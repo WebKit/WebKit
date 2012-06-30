@@ -65,7 +65,7 @@ public:
 
 class MockWebContentLayerClient : public WebContentLayerClient {
 public:
-    MOCK_METHOD3(paintContents, void(WebCanvas*, const WebRect& clip, WebRect& opaque));
+    MOCK_METHOD3(paintContents, void(WebCanvas*, const WebRect& clip, WebFloatRect& opaque));
 };
 
 class WebLayerTest : public Test {

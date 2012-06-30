@@ -1,3 +1,41 @@
+2012-06-30  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] CanvasLayerTextureUpdater needs to convert opaque rects back to content space.
+        https://bugs.webkit.org/show_bug.cgi?id=90092
+
+        The CanvasLayerTextureUpdater currently receives its opaque rects in
+        layer space, but is expected to return them in content space and does
+        not convert them. This patch adds this conversion. To avoid numerical
+        errors, this patch also switches to using float rects to store opaque
+        rects where appropriate.
+
+        Reviewed by Adrienne Walker.
+
+        Unit test: ContentLayerTest.ContentLayerPainterWithDeviceScale
+
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.cpp:
+        (WebCore::CanvasLayerTextureUpdater::paintContents):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::ContentLayerPainter):
+        (WebCore::ContentLayerPainter::create):
+        (WebCore::ContentLayerPainter::paint):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore):
+        (ContentLayerDelegate):
+        (ContentLayerPainter):
+        * platform/graphics/chromium/LayerPainterChromium.h:
+        (WebCore):
+        (LayerPainterChromium):
+        * platform/graphics/chromium/LinkHighlight.cpp:
+        (WebCore::LinkHighlight::paintContents):
+        * platform/graphics/chromium/LinkHighlight.h:
+        (LinkHighlight):
+        * platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.cpp:
+        (WebCore::OpaqueRectTrackingContentLayerDelegate::paintContents):
+        * platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.h:
+        (OpaqueRectTrackingContentLayerDelegate):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+
 2012-06-30  Kwang Yul Seo  <skyul@company100.net>
 
         Unreviewed. Remove unused declaration.

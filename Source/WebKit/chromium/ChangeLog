@@ -1,3 +1,39 @@
+2012-06-30  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] CanvasLayerTextureUpdater needs to convert opaque rects back to content space.
+        https://bugs.webkit.org/show_bug.cgi?id=90092
+
+        The CanvasLayerTextureUpdater currently receives its opaque rects in
+        layer space, but is expected to return them in content space and does
+        not convert them. This patch adds this conversion. To avoid numerical
+        errors, this patch also switches to using float rects to store opaque
+        rects where appropriate.
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::paintContents):
+        * src/WebContentLayerImpl.h:
+        (WebContentLayerImpl):
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestOpacityChangeLayerDelegate::paintContents):
+        (WTF::MockContentLayerDelegate::paintContents):
+        * tests/ContentLayerChromiumTest.cpp: Added.
+        (WebKit):
+        (OpaqueRectDrawingGraphicsContextPainter):
+        (WebKit::OpaqueRectDrawingGraphicsContextPainter::OpaqueRectDrawingGraphicsContextPainter):
+        (WebKit::OpaqueRectDrawingGraphicsContextPainter::~OpaqueRectDrawingGraphicsContextPainter):
+        (MockContentLayerDelegate):
+        (WebKit::MockContentLayerDelegate::MockContentLayerDelegate):
+        (WebKit::TEST):
+        * tests/LayerChromiumTest.cpp:
+        * tests/OpaqueRectTrackingContentLayerDelegateTest.cpp:
+        (WebCore::TEST_F):
+        * tests/TiledLayerChromiumTest.cpp:
+        * tests/WebLayerTest.cpp:
+
 2012-06-29  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Keep direction on IDBCursor to avoid calls to back end

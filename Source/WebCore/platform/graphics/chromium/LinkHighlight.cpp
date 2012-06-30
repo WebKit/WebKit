@@ -92,7 +92,7 @@ ContentLayerChromium* LinkHighlight::contentLayer()
     return m_contentLayer.get();
 }
 
-void LinkHighlight::paintContents(SkCanvas* canvas, const IntRect&, IntRect&)
+void LinkHighlight::paintContents(SkCanvas* canvas, const IntRect&, FloatRect&)
 {
     PlatformContextSkia platformContext(canvas);
     GraphicsContext gc(&platformContext);

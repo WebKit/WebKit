@@ -34,21 +34,36 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "LayerPainterChromium.h"
 #include "TiledLayerChromium.h"
 
 class SkCanvas;
 
 namespace WebCore {
 
+class FloatRect;
 class IntRect;
 class LayerTextureUpdater;
 
 class ContentLayerDelegate {
 public:
-    virtual void paintContents(SkCanvas*, const IntRect& clip, IntRect& opaque) = 0;
+    virtual void paintContents(SkCanvas*, const IntRect& clip, FloatRect& opaque) = 0;
 
 protected:
     virtual ~ContentLayerDelegate() { }
+};
+
+class ContentLayerPainter : public LayerPainterChromium {
+    WTF_MAKE_NONCOPYABLE(ContentLayerPainter);
+public:
+    static PassOwnPtr<ContentLayerPainter> create(ContentLayerDelegate*);
+
+    virtual void paint(SkCanvas*, const IntRect& contentRect, FloatRect& opaque) OVERRIDE;
+
+private:
+    explicit ContentLayerPainter(ContentLayerDelegate*);
+
+    ContentLayerDelegate* m_delegate;
 };
 
 // A layer that renders its contents into an SkCanvas.

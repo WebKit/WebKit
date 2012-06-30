@@ -45,7 +45,7 @@ public:
     ContentLayerChromium* contentLayer();
 
     // ContentLayerDelegate implementation.
-    virtual void paintContents(SkCanvas*, const IntRect& clipRect, IntRect& opaque) OVERRIDE;
+    virtual void paintContents(SkCanvas*, const IntRect& clipRect, FloatRect& opaque) OVERRIDE;
 
     // CCLayerAnimationDelegate implementation.
     virtual void notifyAnimationStarted(double time) OVERRIDE;

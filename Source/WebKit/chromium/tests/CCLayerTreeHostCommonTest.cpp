@@ -3667,7 +3667,7 @@ class MockContentLayerDelegate : public ContentLayerDelegate {
 public:
     MockContentLayerDelegate() { }
     virtual ~MockContentLayerDelegate() { }
-    virtual void paintContents(SkCanvas*, const IntRect& clip, IntRect& opaque) { }
+    virtual void paintContents(SkCanvas*, const IntRect& clip, FloatRect& opaque) OVERRIDE { }
 };
 
 PassRefPtr<ContentLayerChromium> createDrawableContentLayerChromium(ContentLayerDelegate* delegate)

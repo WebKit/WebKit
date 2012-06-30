@@ -55,24 +55,28 @@ void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& c
     canvas->save();
     canvas->translate(WebCoreFloatToSkScalar(-contentRect.x()), WebCoreFloatToSkScalar(-contentRect.y()));
 
-    IntRect scaledContentRect = contentRect;
+    IntRect layerRect = contentRect;
 
     if (contentsWidthScale != 1 || contentsHeightScale != 1) {
         canvas->scale(WebCoreFloatToSkScalar(contentsWidthScale), WebCoreFloatToSkScalar(contentsHeightScale));
 
         FloatRect rect = contentRect;
         rect.scale(1 / contentsWidthScale, 1 / contentsHeightScale);
-        scaledContentRect = enclosingIntRect(rect);
+        layerRect = enclosingIntRect(rect);
     }
 
     SkPaint paint;
     paint.setAntiAlias(false);
     paint.setXfermodeMode(SkXfermode::kClear_Mode);
-    canvas->drawRect(scaledContentRect, paint);
-    canvas->clipRect(scaledContentRect);
+    canvas->drawRect(layerRect, paint);
+    canvas->clipRect(layerRect);
 
-    m_painter->paint(canvas, scaledContentRect, resultingOpaqueRect);
+    FloatRect opaqueLayerRect;
+    m_painter->paint(canvas, layerRect, opaqueLayerRect);
     canvas->restore();
+
+    opaqueLayerRect.scale(contentsWidthScale, contentsHeightScale);
+    resultingOpaqueRect = enclosedIntRect(opaqueLayerRect);
 
     m_contentRect = contentRect;
 }

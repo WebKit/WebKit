@@ -1505,7 +1505,7 @@ class TrackingLayerPainter : public LayerPainterChromium {
 public:
     static PassOwnPtr<TrackingLayerPainter> create() { return adoptPtr(new TrackingLayerPainter()); }
 
-    virtual void paint(SkCanvas*, const IntRect& contentRect, IntRect&)
+    virtual void paint(SkCanvas*, const IntRect& contentRect, FloatRect&) OVERRIDE
     {
         m_paintedRect = contentRect;
     }

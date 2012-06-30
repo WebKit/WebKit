@@ -31,8 +31,10 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "PlatformContextSkia.h"
+#include <public/WebFloatRect.h>
 #include <public/WebRect.h>
 
+using WebKit::WebFloatRect;
 using WebKit::WebRect;
 
 namespace WebCore {
@@ -47,7 +49,7 @@ OpaqueRectTrackingContentLayerDelegate::~OpaqueRectTrackingContentLayerDelegate(
 {
 }
 
-void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, const WebRect& clip, WebRect& opaque)
+void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, const WebRect& clip, WebFloatRect& opaque)
 {
     PlatformContextSkia platformContext(canvas);
     platformContext.setTrackOpaqueRegion(!m_opaque);
@@ -62,8 +64,7 @@ void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, con
     // Transform tracked opaque paints back to our layer's content space.
     ASSERT(canvasToContentTransform.isInvertible());
     ASSERT(canvasToContentTransform.preservesAxisAlignment());
-    FloatRect opaqueCanvasRect = platformContext.opaqueRegion().asRect();
-    opaque = enclosedIntRect(canvasToContentTransform.mapRect(opaqueCanvasRect));
+    opaque = canvasToContentTransform.mapRect(platformContext.opaqueRegion().asRect());
 }
 
 }

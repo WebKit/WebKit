@@ -45,31 +45,25 @@
 
 namespace WebCore {
 
-class ContentLayerPainter : public LayerPainterChromium {
-    WTF_MAKE_NONCOPYABLE(ContentLayerPainter);
-public:
-    static PassOwnPtr<ContentLayerPainter> create(ContentLayerDelegate* delegate)
-    {
-        return adoptPtr(new ContentLayerPainter(delegate));
-    }
+ContentLayerPainter::ContentLayerPainter(ContentLayerDelegate* delegate)
+    : m_delegate(delegate)
+{
+}
 
-    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, IntRect& opaque)
-    {
-        double paintStart = currentTime();
-        m_delegate->paintContents(canvas, contentRect, opaque);
-        double paintEnd = currentTime();
-        double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
-        WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
-    }
-private:
-    explicit ContentLayerPainter(ContentLayerDelegate* delegate)
-        : m_delegate(delegate)
-    {
-    }
+PassOwnPtr<ContentLayerPainter> ContentLayerPainter::create(ContentLayerDelegate* delegate)
+{
+    return adoptPtr(new ContentLayerPainter(delegate));
+}
 
-    ContentLayerDelegate* m_delegate;
-};
+void ContentLayerPainter::paint(SkCanvas* canvas, const IntRect& contentRect, FloatRect& opaque)
+{
+    double paintStart = currentTime();
+    m_delegate->paintContents(canvas, contentRect, opaque);
+    double paintEnd = currentTime();
+    double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
+    WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
+    WebKit::Platform::current()->histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
+}
 
 PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(ContentLayerDelegate* delegate)
 {

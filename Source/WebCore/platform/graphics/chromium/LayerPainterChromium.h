@@ -33,12 +33,13 @@ class SkCanvas;
 
 namespace WebCore {
 
+class FloatRect;
 class IntRect;
 
 class LayerPainterChromium {
 public:
     virtual ~LayerPainterChromium() { }
-    virtual void paint(SkCanvas*, const IntRect& contentRect, IntRect& opaque) = 0;
+    virtual void paint(SkCanvas*, const IntRect& contentRect, FloatRect& opaque) = 0;
 };
 
 } // namespace WebCore

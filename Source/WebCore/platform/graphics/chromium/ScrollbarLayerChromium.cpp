@@ -116,7 +116,7 @@ public:
         return adoptPtr(new ScrollbarBackgroundPainter(scrollbar, theme, trackPart));
     }
 
-    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, IntRect&) OVERRIDE
+    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, FloatRect&) OVERRIDE
     {
         PlatformContextSkia platformContext(canvas);
         platformContext.setDrawingToImageBuffer(true);
@@ -169,7 +169,7 @@ public:
         return adoptPtr(new ScrollbarThumbPainter(scrollbar, theme));
     }
 
-    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, IntRect& opaque) OVERRIDE
+    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, FloatRect& opaque) OVERRIDE
     {
         PlatformContextSkia platformContext(canvas);
         platformContext.setDrawingToImageBuffer(true);
