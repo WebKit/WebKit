@@ -1,3 +1,12 @@
+2012-06-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating baselines after r121599.
+
+        * platform/gtk/fast/transforms/bounding-rect-zoom-expected.txt: Added.
+        * platform/gtk/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+
 2012-06-29  Erik Arvidsson  <arv@chromium.org>
 
         [V8] HTMLCollection wrappers are not retained
