@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -472,8 +472,6 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_neq)
         DEFINE_SLOWCASE_OP(op_new_array)
         DEFINE_SLOWCASE_OP(op_new_object)
-        DEFINE_SLOWCASE_OP(op_new_func)
-        DEFINE_SLOWCASE_OP(op_new_func_exp)
         DEFINE_SLOWCASE_OP(op_not)
         DEFINE_SLOWCASE_OP(op_nstricteq)
         DEFINE_SLOWCASE_OP(op_post_dec)

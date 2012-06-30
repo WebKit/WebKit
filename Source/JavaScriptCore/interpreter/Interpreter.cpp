@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3602,7 +3602,7 @@ skip_id_custom_self:
                         proto = asObject(proto)->structure()->prototypeForLookup(callFrame);
                     }
                 }
-                baseObject->transitionTo(*globalData, newStructure);
+                baseObject->setStructureAndReallocateStorageIfNecessary(*globalData, newStructure);
 
                 int value = vPC[3].u.operand;
                 unsigned offset = vPC[7].u.operand;
