@@ -27,29 +27,46 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-QUEUE_NAME=$1
-BOT_ID=$2
+if [[ $# -ne 4 ]];then
+echo "Usage: cold-boot.sh QUEUE_TYPE BOT_ID BUGZILLA_USERNAME BUGZILLA_PASSWORD"
+exit 1
+fi
 
-cd /mnt/git/webkit-$QUEUE_NAME
-while :
-do
-  # This somewhat quirky sequence of steps seems to clear up all the broken
-  # git situations we've gotten ourself into in the past.
-  git clean -f # Remove any left-over layout test results, added files, etc.
-  git rebase --abort # If we got killed during a git rebase, we need to clean up.
-  git fetch origin # Avoid updating the working copy to a stale revision.
-  git checkout origin/master -fB master # Re-create master from origin/master.
+# Format the disk
+cat <<EOF | sudo fdisk /dev/vdb
+n
 
-  # Most queues auto-update as part of their normal operation, but updating
-  # here makes sure that we get the latest version of the master process.
-  ./Tools/Scripts/update-webkit
 
-  # test-webkitpy has code to remove orphaned .pyc files, so we
-  # run it before running webkit-patch to avoid stale .pyc files
-  # preventing webkit-patch from launching.
-  ./Tools/Scripts/test-webkitpy
 
-  # We use --exit-after-iteration to pick up any changes to webkit-patch, including
-  # changes to the committers.py file.
-  ./Tools/Scripts/webkit-patch $QUEUE_NAME --bot-id=$BOT_ID --no-confirm --exit-after-iteration 10
-done
+
+w
+EOF
+
+sudo mkfs.ext4 /dev/vdb1
+sudo mount /dev/vdb1 /mnt
+
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+
+curl http://src.chromium.org/svn/trunk/src/build/install-build-deps.sh > install-build-deps.sh
+bash install-build-deps.sh --no-prompt
+sudo apt-get install xvfb screen -y
+
+cd /mnt
+sudo mkdir -p git
+sudo chown $USER git
+sudo chgrp $USER git
+cd git
+
+git clone http://git.chromium.org/external/Webkit.git
+mv Webkit webkit-$1
+cd webkit-$1
+
+cat >> .git/config <<EOF
+[bugzilla]
+	username = $3
+	password = $4
+EOF
+
+cd ~/tools
+echo "screen -t kr ./start-queue.sh" $1 $2 > screen-config
+bash boot.sh
