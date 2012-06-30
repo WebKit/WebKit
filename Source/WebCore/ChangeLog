@@ -1,3 +1,20 @@
+2012-06-29  Tony Chang  <tony@chromium.org>
+
+        All child elements of a flex container should be turned into a flex item
+        https://bugs.webkit.org/show_bug.cgi?id=90323
+
+        Reviewed by Ojan Vafai.
+
+        We used to only convert some elements to blocks, but now we convert everything except text nodes.
+        This was recently changed here:
+        http://wiki.csswg.org/topics/css3-flexbox-flexbox-replaced-children
+
+        Tests: css3/flexbox/anonymous-block.html : Add new test case.
+               css3/flexbox/flexitem.html: Update results.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-06-29  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Keep direction on IDBCursor to avoid calls to back end

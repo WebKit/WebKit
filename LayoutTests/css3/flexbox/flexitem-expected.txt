@@ -26,9 +26,9 @@ Expected 100 for height, but got 20.
   <img data-expected-display="block" data-expected-width="200" data-expected-height="100" style="-webkit-flex: 2 0 0;" src="doesnotexist.png" alt="placeholder text">
 </div>
 PASS
- button
- PASS
- PASS
+button
+PASS
+PASS
 FAIL:
 Expected 600 for width, but got 0. 
 

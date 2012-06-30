@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
 <body>
+<p>This tests that text nodes that have a flexbox as a parent are wrapped in
+anonymous blocks.</p>
 <div style="display: -webkit-flex">This text should be visible.</div>
+<div style="display: -webkit-flex; -webkit-justify-content: space-between">
+    spacer<span>middle</span>spacer
+</div>
 </body>
 </html>

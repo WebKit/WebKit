@@ -1,5 +1,17 @@
 2012-06-29  Tony Chang  <tony@chromium.org>
 
+        All child elements of a flex container should be turned into a flex item
+        https://bugs.webkit.org/show_bug.cgi?id=90323
+
+        Reviewed by Ojan Vafai.
+
+        * css3/flexbox/anonymous-block-expected.html:
+        * css3/flexbox/anonymous-block.html:
+        * css3/flexbox/flexitem-expected.txt:
+        * css3/flexbox/flexitem.html:
+
+2012-06-29  Tony Chang  <tony@chromium.org>
+
         Allow align-self: stretch to cause the item size to shrink below its intrinsic size
         https://bugs.webkit.org/show_bug.cgi?id=90304
 

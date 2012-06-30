@@ -70,23 +70,19 @@ if (window.layoutTestController)
 </div>
 
 <div class="flexbox">
-  <!-- The <spans> get wrapped in anonymous blocks that have the default value
-  of flex: 0 1 auto. Setting a flex: on these spans should do nothing. -->
-  <span style="-webkit-flex: 5 0 0"></span>
-  <button data-expected-display="block" data-expected-width="600" style="-webkit-flex: 1 0 0">button</button>
-  <span style="-webkit-lex: 2 2 100px"></span>
+  <span data-expected-display="block" data-expected-width="200" style="-webkit-flex: 2 0 0"></span>
+  <button data-expected-display="block" data-expected-width="100" style="-webkit-flex: 1 0 0">button</button>
+  <span data-expected-display="block" data-expected-width="300" style="-webkit-flex: 2 2 100px"></span>
 </div>
 
-<div class="flexbox">
+<div class="flexbox" style="width: 700px">
   <div data-expected-display="block" data-expected-width="100" style="display: inline-block;"></div>
   <div data-expected-display="-webkit-box" data-expected-width="100" style="display: -webkit-inline-box;"></div>
   <div data-expected-display="-webkit-flex" data-expected-width="100" style="display: -webkit-inline-flex;"></div>
   <div data-expected-display="block" data-expected-width="100" style="display: table-cell"></div>
   <div data-expected-display="block" data-expected-width="100" style="display: compact"></div>
   <div data-expected-display="block" data-expected-width="100" style="display: run-in"></div>
-  <!-- This inline should be wrapping in an anonymous block, which gets the
-  default flex: 0 1 auto. -->
-  <div data-expected-display="inline" data-expected-width="0" style="display: inline;"></div>
+  <div data-expected-display="block" data-expected-width="100" style="display: inline;"></div>
 </div>
 
 <div class="flexbox">

@@ -1981,36 +1981,6 @@ static void addIntrinsicMargins(RenderStyle* style)
     }
 }
 
-static bool shouldBecomeBlockWhenParentIsFlexbox(const Element* element)
-{
-    return element->hasTagName(imgTag)
-        || element->hasTagName(canvasTag)
-#if ENABLE(SVG)
-        || element->hasTagName(SVGNames::svgTag)
-#endif
-#if ENABLE(MATHML)
-        || element->hasTagName(MathMLNames::mathTag)
-#endif
-#if ENABLE(VIDEO)
-        || element->hasTagName(audioTag)
-        || element->hasTagName(videoTag)
-#endif
-        || element->hasTagName(iframeTag)
-        || element->hasTagName(objectTag)
-        || element->hasTagName(embedTag)
-        || element->hasTagName(appletTag)
-#if ENABLE(PROGRESS_TAG)
-        || element->hasTagName(progressTag)
-#endif
-#if ENABLE(METER_TAG)
-        || element->hasTagName(meterTag)
-#endif
-        || element->hasTagName(inputTag)
-        || element->hasTagName(buttonTag)
-        || element->hasTagName(selectTag)
-        || element->hasTagName(textareaTag);
-}
-
 static EDisplay equivalentBlockDisplay(EDisplay display, bool isFloating, bool strictParsing)
 {
     switch (display) {
@@ -2155,12 +2125,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         if (style->writingMode() != TopToBottomWritingMode && (style->display() == BOX || style->display() == INLINE_BOX))
             style->setWritingMode(TopToBottomWritingMode);
 
-        if (e && e->parentNode() && e->parentNode()->renderer() && e->parentNode()->renderer()->isFlexibleBox()) {
-            if (shouldBecomeBlockWhenParentIsFlexbox(e))
-                style->setDisplay(BLOCK);
-            else if (style->display() != INLINE)
-                style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_checker.strictParsing()));
-        }
+        if (e && e->parentNode() && e->parentNode()->renderer() && e->parentNode()->renderer()->isFlexibleBox())
+            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_checker.strictParsing()));
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
