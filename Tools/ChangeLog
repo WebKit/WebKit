@@ -1,3 +1,21 @@
+2012-06-29  Ojan Vafai  <ojan@chromium.org>
+
+        garden-o-matic broken: TypeError: 'undefined' is not an object (evaluating 'buildLocations[currentIndex].url')
+        https://bugs.webkit.org/show_bug.cgi?id=90243
+
+        Reviewed by Dirk Pranke.
+
+        jQuery was trying to be too smart and parsing the jsonp as json because of it's content-type.
+        Excise jQuery and just use XHR directly since it's easier to maintain something where we control it
+        all.
+
+        Not really sure how to unittest this. I tested it all manually of course.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/net.js:
+        Made net.ajax a drop-in replacement for the features of $.ajax that we were using.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+        Not related to this patch, but figured I'd update the failing test while I was at it.
+
 2012-06-29  Yaron Friedman  <yfriedman@chromium.org>
 
         Fix layout test runner for Android after https://bugs.webkit.org/show_bug.cgi?id=88134

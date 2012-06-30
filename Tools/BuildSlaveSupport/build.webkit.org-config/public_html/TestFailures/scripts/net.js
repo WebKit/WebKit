@@ -27,23 +27,51 @@ var net = net || {};
 
 (function () {
 
-net.post = $.post;
-net.get = $.get;
-net.ajax = $.ajax;
+// FIXME: Excise this last bit of jquery ajax code.
+// There are callers that depend on automatically parsing the content as JSON or XML
+// based off the content-type. Instead we should add net.json and net.xml for those cases.
+net.get = function(url, success)
+{
+    $.get(url, success);
+};
+
+net.ajax = function(options)
+{
+    var xhr = new XMLHttpRequest();
+    var method = options.type || 'GET';
+    var async = true;
+    xhr.open(method, options.url, async);
+    xhr.onload = function() {
+        if (xhr.status == 200 && options.success)
+            options.success(xhr.responseText);
+        else if (xhr.status != 200 && options.error)
+            options.error();
+    };
+    xhr.onerror = function() {
+        if (options.error)
+            options.error();
+    };
+    xhr.send(options.data || null);
+};
+
+net.post = function(url, data, success)
+{
+    net.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: success,
+    });
+
+};
 
 net.probe = function(url, options)
 {
-    $.ajax({
+    net.ajax({
         url: url,
         type: 'HEAD',
-        success: function() {
-            if (options.success)
-                options.success.call();
-        },
-        error: function() {
-            if (options.error)
-                options.error.call();
-        },
+        success: options.success,
+        error: options.error,
     });
 };
 
@@ -52,12 +80,12 @@ net.probe = function(url, options)
 // by setting CORS headers.
 net.jsonp = function(url, callback)
 {
-    $.ajax({
+    net.ajax({
         url: url,
         success: function(jsonp) {
             callback(base.parseJSONP(jsonp));
         },
-        error: function(request, textStatus, errorThrown) {
+        error: function() {
             callback({});
         },
     });

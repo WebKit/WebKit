@@ -54,7 +54,7 @@ test("ui.onebar", 3, function() {
     onebar = new ui.onebar();
     onebar.attach();
     equal(onebar.innerHTML,
-        '<div><select id="platform-picker"><option>Apple</option><option>Chromium</option><option>GTK</option></select></div>' +
+        '<div><select id="platform-picker"><option>Apple</option><option>Chromium</option><option>GTK</option><option>Qt</option></select></div>' +
         '<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">' +
             '<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#unexpected">Unexpected Failures</a></li>' +
             '<li class="ui-state-default ui-corner-top"><a href="#expected">Expected Failures</a></li>' +
