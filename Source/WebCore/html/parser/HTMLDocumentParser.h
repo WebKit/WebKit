@@ -127,7 +127,6 @@ private:
     bool runScriptsForPausedTreeBuilder();
     void resumeParsingAfterScriptExecution();
 
-    void begin();
     void attemptToEnd();
     void endIfDelayed();
     void attemptToRunDeferredScriptsAndEnd();

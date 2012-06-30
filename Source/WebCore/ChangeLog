@@ -1,3 +1,10 @@
+2012-06-30  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed. Remove unused declaration.
+        HTMLDocumentParser::begin() has no method definition.
+
+        * html/parser/HTMLDocumentParser.h:
+
 2012-06-29  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Unreviewed, rolling out r121569.
