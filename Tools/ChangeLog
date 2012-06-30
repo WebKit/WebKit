@@ -1,3 +1,13 @@
+2012-06-29  Yaron Friedman  <yfriedman@chromium.org>
+
+        Fix layout test runner for Android after https://bugs.webkit.org/show_bug.cgi?id=88134
+        https://bugs.webkit.org/show_bug.cgi?id=90309
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.start_http_server):
+
 2012-06-29  James Weatherall  <wez@chromium.org>
 
         NPObjectWrapper may not address all window script object lifetime issues

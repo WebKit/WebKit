@@ -227,7 +227,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         expectations = chromium.ChromiumPort.test_expectations(self)
         return expectations.replace('LINUX ', 'LINUX ANDROID ')
 
-    def start_http_server(self, additional_dirs=None):
+    def start_http_server(self, additional_dirs=None, number_of_servers=0):
         # The http server runs during the whole testing period, so ignore this call.
         pass
 
