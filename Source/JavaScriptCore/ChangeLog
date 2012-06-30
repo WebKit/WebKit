@@ -1,3 +1,55 @@
+2012-06-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, rolling out r121605.
+        http://trac.webkit.org/changeset/121605
+        https://bugs.webkit.org/show_bug.cgi?id=90336
+
+        Changes caused flaky crashes in sputnik/Unicode tests on Apple
+        WK1 and GTK Linux builders
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        (JSC::JIT::emitAllocateJSFinalObject):
+        (JSC):
+        (JSC::JIT::emitAllocateJSFunction):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_func):
+        (JSC::JIT::emitSlow_op_new_func):
+        (JSC):
+        (JSC::JIT::emit_op_new_func_exp):
+        (JSC::JIT::emitSlow_op_new_func_exp):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isUsingInlineStorage):
+        (JSObject):
+        (JSC::JSObject::finishCreation):
+        (JSC):
+        (JSNonFinalObject):
+        (JSC::JSNonFinalObject::JSNonFinalObject):
+        (JSC::JSNonFinalObject::finishCreation):
+        (JSFinalObject):
+        (JSC::JSFinalObject::finishCreation):
+        (JSC::JSObject::offsetOfInlineStorage):
+        (JSC::JSObject::setPropertyStorage):
+        (JSC::Structure::isUsingInlineStorage):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::transitionTo):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC):
+        (JSC::Structure::growPropertyStorageCapacity):
+        (JSC::Structure::suggestedNewPropertyStorageSize):
+        * runtime/Structure.h:
+        (JSC::Structure::shouldGrowPropertyStorage):
+        (JSC::Structure::propertyStorageSize):
+
 2012-06-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove warning about protected values when the Heap is being destroyed

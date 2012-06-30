@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,23 +103,7 @@ namespace JSC {
         bool isFrozen(JSGlobalData&);
         bool isExtensible() const { return !m_preventExtensions; }
         bool didTransition() const { return m_didTransition; }
-        bool putWillGrowPropertyStorage()
-        {
-            ASSERT(propertyStorageCapacity() >= propertyStorageSize());
-            
-            if (!m_propertyTable) {
-                unsigned currentSize = static_cast<unsigned>(m_offset + 1);
-                ASSERT(propertyStorageCapacity() >= currentSize);
-                return currentSize == propertyStorageCapacity();
-            }
-            
-            ASSERT(propertyStorageCapacity() >= m_propertyTable->propertyStorageSize());
-            if (m_propertyTable->hasDeletedOffset())
-                return false;
-            
-            ASSERT(propertyStorageCapacity() >= m_propertyTable->size());
-            return m_propertyTable->size() == propertyStorageCapacity();
-        }
+        bool shouldGrowPropertyStorage() { return propertyStorageCapacity() == propertyStorageSize(); }
         JS_EXPORT_PRIVATE size_t suggestedNewPropertyStorageSize(); 
 
         Structure* flattenDictionaryStructure(JSGlobalData&, JSObject*);
@@ -155,7 +139,6 @@ namespace JSC {
         void growPropertyStorageCapacity();
         unsigned propertyStorageCapacity() const { ASSERT(structure()->classInfo() == &s_info); return m_propertyStorageCapacity; }
         unsigned propertyStorageSize() const { ASSERT(structure()->classInfo() == &s_info); return (m_propertyTable ? m_propertyTable->propertyStorageSize() : static_cast<unsigned>(m_offset + 1)); }
-        size_t inlineStorageCapacity() const;
         bool isUsingInlineStorage() const;
 
         size_t get(JSGlobalData&, PropertyName);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -429,16 +429,35 @@ template <typename ClassType, bool destructor, typename StructureType> inline vo
     storePtr(TrustedImmPtr(0), Address(result, JSObject::offsetOfInheritorID()));
 
     // initialize the object's property storage pointer
-    if (ClassType::hasInlineStorage()) {
-        addPtr(TrustedImm32(sizeof(JSObject)), result, storagePtr);
-        storePtr(storagePtr, Address(result, ClassType::offsetOfPropertyStorage()));
-    } else
-        storePtr(TrustedImmPtr(0), Address(result, ClassType::offsetOfPropertyStorage()));
+    addPtr(TrustedImm32(sizeof(JSObject)), result, storagePtr);
+    storePtr(storagePtr, Address(result, ClassType::offsetOfPropertyStorage()));
 }
 
 template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)
 {
     emitAllocateBasicJSObject<JSFinalObject, false, T>(structure, result, scratch);
+}
+
+inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, RegisterID scopeChain, RegisterID result, RegisterID storagePtr)
+{
+    emitAllocateBasicJSObject<JSFunction, true>(TrustedImmPtr(m_codeBlock->globalObject()->namedFunctionStructure()), result, storagePtr);
+
+    // store the function's scope chain
+    storePtr(scopeChain, Address(result, JSFunction::offsetOfScopeChain()));
+
+    // store the function's executable member
+    storePtr(TrustedImmPtr(executable), Address(result, JSFunction::offsetOfExecutable()));
+
+    // clear the function's inheritorID
+    storePtr(TrustedImmPtr(0), Address(result, JSFunction::offsetOfCachedInheritorID()));
+
+    // store the function's name
+    ASSERT(executable->nameValue());
+    int functionNameOffset = sizeof(JSValue) * m_codeBlock->globalObject()->functionNameOffset();
+    storePtr(TrustedImmPtr(executable->nameValue()), Address(regT1, functionNameOffset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+#if USE(JSVALUE32_64)
+    store32(TrustedImm32(JSValue::CellTag), Address(regT1, functionNameOffset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+#endif
 }
 
 inline void JIT::emitAllocateBasicStorage(size_t size, RegisterID result, RegisterID storagePtr)

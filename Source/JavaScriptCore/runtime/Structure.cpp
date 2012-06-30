@@ -156,7 +156,7 @@ Structure::Structure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSV
     , m_prototype(globalData, this, prototype)
     , m_classInfo(classInfo)
     , m_transitionWatchpointSet(InitializedWatching)
-    , m_propertyStorageCapacity(typeInfo.isFinalObject() ? JSFinalObject_inlineStorageCapacity : 0)
+    , m_propertyStorageCapacity(typeInfo.isFinalObject() ? JSFinalObject_inlineStorageCapacity : JSNonFinalObject_inlineStorageCapacity)
     , m_offset(noOffset)
     , m_dictionaryKind(NoneDictionaryKind)
     , m_isPinnedPropertyTable(false)
@@ -256,21 +256,19 @@ void Structure::materializePropertyMap(JSGlobalData& globalData)
     }
 }
 
-inline size_t nextPropertyStorageCapacity(size_t currentCapacity)
-{
-    if (!currentCapacity)
-        return 4;
-    return currentCapacity * 2;
-}
-
 void Structure::growPropertyStorageCapacity()
 {
-    m_propertyStorageCapacity = nextPropertyStorageCapacity(m_propertyStorageCapacity);
+    if (isUsingInlineStorage())
+        m_propertyStorageCapacity = JSObject::baseExternalStorageCapacity;
+    else
+        m_propertyStorageCapacity *= 2;
 }
 
 size_t Structure::suggestedNewPropertyStorageSize()
 {
-    return nextPropertyStorageCapacity(m_propertyStorageCapacity);
+    if (isUsingInlineStorage())
+        return JSObject::baseExternalStorageCapacity;
+    return m_propertyStorageCapacity * 2;
 }
  
 void Structure::despecifyDictionaryFunction(JSGlobalData& globalData, PropertyName propertyName)
