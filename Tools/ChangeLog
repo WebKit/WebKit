@@ -1,3 +1,21 @@
+2012-06-29  Luiz Agostini  <luiz.agostini@nokia.com>
+
+        [Qt][WK2] Private non-QtQuick API
+        https://bugs.webkit.org/show_bug.cgi?id=84532
+
+        MiniBrowserRaw is an usage example for the QRawWebView API.
+        It is only an example and is not fully implemented.
+
+        Reviewed by Noam Rosenthal.
+
+        * MiniBrowser/qt/raw/DerivedSources.pri: Added.
+        * MiniBrowser/qt/raw/MiniBrowserRaw.pro: Added.
+        * MiniBrowser/qt/raw/Target.pri: Added.
+        * MiniBrowser/qt/raw/View.cpp: Added.
+        * MiniBrowser/qt/raw/View.h: Added.
+        * Scripts/webkitpy/style/checker.py:
+        * Tools.pro:
+
 2012-06-29  Ojan Vafai  <ojan@chromium.org>
 
         Remove leopard bots from garden-o-matic

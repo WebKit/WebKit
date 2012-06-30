@@ -1,3 +1,33 @@
+2012-06-29  Luiz Agostini  <luiz.agostini@nokia.com>
+
+        [Qt][WK2] Private non-QtQuick API
+        https://bugs.webkit.org/show_bug.cgi?id=84532
+
+        Reviewed by Noam Rosenthal.
+
+        Adding new private non-QtQuick API. This new C++ API makes it possible
+        to have control over the lower levels of WebKit without going via QML.
+
+        This is a first version of the API, enough to show pages on the screen.
+        Many features are not implemented.
+
+        * Target.pri:
+        * UIProcess/API/qt/raw/qrawwebview.cpp: Added.
+        * UIProcess/API/qt/raw/qrawwebview_p.h: Added.
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h: Added.
+
+        The tests for the new API are pixel tests. They use QRawWebView to load
+        html files and generate images, and them compare those images to the ones
+        in UIProcess/API/qt/tests/html/resources.
+
+        * UIProcess/API/qt/tests/html/bluesquare.html: Added.
+        * UIProcess/API/qt/tests/html/redsquare.html: Added.
+        * UIProcess/API/qt/tests/html/resources/qwkview_noBackground1.png: Added.
+        * UIProcess/API/qt/tests/html/resources/qwkview_noBackground3.png: Added.
+        * UIProcess/API/qt/tests/html/resources/qwkview_paint.png: Added.
+        * UIProcess/API/qt/tests/qrawwebview/qrawwebview.pro: Added.
+        * UIProcess/API/qt/tests/qrawwebview/tst_qrawwebview.cpp: Added.
+
 2012-06-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Move intent delivery code from the frame to the page

@@ -152,7 +152,8 @@ _PATH_RULES_SPECIFIER = [
       "-whitespace/declaration"]),
 
      ([# Qt's MiniBrowser has no config.h
-       "Tools/MiniBrowser/qt"],
+       "Tools/MiniBrowser/qt",
+       "Tools/MiniBrowser/qt/raw"],
       ["-build/include"]),
 
     ([# The Qt APIs use Qt/QML naming style, which includes
