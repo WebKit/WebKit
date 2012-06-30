@@ -1,3 +1,18 @@
+2012-06-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove warning about protected values when the Heap is being destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=90302
+
+        Reviewed by Geoffrey Garen.
+
+        Having to do book-keeping about whether values allocated from a certain 
+        VM are or are not protected makes the JSC API much more difficult to use 
+        correctly. Clients should be able to throw an entire VM away and not have 
+        to worry about unprotecting all of the values that they protected earlier.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+
 2012-06-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSObject wastes too much memory on unused property slots
