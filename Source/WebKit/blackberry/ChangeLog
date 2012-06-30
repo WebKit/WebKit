@@ -1,3 +1,29 @@
+2012-06-30  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Allow surface resizing for use cases other than rotation.
+        https://bugs.webkit.org/show_bug.cgi?id=90295
+        RIM PR 171459
+
+        Reviewed by George Staikos.
+
+        A new API method setHasPendingSurfaceSizeChange() is
+        introduced for that effect, and used inside of
+        setViewportSize() to let the WebPageClient do the
+        resizing. Methods are renamed to reflect that this
+        is not exclusively meant for rotation anymore.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPage::setScreenOrientation):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::setHasPendingSurfaceSizeChange):
+        (BlackBerry::WebKit::WebPagePrivate::resizeSurfaceIfNeeded):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-06-29  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Page jumps after post-pinch-zoom re-render

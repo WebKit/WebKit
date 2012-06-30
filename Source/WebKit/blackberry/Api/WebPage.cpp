@@ -396,6 +396,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_needsCommit(false)
     , m_suspendRootLayerCommit(false)
 #endif
+    , m_hasPendingSurfaceSizeChange(false)
     , m_pendingOrientation(-1)
     , m_fullscreenVideoNode(0)
     , m_hasInRegionScrollableAreas(false)
@@ -3600,6 +3601,12 @@ void WebPagePrivate::setScreenOrientation(int orientation)
 void WebPage::setScreenOrientation(int orientation)
 {
     d->m_pendingOrientation = orientation;
+    d->m_hasPendingSurfaceSizeChange = true;
+}
+
+void WebPage::setHasPendingSurfaceSizeChange()
+{
+    d->m_hasPendingSurfaceSizeChange = true;
 }
 
 void WebPage::applyPendingOrientationIfNeeded()
@@ -3608,7 +3615,7 @@ void WebPage::applyPendingOrientationIfNeeded()
         d->setScreenOrientation(d->m_pendingOrientation);
 }
 
-void WebPagePrivate::screenRotated()
+void WebPagePrivate::resizeSurfaceIfNeeded()
 {
     // This call will cause the client to reallocate the window buffer to new size,
     // which needs to be serialized with usage of the window buffer. Accomplish
@@ -3616,17 +3623,19 @@ void WebPagePrivate::screenRotated()
     // the window buffer happens on the compositing thread.
     if (!Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
         Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
-            Platform::createMethodCallMessage(&WebPagePrivate::screenRotated, this));
+            Platform::createMethodCallMessage(&WebPagePrivate::resizeSurfaceIfNeeded, this));
         return;
     }
 
-    SurfacePool::globalSurfacePool()->notifyScreenRotated();
-    m_client->notifyScreenRotated();
+    if (m_pendingOrientation != -1)
+        SurfacePool::globalSurfacePool()->notifyScreenRotated();
+
+    m_client->resizeSurfaceIfNeeded();
 }
 
 void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize, bool ensureFocusElementVisible)
 {
-    if (m_pendingOrientation == -1 && transformedActualVisibleSize == this->transformedActualVisibleSize())
+    if (m_pendingOrientation == -1 && !m_hasPendingSurfaceSizeChange && transformedActualVisibleSize == this->transformedActualVisibleSize())
         return;
 
     // Suspend all screen updates to the backingstore to make sure no-one tries to blit
@@ -3640,11 +3649,13 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
         setShouldResetTilesWhenShown(true);
 
     bool needsLayout = false;
-
     bool hasPendingOrientation = m_pendingOrientation != -1;
-    if (hasPendingOrientation)
-        screenRotated();
-    else {
+
+    if (m_hasPendingSurfaceSizeChange) {
+        resizeSurfaceIfNeeded();
+        m_hasPendingSurfaceSizeChange = false;
+    }
+    if (!hasPendingOrientation) {
         // If we are not rotating and we've started a viewport resize with
         // the Render tree in dirty state (i.e. it needs layout), lets
         // reset the needsLayout flag for now but set our own 'needsLayout'.

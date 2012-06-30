@@ -131,7 +131,7 @@ public:
     virtual Platform::Graphics::Window* window() const = 0;
 
     virtual void notifyContentRendered(const Platform::IntRect&) = 0;
-    virtual void notifyScreenRotated() = 0;
+    virtual void resizeSurfaceIfNeeded() = 0;
 
     virtual void inputFocusGained(Platform::BlackBerryInputType, int inputStyle) = 0;
     virtual void inputFocusLost() = 0;
