@@ -1,5 +1,13 @@
 2012-06-30  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK and EFL gardening, adding image expectation
+        for the failing css3/flexbox/anonymous-block.html test.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2012-06-30  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening, updating baselines after r121599.
 
         * platform/gtk/fast/transforms/bounding-rect-zoom-expected.txt: Added.
