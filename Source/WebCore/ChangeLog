@@ -1,3 +1,17 @@
+2012-06-29  Simon Fraser  <simon.fraser@apple.com>
+
+        updateDescendantDependentFlags() is inside #if USE(ACCELERATED_COMPOSITING)
+        https://bugs.webkit.org/show_bug.cgi?id=90245
+
+        Reviewed by Dan Bernstein.
+
+        updateDescendantDependentFlags() and updateTransform() should be
+        outside the USE(ACCELERATED_COMPOSITING) #ifdef. They do work
+        that is needed even if accelerated compositing is disabled.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged):
+
 2012-06-29  Erik Arvidsson  <arv@chromium.org>
 
         [V8] HTMLCollection wrappers are not retained

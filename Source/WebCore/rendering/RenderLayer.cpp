@@ -4860,10 +4860,10 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     bool backingDidCompositeLayers = isComposited() && backing()->canCompositeFilters();
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
     updateDescendantDependentFlags();
     updateTransform();
 
+#if USE(ACCELERATED_COMPOSITING)
     if (compositor()->updateLayerCompositingState(this))
         compositor()->setCompositingLayersNeedRebuild();
     else if (oldStyle && (oldStyle->clip() != renderer()->style()->clip() || oldStyle->hasClip() != renderer()->style()->hasClip()))
