@@ -1198,8 +1198,6 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUni
     if (!isColumnFlow() && child->style()->logicalHeight().isAuto()) {
         LayoutUnit logicalHeightBefore = child->logicalHeight();
         LayoutUnit stretchedLogicalHeight = child->logicalHeight() + availableAlignmentSpaceForChild(lineCrossAxisExtent, child);
-        if (stretchedLogicalHeight < logicalHeightBefore)
-            return;
 
         child->setLogicalHeight(stretchedLogicalHeight);
         child->computeLogicalHeight();

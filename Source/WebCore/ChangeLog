@@ -1,3 +1,20 @@
+2012-06-29  Tony Chang  <tony@chromium.org>
+
+        Allow align-self: stretch to cause the item size to shrink below its intrinsic size
+        https://bugs.webkit.org/show_bug.cgi?id=90304
+
+        Reviewed by Ojan Vafai.
+
+        The spec used to say that stretch could only make items grow, but now
+        it allows items to shrink.
+        http://dev.w3.org/csswg/css3-flexbox/#align-items-stretch
+
+        Tests: css3/flexbox/flex-align-stretch.html Updated expectations.
+               css3/flexbox/child-overflow.html Updated expectations.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+
 2012-06-29  James Weatherall  <wez@chromium.org>
 
         NPObjectWrapper may not address all window script object lifetime issues
