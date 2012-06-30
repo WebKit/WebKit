@@ -674,7 +674,12 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     } else {
         if (hasShadow()) {
             if (shadow->mustUseShadowBlur(this)) {
-                shadow->drawRectShadow(this, rect, RoundedRect::Radii());
+                GraphicsContext* shadowContext = shadow->beginShadowLayer(this, normalizedRect);
+                if (shadowContext) {
+                    QPainter* shadowPainter = shadowContext->platformContext();
+                    shadowPainter->fillRect(normalizedRect, p->brush());
+                    shadow->endShadowLayer(this);
+                }
             } else {
                 // Solid rectangle fill with no blur shadow or transformations applied can be done
                 // faster without using the shadow layer at all.

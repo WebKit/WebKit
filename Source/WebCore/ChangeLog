@@ -1,3 +1,14 @@
+2012-06-29  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Unreviewed, rolling out r121569.
+        http://trac.webkit.org/changeset/121569
+        https://bugs.webkit.org/show_bug.cgi?id=90082
+
+        It broke a couple of tests in Qt Linux Release
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillRect):
+
 2012-06-29  Simon Fraser  <simon.fraser@apple.com>
 
         updateDescendantDependentFlags() is inside #if USE(ACCELERATED_COMPOSITING)
