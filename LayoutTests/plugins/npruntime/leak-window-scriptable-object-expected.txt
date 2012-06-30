@@ -1,0 +1,11 @@
+Test that a plugin that fails to release the window script object doesn't result in the window's document being leaked
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.internals.numberOfLiveDocuments() > initialLiveDocumentCount is true
+PASS window.internals.numberOfLiveDocuments() == initialLiveDocumentCount is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

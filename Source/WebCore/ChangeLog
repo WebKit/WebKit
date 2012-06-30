@@ -1,3 +1,42 @@
+2012-06-29  James Weatherall  <wez@chromium.org>
+
+        NPObjectWrapper may not address all window script object lifetime issues
+        https://bugs.webkit.org/show_bug.cgi?id=85679
+
+        The ScriptController implementations force-deallocate the window script object to ensure that DOM objects are not leaked if an NPAPI plugin fails to release a reference to it before being destroyed. The NPObjectWrapper was added to ensure that NPAPI scripting could not touch the real window script object after it had been deallocated, by providing the plugin with a small wrapper which will leak if the plugin fails to dereference it.
+
+        This patch removes NPObjectWrapper and instead drops the window script NPObject's reference to the underlying V8Object in ScriptController::clearScriptObjects(). If a plugin fails to dereference the object then the NPV8Object wrapper will be leaked but the DOM objects it references will not.
+
+        Reviewed by Nate Chapin.
+
+        Test: plugins/npruntime/leak-window-scriptable-object.html
+
+        * WebCore.gypi:
+        * bindings/v8/NPObjectWrapper.cpp: Removed.
+        * bindings/v8/NPObjectWrapper.h: Removed.
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::disposeUnderlyingV8Object):
+        (WebCore):
+        (WebCore::freeV8NPObject):
+        (_NPN_Invoke):
+        (_NPN_InvokeDefault):
+        (_NPN_EvaluateHelper):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_Enumerate):
+        (_NPN_Construct):
+        * bindings/v8/NPV8Object.h:
+        (WebCore):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::clearScriptObjects):
+        (WebCore::ScriptController::windowScriptNPObject):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+
 2012-06-29  Adam Barth  <abarth@webkit.org>
 
         Update complex fonts on Android to use fonts from a newer SDK

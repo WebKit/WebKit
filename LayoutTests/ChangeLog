@@ -1,3 +1,15 @@
+2012-06-29  James Weatherall  <wez@chromium.org>
+
+        NPObjectWrapper may not address all window script object lifetime issues
+        https://bugs.webkit.org/show_bug.cgi?id=85679
+
+        Test that NPAPI plugins that leak references to the window script object don't cause the containing document to be leaked.
+
+        Reviewed by Nate Chapin.
+
+        * plugins/npruntime/leak-window-scriptable-object-expected.txt: Added.
+        * plugins/npruntime/leak-window-scriptable-object.html: Added.
+
 2012-06-29  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium windows rebaselines for r121599.

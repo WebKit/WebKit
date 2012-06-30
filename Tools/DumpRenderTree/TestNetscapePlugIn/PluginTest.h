@@ -65,7 +65,6 @@ public:
     virtual NPError NPP_DestroyStream(NPStream*, NPReason);
     virtual int32_t NPP_WriteReady(NPStream*);
     virtual int32_t NPP_Write(NPStream*, int32_t offset, int32_t len, void* buffer);
-    
     virtual int16_t NPP_HandleEvent(void* event);
     virtual bool NPP_URLNotify(const char* url, NPReason, void* notifyData);
     virtual NPError NPP_GetValue(NPPVariable, void* value);
@@ -87,6 +86,7 @@ public:
     NPObject* NPN_CreateObject(NPClass*);
     NPObject* NPN_RetainObject(NPObject*);
     void NPN_ReleaseObject(NPObject*);
+    bool NPN_GetProperty(NPObject*, NPIdentifier propertyName, NPVariant* value);
     bool NPN_RemoveProperty(NPObject*, NPIdentifier propertyName);
 
 #ifdef XP_MACOSX

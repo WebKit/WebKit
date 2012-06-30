@@ -208,6 +208,11 @@ void PluginTest::NPN_ReleaseObject(NPObject* npObject)
     browser->releaseobject(npObject);
 }
 
+bool PluginTest::NPN_GetProperty(NPObject* npObject, NPIdentifier propertyName, NPVariant* value)
+{
+    return browser->getproperty(m_npp, npObject, propertyName, value);
+}
+
 bool PluginTest::NPN_RemoveProperty(NPObject* npObject, NPIdentifier propertyName)
 {
     return browser->removeproperty(m_npp, npObject, propertyName);

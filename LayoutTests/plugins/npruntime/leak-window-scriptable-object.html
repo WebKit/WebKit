@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test that a plugin that fails to release the window script object doesn't result in the window's document being leaked");
+
+if (window.internals !== undefined) {
+    // Test that the live document count returns to the initial value, rather than to a specific value, so this test is robust to leaks in preceding tests.
+    gc();
+    var initialLiveDocumentCount = window.internals.numberOfLiveDocuments();
+
+    var iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    iframe.contentWindow.document.documentElement.innerHTML = '<embed id="plugin" type="application/x-webkit-test-netscape" test="leak-window-scriptable-object"></embed>';
+
+    shouldBeTrue("window.internals.numberOfLiveDocuments() > initialLiveDocumentCount");
+
+    document.body.removeChild(iframe);
+
+    gc();
+    shouldBeTrue("window.internals.numberOfLiveDocuments() == initialLiveDocumentCount");
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

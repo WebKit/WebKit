@@ -1,3 +1,22 @@
+2012-06-29  James Weatherall  <wez@chromium.org>
+
+        NPObjectWrapper may not address all window script object lifetime issues
+        https://bugs.webkit.org/show_bug.cgi?id=85679
+
+        TestNetscapePlugin now has a leak-window-scriptable-object test which takes a reference to the window script object, and a second reference to it via the "self" property, and does not release those references. This is used to simulate a leaky plugin in layout tests of the NPAPI scripting interface glue code.
+
+        Reviewed by Nate Chapin.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPN_GetProperty):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        (PluginTest):
+        * DumpRenderTree/TestNetscapePlugIn/Tests/LeakWindowScriptableObject.cpp: Added.
+        (LeakWindowScriptableObject):
+        (LeakWindowScriptableObject::LeakWindowScriptableObject):
+        (LeakWindowScriptableObject::NPP_New):
+
 2012-06-29  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: add comment about how determine_full_port_name() works for apple ports, fix -wk2 bug

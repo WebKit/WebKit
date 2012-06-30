@@ -80,6 +80,7 @@
             'TestNetscapePlugIn/Tests/GetURLWithJavaScriptURL.cpp',
             'TestNetscapePlugIn/Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp',
             'TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp',
+            'TestNetscapePlugIn/Tests/LeakWindowScriptableObject.cpp',
             'TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp',
             'TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp',
             'TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp',
