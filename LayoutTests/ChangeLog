@@ -1,5 +1,15 @@
 2012-06-29  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium windows rebaselines for r121599.
+
+        * platform/chromium-win/fast/reflections/reflection-with-zoom-expected.png:
+        * platform/chromium-win/fast/transforms/bounding-rect-zoom-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+
+2012-06-29  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium rebaselines for r121599.
 
         * platform/chromium-mac-snowleopard/fast/reflections/reflection-with-zoom-expected.png:
