@@ -1,5 +1,11 @@
 2012-06-29  Adam Barth  <abarth@webkit.org>
 
+        Turns out we need zip too.
+
+        * EWSTools/cold-boot.sh:
+
+2012-06-29  Adam Barth  <abarth@webkit.org>
+
         Add a cold-boot.sh script for the EWS
         https://bugs.webkit.org/show_bug.cgi?id=90330
 
