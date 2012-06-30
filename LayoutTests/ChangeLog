@@ -1,5 +1,15 @@
 2012-06-30  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium rebaseline for svg/zoom.
+
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png: Added.
+
+2012-06-30  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium windows rebaseline.
 
         * platform/chromium-win-xp/http/tests/inspector/resource-tree/resource-request-content-while-loading-expected.txt:
