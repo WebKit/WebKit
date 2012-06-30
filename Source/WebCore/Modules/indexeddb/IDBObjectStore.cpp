@@ -375,12 +375,12 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return 0;
     }
-    unsigned short direction = IDBCursor::stringToDirection(directionString, ec);
+    IDBCursor::Direction direction = IDBCursor::stringToDirection(directionString, ec);
     if (ec)
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    request->setCursorType(IDBCursorBackendInterface::ObjectStoreCursor);
+    request->setCursorDetails(IDBCursorBackendInterface::ObjectStoreCursor, direction);
     m_backend->openCursor(range, direction, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();

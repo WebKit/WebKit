@@ -47,11 +47,6 @@ WebIDBCursorImpl::~WebIDBCursorImpl()
 {
 }
 
-unsigned short WebIDBCursorImpl::direction() const
-{
-    return m_idbCursorBackend->direction();
-}
-
 WebIDBKey WebIDBCursorImpl::key() const
 {
     return m_idbCursorBackend->key();

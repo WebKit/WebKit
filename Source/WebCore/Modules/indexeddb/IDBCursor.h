@@ -59,10 +59,10 @@ public:
     static const AtomicString& directionPrev();
     static const AtomicString& directionPrevUnique();
 
-    static unsigned short stringToDirection(const String& modeString, ExceptionCode&);
+    static IDBCursor::Direction stringToDirection(const String& modeString, ExceptionCode&);
     static const AtomicString& directionToString(unsigned short mode, ExceptionCode&);
 
-    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
+    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual ~IDBCursor();
 
     // FIXME: Try to modify the code generator so this is unneeded.
@@ -90,7 +90,7 @@ public:
     bool valueIsDirty() { return m_valueIsDirty; }
 
 protected:
-    IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
+    IDBCursor(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual bool isKeyCursor() const { return true; }
 
 private:
@@ -98,6 +98,7 @@ private:
 
     RefPtr<IDBCursorBackendInterface> m_backend;
     RefPtr<IDBRequest> m_request;
+    const Direction m_direction;
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
     IDBTransaction::OpenCursorNotifier m_transactionNotifier;

@@ -42,7 +42,6 @@ public:
     static PassRefPtr<WebCore::IDBCursorBackendInterface> create(PassOwnPtr<WebIDBCursor>);
     virtual ~IDBCursorBackendProxy();
 
-    virtual unsigned short direction() const;
     virtual PassRefPtr<WebCore::IDBKey> key() const;
     virtual PassRefPtr<WebCore::IDBKey> primaryKey() const;
     virtual PassRefPtr<WebCore::SerializedScriptValue> value() const;

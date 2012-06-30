@@ -54,11 +54,6 @@ IDBCursorBackendProxy::~IDBCursorBackendProxy()
 {
 }
 
-unsigned short IDBCursorBackendProxy::direction() const
-{
-    return m_idbCursor->direction();
-}
-
 PassRefPtr<IDBKey> IDBCursorBackendProxy::key() const
 {
     return m_idbCursor->key();

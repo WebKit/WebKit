@@ -44,7 +44,6 @@ public:
     WebIDBCursorImpl(WTF::PassRefPtr<WebCore::IDBCursorBackendInterface>);
     virtual ~WebIDBCursorImpl();
 
-    virtual unsigned short direction() const;
     virtual WebIDBKey key() const;
     virtual WebIDBKey primaryKey() const;
     virtual WebSerializedScriptValue value() const;

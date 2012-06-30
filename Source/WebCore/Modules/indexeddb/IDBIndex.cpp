@@ -69,12 +69,12 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return 0;
     }
-    unsigned short direction = IDBCursor::stringToDirection(directionString, ec);
+    IDBCursor::Direction direction = IDBCursor::stringToDirection(directionString, ec);
     if (ec)
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    request->setCursorType(IDBCursorBackendInterface::IndexCursor);
+    request->setCursorDetails(IDBCursorBackendInterface::IndexCursor, direction);
     m_backend->openCursor(keyRange, direction, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();
@@ -152,13 +152,12 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return 0;
     }
-
-    unsigned short direction = IDBCursor::stringToDirection(directionString, ec);
+    IDBCursor::Direction direction = IDBCursor::stringToDirection(directionString, ec);
     if (ec)
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    request->setCursorType(IDBCursorBackendInterface::IndexKeyCursor);
+    request->setCursorDetails(IDBCursorBackendInterface::IndexKeyCursor, direction);
     m_backend->openKeyCursor(keyRange, direction, request, m_transaction->backend(), ec);
     if (ec) {
         request->markEarlyDeath();

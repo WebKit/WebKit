@@ -61,6 +61,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_cursorFinished(false)
     , m_contextStopped(false)
     , m_cursorType(IDBCursorBackendInterface::InvalidCursorType)
+    , m_cursorDirection(IDBCursor::NEXT)
     , m_cursor(0)
 {
     if (m_transaction) {
@@ -187,10 +188,11 @@ void IDBRequest::abort()
     onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "The transaction was aborted, so the request cannot be fulfilled."));
 }
 
-void IDBRequest::setCursorType(IDBCursorBackendInterface::CursorType cursorType)
+void IDBRequest::setCursorDetails(IDBCursorBackendInterface::CursorType cursorType, IDBCursor::Direction direction)
 {
     ASSERT(m_cursorType == IDBCursorBackendInterface::InvalidCursorType);
     m_cursorType = cursorType;
+    m_cursorDirection = direction;
 }
 
 void IDBRequest::setCursor(PassRefPtr<IDBCursor> cursor)
@@ -237,9 +239,9 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
     ASSERT(m_cursorType != IDBCursorBackendInterface::InvalidCursorType);
     RefPtr<IDBCursor> cursor;
     if (m_cursorType == IDBCursorBackendInterface::IndexKeyCursor)
-        cursor = IDBCursor::create(backend, this, m_source.get(), m_transaction.get());
+        cursor = IDBCursor::create(backend, m_cursorDirection, this, m_source.get(), m_transaction.get());
     else
-        cursor = IDBCursorWithValue::create(backend, this, m_source.get(), m_transaction.get());
+        cursor = IDBCursorWithValue::create(backend, m_cursorDirection, this, m_source.get(), m_transaction.get());
     setResultCursor(cursor, m_cursorType);
 
     enqueueEvent(createSuccessEvent());

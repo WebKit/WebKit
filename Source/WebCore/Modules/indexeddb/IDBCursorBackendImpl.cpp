@@ -63,12 +63,6 @@ IDBCursorBackendImpl::~IDBCursorBackendImpl()
     m_objectStore.clear();
 }
 
-unsigned short IDBCursorBackendImpl::direction() const
-{
-    IDB_TRACE("IDBCursorBackendImpl::direction");
-    return m_direction;
-}
-
 PassRefPtr<IDBKey> IDBCursorBackendImpl::key() const
 {
     IDB_TRACE("IDBCursorBackendImpl::key");

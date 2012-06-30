@@ -53,7 +53,6 @@ public:
         ObjectStoreCursor
     };
 
-    virtual unsigned short direction() const = 0;
     virtual PassRefPtr<IDBKey> key() const = 0;
     virtual PassRefPtr<IDBKey> primaryKey() const = 0;
     virtual PassRefPtr<SerializedScriptValue> value() const = 0;

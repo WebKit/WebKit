@@ -1,3 +1,19 @@
+2012-06-29  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Keep direction on IDBCursor to avoid calls to back end
+        https://bugs.webkit.org/show_bug.cgi?id=90114
+
+        Stop plumbing IDBCursorBackendInterface::direction() through API.
+
+        Reviewed by Tony Chang.
+
+        * src/IDBCursorBackendProxy.cpp:
+        * src/IDBCursorBackendProxy.h:
+        (IDBCursorBackendProxy):
+        * src/WebIDBCursorImpl.cpp:
+        * src/WebIDBCursorImpl.h:
+        (WebIDBCursorImpl):
+
 2012-06-29  Adam Barth  <abarth@webkit.org>
 
         [Chromium] WebFontRendering.cpp requires some OS(ANDROID) ifdefs to build downstream

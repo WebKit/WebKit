@@ -40,6 +40,7 @@
 #include "EventTarget.h"
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
+#include "IDBCursor.h"
 
 namespace WebCore {
 
@@ -73,7 +74,7 @@ public:
 
     void markEarlyDeath();
     bool resetReadyState(IDBTransaction*);
-    void setCursorType(IDBCursorBackendInterface::CursorType);
+    void setCursorDetails(IDBCursorBackendInterface::CursorType, IDBCursor::Direction);
     void setCursor(PassRefPtr<IDBCursor>);
     void finishCursor();
     IDBAny* source();
@@ -134,6 +135,7 @@ private:
 
     // Only used if the result type will be a cursor.
     IDBCursorBackendInterface::CursorType m_cursorType;
+    IDBCursor::Direction m_cursorDirection;
     RefPtr<IDBCursor> m_cursor;
 
     EventTargetData m_eventTargetData;
