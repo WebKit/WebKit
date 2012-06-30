@@ -1,3 +1,16 @@
+2012-06-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Webkit crashes in DFG on Google Docs when creating a new document
+        https://bugs.webkit.org/show_bug.cgi?id=90209
+
+        Reviewed by Gavin Barraclough.
+        
+        Don't attempt to short-circuit Phantom(GetLocal) if the GetLocal is for a
+        captured variable.
+
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+
 2012-06-30  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, rolling out r121605.

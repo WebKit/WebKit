@@ -1,3 +1,18 @@
+2012-06-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Webkit crashes in DFG on Google Docs when creating a new document
+        https://bugs.webkit.org/show_bug.cgi?id=90209
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/dfg-cfg-simplify-phantom-get-local-on-same-block-set-local-expected.txt: Added.
+        * fast/js/dfg-cfg-simplify-phantom-get-local-on-same-block-set-local.html: Added.
+        * fast/js/script-tests/dfg-cfg-simplify-phantom-get-local-on-same-block-set-local.js: Added.
+        (baz):
+        (stuff):
+        (foo):
+        (o.g):
+
 2012-06-30  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK and EFL gardening, adding image expectation
