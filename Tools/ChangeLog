@@ -1,5 +1,16 @@
 2012-06-29  Ojan Vafai  <ojan@chromium.org>
 
+        Remove leopard bots from garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=90328
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+
+2012-06-29  Ojan Vafai  <ojan@chromium.org>
+
         garden-o-matic broken: TypeError: 'undefined' is not an object (evaluating 'buildLocations[currentIndex].url')
         https://bugs.webkit.org/show_bug.cgi?id=90243
 

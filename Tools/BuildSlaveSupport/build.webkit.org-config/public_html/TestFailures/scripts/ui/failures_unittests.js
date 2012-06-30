@@ -93,13 +93,13 @@ test('FailureGrid', 10, function() {
             '<tr class="BUILDING" style="display: none; "><td><span>BUILDING</span></td><td></td><td></td></tr>' +
         '</tbody>' +
     '</table>');
-    grid.update({'Webkit Mac10.5': { actual: 'IMAGE+TEXT'}});
+    grid.update({'Webkit Mac10.6': { actual: 'IMAGE+TEXT'}});
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
             '<tr class="IMAGE+TEXT">' +
                 '<td><span>IMAGE+TEXT</span></td>' +
-                '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5"><span class="version">leopard</span></a></td>' +
+                '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.6"><span class="version">snowleopard</span></a></td>' +
                 '<td></td>' +
             '</tr>' +
             '<tr class="TEXT" style="">' +
@@ -110,13 +110,13 @@ test('FailureGrid', 10, function() {
             '<tr class="BUILDING" style="display: none; "><td><span>BUILDING</span></td><td></td><td></td></tr>' +
         '</tbody>' +
     '</table>');
-    grid.update({'Webkit Mac10.5': { actual: 'IMAGE+TEXT'}});
+    grid.update({'Webkit Mac10.6': { actual: 'IMAGE+TEXT'}});
     equal(grid.outerHTML, '<table class="failures">' +
         '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
         '<tbody>' +
             '<tr class="IMAGE+TEXT" style="">' +
                 '<td><span>IMAGE+TEXT</span></td>' +
-                '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.5"><span class="version">leopard</span></a></td>' +
+                '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Mac10.6"><span class="version">snowleopard</span></a></td>' +
                 '<td></td>' +
             '</tr>' +
             '<tr class="TEXT" style="">' +
