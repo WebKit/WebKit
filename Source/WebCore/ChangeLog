@@ -1,3 +1,16 @@
+2012-06-29  Adam Barth  <abarth@webkit.org>
+
+        Update complex fonts on Android to use fonts from a newer SDK
+        https://bugs.webkit.org/show_bug.cgi?id=90296
+
+        Reviewed by Nate Chapin.
+
+        These fonts are available in the Jelly Bean SDK.
+
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::getComplexFontPlatformData):
+
 2012-06-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLCollection's caches should be owned by either ElementRareData or Document

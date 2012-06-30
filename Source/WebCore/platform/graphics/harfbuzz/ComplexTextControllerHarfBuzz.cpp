@@ -80,6 +80,11 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     m_item.string = m_normalizedBuffer.get();
     m_item.stringLength = m_normalizedBufferLength;
 
+#if OS(ANDROID)
+    // Kerning does not currently work on Android.
+    m_item.shaperFlags = HB_ShaperFlag_NoKerning;
+#endif
+
     reset(startingX);
     m_startingY = startingY;
 
@@ -209,29 +214,41 @@ const FontPlatformData* ComplexTextController::getComplexFontPlatformData()
     case HB_Script_Arabic:
         fallbackScript = kArabic_FallbackScript;
         break;
+    case HB_Script_Armenian:
+        fallbackScript = kArmenian_FallbackScript;
+        break;
+    case HB_Script_Bengali:
+        fallbackScript = kBengali_FallbackScript;
+        break;
+    case HB_Script_Devanagari:
+        fallbackScript = kDevanagari_FallbackScript;
+        break;
+    case HB_Script_Georgian:
+        fallbackScript = kGeorgian_FallbackScript;
+        break;
     case HB_Script_Hebrew:
         if (m_font->fontDescription().weight() >= FontWeightBold)
             fallbackScript = kHebrewBold_FallbackScript;
         else
             fallbackScript = kHebrewRegular_FallbackScript;
         break;
-    case HB_Script_Thai:
-        fallbackScript = kThai_FallbackScript;
+    case HB_Script_Kannada:
+        fallbackScript = kKannada_FallbackScript;
         break;
-    case HB_Script_Armenian:
-        fallbackScript = kArmenian_FallbackScript;
-        break;
-    case HB_Script_Georgian:
-        fallbackScript = kGeorgian_FallbackScript;
-        break;
-    case HB_Script_Devanagari:
-        fallbackScript = kDevanagari_FallbackScript;
-        break;
-    case HB_Script_Bengali:
-        fallbackScript = kBengali_FallbackScript;
+    case HB_Script_Malayalam:
+        fallbackScript = kMalayalam_FallbackScript;
         break;
     case HB_Script_Tamil:
-        fallbackScript = kTamil_FallbackScript;
+        if (m_font->fontDescription().weight() >= FontWeightBold)
+            fallbackScript = kTamilBold_FallbackScript;
+        else
+            fallbackScript = kTamilRegular_FallbackScript;
+        break;
+    case HB_Script_Telugu:
+        fallbackScript = kTelugu_FallbackScript;
+        break;
+    case HB_Script_Thai:
+        fallbackScript = kThai_FallbackScript;
         break;
     default:
         return 0;
