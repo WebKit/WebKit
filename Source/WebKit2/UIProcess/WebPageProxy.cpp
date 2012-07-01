@@ -1115,7 +1115,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     if (m_shouldSendEventsSynchronously) {
         bool handled = false;
         process()->sendSync(Messages::WebPage::KeyEventSyncForTesting(event), Messages::WebPage::KeyEventSyncForTesting::Reply(handled), m_pageID);
-        didReceiveKeyEvent(event.type(), handled);
+        didReceiveEvent(event.type(), handled);
     } else
         process()->send(Messages::WebPage::KeyEvent(event), m_pageID);
 }
@@ -3074,7 +3074,7 @@ void WebPageProxy::didReceiveKeyEvent(uint32_t opaqueType, bool handled)
     case WebEvent::KeyUp:
     case WebEvent::RawKeyDown:
     case WebEvent::Char: {
-        LOG(KeyHandling, "WebPageProxy::didReceiveKeyEvent: %s", webKeyboardEventTypeString(type));
+        LOG(KeyHandling, "WebPageProxy::didReceiveEvent: %s", webKeyboardEventTypeString(type));
 
         NativeWebKeyboardEvent event = m_keyEventQueue.first();
         MESSAGE_CHECK(type == event.type());

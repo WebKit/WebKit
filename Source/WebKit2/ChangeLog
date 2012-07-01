@@ -1,5 +1,10 @@
 2012-06-25  Lucas Forschler  <lforschler@apple.com>
 
+    Rollout 121168 from branch.  
+    This is 121138 from trunk.
+
+2012-06-25  Lucas Forschler  <lforschler@apple.com>
+
     Merge 121138
 
     2012-06-24  Andreas Kling  <kling@webkit.org>
