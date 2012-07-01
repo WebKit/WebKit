@@ -1,5 +1,12 @@
 2012-07-01  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed rebaseline for mac post r121599.
+
+        * platform/mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/mac-snowleopard/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+
+2012-07-01  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed test expectations update for chromium.
 
         * platform/chromium/TestExpectations:
