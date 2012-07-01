@@ -1,3 +1,11 @@
+2012-07-01  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        * EWSTools/cold-boot.sh:
+            - Turns out we need to sudo this command in order for it to
+              actually dimiss the EULA screen. :)
+
 2012-06-29  Adam Barth  <abarth@webkit.org>
 
         Turns out we need zip too.

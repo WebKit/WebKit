@@ -45,7 +45,7 @@ EOF
 sudo mkfs.ext4 /dev/vdb1
 sudo mount /dev/vdb1 /mnt
 
-echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 
 curl http://src.chromium.org/svn/trunk/src/build/install-build-deps.sh > install-build-deps.sh
 bash install-build-deps.sh --no-prompt
