@@ -110,7 +110,7 @@ struct ViewportArguments {
     }
     // FIXME: We're going to keep this constant around until all embedders
     // refactor their code to no longer need it.
-    static const int deprecatedTargetDPI = 160;
+    static const float deprecatedTargetDPI = 160;
 };
 
 ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);

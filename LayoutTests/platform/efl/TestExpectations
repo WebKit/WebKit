@@ -715,7 +715,4 @@ BUGWK89845 : fast/forms/input-set-composition-scroll.html = TEXT
 
 BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT
 
-// Failing after r121555
-BUGWK90286 : fast/viewport/viewport-91.html = TEXT
-
 BUGWK90334 : css3/flexbox/anonymous-block.html = IMAGE

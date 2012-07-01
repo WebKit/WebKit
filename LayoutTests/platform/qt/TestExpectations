@@ -101,6 +101,3 @@ BUGWK85463 SKIP : editing/inserting/typing-space-to-trigger-smart-link.html = PA
 BUGWK88794 SKIP : webaudio/codec-tests = PASS
 
 BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT
-
-// Failing after r121555
-BUGWK90286 : fast/viewport/viewport-91.html = TEXT

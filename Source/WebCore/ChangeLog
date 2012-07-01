@@ -1,3 +1,16 @@
+2012-07-01  Konrad Piascik  <kpiascik@rim.com>
+
+        [EFL] [GTK] [QT] fast/viewport/viewport-91.html is failing after r121555
+        https://bugs.webkit.org/show_bug.cgi?id=90286
+
+        Reviewed by Daniel Bates.
+
+        Since the deprecatedTargetDPI was an int and the deviceDPI was also an int the result
+        was truncated.  Changed deprecatedTargetDPI to a float value. Viewport test 91 now passes.
+
+        * dom/ViewportArguments.h:
+        (ViewportArguments):
+
 2012-06-30  Ian Vollick  <vollick@chromium.org>
 
         [chromium] CanvasLayerTextureUpdater needs to convert opaque rects back to content space.
