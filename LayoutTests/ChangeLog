@@ -1,3 +1,9 @@
+2012-07-01  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed test expectations update for chromium.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-01  Konrad Piascik  <kpiascik@rim.com>
 
         [EFL] [GTK] [QT] fast/viewport/viewport-91.html is failing after r121555
