@@ -1,5 +1,80 @@
 2012-06-29  Filip Pizlo  <fpizlo@apple.com>
 
+        JSObject wastes too much memory on unused property slots
+        https://bugs.webkit.org/show_bug.cgi?id=90255
+
+        Reviewed by Mark Hahnenberg.
+        
+        Rolling back in after applying a simple fix: it appears that
+        JSObject::setStructureAndReallocateStorageIfNecessary() was allocating more
+        property storage than necessary. Fixing this appears to resolve the crash.
+        
+        This does a few things:
+        
+        - JSNonFinalObject no longer has inline property storage.
+        
+        - Initial out-of-line property storage size is 4 slots for JSNonFinalObject,
+          or 2x the inline storage for JSFinalObject.
+        
+        - Property storage is only reallocated if it needs to be. Previously, we
+          would reallocate the property storage on any transition where the original
+          structure said shouldGrowProperyStorage(), but this led to spurious
+          reallocations when doing transitionless property adds and there are
+          deleted property slots available. That in turn led to crashes, because we
+          would switch to out-of-line storage even if the capacity matched the
+          criteria for inline storage.
+        
+        - Inline JSFunction allocation is killed off because we don't have a good
+          way of inlining property storage allocation. This didn't hurt performance.
+          Killing off code is better than fixing it if that code wasn't doing any
+          good.
+        
+        This looks like a 1% progression on V8.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        (JSC):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_func):
+        (JSC):
+        (JSC::JIT::emit_op_new_func_exp):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isUsingInlineStorage):
+        (JSObject):
+        (JSC::JSObject::finishCreation):
+        (JSC):
+        (JSC::JSNonFinalObject::hasInlineStorage):
+        (JSNonFinalObject):
+        (JSC::JSNonFinalObject::JSNonFinalObject):
+        (JSC::JSNonFinalObject::finishCreation):
+        (JSC::JSFinalObject::hasInlineStorage):
+        (JSC::JSFinalObject::finishCreation):
+        (JSC::JSObject::offsetOfInlineStorage):
+        (JSC::JSObject::setPropertyStorage):
+        (JSC::Structure::inlineStorageCapacity):
+        (JSC::Structure::isUsingInlineStorage):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::setStructureAndReallocateStorageIfNecessary):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::nextPropertyStorageCapacity):
+        (JSC):
+        (JSC::Structure::growPropertyStorageCapacity):
+        (JSC::Structure::suggestedNewPropertyStorageSize):
+        * runtime/Structure.h:
+        (JSC::Structure::putWillGrowPropertyStorage):
+        (Structure):
+
+2012-06-29  Filip Pizlo  <fpizlo@apple.com>
+
         Webkit crashes in DFG on Google Docs when creating a new document
         https://bugs.webkit.org/show_bug.cgi?id=90209
 

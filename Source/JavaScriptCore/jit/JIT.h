@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -423,7 +423,6 @@ namespace JSC {
         template<typename ClassType, bool destructor, typename StructureType> void emitAllocateBasicJSObject(StructureType, RegisterID result, RegisterID storagePtr);
         void emitAllocateBasicStorage(size_t, RegisterID result, RegisterID storagePtr);
         template<typename T> void emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID storagePtr);
-        void emitAllocateJSFunction(FunctionExecutable*, RegisterID scopeChain, RegisterID result, RegisterID storagePtr);
         void emitAllocateJSArray(unsigned valuesRegister, unsigned length, RegisterID cellResult, RegisterID storageResult, RegisterID storagePtr);
         
 #if ENABLE(VALUE_PROFILER)
@@ -750,8 +749,6 @@ namespace JSC {
         void emitSlow_op_to_jsnumber(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_primitive(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_urshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_new_func(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_new_func_exp(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_new_array(Instruction*, Vector<SlowCaseEntry>::iterator&);
         
         void emitRightShift(Instruction*, bool isUnsigned);

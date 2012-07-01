@@ -103,13 +103,16 @@ void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, i
 
 void JSFunction::finishCreation(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
 {
-    Base::finishCreation(exec->globalData());
+    JSGlobalData& globalData = exec->globalData();
+    Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 
     // Switching the structure here is only safe if we currently have the function structure!
     ASSERT(structure() == scopeChainNode->globalObject->functionStructure());
-    setStructure(exec->globalData(), scopeChainNode->globalObject->namedFunctionStructure());
-    putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
+    setStructureAndReallocateStorageIfNecessary(
+        globalData,
+        scopeChainNode->globalObject->namedFunctionStructure());
+    putDirectOffset(globalData, scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
 }
 
 Structure* JSFunction::cacheInheritorID(ExecState* exec)
