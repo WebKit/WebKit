@@ -5358,6 +5358,7 @@ void WebPage::clearBrowsingData()
 void WebPage::clearHistory()
 {
     // Don't clear the back-forward list as we might like to keep it.
+    PageGroup::removeAllVisitedLinks();
 }
 
 void WebPage::clearCookies()
