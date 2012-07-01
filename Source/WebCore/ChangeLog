@@ -1,3 +1,25 @@
+2012-07-01  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Arabic shaping is incorrect if ZWNJ exist
+        https://bugs.webkit.org/show_bug.cgi?id=89843
+
+        Reviewed by Dan Bernstein.
+
+        mac port treats ZWJ (zero-width-joiner) and ZWNJ (zero-width-non-joiner) as a part of combining
+        character sequence. This could cause a problem when the font doesn't have glyph mapping of ZWJ and ZWNJ.
+        Suppose the text to be rendered is "U+0645(MEEM) U+06CC(FARSI YEH) U+200C(ZWNJ)". In this case, U+0645
+        and U+06CC are rendered in isolated form if the font doesn't have a glyph for ZWNJ. They should be joined.
+
+        This patch changes handling of ZWJ and ZWNJ. Treats ZWJ and ZWNJ as base characters so that a complex text
+        run isn't separate at the point of ZWJ and ZWNJ even the font doesn't contain glyphs for them.
+        If ComplexTextController finds ZWJ, it doesn't split the current complex text run.
+
+        Test: platform/mac/fast/text/arabic-zwj-and-zwnj.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::advanceByCombiningCharacterSequence): Don't treat ZWJ and ZWNJ as a part of combining character sequence.
+        (WebCore::ComplexTextController::collectComplexTextRuns): Set fontData to nextFontData if the baseCharacter is ZWJ.
+
 2012-07-01  Konrad Piascik  <kpiascik@rim.com>
 
         [EFL] [GTK] [QT] fast/viewport/viewport-91.html is failing after r121555

@@ -1,3 +1,13 @@
+2012-07-01  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Arabic shaping is incorrect if ZWNJ exist
+        https://bugs.webkit.org/show_bug.cgi?id=89843
+
+        Reviewed by Dan Bernstein.
+
+        * platform/mac/fast/text/arabic-zwj-and-zwnj-expected.html: Added.
+        * platform/mac/fast/text/arabic-zwj-and-zwnj.html: Added.
+
 2012-07-01  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed rebaseline for mac post r121599.
