@@ -1,3 +1,14 @@
+2012-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Don't run the tests with jhbuild wrapper if it's already running under jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=89435
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/new-run-webkit-tests: Don't run the tests with the
+        jhbuild wrapper if there isn't a Dependencies directory inside the
+        build directory.
+
 2012-06-29  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Simplify detection of non-installed module file
