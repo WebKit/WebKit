@@ -140,6 +140,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         self._expectations_updater().update_expectations(self._read_entity_body_as_json())
         self._serve_text('success')
 
+    # FIXME: Is this dead code?
     def rebaseline(self):
         builder = self.query['builder'][0]
         command = [ 'rebaseline-test' ]
@@ -155,64 +156,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         self._run_webkit_patch(command)
         self._serve_text('success')
 
-    def _builders_to_fetch_from(self, builders):
-        # This routine returns the subset of builders that will cover all of the baseline search paths
-        # used in the input list. In particular, if the input list contains both Release and Debug
-        # versions of a configuration, we *only* return the Release version (since we don't save
-        # debug versions of baselines).
-        release_builders = set()
-        debug_builders = set()
-        builders_to_fallback_paths = {}
-        for builder in builders:
-            port = self.server.tool.port_factory.get_from_builder_name(builder)
-            if port.test_configuration().build_type == 'Release':
-                release_builders.add(builder)
-            else:
-                debug_builders.add(builder)
-        for builder in list(release_builders) + list(debug_builders):
-            port = self.server.tool.port_factory.get_from_builder_name(builder)
-            fallback_path = port.baseline_search_path()
-            if fallback_path not in builders_to_fallback_paths.values():
-                builders_to_fallback_paths[builder] = fallback_path
-        return builders_to_fallback_paths.keys()
-
-    def _rebaseline_commands(self, test_list):
-        path_to_webkit_patch = self.server.tool.path()
-        cwd = self.server.tool.scm().checkout_root
-        commands = []
-        for test in test_list:
-            for builder in self._builders_to_fetch_from(test_list[test]):
-                suffixes = ','.join(test_list[test][builder])
-                cmd_line = [path_to_webkit_patch, 'rebaseline-test', '--print-scm-changes', '--suffixes', suffixes, builder, test]
-                commands.append(tuple([cmd_line, cwd]))
-        return commands
-
-    def _files_to_add(self, command_results):
-        files_to_add = set()
-        for output in [result[1] for result in command_results]:
-            try:
-                files_to_add.update(json.loads(output)['add'])
-            except ValueError, e:
-                _log.warning('"%s" is not a JSON object, ignoring' % output)
-
-        return list(files_to_add)
-
-    def _optimize_baselines(self, test_list):
-        # We don't run this in parallel because modifying the SCM in parallel is unreliable.
-        for test in test_list:
-            all_suffixes = set()
-            for builder in self._builders_to_fetch_from(test_list[test]):
-                all_suffixes.update(test_list[test][builder])
-            self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(all_suffixes), test])
-
     def rebaselineall(self):
-        test_list = self._read_entity_body_as_json()
-
-        commands = self._rebaseline_commands(test_list)
-        command_results = self.server.tool.executive.run_in_parallel(commands)
-
-        files_to_add = self._files_to_add(command_results)
-        self.server.tool.scm().add_list(list(files_to_add))
-
-        self._optimize_baselines(test_list)
+        command = ['rebaseline-all']
+        self.server.tool.executive.run_command([self.server.tool.path()] + command, input=self.read_entity_body(), cwd=self.server.tool.scm().checkout_root)
         self._serve_text('success')

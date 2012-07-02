@@ -189,6 +189,35 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
 """
         OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt"], expected_logs=expected_logs)
 
+    def test_rebaseline_all(self):
+        old_exact_matches = builders._exact_matches
+        builders._exact_matches = {
+            "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
+            "MOCK builder (Debug)": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier", "debug"])},
+        }
+
+        command = RebaselineAll()
+        tool = MockTool()
+        command.bind_to_tool(tool)
+        tool.executive = MockExecutive(should_log=True)
+
+        expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test', '--print-scm-changes', '--suffixes', u'txt,png', u'MOCK builder', u'user-scripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', u'txt,png', u'user-scripts/another-test.html'], cwd=/mock-checkout
+"""
+        OutputCapture().assert_outputs(self, command._rebaseline, ['{"user-scripts/another-test.html":{"MOCK builder": ["txt","png"]}}'], expected_stderr=expected_stderr)
+
+        expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test', '--print-scm-changes', '--suffixes', u'txt,png', u'MOCK builder (Debug)', u'user-scripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', u'txt,png', u'user-scripts/another-test.html'], cwd=/mock-checkout
+"""
+        OutputCapture().assert_outputs(self, command._rebaseline, ['{"user-scripts/another-test.html":{"MOCK builder (Debug)": ["txt","png"]}}'], expected_stderr=expected_stderr)
+
+        expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test', '--print-scm-changes', '--suffixes', u'txt', u'MOCK builder', u'user-scripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', u'txt', u'user-scripts/another-test.html'], cwd=/mock-checkout
+"""
+        OutputCapture().assert_outputs(self, command._rebaseline, ['{"user-scripts/another-test.html":{"MOCK builder (Debug)": ["txt","png"], "MOCK builder": ["txt"]}}'], expected_stderr=expected_stderr)
+
+        builders._exact_matches = old_exact_matches
+
     def test_rebaseline_expectations(self):
         command = RebaselineExpectations()
         tool = MockTool()

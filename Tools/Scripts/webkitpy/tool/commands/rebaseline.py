@@ -32,6 +32,7 @@ import optparse
 import os.path
 import re
 import shutil
+import sys
 import urllib
 
 import webkitpy.common.config.urls as config_urls
@@ -299,6 +300,81 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
         for test_name, suffixes in self._touched_tests.iteritems():
             _log.info("Optimizing baselines for %s (%s)." % (test_name, ','.join(suffixes)))
             self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(suffixes), test_name])
+
+
+class RebaselineAll(AbstractDeclarativeCommand):
+    name = "rebaseline-all"
+    help_text = "Rebaseline based off JSON passed to stdin. Intended to only be called from other scripts."
+
+    def _run_webkit_patch(self, args):
+        try:
+            self._tool.executive.run_command([self._tool.path()] + args, cwd=self._tool.scm().checkout_root)
+        except ScriptError, e:
+            _log.error(e)
+
+    def _builders_to_fetch_from(self, builders):
+        # This routine returns the subset of builders that will cover all of the baseline search paths
+        # used in the input list. In particular, if the input list contains both Release and Debug
+        # versions of a configuration, we *only* return the Release version (since we don't save
+        # debug versions of baselines).
+        release_builders = set()
+        debug_builders = set()
+        builders_to_fallback_paths = {}
+        for builder in builders:
+            port = self._tool.port_factory.get_from_builder_name(builder)
+            if port.test_configuration().build_type == 'Release':
+                release_builders.add(builder)
+            else:
+                debug_builders.add(builder)
+        for builder in list(release_builders) + list(debug_builders):
+            port = self._tool.port_factory.get_from_builder_name(builder)
+            fallback_path = port.baseline_search_path()
+            if fallback_path not in builders_to_fallback_paths.values():
+                builders_to_fallback_paths[builder] = fallback_path
+        return builders_to_fallback_paths.keys()
+
+    def _rebaseline_commands(self, test_list):
+        path_to_webkit_patch = self._tool.path()
+        cwd = self._tool.scm().checkout_root
+        commands = []
+        for test in test_list:
+            for builder in self._builders_to_fetch_from(test_list[test]):
+                suffixes = ','.join(test_list[test][builder])
+                cmd_line = [path_to_webkit_patch, 'rebaseline-test', '--print-scm-changes', '--suffixes', suffixes, builder, test]
+                commands.append(tuple([cmd_line, cwd]))
+        return commands
+
+    def _files_to_add(self, command_results):
+        files_to_add = set()
+        for output in [result[1] for result in command_results]:
+            try:
+                files_to_add.update(json.loads(output)['add'])
+            except ValueError, e:
+                _log.warning('"%s" is not a JSON object, ignoring' % output)
+
+        return list(files_to_add)
+
+    def _optimize_baselines(self, test_list):
+        # We don't run this in parallel because modifying the SCM in parallel is unreliable.
+        for test in test_list:
+            all_suffixes = set()
+            for builder in self._builders_to_fetch_from(test_list[test]):
+                all_suffixes.update(test_list[test][builder])
+            self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(all_suffixes), test])
+
+    def _rebaseline(self, json_input):
+        test_list = json.loads(json_input)
+
+        commands = self._rebaseline_commands(test_list)
+        command_results = self._tool.executive.run_in_parallel(commands)
+
+        files_to_add = self._files_to_add(command_results)
+        self._tool.scm().add_list(list(files_to_add))
+
+        self._optimize_baselines(test_list)
+
+    def execute(self, options, args, tool):
+        self._rebaseline(sys.stdin.read())
 
 
 class Rebaseline(AbstractDeclarativeCommand):

@@ -1,5 +1,47 @@
 2012-07-02  Ojan Vafai  <ojan@chromium.org>
 
+        Move rebaseline-all command from the gardening-server down into webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=90395
+
+        Reviewed by Adam Barth.
+
+        This is just moving code. It it in preparation for making rebaseline-expectations
+        use the same code in order to get the parallelism benefits and reduces the amount
+        of code we have for doing rebaselines.
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CheckoutTest.test_apply_patch):
+        Updated due to the change to executive_mock.
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.run_command):
+        Update to print out the input passed to stdin.
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        Updated due to executive_mock change.
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineAll):
+        (RebaselineAll._run_webkit_patch):
+        (RebaselineAll._builders_to_fetch_from):
+        (RebaselineAll._rebaseline_commands):
+        (RebaselineAll._files_to_add):
+        (RebaselineAll._optimize_baselines):
+        (RebaselineAll._rebaseline):
+        (RebaselineAll.execute):
+        All this code is just copy-pasted except for mechanical changes
+        (e.g. self.server.tool --> self._tool) and the reading in of the 
+        JSON from stdin instead of the post body.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_all):
+        Copied the test-case out of gardeningserver_unittest.py.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler):
+        (GardeningHTTPRequestHandler.rebaseline):
+        (GardeningHTTPRequestHandler.rebaselineall):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaselineall):
+        (GardeningServerTest.test_rebaselineall.run_command):
+
+2012-07-02  Ojan Vafai  <ojan@chromium.org>
+
         Remove Leopard support from the flakiness dashboard
         https://bugs.webkit.org/show_bug.cgi?id=90390
 
