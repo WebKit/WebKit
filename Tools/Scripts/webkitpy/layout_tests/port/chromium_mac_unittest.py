@@ -35,7 +35,7 @@ from webkitpy.tool.mocktool import MockOptions
 
 class ChromiumMacPortTest(chromium_port_testcase.ChromiumPortTestCase):
     os_name = 'mac'
-    os_version = 'leopard'
+    os_version = 'snowleopard'
     port_name = 'chromium-mac'
     port_maker = chromium_mac.ChromiumMacPort
 

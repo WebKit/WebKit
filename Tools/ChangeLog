@@ -1,3 +1,17 @@
+2012-07-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r121497): It switched off and broke many unittests
+        https://bugs.webkit.org/show_bug.cgi?id=90371
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest): Use snowleopard as os_version instead of leopard, because it isn't supported anymore.
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py:
+        (ChromiumPortTestCase.test_all_test_configurations): Remove leopard testcases, because it isn't supported anymore.
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase): Inherit class PortTestCase from unittest.TestCase instead of object.
+
 2012-07-02  Ojan Vafai  <ojan@chromium.org>
 
         Move rebaseline-all command from the gardening-server down into webkit-patch

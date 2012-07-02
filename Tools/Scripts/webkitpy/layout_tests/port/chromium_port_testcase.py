@@ -64,8 +64,6 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
         self.assertEquals(set(port.all_test_configurations()), set([
             TestConfiguration('icecreamsandwich', 'x86', 'debug'),
             TestConfiguration('icecreamsandwich', 'x86', 'release'),
-            TestConfiguration('leopard', 'x86', 'debug'),
-            TestConfiguration('leopard', 'x86', 'release'),
             TestConfiguration('snowleopard', 'x86', 'debug'),
             TestConfiguration('snowleopard', 'x86', 'release'),
             TestConfiguration('lion', 'x86', 'debug'),

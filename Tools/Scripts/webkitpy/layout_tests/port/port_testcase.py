@@ -44,7 +44,7 @@ from webkitpy.layout_tests.port.config_mock import MockConfig
 from webkitpy.tool.mocktool import MockOptions
 
 
-class PortTestCase(object):
+class PortTestCase(unittest.TestCase):
     """Tests that all Port implementations must pass."""
     HTTP_PORTS = (8000, 8080, 8443)
     WEBSOCKET_PORTS = (8880,)
