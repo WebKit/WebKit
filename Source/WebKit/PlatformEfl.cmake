@@ -103,7 +103,7 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/IconDatabaseClientEfl.cpp
     efl/WebCoreSupport/StorageTrackerClientEfl.cpp
     efl/WebCoreSupport/InspectorClientEfl.cpp
-    efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
+    efl/WebCoreSupport/NotificationClientEfl.cpp
     efl/WebCoreSupport/PageClientEfl.cpp
     efl/WebCoreSupport/PlatformStrategiesEfl.cpp 
 

@@ -1,3 +1,28 @@
+2012-07-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Rename NotificationPresenterEfl with NotificationClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=90370
+
+        Reviewed by Csaba Osztrogonác.
+
+        Bug 80488 renamed NotificationPresenter with NotificationClient. So, EFL port needs to adjust it as well.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        * WebCoreSupport/NotificationClientEfl.cpp: Renamed from Source/WebKit/efl/WebCoreSupport/NotificationPresenterClientEfl.cpp.
+        (WebCore):
+        (WebCore::NotificationClientEfl::NotificationClientEfl):
+        (WebCore::NotificationClientEfl::~NotificationClientEfl):
+        (WebCore::NotificationClientEfl::show):
+        (WebCore::NotificationClientEfl::cancel):
+        (WebCore::NotificationClientEfl::notificationObjectDestroyed):
+        (WebCore::NotificationClientEfl::notificationControllerDestroyed):
+        (WebCore::NotificationClientEfl::requestPermission):
+        (WebCore::NotificationClientEfl::checkPermission):
+        (WebCore::NotificationClientEfl::cancelRequestsForPermission):
+        * WebCoreSupport/NotificationClientEfl.h: Renamed from Source/WebKit/efl/WebCoreSupport/NotificationPresenterClientEfl.h.
+        (WebCore):
+        (NotificationClientEfl):
+
 2012-06-29  Krzysztof Czech  <k.czech@samsung.com>, Tomasz Morawski <t.morawski@samsung.com>
 
         [EFL] Implementation of testing framework and unit tests for WebKit-EFL port.

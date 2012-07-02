@@ -17,30 +17,30 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef NotificationPresenterClientEfl_h
-#define NotificationPresenterClientEfl_h
+#ifndef NotificationClientEfl_h
+#define NotificationClientEfl_h
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "Notification.h"
-#include "NotificationPresenter.h"
+#include "NotificationClient.h"
 
 namespace WebCore {
 
-class NotificationPresenterClientEfl : public NotificationPresenter {
+class NotificationClientEfl : public NotificationClient {
 
 public:
-    NotificationPresenterClientEfl();
-    ~NotificationPresenterClientEfl();
+    NotificationClientEfl();
+    ~NotificationClientEfl();
 
     virtual bool show(Notification*);
     virtual void cancel(Notification*);
     virtual void notificationObjectDestroyed(Notification*);
     virtual void notificationControllerDestroyed();
     virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>);
-    virtual NotificationPresenter::Permission checkPermission(ScriptExecutionContext*);
+    virtual NotificationClient::Permission checkPermission(ScriptExecutionContext*);
     virtual void cancelRequestsForPermission(ScriptExecutionContext*);
 };
 
 }
 #endif
-#endif // NotificationPresenterClientEfl_h
+#endif // NotificationClientEfl_h

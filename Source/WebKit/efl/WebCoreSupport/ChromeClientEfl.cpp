@@ -62,7 +62,7 @@
 #include <wtf/text/CString.h>
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-#include "NotificationPresenterClientEfl.h"
+#include "NotificationClientEfl.h"
 #endif
 
 #if ENABLE(SQL_DATABASE)

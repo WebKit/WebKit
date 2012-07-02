@@ -1,3 +1,15 @@
+2012-07-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Rename NotificationPresenterEfl with NotificationClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=90370
+
+        Reviewed by Csaba Osztrogonác.
+
+        Bug 80488 renamed NotificationPresenter with NotificationClient. So, EFL port needs to adjust
+        it as well.
+
+        * PlatformEfl.cmake:
+
 2012-06-29  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Add support for Unit Tests, based on the gtest library.
