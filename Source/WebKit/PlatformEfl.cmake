@@ -367,6 +367,7 @@ SET(EWKUnitTests_BINARIES
 
 FOREACH(testName ${EWKUnitTests_BINARIES})
     ADD_EXECUTABLE(${testName} ${WEBKIT_EFL_TEST_DIR}/${testName}.cpp ${WEBKIT_EFL_TEST_DIR}/test_runner.cpp)
+    ADD_TEST(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName})
     TARGET_LINK_LIBRARIES(${testName} ${EWKUnitTests_LIBRARIES} ewkTestUtils gtest pthread)
     ADD_TARGET_PROPERTIES(${testName} LINK_FLAGS "${EWKUnitTests_LINK_FLAGS}")
     SET_TARGET_PROPERTIES(${testName} PROPERTIES FOLDER "WebKit")
