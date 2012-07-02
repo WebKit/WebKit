@@ -60,7 +60,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
-#include <wtf/Vector.h>
 
 #if ENABLE(Condition1)
 #include "V8TestObjectA.h"
@@ -879,14 +878,14 @@ static v8::Handle<v8::Value> floatArrayAttrGetter(v8::Local<v8::String> name, co
 {
     INC_STATS("DOM.TestObj.floatArray._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8NumberArray(imp->floatArray());
+    return v8Array(imp->floatArray(), info.GetIsolate());
 }
 
 static void floatArrayAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.floatArray._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    Vector<float> v = v8NumberArrayToVector<float>(value);
+    Vector<float> v = toNativeArray<float>(value);
     imp->setFloatArray(v);
     return;
 }
@@ -895,14 +894,14 @@ static v8::Handle<v8::Value> doubleArrayAttrGetter(v8::Local<v8::String> name, c
 {
     INC_STATS("DOM.TestObj.doubleArray._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8NumberArray(imp->doubleArray());
+    return v8Array(imp->doubleArray(), info.GetIsolate());
 }
 
 static void doubleArrayAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.doubleArray._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    Vector<double> v = v8NumberArrayToVector<double>(value);
+    Vector<double> v = toNativeArray<double>(value);
     imp->setDoubleArray(v);
     return;
 }

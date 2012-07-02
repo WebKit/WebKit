@@ -3511,8 +3511,6 @@ sub IsRefPtrType
     return 0 if $type eq "unsigned";
     return 0 if $type eq "unsigned long";
     return 0 if $type eq "unsigned short";
-    return 0 if $type eq "float[]";
-    return 0 if $type eq "double[]";
 
     return 1;
 }
@@ -3573,8 +3571,6 @@ sub GetNativeType
     return "RefPtr<MediaQueryListListener>" if $type eq "MediaQueryListListener";
 
     # FIXME: Support T[], T[]?, sequence<T> generically
-    return "Vector<float>" if $type eq "float[]";
-    return "Vector<double>" if $type eq "double[]";
     return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
 
     # Default, assume native type is a pointer with same type name as idl type
@@ -3633,14 +3629,6 @@ sub JSValueToNative
     return "v8ValueToWebCoreDOMStringList($value)" if $type eq "DOMStringList";
     # FIXME: Add proper support for T[], T[]? and sequence<T>.
     return "v8ValueToWebCoreDOMStringList($value)" if $type eq "DOMString[]";
-    if ($type eq "float[]") {
-        AddToImplIncludes("wtf/Vector.h");
-        return "v8NumberArrayToVector<float>($value)";
-    }
-    if ($type eq "double[]") {
-        AddToImplIncludes("wtf/Vector.h");
-        return "v8NumberArrayToVector<double>($value)";
-    }
 
     if ($type eq "DOMString" or $type eq "DOMUserData") {
         return $value;
@@ -3820,9 +3808,7 @@ my %non_wrapper_types = (
     'SerializedScriptValue' => 1,
     'boolean' => 1,
     'double' => 1,
-    'double[]' => 1,
     'float' => 1,
-    'float[]' => 1,
     'int' => 1,
     'long long' => 1,
     'long' => 1,
@@ -3908,9 +3894,6 @@ sub NativeToJSValue
     return "v8::Number::New(static_cast<double>($value))" if $type eq "long long" or $type eq "unsigned long long" or $type eq "DOMTimeStamp";
     return "v8::Number::New($value)" if $codeGenerator->IsPrimitiveType($type);
     return "$value.v8Value()" if $nativeType eq "ScriptValue";
-
-    return "v8NumberArray($value)" if $type eq "float[]";
-    return "v8NumberArray($value)" if $type eq "double[]";
 
     if ($codeGenerator->IsStringType($type)) {
         my $conv = $signature->extendedAttributes->{"TreatReturnedNullStringAs"};
