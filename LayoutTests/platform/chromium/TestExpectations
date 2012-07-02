@@ -931,6 +931,10 @@ BUG_DRT WIN DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT
 BUG_DRT SLOW LINUX WIN DEBUG : http/tests/inspector = PASS
 BUG_DRT SLOW LINUX WIN DEBUG : http/tests/inspector-enabled = PASS
 
+BUGFLAKY : http/tests/inspector/extensions-ignore-cache.html = PASS TIMEOUT
+BUGFLAKY : inspector/timeline/timeline-network-received-data.html = PASS TEXT
+BUGFLAKY : inspector/debugger/live-edit.html = PASS TEXT
+
 // Add support for inspector layout tests on Mac.
 BUGCR89357 SKIP MAC : inspector = PASS
 BUGCR89357 SKIP MAC : http/tests/inspector = PASS
@@ -2181,6 +2185,9 @@ BUGJAPHET : fast/js/date-parse-test.html = TEXT
 BUGCR65877 LINUX WIN : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
 BUGCR65877 : fast/writing-mode/japanese-lr-selection.html = IMAGE+TEXT IMAGE
 BUGCR65877 : fast/writing-mode/japanese-rl-selection.html = IMAGE+TEXT IMAGE
+BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS IMAGE+TEXT
+BUGCR65877 : fast/writing-mode/japanese-ruby-vertical-rl.html = PASS IMAGE+TEXT
+BUGCR65877 : fast/writing-mode/japanese-ruby-horizontal-bt.html = PASS IMAGE+TEXT
 BUGCR65877 LINUX : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
 //BUGCR65877 LINUX WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
@@ -3652,7 +3659,7 @@ BUGWK88833 MAC DEBUG : media/track/track-cues-cuechange.html = PASS TIMEOUT
 
 BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIMEOUT
 
-BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = TEXT
+BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = PASS TEXT
 
 // Flaky
 BUGWK89166 : http/tests/messaging/cross-domain-message-event-dispatch.html = TEXT
@@ -3687,6 +3694,8 @@ BUGWK89813 LINUX DEBUG : fast/js/large-expressions.html = PASS TIMEOUT
 BUGWK90234 : css3/calc/transitions.html = PASS TEXT
 
 BUGWK89820 : fast/text/hyphen-min-preferred-width.html = IMAGE
+
+BUGFLAKY : fast/forms/placeholder-position.html = PASS IMAGE
 
 BUGWK89936 WIN : compositing/shadows/shadow-drawing.html = IMAGE
 BUGWK89936 WIN : fast/text/atsui-kerning-and-ligatures.html = IMAGE

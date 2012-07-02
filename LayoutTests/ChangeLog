@@ -1,3 +1,9 @@
+2012-07-02  Adam Barth  <abarth@webkit.org>
+
+        Add some expectations for the top flaky tests on chromium-linux.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Updated Chromium test expectations. Added a missing bug
