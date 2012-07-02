@@ -83,12 +83,12 @@ protected:
     bool hasNameCache() const { return m_hasNameCache; }
     void setHasNameCache() const { m_hasNameCache = true; }
 
+    static void append(NodeCacheMap&, const AtomicString&, Element*);
+
 private:
     using DynamicNodeListCacheBase::isRootedAtDocument;
     using DynamicNodeListCacheBase::shouldInvalidateOnAttributeChange;
     using DynamicNodeListCacheBase::clearCache;
-
-    static void append(NodeCacheMap&, const AtomicString&, Element*);
 
     mutable NodeCacheMap m_idCache;
     mutable NodeCacheMap m_nameCache;
