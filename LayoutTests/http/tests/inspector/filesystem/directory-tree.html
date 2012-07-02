@@ -52,7 +52,7 @@ function test()
 
             fileSystemItem.select();
             fileSystemView = fileSystemItem._fileSystemView;
-            directoryTree = fileSystemView.directoryTree;
+            directoryTree = fileSystemView._directoryTree;
 
             InspectorTest.callOnRequestCompleted(testStep.shift());
         },

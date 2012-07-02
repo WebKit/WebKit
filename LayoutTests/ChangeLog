@@ -1,3 +1,12 @@
+2012-07-02  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add refresh button to FileSystemView status bar
+        https://bugs.webkit.org/show_bug.cgi?id=90244
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/filesystem/directory-tree.html:
+
 2012-07-02  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, removing GTK-specific baseline that's

@@ -1,3 +1,17 @@
+2012-07-02  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add refresh button to FileSystemView status bar
+        https://bugs.webkit.org/show_bug.cgi?id=90244
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/FileSystemView.js:
+        (WebInspector.FileSystemView):
+        (WebInspector.FileSystemView.prototype.get statusBarItems):
+        (WebInspector.FileSystemView.prototype.showView):
+        (WebInspector.FileSystemView.prototype._refresh):
+        (WebInspector.FileSystemView.EntryTreeElement.prototype._directoryContentReceived):
+
 2012-06-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Implement snippets evaluation.

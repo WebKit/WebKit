@@ -40,18 +40,27 @@ WebInspector.FileSystemView = function(fileSystem)
     this.element.addStyleClass("storage-view");
 
     var directoryTreeElement = this.element.createChild("ol", "filesystem-directory-tree");
-    this.directoryTree = new TreeOutline(directoryTreeElement);
+    this._directoryTree = new TreeOutline(directoryTreeElement);
     this.sidebarElement.appendChild(directoryTreeElement);
     this.sidebarElement.addStyleClass("outline-disclosure");
     this.sidebarElement.addStyleClass("sidebar");
 
     var rootItem = new WebInspector.FileSystemView.EntryTreeElement(this, fileSystem.root);
     rootItem.expanded = true;
-    this.directoryTree.appendChild(rootItem);
+    this._directoryTree.appendChild(rootItem);
     this._visibleView = null;
+
+    this._refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
+    this._refreshButton.visible = true;
+    this._refreshButton.addEventListener("click", this._refresh, this);
 }
 
 WebInspector.FileSystemView.prototype = {
+    get statusBarItems()
+    {
+        return [this._refreshButton.element];
+    },
+
     /**
      * @param {WebInspector.View} view
      */
@@ -63,6 +72,11 @@ WebInspector.FileSystemView.prototype = {
             this._visibleView.detach();
         this._visibleView = view;
         view.show(this.mainElement);
+    },
+
+    _refresh: function()
+    {
+        this._directoryTree.children[0].refresh();
     }
 }
 
@@ -138,8 +152,8 @@ WebInspector.FileSystemView.EntryTreeElement.prototype = {
             var order = newEntry.name.localeCompare(oldChild._entry.name);
 
             if (order === 0) {
-                if (oldChild._entry.isDirectory && oldChild.expanded)
-                    oldChild.refresh();
+                if (oldChild._entry.isDirectory)
+                    oldChild.shouldRefreshChildren = true;
                 ++newEntryIndex;
                 ++oldChildIndex;
                 ++currentTreeItem;
