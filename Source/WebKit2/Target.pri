@@ -771,6 +771,16 @@ SOURCES += \
     WebProcess/qt/WebProcessQt.cpp
 
 mac: {
+
+    contains(DEFINES, WTF_USE_QTKIT=1) {
+        DEFINES += NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+        INCLUDEPATH += \
+            $$PWD/../../WebKitLibraries/
+        HEADERS += \
+            WebProcess/WebCoreSupport/qt/WebSystemInterface.h
+        SOURCES += \
+            WebProcess/WebCoreSupport/qt/WebSystemInterface.mm
+    }
     INCLUDEPATH += \
         Platform/mac \
         Platform/CoreIPC/mac

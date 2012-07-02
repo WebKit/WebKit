@@ -1,3 +1,23 @@
+2012-07-02  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Fix WebProcess crash on Mac when accessing a site with video tag.
+        https://bugs.webkit.org/show_bug.cgi?id=90384
+
+        Reviewed by Jocelyn Turcotte.
+
+        We need to initialize the private symbols used by MediaPlayerPrivateQTKit
+        otherwise they will be null and it will lead to a crash. We copy WebSystemInterface
+        files for WK2 just like the Mac port as WK2 may have different needs than WK1 layer (we
+        may add or remove symbols in here). It doesn't fix the video rendering yet but it's
+        first step.
+
+        * Target.pri:
+        * WebProcess/WebCoreSupport/qt/WebSystemInterface.h: Added.
+        * WebProcess/WebCoreSupport/qt/WebSystemInterface.mm: Added.
+        (InitWebCoreSystemInterfaceForWK2):
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
 2012-07-02  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] Remove content sniffer and decoder initialization from WebProcess

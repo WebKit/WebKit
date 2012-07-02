@@ -40,6 +40,9 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "WebGraphicsLayer.h"
 #endif
+#if USE(QTKIT)
+#include "WebSystemInterface.h"
+#endif
 
 #ifndef NDEBUG
 #if !OS(WINDOWS)
@@ -148,6 +151,10 @@ Q_DECL_EXPORT int WebProcessMainQt(QGuiApplication* app)
     JSC::initializeThreading();
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
+    
+#if USE(QTKIT)
+    InitWebCoreSystemInterfaceForWK2();
+#endif
 
     // Create the connection.
     if (app->arguments().size() <= 1) {
