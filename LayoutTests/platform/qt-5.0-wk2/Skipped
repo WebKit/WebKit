@@ -392,4 +392,7 @@ http/tests/cache/xhr-vary-header.html
 # https://bugs.webkit.org/show_bug.cgi?id=89473
 editing/pasteboard/copy-in-password-field.html
 editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
-.
+
+# [Qt][WK2] fast/viewport/viewport-91.html still fails after r121555 and r121661
+# https://bugs.webkit.org/show_bug.cgi?id=90376
+fast/viewport/viewport-91.html

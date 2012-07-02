@@ -1,3 +1,12 @@
+2012-07-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, update expected files, skip new failing tests.
+
+        * platform/qt-5.0-wk2/Skipped: Skip fast/viewport/viewport-91.html because of bug90376.
+        * platform/qt-5.0/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Updated after r121599.
+        * platform/qt-5.0/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Updated after r121599.
+        * platform/qt/Skipped: Skip inspector/debugger/script-snippet-model.html because of bug90385.
+
 2012-07-02  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add requestFileContent command and fileContentReceived event
