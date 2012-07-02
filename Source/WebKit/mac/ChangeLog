@@ -1,3 +1,15 @@
+2012-07-01  Timothy Hatcher  <timothy@apple.com>
+
+        Make the "Inspect Element" context menu item appear in nightly builds again.
+
+        rdar://problem/11702613
+        https://webkit.org/b/89323
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebUIDelegatePrivate.h:
+        Add missing enums that were added in ContextMenuItem.h but left out here.
+
 2012-06-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121529.

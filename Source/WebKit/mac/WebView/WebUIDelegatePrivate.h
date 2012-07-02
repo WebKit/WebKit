@@ -89,6 +89,17 @@ enum {
     WebMenuItemTagMakeLowerCase,
     WebMenuItemTagCapitalize,
     WebMenuItemTagChangeBack,
+    WebMenuItemTagOpenMediaInNewWindow,
+    WebMenuItemTagCopyMediaLinkToClipboard,
+    WebMenuItemTagToggleMediaControls,
+    WebMenuItemTagToggleMediaLoop,
+    WebMenuItemTagEnterVideoFullscreen,
+    WebMenuItemTagMediaPlayPause,
+    WebMenuItemTagMediaMute,
+    WebMenuItemTagDictationAlternative,
+    WebMenuItemBaseCustomTag = 5000,
+    WebMenuItemCustomTagNoAction = 5998,
+    WebMenuItemLastCustomTag = 5999,
     WebMenuItemTagBaseApplication = 10000
 };
 

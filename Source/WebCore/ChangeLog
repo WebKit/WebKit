@@ -1,3 +1,16 @@
+2012-07-01  Timothy Hatcher  <timothy@apple.com>
+
+        Make the "Inspect Element" context menu item appear in nightly builds again.
+
+        rdar://problem/11702613
+        https://webkit.org/b/89323
+
+        Reviewed by Dan Bernstein.
+
+        * platform/ContextMenuItem.h:
+        Fix the order of the ContextMenuAction enum to be binary compatible with
+        older versions of WebKit.
+
 2012-07-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11785743> [mac] Non-BMP characters in vertical text appear as missing glyphs
