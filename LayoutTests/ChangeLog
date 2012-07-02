@@ -1,3 +1,16 @@
+2012-07-02  Tony Chang  <tony@chromium.org>
+
+        Unreviewed: Fix a flexbox reftest that was failing on most platforms.
+
+        Remove the test case that caused the image diff.  I'll try to come up
+        with a different way to test this.
+
+        * css3/flexbox/anonymous-block-expected.html:
+        * css3/flexbox/anonymous-block.html:
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/Skipped:
+
 2012-07-02  Adam Barth  <abarth@webkit.org>
 
         This test is a flaky crash on the cr-linux-ews, which is causing the

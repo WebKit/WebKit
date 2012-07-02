@@ -3715,6 +3715,3 @@ BUGWK90003 WIN DEBUG : fast/js/repeat-cached-vm-reentry.html = TIMEOUT PASS
 BUGWK90207 SLOW WIN DEBUG : fast/forms/select/select-state-restore.html = PASS
 BUGWK90207 SLOW LINUX DEBUG : fast/forms/select/select-state-restore.html = PASS TEXT
 
-// Failing since added in r121613
-BUGWK90353 SNOWLEOPARD LION : css3/flexbox/anonymous-block.html = IMAGE
-
