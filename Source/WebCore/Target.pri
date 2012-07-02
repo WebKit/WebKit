@@ -2313,6 +2313,14 @@ HEADERS += \
     platform/graphics/ShadowBlur.h \
     platform/graphics/SimpleFontData.h \
     platform/graphics/surfaces/GraphicsSurface.h \
+    platform/graphics/texmap/GraphicsLayerTextureMapper.h \
+    platform/graphics/texmap/LayerTransform.h \
+    platform/graphics/texmap/TextureMapper.h \
+    platform/graphics/texmap/TextureMapperAnimation.h \
+    platform/graphics/texmap/TextureMapperBackingStore.h \
+    platform/graphics/texmap/TextureMapperImageBuffer.h \
+    platform/graphics/texmap/TextureMapperLayer.h \
+    platform/graphics/texmap/TextureMapperPlatformLayer.h \
     platform/graphics/Tile.h \
     platform/graphics/TiledBackingStore.h \
     platform/graphics/TiledBackingStoreClient.h \
@@ -2923,6 +2931,13 @@ SOURCES += \
     platform/graphics/qt/PathQt.cpp \
     platform/graphics/qt/PatternQt.cpp \
     platform/graphics/qt/StillImageQt.cpp \
+    platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
+    platform/graphics/texmap/LayerTransform.cpp \
+    platform/graphics/texmap/TextureMapper.cpp \
+    platform/graphics/texmap/TextureMapperAnimation.cpp \
+    platform/graphics/texmap/TextureMapperBackingStore.cpp \
+    platform/graphics/texmap/TextureMapperImageBuffer.cpp \
+    platform/graphics/texmap/TextureMapperLayer.cpp \
     platform/network/MIMESniffing.cpp \
     platform/network/qt/CredentialStorageQt.cpp \
     platform/network/qt/ResourceHandleQt.cpp \
@@ -4132,40 +4147,16 @@ win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{
    }
 }
 
-contains(CONFIG, texmap) {
+contains(DEFINES, WTF_USE_TEXTURE_MAPPER_GL=1) {
     HEADERS += \
-        platform/graphics/texmap/GraphicsLayerTextureMapper.h \
-        platform/graphics/texmap/LayerTransform.h \
-        platform/graphics/texmap/TextureMapper.h \
-        platform/graphics/texmap/TextureMapperAnimation.h \
-        platform/graphics/texmap/TextureMapperBackingStore.h \
-        platform/graphics/texmap/TextureMapperImageBuffer.h \
-        platform/graphics/texmap/TextureMapperLayer.h \
-        platform/graphics/texmap/TextureMapperPlatformLayer.h
+        platform/graphics/texmap/TextureMapperGL.h \
+        platform/graphics/texmap/TextureMapperShaderManager.h
 
     SOURCES += \
-        platform/graphics/texmap/LayerTransform.cpp \
-        platform/graphics/texmap/TextureMapper.cpp \
-        platform/graphics/texmap/TextureMapperAnimation.cpp \
-        platform/graphics/texmap/TextureMapperBackingStore.cpp \
-        platform/graphics/texmap/TextureMapperImageBuffer.cpp \
-        platform/graphics/texmap/TextureMapperLayer.cpp \
-        platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
+        platform/graphics/texmap/TextureMapperGL.cpp \
+        platform/graphics/texmap/TextureMapperShaderManager.cpp
 
-    contains(DEFINES, WTF_USE_TEXTURE_MAPPER_GL=1) {
-        HEADERS += \
-            platform/graphics/texmap/TextureMapperGL.h \
-            platform/graphics/texmap/TextureMapperShaderManager.h
-
-        SOURCES += \
-            platform/graphics/texmap/TextureMapperGL.cpp \
-            platform/graphics/texmap/TextureMapperShaderManager.cpp
-
-        CONFIG += opengl-shims
-    }
-} else {
-    HEADERS += platform/graphics/qt/GraphicsLayerQt.h
-    SOURCES += platform/graphics/qt/GraphicsLayerQt.cpp
+    CONFIG += opengl-shims
 }
 
 contains(CONFIG, opengl-shims) {

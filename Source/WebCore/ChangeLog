@@ -1,3 +1,32 @@
+2012-07-02  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Get rid of GraphicsLayerQt
+        https://bugs.webkit.org/show_bug.cgi?id=78598
+
+        Reviewed by Luiz Agostini.
+
+        Remove GraphicsLayerQt.h/cpp, as well as references to the non-TextureMapper code paths
+        in GraphicsContext3DQt and MediaPlayerPrivateQt.
+
+        No new tests, removing unused code paths.
+
+        * Target.pri:
+        * platform/graphics/PlatformLayer.h:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (GraphicsContext3DPrivate):
+        (WebCore):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore):
+        * platform/graphics/qt/GraphicsLayerQt.cpp: Removed.
+        * platform/graphics/qt/GraphicsLayerQt.h: Removed.
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (MediaPlayerPrivateQt):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::platformStart):
+
 2012-07-02  Behdad Esfahbod  <behdad@behdad.org>
 
         LayoutUnit::epsilon() is wrong

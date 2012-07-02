@@ -322,14 +322,14 @@ void QWebFramePrivate::renderFromTiledBackingStore(GraphicsContext* context, con
         painter->restore();
     }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
     renderCompositedLayers(context, IntRect(clip.boundingRect()));
     renderFrameExtras(context, QFlags<QWebFrame::RenderLayer>(QWebFrame::ScrollBarLayer) | QWebFrame::PanIconLayer, clip);
 #endif
 }
 #endif
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
 void QWebFramePrivate::renderCompositedLayers(GraphicsContext* context, const IntRect& clip)
 {
     if (!rootTextureMapperLayer || !textureMapper)
@@ -395,7 +395,7 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QFlags<QWe
 
             context->restore();
         }
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
         renderCompositedLayers(context, IntRect(clip.boundingRect()));
 #endif
     }

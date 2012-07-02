@@ -34,19 +34,10 @@ typedef CALayer PlatformLayer;
 #elif PLATFORM(WIN)
 typedef struct _CACFLayer PlatformLayer;
 #elif PLATFORM(QT)
-#if USE(TEXTURE_MAPPER)
 namespace WebCore {
 class TextureMapperPlatformLayer;
 typedef TextureMapperPlatformLayer PlatformLayer;
 };
-#else
-QT_BEGIN_NAMESPACE
-class QGraphicsObject;
-QT_END_NAMESPACE
-namespace WebCore {
-typedef QGraphicsObject PlatformLayer;
-}
-#endif
 #elif PLATFORM(CHROMIUM)
 namespace WebCore {
 class LayerChromium;

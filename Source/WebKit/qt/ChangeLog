@@ -1,3 +1,35 @@
+2012-07-02  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Get rid of GraphicsLayerQt
+        https://bugs.webkit.org/show_bug.cgi?id=78598
+
+        Reviewed by Luiz Agostini.
+
+        Removed all references to GraphicsLayerQt, including #ifdef code paths that only apply
+        when TEXTURE_MAPPER is disabled.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::paint):
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderFromTiledBackingStore):
+        (QWebFramePrivate::renderRelativeCoords):
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        (QWebFramePrivate):
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore):
+        (WebCore::PageClientQGraphicsWidget::~PageClientQGraphicsWidget):
+        (WebCore::PageClientQGraphicsWidget::update):
+        (WebCore::PageClientQGraphicsWidget::syncLayers):
+        (WebCore::PageClientQGraphicsWidget::setRootGraphicsLayer):
+        * WebCoreSupport/PageClientQt.h:
+        (WebCore):
+        (WebCore::PageClientQWidget::PageClientQWidget):
+        (PageClientQWidget):
+        (PageClientQGraphicsWidget):
+
 2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Do not do any logging initialization when logging is disabled

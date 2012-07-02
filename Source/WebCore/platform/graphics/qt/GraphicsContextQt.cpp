@@ -1318,7 +1318,7 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
     m_data->p()->setWorldTransform(transform);
 }
 
-#if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
+#if ENABLE(3D_RENDERING)
 TransformationMatrix GraphicsContext::get3DTransform() const
 {
     if (paintingDisabled())

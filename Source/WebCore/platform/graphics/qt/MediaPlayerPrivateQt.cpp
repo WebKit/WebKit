@@ -52,7 +52,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
 #include "texmap/TextureMapper.h"
 #endif
 
@@ -613,7 +613,7 @@ void MediaPlayerPrivateQt::repaint()
 
 }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
 void MediaPlayerPrivateQt::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture*) const
 {
         GraphicsContext* context = textureMapper->graphicsContext();

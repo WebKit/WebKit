@@ -40,7 +40,7 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER) && USE(TEXTURE_MAPPER_GL)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
 #include <texmap/TextureMapperGL.h>
 #endif
 
@@ -57,7 +57,7 @@ typedef char GLchar;
 #endif
 
 class GraphicsContext3DPrivate
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
         : public TextureMapperPlatformLayer
 #endif
 {
@@ -65,7 +65,7 @@ public:
     GraphicsContext3DPrivate(GraphicsContext3D*, HostWindow*);
     ~GraphicsContext3DPrivate();
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
 #endif
 #if USE(GRAPHICS_SURFACE)
@@ -153,7 +153,7 @@ static inline quint32 swapBgrToRgb(quint32 pixel)
     return ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
 }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
 void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture* mask)
 {
     blitMultisampleFramebufferAndRestoreContext();

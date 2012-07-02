@@ -39,7 +39,7 @@ using QTM_NAMESPACE::QOrientationSensor;
 #include "Frame.h"
 #include "ViewportArguments.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
 #include "texmap/TextureMapper.h"
 #endif
 
@@ -84,7 +84,7 @@ public:
         , allowsScrolling(true)
         , marginWidth(-1)
         , marginHeight(-1)
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
         , rootTextureMapperLayer(0)
 #endif
         {}
@@ -104,7 +104,7 @@ public:
     void renderFromTiledBackingStore(WebCore::GraphicsContext*, const QRegion& clip);
 #endif
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
     void renderCompositedLayers(WebCore::GraphicsContext*, const WebCore::IntRect& clip);
 #endif
     void renderFrameExtras(WebCore::GraphicsContext*, QFlags<QWebFrame::RenderLayer>, const QRegion& clip);
@@ -124,7 +124,7 @@ public:
     bool allowsScrolling;
     int marginWidth;
     int marginHeight;
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(ACCELERATED_COMPOSITING)
     WebCore::TextureMapperLayer* rootTextureMapperLayer;
     OwnPtr<WebCore::TextureMapper> textureMapper;
 #endif
