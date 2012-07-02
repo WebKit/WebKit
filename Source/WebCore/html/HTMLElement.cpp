@@ -56,6 +56,7 @@
 #include <wtf/text/CString.h>
 
 #if ENABLE(MICRODATA)
+#include "HTMLPropertiesCollection.h"
 #include "MicroDataItemValue.h"
 #endif
 
@@ -990,7 +991,7 @@ void HTMLElement::setItemValueText(const String& value, ExceptionCode& ec)
 
 HTMLPropertiesCollection* HTMLElement::properties()
 {
-    return ensureCachedHTMLCollection(ItemProperties);
+    return static_cast<HTMLPropertiesCollection*>(ensureCachedHTMLCollection(ItemProperties));
 }
 #endif
 

@@ -1,3 +1,14 @@
+2012-07-02  Arko Saha  <arko@motorola.com>
+
+        Microdata: Fix build failure after r121580.
+        https://bugs.webkit.org/show_bug.cgi?id=90378
+
+        Reviewed by Ryosuke Niwa.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::properties):
+        * html/HTMLElement.h:
+
 2012-07-02  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrackList to match the specification

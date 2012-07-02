@@ -32,6 +32,7 @@ class HTMLCollection;
 class HTMLFormElement;
 
 #if ENABLE(MICRODATA)
+class HTMLPropertiesCollection;
 class MicroDataItemValue;
 #endif
 
