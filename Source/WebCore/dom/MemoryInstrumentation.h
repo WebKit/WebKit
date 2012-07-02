@@ -33,6 +33,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -62,11 +63,31 @@ public:
     }
     template <typename HashMapType> void reportHashMap(const HashMapType&, ObjectType);
 
+protected:
+    class InstrumentedPointerBase {
+    public:
+        virtual ~InstrumentedPointerBase() { }
+
+        virtual void process(MemoryInstrumentation*) = 0;
+    };
+
 private:
     friend class MemoryObjectInfo;
 
+    template <typename T>
+    class InstrumentedPointer : public InstrumentedPointerBase {
+    public:
+        explicit InstrumentedPointer(const T* pointer) : m_pointer(pointer) { }
+
+        virtual void process(MemoryInstrumentation*) OVERRIDE;
+
+    private:
+        const T* m_pointer;
+    };
+
     virtual void reportString(ObjectType, const String&) = 0;
     virtual void countObjectSize(ObjectType, size_t) = 0;
+    virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) = 0;
     virtual bool visited(const void*) = 0;
 };
 
@@ -127,9 +148,7 @@ void MemoryInstrumentation::reportInstrumentedPointer(const T* const object)
 {
     if (!object || visited(object))
         return;
-    MemoryObjectInfo memoryObjectInfo(this);
-    object->reportMemoryUsage(&memoryObjectInfo);
-    countObjectSize(memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
+    deferInstrumentedPointer(adoptPtr(new InstrumentedPointer<T>(object)));
 }
 
 template<typename T>
@@ -141,12 +160,19 @@ void MemoryInstrumentation::reportInstrumentedObject(const T& object)
     object.reportMemoryUsage(&memoryObjectInfo);
 }
 
-
 template<typename HashMapType>
 void MemoryInstrumentation::reportHashMap(const HashMapType& hashMap, ObjectType objectType)
 {
     size_t size = sizeof(HashMapType) + hashMap.capacity() * sizeof(typename HashMapType::ValueType);
     countObjectSize(objectType, size);
+}
+
+template<typename T>
+void MemoryInstrumentation::InstrumentedPointer<T>::process(MemoryInstrumentation* memoryInstrumentation)
+{
+    MemoryObjectInfo memoryObjectInfo(memoryInstrumentation);
+    m_pointer->reportMemoryUsage(&memoryObjectInfo);
+    memoryInstrumentation->countObjectSize(memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
 }
 
 } // namespace WebCore

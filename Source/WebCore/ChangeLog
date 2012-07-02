@@ -1,3 +1,26 @@
+2012-07-02  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: replace recursion with a stack in DOM nodes snapshot traversal.
+        https://bugs.webkit.org/show_bug.cgi?id=89889
+
+        Number of DOM nodes native snapshots can handle was limited
+        by the process stack size because of recursion used to traverse the nodes.
+        The patch changes the recursion to a stack based algorithm.
+
+        Reviewed by Yury Semikhatsky.
+
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (InstrumentedPointerBase):
+        (WebCore::MemoryInstrumentation::InstrumentedPointerBase::~InstrumentedPointerBase):
+        (InstrumentedPointer):
+        (WebCore::MemoryInstrumentation::InstrumentedPointer::InstrumentedPointer):
+        (WebCore::MemoryInstrumentation::reportInstrumentedPointer):
+        (WebCore):
+        (WebCore::::process):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+
 2012-07-02  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add requestFileContent command and fileContentReceived event

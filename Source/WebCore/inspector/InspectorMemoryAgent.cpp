@@ -54,6 +54,9 @@
 #include <wtf/ArrayBuffer.h>
 #include <wtf/ArrayBufferView.h>
 #include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WTFString.h>
@@ -456,6 +459,15 @@ public:
         return dom.release();
     }
 
+    void processDeferredInstrumentedPointers()
+    {
+        while (!m_deferredInstrumentedPointers.isEmpty()) {
+            OwnPtr<InstrumentedPointerBase> pointer = m_deferredInstrumentedPointers.last().release();
+            m_deferredInstrumentedPointers.removeLast();
+            pointer->process(this);
+        }
+    }
+
 private:
     virtual void reportString(ObjectType objectType, const String& string)
     {
@@ -464,18 +476,25 @@ private:
         countObjectSize(objectType, stringSize(string.impl()));
     }
 
-    virtual void countObjectSize(ObjectType objectType, size_t size)
+    virtual void countObjectSize(ObjectType objectType, size_t size) OVERRIDE
     {
         ASSERT(objectType >= 0 && objectType < LastTypeEntry);
         m_totalSizes[objectType] += size;
     }
 
-    virtual bool visited(const void* object)
+    virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase> pointer) OVERRIDE
+    {
+        m_deferredInstrumentedPointers.append(pointer);
+    }
+
+    virtual bool visited(const void* object) OVERRIDE
     {
         return !m_visitedObjects.add(object).isNewEntry;
     }
+
     size_t m_totalSizes[LastTypeEntry];
     VisitedObjects& m_visitedObjects;
+    Vector<OwnPtr<InstrumentedPointerBase> > m_deferredInstrumentedPointers;
 };
 
 class DOMTreesIterator : public NodeWrapperVisitor {
@@ -486,12 +505,13 @@ public:
     {
     }
 
-    virtual void visitNode(Node* node)
+    virtual void visitNode(Node* node) OVERRIDE
     {
         if (node->document() && node->document()->frame() && m_page != node->document()->frame()->page())
             return;
 
         m_domMemoryUsage.reportInstrumentedPointer(node);
+        m_domMemoryUsage.processDeferredInstrumentedPointers();
     }
 
     void visitBindings()
