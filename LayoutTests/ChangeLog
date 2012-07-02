@@ -1,5 +1,21 @@
 2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Rebaseline needed after r121296 and r121599
+        https://bugs.webkit.org/show_bug.cgi?id=90364
+
+        Unreviewed EFL gardening. Update baselines for a few
+        test cases after r121296 and r121599.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/backgrounds/size/zero-expected.png:
+        * platform/efl/fast/backgrounds/size/zero-expected.txt:
+        * platform/efl/fast/transforms/bounding-rect-zoom-expected.png:
+        * platform/efl/fast/transforms/bounding-rect-zoom-expected.txt: Added.
+        * platform/efl/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.png:
+        * platform/efl/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.txt:
+
+2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Skip fast/js/navigator-language.html
         https://bugs.webkit.org/show_bug.cgi?id=90365
 
