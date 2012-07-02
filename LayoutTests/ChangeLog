@@ -1,3 +1,36 @@
+2012-07-02  Alexis Menard  <alexis.menard@openbossa.org>
+
+        fast/box-decoration-break/box-decoration-break-rendering.html failing on mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=89620
+
+        Reviewed by Simon Fraser.
+
+        Remove the border-radius from the test case as it can produce differences between
+        the test case and the reference html. At first we thought the 3 pixels difference
+        was only happening on Mac but after investigation it also happens in Qt (at least).
+        It was not triggered because ImageDiff was called with some tolerance. Turning the
+        tolerance to 0 on Qt also trigger some pixel differences.
+
+        The differences on how the radius is drawn can be explained by the fact that
+        the reference html and the test case uses two different paths for drawing the border.
+        The reference on the slice case only draw three borders which leads into the contruction
+        of three different drawing paths that we use to clip and clip out. We then draw the border with
+        antialiasing off as we have constructed the outer and inner paths pretty accurately.
+        The test case in the other hand uses the fast path for drawing the borders. The slice effect
+        is in fact is happening because the graphics context is clipped to the current InlineFlowBox rect but still
+        the border has 4 edges and its drawing will happen using the following : create a path with 
+        an outer rounded rectangle and an inner rounded rectangle. The path is then filled with RULE_EVENODD
+        and anti-aliasing turn on to achieve a nice looking effect.
+
+        To conclude the pixel differences are the fact of the two different drawing techniques used here. Fast
+        drawing and anti-aliasing to get a decent result or more accurate algorithm but slower. The original test
+        was not about testing the radiuses of the borders but rather if the borders are cloned or sliced. Even
+        removing the radius still cover the feature.
+
+        * fast/box-decoration-break/box-decoration-break-rendering-expected.html:
+        * fast/box-decoration-break/box-decoration-break-rendering.html:
+        * platform/mac/Skipped:
+
 2012-07-02  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11787030> In vertical writing modes, child following float-clearing block has incorrect logical top
