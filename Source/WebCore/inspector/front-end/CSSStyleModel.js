@@ -335,6 +335,14 @@ WebInspector.CSSStyleModel.prototype = {
             return;
         }
         this._resourceBinding._requestViaInspectorResource(rule.id.styleSheetId, callback);
+    },
+
+    /**
+     * @return {WebInspector.CSSStyleModelResourceBinding}
+     */
+    resourceBinding: function()
+    {
+        return this._resourceBinding;
     }
 }
 
@@ -940,6 +948,35 @@ WebInspector.CSSStyleModelResourceBinding = function(cssModel)
 
 WebInspector.CSSStyleModelResourceBinding.prototype = {
     /**
+     * @param {WebInspector.StyleSource} styleSource
+     * @param {string} content
+     * @param {boolean} majorChange
+     * @param {function(?string)} userCallback
+     */
+    setStyleContent: function(styleSource, content, majorChange, userCallback)
+    {
+        var resource = styleSource.resource();
+        if (this._styleSheetIdForResource(resource)) {
+            this._innerSetContent(resource, content, majorChange, innerCallback, null);
+            return;
+        }
+        this._loadStyleSheetHeaders(this._innerSetContent.bind(this, resource, content, majorChange, innerCallback));
+        
+        function innerCallback(error)
+        {
+            if (error) {
+                userCallback(error);
+                return;
+            }
+
+            if (majorChange)
+                resource.addRevision(content);
+
+            userCallback(null);
+        }
+    },
+
+    /**
      * @param {WebInspector.Resource} resource
      * @param {string} content
      * @param {boolean} majorChange
@@ -947,14 +984,12 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
      */
     setContent: function(resource, content, majorChange, userCallback)
     {
-        if (majorChange && resource.type === WebInspector.resourceTypes.Stylesheet)
-            resource.addRevision(content);
-
-        if (this._styleSheetIdForResource(resource)) {
-            this._innerSetContent(resource, content, majorChange, userCallback, null);
+        var styleSource = /** @type {WebInspector.StyleSource} */ resource.uiSourceCode();
+        if (!styleSource) {
+            userCallback("Resource is not editable");
             return;
         }
-        this._loadStyleSheetHeaders(this._innerSetContent.bind(this, resource, content, majorChange, userCallback));
+        this.setStyleContent(styleSource, content, majorChange, userCallback);
     },
 
     /**

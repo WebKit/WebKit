@@ -112,17 +112,26 @@ WebInspector.RevisionHistoryView.prototype = {
         revertToOriginal.textContent = WebInspector.UIString("apply original content");
         revertToOriginal.addEventListener("click", resource.revertToOriginal.bind(resource));
 
-        function clearHistory()
+        var clearHistoryElement = resourceItem.listItemElement.createChild("span", "revision-history-link");
+        clearHistoryElement.textContent = WebInspector.UIString("revert");
+        clearHistoryElement.addEventListener("click", this._clearHistory.bind(this, resource));
+        return resourceItem;
+    },
+
+    /**
+     * @param {WebInspector.Resource} resource
+     */
+    _clearHistory: function(resource)
+    {
+        resource.revertAndClearHistory(historyCleared.bind(this));
+
+        function historyCleared()
         {
-            resource.revertAndClearHistory();
+            var resourceItem = this._resourceItems.get(resource);
             this._treeOutline.removeChild(resourceItem);
             this._resourceItems.remove(resource);
         }
 
-        var clearHistoryElement = resourceItem.listItemElement.createChild("span", "revision-history-link");
-        clearHistoryElement.textContent = WebInspector.UIString("revert");
-        clearHistoryElement.addEventListener("click", clearHistory.bind(this));
-        return resourceItem;
     },
 
     _revisionAdded: function(event)

@@ -500,14 +500,20 @@ WebInspector.Resource.prototype = {
         this.requestContent(revert.bind(this));
     },
 
-    revertAndClearHistory: function()
+    revertAndClearHistory: function(callback)
     {
         function revert(content)
         {
-            this.setContent(content, true, function() {});
+            this.setContent(content, true, clearHistory.bind(this));
+        }
+
+        function clearHistory()
+        {
             WebInspector.Resource._clearResourceHistory(this);
             this.history = [];
+            callback();
         }
+
         this.requestContent(revert.bind(this));
     },
 

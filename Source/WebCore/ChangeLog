@@ -1,3 +1,30 @@
+2012-06-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: StyleSource should set content using CSSStyleModelResourceBinding directly.
+        https://bugs.webkit.org/show_bug.cgi?id=89891
+
+        Reviewed by Pavel Feldman.
+
+        StyleSource now calls CSS resource binding directly.
+        CSS resource binding now adds resource revision only after setStyleSheetText call returns from backend.
+        Resource.revertAndClearHistory is now clearing history asynchronously
+        since Resource.setContent adds revision that should be removed as well.
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getViaInspectorResourceForRule):
+        (WebInspector.CSSStyleModel.prototype.resourceBinding):
+        (WebInspector.CSSStyleModelResourceBinding.prototype.setStyleContent.innerCallback):
+        (WebInspector.CSSStyleModelResourceBinding.prototype.setStyleContent):
+        (WebInspector.CSSStyleModelResourceBinding.prototype.setContent):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.revertAndClearHistory):
+        (WebInspector.Resource.prototype.revertAndClearHistory.clearHistory):
+        * inspector/front-end/RevisionHistoryView.js:
+        (WebInspector.RevisionHistoryView.prototype._createResourceItem):
+        * inspector/front-end/StylesPanel.js:
+        (WebInspector.StyleSource.prototype.workingCopyCommitted):
+        (WebInspector.StyleSource.prototype.workingCopyChanged):
+
 2012-07-02  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add DirectoryContentView for FileSystemView

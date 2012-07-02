@@ -103,14 +103,14 @@ WebInspector.StyleSource.prototype = {
      */
     workingCopyCommitted: function(callback)
     {  
-        this._resource.setContent(this.workingCopy(), true, callback);
+        WebInspector.cssModel.resourceBinding().setStyleContent(this, this.workingCopy(), true, callback);
     },
 
     workingCopyChanged: function()
     {  
         function commitIncrementalEdit()
         {
-            this._resource.setContent(this.workingCopy(), false, function() {});
+            WebInspector.cssModel.resourceBinding().setStyleContent(this, this.workingCopy(), false, function() {});
         }
         const updateTimeout = 200;
         this._incrementalUpdateTimer = setTimeout(commitIncrementalEdit.bind(this), updateTimeout);
