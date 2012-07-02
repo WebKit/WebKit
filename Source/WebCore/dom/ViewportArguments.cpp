@@ -41,6 +41,8 @@ using namespace std;
 
 namespace WebCore {
 
+const float ViewportArguments::deprecatedTargetDPI = 160;
+
 ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport)
 {
     ViewportAttributes result;
