@@ -1,3 +1,15 @@
+2012-07-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Array.prototype.pop should throw if property is not configurable
+        https://bugs.webkit.org/show_bug.cgi?id=75788
+
+        Rubber Stamped by Oliver Hunt.
+
+        No real bug here any more, but the error we throw sometimes has a misleading message.
+ 
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::pop):
+
 2012-06-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSObject wastes too much memory on unused property slots

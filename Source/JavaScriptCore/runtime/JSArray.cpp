@@ -1258,7 +1258,10 @@ JSValue JSArray::pop(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
     // Call the [[Delete]] internal method of O with arguments indx and true.
-    deletePropertyByIndex(this, exec, index);
+    if (!deletePropertyByIndex(this, exec, index)) {
+        throwTypeError(exec, "Unable to delete property.");
+        return jsUndefined();
+    }
     // Call the [[Put]] internal method of O with arguments "length", indx, and true.
     setLength(exec, index, true);
     // Return element.
