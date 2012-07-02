@@ -212,6 +212,7 @@ BUGWK61661 : editing/pasteboard/drag-drop-list.html = TEXT
 
 // Tests for MediaSource API. Feature is not yet functional.
 BUGWK64731 : http/tests/media/media-source = TEXT
+BUGWK64731 SKIP : http/tests/media/media-source/video-media-source-event-attributes.html = TEXT
 
 // Encrypted Media Extensions are not enabled.
 BUGWKGTK SKIP : media/encrypted-media = TEXT
@@ -450,7 +451,7 @@ BUGWK88061 : fast/replaced/border-radius-clip.html = PASS TEXT
 //////////////////////////////////////////////////////////////////////////////////////////
 BUGWK46644 : fast/text/large-text-composed-char-dos.html = TIMEOUT
 
-BUGWKGTK SKIP : http/tests/multipart/invalid-image-data-standalone.html = TIMEOUT
+BUGWK68979 SKIP : http/tests/multipart/invalid-image-data-standalone.html = TIMEOUT
 
 BUGWKGTK SKIP : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT
 
@@ -581,14 +582,13 @@ BUGRDAR6727495 : http/tests/loading/deleted-host-in-resource-load-delegate-callb
 BUGRDAR6727495 : http/tests/loading/gmail-assert-on-load.html = TEXT
 BUGRDAR6727495 : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
 
-BUGWKGTK : http/tests/media/video-play-stall-seek.html = TEXT
+BUGWKGTK SKIP : http/tests/media/video-play-stall-seek.html = TEXT
 BUGWKGTK : http/tests/media/video-play-stall.html = TEXT
 
 BUGWKGTK : http/tests/misc/acid3.html = TEXT
 BUGWKGTK : http/tests/misc/policy-delegate-called-twice.html = TEXT
 BUGWKGTK : http/tests/misc/redirect-to-external-url.html = TEXT
 BUGWKGTK : http/tests/misc/window-dot-stop.html = TEXT
-BUGWKGTK : http/tests/multipart/policy-ignore-crash.php = TEXT
 
 BUGWKGTK : http/tests/plugins/npapi-response-headers.html = TEXT
 BUGWKGTK : http/tests/security/feed-urls-from-remote.html = TEXT
@@ -618,27 +618,29 @@ BUGWKGTK : plugins/clicking-missing-plugin-fires-delegate.html = TEXT
 // Need to implement getFormValue().
 BUGWKGTK : plugins/form-value.html = TEXT
 
-// Tests that failed because we don't have an eventSender implementation
-BUGWKGTK : http/tests/plugins/plugin-document-has-focus.html = TEXT
+// eventSender.keyDown call does not get executed from the TestNetscapePlugin
+BUGWK90383 SKIP : http/tests/plugins/plugin-document-has-focus.html = TEXT
 
 // Missing resource load callback ability in DRT
 BUGWK27905 : http/tests/loading/redirect-methods.html = TEXT
 
 BUGWK30577 : editing/selection/move-left-right.html = TEXT
 
-// Probably related to https://bugs.webkit.org/show_bug.cgi?id=27637
-BUGWKGTK : http/tests/loading/basic-auth-resend-wrong-credentials.html = TEXT
-
 BUGWK30620 : fast/xsl/sort-locale.xml = TEXT
 
 BUGWK53986 : svg/text/caret-in-svg-text.xhtml = TEXT
 
 // No authentication challenge handling
+BUGWK51104 SKIP : http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html = TEXT
+BUGWK51104 : http/tests/loading/basic-auth-resend-wrong-credentials.html = TEXT
 BUGWK51104 : http/tests/loading/basic-credentials-sent-automatically.html = TEXT
-BUGWK51104 : http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html = TEXT
 BUGWK51104 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = TEXT
 BUGWK51104 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = TEXT
 BUGWK51104 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = TEXT
+BUGWK51104 SKIP : http/tests/security/401-logout/401-logout.php = TEXT
+BUGWK51104 : http/tests/xmlhttprequest/basic-auth-nouser.html = TEXT
+BUGWK51104 : http/tests/xmlhttprequest/basic-auth-nopassword.html = TEXT
+BUGWK51104 : http/tests/xmlhttprequest/remember-bad-password.html = TEXT
 
 // This port doesn't support detecting slow unload handlers.
 BUGWKGTK : fast/dom/Window/slow-unload-handler.html = TEXT
@@ -863,10 +865,6 @@ BUGWK20011 SKIP : printing/setPrinting.html = TEXT
 BUGWK20011 SKIP : printing/single-line-must-not-be-split-into-two-pages.html = TEXT
 BUGWK20011 SKIP : printing/width-overflow.html = TEXT
 
-// Advanced credential handling
-BUGWKGTK : http/tests/security/401-logout/401-logout.php = TEXT
-BUGWKGTK : http/tests/xmlhttprequest/remember-bad-password.html = TEXT
-
 // EventSender::dumpFilenameBeingDragged not implemented.
 BUGWK61826 : fast/events/drag-image-filename.html = TEXT
 
@@ -932,11 +930,6 @@ BUGWK50740 : editing/spelling/spellcheck-async-mutation.html = TEXT
 
 BUGWK82675 : http/tests/local/link-stylesheet-load-order.html = TEXT
 
-// Passing just a username or just a password to
-// layoutTestController.queueLoad() does not work
-BUGWKGTK : http/tests/xmlhttprequest/basic-auth-nouser.html = TEXT
-BUGWKGTK : http/tests/xmlhttprequest/basic-auth-nopassword.html = TEXT
-
 // DRT does not obey layoutTestController.addURLToRedirect()
 BUGWKGTK : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 
@@ -996,10 +989,11 @@ BUGWK68855 : editing/selection/select-bidi-run.html = TEXT
 // This test is out-dated since r95899.
 BUGWK65709 : canvas/philip/tests/2d.drawImage.outsidesource.html = TEXT
 
-// http/tests/multipart/stop-crash.html = TEXT fails on GTK and Qt
 // missing multipart/x-mixed-replace support in libsoup
-BUGWK68979 : http/tests/multipart/stop-crash.html = TEXT
+BUGWK68979 SKIP : http/tests/multipart/invalid-image-data.html = PASS
 BUGWK68979 : http/tests/multipart/load-last-non-html-frame.php = TEXT
+BUGWK68979 : http/tests/multipart/policy-ignore-crash.php = TEXT
+BUGWK68979 SKIP : http/tests/multipart/stop-crash.html = TEXT
 
 // Fails because it does not throw a couple of expected exceptions
 BUGWKGTK : http/tests/local/fileapi/send-sliced-dragged-file.html = TEXT

@@ -1,3 +1,17 @@
+2012-07-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        Clean up slow HTTP tests on GTK platform
+
+        Rubber-stamped by Martin Robinson.
+
+        Skip the HTTP tests that take half a minute to run, most oftenly failing
+        as well. These tests only extend the overall testing time.
+        Also group the tests failing due to missing authentication handling in DRT,
+        missing multipart/x-mixed-replace support in libsoup and open a new bug
+        for the failing http/tests/plugins/plugin-document-has-focus.html test.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-02  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrackList to match the specification
