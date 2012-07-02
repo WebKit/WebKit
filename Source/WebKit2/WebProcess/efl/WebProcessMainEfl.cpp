@@ -74,9 +74,6 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
         soup_uri_free(proxyUri);
     }
 
-    soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
-    soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
-
     int socket = atoi(argv[1]);
     WebProcess::shared().initialize(socket, RunLoop::main());
     RunLoop::run();
