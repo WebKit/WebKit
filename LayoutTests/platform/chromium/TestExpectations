@@ -2302,7 +2302,7 @@ BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = PASS TIM
 BUGCR66751 : http/tests/local/link-stylesheet-load-order.html = PASS TIMEOUT TEXT
 
 // The test is just too slow and has never passed since its introduction on Dbg build.
-BUGWK90363 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+BUGWK90363 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS TIMEOUT
 
 // WebKit roll 74255:74308
 BUGCR67416 LINUX WIN : fast/text/emphasis.html = IMAGE+TEXT

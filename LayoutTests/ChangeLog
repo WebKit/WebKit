@@ -1,3 +1,9 @@
+2012-07-02  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium expectations update.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-02  Tony Chang  <tony@chromium.org>
 
         Unreviewed: Fix a flexbox reftest that was failing on most platforms.
