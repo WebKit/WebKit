@@ -1,3 +1,14 @@
+2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip fast/js/navigator-language.html
+        https://bugs.webkit.org/show_bug.cgi?id=90365
+
+        Unreviewed EFL gardening.
+        Skip fast/js/navigator-language.html until
+        Bug 89639 is fixed.
+
+        * platform/efl/TestExpectations:
+
 2012-07-02  Adam Barth  <abarth@webkit.org>
 
         Add some expectations for the top flaky tests on chromium-linux.
