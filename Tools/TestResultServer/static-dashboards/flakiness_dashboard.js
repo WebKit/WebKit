@@ -40,9 +40,9 @@ var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage
 
 // FIXME: These platform names should probably be changed to match the directories in LayoutTests/platform
 // instead of matching the values we use in the TestExpectations file.
-var PLATFORMS = ['LION', 'SNOWLEOPARD', 'LEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'APPLE_LION', 'APPLE_LEOPARD', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX'];
+var PLATFORMS = ['LION', 'SNOWLEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'APPLE_LION', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX'];
 var PLATFORM_UNIONS = {
-    'MAC': ['LEOPARD', 'SNOWLEOPARD', 'LION'],
+    'MAC': ['SNOWLEOPARD', 'LION'],
     'WIN': ['XP', 'WIN7'],
     'LINUX': ['LUCID']
 }
@@ -55,7 +55,6 @@ var PLATFORM_FALLBACKS = {
     'MAC': 'ALL',
     'LION': 'MAC',
     'SNOWLEOPARD': 'MAC',
-    'LEOPARD': 'MAC',
     'LINUX': 'ALL',
     'LUCID': 'LINUX'
 };
@@ -258,8 +257,6 @@ function nonChromiumPlatform(builderNameUpperCase)
         return 'APPLE_LION';
     if (stringContains(builderNameUpperCase, 'SNOWLEOPARD'))
         return 'APPLE_SNOWLEOPARD';
-    if (stringContains(builderNameUpperCase, 'LEOPARD'))
-        return 'APPLE_LEOPARD';
     if (stringContains(builderNameUpperCase, 'WINDOWS 7'))
         return 'APPLE_WIN7';
     if (stringContains(builderNameUpperCase, 'WINDOWS XP'))
@@ -273,8 +270,6 @@ function nonChromiumPlatform(builderNameUpperCase)
 function chromiumPlatform(builderNameUpperCase)
 {
     if (stringContains(builderNameUpperCase, 'MAC')) {
-        if (stringContains(builderNameUpperCase, '10.5'))
-            return 'LEOPARD';
         if (stringContains(builderNameUpperCase, '10.7'))
             return 'LION';
         // The webkit.org 'Chromium Mac Release (Tests)' bot runs SnowLeopard.
@@ -2272,7 +2267,6 @@ function hideLegend()
 var g_fallbacksMap = {};
 g_fallbacksMap['WIN-XP'] = ['chromium-win-xp', 'chromium-win', 'chromium', 'mac'];
 g_fallbacksMap['WIN-7'] = ['chromium-win', 'chromium', 'mac'];
-g_fallbacksMap['MAC-LEOPARD'] = ['chromium-mac-leopard', 'chromium-mac-snowleopard', 'chromium-mac', 'chromium', 'mac'];
 g_fallbacksMap['MAC-SNOWLEOPARD'] = ['chromium-mac-snowleopard', 'chromium-mac', 'chromium', 'mac'];
 g_fallbacksMap['MAC-LION'] = ['chromium-mac', 'chromium', 'mac'];
 g_fallbacksMap['LINUX-32'] = ['chromium-linux-x86', 'chromium-linux', 'chromium-win', 'chromium', 'mac'];
