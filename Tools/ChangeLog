@@ -1,3 +1,17 @@
+2012-07-02  Ojan Vafai  <ojan@chromium.org>
+
+        Delete unused rebaseline method in gardeningserver.py
+        https://bugs.webkit.org/show_bug.cgi?id=90396
+
+        Reviewed by Eric Seidel.
+
+        As best I can tell, the only usage was in this unittest.
+
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler.updateexpectations):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaseline_new_port):
+
 2012-07-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r121497): It switched off and broke many unittests

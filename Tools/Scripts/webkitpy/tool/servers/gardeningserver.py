@@ -140,22 +140,6 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         self._expectations_updater().update_expectations(self._read_entity_body_as_json())
         self._serve_text('success')
 
-    # FIXME: Is this dead code?
-    def rebaseline(self):
-        builder = self.query['builder'][0]
-        command = [ 'rebaseline-test' ]
-
-        if 'suffixes' in self.query:
-            command.append('--suffixes')
-            command.append(self.query['suffixes'][0])
-
-        command.append(builder)
-        command.append(self.query['test'][0])
-
-        command.extend(builders.fallback_port_names_for_new_port(builder))
-        self._run_webkit_patch(command)
-        self._serve_text('success')
-
     def rebaselineall(self):
         command = ['rebaseline-all']
         self.server.tool.executive.run_command([self.server.tool.path()] + command, input=self.read_entity_body(), cwd=self.server.tool.scm().checkout_root)
