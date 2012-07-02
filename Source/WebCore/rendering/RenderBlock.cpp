@@ -2071,10 +2071,10 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
         
         // Adjust our height such that we are ready to be collapsed with subsequent siblings (or the bottom
         // of the parent block).
-        setLogicalHeight(child->y() - max(ZERO_LAYOUT_UNIT, marginInfo.margin()));
+        setLogicalHeight(child->logicalTop() - max(ZERO_LAYOUT_UNIT, marginInfo.margin()));
     } else
         // Increase our height by the amount we had to clear.
-        setLogicalHeight(height() + heightIncrease);
+        setLogicalHeight(logicalHeight() + heightIncrease);
     
     if (marginInfo.canCollapseWithMarginBefore()) {
         // We can no longer collapse with the top of the block since a clear

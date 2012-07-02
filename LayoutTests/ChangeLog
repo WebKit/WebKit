@@ -1,3 +1,17 @@
+2012-07-02  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11787030> In vertical writing modes, child following float-clearing block has incorrect logical top
+        https://bugs.webkit.org/show_bug.cgi?id=90359
+
+        Reviewed by Anders Carlsson.
+
+        * fast/writing-mode/logical-height-after-clear-expected.html: Added.
+        * fast/writing-mode/logical-height-after-clear.html: Added.
+        * platform/mac/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+
 2012-07-02  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt

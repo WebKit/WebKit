@@ -1,3 +1,16 @@
+2012-07-02  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11787030> In vertical writing modes, child following float-clearing block has incorrect logical top
+        https://bugs.webkit.org/show_bug.cgi?id=90359
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/writing-mode/logical-height-after-clear.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloatsIfNeeded): Changed to use logicalTop() and logicalHeight()
+        instead of y() and height().
+
 2012-07-02  Arko Saha  <arko@motorola.com>
 
         Microdata: Fix build failure after r121580.
