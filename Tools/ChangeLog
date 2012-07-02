@@ -2,6 +2,17 @@
 
         Unreviewed.
 
+        Using the default start cylinder for fdisk causes a warning about the
+        partition not starting on physical sector boundary.  The Ubuntu forums
+        recommend using a number that's divisible by 8, which is what we do in
+        this patch.
+
+        * EWSTools/cold-boot.sh:
+
+2012-07-01  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
         It turns out we need to use Ubuntu 10.04 to get the right image results
         for chromium-linux. This patch updates our scripts to be compatible
         with Ubuntu 10.04.

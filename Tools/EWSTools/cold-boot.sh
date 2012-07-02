@@ -37,7 +37,7 @@ cat <<EOF | sudo fdisk /dev/vdb
 n
 p
 1
-
+8
 
 w
 EOF
