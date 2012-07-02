@@ -1,3 +1,10 @@
+2012-07-02  Adam Barth  <abarth@webkit.org>
+
+        Another crashing test on the EWS. We think this is because of the flash
+        package we have installed.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-02  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium rebaseline for r121697.

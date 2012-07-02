@@ -2423,6 +2423,7 @@ BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS 
 // One the cr-linux-ews bot, this test is flaky, causing the queue to spam bugs
 // will false failures.
 BUGEWS LINUX : fast/loader/loadInProgress.html = PASS TEXT CRASH
+BUGEWS LINUX : plugins/hidden-iframe-with-swf-plugin.html = PASS TEXT CRASH
 
 BUGV8_1168 : fast/js/mozilla/strict/10.6.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/15.5.5.2.html = TEXT
