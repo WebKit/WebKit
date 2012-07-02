@@ -32,8 +32,6 @@
     'variables': {
         'platform_files': [
             'chromium/public/Platform.h',
-            'chromium/public/WebAnimation.h'
-            'chromium/public/WebAnimationCurve.h',
             'chromium/public/WebAudioBus.h',
             'chromium/public/WebAudioDevice.h',
             'chromium/public/WebBlobData.h',
@@ -56,8 +54,6 @@
             'chromium/public/WebFileUtilities.h',
             'chromium/public/WebFilterOperation.h',
             'chromium/public/WebFilterOperations.h',
-            'chromium/public/WebFloatAnimationCurve.h',
-            'chromium/public/WebFloatKeyframe.h',
             'chromium/public/WebFloatPoint.h',
             'chromium/public/WebFloatQuad.h',
             'chromium/public/WebFloatRect.h',
@@ -112,8 +108,6 @@
             'chromium/public/WebThread.h',
             'chromium/public/WebThreadSafeData.h',
             'chromium/public/WebTransformationMatrix.h',
-            'chromium/public/WebTransformAnimationCurve.h',
-            'chromium/public/WebTransformKeyframe.h',
             'chromium/public/WebTransformOperations.h',
             'chromium/public/WebPrerender.h',
             'chromium/public/WebURL.h',

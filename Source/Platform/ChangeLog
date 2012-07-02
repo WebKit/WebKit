@@ -1,3 +1,20 @@
+2012-07-01  Keishi Hattori  <keishi@webkit.org>
+
+        Unreviewed, rolling out r121650.
+        http://trac.webkit.org/changeset/121650
+        https://bugs.webkit.org/show_bug.cgi?id=90303
+
+        runhooks is failing for chromium win bots and
+        WebAnimationTest.DefaultSettings is crashing
+
+        * Platform.gypi:
+        * chromium/public/WebAnimation.h: Removed.
+        * chromium/public/WebAnimationCurve.h: Removed.
+        * chromium/public/WebFloatAnimationCurve.h: Removed.
+        * chromium/public/WebFloatKeyframe.h: Removed.
+        * chromium/public/WebTransformAnimationCurve.h: Removed.
+        * chromium/public/WebTransformKeyframe.h: Removed.
+
 2012-07-01  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Create a WebKit::Web* wrapper for the cc animation classes
