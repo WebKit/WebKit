@@ -26,6 +26,7 @@
  *
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
+ * - "intent,request,new", Ewk_Intent_Request*: reports new Web intent request.
  * - "title,changed", const char*: title of the main frame was changed.
  */
 

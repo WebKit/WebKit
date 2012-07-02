@@ -32,6 +32,7 @@ LIST(APPEND WebKit2_SOURCES
 
     UIProcess/API/efl/PageClientImpl.cpp
     UIProcess/API/efl/ewk_context.cpp
+    UIProcess/API/efl/ewk_intent.cpp
     UIProcess/API/efl/ewk_view.cpp
     UIProcess/API/efl/ewk_view_loader_client.cpp
 

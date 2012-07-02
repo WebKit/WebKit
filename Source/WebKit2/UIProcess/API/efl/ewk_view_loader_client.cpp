@@ -26,6 +26,8 @@
 #include "config.h"
 
 #include "WKFrame.h"
+#include "ewk_intent.h"
+#include "ewk_intent_private.h"
 #include "ewk_view_loader_client_private.h"
 #include "ewk_view_private.h"
 #include <wtf/text/CString.h>
@@ -41,6 +43,16 @@ static void didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef fra
     ewk_view_title_changed(ewkView, toImpl(title)->string().utf8().data());
 }
 
+#if ENABLE(WEB_INTENTS)
+static void didReceiveIntentForFrame(WKPageRef page, WKFrameRef frame, WKIntentDataRef intent, const void* clientInfo)
+{
+    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    Ewk_Intent* ewkIntent = ewk_intent_new(intent);
+    ewk_view_intent_request_new(ewkView, ewkIntent);
+    ewk_intent_unref(ewkIntent);
+}
+#endif
+
 void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 {
     WKPageLoaderClient loadClient;
@@ -48,5 +60,8 @@ void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     loadClient.version = kWKPageLoaderClientCurrentVersion;
     loadClient.clientInfo = ewkView;
     loadClient.didReceiveTitleForFrame = didReceiveTitleForFrame;
+#if ENABLE(WEB_INTENTS)
+    loadClient.didReceiveIntentForFrame = didReceiveIntentForFrame;
+#endif
     WKPageSetPageLoaderClient(pageRef, &loadClient);
 }

@@ -568,6 +568,19 @@ void ewk_view_title_changed(Evas_Object* ewkView, const char* title)
     evas_object_smart_callback_call(ewkView, "title,changed", const_cast<char*>(title));
 }
 
+/**
+ * @internal
+ * The view received a new intent request.
+ *
+ * Emits signal: "intent,request,new" with pointer to a Ewk_Intent.
+ */
+void ewk_view_intent_request_new(Evas_Object* ewkView, const Ewk_Intent* ewkIntent)
+{
+#if ENABLE(WEB_INTENTS)
+    evas_object_smart_callback_call(ewkView, "intent,request,new", const_cast<Ewk_Intent*>(ewkIntent));
+#endif
+}
+
 void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);

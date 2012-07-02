@@ -1,3 +1,36 @@
+2012-07-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add API to inspect a Web Intent
+        https://bugs.webkit.org/show_bug.cgi?id=89749
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL API to inspect a Web Intent and emit a signal
+        on the view when a new intent request is made.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_intent.cpp: Added.
+        (_Ewk_Intent):
+        (ewk_intent_ref):
+        (ewk_intent_unref):
+        (ewk_intent_action_get):
+        (ewk_intent_type_get):
+        (ewk_intent_service_get):
+        (ewk_intent_suggestions_get):
+        (ewk_intent_extra_get):
+        (ewk_intent_extra_names_get):
+        (ewk_intent_new):
+        * UIProcess/API/efl/ewk_intent.h: Added.
+        * UIProcess/API/efl/ewk_intent_private.h: Copied from Source/WebKit2/UIProcess/API/efl/ewk_view_loader_client.cpp.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_intent_request_new):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didReceiveIntentForFrame):
+        (ewk_view_loader_client_attach):
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-06-29  Luiz Agostini  <luiz.agostini@nokia.com>
 
         [Qt][WK2] Private non-QtQuick API

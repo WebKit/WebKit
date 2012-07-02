@@ -28,6 +28,7 @@
 #define EWebKit2_h
 
 #include "ewk_context.h"
+#include "ewk_intent.h"
 #include "ewk_view.h"
 
 #endif // EWebKit2_h
