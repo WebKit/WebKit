@@ -1,20 +1,20 @@
 INCLUDE(FindPkgConfig)
 
 PKG_CHECK_MODULES (EDJE REQUIRED edje>=1.0.0)
-PKG_CHECK_MODULES (ECORE REQUIRED ecore>=1.0.0)
+PKG_CHECK_MODULES (ECORE REQUIRED ecore>=1.2.0)
 PKG_CHECK_MODULES (ECORE_EVAS REQUIRED ecore-evas>=1.0.0)
 PKG_CHECK_MODULES (EFLDEPS REQUIRED
-  eina>=1.0.999.63568
+  eina>=1.2.0
   evas>=1.0.0
-  ecore>=1.0.999.59763
+  ecore>=1.2.0
   ecore-file>=1.0.0
   ecore-evas>=1.0.999.59763
   edje>=1.0.0
   eukit>=1.1.0
   edbus>=1.1.0
   ecore-input>=1.0.0
-  eeze>=1.1.99)
-PKG_CHECK_MODULES (EINA REQUIRED eina>=1.0.0)
+  eeze>=1.2.99)
+PKG_CHECK_MODULES (EINA REQUIRED eina>=1.2.0)
 PKG_CHECK_MODULES (ECORE_X ecore-x>=1.0.0)
 PKG_CHECK_MODULES (EVAS REQUIRED evas>=1.0.0)
 PKG_CHECK_MODULES (EUKIT REQUIRED eukit>=1.1.0)

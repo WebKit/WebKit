@@ -1,3 +1,45 @@
+2012-07-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add Gamepad support
+        https://bugs.webkit.org/show_bug.cgi?id=90170
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for the Gamepad feature on the EFL port.
+
+        The implementation of this class relies on the Linux
+        kernel joystick API.
+
+        Gamepad devices are recognized through the GamepadsEfl
+        class, of which implementation is based on Eeze
+        library. This way devices are properly registered on
+        connection as objects of the GamepadDeviceEfl class
+        which inherits GamepadDeviceLinux. GamepadDeviceEfl
+        reads the joystick data through an Ecore_Fd_Handler
+        and updates the device state accordingly. The
+        GamepadsEfl object is then polled for gamepads data
+        through the sampleGamepads method.
+
+        No new tests - already tested by gamepad/*
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * platform/efl/GamepadsEfl.cpp: Added.
+        (WebCore):
+        (GamepadDeviceEfl):
+        (WebCore::GamepadDeviceEfl::create):
+        (WebCore::GamepadDeviceEfl::GamepadDeviceEfl):
+        (WebCore::GamepadDeviceEfl::~GamepadDeviceEfl):
+        (WebCore::GamepadDeviceEfl::readCallback):
+        (GamepadsEfl):
+        (WebCore::GamepadsEfl::onGamePadChange):
+        (WebCore::GamepadsEfl::GamepadsEfl):
+        (WebCore::GamepadsEfl::~GamepadsEfl):
+        (WebCore::GamepadsEfl::registerDevice):
+        (WebCore::GamepadsEfl::unregisterDevice):
+        (WebCore::GamepadsEfl::updateGamepadList):
+        (WebCore::sampleGamepads):
+
 2012-07-01  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r121635.

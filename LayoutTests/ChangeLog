@@ -1,3 +1,20 @@
+2012-07-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add Gamepad support
+        https://bugs.webkit.org/show_bug.cgi?id=90170
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip gamepad/gamepad-api.html now that Gamepad
+        support is enabled on EFL port.
+
+        gamepad/gamepad-polling-access.html is still
+        skipped because it requires additional test
+        infrastructure.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
 2012-07-01  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Move platform/qt/fast/jsnavigator-language.html to fast/js

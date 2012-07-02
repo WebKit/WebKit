@@ -96,6 +96,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
 
 SET(WebCore_IDL_INCLUDES
     Modules/filesystem
+    Modules/gamepad
     Modules/geolocation
     Modules/indexeddb
     Modules/quota
@@ -2472,6 +2473,22 @@ IF (ENABLE_BATTERY_STATUS)
         Modules/battery/BatteryController.cpp
         Modules/battery/BatteryManager.cpp
         Modules/battery/BatteryStatus.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_GAMEPAD)
+    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/Modules/gamepad"
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        Modules/gamepad/Gamepad.idl
+        Modules/gamepad/GamepadList.idl
+        Modules/gamepad/NavigatorGamepad.idl
+    )
+    LIST(APPEND WebCore_SOURCES
+        Modules/gamepad/Gamepad.cpp
+        Modules/gamepad/GamepadList.cpp
+        Modules/gamepad/NavigatorGamepad.cpp
     )
 ENDIF ()
 

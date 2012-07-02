@@ -160,13 +160,13 @@
   <autotools id="eina" >
     <branch module="eina"
             repo="enlightenment.org"
-            revision="68629"/>
+            revision="73027"/>
   </autotools>
 
   <autotools id="embryo">
     <branch module="embryo"
             repo="enlightenment.org"
-            revision="68629"/>
+            revision="73027"/>
     <dependencies>
       <dep package="eina"/>
     </dependencies>
@@ -175,13 +175,13 @@
   <autotools id="evas">
     <branch module="evas"
             repo="enlightenment.org"
-            revision="68629"/>
+            revision="73027"/>
   </autotools>
 
   <autotools id="ecore">
     <branch module="ecore"
             repo="enlightenment.org"
-            revision="68629"/>
+            revision="73027"/>
     <dependencies>
       <dep package="eina"/>
       <dep package="evas"/>
@@ -191,7 +191,7 @@
   <autotools id="eet">
     <branch module="eet"
             repo="enlightenment.org"
-            revision="68629"/>
+            revision="73027"/>
     <dependencies>
       <dep package="eina"/>
     </dependencies>
@@ -200,7 +200,7 @@
   <autotools id="edje">
     <branch module="edje"
             repo="enlightenment.org"
-            revision="68629"/>
+            revision="73027"/>
     <dependencies>
       <dep package="eet"/>
       <dep package="ecore"/>
@@ -212,7 +212,7 @@
   <autotools id="e_dbus">
     <branch module="e_dbus"
             repo="enlightenment.org"
-            revision="68629"/>
+            revision="73027"/>
     <dependencies>
       <dep package="ecore"/>
       <dep package="eina"/>
@@ -222,7 +222,7 @@
   <autotools id="eeze">
     <branch module="eeze"
             repo="enlightenment.org"
-            revision="68629"/>
+            revision="73027"/>
     <dependencies>
       <dep package="ecore"/>
       <dep package="eina"/>

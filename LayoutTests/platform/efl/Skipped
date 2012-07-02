@@ -747,9 +747,6 @@ fast/forms/month
 fast/forms/time
 fast/forms/week
 
-# ENABLE_GAMEPAD not enabled.
-gamepad/
-
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
 svg/as-image/image-respects-deviceScaleFactor.html
