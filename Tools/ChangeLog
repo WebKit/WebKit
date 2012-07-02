@@ -2,6 +2,20 @@
 
         Unreviewed.
 
+        It turns out we need to use Ubuntu 10.04 to get the right image results
+        for chromium-linux. This patch updates our scripts to be compatible
+        with Ubuntu 10.04.
+
+        * EWSTools/cold-boot.sh:
+            - fdisk doesn't have p and 1 as default commands in 10.04.
+        * EWSTools/start-queue.sh:
+            - git doesn't understanding the -B argument in 10.04. We've been
+              using this change locally on the EC2 bots for a while.
+
+2012-07-01  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
         * EWSTools/boot.sh:
             - We need to start the screen in detached mode so that we can run
               it remotely via ssh.

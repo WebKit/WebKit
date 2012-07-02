@@ -35,8 +35,8 @@ fi
 # Format the disk
 cat <<EOF | sudo fdisk /dev/vdb
 n
-
-
+p
+1
 
 
 w
