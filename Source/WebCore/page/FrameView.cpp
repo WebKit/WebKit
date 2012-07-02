@@ -745,6 +745,10 @@ bool FrameView::syncCompositingStateForThisFrame(Frame* rootFrameForSync)
     if (needsLayout())
         return false;
 
+    // If we sync compositing layers and allow the repaint to be deferred, there is time for a
+    // visible flash to occur. Instead, stop the deferred repaint timer and repaint immediately.
+    stopDelayingDeferredRepaints();
+
     root->compositor()->flushPendingLayerChanges(rootFrameForSync == m_frame);
 
     return true;
@@ -1929,13 +1933,18 @@ void FrameView::startDeferredRepaintTimer(double delay)
 
 void FrameView::checkStopDelayingDeferredRepaints()
 {
-    if (!m_deferredRepaintTimer.isActive())
-        return;
-
     Document* document = m_frame->document();
     if (document && (document->parsing() || document->cachedResourceLoader()->requestCount()))
         return;
+
+    stopDelayingDeferredRepaints();
+}
     
+void FrameView::stopDelayingDeferredRepaints()
+{
+    if (!m_deferredRepaintTimer.isActive())
+        return;
+
     m_deferredRepaintTimer.stop();
 
     doDeferredRepaints();
