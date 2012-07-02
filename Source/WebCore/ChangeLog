@@ -1,3 +1,17 @@
+2012-07-02  Behdad Esfahbod  <behdad@behdad.org>
+
+        LayoutUnit::epsilon() is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=90083
+
+        Reviewed by Eric Seidel.
+
+        Do division in floats, not integers.
+
+        No new tests. No code using the affected function.
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::epsilon):
+
 2012-07-02  Tim Horton  <timothy_horton@apple.com>
 
         Compositing layer sync should cause deferred repaints to be fired immediately

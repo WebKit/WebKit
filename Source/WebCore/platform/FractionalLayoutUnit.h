@@ -153,7 +153,7 @@ public:
         return toInt();
     }
 
-    static float epsilon() { return 1 / kFixedPointDenominator; }
+    static float epsilon() { return 1.0f / kFixedPointDenominator; }
     static const FractionalLayoutUnit max()
     {
         FractionalLayoutUnit m;
