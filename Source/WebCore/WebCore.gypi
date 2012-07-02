@@ -6256,6 +6256,7 @@
             'inspector/front-end/DebuggerResourceBinding.js',
             'inspector/front-end/DebuggerScriptMapping.js',
             'inspector/front-end/Dialog.js',
+            'inspector/front-end/DirectoryContentView.js',
             'inspector/front-end/DOMAgent.js',
             'inspector/front-end/DOMBreakpointsSidebarPane.js',
             'inspector/front-end/DOMExtension.js',

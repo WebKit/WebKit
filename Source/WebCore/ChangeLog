@@ -1,3 +1,22 @@
+2012-07-02  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add DirectoryContentView for FileSystemView
+        https://bugs.webkit.org/show_bug.cgi?id=89961
+
+        Reviewed by Vsevolod Vlasov.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/DirectoryContentView.js: Added.
+        * inspector/front-end/FileSystemView.js:
+        (WebInspector.FileSystemView):
+        (WebInspector.FileSystemView.EntryTreeElement.prototype.onattach):
+        (WebInspector.FileSystemView.EntryTreeElement.prototype.onselect):
+        (WebInspector.FileSystemView.EntryTreeElement.prototype._directoryContentReceived):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Fix compilation error in GamepadsEfl.cpp in debug mode

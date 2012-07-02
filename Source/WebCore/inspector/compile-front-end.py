@@ -210,6 +210,7 @@ modules = [
             "CookieItemsView.js",
             "DatabaseQueryView.js",
             "DatabaseTableView.js",
+            "DirectoryContentView.js",
             "DOMStorageItemsView.js",
             "FileSystemView.js",
             "IndexedDBViews.js",

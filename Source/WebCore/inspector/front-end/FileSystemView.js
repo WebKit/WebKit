@@ -37,6 +37,7 @@ WebInspector.FileSystemView = function(fileSystem)
 {
     WebInspector.SplitView.call(this, WebInspector.SplitView.SidebarPosition.Left, "FileSystemViewSidebarWidth");
     this.element.addStyleClass("file-system-view");
+    this.element.addStyleClass("storage-view");
 
     var directoryTreeElement = this.element.createChild("ol", "filesystem-directory-tree");
     this.directoryTree = new TreeOutline(directoryTreeElement);
@@ -86,23 +87,23 @@ WebInspector.FileSystemView.EntryTreeElement.prototype = {
     {
         var selection = this.listItemElement.createChild("div", "selection");
         this.listItemElement.insertBefore(selection, this.listItemElement.firstChild);
+    },
 
-        this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
+    onselect: function()
+    {
+        if (!this._view) {
+            if (this._entry.isDirectory)
+                this._view = new WebInspector.DirectoryContentView();
+            else
+                return;
+        }
+        this._fileSystemView.showView(this._view);
+        this.refresh();
     },
 
     onpopulate: function()
     {
         this.refresh();
-    },
-
-    _handleContextMenuEvent: function(event)
-    {
-        if (!this._entry.isDirectory)
-            return;
-
-        var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendItem(WebInspector.UIString("Refresh"), this.refresh.bind(this));
-        contextMenu.show(event);
     },
 
     /**
@@ -123,6 +124,9 @@ WebInspector.FileSystemView.EntryTreeElement.prototype = {
         }
 
         entries.sort(WebInspector.FileSystemModel.Entry.compare);
+        if (this._view)
+            this._view.showEntries(entries);
+
         var oldChildren = this.children.slice(0);
 
         var newEntryIndex = 0;

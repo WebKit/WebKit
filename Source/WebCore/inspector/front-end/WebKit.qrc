@@ -40,6 +40,7 @@
     <file>DebuggerResourceBinding.js</file>
     <file>DebuggerScriptMapping.js</file>
     <file>Dialog.js</file>
+    <file>DirectoryContentView.js</file>
     <file>DOMAgent.js</file>
     <file>DOMBreakpointsSidebarPane.js</file>
     <file>DOMExtension.js</file>

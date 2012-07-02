@@ -74850,6 +74850,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\DirectoryContentView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\DOMAgent.js"
 					>
 				</File>
