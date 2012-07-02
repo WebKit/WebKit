@@ -47,6 +47,7 @@ public:
         Other,
         DOM,
         CSS,
+        Binding,
         LastTypeEntry
     };
 
@@ -59,6 +60,7 @@ public:
             return;
         countObjectSize(objectType, sizeof(T));
     }
+    template <typename HashMapType> void reportHashMap(const HashMapType&, ObjectType);
 
 private:
     friend class MemoryObjectInfo;
@@ -137,6 +139,14 @@ void MemoryInstrumentation::reportInstrumentedObject(const T& object)
         return;
     MemoryObjectInfo memoryObjectInfo(this);
     object.reportMemoryUsage(&memoryObjectInfo);
+}
+
+
+template<typename HashMapType>
+void MemoryInstrumentation::reportHashMap(const HashMapType& hashMap, ObjectType objectType)
+{
+    size_t size = sizeof(HashMapType) + hashMap.capacity() * sizeof(typename HashMapType::ValueType);
+    countObjectSize(objectType, size);
 }
 
 } // namespace WebCore

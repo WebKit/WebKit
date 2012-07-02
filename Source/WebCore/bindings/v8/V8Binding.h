@@ -49,6 +49,7 @@ namespace WebCore {
     class EventListener;
     class EventTarget;
     class ExternalStringVisitor;
+    class MemoryInstrumentation;
 
     // FIXME: Remove V8Binding.
     class V8Binding {
@@ -77,6 +78,8 @@ namespace WebCore {
         }
 
         void remove(StringImpl*);
+
+        void reportMemoryUsage(MemoryInstrumentation*);
 
     private:
         v8::Local<v8::String> v8ExternalStringSlow(StringImpl*, v8::Isolate*);
@@ -213,6 +216,8 @@ namespace WebCore {
 #endif
 
         GCEventData& gcEventData() { return m_gcEventData; }
+
+        void reportMemoryUsage(MemoryInstrumentation*);
 
     private:
         explicit V8BindingPerIsolateData(v8::Isolate*);

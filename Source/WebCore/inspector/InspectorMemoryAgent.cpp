@@ -90,6 +90,7 @@ static const char dom[] = "DOM";
 static const char domTreeOther[] = "DOMTreeOther";
 static const char domTreeDOM[] = "DOMTreeDOM";
 static const char domTreeCSS[] = "DOMTreeCSS";
+static const char domTreeBinding[] = "DOMTreeBinding";
 }
 
 namespace {
@@ -447,6 +448,7 @@ public:
         addMemoryBlockFor(domChildren.get(), m_totalSizes[Other], MemoryBlockName::domTreeOther);
         addMemoryBlockFor(domChildren.get(), m_totalSizes[DOM], MemoryBlockName::domTreeDOM);
         addMemoryBlockFor(domChildren.get(), m_totalSizes[CSS], MemoryBlockName::domTreeCSS);
+        addMemoryBlockFor(domChildren.get(), m_totalSizes[Binding], MemoryBlockName::domTreeBinding);
 
         RefPtr<InspectorMemoryBlock> dom = InspectorMemoryBlock::create().setName(MemoryBlockName::dom);
         dom->setSize(totalSize);
@@ -492,6 +494,11 @@ public:
         m_domMemoryUsage.reportInstrumentedPointer(node);
     }
 
+    void visitBindings()
+    {
+        ScriptProfiler::collectBindingMemoryInfo(&m_domMemoryUsage);
+    }
+
     PassRefPtr<InspectorMemoryBlock> dumpStatistics() { return m_domMemoryUsage.dumpStatistics(); }
 
 private:
@@ -511,6 +518,8 @@ static PassRefPtr<InspectorMemoryBlock> domTreeInfo(Page* page, VisitedObjects& 
         if (Document* doc = frame->document())
             domTreesIterator.visitNode(doc);
     }
+
+    domTreesIterator.visitBindings();
 
     return domTreesIterator.dumpStatistics();
 }

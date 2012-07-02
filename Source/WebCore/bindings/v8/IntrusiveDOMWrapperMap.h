@@ -32,6 +32,7 @@
 #define IntrusiveDOMWrapperMap_h
 
 #include "DOMDataStore.h"
+#include "MemoryInstrumentation.h"
 #include "V8Node.h"
 
 namespace WebCore {
@@ -99,6 +100,12 @@ class ChunkedTable {
         visitEntries(store, m_chunks->m_entries, m_current, visitor);
         for (Chunk* chunk = m_chunks->m_previous; chunk; chunk = chunk->m_previous)
             visitEntries(store, chunk->m_entries, chunk->m_entries + CHUNK_SIZE, visitor);
+    }
+
+    void reportMemoryUsage(MemoryInstrumentation* instrumentation)
+    {
+        for (Chunk* chunk = m_chunks; chunk; chunk = chunk->m_previous)
+            instrumentation->reportPointer(chunk, MemoryInstrumentation::Binding);
     }
 
   private:
@@ -174,6 +181,12 @@ public:
     virtual void clear()
     {
         m_table.clear();
+    }
+
+    virtual void reportMemoryUsage(MemoryInstrumentation* instrumentation) OVERRIDE
+    {
+        instrumentation->reportPointer(this, MemoryInstrumentation::Binding);
+        m_table.reportMemoryUsage(instrumentation);
     }
 
 private:

@@ -47,6 +47,7 @@ namespace WebCore {
 
     class DOMData;
     class DOMDataStore;
+    class MemoryInstrumentation;
 
     typedef WTF::Vector<DOMDataStore*> DOMDataList;
 
@@ -85,6 +86,8 @@ namespace WebCore {
         // Need by V8GCController.
         static void weakActiveDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
         static void weakNodeCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
+
+        void reportMemoryUsage(MemoryInstrumentation*);
 
     protected:
         static void weakDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject);

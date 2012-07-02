@@ -1,3 +1,50 @@
+2012-06-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add v8 bindings memory info to the native memory graph
+        https://bugs.webkit.org/show_bug.cgi?id=90149
+
+        Reviewed by Pavel Feldman.
+
+        Size of V8 binding maps is now reported on the memory chart.
+
+        * bindings/js/ScriptProfiler.h:
+        (WebCore::ScriptProfiler::collectBindingMemoryInfo):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        (WebCore):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore):
+        (DOMDataStore):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::ChunkedTable::reportMemoryUsage):
+        (ChunkedTable):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::collectBindingMemoryInfo):
+        (WebCore):
+        * bindings/v8/ScriptProfiler.h:
+        (WebCore):
+        (ScriptProfiler):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::reportMemoryUsage):
+        (WebCore):
+        (WebCore::StringCache::reportMemoryUsage):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        (StringCache):
+        (V8BindingPerIsolateData):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore):
+        (AbstractWeakReferenceMap):
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (WebCore):
+        (WebCore::MemoryInstrumentation::reportHashMap): added a method for reporting
+        size of a HashMap.
+        * inspector/InspectorMemoryAgent.cpp:
+        (MemoryBlockName):
+        (WebCore):
+        (WebCore::domTreeInfo):
+
 2012-07-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add Gamepad support

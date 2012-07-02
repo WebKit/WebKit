@@ -34,6 +34,7 @@
 #include "BindingVisitors.h"
 #include "DOMStringList.h"
 #include "Element.h"
+#include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 #include "QualifiedName.h"
 #include "V8DOMStringList.h"
@@ -89,7 +90,16 @@ void V8BindingPerIsolateData::dispose(v8::Isolate* isolate)
     isolate->SetData(0);
 }
 
+void V8BindingPerIsolateData::reportMemoryUsage(MemoryInstrumentation* instrumentation)
+{
+    instrumentation->reportPointer(this, MemoryInstrumentation::Binding);
+    instrumentation->reportHashMap(m_rawTemplates, MemoryInstrumentation::Binding);
+    instrumentation->reportHashMap(m_templates, MemoryInstrumentation::Binding);
+    m_stringCache.reportMemoryUsage(instrumentation);
 
+    for (size_t i = 0; i < m_domDataList.size(); i++)
+        m_domDataList[i]->reportMemoryUsage(instrumentation);
+}
 
 // WebCoreStringResource is a helper class for v8ExternalString. It is used
 // to manage the life-cycle of the underlying buffer of the external string.
@@ -575,6 +585,11 @@ v8::Persistent<v8::FunctionTemplate> getToStringTemplate()
     if (toStringTemplate.IsEmpty())
         toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(constructorToString));
     return toStringTemplate;
+}
+
+void StringCache::reportMemoryUsage(MemoryInstrumentation* instrumentation)
+{
+    instrumentation->reportHashMap(m_stringCache, MemoryInstrumentation::Binding);
 }
     
 PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value> value)

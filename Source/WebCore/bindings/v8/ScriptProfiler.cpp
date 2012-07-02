@@ -33,6 +33,7 @@
 #include "ScriptProfiler.h"
 
 #include "BindingVisitors.h"
+#include "MemoryInstrumentation.h"
 #include "RetainedDOMInfo.h"
 #include "ScriptObject.h"
 #include "V8ArrayBufferView.h"
@@ -217,6 +218,14 @@ void ScriptProfiler::visitExternalArrays(ExternalArrayVisitor* visitor)
 
     getDOMObjectMap().visit(0, &adapter);
 
+}
+
+void ScriptProfiler::collectBindingMemoryInfo(MemoryInstrumentation* instrumentation)
+{
+    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    if (!data)
+        return;
+    data->reportMemoryUsage(instrumentation);
 }
 
 size_t ScriptProfiler::profilerSnapshotsSize()

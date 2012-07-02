@@ -32,6 +32,7 @@
 #include "DOMDataStore.h"
 
 #include "DOMData.h"
+#include "MemoryInstrumentation.h"
 #include "V8Binding.h"
 #include <wtf/MainThread.h>
 
@@ -116,6 +117,15 @@ void* DOMDataStore::getDOMWrapperMap(DOMWrapperMapType type)
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+void DOMDataStore::reportMemoryUsage(MemoryInstrumentation* instrumentation)
+{
+    instrumentation->reportPointer(this, MemoryInstrumentation::Binding);
+    domNodeMap().reportMemoryUsage(instrumentation);
+    activeDomNodeMap().reportMemoryUsage(instrumentation);
+    domObjectMap().reportMemoryUsage(instrumentation);
+    activeDomObjectMap().reportMemoryUsage(instrumentation);
 }
 
 // Called when the object is near death (not reachable from JS roots).

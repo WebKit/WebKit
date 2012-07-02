@@ -42,6 +42,7 @@ namespace WebCore {
 
 class ExternalArrayVisitor;
 class ExternalStringVisitor;
+class MemoryInstrumentation;
 class NodeWrapperVisitor;
 class Page;
 class ScriptObject;
@@ -81,6 +82,7 @@ public:
     static void visitNodeWrappers(NodeWrapperVisitor*);
     static void visitExternalStrings(ExternalStringVisitor*);
     static void visitExternalArrays(ExternalArrayVisitor*);
+    static void collectBindingMemoryInfo(MemoryInstrumentation*);
     static size_t profilerSnapshotsSize();
 };
 

@@ -31,6 +31,7 @@
 #ifndef V8DOMMap_h
 #define V8DOMMap_h
 
+#include "MemoryInstrumentation.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <v8.h>
@@ -38,6 +39,7 @@
 namespace WebCore {
     class DOMDataStore;
     class Node;
+    class MemoryInstrumentation;
 
     template <class KeyType, class ValueType> class AbstractWeakReferenceMap {
     public:
@@ -61,6 +63,9 @@ namespace WebCore {
         virtual void clear() = 0;
 
         v8::WeakReferenceCallback weakReferenceCallback() { return m_weakReferenceCallback; }
+
+        virtual void reportMemoryUsage(MemoryInstrumentation*) = 0;
+
     private:
         v8::WeakReferenceCallback m_weakReferenceCallback;
     };
@@ -127,6 +132,11 @@ namespace WebCore {
             for (; it != m_map.end(); ++it)
                 visitor->visitDOMWrapper(store, it->first, v8::Persistent<ValueType>(it->second));
             visitor->endMap();
+        }
+
+        virtual void reportMemoryUsage(MemoryInstrumentation* instrumentation) OVERRIDE
+        {
+            instrumentation->reportHashMap(m_map, MemoryInstrumentation::Binding);
         }
 
     protected:
