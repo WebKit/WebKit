@@ -1,3 +1,16 @@
+2012-07-01  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r121635.
+        http://trac.webkit.org/changeset/121635
+        https://bugs.webkit.org/show_bug.cgi?id=90286
+
+        Breaks compile on clang error: in-class initializer for static
+        data member of type 'const float' is a GNU extension
+        [-Werror,-Wgnu]
+
+        * dom/ViewportArguments.h:
+        (ViewportArguments):
+
 2012-07-01  Timothy Hatcher  <timothy@apple.com>
 
         Make the "Inspect Element" context menu item appear in nightly builds again.

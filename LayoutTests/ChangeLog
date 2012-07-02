@@ -1,3 +1,17 @@
+2012-07-01  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r121635.
+        http://trac.webkit.org/changeset/121635
+        https://bugs.webkit.org/show_bug.cgi?id=90286
+
+        Breaks compile on clang error: in-class initializer for static
+        data member of type 'const float' is a GNU extension
+        [-Werror,-Wgnu]
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-07-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11785743> [mac] Non-BMP characters in vertical text appear as missing glyphs
