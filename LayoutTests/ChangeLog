@@ -1,3 +1,10 @@
+2012-07-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Updated Chromium test expectations. Added a missing bug
+        number to the expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-02  Konrad Piascik  <kpiascik@rim.com>
 
         [EFL] [GTK] [QT] fast/viewport/viewport-91.html is failing after r121555

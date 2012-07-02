@@ -2294,9 +2294,8 @@ BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
 BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = PASS TIMEOUT TEXT
 BUGCR66751 : http/tests/local/link-stylesheet-load-order.html = PASS TIMEOUT TEXT
 
-// The test is just too slow and has never passed since on Dbg build.
-BUG_YURYS SLOW LINUX MAC DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
-BUG_YURYS WIN DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = TIMEOUT
+// The test is just too slow and has never passed since its introduction on Dbg build.
+BUGWK90363 SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 
 // WebKit roll 74255:74308
 BUGCR67416 LINUX WIN : fast/text/emphasis.html = IMAGE+TEXT
