@@ -1,3 +1,9 @@
+2012-07-02  Ojan Vafai  <ojan@chromium.org>
+
+        Fix posting from garden-o-matic. This broke in moving away from jquery's ajax method
+        in http://trac.webkit.org/changeset/121617.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/net.js:
+
 2012-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Read fonts path when running layout tests from alternative fonts dir when main dir doesn't exist

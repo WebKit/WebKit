@@ -51,7 +51,10 @@ net.ajax = function(options)
         if (options.error)
             options.error();
     };
-    xhr.send(options.data || null);
+    var data = options.data || null;
+    if (data)
+        xhr.setRequestHeader("content-type","application/x-www-form-urlencoded");
+    xhr.send(data);
 };
 
 net.post = function(url, data, success)
