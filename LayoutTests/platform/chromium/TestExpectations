@@ -2420,6 +2420,10 @@ BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = 
 BUGWK54322 SLOW SNOWLEOPARD : fast/loader/loadInProgress.html = PASS
 BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
+// One the cr-linux-ews bot, this test is flaky, causing the queue to spam bugs
+// will false failures.
+BUGEWS LINUX : fast/loader/loadInProgress.html = PASS TEXT CRASH
+
 BUGV8_1168 : fast/js/mozilla/strict/10.6.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/15.5.5.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT

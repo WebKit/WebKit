@@ -1,3 +1,11 @@
+2012-07-02  Adam Barth  <abarth@webkit.org>
+
+        This test is a flaky crash on the cr-linux-ews, which is causing the
+        bot to be very slow in processing patches and to spam bugs with false
+        failures. Mark this test as flaky while we investigate.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, update expected files, skip new failing tests.
