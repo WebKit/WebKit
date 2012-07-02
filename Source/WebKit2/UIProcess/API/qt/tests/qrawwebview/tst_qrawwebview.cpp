@@ -119,26 +119,19 @@ void WebView::finishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef use
     obj->m_frameLoaded = true;
 }
 
-static bool compareImages(const QImage& i1, const QImage& i2, const QPoint& p1, const QPoint& p2, int iter)
-{
-    const QPoint point((p1.x() + p2.x()) >> 1, (p1.y() + p2.y()) >> 1);
-
-    if (i1.pixel(point) != i2.pixel(point))
-        return false;
-
-    if (!iter)
-        return true;
-
-    --iter;
-    return compareImages(i1, i2, point, p1, iter) && compareImages(i1, i2, point, p2, iter)
-        && compareImages(i1, i2, point, QPoint(p1.x(), p2.y()), iter) && compareImages(i1, i2, point, QPoint(p2.x(), p1.y()), iter);
-}
-
-static bool compareImages(const QImage& i1, const QImage& i2, int iter)
+static bool compareImages(const QImage& i1, const QImage& i2, int count)
 {
     if (i1.size() != i2.size())
         return false;
-    return compareImages(i1, i2, QPoint(0, 0), QPoint(i1.size().width(), i1.size().height()), iter);
+    for (int x = 0; x < count; ++x) {
+        for (int y = 0; y < count; ++y) {
+            QPoint point(x * i1.width() / count, y * i1.height() / count);
+            if (i1.pixel(point) != i2.pixel(point))
+                return false;
+        }
+    }
+
+    return true;
 }
 
 class tst_qrawwebview : public QObject {

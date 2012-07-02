@@ -1,3 +1,15 @@
+2012-07-02  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] New API tests introduced in r121620 fail
+        https://bugs.webkit.org/show_bug.cgi?id=90372
+
+        Reviewed by Luiz Agostini.
+
+        Updated the pixel comparison to produce more predictable results.
+
+        * UIProcess/API/qt/tests/qrawwebview/tst_qrawwebview.cpp:
+        (compareImages):
+
 2012-07-02  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Fix WebProcess crash on Mac when accessing a site with video tag.
