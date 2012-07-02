@@ -27,6 +27,8 @@
 
 #include "Logging.h"
 
+#if !LOG_DISABLED
+
 namespace WebCore {
 
 static inline void initializeWithUserDefault(WTFLogChannel& channel)
@@ -77,3 +79,5 @@ void initializeLoggingChannelsIfNecessary()
 }
 
 }
+
+#endif // !LOG_DISABLED

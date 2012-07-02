@@ -28,6 +28,8 @@
 
 #import "WebKitLogging.h"
 
+#if !LOG_DISABLED
+
 WTFLogChannel WebKitLogTextInput =              { 0x00000010, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogTiming =                 { 0x00000020, "WebKitLogLevel", WTFLogChannelOff };
 WTFLogChannel WebKitLogLoading =                { 0x00000040, "WebKitLogLevel", WTFLogChannelOff };
@@ -98,6 +100,7 @@ void WebKitInitializeLoggingChannelsIfNecessary()
     initializeLogChannel(&WebKitLogIconDatabase);
     initializeLogChannel(&WebKitLogTextInput);
 }
+#endif // !LOG_DISABLED
 
 void ReportDiscardedDelegateException(SEL delegateSelector, id exception)
 {

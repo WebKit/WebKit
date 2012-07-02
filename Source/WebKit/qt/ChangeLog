@@ -1,3 +1,13 @@
+2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Do not do any logging initialization when logging is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=90228
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/InitWebCoreQt.cpp:
+        (WebCore::initializeWebCoreQt):
+
 2012-06-29  Konrad Piascik  <kpiascik@rim.com>
 
         Don't hardcode target dpi of 160 (it should be 96 on desktop)

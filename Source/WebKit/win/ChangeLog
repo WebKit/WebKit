@@ -1,3 +1,13 @@
+2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Do not do any logging initialization when logging is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=90228
+
+        Reviewed by Simon Fraser.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2012-06-29  Mihai Balan  <mibalan@adobe.com>
 
         [CSS Regions] Adding feature defines for CSS Regions for Windows

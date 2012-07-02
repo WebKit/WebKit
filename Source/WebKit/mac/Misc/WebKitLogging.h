@@ -36,6 +36,7 @@
 extern "C" {
 #endif
 
+#if !LOG_DISABLED
 extern WTFLogChannel WebKitLogTiming;
 extern WTFLogChannel WebKitLogLoading;
 extern WTFLogChannel WebKitLogFontCache;
@@ -62,6 +63,7 @@ extern WTFLogChannel WebKitLogIconDatabase;
 extern WTFLogChannel WebKitLogTextInput;
 
 void WebKitInitializeLoggingChannelsIfNecessary(void);
+#endif // !LOG_DISABLED
 
 // FIXME: Why is this in the "logging" header file?
 // Use WebCoreThreadViolationCheck instead for checks that throw an exception even in production builds.

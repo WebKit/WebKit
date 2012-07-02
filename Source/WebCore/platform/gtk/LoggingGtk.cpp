@@ -20,8 +20,10 @@
 
 #include "config.h"
 #include "Logging.h"
-#include "PlatformString.h"
 
+#if !LOG_DISABLED
+
+#include "PlatformString.h"
 #include <glib.h>
 #include <string.h>
 
@@ -62,3 +64,5 @@ void initializeLoggingChannelsIfNecessary()
 }
 
 } // namespace WebCore
+
+#endif // !LOG_DISABLED

@@ -20,6 +20,8 @@
 #include "config.h"
 #include "Logging.h"
 
+#if !LOG_DISABLED
+
 #include "PlatformString.h"
 #include <QDebug>
 #include <QStringList>
@@ -54,3 +56,5 @@ void initializeLoggingChannelsIfNecessary()
 }
 
 } // namespace WebCore
+
+#endif // !LOG_DISABLED

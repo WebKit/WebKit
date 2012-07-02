@@ -1,3 +1,30 @@
+2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Do not do any logging initialization when logging is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=90228
+
+        Reviewed by Simon Fraser.
+
+        Initializating of the logging channels was taking time on startup. When logging is disabled
+        (and the LOG macro does nothing), we should aslo disable logging channels and initialization.
+
+        This patch #ifdef the Logging initialization with the macro LOG_DISABLED.
+
+        * WebCore.exp.in:
+        * make-export-file-generator: Explicitely adds Assertions.h so that LOG_DISABLED is defined.
+        * platform/Logging.cpp:
+        * platform/Logging.h:
+        * platform/blackberry/LoggingBlackBerry.cpp:
+        * platform/efl/LoggingEfl.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/gtk/LoggingGtk.cpp:
+        * platform/mac/LoggingMac.mm:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ensureSessionIsInitialized):
+        * platform/qt/LoggingQt.cpp:
+        * platform/win/LoggingWin.cpp:
+        * platform/wx/LoggingWx.cpp:
+
 2012-07-02  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11787030> In vertical writing modes, child following float-clearing block has incorrect logical top

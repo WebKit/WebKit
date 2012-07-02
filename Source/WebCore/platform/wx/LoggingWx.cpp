@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Logging.h"
 
+#if !LOG_DISABLED
+
 #include "PlatformString.h"
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -62,3 +64,5 @@ void initializeLoggingChannelsIfNecessary()
 }
 
 }
+
+#endif // !LOG_DISABLED

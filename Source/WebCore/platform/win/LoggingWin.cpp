@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Logging.h"
 
+#if !LOG_DISABLED
+
 #include "PlatformString.h"
 #include <windows.h>
 #include <wtf/OwnArrayPtr.h>
@@ -102,3 +104,5 @@ void initializeLoggingChannelsIfNecessary()
 }
 
 } // namespace WebCore
+
+#endif // !LOG_DISABLED

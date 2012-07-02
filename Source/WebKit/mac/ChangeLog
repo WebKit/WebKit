@@ -1,3 +1,19 @@
+2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Do not do any logging initialization when logging is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=90228
+
+        Reviewed by Simon Fraser.
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase _scaleIcon:toSize:]):
+        * Misc/WebKitLogging.h:
+        * Misc/WebKitLogging.m:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _attributeStringFromDOMRange:]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2012-07-01  Timothy Hatcher  <timothy@apple.com>
 
         Make the "Inspect Element" context menu item appear in nightly builds again.

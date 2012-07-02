@@ -1,3 +1,13 @@
+2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Do not do any logging initialization when logging is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=90228
+
+        Reviewed by Simon Fraser.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
 2012-07-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Rename NotificationPresenterEfl with NotificationClientEfl

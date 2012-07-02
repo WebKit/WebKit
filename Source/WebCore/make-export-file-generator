@@ -36,6 +36,7 @@ end
 TEMPLATE = <<-EOF
 #include "config.h"
 #include <stdio.h>
+#include <wtf/Assertions.h>
 
 int main(int, char**)
 {

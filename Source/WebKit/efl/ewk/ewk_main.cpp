@@ -146,7 +146,9 @@ Eina_Bool _ewk_init_body(void)
             "work (ie: Adobe Flash)");
 
     WebCore::ScriptController::initializeThreading();
+#if !LOG_DISABLED
     WebCore::initializeLoggingChannelsIfNecessary();
+#endif // !LOG_DISABLED
     WebCore::Settings::setDefaultMinDOMTimerInterval(0.004);
 
     PlatformStrategiesEfl::initialize();

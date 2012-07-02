@@ -50,6 +50,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/text/AtomicString.h>
 
 #if OS(DARWIN)
@@ -185,9 +186,13 @@ bool layoutTestMode()
 
 void enableLogChannel(const char* name)
 {
+#if !LOG_DISABLED
     WTFLogChannel* channel = WebCore::getChannelFromName(name);
     if (channel)
         channel->state = WTFLogChannelOn;
+#else
+    UNUSED_PARAM(name);
+#endif // !LOG_DISABLED
 }
 
 void resetPluginCache(bool reloadPages)

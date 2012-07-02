@@ -27,6 +27,8 @@
 #include "Logging.h"
 #include "PlatformString.h"
 
+#if !LOG_DISABLED
+
 namespace WebCore {
 
 WTFLogChannel LogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", WTFLogChannelOff };
@@ -149,3 +151,5 @@ WTFLogChannel* getChannelFromName(const String& channelName)
 }
 
 }
+
+#endif // !LOG_DISABLED

@@ -90,4 +90,4 @@ void initializeLogChannelsIfNecessary()
 
 } // namespace WebKit
 
-#endif // LOG_DISABLED
+#endif // !LOG_DISABLED

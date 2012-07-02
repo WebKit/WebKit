@@ -52,6 +52,6 @@ WTFLogChannel* getChannelFromName(const String& channelName);
 
 } // namespace WebKit
 
-#endif // LOG_DISABLED
+#endif // !LOG_DISABLED
 
 #endif // Logging_h

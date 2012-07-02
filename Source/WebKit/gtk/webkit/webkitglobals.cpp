@@ -504,7 +504,9 @@ void webkitInit()
     JSC::initializeThreading();
     WTF::initializeMainThread();
 
+#if !LOG_DISABLED
     WebCore::initializeLoggingChannelsIfNecessary();
+#endif // !LOG_DISABLED
     PlatformStrategiesGtk::initialize();
 
     // We make sure the text codecs have been initialized, because

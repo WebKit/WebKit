@@ -723,8 +723,10 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
 
     static bool didOneTimeInitialization = false;
     if (!didOneTimeInitialization) {
+#if !LOG_DISABLED
         WebKitInitializeLoggingChannelsIfNecessary();
         WebCore::initializeLoggingChannelsIfNecessary();
+#endif // !LOG_DISABLED
         [WebHistoryItem initWindowWatcherIfNecessary];
 #if ENABLE(SQL_DATABASE)
         WebKitInitializeDatabasesIfNecessary();

@@ -157,7 +157,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 
     addLanguageChangeObserver(this, languageChanged);
 
+#if !LOG_DISABLED
     WebCore::initializeLoggingChannelsIfNecessary();
+#endif // !LOG_DISABLED
 
 #ifndef NDEBUG
     webContextCounter.increment();

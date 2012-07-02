@@ -441,7 +441,7 @@ static WebIconDatabaseClient* defaultClient()
     ASSERT(size.width);
     ASSERT(size.height);
     
-#if !LOG_DISABLED        
+#if !LOG_DISABLED
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     

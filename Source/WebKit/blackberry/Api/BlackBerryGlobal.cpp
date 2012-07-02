@@ -60,8 +60,10 @@ void globalInitialize()
     blackberryDebugInitialize();
 #endif
 
+#if !LOG_DISABLED
     // Turn on logging.
     initializeLoggingChannelsIfNecessary();
+#endif // !LOG_DISABLED
 
     // Initialize threading/
     JSC::initializeThreading();

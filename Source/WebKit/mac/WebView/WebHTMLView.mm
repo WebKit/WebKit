@@ -6140,7 +6140,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 - (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
 {
     NSAttributedString *attributedString;
-#if !LOG_DISABLED        
+#if !LOG_DISABLED
     double start = CFAbsoluteTimeGetCurrent();
 #endif    
     attributedString = [[[NSAttributedString alloc] _initWithDOMRange:range] autorelease];

@@ -1719,9 +1719,13 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
             g_object_set(m_fpsSink, "silent", TRUE , NULL);
 
             // Turn off text overlay unless logging is enabled.
+#if LOG_DISABLED
+            g_object_set(m_fpsSink, "text-overlay", FALSE , NULL);
+#else
             WTFLogChannel* channel = getChannelFromName("Media");
             if (channel->state != WTFLogChannelOn)
                 g_object_set(m_fpsSink, "text-overlay", FALSE , NULL);
+#endif // LOG_DISABLED
 
             if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
                 g_object_set(m_fpsSink, "video-sink", m_webkitVideoSink, NULL);
