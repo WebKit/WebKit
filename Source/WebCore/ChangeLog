@@ -1,3 +1,36 @@
+2012-07-02  Nikita Vasilyev  <me@elv1s.ru>
+
+        Web Inspector: Design WebSockets panel
+        https://bugs.webkit.org/show_bug.cgi?id=89461
+
+        Use DataGrid to display the data.
+        Put "Data" column first. Make it wider.
+        Remove "Mask" column since it appears to be always true for outgoing frames,
+        and false for incoming.
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView): Don't show Preview, Response, Cookies
+        and Timing tabs for succefuly established WebSocket connection.
+
+        * inspector/front-end/ResourceWebSocketFrameView.js:
+        (WebInspector.ResourceWebSocketFrameView):
+        * inspector/front-end/networkPanel.css:
+        (.resource-websocket):
+        (.resource-websocket, .resource-websocket .data-grid):
+        (.resource-websocket .data-grid .data):
+        (.resource-websocket td):
+        (.resource-websocket .data-column div):
+        (.resource-websocket-row-outcoming):
+        (.resource-websocket-row-outcoming:not(.selected) td):
+        (.resource-websocket-row-outcoming:not(.selected) td, .resource-websocket-row-outcoming:not(.selected) + tr td):
+        (.resource-websocket-row-opcode):
+        (.resource-websocket-row-opcode td):
+        (.resource-websocket-row-opcode td, .resource-websocket-row-opcode + tr td):
+        (.resource-websocket-row-error):
+
 2012-07-02  Vineet Chaudhary  <rgf748@motorola.com>
 
         [V8Binding] Merging v8NumberArray()/v8NumberArrayToVector() to v8Array()/toNativeArray() respectively.

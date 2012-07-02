@@ -280,6 +280,61 @@
     display: block;
 }
 
-.resource-websocket-frame-view {
+.resource-websocket {
     -webkit-user-select: text;
+}
+
+.resource-websocket, .resource-websocket .data-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: none;
+}
+
+.resource-websocket .data-grid .data {
+    background-image: none;
+    font-size: 11px;
+}
+
+.resource-websocket td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-top: 1px solid rgb(240, 240, 240);
+}
+
+.resource-websocket .data-column div {
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+
+.resource-websocket-row-outcoming {
+    background-color: rgb(226, 247, 218);
+}
+
+.resource-websocket-row-outcoming:not(.selected) td {
+    border-right-color: rgb(177, 209, 165);
+}
+
+.resource-websocket-row-outcoming:not(.selected) td, .resource-websocket-row-outcoming:not(.selected) + tr td {
+    border-top-color: rgb(199, 236, 185);
+}
+
+.resource-websocket-row-opcode {
+    background-color: rgb(255, 255, 232);
+    color: rgb(170, 111, 71);
+}
+
+.resource-websocket-row-opcode td {
+    border-color: rgb(211, 187, 171);
+}
+
+.resource-websocket-row-opcode td, .resource-websocket-row-opcode + tr td {
+    border-top-color: rgb(248, 240, 210);
+}
+
+.resource-websocket-row-error {
+    background-color: rgb(255, 237, 237);
+    color: rgb(182, 0, 0);
 }
