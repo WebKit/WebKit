@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,33 +22,52 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
+#include "config.h"
+#if ENABLE(MEDIA_STREAM)
 
-    interface [
-        Conditional=MEDIA_STREAM,
-        IndexedGetter,
-        EventTarget
-    ] MediaStreamTrackList {
-        readonly attribute unsigned long length;
-        MediaStreamTrack item(in [IsIndex] unsigned long index);
+#include "MediaStreamTrackEvent.h"
 
-        void add(in MediaStreamTrack track)
-            raises(DOMException);
-        void remove(in MediaStreamTrack track)
-            raises(DOMException);
+#include "EventNames.h"
+#include "MediaStreamTrack.h"
 
-        attribute EventListener onaddtrack;
-        attribute EventListener onremovetrack;
+namespace WebCore {
 
-        // EventTarget interface
-        void addEventListener(in DOMString type,
-                              in EventListener listener,
-                              in [Optional] boolean useCapture);
-        void removeEventListener(in DOMString type,
-                                 in EventListener listener,
-                                 in [Optional] boolean useCapture);
-        boolean dispatchEvent(in Event event)
-            raises(EventException);
-    };
-
+PassRefPtr<MediaStreamTrackEvent> MediaStreamTrackEvent::create()
+{
+    return adoptRef(new MediaStreamTrackEvent);
 }
+
+PassRefPtr<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStreamTrack> track)
+{
+    return adoptRef(new MediaStreamTrackEvent(type, canBubble, cancelable, track));
+}
+
+
+MediaStreamTrackEvent::MediaStreamTrackEvent()
+{
+}
+
+MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStreamTrack> track)
+    : Event(type, canBubble, cancelable)
+    , m_track(track)
+{
+}
+
+MediaStreamTrackEvent::~MediaStreamTrackEvent()
+{
+}
+
+MediaStreamTrack* MediaStreamTrackEvent::track() const
+{
+    return m_track.get();
+}
+
+const AtomicString& MediaStreamTrackEvent::interfaceName() const
+{
+    return eventNames().interfaceForMediaStreamTrackEvent;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)
+

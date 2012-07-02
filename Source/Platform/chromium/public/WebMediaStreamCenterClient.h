@@ -33,6 +33,7 @@
 
 namespace WebKit {
 
+class WebMediaStreamComponent;
 class WebMediaStreamDescriptor;
 
 class WebMediaStreamCenterClient {
@@ -40,6 +41,8 @@ public:
     virtual ~WebMediaStreamCenterClient() { }
 
     virtual void stopLocalMediaStream(const WebMediaStreamDescriptor&) = 0;
+    virtual void addMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
+    virtual void removeMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) = 0;
 };
 
 } // namespace WebKit

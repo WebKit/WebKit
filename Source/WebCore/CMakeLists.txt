@@ -2507,6 +2507,7 @@ IF (ENABLE_MEDIA_STREAM)
         Modules/mediastream/MediaStreamEvent.idl
         Modules/mediastream/MediaStreamList.idl
         Modules/mediastream/MediaStreamTrack.idl
+        Modules/mediastream/MediaStreamTrackEvent.idl
         Modules/mediastream/MediaStreamTrackList.idl
         Modules/mediastream/NavigatorMediaStream.idl
         Modules/mediastream/NavigatorUserMediaError.idl
@@ -2525,6 +2526,7 @@ IF (ENABLE_MEDIA_STREAM)
         Modules/mediastream/MediaStreamList.cpp
         Modules/mediastream/MediaStreamRegistry.cpp
         Modules/mediastream/MediaStreamTrack.cpp
+        Modules/mediastream/MediaStreamTrackEvent.cpp
         Modules/mediastream/MediaStreamTrackList.cpp
         Modules/mediastream/NavigatorMediaStream.cpp
         Modules/mediastream/PeerConnection00.cpp

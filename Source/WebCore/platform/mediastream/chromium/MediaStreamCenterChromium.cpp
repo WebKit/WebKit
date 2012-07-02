@@ -83,6 +83,14 @@ void MediaStreamCenterChromium::didSetMediaStreamTrackEnabled(MediaStreamDescrip
     }
 }
 
+void MediaStreamCenterChromium::didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+{
+}
+
+void MediaStreamCenterChromium::didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*)
+{
+}
+
 void MediaStreamCenterChromium::didStopLocalMediaStream(MediaStreamDescriptor* stream)
 {
     if (m_private)
@@ -113,6 +121,16 @@ String MediaStreamCenterChromium::constructSDP(SessionDescriptionDescriptor* ses
 void MediaStreamCenterChromium::stopLocalMediaStream(const WebKit::WebMediaStreamDescriptor& stream)
 {
     endLocalMediaStream(stream);
+}
+
+void MediaStreamCenterChromium::addMediaStreamTrack(const WebKit::WebMediaStreamDescriptor& stream, const WebKit::WebMediaStreamComponent& component)
+{
+    MediaStreamCenter::addMediaStreamTrack(stream, component);
+}
+
+void MediaStreamCenterChromium::removeMediaStreamTrack(const WebKit::WebMediaStreamDescriptor& stream, const WebKit::WebMediaStreamComponent& component)
+{
+    MediaStreamCenter::removeMediaStreamTrack(stream, component);
 }
 
 } // namespace WebCore

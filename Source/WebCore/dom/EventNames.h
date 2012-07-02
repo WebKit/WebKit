@@ -216,6 +216,7 @@ namespace WebCore {
     macro(addstream) \
     macro(removestream) \
     macro(statechange) \
+    macro(removetrack) \
     \
     macro(show) \
     \

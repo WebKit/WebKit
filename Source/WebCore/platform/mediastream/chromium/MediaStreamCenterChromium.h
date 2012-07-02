@@ -42,6 +42,7 @@
 
 namespace WebKit {
 class WebMediaStreamCenter;
+class WebMediaStreamComponent;
 class WebMediaStreamDescriptor;
 }
 
@@ -61,6 +62,8 @@ public:
     // MediaStreamCenter
     virtual void queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient>) OVERRIDE;
     virtual void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
+    virtual void didAddMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
+    virtual void didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
     virtual void didStopLocalMediaStream(MediaStreamDescriptor*) OVERRIDE;
     virtual void didCreateMediaStream(MediaStreamDescriptor*) OVERRIDE;
     virtual String constructSDP(IceCandidateDescriptor*) OVERRIDE;
@@ -68,6 +71,8 @@ public:
 
     // WebKit::WebMediaStreamCenterClient
     virtual void stopLocalMediaStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual void addMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
+    virtual void removeMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
 
 private:
     OwnPtr<WebKit::WebMediaStreamCenter> m_private;

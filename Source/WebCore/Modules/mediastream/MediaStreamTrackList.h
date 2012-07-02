@@ -27,21 +27,53 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "ActiveDOMObject.h"
+#include "EventTarget.h"
 #include "MediaStreamTrack.h"
 
 namespace WebCore {
 
-class MediaStreamTrackList : public RefCounted<MediaStreamTrackList> {
+class MediaStreamTrackList : public RefCounted<MediaStreamTrackList>, public ActiveDOMObject, public EventTarget {
 public:
-    static PassRefPtr<MediaStreamTrackList> create(const MediaStreamTrackVector&);
+    static PassRefPtr<MediaStreamTrackList> create(MediaStream*, const MediaStreamTrackVector&);
     virtual ~MediaStreamTrackList();
+
+    void detachOwner();
 
     // DOM methods & attributes for MediaStreamTrackList
     unsigned length() const;
     MediaStreamTrack* item(unsigned index) const;
 
+    void add(PassRefPtr<MediaStreamTrack>, ExceptionCode&);
+    void remove(PassRefPtr<MediaStreamTrack>, ExceptionCode&);
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(removetrack);
+
+    void remove(MediaStreamComponent*);
+
+    // ActiveDOMObject
+    virtual void stop() OVERRIDE;
+
+    // EventTarget
+    virtual const AtomicString& interfaceName() const OVERRIDE;
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+
+    using RefCounted<MediaStreamTrackList>::ref;
+    using RefCounted<MediaStreamTrackList>::deref;
+
 private:
-    MediaStreamTrackList(const MediaStreamTrackVector&);
+    MediaStreamTrackList(MediaStream*, const MediaStreamTrackVector&);
+
+    // EventTarget
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
+    EventTargetData m_eventTargetData;
+
+    // m_owner can become zero.
+    MediaStream* m_owner;
 
     MediaStreamTrackVector m_trackVector;
 };

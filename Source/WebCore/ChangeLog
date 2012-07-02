@@ -1,3 +1,81 @@
+2012-07-02  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update MediaStreamTrackList to match the specification
+        https://bugs.webkit.org/show_bug.cgi?id=90171
+
+        Reviewed by Adam Barth.
+
+        The latest update to the specification added add and remove methods with corresponding callbacks.
+        The callbacks can be triggered both from JS and from the platform layer.
+
+        Test: fast/mediastream/MediaStreamTrackList.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::~MediaStream):
+        (WebCore::MediaStream::streamEnded):
+        (WebCore::MediaStream::addTrack):
+        (WebCore):
+        (WebCore::MediaStream::removeTrack):
+        * Modules/mediastream/MediaStream.h:
+        (MediaStream):
+        * Modules/mediastream/MediaStreamTrackEvent.cpp: Copied from Source/WebCore/Modules/mediastream/MediaStreamTrackList.cpp.
+        (WebCore):
+        (WebCore::MediaStreamTrackEvent::create):
+        (WebCore::MediaStreamTrackEvent::MediaStreamTrackEvent):
+        (WebCore::MediaStreamTrackEvent::~MediaStreamTrackEvent):
+        (WebCore::MediaStreamTrackEvent::track):
+        (WebCore::MediaStreamTrackEvent::interfaceName):
+        * Modules/mediastream/MediaStreamTrackEvent.h: Copied from Source/WebCore/Modules/mediastream/MediaStreamTrackList.h.
+        (WebCore):
+        (MediaStreamTrackEvent):
+        * Modules/mediastream/MediaStreamTrackEvent.idl: Copied from Source/WebCore/Modules/mediastream/MediaStreamTrackList.idl.
+        * Modules/mediastream/MediaStreamTrackList.cpp:
+        (WebCore::MediaStreamTrackList::create):
+        (WebCore::MediaStreamTrackList::MediaStreamTrackList):
+        (WebCore::MediaStreamTrackList::detachOwner):
+        (WebCore):
+        (WebCore::MediaStreamTrackList::add):
+        (WebCore::MediaStreamTrackList::remove):
+        (WebCore::MediaStreamTrackList::stop):
+        (WebCore::MediaStreamTrackList::interfaceName):
+        (WebCore::MediaStreamTrackList::scriptExecutionContext):
+        (WebCore::MediaStreamTrackList::eventTargetData):
+        (WebCore::MediaStreamTrackList::ensureEventTargetData):
+        * Modules/mediastream/MediaStreamTrackList.h:
+        (MediaStreamTrackList):
+        * Modules/mediastream/MediaStreamTrackList.idl:
+        * WebCore.gypi:
+        * dom/EventNames.h:
+        (WebCore):
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * platform/mediastream/MediaStreamCenter.cpp:
+        (WebCore::MediaStreamCenter::addMediaStreamTrack):
+        (WebCore):
+        (WebCore::MediaStreamCenter::removeMediaStreamTrack):
+        * platform/mediastream/MediaStreamCenter.h:
+        (MediaStreamCenter):
+        * platform/mediastream/MediaStreamDescriptor.h:
+        (MediaStreamDescriptorOwner):
+        * platform/mediastream/chromium/MediaStreamCenterChromium.cpp:
+        (WebCore::MediaStreamCenterChromium::didAddMediaStreamTrack):
+        (WebCore):
+        (WebCore::MediaStreamCenterChromium::didRemoveMediaStreamTrack):
+        (WebCore::MediaStreamCenterChromium::addMediaStreamTrack):
+        (WebCore::MediaStreamCenterChromium::removeMediaStreamTrack):
+        * platform/mediastream/chromium/MediaStreamCenterChromium.h:
+        (WebKit):
+        (MediaStreamCenterChromium):
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp:
+        (WebCore::MediaStreamCenterGStreamer::didAddMediaStreamTrack):
+        (WebCore):
+        (WebCore::MediaStreamCenterGStreamer::didRemoveMediaStreamTrack):
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.h:
+        (MediaStreamCenterGStreamer):
+
 2012-07-02  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: incorrect height of main timeline pane after switching to memory mode

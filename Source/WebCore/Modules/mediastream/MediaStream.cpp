@@ -95,19 +95,21 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     audioTrackVector.reserveCapacity(numberOfAudioTracks);
     for (size_t i = 0; i < numberOfAudioTracks; i++)
         audioTrackVector.append(MediaStreamTrack::create(m_descriptor, m_descriptor->audioComponent(i)));
-    m_audioTracks = MediaStreamTrackList::create(audioTrackVector);
+    m_audioTracks = MediaStreamTrackList::create(this, audioTrackVector);
 
     MediaStreamTrackVector videoTrackVector;
     size_t numberOfVideoTracks = m_descriptor->numberOfVideoComponents();
     videoTrackVector.reserveCapacity(numberOfVideoTracks);
     for (size_t i = 0; i < numberOfVideoTracks; i++)
         videoTrackVector.append(MediaStreamTrack::create(m_descriptor, m_descriptor->videoComponent(i)));
-    m_videoTracks = MediaStreamTrackList::create(videoTrackVector);
+    m_videoTracks = MediaStreamTrackList::create(this, videoTrackVector);
 }
 
 MediaStream::~MediaStream()
 {
     m_descriptor->setOwner(0);
+    m_audioTracks->detachOwner();
+    m_videoTracks->detachOwner();
 }
 
 MediaStream::ReadyState MediaStream::readyState() const
@@ -121,6 +123,8 @@ void MediaStream::streamEnded()
         return;
 
     m_descriptor->setEnded();
+    m_audioTracks->detachOwner();
+    m_videoTracks->detachOwner();
 
     dispatchEvent(Event::create(eventNames().endedEvent, false, false));
 }
@@ -143,6 +147,33 @@ EventTargetData* MediaStream::eventTargetData()
 EventTargetData* MediaStream::ensureEventTargetData()
 {
     return &m_eventTargetData;
+}
+
+void MediaStream::addTrack(MediaStreamComponent* component)
+{
+    RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(m_descriptor, component);
+    ExceptionCode ec = 0;
+    switch (component->source()->type()) {
+    case MediaStreamSource::TypeAudio:
+        m_audioTracks->add(track, ec);
+        break;
+    case MediaStreamSource::TypeVideo:
+        m_videoTracks->add(track, ec);
+        break;
+    }
+    ASSERT(!ec);
+}
+
+void MediaStream::removeTrack(MediaStreamComponent* component)
+{
+    switch (component->source()->type()) {
+    case MediaStreamSource::TypeAudio:
+        m_audioTracks->remove(component);
+        break;
+    case MediaStreamSource::TypeVideo:
+        m_videoTracks->remove(component);
+        break;
+    }
 }
 
 } // namespace WebCore
