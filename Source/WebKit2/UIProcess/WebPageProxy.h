@@ -917,7 +917,6 @@ private:
     void setCursorHiddenUntilMouseMoves(bool);
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
-    void didReceiveKeyEvent(uint32_t opaqueType, bool handled);
     void stopResponsivenessTimer();
 
     void voidCallback(uint64_t);

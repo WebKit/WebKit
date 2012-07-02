@@ -1439,7 +1439,7 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     if (!handled)
         handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
 
-    sendSync(Messages::WebPageProxy::DidReceiveKeyEvent(static_cast<uint32_t>(keyboardEvent.type()), handled), Messages::WebPageProxy::DidReceiveKeyEvent::Reply());
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled));
 }
 
 void WebPage::keyEventSyncForTesting(const WebKeyboardEvent& keyboardEvent, bool& handled)

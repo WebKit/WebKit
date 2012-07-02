@@ -1135,7 +1135,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     if (m_shouldSendEventsSynchronously) {
         bool handled = false;
         process()->sendSync(Messages::WebPage::KeyEventSyncForTesting(event), Messages::WebPage::KeyEventSyncForTesting::Reply(handled), m_pageID);
-        didReceiveKeyEvent(event.type(), handled);
+        didReceiveEvent(event.type(), handled);
     } else
         process()->send(Messages::WebPage::KeyEvent(event), m_pageID);
 }
@@ -3159,42 +3159,6 @@ void WebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     m_pageClient->setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
 }
 
-void WebPageProxy::didReceiveKeyEvent(uint32_t opaqueType, bool handled)
-{
-    process()->responsivenessTimer()->stop();
-
-    WebEvent::Type type = static_cast<WebEvent::Type>(opaqueType);
-
-    switch (type) {
-    case WebEvent::KeyDown:
-    case WebEvent::KeyUp:
-    case WebEvent::RawKeyDown:
-    case WebEvent::Char: {
-        LOG(KeyHandling, "WebPageProxy::didReceiveKeyEvent: %s", webKeyboardEventTypeString(type));
-
-        NativeWebKeyboardEvent event = m_keyEventQueue.first();
-        MESSAGE_CHECK(type == event.type());
-
-        m_keyEventQueue.removeFirst();
-
-        m_pageClient->doneWithKeyEvent(event, handled);
-
-        if (handled)
-            break;
-
-        if (m_uiClient.implementsDidNotHandleKeyEvent())
-            m_uiClient.didNotHandleKeyEvent(this, event);
-#if PLATFORM(WIN)
-        else
-            ::TranslateMessage(event.nativeEvent());
-#endif
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
 void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 {
     WebEvent::Type type = static_cast<WebEvent::Type>(opaqueType);
@@ -3207,6 +3171,10 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::MouseDown:
     case WebEvent::MouseUp:
     case WebEvent::Wheel:
+    case WebEvent::KeyDown:
+    case WebEvent::KeyUp:
+    case WebEvent::RawKeyDown:
+    case WebEvent::Char:
 #if ENABLE(GESTURE_EVENTS)
     case WebEvent::GestureScrollBegin:
     case WebEvent::GestureScrollEnd:
@@ -3220,8 +3188,6 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 #endif
         process()->responsivenessTimer()->stop();
         break;
-    default:
-        ASSERT_NOT_REACHED();
     }
 
     switch (type) {
@@ -3266,6 +3232,30 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
     }
 
+    case WebEvent::KeyDown:
+    case WebEvent::KeyUp:
+    case WebEvent::RawKeyDown:
+    case WebEvent::Char: {
+        LOG(KeyHandling, "WebPageProxy::didReceiveEvent: %s", webKeyboardEventTypeString(type));
+
+        NativeWebKeyboardEvent event = m_keyEventQueue.first();
+        MESSAGE_CHECK(type == event.type());
+
+        m_keyEventQueue.removeFirst();
+
+        m_pageClient->doneWithKeyEvent(event, handled);
+
+        if (handled)
+            break;
+
+        if (m_uiClient.implementsDidNotHandleKeyEvent())
+            m_uiClient.didNotHandleKeyEvent(this, event);
+#if PLATFORM(WIN)
+        else
+            ::TranslateMessage(event.nativeEvent());
+#endif
+        break;
+    }
 #if ENABLE(TOUCH_EVENTS)
     case WebEvent::TouchStart:
     case WebEvent::TouchMove:
@@ -3283,8 +3273,6 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
     }
 #endif
-    default:
-        ASSERT_NOT_REACHED();
     }
 }
 
