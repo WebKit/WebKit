@@ -1,3 +1,15 @@
+2012-07-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: incorrect height of main timeline pane after switching to memory mode
+        https://bugs.webkit.org/show_bug.cgi?id=90387
+
+        Reviewed by Pavel Feldman.
+
+        - update cached container height when setting vertical splitter position.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.set _setSplitterPosition):
+
 2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
 
         [MICRODATA] Build failure in html/HTMLPropertiesCollection.h

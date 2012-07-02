@@ -180,6 +180,7 @@ WebInspector.TimelinePanel.prototype = {
         this.splitView.element.style.height = (top - overviewHeight) + "px";
         this._timelineMemorySplitter.style.top = (top - 2) + "px";
         this._memoryStatistics.setTopPosition(top);
+        this._containerElementHeight = this._containerElement.clientHeight;
     },
 
     get calculator()
