@@ -1,5 +1,33 @@
 2012-07-02  Taiju Tsuiki  <tzik@chromium.org>
 
+        Web Inspector: Add requestFileContent command and fileContentReceived event
+        https://bugs.webkit.org/show_bug.cgi?id=89642
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test: http/tests/inspector/filesystem/read-file.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorFileSystemAgent::requestFileContent):
+        * inspector/InspectorFileSystemAgent.h:
+        (InspectorFileSystemAgent):
+        * inspector/front-end/FileSystemModel.js:
+        (WebInspector.FileSystemModel.prototype.requestMetadata):
+        (WebInspector.FileSystemModel.prototype.requestFileContent):
+        (WebInspector.FileSystemModel.File.prototype.get resourceType):
+        (WebInspector.FileSystemModel.File.prototype.requestFileContent):
+        (WebInspector.FileSystemRequestManager):
+        (WebInspector.FileSystemRequestManager.prototype._metadataReceived):
+        (WebInspector.FileSystemRequestManager.prototype.requestFileContent.requestAccepted):
+        (WebInspector.FileSystemRequestManager.prototype.requestFileContent):
+        (WebInspector.FileSystemRequestManager.prototype._fileContentReceived):
+        (WebInspector.FileSystemDispatcher.prototype.metadataReceived):
+        (WebInspector.FileSystemDispatcher.prototype.fileContentReceived):
+
+2012-07-02  Taiju Tsuiki  <tzik@chromium.org>
+
         Web Inspector: Add refresh button to FileSystemView status bar
         https://bugs.webkit.org/show_bug.cgi?id=90244
 

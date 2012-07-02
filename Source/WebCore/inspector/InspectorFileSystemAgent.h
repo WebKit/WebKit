@@ -62,6 +62,7 @@ public:
     virtual void requestFileSystemRoot(ErrorString*, const String& origin, const String& type, int* requestId) OVERRIDE;
     virtual void requestDirectoryContent(ErrorString*, const String& url, int* requestId) OVERRIDE;
     virtual void requestMetadata(ErrorString*, const String& url, int* requestId) OVERRIDE;
+    virtual void requestFileContent(ErrorString*, const String& url, const int* start, const int* end, int* requestId) OVERRIDE;
 
     virtual void setFrontend(InspectorFrontend*) OVERRIDE;
     virtual void clearFrontend() OVERRIDE;

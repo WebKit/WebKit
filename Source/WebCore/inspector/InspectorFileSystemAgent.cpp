@@ -34,15 +34,20 @@
 
 #include "InspectorFileSystemAgent.h"
 
+#include "Base64.h"
 #include "DOMFileSystem.h"
 #include "DirectoryEntry.h"
 #include "DirectoryReader.h"
 #include "Document.h"
 #include "EntriesCallback.h"
+#include "Entry.h"
 #include "EntryArray.h"
 #include "EntryCallback.h"
 #include "ErrorCallback.h"
+#include "FileCallback.h"
+#include "FileEntry.h"
 #include "FileError.h"
+#include "FileReader.h"
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
 #include "Frame.h"
@@ -54,6 +59,7 @@
 #include "MIMETypeRegistry.h"
 #include "Metadata.h"
 #include "MetadataCallback.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
 using WebCore::TypeBuilder::Array;
@@ -400,6 +406,129 @@ bool GetMetadataTask::didGetMetadata(Metadata* metadata)
     return true;
 }
 
+class ReadFileTask : public EventListener {
+    WTF_MAKE_NONCOPYABLE(ReadFileTask);
+public:
+    static PassRefPtr<ReadFileTask> create(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const String& url, long long start, long long end)
+    {
+        return adoptRef(new ReadFileTask(frontendProvider, requestId, url, start, end));
+    }
+
+    virtual ~ReadFileTask()
+    {
+        reportResult(FileError::ABORT_ERR, 0);
+    }
+
+    void start(ScriptExecutionContext*);
+
+
+    virtual bool operator==(const EventListener& other) OVERRIDE
+    {
+        return this == &other;
+    }
+
+    virtual void handleEvent(ScriptExecutionContext*, Event* event) OVERRIDE
+    {
+        if (event->type() == eventNames().loadEvent)
+            didRead();
+        else if (event->type() == eventNames().errorEvent)
+            didHitError(m_reader->error().get());
+    }
+
+private:
+    bool didHitError(FileError* error)
+    {
+        reportResult(error->code(), 0);
+        return true;
+    }
+
+    bool didGetEntry(Entry*);
+    bool didGetFile(File*);
+    void didRead();
+
+    void reportResult(FileError::ErrorCode errorCode, const String* result)
+    {
+        if (!m_frontendProvider || !m_frontendProvider->frontend())
+            return;
+        m_frontendProvider->frontend()->fileContentReceived(m_requestId, static_cast<int>(errorCode), result);
+        m_frontendProvider = 0;
+    }
+
+    ReadFileTask(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const String& url, long long start, long long end)
+        : EventListener(EventListener::CPPEventListenerType)
+        , m_frontendProvider(frontendProvider)
+        , m_requestId(requestId)
+        , m_url(ParsedURLString, url)
+        , m_start(start)
+        , m_end(end)
+        , m_current(start) { }
+
+    RefPtr<FrontendProvider> m_frontendProvider;
+    int m_requestId;
+    KURL m_url;
+    int m_start;
+    long long m_end;
+    long long m_current;
+
+    RefPtr<FileReader> m_reader;
+};
+
+void ReadFileTask::start(ScriptExecutionContext* scriptExecutionContext)
+{
+    ASSERT(scriptExecutionContext);
+
+    FileSystemType type;
+    String path;
+    if (!DOMFileSystemBase::crackFileSystemURL(m_url, type, path)) {
+        reportResult(FileError::SYNTAX_ERR, 0);
+        return;
+    }
+
+    RefPtr<EntryCallback> successCallback = CallbackDispatcherFactory<EntryCallback>::create(this, &ReadFileTask::didGetEntry);
+    RefPtr<ErrorCallback> errorCallback = CallbackDispatcherFactory<ErrorCallback>::create(this, &ReadFileTask::didHitError);
+    OwnPtr<ResolveURICallbacks> fileSystemCallbacks = ResolveURICallbacks::create(successCallback, errorCallback, scriptExecutionContext, type, path);
+
+    LocalFileSystem::localFileSystem().readFileSystem(scriptExecutionContext, type, fileSystemCallbacks.release());
+}
+
+bool ReadFileTask::didGetEntry(Entry* entry)
+{
+    if (entry->isDirectory()) {
+        reportResult(FileError::TYPE_MISMATCH_ERR, 0);
+        return true;
+    }
+
+    if (!entry->filesystem()->scriptExecutionContext()) {
+        reportResult(FileError::ABORT_ERR, 0);
+        return true;
+    }
+
+    RefPtr<FileCallback> successCallback = CallbackDispatcherFactory<FileCallback>::create(this, &ReadFileTask::didGetFile);
+    RefPtr<ErrorCallback> errorCallback = CallbackDispatcherFactory<ErrorCallback>::create(this, &ReadFileTask::didHitError);
+    static_cast<FileEntry*>(entry)->file(successCallback, errorCallback);
+
+    m_reader = FileReader::create(entry->filesystem()->scriptExecutionContext());
+    return true;
+}
+
+bool ReadFileTask::didGetFile(File* file)
+{
+    RefPtr<Blob> blob = file->slice(m_start, m_end);
+    m_reader->setOnload(this);
+    m_reader->setOnerror(this);
+
+    ExceptionCode ec = 0;
+    m_reader->readAsArrayBuffer(blob.get(), ec);
+    return true;
+}
+
+void ReadFileTask::didRead()
+{
+    RefPtr<ArrayBuffer> result = m_reader->arrayBufferResult();
+    String encodedResult = base64Encode(static_cast<char*>(result->data()), result->byteLength());
+    reportResult(static_cast<FileError::ErrorCode>(0), &encodedResult);
+}
+
 }
 
 // static
@@ -476,6 +605,22 @@ void InspectorFileSystemAgent::requestMetadata(ErrorString* error, const String&
         GetMetadataTask::create(m_frontendProvider, *requestId, url)->start(scriptExecutionContext);
     else
         m_frontendProvider->frontend()->metadataReceived(*requestId, static_cast<int>(FileError::ABORT_ERR), 0);
+}
+
+void InspectorFileSystemAgent::requestFileContent(ErrorString* error, const String& url, const int* start, const int* end, int* requestId)
+{
+    if (!m_enabled || !m_frontendProvider) {
+        *error = "FileSystem agent is not enabled";
+        return;
+    }
+    ASSERT(m_frontendProvider->frontend());
+
+    *requestId = m_nextRequestId++;
+
+    if (ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextForOrigin(SecurityOrigin::createFromString(url).get()))
+        ReadFileTask::create(m_frontendProvider, *requestId, url, start ? *start : 0, end ? *end : std::numeric_limits<long long>::max())->start(scriptExecutionContext);
+    else
+        m_frontendProvider->frontend()->fileContentReceived(*requestId, static_cast<int>(FileError::ABORT_ERR), 0);
 }
 
 void InspectorFileSystemAgent::setFrontend(InspectorFrontend* frontend)

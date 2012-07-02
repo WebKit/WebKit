@@ -1471,6 +1471,18 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding metadataReceived event should have same requestId with this." }
                 ],
                 "description": "Returns metadata of the entry as metadataReceived event."
+            },
+            {
+                "name": "requestFileContent",
+                "parameters": [
+                    { "name": "url", "type": "string", "description": "URL of the file that the frontend is requesting to read from." },
+                    { "name": "start", "type": "integer", "optional": true, "description": "Specifies the start of range to read." },
+                    { "name": "end", "type": "integer", "optional": true, "description": "Specifies the end of range to read exclusively." }
+                ],
+                "returns": [
+                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding fileContentReceived event should have same requestId with this." }
+                ],
+                "description": "Returns content of the file as fileContentReceived event. Result should be sliced into [start, end)."
             }
         ],
         "events": [
@@ -1495,11 +1507,20 @@
             {
                 "name": "metadataReceived",
                 "parameters": [
-                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding getMetadata request." },
+                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding requestMetadata command." },
                     { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
                     { "name": "metadata", "$ref": "FileSystem.Metadata", "optional": true, "description": "Contains metadata of the entry if the command completed successfully." }
                 ],
-                "description": "Completion event of getMetadata command."
+                "description": "Completion event of requestMetadata command."
+            },
+            {
+                "name": "fileContentReceived",
+                "parameters": [
+                    { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding requestFileContent command." },
+                    { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
+                    { "name": "content", "type": "string", "optional": true, "description": "Contains content of the file as base64 encoded string." }
+                ],
+                "description": "Completion event of requestFileContent command."
             }
         ]
     },
