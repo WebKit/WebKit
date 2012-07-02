@@ -179,8 +179,6 @@ void GamepadsEfl::registerDevice(const String& syspath)
     if (!deviceFile || !eina_str_has_prefix(deviceFile, joystickPrefix))
         return;
 
-    LOG(Gamepad, "Registering gamepad at %s, deviceFile: %s", syspath.utf8().data(), deviceFile);
-
     const size_t slotCount = m_slots.size();
     for (size_t index = 0; index < slotCount; ++index) {
         if (!m_slots[index]) {
@@ -195,8 +193,6 @@ void GamepadsEfl::unregisterDevice(const String& syspath)
 {
     if (!m_deviceMap.contains(syspath))
         return;
-
-    LOG(Gamepad, "Registering gamepad at %s,", syspath.utf8().data());
 
     GamepadDeviceEfl* gamepadDevice = m_deviceMap.take(syspath);
     const size_t index = m_slots.find(gamepadDevice);

@@ -1,3 +1,14 @@
+2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Fix compilation error in GamepadsEfl.cpp in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=90369
+
+        Unreviewed, EFL build fix.
+
+        * platform/efl/GamepadsEfl.cpp:
+        (WebCore::GamepadsEfl::registerDevice):
+        (WebCore::GamepadsEfl::unregisterDevice):
+
 2012-07-02  Nikita Vasilyev  <me@elv1s.ru>
 
         Web Inspector: Design WebSockets panel
