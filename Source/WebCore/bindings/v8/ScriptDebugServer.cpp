@@ -451,6 +451,8 @@ void ScriptDebugServer::clearCompiledScripts()
 
 void ScriptDebugServer::runScript(ScriptState* state, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage)
 {
+    if (!m_compiledScripts.contains(scriptId))
+        return;
     v8::HandleScope handleScope;
     OwnHandle<v8::Script>* scriptOwnHandle = m_compiledScripts.get(scriptId);
     v8::Local<v8::Script> script = v8::Local<v8::Script>::New(scriptOwnHandle->get());

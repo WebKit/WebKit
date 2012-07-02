@@ -149,14 +149,32 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     afterTextChanged: function(oldRange, newRange)
     {
+        WebInspector.SourceFrame.prototype.afterTextChanged.call(this, oldRange, newRange);
         this._javaScriptSource.setWorkingCopy(this.textModel.text);
-        if (!this._javaScriptSource.isDirty())
-            this._didEditContent(null);
+        this._restoreBreakpointsAfterEditing();
     },
 
     beforeTextChanged: function()
     {
-        if (!this._javaScriptSource.isDirty()) {
+        WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
+        this._removeBreakpointsBeforeEditing();
+    },
+
+    _didEditContent: function(error)
+    {
+        delete this._isCommittingEditing;
+
+        if (error) {
+            WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
+            return;
+        }
+        if (!this._javaScriptSource.supportsEnabledBreakpointsWhileEditing())
+            this._restoreBreakpointsAfterEditing();
+    },
+
+    _removeBreakpointsBeforeEditing: function()
+    {
+        if (!this._javaScriptSource.isDirty() || this._javaScriptSource.supportsEnabledBreakpointsWhileEditing()) {
             // Disable all breakpoints in the model, store them as muted breakpoints.
             var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._javaScriptSource);
             var lineNumbers = {};
@@ -168,27 +186,20 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             }
             this.clearExecutionLine();
         }
-
-        WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
     },
 
-    _didEditContent: function(error)
+    _restoreBreakpointsAfterEditing: function()
     {
-        delete this._isCommittingEditing;
-
-        if (error) {
-            WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
-            return;
-        }
-
-        // Restore all muted breakpoints.
-        for (var lineNumber = 0; lineNumber < this.textModel.linesCount; ++lineNumber) {
-            var breakpointDecoration = this.textModel.getAttribute(lineNumber, "breakpoint");
-            if (breakpointDecoration) {
-                // Remove fake decoration
-                this._removeBreakpointDecoration(lineNumber);
-                // Set new breakpoint
-                this._setBreakpoint(lineNumber, breakpointDecoration.condition, breakpointDecoration.enabled);
+        if (!this._javaScriptSource.isDirty() || this._javaScriptSource.supportsEnabledBreakpointsWhileEditing()) {
+            // Restore all muted breakpoints.
+            for (var lineNumber = 0; lineNumber < this.textModel.linesCount; ++lineNumber) {
+                var breakpointDecoration = this.textModel.getAttribute(lineNumber, "breakpoint");
+                if (breakpointDecoration) {
+                    // Remove fake decoration
+                    this._removeBreakpointDecoration(lineNumber);
+                    // Set new breakpoint
+                    this._setBreakpoint(lineNumber, breakpointDecoration.condition, breakpointDecoration.enabled);
+                }
             }
         }
     },
@@ -326,7 +337,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
         this.textViewer.beginUpdates();
         this.textViewer.addDecoration(lineNumber, "webkit-breakpoint");
-        if (!enabled || mutedWhileEditing)
+        if (!enabled || (mutedWhileEditing && !this._javaScriptSource.supportsEnabledBreakpointsWhileEditing()))
             this.textViewer.addDecoration(lineNumber, "webkit-breakpoint-disabled");
         else
             this.textViewer.removeDecoration(lineNumber, "webkit-breakpoint-disabled");
@@ -349,7 +360,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _onMouseDown: function(event)
     {
-        if (this._javaScriptSource.isDirty())
+        if (this._javaScriptSource.isDirty() && !this._javaScriptSource.supportsEnabledBreakpointsWhileEditing())
             return;
 
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey)

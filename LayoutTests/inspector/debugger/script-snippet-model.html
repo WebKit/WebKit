@@ -26,29 +26,37 @@ function test()
             var content = "";
             content += "// This snippet does nothing.\n";
             content += "var i = 2+2;\n";
-            WebInspector.scriptSnippetModel.setScriptSnippetContent(snippetJavaScriptSource1, content);
+            WebInspector.scriptSnippetModel._setScriptSnippetContent(snippetJavaScriptSource1, content);
 
             var snippetJavaScriptSource2 = WebInspector.scriptSnippetModel.createScriptSnippet();
             WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource2, "Snippet2");
             content = "";
-            content += "// This snippet creates a function that does nothing.\n";
+            content += "// This snippet creates a function that does nothing and returns it.\n";
             content += "function doesNothing()\n";
             content += "{\n";
             content += "    var  i = 2+2;\n";
-            content += "}\n";
-            WebInspector.scriptSnippetModel.setScriptSnippetContent(snippetJavaScriptSource2, content);
+            content += "};\n";
+            content += "doesNothing;\n";
+            WebInspector.scriptSnippetModel._setScriptSnippetContent(snippetJavaScriptSource2, content);
 
             function evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource, callback)
             {
                 InspectorTest.addSniffer(WebInspector.SnippetScriptMapping.prototype, "addScript", dumpScript);
+                InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "_printResult", dumpResult);
                 WebInspector.scriptSnippetModel.evaluateScriptSnippet(snippetJavaScriptSource);
-                var snippet = WebInspector.scriptSnippetModel._snippetStorage.snippetForId(snippetJavaScriptSource.snippetId);
-                InspectorTest.addResult("Last evaluation source url for snippet: " + snippet._lastEvaluationSourceURL);
-                InspectorTest.assertEquals(snippet, WebInspector.scriptSnippetModel._snippetForSourceURL(snippet._lastEvaluationSourceURL), "Snippet can not be identified by its evaluation sourceURL.");
+                var evaluationSourceURL = WebInspector.scriptSnippetModel._evaluationSourceURL(snippetJavaScriptSource);
+                var snippetId = snippetJavaScriptSource.snippetId;
+                InspectorTest.addResult("Last evaluation source url for snippet: " + evaluationSourceURL);
+                InspectorTest.assertEquals(snippetId, WebInspector.scriptSnippetModel._snippetIdForSourceURL(evaluationSourceURL), "Snippet can not be identified by its evaluation sourceURL.");
 
                 function dumpScript(script)
                 {
                     InspectorTest.addResult("Snippet script added, sourceURL = " + script.sourceURL);
+                }
+
+                function dumpResult(result, wasThrown)
+                {
+                    InspectorTest.addResult("Snippet execution result: " + result.description);
                     callback();
                 }
             }

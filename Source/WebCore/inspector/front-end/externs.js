@@ -147,6 +147,8 @@ WebInspector.addMainEventListeners = function(doc) {}
 
 WebInspector.openResource = function(url, external) {}
 
+WebInspector.showConsole = function() {}
+
 /**
  * @param {string} expression
  * @param {boolean=} showResultOnly

@@ -232,7 +232,10 @@ WebInspector.SnippetsNavigatorView.prototype = {
      */
     _handleEvaluateSnippet: function(uiSourceCode, event)
     {
-        // FIXME: To be implemented.
+        if (!uiSourceCode.isSnippet)
+            return;
+        var snippetJavaScriptSource = /** @type {WebInspector.SnippetJavaScriptSource} */ uiSourceCode;
+        snippetJavaScriptSource.evaluate();
     },
 
     /**

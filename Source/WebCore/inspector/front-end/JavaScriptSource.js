@@ -160,6 +160,14 @@ WebInspector.JavaScriptSource.prototype = {
     },
 
     /**
+     * @return {boolean}
+     */
+    supportsEnabledBreakpointsWhileEditing: function()
+    {
+        return false;
+    },
+
+    /**
      * @return {string}
      */
     breakpointStorageId: function()
@@ -188,7 +196,7 @@ WebInspector.JavaScriptSource.prototype = {
      * @param {function(?string)} callback
      */
     workingCopyCommitted: function(callback)
-    {  
+    {
         /**
          * @param {?string} error
          */

@@ -1,3 +1,13 @@
+2012-06-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Implement snippets evaluation.
+        https://bugs.webkit.org/show_bug.cgi?id=88707
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/script-snippet-model-expected.txt:
+        * inspector/debugger/script-snippet-model.html:
+
 2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Rebaseline needed after r121296 and r121599
