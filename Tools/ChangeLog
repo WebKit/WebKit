@@ -1,5 +1,25 @@
 2012-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Read fonts path when running layout tests from alternative fonts dir when main dir doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=89437
+
+        Reviewed by Martin Robinson.
+
+        If main fonts directory doesn't exist, try with an alternative
+        fonts directory at build directory.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (getOutputDir):
+        (getFontsPath):
+        (initializeFonts):
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::getOutputDir):
+        (WTR):
+        (WTR::getFontsPath):
+        (WTR::inititializeFontConfigSetting):
+
+2012-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Don't run the tests with jhbuild wrapper if it's already running under jhbuild
         https://bugs.webkit.org/show_bug.cgi?id=89435
 
