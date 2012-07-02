@@ -25,7 +25,11 @@
 // 5. TESTS TIMING OUT
 // Please open a bug for each test timing out with any important information.
 
-// 6. TESTS FAILING
+// 6. TESTS WITH ARCHITECTURE-SPECIFIC RESULTS
+// Tests with different results (of which at least one is failure) on 32-bit and 64-bit builders.
+// These tests are essentially marked as flaky, but are noted as failing only on specific architecture.
+
+// 7. TESTS FAILING
 // Each test should (eventually) have a bug. Missing DRT features also go here.
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -351,7 +355,7 @@ BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-2.html = CRASH PASS
 BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH PASS
 
 BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
-BUGWK86443 : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
+BUGWK86443 DEBUG : plugins/npruntime/delete-plugin-within-invoke.html = CRASH
 
 BUGWK86176 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 
@@ -474,6 +478,32 @@ BUGWK84676 SKIP : fast/files/file-reader-event-listener.html = TIMEOUT
 // End of Tests timing out
 //////////////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////////////////////
+// Tests with architecture-specific results
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// Fail on 32-bit release builders
+BUGWK84857 : fast/repaint/moving-shadow-on-container.html = PASS TEXT
+BUGWK84857 : fast/repaint/moving-shadow-on-path.html = PASS TEXT
+BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html = PASS TEXT
+BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html = PASS TEXT
+BUGWK62204 : svg/W3C-SVG-1.1/paths-data-03-f.svg = PASS TEXT
+BUGWKGTK : svg/css/composite-shadow-example.html = PASS TEXT
+BUGWKGTK : svg/css/composite-shadow-with-opacity.html = PASS TEXT
+BUGWKGTK : svg/css/stars-with-shadow.html = PASS TEXT
+
+// Fail on 64-bit release and debug builders
+BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A3.2.html = PASS TEXT
+BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html = PASS TEXT
+BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html = PASS TEXT
+BUGWK89099 : svg/transforms/transformed-text-fill-pattern.html = PASS IMAGE
+
+// Fails on 32-bit release and 64-bit debug builders
+BUGWK83560 : fast/events/drop-with-file-paths.html = PASS TEXT
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// End of tests with architecture-specific results
+//////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Tests failing
@@ -887,8 +917,6 @@ BUGWKGTK : http/tests/security/dataTransfer-set-data-file-url.html = TEXT
 BUGWKGTK : fast/events/ondragenter.html = TEXT
 
 // Remaining Sputnik failures
-BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html = TEXT
-BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html = TEXT
 BUGWK43568 : sputnik/Unicode/Unicode_510/S7.6_A3.1.html = TEXT
 
 // The following Sputnik tests fail on the 32bit release bot
@@ -898,9 +926,6 @@ BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T
 BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T4.html = TEXT
 BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T5.html = TEXT
 BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.html = TEXT
-BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html = TEXT
-BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html = TEXT
-BUGWKGTK : sputnik/Unicode/Unicode_510/S7.6_A3.2.html = TEXT
 
 // r65681 broke a couple GTK+ a11y tests
 BUGWK44316 : platform/gtk/accessibility/object-attributes.html = TEXT
@@ -1044,17 +1069,9 @@ BUGWK84700 : fast/dom/Window/window-postmessage-clone.html = TEXT
 
 BUGWK73003 : editing/spelling/spellcheck-async.html = TEXT
 
-// 1 pixel difference between 64-bits and 32-bits
-// Some of these also present rounding issues and xx.00 vs xx.
 BUGWK62204 : svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml = TEXT
 BUGWK62204 : svg/custom/use-on-symbol-inside-pattern.svg = TEXT
-BUGWK62204 : svg/W3C-SVG-1.1/paths-data-03-f.svg = TEXT
 BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-04-t.svg = TEXT
-
-// Floating point inconsistencies between 32-bit and 64-bit bots
-BUGWKGTK : svg/css/composite-shadow-example.html = TEXT
-BUGWKGTK : svg/css/composite-shadow-with-opacity.html = TEXT
-BUGWKGTK : svg/css/stars-with-shadow.html = TEXT
 
 BUGWK78673 : svg/animations/animate-text-nested-transforms.html = TEXT
 
@@ -1094,8 +1111,6 @@ BUGWK82020 : plugins/netscape-dom-access-and-reload.html = TEXT
 // The inner <input> should now grow to take the full cell's height.
 BUGWKGTK : fast/table/colspanMinWidth-vertical.html = TEXT
 
-BUGWK83560 : fast/events/drop-with-file-paths.html = TEXT
-
 // EditorClient::checkTextOfParagraph() is not implemented.
 BUGWKGTK : editing/spelling/spelling-marker-description.html = TEXT
 
@@ -1120,9 +1135,6 @@ BUGWK84693 : fast/events/panScroll-click-hyperlink.html = MISSING
 BUGWK84692 : fast/events/attempt-scroll-with-no-scrollbars.html = TEXT
 
 BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = IMAGE
-
-BUGWK84857 : fast/repaint/moving-shadow-on-container.html = TEXT
-BUGWK84857 : fast/repaint/moving-shadow-on-path.html = TEXT
 
 BUGWK85376 : fullscreen/video-controls-drag.html = TEXT
 
@@ -1190,7 +1202,6 @@ BUGWK86771 SKIP : fast/dom/gc-10.html = TEXT
 BUGWK88961 : http/tests/misc/redirect-to-about-blank.html = TEXT
 
 BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = TEXT
-BUGWK89099 : svg/transforms/transformed-text-fill-pattern.html = IMAGE
 
 BUGWK87088 : fast/js/names.html = TEXT
 
