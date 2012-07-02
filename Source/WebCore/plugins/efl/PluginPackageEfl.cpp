@@ -129,6 +129,8 @@ bool PluginPackage::load()
 
     m_isLoaded = true;
 
+    NPError err;
+
     NP_InitializeFuncPtr initialize = reinterpret_cast<NP_InitializeFuncPtr>(eina_module_symbol_get(m_module, "NP_Initialize"));
     if (!initialize) {
         EINA_LOG_ERR("Could not get symbol NP_Initialize");
@@ -147,9 +149,9 @@ bool PluginPackage::load()
     initializeBrowserFuncs();
 
 #if defined(XP_UNIX)
-    NPError err = initialize(&m_browserFuncs, &m_pluginFuncs);
+    err = initialize(&m_browserFuncs, &m_pluginFuncs);
 #else
-    NPError err = initialize(&m_browserFuncs);
+    err = initialize(&m_browserFuncs);
 #endif
     if (err != NPERR_NO_ERROR)
         goto abort;

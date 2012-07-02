@@ -1,3 +1,11 @@
+2012-07-02  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed build fix with ENABLE_NETSCAPE_PLUGIN_API after r121467.
+
+        * plugins/efl/PluginPackageEfl.cpp:
+        (WebCore::PluginPackage::load): Move the declaration of `err'
+        before the first `goto' statement.
+
 2012-07-02  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: replace recursion with a stack in DOM nodes snapshot traversal.
