@@ -1,5 +1,13 @@
 2012-07-01  Keishi Hattori  <keishi@webkit.org>
 
+       [Chromium] Fix TestExpectations error caused in r121652.
+
+        Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-01  Keishi Hattori  <keishi@webkit.org>
+
         [Chromium] Removing LEOPARD from TestExpectations so the tests run.
         Caused by r121595
 
