@@ -1,3 +1,13 @@
+2012-06-29  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Simplify detection of non-installed module file
+
+        Has the additional advantage that we do not rely on additional information.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/qt_webkit.pri:
+
 2012-07-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add Gamepad support

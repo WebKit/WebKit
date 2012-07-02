@@ -29,9 +29,7 @@ QT_WEBKIT_MINOR_VERSION = $$QT.webkit.MINOR_VERSION
 QT_WEBKIT_PATCH_VERSION = $$QT.webkit.PATCH_VERSION
 
 unix:!mac {
-    install_prefix = $$find(_FILE_, ^$$[QT_INSTALL_PREFIX])
-    module_prefix = $$find(QMAKE_EXTRA_MODULE_FORWARDS, ^$$dirname(QT_MODULE_BIN_BASE))
-    isEmpty(install_prefix):!isEmpty(module_prefix) {
+    !isEmpty(QT_MODULE_LIB_BASE):!equals(QT_MODULE_LIB_BASE, $$[QT_INSTALL_LIBS]) {
         # We are loading the qt_webkit.pri forwarding file from the
         # local webkit build directory, so set up rpath to point to
         # to the local build. This ensures that any of the WebKit tools
@@ -40,6 +38,4 @@ unix:!mac {
         # party applications that set QMAKE_EXTRA_MODULE_FORWARDS.
         QMAKE_LFLAGS *= "$${QMAKE_LFLAGS_RPATH}$${QT_MODULE_LIB_BASE}"
     }
-    unset(install_prefix)
-    unset(module_prefix)
 }
