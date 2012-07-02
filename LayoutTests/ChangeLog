@@ -1,3 +1,18 @@
+2012-07-01  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Move platform/qt/fast/jsnavigator-language.html to fast/js
+        https://bugs.webkit.org/show_bug.cgi?id=90261
+
+        Reviewed by Ryosuke Niwa.
+
+        Efl needs a test case for navigator.language.
+        This test case is modified for all ports.
+
+        * fast/js/navigator-language-expected.txt: Copied from LayoutTests/platform/qt/fast/js/navigator-language-expected.txt.
+        * fast/js/navigator-language.html: Copied from LayoutTests/platform/qt/fast/js/navigator-language.html.
+        * platform/qt/fast/js/navigator-language-expected.txt: Removed.
+        * platform/qt/fast/js/navigator-language.html: Removed.
+
 2012-07-01  Keishi Hattori  <keishi@webkit.org>
 
        [Chromium] Fix TestExpectations error caused in r121652.
