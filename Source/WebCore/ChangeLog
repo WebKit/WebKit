@@ -1,3 +1,18 @@
+2012-07-01  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11785743> [mac] Non-BMP characters in vertical text appear as missing glyphs
+        https://bugs.webkit.org/show_bug.cgi?id=90349
+
+        Reviewed by Dean Jackson.
+
+        Test: platform/mac/fast/text/vertical-surrogate-pair.html
+
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::GlyphPage::fill): When calling wkGetVerticalGlyphsForCharacters or
+        CTFontGetGlyphsForCharacters with a buffer consisting of surrogate pair, account for those
+        functions’ behavior of placing glyphs at indices corresponding to the first character of
+        each pair.
+
 2012-07-01  Kenichi Ishibashi  <bashi@chromium.org>
 
         Arabic shaping is incorrect if ZWNJ exist

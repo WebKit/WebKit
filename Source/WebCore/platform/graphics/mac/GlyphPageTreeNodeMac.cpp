@@ -68,11 +68,14 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
         }
     } else if (!fontData->platformData().isCompositeFontReference() && ((fontData->platformData().widthVariant() == RegularWidth) ? wkGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)
                : CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength))) {
+        // When buffer consists of surrogate pairs, wkGetVerticalGlyphsForCharacters and CTFontGetGlyphsForCharacters
+        // place the glyphs at indices corresponding to the first character of each pair.
+        unsigned glyphStep = bufferLength / length;
         for (unsigned i = 0; i < length; ++i) {
-            if (!glyphs[i])
+            if (!glyphs[i * glyphStep])
                 setGlyphDataForIndex(offset + i, 0, 0);
             else {
-                setGlyphDataForIndex(offset + i, glyphs[i], fontData);
+                setGlyphDataForIndex(offset + i, glyphs[i * glyphStep], fontData);
                 haveGlyphs = true;
             }
         }
