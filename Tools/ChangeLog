@@ -1,3 +1,18 @@
+2012-07-03  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Add run API tests as a step on the build bots
+        https://bugs.webkit.org/show_bug.cgi?id=87252
+
+        Reviewed by Daniel Bates.
+
+        Run EFL API test suite on the build bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunEflAPITests):
+        (TestFactory.__init__):
+        (BuildAndTestFactory.__init__):
+        * Scripts/run-efl-tests: Added.
+
 2012-07-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make use of .qmake.cache for caching features
