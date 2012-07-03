@@ -1,3 +1,13 @@
+2012-07-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::ArgumentsSimplificationPhase should assert that the PhantomArguments nodes it creates are not shouldGenerate()
+        https://bugs.webkit.org/show_bug.cgi?id=90407
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+
 2012-07-02  Gavin Barraclough  <barraclough@apple.com>
 
         Array.prototype.pop should throw if property is not configurable

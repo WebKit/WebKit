@@ -627,8 +627,9 @@ public:
                     continue;
                 // If this is a CreateArguments for an InlineCallFrame* that does
                 // not create arguments, then replace it with a PhantomArguments.
-                // PhantomArguments is a constant that represents JSValue() (the
-                // empty value) in DFG and arguments creation for OSR exit.
+                // PhantomArguments is a non-executing node that just indicates
+                // that the node should be reified as an arguments object on OSR
+                // exit.
                 if (m_createsArguments.contains(node.codeOrigin.inlineCallFrame))
                     continue;
                 if (node.shouldGenerate()) {
@@ -641,12 +642,30 @@ public:
                 }
                 node.setOpAndDefaultFlags(PhantomArguments);
                 node.children.reset();
+                changed = true;
             }
             insertionSet.execute(*block);
         }
         
-        if (changed)
+        if (changed) {
             m_graph.collectGarbage();
+            
+            // Verify that PhantomArguments nodes are not shouldGenerate().
+#if !ASSERT_DISABLED
+            for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
+                BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+                if (!block)
+                    continue;
+                for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
+                    NodeIndex nodeIndex = block->at(indexInBlock);
+                    Node& node = m_graph[nodeIndex];
+                    if (node.op() != PhantomArguments)
+                        continue;
+                    ASSERT(!node.shouldGenerate());
+                }
+            }
+#endif
+        }
         
         return changed;
     }
