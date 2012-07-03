@@ -81,9 +81,6 @@ class QtPort(WebKitPort):
         # The Qt port builds DRT as part of the main build step
         return True
 
-    def _driver_class(self):
-        return XvfbDriver
-
     def _path_to_driver(self):
         return self._build_path('bin/%s' % self.driver_name())
 
