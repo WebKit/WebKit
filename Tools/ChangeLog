@@ -1,3 +1,23 @@
+2012-07-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WTR] Get rid of using DumpRenderTreeSupportQt
+        https://bugs.webkit.org/show_bug.cgi?id=90262
+
+        Unreviewed build fix.
+
+        Reverting r121550 manually because it caused build
+        break on ARM and Mac. It turned out that the Qt build
+        system is too broken for this change now, first we have
+        to address two issues:
+            * symbol hiding was forbidden accidentally on x86 Linux
+            * Qt lacks a separate library for test support
+
+        * Tools.pro:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::resetAfterTest):
+        (WTR::InjectedBundlePage::didClearWindowForFrame):
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+
 2012-07-03  Tony Chang  <tony@chromium.org>
 
         [chromium] Handle trailing backslash on %VSINSTALLDIR%

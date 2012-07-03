@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "ActivateFonts.h"
+#include "DumpRenderTreeSupportQt.h"
 #include "QtInitializeTestFonts.h"
 
 #include <QApplication>

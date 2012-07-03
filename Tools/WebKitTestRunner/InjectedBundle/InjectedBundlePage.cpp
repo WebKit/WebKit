@@ -45,6 +45,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(QT)
+#include "DumpRenderTreeSupportQt.h"
+#endif
+
 using namespace std;
 
 namespace WTR {
@@ -347,7 +351,11 @@ void InjectedBundlePage::resetAfterTest()
 {
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
     JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+#if PLATFORM(QT)
+    DumpRenderTreeSupportQt::injectInternalsObject(context);
+#else
     WebCoreTestSupport::resetInternalsObject(context);
+#endif
 }
 
 // Loader Client Callbacks
@@ -769,7 +777,11 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
     InjectedBundle::shared().textInputController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().accessibilityController()->makeWindowObject(context, window, &exception);
 
+#if PLATFORM(QT)
+    DumpRenderTreeSupportQt::injectInternalsObject(context);
+#else
     WebCoreTestSupport::injectInternalsObject(context);
+#endif
 }
 
 void InjectedBundlePage::didCancelClientRedirectForFrame(WKBundleFrameRef frame)
