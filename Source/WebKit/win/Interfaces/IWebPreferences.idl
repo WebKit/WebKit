@@ -124,9 +124,6 @@ interface IWebPreferences : IUnknown
     HRESULT arePlugInsEnabled([out, retval] BOOL* enabled);
     HRESULT setPlugInsEnabled([in] BOOL enabled);
 
-    HRESULT isCSSRegionsEnabled([out, retval] BOOL* enabled);
-    HRESULT setCSSRegionsEnabled([in] BOOL enabled);
-
     HRESULT allowsAnimatedImages([out, retval] BOOL* enabled);
     HRESULT setAllowsAnimatedImages([in] BOOL enabled);
     HRESULT allowAnimatedImageLooping([out, retval] BOOL* enabled);
@@ -210,4 +207,7 @@ interface IWebPreferences : IUnknown
 
     HRESULT setShouldDisplayTextDescriptions(BOOL shouldDisplayTextDescriptions);
     HRESULT shouldDisplayTextDescriptions(BOOL *shouldDisplayTextDescriptions);
+
+    HRESULT isCSSRegionsEnabled([out, retval] BOOL* enabled);
+    HRESULT setCSSRegionsEnabled([in] BOOL enabled);
 }

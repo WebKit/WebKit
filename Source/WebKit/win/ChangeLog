@@ -1,3 +1,17 @@
+2012-07-03  Mihai Balan  <mibalan@adobe.com>
+
+        [CSS Regions] Enabling regions on Windows lead to crash-on-launch for WebKit.exe
+        https://bugs.webkit.org/show_bug.cgi?id=90435
+
+        Reviewed by Csaba Osztrogonác.
+
+        Initial patch for enabling regions led to WebKit crashing on launch. Moving the
+        IDL declarations for CSS regions getter/setter at the end of the file solves the
+        problem. As per http://trac.webkit.org/changeset/95650 seems it has to do with
+        binary compatibility.
+
+        * Interfaces/IWebPreferences.idl: Mover getter/setter for CSS regions at the end of file
+
 2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Do not do any logging initialization when logging is disabled
