@@ -1,3 +1,10 @@
+2012-07-03  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating one baseline modified in r121745
+        to more suitable content.
+
+        * platform/gtk/fast/multicol/nested-columns-expected.txt:
+
 2012-07-03  Philip Rogers  <pdr@google.com>
 
         Fix text positioning with non-bmp characters.
