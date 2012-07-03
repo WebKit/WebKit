@@ -1,3 +1,22 @@
+2012-07-03  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        master.cfg cleanup, pass BuildStep instances instead of BuildStep subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=89001
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (UploadBuiltProduct.__init__):
+        (UploadTestResults.__init__):
+        (ExtractTestResults.__init__):
+        (Factory.__init__):
+        (BuildFactory.__init__):
+        (TestFactory.__init__):
+        (BuildAndTestFactory.__init__):
+        (BuildAndPerfTestFactory.__init__):
+        (BuildAndPerfTestWebKit2Factory.__init__):
+        (DownloadAndPerfTestFactory.__init__):
+
 2012-07-03  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         Update unit test after r121724.
