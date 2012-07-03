@@ -1,3 +1,23 @@
+2012-07-02  Emil A Eklund  <eae@chromium.org>
+
+        Position replaced elements on pixel bounds
+        https://bugs.webkit.org/show_bug.cgi?id=90354
+
+        Reviewed by Eric Seidel.
+
+        To avoid sizing and repaint issues we should layout replaced elements on
+        pixel bounds. We already ensure that replaced elements are sized in full
+        pixels and that they are painted on pixel bounds. By also ensuring that
+        they are placed on pixel bounds we avoid pixel having the size be
+        expanded by pixel snapping and repainting/invalidation rect issues when
+        scrolling.
+
+        Test: fast/repaint/repaint-during-scroll-with-zoom.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+
 2012-07-02  Nico Weber  <thakis@chromium.org>
 
         Fix new -Wunused-private-field violations
