@@ -1,3 +1,9 @@
+2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] Rebaseline for Mac10.6
+
+        * platform/chromium-mac-snowleopard/fast/events/offsetX-offsetY-expected.txt: Removed.
+
 2012-07-03  Michael Starzinger  <mstarzinger@chromium.org>
 
         [Chromium] Tests still crashing for Linux Release as well.
