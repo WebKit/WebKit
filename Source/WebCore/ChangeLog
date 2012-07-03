@@ -1,3 +1,53 @@
+2012-07-03  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: WebInspector.TextViewer should be renamed WebInspector.TextEditor
+        https://bugs.webkit.org/show_bug.cgi?id=89939
+
+        Reviewed by Vsevolod Vlasov.
+
+        Fixed LayoutTests and PerformanceTests accordingly.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.SearchView):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype._onHidePopover):
+        (WebInspector.JavaScriptSourceFrame.prototype._addBreakpointDecoration):
+        (WebInspector.JavaScriptSourceFrame.prototype._removeBreakpointDecoration):
+        (WebInspector.JavaScriptSourceFrame.prototype._editBreakpointCondition.finishEditing):
+        (WebInspector.JavaScriptSourceFrame.prototype._editBreakpointCondition):
+        (WebInspector.JavaScriptSourceFrame.prototype.setExecutionLine):
+        (WebInspector.JavaScriptSourceFrame.prototype.clearExecutionLine):
+        (WebInspector.JavaScriptSourceFrame.prototype.onTextEditorContentLoaded):
+        (WebInspector.JavaScriptSourceFrame.prototype.toggleBreakpointOnCurrentLine):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.wasShown):
+        (WebInspector.SourceFrame.prototype.willHide):
+        (WebInspector.SourceFrame.prototype.defaultFocusedElement):
+        (WebInspector.SourceFrame.prototype.get textEditor):
+        (WebInspector.SourceFrame.prototype.clearMessages):
+        (WebInspector.SourceFrame.prototype.highlightLine):
+        (WebInspector.SourceFrame.prototype._clearLineHighlight):
+        (WebInspector.SourceFrame.prototype.revealLine):
+        (WebInspector.SourceFrame.prototype.setSelection):
+        (WebInspector.SourceFrame.prototype.setContent):
+        (WebInspector.SourceFrame.prototype.onTextEditorContentLoaded):
+        (WebInspector.SourceFrame.prototype._setTextEditorDecorations):
+        (WebInspector.SourceFrame.prototype.searchCanceled):
+        (WebInspector.SourceFrame.prototype.jumpToSearchResult):
+        (WebInspector.SourceFrame.prototype.addMessageToSource):
+        (WebInspector.SourceFrame.prototype.removeMessageFromSource):
+        (WebInspector.SourceFrame.prototype.inheritScrollPositions):
+        (WebInspector.TextEditorDelegateForSourceFrame):
+        * inspector/front-end/TextViewer.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/textViewer.css: Removed.
+
 2012-07-03  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         IndexedDB: should make the LevelDB persistant to the directory indicated in PageGroupSettings::indexedDBDataBasePath

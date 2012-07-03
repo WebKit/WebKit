@@ -56,7 +56,7 @@ var test = function()
                 if (sourceFrame.loaded)
                     didShowScript(sourceFrame);
                 else
-                    InspectorTest.addSniffer(sourceFrame, "onTextViewerContentLoaded", didShowScript.bind(null, sourceFrame));
+                    InspectorTest.addSniffer(sourceFrame, "onTextEditorContentLoaded", didShowScript.bind(null, sourceFrame));
                 return;
             }
         }

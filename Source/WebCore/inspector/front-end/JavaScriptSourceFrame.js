@@ -46,11 +46,11 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, javaScriptSource)
 
     WebInspector.SourceFrame.call(this, javaScriptSource);
 
-    this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.textViewer.element,
+    this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.textEditor.element,
             this._getPopoverAnchor.bind(this), this._resolveObjectForPopover.bind(this), this._onHidePopover.bind(this), true);
 
-    this.textViewer.element.addEventListener("mousedown", this._onMouseDown.bind(this), true);
-    this.textViewer.element.addEventListener("keydown", this._onKeyDown.bind(this), true);
+    this.textEditor.element.addEventListener("mousedown", this._onMouseDown.bind(this), true);
+    this.textEditor.element.addEventListener("keydown", this._onKeyDown.bind(this), true);
 
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointAdded, this._breakpointAdded, this);
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointRemoved, this._breakpointRemoved, this);
@@ -286,7 +286,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (!highlightElement)
             return;
         // FIXME: the text editor should maintain highlight on its own. The check below is a workaround for
-        // the case when highlight element is detached from DOM by the TextViewer when re-building the DOM.
+        // the case when highlight element is detached from DOM by the TextEditor when re-building the DOM.
         var parentElement = highlightElement.parentElement;
         if (parentElement) {
             var child = highlightElement.firstChild;
@@ -335,27 +335,27 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         };
         this.textModel.setAttribute(lineNumber, "breakpoint", breakpoint);
 
-        this.textViewer.beginUpdates();
-        this.textViewer.addDecoration(lineNumber, "webkit-breakpoint");
+        this.textEditor.beginUpdates();
+        this.textEditor.addDecoration(lineNumber, "webkit-breakpoint");
         if (!enabled || (mutedWhileEditing && !this._javaScriptSource.supportsEnabledBreakpointsWhileEditing()))
-            this.textViewer.addDecoration(lineNumber, "webkit-breakpoint-disabled");
+            this.textEditor.addDecoration(lineNumber, "webkit-breakpoint-disabled");
         else
-            this.textViewer.removeDecoration(lineNumber, "webkit-breakpoint-disabled");
+            this.textEditor.removeDecoration(lineNumber, "webkit-breakpoint-disabled");
         if (!!condition)
-            this.textViewer.addDecoration(lineNumber, "webkit-breakpoint-conditional");
+            this.textEditor.addDecoration(lineNumber, "webkit-breakpoint-conditional");
         else
-            this.textViewer.removeDecoration(lineNumber, "webkit-breakpoint-conditional");
-        this.textViewer.endUpdates();
+            this.textEditor.removeDecoration(lineNumber, "webkit-breakpoint-conditional");
+        this.textEditor.endUpdates();
     },
 
     _removeBreakpointDecoration: function(lineNumber)
     {
         this.textModel.removeAttribute(lineNumber, "breakpoint");
-        this.textViewer.beginUpdates();
-        this.textViewer.removeDecoration(lineNumber, "webkit-breakpoint");
-        this.textViewer.removeDecoration(lineNumber, "webkit-breakpoint-disabled");
-        this.textViewer.removeDecoration(lineNumber, "webkit-breakpoint-conditional");
-        this.textViewer.endUpdates();
+        this.textEditor.beginUpdates();
+        this.textEditor.removeDecoration(lineNumber, "webkit-breakpoint");
+        this.textEditor.removeDecoration(lineNumber, "webkit-breakpoint-disabled");
+        this.textEditor.removeDecoration(lineNumber, "webkit-breakpoint-conditional");
+        this.textEditor.endUpdates();
     },
 
     _onMouseDown: function(event)
@@ -391,11 +391,11 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     _editBreakpointCondition: function(lineNumber, breakpoint)
     {
         this._conditionElement = this._createConditionElement(lineNumber);
-        this.textViewer.addDecoration(lineNumber, this._conditionElement);
+        this.textEditor.addDecoration(lineNumber, this._conditionElement);
 
         function finishEditing(committed, element, newText)
         {
-            this.textViewer.removeDecoration(lineNumber, this._conditionElement);
+            this.textEditor.removeDecoration(lineNumber, this._conditionElement);
             delete this._conditionEditorElement;
             delete this._conditionElement;
             if (breakpoint)
@@ -438,7 +438,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         this._executionLineNumber = lineNumber;
         if (this.loaded) {
-            this.textViewer.addDecoration(lineNumber, "webkit-execution-line");
+            this.textEditor.addDecoration(lineNumber, "webkit-execution-line");
             this.revealLine(this._executionLineNumber);
         }
         if (this.canEditSource())
@@ -448,7 +448,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     clearExecutionLine: function()
     {
         if (this.loaded && typeof this._executionLineNumber === "number")
-            this.textViewer.removeDecoration(this._executionLineNumber, "webkit-execution-line");
+            this.textEditor.removeDecoration(this._executionLineNumber, "webkit-execution-line");
         delete this._executionLineNumber;
     },
 
@@ -516,7 +516,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         this.clearMessages();
     },
 
-    onTextViewerContentLoaded: function()
+    onTextEditorContentLoaded: function()
     {
         if (typeof this._executionLineNumber === "number")
             this.setExecutionLine(this._executionLineNumber);
@@ -552,7 +552,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     toggleBreakpointOnCurrentLine: function()
     {
-        var selection = this.textViewer.selection();
+        var selection = this.textEditor.selection();
         if (!selection)
             return;
         this._toggleBreakpoint(selection.startLine, false);

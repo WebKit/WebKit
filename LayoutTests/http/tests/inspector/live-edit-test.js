@@ -2,7 +2,7 @@ var initialize_LiveEditTest = function() {
 
 InspectorTest.replaceInSource = function(sourceFrame, string, replacement, callback)
 {
-    sourceFrame._textViewer._mainPanel.setReadOnly(false);
+    sourceFrame._textEditor._mainPanel.setReadOnly(false);
     sourceFrame.beforeTextChanged();
     var oldRange, newRange;
     var lines = sourceFrame._textModel._lines;
@@ -18,7 +18,7 @@ InspectorTest.replaceInSource = function(sourceFrame, string, replacement, callb
         break;
     }
     sourceFrame.afterTextChanged(oldRange, newRange);
-    sourceFrame._textViewer._commitEditing();
+    sourceFrame._textEditor._commitEditing();
 }
 
 };

@@ -34,12 +34,12 @@
  * @constructor
  * @param {WebInspector.TextEditorModel} textModel
  * @param {?string} url
- * @param {WebInspector.TextViewerDelegate} delegate
+ * @param {WebInspector.TextEditorDelegate} delegate
  */
-WebInspector.TextViewer = function(textModel, url, delegate)
+WebInspector.TextEditor = function(textModel, url, delegate)
 {
     WebInspector.View.call(this);
-    this.registerRequiredCSS("textViewer.css");
+    this.registerRequiredCSS("textEditor.css");
 
     this._textModel = textModel;
     this._textModel.addEventListener(WebInspector.TextEditorModel.Events.TextChanged, this._textChanged, this);
@@ -77,7 +77,7 @@ WebInspector.TextViewer = function(textModel, url, delegate)
     this._registerShortcuts();
 }
 
-WebInspector.TextViewer.prototype = {
+WebInspector.TextEditor.prototype = {
     /**
      * @param {string} mimeType
      */
@@ -189,12 +189,12 @@ WebInspector.TextViewer.prototype = {
     },
 
     /**
-     * @param {WebInspector.TextViewer} textViewer
+     * @param {WebInspector.TextEditor} textEditor
      */
-    inheritScrollPositions: function(textViewer)
+    inheritScrollPositions: function(textEditor)
     {
-        this._mainPanel.element._scrollTop = textViewer._mainPanel.element.scrollTop;
-        this._mainPanel.element._scrollLeft = textViewer._mainPanel.element.scrollLeft;
+        this._mainPanel.element._scrollTop = textEditor._mainPanel.element.scrollTop;
+        this._mainPanel.element._scrollLeft = textEditor._mainPanel.element.scrollLeft;
     },
 
     beginUpdates: function()
@@ -384,16 +384,16 @@ WebInspector.TextViewer.prototype = {
     }
 }
 
-WebInspector.TextViewer.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.TextEditor.prototype.__proto__ = WebInspector.View.prototype;
 
 /**
  * @interface
  */
-WebInspector.TextViewerDelegate = function()
+WebInspector.TextEditorDelegate = function()
 {
 }
 
-WebInspector.TextViewerDelegate.prototype = {
+WebInspector.TextEditorDelegate.prototype = {
     beforeTextChanged: function() { },
 
     /**
@@ -899,10 +899,10 @@ WebInspector.TextEditorGutterPanel.prototype.__proto__ = WebInspector.TextEditor
 /**
  * @constructor
  */
-WebInspector.TextEditorGutterChunk = function(textViewer, startLine, endLine)
+WebInspector.TextEditorGutterChunk = function(textEditor, startLine, endLine)
 {
-    this._textViewer = textViewer;
-    this._textModel = textViewer._textModel;
+    this._textEditor = textEditor;
+    this._textModel = textEditor._textModel;
 
     this.startLine = startLine;
     endLine = Math.min(this._textModel.linesCount, endLine);
@@ -938,10 +938,10 @@ WebInspector.TextEditorGutterChunk.prototype = {
      */
     addDecoration: function(decoration)
     {
-        this._textViewer.beginDomUpdates();
+        this._textEditor.beginDomUpdates();
         if (typeof decoration === "string")
             this.element.addStyleClass(decoration);
-        this._textViewer.endDomUpdates();
+        this._textEditor.endDomUpdates();
     },
 
     /**
@@ -949,10 +949,10 @@ WebInspector.TextEditorGutterChunk.prototype = {
      */
     removeDecoration: function(decoration)
     {
-        this._textViewer.beginDomUpdates();
+        this._textEditor.beginDomUpdates();
         if (typeof decoration === "string")
             this.element.removeStyleClass(decoration);
-        this._textViewer.endDomUpdates();
+        this._textEditor.endDomUpdates();
     },
 
     /**
@@ -966,7 +966,7 @@ WebInspector.TextEditorGutterChunk.prototype = {
     set expanded(expanded)
     {
         if (this.linesCount === 1)
-            this._textViewer._syncDecorationsForLineListener(this.startLine);
+            this._textEditor._syncDecorationsForLineListener(this.startLine);
 
         if (this._expanded === expanded)
             return;
@@ -976,7 +976,7 @@ WebInspector.TextEditorGutterChunk.prototype = {
         if (this.linesCount === 1)
             return;
 
-        this._textViewer.beginDomUpdates();
+        this._textEditor.beginDomUpdates();
 
         if (expanded) {
             this._expandedLineRows = [];
@@ -987,7 +987,7 @@ WebInspector.TextEditorGutterChunk.prototype = {
                 this._expandedLineRows.push(lineRow);
             }
             parentElement.removeChild(this.element);
-            this._textViewer._syncLineHeightListener(this._expandedLineRows[0]);
+            this._textEditor._syncLineHeightListener(this._expandedLineRows[0]);
         } else {
             var elementInserted = false;
             for (var i = 0; i < this._expandedLineRows.length; ++i) {
@@ -1000,12 +1000,12 @@ WebInspector.TextEditorGutterChunk.prototype = {
                     }
                     parentElement.removeChild(lineRow);
                 }
-                this._textViewer._cachedRows.push(lineRow);
+                this._textEditor._cachedRows.push(lineRow);
             }
             delete this._expandedLineRows;
         }
 
-        this._textViewer.endDomUpdates();
+        this._textEditor.endDomUpdates();
     },
 
     /**
@@ -1014,8 +1014,8 @@ WebInspector.TextEditorGutterChunk.prototype = {
     get height()
     {
         if (!this._expandedLineRows)
-            return this._textViewer._totalHeight(this.element);
-        return this._textViewer._totalHeight(this._expandedLineRows[0], this._expandedLineRows[this._expandedLineRows.length - 1]);
+            return this._textEditor._totalHeight(this.element);
+        return this._textEditor._totalHeight(this._expandedLineRows[0], this._expandedLineRows[this._expandedLineRows.length - 1]);
     },
 
     /**
@@ -1032,7 +1032,7 @@ WebInspector.TextEditorGutterChunk.prototype = {
      */
     _createRow: function(lineNumber)
     {
-        var lineRow = this._textViewer._cachedRows.pop() || document.createElement("div");
+        var lineRow = this._textEditor._cachedRows.pop() || document.createElement("div");
         lineRow.lineNumber = lineNumber;
         lineRow.className = "webkit-line-number";
         lineRow.textContent = lineNumber + 1;
@@ -1780,7 +1780,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         var selection = window.getSelection();
         if (!selection.rangeCount)
             return null;
-        // Selection may be outside of the viewer.
+        // Selection may be outside of the editor.
         if (!this._container.isAncestor(selection.anchorNode) || !this._container.isAncestor(selection.focusNode))
             return null;
         var start = this._selectionToPosition(selection.anchorNode, selection.anchorOffset);

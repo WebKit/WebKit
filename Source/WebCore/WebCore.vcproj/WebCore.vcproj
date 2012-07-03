@@ -75446,6 +75446,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\textEditor.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\TextEditor.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TextEditorHighlighter.js"
 					>
 				</File>
@@ -75459,14 +75467,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\TextPrompt.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\textViewer.css"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\TextViewer.js"
 					>
 				</File>
 				<File

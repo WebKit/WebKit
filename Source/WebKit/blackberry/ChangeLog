@@ -1,3 +1,12 @@
+2012-07-03  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: WebInspector.TextViewer should be renamed WebInspector.TextEditor
+        https://bugs.webkit.org/show_bug.cgi?id=89939
+
+        Reviewed by Vsevolod Vlasov.
+
+        * WebCoreSupport/inspectorBB.html:
+
 2012-07-02  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Use PUBLIC_BUILD to enable/disable DRT

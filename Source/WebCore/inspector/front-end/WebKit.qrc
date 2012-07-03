@@ -166,10 +166,10 @@
     <file>TabbedEditorContainer.js</file>
     <file>TabbedPane.js</file>
     <file>TestController.js</file>
+    <file>TextEditor.js</file>
     <file>TextEditorHighlighter.js</file>
     <file>TextEditorModel.js</file>
     <file>TextPrompt.js</file>
-    <file>TextViewer.js</file>
     <file>TimelineFrameController.js</file>
     <file>TimelineManager.js</file>
     <file>TimelineModel.js</file>
@@ -214,8 +214,8 @@
     <file>scriptsPanel.css</file>
     <file>splitView.css</file>
     <file>tabbedPane.css</file>
+    <file>textEditor.css</file>
     <file>textPrompt.css</file>
-    <file>textViewer.css</file>
     <file>timelinePanel.css</file>
     <file>Images/applicationCache.png</file>
     <file>Images/back.png</file>

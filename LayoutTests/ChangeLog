@@ -1,3 +1,20 @@
+2012-07-03  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: WebInspector.TextViewer should be renamed WebInspector.TextEditor
+        https://bugs.webkit.org/show_bug.cgi?id=89939
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * http/tests/inspector/live-edit-test.js:
+        (initialize_LiveEditTest.InspectorTest.replaceInSource):
+        (initialize_LiveEditTest):
+        * http/tests/inspector/resources-test.js:
+        (initialize_ResourceTest.InspectorTest.showResource.showResourceCallback):
+        (initialize_ResourceTest.InspectorTest.showResource):
+        * inspector/debugger/pause-in-inline-script.html:
+
 2012-07-03  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating baselines after r121697 and r121728
