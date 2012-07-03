@@ -1,3 +1,17 @@
+2012-07-03  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt][WK2] API tests randomly asserts in QQuickWebPage::setContentsScale(qreal)
+        https://bugs.webkit.org/show_bug.cgi?id=88679
+
+        Reviewed by Csaba Osztrogonác.
+
+        Viewport parameters cannot be calculated while viewport is not visible and 
+        viewport size is 0, so let's delay calculation of viewport parameters until view 
+        becomes visible.
+
+        * UIProcess/qt/QtViewportHandler.cpp:
+        (WebKit::QtViewportHandler::pageContentsSizeChanged):
+
 2012-07-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make use of .qmake.cache for caching features

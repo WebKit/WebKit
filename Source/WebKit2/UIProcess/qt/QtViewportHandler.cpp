@@ -238,6 +238,9 @@ void QtViewportHandler::viewportAttributesChanged(const WebCore::ViewportAttribu
 
 void QtViewportHandler::pageContentsSizeChanged(const QSize& newSize, const QSize& viewportSize)
 {
+    if (viewportSize.isEmpty())
+        return;
+
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, viewportSize, newSize);
 
     if (!qFuzzyCompare(minimumScale, m_rawAttributes.minimumScale)) {
