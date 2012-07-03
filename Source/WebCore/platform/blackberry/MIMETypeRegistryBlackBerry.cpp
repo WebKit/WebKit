@@ -30,107 +30,19 @@
 #include "MIMETypeRegistry.h"
 
 #include "NotImplemented.h"
+#include <BlackBerryPlatformCommonFunctions.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
-struct ExtensionMap {
-    const char* extension;
-    const char* mimeType;
-};
-
-static const ExtensionMap extensionMap[] = {
-    { "bmp", "image/bmp" },
-    { "css", "text/css" },
-    { "gif", "image/gif" },
-    { "html", "text/html" },
-    { "htm", "text/html" },
-    { "ico", "image/x-icon" },
-    { "jpg", "image/jpeg" },
-    { "jpeg", "image/jpeg" },
-    { "js", "application/x-javascript" },
-    { "mng", "video/x-mng" },
-    { "pbm", "image/x-portable-bitmap" },
-    { "pgm", "image/x-portable-graymap" },
-    { "pdf", "application/pdf" },
-    { "png", "image/png" },
-    { "ppm", "image/x-portable-pixmap" },
-    { "rss", "application/rss+xml" },
-    { "svg", "image/svg+xml" },
-    { "svgz", "image/svg+xml" },
-    { "txt", "text/plain" },
-    { "text", "text/plain" },
-    { "tiff", "image/tiff" },
-    { "tif", "image/tiff" },
-    { "xbm", "image/x-xbitmap" },
-    { "xml", "text/xml" },
-    { "xpm", "image/x-xpm" },
-    { "xsl", "text/xsl" },
-    { "xhtml", "application/xhtml+xml" },
-    { "m4a", "audio/m4a" },
-    { "midi", "audio/midi" },
-    { "mid", "audio/mid" },
-    { "mp3", "audio/mp3" },
-    { "wma", "audio/x-ms-wma" },
-    { "3gp", "video/3gpp" },
-    { "3gpp", "video/3gpp" },
-    { "3gpp2", "video/3gpp2" },
-    { "3g2", "video/3gpp2" },
-    { "3gp2", "video/3gpp2" },
-    { "mp4", "video/mp4" },
-    { "m4v", "video/m4v" },
-    { "avi", "video/x-msvideo" },
-    { "mov", "video/quicktime" },
-    { "divx", "video/divx" },
-    { "mpeg", "video/mpeg" },
-    { "sbv", "video/sbv" },
-    { "asf", "video/x-ms-asf" },
-    { "wm", "video/x-ms-wm" },
-    { "wmv", "video/x-ms-wmv" },
-    { "wmx", "video/x-ms-wmx" },
-    { "wav", "audio/x-wav" },
-    { "amr", "audio/amr" },
-    { "aac", "audio/aac" },
-    { "x-gsm", "audio/x-gsm" },
-    { "swf", "application/x-shockwave-flash" },
-    { "m3u8", "application/vnd.apple.mpegurl" },
-    { "m3url", "audio/mpegurl" },
-    { "m3u", "audio/mpegurl" },
-    { "flac", "audio/x-flac" },
-    { "ogg", "audio/ogg" },
-    { "oga", "audio/ogg" },
-    // FIXME: wince also maps ttf and otf to text/plain. Should we do that too?
-    { 0, 0 }
-};
-
 String MIMETypeRegistry::getMIMETypeForExtension(const String& extension)
 {
-    String lowerExtension = extension.lower();
-
-    const ExtensionMap* entry = extensionMap;
-    while (entry->extension) {
-        if (lowerExtension == entry->extension)
-            return entry->mimeType;
-        ++entry;
-    }
-
-    return String();
+    return String(BlackBerry::Platform::getMIMETypeForExtension(extension.lower().utf8().data()).c_str());
 }
 
 String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
 {
-    if (type.isEmpty())
-        return String();
-
-    String lowerType = type.lower();
-
-    const ExtensionMap* entry = extensionMap;
-    while (entry->mimeType) {
-        if (lowerType == entry->mimeType)
-            return entry->extension;
-        ++entry;
-    }
-
-    return String();
+    return String(BlackBerry::Platform::getPreferredExtensionForMIMEType(type.lower().utf8().data()).c_str());
 }
 
 bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)

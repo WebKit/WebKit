@@ -1,3 +1,20 @@
+2012-07-02  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [BlackBerry] Refactor : move the implementation of getMIMETypeForExtension and getPreferredExtensionForMIMEType into BlackBerry platform
+        https://bugs.webkit.org/show_bug.cgi?id=90360
+
+        Reviewed by Antonio Gomes.
+
+        We should have one implementation for getMIMETypeForExtension
+        and getPreferredExtensionForMIMEType for both webkit and platform,
+        so I move this implementation to BlackBerry platform.
+        
+        No new test cases , because no behavior changed.
+
+        * platform/blackberry/MIMETypeRegistryBlackBerry.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+
 2012-07-02  Emil A Eklund  <eae@chromium.org>
 
         Position replaced elements on pixel bounds
