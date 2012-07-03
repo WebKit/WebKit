@@ -75,6 +75,7 @@ import sys
 import traceback
 
 
+from webkitpy.common.host import Host
 from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests.views import metered_stream
 
@@ -96,7 +97,7 @@ def get(max_workers, client, worker_factory, host=None):
         max_workers - max # of workers to run concurrently.
         client - BrokerClient implementation to dispatch
             replies to.
-        worker_factory: factory method for creatin objects that implement the AbstractWorker interface.
+        worker_factory: factory method for creating objects that implement the Worker interface.
         host: optional picklable host object that can be passed to workers for testing.
     Returns:
         A handle to an object that will talk to a message broker configured
@@ -263,23 +264,15 @@ class _BrokerConnection(object):
 
 class AbstractWorker(BrokerClient):
     def __init__(self, worker_connection, worker_number):
-        """The constructor should be used to do any simple initialization
-        necessary, but should not do anything that creates data structures
-        that cannot be Pickled or sent across processes (like opening
-        files or sockets). Complex initialization should be done at the
-        start of the run() call.
-
-        Args:
-            worker_connection - handle to the _BrokerConnection object creating
-                the worker and that can be used for messaging.
-            worker_number - the number/index of the current worker."""
         BrokerClient.__init__(self)
+        self.worker = None
         self._worker_connection = worker_connection
         self._worker_number = worker_number
         self._name = 'worker/%d' % worker_number
         self._done = False
         self._canceled = False
         self._options = optparse.Values({'verbose': False})
+        self.host = None
 
     def name(self):
         return self._name
@@ -290,10 +283,14 @@ class AbstractWorker(BrokerClient):
     def stop_handling_messages(self):
         self._done = True
 
-    def run(self):
+    def run(self, host):
         """Callback for the worker to start executing. Typically does any
         remaining initialization and then calls broker_connection.run_message_loop()."""
         exception_msg = ""
+        self.host = host
+
+        self.worker.safe_init()
+        _log.debug('%s starting' % self._name)
 
         try:
             self._worker_connection.run_message_loop()
@@ -308,12 +305,26 @@ class AbstractWorker(BrokerClient):
             self._worker_connection.raise_exception(sys.exc_info())
         finally:
             _log.debug("%s done with message loop%s" % (self._name, exception_msg))
+            self.worker.cleanup()
+            self._worker_connection.post_message('done')
+
+    def handle_stop(self, source):
+        self._done = True
+
+    def handle_test_list(self, source, list_name, test_list):
+        self.worker.handle('test_list', source, list_name, test_list)
 
     def cancel(self):
         """Called when possible to indicate to the worker to stop processing
         messages and shut down. Note that workers may be stopped without this
         method being called, so clients should not rely solely on this."""
         self._canceled = True
+
+    def yield_to_broker(self):
+        self._worker_connection.yield_to_broker()
+
+    def post_message(self, *args):
+        self._worker_connection.post_message(*args)
 
 
 class _ManagerConnection(_BrokerConnection):
@@ -362,7 +373,12 @@ class _MultiProcessManager(_ManagerConnection):
 
 class _WorkerConnection(_BrokerConnection):
     def __init__(self, host, broker, worker_factory, worker_number):
-        self._client = worker_factory(self, worker_number)
+        # FIXME: keeping track of the differences between the WorkerConnection, the AbstractWorker, and the
+        # actual Worker (created by worker_factory) is very confusing, but this all gets better when
+        # _WorkerConnection and AbstractWorker get merged.
+        self._client = AbstractWorker(self, worker_number)
+        self._worker = worker_factory(self._client, worker_number)
+        self._client.worker = self._worker
         self._host = host
         self._log_messages = []
         self._logger = None
@@ -451,6 +467,8 @@ class _Process(multiprocessing.Process):
         self._client = client
 
     def run(self):
+        if not self._worker_connection._host:
+            self._worker_connection._host = Host()
         self._worker_connection.run()
 
 

@@ -54,31 +54,34 @@ def make_broker(manager, max_workers, start_queue=None, stop_queue=None):
     return manager_worker_broker.get(max_workers, manager, _TestWorker)
 
 
-class _TestWorker(manager_worker_broker.AbstractWorker):
-    def __init__(self, worker_connection, worker_number=1):
-        super(_TestWorker, self).__init__(worker_connection, worker_number)
+class _TestWorker(object):
+    def __init__(self, caller, worker_number):
+        self._caller = caller
         self._thing_to_greet = 'everybody'
         self._starting_queue = starting_queue
         self._stopping_queue = stopping_queue
+        self._options = optparse.Values({'verbose': False})
 
-    def handle_stop(self, src):
-        self.stop_handling_messages()
+    def name(self):
+        return WORKER_NAME
 
-    def handle_test(self, src, an_int, a_str):
+    def cleanup(self):
+        pass
+
+    def handle(self, message, src, an_int, a_str):
         assert an_int == 1
         assert a_str == "hello, world"
-        self._worker_connection.post_message('test', 2, 'hi, ' + self._thing_to_greet)
+        self._caller.post_message('finished_test', 2)
 
-    def run(self, host):
+    def safe_init(self):
         if self._starting_queue:
             self._starting_queue.put('')
 
         if self._stopping_queue:
             self._stopping_queue.get()
-        try:
-            super(_TestWorker, self).run()
-        finally:
-            self._worker_connection.post_message('done')
+
+    def stop(self):
+        self._caller.post_message('done')
 
 
 class FunctionTests(unittest.TestCase):
@@ -105,16 +108,14 @@ class _TestsMixin(object):
     def handle_done(self, src, log_messages):
         self._done = True
 
-    def handle_test(self, src, an_int, a_str):
+    def handle_finished_test(self, src, an_int, log_messages):
         self._an_int = an_int
-        self._a_str = a_str
 
     def handle_exception(self, src, exception_type, exception_value, stack):
         raise exception_type(exception_value)
 
     def setUp(self):
         self._an_int = None
-        self._a_str = None
         self._broker = None
         self._done = False
         self._exception = None
@@ -136,7 +137,7 @@ class _TestsMixin(object):
     def test_cancel(self):
         self.make_broker()
         worker = self._broker.start_worker(1)
-        self._broker.post_message('test', 1, 'hello, world')
+        self._broker.post_message('test_list', 1, 'hello, world')
         worker.cancel()
         worker.join(0.1)
         self.assertFalse(worker.is_alive())
@@ -145,14 +146,13 @@ class _TestsMixin(object):
     def test_done(self):
         self.make_broker()
         worker = self._broker.start_worker(1)
-        self._broker.post_message('test', 1, 'hello, world')
+        self._broker.post_message('test_list', 1, 'hello, world')
         self._broker.post_message('stop')
         self._broker.run_message_loop()
         worker.join(0.5)
         self.assertFalse(worker.is_alive())
         self.assertTrue(self.is_done())
         self.assertEqual(self._an_int, 2)
-        self.assertEqual(self._a_str, 'hi, everybody')
         self._broker.cleanup()
 
     def test_unknown_message(self):

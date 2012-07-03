@@ -1,5 +1,69 @@
 2012-07-03  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: make the worker class stand alone with a cleaner interface
+        https://bugs.webkit.org/show_bug.cgi?id=90409
+
+        Reviewed by Ojan Vafai.
+
+        Currently the Worker class derives from AbstractWorker, which is
+        kind of crufty and awkward; it would be better if we did not
+        rely on shared state.
+
+        This change changes that so that Worker derives from object, and
+        exposes the following interface:
+          __init__() - called in the manager process
+          safe_init() - called in the worker process to initialize
+            unpicklable state
+          handle() - a single routine to handle all messages
+          cleanup() - called so the worker can clean up
+
+        Also, all of the "administrative" messages that are handled by
+        the worker (notification of start/stop/etc.) move into
+        manager_worker_broker - this reduces worker.py to just handling
+        the mechanics of actually running each test.
+
+        For the moment, we do this by creating Yet Another wrapper/proxy
+        class in manager_worker_broker, but this will get simpler
+        shortly when the rest of m_w_b is cleaned up.
+
+        With this change worker is now in its new form but there will be
+        a follow-on change that cleans up some names and other minor
+        things.
+
+        This change is again mostly just moving things around and should
+        be covered by the (updated) existing tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (get):
+        (AbstractWorker.__init__):
+        (AbstractWorker.run):
+        (AbstractWorker):
+        (AbstractWorker.handle_stop):
+        (AbstractWorker.handle_test_list):
+        (AbstractWorker.yield_to_broker):
+        (AbstractWorker.post_message):
+        (_WorkerConnection.__init__):
+        (_Process.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (_TestWorker):
+        (_TestWorker.__init__):
+        (_TestWorker.name):
+        (_TestWorker.cleanup):
+        (_TestWorker.handle):
+        (_TestWorker.safe_init):
+        (_TestWorker.stop):
+        (_TestsMixin.handle_finished_test):
+        (_TestsMixin.setUp):
+        (_TestsMixin.test_cancel):
+        (_TestsMixin.test_done):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker):
+        (Worker.__init__):
+        (Worker.safe_init):
+        (Worker.handle):
+
+2012-07-03  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: moving child process logging code into manager_worker_broker
         https://bugs.webkit.org/show_bug.cgi?id=90408
 

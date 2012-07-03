@@ -32,8 +32,6 @@ import logging
 import threading
 import time
 
-from webkitpy.common.host import Host
-from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_results
@@ -42,11 +40,16 @@ from webkitpy.layout_tests.models import test_results
 _log = logging.getLogger(__name__)
 
 
-class Worker(manager_worker_broker.AbstractWorker):
+class Worker(object):
     def __init__(self, worker_connection, worker_number, results_directory, options):
-        super(Worker, self).__init__(worker_connection, worker_number)
+        self._worker_connection = worker_connection
+        self._worker_number = worker_number
+        self._name = 'worker/%d' % worker_number
         self._results_directory = results_directory
         self._options = options
+
+        # The remaining fields are initialized in safe_init()
+        self._host = None
         self._port = None
         self._batch_size = None
         self._batch_count = None
@@ -59,35 +62,19 @@ class Worker(manager_worker_broker.AbstractWorker):
         self.cleanup()
 
     def safe_init(self):
-        """This method should only be called when it is is safe for the mixin
-        to create state that can't be Pickled.
+        """This method is called when it is safe for the object to create state that
+        does not need to be pickled (usually this means it is called in a child process)."""
+        self._host = self._worker_connection.host
+        self._filesystem = self._host.filesystem
+        self._port = self._host.port_factory.get(self._options.platform, self._options)
 
-        This routine exists so that the mixin can be created and then marshaled
-        across into a child process."""
-        self._filesystem = self._port.host.filesystem
         self._batch_count = 0
         self._batch_size = self._options.batch_size or 0
         tests_run_filename = self._filesystem.join(self._results_directory, "tests_run%d.txt" % self._worker_number)
         self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
 
-    def run(self, host):
-        if not host:
-            host = Host()
-
-        options = self._options
-        self._port = host.port_factory.get(options.platform, options)
-
-        self.safe_init()
-        try:
-            _log.debug("%s starting" % self._name)
-            super(Worker, self).run()
-        finally:
-            self.kill_driver()
-            _log.debug("%s exiting" % self._name)
-            self.cleanup()
-            self._worker_connection.post_message('done')
-
-    def handle_test_list(self, src, list_name, test_list):
+    def handle(self, name, source, list_name, test_list):
+        assert name == 'test_list'
         start_time = time.time()
         num_tests = 0
         for test_input in test_list:
@@ -98,9 +85,6 @@ class Worker(manager_worker_broker.AbstractWorker):
 
         elapsed_time = time.time() - start_time
         self._worker_connection.post_message('finished_list', list_name, num_tests, elapsed_time)
-
-    def handle_stop(self, src):
-        self.stop_handling_messages()
 
     def _update_test_input(self, test_input):
         test_input.reference_files = self._port.reference_files(test_input.test_name)
