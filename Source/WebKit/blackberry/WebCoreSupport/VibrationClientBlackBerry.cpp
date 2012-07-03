@@ -36,10 +36,12 @@ void VibrationClientBlackBerry::vibrate(const unsigned long& time)
 
 void VibrationClientBlackBerry::cancelVibration()
 {
+    BlackBerryPlatformVibrate::vibrate(0, 0.);
 }
 
 void VibrationClientBlackBerry::vibrationDestroyed()
 {
+    cancelVibration();
     delete this;
 }
 
