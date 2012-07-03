@@ -86,6 +86,7 @@ WebInspector.JavaScriptSource.prototype = {
 
         // Re-request content
         this._contentLoaded = false;
+        this._content = false;
         WebInspector.UISourceCode.prototype.requestContent.call(this, didGetContent.bind(this));
   
         /**

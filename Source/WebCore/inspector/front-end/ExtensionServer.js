@@ -290,15 +290,17 @@ WebInspector.ExtensionServer.prototype = {
 
     _handleOpenURL: function(port, details)
     {
-        var resource = WebInspector.resourceForURL(details.url);
-        if (!resource)
+        var url = /** @type {String} */ details.url;
+        var contentProvider = WebInspector.workspace.uiSourceCodeForURL(url) || WebInspector.resourceForURL(url);
+        if (!contentProvider)
             return false;
+            
         var lineNumber = details.lineNumber;
         if (typeof lineNumber === "number")
             lineNumber += 1;
         port.postMessage({
             command: "open-resource",
-            resource: this._makeResource(resource),
+            resource: this._makeResource(contentProvider),
             lineNumber: lineNumber
         });
         return true;
@@ -424,26 +426,35 @@ WebInspector.ExtensionServer.prototype = {
         return harLog;
     },
 
-    _makeResource: function(resource)
+    /**
+     * @param {WebInspector.ContentProvider} contentProvider
+     */
+    _makeResource: function(contentProvider)
     {
         return {
-            url: resource.url,
-            type: resource.type.name()
+            url: contentProvider.contentURL(),
+            type: contentProvider.contentType().name()
         };
     },
 
     _onGetPageResources: function()
     {
-        var resources = [];
-        function pushResourceData(resource)
+        var resources = {};
+
+        function pushResourceData(contentProvider)
         {
-            resources.push(this._makeResource(resource));
+            if (!resources[contentProvider.contentURL()])
+                resources[contentProvider.contentURL()] = this._makeResource(contentProvider);
         }
+        WebInspector.workspace.uiSourceCodes().forEach(pushResourceData.bind(this));
         WebInspector.resourceTreeModel.forAllResources(pushResourceData.bind(this));
-        return resources;
+        return Object.values(resources);
     },
 
-    _getResourceContent: function(resource, message, port)
+    /**
+     * @param {WebInspector.ContentProvider} contentProvider
+     */
+    _getResourceContent: function(contentProvider, message, port)
     {
         /**
          * @param {?string} content
@@ -458,7 +469,7 @@ WebInspector.ExtensionServer.prototype = {
             };
             this._dispatchCallback(message.requestId, port, response);
         }
-        resource.requestContent(onContentAvailable.bind(this));
+        contentProvider.requestContent(onContentAvailable.bind(this));
     },
 
     _onGetRequestContent: function(message, port)
@@ -471,10 +482,11 @@ WebInspector.ExtensionServer.prototype = {
 
     _onGetResourceContent: function(message, port)
     {
-        var resource = WebInspector.resourceTreeModel.resourceForURL(message.url);
-        if (!resource)
-            return this._status.E_NOTFOUND(message.url);
-        this._getResourceContent(resource.uiSourceCode() || resource, message, port);
+        var url = /** @type {String} */ message.url;
+        var contentProvider = WebInspector.workspace.uiSourceCodeForURL(url) || WebInspector.resourceForURL(url);
+        if (!contentProvider)
+            return this._status.E_NOTFOUND(url);
+        this._getResourceContent(contentProvider, message, port);
     },
 
     _onSetResourceContent: function(message, port)
@@ -487,10 +499,20 @@ WebInspector.ExtensionServer.prototype = {
             var response = error ? this._status.E_FAILED(error) : this._status.OK();
             this._dispatchCallback(message.requestId, port, response);
         }
-        var resource = WebInspector.resourceTreeModel.resourceForURL(message.url);
-        if (!resource)
-            return this._status.E_NOTFOUND(message.url);
-        resource.setContent(message.content, message.commit, callbackWrapper.bind(this));
+
+        var url = /** @type {String} */ message.url;
+        var uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(url);
+        if (!uiSourceCode) {
+            var resource = WebInspector.resourceTreeModel.resourceForURL(url);
+            if (!resource)
+                return this._status.E_NOTFOUND(url);
+            return this._status.E_NOTSUPPORTED("Resource is not editable")
+        }
+        uiSourceCode.setWorkingCopy(message.content);
+        if (message.commit)
+            uiSourceCode.commitWorkingCopy(callbackWrapper.bind(this));
+        else
+            callbackWrapper.call(this);
     },
 
     _requestId: function(request)
@@ -550,8 +572,8 @@ WebInspector.ExtensionServer.prototype = {
         this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.NetworkRequestFinished,
             WebInspector.networkManager, WebInspector.NetworkManager.EventTypes.RequestFinished, this._notifyRequestFinished);
         this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ResourceAdded,
-            WebInspector.resourceTreeModel,
-            WebInspector.ResourceTreeModel.EventTypes.ResourceAdded,
+            WebInspector.workspace,
+            WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded,
             this._notifyResourceAdded);
         if (WebInspector.panels.elements) {
             this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ElementsPanelObjectSelected,
@@ -592,13 +614,15 @@ WebInspector.ExtensionServer.prototype = {
 
     _notifyResourceAdded: function(event)
     {
-        var resource = event.data;
-        this._postNotification(WebInspector.extensionAPI.Events.ResourceAdded, this._makeResource(resource));
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        this._postNotification(WebInspector.extensionAPI.Events.ResourceAdded, this._makeResource(uiSourceCode));
     },
 
     _notifyResourceContentCommitted: function(event)
     {
-        this._postNotification(WebInspector.extensionAPI.Events.ResourceContentCommitted, this._makeResource(event.data.resource), event.data.content);
+        var resource = /** @type {WebInspector.Resource} */ event.data.resource;
+        var contentProvider = resource.uiSourceCode() || resource;
+        this._postNotification(WebInspector.extensionAPI.Events.ResourceContentCommitted, this._makeResource(contentProvider), event.data.content);
     },
 
     _notifyRequestFinished: function(event)

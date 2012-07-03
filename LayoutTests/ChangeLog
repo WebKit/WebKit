@@ -1,3 +1,18 @@
+2012-06-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Extensions API] Resource manipulations should be based on UISourceCode thus extending Sources Panel.
+        https://bugs.webkit.org/show_bug.cgi?id=89868
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest):
+        (initialize_ExtensionsTest.completeTest):
+        (initialize_ExtensionsTest.InspectorTest.runExtensionTests):
+        * http/tests/inspector/resources/extension-main.js:
+        * inspector/extensions/extensions-resources.html:
+        * inspector/styles/styles-history.html:
+
 2012-07-03  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: floats-wrap-top-below-inline-* fail

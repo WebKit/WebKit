@@ -76,6 +76,21 @@ WebInspector.CompositeUISourceCodeProvider.prototype = {
     },
 
     /**
+     * @param {String} url
+     * @return {WebInspector.UISourceCode}
+     */
+    uiSourceCodeForURL: function(url)
+    {
+        for (var i = 0; i < this._uiSourceCodeProviders.length; ++i) {
+            var uiSourceCodes = this._uiSourceCodeProviders[i].uiSourceCodes();
+            for (var j = 0; j < uiSourceCodes.length; ++j) {
+                if (uiSourceCodes[j].url === url)
+                    return uiSourceCodes[j];
+            }
+        }
+    },
+
+    /**
      * @return {Array.<WebInspector.UISourceCode>}
      */
     uiSourceCodes: function()

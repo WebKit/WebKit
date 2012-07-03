@@ -30,10 +30,22 @@ function extension_testGetAllResources(nextTest)
 {
     function callback(resources)
     {
+        function filter(resource)
+        {
+            // For some reason scripts from tests previously run in the same test shell sometimes appear, so we need to filter them out.
+            const resourceURLsWhiteList = ["abe.png", "audits-style1.css", "extensions-resources.html", "extensions-test.js", "inspector-test.js", "test-script.js"];
+            for (var i = 0; i < resourceURLsWhiteList.length; ++i) {
+                if (resource.url.indexOf(resourceURLsWhiteList[i]) !== -1)
+                  return true;
+            }
+            return false;
+        }
+
         function compareResources(a, b)
         {
             return trimURL(a.url).localeCompare(trimURL(b.url));
         }
+        resources = resources.filter(filter);
         resources.sort(compareResources);
         output("page resources:");
         dumpObject(Array.prototype.slice.call(arguments), { url: "url" });
@@ -67,23 +79,64 @@ function extension_testGetResourceContent(nextTest)
     });
 }
 
+// Extensions tests override WebInspector.StyleSource.updateTimeout because otherwise extensions don't have any control over applying changes to domain specific bindings.
+function extension_setFakeStyleSheetUpdateTimeout(callback)
+{
+    evaluateOnFrontend("WebInspector.oldStyleSheetUpdateTimeout = WebInspector.StyleSource.updateTimeout; WebInspector.StyleSource.updateTimeout = -1; reply();", callback);
+}
+
+function extension_resetStyleSheetUpdateTimeout(callback)
+{
+    evaluateOnFrontend("WebInspector.StyleSource.updateTimeout = WebInspector.oldStyleSheetUpdateTimeout; delete WebInspector.oldStyleSheetUpdateTimeout; reply();", callback);
+}
+
 function extension_testSetResourceContent(nextTest)
 {
-    function callback()
+    extension_setFakeStyleSheetUpdateTimeout(step2);
+
+    function step2()
+    {
+        extension_runWithResource(/audits-style1\.css$/, function(resource) {
+            resource.setContent("div.test { width: 126px; height: 42px; }", false, step3);
+        });
+    }
+
+    function step3()
     {
         webInspector.inspectedWindow.eval("document.getElementById('test-div').clientWidth", function(result) {
             output("div.test width after stylesheet edited (should be 126): " + result);
-            nextTest();
+            step4();
         });
     }
-    extension_runWithResource(/audits-style1\.css$/, function(resource) {
-        resource.setContent("div.test { width: 126px; height: 42px; }", false, callback);
-    });
+
+    function step4()
+    {
+        extension_resetStyleSheetUpdateTimeout(nextTest);
+    }
 }
 
 function extension_testOnContentCommitted(nextTest)
 {
     var expected_content = "div.test { width: 220px; height: 42px; }";
+    extension_setFakeStyleSheetUpdateTimeout(step2);
+
+    function step2()
+    {
+
+        webInspector.inspectedWindow.onResourceContentCommitted.addListener(onContentCommitted);
+        extension_runWithResource(/audits-style1\.css$/, function(resource) {
+            resource.setContent("div.test { width: 140px; height: 42px; }", false);
+        });
+        // The next step is going to produce a console message that will be logged, so synchronize the output now.
+        evaluateOnFrontend("InspectorTest.runAfterPendingDispatches(reply)", function() {
+            extension_runWithResource(/abe\.png$/, function(resource) {
+                resource.setContent("", true);
+            });
+            extension_runWithResource(/audits-style1\.css$/, function(resource) {
+                resource.setContent(expected_content, true);
+            });
+        });
+    }
 
     function onContentCommitted(resource, content)
     {
@@ -93,22 +146,14 @@ function extension_testOnContentCommitted(nextTest)
         webInspector.inspectedWindow.onResourceContentCommitted.removeListener(onContentCommitted);
         resource.getContent(function(content) {
             output("Revision content: " + content);
-            nextTest();
+            step3();
         });
     }
-    webInspector.inspectedWindow.onResourceContentCommitted.addListener(onContentCommitted);
-    extension_runWithResource(/audits-style1\.css$/, function(resource) {
-        resource.setContent("div.test { width: 140px; height: 42px; }", false);
-    });
-    // The next step is going to produce a console message that will be logged, so synchronize the output now.
-    evaluateOnFrontend("InspectorTest.runAfterPendingDispatches(reply)", function() {
-        extension_runWithResource(/abe\.png$/, function(resource) {
-            resource.setContent("", true);
-        });
-        extension_runWithResource(/audits-style1\.css$/, function(resource) {
-            resource.setContent(expected_content, true);
-        });
-    });
+
+    function step3()
+    {
+        extension_resetStyleSheetUpdateTimeout(nextTest);
+    }
 }
 
 function extension_testOnResourceAdded(nextTest)

@@ -127,7 +127,7 @@ WebInspector.UISourceCode.prototype = {
      */
     requestContent: function(callback)
     {
-        if (this._contentLoaded) {
+        if (this._content || this._contentLoaded) {
             callback(this._content, false, this._mimeType);
             return;
         }
@@ -171,7 +171,6 @@ WebInspector.UISourceCode.prototype = {
      */
     workingCopy: function()
     {
-        console.assert(this._contentLoaded);
         if (this.isDirty())
             return this._workingCopy;
         return this._content;
@@ -182,7 +181,6 @@ WebInspector.UISourceCode.prototype = {
      */
     setWorkingCopy: function(newWorkingCopy)
     {
-        console.assert(this._contentLoaded);
         var oldWorkingCopy = this._workingCopy;
         if (this._content === newWorkingCopy)
             delete this._workingCopy;
@@ -230,7 +228,7 @@ WebInspector.UISourceCode.prototype = {
      */
     isDirty: function()
     {
-        return this._contentLoaded && typeof this._workingCopy !== "undefined" && this._workingCopy !== this._content;
+        return typeof this._workingCopy !== "undefined" && this._workingCopy !== this._content;
     },
 
     /**

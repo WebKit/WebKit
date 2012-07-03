@@ -56,7 +56,7 @@ RUNNING TEST: extension_testGetResourceContent
     1 : ""
 }
 RUNNING TEST: extension_testOnContentCommitted
-log: Extension server error: Operation failed: Resource is not editable
+log: Extension server error: Object does not support requested operation: Resource is not editable
 content committed for resource .../audits-style1.css (type: stylesheet), new content: div.test { width: 220px; height: 42px; }
 Revision content: div.test { width: 220px; height: 42px; }
 RUNNING TEST: extension_testOnResourceAdded

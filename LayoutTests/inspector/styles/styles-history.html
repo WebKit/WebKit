@@ -10,35 +10,35 @@
 
 function test()
 {
-    var pendingCallbacks = [];
     InspectorTest.runAfterCachedResourcesProcessed(runTestSuite);
 
-    var styleResource;
-    var styleSheetId;
+    var styleSource;
 
     function runTestSuite()
     {
         InspectorTest.runTestSuite([
             function testSetUp(next)
             {
-                function visitResource(resource)
+                function visitUISourceCodes(uiSourceCode)
                 {
-                    if (resource.url.indexOf("styles-history.css") === -1)
+                    if (uiSourceCode.url.indexOf("styles-history.css") === -1)
                         return;
-                    styleResource = resource;
+                    styleSource = uiSourceCode;
                     next();
                 }
-                WebInspector.resourceTreeModel.forAllResources(visitResource);
+                WebInspector.workspace.uiSourceCodes().forEach(visitUISourceCodes);
             },
 
             function testSetResourceContentMinor(next)
             {
-                styleResource.setContent("body {\n  margin: 15px;\n  padding: 10px;\n}", false, dumpHistory(next));
+                styleSource.setWorkingCopy("body {\n  margin: 15px;\n  padding: 10px;\n}");
+                dumpHistory(next)();
             },
 
             function testSetResourceContentMajor(next)
             {
-                styleResource.setContent("body {\n  margin: 20px;\n  padding: 10px;\n}", true, dumpHistory(next));
+                styleSource.setWorkingCopy("body {\n  margin: 20px;\n  padding: 10px;\n}");
+                styleSource.commitWorkingCopy(dumpHistory(next));
             },
 
             function testSetContentViaModelMinor(next)
@@ -71,7 +71,7 @@ function test()
     function styleSheetForResource(callback)
     {
         CSSAgent.getAllStyleSheets(didGetAllStyleSheets.bind(this));
-        
+
         function didGetAllStyleSheets(error, infos)
         {
             if (error) {
@@ -95,10 +95,10 @@ function test()
     {
         function result()
         {
-            InspectorTest.addResult("History length: " + styleResource.history.length);
-            for (var i = 0; i < styleResource.history.length; ++i) {
+            InspectorTest.addResult("History length: " + styleSource.resource().history.length);
+            for (var i = 0; i < styleSource.resource().history.length; ++i) {
                 InspectorTest.addResult("Item " + i + ":");
-                InspectorTest.addResult(styleResource.history[i].content);
+                InspectorTest.addResult(styleSource.resource().history[i].content);
             }
             next();
         }
