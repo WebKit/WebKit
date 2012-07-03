@@ -1,3 +1,23 @@
+2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][EFL] Free Ewk_Intent calloc'd memory with free() instead of delete
+        https://bugs.webkit.org/show_bug.cgi?id=90433
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Free calloc'd memory with free() instead of delete in Ewk_Intent.
+        Add blank lines before return statements for consistency.
+
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (ewk_intent_unref):
+        (ewk_intent_action_get):
+        (ewk_intent_type_get):
+        (ewk_intent_service_get):
+        (ewk_intent_suggestions_get):
+        (ewk_intent_extra_get):
+        (ewk_intent_extra_names_get):
+        (ewk_intent_new):
+
 2012-07-02  Martin Robinson  <mrobinson@igalia.com>
 
         [TextureMapper] The TextureMapper should support edge-distance anti-antialiasing
