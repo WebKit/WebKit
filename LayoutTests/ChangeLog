@@ -1,5 +1,18 @@
 2012-07-03  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium rebaseline.
+
+        * platform/chromium-linux-x86/fast/line-grid: Added.
+        * platform/chromium-linux-x86/fast/line-grid/line-grid-into-columns-expected.txt: Added.
+        * platform/chromium-linux/fast/line-grid/line-grid-into-columns-expected.png:
+        * platform/chromium-linux/fast/line-grid/line-grid-into-columns-expected.txt: Added.
+        * platform/chromium-win-xp/fast/line-grid: Added.
+        * platform/chromium-win-xp/fast/line-grid/line-grid-into-columns-expected.txt: Added.
+        * platform/chromium-win/fast/line-grid/line-grid-into-columns-expected.png:
+        * platform/chromium-win/fast/line-grid/line-grid-into-columns-expected.txt:
+
+2012-07-03  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium TestExpectations update, marked a couple of tests as flaky on windows.
 
         * platform/chromium/TestExpectations:
