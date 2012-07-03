@@ -1,3 +1,17 @@
+2012-07-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] When calling accept() on the FilePickerContextObject with an empty list, early return and call reject().
+        https://bugs.webkit.org/show_bug.cgi?id=89755
+
+        Reviewed by Simon Hausmann.
+
+        When calling accept with an empty list of files we can just bailout
+        and call reject(). Any other processing is pointless.
+
+       * UIProcess/API/qt/tests/qmltests/WebView/tst_singleFileUpload.qml:
+       * UIProcess/qt/QtDialogRunner.cpp:
+        (WebKit::FilePickerContextObject::accept):
+
 2012-07-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] fast/viewport/viewport-91.html still fails after r121555 and r121661

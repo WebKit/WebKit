@@ -223,6 +223,12 @@ public slots:
     void accept(const QVariant& path)
     {
         QStringList filesPath = path.toStringList();
+
+        if (filesPath.isEmpty()) {
+            emit rejected();
+            return;
+        }
+
         // For single file upload, send only the first element if there are more than one file paths
         if (!m_allowMultiple && filesPath.count() > 1)
             filesPath = QStringList(filesPath.at(0));
