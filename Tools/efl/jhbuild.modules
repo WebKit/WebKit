@@ -70,10 +70,10 @@
   </autotools>
 
   <autotools id="libffi" autogen-sh="configure">
-    <branch module="/pub/libffi/libffi-3.0.10.tar.gz" version="3.0.10"
+    <branch module="/pub/libffi/libffi-3.0.11.tar.gz" version="3.0.11"
              repo="sourceware.org"
-             hash="sha256:f01eb9027e9eb56aeaeef636649877756d475d714ef8b47f627f65bc5f3b492f"
-             md5sum="79390673f5d07a8fb342bc09b5055b6f"/>
+             hash="sha256:70bfb01356360089aa97d3e71e3edf05d195599fd822e922e50d46a0055a6283"
+             md5sum="f69b9693227d976835b4857b1ba7d0e3"/>
   </autotools>
 
   <tarball id="freetype6">

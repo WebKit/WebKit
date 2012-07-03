@@ -1,3 +1,15 @@
+2012-07-03  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [jhbuild][EFL] Bump libffi dependency.
+        https://bugs.webkit.org/show_bug.cgi?id=85373
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update libffi to 3.0.11, which fixes the build on some platforms
+        where 3.0.10 had problems.
+
+        * efl/jhbuild.modules:
+
 2012-07-03  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Enable microdata support for BlackBerry.
