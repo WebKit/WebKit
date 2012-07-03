@@ -66,6 +66,11 @@ BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-manifest-404.htm
 BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-resource-404.html = PASS
 BUGWK76270 SKIP : http/tests/appcache/abort-cache-onprogress.html = PASS
 
+// These tests started being slow when we switched to DRT.
+BUGWK90488 SLOW LINUX WIN DEBUG : inspector = PASS
+BUGWK90488 SLOW LINUX WIN DEBUG : http/tests/inspector = PASS
+BUGWK90488 SLOW LINUX WIN DEBUG : http/tests/inspector-enabled = PASS
+
 BUGWK77523 WIN SLOW : media/media-fragments/TC0050-TC0059.html = PASS
 BUGWK77523 WIN RELEASE SLOW : media/media-fragments/TC0080-TC0089.html = PASS
 
@@ -924,12 +929,8 @@ WONTFIX SKIP : http/tests/inspector/network/network-content-replacement-embed.ht
 // Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
 WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIMEOUT PASS
 
-// Inspector tests in Debug build are very slow.
-BUG_DRT SLOW LINUX WIN DEBUG : inspector = PASS
 BUG_DRT WIN DEBUG : inspector/extensions/extensions-events.html = TIMEOUT
 BUG_DRT WIN DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT
-BUG_DRT SLOW LINUX WIN DEBUG : http/tests/inspector = PASS
-BUG_DRT SLOW LINUX WIN DEBUG : http/tests/inspector-enabled = PASS
 
 BUGFLAKY : http/tests/inspector/extensions-ignore-cache.html = PASS TIMEOUT
 BUGFLAKY : inspector/timeline/timeline-network-received-data.html = PASS TEXT
