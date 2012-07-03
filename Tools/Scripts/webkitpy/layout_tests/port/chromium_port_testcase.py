@@ -164,6 +164,8 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
         skia_overrides_path = port.path_from_chromium_base(
             'skia', 'skia_test_expectations.txt')
 
+        port._filesystem.write_text_file(skia_overrides_path, 'dummay text')
+
         port._options.builder_name = 'DUMMY_BUILDER_NAME'
         self.assertEquals(port.expectations_files(), [expectations_path, skia_overrides_path, chromium_overrides_path])
 

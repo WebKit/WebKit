@@ -1,3 +1,20 @@
+2012-07-02  Ojan Vafai  <ojan@chromium.org>
+
+        Make the skia_test_expectations.txt file optional.
+        https://bugs.webkit.org/show_bug.cgi?id=90400
+
+        Reviewed by Dirk Pranke.
+
+        It used to be optional. This regressed at some point. It's important that it be
+        optional so that webkit-patch commands work in a pure-webkit checkout for chromium bots.
+        Specifically, this was breaking webkit-patch rebaseline-test when it would go to update
+        TestExpectations.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.expectations_files):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_expectations_dict):
+
 2012-07-03  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [jhbuild][EFL] Bump libffi dependency.

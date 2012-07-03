@@ -170,6 +170,14 @@ class ChromiumDriverTest(unittest.TestCase):
         self.driver._start(True, [])
         self.assertFalse(self.port._filesystem.isdir(last_tmpdir))
 
+    def test_expectations_dict(self):
+        self.port._filesystem.write_text_file('/mock-checkout/LayoutTests/platform/chromium/TestExpectations', 'upstream')
+        self.port._filesystem.write_text_file('/mock-checkout/Source/WebKit/chromium/webkit/tools/layout_tests/test_expectations.txt', 'downstream')
+        self.assertEquals('\n'.join(self.port.expectations_dict().values()), 'upstream\ndownstream')
+
+        self.port._filesystem.write_text_file(self.port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), 'skia')
+        self.assertEquals('\n'.join(self.port.expectations_dict().values()), 'upstream\nskia\ndownstream')
+
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
 
