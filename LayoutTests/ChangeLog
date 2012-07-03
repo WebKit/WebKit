@@ -1,3 +1,17 @@
+2012-07-03  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium mac rebaseline.
+
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:
+        * platform/chromium-mac-snowleopard/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:
+        * platform/chromium-mac/http/tests/misc/acid3-expected.txt:
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png:
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png:
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt:
+        * platform/chromium-win-xp/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:
+
 2012-07-03  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Forward message loop instrumentation data to frontend.
