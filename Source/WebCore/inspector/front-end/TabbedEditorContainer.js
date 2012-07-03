@@ -62,7 +62,7 @@ WebInspector.TabbedEditorContainer = function(delegate, settingName)
     this._loadedURLs = {};
 
     this._previouslyViewedFilesSetting = WebInspector.settings.createSetting(settingName, []);
-    this._history = new WebInspector.TabbedEditorContainer.History(this._previouslyViewedFilesSetting.get());
+    this._history = WebInspector.TabbedEditorContainer.History.fromObject(this._previouslyViewedFilesSetting.get());
 }
 
 
@@ -108,6 +108,37 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._innerShowFile(uiSourceCode, true);
     },
 
+    _addScrollAndSelectionListeners: function()
+    {
+        console.assert(this._currentFile);
+        var sourceFrame = this._delegate.viewForFile(this._currentFile);
+        sourceFrame.addEventListener(WebInspector.SourceFrame.Events.ScrollChanged, this._scrollChanged, this);
+        sourceFrame.addEventListener(WebInspector.SourceFrame.Events.SelectionChanged, this._selectionChanged, this);
+    },
+
+    _removeScrollAndSelectionListeners: function()
+    {
+        if (!this._currentFile)
+            return;
+        var sourceFrame = this._delegate.viewForFile(this._currentFile);
+        sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.ScrollChanged, this._scrollChanged, this);
+        sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.SelectionChanged, this._selectionChanged, this);
+    },
+
+    _scrollChanged: function(event)
+    {
+        var lineNumber = /** @type {number} */ event.data;
+        this._history.updateScrollLineNumber(this._currentFile.url, lineNumber);
+        this._history.save(this._previouslyViewedFilesSetting);
+    },
+
+    _selectionChanged: function(event)
+    {
+        var range = /** @type {WebInspector.TextRange} */ event.data;
+        this._history.updateSelectionRange(this._currentFile.url, range);
+        this._history.save(this._previouslyViewedFilesSetting);
+    },
+
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {boolean=} userGesture
@@ -116,6 +147,7 @@ WebInspector.TabbedEditorContainer.prototype = {
     {
         if (this._currentFile === uiSourceCode)
             return;
+        this._removeScrollAndSelectionListeners();
         this._currentFile = uiSourceCode;
 
         var tabId = this._tabIds.get(uiSourceCode) || this._appendFileTab(uiSourceCode, userGesture);
@@ -123,6 +155,8 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabbedPane.selectTab(tabId, userGesture);
         if (userGesture)
             this._editorSelectedByUserAction();
+        
+        this._addScrollAndSelectionListeners();
         
         this.dispatchEventToListeners(WebInspector.TabbedEditorContainer.Events.EditorSelected, this._currentFile);
     },
@@ -225,6 +259,13 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabIds.put(uiSourceCode, tabId);
         this._files[tabId] = uiSourceCode;
 
+        var savedScrollLineNumber = this._history.scrollLineNumber(uiSourceCode.url);
+        if (savedScrollLineNumber)
+            view.scrollToLine(savedScrollLineNumber);
+        var savedSelectionRange = this._history.selectionRange(uiSourceCode.url);
+        if (savedSelectionRange)
+            view.setSelection(savedSelectionRange);
+
         this._tabbedPane.appendTab(tabId, title, view, tooltip, userGesture);
 
         uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
@@ -252,6 +293,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         var tabId = /** @type {string} */ event.data.tabId;
         var userGesture = /** @type {boolean} */ event.data.isUserGesture;
 
+        this._removeScrollAndSelectionListeners();
         var uiSourceCode = this._files[tabId];
         this._tabIds.remove(uiSourceCode);
         delete this._files[tabId];
@@ -361,19 +403,122 @@ WebInspector.TabbedEditorContainer.prototype.__proto__ = WebInspector.Object.pro
 
 /**
  * @constructor
+ * @param {string} url
+ * @param {WebInspector.TextRange=} selectionRange
+ * @param {number=} scrollLineNumber
  */
-WebInspector.TabbedEditorContainer.History = function(urls)
+WebInspector.TabbedEditorContainer.HistoryItem = function(url, selectionRange, scrollLineNumber)
 {
-    this._urls = urls;
+    this.url = url;
+    this.selectionRange = selectionRange;
+    this.scrollLineNumber = scrollLineNumber;
+}
+
+/**
+ * @param {Object} serializedHistoryItem
+ * @return {WebInspector.TabbedEditorContainer.HistoryItem}
+ */
+WebInspector.TabbedEditorContainer.HistoryItem.fromObject = function (serializedHistoryItem)
+{
+    var selectionRange = serializedHistoryItem.selectionRange ? WebInspector.TextRange.fromObject(serializedHistoryItem.selectionRange) : null;
+    return new WebInspector.TabbedEditorContainer.HistoryItem(serializedHistoryItem.url, selectionRange, serializedHistoryItem.scrollLineNumber);
+}
+
+WebInspector.TabbedEditorContainer.HistoryItem.prototype = {
+    /**
+     * @return {Object}
+     */
+    serializeToObject: function()
+    {
+        var serializedHistoryItem = {};
+        serializedHistoryItem.url = this.url;
+        serializedHistoryItem.selectionRange = this.selectionRange;
+        serializedHistoryItem.scrollLineNumber = this.scrollLineNumber;
+        return serializedHistoryItem;
+    }
+}
+
+WebInspector.TabbedEditorContainer.HistoryItem.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ * @param {Array.<WebInspector.TabbedEditorContainer.HistoryItem>} items
+ */
+WebInspector.TabbedEditorContainer.History = function(items)
+{
+    this._items = items;
+}
+
+/**
+ * @param {Object} serializedHistory
+ * @return {WebInspector.TabbedEditorContainer.History}
+ */
+WebInspector.TabbedEditorContainer.History.fromObject = function(serializedHistory)
+{
+    var items = [];
+    for (var i = 0; i < serializedHistory.length; ++i)
+        items.push(WebInspector.TabbedEditorContainer.HistoryItem.fromObject(serializedHistory[i]));
+    return new WebInspector.TabbedEditorContainer.History(items);
 }
 
 WebInspector.TabbedEditorContainer.History.prototype = {
     /**
      * @param {string} url
+     * @return {number}
      */
     index: function(url)
     {
-        return this._urls.indexOf(url);
+        for (var i = 0; i < this._items.length; ++i) {
+            if (this._items[i].url === url)
+                return i;
+        }
+        return -1;
+    },
+
+    /**
+     * @param {string} url
+     * @return {WebInspector.TextRange|undefined}
+     */
+    selectionRange: function(url)
+    {
+        var index = this.index(url);
+        return index !== -1 ? this._items[index].selectionRange : undefined;
+    },
+
+    /**
+     * @param {string} url
+     * @param {WebInspector.TextRange} selectionRange
+     */
+    updateSelectionRange: function(url, selectionRange)
+    {
+        if (!selectionRange)
+            return;
+        var index = this.index(url);
+        if (index === -1)
+            return;
+        this._items[index].selectionRange = selectionRange;
+    },
+
+    /**
+     * @param {string} url
+     * @return {number|undefined}
+     */
+    scrollLineNumber: function(url)
+    {
+        var index = this.index(url);
+        return index !== -1 ? this._items[index].scrollLineNumber : undefined;
+    },
+
+    /**
+     * @param {string} url
+     * @param {number} scrollLineNumber
+     */
+    updateScrollLineNumber: function(url, scrollLineNumber)
+    {
+        var index = this.index(url);
+        if (index === -1)
+            return;
+        this._items[index].scrollLineNumber = scrollLineNumber;
     },
 
     /**
@@ -382,10 +527,14 @@ WebInspector.TabbedEditorContainer.History.prototype = {
     update: function(urls)
     {
         for (var i = urls.length - 1; i >= 0; --i) {
-            var index = this._urls.indexOf(urls[i]);
-            if (index !== -1)
-                this._urls.splice(index, 1);
-            this._urls.unshift(urls[i]);
+            var index = this.index(urls[i]);
+            var item;
+            if (index !== -1) {
+                item = this._items[index];
+                this._items.splice(index, 1);
+            } else
+                item = new WebInspector.TabbedEditorContainer.HistoryItem(urls[i]);
+            this._items.unshift(item);
         }
     },
 
@@ -394,9 +543,9 @@ WebInspector.TabbedEditorContainer.History.prototype = {
      */
     remove: function(url)
     {
-        var index = this._urls.indexOf(url);
+        var index = this.index(url);
         if (index !== -1)
-            this._urls.splice(index, 1);
+            this._items.splice(index, 1);
     },
     
     /**
@@ -404,7 +553,18 @@ WebInspector.TabbedEditorContainer.History.prototype = {
      */
     save: function(setting)
     {
-        setting.set(this._urls);
+        setting.set(this._serializeToObject());
+    },
+    
+    /**
+     * @return {Object}
+     */
+    _serializeToObject: function()
+    {
+        var serializedHistory = [];
+        for (var i = 0; i < this._items.length; ++i)
+            serializedHistory.push(this._items[i].serializeToObject());
+        return serializedHistory;
     }
 }
 

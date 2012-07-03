@@ -1,3 +1,13 @@
+2012-07-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Save scroll selection and cursor position of SourceFrames in sources panel.
+        https://bugs.webkit.org/show_bug.cgi?id=90294
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/tabbed-editors-history-expected.txt:
+        * inspector/tabbed-editors-history.html:
+
 2012-07-03  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Make DirectoryContentView sortable

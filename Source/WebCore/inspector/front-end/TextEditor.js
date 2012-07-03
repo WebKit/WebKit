@@ -55,6 +55,10 @@ WebInspector.TextEditor = function(textModel, url, delegate)
     var syncLineHeightListener = this._syncLineHeight.bind(this);
     this._mainPanel = new WebInspector.TextEditorMainPanel(this._textModel, url, syncScrollListener, syncDecorationsForLineListener, enterTextChangeMode, exitTextChangeMode);
     this._gutterPanel = new WebInspector.TextEditorGutterPanel(this._textModel, syncDecorationsForLineListener, syncLineHeightListener);
+
+    this._mainPanel.element.addEventListener("scroll", this._handleScrollChanged.bind(this), false);
+    this._mainPanel._container.addEventListener("focus", this._handleFocused.bind(this), false);
+
     this.element.appendChild(this._mainPanel.element);
     this.element.appendChild(this._gutterPanel.element);
 
@@ -355,6 +359,29 @@ WebInspector.TextEditor.prototype = {
         return true;
     },
 
+    _handleScrollChanged: function(event)
+    {
+        var visibleFrom = this._mainPanel.element.scrollTop;
+        var firstVisibleLineNumber = this._mainPanel._findFirstVisibleLineNumber(visibleFrom);
+        this._delegate.scrollChanged(firstVisibleLineNumber);
+    },
+
+    /**
+     * @param {number} lineNumber
+     */
+    scrollToLine: function(lineNumber)
+    {
+        this._mainPanel.scrollToLine(lineNumber);
+    },
+
+    _handleSelectionChange: function(event)
+    {
+        var textRange = this._mainPanel._getSelection();
+        if (textRange)
+            this._lastSelection = textRange;
+        this._delegate.selectionChanged(textRange);
+    },
+
     /**
      * @return {WebInspector.TextRange}
      */
@@ -368,6 +395,7 @@ WebInspector.TextEditor.prototype = {
      */
     setSelection: function(textRange)
     {
+        this._lastSelection = textRange;
         this._mainPanel._restoreSelection(textRange);
     },
 
@@ -375,10 +403,26 @@ WebInspector.TextEditor.prototype = {
     {
         if (!this.readOnly())
             WebInspector.markBeingEdited(this.element, true);
+
+        this._boundSelectionChangeListener = this._handleSelectionChange.bind(this);
+        document.addEventListener("selectionchange", this._boundSelectionChangeListener, false);
+    },
+
+    _handleFocused: function()
+    {
+        if (this._lastSelection) {
+            // We do not restore selection after focus lost to avoid selection blinking. We restore only cursor position instead.
+            // FIXME: consider adding selection decoration to blurred editor.
+            var newSelection = WebInspector.TextRange.createFromLocation(this._lastSelection.endLine, this._lastSelection.endColumn);
+            this.setSelection(newSelection);
+        }
     },
 
     willHide: function()
     {
+        document.removeEventListener("selectionchange", this._boundSelectionChangeListener, false);
+        delete this._boundSelectionChangeListener;
+
         if (!this.readOnly())
             WebInspector.markBeingEdited(this.element, false);
     }
@@ -403,6 +447,16 @@ WebInspector.TextEditorDelegate.prototype = {
     afterTextChanged: function(oldRange, newRange) { },
 
     commitEditing: function() { },
+
+    /**
+     * @param {WebInspector.TextRange} textRange
+     */
+    selectionChanged: function(textRange) { },
+
+    /**
+     * @param {number} lineNumber
+     */
+    scrollChanged: function(lineNumber) { },
 
     /**
      * @param {WebInspector.ContextMenu} contextMenu
@@ -437,6 +491,18 @@ WebInspector.TextEditorChunkedPanel.prototype = {
     get textModel()
     {
         return this._textModel;
+    },
+
+    /**
+     * @param {number} lineNumber
+     */
+    scrollToLine: function(lineNumber)
+    {
+        if (lineNumber >= this._textModel.linesCount)
+            return;
+
+        var chunk = this.makeLineAChunk(lineNumber);
+        this.element.scrollTop = chunk.offsetTop;
     },
 
     /**

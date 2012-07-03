@@ -1,3 +1,75 @@
+2012-07-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Save scroll selection and cursor position of SourceFrames in sources panel.
+        https://bugs.webkit.org/show_bug.cgi?id=90294
+
+        Reviewed by Yury Semikhatsky.
+
+        Scroll and selection change handling is now delegated from TextViewer to SourceFrame.
+        SourceFrame now dispatches ScrollChanged and SelectionChanged events.
+        TabbedEditorContainer now saves scroll and selection information together
+        with the url history and restores scroll and selection on resource opening.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.setExecutionLine):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.wasShown):
+        (WebInspector.SourceFrame.prototype.highlightLine):
+        (WebInspector.SourceFrame.prototype._innerHighlightLineIfNeeded):
+        (WebInspector.SourceFrame.prototype._clearLineHighlight):
+        (WebInspector.SourceFrame.prototype.revealLine):
+        (WebInspector.SourceFrame.prototype._innerRevealLineIfNeeded):
+        (WebInspector.SourceFrame.prototype._clearLineToReveal):
+        (WebInspector.SourceFrame.prototype.scrollToLine):
+        (WebInspector.SourceFrame.prototype._innerScrollToLineIfNeeded):
+        (WebInspector.SourceFrame.prototype._clearLineToScrollTo):
+        (WebInspector.SourceFrame.prototype.setSelection):
+        (WebInspector.SourceFrame.prototype._innerSetSelectionIfNeeded):
+        (WebInspector.SourceFrame.prototype._wasShownOrLoaded):
+        (WebInspector.SourceFrame.prototype.setContent):
+        (WebInspector.SourceFrame.prototype.commitEditing):
+        (WebInspector.SourceFrame.prototype.selectionChanged):
+        (WebInspector.SourceFrame.prototype.scrollChanged):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.selectionChanged):
+        (WebInspector.TextViewerDelegateForSourceFrame.prototype.scrollChanged):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer):
+        (WebInspector.TabbedEditorContainer.prototype._addScrollAndSelectionListeners):
+        (WebInspector.TabbedEditorContainer.prototype._removeScrollAndSelectionListeners):
+        (WebInspector.TabbedEditorContainer.prototype._scrollChanged):
+        (WebInspector.TabbedEditorContainer.prototype._selectionChanged):
+        (WebInspector.TabbedEditorContainer.prototype._appendFileTab):
+        (WebInspector.TabbedEditorContainer.prototype._tabClosed):
+        (WebInspector.TabbedEditorContainer.HistoryItem):
+        (WebInspector.TabbedEditorContainer.HistoryItem.fromObject):
+        (WebInspector.TabbedEditorContainer.HistoryItem.prototype.serializeToObject):
+        (WebInspector.TabbedEditorContainer.History):
+        (WebInspector.TabbedEditorContainer.History.fromObject):
+        (WebInspector.TabbedEditorContainer.History.prototype.index):
+        (WebInspector.TabbedEditorContainer.History.prototype.selectionRange):
+        (WebInspector.TabbedEditorContainer.History.prototype.updateSelectionRange):
+        (WebInspector.TabbedEditorContainer.History.prototype.scrollLineNumber):
+        (WebInspector.TabbedEditorContainer.History.prototype.updateScrollLineNumber):
+        (WebInspector.TabbedEditorContainer.History.prototype.update):
+        (WebInspector.TabbedEditorContainer.History.prototype.remove):
+        (WebInspector.TabbedEditorContainer.History.prototype.save):
+        (WebInspector.TabbedEditorContainer.History.prototype.set _serializeToObject):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextRange.fromObject):
+        (WebInspector.TextRange.prototype.clone):
+        (WebInspector.TextRange.prototype.serializeToObject):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._handleScrollChanged):
+        (WebInspector.TextViewer.prototype.scrollToLine):
+        (WebInspector.TextViewer.prototype._handleSelectionChange):
+        (WebInspector.TextViewer.prototype.setSelection):
+        (WebInspector.TextViewer.prototype.wasShown):
+        (WebInspector.TextViewer.prototype._handleFocused):
+        (WebInspector.TextViewer.prototype.willHide):
+        (WebInspector.TextViewerDelegate.prototype.selectionChanged):
+        (WebInspector.TextViewerDelegate.prototype.scrollChanged):
+        (WebInspector.TextEditorChunkedPanel.prototype.scrollToLine):
+
 2012-07-03  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Make DirectoryContentView sortable

@@ -75,11 +75,17 @@ WebInspector.SourceFrame.createSearchRegex = function(query)
     return regex;
 }
 
+WebInspector.SourceFrame.Events = {
+    ScrollChanged: "ScrollChanged",
+    SelectionChanged: "SelectionChanged"
+}
+
 WebInspector.SourceFrame.prototype = {
     wasShown: function()
     {
         this._ensureContentLoaded();
         this._textEditor.show(this.element);
+        this._wasShownOrLoaded();
     },
 
     willHide: function()
@@ -146,35 +152,91 @@ WebInspector.SourceFrame.prototype = {
         return this._textModel;
     },
 
+    /**
+     * @param {number} line
+     */
     canHighlightLine: function(line)
     {
         return true;
     },
 
+    /**
+     * @param {number} line
+     */
     highlightLine: function(line)
     {
         this._clearLineToReveal();
-        if (this.loaded)
-            this._textEditor.highlightLine(line);
-        else
-            this._lineToHighlight = line;
+        this._clearLineToScrollTo();
+        this._lineToHighlight = line;
+        this._innerHighlightLineIfNeeded();
+    },
+
+    _innerHighlightLineIfNeeded: function()
+    {
+        if (typeof this._lineToHighlight === "number") {
+            if (this.loaded && this._textEditor.isShowing()) {
+                this._textEditor.highlightLine(this._lineToHighlight);
+                delete this._lineToHighlight
+            }
+        }
     },
 
     _clearLineHighlight: function()
     {
-        if (this.loaded)
-            this._textEditor.clearLineHighlight();
-        else
-            delete this._lineToHighlight;
+        this._textEditor.clearLineHighlight();
+        delete this._lineToHighlight;
     },
 
+    /**
+     * @param {number} line
+     */
     revealLine: function(line)
     {
         this._clearLineHighlight();
-        if (this.loaded)
-            this._textEditor.revealLine(line);
-        else
-            this._lineToReveal = line;
+        this._clearLineToScrollTo();
+        this._lineToReveal = line;
+        this._innerRevealLineIfNeeded();
+    },
+
+    _innerRevealLineIfNeeded: function()
+    {
+        if (typeof this._lineToReveal === "number") {
+            if (this.loaded && this._textEditor.isShowing()) {
+                this._textEditor.revealLine(this._lineToReveal);
+                delete this._lineToReveal
+            }
+        }
+    },
+
+    _clearLineToReveal: function()
+    {
+        delete this._lineToReveal;
+    },
+
+    /**
+     * @param {number} line
+     */
+    scrollToLine: function(line)
+    {
+        this._clearLineHighlight();
+        this._clearLineToReveal();
+        this._lineToScrollTo = line;
+        this._innerScrollToLineIfNeeded();
+    },
+
+    _innerScrollToLineIfNeeded: function()
+    {
+        if (typeof this._lineToScrollTo === "number") {
+            if (this.loaded && this._textEditor.isShowing()) {
+                this._textEditor.scrollToLine(this._lineToScrollTo);
+                delete this._lineToScrollTo
+            }
+        }
+    },
+
+    _clearLineToScrollTo: function()
+    {
+        delete this._lineToScrollTo;
     },
 
     /**
@@ -182,15 +244,24 @@ WebInspector.SourceFrame.prototype = {
      */
     setSelection: function(textRange)
     {
-        if (this.loaded)
-            this._textEditor.setSelection(textRange);
-        else
-            this._selectionToSet = textRange;
+        this._selectionToSet = textRange;
+        this._innerSetSelectionIfNeeded();
     },
 
-    _clearLineToReveal: function()
+    _innerSetSelectionIfNeeded: function()
     {
-        delete this._lineToReveal;
+        if (this._selectionToSet && this.loaded && this._textEditor.isShowing()) {
+            this._textEditor.setSelection(this._selectionToSet);
+            delete this._selectionToSet;
+        }
+    },
+
+    _wasShownOrLoaded: function()
+    {
+        this._innerHighlightLineIfNeeded();
+        this._innerRevealLineIfNeeded();
+        this._innerScrollToLineIfNeeded();
+        this._innerSetSelectionIfNeeded();
     },
 
     beforeTextChanged: function()
@@ -219,20 +290,7 @@ WebInspector.SourceFrame.prototype = {
 
         this._setTextEditorDecorations();
 
-        if (typeof this._lineToHighlight === "number") {
-            this.highlightLine(this._lineToHighlight);
-            delete this._lineToHighlight;
-        }
-
-        if (typeof this._lineToReveal === "number") {
-            this.revealLine(this._lineToReveal);
-            delete this._lineToReveal;
-        }
-
-        if (typeof this._selectionToSet === "object") {
-            this.setSelection(this._selectionToSet);
-            delete this._selectionToSet;
-        }
+        this._wasShownOrLoaded();
 
         if (this._delayedFindSearchMatches) {
             this._delayedFindSearchMatches();
@@ -496,6 +554,22 @@ WebInspector.SourceFrame.prototype = {
      */
     commitEditing: function(text)
     {
+    },
+
+    /**
+     * @param {WebInspector.TextRange} textRange
+     */
+    selectionChanged: function(textRange)
+    {
+        this.dispatchEventToListeners(WebInspector.SourceFrame.Events.SelectionChanged, textRange);
+    },
+
+    /**
+     * @param {number} lineNumber
+     */
+    scrollChanged: function(lineNumber)
+    {
+        this.dispatchEventToListeners(WebInspector.SourceFrame.Events.ScrollChanged, lineNumber);
     }
 }
 
@@ -525,6 +599,22 @@ WebInspector.TextEditorDelegateForSourceFrame.prototype = {
     commitEditing: function()
     {
         this._sourceFrame.commitEditing(this._sourceFrame._textModel.text);
+    },
+
+    /**
+     * @param {WebInspector.TextRange} textRange
+     */
+    selectionChanged: function(textRange)
+    {
+        this._sourceFrame.selectionChanged(textRange);
+    },
+
+    /**
+     * @param {number} lineNumber
+     */
+    scrollChanged: function(lineNumber)
+    {
+        this._sourceFrame.scrollChanged(lineNumber);
     },
 
     populateLineGutterContextMenu: function(contextMenu, lineNumber)
