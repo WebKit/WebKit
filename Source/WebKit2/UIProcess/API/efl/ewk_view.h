@@ -43,6 +43,7 @@ extern "C" {
 
 typedef struct _Ewk_View_Smart_Data Ewk_View_Smart_Data;
 typedef struct _Ewk_View_Smart_Class Ewk_View_Smart_Class;
+typedef struct _Ewk_Intent Ewk_Intent;
 
 /// Ewk view's class, to be overridden by sub-classes.
 struct _Ewk_View_Smart_Class {
@@ -191,7 +192,16 @@ EAPI Eina_Bool    ewk_view_reload(Evas_Object *o);
  */
 EAPI Eina_Bool    ewk_view_stop(Evas_Object *o);
 
-/*
+/**
+ * Delivers a Web intent to the view's main frame.
+ *
+ * @param o view object to deliver the intent to
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool    ewk_view_intent_deliver(Evas_Object *o, Ewk_Intent *intent);
+
+/**
  * Asks the main frame to navigate back in the history.
  *
  * @param o view object to navigate back

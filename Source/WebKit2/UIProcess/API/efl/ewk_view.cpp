@@ -30,6 +30,7 @@
 #include "WKURL.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
+#include "ewk_intent_private.h"
 #include "ewk_view_loader_client_private.h"
 #include "ewk_view_private.h"
 #include <wtf/text/CString.h>
@@ -614,6 +615,21 @@ Eina_Bool ewk_view_forward(Evas_Object* ewkView)
         return true;
     }
     return false;
+}
+
+Eina_Bool ewk_view_intent_deliver(Evas_Object* ewkView, Ewk_Intent* intent)
+{
+#if ENABLE(WEB_INTENTS)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, false);
+
+    WKPageRef wkPage = toAPI(priv->pageClient->page());
+    WKPageDeliverIntentToFrame(wkPage, WKPageGetMainFrame(wkPage), ewk_intent_WKIntentDataRef_get(intent));
+    return true;
+#else
+    return false;
+#endif
 }
 
 Eina_Bool ewk_view_back_possible(Evas_Object* ewkView)

@@ -1,3 +1,17 @@
+2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add API to deliver a Web Intent to a frame
+        https://bugs.webkit.org/show_bug.cgi?id=90067
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add ewk_view_intent_deliver() method on the Ewk_View
+        to deliver a Web Intent to the view's main frame.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_intent_deliver):
+        * UIProcess/API/efl/ewk_view.h:
+
 2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add API to inspect a Web Intent service

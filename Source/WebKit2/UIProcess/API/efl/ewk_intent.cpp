@@ -198,4 +198,10 @@ Ewk_Intent* ewk_intent_new(WKIntentDataRef intentData)
 
     return ewkIntent;
 }
+
+WKIntentDataRef ewk_intent_WKIntentDataRef_get(const Ewk_Intent* intent)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
+    return intent->wkIntent.get();
+}
 #endif

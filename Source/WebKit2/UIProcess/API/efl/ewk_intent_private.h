@@ -33,6 +33,7 @@
 typedef struct _Ewk_Intent Ewk_Intent;
 
 Ewk_Intent* ewk_intent_new(WKIntentDataRef intentData);
+WKIntentDataRef ewk_intent_WKIntentDataRef_get(const Ewk_Intent* intent);
 
 #endif // ENABLE(WEB_INTENTS)
 
