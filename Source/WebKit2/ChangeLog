@@ -1,3 +1,100 @@
+2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add support for Battery Status API
+        https://bugs.webkit.org/show_bug.cgi?id=89558
+
+        Reviewed by Anders Carlsson.
+
+        Add support for Battery Status API to WebKit2.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Shared/WebBatteryStatus.cpp: Added.
+        (WebKit):
+        (WebKit::WebBatteryStatus::WebBatteryStatus):
+        (WebKit::WebBatteryStatus::~WebBatteryStatus):
+        (WebKit::WebBatteryStatus::Data::encode):
+        (WebKit::WebBatteryStatus::Data::decode):
+        * Shared/WebBatteryStatus.h: Added.
+        (WebKit):
+        (WebBatteryStatus):
+        (Data):
+        (WebKit::WebBatteryStatus::create):
+        (WebKit::WebBatteryStatus::isCharging):
+        (WebKit::WebBatteryStatus::chargingTime):
+        (WebKit::WebBatteryStatus::dischargingTime):
+        (WebKit::WebBatteryStatus::level):
+        (WebKit::WebBatteryStatus::data):
+        (WebKit::WebBatteryStatus::type):
+        * Target.pri:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit):
+        * UIProcess/API/C/WKBatteryManager.cpp: Added.
+        (WKBatteryManagerGetTypeID):
+        * UIProcess/API/C/WKBatteryManager.h: Added.
+        * UIProcess/WebBatteryManagerProxy.cpp: Added.
+        (WebKit):
+        (WebKit::WebBatteryManagerProxy::create):
+        (WebKit::WebBatteryManagerProxy::WebBatteryManagerProxy):
+        (WebKit::WebBatteryManagerProxy::~WebBatteryManagerProxy):
+        (WebKit::WebBatteryManagerProxy::invalidate):
+        (WebKit::WebBatteryManagerProxy::initializeProvider):
+        (WebKit::WebBatteryManagerProxy::didReceiveMessage):
+        (WebKit::WebBatteryManagerProxy::startUpdating):
+        (WebKit::WebBatteryManagerProxy::stopUpdating):
+        (WebKit::WebBatteryManagerProxy::providerDidChangeBatteryStatus):
+        (WebKit::WebBatteryManagerProxy::providerUpdateBatteryStatus):
+        * UIProcess/WebBatteryManagerProxy.h: Added.
+        (CoreIPC):
+        (WebKit):
+        (WebBatteryManagerProxy):
+        (WebKit::WebBatteryManagerProxy::clearContext):
+        (WebKit::WebBatteryManagerProxy::type):
+        * UIProcess/WebBatteryManagerProxy.messages.in: Added.
+        * UIProcess/WebBatteryProvider.cpp: Added.
+        (WebKit):
+        (WebKit::WebBatteryProvider::startUpdating):
+        (WebKit::WebBatteryProvider::stopUpdating):
+        * UIProcess/WebBatteryProvider.h: Added.
+        (WebKit):
+        (WebBatteryProvider):
+        * WebKit2.pri:
+        * WebProcess/Battery/WebBatteryManager.cpp: Added.
+        (WebKit):
+        (WebKit::WebBatteryManager::WebBatteryManager):
+        (WebKit::WebBatteryManager::~WebBatteryManager):
+        (WebKit::WebBatteryManager::didReceiveMessage):
+        (WebKit::WebBatteryManager::registerWebPage):
+        (WebKit::WebBatteryManager::unregisterWebPage):
+        (WebKit::WebBatteryManager::didChangeBatteryStatus):
+        (WebKit::WebBatteryManager::updateBatteryStatus):
+        * WebProcess/Battery/WebBatteryManager.h: Added.
+        (CoreIPC):
+        (WebKit):
+        (WebBatteryManager):
+        * WebProcess/Battery/WebBatteryManager.messages.in: Added.
+        * WebProcess/WebCoreSupport/WebBatteryClient.cpp: Added.
+        (WebKit):
+        (WebKit::WebBatteryClient::startUpdating):
+        (WebKit::WebBatteryClient::stopUpdating):
+        (WebKit::WebBatteryClient::batteryControllerDestroyed):
+        * WebProcess/WebCoreSupport/WebBatteryClient.h: Added.
+        (WebKit):
+        (WebBatteryClient):
+        (WebKit::WebBatteryClient::WebBatteryClient):
+        (WebKit::WebBatteryClient::~WebBatteryClient):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        (WebKit::WebProcess::batteryManager):
+
 2012-07-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make use of .qmake.cache for caching features

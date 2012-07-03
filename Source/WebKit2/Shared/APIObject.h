@@ -72,6 +72,8 @@ public:
         TypeApplicationCacheManager,
         TypeBackForwardList,
         TypeBackForwardListItem,
+        TypeBatteryManager,
+        TypeBatteryStatus,
         TypeCacheManager,
         TypeContext,
         TypeCookieManager,

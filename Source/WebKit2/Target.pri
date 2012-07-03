@@ -97,6 +97,7 @@ HEADERS += \
     Shared/VisitedLinkTable.h \
     Shared/WebCoreArgumentCoders.h \
     Shared/WebBackForwardListItem.h \
+    Shared/WebBatteryStatus.h \
     Shared/WebCertificateInfo.h \
     Shared/WebConnection.h \
     Shared/WebConnectionClient.h \
@@ -145,6 +146,7 @@ HEADERS += \
     UIProcess/API/C/WKAuthenticationDecisionListener.h \
     UIProcess/API/C/WKBackForwardList.h \
     UIProcess/API/C/WKBackForwardListItem.h \
+    UIProcess/API/C/WKBatteryManager.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKCredential.h \
@@ -231,6 +233,8 @@ HEADERS += \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebApplicationCacheManagerProxy.h \
     UIProcess/WebBackForwardList.h \
+    UIProcess/WebBatteryManagerProxy.h \
+    UIProcess/WebBatteryProvider.h \
     UIProcess/WebColorChooserProxy.h \
     UIProcess/WebConnectionToWebProcess.h \
     UIProcess/WebContext.h \
@@ -297,6 +301,7 @@ HEADERS += \
     UIProcess/texmap/LayerBackingStore.h \
     WebProcess/ApplicationCache/WebApplicationCacheManager.h \
     WebProcess/Authentication/AuthenticationManager.h \
+    WebProcess/Battery/WebBatteryManager.h \
     WebProcess/Cookies/WebCookieManager.h \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
@@ -347,6 +352,7 @@ HEADERS += \
     WebProcess/Plugins/PluginProxy.h \
     WebProcess/Plugins/PluginProcessConnection.h \
     WebProcess/Plugins/PluginProcessConnectionManager.h \
+    WebProcess/WebCoreSupport/WebBatteryClient.h \
     WebProcess/WebCoreSupport/WebChromeClient.h \
     WebProcess/WebCoreSupport/WebColorChooser.h \
     WebProcess/WebCoreSupport/WebContextMenuClient.h \
@@ -462,6 +468,7 @@ SOURCES += \
     Shared/UpdateInfo.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \
+    Shared/WebBatteryStatus.cpp \
     Shared/WebConnection.cpp \
     Shared/WebConnectionClient.cpp \
     Shared/WebContextMenuItem.cpp \
@@ -509,6 +516,7 @@ SOURCES += \
     UIProcess/API/C/WKAuthenticationDecisionListener.cpp \
     UIProcess/API/C/WKBackForwardList.cpp \
     UIProcess/API/C/WKBackForwardListItem.cpp \
+    UIProcess/API/C/WKBatteryManager.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKCredential.cpp \
     UIProcess/API/C/WKDatabaseManager.cpp \
@@ -585,6 +593,8 @@ SOURCES += \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebApplicationCacheManagerProxy.cpp \
     UIProcess/WebBackForwardList.cpp \
+    UIProcess/WebBatteryManagerProxy.cpp \
+    UIProcess/WebBatteryProvider.cpp \
     UIProcess/WebConnectionToWebProcess.cpp \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextConnectionClient.cpp \
@@ -654,6 +664,7 @@ SOURCES += \
     UIProcess/texmap/LayerBackingStore.cpp \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \
+    WebProcess/Battery/WebBatteryManager.cpp \
     WebProcess/Cookies/WebCookieManager.cpp \
     WebProcess/Cookies/qt/WebCookieManagerQt.cpp \
     WebProcess/Downloads/Download.cpp \
@@ -717,6 +728,7 @@ SOURCES += \
     WebProcess/Plugins/PluginProxy.cpp \
     WebProcess/Plugins/PluginProcessConnection.cpp \
     WebProcess/Plugins/PluginProcessConnectionManager.cpp \
+    WebProcess/WebCoreSupport/WebBatteryClient.cpp \
     WebProcess/WebCoreSupport/WebChromeClient.cpp \
     WebProcess/WebCoreSupport/WebColorChooser.cpp \
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp \

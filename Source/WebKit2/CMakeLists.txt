@@ -22,6 +22,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess"
     "${WEBKIT2_DIR}/WebProcess/ApplicationCache"
     "${WEBKIT2_DIR}/WebProcess/Authentication"
+    "${WEBKIT2_DIR}/WebProcess/Battery"
     "${WEBKIT2_DIR}/WebProcess/Cookies"
     "${WEBKIT2_DIR}/WebProcess/Downloads"
     "${WEBKIT2_DIR}/WebProcess/FullScreen"
@@ -137,6 +138,7 @@ SET(WebKit2_SOURCES
     Shared/UpdateInfo.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
+    Shared/WebBatteryStatus.cpp
     Shared/WebConnection.cpp
     Shared/WebConnectionClient.cpp
     Shared/WebContextMenuItem.cpp
@@ -214,6 +216,8 @@ SET(WebKit2_SOURCES
     UIProcess/VisitedLinkProvider.cpp
     UIProcess/WebApplicationCacheManagerProxy.cpp
     UIProcess/WebBackForwardList.cpp
+    UIProcess/WebBatteryManagerProxy.cpp
+    UIProcess/WebBatteryProvider.cpp
     UIProcess/WebConnectionToWebProcess.cpp
     UIProcess/WebContext.cpp
     UIProcess/WebContextConnectionClient.cpp
@@ -264,6 +268,7 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKAuthenticationDecisionListener.cpp
     UIProcess/API/C/WKBackForwardList.cpp
     UIProcess/API/C/WKBackForwardListItem.cpp
+    UIProcess/API/C/WKBatteryManager.cpp
     UIProcess/API/C/WKContext.cpp
     UIProcess/API/C/WKCookieManager.cpp
     UIProcess/API/C/WKCredential.cpp
@@ -328,6 +333,8 @@ SET(WebKit2_SOURCES
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp
 
     WebProcess/Authentication/AuthenticationManager.cpp
+
+    WebProcess/Battery/WebBatteryManager.cpp
 
     WebProcess/Cookies/WebCookieManager.cpp
 
@@ -402,6 +409,7 @@ SET(WebKit2_SOURCES
 
     WebProcess/ResourceCache/WebResourceCacheManager.cpp
 
+    WebProcess/WebCoreSupport/WebBatteryClient.cpp
     WebProcess/WebCoreSupport/WebChromeClient.cpp
     WebProcess/WebCoreSupport/WebColorChooser.cpp
     WebProcess/WebCoreSupport/WebContextMenuClient.cpp
@@ -448,6 +456,7 @@ SET(WebKit2_MESSAGES_IN_FILES
     UIProcess/DrawingAreaProxy.messages.in
     UIProcess/LayerTreeCoordinatorProxy.messages.in
     UIProcess/WebApplicationCacheManagerProxy.messages.in
+    UIProcess/WebBatteryManagerProxy.messages.in
     UIProcess/WebContext.messages.in
     UIProcess/WebCookieManagerProxy.messages.in
     UIProcess/WebDatabaseManagerProxy.messages.in
@@ -472,6 +481,8 @@ SET(WebKit2_MESSAGES_IN_FILES
     WebProcess/ApplicationCache/WebApplicationCacheManager.messages.in
 
     WebProcess/Authentication/AuthenticationManager.messages.in
+
+    WebProcess/Battery/WebBatteryManager.messages.in
 
     WebProcess/Cookies/WebCookieManager.messages.in
 

@@ -37,6 +37,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/WebProcess \
     $$SOURCE_DIR/WebProcess/ApplicationCache \
     $$SOURCE_DIR/WebProcess/Authentication \
+    $$SOURCE_DIR/WebProcess/Battery \
     $$SOURCE_DIR/WebProcess/Cookies \
     $$SOURCE_DIR/WebProcess/Cookies/qt \
     $$SOURCE_DIR/WebProcess/Downloads \

@@ -38,6 +38,7 @@ VPATH = \
     PluginProcess \
     WebProcess/ApplicationCache \
     WebProcess/Authentication \
+    WebProcess/Battery \
     WebProcess/Cookies \
     WebProcess/FullScreen \
     WebProcess/Geolocation \
@@ -69,6 +70,8 @@ MESSAGE_RECEIVERS = \
     PluginProxy.messages.in \
     WebApplicationCacheManager.messages.in \
     WebApplicationCacheManagerProxy.messages.in \
+    WebBatteryManager.messages.in \
+    WebBatteryManagerProxy.messages.in \
     WebContext.messages.in \
     WebCookieManager.messages.in \
     WebCookieManagerProxy.messages.in \

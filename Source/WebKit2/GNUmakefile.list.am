@@ -47,6 +47,7 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKAuthenticationDecisionListener.h \
 	$(WebKit2)/UIProcess/API/C/WKBackForwardList.h \
 	$(WebKit2)/UIProcess/API/C/WKBackForwardListItem.h \
+	$(WebKit2)/UIProcess/API/C/WKBatteryManager.h \
 	$(WebKit2)/UIProcess/API/C/WKContext.h \
 	$(WebKit2)/UIProcess/API/C/WKContextPrivate.h \
 	$(WebKit2)/UIProcess/API/C/WKCookieManager.h \
@@ -152,6 +153,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebApplicationCacheManagerMessages.h \
 	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebApplicationCacheManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebBatteryManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebBatteryManagerMessages.h \
+	DerivedSources/WebKit2/WebBatteryManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebBatteryManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebContextMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebContextMessages.h \
 	DerivedSources/WebKit2/WebCookieManagerMessageReceiver.cpp \
@@ -421,6 +426,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/VisitedLinkTable.h \
 	Source/WebKit2/Shared/WebBackForwardListItem.cpp \
 	Source/WebKit2/Shared/WebBackForwardListItem.h \
+	Source/WebKit2/Shared/WebBatteryStatus.cpp \
+	Source/WebKit2/Shared/WebBatteryStatus.h \
 	Source/WebKit2/Shared/WebCertificateInfo.h \
 	Source/WebKit2/Shared/WebConnection.cpp \
 	Source/WebKit2/Shared/WebConnection.h \
@@ -505,6 +512,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKBackForwardList.h \
 	Source/WebKit2/UIProcess/API/C/WKBackForwardListItem.cpp \
 	Source/WebKit2/UIProcess/API/C/WKBackForwardListItem.h \
+	Source/WebKit2/UIProcess/API/C/WKBatteryManager.cpp \
+	Source/WebKit2/UIProcess/API/C/WKBatteryManager.h \
 	Source/WebKit2/UIProcess/API/C/WKContext.cpp \
 	Source/WebKit2/UIProcess/API/C/WKContext.h \
 	Source/WebKit2/UIProcess/API/C/WKContextPrivate.h \
@@ -774,6 +783,10 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebApplicationCacheManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebBackForwardList.cpp \
 	Source/WebKit2/UIProcess/WebBackForwardList.h \
+	Source/WebKit2/UIProcess/WebBatteryManagerProxy.cpp \
+	Source/WebKit2/UIProcess/WebBatteryManagerProxy.h \
+	Source/WebKit2/UIProcess/WebBatteryProvider.cpp \
+	Source/WebKit2/UIProcess/WebBatteryProvider.h \
 	Source/WebKit2/UIProcess/WebColorChooserProxy.h \
 	Source/WebKit2/UIProcess/WebConnectionToWebProcess.cpp \
 	Source/WebKit2/UIProcess/WebConnectionToWebProcess.h \
@@ -868,6 +881,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
 	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.cpp \
 	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.h \
+	Source/WebKit2/WebProcess/Battery/WebBatteryManager.cpp \
+	Source/WebKit2/WebProcess/Battery/WebBatteryManager.h \
 	Source/WebKit2/WebProcess/Cookies/WebCookieManager.h \
 	Source/WebKit2/WebProcess/Cookies/WebCookieManager.cpp \
 	Source/WebKit2/WebProcess/Cookies/soup/WebCookieManagerSoup.cpp \
@@ -1016,6 +1031,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebAlternativeTextClient.h \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebBatteryClient.cpp \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebBatteryClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebColorChooser.cpp \
