@@ -810,4 +810,10 @@ PassOwnPtr<ColorChooser> ChromeClientBlackBerry::createColorChooser(ColorChooser
 }
 
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+void ChromeClientBlackBerry::registerProtocolHandler(const WTF::String&, const WTF::String&, const WTF::String&, const WTF::String&)
+{
+}
+#endif
+
 } // namespace WebCore

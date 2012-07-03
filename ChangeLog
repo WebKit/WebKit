@@ -1,3 +1,12 @@
+2012-07-03  George Staikos  <staikos@webkit.org>
+
+        [BlackBerry] Enable RegisterProtocolHandler for BlackBerry.
+        https://bugs.webkit.org/show_bug.cgi?id=90422
+
+        Reviewed by Rob Buis.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-07-03  Priit Laes  <plaes@plaes.org>
 
         [GTK] Need to bump libsoup requirements (for `soup_cookie_jar_get_cookie_list`)
