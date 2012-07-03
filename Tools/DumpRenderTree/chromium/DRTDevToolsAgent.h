@@ -88,7 +88,6 @@ private:
     TaskList m_taskList;
     DRTDevToolsClient* m_drtDevToolsClient;
     int m_routingID;
-    WebKit::WebDevToolsAgent* m_webDevToolsAgent;
     WebKit::WebView* m_webView;
 };
 

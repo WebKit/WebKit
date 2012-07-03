@@ -35,8 +35,7 @@
 
 using namespace WebKit;
 
-GamepadController::GamepadController(TestShell* shell)
-    : m_shell(shell)
+GamepadController::GamepadController(TestShell*)
 {
     bindMethod("connect", &GamepadController::connect);
     bindMethod("disconnect", &GamepadController::disconnect);

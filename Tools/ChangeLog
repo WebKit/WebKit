@@ -1,3 +1,17 @@
+2012-07-03  Nico Weber  <thakis@chromium.org>
+
+        -Wunused-private-field cleanup, linux edition
+        https://bugs.webkit.org/show_bug.cgi?id=90463
+
+        Reviewed by Stephen White.
+
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        * DumpRenderTree/chromium/GamepadController.h:
+        (GamepadController):
+        * DumpRenderTree/chromium/NotificationPresenter.h:
+        (NotificationPresenter::NotificationPresenter):
+        (NotificationPresenter):
+
 2012-07-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121766.

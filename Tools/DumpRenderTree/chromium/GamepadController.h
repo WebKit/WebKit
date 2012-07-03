@@ -59,8 +59,6 @@ private:
     void setAxisData(const CppArgumentList&, CppVariant*);
     void fallbackCallback(const CppArgumentList&, CppVariant*);
 
-    TestShell* m_shell;
-
     WebKit::WebGamepads internalData;
 };
 

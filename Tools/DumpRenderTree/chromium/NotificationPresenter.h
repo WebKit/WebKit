@@ -43,7 +43,7 @@ class TestShell;
 // A class that implements WebNotificationPresenter for DRT.
 class NotificationPresenter : public WebKit::WebNotificationPresenter {
 public:
-    explicit NotificationPresenter(TestShell* shell) : m_shell(shell) { }
+    explicit NotificationPresenter(TestShell*) { }
     virtual ~NotificationPresenter();
 
     // Called by the LayoutTestController to simulate a user granting permission.
@@ -62,9 +62,6 @@ public:
     void reset() { m_allowedOrigins.clear(); }
 
 private:
-    // Non-owned pointer. The NotificationPresenter is owned by the test shell.
-    TestShell* m_shell;
-
     // Set of allowed origins.
     HashSet<WTF::String> m_allowedOrigins;
 
