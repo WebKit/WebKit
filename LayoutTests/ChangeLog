@@ -1,3 +1,11 @@
+2012-07-03  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r121728. Updated expectations to
+        fast/multicol/span/span-as-immediate-child-generated-content.html.
+
+        * platform/qt/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+
 2012-07-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] fast/viewport/viewport-91.html still fails after r121555 and r121661
