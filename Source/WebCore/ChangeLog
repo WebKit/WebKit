@@ -1,3 +1,18 @@
+2012-07-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Don't call eina_iterator_free() if iterator is NULL
+        https://bugs.webkit.org/show_bug.cgi?id=90076
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a null check to prevent calling eina_iterator_free() when
+        iterator is NULL.
+
+        No new tests. This patch doesn't change behavior.
+
+        * platform/efl/FileSystemEfl.cpp:
+        (WebCore::listDirectory): Early return when iterator is NULL.
+
 2012-07-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Elements] Text formatting is not retained when editing <script> or <style> contents as text
