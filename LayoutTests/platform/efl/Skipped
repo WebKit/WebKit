@@ -754,9 +754,6 @@ svg/as-image/image-respects-deviceScaleFactor.html
 # Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
 http/tests/websocket/tests/hybi/
 
-# Microdata DOM API is not yet enabled.
-fast/dom/MicroData
-
 # Pointer Lock is not implemented.
 pointer-lock/
 

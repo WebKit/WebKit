@@ -1,3 +1,15 @@
+2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Enable MICRODATA support
+        https://bugs.webkit.org/show_bug.cgi?id=90377
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip microdata test cases now that support has been
+        enabled for EFL port.
+
+        * platform/efl/Skipped:
+
 2012-07-02  Yoshifumi Inoue  <yosin@chromium.org>
 
         Layout Test inspector/timeline/timeline-receive-response-event.html is failing

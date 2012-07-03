@@ -292,7 +292,7 @@ my @features = (
       define => "ENABLE_MHTML", default => 0, value => \$mhtmlSupport },
 
     { option => "microdata", desc => "Toggle Microdata support",
-      define => "ENABLE_MICRODATA", default => 0, value => \$microdataSupport },
+      define => "ENABLE_MICRODATA", default => isEfl(), value => \$microdataSupport },
 
     { option => "mutation-observers", desc => "Toggle Mutation Observers support",
       define => "ENABLE_MUTATION_OBSERVERS", default => 1, value => \$mutationObserversSupport },
