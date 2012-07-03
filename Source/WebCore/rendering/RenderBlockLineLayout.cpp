@@ -112,11 +112,26 @@ private:
     bool m_isFirstLine;
 };
 
+static LayoutUnit logicalHeightForLine(RenderBlock* block)
+{
+    InlineFlowBox* lineBox = block->firstRootBox();
+    LayoutUnit logicalHeight = 0;
+    if (!lineBox)
+        return logicalHeight;
+
+    if (lineBox->firstChild() && lineBox->firstChild()->renderer() && lineBox->firstChild()->renderer()->isRenderBlock())
+        logicalHeight = toRenderBlock(lineBox->firstChild()->renderer())->logicalHeight();
+    else
+        logicalHeight = lineBox->height();
+    return logicalHeight;
+}
+
 inline void LineWidth::updateAvailableWidth()
 {
     LayoutUnit height = m_block->logicalHeight();
-    m_left = m_block->logicalLeftOffsetForLine(height, m_isFirstLine);
-    m_right = m_block->logicalRightOffsetForLine(height, m_isFirstLine);
+    LayoutUnit logicalHeight = logicalHeightForLine(m_block);
+    m_left = m_block->logicalLeftOffsetForLine(height, m_isFirstLine, logicalHeight);
+    m_right = m_block->logicalRightOffsetForLine(height, m_isFirstLine, logicalHeight);
 
     computeAvailableWidthFromLeftAndRight();
 }
@@ -751,8 +766,10 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                                                          GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
 {
     ETextAlign textAlign = textAlignmentForLine(!reachedEnd && !lineBox->endsWithBreak());
-    float logicalLeft = pixelSnappedLogicalLeftOffsetForLine(logicalHeight(), lineInfo.isFirstLine());
-    float availableLogicalWidth = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), lineInfo.isFirstLine()) - logicalLeft;
+    
+    LayoutUnit lineLogicalHeight = logicalHeightForLine(this);
+    float logicalLeft = pixelSnappedLogicalLeftOffsetForLine(logicalHeight(), lineInfo.isFirstLine(), lineLogicalHeight);
+    float availableLogicalWidth = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), lineInfo.isFirstLine(), lineLogicalHeight) - logicalLeft;
 
     bool needsWordSpacing = false;
     float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();

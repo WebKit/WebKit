@@ -1,3 +1,68 @@
+2012-07-03  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: floats-wrap-top-below-inline-* fail
+        https://bugs.webkit.org/show_bug.cgi?id=88171
+
+        Reviewed by Eric Seidel.
+
+        * css2.1/20110323/floats-wrap-top-below-001l-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-001r-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-002l-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-002r-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-003l-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-003r-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-001l-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-001l.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-001r-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-001r.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-002l-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-002l.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-002r-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-002r.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-003l-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-003l.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-003r-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-bfc-003r.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-001l-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-001l.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-001r-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-001r.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-002l-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-002l.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-002r-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-002r.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-003l-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-003l.htm: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-003r-expected.html: Added.
+        * css2.1/20110323/floats-wrap-top-below-inline-003r.htm: Added.
+        * css2.1/20110323/floats-zero-height-wrap-001-expected.html: Added.
+        * css2.1/20110323/floats-zero-height-wrap-001.htm: Added.
+        * css2.1/20110323/floats-zero-height-wrap-002.htm: Added.
+        * css2.1/20110323/floats-zero-height-wrap-002-expected.html: Added.
+        All of these are taken from the CSS test suite, including the expected.html files which have been renamed
+        from *-ref.html so that new-run-webkit-tests will parse use them.
+        * fast/block/float/floats-wrap-inside-inline-001-expected.html: Added.
+        * fast/block/float/floats-wrap-inside-inline-001.htm: Added.
+        The span should avoid a float even when its top and bottom does not overlap with the top of the span.
+        In this test the float starts and ends inside the span's first linebox.
+        * fast/block/float/floats-wrap-inside-inline-002-expected.html: Added.
+        * fast/block/float/floats-wrap-inside-inline-002.htm: Added.
+        The span should avoid a float even when its top and bottom does not overlap with the top of the span.
+        In this test the float overlaps the bottom of the span, but is below the span's first linebox.
+        * fast/block/float/floats-wrap-inside-inline-003-expected.html: Added.
+        * fast/block/float/floats-wrap-inside-inline-003.htm: Added.
+        An inline span should avoid a float even when its top and bottom does not overlap with the top of the span.
+        In this test the float starts and ends inside the span's first linebox.
+        * fast/block/float/floats-wrap-inside-inline-004-expected.html: Added.
+        * fast/block/float/floats-wrap-inside-inline-004.htm: Added.
+        The span should avoid a float even when its top and bottom does not overlap with the top of the span.
+        In this test the float overlaps inside the span and the span has height set by its style.
+        * fast/block/float/floats-wrap-inside-inline-005-expected.html: Added.
+        * fast/block/float/floats-wrap-inside-inline-005.htm: Added.
+        In this test the float starts and ends inside the span's second linebox, so only the second linebox should avoid the float.
+        * platform/chromium-win/css1/formatting_model/floating_elements-expected.txt:
+        This is a progression due to lineboxes now avoiding floats they overlap.
+
 2012-07-03  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium rebaseline for r121728.
