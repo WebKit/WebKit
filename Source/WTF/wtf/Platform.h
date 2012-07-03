@@ -903,7 +903,7 @@
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARMv7.  Only tested on iOS. */
-#if CPU(ARM_THUMB2) && PLATFORM(IOS)
+#if CPU(ARM_THUMB2) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY))
 #define ENABLE_DFG_JIT 1
 #endif
 #endif
