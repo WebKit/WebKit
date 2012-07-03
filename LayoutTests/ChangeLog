@@ -1,5 +1,13 @@
 2012-07-03  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium rebaseline for r121728.
+
+        * platform/chromium-mac/fast/multicol/vertical-rl/rules-with-border-before-expected.png: Added.
+        * platform/chromium-win/fast/multicol/vertical-rl/rules-with-border-before-expected.png:
+        * platform/chromium/fast/multicol/vertical-rl/rules-with-border-before-expected.png: Removed.
+
+2012-07-03  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium rebaseline.
 
         * platform/chromium-linux-x86/fast/line-grid: Added.
