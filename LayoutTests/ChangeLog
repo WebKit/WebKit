@@ -1,3 +1,16 @@
+2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] Rebaseline: Add missing expectation files introduced by r121722
+
+        * platform/chromium-mac-snowleopard/fast/repaint/repaint-during-scroll-with-zoom-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Added.
+        * platform/chromium-mac/fast/repaint/repaint-during-scroll-with-zoom-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Added.
+        * platform/chromium-win-xp/fast/repaint/repaint-during-scroll-with-zoom-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/repaint-during-scroll-with-zoom-expected.png: Added.
+        * platform/chromium-win/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Added.
+
 2012-07-03  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Unreviewed Gardening after r121697. Updated expected files.
