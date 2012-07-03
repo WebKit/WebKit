@@ -166,7 +166,8 @@ def archiveBuiltProduct(configuration, platform):
 
         removeDirectoryIfExists(thinDirectory)
         copyBuildFiles(configurationBuildDirectory, thinDirectory,
-            ['.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb', 'BuildLog.htm', '*.obj', '*.pdb'])
+            ['.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb', 'BuildLog.htm', '*.obj',
+            '*.pdb', '*.pch', '*.tlog', '*.lastbuildstate'])
         if createZip(thinDirectory, configuration):
             return 1
 
