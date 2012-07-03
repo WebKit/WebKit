@@ -38,23 +38,23 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest add(in SerializedScriptValue value, in [Optional] IDBKey key)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(in IDBKeyRange keyRange)
+        [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(in IDBKeyRange? keyRange)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(in IDBKey key)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest clear()
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKeyRange key)
+        [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKeyRange? key)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] DOMString direction)
+        [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange? range, in [Optional] DOMString direction)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest openCursor(in IDBKey key, in [Optional] DOMString direction)
             raises (IDBDatabaseException);
 
         // FIXME: remove these when https://bugs.webkit.org/show_bug.cgi?id=85326 is fixed.
-        [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction)
+        [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange? range, in [Optional] unsigned short direction)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest openCursor(in IDBKey key, in [Optional] unsigned short direction)
             raises (IDBDatabaseException);
@@ -67,7 +67,7 @@ module storage {
             raises (IDBDatabaseException);
         void deleteIndex(in DOMString name)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest count(in [Optional] IDBKeyRange range)
+        [CallWith=ScriptExecutionContext] IDBRequest count(in [Optional] IDBKeyRange? range)
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest count(in IDBKey key)
             raises (IDBDatabaseException);

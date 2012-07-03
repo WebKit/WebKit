@@ -168,24 +168,24 @@ module html {
                         in [Optional=DefaultIsUndefined] float height,
                         in [Optional] float lineWidth);
 
-        void drawImage(in HTMLImageElement image, in float x, in float y)
+        void drawImage(in HTMLImageElement? image, in float x, in float y)
             raises (DOMException);
-        void drawImage(in HTMLImageElement image, in float x, in float y, in float width, in float height)
+        void drawImage(in HTMLImageElement? image, in float x, in float y, in float width, in float height)
             raises (DOMException);
-        void drawImage(in HTMLImageElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+        void drawImage(in HTMLImageElement? image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
             raises (DOMException);
-        void drawImage(in HTMLCanvasElement canvas, in float x, in float y)
+        void drawImage(in HTMLCanvasElement? canvas, in float x, in float y)
             raises (DOMException);
-        void drawImage(in HTMLCanvasElement canvas, in float x, in float y, in float width, in float height)
+        void drawImage(in HTMLCanvasElement? canvas, in float x, in float y, in float width, in float height)
             raises (DOMException);
-        void drawImage(in HTMLCanvasElement canvas, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+        void drawImage(in HTMLCanvasElement? canvas, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
             raises (DOMException);
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-        void drawImage(in HTMLVideoElement video, in float x, in float y)
+        void drawImage(in HTMLVideoElement? video, in float x, in float y)
             raises (DOMException);
-        void drawImage(in HTMLVideoElement video, in float x, in float y, in float width, in float height)
+        void drawImage(in HTMLVideoElement? video, in float x, in float y, in float width, in float height)
             raises (DOMException);
-        void drawImage(in HTMLVideoElement video, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+        void drawImage(in HTMLVideoElement? video, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
             raises (DOMException);
 #endif
 
@@ -199,21 +199,21 @@ module html {
         void setShadow(in float width, in float height, in float blur, in float r, in float g, in float b, in float a);
         void setShadow(in float width, in float height, in float blur, in float c, in float m, in float y, in float k, in float a);
 
-        void putImageData(in ImageData imagedata, in float dx, in float dy)
+        void putImageData(in ImageData? imagedata, in float dx, in float dy)
             raises(DOMException);
-        void putImageData(in ImageData imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
-            raises(DOMException);
-
-        void webkitPutImageDataHD(in ImageData imagedata, in float dx, in float dy)
-            raises(DOMException);
-        void webkitPutImageDataHD(in ImageData imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
+        void putImageData(in ImageData? imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
             raises(DOMException);
 
-        CanvasPattern createPattern(in HTMLCanvasElement canvas, in [TreatNullAs=NullString] DOMString repetitionType)
+        void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy)
+            raises(DOMException);
+        void webkitPutImageDataHD(in ImageData? imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
+            raises(DOMException);
+
+        CanvasPattern createPattern(in HTMLCanvasElement? canvas, in [TreatNullAs=NullString] DOMString repetitionType)
             raises (DOMException);
-        CanvasPattern createPattern(in HTMLImageElement image, in [TreatNullAs=NullString] DOMString repetitionType)
+        CanvasPattern createPattern(in HTMLImageElement? image, in [TreatNullAs=NullString] DOMString repetitionType)
             raises (DOMException);
-        ImageData createImageData(in ImageData imagedata)
+        ImageData createImageData(in ImageData? imagedata)
             raises (DOMException);
         ImageData createImageData(in float sw, in float sh)
             raises (DOMException);

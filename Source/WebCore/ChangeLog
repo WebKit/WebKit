@@ -1,3 +1,49 @@
+2012-07-02  Joshua Bell  <jsbell@chromium.org>
+
+        IDL overloads should not treat wrapper types as nullable by default
+        https://bugs.webkit.org/show_bug.cgi?id=90218
+
+        Reviewed by Kentaro Hara.
+
+        Wrapper types were being treated as Nullable by default during overloaded
+        method dispatching, which deviates from the WebIDL specification. This change
+        introduces the "?" type suffix into the parser, and treats wrapper types
+        only nullable if specified. (The behavior of array types and other non-wrapper
+        types are not changed, and only overloaded methods are checked.)
+
+        IDL files with affected overloads are modified to include the "?" suffix
+        so that no behavior changes are introduced by this patch - the JS and V8
+        generator results before/after the change show no diffs.
+
+        Test: bindings/scripts/test/TestObj.idl (a non-nullable overload)
+
+        * Modules/indexeddb/IDBDatabase.idl: Added "?" where necessary.
+        * Modules/indexeddb/IDBIndex.idl: Added "?" where necessary.
+        * Modules/indexeddb/IDBObjectStore.idl: Added "?" where necessary.
+        * Modules/webaudio/AudioContext.idl: Added "?" where necessary.
+        * Modules/webaudio/AudioNode.idl: Added "?" where necessary.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheckExpression): Add isNullable check.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheckExpression): Add isNullable check.
+        * bindings/scripts/IDLParser.pm: Parse/set isNullable.
+        (parseParameters):
+        * bindings/scripts/IDLStructure.pm: Add basic type suffix parsing.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod8):
+        (WebCore):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        * bindings/scripts/test/TestObj.idl: Mark previous overload params with ?, add new one without.
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::overloadedMethod8Callback):
+        (TestObjV8Internal):
+        (WebCore::TestObjV8Internal::overloadedMethodCallback):
+        * dom/DataTransferItemList.idl: Added "?" where necessary.
+        * fileapi/WebKitBlobBuilder.idl: Added "?" where necessary.
+        * html/DOMURL.idl: Added "?" where necessary.
+        * html/canvas/CanvasRenderingContext2D.idl: Added "?" where necessary.
+        * html/canvas/WebGLRenderingContext.idl: Added "?" where necessary.
+
 2012-07-02  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Get rid of GraphicsLayerQt

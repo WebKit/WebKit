@@ -42,7 +42,7 @@ module core {
         DataTransferItem item(in [Optional=DefaultIsUndefined] unsigned long index);
 
         void clear();
-        void add(in File file);
+        void add(in File? file);
         void add(in [Optional=DefaultIsUndefined] DOMString data, 
                  in [Optional=DefaultIsUndefined] DOMString type) raises(DOMException);
     };

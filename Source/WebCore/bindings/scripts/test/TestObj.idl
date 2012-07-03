@@ -163,13 +163,14 @@ module test {
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
         // Overloads
-        void    overloadedMethod(in TestObj objArg, in DOMString strArg);
-        void    overloadedMethod(in TestObj objArg, in [Optional] long intArg);
+        void    overloadedMethod(in TestObj? objArg, in DOMString strArg);
+        void    overloadedMethod(in TestObj? objArg, in [Optional] long intArg);
         void    overloadedMethod(in DOMString strArg);
         void    overloadedMethod(in long intArg);
         void    overloadedMethod(in [Callback] TestCallback callback);
-        void    overloadedMethod(in DOMStringList listArg);
+        void    overloadedMethod(in DOMStringList? listArg);
         void    overloadedMethod(in DOMString[] arrayArg);
+        void    overloadedMethod(in TestObj objArg);
 #endif
 
         // Class methods within JavaScript (like what's used for IDBKeyRange).

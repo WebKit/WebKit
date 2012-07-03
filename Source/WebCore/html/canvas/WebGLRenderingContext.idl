@@ -461,11 +461,11 @@ module html {
         [StrictTypeChecking] void         blendEquationSeparate(in unsigned long modeRGB, in unsigned long modeAlpha);
         [StrictTypeChecking] void         blendFunc(in unsigned long sfactor, in unsigned long dfactor);
         [StrictTypeChecking] void         blendFuncSeparate(in unsigned long srcRGB, in unsigned long dstRGB, in unsigned long srcAlpha, in unsigned long dstAlpha);
-        [StrictTypeChecking] void         bufferData(in unsigned long target, in ArrayBuffer data, in unsigned long usage) raises (DOMException);
-        [StrictTypeChecking] void         bufferData(in unsigned long target, in ArrayBufferView data, in unsigned long usage) raises (DOMException);
+        [StrictTypeChecking] void         bufferData(in unsigned long target, in ArrayBuffer? data, in unsigned long usage) raises (DOMException);
+        [StrictTypeChecking] void         bufferData(in unsigned long target, in ArrayBufferView? data, in unsigned long usage) raises (DOMException);
         [StrictTypeChecking] void         bufferData(in unsigned long target, in long long size, in unsigned long usage) raises (DOMException);
-        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long long offset, in ArrayBuffer data) raises (DOMException);
-        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long long offset, in ArrayBufferView data) raises (DOMException);
+        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long long offset, in ArrayBuffer? data) raises (DOMException);
+        [StrictTypeChecking] void         bufferSubData(in unsigned long target, in long long offset, in ArrayBufferView? data) raises (DOMException);
 
         [StrictTypeChecking] unsigned long checkFramebufferStatus(in unsigned long target);
         [StrictTypeChecking] void         clear(in unsigned long mask);
@@ -602,30 +602,30 @@ module html {
 
         // Supported forms:
         [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long width, in long height, 
-                                                     in long border, in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises (DOMException);
+                                                     in long border, in unsigned long format, in unsigned long type, in ArrayBufferView? pixels) raises (DOMException);
         [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
-                                                     in unsigned long format, in unsigned long type, in ImageData pixels) raises (DOMException);
+                                                     in unsigned long format, in unsigned long type, in ImageData? pixels) raises (DOMException);
         [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
-                                                     in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
+                                                     in unsigned long format, in unsigned long type, in HTMLImageElement? image) raises (DOMException);
         [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
-                                                     in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
+                                                     in unsigned long format, in unsigned long type, in HTMLCanvasElement? canvas) raises (DOMException);
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
         [StrictTypeChecking] void         texImage2D(in unsigned long target, in long level, in unsigned long internalformat,
-                                                     in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
+                                                     in unsigned long format, in unsigned long type, in HTMLVideoElement? video) raises (DOMException);
 #endif
 
         [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, 
                                                         in long width, in long height, 
-                                                        in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises (DOMException);
+                                                        in unsigned long format, in unsigned long type, in ArrayBufferView? pixels) raises (DOMException);
         [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
-                                                        in unsigned long format, in unsigned long type, in ImageData pixels) raises (DOMException);
+                                                        in unsigned long format, in unsigned long type, in ImageData? pixels) raises (DOMException);
         [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
-                                                        in unsigned long format, in unsigned long type, in HTMLImageElement image) raises (DOMException);
+                                                        in unsigned long format, in unsigned long type, in HTMLImageElement? image) raises (DOMException);
         [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
-                                                        in unsigned long format, in unsigned long type, in HTMLCanvasElement canvas) raises (DOMException);
+                                                        in unsigned long format, in unsigned long type, in HTMLCanvasElement? canvas) raises (DOMException);
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
         [StrictTypeChecking] void         texSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset,
-                                                        in unsigned long format, in unsigned long type, in HTMLVideoElement video) raises (DOMException);
+                                                        in unsigned long format, in unsigned long type, in HTMLVideoElement? video) raises (DOMException);
 #endif
 
         [StrictTypeChecking] void uniform1f(in WebGLUniformLocation location, in float x) raises(DOMException);

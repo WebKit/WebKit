@@ -39,10 +39,10 @@ module html {
 #if !defined(LANGUAGE_OBJECTIVE_C)
         Blob getBlob(in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString contentType);
 #endif
-        void append(in Blob blob);
+        void append(in Blob? blob);
 #if defined(ENABLE_BLOB) && ENABLE_BLOB
-        [CallWith=ScriptExecutionContext] void append(in ArrayBuffer arrayBuffer);
-        void append(in ArrayBufferView arrayBufferView);
+        [CallWith=ScriptExecutionContext] void append(in ArrayBuffer? arrayBuffer);
+        void append(in ArrayBufferView? arrayBufferView);
 #endif
         void append(in DOMString value, in [Optional, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString endings) raises (DOMException);
     };

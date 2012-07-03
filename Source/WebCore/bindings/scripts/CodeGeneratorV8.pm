@@ -1359,7 +1359,11 @@ sub GenerateParametersCheckExpression
             # FIXME: Add proper support for T[], T[]?, sequence<T>.
             push(@andExpression, "(${value}->IsNull() || ${value}->IsArray())");
         } elsif (IsWrapperType($type)) {
-            push(@andExpression, "(${value}->IsNull() || V8${type}::HasInstance($value))");
+            if ($parameter->isNullable) {
+                push(@andExpression, "(${value}->IsNull() || V8${type}::HasInstance($value))");
+            } else {
+                push(@andExpression, "(V8${type}::HasInstance($value))");
+            }
         }
 
         $parameterIndex++;

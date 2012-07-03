@@ -244,13 +244,17 @@ sub parseParameters
         my $paramDirection = $1;
         my $paramExtendedAttributes = (defined($2) ? $2 : " "); chop($paramExtendedAttributes);
         my $paramType = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
-        my $paramName = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
+        my $paramTypeSuffix = defined($4) ? $4 : "";
+        my $paramName = (defined($5) ? $5 : die("Parsing error!\nSource:\n$line\n)"));
+
+        my $isNullable = $paramTypeSuffix eq "?";
 
         my $paramDataNode = new domSignature();
         $paramDataNode->direction($paramDirection);
         $paramDataNode->name($paramName);
         $paramDataNode->type($paramType);
         $paramDataNode->extendedAttributes(parseExtendedAttributes($paramExtendedAttributes));
+        $paramDataNode->isNullable($isNullable);
 
         my $arrayRef = $newDataNode->parameters;
         push(@$arrayRef, $paramDataNode);

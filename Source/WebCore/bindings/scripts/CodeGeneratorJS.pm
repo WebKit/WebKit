@@ -1263,7 +1263,11 @@ sub GenerateParametersCheckExpression
             push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JSArray::s_info)))");
             $usedArguments{$parameterIndex} = 1;
         } elsif (!IsNativeType($type)) {
-            push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info)))");
+            if ($parameter->isNullable) {
+                push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info)))");
+            } else {
+                push(@andExpression, "(${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info))");
+            }
             $usedArguments{$parameterIndex} = 1;
         }
         $parameterIndex++;
