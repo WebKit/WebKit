@@ -1,3 +1,29 @@
+2012-07-02  Ojan Vafai  <ojan@chromium.org>
+
+        webkit-patch rebaseline-expectations should share code with rebaseline-all
+        https://bugs.webkit.org/show_bug.cgi?id=90413
+
+        Reviewed by Dirk Pranke.
+
+        Make them share code. In addition to reducing code duplication this makes
+        rebaseline-expectations considerably faster by rebaselining in parallel.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractParallelRebaselineCommand):
+        (AbstractParallelRebaselineCommand._run_webkit_patch):
+        (AbstractParallelRebaselineCommand._rebaseline):
+        (RebaselineJson):
+        (RebaselineJson.execute):
+        (RebaselineExpectations):
+        (RebaselineExpectations._update_expectations_file):
+        (RebaselineExpectations._tests_to_rebaseline):
+        (RebaselineExpectations._add_tests_to_rebaseline_for_port):
+        (RebaselineExpectations.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_all):
+        (test_rebaseline_expectations.run_in_parallel):
+        (test_rebaseline_expectations):
+
 2012-07-02  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Update DumpRenderTree to have it work interactively in parallel

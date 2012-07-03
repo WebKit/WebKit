@@ -239,10 +239,7 @@ class AnalyzeBaselines(AbstractRebaseliningCommand):
             self._analyze_baseline(test_name)
 
 
-class RebaselineExpectations(AbstractDeclarativeCommand):
-    name = "rebaseline-expectations"
-    help_text = "Rebaselines the tests indicated in TestExpectations."
-
+class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
     def __init__(self):
         options = [
             optparse.make_option('--no-optimize', dest='optimize', action='store_false', default=True,
@@ -251,60 +248,6 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
                       'You can use "webkit-patch optimize-baselines" to optimize separately.')),
         ]
         AbstractDeclarativeCommand.__init__(self, options=options)
-
-    def _run_webkit_patch(self, args):
-        try:
-            self._tool.executive.run_command([self._tool.path()] + args, cwd=self._tool.scm().checkout_root)
-        except ScriptError, e:
-            _log.error(e)
-
-    def _update_expectations_file(self, port_name):
-        port = self._tool.port_factory.get(port_name)
-
-        # FIXME: This will intentionally skip over any REBASELINE expectations that were in an overrides file.
-        # This is not good, but avoids having the overrides getting written into the main file.
-        # See https://bugs.webkit.org/show_bug.cgi?id=88456 for context. This will no longer be needed
-        # once we properly support cascading expectations files.
-        expectations = TestExpectations(port, include_overrides=False)
-        path = port.path_to_test_expectations_file()
-        self._tool.filesystem.write_text_file(path, expectations.remove_rebaselined_tests(expectations.get_rebaselining_failures()))
-
-    def _tests_to_rebaseline(self, port):
-        tests_to_rebaseline = {}
-        expectations = TestExpectations(port, include_overrides=True)
-        for test in expectations.get_rebaselining_failures():
-            tests_to_rebaseline[test] = suffixes_for_expectations(expectations.get_expectations(test))
-        return tests_to_rebaseline
-
-    def _rebaseline_port(self, port_name):
-        builder_name = builders.builder_name_for_port_name(port_name)
-        if not builder_name:
-            return
-        tests = self._tests_to_rebaseline(self._tool.port_factory.get(port_name)).items()
-        if tests:
-            _log.info("Retrieving results for %s from %s." % (port_name, builder_name))
-        for test_name, suffixes in tests:
-            self._touched_tests.setdefault(test_name, set()).update(set(suffixes))
-            _log.info("    %s (%s)" % (test_name, ','.join(suffixes)))
-            # FIXME: we should use executive.run_in_parallel() to speed this up.
-            self._run_webkit_patch(['rebaseline-test', '--suffixes', ','.join(suffixes), builder_name, test_name])
-
-    def execute(self, options, args, tool):
-        self._touched_tests = {}
-        for port_name in tool.port_factory.all_port_names():
-            self._rebaseline_port(port_name)
-        for port_name in tool.port_factory.all_port_names():
-            self._update_expectations_file(port_name)
-        if not options.optimize:
-            return
-        for test_name, suffixes in self._touched_tests.iteritems():
-            _log.info("Optimizing baselines for %s (%s)." % (test_name, ','.join(suffixes)))
-            self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(suffixes), test_name])
-
-
-class RebaselineAll(AbstractDeclarativeCommand):
-    name = "rebaseline-all"
-    help_text = "Rebaseline based off JSON passed to stdin. Intended to only be called from other scripts."
 
     def _run_webkit_patch(self, args):
         try:
@@ -362,21 +305,74 @@ class RebaselineAll(AbstractDeclarativeCommand):
                 all_suffixes.update(test_list[test][builder])
             self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(all_suffixes), test])
 
-    def _rebaseline(self, json_input):
-        test_list = json.loads(json_input)
-
+    def _rebaseline(self, options, test_list):
         commands = self._rebaseline_commands(test_list)
         command_results = self._tool.executive.run_in_parallel(commands)
 
         files_to_add = self._files_to_add(command_results)
         self._tool.scm().add_list(list(files_to_add))
 
-        self._optimize_baselines(test_list)
+        if options.optimize:
+            self._optimize_baselines(test_list)
+
+
+class RebaselineJson(AbstractParallelRebaselineCommand):
+    name = "rebaseline-json"
+    help_text = "Rebaseline based off JSON passed to stdin. Intended to only be called from other scripts."
 
     def execute(self, options, args, tool):
-        self._rebaseline(sys.stdin.read())
+        self._rebaseline(options, json.loads(sys.stdin.read()))
 
 
+class RebaselineExpectations(AbstractParallelRebaselineCommand):
+    name = "rebaseline-expectations"
+    help_text = "Rebaselines the tests indicated in TestExpectations."
+
+    def _update_expectations_file(self, port_name):
+        port = self._tool.port_factory.get(port_name)
+
+        # FIXME: This will intentionally skip over any REBASELINE expectations that were in an overrides file.
+        # This is not good, but avoids having the overrides getting written into the main file.
+        # See https://bugs.webkit.org/show_bug.cgi?id=88456 for context. This will no longer be needed
+        # once we properly support cascading expectations files.
+        expectations = TestExpectations(port, include_overrides=False)
+        path = port.path_to_test_expectations_file()
+        self._tool.filesystem.write_text_file(path, expectations.remove_rebaselined_tests(expectations.get_rebaselining_failures()))
+
+    def _tests_to_rebaseline(self, port):
+        tests_to_rebaseline = {}
+        expectations = TestExpectations(port, include_overrides=True)
+        for test in expectations.get_rebaselining_failures():
+            tests_to_rebaseline[test] = suffixes_for_expectations(expectations.get_expectations(test))
+        return tests_to_rebaseline
+
+    def _add_tests_to_rebaseline_for_port(self, port_name):
+        builder_name = builders.builder_name_for_port_name(port_name)
+        if not builder_name:
+            return
+        tests = self._tests_to_rebaseline(self._tool.port_factory.get(port_name)).items()
+
+        if tests:
+            _log.info("Retrieving results for %s from %s." % (port_name, builder_name))
+
+        for test_name, suffixes in tests:
+            _log.info("    %s (%s)" % (test_name, ','.join(suffixes)))
+            if test_name not in self._test_list:
+                self._test_list[test_name] = {}
+            self._test_list[test_name][builder_name] = suffixes
+
+    def execute(self, options, args, tool):
+        self._test_list = {}
+        for port_name in tool.port_factory.all_port_names():
+            self._add_tests_to_rebaseline_for_port(port_name)
+        self._rebaseline(options, self._test_list)
+
+        for port_name in tool.port_factory.all_port_names():
+            self._update_expectations_file(port_name)
+
+
+# FIXME: Merge this with rebaseline-test. The only difference is that this prompts if you leave out the test-name, builder or suffixes.
+# We should just make rebaseline-test prompt and get rid of this command.
 class Rebaseline(AbstractDeclarativeCommand):
     name = "rebaseline"
     help_text = "Replaces local expected.txt files with new results from build bots"

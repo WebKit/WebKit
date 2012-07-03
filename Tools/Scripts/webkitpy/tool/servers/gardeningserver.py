@@ -141,6 +141,6 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         self._serve_text('success')
 
     def rebaselineall(self):
-        command = ['rebaseline-all']
+        command = ['rebaseline-json']
         self.server.tool.executive.run_command([self.server.tool.path()] + command, input=self.read_entity_body(), cwd=self.server.tool.scm().checkout_root)
         self._serve_text('success')
