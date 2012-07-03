@@ -1,3 +1,9 @@
+2012-07-03  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, update .gitignore to handle VS2010 files.
+
+        * WebCore.gyp/.gitignore:
+
 2012-07-03  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk][Gamepads] 'warning: comparison is always true due to limited range of data type [-Wtype-limits]' in GamepadsGtk.cpp

@@ -4,4 +4,8 @@
 *.sln
 *.tmp
 *.vcproj*
+*.vcxproj*
 WebCore.xcodeproj
+webcore_bindings_sources.props
+webcore_bindings_sources.targets
+webcore_bindings_sources.xml

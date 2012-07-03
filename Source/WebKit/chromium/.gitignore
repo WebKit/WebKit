@@ -4,7 +4,11 @@
 *.mk
 *.sln
 *.vcproj*
+*.vcxproj*
+All.ncb
+All.sdf
 All.xcodeproj
+WebKit.ncb
 WebKit.xcodeproj
 WebKitUnitTests.xcodeproj
 

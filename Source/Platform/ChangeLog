@@ -1,3 +1,9 @@
+2012-07-03  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, update .gitignore to handle VS2010 files.
+
+        * Platform.gyp/.gitignore:
+
 2012-07-02  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrackList to match the specification
