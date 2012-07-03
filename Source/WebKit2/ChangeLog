@@ -1,5 +1,38 @@
 2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Add API to inspect a Web Intent service
+        https://bugs.webkit.org/show_bug.cgi?id=90066
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL API to inspect a Web Intent Service and emit
+        a signal on the view when a new intent service
+        registers.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_intent_service.cpp: Added.
+        (_Ewk_Intent_Service):
+        (ewk_intent_service_ref):
+        (ewk_intent_service_unref):
+        (ewk_intent_service_action_get):
+        (ewk_intent_service_type_get):
+        (ewk_intent_service_href_get):
+        (ewk_intent_service_title_get):
+        (ewk_intent_service_disposition_get):
+        (ewk_intent_service_new):
+        * UIProcess/API/efl/ewk_intent_service.h: Added.
+        * UIProcess/API/efl/ewk_intent_service_private.h: Copied from Source/WebKit2/UIProcess/API/efl/ewk_view_loader_client.cpp.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_intent_service_register):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (registerIntentServiceForFrame):
+        (ewk_view_loader_client_attach):
+        * UIProcess/API/efl/ewk_view_private.h:
+
+2012-07-02  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2][EFL] Free Ewk_Intent calloc'd memory with free() instead of delete
         https://bugs.webkit.org/show_bug.cgi?id=90433
 

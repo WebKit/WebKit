@@ -33,6 +33,9 @@ class IntSize;
 #if ENABLE(WEB_INTENTS)
 typedef struct _Ewk_Intent Ewk_Intent;
 #endif
+#if ENABLE(WEB_INTENTS_TAG)
+typedef struct _Ewk_Intent_Service Ewk_Intent_Service;
+#endif
 
 void ewk_view_display(Evas_Object* ewkView, const WebCore::IntRect& rect);
 void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCore::IntSize& size);
@@ -42,6 +45,9 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef);
 
 #if ENABLE(WEB_INTENTS)
 void ewk_view_intent_request_new(Evas_Object* ewkView, const Ewk_Intent* ewkIntent);
+#endif
+#if ENABLE(WEB_INTENTS_TAG)
+void ewk_view_intent_service_register(Evas_Object* ewkView, const Ewk_Intent_Service* ewkIntentService);
 #endif
 
 WebKit::WebPageProxy* ewk_view_page_get(const Evas_Object* ewkView);

@@ -643,6 +643,19 @@ void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const IntSiz
     evas_object_image_data_copy_set(smartData->image, imageData);
 }
 
+#if ENABLE(WEB_INTENTS_TAG)
+/**
+ * @internal
+ * The view received a new intent service registration.
+ *
+ * Emits signal: "intent,service,register" with pointer to a Ewk_Intent_Service.
+ */
+void ewk_view_intent_service_register(Evas_Object* ewkView, const Ewk_Intent_Service* ewkIntentService)
+{
+    evas_object_smart_callback_call(ewkView, "intent,service,register", const_cast<Ewk_Intent_Service*>(ewkIntentService));
+}
+#endif // ENABLE(WEB_INTENTS_TAG)
+
 WebPageProxy* ewk_view_page_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
