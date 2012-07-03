@@ -1,3 +1,66 @@
+2012-07-03  Michael Saboff  <msaboff@apple.com>
+
+        Enh: Hash Const JSString in Backing Stores to Save Memory
+        https://bugs.webkit.org/show_bug.cgi?id=86024
+
+        Reviewed by Oliver Hunt.
+
+        During garbage collection, each marking thread keeps a HashMap of
+        strings.  While visiting via MarkStack::copyAndAppend(), we check to
+        see if the string we are visiting is already in the HashMap.  If not
+        we add it. If so, we change the reference to the current string we're
+        visiting to the prior string.
+
+        To reduce the performance impact of this change, two throttles have
+        ben added.  1) We only try hash consting if a significant number of new 
+        strings have been created since the last hash const.  Currently this is
+        set at 100 strings.  2) If a string is unique at the end of a marking
+        it will not be checked during further GC phases. In some cases this
+        won't catch all duplicates, but we are trying to catch the growth of
+        duplicate strings.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackThreadSharedData::resetChildren):
+        (JSC::MarkStackThreadSharedData::MarkStackThreadSharedData):
+        (JSC::MarkStackThreadSharedData::reset):
+        (JSC::MarkStack::setup): Check to see if enough strings have been created
+        to hash const.
+        (JSC::MarkStack::reset): Added call to clear m_uniqueStrings.
+        (JSC::JSString::tryHashConstLock): New method to lock JSString for
+        hash consting.
+        (JSC::JSString::releaseHashConstLock): New unlock method.
+        (JSC::JSString::shouldTryHashConst): Set of checks to see if we should
+        try to hash const the string.
+        (JSC::MarkStack::internalAppend): New method that performs the hash consting.
+        (JSC::SlotVisitor::copyAndAppend): Changed to call the new hash
+        consting internalAppend().
+        * heap/MarkStack.h:
+        (MarkStackThreadSharedData):
+        (MarkStack):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        (JSC::JSGlobalData::haveEnoughNewStringsToHashConst):
+        (JSC::JSGlobalData::resetNewStringsSinceLastHashConst):
+        * runtime/JSString.h:
+        (JSString): Changed from using bool flags to using an unsigned
+        m_flags field.  This works better with the weakCompareAndSwap in
+        JSString::tryHashConstLock(). Changed the 8bitness setting and
+        checking to use new accessors.
+        (JSC::JSString::JSString):
+        (JSC::JSString::finishCreation):
+        (JSC::JSString::is8Bit): Updated for new m_flags.
+        (JSC::JSString::setIs8Bit): New setter.
+        New hash const flags accessors:
+        (JSC::JSString::isHashConstSingleton):
+        (JSC::JSString::clearHashConstSingleton):
+        (JSC::JSString::setHashConstSingleton):
+        (JSC::JSRopeString::finishCreation):
+        (JSC::JSRopeString::append):
+
 2012-07-03  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, update .gitignore to handle VS2010 files.

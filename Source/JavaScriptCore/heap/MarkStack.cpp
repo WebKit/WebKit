@@ -38,6 +38,7 @@
 #include "Structure.h"
 #include "UString.h"
 #include "WriteBarrier.h"
+#include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
 #include <wtf/MainThread.h>
 
@@ -225,8 +226,8 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other, size_t idleThread
 void MarkStackThreadSharedData::resetChildren()
 {
     for (unsigned i = 0; i < m_markingThreadsMarkStack.size(); ++i)
-       m_markingThreadsMarkStack[i]->reset();
-}   
+        m_markingThreadsMarkStack[i]->reset();
+}
 
 size_t MarkStackThreadSharedData::childVisitCount()
 {       
@@ -257,6 +258,7 @@ void MarkStackThreadSharedData::markingThreadStartFunc(void* myVisitor)
 MarkStackThreadSharedData::MarkStackThreadSharedData(JSGlobalData* globalData)
     : m_globalData(globalData)
     , m_copiedSpace(&globalData->heap.m_storageSpace)
+    , m_shouldHashConst(false)
     , m_sharedMarkStack(m_segmentAllocator)
     , m_numberOfActiveParallelMarkers(0)
     , m_parallelMarkersShouldExit(false)
@@ -298,6 +300,21 @@ void MarkStackThreadSharedData::reset()
     ASSERT(m_opaqueRoots.isEmpty());
 #endif
     m_weakReferenceHarvesters.removeAll();
+
+    if (m_shouldHashConst) {
+        m_globalData->resetNewStringsSinceLastHashConst();
+        m_shouldHashConst = false;
+    }
+}
+
+void MarkStack::setup()
+{
+    m_shared.m_shouldHashConst = m_shared.m_globalData->haveEnoughNewStringsToHashConst();
+    m_shouldHashConst = m_shared.m_shouldHashConst;
+#if ENABLE(PARALLEL_GC)
+    for (unsigned i = 0; i < m_shared.m_markingThreadsMarkStack.size(); ++i)
+        m_shared.m_markingThreadsMarkStack[i]->m_shouldHashConst = m_shared.m_shouldHashConst;
+#endif
 }
 
 void MarkStack::reset()
@@ -309,6 +326,10 @@ void MarkStack::reset()
 #else
     m_opaqueRoots.clear();
 #endif
+    if (m_shouldHashConst) {
+        m_uniqueStrings.clear();
+        m_shouldHashConst = false;
+    }
 }
 
 void MarkStack::append(ConservativeRoots& conservativeRoots)
@@ -521,6 +542,75 @@ void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
     return CopiedSpace::allocateFromBlock(m_copyBlock, bytes);
 }
 
+ALWAYS_INLINE bool JSString::tryHashConstLock()
+{
+#if ENABLE(PARALLEL_GC)
+    unsigned currentFlags = m_flags;
+    unsigned newFlags = currentFlags | HashConstLock;
+
+    if (!WTF::weakCompareAndSwap(&m_flags, currentFlags, newFlags))
+        return false;
+
+    WTF::memoryBarrierAfterLock();
+    return true;
+#else
+    if (isHashConstSingleton())
+        return false;
+
+    m_flags |= HashConstLock;
+
+    return true;
+#endif
+}
+
+ALWAYS_INLINE void JSString::releaseHashConstLock()
+{
+#if ENABLE(PARALLEL_GC)
+    WTF::memoryBarrierBeforeUnlock();
+#endif
+    m_flags &= ~HashConstLock;
+}
+
+ALWAYS_INLINE bool JSString::shouldTryHashConst()
+{
+    return ((length() > 1) && !isRope() && !isHashConstSingleton());
+}
+
+ALWAYS_INLINE void MarkStack::internalAppend(JSValue* slot)
+{
+    // This internalAppend is only intended for visits to object and array backing stores.
+    // as it can change the JSValue pointed to be the argument when the original JSValue
+    // is a string that contains the same contents as another string.
+
+    ASSERT(slot);
+    JSValue value = *slot;
+    ASSERT(value);
+    if (!value.isCell())
+        return;
+
+    JSCell* cell = value.asCell();
+
+    if (m_shouldHashConst && cell->isString()) {
+        JSString* string = jsCast<JSString*>(cell);
+        if (string->shouldTryHashConst() && string->tryHashConstLock()) {
+            UniqueStringMap::AddResult addResult = m_uniqueStrings.add(string->string().impl(), value);
+            if (addResult.isNewEntry)
+                string->setHashConstSingleton();
+            else {
+                JSValue existingJSValue = addResult.iterator->second;
+                if (value != existingJSValue)
+                    jsCast<JSString*>(existingJSValue.asCell())->clearHashConstSingleton();
+                *slot = existingJSValue;
+                string->releaseHashConstLock();
+                return;
+            }
+            string->releaseHashConstLock();
+        }
+    }
+
+    internalAppend(cell);
+}
+
 void SlotVisitor::copyAndAppend(void** ptr, size_t bytes, JSValue* values, unsigned length)
 {
     void* oldPtr = *ptr;
@@ -534,7 +624,7 @@ void SlotVisitor::copyAndAppend(void** ptr, size_t bytes, JSValue* values, unsig
             newValues[i] = value;
             if (!value)
                 continue;
-            internalAppend(value);
+            internalAppend(&newValues[i]);
         }
 
         memcpy(newPtr, oldPtr, jsValuesOffset);

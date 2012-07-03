@@ -454,6 +454,7 @@ void Heap::markRoots(bool fullGC)
 
     m_storageSpace.startedCopying();
     SlotVisitor& visitor = m_slotVisitor;
+    visitor.setup();
     HeapRootVisitor heapRootVisitor(visitor);
 
     {
@@ -585,12 +586,11 @@ void Heap::markRoots(bool fullGC)
 #endif
 
     visitor.reset();
-    m_sharedData.reset();
 #if ENABLE(PARALLEL_GC)
     m_sharedData.resetChildren();
 #endif
+    m_sharedData.reset();
     m_storageSpace.doneCopying();
-
 }
 
 size_t Heap::objectCount()

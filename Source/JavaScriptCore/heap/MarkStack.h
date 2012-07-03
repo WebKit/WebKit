@@ -219,6 +219,8 @@ namespace JSC {
         
         MarkStackSegmentAllocator m_segmentAllocator;
         
+        bool m_shouldHashConst;
+
         Vector<ThreadIdentifier> m_markingThreads;
         Vector<MarkStack*> m_markingThreadsMarkStack;
         
@@ -259,6 +261,7 @@ namespace JSC {
         MarkStackThreadSharedData& sharedData() { return m_shared; }
         bool isEmpty() { return m_stack.isEmpty(); }
 
+        void setup();
         void reset();
 
         size_t visitCount() const { return m_visitCount; }
@@ -292,6 +295,7 @@ namespace JSC {
 
         void internalAppend(JSCell*);
         void internalAppend(JSValue);
+        void internalAppend(JSValue*);
         
         JS_EXPORT_PRIVATE void mergeOpaqueRoots();
         
@@ -325,6 +329,10 @@ namespace JSC {
         
         MarkStackThreadSharedData& m_shared;
 
+        bool m_shouldHashConst; // Local per-thread copy of shared flag for performance reasons
+        typedef HashMap<StringImpl*, JSValue> UniqueStringMap;
+        UniqueStringMap m_uniqueStrings;
+
 #if ENABLE(OBJECT_MARK_LOGGING)
         unsigned m_logChildCount;
 #endif
@@ -339,6 +347,7 @@ namespace JSC {
         , m_visitCount(0)
         , m_isInParallelMode(false)
         , m_shared(shared)
+        , m_shouldHashConst(false)
     {
     }
 

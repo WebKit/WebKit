@@ -67,6 +67,7 @@ namespace JSC {
         friend class JSGlobalData;
         friend class SpecializedThunkJIT;
         friend class JSRopeString;
+        friend class MarkStack;
         friend class SlotVisitor;
         friend struct ThunkHelpers;
 
@@ -77,12 +78,14 @@ namespace JSC {
     private:
         JSString(JSGlobalData& globalData, PassRefPtr<StringImpl> value)
             : JSCell(globalData, globalData.stringStructure.get())
+            , m_flags(0)
             , m_value(value)
         {
         }
 
         JSString(JSGlobalData& globalData)
             : JSCell(globalData, globalData.stringStructure.get())
+            , m_flags(0)
         {
         }
 
@@ -91,7 +94,8 @@ namespace JSC {
             ASSERT(!m_value.isNull());
             Base::finishCreation(globalData);
             m_length = length;
-            m_is8Bit = m_value.impl()->is8Bit();
+            setIs8Bit(m_value.impl()->is8Bit());
+            globalData.m_newStringsSinceLastHashConst++;
         }
 
         void finishCreation(JSGlobalData& globalData, size_t length, size_t cost)
@@ -99,8 +103,9 @@ namespace JSC {
             ASSERT(!m_value.isNull());
             Base::finishCreation(globalData);
             m_length = length;
-            m_is8Bit = m_value.impl()->is8Bit();
+            setIs8Bit(m_value.impl()->is8Bit());
             Heap::heap(this)->reportExtraMemoryCost(cost);
+            globalData.m_newStringsSinceLastHashConst++;
         }
 
     protected:
@@ -108,7 +113,8 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = 0;
-            m_is8Bit = true;
+            setIs8Bit(true);
+            globalData.m_newStringsSinceLastHashConst++;
         }
         
     public:
@@ -161,10 +167,30 @@ namespace JSC {
 
     protected:
         bool isRope() const { return m_value.isNull(); }
-        bool is8Bit() const { return m_is8Bit; }
+        bool is8Bit() const { return m_flags & Is8Bit; }
+        void setIs8Bit(bool flag)
+        {
+            if (flag)
+                m_flags |= Is8Bit;
+            else
+                m_flags &= ~Is8Bit;
+        }
+        bool shouldTryHashConst();
+        bool isHashConstSingleton() const { return m_flags & IsHashConstSingleton; }
+        void clearHashConstSingleton() { m_flags &= ~IsHashConstSingleton; }
+        void setHashConstSingleton() { m_flags |= IsHashConstSingleton; }
+        bool tryHashConstLock();
+        void releaseHashConstLock();
+
+        unsigned m_flags;
+        
+        enum {
+            HashConstLock = 1u << 2,
+            IsHashConstSingleton = 1u << 1,
+            Is8Bit = 1u
+        };
 
         // A string is represented either by a UString or a rope of fibers.
-        bool m_is8Bit : 1;
         unsigned m_length;
         mutable UString m_value;
 
@@ -231,7 +257,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length();
-            m_is8Bit = (s1->is8Bit() && s2->is8Bit());
+            setIs8Bit(s1->is8Bit() && s2->is8Bit());
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
         }
@@ -240,7 +266,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length() + s3->length();
-            m_is8Bit = (s1->is8Bit() && s2->is8Bit() &&  s3->is8Bit());
+            setIs8Bit(s1->is8Bit() && s2->is8Bit() &&  s3->is8Bit());
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
             m_fibers[2].set(globalData, this, s3);
@@ -255,7 +281,7 @@ namespace JSC {
         {
             m_fibers[index].set(globalData, this, jsString);
             m_length += jsString->m_length;
-            m_is8Bit = m_is8Bit && jsString->m_is8Bit;
+            setIs8Bit(is8Bit() && jsString->is8Bit());
         }
 
         static JSRopeString* createNull(JSGlobalData& globalData)
