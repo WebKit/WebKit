@@ -1,3 +1,12 @@
+2012-07-03  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Unreviewed gardening.
+
+        platform/chromium/permissionclient/storage-permission.html consistently
+        passes
+
+        * platform/chromium/TestExpectations:
+
 2012-07-03  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r121728. Updated expectations to

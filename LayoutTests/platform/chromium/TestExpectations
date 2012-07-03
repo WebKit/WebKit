@@ -2674,8 +2674,6 @@ BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html 
 
 BUGCR84032 WIN : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
 
-BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = PASS TEXT
-
 // two regions reftests failing on Chromium
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions-rtl.html = PASS IMAGE
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions.html = PASS IMAGE
