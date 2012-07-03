@@ -1,3 +1,30 @@
+2012-07-02  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Update DumpRenderTree to have it work interactively in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=88326
+
+        Reviewed by Rob Buis.
+
+        1. Test name is sent to torch-launcher via PPS message(from host machine).
+           So we get test list by monitoring and receiving PPS message instead of
+           reading file index.drt.
+        2. Torch-launcher create a <test file>.done file when it finished a test.
+        3. We don't need to search for Ref-tests in DumpRenderTree.cpp any more. NRWT
+           will get them for us.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::DumpRenderTree):
+        (BlackBerry::WebKit::DumpRenderTree::doneDrt):
+        (BlackBerry::WebKit::DumpRenderTree::runRemainingTests):
+        (BlackBerry::WebKit::DumpRenderTree::ensurePPS):
+        (WebKit):
+        (BlackBerry::WebKit::DumpRenderTree::handlePPSData):
+        (BlackBerry::WebKit::DumpRenderTree::waitForTest):
+        (BlackBerry::WebKit::DumpRenderTree::runTests):
+        (BlackBerry::WebKit::DumpRenderTree::dump):
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+        (DumpRenderTree):
+
 2012-07-02  Adam Barth  <abarth@webkit.org>
 
         Remove flashplugin-installer from the EWS image because it causes some tests to crash

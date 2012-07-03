@@ -61,6 +61,7 @@
 #include "WebPageClient.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
+#include <BlackBerryPlatformLayoutTest.h>
 #include <WebSettings.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -156,13 +157,12 @@ DumpRenderTree::DumpRenderTree(BlackBerry::WebKit::WebPage* page)
     , m_waitToDumpWatchdogTimer(this, &DumpRenderTree::waitToDumpWatchdogTimerFired)
     , m_workTimer(this, &DumpRenderTree::processWork)
     , m_acceptsEditing(true)
-    , m_runningRefTests(false)
 {
+    const char* workerNumber = getenv("WORKER_NUMBER") ? getenv("WORKER_NUMBER") : "0";
     String sdcardPath = SDCARD_PATH;
     m_resultsDir = sdcardPath + "/results/";
-    m_indexFile = sdcardPath + "/index.drt";
-    m_doneFile = sdcardPath + "/done";
-    m_currentTestFile = sdcardPath + "/current.drt";
+    m_doneFile = sdcardPath + "/done" + workerNumber;
+    m_currentTestFile = sdcardPath + "/current" + workerNumber + ".drt";
     m_page->resetVirtualViewportOnCommitted(false);
     m_page->setVirtualViewportSize(800, 600);
     s_currentInstance = this;
@@ -200,34 +200,11 @@ void DumpRenderTree::doneDrt()
 {
     fclose(stdout);
     fclose(stderr);
+    unlink(getPPSPath().c_str());
 
     // Notify the external world that we're done.
     createFile(m_doneFile);
     (m_page->client())->notifyRunLayoutTestsFinished();
-}
-
-void DumpRenderTree::getRefTests(const String& testName)
-{
-    if (m_runningRefTests)
-        return;
-
-    const char* suffixes[] = {"-expected", "-expected-mismatch"};
-    const int countofSuffixes = sizeof(suffixes) / sizeof(const char*);
-    // FIXME: Currently we only have ref tests with .html extension, you many need to add more
-    // when they have more extensions(.htm, .shtml, .xhtml, etc.).
-    const char* extensions[] = {".html", ".svg"};
-    const int countofExtensions = sizeof(extensions) / sizeof(const char*);
-    String layoutDir = kSDCLayoutTestsURI + 7; // 7: strlen("file://"), layoutDir: "/developer/LayoutTests/"
-
-    size_t iEnd = testName.reverseFind('.');
-
-    String nameWithoutExtension = testName.substring(0, iEnd);
-    for (int i = 0; i < countofSuffixes; ++i)
-        for (int j = 0; j < countofExtensions; ++j) {
-            String candidateFile = layoutDir + nameWithoutExtension + suffixes[i] + extensions[j];
-            if (!access(candidateFile.utf8().data(), F_OK))
-                m_refTests.append(nameWithoutExtension + suffixes[i] + extensions[j]);
-        }
 }
 
 void DumpRenderTree::runCurrentTest()
@@ -247,20 +224,17 @@ void DumpRenderTree::runRemainingTests()
     fflush(stderr);
 
     if (m_currentTest >= m_tests.end() - 1) {
-        // Run ref-tests after real tests were finished
-        if (!m_runningRefTests && !m_refTests.isEmpty()) {
-            m_tests.clear();
-            m_tests.append(m_refTests);
-            m_refTests.clear();
+        m_tests.clear();
+        if (m_bufferedTests.size() > 0) {
+            m_tests.append(m_bufferedTests);
+            m_bufferedTests.clear();
             m_currentTest = m_tests.begin();
-            m_runningRefTests = true;
-        } else {
-            doneDrt();
-            return;
+            runCurrentTest();
         }
-    } else
-        m_currentTest++;
+        return;
+    }
 
+    m_currentTest++;
     runCurrentTest();
 }
 
@@ -346,19 +320,34 @@ void DumpRenderTree::runTests()
 {
     m_gcController = new GCController();
     m_accessibilityController = new AccessibilityController();
-    getTestsToRun();
+    if (!ensurePPS()) {
+        fprintf(stderr, "Failed to open PPS file '%s', error=%d\n", getPPSPath().c_str(), errno);
+        (m_page->client())->notifyRunLayoutTestsFinished();
+        return;
+    }
 
     mainFrame = DumpRenderTreeSupport::corePage(m_page)->mainFrame();
 
-    m_currentTest = m_tests.begin();
-
-    if (m_currentTest == m_tests.end()) {
-        doneDrt();
-        return;
-    }
-    runCurrentTest();
+    // Get Test file name from PPS: /pps/services/drt/input
+    // Example: test_file::fast/js/arguments.html
+    waitForTest();
 }
 
+void DumpRenderTree::addTest(const char* testFile)
+{
+    String test(testFile);
+    if (test == "#DONE")
+        doneDrt();
+    else if (!test.isEmpty()) {
+        if (m_tests.isEmpty()) {
+            // No test is being run, initialize iterator and start test
+            m_tests.append(test);
+            m_currentTest = m_tests.begin();
+            runCurrentTest();
+        } else
+            m_bufferedTests.append(test);
+    }
+}
 
 String DumpRenderTree::dumpFramesAsText(WebCore::Frame* frame)
 {
@@ -393,28 +382,6 @@ bool DumpRenderTree::isHTTPTest(const String& test)
     int lenHttpTestSyntax = strlen(httpTestSyntax);
     return testLower.substring(0, lenHttpTestSyntax) == httpTestSyntax
             && testLower.substring(lenHttpTestSyntax, strlen(localTestSyntax)) != localTestSyntax;
-}
-
-void DumpRenderTree::getTestsToRun()
-{
-    Vector<String> files;
-
-    FILE* fd = fopen(m_indexFile.utf8().data(), "r");
-    fseek(fd, 0, SEEK_END);
-    int size = ftell(fd);
-    fseek(fd, 0, SEEK_SET);
-    OwnArrayPtr<char> buf = adoptArrayPtr(new char[size]);
-    fread(buf.get(), 1, size, fd);
-    fclose(fd);
-    String s(buf.get(), size);
-    s.split("\n", files);
-
-    m_tests = files;
-
-    // Find ref-tests for each of the real tests, one test may have multiple expected ref-tests
-    // and multiple mismatch ref-tests.
-    for (Vector<String>::iterator iter = files.begin(); files.end() != iter; ++iter)
-        getRefTests(*iter);
 }
 
 void DumpRenderTree::invalidateAnyPreviousWaitToDumpWatchdog()
@@ -511,6 +478,9 @@ static String dumpBackForwardListForWebView()
 
 void DumpRenderTree::dump()
 {
+    if (testDone)
+        return;
+
     invalidateAnyPreviousWaitToDumpWatchdog();
 
     String dumpFile = m_resultsDir + *m_currentTest + ".dump";
@@ -532,6 +502,9 @@ void DumpRenderTree::dump()
 
     String crashFile = dumpFile + ".crash";
     unlink(crashFile.utf8().data());
+
+    String doneFile =  m_resultsDir + *m_currentTest + ".done";
+    createFile(doneFile);
 
     testDone = true;
     runRemainingTests();

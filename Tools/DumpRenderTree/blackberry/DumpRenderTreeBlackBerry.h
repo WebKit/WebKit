@@ -21,9 +21,11 @@
 
 #include "BlackBerryGlobal.h"
 
+
 #include "DumpRenderTreeClient.h"
 #include "PlatformString.h"
 #include "Timer.h"
+#include <BlackBerryPlatformLayoutTest.h>
 #include <FindOptions.h>
 #include <wtf/Vector.h>
 
@@ -45,7 +47,7 @@ namespace BlackBerry {
 namespace WebKit {
 class WebPage;
 
-class DumpRenderTree : public BlackBerry::WebKit::DumpRenderTreeClient {
+class DumpRenderTree : public BlackBerry::WebKit::DumpRenderTreeClient, public BlackBerry::Platform::LayoutTestClient {
 public:
     DumpRenderTree(WebPage*);
     virtual ~DumpRenderTree();
@@ -104,11 +106,12 @@ public:
     void setSelectTrailingWhitespaceEnabled(bool enabled) { s_selectTrailingWhitespaceEnabled = enabled; }
     bool didReceiveAuthenticationChallenge(WebCore::Credential&);
 
+    // BlackBerry::Platform::BlackBerryPlatformLayoutTestClient method
+    virtual void addTest(const char* testFile);
 private:
     void runTest(const String& url);
     void runTests();
     void runCurrentTest();
-    void getRefTests(const String& testName);
 
     void processWork(WebCore::Timer<DumpRenderTree>*);
 
@@ -119,7 +122,6 @@ private:
     void locationChangeForFrame(WebCore::Frame*);
 
     void doneDrt();
-    void getTestsToRun();
     bool isHTTPTest(const String& test);
     String renderTreeDump() const;
     void resetToConsistentStateBeforeTesting();
@@ -129,10 +131,9 @@ private:
 
     Vector<String> m_tests;
     Vector<String>::iterator m_currentTest;
-    Vector<String> m_refTests; // Reference tests for current test
+    Vector<String> m_bufferedTests;
 
     String m_resultsDir;
-    String m_indexFile;
     String m_doneFile;
     String m_currentHttpTest;
     String m_currentTestFile;
@@ -146,7 +147,6 @@ private:
 
     bool m_acceptsEditing;
     bool m_loadFinished;
-    bool m_runningRefTests;
     static bool s_selectTrailingWhitespaceEnabled;
 };
 }
