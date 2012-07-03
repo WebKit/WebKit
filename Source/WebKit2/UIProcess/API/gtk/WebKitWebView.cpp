@@ -88,6 +88,7 @@ enum {
     RUN_FILE_CHOOSER,
 
     CONTEXT_MENU,
+    CONTEXT_MENU_DISMISSED,
 
     LAST_SIGNAL
 };
@@ -1043,6 +1044,22 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      WEBKIT_TYPE_CONTEXT_MENU,
                      GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
                      WEBKIT_TYPE_HIT_TEST_RESULT);
+
+    /**
+     * WebKitWebView::context-menu-dismissed:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     *
+     * Emitted after #WebKitWebView::context-menu signal, if the context menu is shown,
+     * to notify that the context menu is dismissed.
+     */
+    signals[CONTEXT_MENU_DISMISSED] =
+        g_signal_new("context-menu-dismissed",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, context_menu_dismissed),
+                     0, 0,
+                     g_cclosure_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 }
 
 static bool updateReplaceContentStatus(WebKitWebView* webView, WebKitLoadEvent loadEvent)
@@ -1338,6 +1355,11 @@ static void webkitWebViewCreateAndAppendInputMethodsMenuItem(WebKitWebView* webV
     webkit_context_menu_insert(contextMenu, menuItem, unicodeMenuItemPosition);
 }
 
+static void contextMenuDismissed(GtkMenuShell*, WebKitWebView* webView)
+{
+    g_signal_emit(webView, signals[CONTEXT_MENU_DISMISSED], 0, NULL);
+}
+
 void webkitWebViewPopulateContextMenu(WebKitWebView* webView, WKArrayRef wkProposedMenu, WKHitTestResultRef wkHitTestResult)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
@@ -1359,6 +1381,8 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, WKArrayRef wkPropo
     Vector<ContextMenuItem> contextMenuItems;
     webkitContextMenuPopulate(contextMenu.get(), contextMenuItems);
     contextMenuProxy->populate(contextMenuItems);
+
+    g_signal_connect(contextMenuProxy->gtkMenu(), "deactivate", G_CALLBACK(contextMenuDismissed), webView);
 
     // Clear the menu to make sure it's useless after signal emission.
     webkit_context_menu_remove_all(contextMenu.get());

@@ -49,6 +49,7 @@ public:
     virtual void hideContextMenu();
 
     void populate(Vector<WebCore::ContextMenuItem>&);
+    GtkMenu* gtkMenu() const { return m_menu.platformDescription(); }
 
 private:
     WebContextMenuProxyGtk(GtkWidget*, WebPageProxy*);

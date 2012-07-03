@@ -49,11 +49,17 @@ public:
         return test->contextMenu(contextMenu, event, hitTestResult);
     }
 
+    static void contextMenuDismissedCallback(WebKitWebView*, ContextMenuTest* test)
+    {
+        test->contextMenuDismissed();
+    }
+
     ContextMenuTest()
         : m_menuPositionX(0)
         , m_menuPositionY(0)
     {
         g_signal_connect(m_webView, "context-menu", G_CALLBACK(contextMenuCallback), this);
+        g_signal_connect(m_webView, "context-menu-dismissed", G_CALLBACK(contextMenuDismissedCallback), this);
     }
 
     ~ContextMenuTest()
@@ -62,6 +68,11 @@ public:
     }
 
     virtual bool contextMenu(WebKitContextMenu*, GdkEvent*, WebKitHitTestResult*) = 0;
+
+    virtual void contextMenuDismissed()
+    {
+        quitMainLoop();
+    }
 
     bool shouldShowInputMethodsMenu()
     {
@@ -181,6 +192,18 @@ public:
     void showContextMenuAndWaitUntilFinished()
     {
         showContextMenuAtPositionAndWaitUntilFinished(0, 0);
+    }
+
+    static gboolean simulateEscKeyIdleCallback(ContextMenuTest* test)
+    {
+        test->keyStroke(GDK_KEY_Escape);
+        return FALSE;
+    }
+
+    void dismissContextMenuAndWaitUntilFinished()
+    {
+        g_idle_add(reinterpret_cast<GSourceFunc>(simulateEscKeyIdleCallback), this);
+        g_main_loop_run(m_mainLoop);
     }
 
     double m_menuPositionX;
@@ -405,7 +428,6 @@ public:
         GtkMenuItem* item = getMenuItem(menu, m_itemToActivateLabel);
         gtk_menu_shell_activate_item(GTK_MENU_SHELL(menu), GTK_WIDGET(item), TRUE);
         m_itemToActivateLabel = 0;
-        quitMainLoop();
     }
 
     static gboolean activateMenuItemIdleCallback(gpointer userData)
@@ -657,6 +679,48 @@ static void testContextMenuSubMenu(ContextMenuSubmenuTest* test, gconstpointer)
     test->showContextMenuAndWaitUntilFinished();
 }
 
+class ContextMenuDismissedTest: public ContextMenuTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ContextMenuDismissedTest);
+
+    ContextMenuDismissedTest()
+        : m_dismissed(false)
+    {
+    }
+
+    bool contextMenu(WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult*)
+    {
+        quitMainLoop();
+        // Show the default context menu.
+        return false;
+    }
+
+    void contextMenuDismissed()
+    {
+        m_dismissed = true;
+        ContextMenuTest::contextMenuDismissed();
+    }
+
+    void showContextMenuAndWaitUntilDismissed()
+    {
+        showContextMenuAndWaitUntilFinished();
+        dismissContextMenuAndWaitUntilFinished();
+    }
+
+    bool m_dismissed;
+};
+
+static void testContextMenuDismissed(ContextMenuDismissedTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    test->loadHtml("<html><body>WebKitGTK+ Context menu tests</body></html>", "file:///");
+    test->waitUntilLoadFinished();
+
+    test->showContextMenuAndWaitUntilDismissed();
+    g_assert(test->m_dismissed);
+}
+
 void beforeAll()
 {
     ContextMenuDefaultTest::add("WebKitWebView", "default-menu", testContextMenuDefaultMenu);
@@ -664,6 +728,7 @@ void beforeAll()
     ContextMenuCustomFullTest::add("WebKitWebView", "custom-menu", testContextMenuCustomMenu);
     ContextMenuDisabledTest::add("WebKitWebView", "disable-menu", testContextMenuDisableMenu);
     ContextMenuSubmenuTest::add("WebKitWebView", "submenu", testContextMenuSubMenu);
+    ContextMenuDismissedTest::add("WebKitWebView", "menu-dismissed", testContextMenuDismissed);
 }
 
 void afterAll()

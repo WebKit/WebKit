@@ -1,3 +1,26 @@
+2012-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebView::context-menu-dismissed signal to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=90386
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init): Add context-menu-dismissed signal.
+        (contextMenuDismissed): Emit context-menu-dismissed signal.
+        (webkitWebViewPopulateContextMenu): Connect to deactivate signal
+        of the GtkMenu and emit WebKitWebView::context-menu-dismissed when
+        the gtk menu is deactivated.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        (_WebKitWebViewClass): Add virtual methos for
+        context-menu-dismissed signal.
+        * UIProcess/API/gtk/tests/TestContextMenu.cpp:
+        (testContextMenuDismissed):
+        (beforeAll):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+        (WebKit::WebContextMenuProxyGtk::gtkMenu): Get the GtkMenu built
+        for the context menu proxy.
+
 2012-07-03  Piotr Roguski  <p.roguski@samsung.com>
 
         [EFL][WK2] Added missing WebPageProxy::ViewIsFocused flag to WebPageProxy::viewStateDidChange()
