@@ -38,9 +38,7 @@
 #include "TestShell.h"
 #include "WebAnimationController.h"
 #include "WebBindings.h"
-#include "WebWorkerInfo.h"
 #include "WebConsoleMessage.h"
-#include "platform/WebData.h"
 #include "WebDeviceOrientation.h"
 #include "WebDeviceOrientationClientMock.h"
 #include "WebDocument.h"
@@ -58,12 +56,15 @@
 #include "WebPrintParams.h"
 #include "WebScriptSource.h"
 #include "WebSecurityPolicy.h"
-#include "platform/WebSerializedScriptValue.h"
 #include "WebSettings.h"
-#include "platform/WebSize.h"
-#include "platform/WebURL.h"
+#include "WebSurroundingText.h"
 #include "WebView.h"
 #include "WebViewHost.h"
+#include "WebWorkerInfo.h"
+#include "platform/WebData.h"
+#include "platform/WebSerializedScriptValue.h"
+#include "platform/WebSize.h"
+#include "platform/WebURL.h"
 #include "v8/include/v8.h"
 #include "webkit/support/webkit_support.h"
 #include <algorithm>
@@ -72,8 +73,8 @@
 #include <cstdlib>
 #include <limits>
 #include <sstream>
-#include <wtf/text/WTFString.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if OS(LINUX) || OS(ANDROID)
 #include "linux/WebFontRendering.h"
@@ -275,7 +276,8 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setFixedLayoutSize", &LayoutTestController::setFixedLayoutSize);
     bindMethod("selectionAsMarkup", &LayoutTestController::selectionAsMarkup);
     bindMethod("setHasCustomFullScreenBehavior", &LayoutTestController::setHasCustomFullScreenBehavior);
-    
+    bindMethod("textSurroundingElement", &LayoutTestController::textSurroundingElement);
+
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
 
@@ -2343,3 +2345,28 @@ void LayoutTestController::setPointerLockWillFailSynchronously(const CppArgument
     result->setNull();
 }
 #endif
+
+void LayoutTestController::textSurroundingElement(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 3 || !arguments[0].isObject() || !arguments[1].isNumber() || !arguments[2].isNumber())
+        return;
+
+    WebNode node;
+    if (!WebBindings::getNode(arguments[0].value.objectValue, &node))
+        return;
+
+    if (node.isNull() || !node.isTextNode())
+        return;
+
+    unsigned offset = arguments[1].toInt32();
+    if (offset >= node.nodeValue().length()) {
+        result->set(WebString().utf8());
+        return;
+    }
+
+    WebSurroundingText surroundingText;
+    unsigned maxLength = arguments[2].toInt32();
+    surroundingText.initialize(node, offset, maxLength);
+    result->set(surroundingText.textContent().utf8());
+}

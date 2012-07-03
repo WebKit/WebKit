@@ -1,3 +1,19 @@
+2012-07-02  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Implement a Layout Test for editing/SurroundingText
+        https://bugs.webkit.org/show_bug.cgi?id=82461
+
+        Reviewed by Ryosuke Niwa.
+
+        Allow passing nodes as arguments for layout test methods.
+
+        * public/WebBindings.h:
+        (WebBindings):
+        * src/WebBindings.cpp:
+        (WebKit::getNodeImpl):
+        (WebKit):
+        (WebKit::WebBindings::getNode):
+
 2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Do not do any logging initialization when logging is disabled

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<div id="test">
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Test the extraction of the text surrounding an element.');
+
+function surroundingText(html, offset, maxLength) {
+    document.getElementById('test').innerHTML = html;
+
+    var here = document.getElementById('here');
+    if (here == null)
+        throw 'Test case needs an element with id "here"';
+
+    var node = here.hasChildNodes() ? here.firstChild : here.nextSibling;
+    if (node == null)
+        throw 'No node after "here" element';
+
+    var text = window.testRunner.textSurroundingElement(node, offset, maxLength);
+    return text.replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, '');
+}
+
+function run() {
+    if (!window.testRunner)
+        return;
+
+    shouldBeEqualToString('surroundingText(\'<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>\', 0, 100)', '12345 6789 12345 6789');
+    shouldBeEqualToString('surroundingText(\'<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>\', 5, 6)', '89 123');
+    shouldBeEqualToString('surroundingText(\'<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>\', 5, 0)', '');
+    shouldBeEqualToString('surroundingText(\'<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>\', 5, 1)', '1');
+    shouldBeEqualToString('surroundingText(\'<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>\', 6, 2)', '12');
+    shouldBeEqualToString('surroundingText(\'<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>\', 100, 5)', '');
+    shouldBeEqualToString('surroundingText(\'<select>.</select><div>57th Street and Lake Shore Drive</div> <span>Chicago</span> <span id="here">IL</span> <span>60637</span><select>.</select>\', 0, 100)', '57th Street and Lake Shore Drive Chicago IL 60637');
+    shouldBeEqualToString('surroundingText(\'<fieldset>.</fieldset>12345<button>abc</button><p>6789<br id="here"/>12345</p>6789<textarea>abc</textarea>0123<fieldset>.</fieldset>\', 0, 100)', '6789 12345 6789');
+    shouldBeEqualToString('surroundingText(\'<button>.</button><div id="here">This is <!-- comment --!>a test <\' + \'script language="javascript"><\' + \'/script>example<button>.</button>\', 0, 100)', 'This is a test example');
+    shouldBeEqualToString('surroundingText(\'<button>.</button><div id="here">012345678901234567890123456789</div><button>.</button>\', 15, 12)', '901234567890');
+    shouldBeEqualToString('surroundingText(\'<option>.</option>12345<button id="here">test</button><option>.</option>\', 0, 100)', '');
+    shouldBeEqualToString('surroundingText(\'<option>.</option>12345<button>te<span id="here">st</span></button><option>.</option>\', 0, 100)', '');
+
+    document.body.removeChild(document.getElementById('test'));
+    finishJSTest();
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

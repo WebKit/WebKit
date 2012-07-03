@@ -1,0 +1,21 @@
+Test the extraction of the text surrounding an element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS surroundingText('<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>', 0, 100) is "12345 6789 12345 6789"
+PASS surroundingText('<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>', 5, 6) is "89 123"
+PASS surroundingText('<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>', 5, 0) is ""
+PASS surroundingText('<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>', 5, 1) is "1"
+PASS surroundingText('<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>', 6, 2) is "12"
+PASS surroundingText('<button>.</button>12345<p id="here">6789 12345</p>6789<button>.</button>', 100, 5) is ""
+PASS surroundingText('<select>.</select><div>57th Street and Lake Shore Drive</div> <span>Chicago</span> <span id="here">IL</span> <span>60637</span><select>.</select>', 0, 100) is "57th Street and Lake Shore Drive Chicago IL 60637"
+PASS surroundingText('<fieldset>.</fieldset>12345<button>abc</button><p>6789<br id="here"/>12345</p>6789<textarea>abc</textarea>0123<fieldset>.</fieldset>', 0, 100) is "6789 12345 6789"
+PASS surroundingText('<button>.</button><div id="here">This is <!-- comment --!>a test <' + 'script language="javascript"><' + '/script>example<button>.</button>', 0, 100) is "This is a test example"
+PASS surroundingText('<button>.</button><div id="here">012345678901234567890123456789</div><button>.</button>', 15, 12) is "901234567890"
+PASS surroundingText('<option>.</option>12345<button id="here">test</button><option>.</option>', 0, 100) is ""
+PASS surroundingText('<option>.</option>12345<button>te<span id="here">st</span></button><option>.</option>', 0, 100) is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

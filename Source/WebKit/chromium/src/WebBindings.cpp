@@ -223,6 +223,21 @@ static bool getRangeImpl(NPObject* object, WebRange* webRange)
     return true;
 }
 
+static bool getNodeImpl(NPObject* object, WebNode* webNode)
+{
+    if (!object || (object->_class != npScriptObjectClass))
+        return false;
+
+    V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
+    v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
+    Node* native = V8Node::HasInstance(v8Object) ? V8Node::toNative(v8Object) : 0;
+    if (!native)
+        return false;
+
+    *webNode = WebNode(native);
+    return true;
+}
+
 static bool getElementImpl(NPObject* object, WebElement* webElement)
 {
     if (!object || (object->_class != npScriptObjectClass))
@@ -324,6 +339,16 @@ bool WebBindings::getArrayBufferView(NPObject* arrayBufferView, WebArrayBufferVi
     return getArrayBufferViewImpl(arrayBufferView, webArrayBufferView);
 #else
     // Not supported on other ports (JSC, etc).
+    return false;
+#endif
+}
+
+bool WebBindings::getNode(NPObject* node, WebNode* webNode)
+{
+#if USE(V8)
+    return getNodeImpl(node, webNode);
+#else
+    // Not supported on other ports (JSC, etc.).
     return false;
 #endif
 }

@@ -152,6 +152,10 @@ public:
     // If so, return it as a WebArrayBufferView object.
     WEBKIT_EXPORT static bool getArrayBufferView(NPObject* arrayBufferView, WebArrayBufferView*);
 
+    // Return true (success) if the given npobj is a node.
+    // If so, return that node as a WebNode object.
+    WEBKIT_EXPORT static bool getNode(NPObject* element, WebNode*);
+
     // Return true (success) if the given npobj is an element.
     // If so, return that element as a WebElement object.
     WEBKIT_EXPORT static bool getElement(NPObject* element, WebElement*);
