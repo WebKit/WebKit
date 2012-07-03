@@ -29,7 +29,7 @@
  * @implements {WebInspector.TabbedEditorContainerDelegate}
  * @implements {WebInspector.ContextMenu.Provider}
  * @extends {WebInspector.Panel}
- * @param {WebInspector.CompositeUISourceCodeProvider=} uiSourceCodeProviderForTest
+ * @param {WebInspector.UISourceCodeProvider=} uiSourceCodeProviderForTest
  */
 WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
 {
@@ -40,13 +40,7 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     WebInspector.settings.navigatorWasOnceHidden = WebInspector.settings.createSetting("navigatorWasOnceHidden", false);
     WebInspector.settings.debuggerSidebarHidden = WebInspector.settings.createSetting("debuggerSidebarHidden", false);
 
-    var scriptMapping = new WebInspector.DebuggerScriptMapping();
-    var providers = scriptMapping.uiSourceCodeProviders();
-    providers = providers.concat(new WebInspector.StylesUISourceCodeProvider());
-    this._uiSourceCodeProvider = uiSourceCodeProviderForTest || new WebInspector.CompositeUISourceCodeProvider(providers);
-
-    new WebInspector.PresentationConsoleMessageHelper(this._uiSourceCodeProvider);
-    new WebInspector.DebuggerResourceBinding(this._uiSourceCodeProvider);
+    this._uiSourceCodeProvider = uiSourceCodeProviderForTest || WebInspector.workspace;
 
     function viewGetter()
     {
@@ -1058,14 +1052,6 @@ WebInspector.ScriptsPanel.prototype = {
     },
 
     /**
-     * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
-     */
-    registerUISourceCodeProvider: function(uiSourceCodeProvider)
-    {
-        this._uiSourceCodeProvider._registerUISourceCodeProvider(uiSourceCodeProvider);
-    },
-
-    /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      */
     _showLocalHistory: function(uiSourceCode)
@@ -1096,67 +1082,3 @@ WebInspector.ScriptsPanel.prototype = {
 }
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
-
-/**
- * @constructor
- * @extends {WebInspector.Object}
- * @implements {WebInspector.UISourceCodeProvider}
- * @param {Array.<WebInspector.UISourceCodeProvider>} uiSourceCodeProviders
- */
-WebInspector.CompositeUISourceCodeProvider = function(uiSourceCodeProviders)
-{
-    WebInspector.Object.call(this);
-    this._uiSourceCodeProviders = [];
-    for (var i = 0; i < uiSourceCodeProviders.length; ++i)
-        this._registerUISourceCodeProvider(uiSourceCodeProviders[i]);
-}
-
-WebInspector.CompositeUISourceCodeProvider.prototype = {
-    /**
-     * @param {WebInspector.UISourceCodeProvider} uiSourceCodeProvider
-     */
-    _registerUISourceCodeProvider: function(uiSourceCodeProvider)
-    {
-        this._uiSourceCodeProviders.push(uiSourceCodeProvider);
-        uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
-        uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._handleUISourceCodeReplaced, this);
-        uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._handleUISourceCodeRemoved, this);
-    },
-
-    _handleUISourceCodeAdded: function(event)
-    {
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, event.data);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _handleUISourceCodeReplaced: function(event)
-    {
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, event.data);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _handleUISourceCodeRemoved: function(event)
-    {
-        this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, event.data);
-    },
-
-    /**
-     * @return {Array.<WebInspector.UISourceCode>}
-     */
-    uiSourceCodes: function()
-    {
-        var result = [];
-        for (var i = 0; i < this._uiSourceCodeProviders.length; ++i) {
-            var uiSourceCodes = this._uiSourceCodeProviders[i].uiSourceCodes();
-            for (var j = 0; j < uiSourceCodes.length; ++j)
-                result.push(uiSourceCodes[j]);
-        }
-        return result;
-    }
-}
-
-WebInspector.CompositeUISourceCodeProvider.prototype.__proto__ = WebInspector.Object.prototype;

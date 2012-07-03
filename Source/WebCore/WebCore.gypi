@@ -6406,6 +6406,7 @@
             'inspector/front-end/WatchExpressionsSidebarPane.js',
             'inspector/front-end/WorkerManager.js',
             'inspector/front-end/WorkersSidebarPane.js',
+            'inspector/front-end/Workspace.js',
             'inspector/front-end/dialog.css',
             'inspector/front-end/inspector.css',
             'inspector/front-end/inspectorSyntaxHighlight.css',

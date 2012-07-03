@@ -456,6 +456,8 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.openAnchorLocationRegistry = new WebInspector.HandlerRegistry(openAnchorLocationSetting);
     this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
 
+    this.workspace = new WebInspector.Workspace();
+
     this._createPanels();
     this._createGlobalStatusBarItems();
 

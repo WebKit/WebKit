@@ -106,6 +106,7 @@ modules = [
             "NetworkRequest.js",
             "UISourceCode.js",
             "UserAgentSupport.js",
+            "Workspace.js",
         ]
     },
     {

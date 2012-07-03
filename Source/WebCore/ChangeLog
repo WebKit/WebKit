@@ -1,3 +1,29 @@
+2012-07-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Introduce Workspace make it UISourceCode provider for ScriptsPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=90466
+
+        Reviewed by Pavel Feldman.
+
+        Introduced WebInspector.Workspace as a model (UISourceCode provider) behind ScriptsPanel.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/Workspace.js: Added.
+        (WebInspector.CompositeUISourceCodeProvider):
+        (WebInspector.CompositeUISourceCodeProvider.prototype._registerUISourceCodeProvider):
+        (WebInspector.CompositeUISourceCodeProvider.prototype._handleUISourceCodeAdded):
+        (WebInspector.CompositeUISourceCodeProvider.prototype._handleUISourceCodeReplaced):
+        (WebInspector.CompositeUISourceCodeProvider.prototype._handleUISourceCodeRemoved):
+        (WebInspector.CompositeUISourceCodeProvider.prototype.uiSourceCodes):
+        (WebInspector.Workspace):
+        (WebInspector.Workspace.prototype.registerUISourceCodeProvider):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+
 2012-07-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make use of .qmake.cache for caching features

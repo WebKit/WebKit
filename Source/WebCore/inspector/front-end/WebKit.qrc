@@ -189,6 +189,7 @@
     <file>WatchExpressionsSidebarPane.js</file>
     <file>WorkerManager.js</file>
     <file>WorkersSidebarPane.js</file>
+    <file>Workspace.js</file>
     <file>UglifyJS/parse-js.js</file>
     <file>auditsPanel.css</file>
     <file>dataGrid.css</file>
