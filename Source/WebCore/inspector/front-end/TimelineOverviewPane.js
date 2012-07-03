@@ -885,6 +885,8 @@ WebInspector.TimelineCategoryStrips.prototype = {
             var recordStart = Math.floor((WebInspector.TimelineModel.startTimeInSeconds(record) - timeOffset) * scale);
             var recordEnd = Math.ceil((WebInspector.TimelineModel.endTimeInSeconds(record) - timeOffset) * scale);
             var category = WebInspector.TimelinePresentationModel.categoryForRecord(record);
+            if (category.overviewStripGroupIndex < 0)
+                return;
             var bar = lastBarByGroup[category.overviewStripGroupIndex];
             // This bar may be merged with previous -- so just adjust the previous bar.
             const barsMergeThreshold = 2;

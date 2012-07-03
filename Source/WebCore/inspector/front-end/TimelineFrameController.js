@@ -61,6 +61,16 @@ WebInspector.TimelineFrameController.prototype = {
 
     _addRecord: function(record)
     {
+        var records;
+        if (record.type === WebInspector.TimelineModel.RecordType.Program)
+            records = record["children"] || [];
+        else
+            records = [record];
+        records.forEach(this._innerAddRecord, this);
+    },
+
+    _innerAddRecord: function(record)
+    {
         if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame && this._lastFrame)
             this._flushFrame(record);
         else {
