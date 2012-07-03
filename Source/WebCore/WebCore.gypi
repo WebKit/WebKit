@@ -3259,6 +3259,8 @@
             'platform/audio/AudioDSPKernelProcessor.cpp',
             'platform/audio/AudioDSPKernelProcessor.h',
             'platform/audio/AudioDestination.h',
+            'platform/audio/AudioFIFO.cpp',
+            'platform/audio/AudioFIFO.h',
             'platform/audio/AudioFileReader.h',
             'platform/audio/AudioProcessor.h',
             'platform/audio/AudioPullFIFO.cpp',

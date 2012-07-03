@@ -30,6 +30,7 @@
 #define AudioPullFIFO_h
 
 #include "AudioBus.h"
+#include "AudioFIFO.h"
 #include "AudioSourceProvider.h"
 
 namespace WebCore {
@@ -52,31 +53,14 @@ public:
     void consume(AudioBus* destination, size_t framesToConsume);
 
 private:
-    // Update the FIFO index by the step, with appropriate wrapping around the endpoint.
-    int updateIndex(int index, int step) { return (index + step) % m_fifoLength; }
-
-    void findWrapLengths(size_t index, size_t providerSize, size_t& part1Length, size_t& part2Length);
-    
     // Fill the FIFO buffer with at least |numberOfFrames| more data.
     void fillBuffer(size_t numberOfFrames);
 
     // The provider of the data in our FIFO.
     AudioSourceProvider& m_provider;
 
-    // The FIFO itself. In reality, the FIFO is a circular buffer.
-    AudioBus m_fifoAudioBus;
-
-    // The total available space in the FIFO.
-    size_t m_fifoLength;
-
-    // The number of actual elements in the FIFO
-    size_t m_framesInFifo;
-
-    // Where to start reading from the FIFO.
-    size_t m_readIndex;
-
-    // Where to start writing to the FIFO.
-    size_t m_writeIndex;
+    // The actual FIFO
+    AudioFIFO m_fifo;
 
     // Number of frames of data that the provider will produce per call.
     unsigned int m_providerSize;

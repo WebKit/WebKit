@@ -26,50 +26,50 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef AudioFIFO_h
+#define AudioFIFO_h
 
-#if ENABLE(WEB_AUDIO)
-
-#include "AudioPullFIFO.h"
+#include "AudioBus.h"
 
 namespace WebCore {
 
-AudioPullFIFO::AudioPullFIFO(AudioSourceProvider& audioProvider, unsigned numberOfChannels, size_t fifoLength, size_t providerSize)
-    : m_provider(audioProvider)
-    , m_fifo(numberOfChannels, fifoLength)
-    , m_providerSize(providerSize)
-    , m_tempBus(numberOfChannels, providerSize)
-{
-}
+class AudioFIFO {
+public:
+    // Create a FIFO large enough to hold |fifoLength| frames of data of |numberOfChannels| channels.
+    AudioFIFO(unsigned numberOfChannels, size_t fifoLength);
 
-void AudioPullFIFO::consume(AudioBus* destination, size_t framesToConsume)
-{
-    if (!destination)
-        return;
+    // Push the data from the bus into the FIFO.
+    void push(const AudioBus*);
 
-    if (framesToConsume > m_fifo.framesInFifo()) {
-        // We don't have enough data in the FIFO to fulfill the request. Ask for more data.
-        fillBuffer(framesToConsume - m_fifo.framesInFifo());
-    }
+    // Consume |framesToConsume| frames of data from the FIFO and put them in |destination|. The
+    // corresponding frames are removed from the FIFO.
+    void consume(AudioBus* destination, size_t framesToConsume);
 
-    m_fifo.consume(destination, framesToConsume);
-}
+    // Number of frames of data that are currently in the FIFO.
+    size_t framesInFifo() const { return m_framesInFifo; }
 
-void AudioPullFIFO::fillBuffer(size_t numberOfFrames)
-{
-    // Keep asking the provider to give us data until we have received at least |numberOfFrames| of
-    // data. Stuff the data into the FIFO.
-    size_t framesProvided = 0;
+private:
+    // Update the FIFO index by the step, with appropriate wrapping around the endpoint.
+    int updateIndex(int index, int step) { return (index + step) % m_fifoLength; }
 
-    while (framesProvided < numberOfFrames) {
-        m_provider.provideInput(&m_tempBus, m_providerSize);
+    void findWrapLengths(size_t index, size_t providerSize, size_t& part1Length, size_t& part2Length);
+    
+    // The FIFO itself. In reality, the FIFO is a circular buffer.
+    AudioBus m_fifoAudioBus;
 
-        m_fifo.push(&m_tempBus);
+    // The total available space in the FIFO.
+    size_t m_fifoLength;
 
-        framesProvided += m_providerSize;
-    }
-}
+    // The number of actual elements in the FIFO
+    size_t m_framesInFifo;
+
+    // Where to start reading from the FIFO.
+    size_t m_readIndex;
+
+    // Where to start writing to the FIFO.
+    size_t m_writeIndex;
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_AUDIO)
+#endif // AudioFIFO.h

@@ -1,3 +1,38 @@
+2012-07-03  Raymond Toy  <rtoy@google.com>
+
+        Add AudioFIFO class and simplify AudioPullFIFO
+        https://bugs.webkit.org/show_bug.cgi?id=90398
+
+        Reviewed by Chris Rogers.
+
+        No new tests. This code will be used in audio back-end implementation.
+
+        Add AudioFIFO class to implement main parts of FIFO.  Simplify
+        implementation of AudioPushFIFO by using AudioFIFO.
+        
+        * WebCore.gypi: Add new files.
+
+        New AudioFIFO class
+        * platform/audio/AudioFIFO.cpp: Copied from Source/WebCore/platform/audio/AudioPullFIFO.cpp.
+        (WebCore):
+        (WebCore::AudioFIFO::AudioFIFO):
+        (WebCore::AudioFIFO::consume):
+        (WebCore::AudioFIFO::push):
+        (WebCore::AudioFIFO::findWrapLengths):
+        * platform/audio/AudioFIFO.h: Copied from Source/WebCore/platform/audio/AudioPullFIFO.h.
+        (WebCore):
+        (AudioFIFO):
+        (WebCore::AudioFIFO::framesInFifo):
+        (WebCore::AudioFIFO::updateIndex):
+
+        Use AudioFIFO
+        * platform/audio/AudioPullFIFO.cpp:
+        (WebCore::AudioPullFIFO::AudioPullFIFO):
+        (WebCore::AudioPullFIFO::consume):
+        (WebCore::AudioPullFIFO::fillBuffer):
+        * platform/audio/AudioPullFIFO.h:
+        (AudioPullFIFO):
+
 2012-07-03  Nate Chapin  <japhet@chromium.org>
 
         Protect this DocumentThreadableLoader in cancel() to handle reentrancy properly.
