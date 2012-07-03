@@ -1,5 +1,11 @@
 2012-07-03  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium TestExpectations update, marked a couple of tests as flaky on windows.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-03  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium mac rebaseline.
 
         * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:
