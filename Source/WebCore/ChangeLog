@@ -1,3 +1,16 @@
+2012-07-02  Dan Bernstein  <mitz@apple.com>
+
+        Column height and count calculation ignores most overflow
+        https://bugs.webkit.org/show_bug.cgi?id=90392
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/multicol/overflow-content.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::relayoutForPagination): Changed to compute the overflow from children
+        and use the layout overflow height rather the content height.
+
 2012-07-02  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [BlackBerry] Refactor : move the implementation of getMIMETypeForExtension and getPreferredExtensionForMIMEType into BlackBerry platform

@@ -5083,6 +5083,13 @@ bool RenderBlock::relayoutForPagination(bool hasSpecifiedPageLogicalHeight, Layo
     if (!hasColumns())
         return false;
 
+    OwnPtr<RenderOverflow> savedOverflow = m_overflow.release();
+    if (childrenInline())
+        addOverflowFromInlineChildren();
+    else
+        addOverflowFromBlockChildren();
+    LayoutUnit layoutOverflowLogicalBottom = (isHorizontalWritingMode() ? layoutOverflowRect().maxY() : layoutOverflowRect().maxX()) - borderBefore() - paddingBefore();
+
     // FIXME: We don't balance properly at all in the presence of forced page breaks.  We need to understand what
     // the distance between forced page breaks is so that we can avoid making the minimum column height too tall.
     ColumnInfo* colInfo = columnInfo();
@@ -5095,12 +5102,12 @@ bool RenderBlock::relayoutForPagination(bool hasSpecifiedPageLogicalHeight, Layo
             // maximum page break distance.
             if (!pageLogicalHeight) {
                 LayoutUnit distanceBetweenBreaks = max<LayoutUnit>(colInfo->maximumDistanceBetweenForcedBreaks(),
-                                                                   view()->layoutState()->pageLogicalOffset(this, borderBefore() + paddingBefore() + contentLogicalHeight()) - colInfo->forcedBreakOffset());
+                                                                   view()->layoutState()->pageLogicalOffset(this, borderBefore() + paddingBefore() + layoutOverflowLogicalBottom) - colInfo->forcedBreakOffset());
                 columnHeight = max(colInfo->minimumColumnHeight(), distanceBetweenBreaks);
             }
-        } else if (contentLogicalHeight() > boundedMultiply(pageLogicalHeight, desiredColumnCount)) {
+        } else if (layoutOverflowLogicalBottom > boundedMultiply(pageLogicalHeight, desiredColumnCount)) {
             // Now that we know the intrinsic height of the columns, we have to rebalance them.
-            columnHeight = max<LayoutUnit>(colInfo->minimumColumnHeight(), ceilf((float)contentLogicalHeight() / desiredColumnCount));
+            columnHeight = max<LayoutUnit>(colInfo->minimumColumnHeight(), ceilf((float)layoutOverflowLogicalBottom / desiredColumnCount));
         }
         
         if (columnHeight && columnHeight != pageLogicalHeight) {
@@ -5110,14 +5117,15 @@ bool RenderBlock::relayoutForPagination(bool hasSpecifiedPageLogicalHeight, Layo
             return true;
         }
     } 
-    
+
     if (pageLogicalHeight)
-        colInfo->setColumnCountAndHeight(ceilf((float)contentLogicalHeight() / pageLogicalHeight), pageLogicalHeight);
+        colInfo->setColumnCountAndHeight(ceilf((float)layoutOverflowLogicalBottom / pageLogicalHeight), pageLogicalHeight);
 
     if (columnCount(colInfo)) {
         setLogicalHeight(borderBefore() + paddingBefore() + colInfo->columnHeight() + borderAfter() + paddingAfter() + scrollbarLogicalHeight());
         m_overflow.clear();
-    }
+    } else
+        m_overflow = savedOverflow.release();
     
     return false;
 }

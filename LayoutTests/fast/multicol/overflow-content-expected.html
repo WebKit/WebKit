@@ -1,0 +1,70 @@
+<style>
+    div.test {
+        -webkit-logical-width: 100px;
+        -webkit-border-before: 5px solid;
+        -webkit-border-after: 15px solid;
+        -webkit-column-count: 2;
+        -webkit-column-gap: 0;
+        background-color: lightblue;
+    }
+    div.container {
+        -webkit-logical-height: 120px;
+        background-color: red;
+        -webkit-logical-width: 100px;
+        -webkit-margin-after: 8px;
+    }
+</style>
+<div>
+    <div class="container">
+        <div class="test" style="-webkit-logical-height: 100px;">
+            <div>
+                <div style="-webkit-logical-height: 300px; background-color: yellow;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test">
+            <div>
+                <div style="-webkit-logical-height: 200px; background-color: yellow;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test">
+            <div style="-webkit-logical-height: 10px;"></div>
+            <div style="-webkit-column-break-before: always;">
+                <div style="-webkit-logical-height: 100px; background-color: yellow;"></div>
+            </div>
+            <div></div>
+        </div>
+    </div>
+</div>
+<div style="-webkit-writing-mode: vertical-rl;">
+    <div class="container">
+        <div class="test" style="-webkit-logical-height: 100px;">
+            <div>
+                <div style="-webkit-logical-height: 300px; background-color: yellow;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test">
+            <div>
+                <div style="-webkit-logical-height: 200px; background-color: yellow;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="test">
+            <div style="-webkit-logical-height: 10px;"></div>
+            <div style="-webkit-column-break-before: always;">
+                <div style="-webkit-logical-height: 100px; background-color: yellow;"></div>
+            </div>
+            <div></div>
+        </div>
+    </div>
+</div>
