@@ -39,10 +39,13 @@
 #include "ErrorEvent.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "GroupSettings.h"
 #include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "MessagePortChannel.h"
+#include "Page.h"
+#include "PageGroup.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
@@ -86,7 +89,12 @@ WorkerContextProxy* WebWorkerClientImpl::createWorkerContextProxy(Worker* worker
 
 void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode)
 {
-    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, startMode,
+    ASSERT(m_scriptExecutionContext->isDocument());
+    Document* document = static_cast<Document*>(m_scriptExecutionContext.get());
+    GroupSettings* settings = 0;
+    if (document->page())
+        settings = document->page()->group().groupSettings();
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, settings, sourceCode, *this, *this, startMode,
                                                                          m_scriptExecutionContext->contentSecurityPolicy()->deprecatedHeader(),
                                                                          m_scriptExecutionContext->contentSecurityPolicy()->deprecatedHeaderType());
     m_proxy->workerThreadCreated(thread);

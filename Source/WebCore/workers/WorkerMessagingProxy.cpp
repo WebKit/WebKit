@@ -42,6 +42,7 @@
 #include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "NotImplemented.h"
+#include "PageGroup.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
@@ -272,7 +273,13 @@ WorkerMessagingProxy::~WorkerMessagingProxy()
 
 void WorkerMessagingProxy::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode startMode)
 {
-    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this, startMode,
+    // FIXME: This need to be revisited when we support nested worker one day
+    ASSERT(m_scriptExecutionContext->isDocument());
+    Document* document = static_cast<Document*>(m_scriptExecutionContext.get());
+    GroupSettings* settings = 0;
+    if (document->page())
+        settings = document->page()->group().groupSettings();
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, settings, sourceCode, *this, *this, startMode,
                                                                          m_scriptExecutionContext->contentSecurityPolicy()->deprecatedHeader(),
                                                                          m_scriptExecutionContext->contentSecurityPolicy()->deprecatedHeaderType());
     workerThreadCreated(thread);

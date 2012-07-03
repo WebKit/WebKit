@@ -42,6 +42,7 @@
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
+#include "PageGroup.h"
 #include "PlatformString.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
@@ -96,6 +97,8 @@ public:
 
     // Removes a detached document from the list of worker's documents. May set the closing flag if this is the last document in the list.
     void documentDetached(Document*);
+
+    GroupSettings* groupSettings() const; // Page GroupSettings used by worker thread.
 
 private:
     SharedWorkerProxy(const String& name, const KURL&, PassRefPtr<SecurityOrigin>);
@@ -158,6 +161,19 @@ bool SharedWorkerProxy::postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutio
     ASSERT(m_thread);
     m_thread->runLoop().postTaskForMode(task, mode);
     return true;
+}
+
+GroupSettings* SharedWorkerProxy::groupSettings() const
+{
+    if (isClosing())
+        return 0;
+    ASSERT(m_workerDocuments.size());
+    // Just pick the first active document, and use the groupsettings of that page.
+    Document* document = *(m_workerDocuments.begin());
+    if (document->page())
+        return document->page()->group().groupSettings();
+
+    return 0;
 }
 
 static void postExceptionTask(ScriptExecutionContext* context, const String& errorMessage, int lineNumber, const String& sourceURL)
@@ -343,7 +359,7 @@ void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy,
 
     // Another loader may have already started up a thread for this proxy - if so, just send a connect to the pre-existing thread.
     if (!proxy.thread()) {
-        RefPtr<SharedWorkerThread> thread = SharedWorkerThread::create(proxy.name(), proxy.url(), userAgent, workerScript, proxy, proxy, DontPauseWorkerContextOnStart, contentSecurityPolicy, contentSecurityPolicyType);
+        RefPtr<SharedWorkerThread> thread = SharedWorkerThread::create(proxy.name(), proxy.url(), userAgent, proxy.groupSettings(), workerScript, proxy, proxy, DontPauseWorkerContextOnStart, contentSecurityPolicy, contentSecurityPolicyType);
         proxy.setThread(thread);
         thread->start();
     }

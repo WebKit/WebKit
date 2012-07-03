@@ -34,9 +34,12 @@
 #include "CrossThreadTask.h"
 #include "DatabaseTask.h"
 #include "Document.h"
+#include "GroupSettings.h"
 #include "KURL.h"
 #include "MessageEvent.h"
 #include "MessagePortChannel.h"
+#include "Page.h"
+#include "PageGroup.h"
 #include "PlatformMessagePortChannel.h"
 #include "SecurityOrigin.h"
 #include "ScriptExecutionContext.h"
@@ -366,7 +369,13 @@ void WebSharedWorkerImpl::startWorkerContext(const WebURL& url, const WebString&
 {
     initializeLoader(url);
     WorkerThreadStartMode startMode = m_pauseWorkerContextOnStart ? PauseWorkerContextOnStart : DontPauseWorkerContextOnStart;
-    setWorkerThread(SharedWorkerThread::create(name, url, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicy,
+    ASSERT(m_loadingDocument->isDocument());
+    Document* document = static_cast<Document*>(m_loadingDocument.get());
+    GroupSettings* settings = 0;
+    if (document->page())
+        settings = document->page()->group().groupSettings();
+    setWorkerThread(SharedWorkerThread::create(name, url, userAgent, settings,
+                                               sourceCode, *this, *this, startMode, contentSecurityPolicy,
                                                static_cast<WebCore::ContentSecurityPolicy::HeaderType>(policyType)));
 
     workerThread()->start();
