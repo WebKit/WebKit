@@ -1,3 +1,12 @@
+2012-07-02  Adam Barth  <abarth@webkit.org>
+
+        Remove flashplugin-installer from the EWS image because it causes some tests to crash
+        https://bugs.webkit.org/show_bug.cgi?id=90403
+
+        Reviewed by Tony Chang.
+
+        * EWSTools/cold-boot.sh:
+
 2012-07-02  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Implement a Layout Test for editing/SurroundingText
