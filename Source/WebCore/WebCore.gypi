@@ -3851,8 +3851,6 @@
             'platform/graphics/qt/GradientQt.cpp',
             'platform/graphics/qt/GraphicsContext3DQt.cpp',
             'platform/graphics/qt/GraphicsContextQt.cpp',
-            'platform/graphics/qt/GraphicsLayerQt.cpp',
-            'platform/graphics/qt/GraphicsLayerQt.h',
             'platform/graphics/qt/IconQt.cpp',
             'platform/graphics/qt/ImageBufferDataQt.h',
             'platform/graphics/qt/ImageBufferQt.cpp',
