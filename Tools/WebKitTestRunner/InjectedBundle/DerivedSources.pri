@@ -11,8 +11,6 @@
 sanitizedFile = $$toSanitizedPath($$_FILE_)
 equals(sanitizedFile, $$toSanitizedPath($$_PRO_FILE_)):TEMPLATE = derived
 
-load(features)
-
 IDL_BINDINGS += \
     Bindings/AccessibilityController.idl \
     Bindings/AccessibilityTextMarker.idl \

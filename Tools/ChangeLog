@@ -1,3 +1,40 @@
+2012-07-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make use of .qmake.cache for caching features
+
+        Instead of loading() features from the files that need them (and re-running
+        a bunch of checks), we now run feature detection as part of configure.pro,
+        and have build-webkit write the computed feature-defines and CONFIG to
+        .qmake.cache, which is then loaded by qmake _before_ even defaults_pre
+        when building WebKit.pro.
+
+        At some point we'll be able to selectivly prevent running of config tests
+        in configure.pro, which means we don't need a separate code-path for
+        the build-webkit --help case.
+
+        We should also move the code in build-webkit that now uses .webkit.config
+        to detect clean builds, to use .qmake.cache, since we now store the same
+        thing there.
+
+        Original patch by Oswald Buddenhagen <oswald.buddenhagen@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * QtTestBrowser/QtTestBrowser.pro:
+        * Scripts/webkitdirs.pm:
+        (qtFeatureDefaults):
+        (buildQMakeProjects):
+        * Tools.pro:
+        * WebKitTestRunner/InjectedBundle/DerivedSources.pri:
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * WebKitTestRunner/Target.pri:
+        * qmake/.qmake.conf: Added.
+        * qmake/configure.pro:
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/features.prf:
+
 2012-07-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>  Joel Dillon <joel.dillon@codethink.co.uk>
 
         [Qt][Win] Fix broken QtWebKit5.lib linking

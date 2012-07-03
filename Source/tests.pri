@@ -7,8 +7,6 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-load(features)
-
 WEBKIT_TESTS_DIR = $$PWD/WebKit/qt/tests
 
 SUBDIRS += \
