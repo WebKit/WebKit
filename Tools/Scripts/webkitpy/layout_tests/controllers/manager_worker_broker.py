@@ -69,12 +69,14 @@ import cPickle
 import logging
 import multiprocessing
 import optparse
+import os
 import Queue
 import sys
 import traceback
 
 
 from webkitpy.common.system import stack_utils
+from webkitpy.layout_tests.views import metered_stream
 
 
 _log = logging.getLogger(__name__)
@@ -277,6 +279,7 @@ class AbstractWorker(BrokerClient):
         self._name = 'worker/%d' % worker_number
         self._done = False
         self._canceled = False
+        self._options = optparse.Values({'verbose': False})
 
     def name(self):
         return self._name
@@ -361,6 +364,9 @@ class _WorkerConnection(_BrokerConnection):
     def __init__(self, host, broker, worker_factory, worker_number):
         self._client = worker_factory(self, worker_number)
         self._host = host
+        self._log_messages = []
+        self._logger = None
+        self._log_handler = None
         _BrokerConnection.__init__(self, broker, self._client, ANY_WORKER_TOPIC, MANAGER_TOPIC)
 
     def name(self):
@@ -377,6 +383,33 @@ class _WorkerConnection(_BrokerConnection):
 
     def yield_to_broker(self):
         pass
+
+    def post_message(self, *args):
+        # FIXME: This is a hack until we can remove the log_messages arg from the manager.
+        if args[0] in ('finished_test', 'done'):
+            log_messages = self._log_messages
+            self._log_messages = []
+            args = args + tuple([log_messages])
+        super(_WorkerConnection, self).post_message(*args)
+
+    def set_up_logging(self):
+        self._logger = logging.root
+        # The unix multiprocessing implementation clones the MeteredStream log handler
+        # into the child process, so we need to remove it to avoid duplicate logging.
+        for h in self._logger.handlers:
+            # log handlers don't have names until python 2.7.
+            if getattr(h, 'name', '') == metered_stream.LOG_HANDLER_NAME:
+                self._logger.removeHandler(h)
+                break
+        self._logger.setLevel(logging.DEBUG if self._client._options.verbose else logging.INFO)
+        self._log_handler = _WorkerLogHandler(self)
+        self._logger.addHandler(self._log_handler)
+
+    def clean_up_logging(self):
+        if self._log_handler and self._logger:
+            self._logger.removeHandler(self._log_handler)
+        self._log_handler = None
+        self._logger = None
 
 
 class _InlineWorkerConnection(_WorkerConnection):
@@ -397,7 +430,7 @@ class _InlineWorkerConnection(_WorkerConnection):
     def run(self):
         self._alive = True
         try:
-            self._client.run(self._host, set_up_logging=False)
+            self._client.run(self._host)
         finally:
             self._alive = False
 
@@ -439,5 +472,18 @@ class _MultiProcessWorkerConnection(_WorkerConnection):
         self._proc.start()
 
     def run(self):
-        # FIXME: set_up_logging shouldn't be needed.
-        self._client.run(self._host, set_up_logging=True)
+        self.set_up_logging()
+        try:
+            self._client.run(self._host)
+        finally:
+            self.clean_up_logging()
+
+
+class _WorkerLogHandler(logging.Handler):
+    def __init__(self, worker):
+        logging.Handler.__init__(self)
+        self._worker = worker
+        self._pid = os.getpid()
+
+    def emit(self, record):
+        self._worker._log_messages.append(record)

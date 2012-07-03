@@ -69,7 +69,7 @@ class _TestWorker(manager_worker_broker.AbstractWorker):
         assert a_str == "hello, world"
         self._worker_connection.post_message('test', 2, 'hi, ' + self._thing_to_greet)
 
-    def run(self, host, set_up_logging):
+    def run(self, host):
         if self._starting_queue:
             self._starting_queue.put('')
 
@@ -102,7 +102,7 @@ class _TestsMixin(object):
     def is_done(self):
         return self._done
 
-    def handle_done(self, src):
+    def handle_done(self, src, log_messages):
         self._done = True
 
     def handle_test(self, src, an_int, a_str):

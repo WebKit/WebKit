@@ -29,8 +29,6 @@
 """Handle messages from the Manager and executes actual tests."""
 
 import logging
-import os
-import sys
 import threading
 import time
 
@@ -39,7 +37,6 @@ from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_results
-from webkitpy.layout_tests.views import metered_stream
 
 
 _log = logging.getLogger(__name__)
@@ -57,9 +54,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._driver = None
         self._tests_run_file = None
         self._tests_run_filename = None
-        self._log_messages = []
-        self._logger = None
-        self._log_handler = None
 
     def __del__(self):
         self.cleanup()
@@ -76,28 +70,9 @@ class Worker(manager_worker_broker.AbstractWorker):
         tests_run_filename = self._filesystem.join(self._results_directory, "tests_run%d.txt" % self._worker_number)
         self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
 
-    def _set_up_logging(self):
-        self._logger = logging.getLogger()
-
-        # The unix multiprocessing implementation clones the MeteredStream log handler
-        # into the child process, so we need to remove it to avoid duplicate logging.
-        for h in self._logger.handlers:
-            # log handlers don't have names until python 2.7.
-            if getattr(h, 'name', '') == metered_stream.LOG_HANDLER_NAME:
-                self._logger.removeHandler(h)
-                break
-
-        self._logger.setLevel(logging.DEBUG if self._options.verbose else logging.INFO)
-        self._log_handler = _WorkerLogHandler(self)
-        self._logger.addHandler(self._log_handler)
-
-    def run(self, host, set_up_logging):
+    def run(self, host):
         if not host:
             host = Host()
-
-        # FIXME: this should move into manager_worker_broker.py.
-        if set_up_logging:
-            self._set_up_logging()
 
         options = self._options
         self._port = host.port_factory.get(options.platform, options)
@@ -110,7 +85,7 @@ class Worker(manager_worker_broker.AbstractWorker):
             self.kill_driver()
             _log.debug("%s exiting" % self._name)
             self.cleanup()
-            self._worker_connection.post_message('done', self._log_messages)
+            self._worker_connection.post_message('done')
 
     def handle_test_list(self, src, list_name, test_list):
         start_time = time.time()
@@ -147,9 +122,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         result = self.run_test_with_timeout(test_input, test_timeout_sec)
 
         elapsed_time = time.time() - start
-        log_messages = self._log_messages
-        self._log_messages = []
-        self._worker_connection.post_message('finished_test', result, elapsed_time, log_messages)
+        self._worker_connection.post_message('finished_test', result, elapsed_time)
 
         self.clean_up_after_test(test_input, result)
 
@@ -159,10 +132,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         if self._tests_run_file:
             self._tests_run_file.close()
             self._tests_run_file = None
-        if self._log_handler and self._logger:
-            self._logger.removeHandler(self._log_handler)
-        self._log_handler = None
-        self._logger = None
 
     def timeout(self, test_input):
         """Compute the appropriate timeout value for a test."""
@@ -279,13 +248,3 @@ class Worker(manager_worker_broker.AbstractWorker):
     def run_single_test(self, driver, test_input):
         return single_test_runner.run_single_test(self._port, self._options,
             test_input, driver, self._name)
-
-
-class _WorkerLogHandler(logging.Handler):
-    def __init__(self, worker):
-        logging.Handler.__init__(self)
-        self._worker = worker
-        self._pid = os.getpid()
-
-    def emit(self, record):
-        self._worker._log_messages.append(record)
