@@ -1,3 +1,13 @@
+2012-07-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] fast/viewport/viewport-91.html still fails after r121555 and r121661
+        https://bugs.webkit.org/show_bug.cgi?id=90376
+
+        Reviewed by Csaba Osztrogonác.
+
+        Unskip passing test.
+        * platform/qt-5.0-wk2/Skipped:
+
 2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium] Rebaseline for Mac10.6

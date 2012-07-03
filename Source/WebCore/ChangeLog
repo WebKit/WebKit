@@ -1,3 +1,15 @@
+2012-07-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] fast/viewport/viewport-91.html still fails after r121555 and r121661
+        https://bugs.webkit.org/show_bug.cgi?id=90376
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests, this is only a build alignment.
+
+        Export ViewportArguments::deprecatedTargetDPI since it is used in WebKit2.
+        * WebCore.exp.in:
+
 2012-07-02  Martin Robinson  <mrobinson@igalia.com>
 
         [TextureMapper] The TextureMapper should support edge-distance anti-antialiasing

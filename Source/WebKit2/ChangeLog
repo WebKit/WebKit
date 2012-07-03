@@ -1,3 +1,15 @@
+2012-07-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] fast/viewport/viewport-91.html still fails after r121555 and r121661
+        https://bugs.webkit.org/show_bug.cgi?id=90376
+
+        Reviewed by Csaba Osztrogonác.
+
+        layoutTestController.dumpConfigurationForViewport still need
+        to use the constant target DPI of 160.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::viewportConfigurationAsText):
+
 2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add API to deliver a Web Intent to a frame
