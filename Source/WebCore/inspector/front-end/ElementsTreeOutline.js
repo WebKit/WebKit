@@ -1179,6 +1179,9 @@ WebInspector.ElementsTreeElement.prototype = {
         if (WebInspector.isBeingEdited(textNode))
             return true;
 
+        var container = textNode.enclosingNodeOrSelfWithClass("webkit-html-text-node");
+        if (container)
+            container.innerText = container.innerText; // Strip the CSS or JS highlighting if present.
         var config = new WebInspector.EditingConfig(this._textNodeEditingCommitted.bind(this), this._editingCancelled.bind(this));
         this._editing = WebInspector.startEditing(textNode, config);
         window.getSelection().setBaseAndExtent(textNode, 0, textNode, 1);
