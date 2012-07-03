@@ -1,3 +1,9 @@
+2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] Update text expectation for timeline-receive-response-event.html
+
+        * platform/chromium/TestExpectations: Add "TEXT"
+
 2012-07-03  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Unreviewed gardening.
