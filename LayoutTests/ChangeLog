@@ -1,3 +1,12 @@
+2012-07-03  Michael Starzinger  <mstarzinger@chromium.org>
+
+        [Chromium] Tests still crashing for Linux Release as well.
+        https://bugs.webkit.org/show_bug.cgi?id=89979
+
+        Reviewed by Tony Chang.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium] Rebaseline: Add missing expectation files introduced by r121722

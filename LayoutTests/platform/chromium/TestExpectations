@@ -3051,8 +3051,7 @@ BUGWK77314 WIN MAC : fast/events/touch/send-oncancel-event.html = PASS TEXT
 BUGWK77324 WIN MAC DEBUG SLOW : fast/js/dfg-int32array.html = PASS
 
 // CRASH comes from BUGCR121442
-BUGWK77397 LINUX DEBUG : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT CRASH
-BUGWK77397 LINUX RELEASE : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT
+BUGWK77397 LINUX : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT CRASH
 BUGWK77397 WIN MAC : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT
 
 // Started crashing at WK r106422.
@@ -3360,6 +3359,7 @@ BUGWK82776 SKIP : storage/indexeddb/pending-version-change-stuck-works-with-term
 BUGWK WIN RELEASE : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS TEXT
 
 BUGCR121442 LINUX DEBUG : plugins/iframe-shims.html = CRASH
+BUGCR121442 LINUX RELEASE : plugins/iframe-shims.html = PASS CRASH
 
 BUGWK83219 LION : fonts/cursive.html = PASS IMAGE+TEXT
 BUGWK83324 WIN DEBUG : fast/js/cross-global-object-inline-global-var.html = PASS TEXT
