@@ -1,3 +1,19 @@
+2012-07-02  Nico Weber  <thakis@chromium.org>
+
+        Fix new -Wunused-private-field violations
+        https://bugs.webkit.org/show_bug.cgi?id=90417
+
+        Reviewed by Ryosuke Niwa.
+
+        No intended behavior change.
+
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.cpp:
+        (WebCore::CCPrioritizedTextureManager::CCPrioritizedTextureManager):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.h:
+        (CCPrioritizedTextureManager):
+
 2012-07-02  Yoshifumi Inoue  <yosin@chromium.org>
 
         Build fix for Chromimum

@@ -460,15 +460,13 @@ private:
         , m_requestId(requestId)
         , m_url(ParsedURLString, url)
         , m_start(start)
-        , m_end(end)
-        , m_current(start) { }
+        , m_end(end) { }
 
     RefPtr<FrontendProvider> m_frontendProvider;
     int m_requestId;
     KURL m_url;
     int m_start;
     long long m_end;
-    long long m_current;
 
     RefPtr<FileReader> m_reader;
 };

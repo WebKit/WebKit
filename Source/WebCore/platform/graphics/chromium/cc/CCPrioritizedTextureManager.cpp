@@ -36,9 +36,8 @@ using namespace std;
 
 namespace WebCore {
 
-CCPrioritizedTextureManager::CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, size_t preferredMemoryLimitBytes, int maxTextureSize)
-    : m_maxTextureSize(maxTextureSize)
-    , m_maxMemoryLimitBytes(maxMemoryLimitBytes)
+CCPrioritizedTextureManager::CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, size_t preferredMemoryLimitBytes, int)
+    : m_maxMemoryLimitBytes(maxMemoryLimitBytes)
     , m_preferredMemoryLimitBytes(preferredMemoryLimitBytes)
     , m_maxMemoryPriorityCutoff(CCPriorityCalculator::visiblePriority())
     , m_priorityCutoff(CCPriorityCalculator::lowestPriority())

@@ -117,7 +117,6 @@ private:
     CCPrioritizedTexture::Backing* createBacking(IntSize, GC3Denum format, TextureAllocator*);
     void destroyBacking(CCPrioritizedTexture::Backing*, TextureAllocator*);
 
-    int m_maxTextureSize;
     size_t m_maxMemoryLimitBytes;
     size_t m_preferredMemoryLimitBytes;
     unsigned m_maxMemoryPriorityCutoff;
