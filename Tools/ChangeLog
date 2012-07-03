@@ -1,3 +1,30 @@
+2012-07-03  Ojan Vafai  <ojan@chromium.org>
+
+        Rename rebaseline-test to rebaseline-test-internal
+        https://bugs.webkit.org/show_bug.cgi?id=90485
+
+        Reviewed by Adam Barth.
+
+        It's now only used by other rebaseline commands. It's still useful to leave it
+        as it's own command to aid in debugging when something goes wrong. In a followup
+        patch, I'll make webkit-patch rebaseline cover any use-cases that rebaseline-test
+        might have covered.
+
+        We no longer need the --print-scm-changes option since the only caller always passes
+        that option in.
+
+        Also, make all the arguments command-line flags instead. Simplifies the code
+        a bit in my opinion.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest):
+        (RebaselineTest.__init__):
+        (RebaselineTest.execute):
+        (AbstractParallelRebaselineCommand._rebaseline_commands):
+        (RebaselineExpectations.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_all):
+
 2012-07-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WTR] Get rid of using DumpRenderTreeSupportQt

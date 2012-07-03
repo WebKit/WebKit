@@ -68,17 +68,17 @@ class AbstractRebaseliningCommand(AbstractDeclarativeCommand):
 
 
 class RebaselineTest(AbstractRebaseliningCommand):
-    name = "rebaseline-test"
-    help_text = "Rebaseline a single test from a buildbot.  (Currently works only with build.chromium.org buildbots.)"
-    argument_names = "BUILDER_NAME TEST_NAME [PLATFORMS_TO_MOVE_EXISTING_BASELINES_TO]"
+    name = "rebaseline-test-internal"
+    help_text = "Rebaseline a single test from a buildbot. Only intended for use by other webkit-patch commands."
 
     def __init__(self):
         options = [
-            optparse.make_option("--print-scm-changes", action="store_true", help="Print modifcations to the scm (as a json dict) rather than actually modifying the scm"),
+            optparse.make_option("--builder", help="Builder to pull new baselines from"),
+            optparse.make_option("--platform-to-move-to", help="Platform to move existing baselines to before rebaselining. This is for dealing with bringing up new ports that interact with non-tree portions of the fallback graph."),
+            optparse.make_option("--test", help="Test to rebaseline"),
         ]
         AbstractRebaseliningCommand.__init__(self, options=options)
-        self._print_scm_changes = False
-        self._scm_changes = {}
+        self._scm_changes = {'add': []}
 
     def _results_url(self, builder_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
@@ -135,10 +135,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
             self._add_to_scm(target_baseline)
 
     def _add_to_scm(self, path):
-        if self._print_scm_changes:
-            self._scm_changes['add'].append(path)
-        else:
-            self._tool.scm().add(path)
+        self._scm_changes['add'].append(path)
 
     def _update_expectations_file(self, builder_name, test_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
@@ -179,16 +176,8 @@ class RebaselineTest(AbstractRebaseliningCommand):
 
     def execute(self, options, args, tool):
         self._baseline_suffix_list = options.suffixes.split(',')
-        self._print_scm_changes = options.print_scm_changes
-        self._scm_changes = {'add': [], 'delete': []}
-
-        if len(args) > 2:
-            platforms_to_move_existing_baselines_to = args[2:]
-        else:
-            platforms_to_move_existing_baselines_to = None
-        self._rebaseline_test_and_update_expectations(args[0], args[1], platforms_to_move_existing_baselines_to)
-        if self._print_scm_changes:
-            print json.dumps(self._scm_changes)
+        self._rebaseline_test_and_update_expectations(options.builder, options.test, options.platform_to_move_to)
+        print json.dumps(self._scm_changes)
 
 
 class OptimizeBaselines(AbstractRebaseliningCommand):
@@ -283,7 +272,7 @@ class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
         for test in test_list:
             for builder in self._builders_to_fetch_from(test_list[test]):
                 suffixes = ','.join(test_list[test][builder])
-                cmd_line = [path_to_webkit_patch, 'rebaseline-test', '--print-scm-changes', '--suffixes', suffixes, builder, test]
+                cmd_line = [path_to_webkit_patch, 'rebaseline-test-internal', '--suffixes', suffixes, '--builder', builder, '--test', test]
                 commands.append(tuple([cmd_line, cwd]))
         return commands
 
@@ -371,8 +360,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
             self._update_expectations_file(port_name)
 
 
-# FIXME: Merge this with rebaseline-test. The only difference is that this prompts if you leave out the test-name, builder or suffixes.
-# We should just make rebaseline-test prompt and get rid of this command.
+# FIXME: Make this use AbstractParallelRebaselineCommand.
 class Rebaseline(AbstractDeclarativeCommand):
     name = "rebaseline"
     help_text = "Replaces local expected.txt files with new results from build bots"
