@@ -7,8 +7,6 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-load(features)
-
 !no_webkit1 {
     SUBDIRS += QtTestBrowser/QtTestBrowser.pro
     SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro

@@ -11,8 +11,6 @@
 sanitizedFile = $$toSanitizedPath($$_FILE_)
 equals(sanitizedFile, $$toSanitizedPath($$_PRO_FILE_)):TEMPLATE = derived
 
-load(features)
-
 mac {
     # FIXME: This runs the perl script every time. Is there a way we can run it only when deps change?
     fwheader_generator.commands = perl $${ROOT_WEBKIT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl $${ROOT_WEBKIT_DIR}/Source/WebCore $${ROOT_BUILD_DIR}/Source/include mac

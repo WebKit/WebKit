@@ -9,8 +9,6 @@ TEMPLATE = app
 TARGET = DumpRenderTree
 DESTDIR = $$ROOT_BUILD_DIR/bin
 
-load(features)
-
 WEBKIT += wtf webcore
 !v8: WEBKIT += javascriptcore
 

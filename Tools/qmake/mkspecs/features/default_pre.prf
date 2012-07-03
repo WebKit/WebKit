@@ -27,10 +27,13 @@ ROOT_WEBKIT_DIR = $$replace(IN_PWD, /Tools/qmake/mkspecs/features$,)
 WEBKIT_SUBDIR = $$replace(_PRO_FILE_PWD_, $${ROOT_WEBKIT_DIR},)
 ROOT_BUILD_DIR = $$replace(OUT_PWD, $${WEBKIT_SUBDIR}$,)
 
+# Detect if we're running the initial configure step
+pro_file_name = $$basename(_PRO_FILE_)
+equals(pro_file_name, configure.pro): CONFIG += configure_pass
+
 # We want the QtWebKit API forwarding includes to live in the root build dir,
 # except when we are running the config.tests in Tools/qmake.
-pro_file_name = $$basename(_PRO_FILE_)
-!equals(pro_file_name, configure.pro): QMAKE_SYNCQT_OUTDIR = $$ROOT_BUILD_DIR
+!configure_pass: QMAKE_SYNCQT_OUTDIR = $$ROOT_BUILD_DIR
 
 # Load Qt's defaults after we've resolved the build directory. This will also
 # run syncqt if there is a sync.profile in the $$_PRO_FILE_PWD_. We never want
@@ -123,3 +126,30 @@ haveQt(4) {
 
 # Set some defaults for specific platforms
 CONFIG += include_webinspector
+
+# Try to locate sqlite3 source (for WebCore)
+SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
+isEmpty(SQLITE3SRCDIR) {
+    haveQt(5): SQLITE3SRCDIR = $$QT.core.sources/../3rdparty/sqlite/
+    else: SQLITE3SRCDIR = $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
+}
+
+# --------- Make features available to JSC ------------
+
+## Forward enabled feature macros to JavaScript enabled features macros
+FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1
+v8: FEATURE_DEFINES_JAVASCRIPT += V8_BINDING=1
+
+for(define, DEFINES) {
+    enabled_feature_define = $$find(define, ^ENABLE_.+=1$)
+    isEmpty(enabled_feature_define): next()
+
+    FEATURE_DEFINES_JAVASCRIPT += $$enabled_feature_define
+}
+
+configure_pass {
+    # Save the base config and defines so we can compute the delta between
+    # what features.prf introduced and what was already there.
+    BASE_CONFIG = $$CONFIG
+    BASE_DEFINES = $$DEFINES
+}

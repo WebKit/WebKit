@@ -27,8 +27,6 @@ DESTDIR = $${ROOT_BUILD_DIR}/bin
 
 QT = core gui widgets network declarative testlib quick quick-private webkit
 
-load(features)
-
 WEBKIT += wtf javascriptcore webkit2
 
 DEFINES += USE_SYSTEM_MALLOC=1

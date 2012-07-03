@@ -8,8 +8,6 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-load(features)
-
 QMAKEPATH = $$(QMAKEPATH)
 isEmpty(QMAKEPATH)|!exists($${QMAKEPATH}/mkspecs) {
     error("The environment variable QMAKEPATH needs to point to $WEBKITSRC/Tools/qmake")

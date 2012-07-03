@@ -5,8 +5,6 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
-load(features)
-
 # Flag that we're now done processing the project file. This allows
 # a feature to distinguish between being processed due to a load()
 # or include() and a CONFIG += feature.
