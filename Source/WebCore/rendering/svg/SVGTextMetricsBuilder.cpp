@@ -155,6 +155,7 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
 
     initializeMeasurementWithTextRenderer(text);
     bool preserveWhiteSpace = text->style()->whiteSpace() == PRE;
+    int surrogatePairCharacters = 0;
 
     while (advance()) {
         const UChar* currentCharacter = m_run.data(m_textPosition);
@@ -168,7 +169,7 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
 
         if (data->processRenderer) {
             if (data->allCharactersMap) {
-                const SVGCharacterDataMap::const_iterator it = data->allCharactersMap->find(data->valueListPosition + m_textPosition - data->skippedCharacters + 1);
+                const SVGCharacterDataMap::const_iterator it = data->allCharactersMap->find(data->valueListPosition + m_textPosition - data->skippedCharacters - surrogatePairCharacters + 1);
                 if (it != data->allCharactersMap->end())
                     attributes->characterDataMap().set(m_textPosition + 1, it->second);
             }
@@ -176,7 +177,7 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
         }
 
         if (data->allCharactersMap && currentCharacterStartsSurrogatePair())
-            data->skippedCharacters += m_currentMetrics.length() - 1;
+            surrogatePairCharacters++;
 
         data->lastCharacter = currentCharacter;
     }

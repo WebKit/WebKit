@@ -1,3 +1,13 @@
+2012-07-03  Philip Rogers  <pdr@google.com>
+
+        Fix text positioning with non-bmp characters.
+        https://bugs.webkit.org/show_bug.cgi?id=87681
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/text/non-bmp-tspans-expected.svg: Added.
+        * svg/text/non-bmp-tspans.svg: Added.
+
 2012-07-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Improve test cases for network information APIs
