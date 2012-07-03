@@ -1,3 +1,13 @@
+2012-07-03  Tony Chang  <tony@chromium.org>
+
+        [chromium] Handle trailing backslash on %VSINSTALLDIR%
+        https://bugs.webkit.org/show_bug.cgi?id=90410
+
+        Reviewed by Ojan Vafai.
+
+        * Scripts/webkitdirs.pm:
+        (buildChromiumVisualStudioProject): Handle VSINSTALLDIR ending in a backslash, the backslash escapes the closing double quote.
+
 2012-07-02  Ojan Vafai  <ojan@chromium.org>
 
         Make the skia_test_expectations.txt file optional.

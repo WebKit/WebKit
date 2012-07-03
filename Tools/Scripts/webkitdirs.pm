@@ -2531,6 +2531,7 @@ sub buildChromiumVisualStudioProject($$)
     } else {
         $vsInstallDir = "$programFilesPath/Microsoft Visual Studio 8";
     }
+    $vsInstallDir =~ s,\\,/,g;
     $vsInstallDir = `cygpath "$vsInstallDir"` if isCygwin();
     chomp $vsInstallDir;
     $vcBuildPath = "$vsInstallDir/Common7/IDE/devenv.com";
