@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import optparse
 import StringIO
 import unittest
 
@@ -48,6 +49,10 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
         port = self.make_port()
         self.assertTrue(port.get_option('enable_hardware_gpu'))
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-android'))
+
+    def test_default_timeout_ms(self):
+        self.assertEquals(self.make_port(options=optparse.Values({'configuration': 'Release'})).default_timeout_ms(), 10000)
+        self.assertEquals(self.make_port(options=optparse.Values({'configuration': 'Debug'})).default_timeout_ms(), 10000)
 
     def test_expectations_files(self):
         # FIXME: override this test temporarily while we're still upstreaming the android port and

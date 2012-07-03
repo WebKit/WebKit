@@ -693,7 +693,7 @@ class ChromiumDriver(WebKitDriver):
             self._proc.stderr.close()
         time_out_ms = self._port.get_option('time_out_ms')
         if time_out_ms and not self._no_timeout:
-            timeout_ratio = float(time_out_ms) / self._port.default_test_timeout_ms()
+            timeout_ratio = float(time_out_ms) / self._port.default_timeout_ms()
             kill_timeout_seconds = self.KILL_TIMEOUT_DEFAULT * timeout_ratio if timeout_ratio > 1.0 else self.KILL_TIMEOUT_DEFAULT
         else:
             kill_timeout_seconds = self.KILL_TIMEOUT_DEFAULT

@@ -39,6 +39,7 @@ MockDRT to crash).
 
 import base64
 import logging
+import optparse
 import os
 import sys
 
@@ -51,7 +52,6 @@ if script_dir not in sys.path:
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.layout_tests.port.driver import DriverInput, DriverOutput, DriverProxy
 from webkitpy.layout_tests.port.factory import PortFactory
-from webkitpy.tool.mocktool import MockOptions
 
 _log = logging.getLogger(__name__)
 
@@ -130,8 +130,8 @@ def main(argv, host, stdin, stdout, stderr):
     """Run the tests."""
 
     options, args = parse_options(argv)
-    if options.chromium:
-        drt = MockChromiumDRT(options, args, host, stdin, stdout, stderr)
+    if options.test_shell:
+        drt = MockTestShell(options, args, host, stdin, stdout, stderr)
     else:
         drt = MockDRT(options, args, host, stdin, stdout, stderr)
     return drt.run()
@@ -151,16 +151,15 @@ def parse_options(argv):
 
     pixel_tests = False
     pixel_path = None
-    chromium = False
-    if platform.startswith('chromium'):
-        chromium = True
+    test_shell = '--test-shell' in argv
+    if test_shell:
         for arg in argv:
             if arg.startswith('--pixel-tests'):
                 pixel_tests = True
                 pixel_path = arg[len('--pixel-tests='):]
     else:
         pixel_tests = '--pixel-tests' in argv
-    options = MockOptions(chromium=chromium, platform=platform, pixel_tests=pixel_tests, pixel_path=pixel_path)
+    options = optparse.Values({'test_shell': test_shell, 'platform': platform, 'pixel_tests': pixel_tests, 'pixel_path': pixel_path})
     return (options, argv)
 
 
@@ -255,7 +254,7 @@ class MockDRT(object):
         self._stderr.flush()
 
 
-class MockChromiumDRT(MockDRT):
+class MockTestShell(MockDRT):
     def input_from_line(self, line):
         vals = line.strip().split()
         if len(vals) == 3:
@@ -272,7 +271,7 @@ class MockChromiumDRT(MockDRT):
         original_test_name = test_input.test_name
         if '--enable-accelerated-2d-canvas' in self._args and 'canvas' in test_input.test_name:
             test_input.test_name = 'platform/chromium/virtual/gpu/' + test_input.test_name
-        output = super(MockChromiumDRT, self).output_for_test(test_input, is_reftest)
+        output = super(MockTestShell, self).output_for_test(test_input, is_reftest)
         test_input.test_name = original_test_name
         return output
 

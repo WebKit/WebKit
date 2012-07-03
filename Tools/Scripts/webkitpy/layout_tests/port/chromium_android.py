@@ -178,7 +178,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
             self._adb_command += shlex.split(adb_args)
         self._drt_retry_after_killed = 0
 
-    def default_test_timeout_ms(self):
+    def default_timeout_ms(self):
         # Android platform has less computing power than desktop platforms.
         # Using 10 seconds allows us to pass most slow tests which are not
         # marked as slow tests on desktop platforms.
@@ -214,7 +214,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         return True
 
     # FIXME: Remove this function when chromium-android is fully upstream.
-    def expectations_files(self):   
+    def expectations_files(self):
         android_expectations_file = self.path_from_webkit_base('LayoutTests', 'platform', 'chromium', 'test_expectations_android.txt')
         return super(ChromiumAndroidPort, self).expectations_files() + [android_expectations_file]
 
