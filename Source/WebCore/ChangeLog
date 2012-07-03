@@ -1,3 +1,15 @@
+2012-07-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        [TextureMapper] Typo in edge-distance anti-aliasing code
+        https://bugs.webkit.org/show_bug.cgi?id=90475
+
+        Reviewed by Martin Robinson.
+
+        No new tests. This just fixes a typo.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawQuad):
+
 2012-06-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Extensions API] Resource manipulations should be based on UISourceCode thus extending Sources Panel.
