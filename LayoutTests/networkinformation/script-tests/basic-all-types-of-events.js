@@ -6,8 +6,8 @@ var metered = false;
 var connection = navigator.webkitConnection;
 
 function checkNetworkInformation() {
-    shouldBe('connection.bandwidth', 'bandwidth');
-    shouldBe('connection.metered', 'metered');
+    shouldBe("typeof connection.bandwidth", '"number"');
+    shouldBe("typeof connection.metered", '"boolean"');
 }
 
 connection.addEventListener('webkitnetworkinfochange', function() {

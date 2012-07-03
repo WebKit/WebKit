@@ -1,3 +1,31 @@
+2012-07-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Improve test cases for network information APIs
+        https://bugs.webkit.org/show_bug.cgi?id=90162
+
+        Reviewed by Adam Barth.
+
+        Existing implementation doesn't test port implementation in network info APIs.
+        This patch lets test cases use bandwidth and metered functions implemented by port layer.
+
+        In addition, expected results need to check return type instead of property name.
+
+        * networkinformation/add-listener-from-callback-expected.txt:
+        * networkinformation/basic-all-types-of-events-expected.txt:
+        * networkinformation/basic-operation-expected.txt:
+        * networkinformation/multiple-frames-expected.txt:
+        * networkinformation/script-tests/add-listener-from-callback.js:
+        (checkNetworkInformation):
+        * networkinformation/script-tests/basic-all-types-of-events.js:
+        (checkNetworkInformation):
+        * networkinformation/script-tests/basic-operation.js:
+        * networkinformation/script-tests/multiple-frames.js:
+        (checkNetworkInformation):
+        (checkChildNetworkInformation):
+        * networkinformation/script-tests/updates.js:
+        (checkNetworkInformation):
+        * networkinformation/updates-expected.txt:
+
 2012-07-03  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Save scroll selection and cursor position of SourceFrames in sources panel.

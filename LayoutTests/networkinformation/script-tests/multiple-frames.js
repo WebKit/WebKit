@@ -6,13 +6,13 @@ var metered = false;
 var connection = navigator.webkitConnection;
 
 function checkNetworkInformation() {
-    shouldBe('connection.bandwidth', 'bandwidth');
-    shouldBe('connection.metered', 'metered');
+    shouldBe("typeof connection.bandwidth", '"number"');
+    shouldBe("typeof connection.metered", '"boolean"');
 }
 
 function checkChildNetworkInformation() {
-    shouldBe('connection.bandwidth', 'bandwidth');
-    shouldBe('connection.metered', 'metered');
+    shouldBe("typeof connection.bandwidth", '"number"');
+    shouldBe("typeof connection.metered", '"boolean"');
 }
 
 var hasMainFrameEventFired = false;

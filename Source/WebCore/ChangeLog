@@ -1,3 +1,21 @@
+2012-07-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Improve test cases for network information APIs
+        https://bugs.webkit.org/show_bug.cgi?id=90162
+
+        Reviewed by Adam Barth.
+
+        Existing implementation doesn't test port implementation in network info APIs.
+        This patch lets test cases use bandwidth and metered functions implemented by port layer.
+
+        In addition, expected results need to check return type instead of property name.
+
+        No new tests. Covered by existing tests.
+
+        * Modules/networkinfo/NetworkInfoConnection.cpp:
+        (WebCore::NetworkInfoConnection::bandwidth):
+        (WebCore::NetworkInfoConnection::metered):
+
 2012-07-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] Don't call eina_iterator_free() if iterator is NULL
