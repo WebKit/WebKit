@@ -279,7 +279,7 @@ private:
 // is true, so you can hide expensive disassembly-only computations inside there.
 
 #define FINALIZE_CODE(linkBufferReference, dataLogArgumentsForHeading)  \
-    FINALIZE_CODE_IF(Options::showDisassembly, linkBufferReference, dataLogArgumentsForHeading)
+    FINALIZE_CODE_IF(Options::showDisassembly(), linkBufferReference, dataLogArgumentsForHeading)
 
 } // namespace JSC
 

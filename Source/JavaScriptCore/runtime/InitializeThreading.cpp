@@ -53,7 +53,7 @@ static void initializeThreadingOnce()
 {
     WTF::double_conversion::initialize();
     WTF::initializeThreading();
-    Options::initializeOptions();
+    Options::initialize();
 #if ENABLE(WRITE_BARRIER_PROFILING)
     WriteBarrierCounters::initialize();
 #endif

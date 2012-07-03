@@ -176,7 +176,7 @@ public:
         
         // If the variable has been voted to become a double, then make it a
         // double.
-        if (doubleVoteRatio() >= Options::doubleVoteRatioForDoubleFormat)
+        if (doubleVoteRatio() >= Options::doubleVoteRatioForDoubleFormat())
             return true;
         
         return false;

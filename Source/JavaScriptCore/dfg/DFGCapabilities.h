@@ -41,29 +41,29 @@ namespace JSC { namespace DFG {
 // check opcodes.
 inline bool mightCompileEval(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
 }
 inline bool mightCompileProgram(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
 }
 inline bool mightCompileFunctionForCall(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
 }
 inline bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
 }
 
 inline bool mightInlineFunctionForCall(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount
+    return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount()
         && !codeBlock->ownerExecutable()->needsActivation();
 }
 inline bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount
+    return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount()
         && !codeBlock->ownerExecutable()->needsActivation();
 }
 

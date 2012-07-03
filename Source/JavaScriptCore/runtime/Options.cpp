@@ -27,8 +27,13 @@
 #include "Options.h"
 
 #include <limits>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/PageBlock.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/StringExtras.h>
 
 #if OS(DARWIN) && ENABLE(PARALLEL_GC)
 #include <sys/sysctl.h>
@@ -37,67 +42,9 @@
 // Set to 1 to control the heuristics using environment variables.
 #define ENABLE_RUN_TIME_HEURISTICS 0
 
-#if ENABLE(RUN_TIME_HEURISTICS)
-#include <stdio.h>
-#include <stdlib.h>
-#include <wtf/StdLibExtras.h>
-#endif
 
-namespace JSC { namespace Options {
+namespace JSC {
 
-bool useJIT;
-
-bool showDisassembly;
-bool showDFGDisassembly;
-
-unsigned maximumOptimizationCandidateInstructionCount;
-
-unsigned maximumFunctionForCallInlineCandidateInstructionCount;
-unsigned maximumFunctionForConstructInlineCandidateInstructionCount;
-
-unsigned maximumInliningDepth;
-
-int32_t thresholdForJITAfterWarmUp;
-int32_t thresholdForJITSoon;
-
-int32_t thresholdForOptimizeAfterWarmUp;
-int32_t thresholdForOptimizeAfterLongWarmUp;
-int32_t thresholdForOptimizeSoon;
-
-int32_t executionCounterIncrementForLoop;
-int32_t executionCounterIncrementForReturn;
-
-bool randomizeExecutionCountsBetweenCheckpoints;
-int32_t maximumExecutionCountsBetweenCheckpoints;
-
-double likelyToTakeSlowCaseThreshold;
-double couldTakeSlowCaseThreshold;
-unsigned likelyToTakeSlowCaseMinimumCount;
-unsigned couldTakeSlowCaseMinimumCount;
-
-double osrExitProminenceForFrequentExitSite;
-unsigned osrExitCountForReoptimization;
-unsigned osrExitCountForReoptimizationFromLoop;
-
-unsigned reoptimizationRetryCounterMax;
-unsigned reoptimizationRetryCounterStep;
-
-unsigned minimumOptimizationDelay;
-unsigned maximumOptimizationDelay;
-double desiredProfileLivenessRate;
-double desiredProfileFullnessRate;
-
-double doubleVoteRatioForDoubleFormat;
-
-unsigned minimumNumberOfScansBetweenRebalance;
-unsigned gcMarkStackSegmentSize;
-unsigned numberOfGCMarkers;
-unsigned opaqueRootMergeThreshold;
-
-bool forceWeakRandomSeed;
-unsigned forcedWeakRandomSeed;
-
-#if ENABLE(RUN_TIME_HEURISTICS)
 static bool parse(const char* string, bool& value)
 {
     if (!strcasecmp(string, "true") || !strcasecmp(string, "yes") || !strcmp(string, "1")) {
@@ -126,26 +73,21 @@ static bool parse(const char* string, double& value)
     return sscanf(string, "%lf", &value) == 1;
 }
 
-template<typename T, typename U>
-void setHeuristic(T& variable, const char* name, U value)
+#if ENABLE(RUN_TIME_HEURISTICS)
+template<typename T>
+void overrideOptionWithHeuristic(T& variable, const char* name)
 {
     const char* stringValue = getenv(name);
-    if (!stringValue) {
-        variable = safeCast<T>(value);
+    if (!stringValue)
         return;
-    }
     
     if (parse(stringValue, variable))
         return;
     
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
-    variable = safeCast<T>(value);
 }
-
-#define SET(variable, value) setHeuristic(variable, "JSC_" #variable, value)
-#else
-#define SET(variable, value) variable = value
 #endif
+
 
 static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
 {
@@ -163,76 +105,114 @@ static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
     return cpusToUse;
 }
 
-void initializeOptions()
+
+Options::Entry Options::s_options[Options::numberOfOptions];
+
+// Realize the names for each of the options:
+const Options::EntryInfo Options::s_optionsInfo[Options::numberOfOptions] = {
+#define FOR_EACH_OPTION(type_, name_, defaultValue_) \
+    { #name_, Options::type_##Type },
+    JSC_OPTIONS(FOR_EACH_OPTION)
+#undef FOR_EACH_OPTION
+};
+
+void Options::initialize()
 {
-    SET(useJIT, true);
-    
-    SET(showDisassembly, false);
-    SET(showDFGDisassembly, false); // DFG disassembly is shown if showDisassembly || showDFGDisassembly
-    
-    SET(maximumOptimizationCandidateInstructionCount, 10000);
-    
-    SET(maximumFunctionForCallInlineCandidateInstructionCount, 180);
-    SET(maximumFunctionForConstructInlineCandidateInstructionCount, 100);
-    
-    SET(maximumInliningDepth, 5);
+    // Initialize each of the options with their default values:
+#define FOR_EACH_OPTION(type_, name_, defaultValue_) \
+    name_() = defaultValue_;
+    JSC_OPTIONS(FOR_EACH_OPTION)
+#undef FOR_EACH_OPTION
 
-    SET(thresholdForJITAfterWarmUp,     100);
-    SET(thresholdForJITSoon,            100);
-
-    SET(thresholdForOptimizeAfterWarmUp,     1000);
-    SET(thresholdForOptimizeAfterLongWarmUp, 5000);
-    SET(thresholdForOptimizeSoon,            1000);
-
-    SET(executionCounterIncrementForLoop,   1);
-    SET(executionCounterIncrementForReturn, 15);
+    // Allow environment vars to override options if applicable.
+    // The evn var should be the name of the option prefixed with
+    // "JSC_".
+#if ENABLE(RUN_TIME_HEURISTICS)
+#define FOR_EACH_OPTION(type_, name_, defaultValue_) \
+    overrideOptionWithHeuristic(name_(), "JSC_" #name_);
+    JSC_OPTIONS(FOR_EACH_OPTION)
+#undef FOR_EACH_OPTION
     
-    SET(randomizeExecutionCountsBetweenCheckpoints, false);
-    SET(maximumExecutionCountsBetweenCheckpoints, 1000);
+#endif // RUN_TIME_HEURISTICS
 
-    SET(likelyToTakeSlowCaseThreshold,    0.15);
-    SET(couldTakeSlowCaseThreshold,       0.05); // Shouldn't be zero because some ops will spuriously take slow case, for example for linking or caching.
-    SET(likelyToTakeSlowCaseMinimumCount, 100);
-    SET(couldTakeSlowCaseMinimumCount,    10);
-    
-    SET(osrExitProminenceForFrequentExitSite,  0.3);
-    SET(osrExitCountForReoptimization,         100);
-    SET(osrExitCountForReoptimizationFromLoop, 5);
+    // Do range checks where needed and make corrections to the options:
+    ASSERT(thresholdForOptimizeAfterLongWarmUp() >= thresholdForOptimizeAfterWarmUp());
+    ASSERT(thresholdForOptimizeAfterWarmUp() >= thresholdForOptimizeSoon());
+    ASSERT(thresholdForOptimizeAfterWarmUp() >= 0);
 
-    SET(reoptimizationRetryCounterStep, 1);
-
-    SET(minimumOptimizationDelay,   1);
-    SET(maximumOptimizationDelay,   5);
-    SET(desiredProfileLivenessRate, 0.75);
-    SET(desiredProfileFullnessRate, 0.35);
-    
-    SET(doubleVoteRatioForDoubleFormat, 2);
-    
-    SET(minimumNumberOfScansBetweenRebalance, 100);
-    SET(gcMarkStackSegmentSize,               pageSize());
-    SET(opaqueRootMergeThreshold,             1000);
-    SET(numberOfGCMarkers, computeNumberOfGCMarkers(7)); // We don't scale so well beyond 7.
-
-    ASSERT(thresholdForOptimizeAfterLongWarmUp >= thresholdForOptimizeAfterWarmUp);
-    ASSERT(thresholdForOptimizeAfterWarmUp >= thresholdForOptimizeSoon);
-    ASSERT(thresholdForOptimizeAfterWarmUp >= 0);
-    
     // Compute the maximum value of the reoptimization retry counter. This is simply
     // the largest value at which we don't overflow the execute counter, when using it
     // to left-shift the execution counter by this amount. Currently the value ends
     // up being 18, so this loop is not so terrible; it probably takes up ~100 cycles
     // total on a 32-bit processor.
-    reoptimizationRetryCounterMax = 0;
-    while ((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp) << (reoptimizationRetryCounterMax + 1)) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()))
-        reoptimizationRetryCounterMax++;
-    
-    ASSERT((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp) << reoptimizationRetryCounterMax) > 0);
-    ASSERT((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp) << reoptimizationRetryCounterMax) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()));
-    
-    SET(forceWeakRandomSeed, false);
-    SET(forcedWeakRandomSeed, 0);
+    reoptimizationRetryCounterMax() = 0;
+    while ((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp()) << (reoptimizationRetryCounterMax() + 1)) <= static_cast<int64_t>(std::numeric_limits<int32>::max()))
+        reoptimizationRetryCounterMax()++;
+
+    ASSERT((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp()) << reoptimizationRetryCounterMax()) > 0);
+    ASSERT((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp()) << reoptimizationRetryCounterMax()) <= static_cast<int64_t>(std::numeric_limits<int32>::max()));
 }
 
-} } // namespace JSC::Options
+// Parses a single command line option in the format "<optionName>=<value>"
+// (no spaces allowed) and set the specified option if appropriate.
+bool Options::setOption(const char* arg)
+{
+    // arg should look like this:
+    //   <jscOptionName>=<appropriate value>
+    const char* equalStr = strchr(arg, '=');
+    if (!equalStr)
+        return false;
 
+    const char* valueStr = equalStr + 1;
+
+    // For each option, check if the specify arg is a match. If so, set the arg
+    // if the value makes sense. Otherwise, move on to checking the next option.
+#define FOR_EACH_OPTION(type_, name_, defaultValue_)    \
+    if (!strncmp(arg, #name_, equalStr - arg)) {        \
+        type_ value;                                    \
+        bool success = parse(valueStr, value);          \
+        if (success) {                                  \
+            name_() = value;                            \
+            return true;                                \
+        }                                               \
+        return false;                                   \
+    }
+
+    JSC_OPTIONS(FOR_EACH_OPTION)
+#undef FOR_EACH_OPTION
+
+        return false; // No option matched.
+}
+
+void Options::dumpAllOptions(FILE* stream)
+{
+    fprintf(stream, "JSC runtime options:\n");
+    for (int id = 0; id < numberOfOptions; id++)
+        dumpOption(static_cast<OptionID>(id), stream, "   ", "\n");
+}
+
+void Options::dumpOption(OptionID id, FILE* stream, const char* header, const char* footer)
+{
+    if (id >= numberOfOptions)
+        return; // Illegal option.
+
+    fprintf(stream, "%s%s: ", header, s_optionsInfo[id].name);
+    switch (s_optionsInfo[id].type) {
+    case boolType:
+        fprintf(stream, "%s", s_options[id].u.boolVal?"true":"false");
+        break;
+    case unsignedType:
+        fprintf(stream, "%u", s_options[id].u.unsignedVal);
+        break;
+    case doubleType:
+        fprintf(stream, "%lf", s_options[id].u.doubleVal);
+        break;
+    case int32Type:
+        fprintf(stream, "%d", s_options[id].u.int32Val);
+        break;
+    }
+    fprintf(stream, "%s", footer);
+}
+
+} // namespace JSC
 

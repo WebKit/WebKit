@@ -99,7 +99,7 @@ void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
     if (!canBeOptimized())
         return;
     
-    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? Options::executionCounterIncrementForLoop : Options::executionCounterIncrementForReturn), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter()));
+    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? Options::executionCounterIncrementForLoop() : Options::executionCounterIncrementForReturn()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter()));
     JITStubCall stubCall(this, cti_optimize);
     stubCall.addArgument(TrustedImm32(m_bytecodeOffset));
     if (kind == EnterOptimizationCheck)

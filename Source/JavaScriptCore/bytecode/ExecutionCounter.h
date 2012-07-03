@@ -48,10 +48,10 @@ public:
     static T clippedThreshold(JSGlobalObject* globalObject, T threshold)
     {
         int32_t maxThreshold;
-        if (Options::randomizeExecutionCountsBetweenCheckpoints)
-            maxThreshold = globalObject->weakRandomInteger() % Options::maximumExecutionCountsBetweenCheckpoints;
+        if (Options::randomizeExecutionCountsBetweenCheckpoints())
+            maxThreshold = globalObject->weakRandomInteger() % Options::maximumExecutionCountsBetweenCheckpoints();
         else
-            maxThreshold = Options::maximumExecutionCountsBetweenCheckpoints;
+            maxThreshold = Options::maximumExecutionCountsBetweenCheckpoints();
         if (threshold > maxThreshold)
             threshold = maxThreshold;
         return threshold;

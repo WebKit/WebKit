@@ -304,7 +304,7 @@ namespace JSC {
         
         void mergeOpaqueRootsIfProfitable()
         {
-            if (static_cast<unsigned>(m_opaqueRoots.size()) < Options::opaqueRootMergeThreshold)
+            if (static_cast<unsigned>(m_opaqueRoots.size()) < Options::opaqueRootMergeThreshold())
                 return;
             mergeOpaqueRoots();
         }
@@ -350,7 +350,7 @@ namespace JSC {
     inline void MarkStack::addOpaqueRoot(void* root)
     {
 #if ENABLE(PARALLEL_GC)
-        if (Options::numberOfGCMarkers == 1) {
+        if (Options::numberOfGCMarkers() == 1) {
             // Put directly into the shared HashSet.
             m_shared.m_opaqueRoots.add(root);
             return;

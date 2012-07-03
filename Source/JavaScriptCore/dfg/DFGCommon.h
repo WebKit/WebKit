@@ -136,7 +136,7 @@ enum OptimizationFixpointState { FixpointConverged, FixpointNotConverged };
 
 inline bool shouldShowDisassembly()
 {
-    return Options::showDisassembly || Options::showDFGDisassembly;
+    return Options::showDisassembly() || Options::showDFGDisassembly();
 }
 
 } } // namespace JSC::DFG

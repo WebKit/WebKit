@@ -2773,7 +2773,7 @@ bool CodeBlock::shouldOptimizeNow()
     dumpValueProfiles();
 #endif
 
-    if (m_optimizationDelayCounter >= Options::maximumOptimizationDelay)
+    if (m_optimizationDelayCounter >= Options::maximumOptimizationDelay())
         return true;
     
     unsigned numberOfLiveNonArgumentValueProfiles;
@@ -2784,9 +2784,9 @@ bool CodeBlock::shouldOptimizeNow()
     dataLog("Profile hotness: %lf, %lf\n", (double)numberOfLiveNonArgumentValueProfiles / numberOfValueProfiles(), (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles());
 #endif
 
-    if ((!numberOfValueProfiles() || (double)numberOfLiveNonArgumentValueProfiles / numberOfValueProfiles() >= Options::desiredProfileLivenessRate)
-        && (!totalNumberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / totalNumberOfValueProfiles() >= Options::desiredProfileFullnessRate)
-        && static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Options::minimumOptimizationDelay)
+    if ((!numberOfValueProfiles() || (double)numberOfLiveNonArgumentValueProfiles / numberOfValueProfiles() >= Options::desiredProfileLivenessRate())
+        && (!totalNumberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / totalNumberOfValueProfiles() >= Options::desiredProfileFullnessRate())
+        && static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Options::minimumOptimizationDelay())
         return true;
     
     ASSERT(m_optimizationDelayCounter < std::numeric_limits<uint8_t>::max());

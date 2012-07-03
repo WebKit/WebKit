@@ -1,3 +1,87 @@
+2012-07-03  Mark Lam  <mark.lam@apple.com>
+
+        Add ability to symbolically set and dump JSC VM options.
+        See comments in runtime/Options.h for details on how the options work.
+        https://bugs.webkit.org/show_bug.cgi?id=90420
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * assembler/LinkBuffer.h:
+        (JSC):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shouldOptimizeNow):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::likelyToTakeSpecialFastCase):
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase):
+        (JSC::CodeBlock::likelyToTakeAnySlowCase):
+        (JSC::CodeBlock::jitAfterWarmUp):
+        (JSC::CodeBlock::jitSoon):
+        (JSC::CodeBlock::reoptimizationRetryCounter):
+        (JSC::CodeBlock::countReoptimization):
+        (JSC::CodeBlock::counterValueForOptimizeAfterWarmUp):
+        (JSC::CodeBlock::counterValueForOptimizeAfterLongWarmUp):
+        (JSC::CodeBlock::optimizeSoon):
+        (JSC::CodeBlock::exitCountThresholdForReoptimization):
+        (JSC::CodeBlock::exitCountThresholdForReoptimizationFromLoop):
+        * bytecode/ExecutionCounter.h:
+        (JSC::ExecutionCounter::clippedThreshold):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        (JSC::DFG::mightInlineFunctionForCall):
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::shouldShowDisassembly):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormatAccordingToVote):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackSegmentAllocator::allocate):
+        (JSC::MarkStackSegmentAllocator::shrinkReserve):
+        (JSC::MarkStackArray::MarkStackArray):
+        (JSC::MarkStackThreadSharedData::MarkStackThreadSharedData):
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::mergeOpaqueRootsIfProfitable):
+        (JSC::MarkStack::addOpaqueRoot):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::donate):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+        * jsc.cpp:
+        (printUsageStatement):
+        (parseArguments):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/JSGlobalData.cpp:
+        (JSC::enableAssembler):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/Options.cpp:
+        (JSC):
+        (JSC::overrideOptionWithHeuristic):
+        (JSC::Options::initialize):
+        (JSC::Options::setOption):
+        (JSC::Options::dumpAllOptions):
+        (JSC::Options::dumpOption):
+        * runtime/Options.h:
+        (JSC):
+        (Options):
+        (EntryInfo):
+
 2012-07-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>  Joel Dillon <joel.dillon@codethink.co.uk>
 
         [Qt][Win] Fix broken QtWebKit5.lib linking

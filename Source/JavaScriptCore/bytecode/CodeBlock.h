@@ -685,7 +685,7 @@ namespace JSC {
             if (!numberOfRareCaseProfiles())
                 return false;
             unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return value >= Options::likelyToTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold;
+            return value >= Options::likelyToTakeSlowCaseMinimumCount() && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold();
         }
         
         bool couldTakeSlowCase(int bytecodeOffset)
@@ -693,7 +693,7 @@ namespace JSC {
             if (!numberOfRareCaseProfiles())
                 return false;
             unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return value >= Options::couldTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Options::couldTakeSlowCaseThreshold;
+            return value >= Options::couldTakeSlowCaseMinimumCount() && static_cast<double>(value) / m_executionEntryCount >= Options::couldTakeSlowCaseThreshold();
         }
         
         RareCaseProfile* addSpecialFastCaseProfile(int bytecodeOffset)
@@ -713,7 +713,7 @@ namespace JSC {
             if (!numberOfRareCaseProfiles())
                 return false;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return specialFastCaseCount >= Options::likelyToTakeSlowCaseMinimumCount && static_cast<double>(specialFastCaseCount) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold;
+            return specialFastCaseCount >= Options::likelyToTakeSlowCaseMinimumCount() && static_cast<double>(specialFastCaseCount) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold();
         }
         
         bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
@@ -723,7 +723,7 @@ namespace JSC {
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned value = slowCaseCount - specialFastCaseCount;
-            return value >= Options::likelyToTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold;
+            return value >= Options::likelyToTakeSlowCaseMinimumCount() && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold();
         }
         
         bool likelyToTakeAnySlowCase(int bytecodeOffset)
@@ -733,7 +733,7 @@ namespace JSC {
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned value = slowCaseCount + specialFastCaseCount;
-            return value >= Options::likelyToTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold;
+            return value >= Options::likelyToTakeSlowCaseMinimumCount() && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold();
         }
         
         unsigned executionEntryCount() const { return m_executionEntryCount; }
@@ -955,12 +955,12 @@ namespace JSC {
         
         void jitAfterWarmUp()
         {
-            m_llintExecuteCounter.setNewThreshold(Options::thresholdForJITAfterWarmUp, this);
+            m_llintExecuteCounter.setNewThreshold(Options::thresholdForJITAfterWarmUp(), this);
         }
         
         void jitSoon()
         {
-            m_llintExecuteCounter.setNewThreshold(Options::thresholdForJITSoon, this);
+            m_llintExecuteCounter.setNewThreshold(Options::thresholdForJITSoon(), this);
         }
         
         const ExecutionCounter& llintExecuteCounter() const
@@ -991,25 +991,25 @@ namespace JSC {
         // to avoid thrashing.
         unsigned reoptimizationRetryCounter() const
         {
-            ASSERT(m_reoptimizationRetryCounter <= Options::reoptimizationRetryCounterMax);
+            ASSERT(m_reoptimizationRetryCounter <= Options::reoptimizationRetryCounterMax());
             return m_reoptimizationRetryCounter;
         }
         
         void countReoptimization()
         {
             m_reoptimizationRetryCounter++;
-            if (m_reoptimizationRetryCounter > Options::reoptimizationRetryCounterMax)
-                m_reoptimizationRetryCounter = Options::reoptimizationRetryCounterMax;
+            if (m_reoptimizationRetryCounter > Options::reoptimizationRetryCounterMax())
+                m_reoptimizationRetryCounter = Options::reoptimizationRetryCounterMax();
         }
         
         int32_t counterValueForOptimizeAfterWarmUp()
         {
-            return Options::thresholdForOptimizeAfterWarmUp << reoptimizationRetryCounter();
+            return Options::thresholdForOptimizeAfterWarmUp() << reoptimizationRetryCounter();
         }
         
         int32_t counterValueForOptimizeAfterLongWarmUp()
         {
-            return Options::thresholdForOptimizeAfterLongWarmUp << reoptimizationRetryCounter();
+            return Options::thresholdForOptimizeAfterLongWarmUp() << reoptimizationRetryCounter();
         }
         
         int32_t* addressOfJITExecuteCounter()
@@ -1089,7 +1089,7 @@ namespace JSC {
         // in the baseline code.
         void optimizeSoon()
         {
-            m_jitExecuteCounter.setNewThreshold(Options::thresholdForOptimizeSoon << reoptimizationRetryCounter(), this);
+            m_jitExecuteCounter.setNewThreshold(Options::thresholdForOptimizeSoon() << reoptimizationRetryCounter(), this);
         }
         
         uint32_t osrExitCounter() const { return m_osrExitCounter; }
@@ -1118,12 +1118,12 @@ namespace JSC {
         
         uint32_t exitCountThresholdForReoptimization()
         {
-            return adjustedExitCountThreshold(Options::osrExitCountForReoptimization);
+            return adjustedExitCountThreshold(Options::osrExitCountForReoptimization());
         }
         
         uint32_t exitCountThresholdForReoptimizationFromLoop()
         {
-            return adjustedExitCountThreshold(Options::osrExitCountForReoptimizationFromLoop);
+            return adjustedExitCountThreshold(Options::osrExitCountForReoptimizationFromLoop());
         }
 
         bool shouldReoptimizeNow()

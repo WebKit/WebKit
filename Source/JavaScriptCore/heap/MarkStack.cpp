@@ -65,7 +65,7 @@ MarkStackSegment* MarkStackSegmentAllocator::allocate()
         }
     }
 
-    return static_cast<MarkStackSegment*>(OSAllocator::reserveAndCommit(Options::gcMarkStackSegmentSize));
+    return static_cast<MarkStackSegment*>(OSAllocator::reserveAndCommit(Options::gcMarkStackSegmentSize()));
 }
 
 void MarkStackSegmentAllocator::release(MarkStackSegment* segment)
@@ -86,13 +86,13 @@ void MarkStackSegmentAllocator::shrinkReserve()
     while (segments) {
         MarkStackSegment* toFree = segments;
         segments = segments->m_previous;
-        OSAllocator::decommitAndRelease(toFree, Options::gcMarkStackSegmentSize);
+        OSAllocator::decommitAndRelease(toFree, Options::gcMarkStackSegmentSize());
     }
 }
 
 MarkStackArray::MarkStackArray(MarkStackSegmentAllocator& allocator)
     : m_allocator(allocator)
-    , m_segmentCapacity(MarkStackSegment::capacityFromSize(Options::gcMarkStackSegmentSize))
+    , m_segmentCapacity(MarkStackSegment::capacityFromSize(Options::gcMarkStackSegmentSize()))
     , m_top(0)
     , m_numberOfPreviousSegments(0)
 {
@@ -262,7 +262,7 @@ MarkStackThreadSharedData::MarkStackThreadSharedData(JSGlobalData* globalData)
     , m_parallelMarkersShouldExit(false)
 {
 #if ENABLE(PARALLEL_GC)
-    for (unsigned i = 1; i < Options::numberOfGCMarkers; ++i) {
+    for (unsigned i = 1; i < Options::numberOfGCMarkers(); ++i) {
         SlotVisitor* slotVisitor = new SlotVisitor(*this);
         m_markingThreadsMarkStack.append(slotVisitor);
         m_markingThreads.append(createThread(markingThreadStartFunc, slotVisitor, "JavaScriptCore::Marking"));
@@ -368,7 +368,7 @@ void SlotVisitor::donateKnownParallel()
     // Otherwise, assume that a thread will go idle soon, and donate.
     m_stack.donateSomeCellsTo(m_shared.m_sharedMarkStack);
 
-    if (m_shared.m_numberOfActiveParallelMarkers < Options::numberOfGCMarkers)
+    if (m_shared.m_numberOfActiveParallelMarkers < Options::numberOfGCMarkers())
         m_shared.m_markingCondition.broadcast();
 }
 
@@ -377,10 +377,10 @@ void SlotVisitor::drain()
     ASSERT(m_isInParallelMode);
    
 #if ENABLE(PARALLEL_GC)
-    if (Options::numberOfGCMarkers > 1) {
+    if (Options::numberOfGCMarkers() > 1) {
         while (!m_stack.isEmpty()) {
             m_stack.refill();
-            for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance; m_stack.canRemoveLast() && countdown--;)
+            for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); m_stack.canRemoveLast() && countdown--;)
                 visitChildren(*this, m_stack.removeLast());
             donateKnownParallel();
         }
@@ -401,14 +401,14 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
 {
     ASSERT(m_isInParallelMode);
     
-    ASSERT(Options::numberOfGCMarkers);
+    ASSERT(Options::numberOfGCMarkers());
     
     bool shouldBeParallel;
 
 #if ENABLE(PARALLEL_GC)
-    shouldBeParallel = Options::numberOfGCMarkers > 1;
+    shouldBeParallel = Options::numberOfGCMarkers() > 1;
 #else
-    ASSERT(Options::numberOfGCMarkers == 1);
+    ASSERT(Options::numberOfGCMarkers() == 1);
     shouldBeParallel = false;
 #endif
     
@@ -469,7 +469,7 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
                 }
             }
            
-            size_t idleThreadCount = Options::numberOfGCMarkers - m_shared.m_numberOfActiveParallelMarkers;
+            size_t idleThreadCount = Options::numberOfGCMarkers() - m_shared.m_numberOfActiveParallelMarkers;
             m_stack.stealSomeCellsFrom(m_shared.m_sharedMarkStack, idleThreadCount);
             m_shared.m_numberOfActiveParallelMarkers++;
         }

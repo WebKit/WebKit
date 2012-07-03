@@ -41,7 +41,7 @@ public:
     void donate()
     {
         ASSERT(m_isInParallelMode);
-        if (Options::numberOfGCMarkers == 1)
+        if (Options::numberOfGCMarkers() == 1)
             return;
         
         donateKnownParallel();
