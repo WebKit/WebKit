@@ -1,3 +1,20 @@
+2012-07-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Anonymous scripts (evals) should not be added to Workspace.
+        https://bugs.webkit.org/show_bug.cgi?id=90467
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping.prototype.rawLocationToUILocation):
+        (WebInspector.ResourceScriptMapping.prototype._uiSourceCodeAdded):
+        (WebInspector.ResourceScriptMapping.prototype._uiSourceCodeReplaced):
+        (WebInspector.ResourceScriptMapping.prototype._uiSourceCodeRemoved):
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.ScriptSnippetModel.prototype._createUISourceCodeForScript):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeAdded):
+
 2012-07-03  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: floats-wrap-top-below-inline-* fail

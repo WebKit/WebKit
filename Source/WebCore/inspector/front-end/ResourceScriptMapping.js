@@ -161,6 +161,8 @@ WebInspector.ResourceScriptMapping.prototype = {
      */
     _uiSourceCodeAdded: function(rawSourceCode, uiSourceCode)
     {
+        if (!uiSourceCode.url)
+            return;
         this._rawSourceCodeForUISourceCode.put(uiSourceCode, rawSourceCode);
         this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
     },
@@ -172,6 +174,8 @@ WebInspector.ResourceScriptMapping.prototype = {
      */
     _uiSourceCodeReplaced: function(rawSourceCode, oldUISourceCode, uiSourceCode)
     {
+        if (!uiSourceCode.url)
+            return;
         this._rawSourceCodeForUISourceCode.remove(oldUISourceCode);
         this._rawSourceCodeForUISourceCode.put(uiSourceCode, rawSourceCode);
 
@@ -188,6 +192,8 @@ WebInspector.ResourceScriptMapping.prototype = {
      */
     _uiSourceCodeRemoved: function(rawSourceCode, uiSourceCode)
     {
+        if (!uiSourceCode.url)
+            return;
         this._rawSourceCodeForUISourceCode.remove(uiSourceCode);
         this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, uiSourceCode);
     },
