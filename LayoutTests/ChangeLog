@@ -1,3 +1,11 @@
+2012-07-02  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Build fix for Chromium
+
+        Fix webkit-lint failure.
+
+        * platform/chromium/TestExpectations: Got rid of "SLOW" modifier from fast/overflow/lots-of-sibling-inline-boxes.html
+
 2012-07-02  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Implement a Layout Test for editing/SurroundingText
