@@ -20,6 +20,13 @@
 ## load mobilityconfig if mobility is available
 load(mobilityconfig, true)
 
+# Try to locate sqlite3 source
+SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
+isEmpty(SQLITE3SRCDIR) {
+    haveQt(5):SQLITE3SRCDIR = $$QT.core.sources/../3rdparty/sqlite/
+    else:SQLITE3SRCDIR = $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
+}
+
 # ---------- Dynamically detect optional features -------------
 #
 # Please note, static feature defaults go in features.pri
@@ -213,13 +220,24 @@ for(define, DEFINES) {
     contains(DEFINES, $$opposite): DEFINES -= $$define
 }
 
+# --------- Make features available to JSC ------------
+
+## Forward enabled feature macros to JavaScript enabled features macros
+FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1
+v8: FEATURE_DEFINES_JAVASCRIPT += V8_BINDING=1
+
+for(define, DEFINES) {
+    enabled_feature_define = $$find(define, ^ENABLE_.+=1$)
+    isEmpty(enabled_feature_define): next()
+
+    FEATURE_DEFINES_JAVASCRIPT += $$enabled_feature_define
+}
+
 # ---------------------- The end ----------------------
 
 # Used to compute defaults for the build-webkit script
 # Don't place anything after this!
 CONFIG(compute_defaults) {
-    # FIXME: We should have configure.pro do this when the config tests
-    # can be selectivly run.
-    message(DEFINES: $$DEFINES)
+    message($$DEFINES)
     error("Done computing defaults")
 }

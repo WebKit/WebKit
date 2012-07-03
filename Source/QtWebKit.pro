@@ -4,6 +4,8 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
+load(features)
+
 TEMPLATE = subdirs
 CONFIG += ordered
 

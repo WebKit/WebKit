@@ -11,6 +11,8 @@ INCLUDEPATH += \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/ \
     $${ROOT_WEBKIT_DIR}/Source/WTF
 
+load(features)
+
 SOURCES += \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.cpp \
     locationedit.cpp \

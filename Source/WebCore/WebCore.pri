@@ -5,6 +5,8 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
+load(features)
+
 SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/WebCore
 
 # We enable TextureMapper by default; remove this line to enable GraphicsLayerQt.

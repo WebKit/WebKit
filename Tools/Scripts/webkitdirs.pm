@@ -824,40 +824,24 @@ sub qtFeatureDefaults
 
     my $file;
     my @buildArgs;
-    my $qconfigs;
 
     if (@_) {
         @buildArgs = (@buildArgs, @{$_[0]});
-        $qconfigs = $_[1];
         my $dir = File::Spec->catfile(productDir(), "Tools", "qmake");
         File::Path::mkpath($dir);
         chdir $dir or die "Failed to cd into " . $dir . "\n";
         $file = File::Spec->catfile($qmakepath, "configure.pro");
     } else {
         # Do a quick check of the features without running the config tests
-        # FIXME: When Qt supports it, go through configure.pro but without config tests
         $file = File::Spec->catfile($qmakepath, "mkspecs", "features", "features.prf");
         push @buildArgs, "CONFIG+=compute_defaults";
     }
 
-    my @defaults = `$qmakecommand @buildArgs $file 2>&1`;
+    my $defaults = `$qmakecommand @buildArgs $file 2>&1`;
 
     my %qtFeatureDefaults;
-    for (@defaults) {
-        if (/ DEFINES: /) {
-            while (/(\S+?)=(\S+?)/gi) {
-                $qtFeatureDefaults{$1}=$2;
-            }
-        } elsif (/ CONFIG:(.*)$/) {
-            if (@_) {
-                $$qconfigs = $1;
-            }
-        } elsif (/Done computing defaults/) {
-            print "\n";
-            last;
-        } elsif (@_) {
-            print $_;
-        }
+    while ($defaults =~ m/(\S+?)=(\S+?)/gi) {
+        $qtFeatureDefaults{$1}=$2;
     }
 
     chdir $originalCwd;
@@ -2246,7 +2230,6 @@ sub buildQMakeProjects
     my ($projects, $clean, @buildParams) = @_;
 
     my @buildArgs = ();
-    my $qconfigs = "";
 
     my $make = qtMakeCommand($qmakebin);
     my $makeargs = "";
@@ -2303,7 +2286,7 @@ sub buildQMakeProjects
     File::Path::mkpath($dir);
     chdir $dir or die "Failed to cd into " . $dir . "\n";
 
-    my %defines = qtFeatureDefaults(\@buildArgs, \$qconfigs);
+    my %defines = qtFeatureDefaults(\@buildArgs);
 
     my $svnRevision = currentSVNRevision();
 
@@ -2311,8 +2294,6 @@ sub buildQMakeProjects
 
     my $pathToDefinesCache = File::Spec->catfile($dir, ".webkit.config");
     my $pathToOldDefinesFile = File::Spec->catfile($dir, "defaults.txt");
-
-    # FIXME: Get rid of .webkit.config and defaults.txt and move all the logic to .qmake.cache
 
     # Ease transition to new build layout
     if (-e $pathToOldDefinesFile) {
@@ -2376,22 +2357,11 @@ sub buildQMakeProjects
 
             # After removing WebKitBuild directory, we have to call qtFeatureDefaults()
             # to run config tests and generate the removed Tools/qmake/.qmake.cache again.
-            qtFeatureDefaults(\@buildArgs, \$qconfigs);
+            qtFeatureDefaults(\@buildArgs);
         #}
 
         # Still trigger an incremental build
         $buildHint = "incremental";
-    }
-
-    if ($buildHint eq "incremental") {
-        my $qmakeDefines = "DEFINES +=";
-        foreach my $key (sort keys %defines) {
-            $qmakeDefines .= " \\\n    $key=$defines{$key}";
-        }
-        open(QMAKE_CACHE, ">.qmake.cache") or die "Cannot create .qmake.cache!\n";
-        print QMAKE_CACHE "CONFIG += webkit_configured $qconfigs\n";
-        print QMAKE_CACHE $qmakeDefines."\n";
-        close(QMAKE_CACHE);
     }
 
     # Save config up-front so we can detect changes to the build config even

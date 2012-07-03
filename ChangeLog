@@ -1,3 +1,17 @@
+2012-07-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121766.
+        http://trac.webkit.org/changeset/121766
+        https://bugs.webkit.org/show_bug.cgi?id=90465
+
+        It caused flakey build errors on the bots (Requested by Ossy
+        on #webkit).
+
+        * Source/QtWebKit.pro:
+        * Source/api.pri:
+        * Source/tests.pri:
+        * WebKit.pro:
+
 2012-07-03  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Enable Custom Scheme Handlers for BlackBerry.

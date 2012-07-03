@@ -5,6 +5,8 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
+load(features)
+
 # All external modules should include WTF headers by prefixing with "wtf" (#include <wtf/some/thing.h>).
 INCLUDEPATH += $$PWD
 

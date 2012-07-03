@@ -11,6 +11,8 @@
 sanitizedFile = $$toSanitizedPath($$_FILE_)
 equals(sanitizedFile, $$toSanitizedPath($$_PRO_FILE_)):TEMPLATE = derived
 
+load(features)
+
 WEBCORE_GENERATED_SOURCES_DIR = ../WebCore/$${GENERATED_SOURCES_DESTDIR}
 
 SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source

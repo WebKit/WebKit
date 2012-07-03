@@ -11,6 +11,8 @@ TARGET.module_name = QtWebKit
 
 CONFIG += qt plugin
 
+load(features)
+
 QMLDIRFILE = $${_PRO_FILE_PWD_}/qmldir
 copy2build.input = QMLDIRFILE
 copy2build.output = $${ROOT_BUILD_DIR}/imports/$${TARGET.module_name}/qmldir
