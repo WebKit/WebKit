@@ -154,7 +154,7 @@ void GamepadsGtk::unregisterDevice(String deviceFile)
     ASSERT(m_deviceMap.contains(deviceFile));
 
     GamepadDeviceGtk* gamepadDevice = m_deviceMap.take(deviceFile);
-    unsigned index = m_slots.find(gamepadDevice);
+    size_t index = m_slots.find(gamepadDevice);
     ASSERT(index != notFound);
 
     m_slots[index].clear();

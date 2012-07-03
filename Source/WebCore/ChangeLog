@@ -1,3 +1,19 @@
+2012-07-03  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk][Gamepads] 'warning: comparison is always true due to limited range of data type [-Wtype-limits]' in GamepadsGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=90477
+
+        Reviewed by Martin Robinson.
+
+        Vector::find() returns value of type size_t, springing errors when
+        assigning the value to a variable of type unsigned. Use size_t type
+        for that variable instead.
+
+        No new tests - no changed functionality.
+
+        * platform/gtk/GamepadsGtk.cpp:
+        (WebCore::GamepadsGtk::unregisterDevice):
+
 2012-07-03  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Fix LayoutUnit usage in RenderImage::imageDimensionsChanged
