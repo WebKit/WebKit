@@ -1,3 +1,12 @@
+2012-07-03  Priit Laes  <plaes@plaes.org>
+
+        [GTK] Need to bump libsoup requirements (for `soup_cookie_jar_get_cookie_list`)
+        https://bugs.webkit.org/show_bug.cgi?id=90332
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * configure.ac: Bump libsoup requirements to 2.39.2
+
 2012-07-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make use of .qmake.cache for caching features
