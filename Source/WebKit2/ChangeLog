@@ -1,3 +1,18 @@
+2012-07-03  Piotr Roguski  <p.roguski@samsung.com>
+
+        [EFL][WK2] Added missing WebPageProxy::ViewIsFocused flag to WebPageProxy::viewStateDidChange()
+        call in _ewk_view_smart_focus_out() function.
+        https://bugs.webkit.org/show_bug.cgi?id=89877
+
+        Reviewed by Andreas Kling.
+
+        Although name of the flag suggest it should be used only on focus in,
+        omitting it in case of focus out will prevent WebPageProxy::viewStateDidChange()
+        from sending Messages::WebPage::SetFocused(false).
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_focus_out):
+
 2012-07-03  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt][WK2] API tests randomly asserts in QQuickWebPage::setContentsScale(qreal)

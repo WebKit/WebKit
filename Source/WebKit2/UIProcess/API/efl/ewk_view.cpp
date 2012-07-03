@@ -123,7 +123,7 @@ static Eina_Bool _ewk_view_smart_focus_out(Ewk_View_Smart_Data* smartData)
 {
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false)
 
-    priv->pageClient->page()->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+    priv->pageClient->page()->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
     return true;
 }
 
