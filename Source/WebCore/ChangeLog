@@ -1,3 +1,22 @@
+2012-07-03  Nate Chapin  <japhet@chromium.org>
+
+        REGRESSION (r115654): Sometimes does not replace content for multipart/x-mixed-replace
+        https://bugs.webkit.org/show_bug.cgi?id=88436
+
+        Reviewed by Brady Eidson.
+
+        Test: http/tests/multipart/multipart-replace-non-html-content.php
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData): We should only send receivedFirstData() once per main resource load,
+            rather than multiple times in a multipart load. 
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType): m_gotFirstByte isn't set to true until data is
+            actually committed, and multipart data is often not committed until the part is finished. Check
+            whether the SharedBuffer is non-null instead.
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::resetInternalsObject): The JSInternals object my have already been cleared if the window shell
+            was cleared as part of creation of a new Document. Check it before using it.
+
 2012-07-03  Raymond Toy  <rtoy@google.com>
 
         Add AudioFIFO class and simplify AudioPullFIFO
