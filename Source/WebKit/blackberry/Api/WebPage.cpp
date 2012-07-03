@@ -48,13 +48,13 @@
 #include "DragClientBlackBerry.h"
 // FIXME: We should be using DumpRenderTreeClient, but I'm not sure where we should
 // create the DRT_BB object. See PR #120355.
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
 #include "DumpRenderTreeBlackBerry.h"
 #endif
 #include "EditorClientBlackBerry.h"
 #include "FocusController.h"
 #include "FrameLoaderClientBlackBerry.h"
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
 #include "GeolocationClientMock.h"
 #endif
 #include "GeolocationControllerClientBlackBerry.h"
@@ -453,7 +453,7 @@ WebPagePrivate::~WebPagePrivate()
     delete m_touchEventHandler;
     m_touchEventHandler = 0;
 
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     delete m_dumpRenderTree;
     m_dumpRenderTree = 0;
 #endif
@@ -502,7 +502,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     pageClients.inspectorClient = inspectorClient;
 
     m_page = new Page(pageClients);
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (getenv("drtRun")) {
         // In case running in DumpRenderTree mode set the controller to mock provider.
         GeolocationClientMock* mock = new GeolocationClientMock();
@@ -2225,7 +2225,7 @@ bool WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSp
     WebString username;
     WebString password;
 
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_dumpRenderTree)
         return m_dumpRenderTree->didReceiveAuthenticationChallenge(inputCredential);
 #endif
@@ -5167,7 +5167,7 @@ bool WebPage::findNextString(const char* text, bool forward, bool caseSensitive,
 
 void WebPage::runLayoutTests()
 {
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     // FIXME: do we need API to toggle this?
     d->m_page->settings()->setDeveloperExtrasEnabled(true);
 

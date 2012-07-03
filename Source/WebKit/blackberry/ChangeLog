@@ -1,3 +1,33 @@
+2012-07-02  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Use PUBLIC_BUILD to enable/disable DRT
+        https://bugs.webkit.org/show_bug.cgi?id=90271
+
+        Reviewed by George Staikos.
+
+        RIM PR #154707
+
+        Currently DRT code will be compiled only if ENABLE_DRT is set, and it's not
+        defined by default.
+        We should enable DRT by default unless PUBLIC_BUILD is set. In this way we don't
+        need to rebuild webkit before running DRT.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        (BlackBerry::WebKit::WebPage::runLayoutTests):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::addMessageToConsole):
+        (WebCore::ChromeClientBlackBerry::runJavaScriptAlert):
+        (WebCore::ChromeClientBlackBerry::runJavaScriptConfirm):
+        (WebCore::ChromeClientBlackBerry::runJavaScriptPrompt):
+        (WebCore::ChromeClientBlackBerry::createWindow):
+        (WebCore::ChromeClientBlackBerry::runBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientBlackBerry::setStatusbarText):
+        (WebCore::ChromeClientBlackBerry::exceededDatabaseQuota):
+        (WebCore::ChromeClientBlackBerry::keyboardUIMode):
+
 2012-07-02  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Implement cancelVibration, and make sure it's canceled on

@@ -24,7 +24,7 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/blackberry/WebKitSupport"
     "${CMAKE_SOURCE_DIR}/Source" # For JavaScriptCore API headers
 )
-IF (ENABLE_DRT)
+IF (NOT PUBLIC_BUILD)
     LIST(APPEND WebKit_INCLUDE_DIRECTORIES
         # needed for DRT for now
         "${JAVASCRIPTCORE_DIR}/wtf"
@@ -107,7 +107,6 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/FatFingers.cpp
 )
 
-
 IF (ENABLE_WEBGL)
     LIST(APPEND WebKit_INCLUDE_DIRECTORIES
         ${OPENGL_INCLUDE_DIR}
@@ -119,7 +118,7 @@ IF (ENABLE_WEBGL)
     )
 ENDIF (ENABLE_WEBGL)
 
-IF (ENABLE_DRT)
+IF (NOT PUBLIC_BUILD)
     # DumpRenderTree sources
     LIST(APPEND WebKit_SOURCES
         blackberry/WebKitSupport/DumpRenderTreeSupport.cpp
@@ -204,7 +203,7 @@ FILE(GLOB BBWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/blackberry/Api/*.h")
 
 INSTALL(FILES ${BBWebKit_HEADERS} DESTINATION usr/include/browser/webkit)
 
-IF (ENABLE_DRT)
+IF (NOT PUBLIC_BUILD)
     INSTALL(FILES ${TOOLS_DIR}/DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h
             DESTINATION usr/include/browser/webkit)
 ENDIF ()

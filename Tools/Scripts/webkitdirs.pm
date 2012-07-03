@@ -979,7 +979,7 @@ sub blackberryCMakeArguments()
     }
 
     push @cmakeExtraOptions, "-DCMAKE_SKIP_RPATH='ON'" if isDarwin();
-    push @cmakeExtraOptions, "-DENABLE_DRT=1" if $ENV{"ENABLE_DRT"};
+    push @cmakeExtraOptions, "-DPUBLIC_BUILD=1" if $ENV{"PUBLIC_BUILD"};
     push @cmakeExtraOptions, "-DENABLE_GLES2=1" unless $ENV{"DISABLE_GLES2"};
 
     my @includeSystemDirectories;

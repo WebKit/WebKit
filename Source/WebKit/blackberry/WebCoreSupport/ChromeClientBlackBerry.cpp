@@ -93,7 +93,7 @@ ChromeClientBlackBerry::ChromeClientBlackBerry(WebPagePrivate* pagePrivate)
 
 void ChromeClientBlackBerry::addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID)
 {
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree)
         m_webPagePrivate->m_dumpRenderTree->addMessageToConsole(message, lineNumber, sourceID);
 #endif
@@ -103,7 +103,7 @@ void ChromeClientBlackBerry::addMessageToConsole(MessageSource, MessageType, Mes
 
 void ChromeClientBlackBerry::runJavaScriptAlert(Frame* frame, const String& message)
 {
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree) {
         m_webPagePrivate->m_dumpRenderTree->runJavaScriptAlert(message);
         return;
@@ -117,7 +117,7 @@ void ChromeClientBlackBerry::runJavaScriptAlert(Frame* frame, const String& mess
 
 bool ChromeClientBlackBerry::runJavaScriptConfirm(Frame* frame, const String& message)
 {
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree)
         return m_webPagePrivate->m_dumpRenderTree->runJavaScriptConfirm(message);
 #endif
@@ -129,7 +129,7 @@ bool ChromeClientBlackBerry::runJavaScriptConfirm(Frame* frame, const String& me
 
 bool ChromeClientBlackBerry::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree) {
         result = m_webPagePrivate->m_dumpRenderTree->runJavaScriptPrompt(message, defaultValue);
         return true;
@@ -217,7 +217,7 @@ bool ChromeClientBlackBerry::shouldForceDocumentStyleSelectorUpdate()
 
 Page* ChromeClientBlackBerry::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction&)
 {
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree && !m_webPagePrivate->m_dumpRenderTree->allowsOpeningWindow())
         return 0;
 #endif
@@ -252,7 +252,7 @@ Page* ChromeClientBlackBerry::createWindow(Frame*, const FrameLoadRequest& reque
     if (!webPage)
         return 0;
 
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree)
         m_webPagePrivate->m_dumpRenderTree->windowCreated(webPage);
 #endif
@@ -380,7 +380,7 @@ bool ChromeClientBlackBerry::canRunBeforeUnloadConfirmPanel()
 
 bool ChromeClientBlackBerry::runBeforeUnloadConfirmPanel(const String& message, Frame*)
 {
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree)
         return m_webPagePrivate->m_dumpRenderTree->runBeforeUnloadConfirmPanel(message);
 #endif
@@ -398,7 +398,7 @@ void ChromeClientBlackBerry::setStatusbarText(const String& status)
 {
     m_webPagePrivate->m_client->setStatus(status);
 
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree)
         m_webPagePrivate->m_dumpRenderTree->setStatusText(status);
 #endif
@@ -478,7 +478,7 @@ void ChromeClientBlackBerry::exceededDatabaseQuota(Frame* frame, const String& n
 
     SecurityOrigin* origin = document->securityOrigin();
 
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree) {
         m_webPagePrivate->m_dumpRenderTree->exceededDatabaseQuota(origin, name);
         return;
@@ -628,7 +628,7 @@ KeyboardUIMode ChromeClientBlackBerry::keyboardUIMode()
 {
     bool tabsToLinks = true;
 
-#if ENABLE_DRT
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree)
         tabsToLinks = DumpRenderTreeSupport::linksIncludedInFocusChain();
 #endif
