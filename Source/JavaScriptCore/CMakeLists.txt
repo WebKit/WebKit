@@ -78,6 +78,7 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGFixupPhase.cpp
     dfg/DFGGraph.cpp
     dfg/DFGJITCompiler.cpp
+    dfg/DFGMinifiedNode.cpp
     dfg/DFGNodeFlags.cpp
     dfg/DFGOSREntry.cpp
     dfg/DFGOSRExit.cpp
@@ -93,6 +94,9 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGSpeculativeJIT32_64.cpp
     dfg/DFGSpeculativeJIT64.cpp
     dfg/DFGThunks.cpp
+    dfg/DFGValueSource.cpp
+    dfg/DFGVariableEvent.cpp
+    dfg/DFGVariableEventStream.cpp
     dfg/DFGValidate.cpp
     dfg/DFGVirtualRegisterAllocationPhase.cpp
 

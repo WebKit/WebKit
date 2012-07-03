@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitCompiler_h
-#define DFGOSRExitCompiler_h
+#ifndef DFGMinifiedGraph_h
+#define DFGMinifiedGraph_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGCCallHelpers.h"
-#include "DFGOSRExit.h"
-#include "DFGOperations.h"
+#include "DFGMinifiedNode.h"
+#include <algorithm>
+#include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-class ExecState;
-
-namespace DFG {
-
-class OSRExitCompiler {
+class MinifiedGraph {
 public:
-    OSRExitCompiler(CCallHelpers& jit)
-        : m_jit(jit)
+    MinifiedGraph() { }
+
+    MinifiedNode* at(NodeIndex nodeIndex)
     {
+        if (!m_list.size())
+            return 0;
+        MinifiedNode* entry =
+            binarySearch<MinifiedNode, NodeIndex, MinifiedNode::getIndex>(
+                m_list.begin(), m_list.size(), nodeIndex, WTF::KeyMustNotBePresentInArray);
+        if (entry->index() != nodeIndex)
+            return 0;
+        return entry;
     }
     
-    void compileExit(const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
+    void append(const MinifiedNode& node)
+    {
+        m_list.append(node);
+    }
+    
+    void prepareAndShrink()
+    {
+        std::sort(m_list.begin(), m_list.end(), MinifiedNode::compareByNodeIndex);
+        m_list.shrinkToFit();
+    }
+    
+    void setOriginalGraphSize(size_t size) { m_size = size; }
+    
+    size_t originalGraphSize() const { return m_size; }
 
 private:
-#if !ASSERT_DISABLED
-    static unsigned badIndex() { return static_cast<unsigned>(-1); };
-#endif
-    
-    void initializePoisoned(unsigned size)
-    {
-#if ASSERT_DISABLED
-        m_poisonScratchIndices.resize(size);
-#else
-        m_poisonScratchIndices.fill(badIndex(), size);
-#endif
-    }
-    
-    unsigned poisonIndex(unsigned index)
-    {
-        unsigned result = m_poisonScratchIndices[index];
-        ASSERT(result != badIndex());
-        return result;
-    }
-    
-    void handleExitCounts(const OSRExit&);
-    
-    CCallHelpers& m_jit;
-    Vector<unsigned> m_poisonScratchIndices;
+    Vector<MinifiedNode> m_list;
+    size_t m_size;
 };
-
-extern "C" {
-void DFG_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
-}
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGOSRExitCompiler_h
+#endif // DFGMinifiedGraph_h
+

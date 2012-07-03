@@ -39,6 +39,8 @@ extern "C" {
 
 void compileOSRExit(ExecState* exec)
 {
+    SamplingRegion samplingRegion("DFG OSR Exit Compilation");
+    
     CodeBlock* codeBlock = exec->codeBlock();
     
     ASSERT(codeBlock);
@@ -64,12 +66,22 @@ void compileOSRExit(ExecState* exec)
             ->jitCompile(exec);
     }
     
+    // Compute the value recoveries.
+    Operands<ValueRecovery> operands;
+    codeBlock->variableEventStream().reconstruct(codeBlock, exit.m_codeOrigin, codeBlock->minifiedDFG(), exit.m_streamIndex, operands);
+    
+    // There may be an override, for forward speculations.
+    if (!!exit.m_valueRecoveryOverride) {
+        operands.setOperand(
+            exit.m_valueRecoveryOverride->operand, exit.m_valueRecoveryOverride->recovery);
+    }
+    
     SpeculationRecovery* recovery = 0;
     if (exit.m_recoveryIndex)
         recovery = &codeBlock->speculationRecovery(exit.m_recoveryIndex - 1);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("Generating OSR exit #%u (bc#%u, @%u, %s) for code block %p.\n", exitIndex, exit.m_codeOrigin.bytecodeIndex, exit.m_nodeIndex, exitKindToString(exit.m_kind), codeBlock);
+    dataLog("Generating OSR exit #%u (seq#%u, bc#%u, @%u, %s) for code block %p.\n", exitIndex, exit.m_streamIndex, exit.m_codeOrigin.bytecodeIndex, exit.m_nodeIndex, exitKindToString(exit.m_kind), codeBlock);
 #endif
 
     {
@@ -77,7 +89,7 @@ void compileOSRExit(ExecState* exec)
         OSRExitCompiler exitCompiler(jit);
 
         jit.jitAssertHasValidCallFrame();
-        exitCompiler.compileExit(exit, recovery);
+        exitCompiler.compileExit(exit, operands, recovery);
         
         LinkBuffer patchBuffer(*globalData, &jit, codeBlock);
         exit.m_code = FINALIZE_CODE_IF(

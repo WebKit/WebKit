@@ -62,7 +62,7 @@ GPRReg SpeculativeJIT::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat
             m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         }
 
-        info.fillInteger(gpr);
+        info.fillInteger(*m_stream, gpr);
         returnFormat = DataFormatInteger;
         return gpr;
     }
@@ -91,7 +91,7 @@ GPRReg SpeculativeJIT::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat
         m_gprs.release(tagGPR);
         m_gprs.release(payloadGPR);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderInteger);
-        info.fillInteger(payloadGPR);
+        info.fillInteger(*m_stream, payloadGPR);
         returnFormat = DataFormatInteger;
         return payloadGPR;
     }
@@ -103,10 +103,11 @@ GPRReg SpeculativeJIT::fillInteger(NodeIndex nodeIndex, DataFormat& returnFormat
         returnFormat = DataFormatInteger;
         return gpr;
     }
-    }
 
-    ASSERT_NOT_REACHED();
-    return InvalidGPRReg;
+    default:
+        ASSERT_NOT_REACHED();
+        return InvalidGPRReg;
+    }
 }
 
 FPRReg SpeculativeJIT::fillDouble(NodeIndex nodeIndex)
@@ -123,13 +124,13 @@ FPRReg SpeculativeJIT::fillDouble(NodeIndex nodeIndex)
                 GPRReg gpr = allocate();
                 m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-                info.fillInteger(gpr);
+                info.fillInteger(*m_stream, gpr);
                 unlock(gpr);
             } else if (isNumberConstant(nodeIndex)) {
                 FPRReg fpr = fprAllocate();
                 m_jit.loadDouble(addressOfDoubleConstant(nodeIndex), fpr);
                 m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-                info.fillDouble(fpr);
+                info.fillDouble(*m_stream, fpr);
                 return fpr;
             } else {
                 // FIXME: should not be reachable?
@@ -142,7 +143,7 @@ FPRReg SpeculativeJIT::fillDouble(NodeIndex nodeIndex)
                 FPRReg fpr = fprAllocate();
                 m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
                 m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
-                info.fillDouble(fpr);
+                info.fillDouble(*m_stream, fpr);
                 return fpr;
             }
 
@@ -162,7 +163,7 @@ FPRReg SpeculativeJIT::fillDouble(NodeIndex nodeIndex)
                 hasUnboxedDouble.link(&m_jit);
 
             m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
-            info.fillDouble(fpr);
+            info.fillDouble(*m_stream, fpr);
             return fpr;
         }
     }
@@ -207,7 +208,7 @@ FPRReg SpeculativeJIT::fillDouble(NodeIndex nodeIndex)
         m_gprs.unlock(tagGPR);
         m_gprs.unlock(payloadGPR);
         m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-        info.fillDouble(fpr);
+        info.fillDouble(*m_stream, fpr);
         info.killSpilled();
         return fpr;
     }
@@ -227,10 +228,11 @@ FPRReg SpeculativeJIT::fillDouble(NodeIndex nodeIndex)
         m_fprs.lock(fpr);
         return fpr;
     }
-    }
 
-    ASSERT_NOT_REACHED();
-    return InvalidFPRReg;
+    default:
+        ASSERT_NOT_REACHED();
+        return InvalidFPRReg;
+    }
 }
 
 bool SpeculativeJIT::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& payloadGPR, FPRReg& fpr)
@@ -252,7 +254,7 @@ bool SpeculativeJIT::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& pa
             m_jit.move(Imm32(valueOfJSConstant(nodeIndex).payload()), payloadGPR);
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderConstant);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderConstant);
-            info.fillJSValue(tagGPR, payloadGPR, isInt32Constant(nodeIndex) ? DataFormatJSInteger : DataFormatJS);
+            info.fillJSValue(*m_stream, tagGPR, payloadGPR, isInt32Constant(nodeIndex) ? DataFormatJSInteger : DataFormatJS);
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat != DataFormatNone && spillFormat != DataFormatStorage);
@@ -278,7 +280,7 @@ bool SpeculativeJIT::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& pa
             m_jit.load32(JITCompiler::payloadFor(virtualRegister), payloadGPR);
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderSpilled);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderSpilled);
-            info.fillJSValue(tagGPR, payloadGPR, spillFormat == DataFormatJSDouble ? DataFormatJS : spillFormat);
+            info.fillJSValue(*m_stream, tagGPR, payloadGPR, spillFormat == DataFormatJSDouble ? DataFormatJS : spillFormat);
         }
 
         return true;
@@ -320,7 +322,7 @@ bool SpeculativeJIT::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& pa
         m_gprs.release(gpr);
         m_gprs.retain(tagGPR, virtualRegister, SpillOrderJS);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderJS);
-        info.fillJSValue(tagGPR, payloadGPR, fillFormat);
+        info.fillJSValue(*m_stream, tagGPR, payloadGPR, fillFormat);
         return true;
     }
 
@@ -335,7 +337,7 @@ bool SpeculativeJIT::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& pa
         m_fprs.release(oldFPR);
         m_gprs.retain(tagGPR, virtualRegister, SpillOrderJS);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderJS);
-        info.fillJSValue(tagGPR, payloadGPR, DataFormatJS);
+        info.fillJSValue(*m_stream, tagGPR, payloadGPR, DataFormatJS);
         return true;
     }
 
@@ -353,10 +355,11 @@ bool SpeculativeJIT::fillJSValue(NodeIndex nodeIndex, GPRReg& tagGPR, GPRReg& pa
     case DataFormatStorage:
         // this type currently never occurs
         ASSERT_NOT_REACHED();
-    }
 
-    ASSERT_NOT_REACHED();
-    return true;
+    default:
+        ASSERT_NOT_REACHED();
+        return true;
+    }
 }
 
 class ValueToNumberSlowPathGenerator
@@ -1065,7 +1068,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
             GPRReg gpr = allocate();
             m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            info.fillInteger(gpr);
+            info.fillInteger(*m_stream, gpr);
             returnFormat = DataFormatInteger;
             return gpr;
         }
@@ -1080,7 +1083,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
         GPRReg gpr = allocate();
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        info.fillInteger(gpr);
+        info.fillInteger(*m_stream, gpr);
         returnFormat = DataFormatInteger;
         return gpr;
     }
@@ -1098,7 +1101,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
         m_gprs.release(tagGPR);
         m_gprs.release(payloadGPR);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderInteger);
-        info.fillInteger(payloadGPR);
+        info.fillInteger(*m_stream, payloadGPR);
         // If !strict we're done, return.
         returnFormat = DataFormatInteger;
         return payloadGPR;
@@ -1119,10 +1122,11 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
     case DataFormatJSBoolean:
     case DataFormatStorage:
         ASSERT_NOT_REACHED();
-    }
 
-    ASSERT_NOT_REACHED();
-    return InvalidGPRReg;
+    default:
+        ASSERT_NOT_REACHED();
+        return InvalidGPRReg;
+    }
 }
 
 GPRReg SpeculativeJIT::fillSpeculateInt(NodeIndex nodeIndex, DataFormat& returnFormat)
@@ -1160,13 +1164,13 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
                 GPRReg gpr = allocate();
                 m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gpr);
                 m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-                info.fillInteger(gpr);
+                info.fillInteger(*m_stream, gpr);
                 unlock(gpr);
             } else if (isNumberConstant(nodeIndex)) {
                 FPRReg fpr = fprAllocate();
                 m_jit.loadDouble(addressOfDoubleConstant(nodeIndex), fpr);
                 m_fprs.retain(fpr, virtualRegister, SpillOrderConstant);
-                info.fillDouble(fpr);
+                info.fillDouble(*m_stream, fpr);
                 return fpr;
             } else
                 ASSERT_NOT_REACHED();
@@ -1177,7 +1181,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
                 FPRReg fpr = fprAllocate();
                 m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
                 m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
-                info.fillDouble(fpr);
+                info.fillDouble(*m_stream, fpr);
                 return fpr;
             }
 
@@ -1200,7 +1204,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
                 hasUnboxedDouble.link(&m_jit);
 
             m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
-            info.fillDouble(fpr);
+            info.fillDouble(*m_stream, fpr);
             info.killSpilled();
             return fpr;
         }
@@ -1238,7 +1242,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
         m_gprs.unlock(tagGPR);
         m_gprs.unlock(payloadGPR);
         m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-        info.fillDouble(fpr);
+        info.fillDouble(*m_stream, fpr);
         info.killSpilled();
         return fpr;
     }
@@ -1266,10 +1270,11 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
     case DataFormatBoolean:
     case DataFormatJSBoolean:
         ASSERT_NOT_REACHED();
-    }
 
-    ASSERT_NOT_REACHED();
-    return InvalidFPRReg;
+    default:
+        ASSERT_NOT_REACHED();
+        return InvalidFPRReg;
+    }
 }
 
 GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
@@ -1296,7 +1301,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
             GPRReg gpr = allocate();
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             m_jit.move(MacroAssembler::TrustedImmPtr(jsValue.asCell()), gpr);
-            info.fillCell(gpr);
+            info.fillCell(*m_stream, gpr);
             return gpr;
         }
 
@@ -1306,7 +1311,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
         GPRReg gpr = allocate();
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        info.fillCell(gpr);
+        info.fillCell(*m_stream, gpr);
         return gpr;
     }
 
@@ -1328,7 +1333,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
         m_gprs.release(tagGPR);
         m_gprs.release(payloadGPR);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderCell);
-        info.fillCell(payloadGPR);
+        info.fillCell(*m_stream, payloadGPR);
         return payloadGPR;
     }
 
@@ -1340,10 +1345,11 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
     case DataFormatBoolean:
     case DataFormatStorage:
         ASSERT_NOT_REACHED();
-    }
 
-    ASSERT_NOT_REACHED();
-    return InvalidGPRReg;
+    default:
+        ASSERT_NOT_REACHED();
+        return InvalidGPRReg;
+    }
 }
 
 GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
@@ -1370,7 +1376,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
             GPRReg gpr = allocate();
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             m_jit.move(MacroAssembler::TrustedImm32(jsValue.asBoolean()), gpr);
-            info.fillBoolean(gpr);
+            info.fillBoolean(*m_stream, gpr);
             return gpr;
         }
 
@@ -1382,7 +1388,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
         GPRReg gpr = allocate();
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        info.fillBoolean(gpr);
+        info.fillBoolean(*m_stream, gpr);
         return gpr;
     }
 
@@ -1405,7 +1411,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
         m_gprs.release(tagGPR);
         m_gprs.release(payloadGPR);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderBoolean);
-        info.fillBoolean(payloadGPR);
+        info.fillBoolean(*m_stream, payloadGPR);
         return payloadGPR;
     }
 
@@ -1417,10 +1423,11 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
     case DataFormatCell:
     case DataFormatStorage:
         ASSERT_NOT_REACHED();
-    }
 
-    ASSERT_NOT_REACHED();
-    return InvalidGPRReg;
+    default:
+        ASSERT_NOT_REACHED();
+        return InvalidGPRReg;
+    }
 }
 
 JITCompiler::Jump SpeculativeJIT::convertToDouble(JSValueOperand& op, FPRReg result)
@@ -2004,7 +2011,7 @@ void SpeculativeJIT::compile(Node& node)
                 // Indicate that it's no longer necessary to retrieve the value of
                 // this bytecode variable from registers or other locations in the register file,
                 // but that it is stored as a double.
-                valueSourceReferenceForOperand(node.local()) = ValueSource(DoubleInRegisterFile);
+                recordSetLocal(node.local(), ValueSource(DoubleInRegisterFile));
                 break;
             }
             SpeculatedType predictedType = node.variableAccessData()->argumentAwarePrediction();
@@ -2012,14 +2019,14 @@ void SpeculativeJIT::compile(Node& node)
                 DoubleOperand value(this, node.child1());
                 m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node.local()));
                 noResult(m_compileIndex);
-                valueSourceReferenceForOperand(node.local()) = ValueSource(DoubleInRegisterFile);
+                recordSetLocal(node.local(), ValueSource(DoubleInRegisterFile));
                 break;
             }
             if (isInt32Speculation(predictedType)) {
                 SpeculateIntegerOperand value(this, node.child1());
                 m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));
                 noResult(m_compileIndex);
-                valueSourceReferenceForOperand(node.local()) = ValueSource(Int32InRegisterFile);
+                recordSetLocal(node.local(), ValueSource(Int32InRegisterFile));
                 break;
             }
             if (isArraySpeculation(predictedType)) {
@@ -2029,14 +2036,14 @@ void SpeculativeJIT::compile(Node& node)
                     speculationCheck(BadType, JSValueSource::unboxedCell(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
                 m_jit.storePtr(cellGPR, JITCompiler::payloadFor(node.local()));
                 noResult(m_compileIndex);
-                valueSourceReferenceForOperand(node.local()) = ValueSource(CellInRegisterFile);
+                recordSetLocal(node.local(), ValueSource(CellInRegisterFile));
                 break;
             }
             if (isBooleanSpeculation(predictedType)) {
                 SpeculateBooleanOperand value(this, node.child1());
                 m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));
                 noResult(m_compileIndex);
-                valueSourceReferenceForOperand(node.local()) = ValueSource(BooleanInRegisterFile);
+                recordSetLocal(node.local(), ValueSource(BooleanInRegisterFile));
                 break;
             }
         }
@@ -2044,7 +2051,7 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.store32(value.payloadGPR(), JITCompiler::payloadFor(node.local()));
         m_jit.store32(value.tagGPR(), JITCompiler::tagFor(node.local()));
         noResult(m_compileIndex);
-        valueSourceReferenceForOperand(node.local()) = ValueSource(ValueInRegisterFile);
+        recordSetLocal(node.local(), ValueSource(ValueInRegisterFile));
         break;
     }
 

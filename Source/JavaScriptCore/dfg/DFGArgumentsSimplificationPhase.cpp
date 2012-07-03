@@ -834,6 +834,7 @@ private:
 
 bool performArgumentsSimplification(Graph& graph)
 {
+    SamplingRegion samplingRegion("DFG Arguments Simplification Phase");
     return runPhase<ArgumentsSimplificationPhase>(graph);
 }
 

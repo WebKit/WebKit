@@ -1172,6 +1172,7 @@ private:
 
 bool performCSE(Graph& graph, OptimizationFixpointState fixpointState)
 {
+    SamplingRegion samplingRegion("DFG CSE Phase");
     return runPhase<CSEPhase>(graph, fixpointState);
 }
 

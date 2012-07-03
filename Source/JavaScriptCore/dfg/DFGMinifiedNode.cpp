@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitCompiler_h
-#define DFGOSRExitCompiler_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "DFGMinifiedNode.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGCCallHelpers.h"
-#include "DFGOSRExit.h"
-#include "DFGOperations.h"
+#include "DFGNode.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-class ExecState;
-
-namespace DFG {
-
-class OSRExitCompiler {
-public:
-    OSRExitCompiler(CCallHelpers& jit)
-        : m_jit(jit)
-    {
+MinifiedNode MinifiedNode::fromNode(NodeIndex nodeIndex, Node& node)
+{
+    ASSERT(belongsInMinifiedGraph(node.op()));
+    MinifiedNode result;
+    result.m_index = nodeIndex;
+    result.m_op = node.op();
+    if (hasChild(node.op()))
+        result.m_childOrInfo = node.child1().index();
+    else if (hasConstantNumber(node.op()))
+        result.m_childOrInfo = node.constantNumber();
+    else if (hasWeakConstant(node.op()))
+        result.m_childOrInfo = bitwise_cast<uintptr_t>(node.weakConstant());
+    else {
+        ASSERT(node.op() == PhantomArguments);
+        result.m_childOrInfo = 0;
     }
-    
-    void compileExit(const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
-
-private:
-#if !ASSERT_DISABLED
-    static unsigned badIndex() { return static_cast<unsigned>(-1); };
-#endif
-    
-    void initializePoisoned(unsigned size)
-    {
-#if ASSERT_DISABLED
-        m_poisonScratchIndices.resize(size);
-#else
-        m_poisonScratchIndices.fill(badIndex(), size);
-#endif
-    }
-    
-    unsigned poisonIndex(unsigned index)
-    {
-        unsigned result = m_poisonScratchIndices[index];
-        ASSERT(result != badIndex());
-        return result;
-    }
-    
-    void handleExitCounts(const OSRExit&);
-    
-    CCallHelpers& m_jit;
-    Vector<unsigned> m_poisonScratchIndices;
-};
-
-extern "C" {
-void DFG_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
+    return result;
 }
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGOSRExitCompiler_h

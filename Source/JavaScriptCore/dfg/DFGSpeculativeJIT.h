@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #ifndef DFGSpeculativeJIT_h
 #define DFGSpeculativeJIT_h
 
+#include <wtf/Platform.h>
+
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractState.h"
@@ -34,6 +36,7 @@
 #include "DFGOSRExit.h"
 #include "DFGOperations.h"
 #include "DFGSilentRegisterSavePlan.h"
+#include "DFGValueSource.h"
 #include "MarkedAllocator.h"
 #include "ValueRecovery.h"
 
@@ -47,87 +50,6 @@ class SpeculateStrictInt32Operand;
 class SpeculateDoubleOperand;
 class SpeculateCellOperand;
 class SpeculateBooleanOperand;
-
-
-enum ValueSourceKind {
-    SourceNotSet,
-    ValueInRegisterFile,
-    Int32InRegisterFile,
-    CellInRegisterFile,
-    BooleanInRegisterFile,
-    DoubleInRegisterFile,
-    ArgumentsSource,
-    SourceIsDead,
-    HaveNode
-};
-
-class ValueSource {
-public:
-    ValueSource()
-        : m_nodeIndex(nodeIndexFromKind(SourceNotSet))
-    {
-    }
-    
-    explicit ValueSource(ValueSourceKind valueSourceKind)
-        : m_nodeIndex(nodeIndexFromKind(valueSourceKind))
-    {
-        ASSERT(kind() != SourceNotSet);
-        ASSERT(kind() != HaveNode);
-    }
-    
-    explicit ValueSource(NodeIndex nodeIndex)
-        : m_nodeIndex(nodeIndex)
-    {
-        ASSERT(kind() == HaveNode);
-    }
-    
-    static ValueSource forSpeculation(SpeculatedType prediction)
-    {
-        if (isInt32Speculation(prediction))
-            return ValueSource(Int32InRegisterFile);
-        if (isArraySpeculation(prediction))
-            return ValueSource(CellInRegisterFile);
-        if (isBooleanSpeculation(prediction))
-            return ValueSource(BooleanInRegisterFile);
-        return ValueSource(ValueInRegisterFile);
-    }
-    
-    bool isSet() const
-    {
-        return kindFromNodeIndex(m_nodeIndex) != SourceNotSet;
-    }
-    
-    ValueSourceKind kind() const
-    {
-        return kindFromNodeIndex(m_nodeIndex);
-    }
-    
-    NodeIndex nodeIndex() const
-    {
-        ASSERT(kind() == HaveNode);
-        return m_nodeIndex;
-    }
-    
-    void dump(FILE* out) const;
-    
-private:
-    static NodeIndex nodeIndexFromKind(ValueSourceKind kind)
-    {
-        ASSERT(kind >= SourceNotSet && kind < HaveNode);
-        return NoNode - kind;
-    }
-    
-    static ValueSourceKind kindFromNodeIndex(NodeIndex nodeIndex)
-    {
-        unsigned kind = static_cast<unsigned>(NoNode - nodeIndex);
-        if (kind >= static_cast<unsigned>(HaveNode))
-            return HaveNode;
-        return static_cast<ValueSourceKind>(kind);
-    }
-    
-    NodeIndex m_nodeIndex;
-};
-
 
 enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger, GeneratedOperandDouble, GeneratedOperandJSValue};
 
@@ -326,7 +248,7 @@ public:
 
         // use() returns true when the value becomes dead, and any
         // associated resources may be freed.
-        if (!info.use())
+        if (!info.use(*m_stream))
             return;
 
         // Release the associated machine registers.
@@ -376,6 +298,7 @@ public:
     void runSlowPathGenerators();
     
     void compile(Node&);
+    void noticeOSRBirth(NodeIndex, Node&);
     void compileMovHint(Node&);
     void compile(BasicBlock&);
 
@@ -777,7 +700,7 @@ public:
         // Check the GenerationInfo to see if this value need writing
         // to the RegisterFile - if not, mark it as spilled & return.
         if (!info.needsSpill()) {
-            info.setSpilled();
+            info.setSpilled(*m_stream, spillMe);
             return;
         }
 
@@ -787,20 +710,20 @@ public:
             // This is special, since it's not a JS value - as in it's not visible to JS
             // code.
             m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
-            info.spill(DataFormatStorage);
+            info.spill(*m_stream, spillMe, DataFormatStorage);
             return;
         }
 
         case DataFormatInteger: {
             m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
-            info.spill(DataFormatInteger);
+            info.spill(*m_stream, spillMe, DataFormatInteger);
             return;
         }
 
 #if USE(JSVALUE64)
         case DataFormatDouble: {
             m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
-            info.spill(DataFormatDouble);
+            info.spill(*m_stream, spillMe, DataFormatDouble);
             return;
         }
             
@@ -816,13 +739,13 @@ public:
             
             // Spill the value, and record it as spilled in its boxed form.
             m_jit.storePtr(reg, JITCompiler::addressFor(spillMe));
-            info.spill((DataFormat)(spillFormat | DataFormatJS));
+            info.spill(*m_stream, spillMe, (DataFormat)(spillFormat | DataFormatJS));
             return;
 #elif USE(JSVALUE32_64)
         case DataFormatCell:
         case DataFormatBoolean: {
             m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
-            info.spill(spillFormat);
+            info.spill(*m_stream, spillMe, spillFormat);
             return;
         }
 
@@ -830,7 +753,7 @@ public:
         case DataFormatJSDouble: {
             // On JSVALUE32_64 boxing a double is a no-op.
             m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
-            info.spill(DataFormatJSDouble);
+            info.spill(*m_stream, spillMe, DataFormatJSDouble);
             return;
         }
 
@@ -839,7 +762,7 @@ public:
             ASSERT(spillFormat & DataFormatJS);
             m_jit.store32(info.tagGPR(), JITCompiler::tagFor(spillMe));
             m_jit.store32(info.payloadGPR(), JITCompiler::payloadFor(spillMe));
-            info.spill(spillFormat);
+            info.spill(*m_stream, spillMe, spillFormat);
             return;
 #endif
         }
@@ -2204,7 +2127,7 @@ public:
         if (!m_compileOkay)
             return;
         ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
-        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this));
+        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this, m_stream->size()));
     }
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail)
     {
@@ -2231,7 +2154,7 @@ public:
             return;
         ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         m_jit.codeBlock()->appendSpeculationRecovery(recovery);
-        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
+        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this, m_stream->size(), m_jit.codeBlock()->numberOfSpeculationRecoveries()));
     }
     void speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
@@ -2252,7 +2175,7 @@ public:
             m_jit.codeBlock()->appendOSRExit(
                 OSRExit(kind, jsValueSource,
                         m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex),
-                        JITCompiler::Jump(), this)));
+                        JITCompiler::Jump(), this, m_stream->size())));
         exit.m_watchpointIndex = m_jit.codeBlock()->appendWatchpoint(
             Watchpoint(m_jit.watchpointLabel()));
         return &m_jit.codeBlock()->watchpoint(exit.m_watchpointIndex);
@@ -2295,7 +2218,8 @@ public:
         exit.m_codeOrigin = nextNode->codeOrigin;
         exit.m_lastSetOperand = setLocal->local();
         
-        exit.valueRecoveryForOperand(setLocal->local()) = valueRecovery;
+        exit.m_valueRecoveryOverride = adoptRef(
+            new ValueRecoveryOverride(setLocal->local(), valueRecovery));
     }
     void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& valueRecovery)
     {
@@ -2362,6 +2286,13 @@ public:
         return m_variables[operand];
     }
     
+    void recordSetLocal(int operand, ValueSource valueSource)
+    {
+        valueSourceReferenceForOperand(operand) = valueSource;
+        m_stream->appendAndLog(VariableEvent::setLocal(operand, valueSource.dataFormat()));
+    }
+    
+    // The JIT, while also provides MacroAssembler functionality.
     JITCompiler& m_jit;
 
     // The current node being generated.
@@ -2394,6 +2325,9 @@ public:
     CodeOrigin m_codeOriginForOSR;
     
     AbstractState m_state;
+    
+    VariableEventStream* m_stream;
+    MinifiedGraph* m_minifiedGraph;
     
     bool m_isCheckingArgumentTypes;
     

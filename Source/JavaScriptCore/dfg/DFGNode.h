@@ -40,6 +40,7 @@
 #include "JSValue.h"
 #include "Operands.h"
 #include "SpeculatedType.h"
+#include "StructureSet.h"
 #include "ValueProfile.h"
 
 namespace JSC { namespace DFG {
@@ -707,7 +708,7 @@ struct Node {
         ASSERT(m_virtualRegister != InvalidVirtualRegister);
         return m_virtualRegister;
     }
-
+    
     void setVirtualRegister(VirtualRegister virtualRegister)
     {
         ASSERT(hasResult());

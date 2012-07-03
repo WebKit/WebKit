@@ -203,11 +203,14 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             codeBlock()->watchpoint(exit.m_watchpointIndex).correctLabels(linkBuffer);
     }
     
+    codeBlock()->minifiedDFG().setOriginalGraphSize(m_graph.size());
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 }
 
 bool JITCompiler::compile(JITCode& entry)
 {
+    SamplingRegion samplingRegion("DFG Backend");
+
     setStartOfCode();
     compileEntry();
     SpeculativeJIT speculative(*this);
@@ -241,6 +244,8 @@ bool JITCompiler::compile(JITCode& entry)
 
 bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck)
 {
+    SamplingRegion samplingRegion("DFG Backend");
+    
     setStartOfCode();
     compileEntry();
 

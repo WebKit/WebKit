@@ -2478,6 +2478,8 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         m_dfgData->speculationRecovery.shrinkToFit();
         m_dfgData->weakReferences.shrinkToFit();
         m_dfgData->transitions.shrinkToFit();
+        m_dfgData->minifiedDFG.prepareAndShrink();
+        m_dfgData->variableEventStream.shrinkToFit();
     }
 #endif
 }
@@ -2845,7 +2847,7 @@ void CodeBlock::dumpValueProfiles()
         dataLog("   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
     }
 }
-#endif
+#endif // ENABLE(VERBOSE_VALUE_PROFILE)
 
 size_t CodeBlock::predictedMachineCodeSize()
 {

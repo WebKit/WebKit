@@ -115,6 +115,13 @@ public:
     
     const T& operand(int operand) const { return const_cast<const T&>(const_cast<Operands*>(this)->operand(operand)); }
     
+    bool hasOperand(int operand) const
+    {
+        if (operandIsArgument(operand))
+            return true;
+        return static_cast<size_t>(operand) < numberOfLocals();
+    }
+    
     void setOperand(int operand, const T& value)
     {
         if (operandIsArgument(operand)) {
@@ -124,6 +131,39 @@ public:
         }
         
         setLocal(operand, value);
+    }
+    
+    size_t size() const { return numberOfArguments() + numberOfLocals(); }
+    const T& at(size_t index) const
+    {
+        if (index < numberOfArguments())
+            return m_arguments[index];
+        return m_locals[index - numberOfArguments()];
+    }
+    T& at(size_t index)
+    {
+        if (index < numberOfArguments())
+            return m_arguments[index];
+        return m_locals[index - numberOfArguments()];
+    }
+    const T& operator[](size_t index) const { return at(index); }
+    T& operator[](size_t index) { return at(index); }
+
+    bool isArgument(size_t index) const { return index < numberOfArguments(); }
+    bool isVariable(size_t index) const { return !isArgument(index); }
+    int argumentForIndex(size_t index) const
+    {
+        return index;
+    }
+    int variableForIndex(size_t index) const
+    {
+        return index - m_arguments.size();
+    }
+    int operandForIndex(size_t index) const
+    {
+        if (index < numberOfArguments())
+            return argumentToOperand(index);
+        return index - numberOfArguments();
     }
     
     void setOperandFirstTime(int operand, const T& value)
@@ -163,6 +203,16 @@ void dumpOperands(Operands<T, Traits>& operands, FILE* out)
             fprintf(out, " ");
         Traits::dump(operands.local(local), out);
     }
+}
+
+template<typename T, typename Traits>
+void dumpOperands(const Operands<T, Traits>& operands, FILE* out)
+{
+    // Use const-cast because:
+    // 1) I don't feel like writing this code twice, and
+    // 2) Some dump() methods may not be const, and I don't really care if that's
+    //    the case.
+    dumpOperands(*const_cast<Operands<T, Traits>*>(&operands), out);
 }
 
 } // namespace JSC

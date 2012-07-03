@@ -33,17 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-static unsigned computeNumVariablesForCodeOrigin(
-    CodeBlock* codeBlock, const CodeOrigin& codeOrigin)
-{
-    if (!codeOrigin.inlineCallFrame)
-        return codeBlock->m_numCalleeRegisters;
-    return
-        codeOrigin.inlineCallFrame->stackOffset +
-        baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame)->m_numCalleeRegisters;
-}
-
-OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned recoveryIndex)
+OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, MacroAssembler::Jump check, SpeculativeJIT* jit, unsigned streamIndex, unsigned recoveryIndex)
     : m_jsValueSource(jsValueSource)
     , m_valueProfile(valueProfile)
     , m_check(check)
@@ -54,24 +44,10 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
     , m_watchpointIndex(std::numeric_limits<unsigned>::max())
     , m_kind(kind)
     , m_count(0)
-    , m_arguments(jit->m_arguments.size())
-    , m_variables(computeNumVariablesForCodeOrigin(jit->m_jit.graph().m_profiledBlock, jit->m_codeOriginForOSR))
+    , m_streamIndex(streamIndex)
     , m_lastSetOperand(jit->m_lastSetOperand)
 {
     ASSERT(m_codeOrigin.isSet());
-    for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
-        m_arguments[argument] = jit->computeValueRecoveryFor(jit->m_arguments[argument]);
-    for (unsigned variable = 0; variable < m_variables.size(); ++variable)
-        m_variables[variable] = jit->computeValueRecoveryFor(jit->m_variables[variable]);
-}
-
-void OSRExit::dump(FILE* out) const
-{
-    for (unsigned argument = 0; argument < m_arguments.size(); ++argument)
-        m_arguments[argument].dump(out);
-    fprintf(out, " : ");
-    for (unsigned variable = 0; variable < m_variables.size(); ++variable)
-        m_variables[variable].dump(out);
 }
 
 bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock)

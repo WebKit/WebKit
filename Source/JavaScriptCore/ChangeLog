@@ -1,5 +1,233 @@
 2012-07-02  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG OSR exit value recoveries should be computed lazily
+        https://bugs.webkit.org/show_bug.cgi?id=82155
+
+        Reviewed by Gavin Barraclough.
+        
+        This change aims to reduce one aspect of DFG compile times: the fact
+        that we currently compute the value recoveries for each local and
+        argument on every speculation check. We compile many speculation checks,
+        so this can add up quick. The strategy that this change takes is to
+        have the DFG save just enough information about how the compiler is
+        choosing to represent state, that the DFG::OSRExitCompiler can reify
+        the value recoveries lazily.
+        
+        This appears to be an 0.3% SunSpider speed-up and is neutral elsewhere.
+        
+        I also took the opportunity to fix the sampling regions profiler (it
+        was missing an export macro) and to put in more sampling regions in
+        the DFG (which are disabled so long as ENABLE(SAMPLING_REGIONS) is
+        false).
+        
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        (JSC::CodeBlock::shrinkDFGDataToFit):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::minifiedDFG):
+        (JSC::CodeBlock::variableEventStream):
+        (DFGData):
+        * bytecode/Operands.h:
+        (JSC::Operands::hasOperand):
+        (Operands):
+        (JSC::Operands::size):
+        (JSC::Operands::at):
+        (JSC::Operands::operator[]):
+        (JSC::Operands::isArgument):
+        (JSC::Operands::isVariable):
+        (JSC::Operands::argumentForIndex):
+        (JSC::Operands::variableForIndex):
+        (JSC::Operands::operandForIndex):
+        (JSC):
+        (JSC::dumpOperands):
+        * bytecode/SamplingTool.h:
+        (SamplingRegion):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::parse):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::performCFA):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::performCSE):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::performFixup):
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::GenerationInfo):
+        (JSC::DFG::GenerationInfo::initConstant):
+        (JSC::DFG::GenerationInfo::initInteger):
+        (JSC::DFG::GenerationInfo::initJSValue):
+        (JSC::DFG::GenerationInfo::initCell):
+        (JSC::DFG::GenerationInfo::initBoolean):
+        (JSC::DFG::GenerationInfo::initDouble):
+        (JSC::DFG::GenerationInfo::initStorage):
+        (GenerationInfo):
+        (JSC::DFG::GenerationInfo::noticeOSRBirth):
+        (JSC::DFG::GenerationInfo::use):
+        (JSC::DFG::GenerationInfo::spill):
+        (JSC::DFG::GenerationInfo::setSpilled):
+        (JSC::DFG::GenerationInfo::fillJSValue):
+        (JSC::DFG::GenerationInfo::fillCell):
+        (JSC::DFG::GenerationInfo::fillInteger):
+        (JSC::DFG::GenerationInfo::fillBoolean):
+        (JSC::DFG::GenerationInfo::fillDouble):
+        (JSC::DFG::GenerationInfo::fillStorage):
+        (JSC::DFG::GenerationInfo::appendFill):
+        (JSC::DFG::GenerationInfo::appendSpill):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGMinifiedGraph.h: Added.
+        (DFG):
+        (MinifiedGraph):
+        (JSC::DFG::MinifiedGraph::MinifiedGraph):
+        (JSC::DFG::MinifiedGraph::at):
+        (JSC::DFG::MinifiedGraph::append):
+        (JSC::DFG::MinifiedGraph::prepareAndShrink):
+        (JSC::DFG::MinifiedGraph::setOriginalGraphSize):
+        (JSC::DFG::MinifiedGraph::originalGraphSize):
+        * dfg/DFGMinifiedNode.cpp: Added.
+        (DFG):
+        (JSC::DFG::MinifiedNode::fromNode):
+        * dfg/DFGMinifiedNode.h: Added.
+        (DFG):
+        (JSC::DFG::belongsInMinifiedGraph):
+        (MinifiedNode):
+        (JSC::DFG::MinifiedNode::MinifiedNode):
+        (JSC::DFG::MinifiedNode::index):
+        (JSC::DFG::MinifiedNode::op):
+        (JSC::DFG::MinifiedNode::hasChild1):
+        (JSC::DFG::MinifiedNode::child1):
+        (JSC::DFG::MinifiedNode::hasConstant):
+        (JSC::DFG::MinifiedNode::hasConstantNumber):
+        (JSC::DFG::MinifiedNode::constantNumber):
+        (JSC::DFG::MinifiedNode::hasWeakConstant):
+        (JSC::DFG::MinifiedNode::weakConstant):
+        (JSC::DFG::MinifiedNode::getIndex):
+        (JSC::DFG::MinifiedNode::compareByNodeIndex):
+        (JSC::DFG::MinifiedNode::hasChild):
+        * dfg/DFGNode.h:
+        (Node):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler.h:
+        (OSRExitCompiler):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::performPredictionPropagation):
+        * dfg/DFGRedundantPhiEliminationPhase.cpp:
+        (JSC::DFG::performRedundantPhiElimination):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::fillStorage):
+        (JSC::DFG::SpeculativeJIT::noticeOSRBirth):
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::use):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::spill):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::recordSetLocal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillDouble):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillDouble):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValueRecoveryOverride.h: Added.
+        (DFG):
+        (ValueRecoveryOverride):
+        (JSC::DFG::ValueRecoveryOverride::ValueRecoveryOverride):
+        * dfg/DFGValueSource.cpp: Added.
+        (DFG):
+        (JSC::DFG::ValueSource::dump):
+        * dfg/DFGValueSource.h: Added.
+        (DFG):
+        (JSC::DFG::dataFormatToValueSourceKind):
+        (JSC::DFG::valueSourceKindToDataFormat):
+        (JSC::DFG::isInRegisterFile):
+        (ValueSource):
+        (JSC::DFG::ValueSource::ValueSource):
+        (JSC::DFG::ValueSource::forPrediction):
+        (JSC::DFG::ValueSource::forDataFormat):
+        (JSC::DFG::ValueSource::isSet):
+        (JSC::DFG::ValueSource::kind):
+        (JSC::DFG::ValueSource::isInRegisterFile):
+        (JSC::DFG::ValueSource::dataFormat):
+        (JSC::DFG::ValueSource::valueRecovery):
+        (JSC::DFG::ValueSource::nodeIndex):
+        (JSC::DFG::ValueSource::nodeIndexFromKind):
+        (JSC::DFG::ValueSource::kindFromNodeIndex):
+        * dfg/DFGVariableEvent.cpp: Added.
+        (DFG):
+        (JSC::DFG::VariableEvent::dump):
+        (JSC::DFG::VariableEvent::dumpFillInfo):
+        (JSC::DFG::VariableEvent::dumpSpillInfo):
+        * dfg/DFGVariableEvent.h: Added.
+        (DFG):
+        (VariableEvent):
+        (JSC::DFG::VariableEvent::VariableEvent):
+        (JSC::DFG::VariableEvent::reset):
+        (JSC::DFG::VariableEvent::fillGPR):
+        (JSC::DFG::VariableEvent::fillPair):
+        (JSC::DFG::VariableEvent::fillFPR):
+        (JSC::DFG::VariableEvent::spill):
+        (JSC::DFG::VariableEvent::death):
+        (JSC::DFG::VariableEvent::setLocal):
+        (JSC::DFG::VariableEvent::movHint):
+        (JSC::DFG::VariableEvent::kind):
+        (JSC::DFG::VariableEvent::nodeIndex):
+        (JSC::DFG::VariableEvent::dataFormat):
+        (JSC::DFG::VariableEvent::gpr):
+        (JSC::DFG::VariableEvent::tagGPR):
+        (JSC::DFG::VariableEvent::payloadGPR):
+        (JSC::DFG::VariableEvent::fpr):
+        (JSC::DFG::VariableEvent::virtualRegister):
+        (JSC::DFG::VariableEvent::operand):
+        (JSC::DFG::VariableEvent::variableRepresentation):
+        * dfg/DFGVariableEventStream.cpp: Added.
+        (DFG):
+        (JSC::DFG::VariableEventStream::logEvent):
+        (MinifiedGenerationInfo):
+        (JSC::DFG::MinifiedGenerationInfo::MinifiedGenerationInfo):
+        (JSC::DFG::MinifiedGenerationInfo::update):
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * dfg/DFGVariableEventStream.h: Added.
+        (DFG):
+        (VariableEventStream):
+        (JSC::DFG::VariableEventStream::appendAndLog):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::performVirtualRegisterAllocation):
+
+2012-07-02  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::ArgumentsSimplificationPhase should assert that the PhantomArguments nodes it creates are not shouldGenerate()
         https://bugs.webkit.org/show_bug.cgi?id=90407
 

@@ -132,6 +132,7 @@ private:
 
 bool performCFA(Graph& graph)
 {
+    SamplingRegion samplingRegion("DFG CFA Phase");
     return runPhase<CFAPhase>(graph);
 }
 

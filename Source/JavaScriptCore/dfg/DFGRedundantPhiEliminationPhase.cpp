@@ -169,6 +169,7 @@ private:
 
 bool performRedundantPhiElimination(Graph& graph)
 {
+    SamplingRegion samplingRegion("DFG Redundant Phi Elimination Phase");
     return runPhase<RedundantPhiEliminationPhase>(graph);
 }
 

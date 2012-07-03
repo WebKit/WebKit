@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitCompiler_h
-#define DFGOSRExitCompiler_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "DFGValueSource.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGCCallHelpers.h"
-#include "DFGOSRExit.h"
-#include "DFGOperations.h"
+namespace JSC { namespace DFG {
 
-namespace JSC {
-
-class ExecState;
-
-namespace DFG {
-
-class OSRExitCompiler {
-public:
-    OSRExitCompiler(CCallHelpers& jit)
-        : m_jit(jit)
-    {
+void ValueSource::dump(FILE* out) const
+{
+    switch (kind()) {
+    case SourceNotSet:
+        fprintf(out, "NotSet");
+        break;
+    case SourceIsDead:
+        fprintf(out, "IsDead");
+        break;
+    case ValueInRegisterFile:
+        fprintf(out, "InRegFile");
+        break;
+    case Int32InRegisterFile:
+        fprintf(out, "Int32");
+        break;
+    case CellInRegisterFile:
+        fprintf(out, "Cell");
+        break;
+    case BooleanInRegisterFile:
+        fprintf(out, "Bool");
+        break;
+    case DoubleInRegisterFile:
+        fprintf(out, "Double");
+        break;
+    case ArgumentsSource:
+        fprintf(out, "Arguments");
+        break;
+    case HaveNode:
+        fprintf(out, "Node(%d)", m_nodeIndex);
+        break;
     }
-    
-    void compileExit(const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
-
-private:
-#if !ASSERT_DISABLED
-    static unsigned badIndex() { return static_cast<unsigned>(-1); };
-#endif
-    
-    void initializePoisoned(unsigned size)
-    {
-#if ASSERT_DISABLED
-        m_poisonScratchIndices.resize(size);
-#else
-        m_poisonScratchIndices.fill(badIndex(), size);
-#endif
-    }
-    
-    unsigned poisonIndex(unsigned index)
-    {
-        unsigned result = m_poisonScratchIndices[index];
-        ASSERT(result != badIndex());
-        return result;
-    }
-    
-    void handleExitCounts(const OSRExit&);
-    
-    CCallHelpers& m_jit;
-    Vector<unsigned> m_poisonScratchIndices;
-};
-
-extern "C" {
-void DFG_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
 }
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGOSRExitCompiler_h

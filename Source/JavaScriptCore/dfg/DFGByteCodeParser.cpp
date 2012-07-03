@@ -3341,6 +3341,7 @@ bool ByteCodeParser::parse()
 
 bool parse(ExecState* exec, Graph& graph)
 {
+    SamplingRegion samplingRegion("DFG Parsing");
 #if DFG_DEBUG_LOCAL_DISBALE
     UNUSED_PARAM(exec);
     UNUSED_PARAM(graph);

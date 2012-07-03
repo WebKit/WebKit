@@ -402,6 +402,7 @@ private:
     
 bool performFixup(Graph& graph)
 {
+    SamplingRegion samplingRegion("DFG Fixup Phase");
     return runPhase<FixupPhase>(graph);
 }
 

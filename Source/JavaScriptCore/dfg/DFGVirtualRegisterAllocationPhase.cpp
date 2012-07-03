@@ -132,6 +132,7 @@ public:
 
 bool performVirtualRegisterAllocation(Graph& graph)
 {
+    SamplingRegion samplingRegion("DFG Virtual Register Allocation Phase");
     return runPhase<VirtualRegisterAllocationPhase>(graph);
 }
 

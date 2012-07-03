@@ -188,6 +188,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGInsertionSet.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
+	Source/JavaScriptCore/dfg/DFGMinifiedGraph.h \
+	Source/JavaScriptCore/dfg/DFGMinifiedNode.cpp \
+	Source/JavaScriptCore/dfg/DFGMinifiedNode.h \
 	Source/JavaScriptCore/dfg/DFGNode.h \
 	Source/JavaScriptCore/dfg/DFGNodeFlags.cpp \
 	Source/JavaScriptCore/dfg/DFGNodeFlags.h \
@@ -222,6 +225,13 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.h \
 	Source/JavaScriptCore/dfg/DFGThunks.cpp \
 	Source/JavaScriptCore/dfg/DFGThunks.h \
+	Source/JavaScriptCore/dfg/DFGValueRecoveryOverride.h \
+	Source/JavaScriptCore/dfg/DFGValueSource.cpp \
+	Source/JavaScriptCore/dfg/DFGValueSource.h \
+	Source/JavaScriptCore/dfg/DFGVariableEvent.cpp \
+	Source/JavaScriptCore/dfg/DFGVariableEvent.h \
+	Source/JavaScriptCore/dfg/DFGVariableEventStream.cpp \
+	Source/JavaScriptCore/dfg/DFGVariableEventStream.h \
 	Source/JavaScriptCore/dfg/DFGValidate.cpp \
 	Source/JavaScriptCore/dfg/DFGValidate.h \
 	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \

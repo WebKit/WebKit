@@ -40,8 +40,10 @@
 #include "DFGCodeBlocks.h"
 #include "DFGCommon.h"
 #include "DFGExitProfile.h"
+#include "DFGMinifiedGraph.h"
 #include "DFGOSREntry.h"
 #include "DFGOSRExit.h"
+#include "DFGVariableEventStream.h"
 #include "EvalCodeCache.h"
 #include "ExecutionCounter.h"
 #include "ExpressionRangeInfo.h"
@@ -381,6 +383,18 @@ namespace JSC {
             createDFGDataIfNecessary();
             m_dfgData->transitions.append(
                 WeakReferenceTransition(*globalData(), ownerExecutable(), codeOrigin, from, to));
+        }
+        
+        DFG::MinifiedGraph& minifiedDFG()
+        {
+            createDFGDataIfNecessary();
+            return m_dfgData->minifiedDFG;
+        }
+        
+        DFG::VariableEventStream& variableEventStream()
+        {
+            createDFGDataIfNecessary();
+            return m_dfgData->variableEventStream;
         }
 #endif
 
@@ -1280,6 +1294,8 @@ namespace JSC {
             SegmentedVector<Watchpoint, 1, 0> watchpoints;
             Vector<WeakReferenceTransition> transitions;
             Vector<WriteBarrier<JSCell> > weakReferences;
+            DFG::VariableEventStream variableEventStream;
+            DFG::MinifiedGraph minifiedDFG;
             bool mayBeExecuting;
             bool isJettisoned;
             bool livenessHasBeenProved; // Initialized and used on every GC.

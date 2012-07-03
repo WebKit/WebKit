@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGOSRExitCompiler_h
-#define DFGOSRExitCompiler_h
+#ifndef DFGValueRecoveryOverride_h
+#define DFGValueRecoveryOverride_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAssemblyHelpers.h"
-#include "DFGCCallHelpers.h"
-#include "DFGOSRExit.h"
-#include "DFGOperations.h"
+#include "ValueRecovery.h"
+#include <wtf/RefCounted.h>
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-class ExecState;
-
-namespace DFG {
-
-class OSRExitCompiler {
+class ValueRecoveryOverride : public RefCounted<ValueRecoveryOverride> {
 public:
-    OSRExitCompiler(CCallHelpers& jit)
-        : m_jit(jit)
+    ValueRecoveryOverride() { }
+    
+    ValueRecoveryOverride(int operand, const ValueRecovery& recovery)
+        : operand(operand)
+        , recovery(recovery)
     {
     }
     
-    void compileExit(const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
-
-private:
-#if !ASSERT_DISABLED
-    static unsigned badIndex() { return static_cast<unsigned>(-1); };
-#endif
-    
-    void initializePoisoned(unsigned size)
-    {
-#if ASSERT_DISABLED
-        m_poisonScratchIndices.resize(size);
-#else
-        m_poisonScratchIndices.fill(badIndex(), size);
-#endif
-    }
-    
-    unsigned poisonIndex(unsigned index)
-    {
-        unsigned result = m_poisonScratchIndices[index];
-        ASSERT(result != badIndex());
-        return result;
-    }
-    
-    void handleExitCounts(const OSRExit&);
-    
-    CCallHelpers& m_jit;
-    Vector<unsigned> m_poisonScratchIndices;
+    int operand;
+    ValueRecovery recovery;
 };
-
-extern "C" {
-void DFG_OPERATION compileOSRExit(ExecState*) WTF_INTERNAL;
-}
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGOSRExitCompiler_h
+#endif // DFGValueRecoveryOverride_h
+
