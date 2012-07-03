@@ -1,3 +1,66 @@
+2012-07-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [TextureMapper] The TextureMapper should support edge-distance anti-antialiasing
+        https://bugs.webkit.org/show_bug.cgi?id=90308
+
+        Reviewed by Noam Rosenthal.
+
+        Add an edge-distance anti-aliasing implementation for the TextureMapper. Currently
+        this implementation is not active for tiled layers. This implementation is based
+        on the one in the Chromium compositor originally written by David Raveman.
+
+        When a layer is transformed in a way that leaves its edge dimensions across pixel
+        boundaries, edge distance anti-aliasing will do a cheaper form of anti-aliasing
+        than full-scene anti-aliasing to make the transition from the layer pixel
+        to the background pixel smoother.
+
+        No new tests. This will be covered by pixel tests for Qt and GTK+ accelerated
+        compositing and 3D transforms, when those test harnesses are capable of
+        producing pixel output (in progress).
+
+        * platform/graphics/texmap/TextureMapper.h: Add an enum which is used to tell
+        the texture mapper what edges of a texture are exposed. This will be used for
+        properly dealing with tiled layers in the future.
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp: Properly pass information
+        about exposed layer edges to the TextureMapper while painting.
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (TextureMapperTile): Modified arguments include exposed edges.
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawQuad): Renamed from drawRect, this method can now
+        draw quads that have non unit-rect texture coordinates. This is necessary because
+        the edge distance approach draws such quad.
+        (WebCore::TextureMapperGL::drawBorder): Call drawQuad now instead of drawRect.
+        (WebCore::TextureMapperGL::drawTexture): Pass the exposedEdges argument down.
+        (WebCore::TextureMapperGL::drawTextureRectangleARB): Call drawQuad now instead of
+        drawRect.
+        (WebCore::viewportMatrix): Added this helper which can calculate the viewport
+        transform based on the current OpenGL viewport settings.
+        (WebCore::scaleLineEquationCoeffecientsToOptimizeDistanceCalculation): Added this
+        helper which optimizes the fragment shader by precalculating some constant parts
+        of the distance calculation.
+        (WebCore::getStandardEquationCoeffecientsForLine): Given two end points of line segment
+        get the coeffecients of the line in the standard form of the line equation.
+        (WebCore::quadToEdgeArray): Converts a FloatQuad to an array of four sets of pre-scaled
+        line coefficients so that they can be passed to OpenGL.
+        (WebCore::scaledVectorDifference): Helper which helps expand a quad of arbitrary
+        orientation.
+        (WebCore::inflateQuad): Inflate a quad of arbitrary orientation. The transform may
+        flip it so we have to look at neighboring points to expand the quad.
+        (WebCore::TextureMapperGL::drawTextureWithAntialiasing): Activate the anti-aliasing
+        program and set up all uniforms.
+        (WebCore::TextureMapperGL::drawTexturedQuadWithProgram): Abstract out common operations
+        from drawTexture to be used with drawTextureWithAntialiasing.
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (WebCore::TextureMapperGL::DrawQuad::DrawQuad): Add this small type which stores information
+        necessary to draw a quad -- it's original destination rect and the final size mapped to
+        texture coordinates.
+        (TextureMapperGL):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp: Add the new exposedEdges argument.
+        * platform/graphics/texmap/TextureMapperImageBuffer.h: Ditto.
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp: Add the new fragment shader for
+        doing edge-distance AA and a program which uses that shader.
+        * platform/graphics/texmap/TextureMapperShaderManager.h: Ditto.
+
 2012-07-02  Dan Bernstein  <mitz@apple.com>
 
         Column height and count calculation ignores most overflow

@@ -121,8 +121,13 @@ void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const
         tilesToPaint.prepend(&tile);
     }
 
+    // TODO: When the TextureMapper makes a distinction between some edges exposed and no edges
+    // exposed, the value passed should be an accurate reflection of the tile subset that we are
+    // passing. For now we just "estimate" since LayerBackingStore doesn't keep information about
+    // the total tiled surface rect at the moment.
+    unsigned edgesExposed = m_tiles.size() > 1 ? TextureMapper::NoEdges : TextureMapper::AllEdges;
     for (size_t i = 0; i < tilesToPaint.size(); ++i)
-        tilesToPaint[i]->paint(textureMapper, transform, opacity, mask);
+        tilesToPaint[i]->paint(textureMapper, transform, opacity, mask, edgesExposed);
 }
 
 void LayerBackingStore::commitTileOperations(TextureMapper* textureMapper)

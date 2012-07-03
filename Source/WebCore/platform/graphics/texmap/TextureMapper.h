@@ -112,8 +112,17 @@ public:
     static PassOwnPtr<TextureMapper> create(AccelerationMode newMode = SoftwareMode);
     virtual ~TextureMapper() { }
 
+    enum ExposedEdges {
+        NoEdges = 0,
+        LeftEdge = 1 << 0,
+        RightEdge = 1 << 1,
+        TopEdge = 1 << 2,
+        BottomEdge = 1 << 3,
+        AllEdges = LeftEdge | RightEdge | TopEdge | BottomEdge,
+    };
+
     virtual void drawBorder(const Color&, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix = TransformationMatrix()) = 0;
-    virtual void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, const BitmapTexture* maskTexture = 0) = 0;
+    virtual void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, const BitmapTexture* maskTexture = 0, unsigned exposedEdges = AllEdges) = 0;
 
     // makes a surface the target for the following drawTexture calls.
     virtual void bindSurface(BitmapTexture* surface) = 0;

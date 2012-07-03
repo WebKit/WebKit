@@ -39,6 +39,9 @@ public:
     virtual PassRefPtr<BitmapTexture> texture() const = 0;
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*) = 0;
     virtual ~TextureMapperBackingStore() { }
+
+protected:
+    static unsigned calculateExposedTileEdges(const FloatRect& totalRect, const FloatRect& tileRect);
 };
 
 #if USE(GRAPHICS_SURFACE)
@@ -82,7 +85,7 @@ public:
     inline void setRect(const FloatRect& rect) { m_rect = rect; }
 
     void updateContents(TextureMapper*, Image*, const IntRect&);
-    virtual void paint(TextureMapper*, const TransformationMatrix&, float, BitmapTexture*);
+    virtual void paint(TextureMapper*, const TransformationMatrix&, float, BitmapTexture*, const unsigned exposedEdges);
     virtual ~TextureMapperTile() { }
 
     TextureMapperTile(const FloatRect& rect)

@@ -1,3 +1,14 @@
+2012-07-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [TextureMapper] The TextureMapper should support edge-distance anti-antialiasing
+        https://bugs.webkit.org/show_bug.cgi?id=90308
+
+        Reviewed by Noam Rosenthal.
+
+        * UIProcess/texmap/LayerBackingStore.cpp:
+        (WebKit::LayerBackingStore::paintToTextureMapper): Update the method to call paint with
+        the new argument.
+
 2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Do not do any logging initialization when logging is disabled

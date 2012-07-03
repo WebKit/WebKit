@@ -87,10 +87,10 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* imag
     m_texture->updateContents(image, targetRect, sourceOffset);
 }
 
-void TextureMapperTile::paint(TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+void TextureMapperTile::paint(TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask, const unsigned exposedEdges)
 {
     if (texture().get())
-        textureMapper->drawTexture(*texture().get(), rect(), transform, opacity, mask);
+        textureMapper->drawTexture(*texture().get(), rect(), transform, opacity, mask, exposedEdges);
 }
 
 TextureMapperTiledBackingStore::TextureMapperTiledBackingStore()
@@ -107,13 +107,27 @@ void TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded(TextureMapp
     m_image.clear();
 }
 
+unsigned TextureMapperBackingStore::calculateExposedTileEdges(const FloatRect& totalRect, const FloatRect& tileRect)
+{
+    unsigned exposedEdges = TextureMapper::NoEdges;
+    if (!tileRect.x())
+        exposedEdges |= TextureMapper::LeftEdge;
+    if (!tileRect.y())
+        exposedEdges |= TextureMapper::TopEdge;
+    if (tileRect.width() + tileRect.x() >= totalRect.width())
+        exposedEdges |= TextureMapper::RightEdge;
+    if (tileRect.height() + tileRect.y() >= totalRect.height())
+        exposedEdges |= TextureMapper::BottomEdge;
+    return exposedEdges;
+}
+
 void TextureMapperTiledBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
     updateContentsFromImageIfNeeded(textureMapper);
     TransformationMatrix adjustedTransform = transform;
     adjustedTransform.multiply(TransformationMatrix::rectToRect(rect(), targetRect));
     for (size_t i = 0; i < m_tiles.size(); ++i) {
-        m_tiles[i].paint(textureMapper, adjustedTransform, opacity, mask);
+        m_tiles[i].paint(textureMapper, adjustedTransform, opacity, mask, calculateExposedTileEdges(rect(), m_tiles[i].rect()));
         if (m_drawsDebugBorders)
             textureMapper->drawBorder(m_debugBorderColor, m_debugBorderWidth, m_tiles[i].rect(), adjustedTransform);
     }

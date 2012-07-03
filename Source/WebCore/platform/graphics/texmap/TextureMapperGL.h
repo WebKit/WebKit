@@ -50,11 +50,13 @@ public:
 
     // TextureMapper implementation
     virtual void drawBorder(const Color&, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix = TransformationMatrix()) OVERRIDE;
-    virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture) OVERRIDE;
-    virtual void drawTexture(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
+    virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges) OVERRIDE;
+    virtual void drawTexture(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges = AllEdges);
+
 #if defined(GL_ARB_texture_rectangle)
     virtual void drawTextureRectangleARB(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
 #endif
+
     virtual void bindSurface(BitmapTexture* surface) OVERRIDE;
     virtual void beginClip(const TransformationMatrix&, const FloatRect&) OVERRIDE;
     virtual void beginPainting(PaintFlags = 0) OVERRIDE;
@@ -69,6 +71,7 @@ public:
     void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture& contentTexture, const FilterOperation&, int pass);
 #endif
 
+    void setEnableEdgeDistanceAntialiasing(bool enabled) { m_enableEdgeDistanceAntialiasing = enabled; }
 
 private:
 
@@ -94,7 +97,21 @@ private:
         Vector<ClipState> clipStack;
     };
 
-    void drawRect(const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram*, GLenum drawingMode, bool needsBlending);
+    struct DrawQuad {
+        DrawQuad(const FloatRect& originalTargetRect, const FloatQuad& targetRectMappedToUnitSquare = FloatRect(FloatPoint(), FloatSize(1, 1)))
+            : originalTargetRect(originalTargetRect)
+            , targetRectMappedToUnitSquare(targetRectMappedToUnitSquare)
+        {
+        }
+
+        FloatRect originalTargetRect;
+        FloatQuad targetRectMappedToUnitSquare;
+    };
+
+    bool drawTextureWithAntialiasing(uint32_t texture, Flags, const FloatRect& originalTargetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram*, uint32_t texture, Flags, const DrawQuad&, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
+    void drawQuad(const DrawQuad&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram*, GLenum drawingMode, bool needsBlending);
+
     bool beginScissorClip(const TransformationMatrix&, const FloatRect&);
     void bindDefaultSurface();
     ClipStack& clipStack();
@@ -102,6 +119,8 @@ private:
     TextureMapperGLData* m_data;
     GraphicsContext* m_context;
     ClipStack m_clipStack;
+    bool m_enableEdgeDistanceAntialiasing;
+
     friend class BitmapTextureGL;
 };
 

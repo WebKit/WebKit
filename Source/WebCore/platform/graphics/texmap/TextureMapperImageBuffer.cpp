@@ -82,7 +82,7 @@ void TextureMapperImageBuffer::beginClip(const TransformationMatrix& matrix, con
 #endif
 }
 
-void TextureMapperImageBuffer::drawTexture(const BitmapTexture& texture, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, const BitmapTexture* maskTexture)
+void TextureMapperImageBuffer::drawTexture(const BitmapTexture& texture, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, const BitmapTexture* maskTexture, unsigned /* exposedEdges */)
 {
     GraphicsContext* context = currentContext();
     if (!context)

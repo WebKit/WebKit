@@ -1,6 +1,7 @@
 /*
  Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  Copyright (C) 2012 Igalia S.L.
+ Copyright (C) 2011 Google Inc. All rights reserved.
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -105,6 +106,44 @@ static const char* fragmentShaderSourceSimple =
         }
     );
 
+static const char* fragmentShaderSourceAntialiasingNoMask =
+    FRAGMENT_SHADER(
+        uniform sampler2D s_source;
+        varying highp vec2 v_sourceTexCoord;
+        uniform lowp float u_opacity;
+        uniform vec3 u_expandedQuadEdgesInScreenSpace[8];
+        void main()
+        {
+            vec4 sampledColor = texture2D(s_source, clamp(v_sourceTexCoord, 0.0, 1.0));
+            vec3 pos = vec3(gl_FragCoord.xy, 1);
+
+            // The data passed in u_expandedQuadEdgesInScreenSpace is merely the
+            // pre-scaled coeffecients of the line equations describing the four edges
+            // of the expanded quad in screen space and the rectangular bounding box
+            // of the expanded quad.
+            //
+            // We are doing a simple distance calculation here according to the formula:
+            // (A*p.x + B*p.y + C) / sqrt(A^2 + B^2) = distance from line to p
+            // Note that A, B and C have already been scaled by 1 / sqrt(A^2 + B^2).
+            float a0 = clamp(dot(u_expandedQuadEdgesInScreenSpace[0], pos), 0.0, 1.0);
+            float a1 = clamp(dot(u_expandedQuadEdgesInScreenSpace[1], pos), 0.0, 1.0);
+            float a2 = clamp(dot(u_expandedQuadEdgesInScreenSpace[2], pos), 0.0, 1.0);
+            float a3 = clamp(dot(u_expandedQuadEdgesInScreenSpace[3], pos), 0.0, 1.0);
+            float a4 = clamp(dot(u_expandedQuadEdgesInScreenSpace[4], pos), 0.0, 1.0);
+            float a5 = clamp(dot(u_expandedQuadEdgesInScreenSpace[5], pos), 0.0, 1.0);
+            float a6 = clamp(dot(u_expandedQuadEdgesInScreenSpace[6], pos), 0.0, 1.0);
+            float a7 = clamp(dot(u_expandedQuadEdgesInScreenSpace[7], pos), 0.0, 1.0);
+
+            // Now we want to reduce the alpha value of the fragment if it is close to the
+            // edges of the expanded quad (or rectangular bounding box -- which seems to be
+            // important for backfacing quads). Note that we are combining the contribution
+            // from the (top || bottom) and (left || right) edge by simply multiplying. This follows
+            // the approach described at: http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter22.html,
+            // in this case without using Gaussian weights.
+            gl_FragColor = sampledColor * u_opacity * min(min(a0, a2) * min(a1, a3), min(a4, a6) * min(a5, a7));
+        }
+    );
+
 static const char* fragmentShaderSourceRectSimple =
     FRAGMENT_SHADER(
         uniform sampler2DRect s_source;
@@ -156,6 +195,11 @@ PassRefPtr<TextureMapperShaderProgramSolidColor> TextureMapperShaderManager::sol
     return static_pointer_cast<TextureMapperShaderProgramSolidColor>(getShaderProgram(SolidColor));
 }
 
+PassRefPtr<TextureMapperShaderProgramAntialiasingNoMask> TextureMapperShaderManager::antialiasingNoMaskProgram()
+{
+    return static_pointer_cast<TextureMapperShaderProgramAntialiasingNoMask>(getShaderProgram(AntialiasingNoMask));
+}
+
 PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProgram(ShaderType shaderType)
 {
     RefPtr<TextureMapperShaderProgram> program;
@@ -172,6 +216,9 @@ PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderManager::getShaderProg
         break;
     case RectSimple:
         program = TextureMapperShaderProgramRectSimple::create();
+        break;
+    case AntialiasingNoMask:
+        program = TextureMapperShaderProgramAntialiasingNoMask::create();
         break;
     case OpacityAndMask:
         program = TextureMapperShaderProgramOpacityAndMask::create();
@@ -216,11 +263,13 @@ void TextureMapperShaderProgram::initializeProgram()
     GLuint programID = glCreateProgram();
     glCompileShader(vertexShader);
     glCompileShader(fragmentShader);
+
     glAttachShader(programID, vertexShader);
     glAttachShader(programID, fragmentShader);
     glLinkProgram(programID);
 
     m_vertexAttrib = glGetAttribLocation(programID, "a_vertex");
+
     m_id = programID;
     m_vertexShader = vertexShader;
     m_fragmentShader = fragmentShader;
@@ -294,6 +343,17 @@ TextureMapperShaderProgramRectOpacityAndMask::TextureMapperShaderProgramRectOpac
     getUniformLocation(m_sourceTextureLocation, "s_source");
     getUniformLocation(m_maskTextureLocation, "s_mask");
     getUniformLocation(m_opacityLocation, "u_opacity");
+}
+
+TextureMapperShaderProgramAntialiasingNoMask::TextureMapperShaderProgramAntialiasingNoMask()
+    : TextureMapperShaderProgram(vertexShaderSourceSimple, fragmentShaderSourceAntialiasingNoMask)
+{
+    initializeProgram();
+    getUniformLocation(m_matrixLocation, "u_matrix");
+    getUniformLocation(m_sourceTextureLocation, "s_source");
+    getUniformLocation(m_opacityLocation, "u_opacity");
+    getUniformLocation(m_expandedQuadEdgesInScreenSpaceLocation, "u_expandedQuadEdgesInScreenSpace");
+    getUniformLocation(m_flipLocation, "u_flip");
 }
 
 TextureMapperShaderManager::TextureMapperShaderManager()
