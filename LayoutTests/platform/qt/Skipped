@@ -2528,8 +2528,10 @@ fast/block/float/previous-sibling-abspos-001.html
 fast/block/float/previous-sibling-float-001.html
 fast/block/negative-margin-start-positive-margin-end.html
 fast/block/positive-margin-start-negative-margin-end-align-center.html
+fast/block/float/floats-wrap-inside-inline-001.htm
+fast/block/float/floats-wrap-inside-inline-002.htm
+fast/block/float/floats-wrap-inside-inline-003.htm
 
 # [Qt] css3/filters/huge-region-composited.html makes css3/filters/huge-region.html crash
 # https://bugs.webkit.org/show_bug.cgi?id=90165
 css3/filters/huge-region-composited.html
-

@@ -1,3 +1,17 @@
+2012-07-03  Robert Hogan  <robert@webkit.org>
+
+        Suppress tests requiring rebaselining after r121789
+
+        Unreviewed, gardening.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/Skipped:
+        * platform/qt/TestExpectations:
+        * platform/win/Skipped:
+
 2012-06-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Extensions API] Resource manipulations should be based on UISourceCode thus extending Sources Panel.

@@ -719,3 +719,8 @@ BUGWK89845 : fast/forms/input-set-composition-scroll.html = TEXT
 BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT
 
 BUGWK90334 : css3/flexbox/anonymous-block.html = IMAGE
+
+// Require rebaseline after bug 88171
+BUGWK88171 : fast/block/float/independent-align-positioning.html = TEXT
+BUGWK88171 : fast/block/float/010.html = TEXT
+BUGWK88171 : css1/formatting_model/floating_elements.html = TEXT
