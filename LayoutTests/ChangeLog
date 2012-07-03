@@ -1,3 +1,10 @@
+2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] Rebaseline: fast/box-sizing/box-sizing.html
+
+        * platform/chromium-mac-snowleopard/fast/box-sizing/box-sizing-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/box-sizing/box-sizing-expected.txt.
+        * platform/chromium-mac/fast/box-sizing/box-sizing-expected.txt:
+
 2012-07-03  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: WebInspector.TextViewer should be renamed WebInspector.TextEditor
