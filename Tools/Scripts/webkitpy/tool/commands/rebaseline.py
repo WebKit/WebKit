@@ -278,11 +278,18 @@ class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
 
     def _files_to_add(self, command_results):
         files_to_add = set()
-        for output in [result[1] for result in command_results]:
-            try:
-                files_to_add.update(json.loads(output)['add'])
-            except ValueError, e:
-                _log.warning('"%s" is not a JSON object, ignoring' % output)
+        for output in [result[1].split('\n') for result in command_results]:
+            file_added = False
+            for line in output:
+                try:
+                    files_to_add.update(json.loads(line)['add'])
+                    file_added = True
+                except ValueError, e:
+                    _log.debug('"%s" is not a JSON object, ignoring' % line)
+
+            if not file_added:
+                _log.debug('Could not add file based off output "%s"' % output)
+
 
         return list(files_to_add)
 
@@ -360,8 +367,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
             self._update_expectations_file(port_name)
 
 
-# FIXME: Make this use AbstractParallelRebaselineCommand.
-class Rebaseline(AbstractDeclarativeCommand):
+class Rebaseline(AbstractParallelRebaselineCommand):
     name = "rebaseline"
     help_text = "Replaces local expected.txt files with new results from build bots"
 
@@ -377,29 +383,16 @@ class Rebaseline(AbstractDeclarativeCommand):
             if status["name"] == chosen_name:
                 return (self._tool.buildbot.builder_with_name(chosen_name), status["build_number"])
 
-    def _replace_expectation_with_remote_result(self, local_file, remote_file):
-        (downloaded_file, headers) = urllib.urlretrieve(remote_file)
-        shutil.move(downloaded_file, local_file)
-
     def _tests_to_update(self, build):
         failing_tests = build.layout_test_results().tests_matching_failure_types([test_failures.FailureTextMismatch])
         return self._tool.user.prompt_with_list("Which test(s) to rebaseline:", failing_tests, can_choose_multiple=True)
 
-    def _results_url_for_test(self, build, test):
-        test_base = os.path.splitext(test)[0]
-        actual_path = test_base + "-actual.txt"
-        return build.results_url() + "/" + actual_path
-
     def execute(self, options, args, tool):
         builder, build_number = self._builder_to_pull_from()
         build = builder.build(build_number)
-        port = tool.port_factory.get_from_builder_name(builder.name())
 
+        builder_name = builder.name()
+        test_list = {}
         for test in self._tests_to_update(build):
-            results_url = self._results_url_for_test(build, test)
-            # Port operates with absolute paths.
-            expected_file = port.expected_filename(test, '.txt')
-            _log.info(test)
-            self._replace_expectation_with_remote_result(expected_file, results_url)
-
-        # FIXME: We should handle new results too.
+            test_list[test] = {builder_name: ['txt']}
+        self._rebaseline(options, test_list)

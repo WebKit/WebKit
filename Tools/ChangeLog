@@ -1,5 +1,31 @@
 2012-07-03  Ojan Vafai  <ojan@chromium.org>
 
+        Have webkit-patch rebaseline use rebaseline-test-internal
+        https://bugs.webkit.org/show_bug.cgi?id=90491
+
+        Reviewed by Dirk Pranke.
+
+        This lets it handle new files, reduces duplicate code and lays the
+        groundwork for making rebaseline have a richer interface.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_mock.py:
+        (MockBuild):
+        (MockBuild.__init__):
+        (MockBuilder.build):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractParallelRebaselineCommand._files_to_add):
+        (Rebaseline):
+        (Rebaseline._builder_to_pull_from):
+        (Rebaseline._tests_to_update):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_overrides_are_included_correctly):
+        (test_rebaseline):
+        (test_rebaseline.mock_builder_to_pull_from):
+        (test_rebaseline.mock_tests_to_update):
+
+2012-07-03  Ojan Vafai  <ojan@chromium.org>
+
         Rename rebaseline-test to rebaseline-test-internal
         https://bugs.webkit.org/show_bug.cgi?id=90485
 

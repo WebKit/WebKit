@@ -27,12 +27,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+class MockBuild(object):
+    def __init__(self, build_number, revision, is_green):
+        self._number = build_number
+        self._revision = revision
+        self._is_green = is_green
+
 class MockBuilder(object):
     def __init__(self, name):
         self._name = name
 
     def name(self):
         return self._name
+
+    def build(self, build_number):
+        return MockBuild(build_number=build_number, revision=1234, is_green=False)
 
     def results_url(self):
         return "http://example.com/builders/%s/results" % self.name()

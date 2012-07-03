@@ -32,6 +32,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.rebaseline import *
 from webkitpy.tool.mocktool import MockTool, MockOptions
+from webkitpy.common.net.buildbot.buildbot_mock import MockBuilder
 from webkitpy.common.system.executive_mock import MockExecutive
 
 
@@ -331,3 +332,39 @@ MOCK run_command: ['qmake', '-v'], cwd=None
         port._filesystem.write_text_file(port.layout_tests_dir() + '/userscripts/another-test.html', '')
         self.assertEquals(command._tests_to_rebaseline(port), {'userscripts/another-test.html': set(['txt'])})
         self.assertEquals(port._filesystem.read_text_file(expectations_path), expectations_contents)
+
+    def test_rebaseline(self):
+        old_exact_matches = builders._exact_matches
+        try:
+            builders._exact_matches = {
+                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
+            }
+
+            command = Rebaseline()
+            tool = MockTool()
+            command.bind_to_tool(tool)
+
+            for port_name in tool.port_factory.all_port_names():
+                port = tool.port_factory.get(port_name)
+                for path in port.expectations_files():
+                    tool.filesystem.write_text_file(path, '')
+
+            tool.executive = MockExecutive(should_log=True)
+
+            def mock_builder_to_pull_from():
+                return MockBuilder('MOCK builder'), 1234
+
+            def mock_tests_to_update(build):
+                return ['mock/path/to/test.html']
+
+            command._builder_to_pull_from = mock_builder_to_pull_from
+            command._tests_to_update = mock_tests_to_update
+
+            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'mock/path/to/test.html'], cwd=/mock-checkout
+"""
+
+            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True), [], tool], expected_stderr=expected_stderr)
+
+        finally:
+            builders._exact_matches = old_exact_matches
