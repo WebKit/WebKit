@@ -1,3 +1,13 @@
+2012-07-03  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        Update unit test after r121724.
+        https://bugs.webkit.org/show_bug.cgi?id=90444
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaseline_new_port):
+
 2012-07-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121749.
