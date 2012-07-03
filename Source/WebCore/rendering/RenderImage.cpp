@@ -219,8 +219,8 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
     bool shouldRepaint = true;
     if (intrinsicSizeChanged) {
         // lets see if we need to relayout at all..
-        int oldwidth = width();
-        int oldheight = height();
+        LayoutUnit oldwidth = width();
+        LayoutUnit oldheight = height();
         if (!preferredLogicalWidthsDirty())
             setPreferredLogicalWidthsDirty(true);
         computeLogicalWidth();

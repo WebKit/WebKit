@@ -1,3 +1,17 @@
+2012-07-03  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Fix LayoutUnit usage in RenderImage::imageDimensionsChanged
+        https://bugs.webkit.org/show_bug.cgi?id=90173
+
+        Reviewed by Eric Seidel.
+
+        The appropriate type should be used for storing width() and height() into local temporary variables.
+
+        No new tests, no change in behavior.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageDimensionsChanged):
+
 2012-07-03  Sergio Villar Senin  <svillar@igalia.com>
 
         [TextureMapper] Typo in edge-distance anti-aliasing code
