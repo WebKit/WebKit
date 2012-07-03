@@ -399,9 +399,7 @@ bool GetMetadataTask::didGetEntry(Entry* entry)
 bool GetMetadataTask::didGetMetadata(Metadata* metadata)
 {
     using TypeBuilder::FileSystem::Metadata;
-    RefPtr<Metadata> result = Metadata::create().setModificationTime(metadata->modificationTime());
-    if (!m_isDirectory)
-        result->setSize(metadata->size());
+    RefPtr<Metadata> result = Metadata::create().setModificationTime(metadata->modificationTime()).setSize(metadata->size());
     reportResult(static_cast<FileError::ErrorCode>(0), result);
     return true;
 }

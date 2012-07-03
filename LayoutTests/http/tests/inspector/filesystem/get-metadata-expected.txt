@@ -7,5 +7,5 @@ metadata:
 errorCode: 0
 metadata:
   modificationTime: (exists)
-  size: (null)
+  size: 0
 

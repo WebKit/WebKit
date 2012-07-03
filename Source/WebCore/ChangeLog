@@ -1,3 +1,24 @@
+2012-07-03  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Make DirectoryContentView sortable
+        https://bugs.webkit.org/show_bug.cgi?id=90361
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore):
+        * inspector/front-end/DirectoryContentView.js:
+        (WebInspector.DirectoryContentView):
+        (WebInspector.DirectoryContentView.prototype.showEntries):
+        (WebInspector.DirectoryContentView.prototype._sort):
+        (WebInspector.DirectoryContentView.Node.comparator.isDirectoryCompare):
+        (WebInspector.DirectoryContentView.Node.comparator.nameCompare):
+        (WebInspector.DirectoryContentView.Node.comparator.typeCompare):
+        (WebInspector.DirectoryContentView.Node.comparator.sizeCompare):
+        (WebInspector.DirectoryContentView.Node.comparator):
+        (WebInspector.DirectoryContentView.Node.prototype._metadataReceived):
+
 2012-07-03  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: WebInspector.TextViewer should be renamed WebInspector.TextEditor

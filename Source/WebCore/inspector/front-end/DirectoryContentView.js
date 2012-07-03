@@ -38,21 +38,28 @@ WebInspector.DirectoryContentView = function()
     var columns = {};
     columns[indexes.Name] = {};
     columns[indexes.Name].title = WebInspector.UIString("Name");
+    columns[indexes.Name].sort = "ascending";
+    columns[indexes.Name].sortable = true;
     columns[indexes.Name].width = "20%";
     columns[indexes.URL] = {};
     columns[indexes.URL].title = WebInspector.UIString("URL");
+    columns[indexes.URL].sortable = true;
     columns[indexes.URL].width = "20%";
     columns[indexes.Type] = {};
     columns[indexes.Type].title = WebInspector.UIString("Type");
+    columns[indexes.Type].sortable = true;
     columns[indexes.Type].width = "15%";
     columns[indexes.Size] = {};
     columns[indexes.Size].title = WebInspector.UIString("Size");
+    columns[indexes.Size].sortable = true;
     columns[indexes.Size].width = "10%";
     columns[indexes.ModificationTime] = {};
     columns[indexes.ModificationTime].title = WebInspector.UIString("Modification Time");
+    columns[indexes.ModificationTime].sortable = true;
     columns[indexes.ModificationTime].width = "25%";
 
     WebInspector.DataGrid.call(this, columns);
+    this.addEventListener("sorting changed", this._sort, this);
 }
 
 WebInspector.DirectoryContentView.columnIndexes = {
@@ -73,6 +80,12 @@ WebInspector.DirectoryContentView.prototype = {
         this.rootNode().removeChildren();
         for (var i = 0; i < entries.length; ++i)
             this.rootNode().appendChild(new WebInspector.DirectoryContentView.Node(entries[i]));
+    },
+
+    _sort: function()
+    {
+        var column = /** @type {string} */ this.sortColumnIdentifier;
+        this.sortNodes(WebInspector.DirectoryContentView.Node.comparator(column, this.sortOrder === "descending"), false);
     }
 }
 
@@ -100,6 +113,67 @@ WebInspector.DirectoryContentView.Node = function(entry)
     this._entry.requestMetadata(this._metadataReceived.bind(this));
 }
 
+/**
+ * @param {string} column
+ * @param {boolean} reverse
+ */
+WebInspector.DirectoryContentView.Node.comparator = function(column, reverse)
+{
+    var reverseFactor = reverse ? -1 : 1;
+    const indexes = WebInspector.DirectoryContentView.columnIndexes;
+
+    switch (column) {
+    case indexes.Name:
+    case indexes.URL:
+        return function(x, y)
+        {
+            return isDirectoryCompare(x, y) || nameCompare(x, y);
+        };
+    case indexes.Type:
+        return function(x, y)
+        {
+            return isDirectoryCompare(x ,y) || typeCompare(x, y) || nameCompare(x, y);
+        };
+    case indexes.Size:
+        return function(x, y)
+        {
+            return isDirectoryCompare(x, y) || sizeCompare(x, y) || nameCompare(x, y);
+        };
+    case indexes.ModificationTime:
+        return function(x, y)
+        {
+            return isDirectoryCompare(x, y) || modificationTimeCompare(x, y) || nameCompare(x, y);
+        };
+    }
+
+    function isDirectoryCompare(x, y)
+    {
+        if (x._entry.isDirectory != y._entry.isDirectory)
+            return y._entry.isDirectory ? 1 : -1;
+        return 0;
+    }
+
+    function nameCompare(x, y)
+    {
+        return reverseFactor * x._entry.name.localeCompare(y._entry.name);
+    }
+
+    function typeCompare(x, y)
+    {
+        return reverseFactor * (x._entry.mimeType || "").localeCompare(y._entry.mimeType || "");
+    }
+
+    function sizeCompare(x, y)
+    {
+        return reverseFactor * ((x._metadata ? x._metadata.size : 0) - (y._metadata ? y._metadata.size : 0));
+    }
+
+    function modificationTimeCompare(x, y)
+    {
+        return reverseFactor * ((x._metadata ? x._metadata.modificationTime : 0) - (y._metadata ? y._metadata.modificationTime : 0));
+    }
+}
+
 WebInspector.DirectoryContentView.Node.prototype = {
     /**
      * @param {number} errorCode
@@ -113,7 +187,9 @@ WebInspector.DirectoryContentView.Node.prototype = {
 
         this._metadata = metadata;
         var data = this.data;
-        if ("size" in metadata)
+        if (this._entry.isDirectory)
+            data[indexes.Size] = WebInspector.UIString("-");
+        else
             data[indexes.Size] = Number.bytesToString(metadata.size);
         data[indexes.ModificationTime] = new Date(metadata.modificationTime).toGMTString();
         this.data = data;

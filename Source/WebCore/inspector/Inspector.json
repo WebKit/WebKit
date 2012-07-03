@@ -1427,7 +1427,7 @@
                 "type": "object",
                 "properties": [
                     { "name": "modificationTime", "type": "number", "description": "Modification time." },
-                    { "name": "size", "type": "number", "optional": true, "description": "File size. This field is available only for a file." }
+                    { "name": "size", "type": "number", "description": "File size. This field is always zero for directories." }
                 ],
                 "description": "Represents metadata of a file or entry."
             }
