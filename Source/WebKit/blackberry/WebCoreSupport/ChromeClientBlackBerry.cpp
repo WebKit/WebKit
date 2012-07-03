@@ -809,6 +809,16 @@ PassOwnPtr<ColorChooser> ChromeClientBlackBerry::createColorChooser(ColorChooser
     return nullptr;
 }
 
+#if ENABLE(CUSTOM_SCHEME_HANDLER)
+CustomHandlersState ChromeClientBlackBerry::isProtocolHandlerRegistered(const String&, const String&, const String&)
+{
+    return CustomHandlersDeclined;
+}
+
+void ChromeClientBlackBerry::unregisterProtocolHandler(const String&, const String&, const String&)
+{
+}
+#endif
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
 void ChromeClientBlackBerry::registerProtocolHandler(const WTF::String&, const WTF::String&, const WTF::String&, const WTF::String&)

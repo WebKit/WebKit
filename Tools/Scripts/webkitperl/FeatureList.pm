@@ -178,7 +178,7 @@ my @features = (
       define => "ENABLE_CSS_VARIABLES", default => 0, value => \$cssVariablesSupport },
 
     { option => "custom-scheme-handler", desc => "Toggle Custom Scheme Handler support",
-      define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => 0, value => \$customSchemeHandlerSupport },
+      define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => isBlackBerry(), value => \$customSchemeHandlerSupport },
 
     { option => "datalist", desc => "Toggle Datalist support",
       define => "ENABLE_DATALIST", default => isEfl(), value => \$datalistSupport },

@@ -159,6 +159,11 @@ public:
     virtual void registerProtocolHandler(const WTF::String&, const WTF::String&, const WTF::String&, const WTF::String&);
 #endif
 
+#if ENABLE(CUSTOM_SCHEME_HANDLER)
+    virtual CustomHandlersState isProtocolHandlerRegistered(const String&, const String&, const String&);
+    virtual void unregisterProtocolHandler(const String&, const String&, const String&);
+#endif
+
     BlackBerry::WebKit::WebPagePrivate* webPagePrivate() const { return m_webPagePrivate; }
 
 private:
