@@ -37,7 +37,6 @@ HEADERS += \
     testplugin.h
 
 SOURCES += \
-    $${ROOT_WEBKIT_DIR}/Source/WTF/wtf/Assertions.cpp \
     $$PWD/../WorkQueue.cpp \
     DumpRenderTreeQt.cpp \
     EventSenderQt.cpp \

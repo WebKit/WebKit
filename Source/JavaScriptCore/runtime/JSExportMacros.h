@@ -36,7 +36,7 @@
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
-#if defined(BUILDING_JavaScriptCore)
+#if defined(BUILDING_JavaScriptCore) || defined(STATICALLY_LINKED_WITH_JavaScriptCore)
 #define JS_EXPORT_PRIVATE WTF_EXPORT
 #else
 #define JS_EXPORT_PRIVATE WTF_IMPORT
@@ -50,7 +50,7 @@
 
 #if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
 
-#if defined(BUILDING_JavaScriptCore)
+#if defined(BUILDING_JavaScriptCore) || defined(STATICALLY_LINKED_WITH_JavaScriptCore)
 #define JS_EXPORTDATA __declspec(dllexport)
 #else
 #define JS_EXPORTDATA __declspec(dllimport)

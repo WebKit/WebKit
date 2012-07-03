@@ -71,7 +71,7 @@ typedef struct OpaqueJSValue* JSObjectRef;
 #elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
 #define JS_EXPORT __attribute__((visibility("default")))
 #elif defined(WIN32) || defined(_WIN32) || defined(_WIN32_WCE) || defined(__CC_ARM) || defined(__ARMCC__)
-#if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
+#if defined(BUILDING_JavaScriptCore) || defined(STATICALLY_LINKED_WITH_JavaScriptCore)
 #define JS_EXPORT __declspec(dllexport)
 #else
 #define JS_EXPORT __declspec(dllimport)

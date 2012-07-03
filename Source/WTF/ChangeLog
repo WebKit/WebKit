@@ -1,3 +1,18 @@
+2012-07-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>  Joel Dillon <joel.dillon@codethink.co.uk>
+
+        [Qt][Win] Fix broken QtWebKit5.lib linking
+        https://bugs.webkit.org/show_bug.cgi?id=88321
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Instead of letting a module's headers know which other modules depend on them,
+        have depending modules define explicitely that they want its symbols exported too.
+
+        JavaScriptCore should then be compiled with both BUILDING_JavaScriptCore and
+        STATICALLY_LINKED_WITH_WTF.
+
+        * wtf/ExportMacros.h:
+
 2012-06-29  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r121572.

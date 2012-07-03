@@ -35,7 +35,8 @@
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
-#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit)
+#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit) || \
+    defined(STATICALLY_LINKED_WITH_WebCore) || defined(STATICALLY_LINKED_WITH_WebKit)
 #define WEBKIT_EXPORTDATA WTF_EXPORT
 #else
 #define WEBKIT_EXPORTDATA WTF_IMPORT
@@ -45,7 +46,8 @@
 
 #if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
 
-#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit)
+#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit) || \
+    defined(STATICALLY_LINKED_WITH_WebCore) || defined(STATICALLY_LINKED_WITH_WebKit)
 #define WEBKIT_EXPORTDATA __declspec(dllexport)
 #else
 #define WEBKIT_EXPORTDATA __declspec(dllimport)

@@ -1,3 +1,26 @@
+2012-07-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>  Joel Dillon <joel.dillon@codethink.co.uk>
+
+        [Qt][Win] Fix broken QtWebKit5.lib linking
+        https://bugs.webkit.org/show_bug.cgi?id=88321
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The goal is to have different ports build systems define STATICALLY_LINKED_WITH_WTF
+        when building JavaScriptCore, if both are packaged in the same DLL, instead
+        of relying on the code to handle this.
+        The effects of BUILDING_* and STATICALLY_LINKED_WITH_* are currently the same
+        except for a check in Source/JavaScriptCore/config.h.
+
+        Keeping the old way for the WX port as requested by the port's contributors.
+        For non-Windows ports there is no difference between IMPORT and EXPORT, no
+        change is needed.
+
+        * API/JSBase.h:
+          JS symbols shouldn't be included by WTF objects anymore. Remove the export when BUILDING_WTF.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+          Make sure that JavaScriptCore uses import symbols of WTF for the Win port.
+        * runtime/JSExportMacros.h:
+
 2012-07-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit value recoveries should be computed lazily
