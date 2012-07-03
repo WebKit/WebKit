@@ -285,8 +285,9 @@ StyleRuleMedia::StyleRuleMedia(PassRefPtr<MediaQuerySet> media, Vector<RefPtr<St
 
 StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& o)
     : StyleRuleBlock(o)
-    , m_mediaQueries(o.m_mediaQueries->copy())
 {
+    if (o.m_mediaQueries)
+        m_mediaQueries = o.m_mediaQueries->copy();
 }
 
 StyleRuleRegion::StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)

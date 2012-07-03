@@ -16,6 +16,10 @@ body {
     color: "badcolor" ! important /* good property with strange value */;
 }
 
+@media {
+    /* @media rule with an empty media list */
+}
+
 /* comment before selector */body.main1/* comment after selector */{/* comment */color: #F00BAA;zoo:moo /* not an !important unrecognized property */}/* comment */
 
 body.main2{background: green /* value !important comment */ !important /* no semicolon, very !important */}

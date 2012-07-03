@@ -1,3 +1,14 @@
+2012-07-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        [REGRESSION] Crash when copying a StyleRuleMedia with a NULL m_mediaQueries
+        https://bugs.webkit.org/show_bug.cgi?id=90459
+
+        Reviewed by Andreas Kling.
+
+        * inspector/styles/get-set-stylesheet-text-expected.txt:
+        * inspector/styles/resources/get-set-stylesheet-text.css:
+        (@media):
+
 2012-07-03  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: display time intervals measured with console.time() and console.timeEnd() in Timeline

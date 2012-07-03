@@ -9401,10 +9401,10 @@ StyleRuleBase* CSSParser::createMediaRule(MediaQuerySet* media, RuleList* rules)
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<StyleRuleMedia> rule;
     if (rules)
-        rule = StyleRuleMedia::create(media, *rules);
+        rule = StyleRuleMedia::create(media ? media : MediaQuerySet::create(), *rules);
     else {
         RuleList emptyRules;
-        rule = StyleRuleMedia::create(media, emptyRules);
+        rule = StyleRuleMedia::create(media ? media : MediaQuerySet::create(), emptyRules);
     }
     StyleRuleMedia* result = rule.get();
     m_parsedRules.append(rule.release());
