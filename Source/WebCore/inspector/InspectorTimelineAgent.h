@@ -125,6 +125,9 @@ public:
     void didMarkDOMContentEvent(Frame*);
     void didMarkLoadEvent(Frame*);
 
+    void time(const String&);
+    void timeEnd(const String&);
+
     void didScheduleResourceRequest(const String& url, Frame*);
     void willSendResourceRequest(unsigned long, const ResourceRequest&, Frame*);
     void willReceiveResourceResponse(unsigned long, const ResourceResponse&, Frame*);

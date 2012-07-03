@@ -711,3 +711,4 @@ localizedStrings["revert"] = "revert";
 localizedStrings["CPU Time"] = "CPU Time";
 localizedStrings["Encoded Data Length"] = "Encoded Data Length";
 localizedStrings["%d Bytes"] = "%d Bytes";
+localizedStrings["Time End"] = "Time End";

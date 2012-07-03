@@ -79,6 +79,8 @@ static const char MarkLoad[] = "MarkLoad";
 static const char MarkDOMContent[] = "MarkDOMContent";
 
 static const char TimeStamp[] = "TimeStamp";
+static const char Time[] = "Time";
+static const char TimeEnd[] = "TimeEnd";
 
 static const char ScheduleResourceRequest[] = "ScheduleResourceRequest";
 static const char ResourceSendRequest[] = "ResourceSendRequest";
@@ -376,6 +378,16 @@ void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, 
 void InspectorTimelineAgent::didTimeStamp(const String& message)
 {
     appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true, 0);
+}
+
+void InspectorTimelineAgent::time(const String& message)
+{
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::Time, true, 0);
+}
+
+void InspectorTimelineAgent::timeEnd(const String& message)
+{
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeEnd, true, 0);
 }
 
 void InspectorTimelineAgent::didMarkDOMContentEvent(Frame* frame)

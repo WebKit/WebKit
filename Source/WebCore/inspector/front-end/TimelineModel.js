@@ -62,10 +62,12 @@ WebInspector.TimelineModel.RecordType = {
     XHRLoad: "XHRLoad",
     EvaluateScript: "EvaluateScript",
 
-    TimeStamp: "TimeStamp",
-
     MarkLoad: "MarkLoad",
     MarkDOMContent: "MarkDOMContent",
+
+    TimeStamp: "TimeStamp",
+    Time: "Time",
+    TimeEnd: "TimeEnd",
 
     ScheduleResourceRequest: "ScheduleResourceRequest",
     ResourceSendRequest: "ResourceSendRequest",

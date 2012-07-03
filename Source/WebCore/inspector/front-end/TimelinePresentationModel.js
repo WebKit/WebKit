@@ -81,7 +81,6 @@ WebInspector.TimelinePresentationModel.recordStyle = function(record)
     recordStyles[recordTypes.XHRReadyStateChange] = { title: WebInspector.UIString("XHR Ready State Change"), category: categories["scripting"] };
     recordStyles[recordTypes.XHRLoad] = { title: WebInspector.UIString("XHR Load"), category: categories["scripting"] };
     recordStyles[recordTypes.EvaluateScript] = { title: WebInspector.UIString("Evaluate Script"), category: categories["scripting"] };
-    recordStyles[recordTypes.TimeStamp] = { title: WebInspector.UIString("Stamp"), category: categories["scripting"] };
     recordStyles[recordTypes.ResourceSendRequest] = { title: WebInspector.UIString("Send Request"), category: categories["loading"] };
     recordStyles[recordTypes.ResourceReceiveResponse] = { title: WebInspector.UIString("Receive Response"), category: categories["loading"] };
     recordStyles[recordTypes.ResourceFinish] = { title: WebInspector.UIString("Finish Loading"), category: categories["loading"] };
@@ -90,6 +89,9 @@ WebInspector.TimelinePresentationModel.recordStyle = function(record)
     recordStyles[recordTypes.GCEvent] = { title: WebInspector.UIString("GC Event"), category: categories["scripting"] };
     recordStyles[recordTypes.MarkDOMContent] = { title: WebInspector.UIString("DOMContent event"), category: categories["scripting"] };
     recordStyles[recordTypes.MarkLoad] = { title: WebInspector.UIString("Load event"), category: categories["scripting"] };
+    recordStyles[recordTypes.TimeStamp] = { title: WebInspector.UIString("Stamp"), category: categories["scripting"] };
+    recordStyles[recordTypes.Time] = { title: WebInspector.UIString("Time"), category: categories["scripting"] };
+    recordStyles[recordTypes.TimeEnd] = { title: WebInspector.UIString("Time End"), category: categories["scripting"] };
     recordStyles[recordTypes.ScheduleResourceRequest] = { title: WebInspector.UIString("Schedule Request"), category: categories["loading"] };
     recordStyles[recordTypes.RequestAnimationFrame] = { title: WebInspector.UIString("Request Animation Frame"), category: categories["scripting"] };
     recordStyles[recordTypes.CancelAnimationFrame] = { title: WebInspector.UIString("Cancel Animation Frame"), category: categories["scripting"] };
@@ -101,7 +103,7 @@ WebInspector.TimelinePresentationModel.recordStyle = function(record)
 
 WebInspector.TimelinePresentationModel.categoryForRecord = function(record)
 {
-        return WebInspector.TimelinePresentationModel.recordStyle(record).category;
+    return WebInspector.TimelinePresentationModel.recordStyle(record).category;
 }
 
 WebInspector.TimelinePresentationModel.isEventDivider = function(record)
@@ -191,6 +193,7 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._scheduledResourceRequests = {};
         this._timerRecords = {};
         this._requestAnimationFrameRecords = {};
+        this._timeRecords = {};
         this._frames = [];
         this._minimumRecordTime = -1;
     },
@@ -208,9 +211,16 @@ WebInspector.TimelinePresentationModel.prototype = {
         if (this._minimumRecordTime === -1 || record.startTime < this._minimumRecordTime)
             this._minimumRecordTime = WebInspector.TimelineModel.startTimeInSeconds(record);
 
-        if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad)
-            parentRecord = null; // No bar entry for load events.
-        else {
+        switch (record.type) {
+        // No bar entry for load events.
+        case recordTypes.MarkDOMContent:
+        case recordTypes.MarkLoad:
+            parentRecord = null;
+            break;
+        case recordTypes.Time:
+            parentRecord = this._rootRecord;
+            break;
+        default:
             var newParentRecord = this._findParentRecord(record);
             if (newParentRecord) {
                 parentRecord = newParentRecord;
@@ -274,18 +284,25 @@ WebInspector.TimelinePresentationModel.prototype = {
         if (!this._glueRecords)
             return null;
         var recordTypes = WebInspector.TimelineModel.RecordType;
-        var parentRecord;
-        if (record.type === recordTypes.ResourceReceiveResponse ||
-            record.type === recordTypes.ResourceFinish ||
-            record.type === recordTypes.ResourceReceivedData)
-            parentRecord = this._sendRequestRecords[record.data["requestId"]];
-        else if (record.type === recordTypes.TimerFire)
-            parentRecord = this._timerRecords[record.data["timerId"]];
-        else if (record.type === recordTypes.ResourceSendRequest)
-            parentRecord = this._scheduledResourceRequests[record.data["url"]];
-        else if (record.type === recordTypes.FireAnimationFrame)
-            parentRecord = this._requestAnimationFrameRecords[record.data["id"]];
-        return parentRecord;
+
+        switch (record.type) {
+        case recordTypes.ResourceReceiveResponse:
+        case recordTypes.ResourceFinish:
+        case recordTypes.ResourceReceivedData:
+            return this._sendRequestRecords[record.data["requestId"]];
+
+        case recordTypes.TimerFire:
+            return this._timerRecords[record.data["timerId"]];
+
+        case recordTypes.ResourceSendRequest:
+            return this._scheduledResourceRequests[record.data["url"]];
+
+        case recordTypes.FireAnimationFrame:
+            return this._requestAnimationFrameRecords[record.data["id"]];
+
+        case recordTypes.TimeEnd:
+            return this._timeRecords[record.data["message"]];
+        }
     },
 
     setGlueRecords: function(glue)
@@ -376,12 +393,18 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         this.scriptName = scriptDetails.scriptName;
         this.scriptLine = scriptDetails.scriptLine;
     }
-    // Make resource receive record last since request was sent; make finish record last since response received.
-    if (record.type === recordTypes.ResourceSendRequest) {
+
+    switch (record.type) {
+    case recordTypes.ResourceSendRequest:
+        // Make resource receive record last since request was sent; make finish record last since response received.
         presentationModel._sendRequestRecords[record.data["requestId"]] = this;
-    } else if (record.type === recordTypes.ScheduleResourceRequest) {
+        break;
+
+    case recordTypes.ScheduleResourceRequest:
         presentationModel._scheduledResourceRequests[record.data["url"]] = this;
-    } else if (record.type === recordTypes.ResourceReceiveResponse) {
+        break;
+
+    case recordTypes.ResourceReceiveResponse:
         var sendRequestRecord = presentationModel._sendRequestRecords[record.data["requestId"]];
         if (sendRequestRecord) { // False if we started instrumentation in the middle of request.
             this.url = sendRequestRecord.url;
@@ -390,27 +413,52 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
             if (sendRequestRecord.parent !== presentationModel._rootRecord && sendRequestRecord.parent.type === recordTypes.ScheduleResourceRequest)
                 sendRequestRecord.parent._refreshDetails();
         }
-    } else if (record.type === recordTypes.ResourceReceivedData || record.type === recordTypes.ResourceFinish) {
+        break;
+
+    case recordTypes.ResourceReceivedData:
+    case recordTypes.ResourceFinish:
         var sendRequestRecord = presentationModel._sendRequestRecords[record.data["requestId"]];
         if (sendRequestRecord) // False for main resource.
             this.url = sendRequestRecord.url;
-    } else if (record.type === recordTypes.TimerInstall) {
+        break;
+
+    case recordTypes.TimerInstall:
         this.timeout = record.data["timeout"];
         this.singleShot = record.data["singleShot"];
         presentationModel._timerRecords[record.data["timerId"]] = this;
-    } else if (record.type === recordTypes.TimerFire) {
+        break;
+
+    case recordTypes.TimerFire:
         var timerInstalledRecord = presentationModel._timerRecords[record.data["timerId"]];
         if (timerInstalledRecord) {
             this.callSiteStackTrace = timerInstalledRecord.stackTrace;
             this.timeout = timerInstalledRecord.timeout;
             this.singleShot = timerInstalledRecord.singleShot;
         }
-    } else if (record.type === recordTypes.RequestAnimationFrame) {
+        break;
+
+    case recordTypes.RequestAnimationFrame:
         presentationModel._requestAnimationFrameRecords[record.data["id"]] = this;
-    } else if (record.type === recordTypes.FireAnimationFrame) {
+        break;
+
+    case recordTypes.FireAnimationFrame:
         var requestAnimationRecord = presentationModel._requestAnimationFrameRecords[record.data["id"]];
         if (requestAnimationRecord)
             this.callSiteStackTrace = requestAnimationRecord.stackTrace;
+        break;
+
+    case recordTypes.Time:
+        presentationModel._timeRecords[record.data["message"]] = this;
+        break;
+
+    case recordTypes.TimeEnd:
+        var timeRecord = presentationModel._timeRecords[record.data["message"]];
+        if (timeRecord) {
+            var intervalDuration = this.startTime - timeRecord.startTime;
+            this.intervalDuration = intervalDuration;
+            timeRecord.intervalDuration = intervalDuration;
+        }
+        break;
     }
     this._refreshDetails();
 }
@@ -525,7 +573,13 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             case recordTypes.Paint:
                 contentHelper._appendTextRow(WebInspector.UIString("Location"), WebInspector.UIString("(%d, %d)", this.data["x"], this.data["y"]));
                 contentHelper._appendTextRow(WebInspector.UIString("Dimensions"), WebInspector.UIString("%d × %d", this.data["width"], this.data["height"]));
+                break;
             case recordTypes.RecalculateStyles: // We don't want to see default details.
+                break;
+            case recordTypes.Time:
+            case recordTypes.TimeEnd:
+                if (typeof this.intervalDuration === "number")
+                    contentHelper._appendTextRow(WebInspector.UIString("Interval Duration"), Number.secondsToString(this.intervalDuration, true));
                 break;
             default:
                 if (this.details)

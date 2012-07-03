@@ -1,3 +1,14 @@
+2012-07-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: display time intervals measured with console.time() and console.timeEnd() in Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=90442
+
+        Reviewed by Pavel Feldman.
+
+        - added Time & TimeEnd;
+
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+
 2012-07-03  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Add new baselines after r121697, r121722 and r121728

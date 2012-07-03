@@ -1,3 +1,35 @@
+2012-07-03  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: display time intervals measured with console.time() and console.timeEnd() in Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=90442
+
+        Reviewed by Pavel Feldman.
+
+        - added Time and TimeEnd record types produced by console.time() and console.timeEnd()
+        - connect Time to TimeEnd in "glue" mode to better visualize the interval;
+        - always make Time a top-level record;
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        * inspector/InspectorTimelineAgent.cpp:
+        (TimelineRecordType):
+        (WebCore::InspectorTimelineAgent::didStartTiming):
+        (WebCore):
+        (WebCore::InspectorTimelineAgent::didStopTiming):
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+        * inspector/front-end/TimelineModel.js:
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.recordStyle):
+        (WebInspector.TimelinePresentationModel.categoryForRecord):
+        (WebInspector.TimelinePresentationModel.prototype.reset):
+        (WebInspector.TimelinePresentationModel.prototype.addRecord):
+        (WebInspector.TimelinePresentationModel.prototype._findParentRecord):
+        (WebInspector.TimelinePresentationModel.Record):
+        (WebInspector.TimelinePresentationModel.Record.prototype.generatePopupContent):
+
 2012-07-03  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>  Joel Dillon <joel.dillon@codethink.co.uk>
 
         [Qt][Win] Fix broken QtWebKit5.lib linking
