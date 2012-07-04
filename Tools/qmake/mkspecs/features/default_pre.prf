@@ -107,7 +107,7 @@ else: PYTHON = python
 }
 
 haveQt(5): {
-    isEmpty(QT.widgets.name)|isEmpty(QT.printsupport.name) {
+    !haveQtModule(widgets)|!haveQtModule(printsupport) {
         root_project_file: message("WebKit1 requires the QtWidgets and QtPrintSupport modules. Disabling WebKit1.")
         CONFIG += no_webkit1
     }

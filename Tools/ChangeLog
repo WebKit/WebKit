@@ -1,5 +1,14 @@
 2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Use haveQtModule() in project files instead of manual checks
+
+        Reviewed by Jocelyn Turcotte.
+
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/features.prf:
+
+2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Fix haveQtModule() check
 
         Without {} brackets we were pulling out the value of the module.name variable.

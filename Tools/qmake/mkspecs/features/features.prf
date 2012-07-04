@@ -105,7 +105,7 @@ haveQt(5) {
 }
 
 # QStyle detection
-haveQt(4)|!isEmpty(QT.widgets.name): DEFINES += HAVE_QSTYLE=1
+haveQt(4)|haveQtModule(widgets): DEFINES += HAVE_QSTYLE=1
 
 # WebGL support
 !contains(DEFINES, ENABLE_WEBGL=.) {
@@ -129,7 +129,7 @@ haveQt(4)|!isEmpty(QT.widgets.name): DEFINES += HAVE_QSTYLE=1
 
 # orientation support
 haveQt(5) {
-    !isEmpty(QT.sensors.name) {
+    haveQtModule(sensors) {
         !contains(DEFINES, ENABLE_ORIENTATION_EVENTS=.): DEFINES += ENABLE_ORIENTATION_EVENTS=1
         !contains(DEFINES, ENABLE_DEVICE_ORIENTATION=.): DEFINES += ENABLE_DEVICE_ORIENTATION=1
     }
