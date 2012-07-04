@@ -1,3 +1,27 @@
+2012-07-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121821.
+        http://trac.webkit.org/changeset/121821
+        https://bugs.webkit.org/show_bug.cgi?id=90551
+
+        This patch did not receive a high-quality review and has a
+        number of errors (Requested by abarth on #webkit).
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (Build.results_url):
+        * Scripts/webkitpy/common/net/buildbot/chromiumbuildbot.py:
+        (ChromiumBuilder.accumulated_results_url):
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractParallelRebaselineCommand.__init__):
+        (Rebaseline):
+        (Rebaseline._builder_to_pull_from):
+        (Rebaseline._tests_to_update):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline.mock_builder_to_pull_from):
+        (test_rebaseline):
+
 2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Get rid of un-needed QT += declarative for Qt 5

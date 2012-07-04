@@ -351,96 +351,20 @@ MOCK run_command: ['qmake', '-v'], cwd=None
 
             tool.executive = MockExecutive(should_log=True)
 
-            def mock_builders_to_pull_from():
-                return [MockBuilder('MOCK builder')]
+            def mock_builder_to_pull_from():
+                return MockBuilder('MOCK builder'), 1234
 
             def mock_tests_to_update(build):
                 return ['mock/path/to/test.html']
 
-            command._builders_to_pull_from = mock_builders_to_pull_from
+            command._builder_to_pull_from = mock_builder_to_pull_from
             command._tests_to_update = mock_tests_to_update
-
-            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder': ['txt']}}
-"""
 
             expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'mock/path/to/test.html'], cwd=/mock-checkout
 """
 
-            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True, builder=None, test=None, verbose=True), [], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
-
-        finally:
-            builders._exact_matches = old_exact_matches
-
-    def test_rebaseline_command_line_flags(self):
-        old_exact_matches = builders._exact_matches
-        try:
-            builders._exact_matches = {
-                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
-            }
-
-            command = Rebaseline()
-            tool = MockTool()
-            command.bind_to_tool(tool)
-
-            for port_name in tool.port_factory.all_port_names():
-                port = tool.port_factory.get(port_name)
-                for path in port.expectations_files():
-                    tool.filesystem.write_text_file(path, '')
-
-            tool.executive = MockExecutive(should_log=True)
-
-            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder': ['txt']}}
-"""
-
-            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'mock/path/to/test.html'], cwd=/mock-checkout
-"""
-
-            builder = "MOCK builder"
-            test = "mock/path/to/test.html"
-            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True, builder=builder, test=test, verbose=True), [], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
-
-        finally:
-            builders._exact_matches = old_exact_matches
-
-    def test_rebaseline_multiple_builders(self):
-        old_exact_matches = builders._exact_matches
-        try:
-            builders._exact_matches = {
-                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
-                "MOCK builder2": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier2"])},
-            }
-
-            command = Rebaseline()
-            tool = MockTool()
-            command.bind_to_tool(tool)
-
-            for port_name in tool.port_factory.all_port_names():
-                port = tool.port_factory.get(port_name)
-                for path in port.expectations_files():
-                    tool.filesystem.write_text_file(path, '')
-
-            tool.executive = MockExecutive(should_log=True)
-
-            def mock_builders_to_pull_from():
-                return [MockBuilder('MOCK builder'), MockBuilder('MOCK builder2')]
-
-            def mock_tests_to_update(build):
-                return ['mock/path/to/test.html']
-
-            command._builders_to_pull_from = mock_builders_to_pull_from
-            command._tests_to_update = mock_tests_to_update
-
-            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder2': ['txt'], 'MOCK builder': ['txt']}}
-"""
-
-            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'mock/path/to/test.html'], cwd=/mock-checkout
-"""
-
-            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True, builder=None, test=None, verbose=True), [], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True), [], tool], expected_stderr=expected_stderr)
 
         finally:
             builders._exact_matches = old_exact_matches

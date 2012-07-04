@@ -41,16 +41,6 @@ class ChromiumBuilder(Builder):
     def accumulated_results_url(self):
         return self.results_url() + "/results/layout-test-results"
 
-    # We override Builder.latest_cached_build because it relies on functions that assume too much about
-    # the information provided on the buildbot pages.
-    # FIXME: Have Builder and ChromiumBuilder actually provide a unified inteface that they both support.
-    def latest_cached_build(self):
-        for builder_status in self._buildbot.builder_statuses():
-            if builder_status["name"] == self.name():
-                build_number = builder_status["build_number"]
-                break
-        return self.build(build_number)
-
 
 class ChromiumBuildBot(BuildBot):
     _builder_factory = ChromiumBuilder
