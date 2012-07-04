@@ -1,3 +1,14 @@
+2012-07-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: move settings button back to the right.
+        https://bugs.webkit.org/show_bug.cgi?id=90552
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/inspector.css:
+        (button.status-bar-item:active, button.status-bar-item.emulate-active):
+        (button.settings-status-bar-item):
+
 2012-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Get rid of ResourceDomainModelBinding and DebuggerResourceBinding, make Resource.setContent private.

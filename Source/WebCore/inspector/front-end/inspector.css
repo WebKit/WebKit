@@ -538,7 +538,7 @@ button.status-bar-item {
     background-position: 0 0;
 }
 
-button.status-bar-item:active:not(.emulate-inactive), button.status-bar-item.emulate-active {
+button.status-bar-item:active, button.status-bar-item.emulate-active {
     background-position: 32px 0 !important;
 }
 
@@ -595,9 +595,14 @@ button.dock-status-bar-item.status-bar-item.toggled-right .glyph {
     background-color: rgba(0, 0, 0, 0.75);
 }
 
+button.settings-status-bar-item {
+    position: absolute;
+    right: 0;
+}
+
 .alternate-status-bar-buttons-bar {
     position: absolute;
-    width: 32px;
+    width: 31px;
     bottom: -3px;
     margin-left: 1px;
     background: white;
