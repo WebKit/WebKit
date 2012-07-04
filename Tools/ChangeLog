@@ -1,5 +1,13 @@
 2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Replace deprecated IN_PWD with PWD
+
+        Reviewed by Csaba Osztrogonác.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
+2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Don't try to build WTR twice
 
         Reviewed by Csaba Osztrogonác.
