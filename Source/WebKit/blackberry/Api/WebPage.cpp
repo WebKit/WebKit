@@ -967,6 +967,9 @@ void WebPagePrivate::setLoadState(LoadState state)
                     Platform::createMethodCallMessage(&WebPagePrivate::destroyLayerResources, this));
             }
 #endif
+            // Suspend screen update to avoid ui thread blitting while resetting backingstore.
+            m_backingStore->d->suspendScreenAndBackingStoreUpdates();
+
             m_previousContentsSize = IntSize();
             m_backingStore->d->resetRenderQueue();
             m_backingStore->d->resetTiles(true /* resetBackground */);
@@ -1037,6 +1040,8 @@ void WebPagePrivate::setLoadState(LoadState state)
             // we report to the client could make our current scroll position invalid.
             setScrollPosition(IntPoint::zero());
             notifyTransformedScrollChanged();
+
+            m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::None);
 
             // Paints the visible backingstore as white. Note it is important we do
             // this strictly after re-setting the scroll position to origin and resetting
