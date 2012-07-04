@@ -78,7 +78,7 @@ TEST(TextureCopierTest, testDrawArraysCopy)
     int sourceTextureId = 1;
     int destTextureId = 2;
     IntSize size(256, 128);
-    OwnPtr<AcceleratedTextureCopier> copier(AcceleratedTextureCopier::create(ccContext->context3D()));
+    OwnPtr<AcceleratedTextureCopier> copier(AcceleratedTextureCopier::create(ccContext->context3D(), false));
     copier->copyTexture(ccContext.get(), sourceTextureId, destTextureId, size);
 }
 

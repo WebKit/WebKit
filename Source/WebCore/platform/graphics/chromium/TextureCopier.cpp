@@ -34,8 +34,9 @@
 namespace WebCore {
 
 #if USE(ACCELERATED_COMPOSITING)
-AcceleratedTextureCopier::AcceleratedTextureCopier(WebKit::WebGraphicsContext3D* context)
+AcceleratedTextureCopier::AcceleratedTextureCopier(WebKit::WebGraphicsContext3D* context, bool usingBindUniforms)
     : m_context(context)
+    , m_usingBindUniforms(usingBindUniforms)
 {
     ASSERT(m_context);
     GLC(m_context, m_fbo = m_context->createFramebuffer());
@@ -90,7 +91,7 @@ void AcceleratedTextureCopier::copyTexture(CCGraphicsContext* ccContext, unsigne
     GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
 
     if (!m_blitProgram->initialized())
-        m_blitProgram->initialize(context);
+        m_blitProgram->initialize(context, m_usingBindUniforms);
 
     // TODO: Use EXT_framebuffer_blit if available.
     GLC(context, context->useProgram(m_blitProgram->program()));

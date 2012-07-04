@@ -269,6 +269,7 @@ private:
 
     bool m_isViewportChanged;
     bool m_isFramebufferDiscarded;
+    bool m_isUsingBindUniform;
     bool m_visible;
     TextureUploaderOption m_textureUploaderSetting;
 };

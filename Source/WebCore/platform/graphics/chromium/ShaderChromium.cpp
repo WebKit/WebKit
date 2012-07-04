@@ -38,14 +38,38 @@ using WebKit::WebGraphicsContext3D;
 
 namespace WebCore {
 
+namespace {
+
+static void getProgramUniformLocations(WebGraphicsContext3D* context, unsigned program, const char** shaderUniforms, size_t count, size_t maxLocations, int* locations, bool usingBindUniform, int* baseUniformIndex)
+{
+    for (size_t uniformIndex = 0; uniformIndex < count; uniformIndex ++) {
+        ASSERT(uniformIndex < maxLocations);
+
+        if (usingBindUniform) {
+            locations[uniformIndex] = (*baseUniformIndex)++;
+            context->bindUniformLocationCHROMIUM(program, locations[uniformIndex], shaderUniforms[uniformIndex]);
+        } else
+            locations[uniformIndex] = context->getUniformLocation(program, shaderUniforms[uniformIndex]);
+    }
+}
+
+}
+
 VertexShaderPosTex::VertexShaderPosTex()
     : m_matrixLocation(-1)
 {
 }
 
-void VertexShaderPosTex::init(WebGraphicsContext3D* context, unsigned program)
+void VertexShaderPosTex::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_matrixLocation = context->getUniformLocation(program, "matrix");
+    static const char* shaderUniforms[] = {
+        "matrix",
+    };
+    int locations[1];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_matrixLocation = locations[0];
     ASSERT(m_matrixLocation != -1);
 }
 
@@ -71,11 +95,20 @@ VertexShaderPosTexYUVStretch::VertexShaderPosTexYUVStretch()
 {
 }
 
-void VertexShaderPosTexYUVStretch::init(WebGraphicsContext3D* context, unsigned program)
+void VertexShaderPosTexYUVStretch::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_matrixLocation = context->getUniformLocation(program, "matrix");
-    m_yWidthScaleFactorLocation = context->getUniformLocation(program, "y_widthScaleFactor");
-    m_uvWidthScaleFactorLocation = context->getUniformLocation(program, "uv_widthScaleFactor");
+    static const char* shaderUniforms[] = {
+        "matrix",
+        "y_widthScaleFactor",
+        "uv_widthScaleFactor",
+    };
+    int locations[3];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_matrixLocation = locations[0];
+    m_yWidthScaleFactorLocation = locations[1];
+    m_uvWidthScaleFactorLocation = locations[2];
     ASSERT(m_matrixLocation != -1 && m_yWidthScaleFactorLocation != -1 && m_uvWidthScaleFactorLocation != -1);
 }
 
@@ -104,9 +137,16 @@ VertexShaderPos::VertexShaderPos()
 {
 }
 
-void VertexShaderPos::init(WebGraphicsContext3D* context, unsigned program)
+void VertexShaderPos::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_matrixLocation = context->getUniformLocation(program, "matrix");
+    static const char* shaderUniforms[] = {
+        "matrix",
+    };
+    int locations[1];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_matrixLocation = locations[0];
     ASSERT(m_matrixLocation != -1);
 }
 
@@ -128,10 +168,18 @@ VertexShaderPosTexTransform::VertexShaderPosTexTransform()
 {
 }
 
-void VertexShaderPosTexTransform::init(WebGraphicsContext3D* context, unsigned program)
+void VertexShaderPosTexTransform::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_matrixLocation = context->getUniformLocation(program, "matrix");
-    m_texTransformLocation = context->getUniformLocation(program, "texTransform");
+    static const char* shaderUniforms[] = {
+        "matrix",
+        "texTransform",
+    };
+    int locations[2];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_matrixLocation = locations[0];
+    m_texTransformLocation = locations[1];
     ASSERT(m_matrixLocation != -1 && m_texTransformLocation != -1);
 }
 
@@ -170,10 +218,18 @@ String VertexShaderPosTexIdentity::getShaderString() const
     );
 }
 
-void VertexShaderQuad::init(WebGraphicsContext3D* context, unsigned program)
+void VertexShaderQuad::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_matrixLocation = context->getUniformLocation(program, "matrix");
-    m_pointLocation = context->getUniformLocation(program, "point");
+    static const char* shaderUniforms[] = {
+        "matrix",
+        "point",
+    };
+    int locations[2];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_matrixLocation = locations[0];
+    m_pointLocation = locations[1];
     ASSERT(m_matrixLocation != -1 && m_pointLocation != -1);
 }
 
@@ -206,11 +262,20 @@ VertexShaderTile::VertexShaderTile()
 {
 }
 
-void VertexShaderTile::init(WebGraphicsContext3D* context, unsigned program)
+void VertexShaderTile::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_matrixLocation = context->getUniformLocation(program, "matrix");
-    m_pointLocation = context->getUniformLocation(program, "point");
-    m_vertexTexTransformLocation = context->getUniformLocation(program, "vertexTexTransform");
+    static const char* shaderUniforms[] = {
+        "matrix",
+        "point",
+        "vertexTexTransform",
+    };
+    int locations[3];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_matrixLocation = locations[0];
+    m_pointLocation = locations[1];
+    m_vertexTexTransformLocation = locations[2];
     ASSERT(m_matrixLocation != -1 && m_pointLocation != -1 && m_vertexTexTransformLocation != -1);
 }
 
@@ -243,10 +308,18 @@ VertexShaderVideoTransform::VertexShaderVideoTransform()
 {
 }
 
-bool VertexShaderVideoTransform::init(WebGraphicsContext3D* context, unsigned program)
+bool VertexShaderVideoTransform::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_matrixLocation = context->getUniformLocation(program, "matrix");
-    m_texMatrixLocation = context->getUniformLocation(program, "texMatrix");
+    static const char* shaderUniforms[] = {
+        "matrix",
+        "texMatrix",
+    };
+    int locations[2];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_matrixLocation = locations[0];
+    m_texMatrixLocation = locations[1];
     return m_matrixLocation != -1 && m_texMatrixLocation != -1;
 }
 
@@ -272,11 +345,18 @@ FragmentTexAlphaBinding::FragmentTexAlphaBinding()
 {
 }
 
-void FragmentTexAlphaBinding::init(WebGraphicsContext3D* context, unsigned program)
+void FragmentTexAlphaBinding::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_samplerLocation = context->getUniformLocation(program, "s_texture");
-    m_alphaLocation = context->getUniformLocation(program, "alpha");
+    static const char* shaderUniforms[] = {
+        "s_texture",
+        "alpha",
+    };
+    int locations[2];
 
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_samplerLocation = locations[0];
+    m_alphaLocation = locations[1];
     ASSERT(m_samplerLocation != -1 && m_alphaLocation != -1);
 }
 
@@ -285,10 +365,16 @@ FragmentTexOpaqueBinding::FragmentTexOpaqueBinding()
 {
 }
 
-void FragmentTexOpaqueBinding::init(WebGraphicsContext3D* context, unsigned program)
+void FragmentTexOpaqueBinding::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_samplerLocation = context->getUniformLocation(program, "s_texture");
+    static const char* shaderUniforms[] = {
+        "s_texture",
+    };
+    int locations[1];
 
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_samplerLocation = locations[0];
     ASSERT(m_samplerLocation != -1);
 }
 
@@ -307,10 +393,16 @@ String FragmentShaderRGBATexFlipAlpha::getShaderString() const
     );
 }
 
-bool FragmentShaderOESImageExternal::init(WebGraphicsContext3D* context, unsigned program)
+bool FragmentShaderOESImageExternal::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_samplerLocation = context->getUniformLocation(program, "s_texture");
+    static const char* shaderUniforms[] = {
+        "s_texture",
+    };
+    int locations[1];
 
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_samplerLocation = locations[0];
     return m_samplerLocation != -1;
 }
 
@@ -437,12 +529,20 @@ FragmentShaderRGBATexAlphaAA::FragmentShaderRGBATexAlphaAA()
 {
 }
 
-void FragmentShaderRGBATexAlphaAA::init(WebGraphicsContext3D* context, unsigned program)
+void FragmentShaderRGBATexAlphaAA::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_samplerLocation = context->getUniformLocation(program, "s_texture");
-    m_alphaLocation = context->getUniformLocation(program, "alpha");
-    m_edgeLocation = context->getUniformLocation(program, "edge");
+    static const char* shaderUniforms[] = {
+        "s_texture",
+        "alpha",
+        "edge",
+    };
+    int locations[3];
 
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_samplerLocation = locations[0];
+    m_alphaLocation = locations[1];
+    m_edgeLocation = locations[2];
     ASSERT(m_samplerLocation != -1 && m_alphaLocation != -1 && m_edgeLocation != -1);
 }
 
@@ -479,13 +579,22 @@ FragmentTexClampAlphaAABinding::FragmentTexClampAlphaAABinding()
 {
 }
 
-void FragmentTexClampAlphaAABinding::init(WebGraphicsContext3D* context, unsigned program)
+void FragmentTexClampAlphaAABinding::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_samplerLocation = context->getUniformLocation(program, "s_texture");
-    m_alphaLocation = context->getUniformLocation(program, "alpha");
-    m_fragmentTexTransformLocation = context->getUniformLocation(program, "fragmentTexTransform");
-    m_edgeLocation = context->getUniformLocation(program, "edge");
+    static const char* shaderUniforms[] = {
+        "s_texture",
+        "alpha",
+        "fragmentTexTransform",
+        "edge",
+    };
+    int locations[4];
 
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_samplerLocation = locations[0];
+    m_alphaLocation = locations[1];
+    m_fragmentTexTransformLocation = locations[2];
+    m_edgeLocation = locations[3];
     ASSERT(m_samplerLocation != -1 && m_alphaLocation != -1 && m_fragmentTexTransformLocation != -1 && m_edgeLocation != -1);
 }
 
@@ -550,11 +659,20 @@ FragmentShaderRGBATexAlphaMask::FragmentShaderRGBATexAlphaMask()
 {
 }
 
-void FragmentShaderRGBATexAlphaMask::init(WebGraphicsContext3D* context, unsigned program)
+void FragmentShaderRGBATexAlphaMask::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_samplerLocation = context->getUniformLocation(program, "s_texture");
-    m_maskSamplerLocation = context->getUniformLocation(program, "s_mask");
-    m_alphaLocation = context->getUniformLocation(program, "alpha");
+    static const char* shaderUniforms[] = {
+        "s_texture",
+        "s_mask",
+        "alpha",
+    };
+    int locations[3];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_samplerLocation = locations[0];
+    m_maskSamplerLocation = locations[1];
+    m_alphaLocation = locations[2];
     ASSERT(m_samplerLocation != -1 && m_maskSamplerLocation != -1 && m_alphaLocation != -1);
 }
 
@@ -583,12 +701,22 @@ FragmentShaderRGBATexAlphaMaskAA::FragmentShaderRGBATexAlphaMaskAA()
 {
 }
 
-void FragmentShaderRGBATexAlphaMaskAA::init(WebGraphicsContext3D* context, unsigned program)
+void FragmentShaderRGBATexAlphaMaskAA::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_samplerLocation = context->getUniformLocation(program, "s_texture");
-    m_maskSamplerLocation = context->getUniformLocation(program, "s_mask");
-    m_alphaLocation = context->getUniformLocation(program, "alpha");
-    m_edgeLocation = context->getUniformLocation(program, "edge");
+    static const char* shaderUniforms[] = {
+        "s_texture",
+        "s_mask",
+        "alpha",
+        "edge",
+    };
+    int locations[4];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_samplerLocation = locations[0];
+    m_maskSamplerLocation = locations[1];
+    m_alphaLocation = locations[2];
+    m_edgeLocation = locations[3];
     ASSERT(m_samplerLocation != -1 && m_maskSamplerLocation != -1 && m_alphaLocation != -1 && m_edgeLocation != -1);
 }
 
@@ -629,14 +757,26 @@ FragmentShaderYUVVideo::FragmentShaderYUVVideo()
 {
 }
 
-void FragmentShaderYUVVideo::init(WebGraphicsContext3D* context, unsigned program)
+void FragmentShaderYUVVideo::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_yTextureLocation = context->getUniformLocation(program, "y_texture");
-    m_uTextureLocation = context->getUniformLocation(program, "u_texture");
-    m_vTextureLocation = context->getUniformLocation(program, "v_texture");
-    m_alphaLocation = context->getUniformLocation(program, "alpha");
-    m_ccMatrixLocation = context->getUniformLocation(program, "cc_matrix");
-    m_yuvAdjLocation = context->getUniformLocation(program, "yuv_adj");
+    static const char* shaderUniforms[] = {
+        "y_texture",
+        "u_texture",
+        "v_texture",
+        "alpha",
+        "cc_matrix",
+        "yuv_adj",
+    };
+    int locations[6];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_yTextureLocation = locations[0];
+    m_uTextureLocation = locations[1];
+    m_vTextureLocation = locations[2];
+    m_alphaLocation = locations[3];
+    m_ccMatrixLocation = locations[4];
+    m_yuvAdjLocation = locations[5];
 
     ASSERT(m_yTextureLocation != -1 && m_uTextureLocation != -1 && m_vTextureLocation != -1
            && m_alphaLocation != -1 && m_ccMatrixLocation != -1 && m_yuvAdjLocation != -1);
@@ -672,9 +812,16 @@ FragmentShaderColor::FragmentShaderColor()
 {
 }
 
-void FragmentShaderColor::init(WebGraphicsContext3D* context, unsigned program)
+void FragmentShaderColor::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_colorLocation = context->getUniformLocation(program, "color");
+    static const char* shaderUniforms[] = {
+        "color",
+    };
+    int locations[1];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_colorLocation = locations[0];
     ASSERT(m_colorLocation != -1);
 }
 
@@ -697,11 +844,20 @@ FragmentShaderCheckerboard::FragmentShaderCheckerboard()
 {
 }
 
-void FragmentShaderCheckerboard::init(WebGraphicsContext3D* context, unsigned program)
+void FragmentShaderCheckerboard::init(WebGraphicsContext3D* context, unsigned program, bool usingBindUniform, int* baseUniformIndex)
 {
-    m_alphaLocation = context->getUniformLocation(program, "alpha");
-    m_texTransformLocation = context->getUniformLocation(program, "texTransform");
-    m_frequencyLocation = context->getUniformLocation(program, "frequency");
+    static const char* shaderUniforms[] = {
+        "alpha",
+        "texTransform",
+        "frequency",
+    };
+    int locations[3];
+
+    getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
+
+    m_alphaLocation = locations[0];
+    m_texTransformLocation = locations[1];
+    m_frequencyLocation = locations[2];
     ASSERT(m_alphaLocation != -1 && m_texTransformLocation != -1 && m_frequencyLocation != -1);
 }
 

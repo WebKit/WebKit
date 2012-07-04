@@ -1,3 +1,96 @@
+2012-07-03  Alex Sakhartchouk  <alexst@chromium.org>
+
+        [chromium] Avoid calling getUniformLocation??() in the compositor startup
+        https://bugs.webkit.org/show_bug.cgi?id=90217
+
+        Reviewed by Adrienne Walker.
+
+        This change allows chrome compositor to bind uniform locations instead of querying 
+        them from the graphics context by using GL_CHROMIUM_bind_uniform_location.
+
+        The extention itself is tested in chromium and the change in webkit simply adds
+        plumbing to allow its usage. Existing pixel tests would be able to verify proper behaviour.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::tileCheckerboardProgram):
+        (WebCore::LayerRendererChromium::solidColorProgram):
+        (WebCore::LayerRendererChromium::headsUpDisplayProgram):
+        (WebCore::LayerRendererChromium::renderPassProgram):
+        (WebCore::LayerRendererChromium::renderPassProgramAA):
+        (WebCore::LayerRendererChromium::renderPassMaskProgram):
+        (WebCore::LayerRendererChromium::renderPassMaskProgramAA):
+        (WebCore::LayerRendererChromium::tileProgram):
+        (WebCore::LayerRendererChromium::tileProgramOpaque):
+        (WebCore::LayerRendererChromium::tileProgramAA):
+        (WebCore::LayerRendererChromium::tileProgramSwizzle):
+        (WebCore::LayerRendererChromium::tileProgramSwizzleOpaque):
+        (WebCore::LayerRendererChromium::tileProgramSwizzleAA):
+        (WebCore::LayerRendererChromium::textureProgram):
+        (WebCore::LayerRendererChromium::textureProgramFlip):
+        (WebCore::LayerRendererChromium::textureIOSurfaceProgram):
+        (WebCore::LayerRendererChromium::videoYUVProgram):
+        (WebCore::LayerRendererChromium::videoStreamTextureProgram):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/ProgramBinding.cpp:
+        (WebCore::ProgramBindingBase::ProgramBindingBase):
+        (WebCore::ProgramBindingBase::~ProgramBindingBase):
+        (WebCore::ProgramBindingBase::init):
+        (WebCore::ProgramBindingBase::link):
+        (WebCore):
+        (WebCore::ProgramBindingBase::cleanup):
+        (WebCore::ProgramBindingBase::createShaderProgram):
+        (WebCore::ProgramBindingBase::cleanupShaders):
+        * platform/graphics/chromium/ProgramBinding.h:
+        (ProgramBindingBase):
+        (WebCore::ProgramBinding::initialize):
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::VertexShaderPosTex::init):
+        (WebCore::VertexShaderPosTexYUVStretch::init):
+        (WebCore::VertexShaderPos::init):
+        (WebCore::VertexShaderPosTexTransform::init):
+        (WebCore::VertexShaderQuad::init):
+        (WebCore::VertexShaderTile::init):
+        (WebCore::VertexShaderVideoTransform::init):
+        (WebCore::FragmentTexAlphaBinding::init):
+        (WebCore::FragmentTexOpaqueBinding::init):
+        (WebCore::FragmentShaderOESImageExternal::init):
+        (WebCore::FragmentShaderRGBATexAlphaAA::init):
+        (WebCore::FragmentTexClampAlphaAABinding::init):
+        (WebCore::FragmentShaderRGBATexAlphaMask::init):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::init):
+        (WebCore::FragmentShaderYUVVideo::init):
+        (WebCore::FragmentShaderColor::init):
+        (WebCore::FragmentShaderCheckerboard::init):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (VertexShaderPosTex):
+        (VertexShaderPosTexYUVStretch):
+        (VertexShaderPos):
+        (WebCore::VertexShaderPosTexIdentity::init):
+        (VertexShaderPosTexTransform):
+        (VertexShaderQuad):
+        (VertexShaderTile):
+        (VertexShaderVideoTransform):
+        (FragmentTexAlphaBinding):
+        (FragmentTexOpaqueBinding):
+        (FragmentShaderOESImageExternal):
+        (FragmentShaderRGBATexAlphaAA):
+        (FragmentTexClampAlphaAABinding):
+        (FragmentShaderRGBATexAlphaMask):
+        (FragmentShaderRGBATexAlphaMaskAA):
+        (FragmentShaderYUVVideo):
+        (FragmentShaderColor):
+        (FragmentShaderCheckerboard):
+        * platform/graphics/chromium/TextureCopier.cpp:
+        (WebCore::AcceleratedTextureCopier::AcceleratedTextureCopier):
+        (WebCore::AcceleratedTextureCopier::copyTexture):
+        * platform/graphics/chromium/TextureCopier.h:
+        (WebCore::AcceleratedTextureCopier::create):
+        (AcceleratedTextureCopier):
+
 2012-07-03  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Remove enableFasterDOMStoreAccess which is never used

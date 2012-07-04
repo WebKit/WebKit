@@ -164,6 +164,7 @@ LayerRendererChromium::LayerRendererChromium(CCRendererClient* client,
     , m_defaultRenderPass(0)
     , m_isViewportChanged(false)
     , m_isFramebufferDiscarded(false)
+    , m_isUsingBindUniform(false)
     , m_visible(true)
     , m_textureUploaderSetting(textureUploaderSetting)
 {
@@ -226,6 +227,8 @@ bool LayerRendererChromium::initialize()
 
     GLC(m_context, m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_capabilities.maxTextureSize));
     m_capabilities.bestTextureFormat = PlatformColor::bestTextureFormat(m_context, extensions.contains("GL_EXT_texture_format_BGRA8888"));
+
+    m_isUsingBindUniform = extensions.contains("GL_CHROMIUM_bind_uniform_location");
 
     if (!initializeSharedObjects())
         return false;
@@ -1429,7 +1432,7 @@ bool LayerRendererChromium::initializeSharedObjects()
     m_implTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
                                                   TextureManager::reclaimLimitBytes(viewportSize()),
                                                   m_capabilities.maxTextureSize);
-    m_textureCopier = AcceleratedTextureCopier::create(m_context);
+    m_textureCopier = AcceleratedTextureCopier::create(m_context, m_isUsingBindUniform);
     if (m_textureUploaderSetting == ThrottledUploader)
         m_textureUploader = ThrottledTextureUploader::create(m_context);
     else
@@ -1452,7 +1455,7 @@ const LayerRendererChromium::TileCheckerboardProgram* LayerRendererChromium::til
         m_tileCheckerboardProgram = adoptPtr(new TileCheckerboardProgram(m_context));
     if (!m_tileCheckerboardProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::checkerboardProgram::initalize");
-        m_tileCheckerboardProgram->initialize(m_context);
+        m_tileCheckerboardProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_tileCheckerboardProgram.get();
 }
@@ -1463,7 +1466,7 @@ const LayerRendererChromium::SolidColorProgram* LayerRendererChromium::solidColo
         m_solidColorProgram = adoptPtr(new SolidColorProgram(m_context));
     if (!m_solidColorProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::solidColorProgram::initialize");
-        m_solidColorProgram->initialize(m_context);
+        m_solidColorProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_solidColorProgram.get();
 }
@@ -1474,7 +1477,7 @@ const LayerRendererChromium::HeadsUpDisplayProgram* LayerRendererChromium::heads
         m_headsUpDisplayProgram = adoptPtr(new HeadsUpDisplayProgram(m_context));
     if (!m_headsUpDisplayProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::headsUpDisplayProgram::initialize");
-        m_headsUpDisplayProgram->initialize(m_context);
+        m_headsUpDisplayProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_headsUpDisplayProgram.get();
 }
@@ -1484,7 +1487,7 @@ const LayerRendererChromium::RenderPassProgram* LayerRendererChromium::renderPas
     ASSERT(m_renderPassProgram);
     if (!m_renderPassProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::renderPassProgram::initialize");
-        m_renderPassProgram->initialize(m_context);
+        m_renderPassProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_renderPassProgram.get();
 }
@@ -1495,7 +1498,7 @@ const LayerRendererChromium::RenderPassProgramAA* LayerRendererChromium::renderP
         m_renderPassProgramAA = adoptPtr(new RenderPassProgramAA(m_context));
     if (!m_renderPassProgramAA->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::renderPassProgramAA::initialize");
-        m_renderPassProgramAA->initialize(m_context);
+        m_renderPassProgramAA->initialize(m_context, m_isUsingBindUniform);
     }
     return m_renderPassProgramAA.get();
 }
@@ -1506,7 +1509,7 @@ const LayerRendererChromium::RenderPassMaskProgram* LayerRendererChromium::rende
         m_renderPassMaskProgram = adoptPtr(new RenderPassMaskProgram(m_context));
     if (!m_renderPassMaskProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::renderPassMaskProgram::initialize");
-        m_renderPassMaskProgram->initialize(m_context);
+        m_renderPassMaskProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_renderPassMaskProgram.get();
 }
@@ -1517,7 +1520,7 @@ const LayerRendererChromium::RenderPassMaskProgramAA* LayerRendererChromium::ren
         m_renderPassMaskProgramAA = adoptPtr(new RenderPassMaskProgramAA(m_context));
     if (!m_renderPassMaskProgramAA->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::renderPassMaskProgramAA::initialize");
-        m_renderPassMaskProgramAA->initialize(m_context);
+        m_renderPassMaskProgramAA->initialize(m_context, m_isUsingBindUniform);
     }
     return m_renderPassMaskProgramAA.get();
 }
@@ -1527,7 +1530,7 @@ const LayerRendererChromium::TileProgram* LayerRendererChromium::tileProgram()
     ASSERT(m_tileProgram);
     if (!m_tileProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::tileProgram::initialize");
-        m_tileProgram->initialize(m_context);
+        m_tileProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_tileProgram.get();
 }
@@ -1537,7 +1540,7 @@ const LayerRendererChromium::TileProgramOpaque* LayerRendererChromium::tileProgr
     ASSERT(m_tileProgramOpaque);
     if (!m_tileProgramOpaque->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramOpaque::initialize");
-        m_tileProgramOpaque->initialize(m_context);
+        m_tileProgramOpaque->initialize(m_context, m_isUsingBindUniform);
     }
     return m_tileProgramOpaque.get();
 }
@@ -1548,7 +1551,7 @@ const LayerRendererChromium::TileProgramAA* LayerRendererChromium::tileProgramAA
         m_tileProgramAA = adoptPtr(new TileProgramAA(m_context));
     if (!m_tileProgramAA->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramAA::initialize");
-        m_tileProgramAA->initialize(m_context);
+        m_tileProgramAA->initialize(m_context, m_isUsingBindUniform);
     }
     return m_tileProgramAA.get();
 }
@@ -1559,7 +1562,7 @@ const LayerRendererChromium::TileProgramSwizzle* LayerRendererChromium::tileProg
         m_tileProgramSwizzle = adoptPtr(new TileProgramSwizzle(m_context));
     if (!m_tileProgramSwizzle->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramSwizzle::initialize");
-        m_tileProgramSwizzle->initialize(m_context);
+        m_tileProgramSwizzle->initialize(m_context, m_isUsingBindUniform);
     }
     return m_tileProgramSwizzle.get();
 }
@@ -1570,7 +1573,7 @@ const LayerRendererChromium::TileProgramSwizzleOpaque* LayerRendererChromium::ti
         m_tileProgramSwizzleOpaque = adoptPtr(new TileProgramSwizzleOpaque(m_context));
     if (!m_tileProgramSwizzleOpaque->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramSwizzleOpaque::initialize");
-        m_tileProgramSwizzleOpaque->initialize(m_context);
+        m_tileProgramSwizzleOpaque->initialize(m_context, m_isUsingBindUniform);
     }
     return m_tileProgramSwizzleOpaque.get();
 }
@@ -1581,7 +1584,7 @@ const LayerRendererChromium::TileProgramSwizzleAA* LayerRendererChromium::tilePr
         m_tileProgramSwizzleAA = adoptPtr(new TileProgramSwizzleAA(m_context));
     if (!m_tileProgramSwizzleAA->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::tileProgramSwizzleAA::initialize");
-        m_tileProgramSwizzleAA->initialize(m_context);
+        m_tileProgramSwizzleAA->initialize(m_context, m_isUsingBindUniform);
     }
     return m_tileProgramSwizzleAA.get();
 }
@@ -1592,7 +1595,7 @@ const LayerRendererChromium::TextureProgram* LayerRendererChromium::textureProgr
         m_textureProgram = adoptPtr(new TextureProgram(m_context));
     if (!m_textureProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::textureProgram::initialize");
-        m_textureProgram->initialize(m_context);
+        m_textureProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_textureProgram.get();
 }
@@ -1603,7 +1606,7 @@ const LayerRendererChromium::TextureProgramFlip* LayerRendererChromium::textureP
         m_textureProgramFlip = adoptPtr(new TextureProgramFlip(m_context));
     if (!m_textureProgramFlip->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::textureProgramFlip::initialize");
-        m_textureProgramFlip->initialize(m_context);
+        m_textureProgramFlip->initialize(m_context, m_isUsingBindUniform);
     }
     return m_textureProgramFlip.get();
 }
@@ -1614,7 +1617,7 @@ const LayerRendererChromium::TextureIOSurfaceProgram* LayerRendererChromium::tex
         m_textureIOSurfaceProgram = adoptPtr(new TextureIOSurfaceProgram(m_context));
     if (!m_textureIOSurfaceProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::textureIOSurfaceProgram::initialize");
-        m_textureIOSurfaceProgram->initialize(m_context);
+        m_textureIOSurfaceProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_textureIOSurfaceProgram.get();
 }
@@ -1625,7 +1628,7 @@ const LayerRendererChromium::VideoYUVProgram* LayerRendererChromium::videoYUVPro
         m_videoYUVProgram = adoptPtr(new VideoYUVProgram(m_context));
     if (!m_videoYUVProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::videoYUVProgram::initialize");
-        m_videoYUVProgram->initialize(m_context);
+        m_videoYUVProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_videoYUVProgram.get();
 }
@@ -1636,7 +1639,7 @@ const LayerRendererChromium::VideoStreamTextureProgram* LayerRendererChromium::v
         m_videoStreamTextureProgram = adoptPtr(new VideoStreamTextureProgram(m_context));
     if (!m_videoStreamTextureProgram->initialized()) {
         TRACE_EVENT0("cc", "LayerRendererChromium::streamTextureProgram::initialize");
-        m_videoStreamTextureProgram->initialize(m_context);
+        m_videoStreamTextureProgram->initialize(m_context, m_isUsingBindUniform);
     }
     return m_videoStreamTextureProgram.get();
 }

@@ -1,3 +1,16 @@
+2012-07-03  Alex Sakhartchouk  <alexst@chromium.org>
+
+        [chromium] Avoid calling getUniformLocation??() in the compositor startup
+        https://bugs.webkit.org/show_bug.cgi?id=90217
+
+        Reviewed by Adrienne Walker.
+
+        Adding an entry point for bindUniformLocationCHROMIUM.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::bindUniformLocationCHROMIUM):
+
 2012-07-03  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, update .gitignore to handle VS2010 files.

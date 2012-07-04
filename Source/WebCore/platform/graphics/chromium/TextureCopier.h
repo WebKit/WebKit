@@ -53,16 +53,16 @@ protected:
 class AcceleratedTextureCopier : public TextureCopier {
     WTF_MAKE_NONCOPYABLE(AcceleratedTextureCopier);
 public:
-    static PassOwnPtr<AcceleratedTextureCopier> create(WebKit::WebGraphicsContext3D* context)
+    static PassOwnPtr<AcceleratedTextureCopier> create(WebKit::WebGraphicsContext3D* context, bool usingBindUniforms)
     {
-        return adoptPtr(new AcceleratedTextureCopier(context));
+        return adoptPtr(new AcceleratedTextureCopier(context, usingBindUniforms));
     }
     virtual ~AcceleratedTextureCopier();
 
     virtual void copyTexture(CCGraphicsContext*, unsigned sourceTextureId, unsigned destTextureId, const IntSize&);
 
 protected:
-    explicit AcceleratedTextureCopier(WebKit::WebGraphicsContext3D*);
+    AcceleratedTextureCopier(WebKit::WebGraphicsContext3D*, bool usingBindUniforms);
 
 private:
     typedef ProgramBinding<VertexShaderPosTexIdentity, FragmentShaderRGBATex> BlitProgram;
@@ -71,6 +71,7 @@ private:
     Platform3DObject m_fbo;
     Platform3DObject m_positionBuffer;
     OwnPtr<BlitProgram> m_blitProgram;
+    bool m_usingBindUniforms;
 };
 
 #endif // USE(ACCELERATED_COMPOSITING)

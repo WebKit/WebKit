@@ -41,7 +41,7 @@ class VertexShaderPosTex {
 public:
     VertexShaderPosTex();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -54,7 +54,7 @@ class VertexShaderPosTexYUVStretch {
 public:
     VertexShaderPosTexYUVStretch();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -71,7 +71,7 @@ class VertexShaderPos {
 public:
     VertexShaderPos();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -82,7 +82,7 @@ private:
 
 class VertexShaderPosTexIdentity {
 public:
-    void init(WebKit::WebGraphicsContext3D*, unsigned program) { }
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex) { }
     String getShaderString() const;
 };
 
@@ -90,7 +90,7 @@ class VertexShaderPosTexTransform {
 public:
     VertexShaderPosTexTransform();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -105,7 +105,7 @@ class VertexShaderQuad {
 public:
     VertexShaderQuad();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -120,7 +120,7 @@ class VertexShaderTile {
 public:
     VertexShaderTile();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -137,7 +137,7 @@ class VertexShaderVideoTransform {
 public:
     VertexShaderVideoTransform();
 
-    bool init(WebKit::WebGraphicsContext3D*, unsigned program);
+    bool init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -152,7 +152,7 @@ class FragmentTexAlphaBinding {
 public:
     FragmentTexAlphaBinding();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     int alphaLocation() const { return m_alphaLocation; }
     int edgeLocation() const { return -1; }
     int fragmentTexTransformLocation() const { return -1; }
@@ -167,7 +167,7 @@ class FragmentTexOpaqueBinding {
 public:
     FragmentTexOpaqueBinding();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     int alphaLocation() const { return -1; }
     int edgeLocation() const { return -1; }
     int fragmentTexTransformLocation() const { return -1; }
@@ -223,7 +223,7 @@ public:
 class FragmentShaderOESImageExternal : public FragmentTexAlphaBinding {
 public:
     String getShaderString() const;
-    bool init(WebKit::WebGraphicsContext3D*, unsigned program);
+    bool init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
 private:
     int m_samplerLocation;
 };
@@ -232,7 +232,7 @@ class FragmentShaderRGBATexAlphaAA {
 public:
     FragmentShaderRGBATexAlphaAA();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     String getShaderString() const;
 
     int alphaLocation() const { return m_alphaLocation; }
@@ -249,7 +249,7 @@ class FragmentTexClampAlphaAABinding {
 public:
     FragmentTexClampAlphaAABinding();
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     int alphaLocation() const { return m_alphaLocation; }
     int samplerLocation() const { return m_samplerLocation; }
     int fragmentTexTransformLocation() const { return m_fragmentTexTransformLocation; }
@@ -278,7 +278,7 @@ public:
     FragmentShaderRGBATexAlphaMask();
     String getShaderString() const;
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     int alphaLocation() const { return m_alphaLocation; }
     int samplerLocation() const { return m_samplerLocation; }
     int maskSamplerLocation() const { return m_maskSamplerLocation; }
@@ -294,7 +294,7 @@ public:
     FragmentShaderRGBATexAlphaMaskAA();
     String getShaderString() const;
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     int alphaLocation() const { return m_alphaLocation; }
     int samplerLocation() const { return m_samplerLocation; }
     int maskSamplerLocation() const { return m_maskSamplerLocation; }
@@ -312,7 +312,7 @@ public:
     FragmentShaderYUVVideo();
     String getShaderString() const;
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
 
     int yTextureLocation() const { return m_yTextureLocation; }
     int uTextureLocation() const { return m_uTextureLocation; }
@@ -335,7 +335,7 @@ public:
     FragmentShaderColor();
     String getShaderString() const;
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     int colorLocation() const { return m_colorLocation; }
 
 private:
@@ -347,7 +347,7 @@ public:
     FragmentShaderCheckerboard();
     String getShaderString() const;
 
-    void init(WebKit::WebGraphicsContext3D*, unsigned program);
+    void init(WebKit::WebGraphicsContext3D*, unsigned program, bool usingBindUniform, int* baseUniformIndex);
     int alphaLocation() const { return m_alphaLocation; }
     int texTransformLocation() const { return m_texTransformLocation; }
     int frequencyLocation() const { return m_frequencyLocation; }
