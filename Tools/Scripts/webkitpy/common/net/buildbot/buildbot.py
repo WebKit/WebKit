@@ -239,7 +239,8 @@ class Build(object):
         return self.build_url(self.builder(), self._number)
 
     def results_url(self):
-        results_directory = "r%s (%s)" % (self.revision(), self._number)
+        # FIXME: We should probably have a better way of determining chromium builders than checking if the name starts with 'Webkit'.
+        results_directory = "results/layout-test-results" if self._builder.name().startswith('Webkit') else "r%s (%s)" % (self.revision(), self._number)
         return "%s/%s" % (self._builder.results_url(), urllib.quote(results_directory))
 
     def results_zip_url(self):

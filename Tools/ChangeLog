@@ -1,3 +1,49 @@
+2012-07-03  Ojan Vafai  <ojan@chromium.org>
+
+        Improve webkit-patch rebaseline to work for more cases
+        https://bugs.webkit.org/show_bug.cgi?id=90504
+
+        Reviewed by Dirk Pranke.
+
+        -Makes it work for the build.chromium.org bots.
+        -Lets you rebaseline all builders instead of just one.
+        -Lets you pass in the builder or test to rebaseline.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (Build.results_url):
+        Make this work for build.chromium.org builders as well.
+
+        * Scripts/webkitpy/common/net/buildbot/chromiumbuildbot.py:
+        (ChromiumBuilder):
+        (ChromiumBuilder.latest_cached_build):
+        ChromiumBuilder doesn't support large parts of the Builder interface.
+        This provides the bare minimum for this patch to work. Eventually,
+        we should create a single interface that can be supported for both
+        sets of buildbots.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        (builder_path_from_name):
+        (all_builder_names):
+        memoizing here is incorrect because the test override _exact_matches,
+        so these can return different values. In either case, I'm pretty sure these
+        are not remotely hot codepaths.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractParallelRebaselineCommand.__init__):
+        (Rebaseline):
+        (Rebaseline.__init__):
+        (Rebaseline._builders_to_pull_from):
+        (Rebaseline._builder_with_name):
+        (Rebaseline._tests_to_update):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline.mock_builders_to_pull_from):
+        (test_rebaseline):
+        (test_rebaseline_command_line_flags):
+        (test_rebaseline_multiple_builders):
+        (test_rebaseline_multiple_builders.mock_builders_to_pull_from):
+        (test_rebaseline_multiple_builders.mock_tests_to_update):
+
 2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable CSS variables support at compile time
