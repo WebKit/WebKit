@@ -304,6 +304,7 @@ BUGWK85212 : ietestcenter/css3/flexbox/flexbox-layout-002.htm = IMAGE
 // These tests require subpixel layout to be enabled
 BUGWK85532 : fast/sub-pixel = TEXT IMAGE
 BUGWK85532 : fast/sub-pixel/float-containing-block-with-margin.html = PASS
+BUGWK85532 : fast/sub-pixel/float-with-margin-in-container.html = PASS
 BUGWK85532 : fast/sub-pixel/float-with-right-margin-zoom.html = PASS
 BUGWK85532 : fast/sub-pixel/float-wrap-with-subpixel-top.html = PASS
 BUGWK85532 : fast/sub-pixel/inline-block-with-margin.html = PASS
@@ -952,8 +953,6 @@ BUGWK49964 : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGWK50740 : editing/spelling/spellcheck-queue.html = TEXT
 BUGWK50740 : editing/spelling/spellcheck-sequencenum.html = TEXT
 BUGWK50740 : editing/spelling/spellcheck-async-mutation.html = TEXT
-
-BUGWK82675 : http/tests/local/link-stylesheet-load-order.html = TEXT
 
 // DRT does not obey layoutTestController.addURLToRedirect()
 BUGWKGTK : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT

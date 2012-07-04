@@ -1,3 +1,10 @@
+2012-07-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed GTK gardening. Removed some tests from TestExpectations
+        as they were passing in the tree bots.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121813.
