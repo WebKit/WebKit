@@ -1,3 +1,12 @@
+2012-07-03  Ian Vollick  <vollick@chromium.org>
+
+        Add vollick to the list of committers
+        https://bugs.webkit.org/show_bug.cgi?id=90512
+
+        Reviewed by Adrienne Walker.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-03  Ojan Vafai  <ojan@chromium.org>
 
         Improve webkit-patch rebaseline to work for more cases
