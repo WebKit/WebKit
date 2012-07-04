@@ -175,7 +175,7 @@ my @features = (
       define => "ENABLE_CSS_SHADERS", default => isAppleMacWebKit(), value => \$cssShadersSupport },
 
     { option => "css-variables", desc => "Toggle CSS Variable support",
-      define => "ENABLE_CSS_VARIABLES", default => 0, value => \$cssVariablesSupport },
+      define => "ENABLE_CSS_VARIABLES", default => isEfl(), value => \$cssVariablesSupport },
 
     { option => "custom-scheme-handler", desc => "Toggle Custom Scheme Handler support",
       define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => isBlackBerry(), value => \$customSchemeHandlerSupport },
