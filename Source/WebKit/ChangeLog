@@ -1,3 +1,14 @@
+2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix broken OR-operator in project file
+
+        Qmake expects |, not ||. The result was that the block was entered, even
+        if none of the two defines were set to 1.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * WebKit1.pri:
+
 2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Move BatteryClientEfl from WebKit to WebCore

@@ -27,7 +27,7 @@ contains(DEFINES, ENABLE_VIDEO=1):contains(DEFINES, WTF_USE_QTKIT=1) {
     }
 }
 
-contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) || contains(DEFINES, ENABLE_ORIENTATION_EVENTS=1) {
+contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1)|contains(DEFINES, ENABLE_ORIENTATION_EVENTS=1) {
     haveQt(5) {
         QT += sensors
     } else {
