@@ -132,7 +132,6 @@ WEBKIT += webcore
 
 !no_webkit2 {
     WEBKIT += webkit2
-    QT += declarative
 
     # Ensure that changes to the WebKit1 and WebKit2 API will trigger a qmake of this
     # file, which in turn runs syncqt to update the forwarding headers.

@@ -1,5 +1,21 @@
 2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Get rid of un-needed QT += declarative for Qt 5
+
+        The declarative module has been renamed to quick1 in Qt 5, and the
+        engine-only module for Qt 5 is named 'qml'. For many of the instances
+        we could just remove 'declarative', since the project file was only
+        used for Qt5/WebKit2 builds. In the other cases the module was wrapped
+        in a haveQt(4) scope.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * WebKitTestRunner/Target.pri:
+
+2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Remove a few un-needed load(features) after r121777
 
         The features are computed by configure.pro and cached in .qmake.cache.

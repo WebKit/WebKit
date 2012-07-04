@@ -28,7 +28,7 @@ v8 {
     !haveQt(5): error("To build QtWebKit+V8 you need to use Qt 5")
     DEFINES *= WTF_USE_V8=1
     INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/v8/ForwardingHeaders
-    QT += v8-private declarative
+    QT += v8-private
 }
 
 linux-*:contains(DEFINES, WTF_USE_GSTREAMER=1) {

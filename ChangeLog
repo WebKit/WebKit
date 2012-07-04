@@ -1,3 +1,17 @@
+2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Get rid of un-needed QT += declarative for Qt 5
+
+        The declarative module has been renamed to quick1 in Qt 5, and the
+        engine-only module for Qt 5 is named 'qml'. For many of the instances
+        we could just remove 'declarative', since the project file was only
+        used for Qt5/WebKit2 builds. In the other cases the module was wrapped
+        in a haveQt(4) scope.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/api.pri:
+
 2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Enable CSS variables support at compile time
