@@ -955,23 +955,10 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
     {
         var resource = styleSource.resource();
         if (this._styleSheetIdForResource(resource)) {
-            this._innerSetContent(resource, content, majorChange, innerCallback, null);
+            this._innerSetContent(resource, content, majorChange, userCallback, null);
             return;
         }
-        this._loadStyleSheetHeaders(this._innerSetContent.bind(this, resource, content, majorChange, innerCallback));
-        
-        function innerCallback(error)
-        {
-            if (error) {
-                userCallback(error);
-                return;
-            }
-
-            if (majorChange)
-                resource.addRevision(content);
-
-            userCallback(null);
-        }
+        this._loadStyleSheetHeaders(this._innerSetContent.bind(this, resource, content, majorChange, userCallback));
     },
 
     /**

@@ -201,23 +201,18 @@ WebInspector.UISourceCode.prototype = {
     commitWorkingCopy: function(callback)
     {
         if (!this.isDirty()) {
-            callback()
+            callback(null);
             return;
-        }
-
-        /**
-         * @param {?string} error
-         */
-        function innerCallback(error)
-        {
-            delete this._committingWorkingCopy;
-            this.contentChanged(newContent, this._mimeType);
-            callback(error);
         }
 
         var newContent = this._workingCopy;
         this._committingWorkingCopy = true;
-        this.workingCopyCommitted(innerCallback.bind(this));
+        this.workingCopyCommitted(callback);
+        if (this.resource())
+            this.resource().addRevision(newContent);
+        delete this._committingWorkingCopy;
+        this.contentChanged(newContent, this._mimeType);
+
     },
 
     /**

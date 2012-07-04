@@ -130,7 +130,7 @@ WebInspector.StyleSource.prototype = {
         if (WebInspector.StyleSource.updateTimeout >= 0)
             this._incrementalUpdateTimer = setTimeout(callback, WebInspector.StyleSource.updateTimeout);
         else
-            callback();
+            callback(null);
     },
 
     /**

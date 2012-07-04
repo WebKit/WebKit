@@ -76,8 +76,8 @@ WebInspector.CompositeUISourceCodeProvider.prototype = {
     },
 
     /**
-     * @param {String} url
-     * @return {WebInspector.UISourceCode}
+     * @param {string} url
+     * @return {?WebInspector.UISourceCode}
      */
     uiSourceCodeForURL: function(url)
     {
@@ -88,6 +88,7 @@ WebInspector.CompositeUISourceCodeProvider.prototype = {
                     return uiSourceCodes[j];
             }
         }
+        return null;
     },
 
     /**

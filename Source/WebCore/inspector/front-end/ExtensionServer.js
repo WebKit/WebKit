@@ -290,7 +290,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _handleOpenURL: function(port, details)
     {
-        var url = /** @type {String} */ details.url;
+        var url = /** @type {string} */ details.url;
         var contentProvider = WebInspector.workspace.uiSourceCodeForURL(url) || WebInspector.resourceForURL(url);
         if (!contentProvider)
             return false;
@@ -482,7 +482,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _onGetResourceContent: function(message, port)
     {
-        var url = /** @type {String} */ message.url;
+        var url = /** @type {string} */ message.url;
         var contentProvider = WebInspector.workspace.uiSourceCodeForURL(url) || WebInspector.resourceForURL(url);
         if (!contentProvider)
             return this._status.E_NOTFOUND(url);
@@ -500,7 +500,7 @@ WebInspector.ExtensionServer.prototype = {
             this._dispatchCallback(message.requestId, port, response);
         }
 
-        var url = /** @type {String} */ message.url;
+        var url = /** @type {string} */ message.url;
         var uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(url);
         if (!uiSourceCode) {
             var resource = WebInspector.resourceTreeModel.resourceForURL(url);
@@ -512,7 +512,7 @@ WebInspector.ExtensionServer.prototype = {
         if (message.commit)
             uiSourceCode.commitWorkingCopy(callbackWrapper.bind(this));
         else
-            callbackWrapper.call(this);
+            callbackWrapper.call(this, null);
     },
 
     _requestId: function(request)
