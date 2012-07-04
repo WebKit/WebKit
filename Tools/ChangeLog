@@ -1,3 +1,11 @@
+2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't try to build WTR twice
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Tools.pro:
+
 2012-07-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121821.
