@@ -36,13 +36,11 @@ using namespace std;
 
 namespace WebCore {
 
-CCPrioritizedTextureManager::CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, size_t preferredMemoryLimitBytes, int)
+CCPrioritizedTextureManager::CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, int)
     : m_maxMemoryLimitBytes(maxMemoryLimitBytes)
-    , m_preferredMemoryLimitBytes(preferredMemoryLimitBytes)
-    , m_maxMemoryPriorityCutoff(CCPriorityCalculator::visiblePriority())
-    , m_priorityCutoff(CCPriorityCalculator::lowestPriority())
     , m_memoryUseBytes(0)
     , m_memoryAboveCutoffBytes(0)
+    , m_memoryAvailableBytes(0)
 {
 }
 
@@ -57,17 +55,7 @@ CCPrioritizedTextureManager::~CCPrioritizedTextureManager()
         destroyBacking(*m_backings.begin(), 0);
 }
 
-void CCPrioritizedTextureManager::setMemoryAllocationLimitBytes(size_t memoryLimitBytes)
-{
-    setMaxMemoryLimitBytes(memoryLimitBytes);
-
-    // FIXME: Preferred limit should go away. We can remove it as soon
-    //        as we no longer use the 'remainder' of this manager for
-    //        anything.
-    setPreferredMemoryLimitBytes(memoryLimitBytes / 4 * 3);
-}
-
-void CCPrioritizedTextureManager::prioritizeTextures()
+void CCPrioritizedTextureManager::prioritizeTextures(size_t renderSurfacesMemoryBytes)
 {
     TRACE_EVENT0("cc", "CCPrioritizedTextureManager::prioritizeTextures");
 
@@ -89,21 +77,32 @@ void CCPrioritizedTextureManager::prioritizeTextures()
         sortedTextures.append(*it);
     std::sort(sortedTextures.begin(), sortedTextures.end(), compareTextures);
 
+    m_memoryAvailableBytes = m_maxMemoryLimitBytes;
     m_priorityCutoff = CCPriorityCalculator::lowestPriority();
+    bool reservedRenderSurfaces = false;
     size_t memoryBytes = 0;
     for (TextureVector::iterator it = sortedTextures.begin(); it != sortedTextures.end(); ++it) {
         if ((*it)->requestPriority() == CCPriorityCalculator::lowestPriority())
             break;
+
+        // FIXME: We can make placeholder objects similar to textures to represent the render surface memory request.
+        if (!reservedRenderSurfaces && CCPriorityCalculator::priorityIsLower((*it)->requestPriority(), CCPriorityCalculator::renderSurfacePriority())) {
+            size_t newMemoryBytes = memoryBytes + renderSurfacesMemoryBytes;
+            if (newMemoryBytes > m_memoryAvailableBytes) {
+                m_priorityCutoff = (*it)->requestPriority();
+                m_memoryAvailableBytes = memoryBytes;
+                break;
+            }
+            m_memoryAvailableBytes -= renderSurfacesMemoryBytes;
+            reservedRenderSurfaces = true;
+        }
+
         size_t newMemoryBytes = memoryBytes + (*it)->memorySizeBytes();
-        if (newMemoryBytes > maxMemoryLimitBytes()) {
+        if (newMemoryBytes > m_memoryAvailableBytes) {
             m_priorityCutoff = (*it)->requestPriority();
             break;
         }
-        if (newMemoryBytes > preferredMemoryLimitBytes()
-                    && CCPriorityCalculator::priorityIsLower((*it)->requestPriority(), maxMemoryPriorityCutoff())) {
-            m_priorityCutoff = (*it)->requestPriority();
-            break;
-        }
+
         memoryBytes = newMemoryBytes;
     }
 
@@ -117,7 +116,7 @@ void CCPrioritizedTextureManager::prioritizeTextures()
         if (isAbovePriorityCutoff)
             m_memoryAboveCutoffBytes += (*it)->memorySizeBytes();
     }
-    ASSERT(m_memoryAboveCutoffBytes <= maxMemoryLimitBytes());
+    ASSERT(m_memoryAboveCutoffBytes <= m_memoryAvailableBytes);
 
     // Put backings in eviction/recycling order.
     for (BackingSet::iterator it = m_backings.begin(); it != m_backings.end(); ++it)
@@ -155,8 +154,11 @@ bool CCPrioritizedTextureManager::requestLate(CCPrioritizedTexture* texture)
     if (texture->isAbovePriorityCutoff())
         return true;
 
+    if (CCPriorityCalculator::priorityIsLower(texture->requestPriority(), m_priorityCutoff))
+        return false;
+
     size_t newMemoryBytes = m_memoryAboveCutoffBytes + texture->memorySizeBytes();
-    if (newMemoryBytes > m_maxMemoryLimitBytes)
+    if (newMemoryBytes > m_memoryAvailableBytes)
         return false;
 
     m_memoryAboveCutoffBytes = newMemoryBytes;
@@ -189,8 +191,7 @@ void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTex
 
     // Otherwise reduce memory and just allocate a new backing texures.
     if (!backing) {
-        size_t limit = std::max(m_memoryAboveCutoffBytes, m_preferredMemoryLimitBytes) - texture->memorySizeBytes();
-        reduceMemory(limit, allocator);
+        reduceMemory(m_memoryAvailableBytes - texture->memorySizeBytes(), allocator);
         backing = createBacking(texture->size(), texture->format(), allocator);
     }
 
@@ -218,8 +219,7 @@ void CCPrioritizedTextureManager::reduceMemory(size_t limitBytes, TextureAllocat
 
 void CCPrioritizedTextureManager::reduceMemory(TextureAllocator* allocator)
 {
-    size_t limit = std::max(m_memoryAboveCutoffBytes, m_preferredMemoryLimitBytes);
-    reduceMemory(limit, allocator);
+    reduceMemory(m_memoryAvailableBytes, allocator);
     ASSERT(memoryUseBytes() <= maxMemoryLimitBytes());
 
     // We currently collect backings from deleted textures for later recycling.
@@ -233,7 +233,7 @@ void CCPrioritizedTextureManager::reduceMemory(TextureAllocator* allocator)
             break;
         wastedMemory += (*it)->memorySizeBytes();
     }
-    size_t tenPercentOfMemory = maxMemoryLimitBytes() / 10;
+    size_t tenPercentOfMemory = m_memoryAvailableBytes / 10;
     if (wastedMemory <= tenPercentOfMemory)
         return;
     reduceMemory(memoryUseBytes() - (wastedMemory - tenPercentOfMemory), allocator);

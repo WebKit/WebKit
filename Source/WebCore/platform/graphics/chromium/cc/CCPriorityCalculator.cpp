@@ -33,15 +33,21 @@ using namespace std;
 namespace WebCore {
 
 // static
-int CCPriorityCalculator::uiPriority()
+int CCPriorityCalculator::uiPriority(bool drawsToRootSurface)
 {
-    return -1;
+    return drawsToRootSurface ? -1 : 2;
 }
 
 // static
-int CCPriorityCalculator::visiblePriority()
+int CCPriorityCalculator::visiblePriority(bool drawsToRootSurface)
 {
-    return 0;
+    return drawsToRootSurface ? 0 : 3;
+}
+
+// static
+int CCPriorityCalculator::renderSurfacePriority()
+{
+    return 1;
 }
 
 // static
@@ -65,19 +71,24 @@ unsigned manhattanDistance(const IntRect& a, const IntRect& b)
 }
 }
 
-int CCPriorityCalculator::priorityFromDistance(const IntRect& visibleRect, const IntRect& textureRect) const
+int CCPriorityCalculator::priorityFromDistance(const IntRect& visibleRect, const IntRect& textureRect, bool drawsToRootSurface) const
 {
-    return visiblePriority() + manhattanDistance(visibleRect, textureRect);
+    unsigned distance = manhattanDistance(visibleRect, textureRect);
+    if (!distance)
+        return visiblePriority(drawsToRootSurface);
+    return visiblePriority(false) + distance;
 }
 
-int CCPriorityCalculator::priorityFromDistance(unsigned pixels) const
+int CCPriorityCalculator::priorityFromDistance(unsigned pixels, bool drawsToRootSurface) const
 {
-    return visiblePriority() + pixels;
+    if (!pixels)
+        return visiblePriority(drawsToRootSurface);
+    return visiblePriority(false) + pixels;
 }
 
-int CCPriorityCalculator::priorityFromVisibility(bool visible) const
+int CCPriorityCalculator::priorityFromVisibility(bool visible, bool drawsToRootSurface) const
 {
-    return visible ? visiblePriority() : lowestPriority();
+    return visible ? visiblePriority(drawsToRootSurface) : lowestPriority();
 }
 
 } // WebCore

@@ -34,12 +34,13 @@ namespace WebCore {
 
 class CCPriorityCalculator {
 public:
-    static int uiPriority();
-    static int visiblePriority();
+    static int uiPriority(bool drawsToRootSurface);
+    static int visiblePriority(bool drawsToRootSurface);
+    static int renderSurfacePriority();
     static int lingeringPriority(int previousPriority);
-    int priorityFromDistance(const IntRect& visibleRect, const IntRect& textureRect) const;
-    int priorityFromDistance(unsigned pixels) const;
-    int priorityFromVisibility(bool visible) const;
+    int priorityFromDistance(const IntRect& visibleRect, const IntRect& textureRect, bool drawsToRootSurface) const;
+    int priorityFromDistance(unsigned pixels, bool drawsToRootSurface) const;
+    int priorityFromVisibility(bool visible, bool drawsToRootSurface) const;
 
     static inline int highestPriority() { return std::numeric_limits<int>::min(); }
     static inline int lowestPriority() { return std::numeric_limits<int>::max(); }

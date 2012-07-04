@@ -117,13 +117,14 @@ public:
     using WebCore::TiledLayerChromium::skipsDraw;
     using WebCore::TiledLayerChromium::numPaintedTiles;
     using WebCore::TiledLayerChromium::idlePaintRect;
-    using WebCore::TiledLayerChromium::setTexturePrioritiesInRect;
 
     virtual void setNeedsDisplayRect(const WebCore::FloatRect&) OVERRIDE;
     const WebCore::FloatRect& lastNeedsDisplayRect() const { return m_lastNeedsDisplayRect; }
 
     // Updates the visibleLayerRect().
     virtual void update(WebCore::CCTextureUpdater&, const WebCore::CCOcclusionTracker*) OVERRIDE;
+
+    virtual void setTexturePriorities(const WebCore::CCPriorityCalculator&) OVERRIDE;
 
     virtual WebCore::CCPrioritizedTextureManager* textureManager() const OVERRIDE { return m_textureManager; }
     FakeLayerTextureUpdater* fakeLayerTextureUpdater() { return m_fakeTextureUpdater.get(); }

@@ -121,6 +121,25 @@ void FakeTiledLayerChromium::update(CCTextureUpdater& updater, const CCOcclusion
     updateLayerRect(updater, visibleLayerRect(), occlusion);
 }
 
+void FakeTiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& calculator)
+{
+    // Ensure there is always a target render surface available. If none has been
+    // set (the layer is an orphan for the test), then just set a surface on itself.
+    bool missingTargetRenderSurface = !targetRenderSurface();
+
+    if (missingTargetRenderSurface) {
+        createRenderSurface();
+        setTargetRenderSurface(renderSurface());
+    }
+
+    TiledLayerChromium::setTexturePriorities(calculator);
+
+    if (missingTargetRenderSurface) {
+        clearRenderSurface();
+        setTargetRenderSurface(0);
+    }
+}
+
 FakeTiledLayerWithScaledBounds::FakeTiledLayerWithScaledBounds(CCPrioritizedTextureManager* textureManager)
     : FakeTiledLayerChromium(textureManager)
 {

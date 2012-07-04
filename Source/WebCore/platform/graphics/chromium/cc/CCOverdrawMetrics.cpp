@@ -47,6 +47,8 @@ CCOverdrawMetrics::CCOverdrawMetrics(bool recordMetricsForFrame)
     , m_pixelsUploadedOpaque(0)
     , m_pixelsUploadedTranslucent(0)
     , m_tilesCulledForUpload(0)
+    , m_contentsTextureUseBytes(0)
+    , m_renderSurfaceTextureUseBytes(0)
     , m_pixelsDrawnOpaque(0)
     , m_pixelsDrawnTranslucent(0)
     , m_pixelsCulledForDrawing(0)
@@ -105,6 +107,22 @@ void CCOverdrawMetrics::didUpload(const WebTransformationMatrix& transformToTarg
     m_pixelsUploadedTranslucent += uploadArea - uploadOpaqueArea;
 }
 
+void CCOverdrawMetrics::didUseContentsTextureMemoryBytes(size_t contentsTextureUseBytes)
+{
+    if (!m_recordMetricsForFrame)
+        return;
+
+    m_contentsTextureUseBytes += contentsTextureUseBytes;
+}
+
+void CCOverdrawMetrics::didUseRenderSurfaceTextureMemoryBytes(size_t renderSurfaceUseBytes)
+{
+    if (!m_recordMetricsForFrame)
+        return;
+
+    m_renderSurfaceTextureUseBytes += renderSurfaceUseBytes;
+}
+
 void CCOverdrawMetrics::didCullForDrawing(const WebTransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect)
 {
     if (!m_recordMetricsForFrame)
@@ -147,6 +165,8 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
     float normalization = 1000.f / (layerTreeHost->deviceViewportSize().width() * layerTreeHost->deviceViewportSize().height());
     // This gives approximately 100x the percentage of tiles to fill the viewport once, if all tiles were 256x256.
     float tileNormalization = 10000.f / (layerTreeHost->deviceViewportSize().width() / 256.f * layerTreeHost->deviceViewportSize().height() / 256.f);
+    // This gives approximately 10x the percentage of bytes to fill the viewport once, assuming 4 bytes per pixel.
+    float byteNormalization = normalization / 4;
 
     switch (metricsType) {
     case DrawingToScreen:
@@ -164,6 +184,10 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountOpaque_Upload", static_cast<int>(normalization * m_pixelsUploadedOpaque), 100, 1000000, 50);
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.pixelCountTranslucent_Upload", static_cast<int>(normalization * m_pixelsUploadedTranslucent), 100, 1000000, 50);
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.tileCountCulled_Upload", static_cast<int>(tileNormalization * m_tilesCulledForUpload), 100, 10000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.renderSurfaceTextureBytes_ViewportScaled", static_cast<int>(byteNormalization * m_renderSurfaceTextureUseBytes), 10, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.renderSurfaceTextureBytes_Unscaled", static_cast<int>(m_renderSurfaceTextureUseBytes / 1000), 1000, 100000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.contentsTextureBytes_ViewportScaled", static_cast<int>(byteNormalization * m_contentsTextureUseBytes), 10, 1000000, 50);
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.contentsTextureBytes_Unscaled", static_cast<int>(m_contentsTextureUseBytes / 1000), 1000, 100000000, 50);
 
         {
             TRACE_COUNTER_ID1("cc", "UploadTilesCulled", layerTreeHost, m_tilesCulledForUpload);
@@ -172,6 +196,10 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
         {
             // This must be in a different scope than the TRACE_EVENT2 above.
             TRACE_EVENT1("cc", "CCOverdrawPaintMetrics", "PixelsPainted", m_pixelsPainted);
+        }
+        {
+            // This must be in a different scope than the TRACE_EVENTs above.
+            TRACE_EVENT2("cc", "CCOverdrawPaintMetrics", "ContentsTextureBytes", m_contentsTextureUseBytes, "RenderSurfaceTextureBytes", m_renderSurfaceTextureUseBytes);
         }
         break;
     }

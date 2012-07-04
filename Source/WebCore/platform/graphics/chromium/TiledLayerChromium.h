@@ -82,8 +82,6 @@ protected:
     // Reset state on tiles that will be used for updating the layer.
     void resetUpdateState();
 
-    void setTexturePrioritiesInRect(const CCPriorityCalculator&, const IntRect& visibleLayerRect);
-
     // Prepare data needed to update textures that intersect with layerRect.
     void updateLayerRect(CCTextureUpdater&, const IntRect& layerRect, const CCOcclusionTracker*);
 
@@ -108,6 +106,8 @@ private:
 
     bool tileOnlyNeedsPartialUpdate(UpdatableTile*);
     bool tileNeedsBufferedUpdate(UpdatableTile*);
+
+    void setTexturePrioritiesInRect(const CCPriorityCalculator&, const IntRect& visibleLayerRect);
 
     void updateTiles(bool idle, int left, int top, int right, int bottom, CCTextureUpdater&, const CCOcclusionTracker*);
 

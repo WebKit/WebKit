@@ -40,9 +40,9 @@ class CCPriorityCalculator;
 class CCPrioritizedTextureManager {
     WTF_MAKE_NONCOPYABLE(CCPrioritizedTextureManager);
 public:
-    static PassOwnPtr<CCPrioritizedTextureManager> create(size_t maxMemoryLimitBytes, size_t preferredMemoryLimitBytes, int maxTextureSize)
+    static PassOwnPtr<CCPrioritizedTextureManager> create(size_t maxMemoryLimitBytes, int maxTextureSize)
     {
-        return adoptPtr(new CCPrioritizedTextureManager(maxMemoryLimitBytes, preferredMemoryLimitBytes, maxTextureSize));
+        return adoptPtr(new CCPrioritizedTextureManager(maxMemoryLimitBytes, maxTextureSize));
     }
     PassOwnPtr<CCPrioritizedTexture> createTexture(IntSize size, GC3Denum format)
     {
@@ -56,21 +56,12 @@ public:
     // memoryUseBytes() <= memoryAboveCutoffBytes() should always be true.
     size_t memoryUseBytes() const { return m_memoryUseBytes; }
     size_t memoryAboveCutoffBytes() const { return m_memoryAboveCutoffBytes; }
+    size_t memoryForRenderSurfacesBytes() const { return m_maxMemoryLimitBytes - m_memoryAvailableBytes; }
 
-    void setMemoryAllocationLimitBytes(size_t);
-
-    // FIXME: We should get rid of the preferred/max limits and let GpuMemoryManager
-    // just adjust the max limit based on hints we can provide from this class.
-    // Ideally it will be adjusted relatively rarely such that recycling is maximized.
     void setMaxMemoryLimitBytes(size_t bytes) { m_maxMemoryLimitBytes = bytes; }
     size_t maxMemoryLimitBytes() const { return m_maxMemoryLimitBytes; }
-    void setPreferredMemoryLimitBytes(size_t bytes) { m_preferredMemoryLimitBytes = bytes; }
-    size_t preferredMemoryLimitBytes() const { return m_preferredMemoryLimitBytes; }
 
-    void setMaxMemoryPriorityCutoff(size_t cutoff) { m_maxMemoryPriorityCutoff = cutoff; }
-    unsigned maxMemoryPriorityCutoff() const { return m_maxMemoryPriorityCutoff; }
-
-    void prioritizeTextures();
+    void prioritizeTextures(size_t renderSurfacesMemoryBytes);
     void clearPriorities();
 
     bool requestLate(CCPrioritizedTexture*);
@@ -107,7 +98,7 @@ private:
         return CCPriorityCalculator::priorityIsLower(priorityA, priorityB);
     }
 
-    CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, size_t preferredMemoryLimitBytes, int maxTextureSize);
+    CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, int maxTextureSize);
 
     void reduceMemory(size_t limit, TextureAllocator*);
 
@@ -118,11 +109,10 @@ private:
     void destroyBacking(CCPrioritizedTexture::Backing*, TextureAllocator*);
 
     size_t m_maxMemoryLimitBytes;
-    size_t m_preferredMemoryLimitBytes;
-    unsigned m_maxMemoryPriorityCutoff;
     unsigned m_priorityCutoff;
     size_t m_memoryUseBytes;
     size_t m_memoryAboveCutoffBytes;
+    size_t m_memoryAvailableBytes;
 
     typedef HashSet<CCPrioritizedTexture*> TextureSet;
     typedef ListHashSet<CCPrioritizedTexture::Backing*> BackingSet;

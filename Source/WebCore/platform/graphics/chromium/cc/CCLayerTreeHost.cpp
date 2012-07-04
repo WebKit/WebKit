@@ -152,7 +152,7 @@ void CCLayerTreeHost::initializeLayerRenderer()
     // Update m_settings based on partial update capability.
     m_settings.maxPartialTextureUpdates = min(m_settings.maxPartialTextureUpdates, m_proxy->maxPartialTextureUpdates());
 
-    m_contentsTextureManager = CCPrioritizedTextureManager::create(0, 0, m_proxy->layerRendererCapabilities().maxTextureSize);
+    m_contentsTextureManager = CCPrioritizedTextureManager::create(0, m_proxy->layerRendererCapabilities().maxTextureSize);
 
     m_layerRendererInitialized = true;
 
@@ -443,10 +443,10 @@ bool CCLayerTreeHost::initializeLayerRendererIfNeeded()
 }
 
 
-void CCLayerTreeHost::updateLayers(CCTextureUpdater& updater, size_t contentsMemoryLimitBytes)
+void CCLayerTreeHost::updateLayers(CCTextureUpdater& updater, size_t memoryAllocationLimitBytes)
 {
     ASSERT(m_layerRendererInitialized);
-    ASSERT(contentsMemoryLimitBytes);
+    ASSERT(memoryAllocationLimitBytes);
 
     if (!rootLayer())
         return;
@@ -454,7 +454,7 @@ void CCLayerTreeHost::updateLayers(CCTextureUpdater& updater, size_t contentsMem
     if (viewportSize().isEmpty())
         return;
 
-    m_contentsTextureManager->setMemoryAllocationLimitBytes(contentsMemoryLimitBytes);
+    m_contentsTextureManager->setMaxMemoryLimitBytes(memoryAllocationLimitBytes);
 
     updateLayers(rootLayer(), updater);
 }
@@ -525,7 +525,29 @@ void CCLayerTreeHost::prioritizeTextures(const LayerList& updateList)
         }
     }
 
-    m_contentsTextureManager->prioritizeTextures();
+    size_t readbackBytes = 0;
+    size_t maxBackgroundTextureBytes = 0;
+    size_t contentsTextureBytes = 0;
+
+    // Start iteration at 1 to skip the root surface as it does not have a texture cost.
+    for (size_t i = 1; i < updateList.size(); ++i) {
+        LayerChromium* renderSurfaceLayer = updateList[i].get();
+        RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
+
+        size_t bytes = TextureManager::memoryUseBytes(renderSurface->contentRect().size(), GraphicsContext3D::RGBA);
+        contentsTextureBytes += bytes;
+
+        if (renderSurface->backgroundFilters().isEmpty())
+            continue;
+
+        if (bytes > maxBackgroundTextureBytes)
+            maxBackgroundTextureBytes = bytes;
+        if (!readbackBytes)
+            readbackBytes = TextureManager::memoryUseBytes(m_deviceViewportSize, GraphicsContext3D::RGBA);
+    }
+    size_t renderSurfacesBytes = readbackBytes + maxBackgroundTextureBytes + contentsTextureBytes;
+
+    m_contentsTextureManager->prioritizeTextures(renderSurfacesBytes);
 }
 
 // static
@@ -578,6 +600,8 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
         occlusionTracker.leaveLayer(it);
     }
 
+    occlusionTracker.overdrawMetrics().didUseContentsTextureMemoryBytes(m_contentsTextureManager->memoryAboveCutoffBytes());
+    occlusionTracker.overdrawMetrics().didUseRenderSurfaceTextureMemoryBytes(m_contentsTextureManager->memoryForRenderSurfacesBytes());
     occlusionTracker.overdrawMetrics().recordMetrics(this);
 }
 

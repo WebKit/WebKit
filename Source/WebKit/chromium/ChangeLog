@@ -1,5 +1,23 @@
 2012-07-04  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Respect memory needed for RenderSurfaces when reserving contents textures
+        https://bugs.webkit.org/show_bug.cgi?id=89901
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCPrioritizedTextureTest.cpp:
+        (WTF::CCPrioritizedTextureTest::createManager):
+        (WTF::TEST_F):
+        (WTF):
+        * tests/CCTiledLayerTestCommon.cpp:
+        (WebKitTests::FakeTiledLayerChromium::setTexturePriorities):
+        (WebKitTests):
+        * tests/CCTiledLayerTestCommon.h:
+        (FakeTiledLayerChromium):
+        * tests/TiledLayerChromiumTest.cpp:
+
+2012-07-04  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Clear RenderSurfaces still when no idle paint will be done
         https://bugs.webkit.org/show_bug.cgi?id=90553
 

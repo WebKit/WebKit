@@ -504,6 +504,8 @@ void LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* qu
     //
     // Pixel copies in this algorithm occur at steps 2, 3, 4, and 5.
 
+    // FIXME: When this algorithm changes, update CCLayerTreeHost::prioritizeTextures() accordingly.
+
     CCRenderSurface* drawingSurface = quad->renderPass()->targetSurface();
     if (quad->backgroundFilters().isEmpty())
         return;

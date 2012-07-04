@@ -49,6 +49,10 @@ public:
     void didCullTileForUpload();
     // Records pixels that were uploaded to texture memory.
     void didUpload(const WebKit::WebTransformationMatrix& transformToTarget, const IntRect& uploadRect, const IntRect& opaqueRect);
+    // Record contents texture(s) behind present using the given number of bytes.
+    void didUseContentsTextureMemoryBytes(size_t contentsTextureUseBytes);
+    // Record RenderSurface texture(s) being present using the given number of bytes.
+    void didUseRenderSurfaceTextureMemoryBytes(size_t renderSurfaceUseBytes);
 
     // These methods are used for saving metrics during draw.
 
@@ -93,6 +97,10 @@ private:
     float m_pixelsUploadedTranslucent;
     // Count of tiles that were invalidated but not uploaded.
     int m_tilesCulledForUpload;
+    // Count the number of bytes in contents textures.
+    unsigned long long m_contentsTextureUseBytes;
+    // Count the number of bytes in RenderSurface textures.
+    unsigned long long m_renderSurfaceTextureUseBytes;
 
     // These values are used for saving metrics during draw.
 

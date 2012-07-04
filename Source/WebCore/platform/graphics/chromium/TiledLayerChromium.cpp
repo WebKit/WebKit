@@ -523,6 +523,7 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
     resetUpdateState();
 
     IntRect prepaintRect = idlePaintRect(visibleRect);
+    bool drawsToRootSurface = !targetRenderSurface()->targetRenderSurface();
 
     // Minimally create the tiles in the desired pre-paint rect.
     if (!prepaintRect.isEmpty()) {
@@ -558,7 +559,7 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
 
                 tile->dirtyRect = m_tiler->tileRect(tile);
                 LayerTextureUpdater::Texture* backBuffer = tile->texture();
-                backBuffer->texture()->setRequestPriority(priorityCalc.priorityFromVisibility(true));
+                backBuffer->texture()->setRequestPriority(priorityCalc.priorityFromVisibility(true, drawsToRootSurface));
                 OwnPtr<CCPrioritizedTexture> frontBuffer = CCPrioritizedTexture::create(backBuffer->texture()->textureManager(),
                                                                                         backBuffer->texture()->size(),
                                                                                         backBuffer->texture()->format());
@@ -578,9 +579,9 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
         // 512 pixels of pre-painting. Later we can just pass an animating flag etc. to the
         // calculator and it can take care of this special case if we still need it.
         if (visibleRect.isEmpty() && !prepaintRect.isEmpty())
-            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(512));
+            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(512, drawsToRootSurface));
         else if (!visibleRect.isEmpty())
-            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(visibleRect, tileRect));
+            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(visibleRect, tileRect, drawsToRootSurface));
     }
 }
 
