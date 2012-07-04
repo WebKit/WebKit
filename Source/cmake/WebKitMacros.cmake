@@ -24,6 +24,40 @@ MACRO (ADD_SOURCE_DEPENDENCIES _source _deps)
 ENDMACRO ()
 
 
+# Helper macro which wraps generate-bindings.pl script.
+#   _output_source is a list name which will contain generated sources.(eg. WebCore_SOURCES)
+#   _input_files are IDL files to generate.
+#   _base_dir is base directory where script is called.
+#   _idl_includes is value of --include argument. (eg. --include=${WEBCORE_DIR}/bindings/js)
+#   _features is a value of --defines argument.
+#   _destination is a value of --outputDir argument.
+#   _prefix is a prefix of output files. (eg. JS - it makes JSXXX.cpp JSXXX.h from XXX.idl)
+#   _generator is a value of --generator argument.
+#   _supplemental_dependency_file is a value of --supplementalDependencyFile. (optional)
+MACRO (GENERATE_BINDINGS _output_source _input_files _base_dir _idl_includes _features _destination _prefix _generator)
+    SET(BINDING_GENERATOR ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl)
+
+    SET(_supplemental_dependency_file ${ARGN})
+    IF (_supplemental_dependency_file)
+        SET(_supplemental_dependency --supplementalDependencyFile ${_supplemental_dependency_file})
+    ENDIF ()
+
+    FOREACH (_file ${_input_files})
+        GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
+
+        ADD_CUSTOM_COMMAND(
+            OUTPUT ${_destination}/${_prefix}${_name}.cpp ${_destination}/${_prefix}${_name}.h
+            MAIN_DEPENDDENCY ${_file}
+            DEPENDS ${BINDING_GENERATOR} ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/bindings/scripts/CodeGenerator${_generator}.pm ${_supplemental_dependency_file}
+            COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_GENERATOR} --defines "${_features}" --generator ${_generator} ${_idl_includes} --outputDir "${_destination}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${_supplemental_dependency} ${_file}
+            WORKING_DIRECTORY ${_base_dir}
+            VERBATIM)
+
+        LIST(APPEND ${_output_source} ${_destination}/${_prefix}${_name}.cpp)
+    ENDFOREACH ()
+ENDMACRO ()
+
+
 MACRO (GENERATE_FONT_NAMES _infile)
     SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)
     SET(_arguments  --fonts ${_infile})

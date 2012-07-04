@@ -330,24 +330,18 @@ ADD_CUSTOM_COMMAND(
     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} --idlAttributesFile ${IDL_ATTRIBUTES_FILE}
     VERBATIM)
 
-FOREACH (_file ${WebCore_IDL_FILES})
-    GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
-    ADD_CUSTOM_COMMAND(
-        OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.h
-        MAIN_DEPENDENCY ${_file}
-        DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorJS.pm ${SUPPLEMENTAL_DEPENDENCY_FILE}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator JS ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} ${WEBCORE_DIR}/${_file}
-        VERBATIM)
-    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.cpp)
-ENDFOREACH ()
+GENERATE_BINDINGS(WebCore_SOURCES
+    "${WebCore_IDL_FILES}"
+    "${WEBCORE_DIR}"
+    "${IDL_INCLUDES}"
+    "${FEATURE_DEFINES_JAVASCRIPT}"
+    ${DERIVED_SOURCES_WEBCORE_DIR} JS JS
+    ${SUPPLEMENTAL_DEPENDENCY_FILE})
 
-FOREACH (_file ${WebCoreTestSupport_IDL_FILES})
-    GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
-    ADD_CUSTOM_COMMAND(
-        OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.h
-        MAIN_DEPENDENCY ${_file}
-        DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorJS.pm ${SUPPLEMENTAL_DEPENDENCY_FILE}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator JS ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} ${WEBCORE_DIR}/${_file}
-        VERBATIM)
-    LIST(APPEND WebCoreTestSupport_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.cpp)
-ENDFOREACH ()
+GENERATE_BINDINGS(WebCoreTestSupport_SOURCES
+    "${WebCoreTestSupport_IDL_FILES}"
+    "${WEBCORE_DIR}"
+    "${IDL_INCLUDES}"
+    "${FEATURE_DEFINES_JAVASCRIPT}"
+    ${DERIVED_SOURCES_WEBCORE_DIR} JS JS
+    ${SUPPLEMENTAL_DEPENDENCY_FILE})

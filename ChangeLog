@@ -1,3 +1,15 @@
+2012-07-04  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Add GENERATE_BINDINGS macro to share the codes which use generate-bindings.pl.
+        https://bugs.webkit.org/show_bug.cgi?id=90258
+
+        Reviewed by Rob Buis.
+
+        This new macro calls generate-bindings.pl and append generated sources
+        into proper source list.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Get rid of un-needed QT += declarative for Qt 5

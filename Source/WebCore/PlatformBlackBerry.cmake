@@ -339,16 +339,13 @@ ADD_CUSTOM_COMMAND(
     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} --idlAttributesFile ${IDL_ATTRIBUTES_FILE}
     VERBATIM)
 
-FOREACH (_file ${WebCore_CPP_IDL_FILES})
-    GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
-    ADD_CUSTOM_COMMAND(
-        OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/WebDOM${_name}.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/WebDOM${_name}.h
-        MAIN_DEPENDENCY ${_file}
-        DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorCPP.pm ${SUPPLEMENTAL_DEPENDENCY_FILE} ${_file}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_WEBCORE}" --generator CPP ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} ${WEBCORE_DIR}/${_file}
-        VERBATIM)
-    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebDOM${_name}.cpp)
-ENDFOREACH ()
+GENERATE_BINDINGS(WebCore_SOURCES
+    "${WebCore_CPP_IDL_FILES}"
+    "${WEBCORE_DIR}"
+    "${IDL_INCLUDES}"
+    "${FEATURE_DEFINES_WEBCORE}"
+    ${DERIVED_SOURCES_WEBCORE_DIR} WebDOM CPP
+    ${SUPPLEMENTAL_DEPENDENCY_FILE})
 
 # Generate contents for PopupPicker.cpp
 SET(WebCore_POPUP_CSS_AND_JS
