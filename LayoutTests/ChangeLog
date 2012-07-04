@@ -1,3 +1,10 @@
+2012-07-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip failing test.
+        https://bugs.webkit.org/show_bug.cgi?id=90530
+
+        * platform/qt/Skipped: skip inspector/extensions/extensions-resources.html.
+
 2012-07-04  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed GTK gardening. Removed some tests from TestExpectations
