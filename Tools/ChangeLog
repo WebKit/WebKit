@@ -1,3 +1,18 @@
+2012-07-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] WebKit2 testing bot unable to find the build directory
+        https://bugs.webkit.org/show_bug.cgi?id=90523
+
+        Reviewed by Carlos Garcia Campos.
+
+        The presence of GNUmakefile was used to determine whether a given
+        directory was a valid build directory or not. That's not correct for
+        testing bots as we export only the minimum required stuff to run the
+        tests.
+
+        * gtk/common.py:
+        (get_build_path.is_valid_build_directory): added an extra check.:
+
 2012-07-04  Joe Thomas  <joethomas@motorola.com>
 
         Adding myself to committers list.

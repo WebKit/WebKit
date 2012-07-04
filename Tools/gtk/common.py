@@ -40,7 +40,8 @@ def get_build_path():
         return build_dir
 
     def is_valid_build_directory(path):
-        return os.path.exists(os.path.join(path, 'GNUmakefile'))
+        return os.path.exists(os.path.join(path, 'GNUmakefile')) or \
+            os.path.exists(os.path.join(path, 'Programs', 'DumpRenderTree'))
 
     if len(sys.argv[1:]) > 1 and os.path.exists(sys.argv[-1]) and is_valid_build_directory(sys.argv[-1]):
         return sys.argv[-1]
