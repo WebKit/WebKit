@@ -255,9 +255,10 @@ class _BrokerConnection(object):
                                   message_name, *message_args)
 
     def raise_exception(self, exc_info):
-        # Since tracebacks aren't picklable, send the extracted stack instead.
+        # Since tracebacks aren't picklable, send the extracted stack instead,
+        # but at least log the full traceback.
         exception_type, exception_value, exception_traceback = sys.exc_info()
-        stack_utils.log_traceback(_log.debug, exception_traceback)
+        stack_utils.log_traceback(_log.error, exception_traceback)
         stack = traceback.extract_tb(exception_traceback)
         self._broker.post_message(self._client, self._post_topic, 'exception', exception_type, exception_value, stack)
 
@@ -305,8 +306,12 @@ class AbstractWorker(BrokerClient):
             self._worker_connection.raise_exception(sys.exc_info())
         finally:
             _log.debug("%s done with message loop%s" % (self._name, exception_msg))
-            self.worker.cleanup()
-            self._worker_connection.post_message('done')
+            try:
+                self.worker.cleanup()
+            finally:
+                # Make sure we post a done so that we can flush the log messages
+                # and clean up properly even if we raise an exception in worker.cleanup().
+                self._worker_connection.post_message('done')
 
     def handle_stop(self, source):
         self._done = True
@@ -456,8 +461,11 @@ class _InlineWorkerConnection(_WorkerConnection):
     def raise_exception(self, exc_info):
         # Since the worker is in the same process as the manager, we can
         # raise the exception directly, rather than having to send it through
-        # the queue. This allows us to preserve the traceback.
-        raise exc_info[0], exc_info[1], exc_info[2]
+        # the queue. This allows us to preserve the traceback, but we log
+        # it anyway for consistency with the multiprocess case.
+        exception_type, exception_value, exception_traceback = sys.exc_info()
+        stack_utils.log_traceback(_log.error, exception_traceback)
+        raise exception_type, exception_value, exception_traceback
 
 
 class _Process(multiprocessing.Process):

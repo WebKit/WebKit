@@ -112,7 +112,7 @@ class PortFactory(object):
             if port_name.startswith(cls.port_name):
                 port_name = cls.determine_full_port_name(self._host, options, port_name)
                 return cls(self._host, port_name, options=options, **kwargs)
-        raise NotImplementedError('unsupported port: %s' % port_name)
+        raise NotImplementedError('unsupported platform: "%s"' % port_name)
 
     def all_port_names(self):
         """Return a list of all valid, fully-specified, "real" port names.

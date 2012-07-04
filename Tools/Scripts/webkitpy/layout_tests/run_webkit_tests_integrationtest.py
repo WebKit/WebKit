@@ -904,6 +904,20 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEquals(full_results['has_wdiff'], False)
         self.assertEquals(full_results['has_pretty_patch'], False)
 
+    def test_unsupported_platform(self):
+        oc = outputcapture.OutputCapture()
+        try:
+            oc.capture_output()
+            res = run_webkit_tests.main(['--platform', 'foo'])
+        finally:
+            stdout, stderr, logs = oc.restore_output()
+
+        self.assertEquals(res, run_webkit_tests.EXCEPTIONAL_EXIT_STATUS)
+        self.assertEquals(stdout, '')
+        self.assertTrue('unsupported platform' in stderr)
+
+        # This is empty because we don't even get a chance to configure the logger before failing.
+        self.assertEquals(logs, '')
 
 class EndToEndTest(unittest.TestCase):
     def parse_full_results(self, full_results_text):

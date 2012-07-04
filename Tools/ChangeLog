@@ -1,5 +1,31 @@
 2012-07-03  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: clean up exception handling and make sure we log some more failures
+        https://bugs.webkit.org/show_bug.cgi?id=90503
+
+        Reviewed by Ojan Vafai.
+
+        There were several places where exceptions weren't getting
+        logged, most notably if you passed a bad value to --platform.
+        This change tests that and cleans things up a bit; more cleanup
+        will be possible when we rework the manager_worker_broker code.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (_BrokerConnection.raise_exception):
+        (_InlineWorkerConnection.raise_exception):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.run):
+        (Worker.kill_driver):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory.get):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        (main):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_unsupported_platfrom):
+
+2012-07-03  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: fix mock port
         https://bugs.webkit.org/show_bug.cgi?id=90500
 

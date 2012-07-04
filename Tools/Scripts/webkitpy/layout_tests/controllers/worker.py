@@ -134,10 +134,13 @@ class Worker(object):
         return thread_timeout_sec
 
     def kill_driver(self):
-        if self._driver:
+        # Be careful about how and when we kill the driver; if driver.stop()
+        # raises an exception, this routine may get re-entered via __del__.
+        driver = self._driver
+        self._driver = None
+        if driver:
             _log.debug("%s killing driver" % self._name)
-            self._driver.stop()
-            self._driver = None
+            driver.stop()
 
     def run_test_with_timeout(self, test_input, timeout):
         if self._options.run_singly:
