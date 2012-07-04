@@ -1,3 +1,12 @@
+2012-07-03  Hayato Ito  <hayato@chromium.org>
+
+        Parameter 'id' is not used in getUserModifyProperty() of fast/dom/shadow/user-modify-inheritance.html.
+        https://bugs.webkit.org/show_bug.cgi?id=90434
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/shadow/user-modify-inheritance.html:
+
 2012-07-03  Xueqing Huang  <huangxueqing@baidu.com>
 
         eventSender.beginDragWithFiles had been implemented in Windows, related tests should be removed from Skipped.

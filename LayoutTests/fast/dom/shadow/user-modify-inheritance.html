@@ -29,7 +29,7 @@ function computedStyle(element, style) {
 }
 
 function getUserModifyProperty(id) {
-    return computedStyle(document.getElementById("child-a"), userModifyPropertyName);
+    return computedStyle(document.getElementById(id), userModifyPropertyName);
 }
 
 function prepareNodeInShadowRoot(host, contentEditableAttributeValueForNode) {
