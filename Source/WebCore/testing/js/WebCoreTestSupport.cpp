@@ -52,10 +52,8 @@ void resetInternalsObject(JSContextRef context)
     ExecState* exec = toJS(context);
     JSLockHolder lock(exec);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
-    JSValue internalsJS = globalObject->getDirect(exec->globalData(), Identifier(exec, Internals::internalsId));
-    if (internalsJS.isNull() || internalsJS.isEmpty())
-        return;
-    if (Internals* internals = toInternals(internalsJS)) {
+    Internals * internals = toInternals(globalObject->getDirect(exec->globalData(), Identifier(exec, Internals::internalsId)));
+    if (internals) {
         ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
         if (scriptContext->isDocument())
             internals->reset(static_cast<Document*>(scriptContext));
