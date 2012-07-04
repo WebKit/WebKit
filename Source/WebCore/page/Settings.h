@@ -103,8 +103,10 @@ namespace WebCore {
         void setDefaultFixedFontSize(int);
         int defaultFixedFontSize() const { return m_defaultFixedFontSize; }
 
-        void setFontBoostingEnabled(bool);
-        bool fontBoostingEnabled() const { return m_fontBoostingEnabled; }
+#if ENABLE(TEXT_AUTOSIZING)
+        void setTextAutosizingEnabled(bool);
+        bool textAutosizingEnabled() const { return m_textAutosizingEnabled; }
+#endif
 
         // Unlike areImagesEnabled, this only suppresses the network load of
         // the image URL.  A cached image will still be rendered if requested.
@@ -631,7 +633,9 @@ namespace WebCore {
         unsigned m_sessionStorageQuota;
         unsigned m_editingBehaviorType;
         unsigned m_maximumHTMLParserDOMTreeDepth;
-        bool m_fontBoostingEnabled : 1;
+#if ENABLE(TEXT_AUTOSIZING)
+        bool m_textAutosizingEnabled : 1;
+#endif
         bool m_isSpatialNavigationEnabled : 1;
         bool m_isJavaEnabled : 1;
         bool m_isJavaEnabledForLocalFiles : 1;

@@ -135,7 +135,6 @@
       ['OS=="android"', {
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=0',
-          'ENABLE_FONT_BOOSTING=1',
           'ENABLE_INPUT_SPEECH=0',
           'ENABLE_INPUT_TYPE_COLOR=0',
           'ENABLE_INPUT_TYPE_DATETIME=1',
@@ -154,6 +153,7 @@
           # FIXME: Disable once the linking error has been resolved.
           # https://bugs.webkit.org/show_bug.cgi?id=88636
           'ENABLE_SHARED_WORKERS=1',
+          'ENABLE_TEXT_AUTOSIZING=1',
           'ENABLE_WEB_AUDIO=0',
           'WTF_USE_NATIVE_FULLSCREEN_VIDEO=1',
         ],
@@ -161,7 +161,6 @@
       }, { # OS!="android"
         'feature_defines': [
           'ENABLE_CALENDAR_PICKER=1',
-          'ENABLE_FONT_BOOSTING=0',
           'ENABLE_INPUT_SPEECH=1',
           'ENABLE_INPUT_TYPE_COLOR=1',
           'ENABLE_JAVASCRIPT_I18N_API=1',
@@ -173,6 +172,7 @@
           'ENABLE_OVERFLOW_SCROLLING=0',
           'ENABLE_PAGE_POPUP=1',
           'ENABLE_SHARED_WORKERS=1',
+          'ENABLE_TEXT_AUTOSIZING=0',
           'ENABLE_WEB_AUDIO=1',
         ],
       }],

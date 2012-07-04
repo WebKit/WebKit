@@ -1,3 +1,19 @@
+2012-07-04  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Add compile flag and runtime setting
+        https://bugs.webkit.org/show_bug.cgi?id=87394
+
+        This patch renames Font Boosting to Text Autosizing and adds compile guards around the runtime setting.
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setTextAutosizingEnabled):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-07-04  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Correctly reject accelerated animations with certain rotations.

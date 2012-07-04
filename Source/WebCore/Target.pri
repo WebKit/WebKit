@@ -3515,7 +3515,7 @@ contains(DEFINES, HAVE_QRAWFONT=1) {
         platform/graphics/qt/FontQt4.cpp
 }
 
-contains(DEFINES, ENABLE_FONT_BOOSTING=1) {
+contains(DEFINES, ENABLE_TEXT_AUTOSIZING=1) {
     SOURCES += # FIXME!
 }
 

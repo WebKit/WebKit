@@ -138,7 +138,9 @@ Settings::Settings(Page* page)
     , m_sessionStorageQuota(StorageMap::noQuota)
     , m_editingBehaviorType(editingBehaviorTypeForPlatform())
     , m_maximumHTMLParserDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
-    , m_fontBoostingEnabled(true)
+#if ENABLE(TEXT_AUTOSIZING)
+    , m_textAutosizingEnabled(true)
+#endif
     , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
     , m_isJavaEnabledForLocalFiles(true)
@@ -403,14 +405,16 @@ void Settings::setDefaultFixedFontSize(int defaultFontSize)
     m_page->setNeedsRecalcStyleInAllFrames();
 }
 
-void Settings::setFontBoostingEnabled(bool fontBoostingEnabled)
+#if ENABLE(TEXT_AUTOSIZING)
+void Settings::setTextAutosizingEnabled(bool textAutosizingEnabled)
 {
-    if (m_fontBoostingEnabled == fontBoostingEnabled)
+    if (m_textAutosizingEnabled == textAutosizingEnabled)
         return;
 
-    m_fontBoostingEnabled = fontBoostingEnabled;
+    m_textAutosizingEnabled = textAutosizingEnabled;
     m_page->setNeedsRecalcStyleInAllFrames();
 }
+#endif
 
 void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
 {

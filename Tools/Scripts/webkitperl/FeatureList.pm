@@ -66,7 +66,6 @@ my (
     $downloadAttributeSupport,
     $fileSystemSupport,
     $filtersSupport,
-    $fontBoostingSupport,
     $ftpDirSupport,
     $fullscreenAPISupport,
     $gamepadSupport,
@@ -116,6 +115,7 @@ my (
     $svgFontsSupport,
     $svgSupport,
     $systemMallocSupport,
+    $textAutosizingSupport,
     $tiledBackingStoreSupport,
     $touchEventsSupport,
     $touchIconLoadingSupport,
@@ -203,9 +203,6 @@ my @features = (
 
     { option => "filters", desc => "Toggle Filters support",
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl() || isBlackBerry()), value => \$filtersSupport },
-
-    { option => "font-boosting", desc => "Toggle Font Boosting support",
-      define => "ENABLE_FONT_BOOSTING", default => 0, value => \$fontBoostingSupport },
 
     { option => "ftpdir", desc => "Toggle FTP Directory support",
       define => "ENABLE_FTPDIR", default => !isWinCE(), value => \$ftpDirSupport },
@@ -350,6 +347,9 @@ my @features = (
 
     { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
       define => "USE_SYSTEM_MALLOC", default => isWinCE(), value => \$systemMallocSupport },
+
+    { option => "text-autosizing", desc => "Toggle Text Autosizing support",
+      define => "ENABLE_TEXT_AUTOSIZING", default => 0, value => \$textAutosizingSupport },
 
     { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
       define => "WTF_USE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },

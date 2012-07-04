@@ -1,3 +1,14 @@
+2012-07-04  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Add compile flag and runtime setting
+        https://bugs.webkit.org/show_bug.cgi?id=87394
+
+        This patch renames Font Boosting to Text Autosizing.
+
+        Reviewed by Adam Barth.
+
+        * configure.ac:
+
 2012-07-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Add GENERATE_BINDINGS macro to share the codes which use generate-bindings.pl.

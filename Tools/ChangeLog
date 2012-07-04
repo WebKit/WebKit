@@ -1,3 +1,15 @@
+2012-07-04  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Add compile flag and runtime setting
+        https://bugs.webkit.org/show_bug.cgi?id=87394
+
+        This patch renames Font Boosting to Text Autosizing.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * qmake/mkspecs/features/features.pri:
+
 2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Replace deprecated IN_PWD with PWD

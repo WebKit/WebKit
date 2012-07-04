@@ -1093,13 +1093,13 @@ AC_ARG_ENABLE(device_orientation,
               [],[enable_device_orientation="no"])
 AC_MSG_RESULT([$enable_device_orientation])
 
-# check whether to enable Font Boosting support
-AC_MSG_CHECKING([whether to enable Font Boosting])
-AC_ARG_ENABLE(font_boosting,
-              AC_HELP_STRING([--enable-font-boosting],
-                             [enable support for Font Boosting (incomplete) [default=no]]),
-              [],[enable_font_boosting="no"])
-AC_MSG_RESULT([$enable_font_boosting])
+# check whether to enable Text Autosizing support
+AC_MSG_CHECKING([whether to enable Text Autosizing])
+AC_ARG_ENABLE(text_autosizing,
+              AC_HELP_STRING([--enable-text-autosizing],
+                             [enable support for Text Autosizing (incomplete) [default=no]]),
+              [],[enable_text_autosizing="no"])
+AC_MSG_RESULT([$enable_text_autosizing])
 
 # check whether to enable CSS Exclusions support
 AC_MSG_CHECKING([whether to enable CSS Exclusions])
@@ -1453,7 +1453,7 @@ AM_CONDITIONAL([ENABLE_REGISTER_PROTOCOL_HANDLER],[test "$enable_register_protoc
 AM_CONDITIONAL([ENABLE_DEVICE_ORIENTATION],[test "$enable_device_orientation" = "yes"])
 AM_CONDITIONAL([ENABLE_MUTATION_OBSERVERS],[test "$enable_mutation_observers" = "yes"])
 AM_CONDITIONAL([ENABLE_IFRAME_SEAMLESS],[test "$enable_iframe_seamless" = "yes"])
-AM_CONDITIONAL([ENABLE_FONT_BOOSTING],[test "$enable_font_boosting" = "yes"])
+AM_CONDITIONAL([ENABLE_TEXT_AUTOSIZING],[test "$enable_text_autosizing" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_EXCLUSIONS],[test "$enable_css_exclusions" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_REGIONS],[test "$enable_css_regions" = "yes"])
 
@@ -1522,7 +1522,6 @@ Features:
  DOM mutation observer support                            : $enable_mutation_observers
  Fast Mobile Scrolling                                    : $enable_fast_mobile_scrolling
  Filters support                                          : $enable_filters
- Font Boosting support                                    : $enable_font_boosting
  Fullscreen API support                                   : $enable_fullscreen_api
  Gamepad support                                          : $enable_gamepad
  Geolocation support                                      : $enable_geolocation
@@ -1558,6 +1557,7 @@ Features:
  SQL client-side database storage support                 : $enable_sql_database
  SVG fonts support                                        : $enable_svg_fonts
  SVG support                                              : $enable_svg
+ Text Autosizing support                                  : $enable_text_autosizing
  Touch Icon Loading support                               : $enable_touch_icon_loading
  Web Audio support                                        : $enable_web_audio
  WebGL                                                    : $enable_webgl
