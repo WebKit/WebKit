@@ -134,6 +134,7 @@ private:
     typedef HashMap<CSSStyleSheet*, RefPtr<InspectorStyleSheet> > CSSStyleSheetToInspectorStyleSheet;
     typedef HashMap<Node*, RefPtr<InspectorStyleSheetForInlineStyle> > NodeToInspectorStyleSheet; // bogus "stylesheets" with elements' inline styles
     typedef HashMap<RefPtr<Document>, RefPtr<InspectorStyleSheet> > DocumentToViaInspectorStyleSheet; // "via inspector" stylesheets
+    typedef HashMap<int, unsigned> NodeIdToForcedPseudoState;
 
     void recalcStyleForPseudoStateIfNeeded(Element*, InspectorArray* forcedPseudoClasses);
     InspectorStyleSheetForInlineStyle* asInspectorStyleSheet(Element* element);
@@ -156,7 +157,7 @@ private:
     // InspectorCSSAgent::Listener implementation
     virtual void styleSheetChanged(InspectorStyleSheet*);
 
-    void clearPseudoState(bool recalcStyles);
+    void resetPseudoStates();
 
     InspectorFrontend::CSS* m_frontend;
     InspectorDOMAgent* m_domAgent;
@@ -165,9 +166,7 @@ private:
     CSSStyleSheetToInspectorStyleSheet m_cssStyleSheetToInspectorStyleSheet;
     NodeToInspectorStyleSheet m_nodeToInspectorStyleSheet;
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
-
-    RefPtr<Element> m_lastElementWithPseudoState;
-    unsigned m_lastPseudoState;
+    NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;
 
     int m_lastStyleSheetId;
 

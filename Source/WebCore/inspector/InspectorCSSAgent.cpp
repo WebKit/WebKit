@@ -461,7 +461,6 @@ InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, I
     : InspectorBaseAgent<InspectorCSSAgent>("CSS", instrumentingAgents, state)
     , m_frontend(0)
     , m_domAgent(domAgent)
-    , m_lastPseudoState(0)
     , m_lastStyleSheetId(1)
 {
     m_domAgent->setDOMListener(this);
@@ -485,7 +484,7 @@ void InspectorCSSAgent::clearFrontend()
 {
     ASSERT(m_frontend);
     m_frontend = 0;
-    clearPseudoState(true);
+    resetPseudoStates();
     String errorString;
     stopSelectorProfilerImpl(&errorString, false);
 }
@@ -514,6 +513,7 @@ void InspectorCSSAgent::reset()
     m_cssStyleSheetToInspectorStyleSheet.clear();
     m_nodeToInspectorStyleSheet.clear();
     m_documentToInspectorStyleSheet.clear();
+    resetPseudoStates();
 }
 
 void InspectorCSSAgent::enable(ErrorString*)
@@ -534,18 +534,27 @@ void InspectorCSSAgent::mediaQueryResultChanged()
 
 bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoType)
 {
-    if (m_lastElementWithPseudoState != element)
+    if (m_nodeIdToForcedPseudoState.isEmpty())
         return false;
 
+    int nodeId = m_domAgent->boundNodeId(element);
+    if (!nodeId)
+        return false;
+
+    NodeIdToForcedPseudoState::iterator it = m_nodeIdToForcedPseudoState.find(nodeId);
+    if (it == m_nodeIdToForcedPseudoState.end())
+        return false;
+
+    unsigned forcedPseudoState = it->second;
     switch (pseudoType) {
     case CSSSelector::PseudoActive:
-        return m_lastPseudoState & PseudoActive;
+        return forcedPseudoState & PseudoActive;
     case CSSSelector::PseudoFocus:
-        return m_lastPseudoState & PseudoFocus;
+        return forcedPseudoState & PseudoFocus;
     case CSSSelector::PseudoHover:
-        return m_lastPseudoState & PseudoHover;
+        return forcedPseudoState & PseudoHover;
     case CSSSelector::PseudoVisited:
-        return m_lastPseudoState & PseudoVisited;
+        return forcedPseudoState & PseudoVisited;
     default:
         return false;
     }
@@ -553,12 +562,22 @@ bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoTy
 
 void InspectorCSSAgent::recalcStyleForPseudoStateIfNeeded(Element* element, InspectorArray* forcedPseudoClasses)
 {
-    unsigned forcePseudoState = computePseudoClassMask(forcedPseudoClasses);
-    bool needStyleRecalc = element != m_lastElementWithPseudoState || forcePseudoState != m_lastPseudoState;
-    m_lastPseudoState = forcePseudoState;
-    m_lastElementWithPseudoState = element;
-    if (needStyleRecalc)
-        element->ownerDocument()->styleResolverChanged(RecalcStyleImmediately);
+    int nodeId = m_domAgent->boundNodeId(element);
+    if (!nodeId)
+        return;
+
+    unsigned forcedPseudoState = computePseudoClassMask(forcedPseudoClasses);
+    NodeIdToForcedPseudoState::iterator it = m_nodeIdToForcedPseudoState.find(nodeId);
+    unsigned currentForcedPseudoState = it == m_nodeIdToForcedPseudoState.end() ? 0 : it->second;
+    bool needStyleRecalc = forcedPseudoState != currentForcedPseudoState;
+    if (!needStyleRecalc)
+        return;
+
+    if (forcedPseudoState)
+        m_nodeIdToForcedPseudoState.set(nodeId, forcedPseudoState);
+    else
+        m_nodeIdToForcedPseudoState.remove(nodeId);
+    element->ownerDocument()->styleResolverChanged(RecalcStyleImmediately);
 }
 
 void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, const bool* includePseudo, const bool* includeInherited, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> >& matchedCSSRules, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::PseudoIdRules> >& pseudoIdRules, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry> >& inheritedEntries)
@@ -844,7 +863,7 @@ Element* InspectorCSSAgent::elementForId(ErrorString* errorString, int nodeId)
         *errorString = "Not an element node";
         return 0;
     }
-    return static_cast<Element*>(node);
+    return toElement(node);
 }
 
 void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, TypeBuilder::Array<TypeBuilder::CSS::CSSStyleSheetHeader>* result)
@@ -985,7 +1004,6 @@ void InspectorCSSAgent::didRemoveDocument(Document* document)
 {
     if (document)
         m_documentToInspectorStyleSheet.remove(document);
-    clearPseudoState(false);
 }
 
 void InspectorCSSAgent::didRemoveDOMNode(Node* node)
@@ -993,8 +1011,9 @@ void InspectorCSSAgent::didRemoveDOMNode(Node* node)
     if (!node)
         return;
 
-    if (m_lastElementWithPseudoState.get() == node)
-        clearPseudoState(false);
+    int nodeId = m_domAgent->boundNodeId(node);
+    if (nodeId)
+        m_nodeIdToForcedPseudoState.remove(nodeId);
 
     NodeToInspectorStyleSheet::iterator it = m_nodeToInspectorStyleSheet.find(node);
     if (it == m_nodeToInspectorStyleSheet.end())
@@ -1022,16 +1041,18 @@ void InspectorCSSAgent::styleSheetChanged(InspectorStyleSheet* styleSheet)
         m_frontend->styleSheetChanged(styleSheet->id());
 }
 
-void InspectorCSSAgent::clearPseudoState(bool recalcStyles)
+void InspectorCSSAgent::resetPseudoStates()
 {
-    RefPtr<Element> element = m_lastElementWithPseudoState;
-    m_lastElementWithPseudoState = 0;
-    m_lastPseudoState = 0;
-    if (recalcStyles && element) {
-        Document* document = element->ownerDocument();
-        if (document)
-            document->styleResolverChanged(RecalcStyleImmediately);
+    HashSet<Document*> documentsToChange;
+    for (NodeIdToForcedPseudoState::iterator it = m_nodeIdToForcedPseudoState.begin(), end = m_nodeIdToForcedPseudoState.end(); it != end; ++it) {
+        Element* element = toElement(m_domAgent->nodeForId(it->first));
+        if (element && element->ownerDocument())
+            documentsToChange.add(element->ownerDocument());
     }
+
+    m_nodeIdToForcedPseudoState.clear();
+    for (HashSet<Document*>::iterator it = documentsToChange.begin(), end = documentsToChange.end(); it != end; ++it)
+        (*it)->styleResolverChanged(RecalcStyleImmediately);
 }
 
 } // namespace WebCore

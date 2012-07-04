@@ -350,6 +350,9 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     }
 
     nodesMap->remove(node);
+    if (m_domListener)
+        m_domListener->didRemoveDOMNode(node);
+
     bool childrenRequested = m_childrenRequested.contains(id);
     if (childrenRequested) {
         // Unbind subtree known to client recursively.
@@ -1442,9 +1445,6 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
         return;
 
     int parentId = m_documentNodeToIdMap.get(parent);
-
-    if (m_domListener)
-        m_domListener->didRemoveDOMNode(node);
 
     if (!m_childrenRequested.contains(parentId)) {
         // No children are mapped yet -> only notify on changes of hasChildren.

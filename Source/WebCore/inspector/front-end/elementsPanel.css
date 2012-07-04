@@ -39,6 +39,21 @@
     margin-left: 8px;
 }
 
+#elements-content .elements-gutter-decoration {
+    position: absolute;
+    left: 1px;
+    margin-top: 2px;
+    height: 8px;
+    width: 8px;
+    border-radius: 4px;
+    border: 1px solid orange;
+    background-color: orange;
+}
+
+#elements-content .elements-gutter-decoration.elements-has-decorated-children {
+    opacity: 0.5;
+}
+
 .elements-tree-editor {
     -webkit-user-select: text;
     -webkit-user-modify: read-write-plaintext-only;

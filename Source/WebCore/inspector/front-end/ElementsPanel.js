@@ -55,7 +55,7 @@ WebInspector.ElementsPanel = function()
 
     this.contentElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 
-    this.treeOutline = new WebInspector.ElementsTreeOutline(true, true, false, this._populateContextMenu.bind(this));
+    this.treeOutline = new WebInspector.ElementsTreeOutline(true, true, false, this._populateContextMenu.bind(this), this._setPseudoClassForNodeId.bind(this));
     this.treeOutline.wireToDomAgent();
 
     this.treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, this._selectedNodeChanged, this);
@@ -67,7 +67,7 @@ WebInspector.ElementsPanel = function()
 
     this.sidebarPanes = {};
     this.sidebarPanes.computedStyle = new WebInspector.ComputedStyleSidebarPane();
-    this.sidebarPanes.styles = new WebInspector.StylesSidebarPane(this.sidebarPanes.computedStyle);
+    this.sidebarPanes.styles = new WebInspector.StylesSidebarPane(this.sidebarPanes.computedStyle, this._setPseudoClassForNodeId.bind(this));
     this.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
     this.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
     this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
@@ -164,6 +164,37 @@ WebInspector.ElementsPanel.prototype = {
     {
         this.treeOutline.updateSelection();
         this.updateBreadcrumbSizes();
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} nodeId
+     * @param {string} pseudoClass
+     * @param {boolean} enable
+     */
+    _setPseudoClassForNodeId: function(nodeId, pseudoClass, enable)
+    {
+        var node = WebInspector.domAgent.nodeForId(nodeId);
+        if (!node)
+            return;
+
+        var pseudoClasses = node.getUserProperty("pseudoState");
+        if (enable) {
+            pseudoClasses = pseudoClasses || [];
+            if (pseudoClasses.indexOf(pseudoClass) >= 0)
+                return;
+            pseudoClasses.push(pseudoClass);
+            node.setUserProperty("pseudoState", pseudoClasses);
+        } else {
+            if (!pseudoClasses || pseudoClasses.indexOf(pseudoClass) < 0)
+                return;
+            pseudoClasses.remove(pseudoClass);
+            if (!pseudoClasses.length)
+                node.removeUserProperty("pseudoState");
+        }
+
+        this.treeOutline.updateOpenCloseTags(node);
+        this._metricsPaneEdited();
+        this._stylesPaneEdited();
     },
 
     _selectedNodeChanged: function()

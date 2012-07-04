@@ -1,3 +1,66 @@
+2012-07-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Emulate pseudo styles (hover etc.) of non-selected elements
+        https://bugs.webkit.org/show_bug.cgi?id=86630
+
+        Reviewed by Pavel Feldman.
+
+        - A map of pseudo-states for all bound DOM nodes is maintained in the backend and queried whenever StyleResolver
+        calculates the effective element style.
+        - In the frontend, markers are introduced to distinguish elements that have forced pseudo styles set for them.
+        Additionally, dimmed markers are added for collapsed nodes, whose descendants have forced pseudo styles.
+        More ElementDecorator subtypes will be added for other types of markers.
+
+        Test: inspector/styles/force-pseudo-state.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::clearFrontend):
+        (WebCore::InspectorCSSAgent::reset):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        (WebCore::InspectorCSSAgent::recalcStyleForPseudoStateIfNeeded):
+        (WebCore::InspectorCSSAgent::elementForId):
+        (WebCore::InspectorCSSAgent::didRemoveDocument):
+        (WebCore::InspectorCSSAgent::didRemoveDOMNode):
+        (WebCore::InspectorCSSAgent::resetPseudoStates):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.get this):
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._setPseudoClassForNodeId):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype._createNodeDecorators):
+        (WebInspector.ElementsTreeOutline.prototype.updateOpenCloseTags):
+        (WebInspector.ElementsTreeOutline.ElementDecorator):
+        (WebInspector.ElementsTreeOutline.ElementDecorator.prototype.decorate):
+        (WebInspector.ElementsTreeOutline.ElementDecorator.prototype.decorateAncestor):
+        (WebInspector.ElementsTreeOutline.PseudoStateDecorator):
+        (WebInspector.ElementsTreeOutline.PseudoStateDecorator.prototype.decorate):
+        (WebInspector.ElementsTreeOutline.PseudoStateDecorator.prototype.decorateAncestor):
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.ElementsTreeElement.prototype._populateForcedPseudoStateItems):
+        (WebInspector.ElementsTreeElement.prototype.updateTitle):
+        (WebInspector.ElementsTreeElement.prototype._createDecoratorElement):
+        (WebInspector.ElementsTreeElement.prototype._updateDecorations):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylesSidebarPane.prototype.get forcedPseudoClasses):
+        (WebInspector.StylesSidebarPane.prototype._updateForcedPseudoStateInputs):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype._refreshUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+        (WebInspector.StylesSidebarPane.prototype._toggleElementStatePane):
+        (WebInspector.StylesSidebarPane.prototype._createElementStatePane.clickListener):
+        * inspector/front-end/elementsPanel.css:
+        (#elements-content .elements-gutter-decoration):
+        (#elements-content .elements-gutter-decoration.elements-has-decorated-children):
+
 2012-07-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: fix search on the network panel.
