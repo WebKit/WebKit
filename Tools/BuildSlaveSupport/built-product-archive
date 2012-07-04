@@ -147,7 +147,7 @@ def archiveBuiltProduct(configuration, platform):
             neededDirectories = ["Programs", ".libs", "Libraries"]
 
         for dirname in neededDirectories:
-            fromDir = os.path.join(configurationBuildDirectory, dirname, "*")
+            fromDir = os.path.join(configurationBuildDirectory, dirname)
             toDir = os.path.join(thinDirectory, dirname)
             os.makedirs(toDir)
             if subprocess.call('cp -R %s %s' % (fromDir, toDir), shell=True):

@@ -1,3 +1,18 @@
+2012-07-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        Hidden dirs are not copied when creating the built product archive
+        https://bugs.webkit.org/show_bug.cgi?id=90559
+
+        Reviewed by Carlos Garcia Campos.
+
+        Hidden dirs are not copied inside the built product archive because
+        the recursive copy command was ignoring them. We need those hidden
+        directories for the GTK WebKit2 testing bot to work fine.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct): removed the trailing "*" from the copy
+        command.
+
 2012-07-04  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add compile flag and runtime setting
