@@ -440,6 +440,9 @@ public:
 
     void setInspectorOverlayClient(WebCore::InspectorOverlay::InspectorOverlayClient*);
 
+    void applySizeOverride(int overrideWidth, int overrideHeight);
+    void setTextZoomFactor(float);
+
     WebPage* m_webPage;
     WebPageClient* m_client;
     WebCore::Page* m_page;

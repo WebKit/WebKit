@@ -126,6 +126,8 @@ public:
     virtual void scrollChanged(const Platform::IntPoint&) const = 0;
     virtual void zoomChanged(bool isMinZoomed, bool isMaxZoomed, bool isAtInitialZoom, double newZoom) const = 0;
 
+    virtual void requestUpdateViewport(int width, int height) = 0;
+
     virtual void setPageTitle(const unsigned short* title, unsigned titleLength) = 0;
 
     virtual Platform::Graphics::Window* window() const = 0;

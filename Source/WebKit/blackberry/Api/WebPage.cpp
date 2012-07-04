@@ -6600,5 +6600,17 @@ void WebPagePrivate::setInspectorOverlayClient(WebCore::InspectorOverlay::Inspec
     }
 }
 
+void WebPagePrivate::applySizeOverride(int overrideWidth, int overrideHeight)
+{
+    m_client->requestUpdateViewport(overrideWidth, overrideHeight);
+}
+
+void WebPagePrivate::setTextZoomFactor(float textZoomFactor)
+{
+    if (!m_mainFrame)
+        return;
+
+    m_mainFrame->setTextZoomFactor(textZoomFactor);
+}
 }
 }

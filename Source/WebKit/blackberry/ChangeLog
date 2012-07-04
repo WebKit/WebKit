@@ -1,3 +1,29 @@
+2012-07-04  Hanna Ma  <Hanma@rim.com>
+
+        [BlackBerry] Implement device metrics for blackberry.
+        https://bugs.webkit.org/show_bug.cgi?id=90494
+        RIM PR #159034
+
+        Reviewed by Rob Buis.
+
+        Implement calls to the application to change the device metrics for
+        the web inspector.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::applySizeOverride):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::setTextZoomFactor):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/InspectorClientBlackBerry.cpp:
+        (WebCore::InspectorClientBlackBerry::InspectorClientBlackBerry):
+        (WebCore::InspectorClientBlackBerry::canOverrideDeviceMetrics):
+        (WebCore):
+        (WebCore::InspectorClientBlackBerry::overrideDeviceMetrics):
+        (WebCore::InspectorClientBlackBerry::supportsFrameInstrumentation):
+        * WebCoreSupport/InspectorClientBlackBerry.h:
+        (InspectorClientBlackBerry):
+
 2012-07-03  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Checkerboard shown when clicking on error page buttons
