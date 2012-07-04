@@ -207,7 +207,36 @@ WebInspector.JavaScriptSource.prototype = {
             callback(error);
         }
 
-        WebInspector.DebuggerResourceBinding.setScriptSource(this, this.workingCopy(), innerCallback.bind(this));
+        this._setScriptSource(this.workingCopy(), innerCallback.bind(this));
+    },
+
+    /**
+     * @param {string} newSource
+     * @param {function(?Protocol.Error)} callback
+     */
+    _setScriptSource: function(newSource, callback)
+    {
+        var rawLocation = this.uiLocationToRawLocation(0, 0);
+        var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
+
+        /**
+         * @this {WebInspector.JavaScriptSource}
+         * @param {?Protocol.Error} error
+         */
+        function didEditScriptSource(error)
+        {
+            if (error) {
+                callback(error);
+                return;
+            }
+
+            var resource = this.resource();
+            if (resource)
+                resource.addRevision(newSource);
+
+            callback(null);
+        }
+        WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this));
     },
 
     /**

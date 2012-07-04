@@ -101,6 +101,14 @@ WebInspector.StyleSource.updateTimeout = 200;
 
 WebInspector.StyleSource.prototype = {
     /**
+     * @return {boolean}
+     */
+    isEditable: function()
+    {
+        return true;
+    },
+
+    /**
      * @param {function(?string)} callback
      */
     workingCopyCommitted: function(callback)

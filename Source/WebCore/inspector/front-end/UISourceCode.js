@@ -200,6 +200,11 @@ WebInspector.UISourceCode.prototype = {
      */
     commitWorkingCopy: function(callback)
     {
+        if (!this.isDirty()) {
+            callback()
+            return;
+        }
+
         /**
          * @param {?string} error
          */

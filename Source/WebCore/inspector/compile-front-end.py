@@ -79,7 +79,6 @@ modules = [
             "DOMAgent.js",
             "DOMStorage.js",
             "DebuggerModel.js",
-            "DebuggerResourceBinding.js",
             "DebuggerScriptMapping.js",
             "FileManager.js",
             "FileSystemModel.js",

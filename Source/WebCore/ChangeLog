@@ -1,3 +1,37 @@
+2012-07-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Get rid of ResourceDomainModelBinding and DebuggerResourceBinding, make Resource.setContent private.
+        https://bugs.webkit.org/show_bug.cgi?id=90531
+
+        Reviewed by Pavel Feldman.
+
+        Resource.setContent made private. It is delegating now to UISourceCodes which take care of domain specific actions.
+        DebuggerResourceBinding was be removed and DebuggerResourceBinding.setScriptSource was moved to JavaScriptSource.
+        ResourceDomainModelBinding was removed as well.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModelResourceBinding):
+        * inspector/front-end/DebuggerResourceBinding.js: Removed.
+        * inspector/front-end/JavaScriptSource.js:
+        (WebInspector.JavaScriptSource.prototype.workingCopyCommitted):
+        (WebInspector.JavaScriptSource.prototype._setScriptSource.didEditScriptSource):
+        (WebInspector.JavaScriptSource.prototype._setScriptSource):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._setContent):
+        (WebInspector.Resource.prototype.revertToOriginal):
+        (WebInspector.Resource.prototype.revertAndClearHistory):
+        (WebInspector.ResourceRevision.prototype.revertToThis):
+        * inspector/front-end/StylesPanel.js:
+        (WebInspector.StyleSource.prototype.isEditable):
+        * inspector/front-end/UISourceCode.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/Workspace.js:
+        (WebInspector.Workspace):
+        * inspector/front-end/inspector.html:
+
 2012-07-04  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed: follow up to r121843, reduce inspector dock timeout to 200ms.

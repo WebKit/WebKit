@@ -119,7 +119,6 @@ WebInspector.Workspace = function()
     WebInspector.CompositeUISourceCodeProvider.call(this, providers);
     
     new WebInspector.PresentationConsoleMessageHelper(this);
-    new WebInspector.DebuggerResourceBinding(this);
 }
 
 WebInspector.Workspace.prototype = {

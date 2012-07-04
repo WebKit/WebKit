@@ -6256,7 +6256,6 @@
             'inspector/front-end/DatabaseTableView.js',
             'inspector/front-end/DataGrid.js',
             'inspector/front-end/DebuggerModel.js',
-            'inspector/front-end/DebuggerResourceBinding.js',
             'inspector/front-end/DebuggerScriptMapping.js',
             'inspector/front-end/Dialog.js',
             'inspector/front-end/DirectoryContentView.js',

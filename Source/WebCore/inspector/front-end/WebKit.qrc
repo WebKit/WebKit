@@ -37,7 +37,6 @@
     <file>DatabaseTableView.js</file>
     <file>DataGrid.js</file>
     <file>DebuggerModel.js</file>
-    <file>DebuggerResourceBinding.js</file>
     <file>DebuggerScriptMapping.js</file>
     <file>Dialog.js</file>
     <file>DirectoryContentView.js</file>

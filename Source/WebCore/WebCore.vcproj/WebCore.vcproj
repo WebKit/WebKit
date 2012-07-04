@@ -74834,10 +74834,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\DebuggerResourceBinding.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\DebuggerScriptMapping.js"
 					>
 				</File>

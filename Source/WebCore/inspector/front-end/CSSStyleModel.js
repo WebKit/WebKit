@@ -934,7 +934,6 @@ WebInspector.CSSStyleSheet.prototype = {
 
 /**
  * @constructor
- * @implements {WebInspector.ResourceDomainModelBinding}
  */
 WebInspector.CSSStyleModelResourceBinding = function(cssModel)
 {
@@ -943,7 +942,6 @@ WebInspector.CSSStyleModelResourceBinding = function(cssModel)
     this._styleSheetIdToHeader = {};
     this._cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
-    WebInspector.Resource.registerDomainModelBinding(WebInspector.resourceTypes.Stylesheet, this);
 }
 
 WebInspector.CSSStyleModelResourceBinding.prototype = {
@@ -974,30 +972,6 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
 
             userCallback(null);
         }
-    },
-
-    /**
-     * @param {WebInspector.Resource} resource
-     * @param {string} content
-     * @param {boolean} majorChange
-     * @param {function(?string)} userCallback
-     */
-    setContent: function(resource, content, majorChange, userCallback)
-    {
-        var styleSource = /** @type {WebInspector.StyleSource} */ resource.uiSourceCode();
-        if (!styleSource) {
-            userCallback("Resource is not editable");
-            return;
-        }
-        this.setStyleContent(styleSource, content, majorChange, userCallback);
-    },
-
-    /**
-     * @return {boolean}
-     */
-    canSetContent: function()
-    {
-        return true;
     },
 
     /**
@@ -1208,8 +1182,6 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
         return fakeURL;
     }
 }
-
-WebInspector.CSSStyleModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
 
 /**
  * @constructor
