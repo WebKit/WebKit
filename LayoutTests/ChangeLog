@@ -1,3 +1,26 @@
+2012-07-04  Anthony Scian  <ascian@rim.com>
+
+        Web Inspector [JSC]: Implement ScriptCallStack::stackTrace
+        https://bugs.webkit.org/show_bug.cgi?id=40118
+
+        Reviewed by Yong Li.
+
+        Updated test results now that createScriptCallStack is functional.
+
+        * http/tests/inspector/console-resource-errors-expected.txt:
+        * http/tests/inspector/console-xhr-logging-async-expected.txt:
+        * http/tests/inspector/console-xhr-logging-expected.txt:
+        * http/tests/inspector/network/script-as-text-loading-expected.txt:
+        * inspector/timeline/timeline-animation-frame-expected.txt:
+        * inspector/timeline/timeline-layout-expected.txt:
+        * inspector/timeline/timeline-mark-timeline-expected.txt:
+        * inspector/timeline/timeline-network-resource-expected.txt:
+        * inspector/timeline/timeline-paint-expected.txt:
+        * inspector/timeline/timeline-parse-html-expected.txt:
+        * inspector/timeline/timeline-time-stamp-expected.txt:
+        * inspector/timeline/timeline-timer-expected.txt:
+        * platform/chromium/http/tests/inspector/console-xhr-logging-async-expected.txt:
+
 2012-07-04  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, skip another two http tests that

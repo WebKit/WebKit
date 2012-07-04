@@ -3,6 +3,7 @@ Tests the Timeline events for Animation Frame feature
 RequestAnimationFrame Properties:
 {
     startTime : <number>
+    stackTrace : <object>
     data : {
         id : <number>
     }
@@ -29,6 +30,7 @@ FireAnimationFrame Properties:
 CancelAnimationFrame Properties:
 {
     startTime : <number>
+    stackTrace : <object>
     data : {
         id : <number>
     }

@@ -1,3 +1,22 @@
+2012-07-04  Anthony Scian  <ascian@rim.com>
+
+        Web Inspector [JSC]: Implement ScriptCallStack::stackTrace
+        https://bugs.webkit.org/show_bug.cgi?id=40118
+
+        Reviewed by Yong Li.
+
+        Added member functions to expose function name, urlString, and line #.
+        Refactored toString to make use of these member functions to reduce
+        duplicated code for future maintenance.
+
+        Manually tested refactoring of toString by tracing thrown exceptions.
+
+        * interpreter/Interpreter.h:
+        (JSC::StackFrame::toString):
+        (JSC::StackFrame::friendlySourceURL):
+        (JSC::StackFrame::friendlyFunctionName):
+        (JSC::StackFrame::friendlyLineNumber):
+
 2012-07-04  Andy Wingo  <wingo@igalia.com>
 
         [GTK] Enable parallel GC

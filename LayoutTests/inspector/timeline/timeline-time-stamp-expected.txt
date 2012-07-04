@@ -3,6 +3,7 @@ Tests the Timeline API timeStamp feature
 TimeStamp Properties:
 {
     startTime : <number>
+    stackTrace : <object>
     data : {
         message : "TIME STAMP"
     }

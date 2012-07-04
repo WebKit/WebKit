@@ -3,6 +3,7 @@ Tests the Timeline events for Timers
 TimerInstall Properties:
 {
     startTime : <number>
+    stackTrace : <object>
     data : {
         timerId : <number>
         timeout : 10
@@ -17,6 +18,7 @@ TimerInstall Properties:
 TimerInstall Properties:
 {
     startTime : <number>
+    stackTrace : <object>
     data : {
         timerId : <number>
         timeout : 20
@@ -73,6 +75,7 @@ TimerFire Properties:
 TimerRemove Properties:
 {
     startTime : <number>
+    stackTrace : <object>
     data : {
         timerId : <number>
     }

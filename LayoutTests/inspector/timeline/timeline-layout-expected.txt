@@ -4,6 +4,7 @@ Test data
 Layout Properties:
 {
     startTime : <number>
+    stackTrace : <object>
     data : {
     }
     children : <object>

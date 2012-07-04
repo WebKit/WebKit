@@ -6,6 +6,7 @@ Script resource loaded
 ResourceSendRequest Properties:
 {
     startTime : <number>
+    stackTrace : <object>
     data : {
         requestId : <string>
         url : <string>

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +40,7 @@
 #include "RegisterFile.h"
 
 #include <wtf/HashMap.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 
@@ -80,45 +82,63 @@ namespace JSC {
         UString sourceURL;
         UString toString(CallFrame* callFrame) const
         {
-            bool hasSourceURLInfo = !sourceURL.isNull() && !sourceURL.isEmpty();
-            bool hasLineInfo = line > -1;
+            StringBuilder traceBuild;
+            String functionName = friendlyFunctionName(callFrame);
+            String sourceURL = friendlySourceURL();
+            traceBuild.append(functionName);
+            if (!sourceURL.isEmpty()) {
+                if (!functionName.isEmpty())
+                    traceBuild.append('@');
+                traceBuild.append(sourceURL);
+                if (line > -1) {
+                    traceBuild.append(':');
+                    traceBuild.append(String::number(line));
+                }
+            }
+            return traceBuild.toString().impl();
+        }
+        String friendlySourceURL() const
+        {
+            String traceLine;
+
+            switch (codeType) {
+            case StackFrameEvalCode:
+            case StackFrameFunctionCode:
+            case StackFrameGlobalCode:
+                if (!sourceURL.isEmpty())
+                    traceLine = sourceURL.impl();
+                break;
+            case StackFrameNativeCode:
+                traceLine = "[native code]";
+                break;
+            }
+            return traceLine.isNull() ? emptyString() : traceLine;
+        }
+        String friendlyFunctionName(CallFrame* callFrame) const
+        {
             String traceLine;
             JSObject* stackFrameCallee = callee.get();
 
             switch (codeType) {
             case StackFrameEvalCode:
-                if (hasSourceURLInfo) {
-                    traceLine = hasLineInfo ? String::format("eval code@%s:%d", sourceURL.ascii().data(), line) 
-                                            : String::format("eval code@%s", sourceURL.ascii().data());
-                } else
-                    traceLine = String::format("eval code");
+                traceLine = "eval code";
                 break;
-            case StackFrameNativeCode: {
-                if (callee) {
-                    UString functionName = getCalculatedDisplayName(callFrame, stackFrameCallee);
-                    traceLine = String::format("%s@[native code]", functionName.ascii().data());
-                } else
-                    traceLine = "[native code]";
+            case StackFrameNativeCode:
+                if (callee)
+                    traceLine = getCalculatedDisplayName(callFrame, stackFrameCallee).impl();
                 break;
-            }
-            case StackFrameFunctionCode: {
-                UString functionName = getCalculatedDisplayName(callFrame, stackFrameCallee);
-                if (hasSourceURLInfo) {
-                    traceLine = hasLineInfo ? String::format("%s@%s:%d", functionName.ascii().data(), sourceURL.ascii().data(), line)
-                                            : String::format("%s@%s", functionName.ascii().data(), sourceURL.ascii().data());
-                } else
-                    traceLine = String::format("%s\n", functionName.ascii().data());
+            case StackFrameFunctionCode:
+                traceLine = getCalculatedDisplayName(callFrame, stackFrameCallee).impl();
                 break;
-            }
             case StackFrameGlobalCode:
-                if (hasSourceURLInfo) {
-                    traceLine = hasLineInfo ? String::format("global code@%s:%d", sourceURL.ascii().data(), line)
-                                            : String::format("global code@%s", sourceURL.ascii().data());
-                } else
-                    traceLine = String::format("global code");
-                    
+                traceLine = "global code";
+                break;
             }
-            return traceLine.impl();
+            return traceLine.isNull() ? emptyString() : traceLine;
+        }
+        unsigned friendlyLineNumber() const
+        {
+            return line > -1 ? line : 0;
         }
     };
 

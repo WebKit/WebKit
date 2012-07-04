@@ -1,3 +1,20 @@
+2012-07-04  Anthony Scian  <ascian@rim.com>
+
+        Web Inspector [JSC]: Implement ScriptCallStack::stackTrace
+        https://bugs.webkit.org/show_bug.cgi?id=40118
+
+        Reviewed by Yong Li.
+
+        Implemented stub for createScriptCallStack to call into
+        Interpreter and extract the current stack frames, iterate
+        through the frames and create the return result required.
+
+        No new tests, manually tested thrown exception and inspector
+        tracebacks.
+
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStack):
+
 2012-07-04  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Respect memory needed for RenderSurfaces when reserving contents textures
