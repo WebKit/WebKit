@@ -1135,7 +1135,7 @@ WebInspector.NetworkLogView.prototype = {
             this._highlightedSubstringChanges = node._highlightMatchedSubstring(this._searchRegExp);
             if (reveal)
                 node.reveal();
-            this._currentMatcRequestrceIndex = matchedRequestIndex;
+            this._currentMatchedRequestIndex = matchedRequestIndex;
         }
         this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchIndexUpdated, this._currentMatchedRequestIndex);
     },
