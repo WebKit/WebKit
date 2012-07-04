@@ -1357,7 +1357,11 @@ sub GenerateParametersCheckExpression
             push(@andExpression, "(${value}->IsNull() || ${value}->IsFunction())");
         } elsif (IsArrayType($type)) {
             # FIXME: Add proper support for T[], T[]?, sequence<T>.
-            push(@andExpression, "(${value}->IsNull() || ${value}->IsArray())");
+            if ($parameter->isNullable) {
+                push(@andExpression, "(${value}->IsNull() || ${value}->IsArray())");
+            } else {
+                push(@andExpression, "(${value}->IsArray())");
+            }
         } elsif (IsWrapperType($type)) {
             if ($parameter->isNullable) {
                 push(@andExpression, "(${value}->IsNull() || V8${type}::HasInstance($value))");

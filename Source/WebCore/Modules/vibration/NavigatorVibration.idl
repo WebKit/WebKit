@@ -23,7 +23,7 @@ module window {
         Conditional=VIBRATION,
         Supplemental=Navigator
     ] NavigatorVibration {
-        void webkitVibrate(in unsigned long[] pattern) raises(DOMException);
+        void webkitVibrate(in unsigned long[]? pattern) raises(DOMException);
         void webkitVibrate(in unsigned long time) raises(DOMException);
     };
 

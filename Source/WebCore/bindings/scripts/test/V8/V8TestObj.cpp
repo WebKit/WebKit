@@ -1582,6 +1582,17 @@ static v8::Handle<v8::Value> overloadedMethod8Callback(const v8::Arguments& args
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> overloadedMethod9Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.overloadedMethod9");
+    if (args.Length() < 1)
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(RefPtr<DOMStringList>, arrayArg, v8ValueToWebCoreDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    imp->overloadedMethod(arrayArg);
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.overloadedMethod");
@@ -1601,6 +1612,8 @@ static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
         return overloadedMethod7Callback(args);
     if ((args.Length() == 1 && (V8TestObj::HasInstance(args[0]))))
         return overloadedMethod8Callback(args);
+    if ((args.Length() == 1 && (args[0]->IsArray())))
+        return overloadedMethod9Callback(args);
     return V8Proxy::throwTypeError(0, args.GetIsolate());
 }
 

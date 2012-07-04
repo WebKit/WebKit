@@ -1,3 +1,43 @@
+2012-07-03  Joshua Bell  <jsbell@chromium.org>
+
+        Binding: IDL type DOMString[] shouldn't match null
+        https://bugs.webkit.org/show_bug.cgi?id=84217
+
+        Reviewed by Kentaro Hara.
+
+        Similar to r121714, IDL overloads with T[] (which is only minimally supported)
+        were being treated as Nullable by default during overloaded method dispatching,
+        which deviates from the WebIDL specification. Extend the previous change to
+        look for Nullable (specified by "?" type suffix in the IDL) for array types.
+
+        Also, after inspection of the spec, use a strict "is this an Array?" test in
+        the JS generator rather than an "inherits from Array.prototype?" test, to
+        match the WebIDL spec.
+
+        IDL files with affected overloads are modified to include the "?" suffix
+        so that no behavior changes are introduced by this patch - the JS and V8
+        generator results before/after the change show no diffs apart from the stricter
+        isJSArray() test.
+
+        Test: bindings/scripts/test/TestObj.idl (a non-Nullable T[] overload)
+
+        * Modules/indexeddb/IDBDatabase.idl: Tag T[] overloads with ? suffix.
+        * Modules/indexeddb/IDBObjectStore.idl: Ditto.
+        * Modules/vibration/NavigatorVibration.idl: Ditto.
+        * bindings/scripts/CodeGeneratorJS.pm: Check isNullable for T[].
+        (GenerateParametersCheckExpression):
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        (GenerateParametersCheckExpression):
+        * bindings/scripts/test/JS/JSTestObj.cpp: Rebaselined.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod9):
+        (WebCore):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        * bindings/scripts/test/TestObj.idl: Tag existing T[] with ?, add non-? T[].
+        * bindings/scripts/test/V8/V8TestObj.cpp: Rebaselined.
+        (WebCore::TestObjV8Internal::overloadedMethod9Callback):
+        (TestObjV8Internal):
+        (WebCore::TestObjV8Internal::overloadedMethodCallback):
+
 2012-07-03  Nate Chapin  <japhet@chromium.org>
 
         REGRESSION (r115654): Sometimes does not replace content for multipart/x-mixed-replace

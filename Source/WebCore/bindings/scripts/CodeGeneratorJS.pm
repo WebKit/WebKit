@@ -1260,7 +1260,11 @@ sub GenerateParametersCheckExpression
             $usedArguments{$parameterIndex} = 1;
         } elsif (IsArrayType($type)) {
             # FIXME: Add proper support for T[], T[]?, sequence<T>
-            push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JSArray::s_info)))");
+            if ($parameter->isNullable) {
+                push(@andExpression, "(${value}.isNull() || (${value}.isObject() && isJSArray(${value})))");
+            } else {
+                push(@andExpression, "(${value}.isObject() && isJSArray(${value}))");
+            }
             $usedArguments{$parameterIndex} = 1;
         } elsif (!IsNativeType($type)) {
             if ($parameter->isNullable) {
