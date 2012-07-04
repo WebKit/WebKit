@@ -679,9 +679,6 @@ BUGWK88961 : http/tests/misc/redirect-to-about-blank.html = TEXT
 // EFL port does not support hyphenation
 BUGWK89830 : fast/text/hyphen-min-preferred-width.html = IMAGE
 
-// EFL format for navigator.language should be adapted
-BUGWK89639 : fast/js/navigator-language.html = TEXT
-
 // EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
 BUGWK86637 : editing/spelling/spellcheck-async.html = TEXT
 BUGWK86637 : editing/spelling/spellcheck-async-mutation.html = TEXT

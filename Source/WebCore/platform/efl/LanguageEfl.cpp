@@ -43,7 +43,13 @@ static String platformLanguage()
     if (!localeDefault)
         return String("c");
 
-    return String(localeDefault).replace('_', '-');
+    String locale = String(localeDefault);
+    locale.replace('_', '-');
+    size_t position = locale.find('.');
+    if (position != notFound)
+        locale = locale.left(position);
+
+    return locale;
 }
 
 Vector<String> platformUserPreferredLanguages()

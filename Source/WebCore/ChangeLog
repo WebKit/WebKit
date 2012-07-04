@@ -1,3 +1,18 @@
+2012-07-04  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Change format of return value of navigator.language
+        https://bugs.webkit.org/show_bug.cgi?id=89639
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove encoding type from return value of navigator.language.
+        For example, from en-US.UTF-8 to en-US.
+
+        Use exist test case (fast/js/navigator-language.html).
+
+        * platform/efl/LanguageEfl.cpp:
+        (WebCore::platformLanguage):
+
 2012-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Don't show accel labels in context menu items
