@@ -1,3 +1,35 @@
+2012-07-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Ewk_View should report load errors
+        https://bugs.webkit.org/show_bug.cgi?id=90479
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The Ewk_View now emits a "load,error" signal when the
+        main frame fails loading. Information about the error
+        is provided via the new Ewk_Web_Error type.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_load_error):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didFailLoadWithErrorForFrame):
+        (ewk_view_loader_client_attach):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_web_error.cpp: Added.
+        (_Ewk_Web_Error):
+        (ewk_web_error_free):
+        (ewk_web_error_domain_get):
+        (ewk_web_error_url_get):
+        (ewk_web_error_code_get):
+        (ewk_web_error_description_get):
+        (ewk_web_error_cancellation_get):
+        (ewk_web_error_new):
+        * UIProcess/API/efl/ewk_web_error.h: Added.
+        * UIProcess/API/efl/ewk_web_error_private.h: Added.
+
 2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][EFL] Ewk_View should report the load progress

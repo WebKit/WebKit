@@ -28,6 +28,7 @@
  *
  * - "intent,request,new", Ewk_Intent_Request*: reports new Web intent request.
  * - "intent,service,register", Ewk_Intent_Service*: reports new Web intent service registration.
+ * - "load,error", const Ewk_Web_Error*: reports main frame load failed.
  * - "load,progress", double*: load progress has changed (value from 0.0 to 1.0).
  * - "title,changed", const char*: title of the main frame was changed.
  */

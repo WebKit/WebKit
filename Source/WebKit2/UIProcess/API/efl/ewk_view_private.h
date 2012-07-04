@@ -30,6 +30,7 @@ class IntRect;
 class IntSize;
 }
 
+typedef struct _Ewk_Web_Error Ewk_Web_Error;
 #if ENABLE(WEB_INTENTS)
 typedef struct _Ewk_Intent Ewk_Intent;
 #endif
@@ -39,6 +40,7 @@ typedef struct _Ewk_Intent_Service Ewk_Intent_Service;
 
 void ewk_view_display(Evas_Object* ewkView, const WebCore::IntRect& rect);
 void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCore::IntSize& size);
+void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Web_Error* error);
 void ewk_view_load_progress_changed(Evas_Object* ewkView, double progress);
 void ewk_view_title_changed(Evas_Object* ewkView, const char* title);
 

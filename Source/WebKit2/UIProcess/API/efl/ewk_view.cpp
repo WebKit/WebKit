@@ -678,6 +678,18 @@ void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const IntSiz
     evas_object_image_data_copy_set(smartData->image, imageData);
 }
 
+/**
+ * @internal
+ * Reports load failed with error information.
+ *
+ * Emits signal: "load,error" with pointer to Ewk_Web_Error.
+ */
+void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Web_Error* error)
+{
+    evas_object_smart_callback_call(ewkView, "load,error", const_cast<Ewk_Web_Error*>(error));
+}
+
+
 #if ENABLE(WEB_INTENTS_TAG)
 /**
  * @internal
