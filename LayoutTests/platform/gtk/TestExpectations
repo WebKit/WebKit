@@ -558,6 +558,7 @@ BUGWKGTK : fast/loader/policy-delegate-action-hit-test-zoomed.html = TEXT
 BUGWKGTK : fast/loader/reload-policy-delegate.html = TEXT
 BUGWKGTK : fast/loader/stop-provisional-loads.html = TEXT
 BUGWKGTK : fast/loader/subframe-removes-itself.html = TEXT
+BUGWKGTK SKIP : http/tests/security/feed-urls-from-remote.html = TEXT
 
 // This policy delegate is implemented, but it needs the DOM node path in the output.
 BUGWKGTK : fast/encoding/mailto-always-utf-8.html = TEXT
@@ -708,6 +709,7 @@ BUGWK35086 : fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html = TEXT
 
 // Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
 BUGWK35300 : http/tests/loading/307-after-303-after-post.html = TEXT
+BUGWK35300 SKIP : http/tests/navigation/post-307-response.html = TEXT
 
 // mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the GTK EventSender API.
 BUGWK36003 : fast/events/remove-child-onscroll.html = TEXT
