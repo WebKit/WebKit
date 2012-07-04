@@ -569,6 +569,25 @@ void ewk_view_title_changed(Evas_Object* ewkView, const char* title)
     evas_object_smart_callback_call(ewkView, "title,changed", const_cast<char*>(title));
 }
 
+double ewk_view_load_progress_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    return WKPageGetEstimatedProgress(toAPI(priv->pageClient->page()));
+}
+
+/**
+ * @internal
+ * Reports load progress changed.
+ *
+ * Emits signal: "load,progress" with pointer to a double from 0.0 to 1.0.
+ */
+void ewk_view_load_progress_changed(Evas_Object* ewkView, double progress)
+{
+    evas_object_smart_callback_call(ewkView, "load,progress", &progress);
+}
+
 /**
  * @internal
  * The view received a new intent request.

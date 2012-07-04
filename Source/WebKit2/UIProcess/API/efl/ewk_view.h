@@ -28,6 +28,7 @@
  *
  * - "intent,request,new", Ewk_Intent_Request*: reports new Web intent request.
  * - "intent,service,register", Ewk_Intent_Service*: reports new Web intent service registration.
+ * - "load,progress", double*: load progress has changed (value from 0.0 to 1.0).
  * - "title,changed", const char*: title of the main frame was changed.
  */
 
@@ -252,6 +253,17 @@ EAPI Eina_Bool    ewk_view_forward_possible(Evas_Object *o);
  * @return current title on success or @c 0 on failure
  */
 EAPI const char *ewk_view_title_get(const Evas_Object *o);
+
+/**
+ * Gets the current load progress of page.
+ *
+ * The progress estimation from 0.0 to 1.0.
+ *
+ * @param o view object to get the current progress
+ *
+ * @return the load progres of page, value from 0.0 to 1.0.
+ */
+EAPI double ewk_view_load_progress_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

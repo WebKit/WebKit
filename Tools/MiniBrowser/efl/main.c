@@ -26,6 +26,7 @@
 static const int DEFAULT_WIDTH = 800;
 static const int DEFAULT_HEIGHT = 600;
 static const char DEFAULT_URL[] = "http://www.google.com/";
+static const char APP_NAME[] = "EFL MiniBrowser";
 
 #define info(format, args...)       \
     do {                            \
@@ -87,12 +88,41 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
+title_set(Ecore_Evas *ee, const char *title, int progress)
+{
+    Eina_Strbuf* buffer;
+
+    if (!title || !*title) {
+        ecore_evas_title_set(ee, APP_NAME);
+        return;
+    }
+
+    buffer = eina_strbuf_new();
+    if (progress < 100)
+        eina_strbuf_append_printf(buffer, "%s (%d%%) - %s", title, progress, APP_NAME);
+    else
+        eina_strbuf_append_printf(buffer, "%s - %s", title, APP_NAME);
+
+    ecore_evas_title_set(ee, eina_strbuf_string_get(buffer));
+    eina_strbuf_free(buffer);
+}
+
+static void
 on_title_changed(void *user_data, Evas_Object *webview, void *event_info)
 {
     MiniBrowser *app = (MiniBrowser *)user_data;
     const char *title = (const char *)event_info;
 
-    ecore_evas_title_set(app->ee, title);
+    title_set(app->ee, title, 100);
+}
+
+static void
+on_progress(void *user_data, Evas_Object *webview, void *event_info)
+{
+    MiniBrowser *app = (MiniBrowser *)user_data;
+    double progress = *(double *)event_info;
+
+    title_set(app->ee, ewk_view_title_get(app->browser), progress * 100);
 }
 
 static MiniBrowser *browserCreate(const char *url)
@@ -101,7 +131,7 @@ static MiniBrowser *browserCreate(const char *url)
 
     app->ee = ecore_evas_new(0, 0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT, 0);
 
-    ecore_evas_title_set(app->ee, "EFL MiniBrowser");
+    ecore_evas_title_set(app->ee, APP_NAME);
     ecore_evas_callback_resize_set(app->ee, on_ecore_evas_resize);
     ecore_evas_borderless_set(app->ee, 0);
     ecore_evas_show(app->ee);
@@ -121,6 +151,7 @@ static MiniBrowser *browserCreate(const char *url)
     app->browser = ewk_view_add(app->evas);
     evas_object_name_set(app->browser, "browser");
 
+    evas_object_smart_callback_add(app->browser, "load,progress", on_progress, app);
     evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
 
     evas_object_event_callback_add(app->browser, EVAS_CALLBACK_KEY_DOWN, on_key_down, app);

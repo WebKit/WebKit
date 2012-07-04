@@ -1,5 +1,26 @@
 2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2][EFL] Ewk_View should report the load progress
+        https://bugs.webkit.org/show_bug.cgi?id=90457
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The Ewk_View now reports the estimated load progress
+        of the page via the new "load,progress".
+        A method is also added to Ewk_View in order to
+        retrieve the current load progress.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_load_progress_get):
+        (ewk_view_load_progress_changed):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didChangeProgress):
+        (ewk_view_loader_client_attach):
+        * UIProcess/API/efl/ewk_view_private.h:
+
+2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2] Add support for Battery Status API
         https://bugs.webkit.org/show_bug.cgi?id=89558
 

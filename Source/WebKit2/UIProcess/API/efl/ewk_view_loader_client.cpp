@@ -65,6 +65,12 @@ static void registerIntentServiceForFrame(WKPageRef page, WKFrameRef frame, WKIn
 }
 #endif
 
+static void didChangeProgress(WKPageRef page, const void* clientInfo)
+{
+    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    ewk_view_load_progress_changed(ewkView, WKPageGetEstimatedProgress(page));
+}
+
 void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 {
     WKPageLoaderClient loadClient;
@@ -78,5 +84,8 @@ void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 #if ENABLE(WEB_INTENTS_TAG)
     loadClient.registerIntentServiceForFrame = registerIntentServiceForFrame;
 #endif
+    loadClient.didStartProgress = didChangeProgress;
+    loadClient.didChangeProgress = didChangeProgress;
+    loadClient.didFinishProgress = didChangeProgress;
     WKPageSetPageLoaderClient(pageRef, &loadClient);
 }
