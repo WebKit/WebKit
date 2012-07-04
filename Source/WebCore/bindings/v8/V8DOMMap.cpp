@@ -50,10 +50,6 @@ DOMDataStoreHandle::~DOMDataStoreHandle()
     V8BindingPerIsolateData::current()->unregisterDOMDataStore(m_store.get());
 }
 
-void enableFasterDOMStoreAccess()
-{
-}
-
 DOMNodeMapping& getDOMNodeMap(v8::Isolate* isolate)
 {
     return DOMData::getCurrentStore(isolate).domNodeMap();

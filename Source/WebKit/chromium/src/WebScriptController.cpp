@@ -48,7 +48,7 @@ void WebScriptController::registerExtension(v8::Extension* extension)
 
 void WebScriptController::enableV8SingleThreadMode()
 {
-    enableFasterDOMStoreAccess();
+    // FIXME: remove this method after all it's usages are gone.
 }
 
 void WebScriptController::flushConsoleMessages()

@@ -177,7 +177,6 @@ namespace WebCore {
     // This should be called to remove all DOM objects associated with the current thread when it is tearing down.
     void removeAllDOMObjects();
 
-    void enableFasterDOMStoreAccess();
 } // namespace WebCore
 
 #endif // V8DOMMap_h
