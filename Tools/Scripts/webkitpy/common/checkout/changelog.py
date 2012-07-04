@@ -345,10 +345,28 @@ class ChangeLog(object):
                 print line,
 
     def set_reviewer(self, reviewer):
-        # inplace=1 creates a backup file and re-directs stdout to the file
-        for line in fileinput.FileInput(self.path, inplace=1):
-            # Trailing comma suppresses printing newline
-            print line.replace("NOBODY (OOPS!)", reviewer.encode("utf-8")),
+        latest_entry = self.latest_entry()
+        latest_entry_contents = latest_entry.contents()
+        reviewer_text = latest_entry.reviewer()
+        found_nobody = re.search("NOBODY\s*\(OOPS!\)", latest_entry_contents, re.MULTILINE)
+
+        if not found_nobody and not reviewer_text:
+            bug_url_number_of_items = len(re.findall(config_urls.bug_url_long, latest_entry_contents, re.MULTILINE))
+            bug_url_number_of_items += len(re.findall(config_urls.bug_url_short, latest_entry_contents, re.MULTILINE))
+            for line in fileinput.FileInput(self.path, inplace=1):
+                found_bug_url = re.search(config_urls.bug_url_long, line)
+                if not found_bug_url:
+                    found_bug_url = re.search(config_urls.bug_url_short, line)
+                print line,
+                if found_bug_url:
+                    if bug_url_number_of_items == 1:
+                        print "\n        Reviewed by %s." % (reviewer.encode("utf-8"))
+                    bug_url_number_of_items -= 1
+        else:
+            # inplace=1 creates a backup file and re-directs stdout to the file
+            for line in fileinput.FileInput(self.path, inplace=1):
+                # Trailing comma suppresses printing newline
+                print line.replace("NOBODY (OOPS!)", reviewer.encode("utf-8")),
 
     def set_short_description_and_bug_url(self, short_description, bug_url):
         message = "%s\n        %s" % (short_description, bug_url)
