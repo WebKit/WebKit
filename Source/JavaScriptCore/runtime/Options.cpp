@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Options.h"
 
+#include <algorithm>
 #include <limits>
 #include <stdio.h>
 #include <stdlib.h>

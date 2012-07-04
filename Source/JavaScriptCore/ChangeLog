@@ -1,3 +1,12 @@
+2012-07-04  Andy Wingo  <wingo@igalia.com>
+
+        [GTK] Enable parallel GC
+        https://bugs.webkit.org/show_bug.cgi?id=90568
+
+        Reviewed by Martin Robinson.
+
+        * runtime/Options.cpp: Include <algorithm.h> for std::min.
+
 2012-07-04  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add compile flag and runtime setting
