@@ -1,3 +1,11 @@
+2012-07-04  Joe Thomas  <joethomas@motorola.com>
+
+        Adding myself to committers list.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][EFL] Ewk_View should report the load progress

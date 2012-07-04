@@ -277,6 +277,7 @@ committers_unable_to_review = [
     Committer("Jesus Sanchez-Palencia", ["jesus@webkit.org", "jesus.palencia@openbossa.org"], "jeez_"),
     Committer("Jia Pu", "jpu@apple.com"),
     Committer("Jochen Eisinger", "jochen@chromium.org", "jochen__"),
+    Committer("Joe Thomas", "joethomas@motorola.com", "joethomas"),
     Committer("John Abd-El-Malek", "jam@chromium.org", "jam"),
     Committer("John Gregg", ["johnnyg@google.com", "johnnyg@chromium.org"], "johnnyg"),
     Committer("John Knottenbelt", "jknotten@chromium.org", "jknotten"),
