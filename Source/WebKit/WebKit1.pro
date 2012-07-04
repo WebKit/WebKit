@@ -7,8 +7,6 @@
 TEMPLATE = lib
 TARGET = WebKit1
 
-load(features)
-
 include(WebKit1.pri)
 
 WEBKIT += wtf javascriptcore webcore

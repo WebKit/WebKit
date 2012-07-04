@@ -1,5 +1,15 @@
 2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Remove a few un-needed load(features) after r121777
+
+        The features are computed by configure.pro and cached in .qmake.cache.
+
+        Reviewed by Jocelyn Turcotte..
+
+        * MiniBrowser/qt/raw/Target.pri:
+
+2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Use haveQtModule() in project files instead of manual checks
 
         Reviewed by Jocelyn Turcotte.

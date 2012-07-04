@@ -1,5 +1,15 @@
 2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Remove a few un-needed load(features) after r121777
+
+        The features are computed by configure.pro and cached in .qmake.cache.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * WebKit1.pro:
+
+2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Fix broken OR-operator in project file
 
         Qmake expects |, not ||. The result was that the block was entered, even
