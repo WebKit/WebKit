@@ -1,3 +1,9 @@
+2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] Rebaseline: svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml
+
+        * platform/chromium-win/svg/custom/pattern-userSpaceOnUse-userToBaseTransform-expected.txt:
+
 2012-07-03  Hayato Ito  <hayato@chromium.org>
 
         Parameter 'id' is not used in getUserModifyProperty() of fast/dom/shadow/user-modify-inheritance.html.
