@@ -65,6 +65,8 @@ WebInspector.StatusBarButton.prototype = {
     _clicked: function()
     {
         this.dispatchEventToListeners("click");
+        if (this._showOptionsTimer)
+            clearTimeout(this._showOptionsTimer);
     },
 
     get disabled()
@@ -147,6 +149,94 @@ WebInspector.StatusBarButton.prototype = {
         else
             this.element.addStyleClass("hidden");
         this._visible = x;
+    },
+
+    /**
+     * @param {function():Array.<WebInspector.StatusBarButton>} buttonsProvider
+     */
+    makeLongClickEnabled: function(buttonsProvider)
+    {
+        this.longClickGlyph = document.createElement("div");
+        this.longClickGlyph.className = "fill long-click-glyph";
+        this.element.appendChild(this.longClickGlyph);
+  
+        this.longClickGlyphShadow = document.createElement("div");
+        this.longClickGlyphShadow.className = "fill long-click-glyph shadow";
+        this.element.appendChild(this.longClickGlyphShadow);
+
+        this.element.addEventListener("mousedown", mouseDown.bind(this), false);
+        this.element.addEventListener("mouseout", mouseUp.bind(this), false);
+        this.element.addEventListener("mouseup", mouseUp.bind(this), false);
+
+        function mouseDown(e)
+        {
+            if (e.which !== 1)
+                return;
+            this._showOptionsTimer = setTimeout(this._showOptions.bind(this, buttonsProvider), 500);
+        }
+
+        function mouseUp(e)
+        {
+            if (e.which !== 1)
+                return;
+            if (this._showOptionsTimer)
+                clearTimeout(this._showOptionsTimer);
+        }
+    },
+
+    /**
+     * @param {function():Array.<WebInspector.StatusBarButton>} buttonsProvider
+     */
+    _showOptions: function(buttonsProvider)
+    {
+        var buttons = buttonsProvider();
+
+        var mouseUpListener = mouseUp.bind(this);
+        document.documentElement.addEventListener("mouseup", mouseUpListener, false);
+
+        var optionsGlassPane = new WebInspector.GlassPane();
+        var optionsBarElement = optionsGlassPane.element.createChild("div", "alternate-status-bar-buttons-bar");
+        const buttonHeight = 24;
+        optionsBarElement.style.height = (buttonHeight * buttons.length) + "px";
+        optionsBarElement.style.left = this.element.offsetLeft + "px";
+
+        var boundMouseOver = mouseOver.bind(this);
+        var boundMouseOut = mouseOut.bind(this);
+        for (var i = 0; i < buttons.length; ++i) {
+            buttons[i].element.addEventListener("mousemove", boundMouseOver.bind(this), false);
+            buttons[i].element.addEventListener("mouseout", boundMouseOut.bind(this), false);
+            optionsBarElement.appendChild(buttons[i].element);
+        }
+        buttons[buttons.length - 1].element.addStyleClass("emulate-active");
+
+        function mouseOver(e)
+        {
+            if (e.which !== 1)
+                return;
+            var buttonElement = e.target.enclosingNodeOrSelfWithClass("status-bar-item");
+            buttonElement.addStyleClass("emulate-active");
+        }
+
+        function mouseOut(e)
+        {
+            if (e.which !== 1)
+                return;
+            var buttonElement = e.target.enclosingNodeOrSelfWithClass("status-bar-item");
+            buttonElement.removeStyleClass("emulate-active");
+        }
+
+        function mouseUp(e)
+        {
+            if (e.which !== 1)
+                return;
+            optionsGlassPane.dispose();
+            document.documentElement.removeEventListener("mouseup", mouseUpListener, false);
+
+            for (var i = 0; i < buttons.length; ++i) {
+                if (buttons[i].element.hasStyleClass("emulate-active"))
+                    buttons[i]._clicked();
+            }
+        }
     }
 }
 

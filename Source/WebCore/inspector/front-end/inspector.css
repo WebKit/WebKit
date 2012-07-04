@@ -518,6 +518,19 @@ body.drawer-visible #main-panels {
     z-index: 0;
 }
 
+.long-click-glyph {
+    background-color: rgba(0, 0, 0, 0.75);
+    -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
+    -webkit-mask-position: -288px -48px;
+    z-index: 1;
+}
+
+.long-click-glyph.shadow {
+    top: 1px;
+    background-color: white !important;
+    z-index: 0;
+}
+
 button.status-bar-item {
     position: relative;
     width: 32px;
@@ -525,7 +538,7 @@ button.status-bar-item {
     background-position: 0 0;
 }
 
-button.status-bar-item:active {
+button.status-bar-item:active:not(.emulate-inactive), button.status-bar-item.emulate-active {
     background-position: 32px 0 !important;
 }
 
@@ -582,9 +595,16 @@ button.dock-status-bar-item.status-bar-item.toggled-right .glyph {
     background-color: rgba(0, 0, 0, 0.75);
 }
 
-button.settings-status-bar-item {
+.alternate-status-bar-buttons-bar {
     position: absolute;
-    right: 0;
+    width: 32px;
+    bottom: -3px;
+    margin-left: 1px;
+    background: white;
+}
+
+.alternate-status-bar-buttons-bar .status-bar-item {
+    margin-top: -1px;
 }
 
 .settings-status-bar-item .glyph {

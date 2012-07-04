@@ -1,3 +1,39 @@
+2012-07-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: "Dock to right" shouldn't be in the settings dialog
+        https://bugs.webkit.org/show_bug.cgi?id=76917
+
+        Reviewed by Vsevolod Vlasov.
+
+        Introduced 'long click-enabled' options for status bar buttons. Made dock/undock one of them.
+
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+        * inspector/front-end/StatusBarButton.js:
+        (WebInspector.StatusBarButton.prototype._clicked):
+        (WebInspector.StatusBarButton.prototype.set visible):
+        (WebInspector.StatusBarButton.prototype.makeLongClickEnabled.mouseDown):
+        (WebInspector.StatusBarButton.prototype.makeLongClickEnabled.mouseUp):
+        (WebInspector.StatusBarButton.prototype.makeLongClickEnabled):
+        (WebInspector.StatusBarButton.prototype._showOptions.mouseOver):
+        (WebInspector.StatusBarButton.prototype._showOptions.mouseOut):
+        (WebInspector.StatusBarButton.prototype._showOptions.mouseUp):
+        (WebInspector.StatusBarButton.prototype._showOptions):
+        * inspector/front-end/UIUtils.js:
+        (WebInspector.elementDragStart):
+        (WebInspector.elementDragEnd):
+        (WebInspector.GlassPane):
+        (WebInspector.GlassPane.prototype.dispose):
+        * inspector/front-end/inspector.css:
+        (.long-click-glyph):
+        (.long-click-glyph.shadow):
+        (button.status-bar-item:active:not(.emulate-inactive), button.status-bar-item.emulate-active):
+        (.alternate-status-bar-buttons-bar):
+        (.alternate-status-bar-buttons-bar .status-bar-item):
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (WebInspector._createDockOptions.onClick.set else):
+        (WebInspector._createDockOptions.onClick):
+
 2012-07-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121813.

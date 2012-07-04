@@ -71,6 +71,7 @@ var WebInspector = {
     _createGlobalStatusBarItems: function()
     {
         this._dockToggleButton = new WebInspector.StatusBarButton("", "dock-status-bar-item", 3);
+        this._dockToggleButton.makeLongClickEnabled(this._createDockOptions.bind(this));
         this._dockToggleButton.addEventListener("click", this._toggleAttach.bind(this), false);
         this._updateDockButtonState();
 
@@ -84,6 +85,41 @@ var WebInspector = {
         if (this.panels.elements)
             anchoredStatusBar.appendChild(this.panels.elements.nodeSearchButton.element);
         anchoredStatusBar.appendChild(this.settingsController.statusBarItem);
+    },
+
+    _createDockOptions: function()
+    {
+        var alternateDockToggleButton1 = new WebInspector.StatusBarButton("Dock to main window.", "dock-status-bar-item", 3);
+        var alternateDockToggleButton2 = new WebInspector.StatusBarButton("Undock into separate window.", "dock-status-bar-item", 3);
+
+        if (this.attached) {
+            alternateDockToggleButton1.state = WebInspector.settings.dockToRight.get() ? "bottom" : "right";
+            alternateDockToggleButton2.state = "undock";
+        } else {
+            alternateDockToggleButton1.state = WebInspector.settings.dockToRight.get() ? "bottom" : "right";
+            alternateDockToggleButton2.state = WebInspector.settings.dockToRight.get() ? "right" : "bottom";
+        }
+
+        alternateDockToggleButton1.addEventListener("click", onClick.bind(this), false);
+        alternateDockToggleButton2.addEventListener("click", onClick.bind(this), false);
+
+        function onClick(e)
+        {
+            var state = e.target.state;
+            if (state === "undock")
+                this._toggleAttach();
+            else if (state === "right") {
+                if (!this.attached)
+                    this._toggleAttach();
+                WebInspector.settings.dockToRight.set(true);
+            } else if (state === "bottom") {
+                if (!this.attached)
+                    this._toggleAttach();
+                WebInspector.settings.dockToRight.set(false);
+            }
+        }
+
+        return [alternateDockToggleButton1, alternateDockToggleButton2];
     },
 
     _updateDockButtonState: function()
