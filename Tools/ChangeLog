@@ -1,5 +1,20 @@
 2012-07-04  Sergio Villar Senin  <svillar@igalia.com>
 
+        [WK2] [GTK] WK2 testing bot unable to find the InjectedBundle library
+        https://bugs.webkit.org/show_bug.cgi?id=90541
+
+        Reviewed by Carlos Garcia Campos.
+
+        We must add the contents of WebKitBuild/*/Libraries/ directory to
+        the file to be uploaded to b.w.o to successfully run WebKit2 tests
+        in the WebKit2 testing bot.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct): appended Libraries to the list of
+        neededDirectories.
+
+2012-07-04  Sergio Villar Senin  <svillar@igalia.com>
+
         [GTK] WebKit2 testing bot unable to find the build directory
         https://bugs.webkit.org/show_bug.cgi?id=90523
 
