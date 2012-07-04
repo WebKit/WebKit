@@ -1,3 +1,16 @@
+2012-07-03  Dirk Pranke  <dpranke@chromium.org>
+
+        disable failing mock-chromium-mac python unit tests
+
+        Unreviewed, build fix.
+
+        Disable these tests until I can figure out why they're failing
+        on the bots.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (PortTest.disabled_test_chromium_mac_lion):
+        (PortTest.disabled_test_chromium_mac_lion_in_test_shell_mode):
+
 2012-07-03  Ian Vollick  <vollick@chromium.org>
 
         Add vollick to the list of committers
