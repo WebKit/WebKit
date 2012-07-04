@@ -60,8 +60,6 @@ static const char includeMemoryDetails[] = "includeMemoryDetails";
 
 // Must be kept in sync with WebInspector.TimelineModel.RecordType in TimelineModel.js
 namespace TimelineRecordType {
-static const char Program[] = "Program";
-
 static const char EventDispatch[] = "EventDispatch";
 static const char BeginFrame[] = "BeginFrame";
 static const char Layout[] = "Layout";
@@ -344,7 +342,7 @@ void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, c
         String frameId(m_pageAgent->frameId(frame));
         recordRaw->setString("frameId", frameId);
     }
-    setHeapSizeStatistics(recordRaw.get());
+    setHeapSizeStatistic(recordRaw.get());
     // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
     RefPtr<TypeBuilder::Timeline::TimelineEvent> record = TypeBuilder::Timeline::TimelineEvent::runtimeCast(recordRaw.release());
     m_frontend->eventRecorded(record.release());
@@ -429,12 +427,12 @@ void InspectorTimelineAgent::didFireAnimationFrame()
 
 void InspectorTimelineAgent::willProcessTask()
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Program, false, 0);
+    // TODO: Record task processing start time.
 }
 
 void InspectorTimelineAgent::didProcessTask()
 {
-    didCompleteCurrentRecord(TimelineRecordType::Program);
+    // TODO: Record task processing end time.
 }
 
 void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> record, const String& type, const String& frameId)
@@ -445,15 +443,11 @@ void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> rec
 
 void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type, const String& frameId)
 {
-    DEFINE_STATIC_LOCAL(String, program, (TimelineRecordType::Program));
-
     RefPtr<InspectorObject> record(prpRecord);
     record->setString("type", type);
     if (!frameId.isEmpty())
         record->setString("frameId", frameId);
-    if (type != program)
-        setHeapSizeStatistics(record.get());
-
+    setHeapSizeStatistic(record.get());
     if (m_recordStack.isEmpty()) {
         // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
         RefPtr<TypeBuilder::Timeline::TimelineEvent> recordChecked = TypeBuilder::Timeline::TimelineEvent::runtimeCast(record.release());
@@ -464,7 +458,7 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
     }
 }
 
-void InspectorTimelineAgent::setHeapSizeStatistics(InspectorObject* record)
+void InspectorTimelineAgent::setHeapSizeStatistic(InspectorObject* record)
 {
     size_t usedHeapSize = 0;
     size_t totalHeapSize = 0;

@@ -257,20 +257,15 @@ WebInspector.MemoryStatistics.prototype = {
 
     _onRecordAdded: function(event)
     {
-        var statistics = this._counters;
-        function addStatistics(record)
-        {
-            var counters = record["counters"];
-            if (!counters)
-                return;
-            statistics.push({
-                time: record.endTime || record.startTime,
-                documentCount: counters["documents"],
-                nodeCount: counters["nodes"],
-                listenerCount: counters["jsEventListeners"]
-            });
-        }
-        WebInspector.TimelinePresentationModel.forAllRecords([event.data], null, addStatistics);
+        var counters = event.data["counters"];
+        if (!counters)
+            return;
+        this._counters.push({
+            time: event.data.endTime || event.data.startTime,
+            documentCount: counters["documents"],
+            nodeCount: counters["nodes"],
+            listenerCount: counters["jsEventListeners"]
+        });
     },
 
     _draw: function()
