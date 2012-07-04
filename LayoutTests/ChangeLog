@@ -1,5 +1,11 @@
 2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
 
+        [Chromium] Unreviewed gardening for Win build
+
+        * platform/chromium/TestExpectations: Add TEXT to http/tests/misc/last-modified-parsing.htl
+
+2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
+
         [Chromium] Rebaseline: svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml
 
         * platform/chromium-win/svg/custom/pattern-userSpaceOnUse-userToBaseTransform-expected.txt:
