@@ -150,9 +150,15 @@ editing/pasteboard/pasting-empty-html-falls-back-to-text.html
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
 editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/drop-file-svg.html
+editing/pasteboard/file-drag-to-editable.html
 editing/pasteboard/get-data-text-plain-drop.html
+fast/events/drop-handler-should-not-stop-navigate.html
 fast/events/drag-in-frames.html
+fast/events/drag-to-navigate.html
+fast/events/drop-with-file-paths.html
+fast/events/dropzone-004.html
 fast/events/standalone-image-drag-to-editable.html
+http/tests/security/clipboard/clipboard-file-access.html
 http/tests/security/drag-drop-same-unique-origin.html
 
 # EventSender::dumpFilenameBeingDragged not implemented.
@@ -240,34 +246,18 @@ svg/webarchive
 svg/custom/image-with-prefix-in-webarchive.svg
 http/tests/webarchive
 
-# <rdar://problem/5230396> eventSender.beginDragWithFiles is unimplemented
+# Assertion failure http://webkit.org/b/90425
 editing/pasteboard/dataTransfer-setData-getData.html
-editing/pasteboard/data-transfer-items-drag-drop-entry.html
-editing/pasteboard/data-transfer-items-drag-drop-file.html
-editing/pasteboard/drag-files-to-editable-element.html
-editing/pasteboard/drop-file-svg.html
-editing/pasteboard/file-drag-to-editable.html
+
+# FileInputType::receiveDroppedFiles receive relative path http://webkit.org/b/90426
 editing/pasteboard/file-input-files-access.html
-fast/dom/Window/window-postmessage-clone-frames.html
-fast/events/drag-dataTransferItemList-file-handling.html
-fast/events/drag-to-navigate.html
-fast/events/drop-handler-should-not-stop-navigate.html
-fast/events/drop-with-file-paths.html
-fast/events/dropzone-004.html
-fast/events/file-input-hidden-in-ondrop.html
-fast/events/input-element-display-none-in-dragleave-crash.html
-fast/forms/file/file-input-reset.html
-fast/forms/file/file-reset-in-change.html
-fast/forms/file/input-file-directory-upload.html
-fast/forms/file/input-file-entries.html
-fast/forms/file/input-file-re-render.html
-fast/forms/file/recover-file-input-in-unposted-form.html
-http/tests/security/clipboard/clipboard-file-access.html
 
 # File API is not supported yet (e.g. ENABLE(BLOB))
 fast/files
 http/tests/fileapi
 fast/dom/DOMURL/check-instanceof-domurl-functions.html
+fast/forms/file/input-file-entries.html
+fast/forms/file/recover-file-input-in-unposted-form.html
 
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html

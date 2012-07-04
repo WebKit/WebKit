@@ -1,3 +1,14 @@
+2012-07-03  Xueqing Huang  <huangxueqing@baidu.com>
+
+        eventSender.beginDragWithFiles had been implemented in Windows, related tests should be removed from Skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=87610
+
+        Reviewed by Jessie Berlin.
+
+        * platform/win/Skipped:
+        * platform/win/fast/dom/Window: Removed.
+        * platform/win/fast/dom/Window/window-postmessage-clone-frames-expected.txt: Removed.
+
 2012-07-03  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=88436.
