@@ -25,13 +25,13 @@
 #include "BatteryClient.h"
 #include "BatteryStatus.h"
 #include "Timer.h"
-#include <E_Ukit.h>
 #include <wtf/text/AtomicString.h>
+
+typedef struct DBusError DBusError;
 
 namespace WebCore {
 
 class BatteryController;
-class BatteryStatus;
 
 class BatteryClientEfl : public BatteryClient {
 public:
@@ -44,7 +44,7 @@ public:
     virtual void batteryControllerDestroyed();
 
     void setBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus>);
-    BatteryStatus* batteryStatus() { return m_batteryStatus.get(); }
+    BatteryStatus* batteryStatus() const;
 
 private:
     void timerFired(Timer<BatteryClientEfl>*);
@@ -59,6 +59,6 @@ private:
 
 }
 
-#endif // BATTERY_STATUS
+#endif // ENABLE(BATTERY_STATUS)
 #endif // BatteryClientEfl_h
 

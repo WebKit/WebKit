@@ -1,3 +1,33 @@
+2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Move BatteryClientEfl from WebKit to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=90063
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move BatteryClientEfl class from WebKit to WebCore
+        so that it can be reused in WebKit2.
+
+        No new tests, no behavior change.
+
+        * PlatformEfl.cmake:
+        * platform/efl/BatteryClientEfl.cpp: Renamed from Source/WebKit/efl/WebCoreSupport/BatteryClientEfl.cpp.
+        (WebCore):
+        (WebCore::BatteryClientEfl::BatteryClientEfl):
+        (WebCore::BatteryClientEfl::setController):
+        (WebCore::BatteryClientEfl::startUpdating):
+        (WebCore::BatteryClientEfl::stopUpdating):
+        (WebCore::BatteryClientEfl::batteryControllerDestroyed):
+        (WebCore::BatteryClientEfl::setBatteryStatus):
+        (WebCore::BatteryClientEfl::timerFired):
+        (WebCore::BatteryClientEfl::getBatteryStatus):
+        (WebCore::BatteryClientEfl::setBatteryClient):
+        * platform/efl/BatteryClientEfl.h: Renamed from Source/WebKit/efl/WebCoreSupport/BatteryClientEfl.h.
+        (WebCore):
+        (BatteryClientEfl):
+        (WebCore::BatteryClientEfl::~BatteryClientEfl):
+        (WebCore::BatteryClientEfl::batteryStatus):
+
 2012-07-03  Huang Dongsung  <luxtella@company100.net>
 
         Add a comment in order to clarify why

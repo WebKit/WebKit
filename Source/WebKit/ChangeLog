@@ -1,3 +1,15 @@
+2012-07-03  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Move BatteryClientEfl from WebKit to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=90063
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move BatteryClientEfl class from WebKit to WebCore
+        so that it can be reused in WebKit2.
+
+        * PlatformEfl.cmake:
+
 2012-07-02  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Use PUBLIC_BUILD to enable/disable DRT

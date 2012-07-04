@@ -24,6 +24,7 @@
 
 #include "BatteryController.h"
 #include "EventNames.h"
+#include <E_Ukit.h>
 #include <limits>
 
 namespace WebCore {
@@ -33,6 +34,11 @@ BatteryClientEfl::BatteryClientEfl()
     , m_timer(this, &BatteryClientEfl::timerFired)
     , m_batteryStatusRefreshInterval(1.0)
 {
+}
+
+BatteryStatus* BatteryClientEfl::batteryStatus() const
+{
+    return m_batteryStatus.get();
 }
 
 void BatteryClientEfl::setController(BatteryController* controller)
