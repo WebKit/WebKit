@@ -172,7 +172,7 @@ WebInspector.StatusBarButton.prototype = {
         {
             if (e.which !== 1)
                 return;
-            this._showOptionsTimer = setTimeout(this._showOptions.bind(this, buttonsProvider), 500);
+            this._showOptionsTimer = setTimeout(this._showOptions.bind(this, buttonsProvider), 200);
         }
 
         function mouseUp(e)

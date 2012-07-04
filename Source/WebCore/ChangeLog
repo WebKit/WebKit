@@ -1,3 +1,10 @@
+2012-07-04  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed: follow up to r121843, reduce inspector dock timeout to 200ms.
+
+        * inspector/front-end/StatusBarButton.js:
+        (WebInspector.StatusBarButton.prototype.makeLongClickEnabled.mouseDown):
+
 2012-07-04  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Correctly reject accelerated animations with certain rotations.
