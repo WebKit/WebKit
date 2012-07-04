@@ -45,8 +45,6 @@ class MarkupTokenizerBase {
 public:
     virtual ~MarkupTokenizerBase() { }
 
-    OrdinalNumber lineNumber() const { return OrdinalNumber::fromZeroBasedInt(m_lineNumber); }
-
     typename State::State state() const { return m_state; }
     void setState(typename State::State state) { m_state = state; }
 
@@ -73,7 +71,7 @@ protected:
         // Returns whether we succeeded in peeking at the next character.
         // The only way we can fail to peek is if there are no more
         // characters in |source| (after collapsing \r\n, etc).
-        ALWAYS_INLINE bool peek(SegmentedString& source, int& lineNumber)
+        ALWAYS_INLINE bool peek(SegmentedString& source)
         {
         PeekAgain:
             m_nextInputCharacter = *source;
@@ -90,7 +88,7 @@ protected:
 
             if (m_nextInputCharacter == '\n' && m_skipNextNewLine) {
                 m_skipNextNewLine = false;
-                source.advancePastNewline(lineNumber);
+                source.advancePastNewlineAndUpdateLineNumber();
                 if (source.isEmpty())
                     return false;
                 m_nextInputCharacter = *source;
@@ -118,12 +116,12 @@ protected:
         }
 
         // Returns whether there are more characters in |source| after advancing.
-        bool advance(SegmentedString& source, int& lineNumber)
+        bool advance(SegmentedString& source)
         {
-            source.advance(lineNumber);
+            source.advanceAndUpdateLineNumber();
             if (source.isEmpty())
                 return false;
-            return peek(source, lineNumber);
+            return peek(source);
         }
 
         static const UChar endOfFileMarker = 0;
@@ -156,7 +154,7 @@ protected:
     inline bool emitAndResumeIn(SegmentedString& source, typename State::State state)
     {
         m_state = state;
-        source.advance(m_lineNumber);
+        source.advanceAndUpdateLineNumber();
         return true;
     }
     
@@ -172,7 +170,7 @@ protected:
         if (haveBufferedCharacterToken())
             return true;
         m_state = State::DataState;
-        source.advance(m_lineNumber);
+        source.advanceAndUpdateLineNumber();
         m_token->clear();
         m_token->makeEndOfFile();
         return true;
@@ -182,7 +180,6 @@ protected:
     {
         m_state = State::DataState;
         m_token = 0;
-        m_lineNumber = 0;
     }
 
     inline bool haveBufferedCharacterToken()
@@ -195,7 +192,6 @@ protected:
     // m_token is owned by the caller. If nextToken is not on the stack,
     // this member might be pointing to unallocated memory.
     Token* m_token;
-    int m_lineNumber;
 
     bool m_forceNullCharacterReplacement;
 

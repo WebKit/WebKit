@@ -225,7 +225,7 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
     ASSERT(!m_token || m_token == &token || token.type() == XMLTokenTypes::Uninitialized);
     m_token = &token;
 
-    if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source, m_lineNumber))
+    if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source))
         return haveBufferedCharacterToken();
     UChar cc = m_inputStreamPreprocessor.nextInputCharacter();
 

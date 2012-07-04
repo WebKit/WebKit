@@ -134,7 +134,6 @@ void HTMLTokenizer::reset()
 {
     m_state = HTMLTokenizerState::DataState;
     m_token = 0;
-    m_lineNumber = 0;
     m_forceNullCharacterReplacement = false;
     m_shouldAllowCDATA = false;
     m_additionalAllowedCharacter = '\0';
@@ -160,7 +159,7 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 bool HTMLTokenizer::flushBufferedEndTag(SegmentedString& source)
 {
     ASSERT(m_token->type() == HTMLTokenTypes::Character || m_token->type() == HTMLTokenTypes::Uninitialized);
-    source.advance(m_lineNumber);
+    source.advanceAndUpdateLineNumber();
     if (m_token->type() == HTMLTokenTypes::Character)
         return true;
     m_token->beginEndTag(m_bufferedEndTagName);
@@ -175,7 +174,7 @@ bool HTMLTokenizer::flushBufferedEndTag(SegmentedString& source)
         if (flushBufferedEndTag(source))                                   \
             return true;                                                   \
         if (source.isEmpty()                                               \
-            || !m_inputStreamPreprocessor.peek(source, m_lineNumber))      \
+            || !m_inputStreamPreprocessor.peek(source))                    \
             return haveBufferedCharacterToken();                           \
         cc = m_inputStreamPreprocessor.nextInputCharacter();               \
         goto stateName;                                                    \
@@ -207,7 +206,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         }
     }
 
-    if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source, m_lineNumber))
+    if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source))
         return haveBufferedCharacterToken();
     UChar cc = m_inputStreamPreprocessor.nextInputCharacter();
 

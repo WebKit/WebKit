@@ -258,7 +258,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     // FIXME: m_input.current().length() is only accurate if we
     // end up parsing the whole buffer in this pump.  We should pass how
     // much we parsed as part of didWriteHTML instead of willWriteHTML.
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().length(), m_tokenizer->lineNumber().zeroBasedInt());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().length(), m_input.current().currentLine().zeroBasedInt());
 
     while (canTakeNextToken(mode, session) && !session.needsYield) {
         if (!isParsingFragment())
@@ -298,7 +298,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_preloadScanner->scan();
     }
 
-    InspectorInstrumentation::didWriteHTML(cookie, m_tokenizer->lineNumber().zeroBasedInt());
+    InspectorInstrumentation::didWriteHTML(cookie, m_input.current().currentLine().zeroBasedInt());
 }
 
 bool HTMLDocumentParser::hasInsertionPoint()
@@ -448,7 +448,7 @@ String HTMLDocumentParser::sourceForToken(const HTMLToken& token)
 
 OrdinalNumber HTMLDocumentParser::lineNumber() const
 {
-    return m_tokenizer->lineNumber();
+    return m_input.current().currentLine();
 }
 
 TextPosition HTMLDocumentParser::textPosition() const
@@ -456,7 +456,6 @@ TextPosition HTMLDocumentParser::textPosition() const
     const SegmentedString& currentString = m_input.current();
     OrdinalNumber line = currentString.currentLine();
     OrdinalNumber column = currentString.currentColumn();
-    ASSERT(m_tokenizer->lineNumber() == line);
 
     return TextPosition(line, column);
 }

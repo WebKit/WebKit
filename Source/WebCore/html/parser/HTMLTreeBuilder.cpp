@@ -2646,8 +2646,6 @@ void HTMLTreeBuilder::processScriptStartTag(AtomicHTMLToken& token)
 
     TextPosition position = m_parser->textPosition();
 
-    ASSERT(position.m_line == m_parser->tokenizer()->lineNumber());
-
     m_lastScriptElementStartPosition = position;
 
     setInsertionMode(TextMode);

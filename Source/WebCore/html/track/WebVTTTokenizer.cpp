@@ -65,7 +65,6 @@ void WebVTTTokenizer::reset()
 {
     m_state = WebVTTTokenizerState::DataState;
     m_token = 0;
-    m_lineNumber = 0;
     m_buffer.clear();
 }
     
@@ -76,7 +75,7 @@ bool WebVTTTokenizer::nextToken(SegmentedString& source, WebVTTToken& token)
     ASSERT(!m_token || m_token == &token || token.type() == WebVTTTokenTypes::Uninitialized);
     m_token = &token;
 
-    if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source, m_lineNumber))
+    if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source))
         return haveBufferedCharacterToken();
 
     UChar cc = m_inputStreamPreprocessor.nextInputCharacter();

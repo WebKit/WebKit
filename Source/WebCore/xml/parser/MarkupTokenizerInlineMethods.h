@@ -71,7 +71,7 @@ inline void advanceStringAndASSERT(SegmentedString& source, const char* expected
 #define ADVANCE_TO(prefix, stateName)                                      \
     do {                                                                   \
         m_state = prefix::stateName;                                       \
-        if (!m_inputStreamPreprocessor.advance(source, m_lineNumber))      \
+        if (!m_inputStreamPreprocessor.advance(source))                    \
             return haveBufferedCharacterToken();                           \
         cc = m_inputStreamPreprocessor.nextInputCharacter();               \
         goto stateName;                                                    \
@@ -84,7 +84,7 @@ inline void advanceStringAndASSERT(SegmentedString& source, const char* expected
 #define SWITCH_TO(prefix, stateName)                                       \
     do {                                                                   \
         m_state = prefix::stateName;                                       \
-        if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source, m_lineNumber)) \
+        if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source))   \
             return haveBufferedCharacterToken();                           \
         cc = m_inputStreamPreprocessor.nextInputCharacter();               \
         goto stateName;                                                    \

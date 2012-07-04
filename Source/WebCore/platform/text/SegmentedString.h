@@ -157,12 +157,11 @@ public:
         advance();
     }
 
-    void advancePastNewline(int& lineNumber)
+    void advancePastNewlineAndUpdateLineNumber()
     {
         ASSERT(*current() == '\n');
         if (!m_pushedChar1 && m_currentString.m_length > 1) {
             int newLineFlag = m_currentString.doNotExcludeLineNumbers();
-            lineNumber += newLineFlag;
             m_currentLine += newLineFlag;
             if (newLineFlag)
                 m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + 1;
@@ -170,7 +169,7 @@ public:
             m_currentChar = ++m_currentString.m_current;
             return;
         }
-        advanceSlowCase(lineNumber);
+        advanceAndUpdateLineNumberSlowCase();
     }
     
     void advancePastNonNewline()
@@ -184,11 +183,10 @@ public:
         advanceSlowCase();
     }
     
-    void advance(int& lineNumber)
+    void advanceAndUpdateLineNumber()
     {
         if (!m_pushedChar1 && m_currentString.m_length > 1) {
             int newLineFlag = (*m_currentString.m_current == '\n') & m_currentString.doNotExcludeLineNumbers();
-            lineNumber += newLineFlag;
             m_currentLine += newLineFlag;
             if (newLineFlag)
                 m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + 1;
@@ -196,7 +194,7 @@ public:
             m_currentChar = ++m_currentString.m_current;
             return;
         }
-        advanceSlowCase(lineNumber);
+        advanceAndUpdateLineNumberSlowCase();
     }
 
     // Writes the consumed characters into consumedCharacters, which must
@@ -234,7 +232,7 @@ private:
     void prepend(const SegmentedSubstring&);
 
     void advanceSlowCase();
-    void advanceSlowCase(int& lineNumber);
+    void advanceAndUpdateLineNumberSlowCase();
     void advanceSubstring();
     const UChar* current() const { return m_currentChar; }
 

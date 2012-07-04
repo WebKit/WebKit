@@ -222,14 +222,13 @@ void SegmentedString::advanceSlowCase()
     m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
 }
 
-void SegmentedString::advanceSlowCase(int& lineNumber)
+void SegmentedString::advanceAndUpdateLineNumberSlowCase()
 {
     if (m_pushedChar1) {
         m_pushedChar1 = m_pushedChar2;
         m_pushedChar2 = 0;
     } else if (m_currentString.m_current) {
         if (*m_currentString.m_current++ == '\n' && m_currentString.doNotExcludeLineNumbers()) {
-            ++lineNumber;
             ++m_currentLine;
             // Plus 1 because numberOfCharactersConsumed value hasn't incremented yet; it does with m_length decrement below.
             m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + 1;
