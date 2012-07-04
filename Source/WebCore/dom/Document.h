@@ -173,6 +173,10 @@ class MicroDataItemList;
 class Prerenderer;
 #endif
 
+#if ENABLE(TEXT_AUTOSIZING)
+class TextAutosizer;
+#endif
+
 typedef int ExceptionCode;
 
 enum PageshowEventPersistence {
@@ -1129,6 +1133,10 @@ public:
     Prerenderer* prerenderer() { return m_prerenderer.get(); }
 #endif
 
+#if ENABLE(TEXT_AUTOSIZING)
+    TextAutosizer* textAutosizer() { return m_textAutosizer.get(); }
+#endif
+
     void adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>&, RenderObject*);
     void adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect&, RenderObject*);
 
@@ -1492,6 +1500,10 @@ private:
 
 #if ENABLE(LINK_PRERENDER)
     OwnPtr<Prerenderer> m_prerenderer;
+#endif
+
+#if ENABLE(TEXT_AUTOSIZING)
+    OwnPtr<TextAutosizer> m_textAutosizer;
 #endif
 
     bool m_scheduledTasksAreSuspended;

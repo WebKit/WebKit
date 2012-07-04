@@ -87,6 +87,10 @@
 #include "TiledBackingStore.h"
 #endif
 
+#if ENABLE(TEXT_AUTOSIZING)
+#include "TextAutosizer.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1111,6 +1115,11 @@ void FrameView::layout(bool allowSubtree)
             beginDeferredRepaints();
             forceLayoutParentViewIfNeeded();
             root->layout();
+#if ENABLE(TEXT_AUTOSIZING)
+            bool boosted = document->textAutosizer()->boostSubtree(root);
+            if (boosted && root->needsLayout())
+                root->layout();
+#endif
             endDeferredRepaints();
             m_inLayout = false;
 

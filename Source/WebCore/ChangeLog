@@ -1,3 +1,40 @@
+2012-07-04  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Add basic framework
+        https://bugs.webkit.org/show_bug.cgi?id=88655
+
+        This adds a highly simplified foundation that subsequent Text Autosizing patches
+        can build upon. I've refactored this code (since the earlier combined diff
+        uploaded to http://webkit.org/b/84186) to touch as few files as possible.
+
+        Reviewed by Adam Barth.
+
+        No new tests. I plan to add a test framework as my next Text Autosizing patch.
+
+        * WebCore.gypi:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        (WebCore::Document::textAutosizer):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/TextAutosizer.cpp: Added.
+        (WebCore):
+        (WebCore::TextAutosizer::TextAutosizer):
+        (WebCore::TextAutosizer::~TextAutosizer):
+        (WebCore::TextAutosizer::create):
+        (WebCore::TextAutosizer::boostSubtree):
+        (WebCore::TextAutosizer::boostBlock):
+        (WebCore::TextAutosizer::boostText):
+        (WebCore::TextAutosizer::treatAsInline):
+        (WebCore::TextAutosizer::traverseNext):
+        (WebCore::TextAutosizer::cloneRenderStyleWithState):
+        * rendering/TextAutosizer.h: Added.
+        (WebCore):
+        (TextAutosizer):
+
 2012-07-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed, rolling out r121767.

@@ -4630,6 +4630,8 @@
             'rendering/FixedTableLayout.h',
             'rendering/FlowThreadController.cpp',
             'rendering/FlowThreadController.h',
+            'rendering/TextAutosizer.cpp',
+            'rendering/TextAutosizer.h',
             'rendering/HitTestingTransformState.cpp',
             'rendering/HitTestingTransformState.h',
             'rendering/HitTestResult.cpp',

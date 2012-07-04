@@ -216,6 +216,10 @@
 #include "Prerenderer.h"
 #endif
 
+#if ENABLE(TEXT_AUTOSIZING)
+#include "TextAutosizer.h"
+#endif
+
 using namespace std;
 using namespace WTF;
 using namespace Unicode;
@@ -515,6 +519,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_cachedResourceLoader = adoptPtr(new CachedResourceLoader(this));
 #if ENABLE(LINK_PRERENDER)
     m_prerenderer = Prerenderer::create(this);
+#endif
+#if ENABLE(TEXT_AUTOSIZING)
+    m_textAutosizer = TextAutosizer::create(this);
 #endif
     m_visuallyOrdered = false;
     m_bParsing = false;
