@@ -493,13 +493,13 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
     prioritizeTextures(updateList);
 
     paintLayerContents(updateList, PaintVisible, updater);
-    if (!m_triggerIdlePaints)
-        return;
 
-    // The second (idle) paint will be a no-op in layers where painting already occured above.
-    // FIXME: This pass can be merged with the visible pass now that textures
-    //        are prioritized above.
-    paintLayerContents(updateList, PaintIdle, updater);
+    if (m_triggerIdlePaints) {
+        // The second (idle) paint will be a no-op in layers where painting already occured above.
+        // FIXME: This pass can be merged with the visible pass now that textures
+        //        are prioritized above.
+        paintLayerContents(updateList, PaintIdle, updater);
+    }
 
     for (size_t i = 0; i < updateList.size(); ++i)
         updateList[i]->clearRenderSurface();

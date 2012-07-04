@@ -2251,4 +2251,26 @@ TEST_F(CCLayerTreeHostTestScrollChildLayer, runMultiThread)
     runTest(true);
 }
 
+class CCLayerTreeHostTestCompositeAndReadbackCleanup : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestCompositeAndReadbackCleanup() { }
+
+    virtual void beginTest()
+    {
+        LayerChromium* rootLayer = m_layerTreeHost->rootLayer();
+
+        OwnArrayPtr<char> pixels(adoptArrayPtr(new char[4]));
+        m_layerTreeHost->compositeAndReadback(static_cast<void*>(pixels.get()), IntRect(0, 0, 1, 1));
+        EXPECT_FALSE(rootLayer->renderSurface());
+
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestCompositeAndReadbackCleanup)
+
 } // namespace
