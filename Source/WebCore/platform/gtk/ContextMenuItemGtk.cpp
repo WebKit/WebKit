@@ -144,6 +144,17 @@ static PlatformMenuItemDescription createPlatformMenuItemDescription(ContextMenu
 ContextMenuItem::ContextMenuItem(PlatformMenuItemDescription item)
     : m_platformDescription(item)
 {
+    // Don't show accel labels in context menu items.
+    GtkAction* action = gtkAction();
+    if (!action)
+        return;
+
+    if (!gtk_action_get_accel_path(action))
+        return;
+
+    GtkWidget* child = gtk_bin_get_child(GTK_BIN(item));
+    if (GTK_IS_ACCEL_LABEL(child))
+        gtk_accel_label_set_accel_closure(GTK_ACCEL_LABEL(child), 0);
 }
 
 ContextMenuItem::ContextMenuItem(ContextMenu* subMenu)
