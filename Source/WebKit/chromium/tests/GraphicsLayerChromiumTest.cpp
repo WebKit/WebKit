@@ -256,6 +256,50 @@ TEST_F(GraphicsLayerChromiumTest, createTransformAnimationWithBigRotation)
     EXPECT_FALSE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
 }
 
+TEST_F(GraphicsLayerChromiumTest, createTransformAnimationWithRotationInvolvingNegativeAngles)
+{
+    const double duration = 1;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations1;
+    operations1.operations().append(RotateTransformOperation::create(-330, TransformOperation::ROTATE));
+    values.insert(new TransformAnimationValue(0, &operations1));
+
+    TransformOperations operations2;
+    operations2.operations().append(RotateTransformOperation::create(-320, TransformOperation::ROTATE));
+    values.insert(new TransformAnimationValue(duration, &operations2));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    IntSize boxSize;
+    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
+
+    EXPECT_TRUE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
+}
+
+TEST_F(GraphicsLayerChromiumTest, createTransformAnimationWithSmallRotationInvolvingLargeAngles)
+{
+    const double duration = 1;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations1;
+    operations1.operations().append(RotateTransformOperation::create(270, TransformOperation::ROTATE));
+    values.insert(new TransformAnimationValue(0, &operations1));
+
+    TransformOperations operations2;
+    operations2.operations().append(RotateTransformOperation::create(360, TransformOperation::ROTATE));
+    values.insert(new TransformAnimationValue(duration, &operations2));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    IntSize boxSize;
+    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
+
+    EXPECT_TRUE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
+}
+
 TEST_F(GraphicsLayerChromiumTest, createTransformAnimationWithSingularMatrix)
 {
     const double duration = 1;

@@ -509,14 +509,6 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
 
 bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, const String& animationName, double timeOffset)
 {
-    // Bail early if we have a large rotation.
-    if (values.property() == AnimatedPropertyWebkitTransform) {
-        bool hasRotationOfMoreThan180Degrees = false;
-        validateTransformOperations(values, hasRotationOfMoreThan180Degrees);
-        if (hasRotationOfMoreThan180Degrees)
-            return false;
-    }
-
     primaryLayer().unwrap<LayerChromium>()->setLayerAnimationDelegate(this);
 
     int animationId = mapAnimationNameToId(animationName);

@@ -122,15 +122,54 @@ WebTransformOperations toWebTransformOperations(const TransformOperations& trans
 }
 
 template <class Value, class Keyframe, class Curve>
-bool appendKeyframe(Curve& curve, double keyTime, const Value* value, PassOwnPtr<CCTimingFunction> timingFunction, const FloatSize&)
+bool appendKeyframe(Curve& curve, double keyTime, const Value* value, const Value* lastValue, PassOwnPtr<CCTimingFunction> timingFunction, const FloatSize&)
 {
     curve.addKeyframe(Keyframe::create(keyTime, value->value(), timingFunction));
     return true;
 }
 
-template <>
-bool appendKeyframe<TransformAnimationValue, CCTransformKeyframe, CCKeyframedTransformAnimationCurve>(CCKeyframedTransformAnimationCurve& curve, double keyTime, const TransformAnimationValue* value, PassOwnPtr<CCTimingFunction> timingFunction, const FloatSize& boxSize)
+bool isRotationType(TransformOperation::OperationType transformType)
 {
+    return transformType == TransformOperation::ROTATE
+        || transformType == TransformOperation::ROTATE_X
+        || transformType == TransformOperation::ROTATE_Y
+        || transformType == TransformOperation::ROTATE_Z
+        || transformType == TransformOperation::ROTATE_3D;
+}
+
+bool causesRotationOfAtLeast180Degrees(const TransformAnimationValue* value, const TransformAnimationValue* lastValue)
+{
+    if (!lastValue)
+        return false;
+
+    const TransformOperations& operations = *value->value();
+    const TransformOperations& lastOperations = *lastValue->value();
+
+    // We'll be doing matrix interpolation in this case. No risk of incorrect
+    // rotations here.
+    if (!operations.operationsMatch(lastOperations))
+        return false;
+
+    for (size_t i = 0; i < operations.size(); ++i) {
+        if (!isRotationType(operations.operations()[i]->getOperationType()))
+            continue;
+
+        RotateTransformOperation* rotation = static_cast<RotateTransformOperation*>(operations.operations()[i].get());
+        RotateTransformOperation* lastRotation = static_cast<RotateTransformOperation*>(lastOperations.operations()[i].get());
+
+        if (fabs(rotation->angle() - lastRotation->angle()) >= 180)
+            return true;
+    }
+
+    return false;
+}
+
+template <>
+bool appendKeyframe<TransformAnimationValue, CCTransformKeyframe, CCKeyframedTransformAnimationCurve>(CCKeyframedTransformAnimationCurve& curve, double keyTime, const TransformAnimationValue* value, const TransformAnimationValue* lastValue, PassOwnPtr<CCTimingFunction> timingFunction, const FloatSize& boxSize)
+{
+    if (causesRotationOfAtLeast180Degrees(value, lastValue))
+        return false;
+
     WebTransformOperations operations = toWebTransformOperations(*value->value(), boxSize);
     if (operations.apply().isInvertible()) {
         curve.addKeyframe(CCTransformKeyframe::create(keyTime, operations, timingFunction));
@@ -159,6 +198,9 @@ PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& val
         size_t index = reverse ? valueList.size() - i - 1 : i;
 
         const Value* originalValue = static_cast<const Value*>(valueList.at(index));
+        const Value* lastOriginalValue = 0;
+        if (valueList.size() > 1 && ((reverse && index + 1 < valueList.size()) || (!reverse && index > 0)))
+            lastOriginalValue = static_cast<const Value*>(valueList.at(reverse ? index + 1 : index - 1));
 
         OwnPtr<CCTimingFunction> timingFunction;
         const TimingFunction* originalTimingFunction = originalValue->timingFunction();
@@ -190,7 +232,7 @@ PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& val
         if (reverse)
             keyTime = duration - keyTime;
 
-        bool addedKeyframe = appendKeyframe<Value, Keyframe, Curve>(*curve, keyTime, originalValue, timingFunction.release(), boxSize);
+        bool addedKeyframe = appendKeyframe<Value, Keyframe, Curve>(*curve, keyTime, originalValue, lastOriginalValue, timingFunction.release(), boxSize);
         if (!addedKeyframe)
             return nullptr;
     }

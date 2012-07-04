@@ -1,3 +1,25 @@
+2012-07-04  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Correctly reject accelerated animations with certain rotations.
+        https://bugs.webkit.org/show_bug.cgi?id=89768
+
+        Reviewed by James Robinson.
+
+        UnitTests:
+          GraphicsLayerChromiumTest.createTransformAnimationWithBigRotation
+          GraphicsLayerChromiumTest.createTransformAnimationWithRotationInvolvingNegativeAngles
+          GraphicsLayerChromiumTest.createTransformAnimationWithSmallRotationInvolvingLargeAngles
+
+        * platform/graphics/chromium/AnimationTranslationUtil.cpp:
+        (WebCore::appendKeyframe):
+        (WebCore::isRotationType):
+        (WebCore):
+        (WebCore::causesRotationOfAtLeast180Degrees):
+        (WebCore::CCKeyframedTransformAnimationCurve):
+        (WebCore::createActiveAnimation):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::addAnimation):
+
 2012-07-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: "Dock to right" shouldn't be in the settings dialog
