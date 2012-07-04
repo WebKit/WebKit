@@ -2,6 +2,7 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/extensions-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
 <link rel="stylesheet" href="resources/audits-style1.css" type="text/css">
 <script type="text/javascript" src="resources/test-script.js"></script>
 
@@ -158,16 +159,24 @@ function extension_testOnContentCommitted(nextTest)
 
 function extension_testOnResourceAdded(nextTest)
 {
+    evaluateOnFrontend("InspectorTest.startDebuggerTest(reply);", step2);
+
+    function step2()
+    {
+        webInspector.inspectedWindow.onResourceAdded.addListener(onResourceAdded);
+        webInspector.inspectedWindow.eval("addResource()");
+    }
+
     function onResourceAdded(resource)
     {
+        if (resource.url.indexOf("test_func") === -1)
+            return;
         output("resource added:");
         dumpObject(Array.prototype.slice.call(arguments), { url: "url" });
         webInspector.inspectedWindow.onResourceAdded.removeListener(onResourceAdded);
 
-        nextTest();
+        evaluateOnFrontend("InspectorTest.finishDebuggerTest(reply);", nextTest);
     }
-    webInspector.inspectedWindow.onResourceAdded.addListener(onResourceAdded);
-    webInspector.inspectedWindow.eval("addResource()");
 }
 
 function extension_testOpenResourceHandler(nextTest)

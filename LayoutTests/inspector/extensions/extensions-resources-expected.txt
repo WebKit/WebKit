@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 11: don't panic!
+CONSOLE MESSAGE: line 12: don't panic!
 Tests resource-related methods of WebInspector extension API
 
 
@@ -60,6 +60,7 @@ log: Extension server error: Object does not support requested operation: Resour
 content committed for resource .../audits-style1.css (type: stylesheet), new content: div.test { width: 220px; height: 42px; }
 Revision content: div.test { width: 220px; height: 42px; }
 RUNNING TEST: extension_testOnResourceAdded
+Debugger was enabled.
 resource added:
 {
     0 : {
@@ -69,6 +70,7 @@ resource added:
         setContent : <function>
     }
 }
+Debugger was disabled.
 RUNNING TEST: extension_testOpenResourceHandler
 handleOpenResource() invoked [this should only appear once!]: 
 {
@@ -78,7 +80,7 @@ handleOpenResource() invoked [this should only appear once!]:
         getContent : <function>
         setContent : <function>
     }
-    1 : 11
+    1 : 12
 }
 RUNNING TEST: extension_testSetResourceContent
 div.test width after stylesheet edited (should be 126): 126
