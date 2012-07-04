@@ -1,3 +1,13 @@
+2012-07-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix haveQtModule() check
+
+        Without {} brackets we were pulling out the value of the module.name variable.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2012-07-04  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] [GTK] WK2 testing bot unable to find the InjectedBundle library
