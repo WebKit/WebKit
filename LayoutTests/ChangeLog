@@ -1,3 +1,10 @@
+2012-07-04  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] Unreviewed gardening for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=90430
+
+        * platform/chromium/TestExpectations: Add TIMEOUT to inspector/timeline/timeline-receive-response-event.html
+
 2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium] Unreviewed gardening for Win build
