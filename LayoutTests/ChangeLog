@@ -1,3 +1,15 @@
+2012-07-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating baselines after r121789.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css1/formatting_model/floating_elements-expected.png: Added.
+        * platform/gtk/css1/formatting_model/floating_elements-expected.txt:
+        * platform/gtk/fast/block/float/010-expected.png:
+        * platform/gtk/fast/block/float/010-expected.txt:
+        * platform/gtk/fast/block/float/independent-align-positioning-expected.png:
+        * platform/gtk/fast/block/float/independent-align-positioning-expected.txt:
+
 2012-07-04  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip failing test.
