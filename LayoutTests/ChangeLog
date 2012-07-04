@@ -1,6 +1,13 @@
 2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium] Unreviewed gardening for Win build
+        https://bugs.webkit.org/show_bug.cgi?id=90517
+
+        * platform/chromium/TestExpectations: Add svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg as flaky on Windows
+
+2012-07-03  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] Unreviewed gardening for Win build
 
         * platform/chromium/TestExpectations: Add TEXT to http/tests/misc/last-modified-parsing.htl
 
