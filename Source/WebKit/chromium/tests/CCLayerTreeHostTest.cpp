@@ -57,7 +57,6 @@ using namespace WTF;
 namespace {
 
 class CCLayerTreeHostTest : public CCThreadedTest { };
-class CCLayerTreeHostTestThreadOnly : public CCThreadedTestThreadOnly { };
 
 // Shortlived layerTreeHosts shouldn't die.
 class CCLayerTreeHostTestShortlived1 : public CCLayerTreeHostTest {
@@ -125,7 +124,7 @@ public:
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestShortlived3)
 
 // Test interleaving of redraws and commits
-class CCLayerTreeHostTestCommitingWithContinuousRedraw : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestCommitingWithContinuousRedraw : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestCommitingWithContinuousRedraw()
         : m_numCompleteCommits(0)
@@ -164,12 +163,12 @@ private:
 
 TEST_F(CCLayerTreeHostTestCommitingWithContinuousRedraw, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // Two setNeedsCommits in a row should lead to at least 1 commit and at least 1
 // draw with frame 0.
-class CCLayerTreeHostTestSetNeedsCommit1 : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestSetNeedsCommit1 : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestSetNeedsCommit1()
         : m_numCommits(0)
@@ -208,12 +207,12 @@ private:
 
 TEST_F(CCLayerTreeHostTestSetNeedsCommit1, DISABLED_runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // A setNeedsCommit should lead to 1 commit. Issuing a second commit after that
 // first committed frame draws should lead to another commit.
-class CCLayerTreeHostTestSetNeedsCommit2 : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestSetNeedsCommit2 : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestSetNeedsCommit2()
         : m_numCommits(0)
@@ -257,12 +256,12 @@ TEST_F(CCLayerTreeHostTestSetNeedsCommit2, FLAKY_runMultiThread)
 TEST_F(CCLayerTreeHostTestSetNeedsCommit2, runMultiThread)
 #endif
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // 1 setNeedsRedraw after the first commit has completed should lead to 1
 // additional draw.
-class CCLayerTreeHostTestSetNeedsRedraw : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestSetNeedsRedraw : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestSetNeedsRedraw()
         : m_numCommits(0)
@@ -304,11 +303,11 @@ private:
 
 TEST_F(CCLayerTreeHostTestSetNeedsRedraw, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // If the layerTreeHost says it can't draw, then we should not try to draw.
-class CCLayerTreeHostTestCanDrawBlocksDrawing : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestCanDrawBlocksDrawing : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestCanDrawBlocksDrawing()
         : m_numCommits(0)
@@ -362,7 +361,7 @@ private:
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestCanDrawBlocksDrawing)
 
 // beginLayerWrite should prevent draws from executing until a commit occurs
-class CCLayerTreeHostTestWriteLayersRedraw : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestWriteLayersRedraw : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestWriteLayersRedraw()
         : m_numCommits(0)
@@ -401,7 +400,7 @@ private:
 
 TEST_F(CCLayerTreeHostTestWriteLayersRedraw, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // Verify that when resuming visibility, requesting layer write permission
@@ -409,7 +408,7 @@ TEST_F(CCLayerTreeHostTestWriteLayersRedraw, runMultiThread)
 // scheduled redraws. This behavior is critical for reliably surviving tab
 // switching. There are no failure conditions to this test, it just passes
 // by not timing out.
-class CCLayerTreeHostTestWriteLayersAfterVisible : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestWriteLayersAfterVisible : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestWriteLayersAfterVisible()
         : m_numCommits(0)
@@ -444,11 +443,11 @@ private:
 
 TEST_F(CCLayerTreeHostTestWriteLayersAfterVisible, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // A compositeAndReadback while invisible should force a normal commit without assertion.
-class CCLayerTreeHostTestCompositeAndReadbackWhileInvisible : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestCompositeAndReadbackWhileInvisible : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestCompositeAndReadbackWhileInvisible()
         : m_numCommits(0)
@@ -483,10 +482,10 @@ private:
 
 TEST_F(CCLayerTreeHostTestCompositeAndReadbackWhileInvisible, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
-class CCLayerTreeHostTestAbortFrameWhenInvisible : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestAbortFrameWhenInvisible : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestAbortFrameWhenInvisible()
     {
@@ -517,7 +516,7 @@ private:
 
 TEST_F(CCLayerTreeHostTestAbortFrameWhenInvisible, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 
@@ -526,7 +525,7 @@ TEST_F(CCLayerTreeHostTestAbortFrameWhenInvisible, runMultiThread)
 // animate gets called yet-again, indicating that the proxy is correctly
 // handling the case where setNeedsAnimate() is called inside the begin frame
 // flow.
-class CCLayerTreeHostTestSetNeedsAnimateInsideAnimationCallback : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestSetNeedsAnimateInsideAnimationCallback : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestSetNeedsAnimateInsideAnimationCallback()
         : m_numAnimates(0)
@@ -558,12 +557,12 @@ private:
 
 TEST_F(CCLayerTreeHostTestSetNeedsAnimateInsideAnimationCallback, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // Add a layer animation and confirm that CCLayerTreeHostImpl::animateLayers does get
 // called and continues to get called.
-class CCLayerTreeHostTestAddAnimation : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestAddAnimation : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestAddAnimation()
         : m_numAnimates(0)
@@ -614,12 +613,12 @@ private:
 
 TEST_F(CCLayerTreeHostTestAddAnimation, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // Add a layer animation to a layer, but continually fail to draw. Confirm that after
 // a while, we do eventually force a draw.
-class CCLayerTreeHostTestCheckerboardDoesNotStarveDraws : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestCheckerboardDoesNotStarveDraws : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestCheckerboardDoesNotStarveDraws()
         : m_startedAnimating(false)
@@ -658,11 +657,11 @@ private:
 // Starvation can only be an issue with the MT compositor.
 TEST_F(CCLayerTreeHostTestCheckerboardDoesNotStarveDraws, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // Ensures that animations continue to be ticked when we are backgrounded.
-class CCLayerTreeHostTestTickAnimationWhileBackgrounded : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestTickAnimationWhileBackgrounded : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestTickAnimationWhileBackgrounded()
         : m_numAnimates(0)
@@ -701,7 +700,7 @@ private:
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestTickAnimationWhileBackgrounded)
 
 // Ensures that animations continue to be ticked when we are backgrounded.
-class CCLayerTreeHostTestAddAnimationWithTimingFunction : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestAddAnimationWithTimingFunction : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestAddAnimationWithTimingFunction()
     {
@@ -739,7 +738,7 @@ private:
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction)
 
 // Ensures that when opacity is being animated, this value does not cause the subtree to be skipped.
-class CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity()
     {
@@ -774,11 +773,11 @@ TEST_F(CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity, FLAKY_runMultiThre
 TEST_F(CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity, runMultiThread)
 #endif
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // Ensures that main thread animations have their start times synchronized with impl thread animations.
-class CCLayerTreeHostTestSynchronizeAnimationStartTimes : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestSynchronizeAnimationStartTimes : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestSynchronizeAnimationStartTimes()
         : m_layerTreeHostImpl(0)
@@ -821,7 +820,7 @@ private:
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestSynchronizeAnimationStartTimes)
 
 // Ensures that main thread animations have their start times synchronized with impl thread animations.
-class CCLayerTreeHostTestAnimationFinishedEvents : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestAnimationFinishedEvents : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestAnimationFinishedEvents()
     {
@@ -846,7 +845,7 @@ private:
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestAnimationFinishedEvents)
 
-class CCLayerTreeHostTestScrollSimple : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestScrollSimple : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestScrollSimple()
         : m_initialScroll(IntPoint(10, 20))
@@ -916,10 +915,10 @@ private:
 
 TEST_F(CCLayerTreeHostTestScrollSimple, DISABLED_runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
-class CCLayerTreeHostTestScrollMultipleRedraw : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestScrollMultipleRedraw : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestScrollMultipleRedraw()
         : m_initialScroll(IntPoint(40, 10))
@@ -996,7 +995,7 @@ private:
 
 TEST_F(CCLayerTreeHostTestScrollMultipleRedraw, DISABLED_runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // This test verifies that properties on the layer tree host are commited to the impl side.
@@ -1966,7 +1965,7 @@ public:
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestManySurfaces)
 
 // A loseContext(1) should lead to a didRecreateContext(true)
-class CCLayerTreeHostTestSetSingleLostContext : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestSetSingleLostContext : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestSetSingleLostContext()
     {
@@ -1995,12 +1994,12 @@ public:
 
 TEST_F(CCLayerTreeHostTestSetSingleLostContext, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 // A loseContext(10) should lead to a didRecreateContext(false), and
 // a finishAllRendering() should not hang.
-class CCLayerTreeHostTestSetRepeatedLostContext : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestSetRepeatedLostContext : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestSetRepeatedLostContext()
     {
@@ -2030,10 +2029,10 @@ public:
 
 TEST_F(CCLayerTreeHostTestSetRepeatedLostContext, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
-class CCLayerTreeHostTestFractionalScroll : public CCLayerTreeHostTestThreadOnly {
+class CCLayerTreeHostTestFractionalScroll : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestFractionalScroll()
         : m_scrollAmount(1.75, 0)
@@ -2083,7 +2082,7 @@ private:
 
 TEST_F(CCLayerTreeHostTestFractionalScroll, runMultiThread)
 {
-    runTestThreaded();
+    runTest(true);
 }
 
 class CCLayerTreeHostTestFinishAllRendering : public CCLayerTreeHostTest {

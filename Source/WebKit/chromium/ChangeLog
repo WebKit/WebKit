@@ -1,3 +1,23 @@
+2012-07-04  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove CCLayerTreeHostTestThreadOnly class to cleanup CCLayerTreeHostTests
+        https://bugs.webkit.org/show_bug.cgi?id=90556
+
+        Reviewed by Adrienne Walker.
+
+        Currently many tests that run both single and threaded versions subclass
+        from CCLayerTreeHostTestThreadOnly just from copy/pasting. The class
+        only adds a runTestThreaded() which calls runTest(true). Many other
+        tests do run only in threaded mode call runTest(true) themselves, making
+        for an inconsistent mess.
+
+        We remove CCLayerTreeHostTestThreadOnly class, so we don't have tests
+        inheriting it that are not thread-only. And now all tests that are
+        thread-only call runTest(true) consistently.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TEST_F):
+
 2012-07-04  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add compile flag and runtime setting
