@@ -1,3 +1,29 @@
+2012-07-05  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Change class name from NotificationClientEfl to NotificationPresenterClientEfl.
+        https://bugs.webkit.org/show_bug.cgi?id=90542
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Change class name from NotificationClientEfl to NotificationPresenterClientEfl
+        to be in line with other ports.(qt, chromium, blackberry)
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        * WebCoreSupport/NotificationPresenterClientEfl.cpp: Renamed from Source/WebKit/efl/WebCoreSupport/NotificationClientEfl.cpp.
+        (WebCore):
+        (WebCore::NotificationPresenterClientEfl::NotificationPresenterClientEfl):
+        (WebCore::NotificationPresenterClientEfl::~NotificationPresenterClientEfl):
+        (WebCore::NotificationPresenterClientEfl::show):
+        (WebCore::NotificationPresenterClientEfl::cancel):
+        (WebCore::NotificationPresenterClientEfl::notificationObjectDestroyed):
+        (WebCore::NotificationPresenterClientEfl::notificationControllerDestroyed):
+        (WebCore::NotificationPresenterClientEfl::requestPermission):
+        (WebCore::NotificationPresenterClientEfl::checkPermission):
+        (WebCore::NotificationPresenterClientEfl::cancelRequestsForPermission):
+        * WebCoreSupport/NotificationPresenterClientEfl.h: Renamed from Source/WebKit/efl/WebCoreSupport/NotificationClientEfl.h.
+        (WebCore):
+        (NotificationPresenterClientEfl):
+
 2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Do not do any logging initialization when logging is disabled

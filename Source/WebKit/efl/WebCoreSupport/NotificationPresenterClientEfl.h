@@ -17,8 +17,8 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef NotificationClientEfl_h
-#define NotificationClientEfl_h
+#ifndef NotificationPresenterClientEfl_h
+#define NotificationPresenterClientEfl_h
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "Notification.h"
@@ -26,11 +26,11 @@
 
 namespace WebCore {
 
-class NotificationClientEfl : public NotificationClient {
+class NotificationPresenterClientEfl : public NotificationClient {
 
 public:
-    NotificationClientEfl();
-    ~NotificationClientEfl();
+    NotificationPresenterClientEfl();
+    ~NotificationPresenterClientEfl();
 
     virtual bool show(Notification*);
     virtual void cancel(Notification*);
@@ -43,4 +43,4 @@ public:
 
 }
 #endif
-#endif // NotificationClientEfl_h
+#endif // NotificationPresenterClientEfl_h

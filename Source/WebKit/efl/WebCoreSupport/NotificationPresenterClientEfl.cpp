@@ -18,54 +18,54 @@
  */
 
 #include "config.h"
-#include "NotificationClientEfl.h"
+#include "NotificationPresenterClientEfl.h"
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-NotificationClientEfl::NotificationClientEfl()
+NotificationPresenterClientEfl::NotificationPresenterClientEfl()
 {
 }
 
-NotificationClientEfl::~NotificationClientEfl()
+NotificationPresenterClientEfl::~NotificationPresenterClientEfl()
 {
 }
 
-bool NotificationClientEfl::show(Notification* notification)
+bool NotificationPresenterClientEfl::show(Notification* notification)
 {
     notImplemented();
     return false;
 }
 
-void NotificationClientEfl::cancel(Notification* notification)
+void NotificationPresenterClientEfl::cancel(Notification* notification)
 {
     notImplemented();
 }
 
-void NotificationClientEfl::notificationObjectDestroyed(Notification* notification)
+void NotificationPresenterClientEfl::notificationObjectDestroyed(Notification* notification)
 {
     notImplemented();
 }
 
-void NotificationClientEfl::notificationControllerDestroyed()
+void NotificationPresenterClientEfl::notificationControllerDestroyed()
 {
     notImplemented();
 }
 
-void NotificationClientEfl::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
+void NotificationPresenterClientEfl::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
 {
     notImplemented();
 }
 
-NotificationClient::Permission NotificationClientEfl::checkPermission(ScriptExecutionContext* context)
+NotificationClient::Permission NotificationPresenterClientEfl::checkPermission(ScriptExecutionContext* context)
 {
     notImplemented();
     return PermissionDenied;
 }
 
-void NotificationClientEfl::cancelRequestsForPermission(ScriptExecutionContext* context)
+void NotificationPresenterClientEfl::cancelRequestsForPermission(ScriptExecutionContext* context)
 {
     notImplemented();
 }
