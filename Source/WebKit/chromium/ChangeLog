@@ -1,3 +1,9 @@
+2012-07-04  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Unreviewed, Chromium gardening. Roll Chromium DEPS.
+
+        * DEPS: chromium_rev: 145322 => 145501
+
 2012-07-04  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Respect memory needed for RenderSurfaces when reserving contents textures
