@@ -710,6 +710,9 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/PeerConnection00.idl \
 	$(WebCore)/Modules/mediastream/SessionDescription.idl \
 	$(WebCore)/Modules/mediastream/SignalingCallback.idl \
+	$(WebCore)/Modules/notifications/Notification.idl \
+	$(WebCore)/Modules/notifications/NotificationCenter.idl \
+	$(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
 	$(WebCore)/Modules/webaudio/AudioContext.idl \
 	$(WebCore)/Modules/webaudio/AudioPannerNode.idl \
 	$(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
@@ -949,9 +952,6 @@ dom_binding_idls += \
 	$(WebCore)/inspector/ScriptProfile.idl \
 	$(WebCore)/inspector/ScriptProfileNode.idl \
 	$(WebCore)/loader/appcache/DOMApplicationCache.idl \
-	$(WebCore)/notifications/Notification.idl \
-	$(WebCore)/notifications/NotificationCenter.idl \
-	$(WebCore)/notifications/NotificationPermissionCallback.idl \
 	$(WebCore)/page/BarInfo.idl \
 	$(WebCore)/page/Console.idl \
 	$(WebCore)/page/Coordinates.idl \
@@ -1194,6 +1194,18 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/UserMediaController.cpp \
 	Source/WebCore/Modules/mediastream/UserMediaRequest.cpp \
 	Source/WebCore/Modules/mediastream/UserMediaRequest.h \
+	Source/WebCore/Modules/notifications/DOMWindowNotifications.cpp \
+	Source/WebCore/Modules/notifications/DOMWindowNotifications.h \
+	Source/WebCore/Modules/notifications/NotificationCenter.cpp \
+	Source/WebCore/Modules/notifications/NotificationCenter.h \
+	Source/WebCore/Modules/notifications/NotificationClient.h \
+	Source/WebCore/Modules/notifications/NotificationController.cpp \
+	Source/WebCore/Modules/notifications/NotificationController.h \
+	Source/WebCore/Modules/notifications/Notification.cpp \
+	Source/WebCore/Modules/notifications/Notification.h \
+	Source/WebCore/Modules/notifications/NotificationPermissionCallback.h \
+	Source/WebCore/Modules/notifications/WorkerContextNotifications.cpp \
+	Source/WebCore/Modules/notifications/WorkerContextNotifications.h \
 	Source/WebCore/Modules/webdatabase/AbstractDatabase.cpp \
 	Source/WebCore/Modules/webdatabase/AbstractDatabase.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
@@ -2949,18 +2961,6 @@ webcore_sources += \
 	Source/WebCore/mathml/MathMLMathElement.h \
 	Source/WebCore/mathml/MathMLTextElement.cpp \
 	Source/WebCore/mathml/MathMLTextElement.h \
-	Source/WebCore/notifications/DOMWindowNotifications.cpp \
-	Source/WebCore/notifications/DOMWindowNotifications.h \
-	Source/WebCore/notifications/NotificationCenter.cpp \
-	Source/WebCore/notifications/NotificationCenter.h \
-	Source/WebCore/notifications/NotificationClient.h \
-	Source/WebCore/notifications/NotificationController.cpp \
-	Source/WebCore/notifications/NotificationController.h \
-	Source/WebCore/notifications/Notification.cpp \
-	Source/WebCore/notifications/Notification.h \
-	Source/WebCore/notifications/NotificationPermissionCallback.h \
-	Source/WebCore/notifications/WorkerContextNotifications.cpp \
-	Source/WebCore/notifications/WorkerContextNotifications.h \
 	Source/WebCore/page/animation/AnimationBase.cpp \
 	Source/WebCore/page/animation/AnimationBase.h \
 	Source/WebCore/page/animation/AnimationController.cpp \

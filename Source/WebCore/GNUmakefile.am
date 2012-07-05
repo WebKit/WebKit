@@ -16,6 +16,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/Modules/geolocation \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
+	-I$(srcdir)/Source/WebCore/Modules/notifications \
 	-I$(srcdir)/Source/WebCore/Modules/webaudio \
 	-I$(srcdir)/Source/WebCore/Modules/webdatabase \
 	-I$(srcdir)/Source/WebCore/Modules/websockets \
@@ -46,7 +47,6 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/loader/cache \
 	-I$(srcdir)/Source/WebCore/loader/icon \
 	-I$(srcdir)/Source/WebCore/mathml \
-	-I$(srcdir)/Source/WebCore/notifications \
 	-I$(srcdir)/Source/WebCore/page \
 	-I$(srcdir)/Source/WebCore/page/animation \
 	-I$(srcdir)/Source/WebCore/page/scrolling \
@@ -872,6 +872,7 @@ IDL_PATH := \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/mediastream \
+    $(WebCore)/Modules/notifications \
     $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
@@ -886,7 +887,6 @@ IDL_PATH := \
     $(WebCore)/html/track \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
-    $(WebCore)/notifications \
     $(WebCore)/page \
     $(WebCore)/plugins \
     $(WebCore)/storage \
@@ -1040,6 +1040,7 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/geolocation/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/indexeddb/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/Modules/notifications/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/webaudio/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/webdatabase/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \
@@ -1053,7 +1054,6 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/html/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/inspector/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/loader/appcache/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/notifications/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/page/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/plugins/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/storage/*.idl) \

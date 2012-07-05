@@ -7863,8 +7863,8 @@
 		31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
 		31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSKeyframesRule.cpp; sourceTree = "<group>"; };
 		31288E710E3005D6003619AE /* WebKitCSSKeyframesRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSKeyframesRule.h; sourceTree = "<group>"; };
-		3128CA67147331520074C72A /* NotificationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotificationController.cpp; path = notifications/NotificationController.cpp; sourceTree = "<group>"; };
-		3128CA6A147331630074C72A /* NotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationController.h; path = notifications/NotificationController.h; sourceTree = "<group>"; };
+		3128CA67147331520074C72A /* NotificationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotificationController.cpp; path = Modules/notifications/NotificationController.cpp; sourceTree = "<group>"; };
+		3128CA6A147331630074C72A /* NotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationController.h; path = Modules/notifications/NotificationController.h; sourceTree = "<group>"; };
 		312D67B01535691F00563D0D /* Dictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dictionary.cpp; sourceTree = "<group>"; };
 		31313F631443B35E006E2A90 /* FilterEffectRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilterEffectRenderer.cpp; sourceTree = "<group>"; };
 		31313F641443B35E006E2A90 /* FilterEffectRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterEffectRenderer.h; sourceTree = "<group>"; };
@@ -7933,8 +7933,8 @@
 		31C0FF460E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitTransitionEvent.h; sourceTree = "<group>"; };
 		31C0FF470E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitTransitionEvent.mm; sourceTree = "<group>"; };
 		31C0FF480E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitTransitionEventInternal.h; sourceTree = "<group>"; };
-		31EC1D5014FEFD0800C94662 /* NotificationPermissionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationPermissionCallback.idl; path = notifications/NotificationPermissionCallback.idl; sourceTree = "<group>"; };
-		31EC1DAC14FF26EA00C94662 /* NotificationPermissionCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NotificationPermissionCallback.h; path = notifications/NotificationPermissionCallback.h; sourceTree = "<group>"; };
+		31EC1D5014FEFD0800C94662 /* NotificationPermissionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationPermissionCallback.idl; path = Modules/notifications/NotificationPermissionCallback.idl; sourceTree = "<group>"; };
+		31EC1DAC14FF26EA00C94662 /* NotificationPermissionCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NotificationPermissionCallback.h; path = Modules/notifications/NotificationPermissionCallback.h; sourceTree = "<group>"; };
 		31EC1E2614FF60EE00C94662 /* JSNotificationPermissionCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotificationPermissionCallback.cpp; sourceTree = "<group>"; };
 		31EC1E2714FF60EE00C94662 /* JSNotificationPermissionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotificationPermissionCallback.h; sourceTree = "<group>"; };
 		31FB1A4F120A5D0600DC02A0 /* DeviceMotionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceMotionClient.h; sourceTree = "<group>"; };
@@ -7951,18 +7951,18 @@
 		31FE6E6C1501A3BF0004EBC4 /* JSNotificationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotificationCustom.cpp; sourceTree = "<group>"; };
 		3314ACE910892086000F0E56 /* JSExceptionBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSExceptionBase.cpp; sourceTree = "<group>"; };
 		3314ACEA10892086000F0E56 /* JSExceptionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExceptionBase.h; sourceTree = "<group>"; };
-		333F704E0FB49CA2008E12A6 /* Notification.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Notification.idl; path = notifications/Notification.idl; sourceTree = "<group>"; };
-		333F704F0FB49CA2008E12A6 /* Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Notification.h; path = notifications/Notification.h; sourceTree = "<group>"; };
-		33503C9910179A74003B47E1 /* NotificationClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NotificationClient.h; path = notifications/NotificationClient.h; sourceTree = "<group>"; };
+		333F704E0FB49CA2008E12A6 /* Notification.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Notification.idl; path = Modules/notifications/Notification.idl; sourceTree = "<group>"; };
+		333F704F0FB49CA2008E12A6 /* Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Notification.h; path =Modules/notifications/Notification.h; sourceTree = "<group>"; };
+		33503C9910179A74003B47E1 /* NotificationClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NotificationClient.h; path = Modules/notifications/NotificationClient.h; sourceTree = "<group>"; };
 		33503C9F10179AD7003B47E1 /* JSNotification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotification.cpp; sourceTree = "<group>"; };
 		33503CA010179AD7003B47E1 /* JSNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotification.h; sourceTree = "<group>"; };
 		33503CA110179AD7003B47E1 /* JSNotificationCenter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotificationCenter.cpp; sourceTree = "<group>"; };
 		33503CA210179AD7003B47E1 /* JSNotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotificationCenter.h; sourceTree = "<group>"; };
 		33503CBF10179C1A003B47E1 /* JSDesktopNotificationsCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDesktopNotificationsCustom.cpp; sourceTree = "<group>"; };
-		33503CC61017A1B1003B47E1 /* Notification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Notification.cpp; path = notifications/Notification.cpp; sourceTree = "<group>"; };
-		3390CA510FFC157B00921962 /* NotificationCenter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotificationCenter.cpp; path = notifications/NotificationCenter.cpp; sourceTree = "<group>"; };
-		3390CA520FFC157B00921962 /* NotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationCenter.h; path = notifications/NotificationCenter.h; sourceTree = "<group>"; };
-		3390CA530FFC157B00921962 /* NotificationCenter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationCenter.idl; path = notifications/NotificationCenter.idl; sourceTree = "<group>"; };
+		33503CC61017A1B1003B47E1 /* Notification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Notification.cpp; path = Modules/notifications/Notification.cpp; sourceTree = "<group>"; };
+		3390CA510FFC157B00921962 /* NotificationCenter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotificationCenter.cpp; path = Modules/notifications/NotificationCenter.cpp; sourceTree = "<group>"; };
+		3390CA520FFC157B00921962 /* NotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationCenter.h; path = Modules/notifications/NotificationCenter.h; sourceTree = "<group>"; };
+		3390CA530FFC157B00921962 /* NotificationCenter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationCenter.idl; path = Modules/notifications/NotificationCenter.idl; sourceTree = "<group>"; };
 		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
 		33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecureTextInput.cpp; sourceTree = "<group>"; };
 		33C0CCD3112C5E6200CE057D /* SecureTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecureTextInput.h; sourceTree = "<group>"; };
@@ -10677,9 +10677,9 @@
 		97AABD1014FA09D5007457AE /* WebSocketHandshakeResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketHandshakeResponse.h; path = Modules/websockets/WebSocketHandshakeResponse.h; sourceTree = "<group>"; };
 		97AABD1114FA09D5007457AE /* WorkerThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerThreadableWebSocketChannel.cpp; path = Modules/websockets/WorkerThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		97AABD1214FA09D5007457AE /* WorkerThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerThreadableWebSocketChannel.h; path = Modules/websockets/WorkerThreadableWebSocketChannel.h; sourceTree = "<group>"; };
-		97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMWindowNotifications.cpp; path = notifications/DOMWindowNotifications.cpp; sourceTree = "<group>"; };
-		97B38E24151C4264004622E9 /* DOMWindowNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMWindowNotifications.h; path = notifications/DOMWindowNotifications.h; sourceTree = "<group>"; };
-		97B38E25151C4264004622E9 /* DOMWindowNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMWindowNotifications.idl; path = notifications/DOMWindowNotifications.idl; sourceTree = "<group>"; };
+		97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMWindowNotifications.cpp; path = Modules/notifications/DOMWindowNotifications.cpp; sourceTree = "<group>"; };
+		97B38E24151C4264004622E9 /* DOMWindowNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMWindowNotifications.h; path = Modules/notifications/DOMWindowNotifications.h; sourceTree = "<group>"; };
+		97B38E25151C4264004622E9 /* DOMWindowNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMWindowNotifications.idl; path = Modules/notifications/DOMWindowNotifications.idl; sourceTree = "<group>"; };
 		97BC69D61505F076001B74AC /* AbstractDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AbstractDatabase.cpp; path = Modules/webdatabase/AbstractDatabase.cpp; sourceTree = "<group>"; };
 		97BC69D71505F076001B74AC /* AbstractDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractDatabase.h; path = Modules/webdatabase/AbstractDatabase.h; sourceTree = "<group>"; };
 		97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChangeVersionWrapper.cpp; path = Modules/webdatabase/ChangeVersionWrapper.cpp; sourceTree = "<group>"; };
@@ -10762,9 +10762,9 @@
 		97E4028D13A696ED00913D67 /* IconController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconController.cpp; sourceTree = "<group>"; };
 		97E4028E13A696ED00913D67 /* IconController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconController.h; sourceTree = "<group>"; };
 		97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptControllerBase.cpp; sourceTree = "<group>"; };
-		97F8E661151D4A3F00D2D181 /* WorkerContextNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerContextNotifications.cpp; path = notifications/WorkerContextNotifications.cpp; sourceTree = "<group>"; };
-		97F8E662151D4A3F00D2D181 /* WorkerContextNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerContextNotifications.h; path = notifications/WorkerContextNotifications.h; sourceTree = "<group>"; };
-		97F8E663151D4A3F00D2D181 /* WorkerContextNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WorkerContextNotifications.idl; path = notifications/WorkerContextNotifications.idl; sourceTree = "<group>"; };
+		97F8E661151D4A3F00D2D181 /* WorkerContextNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerContextNotifications.cpp; path = Modules/notifications/WorkerContextNotifications.cpp; sourceTree = "<group>"; };
+		97F8E662151D4A3F00D2D181 /* WorkerContextNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerContextNotifications.h; path = Modules/notifications/WorkerContextNotifications.h; sourceTree = "<group>"; };
+		97F8E663151D4A3F00D2D181 /* WorkerContextNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WorkerContextNotifications.idl; path = Modules/notifications/WorkerContextNotifications.idl; sourceTree = "<group>"; };
 		9831AE49154225A200FE2644 /* ReferrerPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferrerPolicy.h; sourceTree = "<group>"; };
 		984264EF12D5280A000D88A4 /* LinkLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkLoaderClient.h; sourceTree = "<group>"; };
 		9856F8C81549E82400B04F3A /* Prerenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Prerenderer.cpp; path = loader/Prerenderer.cpp; sourceTree = SOURCE_ROOT; };
@@ -13940,7 +13940,6 @@
 				1C81B94D0E9732D900266E07 /* inspector */,
 				BCB16BFB0979C38700467741 /* loader */,
 				FABE72EC1059C1EB00D999DD /* mathml */,
-				333F703D0FB49C16008E12A6 /* notifications */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
 				5DCF83690D59157800953BC6 /* plugins */,
@@ -17490,6 +17489,7 @@
 		971145FE14EF006E00674FD9 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				333F703D0FB49C16008E12A6 /* notifications */,
 				971145FF14EF007900674FD9 /* geolocation */,
 				9712A55315004E3C0048AF10 /* indexeddb */,
 				89F60B08157F68350075E157 /* quota */,
@@ -28167,8 +28167,7 @@
 				2E4346480F546A8200B0F1BA /* WorkerContext.cpp in Sources */,
 				9712A611150090CE0048AF10 /* WorkerContextIndexedDatabase.cpp in Sources */,
 				97F8E665151D4A4B00D2D181 /* WorkerContextNotifications.cpp in Sources */,
-				A8CCBB4C151F833B00AB7CE9 /* WorkerContextWebDatabase.cpp in Sources */,
-				F34742E01343631F00531BC2 /* WorkerDebuggerAgent.cpp in Sources */,
+				A8CCBB4C151F833B00AB7CE9 /* WorkerContextWebDatabase.cpp in Sources */, F34742E01343631F00531BC2 /* WorkerDebuggerAgent.cpp in Sources */,
 				A3E2643014748991005A8588 /* WorkerEventQueue.cpp in Sources */,
 				F36E07A41358A8BE00AACBC9 /* WorkerInspectorController.cpp in Sources */,
 				2E43464C0F546A8200B0F1BA /* WorkerLocation.cpp in Sources */,

@@ -1,3 +1,141 @@
+2012-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Notifications should be in Modules/notifications
+        https://bugs.webkit.org/show_bug.cgi?id=82121
+
+        Reviewed by Adam Barth.
+
+        The notifications directory is now self-contained. This patch moves it to the Modules directory.
+
+        No new tests, covered by existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Modules/notifications/DOMWindowNotifications.cpp: Renamed from Source/WebCore/notifications/DOMWindowNotifications.cpp.
+        (WebCore):
+        (WebCore::DOMWindowNotifications::DOMWindowNotifications):
+        (WebCore::DOMWindowNotifications::~DOMWindowNotifications):
+        (WebCore::DOMWindowNotifications::from):
+        (WebCore::DOMWindowNotifications::webkitNotifications):
+        (WebCore::DOMWindowNotifications::disconnectFrameForPageCache):
+        (WebCore::DOMWindowNotifications::reconnectFrameFromPageCache):
+        (WebCore::DOMWindowNotifications::willDestroyGlobalObjectInCachedFrame):
+        (WebCore::DOMWindowNotifications::willDestroyGlobalObjectInFrame):
+        (WebCore::DOMWindowNotifications::willDetachGlobalObjectFromFrame):
+        * Modules/notifications/DOMWindowNotifications.h: Renamed from Source/WebCore/notifications/DOMWindowNotifications.h.
+        (WebCore):
+        (DOMWindowNotifications):
+        * Modules/notifications/DOMWindowNotifications.idl: Renamed from Source/WebCore/notifications/DOMWindowNotifications.idl.
+        * Modules/notifications/Notification.cpp: Renamed from Source/WebCore/notifications/Notification.cpp.
+        (WebCore):
+        (WebCore::Notification::Notification):
+        (WebCore::Notification::~Notification):
+        (WebCore::Notification::create):
+        (WebCore::getAndAddEventListener):
+        (WebCore::Notification::interfaceName):
+        (WebCore::Notification::show):
+        (WebCore::Notification::close):
+        (WebCore::Notification::eventTargetData):
+        (WebCore::Notification::ensureEventTargetData):
+        (WebCore::Notification::contextDestroyed):
+        (WebCore::Notification::finalize):
+        (WebCore::Notification::dispatchShowEvent):
+        (WebCore::Notification::dispatchClickEvent):
+        (WebCore::Notification::dispatchCloseEvent):
+        (WebCore::Notification::dispatchErrorEvent):
+        (WebCore::Notification::taskTimerFired):
+        (WebCore::Notification::permissionLevel):
+        (WebCore::Notification::permissionString):
+        (WebCore::Notification::requestPermission):
+        * Modules/notifications/Notification.h: Renamed from Source/WebCore/notifications/Notification.h.
+        (WebCore):
+        (Notification):
+        (WebCore::Notification::cancel):
+        (WebCore::Notification::isHTML):
+        (WebCore::Notification::setHTML):
+        (WebCore::Notification::url):
+        (WebCore::Notification::setURL):
+        (WebCore::Notification::iconURL):
+        (WebCore::Notification::title):
+        (WebCore::Notification::body):
+        (WebCore::Notification::dir):
+        (WebCore::Notification::setDir):
+        (WebCore::Notification::replaceId):
+        (WebCore::Notification::setReplaceId):
+        (WebCore::Notification::tag):
+        (WebCore::Notification::setTag):
+        (WebCore::Notification::direction):
+        (WebCore::Notification::scriptExecutionContext):
+        (WebCore::Notification::detachPresenter):
+        (WebCore::Notification::setBody):
+        (WebCore::Notification::refEventTarget):
+        (WebCore::Notification::derefEventTarget):
+        * Modules/notifications/Notification.idl: Renamed from Source/WebCore/notifications/Notification.idl.
+        * Modules/notifications/NotificationCenter.cpp: Renamed from Source/WebCore/notifications/NotificationCenter.cpp.
+        (WebCore):
+        (WebCore::NotificationCenter::create):
+        (WebCore::NotificationCenter::NotificationCenter):
+        (WebCore::NotificationCenter::checkPermission):
+        (WebCore::NotificationCenter::requestPermission):
+        (WebCore::NotificationCenter::stop):
+        (WebCore::NotificationCenter::requestTimedOut):
+        (WebCore::NotificationCenter::NotificationRequestCallback::createAndStartTimer):
+        (WebCore::NotificationCenter::NotificationRequestCallback::NotificationRequestCallback):
+        (WebCore::NotificationCenter::NotificationRequestCallback::startTimer):
+        (WebCore::NotificationCenter::NotificationRequestCallback::timerFired):
+        * Modules/notifications/NotificationCenter.h: Renamed from Source/WebCore/notifications/NotificationCenter.h.
+        (WebCore):
+        (NotificationCenter):
+        (WebCore::NotificationCenter::createHTMLNotification):
+        (WebCore::NotificationCenter::createNotification):
+        (WebCore::NotificationCenter::client):
+        (NotificationRequestCallback):
+        * Modules/notifications/NotificationCenter.idl: Renamed from Source/WebCore/notifications/NotificationCenter.idl.
+        * Modules/notifications/NotificationClient.h: Renamed from Source/WebCore/notifications/NotificationClient.h.
+        (WebCore):
+        (NotificationClient):
+        (WebCore::NotificationClient::clearNotifications):
+        (WebCore::NotificationClient::~NotificationClient):
+        * Modules/notifications/NotificationController.cpp: Renamed from Source/WebCore/notifications/NotificationController.cpp.
+        (WebCore):
+        (WebCore::NotificationController::NotificationController):
+        (WebCore::NotificationController::~NotificationController):
+        (WebCore::NotificationController::create):
+        (WebCore::NotificationController::clientFrom):
+        (WebCore::NotificationController::supplementName):
+        (WebCore::provideNotification):
+        * Modules/notifications/NotificationController.h: Renamed from Source/WebCore/notifications/NotificationController.h.
+        (WebCore):
+        (NotificationController):
+        (WebCore::NotificationController::from):
+        (WebCore::NotificationController::client):
+        * Modules/notifications/NotificationPermissionCallback.h: Renamed from Source/WebCore/notifications/NotificationPermissionCallback.h.
+        (WebCore):
+        (NotificationPermissionCallback):
+        (WebCore::NotificationPermissionCallback::~NotificationPermissionCallback):
+        * Modules/notifications/NotificationPermissionCallback.idl: Renamed from Source/WebCore/notifications/NotificationPermissionCallback.idl.
+        * Modules/notifications/WorkerContextNotifications.cpp: Renamed from Source/WebCore/notifications/WorkerContextNotifications.cpp.
+        (WebCore):
+        (WebCore::WorkerContextNotifications::WorkerContextNotifications):
+        (WebCore::WorkerContextNotifications::~WorkerContextNotifications):
+        (WebCore::WorkerContextNotifications::from):
+        (WebCore::WorkerContextNotifications::webkitNotifications):
+        * Modules/notifications/WorkerContextNotifications.h: Renamed from Source/WebCore/notifications/WorkerContextNotifications.h.
+        (WebCore):
+        (WorkerContextNotifications):
+        * Modules/notifications/WorkerContextNotifications.idl: Renamed from Source/WebCore/notifications/WorkerContextNotifications.idl.
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-07-04  Hayato Ito  <hayato@chromium.org>
 
         Remove inline keywords from functions which can not be inlined in ComposedShadowTreeWalker

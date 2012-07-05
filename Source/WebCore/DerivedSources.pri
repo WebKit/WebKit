@@ -128,6 +128,11 @@ IDL_BINDINGS += \
     $$PWD/Modules/indexeddb/IDBRequest.idl \
     $$PWD/Modules/indexeddb/IDBTransaction.idl \
     $$PWD/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $$PWD/Modules/notifications/DOMWindowNotifications.idl \
+    $$PWD/Modules/notifications/Notification.idl \
+    $$PWD/Modules/notifications/NotificationCenter.idl \
+    $$PWD/Modules/notifications/NotificationPermissionCallback.idl \
+    $$PWD/Modules/notifications/WorkerContextNotifications.idl \
     $$PWD/Modules/quota/DOMWindowQuota.idl \
     $$PWD/Modules/quota/StorageInfo.idl \
     $$PWD/Modules/quota/StorageInfoErrorCallback.idl \
@@ -403,11 +408,6 @@ IDL_BINDINGS += \
     $$PWD/inspector/ScriptProfile.idl \
     $$PWD/inspector/ScriptProfileNode.idl \
     $$PWD/loader/appcache/DOMApplicationCache.idl \
-    $$PWD/notifications/DOMWindowNotifications.idl \
-    $$PWD/notifications/Notification.idl \
-    $$PWD/notifications/NotificationCenter.idl \
-    $$PWD/notifications/NotificationPermissionCallback.idl \
-    $$PWD/notifications/WorkerContextNotifications.idl \
     $$PWD/page/BarInfo.idl \
     $$PWD/page/Console.idl \
     $$PWD/page/Coordinates.idl \

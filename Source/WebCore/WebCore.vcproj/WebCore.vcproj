@@ -24959,6 +24959,46 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="notifications"
+				>
+				<File
+					RelativePath="..\Modules\notifications\DOMWindowNotifications.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\notifications\DOMWindowNotifications.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\notifications\Notification.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\notifications\Notification.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\notifications\NotificationCenter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\notifications\NotificationCenter.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\notifications\NotificationClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\notifications\WorkerContextNotifications.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\notifications\WorkerContextNotifications.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="webdatabase"
 				>
 				<File
@@ -54780,46 +54820,6 @@
 			</File>
 			<File
 				RelativePath="..\workers\WorkerThread.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="notifications"
-			>
-			<File
-				RelativePath="..\notifications\DOMWindowNotifications.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\notifications\DOMWindowNotifications.h"
-				>
-			</File>
-			<File
-				RelativePath="..\notifications\Notification.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\notifications\Notification.h"
-				>
-			</File>
-			<File
-				RelativePath="..\notifications\NotificationCenter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\notifications\NotificationCenter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\notifications\NotificationClient.h"
-				>
-			</File>
-			<File
-				RelativePath="..\notifications\WorkerContextNotifications.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\notifications\WorkerContextNotifications.h"
 				>
 			</File>
 		</Filter>

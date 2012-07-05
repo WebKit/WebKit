@@ -20,6 +20,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/Modules/filesystem \
     $$SOURCE_DIR/Modules/geolocation \
     $$SOURCE_DIR/Modules/indexeddb \
+    $$SOURCE_DIR/Modules/notifications \
     $$SOURCE_DIR/Modules/quota \
     $$SOURCE_DIR/Modules/webaudio \
     $$SOURCE_DIR/Modules/webdatabase \
@@ -47,7 +48,6 @@ INCLUDEPATH += \
     $$SOURCE_DIR/loader/cache \
     $$SOURCE_DIR/loader/icon \
     $$SOURCE_DIR/mathml \
-    $$SOURCE_DIR/notifications \
     $$SOURCE_DIR/page \
     $$SOURCE_DIR/page/animation \
     $$SOURCE_DIR/page/qt \

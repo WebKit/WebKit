@@ -427,6 +427,11 @@ SOURCES += \
     Modules/filesystem/FileWriterSync.cpp \
     Modules/filesystem/LocalFileSystem.cpp \
     Modules/filesystem/WorkerContextFileSystem.cpp \
+    Modules/notifications/DOMWindowNotifications.cpp \
+    Modules/notifications/Notification.cpp \
+    Modules/notifications/NotificationCenter.cpp \
+    Modules/notifications/NotificationController.cpp \
+    Modules/notifications/WorkerContextNotifications.cpp \
     css/CSSAspectRatioValue.cpp \
     css/CSSBorderImageSliceValue.cpp \
     css/CSSBorderImage.cpp \
@@ -999,11 +1004,6 @@ SOURCES += \
     loader/SubresourceLoader.cpp \
     loader/TextResourceDecoder.cpp \
     loader/ThreadableLoader.cpp \
-    notifications/DOMWindowNotifications.cpp \
-    notifications/Notification.cpp \
-    notifications/NotificationCenter.cpp \
-    notifications/NotificationController.cpp \
-    notifications/WorkerContextNotifications.cpp \
     page/animation/AnimationBase.cpp \
     page/animation/AnimationController.cpp \
     page/animation/CompositeAnimation.cpp \
@@ -1587,6 +1587,13 @@ HEADERS += \
     Modules/geolocation/PositionErrorCallback.h \
     Modules/geolocation/PositionOptions.h \
     \
+    Modules/notifications/DOMWindowNotifications.h \
+    Modules/notifications/Notification.h \
+    Modules/notifications/NotificationCenter.h \
+    Modules/notifications/NotificationClient.h \
+    Modules/notifications/NotificationController.h \
+    Modules/notifications/WorkerContextNotifications.h \
+    \
     Modules/webdatabase/AbstractDatabase.h \
     Modules/webdatabase/ChangeVersionWrapper.h \
     Modules/webdatabase/DOMWindowWebDatabase.h \
@@ -2151,12 +2158,6 @@ HEADERS += \
     mathml/MathMLInlineContainerElement.h \
     mathml/MathMLMathElement.h \
     mathml/MathMLTextElement.h \
-    notifications/DOMWindowNotifications.h \
-    notifications/Notification.h \
-    notifications/NotificationCenter.h \
-    notifications/NotificationClient.h \
-    notifications/NotificationController.h \
-    notifications/WorkerContextNotifications.h \
     page/animation/AnimationBase.h \
     page/animation/AnimationController.h \
     page/animation/CompositeAnimation.h \

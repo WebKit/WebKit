@@ -31,6 +31,7 @@ VPATH = \
     $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
+    $(WebCore)/Modules/notifications \
     $(WebCore)/Modules/quota \
     $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
@@ -48,7 +49,6 @@ VPATH = \
     $(WebCore)/html/track \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
-    $(WebCore)/notifications \
     $(WebCore)/page \
     $(WebCore)/plugins \
     $(WebCore)/storage \
@@ -105,6 +105,11 @@ BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeRequest.idl \
     $(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $(WebCore)/Modules/notifications/DOMWindowNotifications.idl \
+    $(WebCore)/Modules/notifications/Notification.idl \
+    $(WebCore)/Modules/notifications/NotificationCenter.idl \
+    $(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
+    $(WebCore)/Modules/notifications/WorkerContextNotifications.idl \
     $(WebCore)/Modules/quota/DOMWindowQuota.idl \
     $(WebCore)/Modules/quota/StorageInfo.idl \
     $(WebCore)/Modules/quota/StorageInfoErrorCallback.idl \
@@ -394,11 +399,6 @@ BINDING_IDLS = \
     $(WebCore)/inspector/ScriptProfile.idl \
     $(WebCore)/inspector/ScriptProfileNode.idl \
     $(WebCore)/loader/appcache/DOMApplicationCache.idl \
-    $(WebCore)/notifications/DOMWindowNotifications.idl \
-    $(WebCore)/notifications/Notification.idl \
-    $(WebCore)/notifications/NotificationCenter.idl \
-    $(WebCore)/notifications/NotificationPermissionCallback.idl \
-    $(WebCore)/notifications/WorkerContextNotifications.idl \
     $(WebCore)/page/AbstractView.idl \
     $(WebCore)/page/BarInfo.idl \
     $(WebCore)/page/Console.idl \
@@ -942,8 +942,8 @@ IDL_INCLUDES = \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/css \
-    $(WebCore)/page \
     $(WebCore)/notifications \
+    $(WebCore)/page \
     $(WebCore)/xml \
     $(WebCore)/svg
 
