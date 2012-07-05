@@ -705,6 +705,19 @@ void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Web_Error* error)
     evas_object_smart_callback_call(ewkView, "load,error", const_cast<Ewk_Web_Error*>(error));
 }
 
+Eina_Bool ewk_view_html_string_load(Evas_Object* ewkView, const char* html, const char* baseUrl, const char* unreachableUrl)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(html, false);
+
+    if (unreachableUrl && *unreachableUrl)
+        priv->pageClient->page()->loadAlternateHTMLString(String::fromUTF8(html), baseUrl ? String::fromUTF8(baseUrl) : "", String::fromUTF8(unreachableUrl));
+    else
+        priv->pageClient->page()->loadHTMLString(String::fromUTF8(html), baseUrl ? String::fromUTF8(baseUrl) : "");
+
+    return true;
+}
 
 #if ENABLE(WEB_INTENTS_TAG)
 /**

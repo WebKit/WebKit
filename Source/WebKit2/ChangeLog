@@ -1,5 +1,20 @@
 2012-07-05  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2][EFL] Ewk_View needs API to load HTML data
+        https://bugs.webkit.org/show_bug.cgi?id=90540
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add method to Ewk_View to load provided HTML data.
+        This is used for e.g. when an URL cannot be reached
+        and we need to display an error page.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_html_load):
+        * UIProcess/API/efl/ewk_view.h:
+
+2012-07-05  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2][EFL] Ewk_View needs to report new resource requests
         https://bugs.webkit.org/show_bug.cgi?id=90577
 

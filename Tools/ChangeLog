@@ -1,3 +1,17 @@
+2012-07-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][EFL] Ewk_View needs API to load HTML data
+        https://bugs.webkit.org/show_bug.cgi?id=90540
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update EFL MiniBrowser to catch the "load,error" signal
+        on the view and display an error page.
+
+        * MiniBrowser/efl/main.c:
+        (on_error):
+        (browserCreate):
+
 2012-07-05  Sergio Villar Senin  <svillar@igalia.com>
 
         Hidden dirs are not copied when creating the built product archive

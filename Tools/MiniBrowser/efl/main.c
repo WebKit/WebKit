@@ -125,6 +125,20 @@ on_progress(void *user_data, Evas_Object *webview, void *event_info)
     title_set(app->ee, ewk_view_title_get(app->browser), progress * 100);
 }
 
+static void
+on_error(void *user_data, Evas_Object *webview, void *event_info)
+{
+    Eina_Strbuf* buffer;
+    const Ewk_Web_Error *error = (const Ewk_Web_Error *)event_info;
+
+    buffer = eina_strbuf_new();
+    eina_strbuf_append_printf(buffer, "<html><body><div style=\"color:#ff0000\">ERROR!</div><br><div>Code: %d<br>Description: %s<br>URL: %s</div></body</html>",
+                              ewk_web_error_code_get(error), ewk_web_error_description_get(error), ewk_web_error_url_get(error));
+
+    ewk_view_html_string_load(webview, eina_strbuf_string_get(buffer), 0, ewk_web_error_url_get(error));
+    eina_strbuf_free(buffer);
+}
+
 static MiniBrowser *browserCreate(const char *url)
 {
     MiniBrowser *app = malloc(sizeof(MiniBrowser));
@@ -151,6 +165,7 @@ static MiniBrowser *browserCreate(const char *url)
     app->browser = ewk_view_add(app->evas);
     evas_object_name_set(app->browser, "browser");
 
+    evas_object_smart_callback_add(app->browser, "load,error", on_error, app);
     evas_object_smart_callback_add(app->browser, "load,progress", on_progress, app);
     evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
 

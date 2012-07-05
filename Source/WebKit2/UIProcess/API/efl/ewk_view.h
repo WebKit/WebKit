@@ -283,6 +283,25 @@ EAPI const char *ewk_view_title_get(const Evas_Object *o);
  */
 EAPI double ewk_view_load_progress_get(const Evas_Object *o);
 
+/**
+ * Loads the specified @a html string as the content of the view.
+ *
+ * External objects such as stylesheets or images referenced in the HTML
+ * document are located relative to @a baseUrl.
+ *
+ * If an @a unreachableUrl is passed it is used as the url for the loaded
+ * content. This is typically used to display error pages for a failed
+ * load.
+ *
+ * @param o view object to load the HTML into
+ * @param html HTML data to load
+ * @param baseUrl Base URL used for relative paths to external objects (optional)
+ * @param unreachableUrl URL that could not be reached (optional)
+ *
+ * @return @c EINA_TRUE if it the HTML was successfully loaded, @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_html_string_load(Evas_Object *o, const char *html, const char *baseUrl, const char *unreachableUrl);
+
 #ifdef __cplusplus
 }
 #endif
