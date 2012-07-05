@@ -1,3 +1,47 @@
+2012-07-05  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Create a WebKit::Web* wrapper for the cc animation classes
+        https://bugs.webkit.org/show_bug.cgi?id=90303
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * src/WebAnimation.cpp: Added.
+        (WebKit):
+        (WebKit::WebAnimation::iterations):
+        (WebKit::WebAnimation::setIterations):
+        (WebKit::WebAnimation::startTime):
+        (WebKit::WebAnimation::setStartTime):
+        (WebKit::WebAnimation::timeOffset):
+        (WebKit::WebAnimation::setTimeOffset):
+        (WebKit::WebAnimation::alternatesDirection):
+        (WebKit::WebAnimation::setAlternatesDirection):
+        (WebKit::WebAnimation::toCCActiveAnimation):
+        (WebKit::WebAnimation::initialize):
+        (WebKit::WebAnimation::destroy):
+        * src/WebAnimationCurveCommon.cpp: Added.
+        (WebKit):
+        (WebKit::createTimingFunction):
+        * src/WebAnimationCurveCommon.h: Added.
+        (WebCore):
+        (WebKit):
+        * src/WebFloatAnimationCurve.cpp: Added.
+        (WebKit):
+        (WebKit::WebFloatAnimationCurve::add):
+        (WebKit::WebFloatAnimationCurve::toCCAnimationCurve):
+        (WebKit::WebFloatAnimationCurve::initialize):
+        (WebKit::WebFloatAnimationCurve::destroy):
+        * src/WebTransformAnimationCurve.cpp: Added.
+        (WebKit):
+        (WebKit::WebTransformAnimationCurve::add):
+        (WebKit::WebTransformAnimationCurve::toCCAnimationCurve):
+        (WebKit::WebTransformAnimationCurve::initialize):
+        (WebKit::WebTransformAnimationCurve::destroy):
+        * tests/WebAnimationTest.cpp: Added.
+        * tests/WebFloatAnimationCurveTest.cpp: Added.
+        * tests/WebTransformAnimationCurveTest.cpp: Added.
+
 2012-07-05  Vincent Scheib  <scheib@chromium.org>
 
         [Chromium] Clear m_currentInputEvent after handled by pointerLockMouseEvent().
