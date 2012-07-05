@@ -107,6 +107,10 @@ InternalSettings::InternalSettings(Frame* frame)
     , m_originalWindowFocusRestricted(settings()->windowFocusRestricted())
     , m_originalDeviceSupportsTouch(settings()->deviceSupportsTouch())
     , m_originalDeviceSupportsMouse(settings()->deviceSupportsMouse())
+#if ENABLE(TEXT_AUTOSIZING)
+    , m_originalTextAutosizingEnabled(settings()->textAutosizingEnabled())
+    , m_originalTextAutosizingWindowSizeOverride(settings()->textAutosizingWindowSizeOverride())
+#endif
 {
 }
 
@@ -128,6 +132,10 @@ void InternalSettings::restoreTo(Settings* settings)
     settings->setWindowFocusRestricted(m_originalWindowFocusRestricted);
     settings->setDeviceSupportsTouch(m_originalDeviceSupportsTouch);
     settings->setDeviceSupportsMouse(m_originalDeviceSupportsMouse);
+#if ENABLE(TEXT_AUTOSIZING)
+    settings->setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
+    settings->setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
+#endif
 }
 
 Settings* InternalSettings::settings() const
@@ -318,6 +326,29 @@ void InternalSettings::setPictographFontFamily(const String& family, const Strin
 {
     InternalSettingsGuardForSettings();
     setFontFamily(settings(), family, script, &Settings::setPictographFontFamily);
+}
+
+void InternalSettings::setTextAutosizingEnabled(bool enabled, ExceptionCode& ec)
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    InternalSettingsGuardForSettings();
+    settings()->setTextAutosizingEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+    UNUSED_PARAM(ec);
+#endif
+}
+
+void InternalSettings::setTextAutosizingWindowSizeOverride(int width, int height, ExceptionCode& ec)
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    InternalSettingsGuardForSettings();
+    settings()->setTextAutosizingWindowSizeOverride(IntSize(width, height));
+#else
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(ec);
+#endif
 }
 
 void InternalSettings::setEnableScrollAnimator(bool enabled, ExceptionCode& ec)

@@ -1794,6 +1794,9 @@ fullscreen/
 # viewport meta tag support
 fast/viewport
 
+# Text Autosizing is not enabled (http://webkit.org/b/84186).
+fast/text-autosizing
+
 # https://bugs.webkit.org/show_bug.cgi?id=45983
 media/media-can-play-mpeg4-video.html
 

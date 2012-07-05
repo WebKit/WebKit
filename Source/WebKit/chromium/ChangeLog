@@ -1,3 +1,16 @@
+2012-07-05  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Add test framework and simple test.
+        https://bugs.webkit.org/show_bug.cgi?id=90561
+
+        ENABLE(TEXT_AUTOSIZING) is now on in Chromium (but disabled at runtime).
+        This allows it to be used in Layout Tests (and in future by Web
+        Inspector's mobile device emulation).
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+
 2012-07-05  Oli Lan  <olilan@chromium.org>
 
         [chromium] Add a method didChangeFormState to WebViewClient.

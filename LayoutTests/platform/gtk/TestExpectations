@@ -345,6 +345,9 @@ BUGWK88794 SKIP : webaudio/codec-tests = PASS
 // Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
 BUGWK85558 SKIP : http/tests/security/contentSecurityPolicy/1.1 = TEXT
 
+// Text Autosizing is not yet enabled.
+BUGWK84186 SKIP : fast/text-autosizing = PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////

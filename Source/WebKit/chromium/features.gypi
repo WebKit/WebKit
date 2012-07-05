@@ -92,6 +92,7 @@
       'ENABLE_STYLE_SCOPED=1',
       'ENABLE_SVG=<(enable_svg)',
       'ENABLE_SVG_FONTS=<(enable_svg)',
+      'ENABLE_TEXT_AUTOSIZING=1',
       'ENABLE_TOUCH_ADJUSTMENT=1',
       'ENABLE_TOUCH_EVENTS=<(enable_touch_events)',
       'ENABLE_TOUCH_ICON_LOADING=<(enable_touch_icon_loading)',
@@ -153,7 +154,6 @@
           # FIXME: Disable once the linking error has been resolved.
           # https://bugs.webkit.org/show_bug.cgi?id=88636
           'ENABLE_SHARED_WORKERS=1',
-          'ENABLE_TEXT_AUTOSIZING=1',
           'ENABLE_WEB_AUDIO=0',
           'WTF_USE_NATIVE_FULLSCREEN_VIDEO=1',
         ],
@@ -172,7 +172,6 @@
           'ENABLE_OVERFLOW_SCROLLING=0',
           'ENABLE_PAGE_POPUP=1',
           'ENABLE_SHARED_WORKERS=1',
-          'ENABLE_TEXT_AUTOSIZING=0',
           'ENABLE_WEB_AUDIO=1',
         ],
       }],

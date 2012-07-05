@@ -1,0 +1,24 @@
+<html>
+<head>
+
+<meta name="viewport" content="width=800">
+<style type="text/css">
+body { width: 800px; margin: 0; }
+</style>
+
+<script type="text/javascript">
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body>
+
+<p style="line-height: 1.5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sapien sapien, tempus id egestas a, consectetur et felis. Ut pharetra mi eget lectus laoreet rutrum. Mauris tellus odio, egestas vitae sodales in, vehicula eget ante. Pellentesque id egestas arcu. Quisque tellus quam, rhoncus ac elementum vel, volutpat vel felis. Aliquam ut leo dolor, eget egestas tellus. Nunc ut velit gravida nisl fringilla rutrum eget at arcu. Vivamus et pretium mauris.</p>
+
+</body>
+</html>

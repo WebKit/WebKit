@@ -49,13 +49,12 @@ bool TextAutosizer::boostSubtree(RenderObject* layoutRoot)
     if (!m_document->settings() || !m_document->settings()->textAutosizingEnabled() || layoutRoot->view()->printing() || !m_document->page())
         return false;
 
-#ifdef HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP
-    IntSize windowSize(320, 480);
-#else
-    Frame* mainFrame = m_document->page()->mainFrame();
-    bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenWidthOverride(mainFrame);
-    IntSize windowSize = mainFrame->view()->visibleContentRect(includeScrollbars).size(); // FIXME: Check that this is always in logical (density-independent) pixels (see wkbug.com/87440).
-#endif
+    IntSize windowSize = m_document->settings()->textAutosizingWindowSizeOverride();
+    if (windowSize.isEmpty()) {
+        Frame* mainFrame = m_document->page()->mainFrame();
+        bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenWidthOverride(mainFrame);
+        windowSize = mainFrame->view()->visibleContentRect(includeScrollbars).size(); // FIXME: Check that this is always in logical (density-independent) pixels (see wkbug.com/87440).
+    }
 
     for (RenderObject* descendant = traverseNext(layoutRoot, layoutRoot); descendant; descendant = traverseNext(descendant, layoutRoot)) {
         if (!treatAsInline(descendant))

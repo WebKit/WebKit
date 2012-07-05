@@ -36,6 +36,10 @@
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/unicode/Unicode.h>
 
+#if ENABLE(TEXT_AUTOSIZING)
+#include "IntSize.h"
+#endif
+
 namespace WebCore {
 
     class Page;
@@ -106,6 +110,10 @@ namespace WebCore {
 #if ENABLE(TEXT_AUTOSIZING)
         void setTextAutosizingEnabled(bool);
         bool textAutosizingEnabled() const { return m_textAutosizingEnabled; }
+
+        // Only set by Layout Tests, and only used if textAutosizingEnabled() returns true.
+        void setTextAutosizingWindowSizeOverride(const IntSize&);
+        const IntSize& textAutosizingWindowSizeOverride() const { return m_textAutosizingWindowSizeOverride; }
 #endif
 
         // Unlike areImagesEnabled, this only suppresses the network load of
@@ -634,6 +642,7 @@ namespace WebCore {
         unsigned m_editingBehaviorType;
         unsigned m_maximumHTMLParserDOMTreeDepth;
 #if ENABLE(TEXT_AUTOSIZING)
+        IntSize m_textAutosizingWindowSizeOverride;
         bool m_textAutosizingEnabled : 1;
 #endif
         bool m_isSpatialNavigationEnabled : 1;

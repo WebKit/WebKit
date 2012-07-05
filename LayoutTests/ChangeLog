@@ -1,3 +1,24 @@
+2012-07-05  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Add test framework and simple test.
+        https://bugs.webkit.org/show_bug.cgi?id=90561
+
+        Added a RefTest checking that Text Autosizing is active.
+        Skipped the text-autosizing test directory on platforms that
+        currently disable ENABLE(TEXT_AUTOSIZING).
+
+        Reviewed by Adam Barth.
+
+        * fast/text-autosizing/simple-paragraph-expected.html: Added.
+        * fast/text-autosizing/simple-paragraph.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-07-05  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Enable the CUSTOM_SCHEME_HANDLER feature as default.

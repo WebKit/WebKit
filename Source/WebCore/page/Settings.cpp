@@ -139,7 +139,12 @@ Settings::Settings(Page* page)
     , m_editingBehaviorType(editingBehaviorTypeForPlatform())
     , m_maximumHTMLParserDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
 #if ENABLE(TEXT_AUTOSIZING)
+#if HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP
+    , m_textAutosizingWindowSizeOverride(320, 480)
     , m_textAutosizingEnabled(true)
+#else
+    , m_textAutosizingEnabled(false)
+#endif
 #endif
     , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
@@ -412,6 +417,15 @@ void Settings::setTextAutosizingEnabled(bool textAutosizingEnabled)
         return;
 
     m_textAutosizingEnabled = textAutosizingEnabled;
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+void Settings::setTextAutosizingWindowSizeOverride(const IntSize& textAutosizingWindowSizeOverride)
+{
+    if (m_textAutosizingWindowSizeOverride == textAutosizingWindowSizeOverride)
+        return;
+
+    m_textAutosizingWindowSizeOverride = textAutosizingWindowSizeOverride;
     m_page->setNeedsRecalcStyleInAllFrames();
 }
 #endif

@@ -51,6 +51,8 @@ module window {
         void setCursiveFontFamily(in DOMString family, in DOMString script) raises(DOMException);
         void setFantasyFontFamily(in DOMString family, in DOMString script) raises(DOMException);
         void setPictographFontFamily(in DOMString family, in DOMString script) raises(DOMException);
+        void setTextAutosizingEnabled(in boolean enabled) raises(DOMException);
+        void setTextAutosizingWindowSizeOverride(in long width, in long height) raises(DOMException);
         void setEnableScrollAnimator(in boolean enabled) raises(DOMException);
         boolean scrollAnimatorEnabled() raises(DOMException);
         void setCSSExclusionsEnabled(in boolean enabled) raises(DOMException);

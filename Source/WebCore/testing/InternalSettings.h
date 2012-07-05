@@ -32,6 +32,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(TEXT_AUTOSIZING)
+#include "IntSize.h"
+#endif
+
 namespace WebCore {
 
 typedef int ExceptionCode;
@@ -72,6 +76,8 @@ public:
     void setCursiveFontFamily(const String& family, const String& script, ExceptionCode&);
     void setFantasyFontFamily(const String& family, const String& script, ExceptionCode&);
     void setPictographFontFamily(const String& family, const String& script, ExceptionCode&);
+    void setTextAutosizingEnabled(bool enabled, ExceptionCode&);
+    void setTextAutosizingWindowSizeOverride(int width, int height, ExceptionCode&);
     void setEnableScrollAnimator(bool enabled, ExceptionCode&);
     bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
@@ -109,6 +115,10 @@ private:
     bool m_originalWindowFocusRestricted;
     bool m_originalDeviceSupportsTouch;
     bool m_originalDeviceSupportsMouse;
+#if ENABLE(TEXT_AUTOSIZING)
+    bool m_originalTextAutosizingEnabled;
+    IntSize m_originalTextAutosizingWindowSizeOverride;
+#endif
 };
 
 } // namespace WebCore
