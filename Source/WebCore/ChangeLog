@@ -1,5 +1,27 @@
 2012-07-04  Andrey Kosyakov  <caseq@chromium.org>
 
+        Web Inspector: timeline events in the vicinity of event dividers some times are tricky to expand
+        https://bugs.webkit.org/show_bug.cgi?id=90572
+
+        Reviewed by Pavel Feldman.
+
+        - do not use resources-event-divider-padding;
+        - make dividers larger and use border-color to visualize them;
+        - move resources-<color>-divider to timelinePanel.css, as they're not used outside of timeline;
+
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.createEventDivider):
+        * inspector/front-end/inspectorCommon.css:
+        * inspector/front-end/timelinePanel.css:
+        (.timeline .resources-event-divider):
+        (.resources-red-divider):
+        (.resources-blue-divider):
+        (.resources-orange-divider):
+        (.resources-divider.last):
+        (.timeline .resources-event-divider.timeline-frame-divider):
+
+2012-07-04  Andrey Kosyakov  <caseq@chromium.org>
+
         Web Inspector: incorrect height of main timeline pane after switching to memory mode
         https://bugs.webkit.org/show_bug.cgi?id=90387
 

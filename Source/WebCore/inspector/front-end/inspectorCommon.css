@@ -115,22 +115,6 @@ iframe.view {
     z-index: 300;
 }
 
-.resources-red-divider {
-    background-color: rgba(255, 0, 0, 0.5);
-}
-
-.resources-blue-divider {
-    background-color: rgba(0, 0, 255, 0.5);
-}
-
-.resources-orange-divider {
-    background-color: rgba(255, 178, 23, 0.5);
-}
-
-.resources-divider.last {
-    background-color: transparent;
-}
-
 .resources-divider-label {
     position: absolute;
     top: 4px;

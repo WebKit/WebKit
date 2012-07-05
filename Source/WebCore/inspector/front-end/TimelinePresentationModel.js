@@ -147,9 +147,6 @@ WebInspector.TimelinePresentationModel.createEventDivider = function(recordType,
     eventDivider.className = "resources-event-divider";
     var recordTypes = WebInspector.TimelineModel.RecordType;
 
-    var eventDividerPadding = document.createElement("div");
-    eventDividerPadding.className = "resources-event-divider-padding";
-
     if (recordType === recordTypes.MarkDOMContent)
         eventDivider.className += " resources-blue-divider";
     else if (recordType === recordTypes.MarkLoad)
@@ -160,10 +157,9 @@ WebInspector.TimelinePresentationModel.createEventDivider = function(recordType,
         eventDivider.className += " timeline-frame-divider";
 
     if (title)
-        eventDividerPadding.title = title;
+        eventDivider.title = title;
 
-    eventDividerPadding.appendChild(eventDivider);
-    return eventDividerPadding;
+    return eventDivider;
 }
 
 WebInspector.TimelinePresentationModel.prototype = {

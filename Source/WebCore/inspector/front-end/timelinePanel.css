@@ -572,7 +572,27 @@
 
 .timeline .resources-event-divider {
     height: 19px;
+    width: 8px;
+    border-left-width: 2px;
+    border-left-style: solid;
     bottom: auto;
+    pointer-events: auto;
+}
+
+.resources-red-divider {
+    border-color: rgba(255, 0, 0, 0.5);
+}
+
+.resources-blue-divider {
+    border-color: rgba(0, 0, 255, 0.5);
+}
+
+.resources-orange-divider {
+    border-color: rgba(255, 178, 23, 0.5);
+}
+
+.resources-divider.last {
+    border-color: transparent;
 }
 
 .timeline.timeline-frame-overview .resources-divider {
@@ -582,6 +602,7 @@
 
 .timeline .resources-event-divider.timeline-frame-divider {
     background-color: rgba(180, 180, 180, 0.8);
+    border-style: none;
     width: 1px;
     height: 100%;
 }
