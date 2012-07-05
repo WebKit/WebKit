@@ -15,6 +15,7 @@ PASS surroundingText('<button>.</button><div id="here">This is <!-- comment --!>
 PASS surroundingText('<button>.</button><div id="here">012345678901234567890123456789</div><button>.</button>', 15, 12) is "901234567890"
 PASS surroundingText('<option>.</option>12345<button id="here">test</button><option>.</option>', 0, 100) is ""
 PASS surroundingText('<option>.</option>12345<button>te<span id="here">st</span></button><option>.</option>', 0, 100) is ""
+PASS surroundingText('<p id="here">.', 0, 2) is "."
 PASS successfullyParsed is true
 
 TEST COMPLETE

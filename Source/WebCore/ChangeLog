@@ -1,3 +1,22 @@
+2012-07-05  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Character iterators should not advance if they are at end
+        https://bugs.webkit.org/show_bug.cgi?id=90560
+
+        Reviewed by Ryosuke Niwa.
+
+        CharacterIterator and BackwardsCharacterIterator try to advance their
+        internal TextIterator without checking if they already are at end.
+        This can cause crashes in TextIterator::advance.
+
+        Test: platform/chromium/editing/surrounding-text/surrounding-text.html
+
+        * editing/SurroundingText.cpp:
+        (WebCore::SurroundingText::SurroundingText):
+        * editing/TextIterator.cpp:
+        (WebCore::CharacterIterator::advance):
+        (WebCore::BackwardsCharacterIterator::advance):
+
 2012-07-05  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add basic framework
