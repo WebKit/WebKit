@@ -52,6 +52,12 @@ class EflPort(WebKitPort, PulseAudioSanitizer):
     def setup_test_run(self):
         self._unload_pulseaudio_module()
 
+    def setup_environ_for_server(self, server_name=None):
+        env = super(EflPort, self).setup_environ_for_server(server_name)
+        env['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
+        env['TEST_RUNNER_PLUGIN_PATH'] = self._build_path('lib')
+        return env
+
     def clean_up_test_run(self):
         self._restore_pulseaudio_module()
 

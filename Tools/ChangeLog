@@ -1,3 +1,30 @@
+2012-07-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [Wk2][EFL] EFL needs a WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=87659
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add an implementation of WebKitTestRunner for Efl port.
+
+        * CMakeLists.txt: Includes WebKitTestRunner build script.
+        * Scripts/build-webkittestrunner: Added knowledge of WebKitTestRunner/Efl.
+        * Scripts/webkitpy/layout_tests/port/efl.py: Ditto.
+        (EflPort.setup_environ_for_server):
+        * WebKitTestRunner/CMakeLists.txt: Added.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        * WebKitTestRunner/InjectedBundle/efl/ActivateFontsEfl.cpp: Added.
+        * WebKitTestRunner/InjectedBundle/efl/InjectedBundleEfl.cpp: Added.
+        * WebKitTestRunner/InjectedBundle/efl/LayoutTestControllerEfl.cpp: Added.
+        * WebKitTestRunner/PlatformEfl.cmake: Added.
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/config.h: Added knowledge of WebKitTestRunner/Efl.
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp: Added.
+        * WebKitTestRunner/efl/TestControllerEfl.cpp: Added.
+        * WebKitTestRunner/efl/main.cpp: Added.
+        (main):
+
 2012-07-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][EFL] Ewk_View needs API to load HTML data

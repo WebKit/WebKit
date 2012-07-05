@@ -22,6 +22,7 @@ ENDIF ()
 # -----------------------------------------------------------------------------
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WTF_LIBRARY_NAME})
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(${JavaScriptCore_LIBRARY_NAME})
+WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WebCoreTestSupport_LIBRARY_NAME})
 
 IF (ENABLE_WEBCORE)
     WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WebCore_LIBRARY_NAME})

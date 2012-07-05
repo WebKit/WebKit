@@ -25,11 +25,17 @@
 #ifndef WebKitTestRunner_config_h
 #define WebKitTestRunner_config_h
 
+#if defined (BUILDING_WITH_CMAKE)
+#include "cmakeconfig.h"
+#endif
+
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 #if USE(JSC)
 #include <runtime/JSExportMacros.h>
 #endif
+
+#include <WebKit2/WebKit2.h>
 
 #if PLATFORM(WIN)
 #define WTF_USE_CF 1 

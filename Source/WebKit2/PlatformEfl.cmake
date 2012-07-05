@@ -14,6 +14,8 @@ LIST(APPEND WebKit2_SOURCES
     Platform/CoreIPC/unix/ConnectionUnix.cpp
     Platform/CoreIPC/unix/AttachmentUnix.cpp
 
+    Shared/API/c/cairo/WKImageCairo.cpp
+
     Shared/API/c/gtk/WKGraphicsContextGtk.cpp
 
     Shared/cairo/LayerTreeContextCairo.cpp

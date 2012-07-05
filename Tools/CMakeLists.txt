@@ -1,3 +1,7 @@
+IF (ENABLE_WEBKIT2)
+    ADD_SUBDIRECTORY(WebKitTestRunner)
+ENDIF ()
+
 IF ("${PORT}" STREQUAL "Efl")
     IF (ENABLE_WEBKIT)
         ADD_SUBDIRECTORY(DumpRenderTree/efl)

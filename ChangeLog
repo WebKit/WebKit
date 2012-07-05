@@ -1,3 +1,15 @@
+2012-07-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [Wk2][EFL] EFL needs a WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=87659
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Source/CMakeLists.txt:
+        Set compiler flags for WebCoreTestSupport to be linked into TestRunnerInjectedBundle
+        shared library.
+        * Source/cmake/WebKitMacros.cmake: Remove unnecessary dependency.
+
 2012-07-04  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add compile flag and runtime setting

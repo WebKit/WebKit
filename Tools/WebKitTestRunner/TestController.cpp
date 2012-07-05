@@ -42,7 +42,7 @@
 #include <WebKit2/WKPagePrivateMac.h>
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
 #include "EventSenderProxy.h"
 #endif
 
