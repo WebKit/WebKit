@@ -1,3 +1,10 @@
+2012-07-04  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Unreviewed Chromium gardening, drop test expectations for
+        Chromium-Linux and Chromium-Win.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-04  Anthony Scian  <ascian@rim.com>
 
         Web Inspector [JSC]: Implement ScriptCallStack::stackTrace

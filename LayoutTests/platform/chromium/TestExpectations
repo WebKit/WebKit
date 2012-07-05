@@ -887,7 +887,7 @@ BUGWK66377 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
-BUGWK66377 : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
+BUGWK66377 MAC : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
 // These tests don't work with fast timers due to setTimeout
 // races. See https://bugs.webkit.org/show_bug.cgi?id=21536
@@ -3061,7 +3061,7 @@ BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSI
 
 BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
-BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
+BUGV8_1948 MAC : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
 // Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
 WONTFIX : fast/js/stack-trace.html = TEXT
@@ -3394,16 +3394,16 @@ BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 BUGWK84759 : ietestcenter/css3/multicolumn/column-containing-block-001.htm = IMAGE
 BUGWK84760 : ietestcenter/css3/multicolumn/column-containing-block-002.htm = IMAGE
 BUGWK84761 : ietestcenter/css3/multicolumn/column-filling-001.htm = IMAGE
-BUGWK84764 : ietestcenter/css3/multicolumn/column-width-applies-to-001.htm = IMAGE
-BUGWK84767 : ietestcenter/css3/multicolumn/column-width-applies-to-002.htm = IMAGE
-BUGWK84768 : ietestcenter/css3/multicolumn/column-width-applies-to-003.htm = IMAGE
-BUGWK84769 : ietestcenter/css3/multicolumn/column-width-applies-to-004.htm = IMAGE
+BUGWK84764 MAC : ietestcenter/css3/multicolumn/column-width-applies-to-001.htm = IMAGE
+BUGWK84767 MAC : ietestcenter/css3/multicolumn/column-width-applies-to-002.htm = IMAGE
+BUGWK84768 MAC : ietestcenter/css3/multicolumn/column-width-applies-to-003.htm = IMAGE
+BUGWK84769 MAC : ietestcenter/css3/multicolumn/column-width-applies-to-004.htm = IMAGE
 BUGWK84770 : ietestcenter/css3/multicolumn/column-width-applies-to-007.htm = IMAGE
 BUGWK84771 : ietestcenter/css3/multicolumn/column-width-applies-to-009.htm = IMAGE
 BUGWK84772 : ietestcenter/css3/multicolumn/column-width-applies-to-010.htm = IMAGE
 BUGWK84773 : ietestcenter/css3/multicolumn/column-width-applies-to-012.htm = IMAGE
-BUGWK84775 : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMAGE
-BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
+BUGWK84775 MAC : ietestcenter/css3/multicolumn/column-width-applies-to-013.htm = IMAGE
+BUGWK84776 MAC : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMAGE
 BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 // IETC flexbox failures
@@ -3545,7 +3545,7 @@ BUGWK86592 LINUX : http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html
 BUGWK86592 LINUX : fast/loader/unload-form-about-blank.html = TIMEOUT PASS
 BUGWK86592 LINUX : http/tests/xmlhttprequest/zero-length-response-sync.html = TIMEOUT PASS
 
-BUGWK89126 : platform/chromium/compositing/accelerated-drawing/svg-filters.html = IMAGE
+BUGWK89126 MAC : platform/chromium/compositing/accelerated-drawing/svg-filters.html = IMAGE
 
 // strange "Unexpected no expected results found" on cr-linux ews
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload-within-iframe.html = MISSING PASS
@@ -3667,7 +3667,7 @@ BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIME
 BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = PASS TEXT
 
 // Flaky
-BUGWK89166 : http/tests/messaging/cross-domain-message-event-dispatch.html = TEXT
+BUGWK89166 MAC : http/tests/messaging/cross-domain-message-event-dispatch.html = TEXT
 BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT
 
 // Needs Rebaseline after bug 86942
