@@ -336,10 +336,15 @@ void ScriptController::setCaptureCallStackForUncaughtExceptions(bool)
 {
 }
 
-void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*> >&)
+void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*> >& result)
 {
-    // FIXME(85709): support isolated contexts inspection for JSC.
+    for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
+        JSC::ExecState* exec = iter->second->window()->globalExec();
+        SecurityOrigin* origin = iter->second->window()->impl()->securityOrigin();
+        result.append(std::pair<ScriptState*, SecurityOrigin*>(exec, origin));
+    }
 }
+
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
