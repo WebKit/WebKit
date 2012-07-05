@@ -1,3 +1,40 @@
+2012-07-05  Oli Lan  <olilan@chromium.org>
+
+        [chromium] Add a method didChangeFormState to WebViewClient.
+        https://bugs.webkit.org/show_bug.cgi?id=90563
+
+        Reviewed by Adam Barth.
+
+        This patch adds a new method didChangeFormState to WebViewClient,
+        and calls it from ChromeClientImpl::formStateDidChange with the changed node.
+
+        This new method can be used for example by the Android port to update the browser's
+        IME when the state of the currently focused text node has changed. To facilitate this
+        usage, a focused() method has been added to WebNode.
+
+        A new test has been added to WebViewTest. This test checks that didChangeFormState
+        is called when an input's value is changed, and also checks that WebNode::focused() returns
+        the correct value for the provided node, in both the focused and non-focused cases.
+
+        * public/WebNode.h:
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::didChangeFormState):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::formStateDidChange):
+        * src/WebNode.cpp:
+        (WebKit::WebNode::focused):
+        (WebKit):
+        * tests/WebViewTest.cpp:
+        (FormChangeWebViewClient):
+        (WebKit::FormChangeWebViewClient::didChangeFormState):
+        (WebKit::FormChangeWebViewClient::reset):
+        (WebKit::FormChangeWebViewClient::called):
+        (WebKit::FormChangeWebViewClient::focused):
+        (WebKit):
+        (WebKit::TEST_F):
+        * tests/data/input_field_set_value_while_focused.html: Added.
+        * tests/data/input_field_set_value_while_not_focused.html: Added.
+
 2012-07-04  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed, Chromium gardening. Roll Chromium DEPS.

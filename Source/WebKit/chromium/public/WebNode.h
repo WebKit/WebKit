@@ -111,6 +111,7 @@ public:
     WEBKIT_EXPORT void simulateClick();
     WEBKIT_EXPORT WebNodeList getElementsByTagName(const WebString&) const;
     WEBKIT_EXPORT WebElement rootEditableElement() const;
+    WEBKIT_EXPORT bool focused() const;
 
     // Returns true if the node has a non-empty bounding box in layout.
     // This does not 100% guarantee the user can see it, but is pretty close.

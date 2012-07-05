@@ -92,6 +92,29 @@ private:
     TestData m_testData;
 };
 
+class FormChangeWebViewClient : public WebViewClient {
+public:
+    // WebViewClient methods
+    virtual void didChangeFormState(const WebNode& node)
+    {
+        m_focused = node.focused();
+        m_called = true;
+    }
+
+    // Local methods
+    void reset()
+    {
+        m_called = false;
+        m_focused = false;
+    }
+    bool called() { return m_called; }
+    bool focused() { return m_focused; }
+
+private:
+    bool m_called;
+    bool m_focused;
+};
+
 class WebViewTest : public testing::Test {
 public:
     WebViewTest()
@@ -334,6 +357,22 @@ TEST_F(WebViewTest, SetEditableSelectionOffsetsAndTextInputInfo)
     EXPECT_EQ(19, info.selectionEnd);
     EXPECT_EQ(-1, info.compositionStart);
     EXPECT_EQ(-1, info.compositionEnd);
+    webView->close();
+}
+
+TEST_F(WebViewTest, FormChange)
+{
+    FormChangeWebViewClient client;
+    client.reset();
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "input_field_set_value_while_focused.html");
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "input_field_set_value_while_focused.html", true, 0, &client);
+    EXPECT_TRUE(client.called());
+    EXPECT_TRUE(client.focused());
+    client.reset();
+    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "input_field_set_value_while_not_focused.html");
+    webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "input_field_set_value_while_not_focused.html", true, 0, &client);
+    EXPECT_TRUE(client.called());
+    EXPECT_FALSE(client.focused());
     webView->close();
 }
 

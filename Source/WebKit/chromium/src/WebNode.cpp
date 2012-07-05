@@ -213,6 +213,11 @@ WebElement WebNode::rootEditableElement() const
     return WebElement(m_private->rootEditableElement());
 }
 
+bool WebNode::focused() const
+{
+    return m_private->focused();
+}
+
 bool WebNode::hasNonEmptyBoundingBox() const
 {
     m_private->document()->updateLayoutIgnorePendingStylesheets();
