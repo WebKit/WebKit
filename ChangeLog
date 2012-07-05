@@ -1,3 +1,15 @@
+2012-07-05  Rob Buis  <rbuis@rim.com>
+
+        [CMake] Fix some CMake warnings
+        https://bugs.webkit.org/show_bug.cgi?id=90558
+
+        Fix WebKit options so they match with FeatureList.pm.
+
+        Reviewed by Dan Bates.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-07-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Move Webkit1 before WebKit2 in the build order
