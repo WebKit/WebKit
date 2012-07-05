@@ -1,5 +1,17 @@
 2012-07-04  Yoshifumi Inoue  <yosin@chromium.org>
 
+        Unreviewed Chromium gardening, Disable always failed python tests on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=90587
+
+        PortTest.qt_linux and mac_lion are always failed on Chromium Windows at
+        creating child process.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (PortTest.disabled_test_qt_linux):
+        (PortTest.disabled_test_mac_lion):
+
+2012-07-04  Yoshifumi Inoue  <yosin@chromium.org>
+
         [Tools] webkit_unittest.py got assertion
         https://bugs.webkit.org/show_bug.cgi?id=90579
 

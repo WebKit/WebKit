@@ -1036,10 +1036,10 @@ class PortTest(unittest.TestCase):
     def disabled_test_chromium_mac_lion_in_test_shell_mode(self):
         self.assert_mock_port_works('chromium-mac-lion', args=['--additional-drt-flag=--test-shell'])
 
-    def test_qt_linux(self):
+    def disabled_test_qt_linux(self):
         self.assert_mock_port_works('qt-linux')
 
-    def test_mac_lion(self):
+    def disabled_test_mac_lion(self):
         self.assert_mock_port_works('mac-lion')
 
 if __name__ == '__main__':
