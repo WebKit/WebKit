@@ -1,3 +1,16 @@
+2012-07-05  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] WTR crashes if a URL is passed as a parameter
+        https://bugs.webkit.org/show_bug.cgi?id=88093
+
+        Reviewed by Zoltan Herczeg.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toCopiedURLAPI):
+        Don't special case null string. It's handled
+        fine by WebURL and passing 0 is not suitable
+        to the API.
+
 2012-07-05  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Enable the CUSTOM_SCHEME_HANDLER feature as default.

@@ -159,8 +159,6 @@ inline ProxyingRefPtr<WebURL> toURLRef(StringImpl* string)
 
 inline WKURLRef toCopiedURLAPI(const String& string)
 {
-    if (!string)
-        return 0;
     RefPtr<WebURL> webURL = WebURL::create(string);
     return toAPI(webURL.release().leakRef());
 }
