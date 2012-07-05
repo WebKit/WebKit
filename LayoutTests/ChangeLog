@@ -1,3 +1,9 @@
+2012-07-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, marking a test as a flaky crasher after r121869.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-04  Mike West  <mkwst@chromium.org>
 
         Implement the script-nonce Content Security Policy directive.
