@@ -428,6 +428,8 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     if (!jsThisObject)
         jsThisObject = exec->globalThisValue();
 
+    jsThisObject = jsThisObject->methodTable()->toThisObject(jsThisObject, exec);
+    
     MarkedArgumentBuffer argList;
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(exec, arguments[i]));
