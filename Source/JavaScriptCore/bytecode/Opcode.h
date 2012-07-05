@@ -108,6 +108,7 @@ namespace JSC {
         macro(op_resolve_with_base, 5) /* has value profiling */ \
         macro(op_resolve_with_this, 5) /* has value profiling */ \
         macro(op_get_by_id, 9) /* has value profiling */ \
+        macro(op_get_by_id_out_of_line, 9) /* has value profiling */ \
         macro(op_get_by_id_self, 9) /* has value profiling */ \
         macro(op_get_by_id_proto, 9) /* has value profiling */ \
         macro(op_get_by_id_chain, 9) /* has value profiling */ \
@@ -122,9 +123,12 @@ namespace JSC {
         macro(op_get_string_length, 9) /* has value profiling */ \
         macro(op_get_arguments_length, 4) \
         macro(op_put_by_id, 9) \
+        macro(op_put_by_id_out_of_line, 9) \
         macro(op_put_by_id_transition, 9) \
         macro(op_put_by_id_transition_direct, 9) \
+        macro(op_put_by_id_transition_direct_out_of_line, 9) \
         macro(op_put_by_id_transition_normal, 9) \
+        macro(op_put_by_id_transition_normal_out_of_line, 9) \
         macro(op_put_by_id_replace, 9) \
         macro(op_put_by_id_generic, 9) \
         macro(op_del_by_id, 4) \

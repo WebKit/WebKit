@@ -32,17 +32,19 @@
 
 namespace JSC {
 
+#if ENABLE(LLINT) || ENABLE(JIT)
 static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* structure, Identifier& identifier)
 {
     unsigned attributesIgnored;
     JSCell* specificValue;
-    size_t offset = structure->get(
+    PropertyOffset offset = structure->get(
         *codeBlock->globalData(), identifier, attributesIgnored, specificValue);
-    if (offset == notFound)
+    if (!isValidOffset(offset))
         return ResolveGlobalStatus();
     
     return ResolveGlobalStatus(ResolveGlobalStatus::Simple, structure, offset, specificValue);
 }
+#endif // ENABLE(LLINT) || ENABLE(JIT)
 
 static ResolveGlobalStatus computeForLLInt(CodeBlock* codeBlock, unsigned bytecodeIndex, Identifier& identifier)
 {

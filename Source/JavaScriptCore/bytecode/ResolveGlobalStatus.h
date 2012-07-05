@@ -27,6 +27,7 @@
 #define ResolveGlobalStatus_h
 
 #include "JSValue.h"
+#include "PropertyOffset.h"
 #include <wtf/NotFound.h>
 
 namespace JSC {
@@ -46,12 +47,12 @@ public:
     ResolveGlobalStatus()
         : m_state(NoInformation)
         , m_structure(0)
-        , m_offset(notFound)
+        , m_offset(invalidOffset)
     {
     }
     
     ResolveGlobalStatus(
-        State state, Structure* structure = 0, size_t offset = notFound,
+        State state, Structure* structure = 0, PropertyOffset offset = invalidOffset,
         JSValue specificValue = JSValue())
         : m_state(state)
         , m_structure(structure)
@@ -70,13 +71,13 @@ public:
     bool takesSlowPath() const { return m_state == TakesSlowPath; }
     
     Structure* structure() const { return m_structure; }
-    size_t offset() const { return m_offset; }
+    PropertyOffset offset() const { return m_offset; }
     JSValue specificValue() const { return m_specificValue; }
 
 private:
     State m_state;
     Structure* m_structure;
-    size_t m_offset;
+    PropertyOffset m_offset;
     JSValue m_specificValue;
 }; // class ResolveGlobalStatus
 

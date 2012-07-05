@@ -1822,7 +1822,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         ASSERT(slot.slotBase().isObject());
 
         JSObject* baseObject = asObject(slot.slotBase());
-        size_t offset = slot.cachedOffset();
+        PropertyOffset offset = slot.cachedOffset();
 
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
@@ -1851,7 +1851,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         return;
     }
 
-    size_t offset = slot.cachedOffset();
+    PropertyOffset offset = slot.cachedOffset();
     size_t count = normalizePrototypeChain(callFrame, baseValue, slot.slotBase(), propertyName, offset);
     if (!count) {
         vPC[0] = getOpcode(op_get_by_id_generic);
@@ -3045,6 +3045,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_resolve_with_this);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_get_by_id_out_of_line)
     DEFINE_OPCODE(op_get_by_id) {
         /* get_by_id dst(r) base(r) property(id) structure(sID) nop(n) nop(n) nop(n)
 
@@ -3527,6 +3528,7 @@ skip_id_custom_self:
     skip_get_string_length:
     goto *(&&skip_put_by_id);
 #endif
+    DEFINE_OPCODE(op_put_by_id_out_of_line)
     DEFINE_OPCODE(op_put_by_id) {
         /* put_by_id base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n) direct(b)
 
@@ -3565,6 +3567,8 @@ skip_id_custom_self:
 #endif
     DEFINE_OPCODE(op_put_by_id_transition_direct)
     DEFINE_OPCODE(op_put_by_id_transition_normal)
+    DEFINE_OPCODE(op_put_by_id_transition_direct_out_of_line)
+    DEFINE_OPCODE(op_put_by_id_transition_normal_out_of_line)
     DEFINE_OPCODE(op_put_by_id_transition) {
         /* op_put_by_id_transition base(r) property(id) value(r) oldStructure(sID) newStructure(sID) structureChain(chain) offset(n) direct(b)
          
@@ -3605,7 +3609,7 @@ skip_id_custom_self:
                 baseObject->setStructureAndReallocateStorageIfNecessary(*globalData, newStructure);
 
                 int value = vPC[3].u.operand;
-                unsigned offset = vPC[7].u.operand;
+                int offset = vPC[7].u.operand;
                 ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(*globalData, codeBlock->identifier(vPC[2].u.operand))) == offset);
                 baseObject->putDirectOffset(callFrame->globalData(), offset, callFrame->r(value).jsValue());
 
@@ -3639,7 +3643,7 @@ skip_id_custom_self:
                 ASSERT(baseCell->isObject());
                 JSObject* baseObject = asObject(baseCell);
                 int value = vPC[3].u.operand;
-                unsigned offset = vPC[5].u.operand;
+                int offset = vPC[5].u.operand;
                 
                 ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(*globalData, codeBlock->identifier(vPC[2].u.operand))) == offset);
                 baseObject->putDirectOffset(callFrame->globalData(), offset, callFrame->r(value).jsValue());
@@ -3717,7 +3721,7 @@ skip_id_custom_self:
         JSValue expectedSubscript = callFrame->r(expected).jsValue();
         int index = callFrame->r(i).i() - 1;
         JSValue result;
-        int offset = 0;
+        PropertyOffset offset = 0;
         if (subscript == expectedSubscript && baseValue.isCell() && (baseValue.asCell()->structure() == it->cachedStructure()) && it->getOffset(index, offset)) {
             callFrame->uncheckedR(dst) = JSValue(asObject(baseValue)->getDirectOffset(offset));
             vPC += OPCODE_LENGTH(op_get_by_pname);

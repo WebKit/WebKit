@@ -258,6 +258,13 @@ public:
         m_assembler.movq_mr(address.offset, address.base, dest);
     }
 
+    ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
+    {
+        ConvertibleLoadLabel result = ConvertibleLoadLabel(this);
+        m_assembler.movq_mr(address.offset, address.base, dest);
+        return result;
+    }
+
     void loadPtr(BaseIndex address, RegisterID dest)
     {
         m_assembler.movq_mr(address.offset, address.base, address.index, address.scale, dest);

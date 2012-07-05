@@ -84,6 +84,13 @@ const LLIntReturnPC = ArgumentCount + TagOffset
 # String flags.
 const HashFlags8BitBuffer = 64
 
+# Property storage constants
+if JSVALUE64
+    const InlineStorageCapacity = 4
+else
+    const InlineStorageCapacity = 6
+end
+
 # Allocation constants
 if JSVALUE64
     const JSFinalObjectSizeClassIndex = 1
@@ -312,8 +319,7 @@ macro allocateBasicJSObject(sizeClassIndex, classInfoOffset, structure, result, 
         storep scratch2, [result]
         storep structure, JSCell::m_structure[result]
         storep 0, JSObject::m_inheritorID[result]
-        addp sizeof JSObject, result, scratch1
-        storep scratch1, JSObject::m_propertyStorage[result]
+        storep 0, JSObject::m_outOfLineStorage[result]
     end
 end
 
@@ -479,6 +485,21 @@ _llint_op_resolve_with_this:
     traceExecution()
     callSlowPath(_llint_slow_path_resolve_with_this)
     dispatch(5)
+
+
+macro withInlineStorage(object, propertyStorage, continuation)
+    # Indicate that the object is the property storage, and that the
+    # property storage register is unused.
+    continuation(object, propertyStorage)
+end
+
+macro withOutOfLineStorage(object, propertyStorage, continuation)
+    loadp JSObject::m_outOfLineStorage[object], propertyStorage
+    # Indicate that the propertyStorage register now points to the
+    # property storage, and that the object register may be reused
+    # if the object pointer is not needed anymore.
+    continuation(propertyStorage, object)
+end
 
 
 _llint_op_del_by_id:

@@ -794,16 +794,14 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
 
 
     // Verify structure.
-    move(TrustedImmPtr(globalObject), regT0);
+    move(TrustedImmPtr(globalObject), regT2);
     move(TrustedImmPtr(resolveInfoAddress), regT3);
     loadPtr(Address(regT3, OBJECT_OFFSETOF(GlobalResolveInfo, structure)), regT1);
-    addSlowCase(branchPtr(NotEqual, regT1, Address(regT0, JSCell::structureOffset())));
+    addSlowCase(branchPtr(NotEqual, regT1, Address(regT2, JSCell::structureOffset())));
 
     // Load property.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSGlobalObject, m_propertyStorage)), regT2);
     load32(Address(regT3, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), regT3);
-    load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
-    load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
+    compileGetDirectOffset(regT2, regT1, regT0, regT3, KnownNotFinal);
     emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + (dynamic ? OPCODE_LENGTH(op_resolve_global_dynamic) : OPCODE_LENGTH(op_resolve_global)), dst, regT1, regT0);

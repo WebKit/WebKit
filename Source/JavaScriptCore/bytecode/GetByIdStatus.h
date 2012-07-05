@@ -26,6 +26,7 @@
 #ifndef GetByIdStatus_h
 #define GetByIdStatus_h
 
+#include "PropertyOffset.h"
 #include "StructureSet.h"
 #include <wtf/NotFound.h>
 
@@ -46,13 +47,13 @@ public:
 
     GetByIdStatus()
         : m_state(NoInformation)
-        , m_offset(notFound)
+        , m_offset(invalidOffset)
     {
     }
     
     GetByIdStatus(
         State state, bool wasSeenInJIT, const StructureSet& structureSet = StructureSet(),
-        size_t offset = notFound, JSValue specificValue = JSValue(), Vector<Structure*> chain = Vector<Structure*>())
+        size_t offset = invalidOffset, JSValue specificValue = JSValue(), Vector<Structure*> chain = Vector<Structure*>())
         : m_state(state)
         , m_structureSet(structureSet)
         , m_chain(chain)
@@ -76,7 +77,7 @@ public:
     const StructureSet& structureSet() const { return m_structureSet; }
     const Vector<Structure*>& chain() const { return m_chain; } // Returns empty vector if this is a direct access.
     JSValue specificValue() const { return m_specificValue; } // Returns JSValue() if there is no specific value.
-    size_t offset() const { return m_offset; }
+    PropertyOffset offset() const { return m_offset; }
     
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }
     
@@ -88,7 +89,7 @@ private:
     StructureSet m_structureSet;
     Vector<Structure*> m_chain;
     JSValue m_specificValue;
-    size_t m_offset;
+    PropertyOffset m_offset;
     bool m_wasSeenInJIT;
 };
 

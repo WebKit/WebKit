@@ -93,23 +93,53 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
 #endif
-
+    
     JSCell::visitChildren(thisObject, visitor);
 
-    PropertyStorage storage = thisObject->propertyStorage();
-    size_t storageSize = thisObject->structure()->propertyStorageSize();
-    if (thisObject->isUsingInlineStorage())
-        visitor.appendValues(storage, storageSize);
-    else {
+    PropertyStorage storage = thisObject->outOfLineStorage();
+    if (storage) {
+        size_t storageSize = thisObject->structure()->outOfLineSizeForKnownNonFinalObject();
         // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
         void* temp = storage;
-        visitor.copyAndAppend(&temp, thisObject->structure()->propertyStorageCapacity() * sizeof(WriteBarrierBase<Unknown>), storage->slot(), storageSize);
+        visitor.copyAndAppend(&temp, thisObject->structure()->outOfLineCapacity() * sizeof(WriteBarrierBase<Unknown>), storage->slot(), storageSize);
         storage = static_cast<PropertyStorage>(temp);
-        thisObject->m_propertyStorage.set(storage, StorageBarrier::Unchecked);
+        thisObject->m_outOfLineStorage.set(storage, StorageBarrier::Unchecked);
     }
 
     if (thisObject->m_inheritorID)
         visitor.append(&thisObject->m_inheritorID);
+
+#if !ASSERT_DISABLED
+    visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
+#endif
+}
+
+void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSFinalObject* thisObject = jsCast<JSFinalObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+#if !ASSERT_DISABLED
+    bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
+    visitor.m_isCheckingForDefaultMarkViolation = false;
+#endif
+    
+    JSCell::visitChildren(thisObject, visitor);
+
+    PropertyStorage storage = thisObject->outOfLineStorage();
+    if (storage) {
+        size_t storageSize = thisObject->structure()->outOfLineSizeForKnownFinalObject();
+        // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
+        void* temp = storage;
+        visitor.copyAndAppend(&temp, thisObject->structure()->outOfLineCapacity() * sizeof(WriteBarrierBase<Unknown>), storage->slot(), storageSize);
+        storage = static_cast<PropertyStorage>(temp);
+        thisObject->m_outOfLineStorage.set(storage, StorageBarrier::Unchecked);
+    }
+
+    if (thisObject->m_inheritorID)
+        visitor.append(&thisObject->m_inheritorID);
+
+    size_t storageSize = thisObject->structure()->inlineSizeForKnownFinalObject();
+    visitor.appendValues(thisObject->inlineStorage(), storageSize);
 
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
@@ -153,8 +183,8 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
     for (JSObject* obj = thisObject; ; obj = asObject(prototype)) {
         unsigned attributes;
         JSCell* specificValue;
-        size_t offset = obj->structure()->get(globalData, propertyName, attributes, specificValue);
-        if (offset != WTF::notFound) {
+        PropertyOffset offset = obj->structure()->get(globalData, propertyName, attributes, specificValue);
+        if (offset != invalidOffset) {
             if (attributes & ReadOnly) {
                 if (slot.isStrictMode())
                     throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
@@ -272,7 +302,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
 
     unsigned attributes;
     JSCell* specificValue;
-    if (thisObject->structure()->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound) {
+    if (isValidOffset(thisObject->structure()->get(exec->globalData(), propertyName, attributes, specificValue))) {
         if (attributes & DontDelete && !exec->globalData().isInDefineOwnProperty())
             return false;
         thisObject->removeDirect(exec->globalData(), propertyName);
@@ -394,7 +424,7 @@ bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyN
 bool JSObject::getPropertySpecificValue(ExecState* exec, PropertyName propertyName, JSCell*& specificValue) const
 {
     unsigned attributes;
-    if (structure()->get(exec->globalData(), propertyName, attributes, specificValue) != WTF::notFound)
+    if (isValidOffset(structure()->get(exec->globalData(), propertyName, attributes, specificValue)))
         return true;
 
     // This could be a function within the static table? - should probably
@@ -516,20 +546,20 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
 
 bool JSObject::removeDirect(JSGlobalData& globalData, PropertyName propertyName)
 {
-    if (structure()->get(globalData, propertyName) == WTF::notFound)
+    if (!isValidOffset(structure()->get(globalData, propertyName)))
         return false;
 
-    size_t offset;
+    PropertyOffset offset;
     if (structure()->isUncacheableDictionary()) {
         offset = structure()->removePropertyWithoutTransition(globalData, propertyName);
-        if (offset == WTF::notFound)
+        if (offset == invalidOffset)
             return false;
         putUndefinedAtDirectOffset(offset);
         return true;
     }
 
     setStructure(globalData, Structure::removePropertyTransition(globalData, structure(), propertyName, offset));
-    if (offset == WTF::notFound)
+    if (offset == invalidOffset)
         return false;
     putUndefinedAtDirectOffset(offset);
     return true;
@@ -559,25 +589,22 @@ Structure* JSObject::createInheritorID(JSGlobalData& globalData)
     return m_inheritorID.get();
 }
 
-PropertyStorage JSObject::growPropertyStorage(JSGlobalData& globalData, size_t oldSize, size_t newSize)
+PropertyStorage JSObject::growOutOfLineStorage(JSGlobalData& globalData, size_t oldSize, size_t newSize)
 {
     ASSERT(newSize > oldSize);
 
     // It's important that this function not rely on structure(), since
     // we might be in the middle of a transition.
 
-    PropertyStorage oldPropertyStorage = m_propertyStorage.get();
+    PropertyStorage oldPropertyStorage = m_outOfLineStorage.get();
     PropertyStorage newPropertyStorage = 0;
 
-    if (isUsingInlineStorage()) {
+    if (!oldPropertyStorage) {
         // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
         void* temp = newPropertyStorage;
         if (!globalData.heap.tryAllocateStorage(sizeof(WriteBarrierBase<Unknown>) * newSize, &temp))
             CRASH();
         newPropertyStorage = static_cast<PropertyStorage>(temp);
-
-        for (unsigned i = 0; i < oldSize; ++i)
-            newPropertyStorage[i] = oldPropertyStorage[i];
     } else {
         // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
         void* temp = oldPropertyStorage;
@@ -594,8 +621,8 @@ bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Prope
 {
     unsigned attributes = 0;
     JSCell* cell = 0;
-    size_t offset = object->structure()->get(exec->globalData(), propertyName, attributes, cell);
-    if (offset == WTF::notFound)
+    PropertyOffset offset = object->structure()->get(exec->globalData(), propertyName, attributes, cell);
+    if (offset == invalidOffset)
         return false;
     descriptor.setDescriptor(object->getDirectOffset(offset), attributes);
     return true;

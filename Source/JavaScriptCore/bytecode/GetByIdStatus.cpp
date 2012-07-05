@@ -48,9 +48,9 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     
     unsigned attributesIgnored;
     JSCell* specificValue;
-    size_t offset = structure->get(
+    PropertyOffset offset = structure->get(
         *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
-    if (offset == notFound)
+    if (!isValidOffset(offset))
         return GetByIdStatus(NoInformation, false);
     
     return GetByIdStatus(Simple, false, StructureSet(structure), offset, specificValue);
@@ -88,7 +88,7 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
         
     result.m_offset = currentStructure->get(
         *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
-    if (result.m_offset == notFound)
+    if (!isValidOffset(result.m_offset))
         return;
         
     result.m_structureSet.add(structure);
@@ -156,12 +156,12 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         result.m_offset = structure->get(
             *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
         
-        if (result.m_offset != notFound) {
+        if (isValidOffset(result.m_offset)) {
             result.m_structureSet.add(structure);
             result.m_specificValue = JSValue(specificValue);
         }
         
-        if (result.m_offset != notFound)
+        if (isValidOffset(result.m_offset))
             ASSERT(result.m_structureSet.size());
         break;
     }
@@ -176,11 +176,11 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
             
             unsigned attributesIgnored;
             JSCell* specificValue;
-            size_t myOffset = structure->get(
+            PropertyOffset myOffset = structure->get(
                 *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
             
-            if (myOffset == notFound) {
-                result.m_offset = notFound;
+            if (!isValidOffset(myOffset)) {
+                result.m_offset = invalidOffset;
                 break;
             }
                     
@@ -188,7 +188,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
                 result.m_offset = myOffset;
                 result.m_specificValue = JSValue(specificValue);
             } else if (result.m_offset != myOffset) {
-                result.m_offset = notFound;
+                result.m_offset = invalidOffset;
                 break;
             } else if (result.m_specificValue != JSValue(specificValue))
                 result.m_specificValue = JSValue();
@@ -196,7 +196,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
             result.m_structureSet.add(structure);
         }
                     
-        if (result.m_offset != notFound)
+        if (isValidOffset(result.m_offset))
             ASSERT(result.m_structureSet.size());
         break;
     }
@@ -223,11 +223,11 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     }
         
     default:
-        ASSERT(result.m_offset == notFound);
+        ASSERT(!isValidOffset(result.m_offset));
         break;
     }
     
-    if (result.m_offset == notFound) {
+    if (!isValidOffset(result.m_offset)) {
         result.m_state = TakesSlowPath;
         result.m_structureSet.clear();
         result.m_chain.clear();

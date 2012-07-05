@@ -497,7 +497,8 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::PatchableJump structureCheck = m_jit.patchableBranchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     
-    m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+    JITCompiler::ConvertibleLoadLabel propertyStorageLoad =
+        m_jit.convertibleLoadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), resultGPR);
     JITCompiler::DataLabelCompact loadWithPatch = m_jit.loadPtrWithCompactAddressOffsetPatch(JITCompiler::Address(resultGPR, 0), resultGPR);
     
     JITCompiler::Label doneLabel = m_jit.label();
@@ -517,8 +518,8 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     }
     m_jit.addPropertyAccess(
         PropertyAccessRecord(
-            codeOrigin, structureToCompare, structureCheck, loadWithPatch, slowPath.get(),
-            doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(resultGPR),
+            codeOrigin, structureToCompare, structureCheck, propertyStorageLoad, loadWithPatch,
+            slowPath.get(), doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(resultGPR),
             safeCast<int8_t>(scratchGPR),
             spillMode == NeedToSpill ? PropertyAccessRecord::RegistersInUse : PropertyAccessRecord::RegistersFlushed));
     addSlowPathGenerator(slowPath.release());
@@ -536,7 +537,8 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
 
     writeBarrier(baseGPR, valueGPR, valueUse, WriteBarrierForPropertyAccess, scratchGPR);
 
-    m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
+    JITCompiler::ConvertibleLoadLabel propertyStorageLoad =
+        m_jit.convertibleLoadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR);
     JITCompiler::DataLabel32 storeWithPatch = m_jit.storePtrWithAddressOffsetPatch(valueGPR, JITCompiler::Address(scratchGPR, 0));
 
     JITCompiler::Label doneLabel = m_jit.label();
@@ -566,7 +568,11 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
             slowCases, this, optimizedCall, NoResult, valueGPR, baseGPR,
             identifier(identifierNumber));
     }
-    m_jit.addPropertyAccess(PropertyAccessRecord(codeOrigin, structureToCompare, structureCheck, JITCompiler::DataLabelCompact(storeWithPatch.label()), slowPath.get(), doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(valueGPR), safeCast<int8_t>(scratchGPR)));
+    m_jit.addPropertyAccess(
+        PropertyAccessRecord(
+            codeOrigin, structureToCompare, structureCheck, propertyStorageLoad,
+            JITCompiler::DataLabelCompact(storeWithPatch.label()), slowPath.get(), doneLabel,
+            safeCast<int8_t>(baseGPR), safeCast<int8_t>(valueGPR), safeCast<int8_t>(scratchGPR)));
     addSlowPathGenerator(slowPath.release());
 }
 
@@ -3574,7 +3580,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
         
-        m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+        m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), resultGPR);
         
         storageResult(resultGPR, m_compileIndex);
         break;
@@ -3890,9 +3896,14 @@ void SpeculativeJIT::compile(Node& node)
         JITCompiler::Jump structuresDontMatch = m_jit.branchPtr(JITCompiler::NotEqual, resultGPR, JITCompiler::Address(globalObjectGPR, JSCell::structureOffset()));
 
         // Fast case
-        m_jit.loadPtr(JITCompiler::Address(globalObjectGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
         m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), resolveInfoGPR);
-        m_jit.loadPtr(JITCompiler::BaseIndex(resultGPR, resolveInfoGPR, JITCompiler::ScalePtr), resultGPR);
+#if DFG_ENABLE(JIT_ASSERT)
+        JITCompiler::Jump isOutOfLine = m_jit.branch32(JITCompiler::GreaterThanOrEqual, resolveInfoGPR, TrustedImm32(inlineStorageCapacity));
+        m_jit.breakpoint();
+        isOutOfLine.link(&m_jit);
+#endif
+        m_jit.loadPtr(JITCompiler::Address(globalObjectGPR, JSObject::offsetOfOutOfLineStorage()), resultGPR);
+        m_jit.loadPtr(JITCompiler::BaseIndex(resultGPR, resolveInfoGPR, JITCompiler::ScalePtr, -inlineStorageCapacity * static_cast<ptrdiff_t>(sizeof(JSValue))), resultGPR);
         
         addSlowPathGenerator(
             slowPathCall(

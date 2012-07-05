@@ -54,7 +54,7 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, 
     
     dataLog("    Code at [%p, %p):\n", result.code().executableAddress(), static_cast<char*>(result.code().executableAddress()) + result.size());
     if (!tryToDisassemble(result.code(), m_size, "    ", WTF::dataFile()))
-        dataLog("        <no disassembly available>");
+        dataLog("        <no disassembly available>\n");
     
     return result;
 }

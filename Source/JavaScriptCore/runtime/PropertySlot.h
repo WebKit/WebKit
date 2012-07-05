@@ -23,6 +23,7 @@
 
 #include "JSValue.h"
 #include "PropertyName.h"
+#include "PropertyOffset.h"
 #include "Register.h"
 #include <wtf/Assertions.h>
 #include <wtf/NotFound.h>
@@ -89,7 +90,7 @@ namespace JSC {
         CachedPropertyType cachedPropertyType() const { return m_cachedPropertyType; }
         bool isCacheable() const { return m_cachedPropertyType != Uncacheable; }
         bool isCacheableValue() const { return m_cachedPropertyType == Value; }
-        size_t cachedOffset() const
+        PropertyOffset cachedOffset() const
         {
             ASSERT(isCacheable());
             return m_offset;
@@ -104,7 +105,7 @@ namespace JSC {
             m_value = value;
         }
         
-        void setValue(JSValue slotBase, JSValue value, size_t offset)
+        void setValue(JSValue slotBase, JSValue value, PropertyOffset offset)
         {
             ASSERT(value);
             m_getValue = JSC_VALUE_MARKER;
@@ -160,7 +161,7 @@ namespace JSC {
             m_data.getterFunc = getterFunc;
         }
 
-        void setCacheableGetterSlot(JSValue slotBase, JSObject* getterFunc, unsigned offset)
+        void setCacheableGetterSlot(JSValue slotBase, JSObject* getterFunc, PropertyOffset offset)
         {
             ASSERT(getterFunc);
             m_getValue = GETTER_FUNCTION_MARKER;
@@ -206,7 +207,7 @@ namespace JSC {
         {
             // Clear offset even in release builds, in case this PropertySlot has been used before.
             // (For other data members, we don't need to clear anything because reuse would meaningfully overwrite them.)
-            m_offset = 0;
+            m_offset = invalidOffset;
             m_cachedPropertyType = Uncacheable;
         }
 
@@ -232,7 +233,7 @@ namespace JSC {
         JSValue m_value;
         JSValue m_thisValue;
 
-        size_t m_offset;
+        PropertyOffset m_offset;
         CachedPropertyType m_cachedPropertyType;
     };
 

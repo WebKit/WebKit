@@ -508,7 +508,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNon
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::PatchableJump structureCheck = m_jit.patchableBranchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     
-    m_jit.loadPtr(JITCompiler::Address(basePayloadGPR, JSObject::offsetOfPropertyStorage()), resultPayloadGPR);
+    JITCompiler::ConvertibleLoadLabel propertyStorageLoad = m_jit.convertibleLoadPtr(JITCompiler::Address(basePayloadGPR, JSObject::offsetOfOutOfLineStorage()), resultPayloadGPR);
     JITCompiler::DataLabelCompact tagLoadWithPatch = m_jit.load32WithCompactAddressOffsetPatch(JITCompiler::Address(resultPayloadGPR, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
     JITCompiler::DataLabelCompact payloadLoadWithPatch = m_jit.load32WithCompactAddressOffsetPatch(JITCompiler::Address(resultPayloadGPR, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayloadGPR);
     
@@ -550,7 +550,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNon
     }
     m_jit.addPropertyAccess(
         PropertyAccessRecord(
-            codeOrigin, structureToCompare, structureCheck,
+            codeOrigin, structureToCompare, structureCheck, propertyStorageLoad,
             tagLoadWithPatch, payloadLoadWithPatch, slowPath.get(), doneLabel,
             safeCast<int8_t>(basePayloadGPR), safeCast<int8_t>(resultTagGPR),
             safeCast<int8_t>(resultPayloadGPR), safeCast<int8_t>(scratchGPR),
@@ -565,7 +565,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
 
     writeBarrier(basePayloadGPR, valueTagGPR, valueUse, WriteBarrierForPropertyAccess, scratchGPR);
 
-    m_jit.loadPtr(JITCompiler::Address(basePayloadGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
+    JITCompiler::ConvertibleLoadLabel propertyStorageLoad = m_jit.convertibleLoadPtr(JITCompiler::Address(basePayloadGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR);
     JITCompiler::DataLabel32 tagStoreWithPatch = m_jit.store32WithAddressOffsetPatch(valueTagGPR, JITCompiler::Address(scratchGPR, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     JITCompiler::DataLabel32 payloadStoreWithPatch = m_jit.store32WithAddressOffsetPatch(valuePayloadGPR, JITCompiler::Address(scratchGPR, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
 
@@ -597,7 +597,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
     }
     m_jit.addPropertyAccess(
         PropertyAccessRecord(
-            codeOrigin, structureToCompare, structureCheck,
+            codeOrigin, structureToCompare, structureCheck, propertyStorageLoad,
             JITCompiler::DataLabelCompact(tagStoreWithPatch.label()),
             JITCompiler::DataLabelCompact(payloadStoreWithPatch.label()),
             slowPath.get(), doneLabel, safeCast<int8_t>(basePayloadGPR),
@@ -3550,7 +3550,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
         
-        m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+        m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), resultGPR);
         
         storageResult(resultGPR, m_compileIndex);
         break;
@@ -3891,8 +3891,13 @@ void SpeculativeJIT::compile(Node& node)
         JITCompiler::Jump structuresNotMatch = m_jit.branchPtr(JITCompiler::NotEqual, resultPayloadGPR, JITCompiler::Address(globalObjectGPR, JSCell::structureOffset()));
 
         // Fast case
-        m_jit.loadPtr(JITCompiler::Address(globalObjectGPR, JSObject::offsetOfPropertyStorage()), resultPayloadGPR);
+        m_jit.loadPtr(JITCompiler::Address(globalObjectGPR, JSObject::offsetOfOutOfLineStorage()), resultPayloadGPR);
         m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), resolveInfoGPR);
+#if DFG_ENABLE(JIT_ASSERT)
+        JITCompiler::Jump isOutOfLine = m_jit.branch32(JITCompiler::GreaterThanOrEqual, resolveInfoGPR, TrustedImm32(inlineStorageCapacity));
+        m_jit.breakpoint();
+        isOutOfLine.link(&m_jit);
+#endif
         m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
         m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultPayloadGPR);
 

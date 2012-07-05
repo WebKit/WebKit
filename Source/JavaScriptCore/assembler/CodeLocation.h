@@ -40,6 +40,7 @@ class CodeLocationNearCall;
 class CodeLocationDataLabelCompact;
 class CodeLocationDataLabel32;
 class CodeLocationDataLabelPtr;
+class CodeLocationConvertibleLoad;
 
 // The CodeLocation* types are all pretty much do-nothing wrappers around
 // CodePtr (or MacroAssemblerCodePtr, to give it its full name).  These
@@ -62,6 +63,7 @@ public:
     CodeLocationDataLabelPtr dataLabelPtrAtOffset(int offset);
     CodeLocationDataLabel32 dataLabel32AtOffset(int offset);
     CodeLocationDataLabelCompact dataLabelCompactAtOffset(int offset);
+    CodeLocationConvertibleLoad convertibleLoadAtOffset(int offset);
 
 protected:
     CodeLocationCommon()
@@ -146,6 +148,15 @@ public:
         : CodeLocationCommon(MacroAssemblerCodePtr(location)) {}
 };
 
+class CodeLocationConvertibleLoad : public CodeLocationCommon {
+public:
+    CodeLocationConvertibleLoad() { }
+    explicit CodeLocationConvertibleLoad(MacroAssemblerCodePtr location)
+        : CodeLocationCommon(location) { }
+    explicit CodeLocationConvertibleLoad(void* location)
+        : CodeLocationCommon(MacroAssemblerCodePtr(location)) { }
+};
+
 inline CodeLocationInstruction CodeLocationCommon::instructionAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
@@ -192,6 +203,12 @@ inline CodeLocationDataLabelCompact CodeLocationCommon::dataLabelCompactAtOffset
 {
     ASSERT_VALID_CODE_OFFSET(offset);
     return CodeLocationDataLabelCompact(reinterpret_cast<char*>(dataLocation()) + offset);
+}
+
+inline CodeLocationConvertibleLoad CodeLocationCommon::convertibleLoadAtOffset(int offset)
+{
+    ASSERT_VALID_CODE_OFFSET(offset);
+    return CodeLocationConvertibleLoad(reinterpret_cast<char*>(dataLocation()) + offset);
 }
 
 } // namespace JSC

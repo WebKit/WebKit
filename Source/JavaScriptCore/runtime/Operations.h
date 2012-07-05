@@ -297,7 +297,7 @@ namespace JSC {
         return jsAddSlowCase(callFrame, v1, v2);
     }
 
-    inline size_t normalizePrototypeChain(CallFrame* callFrame, JSValue base, JSValue slotBase, const Identifier& propertyName, size_t& slotOffset)
+    inline size_t normalizePrototypeChain(CallFrame* callFrame, JSValue base, JSValue slotBase, const Identifier& propertyName, PropertyOffset& slotOffset)
     {
         JSCell* cell = base.asCell();
         size_t count = 0;

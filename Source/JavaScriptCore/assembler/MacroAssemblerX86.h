@@ -89,6 +89,13 @@ public:
         m_assembler.movl_mr(address, dest);
     }
 
+    ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
+    {
+        ConvertibleLoadLabel result = ConvertibleLoadLabel(this);
+        m_assembler.movl_mr(address.offset, address.base, dest);
+        return result;
+    }
+
     void addDouble(AbsoluteAddress address, FPRegisterID dest)
     {
         m_assembler.addsd_mr(address.m_ptr, dest);

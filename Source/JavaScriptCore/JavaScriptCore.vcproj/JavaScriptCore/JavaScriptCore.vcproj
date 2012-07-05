@@ -1094,6 +1094,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\PropertyOffset.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\PropertySlot.cpp"
 				>
 			</File>

@@ -429,11 +429,7 @@ template <typename ClassType, bool destructor, typename StructureType> inline vo
     storePtr(TrustedImmPtr(0), Address(result, JSObject::offsetOfInheritorID()));
 
     // initialize the object's property storage pointer
-    if (ClassType::hasInlineStorage()) {
-        addPtr(TrustedImm32(sizeof(JSObject)), result, storagePtr);
-        storePtr(storagePtr, Address(result, ClassType::offsetOfPropertyStorage()));
-    } else
-        storePtr(TrustedImmPtr(0), Address(result, ClassType::offsetOfPropertyStorage()));
+    storePtr(TrustedImmPtr(0), Address(result, ClassType::offsetOfOutOfLineStorage()));
 }
 
 template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)

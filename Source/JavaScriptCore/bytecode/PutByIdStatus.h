@@ -26,6 +26,7 @@
 #ifndef PutByIdStatus_h
 #define PutByIdStatus_h
 
+#include "PropertyOffset.h"
 #include <wtf/NotFound.h>
 
 namespace JSC {
@@ -55,7 +56,7 @@ public:
         , m_oldStructure(0)
         , m_newStructure(0)
         , m_structureChain(0)
-        , m_offset(notFound)
+        , m_offset(invalidOffset)
     {
     }
     
@@ -64,7 +65,7 @@ public:
         Structure* oldStructure,
         Structure* newStructure,
         StructureChain* structureChain,
-        size_t offset)
+        PropertyOffset offset)
         : m_state(state)
         , m_oldStructure(oldStructure)
         , m_newStructure(newStructure)
@@ -74,7 +75,7 @@ public:
         ASSERT((m_state == NoInformation || m_state == TakesSlowPath) == !m_oldStructure);
         ASSERT((m_state != SimpleTransition) == !m_newStructure);
         ASSERT((m_state != SimpleTransition) == !m_structureChain);
-        ASSERT((m_state == NoInformation || m_state == TakesSlowPath) == (m_offset == notFound));
+        ASSERT((m_state == NoInformation || m_state == TakesSlowPath) == (m_offset == invalidOffset));
     }
     
     static PutByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, Identifier&);
@@ -90,7 +91,7 @@ public:
     Structure* oldStructure() const { return m_oldStructure; }
     Structure* newStructure() const { return m_newStructure; }
     StructureChain* structureChain() const { return m_structureChain; }
-    size_t offset() const { return m_offset; }
+    PropertyOffset offset() const { return m_offset; }
     
 private:
     static PutByIdStatus computeFromLLInt(CodeBlock*, unsigned bytecodeIndex, Identifier&);
@@ -99,7 +100,7 @@ private:
     Structure* m_oldStructure;
     Structure* m_newStructure;
     StructureChain* m_structureChain;
-    size_t m_offset;
+    PropertyOffset m_offset;
 };
 
 } // namespace JSC

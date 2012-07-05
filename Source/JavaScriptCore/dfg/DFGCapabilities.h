@@ -119,9 +119,13 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_get_scoped_var:
     case op_put_scoped_var:
     case op_get_by_id:
+    case op_get_by_id_out_of_line:
     case op_put_by_id:
+    case op_put_by_id_out_of_line:
     case op_put_by_id_transition_direct:
+    case op_put_by_id_transition_direct_out_of_line:
     case op_put_by_id_transition_normal:
+    case op_put_by_id_transition_normal_out_of_line:
     case op_get_global_var:
     case op_get_global_var_watchable:
     case op_put_global_var:

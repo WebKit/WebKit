@@ -106,7 +106,6 @@ static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
     return cpusToUse;
 }
 
-
 Options::Entry Options::s_options[Options::numberOfOptions];
 
 // Realize the names for each of the options:
@@ -124,7 +123,7 @@ void Options::initialize()
     name_() = defaultValue_;
     JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
-
+        
     // Allow environment vars to override options if applicable.
     // The evn var should be the name of the option prefixed with
     // "JSC_".
@@ -133,9 +132,12 @@ void Options::initialize()
     overrideOptionWithHeuristic(name_(), "JSC_" #name_);
     JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
-    
 #endif // RUN_TIME_HEURISTICS
 
+#if 0
+    ; // Deconfuse editors that do auto indentation
+#endif
+    
     // Do range checks where needed and make corrections to the options:
     ASSERT(thresholdForOptimizeAfterLongWarmUp() >= thresholdForOptimizeAfterWarmUp());
     ASSERT(thresholdForOptimizeAfterWarmUp() >= thresholdForOptimizeSoon());

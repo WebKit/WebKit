@@ -701,9 +701,8 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool)
 
     // Load cached property
     // Assume that the global object always uses external storage.
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSGlobalObject, m_propertyStorage)), regT0);
     load32(Address(regT2, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), regT1);
-    loadPtr(BaseIndex(regT0, regT1, ScalePtr), regT0);
+    compileGetDirectOffset(regT0, regT0, regT1, regT0, KnownNotFinal);
     emitValueProfilingSite();
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }

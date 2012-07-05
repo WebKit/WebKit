@@ -600,6 +600,14 @@ public:
         move(TrustedImmPtr(address), addressTempRegister);
         m_assembler.ldr(dest, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
     }
+    
+    ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
+    {
+        ConvertibleLoadLabel result(this);
+        ASSERT(address.offset >=0 && address.offset <= 255);
+        m_assembler.ldrWide8BitImmediate(dest, address.base, address.offset);
+        return result;
+    }
 
     void load8(ImplicitAddress address, RegisterID dest)
     {

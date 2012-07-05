@@ -136,6 +136,7 @@ struct PropertyAccessRecord {
         CodeOrigin codeOrigin,
         MacroAssembler::DataLabelPtr structureImm,
         MacroAssembler::PatchableJump structureCheck,
+        MacroAssembler::ConvertibleLoadLabel propertyStorageLoad,
         MacroAssembler::DataLabelCompact loadOrStore,
         SlowPathGenerator* slowPathGenerator,
         MacroAssembler::Label done,
@@ -148,6 +149,7 @@ struct PropertyAccessRecord {
         CodeOrigin codeOrigin,
         MacroAssembler::DataLabelPtr structureImm,
         MacroAssembler::PatchableJump structureCheck,
+        MacroAssembler::ConvertibleLoadLabel propertyStorageLoad,
         MacroAssembler::DataLabelCompact tagLoadOrStore,
         MacroAssembler::DataLabelCompact payloadLoadOrStore,
         SlowPathGenerator* slowPathGenerator,
@@ -161,6 +163,7 @@ struct PropertyAccessRecord {
         : m_codeOrigin(codeOrigin)
         , m_structureImm(structureImm)
         , m_structureCheck(structureCheck)
+        , m_propertyStorageLoad(propertyStorageLoad)
 #if USE(JSVALUE64)
         , m_loadOrStore(loadOrStore)
 #elif USE(JSVALUE32_64)
@@ -182,6 +185,7 @@ struct PropertyAccessRecord {
     CodeOrigin m_codeOrigin;
     MacroAssembler::DataLabelPtr m_structureImm;
     MacroAssembler::PatchableJump m_structureCheck;
+    MacroAssembler::ConvertibleLoadLabel m_propertyStorageLoad;
 #if USE(JSVALUE64)
     MacroAssembler::DataLabelCompact m_loadOrStore;
 #elif USE(JSVALUE32_64)

@@ -132,7 +132,7 @@ namespace JSC {
         WriteBarrier<Structure> m_functionStructure;
         WriteBarrier<Structure> m_boundFunctionStructure;
         WriteBarrier<Structure> m_namedFunctionStructure;
-        size_t m_functionNameOffset;
+        PropertyOffset m_functionNameOffset;
         WriteBarrier<Structure> m_numberObjectStructure;
         WriteBarrier<Structure> m_privateNameStructure;
         WriteBarrier<Structure> m_regExpMatchesArrayStructure;
@@ -262,7 +262,7 @@ namespace JSC {
         Structure* functionStructure() const { return m_functionStructure.get(); }
         Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(); }
         Structure* namedFunctionStructure() const { return m_namedFunctionStructure.get(); }
-        size_t functionNameOffset() const { return m_functionNameOffset; }
+        PropertyOffset functionNameOffset() const { return m_functionNameOffset; }
         Structure* numberObjectStructure() const { return m_numberObjectStructure.get(); }
         Structure* privateNameStructure() const { return m_privateNameStructure.get(); }
         Structure* internalFunctionStructure() const { return m_internalFunctionStructure.get(); }

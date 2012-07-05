@@ -47,12 +47,6 @@ namespace JSC {
         typedef JSCell Base;
 
         static JSPropertyNameIterator* create(ExecState*, JSObject*);
-        static JSPropertyNameIterator* create(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot)
-        {
-            JSPropertyNameIterator* iterator = new (NotNull, allocateCell<JSPropertyNameIterator>(*exec->heap())) JSPropertyNameIterator(exec, propertyNameArrayData, numCacheableSlot);
-            iterator->finishCreation(exec, propertyNameArrayData);
-            return iterator;
-        }
 
         static void destroy(JSCell*);
        
@@ -63,11 +57,11 @@ namespace JSC {
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        bool getOffset(size_t i, int& offset)
+        bool getOffset(size_t i, PropertyOffset& offset)
         {
             if (i >= m_numCacheableSlots)
                 return false;
-            offset = i;
+            offset = i + m_offsetBase;
             return true;
         }
 
@@ -88,12 +82,13 @@ namespace JSC {
         static const ClassInfo s_info;
 
     protected:
-        void finishCreation(ExecState* exec, PropertyNameArrayData* propertyNameArrayData)
+        void finishCreation(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, JSObject* object)
         {
             Base::finishCreation(exec->globalData());
             PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
             for (size_t i = 0; i < m_jsStringsSize; ++i)
                 m_jsStrings[i].set(exec->globalData(), this, jsOwnedString(exec, propertyNameVector[i].ustring()));
+            m_offsetBase = object->structure()->firstValidOffset();
         }
 
     private:
@@ -105,6 +100,7 @@ namespace JSC {
         WriteBarrier<StructureChain> m_cachedPrototypeChain;
         uint32_t m_numCacheableSlots;
         uint32_t m_jsStringsSize;
+        PropertyOffset m_offsetBase;
         OwnArrayPtr<WriteBarrier<Unknown> > m_jsStrings;
     };
 

@@ -1,3 +1,341 @@
+2012-07-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Inline property storage should not be wasted when it is exhausted
+        https://bugs.webkit.org/show_bug.cgi?id=90347
+
+        Reviewed by Gavin Barraclough.
+        
+        Previously, if we switched an object from using inline storage to out-of-line
+        storage, we would abandon the inline storage. This would have two main implications:
+        (i) all accesses to the object, even for properties that were previously in inline
+        storage, must now take an extra indirection; and (ii) we waste a non-trivial amount
+        of space since we must allocate additional out-of-line storage to hold properties
+        that would have fit in the inline storage. There's also the copying cost when
+        switching to out-of-line storage - we must copy all inline properties into ouf-of-line
+        storage.
+        
+        This patch changes the way that object property storage works so that we can use both
+        inline and out-of-line storage concurrently. This is accomplished by introducing a
+        new notion of property offset. This PropertyOffset is a 32-bit signed integer and it
+        behaves as follows:
+        
+        offset == -1: invalid offset, indicating a property that does not exist.
+        
+        0 <= offset <= inlineStorageCapacity: offset into inline storage.
+        
+        inlineStorageCapacity < offset: offset into out-of-line storage.
+        
+        Because non-final objects don't have inline storage, the only valid PropertyOffsets
+        for those objects' properties are -1 or > inlineStorageCapacity.
+        
+        This now means that the decision to use inline or out-of-line storage for an access is
+        made based on the offset, rather than the structure. It also means that any access
+        where the offset is a variable must have an extra branch, unless the type of the
+        object is also known (if it's known to be a non-final object then we can just assert
+        that the offset is >= inlineStorageCapacity).
+        
+        This looks like a big Kraken speed-up and a slight V8 speed-up.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::ldrWide8BitImmediate):
+        (JSC::ARMv7Assembler::replaceWithLoad):
+        (JSC::ARMv7Assembler::replaceWithAddressComputation):
+        * assembler/AbstractMacroAssembler.h:
+        (AbstractMacroAssembler):
+        (ConvertibleLoadLabel):
+        (JSC::AbstractMacroAssembler::ConvertibleLoadLabel::ConvertibleLoadLabel):
+        (JSC::AbstractMacroAssembler::ConvertibleLoadLabel::isSet):
+        (JSC::AbstractMacroAssembler::labelIgnoringWatchpoints):
+        (JSC::AbstractMacroAssembler::replaceWithLoad):
+        (JSC::AbstractMacroAssembler::replaceWithAddressComputation):
+        * assembler/CodeLocation.h:
+        (JSC):
+        (CodeLocationCommon):
+        (CodeLocationConvertibleLoad):
+        (JSC::CodeLocationConvertibleLoad::CodeLocationConvertibleLoad):
+        (JSC::CodeLocationCommon::convertibleLoadAtOffset):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * assembler/LinkBuffer.h:
+        (LinkBuffer):
+        (JSC::LinkBuffer::locationOf):
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::convertibleLoadPtr):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::convertibleLoadPtr):
+        (MacroAssemblerX86):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::convertibleLoadPtr):
+        (MacroAssemblerX86_64):
+        * assembler/RepatchBuffer.h:
+        (RepatchBuffer):
+        (JSC::RepatchBuffer::replaceWithLoad):
+        (JSC::RepatchBuffer::replaceWithAddressComputation):
+        (JSC::RepatchBuffer::setLoadInstructionIsActive):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::replaceWithLoad):
+        (X86Assembler):
+        (JSC::X86Assembler::replaceWithAddressComputation):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForChain):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        (JSC::GetByIdStatus::offset):
+        (GetByIdStatus):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.h:
+        (JSC::PutByIdStatus::PutByIdStatus):
+        (JSC::PutByIdStatus::offset):
+        (PutByIdStatus):
+        * bytecode/ResolveGlobalStatus.cpp:
+        (JSC):
+        (JSC::computeForStructure):
+        * bytecode/ResolveGlobalStatus.h:
+        (JSC::ResolveGlobalStatus::ResolveGlobalStatus):
+        (JSC::ResolveGlobalStatus::offset):
+        (ResolveGlobalStatus):
+        * bytecode/StructureSet.h:
+        (StructureSet):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleGetByOffset):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::PropertyAccessRecord::PropertyAccessRecord):
+        (PropertyAccessRecord):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgRepatchByIdSelfAccess):
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::tryBuildGetByIDProtoList):
+        (JSC::DFG::emitPutReplaceStub):
+        (JSC::DFG::emitPutTransitionStub):
+        (JSC::DFG::tryCachePutByID):
+        (JSC::DFG::tryBuildPutByIdList):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/MarkStack.cpp:
+        (JSC::visitChildren):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::PropertyStubCompilationInfo::copyToStubInfo):
+        * jit/JIT.h:
+        (JSC::PropertyStubCompilationInfo::PropertyStubCompilationInfo):
+        (JSC::JIT::compileGetByIdProto):
+        (JSC::JIT::compileGetByIdSelfList):
+        (JSC::JIT::compileGetByIdProtoList):
+        (JSC::JIT::compileGetByIdChainList):
+        (JSC::JIT::compileGetByIdChain):
+        (JSC::JIT::compilePutByIdTransition):
+        (JIT):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve_global):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_resolve_global):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchGetByIdSelf):
+        (JSC::JIT::patchPutByIdReplace):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::emit_op_get_by_pname):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/x86.rb:
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::functionNameOffset):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        (JSC):
+        (JSC::JSFinalObject::visitChildren):
+        (JSC::JSObject::put):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::getPropertySpecificValue):
+        (JSC::JSObject::removeDirect):
+        (JSC::JSObject::growOutOfLineStorage):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::hasInlineStorage):
+        (JSC::JSObject::inlineStorageUnsafe):
+        (JSC::JSObject::inlineStorage):
+        (JSC::JSObject::outOfLineStorage):
+        (JSC::JSObject::locationForOffset):
+        (JSC::JSObject::offsetForLocation):
+        (JSC::JSObject::getDirectOffset):
+        (JSC::JSObject::putDirectOffset):
+        (JSC::JSObject::putUndefinedAtDirectOffset):
+        (JSC::JSObject::addressOfOutOfLineStorage):
+        (JSC::JSObject::finishCreation):
+        (JSC::JSNonFinalObject::JSNonFinalObject):
+        (JSC::JSNonFinalObject::finishCreation):
+        (JSFinalObject):
+        (JSC::JSFinalObject::finishCreation):
+        (JSC::JSFinalObject::JSFinalObject):
+        (JSC::JSObject::offsetOfOutOfLineStorage):
+        (JSC::JSObject::setOutOfLineStorage):
+        (JSC::JSObject::JSObject):
+        (JSC):
+        (JSC::JSCell::fastGetOwnProperty):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::setStructureAndReallocateStorageIfNecessary):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::offsetRelativeToPatchedStorage):
+        (JSC::indexRelativeToBase):
+        (JSC::offsetRelativeToBase):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSPropertyNameIterator.h:
+        (JSPropertyNameIterator):
+        (JSC::JSPropertyNameIterator::getOffset):
+        (JSC::JSPropertyNameIterator::finishCreation):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChain):
+        * runtime/Options.cpp:
+        (JSC):
+        (JSC::Options::initialize):
+        * runtime/PropertyMapHashTable.h:
+        (PropertyMapEntry):
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        (PropertyTable):
+        (JSC::PropertyTable::PropertyTable):
+        (JSC::PropertyTable::getDeletedOffset):
+        (JSC::PropertyTable::addDeletedOffset):
+        (JSC::PropertyTable::nextOffset):
+        (JSC):
+        (JSC::PropertyTable::sizeInMemory):
+        * runtime/PropertyOffset.h: Added.
+        (JSC):
+        (JSC::checkOffset):
+        (JSC::validateOffset):
+        (JSC::isValidOffset):
+        (JSC::isInlineOffset):
+        (JSC::isOutOfLineOffset):
+        (JSC::offsetInInlineStorage):
+        (JSC::offsetInOutOfLineStorage):
+        (JSC::offsetInRespectiveStorage):
+        (JSC::numberOfOutOfLineSlotsForLastOffset):
+        (JSC::numberOfSlotsForLastOffset):
+        (JSC::nextPropertyOffsetFor):
+        (JSC::firstPropertyOffsetFor):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::cachedOffset):
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setCacheableGetterSlot):
+        (JSC::PropertySlot::clearOffset):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::setExistingProperty):
+        (JSC::PutPropertySlot::setNewProperty):
+        (JSC::PutPropertySlot::cachedOffset):
+        (PutPropertySlot):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::nextOutOfLineStorageCapacity):
+        (JSC::Structure::growOutOfLineCapacity):
+        (JSC::Structure::suggestedNewOutOfLineStorageCapacity):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::removePropertyWithoutTransition):
+        (JSC::Structure::copyPropertyTableForPinning):
+        (JSC::Structure::get):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::remove):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::putWillGrowOutOfLineStorage):
+        (JSC::Structure::previousID):
+        (JSC::Structure::outOfLineCapacity):
+        (JSC::Structure::outOfLineSizeForKnownFinalObject):
+        (JSC::Structure::outOfLineSizeForKnownNonFinalObject):
+        (JSC::Structure::outOfLineSize):
+        (JSC::Structure::hasInlineStorage):
+        (JSC::Structure::inlineCapacity):
+        (JSC::Structure::inlineSizeForKnownFinalObject):
+        (JSC::Structure::inlineSize):
+        (JSC::Structure::totalStorageSize):
+        (JSC::Structure::totalStorageCapacity):
+        (JSC::Structure::firstValidOffset):
+        (JSC::Structure::lastValidOffset):
+        (JSC::Structure::isValidOffset):
+        (JSC::Structure::isEmpty):
+        (JSC::Structure::transitionCount):
+        (JSC::Structure::get):
+
 2012-07-05  Oliver Hunt  <oliver@apple.com>
 
         JSObjectCallAsFunction should thisConvert the provided thisObject

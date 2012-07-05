@@ -919,6 +919,24 @@ _llint_op_is_string:
     dispatch(3)
 
 
+macro loadPropertyAtVariableOffsetKnownNotFinal(propertyOffset, objectAndStorage, tag, payload)
+    assert(macro (ok) bigteq propertyOffset, InlineStorageCapacity, ok end)
+    loadp JSObject::m_outOfLineStorage[objectAndStorage], objectAndStorage
+    loadi TagOffset - 8 * InlineStorageCapacity[objectAndStorage, propertyOffset, 8], tag
+    loadi PayloadOffset - 8 * InlineStorageCapacity[objectAndStorage, propertyOffset, 8], payload
+end
+
+macro loadPropertyAtVariableOffset(propertyOffset, objectAndStorage, tag, payload)
+    bilt propertyOffset, InlineStorageCapacity, .isInline
+    loadp JSObject::m_outOfLineStorage[objectAndStorage], objectAndStorage
+    jmp .ready
+.isInline:
+    addp JSFinalObject::m_inlineStorage + InlineStorageCapacity * 8, objectAndStorage
+.ready:
+    loadi TagOffset - 8 * InlineStorageCapacity[objectAndStorage, propertyOffset, 8], tag
+    loadi PayloadOffset - 8 * InlineStorageCapacity[objectAndStorage, propertyOffset, 8], payload
+end
+
 macro resolveGlobal(size, slow)
     # Operands are as follows:
     # 4[PC]   Destination for the load.
@@ -930,9 +948,7 @@ macro resolveGlobal(size, slow)
     loadp JSCell::m_structure[t0], t1
     bpneq t1, 12[PC], slow
     loadi 16[PC], t1
-    loadp JSObject::m_propertyStorage[t0], t0
-    loadi TagOffset[t0, t1, 8], t2
-    loadi PayloadOffset[t0, t1, 8], t3
+    loadPropertyAtVariableOffsetKnownNotFinal(t1, t0, t2, t3)
     loadi 4[PC], t0
     storei t2, TagOffset[cfr, t0, 8]
     storei t3, PayloadOffset[cfr, t0, 8]
@@ -1087,31 +1103,44 @@ _llint_op_put_global_var_check:
     dispatch(5)
 
 
-_llint_op_get_by_id:
+# We only do monomorphic get_by_id caching for now, and we do not modify the
+# opcode. We do, however, allow for the cache to change anytime if fails, since
+# ping-ponging is free. At best we get lucky and the get_by_id will continue
+# to take fast path on the new cache. At worst we take slow path, which is what
+# we would have been doing anyway.
+
+macro getById(getPropertyStorage)
     traceExecution()
-    # We only do monomorphic get_by_id caching for now, and we do not modify the
-    # opcode. We do, however, allow for the cache to change anytime if fails, since
-    # ping-ponging is free. At best we get lucky and the get_by_id will continue
-    # to take fast path on the new cache. At worst we take slow path, which is what
-    # we would have been doing anyway.
     loadi 8[PC], t0
     loadi 16[PC], t1
     loadConstantOrVariablePayload(t0, CellTag, t3, .opGetByIdSlow)
     loadi 20[PC], t2
-    loadp JSObject::m_propertyStorage[t3], t0
-    bpneq JSCell::m_structure[t3], t1, .opGetByIdSlow
-    loadi 4[PC], t1
-    loadi TagOffset[t0, t2], t3
-    loadi PayloadOffset[t0, t2], t2
-    storei t3, TagOffset[cfr, t1, 8]
-    storei t2, PayloadOffset[cfr, t1, 8]
-    loadi 32[PC], t1
-    valueProfile(t3, t2, t1)
-    dispatch(9)
+    getPropertyStorage(
+        t3,
+        t0,
+        macro (propertyStorage, scratch)
+            bpneq JSCell::m_structure[t3], t1, .opGetByIdSlow
+            loadi 4[PC], t1
+            loadi TagOffset[propertyStorage, t2], scratch
+            loadi PayloadOffset[propertyStorage, t2], t2
+            storei scratch, TagOffset[cfr, t1, 8]
+            storei t2, PayloadOffset[cfr, t1, 8]
+            loadi 32[PC], t1
+            valueProfile(scratch, t2, t1)
+            dispatch(9)
+        end)
 
-.opGetByIdSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
-    dispatch(9)
+    .opGetByIdSlow:
+        callSlowPath(_llint_slow_path_get_by_id)
+        dispatch(9)
+end
+
+_llint_op_get_by_id:
+    getById(withInlineStorage)
+
+
+_llint_op_get_by_id_out_of_line:
+    getById(withOutOfLineStorage)
 
 
 _llint_op_get_arguments_length:
@@ -1130,68 +1159,96 @@ _llint_op_get_arguments_length:
     dispatch(4)
 
 
-_llint_op_put_by_id:
+macro putById(getPropertyStorage)
     traceExecution()
     loadi 4[PC], t3
     loadi 16[PC], t1
     loadConstantOrVariablePayload(t3, CellTag, t0, .opPutByIdSlow)
     loadi 12[PC], t2
-    loadp JSObject::m_propertyStorage[t0], t3
-    bpneq JSCell::m_structure[t0], t1, .opPutByIdSlow
-    loadi 20[PC], t1
-    loadConstantOrVariable2Reg(t2, t0, t2)
-    writeBarrier(t0, t2)
-    storei t0, TagOffset[t3, t1]
-    storei t2, PayloadOffset[t3, t1]
-    dispatch(9)
+    getPropertyStorage(
+        t0,
+        t3,
+        macro (propertyStorage, scratch)
+            bpneq JSCell::m_structure[t0], t1, .opPutByIdSlow
+            loadi 20[PC], t1
+            loadConstantOrVariable2Reg(t2, scratch, t2)
+            writeBarrier(scratch, t2)
+            storei scratch, TagOffset[propertyStorage, t1]
+            storei t2, PayloadOffset[propertyStorage, t1]
+            dispatch(9)
+        end)
+end
+
+_llint_op_put_by_id:
+    putById(withInlineStorage)
 
 .opPutByIdSlow:
     callSlowPath(_llint_slow_path_put_by_id)
     dispatch(9)
 
 
-macro putByIdTransition(additionalChecks)
+_llint_op_put_by_id_out_of_line:
+    putById(withOutOfLineStorage)
+
+
+macro putByIdTransition(additionalChecks, getPropertyStorage)
     traceExecution()
     loadi 4[PC], t3
     loadi 16[PC], t1
     loadConstantOrVariablePayload(t3, CellTag, t0, .opPutByIdSlow)
     loadi 12[PC], t2
     bpneq JSCell::m_structure[t0], t1, .opPutByIdSlow
-    additionalChecks(t1, t3, .opPutByIdSlow)
+    additionalChecks(t1, t3)
     loadi 20[PC], t1
-    loadp JSObject::m_propertyStorage[t0], t3
-    addp t1, t3
-    loadConstantOrVariable2Reg(t2, t1, t2)
-    writeBarrier(t1, t2)
-    storei t1, TagOffset[t3]
-    loadi 24[PC], t1
-    storei t2, PayloadOffset[t3]
-    storep t1, JSCell::m_structure[t0]
-    dispatch(9)
+    getPropertyStorage(
+        t0,
+        t3,
+        macro (propertyStorage, scratch)
+            addp t1, propertyStorage, t3
+            loadConstantOrVariable2Reg(t2, t1, t2)
+            writeBarrier(t1, t2)
+            storei t1, TagOffset[t3]
+            loadi 24[PC], t1
+            storei t2, PayloadOffset[t3]
+            storep t1, JSCell::m_structure[t0]
+            dispatch(9)
+        end)
+end
+
+macro noAdditionalChecks(oldStructure, scratch)
+end
+
+macro structureChainChecks(oldStructure, scratch)
+    const protoCell = oldStructure   # Reusing the oldStructure register for the proto
+
+    loadp 28[PC], scratch
+    assert(macro (ok) btpnz scratch, ok end)
+    loadp StructureChain::m_vector[scratch], scratch
+    assert(macro (ok) btpnz scratch, ok end)
+    bieq Structure::m_prototype + TagOffset[oldStructure], NullTag, .done
+.loop:
+    loadi Structure::m_prototype + PayloadOffset[oldStructure], protoCell
+    loadp JSCell::m_structure[protoCell], oldStructure
+    bpneq oldStructure, [scratch], .opPutByIdSlow
+    addp 4, scratch
+    bineq Structure::m_prototype + TagOffset[oldStructure], NullTag, .loop
+.done:
 end
 
 _llint_op_put_by_id_transition_direct:
-    putByIdTransition(macro (oldStructure, scratch, slow) end)
+    putByIdTransition(noAdditionalChecks, withInlineStorage)
+
+
+_llint_op_put_by_id_transition_direct_out_of_line:
+    putByIdTransition(noAdditionalChecks, withOutOfLineStorage)
 
 
 _llint_op_put_by_id_transition_normal:
-    putByIdTransition(
-        macro (oldStructure, scratch, slow)
-            const protoCell = oldStructure   # Reusing the oldStructure register for the proto
-        
-            loadp 28[PC], scratch
-            assert(macro (ok) btpnz scratch, ok end)
-            loadp StructureChain::m_vector[scratch], scratch
-            assert(macro (ok) btpnz scratch, ok end)
-            bieq Structure::m_prototype + TagOffset[oldStructure], NullTag, .done
-        .loop:
-            loadi Structure::m_prototype + PayloadOffset[oldStructure], protoCell
-            loadp JSCell::m_structure[protoCell], oldStructure
-            bpneq oldStructure, [scratch], slow
-            addp 4, scratch
-            bineq Structure::m_prototype + TagOffset[oldStructure], NullTag, .loop
-        .done:
-        end)
+    putByIdTransition(structureChainChecks, withInlineStorage)
+
+
+_llint_op_put_by_id_transition_normal_out_of_line:
+    putByIdTransition(structureChainChecks, withOutOfLineStorage)
 
 
 _llint_op_get_by_val:
@@ -1261,9 +1318,8 @@ _llint_op_get_by_pname:
     loadi [cfr, t0, 8], t0
     subi 1, t0
     biaeq t0, JSPropertyNameIterator::m_numCacheableSlots[t3], .opGetByPnameSlow
-    loadp JSObject::m_propertyStorage[t2], t2
-    loadi TagOffset[t2, t0, 8], t1
-    loadi PayloadOffset[t2, t0, 8], t3
+    addi JSPropertyNameIterator::m_offsetBase[t3], t0
+    loadPropertyAtVariableOffset(t0, t2, t1, t3)
     loadi 4[PC], t0
     storei t1, TagOffset[cfr, t0, 8]
     storei t3, PayloadOffset[cfr, t0, 8]

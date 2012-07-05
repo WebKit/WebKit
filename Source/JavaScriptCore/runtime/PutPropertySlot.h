@@ -45,14 +45,14 @@ namespace JSC {
         {
         }
 
-        void setExistingProperty(JSObject* base, size_t offset)
+        void setExistingProperty(JSObject* base, PropertyOffset offset)
         {
             m_type = ExistingProperty;
             m_base = base;
             m_offset = offset;
         }
 
-        void setNewProperty(JSObject* base, size_t offset)
+        void setNewProperty(JSObject* base, PropertyOffset offset)
         {
             m_type = NewProperty;
             m_base = base;
@@ -64,7 +64,8 @@ namespace JSC {
 
         bool isStrictMode() const { return m_isStrictMode; }
         bool isCacheable() const { return m_type != Uncachable; }
-        size_t cachedOffset() const {
+        PropertyOffset cachedOffset() const
+        {
             ASSERT(isCacheable());
             return m_offset;
         }
@@ -72,7 +73,7 @@ namespace JSC {
     private:
         Type m_type;
         JSObject* m_base;
-        size_t m_offset;
+        PropertyOffset m_offset;
         bool m_isStrictMode;
     };
 

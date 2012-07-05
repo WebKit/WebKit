@@ -1018,6 +1018,12 @@ public:
         else
             m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDR_imm_T3, rn, rt, imm.getUInt12());
     }
+    
+    ALWAYS_INLINE void ldrWide8BitImmediate(RegisterID rt, RegisterID rn, uint8_t immediate)
+    {
+        ASSERT(rn != ARMRegisters::pc);
+        m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDR_imm_T3, rn, rt, immediate);
+    }
 
     ALWAYS_INLINE void ldrCompact(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
     {
@@ -2116,6 +2122,46 @@ public:
     static ptrdiff_t maxJumpReplacementSize()
     {
         return 6;
+    }
+    
+    static void replaceWithLoad(void* instructionStart)
+    {
+        ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 1));
+        uint16_t* ptr = reinterpret_cast<uint16_t*>(instructionStart);
+        switch (ptr[0] & 0xFFF0) {
+        case OP_LDR_imm_T3:
+            break;
+        case OP_ADD_imm_T3:
+            ASSERT(!(ptr[1] & 0xF000));
+            ptr[0] &= 0x000F;
+            ptr[0] |= OP_LDR_imm_T3;
+            ptr[1] |= (ptr[1] & 0x0F00) << 4;
+            ptr[1] &= 0xF0FF;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        cacheFlush(ptr, sizeof(uint16_t) * 2);
+    }
+
+    static void replaceWithAddressComputation(void* instructionStart)
+    {
+        ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 1));
+        uint16_t* ptr = reinterpret_cast<uint16_t*>(instructionStart);
+        switch (ptr[0] & 0xFFF0) {
+        case OP_LDR_imm_T3:
+            ASSERT(!(ptr[1] & 0x0F00));
+            ptr[0] &= 0x000F;
+            ptr[0] |= OP_ADD_imm_T3;
+            ptr[1] |= (ptr[1] & 0xF000) >> 4;
+            ptr[1] &= 0x0FFF;
+            break;
+        case OP_ADD_imm_T3:
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        cacheFlush(ptr, sizeof(uint16_t) * 2);
     }
 
     unsigned debugOffset() { return m_formatter.debugOffset(); }

@@ -130,8 +130,8 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     for (; ; obj = asObject(prototype)) {
         unsigned attributes;
         JSCell* specificValue;
-        size_t offset = obj->structure()->get(globalData, propertyName, attributes, specificValue);
-        if (offset != WTF::notFound) {
+        PropertyOffset offset = obj->structure()->get(globalData, propertyName, attributes, specificValue);
+        if (offset != invalidOffset) {
             if (attributes & ReadOnly) {
                 if (slot.isStrictMode())
                     throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));

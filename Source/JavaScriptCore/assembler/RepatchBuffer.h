@@ -122,6 +122,24 @@ public:
     {
         relinkNearCallerToTrampoline(returnAddress, CodeLocationLabel(newCalleeFunction));
     }
+    
+    void replaceWithLoad(CodeLocationConvertibleLoad label)
+    {
+        MacroAssembler::replaceWithLoad(label);
+    }
+    
+    void replaceWithAddressComputation(CodeLocationConvertibleLoad label)
+    {
+        MacroAssembler::replaceWithAddressComputation(label);
+    }
+    
+    void setLoadInstructionIsActive(CodeLocationConvertibleLoad label, bool isActive)
+    {
+        if (isActive)
+            replaceWithLoad(label);
+        else
+            replaceWithAddressComputation(label);
+    }
 
 private:
     void* m_start;

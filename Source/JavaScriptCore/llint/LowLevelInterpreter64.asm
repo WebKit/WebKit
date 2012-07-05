@@ -778,6 +778,22 @@ _llint_op_is_string:
     dispatch(3)
 
 
+macro loadPropertyAtVariableOffsetKnownNotFinal(propertyOffset, objectAndStorage, value)
+    assert(macro (ok) bigteq propertyOffset, InlineStorageCapacity, ok end)
+    loadp JSObject::m_outOfLineStorage[objectAndStorage], objectAndStorage
+    loadp -8 * InlineStorageCapacity[objectAndStorage, propertyOffset, 8], value
+end
+
+macro loadPropertyAtVariableOffset(propertyOffset, objectAndStorage, value)
+    bilt propertyOffset, InlineStorageCapacity, .isInline
+    loadp JSObject::m_outOfLineStorage[objectAndStorage], objectAndStorage
+    jmp .ready
+.isInline:
+    addp JSFinalObject::m_inlineStorage + InlineStorageCapacity * 8, objectAndStorage
+.ready:
+    loadp -8 * InlineStorageCapacity[objectAndStorage, propertyOffset, 8], value
+end
+
 macro resolveGlobal(size, slow)
     # Operands are as follows:
     # 8[PB, PC, 8]   Destination for the load.
@@ -789,8 +805,7 @@ macro resolveGlobal(size, slow)
     loadp JSCell::m_structure[t0], t1
     bpneq t1, 24[PB, PC, 8], slow
     loadis 32[PB, PC, 8], t1
-    loadp JSObject::m_propertyStorage[t0], t0
-    loadp [t0, t1, 8], t2
+    loadPropertyAtVariableOffset(t1, t0, t2)
     loadis 8[PB, PC, 8], t0
     storep t2, [cfr, t0, 8]
     loadp (size - 1) * 8[PB, PC, 8], t0
@@ -937,7 +952,7 @@ _llint_op_put_global_var_check:
     dispatch(5)
 
 
-_llint_op_get_by_id:
+macro getById(getPropertyStorage)
     traceExecution()
     # We only do monomorphic get_by_id caching for now, and we do not modify the
     # opcode. We do, however, allow for the cache to change anytime if fails, since
@@ -948,18 +963,30 @@ _llint_op_get_by_id:
     loadp 32[PB, PC, 8], t1
     loadConstantOrVariableCell(t0, t3, .opGetByIdSlow)
     loadis 40[PB, PC, 8], t2
-    loadp JSObject::m_propertyStorage[t3], t0
-    bpneq JSCell::m_structure[t3], t1, .opGetByIdSlow
-    loadis 8[PB, PC, 8], t1
-    loadp [t0, t2], t3
-    storep t3, [cfr, t1, 8]
-    loadp 64[PB, PC, 8], t1
-    valueProfile(t3, t1)
-    dispatch(9)
+    getPropertyStorage(
+        t3,
+        t0,
+        macro (propertyStorage, scratch)
+            bpneq JSCell::m_structure[t3], t1, .opGetByIdSlow
+            loadis 8[PB, PC, 8], t1
+            loadp [propertyStorage, t2], scratch
+            storep scratch, [cfr, t1, 8]
+            loadp 64[PB, PC, 8], t1
+            valueProfile(scratch, t1)
+            dispatch(9)
+        end)
+            
+    .opGetByIdSlow:
+        callSlowPath(_llint_slow_path_get_by_id)
+        dispatch(9)
+end
 
-.opGetByIdSlow:
-    callSlowPath(_llint_slow_path_get_by_id)
-    dispatch(9)
+_llint_op_get_by_id:
+    getById(withInlineStorage)
+
+
+_llint_op_get_by_id_out_of_line:
+    getById(withOutOfLineStorage)
 
 
 _llint_op_get_arguments_length:
@@ -978,65 +1005,93 @@ _llint_op_get_arguments_length:
     dispatch(4)
 
 
-_llint_op_put_by_id:
+macro putById(getPropertyStorage)
     traceExecution()
     loadis 8[PB, PC, 8], t3
     loadp 32[PB, PC, 8], t1
     loadConstantOrVariableCell(t3, t0, .opPutByIdSlow)
     loadis 24[PB, PC, 8], t2
-    loadp JSObject::m_propertyStorage[t0], t3
-    bpneq JSCell::m_structure[t0], t1, .opPutByIdSlow
-    loadis 40[PB, PC, 8], t1
-    loadConstantOrVariable(t2, t0)
-    writeBarrier(t0)
-    storep t0, [t3, t1]
-    dispatch(9)
+    getPropertyStorage(
+        t0,
+        t3,
+        macro (propertyStorage, scratch)
+            bpneq JSCell::m_structure[t0], t1, .opPutByIdSlow
+            loadis 40[PB, PC, 8], t1
+            loadConstantOrVariable(t2, scratch)
+            writeBarrier(t0)
+            storep scratch, [propertyStorage, t1]
+            dispatch(9)
+        end)
+end
+
+_llint_op_put_by_id:
+    putById(withInlineStorage)
 
 .opPutByIdSlow:
     callSlowPath(_llint_slow_path_put_by_id)
     dispatch(9)
 
 
-macro putByIdTransition(additionalChecks)
+_llint_op_put_by_id_out_of_line:
+    putById(withOutOfLineStorage)
+
+
+macro putByIdTransition(additionalChecks, getPropertyStorage)
     traceExecution()
     loadis 8[PB, PC, 8], t3
     loadp 32[PB, PC, 8], t1
     loadConstantOrVariableCell(t3, t0, .opPutByIdSlow)
     loadis 24[PB, PC, 8], t2
     bpneq JSCell::m_structure[t0], t1, .opPutByIdSlow
-    additionalChecks(t1, t3, .opPutByIdSlow)
+    additionalChecks(t1, t3)
     loadis 40[PB, PC, 8], t1
-    loadp JSObject::m_propertyStorage[t0], t3
-    addp t1, t3
-    loadConstantOrVariable(t2, t1)
-    writeBarrier(t1)
-    storep t1, [t3]
-    loadp 48[PB, PC, 8], t1
-    storep t1, JSCell::m_structure[t0]
-    dispatch(9)
+    getPropertyStorage(
+        t0,
+        t3,
+        macro (propertyStorage, scratch)
+            addp t1, propertyStorage, t3
+            loadConstantOrVariable(t2, t1)
+            writeBarrier(t1)
+            storep t1, [t3]
+            loadp 48[PB, PC, 8], t1
+            storep t1, JSCell::m_structure[t0]
+            dispatch(9)
+        end)
+end
+
+macro noAdditionalChecks(oldStructure, scratch)
+end
+
+macro structureChainChecks(oldStructure, scratch)
+    const protoCell = oldStructure    # Reusing the oldStructure register for the proto
+    loadp 56[PB, PC, 8], scratch
+    assert(macro (ok) btpnz scratch, ok end)
+    loadp StructureChain::m_vector[scratch], scratch
+    assert(macro (ok) btpnz scratch, ok end)
+    bpeq Structure::m_prototype[oldStructure], ValueNull, .done
+.loop:
+    loadp Structure::m_prototype[oldStructure], protoCell
+    loadp JSCell::m_structure[protoCell], oldStructure
+    bpneq oldStructure, [scratch], .opPutByIdSlow
+    addp 8, scratch
+    bpneq Structure::m_prototype[oldStructure], ValueNull, .loop
+.done:
 end
 
 _llint_op_put_by_id_transition_direct:
-    putByIdTransition(macro (oldStructure, scratch, slow) end)
+    putByIdTransition(noAdditionalChecks, withInlineStorage)
+
+
+_llint_op_put_by_id_transition_direct_out_of_line:
+    putByIdTransition(noAdditionalChecks, withOutOfLineStorage)
 
 
 _llint_op_put_by_id_transition_normal:
-    putByIdTransition(
-        macro (oldStructure, scratch, slow)
-            const protoCell = oldStructure    # Reusing the oldStructure register for the proto
-            loadp 56[PB, PC, 8], scratch
-            assert(macro (ok) btpnz scratch, ok end)
-            loadp StructureChain::m_vector[scratch], scratch
-            assert(macro (ok) btpnz scratch, ok end)
-            bpeq Structure::m_prototype[oldStructure], ValueNull, .done
-        .loop:
-            loadp Structure::m_prototype[oldStructure], protoCell
-            loadp JSCell::m_structure[protoCell], oldStructure
-            bpneq oldStructure, [scratch], slow
-            addp 8, scratch
-            bpneq Structure::m_prototype[oldStructure], ValueNull, .loop
-        .done:
-        end)
+    putByIdTransition(structureChainChecks, withInlineStorage)
+
+
+_llint_op_put_by_id_transition_normal_out_of_line:
+    putByIdTransition(structureChainChecks, withOutOfLineStorage)
 
 
 _llint_op_get_by_val:
@@ -1106,8 +1161,8 @@ _llint_op_get_by_pname:
     loadi PayloadOffset[cfr, t3, 8], t3
     subi 1, t3
     biaeq t3, JSPropertyNameIterator::m_numCacheableSlots[t1], .opGetByPnameSlow
-    loadp JSObject::m_propertyStorage[t0], t0
-    loadp [t0, t3, 8], t0
+    addi JSPropertyNameIterator::m_offsetBase[t1], t3
+    loadPropertyAtVariableOffset(t3, t0, t0)
     loadis 8[PB, PC, 8], t1
     storep t0, [cfr, t1, 8]
     dispatch(7)

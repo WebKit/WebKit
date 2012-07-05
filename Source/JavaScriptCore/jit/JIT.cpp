@@ -255,6 +255,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_create_activation)
         DEFINE_OP(op_eq)
         DEFINE_OP(op_eq_null)
+        case op_get_by_id_out_of_line:
         DEFINE_OP(op_get_by_id)
         DEFINE_OP(op_get_arguments_length)
         DEFINE_OP(op_get_by_val)
@@ -319,8 +320,11 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_profile_will_call)
         DEFINE_OP(op_push_new_scope)
         DEFINE_OP(op_push_scope)
+        case op_put_by_id_out_of_line:
         case op_put_by_id_transition_direct:
         case op_put_by_id_transition_normal:
+        case op_put_by_id_transition_direct_out_of_line:
+        case op_put_by_id_transition_normal_out_of_line:
         DEFINE_OP(op_put_by_id)
         DEFINE_OP(op_put_by_index)
         DEFINE_OP(op_put_by_val)
@@ -441,6 +445,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_create_this)
         DEFINE_SLOWCASE_OP(op_div)
         DEFINE_SLOWCASE_OP(op_eq)
+        case op_get_by_id_out_of_line:
         DEFINE_SLOWCASE_OP(op_get_by_id)
         DEFINE_SLOWCASE_OP(op_get_arguments_length)
         DEFINE_SLOWCASE_OP(op_get_by_val)
@@ -478,8 +483,11 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_post_inc)
         DEFINE_SLOWCASE_OP(op_pre_dec)
         DEFINE_SLOWCASE_OP(op_pre_inc)
+        case op_put_by_id_out_of_line:
         case op_put_by_id_transition_direct:
         case op_put_by_id_transition_normal:
+        case op_put_by_id_transition_direct_out_of_line:
+        case op_put_by_id_transition_normal_out_of_line:
         DEFINE_SLOWCASE_OP(op_put_by_id)
         DEFINE_SLOWCASE_OP(op_put_by_val)
         DEFINE_SLOWCASE_OP(op_put_global_var_check);
@@ -537,6 +545,7 @@ ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo
         CodeLocationLabel hotPathBeginLocation = linkBuffer.locationOf(hotPathBegin);
         info.patch.baseline.u.get.structureToCompare = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getStructureToCompare));
         info.patch.baseline.u.get.structureCheck = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getStructureCheck));
+        info.patch.baseline.u.get.propertyStorageLoad = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(propertyStorageLoad));
 #if USE(JSVALUE64)
         info.patch.baseline.u.get.displacementLabel = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(getDisplacementLabel));
 #else
@@ -550,6 +559,7 @@ ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo
     case PutById:
         CodeLocationLabel hotPathBeginLocation = linkBuffer.locationOf(hotPathBegin);
         info.patch.baseline.u.put.structureToCompare = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(putStructureToCompare));
+        info.patch.baseline.u.put.propertyStorageLoad = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(propertyStorageLoad));
 #if USE(JSVALUE64)
         info.patch.baseline.u.put.displacementLabel = MacroAssembler::differenceBetweenCodePtr(hotPathBeginLocation, linkBuffer.locationOf(putDisplacementLabel));
 #else

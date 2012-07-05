@@ -43,7 +43,7 @@ static void dfgRepatchCall(CodeBlock* codeblock, CodeLocationCall call, Function
     repatchBuffer.relink(call, newCalleeFunction);
 }
 
-static void dfgRepatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, size_t offset, const FunctionPtr &slowPathFunction, bool compact)
+static void dfgRepatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset, const FunctionPtr &slowPathFunction, bool compact)
 {
     RepatchBuffer repatchBuffer(codeBlock);
 
@@ -52,18 +52,19 @@ static void dfgRepatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& st
 
     // Patch the structure check & the offset of the load.
     repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall), structure);
+    repatchBuffer.setLoadInstructionIsActive(stubInfo.callReturnLocation.convertibleLoadAtOffset(stubInfo.patch.dfg.deltaCallToStorageLoad), isOutOfLineOffset(offset));
 #if USE(JSVALUE64)
     if (compact)
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), sizeof(JSValue) * offset);
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), offsetRelativeToPatchedStorage(offset));
     else
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), sizeof(JSValue) * offset);
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), offsetRelativeToPatchedStorage(offset));
 #elif USE(JSVALUE32_64)
     if (compact) {
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToTagLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToPayloadLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToTagLoadOrStore), offsetRelativeToPatchedStorage(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToPayloadLoadOrStore), offsetRelativeToPatchedStorage(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     } else {
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToTagLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToPayloadLoadOrStore), sizeof(JSValue) * offset + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToTagLoadOrStore), offsetRelativeToPatchedStorage(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToPayloadLoadOrStore), offsetRelativeToPatchedStorage(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 #endif
 }
@@ -105,7 +106,7 @@ static void linkRestoreScratch(LinkBuffer& patchBuffer, bool needToRestoreScratc
     linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
 }
 
-static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stubInfo, StructureChain* chain, size_t count, size_t offset, Structure* structure, CodeLocationLabel successLabel, CodeLocationLabel slowCaseLabel, MacroAssemblerCodeRef& stubRoutine)
+static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stubInfo, StructureChain* chain, size_t count, PropertyOffset offset, Structure* structure, CodeLocationLabel successLabel, CodeLocationLabel slowCaseLabel, MacroAssemblerCodeRef& stubRoutine)
 {
     JSGlobalData* globalData = &exec->globalData();
 
@@ -139,13 +140,23 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
         currStructure = it->get();
     }
     
-    stubJit.loadPtr(protoObject->addressOfPropertyStorage(), resultGPR);
+    if (isInlineOffset(offset)) {
 #if USE(JSVALUE64)
-    stubJit.loadPtr(MacroAssembler::Address(resultGPR, offset * sizeof(WriteBarrier<Unknown>)), resultGPR);
+        stubJit.loadPtr(protoObject->locationForOffset(offset), resultGPR);
 #elif USE(JSVALUE32_64)
-    stubJit.load32(MacroAssembler::Address(resultGPR, offset * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
-    stubJit.load32(MacroAssembler::Address(resultGPR, offset * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultGPR);
+        stubJit.move(MacroAssembler::TrustedImmPtr(protoObject->locationForOffset(offset)), resultGPR);
+        stubJit.load32(MacroAssembler::Address(resultGPR, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
+        stubJit.load32(MacroAssembler::Address(resultGPR, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultGPR);
 #endif
+    } else {
+        stubJit.loadPtr(protoObject->addressOfOutOfLineStorage(), resultGPR);
+#if USE(JSVALUE64)
+        stubJit.loadPtr(MacroAssembler::Address(resultGPR, offsetInOutOfLineStorage(offset) * sizeof(WriteBarrier<Unknown>)), resultGPR);
+#elif USE(JSVALUE32_64)
+        stubJit.load32(MacroAssembler::Address(resultGPR, offsetInOutOfLineStorage(offset) * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
+        stubJit.load32(MacroAssembler::Address(resultGPR, offsetInOutOfLineStorage(offset) * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultGPR);
+#endif
+    }
 
     MacroAssembler::Jump success, fail;
     
@@ -253,7 +264,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     if (slot.cachedPropertyType() != PropertySlot::Value)
         return false;
     
-    size_t offset = slot.cachedOffset();
+    PropertyOffset offset = slot.cachedOffset();
     size_t count = normalizePrototypeChain(exec, baseValue, slot.slotBase(), propertyName, offset);
     if (!count)
         return false;
@@ -349,12 +360,20 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             || slot.cachedPropertyType() == PropertySlot::Custom) {
             if (slot.cachedPropertyType() == PropertySlot::Getter) {
                 ASSERT(baseGPR != scratchGPR);
-                stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
+                if (isInlineOffset(slot.cachedOffset())) {
 #if USE(JSVALUE64)
-                stubJit.loadPtr(MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue)), scratchGPR);
-#elif USE(JSVALUE32_64)
-                stubJit.load32(MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), scratchGPR);
+                    stubJit.loadPtr(MacroAssembler::Address(baseGPR, offsetRelativeToBase(slot.cachedOffset())), scratchGPR);
+#else
+                    stubJit.load32(MacroAssembler::Address(baseGPR, offsetRelativeToBase(slot.cachedOffset())), scratchGPR);
 #endif
+                } else {
+                    stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR);
+#if USE(JSVALUE64)
+                    stubJit.loadPtr(MacroAssembler::Address(scratchGPR, offsetRelativeToBase(slot.cachedOffset())), scratchGPR);
+#else
+                    stubJit.load32(MacroAssembler::Address(scratchGPR, offsetRelativeToBase(slot.cachedOffset())), scratchGPR);
+#endif
+                }
                 stubJit.setupArgumentsWithExecState(baseGPR, scratchGPR);
                 operationFunction = operationCallGetter;
             } else {
@@ -385,13 +404,27 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             handlerCall = stubJit.call();
             stubJit.jump(GPRInfo::returnValueGPR2);
         } else {
-            stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+            if (isInlineOffset(slot.cachedOffset())) {
 #if USE(JSVALUE64)
-            stubJit.loadPtr(MacroAssembler::Address(resultGPR, slot.cachedOffset() * sizeof(JSValue)), resultGPR);
-#elif USE(JSVALUE32_64)
-            stubJit.load32(MacroAssembler::Address(resultGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
-            stubJit.load32(MacroAssembler::Address(resultGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultGPR);
+                stubJit.loadPtr(MacroAssembler::Address(baseGPR, offsetRelativeToBase(slot.cachedOffset())), resultGPR);
+#else
+                if (baseGPR == resultTagGPR) {
+                    stubJit.load32(MacroAssembler::Address(baseGPR, offsetRelativeToBase(slot.cachedOffset()) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultGPR);
+                    stubJit.load32(MacroAssembler::Address(baseGPR, offsetRelativeToBase(slot.cachedOffset()) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
+                } else {
+                    stubJit.load32(MacroAssembler::Address(baseGPR, offsetRelativeToBase(slot.cachedOffset()) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
+                    stubJit.load32(MacroAssembler::Address(baseGPR, offsetRelativeToBase(slot.cachedOffset()) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultGPR);
+                }
 #endif
+            } else {
+                stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), resultGPR);
+#if USE(JSVALUE64)
+                stubJit.loadPtr(MacroAssembler::Address(resultGPR, offsetRelativeToBase(slot.cachedOffset())), resultGPR);
+#else
+                stubJit.load32(MacroAssembler::Address(resultGPR, offsetRelativeToBase(slot.cachedOffset()) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)), resultTagGPR);
+                stubJit.load32(MacroAssembler::Address(resultGPR, offsetRelativeToBase(slot.cachedOffset()) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), resultGPR);
+#endif
+            }
             success = stubJit.jump();
             isDirect = true;
         }
@@ -450,7 +483,7 @@ static bool tryBuildGetByIDProtoList(ExecState* exec, JSValue baseValue, const I
     
     ASSERT(slot.slotBase().isObject());
     
-    size_t offset = slot.cachedOffset();
+    PropertyOffset offset = slot.cachedOffset();
     size_t count = normalizePrototypeChain(exec, baseValue, slot.slotBase(), propertyName, offset);
     if (!count)
         return false;
@@ -567,7 +600,7 @@ static void emitPutReplaceStub(
     
     MacroAssembler stubJit;
     
-    if (scratchGPR == InvalidGPRReg && (writeBarrierNeeded || !structure->isUsingInlineStorage())) {
+    if (scratchGPR == InvalidGPRReg && (writeBarrierNeeded || isOutOfLineOffset(slot.cachedOffset()))) {
         scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR);
         needToRestoreScratch = true;
         stubJit.push(scratchGPR);
@@ -586,20 +619,20 @@ static void emitPutReplaceStub(
 #endif
     
 #if USE(JSVALUE64)
-    if (structure->isUsingInlineStorage())
-        stubJit.storePtr(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue)));
+    if (isInlineOffset(slot.cachedOffset()))
+        stubJit.storePtr(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue)));
     else {
-        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
-        stubJit.storePtr(valueGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue)));
+        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR);
+        stubJit.storePtr(valueGPR, MacroAssembler::Address(scratchGPR, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue)));
     }
 #elif USE(JSVALUE32_64)
-    if (structure->isUsingInlineStorage()) {
-        stubJit.store32(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-        stubJit.store32(valueTagGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+    if (isInlineOffset(slot.cachedOffset())) {
+        stubJit.store32(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+        stubJit.store32(valueTagGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     } else {
-        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
-        stubJit.store32(valueGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-        stubJit.store32(valueTagGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR);
+        stubJit.store32(valueGPR, MacroAssembler::Address(scratchGPR, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+        stubJit.store32(valueTagGPR, MacroAssembler::Address(scratchGPR, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     }
 #endif
     
@@ -685,20 +718,20 @@ static void emitPutTransitionStub(
 
     stubJit.storePtr(MacroAssembler::TrustedImmPtr(structure), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
 #if USE(JSVALUE64)
-    if (structure->isUsingInlineStorage())
-        stubJit.storePtr(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue)));
+    if (isInlineOffset(slot.cachedOffset()))
+        stubJit.storePtr(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue)));
     else {
-        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
-        stubJit.storePtr(valueGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue)));
+        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR);
+        stubJit.storePtr(valueGPR, MacroAssembler::Address(scratchGPR, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue)));
     }
 #elif USE(JSVALUE32_64)
-    if (structure->isUsingInlineStorage()) {
-        stubJit.store32(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-        stubJit.store32(valueTagGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+    if (isInlineOffset(slot.cachedOffset())) {
+        stubJit.store32(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+        stubJit.store32(valueTagGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     } else {
-        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
-        stubJit.store32(valueGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-        stubJit.store32(valueTagGPR, MacroAssembler::Address(scratchGPR, slot.cachedOffset() * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR);
+        stubJit.store32(valueGPR, MacroAssembler::Address(scratchGPR, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+        stubJit.store32(valueTagGPR, MacroAssembler::Address(scratchGPR, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     }
 #endif
             
@@ -752,7 +785,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
                 return false;
             
             // skip optimizing the case where we need a realloc
-            if (oldStructure->propertyStorageCapacity() != structure->propertyStorageCapacity())
+            if (oldStructure->outOfLineCapacity() != structure->outOfLineCapacity())
                 return false;
             
             normalizePrototypeChain(exec, baseCell);
@@ -815,7 +848,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
                 return false;
             
             // skip optimizing the case where we need a realloc
-            if (oldStructure->propertyStorageCapacity() != structure->propertyStorageCapacity())
+            if (oldStructure->outOfLineCapacity() != structure->outOfLineCapacity())
                 return false;
             
             normalizePrototypeChain(exec, baseCell);

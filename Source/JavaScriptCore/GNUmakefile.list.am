@@ -582,6 +582,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/PropertyName.h \
 	Source/JavaScriptCore/runtime/PropertyNameArray.cpp \
 	Source/JavaScriptCore/runtime/PropertyNameArray.h \
+	Source/JavaScriptCore/runtime/PropertyOffset.h \
 	Source/JavaScriptCore/runtime/PropertySlot.cpp \
 	Source/JavaScriptCore/runtime/PropertySlot.h \
 	Source/JavaScriptCore/runtime/Protect.h \

@@ -354,7 +354,7 @@ ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell
     }
 
     if (isJSFinalObject(cell)) {
-        JSObject::visitChildren(const_cast<JSCell*>(cell), visitor);
+        JSFinalObject::visitChildren(const_cast<JSCell*>(cell), visitor);
         return;
     }
 

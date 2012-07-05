@@ -172,6 +172,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 #endif
         info.patch.dfg.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_slowPathGenerator->label()));
         info.patch.dfg.deltaCallToDone = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_done));
+        info.patch.dfg.deltaCallToStorageLoad = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_propertyStorageLoad));
         info.patch.dfg.baseGPR = m_propertyAccesses[i].m_baseGPR;
 #if USE(JSVALUE64)
         info.patch.dfg.valueGPR = m_propertyAccesses[i].m_valueGPR;

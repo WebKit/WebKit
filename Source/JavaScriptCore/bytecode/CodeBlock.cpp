@@ -197,6 +197,9 @@ void CodeBlock::printGetByIdOp(ExecState* exec, int location, Vector<Instruction
     case op_get_by_id:
         op = "get_by_id";
         break;
+    case op_get_by_id_out_of_line:
+        op = "get_by_id_out_of_line";
+        break;
     case op_get_by_id_self:
         op = "get_by_id_self";
         break;
@@ -1033,6 +1036,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_get_by_id:
+        case op_get_by_id_out_of_line:
         case op_get_by_id_self:
         case op_get_by_id_proto:
         case op_get_by_id_chain:
@@ -1059,6 +1063,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printPutByIdOp(exec, location, it, "put_by_id");
             break;
         }
+        case op_put_by_id_out_of_line: {
+            printPutByIdOp(exec, location, it, "put_by_id_out_of_line");
+            break;
+        }
         case op_put_by_id_replace: {
             printPutByIdOp(exec, location, it, "put_by_id_replace");
             break;
@@ -1071,8 +1079,16 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printPutByIdOp(exec, location, it, "put_by_id_transition_direct");
             break;
         }
+        case op_put_by_id_transition_direct_out_of_line: {
+            printPutByIdOp(exec, location, it, "put_by_id_transition_direct_out_of_line");
+            break;
+        }
         case op_put_by_id_transition_normal: {
             printPutByIdOp(exec, location, it, "put_by_id_transition_normal");
+            break;
+        }
+        case op_put_by_id_transition_normal_out_of_line: {
+            printPutByIdOp(exec, location, it, "put_by_id_transition_normal_out_of_line");
             break;
         }
         case op_put_by_id_generic: {
@@ -2029,7 +2045,9 @@ void CodeBlock::finalizeUnconditionally()
             Instruction* curInstruction = &instructions()[m_propertyAccessInstructions[i]];
             switch (interpreter->getOpcodeID(curInstruction[0].u.opcode)) {
             case op_get_by_id:
+            case op_get_by_id_out_of_line:
             case op_put_by_id:
+            case op_put_by_id_out_of_line:
                 if (!curInstruction[4].u.structure || Heap::isMarked(curInstruction[4].u.structure.get()))
                     break;
                 if (verboseUnlinking)
@@ -2039,6 +2057,8 @@ void CodeBlock::finalizeUnconditionally()
                 break;
             case op_put_by_id_transition_direct:
             case op_put_by_id_transition_normal:
+            case op_put_by_id_transition_direct_out_of_line:
+            case op_put_by_id_transition_normal_out_of_line:
                 if (Heap::isMarked(curInstruction[4].u.structure.get())
                     && Heap::isMarked(curInstruction[6].u.structure.get())
                     && Heap::isMarked(curInstruction[7].u.structureChain.get()))

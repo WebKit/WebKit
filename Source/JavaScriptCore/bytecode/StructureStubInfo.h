@@ -204,6 +204,7 @@ namespace JSC {
                 int8_t valueGPR;
                 int8_t scratchGPR;
                 int32_t deltaCallToDone;
+                int32_t deltaCallToStorageLoad;
                 int32_t deltaCallToStructCheck;
                 int32_t deltaCallToSlowCase;
                 int32_t deltaCheckImmToCall;
@@ -219,6 +220,7 @@ namespace JSC {
                     struct {
                         int16_t structureToCompare;
                         int16_t structureCheck;
+                        int16_t propertyStorageLoad;
 #if USE(JSVALUE64)
                         int16_t displacementLabel;
 #else
@@ -230,6 +232,7 @@ namespace JSC {
                     } get;
                     struct {
                         int16_t structureToCompare;
+                        int16_t propertyStorageLoad;
 #if USE(JSVALUE64)
                         int16_t displacementLabel;
 #else

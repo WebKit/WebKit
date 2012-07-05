@@ -69,6 +69,7 @@ class LinkBuffer {
     typedef MacroAssembler::DataLabelCompact DataLabelCompact;
     typedef MacroAssembler::DataLabel32 DataLabel32;
     typedef MacroAssembler::DataLabelPtr DataLabelPtr;
+    typedef MacroAssembler::ConvertibleLoadLabel ConvertibleLoadLabel;
 #if ENABLE(BRANCH_COMPACTION)
     typedef MacroAssembler::LinkRecord LinkRecord;
     typedef MacroAssembler::JumpLinkType JumpLinkType;
@@ -178,6 +179,11 @@ public:
     CodeLocationDataLabelCompact locationOf(DataLabelCompact label)
     {
         return CodeLocationDataLabelCompact(MacroAssembler::getLinkerAddress(code(), applyOffset(label.m_label)));
+    }
+
+    CodeLocationConvertibleLoad locationOf(ConvertibleLoadLabel label)
+    {
+        return CodeLocationConvertibleLoad(MacroAssembler::getLinkerAddress(code(), applyOffset(label.m_label)));
     }
 
     // This method obtains the return address of the call, given as an offset from

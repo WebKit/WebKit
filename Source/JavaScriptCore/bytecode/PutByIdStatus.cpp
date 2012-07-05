@@ -43,12 +43,13 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 
     Structure* structure = instruction[4].u.structure.get();
     if (!structure)
-        return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+        return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
     
-    if (instruction[0].u.opcode == llint_op_put_by_id) {
-        size_t offset = structure->get(*profiledBlock->globalData(), ident);
-        if (offset == notFound)
-            return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+    if (instruction[0].u.opcode == llint_op_put_by_id
+        || instruction[0].u.opcode == llint_op_put_by_id_out_of_line) {
+        PropertyOffset offset = structure->get(*profiledBlock->globalData(), ident);
+        if (!isValidOffset(offset))
+            return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
         
         return PutByIdStatus(SimpleReplace, structure, 0, 0, offset);
     }
@@ -56,16 +57,18 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     ASSERT(structure->transitionWatchpointSetHasBeenInvalidated());
     
     ASSERT(instruction[0].u.opcode == llint_op_put_by_id_transition_direct
-           || instruction[0].u.opcode == llint_op_put_by_id_transition_normal);
+           || instruction[0].u.opcode == llint_op_put_by_id_transition_normal
+           || instruction[0].u.opcode == llint_op_put_by_id_transition_direct_out_of_line
+           || instruction[0].u.opcode == llint_op_put_by_id_transition_normal_out_of_line);
     
     Structure* newStructure = instruction[6].u.structure.get();
     StructureChain* chain = instruction[7].u.structureChain.get();
     ASSERT(newStructure);
     ASSERT(chain);
     
-    size_t offset = newStructure->get(*profiledBlock->globalData(), ident);
-    if (offset == notFound)
-        return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+    PropertyOffset offset = newStructure->get(*profiledBlock->globalData(), ident);
+    if (!isValidOffset(offset))
+        return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
     
     return PutByIdStatus(SimpleTransition, structure, newStructure, chain, offset);
 #else
@@ -83,7 +86,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
     
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))
-        return PutByIdStatus(TakesSlowPath, 0, 0, 0, notFound);
+        return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     
     StructureStubInfo& stubInfo = profiledBlock->getStubInfo(bytecodeIndex);
     if (!stubInfo.seen)
@@ -94,24 +97,24 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
         
     case access_put_by_id_replace: {
-        size_t offset = stubInfo.u.putByIdReplace.baseObjectStructure->get(
+        PropertyOffset offset = stubInfo.u.putByIdReplace.baseObjectStructure->get(
             *profiledBlock->globalData(), ident);
-        if (offset != notFound) {
+        if (isValidOffset(offset)) {
             return PutByIdStatus(
                 SimpleReplace,
                 stubInfo.u.putByIdReplace.baseObjectStructure.get(),
                 0, 0,
                 offset);
         }
-        return PutByIdStatus(TakesSlowPath, 0, 0, 0, notFound);
+        return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     }
         
     case access_put_by_id_transition_normal:
     case access_put_by_id_transition_direct: {
         ASSERT(stubInfo.u.putByIdTransition.previousStructure->transitionWatchpointSetHasBeenInvalidated());
-        size_t offset = stubInfo.u.putByIdTransition.structure->get(
+        PropertyOffset offset = stubInfo.u.putByIdTransition.structure->get(
             *profiledBlock->globalData(), ident);
-        if (offset != notFound) {
+        if (isValidOffset(offset)) {
             return PutByIdStatus(
                 SimpleTransition,
                 stubInfo.u.putByIdTransition.previousStructure.get(),
@@ -119,14 +122,14 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
                 stubInfo.u.putByIdTransition.chain.get(),
                 offset);
         }
-        return PutByIdStatus(TakesSlowPath, 0, 0, 0, notFound);
+        return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     }
         
     default:
-        return PutByIdStatus(TakesSlowPath, 0, 0, 0, notFound);
+        return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
     }
 #else // ENABLE(JIT)
-    return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+    return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
 #endif // ENABLE(JIT)
 }
 

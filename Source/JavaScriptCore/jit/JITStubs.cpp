@@ -962,7 +962,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
         return;
     }
 
-    size_t offset = slot.cachedOffset();
+    PropertyOffset offset = slot.cachedOffset();
     size_t count = normalizePrototypeChain(callFrame, baseValue, slot.slotBase(), propertyName, offset);
     if (!count) {
         stubInfo->accessType = access_get_by_id_generic;
@@ -1494,13 +1494,16 @@ DEFINE_STUB_FUNCTION(JSObject*, op_put_by_id_transition_realloc)
     JSValue baseValue = stackFrame.args[0].jsValue();
     int32_t oldSize = stackFrame.args[3].int32();
     Structure* newStructure = stackFrame.args[4].structure();
-    int32_t newSize = newStructure->propertyStorageCapacity();
+    int32_t newSize = newStructure->outOfLineCapacity();
+    
+    ASSERT(oldSize >= 0);
+    ASSERT(newSize > oldSize);
 
     ASSERT(baseValue.isObject());
     JSObject* base = asObject(baseValue);
     JSGlobalData& globalData = *stackFrame.globalData;
-    PropertyStorage newStorage = base->growPropertyStorage(globalData, oldSize, newSize);
-    base->setPropertyStorage(globalData, newStorage, newStructure);
+    PropertyStorage newStorage = base->growOutOfLineStorage(globalData, oldSize, newSize);
+    base->setOutOfLineStorage(globalData, newStorage, newStructure);
 
     return base;
 }
@@ -1822,7 +1825,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
     ASSERT(slot.slotBase().isObject());
     JSObject* slotBaseObject = asObject(slot.slotBase());
     
-    size_t offset = slot.cachedOffset();
+    PropertyOffset offset = slot.cachedOffset();
 
     if (slot.slotBase() == baseValue)
         ctiPatchCallByReturnAddress(codeBlock, STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));

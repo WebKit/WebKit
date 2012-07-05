@@ -113,15 +113,6 @@ public:
     
     size_t size() const { return m_structures.size(); }
     
-    bool allAreUsingInlinePropertyStorage() const
-    {
-        for (size_t i = 0; i < m_structures.size(); ++i) {
-            if (!m_structures[i]->isUsingInlineStorage())
-                return false;
-        }
-        return true;
-    }
-    
     // Call this if you know that the structure set must consist of exactly
     // one structure.
     Structure* singletonStructure() const
