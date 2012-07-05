@@ -1,3 +1,15 @@
+2012-07-05  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Enable the CUSTOM_SCHEME_HANDLER feature as default.
+        https://bugs.webkit.org/show_bug.cgi?id=88608
+
+        Reviewed by Hajime Morita.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebKit::WebChromeClient::isProtocolHandlerRegistered): Add a stub function.
+        (WebKit::WebChromeClient::unregisterProtocolHandler): Add a stub function.
+        (WebChromeClient):
+
 2012-07-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [Wk2][EFL] EFL needs a WebKitTestRunner

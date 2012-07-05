@@ -1,3 +1,12 @@
+2012-07-05  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Enable the CUSTOM_SCHEME_HANDLER feature as default.
+        https://bugs.webkit.org/show_bug.cgi?id=88608
+
+        Reviewed by Hajime Morita.
+
+        * Scripts/webkitperl/FeatureList.pm: Enable the CUSTOM_SCHEME_HANDLER feature as default.
+
 2012-07-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [Wk2][EFL] EFL needs a WebKitTestRunner
