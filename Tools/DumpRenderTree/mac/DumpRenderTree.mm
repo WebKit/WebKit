@@ -862,8 +862,6 @@ void dumpRenderTree(int argc, const char *argv[])
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
     [WebCache empty];
 
-    // <http://webkit.org/b/31200> In order to prevent extra frame load delegate logging being generated if the first test to use SSL
-    // is set to log frame load delegate calls we ignore SSL certificate errors on localhost and 127.0.0.1.
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
 

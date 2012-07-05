@@ -1,3 +1,19 @@
+2012-07-05  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac][WK2] Enable HTTPS tests
+        https://bugs.webkit.org/show_bug.cgi?id=90600
+
+        Reviewed by Brady Eidson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (dumpRenderTree): Removed a misleading comment.
+        It explained why we were doing this here instead of a frame load delegate, but that's
+        just history, not an explanation of why we need this code.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm: (WTR::InjectedBundle::platformInitialize):
+        Ignore certificate errors for localhost and 127.0.0.1. Since this is only needed
+        for tests, it seems appropriate to have platform specific solutions in every WTR,
+        and not add a WebKit2 API.
+
 2012-07-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove rpath-hacks in qt_webkit.pri

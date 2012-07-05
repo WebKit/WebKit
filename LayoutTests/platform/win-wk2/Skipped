@@ -949,3 +949,6 @@ fast/sub-pixel/file-upload-control-at-fractional-offset.html
 
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
+
+# WebKitTestRunner needs to allow self-signed certificates for localhost.
+http/tests/ssl

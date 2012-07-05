@@ -1177,9 +1177,6 @@ http/tests/navigation/fallback-anchor-reload.html
 http/tests/navigation/history-back-across-form-submission-to-fragment.html
 http/tests/security/cross-frame-access-put.html
 http/tests/security/originHeader/origin-header-for-https.html
-http/tests/ssl/referer-301.html
-http/tests/ssl/referer-303.html
-http/tests/ssl/verify-ssl-enabled.php
 http/tests/storage/callbacks-are-called-in-correct-context.html
 media/controls-after-reload.html
 media/controls-styling.html

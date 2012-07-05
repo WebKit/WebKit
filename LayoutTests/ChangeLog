@@ -1,3 +1,17 @@
+2012-07-05  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac][WK2] Enable HTTPS tests
+        https://bugs.webkit.org/show_bug.cgi?id=90600
+
+        Reviewed by Brady Eidson.
+
+        Unskip in common wk2 skipped file, re-skip everywhere besides Mac.
+
+        * platform/gtk-wk2/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/wk2/Skipped:
+
 2012-07-05  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=88436.

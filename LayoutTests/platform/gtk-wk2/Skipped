@@ -320,6 +320,9 @@ http/tests/navigation/ping-same-origin.html
 http/tests/navigation/ping-cross-origin.html
 http/tests/navigation/ping-cookie.html
 
+# WebKitTestRunner needs to allow self-signed certificates for localhost.
+http/tests/ssl
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################

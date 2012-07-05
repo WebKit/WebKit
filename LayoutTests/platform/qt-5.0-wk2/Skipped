@@ -392,3 +392,6 @@ http/tests/cache/xhr-vary-header.html
 # https://bugs.webkit.org/show_bug.cgi?id=89473
 editing/pasteboard/copy-in-password-field.html
 editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
+
+# WebKitTestRunner needs to allow self-signed certificates for localhost.
+http/tests/ssl

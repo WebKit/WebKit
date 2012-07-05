@@ -27,6 +27,11 @@
 
 #import <Foundation/Foundation.h>
 
+@interface NSURLRequest (PrivateThingsWeShouldntReallyUse)
++(void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString *)host;
+@end
+
+
 namespace WTR {
 
 void InjectedBundle::platformInitialize(WKTypeRef)
@@ -44,7 +49,10 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         [NSArray arrayWithObject:@"en"],  @"AppleLanguages",
         nil];
 
-    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];    
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
+
+    [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
+    [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
 }
 
 } // namespace WTR
