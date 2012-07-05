@@ -1360,7 +1360,7 @@ declaration:
         CSSParser* p = static_cast<CSSParser*>(parser);
         p->storeVariableDeclaration($1, p->sinkFloatingValueList($4), $5);
         $$ = true;
-        p->markPropertyEnd($5, $$);
+        p->markPropertyEnd($5, true);
 #else
         $$ = false;
 #endif

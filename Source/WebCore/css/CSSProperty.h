@@ -51,6 +51,7 @@ public:
 
     CSSValue* value() const { return m_value.get(); }
 
+    String cssName() const;
     String cssText() const;
 
     void wrapValueInCommaSeparatedList();

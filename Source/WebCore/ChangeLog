@@ -1,3 +1,29 @@
+2012-07-04  Luke Macpherson  <macpherson@chromium.org>
+
+        Inspector crashes when trying to inspect a page with CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=89818
+
+        Reviewed by Antti Koivisto.
+
+        Patch works by fixing treating handling of CSSPropertyID == CSSPropertyVariable as a special case,
+        and looking up the author-defined property name from the CSSValue.
+
+        Added test inspector/styles/variables/css-variables.html that inspects an element using CSS variables.
+        Test is skipped when variables are compiled out.
+
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::cssName):
+        (WebCore):
+        (WebCore::CSSProperty::cssText):
+        * css/CSSProperty.h:
+        (CSSProperty):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::item):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::asText):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::populateAllProperties):
+
 2012-07-04  Anthony Scian  <ascian@rim.com>
 
         Web Inspector [JSC]: Implement ScriptCallStack::stackTrace

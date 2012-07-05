@@ -662,6 +662,11 @@ String StylePropertySet::asText() const
         String value;
 
         switch (propertyID) {
+#if ENABLE(CSS_VARIABLES)
+        case CSSPropertyVariable:
+            result.append(prop.cssText());
+            continue;
+#endif
         case CSSPropertyBackgroundPositionX:
             positionXProp = &prop;
             continue;

@@ -1116,7 +1116,7 @@ bool InspectorStyleSheet::ensureSourceData()
         return false;
 
     RefPtr<StyleSheetContents> newStyleSheet = StyleSheetContents::create();
-    CSSParser p(CSSStrictMode);
+    CSSParser p(m_pageStyleSheet->ownerDocument());
     OwnPtr<RuleSourceDataList> ruleSourceDataResult = adoptPtr(new RuleSourceDataList());
     p.parseSheet(newStyleSheet.get(), m_parsedStyleSheet->text(), 0, ruleSourceDataResult.get());
     m_parsedStyleSheet->setSourceData(ruleSourceDataResult.release());

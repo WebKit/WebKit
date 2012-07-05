@@ -3012,13 +3012,16 @@ bool CSSParser::cssVariablesEnabled() const
 
 void CSSParser::storeVariableDeclaration(const CSSParserString& name, PassOwnPtr<CSSParserValueList> value, bool important)
 {
+    ASSERT(name.length > 12);
+    AtomicString variableName = String(name.characters + 12, name.length - 12);
+
     StringBuilder builder;
     for (unsigned i = 0, size = value->size(); i < size; i++) {
         if (i)
             builder.append(' ');
         builder.append(value->valueAt(i)->createCSSValue()->cssText());
     }
-    addProperty(CSSPropertyVariable, CSSVariableValue::create(name, builder.toString()), important, false);
+    addProperty(CSSPropertyVariable, CSSVariableValue::create(variableName, builder.toString()), important, false);
 }
 #endif
 
@@ -8981,21 +8984,16 @@ restartAfterComment:
     }
 
     case CharacterDash:
-#if ENABLE(CSS_VARIABLES)
-        if (cssVariablesEnabled() && isEqualToCSSIdentifier(m_currentCharacter, "webkit-var") && m_currentCharacter[10] == '-' && isIdentifierStartAfterDash(m_currentCharacter + 11)) {
-            // handle variable declarations
-            m_currentCharacter += 11;
-            parseIdentifier(result, hasEscape);
-            m_token = VAR_DEFINITION;
-            yylval->string.characters = m_tokenStart;
-            yylval->string.length = result - m_tokenStart;
-        } else
-#endif
         if (isIdentifierStartAfterDash(m_currentCharacter)) {
             --m_currentCharacter;
             parseIdentifier(result, hasEscape);
             m_token = IDENT;
 
+#if ENABLE(CSS_VARIABLES)
+            if (cssVariablesEnabled() && isEqualToCSSIdentifier(m_tokenStart + 1, "webkit-var") && m_tokenStart[11] == '-' && isIdentifierStartAfterDash(m_tokenStart + 12))
+                m_token = VAR_DEFINITION;
+            else
+#endif
             if (*m_currentCharacter == '(') {
                 m_token = FUNCTION;
                 if (!hasEscape)

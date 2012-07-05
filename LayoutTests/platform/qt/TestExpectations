@@ -73,6 +73,7 @@ BUGWK88198 : svg/stroke/non-scaling-stroke-pattern.svg = PASS IMAGE
 
 // CSS Variables are not yet enabled.
 BUGWK85580 SKIP : fast/css/variables = PASS
+BUGWK85580 SKIP : inspector/styles/variables = PASS
 
 // UndoManager is not yet enabled.
 BUGWK87908 SKIP : editing/undomanager = PASS

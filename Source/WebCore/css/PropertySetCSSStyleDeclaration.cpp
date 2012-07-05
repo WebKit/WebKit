@@ -139,7 +139,7 @@ String PropertySetCSSStyleDeclaration::item(unsigned i) const
 {
     if (i >= m_propertySet->propertyCount())
         return "";
-    return getPropertyName(m_propertySet->propertyAt(i).id());
+    return m_propertySet->propertyAt(i).cssName();
 }
 
 String PropertySetCSSStyleDeclaration::cssText() const

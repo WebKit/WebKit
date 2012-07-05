@@ -26,6 +26,10 @@
 #include "RenderStyleConstants.h"
 #include "StylePropertyShorthand.h"
 
+#if ENABLE(CSS_VARIABLES)
+#include "CSSVariableValue.h"
+#endif
+
 namespace WebCore {
 
 struct SameSizeAsCSSProperty {
@@ -35,9 +39,20 @@ struct SameSizeAsCSSProperty {
 
 COMPILE_ASSERT(sizeof(CSSProperty) == sizeof(SameSizeAsCSSProperty), CSSProperty_should_stay_small);
 
+String CSSProperty::cssName() const
+{
+#if ENABLE(CSS_VARIABLES)
+    if (id() == CSSPropertyVariable) {
+        ASSERT(value()->isVariableValue());
+        return "-webkit-var-" + static_cast<CSSVariableValue*>(value())->name();
+    }
+#endif
+    return String(getPropertyName(id()));
+}
+
 String CSSProperty::cssText() const
 {
-    return String(getPropertyName(id())) + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
+    return cssName() + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
 }
 
 void CSSProperty::wrapValueInCommaSeparatedList()

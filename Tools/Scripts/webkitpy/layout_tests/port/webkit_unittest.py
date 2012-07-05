@@ -100,6 +100,7 @@ class WebKitPortTest(port_testcase.PortTestCase):
             "http/tests/canvas/webgl",  # Requires WebGLShader
             "mhtml",  # Requires MHTMLArchive
             "fast/css/variables",  # Requires CSS Variables
+            "inspector/styles/variables",  # Requires CSS Variables
         ])
 
         result_directories = set(TestWebKitPort(symbols_string, None)._skipped_tests_for_unsupported_features(test_list=['mathml/foo.html']))

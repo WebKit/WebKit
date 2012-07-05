@@ -1,0 +1,24 @@
+Tests that webkit css variables can be loaded correctly.
+
+Text
+[expanded] 
+color: green;
+    #inspected - -webkit-var(a) css-variables.html:7
+display: block;
+    div - block user agent stylesheet
+
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#inspected  { (css-variables.html:7)
+-webkit-var-a: green;
+color: -webkit-var(a);
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+

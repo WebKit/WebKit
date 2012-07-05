@@ -298,7 +298,7 @@ class WebKitPort(Port):
             "WebCoreHas3DRendering": ["animations/3d", "transforms/3d"],
             "WebGLShader": ["fast/canvas/webgl", "compositing/webgl", "http/tests/canvas/webgl"],
             "MHTMLArchive": ["mhtml"],
-            "CSSVariableValue": ["fast/css/variables"],
+            "CSSVariableValue": ["fast/css/variables", "inspector/styles/variables"],
         }
 
     def _has_test_in_directories(self, directory_lists, test_list):
