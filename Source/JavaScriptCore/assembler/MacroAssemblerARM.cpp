@@ -77,18 +77,18 @@ void MacroAssemblerARM::load32WithUnalignedHalfWords(BaseIndex address, Register
 
     if (address.offset >= 0 && address.offset + 0x2 <= 0xff) {
         m_assembler.add_r(ARMRegisters::S0, address.base, op2);
-        m_assembler.dtrh_u(LoadUint16, dest, ARMRegisters::S0, ARMAssembler::getOp2Half(address.offset));
-        m_assembler.dtrh_u(LoadUint16, ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Half(address.offset + 0x2));
+        m_assembler.dtrh_u(ARMAssembler::LoadUint16, dest, ARMRegisters::S0, ARMAssembler::getOp2Half(address.offset));
+        m_assembler.dtrh_u(ARMAssembler::LoadUint16, ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Half(address.offset + 0x2));
     } else if (address.offset < 0 && address.offset >= -0xff) {
         m_assembler.add_r(ARMRegisters::S0, address.base, op2);
-        m_assembler.dtrh_d(LoadUint16, dest, ARMRegisters::S0, ARMAssembler::getOp2Byte(-address.offset));
-        m_assembler.dtrh_d(LoadUint16, ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Byte(-address.offset - 0x2));
+        m_assembler.dtrh_d(ARMAssembler::LoadUint16, dest, ARMRegisters::S0, ARMAssembler::getOp2Byte(-address.offset));
+        m_assembler.dtrh_d(ARMAssembler::LoadUint16, ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Byte(-address.offset - 0x2));
     } else {
         m_assembler.moveImm(address.offset, ARMRegisters::S0);
         m_assembler.add_r(ARMRegisters::S0, ARMRegisters::S0, op2);
-        m_assembler.dtrh_r(true, TYPE_UH, dest, address.base, ARMRegisters::S0);
+        m_assembler.dtrh_ur(ARMAssembler::LoadUint16, dest, address.base, ARMRegisters::S0);
         m_assembler.add_r(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::OP2_IMM | 0x2);
-        m_assembler.dtrh_r(true, TYPE_UH, ARMRegisters::S0, address.base, ARMRegisters::S0);
+        m_assembler.dtrh_ur(ARMAssembler::LoadUint16, ARMRegisters::S0, address.base, ARMRegisters::S0);
     }
     m_assembler.orr_r(dest, dest, m_assembler.lsl(ARMRegisters::S0, 16));
 }

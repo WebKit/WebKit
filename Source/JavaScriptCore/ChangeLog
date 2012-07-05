@@ -1,5 +1,12 @@
 2012-07-05  Zoltan Herczeg  <zherczeg@webkit.org>
 
+        [Qt] Unreviewed buildfix after r121886. Typo fix.
+
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::load32WithUnalignedHalfWords):
+
+2012-07-05  Zoltan Herczeg  <zherczeg@webkit.org>
+
         Port DFG JIT to traditional ARM
         https://bugs.webkit.org/show_bug.cgi?id=90198
 
