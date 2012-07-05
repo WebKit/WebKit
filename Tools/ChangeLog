@@ -1,3 +1,11 @@
+2012-07-05  Dave Tharp  <dtharp@codeaurora.org>
+
+        Adding myself as committer to committers.py
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-05  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac][WK2] Enable HTTPS tests
