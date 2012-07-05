@@ -40,6 +40,7 @@
 #include "InspectorClient.h"
 #include "InspectorCounters.h"
 #include "InspectorFrontend.h"
+#include "InspectorInstrumentation.h"
 #include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
@@ -244,7 +245,7 @@ void InspectorTimelineAgent::didRecalculateStyle()
 
 void InspectorTimelineAgent::willPaint(const LayoutRect& rect, Frame* frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createPaintData(rect), TimelineRecordType::Paint, true, frame);
+    pushCurrentRecord(TimelineRecordFactory::createPaintData(rect), TimelineRecordType::Paint, true, frame, true);
 }
 
 void InspectorTimelineAgent::didPaint()
@@ -320,7 +321,7 @@ void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumbe
 {
     pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true, frame);
 }
-    
+
 void InspectorTimelineAgent::didEvaluateScript()
 {
     didCompleteCurrentRecord(TimelineRecordType::EvaluateScript);
@@ -358,7 +359,7 @@ void InspectorTimelineAgent::didReceiveResourceData()
 {
     didCompleteCurrentRecord(TimelineRecordType::ResourceReceivedData);
 }
-    
+
 void InspectorTimelineAgent::willReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response, Frame* frame)
 {
     String requestId = IdentifiersFactory::requestId(identifier);
@@ -481,6 +482,11 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
     // An empty stack could merely mean that the timeline agent was turned on in the middle of
     // an event.  Don't treat as an error.
     if (!m_recordStack.isEmpty()) {
+        if (m_orphanEventsEnabledStackMark == m_recordStack.size()) {
+            m_orphanEventsEnabledStackMark = 0;
+            InspectorInstrumentation::setTimelineAgentForOrphanEvents(0);
+        }
+
         pushGCEventRecords();
         TimelineRecordEntry entry = m_recordStack.last();
         m_recordStack.removeLast();
@@ -499,6 +505,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_timestampOffset(0)
     , m_id(1)
     , m_maxCallStackDepth(5)
+    , m_orphanEventsEnabledStackMark(0)
     , m_inspectorType(type)
     , m_client(client)
 {
@@ -516,7 +523,7 @@ void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, cons
     addRecordToTimeline(record.release(), type, frameId);
 }
 
-void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame)
+void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame, bool hasOrphanDetails)
 {
     pushGCEventRecords();
     commitCancelableRecords();
@@ -525,6 +532,10 @@ void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data,
     if (frame && m_pageAgent)
         frameId = m_pageAgent->frameId(frame);
     m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, frameId));
+    if (hasOrphanDetails && !m_orphanEventsEnabledStackMark && !InspectorInstrumentation::timelineAgentForOrphanEvents()) {
+        m_orphanEventsEnabledStackMark = m_recordStack.size();
+        InspectorInstrumentation::setTimelineAgentForOrphanEvents(this);
+    }
 }
 
 void InspectorTimelineAgent::pushCancelableRecord(PassRefPtr<InspectorObject> data, const String& type, Frame* frame)

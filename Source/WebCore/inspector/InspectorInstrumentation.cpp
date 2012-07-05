@@ -68,6 +68,7 @@
 #include "WorkerThread.h"
 #include "XMLHttpRequest.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -1134,6 +1135,22 @@ void InspectorInstrumentation::didFireAnimationFrameImpl(const InspectorInstrume
 {
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didFireAnimationFrame();
+}
+
+InspectorTimelineAgent* InspectorInstrumentation::timelineAgentForOrphanEvents()
+{
+    return *threadSpecificTimelineAgentForOrphanEvents();
+}
+
+void InspectorInstrumentation::setTimelineAgentForOrphanEvents(InspectorTimelineAgent* inspectorTimelineAgent)
+{
+    *threadSpecificTimelineAgentForOrphanEvents() = inspectorTimelineAgent;
+}
+
+WTF::ThreadSpecific<InspectorTimelineAgent*>& InspectorInstrumentation::threadSpecificTimelineAgentForOrphanEvents()
+{
+    AtomicallyInitializedStatic(WTF::ThreadSpecific<InspectorTimelineAgent*>*, instance = new WTF::ThreadSpecific<InspectorTimelineAgent*>());
+    return *instance;
 }
 
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const InspectorInstrumentationCookie& cookie)

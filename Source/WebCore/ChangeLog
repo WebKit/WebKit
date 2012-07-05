@@ -1,3 +1,23 @@
+2012-07-05  Sergey Rogulenko  <rogulenko@google.com>
+
+        Web Inspector: added low-level instrumentation support for TimelineAgent
+        https://bugs.webkit.org/show_bug.cgi?id=90264
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::timelineAgentForOrphanEvents):
+        (WebCore::InspectorInstrumentation::setTimelineAgentForOrphanEvents):
+        (WebCore::InspectorInstrumentation::threadSpecificTimelineAgentForOrphanEvents):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+
 2012-07-05  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add test framework and simple test.

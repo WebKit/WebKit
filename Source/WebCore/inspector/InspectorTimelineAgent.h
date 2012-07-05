@@ -162,7 +162,7 @@ private:
         
     InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*, InspectorType, InspectorClient*);
 
-    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*);
+    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*, bool hasOrphanDetails = false);
     void setHeapSizeStatistic(InspectorObject* record);
         
     void didCompleteCurrentRecord(const String& type);
@@ -199,6 +199,7 @@ private:
     typedef Vector<GCEvent> GCEvents;
     GCEvents m_gcEvents;
     int m_maxCallStackDepth;
+    unsigned m_orphanEventsEnabledStackMark;
     InspectorType m_inspectorType;
     InspectorClient* m_client;
 };
