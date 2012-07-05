@@ -1,3 +1,20 @@
+2012-07-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Remove rpath-hacks in qt_webkit.pri
+
+        Having it in qt_webkit.pri meant that all client apps would inherit the rpath,
+        even if they were not using QtWebKit.
+
+        This is a regression for people who build client apps against a non-installed
+        QtWebKit, as the client app will be missing a rpath to the standalone WebKit
+        build dir. This can be solved by LD_LIBRARY_PATH or custom QMAKE_RPATHDIR
+        logic, until the real issue is fixed in Qt.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * qmake/mkspecs/features/rpath.prf:
+        * qmake/qt_webkit.pri:
+
 2012-07-05  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Enable the CUSTOM_SCHEME_HANDLER feature as default.
