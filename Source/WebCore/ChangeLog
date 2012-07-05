@@ -1,3 +1,30 @@
+2012-07-05  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: Add support for keyboard increment / decrement on numbers in attributes in Elements Panel
+        https://bugs.webkit.org/show_bug.cgi?id=89586
+
+        Reviewed by Pavel Feldman
+
+        Refactoring the key events while editing style property values. Migrated the code to UIUtils.js and referred
+        from StylesSidebarPane.js, ElementsTreeOutline.js and MetricsSidebarPane.js.
+
+        No new tests as code refactoring and UI feature added to ElementsTreeOutline.js
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._startEditingAttribute.handleKeyDownEvents):
+        (WebInspector.ElementsTreeElement.prototype._startEditingAttribute):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype._handleKeyDown.finishHandler):
+        (WebInspector.MetricsSidebarPane.prototype._handleKeyDown.customNumberHandler):
+        (WebInspector.MetricsSidebarPane.prototype._handleKeyDown):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._handleNameOrValueUpDown.finishHandler):
+        (WebInspector.StylesSidebarPane.prototype._handleNameOrValueUpDown):
+        * inspector/front-end/UIUtils.js:
+        (WebInspector._modifiedHexValue):
+        (WebInspector._modifiedFloatNumber):
+        (WebInspector.handleElementValueModifications):
+
 2012-07-05  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         NEON intrinsics should be used with gaussian blur filter
