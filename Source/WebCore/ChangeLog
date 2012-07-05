@@ -1,3 +1,22 @@
+2012-07-05  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Code refactoring: move mimeTypeFromUTITree to a separate file.
+        https://bugs.webkit.org/show_bug.cgi?id=90619
+
+        We should move UTI handling related code to a separate file.
+
+        Reviewed by David Kilzer.
+
+        * WebCore.xcodeproj/project.pbxproj: Add UTIUtilities.h/UTIUtilities.mm to xcode project, and drive-by fix
+            that happened when editing the Xcode project file.
+        * platform/network/mac/UTIUtilities.h: Added.
+        (WebCore):
+        * platform/network/mac/UTIUtilities.mm: Added.  move mimeTypeFromUTITree to UTIUtilities.mm.
+        (WebCore):
+        (WebCore::mimeTypeFromUTITree):
+        * platform/network/mac/WebCoreURLResponse.mm: include UTIUtilities.h to use mimeTypeFromUTITree.
+        (WebCore):
+
 2012-07-05  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Character iterators should not advance if they are at end

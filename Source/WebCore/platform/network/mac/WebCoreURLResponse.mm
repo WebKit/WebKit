@@ -30,6 +30,7 @@
 #import "WebCoreURLResponse.h"
 
 #import "MIMETypeRegistry.h"
+#import "UTIUtilities.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
@@ -445,41 +446,6 @@ static CFDictionaryRef createExtensionToMIMETypeMap()
 
     ASSERT(sizeof(keys) == sizeof(values));
     return CFDictionaryCreate(kCFAllocatorDefault, (const void**)&keys, (const void**)&values, sizeof(keys)/sizeof(CFStringRef), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-}
-
-static RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti)
-{
-    // Check if this UTI has a MIME type.
-    RetainPtr<CFStringRef> mimeType(AdoptCF, UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType));
-    if (mimeType)
-        return mimeType.get();
-    
-    // If not, walk the ancestory of this UTI via its "ConformsTo" tags and return the first MIME type we find.
-    RetainPtr<CFDictionaryRef> decl(AdoptCF, UTTypeCopyDeclaration(uti));
-    if (!decl)
-        return nil;
-    CFTypeRef value = CFDictionaryGetValue(decl.get(), kUTTypeConformsToKey);
-    if (!value)
-        return nil;
-    CFTypeID typeID = CFGetTypeID(value);
-    
-    if (typeID == CFStringGetTypeID())
-        return mimeTypeFromUTITree((CFStringRef)value);
-
-    if (typeID == CFArrayGetTypeID()) {
-        CFArrayRef newTypes = (CFArrayRef)value;
-        CFIndex count = CFArrayGetCount(newTypes);
-        for (CFIndex i = 0; i < count; ++i) {
-            CFTypeRef object = CFArrayGetValueAtIndex(newTypes, i);
-            if (CFGetTypeID(object) != CFStringGetTypeID())
-                continue;
-
-            if (RetainPtr<CFStringRef> mimeType = mimeTypeFromUTITree((CFStringRef)object))
-                return mimeType;
-        }
-    }
-    
-    return nil;
 }
 
 void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
