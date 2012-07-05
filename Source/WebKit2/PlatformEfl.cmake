@@ -34,9 +34,12 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_context.cpp
     UIProcess/API/efl/ewk_intent.cpp
     UIProcess/API/efl/ewk_intent_service.cpp
+    UIProcess/API/efl/ewk_url_request.cpp
     UIProcess/API/efl/ewk_view.cpp
     UIProcess/API/efl/ewk_view_loader_client.cpp
+    UIProcess/API/efl/ewk_view_resource_load_client.cpp
     UIProcess/API/efl/ewk_web_error.cpp
+    UIProcess/API/efl/ewk_web_resource.cpp
 
     UIProcess/cairo/BackingStoreCairo.cpp
 

@@ -33,6 +33,7 @@
 #include "ewk_intent_private.h"
 #include "ewk_view_loader_client_private.h"
 #include "ewk_view_private.h"
+#include "ewk_view_resource_load_client_private.h"
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
@@ -494,6 +495,7 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
 
     priv->pageClient = PageClientImpl::create(toImpl(contextRef), toImpl(pageGroupRef), ewkView);
     ewk_view_loader_client_attach(toAPI(priv->pageClient->page()), ewkView);
+    ewk_view_resource_load_client_attach(toAPI(priv->pageClient->page()), ewkView);
 
     return ewkView;
 }
@@ -545,6 +547,20 @@ Eina_Bool ewk_view_stop(Evas_Object* ewkView)
 
     WKPageStopLoading(toAPI(priv->pageClient->page()));
     return true;
+}
+
+/**
+ * @internal
+ * Load was initiated for a resource in the view.
+ *
+ * Emits signal: "resource,request,new" with pointer to resource request.
+ */
+void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Web_Resource* resource, Ewk_Url_Request* request)
+{
+    Ewk_Web_Resource_Request resourceRequest = {resource, request};
+    // FIXME: We will need to store the resource and its identifier at some point
+    // to get the resource back from the identifier on resource load finish.
+    evas_object_smart_callback_call(ewkView, "resource,request,new", &resourceRequest);
 }
 
 const char* ewk_view_title_get(const Evas_Object* ewkView)

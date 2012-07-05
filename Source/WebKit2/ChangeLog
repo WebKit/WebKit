@@ -1,3 +1,47 @@
+2012-07-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][EFL] Ewk_View needs to report new resource requests
+        https://bugs.webkit.org/show_bug.cgi?id=90577
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add new "resource,request,new" signal to Ewk_View to
+        notify clients of the resource requests being initiated.
+        New Ewk_Url_Request and Ewk_Web_Resource types are
+        introduced in order to provide the clients with the
+        needed information regarding the resource requests.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_url_request.cpp: Added.
+        (_Ewk_Url_Request):
+        (ewk_url_request_ref):
+        (ewk_url_request_unref):
+        (ewk_url_request_url_get):
+        (ewk_request_first_party_get):
+        (ewk_url_request_http_method_get):
+        (ewk_url_request_new):
+        * UIProcess/API/efl/ewk_url_request.h: Added.
+        * UIProcess/API/efl/ewk_url_request_private.h: Added.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_base_add):
+        (ewk_view_resource_load_initiated):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp: Added.
+        (didInitiateLoadForResource):
+        (ewk_view_resource_load_client_attach):
+        * UIProcess/API/efl/ewk_view_resource_load_client_private.h: Added.
+        * UIProcess/API/efl/ewk_web_resource.cpp: Added.
+        (_Ewk_Web_Resource):
+        (ewk_web_resource_ref):
+        (ewk_web_resource_unref):
+        (ewk_web_resource_uri_get):
+        (ewk_web_resource_new):
+        (ewk_web_resource_main_get):
+        * UIProcess/API/efl/ewk_web_resource.h: Added.
+        * UIProcess/API/efl/ewk_web_resource_private.h: Added.
+
 2012-07-04  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add compile flag and runtime setting

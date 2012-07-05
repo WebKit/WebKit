@@ -30,6 +30,7 @@
  * - "intent,service,register", Ewk_Intent_Service*: reports new Web intent service registration.
  * - "load,error", const Ewk_Web_Error*: reports main frame load failed.
  * - "load,progress", double*: load progress has changed (value from 0.0 to 1.0).
+ * - "resource,request,new", const Ewk_Web_Resource_Request*: a resource request was initiated.
  * - "title,changed", const char*: title of the main frame was changed.
  */
 
@@ -46,6 +47,9 @@ extern "C" {
 typedef struct _Ewk_View_Smart_Data Ewk_View_Smart_Data;
 typedef struct _Ewk_View_Smart_Class Ewk_View_Smart_Class;
 typedef struct _Ewk_Intent Ewk_Intent;
+typedef struct _Ewk_Url_Request Ewk_Url_Request;
+typedef struct _Ewk_Web_Resource Ewk_Web_Resource;
+
 
 /// Ewk view's class, to be overridden by sub-classes.
 struct _Ewk_View_Smart_Class {
@@ -131,6 +135,19 @@ struct _Ewk_View_Smart_Data {
         Eina_Bool size:1;
         Eina_Bool position:1;
     } changed;
+};
+
+/// Creates a type name for _Ewk_Web_Resource_Request.
+typedef struct _Ewk_Web_Resource_Request Ewk_Web_Resource_Request;
+
+/**
+ * @brief Structure containing details about a resource request.
+ *
+ * Details given about a resource is loaded.
+ */
+struct _Ewk_Web_Resource_Request {
+    Ewk_Web_Resource *resource; /**< resource being requested */
+    Ewk_Url_Request *request; /**< URL request for the resource */
 };
 
 /**

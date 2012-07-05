@@ -30,7 +30,9 @@ class IntRect;
 class IntSize;
 }
 
+typedef struct _Ewk_Url_Request Ewk_Url_Request;
 typedef struct _Ewk_Web_Error Ewk_Web_Error;
+typedef struct _Ewk_Web_Resource Ewk_Web_Resource;
 #if ENABLE(WEB_INTENTS)
 typedef struct _Ewk_Intent Ewk_Intent;
 #endif
@@ -43,6 +45,7 @@ void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCor
 void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Web_Error* error);
 void ewk_view_load_progress_changed(Evas_Object* ewkView, double progress);
 void ewk_view_title_changed(Evas_Object* ewkView, const char* title);
+void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Web_Resource* resource, Ewk_Url_Request* request);
 
 Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef);
 
