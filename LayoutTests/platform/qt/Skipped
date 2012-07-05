@@ -2540,3 +2540,7 @@ fast/block/float/floats-wrap-inside-inline-003.htm
 # https://bugs.webkit.org/show_bug.cgi?id=90165
 css3/filters/huge-region-composited.html
 
+# [Qt] Regression r121891 made two tests to fail
+# https://bugs.webkit.org/show_bug.cgi?id=90594
+http/tests/inspector/console-cd-completions.html
+http/tests/inspector/console-cd.html
