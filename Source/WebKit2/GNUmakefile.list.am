@@ -48,6 +48,7 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKBackForwardList.h \
 	$(WebKit2)/UIProcess/API/C/WKBackForwardListItem.h \
 	$(WebKit2)/UIProcess/API/C/WKBatteryManager.h \
+	$(WebKit2)/UIProcess/API/C/WKBatteryStatus.h \
 	$(WebKit2)/UIProcess/API/C/WKContext.h \
 	$(WebKit2)/UIProcess/API/C/WKContextPrivate.h \
 	$(WebKit2)/UIProcess/API/C/WKCookieManager.h \
@@ -514,6 +515,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKBackForwardListItem.h \
 	Source/WebKit2/UIProcess/API/C/WKBatteryManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKBatteryManager.h \
+	Source/WebKit2/UIProcess/API/C/WKBatteryStatus.cpp \
+	Source/WebKit2/UIProcess/API/C/WKBatteryStatus.h \
 	Source/WebKit2/UIProcess/API/C/WKContext.cpp \
 	Source/WebKit2/UIProcess/API/C/WKContext.h \
 	Source/WebKit2/UIProcess/API/C/WKContextPrivate.h \

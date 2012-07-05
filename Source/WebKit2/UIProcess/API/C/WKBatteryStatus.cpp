@@ -23,38 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBatteryManager_h
-#define WKBatteryManager_h
+#include "config.h"
+#include "WKBatteryStatus.h"
 
-#include <WebKit2/WKBase.h>
+#include "WKAPICast.h"
 
-#ifdef __cplusplus
-extern "C" {
+#if ENABLE(BATTERY_STATUS)
+#include "WebBatteryStatus.h"
 #endif
 
-// Provider.
-typedef void (*WKBatteryProviderStartUpdatingCallback)(WKBatteryManagerRef batteryManager, const void* clientInfo);
-typedef void (*WKBatteryProviderStopUpdatingCallback)(WKBatteryManagerRef batteryManager, const void* clientInfo);
+using namespace WebKit;
 
-struct WKBatteryProvider {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-    WKBatteryProviderStartUpdatingCallback                              startUpdating;
-    WKBatteryProviderStopUpdatingCallback                               stopUpdating;
-};
-typedef struct WKBatteryProvider WKBatteryProvider;
-
-enum { kWKBatteryProviderCurrentVersion = 0 };
-
-WK_EXPORT WKTypeID WKBatteryManagerGetTypeID();
-
-WK_EXPORT void WKBatteryManagerSetProvider(WKBatteryManagerRef batteryManager, const WKBatteryProvider* provider);
-
-WK_EXPORT void WKBatteryManagerProviderDidChangeBatteryStatus(WKBatteryManagerRef batteryManager, WKStringRef eventType, WKBatteryStatusRef status);
-WK_EXPORT void WKBatteryManagerProviderUpdateBatteryStatus(WKBatteryManagerRef batteryManager, WKBatteryStatusRef status);
-
-#ifdef __cplusplus
+WKTypeID WKBatteryStatusGetTypeID()
+{
+#if ENABLE(BATTERY_STATUS)
+    return toAPI(WebBatteryStatus::APIType);
+#else
+    return 0;
+#endif
 }
-#endif
 
-#endif /* WKBatteryManager_h */
+WKBatteryStatusRef WKBatteryStatusCreate(bool isCharging, double chargingTime, double dischargingTime, double level)
+{
+#if ENABLE(BATTERY_STATUS)
+    RefPtr<WebBatteryStatus> status = WebBatteryStatus::create(isCharging, chargingTime, dischargingTime, level);
+    return toAPI(status.release().leakRef());
+#else
+    return 0;
+#endif
+}
+

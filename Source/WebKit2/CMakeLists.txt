@@ -269,6 +269,7 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKBackForwardList.cpp
     UIProcess/API/C/WKBackForwardListItem.cpp
     UIProcess/API/C/WKBatteryManager.cpp
+    UIProcess/API/C/WKBatteryStatus.cpp
     UIProcess/API/C/WKContext.cpp
     UIProcess/API/C/WKCookieManager.cpp
     UIProcess/API/C/WKCredential.cpp

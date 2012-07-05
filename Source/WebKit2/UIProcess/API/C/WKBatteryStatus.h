@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKBatteryManager_h
-#define WKBatteryManager_h
+#ifndef WKBatteryStatus_h
+#define WKBatteryStatus_h
 
 #include <WebKit2/WKBase.h>
 
@@ -32,29 +32,12 @@
 extern "C" {
 #endif
 
-// Provider.
-typedef void (*WKBatteryProviderStartUpdatingCallback)(WKBatteryManagerRef batteryManager, const void* clientInfo);
-typedef void (*WKBatteryProviderStopUpdatingCallback)(WKBatteryManagerRef batteryManager, const void* clientInfo);
+WK_EXPORT WKTypeID WKBatteryStatusGetTypeID();
 
-struct WKBatteryProvider {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-    WKBatteryProviderStartUpdatingCallback                              startUpdating;
-    WKBatteryProviderStopUpdatingCallback                               stopUpdating;
-};
-typedef struct WKBatteryProvider WKBatteryProvider;
-
-enum { kWKBatteryProviderCurrentVersion = 0 };
-
-WK_EXPORT WKTypeID WKBatteryManagerGetTypeID();
-
-WK_EXPORT void WKBatteryManagerSetProvider(WKBatteryManagerRef batteryManager, const WKBatteryProvider* provider);
-
-WK_EXPORT void WKBatteryManagerProviderDidChangeBatteryStatus(WKBatteryManagerRef batteryManager, WKStringRef eventType, WKBatteryStatusRef status);
-WK_EXPORT void WKBatteryManagerProviderUpdateBatteryStatus(WKBatteryManagerRef batteryManager, WKBatteryStatusRef status);
+WK_EXPORT WKBatteryStatusRef WKBatteryStatusCreate(bool isCharging, double chargingTime, double dischargingTime, double level);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKBatteryManager_h */
+#endif // WKBatteryStatus_h

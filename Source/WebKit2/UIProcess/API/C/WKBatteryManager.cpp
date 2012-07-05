@@ -27,6 +27,7 @@
 #include "WKBatteryManager.h"
 
 #include "WKAPICast.h"
+#include <wtf/text/AtomicString.h>
 
 #if ENABLE(BATTERY_STATUS)
 #include "WebBatteryManagerProxy.h"
@@ -40,5 +41,26 @@ WKTypeID WKBatteryManagerGetTypeID()
     return toAPI(WebBatteryManagerProxy::APIType);
 #else
     return 0;
+#endif
+}
+
+void WKBatteryManagerSetProvider(WKBatteryManagerRef batteryManager, const WKBatteryProvider* provider)
+{
+#if ENABLE(BATTERY_STATUS)
+    toImpl(batteryManager)->initializeProvider(provider);
+#endif
+}
+
+void WKBatteryManagerProviderDidChangeBatteryStatus(WKBatteryManagerRef batteryManager, WKStringRef eventType, WKBatteryStatusRef status)
+{
+#if ENABLE(BATTERY_STATUS)
+    toImpl(batteryManager)->providerDidChangeBatteryStatus(AtomicString(toImpl(eventType)->string()), toImpl(status));
+#endif
+}
+
+void WKBatteryManagerProviderUpdateBatteryStatus(WKBatteryManagerRef batteryManager, WKBatteryStatusRef status)
+{
+#if ENABLE(BATTERY_STATUS)
+    toImpl(batteryManager)->providerUpdateBatteryStatus(toImpl(status));
 #endif
 }

@@ -147,6 +147,7 @@ HEADERS += \
     UIProcess/API/C/WKBackForwardList.h \
     UIProcess/API/C/WKBackForwardListItem.h \
     UIProcess/API/C/WKBatteryManager.h \
+    UIProcess/API/C/WKBatteryStatus.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKCredential.h \
@@ -517,6 +518,7 @@ SOURCES += \
     UIProcess/API/C/WKBackForwardList.cpp \
     UIProcess/API/C/WKBackForwardListItem.cpp \
     UIProcess/API/C/WKBatteryManager.cpp \
+    UIProcess/API/C/WKBatteryStatus.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKCredential.cpp \
     UIProcess/API/C/WKDatabaseManager.cpp \

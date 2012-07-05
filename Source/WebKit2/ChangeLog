@@ -1,3 +1,25 @@
+2012-07-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add C API for Battery Status API
+        https://bugs.webkit.org/show_bug.cgi?id=90545
+
+        Reviewed by Anders Carlsson.
+
+        Add C API for WKBatteryManager and WKBatteryStatus
+        so that clients can support the Battery Status API
+        in WebKit2.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/API/C/WKBatteryManager.cpp:
+        (WKBatteryManagerProviderDidChangeBatteryStatus):
+        (WKBatteryManagerProviderUpdateBatteryStatus):
+        * UIProcess/API/C/WKBatteryStatus.cpp: Copied from Source/WebKit2/UIProcess/API/C/WKBatteryManager.cpp.
+        (WKBatteryStatusGetTypeID):
+        (WKBatteryStatusCreate):
+        * UIProcess/API/C/WKBatteryStatus.h: Copied from Source/WebKit2/UIProcess/API/C/WKBatteryManager.cpp.
+
 2012-07-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r121899.
