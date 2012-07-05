@@ -220,7 +220,9 @@ void ComposedShadowTreeWalker::parent()
     assertPostcondition();
 }
 
-inline Node* ComposedShadowTreeWalker::traverseParent(const Node* node, ParentTranversalDetails* details) const
+// FIXME: Use an iterative algorithm so that it can be inlined.
+// https://bugs.webkit.org/show_bug.cgi?id=90415
+Node* ComposedShadowTreeWalker::traverseParent(const Node* node, ParentTranversalDetails* details) const
 {
     if (!canCrossUpperBoundary() && node->isShadowRoot()) {
         ASSERT(toShadowRoot(node)->isYoungest());
@@ -248,7 +250,7 @@ inline Node* ComposedShadowTreeWalker::traverseParentInCurrentTree(const Node* n
     return 0;
 }
 
-inline Node* ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost(const ShadowRoot* shadowRoot, ParentTranversalDetails* details) const
+Node* ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost(const ShadowRoot* shadowRoot, ParentTranversalDetails* details) const
 {
     ASSERT(shadowRoot);
     if (shadowRoot->isYoungest()) {

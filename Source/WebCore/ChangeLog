@@ -1,3 +1,16 @@
+2012-07-04  Hayato Ito  <hayato@chromium.org>
+
+        Remove inline keywords from functions which can not be inlined in ComposedShadowTreeWalker
+        https://bugs.webkit.org/show_bug.cgi?id=90432
+
+        Reviewed by Hajime Morita.
+
+        No new tests - no functional changes.
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseParent):
+        (WebCore::ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost):
+
 2012-07-04  Luke Macpherson  <macpherson@chromium.org>
 
         Inspector crashes when trying to inspect a page with CSS variables
