@@ -58,7 +58,7 @@ namespace WebCore {
     private:
         StillImage(const QPixmap& pixmap);
         StillImage(const QPixmap* pixmap);
-        ~StillImage();
+        virtual ~StillImage();
         
         const QPixmap* m_pixmap;
         bool m_ownsPixmap;

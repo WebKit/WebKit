@@ -112,7 +112,7 @@ public:
     {
         return adoptRef(new BitmapImage(observer));
     }
-    ~BitmapImage();
+    virtual ~BitmapImage();
     
     virtual bool isBitmapImage() const;
 
