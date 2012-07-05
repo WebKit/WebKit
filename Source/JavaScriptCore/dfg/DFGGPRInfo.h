@@ -384,7 +384,7 @@ private:
 
 #endif
 
-#if CPU(ARM_THUMB2)
+#if CPU(ARM)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4
 
 class GPRInfo {
@@ -410,7 +410,7 @@ public:
     static const GPRReg argumentGPR1 = ARMRegisters::r1; // regT1
     static const GPRReg argumentGPR2 = ARMRegisters::r2; // regT2
     // FIXME: r3 is currently used be the MacroAssembler as a temporary - it seems
-    // This could threoretically be a problem if theis is used in code generation
+    // This could threoretically be a problem if this is used in code generation
     // between the arguments being set up, and the call being made. That said,
     // any change introducing a problem here is likely to be immediately apparent!
     static const GPRReg argumentGPR3 = ARMRegisters::r3; // FIXME!

@@ -1241,7 +1241,7 @@ public:
 
     AssemblerLabel label()
     {
-        m_buffer.ensureSpaceForAnyOneInstruction();
+        m_buffer.ensureSpaceForAnyInstruction();
         return m_buffer.label();
     }
 

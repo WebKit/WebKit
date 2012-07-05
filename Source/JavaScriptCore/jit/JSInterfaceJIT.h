@@ -94,7 +94,7 @@ namespace JSC {
         static const FPRegisterID fpRegT1 = X86Registers::xmm1;
         static const FPRegisterID fpRegT2 = X86Registers::xmm2;
         static const FPRegisterID fpRegT3 = X86Registers::xmm3;
-#elif CPU(ARM_THUMB2)
+#elif CPU(ARM)
         static const RegisterID returnValueRegister = ARMRegisters::r0;
         static const RegisterID cachedResultRegister = ARMRegisters::r0;
         static const RegisterID firstArgumentRegister = ARMRegisters::r0;
@@ -107,35 +107,11 @@ namespace JSC {
         static const RegisterID regT1 = ARMRegisters::r1;
         static const RegisterID regT2 = ARMRegisters::r2;
         static const RegisterID regT3 = ARMRegisters::r4;
-        
+
+        // Update ctiTrampoline in JITStubs.cpp if these values are changed!
         static const RegisterID callFrameRegister = ARMRegisters::r5;
         static const RegisterID timeoutCheckRegister = ARMRegisters::r6;
-        
-        static const FPRegisterID fpRegT0 = ARMRegisters::d0;
-        static const FPRegisterID fpRegT1 = ARMRegisters::d1;
-        static const FPRegisterID fpRegT2 = ARMRegisters::d2;
-        static const FPRegisterID fpRegT3 = ARMRegisters::d3;
-#elif CPU(ARM_TRADITIONAL)
-        static const RegisterID returnValueRegister = ARMRegisters::r0;
-        static const RegisterID cachedResultRegister = ARMRegisters::r0;
-        static const RegisterID firstArgumentRegister = ARMRegisters::r0;
-        
-        static const RegisterID timeoutCheckRegister = ARMRegisters::r5;
-        static const RegisterID callFrameRegister = ARMRegisters::r4;
-        
-        static const RegisterID regT0 = ARMRegisters::r0;
-        static const RegisterID regT1 = ARMRegisters::r1;
-        static const RegisterID regT2 = ARMRegisters::r2;
-        // Callee preserved
-        static const RegisterID regT3 = ARMRegisters::r7;
-        
-        static const RegisterID regS0 = ARMRegisters::S0;
-        // Callee preserved
-        static const RegisterID regS1 = ARMRegisters::S1;
-        
-        static const RegisterID regStackPtr = ARMRegisters::sp;
-        static const RegisterID regLink = ARMRegisters::lr;
-        
+
         static const FPRegisterID fpRegT0 = ARMRegisters::d0;
         static const FPRegisterID fpRegT1 = ARMRegisters::d1;
         static const FPRegisterID fpRegT2 = ARMRegisters::d2;

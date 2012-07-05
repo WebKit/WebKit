@@ -262,86 +262,117 @@ ARMWord ARMAssembler::encodeComplexImm(ARMWord imm, int dest)
 
 // Memory load/store helpers
 
-void ARMAssembler::dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset, bool bytes)
+void ARMAssembler::dataTransfer32(DataTransferTypeA transferType, RegisterID srcDst, RegisterID base, int32_t offset)
 {
-    ARMWord transferFlag = bytes ? DT_BYTE : 0;
     if (offset >= 0) {
         if (offset <= 0xfff)
-            dtr_u(isLoad, srcDst, base, offset | transferFlag);
+            dtr_u(transferType, srcDst, base, offset);
         else if (offset <= 0xfffff) {
             add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | (10 << 8));
-            dtr_u(isLoad, srcDst, ARMRegisters::S0, (offset & 0xfff) | transferFlag);
+            dtr_u(transferType, srcDst, ARMRegisters::S0, (offset & 0xfff));
         } else {
             moveImm(offset, ARMRegisters::S0);
-            dtr_ur(isLoad, srcDst, base, ARMRegisters::S0 | transferFlag);
+            dtr_ur(transferType, srcDst, base, ARMRegisters::S0);
         }
     } else {
         if (offset >= -0xfff)
-            dtr_d(isLoad, srcDst, base, -offset | transferFlag);
+            dtr_d(transferType, srcDst, base, -offset);
         else if (offset >= -0xfffff) {
             sub_r(ARMRegisters::S0, base, OP2_IMM | (-offset >> 12) | (10 << 8));
-            dtr_d(isLoad, srcDst, ARMRegisters::S0, (-offset & 0xfff) | transferFlag);
+            dtr_d(transferType, srcDst, ARMRegisters::S0, (-offset & 0xfff));
         } else {
             moveImm(offset, ARMRegisters::S0);
-            dtr_ur(isLoad, srcDst, base, ARMRegisters::S0 | transferFlag);
+            dtr_ur(transferType, srcDst, base, ARMRegisters::S0);
         }
     }
 }
 
-void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset, bool bytes)
+void ARMAssembler::baseIndexTransfer32(DataTransferTypeA transferType, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset)
 {
-    ARMWord op2;
-    ARMWord transferFlag = bytes ? DT_BYTE : 0;
-
     ASSERT(scale >= 0 && scale <= 3);
-    op2 = lsl(index, scale);
+    ARMWord op2 = lsl(index, scale);
 
-    if (offset >= 0 && offset <= 0xfff) {
-        add_r(ARMRegisters::S0, base, op2);
-        dtr_u(isLoad, srcDst, ARMRegisters::S0, offset | transferFlag);
-        return;
-    }
-    if (offset <= 0 && offset >= -0xfff) {
-        add_r(ARMRegisters::S0, base, op2);
-        dtr_d(isLoad, srcDst, ARMRegisters::S0, (-offset & 0xfff) | transferFlag);
+    if (!offset) {
+        dtr_ur(transferType, srcDst, base, op2);
         return;
     }
 
-    ldr_un_imm(ARMRegisters::S0, offset);
-    add_r(ARMRegisters::S0, ARMRegisters::S0, op2);
-    dtr_ur(isLoad, srcDst, base, ARMRegisters::S0 | transferFlag);
+    add_r(ARMRegisters::S1, base, op2);
+    dataTransfer32(transferType, srcDst, ARMRegisters::S1, offset);
 }
 
-void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset)
+void ARMAssembler::dataTransfer16(DataTransferTypeB transferType, RegisterID srcDst, RegisterID base, int32_t offset)
+{
+    if (offset >= 0) {
+        if (offset <= 0xff)
+            dtrh_u(transferType, srcDst, base, getOp2Half(offset));
+        else if (offset <= 0xffff) {
+            add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 8) | (12 << 8));
+            dtrh_u(transferType, srcDst, ARMRegisters::S0, getOp2Half(offset & 0xff));
+        } else {
+            moveImm(offset, ARMRegisters::S0);
+            dtrh_ur(transferType, srcDst, base, ARMRegisters::S0);
+        }
+    } else {
+        if (offset >= -0xff)
+            dtrh_d(transferType, srcDst, base, getOp2Half(-offset));
+        else if (offset >= -0xffff) {
+            sub_r(ARMRegisters::S0, base, OP2_IMM | (-offset >> 8) | (12 << 8));
+            dtrh_d(transferType, srcDst, ARMRegisters::S0, getOp2Half(-offset & 0xff));
+        } else {
+            moveImm(offset, ARMRegisters::S0);
+            dtrh_ur(transferType, srcDst, base, ARMRegisters::S0);
+        }
+    }
+}
+
+void ARMAssembler::baseIndexTransfer16(DataTransferTypeB transferType, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset)
+{
+    if (!scale && !offset) {
+        dtrh_ur(transferType, srcDst, base, index);
+        return;
+    }
+
+    add_r(ARMRegisters::S1, base, lsl(index, scale));
+    dataTransfer16(transferType, srcDst, ARMRegisters::S1, offset);
+}
+
+void ARMAssembler::dataTransferFloat(DataTransferTypeFloat transferType, FPRegisterID srcDst, RegisterID base, int32_t offset)
 {
     // VFP cannot directly access memory that is not four-byte-aligned
     if (!(offset & 0x3)) {
         if (offset <= 0x3ff && offset >= 0) {
-            fdtr_u(isLoad, srcDst, base, offset >> 2);
+            fdtr_u(transferType, srcDst, base, offset >> 2);
             return;
         }
         if (offset <= 0x3ffff && offset >= 0) {
             add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 10) | (11 << 8));
-            fdtr_u(isLoad, srcDst, ARMRegisters::S0, (offset >> 2) & 0xff);
+            fdtr_u(transferType, srcDst, ARMRegisters::S0, (offset >> 2) & 0xff);
             return;
         }
         offset = -offset;
 
         if (offset <= 0x3ff && offset >= 0) {
-            fdtr_d(isLoad, srcDst, base, offset >> 2);
+            fdtr_d(transferType, srcDst, base, offset >> 2);
             return;
         }
         if (offset <= 0x3ffff && offset >= 0) {
             sub_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 10) | (11 << 8));
-            fdtr_d(isLoad, srcDst, ARMRegisters::S0, (offset >> 2) & 0xff);
+            fdtr_d(transferType, srcDst, ARMRegisters::S0, (offset >> 2) & 0xff);
             return;
         }
         offset = -offset;
     }
 
-    ldr_un_imm(ARMRegisters::S0, offset);
+    moveImm(offset, ARMRegisters::S0);
     add_r(ARMRegisters::S0, ARMRegisters::S0, base);
-    fdtr_u(isLoad, srcDst, ARMRegisters::S0, 0);
+    fdtr_u(transferType, srcDst, ARMRegisters::S0, 0);
+}
+
+void ARMAssembler::baseIndexTransferFloat(DataTransferTypeFloat transferType, FPRegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset)
+{
+    add_r(ARMRegisters::S1, base, lsl(index, scale));
+    dataTransferFloat(transferType, srcDst, ARMRegisters::S1, offset);
 }
 
 PassRefPtr<ExecutableMemoryHandle> ARMAssembler::executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
@@ -361,10 +392,10 @@ PassRefPtr<ExecutableMemoryHandle> ARMAssembler::executableCopy(JSGlobalData& gl
         ARMWord* addr = getLdrImmAddress(ldrAddr);
         if (*addr != InvalidBranchTarget) {
             if (!(iter->m_offset & 1)) {
-                int diff = reinterpret_cast_ptr<ARMWord*>(data + *addr) - (ldrAddr + DefaultPrefetching);
+                intptr_t difference = reinterpret_cast_ptr<ARMWord*>(data + *addr) - (ldrAddr + DefaultPrefetching);
 
-                if ((diff <= BOFFSET_MAX && diff >= BOFFSET_MIN)) {
-                    *ldrAddr = B | getConditionalField(*ldrAddr) | (diff & BRANCH_MASK);
+                if ((difference <= BOFFSET_MAX && difference >= BOFFSET_MIN)) {
+                    *ldrAddr = B | getConditionalField(*ldrAddr) | (difference & BRANCH_MASK);
                     continue;
                 }
             }

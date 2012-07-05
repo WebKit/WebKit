@@ -1,3 +1,15 @@
+2012-07-05  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Port DFG JIT to traditional ARM
+        https://bugs.webkit.org/show_bug.cgi?id=90198
+
+        Reviewed by Filip Pizlo.
+
+        Enabling DFG JIT on ARM systems with 32 bit instruction set.
+
+        * wtf/InlineASM.h:
+        * wtf/Platform.h:
+
 2012-07-04  Andy Wingo  <wingo@igalia.com>
 
         [GTK] Enable parallel GC

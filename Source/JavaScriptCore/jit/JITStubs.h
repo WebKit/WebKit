@@ -190,8 +190,10 @@ namespace JSC {
         void* preservedR4;
         void* preservedR5;
         void* preservedR6;
-        void* preservedR7;
         void* preservedR8;
+        void* preservedR9;
+        void* preservedR10;
+        void* preservedR11;
         void* preservedLink;
 
         RegisterFile* registerFile;

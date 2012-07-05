@@ -906,6 +906,10 @@
 #if CPU(ARM_THUMB2) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY))
 #define ENABLE_DFG_JIT 1
 #endif
+/* Enable the DFG JIT on ARM. */
+#if CPU(ARM_TRADITIONAL)
+#define ENABLE_DFG_JIT 1
+#endif
 #endif
 
 /* Profiling of types and values used by JIT code. DFG_JIT depends on it, but you

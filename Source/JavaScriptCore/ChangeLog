@@ -1,3 +1,158 @@
+2012-07-05  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Port DFG JIT to traditional ARM
+        https://bugs.webkit.org/show_bug.cgi?id=90198
+
+        Reviewed by Filip Pizlo.
+
+        This patch contains the macro assembler part of the
+        DFG JIT support on ARM systems with fixed 32 bit instruction
+        width. A large amount of old code was refactored, and the ARMv4
+        or lower support is removed from the macro assembler.
+
+        Sunspider is improved by 8%, and V8 is 92%.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::dataTransfer32):
+        (JSC::ARMAssembler::baseIndexTransfer32):
+        (JSC):
+        (JSC::ARMAssembler::dataTransfer16):
+        (JSC::ARMAssembler::baseIndexTransfer16):
+        (JSC::ARMAssembler::dataTransferFloat):
+        (JSC::ARMAssembler::baseIndexTransferFloat):
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::ARMAssembler):
+        (JSC::ARMAssembler::emitInst):
+        (JSC::ARMAssembler::vmov_f64_r):
+        (ARMAssembler):
+        (JSC::ARMAssembler::vabs_f64_r):
+        (JSC::ARMAssembler::vneg_f64_r):
+        (JSC::ARMAssembler::ldr_imm):
+        (JSC::ARMAssembler::ldr_un_imm):
+        (JSC::ARMAssembler::dtr_u):
+        (JSC::ARMAssembler::dtr_ur):
+        (JSC::ARMAssembler::dtr_d):
+        (JSC::ARMAssembler::dtr_dr):
+        (JSC::ARMAssembler::dtrh_u):
+        (JSC::ARMAssembler::dtrh_ur):
+        (JSC::ARMAssembler::dtrh_d):
+        (JSC::ARMAssembler::dtrh_dr):
+        (JSC::ARMAssembler::fdtr_u):
+        (JSC::ARMAssembler::fdtr_d):
+        (JSC::ARMAssembler::push_r):
+        (JSC::ARMAssembler::pop_r):
+        (JSC::ARMAssembler::poke_r):
+        (JSC::ARMAssembler::peek_r):
+        (JSC::ARMAssembler::vmov_vfp64_r):
+        (JSC::ARMAssembler::vmov_arm64_r):
+        (JSC::ARMAssembler::vmov_vfp32_r):
+        (JSC::ARMAssembler::vmov_arm32_r):
+        (JSC::ARMAssembler::vcvt_u32_f64_r):
+        (JSC::ARMAssembler::vcvt_f64_f32_r):
+        (JSC::ARMAssembler::vcvt_f32_f64_r):
+        (JSC::ARMAssembler::clz_r):
+        (JSC::ARMAssembler::bkpt):
+        (JSC::ARMAssembler::bx):
+        (JSC::ARMAssembler::blx):
+        (JSC::ARMAssembler::labelIgnoringWatchpoints):
+        (JSC::ARMAssembler::labelForWatchpoint):
+        (JSC::ARMAssembler::label):
+        (JSC::ARMAssembler::getLdrImmAddress):
+        (JSC::ARMAssembler::replaceWithJump):
+        (JSC::ARMAssembler::maxJumpReplacementSize):
+        (JSC::ARMAssembler::getOp2Byte):
+        (JSC::ARMAssembler::getOp2Half):
+        (JSC::ARMAssembler::RM):
+        (JSC::ARMAssembler::RS):
+        (JSC::ARMAssembler::RD):
+        (JSC::ARMAssembler::RN):
+        * assembler/AssemblerBufferWithConstantPool.h:
+        (JSC::AssemblerBufferWithConstantPool::ensureSpaceForAnyInstruction):
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::load32WithUnalignedHalfWords):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::add32):
+        (MacroAssemblerARM):
+        (JSC::MacroAssemblerARM::and32):
+        (JSC::MacroAssemblerARM::lshift32):
+        (JSC::MacroAssemblerARM::mul32):
+        (JSC::MacroAssemblerARM::neg32):
+        (JSC::MacroAssemblerARM::rshift32):
+        (JSC::MacroAssemblerARM::urshift32):
+        (JSC::MacroAssemblerARM::xor32):
+        (JSC::MacroAssemblerARM::load8):
+        (JSC::MacroAssemblerARM::load8Signed):
+        (JSC::MacroAssemblerARM::load16):
+        (JSC::MacroAssemblerARM::load16Signed):
+        (JSC::MacroAssemblerARM::load32):
+        (JSC::MacroAssemblerARM::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM::store32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM::store8):
+        (JSC::MacroAssemblerARM::store16):
+        (JSC::MacroAssemblerARM::store32):
+        (JSC::MacroAssemblerARM::move):
+        (JSC::MacroAssemblerARM::jump):
+        (JSC::MacroAssemblerARM::branchAdd32):
+        (JSC::MacroAssemblerARM::mull32):
+        (JSC::MacroAssemblerARM::branchMul32):
+        (JSC::MacroAssemblerARM::nearCall):
+        (JSC::MacroAssemblerARM::compare32):
+        (JSC::MacroAssemblerARM::test32):
+        (JSC::MacroAssemblerARM::sub32):
+        (JSC::MacroAssemblerARM::call):
+        (JSC::MacroAssemblerARM::loadFloat):
+        (JSC::MacroAssemblerARM::loadDouble):
+        (JSC::MacroAssemblerARM::storeFloat):
+        (JSC::MacroAssemblerARM::storeDouble):
+        (JSC::MacroAssemblerARM::moveDouble):
+        (JSC::MacroAssemblerARM::addDouble):
+        (JSC::MacroAssemblerARM::divDouble):
+        (JSC::MacroAssemblerARM::subDouble):
+        (JSC::MacroAssemblerARM::mulDouble):
+        (JSC::MacroAssemblerARM::absDouble):
+        (JSC::MacroAssemblerARM::negateDouble):
+        (JSC::MacroAssemblerARM::convertInt32ToDouble):
+        (JSC::MacroAssemblerARM::convertFloatToDouble):
+        (JSC::MacroAssemblerARM::convertDoubleToFloat):
+        (JSC::MacroAssemblerARM::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerARM::branchTruncateDoubleToUint32):
+        (JSC::MacroAssemblerARM::truncateDoubleToInt32):
+        (JSC::MacroAssemblerARM::truncateDoubleToUint32):
+        (JSC::MacroAssemblerARM::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerARM::branchDoubleNonZero):
+        (JSC::MacroAssemblerARM::branchDoubleZeroOrNaN):
+        (JSC::MacroAssemblerARM::invert):
+        (JSC::MacroAssemblerARM::replaceWithJump):
+        (JSC::MacroAssemblerARM::maxJumpReplacementSize):
+        (JSC::MacroAssemblerARM::call32):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::label):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::debugCall):
+        (JSC::DFG::AssemblyHelpers::boxDouble):
+        (JSC::DFG::AssemblyHelpers::unboxDouble):
+        * dfg/DFGCCallHelpers.h:
+        (CCallHelpers):
+        (JSC::DFG::CCallHelpers::setupArguments):
+        * dfg/DFGFPRInfo.h:
+        (DFG):
+        * dfg/DFGGPRInfo.h:
+        (DFG):
+        (GPRInfo):
+        * dfg/DFGOperations.cpp:
+        (JSC):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheckSetResult):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        * jit/JITStubs.cpp:
+        (JSC):
+        * jit/JITStubs.h:
+        (JITStackFrame):
+        * jit/JSInterfaceJIT.h:
+        (JSInterfaceJIT):
+
 2012-07-04  Anthony Scian  <ascian@rim.com>
 
         Web Inspector [JSC]: Implement ScriptCallStack::stackTrace

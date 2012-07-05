@@ -434,7 +434,7 @@ public:
     {
         setupTwoStubArgs<FPRInfo::argumentFPR0, FPRInfo::argumentFPR1>(arg1, arg2);
     }
-#else
+#elif CPU(ARM)
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
     {
         assembler().vmov(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, arg1);
@@ -445,6 +445,8 @@ public:
         assembler().vmov(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, arg1);
         assembler().vmov(GPRInfo::argumentGPR2, GPRInfo::argumentGPR3, arg2);
     }
+#else
+#error "DFG JIT not supported on this platform."
 #endif
 
     ALWAYS_INLINE void setupArguments(GPRReg arg1)

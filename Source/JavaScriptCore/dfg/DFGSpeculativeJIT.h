@@ -1723,7 +1723,7 @@ public:
     }
 #endif
     
-#if !defined(NDEBUG) && !CPU(ARM_THUMB2)
+#if !defined(NDEBUG) && !CPU(ARM)
     void prepareForExternalCall()
     {
         for (unsigned i = 0; i < sizeof(void*) / 4; i++)

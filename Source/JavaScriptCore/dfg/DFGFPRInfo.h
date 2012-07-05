@@ -102,7 +102,7 @@ public:
 
 #endif
 
-#if CPU(ARM_THUMB2)
+#if CPU(ARM)
 
 class FPRInfo {
 public:

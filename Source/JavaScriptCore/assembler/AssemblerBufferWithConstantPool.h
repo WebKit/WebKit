@@ -127,9 +127,9 @@ public:
         AssemblerBuffer::ensureSpace(insnSpace);
     }
 
-    void ensureSpaceForAnyOneInstruction()
+    void ensureSpaceForAnyInstruction(int amount = 1)
     {
-        flushIfNoSpaceFor(maxInstructionSize, sizeof(uint64_t));
+        flushIfNoSpaceFor(amount * maxInstructionSize, amount * sizeof(uint64_t));
     }
 
     bool isAligned(int alignment)

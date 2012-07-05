@@ -83,4 +83,10 @@
 #define LOCAL_LABEL_STRING(name) ".L" #name
 #endif
 
+#if CPU(ARM_TRADITIONAL) && (defined(thumb2) || defined(__thumb2__) || defined(__thumb) || defined(__thumb__))
+#define INLINE_ARM_FUNCTION(name) ".thumb" "\n" ".thumb_func " THUMB_FUNC_PARAM(name) "\n"
+#else
+#define INLINE_ARM_FUNCTION(name)
+#endif
+
 #endif // InlineASM_h

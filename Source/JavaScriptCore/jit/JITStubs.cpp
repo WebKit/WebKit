@@ -622,38 +622,46 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #elif COMPILER(GCC) && CPU(ARM_TRADITIONAL)
 
 asm (
+".text" "\n"
 ".globl " SYMBOL_STRING(ctiTrampoline) "\n"
 HIDE_SYMBOL(ctiTrampoline) "\n"
+INLINE_ARM_FUNCTION(ctiTrampoline)
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "stmdb sp!, {r1-r3}" "\n"
-    "stmdb sp!, {r4-r8, lr}" "\n"
+    "stmdb sp!, {r4-r6, r8-r11, lr}" "\n"
     "sub sp, sp, #" STRINGIZE_VALUE_OF(PRESERVEDR4_OFFSET) "\n"
-    "mov r4, r2" "\n"
-    "mov r5, #512" "\n"
+    "mov r5, r2" "\n"
+    "mov r6, #512" "\n"
     // r0 contains the code
-    "mov lr, pc" "\n"
-    "mov pc, r0" "\n"
+    "blx r0" "\n"
     "add sp, sp, #" STRINGIZE_VALUE_OF(PRESERVEDR4_OFFSET) "\n"
-    "ldmia sp!, {r4-r8, lr}" "\n"
+    "ldmia sp!, {r4-r6, r8-r11, lr}" "\n"
     "add sp, sp, #12" "\n"
-    "mov pc, lr" "\n"
+    "bx lr" "\n"
+".globl " SYMBOL_STRING(ctiTrampolineEnd) "\n"
+HIDE_SYMBOL(ctiTrampolineEnd) "\n"
+SYMBOL_STRING(ctiTrampolineEnd) ":" "\n"
 );
 
 asm (
+".text" "\n"
 ".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
 HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
+INLINE_ARM_FUNCTION(ctiVMThrowTrampoline)
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
     "mov r0, sp" "\n"
     "bl " SYMBOL_STRING(cti_vm_throw) "\n"
 
 // Both has the same return sequence
+".text" "\n"
 ".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
 HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
+INLINE_ARM_FUNCTION(ctiOpThrowNotCaught)
 SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "add sp, sp, #" STRINGIZE_VALUE_OF(PRESERVEDR4_OFFSET) "\n"
-    "ldmia sp!, {r4-r8, lr}" "\n"
+    "ldmia sp!, {r4-r6, r8-r11, lr}" "\n"
     "add sp, sp, #12" "\n"
-    "mov pc, lr" "\n"
+    "bx lr" "\n"
 );
 
 #elif COMPILER(RVCT) && CPU(ARM_THUMB2)
@@ -1078,8 +1086,7 @@ template<typename T> static T throwExceptionFromOpCall(JITStackFrame& jitStackFr
         ".align 2" "\n" \
         ".globl " SYMBOL_STRING(cti_##op) "\n" \
         HIDE_SYMBOL(cti_##op) "\n"             \
-        ".thumb" "\n" \
-        ".thumb_func " THUMB_FUNC_PARAM(cti_##op) "\n" \
+        INLINE_ARM_FUNCTION(cti_##op) \
         SYMBOL_STRING(cti_##op) ":" "\n" \
         "str lr, [sp, #" STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "]" "\n" \
         "bl " SYMBOL_STRING(JITStubThunked_##op) "\n" \
@@ -1156,11 +1163,12 @@ template<typename T> static T throwExceptionFromOpCall(JITStackFrame& jitStackFr
     }; \
     asm ( \
         ".globl " SYMBOL_STRING(cti_##op) "\n" \
+        INLINE_ARM_FUNCTION(cti_##op) \
         SYMBOL_STRING(cti_##op) ":" "\n" \
         "str lr, [sp, #" STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "]" "\n" \
         "bl " SYMBOL_STRING(JITStubThunked_##op) "\n" \
         "ldr lr, [sp, #" STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "]" "\n" \
-        "mov pc, lr" "\n" \
+        "bx lr" "\n" \
         ); \
     rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
 

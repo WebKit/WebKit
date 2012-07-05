@@ -41,16 +41,16 @@ namespace JSC {
             r0 = 0,
             r1,
             r2,
-            r3, S0 = r3,
+            r3, S0 = r3, /* Same as thumb assembler. */
             r4,
             r5,
             r6,
             r7,
-            r8, S1 = r8,
+            r8,
             r9,
             r10,
             r11,
-            r12,
+            r12, S1 = r12,
             r13, sp = r13,
             r14, lr = r14,
             r15, pc = r15
@@ -60,11 +60,11 @@ namespace JSC {
             d0,
             d1,
             d2,
-            d3, SD0 = d3,
+            d3,
             d4,
             d5,
             d6,
-            d7,
+            d7, SD0 = d7, /* Same as thumb assembler. */
             d8,
             d9,
             d10,
@@ -100,7 +100,10 @@ namespace JSC {
         typedef AssemblerBufferWithConstantPool<2048, 4, 4, ARMAssembler> ARMBuffer;
         typedef SegmentedVector<AssemblerLabel, 64> Jumps;
 
-        ARMAssembler() { }
+        ARMAssembler()
+            : m_indexOfTailOfLastWatchpoint(1)
+        {
+        }
 
         // ARM conditional constants
         typedef enum {
@@ -141,33 +144,33 @@ namespace JSC {
             MVN = (0xf << 21),
             MUL = 0x00000090,
             MULL = 0x00c00090,
+            VMOV_F64 = 0x0eb00b40,
             VADD_F64 = 0x0e300b00,
             VDIV_F64 = 0x0e800b00,
             VSUB_F64 = 0x0e300b40,
             VMUL_F64 = 0x0e200b00,
             VCMP_F64 = 0x0eb40b40,
             VSQRT_F64 = 0x0eb10bc0,
-            DTR = 0x05000000,
-            LDRH = 0x00100090,
-            STRH = 0x00000090,
+            VABS_F64 = 0x0eb00bc0,
+            VNEG_F64 = 0x0eb10b40,
             STMDB = 0x09200000,
             LDMIA = 0x08b00000,
-            FDTR = 0x0d000b00,
             B = 0x0a000000,
             BL = 0x0b000000,
-#if WTF_ARM_ARCH_AT_LEAST(5) || defined(__ARM_ARCH_4T__)
             BX = 0x012fff10,
-#endif
-            VMOV_VFP = 0x0e000a10,
-            VMOV_ARM = 0x0e100a10,
+            VMOV_VFP64 = 0x0c400a10,
+            VMOV_ARM64 = 0x0c500a10,
+            VMOV_VFP32 = 0x0e000a10,
+            VMOV_ARM32 = 0x0e100a10,
             VCVT_F64_S32 = 0x0eb80bc0,
             VCVT_S32_F64 = 0x0ebd0b40,
+            VCVT_U32_F64 = 0x0ebc0b40,
+            VCVT_F32_F64 = 0x0eb70bc0,
+            VCVT_F64_F32 = 0x0eb70ac0,
             VMRS_APSR = 0x0ef1fa10,
-#if WTF_ARM_ARCH_AT_LEAST(5)
             CLZ = 0x016f0f10,
             BKPT = 0xe1200070,
             BLX = 0x012fff30,
-#endif
 #if WTF_ARM_ARCH_AT_LEAST(7)
             MOVW = 0x03000000,
             MOVT = 0x03400000,
@@ -177,17 +180,37 @@ namespace JSC {
 
         enum {
             OP2_IMM = (1 << 25),
-            OP2_IMMh = (1 << 22),
+            OP2_IMM_HALF = (1 << 22),
             OP2_INV_IMM = (1 << 26),
             SET_CC = (1 << 20),
             OP2_OFSREG = (1 << 25),
+            // Data transfer flags.
             DT_UP = (1 << 23),
-            DT_BYTE = (1 << 22),
             DT_WB = (1 << 21),
-            // This flag is inlcuded in LDR and STR
             DT_PRE = (1 << 24),
-            HDT_UH = (1 << 5),
             DT_LOAD = (1 << 20),
+            DT_BYTE = (1 << 22),
+        };
+
+        enum DataTransferTypeA {
+            LoadUint32 = 0x05000000 | DT_LOAD,
+            LoadUint8 = 0x05400000 | DT_LOAD,
+            StoreUint32 = 0x05000000,
+            StoreUint8 = 0x05400000,
+        };
+
+        enum DataTransferTypeB {
+            LoadUint16 = 0x010000b0 | DT_LOAD,
+            LoadInt16 = 0x010000f0 | DT_LOAD,
+            LoadInt8 = 0x010000d0 | DT_LOAD,
+            StoreUint16 = 0x010000b0,
+        };
+
+        enum DataTransferTypeFloat {
+            LoadFloat = 0x0d000a00 | DT_LOAD,
+            LoadDouble = 0x0d000b00 | DT_LOAD,
+            StoreFloat = 0x0d000a00,
+            StoreDouble = 0x0d000b00,
         };
 
         // Masks of ARM instructions
@@ -218,7 +241,7 @@ namespace JSC {
 
         void emitInst(ARMWord op, int rd, int rn, ARMWord op2)
         {
-            ASSERT(((op2 & ~OP2_IMM) <= 0xfff) || (((op2 & ~OP2_IMMh) <= 0xfff)));
+            ASSERT(((op2 & ~OP2_IMM) <= 0xfff) || (((op2 & ~OP2_IMM_HALF) <= 0xfff)));
             m_buffer.putInt(op | RN(rn) | RD(rd) | op2);
         }
 
@@ -407,6 +430,11 @@ namespace JSC {
             m_buffer.putInt(static_cast<ARMWord>(cc) | MULL | RN(rdhi) | RD(rdlo) | RS(rn) | RM(rm));
         }
 
+        void vmov_f64_r(int dd, int dm, Condition cc = AL)
+        {
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VMOV_F64, dd, 0, dm);
+        }
+
         void vadd_f64_r(int dd, int dn, int dm, Condition cc = AL)
         {
             emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VADD_F64, dd, dn, dm);
@@ -437,100 +465,124 @@ namespace JSC {
             emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VSQRT_F64, dd, 0, dm);
         }
 
+        void vabs_f64_r(int dd, int dm, Condition cc = AL)
+        {
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VABS_F64, dd, 0, dm);
+        }
+
+        void vneg_f64_r(int dd, int dm, Condition cc = AL)
+        {
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VNEG_F64, dd, 0, dm);
+        }
+
         void ldr_imm(int rd, ARMWord imm, Condition cc = AL)
         {
-            m_buffer.putIntWithConstantInt(static_cast<ARMWord>(cc) | DTR | DT_LOAD | DT_UP | RN(ARMRegisters::pc) | RD(rd), imm, true);
+            m_buffer.putIntWithConstantInt(static_cast<ARMWord>(cc) | LoadUint32 | DT_UP | RN(ARMRegisters::pc) | RD(rd), imm, true);
         }
 
         void ldr_un_imm(int rd, ARMWord imm, Condition cc = AL)
         {
-            m_buffer.putIntWithConstantInt(static_cast<ARMWord>(cc) | DTR | DT_LOAD | DT_UP | RN(ARMRegisters::pc) | RD(rd), imm);
+            m_buffer.putIntWithConstantInt(static_cast<ARMWord>(cc) | LoadUint32 | DT_UP | RN(ARMRegisters::pc) | RD(rd), imm);
         }
 
-        void dtr_u(bool isLoad, int rd, int rb, ARMWord op2, Condition cc = AL)
+        void dtr_u(DataTransferTypeA transferType, int rd, int rb, ARMWord op2, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | DTR | (isLoad ? DT_LOAD : 0) | DT_UP, rd, rb, op2);
+            emitInst(static_cast<ARMWord>(cc) | transferType | DT_UP, rd, rb, op2);
         }
 
-        void dtr_ur(bool isLoad, int rd, int rb, int rm, Condition cc = AL)
+        void dtr_ur(DataTransferTypeA transferType, int rd, int rb, int rm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | DTR | (isLoad ? DT_LOAD : 0) | DT_UP | OP2_OFSREG, rd, rb, rm);
+            emitInst(static_cast<ARMWord>(cc) | transferType | DT_UP | OP2_OFSREG, rd, rb, rm);
         }
 
-        void dtr_d(bool isLoad, int rd, int rb, ARMWord op2, Condition cc = AL)
+        void dtr_d(DataTransferTypeA transferType, int rd, int rb, ARMWord op2, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | DTR | (isLoad ? DT_LOAD : 0), rd, rb, op2);
+            emitInst(static_cast<ARMWord>(cc) | transferType, rd, rb, op2);
         }
 
-        void dtr_dr(bool isLoad, int rd, int rb, int rm, Condition cc = AL)
+        void dtr_dr(DataTransferTypeA transferType, int rd, int rb, int rm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | DTR | (isLoad ? DT_LOAD : 0) | OP2_OFSREG, rd, rb, rm);
+            emitInst(static_cast<ARMWord>(cc) | transferType | OP2_OFSREG, rd, rb, rm);
         }
 
-        void ldrh_r(int rd, int rn, int rm, Condition cc = AL)
+        void dtrh_u(DataTransferTypeB transferType, int rd, int rb, ARMWord op2, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | LDRH | HDT_UH | DT_UP | DT_PRE, rd, rn, rm);
+            emitInst(static_cast<ARMWord>(cc) | transferType | DT_UP, rd, rb, op2);
         }
 
-        void ldrh_d(int rd, int rb, ARMWord op2, Condition cc = AL)
+        void dtrh_ur(DataTransferTypeB transferType, int rd, int rn, int rm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | LDRH | HDT_UH | DT_PRE, rd, rb, op2);
+            emitInst(static_cast<ARMWord>(cc) | transferType | DT_UP, rd, rn, rm);
         }
 
-        void ldrh_u(int rd, int rb, ARMWord op2, Condition cc = AL)
+        void dtrh_d(DataTransferTypeB transferType, int rd, int rb, ARMWord op2, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | LDRH | HDT_UH | DT_UP | DT_PRE, rd, rb, op2);
+            emitInst(static_cast<ARMWord>(cc) | transferType, rd, rb, op2);
         }
 
-        void strh_r(int rn, int rm, int rd, Condition cc = AL)
+        void dtrh_dr(DataTransferTypeB transferType, int rd, int rn, int rm, Condition cc = AL)
         {
-            emitInst(static_cast<ARMWord>(cc) | STRH | HDT_UH | DT_UP | DT_PRE, rd, rn, rm);
+            emitInst(static_cast<ARMWord>(cc) | transferType, rd, rn, rm);
         }
 
-        void fdtr_u(bool isLoad, int rd, int rb, ARMWord op2, Condition cc = AL)
+        void fdtr_u(DataTransferTypeFloat type, int rd, int rb, ARMWord op2, Condition cc = AL)
         {
-            ASSERT(op2 <= 0xff);
-            emitInst(static_cast<ARMWord>(cc) | FDTR | DT_UP | (isLoad ? DT_LOAD : 0), rd, rb, op2);
+            ASSERT(op2 <= 0xff && rd <= 15);
+            /* Only d0-d15 and s0, s2, s4 ... s30 are supported. */
+            m_buffer.putInt(static_cast<ARMWord>(cc) | DT_UP | type | (rd << 12) | RN(rb) | op2);
         }
 
-        void fdtr_d(bool isLoad, int rd, int rb, ARMWord op2, Condition cc = AL)
+        void fdtr_d(DataTransferTypeFloat type, int rd, int rb, ARMWord op2, Condition cc = AL)
         {
-            ASSERT(op2 <= 0xff);
-            emitInst(static_cast<ARMWord>(cc) | FDTR | (isLoad ? DT_LOAD : 0), rd, rb, op2);
+            ASSERT(op2 <= 0xff && rd <= 15);
+            /* Only d0-d15 and s0, s2, s4 ... s30 are supported. */
+            m_buffer.putInt(static_cast<ARMWord>(cc) | type | (rd << 12) | RN(rb) | op2);
         }
 
         void push_r(int reg, Condition cc = AL)
         {
             ASSERT(ARMWord(reg) <= 0xf);
-            m_buffer.putInt(cc | DTR | DT_WB | RN(ARMRegisters::sp) | RD(reg) | 0x4);
+            m_buffer.putInt(static_cast<ARMWord>(cc) | StoreUint32 | DT_WB | RN(ARMRegisters::sp) | RD(reg) | 0x4);
         }
 
         void pop_r(int reg, Condition cc = AL)
         {
             ASSERT(ARMWord(reg) <= 0xf);
-            m_buffer.putInt(cc | (DTR ^ DT_PRE) | DT_LOAD | DT_UP | RN(ARMRegisters::sp) | RD(reg) | 0x4);
+            m_buffer.putInt(static_cast<ARMWord>(cc) | (LoadUint32 ^ DT_PRE) | DT_UP | RN(ARMRegisters::sp) | RD(reg) | 0x4);
         }
 
         inline void poke_r(int reg, Condition cc = AL)
         {
-            dtr_d(false, ARMRegisters::sp, 0, reg, cc);
+            dtr_d(StoreUint32, ARMRegisters::sp, 0, reg, cc);
         }
 
         inline void peek_r(int reg, Condition cc = AL)
         {
-            dtr_u(true, reg, ARMRegisters::sp, 0, cc);
+            dtr_u(LoadUint32, reg, ARMRegisters::sp, 0, cc);
         }
 
-        void vmov_vfp_r(int sn, int rt, Condition cc = AL)
+        void vmov_vfp64_r(int sm, int rt, int rt2, Condition cc = AL)
         {
-            ASSERT(rt <= 15);
-            emitSinglePrecisionInst(static_cast<ARMWord>(cc) | VMOV_VFP, rt << 1, sn, 0);
+            ASSERT(rt != rt2);
+            m_buffer.putInt(static_cast<ARMWord>(cc) | VMOV_VFP64 | RN(rt2) | RD(rt) | (sm & 0xf) | ((sm & 0x10) << (5 - 4)));
         }
 
-        void vmov_arm_r(int rt, int sn, Condition cc = AL)
+        void vmov_arm64_r(int rt, int rt2, int sm, Condition cc = AL)
+        {
+            ASSERT(rt != rt2);
+            m_buffer.putInt(static_cast<ARMWord>(cc) | VMOV_ARM64 | RN(rt2) | RD(rt) | (sm & 0xf) | ((sm & 0x10) << (5 - 4)));
+        }
+
+        void vmov_vfp32_r(int sn, int rt, Condition cc = AL)
         {
             ASSERT(rt <= 15);
-            emitSinglePrecisionInst(static_cast<ARMWord>(cc) | VMOV_ARM, rt << 1, sn, 0);
+            emitSinglePrecisionInst(static_cast<ARMWord>(cc) | VMOV_VFP32, rt << 1, sn, 0);
+        }
+
+        void vmov_arm32_r(int rt, int sn, Condition cc = AL)
+        {
+            ASSERT(rt <= 15);
+            emitSinglePrecisionInst(static_cast<ARMWord>(cc) | VMOV_ARM32, rt << 1, sn, 0);
         }
 
         void vcvt_f64_s32_r(int dd, int sm, Condition cc = AL)
@@ -545,26 +597,37 @@ namespace JSC {
             emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VCVT_S32_F64, (sd >> 1), 0, dm);
         }
 
+        void vcvt_u32_f64_r(int sd, int dm, Condition cc = AL)
+        {
+            ASSERT(!(sd & 0x1)); // sd must be divisible by 2
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VCVT_U32_F64, (sd >> 1), 0, dm);
+        }
+
+        void vcvt_f64_f32_r(int dd, int sm, Condition cc = AL)
+        {
+            ASSERT(dd <= 15 && sm <= 15);
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VCVT_F64_F32, dd, 0, sm);
+        }
+
+        void vcvt_f32_f64_r(int dd, int sm, Condition cc = AL)
+        {
+            ASSERT(dd <= 15 && sm <= 15);
+            emitDoublePrecisionInst(static_cast<ARMWord>(cc) | VCVT_F32_F64, dd, 0, sm);
+        }
+
         void vmrs_apsr(Condition cc = AL)
         {
             m_buffer.putInt(static_cast<ARMWord>(cc) | VMRS_APSR);
         }
 
-#if WTF_ARM_ARCH_AT_LEAST(5)
         void clz_r(int rd, int rm, Condition cc = AL)
         {
             m_buffer.putInt(static_cast<ARMWord>(cc) | CLZ | RD(rd) | RM(rm));
         }
-#endif
 
         void bkpt(ARMWord value)
         {
-#if WTF_ARM_ARCH_AT_LEAST(5)
             m_buffer.putInt(BKPT | ((value & 0xff0) << 4) | (value & 0xf));
-#else
-            // Cannot access to Zero memory address
-            dtr_dr(true, ARMRegisters::S0, ARMRegisters::S0, ARMRegisters::S0);
-#endif
         }
 
         void nop()
@@ -574,23 +637,12 @@ namespace JSC {
 
         void bx(int rm, Condition cc = AL)
         {
-#if WTF_ARM_ARCH_AT_LEAST(5) || defined(__ARM_ARCH_4T__)
             emitInst(static_cast<ARMWord>(cc) | BX, 0, 0, RM(rm));
-#else
-            mov_r(ARMRegisters::pc, RM(rm), cc);
-#endif
         }
 
         AssemblerLabel blx(int rm, Condition cc = AL)
         {
-#if WTF_ARM_ARCH_AT_LEAST(5)
             emitInst(static_cast<ARMWord>(cc) | BLX, 0, 0, RM(rm));
-#else
-            ASSERT(rm != 14);
-            ensureSpace(2 * sizeof(ARMWord), 0);
-            mov_r(ARMRegisters::lr, ARMRegisters::pc, cc);
-            bx(rm, cc);
-#endif
             return m_buffer.label();
         }
 
@@ -653,10 +705,31 @@ namespace JSC {
             return m_buffer.sizeOfConstantPool();
         }
 
+        AssemblerLabel labelIgnoringWatchpoints()
+        {
+            m_buffer.ensureSpaceForAnyInstruction();
+            return m_buffer.label();
+        }
+
+        AssemblerLabel labelForWatchpoint()
+        {
+            m_buffer.ensureSpaceForAnyInstruction(maxJumpReplacementSize() / sizeof(ARMWord));
+            AssemblerLabel result = m_buffer.label();
+            if (result.m_offset != (m_indexOfTailOfLastWatchpoint - maxJumpReplacementSize()))
+                result = label();
+            m_indexOfTailOfLastWatchpoint = result.m_offset + maxJumpReplacementSize();
+            return label();
+        }
+
         AssemblerLabel label()
         {
-            m_buffer.ensureSpaceForAnyOneInstruction();
-            return m_buffer.label();
+            AssemblerLabel result = labelIgnoringWatchpoints();
+            while (result.m_offset + 1 < m_indexOfTailOfLastWatchpoint) {
+                nop();
+                // The available number of instructions are ensured by labelForWatchpoint.
+                result = m_buffer.label();
+            }
+            return result;
         }
 
         AssemblerLabel align(int alignment)
@@ -684,18 +757,28 @@ namespace JSC {
 
         unsigned debugOffset() { return m_buffer.debugOffset(); }
 
+        // DFG assembly helpers for moving data between fp and registers.
+        void vmov(RegisterID rd1, RegisterID rd2, FPRegisterID rn)
+        {
+            vmov_arm64_r(rd1, rd2, rn);
+        }
+
+        void vmov(FPRegisterID rd, RegisterID rn1, RegisterID rn2)
+        {
+            vmov_vfp64_r(rd, rn1, rn2);
+        }
+
         // Patching helpers
 
         static ARMWord* getLdrImmAddress(ARMWord* insn)
         {
-#if WTF_ARM_ARCH_AT_LEAST(5)
             // Check for call
             if ((*insn & 0x0f7f0000) != 0x051f0000) {
                 // Must be BLX
                 ASSERT((*insn & 0x012fff30) == 0x012fff30);
                 insn--;
             }
-#endif
+
             // Must be an ldr ..., [pc +/- imm]
             ASSERT((*insn & 0x0f7f0000) == 0x051f0000);
 
@@ -799,6 +882,32 @@ namespace JSC {
             return reinterpret_cast<void*>(readPointer(reinterpret_cast<void*>(getAbsoluteJumpAddress(from))));
         }
 
+        static void replaceWithJump(void* instructionStart, void* to)
+        {
+            ARMWord* instruction = reinterpret_cast<ARMWord*>(instructionStart) - 1;
+            intptr_t difference = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(instruction) + DefaultPrefetching * sizeof(ARMWord));
+
+            if (!(difference & 1)) {
+                difference >>= 2;
+                if ((difference <= BOFFSET_MAX && difference >= BOFFSET_MIN)) {
+                     // Direct branch.
+                     instruction[0] = B | AL | (difference & BRANCH_MASK);
+                     cacheFlush(instruction, sizeof(ARMWord));
+                     return;
+                }
+            }
+
+            // Load target.
+            instruction[0] = LoadUint32 | AL | RN(ARMRegisters::pc) | RD(ARMRegisters::pc) | 4;
+            instruction[1] = reinterpret_cast<ARMWord>(to);
+            cacheFlush(instruction, sizeof(ARMWord) * 2);
+        }
+
+        static ptrdiff_t maxJumpReplacementSize()
+        {
+            return sizeof(ARMWord) * 2;
+        }
+
         // Address operations
 
         static void* getRelocatedAddress(void* code, AssemblerLabel label)
@@ -820,13 +929,20 @@ namespace JSC {
 
         // Handle immediates
 
+        static ARMWord getOp2(ARMWord imm);
+
+        // Fast case if imm is known to be between 0 and 0xff
         static ARMWord getOp2Byte(ARMWord imm)
         {
             ASSERT(imm <= 0xff);
-            return OP2_IMMh | (imm & 0x0f) | ((imm & 0xf0) << 4) ;
+            return OP2_IMM | imm;
         }
 
-        static ARMWord getOp2(ARMWord imm);
+        static ARMWord getOp2Half(ARMWord imm)
+        {
+            ASSERT(imm <= 0xff);
+            return OP2_IMM_HALF | (imm & 0x0f) | ((imm & 0xf0) << 4);
+        }
 
 #if WTF_ARM_ARCH_AT_LEAST(7)
         static ARMWord getImm16Op2(ARMWord imm)
@@ -840,20 +956,14 @@ namespace JSC {
         void moveImm(ARMWord imm, int dest);
         ARMWord encodeComplexImm(ARMWord imm, int dest);
 
-        ARMWord getOffsetForHalfwordDataTransfer(ARMWord imm, int tmpReg)
-        {
-            // Encode immediate data in the instruction if it is possible
-            if (imm <= 0xff)
-                return getOp2Byte(imm);
-            // Otherwise, store the data in a temporary register
-            return encodeComplexImm(imm, tmpReg);
-        }
-
         // Memory load/store helpers
 
-        void dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset, bool bytes = false);
-        void baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset, bool bytes = false);
-        void doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset);
+        void dataTransfer32(DataTransferTypeA, RegisterID srcDst, RegisterID base, int32_t offset);
+        void baseIndexTransfer32(DataTransferTypeA, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset);
+        void dataTransfer16(DataTransferTypeB, RegisterID srcDst, RegisterID base, int32_t offset);
+        void baseIndexTransfer16(DataTransferTypeB, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset);
+        void dataTransferFloat(DataTransferTypeFloat, FPRegisterID srcDst, RegisterID base, int32_t offset);
+        void baseIndexTransferFloat(DataTransferTypeFloat, FPRegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset);
 
         // Constant pool hnadlers
 
@@ -901,25 +1011,25 @@ namespace JSC {
 #endif
 
     private:
-        ARMWord RM(int reg)
+        static ARMWord RM(int reg)
         {
             ASSERT(reg <= ARMRegisters::pc);
             return reg;
         }
 
-        ARMWord RS(int reg)
+        static ARMWord RS(int reg)
         {
             ASSERT(reg <= ARMRegisters::pc);
             return reg << 8;
         }
 
-        ARMWord RD(int reg)
+        static ARMWord RD(int reg)
         {
             ASSERT(reg <= ARMRegisters::pc);
             return reg << 12;
         }
 
-        ARMWord RN(int reg)
+        static ARMWord RN(int reg)
         {
             ASSERT(reg <= ARMRegisters::pc);
             return reg << 16;
@@ -934,6 +1044,7 @@ namespace JSC {
 
         ARMBuffer m_buffer;
         Jumps m_jumps;
+        uint32_t m_indexOfTailOfLastWatchpoint;
     };
 
 } // namespace JSC
