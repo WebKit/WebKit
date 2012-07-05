@@ -1,3 +1,14 @@
+2012-07-05  Filip Pizlo  <fpizlo@apple.com>
+
+        INLINE_ARM_FUNCTION(thingy) should make thingy be thumb2 if we're using thumb2
+        https://bugs.webkit.org/show_bug.cgi?id=90644
+
+        Reviewed by Mark Hahnenberg.
+        
+        Fix breakage introduced in http://trac.webkit.org/changeset/121885
+
+        * wtf/InlineASM.h:
+
 2012-07-05  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Port DFG JIT to traditional ARM
