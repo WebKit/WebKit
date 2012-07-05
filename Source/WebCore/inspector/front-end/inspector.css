@@ -263,63 +263,49 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     border-radius: 5px;
 }
 
-#toolbar-search-item {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: end;
-}
-
 #search {
     width: 205px;
-    font-size: 16px;
+    margin-left: 4px;
+    margin-right: 4px;
+    font-size: 11px;
 }
 
-.with-navigation-buttons #search {
-    width: 165px;
-}
-
-.toolbar-search-navigation-label {
-    display: none;
+.toolbar-search-navigation {
+    width: 16px;
+    height: 16px;
+    position: relative;
+    top: 4px;
+    margin: 0px 1px;
+    background-repeat: no-repeat;
+    display: inline-block;
+    background-position: 2px 5px;
     border: 1px solid transparent;
-    border-radius: 2px;
-    padding: 3px;
-    margin-left: 2px;
-    width: 18px;
-    height: 18px;
-    float: right;
 }
 
-.with-navigation-buttons .toolbar-search-navigation-label {
-    display: block;
-}
-
-.toolbar-search-navigation-label:hover {
+.toolbar-search-navigation:hover {
     border: 1px solid rgba(120, 120, 120, 0.6);    
 }
 
-.toolbar-search-navigation-icon-prev , .toolbar-search-navigation-icon-next {
-    width: 9px;
-    margin-top: 2px;
-    height: 100%;
-    background-repeat: no-repeat;
-}
-
-.toolbar-search-navigation-icon-prev {
+.toolbar-search-navigation.toolbar-search-navigation-prev {
     background-image: url(Images/searchPrev.png);
 }
 
-.toolbar-search-navigation-icon-next {
+.toolbar-search-navigation.toolbar-search-navigation-next {
     background-image: url(Images/searchNext.png);
+}
+
+.toolbar-search-navigation-hidden {
+    background: none;
 }
 
 body.compact #search {
     font-size: 11px;
 }
 
-#search-results-matches {
+.search-results-matches {
     font-size: 11px;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+    padding-left: 4px;
 }
 
 .toolbar-item.elements .toolbar-icon {
@@ -2427,7 +2413,7 @@ body.platform-mac .soft-context-menu-item-mouse-over {
 }
 
 .search-drawer-header input[type="search"].search-config-search {
-	font-size: 11px;
+    font-size: 11px;
     margin-left: 4px;
     color: #303030;
     position: relative;
@@ -2777,4 +2763,18 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
 
 #console-context {
     max-width: 200px;
+}
+
+.inspector-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 11px;
+    padding-left: 7px;
+    padding-bottom: 7px;
+}
+
+.inspector-footer > div {
+    vertical-align: middle;
 }

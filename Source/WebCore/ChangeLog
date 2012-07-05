@@ -1,3 +1,50 @@
+2012-07-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: move search field to the bottom of the page.
+        https://bugs.webkit.org/show_bug.cgi?id=90610
+
+        Reviewed by Vsevolod Vlasov.
+
+        This is the first step in the Search/replace implementation. This change moves search
+        field from the inspector toolbar to the inspector view footer that is visible upon Cmd/Ctrl+F.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/InspectorView.js:
+        (WebInspector.InspectorView):
+        (WebInspector.InspectorView.prototype._pushToHistory):
+        (WebInspector.InspectorView.prototype.panelsElement):
+        (WebInspector.InspectorView.prototype.setFooterElement):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.show):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._reset):
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController):
+        (WebInspector.SearchController.prototype.updateSearchLabel):
+        (WebInspector.SearchController.prototype.cancelSearch):
+        (WebInspector.SearchController.prototype._updateSearchNavigationButtonState):
+        (WebInspector.SearchController.prototype.focusSearchField):
+        (WebInspector.SearchController.prototype._onKeyDown):
+        (WebInspector.SearchController.prototype._onNextButtonSearch):
+        (WebInspector.SearchController.prototype._onPrevButtonSearch):
+        (WebInspector.SearchController.prototype._performSearch):
+        * inspector/front-end/inspector.css:
+        (#search):
+        (.toolbar-search-container):
+        (.toolbar-search-navigation):
+        (.toolbar-search-navigation:hover):
+        (.toolbar-search-navigation.toolbar-search-navigation-prev):
+        (.toolbar-search-navigation.toolbar-search-navigation-next):
+        (.toolbar-search-navigation-hidden):
+        (.status-bar):
+        (.search-drawer-header input[type="search"].search-config-search):
+        (.inspector-footer):
+        (.inspector-footer > div):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.get _setCompactMode):
+        (WebInspector.postDocumentKeyDown):
+
 2012-07-05  Sergey Rogulenko  <rogulenko@google.com>
 
         Web Inspector: added low-level instrumentation support for TimelineAgent

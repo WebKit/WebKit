@@ -261,9 +261,6 @@ var WebInspector = {
         if (WebInspector.toolbar)
             WebInspector.toolbar.compact = x;
 
-        if (WebInspector.searchController)
-            WebInspector.searchController.updateSearchLabel();
-
         if (WebInspector.drawer)
             WebInspector.drawer.resize();
     },
@@ -819,7 +816,7 @@ WebInspector.postDocumentKeyDown = function(event)
     if (event.handled)
         return;
 
-    if (event.keyIdentifier === "U+001B") { // Escape key
+    if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
         // If drawer is open with some view other than console then close it.
         if (!this._toggleConsoleButton.toggled && WebInspector.drawer.visible)
             this.closeViewInDrawer();

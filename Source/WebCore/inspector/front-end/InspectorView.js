@@ -51,6 +51,8 @@ WebInspector.InspectorView = function()
     // Windows and Mac have two different definitions of ']', so accept both.
     this._closeBracketIdentifiers = ["U+005D", "U+00DD"].keySet();
     this._closeBracketCharCode = "]".charCodeAt(0);
+    this._footerElementContainer = this.element.createChild("div", "inspector-footer status-bar hidden");
+    this._panelsElement = this.element.createChild("div", "fill");
 }
 
 WebInspector.InspectorView.Events = {
@@ -190,6 +192,28 @@ WebInspector.InspectorView.prototype = {
         if (!this._history.length || this._history[this._history.length - 1] !== panelName)
             this._history.push(panelName);
         this._historyIterator = this._history.length - 1;
+    },
+
+    panelsElement: function()
+    {
+        return this._panelsElement;
+    },
+
+    /**
+     * @param {Element?} element
+     */
+    setFooterElement: function(element)
+    {
+        if (element) {
+            this._footerElementContainer.removeStyleClass("hidden");
+            this._footerElementContainer.appendChild(element);
+            this._panelsElement.style.bottom = this._footerElementContainer.offsetHeight + "px";
+        } else {
+            this._footerElementContainer.addStyleClass("hidden");
+            this._footerElementContainer.removeChildren();
+            this._panelsElement.style.bottom = 0;
+        }
+        this.doResize();
     }
 }
 
