@@ -1,3 +1,16 @@
+2012-07-04  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tools] webkit_unittest.py got assertion
+        https://bugs.webkit.org/show_bug.cgi?id=90579
+
+        Reviewed by Hajime Morita.
+
+        This patch updates expectation of assertion in test_skipped_directories_for_symbols().
+        r121874 added new (exclude) directory (inspector/styles/variables), however it didn't
+        update one of two assertions.
+
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2012-07-04  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         webkit-patch should add reviewer if "Reviewed by NOBODY ..." is missing
