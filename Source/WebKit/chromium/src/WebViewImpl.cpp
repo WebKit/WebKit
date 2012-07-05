@@ -164,6 +164,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/Uint8ClampedArray.h>
 
 #if ENABLE(GESTURE_EVENTS)
@@ -1760,7 +1761,7 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
     if (m_ignoreInputEvents)
         return false;
 
-    m_currentInputEvent = &inputEvent;
+    TemporaryChange<const WebInputEvent*>(m_currentInputEvent, &inputEvent);
 
 #if ENABLE(POINTER_LOCK)
     if (isPointerLocked() && WebInputEvent::isMouseEventType(inputEvent.type)) {
@@ -1798,12 +1799,10 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
         node->dispatchMouseEvent(
               PlatformMouseEventBuilder(mainFrameImpl()->frameView(), *static_cast<const WebMouseEvent*>(&inputEvent)),
               eventType, static_cast<const WebMouseEvent*>(&inputEvent)->clickCount);
-        m_currentInputEvent = 0;
         return true;
     }
 
     bool handled = PageWidgetDelegate::handleInputEvent(m_page.get(), *this, inputEvent);
-    m_currentInputEvent = 0;
     return handled;
 }
 

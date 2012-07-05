@@ -1,3 +1,16 @@
+2012-07-05  Vincent Scheib  <scheib@chromium.org>
+
+        [Chromium] Clear m_currentInputEvent after handled by pointerLockMouseEvent().
+        https://bugs.webkit.org/show_bug.cgi?id=90391
+
+        Test that reproduces bug 90391:
+        Enable pointer lock, receive mouse move, call window.open, don't crash.
+
+        Reviewed by Abhishek Arya.
+
+        * pointer-lock/bug90391-move-then-window-open-crash-expected.txt: Added.
+        * pointer-lock/bug90391-move-then-window-open-crash.html: Added.
+
 2012-07-05  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add test framework and simple test.

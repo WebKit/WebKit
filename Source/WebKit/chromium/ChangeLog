@@ -1,3 +1,18 @@
+2012-07-05  Vincent Scheib  <scheib@chromium.org>
+
+        [Chromium] Clear m_currentInputEvent after handled by pointerLockMouseEvent().
+        https://bugs.webkit.org/show_bug.cgi?id=90391
+
+        WebViewImpl::handleInputEvent was keeping a pointer to an input event that would
+        later be accessed. When in pointer lock, that pointer was not being cleared.
+        Code modified to use TemporaryChange to automatically clear the pointer at all
+        method exit points.
+
+        Reviewed by Abhishek Arya.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+
 2012-07-05  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add test framework and simple test.
