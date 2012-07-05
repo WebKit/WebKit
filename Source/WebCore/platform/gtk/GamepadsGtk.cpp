@@ -30,12 +30,14 @@
 
 #include "GamepadDeviceLinux.h"
 #include "GamepadList.h"
+#include "Logging.h"
 #include <gio/gunixinputstream.h>
 #include <gudev/gudev.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -138,6 +140,7 @@ GamepadsGtk::~GamepadsGtk()
 
 void GamepadsGtk::registerDevice(String deviceFile)
 {
+    LOG(Gamepad, "GamepadsGtk::registerDevice %s", deviceFile.ascii().data());
     ASSERT(!m_deviceMap.contains(deviceFile));
 
     for (unsigned index = 0; index < m_slots.size(); index++) {
@@ -151,6 +154,7 @@ void GamepadsGtk::registerDevice(String deviceFile)
 
 void GamepadsGtk::unregisterDevice(String deviceFile)
 {
+    LOG(Gamepad, "GamepadsGtk::unregisterDevice %s", deviceFile.ascii().data());
     ASSERT(m_deviceMap.contains(deviceFile));
 
     GamepadDeviceGtk* gamepadDevice = m_deviceMap.take(deviceFile);

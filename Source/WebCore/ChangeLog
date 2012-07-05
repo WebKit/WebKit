@@ -1,3 +1,25 @@
+2012-07-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Add Gamepad logging channel
+        https://bugs.webkit.org/show_bug.cgi?id=90570
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new logging channel for logging significant
+        events that are related to Gamepad API implementation.
+
+        No new tests - no new testable functionality.
+
+        * platform/Logging.cpp:
+        (WebCore):
+        (WebCore::getChannelFromName):
+        * platform/Logging.h:
+        (WebCore):
+        * platform/gtk/GamepadsGtk.cpp: Log when a device is
+        registered or unregistered.
+        (WebCore::GamepadsGtk::registerDevice):
+        (WebCore::GamepadsGtk::unregisterDevice):
+
 2012-07-05  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         Web Inspector: [JSC] support JS execution in the context of an isolated world
