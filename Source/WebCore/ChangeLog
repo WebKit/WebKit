@@ -1,3 +1,16 @@
+2012-07-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: move cursor to the current search match.
+        https://bugs.webkit.org/show_bug.cgi?id=90621
+
+        Reviewed by Vsevolod Vlasov.
+
+        After closing the search dialog, the cursor should be at the latest search match location.
+
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor.prototype.markAndRevealRange):
+        (WebInspector.TextEditor.prototype._handleFocused):
+
 2012-07-05  Behdad Esfahbod  <behdad@behdad.org>
 
         Subpixel layout broken with spans with CSS position other than static
