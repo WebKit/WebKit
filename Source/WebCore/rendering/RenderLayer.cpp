@@ -3903,7 +3903,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
         clipRects.setOverflowClipRect(clipRects.posClipRect());
     
     // Update the clip rects that will be passed to child layers.
-    if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
+    if (renderer()->hasClipOrOverflowClip()) {
         // This layer establishes a clip of some kind.
 
         // This offset cannot use convertToLayerCoords, because sometimes our rootLayer may be across
@@ -3990,7 +3990,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, RenderRegion* reg
     layerBounds = LayoutRect(offset, size());
 
     // Update the clip rects that will be passed to child layers.
-    if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
+    if (renderer()->hasClipOrOverflowClip()) {
         // This layer establishes a clip of some kind.
         if (renderer()->hasOverflowClip()) {
             foregroundRect.intersect(toRenderBox(renderer())->overflowClipRect(offset, region, relevancy));

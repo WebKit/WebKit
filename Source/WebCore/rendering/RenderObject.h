@@ -541,6 +541,7 @@ public:
 
     bool hasClip() const { return isOutOfFlowPositioned() && style()->hasClip(); }
     bool hasOverflowClip() const { return m_bitfields.hasOverflowClip(); }
+    bool hasClipOrOverflowClip() const { return hasClip() || hasOverflowClip(); }
 
     bool hasTransform() const { return m_bitfields.hasTransform(); }
     bool hasMask() const { return style() && style()->hasMask(); }
