@@ -31,16 +31,27 @@ function runTest() {
     shouldThrow("audioNode.noteGrainOn()");
     shouldThrow("audioNode.noteOff()");
 
-    // Check number of inputs and outputs.
-    if (audioNode.numberOfInputs == 0)
+    // Check input and output numbers of AudioSourceNode.
+    if (audioNode.numberOfInputs === 0)
         testPassed("Source AudioNode has no inputs.");
     else
         testFailed("Source AudioNode should not have inputs.");
     
-    if (audioNode.numberOfOutputs == 1)
+    if (audioNode.numberOfOutputs === 1)
         testPassed("Source AudioNode has one output.");
     else
         testFailed("Source AudioNode should have one output.");
+
+    // Check input and output numbers of AudioDestinationNode
+    if (context.destination.numberOfInputs === 1)
+        testPassed("Destination AudioNode has one input.");
+    else
+        testFailed("Destination AudioNode should have one input.");
+
+    if (context.destination.numberOfOutputs === 0)
+        testPassed("Destination AudioNode has no outputs.");
+    else
+        testFailed("Destination AudioNode should have no outputs.");
 
     // Try calling connect() method with illegal values.
 

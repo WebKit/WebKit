@@ -1,3 +1,19 @@
+2012-07-04  Li Yin  <li.yin@intel.com>
+
+        AudioNode test should cover numberOfInputs and numberOfOutputs of AudioDestinationNode
+        https://bugs.webkit.org/show_bug.cgi?id=90578
+
+        Reviewed by Chris Rogers.
+
+        Spec: http://www.w3.org/TR/webaudio/#AudioDestinationNode-section
+        An AudioSourceNode has no inputs and a single output.
+        An AudioDestinationNode has one input and no outputs.
+        Currently, the test webaudio/audionode.html has covered AudioSourceNode,
+        it is still required to cover AudioDestinationNode.
+
+        * webaudio/audionode-expected.txt:
+        * webaudio/audionode.html:
+
 2012-07-04  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed Chromium gardening, drop test expectations for
