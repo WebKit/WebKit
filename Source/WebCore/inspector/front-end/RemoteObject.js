@@ -272,8 +272,8 @@ WebInspector.RemoteObject.prototype = {
 
     /**
      * @param {function(this:Object)} functionDeclaration
-     * @param {Array.<RuntimeAgent.CallArgument>|undefined} args
-     * @param {function(?WebInspector.RemoteObject)} callback
+     * @param {Array.<RuntimeAgent.CallArgument>=} args
+     * @param {function(?WebInspector.RemoteObject)=} callback
      */
     callFunction: function(functionDeclaration, args, callback)
     {
@@ -284,6 +284,9 @@ WebInspector.RemoteObject.prototype = {
          */
         function mycallback(error, result, wasThrown)
         {
+            if (!callback)
+                return;
+
             callback((error || wasThrown) ? null : WebInspector.RemoteObject.fromPayload(result));
         }
 

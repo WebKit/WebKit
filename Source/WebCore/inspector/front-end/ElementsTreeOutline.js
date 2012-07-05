@@ -1162,6 +1162,9 @@ WebInspector.ElementsTreeElement.prototype = {
 
         this._populateNodeContextMenu(contextMenu);
         this.treeOutline._populateContextMenu(contextMenu, this.representedObject);
+
+        contextMenu.appendSeparator();
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Scroll into view" : "Scroll Into View"), this._scrollIntoView.bind(this)); 
     },
 
     _populateForcedPseudoStateItems: function(subMenu)
@@ -1912,6 +1915,22 @@ WebInspector.ElementsTreeElement.prototype = {
 
         this._highlightResult = [];
         WebInspector.highlightSearchResults(this.listItemElement, matchRanges, this._highlightResult);
+    },
+
+    _scrollIntoView: function()
+    {
+        function scrollIntoViewCallback(object)
+        {
+            function scrollIntoView()
+            {
+                this.scrollIntoViewIfNeeded(true);
+            }
+
+            if (object)
+                object.callFunction(scrollIntoView);
+        }
+        
+        WebInspector.RemoteObject.resolveNode(this.representedObject, "", scrollIntoViewCallback);
     }
 }
 

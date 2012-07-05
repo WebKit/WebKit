@@ -1,3 +1,22 @@
+2012-07-05  Sam D  <dsam2912@gmail.com>
+
+        Web Inspector: Having a "Scroll into view" for nodes through web inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=89554
+
+        Added options for scrolling-into-view the  element node through web
+        inspector.
+
+        Reviewed by Pavel Feldman.
+
+        No new tests. UI change.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        (.):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.callFunction):
+
 2012-07-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Add Gamepad logging channel
