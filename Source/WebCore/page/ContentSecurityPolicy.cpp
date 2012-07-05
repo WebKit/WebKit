@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorValues.h"
+#include "KURL.h"
 #include "PingLoader.h"
 #include "SchemeRegistry.h"
 #include "ScriptCallStack.h"
@@ -550,6 +551,7 @@ public:
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
     bool allowEval(PassRefPtr<ScriptCallStack>) const;
+    bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL&) const;
 
     bool allowScriptFromSource(const KURL&) const;
     bool allowObjectFromSource(const KURL&) const;
@@ -567,6 +569,7 @@ private:
 
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
     void parseReportURI(const String& name, const String& value);
+    void parseScriptNonce(const String& name, const String& value);
     void addDirective(const String& name, const String& value);
     void applySandboxPolicy(const String& name, const String& sandboxPolicy);
 
@@ -576,9 +579,11 @@ private:
     void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL = KURL(), const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
     void logUnrecognizedDirective(const String& name) const;
     void logDuplicateDirective(const String& name) const;
+    void logInvalidNonce(const String& nonce) const;
     bool checkEval(CSPDirective*) const;
 
     bool checkInlineAndReportViolation(CSPDirective*, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
+    bool checkNonceAndReportViolation(const String& nonce, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
     bool checkEvalAndReportViolation(CSPDirective*, const String& consoleMessage, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
     bool checkSourceAndReportViolation(CSPDirective*, const KURL&, const String& type) const;
 
@@ -601,6 +606,7 @@ private:
     OwnPtr<CSPDirective> m_connectSrc;
 
     Vector<KURL> m_reportURIs;
+    String m_scriptNonce;
 };
 
 CSPDirectiveList::CSPDirectiveList(ScriptExecutionContext* scriptExecutionContext)
@@ -690,6 +696,12 @@ void CSPDirectiveList::logDuplicateDirective(const String& name) const
     m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
 }
 
+void CSPDirectiveList::logInvalidNonce(const String& nonce) const
+{
+    String message = makeString("Ignoring invalid Content Security Policy script nonce: '", nonce, "'.\n");
+    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
+}
+
 bool CSPDirectiveList::checkEval(CSPDirective* directive) const
 {
     return !directive || directive->allowEval();
@@ -705,6 +717,14 @@ bool CSPDirectiveList::checkInlineAndReportViolation(CSPDirective* directive, co
     if (!directive || directive->allowInline())
         return true;
     reportViolation(directive->text(), consoleMessage + "\"" + directive->text() + "\".\n", KURL(), contextURL, contextLine);
+    return denyIfEnforcingPolicy();
+}
+
+bool CSPDirectiveList::checkNonceAndReportViolation(const String& nonce, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const
+{
+    if (m_scriptNonce.isEmpty() || nonce.stripWhiteSpace() == m_scriptNonce)
+        return true;
+    reportViolation(m_scriptNonce, consoleMessage + "\"script-nonce " + m_scriptNonce + "\".\n", KURL(), contextURL, contextLine);
     return denyIfEnforcingPolicy();
 }
 
@@ -728,13 +748,15 @@ bool CSPDirectiveList::checkSourceAndReportViolation(CSPDirective* directive, co
 bool CSPDirectiveList::allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine) const
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because it violates the following Content Security Policy directive: "));
-    return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine);
+    return (checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine)
+            && checkNonceAndReportViolation(String(), consoleMessage, contextURL, contextLine));
 }
 
 bool CSPDirectiveList::allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine) const
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute inline event handler because it violates the following Content Security Policy directive: "));
-    return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine);
+    return (checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, contextURL, contextLine)
+            && checkNonceAndReportViolation(String(), consoleMessage, contextURL, contextLine));
 }
 
 bool CSPDirectiveList::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine) const
@@ -753,6 +775,14 @@ bool CSPDirectiveList::allowEval(PassRefPtr<ScriptCallStack> callStack) const
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to evaluate script because it violates the following Content Security Policy directive: "));
     return checkEvalAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage, String(), WTF::OrdinalNumber::beforeFirst(), callStack);
+}
+
+bool CSPDirectiveList::allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& url) const
+{
+    DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute script because it violates the following Content Security Policy directive: "));
+    if (url.isEmpty())
+        return checkNonceAndReportViolation(nonce, consoleMessage, contextURL, contextLine);
+    return checkNonceAndReportViolation(nonce, "Refused to load '" + url.string() + "' because it violates the following Content Security Policy directive: ", contextURL, contextLine);
 }
 
 bool CSPDirectiveList::allowScriptFromSource(const KURL& url) const
@@ -898,6 +928,36 @@ void CSPDirectiveList::parseReportURI(const String& name, const String& value)
     }
 }
 
+void CSPDirectiveList::parseScriptNonce(const String& name, const String& value)
+{
+    if (!m_scriptNonce.isEmpty()) {
+        logDuplicateDirective(name);
+        return;
+    }
+
+    String nonce;
+    const UChar* position = value.characters();
+    const UChar* end = position + value.length();
+
+    skipWhile<isASCIISpace>(position, end);
+    const UChar* nonceBegin = position;
+    if (position == end) {
+        logInvalidNonce(String());
+        return;
+    }
+    skipWhile<isNotASCIISpace>(position, end);
+    if (nonceBegin < position)
+        nonce = String(nonceBegin, position - nonceBegin);
+
+    // Trim off trailing whitespace: If we're not at the end of the string, log
+    // an error.
+    skipWhile<isASCIISpace>(position, end);
+    if (position < end)
+        logInvalidNonce(value);
+    else
+        m_scriptNonce = nonce;
+}
+
 void CSPDirectiveList::setCSPDirective(const String& name, const String& value, OwnPtr<CSPDirective>& directive)
 {
     if (directive) {
@@ -921,6 +981,9 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
 {
     DEFINE_STATIC_LOCAL(String, defaultSrc, ("default-src"));
     DEFINE_STATIC_LOCAL(String, scriptSrc, ("script-src"));
+#if ENABLE(CSP_NEXT)
+    DEFINE_STATIC_LOCAL(String, scriptNonce, ("script-nonce"));
+#endif
     DEFINE_STATIC_LOCAL(String, objectSrc, ("object-src"));
     DEFINE_STATIC_LOCAL(String, frameSrc, ("frame-src"));
     DEFINE_STATIC_LOCAL(String, imgSrc, ("img-src"));
@@ -955,6 +1018,10 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
         applySandboxPolicy(name, value);
     else if (equalIgnoringCase(name, reportURI))
         parseReportURI(name, value);
+#if ENABLE(CSP_NEXT)
+    else if (equalIgnoringCase(name, scriptNonce))
+        parseScriptNonce(name, value);
+#endif
     else
         logUnrecognizedDirective(name);
 }
@@ -1016,6 +1083,16 @@ bool isAllowedByAllWithContext(const CSPDirectiveListVector& policies, const Str
     return true;
 }
 
+template<bool (CSPDirectiveList::*allowed)(const String&, const String&, const WTF::OrdinalNumber&, const KURL&) const>
+bool isAllowedByAllWithNonce(const CSPDirectiveListVector& policies, const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& url)
+{
+    for (size_t i = 0; i < policies.size(); ++i) {
+        if (!(policies[i].get()->*allowed)(nonce, contextURL, contextLine, url))
+            return false;
+    }
+    return true;
+}
+
 template<bool (CSPDirectiveList::*allowFromURL)(const KURL&) const>
 bool isAllowedByAllWithURL(const CSPDirectiveListVector& policies, const KURL& url)
 {
@@ -1054,6 +1131,11 @@ bool ContentSecurityPolicy::allowInlineStyle(const String& contextURL, const WTF
 bool ContentSecurityPolicy::allowEval(PassRefPtr<ScriptCallStack> callStack) const
 {
     return isAllowedByAllWithCallStack<&CSPDirectiveList::allowEval>(m_policies, callStack);
+}
+
+bool ContentSecurityPolicy::allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& url) const
+{
+    return isAllowedByAllWithNonce<&CSPDirectiveList::allowScriptNonce>(m_policies, nonce, contextURL, contextLine, url);
 }
 
 bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const

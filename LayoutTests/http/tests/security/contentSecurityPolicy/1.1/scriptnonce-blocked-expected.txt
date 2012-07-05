@@ -1,0 +1,9 @@
+ALERT: PASS (1/2)
+ALERT: PASS (2/2)
+CONSOLE MESSAGE: line 13: Refused to execute script because it violates the following Content Security Policy directive: "script-nonce noncynonce".
+
+CONSOLE MESSAGE: line 16: Refused to execute script because it violates the following Content Security Policy directive: "script-nonce noncynonce".
+
+CONSOLE MESSAGE: line 19: Refused to execute script because it violates the following Content Security Policy directive: "script-nonce noncynonce".
+
+This tests the effect of a valid script-nonce value. It passes if three console warnings are visible, and the two PASS alerts are executed.

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-WebKit-CSP" content="script-nonce noncynonce;">
+        <script nonce="noncynonce">
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+        </script>
+        <script nonce="noncynonce">
+            alert('PASS (1/1)');
+        </script>
+    </head>
+    <body>
+        <p>
+            This tests the effect of a valid script-nonce value. It passes if
+            no console warning is visible, and the alert() is executed.
+        </p>
+    </body>
+</html>

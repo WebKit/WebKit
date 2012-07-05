@@ -342,6 +342,9 @@ BUGWK31508 SKIP : storage/websql/transaction-success-callback-isolated-world.htm
 // Disable webaudio codec tests, including proprietary codecs.
 BUGWK88794 SKIP : webaudio/codec-tests = PASS
 
+// Content Security Policy 1.1 (ENABLE_CSP_NEXT) is not enabled
+BUGWK85558 SKIP : http/tests/security/contentSecurityPolicy/1.1 = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////

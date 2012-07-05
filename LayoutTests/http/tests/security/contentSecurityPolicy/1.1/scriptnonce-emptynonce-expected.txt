@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Ignoring invalid Content Security Policy script nonce: ''.
+
+ALERT: PASS (1/1)
+This tests the effect of an empty script-nonce value. It passes if a console warning is visible, and the alert() is executed.

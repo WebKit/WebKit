@@ -1,5 +1,29 @@
 2012-07-04  Mike West  <mkwst@chromium.org>
 
+        Implement the script-nonce Content Security Policy directive.
+        https://bugs.webkit.org/show_bug.cgi?id=89577
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-badnonce-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-badnonce.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-emptynonce-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-emptynonce.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-scriptsrc-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-scriptsrc-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/echo-script-src.pl:
+            Adding noncy goodness to the echo script.
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-test.js:
+        (test):
+        * platform/gtk/TestExpectations:
+            Skipping 1.1 tests on GTK (missed it in r121879).
+
+2012-07-04  Mike West  <mkwst@chromium.org>
+
         Skip CSP 1.1 tests on ports where it's disabled.
         https://bugs.webkit.org/show_bug.cgi?id=90564
 

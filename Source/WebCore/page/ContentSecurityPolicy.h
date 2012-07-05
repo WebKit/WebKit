@@ -26,6 +26,7 @@
 #ifndef ContentSecurityPolicy_h
 #define ContentSecurityPolicy_h
 
+#include "KURL.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -40,7 +41,6 @@ namespace WebCore {
 class CSPDirectiveList;
 class ScriptCallStack;
 class ScriptExecutionContext;
-class KURL;
 
 typedef Vector<OwnPtr<CSPDirectiveList> > CSPDirectiveListVector;
 
@@ -71,6 +71,7 @@ public:
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
     bool allowEval(PassRefPtr<ScriptCallStack>) const;
+    bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& = KURL()) const;
 
     bool allowScriptFromSource(const KURL&) const;
     bool allowObjectFromSource(const KURL&) const;

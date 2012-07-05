@@ -1,0 +1,2 @@
+ALERT: PASS (1/1)
+This tests the effect of a valid script-nonce value. It passes if no console warning is visible, and the alert() is executed.

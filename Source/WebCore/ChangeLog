@@ -1,3 +1,50 @@
+2012-07-04  Mike West  <mkwst@chromium.org>
+
+        Implement the script-nonce Content Security Policy directive.
+        https://bugs.webkit.org/show_bug.cgi?id=89577
+
+        Reviewed by Adam Barth.
+
+        This patch implements the (experimental) script-nonce Content Security
+        Policy directive from the 1.1 spec, which allows for selective
+        execution of script by specifying a "nonce" attribute for the
+        script tag. Script is only loaded and executed if it both matches the
+        nonce and matches the script-src whitelist (if present).
+
+        The implementation is gated on the ENABLE_CSP_NEXT flag, which is
+        currently disabled for all ports other than Chromium.
+
+        Spec: https://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#script-nonce--experimental
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed.html
+               http/tests/security/contentSecurityPolicy/1.1/scriptnonce-badnonce.html
+               http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked.html
+               http/tests/security/contentSecurityPolicy/1.1/scriptnonce-emptynonce.html
+               http/tests/security/contentSecurityPolicy/1.1/scriptnonce-scriptsrc-blocked.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript):
+        (WebCore::ScriptElement::executeScript):
+            Passing the nonce attribute through to check against CSP.
+        * html/HTMLAttributeNames.in:
+        * html/HTMLScriptElement.idl:
+            Adding the `nonce` attribute to the script tag.
+        * page/ContentSecurityPolicy.cpp:
+        (CSPDirectiveList):
+        (WebCore::CSPDirectiveList::logInvalidNonce):
+        (WebCore):
+        (WebCore::CSPDirectiveList::checkNonceAndReportViolation):
+        (WebCore::CSPDirectiveList::allowJavaScriptURLs):
+        (WebCore::CSPDirectiveList::allowInlineEventHandlers):
+            If a nonce is set, deny JavaScript URLs and inline event handlers.
+        (WebCore::CSPDirectiveList::allowScriptNonce):
+        (WebCore::CSPDirectiveList::parseScriptNonce):
+        (WebCore::CSPDirectiveList::addDirective):
+        (WebCore::isAllowedByAllWithNonce):
+        (WebCore::ContentSecurityPolicy::allowScriptNonce):
+        * page/ContentSecurityPolicy.h:
+        (WebCore):
+
 2012-07-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Notifications should be in Modules/notifications
