@@ -1,3 +1,15 @@
+2012-07-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: incorrect height of main timeline pane after switching to memory mode
+        https://bugs.webkit.org/show_bug.cgi?id=90387
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._splitterDragging):
+        (WebInspector.TimelinePanel.prototype.set _setSplitterPosition):
+        (WebInspector.TimelinePanel.prototype._overviewModeChanged):
+
 2012-07-05  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: Add support for keyboard increment / decrement on numbers in attributes in Elements Panel

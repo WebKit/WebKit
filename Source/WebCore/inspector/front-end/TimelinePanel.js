@@ -157,7 +157,6 @@ WebInspector.TimelinePanel.prototype = {
         var top = event.pageY + this._dragOffset
         this._setSplitterPosition(top);
         event.preventDefault();
-        this._refresh();
     },
 
     /**
@@ -181,6 +180,7 @@ WebInspector.TimelinePanel.prototype = {
         this._timelineMemorySplitter.style.top = (top - 2) + "px";
         this._memoryStatistics.setTopPosition(top);
         this._containerElementHeight = this._containerElement.clientHeight;
+        this.onResize();
     },
 
     get calculator()
@@ -437,13 +437,13 @@ WebInspector.TimelinePanel.prototype = {
             this._memoryStatistics.hide();
             this.splitView.element.style.height = "auto";
             this.splitView.element.style.bottom = "0";
+            this.onResize();
         } else {
             this._timelineMemorySplitter.removeStyleClass("hidden");
             this._memoryStatistics.show();
             this.splitView.element.style.bottom = "auto";
             this._setSplitterPosition(WebInspector.settings.memoryCounterGraphsHeight.get());
         }
-        this._refresh();
     },
 
     _toggleTimelineButtonClicked: function()
