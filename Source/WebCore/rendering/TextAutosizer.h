@@ -49,13 +49,13 @@ public:
 
     virtual ~TextAutosizer();
 
-    bool boostSubtree(RenderObject* layoutRoot);
+    bool processSubtree(RenderObject* layoutRoot);
 
 private:
     explicit TextAutosizer(Document*);
 
-    void boostBlock(RenderBlock*, LayoutSize windowSize);
-    void boostText(RenderText*, float multiplier);
+    void processBlock(RenderBlock*, const IntSize& windowSize);
+    void processText(RenderText*, float multiplier);
 
     typedef bool (*RenderObjectFilter)(const RenderObject*);
     static bool treatAsInline(const RenderObject*);

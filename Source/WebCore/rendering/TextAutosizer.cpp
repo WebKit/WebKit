@@ -42,7 +42,7 @@ TextAutosizer::~TextAutosizer()
 {
 }
 
-bool TextAutosizer::boostSubtree(RenderObject* layoutRoot)
+bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
 {
     // FIXME: Text Autosizing should only be enabled when m_document->page()->mainFrame()->view()->useFixedLayout()
     // is true, but for now it's useful to ignore this so that it can be tested on desktop.
@@ -58,38 +58,38 @@ bool TextAutosizer::boostSubtree(RenderObject* layoutRoot)
 
     for (RenderObject* descendant = traverseNext(layoutRoot, layoutRoot); descendant; descendant = traverseNext(descendant, layoutRoot)) {
         if (!treatAsInline(descendant))
-            boostBlock(toRenderBlock(descendant), windowSize);
+            processBlock(toRenderBlock(descendant), windowSize);
     }
 
     return true;
 }
 
-void TextAutosizer::boostBlock(RenderBlock* block, LayoutSize windowSize)
+void TextAutosizer::processBlock(RenderBlock* block, const IntSize& windowSize)
 {
-    float windowLogicalWidth = block->isHorizontalWritingMode() ? windowSize.width() : windowSize.height();
-    float multiplier = block->logicalWidth() / windowLogicalWidth; // FIXME: This is overly simplistic.
+    int windowLogicalWidth = block->isHorizontalWritingMode() ? windowSize.width() : windowSize.height();
+    float multiplier = static_cast<float>(block->logicalWidth()) / windowLogicalWidth; // FIXME: This is overly simplistic.
     if (multiplier < 1)
         return;
     for (RenderObject* descendant = traverseNext(block, block, treatAsInline); descendant; descendant = traverseNext(descendant, block, treatAsInline)) {
         if (descendant->isText())
-            boostText(toRenderText(descendant), multiplier);
+            processText(toRenderText(descendant), multiplier);
     }
 }
 
-void TextAutosizer::boostText(RenderText* text, float multiplier)
+void TextAutosizer::processText(RenderText* text, float multiplier)
 {
     float specifiedSize = text->style()->fontDescription().specifiedSize();
-    float boostedSize = specifiedSize * multiplier; // FIXME: This is overly simplistic.
+    float newSize = specifiedSize * multiplier; // FIXME: This is overly simplistic.
 
     RefPtr<RenderStyle> style = RenderStyle::clone(text->style());
     FontDescription fontDescription(style->fontDescription());
-    fontDescription.setComputedSize(boostedSize);
+    fontDescription.setComputedSize(newSize);
     style->setFontDescription(fontDescription);
     style->font().update(style->font().fontSelector());
     text->setStyle(style.release());
 
     // FIXME: Increase computed line height proportionately.
-    // FIXME: Boost list markers proportionately.
+    // FIXME: Increase list marker size proportionately.
 }
 
 bool TextAutosizer::treatAsInline(const RenderObject* renderer)
@@ -97,6 +97,7 @@ bool TextAutosizer::treatAsInline(const RenderObject* renderer)
     return !renderer->isRenderBlock() || renderer->isListItem() || renderer->isInlineBlockOrInlineTable();
 }
 
+// FIXME: Consider making this a method on RenderObject if it remains this generic.
 RenderObject* TextAutosizer::traverseNext(RenderObject* current, const RenderObject* stayWithin, RenderObjectFilter filter)
 {
     for (RenderObject* child = current->firstChild(); child; child = child->nextSibling()) {

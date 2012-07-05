@@ -1116,8 +1116,8 @@ void FrameView::layout(bool allowSubtree)
             forceLayoutParentViewIfNeeded();
             root->layout();
 #if ENABLE(TEXT_AUTOSIZING)
-            bool boosted = document->textAutosizer()->boostSubtree(root);
-            if (boosted && root->needsLayout())
+            bool autosized = document->textAutosizer()->processSubtree(root);
+            if (autosized && root->needsLayout())
                 root->layout();
 #endif
             endDeferredRepaints();
