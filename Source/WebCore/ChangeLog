@@ -1,3 +1,26 @@
+2012-07-05  Behdad Esfahbod  <behdad@behdad.org>
+
+        Subpixel layout broken with spans with CSS position other than static
+        https://bugs.webkit.org/show_bug.cgi?id=90097
+
+        Reviewed by Eric Seidel.
+
+        In InlineBox, don't truncate size to integers when returning.
+
+        In RenderBlock, don't round-up width to next integer.  Round-up to
+        next LayoutUnit instead.
+
+        Test: Added fast/sub-pixel/size-of-span-with-different-positions.html
+        Adjust expected outputs affected by the rounding changes.
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::fromFloatCeil):
+        (FractionalLayoutUnit):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::size):
+        * rendering/RenderBlock.cpp:
+        (WebCore::updatePreferredWidth):
+
 2012-07-05  Nate Chapin  <japhet@chromium.org>
 
         REGRESSION (r115654): Sometimes does not replace content for multipart/x-mixed-replace
