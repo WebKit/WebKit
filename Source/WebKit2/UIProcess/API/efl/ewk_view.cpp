@@ -540,6 +540,16 @@ Eina_Bool ewk_view_reload(Evas_Object* ewkView)
     return true;
 }
 
+Eina_Bool ewk_view_reload_bypass_cache(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    WKPageReloadFromOrigin(toAPI(priv->pageClient->page()));
+
+    return true;
+}
+
 Eina_Bool ewk_view_stop(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);

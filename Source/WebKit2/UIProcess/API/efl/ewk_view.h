@@ -198,9 +198,18 @@ EAPI const char *ewk_view_uri_get(const Evas_Object *o);
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  *
- * @see ewk_view_reload_full()
+ * @see ewk_view_reload_bypass_cache()
  */
 EAPI Eina_Bool    ewk_view_reload(Evas_Object *o);
+
+/**
+ * Reloads the current page's document without cache.
+ *
+ * @param o view object to reload current document
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_reload_bypass_cache(Evas_Object *o);
 
 /**
  * Asks the main frame to stop loading.
