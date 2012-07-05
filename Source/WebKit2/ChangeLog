@@ -1,3 +1,15 @@
+2012-07-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r121899.
+        http://trac.webkit.org/changeset/121899
+        https://bugs.webkit.org/show_bug.cgi?id=90623
+
+        Unauthorized WK2 API breakage (Requested by andersca on
+        #webkit).
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toCopiedURLAPI):
+
 2012-07-05  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] WTR crashes if a URL is passed as a parameter
