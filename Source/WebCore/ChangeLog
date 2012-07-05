@@ -1,3 +1,36 @@
+2012-07-05  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        NEON intrinsics should be used with gaussian blur filter
+        https://bugs.webkit.org/show_bug.cgi?id=90166
+
+        Reviewed by Zoltan Herczeg.
+
+        Rewrite inline assembly to NEON intrinsics for better portabilty 
+        and readibility. Remove unnecessary FEGaussianBlurNEON.cpp and add
+        NEONHelpers.h to the project which will contains the shared
+        NEON code of the filters.
+
+        Existing tests cover this issue.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplyGeneric):
+        (WebCore::FEGaussianBlur::platformApplyWorker):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        (FEGaussianBlur):
+        * platform/graphics/filters/arm/FEGaussianBlurNEON.cpp: Removed.
+        * platform/graphics/filters/arm/FEGaussianBlurNEON.h:
+        (WebCore::boxBlurNEON):
+        * platform/graphics/filters/arm/NEONHelpers.h: Added.
+        (WebCore):
+        (WebCore::loadRGBA8AsFloat):
+        (WebCore::storeFloatAsRGBA8):
+
 2012-07-05  Sam D  <dsam2912@gmail.com>
 
         Web Inspector: Having a "Scroll into view" for nodes through web inspector.

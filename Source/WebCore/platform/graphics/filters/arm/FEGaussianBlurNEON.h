@@ -29,82 +29,45 @@
 
 #include <wtf/Platform.h>
 
-#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
+#if CPU(ARM_NEON) && COMPILER(GCC)
 
 #include "FEGaussianBlur.h"
+#include "NEONHelpers.h"
 
 namespace WebCore {
 
-struct FEGaussianBlurPaintingDataForNeon {
-    int stride;
-    int strideWidth;
-    int strideLine;
-    int strideLineWidth;
-    int remainingStrides;
-    int distanceLeft;
-    int distanceRight;
-    float invertedKernelSize;
-    unsigned char* paintingConstants;
-};
-
-unsigned char* feGaussianBlurConstantsForNeon();
-
-extern "C" {
-void neonDrawAllChannelGaussianBlur(unsigned char* source, unsigned char* destination, FEGaussianBlurPaintingDataForNeon*);
-void neonDrawAlphaChannelGaussianBlur(unsigned char* source, unsigned char* destination, FEGaussianBlurPaintingDataForNeon*);
-}
-
-inline void FEGaussianBlur::platformApplyNeon(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
+inline void boxBlurNEON(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dstPixelArray,
+                    unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight)
 {
-    const int widthMultipliedByFour = 4 * paintSize.width();
-    FEGaussianBlurPaintingDataForNeon argumentsX = {
-        4,
-        widthMultipliedByFour,
-        widthMultipliedByFour,
-        (isAlphaImage() ? ((paintSize.height() >> 2) << 2) : paintSize.height()) * widthMultipliedByFour,
-        isAlphaImage() ? (paintSize.height() & 0x3) : 0,
-        0,
-        0,
-        0,
-        isAlphaImage() ? 0 : feGaussianBlurConstantsForNeon()
-    };
-    FEGaussianBlurPaintingDataForNeon argumentsY = {
-        widthMultipliedByFour,
-        widthMultipliedByFour * paintSize.height(),
-        4,
-        (isAlphaImage() ? ((paintSize.width() >> 2) << 2) : paintSize.width()) * 4,
-        isAlphaImage() ? (paintSize.width() & 0x3) : 0,
-        0,
-        0,
-        0,
-        isAlphaImage() ? 0 : feGaussianBlurConstantsForNeon()
-    };
+    uint32_t* sourcePixel = reinterpret_cast<uint32_t*>(srcPixelArray->data());
+    uint32_t* destinationPixel = reinterpret_cast<uint32_t*>(dstPixelArray->data());
 
-    for (int i = 0; i < 3; ++i) {
-        if (kernelSizeX) {
-            kernelPosition(i, kernelSizeX, argumentsX.distanceLeft, argumentsX.distanceRight);
-            argumentsX.invertedKernelSize = 1 / static_cast<float>(kernelSizeX);
-            if (isAlphaImage())
-                neonDrawAlphaChannelGaussianBlur(srcPixelArray->data(), tmpPixelArray->data(), &argumentsX);
-            else
-                neonDrawAllChannelGaussianBlur(srcPixelArray->data(), tmpPixelArray->data(), &argumentsX);
-        } else {
-            Uint8ClampedArray* auxPixelArray = tmpPixelArray;
-            tmpPixelArray = srcPixelArray;
-            srcPixelArray = auxPixelArray;
+    float32x4_t deltaX = vdupq_n_f32(1.0 / dx);
+    int pixelLine = strideLine / 4;
+
+    for (int y = 0; y < effectHeight; ++y) {
+        int line = y * pixelLine;
+        float32x4_t sum = vdupq_n_f32(0);
+        // Fill the kernel
+        int maxKernelSize = std::min(dxRight, effectWidth);
+        for (int i = 0; i < maxKernelSize; ++i) {
+            float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel + line + i);
+            sum = vaddq_f32(sum, sourcePixelAsFloat);
         }
 
-        if (kernelSizeY) {
-            kernelPosition(i, kernelSizeY, argumentsY.distanceLeft, argumentsY.distanceRight);
-            argumentsY.invertedKernelSize = 1 / static_cast<float>(kernelSizeY);
-            if (isAlphaImage())
-                neonDrawAlphaChannelGaussianBlur(tmpPixelArray->data(), srcPixelArray->data(), &argumentsY);
-            else
-                neonDrawAllChannelGaussianBlur(tmpPixelArray->data(), srcPixelArray->data(), &argumentsY);
-        } else {
-            Uint8ClampedArray* auxPixelArray = tmpPixelArray;
-            tmpPixelArray = srcPixelArray;
-            srcPixelArray = auxPixelArray;
+        // Blurring
+        for (int x = 0; x < effectWidth; ++x) {
+            int pixelOffset = line + x;
+            float32x4_t result = vmulq_f32(sum, deltaX);
+            storeFloatAsRGBA8(result, destinationPixel+pixelOffset);
+            if (x >= dxLeft) {
+                float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel + pixelOffset - dxLeft);
+                sum = vsubq_f32(sum, sourcePixelAsFloat);
+            }
+            if (x + dxRight < effectWidth) {
+                float32x4_t sourcePixelAsFloat = loadRGBA8AsFloat(sourcePixel + pixelOffset + dxRight);
+                sum = vaddq_f32(sum, sourcePixelAsFloat);
+            }
         }
     }
 }

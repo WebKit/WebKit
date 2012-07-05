@@ -31629,10 +31629,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\filters\arm\FEGaussianBlurNEON.cpp"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\filters\arm\FEGaussianBlurNEON.h"
 						>
 					</File>
@@ -31734,6 +31730,10 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\LightSource.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\arm\NEONHelpers.h"
 						>
 					</File>
 					<File

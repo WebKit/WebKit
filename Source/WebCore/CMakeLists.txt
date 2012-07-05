@@ -1239,8 +1239,8 @@ SET(WebCore_SOURCES
     platform/graphics/filters/SourceAlpha.cpp
     platform/graphics/filters/SourceGraphic.cpp
 
+    platform/graphics/filters/arm/NEONHelpers.h
     platform/graphics/filters/arm/FECompositeArithmeticNEON.h
-    platform/graphics/filters/arm/FEGaussianBlurNEON.cpp
     platform/graphics/filters/arm/FEGaussianBlurNEON.h
     platform/graphics/filters/arm/FELightingNEON.cpp
     platform/graphics/filters/arm/FELightingNEON.h

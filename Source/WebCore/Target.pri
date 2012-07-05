@@ -2271,6 +2271,7 @@ HEADERS += \
     platform/graphics/filters/LightSource.h \
     platform/graphics/filters/SourceAlpha.h \
     platform/graphics/filters/SourceGraphic.h \
+    platform/graphics/filters/arm/NEONHelpers.h \
     platform/graphics/filters/arm/FECompositeArithmeticNEON.h \
     platform/graphics/filters/arm/FEGaussianBlurNEON.h \
     platform/graphics/filters/arm/FELightingNEON.h \
@@ -3473,7 +3474,6 @@ contains(DEFINES, ENABLE_FILTERS=1) {
         platform/graphics/filters/SourceAlpha.cpp \
         platform/graphics/filters/SourceGraphic.cpp \
         platform/graphics/filters/arm/FELightingNEON.cpp \
-        platform/graphics/filters/arm/FEGaussianBlurNEON.cpp \
 }
 
 contains(DEFINES, ENABLE_MATHML=1) {

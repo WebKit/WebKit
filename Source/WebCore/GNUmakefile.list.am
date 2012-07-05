@@ -3284,8 +3284,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/SourceGraphic.h \
 	Source/WebCore/platform/graphics/filters/SpotLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/SpotLightSource.h \
+	Source/WebCore/platform/graphics/filters/arm/NEONHelpers.h \
 	Source/WebCore/platform/graphics/filters/arm/FECompositeArithmeticNEON.h \
-	Source/WebCore/platform/graphics/filters/arm/FEGaussianBlurNEON.cpp \
 	Source/WebCore/platform/graphics/filters/arm/FEGaussianBlurNEON.h \
 	Source/WebCore/platform/graphics/filters/arm/FELightingNEON.cpp \
 	Source/WebCore/platform/graphics/filters/arm/FELightingNEON.h \
