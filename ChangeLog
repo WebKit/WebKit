@@ -1,3 +1,11 @@
+2012-07-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Move Webkit1 before WebKit2 in the build order
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebKit.pro:
+
 2012-07-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Unreviewd typo fix after r121857
