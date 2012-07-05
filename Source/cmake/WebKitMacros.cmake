@@ -47,7 +47,7 @@ MACRO (GENERATE_BINDINGS _output_source _input_files _base_dir _idl_includes _fe
 
         ADD_CUSTOM_COMMAND(
             OUTPUT ${_destination}/${_prefix}${_name}.cpp ${_destination}/${_prefix}${_name}.h
-            MAIN_DEPENDDENCY ${_file}
+            MAIN_DEPENDENCY ${_file}
             DEPENDS ${BINDING_GENERATOR} ${SCRIPTS_BINDINGS} ${_supplemental_dependency_file}
             COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_GENERATOR} --defines "${_features}" --generator ${_generator} ${_idl_includes} --outputDir "${_destination}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${_supplemental_dependency} ${_file}
             WORKING_DIRECTORY ${_base_dir}

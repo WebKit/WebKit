@@ -1,3 +1,9 @@
+2012-07-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE] Unreviewd typo fix after r121857
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2012-07-05  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Enable the CUSTOM_SCHEME_HANDLER feature as default.
