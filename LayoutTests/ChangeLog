@@ -1,3 +1,17 @@
+2012-07-04  Mike West  <mkwst@chromium.org>
+
+        Skip CSP 1.1 tests on ports where it's disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=90564
+
+        Reviewed by Adam Barth.
+
+        * platform/efl/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-07-04  Li Yin  <li.yin@intel.com>
 
         AudioNode test should cover numberOfInputs and numberOfOutputs of AudioDestinationNode
