@@ -31,6 +31,8 @@
 #ifndef TextChecking_h
 #define TextChecking_h
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 #define WTF_USE_GRAMMAR_CHECKING 1
@@ -60,6 +62,34 @@ enum TextCheckingType {
 };
 
 typedef unsigned TextCheckingTypeMask;
+
+enum TextCheckingProcessType {
+    TextCheckingProcessBatch,
+    TextCheckingProcessIncremental
+};
+
+class TextCheckingRequest {
+public:
+    TextCheckingRequest(int sequence, String text, TextCheckingTypeMask mask, TextCheckingProcessType processType)
+        : m_sequence(sequence)
+        , m_text(text)
+        , m_mask(mask)
+        , m_processType(processType)
+    {
+    }
+
+    void setSequence(int sequence) { m_sequence = sequence; }
+    int sequence() const { return m_sequence; }
+    String text() const { return m_text; }
+    TextCheckingTypeMask mask() const { return m_mask; }
+    TextCheckingProcessType processType() const { return m_processType; }
+
+private:
+    int m_sequence;
+    String m_text;
+    TextCheckingTypeMask m_mask;
+    TextCheckingProcessType m_processType;
+};
 
 }
 
