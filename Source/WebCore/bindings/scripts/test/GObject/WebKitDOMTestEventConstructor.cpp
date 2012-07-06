@@ -113,8 +113,10 @@ static void webkit_dom_test_event_constructor_set_property(GObject* object, guin
 static void webkit_dom_test_event_constructor_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
+
     WebKitDOMTestEventConstructor* self = WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(object);
     WebCore::TestEventConstructor* coreSelf = WebKit::core(self);
+
     switch (prop_id) {
     case PROP_ATTR1:
     {
