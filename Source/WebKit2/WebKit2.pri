@@ -50,6 +50,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/WebProcess/InjectedBundle/API/c \
     $$SOURCE_DIR/WebProcess/KeyValueStorage \
     $$SOURCE_DIR/WebProcess/MediaCache \
+    $$SOURCE_DIR/WebProcess/NetworkInfo \
     $$SOURCE_DIR/WebProcess/Notifications \
     $$SOURCE_DIR/WebProcess/Plugins \
     $$SOURCE_DIR/WebProcess/Plugins/Netscape \

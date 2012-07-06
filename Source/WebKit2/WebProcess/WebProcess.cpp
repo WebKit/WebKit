@@ -80,6 +80,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RandomNumber.h>
 
+#if ENABLE(NETWORK_INFO)
+#include "WebNetworkInfoManagerMessages.h"
+#endif
+
 #if !OS(WINDOWS)
 #include <unistd.h>
 #endif
@@ -147,6 +151,9 @@ WebProcess::WebProcess()
     , m_geolocationManager(this)
 #if ENABLE(BATTERY_STATUS)
     , m_batteryManager(this)
+#endif
+#if ENABLE(NETWORK_INFO)
+    , m_networkInfoManager(this)
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     , m_notificationManager(this)
@@ -639,6 +646,13 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 #if ENABLE(BATTERY_STATUS)
     if (messageID.is<CoreIPC::MessageClassWebBatteryManager>()) {
         m_batteryManager.didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
+
+#if ENABLE(NETWORK_INFO)
+    if (messageID.is<CoreIPC::MessageClassWebNetworkInfoManager>()) {
+        m_networkInfoManager.didReceiveMessage(connection, messageID, arguments);
         return;
     }
 #endif

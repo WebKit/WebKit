@@ -77,6 +77,8 @@ class WebIntentServiceInfo;
 class WebKeyValueStorageManagerProxy;
 class WebMediaCacheManagerProxy;
 class WebNavigationData;
+class WebNetworkInfoManagerProxy;
+class WebNetworkInfo;
 class WebNotification;
 class WebNotificationProvider;
 class WebNotificationManagerProxy;
@@ -118,6 +120,8 @@ WK_ADD_API_MAPPING(WKIntentServiceInfoRef, WebIntentServiceInfo)
 WK_ADD_API_MAPPING(WKKeyValueStorageManagerRef, WebKeyValueStorageManagerProxy)
 WK_ADD_API_MAPPING(WKMediaCacheManagerRef, WebMediaCacheManagerProxy)
 WK_ADD_API_MAPPING(WKNavigationDataRef, WebNavigationData)
+WK_ADD_API_MAPPING(WKNetworkInfoManagerRef, WebNetworkInfoManagerProxy)
+WK_ADD_API_MAPPING(WKNetworkInfoRef, WebNetworkInfo)
 WK_ADD_API_MAPPING(WKNotificationManagerRef, WebNotificationManagerProxy)
 WK_ADD_API_MAPPING(WKNotificationPermissionRequestRef, NotificationPermissionRequest)
 WK_ADD_API_MAPPING(WKNotificationProviderRef, WebNotificationProvider)

@@ -95,6 +95,8 @@ public:
         TypeKeyValueStorageManager,
         TypeMediaCacheManager,
         TypeNavigationData,
+        TypeNetworkInfo,
+        TypeNetworkInfoManager,
         TypeNotification,
         TypeNotificationManager,
         TypeNotificationPermissionRequest,

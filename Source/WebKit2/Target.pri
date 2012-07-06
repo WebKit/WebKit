@@ -167,6 +167,7 @@ HEADERS += \
     UIProcess/API/C/WKOpenPanelParameters.h \
     UIProcess/API/C/WKOpenPanelResultListener.h \
     UIProcess/API/C/WKNavigationData.h \
+    UIProcess/API/C/WKNetworkInfoManager.h \
     UIProcess/API/C/WKNotification.h \
     UIProcess/API/C/WKNotificationManager.h \
     UIProcess/API/C/WKNotificationPermissionRequest.h \
@@ -336,6 +337,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
     WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
     WebProcess/MediaCache/WebMediaCacheManager.h \
+    WebProcess/NetworkInfo/WebNetworkInfoManager.h \
     WebProcess/Notifications/NotificationPermissionRequestManager.h \
     WebProcess/Notifications/WebNotificationManager.h \
     WebProcess/ResourceCache/WebResourceCacheManager.h \
@@ -365,6 +367,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebGeolocationClient.h \
     WebProcess/WebCoreSupport/WebInspectorClient.h \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.h \
+    WebProcess/WebCoreSupport/WebNetworkInfoClient.h \
     WebProcess/WebCoreSupport/WebNotificationClient.h \
     WebProcess/WebCoreSupport/WebPlatformStrategies.h \
     WebProcess/WebCoreSupport/WebPopupMenu.h \
@@ -486,6 +489,7 @@ SOURCES += \
     Shared/WebImage.cpp \
     Shared/WebLayerTreeInfo.cpp \
     Shared/WebMouseEvent.cpp \
+    Shared/WebNetworkInfo.cpp \
     Shared/WebOpenPanelParameters.cpp \
     Shared/WebPageCreationParameters.cpp \
     Shared/WebPageGroupData.cpp \
@@ -539,6 +543,7 @@ SOURCES += \
     UIProcess/API/C/WKOpenPanelParameters.cpp \
     UIProcess/API/C/WKOpenPanelResultListener.cpp \
     UIProcess/API/C/WKNavigationData.cpp \
+    UIProcess/API/C/WKNetworkInfoManager.cpp \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageGroup.cpp \
     UIProcess/API/C/WKPluginSiteDataManager.cpp \
@@ -628,6 +633,8 @@ SOURCES += \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebMediaCacheManagerProxy.cpp \
     UIProcess/WebNavigationData.cpp \
+    UIProcess/WebNetworkInfoManagerProxy.cpp \
+    UIProcess/WebNetworkInfoProvider.cpp \
     UIProcess/WebOpenPanelResultListenerProxy.cpp \
     UIProcess/WebPageContextMenuClient.cpp \
     UIProcess/WebPageGroup.cpp \
@@ -711,6 +718,7 @@ SOURCES += \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
     WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp \
     WebProcess/MediaCache/WebMediaCacheManager.cpp \
+    WebProcess/NetworkInfo/WebNetworkInfoManager.cpp \
     WebProcess/Notifications/NotificationPermissionRequestManager.cpp \
     WebProcess/Notifications/WebNotificationManager.cpp \
     WebProcess/ResourceCache/WebResourceCacheManager.cpp \
@@ -741,6 +749,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
+    WebProcess/WebCoreSupport/WebNetworkInfoClient.cpp \
     WebProcess/WebCoreSupport/WebNotificationClient.cpp \
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
     WebProcess/WebCoreSupport/WebPopupMenu.cpp \

@@ -1,3 +1,103 @@
+2012-07-06  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add support for Network Information API
+        https://bugs.webkit.org/show_bug.cgi?id=89870
+
+        Reviewed by Anders Carlsson.
+
+        Add Network Information API support for WebKit2.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Shared/WebNetworkInfo.cpp: Added.
+        (WebKit):
+        (WebKit::WebNetworkInfo::WebNetworkInfo):
+        (WebKit::WebNetworkInfo::~WebNetworkInfo):
+        (WebKit::WebNetworkInfo::Data::encode):
+        (WebKit::WebNetworkInfo::Data::decode):
+        * Shared/WebNetworkInfo.h: Added.
+        (WebKit):
+        (WebNetworkInfo):
+        (Data):
+        (WebKit::WebNetworkInfo::create):
+        (WebKit::WebNetworkInfo::bandwidth):
+        (WebKit::WebNetworkInfo::metered):
+        (WebKit::WebNetworkInfo::data):
+        (WebKit::WebNetworkInfo::type):
+        * Target.pri:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit):
+        * UIProcess/API/C/WKNetworkInfoManager.cpp: Added.
+        (WKNetworkInfoManagerGetTypeID):
+        * UIProcess/API/C/WKNetworkInfoManager.h: Added.
+        * UIProcess/WebNetworkInfoManagerProxy.cpp: Added.
+        (WebKit):
+        (WebKit::WebNetworkInfoManagerProxy::create):
+        (WebKit::WebNetworkInfoManagerProxy::WebNetworkInfoManagerProxy):
+        (WebKit::WebNetworkInfoManagerProxy::~WebNetworkInfoManagerProxy):
+        (WebKit::WebNetworkInfoManagerProxy::invalidate):
+        (WebKit::WebNetworkInfoManagerProxy::initializeProvider):
+        (WebKit::WebNetworkInfoManagerProxy::providerDidChangeNetworkInformation):
+        (WebKit::WebNetworkInfoManagerProxy::didReceiveMessage):
+        (WebKit::WebNetworkInfoManagerProxy::startUpdating):
+        (WebKit::WebNetworkInfoManagerProxy::stopUpdating):
+        (WebKit::WebNetworkInfoManagerProxy::getBandwidth):
+        (WebKit::WebNetworkInfoManagerProxy::isMetered):
+        * UIProcess/WebNetworkInfoManagerProxy.h: Added.
+        (CoreIPC):
+        (WebKit):
+        (WebNetworkInfoManagerProxy):
+        (WebKit::WebNetworkInfoManagerProxy::clearContext):
+        (WebKit::WebNetworkInfoManagerProxy::type):
+        * UIProcess/WebNetworkInfoManagerProxy.messages.in: Added.
+        * UIProcess/WebNetworkInfoProvider.cpp: Added.
+        (WebKit):
+        (WebKit::WebNetworkInfoProvider::startUpdating):
+        (WebKit::WebNetworkInfoProvider::stopUpdating):
+        (WebKit::WebNetworkInfoProvider::bandwidth):
+        (WebKit::WebNetworkInfoProvider::metered):
+        * UIProcess/WebNetworkInfoProvider.h: Added.
+        (WebKit):
+        (WebNetworkInfoProvider):
+        * WebKit2.pri:
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.cpp: Added.
+        (WebKit):
+        (WebKit::WebNetworkInfoManager::WebNetworkInfoManager):
+        (WebKit::WebNetworkInfoManager::~WebNetworkInfoManager):
+        (WebKit::WebNetworkInfoManager::didReceiveMessage):
+        (WebKit::WebNetworkInfoManager::registerWebPage):
+        (WebKit::WebNetworkInfoManager::unregisterWebPage):
+        (WebKit::WebNetworkInfoManager::bandwidth):
+        (WebKit::WebNetworkInfoManager::metered):
+        (WebKit::WebNetworkInfoManager::didChangeNetworkInformation):
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.h: Added.
+        (CoreIPC):
+        (WebKit):
+        (WebNetworkInfoManager):
+        * WebProcess/NetworkInfo/WebNetworkInfoManager.messages.in: Added.
+        * WebProcess/WebCoreSupport/WebNetworkInfoClient.cpp: Added.
+        (WebKit):
+        (WebKit::WebNetworkInfoClient::~WebNetworkInfoClient):
+        (WebKit::WebNetworkInfoClient::bandwidth):
+        (WebKit::WebNetworkInfoClient::metered):
+        (WebKit::WebNetworkInfoClient::startUpdating):
+        (WebKit::WebNetworkInfoClient::stopUpdating):
+        * WebProcess/WebCoreSupport/WebNetworkInfoClient.h: Added.
+        (WebKit):
+        (WebNetworkInfoClient):
+        (WebKit::WebNetworkInfoClient::WebNetworkInfoClient):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        (WebKit::WebProcess::networkInfoManager):
+
 2012-07-06  Jessie Berlin  <jberlin@apple.com>
 
         WKContext should ask for its injected bundle initialization user data when it needs it so the

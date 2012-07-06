@@ -27,6 +27,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/Downloads"
     "${WEBKIT2_DIR}/WebProcess/FullScreen"
     "${WEBKIT2_DIR}/WebProcess/Geolocation"
+    "${WEBKIT2_DIR}/WebProcess/NetworkInfo"
     "${WEBKIT2_DIR}/WebProcess/IconDatabase"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API"
@@ -156,6 +157,7 @@ SET(WebKit2_SOURCES
     Shared/WebLayerTreeInfo.cpp
     Shared/WebMemorySampler.cpp
     Shared/WebMouseEvent.cpp
+    Shared/WebNetworkInfo.cpp
     Shared/WebOpenPanelParameters.cpp
     Shared/WebPageCreationParameters.cpp
     Shared/WebPageGroupData.cpp
@@ -250,6 +252,8 @@ SET(WebKit2_SOURCES
     UIProcess/WebLoaderClient.cpp
     UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebNavigationData.cpp
+    UIProcess/WebNetworkInfoManagerProxy.cpp
+    UIProcess/WebNetworkInfoProvider.cpp
     UIProcess/WebOpenPanelResultListenerProxy.cpp
     UIProcess/WebPageContextMenuClient.cpp
     UIProcess/WebPageGroup.cpp
@@ -290,6 +294,7 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKKeyValueStorageManager.cpp
     UIProcess/API/C/WKMediaCacheManager.cpp
     UIProcess/API/C/WKNavigationData.cpp
+    UIProcess/API/C/WKNetworkInfoManager.cpp
     UIProcess/API/C/WKNotification.cpp
     UIProcess/API/C/WKNotificationManager.cpp
     UIProcess/API/C/WKNotificationPermissionRequest.cpp
@@ -389,6 +394,8 @@ SET(WebKit2_SOURCES
 
     WebProcess/MediaCache/WebMediaCacheManager.cpp
 
+    WebProcess/NetworkInfo/WebNetworkInfoManager.cpp
+
     WebProcess/Notifications/NotificationPermissionRequestManager.cpp
     WebProcess/Notifications/WebNotificationManager.cpp
 
@@ -421,6 +428,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp
     WebProcess/WebCoreSupport/WebInspectorClient.cpp
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp
+    WebProcess/WebCoreSupport/WebNetworkInfoClient.cpp
     WebProcess/WebCoreSupport/WebNotificationClient.cpp
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
     WebProcess/WebCoreSupport/WebPopupMenu.cpp
@@ -467,6 +475,7 @@ SET(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebInspectorProxy.messages.in
     UIProcess/WebKeyValueStorageManagerProxy.messages.in
     UIProcess/WebMediaCacheManagerProxy.messages.in
+    UIProcess/WebNetworkInfoManagerProxy.messages.in
     UIProcess/WebPageProxy.messages.in
     UIProcess/WebProcessProxy.messages.in
     UIProcess/WebResourceCacheManagerProxy.messages.in
@@ -496,6 +505,8 @@ SET(WebKit2_MESSAGES_IN_FILES
     WebProcess/KeyValueStorage/WebKeyValueStorageManager.messages.in
 
     WebProcess/MediaCache/WebMediaCacheManager.messages.in
+
+    WebProcess/NetworkInfo/WebNetworkInfoManager.messages.in
 
     WebProcess/Notifications/WebNotificationManager.messages.in
 

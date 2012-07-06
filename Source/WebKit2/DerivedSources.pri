@@ -45,6 +45,7 @@ VPATH = \
     WebProcess/IconDatabase \
     WebProcess/KeyValueStorage \
     WebProcess/MediaCache \
+    WebProcess/NetworkInfo \
     WebProcess/Notifications \
     WebProcess/Plugins \
     WebProcess/ResourceCache \
@@ -86,6 +87,8 @@ MESSAGE_RECEIVERS = \
     WebKeyValueStorageManagerProxy.messages.in \
     WebMediaCacheManager.messages.in \
     WebMediaCacheManagerProxy.messages.in \
+    WebNetworkInfoManager.messages.in \
+    WebNetworkInfoManagerProxy.messages.in \
     WebNotificationManagerProxy.messages.in \
     WebNotificationManager.messages.in \
     WebFullScreenManager.messages.in \

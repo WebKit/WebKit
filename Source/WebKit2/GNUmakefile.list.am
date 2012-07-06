@@ -71,6 +71,7 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKMediaCacheManager.h \
 	$(WebKit2)/UIProcess/API/C/WKNativeEvent.h \
 	$(WebKit2)/UIProcess/API/C/WKNavigationData.h \
+	$(WebKit2)/UIProcess/API/C/WKNetworkInfoManager.h \
 	$(WebKit2)/UIProcess/API/C/WKNotification.h \
 	$(WebKit2)/UIProcess/API/C/WKNotificationManager.h \
 	$(WebKit2)/UIProcess/API/C/WKNotificationPermissionRequest.h \
@@ -192,6 +193,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebMediaCacheManagerMessages.h \
 	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebNetworkInfoManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebNetworkInfoManagerMessages.h \
+	DerivedSources/WebKit2/WebNetworkInfoManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebNetworkInfoManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebNotificationManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebNotificationManagerMessages.h \
 	DerivedSources/WebKit2/WebNotificationManagerProxyMessageReceiver.cpp \
@@ -460,6 +465,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
 	Source/WebKit2/Shared/WebMouseEvent.cpp \
 	Source/WebKit2/Shared/WebNavigationDataStore.h \
+	Source/WebKit2/Shared/WebNetworkInfo.h \
 	Source/WebKit2/Shared/WebNumber.h \
 	Source/WebKit2/Shared/WebOpenPanelParameters.cpp \
 	Source/WebKit2/Shared/WebOpenPanelParameters.h \
@@ -560,6 +566,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKNativeEvent.h \
 	Source/WebKit2/UIProcess/API/C/WKNavigationData.cpp \
 	Source/WebKit2/UIProcess/API/C/WKNavigationData.h \
+	Source/WebKit2/UIProcess/API/C/WKNetworkInfoManager.cpp \
+	Source/WebKit2/UIProcess/API/C/WKNetworkInfoManager.h \
 	Source/WebKit2/UIProcess/API/C/WKNotification.cpp \
 	Source/WebKit2/UIProcess/API/C/WKNotification.h \
 	Source/WebKit2/UIProcess/API/C/WKNotificationManager.cpp \
@@ -854,6 +862,10 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebLoaderClient.h \
 	Source/WebKit2/UIProcess/WebNavigationData.cpp \
 	Source/WebKit2/UIProcess/WebNavigationData.h \
+	Source/WebKit2/UIProcess/WebNetworkInfoManagerProxy.cpp \
+	Source/WebKit2/UIProcess/WebNetworkInfoManagerProxy.h \
+	Source/WebKit2/UIProcess/WebNetworkInfoProvider.cpp \
+	Source/WebKit2/UIProcess/WebNetworkInfoProvider.h \
 	Source/WebKit2/UIProcess/WebOpenPanelResultListenerProxy.cpp \
 	Source/WebKit2/UIProcess/WebOpenPanelResultListenerProxy.h \
 	Source/WebKit2/UIProcess/WebPageContextMenuClient.cpp \
@@ -984,6 +996,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.cpp \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.h \
+	Source/WebKit2/WebProcess/NetworkInfo/WebNetworkInfoManager.cpp \
+	Source/WebKit2/WebProcess/NetworkInfo/WebNetworkInfoManager.h \
 	Source/WebKit2/WebProcess/Notifications/NotificationPermissionRequestManager.cpp \
 	Source/WebKit2/WebProcess/Notifications/NotificationPermissionRequestManager.h \
 	Source/WebKit2/WebProcess/Notifications/WebNotificationManager.cpp \
@@ -1057,6 +1071,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebInspectorClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebInspectorFrontendClient.h \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebNetworkInfoClient.cpp \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebNetworkInfoClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebNotificationClient.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebNotificationClient.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
