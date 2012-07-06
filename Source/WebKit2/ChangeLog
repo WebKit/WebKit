@@ -1,3 +1,21 @@
+2012-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add site specific quirks setting to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=90663
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_site_specific_quirks):
+        (webkit_settings_set_enable_site_specific_quirks):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2012-07-06  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         ProcessLauncher's WorkQueue's name is too long on Windows

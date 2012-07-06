@@ -112,7 +112,8 @@ enum {
     PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD,
     PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
     PROP_MEDIA_PLAYBACK_ALLOWS_INLINE,
-    PROP_DRAW_COMPOSITING_INDICATORS
+    PROP_DRAW_COMPOSITING_INDICATORS,
+    PROP_ENABLE_SITE_SPECIFIC_QUIRKS
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -236,6 +237,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_DRAW_COMPOSITING_INDICATORS:
         webkit_settings_set_draw_compositing_indicators(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ENABLE_SITE_SPECIFIC_QUIRKS:
+        webkit_settings_set_enable_site_specific_quirks(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -364,6 +368,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_DRAW_COMPOSITING_INDICATORS:
         g_value_set_boolean(value, webkit_settings_get_draw_compositing_indicators(settings));
+        break;
+    case PROP_ENABLE_SITE_SPECIFIC_QUIRKS:
+        g_value_set_boolean(value, webkit_settings_get_enable_site_specific_quirks(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -954,6 +961,24 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                     g_param_spec_boolean("draw-compositing-indicators",
                                                          _("Draw compositing indicators"),
                                                          _("Whether to draw compositing borders and repaint counters"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings::enable-site-specific-quirks:
+     *
+     * Whether to turn on site-specific quirks. Turning this on will
+     * tell WebKit to use some site-specific workarounds for
+     * better web compatibility. For example, older versions of
+     * MediaWiki will incorrectly send to WebKit a css file with KHTML
+     * workarounds. By turning on site-specific quirks, WebKit will
+     * special-case this and other cases to make some specific sites work.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_SITE_SPECIFIC_QUIRKS,
+                                    g_param_spec_boolean("enable-site-specific-quirks",
+                                                         _("Enable Site Specific Quirks"),
+                                                         _("Enables the site-specific compatibility workarounds"),
                                                          FALSE,
                                                          readWriteConstructParamFlags));
 
@@ -2431,4 +2456,39 @@ gboolean webkit_settings_get_draw_compositing_indicators(WebKitSettings* setting
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
     return WKPreferencesGetCompositingBordersVisible(settings->priv->preferences.get())
            && WKPreferencesGetCompositingRepaintCountersVisible(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_get_enable_site_specific_quirks:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-site-specific-quirks property.
+ *
+ * Returns: %TRUE if site specific quirks are enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_site_specific_quirks(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetNeedsSiteSpecificQuirks(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_site_specific_quirks:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-site-specific-quirks property.
+ */
+void webkit_settings_set_enable_site_specific_quirks(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetNeedsSiteSpecificQuirks(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetNeedsSiteSpecificQuirks(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-site-specific-quirks");
 }
