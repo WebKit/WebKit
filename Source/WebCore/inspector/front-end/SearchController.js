@@ -31,7 +31,6 @@
 
 /**
  * @constructor
- * @param {Element} parentElement
  */
 WebInspector.SearchController = function()
 {

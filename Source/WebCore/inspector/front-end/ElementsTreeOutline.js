@@ -1950,7 +1950,8 @@ WebInspector.ElementsTreeElement.prototype = {
                 object.callFunction(scrollIntoView);
         }
         
-        WebInspector.RemoteObject.resolveNode(this.representedObject, "", scrollIntoViewCallback);
+        var node = /** @type {WebInspector.DOMNode} */ this.representedObject;
+        WebInspector.RemoteObject.resolveNode(node, "", scrollIntoViewCallback);
     }
 }
 
