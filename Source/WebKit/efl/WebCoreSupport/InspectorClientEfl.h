@@ -2,7 +2,7 @@
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  * Copyright (C) 2009-2010 ProFUSION embedded systems
- * Copyright (C) 2009-2010 Samsung Electronics
+ * Copyright (C) 2009-2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,13 +33,19 @@
 #define InspectorClientEfl_h
 
 #include "InspectorClient.h"
+#include "InspectorFrontendClientLocal.h"
+#include <Evas.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
+class InspectorFrontendClientEfl;
 class Page;
 
-class InspectorClientEfl : public WebCore::InspectorClient {
+class InspectorClientEfl : public InspectorClient {
 public:
+    InspectorClientEfl(Evas_Object*);
+    ~InspectorClientEfl();
+
     virtual void inspectorDestroyed();
 
     virtual void openInspectorFrontend(InspectorController*);
@@ -49,10 +55,43 @@ public:
     virtual void highlight();
     virtual void hideHighlight();
 
-    virtual void populateSetting(const String& key, String* value);
-    virtual void storeSetting(const String& key, const String& value);
-
     virtual bool sendMessageToFrontend(const String&);
+
+    void releaseFrontendPage();
+    String inspectorFilesPath();
+
+private:
+    Evas_Object* m_inspectedView;
+    Evas_Object* m_inspectorView;
+    InspectorFrontendClientEfl* m_frontendClient;
+};
+
+class InspectorFrontendClientEfl : public InspectorFrontendClientLocal {
+public:
+    InspectorFrontendClientEfl(Evas_Object*, Evas_Object*, InspectorClientEfl*);
+    ~InspectorFrontendClientEfl();
+
+    virtual String localizedStringsURL();
+    virtual String hiddenPanels();
+
+    virtual void bringToFront();
+    virtual void closeWindow();
+
+    virtual void inspectedURLChanged(const String&);
+
+    virtual void attachWindow();
+    virtual void detachWindow();
+
+    virtual void setAttachedWindowHeight(unsigned);
+
+    void disconnectInspectorClient() { m_inspectorClient = 0; }
+    void destroyInspectorWindow(bool notifyInspectorController);
+
+private:
+    Evas_Object* m_inspectedView;
+    Evas_Object* m_inspectorView;
+    InspectorClientEfl* m_inspectorClient;
+
 };
 }
 

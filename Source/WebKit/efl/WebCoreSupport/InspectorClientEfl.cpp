@@ -21,31 +21,86 @@
 #include "config.h"
 #include "InspectorClientEfl.h"
 
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
-
-using namespace WebCore;
+#include "ewk_view_private.h"
+#include <unistd.h>
 
 namespace WebCore {
 
+static void notifyWebInspectorDestroy(void* userData, Evas_Object* webview, void* eventInfo)
+{
+    InspectorFrontendClientEfl* inspectorFrontendClient = static_cast<InspectorFrontendClientEfl*>(userData);
+    if (inspectorFrontendClient)
+        inspectorFrontendClient->destroyInspectorWindow(true);
+}
+
+class InspectorFrontendSettingsEfl : public InspectorFrontendClientLocal::Settings {
+public:
+    virtual String getProperty(const String& name)
+    {
+        notImplemented();
+        return String();
+    }
+
+    virtual void setProperty(const String& name, const String& value)
+    {
+        notImplemented();
+    }
+};
+
+InspectorClientEfl::InspectorClientEfl(Evas_Object* webView)
+    : m_inspectedView(webView)
+    , m_inspectorView(0)
+    , m_frontendClient(0)
+{
+}
+
+InspectorClientEfl::~InspectorClientEfl()
+{
+    if (m_frontendClient) {
+        m_frontendClient->disconnectInspectorClient();
+        m_frontendClient = 0;
+    }
+}
+
 void InspectorClientEfl::inspectorDestroyed()
 {
+    closeInspectorFrontend();
     delete this;
 }
 
 void InspectorClientEfl::openInspectorFrontend(InspectorController*)
 {
-    notImplemented();
+    evas_object_smart_callback_call(m_inspectedView, "inspector,view,create", 0);
+
+    Evas_Object* inspectorView = ewk_view_web_inspector_view_get(m_inspectedView);
+    if (!inspectorView)
+        return;
+
+    m_inspectorView = inspectorView;
+
+    String inspectorUri = inspectorFilesPath();
+    ewk_view_uri_set(m_inspectorView, inspectorUri.utf8().data());
+
+    OwnPtr<InspectorFrontendClientEfl> frontendClient = adoptPtr(new InspectorFrontendClientEfl(m_inspectedView, m_inspectorView, this));
+    m_frontendClient = frontendClient.get();
+
+    InspectorController* controller = EWKPrivate::corePage(m_inspectorView)->inspectorController();
+    controller->setInspectorFrontendClient(frontendClient.release());
 }
 
 void InspectorClientEfl::closeInspectorFrontend()
 {
-    notImplemented();
+    if (m_frontendClient)
+        m_frontendClient->destroyInspectorWindow(false);
 }
 
 void InspectorClientEfl::bringFrontendToFront()
 {
-    notImplemented();
+    m_frontendClient->bringToFront();
 }
 
 void InspectorClientEfl::highlight()
@@ -58,21 +113,98 @@ void InspectorClientEfl::hideHighlight()
     notImplemented();
 }
 
-void InspectorClientEfl::populateSetting(const String&, String*)
+bool InspectorClientEfl::sendMessageToFrontend(const String& message)
+{
+    Page* frontendPage = EWKPrivate::corePage(m_inspectorView);
+    return doDispatchMessageOnFrontendPage(frontendPage, message);
+}
+
+void InspectorClientEfl::releaseFrontendPage()
+{
+    m_inspectorView = 0;
+    m_frontendClient = 0;
+}
+
+String InspectorClientEfl::inspectorFilesPath()
+{
+    String inspectorFilesPath = makeString("file://", WEB_INSPECTOR_INSTALL_DIR, "/inspector.html");
+    if (access(inspectorFilesPath.utf8().data(), R_OK)) // On success, zero is returned
+        inspectorFilesPath = makeString("file://", WEB_INSPECTOR_DIR, "/inspector.html");
+
+    return inspectorFilesPath;
+}
+
+InspectorFrontendClientEfl::InspectorFrontendClientEfl(Evas_Object* inspectedView, Evas_Object* inspectorView, InspectorClientEfl* inspectorClient)
+    : InspectorFrontendClientLocal(EWKPrivate::corePage(inspectedView)->inspectorController(), EWKPrivate::corePage(inspectorView), adoptPtr(new InspectorFrontendSettingsEfl()))
+    , m_inspectedView(inspectedView)
+    , m_inspectorView(inspectorView)
+    , m_inspectorClient(inspectorClient)
+{
+    evas_object_smart_callback_add(m_inspectorView, "inspector,view,destroy", notifyWebInspectorDestroy, this);
+}
+
+InspectorFrontendClientEfl::~InspectorFrontendClientEfl()
+{
+    evas_object_smart_callback_del(m_inspectorView, "inspector,view,destroy", notifyWebInspectorDestroy);
+
+    if (m_inspectorClient) {
+        m_inspectorClient->releaseFrontendPage();
+        m_inspectorClient = 0;
+    }
+}
+
+String InspectorFrontendClientEfl::localizedStringsURL()
+{
+    notImplemented();
+    return String();
+}
+
+String InspectorFrontendClientEfl::hiddenPanels()
+{
+    notImplemented();
+    return String();
+}
+
+void InspectorFrontendClientEfl::bringToFront()
 {
     notImplemented();
 }
 
-void InspectorClientEfl::storeSetting(const String&, const String&)
+void InspectorFrontendClientEfl::closeWindow()
+{
+    destroyInspectorWindow(true);
+}
+
+void InspectorFrontendClientEfl::inspectedURLChanged(const String&)
 {
     notImplemented();
 }
 
-bool InspectorClientEfl::sendMessageToFrontend(const String&)
+void InspectorFrontendClientEfl::attachWindow()
 {
     notImplemented();
-    return false;
 }
 
+void InspectorFrontendClientEfl::detachWindow()
+{
+    notImplemented();
+}
+
+void InspectorFrontendClientEfl::setAttachedWindowHeight(unsigned)
+{
+    notImplemented();
+}
+
+void InspectorFrontendClientEfl::destroyInspectorWindow(bool notifyInspectorController)
+{
+    if (notifyInspectorController)
+        EWKPrivate::corePage(m_inspectedView)->inspectorController()->disconnectFrontend();
+
+    if (m_inspectorClient)
+        m_inspectorClient->releaseFrontendPage();
+
+    evas_object_smart_callback_call(m_inspectedView, "inspector,view,close", m_inspectorView);
+}
 
 }
+#endif
