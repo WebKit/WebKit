@@ -1,3 +1,19 @@
+2012-05-15  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in Document::nodeChildrenWillBeRemoved.
+        https://bugs.webkit.org/show_bug.cgi?id=85247
+
+        Reviewed by Hajime Morita.
+
+        Reverse ordering of commands to ref ptr the children set
+        first before calling nodeChildrenWillBeRemoved, since it
+        can fire mutation events.
+
+        Test: fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml
+
+        * dom/ContainerNode.cpp:
+        (WebCore::willRemoveChildren):
+
 2012-05-10  Abhishek Arya  <inferno@chromium.org>
 
         Crash in swapInNodePreservingAttributesAndChildren.

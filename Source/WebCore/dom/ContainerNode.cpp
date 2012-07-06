@@ -403,11 +403,11 @@ static void willRemoveChild(Node* child)
 
 static void willRemoveChildren(ContainerNode* container)
 {
-    container->document()->nodeChildrenWillBeRemoved(container);
-    container->document()->incDOMTreeVersion();
-
     NodeVector children;
     getChildNodes(container, children);
+
+    container->document()->nodeChildrenWillBeRemoved(container);
+    container->document()->incDOMTreeVersion();
 
 #if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(container);
