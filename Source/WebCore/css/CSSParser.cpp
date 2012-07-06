@@ -1098,7 +1098,7 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSSPropertyFloat:                // left | right | none | positioned | center (for buggy CSS, maps to none)
         if (id == CSSValueLeft || id == CSSValueRight
-            || id == CSSValueNone || id == CSSValueCenter || id == CSSValueWebkitPositioned)
+            || id == CSSValueNone || id == CSSValueCenter)
             validPrimitive = true;
         break;
 
