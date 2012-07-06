@@ -1,3 +1,9 @@
+2012-05-18  MORITA Hajime  <morrita@google.com>
+
+        Yet another unreviewed build fix on r117572, this time for wk2...
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2012-03-26  Adam Barth  <abarth@webkit.org>
 
         FrameLoader::shouldAllowNavigation uses Frame for context rather than Document
