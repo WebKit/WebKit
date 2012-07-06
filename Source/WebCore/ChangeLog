@@ -1,3 +1,55 @@
+2012-04-30  Abhishek Arya  <inferno@chromium.org>
+
+        Remove positioned float code.
+        https://bugs.webkit.org/show_bug.cgi?id=84795
+
+        Reviewed by Dan Bernstein.
+
+        Backout r92004 and some pieces from r91702.
+
+        Test: fast/block/float/positioned-float-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFloat):
+        * css/CSSValueKeywords.in:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::simplifiedLayout):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::FloatingObjects::clear):
+        (WebCore::RenderBlock::FloatingObjects::increaseObjectsCount):
+        (WebCore::RenderBlock::FloatingObjects::decreaseObjectsCount):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        (WebCore::RenderBlock::forceLayoutInlineChildren):
+        (FloatingObject):
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        (WebCore::RenderBlock::hasOverhangingFloats):
+        (WebCore::RenderBlock::FloatingObjects::FloatingObjects):
+        (FloatingObjects):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateBoxModelInfoFromStyle):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        (RenderDeprecatedFlexibleBox):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        * rendering/style/RenderStyleConstants.h:
+
 2012-05-07  Abhishek Arya  <inferno@chromium.org>
 
         Crash in RenderBlock::updateFirstLetterStyle.

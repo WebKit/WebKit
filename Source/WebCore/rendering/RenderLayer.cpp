@@ -2376,7 +2376,7 @@ void RenderLayer::updateScrollInfoAfterLayout()
                     RenderBlock* block = toRenderBlock(renderer());
                     block->scrollbarsChanged(box->hasAutoHorizontalScrollbar() && haveHorizontalBar != horizontalOverflow,
                                              box->hasAutoVerticalScrollbar() && haveVerticalBar != verticalOverflow);
-                    block->layoutBlock(true); // FIXME: Need to handle positioned floats triggering extra relayouts.
+                    block->layoutBlock(true);
                 } else
                     renderer()->layout();
                 m_inOverflowRelayout = false;
