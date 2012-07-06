@@ -58,7 +58,8 @@
     </branch>
   </autotools>
 
-  <autotools id="pixman" autogen-sh="configure">
+  <autotools id="pixman" autogen-sh="configure"
+             autogenargs="--enable-gtk=no">
     <branch module="releases/pixman-0.24.0.tar.gz" version="0.24.0"
             repo="cairographics.org"
             hash="sha256:a5647c7158f103eedff5fba799018f4169f6b26b573ab7685812ebc9a1c5d2e4"
