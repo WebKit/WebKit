@@ -98,6 +98,14 @@ WebInspector.ScriptsNavigator.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    removeUISourceCode: function(uiSourceCode)
+    {
+        this._snippetsNavigatorViewForUISourceCode(uiSourceCode).removeUISourceCode(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
      * @return {boolean}
      */
     isScriptSourceAdded: function(uiSourceCode)
@@ -253,7 +261,10 @@ WebInspector.SnippetsNavigatorView.prototype = {
      */
     _handleRemoveSnippet: function(uiSourceCode, event)
     {
-        // FIXME: To be implemented.
+        if (!uiSourceCode.isSnippet)
+            return;
+        var snippetJavaScriptSource = /** @type {WebInspector.SnippetJavaScriptSource} */ uiSourceCode;
+        WebInspector.scriptSnippetModel.deleteScriptSnippet(snippetJavaScriptSource);
     },
 
     /**

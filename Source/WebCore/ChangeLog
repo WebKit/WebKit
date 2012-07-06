@@ -1,3 +1,21 @@
+2012-07-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Implement snippets removing.
+        https://bugs.webkit.org/show_bug.cgi?id=90674
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NavigatorView.js:
+        (WebInspector.NavigatorView.prototype.rename.afterEditing):
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator.prototype.removeUISourceCode):
+        (WebInspector.SnippetsNavigatorView.prototype._handleRemoveSnippet):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addUISourceCode):
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeRemoved):
+        (WebInspector.ScriptsPanel.prototype._revealExecutionLine):
+        * inspector/front-end/TabbedEditorContainer.js:
+
 2012-07-06  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed: fix inspector front-end compilation.

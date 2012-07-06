@@ -190,7 +190,7 @@ WebInspector.TabbedEditorContainer.prototype = {
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    uiSourceCodeAdded: function(uiSourceCode)
+    addUISourceCode: function(uiSourceCode)
     {
         if (this._userSelectedFiles || this._loadedURLs[uiSourceCode.url])
             return;
@@ -206,7 +206,17 @@ WebInspector.TabbedEditorContainer.prototype = {
         if (index === 0)
             this._innerShowFile(uiSourceCode, false);
     },
-    
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    removeUISourceCode: function(uiSourceCode)
+    {
+        var tabId = this._tabIds.get(uiSourceCode);
+        if (tabId)
+            this._tabbedPane.closeTab(tabId);
+    },
+
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      */
@@ -272,17 +282,6 @@ WebInspector.TabbedEditorContainer.prototype = {
         uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
         uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
         return tabId;
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    _removeFileTab: function(uiSourceCode)
-    {
-        var tabId = this._tabIds.get(uiSourceCode);
-
-        if (tabId)
-            this._tabbedPane.closeTab(tabId);
     },
 
     /**

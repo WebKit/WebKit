@@ -256,12 +256,14 @@ WebInspector.ScriptsPanel.prototype = {
     _addUISourceCode: function(uiSourceCode)
     {
         this._navigator.addUISourceCode(uiSourceCode);
-        this._editorContainer.uiSourceCodeAdded(uiSourceCode);
+        this._editorContainer.addUISourceCode(uiSourceCode);
     },
 
     _uiSourceCodeRemoved: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        this._editorContainer.removeUISourceCode(uiSourceCode);
+        this._navigator.removeUISourceCode(uiSourceCode);
         this._removeSourceFrame(uiSourceCode);
     },
 
@@ -542,7 +544,7 @@ WebInspector.ScriptsPanel.prototype = {
     _revealExecutionLine: function(uiLocation)
     {
         // Some scripts (anonymous and snippets evaluations) are not added to files select by default.
-        this._editorContainer.uiSourceCodeAdded(uiLocation.uiSourceCode);
+        this._editorContainer.addUISourceCode(uiLocation.uiSourceCode);
         var sourceFrame = this._showFile(uiLocation.uiSourceCode);
         sourceFrame.revealLine(uiLocation.lineNumber);
         sourceFrame.focus();
