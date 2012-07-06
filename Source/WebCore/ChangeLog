@@ -1,3 +1,45 @@
+2012-07-06  Andreas Kling  <kling@webkit.org>
+
+        Separate mutating CSSStyleDeclaration operations.
+        <http://webkit.org/b/89945>
+
+        Reviewed by Antti Koivisto.
+
+        Use separate paths for mutating the StylePropertySet wrapped by a CSSStyleDeclaration.
+        PropertySetCSSStyleDeclaration now has:
+
+            - propertySet() const
+            - ensureMutablePropertySet()
+
+        This is prep work for supporting immutable ElementAttributeData objects, the idea being
+        that calling ensureMutablePropertySet() may cause the element to convert its internal
+        attribute storage (which also holds the inline StylePropertySet.)
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::length):
+        (WebCore::PropertySetCSSStyleDeclaration::item):
+        (WebCore::PropertySetCSSStyleDeclaration::cssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValue):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValue):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyPriority):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyShorthand):
+        (WebCore::PropertySetCSSStyleDeclaration::isPropertyImplicit):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::removeProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValueInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::copy):
+        (WebCore::PropertySetCSSStyleDeclaration::makeMutable):
+        (WebCore::PropertySetCSSStyleDeclaration::cssPropertyMatches):
+        (WebCore::InlineCSSStyleDeclaration::didMutate):
+        (WebCore::InlineCSSStyleDeclaration::ensureMutablePropertySet):
+        * css/PropertySetCSSStyleDeclaration.h:
+        (PropertySetCSSStyleDeclaration):
+        (WebCore::PropertySetCSSStyleDeclaration::propertySet):
+        (WebCore::PropertySetCSSStyleDeclaration::ensureMutablePropertySet):
+
 2012-07-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: text editor scrolls 2px horizontally as one navigates the source code.
