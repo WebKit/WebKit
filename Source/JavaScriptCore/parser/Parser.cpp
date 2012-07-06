@@ -313,14 +313,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     int declsStart = 0;
     int declsEnd = 0;
     TreeExpression decls = 0;
-    bool hasDeclaration = false;
     if (match(VAR)) {
         /*
          for (var IDENT in expression) statement
          for (var IDENT = expression in expression) statement
          for (var varDeclarationList; expressionOpt; expressionOpt)
          */
-        hasDeclaration = true;
         const Identifier* forInTarget = 0;
         TreeExpression forInInitializer = 0;
         m_allowsIn = false;
