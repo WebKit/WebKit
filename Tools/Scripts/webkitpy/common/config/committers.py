@@ -267,6 +267,7 @@ committers_unable_to_review = [
     Committer("James Kozianski", ["koz@chromium.org", "koz@google.com"], "koz"),
     Committer("James Simonsen", "simonjam@chromium.org", "simonjam"),
     Committer("Jarred Nicholls", ["jarred@webkit.org", "jarred@sencha.com"], "jarrednicholls"),
+    Committer("Jason Liu", ["jason.liu@torchmobile.com.cn", "jasonliuwebkit@gmail.com"], "jasonliu"),
     Committer("Jay Civelli", "jcivelli@chromium.org", "jcivelli"),
     Committer("Jeff Miller", "jeffm@apple.com", "jeffm7"),
     Committer("Jeffrey Pfau", ["jeffrey@endrift.com", "jpfau@apple.com"], "jpfau"),
