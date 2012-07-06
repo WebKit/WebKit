@@ -1,3 +1,19 @@
+2012-05-07  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in RenderBlock::updateFirstLetterStyle.
+        https://bugs.webkit.org/show_bug.cgi?id=85759
+
+        Reviewed by Julien Chaffraix.
+
+        Test: fast/css-generated-content/first-letter-next-sibling-crash.html
+
+        RenderBlock::removeChild can bring up the children from last single anonymous block,
+        causing |nextSibling| in RenderBlock::updateFirstLetterStyle to go stale. We prevent
+        this by removing the child safely using removeChildNode before destroying it.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+
 2012-05-04  Abhishek Arya  <inferno@chromium.org>
 
         ASSERT(beforeChildAnonymousContainer->isTable()); fails in RenderBlock::addChildIgnoringAnonymousColumnBlocks.
