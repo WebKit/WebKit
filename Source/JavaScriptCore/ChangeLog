@@ -1,3 +1,19 @@
+2012-07-05  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r121925): It broke 5 sputnik tests on x86 platforms
+        https://bugs.webkit.org/show_bug.cgi?id=90658
+
+        Reviewed by Zoltan Herczeg.
+        
+        Under the new object model, out-of-line property accesses such as those
+        in ResolveGlobal must account for the fact that the offset to the Kth
+        property is represented by K + inlineStorageCapacity. Hence, the property
+        loads in ResolveGlobal must have an additional -inlineStorageCapacity *
+        sizeof(JSValue) offset.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-07-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed 64 bit buildfix after r121925.
