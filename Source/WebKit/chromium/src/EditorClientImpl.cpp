@@ -89,17 +89,6 @@ void EditorClientImpl::pageDestroyed()
 
 void EditorClientImpl::frameWillDetachPage(WebCore::Frame* frame)
 {
-    HashSet<WebTextCheckingCompletionImpl*> validRequests;
-
-    for (HashSet<WebTextCheckingCompletionImpl*>::iterator i = m_pendingTextChecks.begin();
-         i != m_pendingTextChecks.end(); ++i) {
-        if (frame->editor()->spellChecker() == (*i)->spellChecker())
-            (*i)->invalidate();
-        else
-            validRequests.add(*i);
-    }
-
-    m_pendingTextChecks.swap(validRequests);
 }
 
 bool EditorClientImpl::shouldShowDeleteInterface(HTMLElement* elem)
@@ -746,14 +735,12 @@ void EditorClientImpl::checkSpellingOfString(const UChar* text, int length,
         *misspellingLength = spellLength;
 }
 
-void EditorClientImpl::requestCheckingOfString(SpellChecker* sender, const WebCore::TextCheckingRequest& request)
+void EditorClientImpl::requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest> request)
 {
-    if (!m_webView->spellCheckClient())
-        return;
-
-    WebTextCheckingCompletionImpl* completion = new WebTextCheckingCompletionImpl(request.sequence(), sender);
-    m_pendingTextChecks.add(completion);
-    m_webView->spellCheckClient()->requestCheckingOfText(request.text(), completion);
+    if (m_webView->spellCheckClient()) {
+        String text = request->text();
+        m_webView->spellCheckClient()->requestCheckingOfText(text, new WebTextCheckingCompletionImpl(request));
+    }
 }
 
 String EditorClientImpl::getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord)

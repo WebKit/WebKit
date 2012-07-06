@@ -558,7 +558,7 @@ void EditorClientBlackBerry::checkGrammarOfString(const UChar*, int, WTF::Vector
     notImplemented();
 }
 
-void EditorClientBlackBerry::requestCheckingOfString(SpellChecker*, const TextCheckingRequest&)
+void EditorClientBlackBerry::requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>)
 {
     notImplemented();
 }

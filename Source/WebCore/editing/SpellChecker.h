@@ -42,30 +42,28 @@ namespace WebCore {
 class Frame;
 class Node;
 class TextCheckerClient;
-struct TextCheckingResult;
+class SpellChecker;
 
-class SpellCheckRequest : public RefCounted<SpellCheckRequest> {
+class SpellCheckRequest : public TextCheckingRequest {
 public:
-    SpellCheckRequest(int sequence, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String&, TextCheckingTypeMask, TextCheckingProcessType);
-    ~SpellCheckRequest();
+    SpellCheckRequest(PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String&, TextCheckingTypeMask, TextCheckingProcessType);
+    virtual ~SpellCheckRequest();
 
     static PassRefPtr<SpellCheckRequest> create(TextCheckingTypeMask, TextCheckingProcessType, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange);
 
-    TextCheckingRequest textCheckingRequest() const;
-
-    void setSequence(int sequence) { m_sequence = sequence; }
-    int sequence() const { return m_sequence; }
     PassRefPtr<Range> checkingRange() const { return m_checkingRange; }
     PassRefPtr<Range> paragraphRange() const { return m_paragraphRange; }
-    const String& text() const { return m_text; }
-    TextCheckingTypeMask mask() const { return m_mask; }
-    TextCheckingProcessType processType() const { return m_processType; }
     PassRefPtr<Element> rootEditableElement() const { return m_rootEditableElement; }
+
+    void setCheckerAndSequence(SpellChecker*, int sequence);
+    void requesterDestroyed();
+    bool isStarted() const { return m_checker; }
+
+    virtual void didSucceed(const Vector<TextCheckingResult>&) OVERRIDE;
+    virtual void didCancel() OVERRIDE;
+
 private:
-    int m_sequence;
-    String m_text;
-    TextCheckingTypeMask m_mask;
-    TextCheckingProcessType m_processType;
+    SpellChecker* m_checker;
     RefPtr<Range> m_checkingRange;
     RefPtr<Range> m_paragraphRange;
     RefPtr<Element> m_rootEditableElement;
@@ -74,6 +72,8 @@ private:
 class SpellChecker {
     WTF_MAKE_NONCOPYABLE(SpellChecker);
 public:
+    friend class SpellCheckRequest;
+
     explicit SpellChecker(Frame*);
     ~SpellChecker();
 
@@ -81,8 +81,6 @@ public:
     bool isCheckable(Range*) const;
 
     void requestCheckingFor(PassRefPtr<SpellCheckRequest>);
-    void didCheckSucceeded(int sequence, const Vector<TextCheckingResult>&);
-    void didCheckCanceled(int sequence);
 
     int lastRequestSequence() const
     {
@@ -102,6 +100,8 @@ private:
     void timerFiredToProcessQueuedRequest(Timer<SpellChecker>*);
     void invokeRequest(PassRefPtr<SpellCheckRequest>);
     void enqueueRequest(PassRefPtr<SpellCheckRequest>);
+    void didCheckSucceed(int sequence, const Vector<TextCheckingResult>&);
+    void didCheckCancel(int sequence);
     void didCheck(int sequence, const Vector<TextCheckingResult>&);
 
     Frame* m_frame;
@@ -113,11 +113,6 @@ private:
     RefPtr<SpellCheckRequest> m_processingRequest;
     RequestQueue m_requestQueue;
 };
-
-inline TextCheckingRequest SpellCheckRequest::textCheckingRequest() const
-{
-    return TextCheckingRequest(m_sequence, m_text, m_mask, m_processType);
-}
 
 } // namespace WebCore
 

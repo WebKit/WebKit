@@ -40,7 +40,6 @@
 namespace WebCore {
 class Frame;
 class HTMLInputElement;
-class SpellChecker;
 }
 
 namespace WebKit {
@@ -112,11 +111,9 @@ public:
     virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
-    virtual void requestCheckingOfString(WebCore::SpellChecker*, const WebCore::TextCheckingRequest&);
+    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>);
 
     virtual WebCore::TextCheckerClient* textChecker() { return this; }
-
-    void didCheckString(WebTextCheckingCompletionImpl*);
 
 private:
     void modifySelection(WebCore::Frame*, WebCore::KeyboardEvent*);
@@ -145,8 +142,6 @@ private:
         SpellCheckForcedOff
     };
     int m_spellCheckThisFieldStatus;
-
-    WTF::HashSet<WebTextCheckingCompletionImpl*> m_pendingTextChecks;
 };
 
 } // namespace WebKit
