@@ -496,6 +496,7 @@ static int textDistance(const Position& start, const Position& end)
 
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)
 {
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
     Node* innerNode = targetNode(event);
     if (!(innerNode && innerNode->renderer() && m_mouseDownMayStartSelect))
         return false;
