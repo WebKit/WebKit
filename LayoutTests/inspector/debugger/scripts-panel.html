@@ -38,7 +38,7 @@ function test()
         provider._reset = function(preservedItems)
         {
             uiSourceCodes = preservedItems || [];
-            WebInspector.debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.GlobalObjectCleared);
+            this.dispatchEventToListeners(WebInspector.Workspace.Events.WorkspaceReset, null);
         }
         provider._replaceUISourceCode = function(oldUISourceCode, uiSourceCode)
         {

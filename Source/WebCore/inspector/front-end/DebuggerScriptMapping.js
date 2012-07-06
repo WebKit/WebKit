@@ -44,7 +44,6 @@ WebInspector.DebuggerScriptMapping = function()
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._parsedScriptSource, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 }
 
 WebInspector.DebuggerScriptMapping.prototype = {
@@ -83,11 +82,5 @@ WebInspector.DebuggerScriptMapping.prototype = {
         }
 
         return this._resourceMapping;
-    },
-
-    _debuggerReset: function()
-    {
-        for (var i = 0; i < this._mappings.length; ++i)
-            this._mappings[i].reset();
     }
 }

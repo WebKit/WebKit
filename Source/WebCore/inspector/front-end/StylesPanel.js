@@ -34,8 +34,7 @@
 WebInspector.StylesUISourceCodeProvider = function()
 {
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._initialize, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this._reset, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._reset, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this.reset, this);
 
     this._uiSourceCodes = [];
 }
@@ -79,7 +78,7 @@ WebInspector.StylesUISourceCodeProvider.prototype = {
         this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
     },
 
-    _reset: function()
+    reset: function()
     {
         this._uiSourceCodes = [];
     }

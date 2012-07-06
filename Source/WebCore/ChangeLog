@@ -1,3 +1,36 @@
+2012-07-05  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Workspace should dispatch WorkspaceReset event on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=90616
+
+        Reviewed by Pavel Feldman.
+
+        Workspace UISourceCodeProviders are now reset on navigation.
+        UISourceCodeRemoved event is not dispatched from UISourceCodeProviders on reset (page navigation) anymore.
+
+        * inspector/front-end/CompilerScriptMapping.js:
+        (WebInspector.CompilerScriptMapping.prototype.reset):
+        * inspector/front-end/DebuggerScriptMapping.js:
+        (WebInspector.DebuggerScriptMapping):
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping.prototype._uiSourceCodeRemoved):
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.ScriptSnippetModel.prototype._reset):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._loadUISourceCodes):
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.prototype.canShowAnchorLocation):
+        (WebInspector.ScriptsPanel.prototype._toggleFormatSource):
+        (WebInspector.ScriptsPanel.prototype.showGoToSourceDialog):
+        * inspector/front-end/StylesPanel.js:
+        (WebInspector.StylesUISourceCodeProvider):
+        (WebInspector.StylesUISourceCodeProvider.prototype.reset):
+        * inspector/front-end/Workspace.js:
+        (WebInspector.CompositeUISourceCodeProvider.prototype.uiSourceCodeProviders):
+        (WebInspector.Workspace):
+        (WebInspector.Workspace.prototype.registerUISourceCodeProvider):
+        (WebInspector.Workspace.prototype._reset):
+
 2012-07-05  Arnaud Renevier  <arno@renevier.net>
 
         [GTK] Showing the context menu in the Web Inspector can crash the browser

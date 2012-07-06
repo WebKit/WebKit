@@ -29,9 +29,9 @@
  * @implements {WebInspector.TabbedEditorContainerDelegate}
  * @implements {WebInspector.ContextMenu.Provider}
  * @extends {WebInspector.Panel}
- * @param {WebInspector.UISourceCodeProvider=} uiSourceCodeProviderForTest
+ * @param {WebInspector.Workspace=} workspaceForTest
  */
-WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
+WebInspector.ScriptsPanel = function(workspaceForTest)
 {
     WebInspector.Panel.call(this, "scripts");
     this.registerRequiredCSS("scriptsPanel.css");
@@ -40,7 +40,7 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     WebInspector.settings.navigatorWasOnceHidden = WebInspector.settings.createSetting("navigatorWasOnceHidden", false);
     WebInspector.settings.debuggerSidebarHidden = WebInspector.settings.createSetting("debuggerSidebarHidden", false);
 
-    this._uiSourceCodeProvider = uiSourceCodeProviderForTest || WebInspector.workspace;
+    this._workspace = workspaceForTest || WebInspector.workspace;
 
     function viewGetter()
     {
@@ -166,18 +166,18 @@ WebInspector.ScriptsPanel = function(uiSourceCodeProviderForTest)
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.CallFrameSelected, this._callFrameSelected, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame, this._consoleCommandEvaluatedInSelectedCallFrame, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ExecutionLineChanged, this._executionLineChanged, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._reset.bind(this, false));
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointsActiveStateChanged, this._breakpointsActiveStateChanged, this);
 
-    this._uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
-    this._uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
-    this._uiSourceCodeProvider.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
+    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._handleUISourceCodeAdded, this);
+    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
+    this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
+    this._workspace.addEventListener(WebInspector.Workspace.Events.WorkspaceReset, this._reset.bind(this, false), this);
 
     var enableDebugger = !Capabilities.debuggerCausesRecompilation || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
         WebInspector.debuggerModel.enableDebugger();
 
-    WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope(this._uiSourceCodeProvider));
+    WebInspector.advancedSearchController.registerSearchScope(new WebInspector.ScriptsSearchScope(this._workspace));
     WebInspector.ContextMenu.registerProvider(this);
 }
 
@@ -237,7 +237,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _loadUISourceCodes: function()
     {
-        var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();
+        var uiSourceCodes = this._workspace.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)
             this._uiSourceCodeAdded(uiSourceCodes[i]);
     },
@@ -365,6 +365,10 @@ WebInspector.ScriptsPanel.prototype = {
             this.sidebarPanes.workers.reset();
         WebInspector.RevisionHistoryView.reset();
 
+        var uiSourceCodes = this._workspace.uiSourceCodes();
+        for (var i = 0; i < uiSourceCodes.length; ++i)
+            this._removeSourceFrame(uiSourceCodes[i]);
+
         this._loadUISourceCodes();
     },
 
@@ -389,7 +393,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (this._debuggerEnabled && anchor.uiSourceCode)
             return true;
-        var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();
+        var uiSourceCodes = this._workspace.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i) {
             if (uiSourceCodes[i].url === anchor.href) {
                 anchor.uiSourceCode = uiSourceCodes[i];
@@ -935,7 +939,7 @@ WebInspector.ScriptsPanel.prototype = {
     _toggleFormatSource: function()
     {
         this._toggleFormatSourceButton.toggled = !this._toggleFormatSourceButton.toggled;
-        var uiSourceCodes = this._uiSourceCodeProvider.uiSourceCodes();
+        var uiSourceCodes = this._workspace.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)
             uiSourceCodes[i].setFormatted(this._toggleFormatSourceButton.toggled);
     },
@@ -1072,7 +1076,7 @@ WebInspector.ScriptsPanel.prototype = {
     showGoToSourceDialog: function()
     {
         WebInspector.inspectorView.setCurrentPanel(this);
-        WebInspector.OpenResourceDialog.show(this, this._uiSourceCodeProvider, this.editorView.mainElement);
+        WebInspector.OpenResourceDialog.show(this, this._workspace, this.editorView.mainElement);
     }
 }
 
