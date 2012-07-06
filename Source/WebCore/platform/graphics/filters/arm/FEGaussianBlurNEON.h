@@ -29,7 +29,7 @@
 
 #include <wtf/Platform.h>
 
-#if CPU(ARM_NEON) && COMPILER(GCC)
+#if ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
 
 #include "FEGaussianBlur.h"
 #include "NEONHelpers.h"
@@ -74,6 +74,6 @@ inline void boxBlurNEON(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dst
 
 } // namespace WebCore
 
-#endif // CPU(ARM_NEON) && COMPILER(GCC)
+#endif // ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
 
 #endif // FEGaussianBlurNEON_h

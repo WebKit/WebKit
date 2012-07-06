@@ -29,7 +29,7 @@
 
 #include <wtf/Platform.h>
 
-#if CPU(ARM_NEON) && COMPILER(GCC)
+#if ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
 
 #include <arm_neon.h>
 
@@ -51,6 +51,6 @@ inline void storeFloatAsRGBA8(float32x4_t data, uint32_t* destination)
 
 } // namespace WebCore
 
-#endif // CPU(ARM_NEON) && COMPILER(GCC)
+#endif // ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
 
 #endif // NEONHelpers_h

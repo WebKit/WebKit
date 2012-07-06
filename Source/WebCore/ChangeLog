@@ -1,3 +1,17 @@
+2012-07-06  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Fixing defines for NEON intrinsics.
+        https://bugs.webkit.org/show_bug.cgi?id=90666
+
+        Reviewed by Zoltan Herczeg.
+
+        Existing tests cover this issue.
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplyGeneric):
+        * platform/graphics/filters/arm/FEGaussianBlurNEON.h:
+        * platform/graphics/filters/arm/NEONHelpers.h:
+
 2012-07-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Workspace should dispatch WorkspaceReset event on navigation.
