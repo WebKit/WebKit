@@ -920,3 +920,6 @@ fullscreen/exit-full-screen-iframe.html
 # https://bugs.webkit.org/show_bug.cgi?id=90709
 http/tests/inspector/console-cd-completions.html
 http/tests/inspector/console-cd.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90710
+plugins/npruntime/leak-window-scriptable-object.html
