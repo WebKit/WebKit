@@ -72,6 +72,9 @@ public:
     // Shared between SVG renderers and resources.
     static void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle*, const RenderObject*);
 
+    // Determines if any ancestor's transform has changed.
+    static bool transformToRootChanged(RenderObject*);
+
     // FIXME: These methods do not belong here.
     static const RenderSVGRoot* findTreeRootObject(const RenderObject*);
 
