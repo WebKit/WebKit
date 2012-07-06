@@ -31,18 +31,15 @@ ROOT_BUILD_DIR = $$replace(OUT_PWD, $${WEBKIT_SUBDIR}$,)
 pro_file_name = $$basename(_PRO_FILE_)
 equals(pro_file_name, configure.pro): CONFIG += configure_pass
 
-# We want the QtWebKit API forwarding includes to live in the root build dir,
-# except when we are running the config.tests in Tools/qmake.
-!configure_pass: QMAKE_SYNCQT_OUTDIR = $$ROOT_BUILD_DIR
+# We want the QtWebKit API forwarding includes to live in the root build dir.
+MODULE_BASE_DIR = $$ROOT_WEBKIT_DIR
+MODULE_BASE_OUTDIR = $$ROOT_BUILD_DIR
 
-# Load Qt's defaults after we've resolved the build directory. This will also
-# run syncqt if there is a sync.profile in the $$_PRO_FILE_PWD_. We never want
-# to enable Qt's concept of a developer-build, since we take care of installing
-# our own module file. See api.pri for details about how we utilize this.
-old_qtdir=$$QTDIR
-QTDIR=no-developer-build-please
+# The qmake files on the other hand live in a subdirectory.
+MODULE_QMAKE_OUTDIR = $$ROOT_BUILD_DIR/Tools/qmake
+
+# Now we're ready to load default_pre from Qt
 load(default_pre)
-QTDIR=$$old_qtdir
 
 unix:config_gccdepends {
     # We have a compiler that supports the -MD option (and neither

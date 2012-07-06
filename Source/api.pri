@@ -15,6 +15,17 @@ haveQt(5) {
     MODULE = webkit
     MODULE_PRI = ../Tools/qmake/qt_webkit.pri
 
+    # ---------------- Custom developer-build handling -------------------
+    #
+    # The assumption for Qt developer builds is that the module file
+    # will be put into qtbase/mkspecs/modules, and the libraries into
+    # qtbase/lib, with rpath/install_name set to the Qt lib dir.
+    #
+    # For WebKit we don't want that behavior for the libraries, as we want
+    # them to be self-contained in the WebKit build dir.
+    #
+    CONFIG += force_independent
+
     BASE_TARGET = $$TARGET
 
     load(qt_module_config)
@@ -29,65 +40,6 @@ haveQt(5) {
 
     # Allow doing a debug-only build of WebKit (not supported by Qt)
     macx:!debug_and_release:debug: TARGET = $$BASE_TARGET
-
-    # ---------------- Custom developer-build handling -------------------
-    #
-    # The assumption for Qt developer builds is that the module file
-    # will be put into qtbase/mkspecs/modules, and the libraries into
-    # qtbase/lib, with rpath/install_name set to the Qt lib dir.
-    #
-    # For WebKit we don't want that behavior for the libraries, as we want
-    # them to be self-contained in the WebKit build dir. To achive that we
-    # trick Qt into thinking it's not a developer build, but setting QTDIR
-    # to a bogus path in default_pre.prf.
-    #
-    # We still want the module file to live in the Qt dir so the module can
-    # be used by setting QT += webkit, so we copy the file manually. We also
-    # have to make sure the rpath/install_name of the libraries are relative
-    # to the webkit build dir.
-
-    !build_pass {
-        # Make a more accessible copy of the module forward file
-        # in the WebKit build directory.
-        convenience_module_path = $$toSystemPath($${ROOT_BUILD_DIR})$${QMAKE_DIR_SEP}modules
-        module_filename = $$basename(QT.webkit.module_pri)
-
-        # The QMAKE_EXTRA_MODULE_FORWARDS might contain more than one path,
-        # so we iterate the paths and find one that matches our build dir.
-        for(module_forward, QMAKE_EXTRA_MODULE_FORWARDS) {
-            in_build_dir = $$find(module_forward, ^$${ROOT_BUILD_DIR})
-            !isEmpty(in_build_dir) {
-                webkit_module_forward = $$module_forward
-                break()
-            }
-        }
-
-        isEmpty(webkit_module_forward) {
-            warning(Could not resolve QMAKE_EXTRA_MODULE_FORWARDS path!)
-        } else {
-            make_module_fwd_convenience.target = $$convenience_module_path$${QMAKE_DIR_SEP}$$module_filename
-            make_module_fwd_convenience.commands = $$QMAKE_MKDIR $$convenience_module_path \
-                && echo \"include($$webkit_module_forward$${QMAKE_DIR_SEP}$$module_filename)\" > $$convenience_module_path$${QMAKE_DIR_SEP}$$module_filename
-            make_module_fwd_convenience.depends = $$webkit_module_forward$${QMAKE_DIR_SEP}$$module_filename
-
-            QMAKE_EXTRA_TARGETS += make_module_fwd_convenience
-            DEFAULT_TARGETS += make_module_fwd_convenience
-        }
-
-        qt_developer_build {
-            # Copy the module forward file into Qt so that the module
-            # is immediately accessible.
-            qt_modules_path = $$[QT_INSTALL_PREFIX]$${QMAKE_DIR_SEP}mkspecs$${QMAKE_DIR_SEP}modules
-
-            copy_module_fwd_file.target = $$qt_modules_path$${QMAKE_DIR_SEP}$$module_filename
-            copy_module_fwd_file.commands = $$QMAKE_COPY  $$toSystemPath($$QMAKE_EXTRA_MODULE_FORWARDS)$${QMAKE_DIR_SEP}$$module_filename $$qt_modules_path
-            # FIXME: Add dependendy that ensures we copy the forward file if the target is updated
-            copy_module_fwd_file.depends = $$QMAKE_EXTRA_MODULE_FORWARDS$${QMAKE_DIR_SEP}$$module_filename
-
-            QMAKE_EXTRA_TARGETS += copy_module_fwd_file
-            DEFAULT_TARGETS += copy_module_fwd_file
-        }
-    }
 
     # Make sure the install_name of the QtWebKit library point to webkit
     macx {
