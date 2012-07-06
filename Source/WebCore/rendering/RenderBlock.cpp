@@ -527,6 +527,13 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
         if (document()->usesBeforeAfterRules())
             blockCurr->children()->updateBeforeAfterContent(blockCurr, AFTER);
 
+        // It is possible that positioned objects under blockCurr are going to be moved to cloneBlock.
+        // Since we are doing layout anyway, it is easier to blow away the entire list, than
+        // traversing down the subtree looking for positioned children and then remove them
+        // from our positioned objects list.
+        if (currChildNextSibling)
+            blockCurr->removePositionedObjects(0);
+
         // Now we need to take all of the children starting from the first child
         // *after* currChild and append them all to the clone.
         blockCurr->moveChildrenTo(cloneBlock, currChild->nextSibling(), 0, true);

@@ -1,3 +1,21 @@
+2012-05-07  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash due to positioned object list not being cleared during block flow split
+        https://bugs.webkit.org/show_bug.cgi?id=85074
+
+        Reviewed by Abhishek Arya.
+
+        When an element is being split due to a column span element being
+        inserted, any of its ancestors that are underneath the column
+        containing block also get split. If an ancestor has an object in
+        its positioned object list from a previous layout, then the list
+        will have to be cleared because the positioned object could have moved
+        to be under the continuation. This patch causes the list to be
+        cleared.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitBlocks):
+
 2012-05-01  James Simonsen  <simonjam@chromium.org>
 
         Ensure HTMLElementStack fails gracefully if it has a non-Element.
