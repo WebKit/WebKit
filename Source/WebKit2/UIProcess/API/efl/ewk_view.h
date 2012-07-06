@@ -42,6 +42,9 @@
 #define ewk_view_h
 
 #include "ewk_context.h"
+#include "ewk_intent.h"
+#include "ewk_url_request.h"
+#include "ewk_web_resource.h"
 #include <Evas.h>
 
 #ifdef __cplusplus
@@ -50,10 +53,6 @@ extern "C" {
 
 typedef struct _Ewk_View_Smart_Data Ewk_View_Smart_Data;
 typedef struct _Ewk_View_Smart_Class Ewk_View_Smart_Class;
-typedef struct _Ewk_Intent Ewk_Intent;
-typedef struct _Ewk_Url_Request Ewk_Url_Request;
-typedef struct _Ewk_Web_Resource Ewk_Web_Resource;
-
 
 /// Ewk view's class, to be overridden by sub-classes.
 struct _Ewk_View_Smart_Class {

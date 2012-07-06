@@ -1,3 +1,16 @@
+2012-07-06  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] WebKit-EFL headers do not build with gcc < 4.6
+        https://bugs.webkit.org/show_bug.cgi?id=90681
+
+        Unreviewed EFL build fix.
+
+        Remove several forward declarations from ewk_view
+        header to avoid typedef redefinitions which are
+        illegal in C.
+
+        * UIProcess/API/efl/ewk_view.h:
+
 2012-07-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Buildfix for newer Qt5
