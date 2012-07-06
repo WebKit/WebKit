@@ -1,0 +1,3 @@
+WebKit Bug 84606 - ASSERT(beforeChildAnonymousContainer->isTable()); fails in RenderBlock::addChildIgnoringAnonymousColumnBlocks.
+The test passes if it doesn't CRASH nor ASSERT.
+PASS 

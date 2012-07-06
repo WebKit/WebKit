@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+WebKit Bug 84606 - ASSERT(beforeChildAnonymousContainer->isTable()); fails in RenderBlock::addChildIgnoringAnonymousColumnBlocks.<br />
+The test passes if it doesn't CRASH nor ASSERT.
+<style>
+.container { -webkit-column-count: 1; }
+.columnSpan { -webkit-column-span: all; }
+</style>
+<li class="container">
+<blockquote id="test">
+<table class="columnSpan"></table>
+</blockquote>
+<textarea></textarea>
+</li>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+document.body.offsetTop;
+var test = document.getElementById("test");
+test.outerHTML = "PASS";
+</script>
+</body>
+</html>
