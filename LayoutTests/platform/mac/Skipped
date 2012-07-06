@@ -910,3 +910,6 @@ fast/canvas/webgl/tex-sub-image-2d.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=90706
 inspector/timeline/timeline-frames.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90707
+inspector/timeline/timeline-receive-response-event.html
