@@ -252,7 +252,7 @@ WebInspector.TextEditor.prototype = {
     {
         var lineNumbersWidth = this._gutterPanel.element.offsetWidth;
         if (lineNumbersWidth)
-            this._mainPanel.element.style.setProperty("left", lineNumbersWidth + "px");
+            this._mainPanel.element.style.setProperty("left", (lineNumbersWidth + 2) + "px");
         else
             this._mainPanel.element.style.removeProperty("left"); // Use default value set in CSS.
     },
@@ -654,10 +654,6 @@ WebInspector.TextEditorChunkedPanel.prototype = {
 
     _scroll: function()
     {
-        // FIXME: Replace the "2" with the padding-left value from CSS.
-        if (this.element.scrollLeft <= 2)
-            this.element.scrollLeft = 0;
-
         this._scheduleRepaintAll();
         if (this._syncScrollListener)
             this._syncScrollListener();
