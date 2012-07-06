@@ -42,9 +42,7 @@ WebInspector.ScriptSnippetModel = function()
     this._lastSnippetEvaluationIndexSetting = WebInspector.settings.createSetting("lastSnippetEvaluationIndex", 0);
     this._snippetScriptMapping = new WebInspector.SnippetScriptMapping(this);
     
-    var snippets = this._snippetStorage.snippets;
-    for (var i = 0; i < snippets.length; ++i)
-        this._addScriptSnippet(snippets[i]);
+    this._loadSnippets();
 }
 
 WebInspector.ScriptSnippetModel.snippetSourceURLPrefix = "snippets:///";
@@ -56,6 +54,13 @@ WebInspector.ScriptSnippetModel.prototype = {
     get scriptMapping()
     {
         return this._snippetScriptMapping;
+    },
+
+    _loadSnippets: function()
+    {
+        var snippets = this._snippetStorage.snippets();
+        for (var i = 0; i < snippets.length; ++i)
+            this._addScriptSnippet(snippets[i]);
     },
 
     /**
@@ -362,6 +367,7 @@ WebInspector.ScriptSnippetModel.prototype = {
         var removedUISourceCodes = this._releasedUISourceCodes();
         this._uiSourceCodeForScriptId = {};
         this._scriptForUISourceCode = new Map();
+        this._loadSnippets();
     }
 }
 

@@ -81,7 +81,7 @@ WebInspector.SnippetStorage.prototype = {
     {
         var savedSnippets = this._snippetsSetting.get();
         for (var i = 0; i < savedSnippets.length; ++i)
-            this._snippetAdded(WebInspector.Snippet.fromObject(savedSnippets[i]));
+            this._snippetAdded(WebInspector.Snippet.fromObject(this, savedSnippets[i]));
     },
 
     /**
@@ -142,12 +142,13 @@ WebInspector.Snippet = function(storage, id, name, content)
 }
 
 /**
+ * @param {WebInspector.SnippetStorage} storage
  * @param {Object} serializedSnippet
  * @return {WebInspector.Snippet}
  */
-WebInspector.Snippet.fromObject = function(serializedSnippet)
+WebInspector.Snippet.fromObject = function(storage, serializedSnippet)
 {
-    return new WebInspector.Snippet(this, serializedSnippet.id, serializedSnippet.name, serializedSnippet.content);
+    return new WebInspector.Snippet(storage, serializedSnippet.id, serializedSnippet.name, serializedSnippet.content);
 }
 
 WebInspector.Snippet.prototype = {

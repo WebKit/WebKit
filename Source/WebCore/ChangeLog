@@ -1,5 +1,22 @@
 2012-07-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Snippets should be correctly (re)loaded when inspector is open and on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=90672
+
+        Reviewed by Pavel Feldman.
+
+        Snippets are now reloaded from the storage on ScriptSnippetMapping reset.
+        Fixed snippets storage.
+
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.ScriptSnippetModel):
+        (WebInspector.ScriptSnippetModel.prototype._loadSnippets):
+        (WebInspector.ScriptSnippetModel.prototype._reset):
+        * inspector/front-end/SnippetStorage.js:
+        (WebInspector.Snippet.fromObject):
+
+2012-07-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Implement snippets removing.
         https://bugs.webkit.org/show_bug.cgi?id=90674
 
