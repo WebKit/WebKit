@@ -1301,7 +1301,7 @@ void WebFrameImpl::requestTextChecking(const WebElement& webElem)
 
     RefPtr<Range> rangeToCheck = rangeOfContents(const_cast<Element*>(webElem.constUnwrap<Element>()));
 
-    frame()->editor()->spellChecker()->requestCheckingFor(SpellCheckRequest::create(TextCheckingTypeSpelling | TextCheckingTypeGrammar, rangeToCheck, rangeToCheck));
+    frame()->editor()->spellChecker()->requestCheckingFor(SpellCheckRequest::create(TextCheckingTypeSpelling | TextCheckingTypeGrammar, TextCheckingProcessBatch, rangeToCheck, rangeToCheck));
 }
 
 bool WebFrameImpl::hasSelection() const

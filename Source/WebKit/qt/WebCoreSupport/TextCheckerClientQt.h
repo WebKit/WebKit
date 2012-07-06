@@ -47,7 +47,7 @@ public:
     virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord);
     virtual void checkGrammarOfString(const UChar*, int length, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
     virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);
-    virtual void requestCheckingOfString(SpellChecker*, int, TextCheckingTypeMask, const String&) { }
+    virtual void requestCheckingOfString(SpellChecker*, const TextCheckingRequest&) { }
 
     virtual bool isContinousSpellCheckingEnabled();
     virtual void toggleContinousSpellChecking();

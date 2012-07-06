@@ -746,14 +746,14 @@ void EditorClientImpl::checkSpellingOfString(const UChar* text, int length,
         *misspellingLength = spellLength;
 }
 
-void EditorClientImpl::requestCheckingOfString(SpellChecker* sender, int identifier, TextCheckingTypeMask, const String& text)
+void EditorClientImpl::requestCheckingOfString(SpellChecker* sender, const WebCore::TextCheckingRequest& request)
 {
     if (!m_webView->spellCheckClient())
         return;
 
-    WebTextCheckingCompletionImpl* completion = new WebTextCheckingCompletionImpl(identifier, sender);
+    WebTextCheckingCompletionImpl* completion = new WebTextCheckingCompletionImpl(request.sequence(), sender);
     m_pendingTextChecks.add(completion);
-    m_webView->spellCheckClient()->requestCheckingOfText(text, completion);
+    m_webView->spellCheckClient()->requestCheckingOfText(request.text(), completion);
 }
 
 String EditorClientImpl::getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord)

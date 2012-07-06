@@ -46,10 +46,12 @@ struct TextCheckingResult;
 
 class SpellCheckRequest : public RefCounted<SpellCheckRequest> {
 public:
-    SpellCheckRequest(int sequence, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String&, TextCheckingTypeMask);
+    SpellCheckRequest(int sequence, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String&, TextCheckingTypeMask, TextCheckingProcessType);
     ~SpellCheckRequest();
 
-    static PassRefPtr<SpellCheckRequest> create(TextCheckingTypeMask, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange);
+    static PassRefPtr<SpellCheckRequest> create(TextCheckingTypeMask, TextCheckingProcessType, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange);
+
+    TextCheckingRequest textCheckingRequest() const;
 
     void setSequence(int sequence) { m_sequence = sequence; }
     int sequence() const { return m_sequence; }
@@ -57,14 +59,15 @@ public:
     PassRefPtr<Range> paragraphRange() const { return m_paragraphRange; }
     const String& text() const { return m_text; }
     TextCheckingTypeMask mask() const { return m_mask; }
+    TextCheckingProcessType processType() const { return m_processType; }
     PassRefPtr<Element> rootEditableElement() const { return m_rootEditableElement; }
 private:
-
     int m_sequence;
-    RefPtr<Range> m_checkingRange;
-    RefPtr<Range> m_paragraphRange;
     String m_text;
     TextCheckingTypeMask m_mask;
+    TextCheckingProcessType m_processType;
+    RefPtr<Range> m_checkingRange;
+    RefPtr<Range> m_paragraphRange;
     RefPtr<Element> m_rootEditableElement;
 };
 
@@ -108,6 +111,11 @@ private:
     RefPtr<SpellCheckRequest> m_processingRequest;
     RequestQueue m_requestQueue;
 };
+
+inline TextCheckingRequest SpellCheckRequest::textCheckingRequest() const
+{
+    return TextCheckingRequest(m_sequence, m_text, m_mask, m_processType);
+}
 
 } // namespace WebCore
 

@@ -447,7 +447,7 @@ void WebEditorClient::setInputMethodState(bool)
     notImplemented();
 }
 
-void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&)
+void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker*, const WebCore::TextCheckingRequest&)
 {
     notImplemented();
 }
