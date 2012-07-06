@@ -942,7 +942,7 @@ IDL_INCLUDES = \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/css \
-    $(WebCore)/notifications \
+    $(WebCore)/Modules/notifications \
     $(WebCore)/page \
     $(WebCore)/xml \
     $(WebCore)/svg

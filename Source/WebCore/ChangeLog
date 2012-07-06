@@ -1,3 +1,10 @@
+2012-07-06  Andy Estes  <aestes@apple.com>
+
+        Fix errors reported by generate-bindings.pl after r121882.
+
+        * DerivedSources.make: Specify the correct path for notifications idl
+        files now that notifications/ lives in WebCore/Modules/.
+
 2012-07-06  Justin Novosad  <junov@chromium.org>
 
         Drawing to accelerated 2D canvas causes compositor to recompute layer tree
