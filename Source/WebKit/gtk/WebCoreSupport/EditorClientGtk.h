@@ -76,6 +76,7 @@ class EditorClient : public WebCore::EditorClient {
 
         // from EditorClient
         virtual void pageDestroyed();
+        virtual void frameWillDetachPage(Frame*) { }
 
         virtual bool shouldDeleteRange(WebCore::Range*);
         virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);

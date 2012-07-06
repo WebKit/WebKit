@@ -1,3 +1,12 @@
+2012-05-18  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=85515
+        Stale frame in WebCore::SpellChecker::didCheckSucceeded
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/WebEditorClient.h:
+
 2012-03-26  Adam Barth  <abarth@webkit.org>
 
         FrameLoader::shouldAllowNavigation uses Frame for context rather than Document
