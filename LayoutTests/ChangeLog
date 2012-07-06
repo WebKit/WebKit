@@ -1,3 +1,13 @@
+2012-07-06  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [Inspector][WebSocket][NRWT] layout tests which requires websocket server must be in a websocket subdirectory.
+        https://bugs.webkit.org/show_bug.cgi?id=90524
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/websocket/web-socket-frame-expected.txt: Renamed from LayoutTests/http/tests/inspector/web-socket-frame-expected.txt.
+        * http/tests/inspector/websocket/web-socket-frame.html: Renamed from LayoutTests/http/tests/inspector/web-socket-frame.html.
+
 2012-07-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Workspace should dispatch WorkspaceReset event on navigation.
