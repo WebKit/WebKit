@@ -1,3 +1,15 @@
+2012-07-05  Michael Saboff  <msaboff@apple.com>
+
+        JSString::tryHashConstLock() fails to get exclusive lock
+        https://bugs.webkit.org/show_bug.cgi?id=90639
+
+        Reviewed by Oliver Hunt.
+
+        Added check that the string is already locked even before compare and swap.
+
+        * heap/MarkStack.cpp:
+        (JSC::JSString::tryHashConstLock):
+
 2012-07-04  Filip Pizlo  <fpizlo@apple.com>
 
         Inline property storage should not be wasted when it is exhausted

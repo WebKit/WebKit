@@ -546,6 +546,10 @@ ALWAYS_INLINE bool JSString::tryHashConstLock()
 {
 #if ENABLE(PARALLEL_GC)
     unsigned currentFlags = m_flags;
+
+    if (currentFlags & HashConstLock)
+        return false;
+
     unsigned newFlags = currentFlags | HashConstLock;
 
     if (!WTF::weakCompareAndSwap(&m_flags, currentFlags, newFlags))
