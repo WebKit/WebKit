@@ -1,3 +1,20 @@
+2012-04-03  Hironori Bono  <hbono@chromium.org>
+
+        Prevent spellchecking text pasted to an element having spellchecking disabled
+        https://bugs.webkit.org/show_bug.cgi?id=81323
+
+        Reviewed by Hajime Morita.
+
+        This change prevent calling SpellChecker::requestCheckingFor when pasting text
+        to an element whose spellcheck attribute is false or a password input.
+
+        Test: editing/spelling/spellcheck-paste-disabled.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment): Disabled spellchecking on password inputs.
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::isCheckable): Return false when spellchecking is disabled.
+
 2012-02-24  Shinya Kawanaka  <shinyak@chromium.org>
 
         SpellCheckRequest needs to know the context where the spellcheck happened.

@@ -413,6 +413,8 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     applyCommand(ReplaceSelectionCommand::create(m_frame->document(), fragment, options, EditActionPaste));
     revealSelectionAfterEditingOperation();
 
+    if (m_frame->selection()->isInPasswordField())
+        return;
     Node* nodeToCheck = m_frame->selection()->rootEditableElement();
     if (!nodeToCheck)
         return;
