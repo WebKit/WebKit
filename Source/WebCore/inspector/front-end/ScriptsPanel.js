@@ -80,10 +80,11 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this._editorContainer = new WebInspector.TabbedEditorContainer(this, "previouslyViewedFiles");
     this._editorContainer.show(this.editorView.mainElement);
 
-    this._navigatorController = new WebInspector.NavigatorOverlayController(this, this.editorView, this._navigator.view, this._editorContainer.view);
+    this._navigatorController = new WebInspector.NavigatorOverlayController(this.editorView, this._navigator.view, this._editorContainer.view);
 
     this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.ScriptSelected, this._scriptSelected, this);
     this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.SnippetCreationRequested, this._snippetCreationRequested, this);
+    this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.ItemRenamingRequested, this._itemRenamingRequested, this);
     this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.FileRenamed, this._fileRenamed, this);
 
     this._editorContainer.addEventListener(WebInspector.TabbedEditorContainer.Events.EditorSelected, this._editorSelected, this);
@@ -1025,7 +1026,10 @@ WebInspector.ScriptsPanel.prototype = {
         WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource, name);
     },
         
-    _snippetCreationRequested: function()
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _snippetCreationRequested: function(event)
     {
         var snippetJavaScriptSource = WebInspector.scriptSnippetModel.createScriptSnippet();
         this._showSourceLine(snippetJavaScriptSource);
@@ -1049,6 +1053,30 @@ WebInspector.ScriptsPanel.prototype = {
             }
 
             this._showSourceLine(snippetJavaScriptSource);
+        }
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _itemRenamingRequested: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        
+        var shouldHideNavigator = !this._navigatorController.isNavigatorPinned();
+        if (this._navigatorController.isNavigatorHidden())
+            this._navigatorController.showNavigatorOverlay();
+        this._navigator.rename(uiSourceCode, callback.bind(this));
+    
+        /**
+         * @param {boolean} committed
+         */
+        function callback(committed)
+        {
+            if (shouldHideNavigator && committed) {
+                this._navigatorController.hideNavigatorOverlay();
+                this._showSourceLine(uiSourceCode);
+            }
         }
     },
 

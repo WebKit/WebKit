@@ -252,21 +252,19 @@ WebInspector.NavigatorView.prototype = {
             return;
 
         // Tree outline should be marked as edited as well as the tree element to prevent search from starting.
-        var treeOutlineElement = scriptTreeElement.treeOutline.element
+        var treeOutlineElement = scriptTreeElement.treeOutline.element;
         WebInspector.markBeingEdited(treeOutlineElement, true);
 
         function commitHandler(element, newTitle, oldTitle)
         {
             if (newTitle && newTitle !== oldTitle)
                 this._fileRenamed(uiSourceCode, newTitle);
-            else
-                this._updateScriptTitle(uiSourceCode);
-            afterEditing(true);
+            afterEditing.call(this, true);
         }
 
         function cancelHandler()
         {
-            afterEditing(false);
+            afterEditing.call(this, false);
         }
 
         /**
@@ -275,6 +273,7 @@ WebInspector.NavigatorView.prototype = {
         function afterEditing(committed)
         {
             WebInspector.markBeingEdited(treeOutlineElement, false);
+            this._updateScriptTitle(uiSourceCode);
             if (callback)
                 callback(committed);
         }

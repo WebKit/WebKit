@@ -28,14 +28,12 @@
 
 /**
  * @constructor
- * @param {WebInspector.Panel} panel
  * @param {WebInspector.SplitView} parentSplitView
  * @param {WebInspector.View} navigatorView
  * @param {WebInspector.View} editorView
  */
-WebInspector.NavigatorOverlayController = function(panel, parentSplitView, navigatorView, editorView)
+WebInspector.NavigatorOverlayController = function(parentSplitView, navigatorView, editorView)
 {
-    this._panel = panel;
     this._parentSplitView = parentSplitView;
     this._navigatorView = navigatorView;
     this._editorView = editorView;
@@ -59,11 +57,6 @@ WebInspector.NavigatorOverlayController.prototype = {
     wasShown: function()
     {
         window.setTimeout(this._maybeShowNavigatorOverlay.bind(this), 0);
-    },
-
-    _escDownWhileNavigatorOverlayOpen: function(event)
-    {
-        this.hideNavigatorOverlay();
     },
 
     _maybeShowNavigatorOverlay: function()
@@ -124,6 +117,8 @@ WebInspector.NavigatorOverlayController.prototype = {
         this._navigatorShowHideButton.title = WebInspector.UIString("Pin navigator");
 
         this._sidebarOverlay = new WebInspector.SidebarOverlay(this._navigatorView, "scriptsPanelNavigatorOverlayWidth", Preferences.minScriptsSidebarWidth);
+        this._boundKeyDown = this._keyDown.bind(this);
+        this._sidebarOverlay.element.addEventListener("keydown", this._boundKeyDown, false);
         var navigatorOverlayResizeWidgetElement = document.createElement("div");
         navigatorOverlayResizeWidgetElement.addStyleClass("scripts-navigator-resizer-widget");
         this._sidebarOverlay.resizerWidgetElement = navigatorOverlayResizeWidgetElement;
@@ -131,10 +126,20 @@ WebInspector.NavigatorOverlayController.prototype = {
         this._navigatorView.element.appendChild(this._navigatorShowHideButton.element);
         this._boundContainingElementFocused = this._containingElementFocused.bind(this);
         this._parentSplitView.element.addEventListener("mousedown", this._boundContainingElementFocused, false);
-        this._panel.registerShortcut(WebInspector.KeyboardShortcut.Keys.Esc.code, this._escDownWhileNavigatorOverlayOpen.bind(this));
 
         this._sidebarOverlay.show(this._parentSplitView.element);
         this._navigatorView.focus();
+    },
+
+    _keyDown: function(event)
+    {
+        if (event.handled)
+            return;
+
+        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
+            this.hideNavigatorOverlay();
+            event.consume(true);
+        }
     },
 
     hideNavigatorOverlay: function()
@@ -153,7 +158,7 @@ WebInspector.NavigatorOverlayController.prototype = {
     _innerHideNavigatorOverlay: function()
     {
         this._parentSplitView.element.removeEventListener("mousedown", this._boundContainingElementFocused, false);
-        this._panel.unregisterShortcut(WebInspector.KeyboardShortcut.Keys.Esc.code);
+        this._sidebarOverlay.element.removeEventListener("keydown", this._boundKeyDown, false);
         this._sidebarOverlay.hide();
     },
 

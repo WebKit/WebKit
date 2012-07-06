@@ -48,6 +48,7 @@ WebInspector.ScriptsNavigator = function()
     this._snippetsView.addEventListener(WebInspector.NavigatorView.Events.ItemSelected, this._scriptSelected, this);
     this._snippetsView.addEventListener(WebInspector.NavigatorView.Events.FileRenamed, this._fileRenamed, this);
     this._snippetsView.addEventListener(WebInspector.SnippetsNavigatorView.Events.SnippetCreationRequested, this._snippetCreationRequested, this);
+    this._snippetsView.addEventListener(WebInspector.SnippetsNavigatorView.Events.ItemRenamingRequested, this._itemRenamingRequested, this);
 
     this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ScriptsTab, WebInspector.UIString("Sources"), this._scriptsView);
     this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ScriptsTab);
@@ -59,6 +60,7 @@ WebInspector.ScriptsNavigator = function()
 WebInspector.ScriptsNavigator.Events = {
     ScriptSelected: "ScriptSelected",
     SnippetCreationRequested: "SnippetCreationRequested",
+    ItemRenamingRequested: "ItemRenamingRequested",
     FileRenamed: "FileRenamed"
 }
 
@@ -166,6 +168,14 @@ WebInspector.ScriptsNavigator.prototype = {
     /**
      * @param {WebInspector.Event} event
      */
+    _itemRenamingRequested: function(event)
+    {
+        this.dispatchEventToListeners(WebInspector.ScriptsNavigator.Events.ItemRenamingRequested, event.data);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
     _snippetCreationRequested: function(event)
     {    
         this.dispatchEventToListeners(WebInspector.ScriptsNavigator.Events.SnippetCreationRequested, event.data);
@@ -192,7 +202,8 @@ WebInspector.SnippetsNavigatorView = function()
 }
 
 WebInspector.SnippetsNavigatorView.Events = {
-    SnippetCreationRequested: "SnippetCreationRequested"
+    SnippetCreationRequested: "SnippetCreationRequested",
+    ItemRenamingRequested: "ItemRenamingRequested"
 }
 
 WebInspector.SnippetsNavigatorView.prototype = {
@@ -252,7 +263,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
      */
     _handleRenameSnippet: function(uiSourceCode, event)
     {
-        this.rename(uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.ScriptsNavigator.Events.ItemRenamingRequested, uiSourceCode);
     },
 
     /**
