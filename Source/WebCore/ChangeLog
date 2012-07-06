@@ -1,3 +1,20 @@
+2012-04-26  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [cairo] CairoGraphicsContext fillRect (with Color) overrides composite operator
+        https://bugs.webkit.org/show_bug.cgi?id=84848
+
+        Reviewed by Martin Robinson.
+
+        FillRectWithColor used to be called fillRectSourceOver before r89314
+        where this operator still made sense. The way this function is used
+        these days doesn't expect the composite operator to be overridden anymore.
+
+        No new tests, covered by existing tests, e.g.
+        svg/filters/feDropShadow.svg
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::fillRectWithColor):
+
 2012-05-04  Dan Winship  <danw@gnome.org>
 
         [GTK] ASSERTION FAILED: shouldLoadAsEmptyDocument(r.url()) ||

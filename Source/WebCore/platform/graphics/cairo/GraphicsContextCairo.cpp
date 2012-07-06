@@ -77,7 +77,6 @@ static inline void fillRectWithColor(cairo_t* cr, const FloatRect& rect, const C
         return;
     setSourceRGBAFromColor(cr, color);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_fill(cr);
 }
 
