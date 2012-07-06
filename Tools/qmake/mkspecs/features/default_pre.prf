@@ -69,9 +69,11 @@ win32* {
     isEmpty(pwd_starts_with_slash): CONFIG += win_cmd_shell
 }
 
-# Make sure QMAKEPATH is set for recursive targets
-win_cmd_shell: QMAKE_QMAKE = \(set QMAKEPATH=$$(QMAKEPATH)\) && $$QMAKE_QMAKE
-else: QMAKE_QMAKE = QMAKEPATH=$$(QMAKEPATH) $$QMAKE_QMAKE
+haveQt(4) {
+    # Make sure QMAKEPATH is set for recursive targets
+    win_cmd_shell: QMAKE_QMAKE = \(set QMAKEPATH=$$(QMAKEPATH)\) && $$QMAKE_QMAKE
+    else: QMAKE_QMAKE = QMAKEPATH=$$(QMAKEPATH) $$QMAKE_QMAKE
+}
 
 # Default location of generated sources
 GENERATED_SOURCES_DESTDIR = generated

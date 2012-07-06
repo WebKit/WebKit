@@ -5,14 +5,16 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
+haveQt(4) {
+    QMAKEPATH = $$(QMAKEPATH)
+    isEmpty(QMAKEPATH)|!exists($${QMAKEPATH}/mkspecs) {
+        error("The environment variable QMAKEPATH needs to point to $WEBKITSRC/Tools/qmake")
+        # Otherwise we won't pick up the feature prf files needed for the build
+    }
+}
+
 TEMPLATE = subdirs
 CONFIG += ordered
-
-QMAKEPATH = $$(QMAKEPATH)
-isEmpty(QMAKEPATH)|!exists($${QMAKEPATH}/mkspecs) {
-    error("The environment variable QMAKEPATH needs to point to $WEBKITSRC/Tools/qmake")
-    # Otherwise we won't pick up the feature prf files needed for the build
-}
 
 WTF.file = Source/WTF/WTF.pro
 WTF.makefile = Makefile.WTF

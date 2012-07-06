@@ -1,5 +1,21 @@
 2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
+        [Qt] Add top-level .qmake.conf
+
+        With Qt5, this makes setting $QMAKEPATH externally unnecessary.
+
+        The magic in the perl scripts to set QMAKEPATH is still there, as it doesn't
+        hurt, and is still required for Qt4.
+
+        https://bugs.webkit.org/show_bug.cgi?id=90461
+
+        Reviewed by Tor Arne Vestbø.
+
+        * .qmake.conf: Added.
+        * WebKit.pro:
+
+2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
         [Qt] Let qt_module_config create the forwarding module pri file
 
         https://bugs.webkit.org/show_bug.cgi?id=90461
