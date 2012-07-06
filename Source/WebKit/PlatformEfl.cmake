@@ -293,21 +293,7 @@ INSTALL(FILES ${EWebKit_HEADERS}
 INSTALL(FILES ${WebKit_THEME}
         DESTINATION ${DATA_INSTALL_DIR}/themes)
 
-INCLUDE_DIRECTORIES(${THIRDPARTY_DIR}/gtest
-                    ${THIRDPARTY_DIR}/gtest/include
-)
-
-SET(GTEST_SOURCES "${THIRDPARTY_DIR}/gtest/src")
-
-ADD_LIBRARY(gtest
-    ${GTEST_SOURCES}/gtest.cc
-    ${GTEST_SOURCES}/gtest-death-test.cc
-    ${GTEST_SOURCES}/gtest_main.cc
-    ${GTEST_SOURCES}/gtest-filepath.cc
-    ${GTEST_SOURCES}/gtest-port.cc
-    ${GTEST_SOURCES}/gtest-test-part.cc
-    ${GTEST_SOURCES}/gtest-typed-test.cc
-)
+INCLUDE_DIRECTORIES(${THIRDPARTY_DIR}/gtest/include)
 
 SET(EWKUnitTests_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}

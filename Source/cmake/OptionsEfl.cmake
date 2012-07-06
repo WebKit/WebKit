@@ -16,6 +16,12 @@ ADD_DEFINITIONS(-DWTF_PLATFORM_EFL=1)
 SET(WTF_PLATFORM_EFL 1)
 
 # -----------------------------------------------------------------------------
+# Enable CTest for the public API unit testing
+# -----------------------------------------------------------------------------
+ENABLE_TESTING()
+SET(ENABLE_API_TESTS ON)
+
+# -----------------------------------------------------------------------------
 # Determine which font backend will be used
 # -----------------------------------------------------------------------------
 SET(ALL_FONT_BACKENDS freetype pango)

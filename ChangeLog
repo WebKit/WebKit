@@ -1,3 +1,18 @@
+2012-07-06  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL][CMake] Move gtest sources to an upper level
+        https://bugs.webkit.org/show_bug.cgi?id=90602
+
+        Reviewed by Chang Shu.
+
+        CTest was enabled for all the ports, but used only by EFL. Now
+        ENABLE_API_TESTS has to be defined, which will also build gtest.
+
+        * CMakeLists.txt:
+        * Source/CMakeLists.txt:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/gtest/CMakeLists.txt: Added.
+
 2012-07-06  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add a configuration option for disabling unstable features in releases

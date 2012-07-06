@@ -1,3 +1,15 @@
+2012-07-06  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL][CMake] Move gtest sources to an upper level
+        https://bugs.webkit.org/show_bug.cgi?id=90602
+
+        Reviewed by Chang Shu.
+
+        Removed gtest since it is now built as a separated component.
+        This will allow us to share it with WebKit 2 API tests.
+
+        * PlatformEfl.cmake:
+
 2012-07-06  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Add Web Inspector to WebKit-EFL
