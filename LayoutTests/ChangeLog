@@ -1,3 +1,10 @@
+2012-07-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding a test expectation for a failing
+        http multipart test after r121912.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-06  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [Inspector][WebSocket][NRWT] layout tests which requires websocket server must be in a websocket subdirectory.
