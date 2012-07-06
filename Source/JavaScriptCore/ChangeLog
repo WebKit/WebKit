@@ -1,3 +1,22 @@
+2012-07-06  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        [Qt][ARM] REGRESSION(r121885): It broke 30 jsc tests, 500+ layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=90656
+
+        Reviewed by Csaba Osztrogonác.
+
+        Typo fixes.
+
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::load32WithUnalignedHalfWords):
+        Rename getOp2Byte() -> getOp2Half()
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::convertibleLoadPtr):
+        Add a necessary space.
+        * jit/JITStubs.cpp:
+        (JSC):
+        Revert INLINE_ARM_FUNCTION macro.
+
 2012-07-05  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r121925): It broke 5 sputnik tests on x86 platforms

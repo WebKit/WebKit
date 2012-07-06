@@ -604,7 +604,7 @@ public:
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
     {
         ConvertibleLoadLabel result(this);
-        ASSERT(address.offset >=0 && address.offset <= 255);
+        ASSERT(address.offset >= 0 && address.offset <= 255);
         m_assembler.ldrWide8BitImmediate(dest, address.base, address.offset);
         return result;
     }

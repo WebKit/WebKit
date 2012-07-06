@@ -1086,7 +1086,8 @@ template<typename T> static T throwExceptionFromOpCall(JITStackFrame& jitStackFr
         ".align 2" "\n" \
         ".globl " SYMBOL_STRING(cti_##op) "\n" \
         HIDE_SYMBOL(cti_##op) "\n"             \
-        INLINE_ARM_FUNCTION(cti_##op) \
+        ".thumb" "\n" \
+        ".thumb_func " THUMB_FUNC_PARAM(cti_##op) "\n" \
         SYMBOL_STRING(cti_##op) ":" "\n" \
         "str lr, [sp, #" STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "]" "\n" \
         "bl " SYMBOL_STRING(JITStubThunked_##op) "\n" \
