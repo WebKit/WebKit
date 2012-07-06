@@ -1,3 +1,20 @@
+2012-07-06  Luciano Wolf <luciano.wolf@openbossa.org>
+
+        [Qt] DumpRenderTree does not use 'monospace' font when directed
+        https://bugs.webkit.org/show_bug.cgi?id=85203
+
+        The test fonts used for Qt tests were moved to the Liberation font family.
+
+        Due to this change we are skipping tons of tests. They will be gradually
+        unskipped in batches, ASAP.
+
+        Also, the now unneeded special font configuration for Qt5 WK1 was removed.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * DumpRenderTree/qt/QtInitializeTestFonts.cpp:
+        (WebKit::initializeTestFonts):
+
 2012-07-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Buildfix for newer Qt5

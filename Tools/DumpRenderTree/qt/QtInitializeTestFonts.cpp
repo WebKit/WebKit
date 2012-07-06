@@ -62,17 +62,8 @@ void initializeTestFonts()
                );
     }
 
-    QByteArray configFile;
+    QByteArray configFile = fontDir + "/fonts.conf";
     FcConfig* config = FcConfigCreate();
-    // The resolving of default font families was altered in Qt5 with 2cc5442 (qtbase),
-    // we use this hack to keep resolving to the same font Qt4 did for serif while
-    // supporting both versions.
-#if HAVE(QT5)
-    configFile = fontDir + "/fonts-qt5-wk1.conf";
-    if (!FcConfigParseAndLoad(config, reinterpret_cast<const FcChar8*>(configFile.constData()), FcTrue))
-        qFatal("Couldn't load font configuration file");
-#endif
-    configFile = fontDir + "/fonts.conf";
     if (!FcConfigParseAndLoad(config, reinterpret_cast<const FcChar8*>(configFile.constData()), FcTrue))
         qFatal("Couldn't load font configuration file");
     if (!FcConfigAppFontAddDir(config, reinterpret_cast<const FcChar8*>(fontDir.data())))
