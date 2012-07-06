@@ -40,7 +40,6 @@ function run() {
     shouldBeEqualToString('surroundingText(\'<button>.</button><div id="here">012345678901234567890123456789</div><button>.</button>\', 15, 12)', '901234567890');
     shouldBeEqualToString('surroundingText(\'<option>.</option>12345<button id="here">test</button><option>.</option>\', 0, 100)', '');
     shouldBeEqualToString('surroundingText(\'<option>.</option>12345<button>te<span id="here">st</span></button><option>.</option>\', 0, 100)', '');
-    shouldBeEqualToString('surroundingText(\'<p id="here">.\', 0, 2)', '.');
 
     document.body.removeChild(document.getElementById('test'));
     finishJSTest();

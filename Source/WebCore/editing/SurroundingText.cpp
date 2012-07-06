@@ -45,8 +45,7 @@ SurroundingText::SurroundingText(const VisiblePosition& visiblePosition, unsigne
 {
     const unsigned halfMaxLength = maxLength / 2;
     CharacterIterator forwardIterator(makeRange(visiblePosition, endOfDocument(visiblePosition)).get(), TextIteratorStopsOnFormControls);
-    if (!forwardIterator.atEnd())
-        forwardIterator.advance(maxLength - halfMaxLength);
+    forwardIterator.advance(maxLength - halfMaxLength);
 
     Position position = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
     Document* document = position.document();
@@ -54,8 +53,7 @@ SurroundingText::SurroundingText(const VisiblePosition& visiblePosition, unsigne
         return;
 
     BackwardsCharacterIterator backwardsIterator(makeRange(startOfDocument(visiblePosition), visiblePosition).get(), TextIteratorStopsOnFormControls);
-    if (!backwardsIterator.atEnd())
-        backwardsIterator.advance(halfMaxLength);
+    backwardsIterator.advance(halfMaxLength);
 
     m_positionOffsetInContent = Range::create(document, backwardsIterator.range()->endPosition(), position)->text().length();
     m_contentRange = Range::create(document, backwardsIterator.range()->endPosition(), forwardIterator.range()->startPosition());

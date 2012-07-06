@@ -1406,8 +1406,6 @@ PassRefPtr<Range> CharacterIterator::range() const
 
 void CharacterIterator::advance(int count)
 {
-    ASSERT(!atEnd());
-
     if (count <= 0) {
         ASSERT(count == 0);
         return;
@@ -1516,8 +1514,6 @@ PassRefPtr<Range> BackwardsCharacterIterator::range() const
 
 void BackwardsCharacterIterator::advance(int count)
 {
-    ASSERT(!atEnd());
-
     if (count <= 0) {
         ASSERT(!count);
         return;
