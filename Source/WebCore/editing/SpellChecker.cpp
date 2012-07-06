@@ -118,7 +118,12 @@ bool SpellChecker::canCheckAsynchronously(Range* range) const
 
 bool SpellChecker::isCheckable(Range* range) const
 {
-    return range && range->firstNode() && range->firstNode()->renderer();
+    if (!range || !range->firstNode() || !range->firstNode()->renderer())
+        return false;
+    const Node* node = range->startContainer();
+    if (node && node->isElementNode() && !toElement(node)->isSpellCheckingEnabled())
+        return false;
+    return true;
 }
 
 void SpellChecker::requestCheckingFor(PassRefPtr<SpellCheckRequest> request)
