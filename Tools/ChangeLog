@@ -1,5 +1,21 @@
 2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
+        [Qt] Make use of Qt5 qmake's changed makefile recursion behavior
+
+        When not using the -r option, qmake now interleaves qmake and make calls,
+        so we don't need custom logic for this. There's also an option to supress
+        the effect of the -r option, which we use to make WebKit.pro the only
+        project file parsed in a recursive qmake-run.
+
+        https://bugs.webkit.org/show_bug.cgi?id=90461
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/functions.prf:
+
+2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
         [Qt] Remove custom qmake logic for module creation
 
         Qmake now has the necessary hooks to cleanly override the build locations.

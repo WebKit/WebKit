@@ -236,8 +236,9 @@ for(subdir, SUBDIRS) {
     }
 }
 
-# Doing `$(MAKE) qmake' should recurse through all subdirs
-contains(TEMPLATE, subdirs):!no_recursive_qmake {
+# Doing '$(MAKE) qmake' should recurse through all subdirs. In Qt5, this is
+# automatic (for 'qmake_all', while 'qmake' does not enter subdirs at all).
+haveQt(4):contains(TEMPLATE, subdirs):!no_recursive_qmake {
     recursive_qmake.target = qmake_all
 
     # We could do this using CONFIG += recurse but that adds
@@ -273,7 +274,7 @@ contains(TEMPLATE, subdirs):!no_recursive_qmake {
 }
 
 incremental.target = incremental
-incremental.commands = $(MAKE) -f $(MAKEFILE) qmake && $(MAKE) -f $(MAKEFILE)
+incremental.commands = $(MAKE) -f $(MAKEFILE) qmake_all && $(MAKE) -f $(MAKEFILE)
 QMAKE_EXTRA_TARGETS += incremental
 
 # Don't set OBJECTS_DIR for subdirs, as that will unconditionally
