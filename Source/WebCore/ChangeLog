@@ -1,3 +1,18 @@
+2012-07-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: get rid of this._lastMarkedRange in TextEditor.
+        https://bugs.webkit.org/show_bug.cgi?id=90691
+
+        Reviewed by Vsevolod Vlasov.
+
+        We don't need it, should use setSelection instead.
+
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor.prototype.markAndRevealRange):
+        (WebInspector.TextEditor.prototype._handleSelectionChange):
+        (WebInspector.TextEditor.prototype.setSelection):
+        (WebInspector.TextEditor.prototype._handleFocused):
+
 2012-07-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Snippet renaming behavior is not correct.

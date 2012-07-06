@@ -159,7 +159,7 @@ WebInspector.TextEditor.prototype = {
     markAndRevealRange: function(range)
     {
         if (range)
-            this._lastMarkedRange = range;
+            this.setSelection(range);
         this._mainPanel.markAndRevealRange(range);
     },
 
@@ -379,8 +379,11 @@ WebInspector.TextEditor.prototype = {
     _handleSelectionChange: function(event)
     {
         var textRange = this._mainPanel._getSelection();
-        if (textRange)
-            this._lastSelection = textRange;
+        if (textRange) {
+            // We do not restore selection after focus lost to avoid selection blinking. We restore only cursor position instead.
+            // FIXME: consider adding selection decoration to blurred editor.
+            this._lastSelection = WebInspector.TextRange.createFromLocation(textRange.endLine, textRange.endColumn);
+        }
         this._delegate.selectionChanged(textRange);
     },
 
@@ -406,7 +409,8 @@ WebInspector.TextEditor.prototype = {
     setSelection: function(textRange)
     {
         this._lastSelection = textRange;
-        this._mainPanel._restoreSelection(textRange);
+        if (this.element.isAncestor(document.activeElement))
+            this._mainPanel._restoreSelection(textRange);
     },
 
     wasShown: function()
@@ -420,19 +424,8 @@ WebInspector.TextEditor.prototype = {
 
     _handleFocused: function()
     {
-        // Convert last marked range into a selection upon focus. This is needed to focus the search result.
-        if (this._lastMarkedRange) {
-            this.setSelection(this._lastMarkedRange);
-            delete this._lastMarkedRange;
-            return;
-        }
-
-        if (this._lastSelection) {
-            // We do not restore selection after focus lost to avoid selection blinking. We restore only cursor position instead.
-            // FIXME: consider adding selection decoration to blurred editor.
-            var newSelection = WebInspector.TextRange.createFromLocation(this._lastSelection.endLine, this._lastSelection.endColumn);
-            this.setSelection(newSelection);
-        }
+        if (this._lastSelection)
+            this.setSelection(this._lastSelection);
     },
 
     willHide: function()
