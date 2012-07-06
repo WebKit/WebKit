@@ -1,3 +1,29 @@
+2012-07-06  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] exitFullScreenForElement() is not working for fullscreen elements in iframes
+        https://bugs.webkit.org/show_bug.cgi?id=90327
+
+        Reviewed by Antonio Gomes.
+
+        Fix exit fullscreen problem for elements in iframes. The
+        exitFullScreenForElement() call is passed a null element in
+        this case, instead of the original element which entered
+        fullscreen. If you look in Document.cpp you can see the
+        exitFullScreenForElement() call being made on the topDocument
+        (which has a null m_fullScreenElement) instead of the iframe's
+        document.
+
+        The Chromium and Windows ports get around this problem by
+        storing either the fullscreen element or its frame during
+        enterFullScreenForElement(), so I will bring the BlackBerry port
+        in line with this. See also bug 89817.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::enterFullScreenForElement):
+        (WebCore::ChromeClientBlackBerry::exitFullScreenForElement):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+
 2012-07-06  Benjamin C Meyer  <bmeyer@rim.com>
 
         Add an API to explicitly call a JavaScript function with args.

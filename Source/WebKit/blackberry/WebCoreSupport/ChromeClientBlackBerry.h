@@ -168,6 +168,7 @@ public:
 
 private:
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
+    RefPtr<WebCore::Element> m_fullScreenElement;
 };
 
 } // WebCore
