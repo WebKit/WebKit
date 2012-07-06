@@ -247,11 +247,11 @@ public:
         return new (m_globalData) ConditionalNode(lineNumber, condition, lhs, rhs);
     }
 
-    ExpressionNode* createAssignResolve(int lineNumber, const Identifier& ident, ExpressionNode* rhs, bool rhsHasAssignment, int start, int divot, int end)
+    ExpressionNode* createAssignResolve(int lineNumber, const Identifier& ident, ExpressionNode* rhs, int start, int divot, int end)
     {
         if (rhs->isFuncExprNode())
             static_cast<FuncExprNode*>(rhs)->body()->setInferredName(ident);
-        AssignResolveNode* node = new (m_globalData) AssignResolveNode(lineNumber, ident, rhs, rhsHasAssignment);
+        AssignResolveNode* node = new (m_globalData) AssignResolveNode(lineNumber, ident, rhs);
         setExceptionLocation(node, start, divot, end);
         return node;
     }
@@ -347,9 +347,9 @@ public:
         return result;
     }
 
-    StatementNode* createForLoop(int lineNumber, ExpressionNode* initializer, ExpressionNode* condition, ExpressionNode* iter, StatementNode* statements, bool b, int start, int end)
+    StatementNode* createForLoop(int lineNumber, ExpressionNode* initializer, ExpressionNode* condition, ExpressionNode* iter, StatementNode* statements, int start, int end)
     {
-        ForNode* result = new (m_globalData) ForNode(lineNumber, initializer, condition, iter, statements, b);
+        ForNode* result = new (m_globalData) ForNode(lineNumber, initializer, condition, iter, statements);
         result->setLoc(start, end);
         return result;
     }
@@ -364,7 +364,7 @@ public:
 
     StatementNode* createForInLoop(int lineNumber, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, int eStart, int eDivot, int eEnd, int start, int end)
     {
-        ForInNode* result = new (m_globalData) ForInNode(m_globalData, lineNumber, lhs, iter, statements);
+        ForInNode* result = new (m_globalData) ForInNode(lineNumber, lhs, iter, statements);
         result->setLoc(start, end);
         setExceptionLocation(result, eStart, eDivot, eEnd);
         return result;
@@ -907,14 +907,14 @@ ExpressionNode* ASTBuilder::makeBinaryNode(int lineNumber, int token, pair<Expre
 ExpressionNode* ASTBuilder::makeAssignNode(int lineNumber, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end)
 {
     if (!loc->isLocation())
-        return new (m_globalData) AssignErrorNode(lineNumber, loc, op, expr, divot, divot - start, end - divot);
+        return new (m_globalData) AssignErrorNode(lineNumber, divot, divot - start, end - divot);
 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
         if (op == OpEqual) {
             if (expr->isFuncExprNode())
                 static_cast<FuncExprNode*>(expr)->body()->setInferredName(resolve->identifier());
-            AssignResolveNode* node = new (m_globalData) AssignResolveNode(lineNumber, resolve->identifier(), expr, exprHasAssignments);
+            AssignResolveNode* node = new (m_globalData) AssignResolveNode(lineNumber, resolve->identifier(), expr);
             setExceptionLocation(node, start, divot, end);
             return node;
         }
@@ -944,7 +944,7 @@ ExpressionNode* ASTBuilder::makeAssignNode(int lineNumber, ExpressionNode* loc, 
 ExpressionNode* ASTBuilder::makePrefixNode(int lineNumber, ExpressionNode* expr, Operator op, int start, int divot, int end)
 {
     if (!expr->isLocation())
-        return new (m_globalData) PrefixErrorNode(lineNumber, expr, op, divot, divot - start, end - divot);
+        return new (m_globalData) PrefixErrorNode(lineNumber, op, divot, divot - start, end - divot);
 
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
@@ -966,7 +966,7 @@ ExpressionNode* ASTBuilder::makePrefixNode(int lineNumber, ExpressionNode* expr,
 ExpressionNode* ASTBuilder::makePostfixNode(int lineNumber, ExpressionNode* expr, Operator op, int start, int divot, int end)
 {
     if (!expr->isLocation())
-        return new (m_globalData) PostfixErrorNode(lineNumber, expr, op, divot, divot - start, end - divot);
+        return new (m_globalData) PostfixErrorNode(lineNumber, op, divot, divot - start, end - divot);
 
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);

@@ -317,10 +317,9 @@ namespace JSC {
     {
     }
 
-    inline PostfixErrorNode::PostfixErrorNode(int lineNumber, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+    inline PostfixErrorNode::PostfixErrorNode(int lineNumber, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
         : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
-        , m_expr(expr)
         , m_operator(oper)
     {
     }
@@ -396,10 +395,9 @@ namespace JSC {
     {
     }
 
-    inline PrefixErrorNode::PrefixErrorNode(int lineNumber, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+    inline PrefixErrorNode::PrefixErrorNode(int lineNumber, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
         : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
-        , m_expr(expr)
         , m_operator(oper)
     {
     }
@@ -592,11 +590,10 @@ namespace JSC {
     {
     }
 
-    inline AssignResolveNode::AssignResolveNode(int lineNumber, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments)
+    inline AssignResolveNode::AssignResolveNode(int lineNumber, const Identifier& ident, ExpressionNode* right)
         : ExpressionNode(lineNumber)
         , m_ident(ident)
         , m_right(right)
-        , m_rightHasAssignments(rightHasAssignments)
     {
     }
 
@@ -644,12 +641,9 @@ namespace JSC {
     {
     }
 
-    inline AssignErrorNode::AssignErrorNode(int lineNumber, ExpressionNode* left, Operator oper, ExpressionNode* right, unsigned divot, unsigned startOffset, unsigned endOffset)
+    inline AssignErrorNode::AssignErrorNode(int lineNumber, unsigned divot, unsigned startOffset, unsigned endOffset)
         : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
-        , m_left(left)
-        , m_operator(oper)
-        , m_right(right)
     {
     }
 
@@ -719,13 +713,12 @@ namespace JSC {
     {
     }
 
-    inline ForNode::ForNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, bool expr1WasVarDecl)
+    inline ForNode::ForNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement)
         : StatementNode(lineNumber)
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_expr3(expr3)
         , m_statement(statement)
-        , m_expr1WasVarDecl(expr1 && expr1WasVarDecl)
     {
         ASSERT(statement);
     }
@@ -865,9 +858,8 @@ namespace JSC {
     {
     }
 
-    inline ForInNode::ForInNode(JSGlobalData* globalData, int lineNumber, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
+    inline ForInNode::ForInNode(int lineNumber, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
         : StatementNode(lineNumber)
-        , m_ident(globalData->propertyNames->nullIdentifier)
         , m_init(0)
         , m_lexpr(l)
         , m_expr(expr)
@@ -878,7 +870,6 @@ namespace JSC {
 
     inline ForInNode::ForInNode(JSGlobalData* globalData, int lineNumber, const Identifier& ident, ExpressionNode* in, ExpressionNode* expr, StatementNode* statement, int divot, int startOffset, int endOffset)
         : StatementNode(lineNumber)
-        , m_ident(ident)
         , m_init(0)
         , m_lexpr(new (globalData) ResolveNode(lineNumber, ident, divot - startOffset))
         , m_expr(expr)
@@ -886,7 +877,7 @@ namespace JSC {
         , m_identIsVarDecl(true)
     {
         if (in) {
-            AssignResolveNode* node = new (globalData) AssignResolveNode(lineNumber, ident, in, true);
+            AssignResolveNode* node = new (globalData) AssignResolveNode(lineNumber, ident, in);
             node->setExceptionSourceCode(divot, divot - startOffset, endOffset - divot);
             m_init = node;
         }

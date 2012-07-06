@@ -1,3 +1,55 @@
+2012-07-06  Nuno Lopes  <nlopes@apple.com>
+
+        Fix build with recent clang.
+        https://bugs.webkit.org/show_bug.cgi?id=90634
+
+        Reviewed by Oliver Hunt.
+
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        (SpecializedThunkJIT):
+        * jit/ThunkGenerators.cpp:
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::floorThunkGenerator):
+        (JSC::ceilThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::expThunkGenerator):
+        (JSC::logThunkGenerator):
+        (JSC::absThunkGenerator):
+        (JSC::powThunkGenerator):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createAssignResolve):
+        (JSC::ASTBuilder::createForLoop):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::makeAssignNode):
+        (JSC::ASTBuilder::makePrefixNode):
+        (JSC::ASTBuilder::makePostfixNode):
+        * parser/NodeConstructors.h:
+        (JSC::PostfixErrorNode::PostfixErrorNode):
+        (JSC::PrefixErrorNode::PrefixErrorNode):
+        (JSC::AssignResolveNode::AssignResolveNode):
+        (JSC::AssignErrorNode::AssignErrorNode):
+        (JSC::ForNode::ForNode):
+        (JSC::ForInNode::ForInNode):
+        * parser/Nodes.h:
+        (FunctionCallResolveNode):
+        (PostfixErrorNode):
+        (PrefixErrorNode):
+        (ReadModifyResolveNode):
+        (AssignResolveNode):
+        (AssignErrorNode):
+        (ForNode):
+        (ForInNode):
+        * parser/Parser.cpp:
+        (JSC::::parseVarDeclarationList):
+        (JSC::::parseForStatement):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createAssignResolve):
+        (JSC::SyntaxChecker::createForLoop):
+
 2012-07-06  Zoltan Herczeg  <zherczeg@webkit.org>
 
         [Qt][ARM] REGRESSION(r121885): It broke 30 jsc tests, 500+ layout tests

@@ -148,7 +148,7 @@ public:
     ExpressionType createNewExpr(int, ExpressionType, int, int, int, int) { return NewExpr; }
     ExpressionType createNewExpr(int, ExpressionType, int, int) { return NewExpr; }
     ExpressionType createConditionalExpr(int, ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
-    ExpressionType createAssignResolve(int, const Identifier&, ExpressionType, bool, int, int, int) { return AssignmentExpr; }
+    ExpressionType createAssignResolve(int, const Identifier&, ExpressionType, int, int, int) { return AssignmentExpr; }
     ExpressionType createFunctionExpr(int, const Identifier*, int, int, int, int, int, int) { return FunctionExpr; }
     int createFunctionBody(int, bool) { return 1; }
     int createArguments() { return 1; }
@@ -183,7 +183,7 @@ public:
     int createExprStatement(int, int, int, int) { return 1; }
     int createIfStatement(int, int, int, int, int) { return 1; }
     int createIfStatement(int, int, int, int, int, int) { return 1; }
-    int createForLoop(int, int, int, int, int, bool, int, int) { return 1; }
+    int createForLoop(int, int, int, int, int, int, int) { return 1; }
     int createForInLoop(int, const Identifier*, int, int, int, int, int, int, int, int, int, int) { return 1; }
     int createForInLoop(int, int, int, int, int, int, int, int, int) { return 1; }
     int createEmptyStatement(int) { return 1; }

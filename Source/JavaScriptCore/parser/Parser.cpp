@@ -260,13 +260,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
             int varDivot = tokenStart() + 1;
             initStart = tokenStart();
             next(TreeBuilder::DontBuildStrings); // consume '='
-            int initialAssignments = m_assignmentCount;
             TreeExpression initializer = parseAssignmentExpression(context);
             initEnd = lastTokenEnd();
             lastInitializer = initializer;
             failIfFalse(initializer);
             
-            TreeExpression node = context.createAssignResolve(m_lexer->lastLineNumber(), *name, initializer, initialAssignments != m_assignmentCount, varStart, varDivot, lastTokenEnd());
+            TreeExpression node = context.createAssignResolve(m_lexer->lastLineNumber(), *name, initializer, varStart, varDivot, lastTokenEnd());
             if (!varDecls)
                 varDecls = node;
             else
@@ -391,7 +390,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         TreeStatement statement = parseStatement(context, unused);
         endLoop();
         failIfFalse(statement);
-        return context.createForLoop(m_lexer->lastLineNumber(), decls, condition, increment, statement, hasDeclaration, startLine, endLine);
+        return context.createForLoop(m_lexer->lastLineNumber(), decls, condition, increment, statement, startLine, endLine);
     }
     
     // For-in loop

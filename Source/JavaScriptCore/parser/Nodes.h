@@ -546,8 +546,6 @@ namespace JSC {
 
         const Identifier& m_ident;
         ArgumentsNode* m_args;
-        size_t m_index; // Used by LocalVarFunctionCallNode.
-        size_t m_scopeDepth; // Used by ScopedVarFunctionCallNode and NonLocalVarFunctionCallNode
     };
     
     class FunctionCallBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
@@ -635,12 +633,11 @@ namespace JSC {
 
     class PostfixErrorNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        PostfixErrorNode(int, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
+        PostfixErrorNode(int, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        ExpressionNode* m_expr;
         Operator m_operator;
     };
 
@@ -754,12 +751,11 @@ namespace JSC {
 
     class PrefixErrorNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        PrefixErrorNode(int, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
+        PrefixErrorNode(int, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        ExpressionNode* m_expr;
         Operator m_operator;
     };
 
@@ -1004,22 +1000,19 @@ namespace JSC {
 
         const Identifier& m_ident;
         ExpressionNode* m_right;
-        size_t m_index; // Used by ReadModifyLocalVarNode.
         Operator m_operator;
         bool m_rightHasAssignments;
     };
 
     class AssignResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        AssignResolveNode(int, const Identifier&, ExpressionNode* right, bool rightHasAssignments);
+        AssignResolveNode(int, const Identifier&, ExpressionNode* right);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
         const Identifier& m_ident;
         ExpressionNode* m_right;
-        size_t m_index; // Used by ReadModifyLocalVarNode.
-        bool m_rightHasAssignments;
     };
 
     class ReadModifyBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
@@ -1080,14 +1073,10 @@ namespace JSC {
 
     class AssignErrorNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        AssignErrorNode(int, ExpressionNode* left, Operator, ExpressionNode* right, unsigned divot, unsigned startOffset, unsigned endOffset);
+        AssignErrorNode(int, unsigned divot, unsigned startOffset, unsigned endOffset);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-
-        ExpressionNode* m_left;
-        Operator m_operator;
-        ExpressionNode* m_right;
     };
     
     typedef Vector<ExpressionNode*, 8> ExpressionVector;
@@ -1254,7 +1243,7 @@ namespace JSC {
 
     class ForNode : public StatementNode {
     public:
-        ForNode(int, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode*, bool expr1WasVarDecl);
+        ForNode(int, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode*);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1263,18 +1252,16 @@ namespace JSC {
         ExpressionNode* m_expr2;
         ExpressionNode* m_expr3;
         StatementNode* m_statement;
-        bool m_expr1WasVarDecl;
     };
 
     class ForInNode : public StatementNode, public ThrowableExpressionData {
     public:
-        ForInNode(JSGlobalData*, int, ExpressionNode*, ExpressionNode*, StatementNode*);
+        ForInNode(int, ExpressionNode*, ExpressionNode*, StatementNode*);
         ForInNode(JSGlobalData*, int, const Identifier&, ExpressionNode*, ExpressionNode*, StatementNode*, int divot, int startOffset, int endOffset);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
-        const Identifier& m_ident;
         ExpressionNode* m_init;
         ExpressionNode* m_lexpr;
         ExpressionNode* m_expr;

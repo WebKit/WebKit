@@ -37,9 +37,7 @@ namespace JSC {
     class SpecializedThunkJIT : public JSInterfaceJIT {
     public:
         static const int ThisArgument = -1;
-        SpecializedThunkJIT(int expectedArgCount, JSGlobalData* globalData)
-            : m_expectedArgCount(expectedArgCount)
-            , m_globalData(globalData)
+        SpecializedThunkJIT(int expectedArgCount)
         {
             // Check that we have the expected number of arguments
             m_failures.append(branch32(NotEqual, payloadFor(RegisterFile::ArgumentCount), TrustedImm32(expectedArgCount + 1)));
@@ -166,8 +164,6 @@ namespace JSC {
 #endif
         }
         
-        int m_expectedArgCount;
-        JSGlobalData* m_globalData;
         MacroAssembler::JumpList m_failures;
         Vector<std::pair<Call, FunctionPtr> > m_calls;
     };

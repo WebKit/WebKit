@@ -75,7 +75,7 @@ static void charToString(SpecializedThunkJIT& jit, JSGlobalData* globalData, Mac
 
 MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData* globalData)
 {
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     stringCharLoad(jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
     return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "charCodeAt");
@@ -83,7 +83,7 @@ MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData* globalData)
 
 MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData* globalData)
 {
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     stringCharLoad(jit);
     charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
@@ -92,7 +92,7 @@ MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData* globalData)
 
 MacroAssemblerCodeRef fromCharCodeThunkGenerator(JSGlobalData* globalData)
 {
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     // load char code
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0);
     charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
@@ -102,7 +102,7 @@ MacroAssemblerCodeRef fromCharCodeThunkGenerator(JSGlobalData* globalData)
 
 MacroAssemblerCodeRef sqrtThunkGenerator(JSGlobalData* globalData)
 {
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     if (!jit.supportsFloatingPointSqrt())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
 
@@ -182,7 +182,7 @@ static const double halfConstant = 0.5;
     
 MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData* globalData)
 {
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     MacroAssembler::Jump nonIntJump;
     if (!UnaryDoubleOpWrapper(floor) || !jit.supportsFloatingPoint())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
@@ -214,7 +214,7 @@ MacroAssemblerCodeRef floorThunkGenerator(JSGlobalData* globalData)
 
 MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData* globalData)
 {
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     if (!UnaryDoubleOpWrapper(ceil) || !jit.supportsFloatingPoint())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
     MacroAssembler::Jump nonIntJump;
@@ -233,7 +233,7 @@ MacroAssemblerCodeRef ceilThunkGenerator(JSGlobalData* globalData)
 
 MacroAssemblerCodeRef roundThunkGenerator(JSGlobalData* globalData)
 {
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     if (!UnaryDoubleOpWrapper(jsRound) || !jit.supportsFloatingPoint())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
     MacroAssembler::Jump nonIntJump;
@@ -269,7 +269,7 @@ MacroAssemblerCodeRef expThunkGenerator(JSGlobalData* globalData)
 {
     if (!UnaryDoubleOpWrapper(exp))
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     if (!jit.supportsFloatingPoint())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
@@ -282,7 +282,7 @@ MacroAssemblerCodeRef logThunkGenerator(JSGlobalData* globalData)
 {
     if (!UnaryDoubleOpWrapper(log))
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     if (!jit.supportsFloatingPoint())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
@@ -293,7 +293,7 @@ MacroAssemblerCodeRef logThunkGenerator(JSGlobalData* globalData)
 
 MacroAssemblerCodeRef absThunkGenerator(JSGlobalData* globalData)
 {
-    SpecializedThunkJIT jit(1, globalData);
+    SpecializedThunkJIT jit(1);
     if (!jit.supportsFloatingPointAbs())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
     MacroAssembler::Jump nonIntJump;
@@ -313,7 +313,7 @@ MacroAssemblerCodeRef absThunkGenerator(JSGlobalData* globalData)
 
 MacroAssemblerCodeRef powThunkGenerator(JSGlobalData* globalData)
 {
-    SpecializedThunkJIT jit(2, globalData);
+    SpecializedThunkJIT jit(2);
     if (!jit.supportsFloatingPoint())
         return MacroAssemblerCodeRef::createSelfManagedCodeRef(globalData->jitStubs->ctiNativeCall());
 
