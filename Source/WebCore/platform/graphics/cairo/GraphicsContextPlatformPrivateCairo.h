@@ -52,8 +52,7 @@ public:
         : platformContext(newPlatformContext)
 #if PLATFORM(GTK)
         , expose(0)
-#endif
-#if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
+#elif PLATFORM(WIN)
         // NOTE:  These may note be needed: review and remove once Cairo implementation is complete
         , m_hdc(0)
         , m_shouldIncludeChildWindows(false)
@@ -99,8 +98,7 @@ public:
 
 #if PLATFORM(GTK)
     GdkEventExpose* expose;
-#endif
-#if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
+#elif PLATFORM(WIN)
     HDC m_hdc;
     bool m_shouldIncludeChildWindows;
 #endif

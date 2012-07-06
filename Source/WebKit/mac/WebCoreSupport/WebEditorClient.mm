@@ -942,54 +942,45 @@ void WebEditorClient::setInputMethodState(bool)
 #ifndef BUILDING_ON_LEOPARD
 @interface WebEditorSpellCheckResponder : NSObject
 {
-    WebEditorClient* _client;
+    WebCore::SpellChecker* _sender;
     int _sequence;
+    TextCheckingTypeMask _types;
     RetainPtr<NSArray> _results;
 }
-- (id)initWithClient:(WebEditorClient*)client sequence:(int)sequence results:(NSArray*)results;
+- (id)initWithSender:(WebCore::SpellChecker*)sender sequence:(int)sequence types:(WebCore::TextCheckingTypeMask)types results:(NSArray*)results;
 - (void)perform;
 @end
 
 @implementation WebEditorSpellCheckResponder
-- (id)initWithClient:(WebEditorClient*)client sequence:(int)sequence results:(NSArray*)results
+- (id)initWithSender:(WebCore::SpellChecker*)sender sequence:(int)sequence types:(WebCore::TextCheckingTypeMask)types results:(NSArray*)results
 {
     self = [super init];
     if (!self)
         return nil;
-    _client = client;
+    _sender = sender;
     _sequence = sequence;
+    _types = types;
     _results = results;
     return self;
 }
 
 - (void)perform
 {
-    _client->didCheckSucceed(_sequence, _results.get());
+    _sender->didCheck(_sequence, core(_results.get(), _types));
 }
 
 @end
 #endif
 
-void WebEditorClient::didCheckSucceed(int sequence, NSArray* results)
-{
-    ASSERT_UNUSED(sequence, sequence == m_textCheckingRequest->sequence());
-    m_textCheckingRequest->didSucceed(core(results, m_textCheckingRequest->mask()));
-    m_textCheckingRequest.clear();
-}
-
-void WebEditorClient::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest> request)
+void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker* sender, int sequence, WebCore::TextCheckingTypeMask checkingTypes, const String& text)
 {
 #ifndef BUILDING_ON_LEOPARD
-    ASSERT(!m_textCheckingRequest);
-    m_textCheckingRequest = request;
-
-    int sequence = m_textCheckingRequest->sequence();
-    NSRange range = NSMakeRange(0, m_textCheckingRequest->text().length());
+    NSRange range = NSMakeRange(0, text.length());
     NSRunLoop* currentLoop = [NSRunLoop currentRunLoop];
-    [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:m_textCheckingRequest->text() range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0
+    [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:text range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0 
                                          completionHandler:^(NSInteger, NSArray* results, NSOrthography*, NSInteger) {
             [currentLoop performSelector:@selector(perform) 
-                                  target:[[[WebEditorSpellCheckResponder alloc] initWithClient:this sequence:sequence results:results] autorelease]
+                                  target:[[[WebEditorSpellCheckResponder alloc] initWithSender:sender sequence:sequence types:checkingTypes results:results] autorelease]
                                 argument:nil order:0 modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
         }];
 #endif

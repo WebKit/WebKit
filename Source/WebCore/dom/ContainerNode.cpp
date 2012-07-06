@@ -403,11 +403,11 @@ static void willRemoveChild(Node* child)
 
 static void willRemoveChildren(ContainerNode* container)
 {
-    NodeVector children;
-    getChildNodes(container, children);
-
     container->document()->nodeChildrenWillBeRemoved(container);
     container->document()->incDOMTreeVersion();
+
+    NodeVector children;
+    getChildNodes(container, children);
 
 #if ENABLE(MUTATION_OBSERVERS)
     ChildListMutationScope mutation(container);
@@ -475,13 +475,13 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     Node* next = child->nextSibling();
     removeBetween(prev, next, child.get());
 
-    childrenChanged(false, prev, next, -1);
-
     if (child->inDocument())
         child->removedFromDocument();
     else
         child->removedFromTree(true);
 
+    // Dispatch post-removal mutation events
+    childrenChanged(false, prev, next, -1);
     dispatchSubtreeModifiedEvent();
 
     return child;
@@ -732,8 +732,6 @@ void ContainerNode::suspendPostAttachCallbacks()
 void ContainerNode::resumePostAttachCallbacks()
 {
     if (s_attachDepth == 1) {
-        RefPtr<ContainerNode> protect(this);
-
         if (s_postAttachCallbackQueue)
             dispatchPostAttachCallbacks();
         if (s_shouldReEnableMemoryCacheCallsAfterAttach) {

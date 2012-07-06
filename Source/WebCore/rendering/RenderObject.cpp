@@ -322,6 +322,12 @@ void RenderObject::removeChild(RenderObject* oldChild)
     if (!children)
         return;
 
+    // We do this here instead of in removeChildNode, since the only extremely low-level uses of remove/appendChildNode
+    // cannot affect the positioned object list, and the floating object list is irrelevant (since the list gets cleared on
+    // layout anyway).
+    if (oldChild->isFloatingOrPositioned())
+        toRenderBox(oldChild)->removeFloatingOrPositionedChildFromBlockLists();
+        
     children->removeChildNode(this, oldChild);
 }
 
@@ -1900,7 +1906,7 @@ void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
             continue;
 #endif
 
-        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), child->style()->display());
+        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
         if (style()->specifiesColumns()) {
             if (child->style()->specifiesColumns())
                 newStyle->inheritColumnPropertiesFrom(style());
@@ -1913,6 +1919,7 @@ void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
         if (child->isRelPositioned() && toRenderBlock(child)->isAnonymousBlockContinuation())
             newStyle->setPosition(child->style()->position());
 
+        newStyle->setDisplay(child->style()->display());
         child->setStyle(newStyle.release());
     }
 }

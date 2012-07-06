@@ -1301,9 +1301,6 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     }
 
     LayoutUnit offsetInColumnDirection = style()->isHorizontalWritingMode() ? location.y() : location.x();
-    
-    recalcCellsIfNeeded();
-
     // Find the first row that starts after offsetInColumnDirection.
     unsigned nextRow = std::upper_bound(m_rowPos.begin(), m_rowPos.end(), offsetInColumnDirection) - m_rowPos.begin();
     if (nextRow == m_rowPos.size())
@@ -1375,7 +1372,9 @@ CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTabl
 
 RenderTableSection* RenderTableSection::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW_GROUP);
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
+    newStyle->setDisplay(TABLE_ROW_GROUP);
+
     RenderTableSection* newSection = new (parent->renderArena()) RenderTableSection(parent->document() /* is anonymous */);
     newSection->setStyle(newStyle.release());
     return newSection;

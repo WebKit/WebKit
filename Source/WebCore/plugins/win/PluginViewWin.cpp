@@ -86,11 +86,6 @@
 #include <cairo-win32.h>
 #endif
 
-#if PLATFORM(GTK)
-#include <gdk/gdkwin32.h>
-#include <gtk/gtk.h>
-#endif
-
 #if PLATFORM(QT)
 #include "QWebPageClient.h"
 #include <QWidget>
@@ -103,13 +98,7 @@
 
 static inline HWND windowHandleForPageClient(PlatformPageClient client)
 {
-#if PLATFORM(GTK)
-    if (!client)
-        return 0;
-    if (GdkWindow* window = gtk_widget_get_window(client))
-        return static_cast<HWND>(GDK_WINDOW_HWND(window));
-    return 0;
-#elif PLATFORM(QT)
+#if PLATFORM(QT)
     if (!client)
         return 0;
     if (QWidget* pluginParent = qobject_cast<QWidget*>(client->pluginParent()))
@@ -302,8 +291,8 @@ static bool registerPluginView()
 
     haveRegisteredWindowClass = true;
 
-#if PLATFORM(GTK) || PLATFORM(QT)
-    WebCore::setInstanceHandle((HINSTANCE)(GetModuleHandle(0)));
+#if PLATFORM(QT)
+    WebCore::setInstanceHandle((HINSTANCE)(qWinAppInst()));
 #endif
 
     ASSERT(WebCore::instanceHandle());
@@ -639,22 +628,14 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     }
 
     ASSERT(parent()->isFrameView());
-
-    // In the GTK port we draw in an offscreen buffer and don't want to use the window
-    // coordinates.
-#if PLATFORM(GTK)
-    IntRect rectInWindow(rect);
-    rectInWindow.intersect(frameRect());
-#else
     IntRect rectInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
-#endif
     LocalWindowsContext windowsContext(context, rectInWindow, m_isTransparent);
 
     // On Safari/Windows without transparency layers the GraphicsContext returns the HDC
     // of the window and the plugin expects that the passed in DC has window coordinates.
-    // In the GTK and Qt ports we always draw in an offscreen buffer and therefore need
-    // to preserve the translation set in getWindowsContext.
-#if !PLATFORM(GTK) && !PLATFORM(QT) && !OS(WINCE)
+    // In the Qt port we always draw in an offscreen buffer and therefore need to preserve
+    // the translation set in getWindowsContext.
+#if !PLATFORM(QT) && !OS(WINCE)
     if (!context->isInTransparencyLayer()) {
         XFORM transform;
         GetWorldTransform(windowsContext.hdc(), &transform);
@@ -762,7 +743,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
-#if !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(WX) && !OS(WINCE)
+#if !PLATFORM(QT) && !PLATFORM(WX) && !OS(WINCE)
     // Currently, Widget::setCursor is always called after this function in EventHandler.cpp
     // and since we don't want that we set ignoreNextSetCursor to true here to prevent that.
     ignoreNextSetCursor = true;
@@ -831,13 +812,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
     m_npWindow.clipRect.right = r.width();
     m_npWindow.clipRect.bottom = r.height();
 #else
-    // In the GTK port we draw in an offscreen buffer and don't want to use the window
-    // coordinates.
-# if PLATFORM(GTK)
-    IntPoint p = rect.location();
-# else
     IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(rect.location());
-# endif
     m_npWindow.x = p.x();
     m_npWindow.y = p.y();
 
@@ -1013,7 +988,7 @@ bool PluginView::platformStart()
         HWND window = ::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
                                        0, 0, 0, 0, parentWindowHandle, 0, WebCore::instanceHandle(), 0);
 
-#if OS(WINDOWS) && (PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(WX))
+#if OS(WINDOWS) && (PLATFORM(QT) || PLATFORM(WX))
         m_window = window;
 #else
         setPlatformWidget(window);
@@ -1056,7 +1031,7 @@ void PluginView::platformDestroy()
 
 PassRefPtr<Image> PluginView::snapshot()
 {
-#if !PLATFORM(GTK) && !PLATFORM(WX) && !OS(WINCE)
+#if !PLATFORM(WX) && !OS(WINCE)
     OwnPtr<HDC> hdc = adoptPtr(CreateCompatibleDC(0));
 
     if (!m_isWindowed) {

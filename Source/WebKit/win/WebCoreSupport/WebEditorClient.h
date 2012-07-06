@@ -41,7 +41,6 @@ public:
     ~WebEditorClient();
 
     virtual void pageDestroyed();
-    virtual void frameWillDetachPage(WebCore::Frame*) { }
 
     virtual bool isContinuousSpellCheckingEnabled();
     virtual void toggleGrammarChecking();
@@ -111,8 +110,7 @@ public:
 
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool);
-    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) { }
-
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) {}
     virtual WebCore::TextCheckerClient* textChecker() { return this; }
 
 private:

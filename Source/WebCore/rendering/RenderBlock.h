@@ -96,7 +96,8 @@ public:
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
 
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0);
+    enum BlockLayoutPass { NormalLayoutPass, PositionedFloatLayoutPass };
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0, BlockLayoutPass = NormalLayoutPass);
 
     void insertPositionedObject(RenderBox*);
     void removePositionedObject(RenderBox*);
@@ -267,12 +268,15 @@ public:
     LayoutUnit logicalWidthForChild(const RenderBox* child) { return isHorizontalWritingMode() ? child->width() : child->height(); }
     LayoutUnit logicalHeightForChild(const RenderBox* child) { return isHorizontalWritingMode() ? child->height() : child->width(); }
     LayoutUnit logicalTopForChild(const RenderBox* child) { return isHorizontalWritingMode() ? child->y() : child->x(); }
+    LayoutUnit logicalLeftForChild(const RenderBox* child) { return isHorizontalWritingMode() ? child->x() : child->y(); }
     void setLogicalLeftForChild(RenderBox* child, LayoutUnit logicalLeft, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     void setLogicalTopForChild(RenderBox* child, LayoutUnit logicalTop, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     LayoutUnit marginBeforeForChild(const RenderBoxModelObject* child) const;
     LayoutUnit marginAfterForChild(const RenderBoxModelObject* child) const;
     LayoutUnit marginStartForChild(const RenderBoxModelObject* child) const;
     LayoutUnit marginEndForChild(const RenderBoxModelObject* child) const;
+    LayoutUnit marginLogicalLeftForChild(const RenderBoxModelObject* child) const;
+    LayoutUnit marginLogicalRightForChild(const RenderBoxModelObject* child) const;
     void setMarginStartForChild(RenderBox* child, LayoutUnit);
     void setMarginEndForChild(RenderBox* child, LayoutUnit);
     void setMarginBeforeForChild(RenderBox* child, LayoutUnit);
@@ -377,7 +381,7 @@ protected:
 
     virtual void layout();
 
-    void layoutPositionedObjects(bool relayoutChildren);
+    bool layoutPositionedObjects(bool relayoutChildren);
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
@@ -431,7 +435,7 @@ protected:
     {
         LayoutUnit repaintLogicalTop = 0;
         LayoutUnit repaintLogicalBottom = 0;
-        clearFloats();
+        clearFloats(NormalLayoutPass);
         layoutInlineChildren(true, repaintLogicalTop, repaintLogicalBottom);
     }
 #endif
@@ -497,14 +501,15 @@ private:
     struct FloatingObject {
         WTF_MAKE_NONCOPYABLE(FloatingObject); WTF_MAKE_FAST_ALLOCATED;
     public:
-        // Note that Type uses bits so you can use FloatLeftRight as a mask to query for both left and right.
-        enum Type { FloatLeft = 1, FloatRight = 2, FloatLeftRight = 3 };
+        // FloatLeftRight is a mask to query for both left and right but not positioned.
+        // FloatAll is a mask to query for all types of floats.
+        enum Type { FloatLeft = 1, FloatRight = 2, FloatLeftRight = 3, FloatPositioned = 4, FloatAll = 7 };
 
         FloatingObject(EFloat type)
             : m_renderer(0)
             , m_originatingLine(0)
             , m_paginationStrut(0)
-            , m_shouldPaint(true)
+            , m_shouldPaint(false)
             , m_isDescendant(false)
             , m_isPlaced(false)
 #ifndef NDEBUG
@@ -515,7 +520,9 @@ private:
             if (type == LeftFloat)
                 m_type = FloatLeft;
             else if (type == RightFloat)
-                m_type = FloatRight;  
+                m_type = FloatRight;
+            else if (type == PositionedFloat)
+                m_type = FloatPositioned;
         }
 
         FloatingObject(Type type, const LayoutRect& frameRect)
@@ -524,7 +531,7 @@ private:
             , m_frameRect(frameRect)
             , m_paginationStrut(0)
             , m_type(type)
-            , m_shouldPaint(true)
+            , m_shouldPaint(type != FloatPositioned)
             , m_isDescendant(false)
             , m_isPlaced(true)
 #ifndef NDEBUG
@@ -576,7 +583,7 @@ private:
         RootInlineBox* m_originatingLine;
         LayoutRect m_frameRect;
         int m_paginationStrut;
-        unsigned m_type : 2; // Type (left or right aligned)
+        unsigned m_type : 3; // Type (left/right aligned or positioned)
         bool m_shouldPaint : 1;
         bool m_isDescendant : 1;
         bool m_isPlaced : 1;
@@ -713,18 +720,23 @@ private:
     // Returns true if and only if it has positioned any floats.
     bool positionNewFloats();
 
-    void clearFloats();
+    bool hasPositionedFloats() const { return m_hasPositionedFloats; }
+    void addPositionedFloats();
+    bool positionedFloatsNeedRelayout();
 
+    void clearFloats(BlockLayoutPass);
     LayoutUnit getClearDelta(RenderBox* child, LayoutUnit yPos);
 
     virtual bool avoidsFloats() const;
 
-    bool hasOverhangingFloats() { return parent() && !hasColumns() && containsFloats() && lowestFloatLogicalBottom() > logicalHeight(); }
+    bool hasOverhangingFloats() { return parent() && !hasColumns() && containsFloats() && lowestFloatLogicalBottomIncludingPositionedFloats() > logicalHeight(); }
     bool hasOverhangingFloat(RenderBox*);
     void addIntrudingFloats(RenderBlock* prev, LayoutUnit xoffset, LayoutUnit yoffset);
     LayoutUnit addOverhangingFloats(RenderBlock* child, bool makeChildPaintOtherFloats);
 
-    LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const; 
+    LayoutUnit lowestFloatLogicalBottom() const { return lowestFloatLogicalBottom(FloatingObject::FloatLeftRight); }
+    LayoutUnit lowestFloatLogicalBottomIncludingPositionedFloats() const { return lowestFloatLogicalBottom(FloatingObject::FloatAll); }
+    LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type) const;
     LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit) const;
     
     virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
@@ -981,6 +993,7 @@ protected:
             : m_placedFloatsTree(UninitializedTree)
             , m_leftObjectsCount(0)
             , m_rightObjectsCount(0)
+            , m_positionedObjectsCount(0)
             , m_horizontalWritingMode(horizontalWritingMode)
             , m_renderer(renderer)
         {
@@ -995,6 +1008,7 @@ protected:
 
         bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
         bool hasRightObjects() const { return m_rightObjectsCount > 0; }
+        bool hasPositionedObjects() const { return m_positionedObjectsCount > 0; }
         const FloatingObjectSet& set() const { return m_set; }
         const FloatingObjectTree& placedFloatsTree()
         {
@@ -1016,6 +1030,7 @@ protected:
         FloatingObjectTree m_placedFloatsTree;
         unsigned m_leftObjectsCount;
         unsigned m_rightObjectsCount;
+        unsigned m_positionedObjectsCount;
         bool m_horizontalWritingMode;
         const RenderBlock* m_renderer;
     };
@@ -1068,6 +1083,7 @@ protected:
 
     mutable signed m_lineHeight : 30;
     bool m_beingDestroyed : 1;
+    bool m_hasPositionedFloats : 1;
 
     // RenderRubyBase objects need to be able to split and merge, moving their children around
     // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).

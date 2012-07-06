@@ -41,7 +41,6 @@ public:
 
     void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
-    void setNeedsTextMetricsUpdate() { m_needsTextMetricsUpdate = true; }
     virtual FloatRect repaintRectInLocalCoordinates() const;
 
     static RenderSVGText* locateRenderSVGTextAncestor(RenderObject*);
@@ -94,7 +93,6 @@ private:
     bool m_needsReordering : 1;
     bool m_needsPositioningValuesUpdate : 1;
     bool m_needsTransformUpdate : 1;
-    bool m_needsTextMetricsUpdate : 1;
     AffineTransform m_localTransform;
     SVGTextLayoutAttributesBuilder m_layoutAttributesBuilder;
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;

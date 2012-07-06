@@ -21,7 +21,6 @@
 #include "AXObjectCache.h"
 
 #include "AccessibilityObject.h"
-#include "AccessibilityRenderObject.h"
 #include "Document.h"
 #include "Element.h"
 #include "GOwnPtr.h"
@@ -159,26 +158,11 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
     }
 }
 
-void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
+static void emitTextChanged(AccessibilityObject* object, AXObjectCache::AXTextChange textChange, unsigned offset, const String& text)
 {
-    if (!object || text.isEmpty())
-        return;
-
-    AccessibilityObject* parentObject = object->parentObjectUnignored();
-    if (!parentObject)
-        return;
-
-    AtkObject* wrapper = parentObject->wrapper();
+    AtkObject* wrapper = object->parentObjectUnignored()->wrapper();
     if (!wrapper || !ATK_IS_TEXT(wrapper))
         return;
-
-    Node* node = object->node();
-    if (!node)
-        return;
-
-    // Ensure document's layout is up-to-date before using TextIterator.
-    Document* document = node->document();
-    document->updateLayout();
 
     // Select the right signal to be emitted
     CString detail;
@@ -191,23 +175,18 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* obje
         break;
     }
 
-    String textToEmit = text;
-    unsigned offsetToEmit = offset;
+    if (!detail.isNull())
+        g_signal_emit_by_name(wrapper, detail.data(), offset, text.length(), text.utf8().data());
+}
 
-    // If the object we're emitting the signal from represents a
-    // password field, we will emit the masked text.
-    if (parentObject->isPasswordField()) {
-        String maskedText = parentObject->passwordFieldValue();
-        textToEmit = maskedText.substring(offset, text.length());
-    } else {
-        // Consider previous text objects that might be present for
-        // the current accessibility object to ensure we emit the
-        // right offset (e.g. multiline text areas).
-        RefPtr<Range> range = Range::create(document, node->parentNode(), 0, node, 0);
-        offsetToEmit = offset + TextIterator::rangeLength(range.get());
-    }
+void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
+{
+    if (!object || !object->isAccessibilityRenderObject() || text.isEmpty())
+        return;
 
-    g_signal_emit_by_name(wrapper, detail.data(), offsetToEmit, textToEmit.length(), textToEmit.utf8().data());
+    Node* node = object->node();
+    RefPtr<Range> range = Range::create(node->document(), node->parentNode(), 0, node, 0);
+    emitTextChanged(object, textChange, offset + TextIterator::rangeLength(range.get()), text);
 }
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* object, AXLoadingEvent loadingEvent)

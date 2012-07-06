@@ -559,10 +559,8 @@ EOF
     push(@txtGetProps, $txtGetProp);
     if (scalar @readableProperties > 0) {
         $txtGetProp = << "EOF";
-$conditionGuardStart
     ${className}* self = WEBKIT_DOM_${clsCaps}(object);
     $privFunction
-$conditionGuardEnd
 EOF
         push(@txtGetProps, "$conditionGuardStart\n") if $conditionGuardStart;
         push(@txtGetProps, $txtGetProp);
@@ -585,10 +583,8 @@ EOF
 
     if (scalar @writeableProperties > 0) {
         $txtSetProps = << "EOF";
-$conditionGuardStart
     ${className}* self = WEBKIT_DOM_${clsCaps}(object);
     $privFunction
-$conditionGuardEnd
 EOF
         push(@txtSetProps, "$conditionGuardStart\n") if $conditionGuardStart;
         push(@txtSetProps, $txtSetProps);

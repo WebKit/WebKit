@@ -199,6 +199,15 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (!document->frame()->script()->canExecuteScripts(AboutToExecuteScript))
         return false;
 
+    Node* ancestor = m_element->parentNode();
+    while (ancestor) {
+        if (ancestor->isSVGShadowRoot()) {
+            fprintf(stderr, "aborted script: shadow root\n");
+            return false;
+        }
+        ancestor = ancestor->parentNode();
+    }
+
     if (!isScriptForEventSupported())
         return false;
 

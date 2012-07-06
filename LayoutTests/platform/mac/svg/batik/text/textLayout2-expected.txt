@@ -129,3 +129,4 @@ layer at (0,0) size 450x500
           chunk 1 (middle anchor) text run 18 at (274.00,465.00) startOffset 17 endOffset 18 width 8.00: "h"
           chunk 1 (middle anchor) text run 19 at (282.00,465.00) startOffset 18 endOffset 19 width 6.00: "s"
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

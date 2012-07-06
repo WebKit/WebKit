@@ -87,10 +87,6 @@ void EditorClientImpl::pageDestroyed()
     // Our lifetime is bound to the WebViewImpl.
 }
 
-void EditorClientImpl::frameWillDetachPage(WebCore::Frame* frame)
-{
-}
-
 bool EditorClientImpl::shouldShowDeleteInterface(HTMLElement* elem)
 {
     // Normally, we don't care to show WebCore's deletion UI, so we only enable
@@ -735,12 +731,10 @@ void EditorClientImpl::checkSpellingOfString(const UChar* text, int length,
         *misspellingLength = spellLength;
 }
 
-void EditorClientImpl::requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest> request)
+void EditorClientImpl::requestCheckingOfString(SpellChecker* sender, int identifier, TextCheckingTypeMask, const String& text)
 {
-    if (m_webView->spellCheckClient()) {
-        String text = request->text();
-        m_webView->spellCheckClient()->requestCheckingOfText(text, new WebTextCheckingCompletionImpl(request));
-    }
+    if (m_webView->spellCheckClient())
+        m_webView->spellCheckClient()->requestCheckingOfText(text, new WebTextCheckingCompletionImpl(identifier, sender));
 }
 
 String EditorClientImpl::getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord)

@@ -34,7 +34,6 @@
 #include "EditingStyle.h"
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
-#include "FrameDestructionObserver.h"
 #include "FrameSelection.h"
 #include "TextChecking.h"
 #include "VisibleSelection.h"
@@ -82,7 +81,7 @@ struct CompositionUnderline {
 
 enum EditorCommandSource { CommandFromMenuOrKeyBinding, CommandFromDOM, CommandFromDOMWithUserInterface };
 
-class Editor : public FrameDestructionObserver {
+class Editor {
 public:
     Editor(Frame*);
     ~Editor();
@@ -385,8 +384,7 @@ public:
     void deviceScaleFactorChanged();
 
 private:
-    virtual void willDetachPage() OVERRIDE;
-
+    Frame* m_frame;
     OwnPtr<DeleteButtonController> m_deleteButtonController;
     RefPtr<CompositeEditCommand> m_lastEditCommand;
     RefPtr<Node> m_removedAnchor;

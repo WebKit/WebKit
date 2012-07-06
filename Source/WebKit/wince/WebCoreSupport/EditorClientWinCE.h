@@ -38,7 +38,6 @@ public:
     ~EditorClientWinCE();
 
     virtual void pageDestroyed();
-    virtual void frameWillDetachPage(WebCore::Frame*) { }
 
     virtual bool shouldDeleteRange(WebCore::Range*);
     virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
@@ -102,7 +101,7 @@ public:
     virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool);
-    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) { }
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) {}
     virtual WebCore::TextCheckerClient* textChecker() { return this; }
 
 private:

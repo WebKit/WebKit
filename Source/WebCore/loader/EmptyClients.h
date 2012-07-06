@@ -430,7 +430,7 @@ public:
 #endif
 
     virtual void getGuessesForWord(const String&, const String&, Vector<String>&) { }
-    virtual void requestCheckingOfString(PassRefPtr<TextCheckingRequest>) { }
+    virtual void requestCheckingOfString(SpellChecker*, int, TextCheckingTypeMask, const String&) { }
 };
 
 class EmptyEditorClient : public EditorClient {
@@ -439,7 +439,6 @@ public:
     EmptyEditorClient() { }
     virtual ~EmptyEditorClient() { }
     virtual void pageDestroyed() { }
-    virtual void frameWillDetachPage(Frame*) { }
 
     virtual bool shouldDeleteRange(Range*) { return false; }
     virtual bool shouldShowDeleteInterface(HTMLElement*) { return false; }

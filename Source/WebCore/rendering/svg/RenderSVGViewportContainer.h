@@ -36,12 +36,12 @@ public:
     FloatRect viewport() const { return m_viewport; }
 
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
-    virtual bool didTransformToRootUpdate() { return m_didTransformToRootUpdate; }
 
     virtual void determineIfLayoutSizeChanged();
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:
+    virtual bool isSVGContainer() const { return true; }
     virtual bool isSVGViewportContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGViewportContainer"; }
 
@@ -56,7 +56,6 @@ private:
 
     FloatRect m_viewport;
     mutable AffineTransform m_localToParentTransform;
-    bool m_didTransformToRootUpdate : 1;
     bool m_isLayoutSizeChanged : 1;
     bool m_needsTransformUpdate : 1;
 };

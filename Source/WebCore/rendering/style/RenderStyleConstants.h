@@ -97,7 +97,7 @@ enum EPosition {
 };
 
 enum EFloat {
-    NoFloat, LeftFloat, RightFloat
+    NoFloat, LeftFloat, RightFloat, PositionedFloat
 };
 
 enum EMarginCollapse { MCOLLAPSE, MSEPARATE, MDISCARD };

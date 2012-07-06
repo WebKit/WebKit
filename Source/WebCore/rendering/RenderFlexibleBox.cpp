@@ -192,7 +192,7 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int)
+void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int, BlockLayoutPass)
 {
     ASSERT(needsLayout());
 

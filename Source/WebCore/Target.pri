@@ -2467,6 +2467,7 @@ HEADERS += \
     rendering/svg/RenderSVGResourceRadialGradient.h \
     rendering/svg/RenderSVGResourceSolidColor.h \
     rendering/svg/RenderSVGRoot.h \
+    rendering/svg/RenderSVGShadowTreeRootContainer.h \
     rendering/svg/RenderSVGShape.h \
     rendering/svg/RenderSVGTSpan.h \
     rendering/svg/RenderSVGText.h \
@@ -2485,6 +2486,7 @@ HEADERS += \
     rendering/svg/SVGResourcesCache.h \
     rendering/svg/SVGResourcesCycleSolver.h \
     rendering/svg/SVGRootInlineBox.h \
+    rendering/svg/SVGShadowTreeElements.h \
     rendering/svg/SVGTextChunk.h \
     rendering/svg/SVGTextChunkBuilder.h \
     rendering/svg/SVGTextFragment.h \
@@ -3433,6 +3435,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               rendering/svg/RenderSVGResourceRadialGradient.cpp \
               rendering/svg/RenderSVGResourceSolidColor.cpp \
               rendering/svg/RenderSVGRoot.cpp \
+              rendering/svg/RenderSVGShadowTreeRootContainer.cpp \
               rendering/svg/RenderSVGTSpan.cpp \
               rendering/svg/RenderSVGText.cpp \
               rendering/svg/RenderSVGTextPath.cpp \
@@ -3449,6 +3452,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               rendering/svg/SVGResourcesCache.cpp \
               rendering/svg/SVGResourcesCycleSolver.cpp \
               rendering/svg/SVGRootInlineBox.cpp \
+              rendering/svg/SVGShadowTreeElements.cpp \
               rendering/svg/SVGTextChunk.cpp \
               rendering/svg/SVGTextChunkBuilder.cpp \
               rendering/svg/SVGTextLayoutAttributes.cpp \

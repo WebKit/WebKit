@@ -1329,6 +1329,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFloat e)
         case RightFloat:
             m_value.ident = CSSValueRight;
             break;
+        case PositionedFloat:
+            m_value.ident = CSSValueWebkitPositioned;
+            break;
     }
 }
 
@@ -1342,6 +1345,8 @@ template<> inline CSSPrimitiveValue::operator EFloat() const
         case CSSValueNone:
         case CSSValueCenter:  // Non-standard CSS value
             return NoFloat;
+        case CSSValueWebkitPositioned:
+            return PositionedFloat;
         default:
             ASSERT_NOT_REACHED();
             return NoFloat;

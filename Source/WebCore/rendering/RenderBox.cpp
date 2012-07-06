@@ -285,7 +285,7 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
 
         if (parentBlock) {
             RenderObject* parent = parentBlock->parent();
-            if (parent && parent->isFlexibleBoxIncludingDeprecated())
+            if (parent && parent->isDeprecatedFlexibleBox())
                 parentBlock = toRenderBlock(parent);
 
             parentBlock->markSiblingsWithFloatsForLayout(this);
@@ -416,7 +416,7 @@ void RenderBox::updateBoxModelInfoFromStyle()
         setHasBoxDecorations(true);
 
     setPositioned(styleToUse->isPositioned());
-    setFloating(!isPositioned() && styleToUse->isFloating());
+    setFloating(styleToUse->isFloating() && (!isPositioned() || styleToUse->floating() == PositionedFloat));
 
     // We also handle <body> and <html>, whose overflow applies to the viewport.
     if (styleToUse->overflowX() != OVISIBLE && !isRootObject && (isRenderBlock() || isTableRow() || isTableSection())) {

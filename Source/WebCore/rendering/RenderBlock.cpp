@@ -124,6 +124,7 @@ RenderBlock::RenderBlock(Node* node)
       : RenderBox(node)
       , m_lineHeight(-1)
       , m_beingDestroyed(false)
+      , m_hasPositionedFloats(false)
 {
     setChildrenInline(true);
 }
@@ -379,17 +380,8 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
     ASSERT(!continuation()); // We don't yet support column spans that aren't immediate children of the multi-column block.
         
     // The goal is to locate a suitable box in which to place our child.
-    RenderBlock* beforeChildParent = 0;
-    if (beforeChild) {
-        RenderObject* curr = beforeChild;
-        while (curr && curr->parent() != this)
-            curr = curr->parent();
-        beforeChildParent = toRenderBlock(curr);
-        ASSERT(beforeChildParent);
-        ASSERT(beforeChildParent->isAnonymousColumnsBlock() || beforeChildParent->isAnonymousColumnSpanBlock());
-    } else
-        beforeChildParent = toRenderBlock(lastChild());
-
+    RenderBlock* beforeChildParent = toRenderBlock(beforeChild && beforeChild->parent()->isRenderBlock() ? beforeChild->parent() : lastChild());
+    
     // If the new child is floating or positioned it can just go in that block.
     if (newChild->isFloatingOrPositioned()) {
         beforeChildParent->addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);
@@ -471,8 +463,7 @@ RenderBlock* RenderBlock::clone() const
         cloneBlock->setChildrenInline(childrenInline());
     }
     else {
-        RenderObject* cloneRenderer = node()->createRenderer(renderArena(), style());
-        cloneBlock = toRenderBlock(cloneRenderer);
+        cloneBlock = new (renderArena()) RenderBlock(node());
         cloneBlock->setStyle(style());
 
         // This takes care of setting the right value of childrenInline in case
@@ -492,16 +483,10 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     if (!isAnonymousBlock())
         cloneBlock->setContinuation(oldCont);
 
-    if (!beforeChild && isAfterContent(lastChild()))
-        beforeChild = lastChild();
-
-    // If we are moving inline children from |this| to cloneBlock, then we need
-    // to clear our line box tree.
-    if (beforeChild && childrenInline())
-        deleteLineBoxTree();
-
     // Now take all of the children from beforeChild to the end and remove
     // them from |this| and place them in the clone.
+    if (!beforeChild && isAfterContent(lastChild()))
+        beforeChild = lastChild();
     moveChildrenTo(cloneBlock, beforeChild, 0, true);
     
     // Hook |clone| up as the continuation of the middle block.
@@ -513,7 +498,6 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     // Once we hit the anonymous columns block we're done.
     RenderBoxModelObject* curr = toRenderBoxModelObject(parent());
     RenderBoxModelObject* currChild = this;
-    RenderObject* currChildNextSibling = currChild->nextSibling();
     
     while (curr && curr != fromBlock) {
         ASSERT(curr->isRenderBlock());
@@ -540,12 +524,8 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
         // Someone may have indirectly caused a <q> to split.  When this happens, the :after content
         // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that the inline's :after
         // content gets properly destroyed.
-        bool isLastChild = (currChildNextSibling == blockCurr->lastChild());
         if (document()->usesBeforeAfterRules())
             blockCurr->children()->updateBeforeAfterContent(blockCurr, AFTER);
-        if (isLastChild && currChildNextSibling != blockCurr->lastChild())
-            currChildNextSibling = 0; // We destroyed the last child, so now we need to update
-                                      // the value of currChildNextSibling.
 
         // It is possible that positioned objects under blockCurr are going to be moved to cloneBlock.
         // Since we are doing layout anyway, it is easier to blow away the entire list, than
@@ -556,11 +536,10 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
 
         // Now we need to take all of the children starting from the first child
         // *after* currChild and append them all to the clone.
-        blockCurr->moveChildrenTo(cloneBlock, currChildNextSibling, 0, true);
+        blockCurr->moveChildrenTo(cloneBlock, currChild->nextSibling(), 0, true);
 
         // Keep walking up the chain.
         currChild = curr;
-        currChildNextSibling = currChild->nextSibling();
         curr = toRenderBoxModelObject(curr->parent());
     }
 
@@ -569,7 +548,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
 
     // Now take all the children after currChild and remove them from the fromBlock
     // and put them in the toBlock.
-    fromBlock->moveChildrenTo(toBlock, currChildNextSibling, 0, true);
+    fromBlock->moveChildrenTo(toBlock, currChild->nextSibling(), 0, true);
 }
 
 void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
@@ -1077,7 +1056,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             // to clear out inherited column properties by just making a new style, and to also clear the
             // column span flag if it is set.
             ASSERT(!inlineChildrenBlock->continuation());
-            RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
+            RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
             children()->removeChildNode(this, inlineChildrenBlock, inlineChildrenBlock->hasLayer());
             inlineChildrenBlock->setStyle(newStyle);
             
@@ -1251,7 +1230,7 @@ void RenderBlock::computeRegionRangeForBlock()
         enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
 }
 
-void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
+void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight, BlockLayoutPass layoutPass)
 {
     ASSERT(needsLayout());
 
@@ -1274,7 +1253,12 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     if (oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth())
         relayoutChildren = true;
 
-    clearFloats();
+    // If nothing changed about our floating positioned objects, let's go ahead and try to place them as
+    // floats to avoid doing two passes.
+    BlockLayoutPass floatsLayoutPass = layoutPass;
+    if (floatsLayoutPass == NormalLayoutPass && !relayoutChildren && !positionedFloatsNeedRelayout())
+        floatsLayoutPass = PositionedFloatLayoutPass;
+    clearFloats(floatsLayoutPass);
 
     LayoutUnit previousHeight = logicalHeight();
     setLogicalHeight(0);
@@ -1379,7 +1363,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
             for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
                 if (child->isBlockFlow() && !child->isFloatingOrPositioned()) {
                     RenderBlock* block = toRenderBlock(child);
-                    if (block->lowestFloatLogicalBottom() + block->logicalTop() > newHeight)
+                    if (block->lowestFloatLogicalBottomIncludingPositionedFloats() + block->logicalTop() > newHeight)
                         addOverhangingFloats(block, false);
                 }
             }
@@ -1389,7 +1373,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     if (previousHeight != newHeight)
         relayoutChildren = true;
 
-    layoutPositionedObjects(relayoutChildren || isRoot());
+    bool needAnotherLayoutPass = layoutPositionedObjects(relayoutChildren || isRoot());
 
     computeRegionRangeForBlock();
 
@@ -1451,7 +1435,11 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         }
     }
     
-    setNeedsLayout(false);
+    if (needAnotherLayoutPass && layoutPass == NormalLayoutPass) {
+        setChildNeedsLayout(true, false);
+        layoutBlock(false, pageLogicalHeight, PositionedFloatLayoutPass);
+    } else
+        setNeedsLayout(false);
 }
 
 void RenderBlock::addOverflowFromChildren()
@@ -1523,7 +1511,7 @@ void RenderBlock::addOverflowFromFloats()
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
-        if (r->isDescendant())
+        if (r->m_isDescendant && !r->m_renderer->isPositioned())
             addOverflowFromChild(r->m_renderer, IntSize(xPositionForFloatIncludingMargin(r), yPositionForFloatIncludingMargin(r)));
     }
     return;
@@ -2135,7 +2123,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     else if (!child->avoidsFloats() || child->shrinkToAvoidFloats()) {
         // If an element might be affected by the presence of floats, then always mark it for
         // layout.
-        LayoutUnit fb = max(previousFloatLogicalBottom, lowestFloatLogicalBottom());
+        LayoutUnit fb = max(previousFloatLogicalBottom, lowestFloatLogicalBottomIncludingPositionedFloats());
         if (fb > logicalTopEstimate)
             markDescendantsWithFloats = true;
     }
@@ -2144,7 +2132,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
         if (markDescendantsWithFloats)
             childRenderBlock->markAllDescendantsWithFloatsForLayout();
         if (!child->isWritingModeRoot())
-            previousFloatLogicalBottom = max(previousFloatLogicalBottom, oldLogicalTop + childRenderBlock->lowestFloatLogicalBottom());
+            previousFloatLogicalBottom = max(previousFloatLogicalBottom, oldLogicalTop + childRenderBlock->lowestFloatLogicalBottomIncludingPositionedFloats());
     }
 
     if (!child->needsLayout())
@@ -2283,8 +2271,8 @@ bool RenderBlock::simplifiedLayout()
         simplifiedNormalFlowLayout();
 
     // Lay out our positioned objects if our positioned child bit is set.
-    if (posChildNeedsLayout())
-        layoutPositionedObjects(false);
+    if (posChildNeedsLayout() && layoutPositionedObjects(false))
+        return false; // If a positioned float is causing our normal flow to change, then we have to bail and do a full layout.
 
     // Recompute our overflow information.
     // FIXME: We could do better here by computing a temporary overflow object from layoutPositionedObjects and only
@@ -2304,13 +2292,40 @@ bool RenderBlock::simplifiedLayout()
     return true;
 }
 
-void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
+bool RenderBlock::positionedFloatsNeedRelayout()
+{
+    if (!hasPositionedFloats())
+        return false;
+    
+    RenderBox* positionedObject;
+    Iterator end = m_positionedObjects->end();
+    for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+        positionedObject = *it;
+        if (!positionedObject->isFloating())
+            continue;
+
+        if (positionedObject->needsLayout())
+            return true;
+
+        if (positionedObject->style()->hasStaticBlockPosition(isHorizontalWritingMode()) && positionedObject->parent() != this && positionedObject->parent()->isBlockFlow())
+            return true;
+        
+        if (view()->layoutState()->pageLogicalHeightChanged() || (view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageLogicalOffset(logicalTop()) != pageLogicalOffset()))
+            return true;
+    }
+    
+    return false;
+}
+
+bool RenderBlock::layoutPositionedObjects(bool relayoutChildren)
 {
     if (!m_positionedObjects)
-        return;
+        return false;
         
     if (hasColumns())
         view()->layoutState()->clearPaginationInformation(); // Positioned objects are not part of the column flow, so they don't paginate with the columns.
+
+    bool didFloatingBoxRelayout = false;
 
     RenderBox* r;
     Iterator end = m_positionedObjects->end();
@@ -2330,6 +2345,11 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         if (!r->needsLayout())
             r->markForPaginationRelayoutIfNeeded();
         
+        // FIXME: Technically we could check the old placement and the new placement of the box and only invalidate if
+        // the margin box of the object actually changed.
+        if (r->needsLayout() && r->isFloating())
+            didFloatingBoxRelayout = true;
+
         // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
         // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
         if (r->needsPositionedMovementLayoutOnly() && r->tryLayoutDoingPositionedMovementOnly())
@@ -2358,6 +2378,8 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
     
     if (hasColumns())
         view()->layoutState()->m_columnInfo = columnInfo(); // FIXME: Kind of gross. We just put this back into the layout state so that pop() will work.
+        
+    return didFloatingBoxRelayout;
 }
 
 void RenderBlock::markPositionedObjectsForLayout()
@@ -3334,16 +3356,18 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
     
     // Our location is irrelevant if we're unsplittable or no pagination is in effect.
     // Just go ahead and lay out the float.
-    bool isChildRenderBlock = o->isRenderBlock();
-    if (isChildRenderBlock && !o->needsLayout() && view()->layoutState()->pageLogicalHeightChanged())
-        o->setChildNeedsLayout(true, false);
+    if (!o->isPositioned()) {
+        bool isChildRenderBlock = o->isRenderBlock();
+        if (isChildRenderBlock && !o->needsLayout() && view()->layoutState()->pageLogicalHeightChanged())
+            o->setChildNeedsLayout(true, false);
             
-    bool needsBlockDirectionLocationSetBeforeLayout = isChildRenderBlock && view()->layoutState()->needsBlockDirectionLocationSetBeforeLayout();
-    if (!needsBlockDirectionLocationSetBeforeLayout || isWritingModeRoot()) // We are unsplittable if we're a block flow root.
-        o->layoutIfNeeded();
-    else {
-        o->computeLogicalWidth();
-        o->computeBlockDirectionMargins(this);
+        bool needsBlockDirectionLocationSetBeforeLayout = isChildRenderBlock && view()->layoutState()->needsBlockDirectionLocationSetBeforeLayout();
+        if (!needsBlockDirectionLocationSetBeforeLayout || isWritingModeRoot()) // We are unsplittable if we're a block flow root.
+            o->layoutIfNeeded();
+        else {
+            o->computeLogicalWidth();
+            o->computeBlockDirectionMargins(this);
+        }
     }
     setLogicalWidthForFloat(newObj, logicalWidthForChild(o) + marginStartForChild(o) + marginEndForChild(o));
 
@@ -3497,8 +3521,9 @@ bool RenderBlock::positionNewFloats()
     for (; it != end; ++it) {
         FloatingObject* floatingObject = *it;
         // The containing block is responsible for positioning floats, so if we have floats in our
-        // list that come from somewhere else, do not attempt to position them.
-        if (floatingObject->renderer()->containingBlock() != this)
+        // list that come from somewhere else, do not attempt to position them. Also don't attempt to handle
+        // positioned floats, since the positioning layout code handles those.
+        if (floatingObject->renderer()->containingBlock() != this || floatingObject->renderer()->isPositioned())
             continue;
 
         RenderBox* childBox = floatingObject->renderer();
@@ -3795,10 +3820,40 @@ void RenderBlock::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit l
     }
 }
 
-void RenderBlock::clearFloats()
+void RenderBlock::addPositionedFloats()
+{
+    if (!m_positionedObjects)
+        return;
+    
+    Iterator end = m_positionedObjects->end();
+    for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+        RenderBox* positionedObject = *it;
+        if (!positionedObject->isFloating())
+            continue;
+
+        ASSERT(!positionedObject->needsLayout());
+
+        // If we're a positioned float, then we need to insert ourselves as a floating object also. We only do
+        // this after the positioned object has received a layout, since otherwise the dimensions and placement
+        // won't be correct.
+        FloatingObject* floatingObject = insertFloatingObject(positionedObject);
+        setLogicalLeftForFloat(floatingObject, logicalLeftForChild(positionedObject) - marginLogicalLeftForChild(positionedObject));
+        setLogicalTopForFloat(floatingObject, logicalTopForChild(positionedObject) - marginBeforeForChild(positionedObject));
+        setLogicalHeightForFloat(floatingObject, logicalHeightForChild(positionedObject) + marginBeforeForChild(positionedObject) + marginAfterForChild(positionedObject));
+
+        m_floatingObjects->addPlacedObject(floatingObject);
+        
+        m_hasPositionedFloats = true;
+    }
+}
+
+void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
 {
     if (m_floatingObjects)
         m_floatingObjects->setHorizontalWritingMode(isHorizontalWritingMode());
+
+    // Clear our positioned floats boolean.
+    m_hasPositionedFloats = false;
 
     HashSet<RenderBox*> oldIntrudingFloatSet;
     if (!childrenInline() && m_floatingObjects) {
@@ -3817,6 +3872,8 @@ void RenderBlock::clearFloats()
             deleteAllValues(m_floatingObjects->set());
             m_floatingObjects->clear();
         }
+        if (layoutPass == PositionedFloatLayoutPass)
+            addPositionedFloats();
         if (!oldIntrudingFloatSet.isEmpty())
             markAllDescendantsWithFloatsForLayout();
         return;
@@ -3838,6 +3895,9 @@ void RenderBlock::clearFloats()
         m_floatingObjects->clear();
     }
 
+    if (layoutPass == PositionedFloatLayoutPass)
+        addPositionedFloats();
+
     // We should not process floats if the parent node is not a RenderBlock. Otherwise, we will add 
     // floats in an invalid context. This will cause a crash arising from a bad cast on the parent.
     // See <rdar://problem/8049753>, where float property is applied on a text node in a SVG.
@@ -3848,7 +3908,7 @@ void RenderBlock::clearFloats()
     // out of flow (like floating/positioned elements), and we also skip over any objects that may have shifted
     // to avoid floats.
     RenderBlock* parentBlock = toRenderBlock(parent());
-    bool parentHasFloats = false;
+    bool parentHasFloats = parentBlock->hasPositionedFloats();
     RenderObject* prev = previousSibling();
     while (prev && (prev->isFloatingOrPositioned() || !prev->isBox() || !prev->isRenderBlock() || toRenderBlock(prev)->avoidsFloats())) {
         if (prev->isFloating())
@@ -3864,14 +3924,14 @@ void RenderBlock::clearFloats()
     LayoutUnit logicalLeftOffset = 0;
     if (prev)
         logicalTopOffset -= toRenderBox(prev)->logicalTop();
-    else {
+    else if (!parentHasFloats) {
         prev = parentBlock;
         logicalLeftOffset += parentBlock->logicalLeftOffsetForContent();
     }
 
     // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.    
     RenderBlock* block = toRenderBlock(prev);
-    if (block->m_floatingObjects && block->lowestFloatLogicalBottom() > logicalTopOffset)
+    if (block && block->m_floatingObjects && block->lowestFloatLogicalBottomIncludingPositionedFloats() > logicalTopOffset)
         addIntrudingFloats(block, logicalLeftOffset, logicalTopOffset);
 
     if (childrenInline()) {
@@ -5776,9 +5836,6 @@ void RenderBlock::updateFirstLetter()
                 remainingText->setFirstLetter(newFirstLetter);
                 toRenderBoxModelObject(newFirstLetter)->setFirstLetterRemainingText(remainingText);
             }
-            // To prevent removal of single anonymous block in RenderBlock::removeChild and causing
-            // |nextSibling| to go stale, we remove the old first letter using removeChildNode first.
-            firstLetterContainer->virtualChildren()->removeChildNode(firstLetterContainer, firstLetter);
             firstLetter->destroy();
             firstLetter = newFirstLetter;
             firstLetterContainer->addChild(firstLetter, nextSibling);
@@ -6737,6 +6794,20 @@ LayoutUnit RenderBlock::marginAfterForChild(const RenderBoxModelObject* child) c
     return child->marginBottom();
 }
 
+LayoutUnit RenderBlock::marginLogicalLeftForChild(const RenderBoxModelObject* child) const
+{
+    if (isHorizontalWritingMode())
+        return child->marginLeft();
+    return child->marginTop();
+}
+
+LayoutUnit RenderBlock::marginLogicalRightForChild(const RenderBoxModelObject* child) const
+{
+    if (isHorizontalWritingMode())
+        return child->marginRight();
+    return child->marginBottom();
+}
+
 LayoutUnit RenderBlock::marginStartForChild(const RenderBoxModelObject* child) const
 {
     if (isHorizontalWritingMode())
@@ -6907,22 +6978,27 @@ inline void RenderBlock::FloatingObjects::clear()
     m_placedFloatsTree.clear();
     m_leftObjectsCount = 0;
     m_rightObjectsCount = 0;
+    m_positionedObjectsCount = 0;
 }
 
 inline void RenderBlock::FloatingObjects::increaseObjectsCount(FloatingObject::Type type)
 {    
     if (type == FloatingObject::FloatLeft)
         m_leftObjectsCount++;
-    else 
+    else if (type == FloatingObject::FloatRight)
         m_rightObjectsCount++;
+    else
+        m_positionedObjectsCount++;
 }
 
 inline void RenderBlock::FloatingObjects::decreaseObjectsCount(FloatingObject::Type type)
 {
     if (type == FloatingObject::FloatLeft)
         m_leftObjectsCount--;
-    else
+    else if (type == FloatingObject::FloatRight)
         m_rightObjectsCount--;
+    else
+        m_positionedObjectsCount--;
 }
 
 inline RenderBlock::FloatingObjectInterval RenderBlock::FloatingObjects::intervalForFloatingObject(FloatingObject* floatingObject)
@@ -7019,27 +7095,28 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
 
 RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderObject* parent, EDisplay display)
 {
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
+
     // FIXME: Do we need to cover the new flex box here ?
     // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
-    EDisplay newDisplay;
     RenderBlock* newBox = 0;
     if (display == BOX || display == INLINE_BOX) {
+        newStyle->setDisplay(BOX);
         newBox = new (parent->renderArena()) RenderDeprecatedFlexibleBox(parent->document() /* anonymous box */);
-        newDisplay = BOX;
     } else {
+        newStyle->setDisplay(BLOCK);
         newBox = new (parent->renderArena()) RenderBlock(parent->document() /* anonymous box */);
-        newDisplay = BLOCK;
     }
 
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), newDisplay);
     newBox->setStyle(newStyle.release());
     return newBox;
 }
 
 RenderBlock* RenderBlock::createAnonymousColumnsWithParentRenderer(const RenderObject* parent)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
     newStyle->inheritColumnPropertiesFrom(parent->style());
+    newStyle->setDisplay(BLOCK);
 
     RenderBlock* newBox = new (parent->renderArena()) RenderBlock(parent->document() /* anonymous box */);
     newBox->setStyle(newStyle.release());
@@ -7048,8 +7125,9 @@ RenderBlock* RenderBlock::createAnonymousColumnsWithParentRenderer(const RenderO
 
 RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const RenderObject* parent)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(parent->style());
     newStyle->setColumnSpan(ColumnSpanAll);
+    newStyle->setDisplay(BLOCK);
 
     RenderBlock* newBox = new (parent->renderArena()) RenderBlock(parent->document() /* anonymous box */);
     newBox->setStyle(newStyle.release());

@@ -413,14 +413,12 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     applyCommand(ReplaceSelectionCommand::create(m_frame->document(), fragment, options, EditActionPaste));
     revealSelectionAfterEditingOperation();
 
-    if (m_frame->selection()->isInPasswordField())
-        return;
     Node* nodeToCheck = m_frame->selection()->rootEditableElement();
     if (!nodeToCheck)
         return;
 
     RefPtr<Range> rangeToCheck = Range::create(m_frame->document(), firstPositionInNode(nodeToCheck), lastPositionInNode(nodeToCheck));
-    m_spellChecker->requestCheckingFor(SpellCheckRequest::create(resolveTextCheckingTypeMask(TextCheckingTypeSpelling | TextCheckingTypeGrammar), TextCheckingProcessBatch, rangeToCheck, rangeToCheck));
+    m_spellChecker->requestCheckingFor(SpellCheckRequest::create(resolveTextCheckingTypeMask(TextCheckingTypeSpelling | TextCheckingTypeGrammar), rangeToCheck, rangeToCheck));
 }
 
 void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace)
@@ -838,7 +836,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 }
 
 Editor::Editor(Frame* frame)
-    : FrameDestructionObserver(frame)
+    : m_frame(frame)
     , m_deleteButtonController(adoptPtr(new DeleteButtonController(frame)))
     , m_ignoreCompositionSelectionChange(false)
     , m_shouldStartNewKillRingSequence(false)
@@ -1937,7 +1935,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     bool asynchronous = m_frame && m_frame->settings() && m_frame->settings()->asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
 
     // In asynchronous mode, we intentionally check paragraph-wide sentence.
-    RefPtr<SpellCheckRequest> request = SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), TextCheckingProcessIncremental, asynchronous ? paragraphRange : rangeToCheck, paragraphRange);
+    RefPtr<SpellCheckRequest> request = SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), asynchronous ? paragraphRange : rangeToCheck, paragraphRange);
 
     if (asynchronous) {
         m_spellChecker->requestCheckingFor(request);
@@ -3018,12 +3016,6 @@ void Editor::deviceScaleFactorChanged()
 bool Editor::unifiedTextCheckerEnabled() const
 {
     return WebCore::unifiedTextCheckerEnabled(m_frame);
-}
-
-void Editor::willDetachPage()
-{
-    if (EditorClient* editorClient = client())
-        editorClient->frameWillDetachPage(frame());
 }
 
 } // namespace WebCore

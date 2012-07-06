@@ -3746,6 +3746,8 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/RenderSVGResourceSolidColor.h \
 	Source/WebCore/rendering/svg/RenderSVGRoot.cpp \
 	Source/WebCore/rendering/svg/RenderSVGRoot.h \
+	Source/WebCore/rendering/svg/RenderSVGShadowTreeRootContainer.cpp \
+	Source/WebCore/rendering/svg/RenderSVGShadowTreeRootContainer.h \
 	Source/WebCore/rendering/svg/RenderSVGShape.cpp \
 	Source/WebCore/rendering/svg/RenderSVGShape.h \
 	Source/WebCore/rendering/svg/RenderSVGTSpan.cpp \
@@ -3781,6 +3783,8 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/SVGResources.h \
 	Source/WebCore/rendering/svg/SVGRootInlineBox.cpp \
 	Source/WebCore/rendering/svg/SVGRootInlineBox.h \
+	Source/WebCore/rendering/svg/SVGShadowTreeElements.cpp \
+	Source/WebCore/rendering/svg/SVGShadowTreeElements.h \
 	Source/WebCore/rendering/svg/SVGSubpathData.h \
 	Source/WebCore/rendering/svg/SVGTextChunk.cpp \
 	Source/WebCore/rendering/svg/SVGTextChunk.h \
@@ -4581,7 +4585,9 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/SoundGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.cpp \
-	Source/WebCore/platform/gtk/WidgetRenderingContext.h
+	Source/WebCore/platform/gtk/WidgetRenderingContext.h \
+	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
+	Source/WebCore/plugins/gtk/PluginViewGtk.cpp
 
 if TARGET_X11
 webcoregtk_sources += \
@@ -4593,29 +4599,13 @@ endif
 
 if TARGET_WIN32
 webcore_sources += \
-	Source/WebCore/platform/graphics/win/DIBPixelData.cpp \
-	Source/WebCore/platform/graphics/win/DIBPixelData.h \
-	Source/WebCore/platform/graphics/win/GraphicsContextCairoWin.cpp \
-	Source/WebCore/platform/graphics/win/GraphicsContextWin.cpp \
-	Source/WebCore/platform/graphics/win/LocalWindowsContext.h \
-	Source/WebCore/platform/graphics/win/TransformationMatrixWin.cpp \
-	Source/WebCore/platform/win/BitmapInfo.cpp \
-	Source/WebCore/platform/win/BitmapInfo.h \
 	Source/WebCore/platform/win/SystemInfo.cpp \
 	Source/WebCore/platform/win/SystemInfo.h \
-	Source/WebCore/platform/win/WebCoreInstanceHandle.cpp \
-	Source/WebCore/platform/win/WebCoreInstanceHandle.h \
 	Source/WebCore/plugins/win/PluginDatabaseWin.cpp \
 	Source/WebCore/plugins/win/PluginMessageThrottlerWin.cpp \
-	Source/WebCore/plugins/win/PluginMessageThrottlerWin.h \
-	Source/WebCore/plugins/win/PluginPackageWin.cpp
+	Source/WebCore/plugins/win/PluginMessageThrottlerWin.h
 webcoregtk_sources += \
-	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp \
-	Source/WebCore/plugins/win/PluginViewWin.cpp
-else
-webcoregtk_sources += \
-	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
-	Source/WebCore/plugins/gtk/PluginViewGtk.cpp
+	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp
 endif
 
 # ----

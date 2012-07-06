@@ -115,11 +115,10 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings()
     if (!canEmbedJava())
         return 0;
 
-    if (!renderer() || !renderer()->isApplet())
-        return 0;
-
     RenderApplet* applet = toRenderApplet(renderer());
-    applet->createWidgetIfNecessary();
+    if (applet)
+        applet->createWidgetIfNecessary();
+
     return applet;
 }
 

@@ -42,7 +42,6 @@ public:
 
 private:
     virtual void pageDestroyed() OVERRIDE;
-    virtual void frameWillDetachPage(WebCore::Frame*) OVERRIDE { }
 
     virtual bool shouldDeleteRange(WebCore::Range*) OVERRIDE;
     virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*) OVERRIDE;
@@ -142,7 +141,7 @@ private:
     virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) OVERRIDE;
     virtual void willSetInputMethodState() OVERRIDE;
     virtual void setInputMethodState(bool enabled) OVERRIDE;
-    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) OVERRIDE;
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) OVERRIDE;
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) OVERRIDE;
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel) OVERRIDE;

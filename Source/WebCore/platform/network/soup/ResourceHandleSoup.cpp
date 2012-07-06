@@ -212,29 +212,6 @@ static void ensureSessionIsInitialized(SoupSession* session)
     g_object_set_data(G_OBJECT(session), "webkit-init", reinterpret_cast<void*>(0xdeadbeef));
 }
 
-static void gotHeadersCallback(SoupMessage* msg, gpointer data)
-{
-    ResourceHandle* handle = static_cast<ResourceHandle*>(data);
-    if (!handle)
-        return;
-    ResourceHandleInternal* d = handle->getInternal();
-    if (d->m_cancelled)
-        return;
-
-#if ENABLE(WEB_TIMING)
-    if (d->m_response.resourceLoadTiming())
-        d->m_response.resourceLoadTiming()->receiveHeadersEnd = milisecondsSinceRequest(d->m_response.resourceLoadTiming()->requestTime);
-#endif
-
-    // The original response will be needed later to feed to willSendRequest in
-    // restartedCallback() in case we are redirected. For this reason, so we store it
-    // here.
-    ResourceResponse response;
-    response.updateFromSoupMessage(msg);
-
-    d->m_response = response;
-}
-
 // Called each time the message is going to be sent again except the first time.
 // It's used mostly to let webkit know about redirects.
 static void restartedCallback(SoupMessage* msg, gpointer data)
@@ -251,8 +228,10 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     KURL newURL = KURL(handle->firstRequest().url(), location);
 
     ResourceRequest request = handle->firstRequest();
+    ResourceResponse response;
     request.setURL(newURL);
     request.setHTTPMethod(msg->method);
+    response.updateFromSoupMessage(msg);
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
     if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https")) {
@@ -261,7 +240,7 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     }
 
     if (d->client())
-        d->client()->willSendRequest(handle, request, d->m_response);
+        d->client()->willSendRequest(handle, request, response);
 
     if (d->m_cancelled)
         return;
@@ -353,11 +332,6 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer dat
         return;
     }
 
-    if (d->m_defersLoading) {
-        d->m_deferredResult = res;
-        return;
-    }
-
     GOwnPtr<GError> error;
     GInputStream* in = soup_request_send_finish(d->m_soupRequest.get(), res, &error.outPtr());
     if (error) {
@@ -375,6 +349,9 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer dat
             d->m_response.setSniffedContentType(sniffedType);
         }
         d->m_response.updateFromSoupMessage(soupMessage);
+
+        if (d->m_defersLoading)
+            soup_session_pause_message(d->soupSession(), soupMessage);
     } else {
         d->m_response.setURL(handle->firstRequest().url());
         const gchar* contentType = soup_request_get_content_type(d->m_soupRequest.get());
@@ -525,7 +502,6 @@ static bool startHTTPRequest(ResourceHandle* handle)
     if (!handle->shouldContentSniff())
         soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_SNIFFER);
 
-    g_signal_connect(soupMessage, "got-headers", G_CALLBACK(gotHeadersCallback), handle);
     g_signal_connect(soupMessage, "restarted", G_CALLBACK(restartedCallback), handle);
     g_signal_connect(soupMessage, "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), handle);
 
@@ -650,11 +626,7 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 
     if (d->m_deferredResult) {
         GRefPtr<GAsyncResult> asyncResult = adoptGRef(d->m_deferredResult.leakRef());
-
-        if (d->m_inputStream)
-            readCallback(G_OBJECT(d->m_inputStream.get()), asyncResult.get(), this);
-        else
-            sendRequestCallback(G_OBJECT(d->m_soupRequest.get()), asyncResult.get(), this);
+        readCallback(G_OBJECT(d->m_inputStream.get()), asyncResult.get(), this);
     }
 }
 

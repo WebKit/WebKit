@@ -38,7 +38,6 @@
 #include "HTMLNames.h"
 #include "RegisteredEventListener.h"
 #include "RenderObject.h"
-#include "ShadowRoot.h"
 #include "SVGCursorElement.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInstance.h"
@@ -109,15 +108,6 @@ SVGElementRareData* SVGElement::ensureRareSVGData()
 
 bool SVGElement::isOutermostSVGSVGElement() const
 {
-    if (!hasTagName(SVGNames::svgTag))
-        return false;
-
-    // If we're living in a shadow tree, we're a <svg> element that got created as replacement
-    // for a <symbol> element or a cloned <svg> element in the referenced tree. In that case
-    // we're always an inner <svg> element.
-    if (isInShadowTree())
-        return false;
-
     // Element may not be in the document, pretend we're outermost for viewport(), getCTM(), etc.
     if (!parentNode())
         return true;
@@ -340,13 +330,13 @@ bool SVGElement::haveLoadedRequiredResources()
     return true;
 }
 
-static bool hasLoadListener(Element* element)
+static bool hasLoadListener(Node* node)
 {
-    if (element->hasEventListeners(eventNames().loadEvent))
+    if (node->hasEventListeners(eventNames().loadEvent))
         return true;
 
-    for (element = element->parentOrHostElement(); element; element = element->parentOrHostElement()) {
-        const EventListenerVector& entry = element->getEventListeners(eventNames().loadEvent);
+    for (node = node->parentNode(); node && node->isElementNode(); node = node->parentNode()) {
+        const EventListenerVector& entry = node->getEventListeners(eventNames().loadEvent);
         for (size_t i = 0; i < entry.size(); ++i) {
             if (entry[i].useCapture)
                 return true;
@@ -360,9 +350,9 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
 {
     RefPtr<SVGElement> currentTarget = this;
     while (currentTarget && currentTarget->haveLoadedRequiredResources()) {
-        RefPtr<Element> parent;
+        RefPtr<Node> parent;
         if (sendParentLoadEvents)
-            parent = currentTarget->parentOrHostElement(); // save the next parent to dispatch too incase dispatching the event changes the tree
+            parent = currentTarget->parentNode(); // save the next parent to dispatch too incase dispatching the event changes the tree
         if (hasLoadListener(currentTarget.get()))
             currentTarget->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
         currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : RefPtr<SVGElement>();
@@ -475,16 +465,10 @@ void SVGElement::synchronizeSystemLanguage(void* contextElement)
 
 PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
 {
-    if (!correspondingElement())
-        return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, true);
+    if (correspondingElement())
+        return document()->styleSelector()->styleForElement(correspondingElement(), parentNode() ? parentNode()->renderer()->style() : 0, false/*allowSharing*/);
 
-    RenderStyle* style = 0;
-    if (Element* parent = parentOrHostElement()) {
-        if (RenderObject* renderer = parent->renderer())
-            style = renderer->style();
-    }
-
-    return document()->styleSelector()->styleForElement(correspondingElement(), style, false /*allowSharing*/);
+    return document()->styleSelector()->styleForElement(static_cast<Element*>(this), 0, true);
 }
 
 #ifndef NDEBUG

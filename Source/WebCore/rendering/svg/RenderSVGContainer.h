@@ -41,7 +41,6 @@ public:
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
-    virtual bool didTransformToRootUpdate() { return false; }
 
 protected:
     virtual RenderObjectChildList* virtualChildren() { return children(); }

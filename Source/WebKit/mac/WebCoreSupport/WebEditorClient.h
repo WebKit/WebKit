@@ -42,7 +42,6 @@ public:
     WebEditorClient(WebView *);
     virtual ~WebEditorClient();
     virtual void pageDestroyed() OVERRIDE;
-    virtual void frameWillDetachPage(WebCore::Frame*) OVERRIDE { }
 
     virtual bool isGrammarCheckingEnabled() OVERRIDE;
     virtual void toggleGrammarChecking() OVERRIDE;
@@ -136,10 +135,7 @@ public:
     virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) OVERRIDE;
     virtual void willSetInputMethodState() OVERRIDE;
     virtual void setInputMethodState(bool enabled) OVERRIDE;
-    virtual void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>) OVERRIDE;
-
-    void didCheckSucceed(int sequence, NSArray* results);
-
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) OVERRIDE;
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings) OVERRIDE;
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel) OVERRIDE;
@@ -153,7 +149,6 @@ private:
     WebView *m_webView;
     RetainPtr<WebEditorUndoTarget> m_undoTarget;
     bool m_haveUndoRedoOperations;
-    RefPtr<WebCore::TextCheckingRequest> m_textCheckingRequest;
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     CorrectionPanel m_correctionPanel;

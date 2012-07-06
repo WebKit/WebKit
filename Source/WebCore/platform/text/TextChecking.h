@@ -31,10 +31,6 @@
 #ifndef TextChecking_h
 #define TextChecking_h
 
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
 #define WTF_USE_GRAMMAR_CHECKING 1
@@ -64,51 +60,6 @@ enum TextCheckingType {
 };
 
 typedef unsigned TextCheckingTypeMask;
-
-enum TextCheckingProcessType {
-    TextCheckingProcessBatch,
-    TextCheckingProcessIncremental
-};
-
-struct GrammarDetail {
-    int location;
-    int length;
-    Vector<String> guesses;
-    String userDescription;
-};
-
-struct TextCheckingResult {
-    TextCheckingType type;
-    int location;
-    int length;
-    Vector<GrammarDetail> details;
-    String replacement;
-};
-
-class TextCheckingRequest : public RefCounted<TextCheckingRequest> {
-public:
-    TextCheckingRequest(int sequence, const String& text, TextCheckingTypeMask mask, TextCheckingProcessType processType)
-        : m_sequence(sequence)
-        , m_text(text)
-        , m_mask(mask)
-        , m_processType(processType)
-    { }
-
-    virtual ~TextCheckingRequest() { }
-    virtual void didSucceed(const Vector<TextCheckingResult>&) = 0;
-    virtual void didCancel() = 0;
-
-    int sequence() const { return m_sequence; }
-    String text() const { return m_text; }
-    TextCheckingTypeMask mask() const { return m_mask; }
-    TextCheckingProcessType processType() const { return m_processType; }
-
-protected:
-    int m_sequence;
-    String m_text;
-    TextCheckingTypeMask m_mask;
-    TextCheckingProcessType m_processType;
-};
 
 }
 
