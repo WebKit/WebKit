@@ -1,3 +1,33 @@
+2012-05-14  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
+
+        [Gtk][DOM Bindings] Feature-protected interface usage in set/get property must be under condition guards
+        https://bugs.webkit.org/show_bug.cgi?id=86060
+
+        Reviewed by Martin Robinson.
+
+        Property set/get functions generated was referencing WebCore::interface without any condition guard.
+        This issue was triggered usually when an interface gets disabled; For instance; --disable-video, disables WebCore::HTMLMediaElement.
+        Also updated the GObject binding reference tests
+
+        No new tests - covered by existing bindings tests
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateProperties):
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        (webkit_dom_test_active_dom_object_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        (webkit_dom_test_event_constructor_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        (webkit_dom_test_exception_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (webkit_dom_test_interface_set_property):
+        (webkit_dom_test_interface_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (webkit_dom_test_serialized_script_value_interface_get_property):
+
 2012-05-30  Daniel Drake  <dsd@laptop.org>
 
         Check for GTK2/GTK3 symbol mismatch earlier

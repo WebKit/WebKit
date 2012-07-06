@@ -123,8 +123,10 @@ static void webkit_dom_test_serialized_script_value_interface_get_property(GObje
 {
     WebCore::JSMainThreadNullState state;
 #if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestSerializedScriptValueInterface* self = WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(object);
     WebCore::TestSerializedScriptValueInterface* coreSelf = WebKit::core(self);
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (prop_id) {
     case PROP_VALUE:

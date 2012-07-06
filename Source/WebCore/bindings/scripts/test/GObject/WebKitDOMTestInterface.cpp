@@ -115,8 +115,10 @@ static void webkit_dom_test_interface_set_property(GObject* object, guint prop_i
 {
     WebCore::JSMainThreadNullState state;
 #if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestInterface* self = WEBKIT_DOM_TEST_INTERFACE(object);
     WebCore::TestInterface* coreSelf = WebKit::core(self);
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (prop_id) {
 #if ENABLE(Condition11) || ENABLE(Condition12)
@@ -142,8 +144,10 @@ static void webkit_dom_test_interface_get_property(GObject* object, guint prop_i
 {
     WebCore::JSMainThreadNullState state;
 #if ENABLE(Condition1) || ENABLE(Condition2)
+#if ENABLE(Condition1) || ENABLE(Condition2)
     WebKitDOMTestInterface* self = WEBKIT_DOM_TEST_INTERFACE(object);
     WebCore::TestInterface* coreSelf = WebKit::core(self);
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
     switch (prop_id) {
 #if ENABLE(Condition11) || ENABLE(Condition12)

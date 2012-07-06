@@ -114,8 +114,10 @@ static void webkit_dom_test_active_dom_object_set_property(GObject* object, guin
 static void webkit_dom_test_active_dom_object_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
+
     WebKitDOMTestActiveDOMObject* self = WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(object);
     WebCore::TestActiveDOMObject* coreSelf = WebKit::core(self);
+
     switch (prop_id) {
     case PROP_EXCITING_ATTR:
     {
