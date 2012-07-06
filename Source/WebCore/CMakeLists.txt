@@ -2589,6 +2589,7 @@ IF (ENABLE_WEB_AUDIO)
         platform/audio/AudioBus.cpp
         platform/audio/AudioChannel.cpp
         platform/audio/AudioDSPKernelProcessor.cpp
+        platform/audio/AudioFIFO.cpp
         platform/audio/AudioPullFIFO.cpp
         platform/audio/AudioResampler.cpp
         platform/audio/AudioResamplerKernel.cpp
