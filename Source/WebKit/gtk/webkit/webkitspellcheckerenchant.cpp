@@ -88,6 +88,18 @@ static void webkit_spell_checker_enchant_init(WebKitSpellCheckerEnchant* checker
     priv->enchantDicts = 0;
 }
 
+static bool wordEndIsAContractionApostrophe(const char* string, long offset)
+{
+    if (g_utf8_get_char(g_utf8_offset_to_pointer(string, offset)) != g_utf8_get_char("'"))
+        return false;
+
+    // If this is the last character in the string, it cannot be the apostrophe part of a contraction.
+    if (offset == g_utf8_strlen(string, -1))
+        return false;
+
+    return g_unichar_isalpha(g_utf8_get_char(g_utf8_offset_to_pointer(string, offset + 1)));
+}
+
 static void checkSpellingOfString(WebKitSpellChecker* checker, const char* string, int* misspellingLocation, int* misspellingLength)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
@@ -113,7 +125,7 @@ static void checkSpellingOfString(WebKitSpellChecker* checker, const char* strin
             int end = i;
             int wordLength;
 
-            while (attrs.get()[end].is_word_end < 1)
+            while (attrs.get()[end].is_word_end < 1 || wordEndIsAContractionApostrophe(string, end))
                 end++;
 
             wordLength = end - start;
