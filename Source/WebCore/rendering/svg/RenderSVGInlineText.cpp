@@ -267,6 +267,8 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, c
     }
 
     FontDescription fontDescription(style->fontDescription());
+
+    // FIXME: We need to better handle the case when we compute very small fonts below (below 1pt).
     fontDescription.setComputedSize(CSSStyleSelector::getComputedSizeFromSpecifiedSize(document, scalingFactor, fontDescription.isAbsoluteSize(), fontDescription.computedSize(), DoNotUseSmartMinimumForFontSize));
 
     scaledFont = Font(fontDescription, 0, 0);

@@ -34,6 +34,7 @@ namespace WebCore {
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGStyledElement* node)
     : RenderSVGContainer(node)
+    , m_didTransformToRootUpdate(false)
     , m_isLayoutSizeChanged(false)
     , m_needsTransformUpdate(true)
 {
@@ -65,6 +66,7 @@ void RenderSVGViewportContainer::calcViewport()
     m_viewport = FloatRect(svg->x().value(lengthContext), svg->y().value(lengthContext), svg->width().value(lengthContext), svg->height().value(lengthContext));
 
     if (oldViewport != m_viewport) {
+        m_didTransformToRootUpdate = true;
         setNeedsBoundariesUpdate();
         setNeedsTransformUpdate();
     }
