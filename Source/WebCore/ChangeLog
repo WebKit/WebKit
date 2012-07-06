@@ -1,3 +1,26 @@
+2012-07-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Double release of resources if the load is canceled in a callback of ResourceLoader::didFinishLoading
+        https://bugs.webkit.org/show_bug.cgi?id=90431
+
+        Reviewed by Anders Carlsson.
+
+        In ResourceLoader::didFinishLoadingOnePart(), we invoke didFinishLoad() on the WebKit client. If WebKit
+        causes the current frame to cancel the load synchronously, the resources are already freed when
+        ResourceLoader::didFinishLoadingOnePart() ends.
+        When ResourceLoader::didFinishLoading() subsequently invokes releaseResources(), we are releasing the
+        resources a second time.
+
+        This patch add a second check for cancellation after invoking ResourceLoader::didFinishLoadingOnePart() to
+        avoid such issues.
+
+        The previous check at the beginning of ResourceLoader::didFinishLoading() has been removed because it is
+        redundant with ResourceLoader::didFinishLoadingOnePart().
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFinishLoadingOnePart):
+
 2012-07-05  Simon Fraser  <simon.fraser@apple.com>
 
         Add a utility method for hasOverflowClip() or hasClip()

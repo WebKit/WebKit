@@ -1,3 +1,20 @@
+2012-07-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Double release of resources if the load is canceled in a callback of ResourceLoader::didFinishLoading
+        https://bugs.webkit.org/show_bug.cgi?id=90431
+
+        Reviewed by Anders Carlsson.
+
+        Add a Mac API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/CancelLoadFromResourceLoadDelegate.html: Added.
+        * TestWebKitAPI/Tests/mac/CancelLoadFromResourceLoadDelegate.mm: Added.
+        (-[CancelLoadFromResourceLoadDelegate webView:resource:didFinishLoadingFromDataSource:]):
+        (-[CancelLoadFromResourceLoadDelegateFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-07-05  Dave Tharp  <dtharp@codeaurora.org>
 
         Adding myself as committer to committers.py
