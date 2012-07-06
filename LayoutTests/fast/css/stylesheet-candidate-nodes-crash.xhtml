@@ -7,20 +7,20 @@
                     layoutTestController.dumpAsText();
                     layoutTestController.waitUntilDone();
                 }
-                
+
                 function runTest()
                 {
                     document.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'style')[0];
-                    if (document.body)
+                    if (document.body) {
                         document.body.innerHTML = "PASS";
-                    
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                        if (window.layoutTestController)
+                            layoutTestController.notifyDone();
+                    }
                 }
             </script>
             <svg:style>
                 <xht:caption>
-                    <xht:iframe onload="runTest();"></xht:iframe>             
+                    <xht:iframe onload="runTest();"></xht:iframe>
                     <style></style>
                 </xht:caption>
             </svg:style>
