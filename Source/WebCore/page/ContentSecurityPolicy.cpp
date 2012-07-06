@@ -1045,7 +1045,24 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
 
 void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType type)
 {
-    m_policies.append(CSPDirectiveList::create(m_scriptExecutionContext, header, type));
+    // RFC2616, section 4.2 specifies that headers appearing multiple times can
+    // be combined with a comma. Walk the header string, and parse each comma
+    // separated chunk as a separate header.
+    const UChar* begin = header.characters();
+    const UChar* position = begin;
+    const UChar* end = begin + header.length();
+    while (position < end) {
+        skipUntil(position, end, ',');
+
+        // header1,header2 OR header1
+        //        ^                  ^
+        m_policies.append(CSPDirectiveList::create(m_scriptExecutionContext, String(begin, position - begin), type));
+
+        // Skip the comma, and begin the next header from the current position.
+        ASSERT(position == end || *position == ',');
+        skipExactly(position, end, ',');
+        begin = position;
+    }
 }
 
 void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)

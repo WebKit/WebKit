@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'allow'.
+
+CONSOLE MESSAGE: Refused to load the script 'http://localhost:8000/security/contentSecurityPolicy/resources/script.js' because it violates the following Content Security Policy directive: "default-src 'self'".
+
+This script should not execute even through the second CSP header would allow it.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS
