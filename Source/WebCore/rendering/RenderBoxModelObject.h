@@ -44,6 +44,7 @@ enum ContentChangeType {
     ImageChanged,
     MaskImageChanged,
     CanvasChanged,
+    CanvasPixelsChanged,
     VideoChanged,
     FullScreenChanged
 };

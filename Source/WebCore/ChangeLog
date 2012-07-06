@@ -1,3 +1,23 @@
+2012-07-06  Justin Novosad  <junov@chromium.org>
+
+        Drawing to accelerated 2D canvas causes compositor to recompute layer tree
+        https://bugs.webkit.org/show_bug.cgi?id=90630
+
+        Reviewed by Simon Fraser.
+
+        No new tests: covered by existing canvas/compositing layout tests
+
+        Before this change, there was no distinction between canvas changes
+        that require recomputing the compositor tree and canvas changes that
+        only require re-display. The new CanvasPixelsChanged member of enum
+        ContentChangeType requests re-display without re-layout.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::didDraw):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::contentChanged):
+
 2012-07-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of this._lastMarkedRange in TextEditor.
