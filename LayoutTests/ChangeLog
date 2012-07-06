@@ -1,5 +1,14 @@
 2012-07-06  Filip Pizlo  <fpizlo@apple.com>
 
+        iframe and global variable related inspector tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=90709
+
+        Unreviewed, skip failing tests.
+
+        * platform/mac/Skipped:
+
+2012-07-06  Filip Pizlo  <fpizlo@apple.com>
+
         fullscreen/exit-full-screen-iframe.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=90708
 
