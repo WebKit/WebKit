@@ -14,7 +14,6 @@ haveQt(5) {
     load(qt_module)
     MODULE = webkit
     MODULE_PRI = $$QT.webkit.module_pri
-    CONFIG += module
 
     BASE_TARGET = $$TARGET
 

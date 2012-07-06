@@ -1,5 +1,18 @@
 2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
+        [Qt] Remove redundant CONFIG+=module
+
+        qt_module_config takes care of that.
+
+        In api.pri we are actually testing the flag ourselves, so now we need to
+        test a related flag qt_module_config sets instead.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
         [Qt] Switch to new-style Qt 5 configure tests
 
         Use explicit project file action instead of syncqt magic.

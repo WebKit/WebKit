@@ -131,7 +131,7 @@ contains(TEMPLATE, lib) {
 
     # Prevent name clashes when building both debug and release. Qt5's module
     # system already takes care of this for the top level QtWebKit library.
-    !module:debug_and_release: TARGET = $$qtLibraryTarget($$TARGET)
+    !qt_install_module:debug_and_release: TARGET = $$qtLibraryTarget($$TARGET)
 
     isEmpty(DESTDIR): DESTDIR = $$activeBuildConfig()
 

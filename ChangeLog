@@ -1,5 +1,20 @@
 2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
+        [Qt] Remove redundant CONFIG+=module
+
+        qt_module_config takes care of that.
+
+        In api.pri we are actually testing the flag ourselves, so now we need to
+        test a related flag qt_module_config sets instead.
+
+        https://bugs.webkit.org/show_bug.cgi?id=90461
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/api.pri:
+
+2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
         [Qt] Adjust to changed generation of master include file
 
         The responsiblity for creating the master include was moved out of syncqt.
