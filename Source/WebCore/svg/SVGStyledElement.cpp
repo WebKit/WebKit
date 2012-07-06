@@ -82,33 +82,20 @@ String SVGStyledElement::title() const
 {
     // According to spec, we should not return titles when hovering over root <svg> elements (those
     // <title> elements are the title of the document, not a tooltip) so we instantly return.
-    if (hasTagName(SVGNames::svgTag)) {
-        const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(this);
-        if (svg->isOutermostSVGSVGElement())
-            return String();
-    }
-    
+    if (isOutermostSVGSVGElement())
+        return String();
+
     // Walk up the tree, to find out whether we're inside a <use> shadow tree, to find the right title.
-    Node* parent = const_cast<SVGStyledElement*>(this);
-    while (parent) {
-        if (!parent->isSVGShadowRoot()) {
-            parent = parent->parentNodeGuaranteedHostFree();
-            continue;
-        }
-        
-        // Get the <use> element.
-        Element* shadowParent = parent->svgShadowHost();
-        if (shadowParent && shadowParent->isSVGElement() && shadowParent->hasTagName(SVGNames::useTag)) {
-            SVGUseElement* useElement = static_cast<SVGUseElement*>(shadowParent);
-            // If the <use> title is not empty we found the title to use.
-            String useTitle(useElement->title());
-            if (useTitle.isEmpty())
-                break;
+    if (isInShadowTree()) {
+        SVGUseElement* useElement = static_cast<SVGUseElement*>(treeScope()->rootNode()->shadowHost());
+        ASSERT(useElement);
+
+        // If the <use> title is not empty we found the title to use.
+        String useTitle(useElement->title());
+        if (!useTitle.isEmpty())
             return useTitle;
-        }
-        parent = parent->parentNode();
     }
-    
+
     // If we aren't an instance in a <use> or the <use> title was not found, then find the first
     // <title> child of this element.
     Element* titleElement = firstElementChild();
@@ -132,7 +119,7 @@ bool SVGStyledElement::rendererIsNeeded(const NodeRenderingContext& context)
     // Spec: SVG allows inclusion of elements from foreign namespaces anywhere
     // with the SVG content. In general, the SVG user agent will include the unknown
     // elements in the DOM but will otherwise ignore unknown elements. 
-    if (!parentNode() || parentNode()->isSVGElement())
+    if (!parentOrHostElement() || parentOrHostElement()->isSVGElement())
         return StyledElement::rendererIsNeeded(context);
 
     return false;

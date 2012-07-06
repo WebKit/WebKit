@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class SVGElementInstance;
-class SVGShadowTreeRootElement;
 
 class SVGUseElement : public SVGStyledTransformableElement,
                       public SVGTests,
@@ -65,21 +64,12 @@ private:
     virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual bool willRecalcStyle(StyleChange);
-    virtual void didRecalcStyle(StyleChange);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void attach();
-    virtual void detach();
-
     virtual void toClipPath(Path&);
 
-    static void removeDisallowedElementsFromSubtree(Node* element);
-
-    void setUpdatesBlocked(bool blocked) { m_updatesBlocked = blocked; }
-
-    friend class RenderSVGShadowTreeRootContainer;
-    friend class SVGElement;
-    void buildShadowAndInstanceTree(SVGShadowTreeRootElement*);
+    void clearResourceReferences();
+    void buildShadowAndInstanceTree(SVGElement* target);
     void detachInstance();
 
     virtual bool selfHasRelativeLengths() const;
@@ -89,7 +79,7 @@ private:
     bool hasCycleUseReferencing(SVGUseElement*, SVGElementInstance* targetInstance, SVGElement*& newTarget);
 
     // Shadow tree handling
-    void buildShadowTree(SVGShadowTreeRootElement*, SVGElement* target, SVGElementInstance* targetInstance);
+    void buildShadowTree(SVGElement* target, SVGElementInstance* targetInstance);
 
     void expandUseElementsInShadowTree(Node* element);
     void expandSymbolElementsInShadowTree(Node* element);
@@ -100,9 +90,6 @@ private:
 
     void transferUseAttributesToReplacedElement(SVGElement* from, SVGElement* to) const;
     void transferEventListenersToShadowTree(SVGElementInstance* target);
-
-    void updateContainerOffsets();
-    void updateContainerSizes();
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGUseElement)
         DECLARE_ANIMATED_LENGTH(X, x)
@@ -118,9 +105,7 @@ private:
     virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
     virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 
-    bool m_updatesBlocked;
     bool m_needsShadowTreeRecreation;
-    String m_resourceId;
     RefPtr<SVGElementInstance> m_targetElementInstance;
 };
 

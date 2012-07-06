@@ -7,5 +7,4 @@ layer at (0,0) size 300x200
       RenderSVGRect {rect} at (0,0) size 280x20 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=280.00] [height=20.00]
     RenderSVGRect {rect} at (0,0) size 280x20 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=280.00] [height=20.00]
     RenderSVGContainer {use} at (0,0) size 280x20
-      RenderSVGContainer {g} at (0,0) size 280x20
-        RenderSVGRect {rect} at (0,0) size 280x20 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=280.00] [height=20.00]
+      RenderSVGRect {rect} at (0,0) size 280x20 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=280.00] [height=20.00]

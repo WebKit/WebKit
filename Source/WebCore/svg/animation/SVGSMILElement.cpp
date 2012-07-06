@@ -192,11 +192,10 @@ void SVGSMILElement::reset()
 void SVGSMILElement::insertedIntoDocument()
 {
     SVGElement::insertedIntoDocument();
-#ifndef NDEBUG
+
     // Verify we are not in <use> instance tree.
-    for (ContainerNode* n = this; n; n = n->parentNode())
-        ASSERT(!n->isSVGShadowRoot());
-#endif
+    ASSERT(!isInShadowTree());
+
     m_attributeName = constructQualifiedName(this, fastGetAttribute(SVGNames::attributeNameAttr));
     SVGSVGElement* owner = ownerSVGElement();
     if (!owner)
