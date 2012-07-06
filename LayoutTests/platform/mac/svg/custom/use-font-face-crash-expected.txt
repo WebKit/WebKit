@@ -20,4 +20,3 @@ layer at (0,0) size 785x778
             RenderSVGInlineText {#text} at (0,0) size 335x18
               chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 53 width 335.00: "This should not crash, but display an error document."
           RenderSVGContainer {use} at (8,166) size 0x0
-            RenderSVGContainer {g} at (8,166) size 0x0

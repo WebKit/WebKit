@@ -55,34 +55,24 @@ bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator
     return mediator->dispatchEvent(&dispatcher);
 }
 
-static EventTarget* findElementInstance(Node* referenceNode)
-{
-#if ENABLE(SVG)
-    // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
-    // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
-    for (Node* n = referenceNode; n; n = n->parentNode()) {
-        if (!n->isSVGShadowRoot() || !n->isSVGElement())
-            continue;
-
-        Element* shadowTreeParentElement = n->svgShadowHost();
-        ASSERT(shadowTreeParentElement->hasTagName(SVGNames::useTag));
-
-        if (SVGElementInstance* instance = static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode))
-            return instance;
-    }
-#else
-    // SVG elements with SVG disabled should not be possible.
-    ASSERT_NOT_REACHED();
-#endif
-
-    return referenceNode;
-}
-
 inline static EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNode)
 {
     ASSERT(referenceNode);
 
-    return referenceNode->isSVGElement() ? findElementInstance(referenceNode) : referenceNode;
+#if ENABLE(SVG)
+    if (!referenceNode->isSVGElement() || !referenceNode->isInShadowTree())
+        return referenceNode;
+
+    // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
+    // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
+    SVGUseElement* useElement = static_cast<SVGUseElement*>(referenceNode->treeScope()->rootNode()->shadowHost());
+    ASSERT(useElement);
+
+    if (SVGElementInstance* instance = useElement->instanceForShadowTreeElement(referenceNode))
+        return instance;
+#endif
+
+    return referenceNode;
 }
 
 void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
@@ -120,11 +110,6 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> under
     gNodesDispatchingSimulatedClicks->remove(node);
 }
 
-static inline bool isShadowRootOrSVGShadowRoot(const Node* node)
-{
-    return node->isShadowRoot() || node->isSVGShadowRoot();
-}
-
 static inline bool isShadowHost(Node* node)
 {
     return node->isElementNode() && toElement(node)->hasShadowRoot();
@@ -141,7 +126,7 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
     bool diverged = false;
     for (Vector<Node*>::const_iterator i = relatedTargetAncestors.end() - 1; i >= relatedTargetAncestors.begin(); --i) {
         if (diverged) {
-            if (isShadowRootOrSVGShadowRoot(*i)) {
+            if ((*i)->isShadowRoot()) {
                 firstDivergentBoundary = i + 1;
                 break;
             }
@@ -155,7 +140,7 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
 
         targetAncestor--;
 
-        if (isShadowRootOrSVGShadowRoot(*i))
+        if ((*i)->isShadowRoot())
             lowestCommonBoundary = targetAncestor;
 
         if ((*i) != (*targetAncestor).node())
@@ -167,7 +152,7 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
         // FIXME: Remove the first check once conversion to new shadow DOM is complete <http://webkit.org/b/48698>
         if (m_node->shadowHost() == relatedTarget.get() || isShadowHost(relatedTarget.get())) {
             Vector<EventContext>::const_iterator relatedTargetChild = targetAncestor - 1;
-            if (relatedTargetChild >= m_ancestors.begin() && isShadowRootOrSVGShadowRoot(relatedTargetChild->node()))
+            if (relatedTargetChild >= m_ancestors.begin() && relatedTargetChild->node()->isShadowRoot())
                 lowestCommonBoundary = relatedTargetChild;
         }
     } else if ((*firstDivergentBoundary) == m_node.get()) {
@@ -217,7 +202,7 @@ PassRefPtr<EventTarget> EventDispatcher::adjustRelatedTarget(Event* event, PassR
     Vector<Node*> relatedTargetAncestors;
     Node* outermostShadowBoundary = relatedTarget.get();
     for (Node* n = outermostShadowBoundary; n; n = n->parentOrHostNode()) {
-        if (isShadowRootOrSVGShadowRoot(n))
+        if (n->isShadowRoot())
             outermostShadowBoundary = n->parentOrHostNode();
         if (!noCommonBoundary)
             relatedTargetAncestors.append(n);
@@ -251,18 +236,12 @@ void EventDispatcher::ensureEventAncestors(Event* event)
 
     Node* ancestor = m_node.get();
     EventTarget* target = eventTargetRespectingSVGTargetRules(ancestor);
-    bool shouldSkipNextAncestor = false;
     while (true) {
-        bool isSVGShadowRoot = ancestor->isSVGShadowRoot();
-        if (isSVGShadowRoot || ancestor->isShadowRoot()) {
+        if (ancestor->isShadowRoot()) {
             if (determineDispatchBehavior(event, ancestor) == StayInsideShadowDOM)
                 return;
-#if ENABLE(SVG)
-            ancestor = isSVGShadowRoot ? ancestor->svgShadowHost() : ancestor->shadowHost();
-#else
             ancestor = ancestor->shadowHost();
-#endif
-            if (!shouldSkipNextAncestor)
+            if (!m_node->isSVGElement())
                 target = ancestor;
         } else
             ancestor = ancestor->parentNodeGuaranteedHostFree();
@@ -270,13 +249,6 @@ void EventDispatcher::ensureEventAncestors(Event* event)
         if (!ancestor)
             return;
 
-#if ENABLE(SVG)
-        // Skip SVGShadowTreeRootElement.
-        shouldSkipNextAncestor = ancestor->isSVGShadowRoot();
-        if (shouldSkipNextAncestor)
-            continue;
-#endif
-        // FIXME: Unroll the extra loop inside eventTargetRespectingSVGTargetRules into this loop.
         m_ancestors.append(EventContext(ancestor, eventTargetRespectingSVGTargetRules(ancestor), target));
     }
 }

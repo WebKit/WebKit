@@ -43,9 +43,9 @@ static bool isViewportElement(Node* node)
 SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* element)
 {
     ASSERT(element);
-    for (ContainerNode* n = element->parentNode(); n; n = n->parentNode()) {
-        if (isViewportElement(n))
-            return static_cast<SVGElement*>(n);
+    for (Element* current = element->parentOrHostElement(); current; current = current->parentOrHostElement()) {
+        if (isViewportElement(current))
+            return static_cast<SVGElement*>(current);
     }
 
     return 0;
@@ -55,9 +55,9 @@ SVGElement* SVGLocatable::farthestViewportElement(const SVGElement* element)
 {
     ASSERT(element);
     SVGElement* farthest = 0;
-    for (ContainerNode* n = element->parentNode(); n; n = n->parentNode()) {
-        if (isViewportElement(n))
-            farthest = static_cast<SVGElement*>(n);
+    for (Element* current = element->parentOrHostElement(); current; current = current->parentOrHostElement()) {
+        if (isViewportElement(current))
+            farthest = static_cast<SVGElement*>(current);
     }
     return farthest;
 }
@@ -84,19 +84,16 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
     AffineTransform ctm;
 
     SVGElement* stopAtElement = mode == NearestViewportScope ? nearestViewportElement(element) : 0;
+    for (Element* currentElement = element; currentElement; currentElement = currentElement->parentOrHostElement()) {
+        if (!currentElement->isSVGElement())
+            break;
 
-    Node* current = const_cast<SVGElement*>(element);
-    while (current && current->isSVGElement()) {
-        SVGElement* currentElement = static_cast<SVGElement*>(current);
-        if (currentElement->isStyled())
-            // note that this modifies the AffineTransform returned by localCoordinateSpaceTransform(mode) too.
+        if (static_cast<SVGElement*>(currentElement)->isStyled())
             ctm = static_cast<SVGStyledElement*>(currentElement)->localCoordinateSpaceTransform(mode).multiply(ctm);
 
         // For getCTM() computation, stop at the nearest viewport element
         if (currentElement == stopAtElement)
             break;
-
-        current = current->parentOrHostNode();
     }
 
     return ctm;
