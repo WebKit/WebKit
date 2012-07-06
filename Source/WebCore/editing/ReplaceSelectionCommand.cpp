@@ -1335,7 +1335,7 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
     if (nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(endingSelection().start()))
         return false;
 
-    Node* nodeAfterInsertionPos = endingSelection().end().downstream().anchorNode();
+    RefPtr<Node> nodeAfterInsertionPos = endingSelection().end().downstream().anchorNode();
     Text* textNode = toText(fragment.firstChild());
     // Our fragment creation code handles tabs, spaces, and newlines, so we don't have to worry about those here.
 
@@ -1344,8 +1344,9 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
     if (end.isNull())
         return false;
 
-    if (nodeAfterInsertionPos && nodeAfterInsertionPos->hasTagName(brTag) && shouldRemoveEndBR(nodeAfterInsertionPos, positionBeforeNode(nodeAfterInsertionPos)))
-        removeNodeAndPruneAncestors(nodeAfterInsertionPos);
+    if (nodeAfterInsertionPos && nodeAfterInsertionPos->parentNode() && nodeAfterInsertionPos->hasTagName(brTag)
+        && shouldRemoveEndBR(nodeAfterInsertionPos.get(), positionBeforeNode(nodeAfterInsertionPos.get())))
+        removeNodeAndPruneAncestors(nodeAfterInsertionPos.get());
 
     VisibleSelection selectionAfterReplace(m_selectReplacement ? start : end, end);
 
