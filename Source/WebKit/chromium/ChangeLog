@@ -1,5 +1,11 @@
 2012-07-05  Yoshifumi Inoue  <yosin@chromium.org>
 
+        Unreviewed Chromium gardening. Roll Chromium DEPS
+
+        * DEPS: 145501 => 145569
+
+2012-07-05  Yoshifumi Inoue  <yosin@chromium.org>
+
         Unreviewed Chromium gardening - Disable WebAnimationTest for Linux and Windows.
         https://bugs.webkit.org/show_bug.cgi?id=90651
 
