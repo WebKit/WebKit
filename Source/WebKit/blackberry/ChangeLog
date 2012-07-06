@@ -1,3 +1,14 @@
+2012-07-05  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Fix the build error introduced by enabling CUSTOM_THEME_HANDLER
+        https://bugs.webkit.org/show_bug.cgi?id=90588
+
+        Reviewed by Rob Buis.
+
+        Fix the build error introduced by enabling CUSTOM_THEME_HANDLER.
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::isProtocolHandlerRegistered):
+
 2012-07-04  Hanna Ma  <Hanma@rim.com>
 
         [BlackBerry] Implement device metrics for blackberry.
