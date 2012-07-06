@@ -188,5 +188,24 @@ void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& resu
         m_timerToProcessQueuedRequest.startOneShot(0);
 }
 
+void SpellChecker::didCheckSucceeded(int sequence, const Vector<TextCheckingResult>& results)
+{
+    if (m_processingRequest->sequence() == sequence) {
+        unsigned markers = 0;
+        if (m_processingRequest->mask() & TextCheckingTypeSpelling)
+            markers |= DocumentMarker::Spelling;
+        if (m_processingRequest->mask() & TextCheckingTypeGrammar)
+            markers |= DocumentMarker::Grammar;
+        if (markers)
+            m_frame->document()->markers()->removeMarkers(m_processingRequest->checkingRange().get(), markers);
+    }
+    didCheck(sequence, results);
+}
+
+void SpellChecker::didCheckCanceled(int sequence)
+{
+    Vector<TextCheckingResult> results;
+    didCheck(sequence, results);
+}
 
 } // namespace WebCore

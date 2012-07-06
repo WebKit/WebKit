@@ -1,3 +1,27 @@
+2012-04-18  Hironori Bono  <hbono@chromium.org>
+
+        Split SpellChecker::didCheck() to SpellChecker::didCheckSucceeded() and SpellChecker::didCheckCanceled()
+        https://bugs.webkit.org/show_bug.cgi?id=83748
+
+        Reviewed by Ryosuke Niwa.
+
+        The current SpellChecker::didCheck() does not delete existing markers. It causes
+        a problem that it leaves misspelled markers when a spellchecker client finishes
+        checking text successfully. This change splits this function to didCheckSucceeded()
+        and  didCheckCanceled() so the SpellChecker class can delete existing markers
+        when its client finishes checking text successfully. (We do not have to erase
+        existing markers when the client needs to cancel a text-check request.)
+
+        Test: platform/chromium/editing/spelling/delete-misspelled-word.html
+
+        * WebCore.exp.in: Replaced SpellChecker::didCheck with SpellChecker::didCheckSucceeded.
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheckSucceeded): Added.
+        (WebCore):
+        (WebCore::SpellChecker::didCheckCanceled): Added.
+        * editing/SpellChecker.h:
+        (SpellChecker): Added didCheckSucceeded and didCheckCanceled. Also changed didCheck to a private function.
+
 2012-04-03  Hironori Bono  <hbono@chromium.org>
 
         Prevent spellchecking text pasted to an element having spellchecking disabled

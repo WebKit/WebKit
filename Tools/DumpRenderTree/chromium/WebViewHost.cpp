@@ -450,7 +450,7 @@ void WebViewHost::requestCheckingOfText(const WebString& text, WebTextCheckingCo
 {
     if (text.isEmpty()) {
         if (completion)
-            completion->didFinishCheckingText(Vector<WebTextCheckingResult>());
+            completion->didCancelCheckingText();
         return;
     }
 

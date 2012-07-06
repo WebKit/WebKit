@@ -51,6 +51,7 @@ public:
     }
 
     virtual void didFinishCheckingText(const WebVector<WebTextCheckingResult>&);
+    virtual void didCancelCheckingText();
 
     void invalidate();
     WebCore::SpellChecker* spellChecker() const { return m_spellChecker; }

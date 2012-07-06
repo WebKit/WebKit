@@ -60,6 +60,11 @@ void WebTextCheckingCompletionImpl::didFinishCheckingText(const WebVector<WebTex
     delete this;
 }
 
+void WebTextCheckingCompletionImpl::didCancelCheckingText()
+{
+    m_spellChecker->didCheckCanceled(m_identifier);
+}
+
 void WebTextCheckingCompletionImpl::invalidate()
 {
     m_spellChecker = 0;
