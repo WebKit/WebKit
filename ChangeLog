@@ -1,3 +1,22 @@
+2012-07-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Add a configuration option for disabling unstable features in releases
+        https://bugs.webkit.org/show_bug.cgi?id=87995
+
+        Reviewed by Martin Robinson.
+
+        Add a configuration flag for enabling the unstable features - features of which
+        support in the Gtk port is being worked on but is not yet complete. The primary
+        use of this flag is when compiling through the build-webkit script.
+
+        All the features that are currently enabled when building through build-webkit but
+        are disabled by default when executing the configure script directly have their default
+        value (when the correspondent flag is not passed) set to 'yes' when unstable features
+        are enabled and 'no' otherwise. This way unstable features are kept disabled when performing
+        a release build (unless they are specifically enabled).
+
+        * configure.ac:
+
 2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Remove custom qmake logic for module creation

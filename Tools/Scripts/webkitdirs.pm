@@ -2066,6 +2066,9 @@ sub buildAutotoolsProject($@)
         push @buildArgs, "--disable-debug";
     }
 
+    # Enable unstable features when building through build-webkit.
+    push @buildArgs, "--enable-unstable-features";
+
     # We might need to update jhbuild dependencies.
     my $needUpdate = 0;
     if (jhbuildConfigurationChanged()) {

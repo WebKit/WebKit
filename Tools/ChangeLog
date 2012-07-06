@@ -1,3 +1,15 @@
+2012-07-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Add a configuration option for disabling unstable features in releases
+        https://bugs.webkit.org/show_bug.cgi?id=87995
+
+        Reviewed by Martin Robinson.
+
+        Pass the --enable-unstable-features flag when building the Gtk port through build-webkit.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+
 2012-07-06  Jessie Berlin  <jberlin@apple.com>
 
         WKContext should ask for its initialization data when it needs it so the client doesn't have

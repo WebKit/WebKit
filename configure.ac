@@ -527,6 +527,14 @@ AC_ARG_ENABLE(optimizations,
               [if test "$enable_debug" = "yes"; then enable_optimizations="no"; else enable_optimizations="yes"; fi])
 AC_MSG_RESULT([$enable_optimizations])
 
+# check whether to enable unstable features
+AC_MSG_CHECKING([whether to enable unstable features])
+AC_ARG_ENABLE(unstable_features,
+              AC_HELP_STRING([--enable-unstable-features],
+                             [enable unstable features [default=no]]),
+              [],[enable_unstable_features="no"])
+AC_MSG_RESULT([$enable_unstable_features])
+
 found_opengl="no"
 if test "$with_target" = "x11"; then
     AC_CHECK_HEADERS([GL/gl.h], [found_opengl="yes"], [])
@@ -650,7 +658,7 @@ AC_MSG_CHECKING([whether to enable Gamepad support])
 AC_ARG_ENABLE(gamepad,
               AC_HELP_STRING([--enable-gamepad],
                              [enable Gamepad support [default=no]]),
-              [],[enable_gamepad="no"])
+              [],[enable_gamepad=$enable_unstable_features])
 AC_MSG_RESULT([$enable_gamepad])
 
 if test "$enable_gamepad" = "yes" && test "$os_linux" = no; then
@@ -671,7 +679,7 @@ AC_MSG_CHECKING([whether to enable DOM mutation observer support])
 AC_ARG_ENABLE(mutation_observers,
               AC_HELP_STRING([--enable-mutation-observers],
                              [enable DOM mutation observer support [default=no]]),
-              [],[enable_mutation_observers="no"])
+              [],[enable_mutation_observers=$enable_unstable_features])
 AC_MSG_RESULT([$enable_mutation_observers])
 
 # check whether to enable the indexed database API
@@ -756,7 +764,7 @@ AC_MSG_CHECKING([whether to enable HTML5 video track support])
 AC_ARG_ENABLE(video_track,
               AC_HELP_STRING([--enable-video-track],
                              [enable HTML5 video track support [default=no]]),
-              [],[enable_video_track="no"])
+              [],[enable_video_track=$enable_unstable_features])
 AC_MSG_RESULT([$enable_video_track])
 
 # check whether to enable media source support
@@ -788,7 +796,7 @@ AC_MSG_CHECKING([whether to enable media stream support])
 AC_ARG_ENABLE(media_stream,
               AC_HELP_STRING([--enable-media-stream],
                              [enable media stream support (incomplete) [default=no]]),
-              [],[enable_media_stream="no"])
+              [],[enable_media_stream=$enable_unstable_features])
 AC_MSG_RESULT([$enable_media_stream])
 
 # check whether to enable XSLT support
@@ -946,7 +954,7 @@ AC_MSG_CHECKING([whether to enable Web Timing support])
 AC_ARG_ENABLE(web_timing,
               AC_HELP_STRING([--enable-web-timing],
                              [enable support for Web Timing [default=no]]),
-              [],[enable_web_timing="no"])
+              [],[enable_web_timing=$enable_unstable_features])
 AC_MSG_RESULT([$enable_web_timing])
 
 # check whether to enable Blob support
@@ -986,7 +994,7 @@ AC_MSG_CHECKING([whether to enable CSS3 flexbox support])
 AC_ARG_ENABLE(css3_flexbox,
               AC_HELP_STRING([--enable-css3-flexbox],
                              [enable CSS3 flexbox support [default=no]]),
-              [],[enable_css3_flexbox="no"])
+              [],[enable_css3_flexbox=$enable_unstable_features])
 AC_MSG_RESULT([$enable_css3_flexbox])
 
 # check whether to enable FastMalloc
@@ -1043,7 +1051,7 @@ fi
 AC_MSG_CHECKING([whether to enable link prefetch support])
 AC_ARG_ENABLE([link-prefetch],
   [AS_HELP_STRING([--enable-link-prefetch], [Enable Link prefetch support (default: disabled)])],
-  [],[enable_link_prefetch=no])
+  [],[enable_link_prefetch=$enable_unstable_features])
 AC_MSG_RESULT([$enable_link_prefetch])
 
 # GObject Introspection
@@ -1390,6 +1398,7 @@ AM_CONDITIONAL([USE_LEVELDB],[test "$enable_indexed_database" = "yes"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
+AM_CONDITIONAL([ENABLE_UNSTABLE_FEATURES],[test "$enable_unstable_features" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
 AM_CONDITIONAL([ENABLE_LEGACY_WEBKIT_BLOB_BUILDER],[test "$enable_legacy_webkit_blob_builder" = "yes"])
