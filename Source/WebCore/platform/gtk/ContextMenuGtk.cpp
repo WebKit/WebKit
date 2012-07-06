@@ -23,8 +23,9 @@
 
 #include "ContextMenu.h"
 
-#include <wtf/gobject/GOwnPtr.h>
 #include <gtk/gtk.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 
 namespace WebCore {
 
@@ -48,10 +49,14 @@ void ContextMenu::appendItem(ContextMenuItem& item)
 {
     ASSERT(m_platformDescription);
 
-    GtkMenuItem* platformItem = item.releasePlatformDescription();
+    GRefPtr<GtkWidget> platformItem = GTK_WIDGET(item.releasePlatformDescription());
     ASSERT(platformItem);
-    gtk_menu_shell_append(GTK_MENU_SHELL(m_platformDescription), GTK_WIDGET(platformItem));
-    gtk_widget_show(GTK_WIDGET(platformItem));
+
+    if (GtkWidget* parent = gtk_widget_get_parent(platformItem.get()))
+        gtk_container_remove(GTK_CONTAINER(parent), platformItem.get());
+
+    gtk_menu_shell_append(GTK_MENU_SHELL(m_platformDescription), platformItem.get());
+    gtk_widget_show(platformItem.get());
 }
 
 void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)

@@ -1,3 +1,18 @@
+2012-07-05  Arnaud Renevier  <arno@renevier.net>
+
+        [GTK] Showing the context menu in the Web Inspector can crash the browser
+        https://bugs.webkit.org/show_bug.cgi?id=88800
+
+        Reviewed by Carlos Garcia Campos.
+
+        Remove ContextMenuItem from its parent before appending it again to a
+        new parent
+
+        No new tests, behavior is unchanged.
+
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::appendItem):
+
 2012-07-05  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Unreviewed, Fix build break when WEB_AUDIO is enabled.
