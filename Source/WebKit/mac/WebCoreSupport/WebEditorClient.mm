@@ -966,7 +966,7 @@ void WebEditorClient::setInputMethodState(bool)
 
 - (void)perform
 {
-    _sender->didCheck(_sequence, core(_results.get(), _types));
+    _sender->didCheckSucceeded(_sequence, core(_results.get(), _types));
 }
 
 @end
