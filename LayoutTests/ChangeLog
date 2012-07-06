@@ -1,3 +1,11 @@
+2012-07-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, clean up the TestExpectations file, removing
+        non-existent or doubled test entries and re-specifying detailed test
+        expectations so the TestExpectations lint passes.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-06  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [GTK] http/tests/multipart/multipart-replace-non-html-content.php is failing after r121912

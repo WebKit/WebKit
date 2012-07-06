@@ -439,7 +439,7 @@ BUGWK84856 : media/media-controller-playback.html = PASS TEXT
 BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT
 
 BUGWK83878 : media/track/track-mode.html = PASS TEXT
-BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html is flaky = PASS TEXT
+BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html = PASS TEXT
 
 BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-3.html = TEXT PASS
 
@@ -469,7 +469,7 @@ BUGWK68979 SKIP : http/tests/multipart/invalid-image-data-standalone.html = TIME
 
 BUGWKGTK SKIP : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT
 
-BUGWKGTK : fast/css/user-drag-none.html = TIMEOUT
+BUGWKGTK DEBUG : fast/css/user-drag-none.html = TIMEOUT
 
 BUGWK84676 SKIP : fast/files/workers/worker-read-blob-async.html = TIMEOUT
 BUGWK84676 SKIP : fast/files/workers/worker-read-blob-sync.html = TIMEOUT
@@ -620,7 +620,6 @@ BUGWKGTK : http/tests/loading/bad-server-subframe.html = TEXT
 
 // Needed to cover the fix for <rdar://problem/6727495>
 BUGRDAR6727495 : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = TEXT
-BUGRDAR6727495 : http/tests/loading/gmail-assert-on-load.html = TEXT
 BUGRDAR6727495 : http/tests/loading/text-content-type-with-binary-extension.html = TEXT
 
 BUGWKGTK SKIP : http/tests/media/video-play-stall-seek.html = TEXT
@@ -632,7 +631,6 @@ BUGWKGTK : http/tests/misc/redirect-to-external-url.html = TEXT
 BUGWKGTK : http/tests/misc/window-dot-stop.html = TEXT
 
 BUGWKGTK : http/tests/plugins/npapi-response-headers.html = TEXT
-BUGWKGTK : http/tests/security/feed-urls-from-remote.html = TEXT
 BUGWKGTK : http/tests/security/mixedContent/insecure-iframe-in-main-frame.html = TEXT
 BUGWKGTK : http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html = TEXT
 BUGWKGTK : http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html = TEXT
@@ -1000,8 +998,6 @@ BUGWK61118 : fullscreen/full-screen-keyboard-enabled.html = TEXT
 BUGWK61118 : fullscreen/full-screen-element-stack.html = TEXT
 BUGWK61118 : fullscreen/full-screen-restrictions.html = TEXT
 
-BUGWK61122 : http/tests/navigation/post-307-response.html = TEXT
-
 BUGWK61630 : fast/events/dropzone-005.html = TEXT
 
 // This test verifies that a mismatch reftest will fail as intended if both results are same.
@@ -1215,8 +1211,6 @@ BUGWK88961 : http/tests/misc/redirect-to-about-blank.html = TEXT
 BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = TEXT
 
 BUGWK87088 : fast/js/names.html = TEXT
-
-BUGWK87593 : http/tests/cache/cancel-in-progress-load.html = TEXT
 
 BUGWK87973 : http/tests/misc/favicon-loads-with-images-disabled.html = TEXT
 
