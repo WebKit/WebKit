@@ -1,3 +1,13 @@
+2012-07-06  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [GTK] http/tests/multipart/multipart-replace-non-html-content.php is failing after r121912
+        https://bugs.webkit.org/show_bug.cgi?id=90685
+
+        Unreviewed gardening, add test expectation for a failing
+        test after r121912.
+
+        * platform/efl/TestExpectations:
+
 2012-07-06  Luciano Wolf <luciano.wolf@openbossa.org>
 
         [Qt] DumpRenderTree does not use 'monospace' font when directed
