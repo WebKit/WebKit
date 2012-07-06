@@ -1,3 +1,22 @@
+2012-05-04  Dan Winship  <danw@gnome.org>
+
+        [GTK] ASSERTION FAILED: shouldLoadAsEmptyDocument(r.url()) ||
+        !defersLoading() in MainResourceLoader.cpp:382
+
+        Remove a soup_session_pause_message() call that got left behind,
+        update the defersLoading stuff to handle this case.
+
+        https://bugs.webkit.org/show_bug.cgi?id=85159
+
+        Reviewed by Martin Robinson.
+
+        No new tests. Now passes loader/load-defer-resume-crash.html under
+        debug build.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sendRequestCallback):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+
 2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [soup] URL of the ResourceResponse passed to willSendRequest is incorrect
