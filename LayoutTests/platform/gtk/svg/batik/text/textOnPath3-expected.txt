@@ -14,8 +14,7 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 227x16
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 39 width 226.17: "Text with one textPath child and x=\"10\""
       RenderSVGContainer {use} at (139,90) size 142x96
-        RenderSVGContainer {g} at (139,90) size 142x96
-          RenderSVGPath {path} at (139,90) size 142x96 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+        RenderSVGPath {path} at (139,90) size 142x96 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
       RenderSVGText {text} at (95,-109) size 157x81 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 157x81
           RenderSVGInlineText {#text} at (0,0) size 157x81
@@ -57,8 +56,7 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 234x16
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 40 width 233.17: "Text with one textPath child and x=\"100\""
       RenderSVGContainer {use} at (139,235) size 142x96
-        RenderSVGContainer {g} at (139,235) size 142x96
-          RenderSVGPath {path} at (139,235) size 142x96 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+        RenderSVGPath {path} at (139,235) size 142x96 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
       RenderSVGText {text} at (177,-108) size 78x108 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 78x108
           RenderSVGInlineText {#text} at (0,0) size 78x108
@@ -89,8 +87,7 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 282x16
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 48 width 281.66: "Text with one textPath child and x=\"-100\" y=\"10\""
       RenderSVGContainer {use} at (139,380) size 142x96
-        RenderSVGContainer {g} at (139,380) size 142x96
-          RenderSVGPath {path} at (139,380) size 142x96 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+        RenderSVGPath {path} at (139,380) size 142x96 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
       RenderSVGText {text} at (85,-109) size 158x110 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 158x110
           RenderSVGInlineText {#text} at (0,105) size 18x5

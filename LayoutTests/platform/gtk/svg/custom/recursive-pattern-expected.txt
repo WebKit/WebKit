@@ -21,31 +21,26 @@ layer at (0,0) size 800x600
       RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=PATTERN] [id="pattern7"]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
       RenderSVGResourcePattern {pattern} [id="pattern7"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGContainer {use} at (0,0) size 50x50
-          RenderSVGContainer {g} at (0,0) size 50x50
-            RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+          RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
         RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
       RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=PATTERN] [id="pattern8"]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
       RenderSVGContainer {use} at (0,0) size 50x50
-        RenderSVGContainer {g} at (0,0) size 50x50
-          RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=PATTERN] [id="pattern8"]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+        RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=PATTERN] [id="pattern8"]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
       RenderSVGResourcePattern {pattern} [id="pattern8"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGContainer {g} at (0,0) size 150x150
           RenderSVGContainer {use} at (50,50) size 100x100
-            RenderSVGContainer {g} at (50,50) size 100x100
-              RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+            RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
           RenderSVGContainer {use} at (0,0) size 50x50
             RenderSVGContainer {g} at (0,0) size 50x50
-              RenderSVGContainer {g} at (0,0) size 50x50
-                RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+              RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
       RenderSVGResourcePattern {pattern} [id="pattern9"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGContainer {use} at (0,0) size 150x150
           RenderSVGContainer {g} at (0,0) size 150x150
-            RenderSVGContainer {g} at (0,0) size 150x150
-              RenderSVGContainer {g} at (50,50) size 100x100
-                RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+            RenderSVGContainer {g} at (50,50) size 100x100
+              RenderSVGRect {rect} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
+            RenderSVGContainer {g} at (0,0) size 50x50
               RenderSVGContainer {g} at (0,0) size 50x50
-                RenderSVGContainer {g} at (0,0) size 50x50
-                  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=PATTERN] [id="pattern8"]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+                RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=PATTERN] [id="pattern8"]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
     RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=PATTERN] [id="pattern1"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGRect {rect} at (100,0) size 100x100 [fill={[type=PATTERN] [id="pattern2"]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGRect {rect} at (200,0) size 100x100 [fill={[type=PATTERN] [id="pattern3"]}] [x=200.00] [y=0.00] [width=100.00] [height=100.00]
