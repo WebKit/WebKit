@@ -1,3 +1,10 @@
+2012-05-18  MORITA Hajime <morrita@google.com>
+
+        Another unreviewed attempt to fix build breakage on r117572.
+
+        * WebCoreSupport/EditorClientWinCE.h:
+        (WebKit::EditorClientWinCE::frameWillDetachPage):
+
 2012-05-18  MORITA Hajime  <morrita@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=85515
