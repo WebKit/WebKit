@@ -519,8 +519,7 @@ guint64 webkit_get_default_web_database_quota()
  * webkit_set_default_web_database_quota:
  * @defaultQuota: the new default database quota
  *
- * Sets the current path to the directory WebKit will write Web 
- * Database databases. 
+ * Sets the default quota for Web Database databases.
  *
  * Since: 1.1.14
  **/
