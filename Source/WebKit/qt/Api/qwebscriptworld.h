@@ -20,6 +20,10 @@
 #ifndef QWebScriptWorld_h_
 #define QWebScriptWorld_h_
 
+#if 0
+#pragma qt_no_master_include
+#endif
+
 #include <QtCore/qurl.h>
 #include <QtCore/qshareddata.h>
 

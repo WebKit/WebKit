@@ -21,6 +21,10 @@
 #ifndef bytearraytestdata_h
 #define bytearraytestdata_h
 
+#if 0
+#pragma qt_no_master_include
+#endif
+
 #include "qwebkitglobal.h"
 #include <QByteArray>
 #include <QObject>

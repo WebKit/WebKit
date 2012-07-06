@@ -20,6 +20,10 @@
 #ifndef testwindow_h
 #define testwindow_h
 
+#if 0
+#pragma qt_no_master_include
+#endif
+
 #include <QResizeEvent>
 #include <QScopedPointer>
 #include <QtQuick/qquickitem.h>

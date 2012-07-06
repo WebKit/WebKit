@@ -18,6 +18,10 @@
 */
 // Functions and macros that really need to be in QTestLib
 
+#if 0
+#pragma qt_no_master_include
+#endif
+
 #include <QEventLoop>
 #include <QSignalSpy>
 #include <QTimer>
