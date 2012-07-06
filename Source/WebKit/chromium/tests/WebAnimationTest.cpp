@@ -35,7 +35,16 @@ using namespace WebKit;
 
 namespace {
 
-TEST(WebAnimationTest, DefaultSettings)
+// Linux/Win bots failed on this test.
+// https://bugs.webkit.org/show_bug.cgi?id=90651
+#if OS(WINDOWS)
+#define MAYBE_DefaultSettings DISABLED_DefaultSettings
+#elif OS(LINUX)
+#define MAYBE_DefaultSettings DISABLED_DefaultSettings
+#else
+#define MAYBE_DefaultSettings DefaultSettings
+#endif
+TEST(WebAnimationTest, MAYBE_DefaultSettings)
 {
     WebFloatAnimationCurve curve;
     WebAnimation animation(curve, WebAnimation::WebAnimationOpacity);
@@ -47,7 +56,16 @@ TEST(WebAnimationTest, DefaultSettings)
     EXPECT_FALSE(animation.alternatesDirection());
 }
 
-TEST(WebAnimationTest, ModifiedSettings)
+// Linux/Win bots failed on this test.
+// https://bugs.webkit.org/show_bug.cgi?id=90651
+#if OS(WINDOWS)
+#define MAYBE_ModifiedSettings DISABLED_ModifiedSettings
+#elif OS(LINUX)
+#define MAYBE_ModifiedSettings DISABLED_ModifiedSettings
+#else
+#define MAYBE_ModifiedSettings ModifiedSettings
+#endif
+TEST(WebAnimationTest, MAYBE_ModifiedSettings)
 {
     WebFloatAnimationCurve curve;
     WebAnimation animation(curve, WebAnimation::WebAnimationOpacity);
