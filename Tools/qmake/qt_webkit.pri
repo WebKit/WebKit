@@ -13,7 +13,6 @@ QT.webkit.private_includes = $$QT_MODULE_INCLUDE_BASE/$$QT.webkit.name/$$QT.webk
 QT.webkit.sources = $$QT_MODULE_BASE
 QT.webkit.libs = $$QT_MODULE_LIB_BASE
 QT.webkit.depends = core gui opengl network xmlpatterns script
-QT.webkit.module_pri = $$_FILE_
 
 !contains(QT_CONFIG, modular)|contains(QT_ELIGIBLE_MODULES, webkit) {
     QT_CONFIG += webkit
