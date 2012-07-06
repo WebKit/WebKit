@@ -1,3 +1,10 @@
+2012-07-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed 64 bit buildfix after r121925.
+
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+
 2012-07-05  Michael Saboff  <msaboff@apple.com>
 
         JSString::tryHashConstLock() fails to get exclusive lock

@@ -72,7 +72,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     
     return PutByIdStatus(SimpleTransition, structure, newStructure, chain, offset);
 #else
-    return PutByIdStatus(NoInformation, 0, 0, 0, notFound);
+    return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
 #endif
 }
 
