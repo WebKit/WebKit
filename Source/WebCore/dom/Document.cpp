@@ -2960,6 +2960,12 @@ void Document::removePendingSheet()
         view()->scrollToFragment(m_url);
 }
 
+void Document::evaluateMediaQueryList()
+{
+    if (m_mediaQueryMatcher)
+        m_mediaQueryMatcher->styleSelectorChanged();
+}
+
 void Document::styleSelectorChanged(StyleSelectorUpdateFlag updateFlag)
 {
     // Don't bother updating, since we haven't loaded all our style info yet
@@ -3004,8 +3010,7 @@ void Document::styleSelectorChanged(StyleSelectorUpdateFlag updateFlag)
             view()->scheduleRelayout();
     }
 
-    if (m_mediaQueryMatcher)
-        m_mediaQueryMatcher->styleSelectorChanged();
+    evaluateMediaQueryList();
 }
 
 void Document::addStyleSheetCandidateNode(Node* node, bool createdByParser)

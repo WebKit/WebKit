@@ -50,7 +50,7 @@ void BackingStore::paint(PlatformGraphicsContext context, const IntRect& rect)
     }
 
     ASSERT(m_bitmapContext);
-    paintBitmapContext(context, m_bitmapContext.get(), rect.location(), rect);
+    paintBitmapContext(context, m_bitmapContext.get(), rect.location(), rect, m_deviceScaleFactor);
 }
 
 CGContextRef BackingStore::backingStoreContext()
@@ -71,7 +71,7 @@ CGContextRef BackingStore::backingStoreContext()
 
         if (m_bitmapContext) {
             // Paint the contents of the bitmap into the layer context.
-            paintBitmapContext(layerContext, m_bitmapContext.get(), CGPointZero, CGRectMake(0, 0, m_size.width(), m_size.height()));
+            paintBitmapContext(layerContext, m_bitmapContext.get(), CGPointZero, CGRectMake(0, 0, m_size.width(), m_size.height()), m_deviceScaleFactor);
             m_bitmapContext = nullptr;
         }
 
@@ -80,10 +80,14 @@ CGContextRef BackingStore::backingStoreContext()
 
     if (!m_bitmapContext) {
         RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-        
-        m_bitmapContext.adoptCF(CGBitmapContextCreate(0, m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+
+        IntSize scaledSize(m_size); 
+        scaledSize.scale(m_deviceScaleFactor); 
+        m_bitmapContext.adoptCF(CGBitmapContextCreate(0, scaledSize.width(), scaledSize.height(), 8, scaledSize.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
 
         CGContextSetBlendMode(m_bitmapContext.get(), kCGBlendModeCopy);
+
+        CGContextScaleCTM(m_bitmapContext.get(), m_deviceScaleFactor, m_deviceScaleFactor); 
 
         // We want the origin to be in the top left corner so flip the backing store context.
         CGContextTranslateCTM(m_bitmapContext.get(), 0, m_size.height());
@@ -136,7 +140,7 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
     CGContextSaveGState(m_bitmapContext.get());
     CGContextClipToRect(m_bitmapContext.get(), scrollRect);
     CGPoint destination = CGPointMake(scrollRect.x() + scrollOffset.width(), scrollRect.y() + scrollOffset.height());
-    paintBitmapContext(m_bitmapContext.get(), m_bitmapContext.get(), destination, scrollRect);
+    paintBitmapContext(m_bitmapContext.get(), m_bitmapContext.get(), destination, scrollRect, m_deviceScaleFactor);
     CGContextRestoreGState(m_bitmapContext.get());
 }
 

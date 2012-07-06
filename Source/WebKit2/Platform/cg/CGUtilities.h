@@ -29,7 +29,7 @@
 namespace WebKit {
 
 void paintImage(CGContextRef, CGImageRef, CGFloat scaleFactor, CGPoint destination, CGRect source);
-void paintBitmapContext(CGContextRef, CGContextRef bitmapContext, CGPoint destination, CGRect source);
+void paintBitmapContext(CGContextRef, CGContextRef bitmapContext, CGPoint destination, CGRect source, CGFloat scaleFactor);
 
 } // namespace WebKit
 

@@ -672,6 +672,9 @@ fast/repaint/table-writing-modes-v.html
 fast/repaint/text-emphasis-h.html
 fast/repaint/text-emphasis-v.html
 
+# window.resizeTo() does not trigger a relayout in our DumpRenderTree
+fast/media/media-query-list-08.html
+
 # This requires didClearWindowObjectForFrameInIsolatedWorld foo in FrameLoaderClient
 http/tests/security/isolatedWorld/didClearWindowObject.html
 # This needs more investigation
