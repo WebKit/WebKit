@@ -1,3 +1,22 @@
+2012-05-04  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [soup] URL of the ResourceResponse passed to willSendRequest is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=85072
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Store the response message by catching the "got-headers" signal so
+        that it can be passed later to willSendRequest() in case of
+        redirection. This is required because the SoupMessage headers and URL
+        have already been updated once restartedCallback() is called.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore):
+        (WebCore::gotHeadersCallback):
+        (WebCore::restartedCallback):
+        (WebCore::sendRequestCallback):
+        (WebCore::startHTTPRequest):
+
 2012-05-14  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
 
         [Gtk][DOM Bindings] Feature-protected interface usage in set/get property must be under condition guards
