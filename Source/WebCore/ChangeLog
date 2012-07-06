@@ -1,3 +1,35 @@
+2012-07-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add memory reporting routine to Document
+        https://bugs.webkit.org/show_bug.cgi?id=90668
+
+        Reviewed by Pavel Feldman.
+
+        Added methods for reporting HashSet, ListHashSet and Vector memory
+        footprint. Made Document report its size along with its internal
+        collections sizes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        (WebCore):
+        * dom/Document.h:
+        (Document):
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (MemoryObjectInfo):
+        (WebCore::MemoryObjectInfo::reportHashMap):
+        (WebCore::MemoryObjectInfo::reportHashSet):
+        (WebCore::MemoryObjectInfo::reportListHashSet):
+        (WebCore::MemoryObjectInfo::reportVector):
+        (WebCore::MemoryObjectInfo::memoryInstrumentation):
+        (WebCore::MemoryInstrumentation::reportHashMap):
+        (WebCore):
+        (WebCore::MemoryInstrumentation::reportHashSet):
+        (WebCore::MemoryInstrumentation::reportListHashSet):
+        (WebCore::MemoryInstrumentation::reportVector):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+
 2012-07-06  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Fixing defines for NEON intrinsics.

@@ -471,7 +471,7 @@ public:
 private:
     virtual void reportString(ObjectType objectType, const String& string)
     {
-        if (visited(string.impl()))
+        if (string.isNull() || visited(string.impl()))
             return;
         countObjectSize(objectType, stringSize(string.impl()));
     }
