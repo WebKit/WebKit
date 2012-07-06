@@ -1,3 +1,21 @@
+2012-07-05  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Unreviewed Chromium gardening - Rebaseline for r121917.
+
+        * platform/chromium-linux/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Removed.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/fast/html/details-marker-style-expected.png:
+        * platform/chromium-mac/fast/html/details-marker-style-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium-win/fast/html/details-marker-style-expected.png:
+        * platform/chromium-win/fast/html/details-marker-style-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+
 2012-07-05  Mike West  <mkwst@chromium.org>
 
         Multiple Content Security Policy headers are correctly processed as separate headers.
