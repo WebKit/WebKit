@@ -529,7 +529,7 @@ bool GraphicsContext3D::getImageData(Image* image,
 
     outputVector.resize(packedSize);
 
-    return packPixels(qtImage.bits(), SourceFormatBGRA8, image->width(), image->height(), 0, format, type, alphaOp, outputVector.data());
+    return packPixels(qtImage.constBits(), SourceFormatBGRA8, image->width(), image->height(), 0, format, type, alphaOp, outputVector.data());
 }
 
 void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)

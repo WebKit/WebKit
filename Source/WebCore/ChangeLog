@@ -1,3 +1,16 @@
+2012-07-06  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [Qt] Avoid deep copy of QImage in GraphicsContext3D::getImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=90705
+
+        Reviewed by Noam Rosenthal.
+
+        Use QImage.constBits() as argument to packPixels instead of bits() to avoid
+        deep copying it.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2012-07-06  Andy Estes  <aestes@apple.com>
 
         Fix errors reported by generate-bindings.pl after r121882.
