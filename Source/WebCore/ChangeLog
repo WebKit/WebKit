@@ -1,3 +1,15 @@
+2012-03-09  Tom Sepez  <tsepez@chromium.org>
+
+        Hold cached images with a CachedResourceHandle rather than a raw pointer for CSSCrossfadeValue
+        https://bugs.webkit.org/show_bug.cgi?id=80186
+
+        Reviewed by Simon Fraser.
+
+        Test: http/tests/css/cross-fade-reload.html
+
+        * css/CSSCrossfadeValue.h:
+        (CSSCrossfadeValue):
+
 2012-05-31  Hajime Morrita  <morrita@chromium.org>
 
         REGRESSION(r117572): editing/spelling/spellcheck-async-remove-frame.html crashes on Mac
