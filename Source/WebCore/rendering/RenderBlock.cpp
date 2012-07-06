@@ -497,6 +497,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
     // Once we hit the anonymous columns block we're done.
     RenderBoxModelObject* curr = toRenderBoxModelObject(parent());
     RenderBoxModelObject* currChild = this;
+    RenderObject* currChildNextSibling = currChild->nextSibling();
     
     while (curr && curr != fromBlock) {
         ASSERT(curr->isRenderBlock());
@@ -523,8 +524,12 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
         // Someone may have indirectly caused a <q> to split.  When this happens, the :after content
         // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that the inline's :after
         // content gets properly destroyed.
+        bool isLastChild = (currChildNextSibling == blockCurr->lastChild());
         if (document()->usesBeforeAfterRules())
             blockCurr->children()->updateBeforeAfterContent(blockCurr, AFTER);
+        if (isLastChild && currChildNextSibling != blockCurr->lastChild())
+            currChildNextSibling = 0; // We destroyed the last child, so now we need to update
+                                      // the value of currChildNextSibling.
 
         // It is possible that positioned objects under blockCurr are going to be moved to cloneBlock.
         // Since we are doing layout anyway, it is easier to blow away the entire list, than
@@ -535,10 +540,11 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
 
         // Now we need to take all of the children starting from the first child
         // *after* currChild and append them all to the clone.
-        blockCurr->moveChildrenTo(cloneBlock, currChild->nextSibling(), 0, true);
+        blockCurr->moveChildrenTo(cloneBlock, currChildNextSibling, 0, true);
 
         // Keep walking up the chain.
         currChild = curr;
+        currChildNextSibling = currChild->nextSibling();
         curr = toRenderBoxModelObject(curr->parent());
     }
 
@@ -547,7 +553,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
 
     // Now take all the children after currChild and remove them from the fromBlock
     // and put them in the toBlock.
-    fromBlock->moveChildrenTo(toBlock, currChild->nextSibling(), 0, true);
+    fromBlock->moveChildrenTo(toBlock, currChildNextSibling, 0, true);
 }
 
 void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,

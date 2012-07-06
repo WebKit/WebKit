@@ -1,3 +1,21 @@
+2012-03-09  Abhishek Arya  <inferno@chromium.org>
+
+        Crash when splitting an anonymous block in multi-column layout.
+        https://bugs.webkit.org/show_bug.cgi?id=80432
+
+        Reviewed by David Hyatt.
+
+        Calculating currChild->nextSibling() is risky after destroying :after content
+        because it can blow away currChild if it is a left over empty anonymous block.
+        We need to calculate next sibling upfront, using the same trick, we do in
+        RenderBlock::addChildIgnoringAnonymousColumnBlock to reset beforeChild (check
+        out the line before splitFlow call).
+
+        Test: fast/multicol/anonymous-block-split-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitBlocks):
+
 2012-03-24  Jeffrey Pfau  <jpfau@apple.com>
 
         XML error document creation should not fire mutation events
