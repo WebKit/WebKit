@@ -103,7 +103,6 @@ public:
     DownloadProxy* download(WebPageProxy* initiatingPage, const WebCore::ResourceRequest&);
 
     void setInjectedBundleInitializationUserData(PassRefPtr<APIObject> userData) { m_injectedBundleInitializationUserData = userData; }
-    APIObject* injectedBundleInitializationUserData() const { return m_injectedBundleInitializationUserData.get(); }
 
     void postMessageToInjectedBundle(const String&, APIObject*);
 

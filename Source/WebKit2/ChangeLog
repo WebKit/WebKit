@@ -1,3 +1,13 @@
+2012-07-06  Jessie Berlin  <jberlin@apple.com>
+
+        WebContext::injectedBundleInitializationUserData() is unused, should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=90486
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebContext.h:
+        Remove it.
+
 2012-07-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add site specific quirks setting to WebKit2 GTK+ API
