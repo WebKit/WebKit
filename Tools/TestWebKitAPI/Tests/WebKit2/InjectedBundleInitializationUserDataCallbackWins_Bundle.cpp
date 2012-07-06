@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextInjectedBundleClient_h
-#define WebContextInjectedBundleClient_h
+#include "config.h"
+#include "InjectedBundleTest.h"
+#include "PlatformUtilities.h"
+#include <WebKit2/WKRetainPtr.h>
 
-#include "APIClient.h"
-#include "WKContext.h"
-#include <wtf/Forward.h>
+namespace TestWebKitAPI {
 
-namespace WebKit {
-
-class APIObject;
-class WebContext;
-
-class WebContextInjectedBundleClient : public APIClient<WKContextInjectedBundleClient, kWKContextInjectedBundleClientCurrentVersion> {
+class InjectedBundleInitializationUserDataCallbackWinsTest : public InjectedBundleTest {
 public:
-    void didReceiveMessageFromInjectedBundle(WebContext*, const String&, APIObject*);
-    void didReceiveSynchronousMessageFromInjectedBundle(WebContext*, const String&, APIObject*, RefPtr<APIObject>& returnData);
-    PassRefPtr<APIObject> getInjectedBundleInitializationUserData(WebContext*);
+    InjectedBundleInitializationUserDataCallbackWinsTest(const std::string& identifier)
+        : InjectedBundleTest(identifier)
+    {
+    }
+
+    virtual void initialize(WKBundleRef bundle, WKTypeRef userData)
+    {
+        WKBundlePostMessage(bundle, Util::toWK("Return the userData").get(), userData);
+    }
 };
 
-} // namespace WebKit
+static InjectedBundleTest::Register<InjectedBundleInitializationUserDataCallbackWinsTest> registrar("InjectedBundleInitializationUserDataCallbackWinsTest");
 
-#endif // WebContextInjectedBundleClient_h
+} // namespace TestWebKitAPI

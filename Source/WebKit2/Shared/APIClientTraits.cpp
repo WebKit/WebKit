@@ -68,4 +68,9 @@ const size_t APIClientTraits<WKBundlePageFormClient>::interfaceSizesByVersion[] 
     sizeof(WKBundlePageFormClient)
 };
 
+const size_t APIClientTraits<WKContextInjectedBundleClient>::interfaceSizesByVersion[] = {
+    offsetof(WKContextInjectedBundleClient, getInjectedBundleInitializationUserData),
+    sizeof(WKContextInjectedBundleClient)
+};
+
 } // namespace WebKit

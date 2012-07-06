@@ -51,4 +51,12 @@ void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBun
     returnData = adoptRef(toImpl(returnDataRef));
 }
 
+PassRefPtr<APIObject> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebContext* context)
+{
+    if (!m_client.getInjectedBundleInitializationUserData)
+        return 0;
+
+    return toImpl(m_client.getInjectedBundleInitializationUserData(toAPI(context), m_client.clientInfo));
+}
+
 } // namespace WebKit

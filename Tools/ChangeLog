@@ -1,3 +1,59 @@
+2012-07-06  Jessie Berlin  <jberlin@apple.com>
+
+        WKContext should ask for its initialization data when it needs it so the client doesn't have
+        to keep it up to date.
+        https://bugs.webkit.org/show_bug.cgi?id=90627
+
+        Reviewed by Anders Carlsson.
+
+        Add tests and update other WKContextInjectedBundleClients.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        Updated for the change to WKContextInjectedBundleClient.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        Ditto.
+
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::createInitializationDictionaryForInjectedBundleTest):
+        Moved the logic to create the initialization dictionary here ...
+        (TestWebKitAPI::Util::createContextForInjectedBundleTest):
+        ... from here so that it can be used without automatically using
+        WKContextSetInitializationUserDataForInjectedBundle.
+        * TestWebKitAPI/PlatformUtilities.h:
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add the new test files.
+        * TestWebKitAPI/GNUmakefile.am:
+        Ditto.
+
+        * TestWebKitAPI/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        Check that the message received from the injected bundle matches the user data it was
+        initialized with.
+        (TestWebKitAPI::getInjectedBundleInitializationUserData):
+        Return the user data that the injected bundle should be initialized with.
+        (TestWebKitAPI::TEST):
+        Set up WKContextInjectedBundleClient and load a page.
+        * TestWebKitAPI/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback_Bundle.cpp: Added.
+        (TestWebKitAPI::GetInjectedBundleInitializationUserDataCallbackTest::initialize):
+        Send the initialization user data back up to the UI Process.
+
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins.cpp: Added.
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        Check that the message received from the injected bundle matches the user data it was
+        initialized with in the callback.
+        (TestWebKitAPI::getInjectedBundleInitializationUserData):
+        Return the user data that the injected bundle should be initialized with.
+        (TestWebKitAPI::TEST):
+        Set up the context and use WKContextSetInitializationUserDataForInjectedBundle to set the
+        initialization user data (which should be overridden by the user data returned in
+        getInjectedBundleInitializationUserData).
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp: Added.
+        (TestWebKitAPI::InjectedBundleInitializationUserDataCallbackWinsTest::initialize):
+        Send the initialization user data back up to the UI Process.
+
 2012-07-06  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL][GTK] jhbuild : Disable pixman demos build depending on GTK+

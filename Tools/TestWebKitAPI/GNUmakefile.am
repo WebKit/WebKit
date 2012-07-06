@@ -125,8 +125,10 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/ForceRepaint.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/FrameMIMETypeHTML.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/FrameMIMETypePNG.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/LoadAlternateHTMLStringWithNonDirectoryURL.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp \
@@ -165,8 +167,10 @@ Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout_Bundle.cpp \

@@ -141,7 +141,8 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
             kWKContextInjectedBundleClientCurrentVersion,
             0,      /* clientInfo */
             didRecieveMessageFromInjectedBundle,
-            0
+            0,      /* didReceiveSynchronousMessageFromInjectedBundle */
+            0       /* getInjectedBundleInitializationUserData */
         };
         WKContextSetInjectedBundleClient(_processContext, &bundleClient);
         WKContextSetHistoryClient(_processContext, &historyClient);

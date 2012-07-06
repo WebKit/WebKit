@@ -51,6 +51,7 @@ void sleep(double seconds);
 
 WKContextRef createContextWithInjectedBundle();
 WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
+WKDictionaryRef createInitializationDictionaryForInjectedBundleTest(const std::string&, WKTypeRef userData);
 
 WKStringRef createInjectedBundlePath();
 WKURLRef createURLForResource(const char* resource, const char* extension);

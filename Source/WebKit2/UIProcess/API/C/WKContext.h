@@ -42,16 +42,22 @@ typedef uint32_t WKCacheModel;
 // Injected Bundle Client
 typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
 typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
+typedef WKTypeRef (*WKContextGetInjectedBundleInitializationUserDataCallback)(WKContextRef context, const void *clientInfo);
 
 struct WKContextInjectedBundleClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+
+    // Version 0.
     WKContextDidReceiveMessageFromInjectedBundleCallback                didReceiveMessageFromInjectedBundle;
     WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback     didReceiveSynchronousMessageFromInjectedBundle;
+
+    // Version 1.
+    WKContextGetInjectedBundleInitializationUserDataCallback            getInjectedBundleInitializationUserData;
 };
 typedef struct WKContextInjectedBundleClient WKContextInjectedBundleClient;
 
-enum { kWKContextInjectedBundleClientCurrentVersion = 0 };
+enum { kWKContextInjectedBundleClientCurrentVersion = 1 };
 
 // History Client
 typedef void (*WKContextDidNavigateWithNavigationDataCallback)(WKContextRef context, WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo);

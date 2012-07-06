@@ -154,6 +154,10 @@
 		E1220DCA155B28AA0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */; };
 		E490296814E2E3A4002BEDD1 /* TypingStyleCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */; };
 		F3FC3EE313678B7300126A65 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
+		F660AA0D15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */; };
+		F660AA1115A5F631003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */; };
+		F660AA1315A619C9003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1215A619C8003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp */; };
+		F660AA1515A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */; };
 		F6F3F29113342FEB00A6BF19 /* CookieManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */; };
 		F6F49C6915545C8E0007F39D /* DOMWindowExtensionNoCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */; };
 		F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */; };
@@ -385,6 +389,10 @@
 		E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCacheDisableWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
 		E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TypingStyleCrash.mm; sourceTree = "<group>"; };
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInjectedBundleInitializationUserDataCallback.cpp; sourceTree = "<group>"; };
+		F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetInjectedBundleInitializationUserDataCallback_Bundle.cpp; sourceTree = "<group>"; };
+		F660AA1215A619C8003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleInitializationUserDataCallbackWins.cpp; sourceTree = "<group>"; };
+		F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp; sourceTree = "<group>"; };
 		F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieManager.cpp; sourceTree = "<group>"; };
 		F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache_Bundle.cpp; sourceTree = "<group>"; };
 		F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache.cpp; sourceTree = "<group>"; };
@@ -543,10 +551,14 @@
 				1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */,
 				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
 				BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */,
+				F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */,
+				F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */,
 				4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */,
 				4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */,
 				BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */,
 				BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */,
+				F660AA1215A619C8003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp */,
+				F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */,
 				52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */,
 				33DC8910141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp */,
 				33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */,
@@ -915,6 +927,8 @@
 				9B26FC6C159D061000CC3765 /* HTMLFormCollectionNamedItem.mm in Sources */,
 				9B4F8FA4159D52B1002D9F94 /* HTMLCollectionNamedItem.mm in Sources */,
 				26DF5A5E15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm in Sources */,
+				F660AA0D15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */,
+				F660AA1315A619C9003A1243 /* InjectedBundleInitializationUserDataCallbackWins.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -947,6 +961,8 @@
 				51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */,
 				76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */,
 				F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */,
+				F660AA1115A5F631003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp in Sources */,
+				F660AA1515A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

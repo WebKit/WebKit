@@ -1,5 +1,32 @@
 2012-07-06  Jessie Berlin  <jberlin@apple.com>
 
+        WKContext should ask for its injected bundle initialization user data when it needs it so the
+        client doesn't have to keep it up to date.
+        https://bugs.webkit.org/show_bug.cgi?id=90627
+
+        Reviewed by Anders Carlsson.
+
+        Add a getInjectedBundleInitializationUserData callback to WKContextInjectedBundleClient.
+
+        * Shared/APIClientTraits.cpp:
+        Allow the WKContextInjectedBundleClient API to be versioned.
+        * Shared/APIClientTraits.h:
+
+        * UIProcess/API/C/WKContext.h:
+        Add the callback and bump the version of WKContextInjectedBundleClient.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        Prefer any user data returned when the callback is invoked over that set with
+        WKContextSetInitializationUserDataForInjectedBundle.
+
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        (WebKit::WebContextInjectedBundleClient::getInjectedBundleInitializationUserData):
+        Invoke the callback if the client has registered for it.
+        * UIProcess/WebContextInjectedBundleClient.h:
+
+2012-07-06  Jessie Berlin  <jberlin@apple.com>
+
         WebContext::injectedBundleInitializationUserData() is unused, should be removed
         https://bugs.webkit.org/show_bug.cgi?id=90486
 

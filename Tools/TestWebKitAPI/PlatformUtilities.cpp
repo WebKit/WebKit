@@ -40,20 +40,25 @@ WKContextRef createContextWithInjectedBundle()
     return context;
 }
 
-WKContextRef createContextForInjectedBundleTest(const std::string& testName, WKTypeRef userData)
+WKDictionaryRef createInitializationDictionaryForInjectedBundleTest(const std::string& testName, WKTypeRef userData)
 {
-    WKRetainPtr<WKStringRef> injectedBundlePath(AdoptWK, createInjectedBundlePath());
-    WKContextRef context = WKContextCreateWithInjectedBundlePath(injectedBundlePath.get());
+    WKMutableDictionaryRef initializationDictionary = WKMutableDictionaryCreate();
 
-    WKRetainPtr<WKMutableDictionaryRef> initializationDictionary(AdoptWK, WKMutableDictionaryCreate());
-    
     WKRetainPtr<WKStringRef> testNameKey(AdoptWK, WKStringCreateWithUTF8CString("TestName"));
     WKRetainPtr<WKStringRef> testNameString(AdoptWK, WKStringCreateWithUTF8CString(testName.c_str()));
-    WKDictionaryAddItem(initializationDictionary.get(), testNameKey.get(), testNameString.get());
+    WKDictionaryAddItem(initializationDictionary, testNameKey.get(), testNameString.get());
 
     WKRetainPtr<WKStringRef> userDataKey(AdoptWK, WKStringCreateWithUTF8CString("UserData"));
-    WKDictionaryAddItem(initializationDictionary.get(), userDataKey.get(), userData);
+    WKDictionaryAddItem(initializationDictionary, userDataKey.get(), userData);
 
+    return initializationDictionary;
+}
+
+WKContextRef createContextForInjectedBundleTest(const std::string& testName, WKTypeRef userData)
+{
+    WKContextRef context = createContextWithInjectedBundle();
+
+    WKRetainPtr<WKDictionaryRef> initializationDictionary(AdoptWK, createInitializationDictionaryForInjectedBundleTest(testName, userData));
     WKContextSetInitializationUserDataForInjectedBundle(context, initializationDictionary.get());
 
     return context;
