@@ -87,6 +87,21 @@ void EditorClientImpl::pageDestroyed()
     // Our lifetime is bound to the WebViewImpl.
 }
 
+void EditorClientImpl::frameWillDetachPage(WebCore::Frame* frame)
+{
+    HashSet<WebTextCheckingCompletionImpl*> validRequests;
+
+    for (HashSet<WebTextCheckingCompletionImpl*>::iterator i = m_pendingTextChecks.begin();
+         i != m_pendingTextChecks.end(); ++i) {
+        if (frame->editor()->spellChecker() == (*i)->spellChecker())
+            (*i)->invalidate();
+        else
+            validRequests.add(*i);
+    }
+
+    m_pendingTextChecks.swap(validRequests);
+}
+
 bool EditorClientImpl::shouldShowDeleteInterface(HTMLElement* elem)
 {
     // Normally, we don't care to show WebCore's deletion UI, so we only enable
@@ -733,8 +748,12 @@ void EditorClientImpl::checkSpellingOfString(const UChar* text, int length,
 
 void EditorClientImpl::requestCheckingOfString(SpellChecker* sender, int identifier, TextCheckingTypeMask, const String& text)
 {
-    if (m_webView->spellCheckClient())
-        m_webView->spellCheckClient()->requestCheckingOfText(text, new WebTextCheckingCompletionImpl(identifier, sender));
+    if (!m_webView->spellCheckClient())
+        return;
+
+    WebTextCheckingCompletionImpl* completion = new WebTextCheckingCompletionImpl(identifier, sender);
+    m_pendingTextChecks.add(completion);
+    m_webView->spellCheckClient()->requestCheckingOfText(text, completion);
 }
 
 String EditorClientImpl::getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord)
