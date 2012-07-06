@@ -1,5 +1,15 @@
 2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
+        [Qt] Let qt_module_config create the forwarding module pri file
+
+        https://bugs.webkit.org/show_bug.cgi?id=90461
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/sync.profile:
+
+2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
         [Qt] Don't let qt_webkit.pri proclaim its own location
 
         This won't work any more with recent Qt5 versions, as the forwarding
