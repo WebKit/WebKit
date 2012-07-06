@@ -1,3 +1,22 @@
+2012-05-10  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to floats not removed from first-letter element.
+        https://bugs.webkit.org/show_bug.cgi?id=86019
+
+        Reviewed by Julien Chaffraix.
+
+        Move clearing logic of a floating/positioned object from removeChild
+        to removeChildNode. There are lot of places which use removeChildNode
+        directly and hence the object is not removed from the floating or
+        positioned objects list.
+
+        Test: fast/block/float/float-not-removed-from-first-letter.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeChild):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+
 2012-05-12  Abhishek Arya  <inferno@chromium.org>
 
         Crash in HTMLSelectElement::setOption
