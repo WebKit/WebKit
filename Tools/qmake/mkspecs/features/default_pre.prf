@@ -44,10 +44,7 @@ QTDIR=no-developer-build-please
 load(default_pre)
 QTDIR=$$old_qtdir
 
-# Load results of config tests (only supported in Qt 5)
-haveQt(5): include($${ROOT_BUILD_DIR}/Tools/qmake/.qmake.cache, , true)
-
-unix:contains(config_test_gccdepends, yes) {
+unix:config_gccdepends {
     # We have a compiler that supports the -MD option (and neither
     # teambuilder nor icecream is messing up the .d file output).
     CONFIG += GNUmake gcc_MD_depends

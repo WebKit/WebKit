@@ -235,19 +235,19 @@ contains(DEFINES, WTF_USE_TEXTURE_MAPPER_GL=1)|contains(DEFINES, ENABLE_WEBGL=1)
 
 haveQt(5) {
     # Qt5 allows us to use config tests to check for the presence of these libraries
-    contains(config_test_libjpeg, yes) {
+    config_libjpeg {
         DEFINES += WTF_USE_LIBJPEG=1
         LIBS += -ljpeg
     } else {
         warning("JPEG library not found! QImageDecoder will decode JPEG images.")
     }
-    contains(config_test_libpng, yes) {
+    config_libpng {
         DEFINES += WTF_USE_LIBPNG=1
         LIBS += -lpng
     } else {
         warning("PNG library not found! QImageDecoder will decode PNG images.")
     }
-    contains(config_test_libwebp, yes) {
+    config_libwebp {
         DEFINES += WTF_USE_WEBP=1
         LIBS += -lwebp
     }

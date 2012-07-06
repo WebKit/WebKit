@@ -35,8 +35,7 @@ OTHER_FILES = \
     $$files(Scripts/webkitpy/*.py, true) \
     $$files(Scripts/webkitperl/*.p[l|m], true) \
     qmake/README \
-    qmake/configure.pro \
-    qmake/sync.profile \
+    qmake/configure.* \
     qmake/qt_webkit.pri \
     qmake/config.tests/README \
     qmake/config.tests/fontconfig/* \

@@ -1,3 +1,21 @@
+2012-07-06  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Switch to new-style Qt 5 configure tests
+
+        Use explicit project file action instead of syncqt magic.
+
+        https://bugs.webkit.org/show_bug.cgi?id=90461
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+        * qmake/configure.pri: Copied from Tools/qmake/configure.pro.
+        * qmake/configure.pro:
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/sync.profile: Removed.
+
 2012-07-05  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         Add Jason Liu to committers.py.

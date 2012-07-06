@@ -2373,10 +2373,6 @@ sub buildQMakeProjects
             File::Path::rmtree($dir);
             File::Path::mkpath($dir);
             chdir $dir or die "Failed to cd into " . $dir . "\n";
-
-            # After removing WebKitBuild directory, we have to call qtFeatureDefaults()
-            # to run config tests and generate the removed Tools/qmake/.qmake.cache again.
-            qtFeatureDefaults(\@buildArgs, \$qconfigs);
         #}
 
         # Still trigger an incremental build

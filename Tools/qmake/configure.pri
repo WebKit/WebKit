@@ -5,14 +5,21 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
-# Will compute features based on command line arguments, config tests,
-# dependency availability, and defaults.
-include(configure.pri)
+haveQt(5) {
+    load(configure)
+    QMAKE_CONFIG_TESTS_DIR = $$PWD/config.tests
 
-# Compute delta
-CONFIG -= $$BASE_CONFIG
-DEFINES -= $$BASE_DEFINES
+    CONFIG_TESTS = \
+        fontconfig \
+        gccdepends \
+        libpng \
+        libjpeg \
+        libwebp \
+        libxml2 \
+        libxslt \
+        libzlib
 
-message(CONFIG: $$CONFIG)
-message(DEFINES: $$DEFINES)
-error("Done computing defaults")
+    for(test, CONFIG_TESTS): qtCompileTest($$test)
+}
+
+load(features)
