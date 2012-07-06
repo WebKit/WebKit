@@ -360,7 +360,7 @@ void QRawWebView::paint(const QMatrix4x4& transform, float opacity, unsigned pai
 
     WebCore::FloatRect rect(0, 0, d->m_size.width(), d->m_size.height());
 
-    renderer->paintToCurrentGLContext(transform, opacity, rect, paintFlags);
+    renderer->paintToCurrentGLContext(transform, opacity, transform.mapRect(rect), paintFlags);
 }
 
 void QRawWebView::sendKeyEvent(QKeyEvent* event)

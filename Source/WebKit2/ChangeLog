@@ -1,3 +1,15 @@
+2012-07-05  Luiz Agostini  <luiz.agostini@nokia.com>
+
+        [Qt] Transform should be applied to the clip rect in QRawWebView::paint
+        https://bugs.webkit.org/show_bug.cgi?id=90652
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Applying the transformation matrix to the clip rect in QRawWebView::paint.
+
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebView::paint):
+
 2012-07-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][EFL] Ewk_View should provide API to set/get device pixel ratio
