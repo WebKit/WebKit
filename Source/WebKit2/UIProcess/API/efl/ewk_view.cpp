@@ -732,6 +732,50 @@ void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Web_Error* error)
     evas_object_smart_callback_call(ewkView, "load,error", const_cast<Ewk_Web_Error*>(error));
 }
 
+/**
+ * @internal
+ * Reports load finished.
+ *
+ * Emits signal: "load,finished".
+ */
+void ewk_view_load_finished(Evas_Object* ewkView)
+{
+    evas_object_smart_callback_call(ewkView, "load,finished", 0);
+}
+
+/**
+ * @internal
+ * Reports view provisional load failed with error information.
+ *
+ * Emits signal: "load,provisional,failed" with pointer to Ewk_Web_Error.
+ */
+void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Web_Error* error)
+{
+    evas_object_smart_callback_call(ewkView, "load,provisional,failed", const_cast<Ewk_Web_Error*>(error));
+}
+
+/**
+ * @internal
+ * Reports view received redirect for provisional load.
+ *
+ * Emits signal: "load,provisional,redirect".
+ */
+void ewk_view_load_provisional_redirect(Evas_Object* ewkView)
+{
+    evas_object_smart_callback_call(ewkView, "load,provisional,redirect", 0);
+}
+
+/**
+ * @internal
+ * Reports view provisional load started.
+ *
+ * Emits signal: "load,provisional,started".
+ */
+void ewk_view_load_provisional_started(Evas_Object* ewkView)
+{
+    evas_object_smart_callback_call(ewkView, "load,provisional,started", 0);
+}
+
 Eina_Bool ewk_view_html_string_load(Evas_Object* ewkView, const char* html, const char* baseUrl, const char* unreachableUrl)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);

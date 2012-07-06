@@ -29,7 +29,11 @@
  * - "intent,request,new", Ewk_Intent_Request*: reports new Web intent request.
  * - "intent,service,register", Ewk_Intent_Service*: reports new Web intent service registration.
  * - "load,error", const Ewk_Web_Error*: reports main frame load failed.
+ * - "load,finished", void: reports load finished.
  * - "load,progress", double*: load progress has changed (value from 0.0 to 1.0).
+ * - "load,provisional,failed", const Ewk_Web_Error*: view provisional load failed.
+ * - "load,provisional,redirect", void: view received redirect for provisional load.
+ * - "load,provisional,started", void: view started provisional load.
  * - "resource,request,new", const Ewk_Web_Resource_Request*: a resource request was initiated.
  * - "title,changed", const char*: title of the main frame was changed.
  */

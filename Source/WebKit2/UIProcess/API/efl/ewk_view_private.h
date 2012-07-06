@@ -43,7 +43,11 @@ typedef struct _Ewk_Intent_Service Ewk_Intent_Service;
 void ewk_view_display(Evas_Object* ewkView, const WebCore::IntRect& rect);
 void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCore::IntSize& size);
 void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Web_Error* error);
+void ewk_view_load_finished(Evas_Object* ewkView);
 void ewk_view_load_progress_changed(Evas_Object* ewkView, double progress);
+void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Web_Error* error);
+void ewk_view_load_provisional_redirect(Evas_Object* ewkView);
+void ewk_view_load_provisional_started(Evas_Object* ewkView);
 void ewk_view_title_changed(Evas_Object* ewkView, const char* title);
 void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Web_Resource* resource, Ewk_Url_Request* request);
 

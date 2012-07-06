@@ -1,3 +1,30 @@
+2012-07-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][EFL] Ewk_View needs to report load status changes
+        https://bugs.webkit.org/show_bug.cgi?id=90566
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add new "load,finished", "load,provisional,failed",
+        "load,provisional,redirect" and "load,provisional,started"
+        signals on the Ewk_View to notify the client of different
+        load state changes.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_load_finished):
+        (ewk_view_load_provisional_failed):
+        (ewk_view_load_provisional_redirect):
+        (ewk_view_load_provisional_started):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didFinishLoadForFrame):
+        (didFailLoadWithErrorForFrame):
+        (didStartProvisionalLoadForFrame):
+        (didReceiveServerRedirectForProvisionalLoadForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        (ewk_view_loader_client_attach):
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-07-05  Luiz Agostini  <luiz.agostini@nokia.com>
 
         [Qt] Transform should be applied to the clip rect in QRawWebView::paint
