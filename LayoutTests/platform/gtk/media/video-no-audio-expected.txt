@@ -12,10 +12,10 @@ layer at (8,42) size 352x288
   RenderVideo {VIDEO} at (0,0) size 352x288
 layer at (8,42) size 352x288
   RenderBlock (relative positioned) {DIV} at (0,0) size 352x288
-layer at (8,42) size 352x288 scrollHeight 298
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 352x288
-    RenderButton {INPUT} at (0,268) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,268) size 252x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+layer at (8,310) size 352x20 scrollHeight 30
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,268) size 352x20
+    RenderButton {INPUT} at (0,0) size 20x20
+    RenderDeprecatedFlexibleBox {DIV} at (20,0) size 252x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 64x30
         RenderDeprecatedFlexibleBox {DIV} at (0,0) size 64x30
           RenderBlock (anonymous) at (5,5) size 54x20
@@ -25,9 +25,9 @@ layer at (8,42) size 352x288 scrollHeight 298
         RenderDeprecatedFlexibleBox {DIV} at (2,0) size 182x20
           RenderBlock {DIV} at (0,4) size 170x12
           RenderBlock {DIV} at (170,4) size 12x12
-    RenderButton {INPUT} at (272,268) size 20x20
-    RenderButton {INPUT} at (292,268) size 20x20
-    RenderButton {INPUT} at (312,268) size 20x20
-    RenderButton {INPUT} at (332,268) size 20x20
+    RenderButton {INPUT} at (272,0) size 20x20
+    RenderButton {INPUT} at (292,0) size 20x20
+    RenderButton {INPUT} at (312,0) size 20x20
+    RenderButton {INPUT} at (332,0) size 20x20
 layer at (95,314) size 12x12
   RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
