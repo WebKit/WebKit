@@ -119,6 +119,9 @@ void PopupMenuMac::populate()
             [m_popup.get() addItemWithTitle:@""];
             NSMenuItem *menuItem = [m_popup.get() lastItem];
             [menuItem setAttributedTitle:string];
+            // We set the title as well as the attributed title here. The attributed title will be displayed in the menu,
+            // but typeahead will use the non-attributed string that doesn't contain any leading or trailing whitespace.
+            [menuItem setTitle:[[string string] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
             [menuItem setEnabled:client()->itemIsEnabled(i)];
             [menuItem setToolTip:client()->itemToolTip(i)];
             [string release];

@@ -1,3 +1,16 @@
+2012-07-05  Anders Carlsson  <andersca@apple.com>
+
+        Type-ahead doesn't work in options inside optgroups
+        https://bugs.webkit.org/show_bug.cgi?id=90647
+        <rdar://problem/5604894>
+
+        Reviewed by Dan Bernstein.
+
+        Set the title of the menu item to a string that doesn't contain any leading or trailing whitespace.
+
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::populate):
+
 2012-07-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add C API for Battery Status API
