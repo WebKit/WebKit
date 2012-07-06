@@ -1,3 +1,9 @@
+2012-07-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new failing tests.
+
+        * platform/qt-5.0-wk1/Skipped:
+
 2012-07-06  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, clean up the TestExpectations file, removing
