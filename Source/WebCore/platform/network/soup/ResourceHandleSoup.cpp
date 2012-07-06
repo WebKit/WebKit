@@ -353,6 +353,11 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer dat
         return;
     }
 
+    if (d->m_defersLoading) {
+        d->m_deferredResult = res;
+        return;
+    }
+
     GOwnPtr<GError> error;
     GInputStream* in = soup_request_send_finish(d->m_soupRequest.get(), res, &error.outPtr());
     if (error) {
@@ -370,9 +375,6 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer dat
             d->m_response.setSniffedContentType(sniffedType);
         }
         d->m_response.updateFromSoupMessage(soupMessage);
-
-        if (d->m_defersLoading)
-            soup_session_pause_message(d->soupSession(), soupMessage);
     } else {
         d->m_response.setURL(handle->firstRequest().url());
         const gchar* contentType = soup_request_get_content_type(d->m_soupRequest.get());
@@ -648,7 +650,11 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 
     if (d->m_deferredResult) {
         GRefPtr<GAsyncResult> asyncResult = adoptGRef(d->m_deferredResult.leakRef());
-        readCallback(G_OBJECT(d->m_inputStream.get()), asyncResult.get(), this);
+
+        if (d->m_inputStream)
+            readCallback(G_OBJECT(d->m_inputStream.get()), asyncResult.get(), this);
+        else
+            sendRequestCallback(G_OBJECT(d->m_soupRequest.get()), asyncResult.get(), this);
     }
 }
 
