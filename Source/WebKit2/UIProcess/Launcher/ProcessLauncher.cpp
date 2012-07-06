@@ -33,7 +33,9 @@ namespace WebKit {
 
 static WorkQueue& processLauncherWorkQueue()
 {
-    DEFINE_STATIC_LOCAL(WorkQueue, processLauncherWorkQueue, ("com.apple.WebKit.ProcessLauncher"));
+    // Give in to VisualStudio and its 31 character thread name limit and shorten the thread name to ProcLauncher instead of class name.
+    // See createThread() in Threading.cpp.
+    DEFINE_STATIC_LOCAL(WorkQueue, processLauncherWorkQueue, ("com.apple.WebKit.ProcLauncher"));
     return processLauncherWorkQueue;
 }
 
