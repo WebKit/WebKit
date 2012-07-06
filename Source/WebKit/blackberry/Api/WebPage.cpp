@@ -157,6 +157,7 @@
 #include <BlackBerryPlatformSettings.h>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSStringRef.h>
 #include <SharedPointer.h>
 #include <sys/keycodes.h>
 #include <unicode/ustring.h> // platform ICU
@@ -847,6 +848,93 @@ bool WebPage::executeJavaScriptInIsolatedWorld(const char* script, JavaScriptDat
 {
     ScriptSourceCode sourceCode(String::fromUTF8(script), KURL());
     return d->executeJavaScriptInIsolatedWorld(sourceCode, returnType, returnValue);
+}
+
+bool WebPage::executeJavaScriptFunction(const std::vector<std::string> &function, const std::vector<std::string> &args, JavaScriptDataType& returnType, WebString& returnValue)
+{
+    if (!d->m_mainFrame)
+        return false;
+    JSC::Bindings::RootObject* root = d->m_mainFrame->script()->bindingRootObject();
+    if (!root)
+        return false;
+    JSC::ExecState* exec = root->globalObject()->globalExec();
+    JSGlobalContextRef ctx = toGlobalRef(exec);
+
+    WTF::Vector<JSStringRef> argList(args.size());
+    WTF::Vector<JSValueRef> argListRef(args.size());
+    for (unsigned i = 0; i < args.size(); ++i) {
+        JSStringRef str = JSStringCreateWithUTF8CString(args[i].c_str());
+        argList[i] = str;
+        JSValueRef strRef = JSValueMakeString(ctx, str);
+        argListRef[i] = strRef;
+    }
+
+    JSValueRef windowObjectValue = windowObject();
+    JSObjectRef obj = JSValueToObject(ctx, windowObjectValue, 0);
+    JSObjectRef thisObject = obj;
+    for (unsigned i = 0; i < function.size(); ++i) {
+        JSStringRef str = JSStringCreateWithUTF8CString(function[i].c_str());
+        thisObject = obj;
+        obj = JSValueToObject(ctx, JSObjectGetProperty(ctx, obj, str, 0), 0);
+        JSStringRelease(str);
+        if (!obj)
+            break;
+    }
+
+    JSObjectRef functionObject = obj;
+    JSValueRef result = 0;
+    JSValueRef exception;
+    if (functionObject && thisObject)
+        result = JSObjectCallAsFunction(ctx, functionObject, thisObject, args.size(), argListRef.data(), &exception);
+
+    for (unsigned i = 0; i < args.size(); ++i)
+        JSStringRelease(argList[i]);
+
+    JSC::JSValue value = toJS(exec, result);
+
+    if (!value) {
+        returnType = JSException;
+        JSStringRef stringRef = JSValueToStringCopy(ctx, exception, 0);
+        size_t bufferSize = JSStringGetMaximumUTF8CStringSize(stringRef);
+        WTF::Vector<char> buffer(bufferSize);
+        JSStringGetUTF8CString(stringRef, buffer.data(), bufferSize);
+        returnValue = WebString::fromUtf8(buffer.data());
+        return false;
+    }
+
+    JSType type = JSValueGetType(ctx, result);
+
+    switch (type) {
+    case kJSTypeNull:
+        returnType = JSNull;
+        break;
+    case kJSTypeBoolean:
+        returnType = JSBoolean;
+        break;
+    case kJSTypeNumber:
+        returnType = JSNumber;
+        break;
+    case kJSTypeString:
+        returnType = JSString;
+        break;
+    case kJSTypeObject:
+        returnType = JSObject;
+        break;
+    case kJSTypeUndefined:
+    default:
+        returnType = JSUndefined;
+        break;
+    }
+
+    if (returnType == JSBoolean || returnType == JSNumber || returnType == JSString || returnType == JSObject) {
+        JSStringRef stringRef = JSValueToStringCopy(ctx, result, 0);
+        size_t bufferSize = JSStringGetMaximumUTF8CStringSize(stringRef);
+        WTF::Vector<char> buffer(bufferSize);
+        JSStringGetUTF8CString(stringRef, buffer.data(), bufferSize);
+        returnValue = WebString::fromUtf8(buffer.data());
+    }
+
+    return true;
 }
 
 void WebPagePrivate::stopCurrentLoad()

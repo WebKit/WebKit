@@ -1,3 +1,29 @@
+2012-07-06  Benjamin C Meyer  <bmeyer@rim.com>
+
+        Add an API to explicitly call a JavaScript function with args.
+        https://bugs.webkit.org/show_bug.cgi?id=90694
+
+        Currently the Blackberry port doesn't expose the JavaScript
+        engine to 3rd parties so they rely upon executeJavaScript
+        which can be slower than necessary and unsafe as eval is used.
+        This new API provides a way to explicitly call a specific
+        JavaScript function with a list of args preventing the case
+        where an argument comes from a untrusted source and tries to
+        escape the arg list to take control of the JavaScript engine.
+
+        In the future if the Blackberry port introduces a formal
+        way to interact with the JavaScript engine this function should
+        be removed.
+
+        PR 149294
+
+        Reviewed by Unreviewed
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::executeJavaScriptFunction):
+        (WebKit):
+        * Api/WebPage.h:
+
 2012-07-05  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Fix the build error introduced by enabling CUSTOM_THEME_HANDLER

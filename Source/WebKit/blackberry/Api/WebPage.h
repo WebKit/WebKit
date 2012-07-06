@@ -27,6 +27,8 @@
 #include <BlackBerryPlatformWebContext.h>
 #include <imf/input_data.h>
 #include <network/NetworkRequest.h>
+#include <string>
+#include <vector>
 
 struct OpaqueJSContext;
 typedef const struct OpaqueJSContext* JSContextRef;
@@ -102,6 +104,8 @@ public:
 
     // Takes a UTF16 encoded script that is used explicitly by the pattern matching code
     bool executeJavaScriptInIsolatedWorld(const std::wstring& script, JavaScriptDataType& returnType, WebString& returnValue);
+
+    bool executeJavaScriptFunction(const std::vector<std::string> &script, const std::vector<std::string> &args, JavaScriptDataType& returnType, WebString& returnValue);
 
     void initializeIconDataBase();
 
