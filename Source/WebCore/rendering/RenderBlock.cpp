@@ -5836,6 +5836,9 @@ void RenderBlock::updateFirstLetter()
                 remainingText->setFirstLetter(newFirstLetter);
                 toRenderBoxModelObject(newFirstLetter)->setFirstLetterRemainingText(remainingText);
             }
+            // To prevent removal of single anonymous block in RenderBlock::removeChild and causing
+            // |nextSibling| to go stale, we remove the old first letter using removeChildNode first.
+            firstLetterContainer->virtualChildren()->removeChildNode(firstLetterContainer, firstLetter);
             firstLetter->destroy();
             firstLetter = newFirstLetter;
             firstLetterContainer->addChild(firstLetter, nextSibling);
