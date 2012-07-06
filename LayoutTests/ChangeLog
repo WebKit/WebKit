@@ -1,5 +1,14 @@
 2012-07-06  Filip Pizlo  <fpizlo@apple.com>
 
+        fast/canvas/webgl/gl-vertexattribpointer.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=90711
+
+        Unreviewed, skip crashing test.
+
+        * platform/mac/Skipped:
+
+2012-07-06  Filip Pizlo  <fpizlo@apple.com>
+
         plugins/npruntime/leak-window-scriptable-object.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=90710
 
