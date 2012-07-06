@@ -1710,6 +1710,9 @@ BUGWKGTK : editing/spelling/spelling-marker-description.html = FAIL
 BUGWK69933 : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = PASS TEXT
 BUGWK69933 : fast/borders/inline-mask-overlay-image-outset.html = PASS TEXT
 
+BUGWK85376 : fullscreen/video-controls-drag.html = FAIL
+
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
