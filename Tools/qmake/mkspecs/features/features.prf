@@ -212,14 +212,3 @@ for(define, DEFINES) {
     # Is there a later define that overrides this one?
     contains(DEFINES, $$opposite): DEFINES -= $$define
 }
-
-# ---------------------- The end ----------------------
-
-# Used to compute defaults for the build-webkit script
-# Don't place anything after this!
-CONFIG(compute_defaults) {
-    # FIXME: We should have configure.pro do this when the config tests
-    # can be selectivly run.
-    message(DEFINES: $$DEFINES)
-    error("Done computing defaults")
-}

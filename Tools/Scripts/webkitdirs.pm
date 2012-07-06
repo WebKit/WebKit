@@ -822,7 +822,7 @@ sub qtFeatureDefaults
 
     my $originalCwd = getcwd();
 
-    my $file;
+    my $file = File::Spec->catfile($qmakepath, "configure.pro");
     my @buildArgs;
     my $qconfigs;
 
@@ -832,12 +832,9 @@ sub qtFeatureDefaults
         my $dir = File::Spec->catfile(productDir(), "Tools", "qmake");
         File::Path::mkpath($dir);
         chdir $dir or die "Failed to cd into " . $dir . "\n";
-        $file = File::Spec->catfile($qmakepath, "configure.pro");
     } else {
         # Do a quick check of the features without running the config tests
-        # FIXME: When Qt supports it, go through configure.pro but without config tests
-        $file = File::Spec->catfile($qmakepath, "mkspecs", "features", "features.prf");
-        push @buildArgs, "CONFIG+=compute_defaults";
+        push @buildArgs, "CONFIG+=quick_check";
     }
 
     my @defaults = `$qmakecommand @buildArgs -nocache $file 2>&1`;
