@@ -23,9 +23,9 @@
 
 #include "QtViewportHandler.h"
 #include "qquickwebview_p_p.h"
-#include "qwindowsysteminterface_qpa.h"
 #include <QMutableListIterator>
 #include <QTouchEvent>
+#include <qpa/qwindowsysteminterface.h>
 
 using namespace WebKit;
 

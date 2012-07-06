@@ -36,7 +36,7 @@
 #include <QGuiApplication>
 #include <QTouchEvent>
 #include <QUrl>
-#include "qwindowsysteminterface_qpa.h"
+#include <qpa/qwindowsysteminterface.h>
 
 class BrowserWindow;
 

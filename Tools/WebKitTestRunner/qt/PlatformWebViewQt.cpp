@@ -34,7 +34,7 @@
 #include <QEventLoop>
 #include <QQmlProperty>
 #include <QtQuick/QQuickView>
-#include <qwindowsysteminterface_qpa.h>
+#include <qpa/qwindowsysteminterface.h>
 
 namespace WTR {
 

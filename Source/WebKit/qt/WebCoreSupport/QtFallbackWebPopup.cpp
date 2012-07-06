@@ -28,7 +28,7 @@
 #include "QWebPageClient.h"
 #include "qgraphicswebview.h"
 #include <QGraphicsProxyWidget>
-#include <QStandardItemModel>
+#include <QtGui/QStandardItemModel>
 
 namespace WebCore {
 
