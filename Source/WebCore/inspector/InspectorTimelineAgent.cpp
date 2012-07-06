@@ -195,12 +195,13 @@ void InspectorTimelineAgent::supportsFrameInstrumentation(ErrorString*, bool* re
 
 void InspectorTimelineAgent::didBeginFrame()
 {
-    pushCancelableRecord(InspectorObject::create(), TimelineRecordType::BeginFrame, 0);
+    m_pendingFrameRecord = TimelineRecordFactory::createGenericRecord(timestamp(), 0);
 }
 
 void InspectorTimelineAgent::didCancelFrame()
 {
-    cancelRecord(TimelineRecordType::BeginFrame);
+    ASSERT(m_pendingFrameRecord);
+    m_pendingFrameRecord.clear();
 }
 
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine, Frame* frame)
@@ -438,7 +439,7 @@ void InspectorTimelineAgent::didProcessTask()
 
 void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> record, const String& type, const String& frameId)
 {
-    commitCancelableRecords();
+    commitFrameRecord();
     innerAddRecordToTimeline(record, type, frameId);
 }
 
@@ -526,7 +527,7 @@ void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, cons
 void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame, bool hasOrphanDetails)
 {
     pushGCEventRecords();
-    commitCancelableRecords();
+    commitFrameRecord();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     String frameId;
     if (frame && m_pageAgent)
@@ -538,44 +539,17 @@ void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data,
     }
 }
 
-void InspectorTimelineAgent::pushCancelableRecord(PassRefPtr<InspectorObject> data, const String& type, Frame* frame)
+void InspectorTimelineAgent::commitFrameRecord()
 {
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), 0);
-    String frameId;
-    if (frame && m_pageAgent)
-        frameId = m_pageAgent->frameId(frame);
-    m_recordStack.append(TimelineRecordEntry(record.release(), data, 0, type, frameId, true));
-}
-
-void InspectorTimelineAgent::commitCancelableRecords()
-{
-    Vector<TimelineRecordEntry> cancelableRecords;
-    while (!m_recordStack.isEmpty()) {
-        TimelineRecordEntry entry = m_recordStack.last();
-        if (!m_recordStack.last().cancelable)
-            break;
-        m_recordStack.removeLast();
-        cancelableRecords.append(entry);
-    }
-    while (!cancelableRecords.isEmpty()) {
-        TimelineRecordEntry entry = cancelableRecords.last();
-        cancelableRecords.removeLast();
-        entry.record->setObject("data", entry.data);
-        innerAddRecordToTimeline(entry.record.release(), entry.type, entry.frameId);
-    }
-}
-
-void InspectorTimelineAgent::cancelRecord(const String& type)
-{
-    if (m_recordStack.isEmpty())
+    if (!m_pendingFrameRecord)
         return;
-    TimelineRecordEntry entry = m_recordStack.last();
-    if (entry.cancelable && entry.type == type)
-        m_recordStack.removeLast();
+    
+    innerAddRecordToTimeline(m_pendingFrameRecord.release(), TimelineRecordType::BeginFrame, "");
 }
 
 void InspectorTimelineAgent::clearRecordStack()
 {
+    m_pendingFrameRecord.clear();
     m_recordStack.clear();
     m_id++;
 }

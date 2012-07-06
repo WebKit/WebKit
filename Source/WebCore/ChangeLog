@@ -1,3 +1,25 @@
+2012-07-06  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: get rid of cancellable records in Timeline, manage frame records explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=90684
+
+        Reviewed by Pavel Feldman.
+
+        - drop handling of "cancelable" records;
+        - keep frame record until other records come (or frame is canceled)
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didBeginFrame):
+        (WebCore::InspectorTimelineAgent::didCancelFrame):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        (WebCore::InspectorTimelineAgent::commitFrameRecord):
+        (WebCore::InspectorTimelineAgent::clearRecordStack):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+        (TimelineRecordEntry):
+        (InspectorTimelineAgent):
+
 2012-07-06  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Add native memory used by GlyphCache to the snapshot
