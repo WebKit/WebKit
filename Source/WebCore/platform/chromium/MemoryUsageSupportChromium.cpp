@@ -32,6 +32,7 @@
 #include "MemoryUsageSupport.h"
 
 #include <public/Platform.h>
+#include <third_party/skia/src/core/SkGlyphCache.h>
 
 namespace WebCore {
 
@@ -63,6 +64,20 @@ int MemoryUsageSupport::highUsageDeltaMB()
 bool MemoryUsageSupport::processMemorySizesInBytes(size_t* privateBytes, size_t* sharedBytes)
 {
     return WebKit::Platform::current()->processMemorySizesInBytes(privateBytes, sharedBytes);
+}
+
+static bool glyphCacheVisitor(SkGlyphCache* cache, void* context)
+{
+    size_t* sizePtr = reinterpret_cast<size_t*>(context);
+    *sizePtr += sizeof(*cache);
+    return false;
+}
+
+void MemoryUsageSupport::memoryUsageByComponents(Vector<ComponentInfo>& components)
+{
+    size_t size = 0;
+    SkGlyphCache::VisitAllCaches(glyphCacheVisitor, &size);
+    components.append(ComponentInfo("GlyphCache", size));
 }
 
 } // namespace WebCore

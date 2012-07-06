@@ -224,6 +224,7 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     addBlock("hsl( 90, 50%,  80%)", "JSExternalStrings", "JavaScript external strings");
     addBlock("hsl(210, 60%,  80%)", "InspectorData", "Inspector data");
     addBlock("hsl( 30, 60%,  80%)", "MemoryCache", "Memory cache resources");
+    addBlock("hsl( 40, 60%,  80%)", "GlyphCache", "Glyph cache resources");
     addBlock("hsl( 60, 60%,  80%)", "RenderTreeAllocated", "Render tree");
     addBlock("hsl( 60, 60%,  80%)", "RenderTreeUsed", "Render tree used");
 }
