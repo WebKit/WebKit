@@ -1,3 +1,12 @@
+2012-07-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Reproducible crash in inspector/timeline/timeline-frames.html
+        https://bugs.webkit.org/show_bug.cgi?id=90706
+
+        Unreviewed, skip crashng test.
+
+        * platform/mac/Skipped:
+
 2012-07-06  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] exitFullScreenForElement() is not working for fullscreen elements in iframes
