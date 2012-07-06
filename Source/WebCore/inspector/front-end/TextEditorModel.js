@@ -109,6 +109,23 @@ WebInspector.TextRange.prototype = {
         serializedTextRange.endLine = this.endLine;
         serializedTextRange.endColumn = this.endColumn;
         return serializedTextRange;
+    },
+
+    /**
+     * @param {WebInspector.TextRange} other
+     * @return {number}
+     */
+    compareTo: function(other)
+    {
+        if (this.startLine > other.startLine)
+            return 1;
+        if (this.startLine < other.startLine)
+            return -1;
+        if (this.startColumn > other.startColumn)
+            return 1;
+        if (this.startColumn < other.startColumn)
+            return -1;
+        return 0;
     }
 }
 

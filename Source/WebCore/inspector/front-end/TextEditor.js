@@ -393,6 +393,14 @@ WebInspector.TextEditor.prototype = {
     },
 
     /**
+     * @return {WebInspector.TextRange?}
+     */
+    lastSelection: function()
+    {
+        return this._lastSelection;
+    },
+
+    /**
      * @param {WebInspector.TextRange} textRange
      */
     setSelection: function(textRange)
@@ -414,8 +422,9 @@ WebInspector.TextEditor.prototype = {
     {
         // Convert last marked range into a selection upon focus. This is needed to focus the search result.
         if (this._lastMarkedRange) {
-            this._lastSelection = this._lastMarkedRange;
-            delete this._lastMarkedRange; 
+            this.setSelection(this._lastMarkedRange);
+            delete this._lastMarkedRange;
+            return;
         }
 
         if (this._lastSelection) {

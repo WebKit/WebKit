@@ -1,3 +1,26 @@
+2012-07-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: start searching from the cursor position in the Sources panel.
+        https://bugs.webkit.org/show_bug.cgi?id=90677
+
+        Reviewed by Vsevolod Vlasov.
+
+        Web Inspector: start searching from the cursor position in the Sources panel.
+        Drive-by: select whole match upon search cancel.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.performSearch.finishedCallback):
+        (WebInspector.ScriptsPanel.prototype.performSearch):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.performSearch.doFindSearchMatches):
+        (WebInspector.SourceFrame.prototype.performSearch):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor.prototype.lastSelection):
+        (WebInspector.TextEditor.prototype._handleFocused):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextRange.prototype.serializeToObject):
+        (WebInspector.TextRange.prototype.compareTo):
+
 2012-07-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Snippets should be correctly (re)loaded when inspector is open and on navigation.
