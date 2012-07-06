@@ -1,3 +1,50 @@
+2012-05-04  Abhishek Arya  <inferno@chromium.org>
+
+        ASSERT(beforeChildAnonymousContainer->isTable()); fails in RenderBlock::addChildIgnoringAnonymousColumnBlocks.
+        https://bugs.webkit.org/show_bug.cgi?id=84606
+
+        Reviewed by Julien Chaffraix.
+
+        RenderBlock::removeChild forgot to set display on the anonymous block, causing it
+        to display as INLINE. To prevent this kind of failure in future, we replace
+        createAnonymousStyle with createAnonymousStyleWithDisplay to make everyone explictly
+        pass display as the argument.
+
+        Test: fast/block/block-add-child-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild): 
+        (WebCore::RenderBlock::createAnonymousWithParentRendererAndDisplay):
+        (WebCore::RenderBlock::createAnonymousColumnsWithParentRenderer):
+        (WebCore::RenderBlock::createAnonymousColumnSpanWithParentRenderer):
+        * rendering/RenderInline.cpp:
+        (WebCore::updateStyleOfAnonymousBlockContinuations):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::propagateStyleToAnonymousChildren):
+        * rendering/RenderRuby.cpp:
+        (WebCore::createAnonymousRubyInlineBlock):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::createRubyBase):
+        (WebCore::RenderRubyRun::staticCreateRubyRun):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::createAnonymousWithParentRenderer):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::createAnonymousWithParentRenderer):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::createAnonymousWithParentRenderer):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::createAnonymousWithParentRenderer):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::createAlmostAnonymousBlock):
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::createAnonymousWithParentRenderer):
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::addChild):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::createAnonymousStyleWithDisplay):
+        * rendering/style/RenderStyle.h:
+
 2012-05-16  Abhishek Arya  <inferno@chromium.org>
 
         Missing RenderApplet cast check in HTMLAppletElement::renderWidgetForJSBindings.

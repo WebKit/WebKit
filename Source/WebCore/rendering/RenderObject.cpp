@@ -1900,7 +1900,7 @@ void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
             continue;
 #endif
 
-        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
+        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), child->style()->display());
         if (style()->specifiesColumns()) {
             if (child->style()->specifiesColumns())
                 newStyle->inheritColumnPropertiesFrom(style());
@@ -1913,7 +1913,6 @@ void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
         if (child->isRelPositioned() && toRenderBlock(child)->isAnonymousBlockContinuation())
             newStyle->setPosition(child->style()->position());
 
-        newStyle->setDisplay(child->style()->display());
         child->setStyle(newStyle.release());
     }
 }

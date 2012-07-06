@@ -73,9 +73,7 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
     if (!childElement->previousElementSibling()) {
         // Position 1 is always the base of the msub/msup/msubsup.
         RenderMathMLBlock* wrapper = new (renderArena()) RenderMathMLBlock(node());
-        RefPtr<RenderStyle> wrapperStyle = RenderStyle::create();
-        wrapperStyle->inheritFrom(style());
-        wrapperStyle->setDisplay(INLINE_BLOCK);
+        RefPtr<RenderStyle> wrapperStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), INLINE_BLOCK);
         wrapperStyle->setVerticalAlign(BASELINE);
         wrapper->setStyle(wrapperStyle.release());
         RenderMathMLBlock::addChild(wrapper, firstChild());
@@ -84,9 +82,7 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
         // Make sure we have a script block for rendering.
         if (m_kind == SubSup && !m_scripts) {
             m_scripts = new (renderArena()) RenderMathMLBlock(node());
-            RefPtr<RenderStyle> scriptsStyle = RenderStyle::create();
-            scriptsStyle->inheritFrom(style());
-            scriptsStyle->setDisplay(INLINE_BLOCK);
+            RefPtr<RenderStyle> scriptsStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), INLINE_BLOCK);
             scriptsStyle->setVerticalAlign(TOP);
             scriptsStyle->setMarginLeft(Length(gSubsupScriptMargin, Fixed));
             scriptsStyle->setTextAlign(LEFT);
@@ -96,9 +92,7 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
     } else {
         if (m_kind == SubSup) {
             RenderBlock* script = new (renderArena()) RenderMathMLBlock(node());
-            RefPtr<RenderStyle> scriptStyle = RenderStyle::create();
-            scriptStyle->inheritFrom(m_scripts->style());
-            scriptStyle->setDisplay(BLOCK);
+            RefPtr<RenderStyle> scriptStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
             script->setStyle(scriptStyle.release());
 
             // The order is always backwards so the first script is the subscript and the superscript 

@@ -51,10 +51,7 @@ bool RenderMathMLBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
 
 PassRefPtr<RenderStyle> RenderMathMLBlock::createBlockStyle()
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(style());
-    newStyle->setDisplay(BLOCK);
-    return newStyle;
+    return RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
 }
 
 int RenderMathMLBlock::nonOperatorHeight() const
