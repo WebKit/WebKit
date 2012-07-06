@@ -1,3 +1,18 @@
+2012-05-12  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in HTMLSelectElement::setOption
+        https://bugs.webkit.org/show_bug.cgi?id=85420
+
+        Reviewed by Eric Seidel
+        
+        RefPtr before option in HTMLSelectElement::setOption since it
+        can get destroyed due to mutation events.
+
+        Test: fast/dom/HTMLSelectElement/option-add-crash.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setOption):
+
 2012-05-15  Abhishek Arya  <inferno@chromium.org>
 
         Crash in Document::nodeChildrenWillBeRemoved.
