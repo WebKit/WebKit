@@ -1,3 +1,21 @@
+2012-07-07  George Staikos  <staikos@webkit.org>
+
+        Detach animation clients properly if we clear the web page pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=90730
+
+        Reviewed by Adam Treat.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::destroyCompositor):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::WebPageCompositorPrivate):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::~WebPageCompositorPrivate):
+        (WebKit):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::detach):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setPage):
+        * Api/WebPageCompositor_p.h:
+        (WebPageCompositorPrivate):
+
 2012-07-06  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] exitFullScreenForElement() is not working for fullscreen elements in iframes

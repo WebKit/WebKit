@@ -47,12 +47,29 @@ WebPageCompositorPrivate::WebPageCompositorPrivate(WebPagePrivate* page, WebPage
     , m_webPage(page)
     , m_drawsRootLayer(false)
 {
+    ASSERT(m_webPage);
     setOneShot(true); // one-shot animation client
 }
 
 WebPageCompositorPrivate::~WebPageCompositorPrivate()
 {
-    Platform::AnimationFrameRateController::instance()->removeClient(this);
+    detach();
+}
+
+void WebPageCompositorPrivate::detach()
+{
+    if (m_webPage)
+        Platform::AnimationFrameRateController::instance()->removeClient(this);
+    m_webPage = 0;
+}
+
+void WebPageCompositorPrivate::setPage(WebPagePrivate *p)
+{
+    if (p == m_webPage)
+        return;
+    ASSERT(p);
+    ASSERT(m_webPage); // if this is null, we have a bug and we need to re-add.
+    m_webPage = p;
 }
 
 void WebPageCompositorPrivate::setContext(Platform::Graphics::GLES2Context* context)

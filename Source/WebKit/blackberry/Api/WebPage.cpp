@@ -6176,7 +6176,7 @@ void WebPagePrivate::destroyCompositor()
 {
     // m_compositor is a RefPtr, so it may live on beyond this point.
     // Disconnect the compositor from us
-    m_compositor->setPage(0);
+    m_compositor->detach();
     m_compositor.clear();
     m_ownedContext.clear();
 }

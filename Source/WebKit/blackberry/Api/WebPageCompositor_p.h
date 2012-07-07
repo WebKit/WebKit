@@ -90,7 +90,8 @@ public:
     void releaseLayerResources();
 
     WebPagePrivate* page() const { return m_webPage; }
-    void setPage(WebPagePrivate* page) { m_webPage = page; }
+    void setPage(WebPagePrivate* page);
+    void detach();
     WebPageCompositorClient* client() const { return m_client; }
     void compositorDestroyed();
 
