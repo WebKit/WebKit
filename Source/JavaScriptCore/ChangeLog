@@ -1,3 +1,16 @@
+2012-07-06  Filip Pizlo  <fpizlo@apple.com>
+
+        WebKit Version 5.1.7 (6534.57.2, r121935): Double-click no longer works on OpenStreetMap
+        https://bugs.webkit.org/show_bug.cgi?id=90703
+
+        Reviewed by Michael Saboff.
+        
+        It turns out that in my object model refactoring, I managed to fix get_by_pname in all
+        execution engines except 64-bit baseline JIT.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_pname):
+
 2012-07-06  Pravin D  <pravind.2k4@gmail.com>
 
         Build Error on Qt Linux build

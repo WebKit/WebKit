@@ -193,6 +193,7 @@ void JIT::emit_op_get_by_pname(Instruction* currentInstruction)
     load32(addressFor(i), regT3);
     sub32(TrustedImm32(1), regT3);
     addSlowCase(branch32(AboveOrEqual, regT3, Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_numCacheableSlots))));
+    add32(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_offsetBase)), regT3);
     compileGetDirectOffset(regT0, regT0, regT3, regT1);
 
     emitPutVirtualRegister(dst, regT0);

@@ -1,5 +1,22 @@
 2012-07-06  Filip Pizlo  <fpizlo@apple.com>
 
+        WebKit Version 5.1.7 (6534.57.2, r121935): Double-click no longer works on OpenStreetMap
+        https://bugs.webkit.org/show_bug.cgi?id=90703
+
+        Reviewed by Michael Saboff.
+
+        * fast/js/get-by-pname-expected.txt: Added.
+        * fast/js/get-by-pname-non-final-object-expected.txt: Added.
+        * fast/js/get-by-pname-non-final-object.html: Added.
+        * fast/js/get-by-pname.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/get-by-pname-non-final-object.js: Added.
+        (foo):
+        * fast/js/script-tests/get-by-pname.js: Added.
+        (foo):
+
+2012-07-06  Filip Pizlo  <fpizlo@apple.com>
+
         fast/canvas/webgl/gl-vertexattribpointer.html is crashing
         https://bugs.webkit.org/show_bug.cgi?id=90711
 
