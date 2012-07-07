@@ -1,3 +1,10 @@
+2012-07-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding a test expectation for
+        a crashing test introduced in r122035.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-06  Filip Pizlo  <fpizlo@apple.com>
 
         WebKit Version 5.1.7 (6534.57.2, r121935): Double-click no longer works on OpenStreetMap
