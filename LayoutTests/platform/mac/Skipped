@@ -926,3 +926,6 @@ plugins/npruntime/leak-window-scriptable-object.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=90711
 fast/canvas/webgl/gl-vertexattribpointer.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=90722
+inspector/profiler/heap-snapshot-comparison-show-next.html
