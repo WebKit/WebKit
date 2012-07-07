@@ -1,3 +1,17 @@
+2012-07-07  Nuno Lopes  <nlopes@apple.com>
+
+        Fix build with recent clang.
+        https://bugs.webkit.org/show_bug.cgi?id=90712
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp:
+        (DOMWindowExtensionBasic):
+        * TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache_Bundle.cpp:
+        (DOMWindowExtensionNoCache):
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp:
+        (TestWebKitAPI::DocumentStartUserScriptAlertCrashTest::initialize):
+
 2012-07-06  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add a configuration option for disabling unstable features in releases

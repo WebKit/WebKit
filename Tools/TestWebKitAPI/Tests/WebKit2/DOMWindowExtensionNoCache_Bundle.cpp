@@ -80,7 +80,6 @@ private:
     void sendExtensionStateMessage();
     void sendBundleMessage(const char*);
 
-    WKBundlePageGroupRef m_pageGroup;
     WKBundleRef m_bundle;
     ExtensionRecord m_extensionRecords[10];
     HashMap<WKBundleDOMWindowExtensionRef, int> m_extensionToRecordMap;

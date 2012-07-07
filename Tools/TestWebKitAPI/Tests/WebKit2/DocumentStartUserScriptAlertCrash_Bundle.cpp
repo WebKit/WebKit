@@ -48,9 +48,6 @@ public:
         WKRetainPtr<WKStringRef> source(AdoptWK, WKStringCreateWithUTF8CString("alert('an alert');"));
         WKBundleAddUserScript(bundle, pageGroup, WKBundleScriptWorldNormalWorld(), source.get(), 0, 0, 0, kWKInjectAtDocumentStart, kWKInjectInAllFrames);
     }
-
-private:
-    WKBundlePageGroupRef m_pageGroup;
 };
 
 static InjectedBundleTest::Register<DocumentStartUserScriptAlertCrashTest> registrar("DocumentStartUserScriptAlertCrashTest");
