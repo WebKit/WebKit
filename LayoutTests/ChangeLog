@@ -1,3 +1,14 @@
+2012-07-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        REGRESSION (r122035): fullscreen/exit-full-screen-iframe.html failing on GTK Linux 64-bit Release
+        https://bugs.webkit.org/show_bug.cgi?id=90719
+
+        Reviewed by Martin Robinson.
+
+        Remove the crashing test expectation for the affected test.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-07  Filip Pizlo  <fpizlo@apple.com>
 
         media/media-blocked-by-beforeload.html is flaky

@@ -945,10 +945,15 @@ void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
     element->document()->webkitDidEnterFullScreenForElement(element);
 }
 
-void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
+void ChromeClient::exitFullScreenForElement(WebCore::Element*)
 {
+    // The element passed into this function is not reliable, i.e. it could
+    // be null. In addition the parameter may be disappearing in the future.
+    // So we use the reference to the element we saved above.
+    ASSERT(m_fullScreenElement);
+
     gboolean returnValue;
-    GRefPtr<WebKitDOMHTMLElement> kitElement(adoptGRef(kit(reinterpret_cast<HTMLElement*>(element))));
+    GRefPtr<WebKitDOMHTMLElement> kitElement(adoptGRef(kit(reinterpret_cast<HTMLElement*>(m_fullScreenElement.get()))));
     g_signal_emit_by_name(m_webView, "leaving-fullscreen", kitElement.get(), &returnValue);
     if (returnValue)
         return;
@@ -957,10 +962,10 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
     ASSERT(widgetIsOnscreenToplevelWindow(window));
     g_signal_handlers_disconnect_by_func(window, reinterpret_cast<void*>(onFullscreenGtkKeyPressEvent), this);
 
-    element->document()->webkitWillExitFullScreenForElement(element);
+    m_fullScreenElement->document()->webkitWillExitFullScreenForElement(m_fullScreenElement.get());
     gtk_window_unfullscreen(GTK_WINDOW(window));
     m_adjustmentWatcher.enableAllScrollbars();
-    element->document()->webkitDidExitFullScreenForElement(element);
+    m_fullScreenElement->document()->webkitDidExitFullScreenForElement(m_fullScreenElement.get());
     m_fullScreenElement.clear();
 }
 #endif

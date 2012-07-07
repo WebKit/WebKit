@@ -1,3 +1,16 @@
+2012-07-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        REGRESSION (r122035): fullscreen/exit-full-screen-iframe.html failing on GTK Linux 64-bit Release
+        https://bugs.webkit.org/show_bug.cgi?id=90719
+
+        Reviewed by Martin Robinson.
+
+        Follow the approach of the BlackBerry port outlined in r122035, using in exitFullScreenForElement
+        the fullscreen element to which the reference was saved when enterFullScreenForElement was called.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::exitFullScreenForElement):
+
 2012-07-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Do not do any logging initialization when logging is disabled
