@@ -1789,8 +1789,7 @@ $methodInCode
     if (!protocolErrors->length()) {
         $agentField->$methodName(&error$agentCallParams);
 
-        if (!error.length()) {
-${responseCook}        }
+${responseCook}
     }
     sendResponse(callId, result, String::format("Some arguments of method '%s' can't be processed", "$domainName.$methodName"), protocolErrors, error);
 }
@@ -2803,6 +2802,9 @@ class Generator:
             js_reply_list = "[%s]" % join(backend_js_reply_param_list, ", ")
 
             response_cook_text = join(response_cook_list, "")
+
+            if len(response_cook_text) != 0:
+                response_cook_text = "        if (!error.length()) {\n" + response_cook_text + "        }"
 
         Generator.backend_method_implementation_list.append(Templates.backend_method.substitute(None,
             domainName=domain_name, methodName=json_command_name,

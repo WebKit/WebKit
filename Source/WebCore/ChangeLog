@@ -1,3 +1,18 @@
+2012-07-08  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py should not generate statements with no effect
+        https://bugs.webkit.org/show_bug.cgi?id=90697
+
+        Reviewed by Vsevolod Vlasov.
+
+        Fix to remove the statements with no effect. The check for errors is added only when some valid
+        statements exist.
+
+        No new tests as generator related patch.
+
+        * inspector/CodeGeneratorInspector.py:
+        (Generator.process_command):
+
 2012-07-06  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt] Avoid deep copy of QImage in GraphicsContext3D::getImageData()
