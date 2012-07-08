@@ -308,7 +308,6 @@ SET(EWKUnitTests_LIBRARIES
 SET(EWKUnitTests_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source"
     "${WEBKIT_DIR}/efl/ewk"
-    "${WEBKIT_DIR}/efl/tests/src/UnitTestUtils"
     "${JAVASCRIPTCORE_DIR}"
     "${WTF_DIR}"
     "${WTF_DIR}/wtf"
