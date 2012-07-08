@@ -929,6 +929,8 @@ fast/canvas/webgl/gl-vertexattribpointer.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=90722
 inspector/profiler/heap-snapshot-comparison-show-next.html
+inspector/profiler/heap-snapshot-comparison-shown-node-count-preserved-when-sorting.html
+inspector/profiler/heap-snapshot-comparison-sorting.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=90723
 inspector/debugger/set-breakpoint.html
@@ -939,5 +941,3 @@ compositing/iframes/iframe-size-from-zero.html
 # https://bugs.webkit.org/show_bug.cgi?id=90725
 media/media-blocked-by-beforeload.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=90729
-inspector/profiler/heap-snapshot-comparison-shown-node-count-preserved-when-sorting.html
