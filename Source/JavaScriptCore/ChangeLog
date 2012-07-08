@@ -1,3 +1,21 @@
+2012-07-08  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        [Qt][ARM] Implementing missing macro assembler instructions after r121925
+        https://bugs.webkit.org/show_bug.cgi?id=90657
+
+        Reviewed by Csaba Osztrogonác.
+
+        Implementing convertibleLoadPtr, replaceWithLoad and
+        replaceWithAddressComputation.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::replaceWithLoad):
+        (ARMAssembler):
+        (JSC::ARMAssembler::replaceWithAddressComputation):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::convertibleLoadPtr):
+        (MacroAssemblerARM):
+
 2012-07-06  Filip Pizlo  <fpizlo@apple.com>
 
         WebKit Version 5.1.7 (6534.57.2, r121935): Double-click no longer works on OpenStreetMap

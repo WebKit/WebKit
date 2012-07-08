@@ -386,6 +386,14 @@ public:
         load16(address, dest);
     }
 
+    ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
+    {
+        ConvertibleLoadLabel result(this);
+        ASSERT(address.offset >= 0 && address.offset <= 255);
+        m_assembler.dtr_u(ARMAssembler::LoadUint32, dest, address.base, address.offset);
+        return result;
+    }
+
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
     {
         DataLabel32 dataLabel(this);

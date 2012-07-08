@@ -908,6 +908,30 @@ namespace JSC {
             return sizeof(ARMWord) * 2;
         }
 
+        static void replaceWithLoad(void* instructionStart)
+        {
+            ARMWord* instruction = reinterpret_cast<ARMWord*>(instructionStart);
+            cacheFlush(instruction, sizeof(ARMWord));
+
+            ASSERT((*instruction & 0x0ff00000) == 0x02800000 || (*instruction & 0x0ff00000) == 0x05900000);
+            if ((*instruction & 0x0ff00000) == 0x02800000) {
+                 *instruction = (*instruction & 0xf00fffff) | 0x05900000;
+                 cacheFlush(instruction, sizeof(ARMWord));
+            }
+        }
+
+        static void replaceWithAddressComputation(void* instructionStart)
+        {
+            ARMWord* instruction = reinterpret_cast<ARMWord*>(instructionStart);
+            cacheFlush(instruction, sizeof(ARMWord));
+
+            ASSERT((*instruction & 0x0ff00000) == 0x02800000 || (*instruction & 0x0ff00000) == 0x05900000);
+            if ((*instruction & 0x0ff00000) == 0x05900000) {
+                 *instruction = (*instruction & 0xf00fffff) | 0x02800000;
+                 cacheFlush(instruction, sizeof(ARMWord));
+            }
+        }
+
         // Address operations
 
         static void* getRelocatedAddress(void* code, AssemblerLabel label)
