@@ -20,7 +20,7 @@
 #include "config.h"
 #include "PageClientEfl.h"
 
-#include "ewk_private.h"
+#include "ewk_view_private.h"
 
 namespace WebCore {
 class IntRect;
@@ -37,12 +37,12 @@ PageClientEfl::~PageClientEfl()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-bool PageClientEfl::createEvasObjectForAcceleratedCompositing(Evas_Native_Surface* nativeSurface, const IntRect& rect)
+bool PageClientEfl::createEvasObjectForAcceleratedCompositing(Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect)
 {
     return ewk_view_accelerated_compositing_object_create(m_view, nativeSurface, rect);
 }
 
-GraphicsContext3D* PageClientEfl::acceleratedCompositingContext()
+WebCore::GraphicsContext3D* PageClientEfl::acceleratedCompositingContext()
 {
     return ewk_view_accelerated_compositing_context_get(m_view);
 }

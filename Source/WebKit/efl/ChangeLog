@@ -1,3 +1,18 @@
+2012-07-07  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Fix build break when Accelerated Compositing is on.
+        https://bugs.webkit.org/show_bug.cgi?id=90718
+
+        Unreviewed build fix.
+
+        ewk_view_accelerated_compositing_XXX APIs are in ewk_view_private.h
+
+        * WebCoreSupport/PageClientEfl.cpp:
+        (PageClientEfl::createEvasObjectForAcceleratedCompositing):
+        (PageClientEfl::acceleratedCompositingContext):
+        * WebCoreSupport/PageClientEfl.h:
+        (PageClientEfl):
+
 2012-07-06  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Add Web Inspector to WebKit-EFL
