@@ -49,6 +49,8 @@ public:
         endPhase();
     }
     
+    const char* name() const { return m_name; }
+    
     // Each phase must have a run() method.
     
 protected:
@@ -76,17 +78,28 @@ private:
 };
 
 template<typename PhaseType>
+bool runAndLog(PhaseType& phase)
+{
+    bool result = phase.run();
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    if (result)
+        dataLog("Phase %s changed the IR.\n", phase.name());
+#endif
+    return result;
+}
+
+template<typename PhaseType>
 bool runPhase(Graph& graph)
 {
     PhaseType phase(graph);
-    return phase.run();
+    return runAndLog(phase);
 }
 
 template<typename PhaseType, typename ArgumentType1>
 bool runPhase(Graph& graph, ArgumentType1 arg1)
 {
     PhaseType phase(graph, arg1);
-    return phase.run();
+    return runAndLog(phase);
 }
 
 } } // namespace JSC::DFG

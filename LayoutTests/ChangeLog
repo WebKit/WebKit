@@ -1,5 +1,17 @@
 2012-07-09  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG may get stuck in an infinite fix point if it constant folds a mispredicted node
+        https://bugs.webkit.org/show_bug.cgi?id=90829
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-constant-fold-misprediction-expected.txt: Added.
+        * fast/js/dfg-constant-fold-misprediction.html: Added.
+        * fast/js/script-tests/dfg-constant-fold-misprediction.js: Added.
+        (foo):
+
+2012-07-09  Filip Pizlo  <fpizlo@apple.com>
+
         fast/js/global-constructors.html is flaky and mostly useless
         https://bugs.webkit.org/show_bug.cgi?id=90833
 

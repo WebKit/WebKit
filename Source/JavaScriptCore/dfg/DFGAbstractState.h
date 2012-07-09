@@ -267,6 +267,23 @@ private:
         childValue2.filter(SpecNumber);
     }
     
+    bool trySetConstant(NodeIndex nodeIndex, JSValue value)
+    {
+        // Make sure we don't constant fold something that will produce values that contravene
+        // predictions. If that happens then we know that the code will OSR exit, forcing
+        // recompilation. But if we tried to constant fold then we'll have a very degenerate
+        // IR: namely we'll have a JSConstant that contravenes its own prediction. There's a
+        // lot of subtle code that assumes that
+        // speculationFromValue(jsConstant) == jsConstant.prediction(). "Hardening" that code
+        // is probably less sane than just pulling back on constant folding.
+        SpeculatedType oldType = m_graph[nodeIndex].prediction();
+        if (mergeSpeculations(speculationFromValue(value), oldType) != oldType)
+            return false;
+        
+        forNode(nodeIndex).set(value);
+        return true;
+    }
+    
     CodeBlock* m_codeBlock;
     Graph& m_graph;
     

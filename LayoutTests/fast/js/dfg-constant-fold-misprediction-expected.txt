@@ -1,0 +1,14 @@
+This tests that a constant folding on a node that has obviously mispredicted type doesn't send the compiler into an infinite loop.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(0.5) is 1000.50025
+PASS foo(0.5) is 1000.50025
+PASS foo(0.5) is 1000.50025
+PASS foo(0.5) is 1000.50025
+PASS foo(0.5) is 1000.50025
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

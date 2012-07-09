@@ -311,31 +311,35 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (left && right && left.isInt32() && right.isInt32()) {
             int32_t a = left.asInt32();
             int32_t b = right.asInt32();
+            bool constantWasSet;
             switch (node.op()) {
             case BitAnd:
-                forNode(nodeIndex).set(JSValue(a & b));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(a & b));
                 break;
             case BitOr:
-                forNode(nodeIndex).set(JSValue(a | b));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(a | b));
                 break;
             case BitXor:
-                forNode(nodeIndex).set(JSValue(a ^ b));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(a ^ b));
                 break;
             case BitRShift:
-                forNode(nodeIndex).set(JSValue(a >> static_cast<uint32_t>(b)));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(a >> static_cast<uint32_t>(b)));
                 break;
             case BitLShift:
-                forNode(nodeIndex).set(JSValue(a << static_cast<uint32_t>(b)));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(a << static_cast<uint32_t>(b)));
                 break;
             case BitURShift:
-                forNode(nodeIndex).set(JSValue(static_cast<uint32_t>(a) >> static_cast<uint32_t>(b)));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(static_cast<uint32_t>(a) >> static_cast<uint32_t>(b)));
                 break;
             default:
                 ASSERT_NOT_REACHED();
+                constantWasSet = false;
             }
-            m_foundConstants = true;
-            node.setCanExit(false);
-            break;
+            if (constantWasSet) {
+                m_foundConstants = true;
+                node.setCanExit(false);
+                break;
+            }
         }
         speculateInt32Binary(node);
         forNode(nodeIndex).set(SpecInt32);
@@ -346,10 +350,11 @@ bool AbstractState::execute(unsigned indexInBlock)
         JSValue child = forNode(node.child1()).value();
         if (child && child.isNumber()) {
             ASSERT(child.isInt32());
-            forNode(nodeIndex).set(JSValue(child.asUInt32()));
-            m_foundConstants = true;
-            node.setCanExit(false);
-            break;
+            if (trySetConstant(nodeIndex, JSValue(child.asUInt32()))) {
+                m_foundConstants = true;
+                node.setCanExit(false);
+                break;
+            }
         }
         if (!node.canSpeculateInteger()) {
             forNode(nodeIndex).set(SpecDouble);
@@ -367,8 +372,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (child && child.isNumber()) {
             double asDouble = child.asNumber();
             int32_t asInt = JSC::toInt32(asDouble);
-            if (bitwise_cast<int64_t>(static_cast<double>(asInt)) == bitwise_cast<int64_t>(asDouble)) {
-                forNode(nodeIndex).set(JSValue(asInt));
+            if (bitwise_cast<int64_t>(static_cast<double>(asInt)) == bitwise_cast<int64_t>(asDouble)
+                && trySetConstant(nodeIndex, JSValue(asInt))) {
                 m_foundConstants = true;
                 break;
             }
@@ -382,13 +387,16 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ValueToInt32: {
         JSValue child = forNode(node.child1()).value();
         if (child && child.isNumber()) {
+            bool constantWasSet;
             if (child.isInt32())
-                forNode(nodeIndex).set(child);
+                constantWasSet = trySetConstant(nodeIndex, child);
             else
-                forNode(nodeIndex).set(JSValue(JSC::toInt32(child.asDouble())));
-            m_foundConstants = true;
-            node.setCanExit(false);
-            break;
+                constantWasSet = trySetConstant(nodeIndex, JSValue(JSC::toInt32(child.asDouble())));
+            if (constantWasSet) {
+                m_foundConstants = true;
+                node.setCanExit(false);
+                break;
+            }
         }
         if (m_graph[node.child1()].shouldSpeculateInteger())
             speculateInt32Unary(node);
@@ -405,8 +413,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         
     case Int32ToDouble: {
         JSValue child = forNode(node.child1()).value();
-        if (child && child.isNumber()) {
-            forNode(nodeIndex).set(JSValue(JSValue::EncodeAsDouble, child.asNumber()));
+        if (child && child.isNumber()
+            && trySetConstant(nodeIndex, JSValue(JSValue::EncodeAsDouble, child.asNumber()))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -424,8 +432,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ArithAdd: {
         JSValue left = forNode(node.child1()).value();
         JSValue right = forNode(node.child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()) {
-            forNode(nodeIndex).set(JSValue(left.asNumber() + right.asNumber()));
+        if (left && right && left.isNumber() && right.isNumber()
+            && trySetConstant(nodeIndex, JSValue(left.asNumber() + right.asNumber()))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -456,8 +464,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ArithSub: {
         JSValue left = forNode(node.child1()).value();
         JSValue right = forNode(node.child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()) {
-            forNode(nodeIndex).set(JSValue(left.asNumber() - right.asNumber()));
+        if (left && right && left.isNumber() && right.isNumber()
+            && trySetConstant(nodeIndex, JSValue(left.asNumber() - right.asNumber()))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -475,8 +483,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         
     case ArithNegate: {
         JSValue child = forNode(node.child1()).value();
-        if (child && child.isNumber()) {
-            forNode(nodeIndex).set(JSValue(-child.asNumber()));
+        if (child && child.isNumber()
+            && trySetConstant(nodeIndex, JSValue(-child.asNumber()))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -495,8 +503,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     case ArithMul: {
         JSValue left = forNode(node.child1()).value();
         JSValue right = forNode(node.child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()) {
-            forNode(nodeIndex).set(JSValue(left.asNumber() * right.asNumber()));
+        if (left && right && left.isNumber() && right.isNumber()
+            && trySetConstant(nodeIndex, JSValue(left.asNumber() * right.asNumber()))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -523,26 +531,30 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (left && right && left.isNumber() && right.isNumber()) {
             double a = left.asNumber();
             double b = right.asNumber();
+            bool constantWasSet;
             switch (node.op()) {
             case ArithDiv:
-                forNode(nodeIndex).set(JSValue(a / b));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(a / b));
                 break;
             case ArithMin:
-                forNode(nodeIndex).set(JSValue(a < b ? a : (b <= a ? b : a + b)));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(a < b ? a : (b <= a ? b : a + b)));
                 break;
             case ArithMax:
-                forNode(nodeIndex).set(JSValue(a > b ? a : (b >= a ? b : a + b)));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(a > b ? a : (b >= a ? b : a + b)));
                 break;
             case ArithMod:
-                forNode(nodeIndex).set(JSValue(fmod(a, b)));
+                constantWasSet = trySetConstant(nodeIndex, JSValue(fmod(a, b)));
                 break;
             default:
                 ASSERT_NOT_REACHED();
+                constantWasSet = false;
                 break;
             }
-            m_foundConstants = true;
-            node.setCanExit(false);
-            break;
+            if (constantWasSet) {
+                m_foundConstants = true;
+                node.setCanExit(false);
+                break;
+            }
         }
         if (Node::shouldSpeculateInteger(
                 m_graph[node.child1()], m_graph[node.child2()])
@@ -558,8 +570,8 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case ArithAbs: {
         JSValue child = forNode(node.child1()).value();
-        if (child && child.isNumber()) {
-            forNode(nodeIndex).set(JSValue(fabs(child.asNumber())));
+        if (child && child.isNumber()
+            && trySetConstant(nodeIndex, JSValue(fabs(child.asNumber())))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -577,8 +589,8 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case ArithSqrt: {
         JSValue child = forNode(node.child1()).value();
-        if (child && child.isNumber()) {
-            forNode(nodeIndex).set(JSValue(sqrt(child.asNumber())));
+        if (child && child.isNumber()
+            && trySetConstant(nodeIndex, JSValue(sqrt(child.asNumber())))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -590,8 +602,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case LogicalNot: {
         JSValue childConst = forNode(node.child1()).value();
-        if (childConst) {
-            forNode(nodeIndex).set(jsBoolean(!childConst.toBoolean()));
+        if (childConst && trySetConstant(nodeIndex, jsBoolean(!childConst.toBoolean()))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -626,27 +637,28 @@ bool AbstractState::execute(unsigned indexInBlock)
         node.setCanExit(false);
         JSValue child = forNode(node.child1()).value();
         if (child) {
-            bool foundConstant = true;
+            bool constantWasSet;
             switch (node.op()) {
             case IsUndefined:
-                forNode(nodeIndex).set(jsBoolean(
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(
                     child.isCell()
                     ? child.asCell()->structure()->typeInfo().masqueradesAsUndefined()
                     : child.isUndefined()));
                 break;
             case IsBoolean:
-                forNode(nodeIndex).set(jsBoolean(child.isBoolean()));
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(child.isBoolean()));
                 break;
             case IsNumber:
-                forNode(nodeIndex).set(jsBoolean(child.isNumber()));
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(child.isNumber()));
                 break;
             case IsString:
-                forNode(nodeIndex).set(jsBoolean(isJSString(child)));
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(isJSString(child)));
                 break;
             default:
+                constantWasSet = false;
                 break;
             }
-            if (foundConstant) {
+            if (constantWasSet) {
                 m_foundConstants = true;
                 break;
             }
@@ -665,29 +677,33 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (leftConst && rightConst && leftConst.isNumber() && rightConst.isNumber()) {
             double a = leftConst.asNumber();
             double b = rightConst.asNumber();
+            bool constantWasSet;
             switch (node.op()) {
             case CompareLess:
-                forNode(nodeIndex).set(jsBoolean(a < b));
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a < b));
                 break;
             case CompareLessEq:
-                forNode(nodeIndex).set(jsBoolean(a <= b));
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a <= b));
                 break;
             case CompareGreater:
-                forNode(nodeIndex).set(jsBoolean(a > b));
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a > b));
                 break;
             case CompareGreaterEq:
-                forNode(nodeIndex).set(jsBoolean(a >= b));
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a >= b));
                 break;
             case CompareEq:
-                forNode(nodeIndex).set(jsBoolean(a == b));
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(a == b));
                 break;
             default:
                 ASSERT_NOT_REACHED();
+                constantWasSet = false;
                 break;
             }
-            m_foundConstants = true;
-            node.setCanExit(false);
-            break;
+            if (constantWasSet) {
+                m_foundConstants = true;
+                node.setCanExit(false);
+                break;
+            }
         }
         
         forNode(nodeIndex).set(SpecBoolean);
@@ -767,8 +783,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     case CompareStrictEq: {
         JSValue left = forNode(node.child1()).value();
         JSValue right = forNode(node.child2()).value();
-        if (left && right && left.isNumber() && right.isNumber()) {
-            forNode(nodeIndex).set(jsBoolean(left.asNumber() == right.asNumber()));
+        if (left && right && left.isNumber() && right.isNumber()
+            && trySetConstant(nodeIndex, jsBoolean(left.asNumber() == right.asNumber()))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -1106,8 +1122,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case ToPrimitive: {
         JSValue childConst = forNode(node.child1()).value();
-        if (childConst && childConst.isNumber()) {
-            forNode(nodeIndex).set(childConst);
+        if (childConst && childConst.isNumber() && trySetConstant(nodeIndex, childConst)) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
