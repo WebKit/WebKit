@@ -1,5 +1,24 @@
 2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
 
+        [Gtk] Implement dumpFrameScrollPosition in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=89356
+
+        Reviewed by Martin Robinson.
+
+        Add a new method for returning the WebKitDOMDocument that is loaded
+        in a given frame, webkit_web_frame_get_dom_document.
+
+        * docs/webkitgtk-sections.txt:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_dom_document):
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebview.cpp: State explicitly that the document being returned
+        when calling webkit_web_view_get_dom_document is loaded in the main frame.
+        Also call the webkit_web_frame_get_dom_document on WebKitWebView's main frame
+        to get the document.
+
+2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
+
         [Gtk] Unskip the CSS Regions layout tests
         https://bugs.webkit.org/show_bug.cgi?id=90771
 

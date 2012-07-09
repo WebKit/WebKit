@@ -5228,7 +5228,8 @@ GdkPixbuf* webkit_web_view_try_get_favicon_pixbuf(WebKitWebView* webView, guint 
  * webkit_web_view_get_dom_document:
  * @web_view: a #WebKitWebView
  * 
- * Returns: (transfer none): the #WebKitDOMDocument currently loaded in the @web_view
+ * Returns: (transfer none): the #WebKitDOMDocument currently loaded in
+ * the main frame of the @web_view or %NULL if no document is loaded
  *
  * Since: 1.3.1
  **/
@@ -5237,15 +5238,7 @@ webkit_web_view_get_dom_document(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
-    Frame* coreFrame = core(webView)->mainFrame();
-    if (!coreFrame)
-        return 0;
-
-    Document* doc = coreFrame->document();
-    if (!doc)
-        return 0;
-
-    return kit(doc);
+    return webkit_web_frame_get_dom_document(webView->priv->mainFrame);
 }
 
 GtkMenu* webkit_web_view_get_context_menu(WebKitWebView* webView)

@@ -56,6 +56,7 @@
 #include "TextIterator.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "markup.h"
+#include "webkit/WebKitDOMDocumentPrivate.h"
 #include "webkit/WebKitDOMRangePrivate.h"
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
@@ -1178,6 +1179,30 @@ WebKitDOMRange* webkit_web_frame_get_range_for_word_around_caret(WebKitWebFrame*
     visibleSelection.expandUsingGranularity(WordGranularity);
 
     return kit(visibleSelection.firstRange().get());
+}
+
+/**
+ * webkit_web_frame_get_dom_document:
+ * @frame: a #WebKitWebFrame
+ * 
+ * Returns: (transfer none): the #WebKitDOMDocument currently loaded
+ * in the @frame or %NULL if no document is loaded
+ *
+ * Since: 1.10
+ **/
+WebKitDOMDocument* webkit_web_frame_get_dom_document(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
+
+    Frame* coreFrame = core(frame);
+    if (!coreFrame)
+        return 0;
+
+    Document* doc = coreFrame->document();
+    if (!doc)
+        return 0;
+
+    return kit(doc);
 }
 
 namespace WebKit {

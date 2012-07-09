@@ -59,3 +59,4 @@ layer at (28,588) size 150x50 clip at (28,588) size 135x35 scrollWidth 200
     RenderBlock {DIV} at (0,0) size 200x18
       RenderText {#text} at (0,0) size 12x19
         text run at (0,0) width 12: "A"
+scrolled to 0,7

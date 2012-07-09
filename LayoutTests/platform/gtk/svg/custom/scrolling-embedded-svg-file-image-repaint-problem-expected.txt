@@ -138,3 +138,4 @@ layer at (0,0) size 785x995
             RenderText {#text} at (403,0) size 150x19
               text run at (403,0) width 150: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
+scrolled to 0,410

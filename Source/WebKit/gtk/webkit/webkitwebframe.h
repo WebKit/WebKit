@@ -183,6 +183,9 @@ webkit_web_frame_replace_selection           (WebKitWebFrame        *frame,
 WEBKIT_API WebKitDOMRange*
 webkit_web_frame_get_range_for_word_around_caret (WebKitWebFrame    *frame);
 
+WEBKIT_API WebKitDOMDocument*
+webkit_web_frame_get_dom_document            (WebKitWebFrame        *frame);
+
 G_END_DECLS
 
 #endif

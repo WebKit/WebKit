@@ -123,7 +123,29 @@ static bool shouldEnableDeveloperExtras(const string& pathOrURL)
 
 void dumpFrameScrollPosition(WebKitWebFrame* frame)
 {
+    WebKitDOMDocument* document = webkit_web_frame_get_dom_document(frame);
+    if (!document)
+        return;
 
+    WebKitDOMDOMWindow* domWindow = webkit_dom_document_get_default_view(document);
+    if (!domWindow)
+        return;
+
+    glong x = webkit_dom_dom_window_get_page_x_offset(domWindow);
+    glong y = webkit_dom_dom_window_get_page_y_offset(domWindow);
+
+    if (abs(x) > 0 || abs(y) > 0) {
+        if (webkit_web_frame_get_parent(frame))
+            printf("frame '%s' ", webkit_web_frame_get_name(frame));
+        printf("scrolled to %ld,%ld\n", x, y);
+    }
+
+    if (gLayoutTestController->dumpChildFrameScrollPositions()) {
+        GSList* children = DumpRenderTreeSupportGtk::getFrameChildren(frame);
+        for (GSList* child = children; child; child = g_slist_next(child))
+            dumpFrameScrollPosition(static_cast<WebKitWebFrame*>(child->data));
+        g_slist_free(children);
+    }
 }
 
 void displayWebView()

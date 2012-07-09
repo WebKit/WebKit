@@ -277,34 +277,6 @@ platform/gtk/accessibility
 fast/forms/cursor-at-editable-content-boundary.html
 editing/inserting/caret-position.html
 
-# Implement dumpFrameScrollPosition in DumpRenderTree and change
-# results because now we have it in the WebKitTestRunner
-svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
-svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
-transforms/2d/transform-fixed-container.html
-fast/dom/scroll-reveal-top-overflow.html
-fast/dom/scroll-reveal-left-overflow.html
-fast/dom/focus-contenteditable.html
-fast/multicol/scrolling-overflow.html
-fast/layers/scroll-rect-to-visible.html
-fast/events/reveal-link-when-focused.html
-fast/events/attempt-scroll-with-no-scrollbars.html
-fast/dynamic/anchor-lock.html
-fast/block/positioning/rtl-fixed-positioning.html
-fast/block/positioning/vertical-rl/fixed-positioning.html
-fast/repaint/fixed-child-of-fixed-move-after-scroll.html
-fast/repaint/fixed-child-of-transformed-move-after-scroll.html
-fast/repaint/repaint-during-scroll.html
-fast/repaint/fixed.html
-fast/repaint/fixed-tranformed.html
-fast/repaint/fixed-child-move-after-scroll.html
-fast/repaint/fixed-move-after-scroll.html
-fast/overflow/position-fixed-transform-clipping.html
-fast/overflow/scrollRevealButton.html
-fast/overflow/clip-rects-fixed-ancestor.html
-fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html
-fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html
-
 # Implement layoutTestController.setViewModeMediaFeature support
 fast/media/media-query-list-02.html
 fast/media/media-query-list-03.html

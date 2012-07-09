@@ -25,3 +25,4 @@ layer at (1200,0) size 828x200
                     RenderText {#text} at (0,0) size 383x19
                       text run at (0,0) width 383: "This is a nested frame that is flattened and scrolled into view."
           RenderText {#text} at (0,0) size 0x0
+scrolled to 1200,0

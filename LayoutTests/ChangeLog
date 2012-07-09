@@ -1,3 +1,42 @@
+2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Implement dumpFrameScrollPosition in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=89356
+
+        Reviewed by Martin Robinson.
+
+        Update baselines for affected tests, removing these tests from the GTK WK2 Skipped list.
+
+        * platform/gtk-wk2/Skipped:
+        * platform/gtk/css2.1/20110323/abspos-containing-block-initial-001-expected.txt:
+        * platform/gtk/fast/block/positioning/rtl-fixed-positioning-expected.txt:
+        * platform/gtk/fast/block/positioning/vertical-rl/fixed-positioning-expected.txt:
+        * platform/gtk/fast/dom/focus-contenteditable-expected.txt:
+        * platform/gtk/fast/dom/rtl-scroll-to-leftmost-and-resize-expected.txt:
+        * platform/gtk/fast/dom/scroll-reveal-left-overflow-expected.txt:
+        * platform/gtk/fast/dom/scroll-reveal-top-overflow-expected.txt:
+        * platform/gtk/fast/dynamic/anchor-lock-expected.txt:
+        * platform/gtk/fast/events/autoscroll-expected.txt:
+        * platform/gtk/fast/events/reveal-link-when-focused-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-and-scroll-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout-expected.txt:
+        * platform/gtk/fast/layers/scroll-rect-to-visible-expected.txt:
+        * platform/gtk/fast/multicol/scrolling-overflow-expected.txt: Added.
+        * platform/gtk/fast/overflow/clip-rects-fixed-ancestor-expected.txt: Added.
+        * platform/gtk/fast/overflow/overflow_hidden-expected.txt:
+        * platform/gtk/fast/overflow/position-fixed-transform-clipping-expected.txt:
+        * platform/gtk/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/gtk/fast/repaint/fixed-child-move-after-scroll-expected.txt:
+        * platform/gtk/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.txt:
+        * platform/gtk/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.txt:
+        * platform/gtk/fast/repaint/fixed-expected.txt:
+        * platform/gtk/fast/repaint/fixed-move-after-scroll-expected.txt:
+        * platform/gtk/fast/repaint/fixed-tranformed-expected.txt:
+        * platform/gtk/fast/repaint/repaint-during-scroll-expected.txt:
+        * platform/gtk/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt:
+        * platform/gtk/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/gtk/transforms/2d/transform-fixed-container-expected.txt:
+
 2012-07-09  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         SurroundingText should not advance character iterators if they are at end.

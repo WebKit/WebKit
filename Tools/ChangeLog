@@ -1,3 +1,17 @@
+2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Implement dumpFrameScrollPosition in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=89356
+
+        Reviewed by Martin Robinson.
+
+        Implement dumpFrameScrollPosition, acquiring the scroll position
+        through WebKitDOMDOMWindow of the WebKitDOMDocument loaded in the frame
+        whose scroll position is being dumped.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpFrameScrollPosition):
+
 2012-07-09  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt][NRWT] Enable cascaded TestExpectations
