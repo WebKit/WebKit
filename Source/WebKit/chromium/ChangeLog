@@ -1,3 +1,10 @@
+2012-07-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium inspector test fix.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.nonAnonymousUISourceCodes_):
+
 2012-07-05  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed Chromium gardening. Roll Chromium DEPS
