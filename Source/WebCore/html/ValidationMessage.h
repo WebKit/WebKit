@@ -41,6 +41,7 @@ namespace WebCore {
 
 class FormAssociatedElement;
 class HTMLElement;
+class Node;
 
 class ValidationMessage {
     WTF_MAKE_NONCOPYABLE(ValidationMessage);
@@ -50,6 +51,7 @@ public:
     String message() const { return m_message; }
     void setMessage(const String&);
     void requestToHideMessage();
+    bool shadowTreeContains(Node*) const;
 
 private:
     ValidationMessage(FormAssociatedElement*);

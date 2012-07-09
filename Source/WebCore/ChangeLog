@@ -1,3 +1,39 @@
+2012-07-05  MORITA Hajime  <morrita@google.com>
+
+        Heap-use-after-free in WebCore::RenderObject::destroyAndCleanupAnonymousWrappers
+        https://bugs.webkit.org/show_bug.cgi?id=90480
+
+        Reviewed by Kent Tamura.
+
+        If <select> has any insertion point, the attachment phase
+        unpextedly creates a renderer for distributed node and added to
+        the renderer of the <select>, which breaks an assumption and
+        results the crash.
+
+        This change tighten the childShouldCreateRenderer() to forbid
+        child renderers even from distributed nodes.
+
+        There is an exception as always: ValidationMessage can create a
+        ShadowRoot to <select>, which generates usually-forbidden child
+        renderers.  This change introduces HTMLFormControlElement::validationMessageContains()
+        to let these renderers in.
+
+        Test: fast/dom/shadow/insertion-point-list-menu-crash.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::validationMessageContains):
+        (WebCore):
+        * html/HTMLFormControlElement.h:
+        (HTMLFormControlElement):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childShouldCreateRenderer):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::contains):
+        (WebCore):
+        * html/ValidationMessage.h:
+        (WebCore):
+        (ValidationMessage):
+
 2012-07-07  Kwang Yul Seo  <skyul@company100.net>
 
         Remove unnecessary member HTMLTreeBuilder::m_lastScriptElementStartPosition

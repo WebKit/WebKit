@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+jsTestIsAsync = true;
+function boom() {
+    var div = document.createElement('div');
+
+    var older = new WebKitShadowRoot(div);
+    older.appendChild(document.createElement('div'));
+    document.documentElement.appendChild(div);
+
+    var younger = new WebKitShadowRoot(div);
+    var select = document.createElement('select');
+    var shadow = document.createElement('shadow');
+    select.appendChild(shadow);
+    younger.appendChild(select);
+
+    testPassed("unless crash");
+    finishJSTest();
+}
+window.onload = boom;
+</script>
+</body>
+</html>
