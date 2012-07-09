@@ -1,3 +1,11 @@
+2012-07-09  Dan Bernstein  <mitz@apple.com>
+
+        Fix the Mac build when codesign_allocate is not installed at /usr/bin.
+
+        * PluginProcess/mac/add-entitlements.sh: Let codesign(1) know where the codesign_allocate
+        tool is by setting the CODESIGN_ALLOCATE environment variable to its path as obtained with
+        xcrun.
+
 2012-07-06  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add support for Network Information API

@@ -32,4 +32,8 @@ if [[ $needs_signing == 0 ]]; then
     exit
 fi
 
+if [ ! $CODESIGN_ALLOCATE ]; then
+    export CODESIGN_ALLOCATE=$(xcrun -find codesign_allocate)
+fi
+
 codesign -f -s - --entitlements "${entitlement_file}" "${app_path}"
