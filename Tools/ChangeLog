@@ -1,3 +1,9 @@
+2012-07-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [wx] Unreviewed. Fix notificaitons directory path after notifications move.
+
+        * waf/build/settings.py:
+
 2012-07-07  Nuno Lopes  <nlopes@apple.com>
 
         Fix build with recent clang.
