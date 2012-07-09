@@ -64,6 +64,9 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     [m_tileCacheLayer addSublayer:m_tileContainerLayer.get()];
+#ifndef NDEBUG
+    [m_tileContainerLayer.get() setName:@"TileCache Container Layer"];
+#endif
     [CATransaction commit];
 }
 
@@ -394,6 +397,9 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer(const IntRect& tileRect)
     [layer.get() setBorderWidth:m_tileDebugBorderWidth];
     [layer.get() setEdgeAntialiasingMask:0];
     [layer.get() setOpaque:YES];
+#ifndef NDEBUG
+    [layer.get() setName:@"Tile"];
+#endif
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     [layer.get() setContentsScale:m_deviceScaleFactor];

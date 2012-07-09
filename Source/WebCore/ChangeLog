@@ -1,3 +1,61 @@
+2012-07-09  Dean Jackson  <dino@apple.com>
+
+        Tiled drawing means some elements can disappear behind the page
+        https://bugs.webkit.org/show_bug.cgi?id=88906
+
+        Reviewed by Simon Fraser.
+
+        The compositing layers in the tile cache could become siblings
+        of the compositing layers for page elements. This meant that in
+        some 3d transforms, the elements could disappear behind the
+        page background (which is rendered into the tile cache) or intersect
+        with the tile cache tiles.
+
+        Fix this by inserting a flattening layer between the tile cache
+        and the page, ensuring that the cache will always be rendered
+        first. I was able to reuse the clipping layer for this, because
+        the tile cache is attached to the RenderView, so there should never
+        be a case where we have both a clipping layer and tiles.
+
+        The unfortunate part of this code is the temporary state variable
+        that wraps the call to GraphicsLayer::create. Because that method
+        calls back into the object, we need to make sure we don't create
+        another tile cache.
+
+        Also added some obvious names to the tile cache layers to
+        help with debugging.
+
+        Test: compositing/tile-cache-must-flatten.html
+
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::TileCache): give the tile host layer a name.
+        (WebCore::TileCache::createTileLayer):
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (WebCore): give each tile layer a name.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore):
+        (WebCore::RenderLayerBacking::shouldUseTileCache): check if we're in the middle
+        of creating the primary graphics layer before answering.
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer): wrap our call to
+        createGraphicsLayer with a message to indicate we are making the layer that should
+        get a tile cache.
+        (WebCore::RenderLayerBacking::destroyGraphicsLayers):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): needs to make
+        sure the flattening layer is in the tree.
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::updateInternalHierarchy):
+        (WebCore::RenderLayerBacking::updateClippingLayers):
+        (WebCore::RenderLayerBacking::backingStoreMemoryEstimate):
+        * rendering/RenderLayerBacking.h: rename m_clippingLayer to m_containmentLayer
+        because it can now either be the clip or the tile cache flattener. Also
+        a new state property used when creating the main graphics layer.
+        (WebCore::RenderLayerBacking::hasClippingLayer):
+        (WebCore::RenderLayerBacking::clippingLayer):
+        (WebCore::RenderLayerBacking::parentForSublayers):
+        (WebCore::RenderLayerBacking::hasTileCacheFlatteningLayer):
+        (WebCore::RenderLayerBacking::tileCacheFlatteningLayer):
+        (RenderLayerBacking):
+
 2012-07-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Log significant Gamepad API-related events

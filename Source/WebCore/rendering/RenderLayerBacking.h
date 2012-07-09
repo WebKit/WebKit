@@ -74,8 +74,8 @@ public:
     GraphicsLayer* graphicsLayer() const { return m_graphicsLayer.get(); }
 
     // Layer to clip children
-    bool hasClippingLayer() const { return m_clippingLayer != 0; }
-    GraphicsLayer* clippingLayer() const { return m_clippingLayer.get(); }
+    bool hasClippingLayer() const { return (m_containmentLayer && !m_usingTiledCacheLayer); }
+    GraphicsLayer* clippingLayer() const { return !m_usingTiledCacheLayer ? m_containmentLayer.get() : 0; }
 
     // Layer to get clipped by ancestor
     bool hasAncestorClippingLayer() const { return m_ancestorClippingLayer != 0; }
@@ -86,7 +86,7 @@ public:
     
     bool hasMaskLayer() const { return m_maskLayer != 0; }
 
-    GraphicsLayer* parentForSublayers() const { return m_clippingLayer ? m_clippingLayer.get() : m_graphicsLayer.get(); }
+    GraphicsLayer* parentForSublayers() const { return m_containmentLayer ? m_containmentLayer.get() : m_graphicsLayer.get(); }
     GraphicsLayer* childForSuperlayers() const { return m_ancestorClippingLayer ? m_ancestorClippingLayer.get() : m_graphicsLayer.get(); }
 
     // RenderLayers with backing normally short-circuit paintLayer() because
@@ -220,6 +220,9 @@ private:
 
     bool shouldClipCompositedBounds() const;
 
+    bool hasTileCacheFlatteningLayer() const { return (m_containmentLayer && m_usingTiledCacheLayer); }
+    GraphicsLayer* tileCacheFlatteningLayer() const { return m_usingTiledCacheLayer ? m_containmentLayer.get() : 0; }
+
     void paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase, RenderObject* paintingRoot);
 
     static CSSPropertyID graphicsLayerToCSSProperty(AnimatedPropertyID);
@@ -230,7 +233,7 @@ private:
     OwnPtr<GraphicsLayer> m_ancestorClippingLayer; // only used if we are clipped by an ancestor which is not a stacking context
     OwnPtr<GraphicsLayer> m_graphicsLayer;
     OwnPtr<GraphicsLayer> m_foregroundLayer;       // only used in cases where we need to draw the foreground separately
-    OwnPtr<GraphicsLayer> m_clippingLayer;         // only used if we have clipping on a stacking context, with compositing children
+    OwnPtr<GraphicsLayer> m_containmentLayer; // Only used if we have clipping on a stacking context with compositing children, or if the layer has a tile cache.
     OwnPtr<GraphicsLayer> m_maskLayer;             // only used if we have a mask
 
     OwnPtr<GraphicsLayer> m_layerForHorizontalScrollbar;
@@ -246,6 +249,8 @@ private:
 #if ENABLE(CSS_FILTERS)
     bool m_canCompositeFilters;
 #endif
+
+    static bool m_creatingPrimaryGraphicsLayer;
 };
 
 } // namespace WebCore

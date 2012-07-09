@@ -1,3 +1,15 @@
+2012-07-09  Dean Jackson  <dino@apple.com>
+
+        Tiled drawing means some elements can disappear behind the page
+        https://bugs.webkit.org/show_bug.cgi?id=88906
+
+        Reviewed by Simon Fraser.
+
+        Reftest to make sure elements can't disappear behind the tile cache.
+
+        * compositing/tile-cache-must-flatten-expected.html: Added.
+        * compositing/tile-cache-must-flatten.html: Added.
+
 2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Implement dumpFrameScrollPosition in DumpRenderTree
