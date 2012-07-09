@@ -6,6 +6,7 @@ entries:
     url: filesystem:http://127.0.0.1:8000/temporary/hoge/piyo.html
     name: piyo.html
     isDirectory: false
+    isTextFile: true
     mimeType: text/html
     resourceType: Document
   1:

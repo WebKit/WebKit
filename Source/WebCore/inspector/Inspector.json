@@ -1418,7 +1418,8 @@
                     { "name": "name", "type": "string", "description": "The name of the file or directory." },
                     { "name": "isDirectory", "type": "boolean", "description": "True if the entry is a directory." },
                     { "name": "mimeType", "type": "string", "optional": true, "description": "MIME type of the entry, available for a file only." },
-                    { "name": "resourceType", "$ref": "Page.ResourceType", "optional": true, "description": "ResourceType of the entry, available for a file only." }
+                    { "name": "resourceType", "$ref": "Page.ResourceType", "optional": true, "description": "ResourceType of the entry, available for a file only." },
+                    { "name": "isTextFile", "type": "boolean", "optional": true, "description": "True if the entry is a text file." }
                 ],
                 "description": "Represents a browser side file or directory."
             },
@@ -1476,8 +1477,10 @@
                 "name": "requestFileContent",
                 "parameters": [
                     { "name": "url", "type": "string", "description": "URL of the file that the frontend is requesting to read from." },
+                    { "name": "readAsText", "type": "boolean", "description": "True if the content should be read as text, otherwise the result will be returned as base64 encoded text." },
                     { "name": "start", "type": "integer", "optional": true, "description": "Specifies the start of range to read." },
-                    { "name": "end", "type": "integer", "optional": true, "description": "Specifies the end of range to read exclusively." }
+                    { "name": "end", "type": "integer", "optional": true, "description": "Specifies the end of range to read exclusively." },
+                    { "name": "charset", "type": "string", "optional": true, "description": "Overrides charset of the content when content is served as text." }
                 ],
                 "returns": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier. Corresponding fileContentReceived event should have same requestId with this." }
@@ -1518,7 +1521,8 @@
                 "parameters": [
                     { "name": "requestId", "type": "integer", "description": "Request Identifier that was returned in response to the corresponding requestFileContent command." },
                     { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
-                    { "name": "content", "type": "string", "optional": true, "description": "Contains content of the file as base64 encoded string." }
+                    { "name": "content", "type": "string", "optional": true, "description": "Content of the file." },
+                    { "name": "charset", "type": "string", "optional": true, "description": "Charset of the content if it is served as text." }
                 ],
                 "description": "Completion event of requestFileContent command."
             }

@@ -1,3 +1,22 @@
+2012-07-09  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add text file support for FileSystemAgent::requestFileContent
+        https://bugs.webkit.org/show_bug.cgi?id=90439
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorFileSystemAgent::requestFileContent):
+        * inspector/InspectorFileSystemAgent.h:
+        (InspectorFileSystemAgent):
+        * inspector/front-end/FileSystemModel.js:
+        (WebInspector.FileSystemModel.prototype.requestFileContent):
+        (WebInspector.FileSystemModel.File.prototype.requestFileContent):
+        (WebInspector.FileSystemRequestManager.prototype._fileContentReceived):
+        (WebInspector.FileSystemDispatcher.prototype.fileContentReceived):
+
 2012-07-09  MORITA Hajime  <morrita@google.com>
 
         [Chromium] ContextFeaturesClient::isEnabled is slow

@@ -18,21 +18,26 @@ function test()
 
     function step2()
     {
-        InspectorTest.writeFile("/hoge/fuga", "piPASSyo", step3);
+        InspectorTest.writeFile("/hoge/fuga.txt", "piPASSyo", step3);
     }
 
     function step3()
     {
-        requestManager.requestFileContent("filesystem:http://127.0.0.1:8000/temporary/hoge/fuga", 2, 6, step4);
+        requestManager.requestFileContent("filesystem:http://127.0.0.1:8000/temporary/hoge/fuga.txt", true, 2, 6, "UTF-8", step4);
     }
 
-    function step4(errorCode, content)
+    function step4(errorCode, content, charset)
     {
         InspectorTest.addResult("errorCode = " + errorCode);
         if (content)
-            InspectorTest.addResult("content = \"" + content + "\" [" + atob(content) + "]");
+            InspectorTest.addResult("content = \"" + content + "\"");
         else
             InspectorTest.addResult("content = (null)");
+
+        if (charset)
+            InspectorTest.addResult("charset = " + charset);
+        else
+            InspectorTest.addResult("charset = (null)");
 
         InspectorTest.clearFileSystem(step5);
     }
@@ -45,6 +50,6 @@ function test()
 </script>
 </head>
 <body>
-<p>Tests readFile.</p>
+<p>Tests requestFileContent.</p>
 </body>
 </html>

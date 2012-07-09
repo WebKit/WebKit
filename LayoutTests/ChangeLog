@@ -1,3 +1,14 @@
+2012-07-09  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add text file support for FileSystemAgent::requestFileContent
+        https://bugs.webkit.org/show_bug.cgi?id=90439
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/filesystem/read-directory-expected.txt:
+        * http/tests/inspector/filesystem/read-file-expected.txt:
+        * http/tests/inspector/filesystem/read-file.html:
+
 2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed, unskipping CSS Exclusions tests for the Gtk port.

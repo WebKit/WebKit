@@ -36,6 +36,7 @@
 
 #include "Base64.h"
 #include "DOMFileSystem.h"
+#include "DOMImplementation.h"
 #include "DirectoryEntry.h"
 #include "DirectoryReader.h"
 #include "Document.h"
@@ -61,6 +62,8 @@
 #include "MetadataCallback.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "TextEncoding.h"
+#include "TextResourceDecoder.h"
 
 using WebCore::TypeBuilder::Array;
 
@@ -307,14 +310,19 @@ bool ReadDirectoryTask::didReadDirectoryEntries(EntryArray* entries)
         if (!entry->isDirectory()) {
             String mimeType = MIMETypeRegistry::getMIMETypeForPath(entry->name());
             ResourceType::Enum resourceType;
-            if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+            if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType)) {
                 resourceType = ResourceType::Image;
-            else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
+                entryForFrontend->setIsTextFile(false);
+            } else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)) {
                 resourceType = ResourceType::Script;
-            else if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
+                entryForFrontend->setIsTextFile(true);
+            } else if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)) {
                 resourceType = ResourceType::Document;
-            else
+                entryForFrontend->setIsTextFile(true);
+            } else {
                 resourceType = ResourceType::Other;
+                entryForFrontend->setIsTextFile(DOMImplementation::isXMLMIMEType(mimeType) || DOMImplementation::isTextMIMEType(mimeType));
+            }
 
             entryForFrontend->setMimeType(mimeType);
             entryForFrontend->setResourceType(resourceType);
@@ -407,14 +415,14 @@ bool GetMetadataTask::didGetMetadata(Metadata* metadata)
 class ReadFileTask : public EventListener {
     WTF_MAKE_NONCOPYABLE(ReadFileTask);
 public:
-    static PassRefPtr<ReadFileTask> create(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const String& url, long long start, long long end)
+    static PassRefPtr<ReadFileTask> create(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const String& url, bool readAsText, long long start, long long end, const String& charset)
     {
-        return adoptRef(new ReadFileTask(frontendProvider, requestId, url, start, end));
+        return adoptRef(new ReadFileTask(frontendProvider, requestId, url, readAsText, start, end, charset));
     }
 
     virtual ~ReadFileTask()
     {
-        reportResult(FileError::ABORT_ERR, 0);
+        reportResult(FileError::ABORT_ERR, 0, 0);
     }
 
     void start(ScriptExecutionContext*);
@@ -436,7 +444,7 @@ public:
 private:
     bool didHitError(FileError* error)
     {
-        reportResult(error->code(), 0);
+        reportResult(error->code(), 0, 0);
         return true;
     }
 
@@ -444,27 +452,32 @@ private:
     bool didGetFile(File*);
     void didRead();
 
-    void reportResult(FileError::ErrorCode errorCode, const String* result)
+    void reportResult(FileError::ErrorCode errorCode, const String* result, const String* charset)
     {
         if (!m_frontendProvider || !m_frontendProvider->frontend())
             return;
-        m_frontendProvider->frontend()->fileContentReceived(m_requestId, static_cast<int>(errorCode), result);
+        m_frontendProvider->frontend()->fileContentReceived(m_requestId, static_cast<int>(errorCode), result, charset);
         m_frontendProvider = 0;
     }
 
-    ReadFileTask(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const String& url, long long start, long long end)
+    ReadFileTask(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const String& url, bool readAsText, long long start, long long end, const String& charset)
         : EventListener(EventListener::CPPEventListenerType)
         , m_frontendProvider(frontendProvider)
         , m_requestId(requestId)
         , m_url(ParsedURLString, url)
+        , m_readAsText(readAsText)
         , m_start(start)
-        , m_end(end) { }
+        , m_end(end)
+        , m_charset(charset) { }
 
     RefPtr<FrontendProvider> m_frontendProvider;
     int m_requestId;
     KURL m_url;
+    bool m_readAsText;
     int m_start;
     long long m_end;
+    String m_mimeType;
+    String m_charset;
 
     RefPtr<FileReader> m_reader;
 };
@@ -476,7 +489,7 @@ void ReadFileTask::start(ScriptExecutionContext* scriptExecutionContext)
     FileSystemType type;
     String path;
     if (!DOMFileSystemBase::crackFileSystemURL(m_url, type, path)) {
-        reportResult(FileError::SYNTAX_ERR, 0);
+        reportResult(FileError::SYNTAX_ERR, 0, 0);
         return;
     }
 
@@ -490,12 +503,12 @@ void ReadFileTask::start(ScriptExecutionContext* scriptExecutionContext)
 bool ReadFileTask::didGetEntry(Entry* entry)
 {
     if (entry->isDirectory()) {
-        reportResult(FileError::TYPE_MISMATCH_ERR, 0);
+        reportResult(FileError::TYPE_MISMATCH_ERR, 0, 0);
         return true;
     }
 
     if (!entry->filesystem()->scriptExecutionContext()) {
-        reportResult(FileError::ABORT_ERR, 0);
+        reportResult(FileError::ABORT_ERR, 0, 0);
         return true;
     }
 
@@ -504,6 +517,8 @@ bool ReadFileTask::didGetEntry(Entry* entry)
     static_cast<FileEntry*>(entry)->file(successCallback, errorCallback);
 
     m_reader = FileReader::create(entry->filesystem()->scriptExecutionContext());
+    m_mimeType = MIMETypeRegistry::getMIMETypeForPath(entry->name());
+
     return true;
 }
 
@@ -520,9 +535,19 @@ bool ReadFileTask::didGetFile(File* file)
 
 void ReadFileTask::didRead()
 {
-    RefPtr<ArrayBuffer> result = m_reader->arrayBufferResult();
-    String encodedResult = base64Encode(static_cast<char*>(result->data()), result->byteLength());
-    reportResult(static_cast<FileError::ErrorCode>(0), &encodedResult);
+    RefPtr<ArrayBuffer> buffer = m_reader->arrayBufferResult();
+
+    if (!m_readAsText) {
+        String result = base64Encode(static_cast<char*>(buffer->data()), buffer->byteLength());
+        reportResult(static_cast<FileError::ErrorCode>(0), &result, 0);
+        return;
+    }
+
+    RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create(m_mimeType, m_charset, true);
+    String result = decoder->decode(static_cast<char*>(buffer->data()), buffer->byteLength());
+    result += decoder->flush();
+    m_charset = decoder->encoding().domName();
+    reportResult(static_cast<FileError::ErrorCode>(0), &result, &m_charset);
 }
 
 }
@@ -603,7 +628,7 @@ void InspectorFileSystemAgent::requestMetadata(ErrorString* error, const String&
         m_frontendProvider->frontend()->metadataReceived(*requestId, static_cast<int>(FileError::ABORT_ERR), 0);
 }
 
-void InspectorFileSystemAgent::requestFileContent(ErrorString* error, const String& url, const int* start, const int* end, int* requestId)
+void InspectorFileSystemAgent::requestFileContent(ErrorString* error, const String& url, bool readAsText, const int* start, const int* end, const String* charset, int* requestId)
 {
     if (!m_enabled || !m_frontendProvider) {
         *error = "FileSystem agent is not enabled";
@@ -614,9 +639,9 @@ void InspectorFileSystemAgent::requestFileContent(ErrorString* error, const Stri
     *requestId = m_nextRequestId++;
 
     if (ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextForOrigin(SecurityOrigin::createFromString(url).get()))
-        ReadFileTask::create(m_frontendProvider, *requestId, url, start ? *start : 0, end ? *end : std::numeric_limits<long long>::max())->start(scriptExecutionContext);
+        ReadFileTask::create(m_frontendProvider, *requestId, url, readAsText, start ? *start : 0, end ? *end : std::numeric_limits<long long>::max(), charset ? *charset : "")->start(scriptExecutionContext);
     else
-        m_frontendProvider->frontend()->fileContentReceived(*requestId, static_cast<int>(FileError::ABORT_ERR), 0);
+        m_frontendProvider->frontend()->fileContentReceived(*requestId, static_cast<int>(FileError::ABORT_ERR), 0, 0);
 }
 
 void InspectorFileSystemAgent::setFrontend(InspectorFrontend* frontend)

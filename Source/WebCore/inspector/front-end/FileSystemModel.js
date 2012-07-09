@@ -248,13 +248,15 @@ WebInspector.FileSystemModel.prototype = {
 
     /**
      * @param {WebInspector.FileSystemModel.File} file
-     * @param {number} start
-     * @param {number} end
-     * @param {function(number, string=)} callback
+     * @param {boolean} readAsText
+     * @param {number=} start
+     * @param {number=} end
+     * @param {string=} charset
+     * @param {function(number, string=, string=)=} callback
      */
-    requestFileContent: function(file, start, end, callback)
+    requestFileContent: function(file, readAsText, start, end, charset, callback)
     {
-        this._agentWrapper.requestFileContent(file.url, start, end, callback);
+        this._agentWrapper.requestFileContent(file.url, readAsText, start, end, charset, callback);
     }
 }
 
@@ -405,6 +407,7 @@ WebInspector.FileSystemModel.File = function(fileSystemModel, fileSystem, backen
 
     this._mimeType = backendEntry.mimeType;
     this._resourceType = WebInspector.resourceTypes[backendEntry.resourceType];
+    this._isTextFile = backendEntry.isTextFile;
 }
 
 WebInspector.FileSystemModel.File.prototype = {
@@ -425,13 +428,23 @@ WebInspector.FileSystemModel.File.prototype = {
     },
 
     /**
-     * @param {number} start
-     * @param {number} end
-     * @param {function(number, string=)} callback
+     * @type {boolean}
      */
-    requestFileContent: function(start, end, callback)
+    get isTextFile()
     {
-        this.fileSystemModel.requestFileContent(this, start, end, callback);
+        return this._isTextFile;
+    },
+
+    /**
+     * @param {boolean} readAsText
+     * @param {number=} start
+     * @param {number=} end
+     * @param {string=} charset
+     * @param {function(number, string=)=} callback
+     */
+    requestFileContent: function(readAsText, start, end, charset, callback)
+    {
+        this.fileSystemModel.requestFileContent(this, readAsText, start, end, charset, callback);
     }
 }
 
@@ -455,7 +468,7 @@ WebInspector.FileSystemRequestManager.prototype = {
     /**
      * @param {string} origin
      * @param {string} type
-     * @param {function(number, FileSystemAgent.Entry)} callback
+     * @param {function(number, FileSystemAgent.Entry)=} callback
      */
     requestFileSystemRoot: function(origin, type, callback)
     {
@@ -465,7 +478,7 @@ WebInspector.FileSystemRequestManager.prototype = {
         function requestAccepted(error, requestId)
         {
             if (!error)
-                store[requestId] = callback;
+                store[requestId] = callback || function() {};
         }
     },
 
@@ -485,7 +498,7 @@ WebInspector.FileSystemRequestManager.prototype = {
 
     /**
      * @param {string} url
-     * @param {function(number, Array.<FileSystemAgent.Entry>=)} callback
+     * @param {function(number, Array.<FileSystemAgent.Entry>=)=} callback
      */
     requestDirectoryContent: function(url, callback)
     {
@@ -495,7 +508,7 @@ WebInspector.FileSystemRequestManager.prototype = {
         function requestAccepted(error, requestId)
         {
             if (!error)
-                store[requestId] = callback;
+                store[requestId] = callback || function() {};
         }
     },
 
@@ -515,7 +528,7 @@ WebInspector.FileSystemRequestManager.prototype = {
 
     /**
      * @param {string} url
-     * @param {function(number, FileSystemAgent.Metadata=)} callback
+     * @param {function(number, FileSystemAgent.Metadata=)=} callback
      */
     requestMetadata: function(url, callback)
     {
@@ -525,7 +538,7 @@ WebInspector.FileSystemRequestManager.prototype = {
         function requestAccepted(error, requestId)
         {
             if (!error)
-                store[requestId] = callback;
+                store[requestId] = callback || function() {};
         }
     },
 
@@ -540,19 +553,21 @@ WebInspector.FileSystemRequestManager.prototype = {
 
     /**
      * @param {string} url
-     * @param {number} start
-     * @param {number} end
-     * @param {function(number, string)} callback
+     * @param {boolean} readAsText
+     * @param {number=} start
+     * @param {number=} end
+     * @param {string=} charset
+     * @param {function(number, string=, string=)=} callback
      */
-    requestFileContent: function(url, start, end, callback)
+    requestFileContent: function(url, readAsText, start, end, charset, callback)
     {
         var store = this._pendingFileContentRequests;
-        FileSystemAgent.requestFileContent(url, start, end, requestAccepted);
+        FileSystemAgent.requestFileContent(url, readAsText, start, end, charset, requestAccepted);
 
         function requestAccepted(error, requestId)
         {
             if (!error)
-                store[requestId] = callback;
+                store[requestId] = callback || function() {};
         }
     },
 
@@ -560,14 +575,15 @@ WebInspector.FileSystemRequestManager.prototype = {
      * @param {number} requestId
      * @param {number} errorCode
      * @param {string=} content
+     * @param {string=} charset
      */
-    _fileContentReceived: function(requestId, errorCode, content)
+    _fileContentReceived: function(requestId, errorCode, content, charset)
     {
-        var callback = /** @type {function(number, string=)} */ this._pendingFileContentRequests[requestId];
+        var callback = /** @type {function(number, string=, string=)} */ this._pendingFileContentRequests[requestId];
         if (!callback)
             return;
         delete this._pendingFileContentRequests[requestId];
-        callback(errorCode, content);
+        callback(errorCode, content, charset);
     }
 }
 
@@ -616,9 +632,10 @@ WebInspector.FileSystemDispatcher.prototype = {
      * @param {number} requestId
      * @param {number} errorCode
      * @param {string=} content
+     * @param {string=} charset
      */
-    fileContentReceived: function(requestId, errorCode, content)
+    fileContentReceived: function(requestId, errorCode, content, charset)
     {
-        this._agentWrapper._fileContentReceived(requestId, errorCode, content);
+        this._agentWrapper._fileContentReceived(requestId, errorCode, content, charset);
     }
 }

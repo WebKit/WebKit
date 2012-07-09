@@ -1,5 +1,6 @@
-Tests readFile.
+Tests requestFileContent.
 
 errorCode = 0
-content = "UEFTUw==" [PASS]
+content = "PASS"
+charset = UTF-8
 
