@@ -1,3 +1,21 @@
+2012-07-09  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions] Implement NamedFlow::firstEmptyRegionIndex attribute
+        https://bugs.webkit.org/show_bug.cgi?id=90608
+
+        Reviewed by Andreas Kling.
+
+        Implemented NamedFlow::firstEmptyRegionIndex as per spec: http://www.w3.org/TR/css3-regions/#dom-named-flow
+
+        Test: fast/regions/webkit-named-flow-first-empty-region-index.html
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::firstEmptyRegionIndex):
+        (WebCore):
+        * dom/WebKitNamedFlow.h:
+        (WebKitNamedFlow):
+        * dom/WebKitNamedFlow.idl:
+
 2012-07-08  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform-Mac] Derive LocaleMac.{cpp,h} and LocalizedDateMac.cpp from LocaleWin

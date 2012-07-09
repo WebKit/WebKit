@@ -56,6 +56,22 @@ bool WebKitNamedFlow::overset() const
     return m_parentFlowThread->overset();
 }
 
+int WebKitNamedFlow::firstEmptyRegionIndex() const
+{
+    m_parentFlowThread->document()->updateLayoutIgnorePendingStylesheets();
+
+    const RenderRegionList& regionList = m_parentFlowThread->renderRegionList();
+    if (regionList.isEmpty())
+        return -1;
+    RenderRegionList::const_iterator iter = regionList.begin();
+    for (int index = 0; iter != regionList.end(); ++index, ++iter) {
+        const RenderRegion* renderRegion = *iter;
+        if (renderRegion->regionState() == RenderRegion::RegionEmpty)
+            return index;
+    }
+    return -1;
+}
+
 PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContentNode(Node* contentNode)
 {
     if (!contentNode)
