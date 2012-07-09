@@ -20,6 +20,14 @@ Expecting exception from store.createIndex('index-multientry', ['e', 'f'], {mult
 PASS Exception was thrown.
 PASS code is DOMException.NOT_SUPPORTED_ERR
 
+Empty arrays are not valid key paths:
+Expecting exception from db.createObjectStore('store-keypath-empty-array', {keyPath: []})
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from store.createIndex('index-keypath-empty-array', [])
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
+
 testKeyPaths():
 transaction = db.transaction(['store'], 'readwrite')
 store = transaction.objectStore('store')

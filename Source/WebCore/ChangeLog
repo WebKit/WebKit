@@ -1,3 +1,21 @@
+2012-07-09  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Empty arrays shouldn't be valid key paths
+        https://bugs.webkit.org/show_bug.cgi?id=90798
+
+        Reviewed by Tony Chang.
+
+        Other IDB implementations already enforce this although it is not yet in 
+        the spec (see https://www.w3.org/Bugs/Public/show_bug.cgi?id=17657). If an
+        empty array is passed as the key path arg to IDBDatabase.createObjectStore()
+        or IDBObjectStore.createIndex(), a SYNTAX_ERR DOMException is now thrown.
+
+        Test: storage/indexeddb/keypath-arrays.html
+              storage/indexeddb/keypath-basics.html
+
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPath::isValid): Test for empty array.
+
 2012-07-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Create render surfaces on main thread only for the current frame

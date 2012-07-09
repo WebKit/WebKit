@@ -60,7 +60,7 @@ function testInvalidKeyPaths()
 
     debug("");
     debug("Object store key path may not be empty or an array if autoIncrement is true");
-    testKeyPaths = ["''", "[]", "['a']", "['']"];
+    testKeyPaths = ["''", "['a']", "['']"];
     testKeyPaths.forEach(function (keyPath) {
         store = evalAndExpectException("store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: " + keyPath + "})", "DOMException.INVALID_ACCESS_ERR");
         deleteAllObjectStores(db);
@@ -68,7 +68,7 @@ function testInvalidKeyPaths()
 
     debug("");
     debug("Key paths which are never valid:");
-    testKeyPaths = ["' '", "'foo '", "'foo bar'", "'foo. bar'", "'foo .bar'", "'foo..bar'", "'+foo'", "'foo%'", "'1'", "'1.0'"];
+    testKeyPaths = ["' '", "'foo '", "'foo bar'", "'foo. bar'", "'foo .bar'", "'foo..bar'", "'+foo'", "'foo%'", "'1'", "'1.0'", "[]"];
     testKeyPaths.forEach(function (keyPath) {
         evalAndExpectException("db.createObjectStore('name', {keyPath: " + keyPath + "})", "DOMException.SYNTAX_ERR");
         evalAndExpectException("db.createObjectStore('name').createIndex('name', " + keyPath + ")", "DOMException.SYNTAX_ERR");

@@ -48,10 +48,6 @@ Expecting exception from store = db.createObjectStore('storeName', {autoIncremen
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_ACCESS_ERR
 Deleted all object stores.
-Expecting exception from store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: []})
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_ACCESS_ERR
-Deleted all object stores.
 Expecting exception from store = db.createObjectStore('storeName', {autoIncrement: true, keyPath: ['a']})
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_ACCESS_ERR
@@ -129,6 +125,13 @@ Expecting exception from db.createObjectStore('name', {keyPath: '1.0'})
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
 Expecting exception from db.createObjectStore('name').createIndex('name', '1.0')
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
+Deleted all object stores.
+Expecting exception from db.createObjectStore('name', {keyPath: []})
+PASS Exception was thrown.
+PASS code is DOMException.SYNTAX_ERR
+Expecting exception from db.createObjectStore('name').createIndex('name', [])
 PASS Exception was thrown.
 PASS code is DOMException.SYNTAX_ERR
 Deleted all object stores.

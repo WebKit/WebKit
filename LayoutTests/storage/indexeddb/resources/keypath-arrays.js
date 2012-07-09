@@ -34,6 +34,11 @@ function openSuccess()
         evalAndExpectException("db.createObjectStore('store-with-generator', {keyPath: ['a', 'b'], autoIncrement: true})", "DOMException.INVALID_ACCESS_ERR");
         evalAndExpectException("store.createIndex('index-multientry', ['e', 'f'], {multiEntry: true})", "DOMException.NOT_SUPPORTED_ERR");
 
+        debug("");
+        debug("Empty arrays are not valid key paths:");
+        evalAndExpectException("db.createObjectStore('store-keypath-empty-array', {keyPath: []})", "DOMException.SYNTAX_ERR");
+        evalAndExpectException("store.createIndex('index-keypath-empty-array', [])", "DOMException.SYNTAX_ERR");
+
         transaction.oncomplete = testKeyPaths;
     };
 }

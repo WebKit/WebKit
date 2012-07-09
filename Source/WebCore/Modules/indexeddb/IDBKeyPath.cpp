@@ -207,6 +207,8 @@ bool IDBKeyPath::isValid() const
         return IDBIsValidKeyPath(m_string);
 
     case ArrayType:
+        if (m_array.isEmpty())
+            return false;
         for (size_t i = 0; i < m_array.size(); ++i) {
             if (!IDBIsValidKeyPath(m_array[i]))
                 return false;
