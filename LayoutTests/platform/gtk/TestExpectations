@@ -237,17 +237,14 @@ BUGWKGTK SKIP : http/tests/security/webgl-remote-read-remote-image-blocked-no-cr
 BUGWK49142 : fast/css/style-scoped = TEXT
 
 // CSS Regions tests for region styling and scoped styles
-BUGWKGTK SKIP : fast/regions/style-scoped-in-flow-override-container-style.html = IMAGE
-BUGWKGTK SKIP : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = IMAGE
-BUGWKGTK SKIP : fast/regions/style-scoped-in-flow-override-region-styling.html = IMAGE
-BUGWKGTK SKIP : fast/regions/style-scoped-in-flow.html = IMAGE
+BUGWKGTK : fast/regions/style-scoped-in-flow-override-container-style.html = IMAGE
+BUGWKGTK : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = IMAGE
+BUGWKGTK : fast/regions/style-scoped-in-flow-override-region-styling.html = IMAGE
+BUGWKGTK : fast/regions/style-scoped-in-flow.html = IMAGE
 
 // ENABLE(SHADOW_DOM) is disabled.
 BUGWKGTK SKIP : fast/dom/shadow = TEXT
 BUGWKGTK SKIP : editing/shadow = TEXT
-
-// CSS Regions support not yet enabled.
-BUGWK57312 SKIP : fast/regions = TEXT
 
 // CSS Filters is disabled
 BUGWKGTK SKIP : css3/filters = TEXT
@@ -1245,6 +1242,9 @@ BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEX
 BUGWK89845 : fast/forms/input-set-composition-scroll.html = TEXT
 
 BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html = TEXT
+
+BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions-rtl.html = IMAGE
+BUGWK90770 : fast/regions/webkit-flow-renderer-layer.html = IMAGE
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

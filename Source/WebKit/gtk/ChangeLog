@@ -1,3 +1,18 @@
+2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Unskip the CSS Regions layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=90771
+
+        Reviewed by Martin Robinson.
+
+        Add a method to DumpRenderTreeSupportGtk for enabling or disabling
+        CSS Regions from DumpRenderTree.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setCSSRegionsEnabled):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-07-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] Memory leak in webkitwebnavigationaction.cpp

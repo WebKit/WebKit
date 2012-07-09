@@ -492,6 +492,7 @@ static void resetDefaultsToConsistentValues()
 
     DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(webView, true);
     DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(webView, false);
+    DumpRenderTreeSupportGtk::setCSSRegionsEnabled(webView, true);
 }
 
 static bool useLongRunningServerMode(int argc, char *argv[])

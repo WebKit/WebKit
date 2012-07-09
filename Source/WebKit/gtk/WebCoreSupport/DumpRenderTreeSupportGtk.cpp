@@ -801,6 +801,11 @@ void DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(WebKitWebView* webView, b
     core(webView)->settings()->setCSSGridLayoutEnabled(enabled);
 }
 
+void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView* webView, bool enabled)
+{
+    core(webView)->settings()->setCSSRegionsEnabled(enabled);
+}
+
 bool DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(WebKitWebFrame* frame, JSStringRef id)
 {
     Frame* coreFrame = core(frame);

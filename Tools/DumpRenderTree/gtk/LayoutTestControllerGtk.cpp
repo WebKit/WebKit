@@ -810,6 +810,9 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     } else if (g_str_equal(originalName.get(), "WebKitCSSGridLayoutEnabled")) {
         DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(webkit_web_frame_get_web_view(mainFrame), booleanFromValue(valueAsString.get()));
         return;
+    } else if (g_str_equal(originalName.get(), "WebKitCSSRegionsEnabled")) {
+        DumpRenderTreeSupportGtk::setCSSRegionsEnabled(webkit_web_frame_get_web_view(mainFrame), booleanFromValue(valueAsString.get()));
+        return;
     } else {
         fprintf(stderr, "LayoutTestController::overridePreference tried to override "
                 "unknown preference '%s'.\n", originalName.get());

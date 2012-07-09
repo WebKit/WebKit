@@ -1,3 +1,88 @@
+2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Unskip the CSS Regions layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=90771
+
+        Reviewed by Martin Robinson.
+
+        Unskip CSS Regions tests, updating baselines for the affected tests.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/regions/bottom-overflow-out-of-first-region-expected.png: Added.
+        * platform/gtk/fast/regions/bottom-overflow-out-of-first-region-expected.txt:
+        * platform/gtk/fast/regions/flow-content-basic-expected.png: Added.
+        * platform/gtk/fast/regions/flow-content-basic-expected.txt:
+        * platform/gtk/fast/regions/flow-content-basic-vertical-expected.png: Added.
+        * platform/gtk/fast/regions/flow-content-basic-vertical-expected.txt:
+        * platform/gtk/fast/regions/flow-content-basic-vertical-rl-expected.png: Added.
+        * platform/gtk/fast/regions/flow-content-basic-vertical-rl-expected.txt:
+        * platform/gtk/fast/regions/flows-dependency-dynamic-remove-expected.png: Added.
+        * platform/gtk/fast/regions/flows-dependency-dynamic-remove-expected.txt:
+        * platform/gtk/fast/regions/flows-dependency-same-flow-expected.png: Added.
+        * platform/gtk/fast/regions/flows-dependency-same-flow-expected.txt:
+        * platform/gtk/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt:
+        * platform/gtk/fast/regions/overflow-in-uniform-regions-dynamic-expected.png: Added.
+        * platform/gtk/fast/regions/overflow-in-uniform-regions-dynamic-expected.txt:
+        * platform/gtk/fast/regions/overflow-in-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/overflow-in-variable-width-regions-expected.txt:
+        * platform/gtk/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.txt:
+        * platform/gtk/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.txt:
+        * platform/gtk/fast/regions/overflow-rtl-in-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/overflow-rtl-in-variable-width-regions-expected.txt:
+        * platform/gtk/fast/regions/overflow-size-change-in-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/overflow-size-change-in-variable-width-regions-expected.txt:
+        * platform/gtk/fast/regions/overflow-size-change-with-stacking-context-expected.png: Added.
+        * platform/gtk/fast/regions/overflow-size-change-with-stacking-context-expected.txt:
+        * platform/gtk/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.png: Added.
+        * platform/gtk/fast/regions/overflow-size-change-with-stacking-context-rtl-expected.txt:
+        * platform/gtk/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.png: Added.
+        * platform/gtk/fast/regions/percentage-margins-mixed-ltr-dominant-regions-expected.txt:
+        * platform/gtk/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.png: Added.
+        * platform/gtk/fast/regions/percentage-margins-mixed-rtl-dominant-regions-expected.txt:
+        * platform/gtk/fast/regions/percentage-margins-rtl-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/percentage-margins-rtl-variable-width-regions-expected.txt:
+        * platform/gtk/fast/regions/percentage-margins-variable-width-regions-expected.png: Added.
+        * platform/gtk/fast/regions/percentage-margins-variable-width-regions-expected.txt:
+        * platform/gtk/fast/regions/region-overflow-auto-overflow-hidden-expected.png: Added.
+        * platform/gtk/fast/regions/region-overflow-auto-overflow-hidden-expected.txt:
+        * platform/gtk/fast/regions/region-overflow-auto-overflow-visible-expected.png: Added.
+        * platform/gtk/fast/regions/region-overflow-auto-overflow-visible-expected.txt:
+        * platform/gtk/fast/regions/region-style-block-background-color-expected.png: Added.
+        * platform/gtk/fast/regions/region-style-block-background-color-expected.txt:
+        * platform/gtk/fast/regions/region-style-block-background-color2-expected.png: Added.
+        * platform/gtk/fast/regions/region-style-block-background-color2-expected.txt:
+        * platform/gtk/fast/regions/text-region-split-small-pagination-expected.png: Added.
+        * platform/gtk/fast/regions/text-region-split-small-pagination-expected.txt:
+        * platform/gtk/fast/regions/top-overflow-out-of-second-region-expected.png: Added.
+        * platform/gtk/fast/regions/top-overflow-out-of-second-region-expected.txt:
+        * platform/gtk/fast/regions/webkit-flow-double-pagination-float-push-expected.png: Added.
+        * platform/gtk/fast/regions/webkit-flow-double-pagination-float-push-expected.txt:
+        * platform/gtk/fast/regions/webkit-flow-float-pushed-to-last-region-expected.png: Added.
+        * platform/gtk/fast/regions/webkit-flow-float-pushed-to-last-region-expected.txt:
+        * platform/gtk/fast/regions/webkit-flow-float-unable-to-push-expected.png: Added.
+        * platform/gtk/fast/regions/webkit-flow-float-unable-to-push-expected.txt:
+        * platform/gtk/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.png: Added.
+        * platform/gtk/fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt:
+        * platform/gtk/fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.png: Added.
+        * platform/gtk/fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.txt:
+        * platform/gtk/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.png: Added.
+        * platform/gtk/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.txt:
+        * platform/gtk/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.png: Added.
+        * platform/gtk/fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt:
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt:
+        * platform/gtk/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/gtk/fast/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/gtk/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png:
+        * platform/gtk/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt:
+        * platform/gtk/fast/repaint/region-painting-invalidation-expected.png:
+        * platform/gtk/fast/repaint/region-painting-invalidation-expected.txt:
+        * platform/gtk/fast/repaint/region-painting-via-layout-expected.png:
+        * platform/gtk/fast/repaint/region-painting-via-layout-expected.txt:
+
 2012-07-09  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions] Rename NamedFlow::getRegionsByContentNode to NamedFlow::getRegionsByContent
