@@ -1,3 +1,11 @@
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Rebaseline after r121917.
+
+        * platform/chromium-mac-snowleopard/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-mac/svg/custom/inline-svg-in-xhtml-expected.png:
+
 2012-07-08  Filip Pizlo  <fpizlo@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=90722
