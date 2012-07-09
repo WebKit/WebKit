@@ -86,13 +86,17 @@ inline J_COLOR_SPACE rgbOutputColorSpace() { return JCS_RGB; }
 inline bool colorSpaceHasAlpha(J_COLOR_SPACE) { return false; }
 #endif
 
-#if OS(ANDROID)
+#if USE(LOW_QUALITY_IMAGE_NO_JPEG_DITHERING)
 inline J_DCT_METHOD dctMethod() { return JDCT_IFAST; }
 inline J_DITHER_MODE ditherMode() { return JDITHER_NONE; }
-inline bool doFancyUpsampling() { return false; }
 #else
 inline J_DCT_METHOD dctMethod() { return JDCT_ISLOW; }
 inline J_DITHER_MODE ditherMode() { return JDITHER_FS; }
+#endif
+
+#if USE(LOW_QUALITY_IMAGE_NO_JPEG_FANCY_UPSAMPLING)
+inline bool doFancyUpsampling() { return false; }
+#else
 inline bool doFancyUpsampling() { return true; }
 #endif
 
