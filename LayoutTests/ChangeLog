@@ -1,3 +1,13 @@
+2012-07-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, checking in platform results.
+
+        * platform/mac/css3/filters/effect-reference-expected.txt: Added.
+        * platform/mac/css3/filters/effect-reference-external-expected.txt: Added.
+        * platform/mac/css3/filters/effect-reference-hw-expected.txt: Added.
+        * platform/mac/css3/filters/effect-reference-ordering-expected.txt: Added.
+        * platform/mac/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Added.
+
 2012-07-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Check returned value in BatteryStatus APIs test cases
