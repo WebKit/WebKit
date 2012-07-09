@@ -1,3 +1,37 @@
+2012-07-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add missing Battery Status API integration to WebContext and WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=90784
+
+        Reviewed by Anders Carlsson.
+
+        Integrate Battery Status API to WebPage, WebContext and
+        properly route messages to the WebBatteryManagerProxy.
+        Without this, the Battery Status tests are crashing for
+        WebKit2.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetBatteryManager):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::disconnectProcess):
+        (WebKit::WebContext::didReceiveMessage):
+        * UIProcess/WebContext.h:
+        (WebKit):
+        (WebContext):
+        (WebKit::WebContext::batteryManagerProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        * WebProcess/WebCoreSupport/WebBatteryClient.cpp:
+        (WebKit::WebBatteryClient::setController):
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebBatteryClient.h:
+        (WebBatteryClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2012-07-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key)

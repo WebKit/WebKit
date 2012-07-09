@@ -66,6 +66,10 @@
 #include "BuiltInPDFView.h"
 #endif
 
+#if ENABLE(BATTERY_STATUS)
+#include "WebBatteryManagerProxy.h"
+#endif
+
 #if USE(SOUP)
 #include "WebSoupRequestManagerProxy.h"
 #endif
@@ -130,6 +134,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
     , m_applicationCacheManagerProxy(WebApplicationCacheManagerProxy::create(this))
+#if ENABLE(BATTERY_STATUS)
+    , m_batteryManagerProxy(WebBatteryManagerProxy::create(this))
+#endif
     , m_cookieManagerProxy(WebCookieManagerProxy::create(this))
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
     , m_geolocationManagerProxy(WebGeolocationManagerProxy::create(this))
@@ -180,6 +187,11 @@ WebContext::~WebContext()
 
     m_applicationCacheManagerProxy->invalidate();
     m_applicationCacheManagerProxy->clearContext();
+
+#if ENABLE(BATTERY_STATUS)
+    m_batteryManagerProxy->invalidate();
+    m_batteryManagerProxy->clearContext();
+#endif
 
     m_cookieManagerProxy->invalidate();
     m_cookieManagerProxy->clearContext();
@@ -398,6 +410,9 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_downloads.clear();
 
     m_applicationCacheManagerProxy->invalidate();
+#if ENABLE(BATTERY_STATUS)
+    m_batteryManagerProxy->invalidate();
+#endif
     m_cookieManagerProxy->invalidate();
     m_databaseManagerProxy->invalidate();
     m_geolocationManagerProxy->invalidate();
@@ -730,6 +745,13 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         m_applicationCacheManagerProxy->didReceiveMessage(connection, messageID, arguments);
         return;
     }
+
+#if ENABLE(BATTERY_STATUS)
+    if (messageID.is<CoreIPC::MessageClassWebBatteryManagerProxy>()) {
+        m_batteryManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
 
     if (messageID.is<CoreIPC::MessageClassWebCookieManagerProxy>()) {
         m_cookieManagerProxy->didReceiveMessage(connection, messageID, arguments);

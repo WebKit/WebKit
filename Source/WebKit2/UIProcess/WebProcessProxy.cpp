@@ -307,6 +307,9 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         || messageID.is<CoreIPC::MessageClassWebContextLegacy>()
         || messageID.is<CoreIPC::MessageClassDownloadProxy>()
         || messageID.is<CoreIPC::MessageClassWebApplicationCacheManagerProxy>()
+#if ENABLE(BATTERY_STATUS)
+        || messageID.is<CoreIPC::MessageClassWebBatteryManagerProxy>()
+#endif
         || messageID.is<CoreIPC::MessageClassWebCookieManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()

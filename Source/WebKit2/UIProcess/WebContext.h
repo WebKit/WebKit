@@ -48,6 +48,9 @@ namespace WebKit {
 
 class DownloadProxy;
 class WebApplicationCacheManagerProxy;
+#if ENABLE(BATTERY_STATUS)
+class WebBatteryManagerProxy;
+#endif
 class WebCookieManagerProxy;
 class WebDatabaseManagerProxy;
 class WebGeolocationManagerProxy;
@@ -154,6 +157,9 @@ public:
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 
     WebApplicationCacheManagerProxy* applicationCacheManagerProxy() const { return m_applicationCacheManagerProxy.get(); }
+#if ENABLE(BATTERY_STATUS)
+    WebBatteryManagerProxy* batteryManagerProxy() const { return m_batteryManagerProxy.get(); }
+#endif
     WebCookieManagerProxy* cookieManagerProxy() const { return m_cookieManagerProxy.get(); }
     WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
     WebGeolocationManagerProxy* geolocationManagerProxy() const { return m_geolocationManagerProxy.get(); }
@@ -299,6 +305,9 @@ private:
     double m_memorySamplerInterval;
 
     RefPtr<WebApplicationCacheManagerProxy> m_applicationCacheManagerProxy;
+#if ENABLE(BATTERY_STATUS)
+    RefPtr<WebBatteryManagerProxy> m_batteryManagerProxy;
+#endif
     RefPtr<WebCookieManagerProxy> m_cookieManagerProxy;
     RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
     RefPtr<WebGeolocationManagerProxy> m_geolocationManagerProxy;
