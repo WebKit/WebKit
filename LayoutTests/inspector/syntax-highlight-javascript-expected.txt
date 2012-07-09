@@ -15,6 +15,6 @@ oo';: webkit-javascript-string,,webkit-javascript-string,*
 foo/**
 /
 */foo: webkit-javascript-ident,webkit-javascript-comment,,webkit-javascript-comment,,webkit-javascript-comment,webkit-javascript-ident
-{0: true}: *,webkit-javascript-number,*,webkit-javascript-keyword,*
+{0: true}: webkit-block-start,webkit-javascript-number,*,webkit-javascript-keyword,webkit-block-end
 var toString;: webkit-javascript-keyword,*,webkit-javascript-ident,*
 

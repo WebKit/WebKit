@@ -28,18 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Generate js file as follows:
-//
-// re2c -isc Source/WebCore/inspector/front-end/SourceJavaScriptTokenizer.re2js \
-// | sed 's|^yy\([^:]*\)*\:|case \1:|' \
-// | sed 's|[*]cursor[+][+]|this._charAt(cursor++)|' \
-// | sed 's|[[*][+][+]cursor|this._charAt(++cursor)|' \
-// | sed 's|[*]cursor|this._charAt(cursor)|' \
-// | sed 's|yych = \*\([^;]*\)|yych = this._charAt\1|' \
-// | sed 's|goto case \([^;]*\)|{ gotoCase = \1; continue; }|' \
-// | sed 's|yych <= \(0x[0-9a-fA-f]*\)|yych <= String.fromCharCode(\1)|' \
-// | sed 's|unsigned\ int|var|' \
-// | sed 's|var\ yych|case 1: var yych|'
+/*
+ * Generate js file as follows:
+re2c -isc Source/WebCore/inspector/front-end/SourceJavaScriptTokenizer.re2js \
+  | sed 's|^yy\([^:]*\)*\:|case \1:|' \
+  | sed 's|[*]cursor[+][+]|this._charAt(cursor++)|' \
+  | sed 's|[[*][+][+]cursor|this._charAt(++cursor)|' \
+  | sed 's|[*]cursor|this._charAt(cursor)|' \
+  | sed 's|yych = \*\([^;]*\)|yych = this._charAt\1|' \
+  | sed 's|goto case \([^;]*\)|{ gotoCase = \1; continue; }|' \
+  | sed 's|yych <= \(0x[0-9a-fA-F]*\)|yych \<\= String.fromCharCode(\1)|' \
+  | sed 's|unsigned\ int|var|' \
+  | sed 's|var\ yych|case 1: var yych|' > Source/WebCore/inspector/front-end/SourceJavaScriptTokenizer.js
+ */
 
 /**
  * @constructor
@@ -177,7 +178,16 @@ WebInspector.SourceJavaScriptTokenizer.prototype = {
                     return cursor;
                 }
                 <DIV,NODIV> RightParen => DIV { this.tokenType = null; return cursor; }
-                <DIV,NODIV> Punctuation => NODIV { this.tokenType = null; return cursor; }
+                <DIV,NODIV> Punctuation => NODIV
+                {
+                    var token = this._line.charAt(cursorOnEnter);
+                    if (token === "{")
+                        this.tokenType = "block-start";
+                    else if (token === "}")
+                        this.tokenType = "block-end";
+                    else this.tokenType = null;
+                    return cursor;
+                }
                 <DIV> Division => NODIV { this.tokenType = null; return cursor; }
                 <*> [^] { this.tokenType = null; return cursor; }
             */

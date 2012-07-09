@@ -32,14 +32,15 @@
 
 /*
 re2c -isc Source/WebCore/inspector/front-end/SourceCSSTokenizer.re2js \
- | sed 's|^yy\([^:]*\)*\:|case \1:|' \
- | sed 's|[*]cursor[+][+]|this._charAt(cursor++)|' \
- | sed 's|[[*][+][+]cursor|this._charAt(++cursor)|' \
- | sed 's|[*]cursor|this._charAt(cursor)|' \
- | sed 's|yych = \*\([^;]*\)|yych = this._charAt\1|' \
- | sed 's|goto case \([^;]*\)|{ gotoCase = \1; continue; }|' \
- | sed 's|unsigned\ int|var|' \
- | sed 's|var\ yych|case 1: var yych|' > Source/WebCore/inspector/front-end/SourceCSSTokenizer.js
+  | sed 's|^yy\([^:]*\)*\:|case \1:|' \
+  | sed 's|[*]cursor[+][+]|this._charAt(cursor++)|' \
+  | sed 's|[[*][+][+]cursor|this._charAt(++cursor)|' \
+  | sed 's|[*]cursor|this._charAt(cursor)|' \
+  | sed 's|yych = \*\([^;]*\)|yych = this._charAt\1|' \
+  | sed 's|goto case \([^;]*\)|{ gotoCase = \1; continue; }|' \
+  | sed 's|yych <= \(0x[0-9a-fA-F]*\)|yych \<\= String.fromCharCode(\1)|' \
+  | sed 's|unsigned\ int|var|' \
+  | sed 's|var\ yych|case 1: var yych|' > Source/WebCore/inspector/front-end/SourceCSSTokenizer.js
 */
 
 /**
@@ -211,7 +212,7 @@ WebInspector.SourceCSSTokenizer.prototype = {
 
                 <INITIAL> OpenCurlyBracket
                 {
-                    this.tokenType = null;
+                    this.tokenType = "block-start";
                     if (this._condition.parseCondition === this._parseConditions.AT_MEDIA_RULE)
                         this._condition.parseCondition = this._parseConditions.INITIAL;
                     else
@@ -221,7 +222,7 @@ WebInspector.SourceCSSTokenizer.prototype = {
 
                 <INITIAL> CloseCurlyBracket
                 {
-                    this.tokenType = null;
+                    this.tokenType = "block-end";
                     this._condition.parseCondition = this._parseConditions.INITIAL;
                     return cursor;
                 }

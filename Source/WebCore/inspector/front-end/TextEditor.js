@@ -2191,6 +2191,9 @@ WebInspector.TextEditorMainPanel.prototype = {
             return; // Noop
         }
 
+        if (lines.length === 1 && lines[0] === "}" && oldRange.isEmpty() && selection.isEmpty() && !this._textModel.line(oldRange.endLine).trim())
+            this._unindentAfterBlock(oldRange, selection);
+        
         // This is a "foreign" call outside of this class. Should be before we delete the dirty lines flag.
         this._enterTextChangeMode();
 
@@ -2202,6 +2205,38 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._restoreSelection(selection);
 
         this._exitTextChangeMode(oldRange, newRange);
+    },
+
+    /**
+     * @param {WebInspector.TextRange} oldRange
+     * @param {WebInspector.TextRange} selection
+     */
+    _unindentAfterBlock: function(oldRange, selection)
+    {
+        var nestingLevel = 1;
+        for (var i = oldRange.endLine; i >= 0; --i) {
+            var attribute = this._textModel.getAttribute(i, "highlight");
+            if (!attribute)
+                continue;
+            var columnNumbers = Object.keys(attribute).reverse();
+            for (var j = 0; j < columnNumbers.length; ++j) {
+                var column = columnNumbers[j];
+                if (attribute[column].tokenType === "block-start") {
+                    if (!(--nestingLevel)) {
+                        var lineContent = this._textModel.line(i);
+                        var blockOffset = lineContent.length - lineContent.trimLeft().length;
+                        if (blockOffset < oldRange.startColumn) {
+                            oldRange.startColumn = blockOffset;
+                            selection.startColumn = blockOffset + 1;
+                            selection.endColumn = blockOffset + 1;
+                        }
+                        return;
+                    }
+                }
+                if (attribute[column].tokenType === "block-end")
+                    ++nestingLevel;
+            }
+        }
     },
 
     /**
