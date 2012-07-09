@@ -156,7 +156,7 @@ struct CCOcclusionTrackerTestImplThreadTypes {
     static int nextCCLayerImplId;
 };
 
-int CCOcclusionTrackerTestImplThreadTypes::nextCCLayerImplId = 0;
+int CCOcclusionTrackerTestImplThreadTypes::nextCCLayerImplId = 1;
 
 template<typename Types, bool opaqueLayers>
 class CCOcclusionTrackerTest : public testing::Test {

@@ -295,7 +295,10 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
         CCLayerImpl* renderSurfaceLayer = (*frame.renderSurfaceLayerList)[surfaceIndex];
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
 
-        OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface);
+        // FIXME: Make this unique across all CCLayerTreeHostImpls.
+        int globalRenderPassId = renderSurfaceLayer->id();
+
+        OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface, globalRenderPassId);
         surfacePassMap.add(renderSurface, pass.get());
         frame.renderPasses.append(pass.release());
     }
@@ -351,7 +354,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
         occlusionTracker.overdrawMetrics().recordMetrics(this);
 
     m_layerRenderer->decideRenderPassAllocationsForFrame(frame.renderPasses);
-    removePassesWithCachedTextures(frame.renderPasses, frame.skippedPasses);
+    removePassesWithCachedTextures(frame.renderPasses, frame.skippedPasses, m_layerRenderer.get());
 
     return drawFrame;
 }
@@ -431,7 +434,7 @@ void CCLayerTreeHostImpl::removeRenderPassesRecursive(CCRenderPassList& passes, 
     skippedPasses.append(removedPass.release());
 }
 
-void CCLayerTreeHostImpl::removePassesWithCachedTextures(CCRenderPassList& passes, CCRenderPassList& skippedPasses)
+void CCLayerTreeHostImpl::removePassesWithCachedTextures(CCRenderPassList& passes, CCRenderPassList& skippedPasses, const CCRenderer* renderer)
 {
     for (int passIndex = passes.size() - 1; passIndex >= 0; --passIndex) {
         CCRenderPass* currentPass = passes[passIndex].get();
@@ -445,14 +448,9 @@ void CCLayerTreeHostImpl::removePassesWithCachedTextures(CCRenderPassList& passe
                 continue;
 
             CCRenderPassDrawQuad* renderPassQuad = static_cast<CCRenderPassDrawQuad*>(currentQuad);
-            CCRenderSurface* targetSurface = renderPassQuad->renderPass()->targetSurface();
-
-            if (targetSurface->contentsChanged() || !targetSurface->hasCachedContentsTexture())
+            if (!renderPassQuad->contentsChangedSinceLastFrame().isEmpty())
                 continue;
-
-            // Reserve the texture immediately. We do not need to pass in layer renderer
-            // since the texture already exists, just needs to be reserved.
-            if (!targetSurface->prepareContentsTexture(0))
+            if (!renderer->haveCachedResourcesForRenderPassId(renderPassQuad->renderPassId()))
                 continue;
 
             // We are changing the vector in the middle of reverse iteration.

@@ -29,6 +29,7 @@
 
 #include "cc/CCTiledLayerImpl.h"
 
+#include "GraphicsContext3D.h"
 #include "SkColor.h"
 #include "TextStream.h"
 #include "cc/CCCheckerboardDrawQuad.h"
@@ -220,7 +221,7 @@ void CCTiledLayerImpl::setTilingData(const CCLayerTilingData& tiler)
     *m_tiler = tiler;
 }
 
-void CCTiledLayerImpl::pushTileProperties(int i, int j, Platform3DObject textureId, const IntRect& opaqueRect)
+void CCTiledLayerImpl::pushTileProperties(int i, int j, unsigned textureId, const IntRect& opaqueRect)
 {
     DrawableTile* tile = tileAt(i, j);
     if (!tile)

@@ -178,7 +178,7 @@ public:
     CCDebugRectHistory* debugRectHistory() const { return m_debugRectHistory.get(); }
 
     // Removes all render passes for which we have cached textures, and which did not change their content.
-    static void removePassesWithCachedTextures(CCRenderPassList& passes, CCRenderPassList& skippedPasses);
+    static void removePassesWithCachedTextures(CCRenderPassList& passes, CCRenderPassList& skippedPasses, const CCRenderer*);
 
 protected:
     CCLayerTreeHostImpl(const CCLayerTreeSettings&, CCLayerTreeHostImplClient*);

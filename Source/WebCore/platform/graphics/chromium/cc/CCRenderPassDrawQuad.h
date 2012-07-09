@@ -37,23 +37,27 @@ class CCRenderPass;
 class CCRenderPassDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCRenderPassDrawQuad);
 public:
-    static PassOwnPtr<CCRenderPassDrawQuad> create(const CCSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId);
+    static PassOwnPtr<CCRenderPassDrawQuad> create(const CCSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
 
     const CCRenderPass* renderPass() const { return m_renderPass; }
+    int renderPassId() const { return m_renderPassId; }
     bool isReplica() const { return m_isReplica; }
     unsigned maskTextureId() const { return m_maskTextureId; }
+    const IntRect& contentsChangedSinceLastFrame() const { return m_contentsChangedSinceLastFrame; }
 
     const WebKit::WebFilterOperations& filters() const { return m_filters; }
     const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
 
 private:
-    CCRenderPassDrawQuad(const CCSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId);
+    CCRenderPassDrawQuad(const CCSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
 
     const CCRenderPass* m_renderPass;
+    int m_renderPassId;
     bool m_isReplica;
     WebKit::WebFilterOperations m_filters;
     WebKit::WebFilterOperations m_backgroundFilters;
     unsigned m_maskTextureId;
+    IntRect m_contentsChangedSinceLastFrame;
 };
 
 }

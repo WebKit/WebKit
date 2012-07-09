@@ -1,3 +1,76 @@
+2012-07-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Decouple RenderPass drawing from CCRenderSurface
+        https://bugs.webkit.org/show_bug.cgi?id=90573
+
+        Reviewed by Adrienne Walker.
+
+        Removes the managed textures from CCRenderSurface and stores them in a
+        HashMap in LayerRendererChromium.
+
+        At the start of a frame, all textures for the frame are reserved, and
+        unneeded textures are deleted. After each quad is drawn, evicted textures
+        (ie temporary textures used for background filters) are deleted to keep
+        within memory limits. At the end of the frame, all surface contents
+        textures are kept reserved and thus not deleted.
+
+        We add a numeric identifier to CCRenderPass which can be used to
+        identify the pass across serialization in the future, and is used
+        in the interface to LayerRendererChromium. Also we add to the
+        CCRenderPass a contentsChangedSinceLastFrame() flag so that the
+        value does not need to be retrieved from the CCRenderSurface.
+
+        The pointer from CCRenderPass to CCRenderSurface remains for some
+        code in the CCLayerTreeHostImpl, and will be addressed in the future, but
+        the pointer is no longer used at all while drawing a frame inside
+        LayerRendererChromium.
+
+        Covered by existing tests, no intended change in behaviour.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::releaseRenderPassTextures):
+        (WebCore::LayerRendererChromium::decideRenderPassAllocationsForFrame):
+        (WebCore):
+        (WebCore::LayerRendererChromium::haveCachedResourcesForRenderPassId):
+        (WebCore::LayerRendererChromium::drawQuad):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        (WebCore::LayerRendererChromium::finishDrawingFrame):
+        (WebCore::LayerRendererChromium::useRenderPass):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::removePassesWithCachedTextures):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::create):
+        (WebCore::CCRenderPass::CCRenderPass):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (CCRenderPass):
+        (WebCore::CCRenderPass::id):
+        (WebCore::CCRenderPass::setFramebufferOutputRect):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        (WebCore::CCRenderPassDrawQuad::renderPassId):
+        (WebCore::CCRenderPassDrawQuad::contentsChangedSinceLastFrame):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore):
+        (CCRenderSurface):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRenderer):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::pushTileProperties):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (CCTiledLayerImpl):
+
 2012-07-09  Adam Klein  <adamk@chromium.org>
 
         Rename WebCore::WebKitMutationObserver to WebCore::MutationObserver

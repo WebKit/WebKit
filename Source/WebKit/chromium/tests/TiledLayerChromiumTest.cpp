@@ -97,7 +97,7 @@ TEST_F(TiledLayerChromiumTest, pushDirtyTiles)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(4*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
@@ -134,7 +134,7 @@ TEST_F(TiledLayerChromiumTest, pushOccludedDirtyTiles)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(4*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
     TestCCOcclusionTracker occluded;
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
@@ -180,7 +180,7 @@ TEST_F(TiledLayerChromiumTest, pushDeletedTiles)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(4*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
@@ -226,7 +226,7 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintTiles)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(4*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     // The tile size is 100x100. Setup 5x5 tiles with one visible tile in the center.
     IntSize contentBounds(500, 500);
@@ -285,9 +285,9 @@ TEST_F(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(2*1024*1024, 1024);
     DebugScopedSetImplThread implThread;
     RefPtr<FakeTiledLayerChromium> layer1 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl1(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl1(adoptPtr(new FakeCCTiledLayerImpl(1)));
     RefPtr<FakeTiledLayerChromium> layer2 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl2(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl2(adoptPtr(new FakeCCTiledLayerImpl(2)));
 
     // For this test we have two layers. layer1 exhausts most texture memory, leaving room for 2 more tiles from
     // layer2, but not all three tiles. First we paint layer1, and one tile from layer2. Then when we idle paint
@@ -368,7 +368,7 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintedOccludedTiles)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(4*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
     TestCCOcclusionTracker occluded;
 
     // The tile size is 100x100, so this invalidates one occluded tile, culls it during paint, but prepaints it.
@@ -395,7 +395,7 @@ TEST_F(TiledLayerChromiumTest, pushTilesMarkedDirtyDuringPaint)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(4*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     // However, during the paint, we invalidate one of the tiles. This should
@@ -422,8 +422,8 @@ TEST_F(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnNextLayer)
     RefPtr<FakeTiledLayerChromium> layer1 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     RefPtr<FakeTiledLayerChromium> layer2 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layer1Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
-    OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layer1Impl(adoptPtr(new FakeCCTiledLayerImpl(1)));
+    OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(2)));
 
     layer1->setBounds(IntSize(100, 200));
     layer1->setVisibleLayerRect(IntRect(0, 0, 100, 200));
@@ -460,8 +460,8 @@ TEST_F(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnPreviousLay
     RefPtr<FakeTiledLayerChromium> layer1 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     RefPtr<FakeTiledLayerChromium> layer2 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layer1Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
-    OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layer1Impl(adoptPtr(new FakeCCTiledLayerImpl(1)));
+    OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(2)));
 
     layer1->setBounds(IntSize(100, 200));
     layer1->setVisibleLayerRect(IntRect(0, 0, 100, 200));
@@ -503,7 +503,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintOutOfMemory)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(memoryLimit, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     // Invalidates 9 tiles and then paints one visible tile.
     layer->setBounds(contentBounds);
@@ -537,7 +537,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintZeroSizedLayer)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(20000, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     // The layer's bounds are empty.
     IntRect contentRect;
@@ -578,7 +578,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintZeroSizedAnimatingLayer)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(20000, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     // Pretend the layer is animating.
     layer->setDrawTransformIsAnimating(true);
@@ -625,7 +625,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleLayers)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(20000, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     // Invalidate the layer but make none of it visible, so nothing paints.
     IntRect visibleRect;
@@ -678,7 +678,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
     for (int j = 0; height[j]; ++j) {
         for (int i = 0; width[i]; ++i) {
             RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
-            OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+            OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
             // Pretend the layer is animating.
             layer->setDrawTransformIsAnimating(true);
@@ -747,7 +747,7 @@ TEST_F(TiledLayerChromiumTest, invalidateFromPrepare)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(4*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     FakeTextureAllocator fakeAllocator;
     FakeTextureCopier fakeCopier;
@@ -836,7 +836,7 @@ TEST_F(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
     OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(4*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
     // Create a layer with one tile.
     layer->setBounds(IntSize(100, 100));
@@ -1001,7 +1001,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
     {
         DebugScopedSetImplThread implThread;
-        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
         updateTextures(4);
         EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_TRUE(updater.hasMoreUpdates());
@@ -1019,7 +1019,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
     {
         DebugScopedSetImplThread implThread;
-        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
         updateTextures(4);
         EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->updateCount());
         EXPECT_TRUE(updater.hasMoreUpdates());
@@ -1036,7 +1036,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     layer->invalidateRect(IntRect(50, 50, 200, 100));
     {
         DebugScopedSetImplThread implThread;
-        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
         ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         updateTextures(4);
         EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->updateCount());
@@ -1054,7 +1054,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     layer->invalidateRect(IntRect(0, 0, 300, 200));
     {
         DebugScopedSetImplThread implThread;
-        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
         layer->pushPropertiesTo(layerImpl.get());
     }
     ccLayerTreeHost->commitComplete();
@@ -1063,7 +1063,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     layer->invalidateRect(IntRect(50, 50, 200, 100));
     {
         DebugScopedSetImplThread implThread;
-        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
         ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         updateTextures(4);
         EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());
@@ -1081,7 +1081,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     layer->invalidateRect(IntRect(50, 50, 100, 100));
     {
         DebugScopedSetImplThread implThread;
-        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
         ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         updateTextures(4);
         EXPECT_EQ(4, layer->fakeLayerTextureUpdater()->updateCount());

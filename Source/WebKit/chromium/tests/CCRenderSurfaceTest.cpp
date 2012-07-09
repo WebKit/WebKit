@@ -57,7 +57,7 @@ TEST(CCRenderSurfaceTest, verifySurfaceChangesAreTrackedProperly)
     // This will fake that we are on the correct thread for testing purposes.
     DebugScopedSetImplThread setImplThread;
 
-    OwnPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(0);
+    OwnPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(1);
     owningLayer->createRenderSurface();
     ASSERT_TRUE(owningLayer->renderSurface());
     CCRenderSurface* renderSurface = owningLayer->renderSurface();
@@ -95,7 +95,7 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
     // This will fake that we are on the correct thread for testing purposes.
     DebugScopedSetImplThread setImplThread;
 
-    OwnPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(0);
+    OwnPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(1);
     owningLayer->createRenderSurface();
     ASSERT_TRUE(owningLayer->renderSurface());
     CCRenderSurface* renderSurface = owningLayer->renderSurface();

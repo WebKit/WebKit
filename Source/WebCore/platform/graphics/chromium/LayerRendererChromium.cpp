@@ -274,8 +274,10 @@ void LayerRendererChromium::setVisible(bool visible)
 
 void LayerRendererChromium::releaseRenderPassTextures()
 {
-    if (m_implTextureManager)
-        m_implTextureManager->evictAndDeleteAllTextures(m_implTextureAllocator.get());
+    if (!m_implTextureManager)
+        return;
+    m_renderPassTextures.clear();
+    m_implTextureManager->deleteEvictedTextures(m_implTextureAllocator.get());
 }
 
 void LayerRendererChromium::viewportChanged()
@@ -315,12 +317,54 @@ void LayerRendererChromium::clearRenderPass(const CCRenderPass* renderPass, cons
 
 void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPassList& renderPassesInDrawOrder)
 {
-    // FIXME: Get this memory limit from GPU Memory Manager
-    size_t contentsMemoryUseBytes = m_contentsTextureAllocator->currentMemoryUseBytes();
-    size_t maxLimitBytes = TextureManager::highLimitBytes(viewportSize());
-    size_t memoryLimitBytes = maxLimitBytes - contentsMemoryUseBytes > 0u ? maxLimitBytes - contentsMemoryUseBytes : 0u;
+    HashMap<int, const CCRenderPass*> passesInFrame;
+    for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i)
+        passesInFrame.set(renderPassesInDrawOrder[i]->id(), renderPassesInDrawOrder[i].get());
 
-    m_implTextureManager->setMaxMemoryLimitBytes(memoryLimitBytes);
+    Vector<int> passesToDelete;
+    HashMap<int, OwnPtr<ManagedTexture> >::const_iterator passIterator;
+    for (passIterator = m_renderPassTextures.begin(); passIterator != m_renderPassTextures.end(); ++passIterator) {
+        const CCRenderPass* renderPassInFrame = passesInFrame.get(passIterator->first);
+        if (!renderPassInFrame) {
+            passesToDelete.append(passIterator->first);
+            continue;
+        }
+
+        const IntSize& requiredSize = renderPassInFrame->framebufferOutputRect().size();
+        GC3Denum requiredFormat = GraphicsContext3D::RGBA;
+        ManagedTexture* texture = passIterator->second.get();
+        if (!texture || !texture->isValid(requiredSize, requiredFormat)) {
+            passesToDelete.append(passIterator->first);
+            continue;
+        }
+    }
+
+    // Delete RenderPass textures from the previous frame that will not be used again.
+    for (size_t i = 0; i < passesToDelete.size(); ++i)
+        m_renderPassTextures.remove(passesToDelete[i]);
+    m_implTextureManager->deleteEvictedTextures(m_implTextureAllocator.get());
+
+    // All RenderPass textures should be reserved for the current frame. Every RenderPass texture
+    // is kept reserved until it is removed and deleted.
+    for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i) {
+        ManagedTexture* texture = m_renderPassTextures.get(renderPassesInDrawOrder[i]->id());
+        if (!texture) {
+            OwnPtr<ManagedTexture> ownTexture = ManagedTexture::create(m_implTextureManager.get());
+            texture = ownTexture.get();
+            m_renderPassTextures.set(renderPassesInDrawOrder[i]->id(), ownTexture.release());
+        }
+
+        const IntSize& requiredSize = renderPassesInDrawOrder[i]->framebufferOutputRect().size();
+        GC3Denum requiredFormat = GraphicsContext3D::RGBA;
+        bool reserved = texture->reserve(requiredSize, requiredFormat);
+        ASSERT_UNUSED(reserved, reserved);
+    }
+}
+
+bool LayerRendererChromium::haveCachedResourcesForRenderPassId(int id) const
+{
+    ManagedTexture* texture = m_renderPassTextures.get(id);
+    return texture && texture->textureId();
 }
 
 void LayerRendererChromium::beginDrawingFrame(const CCRenderPass* rootRenderPass)
@@ -419,6 +463,8 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad)
         drawYUVVideoQuad(quad->toYUVVideoDrawQuad());
         break;
     }
+
+    m_implTextureManager->deleteEvictedTextures(m_implTextureAllocator.get());
 }
 
 void LayerRendererChromium::drawCheckerboardQuad(const CCCheckerboardDrawQuad* quad)
@@ -488,7 +534,7 @@ static inline SkBitmap applyFilters(LayerRendererChromium* layerRenderer, const 
     return CCRenderSurfaceFilters::apply(filters, sourceTexture->textureId(), sourceTexture->size(), filterContext.get());
 }
 
-void LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* quad, const WebTransformationMatrix& contentsDeviceTransform)
+PassOwnPtr<ManagedTexture> LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* quad, const WebTransformationMatrix& contentsDeviceTransform)
 {
     // This method draws a background filter, which applies a filter to any pixels behind the quad and seen through its background.
     // The algorithm works as follows:
@@ -506,14 +552,13 @@ void LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* qu
 
     // FIXME: When this algorithm changes, update CCLayerTreeHost::prioritizeTextures() accordingly.
 
-    CCRenderSurface* drawingSurface = quad->renderPass()->targetSurface();
     if (quad->backgroundFilters().isEmpty())
-        return;
+        return nullptr;
 
     // FIXME: We only allow background filters on an opaque render surface because other surfaces may contain
     // translucent pixels, and the contents behind those translucent pixels wouldn't have the filter applied.
     if (m_currentRenderPass->hasTransparentBackground())
-        return;
+        return nullptr;
     ASSERT(!m_currentManagedTexture);
 
     // FIXME: Do a single readback for both the surface and replica and cache the filtered results (once filter textures are not reused).
@@ -528,20 +573,23 @@ void LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* qu
 
     OwnPtr<ManagedTexture> deviceBackgroundTexture = ManagedTexture::create(m_implTextureManager.get());
     if (!getFramebufferTexture(deviceBackgroundTexture.get(), deviceRect))
-        return;
+        return nullptr;
 
     SkBitmap filteredDeviceBackground = applyFilters(this, quad->backgroundFilters(), deviceBackgroundTexture.get());
     if (!filteredDeviceBackground.getTexture())
-        return;
+        return nullptr;
 
     GrTexture* texture = reinterpret_cast<GrTexture*>(filteredDeviceBackground.getTexture());
     int filteredDeviceBackgroundTextureId = texture->getTextureHandle();
 
-    if (!drawingSurface->prepareBackgroundTexture(this))
-        return;
+    OwnPtr<ManagedTexture> backgroundTexture = ManagedTexture::create(m_implTextureManager.get());
+    if (!backgroundTexture->reserve(quad->quadRect().size(), GraphicsContext3D::RGBA))
+        return nullptr;
 
     const CCRenderPass* targetRenderPass = m_currentRenderPass;
-    if (useManagedTexture(drawingSurface->backgroundTexture(), quad->quadRect())) {
+    bool usingBackgroundTexture = useManagedTexture(backgroundTexture.get(), quad->quadRect());
+
+    if (usingBackgroundTexture) {
         // Copy the readback pixels from device to the background texture for the surface.
         WebTransformationMatrix deviceToFramebufferTransform;
         deviceToFramebufferTransform.translate(quad->quadRect().width() / 2.0, quad->quadRect().height() / 2.0);
@@ -551,46 +599,45 @@ void LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* qu
         deviceToFramebufferTransform.translate(deviceRect.x(), deviceRect.y());
 
         copyTextureToFramebuffer(filteredDeviceBackgroundTextureId, deviceRect.size(), deviceToFramebufferTransform);
-
-        useRenderPass(targetRenderPass);
     }
+
+    useRenderPass(targetRenderPass);
+
+    if (!usingBackgroundTexture)
+        return nullptr;
+    return backgroundTexture.release();
 }
 
 void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
 {
-    // The replica is always drawn first, so free after drawing the contents.
-    bool shouldReleaseTextures = !quad->isReplica();
-
-    CCRenderSurface* drawingSurface = quad->renderPass()->targetSurface();
-
     WebTransformationMatrix renderTransform = quad->layerTransform();
     // Apply a scaling factor to size the quad from 1x1 to its intended size.
     renderTransform.scale3d(quad->quadRect().width(), quad->quadRect().height(), 1);
     WebTransformationMatrix contentsDeviceTransform = WebTransformationMatrix(windowMatrix() * projectionMatrix() * renderTransform).to2dTransform();
 
     // Can only draw surface if device matrix is invertible.
-    if (!contentsDeviceTransform.isInvertible() || !drawingSurface->hasValidContentsTexture()) {
-        if (shouldReleaseTextures) {
-            drawingSurface->releaseBackgroundTexture();
-            drawingSurface->releaseContentsTexture();
-        }
+    if (!contentsDeviceTransform.isInvertible())
         return;
-    }
 
-    drawBackgroundFilters(quad, contentsDeviceTransform);
+    ManagedTexture* contentsTexture = m_renderPassTextures.get(quad->renderPassId());
+    ASSERT(contentsTexture && contentsTexture->textureId());
+
+    OwnPtr<ManagedTexture> backgroundTexture = drawBackgroundFilters(quad, contentsDeviceTransform);
 
     // FIXME: Cache this value so that we don't have to do it for both the surface and its replica.
     // Apply filters to the contents texture.
-    SkBitmap filterBitmap = applyFilters(this, quad->filters(), drawingSurface->contentsTexture());
-    int contentsTextureId = drawingSurface->contentsTexture()->textureId();
+    SkBitmap filterBitmap = applyFilters(this, quad->filters(), contentsTexture);
+    int contentsTextureId = contentsTexture->textureId();
     if (filterBitmap.getTexture()) {
         GrTexture* texture = reinterpret_cast<GrTexture*>(filterBitmap.getTexture());
         contentsTextureId = texture->getTextureHandle();
     }
 
     // Draw the background texture if there is one.
-    if (drawingSurface->hasValidBackgroundTexture())
-        copyTextureToFramebuffer(drawingSurface->backgroundTexture()->textureId(), quad->quadRect().size(), quad->layerTransform());
+    if (backgroundTexture) {
+        ASSERT(backgroundTexture->size() == quad->quadRect().size());
+        copyTextureToFramebuffer(backgroundTexture->textureId(), quad->quadRect().size(), quad->layerTransform());
+    }
 
     bool clipped = false;
     FloatQuad deviceQuad = CCMathUtil::mapQuad(contentsDeviceTransform, sharedGeometryQuad(), clipped);
@@ -673,11 +720,6 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
 
     drawTexturedQuad(quad->layerTransform(), quad->quadRect().width(), quad->quadRect().height(), quad->opacity(), surfaceQuad,
                      shaderMatrixLocation, shaderAlphaLocation, shaderQuadLocation);
-
-    if (shouldReleaseTextures) {
-        drawingSurface->releaseBackgroundTexture();
-        drawingSurface->releaseContentsTexture();
-    }
 }
 
 void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
@@ -1079,9 +1121,6 @@ void LayerRendererChromium::finishDrawingFrame()
 {
     GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
-
-    m_implTextureManager->unprotectAllTextures();
-    m_implTextureManager->deleteEvictedTextures(m_implTextureAllocator.get());
 }
 
 void LayerRendererChromium::toGLMatrix(float* flattened, const WebTransformationMatrix& m)
@@ -1339,10 +1378,10 @@ bool LayerRendererChromium::useRenderPass(const CCRenderPass* renderPass)
         return true;
     }
 
-    if (!renderPass->targetSurface()->prepareContentsTexture(this))
-        return false;
+    ManagedTexture* texture = m_renderPassTextures.get(renderPass->id());
+    ASSERT(texture);
 
-    return bindFramebufferToTexture(renderPass->targetSurface()->contentsTexture(), renderPass->framebufferOutputRect());
+    return bindFramebufferToTexture(texture, renderPass->framebufferOutputRect());
 }
 
 bool LayerRendererChromium::useManagedTexture(ManagedTexture* texture, const IntRect& viewportRect)
@@ -1431,9 +1470,7 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     GLC(m_context, m_context->flush());
 
-    m_implTextureManager = TextureManager::create(TextureManager::highLimitBytes(viewportSize()),
-                                                  TextureManager::reclaimLimitBytes(viewportSize()),
-                                                  m_capabilities.maxTextureSize);
+    m_implTextureManager = TextureManager::create(std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max(), m_capabilities.maxTextureSize);
     m_textureCopier = AcceleratedTextureCopier::create(m_context, m_isUsingBindUniform);
     if (m_textureUploaderSetting == ThrottledUploader)
         m_textureUploader = ThrottledTextureUploader::create(m_context);

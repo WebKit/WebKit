@@ -127,11 +127,11 @@ public:
 
     void setupScrollAndContentsLayers(const IntSize& contentSize)
     {
-        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
         root->setScrollable(true);
         root->setScrollPosition(IntPoint(0, 0));
         root->setMaxScrollPosition(contentSize);
-        OwnPtr<CCLayerImpl> contents = CCLayerImpl::create(1);
+        OwnPtr<CCLayerImpl> contents = CCLayerImpl::create(2);
         contents->setDrawsContent(true);
         contents->setBounds(contentSize);
         contents->setContentBounds(contentSize);
@@ -186,12 +186,12 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaNoLayers)
 TEST_F(CCLayerTreeHostImplTest, scrollDeltaTreeButNoChanges)
 {
     {
-        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
-        root->addChild(CCLayerImpl::create(1));
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
         root->addChild(CCLayerImpl::create(2));
-        root->children()[1]->addChild(CCLayerImpl::create(3));
+        root->addChild(CCLayerImpl::create(3));
         root->children()[1]->addChild(CCLayerImpl::create(4));
-        root->children()[1]->children()[0]->addChild(CCLayerImpl::create(5));
+        root->children()[1]->addChild(CCLayerImpl::create(5));
+        root->children()[1]->children()[0]->addChild(CCLayerImpl::create(6));
         m_hostImpl->setRootLayer(root.release());
     }
     CCLayerImpl* root = m_hostImpl->rootLayer();
@@ -214,7 +214,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
     IntPoint scrollPosition(20, 30);
     IntSize scrollDelta(11, -15);
     {
-        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(10);
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
         root->setScrollPosition(scrollPosition);
         root->setScrollable(true);
         root->setMaxScrollPosition(IntSize(100, 100));
@@ -263,7 +263,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollWithoutRootLayer)
 
 TEST_F(CCLayerTreeHostImplTest, replaceTreeWhileScrolling)
 {
-    const int scrollLayerId = 0;
+    const int scrollLayerId = 1;
 
     setupScrollAndContentsLayers(IntSize(100, 100));
     m_hostImpl->setViewportSize(IntSize(50, 50));
@@ -625,8 +625,10 @@ protected:
         setContentBounds(IntSize(10, 10));
         setDrawsContent(true);
         setSkipsDraw(false);
+        setVisibleLayerRect(IntRect(0, 0, 10, 10));
 
         OwnPtr<CCLayerTilingData> tiler = CCLayerTilingData::create(IntSize(100, 100), CCLayerTilingData::HasBorderTexels);
+        tiler->setBounds(contentBounds());
         setTilingData(*tiler.get());
     }
 
@@ -639,11 +641,11 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
 {
     // The root layer is always drawn, so run this test on a child layer that
     // will be masked out by the root layer's bounds.
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
     root->setMasksToBounds(true);
 
-    root->addChild(DidDrawCheckLayer::create(1));
+    root->addChild(DidDrawCheckLayer::create(2));
     DidDrawCheckLayer* layer = static_cast<DidDrawCheckLayer*>(root->children()[0].get());
     // Ensure visibleLayerRect for layer is empty
     layer->setPosition(FloatPoint(100, 100));
@@ -686,13 +688,13 @@ TEST_F(CCLayerTreeHostImplTest, willDrawNotCalledOnOccludedLayer)
     IntSize bigSize(1000, 1000);
     m_hostImpl->setViewportSize(bigSize);
 
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
 
-    root->addChild(DidDrawCheckLayer::create(1));
+    root->addChild(DidDrawCheckLayer::create(2));
     DidDrawCheckLayer* occludedLayer = static_cast<DidDrawCheckLayer*>(root->children()[0].get());
 
-    root->addChild(DidDrawCheckLayer::create(2));
+    root->addChild(DidDrawCheckLayer::create(3));
     DidDrawCheckLayer* topLayer = static_cast<DidDrawCheckLayer*>(root->children()[1].get());
     // This layer covers the occludedLayer above. Make this layer large so it can occlude.
     topLayer->setBounds(bigSize);
@@ -718,13 +720,13 @@ TEST_F(CCLayerTreeHostImplTest, willDrawNotCalledOnOccludedLayer)
 
 TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
 {
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
 
-    root->addChild(DidDrawCheckLayer::create(1));
+    root->addChild(DidDrawCheckLayer::create(2));
     DidDrawCheckLayer* layer1 = static_cast<DidDrawCheckLayer*>(root->children()[0].get());
 
-    layer1->addChild(DidDrawCheckLayer::create(2));
+    layer1->addChild(DidDrawCheckLayer::create(3));
     DidDrawCheckLayer* layer2 = static_cast<DidDrawCheckLayer*>(layer1->children()[0].get());
 
     layer1->setOpacity(0.3f);
@@ -769,9 +771,9 @@ private:
 TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
 {
     // When the texture is not missing, we draw as usual.
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(1, false, false, true));
+    root->addChild(MissingTextureAnimatingLayer::create(2, false, false, true));
 
     CCLayerTreeHostImpl::FrameData frame;
 
@@ -780,27 +782,27 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     m_hostImpl->didDrawAllLayers(frame);
 
     // When a texture is missing and we're not animating, we draw as usual with checkerboarding.
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(1, true, false, false));
+    root->addChild(MissingTextureAnimatingLayer::create(2, true, false, false));
 
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
     m_hostImpl->didDrawAllLayers(frame);
 
     // When a texture is missing and we're animating, we don't want to draw anything.
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(1, true, false, true));
+    root->addChild(MissingTextureAnimatingLayer::create(2, true, false, true));
 
     EXPECT_FALSE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
     m_hostImpl->didDrawAllLayers(frame);
 
     // When the layer skips draw and we're animating, we still draw the frame.
-    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(1, false, true, true));
+    root->addChild(MissingTextureAnimatingLayer::create(2, false, true, true));
 
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
@@ -809,7 +811,7 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
 
 TEST_F(CCLayerTreeHostImplTest, scrollRootIgnored)
 {
-    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     root->setScrollable(false);
     m_hostImpl->setRootLayer(root.release());
     initializeLayerRendererAndDrawFrame();
@@ -833,7 +835,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollNonCompositedRoot)
     contentLayer->setBounds(surfaceSize);
     contentLayer->setContentBounds(IntSize(surfaceSize.width() * 2, surfaceSize.height() * 2));
 
-    OwnPtr<CCLayerImpl> scrollLayer = CCLayerImpl::create(0);
+    OwnPtr<CCLayerImpl> scrollLayer = CCLayerImpl::create(2);
     scrollLayer->setScrollable(true);
     scrollLayer->setMaxScrollPosition(surfaceSize);
     scrollLayer->addChild(contentLayer.release());
@@ -852,8 +854,8 @@ TEST_F(CCLayerTreeHostImplTest, scrollNonCompositedRoot)
 TEST_F(CCLayerTreeHostImplTest, scrollChildCallsCommitAndRedraw)
 {
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
-    root->addChild(createScrollableLayer(1, FloatPoint(5, 5), surfaceSize));
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    root->addChild(createScrollableLayer(2, FloatPoint(5, 5), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     initializeLayerRendererAndDrawFrame();
@@ -868,8 +870,8 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildCallsCommitAndRedraw)
 TEST_F(CCLayerTreeHostImplTest, scrollMissesChild)
 {
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
-    root->addChild(createScrollableLayer(1, FloatPoint(5, 5), surfaceSize));
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    root->addChild(createScrollableLayer(2, FloatPoint(5, 5), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     initializeLayerRendererAndDrawFrame();
@@ -883,8 +885,8 @@ TEST_F(CCLayerTreeHostImplTest, scrollMissesChild)
 TEST_F(CCLayerTreeHostImplTest, scrollMissesBackfacingChild)
 {
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
-    OwnPtr<CCLayerImpl> child = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(5, 5), surfaceSize);
     m_hostImpl->setViewportSize(surfaceSize);
 
     WebTransformationMatrix matrix;
@@ -906,11 +908,11 @@ TEST_F(CCLayerTreeHostImplTest, scrollMissesBackfacingChild)
 TEST_F(CCLayerTreeHostImplTest, scrollBlockedByContentLayer)
 {
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> contentLayer = createScrollableLayer(0, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> contentLayer = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
     contentLayer->setShouldScrollOnMainThread(true);
     contentLayer->setScrollable(false);
 
-    OwnPtr<CCLayerImpl> scrollLayer = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> scrollLayer = createScrollableLayer(2, FloatPoint(5, 5), surfaceSize);
     scrollLayer->addChild(contentLayer.release());
 
     m_hostImpl->setRootLayer(scrollLayer.release());
@@ -925,7 +927,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnMainThread)
 {
     IntSize surfaceSize(10, 10);
     float pageScale = 2;
-    OwnPtr<CCLayerImpl> root = createScrollableLayer(0, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     initializeLayerRendererAndDrawFrame();
@@ -943,7 +945,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnMainThread)
     // The scale should apply to the scroll delta.
     expectedScrollDelta.scale(pageScale);
     OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
-    expectContains(*scrollInfo.get(), 0, expectedScrollDelta);
+    expectContains(*scrollInfo.get(), m_hostImpl->rootLayer()->id(), expectedScrollDelta);
 
     // The scroll range should also have been updated.
     EXPECT_EQ(m_hostImpl->rootLayer()->maxScrollPosition(), expectedMaxScroll);
@@ -956,7 +958,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnImplThread)
 {
     IntSize surfaceSize(10, 10);
     float pageScale = 2;
-    OwnPtr<CCLayerImpl> root = createScrollableLayer(0, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     m_hostImpl->setPageScaleFactorAndLimits(1, 1, pageScale);
@@ -976,7 +978,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnImplThread)
 
     // The scroll delta is not scaled because the main thread did not scale.
     OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
-    expectContains(*scrollInfo.get(), 0, expectedScrollDelta);
+    expectContains(*scrollInfo.get(), m_hostImpl->rootLayer()->id(), expectedScrollDelta);
 
     // The scroll range should also have been updated.
     EXPECT_EQ(m_hostImpl->rootLayer()->maxScrollPosition(), expectedMaxScroll);
@@ -988,10 +990,11 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnImplThread)
 TEST_F(CCLayerTreeHostImplTest, scrollChildAndChangePageScaleOnMainThread)
 {
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     // Also mark the root scrollable so it becomes the root scroll layer.
     root->setScrollable(true);
-    root->addChild(createScrollableLayer(1, FloatPoint(5, 5), surfaceSize));
+    int scrollLayerId = 2;
+    root->addChild(createScrollableLayer(scrollLayerId, FloatPoint(5, 5), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     initializeLayerRendererAndDrawFrame();
@@ -1011,7 +1014,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildAndChangePageScaleOnMainThread)
     // The scale should apply to the scroll delta.
     expectedScrollDelta.scale(pageScale);
     OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
-    expectContains(*scrollInfo.get(), 1, expectedScrollDelta);
+    expectContains(*scrollInfo.get(), scrollLayerId, expectedScrollDelta);
 
     // The scroll range should not have changed.
     EXPECT_EQ(child->maxScrollPosition(), expectedMaxScroll);
@@ -1026,12 +1029,12 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildBeyondLimit)
     // parent layer is scrolled on the axis on which the child was unable to
     // scroll.
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> root = createScrollableLayer(0, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
 
-    OwnPtr<CCLayerImpl> grandChild = createScrollableLayer(2, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> grandChild = createScrollableLayer(3, FloatPoint(5, 5), surfaceSize);
     grandChild->setScrollPosition(IntPoint(0, 5));
 
-    OwnPtr<CCLayerImpl> child = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(5, 5), surfaceSize);
     child->setScrollPosition(IntPoint(3, 0));
     child->addChild(grandChild.release());
 
@@ -1062,8 +1065,8 @@ TEST_F(CCLayerTreeHostImplTest, scrollEventBubbling)
     // When we try to scroll a non-scrollable child layer, the scroll delta
     // should be applied to one of its ancestors if possible.
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> root = createScrollableLayer(0, FloatPoint(5, 5), surfaceSize);
-    OwnPtr<CCLayerImpl> child = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(5, 5), surfaceSize);
 
     child->setScrollable(false);
     root->addChild(child.release());
@@ -1088,13 +1091,13 @@ TEST_F(CCLayerTreeHostImplTest, scrollEventBubbling)
 TEST_F(CCLayerTreeHostImplTest, scrollBeforeRedraw)
 {
     IntSize surfaceSize(10, 10);
-    m_hostImpl->setRootLayer(createScrollableLayer(0, FloatPoint(5, 5), surfaceSize));
+    m_hostImpl->setRootLayer(createScrollableLayer(1, FloatPoint(5, 5), surfaceSize));
     m_hostImpl->setViewportSize(surfaceSize);
 
     // Draw one frame and then immediately rebuild the layer tree to mimic a tree synchronization.
     initializeLayerRendererAndDrawFrame();
     m_hostImpl->detachLayerTree();
-    m_hostImpl->setRootLayer(createScrollableLayer(0, FloatPoint(5, 5), surfaceSize));
+    m_hostImpl->setRootLayer(createScrollableLayer(2, FloatPoint(5, 5), surfaceSize));
 
     // Scrolling should still work even though we did not draw yet.
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(5, 5), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
@@ -1186,7 +1189,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
 {
 
     {
-        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
         root->setAnchorPoint(FloatPoint(0, 0));
         root->setBounds(IntSize(10, 10));
         root->setContentBounds(root->bounds());
@@ -1195,7 +1198,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     }
     CCLayerImpl* root = m_hostImpl->rootLayer();
 
-    root->addChild(BlendStateCheckLayer::create(1));
+    root->addChild(BlendStateCheckLayer::create(2));
     BlendStateCheckLayer* layer1 = static_cast<BlendStateCheckLayer*>(root->children()[0].get());
 
     CCLayerTreeHostImpl::FrameData frame;
@@ -1247,7 +1250,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     EXPECT_TRUE(layer1->quadsAppended());
     m_hostImpl->didDrawAllLayers(frame);
 
-    layer1->addChild(BlendStateCheckLayer::create(2));
+    layer1->addChild(BlendStateCheckLayer::create(3));
     BlendStateCheckLayer* layer2 = static_cast<BlendStateCheckLayer*>(layer1->children()[0].get());
 
     // 2 opaque layers, drawn without blending.
@@ -1407,7 +1410,7 @@ TEST_F(CCLayerTreeHostImplTest, viewportCovered)
     IntSize viewportSize(1000, 1000);
     m_hostImpl->setViewportSize(viewportSize);
 
-    m_hostImpl->setRootLayer(BlendStateCheckLayer::create(0));
+    m_hostImpl->setRootLayer(BlendStateCheckLayer::create(1));
     BlendStateCheckLayer* root = static_cast<BlendStateCheckLayer*>(m_hostImpl->rootLayer());
     root->setExpectation(false, true);
     root->setOpaque(true);
@@ -1997,7 +2000,7 @@ private:
 
 TEST_F(CCLayerTreeHostImplTest, contextLostAndRestoredNotificationSentToAllLayers)
 {
-    m_hostImpl->setRootLayer(ContextLostNotificationCheckLayer::create(0));
+    m_hostImpl->setRootLayer(ContextLostNotificationCheckLayer::create(1));
     ContextLostNotificationCheckLayer* root = static_cast<ContextLostNotificationCheckLayer*>(m_hostImpl->rootLayer());
 
     root->addChild(ContextLostNotificationCheckLayer::create(1));
@@ -2200,11 +2203,11 @@ public:
 
 TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
 {
-    OwnPtr<CCLayerImpl> rootLayer(CCLayerImpl::create(0));
+    OwnPtr<CCLayerImpl> rootLayer(CCLayerImpl::create(1));
     rootLayer->setBounds(IntSize(10, 10));
     rootLayer->setAnchorPoint(FloatPoint(0, 0));
 
-    OwnPtr<CCTiledLayerImpl> tileLayer = CCTiledLayerImpl::create(1);
+    OwnPtr<CCTiledLayerImpl> tileLayer = CCTiledLayerImpl::create(2);
     tileLayer->setBounds(IntSize(10, 10));
     tileLayer->setAnchorPoint(FloatPoint(0, 0));
     tileLayer->setContentBounds(IntSize(10, 10));
@@ -2216,7 +2219,7 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     tileLayer->pushTileProperties(0, 0, 1, IntRect(0, 0, 10, 10));
     rootLayer->addChild(tileLayer.release());
 
-    OwnPtr<CCTextureLayerImpl> textureLayer = CCTextureLayerImpl::create(2);
+    OwnPtr<CCTextureLayerImpl> textureLayer = CCTextureLayerImpl::create(3);
     textureLayer->setBounds(IntSize(10, 10));
     textureLayer->setAnchorPoint(FloatPoint(0, 0));
     textureLayer->setContentBounds(IntSize(10, 10));
@@ -2225,7 +2228,7 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     rootLayer->addChild(textureLayer.release());
 
     FakeVideoFrameProvider provider;
-    OwnPtr<CCVideoLayerImpl> videoLayer = CCVideoLayerImpl::create(3, &provider);
+    OwnPtr<CCVideoLayerImpl> videoLayer = CCVideoLayerImpl::create(4, &provider);
     videoLayer->setBounds(IntSize(10, 10));
     videoLayer->setAnchorPoint(FloatPoint(0, 0));
     videoLayer->setContentBounds(IntSize(10, 10));
@@ -2233,7 +2236,7 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     videoLayer->setLayerTreeHostImpl(m_hostImpl.get());
     rootLayer->addChild(videoLayer.release());
 
-    OwnPtr<CCIOSurfaceLayerImpl> ioSurfaceLayer = CCIOSurfaceLayerImpl::create(4);
+    OwnPtr<CCIOSurfaceLayerImpl> ioSurfaceLayer = CCIOSurfaceLayerImpl::create(5);
     ioSurfaceLayer->setBounds(IntSize(10, 10));
     ioSurfaceLayer->setAnchorPoint(FloatPoint(0, 0));
     ioSurfaceLayer->setContentBounds(IntSize(10, 10));
@@ -2465,6 +2468,11 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
     surfaceLayerPtr->addChild(child.release());
 }
 
+class LayerRendererChromiumWithReleaseTextures : public LayerRendererChromium {
+public:
+    using LayerRendererChromium::releaseRenderPassTextures;
+};
+
 TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
 {
     CCSettings::setPartialSwapEnabled(true);
@@ -2548,22 +2556,9 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
         myHostImpl->didDrawAllLayers(frame);
     }
 
-    // Change opacity again, but evict the cached surface texture
+    // Change opacity again, and evict the cached surface texture.
     surfaceLayerPtr->setOpacity(0.5f);
-    ManagedTexture* contentsTexture = surfaceLayerPtr->renderSurface()->contentsTexture();
-    ASSERT_TRUE(contentsTexture->isValid(contentsTexture->size(), contentsTexture->format()));
-    CCRenderer* renderer = myHostImpl->layerRenderer();
-    TextureManager* textureManager = renderer->implTextureManager();
-    size_t maxMemoryLimit = textureManager->maxMemoryLimitBytes();
-
-    // This should evice all cached surfaces
-    textureManager->setMaxMemoryLimitBytes(0);
-
-    // Restore original limit
-    textureManager->setMaxMemoryLimitBytes(maxMemoryLimit);
-
-    // Was our surface evicted?
-    ASSERT_FALSE(contentsTexture->isValid(contentsTexture->size(), contentsTexture->format()));
+    static_cast<LayerRendererChromiumWithReleaseTextures*>(myHostImpl->layerRenderer())->releaseRenderPassTextures();
 
     // Change opacity and draw
     surfaceLayerPtr->setOpacity(0.6f);
@@ -2582,6 +2577,9 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
         EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+
+        // Was our surface evicted?
+        EXPECT_FALSE(myHostImpl->layerRenderer()->haveCachedResourcesForRenderPassId(quad->renderPass()->id()));
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2706,22 +2704,9 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
         myHostImpl->didDrawAllLayers(frame);
     }
 
-    // Change opacity again, but evict the cached surface texture
+    // Change opacity again, and evict the cached surface texture.
     surfaceLayerPtr->setOpacity(0.5f);
-    ManagedTexture* contentsTexture = surfaceLayerPtr->renderSurface()->contentsTexture();
-    ASSERT_TRUE(contentsTexture->isValid(contentsTexture->size(), contentsTexture->format()));
-    CCRenderer* renderer = myHostImpl->layerRenderer();
-    TextureManager* textureManager = renderer->implTextureManager();
-    size_t maxMemoryLimit = textureManager->maxMemoryLimitBytes();
-
-    // This should evice all cached surfaces
-    textureManager->setMaxMemoryLimitBytes(0);
-
-    // Restore original limit
-    textureManager->setMaxMemoryLimitBytes(maxMemoryLimit);
-
-    // Was our surface evicted?
-    ASSERT_FALSE(contentsTexture->isValid(contentsTexture->size(), contentsTexture->format()));
+    static_cast<LayerRendererChromiumWithReleaseTextures*>(myHostImpl->layerRenderer())->releaseRenderPassTextures();
 
     // Change opacity and draw
     surfaceLayerPtr->setOpacity(0.6f);
@@ -2740,6 +2725,9 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
         EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+
+        // Was our surface evicted?
+        EXPECT_FALSE(myHostImpl->layerRenderer()->haveCachedResourcesForRenderPassId(quad->renderPass()->id()));
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2898,87 +2886,76 @@ struct RenderPassRemovalTestData {
     OwnPtr<CCSharedQuadState> sharedQuadState;
 };
 
-class FakeRenderSurface : public CCRenderSurface {
-private:
-    bool m_hasCachedTexture;
-    bool m_contentsChanged;
-
-public:
-    FakeRenderSurface(CCLayerImpl* layerImpl)
-        : CCRenderSurface(layerImpl),
-          m_hasCachedTexture(false)
-    {
-    }
-
-    virtual bool hasCachedContentsTexture() const OVERRIDE
-    {
-        return m_hasCachedTexture;
-    }
-
-    virtual bool prepareContentsTexture(LayerRendererChromium* lrc) OVERRIDE
-    {
-        return true;
-    }
-
-    virtual bool contentsChanged() const OVERRIDE
-    {
-        return m_contentsChanged;
-    }
-
-    void setHasCachedTexture(bool hasCachedTexture)
-    {
-        m_hasCachedTexture = hasCachedTexture;
-    }
-
-    void setContentsChanged(bool contentsChanged)
-    {
-        m_contentsChanged = contentsChanged;
-    }
-};
-
 class CCTestRenderPass: public CCRenderPass {
 public:
-    static PassOwnPtr<CCRenderPass> create(CCRenderSurface* targetSurface)
-    {
-        return adoptPtr(new CCTestRenderPass(targetSurface));
-    }
+    static PassOwnPtr<CCRenderPass> create(CCRenderSurface* targetSurface, int id) { return adoptPtr(new CCTestRenderPass(targetSurface, id)); }
+
+    void appendQuad(PassOwnPtr<CCDrawQuad> quad) { m_quadList.append(quad); }
 
 protected:
-    CCTestRenderPass(CCRenderSurface* surface)
-        : CCRenderPass(surface)
-    {
-    }
-
-public:
-    void appendQuad(PassOwnPtr<CCDrawQuad> quad)
-    {
-        m_quadList.append(quad);
-    }
+    CCTestRenderPass(CCRenderSurface* targetSurface, int id) : CCRenderPass(targetSurface, id) { }
 };
 
-static PassOwnPtr<CCRenderPass> createDummyRenderPass(RenderPassRemovalTestData& testData)
-{
-    OwnPtr<CCLayerImpl> layerImpl = CCLayerImpl::create(1);
-    CCRenderSurface* renderSurface = new FakeRenderSurface(layerImpl.get());
-    OwnPtr<CCRenderPass> renderPassPtr = CCTestRenderPass::create(renderSurface);
+class CCTestRenderer : public LayerRendererChromium, public CCRendererClient {
+public:
+    static PassOwnPtr<CCTestRenderer> create(WebKit::WebGraphicsContext3D* context)
+    {
+        OwnPtr<CCTestRenderer> renderer(adoptPtr(new CCTestRenderer(context)));
+        if (!renderer->initialize())
+            return nullptr;
 
-    testData.renderSurfaceStore.append(adoptPtr(renderSurface));
+        return renderer.release();
+    }
+
+    void clearCachedTextures() { m_textures.clear(); }
+    void setHaveCachedResourcesForRenderPassId(int id) { m_textures.add(id); }
+
+    virtual bool haveCachedResourcesForRenderPassId(int id) const OVERRIDE { return m_textures.contains(id); }
+
+    // CCRendererClient implementation.
+    virtual const IntSize& deviceViewportSize() const OVERRIDE { return m_viewportSize; }
+    virtual const CCLayerTreeSettings& settings() const OVERRIDE { return m_settings; }
+    virtual void didLoseContext() OVERRIDE { }
+    virtual void onSwapBuffersComplete() OVERRIDE { }
+    virtual void setFullRootLayerDamage() OVERRIDE { }
+    virtual void releaseContentsTextures() OVERRIDE { }
+    virtual void setMemoryAllocationLimitBytes(size_t) OVERRIDE { }
+
+protected:
+    CCTestRenderer(WebKit::WebGraphicsContext3D* context) : LayerRendererChromium(this, context, UnthrottledUploader) { }
+
+private:
+    CCLayerTreeSettings m_settings;
+    IntSize m_viewportSize;
+    HashSet<int> m_textures;
+};
+
+static PassOwnPtr<CCRenderPass> createDummyRenderPass(RenderPassRemovalTestData& testData, int id)
+{
+    OwnPtr<CCLayerImpl> layerImpl(CCLayerImpl::create(id));
+    OwnPtr<CCRenderSurface> renderSurface(adoptPtr(new CCRenderSurface(layerImpl.get())));
+    OwnPtr<CCRenderPass> renderPassPtr(CCTestRenderPass::create(renderSurface.get(), layerImpl->id()));
+
+    testData.renderSurfaceStore.append(renderSurface.release());
     testData.layerStore.append(layerImpl.release());
     return renderPassPtr.release();
 }
 
-static void configureRenderPassTestData(const char* testScript, RenderPassRemovalTestData& testData)
+static void configureRenderPassTestData(const char* testScript, RenderPassRemovalTestData& testData, CCTestRenderer* renderer)
 {
+    renderer->clearCachedTextures();
+
     // One shared state for all quads - we don't need the correct details
     testData.sharedQuadState = CCSharedQuadState::create(WebTransformationMatrix(), WebTransformationMatrix(), IntRect(), IntRect(), 1.0, true);
 
     const char* currentChar = testScript;
 
     // Pre-create root pass
-    OwnPtr<CCRenderPass> rootRenderPass = createDummyRenderPass(testData);
-    testData.renderPassId.insert(std::pair<CCRenderPass*, char>(rootRenderPass.get(), testScript[0]));
-    testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(testScript[0], RenderPassCacheEntry(rootRenderPass.release())));
-    while (*currentChar != '\0') {
+    char rootRenderPassId = testScript[0];
+    OwnPtr<CCRenderPass> rootRenderPass = createDummyRenderPass(testData, rootRenderPassId);
+    testData.renderPassId.insert(std::pair<CCRenderPass*, char>(rootRenderPass.get(), rootRenderPassId));
+    testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(rootRenderPassId, RenderPassCacheEntry(rootRenderPass.release())));
+    while (*currentChar) {
         char renderPassId = currentChar[0];
         currentChar++;
 
@@ -2991,7 +2968,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
         renderPass = testData.renderPassCache[renderPassId].renderPassPtr.release();
 
         // Cycle through quad data and create all quads
-        while (*currentChar != '\n' && *currentChar != '\0') {
+        while (*currentChar && *currentChar != '\n') {
             if (*currentChar == 's') {
                 // Solid color draw quad
                 OwnPtr<CCDrawQuad> quad = CCSolidColorDrawQuad::create(testData.sharedQuadState.get(), IntRect(0, 0, 10, 10), SK_ColorWHITE);
@@ -3001,13 +2978,14 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
             } else if ((*currentChar >= 'A') && (*currentChar <= 'Z')) {
                 // RenderPass draw quad
                 char newRenderPassId = *currentChar;
+                ASSERT_NE(rootRenderPassId, newRenderPassId);
                 currentChar++;
                 bool hasTexture = false;
                 bool contentsChanged = true;
                 
                 if (*currentChar == '[') {
                     currentChar++;
-                    while ((*currentChar != ']') && (*currentChar != '\0')) {
+                    while (*currentChar && *currentChar != ']') {
                         switch (*currentChar) {
                         case 'c':
                             contentsChanged = false;
@@ -3025,22 +3003,24 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
                 CCRenderPass* refRenderPassPtr;
 
                 if (testData.renderPassCache.find(newRenderPassId) == testData.renderPassCache.end()) {
-                    OwnPtr<CCRenderPass> refRenderPass = createDummyRenderPass(testData);
+                    if (hasTexture)
+                        renderer->setHaveCachedResourcesForRenderPassId(newRenderPassId);
+
+                    OwnPtr<CCRenderPass> refRenderPass = createDummyRenderPass(testData, newRenderPassId);
                     refRenderPassPtr = refRenderPass.get();
-                    FakeRenderSurface* refRenderSurface = static_cast<FakeRenderSurface*>(refRenderPass->targetSurface());
-                    refRenderSurface->setHasCachedTexture(hasTexture);
-                    refRenderSurface->setContentsChanged(contentsChanged);
                     testData.renderPassId.insert(std::pair<CCRenderPass*, char>(refRenderPass.get(), newRenderPassId));
                     testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(newRenderPassId, RenderPassCacheEntry(refRenderPass.release())));
                 } else
                     refRenderPassPtr = testData.renderPassCache[newRenderPassId].renderPass;
 
-                OwnPtr<CCRenderPassDrawQuad> quad = CCRenderPassDrawQuad::create(testData.sharedQuadState.get(), IntRect(), refRenderPassPtr, isReplica, WebKit::WebFilterOperations(), WebKit::WebFilterOperations(), 1);
+                IntRect quadRect = IntRect(0, 0, 1, 1);
+                IntRect contentsChangedRect = contentsChanged ? quadRect : IntRect();
+                OwnPtr<CCRenderPassDrawQuad> quad = CCRenderPassDrawQuad::create(testData.sharedQuadState.get(), quadRect, refRenderPassPtr, isReplica, WebKit::WebFilterOperations(), WebKit::WebFilterOperations(), 1, contentsChangedRect);
                 static_cast<CCTestRenderPass*>(renderPass.get())->appendQuad(quad.release());
             }
         }
         testData.renderPassList.insert(0, renderPass.release());
-        if (*currentChar != '\0')
+        if (*currentChar)
             currentChar++;
     }
 }
@@ -3063,15 +3043,14 @@ void dumpRenderPassTestData(const RenderPassRemovalTestData& testData, char* buf
                 *pos = 's';
                 pos++;
                 break;
-            case CCDrawQuad::RenderPass:
-                {
-                    CCRenderPassDrawQuad* renderPassDrawQuad = static_cast<CCRenderPassDrawQuad*>(currentQuad);
-                    const CCRenderPass* refPass = renderPassDrawQuad->renderPass();
-                    char refPassId = testData.renderPassId.find(refPass)->second;
-                    *pos = refPassId;
-                    pos++;
-                }
+            case CCDrawQuad::RenderPass: {
+                CCRenderPassDrawQuad* renderPassDrawQuad = static_cast<CCRenderPassDrawQuad*>(currentQuad);
+                const CCRenderPass* refPass = renderPassDrawQuad->renderPass();
+                char refPassId = testData.renderPassId.find(refPass)->second;
+                *pos = refPassId;
+                pos++;
                 break;
+            }
             default:
                 *pos = 'x';
                 pos++;
@@ -3235,15 +3214,19 @@ static void verifyRenderPassTestData(TestCase& testCase, RenderPassRemovalTestDa
     EXPECT_STREQ(testCase.expectedResult, actualResult) << "In test case: " << testCase.name;
 }
 
-TEST(RenderPassRemovalTest, testRemoveRenderPasses)
+TEST_F(CCLayerTreeHostImplTest, testRemoveRenderPasses)
 {
+    OwnPtr<CCGraphicsContext> context(createContext());
+    WebKit::WebGraphicsContext3D* context3d = context->context3D();
+    ASSERT_TRUE(context3d);
+    OwnPtr<CCTestRenderer> renderer(CCTestRenderer::create(context3d));
+
     int testCaseIndex = 0;
     while (removeRenderPassesCases[testCaseIndex].name) {
-        DebugScopedSetImplThread implThread;
         RenderPassRemovalTestData testData;
         CCRenderPassList skippedPasses;
-        configureRenderPassTestData(removeRenderPassesCases[testCaseIndex].initScript, testData);
-        CCLayerTreeHostImpl::removePassesWithCachedTextures(testData.renderPassList, skippedPasses);
+        configureRenderPassTestData(removeRenderPassesCases[testCaseIndex].initScript, testData, renderer.get());
+        CCLayerTreeHostImpl::removePassesWithCachedTextures(testData.renderPassList, skippedPasses, renderer.get());
         verifyRenderPassTestData(removeRenderPassesCases[testCaseIndex], testData);
         testCaseIndex++;
     }

@@ -27,20 +27,24 @@
 
 #include "cc/CCRenderPassDrawQuad.h"
 
+#include "cc/CCRenderPass.h"
+
 namespace WebCore {
 
-PassOwnPtr<CCRenderPassDrawQuad> CCRenderPassDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCRenderPass* renderPass, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId)
+PassOwnPtr<CCRenderPassDrawQuad> CCRenderPassDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCRenderPass* renderPass, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame)
 {
-    return adoptPtr(new CCRenderPassDrawQuad(sharedQuadState, quadRect, renderPass, isReplica, filters, backgroundFilters, maskTextureId));
+    return adoptPtr(new CCRenderPassDrawQuad(sharedQuadState, quadRect, renderPass, isReplica, filters, backgroundFilters, maskTextureId, contentsChangedSinceLastFrame));
 }
 
-CCRenderPassDrawQuad::CCRenderPassDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCRenderPass* renderPass, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId)
+CCRenderPassDrawQuad::CCRenderPassDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCRenderPass* renderPass, bool isReplica, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame)
     : CCDrawQuad(sharedQuadState, CCDrawQuad::RenderPass, quadRect)
     , m_renderPass(renderPass)
+    , m_renderPassId(renderPass->id())
     , m_isReplica(isReplica)
     , m_filters(filters)
     , m_backgroundFilters(backgroundFilters)
     , m_maskTextureId(maskTextureId)
+    , m_contentsChangedSinceLastFrame(contentsChangedSinceLastFrame)
 {
     ASSERT(m_renderPass);
 }

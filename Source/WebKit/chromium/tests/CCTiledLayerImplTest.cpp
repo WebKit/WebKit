@@ -43,7 +43,7 @@ namespace {
 // visibility of the entire layer size.
 static PassOwnPtr<CCTiledLayerImpl> createLayer(const IntSize& tileSize, const IntSize& layerSize, CCLayerTilingData::BorderTexelOption borderTexels)
 {
-    OwnPtr<CCTiledLayerImpl> layer = CCTiledLayerImpl::create(0);
+    OwnPtr<CCTiledLayerImpl> layer = CCTiledLayerImpl::create(1);
     OwnPtr<CCLayerTilingData> tiler = CCLayerTilingData::create(tileSize, borderTexels);
     tiler->setBounds(layerSize);
     layer->setTilingData(*tiler);

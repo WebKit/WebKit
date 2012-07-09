@@ -37,17 +37,19 @@ using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
 
-PassOwnPtr<CCRenderPass> CCRenderPass::create(CCRenderSurface* targetSurface)
+PassOwnPtr<CCRenderPass> CCRenderPass::create(CCRenderSurface* targetSurface, int id)
 {
-    return adoptPtr(new CCRenderPass(targetSurface));
+    return adoptPtr(new CCRenderPass(targetSurface, id));
 }
 
-CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface)
-    : m_targetSurface(targetSurface)
+CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface, int id)
+    : m_id(id)
+    , m_targetSurface(targetSurface)
     , m_framebufferOutputRect(targetSurface->contentRect())
     , m_hasTransparentBackground(true)
 {
-    ASSERT(m_targetSurface);
+    ASSERT(targetSurface);
+    ASSERT(id > 0);
 }
 
 void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, bool& hadMissingTiles)

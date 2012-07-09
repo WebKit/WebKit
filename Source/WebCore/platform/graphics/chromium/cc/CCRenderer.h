@@ -72,6 +72,8 @@ public:
     const WebKit::WebTransformationMatrix& windowMatrix() const { return m_windowMatrix; }
 
     virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) = 0;
+    virtual bool haveCachedResourcesForRenderPassId(int) const = 0;
+
     virtual void beginDrawingFrame(const CCRenderPass* defaultRenderPass) = 0;
     virtual void drawRenderPass(const CCRenderPass*, const FloatRect& rootScissorRectInCurrentPass) = 0;
     virtual void finishDrawingFrame() = 0;

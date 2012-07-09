@@ -1,3 +1,14 @@
+2012-07-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Decouple RenderPass drawing from CCRenderSurface
+        https://bugs.webkit.org/show_bug.cgi?id=90573
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeCCRendererClient::FakeCCRendererClient):
+
 2012-07-09  Adam Klein  <adamk@chromium.org>
 
         Rename WebCore::WebKitMutationObserver to WebCore::MutationObserver

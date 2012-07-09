@@ -79,7 +79,7 @@ public:
         , m_memoryAllocationLimitBytes(0)
     {
         m_rootLayer->createRenderSurface();
-        m_rootRenderPass = CCRenderPass::create(m_rootLayer->renderSurface());
+        m_rootRenderPass = CCRenderPass::create(m_rootLayer->renderSurface(), m_rootLayer->id());
     }
 
     // CCRendererClient methods.
