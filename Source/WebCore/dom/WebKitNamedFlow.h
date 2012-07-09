@@ -52,7 +52,7 @@ public:
     String name() const;
     bool overset() const;
     int firstEmptyRegionIndex() const;
-    PassRefPtr<NodeList> getRegionsByContentNode(Node*);
+    PassRefPtr<NodeList> getRegionsByContent(Node*);
     PassRefPtr<NodeList> getContent();
 
 private:

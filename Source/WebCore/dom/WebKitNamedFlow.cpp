@@ -72,7 +72,7 @@ int WebKitNamedFlow::firstEmptyRegionIndex() const
     return -1;
 }
 
-PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContentNode(Node* contentNode)
+PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
 {
     if (!contentNode)
         return 0;

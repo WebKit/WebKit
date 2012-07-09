@@ -1,3 +1,26 @@
+2012-07-09  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions] Rename NamedFlow::getRegionsByContentNode to NamedFlow::getRegionsByContent
+        https://bugs.webkit.org/show_bug.cgi?id=90759
+
+        Reviewed by Andreas Kling.
+
+        Renamed NamedFlow::getRegionsByContentNode to NamedFlow::getRegionsByContent as per CSS Regions spec:
+        http://www.w3.org/TR/css3-regions/#dom-named-flow
+
+        Tests: fast/regions/get-regions-by-content-horiz-bt.html
+               fast/regions/get-regions-by-content-horiz-tb.html
+               fast/regions/get-regions-by-content-vert-lr.html
+               fast/regions/get-regions-by-content-vert-rl.html
+               fast/regions/get-regions-by-content.html
+               fast/regions/get-regions-by-content2.html
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::getRegionsByContent):
+        * dom/WebKitNamedFlow.h:
+        (WebKitNamedFlow):
+        * dom/WebKitNamedFlow.idl:
+
 2012-07-09  Matt Falkenhagen  <falken@chromium.org>
 
         Add ENABLE_DIALOG_ELEMENT and skeleton files
