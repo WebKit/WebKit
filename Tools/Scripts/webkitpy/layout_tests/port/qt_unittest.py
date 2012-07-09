@@ -28,7 +28,6 @@
 
 import unittest
 import os
-from copy import deepcopy
 
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
 from webkitpy.common.system.outputcapture import OutputCapture
@@ -79,17 +78,6 @@ class QtPortTest(port_testcase.PortTestCase):
                               options=MockOptions(webkit_test_runner=use_webkit2, platform='qt'))
         self.assertEquals(port._skipped_file_search_paths(), search_paths)
 
-    def _assert_expectations_files(self, search_paths, os_name, use_webkit2=False, qt_version='4.8'):
-        # FIXME: Port constructors should not "parse" the port name, but
-        # rather be passed components (directly or via setters).  Once
-        # we fix that, this method will need a re-write.
-        host = MockSystemHost(os_name=os_name)
-        host.executive = MockExecutive2(self._qt_version(qt_version))
-        port_name = 'qt-' + os_name
-        port = self.make_port(host=host, qt_version=qt_version, port_name=port_name,
-                              options=MockOptions(webkit_test_runner=use_webkit2, platform='qt'))
-        self.assertEquals(port.expectations_files(), search_paths)
-
     def _qt_version(self, qt_version):
         if qt_version in '4.8':
             return 'QMake version 2.01a\nUsing Qt version 4.8.0 in /usr/local/Trolltech/Qt-4.8.2/lib'
@@ -106,14 +94,6 @@ class QtPortTest(port_testcase.PortTestCase):
             if case['use_webkit2'] and case['qt_version'] == '5.0':
                 case['search_paths'].append("wk2")
             self._assert_skipped_path(**case)
-
-    def test_expectations_files(self):
-        for case in self.search_paths_cases:
-            expectations_case = deepcopy(case)
-            expectations_case['search_paths'] = []
-            for path in reversed(case['search_paths']):
-                expectations_case['search_paths'].append('/mock-checkout/LayoutTests/platform/%s/TestExpectations' % (path))
-            self._assert_expectations_files(**expectations_case)
 
     def test_show_results_html_file(self):
         port = self.make_port()
