@@ -144,7 +144,7 @@ String SelectPopupClient::htmlSource()
 
 void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
 {
-
+    ASSERT(m_element);
     ASSERT(m_size == stringValue.length());
 
     if (m_size > 0) {

@@ -1,3 +1,26 @@
+2012-07-09  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] PagePopupBlackBerry::closePopup() should always clear the pointer in WebPagePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=90817
+
+        Reviewed by Rob Buis.
+
+        PR# 174085.
+        PagePopupBlackBerry::closePopup() should always clear the pointer in WebPagePrivate to avoid crashes.
+        This patch also removes unused variable m_parentPopup and its setter.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate): Remove m_parentPopup.
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::closePagePopup):
+        * WebCoreSupport/PagePopupBlackBerry.cpp:
+        (WebCore::PagePopupBlackBerry::init): Remove the setParentPopup() call.
+        (WebCore::PagePopupBlackBerry::closePopup): Clear the reference in WebPagePrivate.
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::setValueAndClosePopup): Add an assert for valid m_element.
+
 2012-07-09  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] meta viewport initial-scale doesn't factor in device pixel ratio

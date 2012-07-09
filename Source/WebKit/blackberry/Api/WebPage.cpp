@@ -404,7 +404,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_updateDelegatedOverlaysDispatched(false)
     , m_deferredTasksTimer(this, &WebPagePrivate::deferredTasksTimerFired)
     , m_selectPopup(0)
-    , m_parentPopup(0)
     , m_autofillManager(AutofillManager::create(this))
 {
     static bool isInitialized = false;
@@ -6664,11 +6663,6 @@ bool WebPage::hasOpenedPopup() const
 PagePopupBlackBerry* WebPage::popup()
 {
     return d->m_selectPopup;
-}
-
-void WebPagePrivate::setParentPopup(PagePopupBlackBerry* webPopup)
-{
-    m_parentPopup = webPopup;
 }
 
 void WebPagePrivate::setInspectorOverlayClient(WebCore::InspectorOverlay::InspectorOverlayClient* inspectorOverlayClient)

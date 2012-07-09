@@ -68,8 +68,6 @@ bool PagePopupBlackBerry::init(WebPage* webpage)
 
     installDomFunction(webpage->d->mainFrame());
 
-    webpage->d->setParentPopup(this);
-
     return true;
 }
 
@@ -162,6 +160,7 @@ void PagePopupBlackBerry::closePopup()
 {
     m_client->didClosePopup();
     m_webPagePrivate->client()->closePopupWebView();
+    m_webPagePrivate->m_webPage->popupClosed();
 }
 
 }

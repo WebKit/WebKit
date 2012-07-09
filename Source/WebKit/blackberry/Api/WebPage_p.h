@@ -622,8 +622,6 @@ public:
 
     // The popup that opened in this webpage
     WebCore::PagePopupBlackBerry* m_selectPopup;
-    // The popup that owned this webpage
-    WebCore::PagePopupBlackBerry* m_parentPopup;
 
     RefPtr<WebCore::AutofillManager> m_autofillManager;
 protected:
