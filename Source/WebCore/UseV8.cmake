@@ -131,6 +131,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8MessageEventCustom.cpp
     bindings/v8/custom/V8MessagePortCustom.cpp
     bindings/v8/custom/V8MutationCallbackCustom.cpp
+    bindings/v8/custom/V8MutationObserverCustom.cpp
     bindings/v8/custom/V8NamedNodeMapCustom.cpp
     bindings/v8/custom/V8NamedNodesCollection.cpp
     bindings/v8/custom/V8NodeCustom.cpp
@@ -151,7 +152,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8Uint8ArrayCustom.cpp
     bindings/v8/custom/V8WebGLRenderingContextCustom.cpp
     bindings/v8/custom/V8WebKitAnimationCustom.cpp
-    bindings/v8/custom/V8WebKitMutationObserverCustom.cpp
     bindings/v8/custom/V8WebKitPointConstructor.cpp
     bindings/v8/custom/V8WebSocketCustom.cpp
     bindings/v8/custom/V8WorkerContextCustom.cpp

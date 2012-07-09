@@ -32,7 +32,7 @@
 #include "V8RecursionScope.h"
 
 #include "IDBPendingTransactionMonitor.h"
-#include "WebKitMutationObserver.h"
+#include "MutationObserver.h"
 
 namespace WebCore {
 
@@ -48,7 +48,7 @@ void V8RecursionScope::didLeaveScriptContext()
 
 #if ENABLE(MUTATION_OBSERVERS)
     if (m_isDocumentContext)
-        WebKitMutationObserver::deliverAllMutations();
+        MutationObserver::deliverAllMutations();
 #endif
 }
 

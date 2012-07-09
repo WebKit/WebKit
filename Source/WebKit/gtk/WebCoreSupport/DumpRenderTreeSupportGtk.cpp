@@ -50,6 +50,7 @@
 #include "JSLock.h"
 #include "JSNodeList.h"
 #include "JSValue.h"
+#include "MutationObserver.h"
 #include "NodeList.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
@@ -64,7 +65,6 @@
 #include "Settings.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleWrapperAtk.h"
-#include "WebKitMutationObserver.h"
 #include "WorkerThread.h"
 #include "webkitglobalsprivate.h"
 #include "webkitwebframe.h"
@@ -848,7 +848,7 @@ JSValueRef DumpRenderTreeSupportGtk::computedStyleIncludingVisitedInfo(JSContext
 void DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary()
 {
 #if ENABLE(MUTATION_OBSERVERS)
-    WebKitMutationObserver::deliverAllMutations();
+    MutationObserver::deliverAllMutations();
 #endif
 }
 

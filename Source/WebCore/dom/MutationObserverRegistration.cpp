@@ -40,12 +40,12 @@
 
 namespace WebCore {
 
-PassOwnPtr<MutationObserverRegistration> MutationObserverRegistration::create(PassRefPtr<WebKitMutationObserver> observer, Node* registrationNode)
+PassOwnPtr<MutationObserverRegistration> MutationObserverRegistration::create(PassRefPtr<MutationObserver> observer, Node* registrationNode)
 {
     return adoptPtr(new MutationObserverRegistration(observer, registrationNode));
 }
 
-MutationObserverRegistration::MutationObserverRegistration(PassRefPtr<WebKitMutationObserver> observer, Node* registrationNode)
+MutationObserverRegistration::MutationObserverRegistration(PassRefPtr<MutationObserver> observer, Node* registrationNode)
      : m_observer(observer)
      , m_registrationNode(registrationNode)
      , m_options(0)
@@ -105,16 +105,16 @@ void MutationObserverRegistration::unregister()
     // The above line will cause this object to be deleted, so don't do any more in this function.
 }
 
-bool MutationObserverRegistration::shouldReceiveMutationFrom(Node* node, WebKitMutationObserver::MutationType type, const QualifiedName* attributeName)
+bool MutationObserverRegistration::shouldReceiveMutationFrom(Node* node, MutationObserver::MutationType type, const QualifiedName* attributeName)
 {
-    ASSERT((type == WebKitMutationObserver::Attributes && attributeName) || !attributeName);
+    ASSERT((type == MutationObserver::Attributes && attributeName) || !attributeName);
     if (!(m_options & type))
         return false;
 
     if (m_registrationNode != node && !isSubtree())
         return false;
 
-    if (type != WebKitMutationObserver::Attributes || !(m_options & WebKitMutationObserver::AttributeFilter))
+    if (type != MutationObserver::Attributes || !(m_options & MutationObserver::AttributeFilter))
         return true;
 
     if (!attributeName->namespaceURI().isNull())

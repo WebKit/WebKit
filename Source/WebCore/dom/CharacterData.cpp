@@ -33,7 +33,6 @@
 #include "NodeRenderingContext.h"
 #include "RenderText.h"
 #include "TextBreakIterator.h"
-#include "WebKitMutationObserver.h"
 
 using namespace std;
 

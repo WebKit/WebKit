@@ -34,8 +34,8 @@
 #if ENABLE(MUTATION_OBSERVERS)
 
 #include "Document.h"
+#include "MutationObserver.h"
 #include "Node.h"
-#include "WebKitMutationObserver.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -46,7 +46,7 @@ class ChildListMutationScope {
     WTF_MAKE_NONCOPYABLE(ChildListMutationScope);
 public:
     ChildListMutationScope(Node* target)
-        : m_target(target->document()->hasMutationObserversOfType(WebKitMutationObserver::ChildList) ? target : 0)
+        : m_target(target->document()->hasMutationObserversOfType(MutationObserver::ChildList) ? target : 0)
     {
         if (m_target)
             MutationAccumulationRouter::instance()->incrementScopingLevel(m_target);

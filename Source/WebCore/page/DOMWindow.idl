@@ -778,7 +778,7 @@ module window {
 
         attribute [Conditional=BLOB] DOMURLConstructor webkitURL;
 
-        attribute [Conditional=MUTATION_OBSERVERS] WebKitMutationObserverConstructor WebKitMutationObserver;
+        attribute [Conditional=MUTATION_OBSERVERS] MutationObserverConstructor WebKitMutationObserver;
 
 #endif // defined(LANGUAGE_JAVASCRIPT)
 

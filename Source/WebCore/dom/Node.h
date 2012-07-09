@@ -30,10 +30,10 @@
 #include "KURLHash.h"
 #include "LayoutTypes.h"
 #include "MemoryInstrumentation.h"
+#include "MutationObserver.h"
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
 #include "TreeShared.h"
-#include "WebKitMutationObserver.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/text/AtomicString.h>
@@ -633,8 +633,8 @@ public:
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)
-    void getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>&, WebKitMutationObserver::MutationType, const QualifiedName* attributeName);
-    MutationObserverRegistration* registerMutationObserver(PassRefPtr<WebKitMutationObserver>);
+    void getRegisteredMutationObserversOfType(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, MutationObserver::MutationType, const QualifiedName* attributeName);
+    MutationObserverRegistration* registerMutationObserver(PassRefPtr<MutationObserver>);
     void unregisterMutationObserver(MutationObserverRegistration*);
     void registerTransientMutationObserver(MutationObserverRegistration*);
     void unregisterTransientMutationObserver(MutationObserverRegistration*);
@@ -780,7 +780,7 @@ private:
 #if ENABLE(MUTATION_OBSERVERS)
     Vector<OwnPtr<MutationObserverRegistration> >* mutationObserverRegistry();
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
-    void collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>&, Node* fromNode, WebKitMutationObserver::MutationType, const QualifiedName* attributeName);
+    void collectMatchingObserversForMutation(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, Node* fromNode, MutationObserver::MutationType, const QualifiedName* attributeName);
 #endif
 
     mutable uint32_t m_nodeFlags;

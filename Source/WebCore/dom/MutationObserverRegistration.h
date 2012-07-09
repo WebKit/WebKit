@@ -33,7 +33,7 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
-#include "WebKitMutationObserver.h"
+#include "MutationObserver.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -45,7 +45,7 @@ class QualifiedName;
 class MutationObserverRegistration {
 public:
 
-    static PassOwnPtr<MutationObserverRegistration> create(PassRefPtr<WebKitMutationObserver>, Node*);
+    static PassOwnPtr<MutationObserverRegistration> create(PassRefPtr<MutationObserver>, Node*);
 
     ~MutationObserverRegistration();
 
@@ -55,19 +55,19 @@ public:
     bool hasTransientRegistrations() { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
     void unregister();
 
-    bool shouldReceiveMutationFrom(Node*, WebKitMutationObserver::MutationType, const QualifiedName* attributeName);
-    bool inline isSubtree() const { return m_options & WebKitMutationObserver::Subtree; }
+    bool shouldReceiveMutationFrom(Node*, MutationObserver::MutationType, const QualifiedName* attributeName);
+    bool inline isSubtree() const { return m_options & MutationObserver::Subtree; }
 
-    WebKitMutationObserver* observer() { return m_observer.get(); }
-    MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (WebKitMutationObserver::AttributeOldValue | WebKitMutationObserver::CharacterDataOldValue); }
-    MutationObserverOptions mutationTypes() const { return m_options & WebKitMutationObserver::AllMutationTypes; }
+    MutationObserver* observer() { return m_observer.get(); }
+    MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (MutationObserver::AttributeOldValue | MutationObserver::CharacterDataOldValue); }
+    MutationObserverOptions mutationTypes() const { return m_options & MutationObserver::AllMutationTypes; }
 
 private:
-    MutationObserverRegistration(PassRefPtr<WebKitMutationObserver>, Node*);
+    MutationObserverRegistration(PassRefPtr<MutationObserver>, Node*);
 
     const HashSet<AtomicString>& caseInsensitiveAttributeFilter();
 
-    RefPtr<WebKitMutationObserver> m_observer;
+    RefPtr<MutationObserver> m_observer;
     Node* m_registrationNode;
     RefPtr<Node> m_registrationNodeKeepAlive;
     typedef HashSet<RefPtr<Node> > NodeHashSet;

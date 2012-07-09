@@ -32,7 +32,7 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
-#include "WebKitMutationObserver.h"
+#include "MutationObserver.h"
 
 #include "Dictionary.h"
 #include "Document.h"
@@ -50,31 +50,31 @@ namespace WebCore {
 
 static unsigned s_observerPriority = 0;
 
-struct WebKitMutationObserver::ObserverLessThan {
-    bool operator()(const RefPtr<WebKitMutationObserver>& lhs, const RefPtr<WebKitMutationObserver>& rhs)
+struct MutationObserver::ObserverLessThan {
+    bool operator()(const RefPtr<MutationObserver>& lhs, const RefPtr<MutationObserver>& rhs)
     {
         return lhs->m_priority < rhs->m_priority;
     }
 };
 
-PassRefPtr<WebKitMutationObserver> WebKitMutationObserver::create(PassRefPtr<MutationCallback> callback)
+PassRefPtr<MutationObserver> MutationObserver::create(PassRefPtr<MutationCallback> callback)
 {
     ASSERT(isMainThread());
-    return adoptRef(new WebKitMutationObserver(callback));
+    return adoptRef(new MutationObserver(callback));
 }
 
-WebKitMutationObserver::WebKitMutationObserver(PassRefPtr<MutationCallback> callback)
+MutationObserver::MutationObserver(PassRefPtr<MutationCallback> callback)
     : m_callback(callback)
     , m_priority(s_observerPriority++)
 {
 }
 
-WebKitMutationObserver::~WebKitMutationObserver()
+MutationObserver::~MutationObserver()
 {
     ASSERT(m_registrations.isEmpty());
 }
 
-bool WebKitMutationObserver::validateOptions(MutationObserverOptions options)
+bool MutationObserver::validateOptions(MutationObserverOptions options)
 {
     return (options & (Attributes | CharacterData | ChildList))
         && ((options & Attributes) || !(options & AttributeOldValue))
@@ -82,7 +82,7 @@ bool WebKitMutationObserver::validateOptions(MutationObserverOptions options)
         && ((options & CharacterData) || !(options & CharacterDataOldValue));
 }
 
-void WebKitMutationObserver::observe(Node* node, const Dictionary& optionsDictionary, ExceptionCode& ec)
+void MutationObserver::observe(Node* node, const Dictionary& optionsDictionary, ExceptionCode& ec)
 {
     if (!node) {
         ec = NOT_FOUND_ERR;
@@ -93,12 +93,12 @@ void WebKitMutationObserver::observe(Node* node, const Dictionary& optionsDictio
         const char* name;
         MutationObserverOptions value;
     } booleanOptions[] = {
-        { "childList", WebKitMutationObserver::ChildList },
-        { "attributes", WebKitMutationObserver::Attributes },
-        { "characterData", WebKitMutationObserver::CharacterData },
-        { "subtree", WebKitMutationObserver::Subtree },
-        { "attributeOldValue", WebKitMutationObserver::AttributeOldValue },
-        { "characterDataOldValue", WebKitMutationObserver::CharacterDataOldValue }
+        { "childList", ChildList },
+        { "attributes", Attributes },
+        { "characterData", CharacterData },
+        { "subtree", Subtree },
+        { "attributeOldValue", AttributeOldValue },
+        { "characterDataOldValue", CharacterDataOldValue }
     };
     MutationObserverOptions options = 0;
     for (unsigned i = 0; i < sizeof(booleanOptions) / sizeof(booleanOptions[0]); ++i) {
@@ -109,7 +109,7 @@ void WebKitMutationObserver::observe(Node* node, const Dictionary& optionsDictio
 
     HashSet<AtomicString> attributeFilter;
     if (optionsDictionary.get("attributeFilter", attributeFilter))
-        options |= WebKitMutationObserver::AttributeFilter;
+        options |= AttributeFilter;
 
     if (!validateOptions(options)) {
         ec = SYNTAX_ERR;
@@ -122,14 +122,14 @@ void WebKitMutationObserver::observe(Node* node, const Dictionary& optionsDictio
     node->document()->addMutationObserverTypes(registration->mutationTypes());
 }
 
-Vector<RefPtr<MutationRecord> > WebKitMutationObserver::takeRecords()
+Vector<RefPtr<MutationRecord> > MutationObserver::takeRecords()
 {
     Vector<RefPtr<MutationRecord> > records;
     records.swap(m_records);
     return records;
 }
 
-void WebKitMutationObserver::disconnect()
+void MutationObserver::disconnect()
 {
     m_records.clear();
     HashSet<MutationObserverRegistration*> registrations(m_registrations);
@@ -137,19 +137,19 @@ void WebKitMutationObserver::disconnect()
         (*iter)->unregister();
 }
 
-void WebKitMutationObserver::observationStarted(MutationObserverRegistration* registration)
+void MutationObserver::observationStarted(MutationObserverRegistration* registration)
 {
     ASSERT(!m_registrations.contains(registration));
     m_registrations.add(registration);
 }
 
-void WebKitMutationObserver::observationEnded(MutationObserverRegistration* registration)
+void MutationObserver::observationEnded(MutationObserverRegistration* registration)
 {
     ASSERT(m_registrations.contains(registration));
     m_registrations.remove(registration);
 }
 
-typedef HashSet<RefPtr<WebKitMutationObserver> > MutationObserverSet;
+typedef HashSet<RefPtr<MutationObserver> > MutationObserverSet;
 
 static MutationObserverSet& activeMutationObservers()
 {
@@ -157,20 +157,20 @@ static MutationObserverSet& activeMutationObservers()
     return activeObservers;
 }
 
-void WebKitMutationObserver::enqueueMutationRecord(PassRefPtr<MutationRecord> mutation)
+void MutationObserver::enqueueMutationRecord(PassRefPtr<MutationRecord> mutation)
 {
     ASSERT(isMainThread());
     m_records.append(mutation);
     activeMutationObservers().add(this);
 }
 
-void WebKitMutationObserver::setHasTransientRegistration()
+void MutationObserver::setHasTransientRegistration()
 {
     ASSERT(isMainThread());
     activeMutationObservers().add(this);
 }
 
-void WebKitMutationObserver::deliver()
+void MutationObserver::deliver()
 {
     // Calling clearTransientRegistrations() can modify m_registrations, so it's necessary
     // to make a copy of the transient registrations before operating on them.
@@ -191,7 +191,7 @@ void WebKitMutationObserver::deliver()
     m_callback->handleEvent(&records, this);
 }
 
-void WebKitMutationObserver::deliverAllMutations()
+void MutationObserver::deliverAllMutations()
 {
     ASSERT(isMainThread());
     static bool deliveryInProgress = false;
@@ -200,7 +200,7 @@ void WebKitMutationObserver::deliverAllMutations()
     deliveryInProgress = true;
 
     while (!activeMutationObservers().isEmpty()) {
-        Vector<RefPtr<WebKitMutationObserver> > observers;
+        Vector<RefPtr<MutationObserver> > observers;
         copyToVector(activeMutationObservers(), observers);
         activeMutationObservers().clear();
         std::sort(observers.begin(), observers.end(), ObserverLessThan());

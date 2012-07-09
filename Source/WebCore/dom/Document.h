@@ -38,6 +38,7 @@
 #include "InspectorCounters.h"
 #include "IntRect.h"
 #include "LayoutTypes.h"
+#include "MutationObserver.h"
 #include "PageVisibilityState.h"
 #include "PlatformScreen.h"
 #include "QualifiedName.h"
@@ -47,7 +48,6 @@
 #include "Timer.h"
 #include "TreeScope.h"
 #include "ViewportArguments.h"
-#include "WebKitMutationObserver.h"
 #include <wtf/Deque.h>
 #include <wtf/FixedArray.h>
 #include <wtf/OwnPtr.h>
@@ -782,7 +782,7 @@ public:
     void addListenerTypeIfNeeded(const AtomicString& eventType);
 
 #if ENABLE(MUTATION_OBSERVERS)
-    bool hasMutationObserversOfType(WebKitMutationObserver::MutationType type) const
+    bool hasMutationObserversOfType(MutationObserver::MutationType type) const
     {
         return m_mutationObserverTypes & type;
     }

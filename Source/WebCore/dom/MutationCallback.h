@@ -40,7 +40,7 @@
 namespace WebCore {
 
 class MutationRecord;
-class WebKitMutationObserver;
+class MutationObserver;
 
 typedef Vector<RefPtr<MutationRecord> > MutationRecordArray;
 
@@ -48,7 +48,7 @@ class MutationCallback : public RefCounted<MutationCallback> {
 public:
     virtual ~MutationCallback() { }
 
-    virtual bool handleEvent(MutationRecordArray*, WebKitMutationObserver*) = 0;
+    virtual bool handleEvent(MutationRecordArray*, MutationObserver*) = 0;
 };
 
 }

@@ -47,6 +47,7 @@
 #include <JSElement.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <MemoryCache.h>
+#include <MutationObserver.h>
 #include <PageGroup.h>
 #include <PrintContext.h>
 #include <RenderTreeAsText.h>
@@ -55,7 +56,6 @@
 #include <ScriptValue.h>
 #include <Settings.h>
 #include <TextIterator.h>
-#include <WebKitMutationObserver.h>
 #include <bindings/js/GCController.h>
 #include <history/HistoryItem.h>
 #include <workers/WorkerThread.h>
@@ -597,7 +597,7 @@ void DumpRenderTreeSupportEfl::dumpConfigurationForViewport(Evas_Object* ewkView
 void DumpRenderTreeSupportEfl::deliverAllMutationsIfNecessary()
 {
 #if ENABLE(MUTATION_OBSERVERS)
-    WebCore::WebKitMutationObserver::deliverAllMutations();
+    WebCore::MutationObserver::deliverAllMutations();
 #endif
 }
 

@@ -35,7 +35,6 @@
 
 #include "DumpRenderTree.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
-#include "WebKitMutationObserver.h"
 #include <GOwnPtrGtk.h>
 #include <GRefPtrGtk.h>
 #include <GtkVersioning.h>

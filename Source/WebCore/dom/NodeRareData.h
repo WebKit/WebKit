@@ -25,10 +25,10 @@
 #include "ChildNodeList.h"
 #include "DOMSettableTokenList.h"
 #include "DynamicNodeList.h"
+#include "MutationObserver.h"
 #include "MutationObserverRegistration.h"
 #include "QualifiedName.h"
 #include "TagNodeList.h"
-#include "WebKitMutationObserver.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

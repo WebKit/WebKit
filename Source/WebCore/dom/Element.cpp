@@ -71,7 +71,6 @@
 #include "Text.h"
 #include "TextIterator.h"
 #include "VoidCallback.h"
-#include "WebKitMutationObserver.h"
 #include "WebKitAnimationList.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"

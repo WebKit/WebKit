@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "JSMainThreadExecState.h"
-#include "WebKitMutationObserver.h"
+#include "MutationObserver.h"
 
 #if ENABLE(INDEXED_DATABASE)
 #include "IDBPendingTransactionMonitor.h"
@@ -44,7 +44,7 @@ void JSMainThreadExecState::didLeaveScriptContext()
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)
-    WebKitMutationObserver::deliverAllMutations();
+    MutationObserver::deliverAllMutations();
 #endif
 }
 

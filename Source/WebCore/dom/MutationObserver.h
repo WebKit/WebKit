@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitMutationObserver_h
-#define WebKitMutationObserver_h
+#ifndef MutationObserver_h
+#define MutationObserver_h
 
 #if ENABLE(MUTATION_OBSERVERS)
 
@@ -54,7 +54,7 @@ typedef int ExceptionCode;
 typedef unsigned char MutationObserverOptions;
 typedef unsigned char MutationRecordDeliveryOptions;
 
-class WebKitMutationObserver : public RefCounted<WebKitMutationObserver> {
+class MutationObserver : public RefCounted<MutationObserver> {
 public:
     enum MutationType {
         ChildList = 1 << 0,
@@ -74,10 +74,10 @@ public:
         CharacterDataOldValue = 1 << 6,
     };
 
-    static PassRefPtr<WebKitMutationObserver> create(PassRefPtr<MutationCallback>);
+    static PassRefPtr<MutationObserver> create(PassRefPtr<MutationCallback>);
     static void deliverAllMutations();
 
-    ~WebKitMutationObserver();
+    ~MutationObserver();
 
     void observe(Node*, const Dictionary&, ExceptionCode&);
     Vector<RefPtr<MutationRecord> > takeRecords();
@@ -90,7 +90,7 @@ public:
 private:
     struct ObserverLessThan;
 
-    WebKitMutationObserver(PassRefPtr<MutationCallback>);
+    MutationObserver(PassRefPtr<MutationCallback>);
     void deliver();
 
     static bool validateOptions(MutationObserverOptions);
@@ -105,4 +105,4 @@ private:
 
 #endif // ENABLE(MUTATION_OBSERVERS)
 
-#endif // WebKitMutationObserver_h
+#endif // MutationObserver_h

@@ -1,3 +1,103 @@
+2012-07-09  Adam Klein  <adamk@chromium.org>
+
+        Rename WebCore::WebKitMutationObserver to WebCore::MutationObserver
+        https://bugs.webkit.org/show_bug.cgi?id=90810
+
+        Reviewed by Ojan Vafai.
+
+        This is in preparation for removing the vendor prefix from the
+        MutationObserver constructor on Window (currently it's called
+        WebKitMutationObserver). Doing the WebCore-internal rename first
+        makes that change a much smaller one, which is especially useful
+        because there's ongoing discussion of when the prefix should be
+        removed from the web-facing API.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSMainThreadExecState.cpp:
+        (WebCore::JSMainThreadExecState::didLeaveScriptContext):
+        * bindings/js/JSMutationCallbackCustom.cpp:
+        (WebCore::JSMutationCallback::handleEvent):
+        * bindings/js/JSMutationObserverCustom.cpp: Renamed from Source/WebCore/bindings/js/JSWebKitMutationObserverCustom.cpp.
+        (WebCore):
+        (WebCore::JSMutationObserverConstructor::constructJSMutationObserver):
+        * bindings/v8/V8RecursionScope.cpp:
+        (WebCore::V8RecursionScope::didLeaveScriptContext):
+        * bindings/v8/custom/V8MutationCallbackCustom.cpp:
+        (WebCore::V8MutationCallback::handleEvent):
+        * bindings/v8/custom/V8MutationObserverCustom.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8WebKitMutationObserverCustom.cpp.
+        (WebCore):
+        (WebCore::V8MutationObserver::constructorCallback):
+        * dom/CharacterData.cpp:
+        * dom/ChildListMutationScope.h:
+        (WebCore::ChildListMutationScope::ChildListMutationScope):
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.h:
+        (WebCore::Document::hasMutationObserversOfType):
+        * dom/Element.cpp:
+        * dom/MutationCallback.h:
+        (WebCore):
+        (MutationCallback):
+        * dom/MutationCallback.idl:
+        * dom/MutationObserver.cpp: Renamed from Source/WebCore/dom/WebKitMutationObserver.cpp.
+        (WebCore):
+        (WebCore::MutationObserver::ObserverLessThan::operator()):
+        (WebCore::MutationObserver::create):
+        (WebCore::MutationObserver::MutationObserver):
+        (WebCore::MutationObserver::~MutationObserver):
+        (WebCore::MutationObserver::validateOptions):
+        (WebCore::MutationObserver::observe):
+        (WebCore::MutationObserver::takeRecords):
+        (WebCore::MutationObserver::disconnect):
+        (WebCore::MutationObserver::observationStarted):
+        (WebCore::MutationObserver::observationEnded):
+        (WebCore::activeMutationObservers):
+        (WebCore::MutationObserver::enqueueMutationRecord):
+        (WebCore::MutationObserver::setHasTransientRegistration):
+        (WebCore::MutationObserver::deliver):
+        (WebCore::MutationObserver::deliverAllMutations):
+        * dom/MutationObserver.h: Renamed from Source/WebCore/dom/WebKitMutationObserver.h.
+        (WebCore):
+        (MutationObserver):
+        * dom/MutationObserver.idl: Renamed from Source/WebCore/dom/WebKitMutationObserver.idl.
+        * dom/MutationObserverInterestGroup.cpp:
+        (WebCore::MutationObserverInterestGroup::createIfNeeded):
+        (WebCore::MutationObserverInterestGroup::MutationObserverInterestGroup):
+        (WebCore::MutationObserverInterestGroup::isOldValueRequested):
+        (WebCore::MutationObserverInterestGroup::enqueueMutationRecord):
+        * dom/MutationObserverInterestGroup.h:
+        (WebCore::MutationObserverInterestGroup::createForChildListMutation):
+        (WebCore::MutationObserverInterestGroup::createForCharacterDataMutation):
+        (WebCore::MutationObserverInterestGroup::createForAttributesMutation):
+        (MutationObserverInterestGroup):
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::create):
+        (WebCore::MutationObserverRegistration::MutationObserverRegistration):
+        (WebCore::MutationObserverRegistration::shouldReceiveMutationFrom):
+        * dom/MutationObserverRegistration.h:
+        (MutationObserverRegistration):
+        (WebCore::MutationObserverRegistration::isSubtree):
+        (WebCore::MutationObserverRegistration::observer):
+        (WebCore::MutationObserverRegistration::deliveryOptions):
+        (WebCore::MutationObserverRegistration::mutationTypes):
+        * dom/Node.cpp:
+        (WebCore::Node::collectMatchingObserversForMutation):
+        (WebCore::Node::getRegisteredMutationObserversOfType):
+        (WebCore::Node::registerMutationObserver):
+        * dom/Node.h:
+        (Node):
+        * dom/NodeRareData.h:
+        * page/DOMWindow.idl:
+
 2012-07-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, rolling out http://trac.webkit.org/changeset/122116 and http://trac.webkit.org/changeset/122119

@@ -32,21 +32,21 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
-#include "V8WebKitMutationObserver.h"
+#include "V8MutationObserver.h"
 
+#include "MutationObserver.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8DOMWrapper.h"
 #include "V8MutationCallback.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
-#include "WebKitMutationObserver.h"
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8WebKitMutationObserver::constructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8MutationObserver::constructorCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.WebKitMutationObserver.Constructor");
+    INC_STATS("DOM.MutationObserver.Constructor");
 
     if (!args.IsConstructCall())
         return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
@@ -63,10 +63,10 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::constructorCallback(const v8::Ar
 
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "WebKitMutationObserver constructor's associated frame unavailable", args.GetIsolate());
+        return V8Proxy::throwError(V8Proxy::ReferenceError, "MutationObserver constructor's associated frame unavailable", args.GetIsolate());
 
     RefPtr<MutationCallback> callback = V8MutationCallback::create(arg, context);
-    RefPtr<WebKitMutationObserver> observer = WebKitMutationObserver::create(callback.release());
+    RefPtr<MutationObserver> observer = MutationObserver::create(callback.release());
 
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, observer.get());
     V8DOMWrapper::setJSWrapperForDOMObject(observer.release(), v8::Persistent<v8::Object>::New(args.Holder()));

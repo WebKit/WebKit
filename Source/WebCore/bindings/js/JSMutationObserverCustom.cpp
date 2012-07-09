@@ -28,15 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module core {
-    interface [
-        Conditional=MUTATION_OBSERVERS,
-        CustomConstructor,
-        ConstructorParameters=1
-    ] WebKitMutationObserver {
-        void observe(in Node target, in Dictionary options)
-            raises(DOMException);
-        sequence<MutationRecord> takeRecords();
-        void disconnect();
-    };
+#include "config.h"
+
+#if ENABLE(MUTATION_OBSERVERS)
+
+#include "JSMutationObserver.h"
+
+#include "JSMutationCallback.h"
+#include "MutationObserver.h"
+#include <runtime/Error.h>
+
+using namespace JSC;
+
+namespace WebCore {
+
+EncodedJSValue JSC_HOST_CALL JSMutationObserverConstructor::constructJSMutationObserver(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+
+    JSObject* object = exec->argument(0).getObject();
+    if (!object) {
+        setDOMException(exec, TYPE_MISMATCH_ERR);
+        return JSValue::encode(jsUndefined());
+    }
+
+    JSMutationObserverConstructor* jsConstructor = jsCast<JSMutationObserverConstructor*>(exec->callee());
+    RefPtr<MutationCallback> callback = JSMutationCallback::create(object, jsConstructor->globalObject());
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), MutationObserver::create(callback.release()))));
 }
+
+} // namespace WebCore
+
+#endif // ENABLE(MUTATION_OBSERVERS)

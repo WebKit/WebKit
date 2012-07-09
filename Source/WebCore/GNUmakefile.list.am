@@ -411,6 +411,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMutationCallback.h \
 	DerivedSources/WebCore/JSMutationEvent.cpp \
 	DerivedSources/WebCore/JSMutationEvent.h \
+	DerivedSources/WebCore/JSMutationObserver.cpp \
+	DerivedSources/WebCore/JSMutationObserver.h \
 	DerivedSources/WebCore/JSMutationRecord.cpp \
 	DerivedSources/WebCore/JSMutationRecord.h \
 	DerivedSources/WebCore/JSNamedNodeMap.cpp \
@@ -622,8 +624,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebKitCSSRegionRule.h \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.cpp \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.h \
-	DerivedSources/WebCore/JSWebKitMutationObserver.cpp \
-	DerivedSources/WebCore/JSWebKitMutationObserver.h \
 	DerivedSources/WebCore/JSWebKitNamedFlow.cpp \
 	DerivedSources/WebCore/JSWebKitNamedFlow.h \
 	DerivedSources/WebCore/JSWebKitPoint.cpp \
@@ -781,6 +781,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/MouseEvent.idl \
 	$(WebCore)/dom/MutationCallback.idl \
 	$(WebCore)/dom/MutationEvent.idl \
+	$(WebCore)/dom/MutationObserver.idl \
 	$(WebCore)/dom/MutationRecord.idl \
 	$(WebCore)/dom/NamedNodeMap.idl \
 	$(WebCore)/dom/Node.idl \
@@ -804,7 +805,6 @@ dom_binding_idls += \
 	$(WebCore)/dom/TreeWalker.idl \
 	$(WebCore)/dom/UIEvent.idl \
 	$(WebCore)/dom/WebKitAnimationEvent.idl \
-	$(WebCore)/dom/WebKitMutationObserver.idl \
 	$(WebCore)/dom/WebKitNamedFlow.idl \
 	$(WebCore)/dom/WebKitTransitionEvent.idl \
 	$(WebCore)/dom/WheelEvent.idl \
@@ -1480,6 +1480,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSMessagePortCustom.cpp \
 	Source/WebCore/bindings/js/JSMessagePortCustom.h \
 	Source/WebCore/bindings/js/JSMutationCallbackCustom.cpp \
+	Source/WebCore/bindings/js/JSMutationObserverCustom.cpp \
 	Source/WebCore/bindings/js/JSNamedNodeMapCustom.cpp \
 	Source/WebCore/bindings/js/JSNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSNodeCustom.h \
@@ -1524,7 +1525,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	Source/WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
-	Source/WebCore/bindings/js/JSWebKitMutationObserverCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitPointCustom.cpp \
 	Source/WebCore/bindings/js/JSWebSocketCustom.cpp \
 	Source/WebCore/bindings/js/JSWorkerContextBase.cpp \
@@ -1960,6 +1960,8 @@ webcore_sources += \
 	Source/WebCore/dom/MutationCallback.h \
 	Source/WebCore/dom/MutationEvent.cpp \
 	Source/WebCore/dom/MutationEvent.h \
+	Source/WebCore/dom/MutationObserver.cpp \
+	Source/WebCore/dom/MutationObserver.h \
 	Source/WebCore/dom/MutationObserverInterestGroup.cpp \
 	Source/WebCore/dom/MutationObserverInterestGroup.h \
 	Source/WebCore/dom/MutationObserverRegistration.cpp \
@@ -2070,8 +2072,6 @@ webcore_sources += \
 	Source/WebCore/dom/ViewportArguments.h \
 	Source/WebCore/dom/WebKitAnimationEvent.cpp \
 	Source/WebCore/dom/WebKitAnimationEvent.h \
-	Source/WebCore/dom/WebKitMutationObserver.cpp \
-	Source/WebCore/dom/WebKitMutationObserver.h \
 	Source/WebCore/dom/WebKitNamedFlow.cpp \
 	Source/WebCore/dom/WebKitNamedFlow.h \
 	Source/WebCore/dom/WebKitTransitionEvent.cpp \

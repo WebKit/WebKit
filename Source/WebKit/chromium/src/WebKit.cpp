@@ -32,13 +32,13 @@
 #include "WebKit.h"
 
 #include "Logging.h"
+#include "MutationObserver.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "V8Binding.h"
 #include "V8RecursionScope.h"
-#include "WebKitMutationObserver.h"
 #include "WebMediaPlayerClientImpl.h"
 #include "WebSocket.h"
 #include "WorkerContextExecutionProxy.h"
@@ -67,7 +67,7 @@ public:
     virtual void willProcessTask() { }
     virtual void didProcessTask()
     {
-        WebCore::WebKitMutationObserver::deliverAllMutations();
+        WebCore::MutationObserver::deliverAllMutations();
     }
 };
 

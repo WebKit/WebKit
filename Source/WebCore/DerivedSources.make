@@ -229,6 +229,7 @@ BINDING_IDLS = \
     $(WebCore)/dom/MouseEvent.idl \
     $(WebCore)/dom/MutationCallback.idl \
     $(WebCore)/dom/MutationEvent.idl \
+    $(WebCore)/dom/MutationObserver.idl \
     $(WebCore)/dom/MutationRecord.idl \
     $(WebCore)/dom/NamedNodeMap.idl \
     $(WebCore)/dom/Node.idl \
@@ -254,7 +255,6 @@ BINDING_IDLS = \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/UIEvent.idl \
     $(WebCore)/dom/WebKitAnimationEvent.idl \
-    $(WebCore)/dom/WebKitMutationObserver.idl \
     $(WebCore)/dom/WebKitNamedFlow.idl \
     $(WebCore)/dom/WebKitTransitionEvent.idl \
     $(WebCore)/dom/WheelEvent.idl \
