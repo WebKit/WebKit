@@ -1,3 +1,17 @@
+2012-07-09  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        SurroundingText should not advance character iterators if they are at end.
+        https://bugs.webkit.org/show_bug.cgi?id=90560
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new test case where character iterators are already at end when
+        trying to advance. This was caught by Chromium's address sanitizer
+        here: http://code.google.com/p/chromium/issues/detail?id=135705
+
+        * platform/chromium/editing/surrounding-text/surrounding-text-expected.txt:
+        * platform/chromium/editing/surrounding-text/surrounding-text.html:
+
 2012-07-09  Rafael Weinstein  <rafaelw@chromium.org>
 
         Unreviewed gardening. Update TestExpectations after filename change in r122109.

@@ -46,11 +46,7 @@ void WebSurroundingText::initialize(const WebHitTestResult& hitTestInfo, size_t 
     if (!node || !node->renderer())
         return;
 
-    VisiblePosition visiblePosition(node->renderer()->positionForPoint(static_cast<IntPoint>(hitTestInfo.localPoint())));
-    if (visiblePosition.isNull())
-        return;
-
-    m_private.reset(new SurroundingText(visiblePosition, maxLength));
+    m_private.reset(new SurroundingText(VisiblePosition(node->renderer()->positionForPoint(static_cast<IntPoint>(hitTestInfo.localPoint()))), maxLength));
 }
 
 void WebSurroundingText::initialize(WebNode textNode, size_t offset, size_t maxLength)

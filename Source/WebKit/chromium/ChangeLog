@@ -1,3 +1,16 @@
+2012-07-09  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        SurroundingText should not advance character iterators if they are at end.
+        https://bugs.webkit.org/show_bug.cgi?id=90560
+
+        Reviewed by Ryosuke Niwa.
+
+        Moving the check for null visible positions to WebCore as it makes no
+        sense to be in a platform-specific code.
+
+        * src/WebSurroundingText.cpp:
+        (WebKit::WebSurroundingText::initialize):
+
 2012-07-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Create render surfaces on main thread only for the current frame

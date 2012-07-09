@@ -1,3 +1,20 @@
+2012-07-09  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        SurroundingText should not advance character iterators if they are at end.
+        https://bugs.webkit.org/show_bug.cgi?id=90560
+
+        Reviewed by Ryosuke Niwa.
+
+        CharacterIterator and BackwardsCharacterIterator try to advance their
+        internal TextIterator without checking if they already are at end.
+        This can cause crashes in TextIterator::advance.
+
+        Test: platform/chromium/editing/surrounding-text/surrounding-text.html
+
+        * editing/SurroundingText.cpp:
+        (WebCore::SurroundingText::SurroundingText):
+        (WebCore::SurroundingText::rangeFromContentOffsets):
+
 2012-07-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] Ecore errors from ecore_evas_screen_geometry_get()

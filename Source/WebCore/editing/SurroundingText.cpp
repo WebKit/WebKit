@@ -43,20 +43,35 @@ namespace WebCore {
 SurroundingText::SurroundingText(const VisiblePosition& visiblePosition, unsigned maxLength)
     : m_positionOffsetInContent(0)
 {
+    if (visiblePosition.isNull())
+        return;
+
     const unsigned halfMaxLength = maxLength / 2;
     CharacterIterator forwardIterator(makeRange(visiblePosition, endOfDocument(visiblePosition)).get(), TextIteratorStopsOnFormControls);
-    forwardIterator.advance(maxLength - halfMaxLength);
+    if (!forwardIterator.atEnd())
+        forwardIterator.advance(maxLength - halfMaxLength);
 
     Position position = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
     Document* document = position.document();
-    if (!Range::create(document, position, forwardIterator.range()->startPosition())->text().length())
+    RefPtr<Range> forwardRange = forwardIterator.range();
+    if (!forwardRange || !Range::create(document, position, forwardRange->startPosition())->text().length()) {
+        ASSERT(forwardRange);
         return;
+    }
 
     BackwardsCharacterIterator backwardsIterator(makeRange(startOfDocument(visiblePosition), visiblePosition).get(), TextIteratorStopsOnFormControls);
-    backwardsIterator.advance(halfMaxLength);
+    if (!backwardsIterator.atEnd())
+        backwardsIterator.advance(halfMaxLength);
 
-    m_positionOffsetInContent = Range::create(document, backwardsIterator.range()->endPosition(), position)->text().length();
-    m_contentRange = Range::create(document, backwardsIterator.range()->endPosition(), forwardIterator.range()->startPosition());
+    RefPtr<Range> backwardsRange = backwardsIterator.range();
+    if (!backwardsRange) {
+        ASSERT(backwardsRange);
+        return;
+    }
+
+    m_positionOffsetInContent = Range::create(document, backwardsRange->endPosition(), position)->text().length();
+    m_contentRange = Range::create(document, backwardsRange->endPosition(), forwardRange->startPosition());
+    ASSERT(m_contentRange);
 }
 
 PassRefPtr<Range> SurroundingText::rangeFromContentOffsets(unsigned startOffsetInContent, unsigned endOffsetInContent)
@@ -65,11 +80,19 @@ PassRefPtr<Range> SurroundingText::rangeFromContentOffsets(unsigned startOffsetI
         return 0;
 
     CharacterIterator iterator(m_contentRange.get());
+
+    ASSERT(!iterator.atEnd());
     iterator.advance(startOffsetInContent);
 
+    ASSERT(iterator.range());
     Position start = iterator.range()->startPosition();
+
+    ASSERT(!iterator.atEnd());
     iterator.advance(endOffsetInContent - startOffsetInContent);
+
+    ASSERT(iterator.range());
     Position end = iterator.range()->startPosition();
+
     return Range::create(start.document(), start, end);
 }
 
