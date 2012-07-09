@@ -85,7 +85,7 @@ ENDIF ()
 
 IF (ENABLE_NOTIFICATIONS)
   LIST(APPEND WebKit_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/notifications"
+    "${WEBCORE_DIR}/Modules/notifications"
   )
 ENDIF ()
 

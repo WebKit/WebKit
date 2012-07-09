@@ -1,3 +1,15 @@
+2012-07-08  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Change notifications directory path of WebKit_INCLUDE_DIRECTORIES in the PlatformEfl.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=90650
+
+        Reviewed by Laszlo Gombos.
+
+        Change directory path for including notifications of WebCore
+        from WebCore/notifications to WebCore/Modules/notifications
+
+        * PlatformEfl.cmake:
+
 2012-07-07  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL][CMake] Remove non-existent include directory
