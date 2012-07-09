@@ -3740,3 +3740,6 @@ BUGWK90743 WIN : storage/indexeddb/cursor-delete.html = PASS CRASH
 
 // Flaky
 BUGWK90743 : fast/events/display-none-on-focus-crash.html = PASS TEXT
+
+// Flaky
+BUGWK90746 : fast/multicol/column-span-parent-continuation-crash.html = PASS TIMEOUT

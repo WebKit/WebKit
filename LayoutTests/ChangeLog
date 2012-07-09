@@ -1,3 +1,10 @@
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Marking a fast/multicol/column-span-parent-continuation-crash.html as a flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-08  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Update the description of LayoutTestController::textSurroundingElement
