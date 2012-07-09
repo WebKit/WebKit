@@ -32,5 +32,4 @@ PASS event type: click, target: target2, received on: target2
 PASS successfullyParsed is true
 
 TEST COMPLETE
-doNextStep for manual testing
 

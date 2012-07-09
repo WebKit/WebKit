@@ -36,5 +36,4 @@ PASS onwebkitpointerlockerror received after: Lock with asynchronous failure.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-doNextStep for manual testing
   

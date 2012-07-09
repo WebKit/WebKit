@@ -1,3 +1,33 @@
+2012-07-09  Vincent Scheib  <scheib@chromium.org>
+
+        Refactor common Pointer Lock test code to a harness.
+        https://bugs.webkit.org/show_bug.cgi?id=90813
+
+        Reviewed by Adrienne Walker.
+
+        * pointer-lock/bug90391-move-then-window-open-crash-expected.txt:
+        * pointer-lock/bug90391-move-then-window-open-crash.html:
+        * pointer-lock/lock-already-locked-expected.txt:
+        * pointer-lock/lock-already-locked.html:
+        * pointer-lock/lock-fail-responses-expected.txt:
+        * pointer-lock/lock-fail-responses.html:
+        * pointer-lock/mouse-event-delivery-expected.txt:
+        * pointer-lock/mouse-event-delivery.html:
+        * pointer-lock/pointer-lock-api-expected.txt:
+        * pointer-lock/pointer-lock-api.html:
+        * pointer-lock/pointerlockchange-pointerlockerror-events-expected.txt:
+        * pointer-lock/pointerlockchange-pointerlockerror-events.html:
+        * pointer-lock/pointerlocklost-event-expected.txt:
+        * pointer-lock/pointerlocklost-event.html:
+        * pointer-lock/resources/pointer-lock-test-harness.js: Added.
+        (doNextStep.else):
+        (doNextStepWithUserGesture):
+        (eventExpected.targetHanderNode.eventHandlerName):
+        (eventExpected):
+        (expectOnlyChangeEvent):
+        (expectOnlyErrorEvent):
+        (expectNoEvents):
+
 2012-07-09  Dean Jackson  <dino@apple.com>
 
         Tiled drawing means some elements can disappear behind the page

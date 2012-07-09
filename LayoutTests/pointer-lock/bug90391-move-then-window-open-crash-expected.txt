@@ -11,5 +11,4 @@ PASS Didn't crash
 PASS successfullyParsed is true
 
 TEST COMPLETE
-doNextStep for manual testing
 

@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/pointer-lock-test-harness.js"></script>
 </head>
 <body>
 <script>
@@ -9,10 +10,6 @@
     window.jsTestIsAsync = true;
     shouldBeDefined("window.testRunner");
 
-    currentStep = 0;
-    function doNextStep() {
-      todo[currentStep++]();
-    }
     todo = [
         function () {
             testRunner.setPointerLockWillFailSynchronously();
@@ -23,7 +20,7 @@
                 },
                 function () {
                     testPassed("Lock failed (after we called testRunner.setPointerLockWillFailSynchronously)");
-                    doNextStep();
+                    doNextStepWithUserGesture();
                 });
         },
         function () {
@@ -38,9 +35,8 @@
                     doNextStep();
                 });
         },
-        finishJSTest
     ];
-    doNextStep();
+    doNextStepWithUserGesture();
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>
 </body>

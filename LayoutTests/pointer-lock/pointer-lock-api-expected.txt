@@ -17,4 +17,4 @@ PASS element.webkitRequestPointerLock is defined.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-doNextStep for manual testing
+

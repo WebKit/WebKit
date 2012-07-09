@@ -2,10 +2,10 @@
 <html>
 <head>
 <script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/pointer-lock-test-harness.js"></script>
 </head>
 <body id="body">
 <div>
-  <button onclick="doNextStep('manual');">doNextStep for manual testing</button>
   <div id="target1"></div>
   <div id="target2"></div>
 </div>
@@ -22,7 +22,7 @@
         {
             testPassed("document.onwebkitpointerlockchange event received.");
             shouldBe("document.webkitPointerLockElement", expectedTargetToBeLockedString);
-            doNextStep('manual');
+            doNextStep();
         };
     document.onwebkitpointerlockerror =
         function () { testFailed("document.onwebkitpointerlockerror event received."); finishJSTest(); };
@@ -35,16 +35,6 @@
       testPassed("event type: " + e.type + ", target: " + e.target.id + ", received on: " + e.currentTarget.id);
     }
 
-    currentStep = 0;
-    function doNextStep(manual)
-    {
-        if (!window.layoutTestController && !manual)
-            return;
-        if (currentStep < todo.length)
-            setTimeout(function () { todo[currentStep++](); }, 0);
-        else if (currentStep++ == todo.length)
-            setTimeout(function () { finishJSTest(); }, 0);
-    }
     todo = [
         function () {
             targetdiv1.webkitRequestPointerLock();
@@ -61,7 +51,7 @@
                 window.eventSender.mouseDown();
                 window.eventSender.mouseUp();
             }
-            doNextStep();
+            doNextStepWithUserGesture();
         },
         function () {
             targetdiv2.webkitRequestPointerLock();
@@ -78,7 +68,7 @@
                 window.eventSender.mouseDown();
                 window.eventSender.mouseUp();
             }
-            doNextStep();
+            doNextStepWithUserGesture();
         },
         function () {
             debug("     Ensure double clicks work as expected, sending 4 clicks.")
@@ -103,10 +93,10 @@
                 window.eventSender.mouseDown();
                 window.eventSender.mouseUp();
             }
-            doNextStep();
+            doNextStepWithUserGesture();
         },
     ];
-    doNextStep();
+    doNextStepWithUserGesture();
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>
 </body>
