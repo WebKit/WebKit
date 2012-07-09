@@ -1,3 +1,12 @@
+2012-07-09  Filip Pizlo  <fpizlo@apple.com>
+
+        fast/js/global-constructors.html is flaky and mostly useless
+        https://bugs.webkit.org/show_bug.cgi?id=90833
+
+        Unreviewed, skip flaky and useless test.
+
+        * platform/mac/Skipped:
+
 2012-07-09  Rafael Weinstein  <rafaelw@chromium.org>
 
         Unreviewed gardening. Marked webgl/glsl-conformance tests failing after dependency roll in chromium.
