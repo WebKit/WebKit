@@ -1,3 +1,17 @@
+2012-07-09  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] meta viewport initial-scale doesn't factor in device pixel ratio
+        https://bugs.webkit.org/show_bug.cgi?id=90575
+
+        Reviewed by Rob Buis.
+
+        Add a manual test to verify wide content doesn't interfere
+        with initial-scale calculations.
+
+        Internal review from Konrad Piascik.
+
+        * ManualTests/blackberry/meta-viewport-initial-scale-wide-content.html: Added.
+
 2012-07-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122107.

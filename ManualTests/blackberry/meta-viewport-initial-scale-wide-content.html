@@ -1,0 +1,21 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { margin: 0; padding: 0; }
+#green { width: 100%; height: 100%; background: green; }
+#red { width: 1024px; height: 2048px; background: red; }
+</style>
+</head>
+<body>
+<div id="green">
+This green box should fully fill the initial viewport, and the text within it
+should wrap at the edge of the screen appropriately. The test is PASSED if
+this green box is fully visible and takes up the whole screen.
+</div>
+<div id="red">
+This should not be visible initially. This test is FAILED if you can see
+can red without first scrolling down.
+</div>
+</body>
+</html>

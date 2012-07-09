@@ -1,3 +1,28 @@
+2012-07-09  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] meta viewport initial-scale doesn't factor in device pixel ratio
+        https://bugs.webkit.org/show_bug.cgi?id=90575
+
+        Reviewed by Rob Buis.
+
+        Refactor meta viewport handling to multiply the developer
+        specified scale properties by the devicePixelRatio. This
+        required moving the setting of these values until after
+        the call to computeViewportAttributes.
+
+        This fixes an isssue where content wider than the meta viewport
+        would case a zoom-out-to-fit scenario because we misinterpreted
+        the specified initial-scale.
+
+        New test to verify wide content doesn't affect initial-scale:
+        ManualTests/blackberry/meta-viewport-initial-scale-wide-content.html
+
+        Internal review from Konrad Piascik, Arvid Nilsson.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+        (BlackBerry::WebKit::WebPagePrivate::dispatchViewportPropertiesDidChange):
+
 2012-07-07  George Staikos  <staikos@webkit.org>
 
         Detach animation clients properly if we clear the web page pointer.

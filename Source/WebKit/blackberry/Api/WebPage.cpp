@@ -3549,6 +3549,15 @@ IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
     ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, m_webSettings->devicePixelRatio(), m_defaultLayoutSize);
     m_page->setDeviceScaleFactor(result.devicePixelRatio);
+
+    setUserScalable(m_userScalable && result.userScalable);
+    if (result.initialScale > 0)
+        setInitialScale(result.initialScale * result.devicePixelRatio);
+    if (result.minimumScale > 0)
+        setMinimumScale(result.minimumScale * result.devicePixelRatio);
+    if (result.maximumScale > 0)
+        setMaximumScale(result.maximumScale * result.devicePixelRatio);
+
     return IntSize(result.layoutSize.width(), result.layoutSize.height());
 }
 
@@ -3590,14 +3599,6 @@ void WebPagePrivate::dispatchViewportPropertiesDidChange(const ViewportArguments
         m_viewportArguments.width = ViewportArguments::ValueDeviceWidth;
     if (!m_viewportArguments.height)
         m_viewportArguments.height = ViewportArguments::ValueDeviceHeight;
-
-    setUserScalable(arguments.userScalable == ViewportArguments::ValueAuto ? true : arguments.userScalable);
-    if (arguments.initialScale > 0)
-        setInitialScale(arguments.initialScale);
-    if (arguments.minimumScale > 0)
-        setMinimumScale(arguments.minimumScale);
-    if (arguments.maximumScale > 0)
-        setMaximumScale(arguments.maximumScale);
 
     IntSize virtualViewport = recomputeVirtualViewportFromViewportArguments();
     m_webPage->setVirtualViewportSize(virtualViewport.width(), virtualViewport.height());
