@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2012 ChangSeok Oh <shivamidow@gmail.com>
+ * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +32,12 @@
 
 #include "GraphicsContext3D.h"
 
+#include "CanvasRenderingContext.h"
+#if USE(OPENGL_ES_2)
+#include "Extensions3DOpenGLES.h"
+#else
 #include "Extensions3DOpenGL.h"
+#endif
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -49,39 +56,24 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(MAC)
+#if USE(OPENGL_ES_2)
+#include "OpenGLESShims.h"
+#elif PLATFORM(MAC)
 #include <OpenGL/gl.h>
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(QT)
 #include "OpenGLShims.h"
 #endif
 
+#if PLATFORM(BLACKBERRY)
+#include <BlackBerryPlatformLog.h>
+#endif
+
 namespace WebCore {
 
-static bool systemAllowsMultisamplingOnATICards()
-{
-#if PLATFORM(MAC)
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
-    return true;
-#else
-    ASSERT(isMainThread());
-    static SInt32 version;
-    if (!version) {
-        if (Gestalt(gestaltSystemVersion, &version) != noErr)
-            return false;
-    }
-    // See https://bugs.webkit.org/show_bug.cgi?id=77922 for more details
-    return version >= 0x1072;
-#endif // SNOW_LEOPARD and LION
-#else
-    return false;
-#endif // PLATFORM(MAC)
-}
-
-void GraphicsContext3D::validateAttributes()
+void GraphicsContext3D::validateDepthStencil(const char* packedDepthStencilExtension)
 {
     Extensions3D* extensions = getExtensions();
     if (m_attrs.stencil) {
-        const char* packedDepthStencilExtension = isGLES2Compliant() ? "GL_OES_packed_depth_stencil" : "GL_EXT_packed_depth_stencil";
         if (extensions->supports(packedDepthStencilExtension)) {
             extensions->ensureEnabled(packedDepthStencilExtension);
             // Force depth if stencil is true.
@@ -439,35 +431,10 @@ void GraphicsContext3D::compileShader(Platform3DObject shader)
     ASSERT(shader);
     makeContextCurrent();
 
-    int GLshaderType;
-    ANGLEShaderType shaderType;
+    String translatedShaderSource = m_extensions->getTranslatedShaderSourceANGLE(shader);
 
-    glGetShaderiv(shader, SHADER_TYPE, &GLshaderType);
-    
-    if (GLshaderType == VERTEX_SHADER)
-        shaderType = SHADER_TYPE_VERTEX;
-    else if (GLshaderType == FRAGMENT_SHADER)
-        shaderType = SHADER_TYPE_FRAGMENT;
-    else
-        return; // Invalid shader type.
-
-    HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
-
-    if (result == m_shaderSourceMap.end())
+    if (!translatedShaderSource.length())
         return;
-
-    ShaderSourceEntry& entry = result->second;
-
-    String translatedShaderSource;
-    String shaderInfoLog;
-
-    bool isValid = m_compiler.validateShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog);
-
-    entry.log = shaderInfoLog;
-    entry.isValid = isValid;
-
-    if (!isValid)
-        return; // Shader didn't validate, don't move forward with compiling translated source.
 
     int translatedShaderLength = translatedShaderSource.length();
 
@@ -801,16 +768,59 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
+    // Currently only format=RGBA, type=UNSIGNED_BYTE is supported by the specification: http://www.khronos.org/registry/webgl/specs/latest/
+    // If this ever changes, this code will need to be updated.
+
+    // Calculate the strides of our data and canvas
+    unsigned int formatSize = 4; // RGBA UNSIGNED_BYTE
+    unsigned int dataStride = width * formatSize;
+    unsigned int canvasStride = m_currentWidth * formatSize;
+
+    // If we are using a pack alignment of 8, then we need to align our strides to 8 byte boundaries
+    // See: http://en.wikipedia.org/wiki/Data_structure_alignment (computing padding)
+    int packAlignment;
+    glGetIntegerv(GL_PACK_ALIGNMENT, &packAlignment);
+    if (8 == packAlignment) {
+        dataStride = (dataStride + 7) & ~7;
+        canvasStride = (canvasStride + 7) & ~7;
+    }
+
+    unsigned char* canvasData = new unsigned char[canvasStride * m_currentHeight];
+    ::glReadPixels(0, 0, m_currentWidth, m_currentHeight, format, type, canvasData);
+
+    // If we failed to read our canvas data due to a GL error, don't continue
+    int error = glGetError();
+    if (GL_NO_ERROR != error) {
+        synthesizeGLError(error);
+        return;
+    }
+
+    // Clear our data in case some of it lies outside the bounds of our canvas
+    // TODO: don't do this if all of the data lies inside the bounds of the canvas
+    memset(data, 0, dataStride * height);
+
+    // Calculate the intersection of our canvas and data bounds
+    IntRect dataRect(x, y, width, height);
+    IntRect canvasRect(0, 0, m_currentWidth, m_currentHeight);
+    IntRect nonZeroDataRect = intersection(dataRect, canvasRect);
+
+    unsigned int xDataOffset = x < 0 ? -x * formatSize : 0;
+    unsigned int yDataOffset = y < 0 ? -y * dataStride : 0;
+    unsigned int xCanvasOffset = nonZeroDataRect.x() * formatSize;
+    unsigned int yCanvasOffset = nonZeroDataRect.y() * canvasStride;
+    unsigned char* dst = static_cast<unsigned char*>(data) + xDataOffset + yDataOffset;
+    unsigned char* src = canvasData + xCanvasOffset + yCanvasOffset;
+    for (int row = 0; row < nonZeroDataRect.height(); row++) {
+        memcpy(dst, src, nonZeroDataRect.width() * formatSize);
+        dst += dataStride;
+        src += canvasStride;
+    }
+
+    delete [] canvasData;
     ::glReadPixels(x, y, width, height, format, type, data);
+
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
-}
-
-void GraphicsContext3D::releaseShaderCompiler()
-{
-    // FIXME: This is not implemented on desktop OpenGL. We need to have ifdefs for the different GL variants.
-    makeContextCurrent();
-    notImplemented();
 }
 
 void GraphicsContext3D::sampleCoverage(GC3Dclampf value, GC3Dboolean invert)
@@ -1384,13 +1394,6 @@ void GraphicsContext3D::markLayerComposited()
 bool GraphicsContext3D::layerComposited() const
 {
     return m_layerComposited;
-}
-
-Extensions3D* GraphicsContext3D::getExtensions()
-{
-    if (!m_extensions)
-        m_extensions = adoptPtr(new Extensions3DOpenGL(this));
-    return m_extensions.get();
 }
 
 }

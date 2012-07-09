@@ -282,6 +282,11 @@ void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>
 {
 }
 
+void GraphicsContext3D::releaseShaderCompiler()
+{
+    notImplemented();
+}
+
 }
 
 #endif // ENABLE(WEBGL)

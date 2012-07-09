@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +24,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Extensions3DOpenGL_h
-#define Extensions3DOpenGL_h
+#ifndef Extensions3DOpenGLCommon_h
+#define Extensions3DOpenGLCommon_h
 
-#include "Extensions3DOpenGLCommon.h"
+#include "Extensions3D.h"
 
 #include "GraphicsContext3D.h"
 #include <wtf/HashSet.h>
@@ -34,36 +35,38 @@
 
 namespace WebCore {
 
-class Extensions3DOpenGL : public Extensions3DOpenGLCommon {
+class Extensions3DOpenGLCommon : public Extensions3D {
 public:
-    virtual ~Extensions3DOpenGL();
+    virtual ~Extensions3DOpenGLCommon();
 
     // Extensions3D methods.
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);
-    
-    virtual Platform3DObject createVertexArrayOES();
-    virtual void deleteVertexArrayOES(Platform3DObject);
-    virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
-    virtual void bindVertexArrayOES(Platform3DObject);
-    virtual void copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum);
+    virtual bool supports(const String&);
+    virtual void ensureEnabled(const String&);
+    virtual bool isEnabled(const String&);
+    virtual int getGraphicsResetStatusARB();
+
+    virtual Platform3DObject createVertexArrayOES() = 0;
+    virtual void deleteVertexArrayOES(Platform3DObject) = 0;
+    virtual GC3Dboolean isVertexArrayOES(Platform3DObject) = 0;
+    virtual void bindVertexArrayOES(Platform3DObject) = 0;
+
+    virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
 
 protected:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    friend class GraphicsContext3D;
-    Extensions3DOpenGL(GraphicsContext3D*);
+    Extensions3DOpenGLCommon(GraphicsContext3D*);
 
-    virtual bool supportsExtension(const WTF::String&);
-    virtual String getExtensions();
+    virtual bool supportsExtension(const String&) = 0;
+    virtual String getExtensions() = 0;
 
 private:
+    virtual void initializeAvailableExtensions();
     bool m_initializedAvailableExtensions;
     HashSet<String> m_availableExtensions;
-    
+
     // Weak pointer back to GraphicsContext3D
     GraphicsContext3D* m_context;
 };
 
 } // namespace WebCore
 
-#endif // Extensions3DOpenGL_h
+#endif // Extensions3DOpenGLCommon_h
