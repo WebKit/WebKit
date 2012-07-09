@@ -1,3 +1,65 @@
+2012-07-09  Eric Seidel  <eric@webkit.org>
+
+        document.write of scripts that also document.write sometimes writes async
+        https://bugs.webkit.org/show_bug.cgi?id=89102
+
+        Reviewed by Adam Barth.
+
+        When a script tag is first encountered, the TreeBuilder holds the element and returns
+        out to the outer HTMLDocumentParser parse loop.  The HTMLDocumentParser then takes
+        the script element and passes it to the HTMLScriptRunner for execution. However, if the
+        script is an "external script" the HTMLScriptRunner may have to wait for that parser
+        blocking script to load, and may store the script in its own m_parserBlockingScript member.
+
+        While the HTMLScriptRunner has this not-yet-loaded-script the parser is also blocked.
+        Because the "paused" state of the parser was held as a separate bool on the TreeBuilder
+        we'd have to be careful to update it to reflect the current state of this pending script
+        on the HTMLScriptRunner.
+
+        This patch removes this separate "paused" bool and makes the HTMLDocumentParser responsible
+        for the "paused" state of the parser through the isWaitingForScripts() function which
+        knows how to check both the TreeBuilder and the ScriptRunner for possible parser-blocking scripts.
+
+        I suspect this change may actually fix a bunch of edge cases where we were not
+        checking for the HTMLScriptRunner's parser blocking script and thus incorrectly ending
+        the parser, or not starting the pre-load scanner, etc.
+
+        As part of this change I also renamed m_haveParsingBlockingScript in HTMLScriptRunner to match
+        the naming style used elsewhere in the parser, as well as removed all the "bool" return values
+        for these parse/execute functions as they are no longer useful (or correct). The correct way
+        is always to check HTMLDocumentParser::isWaitingForScripts().
+
+        Test: fast/parser/cached-script-document-write.html
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizerIfPossible):
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder):
+        (WebCore::HTMLDocumentParser::canTakeNextToken):
+        (WebCore::HTMLDocumentParser::isWaitingForScripts):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterScriptExecution):
+        (WebCore::HTMLDocumentParser::notifyFinished):
+        (WebCore::HTMLDocumentParser::executeScriptsWaitingForStylesheets):
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::~HTMLScriptRunner):
+        (WebCore::HTMLScriptRunner::executeParsingBlockingScript):
+        (WebCore::HTMLScriptRunner::execute):
+        (WebCore::HTMLScriptRunner::hasParserBlockingScript):
+        (WebCore::HTMLScriptRunner::executeParsingBlockingScripts):
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForLoad):
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForParsing):
+        (WebCore::HTMLScriptRunner::requestParsingBlockingScript):
+        (WebCore::HTMLScriptRunner::runScript):
+        * html/parser/HTMLScriptRunner.h:
+        (HTMLScriptRunner):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::takeScriptToProcess):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent):
+        * html/parser/HTMLTreeBuilder.h:
+        (HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::hasParserBlockingScript):
+
 2012-07-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Microdata tests are flaky

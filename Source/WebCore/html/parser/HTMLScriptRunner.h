@@ -53,13 +53,14 @@ public:
     void detach();
 
     // Processes the passed in script and any pending scripts if possible.
-    bool execute(PassRefPtr<Element> scriptToProcess, const TextPosition& scriptStartPosition);
+    void execute(PassRefPtr<Element> scriptToProcess, const TextPosition& scriptStartPosition);
 
-    bool executeScriptsWaitingForLoad(CachedResource*);
+    void executeScriptsWaitingForLoad(CachedResource*);
     bool hasScriptsWaitingForStylesheets() const { return m_hasScriptsWaitingForStylesheets; }
-    bool executeScriptsWaitingForStylesheets();
-    bool executeScriptsWaitingForParsing();
+    void executeScriptsWaitingForStylesheets();
+    void executeScriptsWaitingForParsing();
 
+    bool hasParserBlockingScript() const;
     bool isExecutingScript() const { return !!m_scriptNestingLevel; }
 
 private:
@@ -69,8 +70,7 @@ private:
 
     void executeParsingBlockingScript();
     void executePendingScriptAndDispatchEvent(PendingScript&);
-    bool haveParsingBlockingScript() const;
-    bool executeParsingBlockingScripts();
+    void executeParsingBlockingScripts();
 
     void requestParsingBlockingScript(Element*);
     void requestDeferredScript(Element*);
@@ -86,7 +86,7 @@ private:
 
     Document* m_document;
     HTMLScriptRunnerHost* m_host;
-    PendingScript m_parsingBlockingScript;
+    PendingScript m_parserBlockingScript;
     Deque<PendingScript> m_scriptsToExecuteAfterParsing; // http://www.whatwg.org/specs/web-apps/current-work/#list-of-scripts-that-will-execute-when-the-document-has-finished-parsing
     unsigned m_scriptNestingLevel;
 

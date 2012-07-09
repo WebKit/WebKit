@@ -351,7 +351,6 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* docum
     , m_document(document)
     , m_tree(document, maximumDOMTreeDepth)
     , m_reportErrors(reportErrors)
-    , m_isPaused(false)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_shouldSkipLeadingNewline(false)
@@ -369,7 +368,6 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
     , m_document(fragment->document())
     , m_tree(fragment, scriptingPermission, maximumDOMTreeDepth)
     , m_reportErrors(false) // FIXME: Why not report errors in fragments?
-    , m_isPaused(false)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_shouldSkipLeadingNewline(false)
@@ -425,11 +423,11 @@ HTMLTreeBuilder::FragmentParsingContext::~FragmentParsingContext()
 
 PassRefPtr<Element> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptStartPosition)
 {
+    ASSERT(m_scriptToProcess);
     // Unpause ourselves, callers may pause us again when processing the script.
     // The HTML5 spec is written as though scripts are executed inside the tree
     // builder.  We pause the parser to exit the tree builder, and then resume
     // before running scripts.
-    m_isPaused = false;
     scriptStartPosition = m_scriptToProcessStartPosition;
     m_scriptToProcessStartPosition = uninitializedPositionValue1();
     return m_scriptToProcess.release();
@@ -2127,7 +2125,6 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
     case TextMode:
         if (token.name() == scriptTag) {
             // Pause ourselves so that parsing stops until the script can be processed by the caller.
-            m_isPaused = true;
             ASSERT(m_tree.currentElement()->hasTagName(scriptTag));
             m_scriptToProcess = m_tree.currentElement();
             m_tree.openElements()->pop();
@@ -2750,7 +2747,6 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken& token)
             adjustSVGTagNameCase(token);
 
         if (token.name() == SVGNames::scriptTag && m_tree.currentNode()->hasTagName(SVGNames::scriptTag)) {
-            m_isPaused = true;
             m_scriptToProcess = m_tree.currentElement();
             m_tree.openElements()->pop();
             return;

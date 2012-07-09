@@ -57,8 +57,8 @@ HTMLScriptRunner::HTMLScriptRunner(Document* document, HTMLScriptRunnerHost* hos
 HTMLScriptRunner::~HTMLScriptRunner()
 {
     // FIXME: Should we be passed a "done loading/parsing" callback sooner than destruction?
-    if (m_parsingBlockingScript.cachedScript() && m_parsingBlockingScript.watchingForLoad())
-        stopWatchingForLoad(m_parsingBlockingScript);
+    if (m_parserBlockingScript.cachedScript() && m_parserBlockingScript.watchingForLoad())
+        stopWatchingForLoad(m_parserBlockingScript);
 
     while (!m_scriptsToExecuteAfterParsing.isEmpty()) {
         PendingScript pendingScript = m_scriptsToExecuteAfterParsing.takeFirst();
@@ -112,10 +112,10 @@ void HTMLScriptRunner::executeParsingBlockingScript()
     ASSERT(m_document);
     ASSERT(!m_scriptNestingLevel);
     ASSERT(m_document->haveStylesheetsLoaded());
-    ASSERT(isPendingScriptReady(m_parsingBlockingScript));
+    ASSERT(isPendingScriptReady(m_parserBlockingScript));
 
     InsertionPointRecord insertionPointRecord(m_host->inputStream());
-    executePendingScriptAndDispatchEvent(m_parsingBlockingScript);
+    executePendingScriptAndDispatchEvent(m_parserBlockingScript);
 }
 
 void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendingScript)
@@ -159,54 +159,47 @@ void HTMLScriptRunner::stopWatchingForLoad(PendingScript& pendingScript)
 
 // This function should match 10.2.5.11 "An end tag whose tag name is 'script'"
 // Script handling lives outside the tree builder to keep the each class simple.
-bool HTMLScriptRunner::execute(PassRefPtr<Element> scriptElement, const TextPosition& scriptStartPosition)
+void HTMLScriptRunner::execute(PassRefPtr<Element> scriptElement, const TextPosition& scriptStartPosition)
 {
     ASSERT(scriptElement);
-    // FIXME: If scripting is disabled, always just return true;
+    // FIXME: If scripting is disabled, always just return.
 
     bool hadPreloadScanner = m_host->hasPreloadScanner();
 
     // Try to execute the script given to us.
     runScript(scriptElement.get(), scriptStartPosition);
 
-    if (haveParsingBlockingScript()) {
+    if (hasParserBlockingScript()) {
         if (m_scriptNestingLevel)
-            return false; // Block the parser.  Unwind to the outermost HTMLScriptRunner::execute before continuing parsing.
+            return; // Unwind to the outermost HTMLScriptRunner::execute before continuing parsing.
         // If preload scanner got created, it is missing the source after the current insertion point. Append it and scan.
         if (!hadPreloadScanner && m_host->hasPreloadScanner())
             m_host->appendCurrentInputStreamToPreloadScannerAndScan();
-        if (!executeParsingBlockingScripts())
-            return false; // We still have a parsing blocking script, block the parser.
+        executeParsingBlockingScripts();
     }
-    return true; // Scripts executed as expected, continue parsing.
 }
 
-bool HTMLScriptRunner::haveParsingBlockingScript() const
+bool HTMLScriptRunner::hasParserBlockingScript() const
 {
-    return !!m_parsingBlockingScript.element();
+    return !!m_parserBlockingScript.element();
 }
 
-bool HTMLScriptRunner::executeParsingBlockingScripts()
+void HTMLScriptRunner::executeParsingBlockingScripts()
 {
-    while (haveParsingBlockingScript()) {
-        // We only really need to check once.
-        if (!isPendingScriptReady(m_parsingBlockingScript))
-            return false;
+    while (hasParserBlockingScript() && isPendingScriptReady(m_parserBlockingScript))
         executeParsingBlockingScript();
-    }
-    return true;
 }
 
-bool HTMLScriptRunner::executeScriptsWaitingForLoad(CachedResource* cachedScript)
+void HTMLScriptRunner::executeScriptsWaitingForLoad(CachedResource* cachedScript)
 {
     ASSERT(!m_scriptNestingLevel);
-    ASSERT(haveParsingBlockingScript());
-    ASSERT_UNUSED(cachedScript, m_parsingBlockingScript.cachedScript() == cachedScript);
-    ASSERT(m_parsingBlockingScript.cachedScript()->isLoaded());
-    return executeParsingBlockingScripts();
+    ASSERT(hasParserBlockingScript());
+    ASSERT_UNUSED(cachedScript, m_parserBlockingScript.cachedScript() == cachedScript);
+    ASSERT(m_parserBlockingScript.cachedScript()->isLoaded());
+    executeParsingBlockingScripts();
 }
 
-bool HTMLScriptRunner::executeScriptsWaitingForStylesheets()
+void HTMLScriptRunner::executeScriptsWaitingForStylesheets()
 {
     ASSERT(m_document);
     // Callers should check hasScriptsWaitingForStylesheets() before calling
@@ -214,39 +207,39 @@ bool HTMLScriptRunner::executeScriptsWaitingForStylesheets()
     ASSERT(hasScriptsWaitingForStylesheets());
     ASSERT(!m_scriptNestingLevel);
     ASSERT(m_document->haveStylesheetsLoaded());
-    return executeParsingBlockingScripts();
+    executeParsingBlockingScripts();
 }
 
-bool HTMLScriptRunner::executeScriptsWaitingForParsing()
+void HTMLScriptRunner::executeScriptsWaitingForParsing()
 {
     while (!m_scriptsToExecuteAfterParsing.isEmpty()) {
         ASSERT(!m_scriptNestingLevel);
-        ASSERT(!haveParsingBlockingScript());
+        ASSERT(!hasParserBlockingScript());
         ASSERT(m_scriptsToExecuteAfterParsing.first().cachedScript());
         if (!m_scriptsToExecuteAfterParsing.first().cachedScript()->isLoaded()) {
             watchForLoad(m_scriptsToExecuteAfterParsing.first());
-            return false;
+            return;
         }
         PendingScript first = m_scriptsToExecuteAfterParsing.takeFirst();
         executePendingScriptAndDispatchEvent(first);
+        // FIXME: What is this m_document check for?
         if (!m_document)
-            return false;
+            return;
     }
-    return true;
 }
 
 void HTMLScriptRunner::requestParsingBlockingScript(Element* element)
 {
-    if (!requestPendingScript(m_parsingBlockingScript, element))
+    if (!requestPendingScript(m_parserBlockingScript, element))
         return;
 
-    ASSERT(m_parsingBlockingScript.cachedScript());
+    ASSERT(m_parserBlockingScript.cachedScript());
 
     // We only care about a load callback if cachedScript is not already
-    // in the cache.  Callers will attempt to run the m_parsingBlockingScript
+    // in the cache. Callers will attempt to run the m_parserBlockingScript
     // if possible before returning control to the parser.
-    if (!m_parsingBlockingScript.cachedScript()->isLoaded())
-        watchForLoad(m_parsingBlockingScript);
+    if (!m_parserBlockingScript.cachedScript()->isLoaded())
+        watchForLoad(m_parserBlockingScript);
 }
 
 void HTMLScriptRunner::requestDeferredScript(Element* element)
@@ -278,7 +271,7 @@ bool HTMLScriptRunner::requestPendingScript(PendingScript& pendingScript, Elemen
 void HTMLScriptRunner::runScript(Element* script, const TextPosition& scriptStartPosition)
 {
     ASSERT(m_document);
-    ASSERT(!haveParsingBlockingScript());
+    ASSERT(!hasParserBlockingScript());
     {
         InsertionPointRecord insertionPointRecord(m_host->inputStream());
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
@@ -302,8 +295,8 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition& scriptStar
             requestDeferredScript(script);
         else if (scriptElement->readyToBeParserExecuted()) {
             if (m_scriptNestingLevel == 1) {
-                m_parsingBlockingScript.setElement(script);
-                m_parsingBlockingScript.setStartingPosition(scriptStartPosition);
+                m_parserBlockingScript.setElement(script);
+                m_parserBlockingScript.setStartingPosition(scriptStartPosition);
             } else {
                 ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), scriptStartPosition);
                 scriptElement->executeScript(sourceCode);
