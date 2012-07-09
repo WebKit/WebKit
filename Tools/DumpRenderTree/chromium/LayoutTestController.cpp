@@ -276,7 +276,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setFixedLayoutSize", &LayoutTestController::setFixedLayoutSize);
     bindMethod("selectionAsMarkup", &LayoutTestController::selectionAsMarkup);
     bindMethod("setHasCustomFullScreenBehavior", &LayoutTestController::setHasCustomFullScreenBehavior);
-    bindMethod("textSurroundingElement", &LayoutTestController::textSurroundingElement);
+    bindMethod("textSurroundingNode", &LayoutTestController::textSurroundingNode);
 
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -2346,7 +2346,7 @@ void LayoutTestController::setPointerLockWillFailSynchronously(const CppArgument
 }
 #endif
 
-void LayoutTestController::textSurroundingElement(const CppArgumentList& arguments, CppVariant* result)
+void LayoutTestController::textSurroundingNode(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 3 || !arguments[0].isObject() || !arguments[1].isNumber() || !arguments[2].isNumber())

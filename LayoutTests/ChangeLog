@@ -1,3 +1,14 @@
+2012-07-08  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Update the description of LayoutTestController::textSurroundingElement
+        https://bugs.webkit.org/show_bug.cgi?id=90620
+
+        Reviewed by Adam Barth.
+
+        Rename textSurroundingElement to match is real behaviour.
+
+        * platform/chromium/editing/surrounding-text/surrounding-text.html:
+
 2012-07-08  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.

@@ -20,7 +20,7 @@ function surroundingText(html, offset, maxLength) {
     if (node == null)
         throw 'No node after "here" element';
 
-    var text = window.testRunner.textSurroundingElement(node, offset, maxLength);
+    var text = window.testRunner.textSurroundingNode(node, offset, maxLength);
     return text.replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, '');
 }
 

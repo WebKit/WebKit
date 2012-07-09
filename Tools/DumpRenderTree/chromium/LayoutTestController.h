@@ -457,9 +457,9 @@ public:
     void setBackingScaleFactor(const CppArgumentList&, CppVariant*);
 
     // Retrieves the text surrounding a position in a text node.
-    // The first child of the element given y its id will be used as reference,
-    // or its next sibling if not present. It must be a text node.
-    void textSurroundingElement(const CppArgumentList&, CppVariant*);
+    // Expects the first argument to be a text node, the second to be an offset
+    // in the node contents and the third the maximum text length to retrieve.
+    void textSurroundingNode(const CppArgumentList&, CppVariant*);
 
 public:
     // The following methods are not exposed to JavaScript.
