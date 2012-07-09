@@ -1,3 +1,16 @@
+2012-07-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] ASSERTION FAILED: !HashTranslator::equal(KeyTraits::emptyValue(), key)
+        https://bugs.webkit.org/show_bug.cgi?id=90464
+
+        Reviewed by Daniel Bates.
+
+        HashMap has the property that 0 is the empty value for integer
+        keys, so do not use 0 as a key in the HashMap.
+
+        * Platform/efl/WorkQueueEfl.cpp:
+        (WorkQueue::dispatchAfterDelay):
+
 2012-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add a setting to enable/disable page cache to WebKit2 GTK+ API

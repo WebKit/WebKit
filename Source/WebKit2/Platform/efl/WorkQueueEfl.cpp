@@ -167,7 +167,7 @@ bool WorkQueue::timerFired(void* data)
 
 void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)
 {
-    static int timerId = 0;
+    static int timerId = 1;
     m_timers.set(timerId, adoptPtr(ecore_timer_add(delay, reinterpret_cast<Ecore_Task_Cb>(timerFired), new TimerWorkItem(timerId, function, this))));
     timerId++;
 }
