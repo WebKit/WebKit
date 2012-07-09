@@ -1,6 +1,13 @@
 2012-07-08  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.
+        Fix a wrong entry in r122070.
+
+        * platform/chromium/TestExpectations: Replace dont-commit-on-blocked.html with cursor-delete.html.
+
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
         Fix a wrong entry in r122064.
 
         * platform/chromium/TestExpectations:

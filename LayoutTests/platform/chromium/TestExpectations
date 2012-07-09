@@ -3736,4 +3736,4 @@ BUGWK90704 : fullscreen/exit-full-screen-iframe.html = TEXT
 BUGWK90741 MAC : fast/text-autosizing/simple-paragraph.html = IMAGE
 
 // Started flaky after r121629.
-BUGWK90743 WIN : storage/indexeddb/dont-commit-on-blocked.html = PASS CRASH
+BUGWK90743 WIN : storage/indexeddb/cursor-delete.html = PASS CRASH
