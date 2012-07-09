@@ -3737,3 +3737,6 @@ BUGWK90741 MAC : fast/text-autosizing/simple-paragraph.html = IMAGE
 
 // Started flaky after r121629.
 BUGWK90743 WIN : storage/indexeddb/cursor-delete.html = PASS CRASH
+
+// Flaky
+BUGWK90743 : fast/events/display-none-on-focus-crash.html = PASS TEXT

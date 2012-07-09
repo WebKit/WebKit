@@ -1,3 +1,10 @@
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Marking a fast/events/display-none-on-focus-crash.html as a flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-08  Kinuko Yasuda  <kinuko@chromium.org>
 
         XHR.send should support ArrayBufferView
