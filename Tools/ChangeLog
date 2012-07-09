@@ -1,3 +1,14 @@
+2012-07-08  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r122076.
+        http://trac.webkit.org/changeset/122076
+        https://bugs.webkit.org/show_bug.cgi?id=89560
+
+        Broke sheriffbot rollout
+
+        * Scripts/prepare-ChangeLog:
+        (generateNewChangeLogs):
+
 2012-07-08  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Update the description of LayoutTestController::textSurroundingElement
