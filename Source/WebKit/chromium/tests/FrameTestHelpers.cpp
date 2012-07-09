@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FrameTestHelpers.h"
 
+#include "URLTestHelpers.h"
 #include <wtf/StdLibExtras.h>
 #include "WebFrame.h"
 #include "WebFrameClient.h"
@@ -40,35 +41,16 @@
 #include "platform/WebURLResponse.h"
 #include "WebView.h"
 #include "WebViewClient.h"
-#include <googleurl/src/gurl.h>
 #include <webkit/support/webkit_support.h>
 
 namespace WebKit {
 namespace FrameTestHelpers {
 
-void registerMockedURLLoad(const std::string& base, const std::string& fileName)
-{
-    registerMockedURLLoad(GURL(base + fileName), fileName);
-}
-
-void registerMockedURLLoad(GURL url, const std::string& fileName)
-{
-    WebURLResponse response;
-    response.initialize();
-    response.setMIMEType("text/html");
-
-    std::string filePath = webkit_support::GetWebKitRootDir().utf8();
-    filePath += "/Source/WebKit/chromium/tests/data/";
-    filePath += fileName;
-
-    webkit_support::RegisterMockedURL(url, response, WebString::fromUTF8(filePath));
-}
-
 void loadFrame(WebFrame* frame, const std::string& url)
 {
     WebURLRequest urlRequest;
     urlRequest.initialize();
-    urlRequest.setURL(GURL(url));
+    urlRequest.setURL(URLTestHelpers::toKURL(url));
     frame->loadRequest(urlRequest);
 }
 

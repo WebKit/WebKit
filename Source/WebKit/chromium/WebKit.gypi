@@ -149,6 +149,8 @@
             'tests/TreeSynchronizerTest.cpp',
             'tests/TreeTestHelpers.cpp',
             'tests/TreeTestHelpers.h',
+            'tests/URLTestHelpers.cpp',
+            'tests/URLTestHelpers.h',
             'tests/WebAnimationTest.cpp',
             'tests/WebCompositorInputHandlerImplTest.cpp',
             'tests/WebFloatAnimationCurveTest.cpp',

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,40 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef URLTestHelpers_h
+#define URLTestHelpers_h
 
-// FIXME: Avoid this source dependency on Chromium's base module.
-#include <base/test/test_suite.h>
+#include "KURL.h"
+#include <public/WebString.h>
 
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
-#include <webkit/support/webkit_support.h>
+namespace WebKit {
 
-#if defined(WEBKIT_DLL_UNITTEST)
-#include "WebUnitTests.h"
-#endif
+class WebURL;
 
-#include <gmock/gmock.h>
+namespace URLTestHelpers {
 
-// TestSuite must be created before SetUpTestEnvironment so it performs
-// initializations needed by WebKit support. This is slightly complicated by the
-// fact that chromium multi-dll build requires that the TestSuite object be created
-// and run inside webkit.dll.
-int main(int argc, char** argv)
+inline WebCore::KURL toKURL(const std::string& url)
 {
-#if defined(WEBKIT_DLL_UNITTEST)
-    WebKit::InitTestSuite(argc, argv);
-    webkit_support::SetUpTestEnvironmentForUnitTests();
-    int result = WebKit::RunAllUnitTests();
-    webkit_support::TearDownTestEnvironment();
-    WebKit::DeleteTestSuite();
-#else
-    ::testing::InitGoogleMock(&argc, argv);
-    TestSuite testSuite(argc, argv);
-    webkit_support::SetUpTestEnvironmentForUnitTests();
-    int result = testSuite.Run();
-    webkit_support::TearDownTestEnvironment();
-#endif
-
-    return result;
+    WTF::String wtfString(url.c_str());
+    return WebCore::KURL(WebCore::ParsedURLString, wtfString);
 }
+
+// Helper functions for mock URLs. These functions set up the desired URL and mimeType, with a 200 OK return status.
+// For the mock URL, fullURL == baseURL + fileName.
+// For the actual file path:  <WebKit root directory> + relativeBaseDirectory + fileName,
+// or, if the relative base directory is not specified:  <WebKit root directory> + fileName.
+//
+void registerMockedURLFromBaseURL(const WebString& baseURL, const WebString& fileName, const WebString& mimeType = WebString::fromUTF8("text/html"));
+void registerMockedURLLoad(const WebURL& fullURL, const WebString& fileName, const WebString& mimeType = WebString::fromUTF8("text/html"));
+void registerMockedURLLoad(const WebURL& fullURL, const WebString& fileName, const WebString& relativeBaseDirectory, const WebString& mimeType);
+
+} // namespace URLTestHelpers
+} // namespace WebKit
+
+#endif
