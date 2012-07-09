@@ -1,5 +1,11 @@
 2012-07-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Mac build fix after r122116.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+
+2012-07-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         EFL build fix after r122115.
 
         * html/HTMLPropertiesCollection.cpp:
