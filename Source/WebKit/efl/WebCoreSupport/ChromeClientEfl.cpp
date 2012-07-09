@@ -628,14 +628,25 @@ bool ChromeClientEfl::supportsFullScreenForElement(const WebCore::Element* eleme
 
 void ChromeClientEfl::enterFullScreenForElement(WebCore::Element* element)
 {
+    // Keep a reference to the element to use it later in
+    // exitFullScreenForElement().
+    m_fullScreenElement = element;
+
     element->document()->webkitWillEnterFullScreenForElement(element);
     element->document()->webkitDidEnterFullScreenForElement(element);
 }
 
-void ChromeClientEfl::exitFullScreenForElement(WebCore::Element* element)
+void ChromeClientEfl::exitFullScreenForElement(WebCore::Element*)
 {
-    element->document()->webkitWillExitFullScreenForElement(element);
-    element->document()->webkitDidExitFullScreenForElement(element);
+    // The element passed into this function is not reliable, i.e. it could
+    // be null. In addition the parameter may be disappearing in the future.
+    // So we use the reference to the element we saved above.
+    ASSERT(m_fullScreenElement);
+
+    m_fullScreenElement->document()->webkitWillExitFullScreenForElement(m_fullScreenElement.get());
+    m_fullScreenElement->document()->webkitDidExitFullScreenForElement(m_fullScreenElement.get());
+
+    m_fullScreenElement.clear();
 }
 #endif
 

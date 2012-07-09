@@ -1,3 +1,22 @@
+2012-07-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] REGRESSION (r122035): fullscreen/exit-full-screen-iframe.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=90735
+
+        Reviewed by Antonio Gomes.
+
+        Keep a reference to the Element passed to enterFullScreenForElement() so
+        that we can reuse it later in exitFullScreenForElement(). This is needed
+        because the Element passed to exitFullScreenForElement() may be null.
+        This fixes the crash for the fullscreen/exit-full-screen-iframe.html
+        test introduced in r122035.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::enterFullScreenForElement):
+        (WebCore::ChromeClientEfl::exitFullScreenForElement):
+        * WebCoreSupport/ChromeClientEfl.h:
+        (ChromeClientEfl):
+
 2012-07-07  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Fix build break when Accelerated Compositing is on.

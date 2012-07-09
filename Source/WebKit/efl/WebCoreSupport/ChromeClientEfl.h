@@ -192,6 +192,9 @@ public:
 
     Evas_Object* m_view;
     KURL m_hoveredLinkURL;
+#if ENABLE(FULLSCREEN_API)
+    RefPtr<Element> m_fullScreenElement;
+#endif
 };
 }
 
