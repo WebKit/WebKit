@@ -30,6 +30,7 @@
 
 #include "GamepadDeviceLinux.h"
 #include "GamepadList.h"
+#include "Logging.h"
 #include <Ecore.h>
 #include <Eeze.h>
 #include <Eina.h>
@@ -51,17 +52,20 @@ public:
     }
     ~GamepadDeviceEfl();
     void resetFdHandler() { m_fdHandler = 0; }
+    const String& deviceFile() const { return m_deviceFile; }
 
 private:
     GamepadDeviceEfl(const String& deviceFile);
     static Eina_Bool readCallback(void* userData, Ecore_Fd_Handler*);
 
     Ecore_Fd_Handler* m_fdHandler;
+    String m_deviceFile;
 };
 
 GamepadDeviceEfl::GamepadDeviceEfl(const String& deviceFile)
     : GamepadDeviceLinux(deviceFile)
     , m_fdHandler(0)
+    , m_deviceFile(deviceFile)
 {
     if (m_fileDescriptor < 0)
         return;
@@ -82,7 +86,7 @@ Eina_Bool GamepadDeviceEfl::readCallback(void* userData, Ecore_Fd_Handler* fdHan
     GamepadDeviceEfl* gamepadDevice = static_cast<GamepadDeviceEfl*>(userData);
 
     if (ecore_main_fd_handler_active_get(fdHandler, ECORE_FD_ERROR)) {
-        LOG_ERROR("An error occurred while watching the joystick file descriptor, aborting.");
+        LOG_ERROR("An error occurred while watching the joystick file descriptor at %s, aborting.", gamepadDevice->deviceFile().utf8().data());
         gamepadDevice->resetFdHandler();
         return ECORE_CALLBACK_CANCEL;
     }
@@ -92,12 +96,12 @@ Eina_Bool GamepadDeviceEfl::readCallback(void* userData, Ecore_Fd_Handler* fdHan
     const ssize_t len = read(fdDevice, &event, sizeof(event));
 
     if (len <= 0) {
-        LOG_ERROR("Failed to read joystick file descriptor, aborting.");
+        LOG_ERROR("Failed to read joystick file descriptor at %s, aborting.", gamepadDevice->deviceFile().utf8().data());
         gamepadDevice->resetFdHandler();
         return ECORE_CALLBACK_CANCEL;
     }
     if (len != sizeof(event)) {
-        LOG_ERROR("Wrong js_event size read on file descriptor, ignoring.");
+        LOG_ERROR("Wrong js_event size read on file descriptor at %s, ignoring.", gamepadDevice->deviceFile().utf8().data());
         return ECORE_CALLBACK_RENEW;
     }
 
@@ -179,10 +183,13 @@ void GamepadsEfl::registerDevice(const String& syspath)
     if (!deviceFile || !eina_str_has_prefix(deviceFile, joystickPrefix))
         return;
 
+    LOG(Gamepad, "Registering gamepad at %s", deviceFile);
+
     const size_t slotCount = m_slots.size();
     for (size_t index = 0; index < slotCount; ++index) {
         if (!m_slots[index]) {
             m_slots[index] = GamepadDeviceEfl::create(String::fromUTF8(deviceFile));
+            LOG(Gamepad, "Gamepad device name is %s", m_slots[index]->id().utf8().data());
             m_deviceMap.add(syspath, m_slots[index].get());
             break;
         }
@@ -195,6 +202,7 @@ void GamepadsEfl::unregisterDevice(const String& syspath)
         return;
 
     GamepadDeviceEfl* gamepadDevice = m_deviceMap.take(syspath);
+    LOG(Gamepad, "Unregistering gamepad at %s", gamepadDevice->deviceFile().utf8().data());
     const size_t index = m_slots.find(gamepadDevice);
     ASSERT(index != notFound);
 

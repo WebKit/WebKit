@@ -1,3 +1,23 @@
+2012-07-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Log significant Gamepad API-related events
+        https://bugs.webkit.org/show_bug.cgi?id=90595
+
+        Reviewed by Antonio Gomes.
+
+        Log significant Gamepad API-related events in
+        GamepadsEfl.
+
+        No new tests, no behavior change.
+
+        * platform/efl/GamepadsEfl.cpp:
+        (WebCore::GamepadDeviceEfl::deviceFile):
+        (GamepadDeviceEfl):
+        (WebCore::GamepadDeviceEfl::GamepadDeviceEfl):
+        (WebCore::GamepadDeviceEfl::readCallback):
+        (WebCore::GamepadsEfl::registerDevice):
+        (WebCore::GamepadsEfl::unregisterDevice):
+
 2012-07-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reduce the amount of flashing when falling into tiled layers
