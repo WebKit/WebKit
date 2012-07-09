@@ -1,3 +1,10 @@
+2012-07-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EFL build fix after r122115.
+
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::create):
+
 2012-07-09  Joshua Netterfield  <jnetterfield@rim.com>
         Make GC3D and E3D more maintainable for GLES platforms
         https://bugs.webkit.org/show_bug.cgi?id=90567
