@@ -1,3 +1,10 @@
+2012-07-09  Dan Bernstein  <mitz@apple.com>
+
+        Fixed clean builds of the All target in the DumpRenderTree project.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Let Xcode know that the
+        DumpRenderTree Perl Support target depends on the DumpRenderTree target.
+
 2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Unskip the CSS Regions layout tests
