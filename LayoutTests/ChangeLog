@@ -1,3 +1,24 @@
+2012-07-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Check returned value in BatteryStatus APIs test cases
+        https://bugs.webkit.org/show_bug.cgi?id=90665
+
+        Reviewed by Adam Barth.
+
+        It is good to compare with actual values to recognize what is difference.
+
+        * batterystatus/add-listener-from-callback-expected.txt:
+        * batterystatus/basic-all-types-of-events-expected.txt:
+        * batterystatus/basic-operation-expected.txt:
+        * batterystatus/script-tests/add-listener-from-callback.js:
+        (checkBatteryStatus):
+        * batterystatus/script-tests/basic-all-types-of-events.js:
+        (checkBatteryStatus):
+        * batterystatus/script-tests/basic-operation.js:
+        * batterystatus/script-tests/updates.js:
+        (checkBatteryStatus):
+        * batterystatus/updates-expected.txt:
+
 2012-07-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, remove a redundant baseline for the

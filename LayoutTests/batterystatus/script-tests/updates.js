@@ -8,10 +8,10 @@ var level = 0.7;
 var battery = navigator.webkitBattery;
 
 function checkBatteryStatus() {
-    shouldBe('battery.charging', 'charging');
-    shouldBe('battery.chargingTime', 'chargingTime');
-    shouldBe('battery.dischargingTime', 'dischargingTime');
-    shouldBe('battery.level', 'level');
+    shouldBe("battery.charging", "false");
+    shouldBe("battery.chargingTime", "Infinity");
+    shouldBe("battery.dischargingTime", "6000");
+    shouldBe("battery.level", "0.7");
 }
 
 function setBatteryStatus() {
@@ -30,7 +30,10 @@ function firstListener() {
 }
 
 function updateListener(event) {
-    checkBatteryStatus(event);
+    shouldBe("battery.charging", "true");
+    shouldBe("battery.chargingTime", "7000");
+    shouldBe("battery.dischargingTime", "Infinity");
+    shouldBe("battery.level", "0.3");
     finishJSTest();
 }
 
