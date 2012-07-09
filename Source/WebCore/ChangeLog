@@ -1,3 +1,26 @@
+2012-07-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Filters] Blur filter is not repainted correctly when applied on a parent of a fixed element
+        https://bugs.webkit.org/show_bug.cgi?id=90087
+
+        Reviewed by Simon Fraser.
+
+        Added a new method, RenderLayer::hasAncestorWithFilterOutsets, to check that there's no filter with outsets (ie. blur) 
+        applied on top level fixed positioned elements, nor any of its parent layers. In the event of a blur filter we need to
+        disable the fast scrolling optimization, otherwise the outsets of the filter will be carried around the page and 
+        repainting will not work correctly.
+
+        Tests: css3/filters/blur-filter-page-scroll-parents.html
+               css3/filters/blur-filter-page-scroll-self.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsFastPath):
+        * rendering/RenderLayer.cpp:
+        (WebCore):
+        (WebCore::RenderLayer::hasAncestorWithFilterOutsets):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+
 2012-07-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Empty arrays shouldn't be valid key paths

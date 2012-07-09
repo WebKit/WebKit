@@ -1,3 +1,25 @@
+2012-07-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Filters] Blur filter is not repainted correctly when applied on a parent of a fixed element
+        https://bugs.webkit.org/show_bug.cgi?id=90087
+
+        Reviewed by Simon Fraser.
+
+        Added two new tests to check that we disable fast path scrolling for fixed positioned 
+        elements that have blur applied on them or any of the parent layers.
+
+        * css3/filters/blur-filter-page-scroll-parents.html: Added.
+        * css3/filters/blur-filter-page-scroll-self.html: Added.
+        * platform/chromium/css3/filters/blur-filter-page-scroll-parents-expected.png: Added.
+        * platform/chromium/css3/filters/blur-filter-page-scroll-parents-expected.txt: Added.
+        * platform/chromium/css3/filters/blur-filter-page-scroll-self-expected.png: Added.
+        * platform/chromium/css3/filters/blur-filter-page-scroll-self-expected.txt: Added.
+        * platform/mac/css3/filters/blur-filter-page-scroll-parents-expected.png: Added.
+        * platform/mac/css3/filters/blur-filter-page-scroll-parents-expected.txt: Added.
+        * platform/mac/css3/filters/blur-filter-page-scroll-self-expected.png: Added.
+        * platform/mac/css3/filters/blur-filter-page-scroll-self-expected.txt: Added.
+        * platform/qt/Skipped: Qt needs platform results.
+
 2012-07-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Empty arrays shouldn't be valid key paths

@@ -2161,6 +2161,9 @@ fast/borders/scaled-border-image.html
 css3/filters/composited-during-animation-layertree.html
 css3/filters/composited-during-transition-layertree.html
 css3/filters/composited-during-animation.html
+css3/filters/blur-filter-page-scroll.html
+css3/filters/blur-filter-page-scroll-self.html
+css3/filters/blur-filter-page-scroll-parents.html
 svg/foreignObject/fO-display-none-with-relative-pos-content.svg
 svg/foreignObject/fO-display-none.svg
 fast/speech/input-appearance-speechbutton.html

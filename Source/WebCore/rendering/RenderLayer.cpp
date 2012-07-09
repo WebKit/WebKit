@@ -1088,6 +1088,16 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, 
     
     ASSERT_NOT_REACHED();
 }
+
+bool RenderLayer::hasAncestorWithFilterOutsets() const
+{
+    for (const RenderLayer* curr = this; curr; curr = curr->parent()) {
+        RenderBoxModelObject* renderer = curr->renderer();
+        if (renderer->style()->hasFilterOutsets())
+            return true;
+    }
+    return false;
+}
 #endif
     
 RenderLayer* RenderLayer::clippingRootForPainting() const
