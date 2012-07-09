@@ -357,7 +357,6 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* docum
     , m_shouldSkipLeadingNewline(false)
     , m_parser(parser)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
-    , m_lastScriptElementStartPosition(TextPosition::belowRangePosition())
     , m_usePreHTML5ParserQuirks(usePreHTML5ParserQuirks)
 {
 }
@@ -376,7 +375,6 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
     , m_shouldSkipLeadingNewline(false)
     , m_parser(parser)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
-    , m_lastScriptElementStartPosition(TextPosition::belowRangePosition())
     , m_usePreHTML5ParserQuirks(usePreHTML5ParserQuirks)
 {
     // FIXME: This assertion will become invalid if <http://webkit.org/b/60316> is fixed.
@@ -2132,7 +2130,6 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             m_isPaused = true;
             ASSERT(m_tree.currentElement()->hasTagName(scriptTag));
             m_scriptToProcess = m_tree.currentElement();
-            m_scriptToProcessStartPosition = m_lastScriptElementStartPosition;
             m_tree.openElements()->pop();
             if (isParsingFragment() && m_fragmentContext.scriptingPermission() == DisallowScriptingContent)
                 m_scriptToProcess->removeAllChildren();
@@ -2646,7 +2643,7 @@ void HTMLTreeBuilder::processScriptStartTag(AtomicHTMLToken& token)
 
     TextPosition position = m_parser->textPosition();
 
-    m_lastScriptElementStartPosition = position;
+    m_scriptToProcessStartPosition = position;
 
     setInsertionMode(TextMode);
 }

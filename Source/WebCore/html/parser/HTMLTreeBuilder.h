@@ -236,11 +236,6 @@ private:
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
     TextPosition m_scriptToProcessStartPosition; // Starting line number of the script tag needing processing.
 
-    // FIXME: We probably want to remove this member.  Originally, it was
-    // created to service the legacy tree builder, but it seems to be used for
-    // some other things now.
-    TextPosition m_lastScriptElementStartPosition;
-
     bool m_usePreHTML5ParserQuirks;
 };
 

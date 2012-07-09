@@ -1,3 +1,26 @@
+2012-07-07  Kwang Yul Seo  <skyul@company100.net>
+
+        Remove unnecessary member HTMLTreeBuilder::m_lastScriptElementStartPosition
+        https://bugs.webkit.org/show_bug.cgi?id=90726
+
+        Reviewed by Adam Barth.
+
+        HTMLTreeBuilder::m_lastScriptElementStartPosition is of no use. Currently,
+        m_lastScriptElementStartPosition is used to store the text position in
+        "script" start tag, and then the stored position is passed to m_scriptToProcessStartPosition
+        later in "script" end tag. Because HTMLTreeBuilder handles one script tag at
+        a time, we can store the text position directly to m_scriptToProcessStartPosition
+        in "script" start tag.
+
+        No behavior change, so no new tests.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+        * html/parser/HTMLTreeBuilder.h:
+        (HTMLTreeBuilder):
+
 2012-07-08  Philip Rogers  <pdr@google.com>
 
         Refactor RenderSVGShape to not contain fallback code
