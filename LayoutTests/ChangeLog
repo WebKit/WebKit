@@ -3,6 +3,175 @@
         Unreviewed gardening.
         Rebaseline after r121917.
 
+        * platform/chromium-linux-x86/css3/selectors3/html/css3-modsel-23-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/html/css3-modsel-24-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/html/css3-modsel-68-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/html/css3-modsel-69-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/xhtml/css3-modsel-23-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/xhtml/css3-modsel-24-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/xhtml/css3-modsel-69-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/xml/css3-modsel-23-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/xml/css3-modsel-24-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/xml/css3-modsel-68-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/xml/css3-modsel-69-expected.png: Removed.
+        * platform/chromium-linux-x86/editing/selection/3690703-2-expected.png: Removed.
+        * platform/chromium-linux-x86/editing/selection/3690703-expected.png: Removed.
+        * platform/chromium-linux-x86/editing/selection/3690719-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css1/formatting_model/floating_elements-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-19b-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-23-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-23-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-24-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-24-expected.txt: Copied from LayoutTests/platform/chromium-mac/css3/selectors3/html/css3-modsel-24-expected.txt.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-64-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-68-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-68-expected.txt: Copied from LayoutTests/platform/chromium-mac/css3/selectors3/html/css3-modsel-68-expected.txt.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-69-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/html/css3-modsel-69-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-19b-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-23-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-23-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-24-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-24-expected.txt: Copied from LayoutTests/platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-24-expected.txt.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-64-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-68-expected.txt: Copied from LayoutTests/platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-68-expected.txt.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-69-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xhtml/css3-modsel-69-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-19b-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-23-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-23-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-24-expected.txt: Copied from LayoutTests/platform/chromium-mac/css3/selectors3/xml/css3-modsel-24-expected.txt.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-64-expected.png:
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-68-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-68-expected.txt: Copied from LayoutTests/platform/chromium-mac/css3/selectors3/xml/css3-modsel-68-expected.txt.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-69-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/selectors3/xml/css3-modsel-69-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/css3/unicode-bidi-isolate-basic-expected.png:
+        * platform/chromium-mac-snowleopard/css3/unicode-bidi-isolate-basic-expected.txt: Copied from LayoutTests/platform/chromium-mac/css3/unicode-bidi-isolate-basic-expected.txt.
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690703-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/3690719-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/4397952-expected.png:
+        * platform/chromium-mac-snowleopard/editing/selection/selection-button-text-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/float/float-avoidance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/positioning/inline-block-relposition-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/continuationCrash-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/rtl-ordering-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/001-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/basic-buttons-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/blankbuttons-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-cannot-be-nested-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-generated-content-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-positioned-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-sizes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-style-color-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-table-styles-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-text-transform-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/button-white-space-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-direction-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-disabled-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/file-input-pressed-state-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/file/input-file-re-render-expected.png:
+        * platform/chromium-mac-snowleopard/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac/css1/formatting_model/floating_elements-expected.txt:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-19b-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-23-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-23-expected.txt: Added.
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-24-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-24-expected.txt:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-64-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-68-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-68-expected.txt:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-69-expected.png:
+        * platform/chromium-mac/css3/selectors3/html/css3-modsel-69-expected.txt: Added.
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-19b-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-23-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-23-expected.txt: Added.
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-24-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-24-expected.txt:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-64-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-68-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-68-expected.txt:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-69-expected.png:
+        * platform/chromium-mac/css3/selectors3/xhtml/css3-modsel-69-expected.txt: Added.
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-19b-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-23-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-23-expected.txt: Added.
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-24-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-24-expected.txt:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-64-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-68-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-68-expected.txt:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-69-expected.png:
+        * platform/chromium-mac/css3/selectors3/xml/css3-modsel-69-expected.txt: Added.
+        * platform/chromium-mac/css3/unicode-bidi-isolate-basic-expected.png:
+        * platform/chromium-mac/css3/unicode-bidi-isolate-basic-expected.txt:
+        * platform/chromium-mac/editing/deleting/5144139-2-expected.txt: Added.
+        * platform/chromium-mac/editing/selection/3690703-2-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-2-expected.txt:
+        * platform/chromium-mac/editing/selection/3690703-expected.png:
+        * platform/chromium-mac/editing/selection/3690703-expected.txt:
+        * platform/chromium-mac/editing/selection/3690719-expected.png:
+        * platform/chromium-mac/editing/selection/3690719-expected.txt:
+        * platform/chromium-mac/editing/selection/4397952-expected.png:
+        * platform/chromium-mac/editing/selection/4397952-expected.txt:
+        * platform/chromium-mac/editing/selection/selection-button-text-expected.png:
+        * platform/chromium-mac/editing/selection/selection-button-text-expected.txt:
+        * platform/chromium-mac/fast/block/float/float-avoidance-expected.png:
+        * platform/chromium-mac/fast/block/positioning/inline-block-relposition-expected.png:
+        * platform/chromium-mac/fast/block/positioning/inline-block-relposition-expected.txt: Added.
+        * platform/chromium-mac/fast/css/continuationCrash-expected.png:
+        * platform/chromium-mac/fast/css/continuationCrash-expected.txt:
+        * platform/chromium-mac/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/chromium-mac/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.png:
+        * platform/chromium-mac/fast/css/rtl-ordering-expected.txt:
+        * platform/chromium-mac/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.png:
+        * platform/chromium-mac/fast/forms/001-expected.png:
+        * platform/chromium-mac/fast/forms/001-expected.txt:
+        * platform/chromium-mac/fast/forms/basic-buttons-expected.png:
+        * platform/chromium-mac/fast/forms/blankbuttons-expected.png:
+        * platform/chromium-mac/fast/forms/blankbuttons-expected.txt:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-mac/fast/forms/button-cannot-be-nested-expected.png:
+        * platform/chromium-mac/fast/forms/button-cannot-be-nested-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/button-generated-content-expected.png:
+        * platform/chromium-mac/fast/forms/button-generated-content-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/button-positioned-expected.png:
+        * platform/chromium-mac/fast/forms/button-positioned-expected.txt:
+        * platform/chromium-mac/fast/forms/button-sizes-expected.png:
+        * platform/chromium-mac/fast/forms/button-sizes-expected.txt:
+        * platform/chromium-mac/fast/forms/button-style-color-expected.png:
+        * platform/chromium-mac/fast/forms/button-style-color-expected.txt:
+        * platform/chromium-mac/fast/forms/button-table-styles-expected.png:
+        * platform/chromium-mac/fast/forms/button-table-styles-expected.txt:
+        * platform/chromium-mac/fast/forms/button-text-transform-expected.png:
+        * platform/chromium-mac/fast/forms/button-text-transform-expected.txt:
+        * platform/chromium-mac/fast/forms/button-white-space-expected.png:
+        * platform/chromium-mac/fast/forms/button-white-space-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-mac/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/chromium-mac/fast/forms/file/file-input-direction-expected.png:
+        * platform/chromium-mac/fast/forms/file/file-input-direction-expected.txt:
+        * platform/chromium-mac/fast/forms/file/file-input-disabled-expected.png:
+        * platform/chromium-mac/fast/forms/file/file-input-pressed-state-expected.png:
+        * platform/chromium-mac/fast/forms/file/input-file-re-render-expected.png:
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.png:
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.txt: Added.
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.png:
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-mac/http/tests/navigation/javascriptlink-frames-expected.txt:
+
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Rebaseline after r121917.
+
         * platform/chromium-mac-snowleopard/fast/forms/form-element-geometry-expected.png:
         * platform/chromium-mac-snowleopard/fast/forms/formmove3-expected.png:
         * platform/chromium-mac-snowleopard/fast/forms/formmove3-expected.txt: Removed.
