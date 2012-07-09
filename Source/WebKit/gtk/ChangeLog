@@ -1,3 +1,15 @@
+2012-07-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] Memory leak in webkitwebnavigationaction.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=90787
+
+        Reviewed by Martin Robinson.
+
+        Fixed a memory leak in WebKitWebNavigationAction.
+
+        * webkit/webkitwebnavigationaction.cpp:
+        (webkit_web_navigation_action_finalize): Free the g_strdup()'d string.
+
 2012-07-07  Zan Dobersek  <zandobersek@gmail.com>
 
         REGRESSION (r122035): fullscreen/exit-full-screen-iframe.html failing on GTK Linux 64-bit Release

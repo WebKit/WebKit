@@ -123,6 +123,7 @@ static void webkit_web_navigation_action_finalize(GObject* obj)
     WebKitWebNavigationActionPrivate* priv = navigationAction->priv;
 
     g_free(priv->originalUri);
+    g_free(priv->targetFrame);
 
     G_OBJECT_CLASS(webkit_web_navigation_action_parent_class)->finalize(obj);
 }
