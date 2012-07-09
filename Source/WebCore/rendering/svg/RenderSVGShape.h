@@ -75,7 +75,6 @@ public:
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
     virtual void fillShape(GraphicsContext*) const;
     virtual void strokeShape(GraphicsContext*) const;
-    bool isPaintingFallback() const { return m_fillFallback; }
 
     Path& path() const
     {
@@ -89,12 +88,12 @@ protected:
     virtual FloatRect objectBoundingBox() const;
     virtual FloatRect strokeBoundingBox() const { return m_strokeAndMarkerBoundingBox; }
     void setStrokeAndMarkerBoundingBox(FloatRect rect) { m_strokeAndMarkerBoundingBox = rect; }
-    virtual bool shapeDependentStrokeContains(const FloatPoint&) const;
+    virtual bool shapeDependentStrokeContains(const FloatPoint&);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
-    void setIsPaintingFallback(bool isFallback) { m_fillFallback = isFallback; }
     bool hasPath() const { return m_path.get(); }
     bool hasNonScalingStroke() const { return style()->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE; }
+    bool hasSmoothStroke() const;
 
 private:
     // Hit-detection separated for the fill and the stroke
@@ -148,7 +147,6 @@ private:
     bool m_needsBoundariesUpdate : 1;
     bool m_needsShapeUpdate : 1;
     bool m_needsTransformUpdate : 1;
-    bool m_fillFallback : 1;
 };
 
 inline RenderSVGShape* toRenderSVGShape(RenderObject* object)

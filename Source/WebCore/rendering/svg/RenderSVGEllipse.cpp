@@ -38,6 +38,7 @@ namespace WebCore {
 
 RenderSVGEllipse::RenderSVGEllipse(SVGStyledTransformableElement* node)
     : RenderSVGShape(node)
+    , m_usePathFallback(false)
 {
 }
 
@@ -54,12 +55,13 @@ void RenderSVGEllipse::createShape()
     m_center = FloatPoint();
     m_radii = FloatSize();
 
-    // Fallback to RenderSVGShape if shape has a non scaling stroke.
+    // Fallback to RenderSVGShape if shape has a non-scaling stroke.
     if (hasNonScalingStroke()) {
         RenderSVGShape::createShape();
-        setIsPaintingFallback(true);
+        m_usePathFallback = true;
         return;
-    }
+    } else
+        m_usePathFallback = false;
 
     calculateRadiiAndCenter();
 
@@ -97,21 +99,21 @@ void RenderSVGEllipse::calculateRadiiAndCenter()
 
 FloatRect RenderSVGEllipse::objectBoundingBox() const
 {
-    if (isPaintingFallback())
+    if (m_usePathFallback)
         return RenderSVGShape::objectBoundingBox();
     return m_boundingBox;
 }
 
 FloatRect RenderSVGEllipse::strokeBoundingBox() const
 {
-    if (isPaintingFallback())
+    if (m_usePathFallback)
         return RenderSVGShape::strokeBoundingBox();
     return m_outerStrokeRect;
 }
 
 void RenderSVGEllipse::fillShape(GraphicsContext* context) const
 {
-    if (isPaintingFallback()) {
+    if (m_usePathFallback) {
         RenderSVGShape::fillShape(context);
         return;
     }
@@ -122,17 +124,22 @@ void RenderSVGEllipse::strokeShape(GraphicsContext* context) const
 {
     if (!style()->svgStyle()->hasVisibleStroke())
         return;
-    if (isPaintingFallback()) {
+    if (m_usePathFallback) {
         RenderSVGShape::strokeShape(context);
         return;
     }
     context->strokeEllipse(m_boundingBox);
 }
 
-bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point) const
+bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point)
 {
-    if (isPaintingFallback())
+    // The optimized contains code below does not support non-smooth strokes so we need
+    // to fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
+    if (m_usePathFallback || !hasSmoothStroke()) {
+        if (!hasPath())
+            RenderSVGShape::createShape();
         return RenderSVGShape::shapeDependentStrokeContains(point);
+    }
 
     float halfStrokeWidth = strokeWidth() / 2;
     FloatPoint center = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());
@@ -151,7 +158,7 @@ bool RenderSVGEllipse::shapeDependentStrokeContains(const FloatPoint& point) con
 
 bool RenderSVGEllipse::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
-    if (isPaintingFallback())
+    if (m_usePathFallback)
         return RenderSVGShape::shapeDependentFillContains(point, fillRule);
 
     FloatPoint center = FloatPoint(m_center.x() - point.x(), m_center.y() - point.y());

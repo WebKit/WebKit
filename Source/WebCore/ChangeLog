@@ -1,3 +1,67 @@
+2012-07-08  Philip Rogers  <pdr@google.com>
+
+        Refactor RenderSVGShape to not contain fallback code
+        https://bugs.webkit.org/show_bug.cgi?id=90514
+
+        Reviewed by Nikolas Zimmermann.
+
+        The interaction between RenderSVGShape and {RenderSVGEllipse, RenderSVGRect}
+        was too coupled and it was not clear when a path existed or who controlled
+        falling back to path codepaths in RenderSVGShape.
+
+        This patch cleans up RenderSVGShape so that it does not track fallback state
+        and does not have special handling for creating a shape in strokeContains. Because
+        some functions of RenderSVGShape can be called without a path existing, each
+        of these functions has switched to using the path() function which asserts that
+        a path exists.
+
+        There is only one remaining use of hasPath() in RenderSVGShape which I plan
+        to remove in a followup patch.
+
+        This patch also cleans up RenderSVGRect and RenderSVGEllipse. These classes
+        now handle fallback tracking themselves and choose when to use their optimized
+        strokeContains codepaths.
+
+        No new tests as this is just a refactoring.
+
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::RenderSVGEllipse):
+        (WebCore::RenderSVGEllipse::createShape):
+        (WebCore::RenderSVGEllipse::objectBoundingBox):
+        (WebCore::RenderSVGEllipse::strokeBoundingBox):
+        (WebCore::RenderSVGEllipse::fillShape):
+        (WebCore::RenderSVGEllipse::strokeShape):
+        (WebCore::RenderSVGEllipse::shapeDependentStrokeContains):
+        (WebCore::RenderSVGEllipse::shapeDependentFillContains):
+        * rendering/svg/RenderSVGEllipse.h:
+        (WebCore::RenderSVGEllipse::isEmpty):
+        (RenderSVGEllipse):
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::RenderSVGRect):
+        (WebCore::RenderSVGRect::createShape):
+        (WebCore::RenderSVGRect::objectBoundingBox):
+        (WebCore::RenderSVGRect::strokeBoundingBox):
+        (WebCore::RenderSVGRect::fillShape):
+        (WebCore::RenderSVGRect::strokeShape):
+        (WebCore::RenderSVGRect::shapeDependentStrokeContains):
+        (WebCore::RenderSVGRect::shapeDependentFillContains):
+        * rendering/svg/RenderSVGRect.h:
+        (WebCore::RenderSVGRect::isEmpty):
+        (RenderSVGRect):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::RenderSVGShape):
+        (WebCore::RenderSVGShape::createShape):
+        (WebCore::RenderSVGShape::isEmpty):
+        (WebCore::RenderSVGShape::objectBoundingBox):
+        (WebCore::RenderSVGShape::shapeDependentStrokeContains):
+        (WebCore::RenderSVGShape::shapeDependentFillContains):
+        (WebCore::RenderSVGShape::strokeContains):
+        (WebCore::RenderSVGShape::layout):
+        (WebCore::RenderSVGShape::hasSmoothStroke):
+        (WebCore):
+        * rendering/svg/RenderSVGShape.h:
+        (RenderSVGShape):
+
 2012-07-08  Kinuko Yasuda  <kinuko@chromium.org>
 
         XHR.send should support ArrayBufferView

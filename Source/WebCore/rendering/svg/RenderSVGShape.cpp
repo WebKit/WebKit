@@ -57,7 +57,6 @@ RenderSVGShape::RenderSVGShape(SVGStyledTransformableElement* node)
     , m_needsBoundariesUpdate(false) // Default is false, the cached rects are empty from the beginning.
     , m_needsShapeUpdate(true) // Default is true, so we grab a Path object once from SVGStyledTransformableElement.
     , m_needsTransformUpdate(true) // Default is true, so we grab a AffineTransform object once from SVGStyledTransformableElement.
-    , m_fillFallback(false)
 {
 }
 
@@ -69,7 +68,7 @@ void RenderSVGShape::createShape()
 {
     ASSERT(!m_path);
     m_path = adoptPtr(new Path);
-    ASSERT(isEmpty());
+    ASSERT(RenderSVGShape::isEmpty());
 
     SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
     updatePathFromGraphicsElement(element, path());
@@ -79,7 +78,7 @@ void RenderSVGShape::createShape()
 
 bool RenderSVGShape::isEmpty() const
 {
-    return m_path->isEmpty();
+    return path().isEmpty();
 }
 
 void RenderSVGShape::fillShape(GraphicsContext* context) const
@@ -89,7 +88,7 @@ void RenderSVGShape::fillShape(GraphicsContext* context) const
 
 FloatRect RenderSVGShape::objectBoundingBox() const
 {
-    return m_path->fastBoundingRect();
+    return path().fastBoundingRect();
 }
 
 void RenderSVGShape::strokeShape(GraphicsContext* context) const
@@ -98,7 +97,7 @@ void RenderSVGShape::strokeShape(GraphicsContext* context) const
         context->strokePath(path());
 }
 
-bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point) const
+bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point)
 {
     ASSERT(m_path);
     BoundingRectStrokeStyleApplier applier(this, style());
@@ -115,8 +114,7 @@ bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point) const
 
 bool RenderSVGShape::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
-    ASSERT(m_path);
-    return m_path->contains(point, fillRule);
+    return path().contains(point, fillRule);
 }
 
 bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, const WindRule fillRule)
@@ -140,7 +138,6 @@ bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke
     if (requiresStroke && !RenderSVGResource::strokePaintingResource(this, style(), fallbackColor))
         return false;
 
-    const SVGRenderStyle* svgStyle = style()->svgStyle();
     for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
         ASSERT(style()->svgStyle()->hasStroke());
         float strokeWidth = this->strokeWidth();
@@ -155,12 +152,6 @@ bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke
         }
     }
 
-    if (!svgStyle->strokeDashArray().isEmpty() || svgStyle->strokeMiterLimit() != svgStyle->initialStrokeMiterLimit()
-        || svgStyle->joinStyle() != svgStyle->initialJoinStyle() || svgStyle->capStyle() != svgStyle->initialCapStyle()) {
-        if (!m_path)
-            RenderSVGShape::createShape();
-        return RenderSVGShape::shapeDependentStrokeContains(point);
-    }
     return shapeDependentStrokeContains(point);
 }
 
@@ -173,7 +164,6 @@ void RenderSVGShape::layout()
 
     bool needsShapeUpdate = m_needsShapeUpdate;
     if (needsShapeUpdate || m_needsBoundariesUpdate) {
-        setIsPaintingFallback(false);
         m_path.clear();
         createShape();
         m_needsShapeUpdate = false;
@@ -481,6 +471,15 @@ float RenderSVGShape::strokeWidth() const
     SVGElement* svgElement = static_cast<SVGElement*>(node());
     SVGLengthContext lengthContext(svgElement);
     return style()->svgStyle()->strokeWidth().value(lengthContext);
+}
+
+bool RenderSVGShape::hasSmoothStroke() const
+{
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
+    return svgStyle->strokeDashArray().isEmpty()
+        && svgStyle->strokeMiterLimit() == svgStyle->initialStrokeMiterLimit()
+        && svgStyle->joinStyle() == svgStyle->initialJoinStyle()
+        && svgStyle->capStyle() == svgStyle->initialCapStyle();
 }
 
 void RenderSVGShape::inflateWithStrokeAndMarkerBounds()
