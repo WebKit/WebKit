@@ -935,7 +935,7 @@ BUG_DRT WIN DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT
 
 BUGFLAKY : http/tests/inspector/extensions-ignore-cache.html = PASS TIMEOUT
 BUGFLAKY : inspector/timeline/timeline-network-received-data.html = PASS TEXT
-BUGFLAKY : inspector/debugger/live-edit.html = PASS TEXT
+BUGFLAKY : inspector/debugger/live-edit.html = PASS TEXT TIMEOUT
 
 // Add support for inspector layout tests on Mac.
 BUGCR89357 SKIP MAC : inspector = PASS

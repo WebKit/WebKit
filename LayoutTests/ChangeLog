@@ -1,3 +1,10 @@
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Add TIMEOUT for inspector/debugger/live-edit.html.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-08  Filip Pizlo  <fpizlo@apple.com>
 
         inspector/profiler/heap-snapshot-comparison-*.html are crashing
