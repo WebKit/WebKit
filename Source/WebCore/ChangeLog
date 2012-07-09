@@ -1,3 +1,27 @@
+2012-07-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Microdata tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=90830
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by SpaceSplitString's not copying on write properly.
+        Even if there was exactly one owner of the SpaceSplitString, we should still not modify
+        m_data since m_data is associated with a particular m_keyString in sharedDataMap().
+
+        The only situation in which we can safely modify m_data is when m_data's m_keyString is null
+        meaning that it had been unique'ed. Furthermore, this optimization had not been used for
+        class lists because class list's refCount is always zero as its ref and deref are forwarded
+        to the associated Element's ref and deref. This fix re-enables the optimization for class lists.
+
+        This behavior change is tested by existing microdata API tests. Without this patch,
+        some tests such as properties-collection-add-remove-property.html fail on the first run
+        when several tests were ran in the same WebKit instance.
+
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitStringData::isUnique):
+        (WebCore::SpaceSplitString::ensureUnique):
+
 2012-07-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Decouple RenderPass drawing from CCRenderSurface

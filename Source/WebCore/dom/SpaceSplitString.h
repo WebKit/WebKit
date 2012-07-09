@@ -49,6 +49,7 @@ namespace WebCore {
         void add(const AtomicString&);
         void remove(const AtomicString&);
 
+        bool isUnique() const { return m_keyString.isNull(); } 
         size_t size() const { return m_vector.size(); }
         const AtomicString& operator[](size_t i) { ASSERT(i < size()); return m_vector[i]; }
 
@@ -82,7 +83,7 @@ namespace WebCore {
     private:
         void ensureUnique()
         {
-            if (m_data && !m_data->hasOneRef())
+            if (m_data && !m_data->isUnique())
                 m_data = SpaceSplitStringData::createUnique(*m_data);
         }
 
