@@ -1,3 +1,17 @@
+2012-07-09  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Ecore errors from ecore_evas_screen_geometry_get()
+        https://bugs.webkit.org/show_bug.cgi?id=90609
+
+        Reviewed by Daniel Bates.
+
+        Do not call ecore_evas_screen_geometry_get() if ecoreEvas is null.
+
+        No new tests. This patch doesn't change behavior.
+
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenRect): Early return if Evas is null.
+
 2012-07-09  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Filters] Blur filter is not repainted correctly when applied on a parent of a fixed element

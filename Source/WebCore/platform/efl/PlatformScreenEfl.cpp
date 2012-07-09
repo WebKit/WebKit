@@ -86,6 +86,8 @@ FloatRect screenRect(Widget* widget)
 
     int x, y, w, h;
     Evas* e = widget->evas();
+    if (!e)
+        return FloatRect();
 
     ecore_evas_screen_geometry_get(ecore_evas_ecore_evas_get(e), &x, &y, &w, &h);
 
