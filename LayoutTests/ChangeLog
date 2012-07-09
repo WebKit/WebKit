@@ -1,3 +1,10 @@
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Marking a inspector/timeline/timeline-frames.html as a CRASH on WebKit Linux (dbg).
+
+        * platform/chromium/TestExpectations:
+
 2012-07-05  MORITA Hajime  <morrita@google.com>
 
         Heap-use-after-free in WebCore::RenderObject::destroyAndCleanupAnonymousWrappers
