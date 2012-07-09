@@ -1,3 +1,21 @@
+2012-07-09  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Simplify runTest function by defining default arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=90525
+
+        Reviewed by Chang Shu.
+
+        Default arguments will simplify macro RUN_TEST.
+        Function will only have one mandatory argument, callback test function.
+        Added static modifiers to callback functions.
+
+        * tests/UnitTestUtils/EWKTestBase.h:
+        (EWKTestBase):
+        * tests/test_ewk_view.cpp:
+        (ewkViewEditableGetCb):
+        (TEST):
+        (ewkViewUriGetCb):
+
 2012-07-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] REGRESSION (r122035): fullscreen/exit-full-screen-iframe.html is crashing

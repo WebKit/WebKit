@@ -59,8 +59,8 @@ public:
     static void startTest();
     static void endTest();
 
-    static bool runTest(const char* url, void (*event_callback)(void*, Evas_Object*, void*), const char* event_name, void* event_data);
-    static bool runTest(void (*event_callback)(void*, Evas_Object*, void*), const char* event_name, void* event_data);
+    static bool runTest(const char* url, void (*event_callback)(void*, Evas_Object*, void*), const char* event_name = "load,finished", void* event_data = 0);
+    static bool runTest(void (*event_callback)(void*, Evas_Object*, void*), const char* event_name = "load,finished", void* event_data = 0);
 
     static int useX11Window;
 };
