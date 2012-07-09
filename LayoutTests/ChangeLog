@@ -1,3 +1,11 @@
+2012-07-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, remove a redundant baseline for the
+        http/tests/xmlhttprequest/send-array-buffer.html test,
+        required after r122074.
+
+        * platform/gtk/http/tests/xmlhttprequest/send-array-buffer-expected.txt: Removed.
+
 2012-07-08  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.
