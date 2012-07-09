@@ -1,3 +1,53 @@
+2012-07-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, rolling out http://trac.webkit.org/changeset/122116 and http://trac.webkit.org/changeset/122119
+
+        * GNUmakefile.list.am:
+        * PlatformBlackBerry.cmake:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore):
+        * platform/graphics/OpenGLESShims.h:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore):
+        * platform/graphics/clutter/GraphicsContext3DClutter.cpp:
+        (WebCore):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::Extensions3DOpenGL):
+        (WebCore::Extensions3DOpenGL::supports):
+        (WebCore):
+        (WebCore::Extensions3DOpenGL::ensureEnabled):
+        (WebCore::Extensions3DOpenGL::isEnabled):
+        (WebCore::Extensions3DOpenGL::getGraphicsResetStatusARB):
+        (WebCore::Extensions3DOpenGL::getTranslatedShaderSourceANGLE):
+        (WebCore::Extensions3DOpenGL::copyTextureCHROMIUM):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        (Extensions3DOpenGL):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h:
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::systemAllowsMultisamplingOnATICards):
+        (WebCore):
+        (WebCore::GraphicsContext3D::validateAttributes):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::readPixels):
+        (WebCore::GraphicsContext3D::releaseShaderCompiler):
+        (WebCore::GraphicsContext3D::getExtensions):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary):
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore):
+
 2012-07-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r122115 and some cleanups.

@@ -1,8 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2012 ChangSeok Oh <shivamidow@gmail.com>
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,29 +29,93 @@
 #if ENABLE(WEBGL)
 
 #include "GraphicsContext3D.h"
-#include "Extensions3DOpenGLES.h"
+
+#include "Extensions3DOpenGL.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "LayerWebKitThread.h"
 #include "NotImplemented.h"
-#include "OpenGLESShims.h"
+
+#if PLATFORM(GTK) || PLATFORM(QT)
+#include "OpenGLShims.h"
+#endif
 
 namespace WebCore {
 
-void GraphicsContext3D::releaseShaderCompiler()
-{
-    makeContextCurrent();
-    ::glReleaseShaderCompiler();
-}
-
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
+    const int totalBytes = m_currentWidth * m_currentHeight * 4;
     ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-    int totalBytes = width * height * 4;
-    if (isGLES2Compliant()) {
-        for (int i = 0; i < totalBytes; i += 4)
-            std::swap(pixels[i], pixels[i + 2]); // Convert to BGRA.
+    for (int i = 0; i < totalBytes; i += 4)
+        std::swap(pixels[i], pixels[i + 2]); // Convert to BGRA.
+}
+
+bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
+{
+    const int width = size.width();
+    const int height = size.height();
+    GLuint colorFormat = 0, pixelDataType = 0;
+    if (m_attrs.alpha) {
+        m_internalColorFormat = GL_RGBA;
+        colorFormat = GL_RGBA;
+        pixelDataType = GL_UNSIGNED_BYTE;
+    } else {
+        m_internalColorFormat = GL_RGB;
+        colorFormat = GL_RGB;
+        pixelDataType = GL_UNSIGNED_SHORT_5_6_5;
     }
+
+    // We don't allow the logic where stencil is required and depth is not.
+    // See GraphicsContext3D::validateAttributes.
+    bool supportPackedDepthStencilBuffer = (m_attrs.stencil || m_attrs.depth) && getExtensions()->supports("GL_OES_packed_depth_stencil");
+
+    // Resize regular FBO.
+    bool mustRestoreFBO = false;
+    if (m_boundFBO != m_fbo) {
+        mustRestoreFBO = true;
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+    }
+
+    ::glBindTexture(GL_TEXTURE_2D, m_texture);
+    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, pixelDataType, 0);
+    ::glFramebufferTexture2DEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
+
+    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
+    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+    ::glBindTexture(GL_TEXTURE_2D, 0);
+
+    // We don't support antialiasing yet. See GraphicsContext3D::validateAttributes.
+    ASSERT(!m_attrs.antialias);
+
+    if (m_attrs.stencil || m_attrs.depth) {
+        // Use a 24 bit depth buffer where we know we have it.
+        if (supportPackedDepthStencilBuffer) {
+            ::glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
+            ::glTexImage2D(GL_TEXTURE_2D, 0, GraphicsContext3D::DEPTH_STENCIL, width, height, 0, GraphicsContext3D::DEPTH_STENCIL, GraphicsContext3D::UNSIGNED_INT_24_8, 0);
+            if (m_attrs.stencil)
+                ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
+            if (m_attrs.depth)
+                ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
+            ::glBindTexture(GL_TEXTURE_2D, 0);
+        } else {
+            if (m_attrs.stencil) {
+                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
+                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+            }
+            if (m_attrs.depth) {
+                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+            }
+            ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, 0);
+        }
+    }
+    if (glCheckFramebufferStatusEXT(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+        // FIXME: cleanup
+        notImplemented();
+    }
+
+    return mustRestoreFBO;
 }
 
 void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
@@ -94,17 +156,6 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
     return true;
 }
 
-void GraphicsContext3D::validateAttributes()
-{
-    validateDepthStencil("GL_OES_packed_depth_stencil");
-
-    if (m_attrs.antialias) {
-        Extensions3D* extensions = getExtensions();
-        if (!extensions->supports("GL_IMG_multisampled_render_to_texture"))
-            m_attrs.antialias = false;
-    }
-}
-
 void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
 {
     makeContextCurrent();
@@ -117,19 +168,6 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
     ::glClearDepthf(depth);
 }
 
-
-Extensions3D* GraphicsContext3D::getExtensions()
-{
-    if (!m_extensions)
-        m_extensions = adoptPtr(new Extensions3DOpenGLES(this));
-    return m_extensions.get();
-}
-
-bool GraphicsContext3D::systemAllowsMultisamplingOnATICards() const
-{
-    return false; // not applicable
-}
-
-}
+} // namespace WebCore
 
 #endif // ENABLE(WEBGL)

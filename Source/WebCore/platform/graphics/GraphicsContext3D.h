@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #ifndef GraphicsContext3D_h
@@ -91,12 +91,14 @@ const Platform3DObject NullPlatform3DObject = 0;
 #include <CoreGraphics/CGContext.h>
 #endif
 
+#if PLATFORM(BLACKBERRY)
+#include <GLES2/gl2.h>
+#endif
+
 namespace WebCore {
 class DrawingBuffer;
 class Extensions3D;
-#if USE(OPENGL_ES_2)
-class Extensions3DOpenGLES;
-#else
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
 class Extensions3DOpenGL;
 #endif
 #if PLATFORM(QT)
@@ -922,7 +924,6 @@ public:
     // in particular stencil and antialias, and determine which could or
     // could not be honored based on the capabilities of the OpenGL
     // implementation.
-    void validateDepthStencil(const char* packedDepthStencilExtension);
     void validateAttributes();
 
     // Read rendering results into a pixel array with the same format as the
@@ -954,30 +955,16 @@ public:
     HashMap<Platform3DObject, ShaderSourceEntry> m_shaderSourceMap;
 
     ANGLEWebKitBridge m_compiler;
-#endif
 
-#if PLATFORM(QT) && defined(QT_OPENGL_ES_2)
-    friend class Extensions3DQt;
-    OwnPtr<Extensions3DQt> m_extensions;
-#elif PLATFORM(BLACKBERRY)
-    friend class Extensions3DOpenGLES;
-    OwnPtr<Extensions3DOpenGLES> m_extensions;
-#elif !PLATFORM(CHROMIUM)
     friend class Extensions3DOpenGL;
     OwnPtr<Extensions3DOpenGL> m_extensions;
-#endif
-    friend class Extensions3DOpenGLCommon;
 
     Attributes m_attrs;
     Vector<Vector<float> > m_vertexArray;
 
-    GC3Duint m_texture;
-#if !PLATFORM(BLACKBERRY)
-    GC3Duint m_compositorTexture;
-#endif
+    GC3Duint m_texture, m_compositorTexture;
     GC3Duint m_fbo;
-
-#if !PLATFORM(BLACKBERRY)
+#if USE(OPENGL_ES_2)
     GC3Duint m_depthBuffer;
     GC3Duint m_stencilBuffer;
 #endif
@@ -998,11 +985,10 @@ public:
 
     // Errors raised by synthesizeGLError().
     ListHashSet<GC3Denum> m_syntheticErrors;
+#endif
 
     friend class GraphicsContext3DPrivate;
     OwnPtr<GraphicsContext3DPrivate> m_private;
-
-    bool systemAllowsMultisamplingOnATICards() const; 
 };
 
 } // namespace WebCore

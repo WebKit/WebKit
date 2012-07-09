@@ -42,8 +42,7 @@
 namespace WebCore {
 
 Extensions3DOpenGL::Extensions3DOpenGL(GraphicsContext3D* context)
-    : Extensions3DOpenGLCommon(context)
-    , m_initializedAvailableExtensions(false)
+    : m_initializedAvailableExtensions(false)
     , m_context(context)
 {
 }
@@ -52,6 +51,91 @@ Extensions3DOpenGL::~Extensions3DOpenGL()
 {
 }
 
+bool Extensions3DOpenGL::supports(const String& name)
+{
+    // Note on support for BGRA:
+    //
+    // For OpenGL ES2.0, requires checking for
+    // GL_EXT_texture_format_BGRA8888 and GL_EXT_read_format_bgra.
+    // For desktop GL, BGRA has been supported since OpenGL 1.2.
+    //
+    // However, note that the GL ES2 extension requires the
+    // internalFormat to glTexImage2D() be GL_BGRA, while desktop GL
+    // will not accept GL_BGRA (must be GL_RGBA), so this must be
+    // checked on each platform. Desktop GL offers neither
+    // GL_EXT_texture_format_BGRA8888 or GL_EXT_read_format_bgra, so
+    // treat them as unsupported here.
+    if (!m_initializedAvailableExtensions) {
+        String extensionsString(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
+        Vector<String> availableExtensions;
+        extensionsString.split(" ", availableExtensions);
+        for (size_t i = 0; i < availableExtensions.size(); ++i)
+            m_availableExtensions.add(availableExtensions[i]);
+        m_initializedAvailableExtensions = true;
+    }
+    
+    // GL_ANGLE_framebuffer_blit and GL_ANGLE_framebuffer_multisample are "fake". They are implemented using other
+    // extensions. In particular GL_EXT_framebuffer_blit and GL_EXT_framebuffer_multisample
+    if (name == "GL_ANGLE_framebuffer_blit")
+        return m_availableExtensions.contains("GL_EXT_framebuffer_blit");
+    if (name == "GL_ANGLE_framebuffer_multisample")
+        return m_availableExtensions.contains("GL_EXT_framebuffer_multisample");
+
+    // Desktop GL always supports GL_OES_rgb8_rgba8.
+    if (name == "GL_OES_rgb8_rgba8")
+        return true;
+
+    // If GL_ARB_texture_float is available then we report GL_OES_texture_float and
+    // GL_OES_texture_half_float as available.
+    if (name == "GL_OES_texture_float" || name == "GL_OES_texture_half_float")
+        return m_availableExtensions.contains("GL_ARB_texture_float");
+    
+    // GL_OES_vertex_array_object
+    if (name == "GL_OES_vertex_array_object")
+        return m_availableExtensions.contains("GL_APPLE_vertex_array_object");
+
+    // Desktop GL always supports the standard derivative functions
+    if (name == "GL_OES_standard_derivatives")
+        return true;
+
+    if (name == "GL_EXT_texture_filter_anisotropic")
+        return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic");
+
+    return m_availableExtensions.contains(name);
+}
+
+void Extensions3DOpenGL::ensureEnabled(const String& name)
+{
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK)
+    if (name == "GL_OES_standard_derivatives") {
+        // Enable support in ANGLE (if not enabled already)
+        ANGLEWebKitBridge& compiler = m_context->m_compiler;
+        ShBuiltInResources ANGLEResources = compiler.getResources();
+        if (!ANGLEResources.OES_standard_derivatives) {
+            ANGLEResources.OES_standard_derivatives = 1;
+            compiler.setResources(ANGLEResources);
+        }
+    }
+#else
+    ASSERT_UNUSED(name, supports(name));
+#endif
+}
+
+bool Extensions3DOpenGL::isEnabled(const String& name)
+{
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK)
+    if (name == "GL_OES_standard_derivatives") {
+        ANGLEWebKitBridge& compiler = m_context->m_compiler;
+        return compiler.getResources().OES_standard_derivatives;
+    }
+#endif
+    return supports(name);
+}
+
+int Extensions3DOpenGL::getGraphicsResetStatusARB()
+{
+    return GraphicsContext3D::NO_ERROR;
+}
 
 void Extensions3DOpenGL::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
 {
@@ -110,47 +194,17 @@ void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
 #endif
 }
 
+String Extensions3DOpenGL::getTranslatedShaderSourceANGLE(Platform3DObject shader)
+{
+    UNUSED_PARAM(shader);
+    return "";
+    // FIXME: implement this function and add GL_ANGLE_translated_shader_source in supports().
+}
+
 void Extensions3DOpenGL::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum)
 {
     // FIXME: implement this function and add GL_CHROMIUM_copy_texture in supports().
     return;
-}
-
-bool Extensions3DOpenGL::supportsExtension(const String& name)
-{
-    // GL_ANGLE_framebuffer_blit and GL_ANGLE_framebuffer_multisample are "fake". They are implemented using other
-    // extensions. In particular GL_EXT_framebuffer_blit and GL_EXT_framebuffer_multisample
-    if (name == "GL_ANGLE_framebuffer_blit")
-        return m_availableExtensions.contains("GL_EXT_framebuffer_blit");
-    if (name == "GL_ANGLE_framebuffer_multisample")
-        return m_availableExtensions.contains("GL_EXT_framebuffer_multisample");
-
-    // Desktop GL always supports GL_OES_rgb8_rgba8.
-    if (name == "GL_OES_rgb8_rgba8")
-        return true;
-
-    // If GL_ARB_texture_float is available then we report GL_OES_texture_float and
-    // GL_OES_texture_half_float as available.
-    if (name == "GL_OES_texture_float" || name == "GL_OES_texture_half_float")
-        return m_availableExtensions.contains("GL_ARB_texture_float");
-
-    // GL_OES_vertex_array_object
-    if (name == "GL_OES_vertex_array_object")
-        return m_availableExtensions.contains("GL_APPLE_vertex_array_object");
-
-    // Desktop GL always supports the standard derivative functions
-    if (name == "GL_OES_standard_derivatives")
-        return true;
-
-    if (name == "GL_EXT_texture_filter_anisotropic")
-        return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic");
-
-    return m_availableExtensions.contains(name);
-}
-
-String Extensions3DOpenGL::getExtensions()
-{
-    return String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
 }
 
 } // namespace WebCore
