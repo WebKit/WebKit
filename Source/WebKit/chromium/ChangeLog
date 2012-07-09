@@ -1,3 +1,12 @@
+2012-07-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Create render surfaces on main thread only for the current frame
+        https://bugs.webkit.org/show_bug.cgi?id=89793
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-07-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make HTMLCollection RefCounted

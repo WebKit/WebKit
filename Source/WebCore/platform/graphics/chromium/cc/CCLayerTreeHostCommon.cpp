@@ -188,19 +188,6 @@ static bool isScaleOrTranslation(const WebTransformationMatrix& m)
            && m.m44();
 }
 
-static inline bool layerOpacityIsOpaque(CCLayerImpl* layer)
-{
-    return layer->opacity() == 1;
-}
-
-static inline bool layerOpacityIsOpaque(LayerChromium* layer)
-{
-    // If the opacity is being animated then the opacity on the main thread is unreliable
-    // (since the impl thread may be using a different opacity), so it should not be trusted.
-    // In particular, it should not be treated as opaque.
-    return layer->opacity() == 1 && !layer->opacityIsAnimating();
-}
-
 static inline bool transformToParentIsKnown(CCLayerImpl*)
 {
     return true;
@@ -303,16 +290,11 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
         return true;
 
     // If the layer clips its descendants but it is not axis-aligned with respect to its parent.
-    // On the main thread, when the transform is being animated, it is treated as unknown and we
-    // always error on the side of making a render surface, to let us consider descendents as
-    // not animating relative to their target to aid culling.
-    if (layer->masksToBounds() && (!axisAlignedWithRespectToParent || !transformToParentIsKnown(layer)) && descendantDrawsContent)
+    if (layer->masksToBounds() && !axisAlignedWithRespectToParent && descendantDrawsContent)
         return true;
 
     // If the layer has opacity != 1 and does not have a preserves-3d transform style.
-    // On the main thread, when opacity is being animated, it is treated as neither 1
-    // nor 0.
-    if (!layerOpacityIsOpaque(layer) && !layer->preserves3D() && descendantDrawsContent)
+    if (layer->opacity() != 1 && !layer->preserves3D() && descendantDrawsContent)
         return true;
 
     return false;

@@ -2183,7 +2183,11 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     childOfRS1->addChild(grandChildOfRS1);
     childOfRS2->addChild(grandChildOfRS2);
 
-    // In combination with descendantDrawsContent, opacity != 1 forces the layer to have a new renderSurface.
+    // Make our render surfaces.
+    renderSurface1->setForceRenderSurface(true);
+    renderSurface2->setForceRenderSurface(true);
+
+    // Put an animated opacity on the render surface.
     addOpacityTransitionToController(*renderSurface1->layerAnimationController(), 10, 1, 0, false);
 
     // Also put an animated opacity on a layer without descendants.
@@ -2194,9 +2198,8 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     WebTransformationMatrix sublayerTransform;
     sublayerTransform.scale3d(10.0, 1.0, 1.0);
 
-    // In combination with descendantDrawsContent and masksToBounds, an animated transform forces the layer to have a new renderSurface.
+    // Put a transform animation on the render surface.
     addAnimatedTransformToController(*renderSurface2->layerAnimationController(), 10, 30, 0);
-    renderSurface2->setMasksToBounds(true);
 
     // Also put transform animations on grandChildOfRoot, and grandChildOfRS2
     addAnimatedTransformToController(*grandChildOfRoot->layerAnimationController(), 10, 30, 0);
@@ -2793,9 +2796,11 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithAnimatingTransforms)
     backfaceMatrix.rotate3d(0, 1, 0, 180);
     backfaceMatrix.translate(-50, -50);
 
-    // Having a descendant that draws, masksToBounds, and animating transforms, will make the animatingSurface own a render surface.
+    // Make our render surface.
+    animatingSurface->setForceRenderSurface(true);
+
+    // Animate the transform on the render surface.
     addAnimatedTransformToController(*animatingSurface->layerAnimationController(), 10, 30, 0);
-    animatingSurface->setMasksToBounds(true);
     // This is just an animating layer, not a surface.
     addAnimatedTransformToController(*animatingChild->layerAnimationController(), 10, 30, 0);
 
