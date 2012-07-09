@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -39,18 +40,16 @@ class Page;
 class ContextFeatures : public RefCountedSupplement<Page, ContextFeatures> {
 public:
     enum FeatureType {
-        DialogElement = 0,
-        ShadowDOM,
+        ShadowDOM = 0,
         StyleScoped,
         PagePopup,
-        FeatureTypeSize // Should be the last entry.
+        FeatureTypeSize // Should be the last enetry.
     };
 
     static const AtomicString& supplementName();
     static ContextFeatures* defaultSwitch();
     static PassRefPtr<ContextFeatures> create(ContextFeaturesClient*);
 
-    static bool dialogElementEnabled(Document*);
     static bool shadowDOMEnabled(Document*);
     static bool styleScopedEnabled(Document*);
     static bool pagePopupEnabled(Document*);

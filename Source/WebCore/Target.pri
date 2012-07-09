@@ -753,7 +753,6 @@ SOURCES += \
     html/HTMLCollection.cpp \
     html/HTMLDListElement.cpp \
     html/HTMLDataListElement.cpp \
-    html/HTMLDialogElement.cpp \
     html/HTMLDirectoryElement.cpp \
     html/HTMLDetailsElement.cpp \
     html/HTMLDivElement.cpp \
@@ -1925,7 +1924,6 @@ HEADERS += \
     html/HTMLButtonElement.h \
     html/HTMLCanvasElement.h \
     html/HTMLCollection.h \
-    html/HTMLDialogElement.h \
     html/HTMLDirectoryElement.h \
     html/HTMLDetailsElement.h \
     html/HTMLDivElement.h \

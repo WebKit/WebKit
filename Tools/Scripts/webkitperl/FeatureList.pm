@@ -62,7 +62,6 @@ my (
     $datalistSupport,
     $detailsSupport,
     $deviceOrientationSupport,
-    $dialogElementSupport,
     $directoryUploadSupport,
     $downloadAttributeSupport,
     $fileSystemSupport,
@@ -193,10 +192,7 @@ my @features = (
     { option => "device-orientation", desc => "Toggle Device Orientation support",
       define => "ENABLE_DEVICE_ORIENTATION", default => isBlackBerry(), value => \$deviceOrientationSupport },
 
-    { option => "dialog", desc => "Toggle Dialog Element support",
-      define => "ENABLE_DIALOG_ELEMENT", default => 0, value => \$dialogElementSupport },
-
-    { option => "directory-upload", desc => "Toggle Directory Upload support",
+    { option => "directory-upload", desc => "Toogle Directory Upload support",
       define => "ENABLE_DIRECTORY_UPLOAD", default => 0, value => \$directoryUploadSupport },
 
     { option => "download-attribute", desc => "Toggle Download Attribute support",

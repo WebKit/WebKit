@@ -231,11 +231,6 @@ public:
     static void setInputTypeDateEnabled(bool isEnabled) { isInputTypeDateEnabled = isEnabled; }
 #endif
 
-#if ENABLE(DIALOG_ELEMENT)
-    static bool dialogElementEnabled() { return isDialogElementEnabled; }
-    static void setDialogElementEnabled(bool isEnabled) { isDialogElementEnabled = isEnabled; }
-#endif
-
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -308,10 +303,6 @@ private:
 
 #if ENABLE(INPUT_TYPE_DATE)
     static bool isInputTypeDateEnabled;
-#endif
-
-#if ENABLE(DIALOG_ELEMENT)
-    static bool isDialogElementEnabled;
 #endif
 };
 
