@@ -1,3 +1,25 @@
+2012-07-09  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Add FileContentView for FileSystemView
+        https://bugs.webkit.org/show_bug.cgi?id=90529
+
+        Adding FileContentView to Inspector.
+        This class provides preview of text files in FileSystem.
+
+        Reviewed by Vsevolod Vlasov.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/FileContentView.js: Added.
+        * inspector/front-end/FileSystemView.js:
+        (WebInspector.FileSystemView.prototype.get visibleView):
+        (WebInspector.FileSystemView.EntryTreeElement.prototype.onselect):
+        (WebInspector.FileSystemView.EntryTreeElement.prototype._directoryContentReceived):
+        (WebInspector.FileSystemView.EntryTreeElement.prototype.refresh):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Use soup_cookie_jar_is_persistent() to set whether cookie is a session one or not

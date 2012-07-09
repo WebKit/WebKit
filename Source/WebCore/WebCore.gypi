@@ -6279,6 +6279,7 @@
             'inspector/front-end/ExtensionRegistryStub.js',
             'inspector/front-end/ExtensionServer.js',
             'inspector/front-end/FileManager.js',
+            'inspector/front-end/FileContentView.js',
             'inspector/front-end/FileSystemModel.js',
             'inspector/front-end/FileSystemView.js',
             'inspector/front-end/FilteredItemSelectionDialog.js',

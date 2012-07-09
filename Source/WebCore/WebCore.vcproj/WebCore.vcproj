@@ -74922,6 +74922,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\FileContentView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\FileManager.js"
 					>
 				</File>

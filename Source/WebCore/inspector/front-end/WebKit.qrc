@@ -57,6 +57,7 @@
     <file>ExtensionPanel.js</file>
     <file>ExtensionRegistryStub.js</file>
     <file>ExtensionServer.js</file>
+    <file>FileContentView.js</file>
     <file>FileManager.js</file>
     <file>FileSystemModel.js</file>
     <file>FileSystemView.js</file>
