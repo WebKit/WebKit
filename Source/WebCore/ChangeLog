@@ -1,3 +1,47 @@
+2012-07-09  Matt Falkenhagen  <falken@chromium.org>
+
+        Add ENABLE_DIALOG_ELEMENT and skeleton files
+        https://bugs.webkit.org/show_bug.cgi?id=90521
+
+        Reviewed by Kent Tamura.
+
+        This adds the ENABLE_DIALOG_ELEMENT feature flag and dummy implementation files for <dialog>. In addition, a runtime feature flag is added.
+        The feature is diabled by default.
+
+        No new tests, as there is no behavior change.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+        * bindings/generic/RuntimeEnabledFeatures.h: Added a runtime feature flag for dialog.
+        (RuntimeEnabledFeatures):
+        (WebCore::RuntimeEnabledFeatures::dialogElementEnabled):
+        (WebCore::RuntimeEnabledFeatures::setDialogElementEnabled):
+        * dom/ContextFeatures.cpp:
+        (WebCore::ContextFeatures::dialogElementEnabled):
+        (WebCore):
+        * dom/ContextFeatures.h: Added a per-context flag for dialog so that dialog can be disabled in HTMLTagNames.in and DOMWindow.idl when the dialog runtime feature flag is off.
+        * html/HTMLDialogElement.cpp: Added.
+        (WebCore):
+        (WebCore::HTMLDialogElement::HTMLDialogElement):
+        (WebCore::HTMLDialogElement::create):
+        (WebCore::HTMLDialogElement::close):
+        (WebCore::HTMLDialogElement::show):
+        * html/HTMLDialogElement.h: Added.
+        (WebCore):
+        (HTMLDialogElement):
+        * html/HTMLDialogElement.idl: Added.
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLTagNames.in:
+        * page/DOMWindow.idl:
+
 2012-07-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: inspector does not reflect newly created text nodes from contenteditable
