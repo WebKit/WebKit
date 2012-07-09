@@ -44,9 +44,12 @@ public:
     { }
 
     virtual bool isEnabled(WebCore::Document*, WebCore::ContextFeatures::FeatureType, bool defaultValue) OVERRIDE;
+    virtual void urlDidChange(WebCore::Document*) OVERRIDE;
     void setPermissionClient(WebPermissionClient* client) { m_client = client; }
 
 private:
+    bool askIfIsEnabled(WebCore::Document*, WebCore::ContextFeatures::FeatureType, bool defaultValue);
+
     WebPermissionClient* m_client;
 };
 

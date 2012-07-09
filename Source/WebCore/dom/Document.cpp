@@ -2684,6 +2684,7 @@ void Document::setURL(const KURL& url)
     m_url = newURL;
     m_documentURI = m_url.string();
     updateBaseURL();
+    contextFeatures()->urlDidChange(this);
 }
 
 void Document::updateBaseURL()

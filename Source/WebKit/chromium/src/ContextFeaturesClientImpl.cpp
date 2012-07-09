@@ -32,19 +32,116 @@
 #include "ContextFeaturesClientImpl.h"
 
 #include "Document.h"
+#include "SecurityOrigin.h"
 #include "WebDocument.h"
 #include "WebPermissionClient.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
-bool ContextFeaturesClientImpl::isEnabled(WebCore::Document* document, WebCore::ContextFeatures::FeatureType type, bool defaultValue)
+class ContextFeaturesCache : public Supplement<ScriptExecutionContext> {
+public:
+    class Entry {
+    public:
+        enum Value {
+            IsEnabled,
+            IsDisabled,
+            NeedsRefresh
+        };
+
+        Entry()
+            : m_value(NeedsRefresh)
+            , m_defaultValue(false)
+        { }
+
+        bool isEnabled() const
+        {
+            ASSERT(m_value != NeedsRefresh);
+            return m_value == IsEnabled;
+        }
+
+        void set(bool value, bool defaultValue)
+        {
+            m_value = value ? IsEnabled : IsDisabled;
+            m_defaultValue = defaultValue;
+        }
+
+        bool needsRefresh(bool defaultValue) const
+        {
+            return m_value == NeedsRefresh || m_defaultValue != defaultValue;
+        }
+
+    private:
+        Value m_value;
+        bool m_defaultValue; // Needs to be traked as a part of the signature since it can be changed dynamically.
+    };
+
+    static const AtomicString& supplementName();
+    static ContextFeaturesCache* from(Document*);
+
+    Entry& entryFor(ContextFeatures::FeatureType type)
+    {
+        size_t index = static_cast<size_t>(type);
+        ASSERT(index < ContextFeatures::FeatureTypeSize);
+        return m_entries[index];
+    }
+
+    void validateAgainst(Document*);
+
+private:
+    String m_domain;
+    Entry m_entries[ContextFeatures::FeatureTypeSize];
+};
+
+const AtomicString& ContextFeaturesCache::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("ContextFeaturesCache"));
+    return name;
+}
+
+ContextFeaturesCache* ContextFeaturesCache::from(Document* document)
+{
+    ContextFeaturesCache* cache = static_cast<ContextFeaturesCache*>(Supplement<ScriptExecutionContext>::from(document, supplementName()));
+    if (!cache) {
+        cache = new ContextFeaturesCache();
+        Supplement<ScriptExecutionContext>::provideTo(document, supplementName(), adoptPtr(cache));
+    }
+
+    return cache;
+}
+
+void ContextFeaturesCache::validateAgainst(Document* document)
+{
+    String currentDomain = document->securityOrigin()->domain();
+    if (currentDomain == m_domain)
+        return;
+    m_domain = currentDomain;
+    for (size_t i = 0; i < ContextFeatures::FeatureTypeSize; ++i)
+        m_entries[i] = Entry();
+}
+
+bool ContextFeaturesClientImpl::isEnabled(Document* document, ContextFeatures::FeatureType type, bool defaultValue)
+{
+    ContextFeaturesCache::Entry& cache = ContextFeaturesCache::from(document)->entryFor(type);
+    if (cache.needsRefresh(defaultValue))
+        cache.set(askIfIsEnabled(document, type, defaultValue), defaultValue);
+    return cache.isEnabled();
+}
+
+void ContextFeaturesClientImpl::urlDidChange(Document* document)
+{
+    ContextFeaturesCache::from(document)->validateAgainst(document);
+}
+
+bool ContextFeaturesClientImpl::askIfIsEnabled(Document* document, ContextFeatures::FeatureType type, bool defaultValue)
 {
     if (!m_client)
         return defaultValue;
 
     switch (type) {
-    case WebCore::ContextFeatures::ShadowDOM:
-    case WebCore::ContextFeatures::StyleScoped:
+    case ContextFeatures::ShadowDOM:
+    case ContextFeatures::StyleScoped:
         return m_client->allowWebComponents(WebDocument(document), defaultValue);
     default:
         return defaultValue;

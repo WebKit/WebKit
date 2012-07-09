@@ -40,9 +40,10 @@ class Page;
 class ContextFeatures : public RefCountedSupplement<Page, ContextFeatures> {
 public:
     enum FeatureType {
-        ShadowDOM,
+        ShadowDOM = 0,
         StyleScoped,
-        PagePopup
+        PagePopup,
+        FeatureTypeSize // Should be the last enetry.
     };
 
     static const AtomicString& supplementName();
@@ -54,6 +55,7 @@ public:
     static bool pagePopupEnabled(Document*);
 
     bool isEnabled(Document*, FeatureType, bool) const;
+    void urlDidChange(Document*);
 
 private:
     explicit ContextFeatures(ContextFeaturesClient* client)
@@ -77,6 +79,7 @@ public:
 
     virtual ~ContextFeaturesClient() { }
     virtual bool isEnabled(Document*, ContextFeatures::FeatureType, bool defaultValue) { return defaultValue; }
+    virtual void urlDidChange(Document*) { }
 };
 
 void provideContextFeaturesTo(Page*, ContextFeaturesClient*);
@@ -92,6 +95,13 @@ inline bool ContextFeatures::isEnabled(Document* document, FeatureType type, boo
     if (!m_client)
         return defaultValue;
     return m_client->isEnabled(document, type, defaultValue);
+}
+
+inline void ContextFeatures::urlDidChange(Document* document)
+{
+    if (m_client)
+        return;
+    m_client->urlDidChange(document);
 }
 
 } // namespace WebCore
