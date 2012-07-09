@@ -39,6 +39,7 @@ namespace JSC {
 
     class ConservativeRoots;
     class DFGCodeBlocks;
+    class JITStubRoutineSet;
     class LLIntOffsetsExtractor;
 
     class RegisterFile {
@@ -64,7 +65,7 @@ namespace JSC {
         ~RegisterFile();
         
         void gatherConservativeRoots(ConservativeRoots&);
-        void gatherConservativeRoots(ConservativeRoots&, DFGCodeBlocks&);
+        void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, DFGCodeBlocks&);
 
         Register* begin() const { return static_cast<Register*>(m_reservation.base()); }
         Register* end() const { return m_end; }

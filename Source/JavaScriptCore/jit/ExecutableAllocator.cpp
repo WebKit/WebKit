@@ -55,7 +55,7 @@ namespace JSC {
 class DemandExecutableAllocator : public MetaAllocator {
 public:
     DemandExecutableAllocator()
-        : MetaAllocator(32) // round up all allocations to 32 bytes
+        : MetaAllocator(jitAllocationGranule)
     {
         MutexLocker lock(allocatorsMutex());
         allocators().add(this);

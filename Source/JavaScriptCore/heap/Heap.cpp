@@ -420,6 +420,7 @@ void Heap::markRoots(bool fullGC)
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
     ConservativeRoots machineThreadRoots(&m_objectSpace.blocks(), &m_storageSpace);
+    m_jitStubRoutines.clearMarks();
     {
         GCPHASE(GatherConservativeRoots);
         m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
@@ -429,7 +430,8 @@ void Heap::markRoots(bool fullGC)
     m_dfgCodeBlocks.clearMarks();
     {
         GCPHASE(GatherRegisterFileRoots);
-        registerFile().gatherConservativeRoots(registerFileRoots, m_dfgCodeBlocks);
+        registerFile().gatherConservativeRoots(
+            registerFileRoots, m_jitStubRoutines, m_dfgCodeBlocks);
     }
 
 #if ENABLE(DFG_JIT)
@@ -540,9 +542,10 @@ void Heap::markRoots(bool fullGC)
         }
     
         {
-            GCPHASE(TraceCodeBlocks);
-            MARK_LOG_ROOT(visitor, "Trace Code Blocks");
+            GCPHASE(TraceCodeBlocksAndJITStubRoutines);
+            MARK_LOG_ROOT(visitor, "Trace Code Blocks and JIT Stub Routines");
             m_dfgCodeBlocks.traceMarkedCodeBlocks(visitor);
+            m_jitStubRoutines.traceMarkedStubRoutines(visitor);
             visitor.donateAndDrain();
         }
     
@@ -665,6 +668,7 @@ void Heap::deleteUnmarkedCompiledCode()
     }
 
     m_dfgCodeBlocks.deleteUnmarkedJettisonedCodeBlocks();
+    m_jitStubRoutines.deleteUnmarkedJettisonedStubRoutines();
 }
 
 void Heap::collectAllGarbage()

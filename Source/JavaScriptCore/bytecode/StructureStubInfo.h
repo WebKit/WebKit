@@ -32,6 +32,7 @@
 
 #include "CodeOrigin.h"
 #include "Instruction.h"
+#include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"
 #include "Structure.h"
@@ -168,7 +169,7 @@ namespace JSC {
         {
             deref();
             accessType = access_unset;
-            stubRoutine = MacroAssemblerCodeRef();
+            stubRoutine.clear();
         }
 
         void deref();
@@ -286,7 +287,7 @@ namespace JSC {
             } putByIdList;
         } u;
 
-        MacroAssemblerCodeRef stubRoutine;
+        RefPtr<JITStubRoutine> stubRoutine;
         CodeLocationCall callReturnLocation;
         CodeLocationLabel hotPathBegin;
     };

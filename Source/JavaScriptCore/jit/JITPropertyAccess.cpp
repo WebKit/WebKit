@@ -29,6 +29,7 @@
 #include "JIT.h"
 
 #include "CodeBlock.h"
+#include "GCAwareJITStubRoutine.h"
 #include "GetterSetter.h"
 #include "Interpreter.h"
 #include "JITInlineMethods.h"
@@ -595,12 +596,17 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
         patchBuffer.link(m_calls[0].from, FunctionPtr(cti_op_put_by_id_transition_realloc));
     }
     
-    stubInfo->stubRoutine = FINALIZE_CODE(
-        patchBuffer,
-        ("Baseline put_by_id transition for CodeBlock %p, return point %p",
-         m_codeBlock, returnAddress.value()));
+    stubInfo->stubRoutine = createJITStubRoutine(
+        FINALIZE_CODE(
+            patchBuffer,
+            ("Baseline put_by_id transition for CodeBlock %p, return point %p",
+             m_codeBlock, returnAddress.value())),
+        *m_globalData,
+        m_codeBlock->ownerExecutable(),
+        willNeedStorageRealloc,
+        newStructure);
     RepatchBuffer repatchBuffer(m_codeBlock);
-    repatchBuffer.relinkCallerToTrampoline(returnAddress, CodeLocationLabel(stubInfo->stubRoutine.code()));
+    repatchBuffer.relinkCallerToTrampoline(returnAddress, CodeLocationLabel(stubInfo->stubRoutine->code().code()));
 }
 
 void JIT::patchGetByIdSelf(CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress)
@@ -657,7 +663,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
 
     // Track the stub we have created so that it will be deleted later.
-    stubInfo->stubRoutine = FINALIZE_CODE(
+    stubInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         patchBuffer,
         ("Basline JIT get_by_id array length stub for CodeBlock %p, return point %p",
          m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
@@ -666,7 +672,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
-    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubInfo->stubRoutine.code()));
+    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubInfo->stubRoutine->code().code()));
 
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_array_fail));
@@ -724,16 +730,20 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
         }
     }
     // Track the stub we have created so that it will be deleted later.
-    stubInfo->stubRoutine = FINALIZE_CODE(
-        patchBuffer,
-        ("Baseline JIT get_by_id proto stub for CodeBlock %p, return point %p",
-         m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-             stubInfo->patch.baseline.u.get.putResult).executableAddress()));
+    stubInfo->stubRoutine = createJITStubRoutine(
+        FINALIZE_CODE(
+            patchBuffer,
+            ("Baseline JIT get_by_id proto stub for CodeBlock %p, return point %p",
+             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
+                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+        *m_globalData,
+        m_codeBlock->ownerExecutable(),
+        needsStubLink);
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
-    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubInfo->stubRoutine.code()));
+    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubInfo->stubRoutine->code().code()));
 
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_proto_list));
@@ -776,7 +786,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     }
 
     // Use the patch information to link the failure cases back to the original slow case routine.
-    CodeLocationLabel lastProtoBegin = CodeLocationLabel(polymorphicStructures->list[currentIndex - 1].stubRoutine.code());
+    CodeLocationLabel lastProtoBegin = CodeLocationLabel(JITStubRoutine::asCodePtr(polymorphicStructures->list[currentIndex - 1].stubRoutine));
     if (!lastProtoBegin)
         lastProtoBegin = stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin);
 
@@ -785,18 +795,22 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
 
-    MacroAssemblerCodeRef stubCode = FINALIZE_CODE(
-        patchBuffer,
-        ("Baseline JIT get_by_id list stub for CodeBlock %p, return point %p",
-         m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-             stubInfo->patch.baseline.u.get.putResult).executableAddress()));
+    RefPtr<JITStubRoutine> stubCode = createJITStubRoutine(
+        FINALIZE_CODE(
+            patchBuffer,
+            ("Baseline JIT get_by_id list stub for CodeBlock %p, return point %p",
+             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
+                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+        *m_globalData,
+        m_codeBlock->ownerExecutable(),
+        needsStubLink);
 
     polymorphicStructures->list[currentIndex].set(*m_globalData, m_codeBlock->ownerExecutable(), stubCode, structure, isDirect);
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
-    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubCode.code()));
+    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubCode->code().code()));
 }
 
 void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, Structure* prototypeStructure, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, CallFrame* callFrame)
@@ -848,24 +862,28 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     }
 
     // Use the patch information to link the failure cases back to the original slow case routine.
-    CodeLocationLabel lastProtoBegin = CodeLocationLabel(prototypeStructures->list[currentIndex - 1].stubRoutine.code());
+    CodeLocationLabel lastProtoBegin = CodeLocationLabel(JITStubRoutine::asCodePtr(prototypeStructures->list[currentIndex - 1].stubRoutine));
     patchBuffer.link(failureCases1, lastProtoBegin);
     patchBuffer.link(failureCases2, lastProtoBegin);
 
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
 
-    MacroAssemblerCodeRef stubCode = FINALIZE_CODE(
-        patchBuffer,
-        ("Baseline JIT get_by_id proto list stub for CodeBlock %p, return point %p",
-         m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-             stubInfo->patch.baseline.u.get.putResult).executableAddress()));
+    RefPtr<JITStubRoutine> stubCode = createJITStubRoutine(
+        FINALIZE_CODE(
+            patchBuffer,
+            ("Baseline JIT get_by_id proto list stub for CodeBlock %p, return point %p",
+             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
+                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+        *m_globalData,
+        m_codeBlock->ownerExecutable(),
+        needsStubLink);
     prototypeStructures->list[currentIndex].set(*m_globalData, m_codeBlock->ownerExecutable(), stubCode, structure, prototypeStructure, isDirect);
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
-    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubCode.code()));
+    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubCode->code().code()));
 }
 
 void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, PolymorphicAccessStructureList* prototypeStructures, int currentIndex, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, CallFrame* callFrame)
@@ -921,18 +939,22 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     }
 
     // Use the patch information to link the failure cases back to the original slow case routine.
-    CodeLocationLabel lastProtoBegin = CodeLocationLabel(prototypeStructures->list[currentIndex - 1].stubRoutine.code());
+    CodeLocationLabel lastProtoBegin = CodeLocationLabel(JITStubRoutine::asCodePtr(prototypeStructures->list[currentIndex - 1].stubRoutine));
 
     patchBuffer.link(bucketsOfFail, lastProtoBegin);
 
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
 
-    CodeRef stubRoutine = FINALIZE_CODE(
-        patchBuffer,
-        ("Baseline JIT get_by_id chain list stub for CodeBlock %p, return point %p",
-         m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-             stubInfo->patch.baseline.u.get.putResult).executableAddress()));
+    RefPtr<JITStubRoutine> stubRoutine = createJITStubRoutine(
+        FINALIZE_CODE(
+            patchBuffer,
+            ("Baseline JIT get_by_id chain list stub for CodeBlock %p, return point %p",
+             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
+                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+        *m_globalData,
+        m_codeBlock->ownerExecutable(),
+        needsStubLink);
 
     // Track the stub we have created so that it will be deleted later.
     prototypeStructures->list[currentIndex].set(callFrame->globalData(), m_codeBlock->ownerExecutable(), stubRoutine, structure, chain, isDirect);
@@ -940,7 +962,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
-    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
+    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine->code().code()));
 }
 
 void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* structure, StructureChain* chain, size_t count, const Identifier& ident, const PropertySlot& slot, PropertyOffset cachedOffset, ReturnAddressPtr returnAddress, CallFrame* callFrame)
@@ -999,17 +1021,21 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
 
     // Track the stub we have created so that it will be deleted later.
-    CodeRef stubRoutine = FINALIZE_CODE(
-        patchBuffer,
-        ("Baseline JIT get_by_id chain stub for CodeBlock %p, return point %p",
-         m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-             stubInfo->patch.baseline.u.get.putResult).executableAddress()));
+    RefPtr<JITStubRoutine> stubRoutine = createJITStubRoutine(
+        FINALIZE_CODE(
+            patchBuffer,
+            ("Baseline JIT get_by_id chain stub for CodeBlock %p, return point %p",
+             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
+                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+        *m_globalData,
+        m_codeBlock->ownerExecutable(),
+        needsStubLink);
     stubInfo->stubRoutine = stubRoutine;
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
     RepatchBuffer repatchBuffer(m_codeBlock);
-    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine.code()));
+    repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine->code().code()));
 
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_proto_list));

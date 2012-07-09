@@ -42,7 +42,7 @@ PutByIdAccess PutByIdAccess::fromStructureStubInfo(
     case access_put_by_id_replace:
         result.m_type = Replace;
         result.m_oldStructure.copyFrom(stubInfo.u.putByIdReplace.baseObjectStructure);
-        result.m_stubRoutine = MacroAssemblerCodeRef::createSelfManagedCodeRef(initialSlowPath);
+        result.m_stubRoutine = JITStubRoutine::createSelfManagedRoutine(initialSlowPath);
         break;
         
     case access_put_by_id_transition_direct:

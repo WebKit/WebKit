@@ -109,6 +109,7 @@ SET(JavaScriptCore_SOURCES
     heap/Heap.cpp
     heap/HeapTimer.cpp
     heap/IncrementalSweeper.cpp
+    heap/JITStubRoutineSet.cpp
     heap/MachineStackMarker.cpp
     heap/MarkedAllocator.cpp
     heap/MarkedBlock.cpp
@@ -129,6 +130,7 @@ SET(JavaScriptCore_SOURCES
 
     jit/ExecutableAllocator.cpp
     jit/HostCallReturnValue.cpp
+    jit/GCAwareJITStubRoutine.cpp
     jit/JITArithmetic32_64.cpp
     jit/JITArithmetic.cpp
     jit/JITCall32_64.cpp
@@ -139,6 +141,7 @@ SET(JavaScriptCore_SOURCES
     jit/JITOpcodes.cpp
     jit/JITPropertyAccess32_64.cpp
     jit/JITPropertyAccess.cpp
+    jit/JITStubRoutine.cpp
     jit/JITStubs.cpp
     jit/ThunkGenerators.cpp
 

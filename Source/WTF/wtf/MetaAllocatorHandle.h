@@ -45,17 +45,27 @@ private:
 public:
     WTF_EXPORT_PRIVATE ~MetaAllocatorHandle();
     
-    void* start()
+    void* start() const
     {
         return m_start;
     }
     
-    void* end()
+    void* end() const
     {
-        return reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(m_start) + m_sizeInBytes);
+        return reinterpret_cast<void*>(endAsInteger());
+    }
+    
+    uintptr_t startAsInteger() const
+    {
+        return reinterpret_cast<uintptr_t>(m_start);
+    }
+    
+    uintptr_t endAsInteger() const
+    {
+        return startAsInteger() + m_sizeInBytes;
     }
         
-    size_t sizeInBytes()
+    size_t sizeInBytes() const
     {
         return m_sizeInBytes;
     }

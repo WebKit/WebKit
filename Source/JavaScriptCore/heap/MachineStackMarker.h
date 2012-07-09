@@ -28,8 +28,8 @@
 
 namespace JSC {
 
-    class Heap;
     class ConservativeRoots;
+    class Heap;
 
     class MachineThreads {
         WTF_MAKE_NONCOPYABLE(MachineThreads);

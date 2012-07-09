@@ -265,6 +265,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/BlockAllocator.h \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
+	Source/JavaScriptCore/heap/JITStubRoutineSet.cpp \
+	Source/JavaScriptCore/heap/JITStubRoutineSet.h \
 	Source/JavaScriptCore/heap/ListableHandler.h \
 	Source/JavaScriptCore/heap/Local.h \
 	Source/JavaScriptCore/heap/LocalScope.h \
@@ -354,6 +356,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/CompactJITCodeMap.h \
 	Source/JavaScriptCore/jit/ExecutableAllocator.cpp \
 	Source/JavaScriptCore/jit/ExecutableAllocator.h \
+	Source/JavaScriptCore/jit/GCAwareJITStubRoutine.cpp \
+	Source/JavaScriptCore/jit/GCAwareJITStubRoutine.h \
 	Source/JavaScriptCore/jit/HostCallReturnValue.cpp \
 	Source/JavaScriptCore/jit/HostCallReturnValue.h \
 	Source/JavaScriptCore/jit/JITArithmetic32_64.cpp \
@@ -373,6 +377,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITPropertyAccess32_64.cpp \
 	Source/JavaScriptCore/jit/JITPropertyAccess.cpp \
 	Source/JavaScriptCore/jit/JITStubCall.h \
+	Source/JavaScriptCore/jit/JITStubRoutine.cpp \
+	Source/JavaScriptCore/jit/JITStubRoutine.h \
 	Source/JavaScriptCore/jit/JITStubs.cpp \
 	Source/JavaScriptCore/jit/JITStubs.h \
 	Source/JavaScriptCore/jit/JITWriteBarrier.h \

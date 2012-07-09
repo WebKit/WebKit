@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,62 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConservativeRoots_h
-#define ConservativeRoots_h
+#ifndef JITStubRoutineSet_h
+#define JITStubRoutineSet_h
 
-#include "Heap.h"
-#include <wtf/OSAllocator.h>
+#include <wtf/Platform.h>
+
+#if ENABLE(JIT)
+
+#include "JITStubRoutine.h"
+#include <wtf/FastAllocBase.h>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
-class DFGCodeBlocks;
-class Heap;
-class JITStubRoutineSet;
-class JSCell;
+class GCAwareJITStubRoutine;
+class SlotVisitor;
 
-class ConservativeRoots {
+class JITStubRoutineSet {
+    WTF_MAKE_NONCOPYABLE(JITStubRoutineSet);
+    WTF_MAKE_FAST_ALLOCATED;
+    
 public:
-    ConservativeRoots(const MarkedBlockSet*, CopiedSpace*);
-    ~ConservativeRoots();
-
-    void add(void* begin, void* end);
-    void add(void* begin, void* end, JITStubRoutineSet&);
-    void add(void* begin, void* end, JITStubRoutineSet&, DFGCodeBlocks&);
+    JITStubRoutineSet();
+    ~JITStubRoutineSet();
     
-    size_t size();
-    JSCell** roots();
+    void add(GCAwareJITStubRoutine*);
 
+    void clearMarks();
+    
+    void mark(void* candidateAddress)
+    {
+        uintptr_t address = reinterpret_cast<uintptr_t>(candidateAddress);
+        if (!JITStubRoutine::passesFilter(address))
+            return;
+        
+        markSlow(address);
+    }
+    
+    void deleteUnmarkedJettisonedStubRoutines();
+    
+    void traceMarkedStubRoutines(SlotVisitor&);
+    
 private:
-    static const size_t inlineCapacity = 128;
-    static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
+    void markSlow(uintptr_t address);
     
-    template<typename MarkHook>
-    void genericAddPointer(void*, TinyBloomFilter, MarkHook&);
-
-    template<typename MarkHook>
-    void genericAddSpan(void*, void* end, MarkHook&);
-    
-    void grow();
-
-    JSCell** m_roots;
-    size_t m_size;
-    size_t m_capacity;
-    const MarkedBlockSet* m_blocks;
-    CopiedSpace* m_copiedSpace;
-    JSCell* m_inlineRoots[inlineCapacity];
+    HashMap<uintptr_t, GCAwareJITStubRoutine*> m_addressToRoutineMap;
+    Vector<GCAwareJITStubRoutine*> m_listOfRoutines;
 };
-
-inline size_t ConservativeRoots::size()
-{
-    return m_size;
-}
-
-inline JSCell** ConservativeRoots::roots()
-{
-    return m_roots;
-}
 
 } // namespace JSC
 
-#endif // ConservativeRoots_h
+#endif // ENABLE(JIT)
+
+#endif // JITStubRoutineSet_h
+

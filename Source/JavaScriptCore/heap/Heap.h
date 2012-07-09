@@ -26,6 +26,7 @@
 #include "DFGCodeBlocks.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
+#include "JITStubRoutineSet.h"
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
@@ -44,10 +45,12 @@ namespace JSC {
     class CodeBlock;
     class ExecutableBase;
     class GCActivityCallback;
+    class GCAwareJITStubRoutine;
     class GlobalCodeBlock;
     class Heap;
     class HeapRootVisitor;
     class IncrementalSweeper;
+    class JITStubRoutine;
     class JSCell;
     class JSGlobalData;
     class JSValue;
@@ -168,6 +171,8 @@ namespace JSC {
 
     private:
         friend class CodeBlock;
+        friend class GCAwareJITStubRoutine;
+        friend class JITStubRoutine;
         friend class LLIntOffsetsExtractor;
         friend class MarkedSpace;
         friend class MarkedAllocator;
@@ -229,6 +234,7 @@ namespace JSC {
         HandleSet m_handleSet;
         HandleStack m_handleStack;
         DFGCodeBlocks m_dfgCodeBlocks;
+        JITStubRoutineSet m_jitStubRoutines;
         FinalizerOwner m_finalizerOwner;
         
         bool m_isSafeToCollect;

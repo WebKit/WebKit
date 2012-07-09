@@ -73,9 +73,9 @@ void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
     conservativeRoots.add(begin(), end());
 }
 
-void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots, DFGCodeBlocks& dfgCodeBlocks)
+void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, DFGCodeBlocks& dfgCodeBlocks)
 {
-    conservativeRoots.add(begin(), end(), dfgCodeBlocks);
+    conservativeRoots.add(begin(), end(), jitStubRoutines, dfgCodeBlocks);
 }
 
 void RegisterFile::releaseExcessCapacity()

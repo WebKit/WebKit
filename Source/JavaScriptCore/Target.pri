@@ -83,6 +83,7 @@ SOURCES += \
     heap/Heap.cpp \
     heap/HeapTimer.cpp \
     heap/IncrementalSweeper.cpp \
+    heap/JITStubRoutineSet.cpp \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \
     heap/MarkedAllocator.cpp \
@@ -137,6 +138,7 @@ SOURCES += \
     jit/ExecutableAllocatorFixedVMPool.cpp \
     jit/ExecutableAllocator.cpp \
     jit/HostCallReturnValue.cpp \
+    jit/GCAwareJITStubRoutine.cpp \
     jit/JITArithmetic.cpp \
     jit/JITArithmetic32_64.cpp \
     jit/JITCall.cpp \
@@ -147,6 +149,7 @@ SOURCES += \
     jit/JITOpcodes32_64.cpp \
     jit/JITPropertyAccess.cpp \
     jit/JITPropertyAccess32_64.cpp \
+    jit/JITStubRoutine.cpp \
     jit/JITStubs.cpp \
     jit/ThunkGenerators.cpp \
     parser/Lexer.cpp \

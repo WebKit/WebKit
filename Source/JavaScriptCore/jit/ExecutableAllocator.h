@@ -77,6 +77,8 @@ namespace JSC {
 class JSGlobalData;
 void releaseExecutableMemory(JSGlobalData&);
 
+static const unsigned jitAllocationGranule = 32;
+
 inline size_t roundUpAllocationSize(size_t request, size_t granularity)
 {
     if ((std::numeric_limits<size_t>::max() - granularity) <= request)
@@ -99,6 +101,18 @@ typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 
 #if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 class DemandExecutableAllocator;
+#endif
+
+#if ENABLE(EXECUTABLE_ALLOCATOR_FIXED)
+#if CPU(ARM)
+static const size_t fixedExecutableMemoryPoolSize = 16 * 1024 * 1024;
+#elif CPU(X86_64)
+static const size_t fixedExecutableMemoryPoolSize = 1024 * 1024 * 1024;
+#else
+static const size_t fixedExecutableMemoryPoolSize = 32 * 1024 * 1024;
+#endif
+
+extern uintptr_t startOfFixedExecutableMemoryPool;
 #endif
 
 class ExecutableAllocator {

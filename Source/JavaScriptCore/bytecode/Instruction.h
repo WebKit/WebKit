@@ -29,6 +29,7 @@
 #ifndef Instruction_h
 #define Instruction_h
 
+#include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"
 #include "PropertySlot.h"
@@ -52,8 +53,6 @@ namespace JSC {
     struct ValueProfile;
 
 #if ENABLE(JIT)
-    typedef MacroAssemblerCodeRef PolymorphicAccessStructureListStubRoutineType;
-
     // Structure used by op_get_by_id_self_list and op_get_by_id_proto_list instruction to hold data off the main opcode stream.
     struct PolymorphicAccessStructureList {
         WTF_MAKE_FAST_ALLOCATED;
@@ -61,7 +60,7 @@ namespace JSC {
         struct PolymorphicStubInfo {
             bool isChain;
             bool isDirect;
-            PolymorphicAccessStructureListStubRoutineType stubRoutine;
+            RefPtr<JITStubRoutine> stubRoutine;
             WriteBarrier<Structure> base;
             union {
                 WriteBarrierBase<Structure> proto;
@@ -73,7 +72,7 @@ namespace JSC {
                 u.proto.clear();
             }
 
-            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, bool isDirect)
+            void set(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, bool isDirect)
             {
                 stubRoutine = _stubRoutine;
                 base.set(globalData, owner, _base);
@@ -82,7 +81,7 @@ namespace JSC {
                 this->isDirect = isDirect;
             }
             
-            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, Structure* _proto, bool isDirect)
+            void set(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, Structure* _proto, bool isDirect)
             {
                 stubRoutine = _stubRoutine;
                 base.set(globalData, owner, _base);
@@ -91,7 +90,7 @@ namespace JSC {
                 this->isDirect = isDirect;
             }
             
-            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, StructureChain* _chain, bool isDirect)
+            void set(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, StructureChain* _chain, bool isDirect)
             {
                 stubRoutine = _stubRoutine;
                 base.set(globalData, owner, _base);
@@ -105,17 +104,17 @@ namespace JSC {
         {
         }
         
-        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, bool isDirect)
+        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, bool isDirect)
         {
             list[0].set(globalData, owner, stubRoutine, firstBase, isDirect);
         }
 
-        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, Structure* firstProto, bool isDirect)
+        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, Structure* firstProto, bool isDirect)
         {
             list[0].set(globalData, owner, stubRoutine, firstBase, firstProto, isDirect);
         }
 
-        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, StructureChain* firstChain, bool isDirect)
+        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, StructureChain* firstChain, bool isDirect)
         {
             list[0].set(globalData, owner, stubRoutine, firstBase, firstChain, isDirect);
         }

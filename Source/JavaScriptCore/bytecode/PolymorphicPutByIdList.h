@@ -60,7 +60,7 @@ public:
         Structure* oldStructure,
         Structure* newStructure,
         StructureChain* chain,
-        MacroAssemblerCodeRef stubRoutine)
+        PassRefPtr<JITStubRoutine> stubRoutine)
     {
         PutByIdAccess result;
         result.m_type = Transition;
@@ -75,7 +75,7 @@ public:
         JSGlobalData& globalData,
         JSCell* owner,
         Structure* structure,
-        MacroAssemblerCodeRef stubRoutine)
+        PassRefPtr<JITStubRoutine> stubRoutine)
     {
         PutByIdAccess result;
         result.m_type = Replace;
@@ -123,7 +123,7 @@ public:
         return m_chain.get();
     }
     
-    MacroAssemblerCodeRef stubRoutine() const
+    PassRefPtr<JITStubRoutine> stubRoutine() const
     {
         ASSERT(isTransition() || isReplace());
         return m_stubRoutine;
@@ -136,7 +136,7 @@ private:
     WriteBarrier<Structure> m_oldStructure;
     WriteBarrier<Structure> m_newStructure;
     WriteBarrier<StructureChain> m_chain;
-    MacroAssemblerCodeRef m_stubRoutine;
+    RefPtr<JITStubRoutine> m_stubRoutine;
 };
 
 class PolymorphicPutByIdList {
@@ -161,7 +161,7 @@ public:
     
     MacroAssemblerCodePtr currentSlowPathTarget() const
     {
-        return m_list.last().stubRoutine().code();
+        return m_list.last().stubRoutine()->code().code();
     }
     
     void addAccess(const PutByIdAccess&);
