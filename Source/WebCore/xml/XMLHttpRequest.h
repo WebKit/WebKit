@@ -93,6 +93,7 @@ public:
     void send(Blob*, ExceptionCode&);
     void send(DOMFormData*, ExceptionCode&);
     void send(ArrayBuffer*, ExceptionCode&);
+    void send(ArrayBufferView*, ExceptionCode&);
     void abort();
     void setRequestHeader(const AtomicString& name, const String& value, ExceptionCode&);
     void overrideMimeType(const String& override);
@@ -160,6 +161,7 @@ private:
     bool responseIsXML() const;
 
     bool initSend(ExceptionCode&);
+    void sendBytesData(const void*, size_t, ExceptionCode&);
 
     String getRequestHeader(const AtomicString& name) const;
     void setRequestHeaderInternal(const AtomicString& name, const String& value);

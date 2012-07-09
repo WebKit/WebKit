@@ -39,6 +39,7 @@
 #include "HTMLDocument.h"
 #include "InspectorInstrumentation.h"
 #include "JSArrayBuffer.h"
+#include "JSArrayBufferView.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
 #include "JSDOMWindowCustom.h"
@@ -126,6 +127,8 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
             impl()->send(toDOMFormData(val), ec);
         else if (val.inherits(&JSArrayBuffer::s_info))
             impl()->send(toArrayBuffer(val), ec);
+        else if (val.inherits(&JSArrayBufferView::s_info))
+            impl()->send(toArrayBufferView(val), ec);
         else
             impl()->send(ustringToString(val.toString(exec)->value(exec)), ec);
     }

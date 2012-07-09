@@ -36,6 +36,7 @@
 #include "Frame.h"
 #include "InspectorInstrumentation.h"
 #include "V8ArrayBuffer.h"
+#include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
 #include "V8DOMFormData.h"
@@ -188,6 +189,11 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
             ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(object);
             ASSERT(arrayBuffer);
             xmlHttpRequest->send(arrayBuffer, ec);
+        } else if (V8ArrayBufferView::HasInstance(arg)) {
+            v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(arg);
+            ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(object);
+            ASSERT(arrayBufferView);
+            xmlHttpRequest->send(arrayBufferView, ec);
 #endif
         } else
             xmlHttpRequest->send(toWebCoreStringWithNullCheck(arg), ec);

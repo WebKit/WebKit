@@ -1,6 +1,6 @@
 <html>
 <body>
-Tests sending an array buffer view.
+Tests sending a data view.
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
@@ -18,8 +18,9 @@ function log(message)
 var array = new Uint8Array([0, 1, 2, 48, 49, 50, 128, 129, 130, 253, 254, 255]);
 var xhr = new XMLHttpRequest;
 xhr.open("POST", "resources/post-echo-as-ascii.cgi", false);
-xhr.send(array);
+xhr.send(new DataView(array.buffer));
 log(xhr.responseText);
 </script>
 </body>
 </html>
+

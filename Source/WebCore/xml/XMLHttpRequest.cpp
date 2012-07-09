@@ -38,6 +38,7 @@
 #include "HTMLDocument.h"
 #include "HTTPParsers.h"
 #include "HTTPValidation.h"
+#include "HistogramSupport.h"
 #include "InspectorInstrumentation.h"
 #include "MemoryCache.h"
 #include "ResourceError.h"
@@ -54,6 +55,7 @@
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
 #include <wtf/ArrayBuffer.h>
+#include <wtf/ArrayBufferView.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
@@ -69,6 +71,13 @@
 namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, xmlHttpRequestCounter, ("XMLHttpRequest"));
+
+// Histogram enum to see when we can deprecate xhr.send(ArrayBuffer).
+enum XMLHttpRequestSendArrayBufferOrView {
+    XMLHttpRequestSendArrayBuffer,
+    XMLHttpRequestSendArrayBufferView,
+    XMLHttpRequestSendArrayBufferOrViewMax,
+};
 
 struct XMLHttpRequestStaticData {
     WTF_MAKE_NONCOPYABLE(XMLHttpRequestStaticData); WTF_MAKE_FAST_ALLOCATED;
@@ -646,11 +655,28 @@ void XMLHttpRequest::send(DOMFormData* body, ExceptionCode& ec)
 
 void XMLHttpRequest::send(ArrayBuffer* body, ExceptionCode& ec)
 {
+    String consoleMessage("ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.");
+    scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
+
+    HistogramSupport::histogramEnumeration("WebCore.XHR.send.ArrayBufferOrView", XMLHttpRequestSendArrayBuffer, XMLHttpRequestSendArrayBufferOrViewMax);
+
+    sendBytesData(body->data(), body->byteLength(), ec);
+}
+
+void XMLHttpRequest::send(ArrayBufferView* body, ExceptionCode& ec)
+{
+    HistogramSupport::histogramEnumeration("WebCore.XHR.send.ArrayBufferOrView", XMLHttpRequestSendArrayBufferView, XMLHttpRequestSendArrayBufferOrViewMax);
+
+    sendBytesData(body->baseAddress(), body->byteLength(), ec);
+}
+
+void XMLHttpRequest::sendBytesData(const void* data, size_t length, ExceptionCode& ec)
+{
     if (!initSend(ec))
         return;
 
     if (m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
-        m_requestEntityBody = FormData::create(body->data(), body->byteLength());
+        m_requestEntityBody = FormData::create(data, length);
         if (m_upload)
             m_requestEntityBody->setAlwaysStream(true);
     }

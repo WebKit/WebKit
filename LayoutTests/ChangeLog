@@ -1,3 +1,15 @@
+2012-07-08  Kinuko Yasuda  <kinuko@chromium.org>
+
+        XHR.send should support ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=90536
+
+        Reviewed by Kenneth Russell.
+
+        * http/tests/xmlhttprequest/send-array-buffer-expected.txt:
+        * http/tests/xmlhttprequest/send-array-buffer.html:
+        * http/tests/xmlhttprequest/send-data-view-expected.txt: Added.
+        * http/tests/xmlhttprequest/send-data-view.html: Added.
+
 2012-07-08  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.

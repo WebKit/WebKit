@@ -1,3 +1,28 @@
+2012-07-08  Kinuko Yasuda  <kinuko@chromium.org>
+
+        XHR.send should support ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=90536
+
+        XHR.send should support ArrayBufferView according to the latest draft
+        and also eventually deprecate ArrayBuffer.
+        Spec: http://dvcs.w3.org/hg/xhr/raw-file/tip/Overview.html#dom-xmlhttprequest-send
+
+        Reviewed by Kenneth Russell.
+
+        Test: http/tests/xmlhttprequest/send-array-buffer.html
+              http/tests/xmlhttprequest/send-data-view.html
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::sendCallback):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore):
+        (WebCore::XMLHttpRequest::send):
+        * xml/XMLHttpRequest.h:
+        (XMLHttpRequest):
+        * xml/XMLHttpRequest.idl:
+
 2012-07-08  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py should not generate statements with no effect
