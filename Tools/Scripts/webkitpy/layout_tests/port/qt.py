@@ -140,6 +140,11 @@ class QtPort(WebKitPort):
             skipped_path.append('wk2')
         return skipped_path
 
+    def expectations_files(self):
+        # expectations_files() uses the directories listed in _search_paths reversed.
+        # e.g. qt -> qt-linux -> qt-4.8
+        return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self._search_paths()]))
+
     def setup_environ_for_server(self, server_name=None):
         clean_env = WebKitPort.setup_environ_for_server(self, server_name)
         clean_env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
