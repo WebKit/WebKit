@@ -416,8 +416,8 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             ASSERT(!(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) % sizeof(double)));
-            ASSERT(this->structure()->inlineCapacity() == inlineStorageCapacity);
-            ASSERT(this->structure()->totalStorageCapacity() == inlineStorageCapacity);
+            ASSERT(this->structure()->inlineCapacity() == static_cast<unsigned>(inlineStorageCapacity));
+            ASSERT(this->structure()->totalStorageCapacity() == static_cast<unsigned>(inlineStorageCapacity));
             ASSERT(classInfo());
         }
 

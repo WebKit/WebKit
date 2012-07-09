@@ -1,3 +1,10 @@
+2012-07-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        gcc build fix after r121925.
+
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::finishCreation):
+
 2012-07-08  Zoltan Herczeg  <zherczeg@webkit.org>
 
         [Qt][ARM] Implementing missing macro assembler instructions after r121925
