@@ -53,6 +53,7 @@ PassRefPtr<HTMLPropertiesCollection> HTMLPropertiesCollection::create(Node* item
 HTMLPropertiesCollection::HTMLPropertiesCollection(Node* itemNode)
     : HTMLCollection(itemNode, ItemProperties)
 {
+    m_cache.clear();
 }
 
 HTMLPropertiesCollection::~HTMLPropertiesCollection()

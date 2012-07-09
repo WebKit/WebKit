@@ -113,7 +113,7 @@ public:
     PassRefPtr<NodeList> tags(const String&);
 
     // Non-DOM API
-    bool hasNamedItem(const AtomicString& name) const;
+    virtual bool hasNamedItem(const AtomicString& name) const;
     void namedItems(const AtomicString& name, Vector<RefPtr<Node> >&) const;
     bool isEmpty() const
     {

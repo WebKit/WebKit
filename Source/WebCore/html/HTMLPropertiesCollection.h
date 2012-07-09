@@ -51,8 +51,8 @@ public:
 
     PassRefPtr<DOMStringList> names() const;
 
-    PassRefPtr<NodeList> namedItem(const String&) const;
-    bool hasNamedItem(const AtomicString&) const;
+    virtual PassRefPtr<NodeList> namedItem(const String&) const OVERRIDE;
+    virtual bool hasNamedItem(const AtomicString&) const OVERRIDE;
 
 private:
     HTMLPropertiesCollection(Node*);

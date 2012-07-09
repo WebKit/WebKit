@@ -1,3 +1,18 @@
+2012-07-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r122115 and some cleanups.
+
+        * html/HTMLCollection.h:
+        (HTMLCollection):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::properties):
+        * html/HTMLElement.h:
+        (HTMLElement):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::HTMLPropertiesCollection):
+        * html/HTMLPropertiesCollection.h:
+        (HTMLPropertiesCollection):
+
 2012-07-09  Dean Jackson  <dino@apple.com>
 
         Tiled drawing means some elements can disappear behind the page
