@@ -1,6 +1,15 @@
 2012-07-08  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=90741
+
+        fast/text-autosizing/simple-paragraph.html (reftest) started to fail after r121907.
+
+        * platform/chromium/TestExpectations: Add IMAGE on Mac.
+
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
         Add TIMEOUT for inspector/timeline/timeline-network-received-data.html.
 
         * platform/chromium/TestExpectations:

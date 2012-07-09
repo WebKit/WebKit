@@ -3731,3 +3731,6 @@ BUGWK90517 WIN : svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg = PASS 
 
 // webkitIsFullScreen does not have the correct value after an iframe exits fullscreen
 BUGWK90704 : fullscreen/exit-full-screen-iframe.html = TEXT
+
+// Started failing after r121907.
+BUGWK90741 MAC : Layout Test fast/text-autosizing/simple-paragraph.html = IMAGE
