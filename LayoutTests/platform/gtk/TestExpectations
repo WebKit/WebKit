@@ -249,9 +249,6 @@ BUGWKGTK SKIP : editing/shadow = TEXT
 // CSS Regions support not yet enabled.
 BUGWK57312 SKIP : fast/regions = TEXT
 
-// CSS Exclusions support not yet enabled.
-BUGWK57311 SKIP : fast/exclusions = TEXT
-
 // CSS Filters is disabled
 BUGWKGTK SKIP : css3/filters = TEXT
 

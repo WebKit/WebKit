@@ -1,3 +1,10 @@
+2012-07-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, unskipping CSS Exclusions tests for the Gtk port.
+        The feature is already enabled for this port and all the tests pass.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-09  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions] Implement NamedFlow::firstEmptyRegionIndex attribute
