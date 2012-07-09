@@ -1511,8 +1511,11 @@ void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elemen
 void InspectorDOMAgent::characterDataModified(CharacterData* characterData)
 {
     int id = m_documentNodeToIdMap.get(characterData);
-    if (!id)
+    if (!id) {
+        // Push text node if it is being created.
+        didInsertDOMNode(characterData);
         return;
+    }
     m_frontend->characterDataModified(id, characterData->data());
 }
 

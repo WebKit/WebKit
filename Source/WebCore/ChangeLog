@@ -1,3 +1,15 @@
+2012-07-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: inspector does not reflect newly created text nodes from contenteditable
+        https://bugs.webkit.org/show_bug.cgi?id=90779
+
+        Reviewed by Vsevolod Vlasov.
+
+        We need to report first text node as inserted, otherwise we fail to report character data modified on it.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::characterDataModified):
+
 2012-07-09  Andrey Kosyakov  <caseq@chromium.org>
 
         REGRESSION(r121980) Layout Test inspector/timeline/timeline-frames.html started to crash.

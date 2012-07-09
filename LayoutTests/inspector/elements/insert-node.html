@@ -39,6 +39,12 @@ function appendChildWithText()
     container.appendChild(child);
 }
 
+function insertFirstTextNode()
+{
+    var child3 = document.getElementById("child3");
+    child3.innerText = "First text";
+}
+
 function test()
 {
     var containerNode;
@@ -104,6 +110,27 @@ function test()
                 next();
             }
             InspectorTest.evaluateInPage("appendChildWithText()", callback);
+        },
+
+        function testInsertFirstTextNode(next)
+        {
+            function callback()
+            {
+                InspectorTest.addResult("======== Inserted first text node =========");
+                InspectorTest.expandElementsTree(callback2);
+            }
+
+            function callback2()
+            {
+                InspectorTest.dumpElementsTree(containerNode);
+                var newNode = InspectorTest.expandedNodeWithId("child3");
+                if (WebInspector.domAgent.nodeForId(newNode.firstChild.id))
+                    InspectorTest.addResult("Success: child text is bound");
+                else
+                    InspectorTest.addResult("Failed: child text is not bound");
+                next();
+            }
+            InspectorTest.evaluateInPage("insertFirstTextNode()", callback);
         }
     ]);
 }
