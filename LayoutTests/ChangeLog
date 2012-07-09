@@ -1,3 +1,10 @@
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Marking a storage/indexeddb/mozilla/key-requirements.html as flaky on WebKit Win.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-08  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip the new failing test.
