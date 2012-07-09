@@ -200,7 +200,6 @@ void InspectorTimelineAgent::didBeginFrame()
 
 void InspectorTimelineAgent::didCancelFrame()
 {
-    ASSERT(m_pendingFrameRecord);
     m_pendingFrameRecord.clear();
 }
 
@@ -544,6 +543,7 @@ void InspectorTimelineAgent::commitFrameRecord()
     if (!m_pendingFrameRecord)
         return;
     
+    m_pendingFrameRecord->setObject("data", InspectorObject::create());
     innerAddRecordToTimeline(m_pendingFrameRecord.release(), TimelineRecordType::BeginFrame, "");
 }
 

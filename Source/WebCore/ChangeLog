@@ -1,3 +1,17 @@
+2012-07-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        REGRESSION(r121980) Layout Test inspector/timeline/timeline-frames.html started to crash.
+        https://bugs.webkit.org/show_bug.cgi?id=90747
+
+        Reviewed by Pavel Feldman.
+
+        - consider didCancelFrame() call normal if there is no pending frame, remove assertion;
+        - always set empty data object for frame records;
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didCancelFrame):
+        (WebCore::InspectorTimelineAgent::commitFrameRecord):
+
 2012-07-09  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add FileContentView for FileSystemView

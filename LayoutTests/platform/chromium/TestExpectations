@@ -982,8 +982,6 @@ BUGWK75647 : http/tests/inspector/network/download.html = PASS TIMEOUT
 
 BUGWK78810 LINUX WIN DEBUG SLOW : inspector/debugger/script-formatter-console.html = PASS
 
-BUGWK90747 LINUX DEBUG : inspector/timeline/timeline-frames.html = CRASH
-
 // -----------------------------------------------------------------
 // Editing tests
 // -----------------------------------------------------------------

@@ -1,3 +1,14 @@
+2012-07-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        REGRESSION(r121980) Layout Test inspector/timeline/timeline-frames.html started to crash.
+        https://bugs.webkit.org/show_bug.cgi?id=90747
+
+        Reviewed by Pavel Feldman.
+
+        - remove CRASH expectations for timeline-frames.html
+
+        * platform/chromium/TestExpectations:
+
 2012-07-09  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add text file support for FileSystemAgent::requestFileContent
