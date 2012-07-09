@@ -1,3 +1,24 @@
+2012-07-08  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform-Mac] Derive LocaleMac.{cpp,h} and LocalizedDateMac.cpp from LocaleWin
+        https://bugs.webkit.org/show_bug.cgi?id=90752
+
+        Reviewed by Kent Tamura.
+
+        This patch is preparation of introducing LocaleMac class for localize date form.
+        This patch copies LocaleWin and LocalizedDateWin.cpp as below:
+         - LocaleMac.h from LocaleWin.h
+         - LocaleMac.mm from LocaliedDateMac.mm
+         - LocaliedDateMac.cpp from LocalizedDateWin.cpp
+
+        Due by git, diffs are appeared as new thing. I'll do svn copy at landing time.
+
+        No new tests. This patch doesn't change behavior.
+
+        * platform/text/mac/LocaleMac.h: Copied from platform/text/LocaleWin.h
+        * platform/text/mac/LocaleMac.mm: Copied from platform/text/mac/LocalizedDateMac.mm
+        * platform/text/mac/LocalizedDateMac.cpp: Copied from platform/text/LocalizedDateWin.cpp
+
 2012-07-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Introduce a build flag for low quality JPEG images
