@@ -107,7 +107,7 @@ public:
     bool mustHandleInternally() const { return m_mustHandleInternally; }
 
     void initializePlatformRequest(BlackBerry::Platform::NetworkRequest&, bool cookiesEnabled, bool isInitial = false, bool isRedirect = false) const;
-    void setForceDownload(bool forceDownload) { m_forceDownload = true; }
+    void setForceDownload(bool forceDownload) { m_forceDownload = forceDownload; }
     bool forceDownload() const { return m_forceDownload; }
     void setSuggestedSaveName(const String& name) { m_suggestedSaveName = name; }
     String suggestedSaveName() const { return m_suggestedSaveName; }
