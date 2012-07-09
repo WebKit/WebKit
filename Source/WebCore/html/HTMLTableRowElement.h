@@ -44,7 +44,7 @@ public:
     PassRefPtr<HTMLElement> insertCell(int index, ExceptionCode&);
     void deleteCell(int index, ExceptionCode&);
 
-    HTMLCollection* cells();
+    PassRefPtr<HTMLCollection> cells();
     void setCells(HTMLCollection *, ExceptionCode&);
 
 private:

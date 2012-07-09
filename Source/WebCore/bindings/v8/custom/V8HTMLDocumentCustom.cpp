@@ -84,7 +84,7 @@ v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocumen
     if (!htmlDocument->hasNamedItem(key.impl()) && !htmlDocument->hasExtraNamedItem(key.impl()))
         return v8::Handle<v8::Value>();
 
-    HTMLCollection* items = htmlDocument->documentNamedItems(key);
+    RefPtr<HTMLCollection> items = htmlDocument->documentNamedItems(key);
     if (items->isEmpty())
         return v8::Handle<v8::Value>();
 
@@ -97,7 +97,7 @@ v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocumen
         return toV8(node, isolate);
     }
 
-    return toV8(items, isolate);
+    return toV8(items.release(), isolate);
 }
 
 // HTMLDocument ----------------------------------------------------------------

@@ -97,7 +97,7 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
     return 0;
 }
 
-HTMLCollection* HTMLFieldSetElement::elements()
+PassRefPtr<HTMLCollection> HTMLFieldSetElement::elements()
 {
     return ensureCachedHTMLCollection(FormControls);
 }

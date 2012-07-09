@@ -47,7 +47,7 @@ public:
     static PassRefPtr<HTMLFormElement> create(const QualifiedName&, Document*);
     virtual ~HTMLFormElement();
 
-    HTMLCollection* elements();
+    PassRefPtr<HTMLCollection> elements();
     void getNamedElements(const AtomicString&, Vector<RefPtr<Node> >&);
 
     unsigned length() const;

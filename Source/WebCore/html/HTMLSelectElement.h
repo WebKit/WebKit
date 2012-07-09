@@ -62,8 +62,8 @@ public:
     String value() const;
     void setValue(const String&);
 
-    HTMLOptionsCollection* options();
-    HTMLCollection* selectedOptions();
+    PassRefPtr<HTMLOptionsCollection> options();
+    PassRefPtr<HTMLCollection> selectedOptions();
 
     void optionElementChildrenChanged();
 

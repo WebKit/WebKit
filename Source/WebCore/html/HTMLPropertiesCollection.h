@@ -42,7 +42,7 @@ class DOMStringList;
 
 class HTMLPropertiesCollection : public HTMLCollection {
 public:
-    static PassOwnPtr<HTMLPropertiesCollection> create(Node*);
+    static PassRefPtr<HTMLPropertiesCollection> create(Node*);
     virtual ~HTMLPropertiesCollection();
 
     unsigned length() const OVERRIDE;

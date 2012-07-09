@@ -101,13 +101,10 @@ private:
     const unsigned m_includeChildren : 1;
 };
 
-class HTMLCollection : public HTMLCollectionCacheBase {
+class HTMLCollection : public RefCounted<HTMLCollection>, public HTMLCollectionCacheBase {
 public:
-    static PassOwnPtr<HTMLCollection> create(Node* base, CollectionType);
+    static PassRefPtr<HTMLCollection> create(Node* base, CollectionType);
     virtual ~HTMLCollection();
-
-    void ref() { m_base->ref(); }
-    void deref() { m_base->deref(); }
 
     // DOM API
     unsigned length() const;
@@ -137,7 +134,7 @@ public:
         return item(0) && !item(1);
     }
 
-    Node* base() const { return m_base; }
+    Node* base() const { return m_base.get(); }
 
     void invalidateCache();
     void invalidateCacheIfNeeded() const;
@@ -154,7 +151,7 @@ private:
 
     bool isAcceptableElement(Element*) const;
 
-    Node* m_base;
+    RefPtr<Node> m_base;
 };
 
 } // namespace

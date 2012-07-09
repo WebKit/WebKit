@@ -59,8 +59,8 @@ public:
     PassRefPtr<HTMLElement> insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 
-    HTMLCollection* rows();
-    HTMLCollection* tBodies();
+    PassRefPtr<HTMLCollection> rows();
+    PassRefPtr<HTMLCollection> tBodies();
 
     String rules() const;
     String summary() const;

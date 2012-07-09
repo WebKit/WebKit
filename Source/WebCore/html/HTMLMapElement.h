@@ -41,7 +41,7 @@ public:
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
     
     HTMLImageElement* imageElement();
-    HTMLCollection* areas();
+    PassRefPtr<HTMLCollection> areas();
 
 private:
     HTMLMapElement(const QualifiedName&, Document*);

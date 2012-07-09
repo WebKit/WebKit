@@ -1,3 +1,147 @@
+2012-07-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make HTMLCollection RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=90414
+
+        Reviewed by Sam Weinig.
+
+        Make HTMLCollection ref counted and stop forwarding ref and deref to its owner (m_base)
+        so as to align its life time management to that of DynamicNodeList.
+
+        After this patch, each HTMLCollection is owned by JSC/V8 and m_cachedCollections in ElementRareData
+        and m_collection in Document merely hold raw pointers for the caching purpose. These raw pointers
+        are cleared when each HTMLCollection is destructed via corresponding removeCachedHTMLCollection's.
+
+        In the destructor of HTMLCollection, we use the CollectionType to decide whether base() is an element
+        or an document, and call the appropriate removeCachedHTMLCollection except for WindowNamedItems and
+        DocumentNamedItems. For those two types, we need to know the atomic string name associated with
+        the collection just like many DynamicNodeList to remove the cache, so we let HTMLNameCollection
+        directly call removeWindowNamedItemCache and removeDocumentNamedItemCache. We'll cleanup this mess in
+        a follow up patch using a nice class hierarchy and virtual destructors.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::openSearchDescriptionURL):
+        (WebCore):
+        (WebCore::Document::cachedCollection):
+        (WebCore::Document::removeCachedHTMLCollection):
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::plugins):
+        (WebCore::Document::objects):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        (WebCore::Document::all):
+        (WebCore::Document::windowNamedItems):
+        (WebCore::Document::documentNamedItems):
+        (WebCore::Document::removeWindowNamedItemCache):
+        (WebCore::Document::removeDocumentNamedItemCache):
+        * dom/Document.h:
+        (Document):
+        * dom/Element.cpp:
+        (WebCore::Element::ensureCachedHTMLCollection):
+        (WebCore::ElementRareData::ensureCachedHTMLCollection):
+        (WebCore::Element::removeCachedHTMLCollection):
+        (WebCore):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::cachedHTMLCollection):
+        (WebCore::ElementRareData::removeCachedHTMLCollection):
+        * html/CollectionType.h:
+        (WebCore): Since WindowNamedItems is not a part of UnnamedDocumentCachedType, we shouldn't addd 1.
+        (WebCore::isUnnamedDocumentCachedType):
+        (WebCore::isNodeCollectionType):
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::create):
+        * html/HTMLAllCollection.h:
+        (HTMLAllCollection):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::create):
+        (WebCore::HTMLCollection::~HTMLCollection):
+        (WebCore::HTMLCollection::itemAfter):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollectionCacheBase::HTMLCollectionCacheBase):
+        (HTMLCollection):
+        (WebCore::HTMLCollection::base):
+        * html/HTMLDataListElement.cpp:
+        (WebCore::HTMLDataListElement::options):
+        * html/HTMLDataListElement.h:
+        (HTMLDataListElement):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::children):
+        (WebCore::HTMLElement::properties):
+        * html/HTMLElement.h:
+        (HTMLElement):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::elements):
+        * html/HTMLFieldSetElement.h:
+        (HTMLFieldSetElement):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::create):
+        * html/HTMLFormCollection.h:
+        (HTMLFormCollection):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::elements):
+        * html/HTMLFormElement.h:
+        (HTMLFormElement):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+        (WebCore::HTMLMapElement::areas):
+        * html/HTMLMapElement.h:
+        (HTMLMapElement):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection):
+        (WebCore::HTMLNameCollection::~HTMLNameCollection):
+        (WebCore):
+        * html/HTMLNameCollection.h:
+        (WebCore::HTMLNameCollection::create):
+        (HTMLNameCollection):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::create):
+        * html/HTMLOptionsCollection.h:
+        (HTMLOptionsCollection):
+        * html/HTMLPropertiesCollection.h:
+        (HTMLPropertiesCollection):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::selectedOptions):
+        (WebCore::HTMLSelectElement::options):
+        * html/HTMLSelectElement.h:
+        (HTMLSelectElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::rows):
+        (WebCore::HTMLTableElement::tBodies):
+        * html/HTMLTableElement.h:
+        (HTMLTableElement):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::insertCell):
+        (WebCore::HTMLTableRowElement::deleteCell):
+        (WebCore::HTMLTableRowElement::cells):
+        * html/HTMLTableRowElement.h:
+        (HTMLTableRowElement):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::create):
+        * html/HTMLTableRowsCollection.h:
+        (HTMLTableRowsCollection):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::insertRow):
+        (WebCore::HTMLTableSectionElement::deleteRow):
+        (WebCore::HTMLTableSectionElement::rows):
+        * html/HTMLTableSectionElement.h:
+        (HTMLTableSectionElement):
+
 2012-07-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: unindent line ending block upon { hit.

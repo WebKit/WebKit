@@ -51,7 +51,7 @@ public:
     String vAlign() const;
     void setVAlign(const String&);
 
-    HTMLCollection* rows();
+    PassRefPtr<HTMLCollection> rows();
 
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document*);

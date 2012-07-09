@@ -157,9 +157,9 @@ HTMLTableRowsCollection::HTMLTableRowsCollection(Element* table)
     ASSERT(table->hasTagName(tableTag));
 }
 
-PassOwnPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Element* table)
+PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Element* table)
 {
-    return adoptPtr(new HTMLTableRowsCollection(table));
+    return adoptRef(new HTMLTableRowsCollection(table));
 }
 
 Element* HTMLTableRowsCollection::itemAfter(Node* previous) const

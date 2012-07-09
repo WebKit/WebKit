@@ -42,9 +42,9 @@ HTMLFormCollection::HTMLFormCollection(Element* base)
     ASSERT(base->hasTagName(formTag) || base->hasTagName(fieldsetTag));
 }
 
-PassOwnPtr<HTMLFormCollection> HTMLFormCollection::create(Element* base)
+PassRefPtr<HTMLFormCollection> HTMLFormCollection::create(Element* base)
 {
-    return adoptPtr(new HTMLFormCollection(base));
+    return adoptRef(new HTMLFormCollection(base));
 }
 
 HTMLFormCollection::~HTMLFormCollection()

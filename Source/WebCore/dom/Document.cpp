@@ -565,6 +565,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     static int docID = 0;
     m_docID = docID++;
     
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_collections); i++)
+        m_collections[i] = 0;
+
     InspectorCounters::incrementCounter(InspectorCounters::DocumentCounter);
 }
 
@@ -4580,7 +4583,7 @@ KURL Document::openSearchDescriptionURL()
     if (!head())
         return KURL();
 
-    HTMLCollection* children = head()->children();
+    RefPtr<HTMLCollection> children = head()->children();
     for (unsigned i = 0; Node* child = children->item(i); i++) {
         if (!child->hasTagName(linkTag))
             continue;
@@ -4698,81 +4701,113 @@ bool Document::hasSVGRootNode() const
 }
 #endif
 
-HTMLCollection* Document::cachedCollection(CollectionType type)
+// FIXME: This caching mechanism should be merged that of DynamicNodeList in NodeRareData.
+PassRefPtr<HTMLCollection> Document::cachedCollection(CollectionType type)
 {
     ASSERT(static_cast<unsigned>(type) < NumUnnamedDocumentCachedTypes);
-    if (!m_collections[type])
-        m_collections[type] = HTMLCollection::create(this, type);
-    return m_collections[type].get();
+    if (m_collections[type])
+        return m_collections[type];
+
+    RefPtr<HTMLCollection> collection;
+    if (type == DocAll)
+        collection = HTMLAllCollection::create(this);
+    else
+        collection = HTMLCollection::create(this, type);
+    m_collections[type] = collection.get();
+
+    return collection.release();
 }
 
-HTMLCollection* Document::images()
+void Document::removeCachedHTMLCollection(HTMLCollection* collection, CollectionType type)
+{
+    ASSERT_UNUSED(collection, m_collections[type] == collection);
+    m_collections[type] = 0;
+}
+
+PassRefPtr<HTMLCollection> Document::images()
 {
     return cachedCollection(DocImages);
 }
 
-HTMLCollection* Document::applets()
+PassRefPtr<HTMLCollection> Document::applets()
 {
     return cachedCollection(DocApplets);
 }
 
-HTMLCollection* Document::embeds()
+PassRefPtr<HTMLCollection> Document::embeds()
 {
     return cachedCollection(DocEmbeds);
 }
 
-HTMLCollection* Document::plugins()
+PassRefPtr<HTMLCollection> Document::plugins()
 {
     // This is an alias for embeds() required for the JS DOM bindings.
     return cachedCollection(DocEmbeds);
 }
 
-HTMLCollection* Document::objects()
+PassRefPtr<HTMLCollection> Document::objects()
 {
     return cachedCollection(DocObjects);
 }
 
-HTMLCollection* Document::scripts()
+PassRefPtr<HTMLCollection> Document::scripts()
 {
     return cachedCollection(DocScripts);
 }
 
-HTMLCollection* Document::links()
+PassRefPtr<HTMLCollection> Document::links()
 {
     return cachedCollection(DocLinks);
 }
 
-HTMLCollection* Document::forms()
+PassRefPtr<HTMLCollection> Document::forms()
 {
     return cachedCollection(DocForms);
 }
 
-HTMLCollection* Document::anchors()
+PassRefPtr<HTMLCollection> Document::anchors()
 {
     return cachedCollection(DocAnchors);
 }
 
-HTMLAllCollection* Document::all()
+PassRefPtr<HTMLCollection> Document::all()
 {
-    if (!m_collections[DocAll])
-        m_collections[DocAll] = HTMLAllCollection::create(this);
-    return static_cast<HTMLAllCollection*>(m_collections[DocAll].get());
+    return cachedCollection(DocAll);
 }
 
-HTMLCollection* Document::windowNamedItems(const AtomicString& name)
+PassRefPtr<HTMLCollection> Document::windowNamedItems(const AtomicString& name)
 {
-    OwnPtr<HTMLNameCollection>& collection = m_windowNamedItemCollections.add(name.impl(), nullptr).iterator->second;
-    if (!collection)
-        collection = HTMLNameCollection::create(this, WindowNamedItems, name);
-    return collection.get();
+    NamedCollectionMap::AddResult result = m_windowNamedItemCollections.add(name, 0);
+    if (!result.isNewEntry)
+        return result.iterator->second;
+
+    RefPtr<HTMLNameCollection> collection = HTMLNameCollection::create(this, WindowNamedItems, name);
+    result.iterator->second = collection.get();
+    return collection.release();
 }
 
-HTMLCollection* Document::documentNamedItems(const AtomicString& name)
+PassRefPtr<HTMLCollection> Document::documentNamedItems(const AtomicString& name)
 {
-    OwnPtr<HTMLNameCollection>& collection = m_documentNamedItemCollections.add(name.impl(), nullptr).iterator->second;
-    if (!collection)
-        collection = HTMLNameCollection::create(this, DocumentNamedItems, name);
-    return collection.get();
+    NamedCollectionMap::AddResult result = m_documentNamedItemCollections.add(name, 0);
+    if (!result.isNewEntry)
+        return result.iterator->second;
+
+    RefPtr<HTMLNameCollection> collection = HTMLNameCollection::create(this, DocumentNamedItems, name);
+    result.iterator->second = collection.get();
+    return collection.release();
+}
+
+// FIXME: This caching mechanism should be merged that of DynamicNodeList in NodeRareData.
+void Document::removeWindowNamedItemCache(HTMLCollection* collection, const AtomicString& name)
+{
+    ASSERT_UNUSED(collection, m_windowNamedItemCollections.get(name) == collection);
+    m_windowNamedItemCollections.remove(name);
+}
+
+void Document::removeDocumentNamedItemCache(HTMLCollection* collection, const AtomicString& name)
+{
+    ASSERT_UNUSED(collection, m_documentNamedItemCollections.get(name) == collection);
+    m_documentNamedItemCollections.remove(name);
 }
 
 void Document::finishedParsing()

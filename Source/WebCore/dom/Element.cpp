@@ -2042,40 +2042,51 @@ void Element::updateExtraNamedItemRegistration(const AtomicString& oldId, const 
         static_cast<HTMLDocument*>(document())->addExtraNamedItem(newId);
 }
 
-HTMLCollection* Element::ensureCachedHTMLCollection(CollectionType type)
+PassRefPtr<HTMLCollection> Element::ensureCachedHTMLCollection(CollectionType type)
 {
     return ensureElementRareData()->ensureCachedHTMLCollection(this, type);
 }
 
-HTMLCollection* ElementRareData::ensureCachedHTMLCollection(Element* element, CollectionType type)
+PassRefPtr<HTMLCollection> ElementRareData::ensureCachedHTMLCollection(Element* element, CollectionType type)
 {
-    if (!m_cachedCollections)
+    if (!m_cachedCollections) {
         m_cachedCollections = adoptPtr(new CachedHTMLCollectionArray);
-    
-    OwnPtr<HTMLCollection>& collection = (*m_cachedCollections)[type - FirstNodeCollectionType];
-    if (!collection) {
-        if (type == TableRows) {
-            ASSERT(element->hasTagName(tableTag));
-            collection = HTMLTableRowsCollection::create(element);
-        } else if (type == SelectOptions) {
-            ASSERT(element->hasTagName(selectTag));
-            collection = HTMLOptionsCollection::create(element);
-        } else if (type == FormControls) {
-            ASSERT(element->hasTagName(formTag) || element->hasTagName(fieldsetTag));
-            collection = HTMLFormCollection::create(element);
-#if ENABLE(MICRODATA)
-        } else if (type == ItemProperties) {
-            collection = HTMLPropertiesCollection::create(element);
-#endif
-        } else
-            collection = HTMLCollection::create(element, type);
+        for (unsigned i = 0; i < NumNodeCollectionTypes; i++)
+            (*m_cachedCollections)[i] = 0;
     }
-    return collection.get();
+
+    if (HTMLCollection* collection = (*m_cachedCollections)[type - FirstNodeCollectionType])
+        return collection;
+
+    RefPtr<HTMLCollection> collection;
+    if (type == TableRows) {
+        ASSERT(element->hasTagName(tableTag));
+        collection = HTMLTableRowsCollection::create(element);
+    } else if (type == SelectOptions) {
+        ASSERT(element->hasTagName(selectTag));
+        collection = HTMLOptionsCollection::create(element);
+    } else if (type == FormControls) {
+        ASSERT(element->hasTagName(formTag) || element->hasTagName(fieldsetTag));
+        collection = HTMLFormCollection::create(element);
+#if ENABLE(MICRODATA)
+    } else if (type == ItemProperties) {
+        collection = HTMLPropertiesCollection::create(element);
+#endif
+    } else
+        collection = HTMLCollection::create(element, type);
+    (*m_cachedCollections)[type - FirstNodeCollectionType] = collection.get();
+    return collection.release();
 }
 
 HTMLCollection* Element::cachedHTMLCollection(CollectionType type)
 {
     return hasRareData() ? elementRareData()->cachedHTMLCollection(type) : 0;
+}
+
+void Element::removeCachedHTMLCollection(HTMLCollection* collection, CollectionType type)
+{
+    ASSERT(hasRareData());
+    elementRareData()->removeCachedHTMLCollection(collection, type);
 }
 
 IntSize Element::savedLayerScrollOffset() const

@@ -62,7 +62,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyNa
     JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(asObject(slotBase));
     HTMLDocument* document = static_cast<HTMLDocument*>(thisObj->impl());
 
-    HTMLCollection* collection = document->documentNamedItems(propertyNameToAtomicString(propertyName));
+    RefPtr<HTMLCollection> collection = document->documentNamedItems(propertyNameToAtomicString(propertyName));
 
     if (collection->isEmpty())
         return jsUndefined();
@@ -77,7 +77,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyNa
         return toJS(exec, thisObj->globalObject(), node);
     } 
 
-    return toJS(exec, thisObj->globalObject(), collection);
+    return toJS(exec, thisObj->globalObject(), WTF::getPtr(collection));
 }
 
 // Custom attributes

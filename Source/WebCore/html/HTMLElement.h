@@ -46,7 +46,7 @@ class HTMLElement : public StyledElement {
 public:
     static PassRefPtr<HTMLElement> create(const QualifiedName& tagName, Document*);
 
-    HTMLCollection* children();
+    PassRefPtr<HTMLCollection> children();
 
     virtual String title() const;
 

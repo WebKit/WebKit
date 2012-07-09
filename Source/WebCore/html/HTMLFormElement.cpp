@@ -535,7 +535,7 @@ void HTMLFormElement::removeImgElement(HTMLImageElement* e)
     removeFromVector(m_imageElements, e);
 }
 
-HTMLCollection* HTMLFormElement::elements()
+PassRefPtr<HTMLCollection> HTMLFormElement::elements()
 {
     return ensureCachedHTMLCollection(FormControls);
 }

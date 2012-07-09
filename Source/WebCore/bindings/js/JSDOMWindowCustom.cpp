@@ -116,10 +116,10 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, PropertyName p
     ASSERT(document);
     ASSERT(document->isHTMLDocument());
 
-    HTMLCollection* collection = document->windowNamedItems(propertyNameToAtomicString(propertyName));
+    RefPtr<HTMLCollection> collection = document->windowNamedItems(propertyNameToAtomicString(propertyName));
     if (collection->hasExactlyOneItem())
         return toJS(exec, thisObj, collection->item(0));
-    return toJS(exec, thisObj, collection);
+    return toJS(exec, thisObj, WTF::getPtr(collection));
 }
 
 bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

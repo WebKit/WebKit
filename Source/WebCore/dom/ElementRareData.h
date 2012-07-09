@@ -44,22 +44,27 @@ public:
     using NodeRareData::needsFocusAppearanceUpdateSoonAfterAttach;
     using NodeRareData::setNeedsFocusAppearanceUpdateSoonAfterAttach;
 
-    typedef FixedArray<OwnPtr<HTMLCollection>, NumNodeCollectionTypes> CachedHTMLCollectionArray;
-
     bool hasCachedHTMLCollections() const
     {
         return m_cachedCollections;
     }
 
-    HTMLCollection* ensureCachedHTMLCollection(Element*, CollectionType);
+    PassRefPtr<HTMLCollection> ensureCachedHTMLCollection(Element*, CollectionType);
     HTMLCollection* cachedHTMLCollection(CollectionType type)
     {
         if (!m_cachedCollections)
             return 0;
 
-        return (*m_cachedCollections)[type - FirstNodeCollectionType].get();
+        return (*m_cachedCollections)[type - FirstNodeCollectionType];
+    }
+    void removeCachedHTMLCollection(HTMLCollection* collection, CollectionType type)
+    {
+        ASSERT(m_cachedCollections);
+        ASSERT_UNUSED(collection, (*m_cachedCollections)[type - FirstNodeCollectionType] == collection);
+        (*m_cachedCollections)[type - FirstNodeCollectionType] = 0;
     }
 
+    typedef FixedArray<HTMLCollection*, NumNodeCollectionTypes> CachedHTMLCollectionArray;
     OwnPtr<CachedHTMLCollectionArray> m_cachedCollections;
 
     LayoutSize m_minimumSizeForResizing;

@@ -35,7 +35,7 @@ typedef int ExceptionCode;
 
 class HTMLOptionsCollection : public HTMLCollection {
 public:
-    static PassOwnPtr<HTMLOptionsCollection> create(Element*);
+    static PassRefPtr<HTMLOptionsCollection> create(Element*);
 
     void add(PassRefPtr<HTMLOptionElement>, ExceptionCode&);
     void add(PassRefPtr<HTMLOptionElement>, int index, ExceptionCode&);

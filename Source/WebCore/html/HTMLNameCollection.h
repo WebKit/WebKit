@@ -33,10 +33,12 @@ class Document;
 
 class HTMLNameCollection : public HTMLCollection {
 public:
-    static PassOwnPtr<HTMLNameCollection> create(Document* document, CollectionType type, const AtomicString& name)
+    static PassRefPtr<HTMLNameCollection> create(Document* document, CollectionType type, const AtomicString& name)
     {
-        return adoptPtr(new HTMLNameCollection(document, type, name));
+        return adoptRef(new HTMLNameCollection(document, type, name));
     }
+
+    ~HTMLNameCollection();
 
 private:
     HTMLNameCollection(Document*, CollectionType, const AtomicString& name);

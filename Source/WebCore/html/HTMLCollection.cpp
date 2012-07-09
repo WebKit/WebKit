@@ -77,13 +77,21 @@ HTMLCollection::HTMLCollection(Node* base, CollectionType type)
     ASSERT(m_base);
 }
 
-PassOwnPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
+PassRefPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
 {
-    return adoptPtr(new HTMLCollection(base, type));
+    return adoptRef(new HTMLCollection(base, type));
 }
 
 HTMLCollection::~HTMLCollection()
 {
+    if (isUnnamedDocumentCachedType(type())) {
+        ASSERT(base()->isDocumentNode());
+        static_cast<Document*>(base())->removeCachedHTMLCollection(this, type());
+    } else if (isNodeCollectionType(type())) {
+        ASSERT(base()->isElementNode());
+        toElement(base())->removeCachedHTMLCollection(this, type());
+    } else // HTMLNameCollection removes cache by itself.
+        ASSERT(type() == WindowNamedItems || type() == DocumentNamedItems);
 }
 
 void HTMLCollection::invalidateCacheIfNeeded() const
@@ -169,9 +177,9 @@ Element* HTMLCollection::itemAfter(Node* previous) const
     if (!previous)
         current = m_base->firstChild();
     else
-        current = nextNodeOrSibling(m_base, previous, includeChildren());
+        current = nextNodeOrSibling(base(), previous, includeChildren());
 
-    for (; current; current = nextNodeOrSibling(m_base, current, includeChildren())) {
+    for (; current; current = nextNodeOrSibling(base(), current, includeChildren())) {
         if (!current->isElementNode())
             continue;
         Element* element = static_cast<Element*>(current);

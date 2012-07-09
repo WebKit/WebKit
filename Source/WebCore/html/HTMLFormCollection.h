@@ -36,7 +36,7 @@ class QualifiedName;
 
 class HTMLFormCollection : public HTMLCollection {
 public:
-    static PassOwnPtr<HTMLFormCollection> create(Element*);
+    static PassRefPtr<HTMLFormCollection> create(Element*);
 
     virtual ~HTMLFormCollection();
 

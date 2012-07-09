@@ -38,7 +38,7 @@ public:
     static PassRefPtr<HTMLFieldSetElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     HTMLLegendElement* legend() const;
 
-    HTMLCollection* elements();
+    PassRefPtr<HTMLCollection> elements();
 
     const Vector<FormAssociatedElement*>& associatedElements() const;
     unsigned length() const;

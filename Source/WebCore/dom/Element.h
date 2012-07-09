@@ -312,6 +312,8 @@ public:
     void didModifyAttribute(const Attribute&);
     void didRemoveAttribute(const QualifiedName&);
 
+    void removeCachedHTMLCollection(HTMLCollection*, CollectionType);
+
     LayoutSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const LayoutSize&);
 
@@ -447,7 +449,7 @@ protected:
     virtual bool shouldRegisterAsNamedItem() const { return false; }
     virtual bool shouldRegisterAsExtraNamedItem() const { return false; }
 
-    HTMLCollection* ensureCachedHTMLCollection(CollectionType);
+    PassRefPtr<HTMLCollection> ensureCachedHTMLCollection(CollectionType);
     HTMLCollection* cachedHTMLCollection(CollectionType);
 
 private:

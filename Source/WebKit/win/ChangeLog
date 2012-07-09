@@ -1,3 +1,14 @@
+2012-07-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make HTMLCollection RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=90414
+
+        Reviewed by Sam Weinig.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::forms):
+        (DOMHTMLSelectElement::options):
+
 2012-07-03  Mihai Balan  <mibalan@adobe.com>
 
         [CSS Regions] Enabling regions on Windows lead to crash-on-launch for WebKit.exe

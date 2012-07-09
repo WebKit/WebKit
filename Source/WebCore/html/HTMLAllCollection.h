@@ -32,7 +32,7 @@ namespace WebCore {
 
 class HTMLAllCollection : public HTMLCollection {
 public:
-    static PassOwnPtr<HTMLAllCollection> create(Document*);
+    static PassRefPtr<HTMLAllCollection> create(Document*);
     virtual ~HTMLAllCollection();
 
     Node* namedItemWithIndex(const AtomicString& name, unsigned index) const;
