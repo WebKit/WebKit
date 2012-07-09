@@ -1,3 +1,16 @@
+2012-07-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reduce the amount of flashing when falling into tiled layers
+        https://bugs.webkit.org/show_bug.cgi?id=90808
+
+        Reviewed by Dean Jackson.
+
+        Implement +prefetchedTiles so that CATiledLayer renders more
+        tiles at a time, reducing the appearance of flashing.
+
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (+[WebTiledLayer prefetchedTiles]):
+
 2012-07-09  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         SurroundingText should not advance character iterators if they are at end.

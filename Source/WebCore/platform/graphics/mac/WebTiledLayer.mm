@@ -50,6 +50,11 @@ using namespace WebCore;
     return YES;
 }
 
++ (unsigned int)prefetchedTiles
+{
+    return 2;
+}
+
 // Disable default animations
 - (id<CAAction>)actionForKey:(NSString *)key
 {
