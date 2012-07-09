@@ -234,6 +234,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_site_specific_quirks(settings, TRUE);
     g_assert(webkit_settings_get_enable_site_specific_quirks(settings));
 
+    // By default, page cache is enabled.
+    g_assert(webkit_settings_get_enable_page_cache(settings));
+    webkit_settings_set_enable_page_cache(settings, FALSE);
+    g_assert(!webkit_settings_get_enable_page_cache(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 

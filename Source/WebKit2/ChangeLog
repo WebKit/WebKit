@@ -1,3 +1,21 @@
+2012-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add a setting to enable/disable page cache to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=90773
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_page_cache):
+        (webkit_settings_set_enable_page_cache):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2012-07-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122107.

@@ -355,6 +355,13 @@ WEBKIT_API void
 webkit_settings_set_enable_site_specific_quirks                (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_page_cache                          (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_page_cache                          (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

@@ -113,7 +113,8 @@ enum {
     PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
     PROP_MEDIA_PLAYBACK_ALLOWS_INLINE,
     PROP_DRAW_COMPOSITING_INDICATORS,
-    PROP_ENABLE_SITE_SPECIFIC_QUIRKS
+    PROP_ENABLE_SITE_SPECIFIC_QUIRKS,
+    PROP_ENABLE_PAGE_CACHE
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -240,6 +241,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_ENABLE_SITE_SPECIFIC_QUIRKS:
         webkit_settings_set_enable_site_specific_quirks(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ENABLE_PAGE_CACHE:
+        webkit_settings_set_enable_page_cache(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -371,6 +375,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_SITE_SPECIFIC_QUIRKS:
         g_value_set_boolean(value, webkit_settings_get_enable_site_specific_quirks(settings));
+        break;
+    case PROP_ENABLE_PAGE_CACHE:
+        g_value_set_boolean(value, webkit_settings_get_enable_page_cache(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -965,7 +972,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-     * WebKitSettings::enable-site-specific-quirks:
+     * WebKitSettings:enable-site-specific-quirks:
      *
      * Whether to turn on site-specific quirks. Turning this on will
      * tell WebKit to use some site-specific workarounds for
@@ -980,6 +987,27 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          _("Enable Site Specific Quirks"),
                                                          _("Enables the site-specific compatibility workarounds"),
                                                          FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-page-cache:
+     *
+     * Enable or disable the page cache. Disabling the page cache is
+     * generally only useful for special circumstances like low-memory
+     * scenarios or special purpose applications like static HTML
+     * viewers. This setting only controls the Page Cache, this cache
+     * is different than the disk-based or memory-based traditional
+     * resource caches, its point is to make going back and forth
+     * between pages much faster. For details about the different types
+     * of caches and their purposes see:
+     * http://webkit.org/blog/427/webkit-page-cache-i-the-basics/
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ENABLE_PAGE_CACHE,
+                                    g_param_spec_boolean("enable-page-cache",
+                                                         _("Enable page cache"),
+                                                         _("Whether the page cache should be used"),
+                                                         TRUE,
                                                          readWriteConstructParamFlags));
 
     g_type_class_add_private(klass, sizeof(WebKitSettingsPrivate));
@@ -2491,4 +2519,39 @@ void webkit_settings_set_enable_site_specific_quirks(WebKitSettings* settings, g
 
     WKPreferencesSetNeedsSiteSpecificQuirks(priv->preferences.get(), enabled);
     g_object_notify(G_OBJECT(settings), "enable-site-specific-quirks");
+}
+
+/**
+ * webkit_settings_get_enable_page_cache:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-page-cache property.
+ *
+ * Returns: %TRUE if page cache enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_enable_page_cache(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetPageCacheEnabled(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_page_cache:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-page-cache property.
+ */
+void webkit_settings_set_enable_page_cache(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetPageCacheEnabled(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetPageCacheEnabled(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-page-cache");
 }
