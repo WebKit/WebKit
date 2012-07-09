@@ -1,3 +1,17 @@
+2012-07-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Use soup_cookie_jar_is_persistent() to set whether cookie is a session one or not
+        https://bugs.webkit.org/show_bug.cgi?id=90769
+
+        Reviewed by Gustavo Noronha Silva.
+
+        It's currently set to false, because there were no API to know
+        whether cookies were persistent or not. Now that we bumped libsoup
+        requirements, we can use soup_cookie_jar_is_persistent().
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::getRawCookies):
+
 2012-07-09  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Add text file support for FileSystemAgent::requestFileContent

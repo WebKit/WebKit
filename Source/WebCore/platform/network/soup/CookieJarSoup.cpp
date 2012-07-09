@@ -162,11 +162,9 @@ bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& ra
         GOwnPtr<SoupCookie> cookie(static_cast<SoupCookie*>(iter->data));
         if (!soup_cookie_applies_to_uri(cookie.get(), uri.get()))
             continue;
-        // FIXME: we are currently passing false always for session because there's no API to know
-        // whether SoupCookieJar is persistent or not. We could probably add soup_cookie_jar_is_persistent().
         rawCookies.append(Cookie(String::fromUTF8(cookie->name), String::fromUTF8(cookie->value), String::fromUTF8(cookie->domain),
                                  String::fromUTF8(cookie->path), static_cast<double>(soup_date_to_time_t(cookie->expires)) * 1000,
-                                 cookie->http_only, cookie->secure, false));
+                                 cookie->http_only, cookie->secure, soup_cookie_jar_is_persistent(jar)));
     }
 
     return true;
