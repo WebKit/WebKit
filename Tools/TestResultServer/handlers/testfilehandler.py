@@ -203,7 +203,10 @@ class GetFile(webapp.RequestHandler):
         else:
             json, date = self._get_file_content(master, builder, test_type, name)
 
-        self._serve_json(_replace_jsonp_callback(json, callback_name), date)
+        if json:
+            json = _replace_jsonp_callback(json, callback_name)
+
+        self._serve_json(json, date)
 
 
 class Upload(webapp.RequestHandler):
