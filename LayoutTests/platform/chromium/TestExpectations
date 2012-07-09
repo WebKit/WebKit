@@ -3734,3 +3734,6 @@ BUGWK90704 : fullscreen/exit-full-screen-iframe.html = TEXT
 
 // Started failing after r121907.
 BUGWK90741 MAC : Layout Test fast/text-autosizing/simple-paragraph.html = IMAGE
+
+// Started flaky after r121629.
+BUGWK90743 WIN : storage/indexeddb/dont-commit-on-blocked.html = PASS CRASH

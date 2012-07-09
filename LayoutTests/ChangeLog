@@ -1,5 +1,11 @@
 2012-07-08  Hayato Ito  <hayato@chromium.org>
 
+        Unreviewed gardening. marking a storage/indexeddb/cursor-delete.html as a flaky crasher after r121629.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-08  Hayato Ito  <hayato@chromium.org>
+
         Unreviewed gardening.
         Rebaseline after r121917.
 
