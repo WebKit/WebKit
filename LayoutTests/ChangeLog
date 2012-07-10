@@ -1,3 +1,11 @@
+2012-07-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding a text expectation for the
+        fast/js/global-constructors.html test. The test is failing because
+        of the in-progress removal of vendor prefix from DOM MutationObservers.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, remove unnecessary expectations.

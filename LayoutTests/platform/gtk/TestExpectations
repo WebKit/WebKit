@@ -1247,6 +1247,8 @@ BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame
 BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions-rtl.html = IMAGE
 BUGWK90770 : fast/regions/webkit-flow-renderer-layer.html = IMAGE
 
+BUGWK89231 : fast/js/global-constructors.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
