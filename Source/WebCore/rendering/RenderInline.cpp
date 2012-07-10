@@ -648,18 +648,26 @@ namespace {
 class AbsoluteQuadsGeneratorContext {
 public:
     AbsoluteQuadsGeneratorContext(const RenderInline* renderer, Vector<FloatQuad>& quads, bool* wasFixed)
-        : m_renderer(renderer)
-        , m_quads(quads)
-        , m_wasFixed(wasFixed) { }
+        : m_quads(quads)
+        , m_wasFixed(wasFixed)
+        , m_geometryMap()
+    {
+        RenderObject* root = renderer->parent();
+        while (root && root->parent())
+            root = root->parent();
+
+        if (root)
+            m_geometryMap.pushMappingsToAncestor(renderer, toRenderBoxModelObject(root));
+    }
 
     void operator()(const FloatRect& rect)
     {
-        m_quads.append(m_renderer->localToAbsoluteQuad(rect));
+        m_quads.append(m_geometryMap.absoluteRect(rect));
     }
 private:
-    const RenderInline* m_renderer;
     Vector<FloatQuad>& m_quads;
     bool* m_wasFixed;
+    RenderGeometryMap m_geometryMap;
 };
 
 } // unnamed namespace
