@@ -1,3 +1,13 @@
+2012-07-09  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock requestPointerLock rejects locking an element not in a document.
+        https://bugs.webkit.org/show_bug.cgi?id=90821
+
+        Reviewed by Adrienne Walker.
+
+        * pointer-lock/lock-element-not-in-dom-expected.txt: Added.
+        * pointer-lock/lock-element-not-in-dom.html: Added.
+
 2012-07-09  Eric Seidel  <eric@webkit.org>
 
         document.write of scripts that also document.write sometimes writes async

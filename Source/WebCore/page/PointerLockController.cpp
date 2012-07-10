@@ -51,6 +51,11 @@ void PointerLockController::requestPointerLock(Element* target, PassRefPtr<VoidC
     if (!target)
         return;
 
+    if (!target->inDocument()) {
+        enqueueEvent(eventNames().webkitpointerlockerrorEvent, target);
+        return;
+    }
+
     if (isLocked()) {
         // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
         enqueueEvent(eventNames().webkitpointerlockchangeEvent, target);
