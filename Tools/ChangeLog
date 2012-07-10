@@ -1,3 +1,16 @@
+2012-07-10  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt][NRWT] Enable cascaded TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=89108
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.expectations_files):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest._assert_expectations_files):
+        (QtPortTest.test_expectations_files):
+
 2012-07-10  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] WebKit DRT and WTR fail to build due to undefined reference to WTF::MD5::*
