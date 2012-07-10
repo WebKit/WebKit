@@ -26,6 +26,8 @@
 #ifndef ExecutionCounter_h
 #define ExecutionCounter_h
 
+#include "JSGlobalObject.h"
+#include "Options.h"
 #include <wtf/SimpleStats.h>
 
 namespace JSC {
@@ -42,6 +44,18 @@ public:
     const char* status() const;
     static double applyMemoryUsageHeuristics(int32_t value, CodeBlock*);
     static int32_t applyMemoryUsageHeuristicsAndConvertToInt(int32_t value, CodeBlock*);
+    template<typename T>
+    static T clippedThreshold(JSGlobalObject* globalObject, T threshold)
+    {
+        int32_t maxThreshold;
+        if (Options::randomizeExecutionCountsBetweenCheckpoints())
+            maxThreshold = globalObject->weakRandomInteger() % Options::maximumExecutionCountsBetweenCheckpoints();
+        else
+            maxThreshold = Options::maximumExecutionCountsBetweenCheckpoints();
+        if (threshold > maxThreshold)
+            threshold = maxThreshold;
+        return threshold;
+    }
 
     static int32_t formattedTotalCount(float value)
     {

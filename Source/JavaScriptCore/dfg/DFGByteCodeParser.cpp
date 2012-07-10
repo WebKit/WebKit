@@ -871,7 +871,7 @@ private:
         // care about when the outcome of the division is not an integer, which
         // is what the special fast case counter tells us.
         
-        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSpecialFastCase(m_currentIndex)
+        if (!m_inlineStackTop->m_profiledBlock->couldTakeSpecialFastCase(m_currentIndex)
             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)
             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             return nodeIndex;
