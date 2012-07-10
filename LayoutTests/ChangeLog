@@ -1,3 +1,9 @@
+2012-07-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][ARM] Unreviewed gardening, skip failing/crashing tests to try to make the bot green.
+
+        * platform/qt-arm/TestExpectations:
+
 2012-07-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] simplify panel size check in extensions-panel.html
