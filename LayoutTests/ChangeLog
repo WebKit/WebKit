@@ -1,5 +1,9 @@
 2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
 
+        Unreviewed gardening. fast/js/dfg-cross-global-object-inline-array-literal.html is racey (and thus flaky).
+
+2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
+
         Unreviewed gardening. Adding another flaky test to bug 90469 (storage tests).
 
         * platform/chromium/TestExpectations:
