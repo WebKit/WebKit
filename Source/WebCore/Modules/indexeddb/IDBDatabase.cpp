@@ -207,7 +207,8 @@ PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionConte
 PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> prpStoreNames, const String& modeString, ExceptionCode& ec)
 {
     RefPtr<DOMStringList> storeNames = prpStoreNames;
-    if (!storeNames || storeNames->isEmpty()) {
+    ASSERT(storeNames.get());
+    if (storeNames->isEmpty()) {
         ec = IDBDatabaseException::IDB_INVALID_ACCESS_ERR;
         return 0;
     }

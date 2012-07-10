@@ -1,3 +1,17 @@
+2012-07-09  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: A null or undefined storeNames argument to IDBDatabase::transaction() should be coerced to string
+        https://bugs.webkit.org/show_bug.cgi?id=90474
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/resources/transaction-basics.js:
+        (testInvalidMode):
+        (testDegenerateNames.request.onsuccess):
+        (testDegenerateNames.verifyDegenerateNames):
+        (testDegenerateNames):
+        * storage/indexeddb/transaction-basics-expected.txt:
+
 2012-07-09  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock requestPointerLock rejects locking an element not in a document.

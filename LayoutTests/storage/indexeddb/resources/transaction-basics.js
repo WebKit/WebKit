@@ -280,7 +280,32 @@ function testInvalidMode()
     debug("");
     debug("Verify that specifying an invalid mode raises an exception");
     evalAndExpectException("db.transaction(['storeName'], 'lsakjdf')", "IDBDatabaseException.TYPE_ERR", "'TypeError'");
-    finishJSTest();
+    testDegenerateNames();
+}
+
+function testDegenerateNames()
+{
+    debug("");
+    debug("Test that null and undefined are treated as strings");
+
+    evalAndExpectException("db.transaction(null)", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
+    evalAndExpectException("db.transaction(undefined)", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
+
+    request = evalAndLog("db.setVersion('funny names')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function () {
+        var trans = request.result;
+        evalAndLog("db.createObjectStore('null')");
+        evalAndLog("db.createObjectStore('undefined')");
+        trans.oncomplete = verifyDegenerateNames;
+    };
+    function verifyDegenerateNames() {
+        shouldNotThrow("transaction = db.transaction(null)");
+        shouldBeNonNull("transaction.objectStore('null')");
+        shouldNotThrow("transaction = db.transaction(undefined)");
+        shouldBeNonNull("transaction.objectStore('undefined')");
+        finishJSTest();
+    }
 }
 
 test();

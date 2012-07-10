@@ -202,6 +202,23 @@ Expecting exception from db.transaction(['storeName'], 'lsakjdf')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TYPE_ERR
 PASS ename is 'TypeError'
+
+Test that null and undefined are treated as strings
+Expecting exception from db.transaction(null)
+PASS Exception was thrown.
+PASS code is DOMException.NOT_FOUND_ERR
+PASS ename is 'NotFoundError'
+Expecting exception from db.transaction(undefined)
+PASS Exception was thrown.
+PASS code is DOMException.NOT_FOUND_ERR
+PASS ename is 'NotFoundError'
+db.setVersion('funny names')
+db.createObjectStore('null')
+db.createObjectStore('undefined')
+PASS transaction = db.transaction(null) did not throw exception.
+PASS transaction.objectStore('null') is non-null.
+PASS transaction = db.transaction(undefined) did not throw exception.
+PASS transaction.objectStore('undefined') is non-null.
 PASS successfullyParsed is true
 
 TEST COMPLETE
