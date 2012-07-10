@@ -1,3 +1,16 @@
+2012-07-10  Adam Barth  <abarth@webkit.org>
+
+        bugs.webkit.org has mixed content
+        https://bugs.webkit.org/show_bug.cgi?id=90907
+
+        Reviewed by Eric Seidel.
+
+        Now that we detect http XMLHttpRequests as mixed content, I've noticed
+        that we're loading committers.py over http instead of https.  For
+        better security, we should use https.
+
+        * committers-autocomplete.js:
+
 2012-05-30  Ojan Vafai  <ojan@chromium.org>
 
         Only include the image checksum error in pretty-diffs for -expected.png files.
