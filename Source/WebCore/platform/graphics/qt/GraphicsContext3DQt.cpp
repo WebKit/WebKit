@@ -94,6 +94,13 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #endif
 }
 
+#if !USE(OPENGL_ES_2)
+void GraphicsContext3D::releaseShaderCompiler()
+{
+    notImplemented();
+}
+#endif
+
 GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, HostWindow* hostWindow)
     : m_context(context)
     , m_hostWindow(hostWindow)

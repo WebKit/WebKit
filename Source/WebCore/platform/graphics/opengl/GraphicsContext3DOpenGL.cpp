@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +35,12 @@
 #include "IntSize.h"
 #include "NotImplemented.h"
 
+#include <algorithm>
+#include <cstring>
+#include <wtf/MainThread.h>
+#include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
+
 #if PLATFORM(MAC)
 #include <OpenGL/gl.h>
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(QT)
@@ -45,6 +52,24 @@ namespace WebCore {
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
     ::glReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, pixels);
+}
+
+void GraphicsContext3D::validateAttributes()
+{
+    Extensions3D* extensions = getExtensions();
+    validateDepthStencil("GL_EXT_packed_depth_stencil");
+    if (m_attrs.antialias) {
+        bool isValidVendor = true;
+        // Currently in Mac we only turn on antialias if vendor is NVIDIA,
+        // or if ATI and on 10.7.2 and above.
+        const char* vendor = reinterpret_cast<const char*>(::glGetString(GL_VENDOR));
+        if (!vendor || (!std::strstr(vendor, "NVIDIA") && !(std::strstr(vendor, "ATI") && systemAllowsMultisamplingOnATICards())))
+            isValidVendor = false;
+        if (!isValidVendor || !extensions->supports("GL_ANGLE_framebuffer_multisample") || isGLES2Compliant())
+            m_attrs.antialias = false;
+        else
+            extensions->ensureEnabled("GL_ANGLE_framebuffer_multisample");
+    }
 }
 
 bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
@@ -254,6 +279,49 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 {
     makeContextCurrent();
     ::glClearDepth(depth);
+}
+
+bool GraphicsContext3D::systemAllowsMultisamplingOnATICards() const
+{
+#if PLATFORM(MAC)
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+    return true;
+#else
+    ASSERT(isMainThread());
+    static SInt32 version;
+    if (!version) {
+        if (Gestalt(gestaltSystemVersion, &version) != noErr)
+            return false;
+    }
+    // See https://bugs.webkit.org/show_bug.cgi?id=77922 for more details
+    return version >= 0x1072;
+#endif // SNOW_LEOPARD and LION
+#else
+    return false;
+#endif // PLATFORM(MAC)
+}
+
+Extensions3D* GraphicsContext3D::getExtensions()
+{
+    if (!m_extensions)
+        m_extensions = adoptPtr(new Extensions3DOpenGL(this));
+    return m_extensions.get();
+}
+
+void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
+{
+    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
+    // all previous rendering calls should be done before reading pixels.
+    makeContextCurrent();
+    ::glFlush();
+    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
+        resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+        ::glFlush();
+    }
+    ::glReadPixels(x, y, width, height, format, type, data);
+    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 }
 
 }

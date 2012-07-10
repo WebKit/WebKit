@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2012 ChangSeok Oh <shivamidow@gmail.com>
+ * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,93 +31,86 @@
 #if USE(3D_GRAPHICS)
 
 #include "GraphicsContext3D.h"
-
-#include "Extensions3DOpenGL.h"
+#include "Extensions3DOpenGLES.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "LayerWebKitThread.h"
 #include "NotImplemented.h"
-
-#if PLATFORM(GTK) || PLATFORM(QT)
-#include "OpenGLShims.h"
-#endif
+#include "OpenGLESShims.h"
 
 namespace WebCore {
 
-void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
+void GraphicsContext3D::releaseShaderCompiler()
 {
-    const int totalBytes = m_currentWidth * m_currentHeight * 4;
-    ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-    for (int i = 0; i < totalBytes; i += 4)
-        std::swap(pixels[i], pixels[i + 2]); // Convert to BGRA.
+    makeContextCurrent();
+    ::glReleaseShaderCompiler();
 }
 
-bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
+void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
 {
-    const int width = size.width();
-    const int height = size.height();
-    GLuint colorFormat = 0, pixelDataType = 0;
-    if (m_attrs.alpha) {
-        m_internalColorFormat = GL_RGBA;
-        colorFormat = GL_RGBA;
-        pixelDataType = GL_UNSIGNED_BYTE;
-    } else {
-        m_internalColorFormat = GL_RGB;
-        colorFormat = GL_RGB;
-        pixelDataType = GL_UNSIGNED_SHORT_5_6_5;
+    // Currently only format=RGBA, type=UNSIGNED_BYTE is supported by the specification: http://www.khronos.org/registry/webgl/specs/latest/
+    // If this ever changes, this code will need to be updated.
+
+    // Calculate the strides of our data and canvas
+    unsigned int formatSize = 4; // RGBA UNSIGNED_BYTE
+    unsigned int dataStride = width * formatSize;
+    unsigned int canvasStride = m_currentWidth * formatSize;
+
+    // If we are using a pack alignment of 8, then we need to align our strides to 8 byte boundaries
+    // See: http://en.wikipedia.org/wiki/Data_structure_alignment (computing padding)
+    int packAlignment;
+    glGetIntegerv(GL_PACK_ALIGNMENT, &packAlignment);
+    if (8 == packAlignment) {
+        dataStride = (dataStride + 7) & ~7;
+        canvasStride = (canvasStride + 7) & ~7;
     }
 
-    // We don't allow the logic where stencil is required and depth is not.
-    // See GraphicsContext3D::validateAttributes.
-    bool supportPackedDepthStencilBuffer = (m_attrs.stencil || m_attrs.depth) && getExtensions()->supports("GL_OES_packed_depth_stencil");
+    unsigned char* canvasData = new unsigned char[canvasStride * m_currentHeight];
+    ::glReadPixels(0, 0, m_currentWidth, m_currentHeight, format, type, canvasData);
 
-    // Resize regular FBO.
-    bool mustRestoreFBO = false;
-    if (m_boundFBO != m_fbo) {
-        mustRestoreFBO = true;
-        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+    // If we failed to read our canvas data due to a GL error, don't continue
+    int error = glGetError();
+    if (GL_NO_ERROR != error) {
+        synthesizeGLError(error);
+        return;
     }
 
-    ::glBindTexture(GL_TEXTURE_2D, m_texture);
-    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, pixelDataType, 0);
-    ::glFramebufferTexture2DEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
+    // Clear our data in case some of it lies outside the bounds of our canvas
+    // TODO: don't do this if all of the data lies inside the bounds of the canvas
+    memset(data, 0, dataStride * height);
 
-    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
-    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-    ::glBindTexture(GL_TEXTURE_2D, 0);
+    // Calculate the intersection of our canvas and data bounds
+    IntRect dataRect(x, y, width, height);
+    IntRect canvasRect(0, 0, m_currentWidth, m_currentHeight);
+    IntRect nonZeroDataRect = intersection(dataRect, canvasRect);
 
-    // We don't support antialiasing yet. See GraphicsContext3D::validateAttributes.
-    ASSERT(!m_attrs.antialias);
-
-    if (m_attrs.stencil || m_attrs.depth) {
-        // Use a 24 bit depth buffer where we know we have it.
-        if (supportPackedDepthStencilBuffer) {
-            ::glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
-            ::glTexImage2D(GL_TEXTURE_2D, 0, GraphicsContext3D::DEPTH_STENCIL, width, height, 0, GraphicsContext3D::DEPTH_STENCIL, GraphicsContext3D::UNSIGNED_INT_24_8, 0);
-            if (m_attrs.stencil)
-                ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
-            if (m_attrs.depth)
-                ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
-            ::glBindTexture(GL_TEXTURE_2D, 0);
-        } else {
-            if (m_attrs.stencil) {
-                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
-                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
-                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
-            }
-            if (m_attrs.depth) {
-                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
-                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
-                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
-            }
-            ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, 0);
-        }
-    }
-    if (glCheckFramebufferStatusEXT(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
-        // FIXME: cleanup
-        notImplemented();
+    unsigned int xDataOffset = x < 0 ? -x * formatSize : 0;
+    unsigned int yDataOffset = y < 0 ? -y * dataStride : 0;
+    unsigned int xCanvasOffset = nonZeroDataRect.x() * formatSize;
+    unsigned int yCanvasOffset = nonZeroDataRect.y() * canvasStride;
+    unsigned char* dst = static_cast<unsigned char*>(data) + xDataOffset + yDataOffset;
+    unsigned char* src = canvasData + xCanvasOffset + yCanvasOffset;
+    for (int row = 0; row < nonZeroDataRect.height(); row++) {
+        memcpy(dst, src, nonZeroDataRect.width() * formatSize);
+        dst += dataStride;
+        src += canvasStride;
     }
 
-    return mustRestoreFBO;
+    delete [] canvasData;
+    ::glReadPixels(x, y, width, height, format, type, data);
+
+    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+}
+
+void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
+{
+    ::glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    int totalBytes = width * height * 4;
+    if (isGLES2Compliant()) {
+        for (int i = 0; i < totalBytes; i += 4)
+            std::swap(pixels[i], pixels[i + 2]); // Convert to BGRA.
+    }
 }
 
 void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
@@ -156,6 +151,17 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
     return true;
 }
 
+void GraphicsContext3D::validateAttributes()
+{
+    validateDepthStencil("GL_OES_packed_depth_stencil");
+
+    if (m_attrs.antialias) {
+        Extensions3D* extensions = getExtensions();
+        if (!extensions->supports("GL_IMG_multisampled_render_to_texture"))
+            m_attrs.antialias = false;
+    }
+}
+
 void GraphicsContext3D::depthRange(GC3Dclampf zNear, GC3Dclampf zFar)
 {
     makeContextCurrent();
@@ -168,6 +174,19 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
     ::glClearDepthf(depth);
 }
 
-} // namespace WebCore
+
+Extensions3D* GraphicsContext3D::getExtensions()
+{
+    if (!m_extensions)
+        m_extensions = adoptPtr(new Extensions3DOpenGLES(this));
+    return m_extensions.get();
+}
+
+bool GraphicsContext3D::systemAllowsMultisamplingOnATICards() const
+{
+    return false; // not applicable
+}
+
+}
 
 #endif // USE(3D_GRAPHICS)

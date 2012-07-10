@@ -3808,6 +3808,7 @@
             'platform/graphics/mac/WebTiledLayer.h',
             'platform/graphics/mac/WebTiledLayer.mm',
             'platform/graphics/opengl/Extensions3DOpenGL.cpp',
+            'platform/graphics/opengl/Extensions3DOpenGLCommon.cpp',
             'platform/graphics/opengl/Extensions3DOpenGL.h',
             'platform/graphics/opengl/GraphicsContext3DOpenGL.cpp',
             'platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp',

@@ -3960,16 +3960,30 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         platform/graphics/GraphicsContext3D.cpp \
         platform/graphics/gpu/DrawingBuffer.cpp \
         platform/graphics/gpu/qt/DrawingBufferQt.cpp \
-        platform/graphics/opengl/Extensions3DOpenGL.cpp \
         platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp \
+        platform/graphics/opengl/Extensions3DOpenGLCommon.cpp \
         platform/graphics/qt/GraphicsContext3DQt.cpp \
         platform/graphics/texmap/TextureMapperGL.cpp \
         platform/graphics/texmap/TextureMapperShaderManager.cpp
 
-    contains(QT_CONFIG, opengles2) {
-        SOURCES += platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
-    } else {
-        SOURCES += platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+    INCLUDEPATH += $$PWD/platform/graphics/gpu
+
+    contains(QT_CONFIG, opengl) | contains(QT_CONFIG, opengles2) {
+        !contains(QT_CONFIG, opengles2) {
+            SOURCES += \
+               platform/graphics/opengl/GraphicsContext3DOpenGL.cpp \
+               platform/graphics/opengl/Extensions3DOpenGL.cpp
+        } else {
+            SOURCES += \
+               platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp \
+               platform/graphics/opengl/Extensions3DOpenGLES.cpp
+        }
+
+        HEADERS += platform/graphics/opengl/Extensions3DOpenGL.h
+
+        SOURCES += \
+            platform/graphics/opengl/Extensions3DOpenGLCommon.cpp \
+            platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
     }
 
     ANGLE_DIR = $$replace(PWD, "WebCore", "ThirdParty/ANGLE")

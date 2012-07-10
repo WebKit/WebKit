@@ -1,3 +1,94 @@
+2012-07-10  Joshua Netterfield  <jnetterfield@rim.com>
+        Make GC3D and E3D more maintainable for GLES platforms
+        https://bugs.webkit.org/show_bug.cgi?id=90567
+
+        Reviewed by Rob Buis.
+
+        This patch cleans up code for WebGL on OpenGLES platforms which use 
+        GraphicsContext3DOpenGL* and Extensions3DOpenGL*. Although
+        GraphicsContext3DOpenGL was already split into GraphicsContext3DOpenGL,
+        GraphicsContext3DOpenGLCommon, and  GraphicsContext3DOpenGLES, this patch
+        is an attempt to refactor this code in a way that will help BlackBerry and
+        other teams support WebGL on mobile platforms with as little use of
+        "#IF USE(OPENGL_ES_2)" in common code as possible. Also included is the
+        separation of Extensions3DOpenGL into Extensions3DOpenGLCommon,
+        Extensions3DOpenGL, and Extensions3DOpenGLES as well as the introduction
+        of OpenGLESShims.
+
+        This patch is created in large part by Jonathan Feldstein.
+
+        No new tests: no new behaviour.
+
+        * PlatformBlackBerry.cmake: Recognize BlackBerry as OPENGL ES, add new files to build
+        * Target.pri: Add new Extensions3DOpenGL* to WebGL builds
+        * platform/graphics/GraphicsContext3D.h: Add validateDepthStencil, make systemAllowsMultisamplingOnATICards a a member function.
+        (WebCore):
+        * platform/graphics/OpenGLESShims.h: Added.
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp: Move code to Extensions3DOpenGLCommon where possible
+        (WebCore::Extensions3DOpenGL::Extensions3DOpenGL): Reflect that it is now inherits Extensions3DCommon
+        (WebCore::Extensions3DOpenGL::supportsExtension): Contains OpenGL specific code from supports
+        (WebCore):
+        (WebCore::Extensions3DOpenGL::getExtensions): Returns a list of extensions
+        * platform/graphics/opengl/Extensions3DOpenGL.h: Remove functions now in Extensions3DOpenGLCommon
+        (WebCore):
+        (Extensions3DOpenGL):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp: Added.
+        (WebCore):
+        (WebCore::Extensions3DOpenGLCommon::Extensions3DOpenGLCommon):
+        (WebCore::Extensions3DOpenGLCommon::~Extensions3DOpenGLCommon):
+        (WebCore::Extensions3DOpenGLCommon::supports):
+        (WebCore::Extensions3DOpenGLCommon::ensureEnabled):
+        (WebCore::Extensions3DOpenGLCommon::isEnabled):
+        (WebCore::Extensions3DOpenGLCommon::getGraphicsResetStatusARB):
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE): Existed before, but did nothing. Now does what is says it does.
+        (WebCore::Extensions3DOpenGLCommon::initializeAvailableExtensions): Moved from Extensions3DOpenGL::supports
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h: Copied from Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h.
+        (WebCore):
+        (Extensions3DOpenGLCommon):
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp: Added.
+        (WebCore):
+        (WebCore::Extensions3DOpenGLES::Extensions3DOpenGLES):
+        (WebCore::Extensions3DOpenGLES::~Extensions3DOpenGLES):
+        (WebCore::Extensions3DOpenGLES::framebufferTexture2DMultisampleIMG):
+        (WebCore::Extensions3DOpenGLES::renderbufferStorageMultisampleIMG):
+        (WebCore::Extensions3DOpenGLES::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGLES::deleteVertexArrayOES):
+        (WebCore::Extensions3DOpenGLES::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGLES::bindVertexArrayOES):
+        (WebCore::Extensions3DOpenGLES::supportsExtension): Contains OpenGLES specific code from supports
+        (WebCore::Extensions3DOpenGLES::getExtensions):
+        * platform/graphics/opengl/Extensions3DOpenGLES.h: Copied from Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h.
+        (WebCore):
+        (Extensions3DOpenGLES):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::validateAttributes):
+        (WebCore):
+        (WebCore::GraphicsContext3D::renderbufferStorage):
+        (WebCore::GraphicsContext3D::texImage2D):
+        (WebCore::GraphicsContext3D::systemAllowsMultisamplingOnATICards): Now a member function.
+        (WebCore::GraphicsContext3D::getExtensions):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::validateDepthStencil):
+        (WebCore::GraphicsContext3D::clear):
+        (WebCore::GraphicsContext3D::isTexture):
+        (WebCore):
+        (WebCore::GraphicsContext3D::lineWidth):
+        (WebCore::GraphicsContext3D::linkProgram):
+        (WebCore::GraphicsContext3D::pixelStorei):
+        (WebCore::GraphicsContext3D::polygonOffset):
+        (WebCore::GraphicsContext3D::readPixels):
+        (WebCore::GraphicsContext3D::deleteBuffer):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::releaseShaderCompiler):
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary):
+        (WebCore::GraphicsContext3D::validateAttributes):
+        (WebCore):
+        (WebCore::GraphicsContext3D::getExtensions):
+        (WebCore::GraphicsContext3D::systemAllowsMultisamplingOnATICards): Now a member function.
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore):
+        (WebCore::GraphicsContext3D::releaseShaderCompiler):
+
 2012-07-06  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=90646

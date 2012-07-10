@@ -26,7 +26,7 @@
 #ifndef Extensions3DOpenGL_h
 #define Extensions3DOpenGL_h
 
-#include "Extensions3D.h"
+#include "Extensions3DOpenGLCommon.h"
 
 #include "GraphicsContext3D.h"
 #include <wtf/HashSet.h>
@@ -34,15 +34,11 @@
 
 namespace WebCore {
 
-class Extensions3DOpenGL : public Extensions3D {
+class Extensions3DOpenGL : public Extensions3DOpenGLCommon {
 public:
     virtual ~Extensions3DOpenGL();
 
     // Extensions3D methods.
-    virtual bool supports(const String&);
-    virtual void ensureEnabled(const String&);
-    virtual bool isEnabled(const String&);
-    virtual int getGraphicsResetStatusARB();
     virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
     virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);
     
@@ -50,19 +46,15 @@ public:
     virtual void deleteVertexArrayOES(Platform3DObject);
     virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
     virtual void bindVertexArrayOES(Platform3DObject);
-    virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
     virtual void copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum);
 
-private:
+protected:
     // This class only needs to be instantiated by GraphicsContext3D implementations.
     friend class GraphicsContext3D;
     Extensions3DOpenGL(GraphicsContext3D*);
 
-    bool m_initializedAvailableExtensions;
-    HashSet<String> m_availableExtensions;
-    
-    // Weak pointer back to GraphicsContext3D
-    GraphicsContext3D* m_context;
+    virtual bool supportsExtension(const WTF::String&);
+    virtual String getExtensions();
 };
 
 } // namespace WebCore

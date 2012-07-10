@@ -282,6 +282,12 @@ void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>
 {
 }
 
+void GraphicsContext3D::releaseShaderCompiler()
+{
+    makeContextCurrent();
+    notImplemented();
+}
+
 }
 
 #endif // USE(3D_GRAPHICS)

@@ -1191,6 +1191,8 @@
 		449B19F50FA72ECE0015CA4A /* HTMLParserQuirks.h in Headers */ = {isa = PBXBuildFile; fileRef = 449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAB12DFB8AC00AE923B /* MathMLElementFactory.h */; };
 		44A28AAF12DFB8BF00AE923B /* MathMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAE12DFB8BF00AE923B /* MathMLNames.h */; };
+		44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44DAB5AF15A623580097C1E4 /* Extensions3DOpenGLCommon.cpp */; };
+		44DAB5B215A623580097C1E4 /* Extensions3DOpenGLCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DAB5B015A623580097C1E4 /* Extensions3DOpenGLCommon.h */; };
 		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
 		450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 450CEBEE15073BBE002BB149 /* LabelableElement.cpp */; };
 		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8252,6 +8254,8 @@
 		44A28AAE12DFB8BF00AE923B /* MathMLNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLNames.h; sourceTree = "<group>"; };
 		44D8DA98139545BE00337B75 /* SVGMPathElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGMPathElement.idl; sourceTree = "<group>"; };
 		44D8DA9A139545CD00337B75 /* SVGAnimateMotionElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAnimateMotionElement.idl; sourceTree = "<group>"; };
+		44DAB5AF15A623580097C1E4 /* Extensions3DOpenGLCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Extensions3DOpenGLCommon.cpp; sourceTree = "<group>"; };
+		44DAB5B015A623580097C1E4 /* Extensions3DOpenGLCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions3DOpenGLCommon.h; sourceTree = "<group>"; };
 		45099C401370A7800058D513 /* IconURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconURL.cpp; sourceTree = "<group>"; };
 		450CEBEE15073BBE002BB149 /* LabelableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelableElement.cpp; sourceTree = "<group>"; };
 		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
@@ -21661,6 +21665,8 @@
 		FBC220DD1237FBEB00BCF788 /* opengl */ = {
 			isa = PBXGroup;
 			children = (
+				44DAB5AF15A623580097C1E4 /* Extensions3DOpenGLCommon.cpp */,
+				44DAB5B015A623580097C1E4 /* Extensions3DOpenGLCommon.h */,
 				6E67D2A41280E8A4008758F7 /* Extensions3DOpenGL.cpp */,
 				6E67D2A51280E8A4008758F7 /* Extensions3DOpenGL.h */,
 				FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */,
@@ -25196,6 +25202,7 @@
 				762F1ED7159D960A007408F2 /* HTMLDialogElement.h in Headers */,
 				76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */,
 				1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */,
+				44DAB5B215A623580097C1E4 /* Extensions3DOpenGLCommon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28253,6 +28260,7 @@
 				762F1EDB159D968A007408F2 /* HTMLDialogElement.cpp in Sources */,
 				76808B4F159DADFA002B5233 /* JSHTMLDialogElement.cpp in Sources */,
 				1FAFBF1815A5FA6E00083A20 /* UTIUtilities.mm in Sources */,
+				44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

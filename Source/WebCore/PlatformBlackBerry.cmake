@@ -218,6 +218,7 @@ if (ENABLE_REQUEST_ANIMATION_FRAME)
 ENDIF ()
 
 if (ENABLE_WEBGL)
+    ADD_DEFINITIONS (-DWTF_USE_OPENGL_ES_2=1)
     LIST(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/gpu"
         "${WEBCORE_DIR}/platform/graphics/opengl"
@@ -225,6 +226,11 @@ if (ENABLE_WEBGL)
     LIST(APPEND WebCore_SOURCES
         platform/graphics/blackberry/DrawingBufferBlackBerry.cpp
         platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp
+        platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
+        platform/graphics/opengl/Extensions3DOpenGLES.cpp
+        platform/graphics/gpu/SharedGraphicsContext3D.cpp
     )
 ENDIF ()
 
