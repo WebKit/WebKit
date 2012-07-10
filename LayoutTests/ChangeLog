@@ -1,3 +1,9 @@
+2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Unreviewed gardening. Adding another flaky test to bug 90469 (storage tests).
+
+        * platform/chromium/TestExpectations:
+
 2012-07-10  Konrad Piascik  <kpiascik@rim.com>
 
         Web Inspector: Geolocation override
