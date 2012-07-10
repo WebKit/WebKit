@@ -28,7 +28,7 @@
 #include "config.h"
 #include "GraphicsContext3D.h"
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
 
 #include "Extensions3DOpenGL.h"
 #include "GraphicsContext3DPrivate.h"
@@ -258,4 +258,4 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL)
+#endif // USE(3D_GRAPHICS)

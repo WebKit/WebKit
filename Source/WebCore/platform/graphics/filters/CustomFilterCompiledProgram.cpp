@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "CustomFilterCompiledProgram.h"
  
 #include "GraphicsContext3D.h"
@@ -176,4 +176,4 @@ CustomFilterCompiledProgram::~CustomFilterCompiledProgram()
 }
 
 } // namespace WebCore
-#endif // ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#endif // ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)

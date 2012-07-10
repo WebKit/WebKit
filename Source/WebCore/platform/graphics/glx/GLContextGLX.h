@@ -48,7 +48,7 @@ public:
     virtual bool canRenderToDefaultFramebuffer();
     virtual IntSize defaultFrameBufferSize();
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
     virtual PlatformGraphicsContext3D platformContext();
 #endif
 

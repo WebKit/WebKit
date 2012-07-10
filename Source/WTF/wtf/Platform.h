@@ -1014,6 +1014,19 @@
 #define ENABLE_CSS_IMAGE_SET 1
 #endif
 
+
+/* Qt always uses Texture Mapper */
+#if PLATFORM(QT)
+#define WTF_USE_TEXTURE_MAPPER 1
+#if USE(3D_GRAPHICS)
+#define WTF_USE_TEXTURE_MAPPER_GL 1
+#endif
+#endif
+
+#if ENABLE(WEBGL) && !defined(WTF_USE_3D_GRAPHICS)
+#define WTF_USE_3D_GRAPHICS 1
+#endif
+
 /* Compositing on the UI-process in WebKit2 */
 #if PLATFORM(QT)
 #define WTF_USE_UI_SIDE_COMPOSITING 1

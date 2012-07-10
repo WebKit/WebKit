@@ -7,9 +7,6 @@
 
 SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/WebCore
 
-# We enable TextureMapper by default; remove this line to enable GraphicsLayerQt.
-CONFIG += texmap
-
 QT *= network sql
 haveQt(5): QT *= gui-private
 
@@ -203,26 +200,11 @@ contains(DEFINES, ENABLE_VIDEO=1) {
     }
 }
 
-contains(DEFINES, ENABLE_WEBGL=1) {
-    !contains(QT_CONFIG, opengl) {
-        error( "This configuration needs an OpenGL enabled Qt. Your Qt is missing OpenGL.")
-    }
-}
-
-contains(CONFIG, texmap) {
-    DEFINES += WTF_USE_TEXTURE_MAPPER=1
-    # TextureMapperGL requires stuff from GraphicsContext3D, hence the WebGL
-    # dependency.
-    !win32-*:contains(QT_CONFIG, opengl):contains(DEFINES, ENABLE_WEBGL=1) {
-        DEFINES += WTF_USE_TEXTURE_MAPPER_GL=1
-        contains(QT_CONFIG, opengles2): LIBS += -lEGL
-    }
+contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
+    contains(QT_CONFIG, opengles2): LIBS += -lEGL
     mac: LIBS += -framework IOSurface -framework CoreFoundation
-}
-
-contains(DEFINES, WTF_USE_TEXTURE_MAPPER_GL=1)|contains(DEFINES, ENABLE_WEBGL=1) {
-    # Only Qt 4 needs the opengl module, for Qt 5 everything we need is part of QtGui.
-    haveQt(4): QT *= opengl
+    # Only WebKit1 needs the opengl module, so it's optional for Qt5.
+    haveQt(4)|contains(QT_CONFIG, opengl): QT *= opengl
 }
 
 !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {

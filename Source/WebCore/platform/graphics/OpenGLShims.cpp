@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#if ENABLE(WEBGL) || defined(QT_OPENGL_SHIMS)
+#if USE(3D_GRAPHICS) || defined(QT_OPENGL_SHIMS)
 
 #define DISABLE_SHIMS
 #include "OpenGLShims.h"
@@ -227,4 +227,4 @@ bool initializeOpenGLShims()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL)
+#endif // USE(3D_GRAPHICS)

@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "CustomFilterGlobalContext.h"
 
 #include "GraphicsContext3D.h"
@@ -59,4 +59,4 @@ void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
 
 } // namespace WebCore
 
-#endif // ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#endif // ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)

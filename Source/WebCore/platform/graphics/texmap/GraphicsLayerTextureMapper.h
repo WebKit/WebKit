@@ -26,10 +26,6 @@
 #include "Image.h"
 #include "TextureMapperLayer.h"
 
-#if ENABLE(WEBGL)
-#include "GraphicsContext3D.h"
-#endif
-
 namespace WebCore {
 
 class TextureMapperLayer;

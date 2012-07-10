@@ -30,7 +30,7 @@
 #ifndef FECustomFilter_h
 #define FECustomFilter_h
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
 #include "CustomFilterOperation.h"
 #include "Filter.h"
@@ -103,6 +103,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#endif // ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
 #endif // FECustomFilter_h

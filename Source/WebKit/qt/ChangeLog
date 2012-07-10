@@ -1,3 +1,21 @@
+2012-07-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Shared code that is guarded with ENABLE(WEBGL) should be guarded with USE()
+        https://bugs.webkit.org/show_bug.cgi?id=90506
+
+        Reviewed by Martin Robinson.
+
+        Updated necessary parts of PageClientQt to be guarded with USE(3D_GRAPHICS) instead of
+        ENABLE(WEBGL). The WebKit1 glue to WebGL still requires the Qt OpenGL module, so it's
+        disable if QT_OPENGL_LIB is not defined.
+
+        * WebCoreSupport/PageClientQt.cpp:
+        (createPlatformGraphicsContext3DFromWidget):
+        (WebCore):
+        * WebCoreSupport/PageClientQt.h:
+        (PageClientQWidget):
+        (PageClientQGraphicsWidget):
+
 2012-07-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Buildfix for newer Qt5

@@ -17,15 +17,11 @@
 */
 
 #include "config.h"
-
 #include "GraphicsContext3D.h"
 
-#include "WebGLObject.h"
-#include "CanvasRenderingContext.h"
 #include "Extensions3DOpenGL.h"
 #include "GraphicsContext.h"
 #include "GraphicsSurface.h"
-#include "HTMLCanvasElement.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -40,11 +36,11 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER_GL)
 #include <texmap/TextureMapperGL.h>
 #endif
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
 
 namespace WebCore {
 
@@ -542,4 +538,4 @@ void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>
 
 }
 
-#endif // ENABLE(WEBGL)
+#endif // USE(3D_GRAPHICS)

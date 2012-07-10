@@ -212,3 +212,12 @@ for(define, DEFINES) {
     # Is there a later define that overrides this one?
     contains(DEFINES, $$opposite): DEFINES -= $$define
 }
+
+# Enable the USE(3D_GRAPHICS) flag for Qt5 or when QtOpenGL is enabled.
+!contains(DEFINES, WTF_USE_3D_GRAPHICS=.) {
+    haveQt(5)|contains(QT_CONFIG, opengl): DEFINES += WTF_USE_3D_GRAPHICS=1
+}
+
+haveQt(4):contains(DEFINES, ENABLE_WEBGL=1):contains(DEFINES, WTF_USE_3D_GRAPHICS=0) {
+    error("WebGL requires Qt to be configured with OpenGL. Please reconfigure Qt with OpenGL, or build WebKit without WebGL.")
+}

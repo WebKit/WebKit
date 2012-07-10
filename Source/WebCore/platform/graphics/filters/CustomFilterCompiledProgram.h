@@ -30,7 +30,7 @@
 #ifndef CustomFilterCompiledProgram_h
 #define CustomFilterCompiledProgram_h
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
 #include "GraphicsTypes3D.h"
 #include <wtf/RefCounted.h>
@@ -104,6 +104,6 @@ private:
 
 }
 
-#endif // ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#endif // ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
 #endif

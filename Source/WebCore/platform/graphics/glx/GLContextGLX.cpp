@@ -311,7 +311,7 @@ void GLContextGLX::swapBuffers()
         glXSwapBuffers(sharedDisplay(), m_window);
 }
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
 PlatformGraphicsContext3D GLContextGLX::platformContext()
 {
     return m_context;
@@ -320,4 +320,4 @@ PlatformGraphicsContext3D GLContextGLX::platformContext()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) || && USE(TEXTURE_MAPPER_GL)
+#endif // USE(GLX)

@@ -20,7 +20,7 @@
 #include "config.h"
 #include "GraphicsContext3DPrivate.h"
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
 
 #include "HostWindow.h"
 #include "NotImplemented.h"
@@ -129,4 +129,4 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 
 } // namespace WebCore
 
-#endif // ENABLE_WEBGL
+#endif // USE(3D_GRAPHICS)

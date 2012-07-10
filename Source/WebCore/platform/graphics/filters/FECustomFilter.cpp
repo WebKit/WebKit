@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "FECustomFilter.h"
 
 #include "CustomFilterCompiledProgram.h"
@@ -303,4 +303,4 @@ TextStream& FECustomFilter::externalRepresentation(TextStream& ts, int indent) c
 
 } // namespace WebCore
 
-#endif // ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#endif // ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)

@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
 
 #include "GraphicsContext3D.h"
 
@@ -1833,4 +1833,4 @@ unsigned GraphicsContext3D::getChannelBitsByFormat(GC3Denum format)
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL)
+#endif // USE(3D_GRAPHICS)

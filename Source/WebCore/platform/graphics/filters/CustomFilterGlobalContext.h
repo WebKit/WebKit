@@ -30,7 +30,7 @@
 #ifndef CustomFilterGlobalContext_h
 #define CustomFilterGlobalContext_h
 
-#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -53,6 +53,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#endif // ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
 #endif // CustomFilterGlobalContext_h

@@ -35,7 +35,7 @@
 #include "CustomFilterCompiledProgram.h"
 #include "CustomFilterProgramClient.h"
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
 #include "GraphicsContext3D.h"
 #endif
 
@@ -80,7 +80,7 @@ void CustomFilterProgram::notifyClients()
         iter->first->notifyCustomFilterProgramLoaded(this);
 }
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
 PassRefPtr<CustomFilterCompiledProgram> CustomFilterProgram::compileProgramWithContext(GraphicsContext3D* context)
 {
     ASSERT(isLoaded());

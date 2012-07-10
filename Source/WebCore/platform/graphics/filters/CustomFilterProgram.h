@@ -53,7 +53,7 @@ public:
     void addClient(CustomFilterProgramClient*);
     void removeClient(CustomFilterProgramClient*);
     
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
     PassRefPtr<CustomFilterCompiledProgram> compileProgramWithContext(GraphicsContext3D*);
 #endif
 

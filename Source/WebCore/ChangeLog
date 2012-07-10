@@ -1,3 +1,68 @@
+2012-07-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Shared code that is guarded with ENABLE(WEBGL) should be guarded with USE()
+        https://bugs.webkit.org/show_bug.cgi?id=90506
+
+        Reviewed by Martin Robinson.
+
+        GraphicsContext3D, ANGLEWebKitBridge and Extensions3D are now guarded with USE(3D_GRAPHICS)
+        instead of ENABLE(WEBGL).
+
+        No new tests, build changes only.
+
+        * Target.pri:
+            Removed references to unused files.
+
+        * WebCore.pri:
+            Updated the Qt build so that the basic 3D-graphics sources can be compiled even when
+            WebGL is disabled.
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        * platform/graphics/GraphicsContext3D.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        * platform/qt/QWebPageClient.h:
+        * platform/graphics/OpenGLShims.cpp:
+        * platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp:
+        * platform/graphics/cairo/DrawingBufferCairo.cpp:
+        * platform/graphics/cairo/GLContext.h:
+        (GLContext):
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        * platform/graphics/cairo/GraphicsContext3DPrivate.cpp:
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        * platform/graphics/clutter/DrawingBufferClutter.cpp:
+        * platform/graphics/clutter/GraphicsContext3DClutter.cpp:
+        * platform/graphics/clutter/GraphicsContext3DPrivate.cpp:
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp:
+        * platform/graphics/filters/CustomFilterCompiledProgram.cpp:
+        * platform/graphics/filters/CustomFilterCompiledProgram.h:
+        * platform/graphics/filters/CustomFilterGlobalContext.cpp:
+        * platform/graphics/filters/CustomFilterGlobalContext.h:
+        * platform/graphics/filters/CustomFilterMesh.cpp:
+        * platform/graphics/filters/CustomFilterMesh.h:
+        * platform/graphics/filters/CustomFilterProgram.cpp:
+        (WebCore):
+        * platform/graphics/filters/CustomFilterProgram.h:
+        * platform/graphics/filters/FECustomFilter.cpp:
+        * platform/graphics/filters/FECustomFilter.h:
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore):
+        * platform/graphics/glx/GLContextGLX.h:
+        (GLContextGLX):
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        * platform/graphics/gpu/qt/DrawingBufferQt.cpp:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/qt/Extensions3DQt.cpp: Removed.
+        * platform/graphics/qt/Extensions3DQt.h: Removed.
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+            Chaned ENABLE(WEBGL) to USE(3D_GRAPHICS)
+
 2012-07-09  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Consider closing unused localStorage database after a timeout.

@@ -1,3 +1,16 @@
+2012-07-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Shared code that is guarded with ENABLE(WEBGL) should be guarded with USE()
+        https://bugs.webkit.org/show_bug.cgi?id=90506
+
+        Reviewed by Martin Robinson.
+
+        Made USE(3D_GRAPHICS) default to true when ENABLE(WEBGL) is true.
+        Also updated the Qt default to always use TEXTURE_MAPPER, and to use TEXTURE_MAPPER_GL when
+        3D_GRAPHICS is used.
+
+        * wtf/Platform.h:
+
 2012-07-08  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Introduce a build flag for low quality JPEG images

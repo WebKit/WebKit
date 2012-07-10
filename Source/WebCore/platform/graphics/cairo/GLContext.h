@@ -42,7 +42,7 @@ public:
     virtual bool canRenderToDefaultFramebuffer() = 0;
     virtual IntSize defaultFrameBufferSize() = 0;
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
     virtual PlatformGraphicsContext3D platformContext() = 0;
 #endif
 };

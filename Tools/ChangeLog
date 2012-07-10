@@ -1,3 +1,15 @@
+2012-07-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Shared code that is guarded with ENABLE(WEBGL) should be guarded with USE()
+        https://bugs.webkit.org/show_bug.cgi?id=90506
+
+        Reviewed by Martin Robinson.
+
+        Always enable the WTF_USE_3D_GRAPHICS flag in features.prf if we're compiling with Qt5
+        or if the OpenGL module is enabled.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-07-09  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Consider closing unused localStorage database after a timeout.

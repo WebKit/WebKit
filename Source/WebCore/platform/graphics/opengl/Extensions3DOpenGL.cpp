@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
 
 #include "Extensions3DOpenGL.h"
 
@@ -209,4 +209,4 @@ void Extensions3DOpenGL::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platfor
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL)
+#endif // USE(3D_GRAPHICS)

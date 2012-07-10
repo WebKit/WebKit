@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL) || USE(ACCELERATED_COMPOSITING)
+#if USE(3D_GRAPHICS) || USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsContext3DPrivate.h"
 
@@ -1121,4 +1121,4 @@ Extensions3D* GraphicsContext3DPrivate::getExtensions()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) || USE(ACCELERATED_COMPOSITING)
+#endif // USE(3D_GRAPHICS) || USE(ACCELERATED_COMPOSITING)
