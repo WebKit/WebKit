@@ -30,6 +30,10 @@
 #include "HTMLOptionElement.h"
 #include "NodeList.h"
 
+#if ENABLE(MICRODATA)
+#include "HTMLPropertiesCollection.h"
+#endif
+
 #include <utility>
 
 namespace WebCore {
@@ -101,11 +105,16 @@ void HTMLCollection::invalidateCacheIfNeeded() const
     if (cacheTreeVersion() == docversion)
         return;
 
-    clearCache(docversion);
+    invalidateCache();
 }
 
-void HTMLCollection::invalidateCache()
+void HTMLCollection::invalidateCache() const
 {
+#if ENABLE(MICRODATA)
+    // FIXME: There should be more generic mechanism to clear caches in subclasses.
+    if (type() == ItemProperties)
+        static_cast<const HTMLPropertiesCollection*>(this)->clearCache();
+#endif
     clearCache(static_cast<HTMLDocument*>(m_base->document())->domTreeVersion());
 }
 

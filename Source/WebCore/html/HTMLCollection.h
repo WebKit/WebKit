@@ -136,8 +136,9 @@ public:
 
     Node* base() const { return m_base.get(); }
 
-    void invalidateCache();
+    void invalidateCache() const;
     void invalidateCacheIfNeeded() const;
+
 protected:
     HTMLCollection(Node* base, CollectionType);
 

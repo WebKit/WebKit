@@ -1,3 +1,41 @@
+2012-07-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLPropertiesCollection should share more code with HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=90842
+
+        Reviewed by Anders Carlsson.
+
+        Got rid of HTMLPropertiesCollection::m_cache, and added m_itemRefElements, m_propertyNames, m_propertyCache,
+        m_hasPropertyNameCache, and m_hasItemRefElements to HTMLPropertiesCollection itself. These are caches specific
+        to HTMLPropertiesCollection. Note that hasNameCache has been renamed to m_hasPropertyNameCache and itemRefElementPosition
+        has been replaced by cachedElementsArrayOffset() in HTMLCollectionCacheBase (also used in HTMLFormCollection).
+
+        Also deleted all methods on m_cache except updatePropertyCache since caches can be accessed directly from
+        HTMLPropertiesCollection.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::invalidateCacheIfNeeded):
+        (WebCore::HTMLCollection::invalidateCache):
+        * html/HTMLCollection.h:
+        (HTMLCollection):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::HTMLPropertiesCollection):
+        (WebCore):
+        (WebCore::HTMLPropertiesCollection::updateRefElements):
+        (WebCore::HTMLPropertiesCollection::itemAfter):
+        (WebCore::HTMLPropertiesCollection::calcLength):
+        (WebCore::HTMLPropertiesCollection::cacheFirstItem):
+        (WebCore::HTMLPropertiesCollection::item):
+        (WebCore::HTMLPropertiesCollection::findProperties):
+        (WebCore::HTMLPropertiesCollection::updateNameCache):
+        (WebCore::HTMLPropertiesCollection::names):
+        (WebCore::HTMLPropertiesCollection::namedItem):
+        (WebCore::HTMLPropertiesCollection::hasNamedItem):
+        * html/HTMLPropertiesCollection.h:
+        (HTMLPropertiesCollection):
+        (WebCore::HTMLPropertiesCollection::clearCache):
+        (WebCore::HTMLPropertiesCollection::updatePropertyCache):
+
 2012-07-10  Ojan Vafai  <ojan@chromium.org>
 
         Add support for min-height:auto and min-width:auto
