@@ -1,3 +1,13 @@
+2012-07-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122207.
+        http://trac.webkit.org/changeset/122207
+        https://bugs.webkit.org/show_bug.cgi?id=90874
+
+        Broke the cr-windows bot (Requested by beverloo on #webkit).
+
+        * DEPS:
+
 2012-07-10  Jochen Eisinger  <jochen@chromium.org>
 
         Unreviewed.  Rolled DEPS.
