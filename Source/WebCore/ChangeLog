@@ -1,3 +1,10 @@
+2012-07-09  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Build fix after r122175
+
+        * WebCore.gypi: Remove Source/WebCore/platform/graphics/qt/Extensions3DQt.{cpp,h}
+
 2012-07-09  Kiran Muppala  <cmuppala@apple.com>
 
         Improve performance of RenderInline::absoluteQuads for deeply nested inlines.

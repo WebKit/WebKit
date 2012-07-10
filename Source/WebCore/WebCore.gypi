@@ -3839,8 +3839,6 @@
             'platform/graphics/pango/GlyphPageTreeNodePango.cpp',
             'platform/graphics/pango/SimpleFontDataPango.cpp',
             'platform/graphics/qt/ColorQt.cpp',
-            'platform/graphics/qt/Extensions3DQt.cpp',
-            'platform/graphics/qt/Extensions3DQt.h',
             'platform/graphics/qt/FloatPointQt.cpp',
             'platform/graphics/qt/FloatRectQt.cpp',
             'platform/graphics/qt/FontCacheQt.cpp',
