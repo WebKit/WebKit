@@ -38,7 +38,7 @@ namespace WebKit {
 
 class WebHitTestResult;
 class WebNode;
-class WebPoint;
+struct WebPoint;
 
 class WebSurroundingText {
 public:
