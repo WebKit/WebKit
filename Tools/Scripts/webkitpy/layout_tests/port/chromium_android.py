@@ -59,7 +59,7 @@ DRT_APP_PACKAGE = 'org.chromium.native_test'
 DRT_ACTIVITY_FULL_NAME = DRT_APP_PACKAGE + '/.ChromeNativeTestActivity'
 DRT_APP_DIR = '/data/user/0/' + DRT_APP_PACKAGE + '/'
 DRT_APP_FILES_DIR = DRT_APP_DIR + 'files/'
-DRT_APP_CACHE_DIR = DIR_APP_DIR + 'cache/'
+DRT_APP_CACHE_DIR = DRT_APP_DIR + 'cache/'
 
 # This only works for single core devices so far.
 # FIXME: Find a solution for multi-core devices.
@@ -253,7 +253,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
         # Delete the disk cache if any to ensure a clean test run.
         # This is like what's done in ChromiumPort.setup_test_run but on the device.
-        self._run_adb_command(['shell', 'rm', '-r', DEVICE_APP_CACHE_DIR])
+        self._run_adb_command(['shell', 'rm', '-r', DRT_APP_CACHE_DIR])
 
         # Start the HTTP server so that the device can access the test cases.
         chromium.ChromiumPort.start_http_server(self, additional_dirs={TEST_PATH_PREFIX: self.layout_tests_dir()})
