@@ -194,6 +194,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             guint m_videoTimerHandler;
             GRefPtr<GstElement> m_webkitAudioSink;
             GRefPtr<GstPad> m_videoSinkPad;
+            mutable IntSize m_videoSize;
     };
 }
 

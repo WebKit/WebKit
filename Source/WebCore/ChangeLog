@@ -1,3 +1,19 @@
+2012-07-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] cache video dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=90733
+
+        Reviewed by Martin Robinson.
+
+        Invalidate the cached video dimensions whenever the video-sink sink pad caps
+        change and let ::naturalSize() lazily recalculate them.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (MediaPlayerPrivateGStreamer):
+
 2012-07-09  Eric Penner  <epenner@google.com>
 
         [chromium] Merge updates and idle updates into one pass

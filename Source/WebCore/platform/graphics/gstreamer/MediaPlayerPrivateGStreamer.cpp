@@ -495,6 +495,9 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     if (!hasVideo())
         return IntSize();
 
+    if (!m_videoSize.isEmpty())
+        return m_videoSize;
+
     GstCaps* caps = webkitGstGetPadCaps(m_videoSinkPad.get());
     if (!caps)
         return IntSize();
@@ -542,7 +545,8 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     }
 
     LOG_VERBOSE(Media, "Natural size: %" G_GUINT64_FORMAT "x%" G_GUINT64_FORMAT, width, height);
-    return IntSize(static_cast<int>(width), static_cast<int>(height));
+    m_videoSize = IntSize(static_cast<int>(width), static_cast<int>(height));
+    return m_videoSize;
 }
 
 void MediaPlayerPrivateGStreamer::videoChanged()
@@ -561,6 +565,9 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
         g_object_get(m_playBin, "n-video", &videoTracks, NULL);
 
     m_hasVideo = videoTracks > 0;
+
+    m_videoSize = IntSize();
+
     m_player->mediaPlayerClient()->mediaPlayerEngineUpdated(m_player);
 }
 
