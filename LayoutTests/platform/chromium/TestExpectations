@@ -3718,7 +3718,17 @@ BUGWK90430 : inspector/timeline/timeline-receive-response-event.html = PASS TEXT
 BUGWK90469 WIN : storage/indexeddb/mozilla/indexes.html = PASS CRASH
 BUGWK90469 WIN : storage/indexeddb/mozilla/key-requirements-inline-and-passed.html = PASS CRASH
 BUGWK90469 WIN : storage/websql/multiple-databases-garbage-collection.html = PASS CRASH
-BUGWK90754 WIN : storage/indexeddb/mozilla/key-requirements.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/key-requirements.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/objectstorenames.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/autoincrement-indexes.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/delete-result.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/key-requirements-put-no-key.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/create-objectstore-null-name.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/index-prev-no-duplicate.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/cursors.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/create-index-with-integer-keys.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/mozilla/indexes.html = PASS CRASH
+
 
 // Require rebaseline after bug 88171
 BUGWK88171 WIN : css1/formatting_model/floating_elements.html = IMAGE
