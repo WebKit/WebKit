@@ -57,7 +57,9 @@ DEVICE_DRT_STAMP_PATH = DEVICE_DRT_DIR + 'DumpRenderTree.stamp'
 
 DRT_APP_PACKAGE = 'org.chromium.native_test'
 DRT_ACTIVITY_FULL_NAME = DRT_APP_PACKAGE + '/.ChromeNativeTestActivity'
-DRT_APP_FILE_DIR = '/data/user/0/' + DRT_APP_PACKAGE + '/files/'
+DRT_APP_DIR = '/data/user/0/' + DRT_APP_PACKAGE + '/'
+DRT_APP_FILES_DIR = DRT_APP_DIR + 'files/'
+DRT_APP_CACHE_DIR = DIR_APP_DIR + 'cache/'
 
 # This only works for single core devices so far.
 # FIXME: Find a solution for multi-core devices.
@@ -235,7 +237,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         # Same as start_http_server().
         pass
 
-    def start_helper(self):
+    def setup_test_run(self):
         self._run_adb_command(['root'])
         self._setup_performance()
         # Required by webkit_support::GetWebKitRootDirFilePath().
@@ -249,13 +251,17 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         self._push_fonts()
         self._synchronize_datetime()
 
+        # Delete the disk cache if any to ensure a clean test run.
+        # This is like what's done in ChromiumPort.setup_test_run but on the device.
+        self._run_adb_command(['shell', 'rm', '-r', DEVICE_APP_CACHE_DIR])
+
         # Start the HTTP server so that the device can access the test cases.
         chromium.ChromiumPort.start_http_server(self, additional_dirs={TEST_PATH_PREFIX: self.layout_tests_dir()})
 
         _log.debug('Starting forwarder')
-        cmd = self._run_adb_command(['shell', '%s %s' % (DEVICE_FORWARDER_PATH, FORWARD_PORTS)])
+        self._run_adb_command(['shell', '%s %s' % (DEVICE_FORWARDER_PATH, FORWARD_PORTS)])
 
-    def stop_helper(self):
+    def clean_up_test_run(self):
         # Leave the forwarder and tests httpd server there because they are
         # useful for debugging and do no harm to subsequent tests.
         self._teardown_performance()
@@ -284,6 +290,9 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         return self._build_path(configuration, 'DumpRenderTree_apk/DumpRenderTree-debug.apk')
 
     def _path_to_helper(self):
+        return None
+
+    def _path_to_forwarder(self):
         return self._build_path(self.get_option('configuration'), 'forwarder')
 
     def _path_to_image_diff(self):
@@ -320,7 +329,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
     def _push_executable(self):
         drt_host_path = self._path_to_driver()
-        forwarder_host_path = self._path_to_helper()
+        forwarder_host_path = self._path_to_forwarder()
         host_stamp = int(float(max(os.stat(drt_host_path).st_mtime,
                                    os.stat(forwarder_host_path).st_mtime)))
         device_stamp = int(float(self._run_adb_command([
@@ -452,9 +461,9 @@ class ChromiumAndroidDriver(chromium.ChromiumDriver):
 
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         chromium.ChromiumDriver.__init__(self, port, worker_number, pixel_tests, no_timeout)
-        self._in_fifo_path = DRT_APP_FILE_DIR + 'DumpRenderTree.in'
-        self._out_fifo_path = DRT_APP_FILE_DIR + 'DumpRenderTree.out'
-        self._err_file_path = DRT_APP_FILE_DIR + 'DumpRenderTree.err'
+        self._in_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.in'
+        self._out_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.out'
+        self._err_file_path = DRT_APP_FILES_DIR + 'DumpRenderTree.err'
         self._restart_after_killed = False
         self._read_fifo_proc = None
 
@@ -467,7 +476,7 @@ class ChromiumAndroidDriver(chromium.ChromiumDriver):
         cmd = []
         for param in original_cmd:
             if param.startswith('--pixel-tests='):
-                self._device_image_path = DRT_APP_FILE_DIR + self._port.host.filesystem.basename(self._image_path)
+                self._device_image_path = DRT_APP_FILES_DIR + self._port.host.filesystem.basename(self._image_path)
                 param = '--pixel-tests=' + self._device_image_path
             cmd.append(param)
 
