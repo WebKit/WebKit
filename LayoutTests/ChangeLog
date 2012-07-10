@@ -1,3 +1,10 @@
+2012-07-09  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Update TestExpectations.
+
+        * platform/chromium/TestExpectations: Mark fast/forms/select/select-state-restore.html as flaky on WIN DEBUG.
+
 2012-07-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: deleteDatabase fails if transaction running in other database
