@@ -977,6 +977,10 @@ fast/selectors/unqualified-hover-strict.html
 # https://bugs.webkit.org/show_bug.cgi?id=89333
 inspector/extensions/extensions-panel.html
 
+# [Qt] http/tests/misc/script-defer.html is flakey
+# https://bugs.webkit.org/show_bug.cgi?id=90845
+http/tests/misc/script-defer.html
+
 # =========================================================================== #
 # failing media tests
 # =========================================================================== #

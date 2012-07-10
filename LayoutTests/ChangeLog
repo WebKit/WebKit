@@ -1,3 +1,10 @@
+2012-07-10  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip a flakey test after r122168.
+        https://bugs.webkit.org/show_bug.cgi?id=90845.
+
+        * platform/qt/Skipped:
+
 2012-07-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening after r122204.
