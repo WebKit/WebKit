@@ -531,4 +531,23 @@ bool WebRuntimeFeatures::isInputTypeDateEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableDialogElement(bool enable)
+{
+#if ENABLE(DIALOG_ELEMENT)
+    RuntimeEnabledFeatures::setDialogElementEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isDialogElementEnabled()
+{
+#if ENABLE(DIALOG_ELEMENT)
+    return RuntimeEnabledFeatures::dialogElementEnabled();
+#else
+    return false;
+#endif
+}
+
+
 } // namespace WebKit

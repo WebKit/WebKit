@@ -198,4 +198,8 @@ bool RuntimeEnabledFeatures::isStyleScopedEnabled = false;
 bool RuntimeEnabledFeatures::isInputTypeDateEnabled = true;
 #endif
 
+#if ENABLE(DIALOG_ELEMENT)
+bool RuntimeEnabledFeatures::isDialogElementEnabled = false;
+#endif
+
 } // namespace WebCore

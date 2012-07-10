@@ -51,6 +51,18 @@ ContextFeatures* ContextFeatures::defaultSwitch()
     return instance.get();
 }
 
+bool ContextFeatures::dialogElementEnabled(Document* document)
+{
+#if ENABLE(DIALOG_ELEMENT)
+    if (!document)
+        return RuntimeEnabledFeatures::dialogElementEnabled();
+    return document->contextFeatures()->isEnabled(document, DialogElement, RuntimeEnabledFeatures::dialogElementEnabled());
+#else
+    UNUSED_PARAM(document);
+    return false;
+#endif
+}
+
 bool ContextFeatures::shadowDOMEnabled(Document* document)
 {
 #if ENABLE(SHADOW_DOM)

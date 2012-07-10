@@ -278,6 +278,7 @@ SET(WebCore_IDL_FILES
     html/HTMLCollection.idl
     html/HTMLDataListElement.idl
     html/HTMLDetailsElement.idl
+    html/HTMLDialogElement.idl
     html/HTMLDirectoryElement.idl
     html/HTMLDivElement.idl
     html/HTMLDListElement.idl
@@ -786,6 +787,7 @@ SET(WebCore_SOURCES
     html/HTMLDListElement.cpp
     html/HTMLDataListElement.cpp
     html/HTMLDetailsElement.cpp
+    html/HTMLDialogElement.cpp
     html/HTMLDirectoryElement.cpp
     html/HTMLDivElement.cpp
     html/HTMLDocument.cpp

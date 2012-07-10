@@ -139,6 +139,9 @@ public:
     WEBKIT_EXPORT static void enableInputTypeDate(bool);
     WEBKIT_EXPORT static bool isInputTypeDateEnabled();
 
+    WEBKIT_EXPORT static void enableDialogElement(bool);
+    WEBKIT_EXPORT static bool isDialogElementEnabled();
+
 private:
     WebRuntimeFeatures();
 };

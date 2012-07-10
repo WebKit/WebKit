@@ -1865,8 +1865,13 @@
 		75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */; };
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
 		758978EC127090D60076D5A9 /* SpeechInputResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758978EA127090D60076D5A9 /* SpeechInputResult.cpp */; };
+		762F1ED7159D960A007408F2 /* HTMLDialogElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 762F1ED6159D960A007408F2 /* HTMLDialogElement.h */; };
+		762F1ED9159D961A007408F2 /* HTMLDialogElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = 762F1ED8159D961A007408F2 /* HTMLDialogElement.idl */; };
+		762F1EDB159D968A007408F2 /* HTMLDialogElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 762F1EDA159D968A007408F2 /* HTMLDialogElement.cpp */; };
 		7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */; };
 		7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */; };
+		76808B4F159DADFA002B5233 /* JSHTMLDialogElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76808B4D159DADFA002B5233 /* JSHTMLDialogElement.cpp */; };
+		76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 76808B4E159DADFA002B5233 /* JSHTMLDialogElement.h */; };
 		7694563C1214D97C0007CBAE /* JSDOMTokenList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7694563A1214D97C0007CBAE /* JSDOMTokenList.cpp */; };
 		7694563D1214D97C0007CBAE /* JSDOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7694563B1214D97C0007CBAE /* JSDOMTokenList.h */; };
 		7694565B1214DB630007CBAE /* DOMDOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 769456591214DB630007CBAE /* DOMDOMTokenList.h */; };
@@ -8977,8 +8982,13 @@
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
 		758978EA127090D60076D5A9 /* SpeechInputResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechInputResult.cpp; sourceTree = "<group>"; };
 		758978EB127090D60076D5A9 /* SpeechInputResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputResult.h; sourceTree = "<group>"; };
+		762F1ED6159D960A007408F2 /* HTMLDialogElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDialogElement.h; sourceTree = "<group>"; };
+		762F1ED8159D961A007408F2 /* HTMLDialogElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDialogElement.idl; sourceTree = "<group>"; };
+		762F1EDA159D968A007408F2 /* HTMLDialogElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDialogElement.cpp; sourceTree = "<group>"; };
 		7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocaleToScriptMapping.h; sourceTree = "<group>"; };
 		7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocaleToScriptMappingDefault.cpp; sourceTree = "<group>"; };
+		76808B4D159DADFA002B5233 /* JSHTMLDialogElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLDialogElement.cpp; path = JSHTMLDialogElement.cpp; sourceTree = "<group>"; };
+		76808B4E159DADFA002B5233 /* JSHTMLDialogElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSHTMLDialogElement.h; path = JSHTMLDialogElement.h; sourceTree = "<group>"; };
 		7694563A1214D97C0007CBAE /* JSDOMTokenList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMTokenList.cpp; sourceTree = "<group>"; };
 		7694563B1214D97C0007CBAE /* JSDOMTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMTokenList.h; sourceTree = "<group>"; };
 		769456591214DB630007CBAE /* DOMDOMTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDOMTokenList.h; sourceTree = "<group>"; };
@@ -17203,6 +17213,9 @@
 				D359D786129CA2710006E5D2 /* HTMLDetailsElement.cpp */,
 				D359D787129CA2710006E5D2 /* HTMLDetailsElement.h */,
 				D359D788129CA2710006E5D2 /* HTMLDetailsElement.idl */,
+				762F1EDA159D968A007408F2 /* HTMLDialogElement.cpp */,
+				762F1ED8159D961A007408F2 /* HTMLDialogElement.idl */,
+				762F1ED6159D960A007408F2 /* HTMLDialogElement.h */,
 				A8EA79ED0A1916DF00A8EF5F /* HTMLDirectoryElement.cpp */,
 				A8EA79EE0A1916DF00A8EF5F /* HTMLDirectoryElement.h */,
 				1A85B1D90A1B23A400D8C87C /* HTMLDirectoryElement.idl */,
@@ -18073,6 +18086,8 @@
 				F5C041E20FFCA96D00839D4A /* JSHTMLDataListElement.h */,
 				D359D8BC129CA55C0006E5D2 /* JSHTMLDetailsElement.cpp */,
 				D359D8BD129CA55C0006E5D2 /* JSHTMLDetailsElement.h */,
+				76808B4D159DADFA002B5233 /* JSHTMLDialogElement.cpp */,
+				76808B4E159DADFA002B5233 /* JSHTMLDialogElement.h */,
 				1A85B1E00A1B240500D8C87C /* JSHTMLDirectoryElement.cpp */,
 				1A85B1E10A1B240500D8C87C /* JSHTMLDirectoryElement.h */,
 				1A85B2B40A1B2AC700D8C87C /* JSHTMLDivElement.cpp */,
@@ -25178,6 +25193,8 @@
 				50987C27157D676D00BDA835 /* CustomFilterGlobalContext.h in Headers */,
 				4F32BB1B14FA85E800F6C1A3 /* MemoryInstrumentation.h in Headers */,
 				A882DA231593848D000115ED /* CSSToStyleMap.h in Headers */,
+				762F1ED7159D960A007408F2 /* HTMLDialogElement.h in Headers */,
+				76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */,
 				1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -28233,6 +28250,8 @@
 				CE7B2DB61586ABAD0098B3FA /* TextAlternativeWithRange.mm in Sources */,
 				50987C26157D676D00BDA835 /* CustomFilterGlobalContext.cpp in Sources */,
 				A882DA201593846A000115ED /* CSSToStyleMap.cpp in Sources */,
+				762F1EDB159D968A007408F2 /* HTMLDialogElement.cpp in Sources */,
+				76808B4F159DADFA002B5233 /* JSHTMLDialogElement.cpp in Sources */,
 				1FAFBF1815A5FA6E00083A20 /* UTIUtilities.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

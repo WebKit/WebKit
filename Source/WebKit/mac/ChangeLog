@@ -1,3 +1,12 @@
+2012-07-09  Matt Falkenhagen  <falken@chromium.org>
+
+        Add ENABLE_DIALOG_ELEMENT and skeleton files
+        https://bugs.webkit.org/show_bug.cgi?id=90521
+
+        Reviewed by Kent Tamura.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-07-09  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Consider closing unused localStorage database after a timeout.
