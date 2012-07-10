@@ -130,8 +130,11 @@ public:
     }
     static bool passesFilter(uintptr_t address)
     {
-        if (!canPerformRangeFilter())
-            return true;
+        if (!canPerformRangeFilter()) {
+            // Just check that the address doesn't use any special values that would make
+            // our hashtables upset.
+            return address >= jitAllocationGranule && address != std::numeric_limits<uintptr_t>::max();
+        }
         
         if (address - filteringStartAddress() >= filteringExtentSize())
             return false;
