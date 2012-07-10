@@ -1,5 +1,11 @@
 2012-07-09  Hayato Ito  <hayato@chromium.org>
 
+        Unreviewed gardening. Update TestExpectations.
+
+        * platform/chromium/TestExpectations: http/tests/misc/script-defer.html started failing after r122168.
+
+2012-07-09  Hayato Ito  <hayato@chromium.org>
+
         Unreviewed gardening.
         Update TestExpectations.
 
