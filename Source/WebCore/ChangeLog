@@ -1,3 +1,20 @@
+2012-07-09  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: deleteDatabase fails if transaction running in other database
+        https://bugs.webkit.org/show_bug.cgi?id=90822
+
+        Reviewed by Tony Chang.
+
+        The IDBLevelDBBackingStore was preventing a deleteDatabase() from running
+        if any other database was running a transaction. Fix by just creating a scratch
+        LevelDBTransaction for the delete steps.
+
+        Test: storage/indexeddb/deletedatabase-transaction.html
+
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::deleteDatabase): Use a LevelDBTransaction
+        directly.
+
 2012-07-09  Pete Williamson  <petewil@google.com>
 
         Changed the behavior of iconURLs to always recalculate the list.
