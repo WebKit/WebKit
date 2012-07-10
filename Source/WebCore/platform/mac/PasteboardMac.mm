@@ -368,6 +368,9 @@ String Pasteboard::plainText(Frame* frame)
     
 static PassRefPtr<DocumentFragment> documentFragmentWithImageResource(Frame* frame, PassRefPtr<ArchiveResource> resource)
 {
+    if (!resource)
+        return 0;
+    
     if (DocumentLoader* loader = frame->loader()->documentLoader())
         loader->addArchiveResource(resource.get());
 

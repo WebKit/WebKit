@@ -1,3 +1,18 @@
+2012-07-10  Alice Cheng  <alice_cheng@apple.com>
+
+        Editing: Reproducible crasher when pasting a 0x0 image into Mail
+        https://bugs.webkit.org/show_bug.cgi?id=90640
+        <rdar://problem/11141920>
+
+        Reviewed by Brady Eidson.
+
+        Test cases for the patch. 0x0 images don't get a resource representation in the WebArchive, so we need a null check.
+
+        * TestWebKitAPI/Tests/mac/0.png: Added.
+        * TestWebKitAPI/Tests/mac/WebViewCanPasteZeroPng.mm: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-07-10  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         WebSurroundingText layout tests should use the same code path as the rest of the feature.
