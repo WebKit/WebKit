@@ -2033,7 +2033,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
     RenderObject* prev = child->previousSibling();
     if (prev && prev->isBlockFlow() && !prev->isFloatingOrOutOfFlowPositioned()) {
         RenderBlock* block = toRenderBlock(prev);
-        if (block->containsFloats() && block->lowestFloatLogicalBottom() > logicalTop) 
+        if (block->containsFloats() && !block->avoidsFloats() && (block->logicalTop() + block->lowestFloatLogicalBottom()) > logicalTop) 
             addOverhangingFloats(block, false);
     }
 
@@ -2089,14 +2089,60 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
     return yPos + heightIncrease;
 }
 
+void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& positiveMarginBefore, LayoutUnit& negativeMarginBefore) const
+{
+    // FIXME: We could get even more quirks mode cases right if we dealt with quirk containers.
+    // FIXME: We should deal with the margin-collapse-* style extensions that prevent collapsing and that discard margins.
+    LayoutUnit beforeChildMargin = marginBeforeForChild(child);
+    positiveMarginBefore = max(positiveMarginBefore, beforeChildMargin);
+    negativeMarginBefore = max(negativeMarginBefore, -beforeChildMargin);
+
+    if (!child->isRenderBlock())
+        return;
+    
+    RenderBlock* childBlock = toRenderBlock(child);
+    if (childBlock->childrenInline() || childBlock->isWritingModeRoot())
+        return;
+
+    MarginInfo childMarginInfo(childBlock, childBlock->borderBefore() + childBlock->paddingBefore(), childBlock->borderAfter() + childBlock->paddingAfter());
+    if (!childMarginInfo.canCollapseMarginBeforeWithChildren())
+        return;
+
+    RenderBox* grandchildBox = childBlock->firstChildBox();
+    for ( ; grandchildBox; grandchildBox = grandchildBox->nextSiblingBox()) {
+        if (!grandchildBox->isFloatingOrOutOfFlowPositioned())
+            break;
+    }
+    
+    // Give up if there is clearance on the box, since it probably won't collapse into us.
+    if (!grandchildBox || grandchildBox->style()->clear() != CNONE)
+        return;
+
+    // Collapse the margin of the grandchild box with our own to produce an estimate.
+    childBlock->marginBeforeEstimateForChild(grandchildBox, positiveMarginBefore, negativeMarginBefore);
+}
+
 LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const MarginInfo& marginInfo, LayoutUnit& estimateWithoutPagination)
 {
     // FIXME: We need to eliminate the estimation of vertical position, because when it's wrong we sometimes trigger a pathological
     // relayout if there are intruding floats.
     LayoutUnit logicalTopEstimate = logicalHeight();
     if (!marginInfo.canCollapseWithMarginBefore()) {
-        LayoutUnit childMarginBefore = child->selfNeedsLayout() ? marginBeforeForChild(child) : collapsedMarginBeforeForChild(child);
-        logicalTopEstimate += max(marginInfo.margin(), childMarginBefore);
+        LayoutUnit positiveMarginBefore = ZERO_LAYOUT_UNIT;
+        LayoutUnit negativeMarginBefore = ZERO_LAYOUT_UNIT;
+        if (child->selfNeedsLayout()) {
+            // Try to do a basic estimation of how the collapse is going to go.
+            marginBeforeEstimateForChild(child, positiveMarginBefore, negativeMarginBefore);
+        } else {
+            // Use the cached collapsed margin values from a previous layout. Most of the time they
+            // will be right.
+            MarginValues marginValues = marginValuesForChild(child);
+            positiveMarginBefore = max(positiveMarginBefore, marginValues.positiveMarginBefore());
+            negativeMarginBefore = max(negativeMarginBefore, marginValues.negativeMarginBefore());
+        }
+
+        // Collapse the result with our current margins.
+        logicalTopEstimate += max(marginInfo.positiveMargin(), positiveMarginBefore) - max(marginInfo.negativeMargin(), negativeMarginBefore);
     }
 
     // Adjust logicalTopEstimate down to the next page if the margins are so large that we don't fit on the current
@@ -7065,7 +7111,7 @@ LayoutUnit RenderBlock::collapsedMarginAfterForChild(const  RenderBox* child) co
     return marginAfterForChild(child);
 }
 
-RenderBlock::MarginValues RenderBlock::marginValuesForChild(RenderBox* child)
+RenderBlock::MarginValues RenderBlock::marginValuesForChild(RenderBox* child) const
 {
     LayoutUnit childBeforePositive = 0;
     LayoutUnit childBeforeNegative = 0;

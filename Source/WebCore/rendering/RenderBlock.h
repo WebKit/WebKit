@@ -331,7 +331,7 @@ public:
         LayoutUnit m_positiveMarginAfter;
         LayoutUnit m_negativeMarginAfter;
     };
-    MarginValues marginValuesForChild(RenderBox* child);
+    MarginValues marginValuesForChild(RenderBox* child) const;
 
     virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { };
 
@@ -921,6 +921,7 @@ private:
     LayoutUnit collapseMargins(RenderBox* child, MarginInfo&);
     LayoutUnit clearFloatsIfNeeded(RenderBox* child, MarginInfo&, LayoutUnit oldTopPosMargin, LayoutUnit oldTopNegMargin, LayoutUnit yPos);
     LayoutUnit estimateLogicalTopPosition(RenderBox* child, const MarginInfo&, LayoutUnit& estimateWithoutPagination);
+    void marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& positiveMarginBefore, LayoutUnit& negativeMarginBefore) const;
     void determineLogicalLeftPositionForChild(RenderBox* child);
     void handleAfterSideOfBlock(LayoutUnit top, LayoutUnit bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);

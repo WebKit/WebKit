@@ -1,3 +1,31 @@
+2012-07-06  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=90646
+        <rdar://problem/11648478> 3-pass pagination slows down pagination
+
+        Improve the logical top estimate function for margin collapsing to be more accurate. In particular
+        make the basic case of <body><p> or <body><h1> no longer be wrong. This estimate being incorrect
+        is not a big deal most of the time, but when paginating it is a very big deal, since you have to
+        relayout everything whenever your vertical placement is wrong.
+
+        Improving the estimation exposed a bug in an existing layout test. I had to clean up the buggy
+        code written for negative margin-related float detection and fix an invalid layout test to
+        actually be correct.
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::marginBeforeEstimateForChild):
+        (WebCore):
+        (WebCore::RenderBlock::estimateLogicalTopPosition):
+        (WebCore::RenderBlock::marginValuesForChild):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats):
+        (WebCore::RenderBox::computeLogicalWidthInRegionUsing):
+
 2012-07-10  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Count inspector memory used to traverse DOM in native memory snapshots.
