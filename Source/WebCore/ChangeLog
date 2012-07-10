@@ -1,3 +1,15 @@
+2012-07-10  Nikita Vasilyev  <me@elv1s.ru>
+
+        Web Inspector: Make the Tab character 4 spaces width
+        https://bugs.webkit.org/show_bug.cgi?id=90172
+
+        Reviewed by Pavel Feldman.
+
+        Do it to match most code editors' behavior.
+
+        * inspector/front-end/inspectorCommon.css:
+        (body):
+
 2012-07-10  Eric Seidel  <eric@webkit.org>
 
         REGRESSION (r122168): Layout Test http/tests/misc/script-defer.html is failing

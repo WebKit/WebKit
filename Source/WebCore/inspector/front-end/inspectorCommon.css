@@ -13,6 +13,7 @@ body {
     font-family: Lucida Grande, sans-serif;
     font-size: 10px;
     margin: 0;
+    tab-size: 4;
     -webkit-user-select: none;
 }
 
