@@ -1,3 +1,40 @@
+2012-07-09  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Consider closing unused localStorage database after a timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=90713
+
+        For a localStorage, if there is no active document referencing to it for certain amount of time (300 seconds),
+        we can close the underlying sqlite database.
+
+        Reviewed by Brady Eidson.
+
+        Test: storage/domstorage/storage-close-database-on-idle.html
+
+        * storage/Storage.cpp:
+        (WebCore::Storage::Storage): increment storageArea access count when a DOMWindow is referencing it.
+        (WebCore::Storage::~Storage): decrement storageArea access count when DOMWindow is done with it.
+        * storage/StorageArea.h:
+        (StorageArea):
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::StorageAreaImpl):
+        (WebCore::StorageAreaImpl::incrementAccessCount):
+        (WebCore):
+        (WebCore::StorageAreaImpl::decrementAccessCount): schedule closeDatabaseTimer if there is no active document
+            referencing to this storageArea.
+        (WebCore::StorageAreaImpl::closeDatabaseTimerFired): close the underlying sqlite database.
+        * storage/StorageAreaImpl.h:
+        (StorageAreaImpl):
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::sync): if m_syncCloseDatabase flag is set and the database is not opened, bail out.
+        * storage/StorageTracker.cpp:
+        (WebCore):
+        (WebCore::StorageTracker::StorageTracker):
+        * storage/StorageTracker.h:
+        (WebCore::StorageTracker::storageDatabaseIdleInterval):
+        (WebCore::StorageTracker::setStorageDatabaseIdleInterval):  set the timeout value that we will wait before closing the
+            database.  This is currently used by DumpRenderTree only.
+        (StorageTracker):
+
 2012-07-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: A null or undefined storeNames argument to IDBDatabase::transaction() should be coerced to string

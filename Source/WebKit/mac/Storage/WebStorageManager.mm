@@ -97,7 +97,12 @@ static pthread_once_t registerLocalStoragePath = PTHREAD_ONCE_INIT;
     return sLocalStoragePath;
 }
 
-static void initializeLocalStoragePath() 
++ (void)setStorageDatabaseIdleInterval:(double)interval
+{
+    StorageTracker::tracker().setStorageDatabaseIdleInterval(interval);
+}
+
+static void initializeLocalStoragePath()
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     sLocalStoragePath = [defaults objectForKey:WebStorageDirectoryDefaultsKey];

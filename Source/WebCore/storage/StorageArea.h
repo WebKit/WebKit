@@ -55,6 +55,9 @@ namespace WebCore {
         virtual bool contains(const String& key, Frame* sourceFrame) const = 0;
 
         virtual bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const = 0;
+
+        virtual void incrementAccessCount() { }
+        virtual void decrementAccessCount() { }
     };
 
 } // namespace WebCore

@@ -2225,6 +2225,20 @@ static JSValueRef setHasCustomFullScreenBehaviorCallback(JSContextRef context, J
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef setStorageDatabaseIdleIntervalCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 1)
+        return JSValueMakeUndefined(context);
+
+    double interval = JSValueToNumber(context, arguments[0], exception);
+    ASSERT(!*exception);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setStorageDatabaseIdleInterval(interval);
+
+    return JSValueMakeUndefined(context);
+}
+
 static void layoutTestControllerObjectFinalize(JSObjectRef object)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(object));
@@ -2445,6 +2459,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setBackingScaleFactor", setBackingScaleFactorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "preciseTime", preciseTimeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setHasCustomFullScreenBehavior", setHasCustomFullScreenBehaviorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setStorageDatabaseIdleInterval", setStorageDatabaseIdleIntervalCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

@@ -1,3 +1,28 @@
+2012-07-09  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Consider closing unused localStorage database after a timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=90713
+
+        For a localStorage, if there is no active document referencing to it for certain amount of time (300 seconds),
+        we can close the underlying sqlite database.
+
+        Reviewed by Brady Eidson.
+
+        * DumpRenderTree/LayoutTestController.cpp: add a JS method setStorageDatabaseIdleInterval to testRunner
+            to set a different timeout value for closing localStorage database.
+        (setStorageDatabaseIdleIntervalCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setStorageDatabaseIdleInterval): add empty method.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setStorageDatabaseIdleInterval): ditto.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setStorageDatabaseIdleInterval): ditto.
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setStorageDatabaseIdleInterval): ditto.
+
 2012-07-09  Adam Klein  <adamk@chromium.org>
 
         Rename WebCore::WebKitMutationObserver to WebCore::MutationObserver

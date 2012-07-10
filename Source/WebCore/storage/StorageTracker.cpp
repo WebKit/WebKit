@@ -46,6 +46,10 @@ namespace WebCore {
 
 static StorageTracker* storageTracker = 0;
 
+// If there is no document referencing a storage database, close the underlying database
+// after it has been idle for m_StorageDatabaseIdleInterval seconds.
+static const double DefaultStorageDatabaseIdleInterval = 300;
+    
 void StorageTracker::initializeTracker(const String& storagePath, StorageTrackerClient* client)
 {
     ASSERT(isMainThread());
@@ -91,6 +95,7 @@ StorageTracker::StorageTracker(const String& storagePath)
     , m_isActive(false)
     , m_needsInitialization(false)
     , m_finishedImportingOriginIdentifiers(false)
+    , m_StorageDatabaseIdleInterval(DefaultStorageDatabaseIdleInterval)
 {
 }
 
@@ -627,5 +632,5 @@ long long StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
 
     return SQLiteFileSystem::getDatabaseFileSize(path);
 }
-    
+
 } // namespace WebCore

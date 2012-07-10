@@ -734,9 +734,10 @@ WONTFIX SKIP : http/tests/globalhistory = PASS
 // For more details, see discussions at issue 20570.
 WONTFIX SKIP : fast/forms/get-forms-to-about-blank.html = PASS
 
-// This test requires LayoutTestController.setCacheModel, which we don't
+// These tests requires LayoutTestController.setCacheModel, which we don't
 // implement because we can't emulate the caching behaviors it expects.
 WONTFIX SKIP : fast/dom/HTMLScriptElement/nested-execution.html = PASS
+WONTFIX SKIP : storage/domstorage/storage-close-database-on-idle.html = PASS
 
 // Deletion UI is a Mail-ism. We don't need to worry about this.
 WONTFIX SKIP : editing/deleting/deletionUI-single-instance.html = PASS

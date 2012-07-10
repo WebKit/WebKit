@@ -1,3 +1,18 @@
+2012-07-09  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Consider closing unused localStorage database after a timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=90713
+
+        For a localStorage, if there is no active document referencing to it for certain amount of time (300 seconds),
+        we can close the underlying sqlite database.
+
+        Reviewed by Brady Eidson.
+
+        * platform/chromium/TestExpectations: the test needs setCacheModel implementation, skip it in chromium.
+        * storage/domstorage/storage-close-database-on-idle-expected.txt: Added.
+        * storage/domstorage/storage-close-database-on-idle.html: Added.
+        * storage/resources/storage-close-data-on-idle-switch.html: Added.
+
 2012-07-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: A null or undefined storeNames argument to IDBDatabase::transaction() should be coerced to string

@@ -366,6 +366,8 @@ public:
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }
     bool hasCustomFullScreenBehavior() const { return m_customFullScreenBehavior; }
 
+    void setStorageDatabaseIdleInterval(double);
+
 private:
     LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash);
 

@@ -1,3 +1,19 @@
+2012-07-09  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Consider closing unused localStorage database after a timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=90713
+
+        For a localStorage, if there is no active document referencing to it for certain amount of time (300 seconds),
+        we can close the underlying sqlite database.
+
+        Reviewed by Brady Eidson.
+
+        * Storage/WebStorageManager.mm:
+        (+[WebStorageManager setStorageDatabaseIdleInterval:]): add a new method for DumpRenderTree to set the timeout
+            that we will wait before closing database.
+        (initializeLocalStoragePath):
+        * Storage/WebStorageManagerPrivate.h:
+
 2012-07-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122107.

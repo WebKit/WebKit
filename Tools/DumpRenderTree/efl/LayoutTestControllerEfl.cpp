@@ -928,3 +928,8 @@ void LayoutTestController::deliverWebIntent(JSStringRef action, JSStringRef type
 {
     DumpRenderTreeSupportEfl::deliverWebIntent(browser->mainFrame(), action, type, data);
 }
+
+void LayoutTestController::setStorageDatabaseIdleInterval(double)
+{
+    notImplemented();
+}

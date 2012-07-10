@@ -201,6 +201,11 @@ void LayoutTestController::deleteAllLocalStorage()
     [[WebStorageManager sharedWebStorageManager] deleteAllOrigins];
 }
 
+void LayoutTestController::setStorageDatabaseIdleInterval(double interval)
+{
+    [WebStorageManager setStorageDatabaseIdleInterval:interval];
+}
+
 JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
 {
     return originsArrayToJS(context, [[WebStorageManager sharedWebStorageManager] origins]);

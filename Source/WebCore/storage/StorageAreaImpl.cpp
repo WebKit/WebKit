@@ -55,6 +55,8 @@ inline StorageAreaImpl::StorageAreaImpl(StorageType storageType, PassRefPtr<Secu
 #ifndef NDEBUG
     , m_isShutdown(false)
 #endif
+    , m_accessCount(0)
+    , m_closeDatabaseTimer(this, &StorageAreaImpl::closeDatabaseTimerFired)
 {
     ASSERT(isMainThread());
     ASSERT(m_securityOrigin);
@@ -93,6 +95,8 @@ StorageAreaImpl::StorageAreaImpl(StorageAreaImpl* area)
 #ifndef NDEBUG
     , m_isShutdown(area->m_isShutdown)
 #endif
+    , m_accessCount(0)
+    , m_closeDatabaseTimer(this, &StorageAreaImpl::closeDatabaseTimerFired)
 {
     ASSERT(isMainThread());
     ASSERT(m_securityOrigin);
@@ -258,6 +262,33 @@ void StorageAreaImpl::blockUntilImportComplete() const
 {
     if (m_storageAreaSync)
         m_storageAreaSync->blockUntilImportComplete();
+}
+
+void StorageAreaImpl::incrementAccessCount()
+{
+    m_accessCount++;
+
+    if (m_closeDatabaseTimer.isActive())
+        m_closeDatabaseTimer.stop();
+}
+
+void StorageAreaImpl::decrementAccessCount()
+{
+    --m_accessCount;
+    ASSERT(m_accessCount >= 0);
+
+    if (!m_accessCount) {
+        if (m_closeDatabaseTimer.isActive())
+            m_closeDatabaseTimer.stop();
+        m_closeDatabaseTimer.startOneShot(StorageTracker::tracker().storageDatabaseIdleInterval());
+    }
+}
+
+void StorageAreaImpl::closeDatabaseTimerFired(Timer<StorageAreaImpl> *)
+{
+    blockUntilImportComplete();
+    if (m_storageAreaSync)
+        m_storageAreaSync->scheduleCloseDatabase();
 }
 
 }

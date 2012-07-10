@@ -27,6 +27,7 @@
 #define StorageAreaImpl_h
 
 #include "StorageArea.h"
+#include "Timer.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -53,6 +54,9 @@ namespace WebCore {
 
         virtual bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const;
 
+        virtual void incrementAccessCount();
+        virtual void decrementAccessCount();
+
         PassRefPtr<StorageAreaImpl> copy();
         void close();
 
@@ -69,6 +73,7 @@ namespace WebCore {
         StorageAreaImpl(StorageAreaImpl*);
 
         void blockUntilImportComplete() const;
+        void closeDatabaseTimerFired(Timer<StorageAreaImpl>*);
 
         StorageType m_storageType;
         RefPtr<SecurityOrigin> m_securityOrigin;
@@ -80,6 +85,8 @@ namespace WebCore {
 #ifndef NDEBUG
         bool m_isShutdown;
 #endif
+        unsigned m_accessCount;
+        Timer<StorageAreaImpl> m_closeDatabaseTimer;
     };
 
 } // namespace WebCore

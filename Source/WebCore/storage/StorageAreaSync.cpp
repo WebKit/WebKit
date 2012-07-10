@@ -382,10 +382,16 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
 {
     ASSERT(!isMainThread());
 
-    if (items.isEmpty() && !clearItems)
+    if (items.isEmpty() && !clearItems && !m_syncCloseDatabase)
         return;
     if (m_databaseOpenFailed)
         return;
+
+    if (!m_database.isOpen() && m_syncCloseDatabase) {
+        m_syncCloseDatabase = false;
+        return;
+    }
+
     if (!m_database.isOpen())
         openDatabase(CreateIfNonExistent);
     if (!m_database.isOpen())
