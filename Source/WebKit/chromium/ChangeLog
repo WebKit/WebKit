@@ -1,3 +1,18 @@
+2012-07-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Create CCScopedTexture class for creating/freeing textures
+        https://bugs.webkit.org/show_bug.cgi?id=89485
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * tests/CCScopedTextureTest.cpp: Added.
+        (WebKitTests):
+        (WebKitTests::TEST):
+        (TrackingTextureAllocator):
+        (WebKitTests::TrackingTextureAllocator::TrackingTextureAllocator):
+        (WebKitTests::TrackingTextureAllocator::numTextures):
+
 2012-07-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove obsolete accessor plumbing

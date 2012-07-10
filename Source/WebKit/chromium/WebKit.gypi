@@ -86,6 +86,7 @@
             'tests/CCSchedulerStateMachineTest.cpp',
             'tests/CCSchedulerTestCommon.h',
             'tests/CCSchedulerTest.cpp',
+            'tests/CCScopedTextureTest.cpp',
             'tests/CCSolidColorLayerImplTest.cpp',
             'tests/CCTestCommon.h',
             'tests/CCTiledLayerImplTest.cpp',

@@ -1,3 +1,48 @@
+2012-07-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Create CCScopedTexture class for creating/freeing textures
+        https://bugs.webkit.org/show_bug.cgi?id=89485
+
+        Reviewed by Adrienne Walker.
+
+        This class provides a standard way to create texture ids in a way that
+        ensures they will be freed later.
+
+        Also includes a CCTexture base class that holds textureId, size, and
+        format together in a struct that can be used in place of storing an
+        unsigned textureId in other classes.
+
+        Unit tests: CCScopedTexureTest.NewScopedTexture
+                    CCScopedTexureTest.CreateScopedTexture
+                    CCScopedTexureTest.ScopedTextureIsDeleted
+                    CCScopedTexureTest.LoseScopedTexture
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCScopedTexture.cpp: Added.
+        (WebCore):
+        (WebCore::CCScopedTexture::CCScopedTexture):
+        (WebCore::CCScopedTexture::~CCScopedTexture):
+        (WebCore::CCScopedTexture::allocate):
+        (WebCore::CCScopedTexture::free):
+        (WebCore::CCScopedTexture::leak):
+        * platform/graphics/chromium/cc/CCScopedTexture.h: Added.
+        (WebCore):
+        (CCScopedTexture):
+        (WebCore::CCScopedTexture::create):
+        * platform/graphics/chromium/cc/CCTexture.cpp: Added.
+        (WebCore):
+        (WebCore::CCTexture::setDimensions):
+        (WebCore::CCTexture::bytes):
+        (WebCore::CCTexture::memorySizeBytes):
+        * platform/graphics/chromium/cc/CCTexture.h: Added.
+        (WebCore):
+        (CCTexture):
+        (WebCore::CCTexture::CCTexture):
+        (WebCore::CCTexture::id):
+        (WebCore::CCTexture::size):
+        (WebCore::CCTexture::format):
+        (WebCore::CCTexture::setId):
+
 2012-07-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: deleteDatabase fails if transaction running in other database
