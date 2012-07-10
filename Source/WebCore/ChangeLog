@@ -1,3 +1,34 @@
+2012-07-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Refactor resource revisions before moving to UISourceCode.
+        https://bugs.webkit.org/show_bug.cgi?id=90855
+
+        Reviewed by Pavel Feldman.
+
+        Revisions are now persisted based on mainFrame.loaderId, not resource.loaderId which makes filtering out stale persisted revisions easier.
+        Restoring revisions from local storage is separated from filtering out stale persisted revisions.
+        Resource._clearRevisionHistory and Resource._restoreRevisions are not static anymore.
+        Renamed localStorage field for persisting revisions: "resource-history" -> "revision-history"
+
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.addRevision):
+        (WebInspector.Resource.prototype._restoreRevisionHistory):
+        (WebInspector.Resource.prototype._clearRevisionHistory):
+        (WebInspector.Resource.prototype.revertAndClearHistory.clearHistory):
+        (WebInspector.Resource.prototype.revertAndClearHistory):
+        (WebInspector.Revision):
+        (WebInspector.Revision._revisionHistoryRegistry):
+        (WebInspector.Revision._ensureStaleRevisionsFileteredOut.persist):
+        (WebInspector.Revision._ensureStaleRevisionsFileteredOut):
+        (WebInspector.Revision.prototype._persist):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._processCachedResources):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        * inspector/front-end/RevisionHistoryView.js:
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype._revisionAdded):
+
 2012-07-10  Alice Cheng  <alice_cheng@apple.com>
 
         Editing: Reproducible crasher when pasting a 0x0 image into Mail

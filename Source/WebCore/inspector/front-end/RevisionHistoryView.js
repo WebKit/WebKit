@@ -174,8 +174,8 @@ WebInspector.RevisionHistoryView.prototype.__proto__ = WebInspector.View.prototy
 /**
  * @constructor
  * @extends {TreeElement}
- * @param {WebInspector.ResourceRevision} revision
- * @param {WebInspector.ResourceRevision} baseRevision
+ * @param {WebInspector.Revision} revision
+ * @param {WebInspector.Revision} baseRevision
  * @param {boolean} allowRevert
  */
 WebInspector.RevisionHistoryTreeElement = function(revision, baseRevision, allowRevert)

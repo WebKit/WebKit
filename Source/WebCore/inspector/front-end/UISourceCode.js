@@ -138,7 +138,7 @@ WebInspector.UISourceCode.prototype = {
 
     _revisionAdded: function(event)
     {
-        var revision = /** @type {WebInspector.ResourceRevision} */ event.data;
+        var revision = /** @type {WebInspector.Revision} */ event.data;
         this.contentChanged(revision.content || "", this._resource.canonicalMimeType());
     },
 

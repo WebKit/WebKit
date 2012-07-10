@@ -56,108 +56,8 @@ WebInspector.Resource = function(request, url, documentURL, frameId, loaderId, t
     this._pendingContentCallbacks = [];
     if (this._request && !this._request.finished)
         this._request.addEventListener(WebInspector.NetworkRequest.Events.FinishedLoading, this._requestFinished, this);
-}
-
-WebInspector.Resource._resourceRevisionRegistry = function()
-{
-    if (!WebInspector.Resource._resourceRevisionRegistryObject) {
-        if (window.localStorage) {
-            var resourceHistory = window.localStorage["resource-history"];
-            try {
-                WebInspector.Resource._resourceRevisionRegistryObject = resourceHistory ? JSON.parse(resourceHistory) : {};
-            } catch (e) {
-                WebInspector.Resource._resourceRevisionRegistryObject = {};
-            }
-        } else
-            WebInspector.Resource._resourceRevisionRegistryObject = {};
-    }
-    return WebInspector.Resource._resourceRevisionRegistryObject;
-}
-
-WebInspector.Resource.restoreRevisions = function()
-{
-    var registry = WebInspector.Resource._resourceRevisionRegistry();
-    var filteredRegistry = {};
-    for (var url in registry) {
-        var historyItems = registry[url];
-        var resource = WebInspector.resourceForURL(url);
-
-        var filteredHistoryItems = [];
-        for (var i = 0; historyItems && i < historyItems.length; ++i) {
-            var historyItem = historyItems[i];
-            if (resource && historyItem.loaderId === resource.loaderId) {
-                resource.addRevision(window.localStorage[historyItem.key], new Date(historyItem.timestamp), true);
-                filteredHistoryItems.push(historyItem);
-                filteredRegistry[url] = filteredHistoryItems;
-            } else
-                delete window.localStorage[historyItem.key];
-        }
-    }
-    WebInspector.Resource._resourceRevisionRegistryObject = filteredRegistry;
-
-    function persist()
-    {
-        window.localStorage["resource-history"] = JSON.stringify(filteredRegistry);
-    }
-
-    // Schedule async storage.
-    setTimeout(persist, 0);
-}
-
-/**
- * @param {WebInspector.ResourceRevision} revision
- */
-WebInspector.Resource.persistRevision = function(revision)
-{
-    if (!window.localStorage)
-        return;
-
-    if (revision.resource.url.startsWith("inspector://"))
-        return;
-
-    var resource = revision.resource;
-    var url = resource.url;
-    var loaderId = resource.loaderId;
-    var timestamp = revision.timestamp.getTime();
-    var key = "resource-history|" + url + "|" + loaderId + "|" + timestamp;
-    var content = revision._content;
-
-    var registry = WebInspector.Resource._resourceRevisionRegistry();
-
-    var historyItems = registry[resource.url];
-    if (!historyItems) {
-        historyItems = [];
-        registry[resource.url] = historyItems;
-    }
-    historyItems.push({url: url, loaderId: loaderId, timestamp: timestamp, key: key});
-
-    function persist()
-    {
-        window.localStorage[key] = content;
-        window.localStorage["resource-history"] = JSON.stringify(registry);
-    }
-
-    // Schedule async storage.
-    setTimeout(persist, 0);
-}
-
-/**
- * @param {WebInspector.Resource} resource
- */
-WebInspector.Resource._clearResourceHistory = function(resource)
-{
-    if (!window.localStorage)
-        return;
-
-    if (resource.url.startsWith("inspector://"))
-        return;
-
-    var registry = WebInspector.Resource._resourceRevisionRegistry();
-    var historyItems = registry[resource.url];
-    for (var i = 0; historyItems && i < historyItems.length; ++i)
-        delete window.localStorage[historyItems[i].key];
-    delete registry[resource.url];
-    window.localStorage["resource-history"] = JSON.stringify(registry);
+    
+    this._restoreRevisionHistory();
 }
 
 WebInspector.Resource.Events = {
@@ -339,15 +239,40 @@ WebInspector.Resource.prototype = {
             if (lastRevision._content === content)
                 return;
         }
-        var revision = new WebInspector.ResourceRevision(this, content, timestamp || new Date());
+        var revision = new WebInspector.Revision(this, content, timestamp || new Date());
         this.history.push(revision);
 
         this.dispatchEventToListeners(WebInspector.Resource.Events.RevisionAdded, revision);
         if (!restoringHistory)
-            revision._persistRevision();
+            revision._persist();
         WebInspector.resourceTreeModel.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.ResourceContentCommitted, { resource: this, content: content });
     },
 
+    _restoreRevisionHistory: function()
+    {
+        if (!window.localStorage)
+            return;
+
+        WebInspector.Revision._ensureStaleRevisionsFileteredOut();
+        var registry = WebInspector.Revision._revisionHistoryRegistry();
+        var historyItems = registry[this.url];
+        for (var i = 0; historyItems && i < historyItems.length; ++i)
+            this.addRevision(window.localStorage[historyItems[i].key], new Date(historyItems[i].timestamp), true);
+    },
+
+    _clearRevisionHistory: function()
+    {
+        if (!window.localStorage)
+            return;
+
+        var registry = WebInspector.Revision._revisionHistoryRegistry();
+        var historyItems = registry[this.url];
+        for (var i = 0; historyItems && i < historyItems.length; ++i)
+            delete window.localStorage[historyItems[i].key];
+        delete registry[this.url];
+        window.localStorage["revision-history"] = JSON.stringify(registry);
+    },
+   
     /**
      * @return {?string}
      */
@@ -484,7 +409,7 @@ WebInspector.Resource.prototype = {
 
         function clearHistory()
         {
-            WebInspector.Resource._clearResourceHistory(this);
+            this._clearRevisionHistory();
             this.history = [];
             callback();
         }
@@ -526,14 +451,64 @@ WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
  * @param {?string|undefined} content
  * @param {Date} timestamp
  */
-WebInspector.ResourceRevision = function(resource, content, timestamp)
+WebInspector.Revision = function(resource, content, timestamp)
 {
     this._resource = resource;
     this._content = content;
     this._timestamp = timestamp;
 }
 
-WebInspector.ResourceRevision.prototype = {
+WebInspector.Revision._revisionHistoryRegistry = function()
+{
+    if (!WebInspector.Revision._revisionHistoryRegistryObject) {
+        if (window.localStorage) {
+            var revisionHistory = window.localStorage["revision-history"];
+            try {
+                WebInspector.Revision._revisionHistoryRegistryObject = revisionHistory ? JSON.parse(revisionHistory) : {};
+            } catch (e) {
+                WebInspector.Revision._revisionHistoryRegistryObject = {};
+            }
+        } else
+            WebInspector.Revision._revisionHistoryRegistryObject = {};
+    }
+    return WebInspector.Revision._revisionHistoryRegistryObject;
+}
+
+WebInspector.Revision._ensureStaleRevisionsFileteredOut = function()
+{
+    if (!window.localStorage)
+        return;
+
+    if (WebInspector.Revision._staleRevisionsFilteredOut)
+        return;
+    WebInspector.Revision._staleRevisionsFilteredOut = true;
+    
+    var registry = WebInspector.Revision._revisionHistoryRegistry();
+    var filteredRegistry = {};
+    for (var url in registry) {
+        var historyItems = registry[url];
+        var filteredHistoryItems = [];
+        for (var i = 0; historyItems && i < historyItems.length; ++i) {
+            var historyItem = historyItems[i];
+            if (historyItem.loaderId === WebInspector.resourceTreeModel.mainFrame.loaderId) {
+                filteredHistoryItems.push(historyItem);
+                filteredRegistry[url] = filteredHistoryItems;
+            } else
+                delete window.localStorage[historyItem.key];
+        }
+    }
+    WebInspector.Revision._revisionHistoryRegistryObject = filteredRegistry;
+
+    function persist()
+    {
+        window.localStorage["revision-history"] = JSON.stringify(filteredRegistry);
+    }
+
+    // Schedule async storage.
+    setTimeout(persist, 0);
+}
+
+WebInspector.Revision.prototype = {
     /**
      * @return {WebInspector.Resource}
      */
@@ -603,8 +578,35 @@ WebInspector.ResourceRevision.prototype = {
         callback([]);
     },
 
-    _persistRevision: function()
+    _persist: function()
     {
-        WebInspector.Resource.persistRevision(this);
+        if (!window.localStorage)
+            return;
+
+        var url = this.contentURL();
+        if (url.startsWith("inspector://"))
+            return;
+
+        var loaderId = WebInspector.resourceTreeModel.mainFrame.loaderId;
+        var timestamp = this.timestamp.getTime();
+        var key = "revision-history|" + url + "|" + loaderId + "|" + timestamp;
+
+        var registry = WebInspector.Revision._revisionHistoryRegistry();
+
+        var historyItems = registry[url];
+        if (!historyItems) {
+            historyItems = [];
+            registry[url] = historyItems;
+        }
+        historyItems.push({url: url, loaderId: loaderId, timestamp: timestamp, key: key});
+
+        function persist()
+        {
+            window.localStorage[key] = this._content;
+            window.localStorage["revision-history"] = JSON.stringify(registry);
+        }
+
+        // Schedule async storage.
+        setTimeout(persist.bind(this), 0);
     }
 }
