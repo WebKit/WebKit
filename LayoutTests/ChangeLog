@@ -1,3 +1,9 @@
+2012-07-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening after r122204.
+
+        * fast/viewport/viewport-legacy-xhtmlmp-expected.txt:
+
 2012-07-10  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening
