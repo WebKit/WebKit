@@ -31,7 +31,6 @@
 #include "config.h"
 #include "WebPageSerializer.h"
 
-#include "URLTestHelpers.h"
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "platform/WebString.h"
@@ -40,11 +39,11 @@
 #include "platform/WebURLResponse.h"
 #include "WebView.h"
 
+#include <googleurl/src/gurl.h>
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 
 using namespace WebKit;
-using WebKit::URLTestHelpers::toKURL;
 
 namespace {
 
@@ -74,16 +73,22 @@ protected:
         m_webView->close();
     }
 
-    void registerMockedURLLoad(const std::string& url, const WebString& fileName)
+    void registerMockedURLLoad(const WebURL& url, const WebString& fileName)
     {
-        URLTestHelpers::registerMockedURLLoad(toKURL(url), fileName, WebString::fromUTF8("pageserialization/"), WebString::fromUTF8("text/html"));
+        WebURLResponse response;
+        response.initialize();
+        response.setMIMEType("text/html");
+        std::string filePath = webkit_support::GetWebKitRootDir().utf8();
+        filePath.append("/Source/WebKit/chromium/tests/data/pageserialization/");
+        filePath.append(fileName.utf8());
+        webkit_support::RegisterMockedURL(url, response, WebString::fromUTF8(filePath));
     }
 
-    void loadURLInTopFrame(const WebURL& url)
+    void loadURLInTopFrame(const GURL& url)
     {
         WebURLRequest urlRequest;
         urlRequest.initialize();
-        urlRequest.setURL(url);
+        urlRequest.setURL(WebURL(url));
         m_webView->mainFrame()->loadRequest(urlRequest);
         // Make sure any pending request get served.
         webkit_support::ServeAsynchronousMockedRequests();
@@ -91,7 +96,7 @@ protected:
 
     static bool webVectorContains(const WebVector<WebURL>& vector, const char* url)
     {
-        return vector.contains(WebURL(toKURL(std::string(url))));
+        return vector.contains(WebURL(GURL(url)));
     }
 
     // Useful for debugging.
@@ -111,8 +116,8 @@ private:
 TEST_F(WebPageSerializerTest, HTMLNodes)
 {
     // Register the mocked frame and load it.
-    WebURL topFrameURL = toKURL("http://www.test.com");
-    registerMockedURLLoad("http://www.test.com", WebString::fromUTF8("simple_page.html"));
+    WebURL topFrameURL = GURL("http://www.test.com");
+    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("simple_page.html"));
     loadURLInTopFrame(topFrameURL);
 
     // Retrieve all resources.
@@ -145,18 +150,18 @@ TEST_F(WebPageSerializerTest, HTMLNodes)
 TEST_F(WebPageSerializerTest, MultipleFrames)
 {
     // Register the mocked frames.
-    WebURL topFrameURL = toKURL("http://www.test.com");
-    registerMockedURLLoad("http://www.test.com", WebString::fromUTF8("top_frame.html"));
-    registerMockedURLLoad("http://www.test.com/simple_iframe.html",
+    WebURL topFrameURL = GURL("http://www.test.com");
+    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("top_frame.html"));
+    registerMockedURLLoad(GURL("http://www.test.com/simple_iframe.html"),
                           WebString::fromUTF8("simple_iframe.html"));
-    registerMockedURLLoad("http://www.test.com/object_iframe.html",
+    registerMockedURLLoad(GURL("http://www.test.com/object_iframe.html"),
                           WebString::fromUTF8("object_iframe.html"));
-    registerMockedURLLoad("http://www.test.com/embed_iframe.html",
+    registerMockedURLLoad(GURL("http://www.test.com/embed_iframe.html"),
                           WebString::fromUTF8("embed_iframe.html"));
     // If we don't register a mocked resource for awesome.png, it causes the
     // document loader of the iframe that has it as its src to assert on close,
     // not sure why.
-    registerMockedURLLoad("http://www.test.com/awesome.png",
+    registerMockedURLLoad(GURL("http://www.test.com/awesome.png"),
                           WebString::fromUTF8("awesome.png"));
 
     loadURLInTopFrame(topFrameURL);

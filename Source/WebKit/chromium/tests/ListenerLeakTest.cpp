@@ -31,7 +31,6 @@
 #include "config.h"
 
 #include "FrameTestHelpers.h"
-#include "URLTestHelpers.h"
 #include "WebView.h"
 #include <gtest/gtest.h>
 #include <v8/include/v8-profiler.h>
@@ -91,7 +90,7 @@ public:
         std::string baseURL("http://www.example.com/");
         std::string fileName(filename);
         bool executeScript = true;
-        URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(baseURL.c_str()), WebString::fromUTF8(fileName.c_str()));
+        FrameTestHelpers::registerMockedURLLoad(baseURL, fileName);
         m_webView = FrameTestHelpers::createWebViewAndLoad(baseURL + fileName, executeScript);
     }
 

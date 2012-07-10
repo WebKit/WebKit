@@ -28,8 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-
 // FIXME: Avoid this source dependency on Chromium's base module.
 #include <base/test/test_suite.h>
 
