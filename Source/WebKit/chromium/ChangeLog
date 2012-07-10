@@ -1,3 +1,9 @@
+2012-07-10  Jochen Eisinger  <jochen@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-07-09  Matt Falkenhagen  <falken@chromium.org>
 
         Add ENABLE_DIALOG_ELEMENT and skeleton files
