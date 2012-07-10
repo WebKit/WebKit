@@ -1,3 +1,11 @@
+2012-07-09  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Fix a wrong fix of r122194.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::decideRenderPassAllocationsForFrame):
+
 2012-07-09  Matt Falkenhagen  <falken@chromium.org>
 
         Add ENABLE_DIALOG_ELEMENT and skeleton files

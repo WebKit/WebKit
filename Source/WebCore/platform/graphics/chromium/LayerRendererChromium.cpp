@@ -356,9 +356,10 @@ void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPa
 
         const IntSize& requiredSize = renderPassesInDrawOrder[i]->framebufferOutputRect().size();
         GC3Denum requiredFormat = GraphicsContext3D::RGBA;
-        bool reserved = texture->reserve(requiredSize, requiredFormat);
         // See https://bugs.webkit.org/show_bug.cgi?id=90848
+        // bool reserved = texture->reserve(requiredSize, requiredFormat);
         // ASSERT_UNUSED(reserved, reserved);
+        texture->reserve(requiredSize, requiredFormat);
     }
 }
 
