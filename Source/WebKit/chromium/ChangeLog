@@ -1,3 +1,25 @@
+2012-07-09  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Platform] Introduce LocaleMac class
+        https://bugs.webkit.org/show_bug.cgi?id=90248
+
+        Reviewed by Kent Tamura.
+
+        This patch added tests for LocaleMac class.
+
+        * WebKit.gypi:
+        * tests/LocaleMacTest.cpp: Added.
+        (LocaleMacTest):
+        (LocaleMacTest::dateComponents):
+        (LocaleMacTest::msForDate):
+        (LocaleMacTest::formatDate):
+        (LocaleMacTest::parseDate):
+        (LocaleMacTest::dateFormatText):
+        (LocaleMacTest::firstDayOfWeek):
+        (LocaleMacTest::monthLabel):
+        (LocaleMacTest::weekDayShortLabel):
+        (TEST_F):
+
 2012-07-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Create CCScopedTexture class for creating/freeing textures

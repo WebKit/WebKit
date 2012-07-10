@@ -28,60 +28,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LocaleWin_h
-#define LocaleWin_h
+#ifndef LocaleMac_h
+#define LocaleMac_h
 
-#include <windows.h>
 #include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+OBJC_CLASS NSDateFormatter;
+OBJC_CLASS NSLocale;
 
 namespace WebCore {
 
 class DateComponents;
-struct DateFormatToken;
 
-class LocaleWin {
+class LocaleMac {
 public:
-    static PassOwnPtr<LocaleWin> create(LCID);
-    static LocaleWin* currentLocale();
-    ~LocaleWin();
+    static PassOwnPtr<LocaleMac> create(const String&);
+    static LocaleMac* currentLocale();
+    ~LocaleMac();
     double parseDate(const String&);
     String formatDate(const DateComponents&);
+
 #if ENABLE(CALENDAR_PICKER)
     String dateFormatText();
     const Vector<String>& monthLabels();
     const Vector<String>& weekDayShortLabels();
-    unsigned firstDayOfWeek() { return m_firstDayOfWeek; }
+    unsigned firstDayOfWeek();
 #endif
-
-    // For testing.
-    double parseDate(const String& format, int baseYear, const String& input);
-    String formatDate(const String& format, int baseYear, int year, int month, int day);
-    static String dateFormatText(const String& format, const String& yearText, const String& monthText, const String& dayText);
 
 private:
-    explicit LocaleWin(LCID);
-    String getLocaleInfoString(LCTYPE);
-    void ensureShortMonthLabels();
-    void ensureMonthLabels();
-    void ensureShortDateTokens();
-    int parseNumberOrMonth(const String&, unsigned& index);
-    double parseDate(const Vector<DateFormatToken>&, int baseYear, const String&);
-    String formatDate(const Vector<DateFormatToken>&, int baseYear, int year, int month, int day);
-#if ENABLE(CALENDAR_PICKER)
-    void ensureWeekDayShortLabels();
-#endif
+    explicit LocaleMac(const String&);
+    NSDateFormatter *createShortDateFormatter();
 
-    LCID m_lcid;
-    int m_baseYear;
-    Vector<DateFormatToken> m_shortDateTokens;
-    Vector<String> m_shortMonthLabels;
+    RetainPtr<NSLocale> m_locale;
+#if ENABLE(CALENDAR_PICKER)
+    String m_localizedDateFormatText;
     Vector<String> m_monthLabels;
-#if ENABLE(CALENDAR_PICKER)
     Vector<String> m_weekDayShortLabels;
-    unsigned m_firstDayOfWeek;
 #endif
-
 };
 
 }

@@ -1648,9 +1648,10 @@
 
             ['include', 'WebKit/mac/WebCoreSupport/WebSystemInterface\\.mm$'],
 
-            # We use LocalizedDateMac.mm instead of LocalizedDateICU.cpp.
+            # We use LocalizedDateMac.cpp with LocaleMac.mm instead of LocalizedDateICU.cpp.
             ['exclude', 'platform/text/LocalizedDateICU\\.cpp$'],
-            ['include', 'platform/text/mac/LocalizedDateMac\\.mm$'],
+            ['include', 'platform/text/mac/LocaleMac\\.mm$'],
+            ['include', 'platform/text/mac/LocalizedDateMac\\.cpp$'],
 
             # The Mac uses platform/mac/KillRingMac.mm instead of the dummy
             # implementation.

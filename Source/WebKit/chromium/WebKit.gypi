@@ -181,6 +181,11 @@
                     'tests/WebPageSerializerTest.cpp',
                 ],
             }],
+            ['OS=="mac"', {
+                'webkit_unittest_files': [
+                    'tests/LocaleMacTest.cpp',
+                ],
+            }],
             ['OS!="mac"', {
                 'webkit_unittest_files': [
                     # Mac uses ScrollAnimatorMac instead of ScrollAnimatorNone.
