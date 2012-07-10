@@ -89,7 +89,6 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
     , m_contextStopped(false)
 {
     ASSERT(m_backend);
-    ASSERT(m_mode == m_backend->mode());
 
     if (mode == VERSION_CHANGE) {
         // Not active until the callback.

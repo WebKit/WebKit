@@ -42,11 +42,6 @@ public:
     static PassRefPtr<IDBIndexBackendInterface> create(PassOwnPtr<WebIDBIndex>);
     virtual ~IDBIndexBackendProxy();
 
-    virtual String name();
-    virtual WebCore::IDBKeyPath keyPath();
-    virtual bool unique();
-    virtual bool multiEntry();
-
     virtual void openCursor(PassRefPtr<WebCore::IDBKeyRange>, unsigned short direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void openKeyCursor(PassRefPtr<WebCore::IDBKeyRange>, unsigned short direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void count(PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);

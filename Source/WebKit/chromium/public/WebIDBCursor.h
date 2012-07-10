@@ -40,11 +40,6 @@ class WebIDBCursor {
 public:
     virtual ~WebIDBCursor() { }
 
-    virtual unsigned short direction() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return 0;
-    }
     virtual WebIDBKey key() const
     {
         WEBKIT_ASSERT_NOT_REACHED();

@@ -1,3 +1,31 @@
+2012-07-09  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove obsolete accessor plumbing
+        https://bugs.webkit.org/show_bug.cgi?id=90812
+
+        Reviewed by Tony Chang.
+
+        * public/WebIDBCursor.h: Remove direction.
+        * public/WebIDBDatabase.h: Remove name, version, objectStoreNames;
+        (WebKit::WebIDBDatabase::metadata):
+        * public/WebIDBIndex.h: Remove name, keyPath, unique, multiEntry;
+        * public/WebIDBObjectStore.h: Remove name, keyPath, indexNames, autoIncrement;
+        * src/IDBDatabaseBackendProxy.cpp: Remove plumbing.
+        * src/IDBDatabaseBackendProxy.h: Remove plumbing.
+        (IDBDatabaseBackendProxy):
+        * src/IDBIndexBackendProxy.cpp: Remove plumbing.
+        * src/IDBIndexBackendProxy.h: Remove plumbing.
+        (IDBIndexBackendProxy):
+        * src/IDBObjectStoreBackendProxy.cpp: Remove plumbing.
+        * src/IDBObjectStoreBackendProxy.h: Remove plumbing.
+        (IDBObjectStoreBackendProxy):
+        * src/IDBTransactionBackendProxy.cpp: Remove plumbing.
+        * src/IDBTransactionBackendProxy.h: Assert stub is not used - only needed
+        by real IDBTransactionBackendImpl
+        (WebKit::IDBTransactionBackendProxy::mode):
+        * src/WebIDBTransactionImpl.cpp: Remove plumbing.
+        * src/WebIDBTransactionImpl.h: Remove plumbing.
+
 2012-07-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122161.

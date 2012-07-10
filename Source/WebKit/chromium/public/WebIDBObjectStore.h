@@ -43,27 +43,6 @@ class WebIDBObjectStore {
 public:
     virtual ~WebIDBObjectStore() { }
 
-    virtual WebString name() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return WebString();
-    }
-    virtual WebIDBKeyPath keyPath() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return WebIDBKeyPath::createNull();
-    }
-    virtual WebDOMStringList indexNames() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return WebDOMStringList();
-    }
-    virtual bool autoIncrement() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return false;
-    }
-
     virtual void get(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     enum PutMode {
@@ -73,8 +52,6 @@ public:
     };
 
     virtual void put(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    // FIXME: Remove the following overload when all callers are updated.
-    virtual void deleteFunction(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void deleteFunction(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual WebIDBIndex* createIndex(const WebString&, const WebIDBKeyPath&, bool, bool, const WebIDBTransaction&, WebExceptionCode&)

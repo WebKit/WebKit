@@ -66,21 +66,6 @@ IDBDatabaseMetadata IDBDatabaseBackendProxy::metadata() const
     return m_webIDBDatabase->metadata();
 }
 
-String IDBDatabaseBackendProxy::name() const
-{
-    return m_webIDBDatabase->name();
-}
-
-String IDBDatabaseBackendProxy::version() const
-{
-    return m_webIDBDatabase->version();
-}
-
-PassRefPtr<DOMStringList> IDBDatabaseBackendProxy::objectStoreNames() const
-{
-    return m_webIDBDatabase->objectStoreNames();
-}
-
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendProxy::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,

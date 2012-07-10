@@ -43,9 +43,6 @@ public:
     virtual ~IDBDatabaseBackendProxy();
 
     virtual WebCore::IDBDatabaseMetadata metadata() const;
-    virtual String name() const;
-    virtual String version() const;
-    virtual PassRefPtr<WebCore::DOMStringList> objectStoreNames() const;
 
     virtual PassRefPtr<WebCore::IDBObjectStoreBackendInterface> createObjectStore(const String& name, const WebCore::IDBKeyPath&, bool autoIncrement, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void deleteObjectStore(const String& name, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);

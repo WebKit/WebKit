@@ -56,26 +56,6 @@ IDBIndexBackendProxy::~IDBIndexBackendProxy()
 {
 }
 
-String IDBIndexBackendProxy::name()
-{
-    return m_webIDBIndex->name();
-}
-
-IDBKeyPath IDBIndexBackendProxy::keyPath()
-{
-    return m_webIDBIndex->keyPath();
-}
-
-bool IDBIndexBackendProxy::unique()
-{
-    return m_webIDBIndex->unique();
-}
-
-bool IDBIndexBackendProxy::multiEntry()
-{
-    return m_webIDBIndex->multiEntry();
-}
-
 void IDBIndexBackendProxy::openCursor(PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,

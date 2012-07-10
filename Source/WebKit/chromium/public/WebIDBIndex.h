@@ -42,27 +42,6 @@ class WebIDBIndex {
 public:
     virtual ~WebIDBIndex() { }
 
-    virtual WebString name() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return WebString();
-    }
-    virtual WebIDBKeyPath keyPath() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return WebIDBKeyPath::createNull();
-    }
-    virtual bool unique() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return false;
-    }
-    virtual bool multiEntry() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return false;
-    }
-
     virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void openKeyCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void count(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }

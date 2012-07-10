@@ -46,11 +46,6 @@ WebIDBTransactionImpl::~WebIDBTransactionImpl()
 {
 }
 
-int WebIDBTransactionImpl::mode() const
-{
-    return m_backend->mode();
-}
-
 WebIDBObjectStore* WebIDBTransactionImpl::objectStore(const WebString& name, ExceptionCode& ec)
 {
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->objectStore(name, ec);

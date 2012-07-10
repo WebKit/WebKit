@@ -42,7 +42,11 @@ public:
     virtual ~IDBTransactionBackendProxy();
 
     virtual PassRefPtr<WebCore::IDBObjectStoreBackendInterface> objectStore(const String& name, WebCore::ExceptionCode&);
-    virtual unsigned short mode() const;
+    virtual unsigned short mode() const
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
     virtual void commit();
     virtual void abort();
     virtual bool scheduleTask(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, PassOwnPtr<WebCore::ScriptExecutionContext::Task>);

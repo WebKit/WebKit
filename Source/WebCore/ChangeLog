@@ -1,3 +1,16 @@
+2012-07-09  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove obsolete accessor plumbing
+        https://bugs.webkit.org/show_bug.cgi?id=90812
+
+        Reviewed by Tony Chang.
+
+        No new tests - just deleting code.
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction): Since backend mode() is disconnected, can no
+        longer assert that front-end/back-end modes match; not worth it to keeping the plumbing.
+
 2012-07-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove HashMap workaround for layers with id=0 in CCDamageTracker
