@@ -29,26 +29,18 @@ function setFavIcon(iconURL) {
 }
 
 function runTests() {
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText();
-
+        testRunner.dumpIconChanges();
+    }
     iconURL = document.getElementsByTagName("head")[0].getElementsByTagName("link")[0].href;
     debugOutput ('Original iconURL is: ' + iconURL);
-    newURL = 'http://test.com/newfavicon.ico';
+    newURL = 'http://test.com/newfavion.ico';
     debugOutput ('Setting new icon URL to: ' + newURL);
     setFavIcon(newURL);
     iconURL = document.getElementsByTagName("head")[0].getElementsByTagName("link")[0].href;
 
     debugOutput ('New iconURL is: ' + iconURL);
-
-    // check that the URL list in the document is as we expect
-    var expectedURLs = "http://test.com/newfavicon.ico";
-    var iconURLs = window.internals.iconURLs(document);
-    if (expectedURLs == iconURLs[0])
-        debugOutput('PASS - URL list matches expected');
-    else
-        debugOutput('FAIL - URL list does not match expected');
-
 }
 
 </script>

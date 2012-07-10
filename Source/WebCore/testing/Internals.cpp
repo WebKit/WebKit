@@ -1156,18 +1156,6 @@ String Internals::counterValue(Element* element)
     return counterValueForElement(element);
 }
 
-PassRefPtr<DOMStringList> Internals::iconURLs(Document* document) const
-{
-    Vector<IconURL> iconURLs = document->iconURLs();
-    RefPtr<DOMStringList> stringList = DOMStringList::create();
-
-    Vector<IconURL>::const_iterator iter(iconURLs.begin());
-    for (; iter != iconURLs.end(); ++iter)
-        stringList->append(iter->m_iconURL.string());
-
-    return stringList.release();
-}
-
 #if ENABLE(FULLSCREEN_API)
 void Internals::webkitWillEnterFullScreenForElement(Document* document, Element* element)
 {

@@ -1,3 +1,14 @@
+2012-07-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122178.
+        http://trac.webkit.org/changeset/122178
+        https://bugs.webkit.org/show_bug.cgi?id=90857
+
+        browser tests, PrerenderBrowserTest.PrerenderFavicon and other
+        tests, started to fail (Requested by hayato on #webkit).
+
+        * Source/autotools/symbols.filter:
+
 2012-07-09  Matt Falkenhagen  <falken@chromium.org>
 
         Add ENABLE_DIALOG_ELEMENT and skeleton files

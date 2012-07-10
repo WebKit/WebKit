@@ -1,3 +1,20 @@
+2012-07-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122178.
+        http://trac.webkit.org/changeset/122178
+        https://bugs.webkit.org/show_bug.cgi?id=90857
+
+        browser tests, PrerenderBrowserTest.PrerenderFavicon and other
+        tests, started to fail (Requested by hayato on #webkit).
+
+        * fast/dom/icon-url-change-expected.txt: Removed.
+        * fast/dom/icon-url-change.html: Removed.
+        * fast/dom/icon-url-list-expected.txt: Removed.
+        * fast/dom/icon-url-list.html: Removed.
+        * fast/dom/icon-url-property-expected.txt:
+        * fast/dom/icon-url-property.html:
+        * platform/chromium/TestExpectations:
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         LayoutTestController.dumpConfigurationForViewport should move to Internals
