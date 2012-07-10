@@ -31,6 +31,7 @@
 
 #if USE(CAIRO)
 #include "CairoUtilities.h"
+#include <wtf/text/CString.h>
 #endif
 
 namespace WebCore {
