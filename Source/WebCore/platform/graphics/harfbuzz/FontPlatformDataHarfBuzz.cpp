@@ -261,18 +261,6 @@ HarfbuzzFace* FontPlatformData::harfbuzzFace() const
 
 void FontPlatformData::querySystemForRenderStyle()
 {
-    if (!m_family.length()) {
-        // We don't have a family for this, probably because it's a webfont. We
-        // set all the values to 'no preference' and take the system defaults.
-        m_style.useBitmaps = FontRenderStyle::NoPreference;
-        m_style.useAutoHint = FontRenderStyle::NoPreference;
-        m_style.useHinting = FontRenderStyle::NoPreference;
-        m_style.useAntiAlias = FontRenderStyle::NoPreference;
-        m_style.useSubpixelRendering = FontRenderStyle::NoPreference;
-        m_style.useSubpixelPositioning = FontRenderStyle::NoPreference;
-        return;
-    }
-
     PlatformSupport::getRenderStyleForStrike(m_family.data(), (((int)m_textSize) << 2) | (m_typeface->style() & 3), &m_style);
 }
 

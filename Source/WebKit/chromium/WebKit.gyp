@@ -864,6 +864,7 @@
                 ['OS=="android"', {
                     'sources/': [
                         ['include', '^src/linux/WebFontRendering\\.cpp$'],
+                        ['include', '^src/linux/WebFontRenderStyle\\.cpp$'],
                     ],
                 }],
             ],

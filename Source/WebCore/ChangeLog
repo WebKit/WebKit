@@ -1,3 +1,15 @@
+2012-07-10  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Use default font rendering styles in FontPlatformData::querySystemForRenderStyle()
+        https://bugs.webkit.org/show_bug.cgi?id=90826
+
+        Reviewed by Adam Barth.
+
+        No new tests. The change to this file is refactoring only.
+
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp:
+        (WebCore::FontPlatformData::querySystemForRenderStyle): Moved the "NoPreference" initialization into PlatformSupport::PlatformSupport::getRenderStyleForStrike().
+
 2012-07-10  Raymond Toy  <rtoy@google.com>
 
         AudioFIFO not correctly wrapping the write index on push
