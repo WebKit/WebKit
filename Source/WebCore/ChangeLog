@@ -1,3 +1,9 @@
+2012-07-10  Ojan Vafai  <ojan@chromium.org>
+
+        Build fix. Removing unused variable from http://trac.webkit.org/changeset/122264.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeContentLogicalHeightUsing):
+
 2012-07-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLPropertiesCollection should share more code with HTMLCollection

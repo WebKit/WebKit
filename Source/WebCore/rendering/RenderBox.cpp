@@ -2081,7 +2081,6 @@ LayoutUnit RenderBox::computeContentLogicalHeightUsing(SizeType heightType, cons
     if (height.isAuto())
         return heightType == MinSize ? 0 : -1;
  
-    LayoutUnit logicalHeight = -1;
     if (height.isFixed())
         return height.value();
     if (height.isPercent())
