@@ -1,3 +1,25 @@
+2012-07-10  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: Count inspector memory used to traverse DOM in native memory snapshots.
+        https://bugs.webkit.org/show_bug.cgi?id=90456
+
+        Inspector may take significant amount of memory when traversing DOM structure.
+        Take it into account and report under inspector memory.
+
+        Reviewed by Pavel Feldman.
+
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (WebCore::MemoryInstrumentation::calculateContainerSize):
+        (WebCore::MemoryInstrumentation::reportHashMap):
+        (WebCore::MemoryInstrumentation::reportHashSet):
+        (WebCore::MemoryInstrumentation::reportVector):
+        * inspector/InspectorMemoryAgent.cpp:
+        (MemoryBlockName):
+        (WebCore):
+        (WebCore::domTreeInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+
 2012-07-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] Fix memory leaks by adopting allocation of GdkPixbuf
