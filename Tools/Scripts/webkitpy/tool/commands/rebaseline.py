@@ -365,12 +365,13 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
 
 class Rebaseline(AbstractParallelRebaselineCommand):
     name = "rebaseline"
-    help_text = "Replaces local expected.txt files with new results from build bots. Shows the list of failing tests on the builders if no test names are provided."
+    help_text = "Rebaseline tests with results from the build bots. Shows the list of failing tests on the builders if no test names are provided."
     argument_names = "[TEST_NAMES]"
 
     def __init__(self):
         options = [
             optparse.make_option("--builders", default=None, action="append", help="Comma-separated-list of builders to pull new baselines from (can also be provided multiple times)"),
+            optparse.make_option("--suffixes", default=BASELINE_SUFFIX_LIST, action="append", help="Comma-separated-list of file types to rebaseline (can also be provided multiple times)"),
         ]
         AbstractParallelRebaselineCommand.__init__(self, options=options)
 
@@ -396,6 +397,12 @@ class Rebaseline(AbstractParallelRebaselineCommand):
         failing_tests = builder.latest_layout_test_results().tests_matching_failure_types([test_failures.FailureTextMismatch])
         return self._tool.user.prompt_with_list("Which test(s) to rebaseline for %s:" % builder.name(), failing_tests, can_choose_multiple=True)
 
+    def _suffixes_to_update(self, options):
+        suffixes = []
+        for suffix_list in options.suffixes:
+            suffixes += suffix_list.split(",")
+        return suffixes
+
     def execute(self, options, args, tool):
         if options.builders:
             builders = []
@@ -411,8 +418,7 @@ class Rebaseline(AbstractParallelRebaselineCommand):
             for test in tests:
                 if test not in test_list:
                     test_list[test] = {}
-                # FIXME: Allow for choosing the suffixes.
-                test_list[test][builder.name()] = ['txt']
+                test_list[test][builder.name()] = self._suffixes_to_update(options)
 
         if options.verbose:
             print "rebaseline-json: " + str(test_list)

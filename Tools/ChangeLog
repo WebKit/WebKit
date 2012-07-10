@@ -1,3 +1,21 @@
+2012-07-10  Ojan Vafai  <ojan@chromium.org>
+
+        webkit-patch rebaseline doesn't work for audio/pixel tests
+        https://bugs.webkit.org/show_bug.cgi?id=90905
+
+        Reviewed by Adam Barth.
+
+        We just need to pass the correct suffix list to rebaseline-test-internal
+        and optimize-baselines. By default, pass all suffixes.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (Rebaseline):
+        (Rebaseline.__init__):
+        (Rebaseline._suffixes_to_update):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_multiple_builders_and_tests_command_line):
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         Remove LayoutTestController and WebKitTestRunner support for Hixie76 WebSockets
