@@ -186,6 +186,7 @@ FloatRect CCDamageTracker::removeRectFromCurrentFrame(int layerID, bool& layerIs
 void CCDamageTracker::saveRectForNextFrame(int layerID, const FloatRect& targetSpaceRect)
 {
     // This layer should not yet exist in next frame's history.
+    ASSERT(layerID > 0);
     ASSERT(m_nextRectHistory->find(layerID) == m_nextRectHistory->end());
     m_nextRectHistory->set(layerID, targetSpaceRect);
 }

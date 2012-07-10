@@ -1,3 +1,16 @@
+2012-07-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove HashMap workaround for layers with id=0 in CCDamageTracker
+        https://bugs.webkit.org/show_bug.cgi?id=90825
+
+        Reviewed by Adrienne Walker.
+
+        Layer ids are no longer allowed to be 0, and the behaviour is guarded
+        with asserts, so this workaround is not needed any longer.
+
+        * platform/graphics/chromium/cc/CCDamageTracker.h:
+        (CCDamageTracker):
+
 2012-07-09  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock requestPointerLock rejects locking an element not in a document.

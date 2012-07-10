@@ -70,14 +70,7 @@ private:
     // To correctly track exposed regions, two hashtables of rects are maintained.
     // The "current" map is used to compute exposed regions of the current frame, while
     // the "next" map is used to collect layer rects that are used in the next frame.
-    struct RectMapKeyTraits : HashTraits<int> {
-        static const bool emptyValueIsZero = false;
-        static const bool needsDestruction = false;
-        static int emptyValue() { return -1; }
-        static void constructDeletedValue(int& slot) { slot = -2; }
-        static bool isDeletedValue(int value) { return value == -2; }
-    };
-    typedef HashMap<int, FloatRect, DefaultHash<int>::Hash, RectMapKeyTraits> RectMap;
+    typedef HashMap<int, FloatRect> RectMap;
     OwnPtr<RectMap> m_currentRectHistory;
     OwnPtr<RectMap> m_nextRectHistory;
 
