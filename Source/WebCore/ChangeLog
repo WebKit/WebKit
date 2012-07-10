@@ -1,3 +1,41 @@
+2012-07-10  Philip Rogers  <pdr@google.com>
+
+        Crash due to SVG animation element not removed from target (before reset)
+        https://bugs.webkit.org/show_bug.cgi?id=90750
+
+        Reviewed by Abhishek Arya.
+
+        Previously we were not removing an animation element from
+        SVGDocumentExtensions::m_animatedElements which led to a crash.
+        This change properly removes animation elements in resetTargetElement
+        which both fixes this bug and will prevent others from hitting it in
+        the future.
+
+        Test: svg/animations/dynamic-modify-attributename-crash2.svg
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removeAllAnimationElementsFromTarget):
+
+        removeAllAnimationElementsFromTarget now adds all the animation elements
+        to a vector and iterates over it because the changes to resetTargetElement
+        would have caused us to modify the underlying hashset as we iterated. Note that
+        before we deleted animationElementsForTarget in removeAllAnimationElementsFromTarget
+        but that logic is now handled in removeAnimationElementFromTarget which is called
+        during resetTargetElement.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::removedFrom):
+
+        Because of the changes in resetTargetElement, removedFrom was able to be
+        refactored. This patch changes removedFrom to call resetTargetElement rather
+        than have duplicated logic. There is a very small change in logic here:
+        animationAttributeChanged() is now called in removedFrom().
+
+        (WebCore::SVGSMILElement::resetTargetElement):
+
+        resetTargetElement now fully resets the target, including removing it from
+        m_animatedElements. This will prevent future instances of this bug.
+
 2012-07-10  Helder Correia  <helder.correia@nokia.com>
 
         [Qt] Repaint counter for accelerated compositing

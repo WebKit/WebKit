@@ -233,11 +233,8 @@ void SVGSMILElement::removedFrom(ContainerNode* rootParent)
         disconnectConditions();
 
         // Clear target now, because disconnectConditions calls targetElement() which will recreate the target if we removed it sooner. 
-        if (m_targetElement) {
-            document()->accessSVGExtensions()->removeAnimationElementFromTarget(this, m_targetElement);
-            targetElementWillChange(m_targetElement, 0);
-            m_targetElement = 0;
-        }
+        if (m_targetElement)
+            resetTargetElement();
 
         m_attributeName = anyQName();
     }
@@ -582,6 +579,7 @@ void SVGSMILElement::targetElementWillChange(SVGElement* currentTarget, SVGEleme
 
 void SVGSMILElement::resetTargetElement()
 {
+    document()->accessSVGExtensions()->removeAnimationElementFromTarget(this, m_targetElement);
     targetElementWillChange(m_targetElement, 0);
     m_targetElement = 0;
     animationAttributeChanged();
