@@ -58,6 +58,7 @@ var japaneseArguments = {
 };
 var arabicArguments = {
     locale: 'ar',
+    isRTL: true,
     monthLabels : ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
                    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
     dayLabels : ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
@@ -95,6 +96,9 @@ function openCalendar(args) {
 }
 
 function selected(select) {
+    var frame = document.getElementsByTagName('iframe')[0];
+    frame.style.width = '100px';
+    frame.style.height = '100px';
     switch (select.selectedIndex) {
     case 0:
         openCalendar(englishArguments);

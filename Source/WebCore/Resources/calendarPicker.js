@@ -310,13 +310,23 @@ function fixWindowSize() {
             maxCellWidth = headers[i].offsetWidth;
     }
     var DaysAreaContainerBorder = 1;
-    var maxRight = Math.max(yearMonthRightElement.offsetLeft + yearMonthRightElement.offsetWidth,
-                            daysAreaElement.offsetLeft + maxCellWidth * 7 + DaysAreaContainerBorder);
+    var main = $("main");
+    var yearMonthEnd;
+    var daysAreaEnd;
+    if (global.params.isRTL) {
+        var startOffset = main.offsetLeft + main.offsetWidth;
+        yearMonthEnd = startOffset - yearMonthRightElement.offsetLeft;
+        daysAreaEnd = startOffset - (daysAreaElement.offsetLeft + daysAreaElement.offsetWidth) + maxCellWidth * 7 + DaysAreaContainerBorder;
+    } else {
+        yearMonthEnd = yearMonthRightElement.offsetLeft + yearMonthRightElement.offsetWidth;
+        daysAreaEnd = daysAreaElement.offsetLeft + maxCellWidth * 7 + DaysAreaContainerBorder;
+    }
+
+    var maxEnd = Math.max(yearMonthEnd, daysAreaEnd);
     var MainPadding = 6;
     var MainBorder = 1;
-    var desiredBodyWidth = maxRight + MainPadding + MainBorder;
+    var desiredBodyWidth = maxEnd + MainPadding + MainBorder;
 
-    var main = $("main");
     var mainHeight = main.offsetHeight;
     main.style.width = "auto";
     daysAreaElement.style.width = "100%";
@@ -355,6 +365,8 @@ function checkLimits() {
 function layout() {
     if (global.params.isRTL)
         document.body.dir = "rtl";
+    else
+        document.body.dir = "ltr";
     var main = $("main");
     var params = global.params;
     main.removeChild(main.firstChild);
