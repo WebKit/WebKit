@@ -3727,8 +3727,6 @@ BUGWK90469 WIN : storage/indexeddb/mozilla/create-objectstore-null-name.html = P
 BUGWK90469 WIN : storage/indexeddb/mozilla/index-prev-no-duplicate.html = PASS CRASH
 BUGWK90469 WIN : storage/indexeddb/mozilla/cursors.html = PASS CRASH
 BUGWK90469 WIN : storage/indexeddb/mozilla/create-index-with-integer-keys.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/indexes.html = PASS CRASH
-
 
 // Require rebaseline after bug 88171
 BUGWK88171 WIN : css1/formatting_model/floating_elements.html = IMAGE

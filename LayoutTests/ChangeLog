@@ -1,3 +1,9 @@
+2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Unreviewed gardening. Removing duplicated line from TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-10  Ojan Vafai  <ojan@chromium.org>
 
         Add support for min-height:auto and min-width:auto
