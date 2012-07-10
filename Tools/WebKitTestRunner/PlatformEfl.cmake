@@ -41,6 +41,7 @@ LIST(APPEND WebKitTestRunner_LIBRARIES
     ${EDJE_LIBRARIES}
     ${EFLDEPS_LIBRARIES}
     ${Glib_LIBRARIES}
+    ${WTF_LIBRARY_NAME}
 )
 
 LIST(APPEND WebKitTestRunnerInjectedBundle_SOURCES

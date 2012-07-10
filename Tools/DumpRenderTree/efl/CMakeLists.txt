@@ -29,6 +29,7 @@ SET(DumpRenderTree_LIBRARIES
     ${WebCoreTestSupport_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
     ${WebKit_LIBRARY_NAME}
+    ${WTF_LIBRARY_NAME}
     ${CAIRO_LIBRARIES}
     ${ECORE_X_LIBRARIES}
     ${EDJE_LIBRARIES}
