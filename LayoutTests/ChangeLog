@@ -1,5 +1,22 @@
 2012-07-10  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, remove unnecessary expectations.
+
+        * platform/qt-mac/fast/block/float/float-not-removed-from-next-sibling-expected.txt: Removed.
+        * platform/qt-mac/fast/block/float/float-not-removed-from-next-sibling2-expected.txt: Removed.
+        * platform/qt-mac/fast/block/float/float-not-removed-from-next-sibling3-expected.txt: Removed.
+        * platform/qt-mac/fast/block/float/float-not-removed-from-next-sibling4-expected.txt: Removed.
+        * platform/qt-mac/plugins/mouse-click-plugin-clears-selection-expected.txt: Removed.
+        * platform/qt-mac/transforms/svg-vs-css-expected.txt: Removed.
+        * platform/qt-win/Skipped:
+        * platform/qt-win/fast/events/panScroll-click-hyperlink-expected.txt: Removed.
+        * platform/qt/fast/css/first-line-text-decoration-expected.png: Renamed from LayoutTests/platform/qt-linux/fast/css/first-line-text-decoration-expected.png.
+        * platform/qt/fast/css/first-line-text-decoration-expected.txt: Renamed from LayoutTests/platform/qt-linux/fast/css/first-line-text-decoration-expected.txt.
+        * platform/qt/fast/css/first-line-text-decoration-inherited-from-parent-expected.png: Renamed from LayoutTests/platform/qt-linux/fast/css/first-line-text-decoration-inherited-from-parent-expected.png.
+        * platform/qt/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt: Renamed from LayoutTests/platform/qt-linux/fast/css/first-line-text-decoration-inherited-from-parent-expected.txt.
+
+2012-07-10  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][ARM] Unreviewed gardening, skip failing/crashing tests to try to make the bot green.
 
         * platform/qt-arm/TestExpectations:
