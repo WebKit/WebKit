@@ -1,3 +1,24 @@
+2012-07-10  Kevin Ellis  <kevers@chromium.org>
+
+        Input type=range issue with events not being raised when value set in js
+        https://bugs.webkit.org/show_bug.cgi?id=84674
+
+        Fix dispatching of change and click events for the input slider.
+        Prior to the fix, change events were not fired if the new value
+        matched the value at last change notification based on expected
+        behavior for text fields.  Clicks were not fired if the thumb
+        element was repositioned under the cursor on mouse down.
+
+        Reviewed by Kent Tamura.
+
+        Tests: fast/events/click-range-slider.html
+               fast/events/onchange-range-slider.html
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2012-07-10  Huang Dongsung  <luxtella@company100.net>
 
         Don't destroy the decoded data of an image if WebKit is about to render the image.

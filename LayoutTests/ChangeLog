@@ -1,3 +1,21 @@
+2012-07-10  Kevin Ellis  <kevers@chromium.org>
+
+        Input type=range issue with events not being raised when value set in js
+        https://bugs.webkit.org/show_bug.cgi?id=84674
+
+        Ensure that click and change events are properly triggered for range 
+        sliders.  Prior to the fix, change events were not fired if the new
+        value matched the value at last change notification based on expected
+        behavior for text fields.  Clicks were not fired if the thumb element
+        was positioned under the cursor on mouse down.
+
+        Reviewed by Kent Tamura.
+
+        * fast/events/click-range-slider-expected.txt: Added.
+        * fast/events/click-range-slider.html: Added.
+        * fast/events/onchange-range-slider-expected.txt: Added.
+        * fast/events/onchange-range-slider.html: Added.
+
 2012-07-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding a text expectation for the
