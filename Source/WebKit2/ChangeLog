@@ -1,3 +1,42 @@
+2012-07-10  Helder Correia  <helder.correia@nokia.com>
+
+        [Qt] Repaint counter for accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=90116
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests, just introducing a debug feature.
+
+        For this feature to be enabled, the environment variable
+        QT_WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS must be set to 1. Once enabled,
+        both repaint counters and tile borders will be painted.
+
+        Important notes:
+        - Only WebKit2 is targetted for now.
+        - There is no integration with Preferences. That aproach was
+        taken initially but revealed complex and overkill for such a
+        debugging-only functionality. Thus, to disable it simply restart with
+        the environment variable unset or set to some other value.
+
+        A Qt-specific drawRepaintCounter() function was added to
+        TextureMapperGL. A QImage is used as scratch buffer to paint borders and
+        counters. It is then uploaded to a BitmapTexture acquired from the pool
+        and finally draw by TextureMapper. The actual compositing happens inside
+        LayerBackingStore::paintToTextureMapper(). Each LayerBackingStoreTile
+        now has a repaint counter which gets incremented in
+        LayerBackingStore::updateTile().
+
+        * UIProcess/texmap/LayerBackingStore.cpp:
+        (WebKit::LayerBackingStore::updateTile):
+        (WebKit):
+        (WebKit::shouldShowTileDebugVisuals):
+        (WebKit::LayerBackingStore::paintToTextureMapper):
+        * UIProcess/texmap/LayerBackingStore.h:
+        (WebKit::LayerBackingStoreTile::LayerBackingStoreTile):
+        (LayerBackingStoreTile):
+        (WebKit::LayerBackingStoreTile::incrementRepaintCount):
+        (WebKit::LayerBackingStoreTile::repaintCount):
+
 2012-07-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [WK2] Add Vibration API support for WebKit2

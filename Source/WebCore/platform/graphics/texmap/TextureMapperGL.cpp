@@ -24,6 +24,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "Image.h"
+#include "NotImplemented.h"
 #include "TextureMapperShaderManager.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
@@ -358,6 +359,38 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     GL_CMD(glLineWidth(width));
 
     drawQuad(targetRect, modelViewMatrix, program.get(), GL_LINE_LOOP, color.hasAlpha());
+}
+
+void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPoint& targetPoint, const TransformationMatrix& modelViewMatrix)
+{
+#if PLATFORM(QT)
+    QString counterString = QString::number(value);
+
+    QFont font(QString::fromLatin1("Monospace"), pointSize, QFont::Bold);
+    font.setStyleHint(QFont::TypeWriter);
+
+    QFontMetrics fontMetrics(font);
+    int width = fontMetrics.width(counterString) + 4;
+    int height = fontMetrics.height();
+
+    IntSize size(width, height);
+    IntRect sourceRect(IntPoint::zero(), size);
+    IntRect targetRect(roundedIntPoint(targetPoint), size);
+
+    QImage image(size, QImage::Format_ARGB32_Premultiplied);
+    QPainter painter(&image);
+    painter.fillRect(sourceRect, Qt::blue); // Since we won't swap R+B for speed, this will paint red.
+    painter.setFont(font);
+    painter.setPen(Qt::white);
+    painter.drawText(2, height * 0.85, counterString);
+
+    RefPtr<BitmapTexture> texture = acquireTextureFromPool(size);
+    const uchar* bits = image.bits();
+    texture->updateContents(bits, sourceRect, IntPoint::zero(), image.bytesPerLine());
+    drawTexture(*texture, targetRect, modelViewMatrix, 1.0f, 0, AllEdges);
+#else
+    notImplemented();
+#endif
 }
 
 void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, const BitmapTexture* mask, unsigned exposedEdges)

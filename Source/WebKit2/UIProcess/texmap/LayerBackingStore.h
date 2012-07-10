@@ -35,10 +35,13 @@ public:
     LayerBackingStoreTile(float scale = 1)
         : TextureMapperTile(WebCore::FloatRect())
         , m_scale(scale)
+        , m_repaintCount(0)
     {
     }
 
     inline float scale() const { return m_scale; }
+    inline void incrementRepaintCount() { ++m_repaintCount; }
+    inline int repaintCount() const { return m_repaintCount; }
     void swapBuffers(WebCore::TextureMapper*);
     void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableSurface> buffer, const WebCore::IntPoint&);
 
@@ -48,6 +51,7 @@ private:
     WebCore::IntRect m_targetRect;
     WebCore::IntPoint m_surfaceOffset;
     float m_scale;
+    int m_repaintCount;
 };
 
 class LayerBackingStore : public WebCore::TextureMapperBackingStore {
