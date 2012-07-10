@@ -37,6 +37,8 @@ WebInspector.UserAgentSupport = function()
         this._deviceMetricsChanged();
     WebInspector.settings.deviceMetrics.addChangeListener(this._deviceMetricsChanged, this);
     WebInspector.settings.deviceFitWindow.addChangeListener(this._deviceMetricsChanged, this);
+    WebInspector.settings.geolocationOverride.addChangeListener(this._geolocationPositionChanged, this);
+    WebInspector.settings.geolocationError.addChangeListener(this._onGeolocationErrorChanged, this);
 }
 
 /**
@@ -163,11 +165,83 @@ WebInspector.UserAgentSupport.DeviceMetrics.prototype = {
     }
 }
 
+WebInspector.UserAgentSupport.GeolocationPosition = function (latitude, longitude)
+{
+    this._latitude = latitude;
+    this._longitude = longitude;
+}
+
+WebInspector.UserAgentSupport.GeolocationPosition.prototype = {
+    /**
+     * @return {string}
+     */
+    toSetting: function()
+    {
+        return (this._latitude || this._latitude == 0) && (this._longitude || this._longitude == 0) ? this._latitude + "@" + this._longitude : "";
+    }
+}
+
+/**
+ * @return {WebInspector.UserAgentSupport.GeolocationPosition}
+ */
+WebInspector.UserAgentSupport.GeolocationPosition.parseSetting = function(value)
+{
+    if (value) {
+        var splitPosition = value.split("@");
+        if (splitPosition.length === 2)
+            return new WebInspector.UserAgentSupport.GeolocationPosition(parseFloat(splitPosition[0]), parseFloat(splitPosition[1]));
+    }
+    return new WebInspector.UserAgentSupport.GeolocationPosition(0, 0);
+}
+
+/**
+ * @return {?WebInspector.UserAgentSupport.GeolocationPosition}
+ */
+WebInspector.UserAgentSupport.GeolocationPosition.parseUserInput = function(latitudeString, longitudeString)
+{
+    function isUserInputValid(value)
+    {
+        if (!value)
+            return true;
+        return /^[-]?[0-9]*[.]?[0-9]*$/.test(value);
+    }
+
+    if (!latitudeString ^ !latitudeString)
+        return null;
+
+    var isLatitudeValid = isUserInputValid(latitudeString);
+    var isLongitudeValid = isUserInputValid(longitudeString);
+
+    if (!isLatitudeValid && !isLongitudeValid)
+        return null;
+
+    var latitude = isLatitudeValid ? parseFloat(latitudeString) : -1;
+    var longitude = isLongitudeValid ? parseFloat(longitudeString) : -1;
+
+    return new WebInspector.UserAgentSupport.GeolocationPosition(latitude, longitude);
+}
+
 WebInspector.UserAgentSupport.prototype = {
     _deviceMetricsChanged: function()
     {
         var metrics = WebInspector.UserAgentSupport.DeviceMetrics.parseSetting(WebInspector.settings.deviceMetrics.get());
         if (metrics.isValid())
             PageAgent.setDeviceMetricsOverride(metrics.width, metrics.height, metrics.fontScaleFactor, WebInspector.settings.deviceFitWindow.get());
+    },
+
+    _geolocationPositionChanged: function(errorType)
+    {
+        var geolocation = WebInspector.UserAgentSupport.GeolocationPosition.parseSetting(WebInspector.settings.geolocationOverride.get());
+        PageAgent.setGeolocationData(geolocation._latitude, geolocation._longitude, 150, typeof errorType === 'string'? errorType : WebInspector.settings.geolocationError.get());
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _onGeolocationErrorChanged: function(event)
+    {
+        this._geolocationPositionChanged(event.data);
+        console.log(event);
     }
 }
+

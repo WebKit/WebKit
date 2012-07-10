@@ -56,6 +56,7 @@ class Database;
 class Element;
 class EventContext;
 class DocumentLoader;
+class GeolocationPosition;
 class GraphicsContext;
 class HitTestResult;
 class InspectorCSSAgent;
@@ -260,6 +261,10 @@ public:
     static bool collectingHTMLParseErrors(Page*) { return false; }
 #endif
 
+#if ENABLE(GEOLOCATION)
+    static GeolocationPosition* checkGeolocationPositionOrError(Page*, GeolocationPosition*);
+#endif
+
 private:
 #if ENABLE(INSPECTOR)
     static WTF::ThreadSpecific<InspectorTimelineAgent*>& threadSpecificTimelineAgentForOrphanEvents();
@@ -420,6 +425,10 @@ private:
     static void pauseOnNativeEventIfNeeded(InstrumentingAgents*, bool isDOMEvent, const String& eventName, bool synchronous);
     static void cancelPauseOnNativeEvent(InstrumentingAgents*);
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
+
+#if ENABLE(GEOLOCATION)
+    static GeolocationPosition* checkGeolocationPositionOrErrorImpl(InstrumentingAgents*, GeolocationPosition*);
+#endif
 
     static int s_frontendCounter;
 #endif
@@ -1385,6 +1394,19 @@ inline void InspectorInstrumentation::didFireAnimationFrame(const InspectorInstr
         didFireAnimationFrameImpl(cookie);
 #endif
 }
+
+
+#if ENABLE(GEOLOCATION)
+inline GeolocationPosition* InspectorInstrumentation::checkGeolocationPositionOrError(Page* page, GeolocationPosition* position)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(position);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        return checkGeolocationPositionOrErrorImpl(instrumentingAgents, position);
+#endif
+    return position;
+}
+#endif
 
 #if ENABLE(INSPECTOR)
 inline bool InspectorInstrumentation::collectingHTMLParseErrors(Page* page)

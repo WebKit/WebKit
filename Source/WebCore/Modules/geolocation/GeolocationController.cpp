@@ -30,11 +30,13 @@
 
 #include "GeolocationClient.h"
 #include "GeolocationPosition.h"
+#include "InspectorInstrumentation.h"
 
 namespace WebCore {
 
-GeolocationController::GeolocationController(Page*, GeolocationClient* client)
+GeolocationController::GeolocationController(Page* page, GeolocationClient* client)
     : m_client(client)
+    , m_page(page)
 {
 }
 
@@ -98,6 +100,9 @@ void GeolocationController::cancelPermissionRequest(Geolocation* geolocation)
 
 void GeolocationController::positionChanged(GeolocationPosition* position)
 {
+    position = InspectorInstrumentation::checkGeolocationPositionOrError(m_page, position);
+    if (!position)
+        return;
     m_lastPosition = position;
     Vector<RefPtr<Geolocation> > observersVector;
     copyToVector(m_observers, observersVector);

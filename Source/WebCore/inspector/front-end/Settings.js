@@ -99,6 +99,8 @@ WebInspector.Settings = function()
     this.zoomLevel = this.createSetting("zoomLevel", 0);
     this.savedURLs = this.createSetting("savedURLs", {});
     this.javaScriptDisabled = this.createSetting("javaScriptDisabled", false);
+    this.geolocationOverride = this.createSetting("geolocationOverride", "");
+    this.geolocationError = this.createSetting("geolocationError", "None");
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.

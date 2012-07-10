@@ -1,3 +1,68 @@
+2012-07-10  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: Geolocation override
+        https://bugs.webkit.org/show_bug.cgi?id=89365
+
+        Reviewed by Yong Li.
+
+        Added a way to override the geoloation of a client using Web
+        Inspector.
+
+        New tests added.
+        * LayoutTests/inspector/geolocation-success.html:
+        * LayoutTests/inspector/getlocation-error.html:
+
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::GeolocationController): Now store and
+        save the Page in m_page.
+        (WebCore::GeolocationController::positionChanged): Check if position
+        is overriden in Web Inspector.
+        * Modules/geolocation/GeolocationController.h:
+        (GeolocationController): Add member variable m_page for Page*.
+        * inspector/Inspector.json: Add new methods for setting and clearing
+        the GeoloationPosition and GeolocationError objects in InspectorPageAgent.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::checkGeolocationPositionOrErrorImpl):
+        Add methods to check whether GeolocationPosition or GeolocationError
+        are set in InspectorPageAgent.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore):
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::checkGeolocationPositionOrError):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent): Initialize new
+        member variables of GeolocationPosition and GeolocationError.
+        (WebCore::InspectorPageAgent::setGeolocationData): Set Position and
+        Error data and call appropriate GeolocaitonController methods.
+        (WebCore):
+        (WebCore::InspectorPageAgent::clearGeolocationData):
+        (WebCore::InspectorPageAgent::sendGeolocationError):
+        * inspector/InspectorPageAgent.h:
+        (WebCore::InspectorPageAgent::geolocationPosition): Getter for
+        GeolocationPosition.
+        (InspectorPageAgent):
+        * inspector/front-end/Settings.js: Added new settings for
+        GeolocationPosition and GeolocationError
+        * inspector/front-end/SettingsScreen.js: Added new control for
+        Geolocaiton.
+        (WebInspector.UserAgentSettingsTab):
+        (WebInspector.UserAgentSettingsTab.prototype._createDeviceMetricsElement):
+        (WebInspector.UserAgentSettingsTab.prototype._onGeolocationOverrideCheckboxClicked):
+        (WebInspector.UserAgentSettingsTab.prototype._applyGeolocationUserInput):
+        (WebInspector.UserAgentSettingsTab.prototype._setGeolocationPosition.set if):
+        (WebInspector.UserAgentSettingsTab.prototype._setGeolocationPosition):
+        (WebInspector.UserAgentSettingsTab.prototype._createGeolocationOverrideElement.createInput):
+        (WebInspector.UserAgentSettingsTab.prototype._createGeolocationOverrideElement):
+        * inspector/front-end/UserAgentSupport.js: New GeolocationPosition
+        Object added along with setting helper methods.  Added new setting
+        changed handlers for Position and Error.
+        (WebInspector.UserAgentSupport.GeolocationPosition):
+        (WebInspector.UserAgentSupport.GeolocationPosition.prototype.toSetting):
+        (WebInspector.UserAgentSupport.GeolocationPosition.parseSetting):
+        (WebInspector.UserAgentSupport.GeolocationPosition.parseUserInput):
+        (WebInspector.UserAgentSupport.prototype.get _onGeolocationErrorChanged):
+
 2012-07-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Refactor resource revisions before moving to UISourceCode.
