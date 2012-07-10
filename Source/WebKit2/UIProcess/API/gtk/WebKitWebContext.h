@@ -51,7 +51,7 @@ G_BEGIN_DECLS
  * @WEBKIT_CACHE_MODEL_WEB_BROWSER: Improve document load speed substantially
  *   by caching a very large number of resources and previously viewed content.
  *
- * Enum values used for determining the webview cache model.
+ * Enum values used for determining the #WebKitWebContext cache model.
  */
 typedef enum {
     WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER,
@@ -102,6 +102,9 @@ webkit_web_context_set_cache_model                  (WebKitWebContext           
                                                      WebKitCacheModel               cache_model);
 WEBKIT_API WebKitCacheModel
 webkit_web_context_get_cache_model                  (WebKitWebContext              *context);
+
+WEBKIT_API void
+webkit_web_context_clear_cache                      (WebKitWebContext              *context);
 
 WEBKIT_API WebKitDownload *
 webkit_web_context_download_uri                     (WebKitWebContext              *context,

@@ -162,11 +162,10 @@ WebKitWebContext* webkit_web_context_get_default(void)
  * these caches, including various WebCore caches.
  *
  * Browsers can improve document load speed substantially by
- * specifying WEBKIT_CACHE_MODEL_WEB_BROWSER. Applications without a
+ * specifying %WEBKIT_CACHE_MODEL_WEB_BROWSER. Applications without a
  * browsing interface can reduce memory usage substantially by
- * specifying WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER. The default value is
- * WEBKIT_CACHE_MODEL_WEB_BROWSER.
- *
+ * specifying %WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER. The default value is
+ * %WEBKIT_CACHE_MODEL_WEB_BROWSER.
  */
 void webkit_web_context_set_cache_model(WebKitWebContext* context, WebKitCacheModel model)
 {
@@ -219,6 +218,21 @@ WebKitCacheModel webkit_web_context_get_cache_model(WebKitWebContext* context)
     }
 
     return WEBKIT_CACHE_MODEL_WEB_BROWSER;
+}
+
+/**
+ * webkit_web_context_clear_cache:
+ * @context: a #WebKitWebContext
+ *
+ * Clears all resources currently cached.
+ * See also webkit_web_context_set_cache_model().
+ */
+void webkit_web_context_clear_cache(WebKitWebContext* context)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+
+    WebKitWebContextPrivate* priv = context->priv;
+    WKResourceCacheManagerClearCacheForAllOrigins(WKContextGetResourceCacheManager(priv->context.get()), WKResourceCachesToClearAll);
 }
 
 typedef HashMap<WKDownloadRef, GRefPtr<WebKitDownload> > DownloadsMap;
