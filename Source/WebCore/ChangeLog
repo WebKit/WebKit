@@ -1,3 +1,31 @@
+2012-07-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Threadsafety issues in WebScriptObject
+        https://bugs.webkit.org/show_bug.cgi?id=90849
+
+        Reviewed by Filip Pizlo.
+
+        WebScriptObject maintains a NSMap of wrapper objects. A race condition exists
+        between a wrapper being retrieved from the map, and being released - if the
+        final release on an object is called between a call to getJSWrapper and the
+        subsequent retain, we may end up with a stale object reference.
+
+        We can make this safe by hoisting the removal from the map from delloc up into
+        release (if the retainCount is 1), and locking release against retrieval from
+        the map. Since release may be called from another thread, and NSMap is not
+        threadsafe, we'd better lock around all access to the map (this fix already
+        necessitates get & remove to be locked, so this just adds 'add', too).
+
+        * bindings/objc/WebScriptObject.mm:
+        (WebCore::createJSWrapper):
+            - lock around getJSWrapper, retain.
+        (-[WebScriptObject _setImp:originRootObject:rootObject:]):
+            - lock around addJSWrapper.
+        (-[WebScriptObject release]):
+            - Added; removeJSWrapper for last release, lock & synchronized vs. getJSWrapper.
+        (-[WebScriptObject dealloc]):
+            - removeJSWrapper call hoisted into release.
+
 2012-07-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Battery status code needs refactoring to be reused in WebKit2

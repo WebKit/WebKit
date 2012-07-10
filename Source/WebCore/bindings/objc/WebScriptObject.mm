@@ -84,6 +84,9 @@ void removeJSWrapper(JSObject* impl)
 
 id createJSWrapper(JSC::JSObject* object, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> root)
 {
+    // NSMap is not thread safe, hold the JSC API lock; also synchronize this vs. release.
+    JSC::JSLockHolder holder(JSDOMWindowBase::commonJSGlobalData());
+
     if (id wrapper = getJSWrapper(object))
         return [[wrapper retain] autorelease];
     return [[[WebScriptObject alloc] _initWithJSObject:object originRootObject:origin rootObject:root] autorelease];
@@ -144,6 +147,9 @@ static void _didExecute(WebScriptObject *obj)
     _private->imp = imp;
     _private->rootObject = rootObject.leakRef();
     _private->originRootObject = originRootObject.leakRef();
+
+    // NSMap is not thread safe, hold the JSC API lock.
+    JSC::JSLockHolder holder(JSDOMWindowBase::commonJSGlobalData());
 
     WebCore::addJSWrapper(self, imp);
 
@@ -223,13 +229,25 @@ static void _didExecute(WebScriptObject *obj)
     return jsCast<JSDOMWindowBase*>(root->globalObject())->allowsAccessFrom(_private->originRootObject->globalObject());
 }
 
+- (oneway void)release
+{
+    {
+        // NSMap is not thread safe, hold the JSC API lock; also synchronize this vs. getJSWrapper.
+        JSC::JSLockHolder holder(JSDOMWindowBase::commonJSGlobalData());
+
+        // If we're releasing the last reference to this object, remove if from the map,
+        // this will prevent this object from being returned by getJSWrapper.
+        if (_private->imp && [self retainCount] == 1)
+            WebCore::removeJSWrapper(_private->imp);
+    }
+
+    [super release];
+}
+
 - (void)dealloc
 {
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebScriptObject class], self))
         return;
-
-    if (_private->imp)
-        WebCore::removeJSWrapper(_private->imp);
 
     if (_private->rootObject && _private->rootObject->isValid())
         _private->rootObject->gcUnprotect(_private->imp);
