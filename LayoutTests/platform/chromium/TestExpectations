@@ -952,6 +952,7 @@ WONTFIX SKIP : http/tests/inspector/network/network-size-sync.html = PASS
 BUGWK65770 SKIP : http/tests/inspector/resource-main-cookies.php = PASS
 
 BUGWK83890 : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TEXT TIMEOUT
+BUGWK83890 : http/tests/inspector/resource-tree/resource-request-content-while-loading.html = PASS TEXT TIMEOUT
 
 BUGWK60107 WIN RELEASE : inspector/console/console-object-constructor-name.html = PASS TEXT
 BUGWK60107 WIN RELEASE : inspector/console/console-log-before-inspector-open.html = PASS TEXT

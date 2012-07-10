@@ -1,3 +1,9 @@
+2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Unreviewed gardening. Added resource-request-content-while-loading.html to flaky wkbug 83890.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-06  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=90646
