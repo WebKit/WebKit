@@ -612,6 +612,10 @@ PassOwnPtr<ManagedTexture> LayerRendererChromium::drawBackgroundFilters(const CC
 
 void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
 {
+    ManagedTexture* contentsTexture = m_renderPassTextures.get(quad->renderPassId());
+    if (!contentsTexture || !contentsTexture->textureId())
+        return;
+
     WebTransformationMatrix renderTransform = quad->layerTransform();
     // Apply a scaling factor to size the quad from 1x1 to its intended size.
     renderTransform.scale3d(quad->quadRect().width(), quad->quadRect().height(), 1);
@@ -620,9 +624,6 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     // Can only draw surface if device matrix is invertible.
     if (!contentsDeviceTransform.isInvertible())
         return;
-
-    ManagedTexture* contentsTexture = m_renderPassTextures.get(quad->renderPassId());
-    ASSERT(contentsTexture && contentsTexture->textureId());
 
     OwnPtr<ManagedTexture> backgroundTexture = drawBackgroundFilters(quad, contentsDeviceTransform);
 

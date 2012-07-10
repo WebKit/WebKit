@@ -2877,8 +2877,7 @@ struct RenderPassCacheEntry {
     }
 };
 
-struct RenderPassRemovalTestData {
-    CCRenderPassList renderPassList;
+struct RenderPassRemovalTestData : public CCLayerTreeHostImpl::FrameData {
     std::map<char, RenderPassCacheEntry> renderPassCache;
     std::map<const CCRenderPass*, char> renderPassId;
     Vector<OwnPtr<CCRenderSurface> > renderSurfaceStore;
@@ -3019,7 +3018,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
                 static_cast<CCTestRenderPass*>(renderPass.get())->appendQuad(quad.release());
             }
         }
-        testData.renderPassList.insert(0, renderPass.release());
+        testData.renderPasses.insert(0, renderPass.release());
         if (*currentChar)
             currentChar++;
     }
@@ -3028,8 +3027,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
 void dumpRenderPassTestData(const RenderPassRemovalTestData& testData, char* buffer)
 {
     char* pos = buffer;
-    CCRenderPassList::const_reverse_iterator it = testData.renderPassList.rbegin();
-    while (it != testData.renderPassList.rend()) {
+    for (CCRenderPassList::const_reverse_iterator it = testData.renderPasses.rbegin(); it != testData.renderPasses.rend(); ++it) {
         CCRenderPass* currentPass = it->get();
         char passId = testData.renderPassId.find(currentPass)->second;
         *pos = passId;
@@ -3061,7 +3059,6 @@ void dumpRenderPassTestData(const RenderPassRemovalTestData& testData, char* buf
         }
         *pos = '\n';
         pos++;
-        it++;
     }
     *pos = '\0';
 }
@@ -3224,9 +3221,8 @@ TEST_F(CCLayerTreeHostImplTest, testRemoveRenderPasses)
     int testCaseIndex = 0;
     while (removeRenderPassesCases[testCaseIndex].name) {
         RenderPassRemovalTestData testData;
-        CCRenderPassList skippedPasses;
         configureRenderPassTestData(removeRenderPassesCases[testCaseIndex].initScript, testData, renderer.get());
-        CCLayerTreeHostImpl::removePassesWithCachedTextures(testData.renderPassList, skippedPasses, renderer.get());
+        CCLayerTreeHostImpl::removeRenderPasses(CCLayerTreeHostImpl::CullRenderPassesWithCachedTextures(*renderer), testData);
         verifyRenderPassTestData(removeRenderPassesCases[testCaseIndex], testData);
         testCaseIndex++;
     }

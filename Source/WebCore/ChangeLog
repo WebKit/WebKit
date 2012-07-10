@@ -1,3 +1,45 @@
+2012-07-10  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Avoid allocating render pass textures that have no content
+        https://bugs.webkit.org/show_bug.cgi?id=90702
+
+        Reviewed by Adrienne Walker.
+
+        When OOM conditions are hit, textures are not allocated for some layers
+        which can prevent any quads from being present for a render surface.
+        This is used as a signal to prevent the RenderPass from allocating a
+        texture.
+
+        Replace the CCLayerTreeHostImpl::removePassesWithCachedTextures() method
+        with a general removeRenderPasses() which takes a culling control object
+        and will remove passes based on the inputs from the control object.
+
+        This new method is used for the old purpose of removing passes with cached
+        textures, as well as to remove passes that do not have any quad inputs.
+
+        Test: CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithCachedTextures::shouldRemoveRenderPass):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithNoQuads::shouldRemoveRenderPass):
+        (WebCore::CCLayerTreeHostImpl::removeRenderPasses):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (WebCore):
+        (CullRenderPassesWithCachedTextures):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithCachedTextures::renderPassListBegin):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithCachedTextures::renderPassListEnd):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithCachedTextures::renderPassListNext):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithCachedTextures::CullRenderPassesWithCachedTextures):
+        (CCLayerTreeHostImpl):
+        (CullRenderPassesWithNoQuads):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithNoQuads::renderPassListBegin):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithNoQuads::renderPassListEnd):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithNoQuads::renderPassListNext):
+
 2012-07-10  Joshua Netterfield  <jnetterfield@rim.com>
         Make GC3D and E3D more maintainable for GLES platforms
         https://bugs.webkit.org/show_bug.cgi?id=90567

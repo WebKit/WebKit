@@ -1,3 +1,21 @@
+2012-07-10  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Avoid allocating render pass textures that have no content
+        https://bugs.webkit.org/show_bug.cgi?id=90702
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::ContentLayerChromiumWithUpdateTracking::ContentLayerChromiumWithUpdateTracking):
+        (CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit):
+        (WTF::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit):
+        (WTF::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit::beginTest):
+        (WTF::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit::didCommit):
+        (WTF::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit::afterTest):
+        (WTF):
+
 2012-07-10  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Unreviewed Chromium build fix for mac-release.

@@ -1171,6 +1171,7 @@ private:
         : ContentLayerChromium(delegate)
         , m_paintContentsCount(0)
     {
+        setAnchorPoint(FloatPoint(0, 0));
         setBounds(IntSize(10, 10));
         setIsDrawable(true);
     }
@@ -2260,5 +2261,76 @@ public:
 };
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestCompositeAndReadbackCleanup)
+
+class CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit()
+        : m_rootLayer(ContentLayerChromiumWithUpdateTracking::create(&m_mockDelegate))
+        , m_surfaceLayer1(ContentLayerChromiumWithUpdateTracking::create(&m_mockDelegate))
+        , m_surfaceLayer2(ContentLayerChromiumWithUpdateTracking::create(&m_mockDelegate))
+    {
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->setViewportSize(IntSize(100, 100));
+
+        m_rootLayer->setBounds(IntSize(100, 100));
+        m_surfaceLayer1->setBounds(IntSize(100, 100));
+        m_surfaceLayer1->setForceRenderSurface(true);
+        m_surfaceLayer1->setOpacity(0.5);
+        m_surfaceLayer2->setBounds(IntSize(100, 100));
+        m_surfaceLayer2->setForceRenderSurface(true);
+        m_surfaceLayer2->setOpacity(0.5);
+
+        m_rootLayer->addChild(m_surfaceLayer1);
+        m_surfaceLayer1->addChild(m_surfaceLayer2);
+        m_layerTreeHost->setRootLayer(m_rootLayer);
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* hostImpl)
+    {
+        CCRenderer* renderer = hostImpl->layerRenderer();
+        unsigned surface1RenderPassId = hostImpl->rootLayer()->children()[0]->id();
+        unsigned surface2RenderPassId = hostImpl->rootLayer()->children()[0]->children()[0]->id();
+
+        switch (hostImpl->sourceFrameNumber()) {
+        case 0:
+            EXPECT_TRUE(renderer->haveCachedResourcesForRenderPassId(surface1RenderPassId));
+            EXPECT_TRUE(renderer->haveCachedResourcesForRenderPassId(surface2RenderPassId));
+
+            // Reduce the memory limit to only fit the root layer and one render surface. This
+            // prevents any contents drawing into surfaces from being allocated.
+            hostImpl->setMemoryAllocationLimitBytes(100 * 100 * 4 * 2);
+            break;
+        case 1:
+            EXPECT_FALSE(renderer->haveCachedResourcesForRenderPassId(surface1RenderPassId));
+            EXPECT_FALSE(renderer->haveCachedResourcesForRenderPassId(surface2RenderPassId));
+
+            endTest();
+            break;
+        }
+    }
+
+    virtual void afterTest()
+    {
+        EXPECT_EQ(2, m_rootLayer->paintContentsCount());
+        EXPECT_EQ(2, m_surfaceLayer1->paintContentsCount());
+        EXPECT_EQ(2, m_surfaceLayer2->paintContentsCount());
+
+        // Clear layer references so CCLayerTreeHost dies.
+        m_rootLayer.clear();
+        m_surfaceLayer1.clear();
+        m_surfaceLayer2.clear();
+    }
+
+private:
+    MockContentLayerDelegate m_mockDelegate;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_rootLayer;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_surfaceLayer1;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_surfaceLayer2;
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit)
 
 } // namespace

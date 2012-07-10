@@ -42,9 +42,10 @@ class CCDebugRectHistory;
 class CCFontAtlas;
 class CCFrameRateCounter;
 class CCHeadsUpDisplay;
-class CCPageScaleAnimation;
 class CCLayerImpl;
 class CCLayerTreeHostImplTimeSourceAdapter;
+class CCPageScaleAnimation;
+class CCRenderPassDrawQuad;
 class LayerRendererChromium;
 class TextureAllocator;
 struct LayerRendererCapabilities;
@@ -177,8 +178,35 @@ public:
     CCFrameRateCounter* fpsCounter() const { return m_fpsCounter.get(); }
     CCDebugRectHistory* debugRectHistory() const { return m_debugRectHistory.get(); }
 
-    // Removes all render passes for which we have cached textures, and which did not change their content.
-    static void removePassesWithCachedTextures(CCRenderPassList& passes, CCRenderPassList& skippedPasses, const CCRenderer*);
+    class CullRenderPassesWithCachedTextures {
+    public:
+        bool shouldRemoveRenderPass(const CCRenderPassList&, const CCRenderPassDrawQuad&) const;
+
+        // Iterates from the root first, in order to remove the surfaces closest
+        // to the root with cached textures, and all surfaces that draw into
+        // them.
+        size_t renderPassListBegin(const CCRenderPassList& list) const { return list.size() - 1; }
+        size_t renderPassListEnd(const CCRenderPassList&) const { return 0 - 1; }
+        size_t renderPassListNext(size_t it) const { return it - 1; }
+
+        CullRenderPassesWithCachedTextures(CCRenderer& renderer) : m_renderer(renderer) { }
+    private:
+        CCRenderer& m_renderer;
+    };
+
+    class CullRenderPassesWithNoQuads {
+    public:
+        bool shouldRemoveRenderPass(const CCRenderPassList&, const CCRenderPassDrawQuad&) const;
+
+        // Iterates in draw order, so that when a surface is removed, and its
+        // target becomes empty, then its target can be removed also.
+        size_t renderPassListBegin(const CCRenderPassList&) const { return 0; }
+        size_t renderPassListEnd(const CCRenderPassList& list) const { return list.size(); }
+        size_t renderPassListNext(size_t it) const { return it + 1; }
+    };
+
+    template<typename RenderPassCuller>
+    static void removeRenderPasses(RenderPassCuller, FrameData&);
 
 protected:
     CCLayerTreeHostImpl(const CCLayerTreeSettings&, CCLayerTreeHostImplClient*);
