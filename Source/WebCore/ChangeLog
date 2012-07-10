@@ -1,3 +1,22 @@
+2012-07-10  Adam Barth  <abarth@webkit.org>
+
+        WebCore::Settings for Hixie76 WebSocket protocol doesn't do anything and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=90910
+
+        Reviewed by Eric Seidel.
+
+        We've already removed the code that implements Hixie76 WebSockets. This
+        patch just removes the WebCore::Setting that used to control which
+        WebSocket protocol version we'd use.
+
+        I've left the WebKit-layer APIs in place, but they now don't do
+        anything.  I'll remove all the Chromium callers shortly.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (Settings):
+
 2012-07-10  Philip Rogers  <pdr@google.com>
 
         Crash due to SVG animation element not removed from target (before reset)

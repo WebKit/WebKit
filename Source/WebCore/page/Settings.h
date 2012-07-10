@@ -505,10 +505,6 @@ namespace WebCore {
         void setEnableScrollAnimator(bool flag) { m_scrollAnimatorEnabled = flag; }
         bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
 #endif
-#if ENABLE(WEB_SOCKETS)
-        void setUseHixie76WebSocketProtocol(bool flag) { m_useHixie76WebSocketProtocol = flag; }
-        bool useHixie76WebSocketProtocol() { return m_useHixie76WebSocketProtocol; }
-#endif
 
         void setMediaPlaybackRequiresUserGesture(bool flag) { m_mediaPlaybackRequiresUserGesture = flag; };
         bool mediaPlaybackRequiresUserGesture() const { return m_mediaPlaybackRequiresUserGesture; }
@@ -744,9 +740,6 @@ namespace WebCore {
         bool m_allowRunningOfInsecureContent : 1;
 #if ENABLE(SMOOTH_SCROLLING)
         bool m_scrollAnimatorEnabled : 1;
-#endif
-#if ENABLE(WEB_SOCKETS)
-        bool m_useHixie76WebSocketProtocol : 1;
 #endif
         bool m_mediaPlaybackRequiresUserGesture : 1;
         bool m_mediaPlaybackAllowsInline : 1;

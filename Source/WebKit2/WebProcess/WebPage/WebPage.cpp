@@ -2050,10 +2050,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setAVFoundationEnabled(store.getBoolValueForKey(WebPreferencesKey::isAVFoundationEnabledKey()));
 #endif
 
-#if ENABLE(WEB_SOCKETS)
-    settings->setUseHixie76WebSocketProtocol(store.getBoolValueForKey(WebPreferencesKey::hixie76WebSocketProtocolEnabledKey()));
-#endif
-
 #if ENABLE(WEB_AUDIO)
     settings->setWebAudioEnabled(store.getBoolValueForKey(WebPreferencesKey::webAudioEnabledKey()));
 #endif

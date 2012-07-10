@@ -4907,13 +4907,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setLoadsSiteIconsIgnoringImageLoadingSetting(!!enabled);
 
-#if ENABLE(WEB_SOCKETS)
-    hr = prefsPrivate->hixie76WebSocketProtocolEnabled(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings->setUseHixie76WebSocketProtocol(enabled);
-#endif
-
     hr = prefsPrivate->showsToolTipOverTruncatedText(&enabled);
     if (FAILED(hr))
         return hr;

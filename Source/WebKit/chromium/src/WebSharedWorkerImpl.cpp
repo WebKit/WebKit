@@ -123,7 +123,6 @@ void WebSharedWorkerImpl::initializeLoader(const WebURL& url)
     m_webView->settings()->setOfflineWebApplicationCacheEnabled(WebRuntimeFeatures::isApplicationCacheEnabled());
     // FIXME: Settings information should be passed to the Worker process from Browser process when the worker
     // is created (similar to RenderThread::OnCreateNewView).
-    m_webView->settings()->setHixie76WebSocketProtocolEnabled(false);
     m_webView->initializeMainFrame(this);
 
     WebFrameImpl* webFrame = static_cast<WebFrameImpl*>(m_webView->mainFrame());

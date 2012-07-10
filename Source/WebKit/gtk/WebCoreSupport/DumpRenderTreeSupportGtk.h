@@ -118,7 +118,6 @@ public:
     static void setMockGeolocationError(WebKitWebView*, int errorCode, const gchar* errorMessage);
     static int numberOfPendingGeolocationPermissionRequests(WebKitWebView*);
 
-    static void setHixie76WebSocketProtocolEnabled(WebKitWebView*, bool enabled);
     static void setPageCacheSupportsPlugins(WebKitWebView*, bool enabled);
     static void setCSSGridLayoutEnabled(WebKitWebView*, bool enabled);
     static void setCSSRegionsEnabled(WebKitWebView*, bool enabled);

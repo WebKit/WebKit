@@ -769,16 +769,6 @@ int DumpRenderTreeSupportGtk::numberOfPendingGeolocationPermissionRequests(WebKi
 #endif
 }
 
-void DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(WebKitWebView* webView, bool enabled)
-{
-#if ENABLE(WEB_SOCKETS)
-    core(webView)->settings()->setUseHixie76WebSocketProtocol(enabled);
-#else
-    UNUSED_PARAM(webView);
-    UNUSED_PARAM(enabled);
-#endif
-}
-
 void DumpRenderTreeSupportGtk::setPageCacheSupportsPlugins(WebKitWebView* webView, bool enabled)
 {
     core(webView)->settings()->setPageCacheSupportsPlugins(enabled);

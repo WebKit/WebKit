@@ -252,9 +252,6 @@ Settings::Settings(Page* page)
 #if ENABLE(SMOOTH_SCROLLING)
     , m_scrollAnimatorEnabled(true)
 #endif
-#if ENABLE(WEB_SOCKETS)
-    , m_useHixie76WebSocketProtocol(false)
-#endif
     , m_mediaPlaybackRequiresUserGesture(false)
     , m_mediaPlaybackAllowsInline(true)
     , m_passwordEchoEnabled(false)

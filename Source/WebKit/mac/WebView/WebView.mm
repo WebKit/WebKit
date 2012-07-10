@@ -1525,9 +1525,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setAVFoundationEnabled(false);
 #endif
 #endif
-#if ENABLE(WEB_SOCKETS)
-    settings->setUseHixie76WebSocketProtocol([preferences isHixie76WebSocketProtocolEnabled]);
-#endif
     settings->setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
     settings->setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
     settings->setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);

@@ -567,7 +567,6 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_page->settings()->setTextReflowEnabled(m_webSettings->textReflowMode() == WebSettings::TextReflowEnabled);
 #endif
 
-    m_page->settings()->setUseHixie76WebSocketProtocol(false);
     m_page->settings()->setInteractiveFormValidationEnabled(true);
     m_page->settings()->setAllowUniversalAccessFromFileURLs(false);
     m_page->settings()->setAllowFileAccessFromFileURLs(false);

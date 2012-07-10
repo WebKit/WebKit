@@ -555,15 +555,6 @@ bool WebSettingsImpl::scrollAnimatorEnabled() const
 #endif
 }
 
-void WebSettingsImpl::setHixie76WebSocketProtocolEnabled(bool enabled)
-{
-#if ENABLE(WEB_SOCKETS)
-    m_settings->setUseHixie76WebSocketProtocol(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
-}
-
 void WebSettingsImpl::setVisualWordMovementEnabled(bool enabled)
 {
     m_settings->setVisualWordMovementEnabled(enabled);

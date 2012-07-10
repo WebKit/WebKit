@@ -358,10 +358,6 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 
     settings = new QWebSettings(page->settings());
 
-#if ENABLE(WEB_SOCKETS)
-    page->settings()->setUseHixie76WebSocketProtocol(false);
-#endif
-
     history.d = new QWebHistoryPrivate(static_cast<WebCore::BackForwardListImpl*>(page->backForwardList()));
     memset(actions, 0, sizeof(actions));
 

@@ -650,12 +650,11 @@ bool WKPreferencesGetFileAccessFromFileURLsAllowed(WKPreferencesRef preferencesR
 
 void WKPreferencesSetHixie76WebSocketProtocolEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setHixie76WebSocketProtocolEnabled(enabled);
 }
 
 bool WKPreferencesGetHixie76WebSocketProtocolEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->hixie76WebSocketProtocolEnabled();
+    return false;
 }
 
 void WKPreferencesSetMediaPlaybackRequiresUserGesture(WKPreferencesRef preferencesRef, bool flag)
