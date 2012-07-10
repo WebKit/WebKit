@@ -407,7 +407,7 @@ static GdkPixbuf* getIconPixbufSynchronously(WebKitFaviconDatabase* database, co
     int pixbufWidth = gdk_pixbuf_get_width(pixbuf.get());
     int pixbufHeight = gdk_pixbuf_get_height(pixbuf.get());
     if (!iconSize.isZero() && (pixbufWidth != iconSize.width() || pixbufHeight != iconSize.height()))
-        pixbuf = gdk_pixbuf_scale_simple(pixbuf.get(), iconSize.width(), iconSize.height(), GDK_INTERP_BILINEAR);
+        pixbuf = adoptGRef(gdk_pixbuf_scale_simple(pixbuf.get(), iconSize.width(), iconSize.height(), GDK_INTERP_BILINEAR));
     return pixbuf.leakRef();
 }
 

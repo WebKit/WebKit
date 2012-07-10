@@ -1,3 +1,16 @@
+2012-07-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [GTK] Fix memory leaks by adopting allocation of GdkPixbuf
+        https://bugs.webkit.org/show_bug.cgi?id=90790
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fixed a memory leak in WebKitFaviconDatabase by adopting an
+        allocation of GdkPixbuf.
+
+        * webkit/webkitfavicondatabase.cpp:
+        (getIconPixbufSynchronously):
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         LayoutTestController.dumpConfigurationForViewport should move to Internals

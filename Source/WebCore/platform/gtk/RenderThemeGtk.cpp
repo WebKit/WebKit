@@ -238,10 +238,11 @@ bool RenderThemeGtk::paintTextArea(RenderObject* o, const PaintInfo& i, const In
 static void paintGdkPixbuf(GraphicsContext* context, const GdkPixbuf* icon, const IntRect& iconRect)
 {
     IntSize iconSize(gdk_pixbuf_get_width(icon), gdk_pixbuf_get_height(icon));
+    GRefPtr<GdkPixbuf> scaledIcon;
     if (iconRect.size() != iconSize) {
         // We could use cairo_scale() here but cairo/pixman downscale quality is quite bad.
-        GRefPtr<GdkPixbuf> scaledIcon = gdk_pixbuf_scale_simple(icon, iconRect.width(), iconRect.height(),
-                                                                GDK_INTERP_BILINEAR);
+        scaledIcon = adoptGRef(gdk_pixbuf_scale_simple(icon, iconRect.width(), iconRect.height(),
+                                                       GDK_INTERP_BILINEAR));
         icon = scaledIcon.get();
     }
 
