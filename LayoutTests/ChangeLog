@@ -1,3 +1,14 @@
+2012-07-09  Alice Cheng  <alice_cheng@apple.com>
+
+        Editing: Autocorrection in blockquotes causes text to break out of quote
+        https://bugs.webkit.org/show_bug.cgi?id=90487
+        <rdar://problem/11769020> 
+
+        Reviewed by Enrica Casucci.
+
+        * platform/mac/editing/spelling/autocorrection-blockquote-crash-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-blockquote-crash.html:
+
 2012-07-09  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Consider closing unused localStorage database after a timeout.

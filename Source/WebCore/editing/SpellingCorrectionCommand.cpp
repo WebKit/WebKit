@@ -30,7 +30,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
-#include "ReplaceSelectionCommand.h"
+#include "InsertTextCommand.h"
 #include "SetSelectionCommand.h"
 #include "TextIterator.h"
 #include "markup.h"
@@ -97,15 +97,11 @@ void SpellingCorrectionCommand::doApply()
     if (!document()->frame()->selection()->shouldChangeSelection(m_selectionToBeCorrected))
         return;
 
-    RefPtr<DocumentFragment> fragment = createFragmentFromText(m_rangeToBeCorrected.get(), m_correction);
-    if (!fragment)
-        return;
-
     applyCommandToComposite(SetSelectionCommand::create(m_selectionToBeCorrected, FrameSelection::SpellCorrectionTriggered | FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle));
 #if USE(AUTOCORRECTION_PANEL)
     applyCommandToComposite(SpellingCorrectionRecordUndoCommand::create(document(), m_corrected, m_correction));
 #endif
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment, ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting, EditActionPaste));
+    applyCommandToComposite(InsertTextCommand::create(document(), m_correction));
 }
 
 bool SpellingCorrectionCommand::shouldRetainAutocorrectionIndicator() const

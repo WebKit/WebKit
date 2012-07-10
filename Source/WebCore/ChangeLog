@@ -1,3 +1,18 @@
+2012-07-09  Alice Cheng  <alice_cheng@apple.com>
+
+        Editing: Autocorrection in blockquotes causes text to break out of quote
+        https://bugs.webkit.org/show_bug.cgi?id=90487
+        <rdar://problem/11769020> 
+
+        Reviewed by Enrica Casucci.
+
+        Test: platform/mac/editing/spelling/autocorrection-blockquote-crash.html
+
+        SpellingCorrectionCommand uses ReplaceSelectionCommand to replace the misspelled word with the auto-corrected word. Specifically, ReplaceSelectionCommand does a smart copy, where it breaks out of blockquotes. Thus, the fix is to substitute ReplaceSelectionCommand with InserTextCommand.
+
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::doApply):
+
 2012-07-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Shared code that is guarded with ENABLE(WEBGL) should be guarded with USE()
