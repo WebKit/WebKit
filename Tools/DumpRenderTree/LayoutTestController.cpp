@@ -160,29 +160,6 @@ static JSValueRef dumpChildFrameScrollPositionsCallback(JSContextRef context, JS
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef dumpConfigurationForViewportCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (argumentCount < 2)
-        return JSValueMakeUndefined(context);
-
-
-    double deviceDPI = JSValueToNumber(context, arguments[0], exception);
-    ASSERT(!*exception);
-    double deviceWidth = JSValueToNumber(context, arguments[1], exception);
-    ASSERT(!*exception);
-    double deviceHeight = JSValueToNumber(context, arguments[2], exception);
-    ASSERT(!*exception);
-    double availableWidth = JSValueToNumber(context, arguments[3], exception);
-    ASSERT(!*exception);
-    double availableHeight = JSValueToNumber(context, arguments[4], exception);
-    ASSERT(!*exception);
-
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->dumpConfigurationForViewport(static_cast<int>(deviceDPI), static_cast<int>(deviceWidth), static_cast<int>(deviceHeight), static_cast<int>(availableWidth), static_cast<int>(availableHeight));
-
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef dumpDatabaseCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -2320,7 +2297,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "dumpBackForwardList", dumpBackForwardListCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpChildFrameScrollPositions", dumpChildFrameScrollPositionsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpChildFramesAsText", dumpChildFramesAsTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "dumpConfigurationForViewport", dumpConfigurationForViewportCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpDOMAsWebArchive", dumpDOMAsWebArchiveCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpDatabaseCallbacks", dumpDatabaseCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "dumpEditingCallbacks", dumpEditingCallbacksCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

@@ -367,11 +367,6 @@ WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef pageRef)
     return toAPI(toImpl(pageRef)->trackedRepaintRects().leakRef());
 }
 
-WKStringRef WKBundlePageViewportConfigurationAsText(WKBundlePageRef pageRef, int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
-{
-    return toCopiedAPI(toImpl(pageRef)->viewportConfigurationAsText(deviceDPI, deviceWidth, deviceHeight, availableWidth, availableHeight));
-}
-
 void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length)
 {
     toImpl(pageRef)->setCompositionForTesting(toImpl(text)->string(), from, length);

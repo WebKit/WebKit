@@ -943,13 +943,6 @@ void LayoutTestController::abortModal()
 {
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
-{
-    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
-    ASSERT(webView);
-    DumpRenderTreeSupportGtk::dumpConfigurationForViewport(webView, deviceDPI, deviceWidth, deviceHeight, availableWidth, availableHeight);
-}
-
 void LayoutTestController::setSerializeHTTPLoads(bool serialize)
 {
     DumpRenderTreeSupportGtk::setSerializeHTTPLoads(serialize);

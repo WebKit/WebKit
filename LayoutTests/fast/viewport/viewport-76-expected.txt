@@ -1,2 +1,2 @@
-viewport size 32x35 scale 10.000000 with limits [10.000000, 10.000000] and userScalable -1.000000
+ALERT: viewport size 32x35.2 scale 10 with limits [10, 10] and userScalable true
 

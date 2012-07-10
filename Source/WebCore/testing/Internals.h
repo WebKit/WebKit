@@ -117,6 +117,7 @@ public:
     void setScrollViewPosition(Document*, long x, long y, ExceptionCode&);
 
     void setPagination(Document*, const String& mode, int gap, ExceptionCode&);
+    String configurationForViewport(Document*, float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);
 
     bool wasLastChangeUserEdit(Element* textField, ExceptionCode&);
     String suggestedValue(Element* inputElement, ExceptionCode&);

@@ -740,14 +740,6 @@ int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
     return DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page());
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
-{
-    if (!mainFrame)
-        return;
-
-    DumpRenderTreeSupport::dumpConfigurationForViewport(mainFrame, deviceDPI, deviceWidth, deviceHeight, availableWidth, availableHeight);
-}
-
 bool LayoutTestController::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
 {
     WebCore::FindOptions options = 0;

@@ -99,8 +99,6 @@ public:
 
     static void setMockScrollbarsEnabled(bool);
 
-    static void dumpConfigurationForViewport(Evas_Object* ewkView, int deviceDPI, const WebCore::IntSize& deviceSize, const WebCore::IntSize& availableSize);
-
     static void deliverAllMutationsIfNecessary();
     static String markerTextForListItem(JSContextRef, JSValueRef nodeObject);
     static void setInteractiveFormValidationEnabled(Evas_Object* ewkView, bool enabled);

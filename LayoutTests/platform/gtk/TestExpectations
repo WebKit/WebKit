@@ -42,6 +42,12 @@
 
 // Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
+BUGWKGTK SKIP : fast/viewport/viewport-legacy-handheldfriendly.html = TEXT
+BUGWKGTK SKIP : fast/viewport/viewport-legacy-mobileoptimized-2.html = TEXT
+BUGWKGTK SKIP : fast/viewport/viewport-legacy-mobileoptimized-3.html = TEXT
+BUGWKGTK SKIP : fast/viewport/viewport-legacy-mobileoptimized.html = TEXT
+BUGWKGTK SKIP : fast/viewport/viewport-legacy-ordering-5.html = TEXT
+BUGWKGTK SKIP : fast/viewport/viewport-legacy-ordering-6.html = TEXT
 
 // Ignored because we do not have OBJC bindings (via Chromium).
 BUGWKGTK SKIP : editing/pasteboard/paste-RTFD.html = TEXT
@@ -934,11 +940,6 @@ BUGWKGTK : sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T
 // r65681 broke a couple GTK+ a11y tests
 BUGWK44316 : platform/gtk/accessibility/object-attributes.html = TEXT
 BUGWK44316 : platform/gtk/accessibility/title-and-alt.html = TEXT
-
-// viewport meta tag tests that differ from the Opera results
-BUGWKGTK : fast/viewport/viewport-87.html = TEXT
-BUGWKGTK : fast/viewport/viewport-126.html = TEXT
-BUGWKGTK : fast/viewport/viewport-127.html = TEXT
 
 // LayoutTestController::addUserScript not implemented for gtk
 BUGWKGTK : plugins/plugin-document-load-prevented-userscript.html = TEXT

@@ -258,12 +258,6 @@ QString LayoutTestController::pathToLocalResource(const QString& url)
     return url;
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
-{
-    QString res = DumpRenderTreeSupportQt::viewportAsText(m_drt->webPage(), deviceDPI, QSize(deviceWidth, deviceHeight), QSize(availableWidth, availableHeight));
-    fputs(qPrintable(res), stdout);
-}
-
 void LayoutTestController::dumpEditingCallbacks()
 {
     qDebug() << ">>>dumpEditingCallbacks";

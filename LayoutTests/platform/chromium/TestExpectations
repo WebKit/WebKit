@@ -1129,7 +1129,13 @@ WONTFIX SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 WONTFIX SKIP : media/audio-delete-while-step-button-clicked.html = TIMEOUT
 
 // Feature disabled on chromium build, see: https://bugs.webkit.org/show_bug.cgi?id=85425
-WONTFIX SKIP : fast/viewport/viewport-legacy-xhtmlmp.html = PASS
+WONTFIX SKIP : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
+WONTFIX SKIP : fast/viewport/viewport-legacy-handheldfriendly.html = TEXT
+WONTFIX SKIP : fast/viewport/viewport-legacy-mobileoptimized-2.html = TEXT
+WONTFIX SKIP : fast/viewport/viewport-legacy-mobileoptimized-3.html = TEXT
+WONTFIX SKIP : fast/viewport/viewport-legacy-mobileoptimized.html = TEXT
+WONTFIX SKIP : fast/viewport/viewport-legacy-ordering-5.html = TEXT
+WONTFIX SKIP : fast/viewport/viewport-legacy-ordering-6.html = TEXT
 
 // We haven't implemented reverse audio/video playback.
 BUGCR33099 SKIP : media/video-reverse-play-duration.html = TIMEOUT
@@ -2087,17 +2093,8 @@ BUGCR53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 // Not focusing an anchor when tab is pressed.
 BUGWK45061 : fast/forms/focus2.html = TEXT
 
-// We don't support LayoutTestController.dumpConfigurationForViewport
-BUGWK45652 : fast/viewport = TEXT
-BUGWK45652 : fast/viewport/viewport-65.html = MISSING
-BUGWK45652 : fast/viewport/viewport-82.html = MISSING
-BUGWK45652 : fast/viewport/viewport-84.html = MISSING
-BUGWK45652 : fast/viewport/viewport-87.html = MISSING
-BUGWK45652 : fast/viewport/viewport-126.html = MISSING
-BUGWK45652 : fast/viewport/viewport-127.html = MISSING
-BUGWK45652 : fast/viewport/viewport-128.html = TIMEOUT TEXT
-BUGWK45652 : fast/viewport/viewport-129.html = TIMEOUT MISSING TEXT
-BUGWK45652 : fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html = PASS
+// Requires page cache.
+BUGWK45652 : fast/viewport/viewport-128.html = TIMEOUT
 
 BUGWK45737 BUGCR100056 DEBUG : fast/frames/frame-limit.html = TIMEOUT
 

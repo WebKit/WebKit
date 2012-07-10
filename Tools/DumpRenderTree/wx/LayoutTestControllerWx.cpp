@@ -531,11 +531,6 @@ void LayoutTestController::abortModal()
 {
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int /*deviceDPI*/, int /*deviceWidth*/, int /*deviceHeight*/, int /*availableWidth*/, int /*availableHeight*/)
-{
-    // FIXME: Implement
-}
-
 JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
 {
     // FIXME: Implement

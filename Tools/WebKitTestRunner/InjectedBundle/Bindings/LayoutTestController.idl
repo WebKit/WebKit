@@ -44,7 +44,6 @@ module WTR {
         void dumpFullScreenCallbacks();
         void dumpFrameLoadCallbacks();
         void dumpProgressFinishedCallback();
-        void dumpConfigurationForViewport(in int deviceDPI, in int deviceWidth, in int deviceHeight, in int availableWidth, in int availableHeight);
 
         // Special options.
         void keepWebHistory();

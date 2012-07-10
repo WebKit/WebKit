@@ -65,6 +65,7 @@
 #include "TextIterator.h"
 #include "TextRun.h"
 #include "TreeScope.h"
+#include "ViewportArguments.h"
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
@@ -632,6 +633,23 @@ void Internals::setPagination(Document* document, const String& mode, int gap, E
     pagination.gap = gap;
 
     document->page()->setPagination(pagination);
+}
+
+String Internals::configurationForViewport(Document* document, float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode& ec)
+{
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    const int defaultLayoutWidthForNonMobilePages = 980;
+
+    ViewportArguments arguments = document->page()->viewportArguments();
+    ViewportAttributes attributes = computeViewportAttributes(arguments, defaultLayoutWidthForNonMobilePages, deviceWidth, deviceHeight, devicePixelRatio, IntSize(availableWidth, availableHeight));
+    restrictMinimumScaleFactorToViewportSize(attributes, IntSize(availableWidth, availableHeight));
+    restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
+
+    return "viewport size " + String::number(attributes.layoutSize.width()) + "x" + String::number(attributes.layoutSize.height()) + " scale " + String::number(attributes.initialScale) + " with limits [" + String::number(attributes.minimumScale) + ", " + String::number(attributes.maximumScale) + "] and userScalable " + (attributes.userScalable ? "true" : "false");
 }
 
 void Internals::reset(Document* document)

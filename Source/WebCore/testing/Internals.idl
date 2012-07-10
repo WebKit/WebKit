@@ -88,6 +88,13 @@ module window {
 
         void setPagination(in Document document, in DOMString mode, in long gap) raises(DOMException);
 
+        DOMString configurationForViewport(in Document document,
+                                           in float devicePixelRatio,
+                                           in long deviceWidth,
+                                           in long deviceHeight,
+                                           in long availableWidth,
+                                           in long availableHeight) raises(DOMException);
+
         boolean wasLastChangeUserEdit(in Element textField) raises (DOMException);
         DOMString suggestedValue(in Element inputElement) raises (DOMException);
         void setSuggestedValue(in Element inputElement, in DOMString value) raises (DOMException);

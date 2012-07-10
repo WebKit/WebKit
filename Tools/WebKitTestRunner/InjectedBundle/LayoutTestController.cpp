@@ -523,11 +523,6 @@ void LayoutTestController::resetPageVisibility()
     WKBundleSetPageVisibilityState(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page(), WebCore::PageVisibilityStateVisible, /* isInitialState */ true);
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight)
-{
-    InjectedBundle::shared().stringBuilder()->append(toWTFString(adoptWK(WKBundlePageViewportConfigurationAsText(InjectedBundle::shared().page()->page(), deviceDPI, deviceWidth, deviceHeight, availableWidth, availableHeight))));
-}
-
 typedef WTF::HashMap<unsigned, JSValueRef> CallbackMap;
 static CallbackMap& callbackMap()
 {

@@ -1,3 +1,14 @@
+2012-07-10  Adam Barth  <abarth@webkit.org>
+
+        LayoutTestController.dumpConfigurationForViewport should move to Internals
+        https://bugs.webkit.org/show_bug.cgi?id=45652
+
+        Reviewed by Eric Seidel.
+
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        * WebKitSupport/DumpRenderTreeSupport.h:
+        (DumpRenderTreeSupport):
+
 2012-07-09  Yong Li  <yoli@rim.com>
 
         [BlackBerry] PagePopupBlackBerry::closePopup() should always clear the pointer in WebPagePrivate

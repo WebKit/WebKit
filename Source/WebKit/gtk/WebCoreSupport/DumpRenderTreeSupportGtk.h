@@ -53,8 +53,6 @@ public:
     static void setSelectTrailingWhitespaceEnabled(bool);
     static bool selectTrailingWhitespaceEnabled();
 
-    static void dumpConfigurationForViewport(WebKitWebView* webView, gint deviceDPI, gint deviceWidth, gint deviceHeight, gint availableWidth, gint availableHeight);
-
     static void clearOpener(WebKitWebFrame*);
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.

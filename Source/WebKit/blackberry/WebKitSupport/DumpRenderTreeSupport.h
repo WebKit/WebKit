@@ -50,8 +50,6 @@ public:
     static void garbageCollectorCollect();
     static void garbageCollectorCollectOnAlternateThread(bool waitUntilDone);
 
-    static void dumpConfigurationForViewport(WebCore::Frame* mainFrame, int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
-
     static int numberOfPendingGeolocationPermissionRequests(BlackBerry::WebKit::WebPage*);
     static void resetGeolocationMock(BlackBerry::WebKit::WebPage*);
     static void setMockGeolocationError(BlackBerry::WebKit::WebPage*, int errorCode, const WTF::String message);

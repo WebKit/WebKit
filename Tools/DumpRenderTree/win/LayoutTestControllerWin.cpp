@@ -1374,11 +1374,6 @@ void LayoutTestController::abortModal()
 {
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int /*deviceDPI*/, int /*deviceWidth*/, int /*deviceHeight*/, int /*availableWidth*/, int /*availableHeight*/)
-{
-    // FIXME: Implement this.
-}
-
 void LayoutTestController::setSerializeHTTPLoads(bool)
 {
     // FIXME: Implement.

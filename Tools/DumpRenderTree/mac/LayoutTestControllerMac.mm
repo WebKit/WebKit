@@ -1123,11 +1123,6 @@ void LayoutTestController::abortModal()
     [NSApp abortModal];
 }
 
-void LayoutTestController::dumpConfigurationForViewport(int /*deviceDPI*/, int /*deviceWidth*/, int /*deviceHeight*/, int /*availableWidth*/, int /*availableHeight*/)
-{
-
-}
-
 void LayoutTestController::setSerializeHTTPLoads(bool serialize)
 {
     [WebView _setLoadResourcesSerially:serialize];
