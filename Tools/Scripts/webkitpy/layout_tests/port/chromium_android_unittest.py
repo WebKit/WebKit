@@ -133,9 +133,9 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
     def test_cmd_line(self):
         cmd_line = self.driver.cmd_line(True, ['--a'])
         self.assertTrue('--a' in cmd_line)
-        self.assertTrue('--in-fifo=' + chromium_android.DRT_APP_FILE_DIR + 'DumpRenderTree.in' in cmd_line)
-        self.assertTrue('--out-fifo=' + chromium_android.DRT_APP_FILE_DIR + 'DumpRenderTree.out' in cmd_line)
-        self.assertTrue('--err-file=' + chromium_android.DRT_APP_FILE_DIR + 'DumpRenderTree.err' in cmd_line)
+        self.assertTrue('--in-fifo=' + chromium_android.DRT_APP_FILES_DIR + 'DumpRenderTree.in' in cmd_line)
+        self.assertTrue('--out-fifo=' + chromium_android.DRT_APP_FILES_DIR + 'DumpRenderTree.out' in cmd_line)
+        self.assertTrue('--err-file=' + chromium_android.DRT_APP_FILES_DIR + 'DumpRenderTree.err' in cmd_line)
 
     def test_read_prompt(self):
         self.driver._proc = Mock()  # FIXME: This should use a tighter mock.

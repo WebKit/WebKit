@@ -1,3 +1,11 @@
+2012-07-10  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Unreviewed fix of webkitpy unittest break about chromium_android.py
+        caused by r122251.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidDriverTest.test_cmd_line):
+
 2012-07-10  Ojan Vafai  <ojan@chromium.org>
 
         webkit-patch rebaseline doesn't work for audio/pixel tests
