@@ -1063,11 +1063,14 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
             minWidth = child->maxPreferredLogicalWidth();
         else if (child->style()->minWidth().type() == MinIntrinsic)
             minWidth = child->minPreferredLogicalWidth();
+        else if (child->style()->minWidth().type() == Auto)
+            minWidth = 0;
 
         LayoutUnit allowedShrinkage = min<LayoutUnit>(0, minWidth - width);
         return allowedShrinkage;
     } else {
-        if (child->style()->minHeight().isFixed()) {
+        Length minHeight = child->style()->minHeight();
+        if (minHeight.isFixed() || minHeight.isAuto()) {
             LayoutUnit minHeight = child->style()->minHeight().value();
             LayoutUnit height = child->overrideLogicalContentHeight();
             LayoutUnit allowedShrinkage = min<LayoutUnit>(0, minHeight - height);

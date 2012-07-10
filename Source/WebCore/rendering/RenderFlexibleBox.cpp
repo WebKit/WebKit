@@ -155,6 +155,7 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
     ASSERT(preferredLogicalWidthsDirty());
 
     RenderStyle* styleToUse = style();
+    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for width.
     if (styleToUse->logicalWidth().isFixed() && styleToUse->logicalWidth().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeContentBoxLogicalWidth(styleToUse->logicalWidth().value());
     else {
@@ -204,11 +205,13 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
     m_maxPreferredLogicalWidth += scrollbarWidth;
     m_minPreferredLogicalWidth += scrollbarWidth;
 
+    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for min-width.
     if (styleToUse->logicalMinWidth().isFixed() && styleToUse->logicalMinWidth().value() > 0) {
         m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMinWidth().value()));
         m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMinWidth().value()));
     }
 
+    // FIXME: This should probably be checking for isSpecified since you should be able to use percentage, calc or viewport relative values for maxWidth.
     if (styleToUse->logicalMaxWidth().isFixed()) {
         m_maxPreferredLogicalWidth = std::min(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMaxWidth().value()));
         m_minPreferredLogicalWidth = std::min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(styleToUse->logicalMaxWidth().value()));
@@ -595,11 +598,11 @@ LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMain
     else if (hasOverrideHeight())
         contentExtent = overrideLogicalContentHeight();
     else {
-        LayoutUnit heightResult = computeContentLogicalHeightUsing(style()->logicalHeight());
+        LayoutUnit heightResult = computeContentLogicalHeightUsing(MainOrPreferredSize, style()->logicalHeight());
         if (heightResult == -1)
             heightResult = preferredMainAxisExtent;
-        LayoutUnit minHeight = computeContentLogicalHeightUsing(style()->logicalMinHeight()); // Leave as -1 if unset.
-        LayoutUnit maxHeight = style()->logicalMaxHeight().isUndefined() ? heightResult : computeContentLogicalHeightUsing(style()->logicalMaxHeight());
+        LayoutUnit minHeight = computeContentLogicalHeightUsing(MinSize, style()->logicalMinHeight()); // Leave as -1 if unset.
+        LayoutUnit maxHeight = style()->logicalMaxHeight().isUndefined() ? heightResult : computeContentLogicalHeightUsing(MaxSize, style()->logicalMaxHeight());
         if (maxHeight == -1)
             maxHeight = heightResult;
         heightResult = std::min(maxHeight, heightResult);
@@ -771,10 +774,10 @@ LayoutUnit RenderFlexibleBox::lineBreakLength()
     if (!isColumnFlow())
         return mainAxisContentExtent();
 
-    LayoutUnit height = computeContentLogicalHeightUsing(style()->logicalHeight());
+    LayoutUnit height = computeContentLogicalHeightUsing(MainOrPreferredSize, style()->logicalHeight());
     if (height == -1)
         height = MAX_LAYOUT_UNIT;
-    LayoutUnit maxHeight = computeContentLogicalHeightUsing(style()->logicalMaxHeight());
+    LayoutUnit maxHeight = computeContentLogicalHeightUsing(MaxSize, style()->logicalMaxHeight());
     if (maxHeight != -1)
         height = std::min(height, maxHeight);
     return height;
@@ -789,6 +792,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox* child, Layo
     // https://bugs.webkit.org/show_bug.cgi?id=81809
     if (max.isSpecified() && childSize > valueForLength(max, flexboxAvailableContentExtent, renderView))
         childSize = valueForLength(max, flexboxAvailableContentExtent, renderView);
+    // FIXME: Treat auto min values as min-content.
     if (min.isSpecified() && childSize < valueForLength(min, flexboxAvailableContentExtent, renderView))
         childSize = valueForLength(min, flexboxAvailableContentExtent, renderView);
     return childSize;

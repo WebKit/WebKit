@@ -1,3 +1,15 @@
+2012-07-10  Ojan Vafai  <ojan@chromium.org>
+
+        Add support for min-height:auto and min-width:auto
+        https://bugs.webkit.org/show_bug.cgi?id=88437
+
+        Reviewed by Tony Chang.
+
+        * fast/css/auto-min-size-expected.txt: Added.
+        * fast/css/auto-min-size.html: Added.
+        * fast/css/deprecated-flexbox-auto-min-size.html: Added.
+        * platform/chromium-linux/fast/css/deprecated-flexbox-auto-min-size-expected.txt: Added.
+
 2012-07-10  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Need test of Typed Arrays

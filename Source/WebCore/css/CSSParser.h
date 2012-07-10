@@ -379,6 +379,9 @@ private:
 
     bool inShorthand() const { return m_inParseShorthand; }
 
+    bool validWidth(CSSParserValue*);
+    bool validHeight(CSSParserValue*);
+
     void checkForOrphanedUnits();
 
     void deleteFontFaceOnlyValues();

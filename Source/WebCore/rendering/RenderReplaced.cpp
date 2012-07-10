@@ -315,7 +315,7 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
 LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
     if (style()->logicalWidth().isSpecified())
-        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style()->logicalWidth()), includeMaxWidth);
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(MainOrPreferredSize, style()->logicalWidth()), includeMaxWidth);
 
     RenderBox* contentRenderer = embeddedContentBox();
 
@@ -340,7 +340,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) con
             // or if 'width' has a computed value of 'auto', 'height' has some other computed value, and the element does have an intrinsic ratio; then the used value
             // of 'width' is: (used height) * (intrinsic ratio)
             if (intrinsicRatio && ((heightIsAuto && !hasIntrinsicWidth && hasIntrinsicHeight) || !heightIsAuto)) {
-                LayoutUnit logicalHeight = computeReplacedLogicalHeightUsing(style()->logicalHeight());
+                LayoutUnit logicalHeight = computeReplacedLogicalHeightUsing(MainOrPreferredSize, style()->logicalHeight());
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(roundToInt(round(logicalHeight * intrinsicRatio)));
             }
 
@@ -352,7 +352,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) con
                 // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
                 LayoutUnit logicalWidth;
                 if (RenderBlock* blockWithWidth = firstContainingBlockWithLogicalWidth(this))
-                    logicalWidth = blockWithWidth->computeReplacedLogicalWidthRespectingMinMaxWidth(blockWithWidth->computeReplacedLogicalWidthUsing(blockWithWidth->style()->logicalWidth()), false);
+                    logicalWidth = blockWithWidth->computeReplacedLogicalWidthRespectingMinMaxWidth(blockWithWidth->computeReplacedLogicalWidthUsing(MainOrPreferredSize, blockWithWidth->style()->logicalWidth()), false);
                 else
                     logicalWidth = containingBlock()->availableLogicalWidth();
 
@@ -384,7 +384,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
 {
     // 10.5 Content height: the 'height' property: http://www.w3.org/TR/CSS21/visudet.html#propdef-height
     if (hasReplacedLogicalHeight())
-        return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style()->logicalHeight()));
+        return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(MainOrPreferredSize, style()->logicalHeight()));
 
     RenderBox* contentRenderer = embeddedContentBox();
 

@@ -1569,6 +1569,22 @@ static inline bool isComma(CSSParserValue* value)
     return value && value->unit == CSSParserValue::Operator && value->iValue == ','; 
 }
 
+bool CSSParser::validWidth(CSSParserValue* value)
+{
+    int id = value->id;
+    if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic || id == CSSValueWebkitMinContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueWebkitFitContent)
+        return true;
+    return !id && validUnit(value, FLength | FPercent | FNonNeg);
+}
+
+// FIXME: Combine this with validWidth when we support fit-content, et al, for heights.
+bool CSSParser::validHeight(CSSParserValue* value)
+{
+    int id = value->id;
+    if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
+        return true;
+    return !id && validUnit(value, FLength | FPercent | FNonNeg);
+}
 
 void CSSParser::checkForOrphanedUnits()
 {
@@ -1981,34 +1997,28 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg));
         break;
 
-    case CSSPropertyMaxWidth: // <length> | <percentage> | none | inherit
+    case CSSPropertyMaxWidth:
     case CSSPropertyWebkitMaxLogicalWidth:
-        if (id == CSSValueNone) {
-            validPrimitive = true;
-            break;
-        }
-        /* nobreak */
-    case CSSPropertyMinWidth: // <length> | <percentage> | inherit
-    case CSSPropertyWebkitMinLogicalWidth:
-        if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic || id == CSSValueWebkitMinContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueWebkitFitContent)
-            validPrimitive = true;
-        else
-            validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg));
+        validPrimitive = (id == CSSValueNone || validWidth(value));
         break;
 
-    case CSSPropertyMaxHeight: // <length> | <percentage> | none | inherit
+    case CSSPropertyMinWidth:
+    case CSSPropertyWebkitMinLogicalWidth:
+    case CSSPropertyWidth:
+    case CSSPropertyWebkitLogicalWidth:
+        validPrimitive = (id == CSSValueAuto || validWidth(value));
+        break;
+
+    case CSSPropertyMaxHeight:
     case CSSPropertyWebkitMaxLogicalHeight:
-        if (id == CSSValueNone) {
-            validPrimitive = true;
-            break;
-        }
-        /* nobreak */
-    case CSSPropertyMinHeight: // <length> | <percentage> | inherit
+        validPrimitive = (id == CSSValueNone || validHeight(value));
+        break;
+
+    case CSSPropertyMinHeight:
     case CSSPropertyWebkitMinLogicalHeight:
-        if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
-            validPrimitive = true;
-        else
-            validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg));
+    case CSSPropertyHeight:
+    case CSSPropertyWebkitLogicalHeight:
+        validPrimitive = (id == CSSValueAuto || validHeight(value));
         break;
 
     case CSSPropertyFontSize:
@@ -2025,22 +2035,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = true;
         else
             validPrimitive = (!id && validUnit(value, FLength | FPercent));
-        break;
-
-    case CSSPropertyWidth: // <length> | <percentage> | auto | inherit
-    case CSSPropertyWebkitLogicalWidth:
-        if (id == CSSValueWebkitMinContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueWebkitFitContent) {
-            validPrimitive = true;
-            break;
-        }
-        /* nobreak */
-    case CSSPropertyHeight: // <length> | <percentage> | auto | inherit
-    case CSSPropertyWebkitLogicalHeight:
-        if (id == CSSValueAuto || id == CSSValueIntrinsic || id == CSSValueMinIntrinsic)
-            validPrimitive = true;
-        else if (!id && validUnit(value, FLength | FPercent | FNonNeg))
-            // ### handle multilength case where we allow relative units
-            validPrimitive = true;
         break;
 
     case CSSPropertyBottom:               // <length> | <percentage> | auto | inherit

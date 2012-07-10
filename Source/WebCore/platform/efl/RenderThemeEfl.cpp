@@ -82,9 +82,9 @@ void RenderThemeEfl::adjustSizeConstraints(RenderStyle* style, FormType type) co
 {
     const struct ThemePartDesc* desc = m_partDescs + (size_t)type;
 
-    if (style->minWidth().isIntrinsicOrAuto())
+    if (style->minWidth().isIntrinsic())
         style->setMinWidth(desc->min.width());
-    if (style->minHeight().isIntrinsicOrAuto())
+    if (style->minHeight().isIntrinsic())
         style->setMinHeight(desc->min.height());
 
     if (desc->max.width().value() > 0 && style->maxWidth().isIntrinsicOrAuto())

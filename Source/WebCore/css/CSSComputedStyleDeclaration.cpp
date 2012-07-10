@@ -1856,8 +1856,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return zoomAdjustedPixelValueForLength(maxWidth, style.get());
         }
         case CSSPropertyMinHeight:
+            // FIXME: For flex-items, min-height:auto should compute to min-content.
+            if (style->minHeight().isAuto())
+                return zoomAdjustedPixelValue(0, style.get());
             return zoomAdjustedPixelValueForLength(style->minHeight(), style.get());
         case CSSPropertyMinWidth:
+            // FIXME: For flex-items, min-width:auto should compute to min-content.
+            if (style->minWidth().isAuto())
+                return zoomAdjustedPixelValue(0, style.get());
             return zoomAdjustedPixelValueForLength(style->minWidth(), style.get());
         case CSSPropertyOpacity:
             return cssValuePool().createValue(style->opacity(), CSSPrimitiveValue::CSS_NUMBER);

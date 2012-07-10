@@ -1,3 +1,77 @@
+2012-07-10  Ojan Vafai  <ojan@chromium.org>
+
+        Add support for min-height:auto and min-width:auto
+        https://bugs.webkit.org/show_bug.cgi?id=88437
+
+        Reviewed by Tony Chang.
+
+        Right now auto does the same thing as min-height/min-width:0.
+        For flex-items it should be the same as min-content (followup patch).
+        http://dev.w3.org/csswg/css3-flexbox/#min-size-auto
+
+        Tests: fast/css/auto-min-size.html
+               fast/css/deprecated-flexbox-auto-min-size.html
+
+        * WebCore.order:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Return 0px for the computed value of auto.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validWidth):
+        (WebCore):
+        (WebCore::CSSParser::validHeight):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSParser.h:
+        (CSSParser):
+        Restructure width/height parsing to reduce code duplication and make it easier
+        to add auto as a valid min value.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::adjustSizeConstraints):
+        This code was unnecessarily checking intrinsicOrAuto since auto was previously
+        not an allowed value for minWidth/minHeight.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::computeLogicalWidthInRegionUsing):
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computeLogicalHeightUsing):
+        (WebCore::RenderBox::computeContentLogicalHeightUsing):
+        (WebCore::RenderBox::computeReplacedLogicalWidth):
+        (WebCore::RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth):
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        Need to pass a SizeType to all these methods so that we know if the Length
+        we're working with is a min length since auto has a different meaning now
+        for min lengths.
+
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::allowedChildFlex):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidths):
+        (WebCore::RenderFlexibleBox::computeAvailableFreeSpace):
+        (WebCore::RenderFlexibleBox::lineBreakLength):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::calcScrollbarThicknessUsing):
+        (WebCore::RenderScrollbarPart::computeScrollbarWidth):
+        (WebCore::RenderScrollbarPart::computeScrollbarHeight):
+        * rendering/style/RenderStyle.h:
+        Default minHeight/minWidth to auto instead of 0px.
+
 2012-07-10  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Use default font rendering styles in FontPlatformData::querySystemForRenderStyle()
