@@ -33,8 +33,9 @@
 
 namespace WebCore {
 
-TrackingTextureAllocator::TrackingTextureAllocator(WebKit::WebGraphicsContext3D* context)
+TrackingTextureAllocator::TrackingTextureAllocator(WebKit::WebGraphicsContext3D* context, int maxTextureSize)
     : m_context(context)
+    , m_maxTextureSize(maxTextureSize)
     , m_currentMemoryUseBytes(0)
     , m_textureUsageHint(Any)
     , m_useTextureStorageExt(false)
@@ -71,6 +72,9 @@ static bool isTextureFormatSupportedForStorage(GC3Denum format)
 
 unsigned TrackingTextureAllocator::createTexture(const IntSize& size, GC3Denum format)
 {
+    if (size.width() > m_maxTextureSize || size.height() > m_maxTextureSize)
+        return 0;
+
     m_currentMemoryUseBytes += TextureManager::memoryUseBytes(size, format);
 
     unsigned textureId = 0;

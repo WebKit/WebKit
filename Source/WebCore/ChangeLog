@@ -1,3 +1,55 @@
+2012-07-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Replace use of ManagedTexture with CCScopedTexture for impl thread and remove implTextureManager from LayerRendererChromium
+        https://bugs.webkit.org/show_bug.cgi?id=90841
+
+        Reviewed by Adrienne Walker.
+
+        Remove the TextureManager from LayerRendererChromium, which was the last
+        instance of the class in the compositor. Instead of using ManagedTexture
+        objects for RenderPass textures, use instances of CCScopedTexture, which
+        manage the lifetime of the allocated texture ids. TextureManager will be
+        removed entirely once all callers of memoryUseBytes() have been removed.
+
+        No new tests. No change in behaviour.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::releaseRenderPassTextures):
+        (WebCore):
+        (WebCore::LayerRendererChromium::renderPassTextureSize):
+        (WebCore::LayerRendererChromium::renderPassTextureFormat):
+        (WebCore::LayerRendererChromium::decideRenderPassAllocationsForFrame):
+        (WebCore::LayerRendererChromium::haveCachedResourcesForRenderPassId):
+        (WebCore::LayerRendererChromium::drawQuad):
+        (WebCore::applyFilters):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        (WebCore::LayerRendererChromium::drawHeadsUpDisplay):
+        (WebCore::LayerRendererChromium::getFramebufferTexture):
+        (WebCore::LayerRendererChromium::isCurrentRenderPass):
+        (WebCore::LayerRendererChromium::useRenderPass):
+        (WebCore::LayerRendererChromium::useScopedTexture):
+        (WebCore::LayerRendererChromium::bindFramebufferToTexture):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore):
+        (LayerRendererChromium):
+        * platform/graphics/chromium/TrackingTextureAllocator.cpp:
+        (WebCore::TrackingTextureAllocator::TrackingTextureAllocator):
+        (WebCore::TrackingTextureAllocator::createTexture):
+        * platform/graphics/chromium/TrackingTextureAllocator.h:
+        (WebCore::TrackingTextureAllocator::create):
+        (TrackingTextureAllocator):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+        (WebCore):
+        (CCHeadsUpDisplay):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (WebCore):
+        (CCRenderer):
+
 2012-07-10  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r109610): Order of values in shorthand animation makes a difference

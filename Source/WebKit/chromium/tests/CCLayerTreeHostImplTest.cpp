@@ -2367,8 +2367,6 @@ TEST_F(CCLayerTreeHostImplTest, layersFreeTextures)
 
     // Kill the layer tree.
     m_hostImpl->setRootLayer(CCLayerImpl::create(100));
-    // FIXME: Remove this when we don't use ManagedTextures in impl layers.
-    m_hostImpl->layerRenderer()->implTextureManager()->deleteEvictedTextures(m_hostImpl->layerRenderer()->implTextureAllocator());
     // There should be no textures left in use after.
     EXPECT_EQ(0u, trackingWebGraphicsContext->numTextures());
 }

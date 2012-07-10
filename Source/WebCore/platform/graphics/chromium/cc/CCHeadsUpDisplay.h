@@ -27,8 +27,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "ManagedTexture.h"
 #include "cc/CCFontAtlas.h"
+#include "cc/CCScopedTexture.h"
 
 namespace WebCore {
 
@@ -36,6 +36,7 @@ class CCDebugRectHistory;
 class CCFrameRateCounter;
 class CCLayerTreeHostImpl;
 class GraphicsContext;
+class TexureAllocator;
 
 struct CCLayerTreeSettings;
 
@@ -66,7 +67,7 @@ private:
     bool showPlatformLayerTree(const CCLayerTreeSettings&) const;
     bool showDebugRects(const CCLayerTreeSettings&) const;
 
-    OwnPtr<ManagedTexture> m_hudTexture;
+    OwnPtr<CCScopedTexture> m_hudTexture;
     OwnPtr<CCFontAtlas> m_fontAtlas;
 };
 
