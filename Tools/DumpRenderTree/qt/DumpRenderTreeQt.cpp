@@ -208,7 +208,6 @@ void WebPage::resetSettings()
     settings()->setUserStyleSheetUrl(QUrl()); // reset to default
 
     DumpRenderTreeSupportQt::setMinimumTimerInterval(this, DumpRenderTreeSupportQt::defaultMinimumTimerInterval());
-    DumpRenderTreeSupportQt::setHixie76WebSocketProtocolEnabled(this, DumpRenderTreeSupportQt::defaultHixie76WebSocketProtocolEnabled());
 
     DumpRenderTreeSupportQt::resetInternalsObject(mainFrame());
 

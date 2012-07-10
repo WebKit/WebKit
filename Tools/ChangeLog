@@ -1,3 +1,33 @@
+2012-07-10  Adam Barth  <abarth@webkit.org>
+
+        Remove LayoutTestController and WebKitTestRunner support for Hixie76 WebSockets
+        https://bugs.webkit.org/show_bug.cgi?id=90853
+
+        Reviewed by Eric Seidel.
+
+        WebKit no longer implements the Hixie76 version of the WebSocket
+        protocol. We don't need to support it in our test framework.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        (WebPreferences):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::resetSettings):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+
 2012-07-10  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Use setup_test_runner() instead of start_helper() to setup test environment

@@ -664,7 +664,6 @@ static void resetDefaultsToConsistentValues()
     [preferences setCSSGridLayoutEnabled:NO];
     [preferences setUsePreHTML5ParserQuirks:NO];
     [preferences setAsynchronousSpellCheckingEnabled:NO];
-    [preferences setHixie76WebSocketProtocolEnabled:NO];
     [preferences setMockScrollbarsEnabled:YES];
 
 #if ENABLE(WEB_AUDIO)

@@ -10,8 +10,6 @@
 description("Make sure WebSocket gives errors on long invalid upgrade header.");
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 function finish() {
     clearTimeout(timeoutID);

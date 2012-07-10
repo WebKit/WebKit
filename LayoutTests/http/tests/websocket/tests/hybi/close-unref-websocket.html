@@ -10,8 +10,6 @@
 description("Test if Web Socket is closed while handshaking and unreferenced, it should fire close event at most once.");
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var countCloseEvent = 0;
 

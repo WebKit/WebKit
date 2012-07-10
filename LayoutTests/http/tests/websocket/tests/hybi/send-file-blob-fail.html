@@ -10,8 +10,6 @@
 description("WebSocket should fail the connection if it has failed to read a Blob.");
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 function startsWith(target, prefix)
 {

@@ -10,8 +10,6 @@
 description("Reload after WebSocket creation should not cause a crash.");
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 document.iframeFinished = function()
 {

@@ -10,8 +10,6 @@
 description("Test whether WebSocket aborts the connection when it receives an unexpected encoding length frame.");
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var closeEvent;
 var payload_extended = ["126_125", "126_0", "127_65535", "127_0"];

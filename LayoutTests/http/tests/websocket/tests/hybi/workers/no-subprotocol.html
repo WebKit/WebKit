@@ -10,8 +10,6 @@
 description("WebSocket's protocol attribute should be an empty string if the server did not provide Sec-WebSocket-Protocol header.");
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 function startsWith(str, prefix)
 {

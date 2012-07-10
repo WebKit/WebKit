@@ -1,3 +1,120 @@
+2012-07-10  Adam Barth  <abarth@webkit.org>
+
+        Remove LayoutTestController and WebKitTestRunner support for Hixie76 WebSockets
+        https://bugs.webkit.org/show_bug.cgi?id=90853
+
+        Reviewed by Eric Seidel.
+
+        There's no need to explicitly disable the Hixie76 protocol because it
+        no longer exists in WebKit.
+
+        * http/tests/websocket/tests/hybi/alert-in-event-handler.html:
+        * http/tests/websocket/tests/hybi/bad-handshake-crash.html:
+        * http/tests/websocket/tests/hybi/bad-sub-protocol-control-chars.html:
+        * http/tests/websocket/tests/hybi/bad-sub-protocol-empty.html:
+        * http/tests/websocket/tests/hybi/bad-sub-protocol-non-ascii.html:
+        * http/tests/websocket/tests/hybi/binary-type.html:
+        * http/tests/websocket/tests/hybi/broken-utf8.html:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html:
+        * http/tests/websocket/tests/hybi/bufferedAmount-after-close.html:
+        * http/tests/websocket/tests/hybi/client-close.html:
+        * http/tests/websocket/tests/hybi/close-before-open.html:
+        * http/tests/websocket/tests/hybi/close-code-and-reason.html:
+        * http/tests/websocket/tests/hybi/close-event.html:
+        * http/tests/websocket/tests/hybi/close-on-navigate-new-location.html:
+        * http/tests/websocket/tests/hybi/close-on-unload-and-force-gc.html:
+        * http/tests/websocket/tests/hybi/close-on-unload-reference-in-parent.html:
+        * http/tests/websocket/tests/hybi/close-on-unload.html:
+        * http/tests/websocket/tests/hybi/close-unref-websocket.html:
+        * http/tests/websocket/tests/hybi/close.html:
+        * http/tests/websocket/tests/hybi/compressed-control-frame.html:
+        * http/tests/websocket/tests/hybi/cross-origin.html:
+        * http/tests/websocket/tests/hybi/deflate-frame-comp-bit-onoff.html:
+        * http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter.html:
+        * http/tests/websocket/tests/hybi/deflate-frame-parameter.html:
+        * http/tests/websocket/tests/hybi/echo-with-no-extension.html:
+        * http/tests/websocket/tests/hybi/extensions.html:
+        * http/tests/websocket/tests/hybi/fragmented-binary-frames.html:
+        * http/tests/websocket/tests/hybi/fragmented-control-frame.html:
+        * http/tests/websocket/tests/hybi/fragmented-frames.html:
+        * http/tests/websocket/tests/hybi/frame-lengths.html:
+        * http/tests/websocket/tests/hybi/handshake-challenge-randomness.html:
+        * http/tests/websocket/tests/hybi/handshake-error.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-maxlength.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header.html:
+        * http/tests/websocket/tests/hybi/httponly-cookie.pl:
+        * http/tests/websocket/tests/hybi/interleaved-fragments.html:
+        * http/tests/websocket/tests/hybi/invalid-continuation.html:
+        * http/tests/websocket/tests/hybi/invalid-encode-length.html:
+        * http/tests/websocket/tests/hybi/invalid-masked-frames-from-server.html:
+        * http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html:
+        * http/tests/websocket/tests/hybi/invalid-subprotocols.html:
+        * http/tests/websocket/tests/hybi/long-control-frame.html:
+        * http/tests/websocket/tests/hybi/long-invalid-header.html:
+        * http/tests/websocket/tests/hybi/multiple-connections.html:
+        * http/tests/websocket/tests/hybi/multiple-subprotocols.html:
+        * http/tests/websocket/tests/hybi/no-subprotocol.html:
+        * http/tests/websocket/tests/hybi/null-character.html:
+        * http/tests/websocket/tests/hybi/pong.html:
+        * http/tests/websocket/tests/hybi/receive-arraybuffer.html:
+        * http/tests/websocket/tests/hybi/receive-blob.html:
+        * http/tests/websocket/tests/hybi/reload-crash.html:
+        * http/tests/websocket/tests/hybi/reserved-bits.html:
+        * http/tests/websocket/tests/hybi/reserved-opcodes.html:
+        * http/tests/websocket/tests/hybi/send-after-close-on-unload.html:
+        * http/tests/websocket/tests/hybi/send-arraybuffer.html:
+        * http/tests/websocket/tests/hybi/send-blob.html:
+        * http/tests/websocket/tests/hybi/send-empty.html:
+        * http/tests/websocket/tests/hybi/send-file-blob-fail.html:
+        * http/tests/websocket/tests/hybi/send-file-blob.html:
+        * http/tests/websocket/tests/hybi/send-object-tostring-check.html:
+        * http/tests/websocket/tests/hybi/send-throw.html:
+        * http/tests/websocket/tests/hybi/send.html:
+        * http/tests/websocket/tests/hybi/server-close.html:
+        * http/tests/websocket/tests/hybi/set-protocol.html:
+        * http/tests/websocket/tests/hybi/simple-stress.html:
+        * http/tests/websocket/tests/hybi/simple.html:
+        * http/tests/websocket/tests/hybi/sub-protocol.html:
+        * http/tests/websocket/tests/hybi/too-long-payload.html:
+        * http/tests/websocket/tests/hybi/unicode.html:
+        * http/tests/websocket/tests/hybi/unmasked-frames.html:
+        * http/tests/websocket/tests/hybi/unpaired-surrogates-in-close-reason.html:
+        * http/tests/websocket/tests/hybi/unpaired-surrogates-in-message.html:
+        * http/tests/websocket/tests/hybi/url-attribute.html:
+        * http/tests/websocket/tests/hybi/url-no-trailing-slash.html:
+        * http/tests/websocket/tests/hybi/url-parsing.html:
+        * http/tests/websocket/tests/hybi/url-with-credential.html:
+        * http/tests/websocket/tests/hybi/url-with-empty-query.html:
+        * http/tests/websocket/tests/hybi/url-with-query.html:
+        * http/tests/websocket/tests/hybi/websocket-event-target.html:
+        * http/tests/websocket/tests/hybi/websocket-pending-activity.html:
+        * http/tests/websocket/tests/hybi/workers/close-code-and-reason.html:
+        * http/tests/websocket/tests/hybi/workers/close-in-onmessage-crash.html:
+        * http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html:
+        * http/tests/websocket/tests/hybi/workers/close-in-worker.html:
+        * http/tests/websocket/tests/hybi/workers/close.html:
+        * http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html:
+        * http/tests/websocket/tests/hybi/workers/no-onmessage-in-sync-op.html:
+        * http/tests/websocket/tests/hybi/workers/no-subprotocol.html:
+        * http/tests/websocket/tests/hybi/workers/receive-arraybuffer.html:
+        * http/tests/websocket/tests/hybi/workers/receive-blob.html:
+        * http/tests/websocket/tests/hybi/workers/send-arraybuffer.html:
+        * http/tests/websocket/tests/hybi/workers/send-blob.html:
+        * http/tests/websocket/tests/hybi/workers/shared-worker-simple.html:
+        * http/tests/websocket/tests/hybi/workers/worker-handshake-challenge-randomness.html:
+        * http/tests/websocket/tests/hybi/workers/worker-reload.html:
+        * http/tests/websocket/tests/hybi/workers/worker-simple.html:
+        * http/tests/websocket/tests/hybi/zero-length-text.html:
+
 2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
 
         Unreviewed gardening. Adding the majority of the remaining indexeddb/mozilla tests which are all flaky and crashing.

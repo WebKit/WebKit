@@ -801,9 +801,6 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     else if (g_str_equal(originalName.get(), "WebKitTabToLinksPreferenceKey")) {
         DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(booleanFromValue(valueAsString.get()));
         return;
-    } else if (g_str_equal(originalName.get(), "WebKitHixie76WebSocketProtocolEnabled")) {
-        DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(webkit_web_frame_get_web_view(mainFrame), booleanFromValue(valueAsString.get()));
-        return;
     } else if (g_str_equal(originalName.get(), "WebKitPageCacheSupportsPluginsPreferenceKey")) {
         DumpRenderTreeSupportGtk::setPageCacheSupportsPlugins(webkit_web_frame_get_web_view(mainFrame), booleanFromValue(valueAsString.get()));
         return;

@@ -10,8 +10,6 @@
 description("Checks whether SYNTAX_ERR is thrown when attemping to close the connection with unpaired surrogates.");
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/echo");
 

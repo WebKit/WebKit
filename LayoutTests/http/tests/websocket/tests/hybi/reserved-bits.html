@@ -10,8 +10,6 @@
 description("Test whether WebSocket rejects frames whose reserved bit is on.");
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 // "compressed=true&bitNumber=1" must not be included in compressedAndBitNumberParameters array.
 var compressedAndBitNumberParameters = ["compressed=false&bitNumber=1",

@@ -512,7 +512,6 @@ static void resetDefaultsToConsistentValues()
 
     DumpRenderTreeSupportGtk::resetGeolocationClientMock(webView);
 
-    DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(webView, true);
     DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(webView, false);
     DumpRenderTreeSupportGtk::setCSSRegionsEnabled(webView, true);
 }

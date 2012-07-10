@@ -10,8 +10,6 @@
 description('Connection should fail immediately, rather than succeeding or staying in limbo until timeout, if handshake is longer than 1024 bytes.');
 
 window.jsTestIsAsync = true;
-if (window.testRunner)
-    testRunner.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
 var timedOut = false;
 var connected = false;
