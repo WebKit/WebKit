@@ -1,3 +1,18 @@
+2012-07-10  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r109610): Order of values in shorthand animation makes a difference
+        https://bugs.webkit.org/show_bug.cgi?id=84533
+        <rdar://problem/11831924>
+        <rdar://problem/11815787>
+
+        Reviewed by Simon Fraser.
+
+        A new test that exercises many different variants of the animation shorthand
+        property, putting the animation name in different spots in the list of values.
+
+        * animations/animation-shorthand-name-order-expected.txt: Added.
+        * animations/animation-shorthand-name-order.html: Added.
+
 2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
 
         Unreviewed gardening. Removing duplicated line from TestExpectations.
