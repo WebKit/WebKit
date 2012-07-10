@@ -88,6 +88,7 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKProtectionSpaceTypes.h \
 	$(WebKit2)/UIProcess/API/C/WKResourceCacheManager.h \
 	$(WebKit2)/UIProcess/API/C/WKTextChecker.h \
+	$(WebKit2)/UIProcess/API/C/WKVibration.cpp \
 	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
 
 webkit2gtk_h_api += \
@@ -218,7 +219,9 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebSoupRequestManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebSoupRequestManagerMessages.h \
 	DerivedSources/WebKit2/WebSoupRequestManagerProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/WebSoupRequestManagerProxyMessages.h
+	DerivedSources/WebKit2/WebSoupRequestManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebVibrationProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebVibrationProxyMessages.h
 
 webkit2gtk_built_sources += \
 	DerivedSources/WebKit2/webkit2gtk/webkit2/WebKitEnumTypes.cpp \
@@ -596,6 +599,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKResourceCacheManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKTextChecker.h \
 	Source/WebKit2/UIProcess/API/C/WKTextChecker.cpp \
+	Source/WebKit2/UIProcess/API/C/WKVibration.cpp \
+	Source/WebKit2/UIProcess/API/C/WKVibration.h \
 	Source/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.cpp \
@@ -891,6 +896,10 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebTextCheckerClient.h \
 	Source/WebKit2/UIProcess/WebUIClient.cpp \
 	Source/WebKit2/UIProcess/WebUIClient.h \
+	Source/WebKit2/UIProcess/WebVibrationProvider.cpp \
+	Source/WebKit2/UIProcess/WebVibrationProvider.h \
+	Source/WebKit2/UIProcess/WebVibrationProxy.cpp \
+	Source/WebKit2/UIProcess/WebVibrationProxy.h \
 	Source/WebKit2/WebKit2Prefix.h \
 	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.h \
 	Source/WebKit2/WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
@@ -1081,6 +1090,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebVibrationClient.cpp \
+	Source/WebKit2/WebProcess/WebCoreSupport/WebVibrationClient.h \
 	Source/WebKit2/WebProcess/WebPage/DecoderAdapter.cpp \
 	Source/WebKit2/WebProcess/WebPage/DecoderAdapter.h \
 	Source/WebKit2/WebProcess/WebPage/DrawingArea.cpp \

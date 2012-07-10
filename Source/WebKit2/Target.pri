@@ -180,6 +180,7 @@ HEADERS += \
     UIProcess/API/C/WKPreferencesPrivate.h \
     UIProcess/API/C/WKProtectionSpace.h \
     UIProcess/API/C/WKProtectionSpaceTypes.h \
+    UIProcess/API/C/WKVibration.h \
     UIProcess/API/C/WebKit2.h \
     UIProcess/API/C/qt/WKNativeEvent.h \
     UIProcess/API/cpp/WKRetainPtr.h \
@@ -280,6 +281,8 @@ HEADERS += \
     UIProcess/WebResourceCacheManagerProxy.h \
     UIProcess/WebResourceLoadClient.h \
     UIProcess/WebUIClient.h \
+    UIProcess/WebVibrationProvider.h \
+    UIProcess/WebVibrationProxy.h \
     UIProcess/qt/QtWebContext.h \
     UIProcess/qt/QtWebPageEventHandler.h \
     UIProcess/qt/QtGestureRecognizer.h \
@@ -372,6 +375,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebPlatformStrategies.h \
     WebProcess/WebCoreSupport/WebPopupMenu.h \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
+    WebProcess/WebCoreSupport/WebVibrationClient.h \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
     WebProcess/WebPage/DrawingArea.h \
     WebProcess/WebPage/DrawingAreaImpl.h \
@@ -550,6 +554,7 @@ SOURCES += \
     UIProcess/API/C/WKPreferences.cpp \
     UIProcess/API/C/WKProtectionSpace.cpp \
     UIProcess/API/C/WKResourceCacheManager.cpp \
+    UIProcess/API/C/WKVibration.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/API/qt/qwebdownloaditem.cpp \
@@ -645,6 +650,8 @@ SOURCES += \
     UIProcess/WebResourceCacheManagerProxy.cpp \
     UIProcess/WebResourceLoadClient.cpp \
     UIProcess/WebUIClient.cpp \
+    UIProcess/WebVibrationProvider.cpp \
+    UIProcess/WebVibrationProxy.cpp \
     UIProcess/qt/QtWebContext.cpp \
     UIProcess/qt/QtWebPageEventHandler.cpp \
     UIProcess/qt/QtGestureRecognizer.cpp \
@@ -754,6 +761,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \
     WebProcess/WebCoreSupport/WebPopupMenu.cpp \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
+    WebProcess/WebCoreSupport/WebVibrationClient.cpp \
     WebProcess/WebCoreSupport/qt/WebContextMenuClientQt.cpp \
     WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp \
     WebProcess/WebCoreSupport/qt/WebDragClientQt.cpp \

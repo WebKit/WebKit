@@ -123,6 +123,7 @@ typedef const struct OpaqueWKPluginSiteDataManager* WKPluginSiteDataManagerRef;
 typedef const struct OpaqueWKPreferences* WKPreferencesRef;
 typedef const struct OpaqueWKProtectionSpace* WKProtectionSpaceRef;
 typedef const struct OpaqueWKTextChecker* WKTextCheckerRef;
+typedef const struct OpaqueWKVibration* WKVibrationRef;
 
 /* WebKit2 Bundle types */
 

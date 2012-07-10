@@ -103,6 +103,7 @@ MESSAGE_RECEIVERS = \
     WebProcessProxy.messages.in \
     WebResourceCacheManager.messages.in \
     WebResourceCacheManagerProxy.messages.in \
+    WebVibrationProxy.messages.in \
     NPObjectMessageReceiver.messages.in
 
 SCRIPTS = \

@@ -266,6 +266,8 @@ SET(WebKit2_SOURCES
     UIProcess/WebTextChecker.cpp
     UIProcess/WebTextCheckerClient.cpp
     UIProcess/WebUIClient.cpp
+    UIProcess/WebVibrationProvider.cpp
+    UIProcess/WebVibrationProxy.cpp
 
     UIProcess/API/C/WKApplicationCacheManager.cpp
     UIProcess/API/C/WKAuthenticationChallenge.cpp
@@ -307,6 +309,7 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKProtectionSpace.cpp
     UIProcess/API/C/WKResourceCacheManager.cpp
     UIProcess/API/C/WKTextChecker.cpp
+    UIProcess/API/C/WKVibration.cpp
 
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp
     UIProcess/Authentication/AuthenticationDecisionListener.cpp
@@ -433,6 +436,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
     WebProcess/WebCoreSupport/WebPopupMenu.cpp
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
+    WebProcess/WebCoreSupport/WebVibrationClient.cpp
 
     WebProcess/WebPage/DecoderAdapter.cpp
     WebProcess/WebPage/DrawingArea.cpp
@@ -479,6 +483,7 @@ SET(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebPageProxy.messages.in
     UIProcess/WebProcessProxy.messages.in
     UIProcess/WebResourceCacheManagerProxy.messages.in
+    UIProcess/WebVibrationProxy.messages.in
 
     UIProcess/Downloads/DownloadProxy.messages.in
 

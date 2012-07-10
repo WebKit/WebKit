@@ -83,6 +83,7 @@ enum MessageClass {
 #if USE(SOUP)
     MessageClassWebSoupRequestManagerProxy,
 #endif
+    MessageClassWebVibrationProxy,
 
     // Messages sent to a WebConnection
     MessageClassWebConnectionLegacy,

@@ -1,3 +1,60 @@
+2012-07-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [WK2] Add Vibration API support for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=90058
+
+        Reviewed by Anders Carlsson.
+
+        Add support for Vibration API to WebKit2.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Target.pri:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit):
+        * UIProcess/API/C/WKVibration.cpp: Added.
+        (WKVibrationGetTypeID):
+        (WKVibrationSetProvider):
+        * UIProcess/API/C/WKVibration.h: Added.
+        * UIProcess/WebVibrationProvider.cpp: Added.
+        (WebKit):
+        (WebKit::WebVibrationProvider::vibrate):
+        (WebKit::WebVibrationProvider::cancelVibration):
+        * UIProcess/WebVibrationProvider.h: Added.
+        (WebKit):
+        (WebVibrationProvider):
+        * UIProcess/WebVibrationProxy.cpp: Added.
+        (WebKit):
+        (WebKit::WebVibrationProxy::create):
+        (WebKit::WebVibrationProxy::WebVibrationProxy):
+        (WebKit::WebVibrationProxy::~WebVibrationProxy):
+        (WebKit::WebVibrationProxy::invalidate):
+        (WebKit::WebVibrationProxy::initializeProvider):
+        (WebKit::WebVibrationProxy::didReceiveMessage):
+        (WebKit::WebVibrationProxy::vibrate):
+        (WebKit::WebVibrationProxy::cancelVibration):
+        * UIProcess/WebVibrationProxy.h: Added.
+        (CoreIPC):
+        (WebKit):
+        (WebVibrationProxy):
+        (WebKit::WebVibrationProxy::clearContext):
+        (WebKit::WebVibrationProxy::type):
+        * UIProcess/WebVibrationProxy.messages.in: Added.
+        * WebProcess/WebCoreSupport/WebVibrationClient.cpp: Added.
+        (WebKit):
+        (WebKit::WebVibrationClient::vibrate):
+        (WebKit::WebVibrationClient::cancelVibration):
+        (WebKit::WebVibrationClient::vibrationDestroyed):
+        * WebProcess/WebCoreSupport/WebVibrationClient.h: Added.
+        (WebKit):
+        (WebVibrationClient):
+        (WebKit::WebVibrationClient::WebVibrationClient):
+        (WebKit::WebVibrationClient::~WebVibrationClient):
+
 2012-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to clear the cache to WebKit2 GTK+

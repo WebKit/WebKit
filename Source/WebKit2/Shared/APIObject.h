@@ -107,6 +107,7 @@ public:
         TypePluginSiteDataManager,
         TypePreferences,
         TypeTextChecker,
+        TypeVibration,
 
         // Bundle types
         TypeBundle,
