@@ -1,3 +1,12 @@
+2012-07-09  Pete Williamson  <petewil@google.com>
+
+        Export the iconURL list to make it available to the Internals class for testing
+        https://bugs.webkit.org/show_bug.cgi?id=88665
+
+        Reviewed by Kent Tamura.
+
+        * win/WebKit2.def: export the DocumentL::iconURLs function
+
 2012-07-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add missing Battery Status API integration to WebContext and WebPage

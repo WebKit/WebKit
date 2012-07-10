@@ -418,6 +418,16 @@ String HTMLLinkElement::type() const
     return getAttribute(typeAttr);
 }
 
+IconType HTMLLinkElement::iconType() const
+{
+    return m_relAttribute.m_iconType;
+}
+
+String HTMLLinkElement::iconSizes() const
+{
+    return m_sizes->toString();
+}
+
 void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);

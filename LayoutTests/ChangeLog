@@ -1,3 +1,18 @@
+2012-07-09  Pete Williamson  <petewil@google.com>
+
+        Add some new unit tests to test the favicon changing dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=88665
+
+        Reviewed by Kent Tamura.
+
+        * fast/dom/icon-url-change-expected.txt: Added.
+        * fast/dom/icon-url-change.html: Added a new test for changing the favicon dynamically
+        * fast/dom/icon-url-list-expected.txt: Added.
+        * fast/dom/icon-url-list.html: Added a new test for multiple favicons in the HTML header
+        * fast/dom/icon-url-property-expected.txt: update unit test expectations
+        * fast/dom/icon-url-property.html: update and enable existing favicon test
+        * platform/chromium/TestExpectations: reenable the url-property test
+
 2012-07-09  Alice Cheng  <alice_cheng@apple.com>
 
         Editing: Autocorrection in blockquotes causes text to break out of quote

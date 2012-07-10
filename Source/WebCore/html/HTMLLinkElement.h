@@ -55,6 +55,11 @@ public:
 
     String type() const;
 
+    IconType iconType() const;
+
+    // the icon size string as parsed from the HTML attribute
+    String iconSizes() const;
+
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
     bool styleSheetIsLoading() const;

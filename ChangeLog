@@ -1,3 +1,12 @@
+2012-07-09  Pete Williamson  <petewil@google.com>
+
+        Expose an export for the iconUrl list so Internals can use it
+        https://bugs.webkit.org/show_bug.cgi?id=88665
+
+        Reviewed by Kent Tamura.
+
+        * Source/autotools/symbols.filter: export iconURLs
+
 2012-07-09  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] meta viewport initial-scale doesn't factor in device pixel ratio

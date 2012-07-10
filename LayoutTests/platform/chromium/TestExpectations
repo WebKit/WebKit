@@ -1873,8 +1873,6 @@ BUGWK71758 : fast/url/port.html = TEXT PASS
 // // Started failing at r58152
 // BUGWK38038 : fast/url/file-http-base.html = TEXT
 
-BUGWK33812 SKIP : fast/dom/icon-url-property.html = PASS
-
 // New layoutTestController function added at r57993
 BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
 

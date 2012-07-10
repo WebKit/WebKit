@@ -1,3 +1,38 @@
+2012-07-09  Pete Williamson  <petewil@google.com>
+
+        Changed the behavior of iconURLs to always recalculate the list.
+        https://bugs.webkit.org/show_bug.cgi?id=88665
+
+        Reviewed by Kent Tamura..
+
+        As it turns out, it can contain stale URLs in the case that some script
+        manipulates the DOM, which breaks scripts trying to reset the favicon
+        URL. Also added a method in Internals to allow tests to get the list of
+        icon
+
+        Tests: fast/dom/icon-url-change.html
+               fast/dom/icon-url-list.html
+
+        * WebCore.exp.in: export Document::iconURLs on the mac for the Internals class
+        * dom/Document.cpp:
+        (WebCore::Document::iconURLs): Changed the method to recalculate the iconURL list every time
+        (WebCore::Document::addIconURL): we no longer need to add to the internal list since we recalculate it
+        (WebCore::Document::setUseSecureKeyboardEntryWhenActive): removed extra whitespace
+        * dom/Document.h:
+        (Document): removed the addIconURL method which is no longer used
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::iconType): exposed the icon type with an accessor
+        (WebCore):
+        (WebCore::HTMLLinkElement::iconSizes): exposed the icon sizes with an accessor
+        * html/HTMLLinkElement.h:
+        (HTMLLinkElement): declared the icon type and size accessors
+        * testing/Internals.cpp:
+        (WebCore::Internals::iconURLs): made a method to be used by unit tests for inspecting the icon URL list
+        (WebCore):
+        * testing/Internals.h:
+        (Internals): declared the method for unit testing the icon URL list
+        * testing/Internals.idl: exported the Document::iconURLs function
+
 2012-07-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Gcc build fix after r122174.
