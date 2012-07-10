@@ -71,7 +71,7 @@ PassOwnPtr<LocaleMac> LocaleMac::create(const String& localeIdentifier)
 
 LocaleMac* LocaleMac::currentLocale()
 {
-    static LocaleMac* currentLocale = LocaleMac::create([NSLocale currentLocale]).leakPtr();
+    static LocaleMac* currentLocale = LocaleMac::create([[NSLocale currentLocale] localeIdentifier]).leakPtr();
     return currentLocale;
 }
 
