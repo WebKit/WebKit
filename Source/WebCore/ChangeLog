@@ -1,6 +1,14 @@
 2012-07-09  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.
+        Remove an assertion starting to fail on interactive_ui_tests on Chromium OS.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::decideRenderPassAllocationsForFrame):
+
+2012-07-09  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
         Build fix after r122175
 
         * WebCore.gypi: Remove Source/WebCore/platform/graphics/qt/Extensions3DQt.{cpp,h}
