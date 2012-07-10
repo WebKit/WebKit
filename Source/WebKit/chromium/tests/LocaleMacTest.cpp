@@ -99,6 +99,26 @@ protected:
         return locale->weekDayShortLabels()[index];
     }
 #endif
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    String timeFormatText(const String& localeString)
+    {
+        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+        return locale->timeFormatText();
+    }
+
+    String shortTimeFormatText(const String& localeString)
+    {
+        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+        return locale->shortTimeFormatText();
+    }
+
+    String timeAMPMLabel(const String& localeString, unsigned index)
+    {
+        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+        return locale->timeAMPMLabels()[index];
+    }
+#endif
 };
 
 TEST_F(LocaleMacTest, formatDate)
@@ -158,5 +178,33 @@ TEST_F(LocaleMacTest, weekDayShortLabels)
     EXPECT_STREQ("\xE6\x97\xA5", weekDayShortLabel("ja_JP", Sunday).utf8().data());
     EXPECT_STREQ("\xE6\xB0\xB4", weekDayShortLabel("ja_JP", Wednesday).utf8().data());
     EXPECT_STREQ("\xE5\x9C\x9F", weekDayShortLabel("ja_JP", Saturday).utf8().data());
+}
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+TEST_F(LocaleMacTest, timeFormatText)
+{
+    EXPECT_STREQ("h:mm:ss a", timeFormatText("en_US").utf8().data());
+    EXPECT_STREQ("HH:mm:ss", timeFormatText("fr_FR").utf8().data());
+    EXPECT_STREQ("H:mm:ss", timeFormatText("ja_JP").utf8().data());
+}
+
+TEST_F(LocaleMacTest, shortTimeFormatText)
+{
+    EXPECT_STREQ("h:mm a", shortTimeFormatText("en_US").utf8().data());
+    EXPECT_STREQ("HH:mm", shortTimeFormatText("fr_FR").utf8().data());
+    EXPECT_STREQ("H:mm", shortTimeFormatText("ja_JP").utf8().data());
+}
+
+TEST_F(LocaleMacTest, timeAMPMLabels)
+{
+    EXPECT_STREQ("AM", timeAMPMLabel("en_US", 0).utf8().data());
+    EXPECT_STREQ("PM", timeAMPMLabel("en_US", 1).utf8().data());
+
+    EXPECT_STREQ("AM", timeAMPMLabel("fr_FR", 0).utf8().data());
+    EXPECT_STREQ("PM", timeAMPMLabel("fr_FR", 1).utf8().data());
+
+    EXPECT_STREQ("\xE5\x8D\x88\xE5\x89\x8D", timeAMPMLabel("ja_JP", 0).utf8().data());
+    EXPECT_STREQ("\xE5\x8D\x88\xE5\xBE\x8C", timeAMPMLabel("ja_JP", 1).utf8().data());
 }
 #endif

@@ -44,6 +44,17 @@ using namespace std;
 
 namespace WebCore {
 
+static NSDateFormatter* createDateTimeFormatter(NSLocale* locale, NSDateFormatterStyle dateStyle, NSDateFormatterStyle timeStyle)
+{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setLocale:locale];
+    [formatter setDateStyle:dateStyle];
+    [formatter setTimeStyle:timeStyle];
+    [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    [formatter setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+    return formatter;
+}
+
 LocaleMac::LocaleMac(const String& localeIdentifier)
     : m_locale([[NSLocale alloc] initWithLocaleIdentifier:localeIdentifier])
 {
@@ -66,13 +77,7 @@ LocaleMac* LocaleMac::currentLocale()
 
 NSDateFormatter* LocaleMac::createShortDateFormatter()
 {
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setLocale:m_locale.get()];
-    [formatter setDateStyle:NSDateFormatterShortStyle];
-    [formatter setTimeStyle:NSDateFormatterNoStyle];
-    [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
-    [formatter setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
-    return formatter;
+    return createDateTimeFormatter(m_locale.get(), NSDateFormatterShortStyle, NSDateFormatterNoStyle);
 }
 
 double LocaleMac::parseDate(const String& input)
@@ -192,6 +197,47 @@ unsigned LocaleMac::firstDayOfWeek()
     // firstWeekday value. We can guess it by the document of NSDateComponents -
     // weekDay, so it can be 1 through 7 and 1 is Sunday.
     return [calendar.get() firstWeekday] - 1;
+}
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+NSDateFormatter* LocaleMac::createTimeFormatter()
+{
+    return createDateTimeFormatter(m_locale.get(), NSDateFormatterNoStyle, NSDateFormatterMediumStyle);
+}
+
+NSDateFormatter* LocaleMac::createShortTimeFormatter()
+{
+    return createDateTimeFormatter(m_locale.get(), NSDateFormatterNoStyle, NSDateFormatterShortStyle);
+}
+
+String LocaleMac::timeFormatText()
+{
+    if (!m_localizedTimeFormatText.isEmpty())
+        return m_localizedTimeFormatText;
+    RetainPtr<NSDateFormatter> formatter(AdoptNS, createTimeFormatter());
+    m_localizedTimeFormatText = String([formatter.get() dateFormat]);
+    return m_localizedTimeFormatText;
+}
+
+String LocaleMac::shortTimeFormatText()
+{
+    if (!m_localizedShortTimeFormatText.isEmpty())
+        return m_localizedShortTimeFormatText;
+    RetainPtr<NSDateFormatter> formatter(AdoptNS, createShortTimeFormatter());
+    m_localizedShortTimeFormatText = String([formatter.get() dateFormat]);
+    return m_localizedShortTimeFormatText;
+}
+
+const Vector<String>& LocaleMac::timeAMPMLabels()
+{
+    if (!m_timeAMPMLabels.isEmpty())
+        return m_timeAMPMLabels;
+    m_timeAMPMLabels.reserveCapacity(2);
+    RetainPtr<NSDateFormatter> formatter(AdoptNS, createShortTimeFormatter());
+    m_timeAMPMLabels.append(String([formatter.get() AMSymbol]));
+    m_timeAMPMLabels.append(String([formatter.get() PMSymbol]));
+    return m_timeAMPMLabels;
 }
 #endif
 }

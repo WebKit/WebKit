@@ -58,6 +58,12 @@ public:
     unsigned firstDayOfWeek();
 #endif
 
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    String timeFormatText();
+    String shortTimeFormatText();
+    const Vector<String>& timeAMPMLabels();
+#endif
+
 private:
     explicit LocaleMac(const String&);
     NSDateFormatter *createShortDateFormatter();
@@ -67,6 +73,14 @@ private:
     String m_localizedDateFormatText;
     Vector<String> m_monthLabels;
     Vector<String> m_weekDayShortLabels;
+#endif
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    NSDateFormatter *createTimeFormatter();
+    NSDateFormatter *createShortTimeFormatter();
+
+    String m_localizedTimeFormatText;
+    String m_localizedShortTimeFormatText;
+    Vector<String> m_timeAMPMLabels;
 #endif
 };
 
