@@ -1,3 +1,12 @@
+2012-07-10  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Skipped a new failing test, because of a missing feature
+        (testRunner.setStorageDatabaseIdleInterval()).
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+
 2012-07-10  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Remove hixie76 protocol implementation

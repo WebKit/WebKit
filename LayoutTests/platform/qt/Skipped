@@ -1234,6 +1234,9 @@ plugins/crash-restoring-plugin-page-from-page-cache.html
 # http://trac.webkit.org/changeset/114067
 fast/events/constructors/media-key-event-constructor.html
 
+# missing testRunner.setStorageDatabaseIdleInterval() implementation
+storage/domstorage/storage-close-database-on-idle.html
+
 # ============================================================================= #
 # Failing SVG tests
 # ============================================================================= #
