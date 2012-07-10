@@ -973,9 +973,6 @@ http/tests/misc/link-rel-icon-beforeload.html
 # https://bugs.webkit.org/show_bug.cgi?id=64002
 fast/selectors/unqualified-hover-strict.html
 
-# [Qt] http/tests/misc/script-defer.html is flakey
-# https://bugs.webkit.org/show_bug.cgi?id=90845
-http/tests/misc/script-defer.html
 
 # =========================================================================== #
 # failing media tests

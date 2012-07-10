@@ -210,7 +210,7 @@ void HTMLScriptRunner::executeScriptsWaitingForStylesheets()
     executeParsingBlockingScripts();
 }
 
-void HTMLScriptRunner::executeScriptsWaitingForParsing()
+bool HTMLScriptRunner::executeScriptsWaitingForParsing()
 {
     while (!m_scriptsToExecuteAfterParsing.isEmpty()) {
         ASSERT(!m_scriptNestingLevel);
@@ -218,14 +218,15 @@ void HTMLScriptRunner::executeScriptsWaitingForParsing()
         ASSERT(m_scriptsToExecuteAfterParsing.first().cachedScript());
         if (!m_scriptsToExecuteAfterParsing.first().cachedScript()->isLoaded()) {
             watchForLoad(m_scriptsToExecuteAfterParsing.first());
-            return;
+            return false;
         }
         PendingScript first = m_scriptsToExecuteAfterParsing.takeFirst();
         executePendingScriptAndDispatchEvent(first);
         // FIXME: What is this m_document check for?
         if (!m_document)
-            return;
+            return false;
     }
+    return true;
 }
 
 void HTMLScriptRunner::requestParsingBlockingScript(Element* element)

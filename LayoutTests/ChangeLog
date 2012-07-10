@@ -1,3 +1,15 @@
+2012-07-10  Eric Seidel  <eric@webkit.org>
+
+        REGRESSION (r122168): Layout Test http/tests/misc/script-defer.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=90845
+
+        Reviewed by Alexey Proskuryakov.
+
+        The test should no longer flake.
+
+        * platform/chromium/TestExpectations:
+        * platform/qt/Skipped:
+
 2012-07-10  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         WebSurroundingText layout tests should use the same code path as the rest of the feature.

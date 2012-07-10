@@ -58,7 +58,7 @@ public:
     void executeScriptsWaitingForLoad(CachedResource*);
     bool hasScriptsWaitingForStylesheets() const { return m_hasScriptsWaitingForStylesheets; }
     void executeScriptsWaitingForStylesheets();
-    void executeScriptsWaitingForParsing();
+    bool executeScriptsWaitingForParsing();
 
     bool hasParserBlockingScript() const;
     bool isExecutingScript() const { return !!m_scriptNestingLevel; }

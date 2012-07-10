@@ -3741,6 +3741,3 @@ BUGWK90746 : fast/multicol/column-span-parent-continuation-crash.html = PASS TIM
 
 BUGCR136441 : fast/canvas/webgl/glsl-conformance.html = TEXT
 BUGCR136441 : platform/chromium/virtual/gpu/fast/canvas/webgl/glsl-conformance.html = TEXT
-
-// Started failing after r122168.
-BUGWK90845 : http/tests/misc/script-defer.html = TEXT
