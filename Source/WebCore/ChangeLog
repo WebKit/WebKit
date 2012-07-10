@@ -1,3 +1,56 @@
+2012-07-10  Huang Dongsung  <luxtella@company100.net>
+
+        Don't destroy the decoded data of an image if WebKit is about to render the image.
+        https://bugs.webkit.org/show_bug.cgi?id=90721
+
+        Reviewed by Antti Koivisto.
+
+        When the cache capacity of the MemoryCache is exceeded, the decoded data of all
+        the CachedImages are destroyed. Even the images inside the viewport are
+        destroyed.  However, if the images need to be rendered again due to scoll events
+        or animation, they must be decoded again. As an extreme case, if there is an
+        animation with an image when MemoryCache is almost full, the image must be
+        decoded every frame. This slows down animation and needlessly consumes CPU
+        cycles.
+
+        Therefore, it is better to not destory the decoded data of an image if the image
+        is inside the viewport because there is high chance that the image needs to be
+        rendered again soon. This patch reduces the unnecessary repetition of image decoding
+        on low memory, and also relieves the memory fragmentation because it avoids reallocation
+        of image frames.
+
+        In addition, there is another positive side effect. Currently,
+        CachedImageClient::willRenderImage() is used only to determine if GIF animation needs
+        to be paused or not in CachedImage::shouldPauseAnimation(). This patch makes
+        GIF animation outside the viewort be paused.
+
+        This is also a prerequisite for parallel image decoders. Because parallel image
+        decoders decode an image asynchronously, clients cannot render the image at the time
+        when the request is made. Clients can draw the image later after receiving image
+        decoding complete notification. However, there is a problem because MemoryCache can
+        destroy the decoded data before clients actually render the image. So parallel image decoders
+        must prevent the decoded data from being destroyed if the image will be rendered
+        soon.
+
+        This patch may consume a little more memory, but furtunately the peak memory usage
+        is almost the same.
+
+        No new tests - no new testable functionality.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::likelyToBeUsedSoon):
+        (WebCore):
+        (WebCore::CachedImage::shouldPauseAnimation):
+        * loader/cache/CachedImage.h:
+        (CachedImage):
+        * loader/cache/CachedResource.h:
+        (CachedResource):
+        (WebCore::CachedResource::likelyToBeUsedSoon):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willRenderImage):
+
 2012-07-10  Kent Tamura  <tkent@chromium.org>
 
         RTL calendar picker for <input type=date> is too narrow and clipped
