@@ -3745,3 +3745,5 @@ BUGCR136441 : platform/chromium/virtual/gpu/fast/canvas/webgl/glsl-conformance.h
 
 // Flaky
 BUGWK90896 WIN DEBUG : fast/js/dfg-cross-global-object-inline-new-array-literal.html = PASS TEXT
+
+BUGWK90899 SLOW WIN LINUX DEBUG : platform/chromium/inspector/styles/device-metrics-fit-window.html = PASS

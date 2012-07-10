@@ -1,5 +1,11 @@
 2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
 
+        Unreviewed gardening. platform/chromium/inspector/styles/device-metrics-fit-window.html is timing out in debug and now marked as slow.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
+
         Unreviewed gardening. fast/js/dfg-cross-global-object-inline-array-literal.html is racey (and thus flaky).
 
 2012-07-10  Rafael Weinstein  <rafaelw@chromium.org>
