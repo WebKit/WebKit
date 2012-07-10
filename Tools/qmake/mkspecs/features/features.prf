@@ -215,7 +215,10 @@ for(define, DEFINES) {
 
 # Enable the USE(3D_GRAPHICS) flag for Qt5 or when QtOpenGL is enabled.
 !contains(DEFINES, WTF_USE_3D_GRAPHICS=.) {
-    haveQt(5)|contains(QT_CONFIG, opengl): DEFINES += WTF_USE_3D_GRAPHICS=1
+    # Disable USE(3D_GRAPHICS) on Windows temporarily, see https://bugs.webkit.org/show_bug.cgi?id=90850 for details.
+    !win32-* {
+        haveQt(5)|contains(QT_CONFIG, opengl): DEFINES += WTF_USE_3D_GRAPHICS=1
+    }
 }
 
 haveQt(4):contains(DEFINES, ENABLE_WEBGL=1):contains(DEFINES, WTF_USE_3D_GRAPHICS=0) {

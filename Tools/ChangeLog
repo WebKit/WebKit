@@ -1,3 +1,12 @@
+2012-07-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r122175): It broke the Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=90850
+
+        Reviewed by Noam Rosenthal.
+
+        * qmake/mkspecs/features/features.prf: Disable USE(3D_GRAPHICS) on Windows temporarily until proper fix.
+
 2012-07-10  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt][NRWT] Enable cascaded TestExpectations
