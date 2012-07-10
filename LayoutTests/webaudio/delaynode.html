@@ -13,7 +13,7 @@
 <div id="console"></div>
 
 <script>
-description("Tests basic functionality of DelayNode.");
+description("Tests attribute and basic functionality of DelayNode.");
 
 function runTest() {
     if (window.testRunner) {
@@ -31,7 +31,17 @@ function runTest() {
     bufferSource.buffer = toneBuffer;
 
     var delay = context.createDelayNode();
+    
+    window.delay = delay;
+    shouldBeTrue("delay.numberOfInputs === 1");
+    shouldBeTrue("delay.numberOfOutputs === 1");
+    shouldBeTrue("delay.delayTime.defaultValue === 0.0");
+    shouldBeTrue("delay.delayTime.minValue === 0.0");
+    shouldBeTrue("delay.delayTime.maxValue === 1.0");
+    shouldBeTrue("delay.delayTime.value === 0.0");
+
     delay.delayTime.value = delayTimeSeconds;
+    shouldBeTrue("delay.delayTime.value === 0.5");
 
     bufferSource.connect(delay);
     delay.connect(context.destination);
