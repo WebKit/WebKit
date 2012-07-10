@@ -37,6 +37,8 @@ class SurroundingText;
 namespace WebKit {
 
 class WebHitTestResult;
+class WebNode;
+class WebPoint;
 
 class WebSurroundingText {
 public:
@@ -50,9 +52,9 @@ public:
     // The maximum length of the contents retrieved is defined by maxLength.
     WEBKIT_EXPORT void initialize(const WebHitTestResult&, size_t maxLength);
 
-    // Initializes the object go get the surrounding text centered in the selected offset of the given node.
+    // Initializes the object to get the surrounding text centered in the position relative to a provided node.
     // The maximum length of the contents retrieved is defined by maxLength.
-    WEBKIT_EXPORT void initialize(WebNode textNode, size_t offset, size_t maxLength);
+    WEBKIT_EXPORT void initialize(const WebNode&, const WebPoint&, size_t maxLength);
 
     // Surrounding text content retrieved.
     WEBKIT_EXPORT WebString textContent() const;

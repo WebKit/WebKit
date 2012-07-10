@@ -40,22 +40,22 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebSurroundingText::initialize(const WebHitTestResult& hitTestInfo, size_t maxLength)
+void WebSurroundingText::initialize(const WebHitTestResult& hitTestResult, size_t maxLength)
 {
-    Node* node = hitTestInfo.node().unwrap<Node>();
+    Node* node = hitTestResult.node().unwrap<Node>();
     if (!node || !node->renderer())
         return;
 
-    m_private.reset(new SurroundingText(VisiblePosition(node->renderer()->positionForPoint(static_cast<IntPoint>(hitTestInfo.localPoint()))), maxLength));
+    m_private.reset(new SurroundingText(VisiblePosition(node->renderer()->positionForPoint(static_cast<IntPoint>(hitTestResult.localPoint()))), maxLength));
 }
 
-void WebSurroundingText::initialize(WebNode textNode, size_t offset, size_t maxLength)
+void WebSurroundingText::initialize(const WebNode& webNode, const WebPoint& nodePoint, size_t maxLength)
 {
-    Node* node = textNode.unwrap<Node>();
-    if (!node || !node->isTextNode() || offset >= node->nodeValue().length())
+    const Node* node = webNode.constUnwrap<Node>();
+    if (!node || !node->renderer())
         return;
 
-    m_private.reset(new SurroundingText(VisiblePosition(Position(toText(node), offset).parentAnchoredEquivalent(), DOWNSTREAM), maxLength));
+    m_private.reset(new SurroundingText(node->renderer()->positionForPoint(static_cast<IntPoint>(nodePoint)), maxLength));
 }
 
 WebString WebSurroundingText::textContent() const

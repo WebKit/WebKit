@@ -1,3 +1,19 @@
+2012-07-10  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        WebSurroundingText layout tests should use the same code path as the rest of the feature.
+        https://bugs.webkit.org/show_bug.cgi?id=90807
+
+        Reviewed by Adam Barth.
+
+        Replace the offset-based initialize method used only by LayoutTestController
+        with a point-based version to follow the same code path.
+
+        * public/WebSurroundingText.h:
+        (WebKit):
+        (WebSurroundingText):
+        * src/WebSurroundingText.cpp:
+        (WebKit::WebSurroundingText::initialize):
+
 2012-07-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122207.

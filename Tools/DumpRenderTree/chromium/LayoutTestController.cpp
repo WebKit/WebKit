@@ -2349,7 +2349,7 @@ void LayoutTestController::setPointerLockWillFailSynchronously(const CppArgument
 void LayoutTestController::textSurroundingNode(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 3 || !arguments[0].isObject() || !arguments[1].isNumber() || !arguments[2].isNumber())
+    if (arguments.size() < 4 || !arguments[0].isObject() || !arguments[1].isNumber() || !arguments[2].isNumber() || !arguments[3].isNumber())
         return;
 
     WebNode node;
@@ -2359,14 +2359,13 @@ void LayoutTestController::textSurroundingNode(const CppArgumentList& arguments,
     if (node.isNull() || !node.isTextNode())
         return;
 
-    unsigned offset = arguments[1].toInt32();
-    if (offset >= node.nodeValue().length()) {
-        result->set(WebString().utf8());
-        return;
-    }
+    WebPoint point(arguments[1].toInt32(), arguments[2].toInt32());
+    unsigned maxLength = arguments[3].toInt32();
 
     WebSurroundingText surroundingText;
-    unsigned maxLength = arguments[2].toInt32();
-    surroundingText.initialize(node, offset, maxLength);
+    surroundingText.initialize(node, point, maxLength);
+    if (surroundingText.isNull())
+        return;
+
     result->set(surroundingText.textContent().utf8());
 }

@@ -1,3 +1,16 @@
+2012-07-10  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        WebSurroundingText layout tests should use the same code path as the rest of the feature.
+        https://bugs.webkit.org/show_bug.cgi?id=90807
+
+        Reviewed by Adam Barth.
+
+        Make the textSurroundingNode method take a pair of point coordinates
+        instead of a node offset.
+
+        * platform/chromium/editing/surrounding-text/surrounding-text-expected.txt:
+        * platform/chromium/editing/surrounding-text/surrounding-text.html:
+
 2012-07-10  Kevin Ellis  <kevers@chromium.org>
 
         Input type=range issue with events not being raised when value set in js
