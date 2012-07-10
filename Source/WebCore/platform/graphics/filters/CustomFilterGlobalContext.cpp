@@ -53,7 +53,9 @@ void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
     attributes.preserveDrawingBuffer = true;
     attributes.premultipliedAlpha = false;
     m_context = GraphicsContext3D::create(attributes, hostWindow, GraphicsContext3D::RenderOffscreen);
-
+    if (!m_context)
+        return;
+    m_context->makeContextCurrent();
     m_context->enable(GraphicsContext3D::DEPTH_TEST);
 }
 

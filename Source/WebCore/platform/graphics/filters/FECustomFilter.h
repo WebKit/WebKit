@@ -72,7 +72,7 @@ private:
                    CustomFilterOperation::MeshType);
     ~FECustomFilter();
     
-    void initializeContext();
+    bool initializeContext();
     void deleteRenderBuffers();
     void resizeContext(const IntSize& newContextSize);
     void bindVertexAttribute(int attributeLocation, unsigned size, unsigned& offset);

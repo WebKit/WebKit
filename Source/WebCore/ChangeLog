@@ -1,3 +1,30 @@
+2012-07-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] The FECustomFilter is not making the GL context active
+        https://bugs.webkit.org/show_bug.cgi?id=90840
+
+        Reviewed by Dean Jackson.
+
+        I've added a couple of makeContextCurrent() in the FECustomFilter related classes.
+        Also, removed the assumption that GraphicsContext3D::create() never returns 0.
+
+        No new tests, this was crashing on existing tests.
+
+        * platform/graphics/filters/CustomFilterCompiledProgram.cpp:
+        (WebCore::CustomFilterCompiledProgram::CustomFilterCompiledProgram):
+        (WebCore::CustomFilterCompiledProgram::~CustomFilterCompiledProgram):
+        * platform/graphics/filters/CustomFilterGlobalContext.cpp:
+        (WebCore::CustomFilterGlobalContext::prepareContextIfNeeded):
+        * platform/graphics/filters/CustomFilterMesh.cpp:
+        (WebCore::CustomFilterMesh::CustomFilterMesh):
+        (WebCore::CustomFilterMesh::~CustomFilterMesh):
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::deleteRenderBuffers):
+        (WebCore::FECustomFilter::platformApplySoftware):
+        (WebCore::FECustomFilter::initializeContext):
+        * platform/graphics/filters/FECustomFilter.h:
+        (FECustomFilter):
+
 2012-07-09  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r114862-r114886): Fix a crash by switching the input type to hidden.

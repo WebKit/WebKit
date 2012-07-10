@@ -103,6 +103,9 @@ FECustomFilter::~FECustomFilter()
 
 void FECustomFilter::deleteRenderBuffers()
 {
+    if (!m_context)
+        return;
+    m_context->makeContextCurrent();
     if (m_frameBuffer) {
         m_context->deleteFramebuffer(m_frameBuffer);
         m_frameBuffer = 0;
@@ -129,8 +132,9 @@ void FECustomFilter::platformApplySoftware()
     
     IntSize newContextSize(effectDrawingRect.size());
     bool hadContext = m_context;
-    if (!m_context)
-        initializeContext();
+    if (!m_context && !initializeContext())
+        return;
+    m_context->makeContextCurrent();
     
     if (!hadContext || m_contextSize != newContextSize)
         resizeContext(newContextSize);
@@ -157,11 +161,13 @@ void FECustomFilter::platformApplySoftware()
     m_context->readPixels(0, 0, newContextSize.width(), newContextSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, dstPixelArray->data());
 }
 
-void FECustomFilter::initializeContext()
+bool FECustomFilter::initializeContext()
 {
     ASSERT(!m_context.get());
-    ASSERT(m_globalContext->context());
     m_context = m_globalContext->context();
+    if (!m_context)
+        return false;
+    m_context->makeContextCurrent();
     
     // FIXME: The shader and the mesh can be shared across multiple elements when possible.
     // Sharing the shader means it's no need to analyze / compile and upload to GPU again.
@@ -174,6 +180,7 @@ void FECustomFilter::initializeContext()
     m_mesh = CustomFilterMesh::create(m_context.get(), m_meshColumns, m_meshRows, 
                                       FloatRect(0, 0, 1, 1),
                                       m_meshType);
+    return true;
 }
 
 void FECustomFilter::resizeContext(const IntSize& newContextSize)

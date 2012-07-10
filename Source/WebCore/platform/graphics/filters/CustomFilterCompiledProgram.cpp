@@ -87,6 +87,8 @@ CustomFilterCompiledProgram::CustomFilterCompiledProgram(GraphicsContext3D* cont
     , m_contentSamplerLocation(-1)
     , m_isInitialized(false)
 {
+    m_context->makeContextCurrent();
+    
     Platform3DObject vertexShader = compileShader(GraphicsContext3D::VERTEX_SHADER, m_vertexShaderString);
     if (!vertexShader)
         return;
@@ -171,8 +173,10 @@ int CustomFilterCompiledProgram::uniformLocationByName(const String& name)
     
 CustomFilterCompiledProgram::~CustomFilterCompiledProgram()
 {
-    if (m_program)
+    if (m_program) {
+        m_context->makeContextCurrent();
         m_context->deleteProgram(m_program);
+    }
 }
 
 } // namespace WebCore
