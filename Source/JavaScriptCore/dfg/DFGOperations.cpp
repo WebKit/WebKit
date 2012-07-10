@@ -1306,13 +1306,15 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     CodeBlock* alternative = codeBlock->alternative();
     dataLog("Speculation failure in %p at @%u with executeCounter = %s, "
             "reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, "
-            "osrExitCounter = %u\n",
+            "success/fail %u/(%u+%u)\n",
             codeBlock,
             debugInfo->nodeIndex,
             alternative ? alternative->jitExecuteCounter().status() : 0,
             alternative ? alternative->reoptimizationRetryCounter() : 0,
             alternative ? alternative->optimizationDelayCounter() : 0,
-            codeBlock->osrExitCounter());
+            codeBlock->speculativeSuccessCounter(),
+            codeBlock->speculativeFailCounter(),
+            codeBlock->forcedOSRExitCounter());
 }
 #endif
 

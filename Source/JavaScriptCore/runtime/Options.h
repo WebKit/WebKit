@@ -91,14 +91,18 @@ namespace JSC {
     v(bool, randomizeExecutionCountsBetweenCheckpoints, false) \
     v(int32, maximumExecutionCountsBetweenCheckpoints, 1000) \
     \
+    v(double, desiredSpeculativeSuccessFailRatio, 6) \
+    \
     v(double, likelyToTakeSlowCaseThreshold, 0.15) \
     v(double, couldTakeSlowCaseThreshold, 0.05) \
     v(unsigned, likelyToTakeSlowCaseMinimumCount, 100) \
     v(unsigned, couldTakeSlowCaseMinimumCount, 10) \
     \
     v(double, osrExitProminenceForFrequentExitSite, 0.3) \
-    v(unsigned, osrExitCountForReoptimization, 100) \
-    v(unsigned, osrExitCountForReoptimizationFromLoop, 5) \
+    \
+    v(unsigned, largeFailCountThresholdBase, 20) \
+    v(unsigned, largeFailCountThresholdBaseForLoop,  1)  \
+    v(unsigned, forcedOSRExitCountForReoptimization, 250) \
     \
     v(unsigned, reoptimizationRetryCounterMax, 0)  \
     v(unsigned, reoptimizationRetryCounterStep, 1) \

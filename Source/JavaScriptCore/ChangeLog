@@ -1,5 +1,45 @@
 2012-07-09  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, roll out http://trac.webkit.org/changeset/121511
+        It made in-browser V8v7 10% slower.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::countSpeculationSuccess):
+        (JSC::CodeBlock::countSpeculationFailure):
+        (JSC::CodeBlock::speculativeSuccessCounter):
+        (JSC::CodeBlock::speculativeFailCounter):
+        (JSC::CodeBlock::forcedOSRExitCounter):
+        (JSC::CodeBlock::addressOfSpeculativeSuccessCounter):
+        (JSC::CodeBlock::addressOfSpeculativeFailCounter):
+        (JSC::CodeBlock::addressOfForcedOSRExitCounter):
+        (JSC::CodeBlock::offsetOfSpeculativeSuccessCounter):
+        (JSC::CodeBlock::offsetOfSpeculativeFailCounter):
+        (JSC::CodeBlock::offsetOfForcedOSRExitCounter):
+        (JSC::CodeBlock::largeFailCountThreshold):
+        (JSC::CodeBlock::largeFailCountThresholdForLoop):
+        (JSC::CodeBlock::shouldReoptimizeNow):
+        (JSC::CodeBlock::shouldReoptimizeFromLoopNow):
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter::setThreshold):
+        * bytecode/ExecutionCounter.h:
+        (ExecutionCounter):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileBody):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGOSRExitCompiler.cpp:
+        (JSC::DFG::OSRExitCompiler::handleExitCounts):
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Options.h:
+        (JSC):
+
+2012-07-09  Filip Pizlo  <fpizlo@apple.com>
+
         DFG may get stuck in an infinite fix point if it constant folds a mispredicted node
         https://bugs.webkit.org/show_bug.cgi?id=90829
         <rdar://problem/11823843>

@@ -1940,12 +1940,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
     unsigned bytecodeIndex = stackFrame.args[0].int32();
 
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("%p: Entered optimize with bytecodeIndex = %u, executeCounter = %s, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, exitCounter = ", codeBlock, bytecodeIndex, codeBlock->jitExecuteCounter().status(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
-    if (codeBlock->hasOptimizedReplacement())
-        dataLog("%u", codeBlock->replacement()->osrExitCounter());
-    else
-        dataLog("N/A");
-    dataLog("\n");
+    dataLog("%p: Entered optimize with bytecodeIndex = %u, executeCounter = %s, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock, bytecodeIndex, codeBlock->jitExecuteCounter().status(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
 #endif
 
     if (!codeBlock->checkIfOptimizationThresholdReached()) {
@@ -1955,21 +1950,8 @@ DEFINE_STUB_FUNCTION(void, optimize)
 
     if (codeBlock->hasOptimizedReplacement()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("Considering OSR into %p(%p).\n", codeBlock, codeBlock->replacement());
+        dataLog("Considering OSR into %p(%p) with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
 #endif
-        // If we have an optimized replacement, then it must be the case that we entered
-        // cti_optimize from a loop. That's because is there's an optimized replacement,
-        // then all calls to this function will be relinked to the replacement and so
-        // the prologue OSR will never fire.
-        
-        // This is an interesting threshold check. Consider that a function OSR exits
-        // in the middle of a loop, while having a relatively low exit count. The exit
-        // will reset the execution counter to some target threshold, meaning that this
-        // code won't be reached until that loop heats up for >=1000 executions. But then
-        // we do a second check here, to see if we should either reoptimize, or just
-        // attempt OSR entry. Hence it might even be correct for
-        // shouldReoptimizeFromLoopNow() to always return true. But we make it do some
-        // additional checking anyway, to reduce the amount of recompilation thrashing.
         if (codeBlock->replacement()->shouldReoptimizeFromLoopNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
             dataLog("Triggering reoptimization of %p(%p) (in loop).\n", codeBlock, codeBlock->replacement());
@@ -2015,6 +1997,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
 #endif
 
         codeBlock->optimizeSoon();
+        optimizedCodeBlock->countSpeculationSuccess();
         STUB_SET_RETURN_ADDRESS(address);
         return;
     }
@@ -2025,10 +2008,10 @@ DEFINE_STUB_FUNCTION(void, optimize)
 
     // Count the OSR failure as a speculation failure. If this happens a lot, then
     // reoptimize.
-    optimizedCodeBlock->countOSRExit();
+    optimizedCodeBlock->countSpeculationFailure();
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("Encountered OSR failure into %p(%p).\n", codeBlock, codeBlock->replacement());
+    dataLog("Encountered OSR failure into %p(%p) with success/fail %u/%u.\n", codeBlock, codeBlock->replacement(), codeBlock->replacement()->speculativeSuccessCounter(), codeBlock->replacement()->speculativeFailCounter());
 #endif
 
     // We are a lot more conservative about triggering reoptimization after OSR failure than
