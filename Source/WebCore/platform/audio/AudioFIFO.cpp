@@ -91,7 +91,7 @@ void AudioFIFO::push(const AudioBus* sourceBus)
     size_t sourceLength = sourceBus->length();
     size_t part1Length;
     size_t part2Length;
-    findWrapLengths(m_readIndex, sourceLength, part1Length, part2Length);
+    findWrapLengths(m_writeIndex, sourceLength, part1Length, part2Length);
 
     size_t numberOfChannels = m_fifoAudioBus.numberOfChannels();
 
