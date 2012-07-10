@@ -1,3 +1,22 @@
+2012-07-10  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Re-enable __declspec(dl{import,export}) for MinGW when using EXPORT_MACROS
+        https://bugs.webkit.org/show_bug.cgi?id=90612
+
+        Reviewed by Csaba Osztrogonác.
+
+        MinGW was switched to use auto import/export of symbols on r44184.
+        From my understanding of the documentation, MinGW will not auto-export symbols
+        unless there are no explicit __declspec(dlexport) in the DLL already.
+
+        The issues that originally made us rely on the auto-import feature of MinGW
+        should now be resolved with the EXPORT_MACROS work. This patch re-enables them.
+
+        It also removes the GCC check for internal symbols hiding as the visibility should
+        already be hidden by default for both MSVC and GCC on Windows anyway.
+
+        * wtf/ExportMacros.h:
+
 2012-07-09  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Shared code that is guarded with ENABLE(WEBGL) should be guarded with USE()

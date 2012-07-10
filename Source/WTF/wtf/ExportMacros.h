@@ -38,7 +38,7 @@
 // being local to the target being generated, and thus not subject to (e.g.) ELF
 // symbol interposition rules.
 
-#if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !COMPILER(GCC)
+#if !PLATFORM(CHROMIUM) && OS(WINDOWS)
 #define HAVE_INTERNAL_VISIBILITY 1
 #define WTF_INTERNAL
 #elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
@@ -51,7 +51,7 @@
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
-#if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !COMPILER(GCC)
+#if !PLATFORM(CHROMIUM) && OS(WINDOWS)
 #define WTF_EXPORT __declspec(dllexport)
 #define WTF_IMPORT __declspec(dllimport)
 #define WTF_HIDDEN
