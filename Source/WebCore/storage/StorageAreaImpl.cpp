@@ -274,8 +274,8 @@ void StorageAreaImpl::incrementAccessCount()
 
 void StorageAreaImpl::decrementAccessCount()
 {
+    ASSERT(m_accessCount);
     --m_accessCount;
-    ASSERT(m_accessCount >= 0);
 
     if (!m_accessCount) {
         if (m_closeDatabaseTimer.isActive())
