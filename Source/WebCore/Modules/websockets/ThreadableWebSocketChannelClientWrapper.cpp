@@ -47,7 +47,6 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
     , m_peer(0)
     , m_failedWebSocketChannelCreation(false)
     , m_syncMethodDone(true)
-    , m_useHixie76Protocol(true)
     , m_sendRequestResult(ThreadableWebSocketChannel::SendFail)
     , m_bufferedAmount(0)
     , m_suspended(false)
@@ -79,10 +78,9 @@ WorkerThreadableWebSocketChannel::Peer* ThreadableWebSocketChannelClientWrapper:
     return m_peer;
 }
 
-void ThreadableWebSocketChannelClientWrapper::didCreateWebSocketChannel(WorkerThreadableWebSocketChannel::Peer* peer, bool useHixie76Protocol)
+void ThreadableWebSocketChannelClientWrapper::didCreateWebSocketChannel(WorkerThreadableWebSocketChannel::Peer* peer)
 {
     m_peer = peer;
-    m_useHixie76Protocol = useHixie76Protocol;
     m_syncMethodDone = true;
 }
 
@@ -99,11 +97,6 @@ bool ThreadableWebSocketChannelClientWrapper::failedWebSocketChannelCreation() c
 void ThreadableWebSocketChannelClientWrapper::setFailedWebSocketChannelCreation()
 {
     m_failedWebSocketChannelCreation = true;
-}
-
-bool ThreadableWebSocketChannelClientWrapper::useHixie76Protocol() const
-{
-    return m_useHixie76Protocol;
 }
 
 String ThreadableWebSocketChannelClientWrapper::subprotocol() const

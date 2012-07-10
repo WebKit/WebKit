@@ -84,7 +84,6 @@ WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* c
     , m_shouldDiscardReceivedData(false)
     , m_unhandledBufferedAmount(0)
     , m_identifier(0)
-    , m_useHixie76Protocol(true)
     , m_hasContinuousFrame(false)
     , m_closeEventCode(CloseEventCodeAbnormalClosure)
     , m_outgoingFrameQueueStatus(OutgoingFrameQueueOpen)
@@ -92,9 +91,6 @@ WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* c
     , m_blobLoaderStatus(BlobLoaderNotStarted)
 #endif
 {
-    if (Settings* settings = m_document->settings())
-        m_useHixie76Protocol = settings->useHixie76WebSocketProtocol();
-
     if (Page* page = m_document->page())
         m_identifier = page->progress()->createUniqueIdentifier();
 }
@@ -104,19 +100,14 @@ WebSocketChannel::~WebSocketChannel()
     fastFree(m_buffer);
 }
 
-bool WebSocketChannel::useHixie76Protocol()
-{
-    return m_useHixie76Protocol;
-}
-
 void WebSocketChannel::connect(const KURL& url, const String& protocol)
 {
     LOG(Network, "WebSocketChannel %p connect", this);
     ASSERT(!m_handle);
     ASSERT(!m_suspended);
-    m_handshake = adoptPtr(new WebSocketHandshake(url, protocol, m_document, m_useHixie76Protocol));
+    m_handshake = adoptPtr(new WebSocketHandshake(url, protocol, m_document));
     m_handshake->reset();
-    if (!m_useHixie76Protocol && m_deflateFramer.canDeflate())
+    if (m_deflateFramer.canDeflate())
         m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     if (m_identifier)
         InspectorInstrumentation::didCreateWebSocket(m_document, m_identifier, url, m_document->url());
@@ -152,9 +143,6 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& mess
     CString utf8 = message.utf8(true);
     if (utf8.isNull() && message.length())
         return InvalidMessage;
-    if (m_useHixie76Protocol) {
-        return sendFrameHixie76(utf8.data(), utf8.length()) ? ThreadableWebSocketChannel::SendSuccess : ThreadableWebSocketChannel::SendFail;
-    }
     enqueueTextFrame(utf8);
     // According to WebSocket API specification, WebSocket.send() should return void instead
     // of boolean. However, our implementation still returns boolean due to compatibility
@@ -168,7 +156,6 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& mess
 ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer& binaryData)
 {
     LOG(Network, "WebSocketChannel %p send arraybuffer %p", this, &binaryData);
-    ASSERT(!m_useHixie76Protocol);
     enqueueRawFrame(WebSocketFrame::OpCodeBinary, static_cast<const char*>(binaryData.data()), binaryData.byteLength());
     return ThreadableWebSocketChannel::SendSuccess;
 }
@@ -176,7 +163,6 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer&
 ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const Blob& binaryData)
 {
     LOG(Network, "WebSocketChannel %p send blob %s", this, binaryData.url().string().utf8().data());
-    ASSERT(!m_useHixie76Protocol);
     enqueueBlobFrame(WebSocketFrame::OpCodeBinary, binaryData);
     return ThreadableWebSocketChannel::SendSuccess;
 }
@@ -184,7 +170,6 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const Blob& binary
 bool WebSocketChannel::send(const char* data, int length)
 {
     LOG(Network, "WebSocketChannel %p send binary %p (%dB)", this, data, length);
-    ASSERT(!m_useHixie76Protocol);
     enqueueRawFrame(WebSocketFrame::OpCodeBinary, data, length);
     return true;
 }
@@ -216,19 +201,18 @@ void WebSocketChannel::fail(const String& reason)
         InspectorInstrumentation::didReceiveWebSocketFrameError(m_document, m_identifier, reason);
         m_document->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, m_handshake->clientOrigin());
     }
-    if (!m_useHixie76Protocol) {
-        // Hybi-10 specification explicitly states we must not continue to handle incoming data
-        // once the WebSocket connection is failed (section 7.1.7).
-        // FIXME: Should we do this in hixie-76 too?
-        RefPtr<WebSocketChannel> protect(this); // The client can close the channel, potentially removing the last reference.
-        m_shouldDiscardReceivedData = true;
-        if (m_buffer)
-            skipBuffer(m_bufferSize); // Save memory.
-        m_deflateFramer.didFail();
-        m_hasContinuousFrame = false;
-        m_continuousFrameData.clear();
-        m_client->didReceiveMessageError();
-    }
+
+    // Hybi-10 specification explicitly states we must not continue to handle incoming data
+    // once the WebSocket connection is failed (section 7.1.7).
+    RefPtr<WebSocketChannel> protect(this); // The client can close the channel, potentially removing the last reference.
+    m_shouldDiscardReceivedData = true;
+    if (m_buffer)
+        skipBuffer(m_bufferSize); // Save memory.
+    m_deflateFramer.didFail();
+    m_hasContinuousFrame = false;
+    m_continuousFrameData.clear();
+    m_client->didReceiveMessageError();
+
     if (m_handle && !m_closed)
         m_handle->disconnect(); // Will call didClose().
 }
@@ -288,7 +272,7 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
     m_closed = true;
     if (m_closingTimer.isActive())
         m_closingTimer.stop();
-    if (!m_useHixie76Protocol && m_outgoingFrameQueueStatus != OutgoingFrameQueueClosed)
+    if (m_outgoingFrameQueueStatus != OutgoingFrameQueueClosed)
         abortOutgoingFrameQueue();
     if (m_handle) {
         m_unhandledBufferedAmount = m_handle->bufferedAmount();
@@ -485,9 +469,6 @@ bool WebSocketChannel::processBuffer()
     if (m_handshake->mode() != WebSocketHandshake::Connected)
         return false;
 
-    if (m_useHixie76Protocol)
-        return processFrameHixie76();
-
     return processFrame();
 }
 
@@ -509,25 +490,17 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
     if (m_closing)
         return;
     ASSERT(m_handle);
-    if (m_useHixie76Protocol) {
-        Vector<char> buf;
-        buf.append('\xff');
-        buf.append('\0');
-        if (!m_handle->send(buf.data(), buf.size())) {
-            m_handle->disconnect();
-            return;
-        }
-    } else {
-        Vector<char> buf;
-        if (!m_receivedClosingHandshake && code != CloseEventCodeNotSpecified) {
-            unsigned char highByte = code >> 8;
-            unsigned char lowByte = code;
-            buf.append(static_cast<char>(highByte));
-            buf.append(static_cast<char>(lowByte));
-            buf.append(reason.utf8().data(), reason.utf8().length());
-        }
-        enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.data(), buf.size());
+
+    Vector<char> buf;
+    if (!m_receivedClosingHandshake && code != CloseEventCodeNotSpecified) {
+        unsigned char highByte = code >> 8;
+        unsigned char lowByte = code;
+        buf.append(static_cast<char>(highByte));
+        buf.append(static_cast<char>(lowByte));
+        buf.append(reason.utf8().data(), reason.utf8().length());
     }
+    enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.data(), buf.size());
+
     m_closing = true;
     if (m_client)
         m_client->didStartClosingHandshake();
@@ -723,98 +696,8 @@ bool WebSocketChannel::processFrame()
     return m_buffer;
 }
 
-bool WebSocketChannel::processFrameHixie76()
-{
-    const char* nextFrame = m_buffer;
-    const char* p = m_buffer;
-    const char* end = p + m_bufferSize;
-
-    unsigned char frameByte = static_cast<unsigned char>(*p++);
-    if ((frameByte & 0x80) == 0x80) {
-        size_t length = 0;
-        bool errorFrame = false;
-        bool lengthFinished = false;
-        while (p < end) {
-            if (length > numeric_limits<size_t>::max() / 128) {
-                LOG(Network, "frame length overflow %lu", static_cast<unsigned long>(length));
-                errorFrame = true;
-                break;
-            }
-            size_t newLength = length * 128;
-            unsigned char msgByte = static_cast<unsigned char>(*p);
-            unsigned int lengthMsgByte = msgByte & 0x7f;
-            if (newLength > numeric_limits<size_t>::max() - lengthMsgByte) {
-                LOG(Network, "frame length overflow %lu+%u", static_cast<unsigned long>(newLength), lengthMsgByte);
-                errorFrame = true;
-                break;
-            }
-            newLength += lengthMsgByte;
-            if (newLength < length) { // sanity check
-                LOG(Network, "frame length integer wrap %lu->%lu", static_cast<unsigned long>(length), static_cast<unsigned long>(newLength));
-                errorFrame = true;
-                break;
-            }
-            length = newLength;
-            ++p;
-            if (!(msgByte & 0x80)) {
-                lengthFinished = true;
-                break;
-            }
-        }
-        if (!errorFrame && !lengthFinished)
-            return false;
-        if (p + length < p) {
-            LOG(Network, "frame buffer pointer wrap %p+%lu->%p", p, static_cast<unsigned long>(length), p + length);
-            errorFrame = true;
-        }
-        if (errorFrame) {
-            skipBuffer(m_bufferSize); // Save memory.
-            m_shouldDiscardReceivedData = true;
-            m_client->didReceiveMessageError();
-            fail("WebSocket frame length too large");
-            return false;
-        }
-        ASSERT(p + length >= p);
-        if (p + length <= end) {
-            p += length;
-            nextFrame = p;
-            ASSERT(nextFrame > m_buffer);
-            skipBuffer(nextFrame - m_buffer);
-            if (frameByte == 0xff && !length) {
-                m_receivedClosingHandshake = true;
-                startClosingHandshake(CloseEventCodeNotSpecified, "");
-                if (m_closing)
-                    m_handle->close(); // close after sending FF 00.
-            } else
-                m_client->didReceiveMessageError();
-            return m_buffer;
-        }
-        return false;
-    }
-
-    const char* msgStart = p;
-    while (p < end && *p != '\xff')
-        ++p;
-    if (p < end && *p == '\xff') {
-        int msgLength = p - msgStart;
-        ++p;
-        nextFrame = p;
-        if (frameByte == 0x00) {
-            String msg = String::fromUTF8(msgStart, msgLength);
-            skipBuffer(nextFrame - m_buffer);
-            m_client->didReceiveMessage(msg);
-        } else {
-            skipBuffer(nextFrame - m_buffer);
-            m_client->didReceiveMessageError();
-        }
-        return m_buffer;
-    }
-    return false;
-}
-
 void WebSocketChannel::enqueueTextFrame(const CString& string)
 {
-    ASSERT(!m_useHixie76Protocol);
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
     OwnPtr<QueuedFrame> frame = adoptPtr(new QueuedFrame);
     frame->opCode = WebSocketFrame::OpCodeText;
@@ -826,7 +709,6 @@ void WebSocketChannel::enqueueTextFrame(const CString& string)
 
 void WebSocketChannel::enqueueRawFrame(WebSocketFrame::OpCode opCode, const char* data, size_t dataLength)
 {
-    ASSERT(!m_useHixie76Protocol);
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
     OwnPtr<QueuedFrame> frame = adoptPtr(new QueuedFrame);
     frame->opCode = opCode;
@@ -840,7 +722,6 @@ void WebSocketChannel::enqueueRawFrame(WebSocketFrame::OpCode opCode, const char
 
 void WebSocketChannel::enqueueBlobFrame(WebSocketFrame::OpCode opCode, const Blob& blob)
 {
-    ASSERT(!m_useHixie76Protocol);
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
     OwnPtr<QueuedFrame> frame = adoptPtr(new QueuedFrame);
     frame->opCode = opCode;
@@ -852,7 +733,6 @@ void WebSocketChannel::enqueueBlobFrame(WebSocketFrame::OpCode opCode, const Blo
 
 void WebSocketChannel::processOutgoingFrameQueue()
 {
-    ASSERT(!m_useHixie76Protocol);
     if (m_outgoingFrameQueueStatus == OutgoingFrameQueueClosed)
         return;
 
@@ -917,7 +797,6 @@ void WebSocketChannel::processOutgoingFrameQueue()
 
 void WebSocketChannel::abortOutgoingFrameQueue()
 {
-    ASSERT(!m_useHixie76Protocol);
     m_outgoingFrameQueue.clear();
     m_outgoingFrameQueueStatus = OutgoingFrameQueueClosed;
 #if ENABLE(BLOB)
@@ -946,18 +825,6 @@ bool WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     frame.makeFrameData(frameData);
 
     return m_handle->send(frameData.data(), frameData.size());
-}
-
-bool WebSocketChannel::sendFrameHixie76(const char* data, size_t dataLength)
-{
-    ASSERT(m_handle);
-    ASSERT(!m_suspended);
-
-    Vector<char> frame;
-    frame.append('\0'); // Frame type.
-    frame.append(data, dataLength);
-    frame.append('\xff'); // Frame end.
-    return m_handle->send(frame.data(), frame.size());
 }
 
 }  // namespace WebCore

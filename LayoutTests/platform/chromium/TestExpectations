@@ -15,8 +15,6 @@ BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl 
 BUGCR24182 SLOW WIN DEBUG : http/tests/loading/redirect-methods.html = PASS
 BUGCR24182 SLOW WIN : http/tests/local/file-url-sent-as-referer.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/misc/uncacheable-script-repeated.html = PASS
-BUGCR24182 SLOW : http/tests/websocket/tests/hixie76/frame-lengths.html = PASS
-BUGCR24182 SLOW WIN DEBUG : http/tests/websocket/tests/hixie76/simple-stress.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/XMLHttpRequestException.html = PASS
@@ -508,8 +506,6 @@ WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-methods-async.htm
 WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-methods.html = TIMEOUT
 WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-referer.html = TIMEOUT
 WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html = TIMEOUT
-WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/close-in-shared-worker.html = TIMEOUT
-WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/shared-worker-simple.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html = TIMEOUT
 WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/shared-worker-simple.html = TIMEOUT
 WONTFIX SKIP : http/tests/inspector/network/network-shared-worker.html = PASS

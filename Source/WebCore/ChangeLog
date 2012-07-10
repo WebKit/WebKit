@@ -1,3 +1,67 @@
+2012-07-10  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Remove hixie76 protocol implementation
+        https://bugs.webkit.org/show_bug.cgi?id=88620
+
+        Reviewed by Adam Barth.
+
+        This change removes code that implements the old hixie-76 WebSocket protocol which
+        isn't used anymore.
+
+        No new tests are added, because the code using the current protocol should not be
+        affected. Tests for hixie-76 protocol are skipped (these tests will be removed
+        eventually).
+
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCreateWebSocketChannel):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        (ThreadableWebSocketChannelClientWrapper):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::WebSocket):
+        (WebCore::WebSocket::connect):
+        (WebCore::WebSocket::send):
+        (WebCore::WebSocket::protocol):
+        (WebCore::WebSocket::extensions):
+        (WebCore::WebSocket::binaryType):
+        (WebCore::WebSocket::setBinaryType):
+        (WebCore::WebSocket::didReceiveMessageError):
+        (WebCore::WebSocket::didClose):
+        (WebCore::WebSocket::getFramingOverhead):
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::connect):
+        (WebCore::WebSocketChannel::send):
+        (WebCore::WebSocketChannel::fail):
+        (WebCore::WebSocketChannel::didCloseSocketStream):
+        (WebCore::WebSocketChannel::processBuffer):
+        (WebCore::WebSocketChannel::startClosingHandshake):
+        (WebCore::WebSocketChannel::enqueueTextFrame):
+        (WebCore::WebSocketChannel::enqueueRawFrame):
+        (WebCore::WebSocketChannel::enqueueBlobFrame):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        (WebCore::WebSocketChannel::abortOutgoingFrameQueue):
+        * Modules/websockets/WebSocketChannel.h:
+        (WebSocketChannel):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::WebSocketHandshake):
+        (WebCore::WebSocketHandshake::clientHandshakeMessage):
+        (WebCore::WebSocketHandshake::clientHandshakeRequest):
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+        * Modules/websockets/WebSocketHandshake.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerContextDidInitializeTask::create):
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerContextDidInitializeTask::WorkerContextDidInitializeTask):
+        (WorkerThreadableWebSocketChannel::WorkerContextDidInitializeTask):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadInitialize):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        (WorkerThreadableWebSocketChannel):
+        (Peer):
+        (Bridge):
+
 2012-07-09  Gavin Barraclough  <barraclough@apple.com>
 
         Threadsafety issues in WebScriptObject

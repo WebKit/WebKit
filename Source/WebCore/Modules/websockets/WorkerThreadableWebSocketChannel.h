@@ -62,7 +62,6 @@ public:
     virtual ~WorkerThreadableWebSocketChannel();
 
     // ThreadableWebSocketChannel functions.
-    virtual bool useHixie76Protocol() OVERRIDE;
     virtual void connect(const KURL&, const String& protocol) OVERRIDE;
     virtual String subprotocol() OVERRIDE;
     virtual String extensions() OVERRIDE;
@@ -87,7 +86,6 @@ public:
         }
         ~Peer();
 
-        bool useHixie76Protocol();
         void connect(const KURL&, const String& protocol);
         void send(const String& message);
         void send(const ArrayBuffer&);
@@ -151,7 +149,7 @@ private:
     private:
         Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, PassRefPtr<WorkerContext>, const String& taskMode);
 
-        static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, bool useHixie76Protocol);
+        static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
 
         // Executed on the main thread to create a Peer for this bridge.
         static void mainThreadInitialize(ScriptExecutionContext*, WorkerLoaderProxy*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, const String& taskMode);

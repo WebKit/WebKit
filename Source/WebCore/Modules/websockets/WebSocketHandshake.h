@@ -51,7 +51,7 @@ public:
     enum Mode {
         Incomplete, Normal, Failed, Connected
     };
-    WebSocketHandshake(const KURL&, const String& protocol, ScriptExecutionContext*, bool useHixie76Protocol);
+    WebSocketHandshake(const KURL&, const String& protocol, ScriptExecutionContext*);
     ~WebSocketHandshake();
 
     const KURL& url() const;
@@ -76,14 +76,12 @@ public:
     Mode mode() const;
     String failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
 
-    String serverWebSocketOrigin() const; // Only for hixie-76 handshake.
-    String serverWebSocketLocation() const; // Only for hixie-76 handshake.
     String serverWebSocketProtocol() const;
     String serverSetCookie() const;
     String serverSetCookie2() const;
     String serverUpgrade() const;
     String serverConnection() const;
-    String serverWebSocketAccept() const; // Only for hybi-10 handshake.
+    String serverWebSocketAccept() const;
     String acceptedExtensions() const;
 
     const WebSocketHandshakeResponse& serverHandshakeResponse() const;
@@ -106,7 +104,6 @@ private:
     String m_clientProtocol;
     bool m_secure;
     ScriptExecutionContext* m_context;
-    bool m_useHixie76Protocol;
 
     Mode m_mode;
 
@@ -114,13 +111,6 @@ private:
 
     String m_failureReason;
 
-    // For hixie-76 handshake.
-    String m_hixie76SecWebSocketKey1;
-    String m_hixie76SecWebSocketKey2;
-    unsigned char m_hixie76Key3[8];
-    unsigned char m_hixie76ExpectedChallengeResponse[16];
-
-    // For hybi-10 handshake.
     String m_secWebSocketKey;
     String m_expectedAccept;
 

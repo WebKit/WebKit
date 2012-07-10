@@ -1,3 +1,20 @@
+2012-07-10  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Remove hixie76 protocol implementation
+        https://bugs.webkit.org/show_bug.cgi?id=88620
+
+        Reviewed by Adam Barth.
+
+        Skip tests under hixie76 directory in all ports, because hixie-76 protocol support is
+        being dropped. These tests will be removed later.
+
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/Skipped:
+        * platform/wk2/Skipped:
+
 2012-07-09  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r114862-r114886): Fix a crash by switching the input type to hidden.

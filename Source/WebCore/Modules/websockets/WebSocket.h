@@ -135,7 +135,6 @@ private:
     unsigned long m_bufferedAmount;
     unsigned long m_bufferedAmountAfterClose;
     BinaryType m_binaryType;
-    bool m_useHixie76Protocol;
     String m_subprotocol;
     String m_extensions;
 };

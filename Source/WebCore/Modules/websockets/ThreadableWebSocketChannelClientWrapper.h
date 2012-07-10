@@ -58,17 +58,13 @@ public:
     bool syncMethodDone() const;
 
     WorkerThreadableWebSocketChannel::Peer* peer() const;
-    void didCreateWebSocketChannel(WorkerThreadableWebSocketChannel::Peer*, bool useHixie76Protocol);
+    void didCreateWebSocketChannel(WorkerThreadableWebSocketChannel::Peer*);
     void clearPeer();
 
     bool failedWebSocketChannelCreation() const;
     void setFailedWebSocketChannelCreation();
 
-    // The value of useHixie76Protocol flag is cachable; this value is saved after WebSocketChannel (on the main
-    // thread) is constructed.
-    bool useHixie76Protocol() const;
-
-    // Subprotocol and extensions are cached too. Will be available when didConnect() callback is invoked.
+    // Subprotocol and extensions will be available when didConnect() callback is invoked.
     String subprotocol() const;
     void setSubprotocol(const String&);
     String extensions() const;
@@ -112,7 +108,6 @@ private:
     WorkerThreadableWebSocketChannel::Peer* m_peer;
     bool m_failedWebSocketChannelCreation;
     bool m_syncMethodDone;
-    bool m_useHixie76Protocol;
     // ThreadSafeRefCounted must not have String member variables.
     Vector<UChar> m_subprotocol;
     Vector<UChar> m_extensions;

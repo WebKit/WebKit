@@ -426,9 +426,6 @@ http/tests/media/video-cancel-load.html
 # Sometimes crashes http://webkit.org/b/62024
 http/tests/media/video-cross-site.html
 
-# Sometimes crashes http://webkit.org/b/48996
-http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html
-
 # Sometimes times out http://webkit.org/b/48997
 animations/animation-iteration-event-destroy-renderer.html
 
@@ -968,10 +965,6 @@ media/video-display-aspect-ratio.html
 
 # Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html
-
-# Tests timeout: https://bugs.webkit.org/show_bug.cgi?id=35041
-http/tests/websocket/tests/hixie76/frame-lengths.html
-http/tests/websocket/tests/hixie76/simple-stress.html
 
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html
