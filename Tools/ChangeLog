@@ -1,3 +1,84 @@
+2012-07-09  Ojan Vafai  <ojan@chromium.org>
+
+        Improve webkit-patch rebaseline to work for more cases
+        https://bugs.webkit.org/show_bug.cgi?id=90504
+
+        Reviewed by Adam Barth.
+
+        -Makes it work for the build.chromium.org bots.
+        -Lets you rebaseline all builders instead of just one.
+        -Lets you pass in the builders or tests to rebaseline.
+
+        * Scripts/webkitpy/common/host.py:
+        (Host.buildbot_for_builder_name):
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (Builder.__init__):
+        (Builder.latest_layout_test_results):
+        Provide a way to get to the LayoutTestResults of the latest build.
+        Most of the time we only need to get the latest one and the Chromium bots
+        only expose the full_results.json file for the latest build.
+
+        (Builder):
+        (Builder._fetch_file_from_results):
+        (Builder.fetch_layout_test_results):
+        Move these functions into Builder so that Builder and Build can both
+        fetch layout test results.
+
+        (Build.results_zip_url):
+        (Build.layout_test_results):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (BuilderTest.test_latest_layout_test_results):
+        (BuildTest.test_layout_test_results):
+        * Scripts/webkitpy/common/system/user.py:
+        (User.prompt_with_multiple_lists):
+        Prompt with multiple sublists, but still have a global numbering.
+        This lets the build.chromium.org bots be clearly separated from the
+        build.webkit.org bots, which helps understand the builder names.
+
+        (User):
+        (User._wait_on_list_response):
+        (User.prompt_with_list):
+        * Scripts/webkitpy/common/system/user_unittest.py:
+        (UserTest.test_prompt_with_multiple_lists):
+        (UserTest.test_prompt_with_multiple_lists.run_prompt_test):
+        (UserTest.test_prompt_with_multiple_lists.run_prompt_test.mock_raw_input):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.is_chromium):
+        Provide a way to tell if a port is a Chromium port that doesn't involve string
+        manipulation on the port name or builder name.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        (builder_path_from_name):
+        (all_builder_names):
+        Memoizing here is incorrect because the test override _exact_matches,
+        so these can return different values. In either case, I'm pretty sure these
+        are not remotely hot codepaths. I manually inspected all call sites and they're
+        all in high-level calls (e.g. execute calls for webkit-patch commands) and not
+        called in a loop.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.is_chromium):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._results_url):
+        (AbstractParallelRebaselineCommand.__init__):
+        (Rebaseline.__init__):
+        (Rebaseline):
+        (Rebaseline._builders_to_pull_from):
+        (Rebaseline._tests_to_update):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline.mock_builders_to_pull_from):
+        (test_rebaseline):
+        (test_rebaseline_command_line_flags):
+        (test_rebaseline_multiple_builders):
+        (test_rebaseline_multiple_builders.mock_builders_to_pull_from):
+        (test_rebaseline_multiple_builders.mock_tests_to_update):
+        (test_rebaseline_multiple_builders_and_tests_command_line):
+        * Scripts/webkitpy/tool/mocktool.py:
+        (MockTool.irc):
+        (MockTool):
+        (MockTool.buildbot_for_builder_name):
+
 2012-07-10  Alice Cheng  <alice_cheng@apple.com>
 
         Editing: Reproducible crasher when pasting a 0x0 image into Mail

@@ -81,11 +81,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
         self._scm_changes = {'add': []}
 
     def _results_url(self, builder_name):
-        port = self._tool.port_factory.get_from_builder_name(builder_name)
-        # FIXME: Come up with a better way than string manipulation to see if the port is a chromium port.
-        if port.name().startswith('chromium-'):
-            return self._tool.chromium_buildbot().builder_with_name(builder_name).accumulated_results_url()
-        return self._tool.buildbot.builder_with_name(builder_name).latest_cached_build().results_url()
+        return self._tool.buildbot_for_builder_name(builder_name).builder_with_name(builder_name).latest_layout_test_results_url()
 
     def _baseline_directory(self, builder_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
@@ -229,13 +225,13 @@ class AnalyzeBaselines(AbstractRebaseliningCommand):
 
 
 class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
-    def __init__(self):
-        options = [
+    def __init__(self, options=None):
+        options = options or []
+        options.extend([
             optparse.make_option('--no-optimize', dest='optimize', action='store_false', default=True,
                 help=('Do not optimize/de-dup the expectations after rebaselining '
                       '(default is to de-dup automatically). '
-                      'You can use "webkit-patch optimize-baselines" to optimize separately.')),
-        ]
+                      'You can use "webkit-patch optimize-baselines" to optimize separately.'))])
         AbstractDeclarativeCommand.__init__(self, options=options)
 
     def _run_webkit_patch(self, args):
@@ -369,30 +365,56 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
 
 class Rebaseline(AbstractParallelRebaselineCommand):
     name = "rebaseline"
-    help_text = "Replaces local expected.txt files with new results from build bots"
+    help_text = "Replaces local expected.txt files with new results from build bots. Shows the list of failing tests on the builders if no test names are provided."
+    argument_names = "[TEST_NAMES]"
 
-    # FIXME: This should share more code with FailureReason._builder_to_explain
-    def _builder_to_pull_from(self):
-        builder_statuses = self._tool.buildbot.builder_statuses()
-        red_statuses = [status for status in builder_statuses if not status["is_green"]]
-        _log.info("%s failing" % (pluralize("builder", len(red_statuses))))
-        builder_choices = [status["name"] for status in red_statuses]
-        chosen_name = self._tool.user.prompt_with_list("Which builder to pull results from:", builder_choices)
-        # FIXME: prompt_with_list should really take a set of objects and a set of names and then return the object.
-        for status in red_statuses:
-            if status["name"] == chosen_name:
-                return (self._tool.buildbot.builder_with_name(chosen_name), status["build_number"])
+    def __init__(self):
+        options = [
+            optparse.make_option("--builders", default=None, action="append", help="Comma-separated-list of builders to pull new baselines from (can also be provided multiple times)"),
+        ]
+        AbstractParallelRebaselineCommand.__init__(self, options=options)
 
-    def _tests_to_update(self, build):
-        failing_tests = build.layout_test_results().tests_matching_failure_types([test_failures.FailureTextMismatch])
-        return self._tool.user.prompt_with_list("Which test(s) to rebaseline:", failing_tests, can_choose_multiple=True)
+    def _builders_to_pull_from(self):
+        chromium_buildbot_builder_names = []
+        webkit_buildbot_builder_names = []
+        for name in builders.all_builder_names():
+            if self._tool.port_factory.get_from_builder_name(name).is_chromium():
+                chromium_buildbot_builder_names.append(name)
+            else:
+                webkit_buildbot_builder_names.append(name)
+
+        titles = ["build.webkit.org bots", "build.chromium.org bots"]
+        lists = [webkit_buildbot_builder_names, chromium_buildbot_builder_names]
+
+        chosen_names = self._tool.user.prompt_with_multiple_lists("Which builder to pull results from:", titles, lists, can_choose_multiple=True)
+        return [self._builder_with_name(name) for name in chosen_names]
+
+    def _builder_with_name(self, name):
+        return self._tool.buildbot_for_builder_name(name).builder_with_name(name)
+
+    def _tests_to_update(self, builder):
+        failing_tests = builder.latest_layout_test_results().tests_matching_failure_types([test_failures.FailureTextMismatch])
+        return self._tool.user.prompt_with_list("Which test(s) to rebaseline for %s:" % builder.name(), failing_tests, can_choose_multiple=True)
 
     def execute(self, options, args, tool):
-        builder, build_number = self._builder_to_pull_from()
-        build = builder.build(build_number)
+        if options.builders:
+            builders = []
+            for builder_names in options.builders:
+                builders += [self._builder_with_name(name) for name in builder_names.split(",")]
+        else:
+            builders = self._builders_to_pull_from()
 
-        builder_name = builder.name()
         test_list = {}
-        for test in self._tests_to_update(build):
-            test_list[test] = {builder_name: ['txt']}
+
+        for builder in builders:
+            tests = args or self._tests_to_update(builder)
+            for test in tests:
+                if test not in test_list:
+                    test_list[test] = {}
+                # FIXME: Allow for choosing the suffixes.
+                test_list[test][builder.name()] = ['txt']
+
+        if options.verbose:
+            print "rebaseline-json: " + str(test_list)
+
         self._rebaseline(options, test_list)

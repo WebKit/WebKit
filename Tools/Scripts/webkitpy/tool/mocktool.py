@@ -29,6 +29,7 @@
 import threading
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.net.buildbot.buildbot_mock import MockBuildBot
 from webkitpy.common.net.statusserver_mock import MockStatusServer
 from webkitpy.common.net.irc.irc_mock import MockIRC
 
@@ -82,3 +83,6 @@ class MockTool(MockHost):
 
     def irc(self):
         return self._irc
+
+    def buildbot_for_builder_name(self, name):
+        return MockBuildBot()

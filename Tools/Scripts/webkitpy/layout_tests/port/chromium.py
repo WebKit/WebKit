@@ -110,6 +110,9 @@ class ChromiumPort(WebKitPort):
         # All sub-classes override this, but we need an initial value for testing.
         self._chromium_base_dir_path = None
 
+    def is_chromium(self):
+        return True
+
     def default_pixel_tests(self):
         return True
 

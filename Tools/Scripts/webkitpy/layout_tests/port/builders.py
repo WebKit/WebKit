@@ -96,12 +96,10 @@ def builder_path_from_name(builder_name):
     return re.sub(r'[\s().]', '_', builder_name)
 
 
-@memoized
 def all_builder_names():
     return sorted(set(_exact_matches.keys()))
 
 
-@memoized
 def all_port_names():
     return sorted(set(map(lambda x: x["port_name"], _exact_matches.values()) + _ports_without_builders))
 

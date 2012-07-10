@@ -48,7 +48,10 @@ class BuilderTest(unittest.TestCase):
                 is_green=build_number < 4
             )
             results = [self._mock_test_result(testname) for testname in failure(build_number)]
-            build._layout_test_results = LayoutTestResults(results)
+            layout_test_results = LayoutTestResults(results)
+            def mock_layout_test_results():
+                return layout_test_results
+            build.layout_test_results = mock_layout_test_results
             return build
         self.builder._fetch_build = _mock_fetch_build
 
@@ -56,6 +59,11 @@ class BuilderTest(unittest.TestCase):
         self.buildbot = BuildBot()
         self.builder = Builder(u"Test Builder \u2661", self.buildbot)
         self._install_fetch_build(lambda build_number: ["test1", "test2"])
+
+    def test_latest_layout_test_results(self):
+        self.builder.fetch_layout_test_results = lambda results_url: LayoutTestResults([self._mock_test_result(testname) for testname in ["test1", "test2"]])
+        self.builder.accumulated_results_url = lambda: "http://dummy_url.org"
+        self.assertTrue(self.builder.latest_layout_test_results())
 
     def test_find_regression_window(self):
         regression_window = self.builder.find_regression_window(self.builder.build(10))
@@ -147,8 +155,8 @@ class BuildTest(unittest.TestCase):
     def test_layout_test_results(self):
         buildbot = BuildBot()
         builder = Builder(u"Foo Builder (test)", buildbot)
+        builder._fetch_file_from_results = lambda results_url, file_name: None
         build = Build(builder, None, None, None)
-        build._fetch_file_from_results = lambda file_name: None
         # Test that layout_test_results() returns None if the fetch fails.
         self.assertEqual(build.layout_test_results(), None)
 

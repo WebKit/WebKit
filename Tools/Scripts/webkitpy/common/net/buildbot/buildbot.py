@@ -33,6 +33,7 @@ import urllib
 import urllib2
 
 import webkitpy.common.config.urls as config_urls
+from webkitpy.common.memoized import memoized
 from webkitpy.common.net.failuremap import FailureMap
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.networktransaction import NetworkTransaction
@@ -64,6 +65,31 @@ class Builder(object):
     # keep a directory that accumulates test results over many runs.
     def accumulated_results_url(self):
         return None
+
+    def latest_layout_test_results_url(self):
+        return self.accumulated_results_url() or self.latest_cached_build().results_url();
+
+    @memoized
+    def latest_layout_test_results(self):
+        return self.fetch_layout_test_results(self.latest_layout_test_results_url())
+
+    def _fetch_file_from_results(self, results_url, file_name):
+        # It seems this can return None if the url redirects and then returns 404.
+        result = urllib2.urlopen("%s/%s" % (results_url, file_name))
+        if not result:
+            return None
+        # urlopen returns a file-like object which sometimes works fine with str()
+        # but sometimes is a addinfourl object.  In either case calling read() is correct.
+        return result.read()
+
+    def fetch_layout_test_results(self, results_url):
+        # FIXME: This should cache that the result was a 404 and stop hitting the network.
+        results_file = NetworkTransaction(convert_404_to_None=True).run(lambda: self._fetch_file_from_results(results_url, "full_results.json"))
+        if not results_file:
+            results_file = NetworkTransaction(convert_404_to_None=True).run(lambda: self._fetch_file_from_results(results_url, "results.html"))
+
+        # results_from_string accepts either ORWT html or NRWT json.
+        return LayoutTestResults.results_from_string(results_file)
 
     def url_encoded_name(self):
         return urllib.quote(self._name)
@@ -229,7 +255,6 @@ class Build(object):
         self._number = build_number
         self._revision = revision
         self._is_green = is_green
-        self._layout_test_results = None
 
     @staticmethod
     def build_url(builder, build_number):
@@ -245,27 +270,9 @@ class Build(object):
     def results_zip_url(self):
         return "%s.zip" % self.results_url()
 
-    def _fetch_file_from_results(self, file_name):
-        # It seems this can return None if the url redirects and then returns 404.
-        result = urllib2.urlopen("%s/%s" % (self.results_url(), file_name))
-        if not result:
-            return None
-        # urlopen returns a file-like object which sometimes works fine with str()
-        # but sometimes is a addinfourl object.  In either case calling read() is correct.
-        return result.read()
-
+    @memoized
     def layout_test_results(self):
-        if self._layout_test_results:
-            return self._layout_test_results
-
-        # FIXME: This should cache that the result was a 404 and stop hitting the network.
-        results_file = NetworkTransaction(convert_404_to_None=True).run(lambda: self._fetch_file_from_results("full_results.json"))
-        if not results_file:
-            results_file = NetworkTransaction(convert_404_to_None=True).run(lambda: self._fetch_file_from_results("results.html"))
-
-        # results_from_string accepts either ORWT html or NRWT json.
-        self._layout_test_results = LayoutTestResults.results_from_string(results_file)
-        return self._layout_test_results
+        return self._builder.fetch_layout_test_results(self.results_url())
 
     def builder(self):
         return self._builder

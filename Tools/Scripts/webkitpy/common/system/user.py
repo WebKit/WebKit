@@ -74,14 +74,20 @@ class User(object):
         return cls.prompt(message, repeat=repeat, raw_input=getpass.getpass)
 
     @classmethod
-    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=raw_input):
+    def prompt_with_multiple_lists(cls, list_title, subtitles, lists, can_choose_multiple=False, raw_input=raw_input):
+        item_index = 0
+        cumulated_list = []
         print list_title
-        i = 0
-        for item in list_items:
-            i += 1
-            print "%2d. %s" % (i, item)
+        for i in range(len(subtitles)):
+            print "\n" + subtitles[i]
+            for item in lists[i]:
+                item_index += 1
+                print "%2d. %s" % (item_index, item)
+            cumulated_list += lists[i]
+        return cls._wait_on_list_response(cumulated_list, can_choose_multiple, raw_input)
 
-        # Loop until we get valid input
+    @classmethod
+    def _wait_on_list_response(cls, list_items, can_choose_multiple, raw_input):
         while True:
             if can_choose_multiple:
                 response = cls.prompt("Enter one or more numbers (comma-separated), or \"all\": ", raw_input=raw_input)
@@ -98,6 +104,15 @@ class User(object):
                 except ValueError, err:
                     continue
                 return list_items[result]
+
+    @classmethod
+    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=raw_input):
+        print list_title
+        i = 0
+        for item in list_items:
+            i += 1
+            print "%2d. %s" % (i, item)
+        return cls._wait_on_list_response(list_items, can_choose_multiple, raw_input)
 
     def edit(self, files):
         editor = os.environ.get("EDITOR") or "vi"

@@ -138,6 +138,11 @@ class Host(SystemHost):
     def checkout(self):
         return self._checkout
 
+    def buildbot_for_builder_name(self, name):
+        if self.port_factory.get_from_builder_name(name).is_chromium():
+            return self.chromium_buildbot()
+        return self.buildbot
+
     @memoized
     def chromium_buildbot(self):
         return ChromiumBuildBot()
