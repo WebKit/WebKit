@@ -211,7 +211,7 @@ public:
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return m_isDrawable; }
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) { }
-    virtual void idleUpdate(CCTextureUpdater&, const CCOcclusionTracker*) { }
+    virtual bool needMoreUpdates() { return false; }
     virtual void setIsMask(bool) { }
     virtual void bindContentsTexture() { }
     virtual bool needsContentsScale() const { return false; }

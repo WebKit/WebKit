@@ -112,7 +112,6 @@ public:
 
     using WebCore::TiledLayerChromium::invalidateRect;
     using WebCore::TiledLayerChromium::updateLayerRect;
-    using WebCore::TiledLayerChromium::idleUpdateLayerRect;
     using WebCore::TiledLayerChromium::needsIdlePaint;
     using WebCore::TiledLayerChromium::skipsDraw;
     using WebCore::TiledLayerChromium::numPaintedTiles;

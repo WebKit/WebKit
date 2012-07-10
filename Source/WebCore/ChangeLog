@@ -1,3 +1,37 @@
+2012-07-09  Eric Penner  <epenner@google.com>
+
+        [chromium] Merge updates and idle updates into one pass
+        https://bugs.webkit.org/show_bug.cgi?id=90324
+
+        Reviewed by Adrienne Walker.
+
+        We no longer need to do painting is passes in order
+        to allocate memory in the right order. So this merges
+        updates and idle updates into one pass.
+
+        Covered by existing unit tests (some of which are
+        updated with this patch).
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::needMoreUpdates):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (ContentLayerChromium):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::needMoreUpdates):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateTiles):
+        (WebCore::TiledLayerChromium::updateLayerRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::compositeAndReadback):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::paintMasksForRenderSurface):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+
 2012-07-09  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Platform] Introduce LocaleMac class

@@ -85,10 +85,7 @@ protected:
     // Prepare data needed to update textures that intersect with layerRect.
     void updateLayerRect(CCTextureUpdater&, const IntRect& layerRect, const CCOcclusionTracker*);
 
-    // Same as above, but this will try to paint additional surrounding content if idle.
-    void idleUpdateLayerRect(CCTextureUpdater&, const IntRect& layerRect, const CCOcclusionTracker*);
-
-    // After preparing an update, returns true if more pre-painting is needed.
+    // After preparing an update, returns true if more painting is needed.
     bool needsIdlePaint(const IntRect& layerRect);
 
     IntRect idlePaintRect(const IntRect& visibleLayerRect);

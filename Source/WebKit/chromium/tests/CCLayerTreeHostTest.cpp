@@ -1158,8 +1158,7 @@ public:
     static PassRefPtr<ContentLayerChromiumWithUpdateTracking> create(ContentLayerDelegate *delegate) { return adoptRef(new ContentLayerChromiumWithUpdateTracking(delegate)); }
 
     int paintContentsCount() { return m_paintContentsCount; }
-    int idlePaintContentsCount() { return m_idlePaintContentsCount; }
-    void resetPaintContentsCount() { m_paintContentsCount = 0; m_idlePaintContentsCount = 0;}
+    void resetPaintContentsCount() { m_paintContentsCount = 0; }
 
     virtual void update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion) OVERRIDE
     {
@@ -1167,24 +1166,16 @@ public:
         m_paintContentsCount++;
     }
 
-    virtual void idleUpdate(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion) OVERRIDE
-    {
-        ContentLayerChromium::idleUpdate(updater, occlusion);
-        m_idlePaintContentsCount++;
-    }
-
 private:
     explicit ContentLayerChromiumWithUpdateTracking(ContentLayerDelegate* delegate)
         : ContentLayerChromium(delegate)
         , m_paintContentsCount(0)
-        , m_idlePaintContentsCount(0)
     {
         setBounds(IntSize(10, 10));
         setIsDrawable(true);
     }
 
     int m_paintContentsCount;
-    int m_idlePaintContentsCount;
 };
 
 // Layer opacity change during paint should not prevent compositor resources from being updated during commit.
@@ -1213,9 +1204,6 @@ public:
     {
         // update() should have been called once.
         EXPECT_EQ(1, m_updateCheckLayer->paintContentsCount());
-
-        // idleUpdate() should have been called once
-        EXPECT_EQ(1, m_updateCheckLayer->idlePaintContentsCount());
 
         // clear m_updateCheckLayer so CCLayerTreeHost dies.
         m_updateCheckLayer.clear();

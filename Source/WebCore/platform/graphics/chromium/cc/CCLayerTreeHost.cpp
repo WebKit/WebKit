@@ -85,7 +85,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCLayerTre
     , m_pageScaleFactor(1)
     , m_minPageScaleFactor(1)
     , m_maxPageScaleFactor(1)
-    , m_triggerIdlePaints(true)
+    , m_triggerIdleUpdates(true)
     , m_backgroundColor(SK_ColorWHITE)
     , m_hasTransparentBackground(false)
     , m_partialTextureUpdateRequests(0)
@@ -288,9 +288,9 @@ void CCLayerTreeHost::didLoseContext()
 
 bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 {
-    m_triggerIdlePaints = false;
+    m_triggerIdleUpdates = false;
     bool ret = m_proxy->compositeAndReadback(pixels, rect);
-    m_triggerIdlePaints = true;
+    m_triggerIdleUpdates = true;
     return ret;
 }
 
@@ -492,14 +492,9 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
 
     prioritizeTextures(updateList);
 
-    paintLayerContents(updateList, PaintVisible, updater);
-
-    if (m_triggerIdlePaints) {
-        // The second (idle) paint will be a no-op in layers where painting already occured above.
-        // FIXME: This pass can be merged with the visible pass now that textures
-        //        are prioritized above.
-        paintLayerContents(updateList, PaintIdle, updater);
-    }
+    bool needMoreUpdates = paintLayerContents(updateList, updater);
+    if (m_triggerIdleUpdates && needMoreUpdates)
+        setNeedsCommit();
 
     for (size_t i = 0; i < updateList.size(); ++i)
         updateList[i]->clearRenderSurface();
@@ -550,37 +545,33 @@ void CCLayerTreeHost::prioritizeTextures(const LayerList& updateList)
     m_contentsTextureManager->prioritizeTextures(renderSurfacesBytes);
 }
 
-// static
-void CCLayerTreeHost::update(LayerChromium* layer, PaintType paintType, CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
-{
-    ASSERT(layer);
-    ASSERT(PaintVisible == paintType || PaintIdle == paintType);
-    if (PaintVisible == paintType)
-        layer->update(updater, occlusion);
-    else
-        layer->idleUpdate(updater, occlusion);
-}
-
-void CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLayer, PaintType paintType, CCTextureUpdater& updater)
+bool CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLayer, CCTextureUpdater& updater)
 {
     // Note: Masks and replicas only exist for layers that own render surfaces. If we reach this point
     // in code, we already know that at least something will be drawn into this render surface, so the
     // mask and replica should be painted.
 
+    bool needMoreUpdates = false;
     LayerChromium* maskLayer = renderSurfaceLayer->maskLayer();
-    if (maskLayer)
-        update(maskLayer, paintType, updater, 0);
+    if (maskLayer) {
+        maskLayer->update(updater, 0);
+        needMoreUpdates |= maskLayer->needMoreUpdates();
+    }
 
     LayerChromium* replicaMaskLayer = renderSurfaceLayer->replicaLayer() ? renderSurfaceLayer->replicaLayer()->maskLayer() : 0;
-    if (replicaMaskLayer)
-        update(replicaMaskLayer, paintType, updater, 0);
+    if (replicaMaskLayer) {
+        replicaMaskLayer->update(updater, 0);
+        needMoreUpdates |= replicaMaskLayer->needMoreUpdates();
+    }
+    return needMoreUpdates;
 }
 
-void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, PaintType paintType, CCTextureUpdater& updater)
+bool CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, CCTextureUpdater& updater)
 {
     // Use FrontToBack to allow for testing occlusion and performing culling during the tree walk.
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
+    bool needMoreUpdates = false;
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
     CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), deviceViewportSize()), recordMetricsForFrame);
     occlusionTracker.setMinimumTrackingSize(CCOcclusionTracker::preferredMinimumTrackingSize());
@@ -591,10 +582,11 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
 
         if (it.representsTargetRenderSurface()) {
             ASSERT(it->renderSurface()->drawOpacity() || it->renderSurface()->drawOpacityIsAnimating());
-            paintMasksForRenderSurface(*it, paintType, updater);
+            needMoreUpdates |= paintMasksForRenderSurface(*it, updater);
         } else if (it.representsItself()) {
             ASSERT(!it->bounds().isEmpty());
-            update(*it, paintType, updater, &occlusionTracker);
+            it->update(updater, &occlusionTracker);
+            needMoreUpdates |= it->needMoreUpdates();
         }
 
         occlusionTracker.leaveLayer(it);
@@ -603,6 +595,8 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     occlusionTracker.overdrawMetrics().didUseContentsTextureMemoryBytes(m_contentsTextureManager->memoryAboveCutoffBytes());
     occlusionTracker.overdrawMetrics().didUseRenderSurfaceTextureMemoryBytes(m_contentsTextureManager->memoryForRenderSurfacesBytes());
     occlusionTracker.overdrawMetrics().recordMetrics(this);
+
+    return needMoreUpdates;
 }
 
 static LayerChromium* findFirstScrollableLayer(LayerChromium* layer)

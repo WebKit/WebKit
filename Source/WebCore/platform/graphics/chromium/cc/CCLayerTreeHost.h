@@ -278,10 +278,9 @@ private:
 
     void initializeLayerRenderer();
 
-    enum PaintType { PaintVisible, PaintIdle };
-    static void update(LayerChromium*, PaintType, CCTextureUpdater&, const CCOcclusionTracker*);
-    void paintLayerContents(const LayerList&, PaintType, CCTextureUpdater&);
-    void paintMasksForRenderSurface(LayerChromium*, PaintType, CCTextureUpdater&);
+    static void update(LayerChromium*, CCTextureUpdater&, const CCOcclusionTracker*);
+    bool paintLayerContents(const LayerList&, CCTextureUpdater&);
+    bool paintMasksForRenderSurface(LayerChromium*, CCTextureUpdater&);
 
     void updateLayers(LayerChromium*, CCTextureUpdater&);
 
@@ -323,7 +322,8 @@ private:
 
     float m_pageScaleFactor;
     float m_minPageScaleFactor, m_maxPageScaleFactor;
-    bool m_triggerIdlePaints;
+    bool m_triggerIdleUpdates;
+
     SkColor m_backgroundColor;
     bool m_hasTransparentBackground;
 

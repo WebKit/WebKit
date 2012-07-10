@@ -78,7 +78,7 @@ public:
     virtual bool drawsContent() const OVERRIDE;
     virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
-    virtual void idleUpdate(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
+    virtual bool needMoreUpdates() OVERRIDE;
 
     virtual void setOpaque(bool) OVERRIDE;
 

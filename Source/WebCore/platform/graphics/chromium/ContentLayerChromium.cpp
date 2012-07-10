@@ -108,15 +108,11 @@ void ContentLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTr
     m_needsDisplay = false;
 }
 
-void ContentLayerChromium::idleUpdate(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
+bool ContentLayerChromium::needMoreUpdates()
 {
     if (!drawsContent())
-        return;
-
-    const IntRect layerRect = visibleLayerRect();
-    idleUpdateLayerRect(updater, layerRect, occlusion);
-    if (needsIdlePaint(layerRect))
-        setNeedsCommit();
+        return false;
+    return needsIdlePaint(visibleLayerRect());
 }
 
 void ContentLayerChromium::createTextureUpdaterIfNeeded()

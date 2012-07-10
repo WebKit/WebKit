@@ -259,7 +259,6 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintTiles)
 
         layer->updateLayerRect(updater, visibleRect, 0);
         EXPECT_TRUE(layer->needsIdlePaint(visibleRect));
-        layer->idleUpdateLayerRect(updater, visibleRect, 0);
         updateTextures();
         layer->pushPropertiesTo(layerImpl.get());
     }
@@ -328,7 +327,6 @@ TEST_F(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     layer1->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
     layer2->updateLayerRect(updater, IntRect(0, 0, 100, 100), 0);
-    layer2->idleUpdateLayerRect(updater, layer2Rect, 0);
 
     // Oh well, commit the frame and push.
     updateTextures();
@@ -382,7 +380,6 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintedOccludedTiles)
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
     layer->updateLayerRect(updater, IntRect(0, 0, 100, 100), &occluded);
-    layer->idleUpdateLayerRect(updater, IntRect(0, 0, 100, 100), &occluded);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -526,7 +523,6 @@ TEST_F(TiledLayerChromiumTest, idlePaintOutOfMemory)
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
     layer->updateLayerRect(updater, visibleRect, 0);
-    layer->idleUpdateLayerRect(updater, visibleRect, 0);
 
     // We shouldn't signal we need another idle paint.
     EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
@@ -539,82 +535,35 @@ TEST_F(TiledLayerChromiumTest, idlePaintZeroSizedLayer)
     DebugScopedSetImplThread implThread;
     OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
 
-    // The layer's bounds are empty.
-    IntRect contentRect;
+    bool animating[2] = {false, true};
+    for (int i = 0; i < 2; i++) {
+        // Pretend the layer is animating.
+        layer->setDrawTransformIsAnimating(animating[i]);
 
-    layer->setBounds(contentRect.size());
-    layer->setVisibleLayerRect(contentRect);
-    layer->invalidateRect(contentRect);
+        // The layer's bounds are empty.
+        IntRect contentRect;
 
-    layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, contentRect, 0);
+        layer->setBounds(contentRect.size());
+        layer->setVisibleLayerRect(contentRect);
+        layer->invalidateRect(contentRect);
 
-    // Empty layers don't have tiles.
-    EXPECT_EQ(0u, layer->numPaintedTiles());
+        layer->setTexturePriorities(priorityCalculator);
+        textureManager->prioritizeTextures(0);
 
-    // Empty layers don't need prepaint.
-    EXPECT_FALSE(layer->needsIdlePaint(contentRect));
+        // Empty layers don't paint or idle-paint.
+        layer->updateLayerRect(updater, contentRect, 0);
 
-    layer->pushPropertiesTo(layerImpl.get());
+        // Empty layers don't have tiles.
+        EXPECT_EQ(0u, layer->numPaintedTiles());
 
-    // Empty layers don't have tiles.
-    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+        // Empty layers don't need prepaint.
+        EXPECT_FALSE(layer->needsIdlePaint(contentRect));
 
-    // Non-visible layers don't idle paint.
-    layer->idleUpdateLayerRect(updater, contentRect, 0);
+        layer->pushPropertiesTo(layerImpl.get());
 
-    // Empty layers don't have tiles.
-    EXPECT_EQ(0u, layer->numPaintedTiles());
-
-    layer->pushPropertiesTo(layerImpl.get());
-
-    // Empty layers don't have tiles.
-    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
-}
-
-TEST_F(TiledLayerChromiumTest, idlePaintZeroSizedAnimatingLayer)
-{
-    OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(20000, 1024);
-    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
-    DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
-
-    // Pretend the layer is animating.
-    layer->setDrawTransformIsAnimating(true);
-
-    // The layer's bounds are empty.
-    IntRect contentRect;
-
-    layer->setBounds(contentRect.size());
-    layer->setVisibleLayerRect(contentRect);
-    layer->invalidateRect(contentRect);
-
-    layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, contentRect, 0);
-
-    // Empty layers don't have tiles.
-    EXPECT_EQ(0u, layer->numPaintedTiles());
-
-    // Empty layers don't need prepaint.
-    EXPECT_FALSE(layer->needsIdlePaint(contentRect));
-
-    layer->pushPropertiesTo(layerImpl.get());
-
-    // Empty layers don't have tiles.
-    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
-
-    // Non-visible layers don't idle paint.
-    layer->idleUpdateLayerRect(updater, contentRect, 0);
-
-    // Empty layers don't have tiles.
-    EXPECT_EQ(0u, layer->numPaintedTiles());
-
-    layer->pushPropertiesTo(layerImpl.get());
-
-    // Empty layers don't have tiles.
-    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+        // Empty layers don't have tiles.
+        EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+    }
 }
 
 TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleLayers)
@@ -634,25 +583,20 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleLayers)
     layer->setVisibleLayerRect(visibleRect);
     layer->invalidateRect(contentRect);
 
-    layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, visibleRect, 0);
+    for (int i = 0; i < 2; i++) {
+        // Paint / idle-paint.
+        layer->setTexturePriorities(priorityCalculator);
+        textureManager->prioritizeTextures(0);
+        layer->updateLayerRect(updater, visibleRect, 0);
 
-    // Non-visible layers don't need idle paint.
-    EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
+        // Non-visible layers don't need idle paint.
+        EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
 
-    layer->pushPropertiesTo(layerImpl.get());
+        layer->pushPropertiesTo(layerImpl.get());
 
-    // We should not have any tiles pushed since the layer is not visible.
-    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
-
-    // Non-visible layers don't idle paint.
-    layer->idleUpdateLayerRect(updater, visibleRect, 0);
-
-    layer->pushPropertiesTo(layerImpl.get());
-
-    // We should not have any tiles pushed since the layer is not visible.
-    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+        // We should not have any tiles pushed since the layer is not visible.
+        EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+    }
 }
 
 static void testHaveOuterTiles(FakeCCTiledLayerImpl* layerImpl, int width, int height, int have)
@@ -698,19 +642,6 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
             // we shoud paint nothing.
             bool shouldPrepaint = !layer->idlePaintRect(visibleRect).isEmpty();
 
-            // This paints the layer but there's nothing visible so it's a no-op.
-            layer->updateLayerRect(updater, visibleRect, 0);
-            // This drops all the tile objects since they were not painted.
-            updateTextures();
-            layer->pushPropertiesTo(layerImpl.get());
-
-            // We should not have any tiles pushed yet since the layer is not visible and we've not prepainted.
-            testHaveOuterTiles(layerImpl.get(), width[i], height[j], 0);
-
-            // Set priorities and recreate tiles.
-            layer->setTexturePriorities(priorityCalculator);
-            textureManager->prioritizeTextures(0);
-
             // Normally we don't allow non-visible layers to pre-paint, but if they are animating then we should.
             EXPECT_EQ(shouldPrepaint, layer->needsIdlePaint(visibleRect));
 
@@ -720,10 +651,10 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
                 textureManager->prioritizeTextures(0);
 
                 layer->updateLayerRect(updater, visibleRect, 0);
-                layer->idleUpdateLayerRect(updater, visibleRect, 0);
                 updateTextures();
                 layer->pushPropertiesTo(layerImpl.get());
             }
+
             testHaveOuterTiles(layerImpl.get(), width[i], height[j], shouldPrepaint ? 1 : 0);
 
             // We don't currently idle paint past the outermost tiles.
@@ -733,10 +664,10 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
                 textureManager->prioritizeTextures(0);
 
                 layer->updateLayerRect(updater, visibleRect, 0);
-                layer->idleUpdateLayerRect(updater, visibleRect, 0);
                 updateTextures();
                 layer->pushPropertiesTo(layerImpl.get());
             }
+
             testHaveOuterTiles(layerImpl.get(), width[i], height[j], shouldPrepaint ? 1 : 0);
         }
     }
@@ -1243,9 +1174,9 @@ TEST_F(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
 
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
-    // Repaint without marking it dirty. The culled tiles remained dirty.
+    // Repaint without marking it dirty. The 3 culled tiles will be pre-painted now.
     layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
-    EXPECT_EQ(0, layer->fakeLayerTextureUpdater()->prepareRectCount());
+    EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedTranslucent(), 330000, 1);
@@ -1436,14 +1367,6 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     EXPECT_EQ_RECT(intersection(IntRect(10, 100, 90, 100), visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
-    EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2 + 1  + 1, 1);
-    EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 17100, 1);
-    EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedTranslucent(), 20000 + 20000 - 17100 + 1 + 1, 1);
-    EXPECT_EQ(0, occluded.overdrawMetrics().tilesCulledForUpload());
-
-    // No metrics are recorded in prepaint, so the values should not change from above.
-    layer->idleUpdateLayerRect(updater, contentBounds, &occluded);
-    updateTextures();
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsPainted(), 20000 * 2 + 1  + 1, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 17100, 1);
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedTranslucent(), 20000 + 20000 - 17100 + 1 + 1, 1);
