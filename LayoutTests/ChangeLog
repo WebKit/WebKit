@@ -1,3 +1,18 @@
+2012-07-10  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Need test of Typed Arrays
+        https://bugs.webkit.org/show_bug.cgi?id=81979
+
+        Reviewed by Tony Chang.
+
+        Verify storage of Typed Arrays (Uint8Array and friends). Checks that
+        these types are stored and read back with types and data intact. Also
+        add an index to the object store, so that key paths are evaluated
+        against each type on every write operation.
+
+        * storage/indexeddb/structured-clone-expected.txt:
+        * storage/indexeddb/structured-clone.html:
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         Remove LayoutTestController and WebKitTestRunner support for Hixie76 WebSockets

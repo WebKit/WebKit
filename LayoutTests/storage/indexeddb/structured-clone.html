@@ -40,7 +40,9 @@ function prepareDatabase()
             request = evalAndLog("db.setVersion('1')");
             request.onerror = unexpectedErrorCallback;
             request.onsuccess = function(e) {
-                evalAndLog("db.createObjectStore('storeName')");
+                evalAndLog("store = db.createObjectStore('storeName')");
+                debug("This index is not used, but evaluating key path on each put() call will exercise (de)serialization:");
+                evalAndLog("store.createIndex('indexName', 'dummyKeyPath')");
                 var trans = request.result;
                 trans.onerror = unexpectedErrorCallback;
                 trans.onabort = unexpectedAbortCallback;
@@ -70,7 +72,8 @@ function startTests()
         testFile,
         testFileList,
         testArray,
-        testObject
+        testObject,
+        testTypedArray
     ];
 
     function nextTest() {
@@ -503,6 +506,39 @@ function testObject(callback) {
             });
         callback();
     });
+}
+
+function testTypedArray(callback) {
+    debug("Testing TypedArray");
+
+    function testTypedArrayValue(string, callback) {
+        evalAndLog("value = " + string);
+        test_data = value;
+        testValue(test_data, function(result) {
+            self.result = result;
+            shouldBeTrue("test_data !== result");
+            shouldBe("Object.prototype.toString.call(result)", "Object.prototype.toString.call(test_data)");
+            shouldBeTrue("test_data.length === result.length");
+            for (i = 0; i < test_data.length; ++i) {
+                shouldBeTrue("is(test_data[" + i + "], result[" + i + "])");
+            }
+            debug("");
+            callback();
+        });
+    }
+
+    forEachWithCallback(testTypedArrayValue, [
+        "new Uint8Array([])",
+        "new Uint8Array([0, 1, 254, 255])",
+        "new Uint16Array([0x0000, 0x0001, 0xFFFE, 0xFFFF])",
+        "new Uint32Array([0x00000000, 0x00000001, 0xFFFFFFFE, 0xFFFFFFFF])",
+        "new Int8Array([0, 1, 254, 255])",
+        "new Int16Array([0x0000, 0x0001, 0xFFFE, 0xFFFF])",
+        "new Int32Array([0x00000000, 0x00000001, 0xFFFFFFFE, 0xFFFFFFFF])",
+        "new Uint8ClampedArray([0, 1, 254, 255])",
+        "new Float32Array([-Infinity, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, Infinity, NaN])",
+        "new Float64Array([-Infinity, -Number.MAX_VALUE, -Number.MIN_VALUE, 0, Number.MIN_VALUE, Number.MAX_VALUE, Infinity, NaN])"
+    ], callback);
 }
 
 function testBadTypes()

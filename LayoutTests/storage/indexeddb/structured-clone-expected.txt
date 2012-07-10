@@ -12,7 +12,9 @@ indexedDB.open('structured-clone')
 db = request.result
 PASS db.version is ""
 db.setVersion('1')
-db.createObjectStore('storeName')
+store = db.createObjectStore('storeName')
+This index is not used, but evaluating key path on each put() call will exercise (de)serialization:
+store.createIndex('indexName', 'dummyKeyPath')
 
 Running tests...
 
@@ -580,6 +582,144 @@ PASS test_data["b"] is result["b"]
 PASS test_data["foo"] is result["foo"]
 PASS test_data["bar"] is result["bar"]
 PASS test_data[""] is result[""]
+
+Testing TypedArray
+value = new Uint8Array([])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+
+value = new Uint8Array([0, 1, 254, 255])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+
+value = new Uint16Array([0x0000, 0x0001, 0xFFFE, 0xFFFF])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+
+value = new Uint32Array([0x00000000, 0x00000001, 0xFFFFFFFE, 0xFFFFFFFF])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+
+value = new Int8Array([0, 1, 254, 255])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+
+value = new Int16Array([0x0000, 0x0001, 0xFFFE, 0xFFFF])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+
+value = new Int32Array([0x00000000, 0x00000001, 0xFFFFFFFE, 0xFFFFFFFF])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+
+value = new Uint8ClampedArray([0, 1, 254, 255])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+
+value = new Float32Array([-Infinity, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, Infinity, NaN])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+PASS is(test_data[4], result[4]) is true
+PASS is(test_data[5], result[5]) is true
+PASS is(test_data[6], result[6]) is true
+PASS is(test_data[7], result[7]) is true
+PASS is(test_data[8], result[8]) is true
+PASS is(test_data[9], result[9]) is true
+
+value = new Float64Array([-Infinity, -Number.MAX_VALUE, -Number.MIN_VALUE, 0, Number.MIN_VALUE, Number.MAX_VALUE, Infinity, NaN])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data.length === result.length is true
+PASS is(test_data[0], result[0]) is true
+PASS is(test_data[1], result[1]) is true
+PASS is(test_data[2], result[2]) is true
+PASS is(test_data[3], result[3]) is true
+PASS is(test_data[4], result[4]) is true
+PASS is(test_data[5], result[5]) is true
+PASS is(test_data[6], result[6]) is true
+PASS is(test_data[7], result[7]) is true
+
 
 
 Test types that can't be cloned:
