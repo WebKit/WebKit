@@ -263,9 +263,12 @@ String BitmapImage::filenameExtension() const
 size_t BitmapImage::frameCount()
 {
     if (!m_haveFrameCount) {
-        m_haveFrameCount = true;
         m_frameCount = m_source.frameCount();
-        didDecodeProperties();
+        // If decoder is not initialized yet, m_source.frameCount() returns 0.
+        if (m_frameCount) {
+            didDecodeProperties();
+            m_haveFrameCount = true;
+        }
     }
     return m_frameCount;
 }
