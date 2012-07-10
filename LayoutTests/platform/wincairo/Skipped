@@ -438,7 +438,6 @@ inspector/debugger/breakpoint-manager.html
 inspector/debugger/raw-source-code.html
 inspector/extensions/extensions-console.html
 inspector/extensions/extensions-events.html
-inspector/extensions/extensions-panel.html
 inspector/styles/styles-invalid-color-values.html
 inspector/timeline/timeline-animation-frame.html 
 inspector/timeline/timeline-load-event.html

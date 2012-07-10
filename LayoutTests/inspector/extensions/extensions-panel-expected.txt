@@ -21,8 +21,8 @@ Panel created
     createStatusBarButton : <function>
     show : <function>
 }
-Extension panel size correct
 Panel shown
+Extension panel size correct
 RUNNING TEST: extension_testSearch
 Panel hidden
 Panel searched:

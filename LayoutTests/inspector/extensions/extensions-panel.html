@@ -10,28 +10,14 @@ function logMessage()
 
 function initialize_extensionsPanelTest()
 {
-    InspectorTest.panelCallback = function(width, height)
-    {
-        InspectorTest.checkPanelSize(width, height);
-        var callback = InspectorTest._pendingPanelSizeTestCallback;
-        if (callback) {
-            delete InspectorTest._pendingPanelSizeTestCallback;
-            callback();
-        }
-    }
-
-    InspectorTest.waitForPanel = function(callback)
-    {
-         InspectorTest._pendingPanelSizeTestCallback = callback;
-    }
-
-    InspectorTest.checkPanelSize = function(width, height)
+    InspectorTest.getPanelSize = function()
     {
         var extensionPanel = WebInspector.inspectorView._panelOrder[WebInspector.inspectorView._panelOrder.length - 1];
         var boundingRect = document.getElementById("main-panels").getBoundingClientRect();
-        InspectorTest.assertEquals(boundingRect.width, width, "panel width mismatch");
-        InspectorTest.assertEquals(boundingRect.height, height, "panel height mismatch");
-        InspectorTest.addResult("Extension panel size correct");
+        return {
+            width: boundingRect.width,
+            height: boundingRect.height
+        };
     }
 
     InspectorTest.dumpStatusBarButtons = function()
@@ -70,6 +56,28 @@ function initialize_extensionsPanelTest()
 
 function extension_testCreatePanel(nextTest)
 {
+    var expectOnShown = false;
+
+    function onPanelShown(panel, window)
+    {
+        if (!expectOnShown) {
+            output("FAIL: unexpected onShown event");
+            nextTest();
+            return;
+        }
+        output("Panel shown");
+        panel.onShown.removeListener(onPanelShown);
+        evaluateOnFrontend("reply(InspectorTest.getPanelSize())", function(result) {
+            if (result.width !== window.innerWidth)
+                output("panel width mismatch, outer: " + result.width + ", inner:" + window.innerWidth);
+            else if (result.height !== window.innerHeight)
+                output("panel height mismatch, outer: " + result.height + ", inner:" + window.innerHeight);
+            else
+                output("Extension panel size correct");
+            nextTest();
+        });
+    }
+
     function onPanelCreated(panel)
     {
         output("Panel created");
@@ -77,9 +85,7 @@ function extension_testCreatePanel(nextTest)
         panel.onHidden.addListener(function() {
             output("Panel hidden");
         });
-        panel.onShown.addListener(function(window) {
-            output("Panel shown");
-        });
+        panel.onShown.addListener(onPanelShown.bind(this, panel));
 
         // This is not authorized and therefore should not produce any output
         panel.show();
@@ -87,17 +93,16 @@ function extension_testCreatePanel(nextTest)
 
         function handleOpenResource(resource, lineNumber)
         {
-            // This will force extension iframe to be really loaded and will cause waitForPanel() callback below.
+            // This will force extension iframe to be really loaded.
             panel.show();
         }
         webInspector.panels.setOpenResourceHandler(handleOpenResource);
         evaluateOnFrontend("WebInspector.openAnchorLocationRegistry._activeHandler = 'test extension'");
         webInspector.inspectedWindow.eval("logMessage()", function() {
+            expectOnShown = true;
             evaluateOnFrontend("InspectorTest.clickOnURL();");
         });
     }
-    // The panel code is expected to report its size via InspectorTest.panelCallback()
-    evaluateOnFrontend("InspectorTest.waitForPanel(reply);", nextTest);
     var basePath = location.pathname.replace(/\/[^/]*$/, "/");
     webInspector.panels.create("Test Panel", basePath + "extension-panel.png", basePath + "extension-panel.html", onPanelCreated);
 }

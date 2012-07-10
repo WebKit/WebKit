@@ -1,3 +1,19 @@
+2012-07-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] simplify panel size check in extensions-panel.html
+        https://bugs.webkit.org/show_bug.cgi?id=90799
+
+        Reviewed by Vsevolod Vlasov.
+
+        - use window argument in Panel.onShown() to check panel window size;
+
+        * http/tests/inspector/resources/extension-panel.html:
+        * inspector/extensions/extensions-panel-expected.txt:
+        * inspector/extensions/extensions-panel.html:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-07-10  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip a flakey test after r122168.
