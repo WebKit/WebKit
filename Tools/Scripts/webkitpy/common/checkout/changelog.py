@@ -327,7 +327,7 @@ class ChangeLog(object):
 
     def update_with_unreviewed_message(self, message):
         first_boilerplate_line_regexp = re.compile(
-                "%sNeed a short description and bug URL \(OOPS!\)" % self._changelog_indent)
+                "%sNeed a short description \(OOPS!\)\." % self._changelog_indent)
         removing_boilerplate = False
         # inplace=1 creates a backup file and re-directs stdout to the file
         for line in fileinput.FileInput(self.path, inplace=1):
@@ -369,6 +369,9 @@ class ChangeLog(object):
                 print line.replace("NOBODY (OOPS!)", reviewer.encode("utf-8")),
 
     def set_short_description_and_bug_url(self, short_description, bug_url):
-        message = "%s\n        %s" % (short_description, bug_url)
+        message = "%s\n%s%s" % (short_description, self._changelog_indent, bug_url)
+        bug_boilerplate = "%sNeed the bug URL (OOPS!).\n" % self._changelog_indent
         for line in fileinput.FileInput(self.path, inplace=1):
-            print line.replace("Need a short description and bug URL (OOPS!)", message.encode("utf-8")),
+            line = line.replace("Need a short description (OOPS!).", message.encode("utf-8"))
+            if line != bug_boilerplate:
+                print line,

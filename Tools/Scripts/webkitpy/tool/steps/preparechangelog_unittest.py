@@ -52,6 +52,6 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
         capture.assert_outputs(self, step.run, [state])
         actual_contents = self._read_file_contents(changelog_path, "utf-8")
         expected_message = "Example title\n        http://example.com/1234"
-        expected_contents = changelog_contents.replace("Need a short description and bug URL (OOPS!)", expected_message)
+        expected_contents = changelog_contents.replace("Need a short description (OOPS!).\n        Need the bug URL (OOPS!).", expected_message)
         os.remove(changelog_path)
         self.assertEquals(actual_contents.splitlines(), expected_contents.splitlines())

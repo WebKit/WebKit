@@ -493,18 +493,19 @@ sub generateNewChangeLogs($$$$$$$$$$$)
 
         print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
 
-        $bugDescription = "Need a short description and bug URL (OOPS!)" unless $bugDescription;
+        $bugDescription = "Need a short description (OOPS!).\n        Need the bug URL (OOPS!)." unless $bugDescription;
         print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
         print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
         print CHANGE_LOG normalizeLineEndings("\n", $endl);
 
         print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
+        print CHANGE_LOG normalizeLineEndings("        Additional information of the change such as approach, rationale. Please add per-function descriptions below (OOPS!).\n\n", $endl);
 
         if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
             if (@$addedRegressionTests) {
                 print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @$addedRegressionTests), $endl);
             } else {
-                print CHANGE_LOG normalizeLineEndings("        No new tests. (OOPS!)\n\n", $endl);
+                print CHANGE_LOG normalizeLineEndings("        No new tests (OOPS!).\n\n", $endl);
             }
         }
 
