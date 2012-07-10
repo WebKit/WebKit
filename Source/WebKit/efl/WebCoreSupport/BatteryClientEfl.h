@@ -1,5 +1,6 @@
 /*
- *  Copyright (C) 2012 Samsung Electronics
+ *  Copyright (C) 2012 Samsung Electronics.  All rights reserved.
+ *  Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -23,42 +24,34 @@
 #if ENABLE(BATTERY_STATUS)
 
 #include "BatteryClient.h"
+#include "BatteryProviderEfl.h"
+#include "BatteryProviderEflClient.h"
 #include "BatteryStatus.h"
-#include "Timer.h"
-#include <wtf/text/AtomicString.h>
-
-typedef struct DBusError DBusError;
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-
 class BatteryController;
+}
 
-class BatteryClientEfl : public BatteryClient {
+class BatteryClientEfl : public WebCore::BatteryClient, public WebCore::BatteryProviderEflClient {
 public:
     BatteryClientEfl();
-    ~BatteryClientEfl() { };
+    virtual ~BatteryClientEfl() { }
 
-    virtual void setController(BatteryController*);
+    // BatteryClient interface.
+    virtual void setController(WebCore::BatteryController*);
     virtual void startUpdating();
     virtual void stopUpdating();
     virtual void batteryControllerDestroyed();
 
-    void setBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus>);
-    BatteryStatus* batteryStatus() const;
-
 private:
-    void timerFired(Timer<BatteryClientEfl>*);
-    static void getBatteryStatus(void* data, void* replyData, DBusError*);
-    static void setBatteryClient(void* data, void* replyData, DBusError*);
+    // BatteryProviderEflClient interface.
+    virtual void didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<WebCore::BatteryStatus>);
 
-    BatteryController* m_controller;
-    Timer<BatteryClientEfl> m_timer;
-    RefPtr<BatteryStatus> m_batteryStatus;
-    const double m_batteryStatusRefreshInterval;
+    WebCore::BatteryController* m_controller;
+    WebCore::BatteryProviderEfl m_provider;
 };
 
-}
-
 #endif // ENABLE(BATTERY_STATUS)
-#endif // BatteryClientEfl_h
 
+#endif // BatteryClientEfl_h

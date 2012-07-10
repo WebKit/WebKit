@@ -1,3 +1,36 @@
+2012-07-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Battery status code needs refactoring to be reused in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=90760
+
+        Reviewed by Hajime Morita.
+
+        Rename BatteryClientEfl to BatteryProviderEfl and remove dependency
+        on BatteryController by introducing the BatteryProviderEflClient
+        interface. This will allow reusing the BatteryProviderEfl class
+        in WebKit2.
+
+        No new tests. Already tested by batterystatus/*.
+
+        * PlatformEfl.cmake:
+        * platform/efl/BatteryProviderEfl.cpp: Renamed from Source/WebCore/platform/efl/BatteryClientEfl.cpp.
+        (WebCore):
+        (WebCore::BatteryProviderEfl::BatteryProviderEfl):
+        (WebCore::BatteryProviderEfl::batteryStatus):
+        (WebCore::BatteryProviderEfl::startUpdating):
+        (WebCore::BatteryProviderEfl::stopUpdating):
+        (WebCore::BatteryProviderEfl::setBatteryStatus):
+        (WebCore::BatteryProviderEfl::timerFired):
+        (WebCore::BatteryProviderEfl::getBatteryStatus):
+        (WebCore::BatteryProviderEfl::setBatteryClient):
+        * platform/efl/BatteryProviderEfl.h: Copied from Source/WebCore/platform/efl/BatteryClientEfl.h.
+        (WebCore):
+        (BatteryProviderEfl):
+        (WebCore::BatteryProviderEfl::~BatteryProviderEfl):
+        * platform/efl/BatteryProviderEflClient.h: Added.
+        (WebCore):
+        (BatteryProviderEflClient):
+
 2012-07-09  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.

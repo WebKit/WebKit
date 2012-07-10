@@ -1,3 +1,27 @@
+2012-07-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Battery status code needs refactoring to be reused in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=90760
+
+        Reviewed by Hajime Morita.
+
+        Add BatteryClientEfl to WebKit, which uses BatteryProviderEfl from
+        WebCore internally.
+
+        * WebCoreSupport/BatteryClientEfl.cpp: Added.
+        (BatteryClientEfl::BatteryClientEfl):
+        (BatteryClientEfl::setController):
+        (BatteryClientEfl::startUpdating):
+        (BatteryClientEfl::stopUpdating):
+        (BatteryClientEfl::batteryControllerDestroyed):
+        (BatteryClientEfl::didChangeBatteryStatus):
+        * WebCoreSupport/BatteryClientEfl.h: Renamed from Source/WebCore/platform/efl/BatteryClientEfl.h.
+        (WebCore):
+        (BatteryClientEfl):
+        (BatteryClientEfl::~BatteryClientEfl):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2012-07-09  Adam Klein  <adamk@chromium.org>
 
         Rename WebCore::WebKitMutationObserver to WebCore::MutationObserver

@@ -18,35 +18,30 @@
  */
 
 #include "config.h"
-#include "BatteryClientEfl.h"
+#include "BatteryProviderEfl.h"
 
 #if ENABLE(BATTERY_STATUS)
 
-#include "BatteryController.h"
+#include "BatteryProviderEflClient.h"
 #include "EventNames.h"
 #include <E_Ukit.h>
 #include <limits>
 
 namespace WebCore {
 
-BatteryClientEfl::BatteryClientEfl()
-    : m_controller(0)
-    , m_timer(this, &BatteryClientEfl::timerFired)
+BatteryProviderEfl::BatteryProviderEfl(BatteryProviderEflClient* client)
+    : m_client(client)
+    , m_timer(this, &BatteryProviderEfl::timerFired)
     , m_batteryStatusRefreshInterval(1.0)
 {
 }
 
-BatteryStatus* BatteryClientEfl::batteryStatus() const
+BatteryStatus* BatteryProviderEfl::batteryStatus() const
 {
     return m_batteryStatus.get();
 }
 
-void BatteryClientEfl::setController(BatteryController* controller)
-{
-    m_controller = controller;
-}
-
-void BatteryClientEfl::startUpdating()
+void BatteryProviderEfl::startUpdating()
 {
     if (m_timer.isActive())
         return;
@@ -62,25 +57,20 @@ void BatteryClientEfl::startUpdating()
     m_timer.startRepeating(m_batteryStatusRefreshInterval);
 }
 
-void BatteryClientEfl::stopUpdating()
+void BatteryProviderEfl::stopUpdating()
 {
     m_timer.stop();
     e_ukit_shutdown();
     e_dbus_shutdown();
 }
 
-void BatteryClientEfl::batteryControllerDestroyed()
-{
-    delete this;
-}
-
-void BatteryClientEfl::setBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus> batteryStatus)
+void BatteryProviderEfl::setBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus> batteryStatus)
 {
     m_batteryStatus = batteryStatus;
-    m_controller->didChangeBatteryStatus(eventType, m_batteryStatus);
+    m_client->didChangeBatteryStatus(eventType, m_batteryStatus);
 }
 
-void BatteryClientEfl::timerFired(Timer<BatteryClientEfl>* timer)
+void BatteryProviderEfl::timerFired(Timer<BatteryProviderEfl>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);
     E_DBus_Connection* edbusConnection = e_dbus_bus_get(DBUS_BUS_SYSTEM);
@@ -88,7 +78,7 @@ void BatteryClientEfl::timerFired(Timer<BatteryClientEfl>* timer)
         e_upower_get_all_devices(edbusConnection, getBatteryStatus, static_cast<void*>(this));
 }
 
-void BatteryClientEfl::getBatteryStatus(void* data, void* replyData, DBusError* dBusError)
+void BatteryProviderEfl::getBatteryStatus(void* data, void* replyData, DBusError* dBusError)
 {
     E_Ukit_Get_All_Devices_Return* eukitDeviceNames = static_cast<E_Ukit_Get_All_Devices_Return*>(replyData);
     if (!eukitDeviceNames || !eukitDeviceNames->strings || dbus_error_is_set(dBusError)) {
@@ -103,7 +93,7 @@ void BatteryClientEfl::getBatteryStatus(void* data, void* replyData, DBusError* 
         e_upower_get_all_properties(edbusConnection, static_cast<char*>(deviceName), setBatteryClient, data);
 }
 
-void BatteryClientEfl::setBatteryClient(void* data, void* replyData, DBusError* dBusError)
+void BatteryProviderEfl::setBatteryClient(void* data, void* replyData, DBusError* dBusError)
 {
     E_Ukit_Get_All_Properties_Return* eukitPropertyNames = static_cast<E_Ukit_Get_All_Properties_Return*>(replyData);
 
@@ -119,7 +109,7 @@ void BatteryClientEfl::setBatteryClient(void* data, void* replyData, DBusError* 
     if (!property || property->val.u != E_UPOWER_SOURCE_BATTERY)
         return;
 
-    BatteryClientEfl* client = static_cast<BatteryClientEfl*>(data);
+    BatteryProviderEfl* client = static_cast<BatteryProviderEfl*>(data);
     BatteryStatus* clientBatteryStatus = client->batteryStatus();
     bool charging = false;
     bool chargingChanged = false;

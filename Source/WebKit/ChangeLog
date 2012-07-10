@@ -1,3 +1,14 @@
+2012-07-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Battery status code needs refactoring to be reused in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=90760
+
+        Reviewed by Hajime Morita.
+
+        Add BatteryClientEfl to PlatformEfl.cmake.
+
+        * PlatformEfl.cmake:
+
 2012-07-08  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Change notifications directory path of WebKit_INCLUDE_DIRECTORIES in the PlatformEfl.cmake

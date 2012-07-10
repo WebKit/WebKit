@@ -91,6 +91,7 @@ ENDIF ()
 
 LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/AssertMatchingEnums.cpp
+    efl/WebCoreSupport/BatteryClientEfl.cpp
     efl/WebCoreSupport/ChromeClientEfl.cpp
     efl/WebCoreSupport/DeviceOrientationClientEfl.cpp
     efl/WebCoreSupport/DeviceMotionClientEfl.cpp
