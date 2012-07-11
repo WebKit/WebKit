@@ -43,8 +43,12 @@ use File::Basename;
 use File::Path;
 use File::Spec;
 use File::Temp qw(tempfile);
+use FindBin;
 use Getopt::Long;
 use Time::HiRes qw(usleep);
+
+use lib $FindBin::Bin;
+use webkitdirs qw(safariPathFromSafariBundle);
 
 sub createTempFile($);
 sub downloadNightly($$$);
@@ -119,7 +123,7 @@ my $nightlyFilesURLBase = $nightlyWebSite . File::Spec->catdir("/files", $branch
 
 $nightlyDownloadDirectory = glob($nightlyDownloadDirectory) if $nightlyDownloadDirectory =~ /^~/;
 $safariPath = glob($safariPath) if $safariPath =~ /^~/;
-$safariPath = File::Spec->catdir($safariPath, "Contents/MacOS/Safari") if $safariPath =~ m#\.app/*#;
+$safariPath = safariPathFromSafariBundle($safariPath) if $safariPath =~ m#\.app/*#;
 
 $nightlyDownloadDirectory = File::Spec->catdir($nightlyDownloadDirectory, $branch);
 if (! -d $nightlyDownloadDirectory) {

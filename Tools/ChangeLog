@@ -1,3 +1,12 @@
+2012-07-09  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/90835> Teach bisect-builds to work with a Safari.app that has entitlements.
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/bisect-builds: Use safariPathFromSafariBundle to determine which binary within the application
+        should be invoked.
+
 2012-07-11  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] fast/events/keydown-function-keys.html is failing
