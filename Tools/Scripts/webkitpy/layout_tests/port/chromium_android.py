@@ -518,7 +518,7 @@ class ChromiumAndroidDriver(chromium.ChromiumDriver):
     def _start_once(self, pixel_tests, per_test_args):
         self._port._run_adb_command(['logcat', '-c'])
         self._port._run_adb_command(['shell', 'echo'] + self.cmd_line(pixel_tests, per_test_args) + ['>', COMMAND_LINE_FILE])
-        start_result = self._port._run_adb_command(['shell', 'am', 'start', '-n', DRT_ACTIVITY_FULL_NAME])
+        start_result = self._port._run_adb_command(['shell', 'am', 'start', '-e', 'RunInSubThread', '-n', DRT_ACTIVITY_FULL_NAME])
         if start_result.find('Exception') != -1:
             _log.error('Failed to start DumpRenderTree application. Exception:\n' + start_result)
             return False

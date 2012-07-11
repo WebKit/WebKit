@@ -1,3 +1,17 @@
+2012-07-11  Min Qin  <qinmin@chromium.org>
+
+        [Android] sending an extra to the DRT apk so that DRT can be run in a seperate thread
+        https://bugs.webkit.org/show_bug.cgi?id=90831
+
+        Reviewed by Adam Barth.
+
+        On android, DRT needs to run in a background thread to avoid ANR.
+        However, the java tests are running on UI thread by default.
+        We need to send an intent extra to the apk so that it can run on a sub thread.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver._start_once):
+
 2012-07-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(r107171): Fix --timeout option of Qt's DRT
