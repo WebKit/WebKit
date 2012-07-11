@@ -1,3 +1,9 @@
+12012-07-10  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+
+        * platform/chromium/fast/css/deprecated-flexbox-auto-min-size-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/css/deprecated-flexbox-auto-min-size-expected.txt.
+
 2012-07-10  Shinya Kawanaka  <shinyak@chromium.org>
 
         Crash in nextLinePosition() due to accessing a removed root line box.
