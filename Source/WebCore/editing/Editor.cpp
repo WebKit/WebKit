@@ -2085,7 +2085,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
             if (result->type == TextCheckingTypeLink && selectionOffset > resultLocation + resultLength + 1)
                 continue;
 
-            if (!(shouldPerformReplacement || shouldShowCorrectionPanel || shouldMarkLink) || !doReplacement)
+            if (!(shouldPerformReplacement || shouldCheckForCorrection || shouldMarkLink) || !doReplacement)
                 continue;
 
             String replacedString = plainText(rangeToReplace.get());
@@ -2188,7 +2188,9 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelec
     if (unifiedTextCheckerEnabled()) {
         if (!isContinuousSpellCheckingEnabled())
             return;
-        TextCheckingTypeMask textCheckingOptions = TextCheckingTypeSpelling | TextCheckingTypeCorrection;
+
+        // markMisspellingsAndBadGrammar() is triggered by selection change, in which case we check spelling and grammar, but don't autocorrect misspellings.
+        TextCheckingTypeMask textCheckingOptions = TextCheckingTypeSpelling;
         if (markGrammar && isGrammarCheckingEnabled())
             textCheckingOptions |= TextCheckingTypeGrammar;
         markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellingSelection.toNormalizedRange().get(), grammarSelection.toNormalizedRange().get());

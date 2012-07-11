@@ -1,3 +1,19 @@
+2012-07-11  Jia Pu  <jpu@apple.com>
+
+        On Mac, autocorrection sometimes fails to take place in Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=89982
+
+        Reviewed by Ryosuke Niwa.
+
+        We should check the value of shouldCheckForCorrection, not shouldShowCorrectionPanel, to determine if we should
+        early return in markAndReplaceFor(). Also, since we don't want autocorrection to happen when we only change selection,
+        not the content, so we shouldn't set TextCheckingTypeCorrection flag in markMisspellingsAndBadGrammar() as this function
+        is triggered only by selection change.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+
 2012-07-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122361.
