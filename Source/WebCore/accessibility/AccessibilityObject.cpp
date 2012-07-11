@@ -1399,7 +1399,7 @@ static ARIARoleMap* createARIARoleMap()
         { "search", LandmarkSearchRole },
         { "separator", SplitterRole },
         { "slider", SliderRole },
-        { "spinbutton", ProgressIndicatorRole },
+        { "spinbutton", SpinButtonRole },
         { "status", ApplicationStatusRole },
         { "tab", TabRole },
         { "tablist", TabListRole },

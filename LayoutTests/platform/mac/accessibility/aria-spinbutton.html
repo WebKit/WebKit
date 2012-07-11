@@ -13,15 +13,15 @@
         var ariaRole = accessibilityController.focusedElement.role;
        
         var result = document.getElementById("result");
-        if (ariaRole == "AXRole: AXProgressIndicator")
+        if (ariaRole == "AXRole: AXIncrementor")
             result.innerText = "This test PASSES in DumpRenderTree. The role is " + ariaRole;
         else
-            result.innerText = "This test FAILS in DumpRenderTree. The ARIA role is " + ariaRole + ", but should be AXProgressIndicator";
+            result.innerText = "This test FAILS in DumpRenderTree. The ARIA role is " + ariaRole + ", but should be AXIncrementor";
     }
 </script>
 
 <div>
-    <p>In accessibility, the following should be a progress indicator:</p>
+    <p>In accessibility, the following should be an incrementor:</p>
     <p><span tabindex="0" role="spinbutton" id="spinbutton" aria-valuenow=5 aria-valuemin=0 aria-valuemax=10>X</span></p>
     <span id="result"></span>
     <script>

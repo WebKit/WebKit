@@ -1,3 +1,13 @@
+2012-07-11  Chris Fleizach  <cfleizach@apple.com>
+
+        ARIA spinbutton role incorrectly mapped to ProgressIndicatorRole
+        https://bugs.webkit.org/show_bug.cgi?id=77298
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/accessibility/aria-spinbutton-expected.txt:
+        * platform/mac/accessibility/aria-spinbutton.html:
+
 2012-07-11  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding an expectation for a test failing on the
