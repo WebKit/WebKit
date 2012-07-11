@@ -1,5 +1,17 @@
 2012-07-11  Adam Barth  <abarth@webkit.org>
 
+        The commit-queue needs some extra git config to be able to commit
+        https://bugs.webkit.org/show_bug.cgi?id=91025
+
+        Reviewed by Eric Seidel.
+
+        In order for the commit-queue to actually commit, it needs to know the
+        location of the SVN server.
+
+        * EWSTools/cold-boot.sh:
+
+2012-07-11  Adam Barth  <abarth@webkit.org>
+
         Teach EWSTools how to configure SVN auth credentials
         https://bugs.webkit.org/show_bug.cgi?id=91021
 

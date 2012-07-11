@@ -70,6 +70,19 @@ cat >> .git/config <<EOF
 	password = $4
 EOF
 
+if [[ $1 == "commit-queue" ]];then
+cat >> .git/config <<EOF
+[svn-remote "svn"]
+    url = http://svn.webkit.org/repository/webkit
+    fetch = trunk:refs/remotes/origin/master
+[user]
+    email = commit-queue@webkit.org
+    name = Commit Queue
+[merge "changelog"]
+    driver = perl $PWD/Tools/Scripts/resolve-ChangeLogs --merge-driver %O %B %A
+EOF
+fi
+
 cd ~/tools
 echo "screen -t kr ./start-queue.sh" $1 $2 > screen-config
 bash boot.sh
