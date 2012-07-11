@@ -1,3 +1,12 @@
+2012-07-10  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+
+        Android builder started to fail after r122292.
+        My best guess is that '--ant-compile' does not take an argument.
+
+        * WebKitUnitTests.gyp:
+
 2012-07-10  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium-Windows] Implement functions for localized time format information
