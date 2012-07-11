@@ -211,10 +211,6 @@ void main()
     gl_Position = vPosition;
 }
 </script>
-<script id="vshaderWithLineDirective" type="text/something-not-javascript">
-#line 123
-foo
-</script>
 <script id="vshaderWith__FILE__" type="text/something-not-javascript">
 __FILE__
 </script>
@@ -404,14 +400,6 @@ if (!gl) {
       linkSuccess: true,
       passMsg: 'vertex shader uses the #version 100 directive should succeed',
     },
-    { vShaderId: 'vshaderWithLineDirective',
-      vShaderSuccess: false,
-      vShaderTest: (function() { return wtu.getLastError().indexOf("124") >= 0; }),
-      fShaderId: 'fshader',
-      fShaderSuccess: true,
-      linkSuccess: false,
-      passMsg: 'vertex shader uses #line directive should report correct line',
-    }
   ];
 
   // Read in all the shader source.

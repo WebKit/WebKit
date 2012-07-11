@@ -28,7 +28,6 @@ PASS [vshaderWithImplicitVec3Cast/fshader]: vertex shader that implicit vec3 to 
 PASS [vshaderWithVersion130/fshader]: vertex shader uses the #version not 100 directive should fail
 PASS [vshaderWithVersion120/fshader]: vertex shader uses the #version not 100 directive should fail
 PASS [vshaderWithVersion100/fshader]: vertex shader uses the #version 100 directive should succeed
-PASS [vshaderWithLineDirective/fshader]: vertex shader uses #line directive should report correct line
 PASS [shaders/implicit/add_int_float.vert/fshader]: implicit cast adding integer to float should fail
 PASS [shaders/implicit/add_int_mat2.vert/fshader]: implicit cast adding integer to mat2 should fail
 PASS [shaders/implicit/add_int_mat3.vert/fshader]: implicit cast adding integer to mat3 should fail

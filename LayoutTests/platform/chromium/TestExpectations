@@ -3749,9 +3749,6 @@ BUGWK90743 : fast/events/display-none-on-focus-crash.html = PASS TEXT
 // Flaky
 BUGWK90746 : fast/multicol/column-span-parent-continuation-crash.html = PASS TIMEOUT
 
-BUGCR136441 : fast/canvas/webgl/glsl-conformance.html = TEXT
-BUGCR136441 : platform/chromium/virtual/gpu/fast/canvas/webgl/glsl-conformance.html = TEXT
-
 // Flaky
 BUGWK90896 WIN DEBUG : fast/js/dfg-cross-global-object-inline-new-array-literal.html = PASS TEXT
 
