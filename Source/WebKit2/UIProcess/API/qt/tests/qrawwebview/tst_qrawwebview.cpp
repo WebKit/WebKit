@@ -58,15 +58,16 @@ static WKPageGroupRef webPageGroup(const QString& name)
 class WebView : public QObject, public QRawWebViewClient {
     Q_OBJECT
 public:
-    WebView(const QSize& size)
+    WebView(const QSize& size, bool transparent = false)
     {
         WKPageLoaderClient loaderClient;
         memset(&loaderClient, 0, sizeof(WKPageLoaderClient));
         loaderClient.clientInfo = this;
-        loaderClient.didFinishLoadForFrame = WebView::finishLoadForFrame;
+        loaderClient.didFirstVisuallyNonEmptyLayoutForFrame = WebView::finishFirstLayoutForFrame;
 
         m_webView = new QRawWebView(webContext(), webPageGroup(QString()), this);
         WKPageSetPageLoaderClient(m_webView->pageRef(), &loaderClient);
+        m_webView->setTransparentBackground(transparent);
         m_webView->create();
         WKPageSetUseFixedLayout(m_webView->pageRef(), true);
 
@@ -91,8 +92,6 @@ public:
     virtual void viewNeedsDisplay(const QRect&)
     {
         m_webView->paint(QMatrix4x4(), 1, 0);
-        if (m_frameLoaded)
-            emit loaded();
     }
 
     virtual void viewRequestedScroll(const QPoint&) { }
@@ -103,7 +102,26 @@ public:
     virtual void doneWithKeyEvent(const QKeyEvent*, bool wasHandled) { }
     virtual void doneWithTouchEvent(const QTouchEvent*, bool wasHandled) { }
 
-    static void finishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo);
+    void frameLoaded()
+    {
+        m_frameLoaded = true;
+        WKPageForceRepaint(m_webView->pageRef(), this, finishForceRepaint);
+    }
+
+    void onRepaintDone()
+    {
+        emit loaded();
+    }
+
+    static void finishForceRepaint(WKErrorRef, void* context)
+    {
+        static_cast<WebView*>(context)->onRepaintDone();
+    }
+
+    static void finishFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+    {
+        static_cast<WebView*>(const_cast<void*>(clientInfo))->frameLoaded();
+    }
 
 signals:
     void loaded();
@@ -112,12 +130,6 @@ private:
     QRawWebView* m_webView;
     bool m_frameLoaded;
 };
-
-void WebView::finishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
-{
-    WebView* obj = static_cast<WebView*>(const_cast<void*>(clientInfo));
-    obj->m_frameLoaded = true;
-}
 
 static bool compareImages(const QImage& i1, const QImage& i2, int count)
 {
@@ -169,37 +181,31 @@ void tst_qrawwebview::doPaint(const QSize& size)
 
 void tst_qrawwebview::doNoBackground1(const QSize& size)
 {
-    WebView view(size);
-    view.setTransparentBackground(true);
+    WebView view(size, true);
     view.load(m_baseUrl + "/redsquare.html");
     view.load(m_baseUrl + "/bluesquare.html");
 }
 
 void tst_qrawwebview::doNoBackground2(const QSize& size)
 {
-    WebView view1(size);
-    view1.setTransparentBackground(true);
+    WebView view1(size, true);
     view1.load(m_baseUrl + "/redsquare.html");
 
-    WebView view2(size);
-    view2.setTransparentBackground(true);
+    WebView view2(size, true);
     view2.load(m_baseUrl + "/bluesquare.html");
 }
 
 void tst_qrawwebview::doNoBackground3(const QSize& size)
 {
-    WebView view1(size);
-    view1.setTransparentBackground(false);
+    WebView view1(size, false);
     view1.load(m_baseUrl + "/redsquare.html");
 
-    WebView view2(size);
-    view2.setTransparentBackground(true);
+    WebView view2(size, true);
     view2.load(m_baseUrl + "/bluesquare.html");
 }
 
 void tst_qrawwebview::run(PaintMethod method, const QString& expectation)
 {
-
     QWindow window;
     window.setSurfaceType(QSurface::OpenGLSurface);
     window.setGeometry(0, 0, 200, 200);

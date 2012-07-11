@@ -1,3 +1,37 @@
+2012-07-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] QRawWebView should notify when rendering is done, so that pixel results can be grabbed at the appropriate moment.
+        https://bugs.webkit.org/show_bug.cgi?id=90641
+
+        Reviewed by Jocelyn Turcotte.
+
+        Implement LayerTreeCoordinator::forceRepaint with logic equivalent to the one in
+        LayerTreeHostCA. If we flush the layers synchronously when forceRepaint is called,when
+        WKPageForceRepaint returns we are guaranteed to have an up-to-date image, as the visible
+        tiles are also synchronously updated.
+
+        * UIProcess/API/qt/tests/qrawwebview/tst_qrawwebview.cpp:
+        (WebView::WebView):
+        (WebView::viewNeedsDisplay):
+        (WebView::frameLoaded):
+        (WebView):
+        (WebView::onRepaintDone):
+        (WebView::finishForceRepaint):
+        (WebView::finishFirstLayoutForFrame):
+        (tst_qrawwebview::doNoBackground1):
+        (tst_qrawwebview::doNoBackground2):
+        (tst_qrawwebview::doNoBackground3):
+        (tst_qrawwebview::run):
+            The test for QRawWebView has been updated to use the WebKit2 ForcePaint API prior to
+            generating the pixel results. This has exposed a timing bug in the test - setting the
+            transparentBackground property of a page has to be done before it's created. This has
+            been fixed in the test.
+
+        * WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::forceRepaint):
+        (WebKit::LayerTreeCoordinator::performScheduledLayerFlush):
+        (WebKit):
+
 2012-07-11  MORITA Hajime  <morrita@google.com>
 
         WebCoreSupport needs objects each of which follows major WebCore objects

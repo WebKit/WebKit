@@ -1,3 +1,13 @@
+2012-07-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] QRawWebView should notify when rendering is done, so that pixel results can be grabbed at the appropriate moment.
+        https://bugs.webkit.org/show_bug.cgi?id=90641
+
+        Reviewed by Jocelyn Turcotte.
+
+        * MiniBrowser/qt/raw/View.h: Comment used old class name (WKView).
+        (View):
+
 2012-07-11  Min Qin  <qinmin@chromium.org>
 
         [Android] sending an extra to the DRT apk so that DRT can be run in a seperate thread

@@ -174,7 +174,10 @@ void LayerTreeCoordinator::scrollNonCompositedContents(const WebCore::IntRect& s
 
 void LayerTreeCoordinator::forceRepaint()
 {
+    // We need to schedule another flush, otherwise the forced paint might cancel a later expected flush.
+    // This is aligned with LayerTreeHostCA.
     scheduleLayerFlush();
+    flushPendingLayerChanges();
 }
 
 void LayerTreeCoordinator::sizeDidChange(const WebCore::IntSize& newSize)
@@ -231,13 +234,27 @@ void LayerTreeCoordinator::setPageOverlayOpacity(float value)
 
 bool LayerTreeCoordinator::flushPendingLayerChanges()
 {
+    m_shouldSyncFrame = false;
     bool didSync = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
     m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
     if (m_pageOverlayLayer)
         m_pageOverlayLayer->syncCompositingStateForThisLayerOnly();
 
     m_rootLayer->syncCompositingStateForThisLayerOnly();
-    return didSync;
+
+    if (m_shouldSyncRootLayer) {
+        m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toWebGraphicsLayer(m_rootLayer.get())->id()));
+        m_shouldSyncRootLayer = false;
+    }
+
+    if (!m_shouldSyncFrame)
+        return didSync;
+
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::DidRenderFrame());
+    m_waitingForUIProcess = true;
+    m_shouldSyncFrame = false;
+
+    return true;
 }
 
 void LayerTreeCoordinator::syncLayerState(WebLayerID id, const WebLayerInfo& info)
@@ -246,6 +263,7 @@ void LayerTreeCoordinator::syncLayerState(WebLayerID id, const WebLayerInfo& inf
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::DidChangeScrollPosition(m_visibleContentsRect.location()));
         m_shouldSendScrollPositionUpdate = false;
     }
+
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetCompositingLayerState(id, info));
 }
@@ -344,25 +362,16 @@ void LayerTreeCoordinator::performScheduledLayerFlush()
     if (!m_isValid)
         return;
 
-    m_shouldSyncFrame = false;
-    flushPendingLayerChanges();
-    if (!m_shouldSyncFrame)
-        return;
+    if (flushPendingLayerChanges())
+        didPerformScheduledLayerFlush();
+}
 
-    if (m_shouldSyncRootLayer) {
-        m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toWebGraphicsLayer(m_rootLayer.get())->id()));
-        m_shouldSyncRootLayer = false;
+void LayerTreeCoordinator::didPerformScheduledLayerFlush()
+{
+    if (m_notifyAfterScheduledLayerFlush) {
+        static_cast<DrawingAreaImpl*>(m_webPage->drawingArea())->layerHostDidFlushLayers();
+        m_notifyAfterScheduledLayerFlush = false;
     }
-
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::DidRenderFrame());
-    m_waitingForUIProcess = true;
-
-    if (!m_notifyAfterScheduledLayerFlush)
-        return;
-
-    // Let the drawing area know that we've done a flush of the layer changes.
-    static_cast<DrawingAreaImpl*>(m_webPage->drawingArea())->layerHostDidFlushLayers();
-    m_notifyAfterScheduledLayerFlush = false;
 }
 
 void LayerTreeCoordinator::layerFlushTimerFired(Timer<LayerTreeCoordinator>*)

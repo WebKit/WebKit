@@ -31,7 +31,7 @@ public:
     View(const QString& url);
     ~View();
 
-public: // WKViewClient
+public: // QRawWebViewClient
     virtual void viewNeedsDisplay(const QRect&);
     virtual void viewRequestedScroll(const QPoint&) { }
     virtual void viewProcessCrashed() { }

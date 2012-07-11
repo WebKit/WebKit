@@ -104,7 +104,7 @@ private:
     bool flushPendingLayerChanges();
     void cancelPendingLayerFlush();
     void performScheduledLayerFlush();
-    void sendLayersToUI();
+    void didPerformScheduledLayerFlush();
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
