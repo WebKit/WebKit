@@ -31,6 +31,7 @@
 #include "config.h"
 #include "LocaleWin.h"
 
+#include "DateComponents.h"
 #include <gtest/gtest.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
@@ -40,19 +41,100 @@
 using namespace WebCore;
 using namespace std;
 
-enum {
-    January = 0, February, March,
-    April, May, June,
-    July, August, September,
-    October, November, December,
+class LocaleWinTest : public ::testing::Test {
+protected:
+    enum {
+        January = 0, February, March,
+        April, May, June,
+        July, August, September,
+        October, November, December,
+    };
+
+    enum {
+        Sunday = 0, Monday, Tuesday,
+        Wednesday, Thursday, Friday,
+        Saturday,
+    };
+
+    // See http://msdn.microsoft.com/en-us/goglobal/bb964664.aspx
+    enum {
+        EnglishUS = 0x409,
+        FrenchFR = 0x40C,
+        JapaneseJP = 0x411,
+    };
+
+    DateComponents dateComponents(int year, int month, int day)
+    {
+        DateComponents date;
+        date.setMillisecondsSinceEpochForDate(msForDate(year, month, day));
+        return date;
+    }
+
+    double msForDate(int year, int month, int day)
+    {
+        return dateToDaysFrom1970(year, month, day) * msPerDay;
+    }
+
+    String formatDate(LCID lcid, int year, int month, int day)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->formatDate(dateComponents(year, month, day));
+    }
+
+    double parseDate(LCID lcid, const String& dateString)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->parseDate(dateString);
+    }
+
+#if ENABLE(CALENDAR_PICKER)
+    String dateFormatText(LCID lcid)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->dateFormatText();
+    }
+
+    unsigned firstDayOfWeek(LCID lcid)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->firstDayOfWeek();
+    }
+
+    String monthLabel(LCID lcid, unsigned index)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->monthLabels()[index];
+    }
+
+    String weekDayShortLabel(LCID lcid, unsigned index)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->weekDayShortLabels()[index];
+    }
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    String timeFormatText(LCID lcid)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->timeFormatText();
+    }
+
+    String shortTimeFormatText(LCID lcid)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->shortTimeFormatText();
+    }
+
+    String timeAMPMLabel(LCID lcid, unsigned index)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->timeAMPMLabels()[index];
+    }
+#endif
 };
 
-static double msForDate(int year, int month, int day)
-{
-    return dateToDaysFrom1970(year, month, day) * msPerDay;
-}
-
-TEST(LocaleWinTest, TestLocalizedDateFormatText)
+TEST_F(LocaleWinTest, TestLocalizedDateFormatText)
 {
     EXPECT_STREQ("year/month/day", LocaleWin::dateFormatText("y/M/d", "year", "month", "day").utf8().data());
     EXPECT_STREQ("year/month/day", LocaleWin::dateFormatText("yy/MM/dd", "year", "month", "day").utf8().data());
@@ -66,9 +148,8 @@ TEST(LocaleWinTest, TestLocalizedDateFormatText)
     EXPECT_STREQ("YY/mm/DD", LocaleWin::dateFormatText("YY/mm/DD", "year", "month", "day").utf8().data());
 }
 
-TEST(LocaleWinTest, TestFormat)
+TEST_F(LocaleWinTest, TestFormat)
 {
-    const LCID EnglishUS = 0x0409;
     OwnPtr<LocaleWin> locale = LocaleWin::create(EnglishUS);
 
     EXPECT_STREQ("4/7/2", locale->formatDate("M/d/y", 2012, 2012, April, 7).utf8().data());
@@ -126,9 +207,8 @@ TEST(LocaleWinTest, TestFormat)
     
 }
 
-TEST(LocaleWinTest, TestParse)
+TEST_F(LocaleWinTest, TestParse)
 {
-    const LCID EnglishUS = 0x0409;
     OwnPtr<LocaleWin> locale = LocaleWin::create(EnglishUS);
 
     EXPECT_EQ(msForDate(2012, April, 27), locale->parseDate("MM/dd/yy", 2012, "04/27/12"));
@@ -161,3 +241,91 @@ TEST(LocaleWinTest, TestParse)
     EXPECT_TRUE(isnan(locale->parseDate("MMMM/d/y", 2012, "November 32 2")));
     EXPECT_TRUE(isnan(locale->parseDate("MMMM/d/y", 2012, "-1/-1/-1")));
 }
+
+TEST_F(LocaleWinTest, formatDate)
+{
+    EXPECT_STREQ("4/27/2005", formatDate(EnglishUS, 2005, April, 27).utf8().data());
+    EXPECT_STREQ("27/04/2005", formatDate(FrenchFR, 2005, April, 27).utf8().data());
+    EXPECT_STREQ("2005/04/27", formatDate(JapaneseJP, 2005, April, 27).utf8().data());
+}
+
+TEST_F(LocaleWinTest, parseDate)
+{
+    EXPECT_EQ(msForDate(2005, April, 27), parseDate(EnglishUS, "April/27/2005"));
+    EXPECT_EQ(msForDate(2005, April, 27), parseDate(FrenchFR, "27/avril/2005"));
+    EXPECT_EQ(msForDate(2005, April, 27), parseDate(JapaneseJP, "2005/04/27"));
+}
+
+#if ENABLE(CALENDAR_PICKER)
+TEST_F(LocaleWinTest, dateFormatText)
+{
+    EXPECT_STREQ("Month/Day/Year", dateFormatText(EnglishUS).utf8().data());
+    EXPECT_STREQ("Day/Month/Year", dateFormatText(FrenchFR).utf8().data());
+    EXPECT_STREQ("Year/Month/Day", dateFormatText(JapaneseJP).utf8().data());
+}
+
+TEST_F(LocaleWinTest, firstDayOfWeek)
+{
+    EXPECT_EQ(Sunday, firstDayOfWeek(EnglishUS));
+    EXPECT_EQ(Monday, firstDayOfWeek(FrenchFR));
+    EXPECT_EQ(Sunday, firstDayOfWeek(JapaneseJP));
+}
+
+TEST_F(LocaleWinTest, monthLabels)
+{
+    EXPECT_STREQ("January", monthLabel(EnglishUS, January).utf8().data());
+    EXPECT_STREQ("June", monthLabel(EnglishUS, June).utf8().data());
+    EXPECT_STREQ("December", monthLabel(EnglishUS, December).utf8().data());
+
+    EXPECT_STREQ("janvier", monthLabel(FrenchFR, January).utf8().data());
+    EXPECT_STREQ("juin", monthLabel(FrenchFR, June).utf8().data());
+    EXPECT_STREQ("d\xC3\xA9" "cembre", monthLabel(FrenchFR, December).utf8().data());
+
+    EXPECT_STREQ("1\xE6\x9C\x88", monthLabel(JapaneseJP, January).utf8().data());
+    EXPECT_STREQ("6\xE6\x9C\x88", monthLabel(JapaneseJP, June).utf8().data());
+    EXPECT_STREQ("12\xE6\x9C\x88", monthLabel(JapaneseJP, December).utf8().data());
+}
+
+TEST_F(LocaleWinTest, weekDayShortLabels)
+{
+    EXPECT_STREQ("Sun", weekDayShortLabel(EnglishUS, Sunday).utf8().data());
+    EXPECT_STREQ("Wed", weekDayShortLabel(EnglishUS, Wednesday).utf8().data());
+    EXPECT_STREQ("Sat", weekDayShortLabel(EnglishUS, Saturday).utf8().data());
+
+    EXPECT_STREQ("dim.", weekDayShortLabel(FrenchFR, Sunday).utf8().data());
+    EXPECT_STREQ("mer.", weekDayShortLabel(FrenchFR, Wednesday).utf8().data());
+    EXPECT_STREQ("sam.", weekDayShortLabel(FrenchFR, Saturday).utf8().data());
+
+    EXPECT_STREQ("\xE6\x97\xA5", weekDayShortLabel(JapaneseJP, Sunday).utf8().data());
+    EXPECT_STREQ("\xE6\xB0\xB4", weekDayShortLabel(JapaneseJP, Wednesday).utf8().data());
+    EXPECT_STREQ("\xE5\x9C\x9F", weekDayShortLabel(JapaneseJP, Saturday).utf8().data());
+}
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+TEST_F(LocaleWinTest, timeFormatText)
+{
+    EXPECT_STREQ("h:mm:ss a", timeFormatText(EnglishUS).utf8().data());
+    EXPECT_STREQ("HH:mm:ss", timeFormatText(FrenchFR).utf8().data());
+    EXPECT_STREQ("H:mm:ss", timeFormatText(JapaneseJP).utf8().data());
+}
+
+TEST_F(LocaleWinTest, shortTimeFormatText)
+{
+    EXPECT_STREQ("h:mm:ss a", shortTimeFormatText(EnglishUS).utf8().data());
+    EXPECT_STREQ("HH:mm:ss", shortTimeFormatText(FrenchFR).utf8().data());
+    EXPECT_STREQ("H:mm:ss", shortTimeFormatText(JapaneseJP).utf8().data());
+}
+
+TEST_F(LocaleWinTest, timeAMPMLabels)
+{
+    EXPECT_STREQ("AM", timeAMPMLabel(EnglishUS, 0).utf8().data());
+    EXPECT_STREQ("PM", timeAMPMLabel(EnglishUS, 1).utf8().data());
+
+    EXPECT_STREQ("", timeAMPMLabel(FrenchFR, 0).utf8().data());
+    EXPECT_STREQ("", timeAMPMLabel(FrenchFR, 1).utf8().data());
+
+    EXPECT_STREQ("\xE5\x8D\x88\xE5\x89\x8D", timeAMPMLabel(JapaneseJP, 0).utf8().data());
+    EXPECT_STREQ("\xE5\x8D\x88\xE5\xBE\x8C", timeAMPMLabel(JapaneseJP, 1).utf8().data());
+}
+#endif

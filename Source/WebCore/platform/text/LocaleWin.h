@@ -34,6 +34,7 @@
 #include <windows.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -52,6 +53,12 @@ public:
     const Vector<String>& monthLabels();
     const Vector<String>& weekDayShortLabels();
     unsigned firstDayOfWeek() { return m_firstDayOfWeek; }
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    String timeFormatText();
+    String shortTimeFormatText();
+    const Vector<String>& timeAMPMLabels();
 #endif
 
     // For testing.
@@ -81,7 +88,10 @@ private:
     Vector<String> m_weekDayShortLabels;
     unsigned m_firstDayOfWeek;
 #endif
-
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    String m_timeFormatText;
+    Vector<String> m_timeAMPMLabels;
+#endif
 };
 
 }

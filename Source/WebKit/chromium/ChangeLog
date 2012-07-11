@@ -1,3 +1,28 @@
+2012-07-10  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium-Windows] Implement functions for localized time format information
+        https://bugs.webkit.org/show_bug.cgi?id=90236
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces test cases for date and time format related
+        functions in LocaleWin.
+
+        * tests/LocaleWinTest.cpp:
+        (LocaleWinTest):
+        (LocaleWinTest::dateComponents): Added.
+        (LocaleWinTest::msForDate): Moved inside class LocaleWinTest.
+        (LocaleWinTest::formatDate): Added.
+        (LocaleWinTest::parseDate): Added.
+        (LocaleWinTest::dateFormatText): Added.
+        (LocaleWinTest::firstDayOfWeek): Added.
+        (LocaleWinTest::monthLabel): Added.
+        (LocaleWinTest::weekDayShortLabel): Added.
+        (LocaleWinTest::timeFormatText): Added.
+        (LocaleWinTest::shortTimeFormatText): Added.
+        (LocaleWinTest::timeAMPMLabel): Added.
+        (TEST_F):
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         [Chromium-Android] Add apk test targets for webkit_unit_tests and TestWebKitAPI

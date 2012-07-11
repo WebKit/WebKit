@@ -32,6 +32,9 @@
 #include "LocaleWin.h"
 
 #include "DateComponents.h"
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#include "DateTimeFormat.h"
+#endif
 #include "LocalizedStrings.h"
 #include <limits>
 #include <windows.h>
@@ -587,6 +590,83 @@ const Vector<String>& LocaleWin::weekDayShortLabels()
 {
     ensureWeekDayShortLabels();
     return m_weekDayShortLabels;
+}
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+static DateTimeFormat::FieldType mapCharacterToDateTimeFieldType(UChar ch)
+{
+    switch (ch) {
+    case 'h':
+        return DateTimeFormat::FieldTypeHour12;
+
+    case 'H':
+        return DateTimeFormat::FieldTypeHour23;
+
+    case 'm':
+        return DateTimeFormat::FieldTypeMinute;
+
+    case 's':
+        return DateTimeFormat::FieldTypeSecond;
+
+    case 't':
+        return DateTimeFormat::FieldTypePeriod;
+
+    default:
+        return DateTimeFormat::FieldTypeLiteral;
+    }
+}
+
+// This class used for converting Windows time pattern format[1] into LDML[2]
+// time format string.
+// [1] http://msdn.microsoft.com/en-us/library/windows/desktop/dd318148(v=vs.85).aspx
+// [2] LDML http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
+static String convertWindowsTimeFormatToLDML(const String& windowsTimeFormat)
+{
+    StringBuilder builder;
+    int counter = 0;
+    DateTimeFormat::FieldType lastFieldType = DateTimeFormat::FieldTypeLiteral;
+    for (unsigned index = 0; index < windowsTimeFormat.length(); ++index) {
+        UChar const ch = windowsTimeFormat[index];
+        DateTimeFormat::FieldType fieldType = mapCharacterToDateTimeFieldType(ch);
+        if (fieldType == DateTimeFormat::FieldTypeLiteral)
+            builder.append(ch);
+        else if (fieldType == lastFieldType) {
+            ++counter;
+            if (counter == 2 && lastFieldType != DateTimeFormat::FieldTypePeriod)
+                builder.append(static_cast<UChar>(lastFieldType));
+        } else {
+            if (lastFieldType != DateTimeFormat::FieldTypeLiteral)
+                builder.append(static_cast<UChar>(lastFieldType));
+            builder.append(static_cast<UChar>(fieldType));
+            counter = 1;
+        }
+        lastFieldType = fieldType;
+    }
+    return builder.toString();
+}
+
+String LocaleWin::timeFormatText()
+{
+    if (m_timeFormatText.isEmpty())
+        m_timeFormatText = convertWindowsTimeFormatToLDML(getLocaleInfoString(LOCALE_STIMEFORMAT));
+    return m_timeFormatText;
+}
+
+// Note: To make XP/Vista and Windows 7/later same behavior, we don't use
+// LOCALE_SSHORTTIME.
+String LocaleWin::shortTimeFormatText()
+{
+    return timeFormatText();
+}
+
+const Vector<String>& LocaleWin::timeAMPMLabels()
+{
+    if (m_timeAMPMLabels.isEmpty()) {
+        m_timeAMPMLabels.append(getLocaleInfoString(LOCALE_S1159));
+        m_timeAMPMLabels.append(getLocaleInfoString(LOCALE_S2359));
+    }
+    return m_timeAMPMLabels;
 }
 #endif
 
