@@ -1,3 +1,13 @@
+2012-07-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r107171): Fix --timeout option of Qt's DRT
+        https://bugs.webkit.org/show_bug.cgi?id=90966
+
+        Reviewed by Ryosuke Niwa.
+
+        * DumpRenderTree/qt/main.cpp:
+        (main): Don't remove the argument, because takeOptionValue() did it before.
+
 2012-07-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         First commit; moving myself to commiters.

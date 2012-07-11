@@ -220,7 +220,6 @@ int main(int argc, char* argv[])
     if (index != -1) {
         int timeout = takeOptionValue(args, index).toInt();
         dumper.setTimeout(timeout);
-        args.removeAt(index);
     }
 
     index = args.indexOf(QLatin1String("--no-timeout"));
