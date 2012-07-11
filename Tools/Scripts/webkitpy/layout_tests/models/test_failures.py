@@ -112,6 +112,7 @@ class TestFailure(object):
 class FailureTimeout(TestFailure):
     """Test timed out.  We also want to restart DumpRenderTree if this happens."""
     def __init__(self, is_reftest=False):
+        super(FailureTimeout, self).__init__()
         self.is_reftest = is_reftest
 
     def message(self):
@@ -124,6 +125,7 @@ class FailureTimeout(TestFailure):
 class FailureCrash(TestFailure):
     """DumpRenderTree/WebKitTestRunner crashed."""
     def __init__(self, is_reftest=False, process_name='DumpRenderTree', pid=None):
+        super(FailureCrash, self).__init__()
         self.process_name = process_name
         self.pid = pid
         self.is_reftest = is_reftest
@@ -168,6 +170,7 @@ class FailureMissingImage(TestFailure):
 class FailureImageHashMismatch(TestFailure):
     """Image hashes didn't match."""
     def __init__(self, diff_percent=0):
+        super(FailureImageHashMismatch, self).__init__()
         self.diff_percent = diff_percent
 
     def message(self):
@@ -185,6 +188,7 @@ class FailureReftestMismatch(TestFailure):
     """The result didn't match the reference rendering."""
 
     def __init__(self, reference_filename=None):
+        super(FailureReftestMismatch, self).__init__()
         self.reference_filename = reference_filename
         self.diff_percent = None
 
@@ -196,6 +200,7 @@ class FailureReftestMismatchDidNotOccur(TestFailure):
     """Unexpected match between the result and the reference rendering."""
 
     def __init__(self, reference_filename=None):
+        super(FailureReftestMismatchDidNotOccur, self).__init__()
         self.reference_filename = reference_filename
 
     def message(self):
@@ -206,6 +211,7 @@ class FailureReftestNoImagesGenerated(TestFailure):
     """Both the reftest and the -expected html file didn't generate pixel results."""
 
     def __init__(self, reference_filename=None):
+        super(FailureReftestNoImagesGenerated, self).__init__()
         self.reference_filename = reference_filename
 
     def message(self):

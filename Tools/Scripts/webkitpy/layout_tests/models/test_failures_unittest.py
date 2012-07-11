@@ -45,10 +45,14 @@ class TestFailuresTest(unittest.TestCase):
 
     def test_unknown_failure_type(self):
         class UnknownFailure(TestFailure):
-            pass
+            def message(self):
+                return ''
 
         failure_obj = UnknownFailure()
         self.assertRaises(ValueError, determine_result_type, [failure_obj])
+
+    def test_message_is_virtual(self):
+        failure_obj = TestFailure()
         self.assertRaises(NotImplementedError, failure_obj.message)
 
     def test_loads(self):

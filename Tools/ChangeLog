@@ -1,5 +1,56 @@
 2012-07-11  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: lint code in webkitpy.layout_tests.models
+        https://bugs.webkit.org/show_bug.cgi?id=90416
+
+        Reviewed by Ojan Vafai.
+
+        Cleaning up errors reported from lint-webkitpy.
+
+        Also, suppress the warnings about wildcard imports in pylintrc;
+        we have nothing particularly against them.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+        (TestConfigurationConverter.combinations):
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py:
+        (TestConfigurationTest.test_hash.query_unknown_key):
+        (TestConfigurationTest.test_eq):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (ParseError.__init__):
+        (TestExpectationLine.__init__):
+        (TestExpectationsModel.get_expectations_string):
+        (TestExpectationsModel):
+        (TestExpectationsModel.expectation_to_string):
+        (TestExpectationsModel.add_expectation_line):
+        (TestExpectationsModel._clear_expectations_for_test):
+        (TestExpectationsModel._remove_from_sets):
+        (TestExpectations.get_expectations_string):
+        (TestExpectations.expectation_to_string):
+        (TestExpectations._report_warnings):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (Base.__init__):
+        (parse_exp):
+        (SkippedTests.check):
+        (TestExpectationParserTests.test_parse_empty_string):
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (FailureTimeout.__init__):
+        (FailureCrash.__init__):
+        (FailureImageHashMismatch.__init__):
+        (FailureReftestMismatch.__init__):
+        (FailureReftestMismatchDidNotOccur.__init__):
+        (FailureReftestNoImagesGenerated.__init__):
+        * Scripts/webkitpy/layout_tests/models/test_failures_unittest.py:
+        (TestFailuresTest.test_unknown_failure_type.UnknownFailure.message):
+        (TestFailuresTest.test_unknown_failure_type):
+        (TestFailuresTest):
+        (TestFailuresTest.test_message_is_virtual):
+        * Scripts/webkitpy/layout_tests/models/test_results.py:
+        (TestResult.loads):
+        (TestResult.has_failure_matching_types):
+        * Scripts/webkitpy/pylintrc:
+
+2012-07-11  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: clean up names in worker.py
         https://bugs.webkit.org/show_bug.cgi?id=90510
 

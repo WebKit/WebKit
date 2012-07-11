@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import itertools
 
 class TestConfiguration(object):
     def __init__(self, version, architecture, build_type):
@@ -212,8 +211,8 @@ class TestConfigurationConverter(object):
                     break
             else:
                 return
-            indices[i] += 1
-            for j in range(i + 1, r):
+            indices[i] += 1  # pylint: disable=W0631
+            for j in range(i + 1, r):  # pylint: disable=W0631
                 indices[j] = indices[j - 1] + 1
             yield tuple(pool[i] for i in indices)
 

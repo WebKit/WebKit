@@ -28,8 +28,6 @@
 
 import unittest
 
-from webkitpy.common.host_mock import MockHost
-
 from webkitpy.layout_tests.models.test_configuration import *
 
 
@@ -77,7 +75,7 @@ class TestConfigurationTest(unittest.TestCase):
         self.assertTrue(config_dict[TestConfiguration('xp', 'x86', 'release')])
 
         def query_unknown_key():
-            config_dict[TestConfiguration('xp', 'x86', 'debug')]
+            return config_dict[TestConfiguration('xp', 'x86', 'debug')]
 
         self.assertRaises(KeyError, query_unknown_key)
         self.assertTrue(TestConfiguration('xp', 'x86', 'release') in config_dict)
@@ -88,8 +86,6 @@ class TestConfigurationTest(unittest.TestCase):
 
     def test_eq(self):
         self.assertEquals(TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'release'))
-        host = MockHost()
-        test_port = host.port_factory.get('test-win-xp', None)
         self.assertNotEquals(TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'debug'))
 
     def test_values(self):

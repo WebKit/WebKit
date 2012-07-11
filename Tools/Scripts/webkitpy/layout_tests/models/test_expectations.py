@@ -31,12 +31,10 @@
 for layout tests.
 """
 
-import itertools
-import json
 import logging
 import re
 
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration, TestConfigurationConverter
+from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
 
 _log = logging.getLogger(__name__)
 
@@ -117,6 +115,7 @@ def strip_comments(line):
 
 class ParseError(Exception):
     def __init__(self, warnings):
+        super(ParseError, self).__init__()
         self.warnings = warnings
 
     def __str__(self):
@@ -400,9 +399,10 @@ class TestExpectationLine(object):
     def __init__(self):
         """Initializes a blank-line equivalent of an expectation."""
         self.original_string = None
+        self.filename = None  # this is the path to the expectations file for this line
         self.line_number = None
-        self.name = None
-        self.path = None
+        self.name = None  # this is the path in the line itself
+        self.path = None  # this is the normpath of self.name
         self.modifiers = []
         self.parsed_modifiers = []
         self.parsed_bug_modifiers = []
@@ -515,6 +515,25 @@ class TestExpectationsModel(object):
     def get_expectations(self, test):
         return self._test_to_expectations[test]
 
+    def get_expectations_string(self, test):
+        """Returns the expectatons for the given test as an uppercase string.
+        If there are no expectations for the test, then "PASS" is returned."""
+        expectations = self.get_expectations(test)
+        retval = []
+
+        for expectation in expectations:
+            retval.append(self.expectation_to_string(expectation))
+
+        return " ".join(retval)
+
+    def expectation_to_string(self, expectation):
+        """Return the uppercased string equivalent of a given expectation."""
+        for item in TestExpectations.EXPECTATIONS.items():
+            if item[1] == expectation:
+                return item[0].upper()
+        raise ValueError(expectation)
+
+
     def add_expectation_line(self, expectation_line, in_skipped=False):
         """Returns a list of warnings encountered while matching modifiers."""
 
@@ -525,7 +544,7 @@ class TestExpectationsModel(object):
             if not in_skipped and self._already_seen_better_match(test, expectation_line):
                 continue
 
-            self._clear_expectations_for_test(test, expectation_line)
+            self._clear_expectations_for_test(test)
             self._test_to_expectation_line[test] = expectation_line
             self._add_test(test, expectation_line)
 
@@ -559,7 +578,7 @@ class TestExpectationsModel(object):
             # FIXME: What is this?
             self._result_type_to_tests[FAIL].add(test)
 
-    def _clear_expectations_for_test(self, test, expectation_line):
+    def _clear_expectations_for_test(self, test):
         """Remove prexisting expectations for this test.
         This happens if we are seeing a more precise path
         than a previous listing.
@@ -571,13 +590,13 @@ class TestExpectationsModel(object):
             self._remove_from_sets(test, self._timeline_to_tests)
             self._remove_from_sets(test, self._result_type_to_tests)
 
-    def _remove_from_sets(self, test, dict):
+    def _remove_from_sets(self, test, dict_of_sets_of_tests):
         """Removes the given test from the sets in the dictionary.
 
         Args:
           test: test to look for
           dict: dict of sets of files"""
-        for set_of_tests in dict.itervalues():
+        for set_of_tests in dict_of_sets_of_tests.itervalues():
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
@@ -782,22 +801,10 @@ class TestExpectations(object):
         return self._model.get_tests_with_timeline(timeline)
 
     def get_expectations_string(self, test):
-        """Returns the expectatons for the given test as an uppercase string.
-        If there are no expectations for the test, then "PASS" is returned."""
-        expectations = self._model.get_expectations(test)
-        retval = []
-
-        for expectation in expectations:
-            retval.append(self.expectation_to_string(expectation))
-
-        return " ".join(retval)
+        return self._model.get_expectations_string(test)
 
     def expectation_to_string(self, expectation):
-        """Return the uppercased string equivalent of a given expectation."""
-        for item in self.EXPECTATIONS.items():
-            if item[1] == expectation:
-                return item[0].upper()
-        raise ValueError(expectation)
+        return self._model.expectation_to_string(expectation)
 
     def matches_an_expected_result(self, test, result, pixel_tests_are_enabled):
         expected_results = self._model.get_expectations(test)
@@ -820,7 +827,8 @@ class TestExpectations(object):
         warnings = []
         for expectation in self._expectations:
             for warning in expectation.warnings:
-                warnings.append('%s:%d %s %s' % (self._shorten_filename(expectation.filename), expectation.line_number, warning, expectation.name if expectation.expectations else expectation.original_string))
+                warnings.append('%s:%d %s %s' % (self._shorten_filename(expectation.filename), expectation.line_number,
+                                warning, expectation.name if expectation.expectations else expectation.original_string))
 
         if warnings:
             self._has_warnings = True

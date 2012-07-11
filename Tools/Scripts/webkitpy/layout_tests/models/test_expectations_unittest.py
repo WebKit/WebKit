@@ -95,7 +95,7 @@ class Base(unittest.TestCase):
     # Note that all of these tests are written assuming the configuration
     # being tested is Windows XP, Release build.
 
-    def __init__(self, testFunc, setUp=None, tearDown=None, description=None):
+    def __init__(self, testFunc):
         host = MockHost()
         self._port = host.port_factory.get('test-win-xp', None)
         self._exp = None
@@ -123,11 +123,11 @@ BUG_TEST WONTFIX MAC : failures/expected/image.html = IMAGE
 """
 
     def parse_exp(self, expectations, overrides=None, is_lint_mode=False):
-        self._expectations_dict = OrderedDict()
-        self._expectations_dict['expectations'] = expectations
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = expectations
         if overrides:
-            self._expectations_dict['overrides'] = overrides
-        self._port.expectations_dict = lambda: self._expectations_dict
+            expectations_dict['overrides'] = overrides
+        self._port.expectations_dict = lambda: expectations_dict
         self._exp = TestExpectations(self._port, self.get_basic_tests(), is_lint_mode)
 
     def assert_exp(self, test, result):
@@ -274,11 +274,11 @@ class SkippedTests(Base):
     def check(self, expectations, overrides, skips, lint=False):
         port = MockHost().port_factory.get('qt')
         port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
-        self._expectations_dict = OrderedDict()
-        self._expectations_dict['expectations'] = expectations
+        expectations_dict = OrderedDict()
+        expectations_dict['expectations'] = expectations
         if overrides:
-            self._expectations_dict['overrides'] = overrides
-        port.expectations_dict = lambda: self._expectations_dict
+            expectations_dict['overrides'] = overrides
+        port.expectations_dict = lambda: expectations_dict
         port.skipped_layout_tests = lambda tests: set(skips)
         exp = TestExpectations(port, ['failures/expected/text.html'], lint)
 
@@ -532,7 +532,6 @@ class TestExpectationParserTests(unittest.TestCase):
         host = MockHost()
         test_port = host.port_factory.get('test-win-xp', None)
         test_port.test_exists = lambda test: True
-        test_config = test_port.test_configuration()
         full_test_list = []
         expectation_line = self._tokenize('')
         parser = TestExpectationParser(test_port, full_test_list, allow_rebaseline_modifier=False)

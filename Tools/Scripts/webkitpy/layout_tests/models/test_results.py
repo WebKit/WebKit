@@ -35,8 +35,8 @@ class TestResult(object):
     """Data object containing the results of a single test."""
 
     @staticmethod
-    def loads(str):
-        return cPickle.loads(str)
+    def loads(string):
+        return cPickle.loads(string)
 
     def __init__(self, test_name, failures=None, test_run_time=None, has_stderr=False):
         self.test_name = test_name
@@ -54,9 +54,9 @@ class TestResult(object):
     def __ne__(self, other):
         return not (self == other)
 
-    def has_failure_matching_types(self, *args, **kargs):
+    def has_failure_matching_types(self, *failure_classes):
         for failure in self.failures:
-            if type(failure) in args:
+            if type(failure) in failure_classes:
                 return True
         return False
 
