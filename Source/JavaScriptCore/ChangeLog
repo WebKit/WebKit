@@ -1,5 +1,17 @@
 2012-07-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Accidentally used the wrong license (3-clause instead of 2-clause) in some
+        files I just committed.
+
+        Rubber stamped by Oliver Hunt.
+
+        * bytecode/Watchpoint.cpp:
+        * bytecode/Watchpoint.h:
+        * jit/JumpReplacementWatchpoint.cpp:
+        * jit/JumpReplacementWatchpoint.h:
+
+2012-07-11  Filip Pizlo  <fpizlo@apple.com>
+
         Watchpoints and jump replacement should be decoupled
         https://bugs.webkit.org/show_bug.cgi?id=91016
 
