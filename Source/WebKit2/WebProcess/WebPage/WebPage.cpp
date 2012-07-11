@@ -875,18 +875,12 @@ void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSiz
     if (view->fixedLayoutSize() == targetLayoutSize)
         return;
 
-    // Always reset even when empty.
-    view->setFixedLayoutSize(targetLayoutSize);
-
     m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
     m_page->settings()->setFixedElementsLayoutRelativeToFrame(true);
     m_page->settings()->setFixedPositionCreatesStackingContext(true);
 
-    // Schedule a layout to use the new target size.
-    if (!view->layoutPending()) {
-        view->setNeedsLayout();
-        view->scheduleRelayout();
-    }
+    // Always reset even when empty. This also takes care of the relayout.
+    setFixedLayoutSize(targetLayoutSize);
 }
 
 void WebPage::resizeToContentsIfNeeded()
@@ -1087,7 +1081,7 @@ void WebPage::setUseFixedLayout(bool fixed)
 
     view->setUseFixedLayout(fixed);
     if (!fixed)
-        view->setFixedLayoutSize(IntSize());
+        setFixedLayoutSize(IntSize());
 }
 
 void WebPage::setFixedLayoutSize(const IntSize& size)

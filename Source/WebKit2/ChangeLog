@@ -1,5 +1,31 @@
 2012-07-11  Andras Becsi  <andras.becsi@nokia.com>
 
+        [Qt][WK2] Fix wheel scrolling for simple pages
+        https://bugs.webkit.org/show_bug.cgi?id=90793
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Call WebPage::setFixedLayoutSize in setResizesToContentsUsingLayoutSize
+        instead of setting the view size manually and scheduling a relayout.
+        Since setFixedLayoutSize forces a relayout it also updates the scrollbars
+        after the visible rect is available.
+        This fixes scrolling with wheel events for a QML WebView loading a simple
+        local page which previously ended up in a state where scrolling was disabled
+        because the scrollbar update happened before the correct visible rect size was
+        available.
+
+        Add a QML test and infrastructure to QWebKitTest to cover this case.
+
+        * UIProcess/API/qt/qwebkittest.cpp:
+        (QWebKitTest::wheelEvent):
+        * UIProcess/API/qt/qwebkittest_p.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_wheelEventHandling.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/test4.html: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setResizesToContentsUsingLayoutSize):
+
+2012-07-11  Andras Becsi  <andras.becsi@nokia.com>
+
         [Qt][WK2] ASSERT: "!m_viewportItem->isMoving()" in QtViewportHandler::flickMoveEnded()
         https://bugs.webkit.org/show_bug.cgi?id=90875
 

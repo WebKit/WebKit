@@ -25,6 +25,7 @@
 #include "qquickwebview_p_p.h"
 #include <QMutableListIterator>
 #include <QTouchEvent>
+#include <QWheelEvent>
 #include <qpa/qwindowsysteminterface.h>
 
 using namespace WebKit;
@@ -111,6 +112,24 @@ bool QWebKitTest::touchDoubleTap(QObject* item, qreal x, qreal y, int delay)
         return false;
 
     return true;
+}
+
+bool QWebKitTest::wheelEvent(QObject* item, qreal x, qreal y, int delta, Qt::Orientation orient)
+{
+    QQuickWebView* window = qobject_cast<QQuickWebView*>(item);
+
+    if (!window) {
+        qWarning("Wheel event not accepted by receiving item");
+        return false;
+    }
+
+    QWheelEvent event(QPointF(x, y), delta, Qt::NoButton, Qt::NoModifier, orient);
+    event.setTimestamp(QDateTime::currentMSecsSinceEpoch());
+    event.setAccepted(false);
+
+    window->wheelEvent(&event);
+
+    return event.isAccepted();
 }
 
 QSize QWebKitTest::contentsSize() const

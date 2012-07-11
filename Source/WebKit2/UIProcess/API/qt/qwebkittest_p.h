@@ -56,6 +56,7 @@ signals:
 public slots:
     bool touchTap(QObject* item, qreal x, qreal y, int delay = -1);
     bool touchDoubleTap(QObject* item, qreal x, qreal y, int delay = -1);
+    bool wheelEvent(QObject* item, qreal x, qreal y, int delta, Qt::Orientation orient = Qt::Vertical);
 
 public:
     QWebKitTest(QQuickWebViewPrivate* webviewPrivate, QObject* parent = 0);
