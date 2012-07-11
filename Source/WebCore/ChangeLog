@@ -1,3 +1,17 @@
+2012-07-11  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [Qt] REGRESSION(r122250): It broke USE(3D_GRAPHICS)=1 and ENABLE(WEBGL)=0 builds
+        https://bugs.webkit.org/show_bug.cgi?id=90943
+
+        Reviewed by Csaba Osztrogonác.
+
+        Uses proper guarding in Extensions3DOpenGLCommon and Extensions3DOpenGLES as per https://bugs.webkit.org/show_bug.cgi?id=90506.
+
+        No new tests, becasue there is no new functionality.
+
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp: Use proper guarding.
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp: Use proper guarding.
+
 2012-07-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: migrate from background images to CSS for statusbar rendering.

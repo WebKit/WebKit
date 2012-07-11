@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL)
+#if USE(3D_GRAPHICS)
 #include "Extensions3DOpenGLCommon.h"
 
 #include "ANGLEWebKitBridge.h"
@@ -145,4 +145,4 @@ void Extensions3DOpenGLCommon::initializeAvailableExtensions()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL)
+#endif // USE(3D_GRAPHICS)
