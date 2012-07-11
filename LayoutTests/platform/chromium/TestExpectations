@@ -927,7 +927,7 @@ WONTFIX SKIP : http/tests/inspector/network/network-content-replacement-embed.ht
 // Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
 WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIMEOUT PASS
 
-BUG_DRT WIN DEBUG : inspector/extensions/extensions-events.html = TIMEOUT
+BUG_DRT WIN : inspector/extensions/extensions-events.html = TIMEOUT
 BUG_DRT WIN DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT
 
 BUGFLAKY : http/tests/inspector/extensions-ignore-cache.html = PASS TIMEOUT
@@ -3513,7 +3513,7 @@ BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-ove
 
 BUGWK81416 : fast/dom/wrapper-scope.html = TEXT
 
-BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-events.html = TIMEOUT PASS
+BUGWK86439 LINUX : inspector/extensions/extensions-events.html = TIMEOUT PASS
 BUGWK86439 LINUX DEBUG : inspector/extensions/extensions-sidebar.html = TIMEOUT PASS
 
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT

@@ -1,3 +1,12 @@
+2012-07-11  W. James MacLean  <wjmaclean@chromium.org>
+
+        Unreviewed gardening. Mark inspector/extensions/extensions-events.html as TIMEOUT on non-debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=86439
+
+        This test has started timing out on non-debug builds as well, adding comment to existing bug.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Move revisions support to UISourceCode.
