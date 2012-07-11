@@ -1,3 +1,14 @@
+2012-07-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122361.
+        http://trac.webkit.org/changeset/122361
+        https://bugs.webkit.org/show_bug.cgi?id=91027
+
+        Broke Windows build and fast/forms/state-restore-broken-
+        state.html (Requested by rniwa on #webkit).
+
+        * testing/Internals.idl:
+
 2012-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         Assertion ASSERTION FAILED: enclosingIntRect(rendererMappedResult) == enclosingIntRect(FloatQuad(result).boundingBox()) when compositing in paginated mode
