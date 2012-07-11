@@ -2534,6 +2534,8 @@ void RenderLayer::updateScrollbarsAfterLayout()
         if (box->hasAutoVerticalScrollbar())
             setHasVerticalScrollbar(hasVerticalOverflow);
 
+        updateSelfPaintingLayer();
+
 #if ENABLE(DASHBOARD_SUPPORT)
         // Force an update since we know the scrollbars have changed things.
         if (renderer()->document()->hasDashboardRegions())
@@ -4740,6 +4742,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
 bool RenderLayer::shouldBeSelfPaintingLayer() const
 {
     return !isNormalFlowOnly()
+        || hasOverlayScrollbars()
         || renderer()->hasReflection()
         || renderer()->hasMask()
         || renderer()->isTableRow()
@@ -4750,7 +4753,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer()->isRenderIFrame();
 }
 
-void RenderLayer::updateSelfPaintingLayerAfterStyleChange(const RenderStyle*)
+void RenderLayer::updateSelfPaintingLayer()
 {
     bool isSelfPaintingLayer = shouldBeSelfPaintingLayer();
     if (m_isSelfPaintingLayer == isSelfPaintingLayer)
@@ -4845,9 +4848,11 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
         m_marquee = 0;
     }
 
-    updateSelfPaintingLayerAfterStyleChange(oldStyle);
     updateStackingContextsAfterStyleChange(oldStyle);
     updateScrollbarsAfterStyleChange(oldStyle);
+    // Overlay scrollbars can make this layer self-painting so we need
+    // to recompute the bit once scrollbars have been updated.
+    updateSelfPaintingLayer();
 
     if (!hasReflection() && m_reflection)
         removeReflection();

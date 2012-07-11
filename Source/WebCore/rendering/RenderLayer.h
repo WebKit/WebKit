@@ -679,7 +679,7 @@ private:
 
     bool shouldRepaintAfterLayout() const;
 
-    void updateSelfPaintingLayerAfterStyleChange(const RenderStyle* oldStyle);
+    void updateSelfPaintingLayer();
     void updateStackingContextsAfterStyleChange(const RenderStyle* oldStyle);
 
     void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);

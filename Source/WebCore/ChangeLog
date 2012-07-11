@@ -1,3 +1,39 @@
+2012-07-11  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION (r116203): overflow sections don't have scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=90052
+
+        Reviewed by Simon Fraser.
+
+        This issue stems from RenderLayers with overlay scrollbars not being considered
+        self-painting.
+
+        After r120395 (follow-up of r116203), we ignore subtrees that have no self-painting layer for
+        painting. Normal scrollbars are painted by their renderer so they were properly painted. However
+        overlay scrollbars need to be painted by their RenderLayer as a separate phase (see bug 57057) so
+        they were not painted anymore. The fix is simple: make RenderLayer with overlay scrollbars
+        self-painting as they should have been in the first place.
+
+        Unfortunately no tests as I don't think we have a good way of testing overlay
+        scrollbars. Tested manually though on the super simple test case from the bug.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeSelfPaintingLayer):
+        Overlay scrollbars make the layer self-painting.
+
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        Added a call to updateSelfPaintingLayer.
+
+        (WebCore::RenderLayer::styleChanged):
+        Moved the call to updateSelfPaintingLayer after recomputing the scrollbars to ensure proper behavior.
+        Added a comment underlining the reason.
+
+        (WebCore::RenderLayer::updateSelfPaintingLayer):
+        Renamed as it is now called during layout too.
+
+        * rendering/RenderLayer.h:
+        (RenderLayer): Updated after updateSelfPaintingLayer rename.
+
 2012-07-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         NodesFromRect doesn't work on SVG root elements.
