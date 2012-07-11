@@ -1,3 +1,10 @@
+2012-07-11  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        One more fix for r122292.
+
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:
+
 2012-07-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122301.

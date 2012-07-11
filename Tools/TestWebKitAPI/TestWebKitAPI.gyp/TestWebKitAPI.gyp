@@ -133,7 +133,7 @@
                         '<(PRODUCT_DIR)/TestWebKitAPI_apk',
                         '--ant-args',
                         '-DPRODUCT_DIR=<(ant_build_out)',
-                        '--ant-compile=<(sdk_build)'
+                        '--ant-compile'
                     ],
                 }],
             }],
