@@ -1,3 +1,16 @@
+2012-07-10  Adam Barth  <abarth@webkit.org>
+
+        [Chromium-Android] Add apk test targets for webkit_unit_tests and TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=90918
+
+        Reviewed by Tony Chang.
+
+        The rules are similar to what we have added for DumpRenderTree apk.
+        All references to gtest_target_type can be removed once we enable APK
+        tests on the all bots.
+
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:
+
 2012-07-10  Kenneth Russell  <kbr@google.com>
 
         Add --no-build option to perf test runner

@@ -82,8 +82,61 @@
                         '<(source_dir)/WebKit/chromium/src/ChromiumCurrentTime.cpp', 
                         '<(source_dir)/WebKit/chromium/src/ChromiumThreading.cpp', 
                     ], 
-                }], 
-            ], 
+                }],
+                ['OS=="android" and gtest_target_type == "shared_library"', {
+                    'type': 'shared_library',
+                    'dependencies': [
+                        '<(chromium_src_dir)/testing/android/native_test.gyp:native_test_native_code',
+                    ],
+                }],
+            ],
         }, 
     ], # targets
+    'conditions': [
+        ['OS=="android" and gtest_target_type == "shared_library"', {
+            # Wrap libTestWebKitAPI.so into an android apk for execution.
+            'targets': [{
+                'target_name': 'TestWebKitAPI_apk',
+                'type': 'none',
+                'dependencies': [
+                    '<(chromium_src_dir)/base/base.gyp:base_java',
+                    'TestWebKitAPI',
+                ],
+                'variables': {
+                    'input_shlib_path': '<(SHARED_LIB_DIR)/<(SHARED_LIB_PREFIX)TestWebKitAPI<(SHARED_LIB_SUFFIX)',
+                    'input_jars_paths': [
+                        '<(PRODUCT_DIR)/lib.java/chromium_base.jar',
+                    ],
+                },
+                # Part of the following was copied from <(chromium_src_dir)/build/apk_test.gpyi.
+                # Not including it because gyp include doesn't support variable in path or under
+                # conditions. And we also have some different requirements.
+                'actions': [{
+                    'action_name': 'apk_TestWebKitAPI',
+                    'message': 'Building TestWebKitAPI test apk.',
+                    'inputs': [
+                        '<(chromium_src_dir)/testing/android/AndroidManifest.xml',
+                        '<(chromium_src_dir)/testing/android/generate_native_test.py',
+                        '<(input_shlib_path)',
+                        '<@(input_jars_paths)',
+                    ],
+                    'outputs': [
+                        '<(PRODUCT_DIR)/TestWebKitAPI_apk/TestWebKitAPI-debug.apk',
+                    ],
+                    'action': [
+                        '<(chromium_src_dir)/testing/android/generate_native_test.py',
+                        '--native_library',
+                        '<(input_shlib_path)',
+                        '--jars',
+                        '"<@(input_jars_paths)"',
+                        '--output',
+                        '<(PRODUCT_DIR)/TestWebKitAPI_apk',
+                        '--ant-args',
+                        '-DPRODUCT_DIR=<(ant_build_out)',
+                        '--ant-compile=<(sdk_build)'
+                    ],
+                }],
+            }],
+        }],
+    ],
 }
