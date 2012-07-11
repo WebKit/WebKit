@@ -155,6 +155,18 @@ private:
     RefPtr<Node> m_base;
 };
 
+class HTMLCollectionWithArrayStorage : public HTMLCollection {
+public:
+    HTMLCollectionWithArrayStorage(Node* base, CollectionType type)
+        : HTMLCollection(base, type)
+    { }
+
+    virtual Node* item(unsigned index) const OVERRIDE;
+
+private:
+    virtual HTMLElement* itemAfter(unsigned& offsetInArray, HTMLElement* previousItem) const = 0;
+};
+
 } // namespace
 
 #endif

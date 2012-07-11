@@ -236,6 +236,47 @@ Node* HTMLCollection::item(unsigned index) const
     return cachedItem();
 }
 
+Node* HTMLCollectionWithArrayStorage::item(unsigned index) const
+{
+    invalidateCacheIfNeeded();
+    if (isItemCacheValid() && cachedItemOffset() == index)
+        return cachedItem();
+
+    if (isLengthCacheValid() && cachedLength() <= index)
+        return 0;
+
+#if ENABLE(MICRODATA)
+    if (type() == ItemProperties)
+        static_cast<const HTMLPropertiesCollection*>(this)->updateRefElements();
+#endif
+
+    if (!isItemCacheValid() || cachedItemOffset() > index) {
+        unsigned offsetInArray = 0;
+        setItemCache(itemAfter(offsetInArray, 0), 0, 0);
+        ASSERT(isItemCacheValid());
+        if (!cachedItem() || cachedItemOffset() == index)
+            return cachedItem();
+    }
+
+    unsigned currentIndex = cachedItemOffset();
+    ASSERT(cachedItem()->isHTMLElement());
+    HTMLElement* currentItem = toHTMLElement(cachedItem());
+    ASSERT(currentIndex < index);
+
+    unsigned offsetInArray = cachedElementsArrayOffset();
+    while ((currentItem = itemAfter(offsetInArray, currentItem))) {
+        currentIndex++;
+        if (currentIndex == index) {
+            setItemCache(currentItem, currentIndex, offsetInArray);
+            return cachedItem();
+        }
+    }
+
+    setLengthCache(currentIndex);
+
+    return 0;
+}
+
 static inline bool nameShouldBeVisibleInDocumentAll(HTMLElement* element)
 {
     // The document.all collection returns only certain types of elements by name,
@@ -296,6 +337,7 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
 
 void HTMLCollection::updateNameCache() const
 {
+    invalidateCacheIfNeeded();
     if (hasNameCache())
         return;
 
@@ -319,7 +361,6 @@ bool HTMLCollection::hasNamedItem(const AtomicString& name) const
     if (name.isEmpty())
         return false;
 
-    invalidateCacheIfNeeded();
     updateNameCache();
 
     if (Vector<Element*>* cache = idCache(name)) {
@@ -341,7 +382,6 @@ void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >&
     if (name.isEmpty())
         return;
 
-    invalidateCacheIfNeeded();
     updateNameCache();
 
     Vector<Element*>* idResults = idCache(name);

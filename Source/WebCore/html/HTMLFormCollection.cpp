@@ -37,7 +37,7 @@ using namespace HTMLNames;
 // calculation every time if anything has changed.
 
 HTMLFormCollection::HTMLFormCollection(Element* base)
-    : HTMLCollection(base, FormControls)
+    : HTMLCollectionWithArrayStorage(base, FormControls)
 {
     ASSERT(base->hasTagName(formTag) || base->hasTagName(fieldsetTag));
 }
@@ -67,48 +67,25 @@ const Vector<HTMLImageElement*>& HTMLFormCollection::formImageElements() const
     return static_cast<HTMLFormElement*>(base())->imageElements();
 }
 
-unsigned HTMLFormCollection::numberOfFormControlElements() const
+unsigned HTMLFormCollection::calcLength() const
 {
-    ASSERT(base());
     ASSERT(base()->hasTagName(formTag) || base()->hasTagName(fieldsetTag));
     if (base()->hasTagName(formTag))
         return static_cast<HTMLFormElement*>(base())->length();
     return static_cast<HTMLFieldSetElement*>(base())->length();
 }
 
-unsigned HTMLFormCollection::calcLength() const
+HTMLElement* HTMLFormCollection::itemAfter(unsigned& offset, HTMLElement* previousItem) const
 {
-    return numberOfFormControlElements();
-}
-
-Node* HTMLFormCollection::item(unsigned index) const
-{
-    invalidateCacheIfNeeded();
-
-    if (isItemCacheValid() && cachedItemOffset() == index)
-        return cachedItem();
-
-    if (isLengthCacheValid() && cachedLength() <= index)
-        return 0;
-
-    if (!isItemCacheValid() || cachedItemOffset() > index)
-        setItemCache(0, 0, 0);
-
     const Vector<FormAssociatedElement*>& elementsArray = formControlElements();
-    unsigned currentIndex = cachedItemOffset();
-
-    for (unsigned i = cachedElementsArrayOffset(); i < elementsArray.size(); i++) {
-        if (elementsArray[i]->isEnumeratable()) {
-            HTMLElement* element = toHTMLElement(elementsArray[i]);
-            if (index == currentIndex) {
-                setItemCache(element, index, i);
-                return element;
-            }
-
-            currentIndex++;
-        }
+    if (previousItem)
+        offset++;
+    while (offset < elementsArray.size()) {
+        FormAssociatedElement* element = elementsArray[offset];
+        if (element->isEnumeratable())
+            return toHTMLElement(element);
+        offset++;
     }
-
     return 0;
 }
 
@@ -152,6 +129,7 @@ Node* HTMLFormCollection::namedItem(const AtomicString& name) const
 
 void HTMLFormCollection::updateNameCache() const
 {
+    invalidateCacheIfNeeded();
     if (hasNameCache())
         return;
 

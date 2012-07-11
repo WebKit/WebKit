@@ -1,3 +1,55 @@
+2012-07-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLFormCollection::item and HTMLPropertiesCollection::item should share code
+        https://bugs.webkit.org/show_bug.cgi?id=90932
+
+        Reviewed by Anders Carlsson.
+
+        Merged HTMLFormCollection::item and HTMLPropertiesCollection::item as HTMLCollectionWithArrayStorage::item,
+        which can be merged into HTMLCollection::item in a follow up patch.
+
+        Also moved the call to invalidateCacheIfNeeded into HTMLCollection::updateNameCache() as done in
+        HTMLPropertiesCollection.
+
+        In addition, moved the early bail out for when the base element doesn't have itemscope attribute from individual
+        functions to updateRefElements so that HTMLCollectionWithArrayStorage::item doesn't need to have this check.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollectionWithArrayStorage::item): Added. It's based on HTMLPropertiesCollection::item but it only
+        has the single loop (as supposed to nested loops) as HTMLFormCollection doesn't have multiple items per element
+        in the array unlike HTMLPropertiesCollection. In addition, offsetInArray (was i in HTMLPropertiesCollection::item) is
+        incremented in each itemAfter due to this semantic difference in each itemAfter.
+        (WebCore::HTMLCollection::updateNameCache):
+        (WebCore::HTMLCollection::hasNamedItem):
+        (WebCore::HTMLCollection::namedItems):
+        * html/HTMLCollection.h:
+        (HTMLCollectionWithArrayStorage):
+        (WebCore::HTMLCollectionWithArrayStorage::HTMLCollectionWithArrayStorage):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::HTMLFormCollection):
+        (WebCore::HTMLFormCollection::calcLength): Merged numberOfFormControlElements since it was only called here.
+        (WebCore::HTMLFormCollection::itemAfter): Added. HTMLFormCollection has exactly one item per element in the array
+        so we increment the offset in each iteration. Note that when we're continuing a search, we need to increment
+        the offset in order to avoid returning the same item.
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLFormCollection.h:
+        (HTMLFormCollection):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::HTMLPropertiesCollection):
+        (WebCore::HTMLPropertiesCollection::updateRefElements): Set m_hasItemRefElements true upfront since we never fail to
+        update ref elements. Bail out as soon as we cleared the m_itemRefElements when the base element doesn't have itemscope
+        content attribute.
+        (WebCore::HTMLPropertiesCollection::itemAfter): Added. We reset previousItem to null because the existing itemAfter
+        requires previousItem be null when we're moving to a new entry in m_itemRefElements.
+        (WebCore::HTMLPropertiesCollection::calcLength):
+        (WebCore::HTMLPropertiesCollection::cacheFirstItem):
+        (WebCore::HTMLPropertiesCollection::updateNameCache): Merged findProperties since this was the only caller.
+        (WebCore::HTMLPropertiesCollection::names):
+        (WebCore::HTMLPropertiesCollection::namedItem):
+        (WebCore::HTMLPropertiesCollection::hasNamedItem):
+        * html/HTMLPropertiesCollection.h:
+        (HTMLPropertiesCollection): Made updateRefElements public as it's called in HTMLCollectionWithArrayStorage::item.
+
 2012-07-11  Sami Kyostila  <skyostil@chromium.org>
 
         RenderView layer is marked as fixed position container in the scrolling tree if page scale != 1

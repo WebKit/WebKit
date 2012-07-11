@@ -40,15 +40,14 @@ namespace WebCore {
 
 class DOMStringList;
 
-class HTMLPropertiesCollection : public HTMLCollection {
+class HTMLPropertiesCollection : public HTMLCollectionWithArrayStorage {
 public:
     static PassRefPtr<HTMLPropertiesCollection> create(Node*);
     virtual ~HTMLPropertiesCollection();
 
-    virtual Node* item(unsigned) const OVERRIDE;
+    void updateRefElements() const;
 
     PassRefPtr<DOMStringList> names() const;
-
     virtual PassRefPtr<NodeList> namedItem(const String&) const OVERRIDE;
     virtual bool hasNamedItem(const AtomicString&) const OVERRIDE;
 
@@ -65,15 +64,14 @@ private:
     HTMLPropertiesCollection(Node*);
 
     virtual unsigned calcLength() const OVERRIDE;
-    void findProperties(Element* base) const;
 
     Node* findRefElements(Node* previous) const;
 
     void cacheFirstItem() const;
-    Element* itemAfter(Element* base, Node* previous) const;
+    virtual HTMLElement* itemAfter(unsigned& offsetInArray, HTMLElement* previousItemInSameArrayElement) const OVERRIDE;
+    HTMLElement* itemAfter(HTMLElement* base, HTMLElement* previous) const;
 
     void updateNameCache() const;
-    void updateRefElements() const;
 
     void updatePropertyCache(Element* element, const AtomicString& propertyName) const
     {
@@ -88,7 +86,7 @@ private:
             append(m_propertyCache, propertyName, element);
     }
 
-    mutable Vector<Element*> m_itemRefElements;
+    mutable Vector<HTMLElement*> m_itemRefElements;
     mutable RefPtr<DOMStringList> m_propertyNames;
     mutable NodeCacheMap m_propertyCache;
 
