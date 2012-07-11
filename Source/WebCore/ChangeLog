@@ -1,3 +1,20 @@
+2012-07-11  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] [regression] Don't use ScrollByPrecisePixels on Chromium Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=91020
+
+        Reviewed by Adam Barth.
+
+        A change in https://bugs.webkit.org/show_bug.cgi?id=87535 to
+        improve the operation of smooth scrolling incorrectly caused
+        Chromium Mac to use the wrong scroll granularity on
+        hasPreciseScrollingDeltas() == true wheelevent scrolls.
+        Exclude the change on the Chromium Mac platform.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent): Adjusted #ifdef to exclude Chromium
+        Mac from ScrollByPrecisePixels change.
+
 2012-07-11  Jia Pu  <jpu@apple.com>
 
         On Mac, autocorrection sometimes fails to take place in Safari.

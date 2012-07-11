@@ -91,7 +91,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 
     bool handled = false;
 
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) && !OS(DARWIN)
     ScrollGranularity granularity = e.hasPreciseScrollingDeltas() ? ScrollByPrecisePixel : ScrollByPixel;
 #else
     ScrollGranularity granularity = ScrollByPixel;
