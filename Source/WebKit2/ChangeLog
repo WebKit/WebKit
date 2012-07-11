@@ -1,3 +1,16 @@
+2012-07-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Enable antialiasing for TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=90915
+
+        Reviewed by Martin Robinson.
+
+        Enable the new antialiasing functionality for WebLayerTreeRendering.
+        This will make one-tile layers antialiased when using UI_SIDE_COMPOSITING.
+
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::ensureRootLayer):
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         WebCore::Settings for Hixie76 WebSocket protocol doesn't do anything and should be removed

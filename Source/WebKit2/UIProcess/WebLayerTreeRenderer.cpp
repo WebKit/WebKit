@@ -414,8 +414,10 @@ void WebLayerTreeRenderer::ensureRootLayer()
 {
     if (m_rootLayer)
         return;
-    if (!m_textureMapper)
+    if (!m_textureMapper) {
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
+        static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
+    }
 
     m_rootLayer = createLayer(InvalidWebLayerID);
     m_rootLayer->setMasksToBounds(false);
