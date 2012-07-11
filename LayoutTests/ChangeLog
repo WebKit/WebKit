@@ -1,3 +1,9 @@
+2012-07-11  Balazs Ankes  <bank@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r122290.
+
+        * platform/qt/Skipped: Skip fast/forms/input-in-table-cell-no-value.html because  ENABLE(INPUT_TYPE_DATE) is disabled
+
 2012-07-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Move tests that require ENABLE_INPUT_TYPE_* to TestExpectations

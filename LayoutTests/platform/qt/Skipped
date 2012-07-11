@@ -80,6 +80,7 @@ fast/forms/datetimelocal
 fast/forms/month
 fast/forms/time
 fast/forms/week
+fast/forms/input-in-table-cell-no-value.html
 
 # ENABLE_GAMEPAD not enabled.
 gamepad/
