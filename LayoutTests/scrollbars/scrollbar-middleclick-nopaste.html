@@ -10,9 +10,12 @@ if (window.testRunner) {
 
 <div id="console" style="width:200%;height:200%;">
 <div style="border:2px solid black;width:25%;" onclick="finished();"> This test checks that middle clicking the scroll bars doesn't trigger a paste event (See <a href="https://bugs.webkit.org/show_bug.cgi?id=33062">Bug 33062</a>). If the test passes, the output will be a single line that says PASS. To run the tests manually, middle click each of the scroll bars, then click this paragraph.</div>
+<input type="text" id="input-field" onpaste="pasteCount++;"/>
 </div>
-
 <script>
+var i = document.getElementById('input-field');
+i.focus();
+
 if (window.eventSender) {
     eventSender.mouseMoveTo(window.innerWidth - 1, 1);
     eventSender.mouseDown(1);

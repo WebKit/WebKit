@@ -1,3 +1,15 @@
+2012-07-11  Steffen Imhof  <steffen.imhof@basyskom.com>
+
+        [Qt] Middle clicking a scrollbar causes text to be pasted.
+        https://bugs.webkit.org/show_bug.cgi?id=78444
+
+        Check if the event was already accepted before handling the clipboard.
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseReleaseEvent):
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         WebCore::Settings for Hixie76 WebSocket protocol doesn't do anything and should be removed

@@ -791,7 +791,8 @@ void QWebPagePrivate::mouseReleaseEvent(T *ev)
         accepted = frame->eventHandler()->handleMouseReleaseEvent(mev);
     ev->setAccepted(accepted);
 
-    handleClipboard(ev, ev->button());
+    if (!ev->isAccepted())
+        handleClipboard(ev, ev->button());
     handleSoftwareInputPanel(ev->button(), QPointF(ev->pos()).toPoint());
 }
 
