@@ -418,32 +418,35 @@ void RenderSVGRoot::updateCachedBoundaries()
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     LayoutPoint pointInParent = pointInContainer.point() - toLayoutSize(accumulatedOffset);
-    LayoutPoint pointInBorderBox(pointInParent.x() - x(), pointInParent.y() - y());
+    LayoutPoint pointInBorderBox = pointInParent - toLayoutSize(location());
 
-    // Note: For now, we're ignoring hits to border and padding for <svg>
-    if (!contentBoxRect().contains(pointInBorderBox))
-        return false;
+    // Only test SVG content if the point is in our content box.
+    // FIXME: This should be an intersection when rect-based hit tests are supported by nodeAtFloatPoint.
+    if (contentBoxRect().contains(pointInBorderBox)) {
+        FloatPoint localPoint = localToParentTransform().inverse().mapPoint(FloatPoint(pointInParent));
 
-    FloatPoint localPoint = localToParentTransform().inverse().mapPoint(FloatPoint(pointInParent));
-
-    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
-            // FIXME: CSS/HTML assumes the local point is relative to the border box, right?
-            updateHitTestResult(result, pointInBorderBox);
+        for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             // FIXME: nodeAtFloatPoint() doesn't handle rect-based hit tests yet.
-            result.addNodeToRectBasedTestResult(child->node(), pointInContainer);
-            return true;
+            if (child->nodeAtFloatPoint(request, result, localPoint, hitTestAction)) {
+                updateHitTestResult(result, pointInBorderBox);
+                if (!result.addNodeToRectBasedTestResult(child->node(), pointInContainer))
+                    return true;
+            }
         }
     }
 
     // If we didn't early exit above, we've just hit the container <svg> element. Unlike SVG 1.1, 2nd Edition allows container elements to be hit.
-    if (hitTestAction == HitTestBlockBackground && style()->pointerEvents() != PE_NONE) {
+    if (hitTestAction == HitTestBlockBackground && visibleToHitTesting()) {
         // Only return true here, if the last hit testing phase 'BlockBackground' is executed. If we'd return true in the 'Foreground' phase,
         // hit testing would stop immediately. For SVG only trees this doesn't matter. Though when we have a <foreignObject> subtree we need
         // to be able to detect hits on the background of a <div> element. If we'd return true here in the 'Foreground' phase, we are not able 
         // to detect these hits anymore.
-        updateHitTestResult(result, roundedLayoutPoint(localPoint));
-        return true;
+        LayoutRect boundsRect(accumulatedOffset + location(), size());
+        if (pointInContainer.intersects(boundsRect)) {
+            updateHitTestResult(result, pointInBorderBox);
+            if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
+                return true;
+        }
     }
 
     return false;

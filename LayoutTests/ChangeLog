@@ -1,3 +1,15 @@
+2012-07-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        NodesFromRect doesn't work on SVG root elements.
+        https://bugs.webkit.org/show_bug.cgi?id=89990
+
+        Reviewed by Antonio Gomes.
+
+        Test nodesFromRect on SVG root elements.
+
+        * fast/dom/nodesFromRect-svg-expected.txt: Added.
+        * fast/dom/nodesFromRect-svg.html: Added.
+
 2012-07-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.
