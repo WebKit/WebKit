@@ -64,6 +64,15 @@ module window {
         void setSyncXHRInDocumentsEnabled(in boolean enabled) raises(DOMException);
         void setJavaScriptProfilingEnabled(in boolean creates) raises(DOMException);
         void setWindowFocusRestricted(in boolean restricted) raises(DOMException);
+
+        void setPagination(in DOMString mode, in long gap) raises(DOMException);
+        sequence<String> userPreferredLanguages();
+        void setUserPreferredLanguages(in sequence<String> languages);
+        void allowRoundingHacks();
+#if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
+        void setShouldDisplayTrackKind(in DOMString kind, in boolean enabled) raises (DOMException);
+        boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);
+#endif
     };
 }
 

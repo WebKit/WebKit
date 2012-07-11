@@ -37,6 +37,7 @@
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "TextRun.h"
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
@@ -50,18 +51,6 @@
 
 #define InternalSettingsGuardForSettings()  \
     if (!settings()) { \
-        ec = INVALID_ACCESS_ERR; \
-        return; \
-    }
-
-#define InternalSettingsGuardForFrame() \
-    if (!frame()) { \
-        ec = INVALID_ACCESS_ERR; \
-        return; \
-    }
-
-#define InternalSettingsGuardForFrameView() \
-    if (!frame() || !frame()->view()) { \
         ec = INVALID_ACCESS_ERR; \
         return; \
     }
@@ -80,41 +69,31 @@
 
 namespace WebCore {
 
-
-PassRefPtr<InternalSettings> InternalSettings::create(Frame* frame)
-{
-    return adoptRef(new InternalSettings(frame));
-}
-
-InternalSettings::~InternalSettings()
-{
-}
-
-InternalSettings::InternalSettings(Frame* frame)
-    : FrameDestructionObserver(frame)
-    , m_originalPasswordEchoDurationInSeconds(settings()->passwordEchoDurationInSeconds())
-    , m_originalPasswordEchoEnabled(settings()->passwordEchoEnabled())
+InternalSettings::Backup::Backup(Page* page, Settings* settings)
+    : m_originalPasswordEchoDurationInSeconds(settings->passwordEchoDurationInSeconds())
+    , m_originalPasswordEchoEnabled(settings->passwordEchoEnabled())
     , m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::cssExclusionsEnabled())
 #if ENABLE(SHADOW_DOM)
     , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::shadowDOMEnabled())
 #endif
-    , m_originalEditingBehavior(settings()->editingBehaviorType())
-    , m_originalFixedPositionCreatesStackingContext(settings()->fixedPositionCreatesStackingContext())
-    , m_originalSyncXHRInDocumentsEnabled(settings()->syncXHRInDocumentsEnabled())
+    , m_originalEditingBehavior(settings->editingBehaviorType())
+    , m_originalFixedPositionCreatesStackingContext(settings->fixedPositionCreatesStackingContext())
+    , m_originalSyncXHRInDocumentsEnabled(settings->syncXHRInDocumentsEnabled())
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_originalJavaScriptProfilingEnabled(page() && page()->inspectorController() && page()->inspectorController()->profilerEnabled())
+    , m_originalJavaScriptProfilingEnabled(page->inspectorController() && page->inspectorController()->profilerEnabled())
 #endif
-    , m_originalWindowFocusRestricted(settings()->windowFocusRestricted())
-    , m_originalDeviceSupportsTouch(settings()->deviceSupportsTouch())
-    , m_originalDeviceSupportsMouse(settings()->deviceSupportsMouse())
+    , m_originalWindowFocusRestricted(settings->windowFocusRestricted())
+    , m_originalDeviceSupportsTouch(settings->deviceSupportsTouch())
+    , m_originalDeviceSupportsMouse(settings->deviceSupportsMouse())
 #if ENABLE(TEXT_AUTOSIZING)
-    , m_originalTextAutosizingEnabled(settings()->textAutosizingEnabled())
-    , m_originalTextAutosizingWindowSizeOverride(settings()->textAutosizingWindowSizeOverride())
+    , m_originalTextAutosizingEnabled(settings->textAutosizingEnabled())
+    , m_originalTextAutosizingWindowSizeOverride(settings->textAutosizingWindowSizeOverride())
 #endif
 {
 }
 
-void InternalSettings::restoreTo(Settings* settings)
+
+void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
 {
     settings->setPasswordEchoDurationInSeconds(m_originalPasswordEchoDurationInSeconds);
     settings->setPasswordEchoEnabled(m_originalPasswordEchoEnabled);
@@ -126,8 +105,8 @@ void InternalSettings::restoreTo(Settings* settings)
     settings->setFixedPositionCreatesStackingContext(m_originalFixedPositionCreatesStackingContext);
     settings->setSyncXHRInDocumentsEnabled(m_originalSyncXHRInDocumentsEnabled);
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
-    if (page() && page()->inspectorController())
-        page()->inspectorController()->setProfilerEnabled(m_originalJavaScriptProfilingEnabled);
+    if (page->inspectorController())
+        page->inspectorController()->setProfilerEnabled(m_originalJavaScriptProfilingEnabled);
 #endif
     settings->setWindowFocusRestricted(m_originalWindowFocusRestricted);
     settings->setDeviceSupportsTouch(m_originalDeviceSupportsTouch);
@@ -138,21 +117,40 @@ void InternalSettings::restoreTo(Settings* settings)
 #endif
 }
 
+InternalSettings* InternalSettings::from(Page* page)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("InternalSettings"));
+    if (!SuperType::from(page, name))
+        SuperType::provideTo(page, name, adoptRef(new InternalSettings(page)));
+    return static_cast<InternalSettings*>(SuperType::from(page, name));
+}
+
+InternalSettings::~InternalSettings()
+{
+}
+
+InternalSettings::InternalSettings(Page* page)
+    : m_page(page)
+    , m_backup(page, page->settings())
+{
+}
+
+void InternalSettings::reset()
+{
+    TextRun::setAllowsRoundingHacks(false);
+    setUserPreferredLanguages(Vector<String>());
+    page()->setPagination(Page::Pagination());
+    page()->setPageScaleFactor(1, IntPoint(0, 0));
+
+    m_backup.restoreTo(page(), settings());
+    m_backup = Backup(page(), settings());
+}
+
 Settings* InternalSettings::settings() const
 {
-    if (!frame() || !frame()->page())
+    if (!page())
         return 0;
-    return frame()->page()->settings();
-}
-
-Document* InternalSettings::document() const
-{
-    return frame() ? frame()->document() : 0;
-}
-
-Page* InternalSettings::page() const
-{
-    return document() ? document()->page() : 0;
+    return page()->settings();
 }
 
 void InternalSettings::setInspectorResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode& ec)
@@ -220,7 +218,7 @@ void InternalSettings::setPasswordEchoDurationInSeconds(double durationInSeconds
 
 void InternalSettings::setFixedElementsLayoutRelativeToFrame(bool enabled, ExceptionCode& ec)
 {
-    InternalSettingsGuardForFrameView();
+    InternalSettingsGuardForSettings();
     settings()->setFixedElementsLayoutRelativeToFrame(enabled);
 }
 
@@ -412,7 +410,7 @@ void InternalSettings::setEditingBehavior(const String& editingBehavior, Excepti
 
 void InternalSettings::setFixedPositionCreatesStackingContext(bool creates, ExceptionCode& ec)
 {
-    InternalSettingsGuardForFrameView();
+    InternalSettingsGuardForSettings();
     settings()->setFixedPositionCreatesStackingContext(creates);
 }
 
@@ -443,5 +441,104 @@ void InternalSettings::setWindowFocusRestricted(bool restricted, ExceptionCode& 
     InternalSettingsGuardForSettings();
     settings()->setWindowFocusRestricted(restricted);
 }
+
+void InternalSettings::allowRoundingHacks() const
+{
+    TextRun::setAllowsRoundingHacks(true);
+}
+
+Vector<String> InternalSettings::userPreferredLanguages() const
+{
+    return WebCore::userPreferredLanguages();
+}
+
+void InternalSettings::setUserPreferredLanguages(const Vector<String>& languages)
+{
+    WebCore::overrideUserPreferredLanguages(languages);
+}
+
+void InternalSettings::setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+
+#if ENABLE(VIDEO_TRACK)
+    if (equalIgnoringCase(kind, "Subtitles"))
+        settings()->setShouldDisplaySubtitles(enabled);
+    else if (equalIgnoringCase(kind, "Captions"))
+        settings()->setShouldDisplayCaptions(enabled);
+    else if (equalIgnoringCase(kind, "TextDescriptions"))
+        settings()->setShouldDisplayTextDescriptions(enabled);
+    else
+        ec = SYNTAX_ERR;
+#else
+    UNUSED_PARAM(kind);
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+bool InternalSettings::shouldDisplayTrackKind(const String& kind, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettingsReturn(false);
+
+#if ENABLE(VIDEO_TRACK)
+    if (equalIgnoringCase(kind, "Subtitles"))
+        return settings()->shouldDisplaySubtitles();
+    if (equalIgnoringCase(kind, "Captions"))
+        return settings()->shouldDisplayCaptions();
+    if (equalIgnoringCase(kind, "TextDescriptions"))
+        return settings()->shouldDisplayTextDescriptions();
+
+    ec = SYNTAX_ERR;
+    return false;
+#else
+    UNUSED_PARAM(kind);
+    return false;
+#endif
+}
+
+void InternalSettings::setPagination(const String& mode, int gap, ExceptionCode& ec)
+{
+    if (!page()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    Page::Pagination pagination;
+    if (mode == "Unpaginated")
+        pagination.mode = Page::Pagination::Unpaginated;
+    else if (mode == "LeftToRightPaginated")
+        pagination.mode = Page::Pagination::LeftToRightPaginated;
+    else if (mode == "RightToLeftPaginated")
+        pagination.mode = Page::Pagination::RightToLeftPaginated;
+    else if (mode == "TopToBottomPaginated")
+        pagination.mode = Page::Pagination::TopToBottomPaginated;
+    else if (mode == "BottomToTopPaginated")
+        pagination.mode = Page::Pagination::BottomToTopPaginated;
+    else {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    pagination.gap = gap;
+    page()->setPagination(pagination);
+}
+
+String InternalSettings::configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode& ec)
+{
+    if (!page()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    const int defaultLayoutWidthForNonMobilePages = 980;
+
+    ViewportArguments arguments = page()->viewportArguments();
+    ViewportAttributes attributes = computeViewportAttributes(arguments, defaultLayoutWidthForNonMobilePages, deviceWidth, deviceHeight, devicePixelRatio, IntSize(availableWidth, availableHeight));
+    restrictMinimumScaleFactorToViewportSize(attributes, IntSize(availableWidth, availableHeight));
+    restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
+
+    return "viewport size " + String::number(attributes.layoutSize.width()) + "x" + String::number(attributes.layoutSize.height()) + " scale " + String::number(attributes.initialScale) + " with limits [" + String::number(attributes.minimumScale) + ", " + String::number(attributes.maximumScale) + "] and userScalable " + (attributes.userScalable ? "true" : "false");
+}
+
 
 }

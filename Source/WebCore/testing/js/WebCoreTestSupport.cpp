@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebCoreTestSupport.h"
 
+#include "Frame.h"
+#include "InternalSettings.h"
 #include "Internals.h"
 #include "JSDocument.h"
 #include "JSInternals.h"
@@ -43,8 +45,8 @@ void injectInternalsObject(JSContextRef context)
     JSLockHolder lock(exec);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
-    Document* document = scriptContext->isDocument() ? static_cast<Document*>(scriptContext) : 0;
-    globalObject->putDirect(exec->globalData(), Identifier(exec, Internals::internalsId), toJS(exec, globalObject, Internals::create(document)));
+    if (scriptContext->isDocument())
+        globalObject->putDirect(exec->globalData(), Identifier(exec, Internals::internalsId), toJS(exec, globalObject, Internals::create(static_cast<Document*>(scriptContext))));
 }
 
 void resetInternalsObject(JSContextRef context)
@@ -52,14 +54,9 @@ void resetInternalsObject(JSContextRef context)
     ExecState* exec = toJS(context);
     JSLockHolder lock(exec);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
-    JSValue internalsJS = globalObject->getDirect(exec->globalData(), Identifier(exec, Internals::internalsId));
-    if (internalsJS.isNull() || internalsJS.isEmpty())
-        return;
-    if (Internals* internals = toInternals(internalsJS)) {
-        ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
-        if (scriptContext->isDocument())
-            internals->reset(static_cast<Document*>(scriptContext));
-    }
+    ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
+    ASSERT(scriptContext->isDocument());
+    InternalSettings::from(static_cast<Document*>(scriptContext)->frame()->page())->reset();
 }
 
 }

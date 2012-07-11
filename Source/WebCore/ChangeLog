@@ -1,3 +1,69 @@
+2012-07-11  MORITA Hajime  <morrita@google.com>
+
+        WebCoreSupport needs objects each of which follows major WebCore objects
+        https://bugs.webkit.org/show_bug.cgi?id=88499
+
+        Reviewed by Alexey Proskuryakov.
+
+        This change
+
+        - Makes Internals rough lifetime to follow Document.
+          Note that Internals can survive longer than Document in same case.
+          Internals::m_document is cleared when the document destruction is notified.
+        - Makes InternalSettings rough lifetime to follow the Page.
+          This is done by making InternalSettings a supplement of the page.
+          Now InternalSettings object is created per Page instead of per Frame.
+
+        Per-test setting clearance is done by newly introduced InternalSettings::Backup,
+        which recovers the modified settings and refreshes it for each time a test starts.
+
+        * WebCore.exp.in:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::from):
+        (WebCore::InternalSettings::~InternalSettings):
+        (WebCore::InternalSettings::InternalSettings):
+        (WebCore::InternalSettings::reset):
+        (WebCore::InternalSettings::settings):
+        (WebCore::InternalSettings::setFixedElementsLayoutRelativeToFrame):
+        (WebCore::InternalSettings::setFixedPositionCreatesStackingContext):
+        (WebCore::InternalSettings::allowRoundingHacks):
+        (WebCore::InternalSettings::userPreferredLanguages):
+        (WebCore::InternalSettings::setUserPreferredLanguages):
+        (WebCore::InternalSettings::setShouldDisplayTrackKind):
+        (WebCore::InternalSettings::shouldDisplayTrackKind):
+        (WebCore::InternalSettings::setPagination):
+        * testing/InternalSettings.h:
+        (Backup):
+        (InternalSettings):
+        (WebCore::InternalSettings::page):
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore):
+        (WebCore::Internals::contextDocument):
+        (WebCore::Internals::frame):
+        (WebCore::Internals::settings):
+        (WebCore::Internals::setPagination): Replaced as an alias.
+        (WebCore::Internals::userPreferredLanguages): Replaced as an alias.
+        (WebCore::Internals::setUserPreferredLanguages): Replaced as an alias.
+        (WebCore::Internals::setShouldDisplayTrackKind): Replaced as an alias.
+        (WebCore::Internals::shouldDisplayTrackKind): Replaced as an alias.
+        (WebCore::Internals::emitInspectorDidBeginFrame):
+        (WebCore::Internals::emitInspectorDidCancelFrame):
+        (WebCore::Internals::allowRoundingHacks): Replaced as an alias.
+        * testing/Internals.h:
+        (WebCore):
+        (Internals):
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject):
+        (WebCoreTestSupport::resetInternalsObject):
+        * testing/v8/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectInternalsObject):
+        (WebCoreTestSupport::resetInternalsObject):
+
 2012-07-11  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Mac] Expose time format related functions

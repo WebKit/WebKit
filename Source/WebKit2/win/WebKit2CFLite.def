@@ -148,6 +148,9 @@ EXPORTS
         ??0String@WTF@@QAE@PB_W@Z
         ??1FrameDestructionObserver@WebCore@@MAE@XZ
         ??0FrameDestructionObserver@WebCore@@QAE@PAVFrame@1@@Z
+        ??1ContextDestructionObserver@WebCore@@MAE@XZ
+        ?contextDestroyed@ContextDestructionObserver@WebCore@@UAEXXZ
+        ??0ContextDestructionObserver@WebCore@@QAE@PAVScriptExecutionContext@1@@Z
         ?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z
         ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ
 	?description@DocumentMarker@WebCore@@QBEABVString@WTF@@XZ
@@ -261,6 +264,7 @@ EXPORTS
         ?setAllowsRoundingHacks@TextRun@WebCore@@SAX_N@Z
         ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
         ?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z
+	??1ContextDestructionObserver@WebCore@@MAE@XZ
         ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@U?$PtrHash@PAVStringImpl@WTF@@@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
         ?registerURLSchemeAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z
         ?removeURLSchemeRegisteredAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z
