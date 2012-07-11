@@ -3771,6 +3771,7 @@
             'platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp',
             'platform/graphics/harfbuzz/HarfBuzzShaperBase.h',
             'platform/graphics/harfbuzz/ng/HarfBuzzFaceCoreText.cpp',
+            'platform/graphics/harfbuzz/ng/HarfBuzzFaceSkia.cpp',
             'platform/graphics/harfbuzz/ng/HarfBuzzFace.cpp',
             'platform/graphics/harfbuzz/ng/HarfBuzzFace.h',
             'platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp',

@@ -251,6 +251,15 @@ bool FontPlatformData::isFixedPitch() const
     return false;
 }
 
+#if USE(HARFBUZZ_NG)
+HarfBuzzFace* FontPlatformData::harfbuzzFace() const
+{
+    if (!m_harfbuzzFace)
+        m_harfbuzzFace = HarfBuzzFace::create(const_cast<FontPlatformData*>(this), uniqueID());
+
+    return m_harfbuzzFace.get();
+}
+#else
 HarfbuzzFace* FontPlatformData::harfbuzzFace() const
 {
     if (!m_harfbuzzFace)
@@ -258,6 +267,7 @@ HarfbuzzFace* FontPlatformData::harfbuzzFace() const
 
     return m_harfbuzzFace.get();
 }
+#endif
 
 void FontPlatformData::querySystemForRenderStyle()
 {

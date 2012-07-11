@@ -33,7 +33,11 @@
 
 #include "FontOrientation.h"
 #include "FontRenderStyle.h"
+#if USE(HARFBUZZ_NG)
+#include "HarfBuzzFace.h"
+#else
 #include "HarfBuzzSkia.h"
+#endif
 #include "SkPaint.h"
 #include "TextOrientation.h"
 #include <wtf/Forward.h>
@@ -128,7 +132,12 @@ public:
     String description() const;
 #endif
 
+#if USE(HARFBUZZ_NG)
+    // FIXME: Rename this like "harfbuzzNGFace()" because difference is too subtle.
+    HarfBuzzFace* harfbuzzFace() const;
+#else
     HarfbuzzFace* harfbuzzFace() const;
+#endif
 
     // -------------------------------------------------------------------------
     // Global font preferences...
@@ -153,7 +162,11 @@ private:
     FontOrientation m_orientation;
     TextOrientation m_textOrientation;
     FontRenderStyle m_style;
+#if USE(HARFBUZZ_NG)
+    mutable RefPtr<HarfBuzzFace> m_harfbuzzFace;
+#else
     mutable RefPtr<HarfbuzzFace> m_harfbuzzFace;
+#endif
 
     SkTypeface* hashTableDeletedFontValue() const { return reinterpret_cast<SkTypeface*>(-1); }
 };

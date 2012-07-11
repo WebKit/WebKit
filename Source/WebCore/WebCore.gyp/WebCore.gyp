@@ -48,6 +48,8 @@
 
     'enable_wexit_time_destructors': 1,
 
+    'use_harfbuzz_ng%': 0,
+
     'webcore_include_dirs': [
       '../',
       '../..',
@@ -229,6 +231,11 @@
       ['use_x11==1 or OS=="android"', {
         'webcore_include_dirs': [
           '../platform/graphics/harfbuzz',
+        ],
+      }],
+      ['use_x11==1 and use_harfbuzz_ng==1', {
+        'webcore_include_dirs': [
+          '../platform/graphics/harfbuzz/ng',
         ],
       }],
       ['OS=="win" and buildtype=="Official"', {
@@ -1564,6 +1571,16 @@
           'sources/': [
             ['exclude', 'Linux\\.cpp$'],
             ['exclude', 'Harfbuzz[^/]+\\.(cpp|h)$'],
+          ],
+        }],
+        ['use_x11==1 and use_harfbuzz_ng==1', {
+          'sources/': [
+            ['exclude', 'platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz\\.cpp$'],
+            ['exclude', 'platform/graphics/harfbuzz/HarfBuzzSkia\\.cpp$'],
+
+            ['include', 'platform/graphics/harfbuzz/ng/HarfBuzzFace\\.(cpp|h)$'],
+            ['include', 'platform/graphics/harfbuzz/ng/HarfBuzzFaceSkia\\.cpp$'],
+            ['include', 'platform/graphics/harfbuzz/ng/HarfBuzzShaper\\.(cpp|h)$'],
           ],
         }],
         ['toolkit_uses_gtk == 1', {
