@@ -85,6 +85,8 @@ class PerfTestsRunner(object):
                 help=("The build number of the builder running this script.")),
             optparse.make_option("--build", dest="build", action="store_true", default=True,
                 help="Check to ensure the DumpRenderTree build is up-to-date (default)."),
+            optparse.make_option("--no-build", dest="build", action="store_false",
+                help="Don't check to see if the DumpRenderTree build is up-to-date."),
             optparse.make_option("--build-directory",
                 help="Path to the directory under which build files are kept (should not include configuration)"),
             optparse.make_option("--time-out-ms", default=600 * 1000,
