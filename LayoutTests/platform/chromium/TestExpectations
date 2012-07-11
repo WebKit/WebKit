@@ -1129,15 +1129,6 @@ WONTFIX SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 // We don't expose a step button.
 WONTFIX SKIP : media/audio-delete-while-step-button-clicked.html = TIMEOUT
 
-// Feature disabled on chromium build, see: https://bugs.webkit.org/show_bug.cgi?id=85425
-WONTFIX SKIP : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
-WONTFIX SKIP : fast/viewport/viewport-legacy-handheldfriendly.html = TEXT
-WONTFIX SKIP : fast/viewport/viewport-legacy-mobileoptimized-2.html = TEXT
-WONTFIX SKIP : fast/viewport/viewport-legacy-mobileoptimized-3.html = TEXT
-WONTFIX SKIP : fast/viewport/viewport-legacy-mobileoptimized.html = TEXT
-WONTFIX SKIP : fast/viewport/viewport-legacy-ordering-5.html = TEXT
-WONTFIX SKIP : fast/viewport/viewport-legacy-ordering-6.html = TEXT
-
 // We haven't implemented reverse audio/video playback.
 BUGCR33099 SKIP : media/video-reverse-play-duration.html = TIMEOUT
 BUGCR33099 SKIP : media/video-timeupdate-reverse-play.html = TIMEOUT
