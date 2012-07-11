@@ -23,13 +23,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCTextureDrawQuad_h
-#define CCTextureDrawQuad_h
+#include "config.h"
 
-#include <public/WebCompositorTextureQuad.h>
+#include <public/WebCompositorStreamVideoQuad.h>
 
-namespace WebCore {
-typedef WebKit::WebCompositorTextureQuad CCTextureDrawQuad;
+using namespace WebCore;
+
+namespace WebKit {
+
+PassOwnPtr<WebCompositorStreamVideoQuad> WebCompositorStreamVideoQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, const WebTransformationMatrix& matrix)
+{
+    return adoptPtr(new WebCompositorStreamVideoQuad(sharedQuadState, quadRect, textureId, matrix));
 }
 
-#endif
+WebCompositorStreamVideoQuad::WebCompositorStreamVideoQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, const WebTransformationMatrix& matrix)
+    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::StreamVideoContent, quadRect)
+    , m_textureId(textureId)
+    , m_matrix(matrix)
+{
+}
+
+const WebCompositorStreamVideoQuad* WebCompositorStreamVideoQuad::materialCast(const WebCompositorQuad* quad)
+{
+    ASSERT(quad->material() == WebCompositorQuad::StreamVideoContent);
+    return static_cast<const WebCompositorStreamVideoQuad*>(quad);
+}
+
+}

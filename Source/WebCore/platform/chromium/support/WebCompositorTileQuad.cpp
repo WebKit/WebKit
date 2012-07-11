@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,19 @@
 
 #include "config.h"
 
-#include "cc/CCTileDrawQuad.h"
+#include <public/WebCompositorTileQuad.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-PassOwnPtr<CCTileDrawQuad> CCTileDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntRect& opaqueRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA)
+namespace WebKit {
+
+PassOwnPtr<WebCompositorTileQuad> WebCompositorTileQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntRect& opaqueRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA)
 {
-    return adoptPtr(new CCTileDrawQuad(sharedQuadState, quadRect, opaqueRect, textureId, textureOffset, textureSize, textureFilter, swizzleContents, leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
+    return adoptPtr(new WebCompositorTileQuad(sharedQuadState, quadRect, opaqueRect, textureId, textureOffset, textureSize, textureFilter, swizzleContents, leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
 }
 
-CCTileDrawQuad::CCTileDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntRect& opaqueRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA)
-    : CCDrawQuad(sharedQuadState, CCDrawQuad::TiledContent, quadRect)
+WebCompositorTileQuad::WebCompositorTileQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntRect& opaqueRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA)
+    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::TiledContent, quadRect)
     , m_textureId(textureId)
     , m_textureOffset(textureOffset)
     , m_textureSize(textureSize)
@@ -49,6 +51,12 @@ CCTileDrawQuad::CCTileDrawQuad(const CCSharedQuadState* sharedQuadState, const I
     if (isAntialiased())
         m_needsBlending = true;
     m_opaqueRect = opaqueRect;
+}
+
+const WebCompositorTileQuad* WebCompositorTileQuad::materialCast(const WebCompositorQuad* quad)
+{
+    ASSERT(quad->material() == WebCompositorQuad::TiledContent);
+    return static_cast<const WebCompositorTileQuad*>(quad);
 }
 
 }

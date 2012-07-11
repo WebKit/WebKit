@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,31 @@
 
 #include "config.h"
 
-#include "cc/CCSharedQuadState.h"
+#include <public/WebCompositorSolidColorQuad.h>
 
-#include "cc/CCMathUtil.h"
+using namespace WebCore;
 
-using WebKit::WebTransformationMatrix;
+namespace WebKit {
 
-namespace WebCore {
-
-PassOwnPtr<CCSharedQuadState> CCSharedQuadState::create(const WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
+PassOwnPtr<WebCompositorSolidColorQuad> WebCompositorSolidColorQuad::create(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
 {
-    return adoptPtr(new CCSharedQuadState(quadTransform, visibleContentRect, scissorRect, opacity, opaque));
+    return adoptPtr(new WebCompositorSolidColorQuad(sharedQuadState, quadRect, color));
 }
 
-CCSharedQuadState::CCSharedQuadState(const WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
-    : m_quadTransform(quadTransform)
-    , m_visibleContentRect(visibleContentRect)
-    , m_scissorRect(scissorRect)
-    , m_opacity(opacity)
-    , m_opaque(opaque)
+WebCompositorSolidColorQuad::WebCompositorSolidColorQuad(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
+    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::SolidColor, quadRect)
+    , m_color(color)
 {
+    if (SkColorGetA(m_color) < 255)
+        m_quadOpaque = false;
+    else
+        m_opaqueRect = quadRect;
 }
 
-bool CCSharedQuadState::isLayerAxisAlignedIntRect() const
+const WebCompositorSolidColorQuad* WebCompositorSolidColorQuad::materialCast(const WebCompositorQuad* quad)
 {
-    // Note: this doesn't consider window or projection matrices.
-    // Assume that they're orthonormal and have integer scales and translations.
-    bool clipped = false;
-    FloatQuad quad = CCMathUtil::mapQuad(quadTransform(), FloatQuad(visibleContentRect()), clipped);
-    return !clipped && quad.isRectilinear() && quad.boundingBox().isExpressibleAsIntRect();
+    ASSERT(quad->material() == WebCompositorQuad::SolidColor);
+    return static_cast<const WebCompositorSolidColorQuad*>(quad);
 }
 
 }

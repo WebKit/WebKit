@@ -23,13 +23,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCTextureDrawQuad_h
-#define CCTextureDrawQuad_h
+#include "config.h"
 
 #include <public/WebCompositorTextureQuad.h>
 
-namespace WebCore {
-typedef WebKit::WebCompositorTextureQuad CCTextureDrawQuad;
+using namespace WebCore;
+
+namespace WebKit {
+
+PassOwnPtr<WebCompositorTextureQuad> WebCompositorTextureQuad::create(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
+{
+    return adoptPtr(new WebCompositorTextureQuad(sharedQuadState, quadRect, textureId, premultipliedAlpha, uvRect, flipped));
 }
 
-#endif
+WebCompositorTextureQuad::WebCompositorTextureQuad(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
+    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::TextureContent, quadRect)
+    , m_textureId(textureId)
+    , m_premultipliedAlpha(premultipliedAlpha)
+    , m_uvRect(uvRect)
+    , m_flipped(flipped)
+{
+}
+
+void WebCompositorTextureQuad::setNeedsBlending()
+{
+    m_needsBlending = true;
+}
+
+const WebCompositorTextureQuad* WebCompositorTextureQuad::materialCast(const WebKit::WebCompositorQuad* quad)
+{
+    ASSERT(quad->material() == WebCompositorQuad::TextureContent);
+    return static_cast<const WebCompositorTextureQuad*>(quad);
+}
+
+}

@@ -1,3 +1,138 @@
+2012-07-11  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Move compositor quads to Platform/chromium/public
+        https://bugs.webkit.org/show_bug.cgi?id=90582
+
+        Reviewed by Adrienne Walker.
+
+        This moves CCSharedQuadState, CCDrawQuad, and all but two CC*DrawQuad
+        classes to the WebKit namespace, as a first step to pushing them
+        across the process boundary for the ubercompositor.
+
+        - The intent is to serialize the class hierarchy using the same
+        mechanism as WebInputEvent.  In order to do this, there are three
+        requirements: pure POD data, a method returning size, and a packing
+        pragma.
+
+        - Private data members are fine with this kind of serializer, and a
+        default constructor is not needed.  Because of that, we can maintain
+        the same encapsulation and convenient APIs (behind
+        WEBKIT_IMPLEMENTATION) as the original classes.  To ease the
+        transition, the original WebCore headers still exist and typedef to
+        the new classes.
+
+        - However, SharedQuadState will be serialized using the normal
+        IPC_STRUCT_TRAITS macro, so I made its members public.  A custom
+        serializer (on quad lists) will maintain the pointers from quads to
+        SharedQuadStates.
+
+        - I converted the Material casting mechanism to materialCast() methods
+        living in the derived classes.  That way, the WebCompositorQuad header
+        doesn't need to know about all its derived classes.
+
+        - Quad classes not yet transitioned can still be used in
+        non-ubercompositor mode.  CCRenderPassDrawQuad and CCYUVVideoDrawQuad
+        are currently non-POD and I left them in their original files.
+
+        This approach is the best I've found so far, since it preserves all
+        WebCore-facing APIs and avoids unnecessary code duplication (new quad
+        types or members can be added by modifying only one place).  There
+        also should not be an unreasonable amount of custom serializer code
+        required.
+
+        No new tests. (No-op refactoring.)
+
+        * WebCore.gypi:
+        * platform/chromium/support/WebCompositorQuad.cpp: Added.
+        (WebKit):
+        (WebKit::WebCompositorQuad::WebCompositorQuad):
+        (WebKit::WebCompositorQuad::opaqueRect):
+        (WebKit::WebCompositorQuad::setQuadVisibleRect):
+        (WebKit::WebCompositorQuad::size):
+        * platform/chromium/support/WebCompositorSharedQuadState.cpp: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCSharedQuadState.cpp.
+        (WebKit):
+        (WebKit::WebCompositorSharedQuadState::WebCompositorSharedQuadState):
+        (WebKit::WebCompositorSharedQuadState::create):
+        (WebKit::WebCompositorSharedQuadState::isLayerAxisAlignedIntRect):
+        * platform/chromium/support/WebCompositorSolidColorQuad.cpp: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCSolidColorDrawQuad.cpp.
+        (WebKit):
+        (WebKit::WebCompositorSolidColorQuad::create):
+        (WebKit::WebCompositorSolidColorQuad::WebCompositorSolidColorQuad):
+        (WebKit::WebCompositorSolidColorQuad::materialCast):
+        * platform/chromium/support/WebCompositorTextureQuad.cpp: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCTextureDrawQuad.cpp.
+        (WebKit):
+        (WebKit::WebCompositorTextureQuad::create):
+        (WebKit::WebCompositorTextureQuad::WebCompositorTextureQuad):
+        (WebKit::WebCompositorTextureQuad::setNeedsBlending):
+        (WebKit::WebCompositorTextureQuad::materialCast):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawQuad):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/cc/CCCheckerboardDrawQuad.cpp:
+        (WebCore::CCCheckerboardDrawQuad::create):
+        (WebCore::CCCheckerboardDrawQuad::CCCheckerboardDrawQuad):
+        (WebCore::CCCheckerboardDrawQuad::materialCast):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCCheckerboardDrawQuad.h:
+        (CCCheckerboardDrawQuad):
+        * platform/graphics/chromium/cc/CCDebugBorderDrawQuad.cpp:
+        (WebCore::CCDebugBorderDrawQuad::create):
+        (WebCore::CCDebugBorderDrawQuad::CCDebugBorderDrawQuad):
+        (WebCore::CCDebugBorderDrawQuad::materialCast):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCDebugBorderDrawQuad.h:
+        (CCDebugBorderDrawQuad):
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp: Removed.
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCIOSurfaceDrawQuad.cpp:
+        (WebCore::CCIOSurfaceDrawQuad::create):
+        (WebCore::CCIOSurfaceDrawQuad::CCIOSurfaceDrawQuad):
+        (WebCore::CCIOSurfaceDrawQuad::materialCast):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCIOSurfaceDrawQuad.h:
+        (CCIOSurfaceDrawQuad):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        (WebCore::CCRenderPassDrawQuad::materialCast):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCSharedQuadState.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCSolidColorDrawQuad.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCStreamVideoDrawQuad.cpp:
+        (WebCore::CCStreamVideoDrawQuad::create):
+        (WebCore::CCStreamVideoDrawQuad::CCStreamVideoDrawQuad):
+        (WebCore::CCStreamVideoDrawQuad::materialCast):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCStreamVideoDrawQuad.h:
+        (CCStreamVideoDrawQuad):
+        * platform/graphics/chromium/cc/CCTextureDrawQuad.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.cpp:
+        (WebCore::CCTileDrawQuad::create):
+        (WebCore::CCTileDrawQuad::CCTileDrawQuad):
+        (WebCore::CCTileDrawQuad::materialCast):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.h:
+        (CCTileDrawQuad):
+        * platform/graphics/chromium/cc/CCYUVVideoDrawQuad.cpp:
+        (WebCore::CCYUVVideoDrawQuad::create):
+        (WebCore::CCYUVVideoDrawQuad::CCYUVVideoDrawQuad):
+        (WebCore::CCYUVVideoDrawQuad::materialCast):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCYUVVideoDrawQuad.h:
+        (CCYUVVideoDrawQuad):
+
 2012-07-11  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] [regression] Don't use ScrollByPrecisePixels on Chromium Mac.

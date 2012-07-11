@@ -23,13 +23,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCTextureDrawQuad_h
-#define CCTextureDrawQuad_h
+#ifndef WebCompositorSolidColorQuad_h
+#define WebCompositorSolidColorQuad_h
 
-#include <public/WebCompositorTextureQuad.h>
+#include "SkColor.h"
+#include "WebCompositorQuad.h"
+#if WEBKIT_IMPLEMENTATION
+#include <wtf/PassOwnPtr.h>
+#endif
 
-namespace WebCore {
-typedef WebKit::WebCompositorTextureQuad CCTextureDrawQuad;
+namespace WebKit {
+
+#pragma pack(push, 4)
+
+class WebCompositorSolidColorQuad : public WebCompositorQuad {
+public:
+#if WEBKIT_IMPLEMENTATION
+    static PassOwnPtr<WebCompositorSolidColorQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, SkColor);
+#endif
+
+    SkColor color() const { return m_color; };
+
+    static const WebCompositorSolidColorQuad* materialCast(const WebCompositorQuad*);
+private:
+#if WEBKIT_IMPLEMENTATION
+    WebCompositorSolidColorQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect&, SkColor);
+#endif
+
+    SkColor m_color;
+};
+
+#pragma pack(pop)
+
 }
 
 #endif

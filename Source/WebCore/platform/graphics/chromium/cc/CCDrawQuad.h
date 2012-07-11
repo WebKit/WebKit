@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,90 +26,10 @@
 #ifndef CCDrawQuad_h
 #define CCDrawQuad_h
 
-#include "cc/CCSharedQuadState.h"
+#include <public/WebCompositorQuad.h>
 
 namespace WebCore {
-
-class CCCheckerboardDrawQuad;
-class CCDebugBorderDrawQuad;
-class CCIOSurfaceDrawQuad;
-class CCRenderPassDrawQuad;
-class CCSolidColorDrawQuad;
-class CCStreamVideoDrawQuad;
-class CCTextureDrawQuad;
-class CCTileDrawQuad;
-class CCYUVVideoDrawQuad;
-
-// CCDrawQuad is a bag of data used for drawing a quad. Because different
-// materials need different bits of per-quad data to render, classes that derive
-// from CCDrawQuad store additional data in their derived instance. The Material
-// enum is used to "safely" upcast to the derived class.
-class CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCDrawQuad);
-public:
-    const IntRect& quadRect() const { return m_quadRect; }
-    const WebKit::WebTransformationMatrix& quadTransform() const { return m_sharedQuadState->quadTransform(); }
-    const IntRect& visibleContentRect() const { return m_sharedQuadState->visibleContentRect(); }
-    const IntRect& scissorRect() const { return m_sharedQuadState->scissorRect(); }
-    float opacity() const { return m_sharedQuadState->opacity(); }
-    // For the purposes of blending, what part of the contents of this quad are opaque?
-    IntRect opaqueRect() const;
-    bool needsBlending() const { return m_needsBlending || !opaqueRect().contains(m_quadVisibleRect); }
-    bool isLayerAxisAlignedIntRect() const { return m_sharedQuadState->isLayerAxisAlignedIntRect(); }
-
-    // Allows changing the rect that gets drawn to make it smaller. Parameter passed
-    // in will be clipped to quadRect().
-    void setQuadVisibleRect(const IntRect&);
-    const IntRect& quadVisibleRect() const { return m_quadVisibleRect; }
-
-    enum Material {
-        Invalid,
-        Checkerboard,
-        DebugBorder,
-        IOSurfaceContent,
-        RenderPass,
-        TextureContent,
-        SolidColor,
-        TiledContent,
-        YUVVideoContent,
-        StreamVideoContent,
-    };
-
-    Material material() const { return m_material; }
-    bool isDebugQuad() const { return m_material == DebugBorder; }
-
-    const CCCheckerboardDrawQuad* toCheckerboardDrawQuad() const;
-    const CCDebugBorderDrawQuad* toDebugBorderDrawQuad() const;
-    const CCIOSurfaceDrawQuad* toIOSurfaceDrawQuad() const;
-    const CCRenderPassDrawQuad* toRenderPassDrawQuad() const;
-    const CCSolidColorDrawQuad* toSolidColorDrawQuad() const;
-    const CCStreamVideoDrawQuad* toStreamVideoDrawQuad() const;
-    const CCTextureDrawQuad* toTextureDrawQuad() const;
-    const CCTileDrawQuad* toTileDrawQuad() const;
-    const CCYUVVideoDrawQuad* toYUVVideoDrawQuad() const;
-
-    const CCSharedQuadState* sharedQuadState() const { return m_sharedQuadState; }
-
-protected:
-    CCDrawQuad(const CCSharedQuadState*, Material, const IntRect&);
-
-    const CCSharedQuadState* m_sharedQuadState;
-
-    Material m_material;
-    IntRect m_quadRect;
-    IntRect m_quadVisibleRect;
-
-    // By default, the shared quad state determines whether or not this quad is
-    // opaque or needs blending. Derived classes can override with these
-    // variables.
-    bool m_quadOpaque;
-    bool m_needsBlending;
-
-    // Be default, this rect is empty. It is used when the shared quad state and above
-    // variables determine that the quad is not fully opaque but may be partially opaque.
-    IntRect m_opaqueRect;
-};
-
+typedef WebKit::WebCompositorQuad CCDrawQuad;
 }
 
 #endif

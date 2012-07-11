@@ -1,3 +1,77 @@
+2012-07-11  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Move compositor quads to Platform/chromium/public
+        https://bugs.webkit.org/show_bug.cgi?id=90582
+
+        Reviewed by Adrienne Walker.
+
+        This moves CCSharedQuadState, CCDrawQuad, and all but two CC*DrawQuad
+        classes to the WebKit namespace, as a first step to pushing them
+        across the process boundary for the ubercompositor.
+
+        - The intent is to serialize the class hierarchy using the same
+        mechanism as WebInputEvent.  In order to do this, there are three
+        requirements: pure POD data, a method returning size, and a packing
+        pragma.
+
+        - Private data members are fine with this kind of serializer, and a
+        default constructor is not needed.  Because of that, we can maintain
+        the same encapsulation and convenient APIs (behind
+        WEBKIT_IMPLEMENTATION) as the original classes.  To ease the
+        transition, the original WebCore headers still exist and typedef to
+        the new classes.
+
+        - However, SharedQuadState will be serialized using the normal
+        IPC_STRUCT_TRAITS macro, so I made its members public.  A custom
+        serializer (on quad lists) will maintain the pointers from quads to
+        SharedQuadStates.
+
+        - I converted the Material casting mechanism to materialCast() methods
+        living in the derived classes.  That way, the WebCompositorQuad header
+        doesn't need to know about all its derived classes.
+
+        - Quad classes not yet transitioned can still be used in
+        non-ubercompositor mode.  CCRenderPassDrawQuad and CCYUVVideoDrawQuad
+        are currently non-POD and I left them in their original files.
+
+        This approach is the best I've found so far, since it preserves all
+        WebCore-facing APIs and avoids unnecessary code duplication (new quad
+        types or members can be added by modifying only one place).  There
+        also should not be an unreasonable amount of custom serializer code
+        required.
+
+        * Platform.gypi:
+        * chromium/public/WebCompositorQuad.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCDrawQuad.h.
+        (WebKit):
+        (WebCompositorQuad):
+        (WebKit::WebCompositorQuad::quadRect):
+        (WebKit::WebCompositorQuad::quadTransform):
+        (WebKit::WebCompositorQuad::layerTransform):
+        (WebKit::WebCompositorQuad::layerRect):
+        (WebKit::WebCompositorQuad::scissorRect):
+        (WebKit::WebCompositorQuad::opacity):
+        (WebKit::WebCompositorQuad::needsBlending):
+        (WebKit::WebCompositorQuad::isLayerAxisAlignedIntRect):
+        (WebKit::WebCompositorQuad::quadVisibleRect):
+        (WebKit::WebCompositorQuad::isDebugQuad):
+        (WebKit::WebCompositorQuad::material):
+        (WebKit::WebCompositorQuad::sharedQuadState):
+        (WebKit::WebCompositorQuad::setSharedQuadState):
+        * chromium/public/WebCompositorSharedQuadState.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCSolidColorDrawQuad.h.
+        (WebKit):
+        (WebCompositorSharedQuadState):
+        * chromium/public/WebCompositorSolidColorQuad.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCSolidColorDrawQuad.h.
+        (WebKit):
+        (WebCompositorSolidColorQuad):
+        (WebKit::WebCompositorSolidColorQuad::color):
+        * chromium/public/WebCompositorTextureQuad.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCTextureDrawQuad.h.
+        (WebKit):
+        (WebCompositorTextureQuad):
+        (WebKit::WebCompositorTextureQuad::uvRect):
+        (WebKit::WebCompositorTextureQuad::textureId):
+        (WebKit::WebCompositorTextureQuad::premultipliedAlpha):
+        (WebKit::WebCompositorTextureQuad::flipped):
+
 2012-07-05  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Create a WebKit::Web* wrapper for the cc animation classes

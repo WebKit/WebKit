@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +25,31 @@
 
 #include "config.h"
 
-#include "cc/CCDebugBorderDrawQuad.h"
+#include <public/WebCompositorDebugBorderQuad.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-PassOwnPtr<CCDebugBorderDrawQuad> CCDebugBorderDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
+namespace WebKit {
+
+PassOwnPtr<WebCompositorDebugBorderQuad> WebCompositorDebugBorderQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
 {
-    return adoptPtr(new CCDebugBorderDrawQuad(sharedQuadState, quadRect, color, width));
+    return adoptPtr(new WebCompositorDebugBorderQuad(sharedQuadState, quadRect, color, width));
 }
 
-CCDebugBorderDrawQuad::CCDebugBorderDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
-    : CCDrawQuad(sharedQuadState, CCDrawQuad::DebugBorder, quadRect)
+WebCompositorDebugBorderQuad::WebCompositorDebugBorderQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
+    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::DebugBorder, quadRect)
     , m_color(color)
     , m_width(width)
 {
     m_quadOpaque = false;
     if (SkColorGetA(m_color) < 255)
         m_needsBlending = true;
+}
+
+const WebCompositorDebugBorderQuad* WebCompositorDebugBorderQuad::materialCast(const WebCompositorQuad* quad)
+{
+    ASSERT(quad->material() == WebCompositorQuad::DebugBorder);
+    return static_cast<const WebCompositorDebugBorderQuad*>(quad);
 }
 
 }

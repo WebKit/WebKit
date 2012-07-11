@@ -23,20 +23,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebCompositorIOSurfaceQuad_h
+#define WebCompositorIOSurfaceQuad_h
 
-#include "cc/CCCheckerboardDrawQuad.h"
+#include "WebCompositorQuad.h"
+#include "WebSize.h"
+#include <wtf/PassOwnPtr.h>
 
-namespace WebCore {
+namespace WebKit {
 
-PassOwnPtr<CCCheckerboardDrawQuad> CCCheckerboardDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect)
-{
-    return adoptPtr(new CCCheckerboardDrawQuad(sharedQuadState, quadRect));
+#pragma pack(push, 4)
+
+class WebCompositorIOSurfaceQuad : public WebCompositorQuad {
+public:
+#if WEBKIT_IMPLEMENTATION
+    static PassOwnPtr<WebCompositorIOSurfaceQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, const WebCore::IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
+
+    WebCore::IntSize ioSurfaceSize() const { return m_ioSurfaceSize; }
+    unsigned ioSurfaceTextureId() const { return m_ioSurfaceTextureId; }
+#endif
+
+    static const WebCompositorIOSurfaceQuad* materialCast(const WebCompositorQuad*);
+private:
+#if WEBKIT_IMPLEMENTATION
+    WebCompositorIOSurfaceQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect&, const WebCore::IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
+#endif
+
+    WebSize m_ioSurfaceSize;
+    unsigned m_ioSurfaceTextureId;
+};
+
+#pragma pack(pop)
+
 }
 
-CCCheckerboardDrawQuad::CCCheckerboardDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect)
-    : CCDrawQuad(sharedQuadState, CCDrawQuad::Checkerboard, quadRect)
-{
-}
-
-}
+#endif

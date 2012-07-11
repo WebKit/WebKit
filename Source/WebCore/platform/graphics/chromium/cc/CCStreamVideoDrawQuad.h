@@ -26,27 +26,10 @@
 #ifndef CCStreamVideoDrawQuad_h
 #define CCStreamVideoDrawQuad_h
 
-#include "cc/CCDrawQuad.h"
-#include <public/WebTransformationMatrix.h>
-#include <wtf/PassOwnPtr.h>
+#include <public/WebCompositorStreamVideoQuad.h>
 
 namespace WebCore {
-
-class CCStreamVideoDrawQuad : public CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCStreamVideoDrawQuad);
-public:
-    static PassOwnPtr<CCStreamVideoDrawQuad> create(const CCSharedQuadState*, const IntRect&, unsigned textureId, const WebKit::WebTransformationMatrix&);
-
-    unsigned textureId() const { return m_textureId; }
-    const WebKit::WebTransformationMatrix& matrix() const { return m_matrix; }
-
-private:
-    CCStreamVideoDrawQuad(const CCSharedQuadState*, const IntRect&, unsigned textureId, const WebKit::WebTransformationMatrix&);
-
-    unsigned m_textureId;
-    WebKit::WebTransformationMatrix m_matrix;
-};
-
+typedef WebKit::WebCompositorStreamVideoQuad CCStreamVideoDrawQuad;
 }
 
 #endif

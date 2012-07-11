@@ -23,13 +23,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCTextureDrawQuad_h
-#define CCTextureDrawQuad_h
+#ifndef WebCompositorCheckerboardQuad_h
+#define WebCompositorCheckerboardQuad_h
 
-#include <public/WebCompositorTextureQuad.h>
+#include "WebCompositorQuad.h"
+#if WEBKIT_IMPLEMENTATION
+#include <wtf/PassOwnPtr.h>
+#endif
 
-namespace WebCore {
-typedef WebKit::WebCompositorTextureQuad CCTextureDrawQuad;
+namespace WebKit {
+
+#pragma pack(push, 4)
+
+class WebCompositorCheckerboardQuad : public WebCompositorQuad {
+public:
+#if WEBKIT_IMPLEMENTATION
+    static PassOwnPtr<WebCompositorCheckerboardQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&);
+#endif
+
+    static const WebCompositorCheckerboardQuad* materialCast(const WebCompositorQuad*);
+private:
+#if WEBKIT_IMPLEMENTATION
+    WebCompositorCheckerboardQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect&);
+#endif
+};
+
+#pragma pack(pop)
+
 }
 
 #endif

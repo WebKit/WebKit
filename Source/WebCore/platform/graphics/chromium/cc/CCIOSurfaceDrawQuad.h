@@ -26,26 +26,10 @@
 #ifndef CCIOSurfaceDrawQuad_h
 #define CCIOSurfaceDrawQuad_h
 
-#include "cc/CCDrawQuad.h"
-#include <wtf/PassOwnPtr.h>
+#include <public/WebCompositorIOSurfaceQuad.h>
 
 namespace WebCore {
-
-class CCIOSurfaceDrawQuad : public CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCIOSurfaceDrawQuad);
-public:
-    static PassOwnPtr<CCIOSurfaceDrawQuad> create(const CCSharedQuadState*, const IntRect&, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
-
-    const IntSize& ioSurfaceSize() const { return m_ioSurfaceSize; }
-    unsigned ioSurfaceTextureId() const { return m_ioSurfaceTextureId; }
-
-private:
-    CCIOSurfaceDrawQuad(const CCSharedQuadState*, const IntRect&, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
-
-    IntSize m_ioSurfaceSize;
-    unsigned m_ioSurfaceTextureId;
-};
-
+typedef WebKit::WebCompositorIOSurfaceQuad CCIOSurfaceDrawQuad;
 }
 
 #endif

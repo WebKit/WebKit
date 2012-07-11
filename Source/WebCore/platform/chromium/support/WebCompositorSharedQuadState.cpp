@@ -23,13 +23,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCSharedQuadState_h
-#define CCSharedQuadState_h
+#include "config.h"
 
 #include <public/WebCompositorSharedQuadState.h>
 
-namespace WebCore {
-typedef WebKit::WebCompositorSharedQuadState CCSharedQuadState;
+#include "FloatQuad.h"
+#include "cc/CCMathUtil.h"
+
+using WebCore::FloatQuad;
+using WebCore::IntRect;
+
+namespace WebKit {
+
+WebCompositorSharedQuadState::WebCompositorSharedQuadState()
+    : opacity(0)
+    , opaque(opaque)
+{
 }
 
-#endif
+PassOwnPtr<WebCompositorSharedQuadState> WebCompositorSharedQuadState::create(const WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
+{
+    return adoptPtr(new WebCompositorSharedQuadState(quadTransform, visibleContentRect, scissorRect, opacity, opaque));
+}
+
+WebCompositorSharedQuadState::WebCompositorSharedQuadState(const WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
+    : quadTransform(quadTransform)
+    , visibleContentRect(visibleContentRect)
+    , scissorRect(scissorRect)
+    , opacity(opacity)
+    , opaque(opaque)
+{
+}
+
+bool WebCompositorSharedQuadState::isLayerAxisAlignedIntRect() const
+{
+    // Note: this doesn't consider window or projection matrices.
+    // Assume that they're orthonormal and have integer scales and translations.
+    bool clipped = false;
+    FloatQuad quad = WebCore::CCMathUtil::mapQuad(quadTransform, FloatQuad(IntRect(visibleContentRect)), clipped);
+    return !clipped && quad.isRectilinear() && quad.boundingBox().isExpressibleAsIntRect();
+}
+
+}

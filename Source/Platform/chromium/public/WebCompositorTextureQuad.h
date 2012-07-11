@@ -23,13 +23,50 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCTextureDrawQuad_h
-#define CCTextureDrawQuad_h
+#ifndef WebCompositorTextureQuad_h
+#define WebCompositorTextureQuad_h
 
-#include <public/WebCompositorTextureQuad.h>
+#if WEBKIT_IMPLEMENTATION
+#include "FloatRect.h"
+#endif
+#include "WebCommon.h"
+#include "WebCompositorQuad.h"
+#include "WebFloatRect.h"
+#if WEBKIT_IMPLEMENTATION
+#include <wtf/PassOwnPtr.h>
+#endif
 
-namespace WebCore {
-typedef WebKit::WebCompositorTextureQuad CCTextureDrawQuad;
+namespace WebKit {
+
+#pragma pack(push, 4)
+
+class WebCompositorTextureQuad : public WebCompositorQuad {
+public:
+#if WEBKIT_IMPLEMENTATION
+    static PassOwnPtr<WebCompositorTextureQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned textureId, bool premultipliedAlpha, const WebCore::FloatRect& uvRect, bool flipped);
+    WebCore::FloatRect uvRect() const { return m_uvRect; }
+#endif
+
+    unsigned textureId() const { return m_textureId; }
+    bool premultipliedAlpha() const { return  m_premultipliedAlpha; }
+    bool flipped() const { return m_flipped; }
+
+    void setNeedsBlending();
+
+    static const WebCompositorTextureQuad* materialCast(const WebCompositorQuad*);
+private:
+#if WEBKIT_IMPLEMENTATION
+    WebCompositorTextureQuad(const WebKit::WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned texture_id, bool premultipliedAlpha, const WebCore::FloatRect& uvRect, bool flipped);
+#endif
+
+    unsigned m_textureId;
+    bool m_premultipliedAlpha;
+    WebFloatRect m_uvRect;
+    bool m_flipped;
+};
+
+#pragma pack(pop)
+
 }
 
 #endif

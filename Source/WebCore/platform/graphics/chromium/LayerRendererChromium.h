@@ -37,7 +37,16 @@
 #include "Extensions3DChromium.h"
 #include "TextureCopier.h"
 #include "TrackingTextureAllocator.h"
+#include "cc/CCCheckerboardDrawQuad.h"
+#include "cc/CCDebugBorderDrawQuad.h"
+#include "cc/CCIOSurfaceDrawQuad.h"
+#include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCRenderer.h"
+#include "cc/CCSolidColorDrawQuad.h"
+#include "cc/CCStreamVideoDrawQuad.h"
+#include "cc/CCTextureDrawQuad.h"
+#include "cc/CCTileDrawQuad.h"
+#include "cc/CCYUVVideoDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
@@ -46,17 +55,7 @@ class WebGraphicsContext3D;
 
 namespace WebCore {
 
-class CCCheckerboardDrawQuad;
-class CCDebugBorderDrawQuad;
-class CCDrawQuad;
-class CCIOSurfaceDrawQuad;
-class CCRenderPassDrawQuad;
 class CCScopedTexture;
-class CCSolidColorDrawQuad;
-class CCStreamVideoDrawQuad;
-class CCTextureDrawQuad;
-class CCTileDrawQuad;
-class CCYUVVideoDrawQuad;
 class GeometryBinding;
 class ScopedEnsureFramebufferAllocation;
 

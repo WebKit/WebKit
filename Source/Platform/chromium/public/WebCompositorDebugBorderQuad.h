@@ -23,22 +23,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebCompositorDebugBorderQuad_h
+#define WebCompositorDebugBorderQuad_h
 
-#include "cc/CCIOSurfaceDrawQuad.h"
+#include "SkColor.h"
+#include "WebCompositorQuad.h"
+#if WEBKIT_IMPLEMENTATION
+#include <wtf/PassOwnPtr.h>
+#endif
 
-namespace WebCore {
+namespace WebKit {
 
-PassOwnPtr<CCIOSurfaceDrawQuad> CCIOSurfaceDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
-{
-    return adoptPtr(new CCIOSurfaceDrawQuad(sharedQuadState, quadRect, ioSurfaceSize, ioSurfaceTextureId));
+#pragma pack(push, 4)
+
+class WebCompositorDebugBorderQuad : public WebCompositorQuad {
+public:
+#if WEBKIT_IMPLEMENTATION
+    static PassOwnPtr<WebCompositorDebugBorderQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, SkColor, int width);
+#endif
+
+    SkColor color() const { return m_color; };
+    int width() const { return m_width; }
+
+    static const WebCompositorDebugBorderQuad* materialCast(const WebCompositorQuad*);
+private:
+#if WEBKIT_IMPLEMENTATION
+    WebCompositorDebugBorderQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect&, SkColor, int width);
+#endif
+
+    SkColor m_color;
+    int m_width;
+};
+
+#pragma pack(pop)
+
 }
 
-CCIOSurfaceDrawQuad::CCIOSurfaceDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
-    : CCDrawQuad(sharedQuadState, CCDrawQuad::IOSurfaceContent, quadRect)
-    , m_ioSurfaceSize(ioSurfaceSize)
-    , m_ioSurfaceTextureId(ioSurfaceTextureId)
-{
-}
-
-}
+#endif

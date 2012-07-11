@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebCompositorSharedQuadState_h
+#define WebCompositorSharedQuadState_h
 
-#include "cc/CCSolidColorDrawQuad.h"
+#include "WebCommon.h"
 
-namespace WebCore {
+#if WEBKIT_IMPLEMENTATION
+#include "IntRect.h"
+#include <wtf/PassOwnPtr.h>
+#endif
+#include "WebRect.h"
+#include "WebTransformationMatrix.h"
 
-PassOwnPtr<CCSolidColorDrawQuad> CCSolidColorDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
-{
-    return adoptPtr(new CCSolidColorDrawQuad(sharedQuadState, quadRect, color));
+namespace WebKit {
+
+class WebCompositorSharedQuadState {
+public:
+    // Transforms from quad's original content space to its target content space.
+    WebTransformationMatrix quadTransform;
+    // This rect lives in the content space for the quad's originating layer.
+    WebRect visibleContentRect;
+    // This rect lives in the quad's target content space.
+    WebRect scissorRect;
+    float opacity;
+    bool opaque;
+
+    WebCompositorSharedQuadState();
+
+#if WEBKIT_IMPLEMENTATION
+    static PassOwnPtr<WebCompositorSharedQuadState> create(const WebTransformationMatrix& quadTransform, const WebCore::IntRect& visibleContentRect, const WebCore::IntRect& scissorRect, float opacity, bool opaque);
+    WebCompositorSharedQuadState(const WebTransformationMatrix& quadTransform, const WebCore::IntRect& visibleContentRect, const WebCore::IntRect& scissorRect, float opacity, bool opaque);
+    bool isLayerAxisAlignedIntRect() const;
+#endif
+};
+
 }
 
-CCSolidColorDrawQuad::CCSolidColorDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
-    : CCDrawQuad(sharedQuadState, CCDrawQuad::SolidColor, quadRect)
-    , m_color(color)
-{
-    if (SkColorGetA(m_color) < 255)
-        m_quadOpaque = false;
-    else
-        m_opaqueRect = quadRect;
-}
-
-}
+#endif

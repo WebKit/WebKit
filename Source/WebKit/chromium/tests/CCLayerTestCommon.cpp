@@ -43,10 +43,11 @@ void verifyQuadsExactlyCoverRect(const CCQuadList& quads, const IntRect& rect)
 
     for (size_t i = 0; i < quads.size(); ++i) {
         CCDrawQuad* quad = quads[i].get();
+        IntRect quadRect = quad->quadRect();
 
-        EXPECT_TRUE(rect.contains(quad->quadRect())) << quadString << i;
-        EXPECT_TRUE(remaining.contains(quad->quadRect())) << quadString << i;
-        remaining.subtract(Region(quad->quadRect()));
+        EXPECT_TRUE(rect.contains(quadRect)) << quadString << i;
+        EXPECT_TRUE(remaining.contains(quadRect)) << quadString << i;
+        remaining.subtract(Region(quadRect));
     }
 
     EXPECT_TRUE(remaining.isEmpty());

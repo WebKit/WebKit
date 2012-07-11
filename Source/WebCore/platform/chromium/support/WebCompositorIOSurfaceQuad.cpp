@@ -25,27 +25,28 @@
 
 #include "config.h"
 
-#include "cc/CCTextureDrawQuad.h"
+#include <public/WebCompositorIOSurfaceQuad.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-PassOwnPtr<CCTextureDrawQuad> CCTextureDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
+namespace WebKit {
+
+PassOwnPtr<WebCompositorIOSurfaceQuad> WebCompositorIOSurfaceQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
 {
-    return adoptPtr(new CCTextureDrawQuad(sharedQuadState, quadRect, textureId, premultipliedAlpha, uvRect, flipped));
+    return adoptPtr(new WebCompositorIOSurfaceQuad(sharedQuadState, quadRect, ioSurfaceSize, ioSurfaceTextureId));
 }
 
-CCTextureDrawQuad::CCTextureDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
-    : CCDrawQuad(sharedQuadState, CCDrawQuad::TextureContent, quadRect)
-    , m_textureId(textureId)
-    , m_premultipliedAlpha(premultipliedAlpha)
-    , m_uvRect(uvRect)
-    , m_flipped(flipped)
+WebCompositorIOSurfaceQuad::WebCompositorIOSurfaceQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::IOSurfaceContent, quadRect)
+    , m_ioSurfaceSize(ioSurfaceSize)
+    , m_ioSurfaceTextureId(ioSurfaceTextureId)
 {
 }
 
-void CCTextureDrawQuad::setNeedsBlending()
+const WebCompositorIOSurfaceQuad* WebCompositorIOSurfaceQuad::materialCast(const WebCompositorQuad* quad)
 {
-    m_needsBlending = true;
+    ASSERT(quad->material() == WebCompositorQuad::IOSurfaceContent);
+    return static_cast<const WebCompositorIOSurfaceQuad*>(quad);
 }
 
 }

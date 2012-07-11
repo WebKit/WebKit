@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,27 +26,10 @@
 #ifndef CCDebugBorderDrawQuad_h
 #define CCDebugBorderDrawQuad_h
 
-#include "SkColor.h"
-#include "cc/CCDrawQuad.h"
-#include <wtf/PassOwnPtr.h>
+#include <public/WebCompositorDebugBorderQuad.h>
 
 namespace WebCore {
-
-class CCDebugBorderDrawQuad : public CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCDebugBorderDrawQuad);
-public:
-    static PassOwnPtr<CCDebugBorderDrawQuad> create(const CCSharedQuadState*, const IntRect&, SkColor, int width);
-
-    SkColor color() const { return m_color; };
-    int width() const { return m_width; }
-
-private:
-    CCDebugBorderDrawQuad(const CCSharedQuadState*, const IntRect&, SkColor, int width);
-
-    SkColor m_color;
-    int m_width;
-};
-
+typedef WebKit::WebCompositorDebugBorderQuad CCDebugBorderDrawQuad;
 }
 
 #endif

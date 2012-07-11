@@ -26,7 +26,7 @@
 #ifndef CCRenderPassDrawQuad_h
 #define CCRenderPassDrawQuad_h
 
-#include "cc/CCDrawQuad.h"
+#include <public/WebCompositorQuad.h>
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/PassOwnPtr.h>
@@ -35,10 +35,10 @@ namespace WebCore {
 
 class CCRenderPass;
 
-class CCRenderPassDrawQuad : public CCDrawQuad {
+class CCRenderPassDrawQuad : public WebKit::WebCompositorQuad {
     WTF_MAKE_NONCOPYABLE(CCRenderPassDrawQuad);
 public:
-    static PassOwnPtr<CCRenderPassDrawQuad> create(const CCSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
+    static PassOwnPtr<CCRenderPassDrawQuad> create(const WebKit::WebCompositorSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
 
     const CCRenderPass* renderPass() const { return m_renderPass; }
     int renderPassId() const { return m_renderPassId; }
@@ -52,8 +52,9 @@ public:
     const WebKit::WebFilterOperations& filters() const { return m_filters; }
     const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
 
+    static const CCRenderPassDrawQuad* materialCast(const WebKit::WebCompositorQuad*);
 private:
-    CCRenderPassDrawQuad(const CCSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
+    CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
 
     const CCRenderPass* m_renderPass;
     int m_renderPassId;

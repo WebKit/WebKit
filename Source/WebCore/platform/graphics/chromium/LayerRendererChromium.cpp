@@ -47,24 +47,15 @@
 #include "ThrottledTextureUploader.h"
 #include "TraceEvent.h"
 #include "TrackingTextureAllocator.h"
-#include "cc/CCCheckerboardDrawQuad.h"
-#include "cc/CCDebugBorderDrawQuad.h"
-#include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerQuad.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCProxy.h"
 #include "cc/CCRenderPass.h"
-#include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCRenderSurfaceFilters.h"
 #include "cc/CCScopedTexture.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
-#include "cc/CCSolidColorDrawQuad.h"
-#include "cc/CCStreamVideoDrawQuad.h"
-#include "cc/CCTextureDrawQuad.h"
-#include "cc/CCTileDrawQuad.h"
 #include "cc/CCVideoLayerImpl.h"
-#include "cc/CCYUVVideoDrawQuad.h"
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebVideoFrame.h>
 #include <wtf/CurrentTime.h>
@@ -414,7 +405,7 @@ void LayerRendererChromium::drawRenderPass(const CCRenderPass* renderPass, const
         drawQuad(it->get());
 }
 
-void LayerRendererChromium::drawQuad(const CCDrawQuad* quad)
+void LayerRendererChromium::drawQuad(const WebKit::WebCompositorQuad* quad)
 {
     IntRect scissorRect = quad->scissorRect();
 
@@ -430,35 +421,35 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad)
         GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 
     switch (quad->material()) {
-    case CCDrawQuad::Invalid:
+    case WebKit::WebCompositorQuad::Invalid:
         ASSERT_NOT_REACHED();
         break;
-    case CCDrawQuad::Checkerboard:
-        drawCheckerboardQuad(quad->toCheckerboardDrawQuad());
+    case WebKit::WebCompositorQuad::Checkerboard:
+        drawCheckerboardQuad(CCCheckerboardDrawQuad::materialCast(quad));
         break;
-    case CCDrawQuad::DebugBorder:
-        drawDebugBorderQuad(quad->toDebugBorderDrawQuad());
+    case WebKit::WebCompositorQuad::DebugBorder:
+        drawDebugBorderQuad(CCDebugBorderDrawQuad::materialCast(quad));
         break;
-    case CCDrawQuad::IOSurfaceContent:
-        drawIOSurfaceQuad(quad->toIOSurfaceDrawQuad());
+    case WebKit::WebCompositorQuad::IOSurfaceContent:
+        drawIOSurfaceQuad(CCIOSurfaceDrawQuad::materialCast(quad));
         break;
-    case CCDrawQuad::RenderPass:
-        drawRenderPassQuad(quad->toRenderPassDrawQuad());
+    case WebKit::WebCompositorQuad::RenderPass:
+        drawRenderPassQuad(CCRenderPassDrawQuad::materialCast(quad));
         break;
-    case CCDrawQuad::SolidColor:
-        drawSolidColorQuad(quad->toSolidColorDrawQuad());
+    case WebKit::WebCompositorQuad::SolidColor:
+        drawSolidColorQuad(WebKit::WebCompositorSolidColorQuad::materialCast(quad));
         break;
-    case CCDrawQuad::StreamVideoContent:
-        drawStreamVideoQuad(quad->toStreamVideoDrawQuad());
+    case WebKit::WebCompositorQuad::StreamVideoContent:
+        drawStreamVideoQuad(CCStreamVideoDrawQuad::materialCast(quad));
         break;
-    case CCDrawQuad::TextureContent:
-        drawTextureQuad(quad->toTextureDrawQuad());
+    case WebKit::WebCompositorQuad::TextureContent:
+        drawTextureQuad(WebKit::WebCompositorTextureQuad::materialCast(quad));
         break;
-    case CCDrawQuad::TiledContent:
-        drawTileQuad(quad->toTileDrawQuad());
+    case WebKit::WebCompositorQuad::TiledContent:
+        drawTileQuad(CCTileDrawQuad::materialCast(quad));
         break;
-    case CCDrawQuad::YUVVideoContent:
-        drawYUVVideoQuad(quad->toYUVVideoDrawQuad());
+    case WebKit::WebCompositorQuad::YUVVideoContent:
+        drawYUVVideoQuad(CCYUVVideoDrawQuad::materialCast(quad));
         break;
     }
 }

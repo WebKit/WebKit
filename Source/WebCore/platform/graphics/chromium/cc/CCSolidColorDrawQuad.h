@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,25 +26,10 @@
 #ifndef CCSolidColorDrawQuad_h
 #define CCSolidColorDrawQuad_h
 
-#include "SkColor.h"
-#include "cc/CCDrawQuad.h"
-#include <wtf/PassOwnPtr.h>
+#include <public/WebCompositorSolidColorQuad.h>
 
 namespace WebCore {
-
-class CCSolidColorDrawQuad : public CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCSolidColorDrawQuad);
-public:
-    static PassOwnPtr<CCSolidColorDrawQuad> create(const CCSharedQuadState*, const IntRect&, SkColor);
-
-    SkColor color() const { return m_color; };
-
-private:
-    CCSolidColorDrawQuad(const CCSharedQuadState*, const IntRect&, SkColor);
-
-    SkColor m_color;
-};
-
+typedef WebKit::WebCompositorSolidColorQuad CCSolidColorDrawQuad;
 }
 
 #endif

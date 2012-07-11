@@ -23,22 +23,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebCompositorStreamVideoQuad_h
+#define WebCompositorStreamVideoQuad_h
 
-#include "cc/CCStreamVideoDrawQuad.h"
+#include "WebCompositorQuad.h"
+#include <public/WebTransformationMatrix.h>
+#if WEBKIT_IMPLEMENTATION
+#include <wtf/PassOwnPtr.h>
+#endif
 
-namespace WebCore {
+namespace WebKit {
 
-PassOwnPtr<CCStreamVideoDrawQuad> CCStreamVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, const WebKit::WebTransformationMatrix& matrix)
-{
-    return adoptPtr(new CCStreamVideoDrawQuad(sharedQuadState, quadRect, textureId, matrix));
+#pragma pack(push, 4)
+
+class WebCompositorStreamVideoQuad : public WebCompositorQuad {
+public:
+#if WEBKIT_IMPLEMENTATION
+    static PassOwnPtr<WebCompositorStreamVideoQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned textureId, const WebTransformationMatrix&);
+#endif
+
+    unsigned textureId() const { return m_textureId; }
+    const WebTransformationMatrix& matrix() const { return m_matrix; }
+
+    static const WebCompositorStreamVideoQuad* materialCast(const WebCompositorQuad*);
+private:
+#if WEBKIT_IMPLEMENTATION
+    WebCompositorStreamVideoQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned textureId, const WebTransformationMatrix&);
+#endif
+
+    unsigned m_textureId;
+    WebTransformationMatrix m_matrix;
+};
+
+#pragma pack(pop)
+
 }
 
-CCStreamVideoDrawQuad::CCStreamVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, const WebKit::WebTransformationMatrix& matrix)
-    : CCDrawQuad(sharedQuadState, CCDrawQuad::StreamVideoContent, quadRect)
-    , m_textureId(textureId)
-    , m_matrix(matrix)
-{
-}
-
-}
+#endif

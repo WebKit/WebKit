@@ -114,12 +114,12 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
 
     OwnPtr<CCSharedQuadState> sharedQuadState = renderSurface->createSharedQuadState();
 
-    EXPECT_EQ(30, sharedQuadState->quadTransform().m41());
-    EXPECT_EQ(40, sharedQuadState->quadTransform().m42());
-    EXPECT_EQ(contentRect, sharedQuadState->visibleContentRect());
-    EXPECT_EQ(clipRect, sharedQuadState->scissorRect());
-    EXPECT_EQ(1, sharedQuadState->opacity());
-    EXPECT_FALSE(sharedQuadState->isOpaque());
+    EXPECT_EQ(30, sharedQuadState->quadTransform.m41());
+    EXPECT_EQ(40, sharedQuadState->quadTransform.m42());
+    EXPECT_EQ(contentRect, IntRect(sharedQuadState->visibleContentRect));
+    EXPECT_EQ(clipRect, IntRect(sharedQuadState->scissorRect));
+    EXPECT_EQ(1, sharedQuadState->opacity);
+    EXPECT_FALSE(sharedQuadState->opaque);
 }
 
 } // namespace

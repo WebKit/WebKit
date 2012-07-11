@@ -31,6 +31,7 @@
 
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "cc/CCSharedQuadState.h"
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/Noncopyable.h>
@@ -41,7 +42,6 @@ namespace WebCore {
 class CCDamageTracker;
 class CCQuadCuller;
 class CCRenderPass;
-class CCSharedQuadState;
 class CCLayerImpl;
 class LayerRendererChromium;
 class TextStream;
