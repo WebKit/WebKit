@@ -89,7 +89,7 @@ static inline void getDecorationRootAndDecoratedRoot(HTMLInputElement* input, Sh
     if (newRoot)
         newRoot->removeChild(newRoot->firstChild());
     else
-        newRoot = ShadowRoot::create(input, ShadowRoot::CreatingUserAgentShadowRoot, ASSERT_NO_EXCEPTION).get();
+        newRoot = ShadowRoot::create(input, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION).get();
     decorationRoot = newRoot;
     decoratedRoot = existingRoot;
 }

@@ -99,10 +99,10 @@ static bool allowsAuthorShadowRoot(Element* element)
 
 PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ExceptionCode& ec)
 {
-    return create(element, CreatingAuthorShadowRoot, ec);
+    return create(element, AuthorShadowRoot, ec);
 }
 
-PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPurpose purpose, ExceptionCode& ec)
+PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootType type, ExceptionCode& ec)
 {
     if (!element) {
         ec = HIERARCHY_REQUEST_ERR;
@@ -111,12 +111,15 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPu
 
     // Since some elements recreates shadow root dynamically, multiple shadow subtrees won't work well in that element.
     // Until they are fixed, we disable adding author shadow root for them.
-    if (purpose == CreatingAuthorShadowRoot && !allowsAuthorShadowRoot(element)) {
+    if (type == AuthorShadowRoot && !allowsAuthorShadowRoot(element)) {
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
     }
 
     RefPtr<ShadowRoot> shadowRoot = adoptRef(new ShadowRoot(element->document()));
+#ifndef NDEBUG
+    shadowRoot->m_type = type;
+#endif
 
     ec = 0;
     element->ensureShadow()->addShadowRoot(element, shadowRoot, ec);

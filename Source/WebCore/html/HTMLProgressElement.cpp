@@ -151,7 +151,7 @@ void HTMLProgressElement::createShadowSubtree()
     m_value = ProgressValueElement::create(document());
     bar->appendChild(m_value, ASSERT_NO_EXCEPTION);
 
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot, ASSERT_NO_EXCEPTION);
+    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
     root->appendChild(bar, ASSERT_NO_EXCEPTION);
 }
 

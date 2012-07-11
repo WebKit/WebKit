@@ -87,7 +87,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     }
 
     ASSERT(!shadow());
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot);
+    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot);
     root->appendChild(select, ec);
 }
 

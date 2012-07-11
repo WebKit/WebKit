@@ -1181,7 +1181,7 @@ ShadowRoot* Element::ensureShadowRoot()
     if (ElementShadow* shadow = this->shadow())
         return shadow->oldestShadowRoot();
 
-    return ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot).get();
+    return ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot).get();
 }
 
 const AtomicString& Element::shadowPseudoId() const

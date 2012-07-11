@@ -453,6 +453,7 @@ void InputType::destroyShadowSubtree()
         return;
 
     ShadowRoot* root = shadow->oldestShadowRoot();
+    ASSERT(root->type() == ShadowRoot::UserAgentShadowRoot);
     root->removeAllChildren();
 
     // It's ok to clear contents of all other ShadowRoots because they must have
