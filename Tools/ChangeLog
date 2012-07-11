@@ -1,3 +1,11 @@
+2012-07-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add new directories and a new LayoutTestController method.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setStorageDatabaseIdleInterval):
+        * waf/build/settings.py:
+
 2012-07-11  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove drag and drop API methods that are no longer used

@@ -639,3 +639,8 @@ void LayoutTestController::deliverWebIntent(JSStringRef, JSStringRef, JSStringRe
 {
     // FIXME: Implement this.
 }
+
+void LayoutTestController::setStorageDatabaseIdleInterval(double)
+{
+    // FIXME: Implement this.
+}

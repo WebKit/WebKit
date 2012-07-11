@@ -88,9 +88,12 @@ port_uses = {
 
 jscore_dirs = [
     'API',
+    'assembler',
     'bytecode',
     'bytecompiler',
     'debugger',
+    'disassembler',
+    'disassembler/udis86',
     'DerivedSources',
     'dfg',
     'heap',
@@ -140,6 +143,7 @@ webcore_dirs_common = [
     'Source/WebCore/Modules/geolocation',
     'Source/WebCore/Modules/notifications',
     'Source/WebCore/Modules/indexeddb',
+    'Source/WebCore/Modules/quota',
     'Source/WebCore/Modules/webdatabase',
     'Source/WebCore/page',
     'Source/WebCore/page/animation',
