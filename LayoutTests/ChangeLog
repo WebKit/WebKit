@@ -1,3 +1,12 @@
+2012-07-11  W. James MacLean  <wjmaclean@chromium.org>
+
+        [Chromium] Unreviewed gardening. fast/forms/textarea/textarea-state-restore.html is flaky (timeouts frquently).
+        https://bugs.webkit.org/show_bug.cgi?id=90980
+
+        Marking this test as possible TIMOUT in test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-11  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip a failing test after r122327.

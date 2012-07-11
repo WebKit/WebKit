@@ -3749,3 +3749,6 @@ BUGWK90896 WIN DEBUG : fast/js/dfg-cross-global-object-inline-new-array-literal.
 BUGWK90899 SLOW WIN LINUX DEBUG : platform/chromium/inspector/styles/device-metrics-fit-window.html = PASS
 
 BUGWK90900 MAC : tables/mozilla_expected_failures/other/empty_cells.html = PASS IMAGE+TEXT
+
+BUGWK90980 LINUX MAC DEBUG : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
+BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
