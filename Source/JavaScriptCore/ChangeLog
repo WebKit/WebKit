@@ -1,3 +1,10 @@
+2012-07-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Don't try to build udis86_itab.c since it's included by 
+        another file.
+
+        * wscript:
+
 2012-07-11  Chao-ying Fu  <fu@mips.com>
 
         Add MIPS convertibleLoadPtr and other functions

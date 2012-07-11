@@ -33,7 +33,7 @@ def build(bld):
 
     import Options
 
-    jscore_excludes = ['jsc.cpp', 'ExecutableAllocatorPosix.cpp', 'LLIntOffsetsExtractor.cpp']
+    jscore_excludes = ['jsc.cpp', 'ExecutableAllocatorPosix.cpp', 'LLIntOffsetsExtractor.cpp', 'udis86_itab.c']
     jscore_exclude_patterns = get_port_excludes(Options.options.port)
     jscore_exclude_patterns.append('*None.cpp')
 
@@ -45,9 +45,6 @@ def build(bld):
             sources.extend(['../WTF/wtf/ThreadingWin.cpp', '../WTF/wtf/ThreadSpecificWin.cpp', '../WTF/wtf/OSAllocatorWin.cpp'])
         else:
             jscore_excludes.append('JSStringRefBSTR.cpp')
-
-    if sys.platform.startswith('darwin'):
-        jscore_excludes.append('GCActivityCallback.cpp') # this is an empty impl.
 
     bld.env.LIBDIR = output_dir
     full_dirs = get_dirs_for_features(jscore_dir, features=[Options.options.port.lower()], dirs=jscore_dirs)
