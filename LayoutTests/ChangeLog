@@ -1,3 +1,15 @@
+2012-07-10  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Crash in nextLinePosition() due to accessing a removed root line box.
+        https://bugs.webkit.org/show_bug.cgi?id=90484
+
+        Reviewed by Abhishek Arya.
+
+        This testcase should not be triggered in ASAN.
+
+        * editing/execCommand/crash-extend-selection-forward-expected.txt: Added.
+        * editing/execCommand/crash-extend-selection-forward.html: Added.
+
 2012-07-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION(r112113): absolutely positioned INPUT boxes with a table cell containing block have a 0px height
