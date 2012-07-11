@@ -1,3 +1,12 @@
+2012-07-11  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Remove empty directories.
+
+        * http/tests/websocket/tests/resources: Removed.
+        * http/tests/websocket/tests/script-tests: Removed.
+        * http/tests/websocket/tests/workers: Removed.
+        * http/tests/websocket/tests/workers/resources: Removed.
+
 2012-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         Assertion ASSERTION FAILED: enclosingIntRect(rendererMappedResult) == enclosingIntRect(FloatQuad(result).boundingBox()) when compositing in paginated mode
