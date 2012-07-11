@@ -1,3 +1,11 @@
+2012-07-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        First commit; moving myself to commiters.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-11  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         webkit-patch land should automatically add svn:mime-type for .png files
