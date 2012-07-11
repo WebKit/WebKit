@@ -1,3 +1,13 @@
+2012-07-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding an image expectation for the
+        fast/forms/input-in-table-cell-no-value.html reftest, failing
+        after it was introduced in r122290 due to <input type='date'>
+        being used. The ENABLE_INPUT_TYPE_DATE feature is not enabled
+        on the Gtk port.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-11  Kenneth Russell  <kbr@google.com>
 
         compositing/webgl/webgl-nonpremultiplied-blend.html is flaky on Lion
