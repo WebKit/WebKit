@@ -471,7 +471,10 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
                     scrollingCoordinator->setLayerIsFixedToContainerLayer(m_ancestorClippingLayer.get(), false);
                 scrollingCoordinator->setLayerIsFixedToContainerLayer(m_graphicsLayer.get(), false);
             }
-            bool isContainer = m_owningLayer->hasTransform();
+            // Page scale is applied as a transform on the root render view layer. Because the scroll
+            // layer is further up in the hierarchy, we need to avoid marking the root render view
+            // layer as a container.
+            bool isContainer = m_owningLayer->hasTransform() && !m_owningLayer->isRootLayer();
             scrollingCoordinator->setLayerIsContainerForFixedPositionLayers(childForSuperlayers(), isContainer);
         }
     }

@@ -1,3 +1,26 @@
+2012-07-11  Sami Kyostila  <skyostil@chromium.org>
+
+        RenderView layer is marked as fixed position container in the scrolling tree if page scale != 1
+        https://bugs.webkit.org/show_bug.cgi?id=89216
+
+        Reviewed by Simon Fraser.
+
+        Render layers with CSS transforms should become containers for any fixed
+        positioned descendants. However, because this check is done with
+        RenderLayer::hasTransform(), we also end up marking the RenderLayer for the
+        RenderView as fixed position container if a non-identity page scale factor is
+        used. This is because page scale is applied as a transform for that layer.
+
+        This breaks fixed position layers, because they become fixed relative to the
+        RenderView layer instead of outer scroll clip layer.
+
+        The fix is to avoid marking any root layers as fixed position containers.
+
+        No new test because the scrolling tree isn't currently testable.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2012-07-11  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION (r116203): overflow sections don't have scrollbars
