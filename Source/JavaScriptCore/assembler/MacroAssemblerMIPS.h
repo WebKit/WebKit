@@ -496,6 +496,20 @@ public:
         ASSERT_NOT_REACHED();
     }
 
+    ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
+    {
+        ConvertibleLoadLabel result(this);
+        /*
+            lui     addrTemp, (offset + 0x8000) >> 16
+            addu    addrTemp, addrTemp, base
+            lw      dest, (offset & 0xffff)(addrTemp)
+        */
+        m_assembler.lui(addrTempRegister, (address.offset + 0x8000) >> 16);
+        m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+        m_assembler.lw(dest, addrTempRegister, address.offset);
+        return result;
+    }
+
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form

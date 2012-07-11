@@ -616,6 +616,11 @@ public:
 
     // General helpers
 
+    AssemblerLabel labelIgnoringWatchpoints()
+    {
+        return m_buffer.label();
+    }
+
     AssemblerLabel label()
     {
         return m_buffer.label();
@@ -807,6 +812,28 @@ public:
 #else
         _flush_cache(reinterpret_cast<char*>(code), size, BCACHE);
 #endif
+    }
+
+    static void replaceWithLoad(void* instructionStart)
+    {
+        MIPSWord* insn = reinterpret_cast<MIPSWord*>(instructionStart);
+        ASSERT((*insn & 0xffe00000) == 0x3c000000); // lui
+        insn++;
+        ASSERT((*insn & 0xfc0007ff) == 0x00000021); // addu
+        insn++;
+        *insn = 0x8c000000 | ((*insn) & 0x3ffffff); // lw
+        cacheFlush(insn, 4);
+    }
+
+    static void replaceWithAddressComputation(void* instructionStart)
+    {
+        MIPSWord* insn = reinterpret_cast<MIPSWord*>(instructionStart);
+        ASSERT((*insn & 0xffe00000) == 0x3c000000); // lui
+        insn++;
+        ASSERT((*insn & 0xfc0007ff) == 0x00000021); // addu
+        insn++;
+        *insn = 0x24000000 | ((*insn) & 0x3ffffff); // addiu
+        cacheFlush(insn, 4);
     }
 
 private:

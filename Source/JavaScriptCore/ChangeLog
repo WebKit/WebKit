@@ -1,3 +1,19 @@
+2012-07-11  Chao-ying Fu  <fu@mips.com>
+
+        Add MIPS convertibleLoadPtr and other functions
+        https://bugs.webkit.org/show_bug.cgi?id=90714
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::labelIgnoringWatchpoints):
+        (MIPSAssembler):
+        (JSC::MIPSAssembler::replaceWithLoad):
+        (JSC::MIPSAssembler::replaceWithAddressComputation):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::convertibleLoadPtr):
+        (MacroAssemblerMIPS):
+
 2012-07-11  Anders Carlsson  <andersca@apple.com>
 
         Add -Wtautological-compare and -Wsign-compare warning flags
