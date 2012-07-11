@@ -84,18 +84,12 @@ WebInspector.ResourceSourceFrame = function(resource)
 {
     this._resource = resource;
     WebInspector.SourceFrame.call(this, resource);
-    this._resource.addEventListener(WebInspector.Resource.Events.RevisionAdded, this._contentChanged, this);
 }
 
 WebInspector.ResourceSourceFrame.prototype = {
     get resource()
     {
         return this._resource;
-    },
-
-    _contentChanged: function(event)
-    {
-        this.setContent(this._resource.content, false, this._resource.canonicalMimeType());
     },
 
     populateTextAreaContextMenu: function(contextMenu, lineNumber)

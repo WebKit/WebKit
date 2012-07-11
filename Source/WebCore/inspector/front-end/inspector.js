@@ -452,7 +452,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
     this.debuggerModel = new WebInspector.DebuggerModel();
-    this.scriptSnippetModel = new WebInspector.ScriptSnippetModel();
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel);
 
     WebInspector.CSSCompletions.requestCSSNameCompletions();
@@ -465,6 +464,8 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.networkLog = new WebInspector.NetworkLog();
     this.domAgent = new WebInspector.DOMAgent();
     this.javaScriptContextManager = new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.consoleView);
+
+    this.scriptSnippetModel = new WebInspector.ScriptSnippetModel();
 
     InspectorBackend.registerInspectorDispatcher(this);
 

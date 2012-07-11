@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 1: Done.
-Tests how resource revision requests content if it was not yet loaded for resource itself.
+Tests how revision requests content if original content was not loaded yet.
 
 Bug 63631
 http://127.0.0.1:8000/inspector/network/resources/script.js

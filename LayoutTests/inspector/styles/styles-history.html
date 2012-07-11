@@ -95,10 +95,10 @@ function test()
     {
         function result()
         {
-            InspectorTest.addResult("History length: " + styleSource.resource().history.length);
-            for (var i = 0; i < styleSource.resource().history.length; ++i) {
+            InspectorTest.addResult("History length: " + styleSource.history.length);
+            for (var i = 0; i < styleSource.history.length; ++i) {
                 InspectorTest.addResult("Item " + i + ":");
-                InspectorTest.addResult(styleSource.resource().history[i].content);
+                InspectorTest.addResult(styleSource.history[i].content);
             }
             next();
         }

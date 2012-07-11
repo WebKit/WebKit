@@ -133,6 +133,7 @@ WebInspector.Workspace = function()
 }
 
 WebInspector.Workspace.Events = {
+    UISourceCodeContentCommitted: "uiSourceCodeContentCommitted",
     WorkspaceReset: "WorkspaceReset"
 }
 

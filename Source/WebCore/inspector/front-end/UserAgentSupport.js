@@ -165,6 +165,11 @@ WebInspector.UserAgentSupport.DeviceMetrics.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @param {number} latitude
+ * @param {number} longitude
+ */
 WebInspector.UserAgentSupport.GeolocationPosition = function (latitude, longitude)
 {
     this._latitude = latitude;

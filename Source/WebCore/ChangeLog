@@ -1,3 +1,64 @@
+2012-07-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Move revisions support to UISourceCode.
+        https://bugs.webkit.org/show_bug.cgi?id=90888
+
+        Reviewed by Pavel Feldman.
+
+        Moved revisions support to UISourceCode.
+        Revision management code is moved unchanged where possible and should be refactored later.
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModelResourceBinding.prototype._innerStyleSheetChanged): revision is now added to uiSourceCode, not resource.
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._notifyUISourceCodeContentCommitted):
+        Extension server is now listening for Workspace.UISourceCodeContentCommitted event instead of ResourceTreeModel.ResourceContentCommitted.
+        * inspector/front-end/Resource.js:
+        * inspector/front-end/ResourceTreeModel.js: ResourceTreeModel.ResourceContentCommitted renamed to Workspace.UISourceCodeContentCommitted.
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceSourceFrame): ResourceSourceFrame is not update when revisions are added anymore as resource conenten is considered immutable now
+        * inspector/front-end/RevisionHistoryView.js:
+        (WebInspector.RevisionHistoryView.populateRevisions):
+        (WebInspector.RevisionHistoryView):
+        (WebInspector.RevisionHistoryView.showHistory):
+        (WebInspector.RevisionHistoryView.prototype._createUISourceCodeItem):
+        (WebInspector.RevisionHistoryView.prototype._revisionAdded.get if):
+        (WebInspector.RevisionHistoryView.prototype._revisionAdded):
+        (WebInspector.RevisionHistoryView.prototype._revealUISourceCode.get if):
+        (WebInspector.RevisionHistoryView.prototype._revealUISourceCode):
+        (WebInspector.RevisionHistoryView.prototype._reset):
+        * inspector/front-end/ScriptSnippetModel.js: Snippets are not loaded before ResourceTreeModel.mainFrame is available anymore.
+        (WebInspector.ScriptSnippetModel):
+        (WebInspector.ScriptSnippetModel.prototype._setScriptSnippetContent):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+        (WebInspector.UISourceCode.prototype.requestOriginalContent):
+        (WebInspector.UISourceCode.prototype._setContent):
+        (WebInspector.UISourceCode.prototype.addRevision):
+        (WebInspector.UISourceCode.prototype._restoreRevisionHistory):
+        (WebInspector.UISourceCode.prototype._clearRevisionHistory):
+        (WebInspector.UISourceCode.prototype.revertToOriginal):
+        (WebInspector.UISourceCode.prototype.revertAndClearHistory):
+        (WebInspector.UISourceCode.prototype.revertAndClearHistory.clearHistory):
+        (WebInspector.UISourceCode.prototype.commitWorkingCopy):
+        (WebInspector.UISourceCode.prototype.canonicalMimeType):
+        (WebInspector.Revision):
+        (WebInspector.Revision._revisionHistoryRegistry):
+        (WebInspector.Revision._ensureStaleRevisionsFileteredOut.persist):
+        (WebInspector.Revision._ensureStaleRevisionsFileteredOut):
+        (WebInspector.Revision.prototype.get uiSourceCode):
+        (WebInspector.Revision.prototype.get timestamp):
+        (WebInspector.Revision.prototype.get content):
+        (WebInspector.Revision.prototype.revertToThis):
+        (WebInspector.Revision.prototype.contentURL):
+        (WebInspector.Revision.prototype.contentType):
+        (WebInspector.Revision.prototype.requestContent):
+        (WebInspector.Revision.prototype.searchInContent):
+        (WebInspector.Revision.prototype._persist):
+        * inspector/front-end/UserAgentSupport.js: Drive-by closure compilation fix.
+        * inspector/front-end/Workspace.js:
+        * inspector/front-end/inspector.js: ScriptSnippetModel is now created after ResourceTreeModel.
+
 2012-07-11  MORITA Hajime  <morrita@google.com>
 
         WebCoreSupport needs objects each of which follows major WebCore objects

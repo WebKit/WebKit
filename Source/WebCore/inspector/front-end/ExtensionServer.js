@@ -582,9 +582,9 @@ WebInspector.ExtensionServer.prototype = {
                 this._notifyElementsSelectionChanged);
         }
         this._registerAutosubscriptionHandler(WebInspector.extensionAPI.Events.ResourceContentCommitted,
-            WebInspector.resourceTreeModel,
-            WebInspector.ResourceTreeModel.EventTypes.ResourceContentCommitted,
-            this._notifyResourceContentCommitted);
+            WebInspector.workspace,
+            WebInspector.Workspace.Events.UISourceCodeContentCommitted,
+            this._notifyUISourceCodeContentCommitted);
 
         function onTimelineSubscriptionStarted()
         {
@@ -618,11 +618,11 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification(WebInspector.extensionAPI.Events.ResourceAdded, this._makeResource(uiSourceCode));
     },
 
-    _notifyResourceContentCommitted: function(event)
+    _notifyUISourceCodeContentCommitted: function(event)
     {
-        var resource = /** @type {WebInspector.Resource} */ event.data.resource;
-        var contentProvider = resource.uiSourceCode() || resource;
-        this._postNotification(WebInspector.extensionAPI.Events.ResourceContentCommitted, this._makeResource(contentProvider), event.data.content);
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
+        var content = /** @type {string} */ event.data.content;
+        this._postNotification(WebInspector.extensionAPI.Events.ResourceContentCommitted, this._makeResource(uiSourceCode), content);
     },
 
     _notifyRequestFinished: function(event)

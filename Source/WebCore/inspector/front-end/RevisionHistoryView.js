@@ -39,19 +39,22 @@ WebInspector.RevisionHistoryView = function()
     this.element.addStyleClass("revision-history-drawer");
     this.element.addStyleClass("fill");
     this.element.addStyleClass("outline-disclosure");
-    this._resourceItems = new Map();
+    this._uiSourceCodeItems = new Map();
 
     var olElement = this.element.createChild("ol");
     this._treeOutline = new TreeOutline(olElement);
 
-    function populateRevisions(resource)
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    function populateRevisions(uiSourceCode)
     {
-        if (resource.history.length)
-            this._createResourceItem(resource);
+        if (uiSourceCode.history.length)
+            this._createUISourceCodeItem(uiSourceCode);
     }
 
-    WebInspector.resourceTreeModel.forAllResources(populateRevisions.bind(this));
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceContentCommitted, this._revisionAdded, this);
+    WebInspector.workspace.uiSourceCodes().forEach(populateRevisions.bind(this));
+    WebInspector.workspace.addEventListener(WebInspector.Workspace.Events.UISourceCodeContentCommitted, this._revisionAdded, this);
 
     this._statusElement = document.createElement("span");
     this._statusElement.textContent = WebInspector.UIString("Local modifications");
@@ -67,7 +70,7 @@ WebInspector.RevisionHistoryView.showHistory = function(uiSourceCode)
         WebInspector.RevisionHistoryView._view = new WebInspector.RevisionHistoryView();
     var view = WebInspector.RevisionHistoryView._view;
     WebInspector.showViewInDrawer(view._statusElement, view);
-    view._revealResource(uiSourceCode.resource());
+    view._revealUISourceCode(uiSourceCode);
 }
 
 WebInspector.RevisionHistoryView.reset = function()
@@ -78,94 +81,94 @@ WebInspector.RevisionHistoryView.reset = function()
 
 WebInspector.RevisionHistoryView.prototype = {
     /**
-     * @param {WebInspector.Resource} resource
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    _createResourceItem: function(resource)
+    _createUISourceCodeItem: function(uiSourceCode)
     {
-        var resourceItem = new TreeElement(resource.displayName, null, true);
-        resourceItem.selectable = false;
+        var uiSourceCodeItem = new TreeElement(uiSourceCode.parsedURL.displayName, null, true);
+        uiSourceCodeItem.selectable = false;
 
         // Insert in sorted order
         for (var i = 0; i < this._treeOutline.children.length; ++i) {
-            if (this._treeOutline.children[i].title.localeCompare(resource.displayName) > 0) {
-                this._treeOutline.insertChild(resourceItem, i);
+            if (this._treeOutline.children[i].title.localeCompare(uiSourceCode.parsedURL.displayName) > 0) {
+                this._treeOutline.insertChild(uiSourceCodeItem, i);
                 break;
             }
         }
         if (i === this._treeOutline.children.length)
-            this._treeOutline.appendChild(resourceItem);
+            this._treeOutline.appendChild(uiSourceCodeItem);
 
-        this._resourceItems.put(resource, resourceItem);
+        this._uiSourceCodeItems.put(uiSourceCode, uiSourceCodeItem);
 
-        var revisionCount = resource.history.length;
+        var revisionCount = uiSourceCode.history.length;
         for (var i = revisionCount - 1; i >= 0; --i) {
-            var revision = resource.history[i];
-            var historyItem = new WebInspector.RevisionHistoryTreeElement(revision, resource.history[i - 1], i !== revisionCount - 1);
-            resourceItem.appendChild(historyItem);
+            var revision = uiSourceCode.history[i];
+            var historyItem = new WebInspector.RevisionHistoryTreeElement(revision, uiSourceCode.history[i - 1], i !== revisionCount - 1);
+            uiSourceCodeItem.appendChild(historyItem);
         }
 
         var linkItem = new TreeElement("", null, false);
         linkItem.selectable = false;
-        resourceItem.appendChild(linkItem);
+        uiSourceCodeItem.appendChild(linkItem);
 
         var revertToOriginal = linkItem.listItemElement.createChild("span", "revision-history-link revision-history-link-row");
         revertToOriginal.textContent = WebInspector.UIString("apply original content");
-        revertToOriginal.addEventListener("click", resource.revertToOriginal.bind(resource));
+        revertToOriginal.addEventListener("click", uiSourceCode.revertToOriginal.bind(uiSourceCode));
 
-        var clearHistoryElement = resourceItem.listItemElement.createChild("span", "revision-history-link");
+        var clearHistoryElement = uiSourceCodeItem.listItemElement.createChild("span", "revision-history-link");
         clearHistoryElement.textContent = WebInspector.UIString("revert");
-        clearHistoryElement.addEventListener("click", this._clearHistory.bind(this, resource));
-        return resourceItem;
+        clearHistoryElement.addEventListener("click", this._clearHistory.bind(this, uiSourceCode));
+        return uiSourceCodeItem;
     },
 
     /**
-     * @param {WebInspector.Resource} resource
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    _clearHistory: function(resource)
+    _clearHistory: function(uiSourceCode)
     {
-        resource.revertAndClearHistory(historyCleared.bind(this));
+        uiSourceCode.revertAndClearHistory(historyCleared.bind(this));
 
         function historyCleared()
         {
-            var resourceItem = this._resourceItems.get(resource);
-            this._treeOutline.removeChild(resourceItem);
-            this._resourceItems.remove(resource);
+            var uiSourceCodeItem = this._uiSourceCodeItems.get(uiSourceCode);
+            this._treeOutline.removeChild(uiSourceCodeItem);
+            this._uiSourceCodeItems.remove(uiSourceCode);
         }
 
     },
 
     _revisionAdded: function(event)
     {
-        var resource = /** @type {WebInspector.Resource} */ event.data.resource;
-        var resourceItem = this._resourceItems.get(resource);
-        if (!resourceItem) {
-            resourceItem = this._createResourceItem(resource);
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
+        var uiSourceCodeItem = this._uiSourceCodeItems.get(uiSourceCode);
+        if (!uiSourceCodeItem) {
+            uiSourceCodeItem = this._createUISourceCodeItem(uiSourceCode);
             return;
         }
 
-        var historyLength = resource.history.length;
-        var historyItem = new WebInspector.RevisionHistoryTreeElement(resource.history[historyLength - 1], resource.history[historyLength - 2], false);
-        if (resourceItem.children.length)
-            resourceItem.children[0].allowRevert();
-        resourceItem.insertChild(historyItem, 0);
+        var historyLength = uiSourceCode.history.length;
+        var historyItem = new WebInspector.RevisionHistoryTreeElement(uiSourceCode.history[historyLength - 1], uiSourceCode.history[historyLength - 2], false);
+        if (uiSourceCodeItem.children.length)
+            uiSourceCodeItem.children[0].allowRevert();
+        uiSourceCodeItem.insertChild(historyItem, 0);
     },
 
     /**
-     * @param {WebInspector.Resource} resource
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    _revealResource: function(resource)
+    _revealUISourceCode: function(uiSourceCode)
     {
-        var resourceItem = this._resourceItems.get(resource);
-        if (resourceItem) {
-            resourceItem.reveal();
-            resourceItem.expand();
+        var uiSourceCodeItem = this._uiSourceCodeItems.get(uiSourceCode);
+        if (uiSourceCodeItem) {
+            uiSourceCodeItem.reveal();
+            uiSourceCodeItem.expand();
         }
     },
 
     _reset: function()
     {
         this._treeOutline.removeChildren();
-        this._resourceItems.clear();
+        this._uiSourceCodeItems.clear();
     }
 }
 
@@ -212,7 +215,7 @@ WebInspector.RevisionHistoryTreeElement.prototype = {
         if (this._baseRevision)
             this._baseRevision.requestContent(step1.bind(this));
         else
-            this._revision.resource.requestContent(step1.bind(this));
+            this._revision.uiSourceCode.requestOriginalContent(step1.bind(this));
 
         function step1(baseContent)
         {

@@ -1079,12 +1079,13 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
                 return;
 
             var styleSheetURL = header.origin === "inspector" ? this._viaInspectorResourceURL(header.sourceURL) : header.sourceURL;
-            var resource = frame.resourceForURL(styleSheetURL);
-            if (!resource)
+            
+            var uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(styleSheetURL);
+            if (!uiSourceCode)
                 return;
 
-            if (resource.type === WebInspector.resourceTypes.Stylesheet)
-                resource.addRevision(content);
+            if (uiSourceCode.contentType() === WebInspector.resourceTypes.Stylesheet)
+                uiSourceCode.addRevision(content);
         }
 
         if (!this._styleSheetIdToHeader[styleSheetId]) {

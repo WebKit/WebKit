@@ -26,7 +26,7 @@ function test()
             var content = "";
             content += "// This snippet does nothing.\n";
             content += "var i = 2+2;\n";
-            WebInspector.scriptSnippetModel._setScriptSnippetContent(snippetJavaScriptSource1, content);
+            snippetJavaScriptSource1.setWorkingCopy(content);
 
             var snippetJavaScriptSource2 = WebInspector.scriptSnippetModel.createScriptSnippet();
             WebInspector.scriptSnippetModel.renameScriptSnippet(snippetJavaScriptSource2, "Snippet2");
@@ -37,7 +37,7 @@ function test()
             content += "    var  i = 2+2;\n";
             content += "};\n";
             content += "doesNothing;\n";
-            WebInspector.scriptSnippetModel._setScriptSnippetContent(snippetJavaScriptSource2, content);
+            snippetJavaScriptSource2.setWorkingCopy(content);
 
             function evaluateSnippetAndDumpEvaluationDetails(snippetJavaScriptSource, callback)
             {
