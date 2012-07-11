@@ -1,5 +1,13 @@
 2012-07-11  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        Mark fast/js/dfg-poison-fuzz.html as slow, because its runtime is 48 secs on 32 bit in debug mode.
+
+        * platform/qt/TestExpectations:
+
+2012-07-11  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][ARM] Unreviewed gardening, mark slow tests.
 
         * platform/qt-arm/TestExpectations:
