@@ -2,6 +2,15 @@
 
         Unreviewed gardening.
 
+        Remove 'true' from testRunner.dumpAsText(true).
+        NRWT complained that an '-expected.png' file was MISSING.
+
+        * animations/animation-shorthand-name-order.html:
+
+2012-07-10  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+
         * fast/css/deprecated-flexbox-auto-min-size-expected.txt: Renamed from LayoutTests/platform/chromium/fast/css/deprecated-flexbox-auto-min-size-expected.txt.
 
 12012-07-10  Hayato Ito  <hayato@chromium.org>
