@@ -1,3 +1,14 @@
+2012-07-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122301.
+        http://trac.webkit.org/changeset/122301
+        https://bugs.webkit.org/show_bug.cgi?id=90947
+
+        Android builder started to fail (Requested by hayato on
+        #webkit).
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Merge final nits to DumpRenderTree.gyp for Android
