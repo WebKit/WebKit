@@ -137,7 +137,7 @@ BUGWKGTK SKIP : fast/forms/color = TEXT
 BUGWK29359 : fast/forms/date = TEXT
 BUGWK29359 : fast/forms/date/date-stepup-stepdown-from-renderer.html = PASS
 BUGWK29359 : fast/forms/date/no-page-popup-controller.html = PASS
-BUGWK89209 : fast/forms/input-in-table-cell-no-value.html = IMAGE
+BUGWK90987 : fast/forms/input-in-table-cell-no-value.html = IMAGE
 BUGWK29359 : fast/css/pseudo-in-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-out-of-range.html = TEXT
 BUGWK29359 : fast/css/pseudo-in-range-invalid-value.html = TEXT
@@ -1249,6 +1249,8 @@ BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions-rtl.h
 BUGWK90770 : fast/regions/webkit-flow-renderer-layer.html = IMAGE
 
 BUGWK89231 : fast/js/global-constructors.html = TEXT
+
+BUGWK91009 DEBUG : fast/xsl/xslt-missing-namespace-in-xsl.xml = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

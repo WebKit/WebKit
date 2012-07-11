@@ -1,3 +1,11 @@
+2012-07-11  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding an expectation for a test failing on the
+        64-bit Debug builder due to libxml2 2.8.0 being used and updating the
+        bug handle for another test.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-11  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Enable LEGACY_VIEWPORT_ADAPTION
