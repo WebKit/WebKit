@@ -1,3 +1,27 @@
+2012-07-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Assertion ASSERTION FAILED: enclosingIntRect(rendererMappedResult) == enclosingIntRect(FloatQuad(result).boundingBox()) when compositing in paginated mode
+        https://bugs.webkit.org/show_bug.cgi?id=90919
+
+        Reviewed by Antti Koivisto.
+
+        r121124 added a fast path for geometry mapping that goes via layers
+        when possible. However, this broke paginated pages, which put
+        the root (RenderView) layer into column mode, because it failed
+        to check for columns on the ancestor layer.
+        
+        Rather than make a risky change to convertToLayerCoords(), add a local
+        function canMapViaLayer(), which is like RenderLayer::canUseConvertToLayerCoords(),
+        but doesn't check for compositing (compositing itself is not a reason
+        to avoid convertToLayerCoords). Call canMapViaLayer() with the ancestorLayer
+        to check whether the ancestor has columns, which fixes the bug.
+
+        Test: compositing/columns/geometry-map-paginated-assert.html
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::canMapViaLayer):
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor):
+
 2012-07-11  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Rename layerRect to contentRect for rects that live in content space

@@ -138,14 +138,31 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, con
     } while (renderer && renderer != ancestorRenderer);
 }
 
+static bool canMapViaLayer(const RenderLayer* layer)
+{
+    RenderStyle* style = layer->renderer()->style();
+    if (style->position() == FixedPosition || style->isFlippedBlocksWritingMode())
+        return false;
+    
+    if (layer->renderer()->hasColumns() || layer->renderer()->hasTransform())
+        return false;
+
+#if ENABLE(SVG)
+    if (layer->renderer()->isSVGRoot())
+        return false;
+#endif
+
+    return true;
+}
+
 void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer)
 {
     const RenderObject* renderer = layer->renderer();
 
     // The simple case can be handled fast in the layer tree.
-    bool canConvertInLayerTree = ancestorLayer && renderer->style()->position() != FixedPosition && !renderer->style()->isFlippedBlocksWritingMode();
+    bool canConvertInLayerTree = ancestorLayer ? canMapViaLayer(ancestorLayer) : false;
     for (const RenderLayer* current = layer; current != ancestorLayer && canConvertInLayerTree; current = current->parent())
-        canConvertInLayerTree = current->canUseConvertToLayerCoords();
+        canConvertInLayerTree = canMapViaLayer(current);
 
     if (canConvertInLayerTree) {
         TemporaryChange<size_t> positionChange(m_insertionPosition, m_mapping.size());

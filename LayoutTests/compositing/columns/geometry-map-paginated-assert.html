@@ -1,0 +1,38 @@
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+          testRunner.dumpAsText();
+
+        if (window.internals)
+            internals.setPagination(document, "LeftToRightPaginated", 0);
+    </script>
+    <style>
+    .spacer {
+      height: 350px;
+      width: 100%;
+      margin: 10px;
+      background-color: silver;
+    }
+    
+    .box {
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+    }
+    .composited {
+      -webkit-transform: translateZ(0);
+    }
+    </style>
+</head>
+<body>
+
+  <p>This test should not assert.</p>
+  <div class="spacer"></div>
+  <div class="spacer"></div>
+  <div class="composited box"></div>
+
+
+</body>
+</html>
