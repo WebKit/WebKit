@@ -1,3 +1,28 @@
+2012-07-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Simplify the copying of JSC ARMv7's LinkRecord
+        https://bugs.webkit.org/show_bug.cgi?id=90930
+
+        Reviewed by Filip Pizlo.
+
+        The class LinkRecord is used by value everywhere in ARMv7Assembler. The compiler uses
+        memmove() to move the objects.
+
+        The problem is memmove() is overkill for this object, moving the value can be done with
+        3 load-store. This patch adds an operator= to the class doing more efficient copying.
+        This reduces the link time by 19%.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::LinkRecord::LinkRecord):
+        (JSC::ARMv7Assembler::LinkRecord::operator=):
+        (JSC::ARMv7Assembler::LinkRecord::from):
+        (JSC::ARMv7Assembler::LinkRecord::setFrom):
+        (JSC::ARMv7Assembler::LinkRecord::to):
+        (JSC::ARMv7Assembler::LinkRecord::type):
+        (JSC::ARMv7Assembler::LinkRecord::linkType):
+        (JSC::ARMv7Assembler::LinkRecord::setLinkType):
+        (JSC::ARMv7Assembler::LinkRecord::condition):
+
 2012-07-11  Andy Wingo  <wingo@igalia.com>
 
         jsc: Parse options before creating global data

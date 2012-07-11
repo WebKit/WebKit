@@ -462,28 +462,42 @@ public:
     class LinkRecord {
     public:
         LinkRecord(intptr_t from, intptr_t to, JumpType type, Condition condition)
-            : m_from(from)
-            , m_to(to)
-            , m_type(type)
-            , m_linkType(LinkInvalid)
-            , m_condition(condition)
         {
+            data.realTypes.m_from = from;
+            data.realTypes.m_to = to;
+            data.realTypes.m_type = type;
+            data.realTypes.m_linkType = LinkInvalid;
+            data.realTypes.m_condition = condition;
         }
-        intptr_t from() const { return m_from; }
-        void setFrom(intptr_t from) { m_from = from; }
-        intptr_t to() const { return m_to; }
-        JumpType type() const { return m_type; }
-        JumpLinkType linkType() const { return m_linkType; }
-        void setLinkType(JumpLinkType linkType) { ASSERT(m_linkType == LinkInvalid); m_linkType = linkType; }
-        Condition condition() const { return m_condition; }
+        void operator=(const LinkRecord& other)
+        {
+            data.copyTypes.content[0] = other.data.copyTypes.content[0];
+            data.copyTypes.content[1] = other.data.copyTypes.content[1];
+            data.copyTypes.content[2] = other.data.copyTypes.content[2];
+        }
+        intptr_t from() const { return data.realTypes.m_from; }
+        void setFrom(intptr_t from) { data.realTypes.m_from = from; }
+        intptr_t to() const { return data.realTypes.m_to; }
+        JumpType type() const { return data.realTypes.m_type; }
+        JumpLinkType linkType() const { return data.realTypes.m_linkType; }
+        void setLinkType(JumpLinkType linkType) { ASSERT(data.realTypes.m_linkType == LinkInvalid); data.realTypes.m_linkType = linkType; }
+        Condition condition() const { return data.realTypes.m_condition; }
     private:
-        intptr_t m_from : 31;
-        intptr_t m_to : 31;
-        JumpType m_type : 8;
-        JumpLinkType m_linkType : 8;
-        Condition m_condition : 16;
+        union {
+            struct RealTypes {
+                intptr_t m_from : 31;
+                intptr_t m_to : 31;
+                JumpType m_type : 8;
+                JumpLinkType m_linkType : 8;
+                Condition m_condition : 16;
+            } realTypes;
+            struct CopyTypes {
+                uint32_t content[3];
+            } copyTypes;
+            COMPILE_ASSERT(sizeof(RealTypes) == sizeof(CopyTypes), LinkRecordCopyStructSizeEqualsRealStruct);
+        } data;
     };
-    
+
     ARMv7Assembler()
         : m_indexOfLastWatchpoint(INT_MIN)
         , m_indexOfTailOfLastWatchpoint(INT_MIN)
