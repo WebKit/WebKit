@@ -1,5 +1,12 @@
 2012-07-11  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix. Update code to use the new constant name.
+        
+        * platform/wx/PasteboardWx.cpp:
+        (WebCore::Pasteboard::documentFragment):
+
+2012-07-11  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix. Ignore array and sequence types for attributes as well
         as functions since the CPP bindings do not yet support them.
 
