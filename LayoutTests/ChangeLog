@@ -1,3 +1,17 @@
+2012-07-11  Ojan Vafai  <ojan@chromium.org>
+
+        Simplify css3/flexbox/repaint-rtl-column.html
+        https://bugs.webkit.org/show_bug.cgi?id=91011
+
+        Reviewed by Tony Chang.
+
+        This test was doing something simple in a complicated way. Also, removing
+        the text should make it so that more ports can fallback to the same png.
+
+        * css3/flexbox/repaint-rtl-column-expected.txt:
+        * css3/flexbox/repaint-rtl-column.html:
+        * platform/chromium-linux/css3/flexbox/repaint-rtl-column-expected.png:
+
 2012-07-11  Chris Fleizach  <cfleizach@apple.com>
 
         ARIA spinbutton role incorrectly mapped to ProgressIndicatorRole
