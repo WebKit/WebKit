@@ -213,6 +213,13 @@ void IDBTransaction::abort()
         return;
     m_state = Finishing;
     m_active = false;
+
+    while (!m_requestList.isEmpty()) {
+        IDBRequest* request = *m_requestList.begin();
+        m_requestList.remove(request);
+        request->abort();
+    }
+
     RefPtr<IDBTransaction> selfRef = this;
     if (m_backend)
         m_backend->abort();
@@ -267,11 +274,16 @@ void IDBTransaction::unregisterRequest(IDBRequest* request)
 void IDBTransaction::onAbort()
 {
     ASSERT(m_state != Finished);
-    m_state = Finishing;
-    while (!m_requestList.isEmpty()) {
-        IDBRequest* request = *m_requestList.begin();
-        m_requestList.remove(request);
-        request->abort();
+
+    if (m_state != Finishing) {
+        // Abort was not triggered by front-end, so outstanding requests must
+        // be aborted now.
+        while (!m_requestList.isEmpty()) {
+            IDBRequest* request = *m_requestList.begin();
+            m_requestList.remove(request);
+            request->abort();
+        }
+        m_state = Finishing;
     }
 
     if (isVersionChange()) {

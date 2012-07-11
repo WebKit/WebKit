@@ -1,3 +1,33 @@
+2012-07-10  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Ensure transaction abort events are deterministic in multiprocess ports
+        https://bugs.webkit.org/show_bug.cgi?id=90412
+
+        Reviewed by Tony Chang.
+
+        In multi-process ports (e.g. Chromium), transaction aborts triggered on the front-end could 
+        be initiated while a "success" event was in-flight from the back end. This would lead to 
+        apparently flaky behavior when requests would sometimes report success and sometimes report
+        an error. Address this by having front-end triggered aborts do the abort steps immediately,
+        then send the async abort request to the back end.
+
+        No new tests - behavior in single process ports (and DRT) covered by existing
+        tests. Will enable currently disabled Chromium tests to be enabled (crbug.com/83226).
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest): Initialize a new m_requestAborted flag, used to prevent
+        dispatching if an in-flight request comes in after the abort.
+        (WebCore::IDBRequest::abort): Set flag to prevent double dispatching.
+        (WebCore::IDBRequest::onError): Handle aborted-then-received-event case.
+        (WebCore::IDBRequest::onSuccess): Ditto.
+        (WebCore::IDBRequest::onSuccessWithContinuation): Ditto.
+        (WebCore::IDBRequest::dispatchEvent): On uncaught error, trigger abort on transaction front-end.
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::abort): Do abort steps locally first, then notify back-end.
+        (WebCore::IDBTransaction::onAbort): If abort wasn't triggered locally, clean up is still necessary.
+
 2012-07-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION(r112113): absolutely positioned INPUT boxes with a table cell containing block have a 0px height

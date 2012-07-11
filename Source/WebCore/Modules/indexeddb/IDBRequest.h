@@ -128,6 +128,7 @@ private:
     RefPtr<IDBTransaction> m_transaction;
 
     ReadyState m_readyState;
+    bool m_requestAborted; // May be aborted by transaction then receive async onsuccess; ignore vs. assert.
     bool m_requestFinished; // Is it possible that we'll fire any more events? If not, we're finished.
     bool m_cursorFinished;
     bool m_contextStopped;
