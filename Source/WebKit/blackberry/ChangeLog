@@ -1,3 +1,32 @@
+2012-07-11  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Implement Date/Time picker
+        https://bugs.webkit.org/show_bug.cgi?id=90911
+
+        Reviewed by Rob Buis.
+
+        Implement HTML Date/Time picker, also should delete popup when closing popup.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::closePagePopup):
+        * WebCoreSupport/DatePickerClient.cpp: Added.
+        (WebCore):
+        (WebCore::DatePickerClient::DatePickerClient):
+        (WebCore::DatePickerClient::~DatePickerClient):
+        (WebCore::DatePickerClient::generateHTML):
+        (WebCore::DatePickerClient::closePopup):
+        (WebCore::DatePickerClient::contentSize):
+        (WebCore::DatePickerClient::htmlSource):
+        (WebCore::DatePickerClient::setValueAndClosePopup):
+        (WebCore::DatePickerClient::didClosePopup):
+        (WebCore::DatePickerClient::writeDocument):
+        * WebCoreSupport/DatePickerClient.h: Added.
+        (WebKit):
+        (WebCore):
+        (DatePickerClient):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::openDatePopup):
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         WebCore::Settings for Hixie76 WebSocket protocol doesn't do anything and should be removed

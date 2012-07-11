@@ -91,6 +91,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/VibrationClientBlackBerry.cpp
     blackberry/WebCoreSupport/PagePopupBlackBerry.cpp
     blackberry/WebCoreSupport/SelectPopupClient.cpp
+    blackberry/WebCoreSupport/DatePickerClient.cpp
     blackberry/WebKitSupport/BackingStoreCompositingSurface.cpp
     blackberry/WebKitSupport/BackingStoreTile.cpp
     blackberry/WebKitSupport/BackingStoreClient.cpp

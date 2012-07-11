@@ -25,6 +25,7 @@
 #include "CString.h"
 #include "Chrome.h"
 #include "DOMSupport.h"
+#include "DatePickerClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
@@ -495,15 +496,28 @@ bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType 
     if (isActiveTextEdit())
         clearCurrentFocusElement();
 
-    m_currentFocusElement = element;
-    m_currentFocusElementType = TextPopup;
+    switch (type) {
+    case BlackBerry::Platform::InputTypeDate:
+    case BlackBerry::Platform::InputTypeTime:
+    case BlackBerry::Platform::InputTypeDateTime:
+    case BlackBerry::Platform::InputTypeDateTimeLocal: {
+        // Check if popup already exists, close it if does.
+        m_webPage->m_page->chrome()->client()->closePagePopup(0);
+        String value = element->value();
+        String min = element->getAttribute(HTMLNames::minAttr).string();
+        String max = element->getAttribute(HTMLNames::maxAttr).string();
+        double step = element->getAttribute(HTMLNames::stepAttr).toDouble();
 
-    WTF::String value = element->value();
-    WTF::String min = element->getAttribute(HTMLNames::minAttr).string();
-    WTF::String max = element->getAttribute(HTMLNames::maxAttr).string();
-    double step = element->getAttribute(HTMLNames::stepAttr).toDouble();
-    m_webPage->m_client->openDateTimePopup(type, value, min, max, step);
-    return true;
+        DatePickerClient* client = new DatePickerClient(type, value, min, max, step,  m_webPage, element);
+        // Fail to create HTML popup, use the old path
+        if (!m_webPage->m_page->chrome()->client()->openPagePopup(client,  WebCore::IntRect()))
+            m_webPage->m_client->openDateTimePopup(type, value, min, max, step);
+
+        return true;
+        }
+    default: // Other types not supported
+        return false;
+    }
 }
 
 bool InputHandler::openColorPopup(HTMLInputElement* element)

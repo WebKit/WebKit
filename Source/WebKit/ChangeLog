@@ -1,3 +1,14 @@
+2012-07-11  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Implement Date/Time picker
+        https://bugs.webkit.org/show_bug.cgi?id=90911
+
+        Reviewed by Rob Buis.
+
+        Add files into make file.
+
+        * PlatformBlackBerry.cmake:
+
 2012-07-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Battery status code needs refactoring to be reused in WebKit2

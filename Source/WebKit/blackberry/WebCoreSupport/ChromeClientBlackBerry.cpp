@@ -321,6 +321,7 @@ void ChromeClientBlackBerry::closePagePopup(PagePopup*)
 
     PagePopupBlackBerry* webPopup = m_webPagePrivate->m_webPage->popup();
     webPopup->closePopup();
+    delete webPopup;
 }
 
 void ChromeClientBlackBerry::setToolbarsVisible(bool)
