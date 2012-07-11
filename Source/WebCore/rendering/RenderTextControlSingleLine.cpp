@@ -124,11 +124,17 @@ void RenderTextControlSingleLine::layout()
     // and type=search if the text height is taller than the contentHeight()
     // because of compability.
 
-    RenderBlock::layoutBlock(false);
-
     RenderBox* innerTextRenderer = innerTextElement()->renderBox();
     ASSERT(innerTextRenderer);
     RenderBox* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : 0;
+
+    // To ensure consistency between layouts, we need to reset any conditionally overriden height.
+    innerTextRenderer->style()->setHeight(Length(Auto));
+    if (innerBlockRenderer)
+        innerBlockRenderer->style()->setHeight(Length(Auto));
+
+    RenderBlock::layoutBlock(false);
+
     HTMLElement* container = containerElement();
     RenderBox* containerRenderer = container ? container->renderBox() : 0;
 
