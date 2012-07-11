@@ -1,3 +1,21 @@
+2012-07-10  Adam Klein  <adamk@chromium.org>
+
+        [Chromium] REGRESSION(r121909): m_currentInputEvent never set
+        https://bugs.webkit.org/show_bug.cgi?id=90914
+
+        Reviewed by Abhishek Arya.
+
+        The always-null m_currentInputEvent causes a regression when
+        middle-clicking on a link that calls window.open('...', '_blank');
+        that new tab should open in the background, but instead opens in the
+        foreground (see code in ChromeClientImpl::getNavigationPolicy()).
+
+        Fix usage of TemporaryChange to specify a local variable name so that
+        m_currentInputEvent is actually set for the duration of handleInputEvent.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent): Name the TemporaryChange instance.
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         WebCore::Settings for Hixie76 WebSocket protocol doesn't do anything and should be removed

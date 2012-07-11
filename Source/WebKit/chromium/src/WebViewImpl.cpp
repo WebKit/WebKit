@@ -1761,7 +1761,7 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
     if (m_ignoreInputEvents)
         return false;
 
-    TemporaryChange<const WebInputEvent*>(m_currentInputEvent, &inputEvent);
+    TemporaryChange<const WebInputEvent*> currentEventChange(m_currentInputEvent, &inputEvent);
 
 #if ENABLE(POINTER_LOCK)
     if (isPointerLocked() && WebInputEvent::isMouseEventType(inputEvent.type)) {
