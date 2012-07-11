@@ -1,3 +1,15 @@
+2012-07-11  Ojan Vafai  <ojan@chromium.org>
+
+        Dedupe suffixes passed to webkit-patch rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=91017
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (Rebaseline._suffixes_to_update):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_multiple_builders_and_tests_command_line):
+
 2012-07-11  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Add new directories and a new LayoutTestController method.

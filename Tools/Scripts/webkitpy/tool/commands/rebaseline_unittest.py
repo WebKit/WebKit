@@ -465,18 +465,18 @@ MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'mock/path
 
             tool.executive = MockExecutive(should_log=True)
 
-            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder2': ['txt', 'png', 'wav'], 'MOCK builder': ['txt', 'png', 'wav'], 'MOCK builder3': ['txt', 'png', 'wav']}, 'mock/path/to/test2.html': {'MOCK builder2': ['txt', 'png', 'wav'], 'MOCK builder': ['txt', 'png', 'wav'], 'MOCK builder3': ['txt', 'png', 'wav']}}
+            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder2': ['wav', 'txt', 'png'], 'MOCK builder': ['wav', 'txt', 'png'], 'MOCK builder3': ['wav', 'txt', 'png']}, 'mock/path/to/test2.html': {'MOCK builder2': ['wav', 'txt', 'png'], 'MOCK builder': ['wav', 'txt', 'png'], 'MOCK builder3': ['wav', 'txt', 'png']}}
 """
 
-            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png,wav', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png,wav', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png,wav', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test2.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png,wav', '--builder', 'MOCK builder', '--test', 'mock/path/to/test2.html'], cwd=/mock-checkout
+            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'wav,txt,png', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'wav,txt,png', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'wav,txt,png', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test2.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'wav,txt,png', '--builder', 'MOCK builder', '--test', 'mock/path/to/test2.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'wav,txt,png', 'mock/path/to/test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'wav,txt,png', 'mock/path/to/test2.html'], cwd=/mock-checkout
 """
 
-            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True, builders=["MOCK builder,MOCK builder2", "MOCK builder3"], suffixes=["txt", "png,wav"], verbose=True), ["mock/path/to/test.html", "mock/path/to/test2.html"], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True, builders=["MOCK builder,MOCK builder2", "MOCK builder3"], suffixes=["txt,png", "png,wav,txt"], verbose=True), ["mock/path/to/test.html", "mock/path/to/test2.html"], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
 
         finally:
             builders._exact_matches = old_exact_matches

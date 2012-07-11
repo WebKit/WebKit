@@ -398,10 +398,10 @@ class Rebaseline(AbstractParallelRebaselineCommand):
         return self._tool.user.prompt_with_list("Which test(s) to rebaseline for %s:" % builder.name(), failing_tests, can_choose_multiple=True)
 
     def _suffixes_to_update(self, options):
-        suffixes = []
+        suffixes = set()
         for suffix_list in options.suffixes:
-            suffixes += suffix_list.split(",")
-        return suffixes
+            suffixes |= set(suffix_list.split(","))
+        return list(suffixes)
 
     def execute(self, options, args, tool):
         if options.builders:
