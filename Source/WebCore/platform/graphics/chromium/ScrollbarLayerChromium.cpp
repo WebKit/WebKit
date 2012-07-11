@@ -247,7 +247,7 @@ void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextu
     texture->prepareRect(rect);
 
     IntRect destRect(IntPoint(), rect.size());
-    updater.appendUpdate(texture, rect, destRect);
+    updater.appendFullUpdate(texture, rect, destRect);
 }
 
 

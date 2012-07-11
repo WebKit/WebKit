@@ -59,9 +59,9 @@ void CCTextureUpdater::appendUpdate(LayerTextureUpdater::Texture* texture, const
     entries.append(entry);
 }
 
-void CCTextureUpdater::appendUpdate(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void CCTextureUpdater::appendFullUpdate(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
-    appendUpdate(texture, sourceRect, destRect, m_entries);
+    appendUpdate(texture, sourceRect, destRect, m_fullEntries);
 }
 
 void CCTextureUpdater::appendPartialUpdate(LayerTextureUpdater::Texture* texture, const IntRect& sourceRect, const IntRect& destRect)
@@ -80,26 +80,26 @@ void CCTextureUpdater::appendCopy(unsigned sourceTexture, unsigned destTexture, 
 
 bool CCTextureUpdater::hasMoreUpdates() const
 {
-    return m_entries.size() || m_partialEntries.size() || m_copyEntries.size();
+    return m_fullEntries.size() || m_partialEntries.size() || m_copyEntries.size();
 }
 
 void CCTextureUpdater::update(CCGraphicsContext* context, TextureAllocator* allocator, TextureCopier* copier, TextureUploader* uploader, size_t count)
 {
     size_t index;
 
-    if (m_entries.size() || m_partialEntries.size()) {
+    if (m_fullEntries.size() || m_partialEntries.size()) {
         if (uploader->isBusy())
             return;
 
         uploader->beginUploads();
 
-        size_t maxIndex = min(m_entryIndex + count, m_entries.size());
+        size_t maxIndex = min(m_entryIndex + count, m_fullEntries.size());
         for (index = m_entryIndex; index < maxIndex; ++index) {
-            UpdateEntry& entry = m_entries[index];
+            UpdateEntry& entry = m_fullEntries[index];
             uploader->uploadTexture(context, entry.texture, allocator, entry.sourceRect, entry.destRect);
         }
 
-        bool moreUploads = maxIndex < m_entries.size();
+        bool moreUploads = maxIndex < m_fullEntries.size();
 
         ASSERT(m_partialEntries.size() <= count);
         // We need another update batch if the number of updates remaining
@@ -143,7 +143,7 @@ void CCTextureUpdater::update(CCGraphicsContext* context, TextureAllocator* allo
 void CCTextureUpdater::clear()
 {
     m_entryIndex = 0;
-    m_entries.clear();
+    m_fullEntries.clear();
     m_partialEntries.clear();
     m_copyEntries.clear();
 }

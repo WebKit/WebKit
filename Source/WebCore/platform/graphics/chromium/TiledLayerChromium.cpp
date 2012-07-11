@@ -510,7 +510,7 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
             if (tile->partialUpdate)
                 updater.appendPartialUpdate(tile->texture(), sourceRect, destRect);
             else
-                updater.appendUpdate(tile->texture(), sourceRect, destRect);
+                updater.appendFullUpdate(tile->texture(), sourceRect, destRect);
         }
     }
 }

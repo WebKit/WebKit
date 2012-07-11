@@ -1,3 +1,24 @@
+2012-07-10  Brian Anderson  <brianderson@chromium.org>
+
+        [chromium] Make full texture updates explicit
+        https://bugs.webkit.org/show_bug.cgi?id=90507
+
+        Reviewed by Adrienne Walker.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::updatePart):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateTiles):
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore::CCTextureUpdater::appendFullUpdate):
+        (WebCore::CCTextureUpdater::hasMoreUpdates):
+        (WebCore::CCTextureUpdater::update):
+        (WebCore::CCTextureUpdater::clear):
+        * platform/graphics/chromium/cc/CCTextureUpdater.h:
+        (CCTextureUpdater):
+
 2012-07-10  Shinya Kawanaka  <shinyak@chromium.org>
 
         Crash in nextLinePosition() due to accessing a removed root line box.
