@@ -1,3 +1,19 @@
+2012-07-11  Andy Wingo  <wingo@igalia.com>
+
+        jsc: Parse options before creating global data
+        https://bugs.webkit.org/show_bug.cgi?id=90975
+
+        Reviewed by Filip Pizlo.
+
+        This patch moves the options parsing in "jsc" before the creation
+        of the JSGlobalData, so that --useJIT=no has a chance to take
+        effect.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments): Refactor to be a class, and take
+        argc and argv as constructor arguments.
+        (jscmain): Move arg parsing before JSGlobalData creation.
+
 2012-07-10  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r122166): It made 170 tests crash on 32 bit platforms
