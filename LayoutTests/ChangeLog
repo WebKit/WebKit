@@ -1,3 +1,10 @@
+2012-07-11  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip a failing test after r122327.
+        https://bugs.webkit.org/show_bug.cgi?id=90979.
+
+        * platform/qt/Skipped:
+
 2012-07-11  W. James MacLean  <wjmaclean@chromium.org>
 
         Unreviewed gardening. Mark inspector/extensions/extensions-events.html as TIMEOUT on non-debug builds.
