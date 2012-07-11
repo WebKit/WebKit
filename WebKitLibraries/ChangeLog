@@ -1,3 +1,16 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        Add a Mountain Lion version of libWebKitSystemInterface.a.
+
+        Update the WebKitSystemInterface header and binaries.
+
+        Reviewed by John Sullivan.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a: Added.
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-07-04  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Add compile flag and runtime setting

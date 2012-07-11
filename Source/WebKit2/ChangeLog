@@ -1,3 +1,11 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        Add a Mountain Lion version of libWebKitSystemInterface.a.
+
+        Reviewed by John Sullivan.
+
+        * Configurations/DebugRelease.xcconfig: Look for the library under its expected name.
+
 2012-07-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] QRawWebView should notify when rendering is done, so that pixel results can be grabbed at the appropriate moment.

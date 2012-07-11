@@ -37,6 +37,7 @@ my @librariesToCopy = (
     "libWebKitSystemInterfaceLeopard.a",
     "libWebKitSystemInterfaceSnowLeopard.a",
     "libWebKitSystemInterfaceLion.a",
+    "libWebKitSystemInterfaceMountainLion.a",
     "libWebCoreSQLite3.a",
 );
 

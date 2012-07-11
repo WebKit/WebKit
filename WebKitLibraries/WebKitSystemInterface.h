@@ -43,9 +43,7 @@ NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *response);
 NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
 NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *response);
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 CFArrayRef WKCopyNSURLResponseCertificateChain(NSURLResponse *response);
-#endif
 
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
@@ -94,7 +92,6 @@ void WKUnregisterUniqueIdForElement(id element);
 
 BOOL WKShouldBlockPlugin(NSString *bundleIdentifier, NSString *bundleVersionString);
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 // Remote Accessibility API.
 void WKAXRegisterRemoteApp(void);
 void WKAXInitializeElementWithPresenterPid(id, pid_t);
@@ -103,7 +100,6 @@ id WKAXRemoteElementForToken(NSData *);
 void WKAXSetWindowForRemoteElement(id remoteWindow, id remoteElement);
 void WKAXRegisterRemoteProcess(bool registerProcess, pid_t);
 pid_t WKAXRemoteProcessIdentifier(id remoteElement);
-#endif
 
 void WKSetUpFontCache(void);
 
@@ -227,7 +223,7 @@ NSURL *WKQTMovieResolvedURL(QTMovie* movie);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
 #else
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
@@ -319,7 +315,6 @@ NSArray *WKQTGetSitesInMediaDownloadCache();
 void WKQTClearMediaDownloadCacheForSite(NSString *site);
 void WKQTClearMediaDownloadCache();
     
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 mach_port_t WKInitializeRenderServer(void);
     
 @class CALayer;
@@ -375,7 +370,6 @@ CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t subsystem, mach_port_
 
 NSUInteger WKGetInputPanelWindowStyle(void);
 UInt8 WKGetNSEventKeyChar(NSEvent *);
-#endif // MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 @class CAPropertyAnimation;
 void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
@@ -390,7 +384,7 @@ void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumber
 void WKSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef WKCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 typedef enum {
     WKEventPhaseNone = 0,
     WKEventPhaseBegan = 1,
@@ -404,7 +398,6 @@ int WKGetNSEventMomentumPhase(NSEvent *);
 void WKWindowSetAlpha(NSWindow *window, float alphaValue);
 void WKWindowSetScaledFrame(NSWindow *window, NSRect scaleFrame, NSRect nonScaledFrame);
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 void WKSyncSurfaceToView(NSView *view);
 
 void WKEnableSettingCursorWhenInBackground(void);
@@ -419,9 +412,7 @@ NSURLResponse *WKNSURLResponseFromSerializableRepresentation(CFDictionaryRef rep
 ScriptCode WKGetScriptCodeFromCurrentKeyboardInputSource(void);
 #endif
 
-#endif
-
-#if MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 CFIndex WKGetHyphenationLocationBeforeIndex(CFStringRef string, CFIndex index);
 #endif
 

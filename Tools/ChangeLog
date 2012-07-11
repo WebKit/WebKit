@@ -1,3 +1,11 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        Add a Mountain Lion version of libWebKitSystemInterface.a.
+
+        Reviewed by John Sullivan.
+
+        * Scripts/copy-webkitlibraries-to-product-directory: Include libWebKitSystemInterfaceMountainLion.a in the list of libraries to copy.
+
 2012-07-09  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/90835> Teach bisect-builds to work with a Safari.app that has entitlements.
