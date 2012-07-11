@@ -55,33 +55,27 @@ def make_broker(manager, max_workers, start_queue=None, stop_queue=None):
 
 
 class _TestWorker(object):
-    def __init__(self, caller, worker_number):
+    def __init__(self, caller):
         self._caller = caller
         self._thing_to_greet = 'everybody'
         self._starting_queue = starting_queue
         self._stopping_queue = stopping_queue
         self._options = optparse.Values({'verbose': False})
 
-    def name(self):
-        return WORKER_NAME
-
-    def cleanup(self):
-        pass
-
-    def handle(self, message, src, an_int, a_str):
-        assert an_int == 1
-        assert a_str == "hello, world"
-        self._caller.post_message('finished_test', 2)
-
-    def safe_init(self):
+    def start(self):
         if self._starting_queue:
             self._starting_queue.put('')
 
         if self._stopping_queue:
             self._stopping_queue.get()
 
+    def handle(self, message, src, an_int, a_str):
+        assert an_int == 1
+        assert a_str == "hello, world"
+        self._caller.post('finished_test', 2)
+
     def stop(self):
-        self._caller.post_message('done')
+        pass
 
 
 class FunctionTests(unittest.TestCase):
@@ -99,8 +93,7 @@ class _TestsMixin(object):
     """Mixin class that implements a series of tests to enforce the
     contract all implementations must follow."""
 
-    def name(self):
-        return 'TesterManager'
+    name = 'TesterManager'
 
     def is_done(self):
         return self._done
@@ -128,7 +121,7 @@ class _TestsMixin(object):
     def test_name(self):
         self.make_broker()
         worker = self._broker.start_worker(1)
-        self.assertEquals(worker.name(), WORKER_NAME)
+        self.assertEquals(worker.name, WORKER_NAME)
         worker.cancel()
         worker.join(0.1)
         self.assertFalse(worker.is_alive())

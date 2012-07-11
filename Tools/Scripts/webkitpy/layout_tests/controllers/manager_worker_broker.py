@@ -171,7 +171,7 @@ class _Broker(object):
         """Post a message to the appropriate topic name.
 
         Messages have a name and a tuple of optional arguments. Both must be picklable."""
-        message = _Message(client.name(), topic_name, message_name, message_args)
+        message = _Message(client.name, topic_name, message_name, message_args)
         queue = self._get_queue_for_topic(topic_name)
         queue.put(_Message.dumps(message))
 
@@ -200,7 +200,7 @@ class _Broker(object):
         if not hasattr(client, 'handle_' + message.name):
             raise ValueError(
                "%s: received message '%s' it couldn't handle" %
-               (client.name(), message.name))
+               (client.name, message.name))
         optargs = message.args
         message_handler = getattr(client, 'handle_' + message.name)
         message_handler(message.src, *optargs)
@@ -268,15 +268,12 @@ class AbstractWorker(BrokerClient):
         BrokerClient.__init__(self)
         self.worker = None
         self._worker_connection = worker_connection
-        self._worker_number = worker_number
-        self._name = 'worker/%d' % worker_number
+        self.worker_number = worker_number
+        self.name = 'worker/%d' % worker_number
         self._done = False
         self._canceled = False
         self._options = optparse.Values({'verbose': False})
         self.host = None
-
-    def name(self):
-        return self._name
 
     def is_done(self):
         return self._done or self._canceled
@@ -290,14 +287,14 @@ class AbstractWorker(BrokerClient):
         exception_msg = ""
         self.host = host
 
-        self.worker.safe_init()
-        _log.debug('%s starting' % self._name)
+        self.worker.start()
+        _log.debug('%s starting' % self.name)
 
         try:
             self._worker_connection.run_message_loop()
             if not self.is_done():
                 raise AssertionError("%s: ran out of messages in worker queue."
-                                     % self._name)
+                                     % self.name)
         except KeyboardInterrupt:
             exception_msg = ", interrupted"
             self._worker_connection.raise_exception(sys.exc_info())
@@ -305,9 +302,9 @@ class AbstractWorker(BrokerClient):
             exception_msg = ", exception raised"
             self._worker_connection.raise_exception(sys.exc_info())
         finally:
-            _log.debug("%s done with message loop%s" % (self._name, exception_msg))
+            _log.debug("%s done with message loop%s" % (self.name, exception_msg))
             try:
-                self.worker.cleanup()
+                self.worker.stop()
             finally:
                 # Make sure we post a done so that we can flush the log messages
                 # and clean up properly even if we raise an exception in worker.cleanup().
@@ -325,10 +322,10 @@ class AbstractWorker(BrokerClient):
         method being called, so clients should not rely solely on this."""
         self._canceled = True
 
-    def yield_to_broker(self):
+    def yield_to_caller(self):
         self._worker_connection.yield_to_broker()
 
-    def post_message(self, *args):
+    def post(self, *args):
         self._worker_connection.post_message(*args)
 
 
@@ -382,16 +379,14 @@ class _WorkerConnection(_BrokerConnection):
         # actual Worker (created by worker_factory) is very confusing, but this all gets better when
         # _WorkerConnection and AbstractWorker get merged.
         self._client = AbstractWorker(self, worker_number)
-        self._worker = worker_factory(self._client, worker_number)
+        self._worker = worker_factory(self._client)
         self._client.worker = self._worker
         self._host = host
         self._log_messages = []
         self._logger = None
         self._log_handler = None
+        self.name = self._client.name
         _BrokerConnection.__init__(self, broker, self._client, ANY_WORKER_TOPIC, MANAGER_TOPIC)
-
-    def name(self):
-        return self._client.name()
 
     def cancel(self):
         raise NotImplementedError

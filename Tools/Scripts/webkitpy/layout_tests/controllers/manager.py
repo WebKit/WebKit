@@ -333,6 +333,8 @@ class Manager(object):
         # This maps worker names to the state we are tracking for each of them.
         self._worker_states = {}
 
+        self.name = 'manager'
+
     def collect_tests(self, args):
         """Find all the files to test.
 
@@ -496,7 +498,7 @@ class Manager(object):
         elif len(self._test_files) > 1:
             self._printer.print_expected("Running all %d tests." % len(self._test_files))
         else:
-            self._printer.print_expected("Running %1 test.")
+            self._printer.print_expected("Running 1 test.")
 
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
@@ -769,8 +771,8 @@ class Manager(object):
         num_workers = min(num_workers, len(all_shards))
         self._log_num_workers(num_workers, len(all_shards), len(locked_shards))
 
-        def worker_factory(worker_connection, worker_number):
-            return worker.Worker(worker_connection, worker_number, self.results_directory(), self._options)
+        def worker_factory(worker_connection):
+            return worker.Worker(worker_connection, self.results_directory(), self._options)
 
         manager_connection = manager_worker_broker.get(num_workers, self, worker_factory, self._port.host)
 
@@ -781,7 +783,7 @@ class Manager(object):
         for worker_number in xrange(num_workers):
             worker_connection = manager_connection.start_worker(worker_number)
             worker_state = _WorkerState(worker_number, worker_connection)
-            self._worker_states[worker_connection.name()] = worker_state
+            self._worker_states[worker_connection.name] = worker_state
 
             time.sleep(self._port.worker_startup_delay_secs())
 
@@ -1442,8 +1444,6 @@ class Manager(object):
         results_filename = self._filesystem.join(self._results_directory, "results.html")
         self._port.show_results_html_file(results_filename)
 
-    def name(self):
-        return 'Manager'
 
     def is_done(self):
         worker_states = self._worker_states.values()
@@ -1477,7 +1477,7 @@ class Manager(object):
         self._log_worker_stack(stack)
         raise WorkerException(str(exception_value))
 
-    def handle_finished_list(self, source, list_name, num_tests, elapsed_time):
+    def handle_finished_test_list(self, source, list_name, num_tests, elapsed_time):
         self._group_stats[list_name] = (num_tests, elapsed_time)
 
         def find(name, test_lists):
@@ -1574,7 +1574,7 @@ class _WorkerState(object):
         self.current_test_name = None
         self.next_timeout = None
         self.stats = {}
-        self.stats['name'] = worker_connection.name()
+        self.stats['name'] = worker_connection.name
         self.stats['num_tests'] = 0
         self.stats['total_time'] = 0
 

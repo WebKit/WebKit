@@ -41,14 +41,14 @@ _log = logging.getLogger(__name__)
 
 
 class Worker(object):
-    def __init__(self, worker_connection, worker_number, results_directory, options):
-        self._worker_connection = worker_connection
-        self._worker_number = worker_number
-        self._name = 'worker/%d' % worker_number
+    def __init__(self, caller, results_directory, options):
+        self._caller = caller
+        self._worker_number = caller.worker_number
+        self._name = caller.name
         self._results_directory = results_directory
         self._options = options
 
-        # The remaining fields are initialized in safe_init()
+        # The remaining fields are initialized in start()
         self._host = None
         self._port = None
         self._batch_size = None
@@ -59,12 +59,13 @@ class Worker(object):
         self._tests_run_filename = None
 
     def __del__(self):
-        self.cleanup()
+        self.stop()
 
-    def safe_init(self):
-        """This method is called when it is safe for the object to create state that
-        does not need to be pickled (usually this means it is called in a child process)."""
-        self._host = self._worker_connection.host
+    def start(self):
+        """This method is called when the object is starting to be used and it is safe
+        for the object to create state that does not need to be pickled (usually this means
+        it is called in a child process)."""
+        self._host = self._caller.host
         self._filesystem = self._host.filesystem
         self._port = self._host.port_factory.get(self._options.platform, self._options)
 
@@ -73,18 +74,14 @@ class Worker(object):
         tests_run_filename = self._filesystem.join(self._results_directory, "tests_run%d.txt" % self._worker_number)
         self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
 
-    def handle(self, name, source, list_name, test_list):
+    def handle(self, name, source, test_list_name, test_inputs):
         assert name == 'test_list'
         start_time = time.time()
-        num_tests = 0
-        for test_input in test_list:
-            self._update_test_input(test_input)
+        for test_input in test_inputs:
             self._run_test(test_input)
-            num_tests += 1
-            self._worker_connection.yield_to_broker()
-
+            self._caller.yield_to_caller()
         elapsed_time = time.time() - start_time
-        self._worker_connection.post_message('finished_list', list_name, num_tests, elapsed_time)
+        self._caller.post('finished_test_list', test_list_name, len(test_inputs), elapsed_time)
 
     def _update_test_input(self, test_input):
         test_input.reference_files = self._port.reference_files(test_input.test_name)
@@ -99,25 +96,26 @@ class Worker(object):
             test_input.should_run_pixel_test = False
 
     def _run_test(self, test_input):
-        test_timeout_sec = self.timeout(test_input)
+        self._update_test_input(test_input)
+        test_timeout_sec = self._timeout(test_input)
         start = time.time()
-        self._worker_connection.post_message('started_test', test_input, test_timeout_sec)
+        self._caller.post('started_test', test_input, test_timeout_sec)
 
-        result = self.run_test_with_timeout(test_input, test_timeout_sec)
+        result = self._run_test_with_timeout(test_input, test_timeout_sec)
 
         elapsed_time = time.time() - start
-        self._worker_connection.post_message('finished_test', result, elapsed_time)
+        self._caller.post('finished_test', result, elapsed_time)
 
-        self.clean_up_after_test(test_input, result)
+        self._clean_up_after_test(test_input, result)
 
-    def cleanup(self):
+    def stop(self):
         _log.debug("%s cleaning up" % self._name)
-        self.kill_driver()
+        self._kill_driver()
         if self._tests_run_file:
             self._tests_run_file.close()
             self._tests_run_file = None
 
-    def timeout(self, test_input):
+    def _timeout(self, test_input):
         """Compute the appropriate timeout value for a test."""
         # The DumpRenderTree watchdog uses 2.5x the timeout; we want to be
         # larger than that. We also add a little more padding if we're
@@ -133,7 +131,7 @@ class Worker(object):
         thread_timeout_sec = driver_timeout_sec + thread_padding_sec
         return thread_timeout_sec
 
-    def kill_driver(self):
+    def _kill_driver(self):
         # Be careful about how and when we kill the driver; if driver.stop()
         # raises an exception, this routine may get re-entered via __del__.
         driver = self._driver
@@ -142,12 +140,12 @@ class Worker(object):
             _log.debug("%s killing driver" % self._name)
             driver.stop()
 
-    def run_test_with_timeout(self, test_input, timeout):
+    def _run_test_with_timeout(self, test_input, timeout):
         if self._options.run_singly:
             return self._run_test_in_another_thread(test_input, timeout)
         return self._run_test_in_this_thread(test_input)
 
-    def clean_up_after_test(self, test_input, result):
+    def _clean_up_after_test(self, test_input, result):
         self._batch_count += 1
         test_name = test_input.test_name
         self._tests_run_file.write(test_name + "\n")
@@ -155,7 +153,7 @@ class Worker(object):
         if result.failures:
             # Check and kill DumpRenderTree if we need to.
             if any([f.driver_needs_restart() for f in result.failures]):
-                self.kill_driver()
+                self._kill_driver()
                 # Reset the batch count since the shell just bounced.
                 self._batch_count = 0
 
@@ -169,7 +167,7 @@ class Worker(object):
             _log.debug("%s %s passed" % (self._name, test_name))
 
         if self._batch_size > 0 and self._batch_count >= self._batch_size:
-            self.kill_driver()
+            self._kill_driver()
             self._batch_count = 0
 
     def _run_test_in_another_thread(self, test_input, thread_timeout_sec):
@@ -195,7 +193,7 @@ class Worker(object):
                 self.result = None
 
             def run(self):
-                self.result = worker.run_single_test(driver, test_input)
+                self.result = worker._run_single_test(driver, test_input)
 
         thread = SingleTestThread()
         thread.start()
@@ -227,11 +225,11 @@ class Worker(object):
         Returns: a TestResult object.
         """
         if self._driver and self._driver.has_crashed():
-            self.kill_driver()
+            self._kill_driver()
         if not self._driver:
             self._driver = self._port.create_driver(self._worker_number)
-        return self.run_single_test(self._driver, test_input)
+        return self._run_single_test(self._driver, test_input)
 
-    def run_single_test(self, driver, test_input):
+    def _run_single_test(self, driver, test_input):
         return single_test_runner.run_single_test(self._port, self._options,
             test_input, driver, self._name)

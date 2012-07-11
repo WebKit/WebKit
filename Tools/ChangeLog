@@ -1,3 +1,56 @@
+2012-07-11  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: clean up names in worker.py
+        https://bugs.webkit.org/show_bug.cgi?id=90510
+
+        Reviewed by Ojan Vafai.
+
+        This is the last patch in the series of refactoring worker.py;
+        all this does is change some names of methods, instance
+        variables, and method parameters to be clearer (it also changes
+        some code in manager.py and manager_worker.py to be consistent).
+
+        There are no functional changes in this patch and the existing
+        tests should cover everything.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager.prepare_lists_and_print_output):
+        (Manager._run_tests.worker_factory):
+        (Manager._run_tests):
+        (Manager._show_results_html_file):
+        (Manager.handle_finished_test_list):
+        (_WorkerState.__init__):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (_Broker.post_message):
+        (_Broker._dispatch_message):
+        (AbstractWorker.__init__):
+        (AbstractWorker.run):
+        (AbstractWorker.yield_to_caller):
+        (AbstractWorker.post):
+        (_WorkerConnection.__init__):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (_TestWorker.__init__):
+        (_TestWorker.start):
+        (_TestWorker.handle):
+        (_TestWorker.stop):
+        (_TestsMixin):
+        (_TestsMixin.test_name):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.__init__):
+        (Worker.__del__):
+        (Worker.start):
+        (Worker.handle):
+        (Worker._run_test):
+        (Worker.stop):
+        (Worker._timeout):
+        (Worker._kill_driver):
+        (Worker._run_test_with_timeout):
+        (Worker._clean_up_after_test):
+        (Worker._run_test_in_another_thread.SingleTestThread.run):
+        (Worker._run_test_in_this_thread):
+        (Worker._run_single_test):
+
 2012-07-11  Adam Barth  <abarth@webkit.org>
 
         The commit-queue needs some extra git config to be able to commit
