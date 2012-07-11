@@ -663,8 +663,12 @@ static void setDefaultsToConsistentStateValuesForTesting()
 #else
     GtkCssProvider* cssProvider = gtk_css_provider_new();
     gtk_css_provider_load_from_data(cssProvider,
+                                    "@binding-set NoKeyboardNavigation {        "
+                                    "   unbind \"<shift>F10\";                  "
+                                    "}                                          "
                                     " * {                                       "
                                     "   -GtkScrolledWindow-scrollbar-spacing: 0;"
+                                    "   gtk-key-bindings: NoKeyboardNavigation; "
                                     "}                                          ",
                                     -1, 0);
     gtk_style_context_add_provider_for_screen(gdk_display_get_default_screen(gdk_display_get_default()),
