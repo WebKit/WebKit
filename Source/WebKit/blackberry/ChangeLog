@@ -1,3 +1,19 @@
+2012-07-11  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] UserViewportArguments are not properly respected.
+        https://bugs.webkit.org/show_bug.cgi?id=91005
+
+        Reviewed by Rob Buis.
+
+        PR# 170088.
+        Move scale and zooming reset on Committed before applying
+        the user viewport to avoid overriding it immediately.
+
+        Internal review by Konrad Piascik, Jacky Jiang.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+
 2012-07-11  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Implement Date/Time picker

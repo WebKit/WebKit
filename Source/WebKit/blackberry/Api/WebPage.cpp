@@ -1084,14 +1084,13 @@ void WebPagePrivate::setLoadState(LoadState state)
                 frameLoadType = m_mainFrame->loader()->loadType();
             if (!((m_didRestoreFromPageCache && documentHasViewportArguments) || (frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin))) {
                 m_viewportArguments = ViewportArguments();
+                m_userScalable = m_webSettings->isUserScalable();
+                resetScales();
 
                 // At the moment we commit a new load, set the viewport arguments
                 // to any fallback values. If there is a meta viewport in the
                 // content it will overwrite the fallback arguments soon.
                 dispatchViewportPropertiesDidChange(m_userViewportArguments);
-
-                m_userScalable = m_webSettings->isUserScalable();
-                resetScales();
             } else {
                 IntSize virtualViewport = recomputeVirtualViewportFromViewportArguments();
                 m_webPage->setVirtualViewportSize(virtualViewport.width(), virtualViewport.height());
