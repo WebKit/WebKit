@@ -487,6 +487,15 @@ webcore_cppflags += -DENABLE_CSS_REGIONS=1
 endif # END ENABLE_CSS_REGIONS
 
 # ----
+# Filters
+# ----
+if ENABLE_CSS_FILTERS
+FEATURE_DEFINES += ENABLE_CSS_FILTERS=1
+webcore_cppflags += -DENABLE_CSS_FILTERS=1
+
+endif # END ENABLE_CSS_FILTERS
+
+# ----
 # Exclusions
 # ----
 if ENABLE_CSS_EXCLUSIONS

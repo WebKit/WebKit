@@ -1125,6 +1125,14 @@ AC_ARG_ENABLE(css_regions,
               [],[enable_css_regions="yes"])
 AC_MSG_RESULT([$enable_css_regions])
 
+# check whether to enable CSS Filters support
+AC_MSG_CHECKING([whether to enable CSS Filters])
+AC_ARG_ENABLE(css_filters,
+              AC_HELP_STRING([--enable-css-filters],
+                             [enable support for CSS Filters [default=no]]),
+              [],[enable_css_filters="no"])
+AC_MSG_RESULT([$enable_css_filters])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1465,6 +1473,7 @@ AM_CONDITIONAL([ENABLE_IFRAME_SEAMLESS],[test "$enable_iframe_seamless" = "yes"]
 AM_CONDITIONAL([ENABLE_TEXT_AUTOSIZING],[test "$enable_text_autosizing" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_EXCLUSIONS],[test "$enable_css_exclusions" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_REGIONS],[test "$enable_css_regions" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1526,6 +1535,7 @@ Features:
  CSS box-decoration-break support                         : $enable_css_box_decoration_break
  CSS Exclusions support                                   : $enable_css_exclusions
  CSS Regions support                                      : $enable_css_regions
+ CSS Filters support                                      : $enable_css_filters
  DeviceOrientation support                                : $enable_device_orientation
  Directory upload                                         : $enable_directory_upload
  DOM mutation observer support                            : $enable_mutation_observers

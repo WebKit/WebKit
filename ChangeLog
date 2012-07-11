@@ -1,3 +1,15 @@
+2012-07-11  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [Gtk] allow building with css-filters
+        https://bugs.webkit.org/show_bug.cgi?id=90908
+
+        Add support for css-filters in Source/WebCore/GNUmakefile.am
+        configure.ac
+
+        Reviewed by Eric Seidel.
+
+        * configure.ac:
+
 2012-07-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Add missing feature macros

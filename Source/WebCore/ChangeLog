@@ -1,3 +1,17 @@
+2012-07-11  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [Gtk] allow building with css-filters
+        https://bugs.webkit.org/show_bug.cgi?id=90908
+
+        Reviewed by Eric Seidel.
+
+        Add support for css-filters in Source/WebCore/GNUmakefile.am
+        configure.ac
+
+        No functional change, so no new tests.
+
+        * GNUmakefile.am:
+
 2012-07-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLFormCollection::item and HTMLPropertiesCollection::item should share code
