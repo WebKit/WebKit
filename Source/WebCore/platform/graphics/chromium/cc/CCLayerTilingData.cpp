@@ -99,12 +99,12 @@ void CCLayerTilingData::reset()
     m_tiles.clear();
 }
 
-void CCLayerTilingData::layerRectToTileIndices(const IntRect& layerRect, int& left, int& top, int& right, int& bottom) const
+void CCLayerTilingData::contentRectToTileIndices(const IntRect& contentRect, int& left, int& top, int& right, int& bottom) const
 {
-    left = m_tilingData.tileXIndexFromSrcCoord(layerRect.x());
-    top = m_tilingData.tileYIndexFromSrcCoord(layerRect.y());
-    right = m_tilingData.tileXIndexFromSrcCoord(layerRect.maxX() - 1);
-    bottom = m_tilingData.tileYIndexFromSrcCoord(layerRect.maxY() - 1);
+    left = m_tilingData.tileXIndexFromSrcCoord(contentRect.x());
+    top = m_tilingData.tileYIndexFromSrcCoord(contentRect.y());
+    right = m_tilingData.tileXIndexFromSrcCoord(contentRect.maxX() - 1);
+    bottom = m_tilingData.tileYIndexFromSrcCoord(contentRect.maxY() - 1);
 }
 
 IntRect CCLayerTilingData::tileRect(const Tile* tile) const
@@ -114,21 +114,21 @@ IntRect CCLayerTilingData::tileRect(const Tile* tile) const
     return tileRect;
 }
 
-Region CCLayerTilingData::opaqueRegionInLayerRect(const IntRect& layerRect) const
+Region CCLayerTilingData::opaqueRegionInContentRect(const IntRect& contentRect) const
 {
-    if (layerRect.isEmpty())
+    if (contentRect.isEmpty())
         return Region();
 
     Region opaqueRegion;
     int left, top, right, bottom;
-    layerRectToTileIndices(layerRect, left, top, right, bottom);
+    contentRectToTileIndices(contentRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             Tile* tile = tileAt(i, j);
             if (!tile)
                 continue;
 
-            IntRect tileOpaqueRect = intersection(layerRect, tile->opaqueRect());
+            IntRect tileOpaqueRect = intersection(contentRect, tile->opaqueRect());
             opaqueRegion.unite(tileOpaqueRect);
         }
     }
@@ -141,7 +141,7 @@ void CCLayerTilingData::setBounds(const IntSize& size)
 
     // Any tiles completely outside our new bounds are invalid and should be dropped.
     int left, top, right, bottom;
-    layerRectToTileIndices(IntRect(IntPoint(), size), left, top, right, bottom);
+    contentRectToTileIndices(IntRect(IntPoint(), size), left, top, right, bottom);
     Vector<TileMapKey> invalidTileKeys;
     for (TileMap::const_iterator it = m_tiles.begin(); it != m_tiles.end(); ++it) {
         if (it->first.first > right || it->first.second > bottom)

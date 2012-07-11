@@ -75,8 +75,9 @@ void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& c
     m_painter->paint(canvas, layerRect, opaqueLayerRect);
     canvas->restore();
 
-    opaqueLayerRect.scale(contentsWidthScale, contentsHeightScale);
-    resultingOpaqueRect = enclosedIntRect(opaqueLayerRect);
+    FloatRect opaqueContentRect = opaqueLayerRect;
+    opaqueContentRect.scale(contentsWidthScale, contentsHeightScale);
+    resultingOpaqueRect = enclosedIntRect(opaqueContentRect);
 
     m_contentRect = contentRect;
 }

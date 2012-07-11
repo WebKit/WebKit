@@ -97,14 +97,14 @@ void ContentLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTr
 {
     createTextureUpdaterIfNeeded();
 
-    IntRect layerRect;
+    IntRect contentRect;
 
-    // Always call updateLayerRect() but with an empty layer rectangle when
+    // Always call updateContentRect() but with an empty layer rectangle when
     // layer doesn't draw contents.
     if (drawsContent())
-        layerRect = visibleLayerRect();
+        contentRect = visibleContentRect();
 
-    updateLayerRect(updater, layerRect, occlusion);
+    updateContentRect(updater, contentRect, occlusion);
     m_needsDisplay = false;
 }
 
@@ -112,7 +112,7 @@ bool ContentLayerChromium::needMoreUpdates()
 {
     if (!drawsContent())
         return false;
-    return needsIdlePaint(visibleLayerRect());
+    return needsIdlePaint(visibleContentRect());
 }
 
 void ContentLayerChromium::createTextureUpdaterIfNeeded()

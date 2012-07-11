@@ -147,7 +147,7 @@ bool CCLayerImpl::descendantDrawsContent()
 
 PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
 {
-    return CCSharedQuadState::create(quadTransform(), drawTransform(), visibleLayerRect(), m_scissorRect, drawOpacity(), opaque());
+    return CCSharedQuadState::create(quadTransform(), m_visibleContentRect, m_scissorRect, m_drawOpacity, m_opaque);
 }
 
 void CCLayerImpl::willDraw(CCRenderer*, CCGraphicsContext*)
@@ -172,8 +172,8 @@ void CCLayerImpl::appendDebugBorderQuad(CCQuadCuller& quadList, const CCSharedQu
     if (!hasDebugBorders())
         return;
 
-    IntRect layerRect(IntPoint(), contentBounds());
-    quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, layerRect, debugBorderColor(), debugBorderWidth()));
+    IntRect contentRect(IntPoint(), contentBounds());
+    quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect, debugBorderColor(), debugBorderWidth()));
 }
 
 unsigned CCLayerImpl::contentsTextureId() const
@@ -613,7 +613,7 @@ void CCLayerImpl::setDoubleSided(bool doubleSided)
 Region CCLayerImpl::visibleContentOpaqueRegion() const
 {
     if (opaque())
-        return visibleLayerRect();
+        return visibleContentRect();
     return Region();
 }
 

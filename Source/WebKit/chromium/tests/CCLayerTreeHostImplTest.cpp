@@ -101,7 +101,7 @@ public:
         root->setPosition(FloatPoint(0, 0));
         root->setBounds(IntSize(10, 10));
         root->setContentBounds(IntSize(10, 10));
-        root->setVisibleLayerRect(IntRect(0, 0, 10, 10));
+        root->setVisibleContentRect(IntRect(0, 0, 10, 10));
         root->setDrawsContent(true);
         myHostImpl->setRootLayer(root.release());
         return myHostImpl.release();
@@ -629,7 +629,7 @@ protected:
         setContentBounds(IntSize(10, 10));
         setDrawsContent(true);
         setSkipsDraw(false);
-        setVisibleLayerRect(IntRect(0, 0, 10, 10));
+        setVisibleContentRect(IntRect(0, 0, 10, 10));
 
         OwnPtr<CCLayerTilingData> tiler = CCLayerTilingData::create(IntSize(100, 100), CCLayerTilingData::HasBorderTexels);
         tiler->setBounds(contentBounds());
@@ -651,7 +651,7 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
 
     root->addChild(DidDrawCheckLayer::create(2));
     DidDrawCheckLayer* layer = static_cast<DidDrawCheckLayer*>(root->children()[0].get());
-    // Ensure visibleLayerRect for layer is empty
+    // Ensure visibleContentRect for layer is empty
     layer->setPosition(FloatPoint(100, 100));
     layer->setBounds(IntSize(10, 10));
     layer->setContentBounds(IntSize(10, 10));
@@ -668,9 +668,9 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
     EXPECT_FALSE(layer->willDrawCalled());
     EXPECT_FALSE(layer->didDrawCalled());
 
-    EXPECT_TRUE(layer->visibleLayerRect().isEmpty());
+    EXPECT_TRUE(layer->visibleContentRect().isEmpty());
 
-    // Ensure visibleLayerRect for layer layer is not empty
+    // Ensure visibleContentRect for layer layer is not empty
     layer->setPosition(FloatPoint(0, 0));
 
     EXPECT_FALSE(layer->willDrawCalled());
@@ -683,7 +683,7 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
     EXPECT_TRUE(layer->willDrawCalled());
     EXPECT_TRUE(layer->didDrawCalled());
 
-    EXPECT_FALSE(layer->visibleLayerRect().isEmpty());
+    EXPECT_FALSE(layer->visibleContentRect().isEmpty());
 }
 
 TEST_F(CCLayerTreeHostImplTest, willDrawNotCalledOnOccludedLayer)
@@ -1858,7 +1858,7 @@ static PassOwnPtr<CCLayerTreeHostImpl> setupLayersForOpacity(bool partialSwap, C
     root->setPosition(FloatPoint(rootRect.x(), rootRect.y()));
     root->setBounds(IntSize(rootRect.width(), rootRect.height()));
     root->setContentBounds(root->bounds());
-    root->setVisibleLayerRect(rootRect);
+    root->setVisibleContentRect(rootRect);
     root->setDrawsContent(false);
     root->renderSurface()->setContentRect(IntRect(IntPoint(), IntSize(rootRect.width(), rootRect.height())));
 
@@ -1867,14 +1867,14 @@ static PassOwnPtr<CCLayerTreeHostImpl> setupLayersForOpacity(bool partialSwap, C
     child->setOpacity(0.5f);
     child->setBounds(IntSize(childRect.width(), childRect.height()));
     child->setContentBounds(child->bounds());
-    child->setVisibleLayerRect(childRect);
+    child->setVisibleContentRect(childRect);
     child->setDrawsContent(false);
 
     grandChild->setAnchorPoint(FloatPoint(0, 0));
     grandChild->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
     grandChild->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
     grandChild->setContentBounds(grandChild->bounds());
-    grandChild->setVisibleLayerRect(grandChildRect);
+    grandChild->setVisibleContentRect(grandChildRect);
     grandChild->setDrawsContent(true);
 
     child->addChild(grandChild.release());
@@ -2423,7 +2423,7 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
     root->setPosition(FloatPoint(0, 0));
     root->setBounds(rootSize);
     root->setContentBounds(rootSize);
-    root->setVisibleLayerRect(IntRect(IntPoint(0, 0), rootSize));
+    root->setVisibleContentRect(IntRect(IntPoint(0, 0), rootSize));
     root->setDrawsContent(true);
     layerTreeHostImpl->setRootLayer(root.release());
 
@@ -2435,7 +2435,7 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
     intermediateLayerPtr->setPosition(FloatPoint(10, 10));
     intermediateLayerPtr->setBounds(rootSize);
     intermediateLayerPtr->setContentBounds(rootSize);
-    intermediateLayerPtr->setVisibleLayerRect(IntRect(IntPoint(0, 0), rootSize));
+    intermediateLayerPtr->setVisibleContentRect(IntRect(IntPoint(0, 0), rootSize));
     intermediateLayerPtr->setDrawsContent(false); // only children draw content
     rootPtr->addChild(intermediateLayer.release());
 
@@ -2449,7 +2449,7 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
     surfaceLayerPtr->setPosition(FloatPoint(10, 10));
     surfaceLayerPtr->setBounds(surfaceSize);
     surfaceLayerPtr->setContentBounds(surfaceSize);
-    surfaceLayerPtr->setVisibleLayerRect(IntRect(IntPoint(0, 0), surfaceSize));
+    surfaceLayerPtr->setVisibleContentRect(IntRect(IntPoint(0, 0), surfaceSize));
     surfaceLayerPtr->setDrawsContent(false); // only children draw content
     surfaceLayerPtr->setOpacity(0.5f); // This will cause it to have a surface
     intermediateLayerPtr->addChild(surfaceLayer.release());
@@ -2463,7 +2463,7 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
     childPtr->setPosition(FloatPoint(5, 5));
     childPtr->setBounds(childSize);
     childPtr->setContentBounds(childSize);
-    childPtr->setVisibleLayerRect(IntRect(IntPoint(0, 0), childSize));
+    childPtr->setVisibleContentRect(IntRect(IntPoint(0, 0), childSize));
     childPtr->setDrawsContent(true);
 
     surfaceLayerPtr->addChild(child.release());
@@ -2946,7 +2946,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
     renderer->clearCachedTextures();
 
     // One shared state for all quads - we don't need the correct details
-    testData.sharedQuadState = CCSharedQuadState::create(WebTransformationMatrix(), WebTransformationMatrix(), IntRect(), IntRect(), 1.0, true);
+    testData.sharedQuadState = CCSharedQuadState::create(WebTransformationMatrix(), IntRect(), IntRect(), 1.0, true);
 
     const char* currentChar = testScript;
 
@@ -3015,7 +3015,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
 
                 IntRect quadRect = IntRect(0, 0, 1, 1);
                 IntRect contentsChangedRect = contentsChanged ? quadRect : IntRect();
-                OwnPtr<CCRenderPassDrawQuad> quad = CCRenderPassDrawQuad::create(testData.sharedQuadState.get(), quadRect, refRenderPassPtr, isReplica, WebKit::WebFilterOperations(), WebKit::WebFilterOperations(), 1, contentsChangedRect);
+                OwnPtr<CCRenderPassDrawQuad> quad = CCRenderPassDrawQuad::create(testData.sharedQuadState.get(), quadRect, refRenderPassPtr, isReplica, WebKit::WebTransformationMatrix(), WebKit::WebFilterOperations(), WebKit::WebFilterOperations(), 1, contentsChangedRect);
                 static_cast<CCTestRenderPass*>(renderPass.get())->appendQuad(quad.release());
             }
         }

@@ -155,11 +155,11 @@ void ImageLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTrac
     if (m_needsDisplay) {
         m_textureUpdater->setBitmap(m_bitmap);
         updateTileSizeAndTilingOption();
-        invalidateRect(IntRect(IntPoint(), contentBounds()));
+        invalidateContentRect(IntRect(IntPoint(), contentBounds()));
         m_needsDisplay = false;
     }
 
-    updateLayerRect(updater, visibleLayerRect(), occlusion);
+    updateContentRect(updater, visibleContentRect(), occlusion);
 }
 
 void ImageLayerChromium::createTextureUpdaterIfNeeded()

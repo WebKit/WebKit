@@ -153,7 +153,7 @@ static bool isSurfaceBackFaceVisible(LayerType* layer, const WebTransformationMa
 }
 
 template<typename LayerType>
-static IntRect calculateVisibleLayerRect(LayerType* layer)
+static IntRect calculateVisibleContentRect(LayerType* layer)
 {
     ASSERT(layer->targetRenderSurface());
 
@@ -176,8 +176,8 @@ static IntRect calculateVisibleLayerRect(LayerType* layer)
                               bounds.height() / static_cast<double>(contentBounds.height()));
     transform.translate(-contentBounds.width() / 2.0, -contentBounds.height() / 2.0);
 
-    IntRect visibleLayerRect = CCLayerTreeHostCommon::calculateVisibleRect(targetSurfaceRect, layerBoundRect, transform);
-    return visibleLayerRect;
+    IntRect visibleContentRect = CCLayerTreeHostCommon::calculateVisibleRect(targetSurfaceRect, layerBoundRect, transform);
+    return visibleContentRect;
 }
 
 static bool isScaleOrTranslation(const WebTransformationMatrix& m)
@@ -219,7 +219,7 @@ static bool layerShouldBeSkipped(LayerType* layer)
     //
     // Some additional conditions need to be computed at a later point after the recursion is finished.
     //   - the intersection of render surface content and layer clipRect is empty
-    //   - the visibleLayerRect is empty
+    //   - the visibleContentRect is empty
     //
     // Note, if the layer should not have been drawn due to being fully transparent,
     // we would have skipped the entire subtree and never made it into this function,
@@ -833,7 +833,7 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
 }
 
 // FIXME: Instead of using the following function to set visibility rects on a second
-// tree pass, revise calculateVisibleLayerRect() so that this can be done in a single
+// tree pass, revise calculateVisibleContentRect() so that this can be done in a single
 // pass inside calculateDrawTransformsInternal<>().
 template<typename LayerType, typename LayerList, typename RenderSurfaceType>
 static void calculateVisibleAndScissorRectsInternal(const LayerList& renderSurfaceLayerList, const FloatRect& rootScissorRect)
@@ -846,13 +846,13 @@ static void calculateVisibleAndScissorRectsInternal(const LayerList& renderSurfa
         if (it.representsTargetRenderSurface()) {
             LayerType* maskLayer = it->maskLayer();
             if (maskLayer)
-                maskLayer->setVisibleLayerRect(IntRect(IntPoint(), it->contentBounds()));
+                maskLayer->setVisibleContentRect(IntRect(IntPoint(), it->contentBounds()));
             LayerType* replicaMaskLayer = it->replicaLayer() ? it->replicaLayer()->maskLayer() : 0;
             if (replicaMaskLayer)
-                replicaMaskLayer->setVisibleLayerRect(IntRect(IntPoint(), it->contentBounds()));
+                replicaMaskLayer->setVisibleContentRect(IntRect(IntPoint(), it->contentBounds()));
         } else if (it.representsItself()) {
-            IntRect visibleLayerRect = calculateVisibleLayerRect(*it);
-            it->setVisibleLayerRect(visibleLayerRect);
+            IntRect visibleContentRect = calculateVisibleContentRect(*it);
+            it->setVisibleContentRect(visibleContentRect);
 
             IntRect scissorRect = calculateLayerScissorRect<LayerType, RenderSurfaceType>(*it, rootScissorRect);
             it->setScissorRect(scissorRect);

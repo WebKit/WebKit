@@ -102,12 +102,10 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
 
     IntRect contentRect = IntRect(IntPoint::zero(), IntSize(50, 50));
     IntRect clipRect = IntRect(IntPoint(5, 5), IntSize(40, 40));
-    WebTransformationMatrix draw;
     WebTransformationMatrix origin;
 
-    draw.translate(30, 40);
+    origin.translate(30, 40);
 
-    renderSurface->setDrawTransform(draw);
     renderSurface->setOriginTransform(origin);
     renderSurface->setContentRect(contentRect);
     renderSurface->setClipRect(clipRect);
@@ -116,10 +114,9 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
 
     OwnPtr<CCSharedQuadState> sharedQuadState = renderSurface->createSharedQuadState();
 
-    EXPECT_TRUE(sharedQuadState->quadTransform().isIdentity());
-    EXPECT_EQ(30, sharedQuadState->layerTransform().m41());
-    EXPECT_EQ(40, sharedQuadState->layerTransform().m42());
-    EXPECT_EQ(contentRect, sharedQuadState->layerRect());
+    EXPECT_EQ(30, sharedQuadState->quadTransform().m41());
+    EXPECT_EQ(40, sharedQuadState->quadTransform().m42());
+    EXPECT_EQ(contentRect, sharedQuadState->visibleContentRect());
     EXPECT_EQ(clipRect, sharedQuadState->scissorRect());
     EXPECT_EQ(1, sharedQuadState->opacity());
     EXPECT_FALSE(sharedQuadState->isOpaque());

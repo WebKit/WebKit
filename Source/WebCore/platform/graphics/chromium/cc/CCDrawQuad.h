@@ -49,8 +49,7 @@ class CCDrawQuad {
 public:
     const IntRect& quadRect() const { return m_quadRect; }
     const WebKit::WebTransformationMatrix& quadTransform() const { return m_sharedQuadState->quadTransform(); }
-    const WebKit::WebTransformationMatrix& layerTransform() const { return m_sharedQuadState->layerTransform(); }
-    const IntRect& layerRect() const { return m_sharedQuadState->layerRect(); }
+    const IntRect& visibleContentRect() const { return m_sharedQuadState->visibleContentRect(); }
     const IntRect& scissorRect() const { return m_sharedQuadState->scissorRect(); }
     float opacity() const { return m_sharedQuadState->opacity(); }
     // For the purposes of blending, what part of the contents of this quad are opaque?

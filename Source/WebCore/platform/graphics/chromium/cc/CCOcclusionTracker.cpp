@@ -310,10 +310,10 @@ static inline WebTransformationMatrix contentToTargetSurfaceTransform(const Laye
 template<typename LayerType>
 static inline void addOcclusionBehindLayer(Region& region, const LayerType* layer, const WebTransformationMatrix& transform, const Region& opaqueContents, const IntRect& scissorRect, const IntSize& minimumTrackingSize, Vector<IntRect>* occludingScreenSpaceRects)
 {
-    ASSERT(layer->visibleLayerRect().contains(opaqueContents.bounds()));
+    ASSERT(layer->visibleContentRect().contains(opaqueContents.bounds()));
 
     bool clipped;
-    FloatQuad visibleTransformedQuad = CCMathUtil::mapQuad(transform, FloatQuad(layer->visibleLayerRect()), clipped);
+    FloatQuad visibleTransformedQuad = CCMathUtil::mapQuad(transform, FloatQuad(layer->visibleContentRect()), clipped);
     // FIXME: Find a rect interior to each transformed quad.
     if (clipped || !visibleTransformedQuad.isRectilinear())
         return;

@@ -2844,13 +2844,13 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithAnimatingTransforms)
     EXPECT_EQ(animatingSurface->id(), renderSurfaceLayerList[1]->renderSurface()->layerList()[0]->id());
     EXPECT_EQ(childOfAnimatingSurface->id(), renderSurfaceLayerList[1]->renderSurface()->layerList()[1]->id());
 
-    EXPECT_FALSE(child2->visibleLayerRect().isEmpty());
+    EXPECT_FALSE(child2->visibleContentRect().isEmpty());
 
-    // The animating layers should have a visibleLayerRect that represents the area of the front face that is within the viewport.
-    EXPECT_EQ(animatingChild->visibleLayerRect(), IntRect(IntPoint(), animatingChild->contentBounds()));
-    EXPECT_EQ(animatingSurface->visibleLayerRect(), IntRect(IntPoint(), animatingSurface->contentBounds()));
-    // And layers in the subtree of the animating layer should have valid visibleLayerRects also.
-    EXPECT_EQ(childOfAnimatingSurface->visibleLayerRect(), IntRect(IntPoint(), childOfAnimatingSurface->contentBounds()));
+    // The animating layers should have a visibleContentRect that represents the area of the front face that is within the viewport.
+    EXPECT_EQ(animatingChild->visibleContentRect(), IntRect(IntPoint(), animatingChild->contentBounds()));
+    EXPECT_EQ(animatingSurface->visibleContentRect(), IntRect(IntPoint(), animatingSurface->contentBounds()));
+    // And layers in the subtree of the animating layer should have valid visibleContentRects also.
+    EXPECT_EQ(childOfAnimatingSurface->visibleContentRect(), IntRect(IntPoint(), childOfAnimatingSurface->contentBounds()));
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithPreserves3dForFlatteningSurface)
@@ -3208,7 +3208,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSinglePerspectiveLayer)
 
 TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleLayerWithScaledContents)
 {
-    // A layer's visibleLayerRect is actually in the layer's content space. The
+    // A layer's visibleContentRect is actually in the layer's content space. The
     // screenSpaceTransform converts from the layer's origin space to screen space. This
     // test makes sure that hit testing works correctly accounts for the contents scale.
     // A contentsScale that is not 1 effectively forces a non-identity transform between
@@ -3216,7 +3216,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleLayerWithScaledContents
     // screenSpaceTransformn. The hit testing code must take this into account.
     //
     // To test this, the layer is positioned at (25, 25), and is size (50, 50). If
-    // contentsScale is ignored, then hit testing will mis-interpret the visibleLayerRect
+    // contentsScale is ignored, then hit testing will mis-interpret the visibleContentRect
     // as being larger than the actual bounds of the layer.
     //
     DebugScopedSetImplThread thisScopeIsOnImplThread;
@@ -3242,8 +3242,8 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleLayerWithScaledContents
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, FloatRect()); // empty scissorRect will help ensure we're hit testing the correct rect.
 
     // Sanity check the scenario we just created.
-    // The visibleLayerRect is actually 100x100, even though the layout size of the layer is 50x50, positioned at 25x25.
-    EXPECT_INT_RECT_EQ(IntRect(IntPoint::zero(), IntSize(100, 100)), root->visibleLayerRect());
+    // The visibleContentRect is actually 100x100, even though the layout size of the layer is 50x50, positioned at 25x25.
+    EXPECT_INT_RECT_EQ(IntRect(IntPoint::zero(), IntSize(100, 100)), root->visibleContentRect());
     ASSERT_EQ(1u, renderSurfaceLayerList.size());
     ASSERT_EQ(1u, root->renderSurface()->layerList().size());
 
@@ -3418,7 +3418,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForMultiClippedRotatedLayer)
 
     // (4, 50) is inside the unclipped layer, but that corner of the layer should be
     // clipped away by the grandParent and should not get hit. If hit testing blindly uses
-    // visibleLayerRect without considering how parent may clip the layer, then hit
+    // visibleContentRect without considering how parent may clip the layer, then hit
     // testing would accidentally think that the point successfully hits the layer.
     testPoint = IntPoint(4, 50);
     resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);

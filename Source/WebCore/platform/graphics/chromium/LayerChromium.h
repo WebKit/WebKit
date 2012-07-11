@@ -154,8 +154,8 @@ public:
     void setTransform(const WebKit::WebTransformationMatrix&);
     bool transformIsAnimating() const;
 
-    const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
-    void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
+    const IntRect& visibleContentRect() const { return m_visibleContentRect; }
+    void setVisibleContentRect(const IntRect& visibleContentRect) { m_visibleContentRect = visibleContentRect; }
 
     const IntRect& scissorRect() const { return m_scissorRect; }
     void setScissorRect(const IntRect& scissorRect) { m_scissorRect = scissorRect; }
@@ -344,7 +344,7 @@ private:
     IntSize m_bounds;
 
     // Uses layer's content space.
-    IntRect m_visibleLayerRect;
+    IntRect m_visibleContentRect;
 
     // During drawing, identifies the region outside of which nothing should be drawn.
     // Currently this is set to layer's clipRect if usesLayerClipping is true, otherwise

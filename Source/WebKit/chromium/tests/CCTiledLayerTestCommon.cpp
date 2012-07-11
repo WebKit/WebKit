@@ -68,7 +68,7 @@ void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const 
     m_prepareCount++;
     m_lastUpdateRect = contentRect;
     if (!m_rectToInvalidate.isEmpty()) {
-        m_layer->invalidateRect(m_rectToInvalidate);
+        m_layer->invalidateContentRect(m_rectToInvalidate);
         m_rectToInvalidate = IntRect();
         m_layer = 0;
     }
@@ -118,7 +118,7 @@ void FakeTiledLayerChromium::setNeedsDisplayRect(const FloatRect& rect)
 
 void FakeTiledLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
 {
-    updateLayerRect(updater, visibleLayerRect(), occlusion);
+    updateContentRect(updater, visibleContentRect(), occlusion);
 }
 
 void FakeTiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& calculator)

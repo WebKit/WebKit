@@ -36,13 +36,13 @@ namespace WebCore {
 class CCSharedQuadState {
     WTF_MAKE_NONCOPYABLE(CCSharedQuadState);
 public:
-    static PassOwnPtr<CCSharedQuadState> create(const WebKit::WebTransformationMatrix& quadTransform, const WebKit::WebTransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& scissorRect, float opacity, bool opaque);
+    static PassOwnPtr<CCSharedQuadState> create(const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque);
 
-    // The transform that quads in a CCDrawQuad should be transformed with.
+    // Transforms from content space for the quad to the quad's target content space.
     const WebKit::WebTransformationMatrix& quadTransform() const { return m_quadTransform; }
-    // The transform that layerRect() should be transformed with.
-    const WebKit::WebTransformationMatrix& layerTransform() const { return m_layerTransform; }
-    const IntRect& layerRect() const { return m_layerRect; }
+    // This rect lives in the content space for the quad's originating layer.
+    const IntRect& visibleContentRect() const { return m_visibleContentRect; }
+    // This rect lives in the quad's target content space.
     const IntRect& scissorRect() const { return m_scissorRect; }
 
     float opacity() const { return m_opacity; }
@@ -50,11 +50,10 @@ public:
     bool isLayerAxisAlignedIntRect() const;
 
 private:
-    CCSharedQuadState(const WebKit::WebTransformationMatrix& quadTransform, const WebKit::WebTransformationMatrix& layerTransform, const IntRect& layerRect, const IntRect& scissorRect, float opacity, bool opaque);
+    CCSharedQuadState(const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque);
 
     WebKit::WebTransformationMatrix m_quadTransform;
-    WebKit::WebTransformationMatrix m_layerTransform;
-    IntRect m_layerRect;
+    IntRect m_visibleContentRect;
     IntRect m_scissorRect;
     float m_opacity;
     bool m_opaque;

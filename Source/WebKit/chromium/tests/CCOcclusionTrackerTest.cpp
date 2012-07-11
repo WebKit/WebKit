@@ -62,7 +62,7 @@ public:
     virtual Region visibleContentOpaqueRegion() const OVERRIDE
     {
         if (m_overrideOpaqueContentsRect)
-            return intersection(m_opaqueContentsRect, visibleLayerRect());
+            return intersection(m_opaqueContentsRect, visibleContentRect());
         return LayerChromium::visibleContentOpaqueRegion();
     }
     void setOpaqueContentsRect(const IntRect& opaqueContentsRect)
@@ -88,7 +88,7 @@ public:
     virtual Region visibleContentOpaqueRegion() const OVERRIDE
     {
         if (m_overrideOpaqueContentsRect)
-            return intersection(m_opaqueContentsRect, visibleLayerRect());
+            return intersection(m_opaqueContentsRect, visibleContentRect());
         return CCLayerImpl::visibleContentOpaqueRegion();
     }
     void setOpaqueContentsRect(const IntRect& opaqueContentsRect)
@@ -759,7 +759,7 @@ protected:
         // This extends past both sides of child2, so it will be the original rect.
         EXPECT_INT_RECT_EQ(IntRect(9, 430, 60, 80), occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 80)));
         // This extends past two adjacent sides of child2, and should included the unoccluded parts of each side.
-        // This also demonstrates that the rect can be arbitrary and does not get clipped to the layer's visibleLayerRect().
+        // This also demonstrates that the rect can be arbitrary and does not get clipped to the layer's visibleContentRect().
         EXPECT_INT_RECT_EQ(IntRect(-10, 430, 20, 70), occlusion.unoccludedContentRect(child, IntRect(-10, 430, 60, 70)));
         // This extends past three adjacent sides of child2, so it should contain the unoccluded parts of each side. The left
         // and bottom edges are completely unoccluded for some row/column so we get back the original query rect.
@@ -869,7 +869,7 @@ protected:
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
         occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
-        IntRect clippedLayerInChild = CCMathUtil::mapClippedRect(layerTransform, layer->visibleLayerRect());
+        IntRect clippedLayerInChild = CCMathUtil::mapClippedRect(layerTransform, layer->visibleContentRect());
 
         this->visitLayer(layer, occlusion);
         this->enterContributingSurface(child, occlusion);
@@ -2024,7 +2024,7 @@ protected:
 
         TestCCOcclusionTrackerWithScissor<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
 
-        // This is very close to the camera, so pixels in its visibleLayerRect will actually go outside of the layer's clipRect.
+        // This is very close to the camera, so pixels in its visibleContentRect will actually go outside of the layer's clipRect.
         // Ensure that those pixels don't occlude things outside the clipRect.
         this->visitLayer(layer, occlusion);
         this->enterLayer(parent, occlusion);

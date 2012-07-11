@@ -101,13 +101,13 @@ TEST_F(TiledLayerChromiumTest, pushDirtyTiles)
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
-    layer->setVisibleLayerRect(IntRect(0, 0, 100, 200));
-    layer->invalidateRect(IntRect(0, 0, 100, 200));
+    layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
+    layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
 
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -116,11 +116,11 @@ TEST_F(TiledLayerChromiumTest, pushDirtyTiles)
     EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
 
     // Invalidates both tiles...
-    layer->invalidateRect(IntRect(0, 0, 100, 200));
+    layer->invalidateContentRect(IntRect(0, 0, 100, 200));
     // ....but then only update one of them.
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 100), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
     layer->pushPropertiesTo(layerImpl.get());
 
     // We should only have the first tile since the other tile was invalidated but not painted.
@@ -140,13 +140,13 @@ TEST_F(TiledLayerChromiumTest, pushOccludedDirtyTiles)
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
     layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
-    layer->setVisibleLayerRect(IntRect(0, 0, 100, 200));
-    layer->invalidateRect(IntRect(0, 0, 100, 200));
+    layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
+    layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
 
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 200), &occluded);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -159,10 +159,10 @@ TEST_F(TiledLayerChromiumTest, pushOccludedDirtyTiles)
     EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
 
     // Invalidates part of the top tile...
-    layer->invalidateRect(IntRect(0, 0, 50, 50));
+    layer->invalidateContentRect(IntRect(0, 0, 50, 50));
     // ....but the area is occluded.
     occluded.setOcclusion(IntRect(0, 0, 50, 50));
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 100), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 100), &occluded);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -184,13 +184,13 @@ TEST_F(TiledLayerChromiumTest, pushDeletedTiles)
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
-    layer->setVisibleLayerRect(IntRect(0, 0, 100, 200));
-    layer->invalidateRect(IntRect(0, 0, 100, 200));
+    layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
+    layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
 
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -212,7 +212,7 @@ TEST_F(TiledLayerChromiumTest, pushDeletedTiles)
     // This should recreate and update the deleted textures.
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 100), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -235,13 +235,13 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintTiles)
 
     // This invalidates 25 tiles and then paints one visible tile.
     layer->setBounds(contentBounds);
-    layer->setVisibleLayerRect(visibleRect);
-    layer->invalidateRect(contentRect);
+    layer->setVisibleContentRect(visibleRect);
+    layer->invalidateContentRect(contentRect);
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
 
-    layer->updateLayerRect(updater, visibleRect, 0);
+    layer->updateContentRect(updater, visibleRect, 0);
     updateTextures();
 
     // We should need idle-painting for 3x3 tiles in the center.
@@ -257,7 +257,7 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintTiles)
         layer->setTexturePriorities(priorityCalculator);
         textureManager->prioritizeTextures(0);
 
-        layer->updateLayerRect(updater, visibleRect, 0);
+        layer->updateContentRect(updater, visibleRect, 0);
         EXPECT_TRUE(layer->needsIdlePaint(visibleRect));
         updateTextures();
         layer->pushPropertiesTo(layerImpl.get());
@@ -295,21 +295,21 @@ TEST_F(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     // This requires 4*30000 bytes of memory.
     IntRect layer2Rect(0, 0, 100, 300);
     layer2->setBounds(layer2Rect.size());
-    layer2->setVisibleLayerRect(layer2Rect);
-    layer2->invalidateRect(layer2Rect);
+    layer2->setVisibleContentRect(layer2Rect);
+    layer2->invalidateContentRect(layer2Rect);
 
     // This uses 960000 bytes, leaving 88576 bytes of memory left, which is enough for 2 tiles only in the other layer.
     IntRect layerRect(IntPoint::zero(), IntSize(100, 2400));
     layer1->setBounds(layerRect.size());
-    layer1->setVisibleLayerRect(layerRect);
-    layer1->invalidateRect(layerRect);
+    layer1->setVisibleContentRect(layerRect);
+    layer1->invalidateContentRect(layerRect);
 
     // Paint a single tile in layer2 so that it will idle paint.
     layer2->setTexturePriorities(priorityCalculator);
     layer1->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer1->updateLayerRect(updater, layerRect, 0);
-    layer2->updateLayerRect(updater, IntRect(0, 0, 100, 100), 0);
+    layer1->updateContentRect(updater, layerRect, 0);
+    layer2->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
 
     // We should need idle-painting for both remaining tiles in layer2.
     EXPECT_TRUE(layer2->needsIdlePaint(layer2Rect));
@@ -326,7 +326,7 @@ TEST_F(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     layer2->setTexturePriorities(priorityCalculator);
     layer1->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer2->updateLayerRect(updater, IntRect(0, 0, 100, 100), 0);
+    layer2->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
 
     // Oh well, commit the frame and push.
     updateTextures();
@@ -346,8 +346,8 @@ TEST_F(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     layer2->setTexturePriorities(priorityCalculator);
     layer1->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer2->updateLayerRect(updater, layer2Rect, 0);
-    layer1->updateLayerRect(updater, layerRect, 0);
+    layer2->updateContentRect(updater, layer2Rect, 0);
+    layer1->updateContentRect(updater, layerRect, 0);
 
     updateTextures();
     layer1->pushPropertiesTo(layerImpl1.get());
@@ -374,12 +374,12 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintedOccludedTiles)
 
     layer->setBounds(IntSize(100, 100));
     layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
-    layer->setVisibleLayerRect(IntRect(0, 0, 100, 100));
-    layer->invalidateRect(IntRect(0, 0, 100, 100));
+    layer->setVisibleContentRect(IntRect(0, 0, 100, 100));
+    layer->invalidateContentRect(IntRect(0, 0, 100, 100));
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 100), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 100), &occluded);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -398,13 +398,13 @@ TEST_F(TiledLayerChromiumTest, pushTilesMarkedDirtyDuringPaint)
     // However, during the paint, we invalidate one of the tiles. This should
     // not prevent the tile from being pushed.
     layer->setBounds(IntSize(100, 200));
-    layer->invalidateRect(IntRect(0, 0, 100, 200));
-    layer->setVisibleLayerRect(IntRect(0, 0, 100, 200));
+    layer->invalidateContentRect(IntRect(0, 0, 100, 200));
+    layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
     layer->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(0, 50, 100, 50), layer.get());
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -423,22 +423,22 @@ TEST_F(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnNextLayer)
     OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(2)));
 
     layer1->setBounds(IntSize(100, 200));
-    layer1->setVisibleLayerRect(IntRect(0, 0, 100, 200));
-    layer1->invalidateRect(IntRect(0, 0, 100, 200));
+    layer1->setVisibleContentRect(IntRect(0, 0, 100, 200));
+    layer1->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer2->setBounds(IntSize(100, 200));
-    layer2->setVisibleLayerRect(IntRect(0, 0, 100, 200));
-    layer2->invalidateRect(IntRect(0, 0, 100, 200));
+    layer2->setVisibleContentRect(IntRect(0, 0, 100, 200));
+    layer2->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer1->setTexturePriorities(priorityCalculator);
     layer2->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
 
-    layer1->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer1->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
 
     // Invalidate a tile on layer1
     layer2->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(0, 50, 100, 50), layer1.get());
-    layer2->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer2->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
 
     updateTextures();
     layer1->pushPropertiesTo(layer1Impl.get());
@@ -461,12 +461,12 @@ TEST_F(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnPreviousLay
     OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(2)));
 
     layer1->setBounds(IntSize(100, 200));
-    layer1->setVisibleLayerRect(IntRect(0, 0, 100, 200));
-    layer1->invalidateRect(IntRect(0, 0, 100, 200));
+    layer1->setVisibleContentRect(IntRect(0, 0, 100, 200));
+    layer1->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer2->setBounds(IntSize(100, 200));
-    layer2->setVisibleLayerRect(IntRect(0, 0, 100, 200));
-    layer2->invalidateRect(IntRect(0, 0, 100, 200));
+    layer2->setVisibleContentRect(IntRect(0, 0, 100, 200));
+    layer2->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer1->setTexturePriorities(priorityCalculator);
     layer2->setTexturePriorities(priorityCalculator);
@@ -474,8 +474,8 @@ TEST_F(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnPreviousLay
 
     // Invalidate a tile on layer2
     layer1->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(0, 50, 100, 50), layer2.get());
-    layer1->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
-    layer2->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer1->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer2->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updateTextures();
     layer1->pushPropertiesTo(layer1Impl.get());
     layer2->pushPropertiesTo(layer2Impl.get());
@@ -504,12 +504,12 @@ TEST_F(TiledLayerChromiumTest, idlePaintOutOfMemory)
 
     // Invalidates 9 tiles and then paints one visible tile.
     layer->setBounds(contentBounds);
-    layer->setVisibleLayerRect(visibleRect);
-    layer->invalidateRect(contentRect);
+    layer->setVisibleContentRect(visibleRect);
+    layer->invalidateContentRect(contentRect);
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, visibleRect, 0);
+    layer->updateContentRect(updater, visibleRect, 0);
 
     // Idle-painting should see no more priority tiles for painting.
     EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
@@ -522,7 +522,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintOutOfMemory)
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, visibleRect, 0);
+    layer->updateContentRect(updater, visibleRect, 0);
 
     // We shouldn't signal we need another idle paint.
     EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
@@ -544,14 +544,14 @@ TEST_F(TiledLayerChromiumTest, idlePaintZeroSizedLayer)
         IntRect contentRect;
 
         layer->setBounds(contentRect.size());
-        layer->setVisibleLayerRect(contentRect);
-        layer->invalidateRect(contentRect);
+        layer->setVisibleContentRect(contentRect);
+        layer->invalidateContentRect(contentRect);
 
         layer->setTexturePriorities(priorityCalculator);
         textureManager->prioritizeTextures(0);
 
         // Empty layers don't paint or idle-paint.
-        layer->updateLayerRect(updater, contentRect, 0);
+        layer->updateContentRect(updater, contentRect, 0);
 
         // Empty layers don't have tiles.
         EXPECT_EQ(0u, layer->numPaintedTiles());
@@ -580,14 +580,14 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleLayers)
     IntRect visibleRect;
 
     layer->setBounds(contentBounds);
-    layer->setVisibleLayerRect(visibleRect);
-    layer->invalidateRect(contentRect);
+    layer->setVisibleContentRect(visibleRect);
+    layer->invalidateContentRect(contentRect);
 
     for (int i = 0; i < 2; i++) {
         // Paint / idle-paint.
         layer->setTexturePriorities(priorityCalculator);
         textureManager->prioritizeTextures(0);
-        layer->updateLayerRect(updater, visibleRect, 0);
+        layer->updateContentRect(updater, visibleRect, 0);
 
         // Non-visible layers don't need idle paint.
         EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
@@ -632,8 +632,8 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
             IntRect visibleRect;
 
             layer->setBounds(contentBounds);
-            layer->setVisibleLayerRect(visibleRect);
-            layer->invalidateRect(contentRect);
+            layer->setVisibleContentRect(visibleRect);
+            layer->invalidateContentRect(contentRect);
 
             layer->setTexturePriorities(priorityCalculator);
             textureManager->prioritizeTextures(0);
@@ -650,7 +650,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
                 layer->setTexturePriorities(priorityCalculator);
                 textureManager->prioritizeTextures(0);
 
-                layer->updateLayerRect(updater, visibleRect, 0);
+                layer->updateContentRect(updater, visibleRect, 0);
                 updateTextures();
                 layer->pushPropertiesTo(layerImpl.get());
             }
@@ -663,7 +663,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
                 layer->setTexturePriorities(priorityCalculator);
                 textureManager->prioritizeTextures(0);
 
-                layer->updateLayerRect(updater, visibleRect, 0);
+                layer->updateContentRect(updater, visibleRect, 0);
                 updateTextures();
                 layer->pushPropertiesTo(layerImpl.get());
             }
@@ -687,11 +687,11 @@ TEST_F(TiledLayerChromiumTest, invalidateFromPrepare)
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
-    layer->setVisibleLayerRect(IntRect(0, 0, 100, 200));
-    layer->invalidateRect(IntRect(0, 0, 100, 200));
+    layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
+    layer->invalidateContentRect(IntRect(0, 0, 100, 200));
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updater.update(ccContext.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -700,22 +700,22 @@ TEST_F(TiledLayerChromiumTest, invalidateFromPrepare)
     EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
 
     layer->fakeLayerTextureUpdater()->clearPrepareCount();
-    // Invoke updateLayerRect again. As the layer is valid updateLayerRect shouldn't be invoked on
+    // Invoke updateContentRect again. As the layer is valid updateContentRect shouldn't be invoked on
     // the LayerTextureUpdater.
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updater.update(ccContext.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     EXPECT_EQ(0, layer->fakeLayerTextureUpdater()->prepareCount());
 
-    layer->invalidateRect(IntRect(0, 0, 50, 50));
-    // setRectToInvalidate triggers invalidateRect() being invoked from updateLayerRect.
+    layer->invalidateContentRect(IntRect(0, 0, 50, 50));
+    // setRectToInvalidate triggers invalidateContentRect() being invoked from updateContentRect.
     layer->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(25, 25, 50, 50), layer.get());
     layer->fakeLayerTextureUpdater()->clearPrepareCount();
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updater.update(ccContext.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     EXPECT_EQ(1, layer->fakeLayerTextureUpdater()->prepareCount());
     layer->fakeLayerTextureUpdater()->clearPrepareCount();
-    // The layer should still be invalid as updateLayerRect invoked invalidate.
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    // The layer should still be invalid as updateContentRect invoked invalidate.
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updater.update(ccContext.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     EXPECT_EQ(1, layer->fakeLayerTextureUpdater()->prepareCount());
 }
@@ -733,32 +733,32 @@ TEST_F(TiledLayerChromiumTest, verifyUpdateRectWhenContentBoundsAreScaled)
 
     layer->setBounds(layerBounds.size());
     layer->setContentBounds(contentBounds.size());
-    layer->setVisibleLayerRect(contentBounds);
+    layer->setVisibleContentRect(contentBounds);
 
     // On first update, the updateRect includes all tiles, even beyond the boundaries of the layer.
     // However, it should still be in layer space, not content space.
-    layer->invalidateRect(contentBounds);
+    layer->invalidateContentRect(contentBounds);
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, contentBounds, 0);
+    layer->updateContentRect(updater, contentBounds, 0);
     EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 300, 300 * 0.8), layer->updateRect());
     updateTextures();
 
     // After the tiles are updated once, another invalidate only needs to update the bounds of the layer.
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->invalidateRect(contentBounds);
-    layer->updateLayerRect(updater, contentBounds, 0);
+    layer->invalidateContentRect(contentBounds);
+    layer->updateContentRect(updater, contentBounds, 0);
     EXPECT_FLOAT_RECT_EQ(FloatRect(layerBounds), layer->updateRect());
     updateTextures();
 
     // Partial re-paint should also be represented by the updateRect in layer space, not content space.
     IntRect partialDamage(30, 100, 10, 10);
-    layer->invalidateRect(partialDamage);
+    layer->invalidateContentRect(partialDamage);
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, contentBounds, 0);
+    layer->updateContentRect(updater, contentBounds, 0);
     EXPECT_FLOAT_RECT_EQ(FloatRect(45, 80, 15, 8), layer->updateRect());
 }
 
@@ -771,7 +771,7 @@ TEST_F(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
 
     // Create a layer with one tile.
     layer->setBounds(IntSize(100, 100));
-    layer->setVisibleLayerRect(IntRect(0, 0, 100, 100));
+    layer->setVisibleContentRect(IntRect(0, 0, 100, 100));
 
     // Invalidate the entire layer.
     layer->setNeedsDisplay();
@@ -780,7 +780,7 @@ TEST_F(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
     // Push the tiles to the impl side and check that there is exactly one.
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 100), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
     EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
@@ -791,13 +791,13 @@ TEST_F(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
     // Change the contents scale and verify that the content rectangle requiring painting
     // is not scaled.
     layer->setContentsScale(2);
-    layer->setVisibleLayerRect(IntRect(0, 0, 200, 200));
+    layer->setVisibleContentRect(IntRect(0, 0, 200, 200));
     EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 100, 100), layer->lastNeedsDisplayRect());
 
     // The impl side should get 2x2 tiles now.
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 200, 200), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 200, 200), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
     EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
@@ -809,7 +809,7 @@ TEST_F(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
     // impl side.
     layer->setNeedsDisplay();
     layer->setTexturePriorities(priorityCalculator);
-    layer->updateLayerRect(updater, IntRect(1, 0, 0, 1), 0);
+    layer->updateContentRect(updater, IntRect(1, 0, 0, 1), 0);
     textureManager->prioritizeTextures(0);
 
     layer->pushPropertiesTo(layerImpl.get());
@@ -839,13 +839,13 @@ TEST_F(TiledLayerChromiumTest, skipsDrawGetsReset)
     rootLayer->addChild(childLayer);
 
     rootLayer->setBounds(contentBounds);
-    rootLayer->setVisibleLayerRect(contentRect);
+    rootLayer->setVisibleContentRect(contentRect);
     rootLayer->setPosition(FloatPoint(150, 150));
     childLayer->setBounds(contentBounds);
-    childLayer->setVisibleLayerRect(contentRect);
+    childLayer->setVisibleContentRect(contentRect);
     childLayer->setPosition(FloatPoint(150, 150));
-    rootLayer->invalidateRect(contentRect);
-    childLayer->invalidateRect(contentRect);
+    rootLayer->invalidateContentRect(contentRect);
+    childLayer->invalidateContentRect(contentRect);
 
     ccLayerTreeHost->setRootLayer(rootLayer);
     ccLayerTreeHost->setViewportSize(IntSize(300, 300));
@@ -876,15 +876,15 @@ TEST_F(TiledLayerChromiumTest, resizeToSmaller)
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
 
     layer->setBounds(IntSize(700, 700));
-    layer->setVisibleLayerRect(IntRect(0, 0, 700, 700));
-    layer->invalidateRect(IntRect(0, 0, 700, 700));
+    layer->setVisibleContentRect(IntRect(0, 0, 700, 700));
+    layer->invalidateContentRect(IntRect(0, 0, 700, 700));
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 700, 700), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 700, 700), 0);
 
     layer->setBounds(IntSize(200, 200));
-    layer->invalidateRect(IntRect(0, 0, 200, 200));
+    layer->invalidateContentRect(IntRect(0, 0, 200, 200));
 }
 
 TEST_F(TiledLayerChromiumTest, hugeLayerUpdateCrash)
@@ -894,13 +894,13 @@ TEST_F(TiledLayerChromiumTest, hugeLayerUpdateCrash)
 
     int size = 1 << 30;
     layer->setBounds(IntSize(size, size));
-    layer->setVisibleLayerRect(IntRect(0, 0, 700, 700));
-    layer->invalidateRect(IntRect(0, 0, size, size));
+    layer->setVisibleContentRect(IntRect(0, 0, 700, 700));
+    layer->invalidateContentRect(IntRect(0, 0, size, size));
 
     // Ensure no crash for bounds where size * size would overflow an int.
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 700, 700), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 700, 700), 0);
 }
 
 TEST_F(TiledLayerChromiumTest, partialUpdates)
@@ -922,8 +922,8 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(ccLayerTreeHost->contentsTextureManager()));
     layer->setBounds(contentBounds);
     layer->setPosition(FloatPoint(150, 150));
-    layer->setVisibleLayerRect(contentRect);
-    layer->invalidateRect(contentRect);
+    layer->setVisibleContentRect(contentRect);
+    layer->invalidateContentRect(contentRect);
 
     ccLayerTreeHost->setRootLayer(layer);
     ccLayerTreeHost->setViewportSize(IntSize(300, 200));
@@ -946,7 +946,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     ccLayerTreeHost->commitComplete();
 
     // Full update of 3 tiles and partial update of 3 tiles.
-    layer->invalidateRect(IntRect(0, 0, 300, 150));
+    layer->invalidateContentRect(IntRect(0, 0, 300, 150));
     ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
     {
         DebugScopedSetImplThread implThread;
@@ -964,7 +964,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     ccLayerTreeHost->commitComplete();
 
     // Partial update of 6 tiles.
-    layer->invalidateRect(IntRect(50, 50, 200, 100));
+    layer->invalidateContentRect(IntRect(50, 50, 200, 100));
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
@@ -982,7 +982,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     ccLayerTreeHost->commitComplete();
 
     // Checkerboard all tiles.
-    layer->invalidateRect(IntRect(0, 0, 300, 200));
+    layer->invalidateContentRect(IntRect(0, 0, 300, 200));
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
@@ -991,7 +991,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     ccLayerTreeHost->commitComplete();
 
     // Partial update of 6 checkerboard tiles.
-    layer->invalidateRect(IntRect(50, 50, 200, 100));
+    layer->invalidateContentRect(IntRect(50, 50, 200, 100));
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
@@ -1009,7 +1009,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     ccLayerTreeHost->commitComplete();
 
     // Partial update of 4 tiles.
-    layer->invalidateRect(IntRect(50, 50, 100, 100));
+    layer->invalidateContentRect(IntRect(50, 50, 100, 100));
     {
         DebugScopedSetImplThread implThread;
         OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
@@ -1035,12 +1035,12 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithoutOcclusion)
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
-    layer->setVisibleLayerRect(IntRect(0, 0, 100, 200));
-    layer->invalidateRect(IntRect(0, 0, 100, 200));
+    layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
+    layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 100, 200), 0);
+    layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->prepareRectCount());
 }
 
@@ -1056,12 +1056,12 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
-    layer->setVisibleLayerRect(IntRect(IntPoint(), layer->bounds()));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1071,8 +1071,8 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     occluded.setOcclusion(IntRect(250, 200, 300, 100));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-2, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1082,8 +1082,8 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     occluded.setOcclusion(IntRect(250, 250, 300, 100));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1104,12 +1104,12 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
 
     // The partially occluded tiles (by the 150 occlusion height) are visible beyond the occlusion, so not culled.
     occluded.setOcclusion(IntRect(200, 200, 300, 150));
-    layer->setVisibleLayerRect(IntRect(0, 0, 600, 360));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
+    layer->setVisibleContentRect(IntRect(0, 0, 600, 360));
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
 
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 360), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 360), &occluded);
     EXPECT_EQ(24-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1120,11 +1120,11 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
 
     // Now the visible region stops at the edge of the occlusion so the partly visible tiles become fully occluded.
     occluded.setOcclusion(IntRect(200, 200, 300, 150));
-    layer->setVisibleLayerRect(IntRect(0, 0, 600, 350));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
+    layer->setVisibleContentRect(IntRect(0, 0, 600, 350));
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 350), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 350), &occluded);
     EXPECT_EQ(24-6, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1135,11 +1135,11 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
 
     // Now the visible region is even smaller than the occlusion, it should have the same result.
     occluded.setOcclusion(IntRect(200, 200, 300, 150));
-    layer->setVisibleLayerRect(IntRect(0, 0, 600, 340));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
+    layer->setVisibleContentRect(IntRect(0, 0, 600, 340));
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 340), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 340), &occluded);
     EXPECT_EQ(24-6, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1160,11 +1160,11 @@ TEST_F(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
     layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
-    layer->setVisibleLayerRect(IntRect(0, 0, 600, 600));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
+    layer->setVisibleContentRect(IntRect(0, 0, 600, 600));
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
     updateTextures();
 
@@ -1175,7 +1175,7 @@ TEST_F(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     // Repaint without marking it dirty. The 3 culled tiles will be pre-painted now.
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1200,11 +1200,11 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndTransforms)
     layer->setDrawTransform(screenTransform * WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(100, 100, 150, 50));
-    layer->setVisibleLayerRect(IntRect(IntPoint(), layer->bounds()));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1228,11 +1228,11 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
-    layer->setVisibleLayerRect(IntRect(IntPoint(), layer->bounds()));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     // The content is half the size of the layer (so the number of tiles is fewer).
     // In this case, the content is 300x300, and since the tile size is 100, the
     // number of tiles 3x3.
@@ -1248,11 +1248,11 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     // a different layer space. In this case the occluded region catches the
     // blown up tiles.
     occluded.setOcclusion(IntRect(200, 200, 300, 200));
-    layer->setVisibleLayerRect(IntRect(IntPoint(), layer->bounds()));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(9-1, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1268,11 +1268,11 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->setDrawTransform(screenTransform * WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(100, 100, 150, 100));
-    layer->setVisibleLayerRect(IntRect(IntPoint(), layer->bounds()));
-    layer->invalidateRect(IntRect(0, 0, 600, 600));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
     textureManager->prioritizeTextures(0);
-    layer->updateLayerRect(updater, IntRect(0, 0, 600, 600), &occluded);
+    layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(9-1, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
     EXPECT_NEAR(occluded.overdrawMetrics().pixelsUploadedOpaque(), 0, 1);
@@ -1296,7 +1296,7 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
 
     layer->setBounds(contentBounds.size());
     layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
-    layer->setVisibleLayerRect(visibleBounds);
+    layer->setVisibleContentRect(visibleBounds);
     layer->setDrawOpacity(1);
 
     layer->setTexturePriorities(priorityCalculator);
@@ -1304,8 +1304,8 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
 
     // If the layer doesn't paint opaque content, then the visibleContentOpaqueRegion should be empty.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
-    layer->invalidateRect(contentBounds);
-    layer->updateLayerRect(updater, contentBounds, &occluded);
+    layer->invalidateContentRect(contentBounds);
+    layer->updateContentRect(updater, contentBounds, &occluded);
     opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_TRUE(opaqueContents.isEmpty());
 
@@ -1317,8 +1317,8 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     // visibleContentOpaqueRegion should match the visible part of what is painted opaque.
     opaquePaintRect = IntRect(10, 10, 90, 190);
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(opaquePaintRect);
-    layer->invalidateRect(contentBounds);
-    layer->updateLayerRect(updater, contentBounds, &occluded);
+    layer->invalidateContentRect(contentBounds);
+    layer->updateContentRect(updater, contentBounds, &occluded);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
@@ -1331,7 +1331,7 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
 
     // If we paint again without invalidating, the same stuff should be opaque.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
-    layer->updateLayerRect(updater, contentBounds, &occluded);
+    layer->updateContentRect(updater, contentBounds, &occluded);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
@@ -1345,8 +1345,8 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     // If we repaint a non-opaque part of the tile, then it shouldn't lose its opaque-ness. And other tiles should
     // not be affected.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
-    layer->invalidateRect(IntRect(0, 0, 1, 1));
-    layer->updateLayerRect(updater, contentBounds, &occluded);
+    layer->invalidateContentRect(IntRect(0, 0, 1, 1));
+    layer->updateContentRect(updater, contentBounds, &occluded);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
@@ -1360,8 +1360,8 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     // If we repaint an opaque part of the tile, then it should lose its opaque-ness. But other tiles should still
     // not be affected.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
-    layer->invalidateRect(IntRect(10, 10, 1, 1));
-    layer->updateLayerRect(updater, contentBounds, &occluded);
+    layer->invalidateContentRect(IntRect(10, 10, 1, 1));
+    layer->updateContentRect(updater, contentBounds, &occluded);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_EQ_RECT(intersection(IntRect(10, 100, 90, 100), visibleBounds), opaqueContents.bounds());
@@ -1389,7 +1389,7 @@ TEST_F(TiledLayerChromiumTest, pixelsPaintedMetrics)
 
     layer->setBounds(contentBounds.size());
     layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
-    layer->setVisibleLayerRect(visibleBounds);
+    layer->setVisibleContentRect(visibleBounds);
     layer->setDrawOpacity(1);
 
     layer->setTexturePriorities(priorityCalculator);
@@ -1397,8 +1397,8 @@ TEST_F(TiledLayerChromiumTest, pixelsPaintedMetrics)
 
     // Invalidates and paints the whole layer.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
-    layer->invalidateRect(contentBounds);
-    layer->updateLayerRect(updater, contentBounds, &occluded);
+    layer->invalidateContentRect(contentBounds);
+    layer->updateContentRect(updater, contentBounds, &occluded);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_TRUE(opaqueContents.isEmpty());
@@ -1411,9 +1411,9 @@ TEST_F(TiledLayerChromiumTest, pixelsPaintedMetrics)
     // Invalidates an area on the top and bottom tile, which will cause us to paint the tile in the middle,
     // even though it is not dirty and will not be uploaded.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
-    layer->invalidateRect(IntRect(0, 0, 1, 1));
-    layer->invalidateRect(IntRect(50, 200, 10, 10));
-    layer->updateLayerRect(updater, contentBounds, &occluded);
+    layer->invalidateContentRect(IntRect(0, 0, 1, 1));
+    layer->invalidateContentRect(IntRect(50, 200, 10, 10));
+    layer->updateContentRect(updater, contentBounds, &occluded);
     updateTextures();
     opaqueContents = layer->visibleContentOpaqueRegion();
     EXPECT_TRUE(opaqueContents.isEmpty());
@@ -1448,7 +1448,7 @@ TEST_F(TiledLayerChromiumTest, dontAllocateContentsWhenTargetSurfaceCantBeAlloca
 
     root->setBounds(rootRect.size());
     root->setAnchorPoint(FloatPoint());
-    root->setVisibleLayerRect(rootRect);
+    root->setVisibleContentRect(rootRect);
     root->addChild(surface);
 
     surface->setForceRenderSurface(true);
@@ -1460,20 +1460,20 @@ TEST_F(TiledLayerChromiumTest, dontAllocateContentsWhenTargetSurfaceCantBeAlloca
     child->setBounds(childRect.size());
     child->setAnchorPoint(FloatPoint());
     child->setPosition(childRect.location());
-    child->setVisibleLayerRect(childRect);
+    child->setVisibleContentRect(childRect);
 
     child2->setBounds(child2Rect.size());
     child2->setAnchorPoint(FloatPoint());
     child2->setPosition(child2Rect.location());
-    child2->setVisibleLayerRect(child2Rect);
+    child2->setVisibleContentRect(child2Rect);
 
     ccLayerTreeHost->setRootLayer(root);
     ccLayerTreeHost->setViewportSize(rootRect.size());
 
     // With a huge memory limit, all layers should update and push their textures.
-    root->invalidateRect(rootRect);
-    child->invalidateRect(childRect);
-    child2->invalidateRect(child2Rect);
+    root->invalidateContentRect(rootRect);
+    child->invalidateContentRect(childRect);
+    child2->invalidateContentRect(child2Rect);
     ccLayerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
     {
         DebugScopedSetImplThread implThread;
@@ -1506,9 +1506,9 @@ TEST_F(TiledLayerChromiumTest, dontAllocateContentsWhenTargetSurfaceCantBeAlloca
     // With a memory limit that includes only the root layer (3x2 tiles) and half the surface that
     // the child layers draw into, the child layers will not be allocated. If the surface isn't
     // accounted for, then one of the children would fit within the memory limit.
-    root->invalidateRect(rootRect);
-    child->invalidateRect(childRect);
-    child2->invalidateRect(child2Rect);
+    root->invalidateContentRect(rootRect);
+    child->invalidateContentRect(childRect);
+    child2->invalidateContentRect(child2Rect);
     ccLayerTreeHost->updateLayers(updater, (3 * 2 + 3 * 1) * (100 * 100) * 4);
     {
         DebugScopedSetImplThread implThread;
@@ -1542,9 +1542,9 @@ TEST_F(TiledLayerChromiumTest, dontAllocateContentsWhenTargetSurfaceCantBeAlloca
     // allocated. If render surface memory wasn't accounted for, there is enough space
     // for one of the children layers, but they draw into a surface that can't be
     // allocated.
-    root->invalidateRect(rootRect);
-    child->invalidateRect(childRect);
-    child2->invalidateRect(child2Rect);
+    root->invalidateContentRect(rootRect);
+    child->invalidateContentRect(childRect);
+    child2->invalidateContentRect(child2Rect);
     ccLayerTreeHost->updateLayers(updater, (3 * 1) * (100 * 100) * 4);
     {
         DebugScopedSetImplThread implThread;
@@ -1633,13 +1633,13 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringPaint)
 
     IntRect contentRect(0, 0, 45, 47);
     EXPECT_EQ(contentRect.size(), layer->contentBounds());
-    layer->setVisibleLayerRect(contentRect);
+    layer->setVisibleContentRect(contentRect);
 
     layer->setTexturePriorities(calculator);
     textureManager->prioritizeTextures(0);
 
     // Update the whole tile.
-    layer->updateLayerRect(updater, contentRect, 0);
+    layer->updateContentRect(updater, contentRect, 0);
     layer->trackingLayerPainter()->resetPaintedRect();
 
     EXPECT_INT_RECT_EQ(IntRect(), layer->trackingLayerPainter()->paintedRect());
@@ -1647,8 +1647,8 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringPaint)
     updateTextures();
 
     // Invalidate the entire layer in content space. When painting, the rect given to webkit should match the layer's bounds.
-    layer->invalidateRect(contentRect);
-    layer->updateLayerRect(updater, contentRect, 0);
+    layer->invalidateContentRect(contentRect);
+    layer->updateContentRect(updater, contentRect, 0);
 
     EXPECT_INT_RECT_EQ(layerRect, layer->trackingLayerPainter()->paintedRect());
 }
@@ -1666,13 +1666,13 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringInvali
     layer->setContentsScale(1.3);
 
     IntRect contentRect(IntPoint(), layer->contentBounds());
-    layer->setVisibleLayerRect(contentRect);
+    layer->setVisibleContentRect(contentRect);
 
     layer->setTexturePriorities(calculator);
     textureManager->prioritizeTextures(0);
 
     // Update the whole tile.
-    layer->updateLayerRect(updater, contentRect, 0);
+    layer->updateContentRect(updater, contentRect, 0);
     layer->trackingLayerPainter()->resetPaintedRect();
 
     EXPECT_INT_RECT_EQ(IntRect(), layer->trackingLayerPainter()->paintedRect());
@@ -1681,7 +1681,7 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringInvali
 
     // Invalidate the entire layer in layer space. When painting, the rect given to webkit should match the layer's bounds.
     layer->setNeedsDisplayRect(layerRect);
-    layer->updateLayerRect(updater, contentRect, 0);
+    layer->updateContentRect(updater, contentRect, 0);
 
     EXPECT_INT_RECT_EQ(layerRect, layer->trackingLayerPainter()->paintedRect());
 }

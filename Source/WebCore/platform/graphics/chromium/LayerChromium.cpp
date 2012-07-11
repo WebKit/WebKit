@@ -732,7 +732,7 @@ void LayerChromium::notifyAnimationFinished(double wallClockTime)
 Region LayerChromium::visibleContentOpaqueRegion() const
 {
     if (opaque())
-        return visibleLayerRect();
+        return visibleContentRect();
     return Region();
 }
 

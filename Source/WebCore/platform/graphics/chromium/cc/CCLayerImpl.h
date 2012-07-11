@@ -227,8 +227,8 @@ public:
 
     CCInputHandlerClient::ScrollStatus tryScroll(const IntPoint& viewportPoint, CCInputHandlerClient::ScrollInputType) const;
 
-    const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
-    void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
+    const IntRect& visibleContentRect() const { return m_visibleContentRect; }
+    void setVisibleContentRect(const IntRect& visibleContentRect) { m_visibleContentRect = visibleContentRect; }
 
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool);
@@ -332,7 +332,7 @@ private:
     bool m_layerSurfacePropertyChanged;
 
     // Uses layer's content space.
-    IntRect m_visibleLayerRect;
+    IntRect m_visibleContentRect;
     bool m_masksToBounds;
     bool m_opaque;
     float m_opacity;

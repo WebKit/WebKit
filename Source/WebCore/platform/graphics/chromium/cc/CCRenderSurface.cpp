@@ -188,13 +188,13 @@ bool CCRenderSurface::surfacePropertyChangedOnlyFromDescendant() const
 PassOwnPtr<CCSharedQuadState> CCRenderSurface::createSharedQuadState() const
 {
     bool isOpaque = false;
-    return CCSharedQuadState::create(originTransform(), drawTransform(), contentRect(), m_scissorRect, drawOpacity(), isOpaque);
+    return CCSharedQuadState::create(m_originTransform, m_contentRect, m_scissorRect, m_drawOpacity, isOpaque);
 }
 
 PassOwnPtr<CCSharedQuadState> CCRenderSurface::createReplicaSharedQuadState() const
 {
     bool isOpaque = false;
-    return CCSharedQuadState::create(replicaOriginTransform(), replicaDrawTransform(), contentRect(), m_scissorRect, drawOpacity(), isOpaque);
+    return CCSharedQuadState::create(m_replicaOriginTransform, m_contentRect, m_scissorRect, m_drawOpacity, isOpaque);
 }
 
 FloatRect CCRenderSurface::computeRootScissorRectInCurrentSurface(const FloatRect& rootScissorRect) const
@@ -232,9 +232,10 @@ void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sha
     }
 
     int maskTextureId = maskLayer ? maskLayer->contentsTextureId() : 0;
+    WebTransformationMatrix drawTransform = forReplica ? m_replicaDrawTransform : m_drawTransform;
     IntRect contentsChangedSinceLastFrame = contentsChanged() ? m_contentRect : IntRect();
 
-    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPass, forReplica, filters(), backgroundFilters(), maskTextureId, contentsChangedSinceLastFrame));
+    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPass, forReplica, drawTransform, filters(), backgroundFilters(), maskTextureId, contentsChangedSinceLastFrame));
 }
 
 }

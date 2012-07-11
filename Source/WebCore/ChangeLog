@@ -1,3 +1,94 @@
+2012-07-11  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Rename layerRect to contentRect for rects that live in content space
+        https://bugs.webkit.org/show_bug.cgi?id=90843
+
+        Reviewed by Adrienne Walker.
+
+        Dropped the layerTransform() from CCSharedQuadState, as nothing should be
+        using it to draw with. RenderPasses need a weird drawTransform right now
+        which was stored in layerTransform, so moved this to the RenderPass quad.
+
+        No new tests. No change in behaviour.
+
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.cpp:
+        (WebCore::CanvasLayerTextureUpdater::paintContents):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::update):
+        (WebCore::ContentLayerChromium::needMoreUpdates):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::update):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::visibleContentOpaqueRegion):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::visibleContentRect):
+        (WebCore::LayerChromium::setVisibleContentRect):
+        (LayerChromium):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        (WebCore::LayerRendererChromium::drawTileQuad):
+        (WebCore::LayerRendererChromium::drawYUVVideoQuad):
+        (WebCore::LayerRendererChromium::drawStreamVideoQuad):
+        (WebCore::LayerRendererChromium::drawIOSurfaceQuad):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateBounds):
+        (WebCore::TiledLayerChromium::setNeedsDisplayRect):
+        (WebCore::TiledLayerChromium::invalidateContentRect):
+        (WebCore::TiledLayerChromium::updateTiles):
+        (WebCore::TiledLayerChromium::setTexturePriorities):
+        (WebCore::TiledLayerChromium::setTexturePrioritiesInRect):
+        (WebCore::TiledLayerChromium::visibleContentOpaqueRegion):
+        (WebCore::TiledLayerChromium::updateContentRect):
+        (WebCore::TiledLayerChromium::needsIdlePaint):
+        (WebCore::TiledLayerChromium::idlePaintRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore::CCDrawQuad::visibleContentRect):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::createSharedQuadState):
+        (WebCore::CCLayerImpl::appendDebugBorderQuad):
+        (WebCore::CCLayerImpl::visibleContentOpaqueRegion):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::visibleContentRect):
+        (WebCore::CCLayerImpl::setVisibleContentRect):
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp:
+        (WebCore::CCLayerTilingData::contentRectToTileIndices):
+        (WebCore::CCLayerTilingData::opaqueRegionInContentRect):
+        (WebCore::CCLayerTilingData::setBounds):
+        * platform/graphics/chromium/cc/CCLayerTilingData.h:
+        (CCLayerTilingData):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateVisibleContentRect):
+        (WebCore::layerShouldBeSkipped):
+        (WebCore):
+        (WebCore::calculateVisibleAndScissorRectsInternal):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::addOcclusionBehindLayer):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        (WebCore::CCRenderPassDrawQuad::drawTransform):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::createSharedQuadState):
+        (WebCore::CCRenderSurface::createReplicaSharedQuadState):
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCSharedQuadState.cpp:
+        (WebCore::CCSharedQuadState::create):
+        (WebCore::CCSharedQuadState::CCSharedQuadState):
+        (WebCore::CCSharedQuadState::isLayerAxisAlignedIntRect):
+        * platform/graphics/chromium/cc/CCSharedQuadState.h:
+        (CCSharedQuadState):
+        (WebCore::CCSharedQuadState::visibleContentRect):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::appendQuads):
+        (WebCore::CCTiledLayerImpl::visibleContentOpaqueRegion):
+
 2012-07-11  Chris Fleizach  <cfleizach@apple.com>
 
         ARIA spinbutton role incorrectly mapped to ProgressIndicatorRole

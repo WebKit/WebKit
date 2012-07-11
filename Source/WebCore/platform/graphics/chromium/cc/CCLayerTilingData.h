@@ -98,10 +98,10 @@ public:
     void setBounds(const IntSize&);
     IntSize bounds() const;
 
-    void layerRectToTileIndices(const IntRect&, int &left, int &top, int &right, int &bottom) const;
+    void contentRectToTileIndices(const IntRect&, int &left, int &top, int &right, int &bottom) const;
     IntRect tileRect(const Tile*) const;
 
-    Region opaqueRegionInLayerRect(const IntRect&) const;
+    Region opaqueRegionInContentRect(const IntRect&) const;
 
     void reset();
 
