@@ -29,6 +29,7 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "EventTarget.h"
+#include "LayoutTypes.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -59,6 +60,7 @@ public:
     int webkitRadiusY() const { return m_radiusY; }
     float webkitRotationAngle() const { return m_rotationAngle; }
     float webkitForce() const { return m_force; }
+    const LayoutPoint& absoluteLocation() const { return m_absoluteLocation; }
 
 private:
     Touch(Frame* frame, EventTarget* target, unsigned identifier,
@@ -77,6 +79,7 @@ private:
     int m_radiusY;
     float m_rotationAngle;
     float m_force;
+    LayoutPoint m_absoluteLocation;
 };
 
 } // namespace WebCore

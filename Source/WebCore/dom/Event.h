@@ -120,6 +120,7 @@ namespace WebCore {
         virtual bool isUIEvent() const;
         virtual bool isMouseEvent() const;
         virtual bool isKeyboardEvent() const;
+        virtual bool isTouchEvent() const;
 
         // Drag events are a subset of mouse events.
         virtual bool isDragEvent() const;

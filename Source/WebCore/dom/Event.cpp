@@ -126,6 +126,11 @@ bool Event::isKeyboardEvent() const
     return false;
 }
 
+bool Event::isTouchEvent() const
+{
+    return false;
+}
+
 bool Event::isDragEvent() const
 {
     return false;

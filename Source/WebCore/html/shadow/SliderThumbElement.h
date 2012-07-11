@@ -57,6 +57,7 @@ public:
     virtual void detach();
     virtual const AtomicString& shadowPseudoId() const;
     HTMLInputElement* hostInput() const;
+    void setPositionFromPoint(const LayoutPoint&);
 
 private:
     SliderThumbElement(Document*);
@@ -67,7 +68,6 @@ private:
     virtual Node* focusDelegate();
     void startDragging();
     void stopDragging();
-    void setPositionFromPoint(const LayoutPoint&);
 
     bool m_inDragMode;
 };

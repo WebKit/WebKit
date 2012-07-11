@@ -69,6 +69,7 @@ public:
     void setTouchHold(bool touchHold) { m_touchHold = touchHold; }
     bool isTouchHold() const { return m_touchHold; }
 #endif
+    virtual bool isTouchEvent() const OVERRIDE;
 
     virtual const AtomicString& interfaceName() const;
 

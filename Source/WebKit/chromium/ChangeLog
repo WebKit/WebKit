@@ -1,3 +1,15 @@
+2012-07-10  Kevin Ellis  <kevers@chromium.org>
+
+        Input elements with type=range do not have default touch handlers.
+        https://bugs.webkit.org/show_bug.cgi?id=88807
+
+        Reviewed by Antonio Gomes.
+
+        Adds flag to enable native handling of touch events for input elements
+        with type=range.
+
+        * features.gypi:
+
 2012-07-10  Adam Klein  <adamk@chromium.org>
 
         [Chromium] REGRESSION(r121909): m_currentInputEvent never set

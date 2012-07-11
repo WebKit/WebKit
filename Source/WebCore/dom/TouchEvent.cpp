@@ -94,6 +94,11 @@ const AtomicString& TouchEvent::interfaceName() const
     return eventNames().interfaceForTouchEvent;
 }
 
+bool TouchEvent::isTouchEvent() const
+{
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(TOUCH_EVENTS)

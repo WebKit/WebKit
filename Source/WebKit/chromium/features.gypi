@@ -97,6 +97,7 @@
       'ENABLE_TOUCH_ADJUSTMENT=1',
       'ENABLE_TOUCH_EVENTS=<(enable_touch_events)',
       'ENABLE_TOUCH_ICON_LOADING=<(enable_touch_icon_loading)',
+      'ENABLE_TOUCH_SLIDER=1',
       'ENABLE_V8_SCRIPT_DEBUG_SERVER=1',
       'ENABLE_VIDEO=1',
       'ENABLE_VIDEO_TRACK=1',

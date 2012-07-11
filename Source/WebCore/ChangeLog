@@ -1,3 +1,57 @@
+2012-07-10  Kevin Ellis  <kevers@chromium.org>
+
+        Input elements with type=range do not have default touch handlers.
+        https://bugs.webkit.org/show_bug.cgi?id=88807
+
+        Reviewed by Antonio Gomes.
+
+        This patch adds support for touch event handling on input elements
+        and dragging a slider with touch start and move events.  Previously,
+        manipulating a slider on a touch screen required generation of
+        synthetic mouse events.
+
+        Tests: fast/events/touch/touch-slider-no-js-touch-listener.html
+               fast/events/touch/touch-slider.html
+
+        * dom/Event.cpp:
+        (WebCore::Event::isTouchEvent):
+        (WebCore):
+        * dom/Event.h:
+        (Event):
+        * dom/Touch.cpp:
+        (WebCore::Touch::Touch):
+        * dom/Touch.h:
+        (WebCore::Touch::absoluteLocation):
+        (Touch):
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::isTouchEvent):
+        (WebCore):
+        * dom/TouchEvent.h:
+        (TouchEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/InputType.cpp:
+        (WebCore):
+        (WebCore::InputType::handleTouchEvent):
+        (WebCore::InputType::hasTouchEventHandler):
+        * html/InputType.h:
+        (WebCore):
+        (ClickHandlingState):
+        (InputType):
+        * html/RangeInputType.cpp:
+        (WebCore):
+        (WebCore::RangeInputType::handleTouchEvent):
+        (WebCore::RangeInputType::hasTouchEventHandler):
+        * html/RangeInputType.h:
+        (RangeInputType):
+        * html/shadow/SliderThumbElement.h:
+        (SliderThumbElement):
+
 2012-07-10  Pravin D  <pravind.2k4@gmail.com>
 
         Re-factoring recalcColumn in AutoTableLayout.cpp for readability

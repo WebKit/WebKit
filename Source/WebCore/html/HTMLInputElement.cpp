@@ -67,6 +67,10 @@
 #include "RuntimeEnabledFeatures.h"
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+#include "TouchEvent.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -98,6 +102,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     , m_valueAttributeWasUpdatedAfterParsing(false)
     , m_wasModifiedByUser(false)
     , m_canReceiveDroppedFiles(false)
+    , m_hasTouchEventHandler(false)
     , m_inputType(InputType::createText(this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
@@ -130,6 +135,10 @@ HTMLInputElement::~HTMLInputElement()
     // We should unregister it to avoid accessing a deleted object.
     if (isRadioButton())
         document()->formController()->checkedRadioButtons().removeButton(this);
+#if ENABLE(TOUCH_EVENTS)
+    if (m_hasTouchEventHandler)
+        document()->didRemoveTouchEventHandler();
+#endif
 }
 
 const AtomicString& HTMLInputElement::name() const
@@ -400,6 +409,18 @@ void HTMLInputElement::updateType()
     m_inputType->destroyShadowSubtree();
     m_inputType = newType.release();
     m_inputType->createShadowSubtree();
+
+#if ENABLE(TOUCH_EVENTS)
+    bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
+    if (hasTouchEventHandler != m_hasTouchEventHandler) {
+      if (hasTouchEventHandler) {
+        document()->didAddTouchEventHandler();
+        document()->addListenerType(Document::TOUCH_LISTENER);
+      } else
+        document()->didRemoveTouchEventHandler();
+      m_hasTouchEventHandler = hasTouchEventHandler;
+    }
+#endif
 
     setNeedsWillValidateCheck();
 
@@ -1037,6 +1058,14 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         if (evt->defaultHandled())
             return;
     }
+
+#if ENABLE(TOUCH_EVENTS)
+    if (evt->isTouchEvent()) {
+        m_inputType->handleTouchEvent(static_cast<TouchEvent*>(evt));
+        if (evt->defaultHandled())
+            return;
+    }
+#endif
 
     if (evt->isKeyboardEvent() && evt->type() == eventNames().keydownEvent) {
         m_inputType->handleKeydownEvent(static_cast<KeyboardEvent*>(evt));

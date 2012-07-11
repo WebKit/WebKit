@@ -417,6 +417,12 @@ void InputType::handleWheelEvent(WheelEvent*)
 {
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void InputType::handleTouchEvent(TouchEvent*)
+{
+}
+#endif
+
 void InputType::forwardEvent(Event*)
 {
 }
@@ -872,6 +878,13 @@ void InputType::readonlyAttributeChanged()
 void InputType::subtreeHasChanged()
 {
 }
+
+#if ENABLE(TOUCH_EVENTS)
+bool InputType::hasTouchEventHandler() const
+{
+    return false;
+}
+#endif
 
 String InputType::defaultToolTip() const
 {

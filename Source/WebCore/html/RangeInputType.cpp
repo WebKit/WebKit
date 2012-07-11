@@ -49,6 +49,12 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
+#if ENABLE(TOUCH_EVENTS)
+#include "Touch.h"
+#include "TouchEvent.h"
+#include "TouchList.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -133,6 +139,34 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
         return;
     thumb->dragFrom(event->absoluteLocation());
 }
+
+#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_SLIDER)
+void RangeInputType::handleTouchEvent(TouchEvent* event)
+{
+    if (element()->disabled() || element()->readOnly())
+        return;
+
+    if (event->type() == eventNames().touchendEvent) {
+        event->setDefaultHandled();
+        return;
+    }
+
+    TouchList* touches = event->targetTouches();
+    if (touches->length() == 1) {
+        Touch* touch = touches->item(0);
+        SliderThumbElement* thumb = sliderThumbElementOf(element());
+        thumb->setPositionFromPoint(touch->absoluteLocation());
+        event->setDefaultHandled();
+    }
+}
+
+bool RangeInputType::hasTouchEventHandler() const
+{
+    return true;
+}
+#endif
+#endif
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 {

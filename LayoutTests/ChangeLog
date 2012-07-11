@@ -1,3 +1,27 @@
+2012-07-10  Kevin Ellis  <kevers@chromium.org>
+
+        Input elements with type=range do not have default touch handlers.
+        https://bugs.webkit.org/show_bug.cgi?id=88807
+
+        Reviewed by Antonio Gomes.
+
+        Add automated test for manipulating an input slider via touch
+        events.
+
+        * fast/events/touch/script-tests/touch-slider-no-js-touch-listener.js: Added.
+        (checkPosition):
+        * fast/events/touch/script-tests/touch-slider.js: Added.
+        (onTouchStart):
+        (onTouchEnd):
+        (onKeyDown):
+        (checkPosition):
+        * fast/events/touch/touch-slider-expected.txt: Added.
+        * fast/events/touch/touch-slider-no-js-touch-listener-expected.txt: Added.
+        * fast/events/touch/touch-slider-no-js-touch-listener.html: Added.
+        * fast/events/touch/touch-slider.html: Added.
+        * platform/chromium/fast/events/touch/touch-slider-expected.txt: Added.
+        * platform/chromium/fast/events/touch/touch-slider-no-js-touch-listener-expected.txt: Added.
+
 2012-07-10  Kenneth Russell  <kbr@google.com>
 
         Line directive test in fast/canvas/webgl/glsl-conformance.html is incorrect
