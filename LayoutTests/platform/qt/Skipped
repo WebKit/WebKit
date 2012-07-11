@@ -1917,11 +1917,11 @@ fast/events/keydown-leftright-keys.html
 fast/events/domactivate-sets-underlying-click-event-as-handled.html
 
 # New fast/dom/Window/mozilla-focus-blur.html introduced in r118916 fails
-# https://bugs.webkit.org/show_bug.cgi?id=87951
+# https://bugs.webkit.org/show_bug.cgi?id=87956
 fast/dom/Window/mozilla-focus-blur.html
 
-# [Qt] New fast/notifications/notifications-click-event-focus.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=87956
+# New fast/notifications/notifications-click-event-focus.html introduced in r118916 fails
+# https://bugs.webkit.org/show_bug.cgi?id=90988
 fast/notifications/notifications-click-event-focus.html
 
 # [Qt][GTK][EFL] fast/dom/gc-attribute-node.html fails

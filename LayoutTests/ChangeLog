@@ -1,3 +1,10 @@
+2012-07-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0-wk2/Skipped: Skip a new crashing test.
+        * platform/qt/Skipped: Typo fix.
+
 2012-07-11  Steffen Imhof  <steffen.imhof@basyskom.com>
 
         [Qt] Middle clicking a scrollbar causes text to be pasted.

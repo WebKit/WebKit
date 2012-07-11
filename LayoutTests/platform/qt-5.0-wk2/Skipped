@@ -396,6 +396,10 @@ editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
 # WebKitTestRunner needs to allow self-signed certificates for localhost.
 http/tests/ssl
 
+# [Qt][WK2] REGRESSION(r122326): It made fast/repaint/background-scaling.html crash
+# https://bugs.webkit.org/show_bug.cgi?id=90985
+fast/repaint/background-scaling.html
+
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
