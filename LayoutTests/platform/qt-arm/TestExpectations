@@ -1,3 +1,7 @@
+// slow tests
+BUG_QT_SLOW SLOW: fast/workers/worker-multi-startup.html = PASS
+BUG_QT_SLOW SLOW: fast/workers/wrapper-map-gc.html = PASS
+
 // failing tests
 BUG_ARM SKIP: css3/flexbox/flex-algorithm.html = TEXT
 BUG_ARM SKIP: fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
