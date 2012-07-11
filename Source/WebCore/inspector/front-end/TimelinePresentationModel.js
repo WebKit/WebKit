@@ -47,6 +47,7 @@ WebInspector.TimelinePresentationModel.categories = function()
     if (WebInspector.TimelinePresentationModel._categories)
         return WebInspector.TimelinePresentationModel._categories;
     WebInspector.TimelinePresentationModel._categories = {
+        program: new WebInspector.TimelineCategory("program", WebInspector.UIString("Program"), -1, "#BBBBBB", "#DDDDDD", "#FFFFFF"),
         loading: new WebInspector.TimelineCategory("loading", WebInspector.UIString("Loading"), 0, "#5A8BCC", "#8EB6E9", "#70A2E3"),
         scripting: new WebInspector.TimelineCategory("scripting", WebInspector.UIString("Scripting"), 1, "#D8AA34", "#F3D07A", "#F1C453"),
         rendering: new WebInspector.TimelineCategory("rendering", WebInspector.UIString("Rendering"), 2, "#8266CC", "#AF9AEB", "#9A7EE6"),
@@ -68,6 +69,7 @@ WebInspector.TimelinePresentationModel.recordStyle = function(record)
 
     var recordStyles = {};
     recordStyles[recordTypes.Root] = { title: "#root", category: categories["loading"] };
+    recordStyles[recordTypes.Program] = { title: WebInspector.UIString("Program"), category: categories["program"] };
     recordStyles[recordTypes.EventDispatch] = { title: WebInspector.UIString("Event"), category: categories["scripting"] };
     recordStyles[recordTypes.BeginFrame] = { title: WebInspector.UIString("Frame Start"), category: categories["rendering"] };
     recordStyles[recordTypes.Layout] = { title: WebInspector.UIString("Layout"), category: categories["rendering"] };
@@ -117,7 +119,12 @@ WebInspector.TimelinePresentationModel.isEventDivider = function(record)
     return false;
 }
 
-WebInspector.TimelinePresentationModel.forAllRecords = function(recordsArray, callback)
+/**
+ * @param {Array} recordsArray
+ * @param {?function(*)} preOrderCallback
+ * @param {function(*)=} postOrderCallback
+ */
+WebInspector.TimelinePresentationModel.forAllRecords = function(recordsArray, preOrderCallback, postOrderCallback)
 {
     if (!recordsArray)
         return;
@@ -127,13 +134,18 @@ WebInspector.TimelinePresentationModel.forAllRecords = function(recordsArray, ca
         var records = entry.array;
         if (entry.index < records.length) {
              var record = records[entry.index];
-             if (callback(record))
+             if (preOrderCallback && preOrderCallback(record))
                  return;
              if (record.children)
-                 stack.push({array: record.children, index: 0});
+                 stack.push({array: record.children, index: 0, record: record});
+             else if (postOrderCallback && postOrderCallback(record))
+                return;
              ++entry.index;
-        } else
+        } else {
+            if (entry.record && postOrderCallback && postOrderCallback(entry.record))
+                return;
             stack.pop();
+        }
     }
 }
 
@@ -201,11 +213,26 @@ WebInspector.TimelinePresentationModel.prototype = {
 
     addRecord: function(record, parentRecord)
     {
-        var connectedToOldRecord = false;
-        var recordTypes = WebInspector.TimelineModel.RecordType;
-
         if (this._minimumRecordTime === -1 || record.startTime < this._minimumRecordTime)
             this._minimumRecordTime = WebInspector.TimelineModel.startTimeInSeconds(record);
+
+        var records;
+        if (record.type === WebInspector.TimelineModel.RecordType.Program)
+            records = record.children;
+        else
+            records = [record];
+
+        var formattedRecords = [];
+        var recordsCount = records.length;
+        for (var i = 0; i < recordsCount; ++i)
+            formattedRecords.push(this._innerAddRecord(records[i], parentRecord));
+        return formattedRecords;
+    },
+
+    _innerAddRecord: function(record, parentRecord)
+    {
+        var connectedToOldRecord = false;
+        var recordTypes = WebInspector.TimelineModel.RecordType;
 
         switch (record.type) {
         // No bar entry for load events.
@@ -253,7 +280,7 @@ WebInspector.TimelinePresentationModel.prototype = {
 
         var childrenCount = children ? children.length : 0;
         for (var i = 0; i < childrenCount; ++i)
-            this.addRecord(children[i], formattedRecord);
+            this._innerAddRecord(children[i], formattedRecord);
 
         formattedRecord.calculateAggregatedStats(WebInspector.TimelinePresentationModel.categories());
 

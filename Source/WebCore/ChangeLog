@@ -1,3 +1,59 @@
+2012-07-09  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Forward message loop instrumentation data to frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=89584
+
+        Reviewed by Yury Semikhatsky.
+
+        Transmit collected message loop tasks to inspector frontend.
+        Now "Program" should be a top-level event on browsers that
+        support message loop instrumentation.
+        Frontend was changed so that user will not see any changes.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (TimelineRecordType):
+        Added new event type - "Program"
+        (WebCore::InspectorTimelineAgent::willProcessTask):
+        Begin "Program" event.
+        (WebCore::InspectorTimelineAgent::didProcessTask):
+        Finish "Program" event.
+        (WebCore::InspectorTimelineAgent::setHeapSizeStatistic):
+        Do not add counters to "Program" events.
+        (WebCore):
+        (WebCore::InspectorTimelineAgent::innerSetHeapSizeStatistic):
+        Renamed from "setHeapSizeStatistic"
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics.prototype._onRecordAdded):
+        Unwraps "Program" events.
+        (WebInspector.MemoryStatistics.prototype._innerRecordAdded):
+        Renamed from "_onRecordAdded"
+        * inspector/front-end/TimelineFrameController.js:
+        (WebInspector.TimelineFrameController.prototype._addRecord):
+        Unwraps "Program" events.
+        (WebInspector.TimelineFrameController.prototype._innerAddRecord):
+        Renamed from "_addRecord"
+        * inspector/front-end/TimelineModel.js:
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineCategoryStrips.prototype.update.appendRecord):
+        Filter out "Program" category.
+        (WebInspector.TimelineCategoryStrips.prototype.update):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        Filter out "Program" category.
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        Unwraps "Program" events.
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.categories):
+        Added "Program" category.
+        (WebInspector.TimelinePresentationModel.recordStyle):
+        Ditto.
+        (WebInspector.TimelinePresentationModel.prototype.addRecord):
+        Unwraps "Program" events.
+        (WebInspector.TimelinePresentationModel.prototype._addRecord):
+        Renamed from "addRecord"
+
 2012-07-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Adding HarfBuzz-ng for Linux

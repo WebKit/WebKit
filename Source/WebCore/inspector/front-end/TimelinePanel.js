@@ -232,6 +232,8 @@ WebInspector.TimelinePanel.prototype = {
         var categories = WebInspector.TimelinePresentationModel.categories();
         for (var categoryName in categories) {
             var category = categories[categoryName];
+            if (category.overviewStripGroupIndex < 0)
+                continue;
             this.statusBarFilters.appendChild(this._createTimelineCategoryStatusBarCheckbox(category, this._onCategoryCheckboxClicked.bind(this, category)));
         }
     },
@@ -495,8 +497,8 @@ WebInspector.TimelinePanel.prototype = {
 
     _innerAddRecordToTimeline: function(record, parentRecord)
     {
-        var formattedRecord = this._presentationModel.addRecord(record, parentRecord);
-        ++this._allRecordsCount;
+        var records = this._presentationModel.addRecord(record, parentRecord);
+        this._allRecordsCount += records.length;
         var recordTypes = WebInspector.TimelineModel.RecordType;
         var timeStampRecords = this._timeStampRecords;
         var hasVisibleRecords = false;
@@ -507,10 +509,14 @@ WebInspector.TimelinePanel.prototype = {
                 timeStampRecords.push(record);
             hasVisibleRecords |= presentationModel.isVisible(record);
         }
-        var records = [ formattedRecord ];
         WebInspector.TimelinePresentationModel.forAllRecords(records, processRecord);
+
+        function isAdoptedRecord(record)
+        {
+            return record.parent !== presentationModel.rootRecord;
+        }
         // Tell caller update is necessary either if we added a visible record or if we re-parented a record.
-        return hasVisibleRecords || formattedRecord.parent !== this._presentationModel.rootRecord;
+        return hasVisibleRecords || records.some(isAdoptedRecord);
     },
 
     sidebarResized: function(event)

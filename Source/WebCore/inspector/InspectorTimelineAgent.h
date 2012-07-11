@@ -162,7 +162,7 @@ private:
     InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*, InspectorType, InspectorClient*);
 
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*, bool hasOrphanDetails = false);
-    void setHeapSizeStatistic(InspectorObject* record);
+    void setHeapSizeStatistics(InspectorObject* record);
 
     void didCompleteCurrentRecord(const String& type);
     void commitFrameRecord();

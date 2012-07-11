@@ -1,3 +1,17 @@
+2012-07-09  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Forward message loop instrumentation data to frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=89584
+
+        Reviewed by Yury Semikhatsky.
+
+        Transmit collected message loop tasks to inspector frontend.
+        Now "Program" should be a top-level event on browsers that
+        support message loop instrumentation.
+        Frontend was changed so that user will not see any changes.
+
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+
 2012-07-11  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding an image expectation for the
