@@ -1,3 +1,9 @@
+2012-07-10  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+
+        * fast/css/deprecated-flexbox-auto-min-size-expected.txt: Renamed from LayoutTests/platform/chromium/fast/css/deprecated-flexbox-auto-min-size-expected.txt.
+
 12012-07-10  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.
