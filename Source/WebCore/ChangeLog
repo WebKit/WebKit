@@ -1,5 +1,13 @@
 2012-07-11  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix. Ignore array and sequence types for attributes as well
+        as functions since the CPP bindings do not yet support them.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (SkipAttribute):
+
+2012-07-11  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix. Use DOMStringList instead of DOMString[] for in / out type.
 
         * testing/Internals.idl:

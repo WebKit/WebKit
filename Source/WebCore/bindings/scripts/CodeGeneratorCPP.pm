@@ -223,6 +223,14 @@ sub SkipAttribute
 
     return 1 if $attribute->signature->type =~ /Constructor$/;
 
+    if ($codeGenerator->GetArrayType($attribute->signature->type)) {
+        return 1;
+    }
+
+    if ($codeGenerator->GetSequenceType($attribute->signature->type)) {
+        return 1;
+    }
+
     $codeGenerator->AssertNotSequenceType($attribute->signature->type);
 
     # FIXME: This is typically used to add script execution state arguments to the method.
