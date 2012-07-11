@@ -1,3 +1,16 @@
+2012-07-11  Dean Jackson  <dino@apple.com>
+
+        TileCache layers have wrong border debug color
+        https://bugs.webkit.org/show_bug.cgi?id=90922
+
+        Reviewed by Simon Fraser.
+
+        Make sure that the document background color is updated
+        when using a Tile Cache.
+
+        * compositing/document-background-color-expected.html: Added.
+        * compositing/document-background-color.html: Added.
+
 2012-07-11  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         NodesFromRect doesn't work on SVG root elements.

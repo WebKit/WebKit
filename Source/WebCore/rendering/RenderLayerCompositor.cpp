@@ -1910,7 +1910,7 @@ void RenderLayerCompositor::documentBackgroundColorDidChange()
         return;
 
     GraphicsLayer* graphicsLayer = backing->graphicsLayer();
-    if (!graphicsLayer->client()->shouldUseTileCache(graphicsLayer))
+    if (!graphicsLayer->client()->usingTileCache(graphicsLayer))
         return;
 
     Color backgroundColor = m_renderView->frameView()->documentBackgroundColor();

@@ -1,3 +1,42 @@
+2012-07-11  Dean Jackson  <dino@apple.com>
+
+        TileCache layers have wrong border debug color
+        https://bugs.webkit.org/show_bug.cgi?id=90922
+
+        Reviewed by Simon Fraser.
+
+        Commit r122152 updated the layer hierarchy when a tile
+        cache is being used by the view. As part of that, GraphicsLayerClient::shouldUseTileCache()
+        was changed to return false in some situations (the idea was that it
+        should only be called from the createGraphicsLayer method). However
+        there were two other call points: one that sets the debug colors on
+        borders, the other was a call that keeps the document background in sync.
+
+        Add a new method usingTileCache() that returns the current state. Also fix
+        a FIXME where the debug code always called into the client rather than
+        caching the value on the GraphicsLayer.
+
+        Test: compositing/document-background-color.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::updateDebugIndicators): check the local variable when
+        setting the debug colors.
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer): new bool member variable m_usingTileCache.
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::usingTileCache): new virtual method to query if
+        this client is actually using the tile cache.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA): set the member variable m_usingTileCache
+        if the GraphicsLayerClient says we are.
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::usingTileCache):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::documentBackgroundColorDidChange): call usingTileCache()
+        rather than shouldUseTileCache(), because the latter's value might not always reflect
+        the existence of a cache.
+
 2012-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Clang build fix after r122345.

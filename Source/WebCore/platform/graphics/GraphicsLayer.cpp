@@ -79,6 +79,7 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_acceleratesDrawing(false)
     , m_maintainsPixelAlignment(false)
     , m_appliesPageScale(false)
+    , m_usingTileCache(false)
     , m_paintingPhase(GraphicsLayerPaintAll)
     , m_contentsOrientation(CompositingCoordinatesTopDown)
     , m_parent(0)
@@ -340,9 +341,7 @@ void GraphicsLayer::updateDebugIndicators()
 {
     if (GraphicsLayer::showDebugBorders()) {
         if (drawsContent()) {
-            // FIXME: It's weird to ask the client if this layer is a tile cache layer.
-            // Maybe we should just cache that information inside GraphicsLayer?
-            if (m_client->shouldUseTileCache(this)) // tile cache layer: dark blue
+            if (m_usingTileCache) // tile cache layer: dark blue
                 setDebugBorder(Color(0, 0, 128, 128), 0.5);
             else if (m_usingTiledLayer)
                 setDebugBorder(Color(255, 128, 0, 128), 2); // tiled layer: orange

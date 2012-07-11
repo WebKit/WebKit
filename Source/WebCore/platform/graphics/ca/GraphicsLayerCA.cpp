@@ -268,8 +268,10 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     , m_uncommittedChanges(0)
 {
     PlatformCALayer::LayerType layerType = PlatformCALayer::LayerTypeWebLayer;
-    if (client && client->shouldUseTileCache(this))
+    if (client && client->shouldUseTileCache(this)) {
         layerType = PlatformCALayer::LayerTypeTileCacheLayer;
+        m_usingTileCache = true;
+    }
 
     m_layer = PlatformCALayer::create(layerType, this);
 
