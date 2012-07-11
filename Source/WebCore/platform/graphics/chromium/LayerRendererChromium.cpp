@@ -1050,8 +1050,17 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
 
-    if (!quad->premultipliedAlpha())
-        GLC(context(), context()->blendFunc(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+    if (!quad->premultipliedAlpha()) {
+        // As it turns out, the premultiplied alpha blending function (ONE, ONE_MINUS_SRC_ALPHA)
+        // will never cause the alpha channel to be set to anything less than 1.0 if it is
+        // initialized to that value! Therefore, premultipliedAlpha being false is the first
+        // situation we can generally see an alpha channel less than 1.0 coming out of the
+        // compositor. This is causing platform differences in some layout tests (see
+        // https://bugs.webkit.org/show_bug.cgi?id=82412), so in this situation, use a separate
+        // blend function for the alpha channel to avoid modifying it. Don't use colorMask for this
+        // as it has performance implications on some platforms.
+        GLC(context(), context()->blendFuncSeparate(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA, GraphicsContext3D::ZERO, GraphicsContext3D::ONE));
+    }
 
     WebTransformationMatrix quadTransform = quad->quadTransform();
     IntRect quadRect = quad->quadRect();

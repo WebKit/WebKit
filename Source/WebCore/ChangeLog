@@ -1,3 +1,22 @@
+2012-07-11  Kenneth Russell  <kbr@google.com>
+
+        compositing/webgl/webgl-nonpremultiplied-blend.html is flaky on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=82412
+
+        Reviewed by Adrienne Walker.
+
+        When compositing premultipliedAlpha=false WebGL canvases, use a separate
+        blend function for the alpha channel to avoid writing alpha < 1. This
+        makes the behavior more consistent with all other compositing results
+        and avoids situations where the alpha channel is preserved on some
+        platforms and discarded on others.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawTextureQuad):
+            Use separate alpha blend function when compositing premultipliedAlpha=false WebGL canvases.
+
 2012-07-10  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium-Windows] Implement functions for localized time format information

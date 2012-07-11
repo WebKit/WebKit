@@ -1,3 +1,16 @@
+2012-07-11  Kenneth Russell  <kbr@google.com>
+
+        compositing/webgl/webgl-nonpremultiplied-blend.html is flaky on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=82412
+
+        Reviewed by Adrienne Walker.
+
+        Removed Chromium Mac-specific pixel results and failure expectations.
+
+        * platform/chromium-mac/compositing/webgl/webgl-nonpremultiplied-blend-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+            Removed expectations of failure.
+
 2012-07-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         gc() doesn't exist in svg/animations/dynamic-modify-attributename-crash2.svg

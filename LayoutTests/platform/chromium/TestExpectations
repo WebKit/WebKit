@@ -2401,9 +2401,6 @@ BUGWK49629 SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
 
 BUGNONE SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-getImageData.html = PASS
 
-BUGWK55968 MAC WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
-BUGWK82412 LION RELEASE : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE PASS
-
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
 BUGWK54051 MAC : compositing/plugins/invalidate_rect.html = TEXT
@@ -3700,9 +3697,6 @@ BUGFLAKY : fast/forms/placeholder-position.html = PASS IMAGE
 BUGWK89936 WIN : compositing/shadows/shadow-drawing.html = IMAGE
 BUGWK89936 WIN : fast/text/atsui-kerning-and-ligatures.html = IMAGE
 BUGWK89936 WIN : fast/css/text-rendering.html = IMAGE+TEXT
-
-// Started failing after r121267.
-BUGWK89998 SNOWLEOPARD RELEASE : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 // Started timeout between r121233:r121239.
 BUGWK90003 WIN DEBUG : fast/js/repeat-cached-vm-reentry.html = TIMEOUT PASS
