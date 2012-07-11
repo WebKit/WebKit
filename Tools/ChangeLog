@@ -1,3 +1,34 @@
+2012-07-11  Balazs Ankes  <bank@inf.u-szeged.hu>
+
+        webkit-patch land should automatically add svn:mime-type for .png files
+        https://bugs.webkit.org/show_bug.cgi?id=75825
+
+        Reviewed by Dirk Pranke.
+
+        Refactor the png.py to avoid code duplication.
+
+        * Scripts/webkitpy/common/checksvnconfigfile.py: Added.
+        (check):
+        (config_file_path):
+        (errorstr_autoprop):
+        (errorstr_png):
+        * Scripts/webkitpy/style/checkers/png.py:
+        (PNGChecker.check):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (Land):
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/addsvnmimetypeforpng.py: Added.
+        (AddSvnMimetypeForPng):
+        (AddSvnMimetypeForPng.__init__):
+        (AddSvnMimetypeForPng.run):
+        (AddSvnMimetypeForPng._check_pngs):
+        * Scripts/webkitpy/tool/steps/addsvnmimetypeforpng_unittest.py: Added.
+        (MockSCMDetector):
+        (MockSCMDetector.__init__):
+        (MockSCMDetector.display_name):
+        (AddSvnMimetypeForPngTest):
+        (AddSvnMimetypeForPngTest.test_run):
+
 2012-07-11  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.

@@ -27,6 +27,7 @@
 import os
 import re
 
+from webkitpy.common import checksvnconfigfile
 from webkitpy.common import read_checksum_from_png
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.checkout.scm.detection import SCMDetector
@@ -54,49 +55,21 @@ class PNGChecker(object):
                     self._handle_style_error(0, 'image/png', 5, "Image lacks a checksum. Generate pngs using run-webkit-tests to ensure they have a checksum.")
 
         if detection == "git":
-            config_file_path = self._config_file_path()
-            there_is_enable_line = False
-            there_is_png_line = False
+            (file_missing, autoprop_missing, png_missing) = checksvnconfigfile.check(self._host, self._fs)
+            config_file_path = checksvnconfigfile.config_file_path(self._host, self._fs)
 
-            try:
-                config_file = self._fs.read_text_file(config_file_path)
-            except IOError:
-                errorstr = "There is no " + config_file_path
-                self._handle_style_error(0, 'image/png', 5, errorstr)
-                return
-
-            errorstr_autoprop = "Have to enable auto props in the subversion config file (" + config_file_path + " \"enable-auto-props = yes\"). "
-            errorstr_png = "Have to set the svn:mime-type in the subversion config file (" + config_file_path + " \"*.png = svn:mime-type=image/png\")."
-
-            for line in config_file.split('\n'):
-                if not there_is_enable_line:
-                    match = re.search("^\s*enable-auto-props\s*=\s*yes", line)
-                    if match:
-                        there_is_enable_line = True
-                        errorstr_autoprop = ""
-                        continue
-
-                if not there_is_png_line:
-                    match = re.search("^\s*\*\.png\s*=\s*svn:mime-type=image/png", line)
-                    if match:
-                        there_is_png_line = True
-                        errorstr_png = ""
-                        continue
-
-            errorstr = errorstr_autoprop + errorstr_png
-            if errorstr:
-                self._handle_style_error(0, 'image/png', 5, errorstr)
+            if file_missing:
+                self._handle_style_error(0, 'image/png', 5, "There is no SVN config file. (%s)" % config_file_path)
+            elif autoprop_missing and png_missing:
+                self._handle_style_error(0, 'image/png', 5, checksvnconfigfile.errorstr_autoprop(config_file_path) + checksvnconfigfile.errorstr_png(config_file_path))
+            elif autoprop_missing:
+                self._handle_style_error(0, 'image/png', 5, checksvnconfigfile.errorstr_autoprop(config_file_path))
+            elif png_missing:
+                self._handle_style_error(0, 'image/png', 5, checksvnconfigfile.errorstr_png(config_file_path))
 
         elif detection == "svn":
             prop_get = self._detector.propget("svn:mime-type", self._file_path)
             if prop_get != "image/png":
-                errorstr = "Set the svn:mime-type property (svn propset svn:mime-type image/png " + self._file_path + ")."
+                errorstr = "Set the svn:mime-type property (svn propset svn:mime-type image/png %s)." % self._file_path
                 self._handle_style_error(0, 'image/png', 5, errorstr)
 
-    def _config_file_path(self):
-        config_file = ""
-        if self._host.platform.is_win():
-            config_file_path = self._fs.join(os.environ['APPDATA'], "Subversion\config")
-        else:
-            config_file_path = self._fs.join(self._fs.expanduser("~"), ".subversion/config")
-        return config_file_path
