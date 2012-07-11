@@ -1,3 +1,22 @@
+2012-07-10  Pravin D  <pravind.2k4@gmail.com>
+
+        Re-factoring recalcColumn in AutoTableLayout.cpp for readability
+        https://bugs.webkit.org/show_bug.cgi?id=89636
+
+        Reviewed by Julien Chaffraix.
+
+        No test case required. Code re-factoring.
+
+        * rendering/AutoTableLayout.cpp:
+        Added a const integer place holder for 32760.
+
+        (WebCore::AutoTableLayout::recalcColumn):
+         Changes :
+         1) Moved the continue statement above the bool cellHasContent for an early return.
+         2) Replaced the constant 32760 by a placeholder.
+         3) Initialization of columnLayout max and min logical widths is made common for both cells having col span == 1 and span > 1.
+         4) Removed redundant check for cell logical width type. 
+
 2012-07-10  Adam Barth  <abarth@webkit.org>
 
         WebCore::Settings for Hixie76 WebSocket protocol doesn't do anything and should be removed

@@ -59,18 +59,19 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                 RenderTableSection::CellStruct current = section->cellAt(i, effCol);
                 RenderTableCell* cell = current.primaryCell();
                 
-                bool cellHasContent = cell && !current.inColSpan && (cell->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding());
-                if (cellHasContent)
-                    columnLayout.emptyCellsOnly = false;
-                    
                 if (current.inColSpan || !cell)
                     continue;
 
+                bool cellHasContent = cell->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding();
+                if (cellHasContent)
+                    columnLayout.emptyCellsOnly = false;
+
+                // A cell originates in this column. Ensure we have
+                // a min/max width of at least 1px for this column now.
+                columnLayout.minLogicalWidth = max<int>(columnLayout.minLogicalWidth, cellHasContent ? 1 : 0);
+                columnLayout.maxLogicalWidth = max<int>(columnLayout.maxLogicalWidth, 1);
+
                 if (cell->colSpan() == 1) {
-                    // A cell originates in this column.  Ensure we have
-                    // a min/max width of at least 1px for this column now.
-                    columnLayout.minLogicalWidth = max<int>(columnLayout.minLogicalWidth, cellHasContent ? 1 : 0);
-                    columnLayout.maxLogicalWidth = max<int>(columnLayout.maxLogicalWidth, 1);
                     if (cell->preferredLogicalWidthsDirty())
                         cell->computePreferredLogicalWidths();
                     columnLayout.minLogicalWidth = max<int>(cell->minPreferredLogicalWidth(), columnLayout.minLogicalWidth);
@@ -79,22 +80,25 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                         maxContributor = cell;
                     }
 
+                    // All browsers implement a size limit on the cell's max width. 
+                    // Our limit is based on KHTML's representation that used 16 bits widths.
+                    // FIXME: Other browsers have a lower limit for the cell's max width. 
+                    const int cCellMaxWidth = 32760;
                     Length cellLogicalWidth = cell->styleOrColLogicalWidth();
-                    // FIXME: What is this arbitrary value?
-                    if (cellLogicalWidth.value() > 32760)
-                        cellLogicalWidth.setValue(32760);
+                    if (cellLogicalWidth.value() > cCellMaxWidth)
+                        cellLogicalWidth.setValue(cCellMaxWidth);
                     if (cellLogicalWidth.isNegative())
                         cellLogicalWidth.setValue(0);
                     switch (cellLogicalWidth.type()) {
                     case Fixed:
                         // ignore width=0
-                        if (cellLogicalWidth.value() > 0 && columnLayout.logicalWidth.type() != Percent) {
+                        if (cellLogicalWidth.isPositive() && !columnLayout.logicalWidth.isPercent()) {
                             int logicalWidth = cell->computeBorderBoxLogicalWidth(cellLogicalWidth.value());
                             if (columnLayout.logicalWidth.isFixed()) {
                                 // Nav/IE weirdness
-                                if ((logicalWidth > columnLayout.logicalWidth.value()) ||
-                                    ((columnLayout.logicalWidth.value() == logicalWidth) && (maxContributor == cell))) {
-                                    columnLayout.logicalWidth.setValue(logicalWidth);
+                                if ((logicalWidth > columnLayout.logicalWidth.value()) 
+                                    || ((columnLayout.logicalWidth.value() == logicalWidth) && (maxContributor == cell))) {
+                                    columnLayout.logicalWidth.setValue(Fixed, logicalWidth);
                                     fixedContributor = cell;
                                 }
                             } else {
@@ -111,16 +115,13 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                     case Relative:
                         // FIXME: Need to understand this case and whether it makes sense to compare values
                         // which are not necessarily of the same type.
-                        if (cellLogicalWidth.isAuto() || (cellLogicalWidth.isRelative() && cellLogicalWidth.value() > columnLayout.logicalWidth.value()))
+                        if (cellLogicalWidth.value() > columnLayout.logicalWidth.value())
                             columnLayout.logicalWidth = cellLogicalWidth;
                     default:
                         break;
                     }
                 } else if (!effCol || section->primaryCellAt(i, effCol - 1) != cell) {
-                    // This spanning cell originates in this column.  Ensure we have
-                    // a min/max width of at least 1px for this column now.
-                    columnLayout.minLogicalWidth = max<int>(columnLayout.minLogicalWidth, cellHasContent ? 1 : 0);
-                    columnLayout.maxLogicalWidth = max<int>(columnLayout.maxLogicalWidth, 1);
+                    // This spanning cell originates in this column. Insert the cell into spanning cells list.
                     insertSpanCell(cell);
                 }
             }
