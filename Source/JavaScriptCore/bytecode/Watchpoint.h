@@ -29,8 +29,6 @@
 #ifndef Watchpoint_h
 #define Watchpoint_h
 
-#include "CodeLocation.h"
-#include "MacroAssembler.h"
 #include <wtf/RefCounted.h>
 #include <wtf/SentinelLinkedList.h>
 
@@ -39,33 +37,15 @@ namespace JSC {
 class Watchpoint : public BasicRawSentinelNode<Watchpoint> {
 public:
     Watchpoint()
-        : m_source(std::numeric_limits<uintptr_t>::max())
-        , m_destination(std::numeric_limits<uintptr_t>::max())
     {
     }
+    
+    virtual ~Watchpoint();
 
-#if ENABLE(JIT)
-    Watchpoint(MacroAssembler::Label source)
-        : m_source(source.m_label.m_offset)
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
+    void fire() { fireInternal(); }
     
-    void setDestination(MacroAssembler::Label destination)
-    {
-        m_destination = destination.m_label.m_offset;
-    }
-    
-    void correctLabels(LinkBuffer&);
-#endif
-    
-    ~Watchpoint();
-    
-    void fire();
-    
-private:
-    uintptr_t m_source;
-    uintptr_t m_destination;
+protected:
+    virtual void fireInternal() = 0;
 };
 
 enum InitialWatchpointSetMode { InitializedWatching, InitializedBlind };

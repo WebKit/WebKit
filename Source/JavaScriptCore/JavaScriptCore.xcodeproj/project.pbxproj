@@ -146,6 +146,8 @@
 		0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D2D15A8DCDD008F363E /* GCAwareJITStubRoutine.cpp */; };
 		0F766D3015A8DCE2008F363E /* GCAwareJITStubRoutine.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D2E15A8DCDD008F363E /* GCAwareJITStubRoutine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D1C15A5028D008F363E /* JITStubRoutine.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F766D3415AE2538008F363E /* JumpReplacementWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D3215AE2535008F363E /* JumpReplacementWatchpoint.cpp */; };
+		0F766D3515AE253B008F363E /* JumpReplacementWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
 		0F7B294A14C3CD29007C3DB1 /* DFGCCallHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -887,6 +889,8 @@
 		0F766D2A15A8CC34008F363E /* JITStubRoutineSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubRoutineSet.h; sourceTree = "<group>"; };
 		0F766D2D15A8DCDD008F363E /* GCAwareJITStubRoutine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCAwareJITStubRoutine.cpp; sourceTree = "<group>"; };
 		0F766D2E15A8DCDD008F363E /* GCAwareJITStubRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCAwareJITStubRoutine.h; sourceTree = "<group>"; };
+		0F766D3215AE2535008F363E /* JumpReplacementWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JumpReplacementWatchpoint.cpp; sourceTree = "<group>"; };
+		0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JumpReplacementWatchpoint.h; sourceTree = "<group>"; };
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
 		0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCCallHelpers.h; path = dfg/DFGCCallHelpers.h; sourceTree = "<group>"; };
@@ -1731,6 +1735,8 @@
 				14A6581A0F4E36F4000150FD /* JITStubs.h */,
 				A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */,
 				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
+				0F766D3215AE2535008F363E /* JumpReplacementWatchpoint.cpp */,
+				0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */,
 				A7386551118697B400540279 /* SpecializedThunkJIT.h */,
 				A7386552118697B400540279 /* ThunkGenerators.cpp */,
 				A7386553118697B400540279 /* ThunkGenerators.h */,
@@ -2836,6 +2842,7 @@
 				0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */,
 				0F766D3015A8DCE2008F363E /* GCAwareJITStubRoutine.h in Headers */,
 				0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */,
+				0F766D3515AE253B008F363E /* JumpReplacementWatchpoint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3431,6 +3438,7 @@
 				0F766D2815A8CC1E008F363E /* JITStubRoutine.cpp in Sources */,
 				0F766D2B15A8CC38008F363E /* JITStubRoutineSet.cpp in Sources */,
 				0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */,
+				0F766D3415AE2538008F363E /* JumpReplacementWatchpoint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

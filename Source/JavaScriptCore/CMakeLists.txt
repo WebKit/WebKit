@@ -143,6 +143,7 @@ SET(JavaScriptCore_SOURCES
     jit/JITPropertyAccess.cpp
     jit/JITStubRoutine.cpp
     jit/JITStubs.cpp
+    jit/JumpReplacementWatchpoint.cpp
     jit/ThunkGenerators.cpp
 
     parser/Lexer.cpp

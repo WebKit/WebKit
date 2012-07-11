@@ -46,6 +46,7 @@
 
 namespace JSC {
 
+class JumpReplacementWatchpoint;
 class LinkBuffer;
 class RepatchBuffer;
 class Watchpoint;
@@ -277,6 +278,7 @@ public:
         friend class AbstractMacroAssembler;
         friend class DFG::CorrectableJumpPoint;
         friend class Jump;
+        friend class JumpReplacementWatchpoint;
         friend class MacroAssemblerCodeRef;
         friend class LinkBuffer;
         friend class Watchpoint;

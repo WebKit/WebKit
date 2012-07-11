@@ -27,77 +27,33 @@
  */
 
 #include "config.h"
-#include "Watchpoint.h"
+#include "JumpReplacementWatchpoint.h"
+
+#if ENABLE(JIT)
 
 #include "LinkBuffer.h"
 
 namespace JSC {
 
-Watchpoint::~Watchpoint()
+void JumpReplacementWatchpoint::correctLabels(LinkBuffer& linkBuffer)
 {
+    MacroAssembler::Label label;
+    label.m_label.m_offset = m_source;
+    m_source = bitwise_cast<uintptr_t>(linkBuffer.locationOf(label).dataLocation());
+    label.m_label.m_offset = m_destination;
+    m_destination = bitwise_cast<uintptr_t>(linkBuffer.locationOf(label).dataLocation());
+}
+
+void JumpReplacementWatchpoint::fireInternal()
+{
+    MacroAssembler::replaceWithJump(
+        CodeLocationLabel(bitwise_cast<void*>(m_source)),
+        CodeLocationLabel(bitwise_cast<void*>(m_destination)));
     if (isOnList())
         remove();
 }
 
-WatchpointSet::WatchpointSet(InitialWatchpointSetMode mode)
-    : m_isWatched(mode == InitializedWatching)
-    , m_isInvalidated(false)
-{
-}
-
-WatchpointSet::~WatchpointSet()
-{
-    // Fire all watchpoints. This is necessary because it is possible, say with
-    // structure watchpoints, for the watchpoint set owner to die while the
-    // watchpoint owners are still live.
-    fireAllWatchpoints();
-}
-
-void WatchpointSet::add(Watchpoint* watchpoint)
-{
-    if (!watchpoint)
-        return;
-    m_set.push(watchpoint);
-    m_isWatched = true;
-}
-
-void WatchpointSet::notifyWriteSlow()
-{
-    ASSERT(m_isWatched);
-    
-    fireAllWatchpoints();
-    m_isWatched = false;
-    m_isInvalidated = true;
-}
-
-void WatchpointSet::fireAllWatchpoints()
-{
-    while (!m_set.isEmpty())
-        m_set.begin()->fire();
-}
-
-void InlineWatchpointSet::add(Watchpoint* watchpoint)
-{
-    inflate()->add(watchpoint);
-}
-
-WatchpointSet* InlineWatchpointSet::inflateSlow()
-{
-    ASSERT(isThin());
-    WatchpointSet* fat = adoptRef(new WatchpointSet(InitializedBlind)).leakRef();
-    if (m_data & IsInvalidatedFlag)
-        fat->m_isInvalidated = true;
-    if (m_data & IsWatchedFlag)
-        fat->m_isWatched = true;
-    m_data = bitwise_cast<uintptr_t>(fat);
-    return fat;
-}
-
-void InlineWatchpointSet::freeFat()
-{
-    ASSERT(isFat());
-    fat()->deref();
-}
-
 } // namespace JSC
+
+#endif // ENABLE(JIT)
 

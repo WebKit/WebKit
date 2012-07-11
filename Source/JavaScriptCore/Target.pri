@@ -151,6 +151,7 @@ SOURCES += \
     jit/JITPropertyAccess32_64.cpp \
     jit/JITStubRoutine.cpp \
     jit/JITStubs.cpp \
+    jit/JumpReplacementWatchpoint.cpp \
     jit/ThunkGenerators.cpp \
     parser/Lexer.cpp \
     parser/Nodes.cpp \

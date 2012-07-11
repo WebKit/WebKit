@@ -26,78 +26,50 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef JumpReplacementWatchpoint_h
+#define JumpReplacementWatchpoint_h
+
 #include "Watchpoint.h"
 
-#include "LinkBuffer.h"
+#if ENABLE(JIT)
+
+#include "CodeLocation.h"
+#include "MacroAssembler.h"
 
 namespace JSC {
 
-Watchpoint::~Watchpoint()
-{
-    if (isOnList())
-        remove();
-}
-
-WatchpointSet::WatchpointSet(InitialWatchpointSetMode mode)
-    : m_isWatched(mode == InitializedWatching)
-    , m_isInvalidated(false)
-{
-}
-
-WatchpointSet::~WatchpointSet()
-{
-    // Fire all watchpoints. This is necessary because it is possible, say with
-    // structure watchpoints, for the watchpoint set owner to die while the
-    // watchpoint owners are still live.
-    fireAllWatchpoints();
-}
-
-void WatchpointSet::add(Watchpoint* watchpoint)
-{
-    if (!watchpoint)
-        return;
-    m_set.push(watchpoint);
-    m_isWatched = true;
-}
-
-void WatchpointSet::notifyWriteSlow()
-{
-    ASSERT(m_isWatched);
+class JumpReplacementWatchpoint : public Watchpoint {
+public:
+    JumpReplacementWatchpoint()
+        : m_source(std::numeric_limits<uintptr_t>::max())
+        , m_destination(std::numeric_limits<uintptr_t>::max())
+    {
+    }
     
-    fireAllWatchpoints();
-    m_isWatched = false;
-    m_isInvalidated = true;
-}
+    JumpReplacementWatchpoint(MacroAssembler::Label source)
+        : m_source(source.m_label.m_offset)
+        , m_destination(std::numeric_limits<uintptr_t>::max())
+    {
+    }
+    
+    void setDestination(MacroAssembler::Label destination)
+    {
+        m_destination = destination.m_label.m_offset;
+    }
+    
+    void correctLabels(LinkBuffer&);
 
-void WatchpointSet::fireAllWatchpoints()
-{
-    while (!m_set.isEmpty())
-        m_set.begin()->fire();
-}
+protected:
+    void fireInternal();
 
-void InlineWatchpointSet::add(Watchpoint* watchpoint)
-{
-    inflate()->add(watchpoint);
-}
-
-WatchpointSet* InlineWatchpointSet::inflateSlow()
-{
-    ASSERT(isThin());
-    WatchpointSet* fat = adoptRef(new WatchpointSet(InitializedBlind)).leakRef();
-    if (m_data & IsInvalidatedFlag)
-        fat->m_isInvalidated = true;
-    if (m_data & IsWatchedFlag)
-        fat->m_isWatched = true;
-    m_data = bitwise_cast<uintptr_t>(fat);
-    return fat;
-}
-
-void InlineWatchpointSet::freeFat()
-{
-    ASSERT(isFat());
-    fat()->deref();
-}
+private:
+    uintptr_t m_source;
+    uintptr_t m_destination;
+};
 
 } // namespace JSC
+
+#endif // ENABLE(JIT)
+
+#endif // JumpReplacementWatchpoint_h
 

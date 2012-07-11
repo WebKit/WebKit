@@ -2165,7 +2165,7 @@ public:
     // must register the returned Watchpoint with something relevant. In general, this should
     // be used with extreme care. Use speculationCheck() unless you've got an amazing reason
     // not to.
-    Watchpoint* speculationWatchpoint(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex)
+    JumpReplacementWatchpoint* speculationWatchpoint(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex)
     {
         if (!m_compileOkay)
             return 0;
@@ -2176,13 +2176,13 @@ public:
                         m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex),
                         JITCompiler::Jump(), this, m_stream->size())));
         exit.m_watchpointIndex = m_jit.codeBlock()->appendWatchpoint(
-            Watchpoint(m_jit.watchpointLabel()));
+            JumpReplacementWatchpoint(m_jit.watchpointLabel()));
         return &m_jit.codeBlock()->watchpoint(exit.m_watchpointIndex);
     }
     // The default for speculation watchpoints is that they're uncounted, because the
     // act of firing a watchpoint invalidates it. So, future recompilations will not
     // attempt to set this watchpoint again.
-    Watchpoint* speculationWatchpoint()
+    JumpReplacementWatchpoint* speculationWatchpoint()
     {
         return speculationWatchpoint(UncountableWatchpoint, JSValueSource(), NoNode);
     }

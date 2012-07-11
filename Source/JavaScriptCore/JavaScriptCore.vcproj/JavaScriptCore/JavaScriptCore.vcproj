@@ -1942,6 +1942,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\JumpReplacementWatchpoint.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JumpReplacementWatchpoint.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JSInterfaceJIT.h"
 				>
 			</File>

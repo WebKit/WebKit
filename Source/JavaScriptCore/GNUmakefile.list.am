@@ -383,6 +383,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITStubs.h \
 	Source/JavaScriptCore/jit/JITWriteBarrier.h \
 	Source/JavaScriptCore/jit/JSInterfaceJIT.h \
+	Source/JavaScriptCore/jit/JumpReplacementWatchpoint.cpp \
+	Source/JavaScriptCore/jit/JumpReplacementWatchpoint.h \
 	Source/JavaScriptCore/jit/SpecializedThunkJIT.h \
 	Source/JavaScriptCore/jit/ThunkGenerators.cpp \
 	Source/JavaScriptCore/jit/ThunkGenerators.h \
