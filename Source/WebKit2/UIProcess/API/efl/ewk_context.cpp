@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ewk_context.h"
 
+#include "BatteryProvider.h"
 #include "WKAPICast.h"
 #include "WKRetainPtr.h"
 #include "ewk_context_private.h"
@@ -29,6 +30,9 @@ using namespace WebKit;
 
 struct _Ewk_Context {
     WKRetainPtr<WKContextRef> context;
+#if ENABLE(BATTERY_STATUS)
+    RefPtr<BatteryProvider> batteryProvider;
+#endif
 
     _Ewk_Context(WKContextRef contextRef)
     {
@@ -41,8 +45,22 @@ WKContextRef ewk_context_WKContext_get(const Ewk_Context* ewkContext)
     return ewkContext->context.get();
 }
 
+static inline Ewk_Context* createDefaultEwkContext()
+{
+    WKContextRef wkContext = WKContextGetSharedProcessContext();
+    Ewk_Context* ewkContext = new Ewk_Context(wkContext);
+
+#if ENABLE(BATTERY_STATUS)
+    WKBatteryManagerRef wkBatteryManager = WKContextGetBatteryManager(wkContext);
+    ewkContext->batteryProvider = BatteryProvider::create(wkBatteryManager);
+#endif
+
+    return ewkContext;
+}
+
 Ewk_Context* ewk_context_default_get()
 {
-    DEFINE_STATIC_LOCAL(Ewk_Context, defaultContext, (WKContextGetSharedProcessContext()));
-    return &defaultContext;
+    static Ewk_Context* defaultContext = createDefaultEwkContext();
+
+    return defaultContext;
 }
