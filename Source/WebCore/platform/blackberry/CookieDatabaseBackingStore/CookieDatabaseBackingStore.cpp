@@ -218,6 +218,8 @@ void CookieDatabaseBackingStore::invokeOpen(const String& cookieJar)
     // This table schema is compliant with Mozilla's.
     createTableQuery += " (" + databaseFields + ", " + primaryKeyFields+");";
 
+    m_db.setBusyTimeout(1000);
+
     if (!m_db.executeCommand(createTableQuery)) {
         LOG_ERROR("Could not create the table to store the cookies into. No cookie will be stored!");
         LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
@@ -346,7 +348,8 @@ void CookieDatabaseBackingStore::getCookiesFromDatabase(Vector<ParsedCookie*>& s
     TypedReplyBuffer< Vector<ParsedCookie*>* > replyBuffer(0);
     dispatchMessage(createMethodCallMessageWithReturn(&CookieDatabaseBackingStore::invokeGetCookiesWithLimit, &replyBuffer, this, limit));
     Vector<ParsedCookie*>* cookies = replyBuffer.pointer();
-    stackOfCookies.swap(*cookies);
+    if (cookies)
+        stackOfCookies.swap(*cookies);
     delete cookies;
 }
 

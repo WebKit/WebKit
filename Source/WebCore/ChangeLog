@@ -1,3 +1,32 @@
+2012-07-11  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] crash in CookieDatabaseBackingStore.
+        https://bugs.webkit.org/show_bug.cgi?id=90270
+
+        Reviewed by George Staikos.
+
+        There is one case for this crash.
+        1. A browser crashes and locks cookies' database for a while.
+        2. Open a new browser when the old one doesn't finish crashing.
+        3. The new one writes the cookies' database and receives a SQLITE_BUSY error
+           in CookieDatabaseBackingStore's invokeOpen. So this database isn't opened.
+        4. invokeGetCookiesWithLimit returns 0.
+        5. Crash happens when using a null pointer.
+
+        Add function setBusyTimeout(1000) and a guard for cookies' pointer.
+        setBusyTimeout will call sqlite3_busy_timeout.
+
+        When the SQLite database is accessed for reading it is locked for writing
+        until the reading access is finished. Another process cannot access the database
+        while it is locked. The timeout time sets a limit while this process tries to access
+        the locked database. If the database is unlocked within the timeout time it can be
+        accessed, otherwise an access fails.
+
+        No new tests. This crash is hard to reproduce, and it happens only on our platform.
+
+        * platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.cpp:
+        (WebCore::CookieDatabaseBackingStore::getCookiesFromDatabase):
+
 2012-07-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Move revisions support to UISourceCode.
