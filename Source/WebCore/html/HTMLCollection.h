@@ -164,7 +164,7 @@ public:
     virtual Node* item(unsigned index) const OVERRIDE;
 
 private:
-    virtual HTMLElement* itemAfter(unsigned& offsetInArray, HTMLElement* previousItem) const = 0;
+    virtual HTMLElement* itemInArrayAfter(unsigned& offsetInArray, HTMLElement* previousItem) const = 0;
 };
 
 } // namespace

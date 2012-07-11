@@ -1,3 +1,22 @@
+2012-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Clang build fix after r122345.
+        Also let XCode do its own thing.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollectionWithArrayStorage::item):
+        * html/HTMLCollection.h:
+        (HTMLCollectionWithArrayStorage):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::itemInArrayAfter):
+        * html/HTMLFormCollection.h:
+        (HTMLFormCollection):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::itemInArrayAfter):
+        * html/HTMLPropertiesCollection.h:
+        (HTMLPropertiesCollection):
+
 2012-07-11  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [Gtk] allow building with css-filters

@@ -75,7 +75,7 @@ unsigned HTMLFormCollection::calcLength() const
     return static_cast<HTMLFieldSetElement*>(base())->length();
 }
 
-HTMLElement* HTMLFormCollection::itemAfter(unsigned& offset, HTMLElement* previousItem) const
+HTMLElement* HTMLFormCollection::itemInArrayAfter(unsigned& offset, HTMLElement* previousItem) const
 {
     const Vector<FormAssociatedElement*>& elementsArray = formControlElements();
     if (previousItem)

@@ -112,7 +112,7 @@ static Node* nextNodeWithProperty(Node* base, Node* node)
             ? node->traverseNextNode(base) : node->traverseNextSibling(base);
 }
 
-HTMLElement* HTMLPropertiesCollection::itemAfter(unsigned& offsetInArray, HTMLElement* previousItem) const
+HTMLElement* HTMLPropertiesCollection::itemInArrayAfter(unsigned& offsetInArray, HTMLElement* previousItem) const
 {
     while (offsetInArray < m_itemRefElements.size()) {
         if (HTMLElement* next = itemAfter(m_itemRefElements[offsetInArray], previousItem))

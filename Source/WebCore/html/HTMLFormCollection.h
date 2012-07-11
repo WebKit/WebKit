@@ -50,7 +50,7 @@ private:
 
     const Vector<FormAssociatedElement*>& formControlElements() const;
     const Vector<HTMLImageElement*>& formImageElements() const;
-    HTMLElement* itemAfter(unsigned& offset, HTMLElement* previousItem) const OVERRIDE;
+    HTMLElement* itemInArrayAfter(unsigned& offset, HTMLElement* previousItem) const OVERRIDE;
 };
 
 } //namespace

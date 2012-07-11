@@ -252,7 +252,7 @@ Node* HTMLCollectionWithArrayStorage::item(unsigned index) const
 
     if (!isItemCacheValid() || cachedItemOffset() > index) {
         unsigned offsetInArray = 0;
-        setItemCache(itemAfter(offsetInArray, 0), 0, 0);
+        setItemCache(itemInArrayAfter(offsetInArray, 0), 0, 0);
         ASSERT(isItemCacheValid());
         if (!cachedItem() || cachedItemOffset() == index)
             return cachedItem();
@@ -264,7 +264,7 @@ Node* HTMLCollectionWithArrayStorage::item(unsigned index) const
     ASSERT(currentIndex < index);
 
     unsigned offsetInArray = cachedElementsArrayOffset();
-    while ((currentItem = itemAfter(offsetInArray, currentItem))) {
+    while ((currentItem = itemInArrayAfter(offsetInArray, currentItem))) {
         currentIndex++;
         if (currentIndex == index) {
             setItemCache(currentItem, currentIndex, offsetInArray);
