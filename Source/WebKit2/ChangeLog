@@ -1,3 +1,21 @@
+2012-07-11  Keunsoon Lee  <keunsoon.lee@samsung.com>
+
+        [EFL][Wk2] WebErrorsEfl.cpp needs to return non-empty errors
+        https://bugs.webkit.org/show_bug.cgi?id=90688
+
+        Reviewed by Hajime Morita.
+
+        Return meaningful error for each case.
+
+        * WebProcess/WebCoreSupport/efl/WebErrorsEfl.cpp:
+        (WebKit::cancelledError): create ResourceError for "request canceled".
+        (WebKit::blockedError): create ResourceError for "request blocked".
+        (WebKit::cannotShowURLError): create ResourceError for "cannot show url".
+        (WebKit::interruptedForPolicyChangeError): create ResourceError for "Frame load interrupted by policy change".
+        (WebKit::cannotShowMIMETypeError): create ResourceError for "Cannot show mimetype".
+        (WebKit::fileDoesNotExistError): create ResourceError for "File does not exist".
+        (WebKit::pluginWillHandleLoadError): create ResourceError for "Plugin will handle load".
+
 2012-07-11  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Fix wheel scrolling for simple pages
