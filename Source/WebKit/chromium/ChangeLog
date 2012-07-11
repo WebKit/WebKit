@@ -1,3 +1,50 @@
+2012-07-11  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Use WEBKIT_IMPLEMENTATION == 1 for webkit_unit_tests
+        https://bugs.webkit.org/show_bug.cgi?id=90094
+
+        Reviewed by Adrienne Walker.
+
+        This patch adds the WEBKIT_IMPLEMENTATION = 1 define to
+        WebKitUnitTests.gyp. To get it to compile correctly, some string
+        and URL code was refactored and fixed, in particular GURL usage is
+        replaced with KURL usage.
+
+        * WebKit.gyp:
+        added WEBKIT_IMPLEMENTATION == 1 for unit test code when in shared library
+        added URLTestHelpers to exclusion in shared library build, because it depends on webkit_support
+
+        * WebKit.gypi:
+        added URLTestHelpers.h and .cpp to the build process
+
+        * WebKitUnitTests.gyp:
+        added WEBKIT_IMPLEMENTATION == 1 for unit test code when not in shared library.
+        note that in shared library build, RunAllTests.cpp does not have WEBKIT_IMPLEMENTATION == 1.
+
+        * public/WebDOMMessageEvent.h:
+        (WebKit::WebDOMMessageEvent::WebDOMMessageEvent):
+        * tests/AssociatedURLLoaderTest.cpp:
+        * tests/EventListenerTest.cpp:
+        * tests/FrameTestHelpers.cpp:
+        (WebKit::FrameTestHelpers::loadFrame):
+        * tests/FrameTestHelpers.h:
+        * tests/ListenerLeakTest.cpp:
+        (WebKit::ListenerLeakTest::RunTest):
+        * tests/PopupMenuTest.cpp:
+        * tests/RunAllTests.cpp:
+        * tests/URLTestHelpers.cpp: Added.
+        (URLTestHelpers):
+        (WebKit::URLTestHelpers::registerMockedURLFromBaseURL):
+        (WebKit::URLTestHelpers::registerMockedURLLoad):
+        * tests/URLTestHelpers.h: Copied from Source/WebKit/chromium/public/WebDOMMessageEvent.h.
+        (WebKit):
+        (URLTestHelpers):
+        (WebKit::URLTestHelpers::toKURL):
+        * tests/WebFrameTest.cpp:
+        * tests/WebPageNewSerializerTest.cpp:
+        * tests/WebPageSerializerTest.cpp:
+        * tests/WebViewTest.cpp:
+
 2012-07-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: migrate from background images to CSS for statusbar rendering.

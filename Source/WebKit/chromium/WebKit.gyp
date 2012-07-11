@@ -688,6 +688,7 @@
                         ['component=="shared_library"', {
                             'defines': [
                                 'WEBKIT_DLL',
+                                'WEBKIT_IMPLEMENTATION=1',
                             ],
                             'dependencies': [
                                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_bindings',
@@ -739,6 +740,7 @@
                                 'tests/PopupMenuTest.cpp',
                                 'tests/RenderTableCellTest.cpp',
                                 'tests/RenderTableRowTest.cpp',
+                                'tests/URLTestHelpers.cpp',
                                 'tests/WebFrameTest.cpp',
                                 'tests/WebPageNewSerializerTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',

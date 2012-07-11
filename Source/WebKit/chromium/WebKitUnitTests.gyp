@@ -87,6 +87,9 @@
                     'dependencies': [
                         '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
                     ],
+                    'defines': [
+                        'WEBKIT_IMPLEMENTATION=1',
+                    ],
                     'sources': [
                         '<@(webkit_unittest_files)',
                     ],
