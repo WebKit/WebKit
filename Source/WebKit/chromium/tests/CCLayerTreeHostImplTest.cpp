@@ -70,6 +70,8 @@ public:
         , m_didRequestRedraw(false)
     {
         CCLayerTreeSettings settings;
+        settings.minimumOcclusionTrackingSize = IntSize();
+
         m_hostImpl = CCLayerTreeHostImpl::create(settings, this);
         m_hostImpl->initializeLayerRenderer(createContext(), UnthrottledUploader);
         m_hostImpl->setViewportSize(IntSize(10, 10));
@@ -86,6 +88,8 @@ public:
         CCSettings::setPartialSwapEnabled(partialSwap);
 
         CCLayerTreeSettings settings;
+        settings.minimumOcclusionTrackingSize = IntSize();
+
         OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
 
         myHostImpl->initializeLayerRenderer(graphicsContext, UnthrottledUploader);
@@ -684,7 +688,6 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
 
 TEST_F(CCLayerTreeHostImplTest, willDrawNotCalledOnOccludedLayer)
 {
-    // Make the viewport large so that we can have large layers that get considered for occlusion (small layers do not).
     IntSize bigSize(1000, 1000);
     m_hostImpl->setViewportSize(bigSize);
 
@@ -1184,10 +1187,8 @@ private:
     IntRect m_quadVisibleRect;
 };
 
-// https://bugs.webkit.org/show_bug.cgi?id=75783
 TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
 {
-
     {
         OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
         root->setAnchorPoint(FloatPoint(0, 0));
@@ -1200,6 +1201,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
 
     root->addChild(BlendStateCheckLayer::create(2));
     BlendStateCheckLayer* layer1 = static_cast<BlendStateCheckLayer*>(root->children()[0].get());
+    layer1->setPosition(FloatPoint(2, 2));
 
     CCLayerTreeHostImpl::FrameData frame;
 
@@ -1252,6 +1254,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
 
     layer1->addChild(BlendStateCheckLayer::create(3));
     BlendStateCheckLayer* layer2 = static_cast<BlendStateCheckLayer*>(layer1->children()[0].get());
+    layer2->setPosition(FloatPoint(4, 4));
 
     // 2 opaque layers, drawn without blending.
     layer1->setOpaque(true);

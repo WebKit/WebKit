@@ -305,7 +305,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
 
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
     CCOcclusionTrackerImpl occlusionTracker(enclosingIntRect(m_rootScissorRect), recordMetricsForFrame);
-    occlusionTracker.setMinimumTrackingSize(CCOcclusionTrackerImpl::preferredMinimumTrackingSize());
+    occlusionTracker.setMinimumTrackingSize(m_settings.minimumOcclusionTrackingSize);
 
     if (settings().showOccludingRects)
         occlusionTracker.setOccludingScreenSpaceRectsContainer(&frame.occludingScreenSpaceRects);

@@ -70,8 +70,6 @@ public:
 
     void setMinimumTrackingSize(const IntSize& size) { m_minimumTrackingSize = size; }
 
-    static IntSize preferredMinimumTrackingSize() { return IntSize(160, 160); }
-
     // The following is used for visualization purposes.
     void setOccludingScreenSpaceRectsContainer(Vector<IntRect>* rects) { m_occludingScreenSpaceRects = rects; }
 

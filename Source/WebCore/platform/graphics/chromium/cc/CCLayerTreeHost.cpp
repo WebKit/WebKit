@@ -574,7 +574,7 @@ bool CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     bool needMoreUpdates = false;
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
     CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), deviceViewportSize()), recordMetricsForFrame);
-    occlusionTracker.setMinimumTrackingSize(CCOcclusionTracker::preferredMinimumTrackingSize());
+    occlusionTracker.setMinimumTrackingSize(m_settings.minimumOcclusionTrackingSize);
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {

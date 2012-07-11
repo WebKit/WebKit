@@ -96,6 +96,7 @@ struct CCLayerTreeSettings {
             , maxPartialTextureUpdates(std::numeric_limits<size_t>::max())
             , defaultTileSize(IntSize(256, 256))
             , maxUntiledLayerSize(IntSize(512, 512))
+            , minimumOcclusionTrackingSize(IntSize(160, 160))
     { }
 
     bool acceleratePainting;
@@ -112,6 +113,7 @@ struct CCLayerTreeSettings {
     size_t maxPartialTextureUpdates;
     IntSize defaultTileSize;
     IntSize maxUntiledLayerSize;
+    IntSize minimumOcclusionTrackingSize;
 };
 
 // Provides information on an Impl's rendering capabilities back to the CCLayerTreeHost
