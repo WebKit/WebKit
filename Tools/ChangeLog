@@ -1,3 +1,22 @@
+2012-07-11  Adam Barth  <abarth@webkit.org>
+
+        Teach EWSTools how to configure SVN auth credentials
+        https://bugs.webkit.org/show_bug.cgi?id=91021
+
+        Reviewed by Eric Seidel.
+
+        To move the commit-queue over to Google Compute Engine, we need a way
+        to configure the commit-queue's credentials during the machine build
+        process. There doesn't seem to be a nice command line way of
+        configuring SVN auth credentials. I tried doing a bogus commit and
+        supplying the credentials that way, but that's super hacky.
+
+        The approach in this patch is to write the config file directly. The
+        format of these configurations files is documented in the SVN book, so
+        this approach doesn't see too sketchy.
+
+        * EWSTools/configure-svn-auth.sh: Added.
+
 2012-07-11  Ojan Vafai  <ojan@chromium.org>
 
         Dedupe suffixes passed to webkit-patch rebaseline
