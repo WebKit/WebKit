@@ -58,6 +58,7 @@ private slots:
     void transparentWebViews();
 
     void inputMethod();
+    void basicRenderingSanity();
 
 private:
     void prepareWebViewComponent();
@@ -327,6 +328,28 @@ void tst_QQuickWebView::multipleWebViews()
     QVERIFY(waitForLoadSucceeded(webView2.data()));
     webView2->setVisible(true);
     QTest::qWait(200);
+}
+
+void tst_QQuickWebView::basicRenderingSanity()
+{
+    showWebView();
+    webView()->setSize(QSizeF(300, 400));
+
+    webView()->setUrl(QUrl(QString::fromUtf8("data:text/html,<html><body bgcolor=\"#00ff00\"></body></html>")));
+    QVERIFY(waitForLoadSucceeded(webView()));
+
+    // We have to explicitly move the window into the screen, otherwise it's not rendered.
+    m_window->setGeometry(0, 0, 300, 400);
+    m_window->show();
+    // This should not crash.
+    webView()->setVisible(true);
+    QTest::qWait(200);
+    QImage grabbedWindow = m_window->grabFrameBuffer();
+    QRgb testColor = qRgba(0, 0xff, 0, 0xff);
+    QVERIFY(grabbedWindow.pixel(10, 10) == testColor);
+    QVERIFY(grabbedWindow.pixel(100, 10) == testColor);
+    QVERIFY(grabbedWindow.pixel(10, 100) == testColor);
+    QVERIFY(grabbedWindow.pixel(100, 100) == testColor);
 }
 
 void tst_QQuickWebView::titleUpdate()
