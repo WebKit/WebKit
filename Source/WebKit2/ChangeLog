@@ -1,3 +1,15 @@
+2012-07-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122318.
+        http://trac.webkit.org/changeset/122318
+        https://bugs.webkit.org/show_bug.cgi?id=90961
+
+        It made 11 fast/events/touch fail (Requested by bbandix on
+        #webkit).
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p.h:
+
 2012-07-11  Keunsoon Lee  <keunsoon.lee@samsung.com>
 
         [EFL][Wk2] WebErrorsEfl.cpp needs to return non-empty errors

@@ -1655,38 +1655,6 @@ void QQuickWebView::platformInitialize()
     WTF::initializeMainThread();
 }
 
-bool QQuickWebView::childMouseEventFilter(QQuickItem* item, QEvent* event)
-{
-    // This function is used by MultiPointTouchArea and PinchArea to filter
-    // touch events, thus to hinder the canvas from sending synthesized
-    // mouse events to the Flickable implementation we need to reimplement
-    // childMouseEventFilter and filter incoming touch events as well.
-
-    if (!isVisible() || !isEnabled())
-        return QQuickFlickable::childMouseEventFilter(item, event);
-
-    switch (event->type()) {
-    case QEvent::MouseButtonPress:
-        mousePressEvent(static_cast<QMouseEvent*>(event));
-        return event->isAccepted();
-    case QEvent::MouseMove:
-        mouseMoveEvent(static_cast<QMouseEvent*>(event));
-        return event->isAccepted();
-    case QEvent::MouseButtonRelease:
-        mouseReleaseEvent(static_cast<QMouseEvent*>(event));
-        return event->isAccepted();
-    case QEvent::TouchBegin:
-    case QEvent::TouchUpdate:
-    case QEvent::TouchEnd:
-        touchEvent(static_cast<QTouchEvent*>(event));
-        return event->isAccepted();
-    default:
-        break;
-    }
-
-    return QQuickFlickable::childMouseEventFilter(item, event);
-}
-
 void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
     Q_D(QQuickWebView);
