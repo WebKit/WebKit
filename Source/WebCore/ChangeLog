@@ -1,3 +1,18 @@
+2012-07-10  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Style not updated for element with display:none becoming first/last-child
+        https://bugs.webkit.org/show_bug.cgi?id=90356
+
+        Reviewed by Kent Tamura.
+
+        Always trigger style recalc when an element without a renderer becomes the first/last-child.
+
+        Tests: fast/css/first-child-display-change.html
+               fast/css/last-child-display-change.html
+
+        * dom/Element.cpp:
+        (WebCore::checkForSiblingStyleChanges):
+
 2012-07-10  Shinya Kawanaka  <shinyak@chromium.org>
 
         ShadowRoot should know its type in debug build.

@@ -1256,7 +1256,7 @@ static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool fin
             firstElementAfterInsertion->setNeedsStyleRecalc();
             
         // We also have to handle node removal.
-        if (childCountDelta < 0 && newFirstChild == firstElementAfterInsertion && newFirstChild && newFirstChild->renderStyle() && !newFirstChild->renderStyle()->firstChildState())
+        if (childCountDelta < 0 && newFirstChild == firstElementAfterInsertion && newFirstChild && (!newFirstChild->renderStyle() || !newFirstChild->renderStyle()->firstChildState()))
             newFirstChild->setNeedsStyleRecalc();
     }
 
@@ -1279,7 +1279,7 @@ static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool fin
             
         // We also have to handle node removal.  The parser callback case is similar to node removal as well in that we need to change the last child
         // to match now.
-        if ((childCountDelta < 0 || finishedParsingCallback) && newLastChild == lastElementBeforeInsertion && newLastChild && newLastChild->renderStyle() && !newLastChild->renderStyle()->lastChildState())
+        if ((childCountDelta < 0 || finishedParsingCallback) && newLastChild == lastElementBeforeInsertion && newLastChild && (!newLastChild->renderStyle() || !newLastChild->renderStyle()->lastChildState()))
             newLastChild->setNeedsStyleRecalc();
     }
 
