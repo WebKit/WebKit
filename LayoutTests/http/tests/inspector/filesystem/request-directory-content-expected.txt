@@ -1,4 +1,4 @@
-Tests readDirectory.
+Tests requestDirectoryContent command.
 
 errorCode: 0
 entries:
@@ -13,6 +13,12 @@ entries:
     url: filesystem:http://127.0.0.1:8000/temporary/hoge/fuga
     name: fuga
     isDirectory: true
+
 errorCode: 1
 entries: (null)
+
+errorCode: 2
+entries: (null)
+
+All tests have done.
 

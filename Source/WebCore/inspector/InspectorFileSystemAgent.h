@@ -34,18 +34,14 @@
 #if ENABLE(INSPECTOR) && ENABLE(FILE_SYSTEM)
 
 #include "InspectorBaseAgent.h"
-#include "InspectorFrontend.h"
 
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class DOMFileSystem;
 class InspectorFrontend;
 class InspectorPageAgent;
-class InspectorState;
-class InstrumentingAgents;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
@@ -59,7 +55,7 @@ public:
     virtual void enable(ErrorString*) OVERRIDE;
     virtual void disable(ErrorString*) OVERRIDE;
 
-    virtual void requestFileSystemRoot(ErrorString*, const String& origin, const String& type, int* requestId) OVERRIDE;
+    virtual void requestFileSystemRoot(ErrorString*, const String& origin, const String& typeString, int* requestId) OVERRIDE;
     virtual void requestDirectoryContent(ErrorString*, const String& url, int* requestId) OVERRIDE;
     virtual void requestMetadata(ErrorString*, const String& url, int* requestId) OVERRIDE;
     virtual void requestFileContent(ErrorString*, const String& url, bool readAsText, const int* start, const int* end, const String* charset, int* requestId) OVERRIDE;
@@ -70,7 +66,7 @@ public:
 
 private:
     InspectorFileSystemAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
-    ScriptExecutionContext* scriptExecutionContextForOrigin(SecurityOrigin*);
+    ScriptExecutionContext* assertScriptExecutionContextForOrigin(ErrorString*, SecurityOrigin*);
 
     InspectorPageAgent* m_pageAgent;
     RefPtr<FrontendProvider> m_frontendProvider;

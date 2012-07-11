@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../inspector-test.js"></script>
+<script src="filesystem-test.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", runTest);
+function test()
+{
+    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+
+    var testStep = [
+        function()
+        {
+            InspectorTest.createDirectory("/hoge", testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.createDirectory("/hoge/fuga", testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.createFile("/hoge/piyo.html", testStep.shift());
+        },
+
+        function()
+        {
+            fileSystemRequestManager.requestDirectoryContent("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
+        },
+
+        function(errorCode, entries)
+        {
+            InspectorTest.dumpDirectoryContentRequestResult(errorCode, entries);
+            fileSystemRequestManager.requestDirectoryContent("filesystem:http://127.0.0.1:8000/temporary/foo", testStep.shift());
+        },
+
+        function(errorCode, entries)
+        {
+            InspectorTest.dumpDirectoryContentRequestResult(errorCode, entries);
+            fileSystemRequestManager.requestDirectoryContent("filesystem:http://example.com/temporary/", testStep.shift());
+        },
+
+        function(errorCode, entries) {
+            InspectorTest.dumpDirectoryContentRequestResult(errorCode, entries);
+            InspectorTest.clearFileSystem(testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.addResult("All tests have done.");
+            InspectorTest.completeTest();
+        }
+    ];
+
+    InspectorTest.clearFileSystem(testStep.shift());
+}
+</script>
+</head>
+<body>
+<p>Tests requestDirectoryContent command.</p>
+</body>
+</html>

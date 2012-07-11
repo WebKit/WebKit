@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../inspector-test.js"></script>
+<script src="filesystem-test.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", runTest);
+function test()
+{
+    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+
+    var testStep = [
+        function()
+        {
+            InspectorTest.writeFile("/hoge", "fuga", testStep.shift());
+        },
+
+        function()
+        {
+            fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/temporary/hoge", testStep.shift());
+        },
+
+        function(errorCode, metadata)
+        {
+            InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
+            InspectorTest.createDirectory("/piyo", testStep.shift());
+        },
+
+        function()
+        {
+            fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/temporary/piyo", testStep.shift());
+        },
+
+        function(errorCode, metadata)
+        {
+            InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
+            fileSystemRequestManager.requestMetadata("filesystem:http://127.0.0.1:8000/temporary/foo", testStep.shift());
+        },
+
+        function(errorCode, metadata)
+        {
+            InspectorTest.dumpMetadataRequestResult(errorCode, metadata);
+            fileSystemRequestManager.requestMetadata("filesystem:http://example.com/temporary/bar", testStep.shift());
+        },
+
+        function(errorCode)
+        {
+            InspectorTest.clearFileSystem(testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.addResult("All tests have done.");
+            InspectorTest.completeTest();
+        }
+    ];
+
+    InspectorTest.clearFileSystem(testStep.shift());
+}
+</script>
+</head>
+<body>
+<p>Tests requestMetadata command.</p>
+</body>
+</html>

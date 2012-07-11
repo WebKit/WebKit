@@ -70,12 +70,23 @@ var initialize_FileSystemTest = function()
         InspectorTest.evaluateInPage("clearFileSystem(" + InspectorTest.registerCallback(callback) + ")");
     };
 
-    InspectorTest.dumpReadDirectoryResult = function(errorCode, entries)
+    InspectorTest.dumpFileSystemRootRequestResult = function(errorCode, backendRootEntry)
+    {
+        InspectorTest.addResult("errorCode: " + errorCode);
+        if (backendRootEntry)
+            InspectorTest.addResult("backendRootEntry.url: " + backendRootEntry.url);
+        else
+            InspectorTest.addResult("backendRootEntry: (null)");
+        InspectorTest.addResult("");
+    };
+
+    InspectorTest.dumpDirectoryContentRequestResult = function(errorCode, entries)
     {
         InspectorTest.addResult("errorCode: " + errorCode);
 
         if (!entries) {
             InspectorTest.addResult("entries: (null)");
+            InspectorTest.addResult("");
             return;
         }
 
@@ -85,6 +96,7 @@ var initialize_FileSystemTest = function()
           for (var j in entries[i])
             InspectorTest.addResult("    " + j + ": " + entries[i][j]);
         }
+        InspectorTest.addResult("");
     };
 
     InspectorTest.dumpMetadataRequestResult = function(errorCode, metadata)
@@ -97,6 +109,20 @@ var initialize_FileSystemTest = function()
         } else {
             InspectorTest.addResult("metadata: (null)");
         }
+        InspectorTest.addResult("");
+    };
+
+    InspectorTest.dumpFileContentRequestResult = function(errorCode, content, charset)
+    {
+        InspectorTest.addResult("errorCode: " + errorCode);
+
+        if (content)
+            InspectorTest.addResult("content: \"" + content + "\"");
+        else
+            InspectorTest.addResult("content: (null)");
+
+        InspectorTest.addResult("charset: " + charset);
+        InspectorTest.addResult("");
     };
 }
 

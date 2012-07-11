@@ -1,3 +1,41 @@
+2012-07-11  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Clean up FileSystem related code
+        https://bugs.webkit.org/show_bug.cgi?id=90592
+
+        Reviewed by Vsevolod Vlasov.
+
+        Clean up FileSystem related code in Inspector as follows:
+        - Clean up layout tests and add test case for error case,
+        - Fix error handling on request,
+        - s/GetFileSystemRootTask/FileSystemRootRequest/g
+        - s/ReadDirectoryTask/DirectoryContentRequest/g
+        - s/ReadFileTask/FileContentRequest/g
+
+        Tests: http/tests/inspector/filesystem/request-directory-content.html
+               http/tests/inspector/filesystem/request-file-content.html
+               http/tests/inspector/filesystem/request-filesystem-root.html
+               http/tests/inspector/filesystem/request-metadata.html
+
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorFileSystemAgent::requestFileSystemRoot): Add early error handling.
+        (WebCore::InspectorFileSystemAgent::requestDirectoryContent): Add early error handling.
+        (WebCore::InspectorFileSystemAgent::requestMetadata): Add early error handling.
+        (WebCore::InspectorFileSystemAgent::requestFileContent): Add early error handling.
+        * inspector/InspectorFileSystemAgent.h: Remove unused forward declaration and unused header.
+        (WebCore):
+        (InspectorFileSystemAgent):
+        * inspector/front-end/FileSystemModel.js:
+        (WebInspector.FileSystemRequestManager.prototype.requestFileSystemRoot.requestAccepted):
+        (WebInspector.FileSystemRequestManager.prototype.requestFileSystemRoot): Add early error handling.
+        (WebInspector.FileSystemRequestManager.prototype.requestDirectoryContent.requestAccepted):
+        (WebInspector.FileSystemRequestManager.prototype.requestDirectoryContent): Add early error handling.
+        (WebInspector.FileSystemRequestManager.prototype.requestMetadata.requestAccepted):
+        (WebInspector.FileSystemRequestManager.prototype.requestMetadata): Add early error handling.
+        (WebInspector.FileSystemRequestManager.prototype.requestFileContent.requestAccepted):
+        (WebInspector.FileSystemRequestManager.prototype.requestFileContent): Add early error handling.
+
 2012-07-09  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Forward message loop instrumentation data to frontend.

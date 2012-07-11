@@ -468,7 +468,7 @@ WebInspector.FileSystemRequestManager.prototype = {
     /**
      * @param {string} origin
      * @param {string} type
-     * @param {function(number, FileSystemAgent.Entry)=} callback
+     * @param {function(number, FileSystemAgent.Entry=)=} callback
      */
     requestFileSystemRoot: function(origin, type, callback)
     {
@@ -477,7 +477,9 @@ WebInspector.FileSystemRequestManager.prototype = {
 
         function requestAccepted(error, requestId)
         {
-            if (!error)
+            if (error)
+                callback(FileError.SECURITY_ERR);
+            else
                 store[requestId] = callback || function() {};
         }
     },
@@ -507,7 +509,9 @@ WebInspector.FileSystemRequestManager.prototype = {
 
         function requestAccepted(error, requestId)
         {
-            if (!error)
+            if (error)
+                callback(FileError.SECURITY_ERR);
+            else
                 store[requestId] = callback || function() {};
         }
     },
@@ -537,7 +541,9 @@ WebInspector.FileSystemRequestManager.prototype = {
 
         function requestAccepted(error, requestId)
         {
-            if (!error)
+            if (error)
+                callback(FileError.SECURITY_ERR);
+            else
                 store[requestId] = callback || function() {};
         }
     },
@@ -566,7 +572,9 @@ WebInspector.FileSystemRequestManager.prototype = {
 
         function requestAccepted(error, requestId)
         {
-            if (!error)
+            if (error)
+                callback(FileError.SECURITY_ERR);
+            else
                 store[requestId] = callback || function() {};
         }
     },

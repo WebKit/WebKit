@@ -1,11 +1,17 @@
-Tests getMetadata.
+Tests requestMetadata command.
 
 errorCode: 0
 metadata:
   modificationTime: (exists)
   size: 4
+
 errorCode: 0
 metadata:
   modificationTime: (exists)
   size: 0
+
+errorCode: 1
+metadata: (null)
+
+All tests have done.
 

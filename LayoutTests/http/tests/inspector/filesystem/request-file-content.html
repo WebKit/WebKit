@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../inspector-test.js"></script>
+<script src="filesystem-test.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", runTest);
+function test()
+{
+    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+
+setTimeout(function() {InspectorTest.completeTest();}, 1000);
+    var testStep = [
+        function()
+        {
+            InspectorTest.createDirectory("/hoge", testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.writeFile("/hoge/fuga.txt", "piPASSyo", testStep.shift());
+        },
+
+        function()
+        {
+            fileSystemRequestManager.requestFileContent("filesystem:http://127.0.0.1:8000/temporary/hoge/fuga.txt", true, 2, 6, "UTF-8", testStep.shift());
+        },
+
+        function(errorCode, content, charset)
+        {
+            InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
+            fileSystemRequestManager.requestFileContent("filesystem:http://127.0.0.1:8000/temporary/hoge", true, undefined, undefined, "", testStep.shift());
+        },
+
+        function(errorCode, content, charset)
+        {
+            InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
+            fileSystemRequestManager.requestFileContent("filesystem:http://127.0.0.1:8000/temporary/foo", true, undefined, undefined, "", testStep.shift());
+        },
+
+        function(errorCode, content, charset)
+        {
+            InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
+            fileSystemRequestManager.requestFileContent("filesystem:http://example.com/temporary/foo.txt", true, undefined, undefined, "", testStep.shift());
+        },
+
+        function(errorCode, content, charset)
+        {
+            InspectorTest.dumpFileContentRequestResult(errorCode, content, charset);
+            InspectorTest.clearFileSystem(testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.addResult("All tests have done.");
+            InspectorTest.completeTest();
+        }
+    ];
+
+    InspectorTest.clearFileSystem(testStep.shift());
+}
+</script>
+</head>
+<body>
+<p>Tests requestFileContent command.</p>
+</body>
+</html>

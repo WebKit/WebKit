@@ -1,3 +1,32 @@
+2012-07-11  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Clean up FileSystem related code
+        https://bugs.webkit.org/show_bug.cgi?id=90592
+
+        Reviewed by Vsevolod Vlasov.
+
+        Clean up FileSystem related code in Inspector as follows:
+        - Clean up layout tests and add test case for error case,
+        - Fix error handling on request,
+        - s/GetFileSystemRootTask/FileSystemRootRequest/g
+        - s/ReadDirectoryTask/DirectoryContentRequest/g
+        - s/ReadFileTask/FileContentRequest/g
+
+        * http/tests/inspector/filesystem/filesystem-test.js:
+        (initialize_FileSystemTest.InspectorTest.dumpFileSystemRootRequestResult):
+        (initialize_FileSystemTest.InspectorTest.dumpDirectoryContentRequestResult):
+        (initialize_FileSystemTest.InspectorTest.dumpMetadataRequestResult):
+        (initialize_FileSystemTest.InspectorTest.dumpFileContentRequestResult):
+        (initialize_FileSystemTest):
+        * http/tests/inspector/filesystem/request-directory-content-expected.txt: Renamed from LayoutTests/http/tests/inspector/filesystem/read-directory-expected.txt.
+        * http/tests/inspector/filesystem/request-directory-content.html: Renamed from LayoutTests/http/tests/inspector/filesystem/read-directory.html. Changed test steps to unnamed function array. Add failcase test.
+        * http/tests/inspector/filesystem/request-file-content-expected.txt: Renamed from LayoutTests/http/tests/inspector/filesystem/read-file-expected.txt.
+        * http/tests/inspector/filesystem/request-file-content.html: Renamed from LayoutTests/http/tests/inspector/filesystem/read-file.html. Changed test steps to unnamed function array. Add failcase test.
+        * http/tests/inspector/filesystem/request-filesystem-root-expected.txt: Renamed from LayoutTests/http/tests/inspector/filesystem/get-filesystem-expected.txt.
+        * http/tests/inspector/filesystem/request-filesystem-root.html: Renamed from LayoutTests/http/tests/inspector/filesystem/get-filesystem-root.html. Changed test steps to unnamed function array. Add failcase test.
+        * http/tests/inspector/filesystem/request-metadata-expected.txt: Renamed from LayoutTests/http/tests/inspector/filesystem/get-metadata-expected.txt.
+        * http/tests/inspector/filesystem/request-metadata.html: Renamed from LayoutTests/http/tests/inspector/filesystem/get-metadata.html. Changed test steps to unnamed function array. Add failcase test.
+
 2012-07-09  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Forward message loop instrumentation data to frontend.

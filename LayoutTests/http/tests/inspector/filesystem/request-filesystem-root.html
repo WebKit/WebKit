@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../inspector-test.js"></script>
+<script src="filesystem-test.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", runTest);
+function test()
+{
+    var fileSystemRequestManager = new WebInspector.FileSystemRequestManager();
+
+    var testStep = [
+        function()
+        {
+            // FIXME: Add API to delete a FileSystem completely and test getFileSystemRoot for
+            // uninitialized FileSystem.
+            InspectorTest.createFile("/hoge", testStep.shift());
+        },
+
+        function()
+        {
+            fileSystemRequestManager.requestFileSystemRoot("http://127.0.0.1:8000", "temporary", testStep.shift());
+        },
+
+        function(errorCode, backendRootEntry)
+        {
+            InspectorTest.dumpFileSystemRootRequestResult(errorCode, backendRootEntry);
+            fileSystemRequestManager.requestFileSystemRoot("http://127.0.0.1:8000", "fizzbuzz", testStep.shift());
+        },
+
+        function(errorCode, backendRootEntry)
+        {
+            InspectorTest.dumpFileSystemRootRequestResult(errorCode, backendRootEntry);
+            fileSystemRequestManager.requestFileSystemRoot("http://example.com", "temporary", testStep.shift());
+        },
+
+        function(errorCode, backendRootEntry)
+        {
+            InspectorTest.dumpFileSystemRootRequestResult(errorCode, backendRootEntry);
+            InspectorTest.clearFileSystem(testStep.shift());
+        },
+
+        function()
+        {
+            InspectorTest.addResult("All tests have done.");
+            InspectorTest.completeTest();
+        }
+    ];
+
+    InspectorTest.clearFileSystem(testStep.shift());
+}
+</script>
+</head>
+<body>
+<p>Tests requestFileSystemRoot command.</p>
+</body>
+</html>

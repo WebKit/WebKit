@@ -1,0 +1,20 @@
+Tests requestFileContent command.
+
+errorCode: 0
+content: "PASS"
+charset: UTF-8
+
+errorCode: 11
+content: (null)
+charset: undefined
+
+errorCode: 1
+content: (null)
+charset: undefined
+
+errorCode: 2
+content: (null)
+charset: undefined
+
+All tests have done.
+
