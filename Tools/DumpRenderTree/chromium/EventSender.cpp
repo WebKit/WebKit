@@ -351,7 +351,7 @@ void EventSender::doDragDrop(const WebDragData& dragData, WebDragOperationsMask 
     WebPoint screenPoint(event.globalX, event.globalY);
     currentDragData = dragData;
     currentDragEffectsAllowed = mask;
-    currentDragEffect = webview()->dragTargetDragEnter(dragData, clientPoint, screenPoint, currentDragEffectsAllowed);
+    currentDragEffect = webview()->dragTargetDragEnter(dragData, clientPoint, screenPoint, currentDragEffectsAllowed, 0);
 
     // Finish processing events.
     replaySavedEvents();
@@ -466,9 +466,9 @@ void EventSender::doMouseUp(const WebMouseEvent& e)
     WebPoint clientPoint(e.x, e.y);
     WebPoint screenPoint(e.globalX, e.globalY);
 
-    currentDragEffect = webview()->dragTargetDragOver(clientPoint, screenPoint, currentDragEffectsAllowed);
+    currentDragEffect = webview()->dragTargetDragOver(clientPoint, screenPoint, currentDragEffectsAllowed, 0);
     if (currentDragEffect)
-        webview()->dragTargetDrop(clientPoint, screenPoint);
+        webview()->dragTargetDrop(clientPoint, screenPoint, 0);
     else
         webview()->dragTargetDragLeave();
     webview()->dragSourceEndedAt(clientPoint, screenPoint, currentDragEffect);
@@ -509,7 +509,7 @@ void EventSender::doMouseMove(const WebMouseEvent& e)
         return;
     WebPoint clientPoint(e.x, e.y);
     WebPoint screenPoint(e.globalX, e.globalY);
-    currentDragEffect = webview()->dragTargetDragOver(clientPoint, screenPoint, currentDragEffectsAllowed);
+    currentDragEffect = webview()->dragTargetDragOver(clientPoint, screenPoint, currentDragEffectsAllowed, 0);
 }
 
 void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
@@ -912,7 +912,7 @@ void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVarian
     currentDragEffectsAllowed = WebKit::WebDragOperationCopy;
 
     // Provide a drag source.
-    webview()->dragTargetDragEnter(currentDragData, lastMousePos, lastMousePos, currentDragEffectsAllowed);
+    webview()->dragTargetDragEnter(currentDragData, lastMousePos, lastMousePos, currentDragEffectsAllowed, 0);
 
     // dragMode saves events and then replays them later. We don't need/want that.
     dragMode.set(false);
