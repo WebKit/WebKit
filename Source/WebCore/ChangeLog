@@ -1,3 +1,9 @@
+2012-07-11  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Use DOMStringList instead of DOMString[] for in / out type.
+
+        * testing/Internals.idl:
+
 2012-07-11  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Minimum size used for occlusion tracking should be a setting on CCLayerTreeHost

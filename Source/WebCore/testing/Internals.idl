@@ -69,8 +69,8 @@ module window {
 #if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
         void selectColorInColorChooser(in Element element, in DOMString colorValue);
 #endif
-        DOMString[] formControlStateOfPreviousHistoryItem() raises(DOMException);
-        void setFormControlStateOfPreviousHistoryItem(in DOMString[] values) raises(DOMException);
+        DOMStringList formControlStateOfPreviousHistoryItem() raises(DOMException);
+        void setFormControlStateOfPreviousHistoryItem(in DOMStringList values) raises(DOMException);
 
         ClientRect absoluteCaretBounds(in Document document) raises(DOMException);
 
