@@ -1,3 +1,9 @@
+2012-07-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][ARM] Unreviewed gardening, skip more crashing tests.
+
+        * platform/qt-arm/TestExpectations:
+
 2012-07-11  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r122290.
