@@ -741,16 +741,6 @@ http/tests/websocket/tests/hixie76/workers/close-in-onmessage-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=85558
 http/tests/security/contentSecurityPolicy/1.1
 
-# ENABLE_INPUT_TYPE_* are not enabled.
-# https://bugs.webkit.org/show_bug.cgi?id=29359
-# https://bugs.webkit.org/show_bug.cgi?id=68971
-fast/forms/date
-fast/forms/datetime
-fast/forms/datetimelocal
-fast/forms/month
-fast/forms/time
-fast/forms/week
-
 # HiDPI tests require test infrastructure enhancements
 fast/hidpi
 svg/as-image/image-respects-deviceScaleFactor.html

@@ -1,3 +1,15 @@
+2012-07-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Move tests that require ENABLE_INPUT_TYPE_* to TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=90948
+
+        Unreviewed EFL gardening. Move tests that require
+        ENABLE_INPUT_TYPE_* to be enabled from Skipped list to
+        TestExpectations.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
 2012-07-11  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Clean up FileSystem related code
