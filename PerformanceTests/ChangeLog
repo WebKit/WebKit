@@ -1,3 +1,28 @@
+2012-07-11  Philip Rogers  <pdr@google.com>
+
+        Add a performance test for hit testing in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=90811
+
+        Reviewed by Ryosuke Niwa.
+
+        The shape rendering code is changing a lot and I'd like a performance test to
+        make sure we don't regress, and to track our improvements.
+
+        Performance results in my Linux desktop:
+            RESULT SVG: SvgHitTesting= 105.0 ms
+            median= 103.5 ms, stdev= 4.60434577329 ms, min= 101.0 ms, max= 116.0 ms
+
+            RESULT SVG: SvgHitTesting= 97.8 ms
+            median= 96.5 ms, stdev= 2.67581763205 ms, min= 95.0 ms, max= 102.0 ms
+
+            RESULT SVG: SvgHitTesting= 104.3 ms
+            median= 104.0 ms, stdev= 1.41774468788 ms, min= 102.0 ms, max= 107.0 ms
+
+            RESULT SVG: SvgHitTesting= 103.6 ms
+            median= 103.5 ms, stdev= 1.2 ms, min= 102.0 ms, max= 106.0 ms
+
+        * SVG/SvgHitTesting.html: Added.
+
 2012-07-03  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: WebInspector.TextViewer should be renamed WebInspector.TextEditor
