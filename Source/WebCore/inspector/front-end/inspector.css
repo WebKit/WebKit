@@ -443,10 +443,15 @@ body.compact #main {
 
 body.drawer-visible #main-status-bar {
     height: 24px;
-    background-image: url(Images/statusbarResizerVertical.png), url(Images/statusbarBackground.png);
-    background-repeat: no-repeat, repeat-x;
-    background-position: right center, center;
+    border-bottom: 1px solid rgb(202, 202, 202);
     cursor: ns-resize;
+}
+
+body.drawer-visible #main-status-bar::after {
+    position: absolute;
+    right: 0;
+    top: 5px;
+    content: url(Images/statusbarResizerVertical.png);
 }
 
 body.drawer-visible #main-status-bar * {
@@ -458,18 +463,19 @@ body.drawer-visible #main-panels {
 }
 
 .status-bar {
-    background-color: rgb(235, 235, 235);
-    background-image: url(Images/statusbarBackground.png);
-    background-repeat: repeat-x;
     white-space: nowrap;
     height: 23px;
     overflow: hidden;
     z-index: 12;
+    background-image: -webkit-linear-gradient(rgb(253,253,253), rgb(230,230,230) 75%, rgb(230,230,230));
+    border-top: 1px solid rgb(202, 202, 202);
 }
 
 .status-bar > div {
     display: inline-block;
     vertical-align: top;
+    overflow: visible;
+    margin-top: -1px;
 }
 
 .status-bar-item {
@@ -490,7 +496,7 @@ body.drawer-visible #main-panels {
 
 .glyph {
     position: absolute;
-    top: 0;
+    top: -1px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -520,12 +526,15 @@ body.drawer-visible #main-panels {
 button.status-bar-item {
     position: relative;
     width: 32px;
-    background-image: url(Images/statusbarButtons.png);
-    background-position: 0 0;
+    border-left: 1px solid rgb(202, 202, 202);
+    border-right: 1px solid rgb(202, 202, 202);
 }
 
-button.status-bar-item:active, button.status-bar-item.emulate-active {
-    background-position: 32px 0 !important;
+.status-bar select.status-bar-item:active,
+.status-bar button.status-bar-item:active {
+    background-color: rgb(163,163,163);
+    border-left: 1px solid rgb(120, 120, 120);
+    border-right: 1px solid rgb(120, 120, 120);
 }
 
 button.status-bar-item .glyph.shadow {
@@ -548,19 +557,14 @@ button.status-bar-item.extension {
 
 select.status-bar-item {
     min-width: 48px;
-    border-width: 0 17px 0 2px;
-    padding: 0 2px 0 6px;
     font-weight: bold;
     color: rgb(48, 48, 48);
     text-shadow: rgba(255, 255, 255, 0.75) 0 1px 0;
-    -webkit-border-image: url(Images/statusbarMenuButton.png) 0 17 0 2;
-    -webkit-border-radius: 0;
-    -webkit-appearance: none;
 }
 
-select.status-bar-item:active {
-    color: black;
-    -webkit-border-image: url(Images/statusbarMenuButtonSelected.png) 0 17 0 2;
+select.status-bar-item, select.status-bar-item:hover {
+    border-left: 1px solid rgb(202, 202, 202);
+    border-right: 1px solid rgb(202, 202, 202);
 }
 
 .status-bar-item > .glyph {
@@ -586,16 +590,28 @@ button.settings-status-bar-item {
     right: 0;
 }
 
+body.detached .alternate-status-bar-buttons-bar {
+    margin-left: 1px;
+}
+
 .alternate-status-bar-buttons-bar {
     position: absolute;
     width: 31px;
     bottom: -3px;
-    margin-left: 1px;
     background: white;
 }
 
 .alternate-status-bar-buttons-bar .status-bar-item {
+    height: 24px;
     margin-top: -1px;
+    border: 1px solid rgb(202, 202, 202);
+    border-bottom: 1px solid transparent;
+}
+
+.alternate-status-bar-buttons-bar .status-bar-item.emulate-active {
+    background-color: rgb(163,163,163);
+    border: 1px solid rgb(120, 120, 120);
+    border-bottom: 1px solid transparent;
 }
 
 .settings-status-bar-item .glyph {
@@ -660,7 +676,6 @@ body.port-qt #dock-status-bar-item {
     right: 0;
     height: 200px;
     background-color: white;
-    background-image: url(Images/statusbarBottomBackground.png);
     background-repeat: repeat-x;
     background-position: bottom;
 }
@@ -668,7 +683,7 @@ body.port-qt #dock-status-bar-item {
 body.drawer-visible #drawer-contents {
     position: absolute;
     top: 0;
-    bottom: 23px;
+    bottom: 24px;
     left: 0;
     right: 0;
 }
@@ -682,7 +697,6 @@ body.drawer-visible #drawer {
     bottom: 0;
     left: 0;
     right: 0;
-    background: none;
 }
 
 body.platform-mac .monospace, body.platform-mac .source-code {

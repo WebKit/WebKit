@@ -198,7 +198,7 @@ WebInspector.StatusBarButton.prototype = {
         var optionsBarElement = optionsGlassPane.element.createChild("div", "alternate-status-bar-buttons-bar");
         const buttonHeight = 24;
         optionsBarElement.style.height = (buttonHeight * buttons.length) + "px";
-        optionsBarElement.style.left = this.element.offsetLeft + "px";
+        optionsBarElement.style.left = (this.element.offsetLeft + 1) + "px";
 
         var boundMouseOver = mouseOver.bind(this);
         var boundMouseOut = mouseOut.bind(this);

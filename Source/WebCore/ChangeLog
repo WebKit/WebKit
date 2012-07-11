@@ -1,3 +1,44 @@
+2012-07-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: migrate from background images to CSS for statusbar rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=90902
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change removes statusbar* images and uses gradients and borders to re-create original inspector look.
+
+        * WebCore.gypi:
+        * inspector/front-end/Images/statusbarBackground.png: Removed.
+        * inspector/front-end/Images/statusbarBottomBackground.png: Removed.
+        * inspector/front-end/Images/statusbarButtons.png: Removed.
+        * inspector/front-end/Images/statusbarMenuButton.png: Removed.
+        * inspector/front-end/Images/statusbarMenuButtonSelected.png: Removed.
+        * inspector/front-end/StatusBarButton.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (body.drawer-visible #main-status-bar):
+        (body.drawer-visible #main-status-bar::after):
+        (.status-bar-background):
+        (.status-bar > div):
+        (.glyph):
+        (button.status-bar-item):
+        (.status-bar button.status-bar-item:active):
+        (select.status-bar-item):
+        (select.status-bar-item, select.status-bar-item:hover):
+        (body.detached .alternate-status-bar-buttons-bar):
+        (.alternate-status-bar-buttons-bar):
+        (.alternate-status-bar-buttons-bar .status-bar-item):
+        (.alternate-status-bar-buttons-bar .status-bar-item.emulate-active):
+        (#drawer):
+        (body.drawer-visible #drawer-contents):
+        (#drawer-status-bar):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/scriptsPanel.css:
+        (button.status-bar-item.scripts-navigator-show-hide-button):
+        (button.status-bar-item.scripts-navigator-show-hide-button:active):
+        (button.status-bar-item.scripts-debugger-show-hide-button):
+        (button.status-bar-item.scripts-debugger-show-hide-button:active):
+
 2012-07-11  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         [BlackBerry] crash in CookieDatabaseBackingStore.

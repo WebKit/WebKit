@@ -50,11 +50,6 @@
             'src/js/Images/segmentHoverEndChromium.png',
             'src/js/Images/segmentSelectedChromium.png',
             'src/js/Images/segmentSelectedEndChromium.png',
-            'src/js/Images/statusbarBackgroundChromium.png',
-            'src/js/Images/statusbarBottomBackgroundChromium.png',
-            'src/js/Images/statusbarButtonsChromium.png',
-            'src/js/Images/statusbarMenuButtonChromium.png',
-            'src/js/Images/statusbarMenuButtonSelectedChromium.png',
         ],
         'webkit_unittest_files': [
             'tests/ArenaTestHelpers.h',

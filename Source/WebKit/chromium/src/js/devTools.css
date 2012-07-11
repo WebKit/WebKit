@@ -80,28 +80,8 @@ body.platform-linux #scripts-files {
     -webkit-border-image: url(Images/segmentHoverEndChromium.png) 0 2 0 2;
 }
 
-body.drawer-visible #main-status-bar {
-    background-image: url(Images/statusbarResizerVertical.png), url(Images/statusbarBackgroundChromium.png);
-}
-
 .status-bar {
-    background-image: url(Images/statusbarBackgroundChromium.png);
-}
-
-button.status-bar-item {
-    background-image: url(Images/statusbarButtonsChromium.png);
-}
-
-select.status-bar-item:active {
-    -webkit-border-image: url(Images/statusbarMenuButtonSelectedChromium.png) 0 17 0 2;
-}
-
-#drawer {
-    background-image: url(Images/statusbarBottomBackgroundChromium.png);
-}
-
-select.status-bar-item {
-    -webkit-border-image: url(Images/statusbarMenuButtonChromium.png) 0 17 0 2;
+    background-image: -webkit-linear-gradient(rgb(243,243,243), rgb(235,235,235));
 }
 
 .scope-bar li.selected {
