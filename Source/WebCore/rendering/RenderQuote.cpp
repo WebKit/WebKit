@@ -57,10 +57,18 @@ RenderQuote::RenderQuote(Document* node, QuoteType quote)
     , m_next(0)
     , m_previous(0)
 {
+    view()->addRenderQuote();
 }
 
 RenderQuote::~RenderQuote()
 {
+}
+
+void RenderQuote::willBeDestroyed()
+{
+    if (view())
+        view()->removeRenderQuote();
+    RenderText::willBeDestroyed();
 }
 
 const char* RenderQuote::renderName() const
@@ -278,7 +286,8 @@ void RenderQuote::computePreferredLogicalWidths(float lead)
 
 void RenderQuote::rendererSubtreeAttached(RenderObject* renderer)
 {
-    if (renderer->documentBeingDestroyed())
+    ASSERT(renderer->view());
+    if (!renderer->view()->hasRenderQuotes())
         return;
     for (RenderObject* descendant = renderer; descendant; descendant = descendant->nextInPreOrder(renderer))
         if (descendant->isQuote()) {
@@ -287,17 +296,18 @@ void RenderQuote::rendererSubtreeAttached(RenderObject* renderer)
         }
 }
 
-void RenderQuote::rendererRemovedFromTree(RenderObject* subtreeRoot)
+void RenderQuote::rendererRemovedFromTree(RenderObject* renderer)
 {
-    if (subtreeRoot->documentBeingDestroyed())
+    ASSERT(renderer->view());
+    if (!renderer->view()->hasRenderQuotes())
         return;
-    for (RenderObject* descendant = subtreeRoot; descendant; descendant = descendant->nextInPreOrder(subtreeRoot))
+    for (RenderObject* descendant = renderer; descendant; descendant = descendant->nextInPreOrder(renderer))
         if (descendant->isQuote()) {
             RenderQuote* removedQuote = toRenderQuote(descendant);
             RenderQuote* lastQuoteBefore = removedQuote->m_previous;
             removedQuote->m_previous = 0;
             int depth = removedQuote->m_depth;
-            for (descendant = descendant->nextInPreOrder(subtreeRoot); descendant; descendant = descendant->nextInPreOrder(subtreeRoot))
+            for (descendant = descendant->nextInPreOrder(renderer); descendant; descendant = descendant->nextInPreOrder(renderer))
                 if (descendant->isQuote())
                     removedQuote = toRenderQuote(descendant);
             RenderQuote* quoteAfter = removedQuote->m_next;

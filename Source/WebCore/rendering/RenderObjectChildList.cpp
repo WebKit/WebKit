@@ -154,8 +154,12 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     oldChild->setNextSibling(0);
     oldChild->setParent(0);
 
-    RenderCounter::rendererRemovedFromTree(oldChild);
-    RenderQuote::rendererRemovedFromTree(oldChild);
+    // rendererRemovedFromTree walks the whole subtree. We can improve performance
+    // by skipping this step when destroying the entire tree.
+    if (!owner->documentBeingDestroyed()) {
+        RenderCounter::rendererRemovedFromTree(oldChild);
+        RenderQuote::rendererRemovedFromTree(oldChild);
+    }
 
     if (AXObjectCache::accessibilityEnabled())
         owner->document()->axObjectCache()->childrenChanged(owner);

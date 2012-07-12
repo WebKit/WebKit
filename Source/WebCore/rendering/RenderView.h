@@ -192,6 +192,17 @@ public:
 
     void setFixedPositionedObjectsNeedLayout();
 
+    // FIXME: This is a work around because the current implementation of counters and quotes
+    // requires walking the entire tree repeatedly and most pages don't actually use either
+    // feature so we shouldn't take the performance hit when not needed. Long term we should
+    // rewrite the counter and quotes code.
+    void addRenderQuote() { m_renderQuoteCount++; }
+    void removeRenderQuote() { ASSERT(m_renderQuoteCount > 0); m_renderQuoteCount--; }
+    bool hasRenderQuotes() { return m_renderQuoteCount; }
+    void addRenderCounter() { m_renderCounterCount++; }
+    void removeRenderCounter() { ASSERT(m_renderCounterCount > 0); m_renderCounterCount--; }
+    bool hasRenderCounters() { return m_renderCounterCount; }
+
 protected:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, ApplyContainerFlipOrNot = ApplyContainerFlip, bool* wasFixed = 0) const;
     virtual const RenderObject* pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap&) const;
@@ -287,6 +298,9 @@ private:
 #endif
     OwnPtr<FlowThreadController> m_flowThreadController;
     RefPtr<IntervalArena> m_intervalArena;
+
+    unsigned m_renderQuoteCount;
+    unsigned m_renderCounterCount;
 };
 
 inline RenderView* toRenderView(RenderObject* object)

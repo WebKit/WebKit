@@ -35,6 +35,7 @@ public:
     static void rendererRemovedFromTree(RenderObject*);
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void willBeDestroyed();
 private:
     virtual const char* renderName() const;
     virtual bool isQuote() const { return true; };

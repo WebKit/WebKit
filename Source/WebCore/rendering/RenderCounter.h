@@ -40,6 +40,9 @@ public:
     static void rendererRemovedFromTree(RenderObject*);
     static void rendererStyleChanged(RenderObject*, const RenderStyle* oldStyle, const RenderStyle* newStyle);
 
+protected:
+    virtual void willBeDestroyed();
+
 private:
     virtual const char* renderName() const;
     virtual bool isCounter() const;

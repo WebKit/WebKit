@@ -474,6 +474,7 @@ RenderCounter::RenderCounter(Document* node, const CounterContent& counter)
     , m_counterNode(0)
     , m_nextForSameCounter(0)
 {
+    view()->addRenderCounter();
 }
 
 RenderCounter::~RenderCounter()
@@ -482,6 +483,13 @@ RenderCounter::~RenderCounter()
         m_counterNode->removeRenderer(this);
         ASSERT(!m_counterNode);
     }
+}
+
+void RenderCounter::willBeDestroyed()
+{
+    if (view())
+        view()->removeRenderCounter();
+    RenderText::willBeDestroyed();
 }
 
 const char* RenderCounter::renderName() const
@@ -596,14 +604,17 @@ void RenderCounter::destroyCounterNode(RenderObject* owner, const AtomicString& 
     // map associated with a renderer, so there is no risk in leaking the map.
 }
 
-void RenderCounter::rendererRemovedFromTree(RenderObject* removedRenderer)
+void RenderCounter::rendererRemovedFromTree(RenderObject* renderer)
 {
-    RenderObject* currentRenderer = removedRenderer->lastLeafChild();
+    ASSERT(renderer->view());
+    if (!renderer->view()->hasRenderCounters())
+        return;
+    RenderObject* currentRenderer = renderer->lastLeafChild();
     if (!currentRenderer)
-        currentRenderer = removedRenderer;
+        currentRenderer = renderer;
     while (true) {
         destroyCounterNodes(currentRenderer);
-        if (currentRenderer == removedRenderer)
+        if (currentRenderer == renderer)
             break;
         currentRenderer = currentRenderer->previousInPreOrder();
     }
@@ -647,6 +658,9 @@ static void updateCounters(RenderObject* renderer)
 
 void RenderCounter::rendererSubtreeAttached(RenderObject* renderer)
 {
+    ASSERT(renderer->view());
+    if (!renderer->view()->hasRenderCounters())
+        return;
     Node* node = renderer->node();
     if (node)
         node = node->parentNode();

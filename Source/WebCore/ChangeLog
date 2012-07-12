@@ -1,3 +1,48 @@
+2012-07-12  Elliott Sprehn  <esprehn@gmail.com>
+
+        Unneeded tree walking when adding or removing children due to RenderCounter / RenderQuote logic
+        https://bugs.webkit.org/show_bug.cgi?id=89900
+
+        Reviewed by Eric Seidel and Abhishek Arya.
+
+        Previously we would walk the all children a renderer whenever adding
+        or removing a child renderer from its RenderObjectChildList to look for 
+        RenderQuote and RenderCounter instances to update. This patch introduces 
+        a counter in RenderView for the number of RenderQuote and RenderCounter 
+        instances in that document so we can avoid these traversals.
+
+        No tests needed since this is just a short circuiting of logic and the existing
+        tests should cover it.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::RenderCounter): Increment instance counter.
+        (WebCore::RenderCounter::willBeDestroyed): Decrement instance counter.
+        (WebCore):
+        (WebCore::RenderCounter::rendererRemovedFromTree): Short circuit when counter is zero.
+        (WebCore::RenderCounter::rendererSubtreeAttached): Short circuit when counter is zero.
+        * rendering/RenderCounter.h:
+        (RenderCounter):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode): Short circuit calling into Counter and Quote code when the document is being destroyed.
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::RenderQuote):
+        (WebCore::RenderQuote::willBeDestroyed):
+        (WebCore):
+        (WebCore::RenderQuote::rendererSubtreeAttached): Increment instance counter.
+        (WebCore::RenderQuote::rendererRemovedFromTree): Decrement instance counter.
+        * rendering/RenderQuote.h:
+        (RenderQuote):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h: Methods for managing the RenderQuote and RenderCounter counts.
+        (RenderView):
+        (WebCore::RenderView::addRenderQuote):
+        (WebCore::RenderView::removeRenderQuote):
+        (WebCore::RenderView::hasRenderQuotes):
+        (WebCore::RenderView::addRenderCounter):
+        (WebCore::RenderView::removeRenderCounter):
+        (WebCore::RenderView::hasRenderCounters):
+
 2012-07-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge HTMLCollectionWithArrayStorage into HTMLCollection
