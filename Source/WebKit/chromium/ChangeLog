@@ -1,3 +1,21 @@
+2012-07-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122358.
+        http://trac.webkit.org/changeset/122358
+        https://bugs.webkit.org/show_bug.cgi?id=91037
+
+        Build break on WebKit Win (Requested by hayato on #webkit).
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::dragTargetDragEnter):
+        (WebKit):
+        (WebKit::WebViewImpl::dragTargetDragOver):
+        (WebKit::WebViewImpl::dragTargetDrop):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-07-11  Alexandre Elias  <aelias@google.com>
 
         [chromium] Move compositor quads to Platform/chromium/public

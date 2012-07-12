@@ -2796,6 +2796,15 @@ WebDragOperation WebViewImpl::dragTargetDragEnter(
     const WebDragData& webDragData,
     const WebPoint& clientPoint,
     const WebPoint& screenPoint,
+    WebDragOperationsMask operationsAllowed)
+{
+    return dragTargetDragEnter(webDragData, clientPoint, screenPoint, operationsAllowed, 0);
+}
+
+WebDragOperation WebViewImpl::dragTargetDragEnter(
+    const WebDragData& webDragData,
+    const WebPoint& clientPoint,
+    const WebPoint& screenPoint,
     WebDragOperationsMask operationsAllowed,
     int keyModifiers)
 {
@@ -2805,6 +2814,14 @@ WebDragOperation WebViewImpl::dragTargetDragEnter(
     m_operationsAllowed = operationsAllowed;
 
     return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragEnter, keyModifiers);
+}
+
+WebDragOperation WebViewImpl::dragTargetDragOver(
+    const WebPoint& clientPoint,
+    const WebPoint& screenPoint,
+    WebDragOperationsMask operationsAllowed)
+{
+    return dragTargetDragOver(clientPoint, screenPoint, operationsAllowed, 0);
 }
 
 WebDragOperation WebViewImpl::dragTargetDragOver(
@@ -2834,6 +2851,12 @@ void WebViewImpl::dragTargetDragLeave()
 
     m_dragOperation = WebDragOperationNone;
     m_currentDragData = 0;
+}
+
+void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
+                                 const WebPoint& screenPoint)
+{
+    dragTargetDrop(clientPoint, screenPoint, 0);
 }
 
 void WebViewImpl::dragTargetDrop(const WebPoint& clientPoint,
