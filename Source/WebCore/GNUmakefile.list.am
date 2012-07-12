@@ -713,6 +713,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/notifications/Notification.idl \
 	$(WebCore)/Modules/notifications/NotificationCenter.idl \
 	$(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
+	$(WebCore)/Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl \
 	$(WebCore)/Modules/webaudio/AudioContext.idl \
 	$(WebCore)/Modules/webaudio/AudioPannerNode.idl \
 	$(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
@@ -1206,6 +1207,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/notifications/NotificationPermissionCallback.h \
 	Source/WebCore/Modules/notifications/WorkerContextNotifications.cpp \
 	Source/WebCore/Modules/notifications/WorkerContextNotifications.h \
+	Source/WebCore/Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp \
+	Source/WebCore/Modules/protocolhandler/NavigatorRegisterProtocolHandler.h \
 	Source/WebCore/Modules/webdatabase/AbstractDatabase.cpp \
 	Source/WebCore/Modules/webdatabase/AbstractDatabase.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
@@ -3045,8 +3048,6 @@ webcore_sources += \
 	Source/WebCore/page/Navigator.h \
 	Source/WebCore/page/NavigatorBase.cpp \
 	Source/WebCore/page/NavigatorBase.h \
-	Source/WebCore/page/NavigatorRegisterProtocolHandler.cpp \
-	Source/WebCore/page/NavigatorRegisterProtocolHandler.h \
 	Source/WebCore/page/OriginAccessEntry.cpp \
 	Source/WebCore/page/OriginAccessEntry.h \
 	Source/WebCore/page/Page.cpp \

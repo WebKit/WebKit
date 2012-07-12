@@ -17,6 +17,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
 	-I$(srcdir)/Source/WebCore/Modules/notifications \
+	-I$(srcdir)/Source/WebCore/Modules/protocolhandler \
 	-I$(srcdir)/Source/WebCore/Modules/webaudio \
 	-I$(srcdir)/Source/WebCore/Modules/webdatabase \
 	-I$(srcdir)/Source/WebCore/Modules/websockets \

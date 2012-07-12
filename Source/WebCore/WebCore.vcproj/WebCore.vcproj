@@ -24927,6 +24927,18 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="protocolhandler"
+				>
+				<File
+					RelativePath="..\Modules\protocolhandler\NavigatorRegisterProtocolHandler.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\protocolhandler\NavigatorRegisterProtocolHandler.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="quota"
 				>
 				<File
@@ -26832,14 +26844,6 @@
 			</File>
 			<File
 				RelativePath="..\page\NavigatorBase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\page\NavigatorRegisterProtocolHandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\NavigatorRegisterProtocolHandler.h"
 				>
 			</File>
 			<File

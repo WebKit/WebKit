@@ -3642,8 +3642,6 @@
 		97DCE20210807C750057D394 /* HistoryController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DCE20010807C750057D394 /* HistoryController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97E4028F13A696ED00913D67 /* IconController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E4028D13A696ED00913D67 /* IconController.cpp */; };
 		97E4029013A696ED00913D67 /* IconController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E4028E13A696ED00913D67 /* IconController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97E4A12614F4C5D400870E43 /* NavigatorRegisterProtocolHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 9730BE1514EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.h */; };
-		97E4A12714F4C5D700870E43 /* NavigatorRegisterProtocolHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9730BE1414EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.cpp */; };
 		97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */; };
 		97F8E665151D4A4B00D2D181 /* WorkerContextNotifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F8E661151D4A3F00D2D181 /* WorkerContextNotifications.cpp */; };
 		97F8E666151D4A4E00D2D181 /* WorkerContextNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F8E662151D4A3F00D2D181 /* WorkerContextNotifications.h */; };
@@ -8789,6 +8787,9 @@
 		63189AE20E83A33300012E41 /* NodeRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRareData.h; sourceTree = "<group>"; };
 		637B7ADE0E8767B800E32194 /* ElementRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementRareData.h; sourceTree = "<group>"; };
 		63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRenderStyle.h; sourceTree = "<group>"; };
+		6458284415AB27C800BBF91A /* NavigatorRegisterProtocolHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp; sourceTree = "<group>"; };
+		6458284515AB27C800BBF91A /* NavigatorRegisterProtocolHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Modules/protocolhandler/NavigatorRegisterProtocolHandler.h; sourceTree = "<group>"; };
+		6458284615AB27C800BBF91A /* NavigatorRegisterProtocolHandler.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl; sourceTree = "<group>"; };
 		650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSGrammar.h; sourceTree = "<group>"; };
 		650FBF270D9AF046008FC292 /* SVGHKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGHKernElement.cpp; sourceTree = "<group>"; };
 		650FBF280D9AF047008FC292 /* SVGHKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGHKernElement.h; sourceTree = "<group>"; };
@@ -10541,9 +10542,6 @@
 		97205ABA1239292700B17380 /* PluginDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDocument.h; sourceTree = "<group>"; };
 		9728C3111268E4390041E89B /* MarkupAccumulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkupAccumulator.cpp; sourceTree = "<group>"; };
 		9728C3121268E4390041E89B /* MarkupAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupAccumulator.h; sourceTree = "<group>"; };
-		9730BE1414EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorRegisterProtocolHandler.cpp; sourceTree = "<group>"; };
-		9730BE1514EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorRegisterProtocolHandler.h; sourceTree = "<group>"; };
-		9730BE1614EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorRegisterProtocolHandler.idl; sourceTree = "<group>"; };
 		9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentWriter.cpp; sourceTree = "<group>"; };
 		9738899F116EA9DC00ADF313 /* DocumentWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentWriter.h; sourceTree = "<group>"; };
 		973DC63D145A9409002842C2 /* ExceptionCodeDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionCodeDescription.cpp; sourceTree = "<group>"; };
@@ -15300,6 +15298,17 @@
 			path = plugins;
 			sourceTree = "<group>";
 		};
+		6458284315AB27C800BBF91A /* protocolhandler */ = {
+			isa = PBXGroup;
+			children = (
+				6458284415AB27C800BBF91A /* NavigatorRegisterProtocolHandler.cpp */,
+				6458284515AB27C800BBF91A /* NavigatorRegisterProtocolHandler.h */,
+				6458284615AB27C800BBF91A /* NavigatorRegisterProtocolHandler.idl */,
+			);
+			name = protocolhandler;
+			path = Modules/protocolhandler;
+			sourceTree = "<group>";
+		};
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -15635,9 +15644,6 @@
 				A9C6E65D0D746694006442E9 /* Navigator.idl */,
 				E12719C90EEEC21300F61213 /* NavigatorBase.cpp */,
 				E12719C60EEEC16800F61213 /* NavigatorBase.h */,
-				9730BE1414EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.cpp */,
-				9730BE1514EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.h */,
-				9730BE1614EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.idl */,
 				00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */,
 				00146289103CD1DE000B20DB /* OriginAccessEntry.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
@@ -24149,7 +24155,6 @@
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
 				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,
-				97E4A12614F4C5D400870E43 /* NavigatorRegisterProtocolHandler.h in Headers */,
 				8A309C9F123950BE00CB9204 /* NestingLevelIncrementer.h in Headers */,
 				656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */,
 				628D214C12131ED10055DCFC /* NetworkingContext.h in Headers */,
@@ -27412,7 +27417,6 @@
 				A9C6E5A50D746458006442E9 /* Navigator.cpp in Sources */,
 				E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */,
 				9711460314EF009A00674FD9 /* NavigatorGeolocation.cpp in Sources */,
-				97E4A12714F4C5D700870E43 /* NavigatorRegisterProtocolHandler.cpp in Sources */,
 				5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */,
 				59C27F05138D28C10079B7E2 /* NetworkResourcesData.cpp in Sources */,
 				1A7FA61B0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp in Sources */,

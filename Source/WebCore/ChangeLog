@@ -1,3 +1,42 @@
+2012-07-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Register protocol handler files should be in Modules/protocolhandler
+        https://bugs.webkit.org/show_bug.cgi?id=90766
+
+        Reviewed by Hajime Morita.
+
+        The register protocol handler files are now self-contained. This patch is moved to the Modules.
+
+        No new tests. Covered by existing tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp: Renamed from Source/WebCore/page/NavigatorRegisterProtocolHandler.cpp.
+        (WebCore):
+        (WebCore::initProtocolHandlerWhitelist):
+        (WebCore::verifyCustomHandlerURL):
+        (WebCore::isProtocolWhitelisted):
+        (WebCore::verifyProtocolHandlerScheme):
+        (WebCore::NavigatorRegisterProtocolHandler::NavigatorRegisterProtocolHandler):
+        (WebCore::NavigatorRegisterProtocolHandler::~NavigatorRegisterProtocolHandler):
+        (WebCore::NavigatorRegisterProtocolHandler::registerProtocolHandler):
+        (WebCore::customHandlersStateString):
+        (WebCore::NavigatorRegisterProtocolHandler::isProtocolHandlerRegistered):
+        (WebCore::NavigatorRegisterProtocolHandler::unregisterProtocolHandler):
+        * Modules/protocolhandler/NavigatorRegisterProtocolHandler.h: Renamed from Source/WebCore/page/NavigatorRegisterProtocolHandler.h.
+        (WebCore):
+        (NavigatorRegisterProtocolHandler):
+        * Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl: Renamed from Source/WebCore/page/NavigatorRegisterProtocolHandler.idl.
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-07-12  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Cannot use digest proxy auth and NTLM auth at the same time

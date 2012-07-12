@@ -432,6 +432,7 @@ SOURCES += \
     Modules/notifications/NotificationCenter.cpp \
     Modules/notifications/NotificationController.cpp \
     Modules/notifications/WorkerContextNotifications.cpp \
+    Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp \
     css/CSSAspectRatioValue.cpp \
     css/CSSBorderImageSliceValue.cpp \
     css/CSSBorderImage.cpp \
@@ -1041,7 +1042,6 @@ SOURCES += \
     page/MouseEventWithHitTestResults.cpp \
     page/Navigator.cpp \
     page/NavigatorBase.cpp \
-    page/NavigatorRegisterProtocolHandler.cpp \
     page/OriginAccessEntry.cpp \
     page/Page.cpp \
     page/PageGroup.cpp \

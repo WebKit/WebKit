@@ -5,6 +5,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/intents"
     "${WEBCORE_DIR}/Modules/notifications"
+    "${WEBCORE_DIR}/Modules/protocolhandler"
     "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webdatabase"
@@ -126,6 +127,8 @@ SET(WebCore_IDL_FILES
     Modules/geolocation/PositionCallback.idl
     Modules/geolocation/PositionError.idl
     Modules/geolocation/PositionErrorCallback.idl
+
+    Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl
 
     Modules/webaudio/AudioBuffer.idl
     Modules/webaudio/AudioBufferCallback.idl
@@ -393,7 +396,6 @@ SET(WebCore_IDL_FILES
     page/Location.idl
     page/MemoryInfo.idl
     page/Navigator.idl
-    page/NavigatorRegisterProtocolHandler.idl
     page/Performance.idl
     page/PerformanceEntry.idl
     page/PerformanceEntryList.idl
@@ -434,6 +436,8 @@ SET(WebCore_SOURCES
     Modules/geolocation/Geolocation.cpp
     Modules/geolocation/GeolocationController.cpp
     Modules/geolocation/NavigatorGeolocation.cpp
+
+    Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp
 
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp
@@ -1082,7 +1086,6 @@ SET(WebCore_SOURCES
     page/MouseEventWithHitTestResults.cpp
     page/Navigator.cpp
     page/NavigatorBase.cpp
-    page/NavigatorRegisterProtocolHandler.cpp
     page/OriginAccessEntry.cpp
     page/Page.cpp
     page/PageGroup.cpp
