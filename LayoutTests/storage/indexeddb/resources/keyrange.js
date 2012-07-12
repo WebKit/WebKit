@@ -22,7 +22,7 @@ function checkLowerBoundKeyRange(value, open)
         open = false;
     shouldBe("keyRange.lowerOpen", "" + open);
     shouldBeNull("keyRange.upper");
-    shouldBeFalse("keyRange.upperOpen");
+    shouldBeTrue("keyRange.upperOpen");
 }
 
 function checkUpperBoundKeyRange(value, open)
@@ -33,7 +33,7 @@ function checkUpperBoundKeyRange(value, open)
         open = false;
     shouldBe("keyRange.upperOpen", "" + open);
     shouldBeNull("keyRange.lower");
-    shouldBeFalse("keyRange.lowerOpen");
+    shouldBeTrue("keyRange.lowerOpen");
 }
 
 function checkBoundKeyRange(lower, upper, lowerOpen, upperOpen)

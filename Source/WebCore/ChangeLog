@@ -1,3 +1,19 @@
+2012-07-12  Xingnan Wang  <xingnan.wang@intel.com>
+
+        [IndexedDB] upperOpen set to true in lowerBound()/lowerOpen set to true in upperBound()
+        https://bugs.webkit.org/show_bug.cgi?id=90867
+
+        Reviewed by Tony Chang.
+
+        In the latest W3C spec upperOpen/lowerOpen are set to true in lowerBound()/upperBound(), which
+        we should keep aligned with.
+
+        No new tests - updated storage/indexeddb/keyrange.html to match new behavior.
+
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+
 2012-07-12  MORITA Hajime  <morrita@google.com>
 
         [Shadow DOM] <video> with <shadow> crashes
