@@ -2,24 +2,28 @@
 <head>
 <script src="../inspector-test.js"></script>
 <script>
-function loadScript()
+function loadStylesheet()
 {
-    var js = document.createElement("script");
-    js.src = "resources/script.js";
-    document.head.appendChild(js);
+    var css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.type = "text/css";
+    css.href = "resource/style.css";
+    document.head.appendChild(css);
 }
 
 function test()
 {
     InspectorTest.addConsoleSniffer(step2, true);
-    InspectorTest.evaluateInPage("loadScript()");
+    InspectorTest.addSniffer(WebInspector.StylesUISourceCodeProvider.prototype, "_resourceAdded", true);
+    InspectorTest.evaluateInPage("loadStylesheet()");
 
     var resource;
-    function step2(msg)
+    function step2(event)
     {
         var request = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
         uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(request.url);
-        resource = WebInspector.resourceForURL(request.url);
+        if (!uiSourceCode)
+            return;
         uiSourceCode.addRevision("");
         uiSourceCode.history[0].requestContent(step3);
     }
