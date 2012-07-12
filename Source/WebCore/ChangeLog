@@ -1,3 +1,19 @@
+2012-07-11  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Compilation error with GLES2 when using gl2ext.h from ANGLE.
+        https://bugs.webkit.org/show_bug.cgi?id=91030
+
+        Reviewed by Kenneth Russell.
+
+        gl2ext.h defines PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG and not
+        PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMGPROC. This is a bug in the original Khronos header,
+        but we should work around it until fixed headers are integrated.
+
+
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        (Extensions3DOpenGLES):
+            Removed the "PROC" suffix to work around the header bug.
+
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
         Attempt to fix the Chromium Mac build after r122400.

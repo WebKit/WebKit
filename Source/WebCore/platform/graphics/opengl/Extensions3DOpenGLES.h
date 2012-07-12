@@ -57,8 +57,8 @@ protected:
     bool m_supportsOESvertexArrayObject;
     bool m_supportsIMGMultisampledRenderToTexture;
 
-    PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMGPROC m_glFramebufferTexture2DMultisampleIMG;
-    PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMGPROC m_glRenderbufferStorageMultisampleIMG;
+    PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG m_glFramebufferTexture2DMultisampleIMG;
+    PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG m_glRenderbufferStorageMultisampleIMG;
     PFNGLBINDVERTEXARRAYOESPROC m_glBindVertexArrayOES;
     PFNGLDELETEVERTEXARRAYSOESPROC m_glDeleteVertexArraysOES;
     PFNGLGENVERTEXARRAYSOESPROC m_glGenVertexArraysOES;
