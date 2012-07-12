@@ -1,3 +1,35 @@
+2012-07-11  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=91000
+        REGRESSION (r122244): Overflow elements don't shrink as much as they should.
+
+        Reviewed by Simon Fraser.
+
+        This is a fix for a a regression from https://bugs.webkit.org/show_bug.cgi?id=90646.
+
+        I incorrectly analyzed the issue with Robert Hogan's negative margin patch and fooled myself into putting back
+        in an incorrect minimum width check from long ago.
+        
+        What should have happened in the test case I patched is that the overflow element should shrink to 0. The issue 
+        with improving the logical top estimate in the previous patch is it made the clear delta become 0. This in turn
+        exposed a bug in our clearing algorithm with Robert's changes where you could need a relayout even if you didn't
+        actually move. This issue only occurs because the floats list is getting changed mid-layout because of negative margins.
+
+        The patch changes getClearDelta to call setChildNeedsLayout(true) on children whose widths change even when their
+        positions do not. In effect this dynamic addition of new floats after you have done a layout on the child already means
+        that you can need to lay out again despite not actually having to move.
+        
+        To handle this, the code that does the relayout is now called if the child needs a relayout. This is done even if
+        the logical top estimate matches the final position.
+        
+        No new tests required, since the test in fast/block/float is now correctly covering the issue.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::getClearDelta):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats):
+
 2012-07-12  James Weatherall  <wez@chromium.org>
 
         storage tests are flaky (crashing) on windows
