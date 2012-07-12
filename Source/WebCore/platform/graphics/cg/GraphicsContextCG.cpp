@@ -54,7 +54,7 @@
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
 // Building on 10.6 or later: kCGInterpolationMedium is defined in the CGInterpolationQuality enum.
 #define HAVE_CG_INTERPOLATION_MEDIUM 1
 #endif

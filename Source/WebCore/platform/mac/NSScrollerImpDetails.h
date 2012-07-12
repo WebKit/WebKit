@@ -29,7 +29,7 @@
 #include "config.h"
 
 // Public APIs not available on versions of Mac on which we build
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 1060
 enum {
     NSScrollerStyleLegacy       = 0,
     NSScrollerStyleOverlay      = 1
@@ -44,7 +44,7 @@ enum {
 typedef NSInteger NSScrollerKnobStyle;
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 1060
 @interface NSScroller(NSObject)
 + (NSScrollerStyle)preferredScrollerStyle;
 @end

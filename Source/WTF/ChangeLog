@@ -1,5 +1,17 @@
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
+        Switch a few cases that care about the SDK over to checking __MAC_OS_X_VERSION_MAX_ALLOWED so that things build.
+
+        Part of <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary): The SDK we're building against determines how many elements
+        the structure is declared as having.
+
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
         <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros
 
         This removal was handled by a script that translates the relevant macros in to the equivalent checks

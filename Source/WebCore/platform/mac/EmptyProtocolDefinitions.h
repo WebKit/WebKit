@@ -29,7 +29,7 @@
 @protocol NAME <NSObject> \
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
+#if __MAC_OS_X_VERSION_MAX_ALLOWED == 1050
 
 EMPTY_PROTOCOL(NSTableViewDataSource)
 EMPTY_PROTOCOL(NSTableViewDelegate)
@@ -38,7 +38,7 @@ EMPTY_PROTOCOL(NSAnimationDelegate)
 
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 1060
 
 EMPTY_PROTOCOL(NSURLConnectionDelegate)
 EMPTY_PROTOCOL(NSURLDownloadDelegate)
