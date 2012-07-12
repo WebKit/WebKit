@@ -60,6 +60,7 @@
 - (BOOL)canResetZoom;
 
 - (IBAction)toggleZoomMode:(id)sender;
+- (IBAction)togglePaginationMode:(id)sender;
 
 - (IBAction)dumpSourceToConsole:(id)sender;
 

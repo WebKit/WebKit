@@ -1,3 +1,23 @@
+2012-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Add an option to enter paginated mode in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=91035
+
+        Reviewed by Dan Bernstein.
+
+        Add an item to the Debug menu for MiniBrowser that puts
+        the web view into paginated mode. For now, we only
+        do left-to-right pagination, with a fixed column width.
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController validateMenuItem:]): Update the checked
+        state of the menu item.
+        (-[BrowserWindowController isPaginated]): Return YES if paginated.
+        (-[BrowserWindowController togglePaginationMode:]): Toggle in
+        and out of pagination mode.
+        * MiniBrowser/mac/MainMenu.xib: Add the debug menu item.
+
 2012-07-11  Adam Barth  <abarth@webkit.org>
 
         commit-queue instances on Compute Engine are missing git-svn

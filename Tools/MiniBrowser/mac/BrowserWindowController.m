@@ -109,6 +109,9 @@
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
     else if (action == @selector(toggleZoomMode:))
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
+    else if ([menuItem action] == @selector(togglePaginationMode:))
+        [menuItem setState:[self isPaginated] ? NSOnState : NSOffState];
+
     return YES;
 }
 
@@ -239,6 +242,22 @@
         _zoomTextOnly = YES;
         double currentPageZoom = WKPageGetPageZoomFactor(_webView.pageRef);
         WKPageSetPageAndTextZoomFactors(_webView.pageRef, 1, currentPageZoom);
+    }
+}
+
+- (BOOL)isPaginated
+{
+    return WKPageGetPaginationMode(_webView.pageRef) != kWKPaginationModeUnpaginated;
+}
+
+- (IBAction)togglePaginationMode:(id)sender
+{
+    if ([self isPaginated])
+        WKPageSetPaginationMode(_webView.pageRef, kWKPaginationModeUnpaginated);
+    else {
+        WKPageSetPaginationMode(_webView.pageRef, kWKPaginationModeLeftToRight);
+        WKPageSetPageLength(_webView.pageRef, _webView.bounds.size.width / 2);
+        WKPageSetGapBetweenPages(_webView.pageRef, 10);
     }
 }
 
