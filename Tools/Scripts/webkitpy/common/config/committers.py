@@ -255,6 +255,7 @@ committers_unable_to_review = [
     Committer("Hironori Bono", "hbono@chromium.org", "hbono"),
     Committer("Helder Correia", "helder.correia@nokia.com", "helder"),
     Committer("Hin-Chung Lam", ["hclam@google.com", "hclam@chromium.org"]),
+    Committer("Hugo Parente Lima", "hugo.lima@openbossa.org", "hugopl"),
     Committer("Ian Vollick", "vollick@chromium.org", "vollick"),
     Committer("Igor Trindade Oliveira", ["igor.oliveira@webkit.org", "igor.o@sisa.samsung.com"], "igoroliveira"),
     Committer("Ilya Sherman", "isherman@chromium.org", "isherman"),
