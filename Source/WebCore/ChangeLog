@@ -1,3 +1,9 @@
+2012-07-12  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Unreviewed. Build fix for r122462.
+
+        * platform/qt/MemoryUsageSupportQt.cpp:
+
 2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove resources panel edited resources search support.

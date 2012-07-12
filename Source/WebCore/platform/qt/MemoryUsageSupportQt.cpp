@@ -22,7 +22,7 @@
 #include "MemoryUsageSupport.h"
 
 #include "JSDOMWindow.h"
-#include <JavaScriptCore/MemoryStatistics.h>
+#include <runtime/MemoryStatistics.h>
 #include <wtf/FastMalloc.h>
 
 #if OS(LINUX)
