@@ -438,8 +438,11 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromSavedElement(Elem
     ASSERT(element->isHTMLElement()); // otherwise localName() might be wrong.
 
     Vector<Attribute> clonedAttributes;
-    if (ElementAttributeData* attributeData = element->updatedAttributeData())
-        clonedAttributes = attributeData->clonedAttributeVector();
+    if (const ElementAttributeData* attributeData = element->updatedAttributeData()) {
+        clonedAttributes.reserveInitialCapacity(attributeData->length());
+        for (unsigned i = 0; i < attributeData->length(); ++i)
+            clonedAttributes.uncheckedAppend(*attributeData->attributeItem(i));
+    }
 
     AtomicHTMLToken fakeToken(HTMLTokenTypes::StartTag, element->localName(), clonedAttributes);
     return createHTMLElement(fakeToken);

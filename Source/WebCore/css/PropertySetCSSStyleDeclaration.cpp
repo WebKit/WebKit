@@ -402,7 +402,18 @@ CSSStyleSheet* InlineCSSStyleDeclaration::parentStyleSheet() const
 
 StylePropertySet* InlineCSSStyleDeclaration::ensureMutablePropertySet()
 {
-    ASSERT(m_propertySet);
+    if (!m_parentElement) {
+        ASSERT(m_propertySet);
+        return m_propertySet;
+    }
+    StylePropertySet* mutablePropertySet = const_cast<StylePropertySet*>(m_parentElement->ensureInlineStyle());
+    if (mutablePropertySet != m_propertySet) {
+        ASSERT(m_propertySet);
+        m_propertySet->deref();
+        mutablePropertySet->adoptCSSOMWrapperFrom(m_propertySet);
+        m_propertySet = mutablePropertySet;
+        m_propertySet->ref();
+    }
     return m_propertySet;
 }
 

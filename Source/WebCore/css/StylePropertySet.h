@@ -123,6 +123,8 @@ public:
             memoryObjectInfo->reportPointer(m_mutablePropertyVector, MemoryInstrumentation::CSS);
     }
 
+    void adoptCSSOMWrapperFrom(StylePropertySet*);
+
 private:
     StylePropertySet(CSSParserMode);
     StylePropertySet(const CSSProperty* properties, unsigned count, CSSParserMode, bool makeMutable);

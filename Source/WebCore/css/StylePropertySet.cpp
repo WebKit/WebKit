@@ -50,6 +50,13 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
     return propertySetCSSOMWrapperMapInstance;
 }
 
+void StylePropertySet::adoptCSSOMWrapperFrom(StylePropertySet* other)
+{
+    ASSERT(propertySetCSSOMWrapperMap().contains(other));
+    OwnPtr<PropertySetCSSStyleDeclaration> wrapper = propertySetCSSOMWrapperMap().take(other);
+    propertySetCSSOMWrapperMap().add(this, wrapper.release());
+}
+
 PassRefPtr<StylePropertySet> StylePropertySet::createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
     void* slot = WTF::fastMalloc(sizeof(StylePropertySet) - sizeof(void*) + sizeof(CSSProperty) * count);
