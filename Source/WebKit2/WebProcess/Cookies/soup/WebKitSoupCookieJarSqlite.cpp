@@ -216,7 +216,7 @@ static void webkit_soup_cookie_jar_sqlite_class_init(WebKitSoupCookieJarSqliteCl
 
 SoupCookieJar* webkitSoupCookieJarSqliteNew(const String& databasePath)
 {
-    ASSERT(!priv->databasePath.isEmpty());
+    ASSERT(!databasePath.isEmpty());
     WebKitSoupCookieJarSqlite* sqliteJar = WEBKIT_SOUP_COOKIE_JAR_SQLITE(g_object_new(WEBKIT_TYPE_SOUP_COOKIE_JAR_SQLITE, NULL));
     sqliteJar->priv->databasePath = databasePath;
     webkitSoupCookieJarSqliteLoad(sqliteJar);

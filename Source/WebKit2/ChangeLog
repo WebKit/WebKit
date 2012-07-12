@@ -1,3 +1,10 @@
+2012-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ debug build after r122425.
+
+        * WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp:
+        (webkitSoupCookieJarSqliteNew):
+
 2012-07-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] Performance issue in FindController::findString
