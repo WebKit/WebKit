@@ -49,9 +49,9 @@ public:
         CannotStartFromShadowBoundary
     };
 
-    class ParentTranversalDetails {
+    class ParentTraversalDetails {
     public:
-        ParentTranversalDetails()
+        ParentTraversalDetails()
             : m_node(0)
             , m_insertionPoint(0)
             , m_resetStyleInheritance(false)
@@ -80,7 +80,7 @@ public:
     // For a common use case such as:
     // for (ComposedShadowTreeWalker walker = ComposedShadowTreeWalker::fromFirstChild(node); walker.get(); walker.nextSibling())
     static ComposedShadowTreeWalker fromFirstChild(const Node*, Policy = CrossUpperBoundary);
-    static void findParent(const Node*, ParentTranversalDetails*);
+    static void findParent(const Node*, ParentTraversalDetails*);
 
     Node* get() const { return const_cast<Node*>(m_node); }
 
@@ -96,7 +96,7 @@ public:
     void previous();
 
 private:
-    ComposedShadowTreeWalker(const Node*, ParentTranversalDetails*);
+    ComposedShadowTreeWalker(const Node*, ParentTraversalDetails*);
 
     enum TraversalDirection {
         TraversalDirectionForward,
@@ -131,7 +131,7 @@ private:
     Node* traverseFirstChild(const Node*) const;
     Node* traverseLastChild(const Node*) const;
     Node* traverseChild(const Node*, TraversalDirection) const;
-    Node* traverseParent(const Node*, ParentTranversalDetails* = 0) const;
+    Node* traverseParent(const Node*, ParentTraversalDetails* = 0) const;
 
     static Node* traverseNextSibling(const Node*);
     static Node* traversePreviousSibling(const Node*);
@@ -142,9 +142,9 @@ private:
     static Node* traverseSiblingOrBackToYoungerShadowRoot(const Node*, TraversalDirection);
     static Node* escapeFallbackContentElement(const Node*, TraversalDirection);
 
-    Node* traverseNodeEscapingFallbackContents(const Node*, ParentTranversalDetails* = 0) const;
-    Node* traverseParentInCurrentTree(const Node*, ParentTranversalDetails* = 0) const;
-    Node* traverseParentBackToYoungerShadowRootOrHost(const ShadowRoot*, ParentTranversalDetails* = 0) const;
+    Node* traverseNodeEscapingFallbackContents(const Node*, ParentTraversalDetails* = 0) const;
+    Node* traverseParentInCurrentTree(const Node*, ParentTraversalDetails* = 0) const;
+    Node* traverseParentBackToYoungerShadowRootOrHost(const ShadowRoot*, ParentTraversalDetails* = 0) const;
 
     const Node* m_node;
     Policy m_policy;

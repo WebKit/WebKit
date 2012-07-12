@@ -70,7 +70,7 @@ public:
 
 private:
     Node* m_node;
-    ComposedShadowTreeWalker::ParentTranversalDetails m_parentDetails;
+    ComposedShadowTreeWalker::ParentTraversalDetails m_parentDetails;
     RefPtr<RenderStyle> m_style;
     RenderNamedFlowThread* m_parentFlowRenderer;
     AtomicString m_flowThread;

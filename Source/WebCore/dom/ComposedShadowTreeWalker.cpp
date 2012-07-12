@@ -51,18 +51,18 @@ static inline ElementShadow* shadowOfParent(const Node* node)
     return 0;
 }
 
-inline void ComposedShadowTreeWalker::ParentTranversalDetails::didTraverseInsertionPoint(InsertionPoint* insertionPoint)
+inline void ComposedShadowTreeWalker::ParentTraversalDetails::didTraverseInsertionPoint(InsertionPoint* insertionPoint)
 {
     if (!m_insertionPoint)
         m_insertionPoint = insertionPoint;
 }
 
-inline void ComposedShadowTreeWalker::ParentTranversalDetails::didTraverseShadowRoot(const ShadowRoot* root)
+inline void ComposedShadowTreeWalker::ParentTraversalDetails::didTraverseShadowRoot(const ShadowRoot* root)
 {
     m_resetStyleInheritance  = m_resetStyleInheritance || root->resetStyleInheritance();
 }
 
-inline void ComposedShadowTreeWalker::ParentTranversalDetails::didFindNode(ContainerNode* node)
+inline void ComposedShadowTreeWalker::ParentTraversalDetails::didFindNode(ContainerNode* node)
 {
     if (!m_outOfComposition)
         m_node = node;
@@ -75,7 +75,7 @@ ComposedShadowTreeWalker ComposedShadowTreeWalker::fromFirstChild(const Node* no
     return walker;
 }
 
-void ComposedShadowTreeWalker::findParent(const Node* node, ParentTranversalDetails* details)
+void ComposedShadowTreeWalker::findParent(const Node* node, ParentTraversalDetails* details)
 {
     ComposedShadowTreeWalker walker(node, CrossUpperBoundary, CanStartFromShadowBoundary);
     ContainerNode* found = toContainerNode(walker.traverseParent(walker.get(), details));
@@ -203,7 +203,7 @@ inline Node* ComposedShadowTreeWalker::escapeFallbackContentElement(const Node* 
     return 0;
 }
 
-inline Node* ComposedShadowTreeWalker::traverseNodeEscapingFallbackContents(const Node* node, ParentTranversalDetails* details) const
+inline Node* ComposedShadowTreeWalker::traverseNodeEscapingFallbackContents(const Node* node, ParentTraversalDetails* details) const
 {
     ASSERT(node);
     if (!isInsertionPoint(node))
@@ -222,7 +222,7 @@ void ComposedShadowTreeWalker::parent()
 
 // FIXME: Use an iterative algorithm so that it can be inlined.
 // https://bugs.webkit.org/show_bug.cgi?id=90415
-Node* ComposedShadowTreeWalker::traverseParent(const Node* node, ParentTranversalDetails* details) const
+Node* ComposedShadowTreeWalker::traverseParent(const Node* node, ParentTraversalDetails* details) const
 {
     if (!canCrossUpperBoundary() && node->isShadowRoot()) {
         ASSERT(toShadowRoot(node)->isYoungest());
@@ -243,14 +243,14 @@ Node* ComposedShadowTreeWalker::traverseParent(const Node* node, ParentTranversa
     return traverseParentInCurrentTree(node, details);
 }
 
-inline Node* ComposedShadowTreeWalker::traverseParentInCurrentTree(const Node* node, ParentTranversalDetails* details) const
+inline Node* ComposedShadowTreeWalker::traverseParentInCurrentTree(const Node* node, ParentTraversalDetails* details) const
 {
     if (Node* parent = node->parentNode())
         return parent->isShadowRoot() ? traverseParentBackToYoungerShadowRootOrHost(toShadowRoot(parent), details) : traverseNodeEscapingFallbackContents(parent, details);
     return 0;
 }
 
-Node* ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost(const ShadowRoot* shadowRoot, ParentTranversalDetails* details) const
+Node* ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost(const ShadowRoot* shadowRoot, ParentTraversalDetails* details) const
 {
     ASSERT(shadowRoot);
     if (shadowRoot->isYoungest()) {

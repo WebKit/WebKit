@@ -1,3 +1,29 @@
+2012-07-12  MORITA Hajime  <morrita@google.com>
+
+        Typo: ParentTranversalDetails should be ParentTraversalDetails
+        https://bugs.webkit.org/show_bug.cgi?id=91059
+
+        Reviewed by Andreas Kling.
+
+        Did a bare rename from ParentTranversalDetails to ParentTraversalDetails
+
+        No new tests, just a rename.
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::ParentTraversalDetails::didTraverseInsertionPoint):
+        (WebCore::ComposedShadowTreeWalker::ParentTraversalDetails::didTraverseShadowRoot):
+        (WebCore::ComposedShadowTreeWalker::ParentTraversalDetails::didFindNode):
+        (WebCore::ComposedShadowTreeWalker::findParent):
+        (WebCore::ComposedShadowTreeWalker::traverseNodeEscapingFallbackContents):
+        (WebCore::ComposedShadowTreeWalker::traverseParent):
+        (WebCore::ComposedShadowTreeWalker::traverseParentInCurrentTree):
+        (WebCore::ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost):
+        * dom/ComposedShadowTreeWalker.h:
+        (WebCore::ComposedShadowTreeWalker::ParentTraversalDetails::ParentTraversalDetails):
+        (ComposedShadowTreeWalker):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+
 2012-07-11  Antti Koivisto  <antti@apple.com>
 
         Failure to dispatch didFinishLoadForFrame if font load fails synchronously 
