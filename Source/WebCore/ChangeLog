@@ -1,3 +1,20 @@
+2012-07-12  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        ASSERT(genChild->isListMarker() || genChild->style()->styleType() == FIRST_LETTER) triggered on flex-box content
+        https://bugs.webkit.org/show_bug.cgi?id=91003
+
+        Reviewed by Abhishek Arya.
+
+        Tests: fast/flexbox/assert-generated-deprecated-flexbox.html
+               fast/flexbox/assert-generated-new-flexbox.html
+
+        The issue was that findBeforeAfterParent didn't return the right parent for the flex-box case. This would
+        make us update the wrong children (and not propagate the style updates properly).
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::findBeforeAfterParent):
+        Added a check for flex boxes (both deprecated and new).
+
 2012-07-12  Pravin D  <pravind.2k4@gmail.com>
 
         Percentage width replaced element in zero percent/fixed width container block incorrectly rendered.

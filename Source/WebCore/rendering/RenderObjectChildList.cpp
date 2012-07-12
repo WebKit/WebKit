@@ -289,8 +289,9 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
 
 static RenderObject* findBeforeAfterParent(RenderObject* object)
 {
-    // Only table parts need to search for the :before or :after parent
-    if (!(object->isTable() || object->isTableSection() || object->isTableRow()))
+    // Only table parts and flex-boxes need to search for the :before or :after parent
+    // FIXME: We could likely get away without this check and always look for the right parent.
+    if (!(object->isTable() || object->isTableSection() || object->isTableRow() || object->isFlexibleBoxIncludingDeprecated()))
         return object;
 
     // If there is a :first-letter style applied on the :before or :after content,
