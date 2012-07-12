@@ -1,3 +1,12 @@
+2012-07-11  Ojan Vafai  <ojan@chromium.org>
+
+        Rebaseline after http://trac.webkit.org/changeset/122374.
+
+        * platform/chromium-linux/css3/flexbox/repaint-rtl-column-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/flexbox/repaint-rtl-column-expected.png: Removed.
+        * platform/chromium-mac/css3/flexbox/repaint-rtl-column-expected.png:
+        * platform/chromium-win/css3/flexbox/repaint-rtl-column-expected.png:
+
 2012-07-11  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed gardening.
