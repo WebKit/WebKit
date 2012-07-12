@@ -160,7 +160,6 @@ public:
 
     // DEPRECATED
     virtual void setDefaultDeviceScaleFactor(int) { }
-    virtual void setHixie76WebSocketProtocolEnabled(bool) { }
 
 protected:
     ~WebSettings() { }
