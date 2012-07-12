@@ -1,16 +1,12 @@
+<!DOCTYPE html>
 <html>
 <head>
   <title>Document::nodesFromRect test - bug 85849</title>
-  <script src="../js/resources/js-test-pre.js"></script>
+  <script src="../../js/resources/js-test-pre.js"></script>
   <script src="resources/nodesFromRect.js"></script>
   <script type="application/javascript">
     function runTest()
     {
-      if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-      }
-
       var e = {};
 
       // Set up shortcut access to elements
@@ -36,12 +32,7 @@
       check(0, 98, 0, 1, 2, 0, [e.img, e.span]);
       /* Rect based test over the entire img. */
       check(0, 0, 0, 99, 99, 0, [e.img]);
-
-      if (window.testRunner)
-        testRunner.notifyDone();
     }
-
-    window.onload = runTest;
   </script>
 </head>
 <body id="body" style="padding: 0; margin: 0;">
@@ -50,7 +41,8 @@
   </span>
 
   <span id="console" style="position: absolute; top: 150px;"></span>
-  <script src="../js/resources/js-test-post.js"></script>
+  <script> runTest();</script>
+  <script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>
 

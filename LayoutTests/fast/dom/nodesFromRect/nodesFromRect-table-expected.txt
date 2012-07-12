@@ -3,9 +3,6 @@ Document::nodesFromRect : Rect-based hit-testing on tables - bug 86605
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Check area hits fully inside table cells
 PASS All correct nodes found for rect
 PASS All correct nodes found for rect
@@ -35,4 +32,7 @@ Check area hits on flipped (tb-lr) table
 PASS All correct nodes found for rect
 PASS All correct nodes found for rect
 PASS All correct nodes found for rect
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

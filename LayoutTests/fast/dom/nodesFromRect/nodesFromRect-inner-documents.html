@@ -1,17 +1,13 @@
+<!DOCTYPE html>
 <html>
 <head>
   <title>Document::nodesFromRect : basic text nodes and links test - bug 47795</title>
   <style type="text/css"> @import "resources/nodesFromRect.css"; </style>
-  <script src="../js/resources/js-test-pre.js"></script>
+  <script src="../../js/resources/js-test-pre.js"></script>
   <script src="resources/nodesFromRect.js"></script>
   <script type="application/javascript">
     function runTest()
     {
-      if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-      }
-
       var e = {};
 
       // Set up shortcut access to elements
@@ -43,18 +39,15 @@
       check(divCenter.x, divCenter.y, 0, 0, 0, 0, [div], innerDocument);
       check(divCenter.x, divCenter.y, 0, 0, divBottom.y - divCenter.y, 0, [div, body], innerDocument);
       check(divCenter.x, divCenter.y, 0, 0, pCenter.y - divCenter.y, 0, [p, div, body], innerDocument);
-
-      if (window.testRunner)
-        testRunner.notifyDone();
     }
-
     window.onload = runTest;
   </script>
 </head>
 <body id="body">
   <a id="a1" href="#">A</a>
   <iframe id="iframe1" src="data:text/html,<div>div</div><p>p</p>"></iframe>
+  
   <div id="console"></div>
-  <script src="../js/resources/js-test-post.js"></script>
+  <script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -899,10 +899,8 @@ platform/mac/editing/spelling/move-cursor-around-misspelled-word.html
 # WebKitTestRunner needs layoutTestController.hasGrammarMarker
 editing/spelling/grammar.html
 
-# WebKitTestRunner needs layoutTestController.nodesFromRect
-fast/dom/nodesFromRect-basic.html
-fast/dom/nodesFromRect-inner-documents.html
-fast/dom/nodesFromRect-links-and-text.html
+# Tests skipped for historical reasons, should be unskipped.
+fast/dom/nodesFromRect
 
 # WebKitTestRunner needs layoutTestController.setSpatialNavigationEnabled
 fast/spatial-navigation

@@ -1,17 +1,13 @@
+<!DOCTYPE html>
 <html>
 <head>
   <title>Document::nodesFromRect test - bug 40197</title>
   <style type="text/css"> @import "resources/nodesFromRect.css"; </style>
-  <script src="../js/resources/js-test-pre.js"></script>
+  <script src="../../js/resources/js-test-pre.js"></script>
   <script src="resources/nodesFromRect.js"></script>
   <script type="application/javascript">
     function runTest()
     {
-      if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-      }
-
       var e = {};
 
       // Set up shortcut access to elements
@@ -76,11 +72,7 @@
       check(39, 212, 10, 0, 10, 0, [e.d2, e.p2, e.body]);
       check(39, 212, 0, 10, 0, 10, [e.p5, e.body]);
       check(39, 212, 10, 10, 10, 10, [e.p5, e.d2, e.p2, e.body]);
-
-      if (window.testRunner)
-        testRunner.notifyDone();
     }
-
     window.onload = runTest;
   </script>
 </head>
@@ -106,7 +98,7 @@
   <p id="p5" style="position:relative; top: -100px; left: 30px; margin-bottom: -70px; background-color: green"></p>
 
   <span id="console"></span>
-  <script src="../js/resources/js-test-post.js"></script>
+  <script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>
 

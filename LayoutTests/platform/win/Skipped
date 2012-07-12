@@ -1300,10 +1300,8 @@ http/tests/websocket/tests/hybi/send-file-blob.html
 http/tests/websocket/tests/hybi/send-file-blob-fail.html
 fast/mutation/filesystem-callback-delivery.html
 
-# LayoutTestController::nodesFromRect is not supported.
-fast/dom/nodesFromRect-basic.html
-fast/dom/nodesFromRect-links-and-text.html
-fast/dom/nodesFromRect-inner-documents.html
+# Tests skipped for historical reasons, should be unskipped.
+fast/dom/nodesFromRect
 
 # https://bugs.webkit.org/show_bug.cgi?id=46223
 # The WebKit plugin implementation does not support iframe shims.
