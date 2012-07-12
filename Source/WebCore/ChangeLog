@@ -1,3 +1,21 @@
+2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Revision history view should be updated when uiSourceCodes are removed or replaced.
+        https://bugs.webkit.org/show_bug.cgi?id=91095
+
+        Reviewed by Pavel Feldman.
+
+        RevisionHistoryView is now reset in WorkspaceReset event handler.
+        UISourceCodes are now removed from RevisionHistoryView when uiSourceCode is removed or replace.
+
+        * inspector/front-end/RevisionHistoryView.js:
+        (WebInspector.RevisionHistoryView):
+        (WebInspector.RevisionHistoryView.prototype._clearHistory):
+        (WebInspector.RevisionHistoryView.prototype._uiSourceCodeRemoved):
+        (WebInspector.RevisionHistoryView.prototype._uiSourceCodeReplaced):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._reset):
+
 2012-07-12  Dongwoo Im  <dw.im@samsung.com>
 
         InspectorFileSystemAgent.cpp have to include File.h explicitly

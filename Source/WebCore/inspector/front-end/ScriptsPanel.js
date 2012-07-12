@@ -366,7 +366,6 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.reset();
         if (!preserveItems && this.sidebarPanes.workers)
             this.sidebarPanes.workers.reset();
-        WebInspector.RevisionHistoryView.reset();
 
         var uiSourceCodes = this._workspace.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)

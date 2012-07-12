@@ -55,6 +55,9 @@ WebInspector.RevisionHistoryView = function()
 
     WebInspector.workspace.uiSourceCodes().forEach(populateRevisions.bind(this));
     WebInspector.workspace.addEventListener(WebInspector.Workspace.Events.UISourceCodeContentCommitted, this._revisionAdded, this);
+    WebInspector.workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
+    WebInspector.workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
+    WebInspector.workspace.addEventListener(WebInspector.Workspace.Events.WorkspaceReset, this._reset.bind(this, false), this);
 
     this._statusElement = document.createElement("span");
     this._statusElement.textContent = WebInspector.UIString("Local modifications");
@@ -71,12 +74,6 @@ WebInspector.RevisionHistoryView.showHistory = function(uiSourceCode)
     var view = WebInspector.RevisionHistoryView._view;
     WebInspector.showViewInDrawer(view._statusElement, view);
     view._revealUISourceCode(uiSourceCode);
-}
-
-WebInspector.RevisionHistoryView.reset = function()
-{
-    if (WebInspector.RevisionHistoryView._view)
-        WebInspector.RevisionHistoryView._view._reset();
 }
 
 WebInspector.RevisionHistoryView.prototype = {
@@ -126,15 +123,7 @@ WebInspector.RevisionHistoryView.prototype = {
      */
     _clearHistory: function(uiSourceCode)
     {
-        uiSourceCode.revertAndClearHistory(historyCleared.bind(this));
-
-        function historyCleared()
-        {
-            var uiSourceCodeItem = this._uiSourceCodeItems.get(uiSourceCode);
-            this._treeOutline.removeChild(uiSourceCodeItem);
-            this._uiSourceCodeItems.remove(uiSourceCode);
-        }
-
+        uiSourceCode.revertAndClearHistory(this._removeUISourceCode.bind(this));
     },
 
     _revisionAdded: function(event)
@@ -163,6 +152,33 @@ WebInspector.RevisionHistoryView.prototype = {
             uiSourceCodeItem.reveal();
             uiSourceCodeItem.expand();
         }
+    },
+
+    _uiSourceCodeRemoved: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        this._removeUISourceCode(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _uiSourceCodeReplaced: function(event)
+    {
+        var oldUISourceCode = /** @type {WebInspector.UISourceCode} */ event.data.oldUISourceCode;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
+        this._removeUISourceCode(oldUISourceCode);
+        this._revealUISourceCode(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _removeUISourceCode: function(uiSourceCode)
+    {
+        var uiSourceCodeItem = this._uiSourceCodeItems.get(uiSourceCode);
+        this._treeOutline.removeChild(uiSourceCodeItem);
+        this._uiSourceCodeItems.remove(uiSourceCode);
     },
 
     _reset: function()
