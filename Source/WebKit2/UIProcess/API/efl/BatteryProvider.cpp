@@ -35,9 +35,9 @@
 using namespace WebCore;
 using namespace WebKit;
 
-static inline BatteryProviderEfl* toBatteryProvider(const void* clientInfo)
+static inline BatteryProvider* toBatteryProvider(const void* clientInfo)
 {
-    return static_cast<BatteryProviderEfl*>(const_cast<void*>(clientInfo));
+    return static_cast<BatteryProvider*>(const_cast<void*>(clientInfo));
 }
 
 static void startUpdatingCallback(WKBatteryManagerRef batteryManager, const void* clientInfo)

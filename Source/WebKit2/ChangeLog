@@ -1,3 +1,16 @@
+2012-07-12  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][WK2] Browser crashes running BatteryStatus tests.
+        https://bugs.webkit.org/show_bug.cgi?id=91065
+
+        Reviewed by Kentaro Hara.
+
+        clientInfo was incorrectly casted to BatteryProviderEfl in helper
+        function. This patch fixes the issue.
+
+        * UIProcess/API/efl/BatteryProvider.cpp:
+        (toBatteryProvider):
+
 2012-07-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] [WK2] regression(r122411) Crashes in Ewk_View
