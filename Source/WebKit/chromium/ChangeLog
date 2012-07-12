@@ -1,3 +1,17 @@
+2012-07-12  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Remove unrequired API in WebSurroundingText.
+        https://bugs.webkit.org/show_bug.cgi?id=91067
+
+        Reviewed by Adam Barth.
+
+        Remove the unused first initialize method from WebSurroundingText.
+        Now both Chromium and LayoutTestController use the second method.
+
+        * public/WebSurroundingText.h:
+        (WebSurroundingText):
+        * src/WebSurroundingText.cpp:
+
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros

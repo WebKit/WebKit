@@ -48,10 +48,6 @@ public:
     WEBKIT_EXPORT bool isNull() const;
     WEBKIT_EXPORT void reset();
 
-    // Initializes the object go get the surrounding text centered in the position described by the hit test.
-    // The maximum length of the contents retrieved is defined by maxLength.
-    WEBKIT_EXPORT void initialize(const WebHitTestResult&, size_t maxLength);
-
     // Initializes the object to get the surrounding text centered in the position relative to a provided node.
     // The maximum length of the contents retrieved is defined by maxLength.
     WEBKIT_EXPORT void initialize(const WebNode&, const WebPoint&, size_t maxLength);

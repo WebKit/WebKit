@@ -40,15 +40,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebSurroundingText::initialize(const WebHitTestResult& hitTestResult, size_t maxLength)
-{
-    Node* node = hitTestResult.node().unwrap<Node>();
-    if (!node || !node->renderer())
-        return;
-
-    m_private.reset(new SurroundingText(VisiblePosition(node->renderer()->positionForPoint(static_cast<IntPoint>(hitTestResult.localPoint()))), maxLength));
-}
-
 void WebSurroundingText::initialize(const WebNode& webNode, const WebPoint& nodePoint, size_t maxLength)
 {
     const Node* node = webNode.constUnwrap<Node>();
