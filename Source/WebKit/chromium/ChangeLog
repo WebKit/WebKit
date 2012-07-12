@@ -1,3 +1,9 @@
+2012-07-12  Tony Chang  <tony@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-07-12  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Delete last mention of Hixie76 in WebKit/chromium
