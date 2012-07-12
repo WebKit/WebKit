@@ -1,3 +1,18 @@
+2012-07-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Enable IDBFactory.deleteDatabase() and webkitGetDatabaseNames() in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=90310
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/factory-basics-workers-expected.txt: Added.
+        * storage/indexeddb/factory-basics-workers.html: Added.
+        * storage/indexeddb/resources/factory-basics.js: Allow use by Worker as well as Window.
+        (getDatabaseNamesSuccess1):
+        (openSuccess):
+        (getDatabaseNamesSuccess2):
+        (getDatabaseNamesSuccess3):
+
 2012-07-12  Dirk Pranke  <dpranke@chromium.org>
 
         rebaseline fast/harness/results.html after r122505.

@@ -35,7 +35,6 @@
 #include "IDBDatabaseException.h"
 #include "IDBLevelDBBackingStore.h"
 #include "IDBTransactionCoordinator.h"
-#include "SecurityOrigin.h"
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
 
@@ -81,7 +80,7 @@ void IDBFactoryBackendImpl::removeIDBBackingStore(const String& fileIdentifier)
     m_backingStoreMap.remove(fileIdentifier);
 }
 
-void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDirectory)
+void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext*, const String& dataDirectory)
 {
     RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
     if (!backingStore) {
@@ -99,17 +98,7 @@ void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks,
     callbacks->onSuccess(databaseNames.release());
 }
 
-void IDBFactoryBackendImpl::open(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDirectory)
-{
-    openInternal(name, callbacks, securityOrigin, dataDirectory);
-}
-
-void IDBFactoryBackendImpl::openFromWorker(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> securityOrigin, WorkerContext*, const String& dataDirectory)
-{
-    openInternal(name, callbacks, securityOrigin, dataDirectory);
-}
-
-void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDirectory)
+void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext*, const String& dataDirectory)
 {
     const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());
 
@@ -160,7 +149,7 @@ PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<S
     return 0;
 }
 
-void IDBFactoryBackendImpl::openInternal(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> prpSecurityOrigin, const String& dataDirectory)
+void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpSecurityOrigin, ScriptExecutionContext*, const String& dataDirectory)
 {
     RefPtr<SecurityOrigin> securityOrigin = prpSecurityOrigin;
     const String uniqueIdentifier = computeUniqueIdentifier(name, securityOrigin.get());

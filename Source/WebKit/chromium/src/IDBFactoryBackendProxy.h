@@ -31,10 +31,11 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCallbacks.h"
 #include "IDBFactoryBackendInterface.h"
 
 namespace WebCore {
-class WorkerContext;
+class ScriptExecutionContext;
 }
 
 namespace WebKit {
@@ -47,16 +48,13 @@ public:
     static PassRefPtr<WebCore::IDBFactoryBackendInterface> create();
     virtual ~IDBFactoryBackendProxy();
 
-    virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir);
-
-    virtual void open(const String& name, WebCore::IDBCallbacks*, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir);
-    virtual void openFromWorker(const String& name, WebCore::IDBCallbacks*, PassRefPtr<WebCore::SecurityOrigin>, WebCore::WorkerContext*, const String& dataDir);
-
-    virtual void deleteDatabase(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir);
+    virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir);
+    virtual void open(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir);
+    virtual void deleteDatabase(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir);
 
 private:
     IDBFactoryBackendProxy();
-    bool allowIDBFromWorkerThread(WebCore::WorkerContext*, const String& name, const WebSecurityOrigin&);
+    bool allowIndexedDB(WebCore::ScriptExecutionContext*, const String& name, const WebSecurityOrigin&, PassRefPtr<WebCore::IDBCallbacks>);
 
     // We don't own this pointer (unlike all the other proxy classes which do).
     WebIDBFactory* m_webIDBFactory;

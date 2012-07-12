@@ -35,6 +35,7 @@
 #include "DOMStringList.h"
 #include "IDBDatabaseBackendProxy.h"
 #include "IDBDatabaseError.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
@@ -70,20 +71,6 @@ IDBFactoryBackendProxy::IDBFactoryBackendProxy()
 
 IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
 {
-}
-
-void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir)
-{
-    WebSecurityOrigin origin(prpOrigin);
-    WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
-    WebViewImpl* webView = webFrame->viewImpl();
-
-    if (webView->permissionClient() && !webView->permissionClient()->allowIndexedDB(webFrame, "Database Listing", origin)) {
-        callbacks->onError(WebIDBDatabaseError(0, "The user denied permission to access the database."));
-        return;
-    }
-
-    m_webIDBFactory->getDatabaseNames(new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
 static const char allowIndexedDBMode[] = "allowIndexedDBMode";
@@ -161,60 +148,79 @@ private:
     WebWorkerBase* m_webWorkerBase;
 };
 
-bool IDBFactoryBackendProxy::allowIDBFromWorkerThread(WorkerContext* workerContext, const String& name, const WebSecurityOrigin&)
+bool IDBFactoryBackendProxy::allowIndexedDB(ScriptExecutionContext* context, const String& name, const WebSecurityOrigin& origin, PassRefPtr<IDBCallbacks> callbacks)
 {
+    bool allowed;
+    ASSERT(context->isDocument() || context->isWorkerContext());
+    if (context->isDocument()) {
+        Document* document = static_cast<Document*>(context);
+        WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
+        WebViewImpl* webView = webFrame->viewImpl();
+        allowed = webView->permissionClient() && webView->permissionClient()->allowIndexedDB(webFrame, name, origin);
+    } else {
+        WorkerContext* workerContext = static_cast<WorkerContext*>(context);
+        WebWorkerBase* webWorkerBase = static_cast<WebWorkerBase*>(&workerContext->thread()->workerLoaderProxy());
+        WorkerRunLoop& runLoop = workerContext->thread()->runLoop();
 
-    WebWorkerBase* webWorkerBase = static_cast<WebWorkerBase*>(&workerContext->thread()->workerLoaderProxy());
-    WorkerRunLoop& runLoop = workerContext->thread()->runLoop();
+        String mode = allowIndexedDBMode;
+        mode.append(String::number(runLoop.createUniqueId()));
+        RefPtr<AllowIndexedDBMainThreadBridge> bridge = AllowIndexedDBMainThreadBridge::create(webWorkerBase, mode, name);
 
-    String mode = allowIndexedDBMode;
-    mode.append(String::number(runLoop.createUniqueId()));
-    RefPtr<AllowIndexedDBMainThreadBridge> bridge = AllowIndexedDBMainThreadBridge::create(webWorkerBase, mode, name);
-
-    // Either the bridge returns, or the queue gets terminated.
-    if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated) {
-        bridge->cancel();
-        return false;
+        // Either the bridge returns, or the queue gets terminated.
+        if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated) {
+            bridge->cancel();
+            allowed = false;
+        } else
+            allowed = bridge->result();
     }
 
-    return bridge->result();
+    if (!allowed)
+        callbacks->onError(WebIDBDatabaseError(IDBDatabaseException::UNKNOWN_ERR, "The user denied permission to access the database."));
+
+    return allowed;
 }
 
-void IDBFactoryBackendProxy::openFromWorker(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> prpOrigin, WorkerContext* context, const String& dataDir)
+static WebFrameImpl* getWebFrame(ScriptExecutionContext* context)
 {
-#if ENABLE(WORKERS)
-    WebSecurityOrigin origin(prpOrigin);
-    if (!allowIDBFromWorkerThread(context, name, origin)) {
-        callbacks->onError(WebIDBDatabaseError(0, "The user denied permission to access the database."));
-        return;
+    ASSERT(context->isDocument() || context->isWorkerContext());
+    if (context->isDocument()) {
+        Document* document = static_cast<Document*>(context);
+        return WebFrameImpl::fromFrame(document->frame());
     }
-    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, /*webFrame*/0, dataDir);
-#endif
+    return 0;
 }
 
-void IDBFactoryBackendProxy::open(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir)
+void IDBFactoryBackendProxy::getDatabaseNames(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
 {
-    WebSecurityOrigin origin(prpOrigin);
-    WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
-    WebViewImpl* webView = webFrame->viewImpl();
-    if (webView->permissionClient() && !webView->permissionClient()->allowIndexedDB(webFrame, name, origin)) {
-        callbacks->onError(WebIDBDatabaseError(0, "The user denied permission to access the database."));
+    RefPtr<IDBCallbacks> callbacks(prpCallbacks);
+    WebSecurityOrigin origin(securityOrigin);
+    if (!allowIndexedDB(context, "Database Listing", origin, callbacks))
         return;
-    }
 
+    WebFrameImpl* webFrame = getWebFrame(context);
+    m_webIDBFactory->getDatabaseNames(new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
+}
+
+
+void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
+{
+    RefPtr<IDBCallbacks> callbacks(prpCallbacks);
+    WebSecurityOrigin origin(securityOrigin);
+    if (!allowIndexedDB(context, name, origin, callbacks))
+        return;
+
+    WebFrameImpl* webFrame = getWebFrame(context);
     m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 
-void IDBFactoryBackendProxy::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir)
+void IDBFactoryBackendProxy::deleteDatabase(const String& name, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
 {
-    WebSecurityOrigin origin(prpOrigin);
-    WebFrameImpl* webFrame = WebFrameImpl::fromFrame(frame);
-    WebViewImpl* webView = webFrame->viewImpl();
-    if (webView->permissionClient() && !webView->permissionClient()->allowIndexedDB(webFrame, name, origin)) {
-        callbacks->onError(WebIDBDatabaseError(0, "The user denied permission to access the database."));
+    RefPtr<IDBCallbacks> callbacks(prpCallbacks);
+    WebSecurityOrigin origin(securityOrigin);
+    if (!allowIndexedDB(context, name, origin, callbacks))
         return;
-    }
 
+    WebFrameImpl* webFrame = getWebFrame(context);
     m_webIDBFactory->deleteDatabase(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 }
 

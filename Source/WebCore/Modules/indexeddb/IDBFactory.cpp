@@ -63,70 +63,73 @@ IDBFactory::~IDBFactory()
 {
 }
 
+namespace {
+static bool isContextValid(ScriptExecutionContext* context)
+{
+    ASSERT(context->isDocument() || context->isWorkerContext());
+    if (context->isDocument()) {
+        Document* document = static_cast<Document*>(context);
+        return document->frame() && document->page();
+    }
+#if !ENABLE(WORKERS)
+    if (context->isWorkerContext())
+        return false;
+#endif
+    return true;
+}
+
+static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
+{
+    ASSERT(isContextValid(context));
+    if (context->isDocument()) {
+        Document* document = static_cast<Document*>(context);
+        return document->page()->group().groupSettings()->indexedDBDatabasePath();
+    }
+#if ENABLE(WORKERS)
+    WorkerContext* workerContext = static_cast<WorkerContext*>(context);
+    const GroupSettings* groupSettings = workerContext->groupSettings();
+    if (groupSettings)
+        return groupSettings->indexedDBDatabasePath();
+#endif
+    return String();
+}
+}
+
 PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* context)
 {
-    if (!context->isDocument()) {
-        // FIXME: make this work with workers.
-        return 0;
-    }
-
-    Document* document = static_cast<Document*>(context);
-    if (!document->frame() || !document->page())
+    if (!isContextValid(context))
         return 0;
 
-    RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this), 0);
-    GroupSettings* groupSettings = document->page()->group().groupSettings();
-    m_backend->getDatabaseNames(request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
+    m_backend->getDatabaseNames(request, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
     return request;
 }
 
 PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
-    ASSERT(context->isDocument() || context->isWorkerContext());
-
     if (name.isNull()) {
         ec = IDBDatabaseException::IDB_TYPE_ERR;
         return 0;
     }
-    if (context->isDocument()) {
-        Document* document = static_cast<Document*>(context);
-        if (!document->frame() || !document->page())
-            return 0;
-        Frame* frame = document->frame();
-        RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
-        m_backend->open(name, request.get(), context->securityOrigin(), frame, document->page()->group().groupSettings()->indexedDBDatabasePath());
-        return request;
-    }
-#if ENABLE(WORKERS)
+    if (!isContextValid(context))
+        return 0;
+
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
-    WorkerContext* workerContext = static_cast<WorkerContext*>(context);
-    const GroupSettings* groupSettings = workerContext->groupSettings();
-    m_backend->openFromWorker(name, request.get(), context->securityOrigin(), workerContext, groupSettings ? groupSettings->indexedDBDatabasePath() : String());
+    m_backend->open(name, request, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
     return request;
-#else
-    return 0;
-#endif
 }
 
 PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
-    if (!context->isDocument()) {
-        // FIXME: make this work with workers.
-        return 0;
-    }
-
-    Document* document = static_cast<Document*>(context);
-    if (!document->frame() || !document->page())
-        return 0;
-
     if (name.isNull()) {
         ec = IDBDatabaseException::IDB_TYPE_ERR;
         return 0;
     }
+    if (!isContextValid(context))
+        return 0;
 
-    RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(document, IDBAny::createNull(), "");
-    GroupSettings* groupSettings = document->page()->group().groupSettings();
-    m_backend->deleteDatabase(name, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
+    RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(context, IDBAny::createNull(), "");
+    m_backend->deleteDatabase(name, request, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
     return request;
 }
 
@@ -138,8 +141,8 @@ short IDBFactory::cmp(PassRefPtr<IDBKey> first, PassRefPtr<IDBKey> second, Excep
     if (!first->isValid() || !second->isValid()) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
-    }    
-    
+    }
+
     return static_cast<short>(first->compare(second.get()));
 }
 

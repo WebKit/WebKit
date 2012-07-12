@@ -186,7 +186,7 @@ private:
 class ExecutableWithDatabase : public RefCounted<ExecutableWithDatabase> {
 public:
     virtual ~ExecutableWithDatabase() { };
-    void start(IDBFactoryBackendInterface*, SecurityOrigin*, Frame*, const String& databaseName);
+    void start(IDBFactoryBackendInterface*, SecurityOrigin*, ScriptExecutionContext*, const String& databaseName);
     virtual void execute(PassRefPtr<IDBDatabaseBackendInterface>) = 0;
 };
 
@@ -233,10 +233,10 @@ private:
     RefPtr<ExecutableWithDatabase> m_executableWithDatabase;
 };
 
-void ExecutableWithDatabase::start(IDBFactoryBackendInterface* idbFactory, SecurityOrigin* securityOrigin, Frame* frame, const String& databaseName)
+void ExecutableWithDatabase::start(IDBFactoryBackendInterface* idbFactory, SecurityOrigin* securityOrigin, ScriptExecutionContext* context, const String& databaseName)
 {
     RefPtr<OpenDatabaseCallback> callback = OpenDatabaseCallback::create(this);
-    idbFactory->open(databaseName, callback.get(), securityOrigin, frame, String());
+    idbFactory->open(databaseName, callback.get(), securityOrigin, context, String());
 }
 
 static PassRefPtr<IDBTransactionBackendInterface> transactionForDatabase(IDBDatabaseBackendInterface* idbDatabase, const String& objectStoreName)
@@ -732,7 +732,7 @@ void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* errorStr
 
     RefPtr<GetDatabaseNamesCallback> callback = GetDatabaseNamesCallback::create(m_frontendProvider.get(), requestId, document->securityOrigin()->toString());
     GroupSettings* groupSettings = document->page()->group().groupSettings();
-    idbFactory->getDatabaseNames(callback.get(), document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath());
+    idbFactory->getDatabaseNames(callback.get(), document->securityOrigin(), document, groupSettings->indexedDBDatabasePath());
 }
 
 void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, int requestId, const String& frameId, const String& databaseName)
@@ -745,7 +745,7 @@ void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, int requ
         return;
 
     RefPtr<DatabaseLoaderCallback> databaseLoaderCallback = DatabaseLoaderCallback::create(m_frontendProvider.get(), requestId);
-    databaseLoaderCallback->start(idbFactory, document->securityOrigin(), document->frame(), databaseName);
+    databaseLoaderCallback->start(idbFactory, document->securityOrigin(), document, databaseName);
 }
 
 void InspectorIndexedDBAgent::requestData(ErrorString* errorString, int requestId, const String& frameId, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const RefPtr<InspectorObject>* keyRange)
@@ -769,7 +769,7 @@ void InspectorIndexedDBAgent::requestData(ErrorString* errorString, int requestI
     }
 
     RefPtr<DataLoaderCallback> dataLoaderCallback = DataLoaderCallback::create(m_frontendProvider, requestId, injectedScript, objectStoreName, indexName, idbKeyRange, skipCount, pageSize);
-    dataLoaderCallback->start(idbFactory, document->securityOrigin(), document->frame(), databaseName);
+    dataLoaderCallback->start(idbFactory, document->securityOrigin(), document, databaseName);
 }
 
 } // namespace WebCore

@@ -25,8 +25,9 @@ function test()
     request.onerror = unexpectedErrorCallback;
 }
 
-function getDatabaseNamesSuccess1()
+function getDatabaseNamesSuccess1(evt)
 {
+    event = evt;
     var databaseNames;
     evalAndLog("databaseNames = event.target.result");
     shouldBeFalse("databaseNames.contains('" + name + "')");
@@ -37,16 +38,18 @@ function getDatabaseNamesSuccess1()
     request.onerror = unexpectedErrorCallback;
 }
 
-function openSuccess()
+function openSuccess(evt)
 {
+    event = evt;
     evalAndLog("event.target.result.close()");
     request = evalAndLog("indexedDB.webkitGetDatabaseNames()");
     request.onsuccess = getDatabaseNamesSuccess2;
     request.onerror = unexpectedErrorCallback;
 }
 
-function getDatabaseNamesSuccess2()
+function getDatabaseNamesSuccess2(evt)
 {
+    event = evt;
     var databaseNames;
     evalAndLog("databaseNames = event.target.result");
     shouldBeTrue("databaseNames.contains('" + name + "')");
@@ -64,8 +67,9 @@ function deleteDatabaseSuccess()
     request.onerror = unexpectedErrorCallback;
 }
 
-function getDatabaseNamesSuccess3()
+function getDatabaseNamesSuccess3(evt)
 {
+    event = evt;
     var databaseNames;
     evalAndLog("databaseNames = event.target.result");
     shouldBeFalse("databaseNames.contains('" + name + "')");

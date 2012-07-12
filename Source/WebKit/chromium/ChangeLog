@@ -1,3 +1,21 @@
+2012-07-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Enable IDBFactory.deleteDatabase() and webkitGetDatabaseNames() in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=90310
+
+        Reviewed by Tony Chang.
+
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::allowIndexedDB): Consolidates user-prompting logic.
+        (WebKit::getWebFrame): Helper to dig out frame from Document, or null for Worker.
+        (WebKit::IDBFactoryBackendProxy::getDatabaseNames):
+        (WebKit):
+        (WebKit::IDBFactoryBackendProxy::open):
+        (WebKit::IDBFactoryBackendProxy::deleteDatabase):
+        * src/IDBFactoryBackendProxy.h: Update method signatures to match interface.
+        (WebCore):
+        (IDBFactoryBackendProxy):
+
 2012-07-12  Dana Jansens  <danakj@chromium.org>
 
         [chromium] The root layer should not try create a second RenderSurface for itself

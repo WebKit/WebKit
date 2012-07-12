@@ -1,0 +1,33 @@
+[Worker] Test the basics of IndexedDB's IDBFactory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/factory-basics.js
+[Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+[Worker] 
+PASS [Worker] typeof indexedDB.open is "function"
+PASS [Worker] typeof indexedDB.cmp is "function"
+PASS [Worker] typeof indexedDB.deleteDatabase is "function"
+PASS [Worker] typeof indexedDB.webkitGetDatabaseNames is "function"
+PASS [Worker] typeof indexedDB.getDatabaseNames is "undefined"
+[Worker] indexedDB.webkitGetDatabaseNames()
+[Worker] databaseNames = event.target.result
+PASS [Worker] databaseNames.contains('storage/indexeddb/factory-basics') is false
+PASS [Worker] databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
+[Worker] indexedDB.open(name)
+[Worker] event.target.result.close()
+[Worker] indexedDB.webkitGetDatabaseNames()
+[Worker] databaseNames = event.target.result
+PASS [Worker] databaseNames.contains('storage/indexeddb/factory-basics') is true
+PASS [Worker] databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
+[Worker] indexedDB.deleteDatabase('storage/indexeddb/factory-basics')
+[Worker] indexedDB.webkitGetDatabaseNames()
+[Worker] databaseNames = event.target.result
+PASS [Worker] databaseNames.contains('storage/indexeddb/factory-basics') is false
+PASS [Worker] databaseNames.contains('DATABASE THAT DOES NOT EXIST') is false
+[Worker] indexedDB.deleteDatabase('DATABASE THAT DOES NOT EXIST')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,38 @@
+2012-07-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Enable IDBFactory.deleteDatabase() and webkitGetDatabaseNames() in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=90310
+
+        Reviewed by Tony Chang.
+
+        Simplify Document vs. Worker logic for IDBFactory::open() and hook up the
+        other two IDBFactory methods for use by workers as well.
+
+        Test: storage/indexeddb/factory-basics-workers.html
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        (isContextValid): Helper function consolidating checks that context is usable.
+        (getIndexedDBDatabasePath): Helper function for accessing group settings.
+        (WebCore::IDBFactory::getDatabaseNames): Simplify - just pass context through to back end.
+        (WebCore::IDBFactory::open): Ditto.
+        (WebCore::IDBFactory::deleteDatabase): Ditto.
+        (WebCore::IDBFactory::cmp): Whitespace.
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp: Obsolete openFromWorker() removed.
+        (WebCore::IDBFactoryBackendImpl::getDatabaseNames): Signature updated.
+        (WebCore::IDBFactoryBackendImpl::deleteDatabase): Signature updated.
+        (WebCore::IDBFactoryBackendImpl::open): Signature updated.
+        * Modules/indexeddb/IDBFactoryBackendImpl.h:
+        (IDBFactoryBackendImpl):
+        * Modules/indexeddb/IDBFactoryBackendInterface.h: Interface methods now take both SecurityOrigin
+        and ScriptExecutionContext, but not Frame. In the proxy, SecurityOrigin is redundant (can be
+        accessed from context) but on the real back end the context is null (as Frame was previously).
+        (IDBFactoryBackendInterface):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNamesForFrame):
+        (WebCore::InspectorIndexedDBAgent::requestDatabase):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+
 2012-07-12  Dana Jansens  <danakj@chromium.org>
 
         [chromium] The root layer should not try create a second RenderSurface for itself
