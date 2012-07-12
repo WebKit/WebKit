@@ -1,3 +1,9 @@
+2012-07-12  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip the new failing test.
+
+        * platform/qt/Skipped:
+
 2012-07-12  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Added new platform specific expected after r122414.

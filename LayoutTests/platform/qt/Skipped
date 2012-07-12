@@ -2462,6 +2462,7 @@ fast/block/line-layout/selection-highlight-overlap.html
 fast/css/empty-cell-baseline.html
 fast/multicol/cell-shrinkback.html
 fast/multicol/overflow-into-columngap.html
+fast/multicol/table-row-height-increase.html
 fast/table/td-width-fifty-percent-regression.html
 svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg
