@@ -47,7 +47,9 @@
             'conditions': [
                 ['OS=="android"', {
                     'dependencies': [
+                        'WebKitUnitTests.gyp:webkit_unit_tests_apk',
                         '../../../Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:DumpRenderTree_apk',
+                        '../../../Tools/TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:TestWebKitAPI_apk',
                     ],
                 }],
             ],

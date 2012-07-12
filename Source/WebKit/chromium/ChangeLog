@@ -1,3 +1,15 @@
+2012-07-12  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Enable building APKs for TestWebKitAPI and webkit_unit_tests
+        https://bugs.webkit.org/show_bug.cgi?id=90989
+
+        Reviewed by Adam Barth.
+
+        Add dependencies on the webkit_unit_tests_apk and TestWebKitAPI_apk
+        targets for Android, making sure that we're generating the packages.
+
+        * All.gyp:
+
 2012-07-12  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Remove unrequired API in WebSurroundingText.
