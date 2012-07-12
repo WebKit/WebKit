@@ -99,7 +99,7 @@ PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Do
 {
     // Always build a #shadow-root for SVGUseElement.
     RefPtr<SVGUseElement> use = adoptRef(new SVGUseElement(tagName, document, wasInsertedByParser));
-    use->ensureShadowRoot();
+    use->createShadowSubtree();
     return use.release();
 }
 
@@ -107,6 +107,12 @@ SVGUseElement::~SVGUseElement()
 {
     if (m_cachedDocument)
         m_cachedDocument->removeClient(this);
+}
+
+void SVGUseElement::createShadowSubtree()
+{
+    ASSERT(!shadow());
+    ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot);
 }
 
 SVGElementInstance* SVGUseElement::instanceRoot()

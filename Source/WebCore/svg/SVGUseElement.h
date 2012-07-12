@@ -56,6 +56,8 @@ public:
 private:
     SVGUseElement(const QualifiedName&, Document*, bool wasInsertedByParser);
 
+    void createShadowSubtree();
+
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const { return true; }
 

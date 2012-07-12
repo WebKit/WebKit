@@ -1,3 +1,23 @@
+2012-07-11  Shinya Kawanaka  <shinyak@chromium.org> 
+
+        SVGUseElement should not use Element::ensureShadowRoot().
+        https://bugs.webkit.org/show_bug.cgi?id=90938
+
+        Reviewed by Hajime Morita.
+
+        We would like to remove Element::ensureShadowRoot() because we would like to stabilize the lifecycle of Shadow DOM.
+        This patch rewrites SVGUseElement::create() not to use Element::ensureShadowRoot(). Since our convention to create
+        a shadow subtree is to create a method createShadowSubtree(), I obeyed it.
+
+        No new tests. Simple refactoring.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::create):
+        (WebCore::SVGUseElement::createShadowSubtree):
+        (WebCore):
+        * svg/SVGUseElement.h:
+        (SVGUseElement):
+
 2012-07-11  Alexandre Elias  <aelias@google.com>
 
         [chromium] Move compositor quads to Platform/chromium/public
