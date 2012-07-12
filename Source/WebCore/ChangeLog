@@ -1,5 +1,16 @@
 2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Remove resources panel edited resources search support.
+        https://bugs.webkit.org/show_bug.cgi?id=91101
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.performSearch.callback):
+        (WebInspector.ResourcesPanel.prototype.performSearch):
+
+2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Unreviewed r122460 inspector closure compilation fix follow up.
 
         * inspector/front-end/RevisionHistoryView.js:
