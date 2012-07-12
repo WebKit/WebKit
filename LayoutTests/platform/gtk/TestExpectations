@@ -1252,7 +1252,7 @@ BUGWK90770 : fast/regions/webkit-flow-renderer-layer.html = IMAGE
 
 BUGWK89231 : fast/js/global-constructors.html = TEXT
 
-BUGWK91009 DEBUG : fast/xsl/xslt-missing-namespace-in-xsl.xml = TEXT
+BUGWK91009 DEBUG : fast/xsl/xslt-missing-namespace-in-xslt.xml = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
