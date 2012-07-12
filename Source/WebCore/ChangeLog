@@ -1,3 +1,9 @@
+2012-07-11  Kent Tamura  <tkent@chromium.org>
+
+        [Mac] Sort project.pbxproj
+
+        * WebCore.xcodeproj/project.pbxproj: Apply Tools/Scripts/sort-Xcode-project-file
+
 2012-07-11  Dan Bernstein  <mitz@apple.com>
 
         When a table row height grows because of pagination, not all cells’ heights are adjusted
