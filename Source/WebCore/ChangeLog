@@ -1,3 +1,27 @@
+2012-07-12  Pravin D  <pravind.2k4@gmail.com>
+
+        Row size/position is wrongly calculated when table having overlapping rowspan cell and colspan cell
+        https://bugs.webkit.org/show_bug.cgi?id=16811
+
+        Reviewed by Julien Chaffraix.
+
+        The height of a row is calculated by taking the max height of the cells contained in it. When a row contains
+        a rowSpan cell and if this row is not the last row of the cell, then its height is max height of other non
+        rowSpan cells. If the row is the last row of the rowSpan cell, then using the contraint laid by CSS2.1 spec
+        "For a rowSpan cell, the sum of the row heights involved must be great enough to encompass the cell spanning the rows",
+        the last remaining height of the rowSpan(cell height minus heights of other involved rows) is taken into consideration
+        while calculating the height of this row.
+        Currently when calculating the height of the row we are only using the height of the primary cell at position (row, col).
+        However when a row has colSpan cell and rowSpan, they might overlap. In such a sitution as only the primary cells height
+        is considered, the height of the row will be calculated worngly if the other overlapping cell has greater height.
+        Thus all the overlapping cell at position (row, col) must be considered while calculating the height of a row. 
+
+        Test: fast/table/last-cell-of-rowspan-overlapping-colspan-cell.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        Fixed function to use all the overlapping cells at position(row, col) to calculate the height/position of rows.
+
 2012-07-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Enable IDBFactory.deleteDatabase() and webkitGetDatabaseNames() in Workers

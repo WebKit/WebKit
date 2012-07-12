@@ -1,3 +1,13 @@
+2012-07-12  Pravin D  <pravind.2k4@gmail.com>
+
+        Row size/position is wrongly calculated when table having overlapping rowspan cell and colspan cell
+        https://bugs.webkit.org/show_bug.cgi?id=16811
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/table/last-cell-of-rowspan-overlapping-colspan-cell-expected.html: Added.
+        * fast/table/last-cell-of-rowspan-overlapping-colspan-cell.html: Added.
+
 2012-07-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Enable IDBFactory.deleteDatabase() and webkitGetDatabaseNames() in Workers
