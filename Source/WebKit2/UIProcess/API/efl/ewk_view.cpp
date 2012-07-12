@@ -34,6 +34,7 @@
 #include "ewk_view_loader_client_private.h"
 #include "ewk_view_private.h"
 #include "ewk_view_resource_load_client_private.h"
+#include "ewk_web_resource.h"
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
@@ -41,10 +42,13 @@ using namespace WebCore;
 
 static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
 
+typedef HashMap<uint64_t, Ewk_Web_Resource*> LoadingResourcesMap;
+
 struct _Ewk_View_Private_Data {
     OwnPtr<PageClientImpl> pageClient;
     const char* uri;
     const char* title;
+    LoadingResourcesMap loadingResourcesMap;
 };
 
 #define EWK_VIEW_TYPE_CHECK(ewkView, result)                                   \
@@ -567,10 +571,94 @@ Eina_Bool ewk_view_stop(Evas_Object* ewkView)
  */
 void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Web_Resource* resource, Ewk_Url_Request* request)
 {
-    Ewk_Web_Resource_Request resourceRequest = {resource, request};
-    // FIXME: We will need to store the resource and its identifier at some point
-    // to get the resource back from the identifier on resource load finish.
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    Ewk_Web_Resource_Request resourceRequest = {resource, request, 0};
+
+    // Keep the resource internally to reuse it later.
+    ewk_web_resource_ref(resource);
+    priv->loadingResourcesMap.add(resourceIdentifier, resource);
+
     evas_object_smart_callback_call(ewkView, "resource,request,new", &resourceRequest);
+}
+
+/**
+ * @internal
+ * Received a response to a resource load request in the view.
+ *
+ * Emits signal: "resource,request,response" with pointer to resource response.
+ */
+void ewk_view_resource_load_response(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Url_Response* response)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (!priv->loadingResourcesMap.contains(resourceIdentifier))
+        return;
+
+    Ewk_Web_Resource* resource = priv->loadingResourcesMap.get(resourceIdentifier);
+    Ewk_Web_Resource_Load_Response resourceLoadResponse = {resource, response};
+    evas_object_smart_callback_call(ewkView, "resource,request,response", &resourceLoadResponse);
+}
+
+/**
+ * @internal
+ * Failed loading a resource in the view.
+ *
+ * Emits signal: "resource,request,finished" with pointer to the resource load error.
+ */
+void ewk_view_resource_load_failed(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Web_Error* error)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (!priv->loadingResourcesMap.contains(resourceIdentifier))
+        return;
+
+    Ewk_Web_Resource* resource = priv->loadingResourcesMap.get(resourceIdentifier);
+    Ewk_Web_Resource_Load_Error resourceLoadError = {resource, error};
+    evas_object_smart_callback_call(ewkView, "resource,request,failed", &resourceLoadError);
+}
+
+/**
+ * @internal
+ * Finished loading a resource in the view.
+ *
+ * Emits signal: "resource,request,finished" with pointer to the resource.
+ */
+void ewk_view_resource_load_finished(Evas_Object* ewkView, uint64_t resourceIdentifier)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (!priv->loadingResourcesMap.contains(resourceIdentifier))
+        return;
+
+    Ewk_Web_Resource* resource = priv->loadingResourcesMap.take(resourceIdentifier);
+    evas_object_smart_callback_call(ewkView, "resource,request,finished", resource);
+
+    ewk_web_resource_unref(resource);
+}
+
+/**
+ * @internal
+ * Request was sent for a resource in the view.
+ *
+ * Emits signal: "resource,request,sent" with pointer to resource request and possible redirect response.
+ */
+void ewk_view_resource_request_sent(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Url_Request* request, Ewk_Url_Response* redirectResponse)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (!priv->loadingResourcesMap.contains(resourceIdentifier))
+        return;
+
+    Ewk_Web_Resource* resource = priv->loadingResourcesMap.get(resourceIdentifier);
+    Ewk_Web_Resource_Request resourceRequest = {resource, request, redirectResponse};
+
+    evas_object_smart_callback_call(ewkView, "resource,request,sent", &resourceRequest);
 }
 
 const char* ewk_view_title_get(const Evas_Object* ewkView)
@@ -773,6 +861,17 @@ void ewk_view_load_provisional_redirect(Evas_Object* ewkView)
  */
 void ewk_view_load_provisional_started(Evas_Object* ewkView)
 {
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    // The main frame started provisional load, we should clear
+    // the loadingResources HashMap to start clean.
+    LoadingResourcesMap::iterator it = priv->loadingResourcesMap.begin();
+    LoadingResourcesMap::iterator end = priv->loadingResourcesMap.end();
+    for ( ; it != end; ++it)
+        ewk_web_resource_unref(it->second);
+    priv->loadingResourcesMap.clear();
+
     evas_object_smart_callback_call(ewkView, "load,provisional,started", 0);
 }
 

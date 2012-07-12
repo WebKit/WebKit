@@ -1,3 +1,50 @@
+2012-07-11  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][EFL] Ewk_View should provide more resource loading notifications
+        https://bugs.webkit.org/show_bug.cgi?id=90601
+
+        Reviewed by Antonio Gomes.
+
+        Add new "resource,request,sent", "resource,request,response",
+        "resource,request,failed" and "resource,request,finished" to
+        Ewk_View in order to notify the clients of the main resource
+        load state changes.
+
+        Introduce new Ewk_Url_Response type that is used to provide
+        information to the clients regarding the resource load
+        responses that are received.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_url_response.cpp: Added.
+        (_Ewk_Url_Response):
+        (ewk_url_response_ref):
+        (ewk_url_response_unref):
+        (ewk_url_response_url_get):
+        (ewk_url_response_status_code_get):
+        (ewk_url_response_mime_type_get):
+        (ewk_url_response_new):
+        * UIProcess/API/efl/ewk_url_response.h: Added.
+        * UIProcess/API/efl/ewk_url_response_private.h: Added.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (ewk_view_resource_load_initiated):
+        (ewk_view_resource_load_response):
+        (ewk_view_resource_load_failed):
+        (ewk_view_resource_load_finished):
+        (ewk_view_resource_request_sent):
+        (ewk_view_load_provisional_started):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/ewk_view_resource_load_client.cpp:
+        (toEwkView):
+        (didInitiateLoadForResource):
+        (didSendRequestForResource):
+        (didReceiveResponseForResource):
+        (didFinishLoadForResource):
+        (didFailLoadForResource):
+        (ewk_view_resource_load_client_attach):
+
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
         Fix a logic error in the #if so that the correct code is compiled on Snow Leopard.
