@@ -1,3 +1,10 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        Attempt to fix the Chromium Mac build after r122400.
+
+        * platform/text/cf/HyphenationCF.cpp: Ensure that Chromium only compiles the body of this file if
+        building for a new enough version of OS X.
+
 2012-07-11  Kent Tamura  <tkent@chromium.org>
 
         [Mac] Sort project.pbxproj
