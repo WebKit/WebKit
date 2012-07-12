@@ -62,7 +62,7 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 {
     return [window convertRectToScreen:rect];

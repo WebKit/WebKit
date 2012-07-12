@@ -1,5 +1,13 @@
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
+        Fix a logic error in the #if so that the correct code is compiled on Snow Leopard.
+
+        I introduced this in r122403 when I inverted the sense of the #if.
+
+        * WebView/WebFullScreenController.mm:
+
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
         <http://webkit.org/b/91024> Build against the latest SDK when targeting older OS X versions.
 
         Reviewed by Dan Bernstein.
