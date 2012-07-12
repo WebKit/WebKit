@@ -464,6 +464,7 @@ static void resetDefaultsToConsistentValues()
                  "enable-caret-browsing", FALSE,
                  "enable-page-cache", FALSE,
                  "auto-resize-window", TRUE,
+                 "auto-load-images", TRUE,
                  "enable-java-applet", FALSE,
                  "enable-plugins", TRUE,
                  "enable-hyperlink-auditing", FALSE,

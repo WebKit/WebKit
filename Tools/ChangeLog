@@ -1,3 +1,15 @@
+2012-07-12  Arnaud Renevier  <arno@renevier.net>
+
+        [GTK] Implement disableImageLoading in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=87973
+
+        Reviewed by Martin Robinson.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::disableImageLoading):
+
 2012-07-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Internal symbols are exported on Linux

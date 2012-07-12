@@ -1210,7 +1210,7 @@ BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = TEXT
 
 BUGWK87088 : fast/js/names.html = TEXT
 
-BUGWK87973 : http/tests/misc/favicon-loads-with-images-disabled.html = TEXT
+BUGWKGTK   : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT
 
 BUGWK84102 : fast/profiler/dead-time.html = TEXT
 BUGWK84102 : fast/profiler/stop-profiling-after-setTimeout.html = TEXT

@@ -1,3 +1,15 @@
+2012-07-12  Arnaud Renevier  <arno@renevier.net>
+
+        [GTK] Implement disableImageLoading in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=87973
+
+        Reviewed by Martin Robinson.
+
+        Add TEXT expectation to favicon-loads-with-icon-loading-override.html
+        which was only working by accident.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-12  Adam Barth  <abarth@webkit.org>
 
         Parse the viewport meta tag like iOS
