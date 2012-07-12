@@ -186,6 +186,7 @@ void disposeUnderlyingV8Object(NPObject* npObject)
 #endif
     v8NpObject->v8Object.Dispose();
     v8NpObject->v8Object.Clear();
+    v8NpObject->rootObject = 0;
 }
 
 } // namespace WebCore
@@ -319,6 +320,9 @@ bool _NPN_EvaluateHelper(NPP npp, bool popupsAllowed, NPObject* npObject, NPStri
         return false;
 
     if (npObject->_class != npScriptObjectClass)
+        return false;
+    V8NPObject* v8NpObject = reinterpret_cast<V8NPObject*>(npObject);
+    if (v8NpObject->v8Object.IsEmpty())
         return false;
 
     v8::HandleScope handleScope;
