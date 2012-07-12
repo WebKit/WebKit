@@ -1628,6 +1628,28 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
 }
 
+TEST_F(CCLayerTreeHostImplTest, rootLayerDoesntCreateExtraSurface)
+{
+    CCLayerImpl* root = new FakeDrawableCCLayerImpl(1);
+    CCLayerImpl* child = new FakeDrawableCCLayerImpl(2);
+    child->setAnchorPoint(FloatPoint(0, 0));
+    child->setBounds(IntSize(10, 10));
+    child->setDrawsContent(true);
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setBounds(IntSize(10, 10));
+    root->setDrawsContent(true);
+    root->setOpacity(0.7f);
+    root->addChild(adoptPtr(child));
+
+    m_hostImpl->setRootLayer(adoptPtr(root));
+
+    CCLayerTreeHostImpl::FrameData frame;
+
+    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+    EXPECT_EQ(1u, frame.renderSurfaceLayerList->size());
+    EXPECT_EQ(1u, frame.renderPasses.size());
+}
+
 } // namespace
 
 class FakeLayerWithQuads : public CCLayerImpl {

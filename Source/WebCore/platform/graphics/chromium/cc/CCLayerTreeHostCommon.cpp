@@ -261,6 +261,11 @@ static inline bool subtreeShouldBeSkipped(LayerChromium* layer)
 template<typename LayerType>
 static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlignedWithRespectToParent)
 {
+    // The root layer has a special render surface that is set up externally, so
+    // it shouldn't be treated as a surface in this code.
+    if (!layer->parent())
+        return false;
+
     // Cache this value, because otherwise it walks the entire subtree several times.
     bool descendantDrawsContent = layer->descendantDrawsContent();
 
