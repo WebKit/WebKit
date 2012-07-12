@@ -1,3 +1,25 @@
+2012-07-12  Florin Malita  <fmalita@chromium.org>
+
+        Incorrect handling of chained pending resources in SVGUseElement
+        https://bugs.webkit.org/show_bug.cgi?id=89686
+
+        Reviewed by Nikolas Zimmermann.
+
+        Added reftest to verify that nested/indirect <use> constructs are
+        handled correctly WRT pending resource tracking.
+
+        Also updated the svg/hixie/error/017-expected.txt to match the current
+        results. Per comments in SVGUseElement::buildShadowAndInstanceTree, the
+        new behavior is correct: <use> cycles are to be ignored.
+
+        * platform/chromium-win/svg/hixie/error/017-expected.txt:
+        * platform/efl/svg/hixie/error/017-expected.txt:
+        * platform/gtk/svg/hixie/error/017-expected.txt:
+        * platform/mac/svg/hixie/error/017-expected.txt:
+        * platform/qt/svg/hixie/error/017-expected.txt:
+        * svg/custom/use-nested-expected.svg: Added.
+        * svg/custom/use-nested.svg: Added.
+
 2012-07-12  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, fixing a typo in test's filename in TestExpectations.

@@ -1,3 +1,41 @@
+2012-07-12  Florin Malita  <fmalita@chromium.org>
+
+        Incorrect handling of chained pending resources in SVGUseElement
+        https://bugs.webkit.org/show_bug.cgi?id=89686
+
+        Reviewed by Nikolas Zimmermann.
+
+        Currently SVGUseElement builds the shadow tree when the target first
+        becomes available. This is normally OK, but if the target itself (or
+        one of its children) is a <use> element with pending resources, then
+        the shadow expansion only captures the current state of the tree and
+        never gets updated when the pending resource becomes available.
+
+        In order to support arbitrary <use>-on-<use> constructs, this patch
+        tracks nested <use> dependencies and rebuilds the dependent trees
+        whenever the target gets updated.
+
+
+        Tests: svg/custom/use-nested-expected.svg
+               svg/custom/use-nested.svg
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::removedFrom): removedFrom needs to be called up the inheritance chain
+        before invoking removeAllElementReferencesForTarget. Otherwise we could end up finding the
+        element being removed as a valid target in SVGUseElement::buildInstanceTree because its
+        InDocument flag is not cleared yet.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::~SVGUseElement):
+        (WebCore::SVGUseElement::clearResourceReferences):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree):
+        (WebCore::SVGUseElement::buildInstanceTree):
+        * svg/SVGUseElement.h:
+        (SVGUseElement):
+        Track <use> -> <use> dependencies using SVGDocumentExtensions'
+        m_elementDependencies framework and ensure dependent trees are rebuilt
+        when the target itself gets rebuilt.
+
 2012-07-12  MORITA Hajime  <morrita@google.com>
 
         Typo: ParentTranversalDetails should be ParentTraversalDetails

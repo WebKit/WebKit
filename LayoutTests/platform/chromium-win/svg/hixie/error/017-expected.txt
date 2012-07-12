@@ -5,12 +5,8 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 0x0
         RenderSVGContainer {use} at (0,0) size 0x0
-          RenderSVGContainer {g} at (0,0) size 0x0
-            RenderSVGContainer {g} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 0x0
         RenderSVGContainer {use} at (0,0) size 0x0
-          RenderSVGContainer {g} at (0,0) size 0x0
-            RenderSVGContainer {g} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 0x0
         RenderSVGContainer {use} at (0,0) size 0x0
     RenderSVGContainer {g} at (0,0) size 0x0

@@ -173,12 +173,14 @@ void SVGElement::setXmlbase(const String& value, ExceptionCode&)
 
 void SVGElement::removedFrom(ContainerNode* rootParent)
 {
-    if (rootParent->inDocument()) {
+    bool wasInDocument = rootParent->inDocument();
+
+    StyledElement::removedFrom(rootParent);
+
+    if (wasInDocument) {
         document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(this);
         document()->accessSVGExtensions()->removeAllElementReferencesForTarget(this);
     }
-
-    StyledElement::removedFrom(rootParent);
 }
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
