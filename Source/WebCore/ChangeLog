@@ -1,3 +1,18 @@
+2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Simplify UISourceCode code after moving revisions support inside it.
+        https://bugs.webkit.org/show_bug.cgi?id=91118
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype._setContent):
+        (WebInspector.UISourceCode.prototype.revertToOriginal):
+        (WebInspector.UISourceCode.prototype.revertAndClearHistory):
+        (WebInspector.UISourceCode.prototype.contentChanged):
+        (WebInspector.UISourceCode.prototype.commitWorkingCopy):
+        (WebInspector.Revision.prototype.revertToThis):
+
 2012-07-12  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Unreviewed. Build fix for r122462.
