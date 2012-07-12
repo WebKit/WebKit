@@ -1,3 +1,90 @@
+2012-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        invalidateNodeListsCacheAfterAttributeChanged should dynamically figure out which attribute needs invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=91046
+
+        Reviewed by Anders Carlsson.
+
+        Added an array of counters (m_nodeListCounts) for each set of attributes (NodeListInvalidationType) node lists care about
+        to Document, and made DynamicSubtreeNodeList's constructor and destructor increment and decrement these counters via
+        registerDynamicSubtreeNodeList and unregisterDynamicSubtreeNodeList respectively. shouldInvalidateDynamicSubtreeNodeList,
+        which is called by invalidateNodeListsCacheAfterAttributeChanged, then use these counters to determine whether a given
+        attribute change should result in node list invalidations.
+
+        Also removed m_numNodeListCaches from TreeScope because this counter has now become redundant with m_nodeListCounts.
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList): Do not invalidate on attribute changes.
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList): Invalidate on class attribute changes.
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize m_nodeListCounts.
+        (WebCore::Document::~Document): Add assertions to make sure m_listsInvalidatedAtDocument, m_nodeListCounts, and
+        m_collections are all empty.
+        (WebCore::Document::registerDynamicSubtreeNodeList): This function is now called for all DynamicSubtreeNodeLists supposed
+        to just ones rooted at the document in order to increment the counter for each invalidation type.
+        (WebCore::Document::unregisterDynamicSubtreeNodeList): Ditto.
+        (WebCore::shouldInvalidateDynamicSubtreeNodeListForType): Checks the attribute name against NodeListInvalidationType.
+        (WebCore::Document::shouldInvalidateDynamicSubtreeNodeList): Returns true if the given attribute name matches the invalidation
+        type of the existing DynamicSubtreeNodeLists in the document. If the attribute name is not given (used when children change),
+        then it checks for the existence of any DynamicSubtreeNodeLists. Conceptually, this function can be written as a list of
+        "if" statements that checks values in m_nodeListCounts and the attribute name. We use "for" loop and switch statement instead
+        to share logic and detect future addition of values to NodeListInvalidationType.
+        * dom/Document.h:
+        (Document): Moved RootType and InvalidationType from DynamicNodeListCacheBase and renamed them to NodeListRootType and
+        NodeListInvalidationType respectively in order to reduce the possibility of future name collisions. Also the invalidation type
+        now contains 6 values instead of 2.
+        * dom/DynamicNodeList.cpp:
+        (WebCore):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::DynamicNodeListCacheBase): 
+        (WebCore::DynamicNodeListCacheBase::shouldInvalidateOnAttributeChange):
+        (WebCore::DynamicNodeListCacheBase::rootType): Added.
+        (WebCore::DynamicNodeListCacheBase::invalidationType): Added.
+        (DynamicNodeListCacheBase): Uses 3 bits to store invalidation type now that the number of values have increased from 2 to 6.
+        (WebCore::DynamicNodeList::DynamicNodeList):
+        (WebCore::DynamicSubtreeNodeList::~DynamicSubtreeNodeList): Call unregisterDynamicSubtreeNodeList.
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList): Call registerDynamicSubtreeNodeList.
+        * dom/MicroDataItemList.cpp:
+        (WebCore::MicroDataItemList::MicroDataItemList): Invalidate on itemscope, itemprop, and itemtype content attribute changes.
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList): Invalidate on name attribute changes.
+        * dom/Node.cpp:
+        (WebCore::Node::clearRareData):
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged): Replaced the hard coded check list of attributes, by a call
+        to shouldInvalidateDynamicSubtreeNodeList.
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged): Calls shouldInvalidateDynamicSubtreeNodeList.
+        (WebCore::Node::getElementsByTagName):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        (WebCore::Node::radioNodeList):
+        (WebCore::NodeRareData::createNodeLists):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptTreeScope): Unregister and register node lists in m_tagNodeListCacheNS since all node lists
+        need to be accounted in m_nodeListCounts.
+        (WebCore::NodeRareData::ensureNodeLists):
+        (NodeRareData):
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList): Do not invalidate on any attribute changes.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope): No longer initializes m_numNodeListCaches since it has been removed.
+        * dom/TreeScope.h:
+        (TreeScope): Removed m_numNodeListCaches.
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollectionCacheBase::HTMLCollectionCacheBase): Just pass in DoNotInvalidateOnAttributeChanges for now since
+        it's never used in HTMLCollections.
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList): Invalidate on for content attribute changes.
+        (WebCore::LabelsNodeList::~LabelsNodeList):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList): Invalidate on id, name, and for content attribute changes.
+        (WebCore::RadioNodeList::~RadioNodeList):
+
 2012-07-12  Gavin Barraclough  <barraclough@apple.com>
 
         Threadsafety issues in WebScriptObject

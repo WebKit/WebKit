@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 NameNodeList::NameNodeList(PassRefPtr<Node> rootNode, const AtomicString& name)
-    : DynamicSubtreeNodeList(rootNode)
+    : DynamicSubtreeNodeList(rootNode, InvalidateOnNameAttrChange)
     , m_name(name)
 {
 }

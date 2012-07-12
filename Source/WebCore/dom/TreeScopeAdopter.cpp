@@ -49,7 +49,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
     for (Node* node = root; node; node = node->traverseNextNode(root)) {
         NodeRareData* rareData = node->setTreeScope(newDocument == m_newScope ? 0 : m_newScope);
         if (rareData && rareData->nodeLists())
-            rareData->nodeLists()->adoptTreeScope(m_oldScope, m_newScope, oldDocument, newDocument);
+            rareData->nodeLists()->adoptTreeScope(oldDocument, newDocument);
 
         if (willMoveToNewDocument)
             moveNodeToNewDocument(node, oldDocument, newDocument);

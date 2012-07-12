@@ -28,7 +28,7 @@
 namespace WebCore {
 
 ChildNodeList::ChildNodeList(PassRefPtr<Node> node)
-    : DynamicNodeList(node, RootedAtNode, DoNotInvalidateOnAttributeChange)
+    : DynamicNodeList(node, NodeListIsRootedAtNode, DoNotInvalidateOnAttributeChanges)
 {
 }
 

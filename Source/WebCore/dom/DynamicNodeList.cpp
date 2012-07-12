@@ -28,10 +28,6 @@
 
 namespace WebCore {
 
-DynamicSubtreeNodeList::~DynamicSubtreeNodeList()
-{
-}
-
 unsigned DynamicSubtreeNodeList::length() const
 {
     if (isLengthCacheValid())

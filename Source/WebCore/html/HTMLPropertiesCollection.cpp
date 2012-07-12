@@ -153,15 +153,6 @@ unsigned HTMLPropertiesCollection::calcLength() const
     return length;
 }
 
-void HTMLPropertiesCollection::cacheFirstItem() const
-{
-    for (unsigned i = 0; i < m_itemRefElements.size(); ++i) {
-        if (HTMLElement* element = itemAfter(m_itemRefElements[i], 0))
-            return setItemCache(element, 0, i);
-    }
-    setItemCache(0, 0, 0);
-}
-
 void HTMLPropertiesCollection::updateNameCache() const
 {
     invalidateCacheIfNeeded();

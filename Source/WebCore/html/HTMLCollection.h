@@ -40,7 +40,7 @@ class NodeList;
 class HTMLCollectionCacheBase : public DynamicNodeListCacheBase {
 public:
     HTMLCollectionCacheBase(CollectionType type, bool includeChildren)
-        : DynamicNodeListCacheBase(RootedAtNode, AlwaysInvalidate) // These two flags are never used
+        : DynamicNodeListCacheBase(NodeListIsRootedAtNode, DoNotInvalidateOnAttributeChanges) // These two flags are never used
         , m_cachedElementsArrayOffset(0)
         , m_cacheTreeVersion(0)
         , m_hasNameCache(false)

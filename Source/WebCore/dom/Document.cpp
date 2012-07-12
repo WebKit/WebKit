@@ -564,7 +564,10 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 
     static int docID = 0;
     m_docID = docID++;
-    
+
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListCounts); i++)
+        m_nodeListCounts[i] = 0;
+
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_collections); i++)
         m_collections[i] = 0;
 
@@ -647,6 +650,14 @@ Document::~Document()
     // as well as Node. See a comment on TreeScope.h for the reason.
     if (hasRareData())
         clearRareData();
+
+    ASSERT(!m_listsInvalidatedAtDocument.size());
+
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListCounts); i++)
+        ASSERT(!m_nodeListCounts[i]);
+
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_collections); i++)
+        ASSERT(!m_collections[i]);
 
     m_document = 0;
 
@@ -3865,14 +3876,60 @@ void Document::setCSSTarget(Element* n)
         n->setNeedsStyleRecalc();
 }
 
-void Document::registerDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
+void Document::registerDynamicSubtreeNodeList(DynamicSubtreeNodeList* list, NodeListRootType rootType, NodeListInvalidationType invalidationType)
 {
-    m_listsInvalidatedAtDocument.add(list);
+    m_nodeListCounts[invalidationType]++;
+    if (rootType == NodeListIsRootedAtDocument)
+        m_listsInvalidatedAtDocument.add(list);
 }
 
-void Document::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
+void Document::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list, NodeListRootType rootType, NodeListInvalidationType invalidationType)
 {
-    m_listsInvalidatedAtDocument.remove(list);
+    m_nodeListCounts[invalidationType]--;
+    if (rootType == NodeListIsRootedAtDocument) {
+        ASSERT(m_listsInvalidatedAtDocument.contains(list));
+        m_listsInvalidatedAtDocument.remove(list);
+    }
+}
+
+static ALWAYS_INLINE bool shouldInvalidateNodeListForType(NodeListInvalidationType type, const QualifiedName& attrName)
+{
+    switch (type) {
+    case InvalidateOnClassAttrChange:
+        return attrName == classAttr;
+    case InvalidateOnNameAttrChange:
+        return attrName == nameAttr;
+    case InvalidateOnForAttrChange:
+        return attrName == forAttr;
+    case InvalidateOnIdNameForAttrChange:
+        return attrName == nameAttr || attrName == idAttr || attrName == forAttr;
+    case InvalidateOnItemAttrChange:
+#if ENABLE(MICRODATA)
+        return attrName == itemscopeAttr || attrName == itempropAttr || attrName == itemtypeAttr;
+#endif // Intentionally fall through
+    case DoNotInvalidateOnAttributeChanges:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    return false;
+}
+
+bool Document::shouldInvalidateDynamicSubtreeNodeList(const QualifiedName* attrName) const
+{
+    if (attrName) {
+        for (int type = DoNotInvalidateOnAttributeChanges + 1; type < numNodeListInvalidationTypes; type++) {
+            if (m_nodeListCounts[type] && shouldInvalidateNodeListForType(static_cast<NodeListInvalidationType>(type), *attrName))
+                return true;
+        }
+        return false;
+    }
+
+    for (int type = 0; type < numNodeListInvalidationTypes; type++) {
+        if (m_nodeListCounts[type])
+            return true;
+    }
+
+    return false;
 }
 
 void Document::clearNodeListCaches()
@@ -5965,7 +6022,7 @@ PassRefPtr<NodeList> Document::getItems(const String& typeNames)
     // In this case we need to create an unique string identifier to map such request in the cache.
     String localTypeNames = typeNames.isNull() ? MicroDataItemList::undefinedItemType() : typeNames;
 
-    return ensureRareData()->ensureNodeLists(this)->addCacheWithName<MicroDataItemList>(this, DynamicNodeList::MicroDataItemListType, localTypeNames);
+    return ensureRareData()->ensureNodeLists()->addCacheWithName<MicroDataItemList>(this, DynamicNodeList::MicroDataItemListType, localTypeNames);
 }
 #endif
 

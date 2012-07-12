@@ -36,26 +36,19 @@ class Node;
 
 class DynamicNodeListCacheBase {
 public:
-    enum RootType {
-        RootedAtNode,
-        RootedAtDocument,
-    };
-
-    enum InvalidationType {
-        AlwaysInvalidate,
-        DoNotInvalidateOnAttributeChange,
-    };
-
-    DynamicNodeListCacheBase(RootType rootType, InvalidationType invalidationType)
-        : m_rootedAtDocument(rootType == RootedAtDocument)
-        , m_shouldInvalidateOnAttributeChange(invalidationType == AlwaysInvalidate)
+    DynamicNodeListCacheBase(NodeListRootType rootType, NodeListInvalidationType invalidationType)
+        : m_rootedAtDocument(rootType == NodeListIsRootedAtDocument)
+        , m_invalidationType(invalidationType)
     {
+        ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
         clearCache();
     }
 
 public:
     ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootedAtDocument; }
-    ALWAYS_INLINE bool shouldInvalidateOnAttributeChange() const { return m_shouldInvalidateOnAttributeChange; }
+    ALWAYS_INLINE bool shouldInvalidateOnAttributeChange() const { return m_invalidationType != DoNotInvalidateOnAttributeChanges; }
+    ALWAYS_INLINE NodeListRootType rootType() { return m_rootedAtDocument ? NodeListIsRootedAtDocument : NodeListIsRootedAtNode; }
+    ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
 
 protected:
     ALWAYS_INLINE bool isItemCacheValid() const { return m_isItemCacheValid; }
@@ -92,7 +85,7 @@ private:
 
     // From DynamicNodeList
     const unsigned m_rootedAtDocument : 1;
-    const unsigned m_shouldInvalidateOnAttributeChange : 1;
+    const unsigned m_invalidationType : 3;
 };
 
 class DynamicNodeList : public NodeList, public DynamicNodeListCacheBase {
@@ -106,7 +99,7 @@ public:
         LabelsNodeListType,
         MicroDataItemListType,
     };
-    DynamicNodeList(PassRefPtr<Node> ownerNode, RootType rootType, InvalidationType invalidationType)
+    DynamicNodeList(PassRefPtr<Node> ownerNode, NodeListRootType rootType, NodeListInvalidationType invalidationType)
         : DynamicNodeListCacheBase(rootType, invalidationType)
         , m_ownerNode(ownerNode)
     { }
@@ -138,14 +131,19 @@ private:
 
 class DynamicSubtreeNodeList : public DynamicNodeList {
 public:
-    virtual ~DynamicSubtreeNodeList();
+    virtual ~DynamicSubtreeNodeList()
+    {
+        document()->unregisterDynamicSubtreeNodeList(this, rootType(), invalidationType());
+    }
     virtual unsigned length() const OVERRIDE;
     virtual Node* item(unsigned index) const OVERRIDE;
 
 protected:
-    DynamicSubtreeNodeList(PassRefPtr<Node> node, RootType rootType = RootedAtNode, InvalidationType invalidationType = AlwaysInvalidate)
+    DynamicSubtreeNodeList(PassRefPtr<Node> node, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
         : DynamicNodeList(node, rootType, invalidationType)
-    { }
+    {
+        document()->registerDynamicSubtreeNodeList(this, rootType, invalidationType);
+    }
 
 private:
     Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;

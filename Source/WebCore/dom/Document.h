@@ -186,6 +186,21 @@ enum PageshowEventPersistence {
 
 enum StyleResolverUpdateFlag { RecalcStyleImmediately, DeferRecalcStyle, RecalcStyleIfNeeded };
 
+enum NodeListRootType {
+    NodeListIsRootedAtNode,
+    NodeListIsRootedAtDocument,
+};
+
+enum NodeListInvalidationType {
+    DoNotInvalidateOnAttributeChanges = 0,
+    InvalidateOnClassAttrChange,
+    InvalidateOnNameAttrChange,
+    InvalidateOnForAttrChange,
+    InvalidateOnIdNameForAttrChange,
+    InvalidateOnItemAttrChange,
+};
+const int numNodeListInvalidationTypes = InvalidateOnItemAttrChange + 1;
+
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
     static PassRefPtr<Document> create(Frame* frame, const KURL& url)
@@ -723,8 +738,9 @@ public:
     bool isPendingStyleRecalc() const;
     void styleRecalcTimerFired(Timer<Document>*);
 
-    void registerDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
-    void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
+    void registerDynamicSubtreeNodeList(DynamicSubtreeNodeList*, NodeListRootType, NodeListInvalidationType);
+    void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*, NodeListRootType, NodeListInvalidationType);
+    bool shouldInvalidateDynamicSubtreeNodeList(const QualifiedName* attrName = 0) const;
     void clearNodeListCaches();
 
     void attachNodeIterator(NodeIterator*);
@@ -1409,6 +1425,7 @@ private:
     InheritedBool m_designMode;
 
     HashSet<DynamicSubtreeNodeList*> m_listsInvalidatedAtDocument;
+    unsigned m_nodeListCounts[numNodeListInvalidationTypes];
 
     HTMLCollection* m_collections[NumUnnamedDocumentCachedTypes];
     typedef HashMap<AtomicString, HTMLNameCollection*> NamedCollectionMap;

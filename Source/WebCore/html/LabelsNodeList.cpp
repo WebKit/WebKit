@@ -34,15 +34,13 @@ namespace WebCore {
 using namespace HTMLNames;
 
 LabelsNodeList::LabelsNodeList(Node* forNode)
-    : DynamicSubtreeNodeList(forNode, RootedAtDocument)
+    : DynamicSubtreeNodeList(forNode, InvalidateOnForAttrChange, NodeListIsRootedAtDocument)
 {
-    document()->registerDynamicSubtreeNodeList(this);
 }
 
 LabelsNodeList::~LabelsNodeList()
 {
     ownerNode()->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::LabelsNodeListType, starAtom);
-    document()->unregisterDynamicSubtreeNodeList(this);
 } 
     
 bool LabelsNodeList::nodeMatches(Element* testNode) const
