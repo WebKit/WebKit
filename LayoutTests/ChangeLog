@@ -1,3 +1,16 @@
+2012-07-12  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening after r122408 and r122414
+        https://bugs.webkit.org/show_bug.cgi?id=91069
+
+        Unreviewed gardening. Add new baseline for state-restore-skip-stateless.html
+        after r122414 and update expected results for table-vertical-align.html after
+        r122408.
+
+        * platform/efl/fast/forms/state-restore-skip-stateless-expected.txt:
+        * platform/efl/fast/multicol/table-vertical-align-expected.png:
+        * platform/efl/fast/multicol/table-vertical-align-expected.txt:
+
 2012-07-12  Simon Pena  <spena@igalia.com>
 
         [GTK] Gardening: rebaseline after r122414
