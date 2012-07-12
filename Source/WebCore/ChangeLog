@@ -1,3 +1,16 @@
+2012-07-12  Dongwoo Im  <dw.im@samsung.com>
+
+        InspectorFileSystemAgent.cpp have to include File.h explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=91078
+
+        Reviewed by Vsevolod Vlasov.
+
+        Make sure the InspectorFileSystemAgent.cpp include the File.h by including explicitly.
+
+        No new tests. Covered by existing tests.
+
+        * inspector/InspectorFileSystemAgent.cpp: Include File.h
+
 2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] Stale revisions should be removed on navigation.
