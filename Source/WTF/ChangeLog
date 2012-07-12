@@ -1,5 +1,15 @@
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
+        Replace definitions of BUILDING_ON / TARGETING macros with macros that will error when used.
+
+        Part of <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros.
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Platform.h:
+
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
         Switch a few cases that care about the SDK over to checking __MAC_OS_X_VERSION_MAX_ALLOWED so that things build.
 
         Part of <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros

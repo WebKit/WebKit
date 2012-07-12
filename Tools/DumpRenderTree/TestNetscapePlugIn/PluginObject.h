@@ -29,14 +29,6 @@
 #include <WebKit/npfunctions.h>
 #include <stdarg.h>
 
-#if defined(XP_MACOSX)
-#if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
-#define BUILDING_ON_LEOPARD 1
-#elif !defined(MAC_OS_X_VERSION_10_7) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
-#define BUILDING_ON_SNOW_LEOPARD 1
-#endif
-#endif // XP_MACOSX
-
 class PluginTest;
 
 extern NPNetscapeFuncs *browser;
