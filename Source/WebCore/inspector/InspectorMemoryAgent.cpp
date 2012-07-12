@@ -548,6 +548,7 @@ public:
     void visitBindings()
     {
         ScriptProfiler::collectBindingMemoryInfo(&m_domMemoryUsage);
+        m_domMemoryUsage.processDeferredInstrumentedPointers();
     }
 
     PassRefPtr<InspectorMemoryBlock> dumpStatistics(InspectorDataCounter* inspectorData)

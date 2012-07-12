@@ -102,10 +102,11 @@ class ChunkedTable {
             visitEntries(store, chunk->m_entries, chunk->m_entries + CHUNK_SIZE, visitor);
     }
 
-    void reportMemoryUsage(MemoryInstrumentation* instrumentation)
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::Binding);
         for (Chunk* chunk = m_chunks; chunk; chunk = chunk->m_previous)
-            instrumentation->reportPointer(chunk, MemoryInstrumentation::Binding);
+            memoryObjectInfo->reportPointer(chunk, MemoryInstrumentation::Binding);
     }
 
   private:
@@ -183,10 +184,10 @@ public:
         m_table.clear();
     }
 
-    virtual void reportMemoryUsage(MemoryInstrumentation* instrumentation) OVERRIDE
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
-        instrumentation->reportPointer(this, MemoryInstrumentation::Binding);
-        m_table.reportMemoryUsage(instrumentation);
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::Binding);
+        memoryObjectInfo->reportInstrumentedObject(m_table);
     }
 
 private:

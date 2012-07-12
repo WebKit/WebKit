@@ -1,3 +1,48 @@
+2012-07-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: fix native memory instrumentation code for the bindings instrumentation.
+        https://bugs.webkit.org/show_bug.cgi?id=91096
+
+        The instrumented class has to have instrumentation method which reports class size and type and
+        the member objects and pointers.
+
+        Sample:
+        void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+        {
+            memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM); // report object size and type.
+            TreeShared<Node, ContainerNode>::reportMemoryUsage(memoryObjectInfo); // call base class instrumentation.
+            ScriptWrappable::reportMemoryUsage(memoryObjectInfo); // call base class instrumentation.
+            memoryObjectInfo->reportPointer(m_document, MemoryInstrumentation::DOM); // report uninstrumented pointer.
+            memoryObjectInfo->reportInstrumentedPointer(m_next); // report instrumented pointer.
+            memoryObjectInfo->reportInstrumentedObject(m_anObject); // report instrumented object.
+        }
+
+        Reviewed by Pavel Feldman.
+
+        Existing tests for native memory instrumentation.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore):
+        (DOMDataStore):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::ChunkedTable::reportMemoryUsage):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::collectBindingMemoryInfo):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::reportMemoryUsage):
+        (WebCore::StringCache::reportMemoryUsage):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        (StringCache):
+        (V8BindingPerIsolateData):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore):
+        (AbstractWeakReferenceMap):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+
 2012-07-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: beautify find bar looks, simplify search update routines.
