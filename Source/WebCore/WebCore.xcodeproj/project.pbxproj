@@ -8787,9 +8787,6 @@
 		63189AE20E83A33300012E41 /* NodeRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRareData.h; sourceTree = "<group>"; };
 		637B7ADE0E8767B800E32194 /* ElementRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementRareData.h; sourceTree = "<group>"; };
 		63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRenderStyle.h; sourceTree = "<group>"; };
-		6458284415AB27C800BBF91A /* NavigatorRegisterProtocolHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp; sourceTree = "<group>"; };
-		6458284515AB27C800BBF91A /* NavigatorRegisterProtocolHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Modules/protocolhandler/NavigatorRegisterProtocolHandler.h; sourceTree = "<group>"; };
-		6458284615AB27C800BBF91A /* NavigatorRegisterProtocolHandler.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl; sourceTree = "<group>"; };
 		650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSGrammar.h; sourceTree = "<group>"; };
 		650FBF270D9AF046008FC292 /* SVGHKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGHKernElement.cpp; sourceTree = "<group>"; };
 		650FBF280D9AF047008FC292 /* SVGHKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGHKernElement.h; sourceTree = "<group>"; };
@@ -15296,17 +15293,6 @@
 				76FF17E211235673001D61B5 /* PluginViewNone.cpp */,
 			);
 			path = plugins;
-			sourceTree = "<group>";
-		};
-		6458284315AB27C800BBF91A /* protocolhandler */ = {
-			isa = PBXGroup;
-			children = (
-				6458284415AB27C800BBF91A /* NavigatorRegisterProtocolHandler.cpp */,
-				6458284515AB27C800BBF91A /* NavigatorRegisterProtocolHandler.h */,
-				6458284615AB27C800BBF91A /* NavigatorRegisterProtocolHandler.idl */,
-			);
-			name = protocolhandler;
-			path = Modules/protocolhandler;
 			sourceTree = "<group>";
 		};
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
