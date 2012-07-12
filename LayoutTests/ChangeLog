@@ -1,3 +1,18 @@
+2012-07-12  Adam Barth  <abarth@webkit.org>
+
+        LayoutTests/platform/google-chrome-linux32 and google-chrome-linux64 are empty and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=91114
+
+        Reviewed by Tony Chang.
+
+        These directories are empty and haven't been touched in over a year.
+        We should remove them.
+
+        * platform/google-chrome-linux32: Removed.
+        * platform/google-chrome-linux32/README: Removed.
+        * platform/google-chrome-linux64: Removed.
+        * platform/google-chrome-linux64/README: Removed.
+
 2012-07-12  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Unreviewed gardening. Re-baseline expected text for fast/multicol/table-vertical-align.html
