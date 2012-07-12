@@ -1,3 +1,15 @@
+2012-07-12  Pravin D  <pravind.2k4@gmail.com>
+
+        Percentage width replaced element in zero percent/fixed width container block incorrectly rendered.
+        https://bugs.webkit.org/show_bug.cgi?id=9493
+
+        Reviewed by Andy Estes.
+
+        * fast/css/percent-width-img-inside-zero-percent-and-fixed-container-expected.html: Added.
+        * fast/css/percent-width-img-inside-zero-percent-and-fixed-container.html: Added.
+        * fast/css/resources/red-box.png: Added.
+          Image resource file for the test case.
+
 2012-07-12  Dirk Pranke  <dpranke@chromium.org>
 
         Remove chromium-mac-leopard baselines.

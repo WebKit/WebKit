@@ -1,3 +1,21 @@
+2012-07-12  Pravin D  <pravind.2k4@gmail.com>
+
+        Percentage width replaced element in zero percent/fixed width container block incorrectly rendered.
+        https://bugs.webkit.org/show_bug.cgi?id=9493
+
+        Reviewed by Andy Estes.
+
+        When the width of the container is zero percent/fixed value then the width of the replaced element must also be zero.
+
+        Test: fast/css/percent-width-img-inside-zero-percent-and-fixed-container.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+          When the containing block's available width is zero there can be two cases.
+          The containing block is floated/positioned in which case the width of the replaced child element must be its instrinsic width.
+          On the other hand if the width of the container is specified to be either zero percent or fixed value then the width of the
+          replaced elment must be zero.
+
 2012-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         invalidateNodeListsCacheAfterAttributeChanged should dynamically figure out which attribute needs invalidation

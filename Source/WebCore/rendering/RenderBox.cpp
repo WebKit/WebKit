@@ -2205,7 +2205,10 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(SizeType sizeType, Length
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
             const LayoutUnit cw = isOutOfFlowPositioned() ? containingBlockLogicalWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
-            if (cw > 0)
+            Length containerLogicalWidth = containingBlock()->style()->logicalWidth();
+            // FIXME: Handle cases when containing block width is calculated or viewport percent.
+            // https://bugs.webkit.org/show_bug.cgi?id=91071
+            if (cw > 0 || (!cw && (containerLogicalWidth.isFixed() || containerLogicalWidth.isPercent())))
                 return computeContentBoxLogicalWidth(minimumValueForLength(logicalWidth, cw));
         }
         // fall through
