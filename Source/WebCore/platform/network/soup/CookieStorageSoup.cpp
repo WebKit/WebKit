@@ -37,8 +37,10 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 }
 
 #if USE(PLATFORM_STRATEGIES)
-static void soupCookiesChanged(SoupCookieJar*, SoupCookie*, SoupCookie*, gpointer)
+static void soupCookiesChanged(SoupCookieJar* jar, SoupCookie*, SoupCookie*, gpointer)
 {
+    if (jar != soupCookieJar())
+        return;
     platformStrategies()->cookiesStrategy()->notifyCookiesChanged();
 }
 #endif

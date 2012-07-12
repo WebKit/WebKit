@@ -636,7 +636,9 @@ webkit_find_controller_get_type
 <SECTION>
 <FILE>WebKitCookieManager</FILE>
 WebKitCookieManager
+WebKitCookiePersistentStorage
 WebKitCookieAcceptPolicy
+webkit_cookie_manager_set_persistent_storage
 webkit_cookie_manager_set_accept_policy
 webkit_cookie_manager_get_accept_policy
 webkit_cookie_manager_get_accept_policy_finish

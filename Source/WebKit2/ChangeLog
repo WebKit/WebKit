@@ -1,3 +1,66 @@
+2012-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_cookie_manager_set_persistent_storage() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=83016
+
+        Reviewed by Martin Robinson.
+
+        Add a custom implementation of SoupCookieJarSqlite based on
+        libsoup code but using WebCore SQLite classes. SoupCookieJarSqlite
+        is part of libsoup-gnome, it's not a lot of code and it doesn't
+        change often, so it's better to simply have our own implementation
+        instead of making this important feature depend on an optional
+        dependency. There are plans to move the implementation to libsoup,
+        if that eventually happens we will remove our code to use libsoup
+        directly.
+
+        * GNUmakefile.am: Add new dirs to include path.
+        * GNUmakefile.list.am: Add new files to compilation.
+        * PlatformEfl.cmake: Ditto.
+        * Shared/soup/SoupCookiePersistentStorageType.h: Added.
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (webkit_cookie_manager_set_persistent_storage): Set a persistent
+        storage for cookies.
+        * UIProcess/API/gtk/WebKitCookieManager.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols
+        * UIProcess/API/gtk/tests/TestCookieManager.cpp:
+        (testCookieManagerPersistentStorage):
+        (serverCallback):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/WebCookieManagerProxy.h:
+        (WebCookieManagerProxy): Add setCookiePersistentStorage() method
+        when using soup.
+        * UIProcess/soup/WebCookieManagerProxySoup.cpp: Added.
+        (WebKit::WebCookieManagerProxy::setCookiePersistentStorage): Send
+        SetCookiePersistentStorage message to the web process.
+        * WebProcess/Cookies/WebCookieManager.h:
+        (WebCookieManager): Add setCookiePersistentStorage() method when
+        using soup.
+        * WebProcess/Cookies/WebCookieManager.messages.in: Add
+        SetCookiePersistentStorage message when using soup.
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::setCookiePersistentStorage): Create a
+        new cookie jar for the given filename and storage type and add it
+        to the soup session.
+        * WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp: Added.
+        (webkitSoupCookieJarSqliteOpenDatabase): Open SQLite database.
+        (webkitSoupCookieJarSqliteCreateTable): Create moz_cookies if it
+        doesn't exist.
+        (webkitSoupCookieJarSqliteLoad): Load the initial set of cookies
+        from the database.
+        (webkitSoupCookieJarSqliteInsertCookie): Insert a new cookie into
+        the database.
+        (webkitSoupCookieJarSqliteDeleteCookie): Delete an exising cookie
+        from the database.
+        (webkitSoupCookieJarSqliteChanged): Insert/delete cookies
+        depending on the change.
+        (webkitSoupCookieJarSqliteFinalize):
+        (webkit_soup_cookie_jar_sqlite_init):
+        (webkit_soup_cookie_jar_sqlite_class_init):
+        (webkitSoupCookieJarSqliteNew):
+        * WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.h: Added.
+
 2012-07-11  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][EFL] Ewk_View should provide more resource loading notifications

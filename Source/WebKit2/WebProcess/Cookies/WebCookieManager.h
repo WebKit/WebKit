@@ -30,6 +30,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(SOUP)
+#include "SoupCookiePersistentStorageType.h"
+#endif
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class Connection;
@@ -62,6 +66,10 @@ private:
 
     void startObservingCookieChanges();
     void stopObservingCookieChanges();
+
+#if USE(SOUP)
+    void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
+#endif
 
     void didReceiveWebCookieManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 };

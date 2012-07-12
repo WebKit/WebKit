@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitCookieManager.h"
 
+#include "SoupCookiePersistentStorageType.h"
+#include "WebCookieManagerProxy.h"
 #include "WebKitCookieManagerPrivate.h"
 #include "WebKitEnumTypes.h"
 #include <wtf/gobject/GRefPtr.h>
@@ -40,6 +42,9 @@ struct _WebKitCookieManagerPrivate {
 static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitCookieManager, webkit_cookie_manager, G_TYPE_OBJECT)
+
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT, SoupCookiePersistentStorageText);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE, SoupCookiePersistentStorageSQLite);
 
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS, kWKHTTPCookieAcceptPolicyAlways);
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_COOKIE_POLICY_ACCEPT_NEVER, kWKHTTPCookieAcceptPolicyNever);
@@ -101,6 +106,30 @@ WebKitCookieManager* webkitCookieManagerCreate(WKCookieManagerRef wkCookieManage
     WKCookieManagerStartObservingCookieChanges(wkCookieManager);
 
     return manager;
+}
+
+/**
+ * webkit_cookie_manager_set_persistent_storage:
+ * @cookie_manager: a #WebKitCookieManager
+ * @filename: the filename to read to/write from
+ * @storage: a #WebKitCookiePersistentStorage
+ *
+ * Set the @filename where non-session cookies are stored persistently using
+ * @storage as the format to read/write the cookies.
+ * Cookies are initially read from @filename to create an initial set of cookies.
+ * Then, non-session cookies will be written to @filename when the WebKitCookieManager::changed
+ * signal is emitted.
+ * By default, @cookie_manager doesn't store the cookies persistenly, so you need to call this
+ * method to keep cookies saved across sessions.
+ */
+void webkit_cookie_manager_set_persistent_storage(WebKitCookieManager* manager, const char* filename, WebKitCookiePersistentStorage storage)
+{
+    g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
+    g_return_if_fail(filename);
+
+    WKCookieManagerStopObservingCookieChanges(manager->priv->wkCookieManager.get());
+    toImpl(manager->priv->wkCookieManager.get())->setCookiePersistentStorage(String::fromUTF8(filename), storage);
+    WKCookieManagerStartObservingCookieChanges(manager->priv->wkCookieManager.get());
 }
 
 /**

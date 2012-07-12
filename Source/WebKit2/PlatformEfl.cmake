@@ -54,6 +54,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/efl/WebPageProxyEfl.cpp
     UIProcess/efl/WebPreferencesEfl.cpp
 
+    UIProcess/soup/WebCookieManagerProxySoup.cpp
     UIProcess/soup/WebSoupRequestManagerClient.cpp
     UIProcess/soup/WebSoupRequestManagerProxy.cpp
 
@@ -63,6 +64,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
 
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
+    WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
 
     WebProcess/Downloads/efl/DownloadEfl.cpp
     WebProcess/Downloads/efl/FileDownloaderEfl.cpp
@@ -97,6 +99,7 @@ LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/svg/graphics"
     "${WEBKIT2_DIR}/Shared/efl"
+    "${WEBKIT2_DIR}/Shared/soup"
     "${WEBKIT2_DIR}/UIProcess/API/C/efl"
     "${WEBKIT2_DIR}/UIProcess/API/C/soup"
     "${WEBKIT2_DIR}/UIProcess/API/efl"

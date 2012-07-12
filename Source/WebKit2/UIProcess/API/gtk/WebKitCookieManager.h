@@ -42,6 +42,20 @@ typedef struct _WebKitCookieManagerClass   WebKitCookieManagerClass;
 typedef struct _WebKitCookieManagerPrivate WebKitCookieManagerPrivate;
 
 /**
+ * WebKitCookiePersistentStorage:
+ * @WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT: Cookies are stored in a text
+ *  file in the Mozilla "cookies.txt" format.
+ * @WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE: Cookies are stored in a SQLite
+ *  file in the current Mozilla format.
+ *
+ * Enum values used to denote the cookie persistent storage types.
+ */
+typedef enum {
+    WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT,
+    WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE
+} WebKitCookiePersistentStorage;
+
+/**
  * WebKitCookieAcceptPolicy:
  * @WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS: Accept all cookies unconditionally.
  * @WEBKIT_COOKIE_POLICY_ACCEPT_NEVER: Reject all cookies unconditionally.
@@ -69,37 +83,42 @@ WEBKIT_API GType
 webkit_cookie_manager_get_type                        (void);
 
 WEBKIT_API void
-webkit_cookie_manager_set_accept_policy               (WebKitCookieManager     *cookie_manager,
-                                                       WebKitCookieAcceptPolicy policy);
+webkit_cookie_manager_set_persistent_storage          (WebKitCookieManager          *cookie_manager,
+                                                       const gchar                  *filename,
+                                                       WebKitCookiePersistentStorage storage);
 
 WEBKIT_API void
-webkit_cookie_manager_get_accept_policy               (WebKitCookieManager     *cookie_manager,
-                                                       GCancellable            *cancellable,
-                                                       GAsyncReadyCallback      callback,
-                                                       gpointer                 user_data);
+webkit_cookie_manager_set_accept_policy               (WebKitCookieManager          *cookie_manager,
+                                                       WebKitCookieAcceptPolicy      policy);
+
+WEBKIT_API void
+webkit_cookie_manager_get_accept_policy               (WebKitCookieManager          *cookie_manager,
+                                                       GCancellable                 *cancellable,
+                                                       GAsyncReadyCallback           callback,
+                                                       gpointer                      user_data);
 
 WEBKIT_API WebKitCookieAcceptPolicy
-webkit_cookie_manager_get_accept_policy_finish        (WebKitCookieManager     *cookie_manager,
-                                                       GAsyncResult            *result,
-                                                       GError                 **error);
+webkit_cookie_manager_get_accept_policy_finish        (WebKitCookieManager          *cookie_manager,
+                                                       GAsyncResult                 *result,
+                                                       GError                      **error);
 
 WEBKIT_API void
-webkit_cookie_manager_get_domains_with_cookies        (WebKitCookieManager     *cookie_manager,
-                                                       GCancellable            *cancellable,
-                                                       GAsyncReadyCallback      callback,
-                                                       gpointer                 user_data);
+webkit_cookie_manager_get_domains_with_cookies        (WebKitCookieManager          *cookie_manager,
+                                                       GCancellable                 *cancellable,
+                                                       GAsyncReadyCallback           callback,
+                                                       gpointer                      user_data);
 
 WEBKIT_API gchar **
-webkit_cookie_manager_get_domains_with_cookies_finish (WebKitCookieManager     *cookie_manager,
-                                                       GAsyncResult            *result,
-                                                       GError                 **error);
+webkit_cookie_manager_get_domains_with_cookies_finish (WebKitCookieManager          *cookie_manager,
+                                                       GAsyncResult                 *result,
+                                                       GError                      **error);
 
 WEBKIT_API void
-webkit_cookie_manager_delete_cookies_for_domain       (WebKitCookieManager     *cookie_manager,
-                                                       const gchar             *domain);
+webkit_cookie_manager_delete_cookies_for_domain       (WebKitCookieManager          *cookie_manager,
+                                                       const gchar                  *domain);
 
 WEBKIT_API void
-webkit_cookie_manager_delete_all_cookies              (WebKitCookieManager     *cookie_manager);
+webkit_cookie_manager_delete_all_cookies              (WebKitCookieManager          *cookie_manager);
 
 G_END_DECLS
 

@@ -427,6 +427,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/StatisticsData.cpp \
 	Source/WebKit2/Shared/StatisticsData.h \
 	Source/WebKit2/Shared/StringPairVector.h \
+	Source/WebKit2/Shared/soup/SoupCookiePersistentStorageType.h \
 	Source/WebKit2/Shared/TextCheckerState.h \
 	Source/WebKit2/Shared/UserMessageCoders.h \
 	Source/WebKit2/Shared/UpdateInfo.cpp \
@@ -788,6 +789,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/ProcessModel.h \
 	Source/WebKit2/UIProcess/ResponsivenessTimer.cpp \
 	Source/WebKit2/UIProcess/ResponsivenessTimer.h \
+	Source/WebKit2/UIProcess/soup/WebCookieManagerProxySoup.cpp \
 	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerClient.cpp \
 	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerClient.h \
 	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerProxy.cpp \
@@ -910,6 +912,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Cookies/WebCookieManager.h \
 	Source/WebKit2/WebProcess/Cookies/WebCookieManager.cpp \
 	Source/WebKit2/WebProcess/Cookies/soup/WebCookieManagerSoup.cpp \
+	Source/WebKit2/WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp \
+	Source/WebKit2/WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.h \
 	Source/WebKit2/WebProcess/Downloads/Download.cpp \
 	Source/WebKit2/WebProcess/Downloads/Download.h \
 	Source/WebKit2/WebProcess/Downloads/DownloadAuthenticationClient.h \

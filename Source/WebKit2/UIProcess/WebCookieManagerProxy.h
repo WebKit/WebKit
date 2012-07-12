@@ -70,6 +70,10 @@ public:
     void startObservingCookieChanges();
     void stopObservingCookieChanges();
 
+#if USE(SOUP)
+    void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
+#endif
+
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     bool shouldTerminate(WebProcessProxy*) const;
