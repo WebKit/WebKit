@@ -1,3 +1,18 @@
+2012-07-12  Adam Barth  <abarth@webkit.org>
+
+        Regression (r122359) Layout Test html5lib/runner.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=91047
+
+        Reviewed by Tony Chang.
+
+        This ASSERT is bogus because doctypes can be removed from the DOM and
+        then re-added.
+
+        Test: fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDocType):
+
 2012-07-12  Ojan Vafai  <ojan@chromium.org>
 
         Implied minimum size of flex items is min-content

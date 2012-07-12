@@ -3744,8 +3744,5 @@ BUGWK90900 MAC : tables/mozilla_expected_failures/other/empty_cells.html = PASS 
 BUGWK90980 LINUX MAC DEBUG : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 
-// Started crashing after r122359
-BUGWK91047 DEBUG : html5lib/runner.html = CRASH
-
 // Started crashing after 122286
 BUGWK91133 WIN : storage/indexeddb/constants.html = PASS CRASH

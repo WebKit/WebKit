@@ -815,7 +815,6 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
     if (m_docType) {
         this->adoptIfNeeded(m_docType.get());
 #if ENABLE(LEGACY_VIEWPORT_ADAPTION)
-        ASSERT(m_viewportArguments.type == ViewportArguments::Implicit);
         if (m_docType->publicId().startsWith("-//wapforum//dtd xhtml mobile 1.", /* caseSensitive */ false))
             processViewport("width=device-width, height=device-height", ViewportArguments::XHTMLMobileProfile);
 #endif

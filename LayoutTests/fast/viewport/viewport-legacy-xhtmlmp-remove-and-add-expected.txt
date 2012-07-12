@@ -1,0 +1,4 @@
+ALERT: viewport size 320x480 scale 1 with limits [1, 5] and userScalable true
+ALERT: viewport size 320x480 scale 1 with limits [1, 5] and userScalable true
+ALERT: viewport size 320x480 scale 1 with limits [1, 5] and userScalable true
+
