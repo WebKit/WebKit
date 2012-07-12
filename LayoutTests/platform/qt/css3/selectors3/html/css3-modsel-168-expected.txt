@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x90
-  RenderBlock {HTML} at (0,0) size 800x90
-    RenderBody {BODY} at (8,16) size 784x58
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 94x21
-          text run at (0,0) width 94: "This test has "
-        RenderInline {SPAN} at (0,0) size 67x21
-          RenderInline (generated) at (0,0) size 67x21 [bgcolor=#00FF00]
-            RenderText at (94,0) size 67x21
-              text run at (94,0) width 67: "PASSED"
-        RenderText {#text} at (161,0) size 4x21
-          text run at (161,0) width 4: "."
-      RenderBlock {P} at (0,37) size 784x21
-        RenderText {#text} at (0,0) size 496x21
-          text run at (0,0) width 496: "(If the previous line just reads \"This test has .\" then this test has failed.)"
+layer at (0,0) size 800x86
+  RenderBlock {HTML} at (0,0) size 800x86
+    RenderBody {BODY} at (8,16) size 784x54
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 78x19
+          text run at (0,0) width 78: "This test has "
+        RenderInline {SPAN} at (0,0) size 58x19
+          RenderInline (generated) at (0,0) size 58x19 [bgcolor=#00FF00]
+            RenderText at (78,0) size 58x19
+              text run at (78,0) width 58: "PASSED"
+        RenderText {#text} at (136,0) size 4x19
+          text run at (136,0) width 4: "."
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 420x19
+          text run at (0,0) width 420: "(If the previous line just reads \"This test has .\" then this test has failed.)"

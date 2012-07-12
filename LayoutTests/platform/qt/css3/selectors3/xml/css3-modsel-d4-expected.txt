@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x127
-  RenderBlock {test} at (0,0) size 800x127
-    RenderBlock {div} at (0,16) size 800x95
-      RenderBlock {div} at (0,0) size 800x95
-        RenderBlock {p} at (0,0) size 800x21 [bgcolor=#FF0000]
-          RenderText {#text} at (0,0) size 226x21
-            text run at (0,0) width 226: "This line should be unstyled. (2)"
-        RenderBlock {p} at (0,37) size 800x21
-          RenderText {#text} at (0,0) size 325x21
-            text run at (0,0) width 325: "This line should have a green background. (3)"
-        RenderBlock {p} at (0,74) size 800x21
-          RenderText {#text} at (0,0) size 312x21
-            text run at (0,0) width 312: "This line should be unstyled. (4 moving to 1)"
+layer at (0,0) size 800x121
+  RenderBlock {test} at (0,0) size 800x121
+    RenderBlock {div} at (0,16) size 800x89
+      RenderBlock {div} at (0,0) size 800x89
+        RenderBlock {p} at (0,0) size 800x19 [bgcolor=#FF0000]
+          RenderText {#text} at (0,0) size 190x19
+            text run at (0,0) width 190: "This line should be unstyled. (2)"
+        RenderBlock {p} at (0,35) size 800x19
+          RenderText {#text} at (0,0) size 274x19
+            text run at (0,0) width 274: "This line should have a green background. (3)"
+        RenderBlock {p} at (0,70) size 800x19
+          RenderText {#text} at (0,0) size 265x19
+            text run at (0,0) width 265: "This line should be unstyled. (4 moving to 1)"

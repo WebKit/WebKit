@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x111
-  RenderBlock {test} at (0,0) size 800x111 [color=#00FF00]
-    RenderBlock {p} at (0,16) size 800x21 [color=#FF0000]
-      RenderInline {span} at (0,0) size 523x21 [color=#00FF00]
-        RenderText {#text} at (0,0) size 523x21
-          text run at (0,0) width 404: "This paragraph, and all textual contents in the document, "
-          text run at (404,0) width 119: "should be green."
+layer at (0,0) size 800x105
+  RenderBlock {test} at (0,0) size 800x105 [color=#00FF00]
+    RenderBlock {p} at (0,16) size 800x19 [color=#FF0000]
+      RenderInline {span} at (0,0) size 440x19 [color=#00FF00]
+        RenderText {#text} at (0,0) size 440x19
+          text run at (0,0) width 341: "This paragraph, and all textual contents in the document, "
+          text run at (341,0) width 99: "should be green."
       RenderText {#text} at (0,0) size 0x0
-    RenderBlock {ul} at (0,53) size 800x21 [color=#FF0000]
-      RenderListItem {li} at (40,0) size 760x21 [color=#00FF00]
-        RenderListMarker at (-18,0) size 7x21: bullet
-        RenderText {#text} at (0,0) size 188x21
-          text run at (0,0) width 188: "This item should be green."
-    RenderBlock (anonymous) at (0,90) size 800x21
-      RenderInline {foo} at (0,0) size 500x21
-        RenderText {#text} at (0,0) size 500x21
-          text run at (0,0) width 359: "And this element, part of a non-HTML namespace, "
-          text run at (359,0) width 141: "should be green too"
+    RenderBlock {ul} at (0,51) size 800x19 [color=#FF0000]
+      RenderListItem {li} at (40,0) size 760x19 [color=#00FF00]
+        RenderListMarker at (-18,0) size 7x19: bullet
+        RenderText {#text} at (0,0) size 157x19
+          text run at (0,0) width 157: "This item should be green."
+    RenderBlock (anonymous) at (0,86) size 800x19
+      RenderInline {foo} at (0,0) size 432x19
+        RenderText {#text} at (0,0) size 432x19
+          text run at (0,0) width 313: "And this element, part of a non-HTML namespace, "
+          text run at (313,0) width 119: "should be green too"
       RenderText {#text} at (0,0) size 0x0

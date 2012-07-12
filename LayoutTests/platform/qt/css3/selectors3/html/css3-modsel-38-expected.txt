@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x137
-  RenderBlock {HTML} at (0,0) size 800x137
-    RenderBody {BODY} at (8,16) size 784x105
-      RenderBlock {P} at (0,0) size 784x105
-        RenderText {#text} at (0,0) size 782x105
-          text run at (0,0) width 285: "This very long paragraph should have a "
-          text run at (285,0) width 497: "first line with green background. This very long paragraph should have"
-          text run at (0,21) width 42: "a first "
-          text run at (42,21) width 200: "line with green background. "
-          text run at (242,21) width 344: "This very long paragraph should have a first line "
-          text run at (586,21) width 166: "with green background."
-          text run at (0,42) width 377: "This very long paragraph should have a first line with "
-          text run at (377,42) width 405: "green background. This very long paragraph should have"
-          text run at (0,63) width 150: "a first line with green "
-          text run at (150,63) width 602: "background. This very long paragraph should have a first line with green background."
-          text run at (0,84) width 510: "This very long paragraph should have a first line with green background."
+layer at (0,0) size 800x108
+  RenderBlock {HTML} at (0,0) size 800x108
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x76
+        RenderText {#text} at (0,0) size 778x76
+          text run at (0,0) width 239: "This very long paragraph should have a "
+          text run at (239,0) width 461: "first line with green background. This very long paragraph should have a first "
+          text run at (700,0) width 49: "line with"
+          text run at (0,19) width 117: "green background. "
+          text run at (117,19) width 289: "This very long paragraph should have a first line "
+          text run at (406,19) width 370: "with green background. This very long paragraph should have"
+          text run at (0,38) width 90: "a first line with "
+          text run at (90,38) width 472: "green background. This very long paragraph should have a first line with green "
+          text run at (562,38) width 164: "background. This very long"
+          text run at (0,57) width 347: "paragraph should have a first line with green background. "
+          text run at (347,57) width 431: "This very long paragraph should have a first line with green background."

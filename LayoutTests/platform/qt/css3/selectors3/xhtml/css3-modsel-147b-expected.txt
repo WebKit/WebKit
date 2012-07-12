@@ -1,75 +1,75 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x457
-  RenderBlock {html} at (0,0) size 800x457
-    RenderBody {body} at (8,8) size 784x441
+layer at (0,0) size 800x415
+  RenderBlock {html} at (0,0) size 800x415
+    RenderBody {body} at (8,8) size 784x399
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {test} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,0) size 784x441
-        RenderBlock {line} at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,21) size 784x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 184x21
-            text run at (0,0) width 184: "This line should be green."
-        RenderBlock {line} at (0,42) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,63) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,84) size 784x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 184x21
-            text run at (0,0) width 184: "This line should be green."
-        RenderBlock {line} at (0,105) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,126) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,147) size 784x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 184x21
-            text run at (0,0) width 184: "This line should be green."
-        RenderBlock {line} at (0,168) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,189) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,210) size 784x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 184x21
-            text run at (0,0) width 184: "This line should be green."
-        RenderBlock {line} at (0,231) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,252) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,273) size 784x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 184x21
-            text run at (0,0) width 184: "This line should be green."
-        RenderBlock {line} at (0,294) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,315) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,336) size 784x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 184x21
-            text run at (0,0) width 184: "This line should be green."
-        RenderBlock {line} at (0,357) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,378) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-        RenderBlock {line} at (0,399) size 784x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 184x21
-            text run at (0,0) width 184: "This line should be green."
-        RenderBlock {line} at (0,420) size 784x21
-          RenderText {#text} at (0,0) size 203x21
-            text run at (0,0) width 203: "This line should be unstyled."
-      RenderBlock (anonymous) at (0,441) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x399
+        RenderBlock {line} at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,19) size 784x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 152x19
+            text run at (0,0) width 152: "This line should be green."
+        RenderBlock {line} at (0,38) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,57) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,76) size 784x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 152x19
+            text run at (0,0) width 152: "This line should be green."
+        RenderBlock {line} at (0,95) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,114) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,133) size 784x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 152x19
+            text run at (0,0) width 152: "This line should be green."
+        RenderBlock {line} at (0,152) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,171) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,190) size 784x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 152x19
+            text run at (0,0) width 152: "This line should be green."
+        RenderBlock {line} at (0,209) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,228) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,247) size 784x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 152x19
+            text run at (0,0) width 152: "This line should be green."
+        RenderBlock {line} at (0,266) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,285) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,304) size 784x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 152x19
+            text run at (0,0) width 152: "This line should be green."
+        RenderBlock {line} at (0,323) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,342) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+        RenderBlock {line} at (0,361) size 784x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 152x19
+            text run at (0,0) width 152: "This line should be green."
+        RenderBlock {line} at (0,380) size 784x19
+          RenderText {#text} at (0,0) size 168x19
+            text run at (0,0) width 168: "This line should be unstyled."
+      RenderBlock (anonymous) at (0,399) size 784x0
         RenderInline {test} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

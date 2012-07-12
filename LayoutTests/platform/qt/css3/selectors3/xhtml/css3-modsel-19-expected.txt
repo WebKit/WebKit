@@ -1,16 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x74
-  RenderBlock {html} at (0,0) size 800x74
-    RenderBody {body} at (8,16) size 784x42
-      RenderBlock {p} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 176x21
-          text run at (0,0) width 176: "The background color of "
-        RenderInline {a} at (0,0) size 75x21 [color=#0000EE]
-          RenderText {#text} at (176,0) size 75x21
-            text run at (176,0) width 75: "the anchor"
-        RenderText {#text} at (251,0) size 772x42
-          text run at (251,0) width 4: " "
-          text run at (255,0) width 413: "should turn to green when it is activated and come back to "
-          text run at (668,0) width 104: "normal when it"
-          text run at (0,21) width 82: "is released."
+layer at (0,0) size 800x51
+  RenderBlock {html} at (0,0) size 800x51
+    RenderBody {body} at (8,16) size 784x19
+      RenderBlock {p} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 154x19
+          text run at (0,0) width 154: "The background color of "
+        RenderInline {a} at (0,0) size 63x19 [color=#0000EE]
+          RenderText {#text} at (154,0) size 63x19
+            text run at (154,0) width 63: "the anchor"
+        RenderText {#text} at (217,0) size 517x19
+          text run at (217,0) width 4: " "
+          text run at (221,0) width 354: "should turn to green when it is activated and come back to "
+          text run at (575,0) width 159: "normal when it is released."

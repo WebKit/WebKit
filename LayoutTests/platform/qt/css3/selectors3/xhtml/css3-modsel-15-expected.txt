@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x95
-  RenderBlock {html} at (0,0) size 800x95
-    RenderBody {body} at (8,16) size 784x63
-      RenderBlock {ul} at (0,0) size 784x63
-        RenderListItem {li} at (40,0) size 744x21 [bgcolor=#00FF00]
-          RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 480x21
-            text run at (0,0) width 480: "This list item should have a green background. because its ID is \"t1\""
-        RenderListItem {li} at (40,21) size 744x21 [bgcolor=#00FF00]
-          RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 480x21
-            text run at (0,0) width 480: "This list item should have a green background. because its ID is \"t2\""
-        RenderListItem {li} at (40,42) size 744x21 [bgcolor=#00FF00]
-          RenderListMarker at (-18,0) size 7x21: bullet
-          RenderInline {span} at (0,0) size 660x21
-            RenderText {#text} at (0,0) size 660x21
-              text run at (0,0) width 660: "This list item should have a green background. because the inner SPAN does not match \"#t4\""
+layer at (0,0) size 800x89
+  RenderBlock {html} at (0,0) size 800x89
+    RenderBody {body} at (8,16) size 784x57
+      RenderBlock {ul} at (0,0) size 784x57
+        RenderListItem {li} at (40,0) size 744x19 [bgcolor=#00FF00]
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 406x19
+            text run at (0,0) width 406: "This list item should have a green background. because its ID is \"t1\""
+        RenderListItem {li} at (40,19) size 744x19 [bgcolor=#00FF00]
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 406x19
+            text run at (0,0) width 406: "This list item should have a green background. because its ID is \"t2\""
+        RenderListItem {li} at (40,38) size 744x19 [bgcolor=#00FF00]
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderInline {span} at (0,0) size 560x19
+            RenderText {#text} at (0,0) size 560x19
+              text run at (0,0) width 560: "This list item should have a green background. because the inner SPAN does not match \"#t4\""

@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x53
-  RenderBlock {HTML} at (0,0) size 800x53
-    RenderBody {BODY} at (8,16) size 784x21
-      RenderBlock {P} at (0,0) size 784x21
-        RenderInline {A} at (0,0) size 424x21 [color=#000080]
-          RenderText {#text} at (0,0) size 47x21
-            text run at (0,0) width 47: "Hover "
-          RenderInline {STRONG} at (0,0) size 34x21
-            RenderText {#text} at (47,0) size 34x21
-              text run at (47,0) width 34: "here"
-          RenderText {#text} at (81,0) size 166x21
-            text run at (81,0) width 166: " and the background of "
-          RenderInline {SPAN} at (0,0) size 173x21
-            RenderText {#text} at (247,0) size 173x21
-              text run at (247,0) width 173: "this text should go green"
-          RenderText {#text} at (420,0) size 4x21
-            text run at (420,0) width 4: "."
+layer at (0,0) size 800x51
+  RenderBlock {HTML} at (0,0) size 800x51
+    RenderBody {BODY} at (8,16) size 784x19
+      RenderBlock {P} at (0,0) size 784x19
+        RenderInline {A} at (0,0) size 365x19 [color=#000080]
+          RenderText {#text} at (0,0) size 42x19
+            text run at (0,0) width 42: "Hover "
+          RenderInline {STRONG} at (0,0) size 30x19
+            RenderText {#text} at (42,0) size 30x19
+              text run at (42,0) width 30: "here"
+          RenderText {#text} at (72,0) size 144x19
+            text run at (72,0) width 144: " and the background of "
+          RenderInline {SPAN} at (0,0) size 145x19
+            RenderText {#text} at (216,0) size 145x19
+              text run at (216,0) width 145: "this text should go green"
+          RenderText {#text} at (361,0) size 4x19
+            text run at (361,0) width 4: "."

@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x201
-  RenderBlock {html} at (0,0) size 800x201
-    RenderBody {body} at (8,16) size 784x169
-      RenderBlock {div} at (0,0) size 784x169
-        RenderBlock {p} at (0,0) size 784x21
-          RenderInline {span} at (0,0) size 417x21 [bgcolor=#00FF00]
-            RenderText {#text} at (0,0) size 417x21
-              text run at (0,0) width 417: "The text in this paragraph should have a green background"
+layer at (0,0) size 800x191
+  RenderBlock {html} at (0,0) size 800x191
+    RenderBody {body} at (8,16) size 784x159
+      RenderBlock {div} at (0,0) size 784x159
+        RenderBlock {p} at (0,0) size 784x19
+          RenderInline {span} at (0,0) size 351x19 [bgcolor=#00FF00]
+            RenderText {#text} at (0,0) size 351x19
+              text run at (0,0) width 351: "The text in this paragraph should have a green background"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {address} at (16,37) size 752x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 329x21
-            text run at (0,0) width 329: "This address should have a green background"
-        RenderBlock {q} at (16,74) size 752x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 495x21
-            text run at (0,0) width 495: "This element in another namespace should have a green background."
-        RenderBlock {r} at (16,111) size 752x21 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 488x21
-            text run at (0,0) width 488: "This element without a namespace should have a green background."
-        RenderBlock {p} at (0,148) size 784x21
-          RenderText {#text} at (0,0) size 250x21
-            text run at (0,0) width 250: "This paragraph should be unstyled."
+        RenderBlock {address} at (16,35) size 752x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 294x19
+            text run at (0,0) width 294: "This address should have a green background"
+        RenderBlock {q} at (16,70) size 752x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 412x19
+            text run at (0,0) width 412: "This element in another namespace should have a green background."
+        RenderBlock {r} at (16,105) size 752x19 [bgcolor=#00FF00]
+          RenderText {#text} at (0,0) size 408x19
+            text run at (0,0) width 408: "This element without a namespace should have a green background."
+        RenderBlock {p} at (0,140) size 784x19
+          RenderText {#text} at (0,0) size 209x19
+            text run at (0,0) width 209: "This paragraph should be unstyled."

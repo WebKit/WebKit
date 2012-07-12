@@ -1,21 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x103
-  RenderBlock {html} at (0,0) size 800x103
-    RenderBody {body} at (8,16) size 784x79
-      RenderBlock {p} at (0,0) size 784x21 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 544x21
-          text run at (0,0) width 459: "This paragraph should have green background because CLASS "
-          text run at (459,0) width 85: "contains \"b\""
-      RenderBlock {address} at (0,37) size 784x42 [bgcolor=#00FF00]
-        RenderInline {span} at (0,0) size 178x21
-          RenderText {#text} at (0,0) size 178x21
-            text run at (0,0) width 178: "This address should also"
-        RenderText {#text} at (178,0) size 4x21
-          text run at (178,0) width 4: " "
-        RenderInline {span} at (0,0) size 755x42
-          RenderText {#text} at (182,0) size 755x42
-            text run at (182,0) width 395: "have green background because the selector in the last "
-            text run at (577,0) width 178: "rule does not apply to the"
-            text run at (0,21) width 97: "inner SPANs."
+layer at (0,0) size 800x78
+  RenderBlock {html} at (0,0) size 800x78
+    RenderBody {body} at (8,16) size 784x54
+      RenderBlock {p} at (0,0) size 784x19 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 459x19
+          text run at (0,0) width 388: "This paragraph should have green background because CLASS "
+          text run at (388,0) width 71: "contains \"b\""
+      RenderBlock {address} at (0,35) size 784x19 [bgcolor=#00FF00]
+        RenderInline {span} at (0,0) size 156x19
+          RenderText {#text} at (0,0) size 156x19
+            text run at (0,0) width 156: "This address should also"
+        RenderText {#text} at (156,0) size 4x19
+          text run at (156,0) width 4: " "
+        RenderInline {span} at (0,0) size 609x19
+          RenderText {#text} at (160,0) size 609x19
+            text run at (160,0) width 356: "have green background because the selector in the last "
+            text run at (516,0) width 253: "rule does not apply to the inner SPANs."
         RenderText {#text} at (0,0) size 0x0

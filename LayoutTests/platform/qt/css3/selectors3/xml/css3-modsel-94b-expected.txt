@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x201
-  RenderBlock {test} at (0,0) size 800x201
-    RenderBlock {p} at (0,16) size 800x21
-      RenderText {#text} at (0,0) size 203x21
-        text run at (0,0) width 203: "This line should be unstyled."
-    RenderBlock {p} at (0,53) size 800x21 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 302x21
-        text run at (0,0) width 302: "This line should have a green background."
-    RenderBlock {q} at (0,90) size 800x21 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 302x21
-        text run at (0,0) width 302: "This line should have a green background."
-    RenderBlock {p} at (0,127) size 800x21
-      RenderText {#text} at (0,0) size 203x21
-        text run at (0,0) width 203: "This line should be unstyled."
-    RenderBlock {p} at (0,164) size 800x21 [bgcolor=#00FF00]
-      RenderText {#text} at (0,0) size 302x21
-        text run at (0,0) width 302: "This line should have a green background."
+layer at (0,0) size 800x191
+  RenderBlock {test} at (0,0) size 800x191
+    RenderBlock {p} at (0,16) size 800x19
+      RenderText {#text} at (0,0) size 168x19
+        text run at (0,0) width 168: "This line should be unstyled."
+    RenderBlock {p} at (0,51) size 800x19 [bgcolor=#00FF00]
+      RenderText {#text} at (0,0) size 252x19
+        text run at (0,0) width 252: "This line should have a green background."
+    RenderBlock {q} at (0,86) size 800x19 [bgcolor=#00FF00]
+      RenderText {#text} at (0,0) size 252x19
+        text run at (0,0) width 252: "This line should have a green background."
+    RenderBlock {p} at (0,121) size 800x19
+      RenderText {#text} at (0,0) size 168x19
+        text run at (0,0) width 168: "This line should be unstyled."
+    RenderBlock {p} at (0,156) size 800x19 [bgcolor=#00FF00]
+      RenderText {#text} at (0,0) size 252x19
+        text run at (0,0) width 252: "This line should have a green background."

@@ -1,39 +1,37 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x211
-  RenderBlock {HTML} at (0,0) size 800x211
-    RenderBody {BODY} at (8,16) size 784x179
-      RenderBlock {P} at (0,0) size 784x42 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 779x42
-          text run at (0,0) width 254: "This paragraph should be unstyled. "
-          text run at (254,0) width 499: "The background of the following paragraph should become blue when "
-          text run at (753,0) width 26: "you"
-          text run at (0,21) width 46: "follow "
-        RenderInline {A} at (0,0) size 54x21 [color=#0000EE]
-          RenderText {#text} at (46,21) size 54x21
-            text run at (46,21) width 54: "this link"
-        RenderText {#text} at (100,21) size 4x21
-          text run at (100,21) width 4: "."
-      RenderBlock {P} at (0,58) size 784x63 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 766x42
-          text run at (0,0) width 308: "This paragraph should initially be unstyled. "
-          text run at (308,0) width 458: "It should become blue when you select the link above. When you"
-          text run at (0,21) width 46: "select "
-        RenderInline {A} at (0,0) size 54x21 [color=#0000EE]
-          RenderText {#text} at (46,21) size 54x21
-            text run at (46,21) width 54: "this link"
-        RenderText {#text} at (100,21) size 763x42
-          text run at (100,21) width 299: ", it should return to being unstyled and the "
-          text run at (399,21) width 364: "background of the paragraph below should become"
-          text run at (0,42) width 35: "blue."
-      RenderBlock {P} at (0,137) size 784x42 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 766x42
-          text run at (0,0) width 308: "This paragraph should initially be unstyled. "
-          text run at (308,0) width 458: "It should become blue when you select the link above. When you"
-          text run at (0,21) width 46: "follow "
-        RenderInline {A} at (0,0) size 54x21 [color=#0000EE]
-          RenderText {#text} at (46,21) size 54x21
-            text run at (46,21) width 54: "this link"
-        RenderText {#text} at (100,21) size 402x21
-          text run at (100,21) width 159: ", the three paragraphs "
-          text run at (259,21) width 243: "should all return to being unstyled."
+layer at (0,0) size 800x159
+  RenderBlock {HTML} at (0,0) size 800x159
+    RenderBody {BODY} at (8,16) size 784x127
+      RenderBlock {P} at (0,0) size 784x19 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 704x19
+          text run at (0,0) width 213: "This paragraph should be unstyled. "
+          text run at (213,0) width 424: "The background of the following paragraph should become blue when "
+          text run at (637,0) width 67: "you follow "
+        RenderInline {A} at (0,0) size 45x19 [color=#0000EE]
+          RenderText {#text} at (704,0) size 45x19
+            text run at (704,0) width 45: "this link"
+        RenderText {#text} at (749,0) size 4x19
+          text run at (749,0) width 4: "."
+      RenderBlock {P} at (0,35) size 784x38 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 690x19
+          text run at (0,0) width 257: "This paragraph should initially be unstyled. "
+          text run at (257,0) width 433: "It should become blue when you select the link above. When you select "
+        RenderInline {A} at (0,0) size 45x19 [color=#0000EE]
+          RenderText {#text} at (690,0) size 45x19
+            text run at (690,0) width 45: "this link"
+        RenderText {#text} at (735,0) size 750x38
+          text run at (735,0) width 15: ", it"
+          text run at (0,19) width 235: "should return to being unstyled and the "
+          text run at (235,19) width 344: "background of the paragraph below should become blue."
+      RenderBlock {P} at (0,89) size 784x38 [bgcolor=#FFFFFF]
+        RenderText {#text} at (0,0) size 693x19
+          text run at (0,0) width 257: "This paragraph should initially be unstyled. "
+          text run at (257,0) width 436: "It should become blue when you select the link above. When you follow "
+        RenderInline {A} at (0,0) size 45x19 [color=#0000EE]
+          RenderText {#text} at (693,0) size 45x19
+            text run at (693,0) width 45: "this link"
+        RenderText {#text} at (738,0) size 764x38
+          text run at (738,0) width 26: ", the"
+          text run at (0,19) width 105: "three paragraphs "
+          text run at (105,19) width 204: "should all return to being unstyled."
