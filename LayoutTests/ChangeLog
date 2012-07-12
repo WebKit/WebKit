@@ -1,3 +1,13 @@
+2012-07-12  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Unreviewed gardening. inspector/elements/edit-dom-actions.html is timing out on Win Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=60109
+
+        This test has recently started timing out on Win Debug bots. It was already slow, but has gotten much worse,
+        but times are also quite variable.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Verify internal "delete pending" flag on database
