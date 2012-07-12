@@ -1,3 +1,14 @@
+2012-07-12  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Implement MemoryUsageSupport
+        https://bugs.webkit.org/show_bug.cgi?id=91094
+
+        Reviewed by Adam Barth.
+
+        Compile in MemoryStatistics so we can make use of the interface.
+
+        * Target.pri:
+
 2012-07-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove dead code after r122392.

@@ -1,3 +1,32 @@
+2012-07-12  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Implement MemoryUsageSupport
+        https://bugs.webkit.org/show_bug.cgi?id=91094
+
+        Reviewed by Adam Barth.
+
+        Implements Qt versions of the memory-usage functions using the information we have available
+        from the various memory systems used in WebKit.
+
+        Also gets rid of a redundant indirection in V8GCController.
+
+        * Target.pri:
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::gcEpilogue):
+        (WebCore::V8GCController::checkMemoryUsage):
+        * platform/qt/MemoryUsageSupportQt.cpp: Added.
+        (WebCore::mallocMemoryUsage):
+        (WebCore::memoryUsageKB):
+        (WebCore::actualMemoryUsageKB):
+        (WebCore::MemoryUsageSupport::memoryUsageMB):
+        (WebCore::MemoryUsageSupport::actualMemoryUsageMB):
+        (WebCore::MemoryUsageSupport::lowMemoryUsageMB):
+        (WebCore::MemoryUsageSupport::highMemoryUsageMB):
+        (WebCore::MemoryUsageSupport::highUsageDeltaMB):
+        (WebCore::MemoryUsageSupport::processMemorySizesInBytes):
+        * platform/qt/PlatformSupport.h:
+        (PlatformSupport):
+
 2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Revision history view should be updated when uiSourceCodes are removed or replaced.

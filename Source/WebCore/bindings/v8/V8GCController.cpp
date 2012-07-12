@@ -475,23 +475,6 @@ int V8GCController::workingSetEstimateMB = 0;
 
 namespace {
 
-int getMemoryUsageInMB()
-{
-#if PLATFORM(CHROMIUM)
-    return MemoryUsageSupport::memoryUsageMB();
-#else
-    return 0;
-#endif
-}
-
-int getActualMemoryUsageInMB()
-{
-#if PLATFORM(CHROMIUM)
-    return MemoryUsageSupport::actualMemoryUsageMB();
-#else
-    return 0;
-#endif
-}
 
 }  // anonymous namespace
 
@@ -506,7 +489,7 @@ void V8GCController::gcEpilogue()
     GCEpilogueVisitor<Node, SpecialCaseEpilogueNodeHandler, &DOMDataStore::weakNodeCallback> epilogueNodeVisitor;
     visitActiveDOMNodes(&epilogueNodeVisitor);
 
-    workingSetEstimateMB = getActualMemoryUsageInMB();
+    workingSetEstimateMB = MemoryUsageSupport::actualMemoryUsageMB();
 
 #ifndef NDEBUG
     // Check all survivals are weak.
@@ -530,7 +513,7 @@ void V8GCController::checkMemoryUsage()
     const int lowMemoryUsageMB = MemoryUsageSupport::lowMemoryUsageMB();
     const int highMemoryUsageMB = MemoryUsageSupport::highMemoryUsageMB();
     const int highUsageDeltaMB = MemoryUsageSupport::highUsageDeltaMB();
-    int memoryUsageMB = getMemoryUsageInMB();
+    int memoryUsageMB = MemoryUsageSupport::memoryUsageMB();
     if ((memoryUsageMB > lowMemoryUsageMB && memoryUsageMB > 2 * workingSetEstimateMB) || (memoryUsageMB > highMemoryUsageMB && memoryUsageMB > workingSetEstimateMB + highUsageDeltaMB))
         v8::V8::LowMemoryNotification();
 #endif

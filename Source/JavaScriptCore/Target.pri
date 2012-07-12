@@ -218,6 +218,7 @@ SOURCES += \
     runtime/LiteralParser.cpp \
     runtime/Lookup.cpp \
     runtime/MathObject.cpp \
+    runtime/MemoryStatistics.cpp \
     runtime/NameConstructor.cpp \
     runtime/NameInstance.cpp \
     runtime/NamePrototype.cpp \
