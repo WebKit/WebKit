@@ -1,3 +1,67 @@
+2012-07-03  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: add a MessagePool abstraction that the manager will call to replace the broker
+        https://bugs.webkit.org/show_bug.cgi?id=90511
+
+        Reviewed by Ojan Vafai.
+
+        This change introduces the new MessagePool abstraction that will
+        replace the classes in manager_worker_broker. It is a minimal
+        interface that tries to follow the conventions in
+        multiprocessing.Pool and concurrency.futures ... it provides a
+        context manager and a run() method that sends N messages to M
+        workers processes (starting workers as necessary) and waits for
+        them all to complete, handling cleanup as necessary. The caller
+        is responsible for providing a handle() method to handle
+        messages received from the workers.
+        
+        This interface basically hides all of the multiprocessing logic from
+        the manager class.
+
+        The initial implementation of MessagePool is a simple shim
+        around the existing broker classes; a subsequent change will
+        replace all the other classes with a much simpler
+        implementation.
+
+        No additional tests are provided for now; existing tests should
+        provide adequate coverage, and I will add new unit tests for the
+        MessagePool class when I replace the existing implementation.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (TestRunInterruptedException.__reduce__):
+        (Manager.__init__):
+        (Manager._run_tests):
+        (Manager._run_tests.instead):
+        (Manager.handle):
+        (Manager._handle_started_test):
+        (Manager._handle_finished_test_list):
+        (Manager._handle_finished_test):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (get):
+        (_MessagePool):
+        (_MessagePool.__init__):
+        (_MessagePool.__enter__):
+        (_MessagePool.__exit__):
+        (_MessagePool.run):
+        (_MessagePool.wait):
+        (_MessagePool.is_done):
+        (_MessagePool._worker_is_done):
+        (_MessagePool._close):
+        (_MessagePool.handle_done):
+        (_MessagePool.handle_started_test):
+        (_MessagePool.handle_finished_test):
+        (_MessagePool.handle_finished_test_list):
+        (_MessagePool.handle_exception):
+        (_MessagePool._log_messages):
+        (_MessagePool._handle_worker_exception):
+        (_WorkerState):
+        (_WorkerState.for):
+        (_WorkerState.__init__):
+        (_WorkerState.__repr__):
+        (_get_broker):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py:
+        (make_broker):
+
 2012-07-11  Simon Fraser  <simon.fraser@apple.com>
 
         Add an option to enter paginated mode in MiniBrowser

@@ -51,7 +51,7 @@ def make_broker(manager, max_workers, start_queue=None, stop_queue=None):
     global stopping_queue
     starting_queue = start_queue
     stopping_queue = stop_queue
-    return manager_worker_broker.get(max_workers, manager, _TestWorker)
+    return manager_worker_broker._get_broker(max_workers, manager, _TestWorker)
 
 
 class _TestWorker(object):

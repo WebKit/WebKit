@@ -266,6 +266,7 @@ class TestRunInterruptedException(Exception):
         return self.__class__, (self.reason,)
 
 
+# Export this so callers don't need to know about manager_worker_broker.
 WorkerException = manager_worker_broker.WorkerException
 
 
@@ -300,7 +301,6 @@ class Manager(object):
         self._filesystem = port.host.filesystem
         self._options = options
         self._printer = printer
-        self._message_broker = None
         self._expectations = None
 
         self.HTTP_SUBDIR = 'http' + port.TEST_PATH_SEPARATOR
@@ -328,12 +328,8 @@ class Manager(object):
 
         self._all_results = []
         self._group_stats = {}
+        self._worker_stats = {}
         self._current_result_summary = None
-
-        # This maps worker names to the state we are tracking for each of them.
-        self._worker_states = {}
-
-        self.name = 'manager'
 
     def collect_tests(self, args):
         """Find all the files to test.
@@ -746,11 +742,10 @@ class Manager(object):
         self._current_result_summary = result_summary
         self._all_results = []
         self._group_stats = {}
-        self._worker_states = {}
+        self._worker_stats = {}
 
         keyboard_interrupted = False
         interrupted = False
-        thread_timings = []
 
         self._printer.print_update('Sharding tests ...')
         locked_shards, unlocked_shards = self._shard_tests(file_list, int(self._options.child_processes), self._options.fully_parallel)
@@ -777,65 +772,28 @@ class Manager(object):
         manager_connection = manager_worker_broker.get(num_workers, self, worker_factory, self._port.host)
 
         if self._options.dry_run:
-            return (keyboard_interrupted, interrupted, thread_timings, self._group_stats, self._all_results)
+            return (keyboard_interrupted, interrupted, self._worker_stats.values(), self._group_stats, self._all_results)
 
         self._printer.print_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
-        for worker_number in xrange(num_workers):
-            worker_connection = manager_connection.start_worker(worker_number)
-            worker_state = _WorkerState(worker_number, worker_connection)
-            self._worker_states[worker_connection.name] = worker_state
-
-            time.sleep(self._port.worker_startup_delay_secs())
-
-        self._printer.print_update("Starting testing ...")
-        for shard in all_shards:
-            # FIXME: Change 'test_list' to 'shard', make sharding public.
-            manager_connection.post_message('test_list', shard.name, shard.test_inputs)
-
-        # We post one 'stop' message for each worker. Because the stop message
-        # are sent after all of the tests, and because each worker will stop
-        # reading messsages after receiving a stop, we can be sure each
-        # worker will get a stop message and hence they will all shut down.
-        for _ in xrange(num_workers):
-            manager_connection.post_message('stop')
 
         try:
-            while not self.is_done():
-                manager_connection.run_message_loop(delay_secs=1.0)
-
-            # Make sure all of the workers have shut down (if possible).
-            for worker_state in self._worker_states.values():
-                if worker_state.worker_connection.is_alive():
-                    _log.debug('Waiting for worker %d to exit' % worker_state.number)
-                    worker_state.worker_connection.join(5.0)
-                    if worker_state.worker_connection.is_alive():
-                        _log.error('Worker %d did not exit in time.' % worker_state.number)
-
+            with manager_worker_broker.get(self, worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:
+                pool.run(('test_list', shard.name, shard.test_inputs) for shard in all_shards)
         except KeyboardInterrupt:
             self._printer.flush()
             self._printer.write('Interrupted, exiting ...')
-            self.cancel_workers()
             keyboard_interrupted = True
         except TestRunInterruptedException, e:
             _log.warning(e.reason)
-            self.cancel_workers()
             interrupted = True
-        except WorkerException:
-            self.cancel_workers()
-            raise
         except:
-            # Unexpected exception; don't try to clean up workers.
             _log.error("Exception raised, exiting")
-            self.cancel_workers()
             raise
         finally:
-            manager_connection.cleanup()
             self.stop_servers_with_lock()
 
-        thread_timings = [worker_state.stats for worker_state in self._worker_states.values()]
-
         # FIXME: should this be a class instead of a tuple?
-        return (interrupted, keyboard_interrupted, thread_timings, self._group_stats, self._all_results)
+        return (interrupted, keyboard_interrupted, self._worker_stats.values(), self._group_stats, self._all_results)
 
     def results_directory(self):
         if not self._retrying:
@@ -1444,40 +1402,17 @@ class Manager(object):
         results_filename = self._filesystem.join(self._results_directory, "results.html")
         self._port.show_results_html_file(results_filename)
 
+    def handle(self, name, source, *args):
+        method = getattr(self, '_handle_' + name)
+        if method:
+            return method(source, *args)
+        raise AssertionError('unknown message %s received from %s, args=%s' % (name, source, repr(args)))
 
-    def is_done(self):
-        worker_states = self._worker_states.values()
-        return worker_states and all(self._worker_is_done(worker_state) for worker_state in worker_states)
+    def _handle_started_test(self, worker_name, test_input, test_timeout_sec):
+        # FIXME: log that we've started another test.
+        pass
 
-    # FIXME: Inline this function.
-    def _worker_is_done(self, worker_state):
-        return worker_state.done
-
-    def cancel_workers(self):
-        for worker_state in self._worker_states.values():
-            worker_state.worker_connection.cancel()
-
-    def handle_started_test(self, source, test_info, hang_timeout):
-        worker_state = self._worker_states[source]
-        worker_state.current_test_name = test_info.test_name
-        worker_state.next_timeout = time.time() + hang_timeout
-
-    def handle_done(self, source, log_messages=None):
-        worker_state = self._worker_states[source]
-        worker_state.done = True
-        self._log_messages(log_messages)
-
-    def handle_exception(self, source, exception_type, exception_value, stack):
-        if exception_type in (KeyboardInterrupt, TestRunInterruptedException):
-            raise exception_type(exception_value)
-        _log.error("%s raised %s('%s'):" % (
-                   source,
-                   exception_value.__class__.__name__,
-                   str(exception_value)))
-        self._log_worker_stack(stack)
-        raise WorkerException(str(exception_value))
-
-    def handle_finished_test_list(self, source, list_name, num_tests, elapsed_time):
+    def _handle_finished_test_list(self, worker_name, list_name, num_tests, elapsed_time):
         self._group_stats[list_name] = (num_tests, elapsed_time)
 
         def find(name, test_lists):
@@ -1492,28 +1427,12 @@ class Manager(object):
             if not self._remaining_locked_shards:
                 self.stop_servers_with_lock()
 
-    def handle_finished_test(self, source, result, elapsed_time, log_messages=None):
-        worker_state = self._worker_states[source]
-        worker_state.next_timeout = None
-        worker_state.current_test_name = None
-        worker_state.stats['total_time'] += elapsed_time
-        worker_state.stats['num_tests'] += 1
-
-        self._log_messages(log_messages)
+    def _handle_finished_test(self, worker_name, result, elapsed_time, log_messages=[]):
+        self._worker_stats.setdefault(worker_name, {'name': worker_name, 'num_tests': 0, 'total_time': 0})
+        self._worker_stats[worker_name]['total_time'] += elapsed_time
+        self._worker_stats[worker_name]['num_tests'] += 1
         self._all_results.append(result)
         self._update_summary_with_result(self._current_result_summary, result)
-
-    def _log_messages(self, messages):
-        for message in messages:
-            logging.root.handle(message)
-
-    def _log_worker_stack(self, stack):
-        webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._filesystem.sep
-        for filename, line_number, function_name, text in stack:
-            if filename.startswith(webkitpydir):
-                filename = filename.replace(webkitpydir, '')
-            _log.error('  %s:%u (in %s)' % (filename, line_number, function_name))
-            _log.error('    %s' % text)
 
 
 def read_test_files(fs, filenames, test_path_separator):
@@ -1563,20 +1482,3 @@ def natural_sort_key(string_to_split):
             return val
 
     return [tryint(chunk) for chunk in re.split('(\d+)', string_to_split)]
-
-
-class _WorkerState(object):
-    """A class for the manager to use to track the current state of the workers."""
-    def __init__(self, number, worker_connection):
-        self.worker_connection = worker_connection
-        self.number = number
-        self.done = False
-        self.current_test_name = None
-        self.next_timeout = None
-        self.stats = {}
-        self.stats['name'] = worker_connection.name
-        self.stats['num_tests'] = 0
-        self.stats['total_time'] = 0
-
-    def __repr__(self):
-        return "_WorkerState(" + str(self.__dict__) + ")"

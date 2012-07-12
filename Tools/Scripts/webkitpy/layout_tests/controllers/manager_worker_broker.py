@@ -26,44 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Module for handling messages and concurrency for run-webkit-tests.
-
-This module implements a message broker that connects the manager to the
-workers: it provides a messaging abstraction and message loops (building on
-top of message_broker), and handles starting workers by launching processes.
-
-There are a lot of classes and objects involved in a fully connected system.
-They interact more or less like:
-
-  Manager  -->  _InlineManager ---> _InlineWorker <-> Worker
-     ^                    \               /              ^
-     |                     v             v               |
-     \-----------------------  Broker   ----------------/
-
-The broker simply distributes messages onto topics (named queues); the actual
-queues themselves are provided by the caller, as the queue's implementation
-requirements varies vary depending on the desired concurrency model
-(none/threads/processes).
-
-In order for shared-nothing messaging between processing to be possible,
-Messages must be picklable.
-
-The module defines one interface and two classes. Callers of this package
-must implement the BrokerClient interface, and most callers will create
-_BrokerConnections as well as Brokers.
-
-The classes relate to each other as:
-
-    BrokerClient   ------>    _BrokerConnection
-         ^                         |
-         |                         v
-         \----------------      _Broker
-
-(The BrokerClient never calls broker directly after it is created, only
-_BrokerConnection.  _BrokerConnection passes a reference to BrokerClient to
-_Broker, and _Broker only invokes that reference, never talking directly to
-BrokerConnection).
-"""
+"""Module for handling messages and concurrency for run-webkit-tests."""
 
 import cPickle
 import logging
@@ -72,6 +35,7 @@ import optparse
 import os
 import Queue
 import sys
+import time
 import traceback
 
 
@@ -90,7 +54,106 @@ MANAGER_TOPIC = 'managers'
 ANY_WORKER_TOPIC = 'workers'
 
 
-def get(max_workers, client, worker_factory, host=None):
+def get(caller, worker_factory, num_workers, worker_startup_delay_secs=0.0, host=None):
+    """Returns an object that exposes a run() method that takes a list of test shards and runs them in parallel."""
+    return _MessagePool(caller, worker_factory, num_workers, worker_startup_delay_secs, host)
+
+
+class _MessagePool(object):
+    def __init__(self, caller, worker_factory, num_workers, worker_startup_delay_secs=0.0, host=None):
+        self._caller = caller
+        self._worker_factory = worker_factory
+        self._num_workers = num_workers
+        self._worker_startup_delay_secs = worker_startup_delay_secs
+        self._worker_states = {}
+        self._host = host
+        self.name = 'manager'
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self._close()
+        return False
+
+    def run(self, shards):
+        manager_connection = _get_broker(self._num_workers, self, self._worker_factory, self._host)
+        for worker_number in xrange(self._num_workers):
+            worker_connection = manager_connection.start_worker(worker_number)
+            worker_state = _WorkerState(worker_number, worker_connection)
+            self._worker_states[worker_connection.name] = worker_state
+            time.sleep(self._worker_startup_delay_secs)
+
+        messages = list(shards)
+        for message in messages:
+            manager_connection.post_message(*message)
+
+        for _ in xrange(self._num_workers):
+            manager_connection.post_message('stop')
+
+        self.wait(manager_connection)
+
+    def wait(self, manager_connection):
+        try:
+            while not self.is_done():
+                manager_connection.run_message_loop(delay_secs=1.0)
+        finally:
+            self._close()
+
+    def is_done(self):
+        worker_states = self._worker_states.values()
+        return worker_states and all(worker_state.done for worker_state in worker_states)
+
+    def _close(self):
+        for worker_state in self._worker_states.values():
+            if worker_state.worker_connection.is_alive():
+                worker_state.worker_connection.cancel()
+                _log.debug('Waiting for worker %d to exit' % worker_state.number)
+                worker_state.worker_connection.join(5.0)
+                if worker_state.worker_connection.is_alive():
+                    _log.error('Worker %d did not exit in time.' % worker_state.number)
+
+    def handle_done(self, source, log_messages=None):
+        worker_state = self._worker_states[source]
+        worker_state.done = True
+        self._log_messages(log_messages)
+
+    def handle_started_test(self, *args):
+        self._caller.handle('started_test', *args)
+
+    def handle_finished_test(self, *args):
+        self._caller.handle('finished_test', *args)
+
+    def handle_finished_test_list(self, *args):
+        self._caller.handle('finished_test_list', *args)
+
+    def handle_exception(self, *args):
+        self._handle_worker_exception(*args)
+
+    def _log_messages(self, messages):
+        for message in messages:
+            logging.root.handle(message)
+
+    @staticmethod
+    def _handle_worker_exception(source, exception_type, exception_value, stack):
+        if exception_type == KeyboardInterrupt:
+            raise exception_type(exception_value)
+        _log.error("%s raised %s('%s'):" % (
+                   source, exception_value.__class__.__name__, str(exception_value)))
+        raise WorkerException(str(exception_value))
+
+
+class _WorkerState(object):
+    def __init__(self, number, worker_connection):
+        self.worker_connection = worker_connection
+        self.number = number
+        self.done = False
+
+    def __repr__(self):
+        return "_WorkerState(" + str(self.__dict__) + ")"
+
+
+def _get_broker(max_workers, client, worker_factory, host=None):
     """Return a connection to a manager/worker message_broker
 
     Args:
@@ -397,6 +460,7 @@ class _WorkerConnection(_BrokerConnection):
     def join(self, timeout):
         raise NotImplementedError
 
+    # FIXME: rename to yield_to_caller().
     def yield_to_broker(self):
         pass
 
