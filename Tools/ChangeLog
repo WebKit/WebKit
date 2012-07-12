@@ -1,5 +1,23 @@
 2012-07-12  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: rename manager_worker_broker to message_pool
+        https://bugs.webkit.org/show_bug.cgi?id=91145
+
+        Reviewed by Ojan Vafai.
+
+        Since the MessagePool interface is more generic (and simpler)
+        now and will be reused by test-webkitpy, I'm renaming it and
+        moving it to webkitpy.common.
+
+        * Scripts/webkitpy/common/message_pool.py: Renamed from Tools/Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (TestRunInterruptedException.__reduce__):
+        (Manager._run_tests.worker_factory):
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+
+2012-07-12  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt crashes saving the output for a platform-specific expected test reference
         https://bugs.webkit.org/show_bug.cgi?id=90872
 

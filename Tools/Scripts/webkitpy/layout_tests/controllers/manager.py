@@ -44,7 +44,7 @@ import re
 import sys
 import time
 
-from webkitpy.layout_tests.controllers import manager_worker_broker
+from webkitpy.common import message_pool
 from webkitpy.layout_tests.controllers import worker
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
@@ -264,8 +264,8 @@ class TestRunInterruptedException(Exception):
         return self.__class__, (self.reason,)
 
 
-# Export this so callers don't need to know about manager_worker_broker.
-WorkerException = manager_worker_broker.WorkerException
+# Export this so callers don't need to know about message pools.
+WorkerException = message_pool.WorkerException
 
 
 class TestShard(object):
@@ -767,15 +767,13 @@ class Manager(object):
         def worker_factory(worker_connection):
             return worker.Worker(worker_connection, self.results_directory(), self._options)
 
-        manager_connection = manager_worker_broker.get(num_workers, self, worker_factory, self._port.host)
-
         if self._options.dry_run:
             return (keyboard_interrupted, interrupted, self._worker_stats.values(), self._group_stats, self._all_results)
 
         self._printer.print_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
 
         try:
-            with manager_worker_broker.get(self, worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:
+            with message_pool.get(self, worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:
                 pool.run(('test_list', shard.name, shard.test_inputs) for shard in all_shards)
         except KeyboardInterrupt:
             self._printer.flush()

@@ -26,7 +26,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""Module for handling messages and concurrency for run-webkit-tests."""
+"""Module for handling messages and concurrency for run-webkit-tests
+and test-webkitpy. This module follows the design for multiprocessing.Pool
+and concurrency.futures.ProcessPoolExecutor, with the following differences:
+
+* Tasks are executed in stateful subprocesses via objects that implement the
+  Worker interface - this allows the workers to share state across tasks.
+* The pool provides an asynchronous event-handling interface so the caller
+  may receive events as tasks are processed.
+
+If you don't need these features, use multiprocessing.Pool or concurrency.futures
+intead.
+
+"""
 
 import cPickle
 import logging
@@ -39,7 +51,6 @@ import traceback
 
 from webkitpy.common.host import Host
 from webkitpy.common.system import stack_utils
-from webkitpy.layout_tests.views import metered_stream
 
 
 _log = logging.getLogger(__name__)
@@ -281,8 +292,8 @@ class _Worker(multiprocessing.Process):
         # into the child process, so we need to remove it to avoid duplicate logging.
         for h in self._logger.handlers:
             # log handlers don't have names until python 2.7.
-            # FIXME: get webkitpy.test.printer from a constant as well.
-            if getattr(h, 'name', '') in (metered_stream.LOG_HANDLER_NAME, 'webkitpy.test.printer'):
+            # FIXME: log handler names should be passed in.
+            if getattr(h, 'name', '') in ('MeteredStreamLogHandler', 'webkitpy.test.printer'):
                 self._logger.removeHandler(h)
                 break
 
