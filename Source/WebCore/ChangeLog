@@ -1,3 +1,19 @@
+2012-07-11  Antti Koivisto  <antti@apple.com>
+
+        Failure to dispatch didFinishLoadForFrame if font load fails synchronously 
+        https://bugs.webkit.org/show_bug.cgi?id=91018
+
+        Reviewed by Enrica Casucci.
+
+        New font loads may be triggered by layout after the document load is complete but before we have dispatched
+        didFinishLoading for the frame. If the load fails synchronously we might fail to ever invoke 
+        FrameLoader::checkLoadComplete and so fail to dispatch didFinishLoading.
+        
+        Make sure this doesn't happen by calling FrameLoader::checkLoadComplete explicitly after triggering font loads.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadTimerFired):
+
 2012-07-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Register protocol handler files should be in Modules/protocolhandler
