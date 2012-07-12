@@ -1,3 +1,28 @@
+2012-07-12  Huang Dongsung  <luxtella@company100.net>
+
+        [Qt] Increase the drawing performance by merging dirty rects.
+        https://bugs.webkit.org/show_bug.cgi?id=91075
+
+        Reviewed by Noam Rosenthal.
+
+        QWebFramePrivate calls FrameView::paintContents as many as the number of dirty
+        rects, so it causes too many redundant render tree traversals.
+        I changed it to merge dirty rects and call FrameView::paintContents only once.
+        The algorithm to merge rects is copied from GTK.
+
+        When parallel image decoders are in use, each image is independently repainted
+        when decoding is finished. This creates a lot by repaint requests. So by merging
+        these repaint requests, I could improve rendering performance.
+
+        For example, I tested parallel image decoders on the locally mirrored Pinterest site.
+        QWebFramePrivate called FrameView::paintContents 165 times after parallel image
+        decoders decoded all the images. It took about 120ms on my six-core Intel Xeon machine.
+        This patch decreases painting time from 120ms to 30ms.
+
+        * Api/qwebframe.cpp:
+        (coalesceRectsIfPossible):
+        (QWebFramePrivate::renderRelativeCoords):
+
 2012-07-11  Steffen Imhof  <steffen.imhof@basyskom.com>
 
         [Qt] Middle clicking a scrollbar causes text to be pasted.

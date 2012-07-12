@@ -356,6 +356,32 @@ void QWebFramePrivate::renderCompositedLayers(GraphicsContext* context, const In
 }
 #endif
 
+// This code is copied from ChromeClientGtk.cpp.
+static void coalesceRectsIfPossible(const QRect& clipRect, QVector<QRect>& rects)
+{
+    const unsigned int rectThreshold = 10;
+    const float wastedSpaceThreshold = 0.75f;
+    bool useUnionedRect = (rects.size() <= 1) || (rects.size() > rectThreshold);
+    if (!useUnionedRect) {
+        // Attempt to guess whether or not we should use the unioned rect or the individual rects.
+        // We do this by computing the percentage of "wasted space" in the union. If that wasted space
+        // is too large, then we will do individual rect painting instead.
+        float unionPixels = (clipRect.width() * clipRect.height());
+        float singlePixels = 0;
+        for (size_t i = 0; i < rects.size(); ++i)
+            singlePixels += rects[i].width() * rects[i].height();
+        float wastedSpace = 1 - (singlePixels / unionPixels);
+        if (wastedSpace <= wastedSpaceThreshold)
+            useUnionedRect = true;
+    }
+
+    if (!useUnionedRect)
+        return;
+
+    rects.clear();
+    rects.append(clipRect);
+}
+
 void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QFlags<QWebFrame::RenderLayer> layers, const QRegion& clip)
 {
     if (!frame->view() || !frame->contentRenderer())
@@ -371,6 +397,8 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QFlags<QWe
     view->updateLayoutAndStyleIfNeededRecursive();
 
     if (layers & QWebFrame::ContentsLayer) {
+        QRect clipBoundingRect = clip.boundingRect();
+        coalesceRectsIfPossible(clipBoundingRect, vector);
         for (int i = 0; i < vector.size(); ++i) {
             const QRect& clipRect = vector.at(i);
 
@@ -396,7 +424,7 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QFlags<QWe
             context->restore();
         }
 #if USE(ACCELERATED_COMPOSITING)
-        renderCompositedLayers(context, IntRect(clip.boundingRect()));
+        renderCompositedLayers(context, IntRect(clipBoundingRect));
 #endif
     }
     renderFrameExtras(context, layers, clip);
