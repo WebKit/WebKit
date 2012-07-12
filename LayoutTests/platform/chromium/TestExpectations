@@ -3745,7 +3745,8 @@ BUGWK90980 LINUX MAC DEBUG : fast/forms/textarea/textarea-state-restore.html = P
 BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 
 // Started failing after r122312
-BUGWK91041 : inspector/timeline/timeline-dom-content-loaded-event.html = TEXT
+BUGWK91041 LINUX WIN : inspector/timeline/timeline-dom-content-loaded-event.html = TEXT
+BUGWK91041 MAC : inspector/timeline/timeline-dom-content-loaded-event.html = TIMEOUT
 
 // Started crashing after r122359
 BUGWK91047 DEBUG : html5lib/runner.html = CRASH
