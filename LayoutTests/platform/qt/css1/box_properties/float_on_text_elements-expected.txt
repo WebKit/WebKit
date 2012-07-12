@@ -1,367 +1,347 @@
-layer at (0,0) size 784x3303
+layer at (0,0) size 784x2725
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x3303
-  RenderBlock {HTML} at (0,0) size 784x3303
-    RenderBody {BODY} at (8,8) size 768x3287 [bgcolor=#CCCCCC]
-      RenderBlock (floating) {P} at (0,0) size 384x42 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x42
-          text run at (0,0) width 384: "This paragraph is of class \"one\". It has a width of 50%"
-          text run at (0,21) width 167: "and is floated to the left."
-      RenderBlock {P} at (0,0) size 768x105
-        RenderText {#text} at (384,0) size 768x105
-          text run at (384,0) width 384: "This paragraph should start on the right side of a"
-          text run at (384,21) width 384: "yellow box which contains the previous paragraph."
-          text run at (0,42) width 768: "Since the text of this element is much longer than the text in the previous element, the text will wrap around"
-          text run at (0,63) width 768: "the yellow box. There is no padding, border or margins on this and the previous element, so the text of the"
-          text run at (0,84) width 344: "two elements should be very close to each other."
-      RenderBlock (anonymous) at (0,105) size 768x21
-        RenderBR {BR} at (0,0) size 0x21
-      RenderBlock {HR} at (0,134) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {P} at (0,144) size 768x84 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 768x84
-          text run at (0,0) width 768: "This paragraph is of class \"two\". Since the width has been set to 100%, it should automatically be as wide as"
-          text run at (0,21) width 768: "its parent element allows it to be. Therefore, even though the element is floated, there is no room for other"
-          text run at (0,42) width 768: "content on the sides and a orange square image should be seen AFTER the paragraph, not next to it. A"
-          text run at (0,63) width 549: "yellow background has been added to this paragraph for diagnostic purposes."
-      RenderBlock (anonymous) at (0,144) size 768x105
-        RenderImage {IMG} at (0,85) size 15x15
-        RenderText {#text} at (15,84) size 4x21
-          text run at (15,84) width 4: " "
-        RenderBR {BR} at (19,100) size 0x0
-      RenderBlock {HR} at (0,257) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {P} at (0,267) size 384x126 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x126
-          text run at (0,0) width 384: "This paragraph is floated to the left and the orange"
-          text run at (0,21) width 384: "square image should appear to the right of the"
-          text run at (0,42) width 384: "paragraph. This paragraph has a yellow background"
-          text run at (0,63) width 384: "and no padding, margin or border. The right edge of"
-          text run at (0,84) width 384: "this yellow box should be horizontally aligned with the"
-          text run at (0,105) width 278: "left edge of the yellow box undernearth."
-      RenderBlock (anonymous) at (0,267) size 768x126
-        RenderImage {IMG} at (384,1) size 15x15
-        RenderText {#text} at (399,0) size 4x21
+layer at (0,0) size 784x2725
+  RenderBlock {HTML} at (0,0) size 784x2725
+    RenderBody {BODY} at (8,8) size 768x2709 [bgcolor=#CCCCCC]
+      RenderBlock (floating) {P} at (0,0) size 384x38 [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 384x38
+          text run at (0,0) width 384: "This paragraph is of class \"one\". It has a width of 50% and is"
+          text run at (0,19) width 105: "floated to the left."
+      RenderBlock {P} at (0,0) size 768x76
+        RenderText {#text} at (384,0) size 768x76
+          text run at (384,0) width 384: "This paragraph should start on the right side of a yellow box"
+          text run at (384,19) width 384: "which contains the previous paragraph. Since the text of this"
+          text run at (0,38) width 768: "element is much longer than the text in the previous element, the text will wrap around the yellow box. There is no padding,"
+          text run at (0,57) width 709: "border or margins on this and the previous element, so the text of the two elements should be very close to each other."
+      RenderBlock (anonymous) at (0,76) size 768x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {HR} at (0,103) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (0,113) size 768x76 [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 768x76
+          text run at (0,0) width 768: "This paragraph is of class \"two\". Since the width has been set to 100%, it should automatically be as wide as its parent element"
+          text run at (0,19) width 768: "allows it to be. Therefore, even though the element is floated, there is no room for other content on the sides and a orange"
+          text run at (0,38) width 768: "square image should be seen AFTER the paragraph, not next to it. A yellow background has been added to this paragraph for"
+          text run at (0,57) width 123: "diagnostic purposes."
+      RenderBlock (anonymous) at (0,113) size 768x95
+        RenderImage {IMG} at (0,76) size 15x15
+        RenderText {#text} at (15,76) size 4x19
+          text run at (15,76) width 4: " "
+        RenderBR {BR} at (19,91) size 0x0
+      RenderBlock {HR} at (0,216) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (0,226) size 384x95 [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 384x95
+          text run at (0,0) width 384: "This paragraph is floated to the left and the orange square image"
+          text run at (0,19) width 384: "should appear to the right of the paragraph. This paragraph has"
+          text run at (0,38) width 384: "a yellow background and no padding, margin or border. The"
+          text run at (0,57) width 384: "right edge of this yellow box should be horizontally aligned with"
+          text run at (0,76) width 260: "the left edge of the yellow box undernearth."
+      RenderBlock (anonymous) at (0,226) size 768x95
+        RenderImage {IMG} at (384,0) size 15x15
+        RenderText {#text} at (399,0) size 4x19
           text run at (399,0) width 4: " "
-        RenderBR {BR} at (403,16) size 0x0
-      RenderBlock {HR} at (0,401) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {P} at (384,411) size 384x126 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,0) size 384x126
-          text run at (0,0) width 384: "This paragraph is floated to the right (using a STYLE"
-          text run at (0,21) width 384: "attribute) and the orange square image should appear"
-          text run at (0,42) width 384: "to the left of the paragraph. This paragraph has a"
-          text run at (0,63) width 384: "yellow background and no padding, margin or border."
-          text run at (0,84) width 384: "The left edge of this yellow box should be horizonally"
-          text run at (0,105) width 362: "aligned with the right edge of the yellow box above."
-      RenderBlock (anonymous) at (0,411) size 768x126
-        RenderImage {IMG} at (0,1) size 15x15
-        RenderText {#text} at (15,0) size 4x21
+        RenderBR {BR} at (403,15) size 0x0
+      RenderBlock {HR} at (0,329) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (384,339) size 384x114 [bgcolor=#FFFF00]
+        RenderText {#text} at (0,0) size 384x114
+          text run at (0,0) width 384: "This paragraph is floated to the right (using a STYLE attribute)"
+          text run at (0,19) width 384: "and the orange square image should appear to the left of the"
+          text run at (0,38) width 384: "paragraph. This paragraph has a yellow background and no"
+          text run at (0,57) width 384: "padding, margin or border. The left edge of this yellow box"
+          text run at (0,76) width 384: "should be horizonally aligned with the right edge of the yellow"
+          text run at (0,95) width 68: "box above."
+      RenderBlock (anonymous) at (0,339) size 768x114
+        RenderImage {IMG} at (0,0) size 15x15
+        RenderText {#text} at (15,0) size 4x19
           text run at (15,0) width 4: " "
-        RenderBR {BR} at (19,16) size 0x0
-      RenderBlock {HR} at (0,545) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,555) size 768x84
-        RenderBlock (floating) {SPAN} at (0,0) size 48x42 [bgcolor=#C0C0C0]
-          RenderText {#text} at (0,0) size 20x42
-            text run at (0,0) width 20: "T"
-        RenderText {#text} at (48,0) size 768x84
-          text run at (48,0) width 720: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the"
-          text run at (48,21) width 647: "paragraph, as well as bold, with a content width of 1.5em and a background-color of silver. "
-          text run at (695,21) width 73: "The top of"
-          text run at (0,42) width 768: "the big letter \"T\" should be vertically aligned with the top of the first line of this paragraph. This is commonly"
-          text run at (0,63) width 151: "known as \"drop-cap\"."
-      RenderBlock (anonymous) at (0,639) size 768x21
-        RenderBR {BR} at (0,0) size 0x21
-      RenderBlock {HR} at (0,668) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {P} at (422,688) size 336x247 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
-        RenderText {#text} at (8,8) size 320x231
-          text run at (8,8) width 320: "This paragraph should be floated to the right,"
-          text run at (8,29) width 320: "sort of like a 'sidebar' in a magazine article."
-          text run at (8,50) width 320: "Its width is 20em so the box should not be"
-          text run at (8,71) width 320: "reformatted when the size of the viewport is"
-          text run at (8,92) width 320: "changed (e.g. when the window is resized)."
-          text run at (8,113) width 320: "The background color of the element is"
-          text run at (8,134) width 320: "yellow, and there should be a 3px solid red"
-          text run at (8,155) width 320: "border outside a 5px wide padding. Also, the"
-          text run at (8,176) width 320: "element has a 10px wide margin around it"
-          text run at (8,197) width 320: "where the blue background of the paragraph"
-          text run at (8,218) width 282: "in the normal flow should shine through."
-      RenderBlock {P} at (0,678) size 768x252 [bgcolor=#66CCFF]
-        RenderText {#text} at (0,0) size 412x252
-          text run at (0,0) width 412: "This paragraph is not floating. If there is enough room, the"
-          text run at (0,21) width 412: "textual content of the paragraph should appear on the left"
-          text run at (0,42) width 305: "side of the yellow \"sidebar\" on the right. "
-          text run at (305,42) width 107: "The content of"
-          text run at (0,63) width 412: "this element should flow around the floated element."
-          text run at (0,84) width 412: "However, the floated element may or may not be obscured"
-          text run at (0,105) width 412: "by the blue background of this element, as the"
-          text run at (0,126) width 362: "specification does not say which is drawn \"on top.\" "
-          text run at (362,126) width 50: "Even if"
-          text run at (0,147) width 412: "the floated element is obscured, it still forces the content of"
-          text run at (0,168) width 217: "this element to flow around it. "
-          text run at (217,168) width 195: "If the floated element is not"
-          text run at (0,189) width 412: "obscured, then the blue rectangle of this paragraph should"
-          text run at (0,210) width 412: "extend 10px above and to the right of the sidebar's red"
-          text run at (0,231) width 412: "border, due to the margin styles set for the floated element."
-      RenderBlock (anonymous) at (0,930) size 768x21
-        RenderBR {BR} at (0,0) size 0x21
-      RenderBlock {HR} at (0,959) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,969) size 768x29 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
-        RenderBlock (floating) {DIV} at (424,14) size 330x304 [bgcolor=#FFFF00]
-          RenderBlock {P} at (5,5) size 320x294
-            RenderText {#text} at (0,0) size 320x294
-              text run at (0,0) width 320: "This paragraph is placed inside a DIV"
-              text run at (0,21) width 320: "element which is floated to the right. The"
-              text run at (0,42) width 320: "width of the DIV element is 20em. The"
-              text run at (0,63) width 320: "background is yellow and there is a 5px"
-              text run at (0,84) width 320: "padding, a 10px margin and no border. Since"
-              text run at (0,105) width 320: "it is floated, the yellow box should be"
-              text run at (0,126) width 320: "rendered on top of the background and"
-              text run at (0,147) width 320: "borders of adjacent non-floated elements. To"
-              text run at (0,168) width 320: "the left of this yellow box there should be a"
-              text run at (0,189) width 320: "short paragraph with a blue background and"
-              text run at (0,210) width 320: "a red border. The yellow box should be"
-              text run at (0,231) width 320: "rendered on top of the bottom red border. I.e.,"
-              text run at (0,252) width 320: "the bottom red border will appear broken"
-              text run at (0,273) width 299: "where it's overlaid by the yellow rectangle."
-        RenderBlock {P} at (4,4) size 760x21
-          RenderText {#text} at (0,0) size 301x21
-            text run at (0,0) width 301: "See description in the box on the right side"
-      RenderBlock (anonymous) at (0,998) size 768x299
-        RenderBR {BR} at (0,0) size 0x21
-      RenderBlock {HR} at (0,1305) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {DIV} at (0,1315) size 192x84 [bgcolor=#66CCFF]
-        RenderBlock {P} at (0,0) size 192x84
-          RenderText {#text} at (0,0) size 192x84
-            text run at (0,0) width 192: "This paragraph is inside a"
-            text run at (0,21) width 192: "DIV which is floated left. Its"
-            text run at (0,42) width 192: "background is blue and the"
-            text run at (0,63) width 94: "width is 25%."
-      RenderBlock (floating) {DIV} at (576,1315) size 192x84 [bgcolor=#FFFF00]
-        RenderBlock {P} at (0,0) size 192x84
-          RenderText {#text} at (0,0) size 192x84
-            text run at (0,0) width 192: "This paragraph is inside a"
-            text run at (0,21) width 192: "DIV which is floated right."
-            text run at (0,42) width 27: "Its "
-            text run at (27,42) width 165: "background is yellow"
-            text run at (0,63) width 151: "and the width is 25%."
-      RenderBlock {P} at (0,1315) size 768x42
-        RenderText {#text} at (192,0) size 384x42
-          text run at (192,0) width 384: "This paragraph should appear between a blue box (on"
-          text run at (192,21) width 56: "the left) "
-          text run at (248,21) width 217: "and a yellow box (on the right)."
-      RenderBlock (anonymous) at (0,1357) size 768x42
-        RenderBR {BR} at (192,0) size 0x21
-      RenderBlock {HR} at (0,1407) size 768x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {DIV} at (0,1417) size 576x168 [bgcolor=#66CCFF]
-        RenderBlock (floating) {DIV} at (422,0) size 144x63 [bgcolor=#FFFF00]
-          RenderBlock {P} at (0,0) size 144x63
-            RenderText {#text} at (0,0) size 144x63
-              text run at (0,0) width 144: "See description in"
-              text run at (0,21) width 144: "the box on the left"
-              text run at (0,42) width 34: "side."
-        RenderBlock {P} at (0,0) size 576x168
-          RenderText {#text} at (0,0) size 576x168
-            text run at (0,0) width 422: "This paragraph is inside a DIV which is floated left. The"
-            text run at (0,21) width 422: "background of the DIV element is blue and its width is 75%."
-            text run at (0,42) width 36: "This "
-            text run at (36,42) width 386: "text should all be inside the blue rectangle. The blue"
-            text run at (0,63) width 31: "DIV "
-            text run at (31,63) width 422: "element has another DIV element as a child. It has a yellow "
-            text run at (453,63) width 123: "background color"
-            text run at (0,84) width 268: "and is floated to the right. Since it is a "
-            text run at (268,84) width 308: "child of the blue DIV, the yellow DIV should"
-            text run at (0,105) width 129: "appear inside the "
-            text run at (129,105) width 438: "blue rectangle. Due to it being floated to the right and having "
-            text run at (567,105) width 9: "a"
-            text run at (0,126) width 458: "10px right margin, the yellow rectange should have a 10px blue "
-            text run at (458,126) width 118: "stripe on its right"
-            text run at (0,147) width 34: "side."
-      RenderBlock (anonymous) at (0,1417) size 768x168
-        RenderBR {BR} at (576,0) size 0x21
-      RenderBlock {HR} at (0,1593) size 768x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,1603) size 768x1684 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 766x1682
-          RenderTableRow {TR} at (0,0) size 766x29
-            RenderTableCell {TD} at (0,0) size 766x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 178x21
-                RenderText {#text} at (4,4) size 178x21
-                  text run at (4,4) width 178: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,29) size 766x1653
-            RenderTableCell {TD} at (0,841) size 12x29 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x21
+        RenderBR {BR} at (19,15) size 0x0
+      RenderBlock {HR} at (0,461) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,471) size 768x57
+        RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
+          RenderText {#text} at (0,0) size 21x36
+            text run at (0,0) width 21: "T"
+        RenderText {#text} at (48,0) size 768x57
+          text run at (48,0) width 720: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph, as well as"
+          text run at (48,19) width 431: "bold, with a content width of 1.5em and a background-color of silver. "
+          text run at (479,19) width 289: "The top of the big letter \"T\" should be vertically"
+          text run at (0,38) width 559: "aligned with the top of the first line of this paragraph. This is commonly known as \"drop-cap\"."
+      RenderBlock (anonymous) at (0,528) size 768x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {HR} at (0,555) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (422,575) size 336x206 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
+        RenderText {#text} at (8,8) size 320x190
+          text run at (8,8) width 320: "This paragraph should be floated to the right, sort of"
+          text run at (8,27) width 320: "like a 'sidebar' in a magazine article. Its width is"
+          text run at (8,46) width 320: "20em so the box should not be reformatted when the"
+          text run at (8,65) width 320: "size of the viewport is changed (e.g. when the"
+          text run at (8,84) width 320: "window is resized). The background color of the"
+          text run at (8,103) width 320: "element is yellow, and there should be a 3px solid"
+          text run at (8,122) width 320: "red border outside a 5px wide padding. Also, the"
+          text run at (8,141) width 320: "element has a 10px wide margin around it where the"
+          text run at (8,160) width 320: "blue background of the paragraph in the normal flow"
+          text run at (8,179) width 126: "should shine through."
+      RenderBlock {P} at (0,565) size 768x209 [bgcolor=#66CCFF]
+        RenderText {#text} at (0,0) size 412x209
+          text run at (0,0) width 412: "This paragraph is not floating. If there is enough room, the textual"
+          text run at (0,19) width 412: "content of the paragraph should appear on the left side of the yellow"
+          text run at (0,38) width 151: "\"sidebar\" on the right. "
+          text run at (151,38) width 261: "The content of this element should flow"
+          text run at (0,57) width 176: "around the floated element. "
+          text run at (176,57) width 236: "However, the floated element may or"
+          text run at (0,76) width 412: "may not be obscured by the blue background of this element, as the"
+          text run at (0,95) width 341: "specification does not say which is drawn \"on top.\" "
+          text run at (341,95) width 71: "Even if the"
+          text run at (0,114) width 412: "floated element is obscured, it still forces the content of this element"
+          text run at (0,133) width 116: "to flow around it. "
+          text run at (116,133) width 296: "If the floated element is not obscured, then the"
+          text run at (0,152) width 412: "blue rectangle of this paragraph should extend 10px above and to"
+          text run at (0,171) width 412: "the right of the sidebar's red border, due to the margin styles set for"
+          text run at (0,190) width 117: "the floated element."
+      RenderBlock (anonymous) at (0,774) size 768x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {HR} at (0,801) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,811) size 768x27 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
+        RenderBlock (floating) {DIV} at (424,14) size 330x238 [bgcolor=#FFFF00]
+          RenderBlock {P} at (5,5) size 320x228
+            RenderText {#text} at (0,0) size 320x228
+              text run at (0,0) width 320: "This paragraph is placed inside a DIV element which"
+              text run at (0,19) width 320: "is floated to the right. The width of the DIV element"
+              text run at (0,38) width 320: "is 20em. The background is yellow and there is a"
+              text run at (0,57) width 320: "5px padding, a 10px margin and no border. Since it"
+              text run at (0,76) width 320: "is floated, the yellow box should be rendered on top"
+              text run at (0,95) width 320: "of the background and borders of adjacent non-"
+              text run at (0,114) width 320: "floated elements. To the left of this yellow box there"
+              text run at (0,133) width 320: "should be a short paragraph with a blue background"
+              text run at (0,152) width 320: "and a red border. The yellow box should be"
+              text run at (0,171) width 320: "rendered on top of the bottom red border. I.e., the"
+              text run at (0,190) width 320: "bottom red border will appear broken where it's"
+              text run at (0,209) width 194: "overlaid by the yellow rectangle."
+        RenderBlock {P} at (4,4) size 760x19
+          RenderText {#text} at (0,0) size 255x19
+            text run at (0,0) width 255: "See description in the box on the right side"
+      RenderBlock (anonymous) at (0,838) size 768x235
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {HR} at (0,1081) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {DIV} at (0,1091) size 192x76 [bgcolor=#66CCFF]
+        RenderBlock {P} at (0,0) size 192x76
+          RenderText {#text} at (0,0) size 192x76
+            text run at (0,0) width 192: "This paragraph is inside a DIV"
+            text run at (0,19) width 192: "which is floated left. Its"
+            text run at (0,38) width 192: "background is blue and the"
+            text run at (0,57) width 83: "width is 25%."
+      RenderBlock (floating) {DIV} at (576,1091) size 192x76 [bgcolor=#FFFF00]
+        RenderBlock {P} at (0,0) size 192x76
+          RenderText {#text} at (0,0) size 192x76
+            text run at (0,0) width 192: "This paragraph is inside a DIV"
+            text run at (0,19) width 192: "which is floated right. Its"
+            text run at (0,38) width 192: "background is yellow and the"
+            text run at (0,57) width 83: "width is 25%."
+      RenderBlock {P} at (0,1091) size 768x38
+        RenderText {#text} at (192,0) size 384x38
+          text run at (192,0) width 384: "This paragraph should appear between a blue box (on the left)"
+          text run at (192,19) width 188: "and a yellow box (on the right)."
+      RenderBlock (anonymous) at (0,1129) size 768x38
+        RenderBR {BR} at (192,0) size 0x19
+      RenderBlock {HR} at (0,1175) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {DIV} at (0,1185) size 576x114 [bgcolor=#66CCFF]
+        RenderBlock (floating) {DIV} at (422,0) size 144x38 [bgcolor=#FFFF00]
+          RenderBlock {P} at (0,0) size 144x38
+            RenderText {#text} at (0,0) size 144x38
+              text run at (0,0) width 144: "See description in the"
+              text run at (0,19) width 118: "box on the left side."
+        RenderBlock {P} at (0,0) size 576x114
+          RenderText {#text} at (0,0) size 576x114
+            text run at (0,0) width 350: "This paragraph is inside a DIV which is floated left. The "
+            text run at (350,0) width 72: "background"
+            text run at (0,19) width 320: "of the DIV element is blue and its width is 75%. This "
+            text run at (320,19) width 102: "text should all be"
+            text run at (0,38) width 248: "inside the blue rectangle. The blue DIV "
+            text run at (248,38) width 328: "element has another DIV element as a child. It has a"
+            text run at (0,57) width 45: "yellow "
+            text run at (45,57) width 367: "background color and is floated to the right. Since it is a "
+            text run at (412,57) width 164: "child of the blue DIV, the"
+            text run at (0,76) width 236: "yellow DIV should appear inside the "
+            text run at (236,76) width 340: "blue rectangle. Due to it being floated to the right and"
+            text run at (0,95) width 42: "having "
+            text run at (42,95) width 394: "a 10px right margin, the yellow rectange should have a 10px blue "
+            text run at (436,95) width 131: "stripe on its right side."
+      RenderBlock (anonymous) at (0,1185) size 768x114
+        RenderBR {BR} at (576,0) size 0x19
+      RenderBlock {HR} at (0,1307) size 768x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,1317) size 768x1392 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x1390
+          RenderTableRow {TR} at (0,0) size 766x27
+            RenderTableCell {TD} at (0,0) size 766x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 159x19
+                RenderText {#text} at (4,4) size 159x19
+                  text run at (4,4) width 159: "TABLE Testing Section"
+          RenderTableRow {TR} at (0,27) size 766x1363
+            RenderTableCell {TD} at (0,695) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,29) size 754x1653 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (floating) {P} at (4,4) size 373x42 [bgcolor=#FFFF00]
-                RenderText {#text} at (0,0) size 373x42
-                  text run at (0,0) width 373: "This paragraph is of class \"one\". It has a width of"
-                  text run at (0,21) width 203: "50% and is floated to the left."
-              RenderBlock {P} at (4,4) size 746x105
-                RenderText {#text} at (373,0) size 746x105
-                  text run at (373,0) width 373: "This paragraph should start on the right side of a"
-                  text run at (373,21) width 373: "yellow box which contains the previous paragraph."
-                  text run at (0,42) width 746: "Since the text of this element is much longer than the text in the previous element, the text will wrap"
-                  text run at (0,63) width 746: "around the yellow box. There is no padding, border or margins on this and the previous element, so the"
-                  text run at (0,84) width 416: "text of the two elements should be very close to each other."
-              RenderBlock (anonymous) at (4,109) size 746x21
-                RenderBR {BR} at (0,0) size 0x21
-              RenderBlock {HR} at (4,138) size 746x2 [border: (1px inset #000000)]
-              RenderBlock (floating) {P} at (4,148) size 746x84 [bgcolor=#FFFF00]
-                RenderText {#text} at (0,0) size 746x84
-                  text run at (0,0) width 746: "This paragraph is of class \"two\". Since the width has been set to 100%, it should automatically be as wide"
-                  text run at (0,21) width 746: "as its parent element allows it to be. Therefore, even though the element is floated, there is no room for"
-                  text run at (0,42) width 746: "other content on the sides and a orange square image should be seen AFTER the paragraph, not next to"
-                  text run at (0,63) width 580: "it. A yellow background has been added to this paragraph for diagnostic purposes."
-              RenderBlock (anonymous) at (4,148) size 746x105
-                RenderImage {IMG} at (0,85) size 15x15
-                RenderText {#text} at (15,84) size 4x21
-                  text run at (15,84) width 4: " "
-                RenderBR {BR} at (19,100) size 0x0
-              RenderBlock {HR} at (4,261) size 746x2 [border: (1px inset #000000)]
-              RenderBlock (floating) {P} at (4,271) size 373x126 [bgcolor=#FFFF00]
-                RenderText {#text} at (0,0) size 373x126
-                  text run at (0,0) width 373: "This paragraph is floated to the left and the orange"
-                  text run at (0,21) width 373: "square image should appear to the right of the"
-                  text run at (0,42) width 373: "paragraph. This paragraph has a yellow background"
-                  text run at (0,63) width 373: "and no padding, margin or border. The right edge of"
-                  text run at (0,84) width 373: "this yellow box should be horizontally aligned with"
-                  text run at (0,105) width 304: "the left edge of the yellow box undernearth."
-              RenderBlock (anonymous) at (4,271) size 746x126
-                RenderImage {IMG} at (373,1) size 15x15
-                RenderText {#text} at (388,0) size 4x21
+            RenderTableCell {TD} at (12,27) size 754x1363 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (floating) {P} at (4,4) size 373x38 [bgcolor=#FFFF00]
+                RenderText {#text} at (0,0) size 373x38
+                  text run at (0,0) width 373: "This paragraph is of class \"one\". It has a width of 50% and is"
+                  text run at (0,19) width 105: "floated to the left."
+              RenderBlock {P} at (4,4) size 746x76
+                RenderText {#text} at (373,0) size 746x76
+                  text run at (373,0) width 373: "This paragraph should start on the right side of a yellow box"
+                  text run at (373,19) width 373: "which contains the previous paragraph. Since the text of this"
+                  text run at (0,38) width 746: "element is much longer than the text in the previous element, the text will wrap around the yellow box. There is no padding,"
+                  text run at (0,57) width 709: "border or margins on this and the previous element, so the text of the two elements should be very close to each other."
+              RenderBlock (anonymous) at (4,80) size 746x19
+                RenderBR {BR} at (0,0) size 0x19
+              RenderBlock {HR} at (4,107) size 746x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {P} at (4,117) size 746x76 [bgcolor=#FFFF00]
+                RenderText {#text} at (0,0) size 746x76
+                  text run at (0,0) width 746: "This paragraph is of class \"two\". Since the width has been set to 100%, it should automatically be as wide as its parent"
+                  text run at (0,19) width 746: "element allows it to be. Therefore, even though the element is floated, there is no room for other content on the sides and a"
+                  text run at (0,38) width 746: "orange square image should be seen AFTER the paragraph, not next to it. A yellow background has been added to this"
+                  text run at (0,57) width 209: "paragraph for diagnostic purposes."
+              RenderBlock (anonymous) at (4,117) size 746x95
+                RenderImage {IMG} at (0,76) size 15x15
+                RenderText {#text} at (15,76) size 4x19
+                  text run at (15,76) width 4: " "
+                RenderBR {BR} at (19,91) size 0x0
+              RenderBlock {HR} at (4,220) size 746x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {P} at (4,230) size 373x114 [bgcolor=#FFFF00]
+                RenderText {#text} at (0,0) size 373x114
+                  text run at (0,0) width 373: "This paragraph is floated to the left and the orange square"
+                  text run at (0,19) width 373: "image should appear to the right of the paragraph. This"
+                  text run at (0,38) width 373: "paragraph has a yellow background and no padding, margin"
+                  text run at (0,57) width 373: "or border. The right edge of this yellow box should be"
+                  text run at (0,76) width 373: "horizontally aligned with the left edge of the yellow box"
+                  text run at (0,95) width 75: "undernearth."
+              RenderBlock (anonymous) at (4,230) size 746x114
+                RenderImage {IMG} at (373,0) size 15x15
+                RenderText {#text} at (388,0) size 4x19
                   text run at (388,0) width 4: " "
-                RenderBR {BR} at (392,16) size 0x0
-              RenderBlock {HR} at (4,405) size 746x2 [border: (1px inset #000000)]
-              RenderBlock (floating) {P} at (377,415) size 373x147 [bgcolor=#FFFF00]
-                RenderText {#text} at (0,0) size 373x147
+                RenderBR {BR} at (392,15) size 0x0
+              RenderBlock {HR} at (4,352) size 746x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {P} at (377,362) size 373x114 [bgcolor=#FFFF00]
+                RenderText {#text} at (0,0) size 373x114
                   text run at (0,0) width 373: "This paragraph is floated to the right (using a STYLE"
-                  text run at (0,21) width 373: "attribute) and the orange square image should"
-                  text run at (0,42) width 373: "appear to the left of the paragraph. This paragraph"
-                  text run at (0,63) width 373: "has a yellow background and no padding, margin or"
-                  text run at (0,84) width 373: "border. The left edge of this yellow box should be"
-                  text run at (0,105) width 373: "horizonally aligned with the right edge of the yellow"
-                  text run at (0,126) width 78: "box above."
-              RenderBlock (anonymous) at (4,415) size 746x147
-                RenderImage {IMG} at (0,1) size 15x15
-                RenderText {#text} at (15,0) size 4x21
+                  text run at (0,19) width 373: "attribute) and the orange square image should appear to the"
+                  text run at (0,38) width 373: "left of the paragraph. This paragraph has a yellow background"
+                  text run at (0,57) width 373: "and no padding, margin or border. The left edge of this yellow"
+                  text run at (0,76) width 373: "box should be horizonally aligned with the right edge of the"
+                  text run at (0,95) width 111: "yellow box above."
+              RenderBlock (anonymous) at (4,362) size 746x114
+                RenderImage {IMG} at (0,0) size 15x15
+                RenderText {#text} at (15,0) size 4x19
                   text run at (15,0) width 4: " "
-                RenderBR {BR} at (19,16) size 0x0
-              RenderBlock {HR} at (4,570) size 746x2 [border: (1px inset #000000)]
-              RenderBlock {P} at (4,580) size 746x84
-                RenderBlock (floating) {SPAN} at (0,0) size 48x42 [bgcolor=#C0C0C0]
-                  RenderText {#text} at (0,0) size 20x42
-                    text run at (0,0) width 20: "T"
-                RenderText {#text} at (48,0) size 746x84
-                  text run at (48,0) width 698: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the"
-                  text run at (48,21) width 643: "paragraph, as well as bold, with a content width of 1.5em and a background-color of silver. "
-                  text run at (691,21) width 55: "The top"
-                  text run at (0,42) width 746: "of the big letter \"T\" should be vertically aligned with the top of the first line of this paragraph. This is"
-                  text run at (0,63) width 228: "commonly known as \"drop-cap\"."
-              RenderBlock (anonymous) at (4,664) size 746x21
-                RenderBR {BR} at (0,0) size 0x21
-              RenderBlock {HR} at (4,693) size 746x2 [border: (1px inset #000000)]
-              RenderBlock (floating) {P} at (404,713) size 336x247 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
-                RenderText {#text} at (8,8) size 320x231
-                  text run at (8,8) width 320: "This paragraph should be floated to the right,"
-                  text run at (8,29) width 320: "sort of like a 'sidebar' in a magazine article."
-                  text run at (8,50) width 320: "Its width is 20em so the box should not be"
-                  text run at (8,71) width 320: "reformatted when the size of the viewport is"
-                  text run at (8,92) width 320: "changed (e.g. when the window is resized)."
-                  text run at (8,113) width 320: "The background color of the element is"
-                  text run at (8,134) width 320: "yellow, and there should be a 3px solid red"
-                  text run at (8,155) width 320: "border outside a 5px wide padding. Also, the"
-                  text run at (8,176) width 320: "element has a 10px wide margin around it"
-                  text run at (8,197) width 320: "where the blue background of the paragraph"
-                  text run at (8,218) width 282: "in the normal flow should shine through."
-              RenderBlock {P} at (4,703) size 746x273 [bgcolor=#66CCFF]
-                RenderText {#text} at (0,0) size 390x273
-                  text run at (0,0) width 390: "This paragraph is not floating. If there is enough room,"
-                  text run at (0,21) width 390: "the textual content of the paragraph should appear on"
-                  text run at (0,42) width 362: "the left side of the yellow \"sidebar\" on the right. "
-                  text run at (362,42) width 28: "The"
-                  text run at (0,63) width 390: "content of this element should flow around the floated"
-                  text run at (0,84) width 65: "element. "
-                  text run at (65,84) width 325: "However, the floated element may or may not"
-                  text run at (0,105) width 390: "be obscured by the blue background of this element, as"
-                  text run at (0,126) width 390: "the specification does not say which is drawn \"on top.\""
-                  text run at (0,147) width 390: "Even if the floated element is obscured, it still forces"
-                  text run at (0,168) width 351: "the content of this element to flow around it. "
-                  text run at (351,168) width 39: "If the"
-                  text run at (0,189) width 390: "floated element is not obscured, then the blue"
-                  text run at (0,210) width 390: "rectangle of this paragraph should extend 10px above"
-                  text run at (0,231) width 390: "and to the right of the sidebar's red border, due to the"
-                  text run at (0,252) width 284: "margin styles set for the floated element."
-              RenderBlock (anonymous) at (4,976) size 746x21
-                RenderBR {BR} at (0,0) size 0x21
-              RenderBlock {HR} at (4,1005) size 746x2 [border: (1px inset #000000)]
-              RenderBlock {DIV} at (4,1015) size 746x29 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
-                RenderBlock (floating) {DIV} at (402,14) size 330x304 [bgcolor=#FFFF00]
-                  RenderBlock {P} at (5,5) size 320x294
-                    RenderText {#text} at (0,0) size 320x294
-                      text run at (0,0) width 320: "This paragraph is placed inside a DIV"
-                      text run at (0,21) width 320: "element which is floated to the right. The"
-                      text run at (0,42) width 320: "width of the DIV element is 20em. The"
-                      text run at (0,63) width 320: "background is yellow and there is a 5px"
-                      text run at (0,84) width 320: "padding, a 10px margin and no border. Since"
-                      text run at (0,105) width 320: "it is floated, the yellow box should be"
-                      text run at (0,126) width 320: "rendered on top of the background and"
-                      text run at (0,147) width 320: "borders of adjacent non-floated elements. To"
-                      text run at (0,168) width 320: "the left of this yellow box there should be a"
-                      text run at (0,189) width 320: "short paragraph with a blue background and"
-                      text run at (0,210) width 320: "a red border. The yellow box should be"
-                      text run at (0,231) width 320: "rendered on top of the bottom red border. I.e.,"
-                      text run at (0,252) width 320: "the bottom red border will appear broken"
-                      text run at (0,273) width 299: "where it's overlaid by the yellow rectangle."
-                RenderBlock {P} at (4,4) size 738x21
-                  RenderText {#text} at (0,0) size 301x21
-                    text run at (0,0) width 301: "See description in the box on the right side"
-              RenderBlock (anonymous) at (4,1044) size 746x299
-                RenderBR {BR} at (0,0) size 0x21
-              RenderBlock {HR} at (4,1351) size 746x2 [border: (1px inset #000000)]
-              RenderBlock (floating) {DIV} at (4,1361) size 186x84 [bgcolor=#66CCFF]
-                RenderBlock {P} at (0,0) size 186x84
-                  RenderText {#text} at (0,0) size 186x84
-                    text run at (0,0) width 186: "This paragraph is inside a"
-                    text run at (0,21) width 186: "DIV which is floated left."
-                    text run at (0,42) width 20: "Its "
-                    text run at (20,42) width 166: "background is blue and"
-                    text run at (0,63) width 120: "the width is 25%."
-              RenderBlock (floating) {DIV} at (564,1361) size 186x84 [bgcolor=#FFFF00]
-                RenderBlock {P} at (0,0) size 186x84
-                  RenderText {#text} at (0,0) size 186x84
-                    text run at (0,0) width 186: "This paragraph is inside a"
-                    text run at (0,21) width 186: "DIV which is floated right."
-                    text run at (0,42) width 25: "Its "
-                    text run at (25,42) width 161: "background is yellow"
-                    text run at (0,63) width 151: "and the width is 25%."
-              RenderBlock {P} at (4,1361) size 746x42
-                RenderText {#text} at (186,0) size 374x42
-                  text run at (186,0) width 374: "This paragraph should appear between a blue box"
-                  text run at (186,21) width 83: "(on the left) "
-                  text run at (269,21) width 217: "and a yellow box (on the right)."
-              RenderBlock (anonymous) at (4,1403) size 746x42
-                RenderBR {BR} at (186,0) size 0x21
-              RenderBlock {HR} at (4,1453) size 746x2 [border: (1px inset #000000)]
-              RenderBlock (floating) {DIV} at (4,1463) size 559x168 [bgcolor=#66CCFF]
-                RenderBlock (floating) {DIV} at (410,0) size 139x63 [bgcolor=#FFFF00]
-                  RenderBlock {P} at (0,0) size 139x63
-                    RenderText {#text} at (0,0) size 139x63
-                      text run at (0,0) width 139: "See description in"
-                      text run at (0,21) width 139: "the box on the left"
-                      text run at (0,42) width 34: "side."
-                RenderBlock {P} at (0,0) size 559x168
-                  RenderText {#text} at (0,0) size 559x168
-                    text run at (0,0) width 410: "This paragraph is inside a DIV which is floated left. The"
-                    text run at (0,21) width 410: "background of the DIV element is blue and its width is"
-                    text run at (0,42) width 75: "75%. This "
-                    text run at (75,42) width 335: "text should all be inside the blue rectangle. The"
-                    text run at (0,63) width 77: "blue DIV "
-                    text run at (77,63) width 482: "element has another DIV element as a child. It has a yellow"
-                    text run at (0,84) width 407: "background color and is floated to the right. Since it is a "
-                    text run at (407,84) width 152: "child of the blue DIV,"
-                    text run at (0,105) width 290: "the yellow DIV should appear inside the "
-                    text run at (290,105) width 269: "blue rectangle. Due to it being floated"
-                    text run at (0,126) width 165: "to the right and having "
-                    text run at (165,126) width 394: "a 10px right margin, the yellow rectange should have a"
-                    text run at (0,147) width 74: "10px blue "
-                    text run at (74,147) width 154: "stripe on its right side."
-              RenderBlock (anonymous) at (4,1463) size 746x168
-                RenderBR {BR} at (559,0) size 0x21
-              RenderBlock {HR} at (4,1639) size 746x2 [border: (1px inset #000000)]
+                RenderBR {BR} at (19,15) size 0x0
+              RenderBlock {HR} at (4,484) size 746x2 [border: (1px inset #000000)]
+              RenderBlock {P} at (4,494) size 746x57
+                RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
+                  RenderText {#text} at (0,0) size 21x36
+                    text run at (0,0) width 21: "T"
+                RenderText {#text} at (48,0) size 746x57
+                  text run at (48,0) width 698: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph, as well"
+                  text run at (48,19) width 459: "as bold, with a content width of 1.5em and a background-color of silver. "
+                  text run at (507,19) width 239: "The top of the big letter \"T\" should be"
+                  text run at (0,38) width 616: "vertically aligned with the top of the first line of this paragraph. This is commonly known as \"drop-cap\"."
+              RenderBlock (anonymous) at (4,551) size 746x19
+                RenderBR {BR} at (0,0) size 0x19
+              RenderBlock {HR} at (4,578) size 746x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {P} at (404,598) size 336x206 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
+                RenderText {#text} at (8,8) size 320x190
+                  text run at (8,8) width 320: "This paragraph should be floated to the right, sort of"
+                  text run at (8,27) width 320: "like a 'sidebar' in a magazine article. Its width is"
+                  text run at (8,46) width 320: "20em so the box should not be reformatted when the"
+                  text run at (8,65) width 320: "size of the viewport is changed (e.g. when the"
+                  text run at (8,84) width 320: "window is resized). The background color of the"
+                  text run at (8,103) width 320: "element is yellow, and there should be a 3px solid"
+                  text run at (8,122) width 320: "red border outside a 5px wide padding. Also, the"
+                  text run at (8,141) width 320: "element has a 10px wide margin around it where the"
+                  text run at (8,160) width 320: "blue background of the paragraph in the normal flow"
+                  text run at (8,179) width 126: "should shine through."
+              RenderBlock {P} at (4,588) size 746x209 [bgcolor=#66CCFF]
+                RenderText {#text} at (0,0) size 390x209
+                  text run at (0,0) width 390: "This paragraph is not floating. If there is enough room, the textual"
+                  text run at (0,19) width 390: "content of the paragraph should appear on the left side of the"
+                  text run at (0,38) width 181: "yellow \"sidebar\" on the right. "
+                  text run at (181,38) width 209: "The content of this element should"
+                  text run at (0,57) width 207: "flow around the floated element. "
+                  text run at (207,57) width 183: "However, the floated element"
+                  text run at (0,76) width 390: "may or may not be obscured by the blue background of this"
+                  text run at (0,95) width 390: "element, as the specification does not say which is drawn \"on"
+                  text run at (0,114) width 35: "top.\" "
+                  text run at (35,114) width 355: "Even if the floated element is obscured, it still forces the"
+                  text run at (0,133) width 249: "content of this element to flow around it. "
+                  text run at (249,133) width 141: "If the floated element is"
+                  text run at (0,152) width 390: "not obscured, then the blue rectangle of this paragraph should"
+                  text run at (0,171) width 390: "extend 10px above and to the right of the sidebar's red border,"
+                  text run at (0,190) width 304: "due to the margin styles set for the floated element."
+              RenderBlock (anonymous) at (4,797) size 746x19
+                RenderBR {BR} at (0,0) size 0x19
+              RenderBlock {HR} at (4,824) size 746x2 [border: (1px inset #000000)]
+              RenderBlock {DIV} at (4,834) size 746x27 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
+                RenderBlock (floating) {DIV} at (402,14) size 330x238 [bgcolor=#FFFF00]
+                  RenderBlock {P} at (5,5) size 320x228
+                    RenderText {#text} at (0,0) size 320x228
+                      text run at (0,0) width 320: "This paragraph is placed inside a DIV element which"
+                      text run at (0,19) width 320: "is floated to the right. The width of the DIV element"
+                      text run at (0,38) width 320: "is 20em. The background is yellow and there is a"
+                      text run at (0,57) width 320: "5px padding, a 10px margin and no border. Since it"
+                      text run at (0,76) width 320: "is floated, the yellow box should be rendered on top"
+                      text run at (0,95) width 320: "of the background and borders of adjacent non-"
+                      text run at (0,114) width 320: "floated elements. To the left of this yellow box there"
+                      text run at (0,133) width 320: "should be a short paragraph with a blue background"
+                      text run at (0,152) width 320: "and a red border. The yellow box should be"
+                      text run at (0,171) width 320: "rendered on top of the bottom red border. I.e., the"
+                      text run at (0,190) width 320: "bottom red border will appear broken where it's"
+                      text run at (0,209) width 194: "overlaid by the yellow rectangle."
+                RenderBlock {P} at (4,4) size 738x19
+                  RenderText {#text} at (0,0) size 255x19
+                    text run at (0,0) width 255: "See description in the box on the right side"
+              RenderBlock (anonymous) at (4,861) size 746x235
+                RenderBR {BR} at (0,0) size 0x19
+              RenderBlock {HR} at (4,1104) size 746x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {DIV} at (4,1114) size 186x76 [bgcolor=#66CCFF]
+                RenderBlock {P} at (0,0) size 186x76
+                  RenderText {#text} at (0,0) size 186x76
+                    text run at (0,0) width 186: "This paragraph is inside a DIV"
+                    text run at (0,19) width 186: "which is floated left. Its"
+                    text run at (0,38) width 186: "background is blue and the"
+                    text run at (0,57) width 83: "width is 25%."
+              RenderBlock (floating) {DIV} at (564,1114) size 186x76 [bgcolor=#FFFF00]
+                RenderBlock {P} at (0,0) size 186x76
+                  RenderText {#text} at (0,0) size 186x76
+                    text run at (0,0) width 186: "This paragraph is inside a DIV"
+                    text run at (0,19) width 186: "which is floated right. Its"
+                    text run at (0,38) width 186: "background is yellow and the"
+                    text run at (0,57) width 83: "width is 25%."
+              RenderBlock {P} at (4,1114) size 746x38
+                RenderText {#text} at (186,0) size 374x38
+                  text run at (186,0) width 374: "This paragraph should appear between a blue box (on the left)"
+                  text run at (186,19) width 188: "and a yellow box (on the right)."
+              RenderBlock (anonymous) at (4,1152) size 746x38
+                RenderBR {BR} at (186,0) size 0x19
+              RenderBlock {HR} at (4,1198) size 746x2 [border: (1px inset #000000)]
+              RenderBlock (floating) {DIV} at (4,1208) size 559x133 [bgcolor=#66CCFF]
+                RenderBlock (floating) {DIV} at (410,0) size 139x38 [bgcolor=#FFFF00]
+                  RenderBlock {P} at (0,0) size 139x38
+                    RenderText {#text} at (0,0) size 139x38
+                      text run at (0,0) width 139: "See description in the"
+                      text run at (0,19) width 118: "box on the left side."
+                RenderBlock {P} at (0,0) size 559x133
+                  RenderText {#text} at (0,0) size 559x133
+                    text run at (0,0) width 338: "This paragraph is inside a DIV which is floated left. The "
+                    text run at (338,0) width 72: "background"
+                    text run at (0,19) width 326: "of the DIV element is blue and its width is 75%. This "
+                    text run at (326,19) width 84: "text should all"
+                    text run at (0,38) width 257: "be inside the blue rectangle. The blue DIV "
+                    text run at (257,38) width 302: "element has another DIV element as a child. It has"
+                    text run at (0,57) width 55: "a yellow "
+                    text run at (55,57) width 348: "background color and is floated to the right. Since it is a "
+                    text run at (403,57) width 156: "child of the blue DIV, the"
+                    text run at (0,76) width 229: "yellow DIV should appear inside the "
+                    text run at (229,76) width 330: "blue rectangle. Due to it being floated to the right and"
+                    text run at (0,95) width 43: "having "
+                    text run at (43,95) width 412: "a 10px right margin, the yellow rectange should have a 10px blue "
+                    text run at (455,95) width 104: "stripe on its right"
+                    text run at (0,114) width 28: "side."
+              RenderBlock (anonymous) at (4,1208) size 746x133
+                RenderBR {BR} at (559,0) size 0x19
+              RenderBlock {HR} at (4,1349) size 746x2 [border: (1px inset #000000)]

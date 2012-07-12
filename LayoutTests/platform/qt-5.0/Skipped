@@ -121,8 +121,6 @@ animations/cross-fade-webkit-mask-image.html
 animations/missing-values-first-keyframe.html
 animations/missing-values-last-keyframe.html
 animations/state-at-end-event.html
-css1/box_properties/acid_test.html
-css1/box_properties/float_on_text_elements.html
 css2.1/20110323/absolute-non-replaced-height-001.htm
 css2.1/20110323/absolute-non-replaced-height-002.htm
 css2.1/20110323/absolute-non-replaced-height-003.htm
