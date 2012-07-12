@@ -127,6 +127,7 @@ WebInspector.ConsolePanel.prototype = {
     {
         this._clearCurrentSearchResultHighlight();
         this._currentSearchResultIndex = index;
+        WebInspector.searchController.updateCurrentMatchIndex(this._currentSearchResultIndex, this);
         this._searchResults[index].highlightSearchResults(this._searchRegex);
     },
 

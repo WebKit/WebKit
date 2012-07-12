@@ -333,7 +333,7 @@ WebInspector.SourceFrame.prototype = {
             this._searchResults = this._collectRegexMatches(regex);
             var selection = this._textEditor.lastSelection();
             for (var i = 0; selection && i < this._searchResults.length; ++i) {
-                if (this._searchResults[i].compareTo(selection) > 0) {
+                if (this._searchResults[i].compareTo(selection) >= 0) {
                     this._currentSearchResultIndex = i - 1;
                     break;
                 }

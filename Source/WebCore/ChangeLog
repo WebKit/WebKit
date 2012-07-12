@@ -1,3 +1,36 @@
+2012-07-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: beautify find bar looks, simplify search update routines.
+        https://bugs.webkit.org/show_bug.cgi?id=91087
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change updates the looks to the one on the screenshots and simplifies match count update routines.
+
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.onMatchesMouseDown):
+        (WebInspector.SearchController):
+        (WebInspector.SearchController.prototype.activePanelChanged.performPanelSearch):
+        (WebInspector.SearchController.prototype.activePanelChanged):
+        (WebInspector.SearchController.prototype._updateSearchNavigationButtonState):
+        (WebInspector.SearchController.prototype._updateSearchMatchesCountAndCurrentMatchIndex):
+        (WebInspector.SearchController.prototype._onKeyDown):
+        (WebInspector.SearchController.prototype._onInput):
+        (WebInspector.SearchController.prototype._onNextButtonSearch):
+        (WebInspector.SearchController.prototype._onPrevButtonSearch):
+        (WebInspector.SearchController.prototype._performSearch):
+        * inspector/front-end/inspector.css:
+        (#search):
+        (#search:focus):
+        (.toolbar-search-navigation-controls):
+        (.toolbar-search-navigation):
+        (.toolbar-search-navigation.enabled:hover):
+        (.toolbar-search-navigation.enabled, .toolbar-search-navigation.enabled:active):
+        (.toolbar-search):
+        (.toolbar-search-control):
+        (.search-results-matches):
+        (.inspector-footer):
+
 2012-07-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: ASSERT hit calling open from callback in Worker

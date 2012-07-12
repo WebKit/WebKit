@@ -264,26 +264,62 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
 }
 
 #search {
-    width: 205px;
-    margin-left: 4px;
-    margin-right: 4px;
-    font-size: 11px;
+    -webkit-appearance: none;
+    border: 0;
+    padding: 0 2px;
+    margin: 0;
+    width: 165px;
+}
+
+#search:focus {
+    outline: none;
+}
+
+.toolbar-search-navigation-controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 18px;
+    background-image: -webkit-linear-gradient(rgb(228, 228, 228), rgb(204, 204, 204) 75%, rgb(206, 206, 206));
 }
 
 .toolbar-search-navigation {
-    width: 16px;
-    height: 16px;
-    position: relative;
-    top: 4px;
-    margin: 0px 1px;
-    background-repeat: no-repeat;
     display: inline-block;
-    background-position: 2px 5px;
-    border: 1px solid transparent;
+    width: 18px;
+    height: 18px;
+    background-repeat: no-repeat;
+    background-position: 4px 7px;
+    border-left: 1px solid rgb(170, 170, 170);
+    opacity: 0.3;
 }
 
-.toolbar-search-navigation:hover {
-    border: 1px solid rgba(120, 120, 120, 0.6);    
+.toolbar-search-navigation.enabled:hover {
+    border-left: 1px solid rgb(190, 190, 190);
+    opacity: 0.9;
+}
+
+.toolbar-search-navigation.enabled, .toolbar-search-navigation.enabled:active {
+    border-left: 1px solid rgb(170, 170, 170);
+    opacity: 0.7;
+}
+
+#search:focus {
+    outline: none;
+}
+
+.toolbar-search {
+    line-height: 19px;
+}
+
+.toolbar-search-control {
+    display: inline-block;
+    position: relative;
+    background-color: white;
+    border: 1px solid rgb(202, 202, 202);
+    margin: 2px;
+    height: 20px;
+    border-radius: 2px;
+    padding-right: 36px;
 }
 
 .toolbar-search-navigation.toolbar-search-navigation-prev {
@@ -294,18 +330,18 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     background-image: url(Images/searchNext.png);
 }
 
-.toolbar-search-navigation-hidden {
-    background: none;
-}
-
 body.compact #search {
     font-size: 11px;
 }
 
 .search-results-matches {
+    display: inline-block;
+    min-width: 70px;
+    min-height: 10px;
+    text-align: right;
     font-size: 11px;
-    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
-    padding-left: 4px;
+    padding: 0 4px;
+    color: rgb(165, 165, 165);
 }
 
 .toolbar-item.elements .toolbar-icon {
@@ -2785,10 +2821,5 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
     left: 0;
     right: 0;
     font-size: 11px;
-    padding-left: 7px;
-    padding-bottom: 7px;
-}
-
-.inspector-footer > div {
-    vertical-align: middle;
+    padding-left: 5px;
 }
