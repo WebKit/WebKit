@@ -49,7 +49,7 @@ echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select tr
 
 curl http://src.chromium.org/svn/trunk/src/build/install-build-deps.sh > install-build-deps.sh
 bash install-build-deps.sh --no-prompt
-sudo apt-get install xvfb screen zip -y
+sudo apt-get install xvfb screen git-svn zip -y
 
 # install-build-deps.sh will install flashplugin-installer, which causes some plug-in tests to crash.
 sudo apt-get remove flashplugin-installer -y

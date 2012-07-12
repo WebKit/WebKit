@@ -1,3 +1,14 @@
+2012-07-11  Adam Barth  <abarth@webkit.org>
+
+        commit-queue instances on Compute Engine are missing git-svn
+        https://bugs.webkit.org/show_bug.cgi?id=91034
+
+        Reviewed by Eric Seidel.
+
+        git-svn is needed to actually commit to SVN from a git working copy.
+
+        * EWSTools/cold-boot.sh:
+
 2012-07-11  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: lint code in webkitpy.layout_tests.models
