@@ -1,3 +1,16 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/91051> Fix the Qt Mac build after r122400.
+
+        Qt on Mac builds with a deployment target of OS X 10.5. However, it was not been setting
+        BUILDING_ON_LEOPARD / TARGETING_LEOPARD and thus was falling down code paths in DisplaySleepDisabler.cpp
+        that were specific to Snow Leopard and newer. After the removal of BUILDING_ON_LEOPARD
+        and TARGETING_LEOPARD it ended up falling down the correct Leopard-compatible code path,
+        which revealed that the code made assumptions about which headers had already been included.
+
+        * platform/mac/DisplaySleepDisabler.cpp: Include CoreServices/CoreServices.h to pull in
+        a declaration of UpdateSystemActivity when targeting Leopard.
+
 2012-07-11  Matt Falkenhagen  <falken@chromium.org>
 
         Add dialog element feature toggle to InternalSettings

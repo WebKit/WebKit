@@ -31,6 +31,7 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 #include <wtf/UnusedParam.h>
+#include <CoreServices/CoreServices.h>
 #endif
 
 namespace WebCore {
@@ -57,7 +58,7 @@ DisplaySleepDisabler::~DisplaySleepDisabler()
 {
     IOPMAssertionRelease(m_disableDisplaySleepAssertion);
 }
-    
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 void DisplaySleepDisabler::systemActivityTimerFired(Timer<DisplaySleepDisabler>*)
 {
