@@ -1,3 +1,12 @@
+2012-07-12  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Unreviewed gardening. SKIP inspector/elements/edit-dom-actions.html on Win Debug
+        https://bugs.webkit.org/show_bug.cgi?id=60109
+
+        Since we can't use SLOW and TIMEOUT together, let's skip this test until it is fixed.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-12  Pravin D  <pravind.2k4@gmail.com>
 
         Row size/position is wrongly calculated when table having overlapping rowspan cell and colspan cell
