@@ -1,3 +1,10 @@
+2012-07-12  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Delete two empty directories.
+
+        * platform/google-chrome-linux32: Removed.
+        * platform/google-chrome-linux64: Removed.
+
 2012-07-12  Julien Chaffraix  <jchaffraix@webkit.org>
 
         ASSERT(genChild->isListMarker() || genChild->style()->styleType() == FIRST_LETTER) triggered on flex-box content
