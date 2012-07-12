@@ -1,3 +1,10 @@
+2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed r122460 inspector closure compilation fix follow up.
+
+        * inspector/front-end/RevisionHistoryView.js:
+        (WebInspector.RevisionHistoryView):
+
 2012-07-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: fix native memory instrumentation code for the bindings instrumentation.
