@@ -59,9 +59,9 @@ class UserTest(unittest.TestCase):
             actual_result = output_capture.assert_outputs(
                 self,
                 User.prompt_with_multiple_lists,
-                args=["title", ["subtitle1", "subtitle2"], [["foo", "bar"], ["foobar", "barbaz"]]],
+                args=["title", ["subtitle1", "subtitle2"], [["foo", "bar"], ["foobar", "barbaz", "foobaz"]]],
                 kwargs={"can_choose_multiple": can_choose_multiple, "raw_input": mock_raw_input},
-                expected_stdout="title\n\nsubtitle1\n 1. foo\n 2. bar\n\nsubtitle2\n 3. foobar\n 4. barbaz\n")
+                expected_stdout="title\n\nsubtitle1\n 1. foo\n 2. bar\n\nsubtitle2\n 3. foobar\n 4. barbaz\n 5. foobaz\n")
             self.assertEqual(actual_result, expected_result)
             self.assertEqual(len(inputs), 0)
 
@@ -69,13 +69,17 @@ class UserTest(unittest.TestCase):
         run_prompt_test(["badinput", "2"], "bar")
         run_prompt_test(["3"], "foobar")
         run_prompt_test(["4"], "barbaz")
+        run_prompt_test(["5"], "foobaz")
 
         run_prompt_test(["1,2"], ["foo", "bar"], can_choose_multiple=True)
+        run_prompt_test(["1-3"], ["foo", "bar", "foobar"], can_choose_multiple=True)
+        run_prompt_test(["1-2,3"], ["foo", "bar", "foobar"], can_choose_multiple=True)
+        run_prompt_test(["2-1,3"], ["foobar"], can_choose_multiple=True)
         run_prompt_test(["  1,  2   "], ["foo", "bar"], can_choose_multiple=True)
-        run_prompt_test(["all"], ["foo", "bar", 'foobar', 'barbaz'], can_choose_multiple=True)
-        run_prompt_test([""], ["foo", "bar", 'foobar', 'barbaz'], can_choose_multiple=True)
-        run_prompt_test(["  "], ["foo", "bar", 'foobar', 'barbaz'], can_choose_multiple=True)
-        run_prompt_test(["badinput", "all"], ["foo", "bar", 'foobar', 'barbaz'], can_choose_multiple=True)
+        run_prompt_test(["all"], ["foo", "bar", 'foobar', 'barbaz', 'foobaz'], can_choose_multiple=True)
+        run_prompt_test([""], ["foo", "bar", 'foobar', 'barbaz', 'foobaz'], can_choose_multiple=True)
+        run_prompt_test(["  "], ["foo", "bar", 'foobar', 'barbaz', 'foobaz'], can_choose_multiple=True)
+        run_prompt_test(["badinput", "all"], ["foo", "bar", 'foobar', 'barbaz', 'foobaz'], can_choose_multiple=True)
 
     def test_prompt_with_list(self):
         def run_prompt_test(inputs, expected_result, can_choose_multiple=False):

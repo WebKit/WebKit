@@ -90,13 +90,21 @@ class User(object):
     def _wait_on_list_response(cls, list_items, can_choose_multiple, raw_input):
         while True:
             if can_choose_multiple:
-                response = cls.prompt("Enter one or more numbers (comma-separated), or \"all\": ", raw_input=raw_input)
+                response = cls.prompt("Enter one or more numbers (comma-separated) or ranges (e.g. 3-7), or \"all\": ", raw_input=raw_input)
                 if not response.strip() or response == "all":
                     return list_items
+
                 try:
-                    indices = [int(r) - 1 for r in re.split("\s*,\s*", response)]
+                    indices = []
+                    for value in re.split("\s*,\s*", response):
+                        parts = value.split('-')
+                        if len(parts) == 2:
+                            indices += range(int(parts[0]) - 1, int(parts[1]))
+                        else:
+                            indices.append(int(value) - 1)
                 except ValueError, err:
                     continue
+
                 return [list_items[i] for i in indices]
             else:
                 try:
