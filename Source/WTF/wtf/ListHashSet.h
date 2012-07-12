@@ -34,6 +34,10 @@ namespace WTF {
     // order - iterating it will always give back values in the order
     // in which they are added.
 
+    // Unlike iteration of most WTF Hash data structures, iteration is
+    // guaranteed safe against mutation of the ListHashSet, except for
+    // removal of the item currently pointed to by a given iterator.
+
     // In theory it would be possible to add prepend, insertAfter
     // and an append that moves the element to the end even if already present,
     // but unclear yet if these are needed.
