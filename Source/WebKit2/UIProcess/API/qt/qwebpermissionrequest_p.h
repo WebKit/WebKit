@@ -26,6 +26,7 @@
 #include <QtCore/QObject>
 #include <QtCore/qshareddata.h>
 #include <WebKit2/WKGeolocationPermissionRequest.h>
+#include <WebKit2/WKNotificationPermissionRequest.h>
 #include <WebKit2/WKSecurityOrigin.h>
 
 class QWebPermissionRequestPrivate;
@@ -39,10 +40,12 @@ class QWEBKIT_EXPORT QWebPermissionRequest : public QObject {
 
 public:
     enum RequestType {
-        Geolocation
+        Geolocation,
+        Notification
     };
 
     static QWebPermissionRequest* create(WKSecurityOriginRef, WKGeolocationPermissionRequestRef);
+    static QWebPermissionRequest* create(WKSecurityOriginRef, WKNotificationPermissionRequestRef);
     virtual ~QWebPermissionRequest();
 
     RequestType type() const;
@@ -54,7 +57,11 @@ public Q_SLOTS:
 
 private:
     friend class QWebPermissionRequestPrivate;
-    QWebPermissionRequest(WKSecurityOriginRef securityOrigin, WKGeolocationPermissionRequestRef permissionRequest, QObject* parent = 0);
+    QWebPermissionRequest(WKSecurityOriginRef securityOrigin
+                          , WKGeolocationPermissionRequestRef geo = 0
+                          , WKNotificationPermissionRequestRef notify = 0
+                          , QWebPermissionRequest::RequestType type = Geolocation
+                          , QObject* parent = 0);
 
 private:
     QExplicitlySharedDataPointer<QWebPermissionRequestPrivate> d;

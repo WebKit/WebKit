@@ -48,6 +48,7 @@ QtWebPageUIClient::QtWebPageUIClient(WKPageRef pageRef, QQuickWebView* webView)
     uiClient.mouseDidMoveOverElement = mouseDidMoveOverElement;
     uiClient.exceededDatabaseQuota = exceededDatabaseQuota;
     uiClient.decidePolicyForGeolocationPermissionRequest = policyForGeolocationPermissionRequest;
+    uiClient.decidePolicyForNotificationPermissionRequest = policyForNotificationPermissionRequest;
     WKPageSetPageUIClient(pageRef, &uiClient);
 }
 
@@ -161,4 +162,14 @@ void QtWebPageUIClient::policyForGeolocationPermissionRequest(WKPageRef page, WK
     toQtWebPageUIClient(clientInfo)->permissionRequest(req);
 }
 
+void QtWebPageUIClient::policyForNotificationPermissionRequest(WKPageRef page, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef request, const void *clientInfo)
+{
+    if (!request)
+        return;
+
+    QWebPermissionRequest* req = QWebPermissionRequest::create(origin, request);
+    toQtWebPageUIClient(clientInfo)->permissionRequest(req);
+}
+
 } // namespace WebKit
+

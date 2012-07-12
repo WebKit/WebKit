@@ -1,3 +1,28 @@
+2012-07-12  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [Qt][WK2] Implement web notifications support
+        https://bugs.webkit.org/show_bug.cgi?id=80702
+
+        Reviewed by Noam Rosenthal.
+
+        Adding a new type of permission request for Desktop Notifications (plus required code
+        to register the handle for this requests).
+
+        * UIProcess/API/qt/qwebpermissionrequest.cpp:
+        (QWebPermissionRequestPrivate::QWebPermissionRequestPrivate):
+        (QWebPermissionRequestPrivate):
+        (QWebPermissionRequest::create):
+        (QWebPermissionRequest::QWebPermissionRequest):
+        (QWebPermissionRequest::setAllow):
+        * UIProcess/API/qt/qwebpermissionrequest_p.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_notification.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/notification.html: Added.
+        * UIProcess/qt/QtWebPageUIClient.cpp:
+        (WebKit::QtWebPageUIClient::QtWebPageUIClient):
+        (WebKit::QtWebPageUIClient::policyForNotificationPermissionRequest):
+        (WebKit):
+        * UIProcess/qt/QtWebPageUIClient.h:
+
 2012-07-12  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][WK2] Browser crashes running BatteryStatus tests.
