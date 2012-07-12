@@ -1,3 +1,24 @@
+2012-07-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] Performance issue in FindController::findString
+        https://bugs.webkit.org/show_bug.cgi?id=78132
+
+        Reviewed by Anders Carlsson.
+
+        FindController should not unmark all text matches by default. It
+        will be done only if the string is not found or if
+        markAllTextMatches() is called. This will allow clients to look
+        for the next/previous without having to unmark() + mark() all the
+        text matches for every single search operation.
+
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        (webKitFindControllerPerform):
+        (webkit_find_controller_search_next):
+        (webkit_find_controller_search_previous):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::findString):
+
 2012-07-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][EFL] Add policy client to Ewk_View

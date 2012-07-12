@@ -48,6 +48,7 @@ enum {
 
 typedef enum {
     FindOperation,
+    FindNextPrevOperation,
     CountOperation
 } WebKitFindControllerOperation;
 
@@ -345,17 +346,22 @@ static void webKitFindControllerPerform(WebKitFindController* findController, We
     WKRetainPtr<WKStringRef> wkSearchText(AdoptWK, WKStringCreateWithUTF8CString(findController->priv->searchText.data()));
     WKPageRef wkPage = getWKPageFromWebKitWebView(findController->priv->webView);
 
-    if (operation == FindOperation) {
-        // Unconditionally highlight text matches. WK1 API was forcing
-        // clients to enable/disable highlighting. Since most of them
-        // (all?) where using highlighting we decided to simplify the
-        // WK2 API and unconditionally show highlights.
-        wkFindOptions = static_cast<WKFindOptions>(findController->priv->findOptions | kWKFindOptionsShowHighlight);
-        WKPageFindString(wkPage, wkSearchText.get(), wkFindOptions, findController->priv->maxMatchCount);
+    if (operation == CountOperation) {
+        WKPageCountStringMatches(wkPage, wkSearchText.get(), wkFindOptions, findController->priv->maxMatchCount);
         return;
     }
 
-    WKPageCountStringMatches(wkPage, wkSearchText.get(), wkFindOptions, findController->priv->maxMatchCount);
+    if (operation == FindOperation)
+        // Unconditionally highlight text matches when the search
+        // starts. WK1 API was forcing clients to enable/disable
+        // highlighting. Since most of them (all?) where using that
+        // feature we decided to simplify the WK2 API and
+        // unconditionally show highlights. Both search_next() and
+        // search_prev() should not enable highlighting to avoid an
+        // extra unmarkAllTextMatches() + markAllTextMatches()
+        wkFindOptions = static_cast<WKFindOptions>(findController->priv->findOptions | kWKFindOptionsShowHighlight);
+
+    WKPageFindString(wkPage, wkSearchText.get(), wkFindOptions, findController->priv->maxMatchCount);
 }
 
 static inline void webKitFindControllerSetSearchData(WebKitFindController* findController, const gchar* searchText, guint32 findOptions, guint maxMatchCount)
@@ -415,7 +421,8 @@ void webkit_find_controller_search_next(WebKitFindController* findController)
     g_return_if_fail(WEBKIT_IS_FIND_CONTROLLER(findController));
 
     findController->priv->findOptions = findController->priv->findOptions & ~WEBKIT_FIND_OPTIONS_BACKWARDS;
-    webKitFindControllerPerform(findController, FindOperation);
+    findController->priv->findOptions = findController->priv->findOptions & ~kWKFindOptionsShowHighlight;
+    webKitFindControllerPerform(findController, FindNextPrevOperation);
 }
 
 /**
@@ -432,7 +439,8 @@ void webkit_find_controller_search_previous(WebKitFindController* findController
     g_return_if_fail(WEBKIT_IS_FIND_CONTROLLER(findController));
 
     findController->priv->findOptions = findController->priv->findOptions | WEBKIT_FIND_OPTIONS_BACKWARDS;
-    webKitFindControllerPerform(findController, FindOperation);
+    findController->priv->findOptions = findController->priv->findOptions & ~kWKFindOptionsShowHighlight;
+    webKitFindControllerPerform(findController, FindNextPrevOperation);
 }
 
 /**
