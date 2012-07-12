@@ -35,9 +35,8 @@ struct _Ewk_Context {
 #endif
 
     _Ewk_Context(WKContextRef contextRef)
-    {
-        this->context = contextRef;
-    }
+        : context(contextRef)
+    { }
 };
 
 WKContextRef ewk_context_WKContext_get(const Ewk_Context* ewkContext)

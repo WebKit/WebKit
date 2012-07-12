@@ -50,6 +50,11 @@ struct _Ewk_View_Private_Data {
     const char* uri;
     const char* title;
     LoadingResourcesMap loadingResourcesMap;
+
+    _Ewk_View_Private_Data()
+        : uri(0)
+        , title(0)
+    { }
 };
 
 #define EWK_VIEW_TYPE_CHECK(ewkView, result)                                   \
@@ -260,8 +265,7 @@ static Evas_Smart_Class g_parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;
 
 static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 {
-    Ewk_View_Private_Data* priv =
-        static_cast<Ewk_View_Private_Data*>(calloc(1, sizeof(Ewk_View_Private_Data)));
+    Ewk_View_Private_Data* priv = new Ewk_View_Private_Data;
     if (!priv) {
         EINA_LOG_CRIT("could not allocate Ewk_View_Private_Data");
         return 0;
@@ -278,7 +282,7 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
     priv->pageClient = nullptr;
     eina_stringshare_del(priv->uri);
     eina_stringshare_del(priv->title);
-    free(priv);
+    delete priv;
 }
 
 static void _ewk_view_smart_add(Evas_Object* ewkView)

@@ -39,6 +39,13 @@ struct _Ewk_Url_Response {
 
     const char* url;
     const char* mimeType;
+
+    _Ewk_Url_Response(const WebCore::ResourceResponse& _coreResponse)
+        : __ref(1)
+        , coreResponse(_coreResponse)
+        , url(0)
+        , mimeType(0)
+    { }
 };
 
 void ewk_url_response_ref(Ewk_Url_Response* response)
@@ -56,7 +63,7 @@ void ewk_url_response_unref(Ewk_Url_Response* response)
 
     eina_stringshare_del(response->url);
     eina_stringshare_del(response->mimeType);
-    free(response);
+    delete response;
 }
 
 const char* ewk_url_response_url_get(const Ewk_Url_Response* response)
@@ -92,9 +99,5 @@ const char* ewk_url_response_mime_type_get(const Ewk_Url_Response* response)
  */
 Ewk_Url_Response* ewk_url_response_new(const WebCore::ResourceResponse& coreResponse)
 {
-    Ewk_Url_Response* ewkUrlResponse = static_cast<Ewk_Url_Response*>(calloc(1, sizeof(Ewk_Url_Response)));
-    ewkUrlResponse->__ref = 1;
-    ewkUrlResponse->coreResponse = coreResponse;
-
-    return ewkUrlResponse;
+    return new Ewk_Url_Response(coreResponse);
 }

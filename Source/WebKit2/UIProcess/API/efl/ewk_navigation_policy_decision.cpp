@@ -47,6 +47,16 @@ struct _Ewk_Navigation_Policy_Decision {
     Event_Modifier_Keys modifiers;
     Ewk_Url_Request* request;
     const char* frameName;
+
+    _Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef _listener, Ewk_Navigation_Type _navigationType, Event_Mouse_Button _mouseButton, Event_Modifier_Keys _modifiers, Ewk_Url_Request* _request, const char* _frameName)
+        : listener(_listener)
+        , actedUponByClient(false)
+        , navigationType(_navigationType)
+        , mouseButton(_mouseButton)
+        , modifiers(_modifiers)
+        , request(_request)
+        , frameName(eina_stringshare_add(_frameName))
+    { }
 };
 
 void ewk_navigation_policy_decision_free(Ewk_Navigation_Policy_Decision* decision)
@@ -59,7 +69,7 @@ void ewk_navigation_policy_decision_free(Ewk_Navigation_Policy_Decision* decisio
 
     ewk_url_request_unref(decision->request);
     eina_stringshare_del(decision->frameName);
-    free(decision);
+    delete decision;
 }
 
 Ewk_Navigation_Type ewk_navigation_policy_navigation_type_get(const Ewk_Navigation_Policy_Decision* decision)
@@ -143,13 +153,10 @@ COMPILE_ASSERT_MATCHING_ENUM(EVENT_MODIFIER_KEY_META, kWKEventModifiersMetaKey);
 
 Ewk_Navigation_Policy_Decision* ewk_navigation_policy_decision_new(WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, WKURLRequestRef request, const char* frameName, WKFramePolicyListenerRef listener)
 {
-    Ewk_Navigation_Policy_Decision* ewkPolicyDecision = static_cast<Ewk_Navigation_Policy_Decision*>(calloc(1, sizeof(Ewk_Navigation_Policy_Decision)));
-    ewkPolicyDecision->listener = listener;
-    ewkPolicyDecision->mouseButton = static_cast<Event_Mouse_Button>(mouseButton);
-    ewkPolicyDecision->modifiers = static_cast<Event_Modifier_Keys>(modifiers);
-    ewkPolicyDecision->navigationType = static_cast<Ewk_Navigation_Type>(navigationType);
-    ewkPolicyDecision->request = ewk_url_request_new(request);
-    ewkPolicyDecision->frameName = eina_stringshare_add(frameName);
-
-    return ewkPolicyDecision;
+    return new Ewk_Navigation_Policy_Decision(listener,
+                                              static_cast<Ewk_Navigation_Type>(navigationType),
+                                              static_cast<Event_Mouse_Button>(mouseButton),
+                                              static_cast<Event_Modifier_Keys>(modifiers),
+                                              ewk_url_request_new(request),
+                                              frameName);
 }

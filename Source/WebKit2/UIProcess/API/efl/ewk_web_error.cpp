@@ -44,6 +44,12 @@ struct _Ewk_Web_Error {
 
     const char* url;
     const char* description;
+
+    _Ewk_Web_Error(WKErrorRef errorRef)
+        : wkError(errorRef)
+        , url(0)
+        , description(0)
+    { }
 };
 
 #define EWK_WEB_ERROR_WK_GET_OR_RETURN(error, wkError_, ...)    \
@@ -63,7 +69,7 @@ void ewk_web_error_free(Ewk_Web_Error *error)
 
     eina_stringshare_del(error->url);
     eina_stringshare_del(error->description);
-    free(error);
+    delete error;
 }
 
 Ewk_Web_Error_Type ewk_web_error_type_get(const Ewk_Web_Error* error)
@@ -122,8 +128,5 @@ Ewk_Web_Error* ewk_web_error_new(WKErrorRef error)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
 
-    Ewk_Web_Error* ewkError = static_cast<Ewk_Web_Error*>(calloc(1, sizeof(Ewk_Web_Error)));
-    ewkError->wkError = error;
-
-    return ewkError;
+    return new Ewk_Web_Error(error);
 }

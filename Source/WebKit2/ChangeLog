@@ -1,3 +1,59 @@
+2012-07-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] [WK2] regression(r122411) Crashes in Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=91068
+
+        Reviewed by Kentaro Hara.
+
+        Avoid using calloc() to allocate memory for structures
+        and use new operator instead. calloc() causes unwanted
+        behavior when allocing a structure which contains
+        non-pointer types (e.g. a HashMap) and leads to
+        crashes.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context::_Ewk_Context):
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (_Ewk_Intent):
+        (_Ewk_Intent::_Ewk_Intent):
+        (ewk_intent_unref):
+        (ewk_intent_new):
+        * UIProcess/API/efl/ewk_intent_service.cpp:
+        (_Ewk_Intent_Service):
+        (_Ewk_Intent_Service::_Ewk_Intent_Service):
+        (ewk_intent_service_unref):
+        (ewk_intent_service_new):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::_Ewk_Navigation_Policy_Decision):
+        (ewk_navigation_policy_decision_free):
+        (ewk_navigation_policy_decision_new):
+        * UIProcess/API/efl/ewk_url_request.cpp:
+        (_Ewk_Url_Request):
+        (_Ewk_Url_Request::_Ewk_Url_Request):
+        (ewk_url_request_unref):
+        (ewk_url_request_new):
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (_Ewk_Url_Response):
+        (_Ewk_Url_Response::_Ewk_Url_Response):
+        (ewk_url_response_unref):
+        (ewk_url_response_new):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+        (_ewk_view_priv_del):
+        * UIProcess/API/efl/ewk_web_error.cpp:
+        (_Ewk_Web_Error):
+        (_Ewk_Web_Error::_Ewk_Web_Error):
+        (ewk_web_error_free):
+        (ewk_web_error_new):
+        * UIProcess/API/efl/ewk_web_resource.cpp:
+        (_Ewk_Web_Resource):
+        (_Ewk_Web_Resource::_Ewk_Web_Resource):
+        (ewk_web_resource_unref):
+        (ewk_web_resource_new):
+
 2012-07-11  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] ASSERT: "!m_viewportItem->isMoving()" in QtViewportHandler::flickMoveEnded()
