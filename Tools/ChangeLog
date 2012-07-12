@@ -1,3 +1,9 @@
+2012-07-12  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed. Change my irc nickname to kseo.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-12  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up logging handlers, lint common.message_pool
