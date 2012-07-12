@@ -488,7 +488,11 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
 
 bool HTMLMediaElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
+    if (!hasMediaControls())
+        return false;
+    // Only allows nodes from the controls shadow subtree.
+    return (mediaControls()->treeScope() == childContext.node()->treeScope()
+            && childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext));
 }
 
 Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode* insertionPoint)
@@ -4142,12 +4146,12 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
     m_player->setPrivateBrowsingMode(privateMode);
 }
 
-MediaControls* HTMLMediaElement::mediaControls()
+MediaControls* HTMLMediaElement::mediaControls() const
 {
     return toMediaControls(shadow()->oldestShadowRoot()->firstChild());
 }
 
-bool HTMLMediaElement::hasMediaControls()
+bool HTMLMediaElement::hasMediaControls() const
 {
     ElementShadow* elementShadow = shadow();
     if (!elementShadow)

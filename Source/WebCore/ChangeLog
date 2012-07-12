@@ -1,3 +1,26 @@
+2012-07-12  MORITA Hajime  <morrita@google.com>
+
+        [Shadow DOM] <video> with <shadow> crashes
+        https://bugs.webkit.org/show_bug.cgi?id=91055
+
+        Reviewed by Kent Tamura.
+
+        This is similar to Bug 90480, where an undesired renderer is created by
+        locating an insertion point on the shadow boundary.
+
+        This change adds a guard for such case by cheking whether the
+        source node of each to-be-created renderer comes from the UA shadow
+        tree, which is allowed to have a renderer.
+
+        Test: fast/dom/shadow/insertion-point-video-crash.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::childShouldCreateRenderer): Added a check.
+        (WebCore::HTMLMediaElement::mediaControls): Added const.
+        (WebCore::HTMLMediaElement::hasMediaControls): Added const.
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+
 2012-07-12  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r122184): LocaleMac::currentLocale should use current locale rather than newly create locale object. 

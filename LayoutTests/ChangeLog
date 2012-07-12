@@ -1,3 +1,13 @@
+2012-07-12  MORITA Hajime  <morrita@google.com>
+
+        [Shadow DOM] <video> with <shadow> crashes
+        https://bugs.webkit.org/show_bug.cgi?id=91055
+
+        Reviewed by Kent Tamura.
+
+        * fast/dom/shadow/insertion-point-video-crash-expected.txt: Added.
+        * fast/dom/shadow/insertion-point-video-crash.html: Added.
+
 2012-07-12  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip new failing test introduced in r122399

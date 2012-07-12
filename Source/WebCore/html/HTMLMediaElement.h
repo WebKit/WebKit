@@ -291,7 +291,7 @@ public:
     bool closedCaptionsVisible() const;
     void setClosedCaptionsVisible(bool);
 
-    MediaControls* mediaControls();
+    MediaControls* mediaControls() const;
 
     void sourceWasRemoved(HTMLSourceElement*);
     void sourceWasAdded(HTMLSourceElement*);
@@ -508,7 +508,7 @@ private:
     void invalidateCachedTime();
     void refreshCachedTime() const;
 
-    bool hasMediaControls();
+    bool hasMediaControls() const;
     bool createMediaControls();
     void configureMediaControls();
 
