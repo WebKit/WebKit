@@ -1,3 +1,11 @@
+2012-07-12  Dirk Pranke  <dpranke@chromium.org>
+
+        rebaseline fast/harness/results.html after r122505.
+
+        Unreviewed, expectations change.
+
+        * fast/harness/results-expected.txt:
+
 2012-07-12  Adam Barth  <abarth@webkit.org>
 
         Regression (r122359) Layout Test html5lib/runner.html is failing
