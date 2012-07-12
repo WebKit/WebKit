@@ -1,3 +1,20 @@
+2012-07-11  Robert Kroeger  <rjkroege@chromium.org>
+
+        Suppress horizontal conversion of PlatformWheelEvents when hasPreciseScrollingDeltas is true
+        https://bugs.webkit.org/show_bug.cgi?id=89580
+
+        WebKit GTK and Chromium Linux force vertical wheel events to
+        scroll horizontally when over horizontal scroll bars.  This is
+        undesirable for touchpad scrolling with
+        hasPreciseScrollingDeltas() == true. Added a layout test showing
+        that change correctly suppresses this behaviour.
+
+        Reviewed by Adam Barth.
+
+        * fast/events/touch/gesture/touch-gesture-scroll-sideways-expected.txt: Added.
+        * fast/events/touch/gesture/touch-gesture-scroll-sideways.html: Added.
+        * platform/chromium-linux/fast/events/touch/gesture/touch-gesture-scroll-sideways-expected.txt: Added. Note: test has intentional platform difference.
+
 2012-07-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should have fast virtual calls

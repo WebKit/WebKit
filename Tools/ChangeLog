@@ -1,3 +1,20 @@
+2012-07-11  Robert Kroeger  <rjkroege@chromium.org>
+
+        Suppress horizontal conversion of PlatformWheelEvents when hasPreciseScrollingDeltas is true
+        https://bugs.webkit.org/show_bug.cgi?id=89580
+
+        WebKit GTK and Chromium Linux force vertical wheel events to
+        scroll horizontally when over horizontal scroll bars.  This is
+        undesirable for touchpad scrolling with
+        hasPreciseScrollingDeltas() == true. Modified DumpRenderTree to
+        let a layout test specify this attribute so that the change's impact
+        on scrolling can be tested in a layout test.
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::handleMouseWheel):
+
 2012-07-11  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build by declaring -isPaginated before use.

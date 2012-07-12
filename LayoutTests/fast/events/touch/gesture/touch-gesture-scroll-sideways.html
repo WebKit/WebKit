@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../js/resources/js-test-pre.js"></script>
+<script src="resources/gesture-helpers.js"></script>
+<style type="text/css">
+#touchtarget {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  background: white;
+}
+
+/*
+    Make sure that scrollbar has a known size and
+    shape so that events can hit on it more reliably
+    across multiple platforms.
+*/
+::-webkit-scrollbar {
+    width: 20px;
+    height: 20px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+ 
+#movingbox {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  word-wrap: break-word;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  display: block;
+}
+
+#greenbox {
+  width: 100px;
+  height: 100px;
+  background: green;
+  padding: 0px;
+  margin: 0px;
+}
+
+#redbox {
+  width: 100px;
+  height: 100px;
+  background: red;
+  padding: 0px;
+  margin: 0px;
+}
+
+td {
+  padding: 0px;
+}
+</style>
+</head>
+<body style="margin:0" onload="runTest();">
+<div id="touchtarget">
+  <div id="movingbox">
+    <table border="0" cellspacing="0px" id="tablefoo">
+      <tr>
+        <td><div id="redbox"></div></td>
+        <td><div id="greenbox"></div></td>
+      </tr>
+      <tr>
+        <td><div id="greenbox"></div></td>
+        <td><div id="greenbox"></div></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+
+var movingdiv;
+var expectedGesturesTotal = 2;
+var gesturesOccurred = 0;
+var scrollAmountX = ['0', '0'];
+var scrollAmountY = ['19', '44'];
+var wheelEventsOccurred = 0;
+var expectedWheelEventsOccurred = ['1', '2'];
+var scrollEventsOccurred = 0;
+var expectedScrollEventsOccurred = '1';
+var scrolledElement = 'movingdiv'
+
+function checkWheelScrollOffset()
+{
+    if (!window.eventSender)
+        return;
+		
+    if (gesturesOccurred == 0) {
+        shouldBe(scrolledElement + '.' + 'scrollTop', scrollAmountY[gesturesOccurred]);
+        shouldBe(scrolledElement + '.' + 'scrollLeft', scrollAmountX[gesturesOccurred]);
+        shouldBe('wheelEventsOccurred', expectedWheelEventsOccurred[gesturesOccurred]);
+        gesturesOccurred++;
+        secondWheelScroll();
+        return;
+    }
+
+    if (gesturesOccurred == 1) {
+        debug("without precise deltas, scrollLeft: " + movingdiv.scrollLeft + " scrollTop: " + movingdiv.scrollTop);
+        shouldBe('wheelEventsOccurred', expectedWheelEventsOccurred[gesturesOccurred]);		
+        gesturesOccurred++;
+        return;
+    }
+	
+    if (gesturesOccurred == expectedGesturesTotal) {
+        successfullyParsed = true;
+        isSuccessfullyParsed();
+        if (window.testRunner)
+        testRunner.notifyDone();
+    }
+}
+
+function firstWheelScroll()
+{
+    debug("first wheel event");
+    eventSender.mouseMoveTo(3, 90); // Over Scrollbar
+    eventSender.continuousMouseScrollBy(0, -19, false, true);
+    checkWheelScrollOffset();
+}
+
+function secondWheelScroll()
+{
+    debug("second wheel event");
+    eventSender.continuousMouseScrollBy(0, -25, false, false);
+    checkWheelScrollOffset();
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function runTest()
+{
+    movingdiv = document.getElementById('movingbox');
+    movingdiv.addEventListener("scroll", recordScroll);
+    window.addEventListener("mousewheel", recordWheel);
+
+    if (window.eventSender) {
+        description('This tests that precise scrolls on a horizontal scroll bar move vertically.');
+
+        if (checkTestDependencies())
+            firstWheelScroll();
+        else
+            exitIfNecessary();
+    } else {
+        debug("This test requires DumpRenderTree.  Touchpad scroll the red rect to log.");
+    }
+}
+</script>
+</body>
+</html>

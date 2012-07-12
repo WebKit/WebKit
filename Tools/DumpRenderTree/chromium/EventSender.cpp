@@ -1043,9 +1043,13 @@ void EventSender::handleMouseWheel(const CppArgumentList& arguments, CppVariant*
     int horizontal = arguments[0].toInt32();
     int vertical = arguments[1].toInt32();
     int paged = false;
+    int hasPreciseScrollingDeltas = false;
 
     if (arguments.size() > 2 && arguments[2].isBool())
         paged = arguments[2].toBoolean();
+
+    if (arguments.size() > 3 && arguments[3].isBool())
+        hasPreciseScrollingDeltas = arguments[3].toBoolean();
 
     WebMouseWheelEvent event;
     initMouseEvent(WebInputEvent::MouseWheel, pressedButton, lastMousePos, &event);
@@ -1054,6 +1058,8 @@ void EventSender::handleMouseWheel(const CppArgumentList& arguments, CppVariant*
     event.deltaX = event.wheelTicksX;
     event.deltaY = event.wheelTicksY;
     event.scrollByPage = paged;
+    event.hasPreciseScrollingDeltas = hasPreciseScrollingDeltas;
+
     if (continuous) {
         event.wheelTicksX /= scrollbarPixelsPerTick;
         event.wheelTicksY /= scrollbarPixelsPerTick;

@@ -126,7 +126,7 @@ unsigned EventHandler::accessKeyModifiers()
 // horizontal scrollbar while scrolling with the wheel; we need to
 // add the deltas and ticks here so that this behavior is consistent
 // for styled scrollbars.
-bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult& result) const
+bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult& result, const PlatformWheelEvent&) const
 {
     return result.scrollbar() && result.scrollbar()->orientation() == HorizontalScrollbar;
 }
