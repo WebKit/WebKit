@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<input type=submit>
+
+<script>
+jsTestIsAsync = true;
+
+window.onload = function() {
+    setTimeout(function() {
+        location.href = 'resources/state-restore-empty-state-1.html';
+    }, 0);
+};
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>

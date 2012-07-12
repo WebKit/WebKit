@@ -1,3 +1,14 @@
+2012-07-12  Kent Tamura  <tkent@chromium.org>
+
+        Do not save the form state signature if nothing is saved
+        https://bugs.webkit.org/show_bug.cgi?id=91050
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/resources/state-restore-empty-state-1.html: Added.
+        * fast/forms/state-restore-empty-state-expected.txt: Added.
+        * fast/forms/state-restore-empty-state.html: Added.
+
 2012-07-11  Matt Falkenhagen  <falken@chromium.org>
 
         Add dialog element feature toggle to InternalSettings

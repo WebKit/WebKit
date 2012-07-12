@@ -172,6 +172,9 @@ Vector<String> FormController::formElementsState() const
         stateVector.append(keyGenerator->formKey(*elementWithState).string());
         elementWithState->saveFormControlState().serializeTo(stateVector);
     }
+    bool hasOnlySignature = stateVector.size() == 1;
+    if (hasOnlySignature)
+        stateVector.clear();
     return stateVector;
 }
 

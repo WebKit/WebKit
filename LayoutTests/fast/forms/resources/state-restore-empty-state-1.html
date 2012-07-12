@@ -1,0 +1,13 @@
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+description('State vector should be empty if nothing is saved.');
+if (window.internals) {
+    var states = internals.formControlStateOfPreviousHistoryItem();
+    shouldBe('states.length', '0');
+} else {
+    debug('Need window.internals.formControlStateOfPreviousHistoryItem().');
+}
+jsTestIsAsync = true;
+finishJSTest();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
