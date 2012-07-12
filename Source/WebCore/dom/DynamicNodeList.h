@@ -64,6 +64,7 @@ protected:
     }
     ALWAYS_INLINE void setItemCache(Node* item, unsigned offset) const
     {
+        // FIXME: Assert that item is not null once we've updated DynamicNodeList.
         m_cachedItem = item;
         m_cachedItemOffset = offset;
         m_isItemCacheValid = true;

@@ -51,7 +51,7 @@ PassRefPtr<HTMLPropertiesCollection> HTMLPropertiesCollection::create(Node* item
 }
 
 HTMLPropertiesCollection::HTMLPropertiesCollection(Node* itemNode)
-    : HTMLCollectionWithArrayStorage(itemNode, ItemProperties)
+    : HTMLCollection(itemNode, ItemProperties)
     , m_hasPropertyNameCache(false)
     , m_hasItemRefElements(false)
 {
@@ -112,10 +112,10 @@ static Node* nextNodeWithProperty(Node* base, Node* node)
             ? node->traverseNextNode(base) : node->traverseNextSibling(base);
 }
 
-HTMLElement* HTMLPropertiesCollection::itemInArrayAfter(unsigned& offsetInArray, HTMLElement* previousItem) const
+Element* HTMLPropertiesCollection::itemAfter(unsigned& offsetInArray, Element* previousItem) const
 {
     while (offsetInArray < m_itemRefElements.size()) {
-        if (HTMLElement* next = itemAfter(m_itemRefElements[offsetInArray], previousItem))
+        if (Element* next = itemAfter(m_itemRefElements[offsetInArray], previousItem))
             return next;
         offsetInArray++;
         previousItem = 0;
@@ -123,7 +123,7 @@ HTMLElement* HTMLPropertiesCollection::itemInArrayAfter(unsigned& offsetInArray,
     return 0;
 }
 
-HTMLElement* HTMLPropertiesCollection::itemAfter(HTMLElement* base, HTMLElement* previous) const
+HTMLElement* HTMLPropertiesCollection::itemAfter(HTMLElement* base, Element* previous) const
 {
     Node* current;
     current = previous ? nextNodeWithProperty(base, previous) : base;
@@ -138,19 +138,6 @@ HTMLElement* HTMLPropertiesCollection::itemAfter(HTMLElement* base, HTMLElement*
     }
 
     return 0;
-}
-
-unsigned HTMLPropertiesCollection::calcLength() const
-{
-    unsigned length = 0;
-    updateRefElements();
-
-    for (unsigned i = 0; i < m_itemRefElements.size(); ++i) {
-        for (HTMLElement* element = itemAfter(m_itemRefElements[i], 0); element; element = itemAfter(m_itemRefElements[i], element))
-            ++length;
-    }
-
-    return length;
 }
 
 void HTMLPropertiesCollection::updateNameCache() const

@@ -34,7 +34,7 @@ class QualifiedName;
 // This class is just a big hack to find form elements even in malformed HTML elements.
 // The famous <table><tr><form><td> problem.
 
-class HTMLFormCollection : public HTMLCollectionWithArrayStorage {
+class HTMLFormCollection : public HTMLCollection {
 public:
     static PassRefPtr<HTMLFormCollection> create(Element*);
 
@@ -46,11 +46,10 @@ private:
     HTMLFormCollection(Element*);
 
     virtual void updateNameCache() const;
-    virtual unsigned calcLength() const;
 
     const Vector<FormAssociatedElement*>& formControlElements() const;
     const Vector<HTMLImageElement*>& formImageElements() const;
-    HTMLElement* itemInArrayAfter(unsigned& offset, HTMLElement* previousItem) const OVERRIDE;
+    virtual Element* itemAfter(unsigned& offsetInArray, Element*) const OVERRIDE;
 };
 
 } //namespace

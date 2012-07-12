@@ -49,8 +49,9 @@ HTMLNameCollection::~HTMLNameCollection()
         static_cast<Document*>(base())->removeDocumentNamedItemCache(this, m_name);
 }
 
-Element* HTMLNameCollection::itemAfter(Node* previous) const
+Element* HTMLNameCollection::itemAfter(unsigned& offsetInArray, Element* previous) const
 {
+    ASSERT_UNUSED(offsetInArray, !offsetInArray);
     ASSERT(previous != base());
 
     Node* current;

@@ -162,8 +162,9 @@ PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Element* tab
     return adoptRef(new HTMLTableRowsCollection(table));
 }
 
-Element* HTMLTableRowsCollection::itemAfter(Node* previous) const
+Element* HTMLTableRowsCollection::itemAfter(unsigned& offsetInArray, Element* previous) const
 {
+    ASSERT_UNUSED(offsetInArray, !offsetInArray);
     ASSERT(!previous || (previous->isHTMLElement() && toHTMLElement(previous)->hasLocalName(trTag)));
     return rowAfter(static_cast<HTMLTableElement*>(base()), static_cast<HTMLTableRowElement*>(previous));
 }

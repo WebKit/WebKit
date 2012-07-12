@@ -1,3 +1,64 @@
+2012-07-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge HTMLCollectionWithArrayStorage into HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=91144
+
+        Reviewed by Anders Carlsson.
+
+        Merged HTMLCollectionWithArrayStorage::item into HTMLCollection::item and got rid of
+        HTMLCollectionWithArrayStorage. Also de-virtualized HTMLCollection::item and HTMLCollection::length
+        and merged itemInArrayAfter and itemAfter.
+
+        In addition, improved the algorithm in HTMLCollection::length to take advantage of item cache.
+        Instead of always computing the length from the beginning, we start the search from the cached item
+        so that if we're near end of the collection, we avoid significant portion of the node traversal.
+
+        Furthermore, made HTMLCollection always call setItemCache with a non-null item and HTMLCollection::item
+        set the length cache when it reaches the end of the collection to avoid redundant length calculations.
+
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::setItemCache): Add a FIXME.
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::itemAfter): Regular HTMLCollection doesn't have uses elements array so
+        assert that offsetInArray is always 0.
+        (WebCore): Removed calcLength.
+        (WebCore::HTMLCollection::length): Rewritten. The algorithm is as follows:
+        When there is no item cache, we look for the first item by calling item(0). If item(0) returns null,
+        then it must have set the length cache so bail out. If the previous step didn't bail out, then
+        the item cache is valid and not null (see above), so count the number of remaining items in collection
+        starting at the cached item's offset + 1.
+        (WebCore::HTMLCollection::item): Avoid calling setItemCache with null. When the first item is null,
+        set the length cache instead.
+        (WebCore::HTMLCollection::itemAfterCachedItem): Extracted from HTMLCollectionWithArrayStorage::item.
+        (WebCore::HTMLCollection::namedItem): Pass in arrayOffset to itemAfter. Note this variable is never
+        used since only HTMLFormCollection and HTMLPropertiesCollection use array offsets but they override
+        this function.
+        (WebCore::HTMLCollection::updateNameCache): Ditto.
+        * html/HTMLCollection.h:
+        (HTMLCollection):
+        (WebCore):
+        * html/HTMLFormCollection.cpp: Removed calcLength(). Even though this function didn't iterate over
+        the collection directly, HTMLFormElement::length and HTMLFieldSetElement::length did so we're not
+        regressing any performance here.
+        (WebCore::HTMLFormCollection::HTMLFormCollection):
+        (WebCore::HTMLFormCollection::itemAfter):
+        * html/HTMLFormCollection.h:
+        (HTMLFormCollection):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::itemAfter):
+        * html/HTMLNameCollection.h:
+        (HTMLNameCollection):
+        * html/HTMLPropertiesCollection.cpp: Removed calcLength().
+        (WebCore::HTMLPropertiesCollection::HTMLPropertiesCollection):
+        (WebCore::HTMLPropertiesCollection::itemAfter):
+        (WebCore):
+        * html/HTMLPropertiesCollection.h:
+        (HTMLPropertiesCollection):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::itemAfter):
+        * html/HTMLTableRowsCollection.h:
+        (HTMLTableRowsCollection):
+
 2012-07-12  Pravin D  <pravind.2k4@gmail.com>
 
         Row size/position is wrongly calculated when table having overlapping rowspan cell and colspan cell

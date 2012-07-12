@@ -37,7 +37,7 @@ using namespace HTMLNames;
 // calculation every time if anything has changed.
 
 HTMLFormCollection::HTMLFormCollection(Element* base)
-    : HTMLCollectionWithArrayStorage(base, FormControls)
+    : HTMLCollection(base, FormControls)
 {
     ASSERT(base->hasTagName(formTag) || base->hasTagName(fieldsetTag));
 }
@@ -67,15 +67,7 @@ const Vector<HTMLImageElement*>& HTMLFormCollection::formImageElements() const
     return static_cast<HTMLFormElement*>(base())->imageElements();
 }
 
-unsigned HTMLFormCollection::calcLength() const
-{
-    ASSERT(base()->hasTagName(formTag) || base()->hasTagName(fieldsetTag));
-    if (base()->hasTagName(formTag))
-        return static_cast<HTMLFormElement*>(base())->length();
-    return static_cast<HTMLFieldSetElement*>(base())->length();
-}
-
-HTMLElement* HTMLFormCollection::itemInArrayAfter(unsigned& offset, HTMLElement* previousItem) const
+Element* HTMLFormCollection::itemAfter(unsigned& offset, Element* previousItem) const
 {
     const Vector<FormAssociatedElement*>& elementsArray = formControlElements();
     if (previousItem)

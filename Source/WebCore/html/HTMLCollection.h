@@ -63,7 +63,6 @@ protected:
         m_hasNameCache = false;
     }
 
-    using DynamicNodeListCacheBase::setItemCache;
     void setItemCache(Node* item, unsigned offset, unsigned elementsArrayOffset) const
     {
         setItemCache(item, offset);
@@ -89,6 +88,7 @@ private:
     using DynamicNodeListCacheBase::isRootedAtDocument;
     using DynamicNodeListCacheBase::shouldInvalidateOnAttributeChange;
     using DynamicNodeListCacheBase::clearCache;
+    using DynamicNodeListCacheBase::setItemCache;
 
     mutable NodeCacheMap m_idCache;
     mutable NodeCacheMap m_nameCache;
@@ -108,7 +108,7 @@ public:
 
     // DOM API
     unsigned length() const;
-    virtual Node* item(unsigned index) const;
+    Node* item(unsigned index) const;
     virtual Node* namedItem(const AtomicString& name) const;
     PassRefPtr<NodeList> tags(const String&);
 
@@ -143,28 +143,15 @@ protected:
     HTMLCollection(Node* base, CollectionType);
 
     virtual void updateNameCache() const;
-    virtual Element* itemAfter(Node*) const;
+    virtual Element* itemAfter(unsigned& offsetInArray, Element*) const;
 
 private:
     bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
-    virtual unsigned calcLength() const;
-
+    Element* itemAfterCachedItem(unsigned) const;
     bool isAcceptableElement(Element*) const;
 
     RefPtr<Node> m_base;
-};
-
-class HTMLCollectionWithArrayStorage : public HTMLCollection {
-public:
-    HTMLCollectionWithArrayStorage(Node* base, CollectionType type)
-        : HTMLCollection(base, type)
-    { }
-
-    virtual Node* item(unsigned index) const OVERRIDE;
-
-private:
-    virtual HTMLElement* itemInArrayAfter(unsigned& offsetInArray, HTMLElement* previousItem) const = 0;
 };
 
 } // namespace

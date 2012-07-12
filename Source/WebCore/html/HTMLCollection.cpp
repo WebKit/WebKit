@@ -180,8 +180,9 @@ static Node* nextNodeOrSibling(Node* base, Node* node, bool includeChildren)
     return includeChildren ? node->traverseNextNode(base) : node->traverseNextSibling(base);
 }
 
-Element* HTMLCollection::itemAfter(Node* previous) const
+Element* HTMLCollection::itemAfter(unsigned& offsetInArray, Element* previous) const
 {
+    ASSERT_UNUSED(offsetInArray, !offsetInArray);
     Node* current;
     if (!previous)
         current = m_base->firstChild();
@@ -199,44 +200,29 @@ Element* HTMLCollection::itemAfter(Node* previous) const
     return 0;
 }
 
-unsigned HTMLCollection::calcLength() const
-{
-    unsigned len = 0;
-    for (Element* current = itemAfter(0); current; current = itemAfter(current))
-        ++len;
-    return len;
-}
-
-// since the collections are to be "live", we have to do the
-// calculation every time if anything has changed
 unsigned HTMLCollection::length() const
 {
     invalidateCacheIfNeeded();
-    if (!isLengthCacheValid())
-        setLengthCache(calcLength());
-    return cachedLength();
+    if (isLengthCacheValid())
+        return cachedLength();
+
+    if (!isItemCacheValid() && !item(0)) {
+        ASSERT(isLengthCacheValid());
+        return 0;
+    }
+
+    ASSERT(isItemCacheValid());
+    ASSERT(cachedItem());
+    unsigned offset = cachedItemOffset();
+    do {
+        offset++;
+    } while (itemAfterCachedItem(offset));
+
+    setLengthCache(offset);
+    return offset;
 }
 
 Node* HTMLCollection::item(unsigned index) const
-{
-    invalidateCacheIfNeeded();
-    if (isItemCacheValid() && cachedItemOffset() == index)
-        return cachedItem();
-    if (isLengthCacheValid() && cachedLength() <= index)
-        return 0;
-    if (!isItemCacheValid() || cachedItemOffset() > index) {
-        setItemCache(itemAfter(0), 0);
-        if (!cachedItem())
-            return 0;
-    }
-    Node* e = cachedItem();
-    for (unsigned pos = cachedItemOffset(); e && pos < index; pos++)
-        e = itemAfter(e);
-    setItemCache(e, index);
-    return cachedItem();
-}
-
-Node* HTMLCollectionWithArrayStorage::item(unsigned index) const
 {
     invalidateCacheIfNeeded();
     if (isItemCacheValid() && cachedItemOffset() == index)
@@ -252,23 +238,33 @@ Node* HTMLCollectionWithArrayStorage::item(unsigned index) const
 
     if (!isItemCacheValid() || cachedItemOffset() > index) {
         unsigned offsetInArray = 0;
-        setItemCache(itemInArrayAfter(offsetInArray, 0), 0, 0);
-        ASSERT(isItemCacheValid());
-        if (!cachedItem() || cachedItemOffset() == index)
+        Node* firstItem = itemAfter(offsetInArray, 0);
+        if (!firstItem) {
+            setLengthCache(0);
+            return 0;
+        }
+        setItemCache(firstItem, 0, offsetInArray);
+        ASSERT(!cachedItemOffset());
+        if (!index)
             return cachedItem();
     }
 
+    return itemAfterCachedItem(index);
+}
+
+Element* HTMLCollection::itemAfterCachedItem(unsigned index) const
+{
     unsigned currentIndex = cachedItemOffset();
-    ASSERT(cachedItem()->isHTMLElement());
-    HTMLElement* currentItem = toHTMLElement(cachedItem());
+    ASSERT(cachedItem()->isElementNode());
+    Element* currentItem = toElement(cachedItem());
     ASSERT(currentIndex < index);
 
     unsigned offsetInArray = cachedElementsArrayOffset();
-    while ((currentItem = itemInArrayAfter(offsetInArray, currentItem))) {
+    while ((currentItem = itemAfter(offsetInArray, currentItem))) {
         currentIndex++;
         if (currentIndex == index) {
             setItemCache(currentItem, currentIndex, offsetInArray);
-            return cachedItem();
+            return currentItem;
         }
     }
 
@@ -314,19 +310,20 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
     // that are allowed a name attribute.
     invalidateCacheIfNeeded();
 
+    unsigned arrayOffset = 0;
     unsigned i = 0;
-    for (Element* e = itemAfter(0); e; e = itemAfter(e)) {
+    for (Element* e = itemAfter(arrayOffset, 0); e; e = itemAfter(arrayOffset, e)) {
         if (checkForNameMatch(e, /* checkName */ false, name)) {
-            setItemCache(e, i);
+            setItemCache(e, i, arrayOffset);
             return e;
         }
         i++;
     }
 
     i = 0;
-    for (Element* e = itemAfter(0); e; e = itemAfter(e)) {
+    for (Element* e = itemAfter(arrayOffset, 0); e; e = itemAfter(arrayOffset, e)) {
         if (checkForNameMatch(e, /* checkName */ true, name)) {
-            setItemCache(e, i);
+            setItemCache(e, i, arrayOffset);
             return e;
         }
         i++;
@@ -341,7 +338,8 @@ void HTMLCollection::updateNameCache() const
     if (hasNameCache())
         return;
 
-    for (Element* element = itemAfter(0); element; element = itemAfter(element)) {
+    unsigned arrayOffset = 0;
+    for (Element* element = itemAfter(arrayOffset, 0); element; element = itemAfter(arrayOffset, element)) {
         if (!element->isHTMLElement())
             continue;
         HTMLElement* e = toHTMLElement(element);

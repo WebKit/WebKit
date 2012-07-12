@@ -40,7 +40,7 @@ namespace WebCore {
 
 class DOMStringList;
 
-class HTMLPropertiesCollection : public HTMLCollectionWithArrayStorage {
+class HTMLPropertiesCollection : public HTMLCollection {
 public:
     static PassRefPtr<HTMLPropertiesCollection> create(Node*);
     virtual ~HTMLPropertiesCollection();
@@ -63,13 +63,10 @@ public:
 private:
     HTMLPropertiesCollection(Node*);
 
-    virtual unsigned calcLength() const OVERRIDE;
-
     Node* findRefElements(Node* previous) const;
 
-    void cacheFirstItem() const;
-    virtual HTMLElement* itemInArrayAfter(unsigned& offsetInArray, HTMLElement* previousItemInSameArrayElement) const OVERRIDE;
-    HTMLElement* itemAfter(HTMLElement* base, HTMLElement* previous) const;
+    virtual Element* itemAfter(unsigned& offsetInArray, Element*) const OVERRIDE;
+    HTMLElement* itemAfter(HTMLElement* base, Element* previous) const;
 
     void updateNameCache() const;
 
