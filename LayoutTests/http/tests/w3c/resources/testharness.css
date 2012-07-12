@@ -1,0 +1,28 @@
+html {
+    font-family:DejaVu Sans, Bitstream Vera Sans, Arial, Sans;
+}
+
+table#results {
+    border-collapse:collapse;
+}
+
+table#results th {
+    padding:0;
+    padding-bottom:0.5em;
+    border-bottom:medium solid black;
+}
+
+table#results td {
+    padding:0;
+    padding-bottom:0.5em;
+    border-bottom:thin solid black;
+}
+
+table#results tr>td:nth-child(1) {
+    font-variant:small-caps;
+}
+
+table#results tr>td:nth-child(3) {
+    font-family:DejaVu Sans Mono, Bitstream Vera Sans Mono, Monospace;
+    white-space:pre;
+}

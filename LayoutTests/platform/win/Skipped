@@ -1229,6 +1229,7 @@ http/tests/misc/webtiming-one-redirect.php
 http/tests/misc/webtiming-slow-load.php
 http/tests/misc/webtiming-ssl.php
 http/tests/misc/webtiming-two-redirects.php
+http/tests/w3c/webperf
 fast/performance
 
 # Still working out flakiness issues with the perf tests.

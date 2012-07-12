@@ -1,3 +1,12 @@
+2012-07-12  James Simonsen  <simonjam@chromium.org>
+
+        [Navigation Timing] Import the W3C Navigation Timing test suite
+        https://bugs.webkit.org/show_bug.cgi?id=84887
+
+        Reviewed by Tony Gentilcore.
+
+        * Scripts/import-w3c-performance-wg-tests: Added.
+
 2012-07-12  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Nit: git config files use tabs, not spaces.

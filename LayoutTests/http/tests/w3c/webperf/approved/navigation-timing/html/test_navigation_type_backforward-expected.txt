@@ -1,0 +1,23 @@
+frame "frameContext" - has 1 onunload handler(s)
+frame "frameContext" - has 1 onunload handler(s)
+frame "frameContext" - has 1 onunload handler(s)
+frame "frameContext" - has 1 onunload handler(s)
+Description
+
+This test validates the value of window.performance.navigation.type with a forward and back navigation.
+
+This page should be loaded with a yellow background frame below. It should turn green for a starting navigation, back to yellow for a back navigation and then back to green again for a forward navigation.
+
+Along the navigation timeline the frame.window.performance.type is checked for TYPE_BACK_FORWARD.
+
+This test passes if all of the checks to the navigation.type are correct throughout the navigation scenario and the frame below ends with a green background. Otherwise, this test fails.
+
+
+
+
+PASS window.performance is defined 
+PASS window.performance.navigation is defined 
+PASS window.performance.navigation.type == TYPE_NAVIGATE 
+PASS window.performance.navigation.type == TYPE_BACK_FORWARD after history.back() 
+PASS window.performance.navigation.type == TYPE_BACK_FORWARD after history.forward() 
+

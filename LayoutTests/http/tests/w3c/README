@@ -1,0 +1,11 @@
+This directory contains files imported from the W3C.
+
+With only one exception (below), these files should not be modified directly. Instead, please
+source the files from the following locations:
+
+resources/testharness.js - and...
+resources/testharness.css - Fetch from http://w3c-test.org/resources/
+
+resources/testharnessreport.js - Modify directly. It's the vendor specific portion.
+
+webperf/ - Use Tools/Scripts/import-w3c-performance-wg-tests
