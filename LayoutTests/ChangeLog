@@ -1,3 +1,16 @@
+2012-07-12  Simon Pena  <spena@igalia.com>
+
+        [GTK] Gardening: rebaseline after r122414
+        https://bugs.webkit.org/show_bug.cgi?id=91064
+
+        Unreviewed gardening.
+
+        Added the right -expected results for the
+        fast/forms/state-restore-skip-stateless.html test after
+        r122414
+
+        * platform/gtk/fast/forms/state-restore-skip-stateless-expected.txt:
+
 2012-07-12  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] [Part 1] platform/qt/css1 tests needs update after rebaseline and new testfonts
