@@ -185,7 +185,6 @@ WebInspector.UISourceCode.prototype = {
         if (!window.localStorage)
             return;
 
-        WebInspector.Revision._ensureStaleRevisionsFileteredOut();
         var registry = WebInspector.Revision._revisionHistoryRegistry();
         var historyItems = registry[this.url];
         for (var i = 0; historyItems && i < historyItems.length; ++i)
@@ -560,15 +559,11 @@ WebInspector.Revision._revisionHistoryRegistry = function()
     return WebInspector.Revision._revisionHistoryRegistryObject;
 }
 
-WebInspector.Revision._ensureStaleRevisionsFileteredOut = function()
+WebInspector.Revision.filterOutStaleRevisions = function()
 {
     if (!window.localStorage)
         return;
 
-    if (WebInspector.Revision._staleRevisionsFilteredOut)
-        return;
-    WebInspector.Revision._staleRevisionsFilteredOut = true;
-    
     var registry = WebInspector.Revision._revisionHistoryRegistry();
     var filteredRegistry = {};
     for (var url in registry) {

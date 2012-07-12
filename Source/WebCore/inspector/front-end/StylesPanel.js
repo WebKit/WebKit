@@ -33,10 +33,11 @@
  */
 WebInspector.StylesUISourceCodeProvider = function()
 {
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._initialize, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources, this.reset, this);
-
+    /**
+     * @type {Array.<WebInspector.UISourceCode>}
+     */
     this._uiSourceCodes = [];
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
 }
 
 WebInspector.StylesUISourceCodeProvider.prototype = {
@@ -48,11 +49,8 @@ WebInspector.StylesUISourceCodeProvider.prototype = {
         return this._uiSourceCodes;
     },
 
-    _initialize: function()
+    _populate: function()
     {
-        if (this._initialized)
-            return;
-
         function populateFrame(frame)
         {
             for (var i = 0; i < frame.childFrames.length; ++i)
@@ -62,10 +60,8 @@ WebInspector.StylesUISourceCodeProvider.prototype = {
             for (var i = 0; i < resources.length; ++i)
                 this._resourceAdded({data:resources[i]});
         }
-        populateFrame.call(this, WebInspector.resourceTreeModel.mainFrame);
 
-        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
-        this._initialized = true;
+        populateFrame.call(this, WebInspector.resourceTreeModel.mainFrame);
     },
 
     _resourceAdded: function(event)
@@ -81,6 +77,7 @@ WebInspector.StylesUISourceCodeProvider.prototype = {
     reset: function()
     {
         this._uiSourceCodes = [];
+        this._populate();
     }
 }
 
