@@ -51,6 +51,7 @@ private:
     virtual bool supportLabels() const OVERRIDE { return true; }
 
     virtual void reset();
+    virtual bool shouldSaveAndRestoreFormControlState() const OVERRIDE;
 
     HTMLSelectElement* shadowSelect() const;
 };

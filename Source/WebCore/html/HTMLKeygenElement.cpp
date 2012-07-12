@@ -129,6 +129,11 @@ void HTMLKeygenElement::reset()
     static_cast<HTMLFormControlElement*>(shadowSelect())->reset();
 }
 
+bool HTMLKeygenElement::shouldSaveAndRestoreFormControlState() const
+{
+    return false;
+}
+
 HTMLSelectElement* HTMLKeygenElement::shadowSelect() const
 {
     ShadowRoot* root = this->shadow()->oldestShadowRoot();

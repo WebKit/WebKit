@@ -49,9 +49,15 @@ const AtomicString& PasswordInputType::formControlType() const
     return InputTypeNames::password();
 }
 
+bool PasswordInputType::shouldSaveAndRestoreFormControlState() const
+{
+    return false;
+}
+
 FormControlState PasswordInputType::saveFormControlState() const
 {
     // Should never save/restore password fields.
+    ASSERT_NOT_REACHED();
     return FormControlState();
 }
 

@@ -296,6 +296,7 @@ private:
 
     virtual const AtomicString& formControlType() const;
 
+    virtual bool shouldSaveAndRestoreFormControlState() const OVERRIDE;
     virtual FormControlState saveFormControlState() const OVERRIDE;
     virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
 

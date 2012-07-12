@@ -42,6 +42,7 @@ public:
 private:
     PasswordInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool shouldSaveAndRestoreFormControlState() const OVERRIDE;
     virtual FormControlState saveFormControlState() const OVERRIDE;
     virtual void restoreFormControlState(const FormControlState&) OVERRIDE;
     virtual bool shouldUseInputMethod() const OVERRIDE;

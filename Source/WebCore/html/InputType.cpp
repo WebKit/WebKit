@@ -169,6 +169,11 @@ bool InputType::isRangeControl() const
     return false;
 }
 
+bool InputType::shouldSaveAndRestoreFormControlState() const
+{
+    return true;
+}
+
 FormControlState InputType::saveFormControlState() const
 {
     String currentValue = element()->value();

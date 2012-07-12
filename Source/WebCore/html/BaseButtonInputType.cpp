@@ -41,6 +41,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+bool BaseButtonInputType::shouldSaveAndRestoreFormControlState() const
+{
+    return false;
+}
+
 bool BaseButtonInputType::appendFormData(FormDataList&, bool) const
 {
     // Buttons except overridden types are never successful.
