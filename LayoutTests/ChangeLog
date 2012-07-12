@@ -1,5 +1,15 @@
 2012-07-12  W. James MacLean  <wjmaclean@chromium.org>
 
+        [chromium] Unreviewed gardening. Re-baseline expected text for fast/multicol/table-vertical-align.html
+
+        * platform/chromium-linux-x86/fast/multicol/table-vertical-align-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/multicol/table-vertical-align-expected.txt.
+        * platform/chromium-linux/fast/multicol/table-vertical-align-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/multicol/table-vertical-align-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/multicol/table-vertical-align-expected.txt: Added.
+        * platform/chromium-win-xp/fast/multicol/table-vertical-align-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/multicol/table-vertical-align-expected.txt.
+        * platform/chromium-win/fast/multicol/table-vertical-align-expected.txt:
+
+2012-07-12  W. James MacLean  <wjmaclean@chromium.org>
+
         [chromium] Unreviewed gardening. inspector/elements/edit-dom-actions.html is timing out on Win Debug.
         https://bugs.webkit.org/show_bug.cgi?id=60109
 
