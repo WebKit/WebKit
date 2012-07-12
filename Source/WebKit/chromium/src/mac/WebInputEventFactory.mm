@@ -34,7 +34,7 @@
 #include "WebInputEvent.h"
 #include <wtf/ASCIICType.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 1070
 
 // Additional Lion APIs.
 enum {
@@ -53,9 +53,11 @@ typedef NSUInteger NSEventPhase;
 - (NSEventPhase)momentumPhase;
 @end
 
-#endif  // __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#endif  // __MAC_OS_X_VERSION_MAX_ALLOWED < 1070
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
+// Do not __MAC_OS_X_VERSION_MAX_ALLOWED here because of a bug in the 10.5 SDK,
+// see <http://lists.webkit.org/pipermail/webkit-dev/2012-July/021442.html>.
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= 1050
 
 // These are not defined in the 10.5 SDK but are defined in later SDKs inside
 // a MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 #ifdef.
@@ -64,7 +66,7 @@ enum {
     NSEventTypeEndGesture       = 20
 };
 
-#endif  // __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
+#endif  // MAC_OS_X_VERSION_MAX_ALLOWED <= 1050
 
 namespace WebKit {
 
