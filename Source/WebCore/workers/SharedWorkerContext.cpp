@@ -50,8 +50,8 @@ PassRefPtr<MessageEvent> createConnectEvent(PassRefPtr<MessagePort> port)
     return event.release();
 }
 
-SharedWorkerContext::SharedWorkerContext(const String& name, const KURL& url, const String& userAgent, SharedWorkerThread* thread, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
-    : WorkerContext(url, userAgent, thread, contentSecurityPolicy, contentSecurityPolicyType)
+SharedWorkerContext::SharedWorkerContext(const String& name, const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, SharedWorkerThread* thread, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+    : WorkerContext(url, userAgent, settings, thread, contentSecurityPolicy, contentSecurityPolicyType)
     , m_name(name)
 {
 }

@@ -44,9 +44,9 @@ namespace WebCore {
     class DedicatedWorkerContext : public WorkerContext {
     public:
         typedef WorkerContext Base;
-        static PassRefPtr<DedicatedWorkerContext> create(const KURL& url, const String& userAgent, DedicatedWorkerThread* thread, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+        static PassRefPtr<DedicatedWorkerContext> create(const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, DedicatedWorkerThread* thread, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
         {
-            return adoptRef(new DedicatedWorkerContext(url, userAgent, thread, contentSecurityPolicy, contentSecurityPolicyType));
+            return adoptRef(new DedicatedWorkerContext(url, userAgent, settings, thread, contentSecurityPolicy, contentSecurityPolicyType));
         }
 
         virtual bool isDedicatedWorkerContext() const { return true; }
@@ -66,7 +66,7 @@ namespace WebCore {
 
         DedicatedWorkerThread* thread();
     private:
-        DedicatedWorkerContext(const KURL&, const String& userAgent, DedicatedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
+        DedicatedWorkerContext(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, DedicatedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
     };
 
 } // namespace WebCore

@@ -1,3 +1,20 @@
+2012-07-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: ASSERT hit calling open from callback in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=90832
+
+        Reviewed by Kentaro Hara.
+
+        Call IDBFactory.open() twice from a worker - once from the initial worker
+        script evaluation, and once in a callback after the worker thread data
+        has been purged.
+
+        * storage/indexeddb/open-twice-workers-expected.txt: Added.
+        * storage/indexeddb/open-twice-workers.html: Added.
+        * storage/indexeddb/resources/open-twice.js: Added.
+        (test):
+        (openAnother):
+
 2012-07-12  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] platform/qt/css3 tests needs update after rebaseline

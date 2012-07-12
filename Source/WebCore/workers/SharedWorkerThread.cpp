@@ -53,9 +53,9 @@ SharedWorkerThread::~SharedWorkerThread()
 {
 }
 
-PassRefPtr<WorkerContext> SharedWorkerThread::createWorkerContext(const KURL& url, const String& userAgent, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+PassRefPtr<WorkerContext> SharedWorkerThread::createWorkerContext(const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
 {
-    return SharedWorkerContext::create(m_name, url, userAgent, this, contentSecurityPolicy, contentSecurityPolicyType);
+    return SharedWorkerContext::create(m_name, url, userAgent, settings, this, contentSecurityPolicy, contentSecurityPolicyType);
 }
 
 } // namespace WebCore

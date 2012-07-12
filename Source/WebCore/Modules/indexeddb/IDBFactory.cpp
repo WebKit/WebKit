@@ -100,7 +100,7 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
 #if ENABLE(WORKERS)
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
     WorkerContext* workerContext = static_cast<WorkerContext*>(context);
-    GroupSettings* groupSettings = workerContext->thread()->groupSettings();
+    const GroupSettings* groupSettings = workerContext->groupSettings();
     m_backend->openFromWorker(name, request.get(), context->securityOrigin(), workerContext, groupSettings ? groupSettings->indexedDBDatabasePath() : String());
     return request;
 #else

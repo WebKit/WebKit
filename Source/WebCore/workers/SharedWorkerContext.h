@@ -44,9 +44,9 @@ namespace WebCore {
     class SharedWorkerContext : public WorkerContext {
     public:
         typedef WorkerContext Base;
-        static PassRefPtr<SharedWorkerContext> create(const String& name, const KURL& url, const String& userAgent, SharedWorkerThread* thread, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+        static PassRefPtr<SharedWorkerContext> create(const String& name, const KURL& url, const String& userAgent, PassOwnPtr<GroupSettings> settings, SharedWorkerThread* thread, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
         {
-            return adoptRef(new SharedWorkerContext(name, url, userAgent, thread, contentSecurityPolicy, contentSecurityPolicyType));
+            return adoptRef(new SharedWorkerContext(name, url, userAgent, settings, thread, contentSecurityPolicy, contentSecurityPolicyType));
         }
         virtual ~SharedWorkerContext();
 
@@ -61,7 +61,7 @@ namespace WebCore {
 
         SharedWorkerThread* thread();
     private:
-        SharedWorkerContext(const String& name, const KURL&, const String&, SharedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
+        SharedWorkerContext(const String& name, const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, SharedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
 
         virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, PassRefPtr<ScriptCallStack>);
 

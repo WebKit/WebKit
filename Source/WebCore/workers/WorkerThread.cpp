@@ -146,7 +146,7 @@ void WorkerThread::workerThread()
 {
     {
         MutexLocker lock(m_threadCreationMutex);
-        m_workerContext = createWorkerContext(m_startupData->m_scriptURL, m_startupData->m_userAgent, m_startupData->m_contentSecurityPolicy, m_startupData->m_contentSecurityPolicyType);
+        m_workerContext = createWorkerContext(m_startupData->m_scriptURL, m_startupData->m_userAgent, m_startupData->m_groupSettings.release(), m_startupData->m_contentSecurityPolicy, m_startupData->m_contentSecurityPolicyType);
 
         if (m_runLoop.terminated()) {
             // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,
@@ -191,11 +191,6 @@ void WorkerThread::runEventLoop()
 {
     // Does not return until terminated.
     m_runLoop.run(m_workerContext.get());
-}
-
-GroupSettings* WorkerThread::groupSettings()
-{
-    return m_startupData->m_groupSettings.get();
 }
 
 class WorkerThreadShutdownFinishTask : public ScriptExecutionContext::Task {

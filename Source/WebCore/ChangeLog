@@ -1,3 +1,49 @@
+2012-07-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: ASSERT hit calling open from callback in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=90832
+
+        Reviewed by Kentaro Hara.
+
+        GroupSettings are used to provide the backing store path in some
+        ports. Accessing those settings from a Worker was added, but the
+        access referenced thread startup data that is cleared before the
+        run loop, so an IDBFactory.open() call executed asynchronously
+        would dereference a null pointer. Plumb the settings startup
+        data into the context itself, like all of the other properties.
+
+        Test: storage/indexeddb/open-twice-workers.html
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::open):
+        * workers/DedicatedWorkerContext.cpp:
+        (WebCore::DedicatedWorkerContext::DedicatedWorkerContext):
+        * workers/DedicatedWorkerContext.h:
+        (WebCore::DedicatedWorkerContext::create):
+        (DedicatedWorkerContext):
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::createWorkerContext):
+        * workers/DedicatedWorkerThread.h:
+        (DedicatedWorkerThread):
+        * workers/SharedWorkerContext.cpp:
+        (WebCore::SharedWorkerContext::SharedWorkerContext):
+        * workers/SharedWorkerContext.h:
+        (WebCore::SharedWorkerContext::create):
+        (SharedWorkerContext):
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::createWorkerContext):
+        * workers/SharedWorkerThread.h:
+        (SharedWorkerThread):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        * workers/WorkerContext.h:
+        (WebCore::WorkerContext::groupSettings):
+        (WorkerContext):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+        (WorkerThread):
+
 2012-07-12  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Implement MemoryUsageSupport
