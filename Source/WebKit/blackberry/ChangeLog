@@ -1,3 +1,17 @@
+2012-07-12  Pawel Chomicki  <pchomicki@rim.com>
+
+        [BlackBerry] WebPage::touchEvent() should use Platform::TouchEvent's toString() for debugging.
+        https://bugs.webkit.org/show_bug.cgi?id=91002
+
+        Reviewed by Antonio Gomes.
+        Reviewed internally by Genevieve Mak.
+
+        Updated DEBUG_TOUCH_EVENTS section of touchEvent method to utilize
+        Platform::TouchEvent's toString method.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::touchEvent):
+
 2012-07-12  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Cannot use digest proxy auth and NTLM auth at the same time

@@ -4129,37 +4129,7 @@ bool WebPagePrivate::handleWheelEvent(PlatformWheelEvent& wheelEvent)
 bool WebPage::touchEvent(const Platform::TouchEvent& event)
 {
 #if DEBUG_TOUCH_EVENTS
-    switch (event.m_type) {
-    case Platform::TouchEvent::TouchEnd:
-        Platform::log(Platform::LogLevelCritical, "WebPage::touchEvent Touch End");
-        break;
-    case Platform::TouchEvent::TouchStart:
-        Platform::log(Platform::LogLevelCritical, "WebPage::touchEvent Touch Start");
-        break;
-    case Platform::TouchEvent::TouchMove:
-        Platform::log(Platform::LogLevelCritical, "WebPage::touchEvent Touch Move");
-        break;
-    case Platform::TouchEvent::TouchCancel:
-        Platform::log(Platform::LogLevelCritical, "WebPage::touchCancel Touch Cancel");
-        break;
-    }
-
-    for (unsigned i = 0; i < event.m_points.size(); i++) {
-        switch (event.m_points[i].m_state) {
-        case Platform::TouchPoint::TouchPressed:
-            Platform::log(Platform::LogLevelCritical, "WebPage::touchEvent %d Touch Pressed (%d, %d)", event.m_points[i].m_id, event.m_points[i].m_pos.x(), event.m_points[i].m_pos.y());
-            break;
-        case Platform::TouchPoint::TouchReleased:
-            Platform::log(Platform::LogLevelCritical, "WebPage::touchEvent %d Touch Released (%d, %d)", event.m_points[i].m_id, event.m_points[i].m_pos.x(), event.m_points[i].m_pos.y());
-            break;
-        case Platform::TouchPoint::TouchMoved:
-            Platform::log(Platform::LogLevelCritical, "WebPage::touchEvent %d Touch Moved (%d, %d)", event.m_points[i].m_id, event.m_points[i].m_pos.x(), event.m_points[i].m_pos.y());
-            break;
-        case Platform::TouchPoint::TouchStationary:
-            Platform::log(Platform::LogLevelCritical, "WebPage::touchEvent %d Touch Stationary (%d, %d)", event.m_points[i].m_id, event.m_points[i].m_pos.x(), event.m_points[i].m_pos.y());
-            break;
-        }
-    }
+    BBLOG(LogLevelCritical, "%s", event.toString().c_str());
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
