@@ -37,7 +37,7 @@ namespace WebKit {
 
 WebCompositorSharedQuadState::WebCompositorSharedQuadState()
     : opacity(0)
-    , opaque(opaque)
+    , opaque(false)
 {
 }
 

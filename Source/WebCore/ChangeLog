@@ -1,3 +1,11 @@
+2012-07-11  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        Build fix for r122373.
+
+        * platform/chromium/support/WebCompositorSharedQuadState.cpp:
+        (WebKit::WebCompositorSharedQuadState::WebCompositorSharedQuadState):
+
 2012-07-11  Shinya Kawanaka  <shinyak@chromium.org> 
 
         SVGUseElement should not use Element::ensureShadowRoot().
