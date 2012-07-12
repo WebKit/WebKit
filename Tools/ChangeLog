@@ -1,3 +1,50 @@
+2012-07-12  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: reimplement manager_worker_broker in a much simpler form
+        https://bugs.webkit.org/show_bug.cgi?id=90513
+
+        Reviewed by Ojan Vafai.
+
+        This is a wholesale replacement of the MessagePool() implementation
+        and the other classes in manager_worker_broker.py. All of the
+        BrokerConnection*, Broker*, etc. classes are gone, and there are now
+        just a MessagePool class and a _Worker class. Happiness ensues.
+ 
+        I'm removing manager_worker_broker_unittest.py as well; we get
+        nearly complete coverage from the integration tests, and will
+        get more coverage when test-webkitpy moves to use this as well,
+        so having unit tests seems like unnecessary overhead. (running
+        coverage numbers with test-webkitpy shows that pretty much the only
+        uncovered lines are lines that are only run in the child processes,
+        which coverage doesn't handle at the moment).
+ 
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (_MessagePool.__init__):
+        (_MessagePool.run):
+        (_MessagePool._start_workers):
+        (_MessagePool):
+        (_MessagePool.wait):
+        (_MessagePool._close):
+        (_MessagePool._handle_done):
+        (_MessagePool._can_pickle):
+        (_MessagePool._loop):
+        (WorkerException):
+        (_Message.__init__):
+        (_Message.__repr__):
+        (_Worker):
+        (_Worker.__init__):
+        (_Worker.terminate):
+        (_Worker._close):
+        (_Worker.run):
+        (_Worker.post):
+        (_Worker.yield_to_caller):
+        (_Worker._post):
+        (_Worker._raise):
+        (_Worker._set_up_logging):
+        (_WorkerLogHandler.__init__):
+        (_WorkerLogHandler.emit):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker_unittest.py: Removed.
+
 2012-07-12  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove drag and drop API methods that are no longer used
