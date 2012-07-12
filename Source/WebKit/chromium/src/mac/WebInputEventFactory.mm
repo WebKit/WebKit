@@ -28,14 +28,13 @@
 #include "WebInputEventFactory.h"
 
 #include <ApplicationServices/ApplicationServices.h>
-#include <Availability.h>
 #import <Cocoa/Cocoa.h>
 
 #import "KeyEventCocoa.h"
 #include "WebInputEvent.h"
 #include <wtf/ASCIICType.h>
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 1070
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 
 // Additional Lion APIs.
 enum {
@@ -54,9 +53,9 @@ typedef NSUInteger NSEventPhase;
 - (NSEventPhase)momentumPhase;
 @end
 
-#endif  // __MAC_OS_X_VERSION_MAX_ALLOWED < 1070
+#endif  // __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED <= 1050
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 
 // These are not defined in the 10.5 SDK but are defined in later SDKs inside
 // a MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 #ifdef.
@@ -65,7 +64,7 @@ enum {
     NSEventTypeEndGesture       = 20
 };
 
-#endif  // __MAC_OS_X_VERSION_MAX_ALLOWED <= 1050
+#endif  // __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 
 namespace WebKit {
 
