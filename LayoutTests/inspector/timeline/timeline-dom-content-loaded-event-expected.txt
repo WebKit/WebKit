@@ -1,5 +1,6 @@
 Tests the DOM content loaded event.
 
+Page reloaded.
 MarkDOMContent Properties:
 {
     startTime : <number>
@@ -11,5 +12,4 @@ MarkDOMContent Properties:
     totalHeapSize : <number>
     counters : <object>
 }
-Page reloaded.
 

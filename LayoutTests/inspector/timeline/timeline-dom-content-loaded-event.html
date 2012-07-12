@@ -14,14 +14,15 @@ function test()
 
     function contentEvent()
     {
-        InspectorTest.printTimelineRecords("MarkDOMContent");
         InspectorTest.stopTimeline(finish);
     }
 
     function finish()
     {
-        if (++finishCalled === 2)
-            InspectorTest.completeTest();
+        if (++finishCalled < 2)
+            return;
+        InspectorTest.printTimelineRecords("MarkDOMContent");
+        InspectorTest.completeTest();
     }
 }
 

@@ -1,3 +1,15 @@
+2012-07-11  Andrey Kosyakov  <caseq@chromium.org>
+
+        Layout Test inspector/timeline/timeline-dom-content-loaded-event.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=90984
+
+        Reviewed by Vsevolod Vlasov.
+
+        - remove test flakiness by only outputting result when page completed reload;
+
+        * inspector/timeline/timeline-dom-content-loaded-event-expected.txt:
+        * inspector/timeline/timeline-dom-content-loaded-event.html:
+
 2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         REGRESSION(r122327): It made http/tests/inspector/network/network-request-revision-content.html fail on Lion, Qt
