@@ -82,7 +82,7 @@ class _MessagePool(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type, exc_value, exc_traceback):
         self._close()
         return False
 
@@ -143,7 +143,7 @@ class _MessagePool(object):
         self._workers_stopped.add(source)
 
     @staticmethod
-    def _handle_worker_exception(source, exception_type, exception_value, stack):
+    def _handle_worker_exception(source, exception_type, exception_value, _):
         if exception_type == KeyboardInterrupt:
             raise exception_type(exception_value)
         _log.error("%s raised %s('%s'):" % (
@@ -288,14 +288,10 @@ class _Worker(multiprocessing.Process):
     def _set_up_logging(self):
         self._logger = logging.getLogger()
 
-        # The unix multiprocessing implementation clones the MeteredStream log handler
-        # into the child process, so we need to remove it to avoid duplicate logging.
+        # The unix multiprocessing implementation clones any log handlers into the child process,
+        # so we remove them to avoid duplicate logging.
         for h in self._logger.handlers:
-            # log handlers don't have names until python 2.7.
-            # FIXME: log handler names should be passed in.
-            if getattr(h, 'name', '') in ('MeteredStreamLogHandler', 'webkitpy.test.printer'):
-                self._logger.removeHandler(h)
-                break
+            self._logger.removeHandler(h)
 
         self._log_handler = _WorkerLogHandler(self)
         self._logger.addHandler(self._log_handler)

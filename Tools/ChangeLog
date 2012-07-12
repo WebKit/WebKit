@@ -1,5 +1,29 @@
 2012-07-12  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: clean up logging handlers, lint common.message_pool
+        https://bugs.webkit.org/show_bug.cgi?id=91152
+
+        Reviewed by Ojan Vafai.
+
+        The unix implementation of multiprocessing clones any logging
+        handlers from the parent process into the child; we currently
+        don't want this behavior in our code, so I was hand-removing the
+        installed handlers in the child process I knew about. After thinking
+        about it further, I think it was simpler and safe enough to just
+        remove all handlers in the child, since the message pool
+        propagates any message from the child back into the parent.
+        
+        We can always change this in the future if it turns out to be an issue.
+
+        I'm also fixing a couple of other lint warnings while I'm at it.
+
+        * Scripts/webkitpy/common/message_pool.py:
+        (_MessagePool.__exit__):
+        (_MessagePool._handle_worker_exception):
+        (_Worker._set_up_logging):
+
+2012-07-12  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: rename manager_worker_broker to message_pool
         https://bugs.webkit.org/show_bug.cgi?id=91145
 
