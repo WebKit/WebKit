@@ -76,28 +76,58 @@ class CallBeginToken {
 public:
     CallBeginToken()
 #if !ASSERT_DISABLED
-        : m_codeOriginIndex(UINT_MAX)
+        : m_registered(false)
+        , m_exceptionCheckIndex(std::numeric_limits<unsigned>::max())
 #endif
     {
     }
     
-    explicit CallBeginToken(unsigned codeOriginIndex)
+    ~CallBeginToken()
+    {
+        ASSERT(m_registered || !m_codeOrigin.isSet());
+        ASSERT(m_codeOrigin.isSet() == (m_exceptionCheckIndex != std::numeric_limits<unsigned>::max()));
+    }
+    
+    void set(CodeOrigin codeOrigin, unsigned index)
+    {
 #if !ASSERT_DISABLED
-        : m_codeOriginIndex(codeOriginIndex)
+        ASSERT(m_registered || !m_codeOrigin.isSet());
+        ASSERT(m_codeOrigin.isSet() == (m_exceptionCheckIndex != std::numeric_limits<unsigned>::max()));
+        m_codeOrigin = codeOrigin;
+        m_registered = false;
+        m_exceptionCheckIndex = index;
+#else
+        UNUSED_PARAM(codeOrigin);
+        UNUSED_PARAM(index);
 #endif
-    {
-        UNUSED_PARAM(codeOriginIndex);
     }
     
-    void assertCodeOriginIndex(unsigned codeOriginIndex) const
+    void registerWithExceptionCheck(CodeOrigin codeOrigin, unsigned index)
     {
-        ASSERT_UNUSED(codeOriginIndex, codeOriginIndex < UINT_MAX);
-        ASSERT_UNUSED(codeOriginIndex, codeOriginIndex == m_codeOriginIndex);
+#if !ASSERT_DISABLED
+        ASSERT(m_codeOrigin == codeOrigin);
+        if (m_registered)
+            return;
+        ASSERT(m_exceptionCheckIndex == index);
+        m_registered = true;
+#else
+        UNUSED_PARAM(codeOrigin);
+        UNUSED_PARAM(index);
+#endif
     }
 
+#if !ASSERT_DISABLED
+    const CodeOrigin& codeOrigin() const
+    {
+        return m_codeOrigin;
+    }
+#endif
+    
 private:
 #if !ASSERT_DISABLED
-    unsigned m_codeOriginIndex;
+    CodeOrigin m_codeOrigin;
+    bool m_registered;
+    unsigned m_exceptionCheckIndex;
 #endif
 };
 
@@ -107,25 +137,22 @@ private:
 // Calls that might throw an exception also record the Jump taken on exception
 // (unset if not present) and code origin used to recover handler/source info.
 struct CallExceptionRecord {
-    CallExceptionRecord(MacroAssembler::Call call, CodeOrigin codeOrigin, CallBeginToken token)
+    CallExceptionRecord(MacroAssembler::Call call, CodeOrigin codeOrigin)
         : m_call(call)
         , m_codeOrigin(codeOrigin)
-        , m_token(token)
     {
     }
 
-    CallExceptionRecord(MacroAssembler::Call call, MacroAssembler::Jump exceptionCheck, CodeOrigin codeOrigin, CallBeginToken token)
+    CallExceptionRecord(MacroAssembler::Call call, MacroAssembler::Jump exceptionCheck, CodeOrigin codeOrigin)
         : m_call(call)
         , m_exceptionCheck(exceptionCheck)
         , m_codeOrigin(codeOrigin)
-        , m_token(token)
     {
     }
 
     MacroAssembler::Call m_call;
     MacroAssembler::Jump m_exceptionCheck;
     CodeOrigin m_codeOrigin;
-    CallBeginToken m_token;
 };
 
 struct PropertyAccessRecord {
@@ -257,19 +284,27 @@ public:
         m_disassembler->setEndOfCode(labelIgnoringWatchpoints());
     }
     
-    // Get a token for beginning a call, and set the current code origin index in
-    // the call frame.
-    CallBeginToken beginCall()
+    unsigned currentCodeOriginIndex() const
     {
-        unsigned codeOriginIndex = m_currentCodeOriginIndex++;
-        store32(TrustedImm32(codeOriginIndex), tagFor(static_cast<VirtualRegister>(RegisterFile::ArgumentCount)));
-        return CallBeginToken(codeOriginIndex);
+        return m_currentCodeOriginIndex;
+    }
+    
+    // Get a token for beginning a call, and set the current code origin index in
+    // the call frame. For each beginCall() there must be at least one exception
+    // check, and all of the exception checks must have the same CodeOrigin as the
+    // beginCall().
+    void beginCall(CodeOrigin codeOrigin, CallBeginToken& token)
+    {
+        unsigned index = m_exceptionChecks.size();
+        store32(TrustedImm32(index), tagFor(static_cast<VirtualRegister>(RegisterFile::ArgumentCount)));
+        token.set(codeOrigin, index);
     }
 
     // Notify the JIT of a call that does not require linking.
-    void notifyCall(Call functionCall, CodeOrigin codeOrigin, CallBeginToken token)
+    void notifyCall(Call functionCall, CodeOrigin codeOrigin, CallBeginToken& token)
     {
-        m_exceptionChecks.append(CallExceptionRecord(functionCall, codeOrigin, token));
+        token.registerWithExceptionCheck(codeOrigin, m_exceptionChecks.size());
+        m_exceptionChecks.append(CallExceptionRecord(functionCall, codeOrigin));
     }
 
     // Add a call out from JIT code, without an exception check.
@@ -279,20 +314,27 @@ public:
         m_calls.append(CallLinkRecord(functionCall, function));
         return functionCall;
     }
-
-    // Add a call out from JIT code, with an exception check.
-    void addExceptionCheck(Call functionCall, CodeOrigin codeOrigin, CallBeginToken token)
+    
+    void prepareForExceptionCheck()
     {
         move(TrustedImm32(m_exceptionChecks.size()), GPRInfo::nonPreservedNonReturnGPR);
-        m_exceptionChecks.append(CallExceptionRecord(functionCall, emitExceptionCheck(), codeOrigin, token));
+    }
+
+    // Add a call out from JIT code, with an exception check.
+    void addExceptionCheck(Call functionCall, CodeOrigin codeOrigin, CallBeginToken& token)
+    {
+        prepareForExceptionCheck();
+        token.registerWithExceptionCheck(codeOrigin, m_exceptionChecks.size());
+        m_exceptionChecks.append(CallExceptionRecord(functionCall, emitExceptionCheck(), codeOrigin));
     }
     
     // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
-    void addFastExceptionCheck(Call functionCall, CodeOrigin codeOrigin, CallBeginToken token)
+    void addFastExceptionCheck(Call functionCall, CodeOrigin codeOrigin, CallBeginToken& token)
     {
-        move(TrustedImm32(m_exceptionChecks.size()), GPRInfo::nonPreservedNonReturnGPR);
+        prepareForExceptionCheck();
         Jump exceptionCheck = branchTestPtr(Zero, GPRInfo::returnValueGPR);
-        m_exceptionChecks.append(CallExceptionRecord(functionCall, exceptionCheck, codeOrigin, token));
+        token.registerWithExceptionCheck(codeOrigin, m_exceptionChecks.size());
+        m_exceptionChecks.append(CallExceptionRecord(functionCall, exceptionCheck, codeOrigin));
     }
     
     // Helper methods to get predictions

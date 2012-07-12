@@ -1007,16 +1007,18 @@ void SpeculativeJIT::emitCall(Node& node)
     JITCompiler::DataLabelPtr targetToCheck;
     JITCompiler::JumpList slowPath;
 
+    CallBeginToken token;
+    m_jit.beginCall(node.codeOrigin, token);
+    
+    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
+    
     slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck));
     slowPath.append(m_jit.branch32(MacroAssembler::NotEqual, calleeTagGPR, TrustedImm32(JSValue::CellTag)));
     m_jit.loadPtr(MacroAssembler::Address(calleePayloadGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultPayloadGPR);
-    m_jit.storePtr(resultPayloadGPR, callFramePayloadSlot(RegisterFile::ScopeChain));
-    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), callFrameTagSlot(RegisterFile::ScopeChain));
-
-    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
+    m_jit.storePtr(resultPayloadGPR, MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ScopeChain + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ScopeChain + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
 
     CodeOrigin codeOrigin = at(m_compileIndex).codeOrigin;
-    CallBeginToken token = m_jit.beginCall();
     JITCompiler::Call fastCall = m_jit.nearCall();
     m_jit.notifyCall(fastCall, codeOrigin, token);
 
@@ -1024,15 +1026,20 @@ void SpeculativeJIT::emitCall(Node& node)
 
     slowPath.link(&m_jit);
 
-    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    m_jit.poke(GPRInfo::argumentGPR0);
-    token = m_jit.beginCall();
-    JITCompiler::Call slowCall = m_jit.appendCall(slowCallFunction);
-    m_jit.addFastExceptionCheck(slowCall, codeOrigin, token);
-    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
-    token = m_jit.beginCall();
-    JITCompiler::Call theCall = m_jit.call(GPRInfo::returnValueGPR);
-    m_jit.notifyCall(theCall, codeOrigin, token);
+    if (calleeTagGPR == GPRInfo::nonArgGPR0) {
+        if (calleePayloadGPR == GPRInfo::nonArgGPR1)
+            m_jit.swap(GPRInfo::nonArgGPR1, GPRInfo::nonArgGPR0);
+        else {
+            m_jit.move(calleeTagGPR, GPRInfo::nonArgGPR1);
+            m_jit.move(calleePayloadGPR, GPRInfo::nonArgGPR0);
+        }
+    } else {
+        m_jit.move(calleePayloadGPR, GPRInfo::nonArgGPR0);
+        m_jit.move(calleeTagGPR, GPRInfo::nonArgGPR1);
+    }
+    m_jit.prepareForExceptionCheck();
+    JITCompiler::Call slowCall = m_jit.nearCall();
+    m_jit.notifyCall(slowCall, codeOrigin, token);
 
     done.link(&m_jit);
 

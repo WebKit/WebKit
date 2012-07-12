@@ -176,6 +176,30 @@ namespace JSC {
                 return intrinsic();
             return NoIntrinsic;
         }
+        
+        static ptrdiff_t offsetOfJITCodeFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return OBJECT_OFFSETOF(ExecutableBase, m_jitCodeForCall);
+            ASSERT(kind == CodeForConstruct);
+            return OBJECT_OFFSETOF(ExecutableBase, m_jitCodeForConstruct);
+        }
+        
+        static ptrdiff_t offsetOfJITCodeWithArityCheckFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return OBJECT_OFFSETOF(ExecutableBase, m_jitCodeForCallWithArityCheck);
+            ASSERT(kind == CodeForConstruct);
+            return OBJECT_OFFSETOF(ExecutableBase, m_jitCodeForConstructWithArityCheck);
+        }
+        
+        static ptrdiff_t offsetOfNumParametersFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return OBJECT_OFFSETOF(ExecutableBase, m_numParametersForCall);
+            ASSERT(kind == CodeForConstruct);
+            return OBJECT_OFFSETOF(ExecutableBase, m_numParametersForConstruct);
+        }
 #endif
 
     protected:

@@ -65,7 +65,7 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
             remove();
     }
 
-    CodeLocationLabel callReturnLocation; // it's a near call in the old JIT, or a normal call in DFG
+    CodeLocationNearCall callReturnLocation;
     CodeLocationDataLabelPtr hotPathBegin;
     CodeLocationNearCall hotPathOther;
     JITWriteBarrier<JSFunction> callee;

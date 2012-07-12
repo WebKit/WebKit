@@ -30,6 +30,7 @@
 
 #include "DFGCCallHelpers.h"
 #include "DFGSpeculativeJIT.h"
+#include "DFGThunks.h"
 #include "GCAwareJITStubRoutine.h"
 #include "LinkBuffer.h"
 #include "Operations.h"
@@ -916,6 +917,7 @@ void dfgBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& p
 void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock, JSFunction* callee, MacroAssemblerCodePtr codePtr, CodeSpecializationKind kind)
 {
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
+    JSGlobalData* globalData = callerCodeBlock->globalData();
     
     RepatchBuffer repatchBuffer(callerCodeBlock);
     
@@ -928,11 +930,11 @@ void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCo
         calleeCodeBlock->linkIncomingCall(&callLinkInfo);
     
     if (kind == CodeForCall) {
-        repatchBuffer.relink(CodeLocationCall(callLinkInfo.callReturnLocation), operationVirtualCall);
+        repatchBuffer.relink(callLinkInfo.callReturnLocation, globalData->getCTIStub(virtualCallThunkGenerator).code());
         return;
     }
     ASSERT(kind == CodeForConstruct);
-    repatchBuffer.relink(CodeLocationCall(callLinkInfo.callReturnLocation), operationVirtualConstruct);
+    repatchBuffer.relink(callLinkInfo.callReturnLocation, globalData->getCTIStub(virtualConstructThunkGenerator).code());
 }
 
 void dfgResetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)

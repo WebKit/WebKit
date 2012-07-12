@@ -151,7 +151,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     99   selfRecursive1 at stack-trace.js:52
 
 --> Stack Trace:
-    0   selfRecursive2 at stack-trace.js:58
+    0   selfRecursive2 at stack-trace.js:62
     1   selfRecursive2 at stack-trace.js:62
     2   selfRecursive2 at stack-trace.js:62
     3   selfRecursive2 at stack-trace.js:62

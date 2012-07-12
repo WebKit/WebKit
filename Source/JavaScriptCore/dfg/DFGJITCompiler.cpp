@@ -153,7 +153,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         unsigned returnAddressOffset = linkBuffer.returnAddressOffset(m_exceptionChecks[i].m_call);
         codeOrigins[i].codeOrigin = record.m_codeOrigin;
         codeOrigins[i].callReturnOffset = returnAddressOffset;
-        record.m_token.assertCodeOriginIndex(i);
     }
     
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size());
@@ -189,7 +188,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
         info.callType = m_jsCalls[i].m_callType;
         info.isDFG = true;
-        info.callReturnLocation = CodeLocationLabel(linkBuffer.locationOf(m_jsCalls[i].m_slowCall));
+        linkBuffer.link(m_jsCalls[i].m_slowCall, FunctionPtr((m_globalData->getCTIStub(info.callType == CallLinkInfo::Construct ? linkConstructThunkGenerator : linkCallThunkGenerator)).code().executableAddress()));
+        info.callReturnLocation = linkBuffer.locationOfNearCall(m_jsCalls[i].m_slowCall);
         info.hotPathBegin = linkBuffer.locationOf(m_jsCalls[i].m_targetToCheck);
         info.hotPathOther = linkBuffer.locationOfNearCall(m_jsCalls[i].m_fastCall);
     }
@@ -280,7 +280,8 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
 
-    CallBeginToken token = beginCall();
+    CallBeginToken token;
+    beginCall(CodeOrigin(0), token);
     Call callRegisterFileCheck = call();
     notifyCall(callRegisterFileCheck, CodeOrigin(0), token);
     jump(fromRegisterFileCheck);
@@ -297,7 +298,7 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
-    token = beginCall();
+    beginCall(CodeOrigin(0), token);
     Call callArityCheck = call();
     notifyCall(callArityCheck, CodeOrigin(0), token);
     move(GPRInfo::regT0, GPRInfo::callFrameRegister);

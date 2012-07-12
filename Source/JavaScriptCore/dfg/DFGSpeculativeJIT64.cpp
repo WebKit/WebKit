@@ -998,14 +998,16 @@ void SpeculativeJIT::emitCall(Node& node)
     JITCompiler::DataLabelPtr targetToCheck;
     JITCompiler::Jump slowPath;
 
-    slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(JSValue::encode(JSValue())));
-    m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultGPR);
-    m_jit.storePtr(resultGPR, callFrameSlot(RegisterFile::ScopeChain));
-
+    CallBeginToken token;
+    m_jit.beginCall(node.codeOrigin, token);
+    
     m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     
+    slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(JSValue::encode(JSValue())));
+    m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultGPR);
+    m_jit.storePtr(resultGPR, MacroAssembler::Address(GPRInfo::callFrameRegister, static_cast<ptrdiff_t>(sizeof(Register)) * RegisterFile::ScopeChain));
+
     CodeOrigin codeOrigin = at(m_compileIndex).codeOrigin;
-    CallBeginToken token = m_jit.beginCall();
     JITCompiler::Call fastCall = m_jit.nearCall();
     m_jit.notifyCall(fastCall, codeOrigin, token);
     
@@ -1013,14 +1015,10 @@ void SpeculativeJIT::emitCall(Node& node)
     
     slowPath.link(&m_jit);
     
-    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    token = m_jit.beginCall();
-    JITCompiler::Call slowCall = m_jit.appendCall(slowCallFunction);
-    m_jit.addFastExceptionCheck(slowCall, codeOrigin, token);
-    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
-    token = m_jit.beginCall();
-    JITCompiler::Call theCall = m_jit.call(GPRInfo::returnValueGPR);
-    m_jit.notifyCall(theCall, codeOrigin, token);
+    m_jit.move(calleeGPR, GPRInfo::nonArgGPR0);
+    m_jit.prepareForExceptionCheck();
+    JITCompiler::Call slowCall = m_jit.nearCall();
+    m_jit.notifyCall(slowCall, codeOrigin, token);
     
     done.link(&m_jit);
     

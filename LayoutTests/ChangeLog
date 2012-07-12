@@ -1,3 +1,16 @@
+2012-07-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have fast virtual calls
+        https://bugs.webkit.org/show_bug.cgi?id=90924
+
+        Rubber stamped by Oliver Hunt.
+
+        This changes which piece of code appears on top of the stack at the point of a stack
+        overflow. As far as Oliver and I can tell, it doesn't matter, so I just rebased the
+        test.
+
+        * fast/js/stack-trace-expected.txt:
+
 2012-07-11  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Remove empty directories.

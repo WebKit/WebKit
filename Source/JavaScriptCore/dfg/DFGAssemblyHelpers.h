@@ -46,12 +46,13 @@ public:
     AssemblyHelpers(JSGlobalData* globalData, CodeBlock* codeBlock)
         : m_globalData(globalData)
         , m_codeBlock(codeBlock)
-        , m_baselineCodeBlock(codeBlock->baselineVersion())
+        , m_baselineCodeBlock(codeBlock ? codeBlock->baselineVersion() : 0)
     {
-        ASSERT(m_codeBlock);
-        ASSERT(m_baselineCodeBlock);
-        ASSERT(!m_baselineCodeBlock->alternative());
-        ASSERT(m_baselineCodeBlock->getJITType() == JITCode::BaselineJIT);
+        if (m_codeBlock) {
+            ASSERT(m_baselineCodeBlock);
+            ASSERT(!m_baselineCodeBlock->alternative());
+            ASSERT(m_baselineCodeBlock->getJITType() == JITCode::BaselineJIT);
+        }
     }
     
     CodeBlock* codeBlock() { return m_codeBlock; }

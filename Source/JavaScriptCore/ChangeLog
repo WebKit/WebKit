@@ -1,5 +1,91 @@
 2012-07-11  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should have fast virtual calls
+        https://bugs.webkit.org/show_bug.cgi?id=90924
+
+        Reviewed by Gavin Barraclough.
+        
+        Implements virtual call support in the style of the old JIT, with the
+        caveat that we still use the same slow path for both InternalFunction
+        calls and JSFunction calls. Also rationalized the way that our
+        CodeOrigin indices tie into exception checks (previously it was a
+        strange one-to-one mapping with fairly limited assertions; now it's a
+        one-to-many mapping for CodeOrigins to exception checks, respectively).
+        I also took the opportunity to clean up
+        CallLinkInfo::callReturnLocation, which previously was either a Call or
+        a NearCall. Now it's just a NearCall. As well, exceptions during slow
+        path call resolution are now handled by returning an exception throwing
+        thunk rather than returning null. And finally, I made a few things
+        public that were previously private-with-lots-of-friends, because I
+        truly despise the thought of listing each thunk generating function as
+        a friend of JSValue and friends.
+        
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        * bytecode/CallLinkInfo.h:
+        (CallLinkInfo):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::CodeOrigin):
+        (JSC::CodeOrigin::isSet):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::AssemblyHelpers):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::CCallHelpers):
+        * dfg/DFGGPRInfo.h:
+        (GPRInfo):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::CallBeginToken::CallBeginToken):
+        (JSC::DFG::CallBeginToken::~CallBeginToken):
+        (CallBeginToken):
+        (JSC::DFG::CallBeginToken::set):
+        (JSC::DFG::CallBeginToken::registerWithExceptionCheck):
+        (JSC::DFG::CallBeginToken::codeOrigin):
+        (JSC::DFG::CallExceptionRecord::CallExceptionRecord):
+        (CallExceptionRecord):
+        (JSC::DFG::JITCompiler::currentCodeOriginIndex):
+        (JITCompiler):
+        (JSC::DFG::JITCompiler::beginCall):
+        (JSC::DFG::JITCompiler::notifyCall):
+        (JSC::DFG::JITCompiler::prepareForExceptionCheck):
+        (JSC::DFG::JITCompiler::addExceptionCheck):
+        (JSC::DFG::JITCompiler::addFastExceptionCheck):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::dfgLinkFor):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheck):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::emitPointerValidation):
+        (DFG):
+        (JSC::DFG::throwExceptionFromCallSlowPathGenerator):
+        (JSC::DFG::slowPathFor):
+        (JSC::DFG::linkForThunkGenerator):
+        (JSC::DFG::linkCallThunkGenerator):
+        (JSC::DFG::linkConstructThunkGenerator):
+        (JSC::DFG::virtualForThunkGenerator):
+        (JSC::DFG::virtualCallThunkGenerator):
+        (JSC::DFG::virtualConstructThunkGenerator):
+        * dfg/DFGThunks.h:
+        (DFG):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::linkFor):
+        * runtime/Executable.h:
+        (ExecutableBase):
+        (JSC::ExecutableBase::offsetOfJITCodeFor):
+        (JSC::ExecutableBase::offsetOfNumParametersFor):
+        * runtime/JSValue.h:
+        (JSValue):
+
+2012-07-11  Filip Pizlo  <fpizlo@apple.com>
+
         Accidentally used the wrong license (3-clause instead of 2-clause) in some
         files I just committed.
 

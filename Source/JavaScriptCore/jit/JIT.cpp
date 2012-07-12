@@ -739,7 +739,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
         info.callType = m_callStructureStubCompilationInfo[i].callType;
         info.bytecodeIndex = m_callStructureStubCompilationInfo[i].bytecodeIndex;
-        info.callReturnLocation = CodeLocationLabel(patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation));
+        info.callReturnLocation = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
         info.hotPathOther = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].hotPathOther);
     }
@@ -802,12 +802,12 @@ void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* cal
 
     // Patch the slow patch so we do not continue to try to link.
     if (kind == CodeForCall) {
-        repatchBuffer.relink(CodeLocationNearCall(callLinkInfo->callReturnLocation), globalData->jitStubs->ctiVirtualCall());
+        repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualCall());
         return;
     }
 
     ASSERT(kind == CodeForConstruct);
-    repatchBuffer.relink(CodeLocationNearCall(callLinkInfo->callReturnLocation), globalData->jitStubs->ctiVirtualConstruct());
+    repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualConstruct());
 }
 
 } // namespace JSC

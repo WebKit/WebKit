@@ -273,6 +273,7 @@ public:
     static const GPRReg argumentGPR1 = X86Registers::edx; // regT1
     static const GPRReg nonArgGPR0 = X86Registers::eax; // regT0
     static const GPRReg nonArgGPR1 = X86Registers::ebx; // regT3
+    static const GPRReg nonArgGPR2 = X86Registers::esi; // regT4
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::ecx;
@@ -344,6 +345,7 @@ public:
     static const GPRReg argumentGPR5 = X86Registers::r9;  // regT7
     static const GPRReg nonArgGPR0 = X86Registers::eax; // regT0
     static const GPRReg nonArgGPR1 = X86Registers::ebx; // regT3
+    static const GPRReg nonArgGPR2 = X86Registers::r10; // regT8
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::esi;
@@ -416,6 +418,7 @@ public:
     static const GPRReg argumentGPR3 = ARMRegisters::r3; // FIXME!
     static const GPRReg nonArgGPR0 = ARMRegisters::r4; // regT3
     static const GPRReg nonArgGPR1 = ARMRegisters::r8; // regT4
+    static const GPRReg nonArgGPR2 = ARMRegisters::r9; // regT5
     static const GPRReg returnValueGPR = ARMRegisters::r0; // regT0
     static const GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
     static const GPRReg nonPreservedNonReturnGPR = ARMRegisters::r2;
