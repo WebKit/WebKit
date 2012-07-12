@@ -2343,6 +2343,11 @@ PageClientBlackBerry::SaveCredentialType WebPagePrivate::notifyShouldSaveCredent
     return static_cast<PageClientBlackBerry::SaveCredentialType>(m_client->notifyShouldSaveCredential(isNew));
 }
 
+void WebPagePrivate::syncProxyCredential(const WebCore::Credential& credential)
+{
+    m_client->syncProxyCredential(credential.user().utf8().data(), credential.password().utf8().data());
+}
+
 void WebPagePrivate::notifyPopupAutofillDialog(const Vector<String>& candidates, const WebCore::IntRect& screenRect)
 {
     vector<string> textItems;

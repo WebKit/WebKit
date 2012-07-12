@@ -800,6 +800,12 @@ void NetworkJob::storeCredentials()
 
     CredentialStorage::set(challenge.proposedCredential(), challenge.protectionSpace(), m_response.url());
     challenge.setStored(true);
+
+    if (challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTP) {
+        BlackBerry::Platform::Client::get()->setProxyCredential(challenge.proposedCredential().user().utf8().data(),
+                                                                challenge.proposedCredential().password().utf8().data());
+        m_frame->page()->chrome()->client()->platformPageClient()->syncProxyCredential(challenge.proposedCredential());
+    }
 }
 
 void NetworkJob::purgeCredentials()

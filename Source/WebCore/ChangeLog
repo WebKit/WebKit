@@ -1,3 +1,23 @@
+2012-07-12  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Cannot use digest proxy auth and NTLM auth at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=91054
+
+        Reviewed by George Staikos.
+
+        Added an interface function syncProxyCredential() in class
+        PageClientBlackBerry, which is responsible to notify WebPageClient
+        to synchronize proxy credential to the chrome process.
+
+        Internally reviewed by Jason Liu <jason.liu@torchmobile.com.cn>
+
+        No new tests since there's no functional change.
+
+        * platform/blackberry/PageClientBlackBerry.h:
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::storeCredentials): Remember the accepted proxy
+        credential and notify webpage client to synchronize it.
+
 2012-07-12  Xingnan Wang  <xingnan.wang@intel.com>
 
         [IndexedDB] upperOpen set to true in lowerBound()/lowerOpen set to true in upperBound()

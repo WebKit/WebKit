@@ -191,6 +191,7 @@ public:
     virtual bool isVisible() const { return m_visible; }
     virtual bool authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&, WebCore::Credential&);
     virtual SaveCredentialType notifyShouldSaveCredential(bool);
+    virtual void syncProxyCredential(const WebCore::Credential&);
 
     // Called from within WebKit via ChromeClientBlackBerry.
     void enterFullscreenForNode(WebCore::Node*);

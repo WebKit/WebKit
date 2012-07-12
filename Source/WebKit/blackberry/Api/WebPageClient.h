@@ -215,6 +215,7 @@ public:
     virtual void setPreventsScreenIdleDimming(bool noDimming) = 0;
     virtual bool authenticationChallenge(const unsigned short* realm, unsigned int realmLength, WebString& username, WebString& password) = 0;
     virtual SaveCredentialType notifyShouldSaveCredential(bool isNew) = 0;
+    virtual void syncProxyCredential(const WebString& username, const WebString& password) = 0;
     virtual void notifyPopupAutofillDialog(const std::vector<std::string>&, const Platform::IntRect&) = 0;
     virtual void notifyDismissAutofillDialog() = 0;
 

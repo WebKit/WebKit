@@ -72,6 +72,7 @@ public:
     virtual bool isVisible() const = 0;
     virtual bool authenticationChallenge(const WebCore::KURL&, const WebCore::ProtectionSpace&, WebCore::Credential&) = 0;
     virtual SaveCredentialType notifyShouldSaveCredential(bool) = 0;
+    virtual void syncProxyCredential(const WebCore::Credential&) = 0;
 };
 
 #endif // PageClientBlackBerry_h
