@@ -1,3 +1,13 @@
+2012-07-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Remove chromium-mac-leopard baselines.
+
+        Rubber-stamped by Tony Chang.
+
+        Chromium no longer actively supports the Leopard (10.5) version
+        of Mac OS and doesn't have any bots running it, so we don't need
+        the baselines any more.
+
 2012-07-12  Andy Estes  <aestes@apple.com>
 
         [Mac] input-in-table-cell-no-value.html fails due to INPUT_TYPE_DATE being disabled.
