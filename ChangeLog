@@ -1,3 +1,12 @@
+2012-07-11  Matt Falkenhagen  <falken@chromium.org>
+
+        Add dialog element feature toggle to InternalSettings
+        https://bugs.webkit.org/show_bug.cgi?id=90934
+
+        Reviewed by Hajime Morita.
+
+        * Source/autotools/symbols.filter: Added newly exported symbol.
+
 2012-07-11  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [Gtk] allow building with css-filters

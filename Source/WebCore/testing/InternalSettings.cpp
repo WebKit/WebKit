@@ -89,6 +89,9 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
     , m_originalTextAutosizingEnabled(settings->textAutosizingEnabled())
     , m_originalTextAutosizingWindowSizeOverride(settings->textAutosizingWindowSizeOverride())
 #endif
+#if ENABLE(DIALOG_ELEMENT)
+    , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
+#endif
 {
 }
 
@@ -114,6 +117,9 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
 #if ENABLE(TEXT_AUTOSIZING)
     settings->setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
     settings->setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
+#endif
+#if ENABLE(DIALOG_ELEMENT)
+    RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
 #endif
 }
 
@@ -442,6 +448,16 @@ void InternalSettings::setWindowFocusRestricted(bool restricted, ExceptionCode& 
     settings()->setWindowFocusRestricted(restricted);
 }
 
+void InternalSettings::setDialogElementEnabled(bool enabled, ExceptionCode& ec)
+{
+    UNUSED_PARAM(ec);
+#if ENABLE(DIALOG_ELEMENT)
+    RuntimeEnabledFeatures::setDialogElementEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
 void InternalSettings::allowRoundingHacks() const
 {
     TextRun::setAllowsRoundingHacks(true);
@@ -539,6 +555,5 @@ String InternalSettings::configurationForViewport(float devicePixelRatio, int de
 
     return "viewport size " + String::number(attributes.layoutSize.width()) + "x" + String::number(attributes.layoutSize.height()) + " scale " + String::number(attributes.initialScale) + " with limits [" + String::number(attributes.minimumScale) + ", " + String::number(attributes.maximumScale) + "] and userScalable " + (attributes.userScalable ? "true" : "false");
 }
-
 
 }

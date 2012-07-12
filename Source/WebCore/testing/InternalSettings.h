@@ -71,6 +71,9 @@ public:
         bool m_originalTextAutosizingEnabled;
         IntSize m_originalTextAutosizingWindowSizeOverride;
 #endif
+#if ENABLE(DIALOG_ELEMENT)
+        bool m_originalDialogElementEnabled;
+#endif
     };
 
     typedef RefCountedSupplement<Page, InternalSettings> SuperType;
@@ -116,6 +119,7 @@ public:
     void setFixedPositionCreatesStackingContext(bool, ExceptionCode&);
     void setSyncXHRInDocumentsEnabled(bool, ExceptionCode&);
     void setWindowFocusRestricted(bool, ExceptionCode&);
+    void setDialogElementEnabled(bool, ExceptionCode&);
     void setJavaScriptProfilingEnabled(bool enabled, ExceptionCode&);
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);

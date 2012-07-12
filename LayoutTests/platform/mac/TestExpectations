@@ -289,3 +289,6 @@ BUGWK88171 : css1/formatting_model/floating_elements.html = TEXT
 
 // Text Autosizing is not enabled.
 BUGWK84186 SKIP : fast/text-autosizing = PASS
+
+// Dialog element is not yet enabled.
+BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT

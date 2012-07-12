@@ -349,6 +349,8 @@ BUGWK85558 SKIP : http/tests/security/contentSecurityPolicy/1.1 = TEXT
 // Text Autosizing is not yet enabled.
 BUGWK84186 SKIP : fast/text-autosizing = PASS
 
+// Dialog element is not yet enabled.
+BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////

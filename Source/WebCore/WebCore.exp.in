@@ -2379,6 +2379,10 @@ __ZN7WebCore9FrameView25serviceScriptedAnimationsEy
 __ZN7WebCore22RuntimeEnabledFeatures18isShadowDOMEnabledE
 #endif
 
+#if ENABLE(DIALOG_ELEMENT)
+__ZN7WebCore22RuntimeEnabledFeatures22isDialogElementEnabledE
+#endif
+
 #if ENABLE(SVG)
 __ZN7WebCore14SVGSMILElement13isSMILElementEPNS_4NodeE
 __ZN7WebCore8Document13svgExtensionsEv
