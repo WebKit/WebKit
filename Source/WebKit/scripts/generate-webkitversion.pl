@@ -45,7 +45,7 @@ my $usage = "generate-webkitversion --config WebKit/mac/Configurations/Version.x
 my $major_version = "";
 my $minor_version = "";
 # The appropriate Apple-maintained Version.xcconfig file for WebKit version information is in WebKit/mac/Configurations/.
-my $configFile = "./Soure/WebKit/mac/Configurations/Version.xcconfig";
+my $configFile = "./Source/WebKit/mac/Configurations/Version.xcconfig";
 my $outputDir = "";
 
 GetOptions('config=s' => \$configFile,

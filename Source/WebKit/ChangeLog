@@ -1,3 +1,16 @@
+2012-07-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Typo in path in generate-webkitversion.pl
+        https://bugs.webkit.org/show_bug.cgi?id=90883
+
+        Reviewed by Mark Rowe.
+
+        Correct default path to version config file. In practice it wasn't a problem because only the Qt
+        build system seems to use the script right now and passes the path to the version file as a
+        command line parameter.
+
+        * scripts/generate-webkitversion.pl:
+
 2012-07-11  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Implement Date/Time picker
