@@ -1,3 +1,9 @@
+2012-07-12  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip new failing test introduced in r122399
+
+        * platform/qt/Skipped:
+
 2012-07-12  Kent Tamura  <tkent@chromium.org>
 
         Do not save the form state signature if nothing is saved

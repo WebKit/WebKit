@@ -2291,6 +2291,7 @@ fast/events/touch/gesture/gesture-click.html
 # New tests introduced in https://bugs.webkit.org/show_bug.cgi?id=66272. Needs
 # Qt implementation.
 fast/events/touch/gesture/gesture-scroll.html
+fast/events/touch/gesture/touch-gesture-scroll-sideways.html
 
 # new test introduced in r89118, but fail on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=62847
