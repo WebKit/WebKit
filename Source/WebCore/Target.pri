@@ -1119,6 +1119,8 @@ SOURCES += \
     platform/graphics/Gradient.cpp \
     platform/graphics/GraphicsContext.cpp \
     platform/graphics/GraphicsLayer.cpp \
+    platform/graphics/GraphicsLayerAnimation.cpp \
+    platform/graphics/GraphicsLayerTransform.cpp \
     platform/graphics/GraphicsTypes.cpp \
     platform/graphics/Image.cpp \
     platform/graphics/ImageBuffer.cpp \
@@ -2294,7 +2296,9 @@ HEADERS += \
     platform/graphics/Gradient.h \
     platform/graphics/GraphicsContext.h \
     platform/graphics/GraphicsLayer.h \
+    platform/graphics/GraphicsLayerAnimation.h \
     platform/graphics/GraphicsLayerClient.h \
+    platform/graphics/GraphicsLayerTransform.h \
     platform/graphics/GraphicsTypes.h \
     platform/graphics/GraphicsTypes3D.h \
     platform/graphics/Image.h \
@@ -2318,9 +2322,7 @@ HEADERS += \
     platform/graphics/SimpleFontData.h \
     platform/graphics/surfaces/GraphicsSurface.h \
     platform/graphics/texmap/GraphicsLayerTextureMapper.h \
-    platform/graphics/texmap/LayerTransform.h \
     platform/graphics/texmap/TextureMapper.h \
-    platform/graphics/texmap/TextureMapperAnimation.h \
     platform/graphics/texmap/TextureMapperBackingStore.h \
     platform/graphics/texmap/TextureMapperImageBuffer.h \
     platform/graphics/texmap/TextureMapperLayer.h \
@@ -2936,9 +2938,7 @@ SOURCES += \
     platform/graphics/qt/PatternQt.cpp \
     platform/graphics/qt/StillImageQt.cpp \
     platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
-    platform/graphics/texmap/LayerTransform.cpp \
     platform/graphics/texmap/TextureMapper.cpp \
-    platform/graphics/texmap/TextureMapperAnimation.cpp \
     platform/graphics/texmap/TextureMapperBackingStore.cpp \
     platform/graphics/texmap/TextureMapperImageBuffer.cpp \
     platform/graphics/texmap/TextureMapperLayer.cpp \

@@ -23,9 +23,9 @@
 
 #include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
+#include "GraphicsLayerTransform.h"
 #include "Image.h"
 #include "IntSize.h"
-#include "LayerTransform.h"
 #include "ShareableBitmap.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
@@ -165,7 +165,7 @@ private:
     RefPtr<Image> m_image;
     GraphicsLayer* m_maskTarget;
     FloatRect m_needsDisplayRect;
-    LayerTransform m_layerTransform;
+    GraphicsLayerTransform m_layerTransform;
     bool m_inUpdateMode : 1;
     bool m_shouldUpdateVisibleRect: 1;
     bool m_shouldSyncLayerState: 1;

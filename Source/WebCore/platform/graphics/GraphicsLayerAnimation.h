@@ -17,32 +17,30 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef TextureMapperAnimation_h
-#define TextureMapperAnimation_h
+#ifndef GraphicsLayerAnimation_h
+#define GraphicsLayerAnimation_h
 
 #include "GraphicsLayer.h"
 #include "TransformationMatrix.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
-#if USE(TEXTURE_MAPPER)
 namespace WebCore {
 
-class TextureMapperAnimationClient {
-public:
-    virtual void setTransform(const TransformationMatrix&) = 0;
-    virtual void setOpacity(float) = 0;
-};
-
-class TextureMapperAnimation {
+class GraphicsLayerAnimation {
 public:
     enum AnimationState { PlayingState, PausedState, StoppedState };
+    class Client {
+    public:
+        virtual void setAnimatedTransform(const TransformationMatrix&) = 0;
+        virtual void setAnimatedOpacity(float) = 0;
+    };
 
-    TextureMapperAnimation()
+    GraphicsLayerAnimation()
         : m_keyframes(AnimatedPropertyInvalid)
     { }
-    TextureMapperAnimation(const KeyframeValueList&, const IntSize&, const Animation*, double, bool);
-    void apply(TextureMapperAnimationClient*);
+    GraphicsLayerAnimation(const KeyframeValueList&, const IntSize&, const Animation*, double, bool);
+    void apply(Client*);
     void pause(double);
     AnimationState state() const { return m_state; }
     void setState(AnimationState s) { m_state = s; }
@@ -50,7 +48,7 @@ public:
     bool isActive() const;
 
 private:
-    void applyInternal(TextureMapperAnimationClient*, const AnimationValue* from, const AnimationValue* to, float progress);
+    void applyInternal(Client*, const AnimationValue* from, const AnimationValue* to, float progress);
     KeyframeValueList m_keyframes;
     IntSize m_boxSize;
     RefPtr<Animation> m_animation;
@@ -62,24 +60,22 @@ private:
     AnimationState m_state;
 };
 
-class TextureMapperAnimations {
+class GraphicsLayerAnimations {
 public:
-    TextureMapperAnimations() { }
+    GraphicsLayerAnimations() { }
 
-    void add(const String&, const TextureMapperAnimation&);
+    void add(const String&, const GraphicsLayerAnimation&);
     void remove(const String& name) { m_animations.remove(name); }
     void pause(const String&, double);
-    void apply(TextureMapperAnimationClient*);
+    void apply(GraphicsLayerAnimation::Client*);
     bool isEmpty() const { return m_animations.isEmpty(); }
 
     bool hasRunningAnimations() const;
     bool hasActiveAnimationsOfType(AnimatedPropertyID type) const;
 
 private:
-    HashMap<String, Vector<TextureMapperAnimation> > m_animations;
+    HashMap<String, Vector<GraphicsLayerAnimation> > m_animations;
 };
 
 }
-#endif // USE(TEXTURE_MAPPER)
-
-#endif // TextureMapperAnimation_h
+#endif // GraphicsLayerAnimation_h

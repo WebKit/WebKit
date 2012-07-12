@@ -6122,10 +6122,10 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/TextureMapperShaderManager.h \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.h \
-	Source/WebCore/platform/graphics/texmap/LayerTransform.cpp \
-	Source/WebCore/platform/graphics/texmap/LayerTransform.h \
-	Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.cpp \
-	Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.h \
+	Source/WebCore/platform/graphics/GraphicsLayerTransform.cpp \
+	Source/WebCore/platform/graphics/GraphicsLayerTransform.h \
+	Source/WebCore/platform/graphics/GraphicsLayerAnimation.cpp \
+	Source/WebCore/platform/graphics/GraphicsLayerAnimation.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperBackingStore.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperBackingStore.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.cpp \
@@ -6145,10 +6145,10 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/TextureMapperShaderManager.h \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.h \
-	Source/WebCore/platform/graphics/texmap/LayerTransform.cpp \
-	Source/WebCore/platform/graphics/texmap/LayerTransform.h \
-	Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.cpp \
-	Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.h \
+	Source/WebCore/platform/graphics/GraphicsLayerTransform.cpp \
+	Source/WebCore/platform/graphics/GraphicsLayerTransform.h \
+	Source/WebCore/platform/graphics/GraphicsLayerAnimation.cpp \
+	Source/WebCore/platform/graphics/GraphicsLayerAnimation.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperBackingStore.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperBackingStore.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapper.cpp \

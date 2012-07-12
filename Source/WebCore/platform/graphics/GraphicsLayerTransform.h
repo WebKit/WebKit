@@ -17,8 +17,8 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef LayerTransform_h
-#define LayerTransform_h
+#ifndef GraphicsLayerTransform_h
+#define GraphicsLayerTransform_h
 
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class LayerTransform {
+class GraphicsLayerTransform {
 public:
-    LayerTransform();
+    GraphicsLayerTransform();
     void setPosition(const FloatPoint&);
     void setSize(const FloatSize&);
     void setAnchorPoint(const FloatPoint3D&);
@@ -59,4 +59,4 @@ private:
 
 }
 
-#endif // LayerTransform_h
+#endif // GraphicsLayerTransform_h

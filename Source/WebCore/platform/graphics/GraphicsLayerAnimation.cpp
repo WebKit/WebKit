@@ -18,12 +18,11 @@
  */
 
 #include "config.h"
-#include "TextureMapperAnimation.h"
+#include "GraphicsLayerAnimation.h"
 
 #include "UnitBezier.h"
 #include <wtf/CurrentTime.h>
 
-#if USE(TEXTURE_MAPPER)
 namespace WebCore {
 
 
@@ -145,7 +144,7 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations* f
 }
 
 
-TextureMapperAnimation::TextureMapperAnimation(const KeyframeValueList& keyframes, const IntSize& boxSize, const Animation* animation, double timeOffset, bool listsMatch)
+GraphicsLayerAnimation::GraphicsLayerAnimation(const KeyframeValueList& keyframes, const IntSize& boxSize, const Animation* animation, double timeOffset, bool listsMatch)
     : m_keyframes(keyframes)
     , m_boxSize(boxSize)
     , m_animation(Animation::create(animation))
@@ -156,21 +155,21 @@ TextureMapperAnimation::TextureMapperAnimation(const KeyframeValueList& keyframe
 {
 }
 
-void TextureMapperAnimation::applyInternal(TextureMapperAnimationClient* client, const AnimationValue* from, const AnimationValue* to, float progress)
+void GraphicsLayerAnimation::applyInternal(Client* client, const AnimationValue* from, const AnimationValue* to, float progress)
 {
     switch (m_keyframes.property()) {
     case AnimatedPropertyOpacity:
-        client->setOpacity(applyOpacityAnimation((static_cast<const FloatAnimationValue*>(from)->value()), (static_cast<const FloatAnimationValue*>(to)->value()), progress));
+        client->setAnimatedOpacity(applyOpacityAnimation((static_cast<const FloatAnimationValue*>(from)->value()), (static_cast<const FloatAnimationValue*>(to)->value()), progress));
         return;
     case AnimatedPropertyWebkitTransform:
-        client->setTransform(applyTransformAnimation(static_cast<const TransformAnimationValue*>(from)->value(), static_cast<const TransformAnimationValue*>(to)->value(), progress, m_boxSize, m_listsMatch));
+        client->setAnimatedTransform(applyTransformAnimation(static_cast<const TransformAnimationValue*>(from)->value(), static_cast<const TransformAnimationValue*>(to)->value(), progress, m_boxSize, m_listsMatch));
         return;
     default:
         ASSERT_NOT_REACHED();
     }
 }
 
-bool TextureMapperAnimation::isActive() const
+bool GraphicsLayerAnimation::isActive() const
 {
     if (state() != StoppedState)
         return true;
@@ -178,11 +177,11 @@ bool TextureMapperAnimation::isActive() const
     return m_animation->fillsForwards();
 }
 
-bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
+bool GraphicsLayerAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
 {
-    HashMap<String, Vector<TextureMapperAnimation> >::const_iterator end = m_animations.end();
-    for (HashMap<String, Vector<TextureMapperAnimation> >::const_iterator it = m_animations.begin(); it != end; ++it) {
-        const Vector<TextureMapperAnimation>& animations = it->second;
+    HashMap<String, Vector<GraphicsLayerAnimation> >::const_iterator end = m_animations.end();
+    for (HashMap<String, Vector<GraphicsLayerAnimation> >::const_iterator it = m_animations.begin(); it != end; ++it) {
+        const Vector<GraphicsLayerAnimation>& animations = it->second;
         for (size_t i = 0; i < animations.size(); ++i) {
             if (animations[i].isActive() && animations[i].property() == type)
                 return true;
@@ -191,13 +190,13 @@ bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type)
     return false;
 }
 
-bool TextureMapperAnimations::hasRunningAnimations() const
+bool GraphicsLayerAnimations::hasRunningAnimations() const
 {
-    HashMap<String, Vector<TextureMapperAnimation> >::const_iterator end = m_animations.end();
-    for (HashMap<String, Vector<TextureMapperAnimation> >::const_iterator it = m_animations.begin(); it != end; ++it) {
-        const Vector<TextureMapperAnimation>& animations = it->second;
+    HashMap<String, Vector<GraphicsLayerAnimation> >::const_iterator end = m_animations.end();
+    for (HashMap<String, Vector<GraphicsLayerAnimation> >::const_iterator it = m_animations.begin(); it != end; ++it) {
+        const Vector<GraphicsLayerAnimation>& animations = it->second;
         for (size_t i = 0; i < animations.size(); ++i) {
-            if (animations[i].state() == TextureMapperAnimation::PlayingState)
+            if (animations[i].state() == GraphicsLayerAnimation::PlayingState)
                 return true;
         }
     }
@@ -205,7 +204,7 @@ bool TextureMapperAnimations::hasRunningAnimations() const
     return false;
 }
 
-void TextureMapperAnimation::apply(TextureMapperAnimationClient* client)
+void GraphicsLayerAnimation::apply(Client* client)
 {
     if (state() == StoppedState)
         return;
@@ -244,29 +243,29 @@ void TextureMapperAnimation::apply(TextureMapperAnimationClient* client)
     }
 }
 
-void TextureMapperAnimation::pause(double offset)
+void GraphicsLayerAnimation::pause(double offset)
 {
     // FIXME: should apply offset here.
     setState(PausedState);
     m_pauseTime = WTF::currentTime() - offset;
 }
 
-void TextureMapperAnimations::add(const String& name, const TextureMapperAnimation& animation)
+void GraphicsLayerAnimations::add(const String& name, const GraphicsLayerAnimation& animation)
 {
-    HashMap<String, Vector<TextureMapperAnimation> >::iterator it = m_animations.find(name);
+    HashMap<String, Vector<GraphicsLayerAnimation> >::iterator it = m_animations.find(name);
     if (it != m_animations.end()) {
         it->second.append(animation);
         return;
     }
 
-    Vector<TextureMapperAnimation> animations;
+    Vector<GraphicsLayerAnimation> animations;
     animations.append(animation);
     m_animations.add(name, animations);
 }
 
-void TextureMapperAnimations::pause(const String& name, double offset)
+void GraphicsLayerAnimations::pause(const String& name, double offset)
 {
-    HashMap<String, Vector<TextureMapperAnimation> >::iterator it = m_animations.find(name);
+    HashMap<String, Vector<GraphicsLayerAnimation> >::iterator it = m_animations.find(name);
     if (it == m_animations.end())
         return;
 
@@ -274,14 +273,13 @@ void TextureMapperAnimations::pause(const String& name, double offset)
         it->second[i].pause(offset);
 }
 
-void TextureMapperAnimations::apply(TextureMapperAnimationClient* client)
+void GraphicsLayerAnimations::apply(GraphicsLayerAnimation::Client* client)
 {
-    HashMap<String, Vector<TextureMapperAnimation> >::iterator end = m_animations.end();
-    for (HashMap<String, Vector<TextureMapperAnimation> >::iterator it = m_animations.begin(); it != end; ++it) {
+    HashMap<String, Vector<GraphicsLayerAnimation> >::iterator end = m_animations.end();
+    for (HashMap<String, Vector<GraphicsLayerAnimation> >::iterator it = m_animations.begin(); it != end; ++it) {
         for (size_t i = 0; i < it->second.size(); ++i)
             it->second[i].apply(client);
     }
 }
 
 }
-#endif

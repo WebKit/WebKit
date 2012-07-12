@@ -24,11 +24,11 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "GraphicsLayerAnimation.h"
+#include "GraphicsLayerTransform.h"
 #include "Image.h"
 #include "IntPointHash.h"
-#include "LayerTransform.h"
 #include "TextureMapper.h"
-#include "TextureMapperAnimation.h"
 #include "TextureMapperBackingStore.h"
 #include "Timer.h"
 #include "TransformOperations.h"
@@ -56,7 +56,7 @@ public:
     { }
 };
 
-class TextureMapperLayer : public TextureMapperAnimationClient {
+class TextureMapperLayer : public GraphicsLayerAnimation::Client {
 
 public:
     // This set of flags help us defer which properties of the layer have been
@@ -157,6 +157,10 @@ private:
 
     void drawRepaintCounter(GraphicsContext*, GraphicsLayer*);
 
+    // GraphicsLayerAnimation::Client
+    void setAnimatedTransform(const TransformationMatrix& matrix) { setTransform(matrix); }
+    void setAnimatedOpacity(float opacity) { setOpacity(opacity); }
+
     void syncAnimations();
     bool isVisible() const;
     enum ContentsLayerCount {
@@ -168,7 +172,7 @@ private:
     ContentsLayerCount countPotentialLayersWithContents() const;
     bool shouldPaintToIntermediateSurface() const;
 
-    LayerTransform m_transform;
+    GraphicsLayerTransform m_transform;
 
     inline FloatRect layerRect() const
     {
@@ -230,7 +234,7 @@ private:
 
     State m_state;
     TextureMapper* m_textureMapper;
-    TextureMapperAnimations m_animations;
+    GraphicsLayerAnimations m_animations;
     IntPoint m_scrollPositionDelta;
     bool m_fixedToViewport;
     Color m_debugBorderColor;

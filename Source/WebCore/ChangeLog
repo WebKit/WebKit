@@ -1,3 +1,32 @@
+2012-07-12  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Move TextureMapperAnimation and texmap/LayerTransform to platform/graphics
+        https://bugs.webkit.org/show_bug.cgi?id=91111
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        TextureMapperAnimation and LayerTransform are not specific to TextureMapper, and we want
+        to use them for other purposes as well. Moving them to platform/graphics would make that
+        more explicit.
+
+        No new tests, moving files around.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * platform/graphics/GraphicsLayerAnimation.cpp: Renamed from Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.cpp.
+        * platform/graphics/GraphicsLayerAnimation.h: Renamed from Source/WebCore/platform/graphics/texmap/TextureMapperAnimation.h.
+        * platform/graphics/GraphicsLayerTransform.cpp: Renamed from Source/WebCore/platform/graphics/texmap/LayerTransform.cpp.
+        * platform/graphics/GraphicsLayerTransform.h: Renamed from Source/WebCore/platform/graphics/texmap/LayerTransform.h.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (TextureMapperLayer):
+        (WebCore::TextureMapperLayer::setAnimatedTransform):
+        (WebCore::TextureMapperLayer::setAnimatedOpacity):
+
 2012-07-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Simplify UISourceCode code after moving revisions support inside it.

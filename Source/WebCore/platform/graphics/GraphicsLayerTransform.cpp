@@ -18,60 +18,60 @@
  */
 
 #include "config.h"
-#include "LayerTransform.h"
+#include "GraphicsLayerTransform.h"
 
 namespace WebCore {
 
-LayerTransform::LayerTransform()
-: m_flattening(false)
-, m_dirty(false) // false by default since all default values would be combined as the identity matrix
-, m_childrenDirty(false)
+GraphicsLayerTransform::GraphicsLayerTransform()
+    : m_flattening(false)
+    , m_dirty(false) // false by default since all default values would be combined as the identity matrix
+    , m_childrenDirty(false)
 {
 }
 
-void LayerTransform::setPosition(const FloatPoint& position)
+void GraphicsLayerTransform::setPosition(const FloatPoint& position)
 {
     m_position = position;
     m_dirty = true;
 }
 
-void LayerTransform::setSize(const FloatSize& size)
+void GraphicsLayerTransform::setSize(const FloatSize& size)
 {
     m_size = size;
     m_dirty = true;
 }
 
-void LayerTransform::setAnchorPoint(const FloatPoint3D& anchorPoint)
+void GraphicsLayerTransform::setAnchorPoint(const FloatPoint3D& anchorPoint)
 {
     m_anchorPoint = anchorPoint;
     m_dirty = true;
 }
 
-void LayerTransform::setFlattening(bool flattening)
+void GraphicsLayerTransform::setFlattening(bool flattening)
 {
     m_flattening = flattening;
     m_dirty = true;
 }
 
-void LayerTransform::setLocalTransform(const TransformationMatrix& transform)
+void GraphicsLayerTransform::setLocalTransform(const TransformationMatrix& transform)
 {
     m_local = transform;
     m_dirty = true;
 }
 
-void LayerTransform::setChildrenTransform(const TransformationMatrix& transform)
+void GraphicsLayerTransform::setChildrenTransform(const TransformationMatrix& transform)
 {
     m_children = transform;
     m_dirty = true;
 }
 
-TransformationMatrix LayerTransform::combined()
+TransformationMatrix GraphicsLayerTransform::combined()
 {
     ASSERT(!m_dirty);
     return m_combined;
 }
 
-TransformationMatrix LayerTransform::combinedForChildren()
+TransformationMatrix GraphicsLayerTransform::combinedForChildren()
 {
     ASSERT(!m_dirty);
     if (m_childrenDirty)
@@ -79,7 +79,7 @@ TransformationMatrix LayerTransform::combinedForChildren()
     return m_combinedForChildren;
 }
 
-void LayerTransform::combineTransforms(const TransformationMatrix& parentTransform)
+void GraphicsLayerTransform::combineTransforms(const TransformationMatrix& parentTransform)
 {
     float originX = m_anchorPoint.x() * m_size.width();
     float originY = m_anchorPoint.y() * m_size.height();
@@ -96,7 +96,7 @@ void LayerTransform::combineTransforms(const TransformationMatrix& parentTransfo
     m_childrenDirty = true;
 }
 
-void LayerTransform::combineTransformsForChildren()
+void GraphicsLayerTransform::combineTransformsForChildren()
 {
     ASSERT(!m_dirty);
     ASSERT(m_childrenDirty);
