@@ -1,26 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x303
-  RenderBlock {HTML} at (0,0) size 800x303
-    RenderBody {BODY} at (8,16) size 784x279
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 713x21
-          text run at (0,0) width 713: "Test passes if the top square below has \"Filler Text\" directly above it and the bottom square does not."
-      RenderTable {DIV} at (0,37) size 100x121
-        RenderBlock {DIV} at (0,0) size 100x21
-          RenderText {#text} at (0,0) size 71x21
-            text run at (0,0) width 71: "Filler Text"
-        RenderTableSection (anonymous) at (0,21) size 100x100
+layer at (0,0) size 800x297
+  RenderBlock {HTML} at (0,0) size 800x297
+    RenderBody {BODY} at (8,16) size 784x273
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 610x19
+          text run at (0,0) width 610: "Test passes if the top square below has \"Filler Text\" directly above it and the bottom square does not."
+      RenderTable {DIV} at (0,35) size 100x119
+        RenderBlock {DIV} at (0,0) size 100x19
+          RenderText {#text} at (0,0) size 61x19
+            text run at (0,0) width 61: "Filler Text"
+        RenderTableSection (anonymous) at (0,19) size 100x100
           RenderTableRow {DIV} at (0,0) size 100x50
             RenderTableCell {DIV} at (0,0) size 50x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
             RenderTableCell {DIV} at (50,0) size 50x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
           RenderTableRow {DIV} at (0,50) size 100x50
             RenderTableCell {DIV} at (0,50) size 50x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
             RenderTableCell {DIV} at (50,50) size 50x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
-      RenderBlock {DIV} at (0,158) size 784x21
-        RenderText {#text} at (0,0) size 4x21
+      RenderBlock {DIV} at (0,154) size 784x19
+        RenderText {#text} at (0,0) size 4x19
           text run at (0,0) width 4: " "
-      RenderTable {DIV} at (0,179) size 100x100
+      RenderTable {DIV} at (0,173) size 100x100
         RenderTableSection (anonymous) at (0,0) size 100x100
           RenderTableRow {DIV} at (0,0) size 100x50
             RenderTableCell {DIV} at (0,0) size 50x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]

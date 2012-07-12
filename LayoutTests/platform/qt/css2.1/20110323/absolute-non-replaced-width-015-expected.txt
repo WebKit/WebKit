@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x259
-  RenderBlock {HTML} at (0,0) size 800x259
-    RenderBody {BODY} at (8,16) size 784x235
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 754x21
-          text run at (0,0) width 754: "Test passes if the blue box is horizontally centered inside black box and there is no red visible on the page."
-layer at (8,53) size 294x198
-  RenderBlock (relative positioned) {DIV} at (0,37) size 294x198 [border: (3px solid #000000)]
-layer at (107,56) size 96x96
+layer at (0,0) size 800x257
+  RenderBlock {HTML} at (0,0) size 800x257
+    RenderBody {BODY} at (8,16) size 784x233
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 637x19
+          text run at (0,0) width 637: "Test passes if the blue box is horizontally centered inside black box and there is no red visible on the page."
+layer at (8,51) size 294x198
+  RenderBlock (relative positioned) {DIV} at (0,35) size 294x198 [border: (3px solid #000000)]
+layer at (107,54) size 96x96
   RenderBlock (positioned) {DIV} at (99,3) size 96x96 [bgcolor=#0000FF]

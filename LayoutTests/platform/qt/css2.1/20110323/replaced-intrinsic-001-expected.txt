@@ -1,23 +1,22 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (8,8) size 150x260 layerType: background only
-layer at (6,111) size 154x154
-  RenderBlock (positioned) zI: -1 {P} at (6,111) size 154x154 [bgcolor=#FF0000] [border: (2px solid #00FF00)]
-    RenderText zI: -1 {#text} at (2,2) size 104x63
-      text run at (2,2) width 104: "FAIL (absolute"
-      text run at (2,23) width 104: "positioning not"
-      text run at (2,44) width 76: "supported)"
-layer at (8,8) size 150x260 layerType: foreground only
-  RenderBlock {HTML} at (8,8) size 150x260
-    RenderBody {BODY} at (0,0) size 150x260
-      RenderBlock {P} at (0,0) size 150x105
-        RenderText {#text} at (0,0) size 141x105
-          text run at (0,0) width 129: "There should be a"
-          text run at (0,21) width 141: "green square below"
-          text run at (0,42) width 113: "this line, exactly"
-          text run at (0,63) width 128: "fitting inside a 2px"
-          text run at (0,84) width 84: "lime border."
-      RenderBlock {P} at (0,105) size 150x155
+layer at (8,8) size 150x230 layerType: background only
+layer at (6,82) size 154x154
+  RenderBlock (positioned) zI: -1 {P} at (6,82) size 154x154 [bgcolor=#FF0000] [border: (2px solid #00FF00)]
+    RenderText zI: -1 {#text} at (2,2) size 93x57
+      text run at (2,2) width 93: "FAIL (absolute"
+      text run at (2,21) width 87: "positioning not"
+      text run at (2,40) width 66: "supported)"
+layer at (8,8) size 150x230 layerType: foreground only
+  RenderBlock {HTML} at (8,8) size 150x230
+    RenderBody {BODY} at (0,0) size 150x230
+      RenderBlock {P} at (0,0) size 150x76
+        RenderText {#text} at (0,0) size 145x76
+          text run at (0,0) width 145: "There should be a green"
+          text run at (0,19) width 133: "square below this line,"
+          text run at (0,38) width 127: "exactly fitting inside a"
+          text run at (0,57) width 100: "2px lime border."
+      RenderBlock {P} at (0,76) size 150x154
         RenderEmbeddedObject {OBJECT} at (0,0) size 150x150
           layer at (0,0) size 150x150
             RenderView at (0,0) size 150x150
