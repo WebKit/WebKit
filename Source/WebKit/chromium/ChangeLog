@@ -1,3 +1,15 @@
+2012-07-12  Robert Sesek  <rsesek@chromium.org>
+
+        [chromium][Mac] r122400 broke 10.6 build
+        https://bugs.webkit.org/show_bug.cgi?id=91103
+
+        Reviewed by Tony Chang.
+
+        Use the right availability macros for forward-declaring methods and
+        defining constants.
+
+        * src/mac/WebInputEventFactory.mm:
+
 2012-07-12  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Enable building APKs for TestWebKitAPI and webkit_unit_tests
