@@ -41,19 +41,15 @@ public:
 private:
     virtual const char* renderName() const { return "RenderSVGEllipse"; }
 
-    virtual void createShape();
-    virtual bool isEmpty() const { return m_usePathFallback ? RenderSVGShape::isEmpty() : m_boundingBox.isEmpty(); };
+    virtual void updateShapeFromElement();
+    virtual bool isEmpty() const { return m_usePathFallback ? RenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); };
     virtual void fillShape(GraphicsContext*) const;
     virtual void strokeShape(GraphicsContext*) const;
-    virtual FloatRect objectBoundingBox() const;
-    virtual FloatRect strokeBoundingBox() const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     void calculateRadiiAndCenter();
 
 private:
-    FloatRect m_boundingBox;
-    FloatRect m_outerStrokeRect;
     FloatPoint m_center;
     FloatSize m_radii;
     bool m_usePathFallback;

@@ -83,17 +83,17 @@ public:
     }
 
 protected:
-    virtual void createShape();
+    virtual void updateShapeFromElement();
     virtual bool isEmpty() const;
-    virtual FloatRect objectBoundingBox() const;
-    virtual FloatRect strokeBoundingBox() const { return m_strokeAndMarkerBoundingBox; }
-    void setStrokeAndMarkerBoundingBox(FloatRect rect) { m_strokeAndMarkerBoundingBox = rect; }
     virtual bool shapeDependentStrokeContains(const FloatPoint&);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
     bool hasPath() const { return m_path.get(); }
     bool hasNonScalingStroke() const { return style()->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE; }
     bool hasSmoothStroke() const;
+
+    FloatRect m_fillBoundingBox;
+    FloatRect m_strokeBoundingBox;
 
 private:
     // Hit-detection separated for the fill and the stroke
@@ -113,7 +113,12 @@ private:
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
-    void updateCachedBoundaries();
+    virtual FloatRect objectBoundingBox() const { return m_fillBoundingBox; }
+    virtual FloatRect strokeBoundingBox() const { return m_strokeBoundingBox; }
+
+    FloatRect calculateObjectBoundingBox() const;
+    FloatRect calculateStrokeBoundingBox() const;
+    void updateRepaintBoundingBox();
 
     AffineTransform nonScalingStrokeTransform() const;
     bool setupNonScalingStrokeContext(AffineTransform&, GraphicsContextStateSaver&);
@@ -132,12 +137,9 @@ private:
     void strokePath(RenderStyle*, GraphicsContext*, Path*, RenderSVGResource*,
                     const Color&, int);
     void fillAndStrokePath(GraphicsContext*);
-    void inflateWithStrokeAndMarkerBounds();
     void drawMarkers(PaintInfo&);
 
 private:
-    FloatRect m_fillBoundingBox;
-    FloatRect m_strokeAndMarkerBoundingBox;
     FloatRect m_repaintBoundingBox;
     AffineTransform m_localTransform;
     OwnPtr<Path> m_path;

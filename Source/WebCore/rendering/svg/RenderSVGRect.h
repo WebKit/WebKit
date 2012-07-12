@@ -42,20 +42,16 @@ public:
 private:
     virtual const char* renderName() const { return "RenderSVGRect"; }
 
-    virtual void createShape();
-    virtual bool isEmpty() const { return m_usePathFallback ? RenderSVGShape::isEmpty() : m_boundingBox.isEmpty(); };
+    virtual void updateShapeFromElement();
+    virtual bool isEmpty() const { return m_usePathFallback ? RenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); };
     virtual void fillShape(GraphicsContext*) const;
     virtual void strokeShape(GraphicsContext*) const;
-    virtual FloatRect objectBoundingBox() const;
-    virtual FloatRect strokeBoundingBox() const;
     virtual bool shapeDependentStrokeContains(const FloatPoint&);
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
 
 private:
-    FloatRect m_boundingBox;
     FloatRect m_innerStrokeRect;
     FloatRect m_outerStrokeRect;
-    FloatRect m_strokeBoundingRect;
     bool m_usePathFallback;
 };
 

@@ -64,9 +64,9 @@ RenderSVGShape::~RenderSVGShape()
 {
 }
 
-void RenderSVGShape::createShape()
+void RenderSVGShape::updateShapeFromElement()
 {
-    ASSERT(!m_path);
+    m_path.clear();
     m_path = adoptPtr(new Path);
     ASSERT(RenderSVGShape::isEmpty());
 
@@ -74,6 +74,9 @@ void RenderSVGShape::createShape()
     updatePathFromGraphicsElement(element, path());
     processZeroLengthSubpaths();
     processMarkerPositions();
+
+    m_fillBoundingBox = calculateObjectBoundingBox();
+    m_strokeBoundingBox = calculateStrokeBoundingBox();
 }
 
 bool RenderSVGShape::isEmpty() const
@@ -84,11 +87,6 @@ bool RenderSVGShape::isEmpty() const
 void RenderSVGShape::fillShape(GraphicsContext* context) const
 {
     context->fillPath(path());
-}
-
-FloatRect RenderSVGShape::objectBoundingBox() const
-{
-    return path().fastBoundingRect();
 }
 
 void RenderSVGShape::strokeShape(GraphicsContext* context) const
@@ -162,11 +160,11 @@ void RenderSVGShape::layout()
 
     bool updateCachedBoundariesInParents = false;
 
-    bool needsShapeUpdate = m_needsShapeUpdate;
-    if (needsShapeUpdate || m_needsBoundariesUpdate) {
-        m_path.clear();
-        createShape();
+    if (m_needsShapeUpdate || m_needsBoundariesUpdate) {
+        updateShapeFromElement();
         m_needsShapeUpdate = false;
+        updateRepaintBoundingBox();
+        m_needsBoundariesUpdate = false;
         updateCachedBoundariesInParents = true;
     }
 
@@ -179,13 +177,6 @@ void RenderSVGShape::layout()
     // Invalidate all resources of this client if our layout changed.
     if (everHadLayout() && selfNeedsLayout())
         SVGResourcesCache::clientLayoutChanged(this);
-
-    // At this point LayoutRepainter already grabbed the old bounds,
-    // recalculate them now so repaintAfterLayout() uses the new bounds.
-    if (needsShapeUpdate || m_needsBoundariesUpdate) {
-        updateCachedBoundaries();
-        m_needsBoundariesUpdate = false;
-    }
 
     // If our bounds changed, notify the parents.
     if (updateCachedBoundariesInParents)
@@ -439,29 +430,44 @@ FloatRect RenderSVGShape::markerRect(float strokeWidth) const
     return boundaries;
 }
 
-void RenderSVGShape::updateCachedBoundaries()
+FloatRect RenderSVGShape::calculateObjectBoundingBox() const
 {
-    if (isEmpty()) {
-        m_fillBoundingBox = FloatRect();
-        m_strokeAndMarkerBoundingBox = FloatRect();
-        m_repaintBoundingBox = FloatRect();
-        return;
+    return path().fastBoundingRect();
+}
+
+FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
+{
+    ASSERT(m_path);
+    FloatRect strokeBoundingBox = m_fillBoundingBox;
+
+    const SVGRenderStyle* svgStyle = style()->svgStyle();
+    if (svgStyle->hasStroke()) {
+        BoundingRectStrokeStyleApplier strokeStyle(this, style());
+        if (hasNonScalingStroke()) {
+            AffineTransform nonScalingTransform = nonScalingStrokeTransform();
+            if (nonScalingTransform.isInvertible()) {
+                Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
+                FloatRect strokeBoundingRect = usePath->strokeBoundingRect(&strokeStyle);
+                strokeBoundingRect = nonScalingTransform.inverse().mapRect(strokeBoundingRect);
+                strokeBoundingBox.unite(strokeBoundingRect);
+            }
+        } else
+            strokeBoundingBox.unite(path().strokeBoundingRect(&strokeStyle));
+
+        // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.
+        float strokeWidth = this->strokeWidth();
+        for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i)
+            strokeBoundingBox.unite(zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], strokeWidth));
     }
 
-    // Cache _unclipped_ fill bounding box, used for calculations in resources
-    m_fillBoundingBox = objectBoundingBox();
+    if (!m_markerPositions.isEmpty())
+        strokeBoundingBox.unite(markerRect(strokeWidth()));
 
-    // Add zero-length sub-path linecaps to the fill box
-    // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.
-    float strokeWidth = this->strokeWidth();
-    for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i)
-        m_fillBoundingBox.unite(zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], strokeWidth));
+    return strokeBoundingBox;
+}
 
-    // Cache _unclipped_ stroke bounding box, used for calculations in resources (includes marker boundaries)
-    m_strokeAndMarkerBoundingBox = m_fillBoundingBox;
-    if (hasPath())
-        inflateWithStrokeAndMarkerBounds();
-    // Cache smallest possible repaint rectangle
+void RenderSVGShape::updateRepaintBoundingBox()
+{
     m_repaintBoundingBox = strokeBoundingBox();
     SVGRenderSupport::intersectRepaintRectWithResources(this, m_repaintBoundingBox);
 }
@@ -480,28 +486,6 @@ bool RenderSVGShape::hasSmoothStroke() const
         && svgStyle->strokeMiterLimit() == svgStyle->initialStrokeMiterLimit()
         && svgStyle->joinStyle() == svgStyle->initialJoinStyle()
         && svgStyle->capStyle() == svgStyle->initialCapStyle();
-}
-
-void RenderSVGShape::inflateWithStrokeAndMarkerBounds()
-{
-    const SVGRenderStyle* svgStyle = style()->svgStyle();
-    if (svgStyle->hasStroke()) {
-        BoundingRectStrokeStyleApplier strokeStyle(this, style());
-
-        // SVG1.2 Tiny only defines non scaling stroke for the stroke but not markers.
-        if (hasNonScalingStroke()) {
-            AffineTransform nonScalingTransform = nonScalingStrokeTransform();
-            if (nonScalingTransform.isInvertible()) {
-                Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
-                FloatRect strokeBoundingRect = usePath->strokeBoundingRect(&strokeStyle);
-                strokeBoundingRect = nonScalingTransform.inverse().mapRect(strokeBoundingRect);
-                m_strokeAndMarkerBoundingBox.unite(strokeBoundingRect);
-            }
-        } else
-            m_strokeAndMarkerBoundingBox.unite(path().strokeBoundingRect(&strokeStyle));
-    }
-    if (!m_markerPositions.isEmpty())
-        m_strokeAndMarkerBoundingBox.unite(markerRect(strokeWidth()));
 }
 
 void RenderSVGShape::drawMarkers(PaintInfo& paintInfo)

@@ -1,3 +1,64 @@
+2012-07-12  Philip Rogers  <pdr@google.com>
+
+        Refactor RenderSVGShape bounding box code
+        https://bugs.webkit.org/show_bug.cgi?id=90655
+
+        Reviewed by Nikolas Zimmermann.
+
+        RenderSVGShape::objectBoundingBox worked differently than RenderSVGShape::strokeBoundingBox by
+        not caching the object bounding box and instead computing it on each call. For consistency and
+        performance objectBoundingBox has been refactored to return a cached value.
+
+        createShape has been renamed updateShapeFromElement for understandability. updateShapeFromElement
+        now updates the internal state of the shape (bounding boxes, etc) from the associated element.
+        RenderSVGShape::inflateWithStrokeAndMarkerBounds has been merged into
+        RenderSVGShape::calculateStrokeBoundingBox which is called from updateShapeFromElement.
+
+        After this change all bounding box computation is now handled in updateShapeFromElement. Because
+        subclasses override updateShapeFromElement it will be easy for them to have custom bounding box
+        code there (as will happen for RenderSVGPath in a followup patch).
+
+        strokeBoundingBox and objectBoundingBox are now able to return their cached values immediately
+        in RenderSVGRect and RenderSVGEllipse instead of checking their fallback state on each call.
+
+        Additionally, to save space RenderSVGEllipse and RenderSVGRect now use the m_fillBoundingBox and
+        m_strokeBoundingBox of RenderSVGShape instead of having their own.
+
+        This patch also removes setStrokeAndMarkerBoundingBox that was previously dead code.
+
+        No new tests, just a refactoring.
+
+        * rendering/svg/RenderSVGEllipse.cpp:
+        (WebCore::RenderSVGEllipse::updateShapeFromElement):
+        (WebCore):
+        (WebCore::RenderSVGEllipse::fillShape):
+        (WebCore::RenderSVGEllipse::strokeShape):
+        (WebCore::RenderSVGEllipse::shapeDependentStrokeContains):
+        * rendering/svg/RenderSVGEllipse.h:
+        (RenderSVGEllipse):
+        (WebCore::RenderSVGEllipse::isEmpty):
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement):
+        (WebCore):
+        (WebCore::RenderSVGRect::fillShape):
+        (WebCore::RenderSVGRect::strokeShape):
+        (WebCore::RenderSVGRect::shapeDependentStrokeContains):
+        (WebCore::RenderSVGRect::shapeDependentFillContains):
+        * rendering/svg/RenderSVGRect.h:
+        (RenderSVGRect):
+        (WebCore::RenderSVGRect::isEmpty):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::updateShapeFromElement):
+        (WebCore):
+        (WebCore::RenderSVGShape::layout):
+        (WebCore::RenderSVGShape::calculateObjectBoundingBox):
+        (WebCore::RenderSVGShape::calculateStrokeBoundingBox):
+        (WebCore::RenderSVGShape::updateRepaintBoundingBox):
+        * rendering/svg/RenderSVGShape.h:
+        (RenderSVGShape):
+        (WebCore::RenderSVGShape::objectBoundingBox):
+        (WebCore::RenderSVGShape::strokeBoundingBox):
+
 2012-07-12  Kent Tamura  <tkent@chromium.org>
 
         Do not save the form state signature if nothing is saved

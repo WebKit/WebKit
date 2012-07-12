@@ -46,11 +46,11 @@ RenderSVGRect::~RenderSVGRect()
 {
 }
 
-void RenderSVGRect::createShape()
+void RenderSVGRect::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
-    m_boundingBox = FloatRect();
+    m_fillBoundingBox = FloatRect();
     m_innerStrokeRect = FloatRect();
     m_outerStrokeRect = FloatRect();
     SVGRectElement* rect = static_cast<SVGRectElement*>(node());
@@ -58,7 +58,7 @@ void RenderSVGRect::createShape()
 
     // Fallback to RenderSVGShape if rect has rounded corners or a non-scaling stroke.
     if (rect->hasAttribute(SVGNames::rxAttr) || rect->hasAttribute(SVGNames::ryAttr) || hasNonScalingStroke()) {
-        RenderSVGShape::createShape();
+        RenderSVGShape::updateShapeFromElement();
         m_usePathFallback = true;
         return;
     } else
@@ -69,12 +69,12 @@ void RenderSVGRect::createShape()
     if (boundingBoxSize.isEmpty())
         return;
 
-    m_boundingBox = FloatRect(FloatPoint(rect->x().value(lengthContext), rect->y().value(lengthContext)), boundingBoxSize);
+    m_fillBoundingBox = FloatRect(FloatPoint(rect->x().value(lengthContext), rect->y().value(lengthContext)), boundingBoxSize);
 
     // To decide if the stroke contains a point we create two rects which represent the inner and
     // the outer stroke borders. A stroke contains the point, if the point is between them.
-    m_innerStrokeRect = m_boundingBox;
-    m_outerStrokeRect = m_boundingBox;
+    m_innerStrokeRect = m_fillBoundingBox;
+    m_outerStrokeRect = m_fillBoundingBox;
 
     if (style()->svgStyle()->hasStroke()) {
         float strokeWidth = this->strokeWidth();
@@ -82,27 +82,13 @@ void RenderSVGRect::createShape()
         m_outerStrokeRect.inflate(strokeWidth / 2);
     }
 
-    m_strokeBoundingRect = m_outerStrokeRect;
+    m_strokeBoundingBox = m_outerStrokeRect;
 
 #if USE(CG)
     // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
     if (style()->svgStyle()->shapeRendering() == SR_CRISPEDGES)
-        m_strokeBoundingRect.inflate(1);
+        m_strokeBoundingBox.inflate(1);
 #endif
-}
-
-FloatRect RenderSVGRect::objectBoundingBox() const
-{
-    if (m_usePathFallback)
-        return RenderSVGShape::objectBoundingBox();
-    return m_boundingBox;
-}
-
-FloatRect RenderSVGRect::strokeBoundingBox() const
-{
-    if (m_usePathFallback)
-        return RenderSVGShape::strokeBoundingBox();
-    return m_strokeBoundingRect;
 }
 
 void RenderSVGRect::fillShape(GraphicsContext* context) const
@@ -120,12 +106,12 @@ void RenderSVGRect::fillShape(GraphicsContext* context) const
     if (context->hasShadow()) {
         GraphicsContextStateSaver stateSaver(*context);
         context->clearShadow();
-        context->fillRect(m_boundingBox);
+        context->fillRect(m_fillBoundingBox);
         return;
     }
 #endif
 
-    context->fillRect(m_boundingBox);
+    context->fillRect(m_fillBoundingBox);
 }
 
 void RenderSVGRect::strokeShape(GraphicsContext* context) const
@@ -138,7 +124,7 @@ void RenderSVGRect::strokeShape(GraphicsContext* context) const
         return;
     }
 
-    context->strokeRect(m_boundingBox, strokeWidth());
+    context->strokeRect(m_fillBoundingBox, strokeWidth());
 }
 
 bool RenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point)
@@ -147,7 +133,7 @@ bool RenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point)
     // to fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
     if (m_usePathFallback || !hasSmoothStroke()) {
         if (!hasPath())
-            RenderSVGShape::createShape();
+            RenderSVGShape::updateShapeFromElement();
         return RenderSVGShape::shapeDependentStrokeContains(point);
     }
 
@@ -158,7 +144,7 @@ bool RenderSVGRect::shapeDependentFillContains(const FloatPoint& point, const Wi
 {
     if (m_usePathFallback)
         return RenderSVGShape::shapeDependentFillContains(point, fillRule);
-    return m_boundingBox.contains(point.x(), point.y());
+    return m_fillBoundingBox.contains(point.x(), point.y());
 }
 
 }
