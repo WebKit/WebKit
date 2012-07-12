@@ -1,3 +1,19 @@
+2012-07-12  Timothy Hatcher  <timothy@apple.com>
+
+        Make the "Inspect Element" context menu item appear in nightly builds again.
+
+        https://webkit.org/b/89323
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/c/WKContextMenuItem.cpp:
+        (compatibleContextMenuItemTag): Added. Checks for the specific version of Safari 6 that needs the
+        tag fixed up to match values it expects.
+        (WKContextMenuItemGetTag): On Mac platforms call compatibleContextMenuItemTag to fix up the tag
+        before returning it.
+        * Shared/API/c/WKContextMenuItemTypes.h: Fix the order of the WKContextMenuItemTag enum
+        to be binary compatible with older versions of WebKit2.
+
 2012-07-12  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Port the test framework to WebKit 2

@@ -32,6 +32,10 @@
 #include "WKAPICast.h"
 #include "WKContextMenuItemTypes.h"
 
+#if PLATFORM(MAC)
+#import <mach-o/dyld.h>
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -80,10 +84,36 @@ WKContextMenuItemRef WKContextMenuItemSeparatorItem()
 #endif
 }
 
+#if PLATFORM(MAC)
+static WKContextMenuItemTag compatibleContextMenuItemTag(WKContextMenuItemTag tag)
+{
+    static bool needsWorkaround = ^bool {
+        const int32_t safariFrameworkVersionWithIncompatibleContextMenuItemTags = 0x02181900; // 536.25.0 (Safari 6.0)
+        return NSVersionOfRunTimeLibrary("Safari") == safariFrameworkVersionWithIncompatibleContextMenuItemTags;
+    }();
+
+    if (!needsWorkaround)
+        return tag;
+
+    // kWKContextMenuItemTagDictationAlternative was inserted before kWKContextMenuItemTagInspectElement.
+    // DictationAlternative is now at the end like it should have been. To be compatible we need to return
+    // InspectElement for DictationAlternative and shift InspectElement and after by one.
+    if (tag == kWKContextMenuItemTagDictationAlternative)
+        return kWKContextMenuItemTagInspectElement;
+    if (tag >= kWKContextMenuItemTagInspectElement && tag < kWKContextMenuItemBaseApplicationTag)
+        return tag + 1;
+    return tag;
+}
+#endif
+
 WKContextMenuItemTag WKContextMenuItemGetTag(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
+#if PLATFORM(MAC)
+    return compatibleContextMenuItemTag(toAPI(toImpl(itemRef)->data()->action()));
+#else
     return toAPI(toImpl(itemRef)->data()->action());
+#endif
 #else
     return toAPI(ContextMenuItemTagNoAction);
 #endif

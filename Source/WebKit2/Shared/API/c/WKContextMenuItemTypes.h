@@ -88,7 +88,6 @@ enum {
     kWKContextMenuItemTagRightToLeft,
     kWKContextMenuItemTagPDFSinglePageScrolling,
     kWKContextMenuItemTagPDFFacingPagesScrolling,
-    kWKContextMenuItemTagDictationAlternative,
     kWKContextMenuItemTagInspectElement,
     kWKContextMenuItemTagTextDirectionMenu,
     kWKContextMenuItemTagTextDirectionDefault,
@@ -114,6 +113,7 @@ enum {
     kWKContextMenuItemTagEnterVideoFullscreen,
     kWKContextMenuItemTagMediaPlayPause,
     kWKContextMenuItemTagMediaMute,
+    kWKContextMenuItemTagDictationAlternative,
     kWKContextMenuItemBaseApplicationTag = 10000
 };
 typedef uint32_t WKContextMenuItemTag;
