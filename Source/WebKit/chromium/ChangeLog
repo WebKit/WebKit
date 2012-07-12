@@ -1,3 +1,20 @@
+2012-07-12  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] WebSettings should be sorted
+        https://bugs.webkit.org/show_bug.cgi?id=91157
+
+        Reviewed by Eric Seidel.
+
+        This might be my OCD, but IMHO this file would be cleaner if we listed
+        the settings in alphabetic order.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::forceSoftwareCompositing):
+        (WebKit::WebSettingsImpl::viewportEnabled):
+        (WebKit::WebSettingsImpl::maxUntiledLayerSize):
+
 2012-07-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Enable IDBFactory.deleteDatabase() and webkitGetDatabaseNames() in Workers
