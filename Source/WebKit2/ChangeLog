@@ -1,3 +1,45 @@
+2012-07-12  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Port the test framework to WebKit 2
+        https://bugs.webkit.org/show_bug.cgi?id=90606
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This port of EFL's WebKit 1 test framework uses a more gtest-ish
+        way of writing tests and it is based on a test fixture that loads a
+        page synchronously as convenience (if needed). This base fixture can be
+        easily extended by just inheriting from it.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp: Added.
+        (EWK2UnitTest):
+        (EWK2UnitTest::onLoadProgress):
+        (EWK2UnitTest::EWK2UnitTestBase::EWK2UnitTestBase):
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+        (EWK2UnitTest::EWK2UnitTestBase::TearDown):
+        (EWK2UnitTest::EWK2UnitTestBase::loadUrlSync):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h: Added.
+        (EWK2UnitTest):
+        (EWK2UnitTestBase):
+        (EWK2UnitTest::EWK2UnitTestBase::setLoadProgress):
+        (EWK2UnitTest::EWK2UnitTestBase::webView):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.cpp: Added.
+        (EWK2UnitTest):
+        (EWK2UnitTest::EWK2UnitTestEnvironment::EWK2UnitTestEnvironment):
+        (EWK2UnitTest::EWK2UnitTestEnvironment::defaultTestPageUrl):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.h: Added.
+        (EWK2UnitTest):
+        (EWK2UnitTestEnvironment):
+        (EWK2UnitTest::EWK2UnitTestEnvironment::useX11Window):
+        (EWK2UnitTest::EWK2UnitTestEnvironment::defaultWidth):
+        (EWK2UnitTest::EWK2UnitTestEnvironment::defaultHeight):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestMain.cpp: Added.
+        (parseArguments):
+        (main):
+        * UIProcess/API/efl/tests/resources/default_test_page.html: Added.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp: Added.
+        (TEST_F):
+
 2012-07-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add missing Network Information API integration to WebContext and WebPage

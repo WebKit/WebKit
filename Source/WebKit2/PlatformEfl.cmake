@@ -173,3 +173,47 @@ SET (EWebKit2_HEADERS
 
 INSTALL(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc DESTINATION lib/pkgconfig)
 INSTALL(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR})
+
+INCLUDE_DIRECTORIES(${THIRDPARTY_DIR}/gtest/include)
+
+SET(EWK2UnitTests_LIBRARIES
+    ${JavaScriptCore_LIBRARY_NAME}
+    ${WebCore_LIBRARY_NAME}
+    ${WebKit2_LIBRARY_NAME}
+    ${ECORE_LIBRARIES}
+    ${ECORE_EVAS_LIBRARIES}
+    ${EVAS_LIBRARIES}
+)
+
+IF (ENABLE_GLIB_SUPPORT)
+    LIST(APPEND EWK2UnitTests_LIBRARIES
+        ${Glib_LIBRARIES}
+        ${Gthread_LIBRARIES}
+    )
+ENDIF()
+
+SET(WEBKIT2_EFL_TEST_DIR "${WEBKIT2_DIR}/UIProcess/API/efl/tests")
+SET(TEST_RESOURCES_DIR ${WEBKIT2_EFL_TEST_DIR}/resources)
+
+ADD_DEFINITIONS(-DTEST_RESOURCES_DIR=\"${TEST_RESOURCES_DIR}\")
+
+ADD_LIBRARY(ewk2UnitTestUtils
+    ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestBase.cpp
+    ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestEnvironment.cpp
+    ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestMain.cpp
+)
+
+TARGET_LINK_LIBRARIES(ewk2UnitTestUtils ${EWK2UnitTests_LIBRARIES})
+
+# The "ewk" on the test name needs to be suffixed with "2", otherwise it
+# will clash with tests from the WebKit 1 test suite.
+SET(EWK2UnitTests_BINARIES
+    test_ewk2_view
+)
+
+FOREACH(testName ${EWK2UnitTests_BINARIES})
+    ADD_EXECUTABLE(${testName} ${WEBKIT2_EFL_TEST_DIR}/${testName}.cpp)
+    ADD_TEST(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName})
+    SET_TESTS_PROPERTIES(${testName} PROPERTIES TIMEOUT 60)
+    TARGET_LINK_LIBRARIES(${testName} ${EWK2UnitTests_LIBRARIES} ewk2UnitTestUtils gtest pthread)
+ENDFOREACH()
