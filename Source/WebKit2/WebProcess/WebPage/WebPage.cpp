@@ -130,6 +130,10 @@
 #include "WebBatteryClient.h"
 #endif
 
+#if ENABLE(NETWORK_INFO)
+#include "WebNetworkInfoClient.h"
+#endif
+
 #if ENABLE(WEB_INTENTS)
 #include "IntentData.h"
 #endif
@@ -275,6 +279,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(QT)
     WebCore::provideDeviceMotionTo(m_page.get(), new DeviceMotionClientQt);
     WebCore::provideDeviceOrientationTo(m_page.get(), new DeviceOrientationClientQt);
+#endif
+#if ENABLE(NETWORK_INFO)
+    WebCore::provideNetworkInfoTo(m_page.get(), new WebNetworkInfoClient(this));
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));

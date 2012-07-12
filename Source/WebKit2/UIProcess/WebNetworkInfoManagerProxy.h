@@ -59,6 +59,7 @@ public:
     void providerDidChangeNetworkInformation(const WTF::AtomicString& eventType, WebNetworkInfo*);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, WTF::OwnPtr<CoreIPC::ArgumentEncoder>&);
 
 private:
     explicit WebNetworkInfoManagerProxy(WebContext*);

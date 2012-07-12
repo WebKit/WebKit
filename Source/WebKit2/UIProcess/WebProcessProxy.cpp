@@ -316,6 +316,9 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         || messageID.is<CoreIPC::MessageClassWebIconDatabase>()
         || messageID.is<CoreIPC::MessageClassWebKeyValueStorageManagerProxy>()
         || messageID.is<CoreIPC::MessageClassWebMediaCacheManagerProxy>()
+#if ENABLE(NETWORK_INFO)
+        || messageID.is<CoreIPC::MessageClassWebNetworkInfoManagerProxy>()
+#endif
         || messageID.is<CoreIPC::MessageClassWebNotificationManagerProxy>()
 #if USE(SOUP)
         || messageID.is<CoreIPC::MessageClassWebSoupRequestManagerProxy>()
@@ -343,7 +346,10 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>() 
+    if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>()
+#if ENABLE(NETWORK_INFO)
+        || messageID.is<CoreIPC::MessageClassWebNetworkInfoManagerProxy>()
+#endif
         || messageID.is<CoreIPC::MessageClassDownloadProxy>() || messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
         m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);
         return;

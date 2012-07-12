@@ -1,3 +1,36 @@
+2012-07-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] Add missing Network Information API integration to WebContext and WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=90781
+
+        Reviewed by Anders Carlsson.
+
+        Integrate Network Information API to WebPage, WebContext and
+        properly route messages to the WebNetworkInfoManagerProxy.
+        Without this, the Network Information tests are crashing for
+        WebKit2.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::disconnectProcess):
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContext.h:
+        (WebKit):
+        (WebContext):
+        (WebKit::WebContext::networkInfoManagerProxy):
+        * UIProcess/WebNetworkInfoManagerProxy.cpp:
+        (WebKit::WebNetworkInfoManagerProxy::didReceiveSyncMessage):
+        (WebKit):
+        * UIProcess/WebNetworkInfoManagerProxy.h:
+        (WebNetworkInfoManagerProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2012-07-12  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Move TextureMapperAnimation and texmap/LayerTransform to platform/graphics

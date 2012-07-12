@@ -70,6 +70,10 @@
 #include "WebBatteryManagerProxy.h"
 #endif
 
+#if ENABLE(NETWORK_INFO)
+#include "WebNetworkInfoManagerProxy.h"
+#endif
+
 #if USE(SOUP)
 #include "WebSoupRequestManagerProxy.h"
 #endif
@@ -143,6 +147,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_iconDatabase(WebIconDatabase::create(this))
     , m_keyValueStorageManagerProxy(WebKeyValueStorageManagerProxy::create(this))
     , m_mediaCacheManagerProxy(WebMediaCacheManagerProxy::create(this))
+#if ENABLE(NETWORK_INFO)
+    , m_networkInfoManagerProxy(WebNetworkInfoManagerProxy::create(this))
+#endif
     , m_notificationManagerProxy(WebNotificationManagerProxy::create(this))
     , m_pluginSiteDataManager(WebPluginSiteDataManager::create(this))
     , m_resourceCacheManagerProxy(WebResourceCacheManagerProxy::create(this))
@@ -210,6 +217,11 @@ WebContext::~WebContext()
 
     m_mediaCacheManagerProxy->invalidate();
     m_mediaCacheManagerProxy->clearContext();
+
+#if ENABLE(NETWORK_INFO)
+    m_networkInfoManagerProxy->invalidate();
+    m_networkInfoManagerProxy->clearContext();
+#endif
     
     m_notificationManagerProxy->invalidate();
     m_notificationManagerProxy->clearContext();
@@ -418,6 +430,9 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_geolocationManagerProxy->invalidate();
     m_keyValueStorageManagerProxy->invalidate();
     m_mediaCacheManagerProxy->invalidate();
+#if ENABLE(NETWORK_INFO)
+    m_networkInfoManagerProxy->invalidate();
+#endif
     m_notificationManagerProxy->invalidate();
     m_resourceCacheManagerProxy->invalidate();
 #if USE(SOUP)
@@ -782,6 +797,13 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         m_mediaCacheManagerProxy->didReceiveMessage(connection, messageID, arguments);
         return;
     }
+
+#if ENABLE(NETWORK_INFO)
+    if (messageID.is<CoreIPC::MessageClassWebNetworkInfoManagerProxy>()) {
+        m_networkInfoManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
     
     if (messageID.is<CoreIPC::MessageClassWebNotificationManagerProxy>()) {
         m_notificationManagerProxy->didReceiveMessage(connection, messageID, arguments);
@@ -835,6 +857,13 @@ void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC:
         m_iconDatabase->didReceiveSyncMessage(connection, messageID, arguments, reply);
         return;
     }
+
+#if ENABLE(NETWORK_INFO)
+    if (messageID.is<CoreIPC::MessageClassWebNetworkInfoManagerProxy>()) {
+        m_networkInfoManagerProxy->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        return;
+    }
+#endif
     
     switch (messageID.get<WebContextLegacyMessage::Kind>()) {
         case WebContextLegacyMessage::PostSynchronousMessage: {

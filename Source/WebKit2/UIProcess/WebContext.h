@@ -57,6 +57,9 @@ class WebGeolocationManagerProxy;
 class WebIconDatabase;
 class WebKeyValueStorageManagerProxy;
 class WebMediaCacheManagerProxy;
+#if ENABLE(NETWORK_INFO)
+class WebNetworkInfoManagerProxy;
+#endif
 class WebNotificationManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
@@ -166,6 +169,9 @@ public:
     WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
     WebKeyValueStorageManagerProxy* keyValueStorageManagerProxy() const { return m_keyValueStorageManagerProxy.get(); }
     WebMediaCacheManagerProxy* mediaCacheManagerProxy() const { return m_mediaCacheManagerProxy.get(); }
+#if ENABLE(NETWORK_INFO)
+    WebNetworkInfoManagerProxy* networkInfoManagerProxy() const { return m_networkInfoManagerProxy.get(); }
+#endif
     WebNotificationManagerProxy* notificationManagerProxy() const { return m_notificationManagerProxy.get(); }
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
     WebResourceCacheManagerProxy* resourceCacheManagerProxy() const { return m_resourceCacheManagerProxy.get(); }
@@ -314,6 +320,9 @@ private:
     RefPtr<WebIconDatabase> m_iconDatabase;
     RefPtr<WebKeyValueStorageManagerProxy> m_keyValueStorageManagerProxy;
     RefPtr<WebMediaCacheManagerProxy> m_mediaCacheManagerProxy;
+#if ENABLE(NETWORK_INFO)
+    RefPtr<WebNetworkInfoManagerProxy> m_networkInfoManagerProxy;
+#endif
     RefPtr<WebNotificationManagerProxy> m_notificationManagerProxy;
     RefPtr<WebPluginSiteDataManager> m_pluginSiteDataManager;
     RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;

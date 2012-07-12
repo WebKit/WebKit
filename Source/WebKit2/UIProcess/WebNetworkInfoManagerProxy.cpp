@@ -72,6 +72,11 @@ void WebNetworkInfoManagerProxy::didReceiveMessage(CoreIPC::Connection* connecti
     didReceiveWebNetworkInfoManagerProxyMessage(connection, messageID, arguments);
 }
 
+void WebNetworkInfoManagerProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, WTF::OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+{
+    didReceiveSyncWebNetworkInfoManagerProxyMessage(connection, messageID, arguments, reply);
+}
+
 void WebNetworkInfoManagerProxy::startUpdating()
 {
     if (m_isUpdating)
