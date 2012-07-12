@@ -34,6 +34,8 @@
  * - "load,provisional,failed", const Ewk_Web_Error*: view provisional load failed.
  * - "load,provisional,redirect", void: view received redirect for provisional load.
  * - "load,provisional,started", void: view started provisional load.
+ * - "policy,decision,navigation", Ewk_Navigation_Policy_Decision*: a navigation policy decision should be taken.
+ * - "policy,decision,new,window", Ewk_Navigation_Policy_Decision*: a new window policy decision should be taken.
  * - "resource,request,failed", const Ewk_Web_Resource_Load_Error*: a resource failed loading.
  * - "resource,request,finished", const Ewk_Web_Resource*: a resource finished loading.
  * - "resource,request,new", const Ewk_Web_Resource_Request*: a resource request was initiated.

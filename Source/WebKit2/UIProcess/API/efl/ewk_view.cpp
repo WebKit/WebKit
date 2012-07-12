@@ -32,6 +32,7 @@
 #include "ewk_context_private.h"
 #include "ewk_intent_private.h"
 #include "ewk_view_loader_client_private.h"
+#include "ewk_view_policy_client_private.h"
 #include "ewk_view_private.h"
 #include "ewk_view_resource_load_client_private.h"
 #include "ewk_web_resource.h"
@@ -499,6 +500,7 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
 
     priv->pageClient = PageClientImpl::create(toImpl(contextRef), toImpl(pageGroupRef), ewkView);
     ewk_view_loader_client_attach(toAPI(priv->pageClient->page()), ewkView);
+    ewk_view_policy_client_attach(toAPI(priv->pageClient->page()), ewkView);
     ewk_view_resource_load_client_attach(toAPI(priv->pageClient->page()), ewkView);
 
     return ewkView;
@@ -873,6 +875,28 @@ void ewk_view_load_provisional_started(Evas_Object* ewkView)
     priv->loadingResourcesMap.clear();
 
     evas_object_smart_callback_call(ewkView, "load,provisional,started", 0);
+}
+
+/**
+ * @internal
+ * Reports that a navigation policy decision should be taken.
+ *
+ * Emits signal: "policy,decision,navigation".
+ */
+void ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Navigation_Policy_Decision* decision)
+{
+    evas_object_smart_callback_call(ewkView, "policy,decision,navigation", decision);
+}
+
+/**
+ * @internal
+ * Reports that a new window policy decision should be taken.
+ *
+ * Emits signal: "policy,decision,new,window".
+ */
+void ewk_view_new_window_policy_decision(Evas_Object* ewkView, Ewk_Navigation_Policy_Decision* decision)
+{
+    evas_object_smart_callback_call(ewkView, "policy,decision,new,window", decision);
 }
 
 Eina_Bool ewk_view_html_string_load(Evas_Object* ewkView, const char* html, const char* baseUrl, const char* unreachableUrl)

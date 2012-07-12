@@ -1,3 +1,47 @@
+2012-07-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][EFL] Add policy client to Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=90953
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Emit new "policy,decision,navigation" and "policy,decision,new,window"
+        on the Ewk_View when policy decisions should be taken by the client.
+
+        A new Ewk_Navigation_Policy_Decision type is introduced to provide
+        information about the navigation request and make a decision.
+        By default, the navigation request is accepted.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp: Added.
+        (_Ewk_Navigation_Policy_Decision):
+        (ewk_navigation_policy_decision_free):
+        (ewk_navigation_policy_navigation_type_get):
+        (ewk_navigation_policy_mouse_button_get):
+        (ewk_navigation_policy_modifiers_get):
+        (ewk_navigation_policy_frame_name_get):
+        (ewk_navigation_policy_request_get):
+        (ewk_navigation_policy_decision_accept):
+        (ewk_navigation_policy_decision_reject):
+        (ewk_navigation_policy_decision_download):
+        (ewk_navigation_policy_decision_new):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.h: Added.
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h: Added.
+        * UIProcess/API/efl/ewk_private.h: Added.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_base_add):
+        (ewk_view_navigation_policy_decision):
+        (ewk_view_new_window_policy_decision):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_policy_client.cpp: Added.
+        (toEwkView):
+        (decidePolicyForNavigationAction):
+        (decidePolicyForNewWindowAction):
+        (ewk_view_policy_client_attach):
+        * UIProcess/API/efl/ewk_view_policy_client_private.h: Added.
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_cookie_manager_set_persistent_storage() to WebKit2 GTK+ API
