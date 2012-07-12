@@ -1,3 +1,26 @@
+2012-07-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Verify internal "delete pending" flag on database
+        https://bugs.webkit.org/show_bug.cgi?id=90995
+
+        Reviewed by Tony Chang.
+
+        Verify the behavior required by the spec that an open() following
+        a deleteDatabase() is delayed and returns a new database.
+
+        * storage/indexeddb/database-deletepending-flag-expected.txt: Added.
+        * storage/indexeddb/database-deletepending-flag.html: Added.
+        * storage/indexeddb/resources/database-deletepending-flag.js: Added.
+        (test):
+        (openConnection.request.onsuccess.request.onsuccess):
+        (openConnection.request.onsuccess):
+        (openConnection):
+        (testDatabaseDelete.connection.onversionchange):
+        (testDatabaseDelete.deleteRequest.onblocked):
+        (testDatabaseDelete.deleteRequest.onsuccess):
+        (testDatabaseDelete.openRequest.onsuccess):
+        (testDatabaseDelete):
+
 2012-07-12  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Move nodesFromRect tests to separate sub-directory.
