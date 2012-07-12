@@ -3746,3 +3746,6 @@ BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 
 // Started failing after r122312
 BUGWK91041 : inspector/timeline/timeline-dom-content-loaded-event.html = TEXT
+
+// Started crashing after r122359
+BUGWK91047 DEBUG : html5lib/runner.html = CRASH

@@ -1,3 +1,10 @@
+2012-07-11  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+        html5lib/runner.html started crashing after r122359.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-11  Kent Tamura  <tkent@chromium.org>
 
         Do not save state of stateless form controls
