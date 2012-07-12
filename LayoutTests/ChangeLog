@@ -1,3 +1,18 @@
+2012-07-12  Adrienne Walker  <enne@google.com>
+
+        [chromium] Root invalidations for RTL pages need to be in the right space
+        https://bugs.webkit.org/show_bug.cgi?id=91155
+
+        Reviewed by Kenneth Russell.
+
+        Add a test that demonstrates this problem. Before the code fix, the
+        test shows just a red square because the invalidation for the style
+        change repaints the wrong rect.
+
+        * compositing/rtl/rtl-overflow-invalidation-expected.png: Added.
+        * compositing/rtl/rtl-overflow-invalidation-expected.txt: Added.
+        * compositing/rtl/rtl-overflow-invalidation.html: Added.
+
 2012-07-12  James Simonsen  <simonjam@chromium.org>
 
         [Navigation Timing] Import the W3C Navigation Timing test suite

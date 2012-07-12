@@ -1,3 +1,30 @@
+2012-07-12  Adrienne Walker  <enne@google.com>
+
+        [chromium] Root invalidations for RTL pages need to be in the right space
+        https://bugs.webkit.org/show_bug.cgi?id=91155
+
+        Reviewed by Kenneth Russell.
+
+        The root layer has a translation on it when placed in the tree, so any
+        invalidations on this layer likewise need to be adjusted.
+
+        This adjustment is due to the fact that compositor layers all have the
+        origin in the upper left corner of the layer, but this is not always
+        the origin for graphics layers. Rather than making compositor layers
+        have to deal with a potential offset, we change the transform when
+        inserting the layer into the tree. Invalidations need to be similarly
+        transformed from document space into compositor layer space.
+
+        The need for this offset is due to the definition of the initial
+        containing block. RTL pages (pages with dir=RTL on the body) start
+        scrolled all the way to the right, and the origin is in the upper left
+        hand corner of this initial viewport. Thus on RTL pages with
+        horizontal overflow, the left of the document is in negative CSS
+        space.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::invalidateRect):
+
 2012-07-12  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove the RenderPass pointer from RenderPassDrawQuad

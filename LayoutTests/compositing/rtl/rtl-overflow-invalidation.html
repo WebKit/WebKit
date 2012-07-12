@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        direction: rtl;
+        margin: 0px;
+    }
+
+    #layer {
+        position: absolute;
+        top: 50px;
+        right: 50px;
+        width: 100px;
+        height: 100px;
+        background-color: red;
+    }
+
+    #root {
+        width: 1000px;
+        height: 1000px;
+        -webkit-transform:translateZ(0);
+    }
+</style>
+<script>
+    function doTest() {
+        if (window.testRunner) {
+            testRunner.display();
+            testRunner.dumpAsText(true);
+        }
+        // This test passes if this element is repainted correctly, even
+        // on a page that is composited and has horizontal overflow.
+        var elem = document.getElementById("layer");
+        elem.style.backgroundColor = "green";
+    }
+    window.addEventListener('load', doTest, false);
+</script>
+<body>
+    <div id="layer" class=""></div>
+    <div id="root"></div>
+</body>
+</html>

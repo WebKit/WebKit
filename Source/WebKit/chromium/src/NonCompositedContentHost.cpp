@@ -157,7 +157,9 @@ WebScrollableLayer NonCompositedContentHost::scrollLayer()
 
 void NonCompositedContentHost::invalidateRect(const WebCore::IntRect& rect)
 {
-    m_graphicsLayer->setNeedsDisplayInRect(WebCore::FloatRect(rect));
+    WebCore::IntRect layerRect = rect;
+    layerRect.move(-m_layerAdjust);
+    m_graphicsLayer->setNeedsDisplayInRect(WebCore::FloatRect(layerRect));
 }
 
 void NonCompositedContentHost::notifyAnimationStarted(const WebCore::GraphicsLayer*, double /* time */)
