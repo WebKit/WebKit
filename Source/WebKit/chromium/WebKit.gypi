@@ -138,7 +138,6 @@
             'tests/ScrollbarLayerChromiumTest.cpp',
             'tests/TextureCopierTest.cpp',
             'tests/TextureLayerChromiumTest.cpp',
-            'tests/TextureManagerTest.cpp',
             'tests/ThrottledTextureUploaderTest.cpp',
             'tests/TiledLayerChromiumTest.cpp',
             'tests/TilingDataTest.cpp',

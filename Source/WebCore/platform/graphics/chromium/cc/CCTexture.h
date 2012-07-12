@@ -35,6 +35,10 @@ namespace WebCore {
 class CCTexture {
 public:
     CCTexture() : m_id(0) { }
+    CCTexture(unsigned id, IntSize size, GC3Denum format)
+        : m_id(id)
+        , m_size(size)
+        , m_format(format) { }
 
     unsigned id() const { return m_id; }
     const IntSize& size() const { return m_size; }

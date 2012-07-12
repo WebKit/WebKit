@@ -51,7 +51,6 @@ class CCLayerChromium;
 class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
 class CCTextureUpdater;
-class ManagedTexture;
 class Region;
 class TextureAllocator;
 class CCPrioritizedTextureManager;

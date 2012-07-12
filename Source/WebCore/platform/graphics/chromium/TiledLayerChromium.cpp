@@ -30,7 +30,6 @@
 #include "TiledLayerChromium.h"
 
 #include "GraphicsContext3D.h"
-#include "ManagedTexture.h"
 #include "Region.h"
 #include "TextStream.h"
 

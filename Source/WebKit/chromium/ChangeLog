@@ -1,3 +1,21 @@
+2012-07-12  Eric Penner  <epenner@google.com>
+
+        [chromium] Use CCTexture/TextureAllocator and remove TextureManager
+        https://bugs.webkit.org/show_bug.cgi?id=91001
+
+        Reviewed by Adrienne Walker.
+
+        Deleting old texture manager tests.
+
+        * WebKit.gypi:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCPrioritizedTextureTest.cpp:
+        (WTF::CCPrioritizedTextureTest::texturesMemorySize):
+        * tests/CCThreadedTest.cpp:
+        * tests/CCTiledLayerTestCommon.h:
+        * tests/Canvas2DLayerBridgeTest.cpp:
+        * tests/TextureManagerTest.cpp: Removed.
+
 2012-07-12  Robert Sesek  <rsesek@chromium.org>
 
         [chromium][Mac] r122400 broke 10.6 build

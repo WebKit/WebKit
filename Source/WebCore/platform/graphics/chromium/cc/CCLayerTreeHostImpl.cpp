@@ -42,6 +42,7 @@
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCOverdrawMetrics.h"
 #include "cc/CCPageScaleAnimation.h"
+#include "cc/CCPrioritizedTextureManager.h"
 #include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
@@ -122,7 +123,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCLayerTreeSettings& settings, CC
     , m_deviceScaleFactor(1)
     , m_visible(true)
     , m_contentsTexturesWerePurgedSinceLastCommit(false)
-    , m_memoryAllocationLimitBytes(TextureManager::highLimitBytes(viewportSize()))
+    , m_memoryAllocationLimitBytes(CCPrioritizedTextureManager::defaultMemoryAllocationLimit())
     , m_headsUpDisplay(CCHeadsUpDisplay::create())
     , m_pageScale(1)
     , m_pageScaleDelta(1)

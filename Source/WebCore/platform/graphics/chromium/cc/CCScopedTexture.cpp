@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
-
 #include "cc/CCScopedTexture.h"
 
-#include "TextureManager.h" // For TextureAllocator
+#include "TextureAllocator.h"
 
 namespace WebCore {
 

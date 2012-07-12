@@ -27,10 +27,10 @@
 
 #include "CCPrioritizedTexture.h"
 #include "CCPriorityCalculator.h"
+#include "CCTexture.h"
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "TextureManager.h"
 
 namespace WebCore {
 
@@ -49,6 +49,13 @@ public:
         return adoptPtr(new CCPrioritizedTexture(this, size, format));
     }
     ~CCPrioritizedTextureManager();
+
+    // FIXME (http://crbug.com/137094): This 64MB default is a straggler from the
+    // old texture manager and is just to give us a default memory allocation before
+    // we get a callback from the GPU memory manager. We should probaby either:
+    // - wait for the callback before rendering anything instead
+    // - push this into the GPU memory manager somehow.
+    static size_t defaultMemoryAllocationLimit() { return 64 * 1024 * 1024; }
 
     // memoryUseBytes() describes the number of bytes used by existing allocated textures.
     // memoryAboveCutoffBytes() describes the number of bytes that would be used if all
@@ -91,8 +98,8 @@ private:
     // Compare backings. Lowest priority first.
     static inline bool compareBackings(CCPrioritizedTexture::Backing* a, CCPrioritizedTexture::Backing* b)
     {
-        int priorityA = a->currentTexture() ? a->currentTexture()->requestPriority() : CCPriorityCalculator::lowestPriority();
-        int priorityB = b->currentTexture() ? b->currentTexture()->requestPriority() : CCPriorityCalculator::lowestPriority();
+        int priorityA = a->owner() ? a->owner()->requestPriority() : CCPriorityCalculator::lowestPriority();
+        int priorityB = b->owner() ? b->owner()->requestPriority() : CCPriorityCalculator::lowestPriority();
         if (priorityA == priorityB)
             return a < b;
         return CCPriorityCalculator::priorityIsLower(priorityA, priorityB);
@@ -101,9 +108,6 @@ private:
     CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, int maxTextureSize);
 
     void reduceMemory(size_t limit, TextureAllocator*);
-
-    void link(CCPrioritizedTexture*, CCPrioritizedTexture::Backing*);
-    void unlink(CCPrioritizedTexture*, CCPrioritizedTexture::Backing*);
 
     CCPrioritizedTexture::Backing* createBacking(IntSize, GC3Denum format, TextureAllocator*);
     void destroyBacking(CCPrioritizedTexture::Backing*, TextureAllocator*);

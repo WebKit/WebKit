@@ -34,6 +34,7 @@
 #include "PlatformColor.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
+#include "TextureAllocator.h"
 #include "cc/CCGraphicsContext.h"
 
 namespace WebCore {

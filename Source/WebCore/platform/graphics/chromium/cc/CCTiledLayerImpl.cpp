@@ -54,8 +54,6 @@ static const int debugTileBorderMissingTileColorRed = 255;
 static const int debugTileBorderMissingTileColorGreen = 0;
 static const int debugTileBorderMissingTileColorBlue = 0;
 
-class ManagedTexture;
-
 class DrawableTile : public CCLayerTilingData::Tile {
     WTF_MAKE_NONCOPYABLE(DrawableTile);
 public:

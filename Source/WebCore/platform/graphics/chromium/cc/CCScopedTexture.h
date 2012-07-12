@@ -26,6 +26,7 @@
 #ifndef CCScopedTexture_h
 #define CCScopedTexture_h
 
+#include "TextureAllocator.h"
 #include "cc/CCTexture.h"
 
 #if !ASSERT_DISABLED
@@ -34,7 +35,6 @@
 
 namespace WebCore {
 
-class TextureAllocator;
 
 class CCScopedTexture : protected CCTexture {
     WTF_MAKE_NONCOPYABLE(CCScopedTexture);

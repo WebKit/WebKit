@@ -34,7 +34,6 @@
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
-#include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
 #include "cc/CCActiveAnimation.h"

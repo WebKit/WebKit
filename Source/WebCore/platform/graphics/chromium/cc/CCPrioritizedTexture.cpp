@@ -29,6 +29,7 @@
 #include "CCPrioritizedTextureManager.h"
 #include "CCPriorityCalculator.h"
 #include "LayerRendererChromium.h"
+#include "TextureAllocator.h"
 #include <algorithm>
 
 using namespace std;
@@ -38,16 +39,16 @@ namespace WebCore {
 CCPrioritizedTexture::CCPrioritizedTexture(CCPrioritizedTextureManager* manager, IntSize size, GC3Denum format)
     : m_size(size)
     , m_format(format)
-    , m_memorySizeBytes(0)
+    , m_bytes(0)
     , m_priority(CCPriorityCalculator::lowestPriority())
     , m_isAbovePriorityCutoff(false)
-    , m_currentBacking(0)
+    , m_backing(0)
     , m_manager(0)
 {
     // m_manager is set in registerTexture() so validity can be checked.
     ASSERT(format || size.isEmpty());
     if (format)
-        m_memorySizeBytes = TextureManager::memoryUseBytes(size, format);
+        m_bytes = CCTexture::memorySizeBytes(size, format);
     if (manager)
         manager->registerTexture(this);
 }
@@ -74,8 +75,8 @@ void CCPrioritizedTexture::setDimensions(IntSize size, GC3Denum format)
         m_isAbovePriorityCutoff = false;
         m_format = format;
         m_size = size;
-        m_memorySizeBytes = TextureManager::memoryUseBytes(size, format);
-        ASSERT(m_manager || !m_currentBacking);
+        m_bytes = CCTexture::memorySizeBytes(size, format);
+        ASSERT(m_manager || !m_backing);
         if (m_manager)
             m_manager->returnBackingTexture(this);
     }
@@ -97,8 +98,8 @@ void CCPrioritizedTexture::acquireBackingTexture(TextureAllocator* allocator)
 
 unsigned CCPrioritizedTexture::textureId()
 {
-    if (m_currentBacking)
-        return m_currentBacking->textureId();
+    if (m_backing)
+        return m_backing->id();
     return 0;
 }
 
@@ -107,7 +108,7 @@ void CCPrioritizedTexture::bindTexture(CCGraphicsContext* context, TextureAlloca
     ASSERT(m_isAbovePriorityCutoff);
     if (m_isAbovePriorityCutoff)
         acquireBackingTexture(allocator);
-    ASSERT(m_currentBacking);
+    ASSERT(m_backing);
     WebKit::WebGraphicsContext3D* context3d = context->context3D();
     if (!context3d) {
         // FIXME: Implement this path for software compositing.
@@ -121,7 +122,7 @@ void CCPrioritizedTexture::framebufferTexture2D(CCGraphicsContext* context, Text
     ASSERT(m_isAbovePriorityCutoff);
     if (m_isAbovePriorityCutoff)
         acquireBackingTexture(allocator);
-    ASSERT(m_currentBacking);
+    ASSERT(m_backing);
     WebKit::WebGraphicsContext3D* context3d = context->context3D();
     if (!context3d) {
         // FIXME: Implement this path for software compositing.
@@ -130,12 +131,26 @@ void CCPrioritizedTexture::framebufferTexture2D(CCGraphicsContext* context, Text
     context3d->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, textureId(), 0);
 }
 
-void CCPrioritizedTexture::setCurrentBacking(CCPrioritizedTexture::Backing* backing)
+void CCPrioritizedTexture::link(Backing* backing)
 {
-    if (m_currentBacking == backing)
-        return;
-    m_currentBacking = backing;
+    ASSERT(backing);
+    ASSERT(!backing->m_owner);
+    ASSERT(!m_backing);
+
+    m_backing = backing;
+    m_backing->m_owner = this;
 }
+
+void CCPrioritizedTexture::unlink()
+{
+    ASSERT(m_backing);
+    ASSERT(m_backing->m_owner == this);
+
+    m_backing->m_owner = 0;
+    m_backing = 0;
+}
+
+
 
 } // namespace WebCore
 

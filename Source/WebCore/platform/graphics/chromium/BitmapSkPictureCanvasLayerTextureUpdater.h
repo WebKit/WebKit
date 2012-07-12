@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class TextureAllocator;
+
 // This class records the contentRect into an SkPicture, then software rasterizes
 // the SkPicture into bitmaps for each tile. This implements CCSettings::perTilePainting.
 class BitmapSkPictureCanvasLayerTextureUpdater : public SkPictureCanvasLayerTextureUpdater {

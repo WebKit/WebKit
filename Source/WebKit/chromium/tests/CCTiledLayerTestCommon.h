@@ -29,6 +29,7 @@
 #include "IntSize.h"
 #include "LayerTextureUpdater.h"
 #include "Region.h"
+#include "TextureAllocator.h"
 #include "TextureCopier.h"
 #include "TextureUploader.h"
 #include "TiledLayerChromium.h"

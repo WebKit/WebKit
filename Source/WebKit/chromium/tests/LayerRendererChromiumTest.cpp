@@ -30,6 +30,7 @@
 #include "GraphicsContext3D.h"
 #include "WebCompositor.h"
 #include "cc/CCDrawQuad.h"
+#include "cc/CCPrioritizedTextureManager.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 
@@ -76,7 +77,7 @@ public:
     FakeCCRendererClient()
         : m_setFullRootLayerDamageCount(0)
         , m_rootLayer(CCLayerImpl::create(1))
-        , m_memoryAllocationLimitBytes(0)
+        , m_memoryAllocationLimitBytes(CCPrioritizedTextureManager::defaultMemoryAllocationLimit())
     {
         m_rootLayer->createRenderSurface();
         m_rootRenderPass = CCRenderPass::create(m_rootLayer->renderSurface(), m_rootLayer->id());

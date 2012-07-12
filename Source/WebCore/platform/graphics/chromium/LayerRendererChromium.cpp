@@ -43,7 +43,6 @@
 #include "SharedGraphicsContext3D.h"
 #include "SkBitmap.h"
 #include "SkColor.h"
-#include "TextureManager.h"
 #include "ThrottledTextureUploader.h"
 #include "TraceEvent.h"
 #include "TrackingTextureAllocator.h"
@@ -209,8 +208,6 @@ bool LayerRendererChromium::initialize()
     m_capabilities.usingGpuMemoryManager = extensions.contains("GL_CHROMIUM_gpu_memory_manager");
     if (m_capabilities.usingGpuMemoryManager)
         m_context->setMemoryAllocationChangedCallbackCHROMIUM(this);
-    else
-        m_client->setMemoryAllocationLimitBytes(TextureManager::highLimitBytes(viewportSize()));
 
     m_capabilities.usingDiscardFramebuffer = extensions.contains("GL_CHROMIUM_discard_framebuffer");
 

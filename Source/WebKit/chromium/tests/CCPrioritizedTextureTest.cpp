@@ -28,6 +28,7 @@
 
 #include "CCTiledLayerTestCommon.h"
 #include "cc/CCPrioritizedTextureManager.h"
+#include "cc/CCTexture.h"
 #include <gtest/gtest.h>
 
 using namespace WebCore;
@@ -50,7 +51,7 @@ public:
 
     size_t texturesMemorySize(size_t textureCount)
     {
-        return TextureManager::memoryUseBytes(m_textureSize, m_textureFormat) * textureCount;
+        return CCTexture::memorySizeBytes(m_textureSize, m_textureFormat) * textureCount;
     }
 
     PassOwnPtr<CCPrioritizedTextureManager> createManager(size_t maxTextures)

@@ -27,7 +27,6 @@
 #include "cc/CCLayerTreeHost.h"
 
 #include "LayerChromium.h"
-#include "ManagedTexture.h"
 #include "Region.h"
 #include "TraceEvent.h"
 #include "TreeSynchronizer.h"
@@ -529,7 +528,7 @@ void CCLayerTreeHost::prioritizeTextures(const LayerList& updateList)
         LayerChromium* renderSurfaceLayer = updateList[i].get();
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
 
-        size_t bytes = TextureManager::memoryUseBytes(renderSurface->contentRect().size(), GraphicsContext3D::RGBA);
+        size_t bytes = CCTexture::memorySizeBytes(renderSurface->contentRect().size(), GraphicsContext3D::RGBA);
         contentsTextureBytes += bytes;
 
         if (renderSurface->backgroundFilters().isEmpty())
@@ -538,7 +537,7 @@ void CCLayerTreeHost::prioritizeTextures(const LayerList& updateList)
         if (bytes > maxBackgroundTextureBytes)
             maxBackgroundTextureBytes = bytes;
         if (!readbackBytes)
-            readbackBytes = TextureManager::memoryUseBytes(m_deviceViewportSize, GraphicsContext3D::RGBA);
+            readbackBytes = CCTexture::memorySizeBytes(m_deviceViewportSize, GraphicsContext3D::RGBA);
     }
     size_t renderSurfacesBytes = readbackBytes + maxBackgroundTextureBytes + contentsTextureBytes;
 

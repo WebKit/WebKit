@@ -35,7 +35,7 @@
 #include "LayerTextureSubImage.h"
 #include "NotImplemented.h"
 #include "TextStream.h"
-#include "TextureManager.h" // For TextureAllocator
+#include "TextureAllocator.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"

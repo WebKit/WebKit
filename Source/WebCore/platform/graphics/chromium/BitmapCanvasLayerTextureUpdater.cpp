@@ -33,6 +33,7 @@
 #include "LayerPainterChromium.h"
 #include "PlatformColor.h"
 #include "PlatformContextSkia.h"
+#include "TextureAllocator.h"
 #include "cc/CCGraphicsContext.h"
 #include "skia/ext/platform_canvas.h"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2012, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,8 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCPriorityCalculator_h
-#define CCPriorityCalculator_h
+
+#ifndef TextureAllocator_h
+#define TextureAllocator_h
 
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
@@ -31,22 +32,18 @@
 
 namespace WebCore {
 
-class CCPriorityCalculator {
+class TextureAllocator {
 public:
-    static int uiPriority(bool drawsToRootSurface);
-    static int visiblePriority(bool drawsToRootSurface);
-    static int renderSurfacePriority();
-    static int lingeringPriority(int previousPriority);
-    int priorityFromDistance(const IntRect& visibleRect, const IntRect& textureRect, bool drawsToRootSurface) const;
-    int priorityFromDistance(unsigned pixels, bool drawsToRootSurface) const;
-    int priorityFromVisibility(bool visible, bool drawsToRootSurface) const;
+    virtual unsigned createTexture(const IntSize&, GC3Denum format) = 0;
+    virtual void deleteTexture(unsigned texture, const IntSize&, GC3Denum) = 0;
+    virtual void deleteAllTextures() = 0;
 
-    static inline int highestPriority() { return std::numeric_limits<int>::min(); }
-    static inline int lowestPriority() { return std::numeric_limits<int>::max(); }
-    static inline bool priorityIsLower(int a, int b) { return a > b; }
-    static inline bool priorityIsHigher(int a, int b) { return a < b; }
+protected:
+    virtual ~TextureAllocator() { }
 };
 
 }
 
 #endif
+
+

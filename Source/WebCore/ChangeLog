@@ -1,3 +1,92 @@
+2012-07-12  Eric Penner  <epenner@google.com>
+
+        [chromium] Use CCTexture/TextureAllocator and remove TextureManager
+        https://bugs.webkit.org/show_bug.cgi?id=91001
+
+        Reviewed by Adrienne Walker.
+
+        Use CCTexture to clean up CCPrioritizedTexture::Backing.
+        Add TextureAllocator.h and remove remainder of TextureManager.h/cpp.
+        Minor move/refactoring of link/unlink in CCPrioritizedTexture.
+        Remove double initialization of the default memory limit.
+
+        Covered by existing tests (refactoring).
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        (WebCore):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        (WebCore):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/ManagedTexture.cpp: Removed.
+        * platform/graphics/chromium/ManagedTexture.h: Removed.
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (WebCore):
+        * platform/graphics/chromium/TextureAllocator.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCPriorityCalculator.h.
+        (WebCore):
+        (TextureAllocator):
+        (WebCore::TextureAllocator::~TextureAllocator):
+        * platform/graphics/chromium/TextureManager.cpp: Removed.
+        * platform/graphics/chromium/TextureManager.h: Removed.
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        * platform/graphics/chromium/TrackingTextureAllocator.cpp:
+        (WebCore::TrackingTextureAllocator::createTexture):
+        (WebCore::TrackingTextureAllocator::deleteTexture):
+        * platform/graphics/chromium/TrackingTextureAllocator.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::prioritizeTextures):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCPrioritizedTexture.cpp:
+        (WebCore::CCPrioritizedTexture::CCPrioritizedTexture):
+        (WebCore::CCPrioritizedTexture::setDimensions):
+        (WebCore::CCPrioritizedTexture::textureId):
+        (WebCore::CCPrioritizedTexture::bindTexture):
+        (WebCore::CCPrioritizedTexture::framebufferTexture2D):
+        (WebCore::CCPrioritizedTexture::link):
+        (WebCore):
+        (WebCore::CCPrioritizedTexture::unlink):
+        * platform/graphics/chromium/cc/CCPrioritizedTexture.h:
+        (WebCore):
+        (WebCore::CCPrioritizedTexture::bytes):
+        (CCPrioritizedTexture):
+        (WebCore::CCPrioritizedTexture::haveBackingTexture):
+        (WebCore::CCPrioritizedTexture::Backing::Backing):
+        (WebCore::CCPrioritizedTexture::Backing::~Backing):
+        (WebCore::CCPrioritizedTexture::Backing::owner):
+        (Backing):
+        (WebCore::CCPrioritizedTexture::backing):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.cpp:
+        (WebCore::CCPrioritizedTextureManager::prioritizeTextures):
+        (WebCore::CCPrioritizedTextureManager::requestLate):
+        (WebCore::CCPrioritizedTextureManager::acquireBackingTextureIfNeeded):
+        (WebCore::CCPrioritizedTextureManager::reduceMemory):
+        (WebCore::CCPrioritizedTextureManager::clearAllMemory):
+        (WebCore::CCPrioritizedTextureManager::registerTexture):
+        (WebCore::CCPrioritizedTextureManager::returnBackingTexture):
+        (WebCore::CCPrioritizedTextureManager::createBacking):
+        (WebCore::CCPrioritizedTextureManager::destroyBacking):
+        (WebCore::CCPrioritizedTextureManager::assertInvariants):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.h:
+        (CCPrioritizedTextureManager):
+        (WebCore::CCPrioritizedTextureManager::defaultMemoryAllocationLimit):
+        (WebCore::CCPrioritizedTextureManager::compareBackings):
+        * platform/graphics/chromium/cc/CCPriorityCalculator.h:
+        * platform/graphics/chromium/cc/CCScopedTexture.cpp:
+        * platform/graphics/chromium/cc/CCScopedTexture.h:
+        * platform/graphics/chromium/cc/CCTexture.h:
+        (WebCore::CCTexture::CCTexture):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+
 2012-07-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Let XCode have its own way.

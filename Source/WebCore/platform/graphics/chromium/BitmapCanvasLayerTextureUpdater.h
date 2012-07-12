@@ -38,6 +38,7 @@ namespace WebCore {
 
 class LayerPainterChromium;
 class CCGraphicsContext;
+class TextureAllocator;
 
 // This class rasterizes the contentRect into a skia bitmap canvas. It then updates
 // textures by copying from the canvas into the texture, using MapSubImage if

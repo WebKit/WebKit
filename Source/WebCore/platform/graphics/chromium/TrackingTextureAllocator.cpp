@@ -75,7 +75,7 @@ unsigned TrackingTextureAllocator::createTexture(const IntSize& size, GC3Denum f
     if (size.width() > m_maxTextureSize || size.height() > m_maxTextureSize)
         return 0;
 
-    m_currentMemoryUseBytes += TextureManager::memoryUseBytes(size, format);
+    m_currentMemoryUseBytes += CCTexture::memorySizeBytes(size, format);
 
     unsigned textureId = 0;
     GLC(m_context, textureId = m_context->createTexture());
@@ -100,7 +100,7 @@ unsigned TrackingTextureAllocator::createTexture(const IntSize& size, GC3Denum f
 
 void TrackingTextureAllocator::deleteTexture(unsigned textureId, const IntSize& size, GC3Denum format)
 {
-    m_currentMemoryUseBytes -= TextureManager::memoryUseBytes(size, format);
+    m_currentMemoryUseBytes -= CCTexture::memorySizeBytes(size, format);
     GLC(m_context, m_context->deleteTexture(textureId));
     GLC(m_context, m_context->deleteTexture(textureId));
     ASSERT(m_allocatedTextureIds.contains(textureId));

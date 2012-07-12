@@ -30,7 +30,6 @@
 #include "GraphicsContext3DPrivate.h"
 #include "ImageBuffer.h"
 #include "LayerChromium.h"
-#include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
 #include "cc/CCGraphicsContext.h"

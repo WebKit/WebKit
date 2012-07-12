@@ -25,7 +25,7 @@
 #ifndef TrackingTextureAllocator_h
 #define TrackingTextureAllocator_h
 
-#include "TextureManager.h"
+#include "TextureAllocator.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 

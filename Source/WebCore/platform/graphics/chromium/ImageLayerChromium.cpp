@@ -36,7 +36,6 @@
 
 #include "LayerTextureSubImage.h"
 #include "LayerTextureUpdater.h"
-#include "ManagedTexture.h"
 #include "PlatformColor.h"
 #include "cc/CCLayerTreeHost.h"
 

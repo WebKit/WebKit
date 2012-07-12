@@ -31,7 +31,6 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "PlatformCanvas.h"
-#include "TextureManager.h"
 #include "cc/CCDebugRectHistory.h"
 #include "cc/CCFrameRateCounter.h"
 #include "cc/CCLayerTreeHostImpl.h"
