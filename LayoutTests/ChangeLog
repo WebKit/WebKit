@@ -1,5 +1,19 @@
 2012-07-12  Simon Pena  <spena@igalia.com>
 
+        [GTK] Rebaseline after 122416 and r122408
+        https://bugs.webkit.org/show_bug.cgi?id=91066
+
+        Unreviewed gardening.
+
+        Rebaseline fast/multicol/table-vertical-align.html
+        after r122416 (which updated results missing after the fix
+        from r122408)
+
+        * platform/gtk/fast/multicol/table-vertical-align-expected.png:
+        * platform/gtk/fast/multicol/table-vertical-align-expected.txt:
+
+2012-07-12  Simon Pena  <spena@igalia.com>
+
         [GTK] Gardening: rebaseline after r122414
         https://bugs.webkit.org/show_bug.cgi?id=91064
 
