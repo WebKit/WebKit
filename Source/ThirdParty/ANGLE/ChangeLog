@@ -1,3 +1,14 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/91024> Build against the latest SDK when targeting older OS X versions.
+
+        Reviewed by Dan Bernstein.
+
+        The deployment target is already set to the version that we're targeting, and it's that setting
+        which determines which functionality from the SDK is available to us.
+
+        * Configurations/Base.xcconfig:
+
 2012-06-22  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Sanitize GLSL code using ANGLE.

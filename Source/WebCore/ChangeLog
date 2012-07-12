@@ -1,5 +1,16 @@
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
+        <http://webkit.org/b/91024> Build against the latest SDK when targeting older OS X versions.
+
+        Reviewed by Dan Bernstein.
+
+        The deployment target is already set to the version that we're targeting, and it's that setting
+        which determines which functionality from the SDK is available to us.
+
+        * Configurations/Base.xcconfig:
+
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
         Switch a few cases that care about the SDK over to checking __MAC_OS_X_VERSION_MAX_ALLOWED so that things build.
 
         Part of <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros
