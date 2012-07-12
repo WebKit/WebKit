@@ -65,7 +65,7 @@ WK_EXPORT void WKPageSetPaginationMode(WKPageRef page, WKPaginationMode paginati
 WK_EXPORT WKPaginationMode WKPageGetPaginationMode(WKPageRef page);
 WK_EXPORT void WKPageSetPaginationBehavesLikeColumns(WKPageRef page, bool behavesLikeColumns);
 WK_EXPORT bool WKPageGetPaginationBehavesLikeColumns(WKPageRef page);
-WK_EXPORT void WKPageSetPageLength(WKPageRef page, double pagesPerView);
+WK_EXPORT void WKPageSetPageLength(WKPageRef page, double pageLength);
 WK_EXPORT double WKPageGetPageLength(WKPageRef page);
 WK_EXPORT void WKPageSetGapBetweenPages(WKPageRef page, double gap);
 WK_EXPORT double WKPageGetGapBetweenPages(WKPageRef page);

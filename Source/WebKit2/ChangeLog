@@ -1,3 +1,16 @@
+2012-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        pagesPerView param is misnamed for WKPageSetPageLength()
+        https://bugs.webkit.org/show_bug.cgi?id=91033
+
+        Rubber-stamped by Dan Bernstein.
+
+        The name of the second parameter to WKPageSetPageLength(),
+        'pagesPerView', was confusing; it's a page size (normally width)
+        in pixels.
+
+        * UIProcess/API/C/WKPagePrivate.h:
+
 2012-07-11  Anders Carlsson  <andersca@apple.com>
 
         Add -Wtautological-compare and -Wsign-compare warning flags
