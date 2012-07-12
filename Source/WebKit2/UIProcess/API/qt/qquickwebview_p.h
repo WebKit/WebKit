@@ -168,6 +168,7 @@ Q_SIGNALS:
     void navigationRequested(QWebNavigationRequest* request);
 
 protected:
+    virtual bool childMouseEventFilter(QQuickItem*, QEvent*);
     virtual void geometryChanged(const QRectF&, const QRectF&);
     virtual void componentComplete();
     virtual void keyPressEvent(QKeyEvent*);

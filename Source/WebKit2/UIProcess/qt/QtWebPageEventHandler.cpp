@@ -118,6 +118,7 @@ void QtWebPageEventHandler::handleMouseMoveEvent(QMouseEvent* ev)
     static QPointF lastPos = QPointF();
     QTransform fromItemTransform = m_webPage->transformFromItem();
     QPointF webPagePoint = fromItemTransform.map(ev->localPos());
+    ev->accept();
     if (lastPos == webPagePoint)
         return;
     lastPos = webPagePoint;
@@ -139,6 +140,7 @@ void QtWebPageEventHandler::handleMousePressEvent(QMouseEvent* ev)
         m_previousClickButton = ev->button();
     }
 
+    ev->accept();
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, fromItemTransform, m_clickCount));
 
     m_lastClick = webPagePoint;
@@ -147,6 +149,7 @@ void QtWebPageEventHandler::handleMousePressEvent(QMouseEvent* ev)
 
 void QtWebPageEventHandler::handleMouseReleaseEvent(QMouseEvent* ev)
 {
+    ev->accept();
     QTransform fromItemTransform = m_webPage->transformFromItem();
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, fromItemTransform, /*eventClickCount*/ 0));
 }
