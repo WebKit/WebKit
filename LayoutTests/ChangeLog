@@ -1,3 +1,18 @@
+2012-07-12  Adam Barth  <abarth@webkit.org>
+
+        Parse the viewport meta tag like iOS
+        https://bugs.webkit.org/show_bug.cgi?id=72722
+
+        Reviewed by Alexey Proskuryakov.
+
+        Our parsing appears to match iOS already.  This patch simply adds tests
+        that show that we agree on these cases.
+
+        * fast/viewport/viewport-133-expected.txt: Added.
+        * fast/viewport/viewport-133.html: Added.
+        * fast/viewport/viewport-134-expected.txt: Added.
+        * fast/viewport/viewport-134.html: Added.
+
 2012-07-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: ASSERT hit calling open from callback in Worker
