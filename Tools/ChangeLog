@@ -1,3 +1,9 @@
+2012-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the build by declaring -isPaginated before use.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+
 2012-07-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122358.

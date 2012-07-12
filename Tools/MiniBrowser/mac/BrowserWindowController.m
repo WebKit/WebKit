@@ -40,6 +40,7 @@
 - (void)didFailProvisionalLoadWithErrorForFrame:(WKFrameRef)frame;
 - (void)didFailLoadWithErrorForFrame:(WKFrameRef)frame;
 - (void)didSameDocumentNavigationForFrame:(WKFrameRef)frame;
+- (BOOL)isPaginated;
 @end
 
 @implementation BrowserWindowController
