@@ -190,7 +190,7 @@ unsigned ImageInputType::height() const
             return height;
 
         // If the image is available, use its height.
-        if (m_imageLoader->image())
+        if (m_imageLoader && m_imageLoader->image())
             return m_imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).height();
     }
 
@@ -211,7 +211,7 @@ unsigned ImageInputType::width() const
             return width;
 
         // If the image is available, use its width.
-        if (m_imageLoader->image())
+        if (m_imageLoader && m_imageLoader->image())
             return m_imageLoader->image()->imageSizeForRenderer(element->renderer(), 1).width();
     }
 

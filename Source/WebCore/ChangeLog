@@ -1,5 +1,18 @@
 2012-07-11  Kent Tamura  <tkent@chromium.org>
 
+        Accessing width or height of a detached image input element causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=90885
+
+        Reviewed by Kentaro Hara.
+
+        Test: fast/forms/image/width-and-height-of-detached-input.html
+
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::height): Add null check for m_imageLoader.
+        (WebCore::ImageInputType::width): ditto.
+
+2012-07-11  Kent Tamura  <tkent@chromium.org>
+
         Do not save state of stateless form controls
         https://bugs.webkit.org/show_bug.cgi?id=90964
 
