@@ -36,7 +36,7 @@
 #import <sys/stat.h>
 #import <wtf/RetainPtr.h>
 
-#ifdef BUILDING_ON_SNOW_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 extern "C" DADiskRef DADiskCreateFromVolumePath(CFAllocatorRef allocator, DASessionRef session, CFURLRef path);
 #endif
 

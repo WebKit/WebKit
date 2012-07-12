@@ -89,7 +89,7 @@
             action = @selector(_searchWithSpotlightFromMenu:);
             break;
         case WebMenuItemTagSearchWeb: {
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
             RetainPtr<CFStringRef> searchProviderName(AdoptCF, WKCopyDefaultSearchProviderDisplayName());
             title = [NSString stringWithFormat:UI_STRING_INTERNAL("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get()];
 #else
@@ -136,7 +136,7 @@
     }
 }
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 #define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 1
 #else
 #define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 0

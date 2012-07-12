@@ -26,7 +26,7 @@
 #import "config.h"
 #import "KeychainItemShimMethods.h"
 
-#if USE(SECURITY_FRAMEWORK) && defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(SECURITY_FRAMEWORK) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 
 #import "BlockingResponseMap.h"
 #import "SecKeychainItemRequestData.h"
@@ -229,4 +229,4 @@ void initializeKeychainItemShim()
 
 } // namespace WebKit
 
-#endif // USE(SECURITY_FRAMEWORK) && defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // USE(SECURITY_FRAMEWORK) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060

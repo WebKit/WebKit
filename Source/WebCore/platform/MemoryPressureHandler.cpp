@@ -42,7 +42,7 @@ MemoryPressureHandler::MemoryPressureHandler()
 {
 }
 
-#if !PLATFORM(MAC) || defined(BUILDING_ON_SNOW_LEOPARD) || PLATFORM(IOS)
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED == 1060 || PLATFORM(IOS)
 void MemoryPressureHandler::install() { }
 
 void MemoryPressureHandler::uninstall() { }

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SecItemShimMethods.h"
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 #import "BlockingResponseMap.h"
 #import "SecItemRequestData.h"
@@ -119,4 +119,4 @@ void initializeSecItemShim()
 
 } // namespace WebKit
 
-#endif // !BUILDING_ON_SNOW_LEOPARD
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070

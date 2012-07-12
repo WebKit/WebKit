@@ -84,7 +84,7 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     AffineTransform transform = CGContextGetCTM(context);
     ThemeMac::setFocusRingClipRect(transform.mapRect(clipBounds));
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     __block GraphicsContext* ctx = &graphicsContext;
 
     wkCALayerEnumerateRectsBeingDrawnWithBlock(layer, context, ^(CGRect rect){

@@ -43,7 +43,7 @@ void InitWebCoreSystemInterface(void)
         return;
 
     INIT(AdvanceDefaultButtonPulseAnimation);
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
 #endif
     INIT(CGContextGetShouldSmoothFonts);
@@ -119,14 +119,14 @@ void InitWebCoreSystemInterface(void)
     INIT(GetGlyphsForCharacters);
     INIT(GetVerticalGlyphsForCharacters);
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
     INIT(GetHyphenationLocationBeforeIndex);
     INIT(GetNSEventMomentumPhase);
 #endif
 
     INIT(CreateCTLineWithUniCharProvider);
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(IOSurfaceContextCreate);
     INIT(IOSurfaceContextCreateImage);
     INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
@@ -174,24 +174,24 @@ void InitWebCoreSystemInterface(void)
 #if PLATFORM(MAC)
     // FIXME: We should stop using this file in Chromium.
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(CreateVMPressureDispatchOnMainQueue);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     INIT(GetMacOSXVersionString);
     INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(CGPathAddRoundedRect);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(CFURLRequestAllowAllPostCaching);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
     INIT(FilterIsManagedSession);
     INIT(FilterCreateInstance);
     INIT(FilterRelease);

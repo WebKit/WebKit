@@ -284,7 +284,7 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 bool GraphicsContext3D::systemAllowsMultisamplingOnATICards() const
 {
 #if PLATFORM(MAC)
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     return true;
 #else
     ASSERT(isMainThread());

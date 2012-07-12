@@ -72,7 +72,7 @@ static String formatLocalizedString(String format, ...)
 #endif
 }
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static String truncatedStringForLookupMenuItem(const String& original)
 {
     if (original.isEmpty())
@@ -244,7 +244,7 @@ String contextMenuItemTagSearchInSpotlight()
 
 String contextMenuItemTagSearchWeb()
 {
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     RetainPtr<CFStringRef> searchProviderName(AdoptCF, wkCopyDefaultSearchProviderDisplayName());
     return formatLocalizedString(WEB_UI_STRING("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get());
 #else
@@ -254,7 +254,7 @@ String contextMenuItemTagSearchWeb()
 
 String contextMenuItemTagLookUpInDictionary(const String& selectedString)
 {
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
     UNUSED_PARAM(selectedString);
     return WEB_UI_STRING("Look Up in Dictionary", "Look Up in Dictionary context menu item");
 #else
@@ -755,7 +755,7 @@ String htmlSelectMultipleItems(size_t count)
 String imageTitle(const String& filename, const IntSize& size)
 {
 #if USE(CF)
-#if !defined(BUILDING_ON_LEOPARD)
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     RetainPtr<CFStringRef> filenameCFString(AdoptCF, filename.createCFString());
     RetainPtr<CFLocaleRef> locale(AdoptCF, CFLocaleCopyCurrent());
     RetainPtr<CFNumberFormatterRef> formatter(AdoptCF, CFNumberFormatterCreate(0, locale.get(), kCFNumberFormatterDecimalStyle));

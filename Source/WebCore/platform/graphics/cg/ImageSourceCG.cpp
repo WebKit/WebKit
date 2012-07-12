@@ -85,7 +85,7 @@ ImageSource::~ImageSource()
 
 void ImageSource::clear(bool destroyAllFrames, size_t, SharedBuffer* data, bool allDataReceived)
 {
-#if !defined(BUILDING_ON_LEOPARD)
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     // Recent versions of ImageIO discard previously decoded image frames if the client
     // application no longer holds references to them, so there's no need to throw away
     // the decoder unless we're explicitly asked to destroy all of the frames.
@@ -116,7 +116,7 @@ static CFDictionaryRef imageSourceOptions(ImageSource::ShouldSkipMetadata skipMe
     if (!options) {
         const unsigned numOptions = 3;
 
-#if defined(BUILDING_ON_LION) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
         // Lion and Snow Leopard only return Orientation when kCGImageSourceSkipMetaData is false,
         // and incorrectly return cached metadata if an image is queried once with kCGImageSourceSkipMetaData true
         // and then subsequently with kCGImageSourceSkipMetaData false.

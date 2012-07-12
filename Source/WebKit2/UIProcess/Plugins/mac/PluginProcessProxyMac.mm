@@ -35,7 +35,7 @@
 #import <spawn.h>
 #import <wtf/text/CString.h>
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #import <QuartzCore/CARemoteLayerServer.h>
 #endif
 
@@ -120,7 +120,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 {
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
 #else
     mach_port_t renderServerPort = WKInitializeRenderServer();

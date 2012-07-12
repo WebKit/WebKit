@@ -1989,23 +1989,23 @@ __ZN7WebCore7IntSizeC1ERK7_NSSize
 __ZNK7WebCore7IntSizecv7_NSSizeEv
 #endif
 
-#if defined(BUILDING_ON_SNOW_LEOPARD) && !PLATFORM(IOS)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060 && !PLATFORM(IOS)
 _wkGetNSEventMomentumPhase
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) || PLATFORM(IOS)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 || PLATFORM(IOS)
 _wkCALayerEnumerateRectsBeingDrawnWithBlock
 _wkCFURLRequestAllowAllPostCaching
 _wkCGPathAddRoundedRect
 _wkCreateCTTypesetterWithUniCharProviderAndOptions
 #endif
 
-#if (!defined(BUILDING_ON_SNOW_LEOPARD) || PLATFORM(IOS)) && !PLATFORM(IOS_SIMULATOR)
+#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 || PLATFORM(IOS)) && !PLATFORM(IOS_SIMULATOR)
 _wkIOSurfaceContextCreate
 _wkIOSurfaceContextCreateImage
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !PLATFORM(IOS)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && !PLATFORM(IOS)
 _wkAVAssetResolvedURL
 _wkCopyDefaultSearchProviderDisplayName
 _wkCreateVMPressureDispatchOnMainQueue
@@ -2014,7 +2014,7 @@ _wkExecutableWasLinkedOnOrBeforeSnowLeopard
 _wkRecommendedScrollerStyle
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
 _wkExecutableWasLinkedOnOrBeforeLion
 _wkFilterAddData
 _wkFilterCreateInstance
@@ -2073,7 +2073,7 @@ __ZN7WebCore14ResourceHandle46setPrivateBrowsingStorageSessionIdentifierBaseERKN
 __ZN7WebCore14ResourceHandle21currentStorageSessionEv
 __ZN7WebCore14ResourceHandle29privateBrowsingStorageSessionEv
 __ZN7WebCore26currentCFHTTPCookieStorageEv
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 __ZN7WebCore14ResourceHandle24setDefaultStorageSessionEP21__CFURLStorageSession
 #else
 __ZN7WebCore14ResourceHandle24setDefaultStorageSessionEPK21__CFURLStorageSession
@@ -2543,7 +2543,7 @@ __ZNK7WebCore4KURL7isValidEv
 __ZNK7WebCore4KURL22protocolIsInHTTPFamilyEv
 #endif
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 __ZN7WebCore27AlternativeTextUIController15addAlternativesERKN3WTF9RetainPtrI18NSTextAlternativesEE
 __ZN7WebCore27AlternativeTextUIController22alternativesForContextEy
 __ZN7WebCore27AlternativeTextUIController5clearEv

@@ -105,7 +105,7 @@
     return nil;
 }
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 - (NSDraggingFormation)draggingFormation
 {
     return NSDraggingFormationDefault;
@@ -140,7 +140,7 @@
 {
     // Ignored.
 }
-#endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 @end
 

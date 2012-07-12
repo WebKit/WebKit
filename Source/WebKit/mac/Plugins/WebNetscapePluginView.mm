@@ -1099,7 +1099,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #endif
             if (accleratedCompositingEnabled) {
                 // FIXME: This code can be shared between WebHostedNetscapePluginView and WebNetscapePluginView.
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
                 // Since this layer isn't going to be inserted into a view, we need to create another layer and flip its geometry
                 // in order to get the coordinate system right.
                 RetainPtr<CALayer> realPluginLayer(AdoptNS, _pluginLayer.leakRef());
@@ -2231,7 +2231,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             break;
         }
         case NPNURLVProxy: {
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
             if (!value)
                 break;
             
@@ -2341,7 +2341,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 // For now, we'll distinguish older broken versions of Silverlight by asking the plug-in if it resolved its full screen badness.
 - (void)_workaroundSilverlightFullscreenBug:(BOOL)initializedPlugin
 {
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     ASSERT(_isSilverlight);
     NPBool isFullscreenPerformanceIssueFixed = 0;
     NPPluginFuncs *pluginFuncs = [_pluginPackage.get() pluginFuncs];

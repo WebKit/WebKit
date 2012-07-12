@@ -1031,7 +1031,7 @@ void LayoutTestController::setWebViewEditable(bool editable)
 
 static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoaderRunLoopMode";
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 @protocol NSURLConnectionDelegate <NSObject>
 @end
 #endif
@@ -1107,7 +1107,7 @@ static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoade
 void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
 {
     // See <rdar://problem/7880699>.
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     RetainPtr<CFStringRef> urlStringCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
     RetainPtr<CFStringRef> usernameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, username));
     RetainPtr<CFStringRef> passwordCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, password));
@@ -1135,7 +1135,7 @@ void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
 
 void LayoutTestController::setTextDirection(JSStringRef directionName)
 {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     if (JSStringIsEqualToUTF8CString(directionName, "ltr"))
         [[mainFrame webView] makeBaseWritingDirectionLeftToRight:0];
     else if (JSStringIsEqualToUTF8CString(directionName, "rtl"))

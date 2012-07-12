@@ -28,7 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 #import "PluginProcess.h"
 #import "NetscapePluginModule.h"
@@ -103,7 +103,7 @@ NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths
     if (profile.isNull())
         exit(EX_NOPERM);
 
-#if !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
     String systemDirectorySuffix = "com.apple.WebKit.PluginProcess+" + PluginProcess::shared().netscapePluginModule()->module()->bundleIdentifier();
     setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
@@ -190,6 +190,6 @@ NPError WKN_FileStopAccessing(const char* path)
     return NPERR_NO_ERROR;
 }
 
-#endif // !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)

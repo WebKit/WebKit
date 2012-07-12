@@ -136,7 +136,7 @@ void EnvironmentVariables::copyEnvironmentVariables()
     m_environmentPointer = m_environmentVariables.data();
 }
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 const char* EnvironmentVariables::preexistingProcessServiceNameKey()
 {
@@ -148,6 +148,6 @@ const char* EnvironmentVariables::preexistingProcessTypeKey()
     return "WEBKIT_PREEXISTING_PROCESS_TYPE";
 }
 
-#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 } // namespace WebKit

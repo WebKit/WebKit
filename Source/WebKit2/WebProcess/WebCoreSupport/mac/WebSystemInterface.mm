@@ -37,7 +37,7 @@ void InitWebCoreSystemInterface(void)
     
     dispatch_once(&initOnce, ^{
         INIT(AdvanceDefaultButtonPulseAnimation);
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
 #endif
         INIT(CopyCFLocalizationPreferredName);
@@ -117,7 +117,7 @@ void InitWebCoreSystemInterface(void)
 
         INIT(SetMetadataURL);
         
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         INIT(IOSurfaceContextCreate);
         INIT(IOSurfaceContextCreateImage);
         INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
@@ -156,23 +156,23 @@ void InitWebCoreSystemInterface(void)
         INIT(CopyCFURLResponseSuggestedFilename);
         INIT(SetCFURLResponseMIMEType);
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         INIT(CreateVMPressureDispatchOnMainQueue);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         INIT(GetMacOSXVersionString);
         INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         INIT(CGPathAddRoundedRect);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         INIT(CFURLRequestAllowAllPostCaching);
 #endif
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
         INIT(FilterIsManagedSession);
         INIT(FilterCreateInstance);
         INIT(FilterRelease);

@@ -52,7 +52,7 @@ using namespace WebCore;
 - (void)_immediateScrollToPoint:(NSPoint)newOrigin;
 @end
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 @interface NSWindow (WebNSWindowDetails)
 - (void)_disableDelayedWindowDisplay;
 - (void)_enableDelayedWindowDisplay;
@@ -105,13 +105,13 @@ using namespace WebCore;
 {
     _isScrolling = YES;
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     [[self window] _disableDelayedWindowDisplay];
 #endif
 
     [super _immediateScrollToPoint:newOrigin];
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     [[self window] _enableDelayedWindowDisplay];
 #endif
 

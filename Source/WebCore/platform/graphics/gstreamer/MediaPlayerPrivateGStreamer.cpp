@@ -1624,7 +1624,7 @@ bool MediaPlayerPrivateGStreamer::hasSingleSecurityOrigin() const
 
 bool MediaPlayerPrivateGStreamer::supportsFullscreen() const
 {
-#if defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     // See <rdar://problem/7389945>
     return false;
 #else

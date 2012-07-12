@@ -472,7 +472,7 @@ void PageClientImpl::didPerformDictionaryLookup(const String& text, double scale
 
     NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // Convert to screen coordinates.
     textBaselineOrigin = [m_wkView convertPoint:textBaselineOrigin toView:nil];
     textBaselineOrigin = [m_wkView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
@@ -487,7 +487,7 @@ void PageClientImpl::didPerformDictionaryLookup(const String& text, double scale
 
 void PageClientImpl::dismissDictionaryLookupPanel()
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     WKHideWordDefinitionWindow();
 #endif
 }
@@ -519,7 +519,7 @@ String PageClientImpl::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAl
 
 void PageClientImpl::recordAutocorrectionResponse(AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     NSCorrectionResponse response = responseType == AutocorrectionReverted ? NSCorrectionResponseReverted : NSCorrectionResponseEdited;
     CorrectionPanel::recordAutocorrectionResponse(m_wkView, response, replacedString, replacementString);
 #endif
@@ -527,7 +527,7 @@ void PageClientImpl::recordAutocorrectionResponse(AutocorrectionResponseType res
 
 void PageClientImpl::recommendedScrollbarStyleDidChange(int32_t newStyle)
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     NSArray *trackingAreas = [m_wkView trackingAreas];
     NSUInteger count = [trackingAreas count];
     ASSERT(count == 1);

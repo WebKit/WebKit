@@ -46,7 +46,7 @@ public:
 
     char** environmentPointer() const { return m_environmentPointer; }
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     static const char* preexistingProcessServiceNameKey();
     static const char* preexistingProcessTypeKey();
 #endif

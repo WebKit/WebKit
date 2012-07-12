@@ -52,7 +52,7 @@
 #include <IOSurface/IOSurface.h>
 #endif
 
-#if defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
 #include <wtf/CurrentTime.h>
 #endif
 
@@ -183,7 +183,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace 
     m_context->scale(FloatSize(1, -1));
     m_context->translate(0, -size.height());
     m_context->setIsAcceleratedContext(accelerateRendering);
-#if defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
     m_data.m_lastFlushTime = currentTimeMS();
 #endif
     success = true;
@@ -195,7 +195,7 @@ ImageBuffer::~ImageBuffer()
 
 GraphicsContext* ImageBuffer::context() const
 {
-#if defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
     // Force a flush if last flush was more than 20ms ago
     if (m_context->isAcceleratedContext()) {
         double elapsedTime = currentTimeMS() - m_data.m_lastFlushTime;
@@ -250,7 +250,7 @@ NativeImagePtr ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     else {
         image = wkIOSurfaceContextCreateImage(context()->platformContext());
-#if defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
         m_data.m_lastFlushTime = currentTimeMS();
 #endif
     }
@@ -310,7 +310,7 @@ PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRec
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
-#if defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
         m_data.m_lastFlushTime = currentTimeMS();
 #endif
     }
@@ -321,7 +321,7 @@ PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRe
 {
     if (m_context->isAcceleratedContext()) {
         CGContextFlush(context()->platformContext());
-#if defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
         m_data.m_lastFlushTime = currentTimeMS();
 #endif
     }

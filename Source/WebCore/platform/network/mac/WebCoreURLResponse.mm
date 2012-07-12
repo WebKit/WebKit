@@ -497,7 +497,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
         }
     }
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     // Workaround for <rdar://problem/5539824>
     if (CFStringCompare(result.get(), CFSTR("text/xml"), 0) == kCFCompareEqualTo)
         result = CFSTR("application/xml");

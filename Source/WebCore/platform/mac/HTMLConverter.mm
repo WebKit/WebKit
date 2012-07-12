@@ -50,7 +50,7 @@ using namespace HTMLNames;
 static NSFileWrapper *fileWrapperForURL(DocumentLoader *, NSURL *);
 static NSFileWrapper *fileWrapperForElement(Element*);
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 // Additional control Unicode characters
 const unichar WebNextLineCharacter = 0x0085;
@@ -100,7 +100,7 @@ static NSFont *WebDefaultFont()
 
 @implementation WebHTMLConverter
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 static NSFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMutableDictionary *cache)
 {
@@ -1657,7 +1657,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
     return (0 == _errorCode) ? [[_attrStr retain] autorelease] : nil;
 }
 
-#endif // !defined(BUILDING_ON_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
 + (NSAttributedString *)editingAttributedStringFromRange:(Range*)range

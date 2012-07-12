@@ -1,3 +1,36 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros
+
+        This removal was handled by a script that translates the relevant macros in to the equivalent checks
+        using the system availability macros.
+
+        Reviewed by Filip Pizlo.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        * Misc/WebKitErrors.m:
+        * Misc/WebNSControlExtras.m:
+        * Misc/WebNSFileManagerExtras.mm:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebNetscapePluginView.mm:
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebCoreSupport/WebSystemInterface.mm:
+        * WebView/WebClipView.mm:
+        * WebView/WebDynamicScrollBarsView.mm:
+        * WebView/WebFrameView.mm:
+        * WebView/WebFullScreenController.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebPDFDocumentExtras.mm:
+        * WebView/WebPreferences.mm:
+        * WebView/WebResourceInternal.h:
+        * WebView/WebScriptDebugDelegate.h:
+        * WebView/WebView.mm:
+        * WebView/WebViewPrivate.h:
+
 2012-07-11  Anders Carlsson  <andersca@apple.com>
 
         Add -Wtautological-compare and -Wsign-compare warning flags

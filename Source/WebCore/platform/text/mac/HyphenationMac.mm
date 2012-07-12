@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Hyphenation.h"
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 
 #import "AtomicStringKeyedMRUCache.h"
 #import "TextBreakIteratorInternalICU.h"
@@ -67,4 +67,4 @@ size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeI
 
 } // namespace WebCore
 
-#endif // defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060

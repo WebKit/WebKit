@@ -29,7 +29,7 @@
 @protocol NAME <NSObject> \
 @end
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 
 EMPTY_PROTOCOL(NSTableViewDataSource)
 EMPTY_PROTOCOL(NSTableViewDelegate)
@@ -38,7 +38,7 @@ EMPTY_PROTOCOL(NSAnimationDelegate)
 
 #endif
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 
 EMPTY_PROTOCOL(NSURLConnectionDelegate)
 EMPTY_PROTOCOL(NSURLDownloadDelegate)

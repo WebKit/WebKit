@@ -703,7 +703,7 @@ static bool selectionContainsPossibleWord(Frame* frame)
 }
 
 #if PLATFORM(MAC)
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 #define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 1
 #else
 #define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 0
@@ -934,7 +934,7 @@ void ContextMenuController::populate()
                         appendItem(IgnoreGrammarItem, m_contextMenu.get());
                     appendItem(*separatorItem(), m_contextMenu.get());
                     haveContextMenuItemsForMisspellingOrGrammer = true;
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
                 } else {
                     // If the string was autocorrected, generate a contextual menu item allowing it to be changed back.
                     String replacedString = m_hitTestResult.replacedString();

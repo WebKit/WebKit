@@ -125,7 +125,7 @@ extern "C" {
 
         if (accleratedCompositingEnabled && _proxy->rendererType() == UseAcceleratedCompositing) {
             // FIXME: This code can be shared between WebHostedNetscapePluginView and WebNetscapePluginView.
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
             // Since this layer isn't going to be inserted into a view, we need to create another layer and flip its geometry
             // in order to get the coordinate system right.
             RetainPtr<CALayer> realPluginLayer(AdoptNS, _pluginLayer.leakRef());

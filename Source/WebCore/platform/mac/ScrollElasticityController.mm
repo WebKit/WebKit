@@ -33,7 +33,7 @@
 
 #if ENABLE(RUBBER_BANDING)
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 @interface NSProcessInfo (ScrollAnimatorMacExt)
 - (NSTimeInterval)systemUptime;
 @end
@@ -71,8 +71,7 @@ static const float scrollVelocityZeroingTimeout = 0.10f;
 static const float rubberbandDirectionLockStretchRatio = 1;
 static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BULDING_ON_SNOW_LEOPARD) || \
-    defined(BUILDING_ON_LION) || PLATFORM(CHROMIUM)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070 || PLATFORM(CHROMIUM)
 static const float rubberbandStiffness = 20;
 static const float rubberbandAmplitude = 0.31f;
 static const float rubberbandPeriod = 1.6f;

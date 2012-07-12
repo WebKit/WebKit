@@ -129,7 +129,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
             patternColor = grammarPatternColor.get();
             break;
         }
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         // To support correction panel.
         case DocumentMarkerAutocorrectionReplacementLineStyle:
         case DocumentMarkerDictationAlternativesLineStyle:

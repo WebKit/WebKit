@@ -63,7 +63,7 @@ namespace WebKit {
 #error Unknown architecture
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 static String macOSXVersionString()
 {
@@ -98,7 +98,7 @@ static String macOSXVersionString()
     return String::format("%d", major);
 }
 
-#endif // !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 static String userVisibleWebKitVersionString()
 {

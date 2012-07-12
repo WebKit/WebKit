@@ -69,7 +69,7 @@ void Settings::initializeDefaultFontFamilies()
     setStandardFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
     setSerifFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
 #endif
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     setFixedFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
     setSansSerifFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
 #else

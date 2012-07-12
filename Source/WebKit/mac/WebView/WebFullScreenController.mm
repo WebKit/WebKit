@@ -70,7 +70,7 @@ static IntRect screenRectOfContents(Element* element)
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 @interface NSWindow(convertRectToScreenForLeopardAndSnowLeopard)
 - (NSRect)convertRectToScreen:(NSRect)aRect;
 @end
@@ -273,14 +273,14 @@ static IntRect screenRectOfContents(Element* element)
         WKWindowSetClipRect([self window], windowBounds);
         
         NSWindow *webWindow = [_webViewPlaceholder.get() window];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
         // behavior here, making sure to reset the animation behavior afterward.
         NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
         [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
 #endif
         [webWindow orderOut:self];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         [webWindow setAnimationBehavior:animationBehavior];
 #endif
         
@@ -323,7 +323,7 @@ static IntRect screenRectOfContents(Element* element)
     [self _updateMenuAndDockForFullScreen];
     
     NSWindow* webWindow = [_webViewPlaceholder.get() window];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
     // behavior here, making sure to reset the animation behavior afterward.
     NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
@@ -338,7 +338,7 @@ static IntRect screenRectOfContents(Element* element)
         [webWindow setCollectionBehavior:behavior];
     } else
         [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     [webWindow setAnimationBehavior:animationBehavior];
 #endif
 
@@ -415,7 +415,7 @@ static IntRect screenRectOfContents(Element* element)
 - (void)_updateMenuAndDockForFullScreen
 {
     // NSApplicationPresentationOptions is available on > 10.6 only:
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
     NSScreen* fullscreenScreen = [[self window] screen];
     

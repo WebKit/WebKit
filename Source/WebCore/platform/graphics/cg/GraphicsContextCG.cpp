@@ -54,12 +54,12 @@
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 // Building on 10.6 or later: kCGInterpolationMedium is defined in the CGInterpolationQuality enum.
 #define HAVE_CG_INTERPOLATION_MEDIUM 1
 #endif
 
-#ifndef TARGETING_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 // Targeting 10.6 or later: use kCGInterpolationMedium.
 #define WTF_USE_CG_INTERPOLATION_MEDIUM 1
 #endif
@@ -1181,7 +1181,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
     blurRadius = min(blurRadius, narrowPrecisionToCGFloat(1000.0));
 
 
-#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
     if (!isAcceleratedContext()) {
         // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated
         // to the desired integer. Also see: <rdar://problem/10056277>
@@ -1598,7 +1598,7 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 void GraphicsContext::setAllowsFontSmoothing(bool allowsFontSmoothing)
 {
     UNUSED_PARAM(allowsFontSmoothing);
-#if !defined(BUILDING_ON_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     CGContextRef context = platformContext();
     CGContextSetAllowsFontSmoothing(context, allowsFontSmoothing);
 #endif

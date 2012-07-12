@@ -104,7 +104,7 @@
 @end
 
 @interface NSWindow (WKNSWindowDetails)
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 - (NSRect)_growBoxRect;
 - (id)_growBoxOwner;
 - (void)_setShowOpaqueGrowBoxForOwner:(id)owner;
@@ -957,7 +957,7 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 
 - (void)displayIfNeeded
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // FIXME: We should remove this code when <rdar://problem/9362085> is resolved. In the meantime,
     // it is necessary to disable scren updates so we get a chance to redraw the corners before this 
     // display is visible.
@@ -969,7 +969,7 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 
     [super displayIfNeeded];
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (shouldMaskWindow) {
         [window _maskRoundedBottomCorners:_data->_windowBottomCornerIntersectionRect];
         NSEnableScreenUpdates();
@@ -1666,7 +1666,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     _data->_page->dragUpdated(&dragData, [[draggingInfo draggingPasteboard] name]);
     
     WebCore::DragSession dragSession = _data->_page->dragSession();
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     NSInteger numberOfValidItemsForDrop = dragSession.numberOfItemsToBeAccepted;
     NSDraggingFormation draggingFormation = NSDraggingFormationNone;
     if (dragSession.mouseIsOverFileInput && numberOfValidItemsForDrop > 0)
@@ -1778,7 +1778,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 }
 
 
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 - (BOOL)_ownsWindowGrowBox
 {
     NSWindow* window = [self window];
@@ -1888,7 +1888,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     [self removeWindowObservers];
     [self addWindowObserversForWindow:window];
 
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     if ([currentWindow _growBoxOwner] == self)
         [currentWindow _setShowOpaqueGrowBoxForOwner:nil];
 #endif
@@ -1927,7 +1927,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
             _data->_endGestureMonitor = nil;
         }
 #endif
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         WKHideWordDefinitionWindow();
 #endif
     }
@@ -2209,7 +2209,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (float)_intrinsicDeviceScaleFactor
 {
     NSWindow *window = [self window];
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (window)
         return [window backingScaleFactor];
     return [[NSScreen mainScreen] backingScaleFactor];
@@ -2234,7 +2234,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     return NO;
 }
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 - (void)quickLookWithEvent:(NSEvent *)event
 {
     NSPoint locationInViewCoordinates = [self convertPoint:[event locationInWindow] fromView:nil];
@@ -2865,7 +2865,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_didChangeScrollbarsForMainFrame
 {
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     [self _updateGrowBoxForWindowFrameChange];
 #endif
 }
@@ -2906,7 +2906,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_cacheWindowBottomCornerRect
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // FIXME: We should remove this code when <rdar://problem/9362085> is resolved. 
     NSWindow *window = [self window];
     if (!window)
@@ -2967,7 +2967,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
     NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect;
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
         options |= NSTrackingActiveAlways;
     else
@@ -3009,7 +3009,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return self;
 }
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 - (BOOL)wantsUpdateLayer
 {
     return [self _shouldUseTiledDrawingArea];
@@ -3095,7 +3095,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 + (void)hideWordDefinitionWindow
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     WKHideWordDefinitionWindow();
 #endif
 }

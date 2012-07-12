@@ -44,10 +44,10 @@ static inline CGFloat webkit_CGFloor(CGFloat value)
     return floor(value);
 }
 
-#define HAVE_MEDIA_CONTROL (!defined(BUILDING_ON_LEOPARD))
+#define HAVE_MEDIA_CONTROL (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1060)
 
 @interface WebVideoFullscreenHUDWindowController (Private)
-#if !defined(BUILDING_ON_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 <NSWindowDelegate>
 #endif
 

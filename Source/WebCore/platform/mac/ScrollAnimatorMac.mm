@@ -635,7 +635,7 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
 
 static bool scrollAnimationEnabledForSystem()
 {
-#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION) || PLATFORM(CHROMIUM)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070 || PLATFORM(CHROMIUM)
     return [[NSUserDefaults standardUserDefaults] boolForKey:@"AppleScrollAnimationEnabled"];
 #else
     return [[NSUserDefaults standardUserDefaults] boolForKey:@"NSScrollAnimationEnabled"];

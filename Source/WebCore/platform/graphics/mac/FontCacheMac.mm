@@ -52,7 +52,7 @@ static void invalidateFontCache(void*)
     fontCache()->invalidate();
 }
 
-#if !defined(BUILDING_ON_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void *, CFDictionaryRef)
 {
     ASSERT_UNUSED(observer, observer == fontCache());
@@ -69,7 +69,7 @@ static void fontCacheATSNotificationCallback(ATSFontNotificationInfoRef, void*)
 void FontCache::platformInit()
 {
     wkSetUpFontCache();
-#if !defined(BUILDING_ON_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
 #else
     // kCTFontManagerRegisteredFontsChangedNotification does not exist on Leopard and earlier.

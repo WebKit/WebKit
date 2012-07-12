@@ -735,7 +735,7 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const PaintInfo& paintInfo,
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
-#if defined(BUILDING_ON_LION) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
     bool useNSTextFieldCell = o->style()->hasAppearance()
         && o->style()->visitedDependentColor(CSSPropertyBackgroundColor) == Color::white
         && !o->style()->hasBackgroundImage();
@@ -2111,7 +2111,7 @@ IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonB
 
 bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
 {
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     return true;
 #else
     return false;
@@ -2183,7 +2183,7 @@ NSTextFieldCell* RenderThemeMac::textField() const
         [m_textField.get() setBezeled:YES];
         [m_textField.get() setEditable:YES];
         [m_textField.get() setFocusRingType:NSFocusRingTypeExterior];
-#if defined(BUILDING_ON_LION) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
         [m_textField.get() setDrawsBackground:YES];
         [m_textField.get() setBackgroundColor:[NSColor whiteColor]];
 #else

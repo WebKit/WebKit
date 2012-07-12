@@ -267,7 +267,7 @@ void MediaPlayerPrivateQTKit::createQTMovie(const String& url)
     NSMutableDictionary *movieAttributes = commonMovieAttributes();    
     [movieAttributes setValue:cocoaURL forKey:QTMovieURLAttribute];
 
-#if !defined(BUILDING_ON_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     CFDictionaryRef proxySettings = CFNetworkCopySystemProxySettings();
     CFArrayRef proxiesForURL = CFNetworkCopyProxiesForURL((CFURLRef)cocoaURL, proxySettings);
     BOOL willUseProxy = YES;
@@ -392,7 +392,7 @@ void MediaPlayerPrivateQTKit::createQTMovie(NSURL *url, NSDictionary *movieAttri
                                              selector:@selector(didEnd:) 
                                                  name:QTMovieDidEndNotification 
                                                object:m_qtMovie.get()];
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
                                              selector:@selector(layerHostChanged:)
                                                  name:@"WebKitLayerHostChanged"
@@ -876,7 +876,7 @@ bool MediaPlayerPrivateQTKit::hasAudio() const
 
 bool MediaPlayerPrivateQTKit::supportsFullscreen() const
 {
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     return true;
 #else
     // See <rdar://problem/7389945>
@@ -903,7 +903,7 @@ void MediaPlayerPrivateQTKit::setClosedCaptionsVisible(bool closedCaptionsVisibl
     if (metaDataAvailable()) {
         wkQTMovieSetShowClosedCaptions(m_qtMovie.get(), closedCaptionsVisible);
 
-#if USE(ACCELERATED_COMPOSITING) && !defined(BUILDING_ON_LEOPARD)
+#if USE(ACCELERATED_COMPOSITING) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     if (closedCaptionsVisible && m_qtVideoLayer) {
         // Captions will be rendered upside down unless we flag the movie as flipped (again). See <rdar://7408440>.
         [m_qtVideoLayer.get() setGeometryFlipped:YES];
@@ -1001,7 +1001,7 @@ void MediaPlayerPrivateQTKit::cacheMovieScale()
     NSSize initialSize = NSZeroSize;
     NSSize naturalSize = [[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     // QTMovieCurrentSizeAttribute is not allowed with instances of QTMovie that have been 
     // opened with QTMovieOpenForPlaybackAttribute, so ask for the display transform attribute instead.
     NSAffineTransform *displayTransform = [m_qtMovie.get() attributeForKey:@"QTMoviePreferredTransformAttribute"];
@@ -1236,7 +1236,7 @@ void MediaPlayerPrivateQTKit::didEnd()
 }
 
 #if USE(ACCELERATED_COMPOSITING) && !(PLATFORM(QT) && USE(QTKIT))
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 static bool layerIsDescendentOf(PlatformLayer* child, PlatformLayer* descendent)
 {
     if (!child || !descendent)
@@ -1253,7 +1253,7 @@ static bool layerIsDescendentOf(PlatformLayer* child, PlatformLayer* descendent)
 
 void MediaPlayerPrivateQTKit::layerHostChanged(PlatformLayer* rootLayer)
 {
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     if (!rootLayer)
         return;
 

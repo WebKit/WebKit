@@ -29,7 +29,7 @@
 #ifndef AccessibilityList_h
 #define AccessibilityList_h
 
-#if PLATFORM(MAC) && defined(BUILDING_ON_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 #define ACCESSIBILITY_LISTS 0
 #else
 #define ACCESSIBILITY_LISTS 1

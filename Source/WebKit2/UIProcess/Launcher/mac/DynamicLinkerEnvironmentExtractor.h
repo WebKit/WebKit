@@ -26,7 +26,7 @@
 #ifndef DynamicLinkerEnvironmentExtractor_h
 #define DynamicLinkerEnvironmentExtractor_h
 
-#ifndef BUILDING_ON_SNOW_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 #include <mach/machine.h>
 #include <wtf/Noncopyable.h>
@@ -61,6 +61,6 @@ private:
 
 } // namespace WebKit
 
-#endif // BUILDING_ON_SNOW_LEOPARD
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 
 #endif // DynamicLinkerEnvironmentExtractor_h

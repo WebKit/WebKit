@@ -41,7 +41,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 #include <SystemConfiguration/SystemConfiguration.h>
 #endif
 
@@ -176,7 +176,7 @@ void SocketStreamHandle::removePACRunLoopSource()
 
 void SocketStreamHandle::chooseProxy()
 {
-#ifndef BUILDING_ON_LEOPARD
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     RetainPtr<CFDictionaryRef> proxyDictionary(AdoptCF, CFNetworkCopySystemProxySettings());
 #else
     // We don't need proxy information often, so there is no need to set up a permanent dynamic store session.

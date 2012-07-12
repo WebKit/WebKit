@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DynamicLinkerEnvironmentExtractor.h"
 
-#ifndef BUILDING_ON_SNOW_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 #include "EnvironmentVariables.h"
 #include <mach-o/loader.h>
@@ -201,4 +201,4 @@ void DynamicLinkerEnvironmentExtractor::getExtractedEnvironmentVariables(Environ
 
 } // namespace WebKit
 
-#endif // BUILDING_ON_SNOW_LEOPARD
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED == 1060

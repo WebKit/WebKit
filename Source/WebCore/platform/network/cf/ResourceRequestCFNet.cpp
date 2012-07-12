@@ -265,7 +265,7 @@ void ResourceRequest::setHTTPPipeliningEnabled(bool flag)
     s_httpPipeliningEnabled = flag;
 }
 
-#if USE(CFNETWORK) || PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(CFNETWORK) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static inline bool readBooleanPreference(CFStringRef key)
 {
     Boolean keyExistsAndHasValidFormat;
@@ -281,7 +281,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     // Always set the connection count per host, even when pipelining.
     unsigned maximumHTTPConnectionCountPerHost = wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 
-#if USE(CFNETWORK) || PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(CFNETWORK) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     static const unsigned unlimitedConnectionCount = 10000;
 
     if (!ResourceRequest::httpPipeliningEnabled() && readBooleanPreference(CFSTR("WebKitEnableHTTPPipelining")))

@@ -45,7 +45,7 @@
 #import <objc/runtime.h>
 #import <stdio.h>
 
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 #import "KeychainItemShimMethods.h"
 #else
 #import "SecItemShimMethods.h"
@@ -185,7 +185,7 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
         return;
     }
 
-#if !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
     String systemDirectorySuffix = "com.apple.WebProcess+" + parameters.uiProcessBundleIdentifier;
     setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
@@ -281,7 +281,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
 void WebProcess::initializeShim()
 {
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     initializeKeychainItemShim();
 #else
     initializeSecItemShim();
@@ -299,14 +299,14 @@ void WebProcess::platformTerminate()
 
 void WebProcess::secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData& response)
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     didReceiveSecItemResponse(requestID, response);
 #endif
 }
 
 void WebProcess::secKeychainItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecKeychainItemResponseData& response)
 {
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     didReceiveSecKeychainItemResponse(requestID, response);
 #endif
 }

@@ -418,7 +418,7 @@ static void activateTestingFonts()
         "WebKitWeightWatcher700.ttf",
         "WebKitWeightWatcher800.ttf",
         "WebKitWeightWatcher900.ttf",
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         "SampleFont.sfont",
 #endif
         0
@@ -590,7 +590,7 @@ static void resetDefaultsToConsistentValues()
 #endif
 
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(CHROMIUM)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(CHROMIUM)
     [defaults setBool:NO forKey:@"NSScrollAnimationEnabled"];
 #else
     [defaults setBool:NO forKey:@"AppleScrollAnimationEnabled"];
@@ -655,7 +655,7 @@ static void resetDefaultsToConsistentValues()
     // So, turn it off for now, but we might want to turn it back on some day.
     [preferences setUsesPageCache:NO];
     [preferences setAcceleratedCompositingEnabled:YES];
-#if USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(CA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     [preferences setCanvasUsesAcceleratedDrawing:YES];
     [preferences setAcceleratedDrawingEnabled:NO];
 #endif

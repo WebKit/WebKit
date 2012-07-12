@@ -58,7 +58,7 @@ typedef UInt32 FMFont;
 typedef FMFont ATSUFontID;
 typedef UInt16 ATSGlyphRef;
 
-#if PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && USE(CA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 typedef struct __IOSurface *IOSurfaceRef;
 #endif
 
@@ -109,7 +109,7 @@ extern "C" {
 // In alphabetical order.
 
 extern void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef, void (^block)(CGRect rect));
 #endif
 
@@ -215,7 +215,7 @@ extern bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGl
 
 extern BOOL (*wkUseSharedMediaUI)();
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern void* wkGetHyphenationLocationBeforeIndex;
 #else
 extern CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFIndex index);
@@ -232,7 +232,7 @@ extern int (*wkGetNSEventMomentumPhase)(NSEvent *);
 
 extern CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
@@ -264,7 +264,7 @@ extern CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
 extern BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
 extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
-#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
 #else
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
@@ -296,27 +296,27 @@ extern void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRe
 #endif
 extern void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
     
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #import <dispatch/dispatch.h>
 
 extern dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 extern NSString *(*wkGetMacOSXVersionString)(void);
 extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #endif
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
 extern BOOL (*wkFilterIsManagedSession)(void);
 extern WebFilterEvaluator *(*wkFilterCreateInstance)(NSURLResponse *);
 extern void (*wkFilterRelease)(WebFilterEvaluator *);

@@ -29,7 +29,7 @@
 #import "WebResourcePrivate.h"
 #import <wtf/PassRefPtr.h>
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 #define MAIL_THREAD_WORKAROUND 1
 #endif
 

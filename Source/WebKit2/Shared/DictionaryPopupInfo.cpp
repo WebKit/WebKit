@@ -40,7 +40,7 @@ void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(fontInfo);
     encoder->encodeEnum(type);
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     bool hadOptions = options;
     encoder->encodeBool(hadOptions);
     if (hadOptions)
@@ -56,7 +56,7 @@ bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPo
         return false;
     if (!decoder->decodeEnum(result.type))
         return false;
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     bool hadOptions;
     if (!decoder->decodeBool(hadOptions))
         return false;

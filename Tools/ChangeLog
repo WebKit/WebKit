@@ -1,3 +1,22 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros
+
+        This removal was handled by a script that translates the relevant macros in to the equivalent checks
+        using the system availability macros.
+
+        Reviewed by Filip Pizlo.
+
+        * DumpRenderTree/cf/WebArchiveDumpSupport.cpp:
+        * DumpRenderTree/mac/CheckedMalloc.cpp:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        * DumpRenderTree/mac/TextInputController.m:
+        * TestWebKitAPI/mac/InjectedBundleControllerMac.mm:
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+
 2012-07-11  Robert Kroeger  <rjkroege@chromium.org>
 
         Suppress horizontal conversion of PlatformWheelEvents when hasPreciseScrollingDeltas is true

@@ -38,7 +38,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <utility>
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #include "NetscapeSandboxFunctions.h"
 #endif
 
@@ -507,7 +507,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = true;
             break;
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && ENABLE(PLUGIN_PROCESS)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && ENABLE(PLUGIN_PROCESS)
         case WKNVSandboxFunctions:
         {
             *(WKNSandboxFunctions **)value = netscapeSandboxFunctions();

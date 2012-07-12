@@ -36,7 +36,7 @@ namespace WebCore {
     class PlatformCALayerClient;
 }
 
-#if defined(BUILDING_ON_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 @interface CALayer(WebLayerInternal)
 - (CGAffineTransform)contentsTransform;
 - (void)setContentsTransform:(CGAffineTransform)t;

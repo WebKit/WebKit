@@ -80,7 +80,7 @@ void ProcessLauncher::launchProcess()
     pid_t processIdentifier = 0;
 
     EnvironmentVariables environmentVariables;
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     static const char* preexistingProcessServiceName = environmentVariables.get(EnvironmentVariables::preexistingProcessServiceNameKey());
     ProcessType preexistingProcessType;
     if (preexistingProcessServiceName)
@@ -160,7 +160,7 @@ void ProcessLauncher::launchProcess()
         // Start suspended so we can set up the termination notification handler.
         flags |= POSIX_SPAWN_START_SUSPENDED;
 
-#ifndef BUILDING_ON_SNOW_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         static const int allowExecutableHeapFlag = 0x2000;
         if (m_launchOptions.executableHeap)
             flags |= allowExecutableHeapFlag;
@@ -168,7 +168,7 @@ void ProcessLauncher::launchProcess()
 
         posix_spawnattr_setflags(&attr, flags);
 
-#ifndef BUILDING_ON_SNOW_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], architecture);
         environmentExtractor.getExtractedEnvironmentVariables(environmentVariables);
 #endif
@@ -211,7 +211,7 @@ void ProcessLauncher::launchProcess()
             listeningPort = MACH_PORT_NULL;
             processIdentifier = 0;
         }
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     }
 #endif
 

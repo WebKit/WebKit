@@ -34,7 +34,7 @@
 #include "SubstituteData.h"
 #include <wtf/Forward.h>
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
 OBJC_CLASS WebFilterEvaluator;
 #endif
 
@@ -112,7 +112,7 @@ namespace WebCore {
         bool m_waitingForContentPolicy;
         double m_timeOfLastDataReceived;
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION) && !PLATFORM(IOS)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
         WebFilterEvaluator *m_filter;
 #endif
     };

@@ -49,7 +49,7 @@ PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, float samp
     
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreAudioBundleClass class]];
     NSURL *audioFileURL = [bundle URLForResource:[NSString stringWithUTF8String:name] withExtension:@"wav" subdirectory:@"audio"];
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     NSDataReadingOptions options = NSDataReadingMapped;
 #else
     NSDataReadingOptions options = NSDataReadingMappedIfSafe;

@@ -156,7 +156,7 @@ static PlatformWheelEventPhase momentumPhaseForEvent(NSEvent *event)
 {
     uint32_t phase = PlatformWheelEventPhaseNone;
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if ([event momentumPhase] & NSEventPhaseBegan)
         phase |= PlatformWheelEventPhaseBegan;
     if ([event momentumPhase] & NSEventPhaseStationary)
@@ -189,7 +189,7 @@ static PlatformWheelEventPhase momentumPhaseForEvent(NSEvent *event)
 
 static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
 {
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     uint32_t phase = PlatformWheelEventPhaseNone; 
     if ([event phase] & NSEventPhaseBegan)
         phase |= PlatformWheelEventPhaseBegan;
@@ -201,7 +201,7 @@ static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
         phase |= PlatformWheelEventPhaseEnded;
     if ([event phase] & NSEventPhaseCancelled)
         phase |= PlatformWheelEventPhaseCancelled;
-#if !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     if ([event momentumPhase] & NSEventPhaseMayBegin)
         phase |= PlatformWheelEventPhaseMayBegin;
 #endif

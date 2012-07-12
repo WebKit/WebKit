@@ -1,3 +1,18 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros
+
+        This removal was handled by a script that translates the relevant macros in to the equivalent checks
+        using the system availability macros.
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/Assertions.cpp:
+        * wtf/FastMalloc.cpp:
+        * wtf/Platform.h:
+        * wtf/ThreadingPthreads.cpp:
+        * wtf/unicode/icu/CollatorICU.cpp:
+
 2012-07-11  Anders Carlsson  <andersca@apple.com>
 
         Add -Wtautological-compare and -Wsign-compare warning flags

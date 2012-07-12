@@ -285,7 +285,7 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 - (void)_invalidateGStatesForTree;
 - (void)_propagateDirtyRectsToOpaqueAncestors;
 - (void)_windowChangedKeyState;
-#if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
+#if USE(ACCELERATED_COMPOSITING) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 - (void)_updateLayerGeometryFromView;
 #endif
 @end
@@ -411,7 +411,7 @@ static CachedImageClient* promisedDataClient()
 - (void)_web_clearPrintingModeRecursive;
 @end
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 @interface WebHTMLView (WebHTMLViewTextCheckingInternal)
 - (void)orderFrontSubstitutionsPanel:(id)sender;
@@ -794,7 +794,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                              subresources:0]))
         return fragment;
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     if ([types containsObject:NSPICTPboardType] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:NSPICTPboardType
@@ -875,7 +875,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     DOMRange *range = [self _selectedRange];
     Frame* coreFrame = core([self _frame]);
     
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
     if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionPasted])
         coreFrame->editor()->pasteAsFragment(core(fragment), [self _canSmartReplaceWithPasteboard:pasteboard], false);
@@ -1232,7 +1232,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     }
     _private->lastScrollPosition = origin;
 
-#if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
+#if USE(ACCELERATED_COMPOSITING) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     [self _updateLayerHostingViewPosition];
 #endif
 }
@@ -1389,7 +1389,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 static BOOL isQuickLookEvent(NSEvent *event)
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     const int kCGSEventSystemSubtypeHotKeyCombinationReleased = 9;
     return [event type] == NSSystemDefined && [event subtype] == kCGSEventSystemSubtypeHotKeyCombinationReleased && [event data1] == 'lkup';
 #else
@@ -1658,7 +1658,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     static NSArray *types = nil;
     if (!types) {
         types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
             NSPICTPboardType,
 #endif
             NSURLPboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, kUTTypePNG, nil];
@@ -2047,7 +2047,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         [resource release];
         return fragment;
     }
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     if (pboardType == NSPICTPboardType) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
                                                               URL:uniqueURLWithRelativePart(@"image.pict")
@@ -2699,7 +2699,7 @@ WEBCORE_COMMAND(yankAndSelect)
         return YES;
     }
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     if (action == @selector(orderFrontSubstitutionsPanel:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
@@ -2852,7 +2852,7 @@ WEBCORE_COMMAND(yankAndSelect)
         return;
 #endif
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // Legacy scrollbars require tracking the mouse at all times.
     if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
         return;
@@ -3391,7 +3391,7 @@ static void setMenuTargets(NSMenu* menu)
         return;
     }
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (_private->trackingAreaForNonKeyWindow) {
         [self removeTrackingArea:_private->trackingAreaForNonKeyWindow];
         [_private->trackingAreaForNonKeyWindow release];
@@ -3424,7 +3424,7 @@ static void setMenuTargets(NSMenu* menu)
         [_private->completionController endRevertingChange:NO moveLeft:NO];
     }
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy) {
         // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
         // It's easiest to do this with a tracking area, which we will remove when the window is key
@@ -4898,7 +4898,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
 static BOOL writingDirectionKeyBindingsEnabled()
 {
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     return YES;
 #else
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -4936,7 +4936,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     [self _changeBaseWritingDirectionTo:NSWritingDirectionRightToLeft];
 }
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 - (void)changeBaseWritingDirectionToLTR:(id)sender
 {
     [self makeBaseWritingDirectionLeftToRight:sender];
@@ -5151,7 +5151,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 }
 
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 - (void)orderFrontSubstitutionsPanel:(id)sender
 {
@@ -5286,7 +5286,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if (font)
         rect.origin.y += [font ascender];
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     [self showDefinitionForAttributedString:attrString atPoint:rect.origin];
     return;
 #endif
@@ -5476,7 +5476,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
     if (!_private->layerHostingView) {
         NSView* hostingView = [[WebLayerHostingFlippedView alloc] initWithFrame:[self bounds]];
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
         [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 #endif
         [self addSubview:hostingView];
@@ -5488,7 +5488,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     // Make a container layer, which will get sized/positioned by AppKit and CA.
     CALayer* viewLayer = [WebRootLayer layer];
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     // Turn off default animations.
     NSNull *nullValue = [NSNull null];
     NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -5522,10 +5522,10 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if ([[self _webView] _postsAcceleratedCompositingNotifications])
         [[NSNotificationCenter defaultCenter] postNotificationName:_WebViewDidStartAcceleratedCompositingNotification object:[self _webView] userInfo:nil];
     
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     [viewLayer setSublayerTransform:CATransform3DMakeScale(1, -1, 1)]; // setGeometryFlipped: doesn't exist on Leopard.
     [self _updateLayerHostingViewPosition];
-#elif (defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION))
+#elif __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
     // Do geometry flipping here, which flips all the compositing layers so they are top-down.
     [viewLayer setGeometryFlipped:YES];
 #else
@@ -5544,7 +5544,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     }
 }
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 // This method is necessary on Leopard to work around <rdar://problem/7067892>.
 - (void)_updateLayerHostingViewPosition
 {
@@ -5572,7 +5572,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [_private->layerHostingView _updateLayerGeometryFromView];  // Workaround for <rdar://problem/7071636>
     [_private->layerHostingView setFrame:layerViewFrame];
 }
-#endif // defined(BUILDING_ON_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
 {

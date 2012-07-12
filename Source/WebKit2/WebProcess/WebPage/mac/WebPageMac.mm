@@ -481,7 +481,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
     NSDictionary *options = nil;
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // As context, we are going to use the surrounding paragraph of text.
     VisiblePosition paragraphStart = startOfParagraph(position);
     VisiblePosition paragraphEnd = endOfParagraph(position);
@@ -513,7 +513,7 @@ void WebPage::performDictionaryLookupForSelection(DictionaryPopupInfo::Type type
 
     NSDictionary *options = nil;
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     VisiblePosition selectionStart = selection.visibleStart();
     VisiblePosition selectionEnd = selection.visibleEnd();
 
@@ -564,7 +564,7 @@ void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Fr
     dictionaryPopupInfo.type = type;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + (style->fontMetrics().ascent() * pageScaleFactor()));
     dictionaryPopupInfo.fontInfo.fontAttributeDictionary = fontDescriptorAttributes;
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     dictionaryPopupInfo.options = (CFDictionaryRef)options;
 #endif
 

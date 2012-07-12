@@ -33,7 +33,7 @@
 #import <WebCore/PlatformPasteboard.h>
 #import <sys/param.h>
 
-#if HAVE(HOSTED_CORE_ANIMATION) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if HAVE(HOSTED_CORE_ANIMATION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #import <QuartzCore/CARemoteLayerServer.h>
 #endif
 
@@ -99,7 +99,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
 #else
     mach_port_t renderServerPort = WKInitializeRenderServer();

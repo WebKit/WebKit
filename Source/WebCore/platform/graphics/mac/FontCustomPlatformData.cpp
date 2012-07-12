@@ -78,7 +78,7 @@ private:
 
 FontCustomPlatformData::~FontCustomPlatformData()
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     if (m_atsContainer)
         ATSFontDeactivate(m_atsContainer, NULL, kATSOptionFlagsDefault);
 #endif
@@ -119,7 +119,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 
     RetainPtr<CGFontRef> cgFontRef;
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     RetainPtr<CFDataRef> bufferData(AdoptCF, buffer->createCFData());
     RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(bufferData.get()));
 
@@ -157,7 +157,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
         ATSFontDeactivate(containerRef, NULL, kATSOptionFlagsDefault);
         return 0;
     }
-#endif // !defined(BUILDING_ON_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
     FontCustomPlatformData* fontCustomPlatformData = new FontCustomPlatformData(containerRef, cgFontRef.leakRef());
 #if USE(SKIA_ON_MAC_CHROMIUM)

@@ -199,7 +199,7 @@ static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
 
 static WebWheelEvent::Phase phaseForEvent(NSEvent *event)
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     uint32_t phase = WebWheelEvent::PhaseNone; 
     if ([event phase] & NSEventPhaseBegan)
         phase |= WebWheelEvent::PhaseBegan;
@@ -211,7 +211,7 @@ static WebWheelEvent::Phase phaseForEvent(NSEvent *event)
         phase |= WebWheelEvent::PhaseEnded;
     if ([event phase] & NSEventPhaseCancelled)
         phase |= WebWheelEvent::PhaseCancelled;
-#if !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     if ([event phase] & NSEventPhaseMayBegin)
         phase |= WebWheelEvent::PhaseMayBegin;
 #endif
@@ -226,7 +226,7 @@ static WebWheelEvent::Phase momentumPhaseForEvent(NSEvent *event)
 {
     uint32_t phase = WebWheelEvent::PhaseNone; 
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if ([event momentumPhase] & NSEventPhaseBegan)
         phase |= WebWheelEvent::PhaseBegan;
     if ([event momentumPhase] & NSEventPhaseStationary)

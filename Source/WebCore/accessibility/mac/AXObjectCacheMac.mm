@@ -71,7 +71,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
                 macNotification = NSAccessibilityFocusedUIElementChangedNotification;                
             break;
         case AXAutocorrectionOccured:
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
             macNotification = @"AXAutocorrectionOccurred";
             break;
 #else
@@ -107,7 +107,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXRowCountChanged:
             macNotification = NSAccessibilityRowCountChangedNotification;
             break;
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
         case AXRowExpanded:
             macNotification = NSAccessibilityRowExpandedNotification;
             break;

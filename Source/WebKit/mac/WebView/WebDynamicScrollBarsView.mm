@@ -413,7 +413,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     // This call updates the initial position correctly.
     [self adjustForScrollOriginChange];
 
-#if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
+#if USE(ACCELERATED_COMPOSITING) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     NSView *documentView = [self documentView];
     if ([documentView isKindOfClass:[WebHTMLView class]]) {
         WebHTMLView *htmlView = (WebHTMLView *)documentView;
@@ -522,7 +522,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     BOOL isContinuous;
     WKGetWheelEventDeltas(event, &deltaX, &deltaY, &isContinuous);
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     NSEventPhase momentumPhase = [event momentumPhase];
     BOOL isLatchingEvent = momentumPhase & NSEventPhaseBegan || momentumPhase & NSEventPhaseStationary;
 #else

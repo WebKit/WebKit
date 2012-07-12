@@ -53,7 +53,7 @@ SOFT_LINK_POINTER(QTKit, QTMovieRateDidChangeNotification, NSString *)
 #define QTMovieRateDidChangeNotification getQTMovieRateDidChangeNotification()
 
 @interface WebVideoFullscreenWindow : NSWindow
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 <NSAnimationDelegate>
 #endif
 {
@@ -339,7 +339,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 - (void)updateMenuAndDockForFullscreen
 {
     // NSApplicationPresentationOptions is available on > 10.6 only:
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
     NSScreen* fullscreenScreen = [[self window] screen];
 

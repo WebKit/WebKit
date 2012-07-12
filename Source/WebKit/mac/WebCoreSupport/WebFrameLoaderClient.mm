@@ -668,7 +668,7 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
     WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
     if ([getWebView(m_webFrame.get()) drawsBackground])
         [scrollView setDrawsBackground:YES];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     [scrollView setVerticalScrollElasticity:NSScrollElasticityAutomatic];
     [scrollView setHorizontalScrollElasticity:NSScrollElasticityAutomatic];
 #endif
@@ -1087,7 +1087,7 @@ void WebFrameLoaderClient::provisionalLoadStarted()
 
     WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
     [scrollView setDrawsBackground:NO];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     [scrollView setVerticalScrollElasticity:NSScrollElasticityNone];
     [scrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
 #endif

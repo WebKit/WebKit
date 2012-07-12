@@ -1,3 +1,49 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros
+
+        This removal was handled by a script that translates the relevant macros in to the equivalent checks
+        using the system availability macros.
+
+        Reviewed by Filip Pizlo.
+
+        * Shared/DictionaryPopupInfo.cpp:
+        * Shared/DictionaryPopupInfo.h:
+        * Shared/mac/PasteboardTypes.mm:
+        * Shared/mac/WebEventFactory.mm:
+        * UIProcess/API/mac/PDFViewController.mm:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.h:
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.mm:
+        * UIProcess/Launcher/mac/EnvironmentVariables.cpp:
+        * UIProcess/Launcher/mac/EnvironmentVariables.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/TextCheckerMac.mm:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        * UIProcess/mac/WebContextMac.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebKit2Prefix.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/com.apple.WebProcess.sb.in:
+        * WebProcess/mac/KeychainItemShimMethods.mm:
+        * WebProcess/mac/SecItemShimMethods.mm:
+        * WebProcess/mac/WebProcessMac.mm:
+        * WebProcess/mac/WebProcessMainMac.mm:
+        * WebProcess/mac/WebProcessShim.mm:
+
 2012-07-11  Simon Fraser  <simon.fraser@apple.com>
 
         pagesPerView param is misnamed for WKPageSetPageLength()

@@ -39,7 +39,7 @@
 
 typedef struct CGContext* CGContextRef;
 
-#define USE_CG_SHADING defined(BUILDING_ON_LEOPARD)
+#define USE_CG_SHADING (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050)
 
 #if USE_CG_SHADING
 typedef struct CGShading* CGShadingRef;

@@ -44,7 +44,7 @@ CFTypeID CFURLResponseGetTypeID(void);
 
 static void convertMIMEType(CFMutableStringRef mimeType)
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     // Workaround for <rdar://problem/5539824> on Leopard
     if (CFStringCompare(mimeType, CFSTR("text/xml"), kCFCompareAnchored | kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         CFStringReplaceAll(mimeType, CFSTR("application/xml"));
@@ -158,7 +158,7 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
     CFErrorRef error = 0;
     CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0;
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     CFIndex bytesCount = CFDataGetLength(webArchiveData);
     RetainPtr<CFReadStreamRef> readStream(AdoptCF, CFReadStreamCreateWithBytesNoCopy(kCFAllocatorDefault, CFDataGetBytePtr(webArchiveData), bytesCount, kCFAllocatorNull));
     CFReadStreamOpen(readStream.get());
@@ -208,7 +208,7 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
 
     error = 0;
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     RetainPtr<CFDataRef> xmlData(AdoptCF, CFPropertyListCreateXMLData(kCFAllocatorDefault, propertyList.get()));
 #else
     RetainPtr<CFDataRef> xmlData(AdoptCF, CFPropertyListCreateData(kCFAllocatorDefault, propertyList.get(), kCFPropertyListXMLFormat_v1_0, 0, &error));

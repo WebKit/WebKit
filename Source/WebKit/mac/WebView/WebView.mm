@@ -463,7 +463,7 @@ NSString *_WebViewDidStartAcceleratedCompositingNotification = @"_WebViewDidStar
 
 static BOOL continuousSpellCheckingEnabled;
 static BOOL grammarCheckingEnabled;
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 static BOOL automaticQuoteSubstitutionEnabled;
 static BOOL automaticLinkDetectionEnabled;
 static BOOL automaticDashSubstitutionEnabled;
@@ -510,7 +510,7 @@ static CFMutableSetRef allWebViewsSet;
 
 @implementation WebView (WebPrivate)
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 static NSString *createMacOSXVersionString()
 {
@@ -545,7 +545,7 @@ static NSString *createMacOSXVersionString()
     return [[NSString alloc] initWithFormat:@"%d", major];
 }
 
-#endif // !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 static NSString *createUserVisibleWebKitVersionString()
 {
@@ -611,7 +611,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 static bool runningLeopardMail()
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     return applicationIsAppleMail();
 #endif
     return NO;
@@ -619,7 +619,7 @@ static bool runningLeopardMail()
 
 static bool coreVideoHas7228836Fix()
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     NSBundle* coreVideoFrameworkBundle = [NSBundle bundleWithPath:@"/System/Library/Frameworks/CoreVideo.framework"];
     double version = [[coreVideoFrameworkBundle objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] doubleValue];
     return (version >= 48);
@@ -647,7 +647,7 @@ static bool shouldEnableLoadDeferring()
     [types release];
 }
 
-#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 // This method should be removed once we no longer want to keep Safari 5.0.x working with nightly builds.
 - (BOOL)_usesDocumentViews
 {
@@ -1508,7 +1508,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(FULLSCREEN_API)
     settings->setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     // Asynchronous spell checking API is available for 10.6 or later.
     settings->setAsynchronousSpellCheckingEnabled([preferences asynchronousSpellCheckingEnabled]);
 #endif
@@ -3046,7 +3046,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
     grammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     automaticQuoteSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticQuoteSubstitutionEnabled];
     automaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
     automaticDashSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticDashSubstitutionEnabled];
@@ -3054,7 +3054,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     automaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
 #endif
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticTextReplacementEnabled])
         automaticTextReplacementEnabled = [NSSpellChecker isAutomaticTextReplacementEnabled];
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticSpellingCorrectionEnabled])
@@ -3261,7 +3261,7 @@ static bool clientNeedsWebViewInitThreadWorkaround()
     if ([bundleIdentifier _webkit_hasCaseInsensitivePrefix:@"com.apple.Automator."])
         return true;
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     // Mail.
     if ([bundleIdentifier _webkit_isCaseInsensitiveEqualToString:@"com.apple.Mail"])
         return true;
@@ -4564,7 +4564,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
             [menuItem setState:checkMark ? NSOnState : NSOffState];
         }
         return YES;
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     } else if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
         BOOL checkMark = [self isAutomaticQuoteSubstitutionEnabled];
         if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
@@ -4713,7 +4713,7 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
     return kit(_private->page->rangeOfString(string, core(previousRange), coreOptions(options)).get());
 }
 
-#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
 // FIXME: Remove once WebKit no longer needs to support versions of Safari that call this.
 - (void)setHoverFeedbackSuspended:(BOOL)newValue
 {
@@ -5402,7 +5402,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
     grammarCheckingEnabled = flag;
     [[NSUserDefaults standardUserDefaults] setBool:grammarCheckingEnabled forKey:WebGrammarCheckingEnabled];    
     
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 #else
     NSSpellChecker *spellChecker = [NSSpellChecker sharedSpellChecker];
@@ -5429,7 +5429,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticQuoteSubstitutionEnabled
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     return NO;
 #else
     return automaticQuoteSubstitutionEnabled;
@@ -5438,7 +5438,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticLinkDetectionEnabled
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     return NO;
 #else
     return automaticLinkDetectionEnabled;
@@ -5447,7 +5447,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticDashSubstitutionEnabled
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     return NO;
 #else
     return automaticDashSubstitutionEnabled;
@@ -5456,7 +5456,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticTextReplacementEnabled
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     return NO;
 #else
     return automaticTextReplacementEnabled;
@@ -5465,14 +5465,14 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 - (BOOL)isAutomaticSpellingCorrectionEnabled
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     return NO;
 #else
     return automaticSpellingCorrectionEnabled;
 #endif
 }
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 - (void)setAutomaticQuoteSubstitutionEnabled:(BOOL)flag
 {
@@ -5698,7 +5698,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
     NSWindow *window = [self window];
     NSWindow *hostWindow = [self hostWindow];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (window)
         return [window backingScaleFactor];
     if (hostWindow)
@@ -6059,7 +6059,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     if (![selectedString length])
         return;
 
-#ifndef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:selectedString];
 #else
     (void)HISearchWindowShow((CFStringRef)selectedString, kNilOptions);
@@ -6579,7 +6579,7 @@ void WebInstallMemoryPressureHandler(void)
     memoryPressureHandler().install();
 }
 
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 
 static IMP originalRecursivelyRemoveMailAttributesImp;
 
@@ -6605,7 +6605,7 @@ static void recursivelyRemoveMailAttributes(DOMNode *self, SEL selector, BOOL a,
 
 static void patchMailRemoveAttributesMethod()
 {
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     if (!WKAppVersionCheckLessThan(@"com.apple.mail", -1, 4.0))
         return;
     Method methodToPatch = class_getInstanceMethod(objc_getRequiredClass("DOMNode"), @selector(recursivelyRemoveMailAttributes:convertObjectsToImages:convertEditableElements:));

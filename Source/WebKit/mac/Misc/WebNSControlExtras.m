@@ -46,7 +46,7 @@
     NSRect windowFrame = [window frame];
 
     CGFloat backingScaleFactor;
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     backingScaleFactor = [window backingScaleFactor];
 #else
     backingScaleFactor = [window userSpaceScaleFactor];

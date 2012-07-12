@@ -30,7 +30,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Uint8ClampedArray.h>
 
-#if (PLATFORM(MAC) && USE(CA) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
+#if (PLATFORM(MAC) && USE(CA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
 #define WTF_USE_IOSURFACE_CANVAS_BACKING_STORE 1
 #endif
 
@@ -54,7 +54,7 @@ public:
     Checked<unsigned, RecordOverflow> m_bytesPerRow;
     CGColorSpaceRef m_colorSpace;
     RetainPtr<IOSurfaceRef> m_surface;
-#if defined(BUILDING_ON_LION)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
     mutable double m_lastFlushTime;
 #endif
 

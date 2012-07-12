@@ -1,3 +1,91 @@
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros
+
+        This removal was handled by a script that translates the relevant macros in to the equivalent checks
+        using the system availability macros.
+
+        Reviewed by Filip Pizlo.
+
+        * WebCore.exp.in:
+        * accessibility/AccessibilityList.h:
+        * accessibility/AccessibilityTable.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        * editing/mac/EditorMac.mm:
+        * loader/MainResourceLoader.cpp:
+        * loader/MainResourceLoader.h:
+        * page/AlternativeTextClient.h:
+        * page/ContextMenuController.cpp:
+        * page/mac/SettingsMac.mm:
+        * platform/LocalizedStrings.cpp:
+        * platform/MemoryPressureHandler.cpp:
+        * platform/audio/mac/AudioBusMac.mm:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        * platform/graphics/ca/mac/TileCache.mm:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/cg/ImageCG.cpp:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        * platform/graphics/mac/FontCacheMac.mm:
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        * platform/graphics/mac/FontMac.mm:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/mac/CursorMac.mm:
+        * platform/mac/DisplaySleepDisabler.cpp:
+        * platform/mac/DisplaySleepDisabler.h:
+        * platform/mac/EmptyProtocolDefinitions.h:
+        * platform/mac/HTMLConverter.h:
+        * platform/mac/HTMLConverter.mm:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        * platform/mac/NSScrollerImpDetails.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        * platform/mac/PopupMenuMac.mm:
+        * platform/mac/ScrollAnimatorMac.mm:
+        * platform/mac/ScrollElasticityController.mm:
+        * platform/mac/SharedTimerMac.mm:
+        * platform/mac/SuddenTermination.mm:
+        * platform/mac/WebCoreFullScreenWindow.mm:
+        * platform/mac/WebCoreNSCellExtras.h:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/mac/WebFontCache.mm:
+        * platform/mac/WebVideoFullscreenController.mm:
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        * platform/network/Credential.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/DNSCFNet.cpp:
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        * platform/network/mac/AuthenticationMac.mm:
+        * platform/network/mac/CookieStorageMac.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/mac/ResourceRequestMac.mm:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        * platform/text/TextChecking.h:
+        * platform/text/cf/HyphenationCF.cpp:
+        * platform/text/mac/HyphenationMac.mm:
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderThemeMac.mm:
+
 2012-07-11  Robert Kroeger  <rjkroege@chromium.org>
 
         Suppress horizontal conversion of PlatformWheelEvents when hasPreciseScrollingDeltas is true

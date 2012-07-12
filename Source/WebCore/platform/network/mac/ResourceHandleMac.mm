@@ -214,7 +214,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         nsRequest = mutableRequest;
     }
 
-#if !defined(BUILDING_ON_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     ASSERT([NSURLConnection instancesRespondToSelector:@selector(_initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:)]);
     static bool supportsSettingConnectionProperties = true;
 #else
@@ -512,7 +512,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     // we make sure that is actually present
     ASSERT(challenge.nsURLAuthenticationChallenge());
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOWLEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // Proxy authentication is handled by CFNetwork internally. We can get here if the user cancels
     // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
     if (challenge.protectionSpace().isProxy()) {

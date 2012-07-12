@@ -36,7 +36,7 @@
 #include <stdio.h>
 
 // On Snow Leopard and newer we'll ask IOKit to deliver notifications on a queue.
-#ifdef BUILDING_ON_LEOPARD
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 #define IOKIT_WITHOUT_LIBDISPATCH 1
 #endif
 
@@ -46,7 +46,7 @@ static CFRunLoopTimerRef sharedTimer;
 static void (*sharedTimerFiredFunction)();
 static void timerFired(CFRunLoopTimerRef, void*);
 
-#if !defined(IOKIT_WITHOUT_LIBDISPATCH) && defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(IOKIT_WITHOUT_LIBDISPATCH) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 extern "C" void IONotificationPortSetDispatchQueue(IONotificationPortRef notify, dispatch_queue_t queue);
 #endif
 

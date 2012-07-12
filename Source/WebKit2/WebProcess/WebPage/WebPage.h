@@ -520,7 +520,7 @@ public:
 
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     void handleAlternativeTextUIResult(const String&);
 #endif
 

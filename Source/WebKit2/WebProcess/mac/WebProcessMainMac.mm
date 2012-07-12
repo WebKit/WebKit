@@ -47,7 +47,7 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
 #endif
 
@@ -73,7 +73,7 @@ int WebProcessMain(const CommandLine& commandLine)
 
     String serviceName = commandLine["servicename"];
     String clientExecutable;
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     clientExecutable = commandLine["client-executable"];
 #endif
 
@@ -89,7 +89,7 @@ int WebProcessMain(const CommandLine& commandLine)
             return 2;
         }
     }
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     else {
         mach_port_name_t publishedService;
         mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &publishedService);
@@ -141,7 +141,7 @@ int WebProcessMain(const CommandLine& commandLine)
             return EXIT_FAILURE;
         }
     }
-#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
     String localization = commandLine["localization"];
     RetainPtr<CFStringRef> cfLocalization(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));

@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 extern "C" void WebKitWebProcessSecItemShimInitialize(const WebProcessSecItemShimCallbacks&);
 
@@ -70,9 +70,9 @@ void WebKitWebProcessSecItemShimInitialize(const WebProcessSecItemShimCallbacks&
     secItemShimCallbacks = callbacks;
 }
 
-#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
-#if defined(BUILDING_ON_SNOW_LEOPARD)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 
 extern "C" void WebKitWebProcessKeychainItemShimInitialize(const WebProcessKeychainItemShimCallbacks&);
 
@@ -121,6 +121,6 @@ void WebKitWebProcessKeychainItemShimInitialize(const WebProcessKeychainItemShim
     keychainItemShimCallbacks = callbacks;
 }
 
-#endif // defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 
 } // namespace WebKit
