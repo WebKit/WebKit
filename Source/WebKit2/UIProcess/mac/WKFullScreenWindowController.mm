@@ -62,20 +62,19 @@ static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
-@interface NSWindow(convertRectToScreenForLeopardAndSnowLeopard)
-- (NSRect)convertRectToScreen:(NSRect)aRect;
-@end
-
-@implementation NSWindow(convertRectToScreenForLeopardAndSnowLeopard)
-- (NSRect)convertRectToScreen:(NSRect)rect
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 {
-    NSRect frame = [self frame];
+    return [window convertRectToScreen:rect];
+}
+#else
+static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
+{
+    NSRect frame = [window frame];
     rect.origin.x += frame.origin.x;
     rect.origin.y += frame.origin.y;
     return rect;
 }
-@end
 #endif
 
 @interface NSWindow(IsOnActiveSpaceAdditionForTigerAndLeopard)
@@ -217,8 +216,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         screen = [NSScreen mainScreen];
     NSRect screenFrame = [screen frame];
 
-    NSRect webViewFrame = [[_webView window] convertRectToScreen:
-                           [_webView convertRect:[_webView frame] toView:nil]];
+    NSRect webViewFrame = convertRectToScreen([_webView window], [_webView convertRect:[_webView frame] toView:nil]);
 
     // Flip coordinate system:
     webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);

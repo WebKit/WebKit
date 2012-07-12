@@ -1,5 +1,16 @@
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
+        <http://webkit.org/b/91022> WebFullScreenController and WKFullScreenWindowController shouldn't add unprefixed methods to AppKit classes
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (convertRectToScreen): Add a static helper method that calls through to -[NSWindow convertRectToScreen:] on OS versions where it exists
+        but otherwise provides a compatibility implementation of it.
+        (-[WKFullScreenWindowController enterFullScreen:]): Call our new helper.
+
+2012-07-11  Mark Rowe  <mrowe@apple.com>
+
         <http://webkit.org/b/91015> Remove BUILDING_ON / TARGETING macros in favor of system availability macros
 
         This removal was handled by a script that translates the relevant macros in to the equivalent checks
