@@ -65,6 +65,7 @@ public:
 #endif
 
 private:
+    explicit LocaleMac(NSLocale*);
     explicit LocaleMac(const String&);
     NSDateFormatter *createShortDateFormatter();
 

@@ -55,6 +55,11 @@ static NSDateFormatter* createDateTimeFormatter(NSLocale* locale, NSDateFormatte
     return formatter;
 }
 
+LocaleMac::LocaleMac(NSLocale* locale)
+    : m_locale(locale)
+{
+}
+
 LocaleMac::LocaleMac(const String& localeIdentifier)
     : m_locale([[NSLocale alloc] initWithLocaleIdentifier:localeIdentifier])
 {
@@ -71,7 +76,7 @@ PassOwnPtr<LocaleMac> LocaleMac::create(const String& localeIdentifier)
 
 LocaleMac* LocaleMac::currentLocale()
 {
-    static LocaleMac* currentLocale = LocaleMac::create([[NSLocale currentLocale] localeIdentifier]).leakPtr();
+    static LocaleMac* currentLocale = new LocaleMac([NSLocale currentLocale]);
     return currentLocale;
 }
 

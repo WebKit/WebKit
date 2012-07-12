@@ -1,3 +1,23 @@
+2012-07-12  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r122184): LocaleMac::currentLocale should use current locale rather than newly create locale object. 
+        https://bugs.webkit.org/show_bug.cgi?id=91057
+
+        Reviewed by Kent Tamura.
+
+        This patch changes NSLocale object of LocaleMac::m_locale variable to
+        current NSLocale object rather than newly created NSLocale object from
+        locale identifier.
+
+        No new tests. We don't have way to change system preferences from
+        test scripts and restoring them. To test this patch, we need to do so.
+
+        * platform/text/mac/LocaleMac.h:
+        (LocaleMac): Added a constructor which takes NSLocale object.
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::LocaleMac): Added a constructor which takes NSLocale object.
+        (WebCore::LocaleMac::currentLocale): Changed to construct LocaleMac object from NSLocale object rather than locale identifier.
+
 2012-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_cookie_manager_set_persistent_storage() to WebKit2 GTK+ API
