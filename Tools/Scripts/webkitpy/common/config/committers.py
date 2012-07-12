@@ -123,6 +123,7 @@ contributors_who_are_not_committers = [
     Contributor("David Barr", "davidbarr@chromium.org", "barrbrain"),
     Contributor("David Dorwin", "ddorwin@chromium.org", "ddorwin"),
     Contributor("David Reveman", "reveman@chromium.org", "reveman"),
+    Contributor("Dongsung Huang", "luxtella@company100.net", "Huang"),
     Contributor("Douglas Davidson", "ddavidso@apple.com"),
     Contributor("Edward O'Connor", "eoconnor@apple.com", "hober"),
     Contributor("Eric Penner", "epenner@chromium.org", "epenner"),
