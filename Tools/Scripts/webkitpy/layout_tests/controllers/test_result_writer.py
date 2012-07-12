@@ -40,6 +40,7 @@ def write_test_result(filesystem, port, test_name, driver_output,
     """Write the test result to the result output directory."""
     root_output_dir = port.results_directory()
     writer = TestResultWriter(filesystem, port, root_output_dir, test_name)
+
     if driver_output.error:
         writer.write_stderr(driver_output.error)
 
@@ -74,10 +75,10 @@ def write_test_result(filesystem, port, test_name, driver_output,
                     failure.diff_percent = diff_percent
                 else:
                     _log.warn('Can not get image diff. ImageDiff program might not work correctly.')
-            writer.copy_file(failure.reference_filename)
+            writer.write_reftest(failure.reference_filename)
         elif isinstance(failure, test_failures.FailureReftestMismatchDidNotOccur):
             writer.write_image_files(driver_output.image, expected_image=None)
-            writer.copy_file(failure.reference_filename)
+            writer.write_reftest(failure.reference_filename)
         else:
             assert isinstance(failure, (test_failures.FailureTimeout, test_failures.FailureReftestNoImagesGenerated))
 
@@ -124,6 +125,16 @@ class TestResultWriter(object):
         output_filename = fs.join(self._root_output_dir, self._test_name)
         return fs.splitext(output_filename)[0] + modifier
 
+    def _write_binary_file(self, path, contents):
+        if contents is not None:
+            self._make_output_directory()
+            self._filesystem.write_binary_file(path, contents)
+
+    def _write_text_file(self, path, contents):
+        if contents is not None:
+            self._make_output_directory()
+            self._filesystem.write_text_file(path, contents)
+
     def _output_testname(self, modifier):
         fs = self._filesystem
         return fs.splitext(fs.basename(self._test_name))[0] + modifier
@@ -141,28 +152,19 @@ class TestResultWriter(object):
           output: A string containing the test output
           expected: A string containing the expected test output
         """
-        self._make_output_directory()
         actual_filename = self.output_filename(self.FILENAME_SUFFIX_ACTUAL + file_type)
         expected_filename = self.output_filename(self.FILENAME_SUFFIX_EXPECTED + file_type)
 
-        fs = self._filesystem
-        if output is not None:
-            fs.write_binary_file(actual_filename, output)
-        if expected is not None:
-            fs.write_binary_file(expected_filename, expected)
+        self._write_binary_file(actual_filename, output)
+        self._write_binary_file(expected_filename, expected)
 
     def write_stderr(self, error):
-        fs = self._filesystem
         filename = self.output_filename(self.FILENAME_SUFFIX_STDERR + ".txt")
-        fs.maybe_make_directory(fs.dirname(filename))
-        fs.write_binary_file(filename, error)
+        self._write_text_file(filename, error)
 
     def write_crash_log(self, crash_log):
-        fs = self._filesystem
         filename = self.output_filename(self.FILENAME_SUFFIX_CRASH_LOG + ".txt")
-        fs.maybe_make_directory(fs.dirname(filename))
-        if crash_log is not None:
-            fs.write_text_file(filename, crash_log)
+        self._write_text_file(filename, crash_log)
 
     def write_text_files(self, actual_text, expected_text):
         self.write_output_files(".txt", actual_text, expected_text)
@@ -173,28 +175,26 @@ class TestResultWriter(object):
         if not actual_text or not expected_text:
             return
 
-        self._make_output_directory()
         file_type = '.txt'
         actual_filename = self.output_filename(self.FILENAME_SUFFIX_ACTUAL + file_type)
         expected_filename = self.output_filename(self.FILENAME_SUFFIX_EXPECTED + file_type)
-        fs = self._filesystem
         # We treat diff output as binary. Diff output may contain multiple files
         # in conflicting encodings.
         diff = self._port.diff_text(expected_text, actual_text, expected_filename, actual_filename)
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_DIFF + file_type)
-        fs.write_binary_file(diff_filename, diff)
+        self._write_binary_file(diff_filename, diff)
 
         # Shell out to wdiff to get colored inline diffs.
         if self._port.wdiff_available():
             wdiff = self._port.wdiff_text(expected_filename, actual_filename)
             wdiff_filename = self.output_filename(self.FILENAME_SUFFIX_WDIFF)
-            fs.write_binary_file(wdiff_filename, wdiff)
+            self._write_binary_file(wdiff_filename, wdiff)
 
         # Use WebKit's PrettyPatch.rb to get an HTML diff.
         if self._port.pretty_patch_available():
             pretty_patch = self._port.pretty_patch_text(diff_filename)
             pretty_patch_filename = self.output_filename(self.FILENAME_SUFFIX_PRETTY_PATCH)
-            fs.write_binary_file(pretty_patch_filename, pretty_patch)
+            self._write_binary_file(pretty_patch_filename, pretty_patch)
 
     def write_audio_files(self, actual_audio, expected_audio):
         self.write_output_files('.wav', actual_audio, expected_audio)
@@ -204,8 +204,7 @@ class TestResultWriter(object):
 
     def write_image_diff_files(self, image_diff):
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFF)
-        fs = self._filesystem
-        fs.write_binary_file(diff_filename, image_diff)
+        self._write_binary_file(diff_filename, image_diff)
 
         diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
         # FIXME: old-run-webkit-tests shows the diff percentage as the text contents of the "diff" link.
@@ -263,9 +262,8 @@ Difference between images: <a href="%(diff_filename)s">diff</a><br>
         }
         self._filesystem.write_text_file(diffs_html_filename, html)
 
-    def copy_file(self, src_filepath):
+    def write_reftest(self, src_filepath):
         fs = self._filesystem
-        assert fs.exists(src_filepath), 'src_filepath: %s' % src_filepath
-        dst_filepath = fs.join(self._root_output_dir, self._port.relative_test_filename(src_filepath))
-        self._make_output_directory()
-        fs.copyfile(src_filepath, dst_filepath)
+        dst_dir = fs.dirname(fs.join(self._root_output_dir, self._test_name))
+        dst_filepath = fs.join(dst_dir, fs.basename(src_filepath))
+        self._write_text_file(dst_filepath, fs.read_text_file(src_filepath))

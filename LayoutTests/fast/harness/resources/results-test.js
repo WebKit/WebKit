@@ -8,7 +8,7 @@ testStyles.innerText = ".test-pass { color: green; } .test-fail { color: red; }"
 document.querySelector('head').appendChild(testStyles);
 
 var g_testIndex = 0;
-var g_log = ["You should see a serios of PASS lines."];
+var g_log = ["You should see a series of PASS lines."];
 
 // Make async actually be sync for the sake of simpler testing.
 function async(func, args)
@@ -274,23 +274,6 @@ function runTests()
     results.tests['bar-reftest-mismatch.html'].is_mismatch_reftest = true;
     runSingleRowTest(results, false, '', 'ref mismatch html actual ');
 
-    results = mockResults();
-    results.tests['bar-reftest.html'] = mockExpectation('PASS', 'IMAGE', 1);
-    results.tests['bar-reftest.html'].is_reftest = true;
-    results.tests['bar-reftest.html'].ref_file = 'common.html';
-    runSingleRowTest(results, false, '', 'ref html images diff (1%) ');
-    runTest(results, function() {
-        assertTrue(document.getElementsByClassName('result-link')[0].getAttribute('href') == 'common.html');
-    });
-
-    results = mockResults();
-    results.tests['bar-reftest.html'] = mockExpectation('PASS', 'IMAGE');
-    results.tests['bar-reftest.html'].is_mismatch_reftest = true;
-    results.tests['bar-reftest.html'].ref_file = 'common.html';
-    runSingleRowTest(results, false, '', 'ref mismatch html actual ');
-    runTest(results, function() {
-        assertTrue(document.getElementsByClassName('result-link')[0].getAttribute('href') == 'common.html');
-    });
 
     results = mockResults();
     var subtree = results.tests['foo'] = {}

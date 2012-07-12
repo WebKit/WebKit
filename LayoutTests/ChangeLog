@@ -1,3 +1,16 @@
+2012-07-12  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt crashes saving the output for a platform-specific expected test reference
+        https://bugs.webkit.org/show_bug.cgi?id=90872
+
+        Reviewed by Ojan Vafai.
+
+        Remove tests for the 'ref_file' parameter in results.json
+        entries.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
 2012-07-12  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  Delete two empty directories.

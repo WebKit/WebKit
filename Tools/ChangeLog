@@ -1,5 +1,56 @@
 2012-07-12  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt crashes saving the output for a platform-specific expected test reference
+        https://bugs.webkit.org/show_bug.cgi?id=90872
+
+        Reviewed by Ojan Vafai.
+
+        The expected output for a test is copied alongside the test
+        itself in the layout-test-results directory; in other words, for
+        foo/bar-expected.txt sits alongside foo/bar.html even if we're
+        actually using platform/mac/foo/bar-expected.txt.
+
+        Unless the test is a reftest, in which case we would copy the
+        output to platform/mac/foo/bar-expected.html and set a
+        'ref_file' parameter in results.json to indicate the path. This
+        can be useful in the cases where we have multiple references for
+        a single test or when multiple tests share the same reference.
+
+        We found a bug where we weren't creating platform/mac/foo under
+        the results directory, and so this wasn't actually working.
+        However, treating reftests differently seems like a bad thing,
+        so we should probably be consistent. This change puts the
+        -expected.html next to the test, and reworks test_result_writer
+        so that we create directories uniformly and consistently.
+
+        Note that we weren't catching this problem in unit tests because
+        the MockFileSystem creates a directory automatically if it
+        doesn't exist; this was done intentionally for convenience, but
+        is really a bug and should be fixed; see https://bugs.webkit.org/show_bug.cgi?id=91028.
+
+        I have not added additional tests here since fixing that bug
+        should be sufficient.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (interpret_test_failures):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.test_interpret_test_failures):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        (TestResultWriter._write_binary_file):
+        (TestResultWriter):
+        (TestResultWriter._write_text_file):
+        (TestResultWriter.write_output_files):
+        (TestResultWriter.write_stderr):
+        (TestResultWriter.write_crash_log):
+        (TestResultWriter.create_text_diff_and_write_result):
+        (TestResultWriter.write_image_diff_files):
+        (write_reftest):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (EndToEndTest.test_reftest_with_two_notrefs):
+
+2012-07-12  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: reimplement manager_worker_broker in a much simpler form
         https://bugs.webkit.org/show_bug.cgi?id=90513
 
