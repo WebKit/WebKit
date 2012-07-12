@@ -38,9 +38,8 @@ class CCRenderPass;
 class CCRenderPassDrawQuad : public WebKit::WebCompositorQuad {
     WTF_MAKE_NONCOPYABLE(CCRenderPassDrawQuad);
 public:
-    static PassOwnPtr<CCRenderPassDrawQuad> create(const WebKit::WebCompositorSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
+    static PassOwnPtr<CCRenderPassDrawQuad> create(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
 
-    const CCRenderPass* renderPass() const { return m_renderPass; }
     int renderPassId() const { return m_renderPassId; }
     bool isReplica() const { return m_isReplica; }
     unsigned maskTextureId() const { return m_maskTextureId; }
@@ -54,9 +53,8 @@ public:
 
     static const CCRenderPassDrawQuad* materialCast(const WebKit::WebCompositorQuad*);
 private:
-    CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState*, const IntRect&, const CCRenderPass*, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
+    CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
 
-    const CCRenderPass* m_renderPass;
     int m_renderPassId;
     bool m_isReplica;
     WebKit::WebTransformationMatrix m_drawTransform;

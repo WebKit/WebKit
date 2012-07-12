@@ -130,7 +130,7 @@ public:
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     PassOwnPtr<CCSharedQuadState> createReplicaSharedQuadState() const;
 
-    void appendQuads(CCQuadCuller&, CCSharedQuadState*, bool forReplica, const CCRenderPass*);
+    void appendQuads(CCQuadCuller&, CCSharedQuadState*, bool forReplica, int renderPassId);
 
     FloatRect computeRootScissorRectInCurrentSurface(const FloatRect& rootScissorRect) const;
 

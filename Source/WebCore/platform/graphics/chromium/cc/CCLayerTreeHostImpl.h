@@ -85,7 +85,7 @@ public:
     struct FrameData {
         Vector<IntRect> occludingScreenSpaceRects;
         CCRenderPassList renderPasses;
-        CCRenderPassList skippedPasses;
+        CCRenderPassIdHashMap renderPassesById;
         CCLayerList* renderSurfaceLayerList;
         CCLayerList willDrawLayers;
     };
@@ -180,7 +180,7 @@ public:
 
     class CullRenderPassesWithCachedTextures {
     public:
-        bool shouldRemoveRenderPass(const CCRenderPassList&, const CCRenderPassDrawQuad&) const;
+        bool shouldRemoveRenderPass(const CCRenderPassDrawQuad&, const FrameData&) const;
 
         // Iterates from the root first, in order to remove the surfaces closest
         // to the root with cached textures, and all surfaces that draw into
@@ -196,7 +196,7 @@ public:
 
     class CullRenderPassesWithNoQuads {
     public:
-        bool shouldRemoveRenderPass(const CCRenderPassList&, const CCRenderPassDrawQuad&) const;
+        bool shouldRemoveRenderPass(const CCRenderPassDrawQuad&, const FrameData&) const;
 
         // Iterates in draw order, so that when a surface is removed, and its
         // target becomes empty, then its target can be removed also.
@@ -243,8 +243,6 @@ private:
     void animateLayersRecursive(CCLayerImpl*, double monotonicTime, double wallClockTime, CCAnimationEventsVector*, bool& didAnimate, bool& needsAnimateLayers);
     void setBackgroundTickingEnabled(bool);
     IntSize contentSize() const;
-
-    static void removeRenderPassesRecursive(CCRenderPassList& passes, size_t bottomPass, const CCRenderPass* firstToRemove, CCRenderPassList& skippedPasses);
 
     void sendDidLoseContextRecursive(CCLayerImpl*);
     void clearRenderSurfaces();

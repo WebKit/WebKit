@@ -315,7 +315,7 @@ void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPa
 {
     HashMap<int, const CCRenderPass*> passesInFrame;
     for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i)
-        passesInFrame.set(renderPassesInDrawOrder[i]->id(), renderPassesInDrawOrder[i].get());
+        passesInFrame.set(renderPassesInDrawOrder[i]->id(), renderPassesInDrawOrder[i]);
 
     Vector<int> passesToDelete;
     HashMap<int, OwnPtr<CCScopedTexture> >::const_iterator passIterator;

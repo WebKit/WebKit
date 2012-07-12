@@ -296,12 +296,11 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
         CCLayerImpl* renderSurfaceLayer = (*frame.renderSurfaceLayerList)[surfaceIndex];
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
 
-        // FIXME: Make this unique across all CCLayerTreeHostImpls.
-        int globalRenderPassId = renderSurfaceLayer->id();
-
-        OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface, globalRenderPassId);
+        int renderPassId = renderSurfaceLayer->id();
+        OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface, renderPassId);
         surfacePassMap.add(renderSurface, pass.get());
-        frame.renderPasses.append(pass.release());
+        frame.renderPasses.append(pass.get());
+        frame.renderPassesById.add(renderPassId, pass.release());
     }
 
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
@@ -407,19 +406,26 @@ IntSize CCLayerTreeHostImpl::contentSize() const
     return m_rootScrollLayerImpl->children()[0]->contentBounds();
 }
 
-// static
-void CCLayerTreeHostImpl::removeRenderPassesRecursive(CCRenderPassList& passes, size_t bottomPass, const CCRenderPass* firstToRemove, CCRenderPassList& skippedPasses)
+static inline CCRenderPass* findRenderPassById(int renderPassId, const CCLayerTreeHostImpl::FrameData& frame)
 {
-    size_t removeIndex = passes.find(firstToRemove);
+    CCRenderPassIdHashMap::const_iterator it = frame.renderPassesById.find(renderPassId);
+    ASSERT(it != frame.renderPassesById.end());
+    return it->second.get();
+}
+
+static void removeRenderPassesRecursive(int removeRenderPassId, CCLayerTreeHostImpl::FrameData& frame)
+{
+    CCRenderPass* removeRenderPass = findRenderPassById(removeRenderPassId, frame);
+    size_t removeIndex = frame.renderPasses.find(removeRenderPass);
 
     // The pass was already removed by another quad - probably the original, and we are the replica.
     if (removeIndex == notFound)
         return;
 
-    OwnPtr<CCRenderPass> removedPass = passes[removeIndex].release();
-    passes.remove(removeIndex);
+    const CCRenderPass* removedPass = frame.renderPasses[removeIndex];
+    frame.renderPasses.remove(removeIndex);
 
-    // Now follow up for all RenderPass quads and remove their render passes recursively.
+    // Now follow up for all RenderPass quads and remove their RenderPasses recursively.
     const CCQuadList& quadList = removedPass->quadList();
     CCQuadList::constBackToFrontIterator quadListIterator = quadList.backToFrontBegin();
     for (; quadListIterator != quadList.backToFrontEnd(); ++quadListIterator) {
@@ -427,36 +433,32 @@ void CCLayerTreeHostImpl::removeRenderPassesRecursive(CCRenderPassList& passes, 
         if (currentQuad->material() != CCDrawQuad::RenderPass)
             continue;
 
-        CCRenderPassDrawQuad* renderPassQuad = static_cast<CCRenderPassDrawQuad*>(currentQuad);
-        const CCRenderPass* nextRenderPass = renderPassQuad->renderPass();
-
-        // Our search is now limited up to the pass that we just removed.
-        // Substitute removeIndex for bottomPass now.
-        removeRenderPassesRecursive(passes, removeIndex, nextRenderPass, skippedPasses);
+        int nextRemoveRenderPassId = CCRenderPassDrawQuad::materialCast(currentQuad)->renderPassId();
+        removeRenderPassesRecursive(nextRemoveRenderPassId, frame);
     }
-    skippedPasses.append(removedPass.release());
 }
 
-bool CCLayerTreeHostImpl::CullRenderPassesWithCachedTextures::shouldRemoveRenderPass(const CCRenderPassList&, const CCRenderPassDrawQuad& quad) const
+bool CCLayerTreeHostImpl::CullRenderPassesWithCachedTextures::shouldRemoveRenderPass(const CCRenderPassDrawQuad& quad, const FrameData&) const
 {
     return quad.contentsChangedSinceLastFrame().isEmpty() && m_renderer.haveCachedResourcesForRenderPassId(quad.renderPassId());
 }
 
-bool CCLayerTreeHostImpl::CullRenderPassesWithNoQuads::shouldRemoveRenderPass(const CCRenderPassList& passList, const CCRenderPassDrawQuad& quad) const
+bool CCLayerTreeHostImpl::CullRenderPassesWithNoQuads::shouldRemoveRenderPass(const CCRenderPassDrawQuad& quad, const FrameData& frame) const
 {
-    size_t passIndex = passList.find(quad.renderPass());
+    const CCRenderPass* renderPass = findRenderPassById(quad.renderPassId(), frame);
+    size_t passIndex = frame.renderPasses.find(renderPass);
     ASSERT(passIndex != notFound);
 
     // If any quad or RenderPass draws into this RenderPass, then keep it.
-    const CCQuadList& quadList = passList[passIndex]->quadList();
+    const CCQuadList& quadList = frame.renderPasses[passIndex]->quadList();
     for (CCQuadList::constBackToFrontIterator quadListIterator = quadList.backToFrontBegin(); quadListIterator != quadList.backToFrontEnd(); ++quadListIterator) {
         CCDrawQuad* currentQuad = quadListIterator->get();
 
         if (currentQuad->material() != CCDrawQuad::RenderPass)
             return false;
 
-        const CCRenderPassDrawQuad* quadInPass = static_cast<CCRenderPassDrawQuad*>(currentQuad);
-        if (passList.contains(quadInPass->renderPass()))
+        const CCRenderPass* contributingPass = findRenderPassById(CCRenderPassDrawQuad::materialCast(currentQuad)->renderPassId(), frame);
+        if (frame.renderPasses.contains(contributingPass))
             return false;
     }
     return true;
@@ -471,7 +473,7 @@ template<typename RenderPassCuller>
 void CCLayerTreeHostImpl::removeRenderPasses(RenderPassCuller culler, FrameData& frame)
 {
     for (size_t it = culler.renderPassListBegin(frame.renderPasses); it != culler.renderPassListEnd(frame.renderPasses); it = culler.renderPassListNext(it)) {
-        CCRenderPass* currentPass = frame.renderPasses[it].get();
+        const CCRenderPass* currentPass = frame.renderPasses[it];
         const CCQuadList& quadList = currentPass->quadList();
         CCQuadList::constBackToFrontIterator quadListIterator = quadList.backToFrontBegin();
 
@@ -482,7 +484,7 @@ void CCLayerTreeHostImpl::removeRenderPasses(RenderPassCuller culler, FrameData&
                 continue;
 
             CCRenderPassDrawQuad* renderPassQuad = static_cast<CCRenderPassDrawQuad*>(currentQuad);
-            if (!culler.shouldRemoveRenderPass(frame.renderPasses, *renderPassQuad))
+            if (!culler.shouldRemoveRenderPass(*renderPassQuad, frame))
                 continue;
 
             // We are changing the vector in the middle of iteration. Because we
@@ -491,7 +493,7 @@ void CCLayerTreeHostImpl::removeRenderPasses(RenderPassCuller culler, FrameData&
             // change. So, capture the iterator position from the end of the
             // list, and restore it after the change.
             int positionFromEnd = frame.renderPasses.size() - it;
-            removeRenderPassesRecursive(frame.renderPasses, it, renderPassQuad->renderPass(), frame.skippedPasses);
+            removeRenderPassesRecursive(renderPassQuad->renderPassId(), frame);
             it = frame.renderPasses.size() - positionFromEnd;
             ASSERT(it >= 0);
         }
@@ -505,6 +507,7 @@ bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
 
     frame.renderSurfaceLayerList = &m_renderSurfaceLayerList;
     frame.renderPasses.clear();
+    frame.renderPassesById.clear();
     frame.renderSurfaceLayerList->clear();
     frame.willDrawLayers.clear();
 
@@ -543,13 +546,13 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     // RenderWidget.
 
     // The root RenderPass is the last one to be drawn.
-    CCRenderPass* rootRenderPass = frame.renderPasses.last().get();
+    const CCRenderPass* rootRenderPass = frame.renderPasses.last();
 
     m_fpsCounter->markBeginningOfFrame(currentTime());
     m_layerRenderer->beginDrawingFrame(rootRenderPass);
 
     for (size_t i = 0; i < frame.renderPasses.size(); ++i) {
-        CCRenderPass* renderPass = frame.renderPasses[i].get();
+        const CCRenderPass* renderPass = frame.renderPasses[i];
 
         FloatRect rootScissorRectInCurrentSurface = renderPass->targetSurface()->computeRootScissorRectInCurrentSurface(m_rootScissorRect);
         m_layerRenderer->drawRenderPass(renderPass, rootScissorRectInCurrentSurface);

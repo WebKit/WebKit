@@ -30,6 +30,7 @@
 #include "cc/CCDrawQuad.h"
 #include "cc/CCOcclusionTracker.h"
 #include "cc/CCSharedQuadState.h"
+#include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -81,7 +82,8 @@ protected:
     bool m_hasTransparentBackground;
 };
 
-typedef Vector<OwnPtr<CCRenderPass> > CCRenderPassList;
+typedef Vector<CCRenderPass*> CCRenderPassList;
+typedef HashMap<int, OwnPtr<CCRenderPass> > CCRenderPassIdHashMap;
 
 }
 

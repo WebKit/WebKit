@@ -203,7 +203,7 @@ FloatRect CCRenderSurface::computeRootScissorRectInCurrentSurface(const FloatRec
     return CCMathUtil::projectClippedRect(inverseScreenSpaceTransform, rootScissorRect);
 }
 
-void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sharedQuadState, bool forReplica, const CCRenderPass* renderPass)
+void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sharedQuadState, bool forReplica, int renderPassId)
 {
     ASSERT(!forReplica || hasReplica());
 
@@ -235,7 +235,7 @@ void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sha
     WebTransformationMatrix drawTransform = forReplica ? m_replicaDrawTransform : m_drawTransform;
     IntRect contentsChangedSinceLastFrame = contentsChanged() ? m_contentRect : IntRect();
 
-    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPass, forReplica, drawTransform, filters(), backgroundFilters(), maskTextureId, contentsChangedSinceLastFrame));
+    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, drawTransform, filters(), backgroundFilters(), maskTextureId, contentsChangedSinceLastFrame));
 }
 
 }

@@ -72,7 +72,7 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, const CC
 
     OwnPtr<CCSharedQuadState> sharedQuadState = surface->createSharedQuadState();
     bool isReplica = false;
-    surface->appendQuads(quadCuller, sharedQuadState.get(), isReplica, contributingRenderPass);
+    surface->appendQuads(quadCuller, sharedQuadState.get(), isReplica, contributingRenderPass->id());
     m_sharedQuadStateList.append(sharedQuadState.release());
 
     if (!surface->hasReplica())
@@ -81,7 +81,7 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, const CC
     // Add replica after the surface so that it appears below the surface.
     OwnPtr<CCSharedQuadState> replicaSharedQuadState = surface->createReplicaSharedQuadState();
     isReplica = true;
-    surface->appendQuads(quadCuller, replicaSharedQuadState.get(), isReplica, contributingRenderPass);
+    surface->appendQuads(quadCuller, replicaSharedQuadState.get(), isReplica, contributingRenderPass->id());
     m_sharedQuadStateList.append(replicaSharedQuadState.release());
 }
 

@@ -1,3 +1,12 @@
+2012-07-12  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove the RenderPass pointer from RenderPassDrawQuad
+        https://bugs.webkit.org/show_bug.cgi?id=91023
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-07-12  Adam Barth  <abarth@webkit.org>
 
         [Chromium] WebSettings should be sorted

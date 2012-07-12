@@ -1,3 +1,43 @@
+2012-07-12  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove the RenderPass pointer from RenderPassDrawQuad
+        https://bugs.webkit.org/show_bug.cgi?id=91023
+
+        Reviewed by Adrienne Walker.
+
+        Removes the RenderPass pointer and keeps only an integer id in the
+        quad to refer back to the RenderPass the quad reads from.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::findRenderPassById):
+        (WebCore):
+        (WebCore::removeRenderPassesRecursive):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithCachedTextures::shouldRemoveRenderPass):
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithNoQuads::shouldRemoveRenderPass):
+        (WebCore::CCLayerTreeHostImpl::removeRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::prepareToDraw):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (FrameData):
+        (CullRenderPassesWithCachedTextures):
+        (CullRenderPassesWithNoQuads):
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::appendQuadsForRenderSurfaceLayer):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (CCRenderSurface):
+
 2012-07-12  Elliott Sprehn  <esprehn@gmail.com>
 
         Unneeded tree walking when adding or removing children due to RenderCounter / RenderQuote logic

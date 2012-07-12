@@ -2520,7 +2520,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
-        EXPECT_TRUE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_TRUE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2552,7 +2553,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
         EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[0]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[0]->quadList()[0].get());
-        EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_FALSE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2572,7 +2574,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
-        EXPECT_TRUE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_TRUE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2598,10 +2601,11 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
-        EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_FALSE(targetPass->targetSurface()->contentsChanged());
 
         // Was our surface evicted?
-        EXPECT_FALSE(myHostImpl->layerRenderer()->haveCachedResourcesForRenderPassId(quad->renderPass()->id()));
+        EXPECT_FALSE(myHostImpl->layerRenderer()->haveCachedResourcesForRenderPassId(targetPass->id()));
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2635,7 +2639,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[0]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[0]->quadList()[0].get());
-        EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_FALSE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2667,7 +2672,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
-        EXPECT_TRUE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_TRUE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2700,7 +2706,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
         EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[0]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[0]->quadList()[0].get());
-        EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_FALSE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2720,7 +2727,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
-        EXPECT_TRUE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_TRUE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2746,10 +2754,11 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
-        EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_FALSE(targetPass->targetSurface()->contentsChanged());
 
         // Was our surface evicted?
-        EXPECT_FALSE(myHostImpl->layerRenderer()->haveCachedResourcesForRenderPassId(quad->renderPass()->id()));
+        EXPECT_FALSE(myHostImpl->layerRenderer()->haveCachedResourcesForRenderPassId(targetPass->id()));
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2784,7 +2793,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[0]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[0]->quadList()[0].get());
-        EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_FALSE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2825,7 +2835,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingMemoryLimit)
 
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
-        EXPECT_TRUE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_TRUE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2858,7 +2869,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingMemoryLimit)
         EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[0]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[0]->quadList()[0].get());
-        EXPECT_FALSE(quad->renderPass()->targetSurface()->contentsChanged());
+        CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
+        EXPECT_FALSE(targetPass->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
@@ -2901,7 +2913,6 @@ struct RenderPassCacheEntry {
 
 struct RenderPassRemovalTestData : public CCLayerTreeHostImpl::FrameData {
     std::map<char, RenderPassCacheEntry> renderPassCache;
-    std::map<const CCRenderPass*, char> renderPassId;
     Vector<OwnPtr<CCRenderSurface> > renderSurfaceStore;
     Vector<OwnPtr<CCLayerImpl> > layerStore;
     OwnPtr<CCSharedQuadState> sharedQuadState;
@@ -2974,7 +2985,6 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
     // Pre-create root pass
     char rootRenderPassId = testScript[0];
     OwnPtr<CCRenderPass> rootRenderPass = createDummyRenderPass(testData, rootRenderPassId);
-    testData.renderPassId.insert(std::pair<CCRenderPass*, char>(rootRenderPass.get(), rootRenderPassId));
     testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(rootRenderPassId, RenderPassCacheEntry(rootRenderPass.release())));
     while (*currentChar) {
         char renderPassId = currentChar[0];
@@ -3021,26 +3031,22 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
                         currentChar++;
                 }
 
-                CCRenderPass* refRenderPassPtr;
-
                 if (testData.renderPassCache.find(newRenderPassId) == testData.renderPassCache.end()) {
                     if (hasTexture)
                         renderer->setHaveCachedResourcesForRenderPassId(newRenderPassId);
 
-                    OwnPtr<CCRenderPass> refRenderPass = createDummyRenderPass(testData, newRenderPassId);
-                    refRenderPassPtr = refRenderPass.get();
-                    testData.renderPassId.insert(std::pair<CCRenderPass*, char>(refRenderPass.get(), newRenderPassId));
-                    testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(newRenderPassId, RenderPassCacheEntry(refRenderPass.release())));
-                } else
-                    refRenderPassPtr = testData.renderPassCache[newRenderPassId].renderPass;
+                    OwnPtr<CCRenderPass> renderPass = createDummyRenderPass(testData, newRenderPassId);
+                    testData.renderPassCache.insert(std::pair<char, RenderPassCacheEntry>(newRenderPassId, RenderPassCacheEntry(renderPass.release())));
+                }
 
                 IntRect quadRect = IntRect(0, 0, 1, 1);
                 IntRect contentsChangedRect = contentsChanged ? quadRect : IntRect();
-                OwnPtr<CCRenderPassDrawQuad> quad = CCRenderPassDrawQuad::create(testData.sharedQuadState.get(), quadRect, refRenderPassPtr, isReplica, WebKit::WebTransformationMatrix(), WebKit::WebFilterOperations(), WebKit::WebFilterOperations(), 1, contentsChangedRect);
+                OwnPtr<CCRenderPassDrawQuad> quad = CCRenderPassDrawQuad::create(testData.sharedQuadState.get(), quadRect, newRenderPassId, isReplica, WebKit::WebTransformationMatrix(), WebKit::WebFilterOperations(), WebKit::WebFilterOperations(), 1, contentsChangedRect);
                 static_cast<CCTestRenderPass*>(renderPass.get())->appendQuad(quad.release());
             }
         }
-        testData.renderPasses.insert(0, renderPass.release());
+        testData.renderPasses.insert(0, renderPass.get());
+        testData.renderPassesById.add(renderPass->id(), renderPass.release());
         if (*currentChar)
             currentChar++;
     }
@@ -3050,9 +3056,8 @@ void dumpRenderPassTestData(const RenderPassRemovalTestData& testData, char* buf
 {
     char* pos = buffer;
     for (CCRenderPassList::const_reverse_iterator it = testData.renderPasses.rbegin(); it != testData.renderPasses.rend(); ++it) {
-        CCRenderPass* currentPass = it->get();
-        char passId = testData.renderPassId.find(currentPass)->second;
-        *pos = passId;
+        const CCRenderPass* currentPass = *it;
+        *pos = currentPass->id();
         pos++;
 
         CCQuadList::const_iterator quadListIterator = currentPass->quadList().begin();
@@ -3063,14 +3068,10 @@ void dumpRenderPassTestData(const RenderPassRemovalTestData& testData, char* buf
                 *pos = 's';
                 pos++;
                 break;
-            case CCDrawQuad::RenderPass: {
-                CCRenderPassDrawQuad* renderPassDrawQuad = static_cast<CCRenderPassDrawQuad*>(currentQuad);
-                const CCRenderPass* refPass = renderPassDrawQuad->renderPass();
-                char refPassId = testData.renderPassId.find(refPass)->second;
-                *pos = refPassId;
+            case CCDrawQuad::RenderPass:
+                *pos = CCRenderPassDrawQuad::materialCast(currentQuad)->renderPassId();
                 pos++;
                 break;
-            }
             default:
                 *pos = 'x';
                 pos++;
