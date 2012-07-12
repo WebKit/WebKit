@@ -1,3 +1,32 @@
+2012-07-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Threadsafety issues in WebScriptObject
+        https://bugs.webkit.org/show_bug.cgi?id=90849
+
+        Reviewed by Filip Pizlo & Oliver Hunt.
+
+        Updated fix for this bug. Taking the JSC API lock from WebScriptObject::release
+        may not be safe; better to just guard the JSWrapperCache with its own spinlock.
+
+        * bindings/objc/WebScriptObject.mm:
+        (WebCore::getJSWrapper):
+            - Added spinlock; also retain/autorelease the returned wrapper - it is unsafe
+              to wait for the caller to do so, due to a race condition vs release removing
+              the wrapper from the map.
+        (WebCore::addJSWrapper):
+            - Take the spinlock guarding the cache.
+        (WebCore::removeJSWrapper):
+            - Take the spinlock guarding the cache.
+        (WebCore::removeJSWrapperIfRetainCountOne):
+            - Take the spinlock guarding the cache, remove the wrapper if retainCount is one.
+        (WebCore::createJSWrapper):
+            - Remove the API lock; this method no longer needs to retain/autorelease (this is
+              done by getJSWrapper).
+        (-[WebScriptObject _setImp:originRootObject:rootObject:]):
+            - Remove the API lock.
+        (-[WebScriptObject release]):
+            - Remove the API lock, retainCount check moved into removeJSWrapperIfRetainCountOne.
+
 2012-07-11  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=91000
