@@ -1,3 +1,9 @@
+2012-07-12  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Nit: git config files use tabs, not spaces.
+
+        * EWSTools/cold-boot.sh:
+
 2012-07-12  Kwang Yul Seo  <skyul@company100.net>
 
         Unreviewed. Add Dongsung Huang to the list of contributors. He

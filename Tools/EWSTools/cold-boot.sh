@@ -73,13 +73,13 @@ EOF
 if [[ $1 == "commit-queue" ]];then
 cat >> .git/config <<EOF
 [svn-remote "svn"]
-    url = http://svn.webkit.org/repository/webkit
-    fetch = trunk:refs/remotes/origin/master
+	url = http://svn.webkit.org/repository/webkit
+	fetch = trunk:refs/remotes/origin/master
 [user]
-    email = commit-queue@webkit.org
-    name = Commit Queue
+	email = commit-queue@webkit.org
+	name = Commit Queue
 [merge "changelog"]
-    driver = perl $PWD/Tools/Scripts/resolve-ChangeLogs --merge-driver %O %B %A
+	driver = perl $PWD/Tools/Scripts/resolve-ChangeLogs --merge-driver %O %B %A
 EOF
 fi
 
