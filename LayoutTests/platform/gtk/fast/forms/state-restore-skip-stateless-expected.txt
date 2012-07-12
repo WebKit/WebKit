@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: line 44: Test if state of stateless form control types are not saved.
+CONSOLE MESSAGE: line 8: Form state vector:
+CONSOLE MESSAGE: line 8: name02, hidden, No owner, 0, 
+CONSOLE MESSAGE: line 8: name03, text, No owner, 0, 
+CONSOLE MESSAGE: line 8: name04, tel, No owner, 0, 
+CONSOLE MESSAGE: line 8: name05, url, No owner, 0, 
+CONSOLE MESSAGE: line 8: name06, email, No owner, 0, 
+CONSOLE MESSAGE: line 8: name07, text, No owner, 0, 
+CONSOLE MESSAGE: line 8: name14, number, No owner, 0, 
+CONSOLE MESSAGE: line 8: name15, range, No owner, 1, 
+CONSOLE MESSAGE: line 8: 50, name17, checkbox, No owner, 
+CONSOLE MESSAGE: line 8: 1, off, name18, radio, 
+CONSOLE MESSAGE: line 8: No owner, 1, off, name19, 
+CONSOLE MESSAGE: line 8: file, No owner, 0, , 
+CONSOLE MESSAGE: line 8: button, No owner, 0, name20, 
+CONSOLE MESSAGE: line 8: submit, No owner, 0, name21, 
+CONSOLE MESSAGE: line 8: reset, No owner, 0, name22, 
+CONSOLE MESSAGE: line 8: button, No owner, 0, name26, 
+CONSOLE MESSAGE: line 8: select-one, No owner, 0, name27, 
+CONSOLE MESSAGE: line 8: select-multiple, No owner, 0, name28, 
+CONSOLE MESSAGE: line 8: textarea, No owner, 0, name29, 
+CONSOLE MESSAGE: line 8: keygen, No owner, 0, , 
+CONSOLE MESSAGE: line 13: select-one, No owner, 0, 
+CONSOLE MESSAGE: line 14: 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

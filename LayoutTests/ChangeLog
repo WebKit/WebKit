@@ -1,3 +1,13 @@
+2012-07-12  Simon Pena  <spena@igalia.com>
+
+        [GTK] Gardening: rebaseline after r122414
+        https://bugs.webkit.org/show_bug.cgi?id=91064
+
+        Unreviewed gardening. Add new baseline after r122414
+        for fast/forms/state-restore-skip-stateless.html
+
+        * platform/gtk/fast/forms/state-restore-skip-stateless-expected.txt: Added.
+
 2012-07-11  Andrey Kosyakov  <caseq@chromium.org>
 
         Layout Test inspector/timeline/timeline-dom-content-loaded-event.html is failing
