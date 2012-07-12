@@ -1,3 +1,10 @@
+2012-07-12  Andy Estes  <aestes@apple.com>
+
+        [Mac] input-in-table-cell-no-value.html fails due to INPUT_TYPE_DATE being disabled.
+
+        * platform/mac/TestExpectations: Mark input-in-table-cell-no-value.html
+        as expected to fail.
+
 2012-07-12  W. James MacLean  <wjmaclean@chromium.org>
 
 

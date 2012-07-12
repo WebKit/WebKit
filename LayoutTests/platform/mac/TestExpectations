@@ -292,3 +292,6 @@ BUGWK84186 SKIP : fast/text-autosizing = PASS
 
 // Dialog element is not yet enabled.
 BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
+
+// INPUT_TYPE_DATE is not enabled on the Mac
+BUGWK90987 : fast/forms/input-in-table-cell-no-value.html = IMAGE
