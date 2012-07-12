@@ -1,3 +1,19 @@
+2012-07-12  Benjamin C Meyer  <bmeyer@rim.com>
+
+        WebPage::executeJavaScriptFunction crashes when there is an exception
+        https://bugs.webkit.org/show_bug.cgi?id=91098
+        RIM PR #149294
+
+        When there is an exception currently the code tries to get the string of
+        the exception via JSValueToStringCopy to pass back, but this cases a
+        crash inside JavaScriptCore, so change it to simply return false and not
+        set the return value with the exception string.
+
+        Reviewed by George Staikos.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::executeJavaScriptFunction):
+
 2012-07-12  Pawel Chomicki  <pchomicki@rim.com>
 
         [BlackBerry] WebPage::touchEvent() should use Platform::TouchEvent's toString() for debugging.

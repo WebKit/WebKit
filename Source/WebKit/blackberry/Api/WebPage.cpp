@@ -881,9 +881,8 @@ bool WebPage::executeJavaScriptFunction(const std::vector<std::string> &function
 
     JSObjectRef functionObject = obj;
     JSValueRef result = 0;
-    JSValueRef exception;
     if (functionObject && thisObject)
-        result = JSObjectCallAsFunction(ctx, functionObject, thisObject, args.size(), argListRef.data(), &exception);
+        result = JSObjectCallAsFunction(ctx, functionObject, thisObject, args.size(), argListRef.data(), 0);
 
     for (unsigned i = 0; i < args.size(); ++i)
         JSStringRelease(argList[i]);
@@ -892,11 +891,6 @@ bool WebPage::executeJavaScriptFunction(const std::vector<std::string> &function
 
     if (!value) {
         returnType = JSException;
-        JSStringRef stringRef = JSValueToStringCopy(ctx, exception, 0);
-        size_t bufferSize = JSStringGetMaximumUTF8CStringSize(stringRef);
-        WTF::Vector<char> buffer(bufferSize);
-        JSStringGetUTF8CString(stringRef, buffer.data(), bufferSize);
-        returnValue = WebString::fromUtf8(buffer.data());
         return false;
     }
 
