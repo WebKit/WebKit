@@ -149,12 +149,12 @@ if (window.testRunner)
     </div>
 </div>
 
-<div data-expected-width=500 data-expected-height=0 class="flexbox auto column horizontal-tb">
-    <div data-expected-width=500 data-expected-height=0>
+<div data-expected-width=500 data-expected-height=80 class="flexbox auto column horizontal-tb">
+    <div data-expected-width=500 data-expected-height=40>
         <div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=20 data-offset-x=0></div>
     </div>
-    <div data-expected-width=500 data-expected-height=0 style="-webkit-align-self: flex-start;">
-        <div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=0></div><div data-offset-y=20 data-offset-x=0></div>
+    <div data-expected-width=500 data-expected-height=40 style="-webkit-align-self: flex-start;">
+        <div data-offset-y=40></div><div data-offset-y=40></div><div data-offset-y=40></div><div data-offset-y=40></div><div data-offset-y=40></div><div data-offset-y=60 data-offset-x=0></div>
     </div>
 </div>
 
@@ -196,12 +196,12 @@ if (window.testRunner)
     </div>
 </div>
 
-<div data-expected-height=500 data-expected-width=0 class="flexbox auto column vertical-lr">
-    <div data-expected-height=500 data-expected-width=0>
+<div data-expected-height=500 data-expected-width=80 class="flexbox auto column vertical-lr">
+    <div data-expected-height=500 data-expected-width=40>
         <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
     </div>
-    <div data-expected-height=500 data-expected-width=0 style="-webkit-align-self: flex-start;">
-        <div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=4></div><div data-offset-x=24 data-offset-y=0></div>
+    <div data-expected-height=500 data-expected-width=40 style="-webkit-align-self: flex-start;">
+        <div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=44></div><div data-offset-x=64 data-offset-y=0></div>
     </div>
 </div>
 
@@ -242,15 +242,12 @@ if (window.testRunner)
     </div>
 </div>
 
-<!-- Not sure if these negative offsets are correct, but if there's a bug it's not a flexbox bug, e.g. the following html gets the same negative offsets:
-<div style="-webkit-writing-mode:vertical-rl;"><div style="width: 0"><div style="display: inline-block; height: 40px; width: 20px; background-color: blue;"></div></div></div>
--->
-<div data-expected-height=500 data-expected-width=0 class="flexbox auto column vertical-rl">
-    <div data-expected-height=500 data-expected-width=0>
-        <div data-offset-x=-20></div><div data-offset-x=-20></div><div data-offset-x=-20></div><div data-offset-x=-20></div><div data-offset-x=-20></div><div data-offset-x=-40 data-offset-y=0></div>
+<div data-expected-height=500 data-expected-width=80 class="flexbox auto column vertical-rl">
+    <div data-expected-height=500 data-expected-width=40>
+        <div data-offset-x=60></div><div data-offset-x=60></div><div data-offset-x=60></div><div data-offset-x=60></div><div data-offset-x=60></div><div data-offset-x=40 data-offset-y=0></div>
     </div>
-    <div data-expected-height=500 data-expected-width=0 style="-webkit-align-self: flex-start;">
-        <div data-offset-x=-20></div><div data-offset-x=-20></div><div data-offset-x=-20></div><div data-offset-x=-20></div><div data-offset-x=-20></div><div data-offset-x=-40 data-offset-y=0></div>
+    <div data-expected-height=500 data-expected-width=40 style="-webkit-align-self: flex-start;">
+        <div data-offset-x=20></div><div data-offset-x=20></div><div data-offset-x=20></div><div data-offset-x=20></div><div data-offset-x=20></div><div data-offset-x=0 data-offset-y=0></div>
     </div>
 </div>
 

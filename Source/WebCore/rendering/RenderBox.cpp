@@ -1740,7 +1740,6 @@ LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(SizeType widthType, Layou
 
     ASSERT(!logicalWidth.isUndefined());
 
-    // FIXME: minWidth:auto on a flex-item needs to go down the intrinsicOrAuto path below.
     if (widthType == MinSize && logicalWidth.isAuto())
         return computeBorderBoxLogicalWidth(0);
     
@@ -2076,10 +2075,8 @@ LayoutUnit RenderBox::computeLogicalHeightUsing(SizeType heightType, const Lengt
 
 LayoutUnit RenderBox::computeContentLogicalHeightUsing(SizeType heightType, const Length& height)
 {
-    // FIXME: For flexboxes, minHeight:auto should be min-content.
     if (height.isAuto())
         return heightType == MinSize ? 0 : -1;
- 
     if (height.isFixed())
         return height.value();
     if (height.isPercent())
@@ -2188,7 +2185,6 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUni
 
 LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(SizeType sizeType, Length logicalWidth) const
 {
-    // FIXME: For flexboxes, minWidth:auto should be min-content.
     if (sizeType == MinSize && logicalWidth.isAuto())
         return computeContentBoxLogicalWidth(0);
 
@@ -2231,7 +2227,6 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutU
 
 LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType sizeType, Length logicalHeight) const
 {
-    // FIXME: For flexboxes, minWidth:auto should be min-content.
     if (sizeType == MinSize && logicalHeight.isAuto())
         return computeContentBoxLogicalHeight(0);
 
@@ -2669,7 +2664,6 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthSizeType, Lengt
                                                    Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
                                                    LayoutUnit& logicalWidthValue, LayoutUnit& marginLogicalLeftValue, LayoutUnit& marginLogicalRightValue, LayoutUnit& logicalLeftPos)
 {
-    // FIXME: What should flex items do here since min-width:auto == min-width:min-content instead of min-width:auto == min-width:0.
     if (widthSizeType == MinSize && logicalWidth.isAuto())
         logicalWidth = Length(0, Fixed);
 
@@ -3003,7 +2997,6 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightSizeType, Len
                                                     Length logicalTop, Length logicalBottom, Length marginBefore, Length marginAfter,
                                                     LayoutUnit& logicalHeightValue, LayoutUnit& marginBeforeValue, LayoutUnit& marginAfterValue, LayoutUnit& logicalTopPos)
 {
-    // FIXME: What should flex items do here since min-height:auto == min-height:min-content instead of min-height:auto == min-height:0.
     if (heightSizeType == MinSize && logicalHeightLength.isAuto())
         logicalHeightLength = Length(0, Fixed);
 
@@ -3015,7 +3008,6 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightSizeType, Len
 
     LayoutUnit logicalTopValue = 0;
 
-    // FIXME: For non-flexboxes + min-height, this needs to treat non-flexboxes as 0.
     bool logicalHeightIsAuto = logicalHeightLength.isAuto();
     bool logicalTopIsAuto = logicalTop.isAuto();
     bool logicalBottomIsAuto = logicalBottom.isAuto();

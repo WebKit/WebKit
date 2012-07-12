@@ -1,3 +1,25 @@
+2012-07-12  Ojan Vafai  <ojan@chromium.org>
+
+        Implied minimum size of flex items is min-content
+        https://bugs.webkit.org/show_bug.cgi?id=87546
+
+        Reviewed by Tony Chang.
+
+        Mostly just set min-height/min-width:0 as appropriate to keep the tests testing
+        what the used to be testing. I made sure that each rendering was correct before
+        making the changes. In a couple cases, I changed expectations where I thought
+        the test was still testing was it was intending to test.
+
+        * css3/flexbox/child-overflow.html:
+        * css3/flexbox/columns-auto-size.html:
+        * css3/flexbox/cross-axis-scrollbar.html:
+        * css3/flexbox/flex-item-min-size-expected.txt: Added.
+        * css3/flexbox/flex-item-min-size.html: Added.
+        * css3/flexbox/flexitem.html:
+        * css3/flexbox/line-wrapping.html:
+        * css3/flexbox/perpendicular-writing-modes-inside-flex-item.html:
+        * css3/flexbox/repaint-rtl-column.html:
+
 2012-07-12  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt crashes saving the output for a platform-specific expected test reference

@@ -1,3 +1,28 @@
+2012-07-12  Ojan Vafai  <ojan@chromium.org>
+
+        Implied minimum size of flex items is min-content
+        https://bugs.webkit.org/show_bug.cgi?id=87546
+
+        Reviewed by Tony Chang.
+
+        http://dev.w3.org/csswg/css3-flexbox/#min-size-auto
+        In the main axis direction, min-size of auto means min-content.
+
+        Test: css3/flexbox/flex-item-min-size.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthInRegionUsing):
+        (WebCore::RenderBox::computeContentLogicalHeightUsing):
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        It turned out that these FIXMEs are all unnecessary with the changes to RenderFlexibleBox.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+
 2012-07-12  Eric Penner  <epenner@google.com>
 
         [chromium] Use CCTexture/TextureAllocator and remove TextureManager

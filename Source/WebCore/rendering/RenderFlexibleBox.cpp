@@ -751,7 +751,8 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Ord
 
         child->clearOverrideSize();
         // Only need to layout here if we will need to get the logicalHeight of the child in computeNextFlexLine.
-        if (hasOrthogonalFlow(child) && flexBasisForChild(child).isAuto()) {
+        Length childMainAxisMin = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
+        if (hasOrthogonalFlow(child) && (flexBasisForChild(child).isAuto() || childMainAxisMin.isAuto())) {
             if (!relayoutChildren)
                 child->setChildNeedsLayout(true);
             child->layoutIfNeeded();
@@ -792,9 +793,17 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox* child, Layo
     // https://bugs.webkit.org/show_bug.cgi?id=81809
     if (max.isSpecified() && childSize > valueForLength(max, flexboxAvailableContentExtent, renderView))
         childSize = valueForLength(max, flexboxAvailableContentExtent, renderView);
-    // FIXME: Treat auto min values as min-content.
+
     if (min.isSpecified() && childSize < valueForLength(min, flexboxAvailableContentExtent, renderView))
-        childSize = valueForLength(min, flexboxAvailableContentExtent, renderView);
+        return valueForLength(min, flexboxAvailableContentExtent, renderView);
+
+    // FIXME: Support min/max sizes of fit-content, max-content and fill-available.
+    if (min.isAuto()) {
+        LayoutUnit minContent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->minPreferredLogicalWidth();
+        minContent -= mainAxisBorderAndPaddingExtentForChild(child);
+        return std::max(childSize, minContent);
+    }
+
     return childSize;
 }
 
