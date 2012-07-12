@@ -1,3 +1,23 @@
+2012-07-11  Dan Bernstein  <mitz@apple.com>
+
+        When a table row height grows because of pagination, not all cells’ heights are adjusted
+        https://bugs.webkit.org/show_bug.cgi?id=91043
+
+        Reviewed by Sam Weinig.
+
+        The fix for in bug <http://webkit.org/b/83595> in <http://trac.webkit.org/r113738> made table
+        rows grow as necessary to fit cells that grow as a result of pagination. But it had two bad
+        side effects: earlier cells on the row would not grow by the same amount, and later cells on
+        the row would factor the existing growth into their intrinsic padding.
+
+        Test: fast/multicol/table-row-height-increase.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows): Now when a cell becomes taller than the row height,
+        the additional height needed is recorded, and the cell is shrunk back to row height. Then
+        after finishing the row, all cells occurring on the row (including cells spanning it but not
+        starting on it) are grown by the same amount.
+
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/91024> Build against the latest SDK when targeting older OS X versions.

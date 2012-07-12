@@ -547,6 +547,8 @@ void RenderTableSection::layoutRows()
             rowRenderer->updateLayerTransform();
         }
 
+        int rowHeightIncreaseForPagination = 0;
+
         for (unsigned c = 0; c < nEffCols; c++) {
             CellStruct& cs = cellAt(r, c);
             RenderTableCell* cell = cs.primaryCell();
@@ -671,13 +673,9 @@ void RenderTableSection::layoutRows()
                 // FIXME: Pagination might have made us change size. For now just shrink or grow the cell to fit without doing a relayout.
                 // We'll also do a basic increase of the row height to accommodate the cell if it's bigger, but this isn't quite right
                 // either. It's at least stable though and won't result in an infinite # of relayouts that may never stabilize.
-                if (cell->logicalHeight() > rHeight) {
-                    unsigned delta = cell->logicalHeight() - rHeight;
-                    for (unsigned rowIndex = rindx + cell->rowSpan(); rowIndex <= totalRows; rowIndex++)
-                        m_rowPos[rowIndex] += delta;
-                    rHeight = cell->logicalHeight();
-                } else
-                    cell->setLogicalHeight(rHeight);
+                if (cell->logicalHeight() > rHeight)
+                    rowHeightIncreaseForPagination = max<int>(rowHeightIncreaseForPagination, cell->logicalHeight() - rHeight);
+                cell->setLogicalHeight(rHeight);
             }
 
             LayoutSize childOffset(cell->location() - oldCellRect.location());
@@ -689,6 +687,15 @@ void RenderTableSection::layoutRows()
                 // repaint ourselves (and the child) anyway.
                 if (!table()->selfNeedsLayout() && cell->checkForRepaintDuringLayout())
                     cell->repaintDuringLayoutIfMoved(oldCellRect);
+            }
+        }
+        if (rowHeightIncreaseForPagination) {
+            for (unsigned rowIndex = r + 1; rowIndex <= totalRows; rowIndex++)
+                m_rowPos[rowIndex] += rowHeightIncreaseForPagination;
+            for (unsigned c = 0; c < nEffCols; ++c) {
+                Vector<RenderTableCell*, 1>& cells = cellAt(r, c).cells;
+                for (size_t i = 0; i < cells.size(); ++i)
+                    cells[i]->setLogicalHeight(cells[i]->logicalHeight() + rowHeightIncreaseForPagination);
             }
         }
     }

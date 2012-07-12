@@ -1,3 +1,13 @@
+2012-07-11  Dan Bernstein  <mitz@apple.com>
+
+        When a table row height grows because of pagination, not all cells’ heights are adjusted
+        https://bugs.webkit.org/show_bug.cgi?id=91043
+
+        Reviewed by Sam Weinig.
+
+        * fast/multicol/table-row-height-increase-expected.html: Added.
+        * fast/multicol/table-row-height-increase.html: Added.
+
 2012-07-11  Ojan Vafai  <ojan@chromium.org>
 
         Rebaseline after http://trac.webkit.org/changeset/122374.
