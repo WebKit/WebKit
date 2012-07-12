@@ -2459,7 +2459,6 @@ fast/block/line-layout/selection-highlight-overlap.html
 fast/css/empty-cell-baseline.html
 fast/multicol/cell-shrinkback.html
 fast/multicol/overflow-into-columngap.html
-fast/multicol/table-row-height-increase.html
 fast/table/td-width-fifty-percent-regression.html
 svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg
@@ -2543,6 +2542,7 @@ fast/block/positive-margin-start-negative-margin-end-align-center.html
 fast/block/float/floats-wrap-inside-inline-001.htm
 fast/block/float/floats-wrap-inside-inline-002.htm
 fast/block/float/floats-wrap-inside-inline-003.htm
+fast/multicol/table-row-height-increase.html
 
 # [Qt] css3/filters/huge-region-composited.html makes css3/filters/huge-region.html crash
 # https://bugs.webkit.org/show_bug.cgi?id=90165
@@ -2556,3 +2556,7 @@ http/tests/inspector/console-cd.html
 # Reproducible crash in inspector/timeline/timeline-frames.html
 # https://bugs.webkit.org/show_bug.cgi?id=90706
 inspector/timeline/timeline-frames.html
+
+# [Qt][WK2] REGRESSION(r122376): It made 68 tests flakey (TEXT PASS)
+# https://bugs.webkit.org/show_bug.cgi?id=91063
+compositing/columns/geometry-map-paginated-assert.html

@@ -1,3 +1,10 @@
+2012-07-12  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/forms/state-restore-skip-stateless-expected.txt: Renamed from LayoutTests/platform/qt/fast/forms/state-restore-.
+
 2012-07-12  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip new failing test.
