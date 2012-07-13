@@ -1,3 +1,15 @@
+2012-07-13  Filip Pizlo  <fpizlo@apple.com>
+
+        ASSERTION FAILED: use.useKind() != DoubleUse
+        https://bugs.webkit.org/show_bug.cgi?id=91082
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/dfg-mispredict-variable-but-prove-int-expected.txt: Added.
+        * fast/js/dfg-mispredict-variable-but-prove-int.html: Added.
+        * fast/js/script-tests/dfg-mispredict-variable-but-prove-int.js: Added.
+        (foo):
+
 2012-07-13  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Unskip fast/css/font-face-download-error.html

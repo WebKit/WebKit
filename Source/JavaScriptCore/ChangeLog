@@ -1,3 +1,18 @@
+2012-07-13  Filip Pizlo  <fpizlo@apple.com>
+
+        ASSERTION FAILED: use.useKind() != DoubleUse
+        https://bugs.webkit.org/show_bug.cgi?id=91082
+
+        Reviewed by Geoffrey Garen.
+
+        The implementation of Branch() was unwisely relying on register allocation state
+        to decide what speculations to perform. That's never correct.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122640.
