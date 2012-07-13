@@ -1,3 +1,22 @@
+2012-07-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        RadioNodeList is not updated upon input type change
+        https://bugs.webkit.org/show_bug.cgi?id=91178
+
+        Reviewed by Alexey Proskuryakov.
+
+        Invalidate the radio node lists when type content attribute changes since it excludes
+        image type input elements.
+
+        Test: fast/forms/radionodelist-image-type.html
+
+        * dom/Document.cpp:
+        (WebCore::shouldInvalidateNodeListForType):
+        * dom/Document.h: Renamed InvalidateOnIdNameForAttrChange to InvalidateOnFormAttrChange
+        since listing all attribute name isn't useful at this point.
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+
 2012-07-12  Dongwoo Im  <dw.im@samsung.com>
 
         CodeGeneratorJS.pm need to handle the attribute which has "CallWith=ScriptExecutionContext" option.

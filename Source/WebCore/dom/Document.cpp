@@ -3900,8 +3900,8 @@ static ALWAYS_INLINE bool shouldInvalidateNodeListForType(NodeListInvalidationTy
         return attrName == nameAttr;
     case InvalidateOnForAttrChange:
         return attrName == forAttr;
-    case InvalidateOnIdNameForAttrChange:
-        return attrName == nameAttr || attrName == idAttr || attrName == forAttr;
+    case InvalidateForFormControls:
+        return attrName == nameAttr || attrName == idAttr || attrName == forAttr || attrName == typeAttr;
     case InvalidateOnItemAttrChange:
 #if ENABLE(MICRODATA)
         return attrName == itemscopeAttr || attrName == itempropAttr || attrName == itemtypeAttr;
