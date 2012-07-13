@@ -25,10 +25,10 @@ import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.test.test_finder import TestFinder
+from webkitpy.test.finder import Finder
 
 
-class TestFinderTest(unittest.TestCase):
+class FinderTest(unittest.TestCase):
     def setUp(self):
         files = {
           '/foo/bar/baz.py': '',
@@ -40,7 +40,7 @@ class TestFinderTest(unittest.TestCase):
           '/tmp/another_unittest.py': '',
         }
         self.fs = MockFileSystem(files)
-        self.finder = TestFinder(self.fs)
+        self.finder = Finder(self.fs)
         self.finder.add_tree('/foo', 'bar')
         self.finder.add_tree('/foo2')
 

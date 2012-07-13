@@ -1,3 +1,18 @@
+2012-07-12  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: rename test_finder to finder
+        https://bugs.webkit.org/show_bug.cgi?id=91175
+
+        Reviewed by Adam Barth.
+
+        Rename test_finder -> finder, TestFinder -> Finder to remove
+        some of the stutter in the names.
+
+        * Scripts/webkitpy/test/finder.py: Renamed from Tools/Scripts/webkitpy/test/test_finder.py.
+        * Scripts/webkitpy/test/finder_unittest.py: Renamed from Tools/Scripts/webkitpy/test/test_finder_unittest.py.
+        * Scripts/webkitpy/test/main.py:
+        (Tester.__init__):
+
 2012-07-12  Adam Barth  <abarth@webkit.org>
 
         CommitQueue is confused about what port it is using

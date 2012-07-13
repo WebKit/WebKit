@@ -33,7 +33,7 @@ import unittest
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system import outputcapture
-from webkitpy.test.test_finder import TestFinder
+from webkitpy.test.finder import Finder
 from webkitpy.test.runner import TestRunner
 
 _log = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ _log = logging.getLogger(__name__)
 
 class Tester(object):
     def __init__(self, filesystem=None):
-        self.finder = TestFinder(filesystem or FileSystem())
+        self.finder = Finder(filesystem or FileSystem())
         self.stream = sys.stderr
 
     def add_tree(self, top_directory, starting_subdirectory=None):

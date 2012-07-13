@@ -63,7 +63,6 @@ class TestDirectoryTree(object):
             return realpath.replace(self.top_directory + self.filesystem.sep, '')
         return None
 
-
     def clean(self):
         """Delete all .pyc files in the tree that have no matching .py file."""
         _log.debug("Cleaning orphaned *.pyc files from: %s" % self.search_directory)
@@ -74,7 +73,7 @@ class TestDirectoryTree(object):
                 self.filesystem.remove(filename)
 
 
-class TestFinder(object):
+class Finder(object):
     def __init__(self, filesystem):
         self.filesystem = filesystem
         self.trees = []
