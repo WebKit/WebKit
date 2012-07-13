@@ -3765,3 +3765,6 @@ BUGWK91254 WIN LINUX DEBUG : fast/dom/attribute-empty-value-no-children.html = C
 // Need rebaseline
 BUGWK90951 : fast/text/shaping/shaping-selection-rect.html = MISSING
 BUGWK90951 : fast/text/shaping/shaping-script-order.html = MISSING
+
+// Recently(?) started crashing on occassion
+BUGWK91275 WIN : storage/indexeddb/cursor-key-order.html = PASS CRASH
