@@ -181,27 +181,26 @@ function run()
         console.log(document.doctype);
     }, 'HIERARCHY_REQUEST_ERR');
 
-    // FIXME: This doesn't match http://www.w3.org/TR/DOM-Level-2-Traversal-Range/ranges.html#Level-2-Range-Changing.
-    // Gecko implements it correctly. When setting a boundary of the range in a different
+    // When setting a boundary of the range in a different
     // document, the call should succeed and the range should be collapsed.
     runTest(function() {
         rangeInIframe().setStart(elementInCurrentDocument('setStart'), 0);
-    }, 'WRONG_DOCUMENT_ERR');
+    });
     runTest(function() {
         rangeInIframe().setEnd(elementInCurrentDocument('setEnd'), 0);
-    }, 'WRONG_DOCUMENT_ERR');
+    });
     runTest(function() {
         rangeInIframe().setStartBefore(elementInCurrentDocument('setStartBefore'), 0);
-    }, 'WRONG_DOCUMENT_ERR');
+    });
     runTest(function() {
         rangeInIframe().setStartAfter(elementInCurrentDocument('setStartAfter'), 0);
-    }, 'WRONG_DOCUMENT_ERR');
+    });
     runTest(function() {
         rangeInIframe().setEndBefore(elementInCurrentDocument('setEndBefore'), 0);
-    }, 'WRONG_DOCUMENT_ERR');
+    });
     runTest(function() {
         rangeInIframe().setEndAfter(elementInCurrentDocument('setEndAfter'), 0);
-    }, 'WRONG_DOCUMENT_ERR');
+    });
 
     // FIXME: isPointInRange isn't specced anywhere, but Gecko doesn't throw an exception here.
     // It doesn't seem like we should either. Gecko returns false.

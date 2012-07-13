@@ -196,6 +196,18 @@ bool Range::collapsed(ExceptionCode& ec) const
     return m_start == m_end;
 }
 
+static inline bool checkForDifferentRootContainer(const RangeBoundaryPoint& start, const RangeBoundaryPoint& end)
+{
+    Node* endRootContainer = end.container();
+    while (endRootContainer->parentNode())
+        endRootContainer = endRootContainer->parentNode();
+    Node* startRootContainer = start.container();
+    while (startRootContainer->parentNode())
+        startRootContainer = startRootContainer->parentNode();
+
+    return startRootContainer != endRootContainer || (Range::compareBoundaryPoints(start, end, ASSERT_NO_EXCEPTION) > 0);
+}
+
 void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
 {
     if (!m_start.container()) {
@@ -208,9 +220,10 @@ void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
         return;
     }
 
+    bool didMoveDocument = false;
     if (refNode->document() != m_ownerDocument) {
-        ec = WRONG_DOCUMENT_ERR;
-        return;
+        setDocument(refNode->document());
+        didMoveDocument = true;
     }
 
     ec = 0;
@@ -220,20 +233,8 @@ void Range::setStart(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
 
     m_start.set(refNode, offset, childNode);
 
-    // check if different root container
-    Node* endRootContainer = m_end.container();
-    while (endRootContainer->parentNode())
-        endRootContainer = endRootContainer->parentNode();
-    Node* startRootContainer = m_start.container();
-    while (startRootContainer->parentNode())
-        startRootContainer = startRootContainer->parentNode();
-    if (startRootContainer != endRootContainer)
+    if (didMoveDocument || checkForDifferentRootContainer(m_start, m_end))
         collapse(true, ec);
-    // check if new start after end
-    else if (compareBoundaryPoints(m_start, m_end, ec) > 0) {
-        ASSERT(!ec);
-        collapse(true, ec);
-    }
 }
 
 void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
@@ -248,9 +249,10 @@ void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
         return;
     }
 
+    bool didMoveDocument = false;
     if (refNode->document() != m_ownerDocument) {
-        ec = WRONG_DOCUMENT_ERR;
-        return;
+        setDocument(refNode->document());
+        didMoveDocument = true;
     }
 
     ec = 0;
@@ -260,20 +262,8 @@ void Range::setEnd(PassRefPtr<Node> refNode, int offset, ExceptionCode& ec)
 
     m_end.set(refNode, offset, childNode);
 
-    // check if different root container
-    Node* endRootContainer = m_end.container();
-    while (endRootContainer->parentNode())
-        endRootContainer = endRootContainer->parentNode();
-    Node* startRootContainer = m_start.container();
-    while (startRootContainer->parentNode())
-        startRootContainer = startRootContainer->parentNode();
-    if (startRootContainer != endRootContainer)
+    if (didMoveDocument || checkForDifferentRootContainer(m_start, m_end))
         collapse(false, ec);
-    // check if new end before start
-    if (compareBoundaryPoints(m_start, m_end, ec) > 0) {
-        ASSERT(!ec);
-        collapse(false, ec);
-    }
 }
 
 void Range::setStart(const Position& start, ExceptionCode& ec)
@@ -1253,11 +1243,6 @@ void Range::setStartAfter(Node* refNode, ExceptionCode& ec)
         return;
     }
 
-    if (refNode->document() != m_ownerDocument) {
-        ec = WRONG_DOCUMENT_ERR;
-        return;
-    }
-
     ec = 0;
     checkNodeBA(refNode, ec);
     if (ec)
@@ -1275,11 +1260,6 @@ void Range::setEndBefore(Node* refNode, ExceptionCode& ec)
 
     if (!refNode) {
         ec = NOT_FOUND_ERR;
-        return;
-    }
-
-    if (refNode->document() != m_ownerDocument) {
-        ec = WRONG_DOCUMENT_ERR;
         return;
     }
 
@@ -1303,18 +1283,12 @@ void Range::setEndAfter(Node* refNode, ExceptionCode& ec)
         return;
     }
 
-    if (refNode->document() != m_ownerDocument) {
-        ec = WRONG_DOCUMENT_ERR;
-        return;
-    }
-
     ec = 0;
     checkNodeBA(refNode, ec);
     if (ec)
         return;
 
     setEnd(refNode->parentNode(), refNode->nodeIndex() + 1, ec);
-
 }
 
 void Range::selectNode(Node* refNode, ExceptionCode& ec)
@@ -1526,11 +1500,6 @@ void Range::setStartBefore(Node* refNode, ExceptionCode& ec)
 
     if (!refNode) {
         ec = NOT_FOUND_ERR;
-        return;
-    }
-
-    if (refNode->document() != m_ownerDocument) {
-        ec = WRONG_DOCUMENT_ERR;
         return;
     }
 

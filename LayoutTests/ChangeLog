@@ -1,3 +1,17 @@
+2012-07-12  Eric Seidel  <eric@webkit.org>
+
+        Incorrect behaviour calling Range setStart or setEnd with boundary in different document
+        https://bugs.webkit.org/show_bug.cgi?id=42517
+
+        Reviewed by Ojan Vafai.
+
+        Add a new test to cover this changed behavior, and correct a FIXME in an old test
+        which was documenting our incorrect behavior.
+
+        * fast/dom/Range/set-wrong-document-err-expected.txt: Added.
+        * fast/dom/Range/set-wrong-document-err.html: Added.
+        * fast/dom/move-nodes-across-documents.html:
+
 2012-07-12  Konrad Piascik  <kpiascik@rim.com>
 
         Web Inspector: Geolocation override
