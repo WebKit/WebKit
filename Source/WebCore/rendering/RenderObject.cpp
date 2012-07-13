@@ -282,15 +282,8 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
         needsTable = !isTable();
     else if (newChild->isTableRow())
         needsTable = !isTableSection();
-    else if (newChild->isTableCell()) {
+    else if (newChild->isTableCell())
         needsTable = !isTableRow();
-        // I'm not 100% sure this is the best way to fix this, but without this
-        // change we recurse infinitely when trying to render the CSS2 test page:
-        // http://www.bath.ac.uk/%7Epy8ieh/internet/eviltests/htmlbodyheadrendering2.html.
-        // See Radar 2925291.
-        if (needsTable && isTableCell() && !children->firstChild() && !newChild->isTableCell())
-            needsTable = false;
-    }
 
     if (needsTable) {
         RenderTable* table;
@@ -302,10 +295,8 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
             addChild(table, beforeChild);
         }
         table->addChild(newChild);
-    } else {
-        // Just add it...
+    } else
         children->insertChildNode(this, newChild, beforeChild);
-    }
 
     if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE)
         toRenderText(newChild)->transformText();

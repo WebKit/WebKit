@@ -1,3 +1,21 @@
+2012-07-13  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove an always-failing table-wrapping check in RenderObject::addChild
+        https://bugs.webkit.org/show_bug.cgi?id=91286
+
+        Reviewed by Eric Seidel.
+
+        Due to the structure of the code, this test is always failing (newChild->isTableCell()
+        is true to get in the branch).
+
+        The changeset adding the code didn't add testing so I poundered adding the mentioned test,
+        which is passing. However the test would need to be blindly changed to be included in our
+        test harness. I would also expect this code to be exercised by other table tests anyway.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild):
+        Removed never-reached branch. While at it, removed a 'what' comment in the same file.
+
 2012-07-13  Emil A Eklund  <eae@chromium.org>
 
         Use LayoutBoxExtent for image outsets
