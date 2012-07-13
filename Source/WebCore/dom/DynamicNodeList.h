@@ -35,24 +35,24 @@ namespace WebCore {
 class Element;
 class Node;
 
+enum NodeListRootType {
+    NodeListIsRootedAtNode,
+    NodeListIsRootedAtDocument,
+};
+
 class DynamicNodeListCacheBase {
 public:
-    DynamicNodeListCacheBase(NodeListRootType rootType, NodeListInvalidationType invalidationType)
-        : m_rootedAtDocument(rootType == NodeListIsRootedAtDocument)
+    DynamicNodeListCacheBase(NodeListRootType rootType, NodeListInvalidationType invalidationType, CollectionType collectionType = InvalidCollectionType)
+        : m_cachedItem(0)
+        , m_isLengthCacheValid(false)
+        , m_isItemCacheValid(false)
+        , m_rootedAtDocument(rootType == NodeListIsRootedAtDocument)
         , m_invalidationType(invalidationType)
-        , m_collectionType(InvalidCollectionType)
-    {
-        ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
-        clearCache();
-    }
-
-    DynamicNodeListCacheBase(CollectionType collectionType)
-        : m_rootedAtDocument(false) // Ignored
-        , m_invalidationType(DoNotInvalidateOnAttributeChanges) // Ignored
+        , m_isNameCacheValid(false)
         , m_collectionType(collectionType)
     {
+        ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
         ASSERT(m_collectionType == static_cast<unsigned>(collectionType));
-        clearCache();
     }
 
 public:
@@ -61,6 +61,8 @@ public:
     ALWAYS_INLINE NodeListRootType rootType() { return m_rootedAtDocument ? NodeListIsRootedAtDocument : NodeListIsRootedAtNode; }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
     ALWAYS_INLINE CollectionType type() const { return static_cast<CollectionType>(m_collectionType); }
+
+    void invalidateCache() const;
 
 protected:
     ALWAYS_INLINE bool isItemCacheValid() const { return m_isItemCacheValid; }
@@ -85,24 +87,14 @@ protected:
     bool hasNameCache() const { return m_isNameCacheValid; }
     void setHasNameCache() const { m_isNameCacheValid = true; }
 
-    void clearCache() const
-    {
-        m_cachedItem = 0;
-        m_isLengthCacheValid = false;
-        m_isItemCacheValid = false;
-        m_isNameCacheValid = false;
-    }
-
 private:
     mutable Node* m_cachedItem;
     mutable unsigned m_cachedLength;
     mutable unsigned m_cachedItemOffset;
     mutable unsigned m_isLengthCacheValid : 1;
     mutable unsigned m_isItemCacheValid : 1;
-
-    // From DynamicNodeList
     const unsigned m_rootedAtDocument : 1;
-    const unsigned m_invalidationType : 3;
+    const unsigned m_invalidationType : 4;
 
     // From HTMLCollection
     mutable unsigned m_isNameCacheValid : 1;
@@ -133,7 +125,6 @@ public:
 
     // Other methods (not part of DOM)
     Node* ownerNode() const { return m_ownerNode.get(); }
-    void invalidateCache() { clearCache(); }
 
 protected:
     Node* rootNode() const
@@ -154,7 +145,7 @@ class DynamicSubtreeNodeList : public DynamicNodeList {
 public:
     virtual ~DynamicSubtreeNodeList()
     {
-        document()->unregisterDynamicSubtreeNodeList(this, rootType(), invalidationType());
+        document()->unregisterNodeListCache(this);
     }
     virtual unsigned length() const OVERRIDE;
     virtual Node* item(unsigned index) const OVERRIDE;
@@ -163,7 +154,7 @@ protected:
     DynamicSubtreeNodeList(PassRefPtr<Node> node, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
         : DynamicNodeList(node, rootType, invalidationType)
     {
-        document()->registerDynamicSubtreeNodeList(this, rootType, invalidationType);
+        document()->registerNodeListCache(this);
     }
 
 private:

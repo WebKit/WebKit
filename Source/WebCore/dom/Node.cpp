@@ -47,6 +47,7 @@
 #include "DocumentType.h"
 #include "DynamicNodeList.h"
 #include "Element.h"
+#include "ElementRareData.h"
 #include "ElementShadow.h"
 #include "Event.h"
 #include "EventContext.h"
@@ -973,7 +974,7 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
     if (!attributeOwnerElement)
         return;
 
-    if (!document()->shouldInvalidateDynamicSubtreeNodeList(&attrName))
+    if (!document()->shouldInvalidateNodeListCaches(&attrName))
         return;
 
     document()->clearNodeListCaches();
@@ -983,10 +984,10 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
         if (!node->hasRareData())
             continue;
         NodeRareData* data = node->rareData();
-        if (!data->nodeLists())
-            continue;
-
-        data->nodeLists()->invalidateCaches(&attrName);
+        if (data->nodeLists())
+            data->nodeLists()->invalidateCaches(&attrName);
+        if (node->isElementNode())
+            static_cast<ElementRareData*>(data)->clearHTMLCollectionCaches();
     }
 }
 
@@ -995,7 +996,7 @@ void Node::invalidateNodeListsCacheAfterChildrenChanged()
     if (hasRareData())
         rareData()->clearChildNodeListCache();
 
-    if (!document()->shouldInvalidateDynamicSubtreeNodeList())
+    if (!document()->shouldInvalidateNodeListCaches())
         return;
 
     document()->clearNodeListCaches();
@@ -1004,10 +1005,10 @@ void Node::invalidateNodeListsCacheAfterChildrenChanged()
         if (!node->hasRareData())
             continue;
         NodeRareData* data = node->rareData();
-        if (!data->nodeLists())
-            continue;
-
-        data->nodeLists()->invalidateCaches();
+        if (data->nodeLists())
+            data->nodeLists()->invalidateCaches();
+        if (node->isElementNode())
+            static_cast<ElementRareData*>(data)->clearHTMLCollectionCaches();
     }
 }
 

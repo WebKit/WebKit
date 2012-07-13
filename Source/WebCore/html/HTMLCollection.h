@@ -39,31 +39,19 @@ class NodeList;
 
 class HTMLCollectionCacheBase : public DynamicNodeListCacheBase {
 public:
-    HTMLCollectionCacheBase(CollectionType type)
-        : DynamicNodeListCacheBase(type)
+    HTMLCollectionCacheBase(NodeListRootType rootType, NodeListInvalidationType invalidationType, CollectionType collectionType)
+        : DynamicNodeListCacheBase(rootType, invalidationType, collectionType)
         , m_cachedElementsArrayOffset(0)
-        , m_cacheTreeVersion(0)
     {
     }
 
 protected:
-    void clearCache(uint64_t currentDomTreeVersion) const
-    {
-        DynamicNodeListCacheBase::clearCache();
-        m_idCache.clear();
-        m_nameCache.clear();
-        m_cachedElementsArrayOffset = 0;
-        m_cacheTreeVersion = currentDomTreeVersion;
-    }
-
     void setItemCache(Node* item, unsigned offset, unsigned elementsArrayOffset) const
     {
         setItemCache(item, offset);
         m_cachedElementsArrayOffset = elementsArrayOffset;
     }
     unsigned cachedElementsArrayOffset() const { return m_cachedElementsArrayOffset; }
-
-    uint64_t cacheTreeVersion() const { return m_cacheTreeVersion; }
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<Element*> > > NodeCacheMap;
     Vector<Element*>* idCache(const AtomicString& name) const { return m_idCache.get(name.impl()); }
@@ -76,13 +64,13 @@ protected:
 private:
     using DynamicNodeListCacheBase::isRootedAtDocument;
     using DynamicNodeListCacheBase::shouldInvalidateOnAttributeChange;
-    using DynamicNodeListCacheBase::clearCache;
     using DynamicNodeListCacheBase::setItemCache;
 
     mutable NodeCacheMap m_idCache;
     mutable NodeCacheMap m_nameCache;
     mutable unsigned m_cachedElementsArrayOffset;
-    mutable uint64_t m_cacheTreeVersion;
+
+    friend void DynamicNodeListCacheBase::invalidateCache() const;
 };
 
 class HTMLCollection : public RefCounted<HTMLCollection>, public HTMLCollectionCacheBase {
@@ -101,7 +89,6 @@ public:
     void namedItems(const AtomicString& name, Vector<RefPtr<Node> >&) const;
     bool isEmpty() const
     {
-        invalidateCacheIfNeeded();
         if (isLengthCacheValid())
             return !cachedLength();
         if (isItemCacheValid())
@@ -110,7 +97,6 @@ public:
     }
     bool hasExactlyOneItem() const
     {
-        invalidateCacheIfNeeded();
         if (isLengthCacheValid())
             return cachedLength() == 1;
         if (isItemCacheValid())
@@ -119,9 +105,6 @@ public:
     }
 
     Node* base() const { return m_base.get(); }
-
-    void invalidateCache() const;
-    void invalidateCacheIfNeeded() const;
 
 protected:
     HTMLCollection(Node* base, CollectionType);

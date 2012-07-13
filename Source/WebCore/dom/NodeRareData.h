@@ -138,8 +138,8 @@ public:
             for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
                 DynamicSubtreeNodeList* list = it->second;
                 if (list->isRootedAtDocument()) {
-                    oldDocument->unregisterDynamicSubtreeNodeList(list, list->rootType(), list->invalidationType());
-                    newDocument->registerDynamicSubtreeNodeList(list, list->rootType(), list->invalidationType());
+                    oldDocument->unregisterNodeListCache(list);
+                    newDocument->registerNodeListCache(list);
                 }
             }
 
@@ -147,8 +147,8 @@ public:
             for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
                 DynamicSubtreeNodeList* list = it->second;
                 if (list->isRootedAtDocument()) {
-                    oldDocument->unregisterDynamicSubtreeNodeList(list, list->rootType(), list->invalidationType());
-                    newDocument->registerDynamicSubtreeNodeList(list, list->rootType(), list->invalidationType());
+                    oldDocument->unregisterNodeListCache(list);
+                    newDocument->registerNodeListCache(list);
                 }
             }
 
@@ -156,8 +156,8 @@ public:
             for (TagNodeListCacheNS::const_iterator it = m_tagNodeListCacheNS.begin(); it != tagEnd; ++it) {
                 DynamicSubtreeNodeList* list = it->second;
                 ASSERT(!list->isRootedAtDocument());
-                oldDocument->unregisterDynamicSubtreeNodeList(list, list->rootType(), list->invalidationType());
-                newDocument->registerDynamicSubtreeNodeList(list, list->rootType(), list->invalidationType());
+                oldDocument->unregisterNodeListCache(list);
+                newDocument->registerNodeListCache(list);
             }
         }
     }

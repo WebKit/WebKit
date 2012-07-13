@@ -3861,17 +3861,21 @@ void Document::setCSSTarget(Element* n)
         n->setNeedsStyleRecalc();
 }
 
-void Document::registerDynamicSubtreeNodeList(DynamicSubtreeNodeList* list, NodeListRootType rootType, NodeListInvalidationType invalidationType)
+void Document::registerNodeListCache(DynamicNodeListCacheBase* list)
 {
-    m_nodeListCounts[invalidationType]++;
-    if (rootType == NodeListIsRootedAtDocument)
+    if (list->type() != InvalidCollectionType)
+        m_nodeListCounts[InvalidateOnIdNameAttrChange]++;
+    m_nodeListCounts[list->invalidationType()]++;
+    if (list->rootType() == NodeListIsRootedAtDocument)
         m_listsInvalidatedAtDocument.add(list);
 }
 
-void Document::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list, NodeListRootType rootType, NodeListInvalidationType invalidationType)
+void Document::unregisterNodeListCache(DynamicNodeListCacheBase* list)
 {
-    m_nodeListCounts[invalidationType]--;
-    if (rootType == NodeListIsRootedAtDocument) {
+    if (list->type() != InvalidCollectionType)
+        m_nodeListCounts[InvalidateOnIdNameAttrChange]--;
+    m_nodeListCounts[list->invalidationType()]--;
+    if (list->rootType() == NodeListIsRootedAtDocument) {
         ASSERT(m_listsInvalidatedAtDocument.contains(list));
         m_listsInvalidatedAtDocument.remove(list);
     }
@@ -3884,10 +3888,14 @@ static ALWAYS_INLINE bool shouldInvalidateNodeListForType(NodeListInvalidationTy
         return attrName == classAttr;
     case InvalidateOnNameAttrChange:
         return attrName == nameAttr;
+    case InvalidateOnIdNameAttrChange:
+        return attrName == idAttr || attrName == nameAttr;
     case InvalidateOnForAttrChange:
         return attrName == forAttr;
     case InvalidateForFormControls:
         return attrName == nameAttr || attrName == idAttr || attrName == forAttr || attrName == typeAttr;
+    case InvalidateOnHRefAttrChange:
+        return attrName == hrefAttr;
     case InvalidateOnItemAttrChange:
 #if ENABLE(MICRODATA)
         return attrName == itemscopeAttr || attrName == itempropAttr || attrName == itemtypeAttr;
@@ -3895,11 +3903,13 @@ static ALWAYS_INLINE bool shouldInvalidateNodeListForType(NodeListInvalidationTy
     case DoNotInvalidateOnAttributeChanges:
         ASSERT_NOT_REACHED();
         return false;
+    case InvalidateOnAnyAttrChange:
+        return true;
     }
     return false;
 }
 
-bool Document::shouldInvalidateDynamicSubtreeNodeList(const QualifiedName* attrName) const
+bool Document::shouldInvalidateNodeListCaches(const QualifiedName* attrName) const
 {
     if (attrName) {
         for (int type = DoNotInvalidateOnAttributeChanges + 1; type < numNodeListInvalidationTypes; type++) {
@@ -3919,8 +3929,8 @@ bool Document::shouldInvalidateDynamicSubtreeNodeList(const QualifiedName* attrN
 
 void Document::clearNodeListCaches()
 {
-    HashSet<DynamicSubtreeNodeList*>::iterator end = m_listsInvalidatedAtDocument.end();
-    for (HashSet<DynamicSubtreeNodeList*>::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
+    HashSet<DynamicNodeListCacheBase*>::iterator end = m_listsInvalidatedAtDocument.end();
+    for (HashSet<DynamicNodeListCacheBase*>::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
         (*it)->invalidateCache();
 }
 

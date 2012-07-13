@@ -142,7 +142,6 @@ HTMLElement* HTMLPropertiesCollection::itemAfter(HTMLElement* base, Element* pre
 
 void HTMLPropertiesCollection::updateNameCache() const
 {
-    invalidateCacheIfNeeded();
     if (m_hasPropertyNameCache)
         return;
 

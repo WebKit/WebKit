@@ -1,3 +1,84 @@
+2012-07-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLCollection should use DynamicNodeList's invalidation model
+        https://bugs.webkit.org/show_bug.cgi?id=90326
+
+        Reviewed by Anders Carlsson.
+
+        Make HTMLCollection invalidated upon attribute and children changes instead of invalidating it on demand
+        by comparing DOM tree versions. Node that HTMLCollections owned by Document are invalidated with other
+        document-rooted node lists in m_listsInvalidatedAtDocument for simplicity although this mechanism is
+        normally used for node lists owned by a non-Document node that contains nodes outside of its subtree.
+        ItemProperties and FormControls are more "traditional" users of the mechanism.
+
+        Also, merged DynamicNodeList::invalidateCache and HTMLCollection::invalidateCache.
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerNodeListCache): Renamed. No longer takes NodeListInvalidationType or
+        NodeListRootType since they can be obtained from the cache base. Increment the node list counter for
+        InvalidateOnIdNameAttrChange when a HTMLCollection is passed in since all HTMLCollections need to be
+        invalidated on id or name content attribute changes due to named getters.
+        (WebCore::Document::unregisterNodeListCache): Ditto.
+        (WebCore::shouldInvalidateNodeListForType):
+        (WebCore::Document::shouldInvalidateNodeListCaches):
+        (WebCore::Document::clearNodeListCaches):
+        * dom/Document.h:
+        (WebCore): Added InvalidateOnIdNameAttrChange, InvalidateOnHRefAttrChange, and InvalidateOnAnyAttrChange.
+        (Document):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeListCacheBase::invalidateCache): Added. Invalidates caches of both DynamicNodeList
+        and HTMLCollection. We can't afford to use virtual function calls here because this function is called on
+        all node lists and HTML collections owned by ancestors of an element under which a node is added, removed,
+        or its attributes are changed.
+        (WebCore):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::DynamicNodeListCacheBase): Initializes member variables directly
+        instead of calling clearCache now that DynamicNodeListCacheBase::invalidateCache has become polymorphic.
+        (DynamicNodeListCacheBase): Increased the number of bits for m_invalidationType since we now have 9
+        invalidation types.
+        (WebCore::DynamicSubtreeNodeList::~DynamicSubtreeNodeList):
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::clearHTMLCollectionCaches): Added.
+        (WebCore::ElementRareData::adoptTreeScope): Added; similar to NodeRareData::adoptTreeScope.
+        * dom/Node.cpp:
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged): Clears HTML collection caches as well as
+        node list caches.
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged): Ditto.
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptTreeScope):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope): Calls ElementRareData's adoptTreeScope as well as
+        NodeRareData's.
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::namedItemWithIndex):
+        * html/HTMLCollection.cpp:
+        (WebCore::rootTypeFromCollectionType): Added. As mentioned above, treat all Document-owned HTML collection
+        as if rooted at document for convenience.
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes): Added. Since all HTML collection requires
+        invalidation on id and name content attribute changes, which is taken care by the special logic in
+        Document::registerNodeListCache, exclude those two attributes from consideration.
+        (WebCore::HTMLCollection::HTMLCollection): Calls Document::registerNodeListCache.
+        (WebCore::HTMLCollection::~HTMLCollection): Calls Document::unregisterNodeListCache.
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::item):
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollectionCacheBase::HTMLCollectionCacheBase):
+        (HTMLCollectionCacheBase): Removed m_cacheTreeVersion and clearCache since they're no longer used.
+        (HTMLCollection):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::namedItem):
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLOptionsCollection.h:
+        (HTMLOptionsCollection):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::updateNameCache):
+        * html/HTMLPropertiesCollection.h:
+        (WebCore::HTMLPropertiesCollection::invalidateCache):
+
 2012-07-13  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Remove incorrect debug assertion in LayerRendererChromium.cpp

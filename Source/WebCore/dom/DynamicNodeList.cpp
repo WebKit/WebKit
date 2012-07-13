@@ -25,8 +25,31 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "HTMLCollection.h"
+#include "HTMLPropertiesCollection.h"
 
 namespace WebCore {
+
+void DynamicNodeListCacheBase::invalidateCache() const
+{
+    m_cachedItem = 0;
+    m_isLengthCacheValid = false;
+    m_isItemCacheValid = false;
+    m_isNameCacheValid = false;
+    if (type() == InvalidCollectionType)
+        return;
+
+    const HTMLCollectionCacheBase* cacheBase = static_cast<const HTMLCollectionCacheBase*>(this);
+    cacheBase->m_idCache.clear();
+    cacheBase->m_nameCache.clear();
+    cacheBase->m_cachedElementsArrayOffset = 0;
+
+#if ENABLE(MICRODATA)
+    // FIXME: There should be more generic mechanism to clear caches in subclasses.
+    if (type() == ItemProperties)
+        static_cast<const HTMLPropertiesCollection*>(this)->invalidateCache();
+#endif
+}
 
 unsigned DynamicSubtreeNodeList::length() const
 {

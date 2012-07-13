@@ -26,6 +26,7 @@
 #include "DatasetDOMStringMap.h"
 #include "Element.h"
 #include "ElementShadow.h"
+#include "HTMLCollection.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include <wtf/OwnPtr.h>
@@ -57,11 +58,40 @@ public:
 
         return (*m_cachedCollections)[type - FirstNodeCollectionType];
     }
+
     void removeCachedHTMLCollection(HTMLCollection* collection, CollectionType type)
     {
         ASSERT(m_cachedCollections);
         ASSERT_UNUSED(collection, (*m_cachedCollections)[type - FirstNodeCollectionType] == collection);
         (*m_cachedCollections)[type - FirstNodeCollectionType] = 0;
+    }
+
+    void clearHTMLCollectionCaches()
+    {
+        if (!m_cachedCollections)
+            return;
+
+        for (unsigned i = 0; i < (*m_cachedCollections).size(); i++) {
+            if ((*m_cachedCollections)[i])
+                (*m_cachedCollections)[i]->invalidateCache();
+        }
+    }
+
+    void adoptTreeScope(Document* oldDocument, Document* newDocument)
+    {
+        if (!m_cachedCollections)
+            return;
+
+        for (unsigned i = 0; i < (*m_cachedCollections).size(); i++) {
+            HTMLCollection* collection = (*m_cachedCollections)[i];
+            if (!collection)
+                continue;
+            collection->invalidateCache();
+            if (oldDocument != newDocument) {
+                oldDocument->unregisterNodeListCache(collection);
+                newDocument->registerNodeListCache(collection);
+            }
+        }
     }
 
     typedef FixedArray<HTMLCollection*, NumNodeCollectionTypes> CachedHTMLCollectionArray;

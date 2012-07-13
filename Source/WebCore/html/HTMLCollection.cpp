@@ -76,11 +76,88 @@ static bool shouldOnlyIncludeDirectChildren(CollectionType type)
     return false;
 }
 
+static NodeListRootType rootTypeFromCollectionType(CollectionType type)
+{
+    switch (type) {
+    case DocImages:
+    case DocApplets:
+    case DocEmbeds:
+    case DocObjects:
+    case DocForms:
+    case DocLinks:
+    case DocAnchors:
+    case DocScripts:
+    case DocAll:
+    case WindowNamedItems:
+    case DocumentNamedItems:
+#if ENABLE(MICRODATA)
+    case ItemProperties:
+#endif
+    case FormControls:
+        return NodeListIsRootedAtDocument;
+    case NodeChildren:
+    case TableTBodies:
+    case TSectionRows:
+    case TableRows:
+    case TRCells:
+    case SelectOptions:
+    case SelectedOptions:
+    case DataListOptions:
+    case MapAreas:
+    case InvalidCollectionType:
+        return NodeListIsRootedAtNode;
+    }
+    ASSERT_NOT_REACHED();
+    return NodeListIsRootedAtNode;
+}
+
+static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(CollectionType type)
+{
+    switch (type) {
+    case DocImages:
+    case DocEmbeds:
+    case DocObjects:
+    case DocForms:
+    case DocAnchors: // Depends on name attribute.
+    case DocScripts:
+    case DocAll:
+    case WindowNamedItems: // Depends on id and name attributes.
+    case DocumentNamedItems: // Ditto.
+    case NodeChildren:
+    case TableTBodies:
+    case TSectionRows:
+    case TableRows:
+    case TRCells:
+    case SelectOptions:
+    case MapAreas:
+        return DoNotInvalidateOnAttributeChanges;
+    case DocApplets:
+    case SelectedOptions:
+    case DataListOptions:
+        // FIXME: We can do better some day.
+        return InvalidateOnAnyAttrChange;
+    case DocLinks:
+        return InvalidateOnHRefAttrChange;
+#if ENABLE(MICRODATA)
+    case ItemProperties:
+        return InvalidateOnItemAttrChange;
+#endif
+    case FormControls:
+        return InvalidateForFormControls;
+    case InvalidCollectionType:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return DoNotInvalidateOnAttributeChanges;
+}
+    
+
 HTMLCollection::HTMLCollection(Node* base, CollectionType type)
-    : HTMLCollectionCacheBase(type)
+    : HTMLCollectionCacheBase(rootTypeFromCollectionType(type), invalidationTypeExcludingIdAndNameAttributes(type), type)
     , m_base(base)
 {
     ASSERT(m_base);
+    m_base->document()->registerNodeListCache(this);
 }
 
 PassRefPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
@@ -98,26 +175,8 @@ HTMLCollection::~HTMLCollection()
         toElement(base())->removeCachedHTMLCollection(this, type());
     } else // HTMLNameCollection removes cache by itself.
         ASSERT(type() == WindowNamedItems || type() == DocumentNamedItems);
-}
 
-void HTMLCollection::invalidateCacheIfNeeded() const
-{
-    uint64_t docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
-
-    if (cacheTreeVersion() == docversion)
-        return;
-
-    invalidateCache();
-}
-
-void HTMLCollection::invalidateCache() const
-{
-#if ENABLE(MICRODATA)
-    // FIXME: There should be more generic mechanism to clear caches in subclasses.
-    if (type() == ItemProperties)
-        static_cast<const HTMLPropertiesCollection*>(this)->clearCache();
-#endif
-    clearCache(static_cast<HTMLDocument*>(m_base->document())->domTreeVersion());
+    m_base->document()->unregisterNodeListCache(this);
 }
 
 inline bool HTMLCollection::isAcceptableElement(Element* element) const
@@ -200,7 +259,6 @@ Element* HTMLCollection::itemAfter(unsigned& offsetInArray, Element* previous) c
 
 unsigned HTMLCollection::length() const
 {
-    invalidateCacheIfNeeded();
     if (isLengthCacheValid())
         return cachedLength();
 
@@ -222,7 +280,6 @@ unsigned HTMLCollection::length() const
 
 Node* HTMLCollection::item(unsigned index) const
 {
-    invalidateCacheIfNeeded();
     if (isItemCacheValid() && cachedItemOffset() == index)
         return cachedItem();
 
@@ -306,7 +363,6 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
     // attribute. If a match is not found, the method then searches for an
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
-    invalidateCacheIfNeeded();
 
     unsigned arrayOffset = 0;
     unsigned i = 0;
@@ -332,7 +388,6 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
 
 void HTMLCollection::updateNameCache() const
 {
-    invalidateCacheIfNeeded();
     if (hasNameCache())
         return;
 

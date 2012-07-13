@@ -51,7 +51,7 @@ public:
     virtual PassRefPtr<NodeList> namedItem(const String&) const OVERRIDE;
     virtual bool hasNamedItem(const AtomicString&) const OVERRIDE;
 
-    void clearCache() const
+    void invalidateCache() const
     {
         m_itemRefElements.clear();
         m_propertyNames.clear();

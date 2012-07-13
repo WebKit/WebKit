@@ -46,8 +46,6 @@ public:
 
     void setLength(unsigned, ExceptionCode&);
 
-    using HTMLCollection::invalidateCacheIfNeeded;
-
 private:
     HTMLOptionsCollection(Element*);
 };

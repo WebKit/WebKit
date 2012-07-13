@@ -79,6 +79,7 @@ class DocumentMarkerController;
 class DocumentParser;
 class DocumentType;
 class DocumentWeakReference;
+class DynamicNodeListCacheBase;
 class EditingText;
 class Element;
 class EntityReference;
@@ -187,20 +188,18 @@ enum PageshowEventPersistence {
 
 enum StyleResolverUpdateFlag { RecalcStyleImmediately, DeferRecalcStyle, RecalcStyleIfNeeded };
 
-enum NodeListRootType {
-    NodeListIsRootedAtNode,
-    NodeListIsRootedAtDocument,
-};
-
 enum NodeListInvalidationType {
     DoNotInvalidateOnAttributeChanges = 0,
     InvalidateOnClassAttrChange,
+    InvalidateOnIdNameAttrChange,
     InvalidateOnNameAttrChange,
     InvalidateOnForAttrChange,
     InvalidateForFormControls,
+    InvalidateOnHRefAttrChange,
     InvalidateOnItemAttrChange,
+    InvalidateOnAnyAttrChange,
 };
-const int numNodeListInvalidationTypes = InvalidateOnItemAttrChange + 1;
+const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
 
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
@@ -736,9 +735,9 @@ public:
     bool isPendingStyleRecalc() const;
     void styleRecalcTimerFired(Timer<Document>*);
 
-    void registerDynamicSubtreeNodeList(DynamicSubtreeNodeList*, NodeListRootType, NodeListInvalidationType);
-    void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*, NodeListRootType, NodeListInvalidationType);
-    bool shouldInvalidateDynamicSubtreeNodeList(const QualifiedName* attrName = 0) const;
+    void registerNodeListCache(DynamicNodeListCacheBase*);
+    void unregisterNodeListCache(DynamicNodeListCacheBase*);
+    bool shouldInvalidateNodeListCaches(const QualifiedName* attrName = 0) const;
     void clearNodeListCaches();
 
     void attachNodeIterator(NodeIterator*);
@@ -1422,7 +1421,7 @@ private:
 
     InheritedBool m_designMode;
 
-    HashSet<DynamicSubtreeNodeList*> m_listsInvalidatedAtDocument;
+    HashSet<DynamicNodeListCacheBase*> m_listsInvalidatedAtDocument;
     unsigned m_nodeListCounts[numNodeListInvalidationTypes];
 
     HTMLCollection* m_collections[NumUnnamedDocumentCachedTypes];
