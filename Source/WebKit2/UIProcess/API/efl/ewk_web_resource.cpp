@@ -31,12 +31,12 @@
 
 struct _Ewk_Web_Resource {
     unsigned int __ref; /**< the reference count of the object */
-    CString url;
+    const char* url;
     bool isMainResource;
 
     _Ewk_Web_Resource(const char* _url, bool _isMainResource)
         : __ref(1)
-         , url(_url)
+         , url(eina_stringshare_add(_url))
         , isMainResource(_isMainResource)
     { }
 };
@@ -55,6 +55,7 @@ void ewk_web_resource_unref(Ewk_Web_Resource* resource)
     if (--resource->__ref)
         return;
 
+    eina_stringshare_del(resource->url);
     delete resource;
 }
 
@@ -62,7 +63,7 @@ const char* ewk_web_resource_url_get(const Ewk_Web_Resource* resource)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(resource, 0);
 
-    return resource->url.data();
+    return resource->url;
 }
 
 /**

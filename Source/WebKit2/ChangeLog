@@ -1,3 +1,20 @@
+2012-07-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use eina stringsharing for Ewk_Web_Resource's url
+        https://bugs.webkit.org/show_bug.cgi?id=91200
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use eina stringsharing for Ewk_Web_Resource's url
+        for consistency.
+
+        * UIProcess/API/efl/ewk_web_resource.cpp:
+        (_Ewk_Web_Resource):
+        (_Ewk_Web_Resource::_Ewk_Web_Resource):
+        (ewk_web_resource_unref):
+        (ewk_web_resource_url_get):
+        * UIProcess/API/efl/ewk_web_resource.h:
+
 2012-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebView::mouse-target-changed is not emitted when moved to/from edtiable content

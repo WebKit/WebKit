@@ -61,7 +61,11 @@ EAPI void ewk_web_resource_unref(Ewk_Web_Resource *resource);
  *
  * @param resource resource object to query.
  *
- * @return the URL pointer, that may be @c NULL.
+ * @return the URL pointer, that may be @c NULL. This pointer is
+ *         guaranteed to be eina_stringshare, so whenever possible
+ *         save yourself some cpu cycles and use
+ *         eina_stringshare_ref() instead of eina_stringshare_add() or
+ *         strdup().
  */
 EAPI const char *ewk_web_resource_url_get(const Ewk_Web_Resource *resource);
 
