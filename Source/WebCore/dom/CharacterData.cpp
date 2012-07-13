@@ -94,9 +94,9 @@ unsigned CharacterData::parserAppendData(const UChar* data, unsigned dataLength,
 
 void CharacterData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CharacterData> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
-    info.visitBaseClass<Node>(this);
-    info.reportString(m_data);
+    memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+    Node::reportMemoryUsage(memoryObjectInfo);
+    memoryObjectInfo->reportString(m_data);
 }
 
 void CharacterData::appendData(const String& data, ExceptionCode&)

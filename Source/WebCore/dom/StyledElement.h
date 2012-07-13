@@ -41,7 +41,7 @@ public:
     void invalidateStyleAttribute();
 
     const StylePropertySet* inlineStyle() const { return attributeData() ? attributeData()->inlineStyle() : 0; }
-    StylePropertySet* ensureInlineStyle() { return mutableAttributeData()->ensureMutableInlineStyle(this); }
+    const StylePropertySet* ensureInlineStyle() { return ensureAttributeData()->ensureInlineStyle(this); }
     
     // Unlike StylePropertySet setters, these implement invalidation.
     bool setInlineStyleProperty(CSSPropertyID, int identifier, bool important = false);

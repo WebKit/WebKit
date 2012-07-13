@@ -142,7 +142,7 @@ StyledElement::~StyledElement()
 
 CSSStyleDeclaration* StyledElement::style()
 {
-    return ensureInlineStyle()->ensureInlineCSSStyleDeclaration(this);
+    return ensureAttributeData()->ensureMutableInlineStyle(this)->ensureInlineCSSStyleDeclaration(this); 
 }
 
 void StyledElement::attributeChanged(const Attribute& attribute)
@@ -173,7 +173,7 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
         if (DOMTokenList* classList = optionalClassList())
             static_cast<ClassList*>(classList)->reset(newClassString);
     } else
-        mutableAttributeData()->clearClass();
+        attributeData()->clearClass();
     setNeedsStyleRecalc();
 }
 
@@ -210,21 +210,21 @@ void StyledElement::inlineStyleChanged()
     
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, int identifier, bool important)
 {
-    ensureInlineStyle()->setProperty(propertyID, cssValuePool().createIdentifierValue(identifier), important);
+    ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, cssValuePool().createIdentifierValue(identifier), important);
     inlineStyleChanged();
     return true;
 }
 
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important)
 {
-    ensureInlineStyle()->setProperty(propertyID, cssValuePool().createValue(value, unit), important);
+    ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, cssValuePool().createValue(value, unit), important);
     inlineStyleChanged();
     return true;
 }
 
 bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, bool important)
 {
-    bool changes = ensureInlineStyle()->setProperty(propertyID, value, important, document()->elementSheet()->contents());
+    bool changes = ensureAttributeData()->ensureMutableInlineStyle(this)->setProperty(propertyID, value, important, document()->elementSheet()->contents());
     if (changes)
         inlineStyleChanged();
     return changes;
@@ -232,9 +232,10 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const Strin
 
 bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
 {
-    if (!attributeData() || !attributeData()->inlineStyle())
+    StylePropertySet* inlineStyle = attributeData() ? attributeData()->inlineStyle() : 0;
+    if (!inlineStyle)
         return false;
-    bool changes = mutableAttributeData()->inlineStyle()->removeProperty(propertyID);
+    bool changes = inlineStyle->removeProperty(propertyID);
     if (changes)
         inlineStyleChanged();
     return changes;
@@ -242,7 +243,7 @@ bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
-    if (const StylePropertySet* inlineStyle = attributeData() ? attributeData()->inlineStyle() : 0)
+    if (StylePropertySet* inlineStyle = attributeData() ? attributeData()->inlineStyle() : 0)
         inlineStyle->addSubresourceStyleURLs(urls, document()->elementSheet()->contents());
 }
 

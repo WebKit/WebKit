@@ -1,3 +1,130 @@
+2012-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122450 and r122580.
+        http://trac.webkit.org/changeset/122450
+        http://trac.webkit.org/changeset/122580
+        https://bugs.webkit.org/show_bug.cgi?id=91263
+
+        Caused multiple regressions on ClusterFuzz (Requested by
+        inferno-sec on #webkit).
+
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::ChunkedTable::reportMemoryUsage):
+        * bindings/v8/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::reportMemoryUsage):
+        (WebCore::StringCache::reportMemoryUsage):
+        * bindings/v8/V8DOMMap.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::InlineCSSStyleDeclaration::ensureMutablePropertySet):
+        * css/StylePropertySet.cpp:
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::reportMemoryUsage):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::reportMemoryUsage):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::reportMemoryUsage):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/Element.cpp:
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::attributes):
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::parserSetAttributes):
+        (WebCore::Element::hasEquivalentAttributes):
+        (WebCore::Element::createAttributeData):
+        (WebCore):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        (WebCore::Element::normalizeAttributes):
+        (WebCore::Element::cloneAttributesFromElement):
+        * dom/Element.h:
+        (WebCore::Element::attributeData):
+        (Element):
+        (WebCore::Element::reportMemoryUsage):
+        (WebCore::Element::ensureAttributeData):
+        (WebCore::Element::updatedAttributeData):
+        (WebCore::Element::ensureUpdatedAttributeData):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::attrIfExists):
+        (WebCore::ElementAttributeData::ensureAttr):
+        (WebCore::ElementAttributeData::setAttr):
+        (WebCore::ElementAttributeData::removeAttr):
+        (WebCore::ElementAttributeData::setClass):
+        (WebCore):
+        (WebCore::ElementAttributeData::ensureInlineStyle):
+        (WebCore::ElementAttributeData::ensureMutableInlineStyle):
+        (WebCore::ElementAttributeData::destroyInlineStyle):
+        (WebCore::ElementAttributeData::addAttribute):
+        (WebCore::ElementAttributeData::removeAttribute):
+        (WebCore::ElementAttributeData::isEquivalent):
+        (WebCore::ElementAttributeData::detachAttrObjectsFromElement):
+        (WebCore::ElementAttributeData::getAttributeItemIndexSlowCase):
+        (WebCore::ElementAttributeData::cloneDataFrom):
+        (WebCore::ElementAttributeData::clearAttributes):
+        (WebCore::ElementAttributeData::replaceAttribute):
+        (WebCore::ElementAttributeData::getAttributeNode):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::create):
+        (ElementAttributeData):
+        (WebCore::ElementAttributeData::setIdForStyleResolution):
+        (WebCore::ElementAttributeData::setAttributeStyle):
+        (WebCore::ElementAttributeData::length):
+        (WebCore::ElementAttributeData::isEmpty):
+        (WebCore::ElementAttributeData::attributeItem):
+        (WebCore::ElementAttributeData::getAttributeItem):
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        (WebCore::ElementAttributeData::attributeVector):
+        (WebCore::ElementAttributeData::clonedAttributeVector):
+        (WebCore::ElementAttributeData::removeAttribute):
+        (WebCore::ElementAttributeData::getAttributeItemIndex):
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (MemoryObjectInfo):
+        (WebCore::MemoryObjectInfo::reportInstrumentedPointer):
+        (WebCore::MemoryObjectInfo::reportPointer):
+        (WebCore::MemoryObjectInfo::reportInstrumentedObject):
+        (WebCore::MemoryObjectInfo::reportObject):
+        (WebCore::MemoryObjectInfo::reportObjectInfo):
+        (WebCore::MemoryObjectInfo::reportHashMap):
+        (WebCore::MemoryObjectInfo::reportHashSet):
+        (WebCore::MemoryObjectInfo::reportListHashSet):
+        (WebCore::MemoryObjectInfo::reportVector):
+        (WebCore::MemoryObjectInfo::reportString):
+        (WebCore::MemoryObjectInfo::objectType):
+        (WebCore::MemoryObjectInfo::objectSize):
+        (WebCore::MemoryObjectInfo::memoryInstrumentation):
+        * dom/Node.cpp:
+        (WebCore::Node::reportMemoryUsage):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::reportMemoryUsage):
+        (WebCore::QualifiedName::reportMemoryUsage):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::style):
+        (WebCore::StyledElement::classAttributeChanged):
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::removeInlineStyleProperty):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::ensureInlineStyle):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElementFromSavedElement):
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::reportMemoryUsage):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2012-07-13  Huang Dongsung  <luxtella@company100.net>
 
         Remove down-casting to BitmapImage in GraphicsContext::drawImage.

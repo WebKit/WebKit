@@ -246,11 +246,10 @@ public:
     // Only called by the parser immediately after element construction.
     void parserSetAttributes(const Vector<Attribute>&, FragmentScriptingPermission);
 
-    const ElementAttributeData* attributeData() const { return m_attributeData.get(); }
-    ElementAttributeData* mutableAttributeData();
-    ElementAttributeData* ensureAttributeData();
-    const ElementAttributeData* updatedAttributeData() const;
-    ElementAttributeData* ensureUpdatedAttributeData();
+    ElementAttributeData* attributeData() const { return m_attributeData.get(); }
+    ElementAttributeData* ensureAttributeData() const;
+    ElementAttributeData* updatedAttributeData() const;
+    ElementAttributeData* ensureUpdatedAttributeData() const;
 
     // Clones attributes only.
     void cloneAttributesFromElement(const Element&);
@@ -430,10 +429,10 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<Element> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
-        info.visitBaseClass<ContainerNode>(this);
-        info.reportInstrumentedObject(m_tagName);
-        info.reportInstrumentedPointer(m_attributeData.get());
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
+        ContainerNode::reportMemoryUsage(memoryObjectInfo);
+        memoryObjectInfo->reportInstrumentedObject(m_tagName);
+        memoryObjectInfo->reportInstrumentedPointer(m_attributeData.get());
     }
 
 protected:
@@ -474,6 +473,8 @@ private:
 
     bool pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle);
 
+    void createAttributeData() const;
+
     virtual void updateStyleAttribute() const { }
 
 #if ENABLE(SVG)
@@ -501,8 +502,6 @@ private:
     void updateExtraNamedItemRegistration(const AtomicString& oldName, const AtomicString& newName);
 
     void unregisterNamedFlowContentNode();
-
-    void createMutableAttributeData();
 
 private:
     ElementRareData* elementRareData() const;
@@ -568,25 +567,23 @@ inline Element* Element::nextElementSibling() const
     return static_cast<Element*>(n);
 }
 
-inline const ElementAttributeData* Element::updatedAttributeData() const
+inline ElementAttributeData* Element::ensureAttributeData() const
+{
+    if (!m_attributeData)
+        createAttributeData();
+    return m_attributeData.get();
+}
+
+inline ElementAttributeData* Element::updatedAttributeData() const
 {
     updateInvalidAttributes();
     return attributeData();
 }
 
-inline ElementAttributeData* Element::ensureAttributeData()
-{
-    if (m_attributeData)
-        return m_attributeData.get();
-    return mutableAttributeData();
-}
-
-inline ElementAttributeData* Element::ensureUpdatedAttributeData()
+inline ElementAttributeData* Element::ensureUpdatedAttributeData() const
 {
     updateInvalidAttributes();
-    if (m_attributeData)
-        return m_attributeData.get();
-    return mutableAttributeData();
+    return ensureAttributeData();
 }
 
 inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
@@ -729,13 +726,6 @@ inline bool Element::hasID() const
 inline bool Element::hasClass() const
 {
     return attributeData() && attributeData()->hasClass();
-}
-
-inline ElementAttributeData* Element::mutableAttributeData()
-{
-    if (!m_attributeData || !m_attributeData->isMutable())
-        createMutableAttributeData();
-    return m_attributeData.get();
 }
 
 // Put here to make them inline.

@@ -81,7 +81,8 @@ protected:
     }
 
 private:
-    template <typename T> friend class MemoryClassInfo;
+    friend class MemoryObjectInfo;
+
     template <typename T>
     class InstrumentedPointer : public InstrumentedPointerBase {
     public:
@@ -107,15 +108,29 @@ public:
         , m_objectSize(0)
      { }
 
-    MemoryInstrumentation::ObjectType objectType() const { return m_objectType; }
-    size_t objectSize() const { return m_objectSize; }
+    template <typename P>
+    void reportInstrumentedPointer(const P* memberPointer)
+    {
+        m_memoryInstrumentation->reportInstrumentedPointer(memberPointer);
+    }
 
-    MemoryInstrumentation* memoryInstrumentation() { return m_memoryInstrumentation; }
+    template <typename P>
+    void reportPointer(const P* pointer, MemoryInstrumentation::ObjectType objectType)
+    {
+        m_memoryInstrumentation->reportPointer(pointer, objectType);
+    }
 
-private:
-    template <typename T> friend class MemoryClassInfo;
+    template <typename T>
+    void reportInstrumentedObject(const T& memberObject)
+    {
+        m_memoryInstrumentation->reportInstrumentedObject(memberObject);
+    }
 
-    template <typename T> void reportObjectInfo(const T*, MemoryInstrumentation::ObjectType objectType)
+    template <typename T>
+    void reportObject(const T& object) { m_memoryInstrumentation->reportObject(object); }
+
+    template <typename T>
+    void reportObjectInfo(const T*, MemoryInstrumentation::ObjectType objectType)
     {
         if (m_objectType != MemoryInstrumentation::Other)
             return;
@@ -123,41 +138,44 @@ private:
         m_objectSize = sizeof(T);
     }
 
+    template <typename HashMapType>
+    void reportHashMap(const HashMapType& map)
+    {
+        m_memoryInstrumentation->reportHashMap(map, objectType(), true);
+    }
+
+    template <typename HashSetType>
+    void reportHashSet(const HashSetType& set)
+    {
+        m_memoryInstrumentation->reportHashSet(set, objectType(), true);
+    }
+
+    template <typename ListHashSetType>
+    void reportListHashSet(const ListHashSetType& set)
+    {
+        m_memoryInstrumentation->reportListHashSet(set, objectType(), true);
+    }
+
+    template <typename VectorType>
+    void reportVector(const VectorType& vector)
+    {
+        m_memoryInstrumentation->reportVector(vector, objectType(), true);
+    }
+
+    void reportString(const String& string)
+    {
+        m_memoryInstrumentation->reportString(objectType(), string);
+    }
+
+    MemoryInstrumentation::ObjectType objectType() const { return m_objectType; }
+    size_t objectSize() const { return m_objectSize; }
+
+    MemoryInstrumentation* memoryInstrumentation() { return m_memoryInstrumentation; }
+
+ private:
     MemoryInstrumentation* m_memoryInstrumentation;
     MemoryInstrumentation::ObjectType m_objectType;
     size_t m_objectSize;
-};
-
-template <typename T>
-class MemoryClassInfo {
-public:
-    MemoryClassInfo(MemoryObjectInfo* memoryObjectInfo, const T* ptr, MemoryInstrumentation::ObjectType objectType)
-        : m_memoryObjectInfo(memoryObjectInfo)
-        , m_memoryInstrumentation(memoryObjectInfo->memoryInstrumentation())
-    {
-        m_memoryObjectInfo->reportObjectInfo(ptr, objectType);
-        m_objectType = memoryObjectInfo->objectType();
-    }
-
-    template <typename P> void visitBaseClass(const P* ptr) { ptr->P::reportMemoryUsage(m_memoryObjectInfo); }
-
-    template <typename P> void reportInstrumentedPointer(const P* memberPointer) { m_memoryInstrumentation->reportInstrumentedPointer(memberPointer); }
-    template <typename O> void reportInstrumentedObject(const O& memberObject) { m_memoryInstrumentation->reportInstrumentedObject(memberObject); }
-
-    template <typename P> void reportPointer(const P* pointer) { m_memoryInstrumentation->reportPointer(pointer, m_objectType); }
-    template <typename O> void reportObject(const O& object) { m_memoryInstrumentation->reportObject(object); }
-
-    template <typename HashMapType> void reportHashMap(const HashMapType& map) { m_memoryInstrumentation->reportHashMap(map, m_objectType, true); }
-    template <typename HashSetType> void reportHashSet(const HashSetType& set) { m_memoryInstrumentation->reportHashSet(set, m_objectType, true); }
-    template <typename ListHashSetType> void reportListHashSet(const ListHashSetType& set) { m_memoryInstrumentation->reportListHashSet(set, m_objectType, true); }
-    template <typename VectorType> void reportVector(const VectorType& vector) { m_memoryInstrumentation->reportVector(vector, m_objectType, true); }
-
-    void reportString(const String& string) { m_memoryInstrumentation->reportString(m_objectType, string); }
-
-private:
-    MemoryObjectInfo* m_memoryObjectInfo;
-    MemoryInstrumentation* m_memoryInstrumentation;
-    MemoryInstrumentation::ObjectType m_objectType;
 };
 
 template <typename T>

@@ -118,12 +118,10 @@ public:
     
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<StylePropertySet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::CSS);
         if (m_isMutable)
-            info.reportPointer(m_mutablePropertyVector);
+            memoryObjectInfo->reportPointer(m_mutablePropertyVector, MemoryInstrumentation::CSS);
     }
-
-    void adoptCSSOMWrapperFrom(StylePropertySet*);
 
 private:
     StylePropertySet(CSSParserMode);

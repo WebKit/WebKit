@@ -201,7 +201,7 @@ PassRefPtr<Attr> Element::detachAttribute(size_t index)
 {
     ASSERT(attributeData());
 
-    const Attribute* attribute = attributeData()->attributeItem(index);
+    Attribute* attribute = attributeData()->attributeItem(index);
     ASSERT(attribute);
 
     RefPtr<Attr> attr = attrIfExists(attribute->name());
@@ -210,7 +210,7 @@ PassRefPtr<Attr> Element::detachAttribute(size_t index)
     else
         attr = Attr::create(document(), attribute->name(), attribute->value());
 
-    mutableAttributeData()->removeAttribute(index, this);
+    attributeData()->removeAttribute(index, this);
     return attr.release();
 }
 
@@ -222,11 +222,7 @@ void Element::removeAttribute(const QualifiedName& name)
     if (RefPtr<Attr> attr = attrIfExists(name))
         attr->detachFromElementWithValue(attr->value());
 
-    size_t index = attributeData()->getAttributeItemIndex(name);
-    if (index == notFound)
-        return;
-
-    mutableAttributeData()->removeAttribute(index, this);
+    attributeData()->removeAttribute(name, this);
 }
 
 void Element::setBooleanAttribute(const QualifiedName& name, bool value)
@@ -239,7 +235,7 @@ void Element::setBooleanAttribute(const QualifiedName& name, bool value)
 
 NamedNodeMap* Element::attributes() const
 {
-    const_cast<Element*>(this)->ensureUpdatedAttributeData();
+    ensureUpdatedAttributeData();
     ElementRareData* rareData = const_cast<Element*>(this)->ensureElementRareData();
     if (NamedNodeMap* attributeMap = rareData->m_attributeMap.get())
         return attributeMap;
@@ -662,17 +658,15 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 
 inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value, EInUpdateStyleAttribute inUpdateStyleAttribute)
 {
-    ElementAttributeData* attributeData = mutableAttributeData();
-
-    Attribute* old = index != notFound ? attributeData->attributeItem(index) : 0;
+    Attribute* old = index != notFound ? m_attributeData->attributeItem(index) : 0;
     if (value.isNull()) {
         if (old)
-            attributeData->removeAttribute(index, this, inUpdateStyleAttribute);
+            m_attributeData->removeAttribute(index, this, inUpdateStyleAttribute);
         return;
     }
 
     if (!old) {
-        attributeData->addAttribute(Attribute(name, value), this, inUpdateStyleAttribute);
+        m_attributeData->addAttribute(Attribute(name, value), this, inUpdateStyleAttribute);
         return;
     }
 
@@ -766,32 +760,32 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, Frag
     if (attributeVector.isEmpty())
         return;
 
-    Vector<Attribute> filteredAttributes = attributeVector;
+    createAttributeData();
+    m_attributeData->m_attributes = attributeVector;
+    m_attributeData->m_attributes.shrinkToFit();
 
     // If the element is created as result of a paste or drag-n-drop operation
     // we want to remove all the script and event handlers.
     if (scriptingPermission == DisallowScriptingContent) {
         unsigned i = 0;
-        while (i < filteredAttributes.size()) {
-            Attribute& attribute = filteredAttributes[i];
-            if (isEventHandlerAttribute(attribute.name())) {
-                filteredAttributes.remove(i);
+        while (i < m_attributeData->length()) {
+            const QualifiedName& attributeName = m_attributeData->m_attributes[i].name();
+            if (isEventHandlerAttribute(attributeName)) {
+                m_attributeData->m_attributes.remove(i);
                 continue;
             }
 
-            if (isAttributeToRemove(attribute.name(), attribute.value()))
-                attribute.setValue(nullAtom);
+            if (isAttributeToRemove(attributeName, m_attributeData->m_attributes[i].value()))
+                m_attributeData->m_attributes[i].setValue(nullAtom);
             i++;
         }
     }
 
-    m_attributeData = ElementAttributeData::createImmutable(filteredAttributes);
-
-    // Iterate over the set of attributes we already have on the stack in case
+    // Store the set of attributes that changed on the stack in case
     // attributeChanged mutates m_attributeData.
-    // FIXME: Find a way so we don't have to do this.
-    for (unsigned i = 0; i < filteredAttributes.size(); ++i)
-        attributeChanged(filteredAttributes[i]);
+    Vector<Attribute> clonedAttributes = m_attributeData->clonedAttributeVector();
+    for (unsigned i = 0; i < clonedAttributes.size(); ++i)
+        attributeChanged(clonedAttributes[i]);
 }
 
 bool Element::hasAttributes() const
@@ -802,8 +796,8 @@ bool Element::hasAttributes() const
 
 bool Element::hasEquivalentAttributes(const Element* other) const
 {
-    const ElementAttributeData* attributeData = updatedAttributeData();
-    const ElementAttributeData* otherAttributeData = other->updatedAttributeData();
+    ElementAttributeData* attributeData = updatedAttributeData();
+    ElementAttributeData* otherAttributeData = other->updatedAttributeData();
     if (attributeData)
         return attributeData->isEquivalent(otherAttributeData);
     if (otherAttributeData)
@@ -847,6 +841,11 @@ KURL Element::baseURI() const
         return base;
 
     return KURL(parentBase, baseAttribute);
+}
+
+void Element::createAttributeData() const
+{
+    m_attributeData = ElementAttributeData::create();
 }
 
 const QualifiedName& Element::imageSourceAttributeName() const
@@ -1379,6 +1378,8 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
         return 0;
     }
 
+    ElementAttributeData* attributeData = ensureUpdatedAttributeData();
+
     RefPtr<Attr> oldAttr = attrIfExists(attr->qualifiedName());
     if (oldAttr.get() == attr)
         return attr; // This Attr is already attached to the element.
@@ -1389,8 +1390,6 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
         ec = INUSE_ATTRIBUTE_ERR;
         return 0;
     }
-
-    ElementAttributeData* attributeData = mutableAttributeData();
 
     size_t index = attributeData->getAttributeItemIndex(attr->qualifiedName());
     Attribute* oldAttribute = index != notFound ? attributeData->attributeItem(index) : 0;
@@ -1429,7 +1428,7 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
 
     ASSERT(document() == attr->document());
 
-    const ElementAttributeData* attributeData = updatedAttributeData();
+    ElementAttributeData* attributeData = updatedAttributeData();
     ASSERT(attributeData);
 
     size_t index = attributeData->getAttributeItemIndex(attr->qualifiedName());
@@ -1464,20 +1463,21 @@ void Element::removeAttribute(size_t index)
 {
     ASSERT(attributeData());
     ASSERT(index <= attributeCount());
-    mutableAttributeData()->removeAttribute(index, this);
+    attributeData()->removeAttribute(index, this);
 }
 
 void Element::removeAttribute(const String& name)
 {
-    if (!attributeData())
+    ElementAttributeData* attributeData = this->attributeData();
+    if (!attributeData)
         return;
 
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    size_t index = attributeData()->getAttributeItemIndex(localName, false);
+    size_t index = attributeData->getAttributeItemIndex(localName, false);
     if (index == notFound)
         return;
 
-    mutableAttributeData()->removeAttribute(index, this);
+    attributeData->removeAttribute(index, this);
 }
 
 void Element::removeAttributeNS(const String& namespaceURI, const String& localName)
@@ -1487,7 +1487,7 @@ void Element::removeAttributeNS(const String& namespaceURI, const String& localN
 
 PassRefPtr<Attr> Element::getAttributeNode(const String& name)
 {
-    const ElementAttributeData* attributeData = updatedAttributeData();
+    ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
         return 0;
     return attributeData->getAttributeNode(name, shouldIgnoreAttributeCase(this), this);
@@ -1495,7 +1495,7 @@ PassRefPtr<Attr> Element::getAttributeNode(const String& name)
 
 PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const String& localName)
 {
-    const ElementAttributeData* attributeData = updatedAttributeData();
+    ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
         return 0;
     return attributeData->getAttributeNode(QualifiedName(nullAtom, localName, namespaceURI), this);
@@ -1503,18 +1503,19 @@ PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const S
 
 bool Element::hasAttribute(const String& name) const
 {
-    if (!attributeData())
+    ElementAttributeData* attributeData = updatedAttributeData();
+    if (!attributeData)
         return false;
 
     // This call to String::lower() seems to be required but
     // there may be a way to remove it.
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    return updatedAttributeData()->getAttributeItem(localName, false);
+    return attributeData->getAttributeItem(localName, false);
 }
 
 bool Element::hasAttributeNS(const String& namespaceURI, const String& localName) const
 {
-    const ElementAttributeData* attributeData = updatedAttributeData();
+    ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
         return false;
     return attributeData->getAttributeItem(QualifiedName(nullAtom, localName, namespaceURI));
@@ -1721,11 +1722,12 @@ void Element::normalizeAttributes()
     if (!hasAttrList())
         return;
 
-    const ElementAttributeData* attributeData = updatedAttributeData();
+    ElementAttributeData* attributeData = updatedAttributeData();
     ASSERT(attributeData);
 
-    for (size_t i = 0; i < attributeData->length(); ++i) {
-        if (RefPtr<Attr> attr = attrIfExists(attributeData->attributeItem(i)->name()))
+    const Vector<Attribute>& attributes = attributeData->attributeVector();
+    for (size_t i = 0; i < attributes.size(); ++i) {
+        if (RefPtr<Attr> attr = attrIfExists(attributes[i].name()))
             attr->normalize();
     }
 }
@@ -2149,8 +2151,8 @@ PassRefPtr<RenderStyle> Element::customStyleForRenderer()
 
 void Element::cloneAttributesFromElement(const Element& other)
 {
-    if (const ElementAttributeData* attributeData = other.updatedAttributeData())
-        mutableAttributeData()->cloneDataFrom(*attributeData, other, *this);
+    if (ElementAttributeData* attributeData = other.updatedAttributeData())
+        ensureUpdatedAttributeData()->cloneDataFrom(*attributeData, other, *this);
     else if (m_attributeData) {
         m_attributeData->clearAttributes(this);
         m_attributeData.clear();
@@ -2161,14 +2163,6 @@ void Element::cloneDataFromElement(const Element& other)
 {
     cloneAttributesFromElement(other);
     copyNonAttributePropertiesFromElement(other);
-}
-
-void Element::createMutableAttributeData()
-{
-    if (!m_attributeData)
-        m_attributeData = ElementAttributeData::create();
-    else
-        m_attributeData = m_attributeData->makeMutable();
 }
 
 } // namespace WebCore
