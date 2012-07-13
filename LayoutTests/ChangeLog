@@ -1,5 +1,14 @@
 2012-07-13  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening, adding a baseline required after unskipping
+        fast/files/workers/worker-read-blob-async.html in r122612.
+
+        * platform/gtk/fast/files: Added.
+        * platform/gtk/fast/files/workers: Added.
+        * platform/gtk/fast/files/workers/worker-read-blob-async-expected.txt: Added.
+
+2012-07-13  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening, updating baselines for the fast/backgrounds/size/zero.html
         test as required after r121296.
 
