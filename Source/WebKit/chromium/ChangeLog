@@ -1,3 +1,12 @@
+2012-07-13  Wei James  <james.wei@intel.com>
+
+        enable TestWebKitAPI/webkit_unit_tests apk on x86 android platform by adding abi support
+        https://bugs.webkit.org/show_bug.cgi?id=91194
+
+        Reviewed by Adam Barth.
+
+        * WebKitUnitTests.gyp:
+
 2012-07-13  Dana Jansens  <danakj@chromium.org>
 
         webkit_unit_test CCLayerTreeHostImplTest.testRemoveRenderPasses started failing.
