@@ -1,3 +1,15 @@
+2012-07-13  Adam Barth  <abarth@webkit.org>
+
+        EWSTools should be able to build a commit-queue instance from scratch
+        https://bugs.webkit.org/show_bug.cgi?id=91264
+
+        Reviewed by Eric Seidel.
+
+        I've been using this script to build commit-queue instances on Google
+        Compute Engine and it seems to work.
+
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh: Added.
+
 2012-07-13  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: make worker.start() and worker.stop() optional in the messagepool
