@@ -34,6 +34,7 @@
 #include "BindingSecurity.h"
 #include "DOMDataStore.h"
 #include "PlatformString.h"
+#include "V8BindingMacros.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
 #include "V8HiddenPropertyName.h"
@@ -437,6 +438,31 @@ namespace WebCore {
             result.append(TraitsType::arrayNativeValue(array, i));
         }
         return result;
+    }
+
+    // Validates that the passed object is a sequence type per WebIDL spec
+    // http://www.w3.org/TR/2012/WD-WebIDL-20120207/#es-sequence
+    inline v8::Handle<v8::Value> toV8Sequence(v8::Handle<v8::Value> value, uint32_t& length)
+    {
+        if (!value->IsObject()) {
+            V8Proxy::throwTypeError();
+            return v8::Local<v8::Value>();
+        }
+
+        v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
+        v8::Local<v8::Object> object = v8::Local<v8::Object>::Cast(v8Value);
+
+        EXCEPTION_BLOCK(v8::Local<v8::Value>, lengthValue, object->Get(v8::String::New("length")));
+
+        if (lengthValue->IsUndefined() || lengthValue->IsNull()) {
+            V8Proxy::throwTypeError();
+            return v8::Local<v8::Value>();
+        }
+
+        EXCEPTION_BLOCK(uint32_t, sequenceLength, lengthValue->Int32Value());
+        length = sequenceLength;
+
+        return v8Value;
     }
 
     // Enables caching v8 wrappers created for WTF::StringImpl.  Currently this cache requires
