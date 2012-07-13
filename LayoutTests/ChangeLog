@@ -1,3 +1,15 @@
+2012-07-13  Adam Barth  <abarth@webkit.org>
+
+        Remove supressions for flashplayer crash
+        https://bugs.webkit.org/show_bug.cgi?id=91283
+
+        Reviewed by Tony Chang.
+
+        These tests don't crash any more now that I've corrected the
+        configuration on the bots.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-13  James Simonsen  <simonjam@chromium.org>
 
         [Navigation Timing] Imported W3C tests contain duplicates and are DOS formatted
