@@ -64,6 +64,8 @@ public:
 
     void registerNamedFlowContentNode(Node*, RenderNamedFlowThread*);
     void unregisterNamedFlowContentNode(Node*);
+    
+    void removeFlowThread(RenderNamedFlowThread*);
 
 protected:
     FlowThreadController(RenderView*);

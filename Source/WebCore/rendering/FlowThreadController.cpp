@@ -33,6 +33,8 @@
 
 #include "RenderFlowThread.h"
 #include "RenderNamedFlowThread.h"
+#include "WebKitNamedFlow.h"
+#include "WebKitNamedFlowCollection.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -65,7 +67,12 @@ RenderNamedFlowThread* FlowThreadController::ensureRenderFlowThreadWithName(cons
         }
     }
 
-    RenderNamedFlowThread* flowRenderer = new (m_view->renderArena()) RenderNamedFlowThread(m_view->document(), name);
+    WebKitNamedFlowCollection* namedFlows = m_view->document()->namedFlows();
+
+    // Sanity check for the absence of a named flow in the "CREATED" state with the same name.
+    ASSERT(!namedFlows->flowByName(name));
+
+    RenderNamedFlowThread* flowRenderer = new (m_view->renderArena()) RenderNamedFlowThread(m_view->document(), namedFlows->ensureFlowWithName(name));
     flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(m_view->style()));
     m_renderNamedFlowThreadList->add(flowRenderer);
 
@@ -120,6 +127,12 @@ void FlowThreadController::unregisterNamedFlowContentNode(Node* contentNode)
     ASSERT(it->second->hasContentNode(contentNode));
     it->second->unregisterNamedFlowContentNode(contentNode);
     m_mapNamedFlowContentNodes.remove(contentNode);
+}
+
+void FlowThreadController::removeFlowThread(RenderNamedFlowThread* flowThread)
+{
+    m_renderNamedFlowThreadList->remove(flowThread);
+    setIsRenderNamedFlowThreadOrderDirty(true);
 }
 
 } // namespace WebCore

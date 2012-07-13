@@ -3,7 +3,8 @@ Test for 90759: [CSSRegions] Rename NamedFlow::getRegionsByContentNode to NamedF
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS regionList is null
+PASS regionList is non-null.
+PASS regionList.length is 0
 PASS regionList2 is non-null.
 PASS regionList2.length is 0
 PASS regionList != regionList2 is true

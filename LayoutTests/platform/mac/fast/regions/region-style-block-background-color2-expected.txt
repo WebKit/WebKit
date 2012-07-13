@@ -29,7 +29,6 @@ Flow Threads
               text run at (0,0) width 258: "Green background text styled in region1."
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1 region style: 1
-  Thread with flow-name 'flow2'
   Thread with flow-name 'flow3'
     layer at (0,0) size 280x80
       RenderNamedFlowThread at (0,0) size 280x80

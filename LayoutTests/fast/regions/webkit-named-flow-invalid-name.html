@@ -22,9 +22,9 @@
                 assert(nullNamedFlow == null, "Named flow for " + arrFlowInvalidNames[i] + " should be null");
             }
 
-            // It should be possible to get the named flow object for a valid flow name.
+            // It should not be possible to get the NamedFlow object for a missing flow.
             var namedFlow = document.webkitGetFlowByName("flow");
-            assert(namedFlow != null, "Named flow for flow should not be null");
+            assert(namedFlow == null, "Named flow for flow should be null");
         </script>
     </body>
 </html>

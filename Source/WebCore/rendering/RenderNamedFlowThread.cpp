@@ -33,17 +33,22 @@
 
 namespace WebCore {
 
-RenderNamedFlowThread::RenderNamedFlowThread(Node* node, const AtomicString& name)
+RenderNamedFlowThread::RenderNamedFlowThread(Node* node, PassRefPtr<WebKitNamedFlow> namedFlow)
     : RenderFlowThread(node)
-    , m_flowThreadName(name)
+    , m_namedFlow(namedFlow)
 {
+    m_namedFlow->setRenderer(this);
+}
+
+RenderNamedFlowThread::~RenderNamedFlowThread()
+{
+    m_namedFlow->setRenderer(0);
 }
 
 const char* RenderNamedFlowThread::renderName() const
 {    
     return "RenderNamedFlowThread";
 }
-
 
 RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
 {
@@ -182,9 +187,13 @@ void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
         removeDependencyOnFlowThread(renderRegion->parentNamedFlowThread());
     }
 
+    if (canBeDestroyed()) {
+        destroy();
+        return;
+    }
+
     invalidateRegions();
 }
-
 
 void RenderNamedFlowThread::checkInvalidRegions()
 {
@@ -245,14 +254,6 @@ void RenderNamedFlowThread::pushDependencies(RenderNamedFlowThreadList& list)
     }
 }
 
-WebKitNamedFlow* RenderNamedFlowThread::ensureNamedFlow()
-{
-    if (!m_namedFlow)
-        m_namedFlow = WebKitNamedFlow::create(this);
-
-    return m_namedFlow.get();
-}
-
 // The content nodes list contains those nodes with -webkit-flow-into: flow.
 // An element with display:none should also be listed among those nodes.
 // The list of nodes is ordered.
@@ -283,6 +284,21 @@ void RenderNamedFlowThread::unregisterNamedFlowContentNode(Node* contentNode)
     contentNode->clearInNamedFlow();
     m_contentNodes.remove(contentNode);
 
+    if (canBeDestroyed())
+        destroy();
+}
+
+const AtomicString& RenderNamedFlowThread::flowThreadName() const
+{
+    return m_namedFlow->name();
+}
+
+void RenderNamedFlowThread::willBeDestroyed()
+{
+    if (!documentBeingDestroyed())
+        view()->flowThreadController()->removeFlowThread(this);
+
+    RenderFlowThread::willBeDestroyed();
 }
 
 }

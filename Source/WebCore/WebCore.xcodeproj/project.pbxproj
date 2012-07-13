@@ -281,6 +281,8 @@
 		0FF50271102BA96A0066F39A /* StyleMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5026E102BA9660066F39A /* StyleMedia.cpp */; };
 		0FF50272102BA96A0066F39A /* StyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF5026F102BA96A0066F39A /* StyleMedia.h */; };
 		10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */; };
+		12F35EB6158745A40035CB63 /* WebKitNamedFlowCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 12F35EB4158745A40035CB63 /* WebKitNamedFlowCollection.h */; };
+		12F35EB7158745A40035CB63 /* WebKitNamedFlowCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12F35EB5158745A40035CB63 /* WebKitNamedFlowCollection.cpp */; };
 		1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1402645D0AFDC19B005919E2 /* LoggingMac.mm */; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1403B99609EB13AF00797C7F /* DOMWindow.cpp */; };
@@ -7233,6 +7235,8 @@
 		0FF5026F102BA96A0066F39A /* StyleMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleMedia.h; sourceTree = "<group>"; };
 		0FF50270102BA96A0066F39A /* StyleMedia.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StyleMedia.idl; sourceTree = "<group>"; };
 		10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublicURLManager.h; sourceTree = "<group>"; };
+		12F35EB4158745A40035CB63 /* WebKitNamedFlowCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNamedFlowCollection.h; sourceTree = "<group>"; };
+		12F35EB5158745A40035CB63 /* WebKitNamedFlowCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitNamedFlowCollection.cpp; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
 		1403B99509EB13AF00797C7F /* DOMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindow.h; sourceTree = "<group>"; };
@@ -21630,6 +21634,8 @@
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
 				4123E568127B3041000FEEA7 /* WindowEventContext.cpp */,
 				4123E567127B3041000FEEA7 /* WindowEventContext.h */,
+				12F35EB4158745A40035CB63 /* WebKitNamedFlowCollection.h */,
+				12F35EB5158745A40035CB63 /* WebKitNamedFlowCollection.cpp */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -25090,6 +25096,7 @@
 				0562F9471573ECEB0031CA16 /* WebKitCSSSVGDocumentValue.h in Headers */,
 				BC9ADD230CC4032600098C4C /* WebKitCSSTransformValue.h in Headers */,
 				89878566122CA064003AABDA /* WebKitFlags.h in Headers */,
+				12F35EB6158745A40035CB63 /* WebKitNamedFlowCollection.h in Headers */,
 				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
 				0FCF332F0F2B9A25004B6795 /* WebLayer.h in Headers */,
@@ -28159,6 +28166,7 @@
 				BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */,
 				1A1414B513A0F0500019996C /* WebKitFontFamilyNames.cpp in Sources */,
 				D7613A501474F13F00DB8606 /* WebKitNamedFlow.cpp in Sources */,
+				12F35EB7158745A40035CB63 /* WebKitNamedFlowCollection.cpp in Sources */,
 				31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */,
 				0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */,
 				E1A3162E134BC32D007C9A4F /* WebNSAttributedStringExtras.mm in Sources */,

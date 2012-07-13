@@ -44,9 +44,10 @@ typedef ListHashSet<Node*> NamedFlowContentNodes;
 
 class RenderNamedFlowThread : public RenderFlowThread {
 public:
-    RenderNamedFlowThread(Node*, const AtomicString&);
+    RenderNamedFlowThread(Node*, PassRefPtr<WebKitNamedFlow>);
+    virtual ~RenderNamedFlowThread();
 
-    AtomicString flowThreadName() const { return m_flowThreadName; }
+    const AtomicString& flowThreadName() const;
 
     RenderObject* nextRendererForNode(Node*) const;
     RenderObject* previousRendererForNode(Node*) const;
@@ -63,11 +64,13 @@ public:
     virtual void addRegionToThread(RenderRegion*) OVERRIDE;
     virtual void removeRegionFromThread(RenderRegion*) OVERRIDE;
 
-    WebKitNamedFlow* ensureNamedFlow();
     void registerNamedFlowContentNode(Node*);
     void unregisterNamedFlowContentNode(Node*);
     const NamedFlowContentNodes& contentNodes() const { return m_contentNodes; }
     bool hasContentNode(Node* contentNode) const { ASSERT(contentNode); return m_contentNodes.contains(contentNode); }
+
+protected:
+    virtual void willBeDestroyed() OVERRIDE;
 
 private:
     virtual const char* renderName() const OVERRIDE;
@@ -77,11 +80,9 @@ private:
     void addDependencyOnFlowThread(RenderNamedFlowThread*);
     void removeDependencyOnFlowThread(RenderNamedFlowThread*);
     void checkInvalidRegions();
+    bool canBeDestroyed() const { return m_regionList.isEmpty() && m_contentNodes.isEmpty(); }
 
 private:
-    // The name of the flow thread as specified in CSS.
-    AtomicString m_flowThreadName;
-
     // Observer flow threads have invalid regions that depend on the state of this thread
     // to re-validate their regions. Keeping a set of observer threads make it easy
     // to notify them when a region was removed from this flow.

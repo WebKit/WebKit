@@ -2077,6 +2077,8 @@ webcore_sources += \
 	Source/WebCore/dom/WebKitAnimationEvent.h \
 	Source/WebCore/dom/WebKitNamedFlow.cpp \
 	Source/WebCore/dom/WebKitNamedFlow.h \
+	Source/WebCore/dom/WebKitNamedFlowCollection.cpp \
+	Source/WebCore/dom/WebKitNamedFlowCollection.h \
 	Source/WebCore/dom/WebKitTransitionEvent.cpp \
 	Source/WebCore/dom/WebKitTransitionEvent.h \
 	Source/WebCore/dom/WheelEvent.cpp \

@@ -674,6 +674,7 @@ SET(WebCore_SOURCES
     dom/ViewportArguments.cpp
     dom/WebKitAnimationEvent.cpp
     dom/WebKitNamedFlow.cpp
+    dom/WebKitNamedFlowCollection.cpp
     dom/WebKitTransitionEvent.cpp
     dom/WheelEvent.cpp
     dom/WindowEventContext.cpp

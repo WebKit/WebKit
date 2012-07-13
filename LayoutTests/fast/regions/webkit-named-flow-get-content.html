@@ -21,18 +21,12 @@
                 window.layoutTestController.dumpAsText();
             description("Test for 90163: [CSSRegions]Rename NamedFlow::contentNodes to NamedFlow::getContent()");
 
-            // First time ask for a named flow object, the contentNodes should be empty.
-            var namedFlowContent = document.webkitGetFlowByName("flow").getContent();
-            shouldBeNonNull("namedFlowContent");
-            shouldEvaluateTo("namedFlowContent.length", 0);
-            shouldBeTrue("namedFlowContent instanceof NodeList");
-
             // Add an element that would be collected by the named flow but do not add it to the DOM, the contentNodes should be empty.
             var article = document.createElement("div");
             article.id = "article";
             article.style.webkitFlowInto = "flow";
-            var namedFlowContent2 = document.webkitGetFlowByName("flow").getContent();
-            shouldEvaluateTo("namedFlowContent2.length", 0);
+
+            shouldBeNull('document.webkitGetFlowByName("flow")');
 
             // Append the above element to the DOM. It will be collected by the flow, therefore the contentNodes should have 1 element.
             document.body.appendChild(article);
@@ -58,8 +52,8 @@
 
             var namedFlowContent5 = document.webkitGetFlowByName("flow").getContent();
             shouldEvaluateTo("namedFlowContent5.length", 2);
-			shouldBeEqualToString("namedFlowContent5.item(0).id", "article2");
-			shouldBeEqualToString("namedFlowContent5.item(1).id", "article");
+            shouldBeEqualToString("namedFlowContent5.item(0).id", "article2");
+            shouldBeEqualToString("namedFlowContent5.item(1).id", "article");
 
             // Adding a region element to flow content into should not influence the content nodes collection.
             var regionNode = document.createElement("div");
@@ -89,16 +83,16 @@
             document.getElementById("article").style.display = "none";
             var namedFlowContent9 = document.webkitGetFlowByName("flow").getContent();
             shouldEvaluateTo("namedFlowContent9.length", 3);
-			shouldBeEqualToString("namedFlowContent9.item(0).id", "article2");
-			shouldBeEqualToString("namedFlowContent9.item(1).id", "span1");
-			shouldBeEqualToString("namedFlowContent9.item(2).id", "article");
+            shouldBeEqualToString("namedFlowContent9.item(0).id", "article2");
+            shouldBeEqualToString("namedFlowContent9.item(1).id", "span1");
+            shouldBeEqualToString("namedFlowContent9.item(2).id", "article");
 
             // Take 'article' node from last position and insert it before 'article2'
             article = document.getElementById("article");
             document.body.insertBefore(document.body.removeChild(article), article2);
             var namedFlowContent10 = document.webkitGetFlowByName("flow").getContent();
             shouldEvaluateTo("namedFlowContent10.length", 3);
-			shouldBeEqualToString("namedFlowContent10.item(0).id", "article");
+            shouldBeEqualToString("namedFlowContent10.item(0).id", "article");
 
             // Clone 'article2' including its children.
             var article2Clone = document.getElementById("article2").cloneNode(true);
@@ -110,14 +104,11 @@
             document.body.removeChild(article2Clone);
             var namedFlowContent12 = document.webkitGetFlowByName("flow").getContent();
             shouldEvaluateTo("namedFlowContent12.length", 1);
-			shouldBeEqualToString("namedFlowContent12.item(0).id", "article");
-
-            // Get the content nodes for another flow, flow2.
-            var namedFlowContent10 = document.webkitGetFlowByName("flow2").getContent();
-            shouldEvaluateTo("namedFlowContent10.length", "0");
+            shouldBeEqualToString("namedFlowContent12.item(0).id", "article");
 
             // Move the content node 'article' from named flow 'flow' to named flow 'flow2'
             document.getElementById("article").style.webkitFlowInto = "flow2";
+            var flow2 = document.webkitGetFlowByName("flow2");
             var namedFlowContent11 = document.webkitGetFlowByName("flow").getContent();
             var namedFlowContent12 = document.webkitGetFlowByName("flow2").getContent();
             shouldEvaluateTo("namedFlowContent11.length", "0");
@@ -126,10 +117,16 @@
 
             // Remove the content node from dom, content nodes for both 'flow' and 'flow2' should be empty
             document.body.removeChild(document.getElementById("article"));
+            shouldBeNull('document.webkitGetFlowByName("flow2")');
+
             var namedFlowContent13 = document.webkitGetFlowByName("flow").getContent();
-            var namedFlowContent14 = document.webkitGetFlowByName("flow2").getContent();
             shouldEvaluateTo("namedFlowContent13.length", "0");
+
+            var namedFlowContent14 = flow2.getContent();
             shouldEvaluateTo("namedFlowContent14.length", "0");
+            document.body.appendChild(article);
+            var namedFlowContent15 = flow2.getContent();
+            shouldEvaluateTo("namedFlowContent15.length", "1");
 
             document.getElementById("region").style.visibility = "hidden";
         </script>

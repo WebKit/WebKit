@@ -157,6 +157,7 @@
 #include "UndoManager.h"
 #include "UserContentURLPattern.h"
 #include "WebKitNamedFlow.h"
+#include "WebKitNamedFlowCollection.h"
 #include "XMLDocumentParser.h"
 #include "XMLHttpRequest.h"
 #include "XMLNSNames.h"
@@ -617,6 +618,9 @@ Document::~Document()
 
     if (m_styleSheets)
         m_styleSheets->documentDestroyed();
+
+    if (m_namedFlows)
+        m_namedFlows->documentDestroyed();
 
     if (m_elemSheet)
         m_elemSheet->clearOwnerNode();
@@ -1126,43 +1130,25 @@ bool Document::cssGridLayoutEnabled() const
 
 #if ENABLE(CSS_REGIONS)
 
-static bool validFlowName(const String& flowName)
-{
-    if (equalIgnoringCase(flowName, "auto")
-        || equalIgnoringCase(flowName, "default")
-        || equalIgnoringCase(flowName, "inherit")
-        || equalIgnoringCase(flowName, "initial")
-        || equalIgnoringCase(flowName, "none"))
-        return false;
-    return true;
-}
-
 PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName)
-{
-    return webkitGetFlowByName(flowName, CheckFlowNameForInvalidValues);
-}
-
-PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName, FlowNameCheck flowNameCheck)
 {
     if (!cssRegionsEnabled() || !renderer())
         return 0;
 
-    if (flowNameCheck == CheckFlowNameForInvalidValues) {
-        if (flowName.isEmpty() || !validFlowName(flowName))
-            return 0;
+    // It's possible to have pending styles not applied that affect the existing flows.
+    updateStyleIfNeeded();
 
-        // Make a slower check for invalid flow name.
-        CSSParser parser(document());
-        if (!parser.parseFlowThread(flowName))
-            return 0;
-    }
-
-    if (RenderView* view = renderer()->view())
-        return view->flowThreadController()->ensureRenderFlowThreadWithName(flowName)->ensureNamedFlow();
-    return 0;
+    return namedFlows()->flowByName(flowName);
 }
-
 #endif
+
+WebKitNamedFlowCollection* Document::namedFlows()
+{
+    if (!m_namedFlows)
+        m_namedFlows = WebKitNamedFlowCollection::create(this);
+
+    return m_namedFlows.get();
+}
 
 PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec)
 {

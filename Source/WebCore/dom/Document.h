@@ -137,6 +137,7 @@ class TextResourceDecoder;
 class TreeWalker;
 class UndoManager;
 class WebKitNamedFlow;
+class WebKitNamedFlowCollection;
 class XMLHttpRequest;
 class XPathEvaluator;
 class XPathExpression;
@@ -347,13 +348,10 @@ public:
 
     bool cssRegionsEnabled() const;
 #if ENABLE(CSS_REGIONS)
-    enum FlowNameCheck {
-        CheckFlowNameForInvalidValues,
-        DoNotCheckFlowNameForInvalidValues
-    };
     PassRefPtr<WebKitNamedFlow> webkitGetFlowByName(const String&);
-    PassRefPtr<WebKitNamedFlow> webkitGetFlowByName(const String&, FlowNameCheck);
 #endif
+
+    WebKitNamedFlowCollection* namedFlows();
 
     bool regionBasedColumnsEnabled() const;
 
@@ -1532,6 +1530,8 @@ private:
     
     bool m_visualUpdatesAllowed;
     Timer<Document> m_visualUpdatesSuppressionTimer;
+
+    RefPtr<WebKitNamedFlowCollection> m_namedFlows;
 
 #ifndef NDEBUG
     bool m_didDispatchViewportPropertiesChanged;

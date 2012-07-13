@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -12,7 +12,7 @@
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -27,53 +27,45 @@
  * SUCH DAMAGE.
  */
 
-#ifndef WebKitNamedFlow_h
-#define WebKitNamedFlow_h
+#ifndef WebKitNamedFlowCollection_h
+#define WebKitNamedFlowCollection_h
 
-#include <Node.h>
+#include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class NodeList;
-class RenderNamedFlowThread;
-class WebKitNamedFlowCollection;
+class Document;
+class WebKitNamedFlow;
 
-class WebKitNamedFlow : public RefCounted<WebKitNamedFlow> {
+class WebKitNamedFlowCollection : public RefCounted<WebKitNamedFlowCollection> {
 public:
-    static PassRefPtr<WebKitNamedFlow> create(PassRefPtr<WebKitNamedFlowCollection> manager, const AtomicString& flowThreadName);
+    static PassRefPtr<WebKitNamedFlowCollection> create(Document* doc) { return adoptRef(new WebKitNamedFlowCollection(doc)); }
 
-    ~WebKitNamedFlow();
+    WebKitNamedFlow* flowByName(const String&);
+    PassRefPtr<WebKitNamedFlow> ensureFlowWithName(const String&);
 
-    const AtomicString& name() const;
-    bool overset() const;
-    int firstEmptyRegionIndex() const;
-    PassRefPtr<NodeList> getRegionsByContent(Node*);
-    PassRefPtr<NodeList> getContent();
+    void discardNamedFlow(WebKitNamedFlow*);
 
-    void setRenderer(RenderNamedFlowThread* parentFlowThread);
+    void documentDestroyed();
 
-    enum FlowState {
-        FlowStateCreated,
-        FlowStateNull
-    };
-
-    FlowState flowState() const { return m_parentFlowThread ? FlowStateCreated : FlowStateNull; }
+    Document* document() const { return m_document; }
 
 private:
-    WebKitNamedFlow(PassRefPtr<WebKitNamedFlowCollection>, const AtomicString&);
+    WebKitNamedFlowCollection(Document*);
 
-    // The name of the flow thread as specified in CSS.
-    AtomicString m_flowThreadName;
+    Document* m_document;
 
-    RefPtr<WebKitNamedFlowCollection> m_flowManager;
-    RenderNamedFlowThread* m_parentFlowThread;
+    struct NamedFlowHashFunctions;
+    struct NamedFlowHashTranslator;
 
-    FlowState m_state;
+    typedef ListHashSet<WebKitNamedFlow*, 1, NamedFlowHashFunctions> NamedFlowSet;
+
+    NamedFlowSet m_namedFlows;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // WebKitNamedFlowCollection_h

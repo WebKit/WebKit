@@ -27,7 +27,8 @@
             // Getting the regions for a non existant node should return null.
             var pElement;
             var regionList = namedFlow.getRegionsByContent(pElement);
-            shouldBeNull("regionList");
+            shouldBeNonNull("regionList");
+            shouldBeZero("regionList.length");
 
             // Getting the regions for an element that was not added to the dom should return an empty list.
             pElement = document.createElement("p");

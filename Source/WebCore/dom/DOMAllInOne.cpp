@@ -144,6 +144,7 @@
 #include "ViewportArguments.cpp"
 #include "WebKitAnimationEvent.cpp"
 #include "WebKitNamedFlow.cpp"
+#include "WebKitNamedFlowCollection.cpp"
 #include "WebKitTransitionEvent.cpp"
 #include "WheelEvent.cpp"
 #include "WindowEventContext.cpp"

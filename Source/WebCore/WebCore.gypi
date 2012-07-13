@@ -5298,6 +5298,8 @@
             'dom/WebKitAnimationEvent.h',
             'dom/WebKitNamedFlow.cpp',
             'dom/WebKitNamedFlow.h',
+            'dom/WebKitNamedFlowCollection.cpp',
+            'dom/WebKitNamedFlowCollection.h',
             'dom/WebKitTransitionEvent.cpp',
             'dom/WebKitTransitionEvent.h',
             'dom/WheelEvent.cpp',

@@ -1,3 +1,94 @@
+2012-07-13  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Fix the lifecycle for the flow objects and their renderers
+        https://bugs.webkit.org/show_bug.cgi?id=89000
+
+        Reviewed by Eric Seidel.
+
+        This patch adds the concept of a NamedFlowCollection, owned by the document, that keeps track of
+        all the named flows that exist in the Document. This collection contains a ListHashSet of weak references to
+        all the existing NamedFlows in the document. This is not a managed set because the CREATED flows are referenced from the renderer and
+        the NULL flows are only cached, they should be destructible.
+        Two named flows are considered to be equal if they have the same name.
+        I've changed the NamedFlow state to depend on the existence of its renderer. A flow thread that has a renderer will also have a NamedFlow object.
+        A flow thread without a renderer can have a NamedFlow object, but only in the NULL state. It's possible for a NamedFlow object to jump from the
+        NULL state to the CREATED state if it was not destroyed (e.g. it was referenced from JS). Keeping track of the NULL state flows that have listeners will be important
+        so when they go back to the CREATED state, the listeners would still be there.
+
+        Link to spec: http://www.w3.org/TR/2012/WD-css3-regions-20120503/
+
+        Tests: The old tests have been modified to take into account the new behavior
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore):
+        (WebCore::Document::webkitGetFlowByName):
+        (WebCore::Document::namedFlows):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::WebKitNamedFlow):
+        (WebCore::WebKitNamedFlow::~WebKitNamedFlow):
+        (WebCore::WebKitNamedFlow::create):
+        (WebCore):
+        (WebCore::WebKitNamedFlow::name):
+        (WebCore::WebKitNamedFlow::overset):
+        (WebCore::nodeInFlowThread):
+        (WebCore::WebKitNamedFlow::getRegionsByContentNode):
+        (WebCore::WebKitNamedFlow::getContent):
+        (WebCore::WebKitNamedFlow::setRenderer):
+        * dom/WebKitNamedFlow.h:
+        (WebCore):
+        (WebKitNamedFlow):
+        (WebCore::WebKitNamedFlow::getFlowState):
+        (WebCore::WebKitNamedFlow::switchFlowState):
+        * dom/WebKitNamedFlowCollection.cpp: Added.
+        (WebCore):
+        (WebCore::WebKitNamedFlowCollection::WebKitNamedFlowCollection):
+        (WebCore::WebKitNamedFlowCollection::length): An O(1) operation
+        (WebCore::WebKitNamedFlowCollection::item): An O(N) operation
+        (WebCore::WebKitNamedFlowCollection::flowByName): An O(1) operation
+        (WebCore::WebKitNamedFlowCollection::ensureNamedFlowInCreatedState): An O(1) operation
+        (WebCore::WebKitNamedFlowCollection::moveNamedFlowToNullState): An O(1) operation
+        (WebCore::WebKitNamedFlowCollection::discardNamedFlow): An O(1) operation
+        (WebCore::WebKitNamedFlowCollection::documentDestroyed):
+        (WebCore::WebKitNamedFlowCollection::NamedFlowHashFunctions::hash):
+        (WebCore::WebKitNamedFlowCollection::NamedFlowHashFunctions::equal):
+        (WebKitNamedFlowCollection::NamedFlowHashFunctions):
+        (WebCore::WebKitNamedFlowCollection::NamedFlowHashTranslator::hash):
+        (WebCore::WebKitNamedFlowCollection::NamedFlowHashTranslator::equal):
+        * dom/WebKitNamedFlowCollection.h: Copied from Source/WebCore/dom/WebKitNamedFlow.h.
+        (WebCore):
+        (WebKitNamedFlowCollection):
+        (WebCore::WebKitNamedFlowCollection::create):
+        (WebCore::WebKitNamedFlowCollection::document):
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::ensureRenderFlowThreadWithName):
+        (WebCore::FlowThreadController::removeFlowThread):
+        (WebCore):
+        * rendering/FlowThreadController.h:
+        (FlowThreadController):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        (WebCore):
+        (WebCore::RenderNamedFlowThread::~RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::removeRegionFromThread):
+        (WebCore::RenderNamedFlowThread::unregisterNamedFlowContentNode):
+        (WebCore::RenderNamedFlowThread::flowThreadName):
+        (WebCore::RenderNamedFlowThread::willBeDestroyed):
+        * rendering/RenderNamedFlowThread.h:
+        (RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::contentNodes):
+        (WebCore::RenderNamedFlowThread::canBeDestroyed):
+
 2012-07-13  Vineet Chaudhary  <rgf748@motorola.com>
 
         [V8Bindings] Implement generalised method to validates that the passed object is a sequence type.

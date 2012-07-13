@@ -638,6 +638,7 @@ SOURCES += \
     dom/ViewportArguments.cpp \
     dom/WebKitAnimationEvent.cpp \
     dom/WebKitNamedFlow.cpp \
+    dom/WebKitNamedFlowCollection.cpp \
     dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
     dom/WindowEventContext.cpp \
@@ -1820,6 +1821,7 @@ HEADERS += \
     dom/ViewportArguments.h \
     dom/WebKitAnimationEvent.h \
     dom/WebKitNamedFlow.h \
+    dom/WebKitNamedFlowCollection.h \
     dom/WebKitTransitionEvent.h \
     dom/WheelEvent.h \
     editing/AlternativeTextController.h \

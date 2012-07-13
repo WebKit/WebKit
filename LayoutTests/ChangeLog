@@ -1,3 +1,25 @@
+2012-07-13  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Fix the lifecycle for the flow objects and their renderers
+        https://bugs.webkit.org/show_bug.cgi?id=89000
+
+        Reviewed by Eric Seidel.
+
+        These tests expected getFlowByName() to return a valid object even for the NULL flows. They've been modified to
+        reflect the new behavior.
+
+        * fast/regions/get-regions-by-content-node2-expected.txt:
+        * fast/regions/get-regions-by-content-node2.html:
+        * fast/regions/webkit-named-flow-flow-added.html:
+        * fast/regions/webkit-named-flow-get-content-expected.txt:
+        * fast/regions/webkit-named-flow-get-content.html:
+        * fast/regions/webkit-named-flow-invalid-name.html:
+        * fast/regions/webkit-named-flow-modified-flow.html:
+        * fast/regions/webkit-named-flow-non-existing-flow.html:
+        * fast/regions/webkit-named-flow-removed-flow.html:
+        * platform/chromium-win/fast/regions/region-style-block-background-color2-expected.txt:
+        * platform/mac/fast/regions/region-style-block-background-color2-expected.txt:
+
 2012-07-13  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r119948): [Forms] Spin button Up/Down actions make value to zero for input type "number" when step mismatched
