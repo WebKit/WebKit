@@ -2019,7 +2019,7 @@ sub GenerateImplementation
                                     $functionName = "impl->${functionName}";
                                 }
 
-                                push(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, ""));
+                                unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, ""));
 
                                 push(@arguments, "ec") if @{$attribute->setterExceptions};
                                 push(@implContent, "    ${functionName}(" . join(", ", @arguments) . ");\n");
