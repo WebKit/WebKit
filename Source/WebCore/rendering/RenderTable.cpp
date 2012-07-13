@@ -521,20 +521,14 @@ void RenderTable::addOverflowFromChildren()
         addOverflowFromChild(m_captions[i]);
 
     // Add overflow from our sections.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableSection()) {
-            RenderTableSection* section = toRenderTableSection(child);
-            addOverflowFromChild(section);
-        }
-    }
+    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))
+        addOverflowFromChild(section);
 }
 
 void RenderTable::setCellLogicalWidths()
 {
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableSection())
-            toRenderTableSection(child)->setCellLogicalWidths();
-    }
+    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))
+        section->setCellLogicalWidths();
 }
 
 void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -1000,18 +994,11 @@ int RenderTable::outerBorderAfter() const
     if (!collapseBorders())
         return 0;
     int borderWidth = 0;
-    RenderTableSection* bottomSection;
-    if (m_foot)
-        bottomSection = m_foot;
-    else {
-        RenderObject* child;
-        for (child = lastChild(); child && !child->isTableSection(); child = child->previousSibling()) { }
-        bottomSection = child ? toRenderTableSection(child) : 0;
-    }
-    if (bottomSection) {
-        borderWidth = bottomSection->outerBorderAfter();
+
+    if (RenderTableSection* section = bottomSection()) {
+        borderWidth = section->outerBorderAfter();
         if (borderWidth < 0)
-            return 0;   // Overridden by hidden
+            return 0; // Overridden by hidden
     }
     const BorderValue& tb = style()->borderAfter();
     if (tb.style() == BHIDDEN)
@@ -1035,10 +1022,8 @@ int RenderTable::outerBorderStart() const
         borderWidth = (tb.width() + (style()->isLeftToRightDirection() ? 0 : 1)) / 2;
 
     bool allHidden = true;
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->isTableSection())
-            continue;
-        int sw = toRenderTableSection(child)->outerBorderStart();
+    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
+        int sw = section->outerBorderStart();
         if (sw < 0)
             continue;
         allHidden = false;
@@ -1064,10 +1049,8 @@ int RenderTable::outerBorderEnd() const
         borderWidth = (tb.width() + (style()->isLeftToRightDirection() ? 1 : 0)) / 2;
 
     bool allHidden = true;
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->isTableSection())
-            continue;
-        int sw = toRenderTableSection(child)->outerBorderEnd();
+    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
+        int sw = section->outerBorderEnd();
         if (sw < 0)
             continue;
         allHidden = false;

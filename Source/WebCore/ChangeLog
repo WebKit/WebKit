@@ -1,3 +1,25 @@
+2012-07-13  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Refactor RenderTable to use the section's iteration functions.
+        https://bugs.webkit.org/show_bug.cgi?id=89751
+
+        Reviewed by Julien Chaffraix.
+
+        Removing anti-pattern wherever possible from RenderTable code. Also, modifying
+        RenderTable sections' iterations to use helper functions.
+
+        No new tests required for this change since no change in behavior is expected.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addOverflowFromChildren):
+        (WebCore::RenderTable::setCellLogicalWidths):
+        (WebCore::RenderTable::outerBorderStart):
+        (WebCore::RenderTable::outerBorderEnd):
+        Removed anti-patterns involving iterations over RenderObjects.
+
+        (WebCore::RenderTable::outerBorderAfter):
+        Modified RenderTable sections' iteration to use helper functions.
+
 2012-07-13  Enrica Casucci  <enrica@apple.com>
 
         Threadsafety issues in WebScriptObject
