@@ -1,3 +1,10 @@
+2012-07-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Initialize unused const member variables to make compilers happy.
+
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::DynamicNodeListCacheBase):
+
 2012-07-12  Konrad Piascik  <kpiascik@rim.com>
 
         Web Inspector: Geolocation override

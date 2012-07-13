@@ -47,7 +47,9 @@ public:
     }
 
     DynamicNodeListCacheBase(CollectionType collectionType)
-        : m_collectionType(collectionType)
+        : m_rootedAtDocument(false) // Ignored
+        , m_invalidationType(DoNotInvalidateOnAttributeChanges) // Ignored
+        , m_collectionType(collectionType)
     {
         ASSERT(m_collectionType == static_cast<unsigned>(collectionType));
         clearCache();
