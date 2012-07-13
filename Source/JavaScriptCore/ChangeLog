@@ -1,3 +1,18 @@
+2012-07-13  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix ARM_TRADITIONAL JIT for COMPILER(MSVC) and COMPILER(RVCT) after r121885
+        https://bugs.webkit.org/show_bug.cgi?id=91238
+
+        Reviewed by Zoltan Herczeg.
+
+        r121885 changed the assembler instruction only for COMPILER(GCC).
+        Use the same instructions for the other compilers too.
+
+        * jit/JITStubs.cpp:
+        (JSC::ctiTrampoline):
+        (JSC::ctiTrampolineEnd):
+        (JSC::ctiVMThrowTrampoline):
+
 2012-07-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG property access stubs should use structure transition watchpoints

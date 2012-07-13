@@ -740,16 +740,19 @@ __asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, void* /*unu
 {
     ARM
     stmdb sp!, {r1-r3}
-    stmdb sp!, {r4-r8, lr}
+    stmdb sp!, {r4-r6, r8-r11, lr}
     sub sp, sp, # PRESERVEDR4_OFFSET
-    mov r4, r2
-    mov r5, #512
+    mov r5, r2
+    mov r6, #512
     mov lr, pc
     bx r0
     add sp, sp, # PRESERVEDR4_OFFSET
-    ldmia sp!, {r4-r8, lr}
+    ldmia sp!, {r4-r6, r8-r11, lr}
     add sp, sp, #12
     bx lr
+}
+__asm void ctiTrampolineEnd()
+{
 }
 
 __asm void ctiVMThrowTrampoline()
@@ -759,7 +762,7 @@ __asm void ctiVMThrowTrampoline()
     mov r0, sp
     bl cti_vm_throw
     add sp, sp, # PRESERVEDR4_OFFSET
-    ldmia sp!, {r4-r8, lr}
+    ldmia sp!, {r4-r6, r8-r11, lr}
     add sp, sp, #12
     bx lr
 }
@@ -1212,31 +1215,32 @@ RVCT()
 MSVC_BEGIN(    AREA Trampoline, CODE)
 MSVC_BEGIN()
 MSVC_BEGIN(    EXPORT ctiTrampoline)
+MSVC_BEGIN(    EXPORT ctiTrampolineEnd)
 MSVC_BEGIN(    EXPORT ctiVMThrowTrampoline)
 MSVC_BEGIN(    EXPORT ctiOpThrowNotCaught)
 MSVC_BEGIN()
 MSVC_BEGIN(ctiTrampoline PROC)
 MSVC_BEGIN(    stmdb sp!, {r1-r3})
-MSVC_BEGIN(    stmdb sp!, {r4-r8, lr})
+MSVC_BEGIN(    stmdb sp!, {r4-r6, r8-r11, lr})
 MSVC_BEGIN(    sub sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
-MSVC_BEGIN(    mov r4, r2)
-MSVC_BEGIN(    mov r5, #512)
+MSVC_BEGIN(    mov r5, r2)
+MSVC_BEGIN(    mov r6, #512)
 MSVC_BEGIN(    ; r0 contains the code)
 MSVC_BEGIN(    mov lr, pc)
 MSVC_BEGIN(    bx r0)
 MSVC_BEGIN(    add sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
-MSVC_BEGIN(    ldmia sp!, {r4-r8, lr})
+MSVC_BEGIN(    ldmia sp!, {r4-r6, r8-r11, lr})
 MSVC_BEGIN(    add sp, sp, #12)
 MSVC_BEGIN(    bx lr)
+MSVC_BEGIN(ctiTrampolineEnd)
 MSVC_BEGIN(ctiTrampoline ENDP)
 MSVC_BEGIN()
 MSVC_BEGIN(ctiVMThrowTrampoline PROC)
 MSVC_BEGIN(    mov r0, sp)
-MSVC_BEGIN(    mov lr, pc)
 MSVC_BEGIN(    bl cti_vm_throw)
 MSVC_BEGIN(ctiOpThrowNotCaught)
 MSVC_BEGIN(    add sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
-MSVC_BEGIN(    ldmia sp!, {r4-r8, lr})
+MSVC_BEGIN(    ldmia sp!, {r4-r6, r8-r11, lr})
 MSVC_BEGIN(    add sp, sp, #12)
 MSVC_BEGIN(    bx lr)
 MSVC_BEGIN(ctiVMThrowTrampoline ENDP)
