@@ -34,7 +34,9 @@
 #include "Extensions3DOpenGLES.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#if PLATFORM(BLACKBERRY)
 #include "LayerWebKitThread.h"
+#endif
 #include "NotImplemented.h"
 #include "OpenGLESShims.h"
 
@@ -111,6 +113,75 @@ void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int 
         for (int i = 0; i < totalBytes; i += 4)
             std::swap(pixels[i], pixels[i + 2]); // Convert to BGRA.
     }
+}
+
+bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
+{
+    const int width = size.width();
+    const int height = size.height();
+    GLuint colorFormat = 0, pixelDataType = 0;
+    if (m_attrs.alpha) {
+        m_internalColorFormat = GL_RGBA;
+        colorFormat = GL_RGBA;
+        pixelDataType = GL_UNSIGNED_BYTE;
+    } else {
+        m_internalColorFormat = GL_RGB;
+        colorFormat = GL_RGB;
+        pixelDataType = GL_UNSIGNED_SHORT_5_6_5;
+    }
+
+    // We don't allow the logic where stencil is required and depth is not.
+    // See GraphicsContext3D::validateAttributes.
+    bool supportPackedDepthStencilBuffer = (m_attrs.stencil || m_attrs.depth) && getExtensions()->supports("GL_OES_packed_depth_stencil");
+
+    // Resize regular FBO.
+    bool mustRestoreFBO = false;
+    if (m_boundFBO != m_fbo) {
+        mustRestoreFBO = true;
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+    }
+
+    ::glBindTexture(GL_TEXTURE_2D, m_texture);
+    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, pixelDataType, 0);
+    ::glFramebufferTexture2DEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
+
+    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
+    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+    ::glBindTexture(GL_TEXTURE_2D, 0);
+
+    // We don't support antialiasing yet. See GraphicsContext3D::validateAttributes.
+    ASSERT(!m_attrs.antialias);
+
+    if (m_attrs.stencil || m_attrs.depth) {
+        // Use a 24 bit depth buffer where we know we have it.
+        if (supportPackedDepthStencilBuffer) {
+            ::glBindTexture(GL_TEXTURE_2D, m_depthStencilBuffer);
+            ::glTexImage2D(GL_TEXTURE_2D, 0, GraphicsContext3D::DEPTH_STENCIL, width, height, 0, GraphicsContext3D::DEPTH_STENCIL, GraphicsContext3D::UNSIGNED_INT_24_8, 0);
+            if (m_attrs.stencil)
+                ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
+            if (m_attrs.depth)
+                ::glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthStencilBuffer, 0);
+            ::glBindTexture(GL_TEXTURE_2D, 0);
+        } else {
+            if (m_attrs.stencil) {
+                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_STENCIL_INDEX8, width, height);
+                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+            }
+            if (m_attrs.depth) {
+                ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+                ::glRenderbufferStorageEXT(GraphicsContext3D::RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+                ::glFramebufferRenderbufferEXT(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+            }
+            ::glBindRenderbufferEXT(GraphicsContext3D::RENDERBUFFER, 0);
+        }
+    }
+    if (glCheckFramebufferStatusEXT(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+        // FIXME: cleanup
+        notImplemented();
+    }
+
+    return mustRestoreFBO;
 }
 
 void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)

@@ -1,3 +1,43 @@
+2012-07-13  Lauro Neto  <lauro.neto@openbossa.org>
+
+        Fix QtWebKit build with OpenGLES after GC3D/E3D refactor
+        https://bugs.webkit.org/show_bug.cgi?id=91156
+
+        Reviewed by Noam Rosenthal.
+
+        Adds several build fixes.
+
+        * platform/graphics/GraphicsContext3D.h:
+            Use E3DOpenGLES instead of previously removed E3DQt.
+
+        * platform/graphics/OpenGLESShims.h:
+            Enable defines for Qt.
+
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        (WebCore::Extensions3DOpenGLES::blitFramebuffer):
+        (WebCore):
+        (WebCore::Extensions3DOpenGLES::renderbufferStorageMultisample):
+        (WebCore::Extensions3DOpenGLES::copyTextureCHROMIUM):
+            Added pure virtual stubs.
+
+        (WebCore::Extensions3DOpenGLES::supportsExtension):
+            Remove PROC suffix. See bug #91130.
+
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        (Extensions3DOpenGLES):
+            Added pure virtual stubs.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+            Readded missing function after removed in r122250.
+
+        (WebCore):
+            Use PLATFORM(BLACKBERRY) guard around port-specific include.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+            Added USE(OPENGL_ES_2) guard instead of always loading the OpenGL extensions.
+
+
 2012-07-13  Keishi Hattori  <keishi@webkit.org>
 
         Form of FormAssociatedElement is not updated when id target changes.

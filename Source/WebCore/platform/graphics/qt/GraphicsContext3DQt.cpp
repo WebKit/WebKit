@@ -19,7 +19,11 @@
 #include "config.h"
 #include "GraphicsContext3D.h"
 
+#if USE(OPENGL_ES_2)
+#include "Extensions3DOpenGLES.h"
+#else
 #include "Extensions3DOpenGL.h"
+#endif
 #include "GraphicsContext.h"
 #include "GraphicsSurface.h"
 #include "HostWindow.h"

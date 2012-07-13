@@ -956,10 +956,7 @@ public:
     ANGLEWebKitBridge m_compiler;
 #endif
 
-#if PLATFORM(QT) && defined(QT_OPENGL_ES_2)
-    friend class Extensions3DQt;
-    OwnPtr<Extensions3DQt> m_extensions;
-#elif PLATFORM(BLACKBERRY)
+#if PLATFORM(BLACKBERRY) || (PLATFORM(QT) && defined(QT_OPENGL_ES_2))
     friend class Extensions3DOpenGLES;
     OwnPtr<Extensions3DOpenGLES> m_extensions;
 #elif !PLATFORM(CHROMIUM)

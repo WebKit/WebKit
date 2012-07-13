@@ -29,6 +29,7 @@
 #include "Extensions3DOpenGLES.h"
 
 #include "GraphicsContext3D.h"
+#include "NotImplemented.h"
 #include <EGL/egl.h>
 #include <wtf/Vector.h>
 
@@ -66,6 +67,21 @@ void Extensions3DOpenGLES::renderbufferStorageMultisampleIMG(unsigned long targe
         m_glRenderbufferStorageMultisampleIMG(target, samples, internalformat, width, height);
     else
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
+}
+
+void Extensions3DOpenGLES::blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter)
+{
+    notImplemented();
+}
+
+void Extensions3DOpenGLES::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
+{
+    notImplemented();
+}
+
+void Extensions3DOpenGLES::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum)
+{
+    notImplemented();
 }
 
 Platform3DObject Extensions3DOpenGLES::createVertexArrayOES()
@@ -129,8 +145,8 @@ bool Extensions3DOpenGLES::supportsExtension(const String& name)
             m_glIsVertexArrayOES = reinterpret_cast<PFNGLISVERTEXARRAYOESPROC>(eglGetProcAddress("glIsVertexArrayOES"));
             m_supportsOESvertexArrayObject = true;
         } else if (name == "GL_IMG_multisampled_render_to_texture" && !m_supportsIMGMultisampledRenderToTexture) {
-            m_glFramebufferTexture2DMultisampleIMG = reinterpret_cast<PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMGPROC>(eglGetProcAddress("glFramebufferTexture2DMultisampleIMG"));
-            m_glRenderbufferStorageMultisampleIMG = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMGPROC>(eglGetProcAddress("glRenderbufferStorageMultisampleIMG"));
+            m_glFramebufferTexture2DMultisampleIMG = reinterpret_cast<PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG>(eglGetProcAddress("glFramebufferTexture2DMultisampleIMG"));
+            m_glRenderbufferStorageMultisampleIMG = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG>(eglGetProcAddress("glRenderbufferStorageMultisampleIMG"));
             m_supportsIMGMultisampledRenderToTexture = true;
         }
         return true;
