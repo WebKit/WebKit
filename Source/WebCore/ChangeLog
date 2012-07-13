@@ -1,3 +1,17 @@
+2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Remove uiSourceCode from Resource.
+        https://bugs.webkit.org/show_bug.cgi?id=91201
+
+        Reviewed by Pavel Feldman.
+
+        Removed Resource._uiSourceCode field as it is not used anymore.
+
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.isHidden):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+
 2012-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122450 and r122580.

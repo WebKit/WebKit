@@ -42,8 +42,6 @@ WebInspector.UISourceCode = function(url, resource, contentProvider, sourceMappi
 {
     this._url = url;
     this._resource = resource;
-    if (resource)
-        resource.setUISourceCode(this);
     this._parsedURL = new WebInspector.ParsedURL(url);
     this._contentProvider = contentProvider;
     this._sourceMapping = sourceMapping;

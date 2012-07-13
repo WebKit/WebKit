@@ -333,23 +333,7 @@ WebInspector.Resource.prototype = {
      */
     isHidden: function()
     {
-        return !!this._isHidden; 
-    },
-
-    /**
-     * @return {WebInspector.UISourceCode}
-     */
-    uiSourceCode: function()
-    {
-        return this._uiSourceCode;
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    setUISourceCode: function(uiSourceCode)
-    {
-        this._uiSourceCode = uiSourceCode;
+        return !!this._isHidden;
     }
 }
 
