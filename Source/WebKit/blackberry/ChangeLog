@@ -1,3 +1,22 @@
+2012-07-13  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Update about:* pages
+        https://bugs.webkit.org/show_bug.cgi?id=91121
+
+        Reviewed by Yong Li.
+
+        Update the about:config pages, and improve the aesthetics of the about:build, about:version, about:credits, about:memory, about:config, and similar pages.
+
+        No new tests, because there is no new funtionality.
+
+        * WebCoreSupport/AboutData.cpp:
+        (WebCore):
+        (WebCore::writeFeatures):
+        (WebCore::numberToHTMLTr): Converted to template function, added bool specialization to write "true" and "false" instead of "1" and "0"
+        (WebCore::configPage):
+        (WebCore::memoryPage):
+        * WebCoreSupport/AboutTemplate.html.cpp: Template for BlackBerry about:* pages.
+
 2012-07-12  Benjamin C Meyer  <bmeyer@rim.com>
 
         WebPage::executeJavaScriptFunction crashes when there is an exception

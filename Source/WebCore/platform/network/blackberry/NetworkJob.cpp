@@ -20,6 +20,7 @@
 #include "NetworkJob.h"
 
 #include "AboutData.h"
+#include "AboutTemplate.html.cpp"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CookieManager.h"
@@ -843,7 +844,8 @@ void NetworkJob::handleAbout()
     if (equalIgnoringCase(aboutWhat, "blank")) {
         handled = true;
     } else if (equalIgnoringCase(aboutWhat, "credits")) {
-        result.append(String("<html><head><title>Open Source Credits</title> <style> .about {padding:14px;} </style> <meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"></head><body>"));
+        result.append(writeHeader("Credits"));
+        result.append(String("<style> .about {padding:14px;} </style>"));
         result.append(String(BlackBerry::Platform::WEBKITCREDITS));
         result.append(String("</body></html>"));
         handled = true;
@@ -883,16 +885,18 @@ void NetworkJob::handleAbout()
         result.append(String("</body></html>"));
         handled = true;
     } else if (equalIgnoringCase(aboutWhat, "version")) {
-        result.append(String("<html><meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"></head><body>"));
+        result.append(writeHeader("Version"));
+        result.append(String("<div class='box'><div class='box-title'>Build Time</div><br>"));
         result.append(String(BlackBerry::Platform::BUILDTIME));
-        result.append(String("</body></html>"));
+        result.append(String("</div><br><div style='font-size:10px;text-align:center;'>Also see the <A href='about:build'>build information</A>.</body></html>"));
         handled = true;
     } else if (BlackBerry::Platform::debugSetting() > 0 && equalIgnoringCase(aboutWhat, "config")) {
         result = configPage();
         handled = true;
     } else if (BlackBerry::Platform::debugSetting() > 0 && equalIgnoringCase(aboutWhat, "build")) {
-        result.append(String("<html><head><title>BlackBerry Browser Build Information</title></head><body><table>"));
-        result.append(String("<tr><td>Build Computer:  </td><td>"));
+        result.append(writeHeader("Build"));
+        result.append(String("<div class='box'><div class='box-title'>Basic</div><table>"));
+        result.append(String("<tr><td>Built On:  </td><td>"));
         result.append(String(BlackBerry::Platform::BUILDCOMPUTER));
         result.append(String("</td></tr>"));
         result.append(String("<tr><td>Build User:  </td><td>"));
@@ -900,11 +904,11 @@ void NetworkJob::handleAbout()
         result.append(String("</td></tr>"));
         result.append(String("<tr><td>Build Time:  </td><td>"));
         result.append(String(BlackBerry::Platform::BUILDTIME));
-        result.append(String("</td></tr><tr><td></td><td></td></tr>"));
+        result.append(String("</table></div><br>"));
         result.append(String(BlackBerry::Platform::BUILDINFO_WEBKIT));
         result.append(String(BlackBerry::Platform::BUILDINFO_PLATFORM));
         result.append(String(BlackBerry::Platform::BUILDINFO_LIBWEBVIEW));
-        result.append(String("</table></body></html>"));
+        result.append(String("</body></html>"));
         handled = true;
     } else if (equalIgnoringCase(aboutWhat, "memory")) {
         result = memoryPage();
