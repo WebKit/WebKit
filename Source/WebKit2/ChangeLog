@@ -1,5 +1,18 @@
 2012-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Fix disk cache size computation in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=91226
+
+        Reviewed by Xan Lopez.
+
+        We are passing the free disk space value in bytes to
+        calculateCacheSizes() which expects values in MB.
+
+        * WebProcess/gtk/WebProcessGtk.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+
+2012-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] WebKit2 crash when going back/forward
         https://bugs.webkit.org/show_bug.cgi?id=91220
 

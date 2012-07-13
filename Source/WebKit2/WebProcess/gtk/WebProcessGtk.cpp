@@ -90,7 +90,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
     SoupCache* cache = reinterpret_cast<SoupCache*>(soup_session_get_feature(session, SOUP_TYPE_CACHE));
-    uint64_t diskFreeSize = getCacheDiskFreeSize(cache);
+    uint64_t diskFreeSize = getCacheDiskFreeSize(cache) / 1024 / 1024;
 
     uint64_t memSize = getMemorySize();
     calculateCacheSizes(cacheModel, memSize, diskFreeSize,
