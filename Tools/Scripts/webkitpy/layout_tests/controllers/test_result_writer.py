@@ -160,7 +160,7 @@ class TestResultWriter(object):
 
     def write_stderr(self, error):
         filename = self.output_filename(self.FILENAME_SUFFIX_STDERR + ".txt")
-        self._write_text_file(filename, error)
+        self._write_binary_file(filename, error)
 
     def write_crash_log(self, crash_log):
         filename = self.output_filename(self.FILENAME_SUFFIX_CRASH_LOG + ".txt")

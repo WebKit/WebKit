@@ -1,3 +1,13 @@
+2012-07-13  David Grogan  <dgrogan@chromium.org>
+
+        nrwt: don't choke when printing invalid utf-8 to stderr
+        https://bugs.webkit.org/show_bug.cgi?id=91181
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.write_stderr):
+
 2012-07-13  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: more class renaming cleanup
