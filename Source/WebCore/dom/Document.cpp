@@ -6075,38 +6075,38 @@ void Document::setContextFeatures(PassRefPtr<ContextFeatures> features)
 
 void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
-    ContainerNode::reportMemoryUsage(memoryObjectInfo);
-    memoryObjectInfo->reportVector(m_customFonts);
-    memoryObjectInfo->reportString(m_documentURI);
-    memoryObjectInfo->reportString(m_baseTarget);
+    MemoryClassInfo<Document> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    info.visitBaseClass<ContainerNode>(this);
+    info.reportVector(m_customFonts);
+    info.reportString(m_documentURI);
+    info.reportString(m_baseTarget);
     if (m_pageGroupUserSheets)
-        memoryObjectInfo->reportVector(*m_pageGroupUserSheets.get());
+        info.reportVector(*m_pageGroupUserSheets.get());
     if (m_userSheets)
-        memoryObjectInfo->reportVector(*m_userSheets.get());
-    memoryObjectInfo->reportHashSet(m_nodeIterators);
-    memoryObjectInfo->reportHashSet(m_ranges);
-    memoryObjectInfo->reportListHashSet(m_styleSheetCandidateNodes);
-    memoryObjectInfo->reportString(m_preferredStylesheetSet);
-    memoryObjectInfo->reportString(m_selectedStylesheetSet);
-    memoryObjectInfo->reportString(m_title.string());
-    memoryObjectInfo->reportString(m_rawTitle.string());
-    memoryObjectInfo->reportString(m_xmlEncoding);
-    memoryObjectInfo->reportString(m_xmlVersion);
-    memoryObjectInfo->reportString(m_contentLanguage);
-    memoryObjectInfo->reportHashMap(m_documentNamedItemCollections);
-    memoryObjectInfo->reportHashMap(m_windowNamedItemCollections);
+        info.reportVector(*m_userSheets.get());
+    info.reportHashSet(m_nodeIterators);
+    info.reportHashSet(m_ranges);
+    info.reportListHashSet(m_styleSheetCandidateNodes);
+    info.reportString(m_preferredStylesheetSet);
+    info.reportString(m_selectedStylesheetSet);
+    info.reportString(m_title.string());
+    info.reportString(m_rawTitle.string());
+    info.reportString(m_xmlEncoding);
+    info.reportString(m_xmlVersion);
+    info.reportString(m_contentLanguage);
+    info.reportHashMap(m_documentNamedItemCollections);
+    info.reportHashMap(m_windowNamedItemCollections);
 #if ENABLE(DASHBOARD_SUPPORT)
-    memoryObjectInfo->reportVector(m_dashboardRegions);
+    info.reportVector(m_dashboardRegions);
 #endif
-    memoryObjectInfo->reportHashMap(m_cssCanvasElements);
-    memoryObjectInfo->reportVector(m_iconURLs);
-    memoryObjectInfo->reportHashSet(m_documentSuspensionCallbackElements);
-    memoryObjectInfo->reportHashSet(m_mediaVolumeCallbackElements);
-    memoryObjectInfo->reportHashSet(m_privateBrowsingStateChangedElements);
-    memoryObjectInfo->reportHashMap(m_elementsByAccessKey);
-    memoryObjectInfo->reportHashSet(m_mediaCanStartListeners);
-    memoryObjectInfo->reportVector(m_pendingTasks);
+    info.reportHashMap(m_cssCanvasElements);
+    info.reportVector(m_iconURLs);
+    info.reportHashSet(m_documentSuspensionCallbackElements);
+    info.reportHashSet(m_mediaVolumeCallbackElements);
+    info.reportHashSet(m_privateBrowsingStateChangedElements);
+    info.reportHashMap(m_elementsByAccessKey);
+    info.reportHashSet(m_mediaCanStartListeners);
+    info.reportVector(m_pendingTasks);
 }
 
 #if ENABLE(UNDO_MANAGER)

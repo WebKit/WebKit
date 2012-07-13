@@ -430,10 +430,10 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
-        ContainerNode::reportMemoryUsage(memoryObjectInfo);
-        memoryObjectInfo->reportInstrumentedObject(m_tagName);
-        memoryObjectInfo->reportInstrumentedPointer(m_attributeData.get());
+        MemoryClassInfo<Element> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        info.visitBaseClass<ContainerNode>(this);
+        info.reportInstrumentedObject(m_tagName);
+        info.reportInstrumentedPointer(m_attributeData.get());
     }
 
 protected:

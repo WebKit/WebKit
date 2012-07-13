@@ -113,8 +113,8 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
-        memoryObjectInfo->reportInstrumentedPointer(m_parent);
+        MemoryClassInfo<TreeShared<NodeType, ParentNodeType> > info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        info.reportInstrumentedPointer(m_parent);
     }
 
 private:

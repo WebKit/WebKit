@@ -2801,12 +2801,12 @@ void Node::removedLastRef()
 
 void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::DOM);
-    TreeShared<Node, ContainerNode>::reportMemoryUsage(memoryObjectInfo);
-    ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
-    memoryObjectInfo->reportPointer(m_document, MemoryInstrumentation::DOM);
-    memoryObjectInfo->reportInstrumentedPointer(m_next);
-    memoryObjectInfo->reportInstrumentedPointer(m_previous);
+    MemoryClassInfo<Node> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    info.visitBaseClass<TreeShared<Node, ContainerNode> >(this);
+    info.visitBaseClass<ScriptWrappable>(this);
+    info.reportInstrumentedPointer(m_document);
+    info.reportInstrumentedPointer(m_next);
+    info.reportInstrumentedPointer(m_previous);
 }
 
 } // namespace WebCore
