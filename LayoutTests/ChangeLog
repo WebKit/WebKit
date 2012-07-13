@@ -1,3 +1,10 @@
+2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed inspector test fix.
+
+        * http/tests/inspector/network/resources/style.css: Added.
+        (body):
+
 2012-07-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         RadioNodeList is not updated upon input type change
