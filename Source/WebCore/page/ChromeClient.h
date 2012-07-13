@@ -63,6 +63,7 @@ namespace WebCore {
     class Page;
     class PagePopup;
     class PagePopupClient;
+    class PagePopupDriver;
     class PopupMenuClient;
     class SecurityOrigin;
     class GraphicsContext3D;
@@ -320,6 +321,9 @@ namespace WebCore {
         // The return value can be 0.
         virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect& originBoundsInRootView) = 0;
         virtual void closePagePopup(PagePopup*) = 0;
+        // For testing.
+        virtual void setPagePopupDriver(PagePopupDriver*) = 0;
+        virtual void resetPagePopupDriver() = 0;
 #endif
         // This function is called whenever a text field <input> is
         // created. The implementation should return true if it wants

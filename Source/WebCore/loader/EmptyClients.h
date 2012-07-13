@@ -124,6 +124,8 @@ public:
 #if ENABLE(PAGE_POPUP)
     virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect&) OVERRIDE { return 0; }
     virtual void closePagePopup(PagePopup*) OVERRIDE { }
+    virtual void setPagePopupDriver(PagePopupDriver*) OVERRIDE { }
+    virtual void resetPagePopupDriver() OVERRIDE { }
 #endif
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)

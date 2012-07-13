@@ -52,6 +52,7 @@
 #include "IntRect.h"
 #include "NotificationPresenterImpl.h"
 #include "PageOverlayList.h"
+#include "PagePopupDriver.h"
 #include "PageWidgetDelegate.h"
 #include "PlatformGestureCurveTarget.h"
 #include "UserMediaClientImpl.h"
@@ -112,7 +113,14 @@ class WebMouseWheelEvent;
 class WebSettingsImpl;
 class WebTouchEvent;
 
-class WebViewImpl : public WebView, public WebLayerTreeViewClient, public RefCounted<WebViewImpl>, public WebCore::PlatformGestureCurveTarget, public PageWidgetEventHandler {
+class WebViewImpl : public WebView
+                  , public WebLayerTreeViewClient
+                  , public RefCounted<WebViewImpl>
+                  , public WebCore::PlatformGestureCurveTarget
+#if ENABLE(PAGE_POPUP)
+                  , public WebCore::PagePopupDriver
+#endif
+                  , public PageWidgetEventHandler {
 public:
     enum AutoZoomType {
         DoubleTap,
@@ -479,8 +487,9 @@ public:
     void popupOpened(WebCore::PopupContainer* popupContainer);
     void popupClosed(WebCore::PopupContainer* popupContainer);
 #if ENABLE(PAGE_POPUP)
-    WebCore::PagePopup* openPagePopup(WebCore::PagePopupClient*, const WebCore::IntRect& originBoundsInRootView);
-    void closePagePopup(WebCore::PagePopup*);
+    // PagePopupDriver functions.
+    virtual WebCore::PagePopup* openPagePopup(WebCore::PagePopupClient*, const WebCore::IntRect& originBoundsInRootView) OVERRIDE;
+    virtual void closePagePopup(WebCore::PagePopup*) OVERRIDE;
 #endif
 
     void hideAutofillPopup();

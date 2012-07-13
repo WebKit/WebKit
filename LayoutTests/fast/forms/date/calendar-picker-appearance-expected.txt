@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 11: Check if window.pagePopupController exists for a page-popup window.
+CONSOLE MESSAGE: line 20: [object PagePopupController]
+ 

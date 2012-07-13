@@ -243,6 +243,7 @@
             'page/PageGroup.h',
             'page/PagePopup.h',
             'page/PagePopupClient.h',
+            'page/PagePopupDriver.h',
             'page/PageSerializer.h',
             'page/PageVisibilityState.h',
             'page/PrintContext.h',
@@ -6189,6 +6190,8 @@
             'testing/Internals.h',
             'testing/InternalSettings.cpp',
             'testing/InternalSettings.h',
+            'testing/MockPagePopupDriver.cpp',
+            'testing/MockPagePopupDriver.h',
         ],
         'webcore_resource_files': [
             'English.lproj/Localizable.strings',

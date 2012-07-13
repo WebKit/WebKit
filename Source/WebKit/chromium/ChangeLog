@@ -1,3 +1,25 @@
+2012-07-13  Kent Tamura  <tkent@chromium.org>
+
+        Make calendar pickers testable
+        https://bugs.webkit.org/show_bug.cgi?id=84827
+
+        Reviewed by Hajime Morita.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::ChromeClientImpl):
+        Initialize m_pagePopupDriver with the WebViewImpl.
+        (WebKit::ChromeClientImpl::openPagePopup):
+        Just calls PagePoupDriver::openPagePopup().
+        (WebKit::ChromeClientImpl::closePagePopup):
+        Just calls PagePoupDriver::closePagePopup().
+        (WebKit::ChromeClientImpl::setPagePopupDriver):
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl): Add setPagePopupDriver
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        WebViewImpl implements PagePopupDriver. openPagePopup() and
+        closePagePopup() override members of PagePopupDriver.
+
 2012-07-13  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r119948): [Forms] Spin button Up/Down actions make value to zero for input type "number" when step mismatched

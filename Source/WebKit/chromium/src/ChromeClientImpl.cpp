@@ -60,6 +60,7 @@
 #include "NavigationAction.h"
 #include "Node.h"
 #include "Page.h"
+#include "PagePopupDriver.h"
 #include "PlatformScreen.h"
 #include "PlatformSupport.h"
 #include "PopupContainer.h"
@@ -139,6 +140,9 @@ ChromeClientImpl::ChromeClientImpl(WebViewImpl* webView)
     , m_menubarVisible(true)
     , m_resizable(true)
     , m_nextNewWindowNavigationPolicy(WebNavigationPolicyIgnore)
+#if ENABLE(PAGE_POPUP)
+    , m_pagePopupDriver(webView)
+#endif
 {
 }
 
@@ -1009,12 +1013,25 @@ PassRefPtr<SearchPopupMenu> ChromeClientImpl::createSearchPopupMenu(PopupMenuCli
 #if ENABLE(PAGE_POPUP)
 PagePopup* ChromeClientImpl::openPagePopup(PagePopupClient* client, const IntRect& originBoundsInRootView)
 {
-    return m_webView->openPagePopup(client, originBoundsInRootView);
+    ASSERT(m_pagePopupDriver);
+    return m_pagePopupDriver->openPagePopup(client, originBoundsInRootView);
 }
 
 void ChromeClientImpl::closePagePopup(PagePopup* popup)
 {
-    m_webView->closePagePopup(popup);
+    ASSERT(m_pagePopupDriver);
+    m_pagePopupDriver->closePagePopup(popup);
+}
+
+void ChromeClientImpl::setPagePopupDriver(PagePopupDriver* driver)
+{
+    ASSERT(driver);
+    m_pagePopupDriver = driver;
+}
+
+void ChromeClientImpl::resetPagePopupDriver()
+{
+    m_pagePopupDriver = m_webView;
 }
 #endif
 

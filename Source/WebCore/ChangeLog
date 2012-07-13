@@ -1,3 +1,59 @@
+2012-07-13  Kent Tamura  <tkent@chromium.org>
+
+        Make calendar pickers testable
+        https://bugs.webkit.org/show_bug.cgi?id=84827
+
+        Reviewed by Hajime Morita.
+
+        WebCore:
+        - Add PagePopupDriver, an interface to open/close a PagePopup.
+        - Add setPagePopupDriver() to ChromeClient in order to inject a
+        PagePopupDriver for testing.
+
+        Internals:
+        Add MockPagePopupDriver, which creates a MockPagePopup, which creates a
+        normal <iframe> in the top-level document, and load the popup content on
+        it. MockPagePopupDriver is enabled by
+        internals.settings.setEnableMockPagePopup(true).
+
+        Test: fast/forms/date/calendar-picker-appearance.html
+
+        * WebCore.gypi: Add new files.
+        * WebCore.xcodeproj/project.pbxproj: Add files to make this buildable.
+        * page/ChromeClient.h:
+        (ChromeClient): Add function for PagePopupDriver.
+        * loader/EmptyClients.h: Add empty implementations for PagePopupDriver functions.
+        * page/PagePopupDriver.h: Added.
+        (PagePopupDriver):
+        (WebCore::PagePopupDriver::~PagePopupDriver):
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::restoreTo): Reset the mock PagePopupDriver.
+        (WebCore::InternalSettings::setEnableMockPagePopup):
+        Register MockPagePopupDriver to ChromeClient.
+        * testing/InternalSettings.h:
+        (InternalSettings): Declare setEnableMockPagePopup().
+        * testing/InternalSettings.idl: ditto.
+        * testing/MockPagePopupDriver.cpp: Added.
+        (MockPagePopup): Pseudo PagePopup implementation with the standard <iframe>.
+        (WebCore::MockPagePopupDriver::MockPagePopupDriver): Added.
+        (WebCore::MockPagePopupDriver::create): Added.
+        (WebCore::MockPagePopupDriver::~MockPagePopupDriver): Added.
+        (WebCore::MockPagePopupDriver::openPagePopup):
+        Added. An override of PagePopupDriver function. This creates a MockPagePopup.
+        (WebCore::MockPagePopupDriver::closePagePopup):
+        Added. An override of PagePopupDriver function. This deletes the MockPagePopup.
+        * testing/MockPagePopupDriver.h:
+        (MockPagePopupDriver): Added.
+
+        * testing/v8/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::injectPagePopupController):
+        Added. Production code uses per-Page context feature framework. However
+        MockPagePopup uses the same page as the host page. So we can't use the
+        framework and need to inject window.pagePopupController manually.
+        * testing/v8/WebCoreTestSupport.h:
+        (WebCoreTestSupport): Add injectPagePopupController().
+
 2012-07-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: mute the native looks of the selects in the console.

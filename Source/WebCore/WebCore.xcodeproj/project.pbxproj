@@ -6166,6 +6166,11 @@
 		F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EAF4AD10C742B1009100D3 /* OpenTypeSanitizer.h */; };
 		F50664F7157F52DC00AC226F /* FormController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F50664F5157F52DC00AC226F /* FormController.cpp */; };
 		F50664F8157F52DC00AC226F /* FormController.h in Headers */ = {isa = PBXBuildFile; fileRef = F50664F6157F52DC00AC226F /* FormController.h */; };
+		F50824691548D89A00A119AB /* PagePopup.h in Headers */ = {isa = PBXBuildFile; fileRef = F50824681548D89A00A119AB /* PagePopup.h */; };
+		F508246B1548D8E100A119AB /* PagePopupClient.h in Headers */ = {isa = PBXBuildFile; fileRef = F508246A1548D8E100A119AB /* PagePopupClient.h */; };
+		F508246E1548D96200A119AB /* MockPagePopupDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F508246C1548D96200A119AB /* MockPagePopupDriver.cpp */; };
+		F508246F1548D96200A119AB /* MockPagePopupDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F508246D1548D96200A119AB /* MockPagePopupDriver.h */; };
+		F5122C901547FA1B0028A93B /* PagePopupDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5122C8F1547FA1B0028A93B /* PagePopupDriver.h */; };
 		F5142C69123F12B000F5BD4C /* LocalizedNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = F5142C68123F12B000F5BD4C /* LocalizedNumber.h */; };
 		F52AD5E41534245F0059FBE6 /* EmptyClients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */; };
 		F55B3DAD1251F12D003EF269 /* BaseTextInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */; };
@@ -13449,6 +13454,11 @@
 		F4EAF4AD10C742B1009100D3 /* OpenTypeSanitizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenTypeSanitizer.h; path = opentype/OpenTypeSanitizer.h; sourceTree = "<group>"; };
 		F50664F5157F52DC00AC226F /* FormController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormController.cpp; sourceTree = "<group>"; };
 		F50664F6157F52DC00AC226F /* FormController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormController.h; sourceTree = "<group>"; };
+		F50824681548D89A00A119AB /* PagePopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PagePopup.h; sourceTree = "<group>"; };
+		F508246A1548D8E100A119AB /* PagePopupClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PagePopupClient.h; sourceTree = "<group>"; };
+		F508246C1548D96200A119AB /* MockPagePopupDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MockPagePopupDriver.cpp; path = testing/MockPagePopupDriver.cpp; sourceTree = SOURCE_ROOT; };
+		F508246D1548D96200A119AB /* MockPagePopupDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockPagePopupDriver.h; path = testing/MockPagePopupDriver.h; sourceTree = SOURCE_ROOT; };
+		F5122C8F1547FA1B0028A93B /* PagePopupDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PagePopupDriver.h; sourceTree = "<group>"; };
 		F5142C68123F12B000F5BD4C /* LocalizedNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedNumber.h; sourceTree = "<group>"; };
 		F523D23B02DE4396018635CA /* HTMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDocument.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23C02DE4396018635CA /* HTMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDocument.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -15627,6 +15637,8 @@
 				9FFE3E7811B59C5D0037874E /* MemoryInfo.cpp */,
 				9FFE3E7911B59C5D0037874E /* MemoryInfo.h */,
 				9FFE3E7C11B59C6E0037874E /* MemoryInfo.idl */,
+				F508246C1548D96200A119AB /* MockPagePopupDriver.cpp */,
+				F508246D1548D96200A119AB /* MockPagePopupDriver.h */,
 				93EB355E09E37FD600F43799 /* MouseEventWithHitTestResults.cpp */,
 				935C476209AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h */,
 				A9C6E5A30D746458006442E9 /* Navigator.cpp */,
@@ -15642,6 +15654,9 @@
 				9302B0BE0D79F82C00C7EE83 /* PageGroup.h */,
 				7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */,
 				7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */,
+				F50824681548D89A00A119AB /* PagePopup.h */,
+				F508246A1548D8E100A119AB /* PagePopupClient.h */,
+				F5122C8F1547FA1B0028A93B /* PagePopupDriver.h */,
 				371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */,
 				371E65CB13661EDC00BEEDB0 /* PageSerializer.h */,
 				FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */,
@@ -24126,6 +24141,7 @@
 				9B375EDB14478A0100F3CAE5 /* MicroDataItemList.h in Headers */,
 				37DDCD9513844FD50008B793 /* MIMEHeader.h in Headers */,
 				BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */,
+				F508246F1548D96200A119AB /* MockPagePopupDriver.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */,
 				F55B3DC61251F12D003EF269 /* MonthInputType.h in Headers */,
 				85031B460A44EFC700F992E0 /* MouseEvent.h in Headers */,
@@ -24208,6 +24224,9 @@
 				9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */,
 				9712A60515004EDA0048AF10 /* PageGroupIndexedDatabase.h in Headers */,
 				7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */,
+				F50824691548D89A00A119AB /* PagePopup.h in Headers */,
+				F508246B1548D8E100A119AB /* PagePopupClient.h in Headers */,
+				F5122C901547FA1B0028A93B /* PagePopupDriver.h in Headers */,
 				F3820895147D35F90010BC06 /* PageRuntimeAgent.h in Headers */,
 				F34742E51343633C00531BC2 /* PageScriptDebugServer.h in Headers */,
 				371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */,
@@ -27390,6 +27409,7 @@
 				37DDCD9413844FD50008B793 /* MIMEHeader.cpp in Sources */,
 				BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */,
 				BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */,
+				F508246E1548D96200A119AB /* MockPagePopupDriver.cpp in Sources */,
 				C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */,
 				F55B3DC51251F12D003EF269 /* MonthInputType.cpp in Sources */,
 				85031B450A44EFC700F992E0 /* MouseEvent.cpp in Sources */,

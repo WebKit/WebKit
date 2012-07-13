@@ -1113,6 +1113,8 @@ BUGWK29359 : fast/forms/datetimelocal/input-valueasnumber-datetimelocal.html = T
 BUGWK29359 : fast/forms/month = TEXT
 BUGWK29359 : fast/forms/time = TEXT
 BUGWK29359 : fast/forms/week = TEXT
+// Need rebaseline
+BUGWK84827 : fast/forms/date/calendar-picker-appearance.html = IMAGE PASS MISSING
 
 BUGCR78376 : http/tests/media/video-play-stall-seek.html = TIMEOUT
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreTestSupport_h
-#define WebCoreTestSupport_h
-
-namespace v8 {
-class Context;
-template <class T> class Local;
-}
+#ifndef PagePopupDriver_h
+#define PagePopupDriver_h
 
 namespace WebCore {
-class Frame;
-class PagePopupController;
+
+class IntRect;
+class PagePopup;
+class PagePopupClient;
+
+class PagePopupDriver {
+public:
+    virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect& originBoundsInRootView) = 0;
+    virtual void closePagePopup(PagePopup*) = 0;
+    virtual ~PagePopupDriver() { }
+};
+
 }
-
-namespace WebCoreTestSupport {
-
-void injectInternalsObject(v8::Local<v8::Context>);
-void resetInternalsObject(v8::Local<v8::Context>);
-
-#if ENABLE(PAGE_POPUP)
-void injectPagePopupController(WebCore::Frame*, WebCore::PagePopupController*);
-#endif
-
-} // namespace WebCore
-
 #endif

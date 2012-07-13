@@ -42,6 +42,7 @@ typedef int ExceptionCode;
 
 class Frame;
 class Document;
+class MockPagePopupDriver;
 class Page;
 class Settings;
 
@@ -127,6 +128,7 @@ public:
     void allowRoundingHacks() const;
     void setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode&);
     bool shouldDisplayTrackKind(const String& kind, ExceptionCode&);
+    void setEnableMockPagePopup(bool, ExceptionCode&);
     String configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);
 private:
     explicit InternalSettings(Page*);
@@ -137,6 +139,9 @@ private:
 
     Page* m_page;
     Backup m_backup;
+#if ENABLE(PAGE_POPUP)
+    OwnPtr<MockPagePopupDriver> m_pagePopupDriver;
+#endif
 };
 
 } // namespace WebCore

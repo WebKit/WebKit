@@ -70,6 +70,7 @@ module window {
         sequence<String> userPreferredLanguages();
         void setUserPreferredLanguages(in sequence<String> languages);
         void allowRoundingHacks();
+        void setEnableMockPagePopup(in boolean enabled) raises(DOMException);
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
         void setShouldDisplayTrackKind(in DOMString kind, in boolean enabled) raises (DOMException);
         boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);

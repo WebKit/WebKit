@@ -27,6 +27,8 @@
 #include "InternalSettings.h"
 
 #include "CachedResourceLoader.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -34,6 +36,7 @@
 #include "InspectorController.h"
 #include "Language.h"
 #include "LocaleToScriptMapping.h"
+#include "MockPagePopupDriver.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -120,6 +123,11 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
 #endif
 #if ENABLE(DIALOG_ELEMENT)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
+#endif
+
+#if ENABLE(PAGE_POPUP)
+    if (page->chrome())
+        page->chrome()->client()->resetPagePopupDriver();
 #endif
 }
 
@@ -537,6 +545,25 @@ void InternalSettings::setPagination(const String& mode, int gap, ExceptionCode&
 
     pagination.gap = gap;
     page()->setPagination(pagination);
+}
+
+void InternalSettings::setEnableMockPagePopup(bool enabled, ExceptionCode& ec)
+{
+#if ENABLE(PAGE_POPUP)
+    InternalSettingsGuardForPage();
+    if (!page()->chrome())
+        return;
+    if (!enabled) {
+        page()->chrome()->client()->resetPagePopupDriver();
+        return;
+    }
+    if (!m_pagePopupDriver)
+        m_pagePopupDriver = MockPagePopupDriver::create(page()->mainFrame());
+    page()->chrome()->client()->setPagePopupDriver(m_pagePopupDriver.get());
+#else
+    UNUSED_PARAM(enabled);
+    UNUSED_PARAM(ec);
+#endif
 }
 
 String InternalSettings::configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode& ec)

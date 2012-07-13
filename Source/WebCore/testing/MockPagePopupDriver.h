@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreTestSupport_h
-#define WebCoreTestSupport_h
+#ifndef MockPagePopupDriver_h
+#define MockPagePopupDriver_h
 
-namespace v8 {
-class Context;
-template <class T> class Local;
-}
-
-namespace WebCore {
-class Frame;
-class PagePopupController;
-}
-
-namespace WebCoreTestSupport {
-
-void injectInternalsObject(v8::Local<v8::Context>);
-void resetInternalsObject(v8::Local<v8::Context>);
+#include "PagePopupClient.h"
+#include "PagePopupDriver.h"
+#include <wtf/RefPtr.h>
 
 #if ENABLE(PAGE_POPUP)
-void injectPagePopupController(WebCore::Frame*, WebCore::PagePopupController*);
+namespace WebCore {
+
+class Frame;
+class IntRect;
+class MockPagePopup;
+class PagePopup;
+
+class MockPagePopupDriver : public PagePopupDriver {
+public:
+    static PassOwnPtr<MockPagePopupDriver> create(Frame* mainFrame);
+    virtual ~MockPagePopupDriver();
+
+private:
+    MockPagePopupDriver(Frame* mainFrame);
+
+    // PagePopupDriver functions:
+    virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect& originBoundsInRootView) OVERRIDE;
+    virtual void closePagePopup(PagePopup*) OVERRIDE;
+
+    OwnPtr<MockPagePopup> m_mockPagePopup;
+    Frame* m_mainFrame;
+};
+
+}
 #endif
-
-} // namespace WebCore
-
 #endif
