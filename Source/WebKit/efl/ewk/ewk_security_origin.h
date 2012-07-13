@@ -49,9 +49,9 @@ typedef struct _Ewk_Security_Origin Ewk_Security_Origin;
  * It returns a internal string which should not
  * be modified. The string is guaranteed to be stringshared.
  *
- * @return the protocol scheme
+ * @return the protocol scheme or @c 0 if there is not a protocol scheme
  */
-EAPI const char          *ewk_security_origin_protocol_get(Ewk_Security_Origin *o);
+EAPI const char          *ewk_security_origin_protocol_get(const Ewk_Security_Origin *o);
 
 /**
  * Returns the host of the security origin.
@@ -61,9 +61,9 @@ EAPI const char          *ewk_security_origin_protocol_get(Ewk_Security_Origin *
  *
  * @param o security origin object
  *
- * @return the host domain
+ * @return the host domain or @c 0 if there is not a host scheme
  */
-EAPI const char          *ewk_security_origin_host_get(Ewk_Security_Origin *o);
+EAPI const char          *ewk_security_origin_host_get(const Ewk_Security_Origin *o);
 
 /**
  * Returns the port of the security origin.

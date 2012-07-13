@@ -39,19 +39,15 @@ struct _Ewk_Security_Origin {
     const char* host;
 };
 
-const char* ewk_security_origin_protocol_get(Ewk_Security_Origin* origin)
+const char* ewk_security_origin_protocol_get(const Ewk_Security_Origin* origin)
 {
-    if (!origin->protocol)
-        origin->protocol = eina_stringshare_add(origin->securityOrigin->protocol().utf8().data());
-
+    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
     return origin->protocol;
 }
 
-const char* ewk_security_origin_host_get(Ewk_Security_Origin* origin)
+const char* ewk_security_origin_host_get(const Ewk_Security_Origin* origin)
 {
-    if (!origin->host)
-        origin->host = eina_stringshare_add(origin->securityOrigin->host().utf8().data());
-
+    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
     return origin->host;
 }
 
@@ -142,8 +138,8 @@ Ewk_Security_Origin* ewk_security_origin_new(WebCore::SecurityOrigin* coreOrigin
     Ewk_Security_Origin* origin = new Ewk_Security_Origin;
 
     origin->securityOrigin = coreOrigin;
-    origin->host = 0;
-    origin->protocol = 0;
+    origin->protocol = eina_stringshare_add(coreOrigin->protocol().utf8().data());
+    origin->host = eina_stringshare_add(coreOrigin->host().utf8().data());
 
     return origin;
 }
