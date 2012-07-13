@@ -54,6 +54,7 @@ if os.path.exists(destination_directory):
 os.makedirs(destination_directory)
 
 directories_to_copy = ['approved', 'resources']
+directories_to_ignore = ['html5']                 # These are just duplicates of the sibling directory 'html'.
 replacements = [
         ('www.w3c-test.org', 'localhost:8000'),   # This is the alternate host for cross-server requests.
         ('w3c-test.org', '127.0.0.1:8000'),       # This is the primary test server.
@@ -61,12 +62,16 @@ replacements = [
         ('/resources/testharness', '/w3c/resources/testharness'),
         ('+ "(" + reloadTime[time] + ")"', ''),   # Remove dynamic values from the output. We'll still see PASS.
         ('+ "(" + startingTime[time] + ")"', ''),
+        ('\r\n', '\n'),                           # Convert to *NIX format.
 ]
 
 for directory_to_copy in directories_to_copy:
     os.makedirs(os.path.join(destination_directory, directory_to_copy))
     os.chdir(source_directory)
     for root, dirs, files in os.walk(directory_to_copy):
+        for dirname in directories_to_ignore:
+            if dirname in dirs:
+                dirs.remove(dirname)
         for dirname in dirs:
             os.makedirs(os.path.join(destination_directory, root, dirname))
         for filename in files:

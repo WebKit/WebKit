@@ -1,3 +1,83 @@
+2012-07-13  James Simonsen  <simonjam@chromium.org>
+
+        [Navigation Timing] Imported W3C tests contain duplicates and are DOS formatted
+        https://bugs.webkit.org/show_bug.cgi?id=91184
+
+        Reviewed by Adam Barth.
+
+        The upstream 'html5' tests are just duplicates of the 'html' tests.
+
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_document_readiness_exist.html: Converted to *NIX newline format.
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_attributes_exist.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_redirectCount_none.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_type_backforward.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_type_enums.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_navigation_type_reload.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_no_previous_document.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_readwrite.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_exist.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_order.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_client_redirect.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_reload.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_server_redirect.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html/test_unique_performance_objects.html:
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_document_open-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_document_open.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_document_readiness_exist-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_document_readiness_exist.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigate_within_document-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigate_within_document.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_attributes_exist-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_attributes_exist.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_redirectCount_none-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_redirectCount_none.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_type_backforward-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_type_backforward.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_type_enums-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_type_enums.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_type_reload-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_navigation_type_reload.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_no_previous_document-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_no_previous_document.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist_in_object-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist_in_object.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_readwrite-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_readwrite.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_attributes_exist-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_attributes_exist.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_attributes_order-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_attributes_order.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_client_redirect-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_client_redirect.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_reload-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_reload.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_server_redirect-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_server_redirect.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_xserver_redirect-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_xserver_redirect.html: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_unique_performance_objects-expected.txt: Removed.
+        * http/tests/w3c/webperf/approved/navigation-timing/html5/test_unique_performance_objects.html: Removed.
+        * http/tests/w3c/webperf/resources/blank_page_green.htm:
+        * http/tests/w3c/webperf/resources/blank_page_green_with_onunload.htm:
+        * http/tests/w3c/webperf/resources/blank_page_meta_redirect.htm:
+        * http/tests/w3c/webperf/resources/blank_page_unload.htm:
+        * http/tests/w3c/webperf/resources/blank_page_yellow.htm:
+        * http/tests/w3c/webperf/resources/blank_page_yellow_with_onunload.htm:
+        * http/tests/w3c/webperf/resources/pagevistestharness.js:
+        (pv_test):
+        (test_feature_exists):
+        (test_equals):
+        (add_async_result_assert):
+        (TabSwitch):
+        * http/tests/w3c/webperf/resources/webperftestharness.js:
+        (test_true):
+        * platform/chromium/TestExpectations:
+
 2012-07-13  Raymond Toy  <rtoy@google.com>
 
         DelayNode doesn't work if delayTime.value == delayTime.maxValue
