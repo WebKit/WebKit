@@ -134,7 +134,7 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     if (!scriptContext)
         return v8::Undefined();
-    RefPtr<TestObj> result = TestSupplemental::supplementalMethod2(imp, scriptContext, strArg, objArg, ec);
+    RefPtr<TestObj> result = TestSupplemental::supplementalMethod2(scriptContext, imp, strArg, objArg, ec);
     if (UNLIKELY(ec))
         goto fail;
     return toV8(result.release(), args.GetIsolate());

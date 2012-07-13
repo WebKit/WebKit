@@ -51,7 +51,7 @@
 namespace WebCore {
 
 // static
-PassRefPtr<Entry> DataTransferItemFileSystem::webkitGetAsEntry(DataTransferItem* item, ScriptExecutionContext* scriptExecutionContext)
+PassRefPtr<Entry> DataTransferItemFileSystem::webkitGetAsEntry(ScriptExecutionContext* scriptExecutionContext, DataTransferItem* item)
 {
     DataTransferItemPolicyWrapper* itemPolicyWrapper = static_cast<DataTransferItemPolicyWrapper*>(item);
 

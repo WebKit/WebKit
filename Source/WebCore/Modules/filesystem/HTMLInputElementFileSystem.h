@@ -41,7 +41,7 @@ class ScriptExecutionContext;
 
 class HTMLInputElementFileSystem {
 public:
-    static PassRefPtr<EntryArray> webkitEntries(HTMLInputElement*, ScriptExecutionContext*);
+    static PassRefPtr<EntryArray> webkitEntries(ScriptExecutionContext*, HTMLInputElement*);
 
 private:
     HTMLInputElementFileSystem();

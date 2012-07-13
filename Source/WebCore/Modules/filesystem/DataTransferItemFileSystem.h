@@ -43,7 +43,7 @@ class ScriptExecutionContext;
 
 class DataTransferItemFileSystem {
 public:
-    static PassRefPtr<Entry> webkitGetAsEntry(DataTransferItem*, ScriptExecutionContext*);
+    static PassRefPtr<Entry> webkitGetAsEntry(ScriptExecutionContext*, DataTransferItem*);
 
 private:
     DataTransferItemFileSystem();

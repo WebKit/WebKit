@@ -1,3 +1,39 @@
+2012-07-13  Kentaro Hara  <haraken@chromium.org>
+
+        [CallWith=XXX] arguments should be placed at the head of method arguments
+        https://bugs.webkit.org/show_bug.cgi?id=91217
+
+        Reviewed by Adam Barth.
+
+        The EFL build with the ENABLE_FILE_SYSTEM flag caused a build error,
+        because CodeGeneratorJS.pm assumes webkitEntries(ScriptExecutionContext*, HTMLInputElement*)
+        but the actual signature is webkitEntries(HTMLInputElement*, ScriptExecutionContext*) (bug 91185).
+
+        Per https://trac.webkit.org/wiki/WebKitIDL#CallWith, [CallWith=XXX] arguments should be placed
+        at the head of the arguments. (i.e. the behavior of CodeGeneratorJS.pm is correct.)
+
+        Thus the correct fix is (1) to change the signature of webkitEntries() and webkitGetAsEntry()
+        so that ScriptExecutionContext* comes first and (2) to modify CodeGeneratorV8.pm to support the order.
+
+        Test: bindings/scripts/test/TestObj.idl
+
+        * Modules/filesystem/DataTransferItemFileSystem.h: Placed ScriptExecutionContext* at the head of arguments.
+        (DataTransferItemFileSystem):
+        * Modules/filesystem/HTMLInputElementFileSystem.cpp: Ditto.
+        (WebCore::HTMLInputElementFileSystem::webkitEntries):
+        * Modules/filesystem/HTMLInputElementFileSystem.h: Ditto.
+        (HTMLInputElementFileSystem):
+        * Modules/filesystem/chromium/DataTransferItemFileSystemChromium.cpp: Ditto.
+        (WebCore::DataTransferItemFileSystem::webkitGetAsEntry):
+
+        * bindings/scripts/CodeGeneratorV8.pm: Modified to support the correct order.
+        (GenerateNormalAttrGetter):
+        (GenerateNormalAttrSetter):
+        (GenerateFunctionCallString):
+
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Updated run-bindings-tests results.
+        (WebCore::TestInterfaceV8Internal::supplementalMethod2Callback):
+
 2012-07-13  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] Some small changes in network code

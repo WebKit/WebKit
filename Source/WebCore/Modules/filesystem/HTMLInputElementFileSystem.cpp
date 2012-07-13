@@ -46,7 +46,7 @@
 namespace WebCore {
 
 // static
-PassRefPtr<EntryArray> HTMLInputElementFileSystem::webkitEntries(HTMLInputElement* input, ScriptExecutionContext* scriptExecutionContext)
+PassRefPtr<EntryArray> HTMLInputElementFileSystem::webkitEntries(ScriptExecutionContext* scriptExecutionContext, HTMLInputElement* input)
 {
     RefPtr<EntryArray> array = EntryArray::create();
 

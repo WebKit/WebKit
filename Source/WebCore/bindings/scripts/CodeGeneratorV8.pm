@@ -922,9 +922,6 @@ END
 
     if ($getterStringUsesImp) {
         my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
-
-        push(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 0, 0));
-
         push(@arguments, "ec") if $useExceptions;
         if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
             my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
@@ -934,6 +931,7 @@ END
         } else {
             $functionName = "imp->${functionName}";
         }
+        unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 0, 0));
         $getterString = "${functionName}(" . join(", ", @arguments) . ")";
     } else {
         $getterString = "impInstance";
@@ -1215,9 +1213,6 @@ END
             push(@implContentDecls, ");\n");
         } else {
             my ($functionName, @arguments) = $codeGenerator->SetterExpression(\%implIncludes, $interfaceName, $attribute);
-
-            push(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 1, 0));
-
             push(@arguments, $result);
             push(@arguments, "ec") if $useExceptions;
             if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
@@ -1228,6 +1223,7 @@ END
             } else {
                 $functionName = "imp->${functionName}";
             }
+            unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 1, 0));
             push(@implContentDecls, "    ${functionName}(" . join(", ", @arguments) . ");\n");
         }
     }
@@ -3374,7 +3370,7 @@ sub GenerateFunctionCallString()
     my @callWithOutput = ();
     my @callWithArgs = GenerateCallWith($callWith, \@callWithOutput, $indent, 0, 1, $function);
     $result .= join("", @callWithOutput);
-    push(@arguments, @callWithArgs);
+    unshift(@arguments, @callWithArgs);
     $index += @callWithArgs;
     $numberOfParameters += @callWithArgs;
 
