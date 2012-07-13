@@ -1,3 +1,10 @@
+2012-07-13  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r122528. Skipped some new tests.
+        https://bugs.webkit.org/show_bug.cgi?id=91218
+
+        * platform/qt/Skipped:
+
 2012-07-13  Simon Pena  <spena@igalia.com>
 
         [GTK] Gardening: new baseline after r122550 and rebaseline after r122556
