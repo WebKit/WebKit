@@ -3046,7 +3046,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
             }
         }
         testData.renderPasses.insert(0, renderPass.get());
-        testData.renderPassesById.add(renderPass->id(), renderPass.release());
+        testData.renderPassesById.add(renderPassId, renderPass.release());
         if (*currentChar)
             currentChar++;
     }
@@ -3234,7 +3234,7 @@ static void verifyRenderPassTestData(TestCase& testCase, RenderPassRemovalTestDa
     EXPECT_STREQ(testCase.expectedResult, actualResult) << "In test case: " << testCase.name;
 }
 
-TEST_F(CCLayerTreeHostImplTest, DISABLED_testRemoveRenderPasses)
+TEST_F(CCLayerTreeHostImplTest, testRemoveRenderPasses)
 {
     OwnPtr<CCGraphicsContext> context(createContext());
     WebKit::WebGraphicsContext3D* context3d = context->context3D();
