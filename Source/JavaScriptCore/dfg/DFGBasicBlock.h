@@ -45,6 +45,7 @@ struct BasicBlock : Vector<NodeIndex, 8> {
         , cfaHasVisited(false)
         , cfaShouldRevisit(false)
         , cfaFoundConstants(false)
+        , cfaDidFinish(true)
 #if !ASSERT_DISABLED
         , isLinked(false)
 #endif
@@ -103,6 +104,7 @@ struct BasicBlock : Vector<NodeIndex, 8> {
     bool cfaHasVisited;
     bool cfaShouldRevisit;
     bool cfaFoundConstants;
+    bool cfaDidFinish;
 #if !ASSERT_DISABLED
     bool isLinked;
 #endif

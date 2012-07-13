@@ -52,6 +52,10 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
     ASSERT(basicBlock->variablesAtTail.numberOfLocals() == basicBlock->valuesAtTail.numberOfLocals());
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
     
+    // This is usually a no-op, but it is possible that the graph has grown since the
+    // abstract state was last used.
+    m_nodes.resize(m_graph.size());
+    
     for (size_t i = 0; i < basicBlock->size(); i++)
         m_nodes[basicBlock->at(i)].clear();
 
@@ -164,6 +168,7 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode, BranchDirection* branchDi
     BasicBlock* block = m_block; // Save the block for successor merging.
     
     block->cfaFoundConstants = m_foundConstants;
+    block->cfaDidFinish = m_isValid;
     
     if (!m_isValid) {
         reset();

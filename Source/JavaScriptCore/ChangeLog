@@ -1,3 +1,37 @@
+2012-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFA may get overzealous in loops that have code that must exit
+        https://bugs.webkit.org/show_bug.cgi?id=91188
+
+        Reviewed by Gavin Barraclough.
+
+        Ensure that if the CFA assumes that an operation must exit, then it will always exit
+        no matter what happens after. That's necessary to preserve soundness.
+        
+        Remove a broken fixup done by the DFG simplifier, where it was trying to say that the
+        variable-at-head was the first access in the second block in the merge, if the first
+        block did not read the variable. That's totally wrong, if the first block was in fact
+        doing a phantom read. I removed that fixup and instead hardened the rest of the
+        compiler.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::endBasicBlock):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (BasicBlock):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::ConstantFoldingPhase):
+        (JSC::DFG::ConstantFoldingPhase::run):
+        (ConstantFoldingPhase):
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::paintUnreachableCode):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+
 2012-07-12  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Implement MemoryUsageSupport

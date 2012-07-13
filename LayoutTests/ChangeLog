@@ -1,3 +1,15 @@
+2012-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFA may get overzealous in loops that have code that must exit
+        https://bugs.webkit.org/show_bug.cgi?id=91188
+
+        Reviewed by Gavin Baraclough.
+
+        * fast/js/dfg-force-exit-then-sparse-conditional-constant-prop-in-loop-expected.txt: Added.
+        * fast/js/dfg-force-exit-then-sparse-conditional-constant-prop-in-loop.html: Added.
+        * fast/js/script-tests/dfg-force-exit-then-sparse-conditional-constant-prop-in-loop.js: Added.
+        (foo):
+
 2012-07-12  Eric Seidel  <eric@webkit.org>
 
         Incorrect behaviour calling Range setStart or setEnd with boundary in different document

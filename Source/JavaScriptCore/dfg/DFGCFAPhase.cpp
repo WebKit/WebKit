@@ -95,8 +95,12 @@ private:
             m_state.dump(WTF::dataFile());
             dataLog("\n");
 #endif
-            if (!m_state.execute(i))
+            if (!m_state.execute(i)) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                dataLog("         Expect OSR exit.\n");
+#endif
                 break;
+            }
         }
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("      tail regs: ");
