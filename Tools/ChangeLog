@@ -1,3 +1,39 @@
+2012-07-13  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: split printing/logging code for test-webkitpy out into a new class
+        https://bugs.webkit.org/show_bug.cgi?id=91282
+
+        Reviewed by Ojan Vafai.
+
+        This patch is the first step at splitting all of the
+        printing/logging code out separately from the actual
+        test-running code.
+
+        This is just moving stuff around; no new functionality and no
+        new tests needed.
+
+        * Scripts/webkitpy/test/finder_unittest.py:
+        (FinderTest.setUp):
+        * Scripts/webkitpy/test/main.py:
+        (Tester.__init__):
+        (Tester._parse_args):
+        (Tester.run):
+        (Tester._run_tests):
+        (Tester._log_exception):
+        * Scripts/webkitpy/test/main_unittest.py:
+        (TesterTest.test_no_tests_found):
+        * Scripts/webkitpy/test/printer.py: Added.
+        (Printer):
+        (Printer.__init__):
+        (Printer.configure):
+        (Printer.configure.filter):
+        (_CaptureAndPassThroughStream):
+        (_CaptureAndPassThroughStream.__init__):
+        (_CaptureAndPassThroughStream.write):
+        (_CaptureAndPassThroughStream._message_is_from_pdb):
+        (_CaptureAndPassThroughStream.flush):
+        (_CaptureAndPassThroughStream.getvalue):
+
 2012-07-13  James Simonsen  <simonjam@chromium.org>
 
         [Navigation Timing] Imported W3C tests contain duplicates and are DOS formatted

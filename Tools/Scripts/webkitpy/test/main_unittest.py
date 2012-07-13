@@ -40,7 +40,7 @@ class TesterTest(unittest.TestCase):
         root_handlers = root_logger.handlers
         root_logger.handlers = []
 
-        tester.stream = errors
+        tester.printer.stream = errors
         tester.finder.find_names = lambda args, skip_integration, run_all: []
         oc = OutputCapture()
         try:

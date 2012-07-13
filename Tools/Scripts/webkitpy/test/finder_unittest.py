@@ -49,7 +49,7 @@ class FinderTest(unittest.TestCase):
         self.root_logger = logging.getLogger()
         self.log_handler = None
         for h in self.root_logger.handlers:
-            if getattr(h, 'name', None) == 'webkitpy.test.main':
+            if getattr(h, 'name', None) == 'webkitpy.test.printer':
                 self.log_handler = h
                 break
         if self.log_handler:
