@@ -31,7 +31,7 @@ import sys
 _log = logging.getLogger(__name__)
 
 
-class TestDirectoryTree(object):
+class _DirectoryTree(object):
     def __init__(self, filesystem, top_directory, starting_subdirectory):
         self.filesystem = filesystem
         self.top_directory = filesystem.realpath(top_directory)
@@ -79,7 +79,7 @@ class Finder(object):
         self.trees = []
 
     def add_tree(self, top_directory, starting_subdirectory=None):
-        self.trees.append(TestDirectoryTree(self.filesystem, top_directory, starting_subdirectory))
+        self.trees.append(_DirectoryTree(self.filesystem, top_directory, starting_subdirectory))
 
     def additional_paths(self, paths):
         return [tree.top_directory for tree in self.trees if tree.top_directory not in paths]

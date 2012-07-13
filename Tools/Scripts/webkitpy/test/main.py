@@ -34,7 +34,7 @@ import unittest
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system import outputcapture
 from webkitpy.test.finder import Finder
-from webkitpy.test.runner import TestRunner
+from webkitpy.test.runner import Runner
 
 _log = logging.getLogger(__name__)
 
@@ -177,7 +177,7 @@ class Tester(object):
             suites.append(loader.loadTestsFromName(name, None))
 
         test_suite = unittest.TestSuite(suites)
-        test_runner = TestRunner(self.stream, self._options, loader)
+        test_runner = Runner(self.stream, self._options, loader)
 
         _log.debug("Running the tests.")
         if self._options.pass_through:

@@ -31,7 +31,7 @@ import unittest
 _log = logging.getLogger(__name__)
 
 
-class TestRunner(object):
+class Runner(object):
     def __init__(self, stream, options, loader):
         self.options = options
         self.stream = stream

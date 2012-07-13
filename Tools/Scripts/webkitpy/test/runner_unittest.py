@@ -25,7 +25,7 @@ import StringIO
 import unittest
 
 from webkitpy.tool.mocktool import MockOptions
-from webkitpy.test.runner import TestRunner
+from webkitpy.test.runner import Runner
 
 
 class FakeModuleSuite(object):
@@ -74,7 +74,7 @@ class RunnerTest(unittest.TestCase):
         loader = FakeLoader(('test1 (Foo)', '.', ''),
                             ('test2 (Foo)', 'F', 'test2\nfailed'),
                             ('test3 (Foo)', 'E', 'test3\nerred'))
-        result = TestRunner(stream, options, loader).run(loader.top_suite())
+        result = Runner(stream, options, loader).run(loader.top_suite())
         self.assertFalse(result.wasSuccessful())
         self.assertEquals(result.testsRun, 3)
         self.assertEquals(len(result.failures), 1)
@@ -87,7 +87,7 @@ class RunnerTest(unittest.TestCase):
         loader = FakeLoader(('test1 (Foo)', '.', ''),
                             ('test2 (Foo)', 'F', 'test2\nfailed'),
                             ('test3 (Foo)', 'E', 'test3\nerred'))
-        result = TestRunner(stream, options, loader).run(loader.top_suite())
+        result = Runner(stream, options, loader).run(loader.top_suite())
         self.assertFalse(result.wasSuccessful())
         self.assertEquals(result.testsRun, 3)
         self.assertEquals(len(result.failures), 1)
@@ -100,7 +100,7 @@ class RunnerTest(unittest.TestCase):
         loader = FakeLoader(('test1 (Foo)', '.', ''),
                             ('test2 (Foo)', 'F', 'test2\nfailed'),
                             ('test3 (Foo)', 'E', 'test3\nerred'))
-        result = TestRunner(stream, options, loader).run(loader.top_suite())
+        result = Runner(stream, options, loader).run(loader.top_suite())
         self.assertFalse(result.wasSuccessful())
         self.assertEquals(result.testsRun, 3)
         self.assertEquals(len(result.failures), 1)
