@@ -1,3 +1,18 @@
+2012-07-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding baselines and expectations required
+        after r122509 and r122528.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/w3c: Added.
+        * platform/gtk/http/tests/w3c/webperf: Added.
+        * platform/gtk/http/tests/w3c/webperf/approved: Added.
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing: Added.
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing/html: Added.
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect-expected.txt: Added.
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing/html5: Added.
+        * platform/gtk/http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_xserver_redirect-expected.txt: Added.
+
 2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed gardening, updated chromium test expectations.

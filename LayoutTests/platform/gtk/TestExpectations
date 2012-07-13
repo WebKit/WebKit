@@ -1257,6 +1257,8 @@ BUGWK91009 DEBUG : fast/xsl/xslt-missing-namespace-in-xslt.xml = TEXT
 // Skip tests in fast/text/shaping
 BUGWK90951 SKIP : fast/text/shaping = PASS
 
+BUGWK91266 : fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
