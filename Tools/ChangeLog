@@ -1,3 +1,16 @@
+2012-07-13  Simon Pena  <spena@igalia.com>
+
+        [GTK] Gardening: update API tests skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=91224
+
+        Unreviewed gardening.
+
+        Skip "next" and "previous" tests of FindController until bug #91083
+        is fixed.
+
+        * gtk/run-api-tests:
+        (TestRunner):
+
 2012-07-13  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][WK2] Implement GraphicsSurface for Linux/GLX.
