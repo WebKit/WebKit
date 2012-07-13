@@ -1,3 +1,25 @@
+2012-07-13  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Remove incorrect debug assertion in LayerRendererChromium.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=91260
+
+        Reviewed by Adrienne Walker.
+
+        ASSERT(!clipped) was being triggered after skinny almost-degenerate
+        quads went through anti-aliasing inflation, and then were being
+        transformed back from device space to local space. It turns out
+        this assertion is too aggressive, and we don't yet have an obvious
+        need to change the behavior on the clipped==true case.
+
+        No new tests needed, this patch fixes only comments and debug code.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+           fixed a comment.
+
+        (WebCore::LayerRendererChromium::drawTileQuad):
+           fixed a similar comment, removed unnecessary assertion.
+
 2012-07-13  Philip Rogers  <pdr@google.com>
 
         Remove assert in localCoordinateSpaceTransform()

@@ -699,7 +699,7 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
         GLC(context(), context()->uniform3fv(shaderEdgeLocation, 8, edge));
     }
 
-    // Map device space quad to surface space. contentsDeviceTransform has no perspective since it was generated with to2dTransform() so we don't need to project.
+    // Map device space quad to surface space. contentsDeviceTransform has no 3d component since it was generated with to2dTransform() so we don't need to project.
     FloatQuad surfaceQuad = CCMathUtil::mapQuad(contentsDeviceTransform.inverse(), deviceLayerEdges.floatQuad(), clipped);
     ASSERT(!clipped);
 
@@ -879,10 +879,12 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
         // Create device space quad.
         CCLayerQuad deviceQuad(leftEdge, topEdge, rightEdge, bottomEdge);
 
-        // Map quad to layer space.
+        // Map device space quad to local space. contentsDeviceTransform has no 3d component since it was generated with to2dTransform() so we don't need to project.
         WebTransformationMatrix inverseDeviceTransform = deviceTransform.inverse();
         localQuad = CCMathUtil::mapQuad(inverseDeviceTransform, deviceQuad.floatQuad(), clipped);
-        ASSERT(!clipped);
+
+        // We should not ASSERT(!clipped) here, because anti-aliasing inflation may cause deviceQuad to become
+        // clipped.  To our knowledge this scenario does not need to be handled differently than the unclipped case.
     } else {
         // Move fragment shader transform to vertex shader. We can do this while
         // still producing correct results as fragmentTexTransformLocation
