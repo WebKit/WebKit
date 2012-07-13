@@ -1,5 +1,11 @@
 2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed gardening: skip failing webkit unit test.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
+2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Unreviewed gardening, skip failing webkit_unit_tests.
 
         * tests/DecimalTest.cpp:

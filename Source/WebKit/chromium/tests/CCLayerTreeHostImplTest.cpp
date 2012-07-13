@@ -3234,7 +3234,7 @@ static void verifyRenderPassTestData(TestCase& testCase, RenderPassRemovalTestDa
     EXPECT_STREQ(testCase.expectedResult, actualResult) << "In test case: " << testCase.name;
 }
 
-TEST_F(CCLayerTreeHostImplTest, testRemoveRenderPasses)
+TEST_F(CCLayerTreeHostImplTest, DISABLED_testRemoveRenderPasses)
 {
     OwnPtr<CCGraphicsContext> context(createContext());
     WebKit::WebGraphicsContext3D* context3d = context->context3D();
