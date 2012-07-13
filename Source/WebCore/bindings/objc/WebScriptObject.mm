@@ -530,6 +530,9 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 - (JSObjectRef)JSObject
 {
+    ExecState* exec = [self _rootObject]->globalObject()->globalExec();
+    
+    JSLockHolder lock(exec);
     if (![self _isSafeScript])
         return NULL;
 

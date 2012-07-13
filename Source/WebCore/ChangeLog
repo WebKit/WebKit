@@ -1,3 +1,15 @@
+2012-07-13  Enrica Casucci  <enrica@apple.com>
+
+        Threadsafety issues in WebScriptObject
+        https://bugs.webkit.org/show_bug.cgi?id=90849
+
+        Reviewed by Geoff Garen.
+
+        Updated fix for this bug. The JSC API lock needs to be acquired also in JSObject.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject JSObject]):
+
 2012-07-13  Raymond Toy  <rtoy@google.com>
 
         DelayNode doesn't work if delayTime.value == delayTime.maxValue
