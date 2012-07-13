@@ -1,3 +1,16 @@
+2012-07-13  Simon Pena  <spena@igalia.com>
+
+        [GTK] Gardening: new baseline after r122550 and rebaseline after r122556
+        https://bugs.webkit.org/show_bug.cgi?id=91235
+
+        Unreviewed gardening.
+
+        Add new baseline for fast/canvas/fallback-content.html added in r122550, and
+        rebaseline fast/regions/region-style-block-background-color2.html after r122556.
+
+        * platform/gtk/fast/canvas/fallback-content-expected.txt: Added.
+        * platform/gtk/fast/regions/region-style-block-background-color2-expected.txt:
+
 2012-07-13  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebase test after r122550.
