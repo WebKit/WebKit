@@ -20,39 +20,40 @@
 #include "GCActivityCallback.h"
 
 #include "Heap.h"
+#include "JSGlobalData.h"
 #include <BlackBerryPlatformMemory.h>
 
 namespace JSC {
+
+static const size_t bytesWorthGC = 4 * 1024 * 1024;
 
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
     : GCActivityCallback(heap->globalData())
 {
 }
 
-DefaultGCActivityCallback::doWork()
+void DefaultGCActivityCallback::doWork()
 {
+    m_globalData->heap.collect(Heap::DoNotSweep);
 }
 
 void DefaultGCActivityCallback::didAllocate(size_t bytesAllocated)
 {
-    if (!BlackBerry::Platform::isMemoryLow())
+    if (bytesAllocated < bytesWorthGC || m_timer.started())
         return;
 
-    if (bytesAllocated < 1 * 1024 * 1024)
-        return;
-
-    if (m_globalData->heap.isBusy() || !m_globalData->heap.isSafeToCollect())
-        return;
-
-    m_globalData->heap.collect(Heap::DoNotSweep);
+    // Try using ~5% CPU time.
+    m_timer.start(m_globalData->heap.lastGCLength() * 20);
 }
 
 void DefaultGCActivityCallback::willCollect()
 {
+    cancel();
 }
 
 void DefaultGCActivityCallback::cancel()
 {
+    m_timer.stop();
 }
 
 }

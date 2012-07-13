@@ -98,8 +98,38 @@ void HeapTimer::timerDidFire(CFRunLoopTimerRef, void* info)
     agent->m_shutdownMutex.unlock();
 }
 
+#elif PLATFORM(BLACKBERRY)
+
+HeapTimer::HeapTimer(JSGlobalData* globalData)
+    : m_globalData(globalData)
+    , m_timer(this, &HeapTimer::timerDidFire)
+{
+}
+
+HeapTimer::~HeapTimer()
+{
+}
+
+void HeapTimer::timerDidFire()
+{
+    doWork();
+}
+
+void HeapTimer::synchronize()
+{
+}
+
+void HeapTimer::invalidate()
+{
+}
+
+void HeapTimer::didStartVMShutdown()
+{
+    delete this;
+}
+
 #else
-    
+
 HeapTimer::HeapTimer(JSGlobalData* globalData)
     : m_globalData(globalData)
 {

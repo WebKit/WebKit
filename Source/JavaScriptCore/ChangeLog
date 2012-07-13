@@ -1,3 +1,29 @@
+2012-07-13  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Implement GCActivityCallback with platform timer
+        https://bugs.webkit.org/show_bug.cgi?id=90175
+
+        Reviewed by Rob Buis.
+
+        Implement GCActivityCallback and HeapTimer for BlackBerry port.
+
+        * heap/HeapTimer.cpp:
+        (JSC):
+        (JSC::HeapTimer::HeapTimer):
+        (JSC::HeapTimer::~HeapTimer):
+        (JSC::HeapTimer::timerDidFire):
+        (JSC::HeapTimer::synchronize):
+        (JSC::HeapTimer::invalidate):
+        (JSC::HeapTimer::didStartVMShutdown):
+        * heap/HeapTimer.h:
+        (HeapTimer):
+        * runtime/GCActivityCallbackBlackBerry.cpp:
+        (JSC):
+        (JSC::DefaultGCActivityCallback::doWork):
+        (JSC::DefaultGCActivityCallback::didAllocate):
+        (JSC::DefaultGCActivityCallback::willCollect):
+        (JSC::DefaultGCActivityCallback::cancel):
+
 2012-07-13  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Fix compilation of DFGRepatch.cpp

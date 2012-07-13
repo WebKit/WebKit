@@ -31,6 +31,8 @@
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
+#elif PLATFORM(BLACKBERRY)
+#include <BlackBerryPlatformTimer.h>
 #endif
 
 namespace JSC {
@@ -63,6 +65,10 @@ protected:
     CFRunLoopTimerContext m_context;
 
     Mutex m_shutdownMutex;
+#elif PLATFORM(BLACKBERRY)
+    void timerDidFire();
+
+    BlackBerry::Platform::Timer<HeapTimer> m_timer;
 #endif
     
 private:
