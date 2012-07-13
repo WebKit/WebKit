@@ -1,3 +1,9 @@
+2012-07-13  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebase test after r122550.
+
+        * platform/qt/fast/canvas/fallback-content-expected.txt: Added.
+
 2012-07-13  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Fix bugs in HarfBuzzShaper
