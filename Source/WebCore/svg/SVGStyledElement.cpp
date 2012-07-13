@@ -451,7 +451,6 @@ void SVGStyledElement::clearHasPendingResourcesIfPossible()
 AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const
 {
     // To be overriden by SVGStyledLocatableElement/SVGStyledTransformableElement (or as special case SVGTextElement and SVGPatternElement)
-    ASSERT_NOT_REACHED();
     return AffineTransform();
 }
 

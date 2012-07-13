@@ -1,3 +1,13 @@
+2012-07-13  Philip Rogers  <pdr@google.com>
+
+        Remove assert in localCoordinateSpaceTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=91189
+
+        Reviewed by Nikolas Zimmermann.
+
+        * svg/custom/invalid-ctm-expected.txt: Added.
+        * svg/custom/invalid-ctm.svg: Added.
+
 2012-07-13  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Add unexpectedUpgradeNeededCallback to shared.js

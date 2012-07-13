@@ -1,3 +1,23 @@
+2012-07-13  Philip Rogers  <pdr@google.com>
+
+        Remove assert in localCoordinateSpaceTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=91189
+
+        Reviewed by Nikolas Zimmermann.
+
+        The assert in localCoordinateSpaceTransform was added to catch subclasses forgetting
+        to override the method but it is better to simply return the identity matrix.
+
+        This scenario can occur when we break the SVG content model, such as asking for
+        the CTM of a <g> element inside a <tspan>. This is undefined in the spec because
+        tspan is not a subclass of SVGLocatable but both Firefox and Opera
+        implement this by returning the identity matrix.
+
+        Test: svg/custom/invalid-ctm.svg
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::localCoordinateSpaceTransform):
+
 2012-07-13  Kentaro Hara  <haraken@chromium.org>
 
         [V8] String wrappers should be marked Independent
