@@ -694,9 +694,6 @@ BUGWK86637 : editing/spelling/spellcheck-queue.html = TEXT
 BUGWK86637 : editing/spelling/spellcheck-sequencenum.html = TEXT
 BUGWK86637 : editing/spelling/spelling-marker-description.html = TEXT
 
-// Looks like some race condition during loading.
-BUGWK85977 : fast/css/font-face-download-error.html = TIMEOUT
-
 // Missing test infrastructure, no gamepads available.
 BUGWKEFL : gamepad/gamepad-polling-access.html = TEXT
 

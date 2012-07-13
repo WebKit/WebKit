@@ -1,3 +1,13 @@
+2012-07-13  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Unskip fast/css/font-face-download-error.html
+        https://bugs.webkit.org/show_bug.cgi?id=91279
+
+        Unreviewed EFL gardening. Unskip passing test
+        fast/css/font-face-download-error.html
+
+        * platform/efl/TestExpectations:
+
 2012-07-13  Adam Barth  <abarth@webkit.org>
 
         Remove supressions for flashplayer crash
