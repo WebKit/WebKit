@@ -1,3 +1,21 @@
+2012-07-13  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][WK2] Implement GraphicsSurface for Linux/GLX.
+        https://bugs.webkit.org/show_bug.cgi?id=90881
+
+        Enable GraphicsSurface for Linux based platforms
+        whenever the Xcomposite extension is available.
+
+        Reviewed by Noam Rosenthal.
+
+        * qmake/config.tests/libXcomposite/libXcomposite.cpp: Added.
+        (main):
+        * qmake/config.tests/libXcomposite/libXcomposite.pro: Added.
+          Add a configure test to detect Xcomposite extension and
+          activate GraphicsSurface on linux in case the extension is available.
+        * qmake/configure.pri:
+        * qmake/mkspecs/features/features.prf:
+
 2012-07-13  David Grogan  <dgrogan@chromium.org>
 
         nrwt: don't choke when printing invalid utf-8 to stderr

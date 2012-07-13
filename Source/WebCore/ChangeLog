@@ -1,3 +1,83 @@
+2012-07-13  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][WK2] Implement GraphicsSurface for Linux/GLX.
+        https://bugs.webkit.org/show_bug.cgi?id=90881
+
+        Add a GLX based GraphicsSurface implementation for Linux.
+        Native X windows are being used for exchanging textures
+        with the UIProcess.
+
+        Reviewed by Noam Rosenthal.
+
+        * Target.pri:
+        * WebCore.pri:
+        * platform/graphics/surfaces/GraphicsSurface.cpp:
+        (WebCore::GraphicsSurface::create):
+            Move creating GraphicsSurface instance into
+            platformCreate/platformImport functions to allow
+            platform specific creation based on the provided flags.
+        (WebCore::GraphicsSurface::GraphicsSurface):
+        (WebCore::GraphicsSurface::~GraphicsSurface):
+            Call platformDestroy when destroying a GraphicsSurface.
+        (WebCore):
+        * platform/graphics/surfaces/GraphicsSurface.h:
+            Make platformCreate/platformImport functions static
+            to be able to call these from the static create function.
+            Add Destructor prototype and add GraphicsSurfacePrivate member.
+        (WebCore):
+        (GraphicsSurface):
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+        (WebCore):
+        (WebCore::GraphicsSurface::platformCreate):
+        (WebCore::GraphicsSurface::platformImport):
+            Insert creation of GraphicsSurface instance.
+            This allows having a platform specific creation mechanism
+            for GLX.
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp: Added.
+        (WebCore):
+        (OffScreenRootWindow):
+        (WebCore::OffScreenRootWindow::OffScreenRootWindow):
+        (WebCore::OffScreenRootWindow::get):
+        (WebCore::OffScreenRootWindow::~OffScreenRootWindow):
+            Add an OffScreenRootWindow singelton that is being used
+            as a parent for all native offscreen windows.
+        (GraphicsSurfacePrivate):
+            This class is used to manage all the X related resources
+            such as opening a display or creating XPixmaps etc.
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+            Open a connection to the X server and create a
+            QOpenGLContext that can be used to resolve GL functions.
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+            Properly cleanup and release all the X resources again.
+        (WebCore::GraphicsSurfacePrivate::createSurface):
+            Create a surface that is placed off screen and can be
+            used as a rendering target by the WebProcess.
+        (WebCore::GraphicsSurfacePrivate::createPixmap):
+            Create a GLXPixmap from the XWindow that was previously
+            redirected by the WebProcess. This GLXPixmap can then be
+            bound to a texture and being painted on screen by the
+            UIProcess.
+        (WebCore::GraphicsSurfacePrivate::makeCurrent):
+        (WebCore::GraphicsSurfacePrivate::swapBuffers):
+        (WebCore::GraphicsSurfacePrivate::display):
+        (WebCore::GraphicsSurfacePrivate::glxPixmap):
+        (WebCore::GraphicsSurfacePrivate::size):
+        (WebCore::GraphicsSurfacePrivate::glContext):
+        (WebCore::resolveGLMethods):
+            Initialize all the function pointers for the GL functions used.
+        (WebCore::GraphicsSurface::platformExport):
+        (WebCore::GraphicsSurface::platformGetTextureID):
+            Bind the GLXPixmap to a texture.
+        (WebCore::GraphicsSurface::platformCopyToGLTexture):
+            Not beeing implemented for GLX.
+        (WebCore::GraphicsSurface::platformCopyFromFramebuffer):
+            Blit origin fbo onto the GraphicsSurface's backing.
+        (WebCore::GraphicsSurface::platformCreate):
+        (WebCore::GraphicsSurface::platformImport):
+        (WebCore::GraphicsSurface::platformLock):
+        (WebCore::GraphicsSurface::platformUnlock):
+        (WebCore::GraphicsSurface::platformDestroy):
+
 2012-07-13  Dongwoo Im  <dw.im@samsung.com>
 
         CodeGeneratorJS.pm : SetterExpression should use 'push' rather than 'unshift'

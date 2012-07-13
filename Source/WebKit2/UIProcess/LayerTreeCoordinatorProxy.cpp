@@ -61,15 +61,24 @@ void LayerTreeCoordinatorProxy::createTileForLayer(int layerID, int tileID, cons
     updateTileForLayer(layerID, tileID, targetRect, updateInfo);
 }
 
+static inline uint64_t createLayerTileUniqueKey(int layerID, int tileID)
+{
+    uint64_t key = layerID;
+    key <<= 32;
+    key |= tileID;
+    return key;
+}
+
 void LayerTreeCoordinatorProxy::updateTileForLayer(int layerID, int tileID, const IntRect& targetRect, const WebKit::SurfaceUpdateInfo& updateInfo)
 {
     RefPtr<ShareableSurface> surface;
 #if USE(GRAPHICS_SURFACE)
-    uint32_t token = updateInfo.surfaceHandle.graphicsSurfaceToken();
-    HashMap<uint32_t, RefPtr<ShareableSurface> >::iterator it = m_surfaces.find(token);
+    uint64_t key = createLayerTileUniqueKey(layerID, tileID);
+
+    HashMap<uint64_t, RefPtr<ShareableSurface> >::iterator it = m_surfaces.find(key);
     if (it == m_surfaces.end()) {
         surface = ShareableSurface::create(updateInfo.surfaceHandle);
-        m_surfaces.add(token, surface);
+        m_surfaces.add(key, surface);
     } else
         surface = it->second;
 #else

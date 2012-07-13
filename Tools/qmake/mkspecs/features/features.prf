@@ -170,8 +170,16 @@ haveQt(4) {
     # is called QmlEngine and it is safe for us to use QQuick1 again.
 }
 
+# Xcomposite Support
+haveQt(5):linux-*:config_libXcomposite: DEFINES += HAVE_XCOMPOSITE=1
+
+# Support for Graphics Surface
 !contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=.) {
-    haveQt(5):mac: DEFINES += WTF_USE_GRAPHICS_SURFACE=1
+    haveQt(5) {
+        mac: DEFINES += WTF_USE_GRAPHICS_SURFACE=1
+        # On linux we require libXcomposite to enable graphics surface.
+        linux-*:contains(DEFINES, HAVE_XCOMPOSITE=1): DEFINES += WTF_USE_GRAPHICS_SURFACE=1
+    }
 }
 
 # -------------- Fill in static defaults --------------

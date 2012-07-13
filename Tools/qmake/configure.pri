@@ -15,6 +15,7 @@ haveQt(5):!quick_check {
         libpng \
         libjpeg \
         libwebp \
+        libXcomposite \
         libxml2 \
         libxslt \
         libzlib

@@ -27,18 +27,12 @@ namespace WebCore {
 
 PassRefPtr<GraphicsSurface> GraphicsSurface::create(const IntSize& size, Flags flags, uint32_t token)
 {
-    RefPtr<GraphicsSurface> surface = adoptRef(new GraphicsSurface(size, flags));
-    if (!surface->platformImport(token))
-        return PassRefPtr<GraphicsSurface>();
-    return surface;
+    return platformImport(size, flags, token);
 }
 
 PassRefPtr<GraphicsSurface> GraphicsSurface::create(const IntSize& size, GraphicsSurface::Flags flags)
 {
-    RefPtr<GraphicsSurface> surface = adoptRef(new GraphicsSurface(size, flags));
-    if (!surface->platformCreate(size, flags))
-        return PassRefPtr<GraphicsSurface>();
-    return surface;
+    return platformCreate(size, flags);
 }
 
 uint32_t GraphicsSurface::exportToken()
@@ -70,12 +64,18 @@ void GraphicsSurface::copyFromFramebuffer(uint32_t fbo, const IntRect& sourceRec
 }
 
 GraphicsSurface::GraphicsSurface(const IntSize& size, Flags flags)
-    : m_size(size)
-    , m_flags(flags)
+    : m_flags(flags)
+    , m_size(size)
     , m_platformSurface(0)
     , m_texture(0)
     , m_fbo(0)
+    , m_private(0)
 {
+}
+
+GraphicsSurface::~GraphicsSurface()
+{
+    platformDestroy();
 }
 
 }

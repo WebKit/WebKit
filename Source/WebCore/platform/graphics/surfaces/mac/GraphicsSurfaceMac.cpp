@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+struct GraphicsSurfacePrivate { };
+
 uint32_t GraphicsSurface::platformExport()
 {
     return IOSurfaceGetID(m_platformSurface);
@@ -118,7 +120,7 @@ void GraphicsSurface::platformCopyFromFramebuffer(uint32_t originFbo, const IntR
     glFlush();
 }
 
-bool GraphicsSurface::platformCreate(const IntSize& size, Flags flags)
+PassRefPtr<GraphicsSurface> GraphicsSurface::platformCreate(const IntSize& size, Flags flags)
 {
     unsigned pixelFormat = 'BGRA';
     unsigned bytesPerElement = 4;
@@ -154,14 +156,20 @@ bool GraphicsSurface::platformCreate(const IntSize& size, Flags flags)
     for (unsigned i = 0; i < 7; i++)
         CFRelease(values[i]);
 
-    m_platformSurface = IOSurfaceCreate(dict);
-    return !!m_platformSurface;
+    RefPtr<GraphicsSurface> surface = adoptRef(new GraphicsSurface(size, flags));
+    surface->m_platformSurface = IOSurfaceCreate(dict);
+    if (!surface->m_platformSurface)
+        return PassRefPtr<GraphicsSurface>();
+    return surface;
 }
 
-bool GraphicsSurface::platformImport(uint32_t token)
+PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size, Flags flags, uint32_t token)
 {
-    m_platformSurface = IOSurfaceLookup(token);
-    return !!m_platformSurface;
+    RefPtr<GraphicsSurface> surface = adoptRef(new GraphicsSurface(size, flags));
+    surface->m_platformSurface = IOSurfaceLookup(token);
+    if (!surface->m_platformSurface)
+        return PassRefPtr<GraphicsSurface>();
+    return surface;
 }
 
 static int ioSurfaceLockOptions(int lockOptions)

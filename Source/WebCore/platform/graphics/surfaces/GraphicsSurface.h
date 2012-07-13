@@ -32,9 +32,13 @@
 #if OS(DARWIN)
 typedef struct __IOSurface* IOSurfaceRef;
 typedef IOSurfaceRef PlatformGraphicsSurface;
+#else
+typedef uint32_t PlatformGraphicsSurface;
 #endif
 
 namespace WebCore {
+
+struct GraphicsSurfacePrivate;
 
 class GraphicsSurface : public RefCounted<GraphicsSurface> {
 public:
@@ -69,10 +73,11 @@ public:
     uint32_t getTextureID();
     PassOwnPtr<GraphicsContext> beginPaint(const IntRect&, LockOptions);
     PassRefPtr<Image> createReadOnlyImage(const IntRect&);
+    ~GraphicsSurface();
 
 protected:
-    bool platformCreate(const IntSize&, Flags);
-    bool platformImport(uint32_t);
+    static PassRefPtr<GraphicsSurface> platformCreate(const IntSize&, Flags);
+    static PassRefPtr<GraphicsSurface> platformImport(const IntSize&, Flags, uint32_t);
     uint32_t platformExport();
     void platformDestroy();
 
@@ -100,6 +105,7 @@ private:
     PlatformGraphicsSurface m_platformSurface;
     uint32_t m_texture;
     uint32_t m_fbo;
+    GraphicsSurfacePrivate* m_private;
 };
 
 }

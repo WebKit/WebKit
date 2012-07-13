@@ -149,9 +149,11 @@ ShareableSurface::~ShareableSurface()
 PassRefPtr<ShareableSurface> ShareableSurface::create(const Handle& handle)
 {
 #if USE(GRAPHICS_SURFACE)
+    if (handle.graphicsSurfaceToken()) {
         RefPtr<GraphicsSurface> surface = GraphicsSurface::create(handle.m_size, handle.m_flags, handle.m_graphicsSurfaceToken);
         if (surface)
             return adoptRef(new ShareableSurface(handle.m_size, handle.m_flags, PassRefPtr<GraphicsSurface>(surface)));
+    }
 #endif
 
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle.m_bitmapHandle);

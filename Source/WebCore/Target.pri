@@ -4179,6 +4179,9 @@ contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=1) {
         SOURCES += platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp
         INCLUDEPATH += /System/Library/Frameworks/CoreFoundation.framework/Headers
     }
+    contains(DEFINES, HAVE_XCOMPOSITE=1)  {
+        SOURCES += platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp
+    }
 }
 
 # Make sure the derived sources are built

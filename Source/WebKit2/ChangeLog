@@ -1,3 +1,31 @@
+2012-07-13  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][WK2] Implement GraphicsSurface for Linux/GLX.
+        https://bugs.webkit.org/show_bug.cgi?id=90881
+
+        Add a GLX based GraphicsSurface implementation for Linux.
+
+        Reviewed by Noam Rosenthal.
+
+        * Shared/ShareableSurface.cpp:
+        (WebKit::ShareableSurface::create):
+            Only create a GraphicsSurface from a ShareableSurface::Handle
+            in case the Handle contains a valid GraphicsSurface token.
+            Otherwise fall back to creating a ShareableBitmap.
+        * UIProcess/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::createLayerTileUniqueKey):
+            Create a unique key for a surface based on tileID and layerID.
+        (WebKit::LayerTreeCoordinatorProxy::updateTileForLayer):
+            Even when GraphicsSurface is enabled, not all ShareableSurfaces
+            will necessarily be backed by a GraphicsSurface. In case of
+            a ShareableSurface being backed by a ShareableBitmap instead,
+            the GraphicsSurface token will always be null.
+            So instead of using the GraphicsSurface token as a key for
+            storing surfaces in a map, we create a unique key from
+            layerID and tileID.
+        * UIProcess/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+
 2012-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get HTTPS status to WebKit2 GTK+
