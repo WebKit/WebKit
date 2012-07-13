@@ -474,19 +474,6 @@ BUGWKGTK SKIP : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = 
 
 BUGWKGTK DEBUG : fast/css/user-drag-none.html = TIMEOUT
 
-BUGWK84676 SKIP : fast/files/workers/worker-read-blob-async.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/workers/worker-read-blob-sync.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/workers/worker-read-file-async.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/workers/worker-read-file-sync.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/read-blob-async.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/read-file-async.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/apply-blob-url-to-img.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/file-reader-directory-crash.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/null-origin-string.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/file-reader-abort.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/apply-blob-url-to-xhr.html = TIMEOUT
-BUGWK84676 SKIP : fast/files/file-reader-event-listener.html = TIMEOUT
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests timing out
 //////////////////////////////////////////////////////////////////////////////////////////
