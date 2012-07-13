@@ -209,7 +209,8 @@ class _Worker(multiprocessing.Process):
 
     def terminate(self):
         if self._worker:
-            self._worker.stop()
+            if hasattr(self._worker, 'stop'):
+                self._worker.stop()
             self._worker = None
         if self.is_alive():
             super(_Worker, self).terminate()
@@ -235,7 +236,8 @@ class _Worker(multiprocessing.Process):
         _log.debug("%s starting" % self.name)
 
         try:
-            worker.start()
+            if hasattr(worker, 'start'):
+                worker.start()
             while True:
                 message = self._messages_to_worker.get()
                 if message.from_user:
@@ -254,7 +256,8 @@ class _Worker(multiprocessing.Process):
             self._raise(sys.exc_info())
         finally:
             try:
-                worker.stop()
+                if hasattr(worker, 'stop'):
+                    worker.stop()
             finally:
                 self._post(name='done', args=(), from_user=False)
             self._close()
