@@ -120,6 +120,19 @@ template <> void derefGPtr(GPtrArray* ptr)
         g_ptr_array_unref(ptr);
 }
 
+template <> GByteArray* refGPtr(GByteArray* ptr)
+{
+    if (ptr)
+        g_byte_array_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GByteArray* ptr)
+{
+    if (ptr)
+        g_byte_array_unref(ptr);
+}
+
 } // namespace WTF
 
 #endif // ENABLE(GLIB_SUPPORT)

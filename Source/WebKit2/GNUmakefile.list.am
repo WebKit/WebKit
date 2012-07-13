@@ -370,7 +370,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/gtk/NativeWebKeyboardEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebMouseEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebWheelEventGtk.cpp \
-	Source/WebKit2/Shared/gtk/PlatformCertificateInfo.h \
 	Source/WebKit2/Shared/gtk/PrintInfoGtk.cpp \
 	Source/WebKit2/Shared/gtk/ProcessExecutablePathGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebCoreArgumentCodersGtk.cpp \
@@ -427,6 +426,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/StatisticsData.cpp \
 	Source/WebKit2/Shared/StatisticsData.h \
 	Source/WebKit2/Shared/StringPairVector.h \
+	Source/WebKit2/Shared/soup/PlatformCertificateInfo.cpp \
+	Source/WebKit2/Shared/soup/PlatformCertificateInfo.h \
 	Source/WebKit2/Shared/soup/SoupCookiePersistentStorageType.h \
 	Source/WebKit2/Shared/TextCheckerState.h \
 	Source/WebKit2/Shared/UserMessageCoders.h \

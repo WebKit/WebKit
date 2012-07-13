@@ -27,30 +27,35 @@
 #ifndef PlatformCertificateInfo_h
 #define PlatformCertificateInfo_h
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
-#include <WebCore/ResourceResponse.h>
+#include <libsoup/soup.h>
+#include <wtf/gobject/GRefPtr.h>
+
+namespace CoreIPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
+namespace WebCore {
+class ResourceResponse;
+}
 
 namespace WebKit {
 
 class PlatformCertificateInfo {
 public:
-    PlatformCertificateInfo()
-    {
-    }
+    PlatformCertificateInfo();
+    explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);
+    ~PlatformCertificateInfo();
 
-    explicit PlatformCertificateInfo(const WebCore::ResourceResponse&)
-    {
-    }
+    GTlsCertificate* certificate() const { return m_certificate.get(); }
+    GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }
 
-    void encode(CoreIPC::ArgumentEncoder*) const
-    {
-    }
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, PlatformCertificateInfo&);
 
-    static bool decode(CoreIPC::ArgumentDecoder*, PlatformCertificateInfo&)
-    {
-        return true;
-    }
+private:
+    GRefPtr<GTlsCertificate> m_certificate;
+    GTlsCertificateFlags m_tlsErrors;
 };
 
 } // namespace WebKit

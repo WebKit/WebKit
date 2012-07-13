@@ -24,7 +24,7 @@
 #ifndef WebKitURIResponse_h
 #define WebKitURIResponse_h
 
-#include <glib-object.h>
+#include <gio/gio.h>
 #include <webkit2/WebKitDefines.h>
 
 G_BEGIN_DECLS
@@ -56,16 +56,21 @@ WEBKIT_API GType
 webkit_uri_response_get_type           (void);
 
 WEBKIT_API const gchar *
-webkit_uri_response_get_uri            (WebKitURIResponse *response);
+webkit_uri_response_get_uri            (WebKitURIResponse    *response);
 
 WEBKIT_API guint
-webkit_uri_response_get_status_code    (WebKitURIResponse *response);
+webkit_uri_response_get_status_code    (WebKitURIResponse    *response);
 
 WEBKIT_API guint64
-webkit_uri_response_get_content_length (WebKitURIResponse *response);
+webkit_uri_response_get_content_length (WebKitURIResponse    *response);
 
 WEBKIT_API const gchar *
-webkit_uri_response_get_mime_type      (WebKitURIResponse *response);
+webkit_uri_response_get_mime_type      (WebKitURIResponse    *response);
+
+WEBKIT_API gboolean
+webkit_uri_response_get_https_status   (WebKitURIResponse    *response,
+                                        GTlsCertificate     **certificate,
+                                        GTlsCertificateFlags *errors);
 
 G_END_DECLS
 

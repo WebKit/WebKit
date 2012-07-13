@@ -64,6 +64,7 @@ typedef union _GdkEvent GdkEvent;
 typedef struct _GTimer GTimer;
 typedef struct _GKeyFile GKeyFile;
 typedef struct _GPtrArray GPtrArray;
+typedef struct _GByteArray GByteArray;
 
 #if USE(CAIRO)
 typedef struct _cairo_surface cairo_surface_t;

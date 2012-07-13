@@ -27,6 +27,8 @@ LIST(APPEND WebKit2_SOURCES
     Shared/efl/WebEventFactory.cpp
     Shared/efl/WebCoreArgumentCodersEfl.cpp
 
+    Shared/soup/PlatformCertificateInfo.cpp
+
     UIProcess/API/C/efl/WKView.cpp
 
     UIProcess/API/C/soup/WKContextSoup.cpp

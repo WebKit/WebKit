@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebKitURIResponse.h"
 
+#include "PlatformCertificateInfo.h"
+#include "WebCertificateInfo.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include <glib/gi18n-lib.h>
@@ -34,6 +36,7 @@ enum {
     PROP_MIME_TYPE
 };
 
+using namespace WebKit;
 using namespace WebCore;
 
 G_DEFINE_TYPE(WebKitURIResponse, webkit_uri_response, G_TYPE_OBJECT)
@@ -202,6 +205,31 @@ const gchar* webkit_uri_response_get_mime_type(WebKitURIResponse* response)
     return response->priv->mimeType.data();
 }
 
+/**
+ * webkit_uri_response_get_https_status:
+ * @response: a #WebKitURIResponse
+ * @certificate: (out) (transfer none): return location for a #GTlsCertificate
+ * @errors: (out): return location for a #GTlsCertificateFlags the verification status of @certificate
+ *
+ * Retrieves the #GTlsCertificate associated with the @response connection,
+ * and the #GTlsCertificateFlags showing what problems, if any, have been found
+ * with that certificate.
+ * If the response connection is not HTTPS, this function returns %FALSE.
+ *
+ * Returns: %TRUE if @response connection uses HTTPS or %FALSE otherwise.
+ */
+gboolean webkit_uri_response_get_https_status(WebKitURIResponse* response, GTlsCertificate** certificate, GTlsCertificateFlags* errors)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_RESPONSE(response), FALSE);
+
+    if (certificate)
+        *certificate = response->priv->resourceResponse.soupMessageCertificate();
+    if (errors)
+        *errors = response->priv->resourceResponse.soupMessageTLSErrors();
+
+    return !!response->priv->resourceResponse.soupMessageCertificate();
+}
+
 WebKitURIResponse* webkitURIResponseCreateForResourceResponse(const WebCore::ResourceResponse& resourceResponse)
 {
     WebKitURIResponse* uriResponse = WEBKIT_URI_RESPONSE(g_object_new(WEBKIT_TYPE_URI_RESPONSE, NULL));
@@ -212,4 +240,11 @@ WebKitURIResponse* webkitURIResponseCreateForResourceResponse(const WebCore::Res
 const WebCore::ResourceResponse& webkitURIResponseGetResourceResponse(WebKitURIResponse* uriResponse)
 {
     return uriResponse->priv->resourceResponse;
+}
+
+void webkitURIResponseSetCertificateInfo(WebKitURIResponse* response, WKCertificateInfoRef wkCertificate)
+{
+    const PlatformCertificateInfo& certificateInfo = toImpl(wkCertificate)->platformCertificateInfo();
+    response->priv->resourceResponse.setSoupMessageCertificate(certificateInfo.certificate());
+    response->priv->resourceResponse.setSoupMessageTLSErrors(certificateInfo.tlsErrors());
 }

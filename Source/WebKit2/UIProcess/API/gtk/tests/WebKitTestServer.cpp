@@ -20,12 +20,26 @@
 #include "config.h"
 #include "WebKitTestServer.h"
 
+#include "TestMain.h"
 #include <wtf/gobject/GOwnPtr.h>
 
-WebKitTestServer::WebKitTestServer()
-    : m_soupServer(adoptGRef(soup_server_new(SOUP_SERVER_PORT, 0, NULL)))
-    , m_baseURI(soup_uri_new("http://127.0.0.1/"))
+WebKitTestServer::WebKitTestServer(ServerType type)
 {
+    GOwnPtr<char> sslCertificateFile;
+    GOwnPtr<char> sslKeyFile;
+    if (type == ServerHTTPS) {
+        CString resourcesDir = Test::getResourcesDir();
+        sslCertificateFile.set(g_build_filename(resourcesDir.data(), "test-cert.pem", NULL));
+        sslKeyFile.set(g_build_filename(resourcesDir.data(), "test-key.pem", NULL));
+    }
+
+    GRefPtr<SoupAddress> address = adoptGRef(soup_address_new("127.0.0.1", SOUP_ADDRESS_ANY_PORT));
+    soup_address_resolve_sync(address.get(), 0);
+
+    m_soupServer = adoptGRef(soup_server_new(SOUP_SERVER_INTERFACE, address.get(),
+                                             SOUP_SERVER_SSL_CERT_FILE, sslCertificateFile.get(),
+                                             SOUP_SERVER_SSL_KEY_FILE, sslKeyFile.get(), NULL));
+    m_baseURI = type == ServerHTTPS ? soup_uri_new("https://127.0.0.1/") : soup_uri_new("http://127.0.0.1/");
     soup_uri_set_port(m_baseURI, soup_server_get_port(m_soupServer.get()));
 }
 

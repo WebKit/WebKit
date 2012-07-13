@@ -27,7 +27,13 @@
 
 class WebKitTestServer {
 public:
-    WebKitTestServer();
+
+    enum ServerType {
+        ServerHTTP,
+        ServerHTTPS
+    };
+
+    WebKitTestServer(ServerType type = ServerHTTP);
     virtual ~WebKitTestServer();
 
     SoupURI* baseURI() { return m_baseURI; }

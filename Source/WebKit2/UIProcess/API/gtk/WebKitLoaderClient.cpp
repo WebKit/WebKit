@@ -22,6 +22,7 @@
 #include "WebKitLoaderClient.h"
 
 #include "WebKitBackForwardListPrivate.h"
+#include "WebKitURIResponsePrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/gobject/GOwnPtr.h>
@@ -64,7 +65,11 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    webkitWebViewLoadChanged(WEBKIT_WEB_VIEW(clientInfo), WEBKIT_LOAD_COMMITTED);
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(clientInfo);
+    WebKitURIResponse* response = webkit_web_resource_get_response(webkit_web_view_get_main_resource(webView));
+    webkitURIResponseSetCertificateInfo(response, WKFrameGetCertificateInfo(frame));
+
+    webkitWebViewLoadChanged(webView, WEBKIT_LOAD_COMMITTED);
 }
 
 static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)

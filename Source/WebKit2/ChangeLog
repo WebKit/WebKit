@@ -1,3 +1,56 @@
+2012-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to get HTTPS status to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=91100
+
+        Reviewed by Martin Robinson.
+
+        Add webkit_uri_response_get_https_status() to return
+        GTlsCertificate and GTlsCertificateFlags with information about
+        the SSL certificate and the possible errors with the certificate.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * PlatformEfl.cmake: Ditto.
+        * Shared/efl/PlatformCertificateInfo.h: Removed.
+        * Shared/soup/PlatformCertificateInfo.cpp: Added.
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::~PlatformCertificateInfo):
+        (WebKit::PlatformCertificateInfo::encode): Encode the
+        GTlsCertificate and GTlsCertificateFlags.
+        (WebKit::PlatformCertificateInfo::decode): Decode
+        PlatformCertificateInfo into a GTlsCertificate and GTlsCertificateFlags.
+        * Shared/soup/PlatformCertificateInfo.h: Renamed from Source/WebKit2/Shared/gtk/PlatformCertificateInfo.h.
+        (WebKit::PlatformCertificateInfo::certificate): Return the certificate.
+        (WebKit::PlatformCertificateInfo::tlsErrors): Return the TLS errors
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (didCommitLoadForFrame): Set the certificate of the current frame
+        to the response of the main resource.
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        (webkit_uri_response_get_https_status): Return GTlsCertificate and
+        GTlsCertificateFlags.
+        (webkitURIResponseSetCertificateInfo): Update the internal
+        ResourceResponse with the GTlsCertificate and GTlsCertificateFlags
+        of the given PlatformCertificateInfo.
+        * UIProcess/API/gtk/WebKitURIResponse.h:
+        * UIProcess/API/gtk/WebKitURIResponsePrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestMain.h:
+        (Test::getResourcesDir): Helper function to get the resources
+        directory of the WebKit2 API tests.
+        * UIProcess/API/gtk/tests/TestSSL.cpp: Added.
+        (testSSL):
+        (serverCallback):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/tests/WebKitTestServer.cpp:
+        (WebKitTestServer::WebKitTestServer): Add support por SSL test
+        servers.
+        * UIProcess/API/gtk/tests/WebKitTestServer.h:
+        (WebKitTestServer): Add ssl parameter to create a HTTPS server.
+        * UIProcess/API/gtk/tests/resources/test-cert.pem: Added.
+        * UIProcess/API/gtk/tests/resources/test-key.pem: Added.
+
 2012-07-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][EFL] Facilitate debugging of the Web Process

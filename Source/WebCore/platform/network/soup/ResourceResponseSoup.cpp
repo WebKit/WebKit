@@ -51,6 +51,8 @@ SoupMessage* ResourceResponse::toSoupMessage() const
 
     soup_message_set_flags(soupMessage, m_soupFlags);
 
+    g_object_set(G_OBJECT(soupMessage), "tls-certificate", m_certificate.get(), "tls-errors", m_tlsErrors, NULL);
+
     // Body data is not in the message.
     return soupMessage;
 }
@@ -84,6 +86,10 @@ void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
     setExpectedContentLength(soup_message_headers_get_content_length(soupMessage->response_headers));
     setHTTPStatusText(soupMessage->reason_phrase);
     setSuggestedFilename(filenameFromHTTPContentDisposition(httpHeaderField("Content-Disposition")));
+
+    GTlsCertificate* certificate = 0;
+    soup_message_get_https_status(soupMessage, &certificate, &m_tlsErrors);
+    m_certificate = certificate;
 }
 
 }
