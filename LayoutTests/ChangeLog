@@ -1,3 +1,20 @@
+2012-07-13  Vineet Chaudhary  <rgf748@motorola.com>
+
+        Restructure V8Utilities::extractTransferables() with help of toV8Sequence()
+        https://bugs.webkit.org/show_bug.cgi?id=91208
+
+        Reviewed by Kentaro Hara.
+
+        We can remove the specialised check for MessagePort from V8Utilities::extractTransferables()
+        using toV8Sequence() as it validates the passed object for sequence type per WebIDL spec.
+        Removing port specific expected results.
+
+        * platform/chromium-win/fast/workers/worker-context-multi-port-expected.txt: Removed.
+        * platform/chromium-win/fast/workers/worker-multi-port-expected.txt: Removed.
+        * platform/chromium/fast/dom/Window/window-postmessage-args-expected.txt: Removed.
+        * platform/chromium/fast/events/constructors/message-event-constructor-expected.txt: Removed.
+        * platform/chromium/fast/events/message-port-multi-expected.txt: Rebaselined.
+
 2012-07-13  Vincent Scheib  <scheib@chromium.org>
 
         Pointer Lock handles disconnected DOM elements

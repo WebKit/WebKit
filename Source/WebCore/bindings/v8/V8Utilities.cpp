@@ -92,25 +92,16 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
         return true;
     }
 
-    if (!value->IsObject()) {
-        V8Proxy::throwTypeError("TransferArray argument must be an object");
-        return false;
-    }
     uint32_t length = 0;
-    v8::Local<v8::Object> transferrables = v8::Local<v8::Object>::Cast(value);
-
     if (value->IsArray()) {
         v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
         length = array->Length();
     } else {
-        // Sequence-type object - get the length attribute
-        v8::Local<v8::Value> sequenceLength = transferrables->Get(v8::String::New("length"));
-        if (!sequenceLength->IsNumber()) {
-            V8Proxy::throwTypeError("TransferArray argument has no length attribute");
+        if (toV8Sequence(value, length).IsEmpty())
             return false;
-        }
-        length = sequenceLength->Uint32Value();
     }
+
+    v8::Local<v8::Object> transferrables = v8::Local<v8::Object>::Cast(value);
 
     // Validate the passed array of transferrables.
     for (unsigned int i = 0; i < length; ++i) {
@@ -126,7 +117,7 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
         else if (V8ArrayBuffer::HasInstance(transferrable))
             arrayBuffers.append(V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(transferrable)));
         else {
-            V8Proxy::throwTypeError("TransferArray argument must contain only Transferables");
+            V8Proxy::throwTypeError();
             return false;
         }
     }
