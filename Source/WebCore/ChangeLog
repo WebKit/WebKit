@@ -1,3 +1,24 @@
+2012-07-13  Raymond Toy  <rtoy@google.com>
+
+        DelayNode doesn't work if delayTime.value == delayTime.maxValue
+        https://bugs.webkit.org/show_bug.cgi?id=90357
+
+        Reviewed by Kenneth Russell.
+
+        Increase delay buffer size slightly so that the read and write
+        pointers don't become equal when the delay and the max delay are
+        the same.
+        
+        Tests: webaudio/delaynode-max-default-delay.html
+               webaudio/delaynode-max-nondefault-delay.html
+
+        * Modules/webaudio/DelayDSPKernel.cpp:
+        (WebCore): Moved SmoothingTimeConstant to WebCore namespace.
+        (WebCore::DelayDSPKernel::DelayDSPKernel): Add some additional checks to prevent crashes; use bufferLengthForDelay to compute buffer length.
+        (WebCore::DelayDSPKernel::bufferLengthForDelay): New function to compute buffer length.
+        * Modules/webaudio/DelayDSPKernel.h:
+        (DelayDSPKernel): Declare bufferLengthForDelay. 
+
 2012-07-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Always aggressively preload on iOS

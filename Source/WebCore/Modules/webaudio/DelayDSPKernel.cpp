@@ -33,9 +33,9 @@
 
 using namespace std;
 
-const float SmoothingTimeConstant = 0.020f; // 20ms
-  
 namespace WebCore {
+
+const float SmoothingTimeConstant = 0.020f; // 20ms
 
 DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
     : AudioDSPKernel(processor)
@@ -43,11 +43,15 @@ DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
     , m_firstTime(true)
 {
     ASSERT(processor && processor->sampleRate() > 0);
-    if (!processor)
+    if (!(processor && processor->sampleRate() > 0))
         return;
 
     m_maxDelayTime = processor->maxDelayTime();
-    m_buffer.allocate(static_cast<size_t>(processor->sampleRate() * m_maxDelayTime));
+    ASSERT(m_maxDelayTime >= 0);
+    if (m_maxDelayTime < 0)
+        return;
+    
+    m_buffer.allocate(bufferLengthForDelay(m_maxDelayTime, processor->sampleRate()));
     m_buffer.zero();
 
     m_smoothingRate = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, processor->sampleRate());
@@ -63,7 +67,7 @@ DelayDSPKernel::DelayDSPKernel(double maxDelayTime, float sampleRate)
     if (maxDelayTime <= 0.0)
         return;
         
-    size_t bufferLength = static_cast<size_t>(sampleRate * maxDelayTime);
+    size_t bufferLength = bufferLengthForDelay(maxDelayTime, sampleRate);
     ASSERT(bufferLength);
     if (!bufferLength)
         return;
@@ -72,6 +76,13 @@ DelayDSPKernel::DelayDSPKernel(double maxDelayTime, float sampleRate)
     m_buffer.zero();
 
     m_smoothingRate = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, sampleRate);
+}
+
+size_t DelayDSPKernel::bufferLengthForDelay(double maxDelayTime, double sampleRate) const
+{
+    // Compute the length of the buffer needed to handle a max delay of |maxDelayTime|. One is
+    // added to handle the case where the actual delay equals the maximum delay.
+    return 1 + AudioUtilities::timeToSampleFrame(maxDelayTime, sampleRate);
 }
 
 void DelayDSPKernel::process(const float* source, float* destination, size_t framesToProcess)

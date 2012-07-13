@@ -1,3 +1,19 @@
+2012-07-13  Raymond Toy  <rtoy@google.com>
+
+        DelayNode doesn't work if delayTime.value == delayTime.maxValue
+        https://bugs.webkit.org/show_bug.cgi?id=90357
+
+        Reviewed by Kenneth Russell.
+
+        New tests to test the case when the delay node delay equals the
+        maximum allowed delay. Add one test for the default maximum delay
+        and a second test with a user-set maximum delay.
+        
+        * webaudio/delaynode-max-default-delay-expected.txt: Added.
+        * webaudio/delaynode-max-default-delay.html: Added.
+        * webaudio/delaynode-max-nondefault-delay-expected.txt: Added.
+        * webaudio/delaynode-max-nondefault-delay.html: Added.
+
 2012-07-13  Vineet Chaudhary  <rgf748@motorola.com>
 
         Restructure V8Utilities::extractTransferables() with help of toV8Sequence()
