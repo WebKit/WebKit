@@ -1,3 +1,12 @@
+2012-07-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating baselines for the fast/backgrounds/size/zero.html
+        test as required after r121296.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/backgrounds/size/zero-expected.png: Added.
+        * platform/gtk/fast/backgrounds/size/zero-expected.txt:
+
 2012-07-13  Philip Rogers  <pdr@google.com>
 
         Remove assert in localCoordinateSpaceTransform()
