@@ -1,5 +1,35 @@
 2012-07-13  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: move printing-related code out of the runner
+        https://bugs.webkit.org/show_bug.cgi?id=91289
+
+        Reviewed by Ryosuke Niwa.
+
+        More refactoring ... this moves all printing-related stuff out
+        of runner.py and into printer.py.
+
+        No functional changes; covered by existing tests.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+        * Scripts/webkitpy/test/printer.py:
+        (Printer.__init__):
+        (Printer):
+        (Printer.test_name):
+        (Printer.print_started_test):
+        (Printer.print_finished_test):
+        (Printer.print_result):
+        * Scripts/webkitpy/test/runner.py:
+        (Runner.__init__):
+        (Runner.all_test_names):
+        (Runner.run):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (RunnerTest.test_regular):
+        (RunnerTest.test_verbose):
+        (RunnerTest.test_timing):
+
+2012-07-13  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: split printing/logging code for test-webkitpy out into a new class
         https://bugs.webkit.org/show_bug.cgi?id=91282
 

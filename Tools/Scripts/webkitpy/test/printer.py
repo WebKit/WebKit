@@ -22,6 +22,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import re
 import StringIO
 
 from webkitpy.common.system import outputcapture
@@ -33,6 +34,11 @@ class Printer(object):
     def __init__(self, stream, options=None):
         self.stream = stream
         self.options = options
+        self.test_description = re.compile("(\w+) \(([\w.]+)\)")
+
+    def test_name(self, test):
+        m = self.test_description.match(str(test))
+        return "%s.%s" % (m.group(2), m.group(1))
 
     def configure(self, options):
         self.options = options
@@ -91,6 +97,60 @@ class Printer(object):
 
         if self.options.pass_through:
             outputcapture.OutputCapture.stream_wrapper = _CaptureAndPassThroughStream
+
+    def print_started_test(self, test_name):
+        if self.options.verbose:
+            self.stream.write(test_name)
+
+    def print_finished_test(self, result, test_name, test_time, failure, err):
+        timing = ''
+        if self.options.timing:
+            timing = ' %.4fs' % test_time
+        if self.options.verbose:
+            if failure:
+                msg = ' failed'
+            elif err:
+                msg = ' erred'
+            else:
+                msg = ' passed'
+            self.stream.write(msg + timing + '\n')
+        else:
+            if failure:
+                msg = 'F'
+            elif err:
+                msg = 'E'
+            else:
+                msg = '.'
+            self.stream.write(msg)
+
+    def print_result(self, result, run_time):
+        self.stream.write('\n')
+
+        for (test, err) in result.errors:
+            self.stream.write("=" * 80 + '\n')
+            self.stream.write("ERROR: " + self.test_name(test) + '\n')
+            self.stream.write("-" * 80 + '\n')
+            for line in err.splitlines():
+                self.stream.write(line + '\n')
+            self.stream.write('\n')
+
+        for (test, failure) in result.failures:
+            self.stream.write("=" * 80 + '\n')
+            self.stream.write("FAILURE: " + self.test_name(test) + '\n')
+            self.stream.write("-" * 80 + '\n')
+            for line in failure.splitlines():
+                self.stream.write(line + '\n')
+            self.stream.write('\n')
+
+        self.stream.write('-' * 80 + '\n')
+        self.stream.write('Ran %d test%s in %.3fs\n' %
+            (result.testsRun, result.testsRun != 1 and "s" or "", run_time))
+
+        if result.wasSuccessful():
+            self.stream.write('\nOK\n')
+        else:
+            self.stream.write('FAILED (failures=%d, errors=%d)\n' %
+                (len(result.failures), len(result.errors)))
 
 
 class _CaptureAndPassThroughStream(object):

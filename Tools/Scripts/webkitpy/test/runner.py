@@ -23,7 +23,6 @@
 """code to actually run a list of python tests."""
 
 import logging
-import re
 import time
 import unittest
 
@@ -32,15 +31,10 @@ _log = logging.getLogger(__name__)
 
 
 class Runner(object):
-    def __init__(self, stream, options, loader):
+    def __init__(self, printer, options, loader):
         self.options = options
-        self.stream = stream
+        self.printer = printer
         self.loader = loader
-        self.test_description = re.compile("(\w+) \(([\w.]+)\)")
-
-    def test_name(self, test):
-        m = self.test_description.match(str(test))
-        return "%s.%s" % (m.group(2), m.group(1))
 
     def all_test_names(self, suite):
         names = []
@@ -48,7 +42,7 @@ class Runner(object):
             for t in suite._tests:
                 names.extend(self.all_test_names(t))
         else:
-            names.append(self.test_name(suite))
+            names.append(self.printer.test_name(suite))
         return names
 
     def run(self, suite):
@@ -57,8 +51,7 @@ class Runner(object):
         result = unittest.TestResult()
         stop = run_start_time
         for test_name in all_test_names:
-            if self.options.verbose:
-                self.stream.write(test_name)
+            self.printer.print_started_test(test_name)
             num_failures = len(result.failures)
             num_errors = len(result.errors)
 
@@ -75,58 +68,8 @@ class Runner(object):
                 failure = result.failures[num_failures][1]
             elif len(result.errors) > num_errors:
                 err = result.errors[num_errors][1]
-            self.write_result(result, test_name, stop - start, failure, err)
+            self.printer.print_finished_test(result, test_name, stop - start, failure, err)
 
-        self.write_summary(result, stop - run_start_time)
+        self.printer.print_result(result, stop - run_start_time)
 
         return result
-
-    def write_result(self, result, test_name, test_time, failure=None, err=None):
-        timing = ''
-        if self.options.timing:
-            timing = ' %.4fs' % test_time
-        if self.options.verbose:
-            if failure:
-                msg = ' failed'
-            elif err:
-                msg = ' erred'
-            else:
-                msg = ' passed'
-            self.stream.write(msg + timing + '\n')
-        else:
-            if failure:
-                msg = 'F'
-            elif err:
-                msg = 'E'
-            else:
-                msg = '.'
-            self.stream.write(msg)
-
-    def write_summary(self, result, run_time):
-        self.stream.write('\n')
-
-        for (test, err) in result.errors:
-            self.stream.write("=" * 80 + '\n')
-            self.stream.write("ERROR: " + self.test_name(test) + '\n')
-            self.stream.write("-" * 80 + '\n')
-            for line in err.splitlines():
-                self.stream.write(line + '\n')
-            self.stream.write('\n')
-
-        for (test, failure) in result.failures:
-            self.stream.write("=" * 80 + '\n')
-            self.stream.write("FAILURE: " + self.test_name(test) + '\n')
-            self.stream.write("-" * 80 + '\n')
-            for line in failure.splitlines():
-                self.stream.write(line + '\n')
-            self.stream.write('\n')
-
-        self.stream.write('-' * 80 + '\n')
-        self.stream.write('Ran %d test%s in %.3fs\n' %
-            (result.testsRun, result.testsRun != 1 and "s" or "", run_time))
-
-        if result.wasSuccessful():
-            self.stream.write('\nOK\n')
-        else:
-            self.stream.write('FAILED (failures=%d, errors=%d)\n' %
-                (len(result.failures), len(result.errors)))

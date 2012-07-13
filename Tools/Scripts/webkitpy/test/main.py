@@ -114,7 +114,7 @@ class Tester(object):
             suites.append(loader.loadTestsFromName(name, None))
 
         test_suite = unittest.TestSuite(suites)
-        test_runner = Runner(self.printer.stream, self._options, loader)
+        test_runner = Runner(self.printer, self._options, loader)
 
         _log.debug("Running the tests.")
         result = test_runner.run(test_suite)
