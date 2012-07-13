@@ -558,8 +558,7 @@ public:
     void showTreeForThisAcrossFrame() const;
 #endif
 
-    void invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName&, Element* attributeOwnerElement);
-    void invalidateNodeListsCacheAfterChildrenChanged();
+    void invalidateNodeListCachesInAncestors(const QualifiedName* attrName = 0, Element* attributeOwnerElement = 0);
     NodeListsNodeData* nodeLists();
     void removeCachedChildNodeList();
 

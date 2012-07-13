@@ -962,39 +962,14 @@ unsigned Node::nodeIndex() const
     return count;
 }
 
-void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& attrName, Element* attributeOwnerElement)
+void Node::invalidateNodeListCachesInAncestors(const QualifiedName* attrName, Element* attributeOwnerElement)
 {
-    if (hasRareData() && isAttributeNode()) {
-        NodeRareData* data = rareData();
-        ASSERT(!data->nodeLists());
-        data->clearChildNodeListCache();
-    }
+    if (hasRareData() && (!attrName || isAttributeNode()))
+        rareData()->clearChildNodeListCache();
 
     // Modifications to attributes that are not associated with an Element can't invalidate NodeList caches.
-    if (!attributeOwnerElement)
+    if (attrName && !attributeOwnerElement)
         return;
-
-    if (!document()->shouldInvalidateNodeListCaches(&attrName))
-        return;
-
-    document()->clearNodeListCaches();
-
-    for (Node* node = this; node; node = node->parentNode()) {
-        ASSERT(this == node || !node->isAttributeNode());
-        if (!node->hasRareData())
-            continue;
-        NodeRareData* data = node->rareData();
-        if (data->nodeLists())
-            data->nodeLists()->invalidateCaches(&attrName);
-        if (node->isElementNode())
-            static_cast<ElementRareData*>(data)->clearHTMLCollectionCaches();
-    }
-}
-
-void Node::invalidateNodeListsCacheAfterChildrenChanged()
-{
-    if (hasRareData())
-        rareData()->clearChildNodeListCache();
 
     if (!document()->shouldInvalidateNodeListCaches())
         return;
@@ -1006,9 +981,9 @@ void Node::invalidateNodeListsCacheAfterChildrenChanged()
             continue;
         NodeRareData* data = node->rareData();
         if (data->nodeLists())
-            data->nodeLists()->invalidateCaches();
+            data->nodeLists()->invalidateCaches(attrName);
         if (node->isElementNode())
-            static_cast<ElementRareData*>(data)->clearHTMLCollectionCaches();
+            static_cast<ElementRareData*>(data)->clearHTMLCollectionCaches(attrName);
     }
 }
 
@@ -2249,14 +2224,16 @@ void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
 {
     NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
     for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
-        if (!attrName || it->second->shouldInvalidateOnAttributeChange())
-            it->second->invalidateCache();
+        DynamicNodeList* list = it->second;
+        if (!attrName || DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(list->invalidationType(), *attrName))
+            list->invalidateCache();
     }
 
     NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
     for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
-        if (!attrName || it->second->shouldInvalidateOnAttributeChange())
-            it->second->invalidateCache();
+        DynamicNodeList* list = it->second;
+        if (!attrName || DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(list->invalidationType(), *attrName))
+            list->invalidateCache();
     }
 
     if (!attrName)
@@ -2771,17 +2748,6 @@ void Node::setItemType(const String& value)
 }
 
 #endif
-
-void NodeRareData::createNodeLists()
-{
-    setNodeLists(NodeListsNodeData::create());
-}
-
-void NodeRareData::clearChildNodeListCache()
-{
-    if (m_childNodeList)
-        m_childNodeList->invalidateCache();
-}
 
 // It's important not to inline removedLastRef, because we don't want to inline the code to
 // delete a Node at each deref call site.

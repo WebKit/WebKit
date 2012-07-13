@@ -222,10 +222,14 @@ public:
     NodeListsNodeData* ensureNodeLists()
     {
         if (!m_nodeLists)
-            createNodeLists();
+            setNodeLists(NodeListsNodeData::create());
         return m_nodeLists.get();
     }
-    void clearChildNodeListCache();
+    void clearChildNodeListCache()
+    {
+        if (m_childNodeList)
+            m_childNodeList->invalidateCache();
+    }
 
     ChildNodeList* childNodeList() const { return m_childNodeList; }
     void setChildNodeList(ChildNodeList* list) { m_childNodeList = list; }
@@ -344,7 +348,6 @@ protected:
     void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
 
 private:
-    void createNodeLists();
 
     TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;

@@ -26,6 +26,7 @@
 
 #include "CollectionType.h"
 #include "Document.h"
+#include "HTMLNames.h"
 #include "NodeList.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -57,12 +58,12 @@ public:
 
 public:
     ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootedAtDocument; }
-    ALWAYS_INLINE bool shouldInvalidateOnAttributeChange() const { return m_invalidationType != DoNotInvalidateOnAttributeChanges; }
-    ALWAYS_INLINE NodeListRootType rootType() { return m_rootedAtDocument ? NodeListIsRootedAtDocument : NodeListIsRootedAtNode; }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
     ALWAYS_INLINE CollectionType type() const { return static_cast<CollectionType>(m_collectionType); }
 
     void invalidateCache() const;
+
+    static bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
 
 protected:
     ALWAYS_INLINE bool isItemCacheValid() const { return m_isItemCacheValid; }
@@ -100,6 +101,34 @@ private:
     mutable unsigned m_isNameCacheValid : 1;
     const unsigned m_collectionType : 5;
 };
+
+ALWAYS_INLINE bool DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType type, const QualifiedName& attrName)
+{
+    switch (type) {
+    case InvalidateOnClassAttrChange:
+        return attrName == HTMLNames::classAttr;
+    case InvalidateOnNameAttrChange:
+        return attrName == HTMLNames::nameAttr;
+    case InvalidateOnIdNameAttrChange:
+        return attrName == HTMLNames::idAttr || attrName == HTMLNames::nameAttr;
+    case InvalidateOnForAttrChange:
+        return attrName == HTMLNames::forAttr;
+    case InvalidateForFormControls:
+        return attrName == HTMLNames::nameAttr || attrName == HTMLNames::idAttr || attrName == HTMLNames::forAttr || attrName == HTMLNames::typeAttr;
+    case InvalidateOnHRefAttrChange:
+        return attrName == HTMLNames::hrefAttr;
+    case InvalidateOnItemAttrChange:
+#if ENABLE(MICRODATA)
+        return attrName == HTMLNames::itemscopeAttr || attrName == HTMLNames::itempropAttr || attrName == HTMLNames::itemtypeAttr;
+#endif // Intentionally fall through
+    case DoNotInvalidateOnAttributeChanges:
+        ASSERT_NOT_REACHED();
+        return false;
+    case InvalidateOnAnyAttrChange:
+        return true;
+    }
+    return false;
+}
 
 class DynamicNodeList : public NodeList, public DynamicNodeListCacheBase {
 public:

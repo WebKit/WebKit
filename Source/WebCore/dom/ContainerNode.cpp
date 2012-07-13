@@ -680,7 +680,7 @@ void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int chil
     document()->incDOMTreeVersion();
     if (!changedByParser && childCountDelta)
         document()->updateRangesAfterChildrenChanged(this);
-    invalidateNodeListsCacheAfterChildrenChanged();
+    invalidateNodeListCachesInAncestors();
 }
 
 void ContainerNode::cloneChildNodes(ContainerNode *clone)

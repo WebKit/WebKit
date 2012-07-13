@@ -63,7 +63,6 @@ protected:
 
 private:
     using DynamicNodeListCacheBase::isRootedAtDocument;
-    using DynamicNodeListCacheBase::shouldInvalidateOnAttributeChange;
     using DynamicNodeListCacheBase::setItemCache;
 
     mutable NodeCacheMap m_idCache;

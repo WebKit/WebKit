@@ -1,3 +1,53 @@
+2012-07-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        NodeLists should not invalidate on irreleavnt attribute changes
+        https://bugs.webkit.org/show_bug.cgi?id=91277
+
+        Reviewed by Ojan Vafai.
+
+        Explicitely check the invalidation type and the changed attribute in NodeListNodeData::invalidateCaches
+        and ElementRareData::clearHTMLCollectionCaches to only invalidate node lists affected by the change.
+
+        Also merged invalidateNodeListsCacheAfterAttributeChanged and invalidateNodeListsCacheAfterChildrenChanged
+        as invalidateNodeListCachesInAncestors since they're almost identical after r122498.
+
+        In addition, moved shouldInvalidateNodeListForType from Document.cpp to DynamicNodeList.h and renamed it to
+        shouldInvalidateTypeOnAttributeChange since it needs to called in Node.cpp and ElementRareData.h.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::childrenChanged):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged):
+        * dom/Document.cpp:
+        (WebCore::Document::registerNodeListCache): Calls isRootedAtDocument() instead of directly comparing
+        the value of NodeListRootType in order to prepare for the bug 80269.
+        (WebCore::Document::unregisterNodeListCache): Ditto.
+        (WebCore): shouldInvalidateNodeListForType is moved to DynamicNodeList.h
+        (WebCore::Document::shouldInvalidateNodeListCaches):
+        * dom/DynamicNodeList.h:
+        (DynamicNodeListCacheBase):
+        (WebCore::DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange): Moved from Document.cpp.
+        * dom/Element.cpp: 
+        (WebCore::Element::attributeChanged):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::clearHTMLCollectionCaches): Takes const QualifiedName* to compare against
+        the invalidation type of HTML collections via shouldInvalidateTypeOnAttributeChange.
+        * dom/Node.cpp:
+        (WebCore::Node::invalidateNodeListCachesInAncestors): Merged invalidateNodeListCachesInAncestors and
+        invalidateNodeListsCacheAfterChildrenChanged. Also pass attrName to clearHTMLCollectionCaches.
+        (WebCore::NodeListsNodeData::invalidateCaches): Compares attrName against the invalidation type of
+        node lists via shouldInvalidateTypeOnAttributeChange.
+        (WebCore):
+        * dom/Node.h:
+        (Node):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::ensureNodeLists): Merged NodeRareData::createNodeLists.
+        (WebCore::NodeRareData::clearChildNodeListCache): Moved from Node.cpp.
+        (NodeRareData):
+        * html/HTMLCollection.h:
+        (HTMLCollectionCacheBase):
+
 2012-07-13  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Refactor RenderTable to use the section's iteration functions.

@@ -3871,7 +3871,7 @@ void Document::registerNodeListCache(DynamicNodeListCacheBase* list)
     if (list->type() != InvalidCollectionType)
         m_nodeListCounts[InvalidateOnIdNameAttrChange]++;
     m_nodeListCounts[list->invalidationType()]++;
-    if (list->rootType() == NodeListIsRootedAtDocument)
+    if (list->isRootedAtDocument())
         m_listsInvalidatedAtDocument.add(list);
 }
 
@@ -3880,45 +3880,17 @@ void Document::unregisterNodeListCache(DynamicNodeListCacheBase* list)
     if (list->type() != InvalidCollectionType)
         m_nodeListCounts[InvalidateOnIdNameAttrChange]--;
     m_nodeListCounts[list->invalidationType()]--;
-    if (list->rootType() == NodeListIsRootedAtDocument) {
+    if (list->isRootedAtDocument()) {
         ASSERT(m_listsInvalidatedAtDocument.contains(list));
         m_listsInvalidatedAtDocument.remove(list);
     }
-}
-
-static ALWAYS_INLINE bool shouldInvalidateNodeListForType(NodeListInvalidationType type, const QualifiedName& attrName)
-{
-    switch (type) {
-    case InvalidateOnClassAttrChange:
-        return attrName == classAttr;
-    case InvalidateOnNameAttrChange:
-        return attrName == nameAttr;
-    case InvalidateOnIdNameAttrChange:
-        return attrName == idAttr || attrName == nameAttr;
-    case InvalidateOnForAttrChange:
-        return attrName == forAttr;
-    case InvalidateForFormControls:
-        return attrName == nameAttr || attrName == idAttr || attrName == forAttr || attrName == typeAttr;
-    case InvalidateOnHRefAttrChange:
-        return attrName == hrefAttr;
-    case InvalidateOnItemAttrChange:
-#if ENABLE(MICRODATA)
-        return attrName == itemscopeAttr || attrName == itempropAttr || attrName == itemtypeAttr;
-#endif // Intentionally fall through
-    case DoNotInvalidateOnAttributeChanges:
-        ASSERT_NOT_REACHED();
-        return false;
-    case InvalidateOnAnyAttrChange:
-        return true;
-    }
-    return false;
 }
 
 bool Document::shouldInvalidateNodeListCaches(const QualifiedName* attrName) const
 {
     if (attrName) {
         for (int type = DoNotInvalidateOnAttributeChanges + 1; type < numNodeListInvalidationTypes; type++) {
-            if (m_nodeListCounts[type] && shouldInvalidateNodeListForType(static_cast<NodeListInvalidationType>(type), *attrName))
+            if (m_nodeListCounts[type] && DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(static_cast<NodeListInvalidationType>(type), *attrName))
                 return true;
         }
         return false;
