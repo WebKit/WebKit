@@ -277,7 +277,8 @@ static bool stringIsEqualToCString(const String& string, const CString& cString)
 bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, WKHitTestResultRef wkHitTestResult)
 {
     WebKitHitTestResultPrivate* priv = hitTestResult->priv;
-    return stringIsEqualToCString(toImpl(wkHitTestResult)->absoluteLinkURL(), priv->linkURI)
+    return WKHitTestResultIsContentEditable(wkHitTestResult) == webkit_hit_test_result_context_is_editable(hitTestResult)
+        && stringIsEqualToCString(toImpl(wkHitTestResult)->absoluteLinkURL(), priv->linkURI)
         && stringIsEqualToCString(toImpl(wkHitTestResult)->linkTitle(), priv->linkTitle)
         && stringIsEqualToCString(toImpl(wkHitTestResult)->linkLabel(), priv->linkLabel)
         && stringIsEqualToCString(toImpl(wkHitTestResult)->absoluteImageURL(), priv->imageURI)

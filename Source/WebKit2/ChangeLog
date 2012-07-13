@@ -1,3 +1,16 @@
+2012-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView::mouse-target-changed is not emitted when moved to/from edtiable content
+        https://bugs.webkit.org/show_bug.cgi?id=91216
+
+        Reviewed by Xan Lopez.
+
+        The problem is that the function to check whether two hit test
+        results are equal doesn't check the editable flag.
+
+        * UIProcess/API/gtk/WebKitHitTestResult.cpp:
+        (webkitHitTestResultCompare): Check also the editable flag.
+
 2012-07-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Add *explicit* keyword to constructor which has a parameter
