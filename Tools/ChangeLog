@@ -1,3 +1,11 @@
+2012-07-12  Adam Barth  <abarth@webkit.org>
+
+        Fix crash in the commit-queue.  We need to initialize self.port during __init__.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (CommitQueue.__init__):
+        (CommitQueue.begin_work_queue):
+
 2012-07-12  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: rename test_finder to finder

@@ -260,14 +260,15 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     name = "commit-queue"
     port_name = "chromium-xvfb"
 
+    def __init__(self):
+        AbstractPatchQueue.__init__(self)
+        self.port = DeprecatedPort.port(self.port_name)
+
     # AbstractPatchQueue methods
 
     def begin_work_queue(self):
-        if not self._options.port:
-            self.port = DeprecatedPort.port(self.port_name)
-            # FIXME: This violates abstraction
-            self._tool._deprecated_port = self.port
-
+        # FIXME: This violates abstraction
+        self._tool._deprecated_port = self.port
         AbstractPatchQueue.begin_work_queue(self)
         self.committer_validator = CommitterValidator(self._tool)
         self._expected_failures = ExpectedFailures()
