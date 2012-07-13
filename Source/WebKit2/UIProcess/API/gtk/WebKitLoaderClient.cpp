@@ -66,8 +66,13 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
         return;
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(clientInfo);
-    WebKitURIResponse* response = webkit_web_resource_get_response(webkit_web_view_get_main_resource(webView));
-    webkitURIResponseSetCertificateInfo(response, WKFrameGetCertificateInfo(frame));
+    WebKitWebResource* resource = webkit_web_view_get_main_resource(webView);
+    if (resource) {
+        // We might not have a resource if this load is a content replacement.
+        // FIXME: For some reason, when going back/forward this callback is emitted even before
+        // didInitiateLoadForResource(), so we don't have a main resource at this point either.
+        webkitURIResponseSetCertificateInfo(webkit_web_resource_get_response(resource), WKFrameGetCertificateInfo(frame));
+    }
 
     webkitWebViewLoadChanged(webView, WEBKIT_LOAD_COMMITTED);
 }

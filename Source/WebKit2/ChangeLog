@@ -1,3 +1,23 @@
+2012-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKit2 crash when going back/forward
+        https://bugs.webkit.org/show_bug.cgi?id=91220
+
+        Reviewed by Xan Lopez.
+
+        For some reason when a page is loaded from the backforward list,
+        when the didCommitLoadForFrame callback is called for the main
+        frame, the callback didInitiateLoadForResource hasn't been called
+        yet, so we don't even have a main resource at that point. We were
+        assuming we always had a main resource with a response. For now we
+        just check whether we have a resource before trying to set the
+        certificate to fix the crash, but we need to figue out why this is
+        happening an how to properly fix it.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (didCommitLoadForFrame): Check whether we have a main resource
+        before setting the certificate.
+
 2012-07-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use eina stringsharing for Ewk_Web_Resource's url
