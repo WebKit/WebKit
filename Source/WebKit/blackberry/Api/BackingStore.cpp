@@ -77,9 +77,6 @@ namespace WebKit {
 
 const int s_renderTimerTimeout = 1.0;
 WebPage* BackingStorePrivate::s_currentBackingStoreOwner = 0;
-Platform::Graphics::Buffer* BackingStorePrivate::s_overScrollImage = 0;
-std::string BackingStorePrivate::s_overScrollImagePath;
-Platform::IntSize BackingStorePrivate::s_overScrollImageSize;
 
 typedef std::pair<int, int> Divisor;
 typedef Vector<Divisor> DivisorList;
@@ -1219,52 +1216,6 @@ void BackingStorePrivate::copyPreviousContentsToBackSurfaceOfTile(const Platform
     }
 }
 
-bool BackingStorePrivate::ensureOverScrollImage()
-{
-    std::string path = m_webPage->settings()->overScrollImagePath().utf8();
-    if (path == "")
-        return false;
-
-    if (s_overScrollImage && path == s_overScrollImagePath)
-        return true;
-
-    std::string imagePath = Platform::Client::get()->getApplicationLocalDirectory() + path;
-
-    SkBitmap bitmap;
-    if (!SkImageDecoder::DecodeFile(imagePath.c_str(), &bitmap)) {
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
-                    "BackingStorePrivate::ensureOverScrollImage could not decode overscroll image: %s", imagePath.c_str());
-        return false;
-    }
-
-    destroyBuffer(s_overScrollImage);
-    s_overScrollImage = createBuffer(Platform::IntSize(bitmap.width(), bitmap.height()), Platform::Graphics::TemporaryBuffer);
-
-    SkCanvas* canvas = Platform::Graphics::lockBufferDrawable(s_overScrollImage);
-    if (!canvas) {
-        destroyBuffer(s_overScrollImage);
-        s_overScrollImage = 0;
-        return false;
-    }
-
-    SkPaint paint;
-    paint.setXfermodeMode(SkXfermode::kSrc_Mode);
-    paint.setFlags(SkPaint::kAntiAlias_Flag);
-    paint.setFilterBitmap(true);
-
-    SkRect rect = SkRect::MakeXYWH(0, 0, bitmap.width(), bitmap.height());
-    canvas->save();
-    canvas->drawBitmapRect(bitmap, 0, rect, &paint);
-    canvas->restore();
-
-    Platform::Graphics::releaseBufferDrawable(s_overScrollImage);
-
-    s_overScrollImageSize = Platform::IntSize(bitmap.width(), bitmap.height());
-    s_overScrollImagePath = path;
-
-    return true;
-}
-
 void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& contents,
                                                  const WebCore::TransformationMatrix& transformation,
                                                  bool flush)
@@ -1273,11 +1224,8 @@ void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& conten
     Platform::IntPoint origin = contents.location();
     Platform::IntRect contentsClipped = contents;
 
-
     // We have to paint the default background in the case of overzoom and
     // make sure it is invalidated.
-    Color color(m_webPage->settings()->overZoomColor());
-
     Platform::IntRectRegion overScrollRegion
             = Platform::IntRectRegion::subtractRegions(Platform::IntRect(contentsClipped), contentsRect);
 
@@ -1294,21 +1242,13 @@ void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& conten
             overScrollRect.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
         }
 
-        if (ensureOverScrollImage()) {
-            // Tile the image on the window region.
-            Platform::IntRect dstRect;
-            for (int y = overScrollRect.y(); y < overScrollRect.y() + overScrollRect.height(); y += dstRect.height()) {
-                for (int x = overScrollRect.x(); x < overScrollRect.x() + overScrollRect.width(); x += dstRect.width()) {
-                    Platform::IntRect imageRect = Platform::IntRect(Platform::IntPoint(x - (x % s_overScrollImageSize.width()),
-                            y - (y % s_overScrollImageSize.height())), s_overScrollImageSize);
-                    dstRect = imageRect;
-                    dstRect.intersect(overScrollRect);
-                    Platform::IntRect srcRect = Platform::IntRect(x - imageRect.x(), y - imageRect.y(), dstRect.width(), dstRect.height());
-                    blitToWindow(dstRect, s_overScrollImage, srcRect, false, 255);
-                }
-            }
-        } else
+        if (m_webPage->settings()->isEnableDefaultOverScrollBackground()) {
+            fillWindow(BlackBerry::Platform::Graphics::DefaultBackgroundPattern,
+                overScrollRect, overScrollRect.location(), 1.0 /*contentsScale*/);
+        } else {
+            Color color(m_webPage->settings()->overScrollColor());
             clearWindow(overScrollRect, color.red(), color.green(), color.blue(), color.alpha());
+        }
     }
 }
 
@@ -1426,7 +1366,8 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 #if DEBUG_CHECKERBOARD
                 blitCheckered = true;
 #endif
-                checkerWindow(dstRect, checkeredRects.at(i).location(), transformation.a());
+                fillWindow(BlackBerry::Platform::Graphics::CheckerboardPattern,
+                    dstRect, checkeredRects.at(i).location(), transformation.a());
             }
         }
 
@@ -1485,7 +1426,8 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 #if DEBUG_CHECKERBOARD
                 blitCheckered = true;
 #endif
-                checkerWindow(dirtyRectT, contentsOrigin, transformation.a());
+                fillWindow(BlackBerry::Platform::Graphics::CheckerboardPattern,
+                    dirtyRectT, contentsOrigin, transformation.a());
             }
 
             // Blit the visible buffer here if we have visible zoom jobs.
@@ -2507,9 +2449,10 @@ void BackingStorePrivate::blitToWindow(const Platform::IntRect& dstRect,
 
 }
 
-void BackingStorePrivate::checkerWindow(const Platform::IntRect& dstRect,
-                                        const Platform::IntPoint& contentsOrigin,
-                                        double contentsScale)
+void BackingStorePrivate::fillWindow(Platform::Graphics::FillPattern pattern,
+                                     const Platform::IntRect& dstRect,
+                                     const Platform::IntPoint& contentsOrigin,
+                                     double contentsScale)
 {
     ASSERT(BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread());
 
@@ -2519,11 +2462,9 @@ void BackingStorePrivate::checkerWindow(const Platform::IntRect& dstRect,
     BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
     if (!dstBuffer)
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelWarn, "Empty window buffer, couldn't checkerWindow");
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelWarn, "Empty window buffer, couldn't fillWindow");
 
-    Color color(m_webPage->settings()->backgroundColor());
-    unsigned char alpha = color.alpha();
-    BlackBerry::Platform::Graphics::checkerBuffer(dstBuffer, dstRect, contentsOrigin, contentsScale, alpha);
+    BlackBerry::Platform::Graphics::fillBuffer(dstBuffer, pattern, dstRect, contentsOrigin, contentsScale);
 }
 
 void BackingStorePrivate::invalidateWindow()

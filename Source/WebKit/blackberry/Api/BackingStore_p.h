@@ -307,7 +307,7 @@ public:
     void renderContents(Platform::Graphics::Drawable* /*drawable*/, const Platform::IntRect& /*contentsRect*/, const Platform::IntSize& /*destinationSize*/) const;
 
     void blitToWindow(const Platform::IntRect& dstRect, const BlackBerry::Platform::Graphics::Buffer* srcBuffer, const Platform::IntRect& srcRect, bool blend, unsigned char globalAlpha);
-    void checkerWindow(const Platform::IntRect& dstRect, const Platform::IntPoint& contentsOrigin, double contentsScale);
+    void fillWindow(Platform::Graphics::FillPattern, const Platform::IntRect& dstRect, const Platform::IntPoint& contentsOrigin, double contentsScale);
 
     void invalidateWindow();
     void invalidateWindow(const Platform::IntRect& dst);
@@ -334,8 +334,6 @@ public:
     // Surface abstraction, maybe BlackBerry::Platform::Graphics::Buffer could be made public instead.
     BlackBerry::Platform::IntSize surfaceSize() const;
     BlackBerry::Platform::Graphics::Buffer* buffer() const;
-
-    bool ensureOverScrollImage();
 
     static WebPage* s_currentBackingStoreOwner;
 
@@ -377,10 +375,6 @@ public:
     mutable bool m_needsDrawLayersOnCommit; // Not thread safe, WebKit thread only
     bool m_isDirectRenderingAnimationMessageScheduled;
 #endif
-
-    static Platform::Graphics::Buffer* s_overScrollImage;
-    static std::string s_overScrollImagePath;
-    static Platform::IntSize s_overScrollImageSize;
 
 protected:
     virtual ~BackingStorePrivate();

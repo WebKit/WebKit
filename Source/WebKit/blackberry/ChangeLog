@@ -1,3 +1,39 @@
+2012-07-13  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Use fillBuffer() instead of a user-defined background image.
+        https://bugs.webkit.org/show_bug.cgi?id=91180
+        RIM PR 171458
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Andrew Lo.
+
+        By using Platform::Graphics::fillBuffer() to fill the
+        overscroll area, we save graphics memory for the buffer
+        that the background image was occupying.
+
+        Also adapt checkerboard drawing as it is now done using
+        fillBuffer() which replaces checkerBuffer().
+
+        In the same go, use the opportunity of the WebSettings
+        API change to make it more consistent, renaming the
+        OverZoomColor setting to OverScrollColor.
+
+        * Api/BackingStore.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::paintDefaultBackground):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (BlackBerry::WebKit::BackingStorePrivate::fillWindow):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        (BlackBerry::WebKit::WebSettings::overScrollColor):
+        (BlackBerry::WebKit::WebSettings::setOverScrollColor):
+        (BlackBerry::WebKit::WebSettings::isEnableDefaultOverScrollBackground):
+        (BlackBerry::WebKit::WebSettings::setEnableDefaultOverScrollBackground):
+        * Api/WebSettings.h:
+
 2012-07-13  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Update about:* pages

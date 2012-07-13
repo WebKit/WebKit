@@ -48,8 +48,8 @@ DEFINE_STATIC_LOCAL(String, BlackBerryHandlePatternURLs, ("BlackBerryHandlePatte
 DEFINE_STATIC_LOCAL(String, BlackBerryInitialScale, ("BlackBerryInitialScale"));
 DEFINE_STATIC_LOCAL(String, BlackBerryLinksHandledExternallyEnabled, ("BlackBerryLinksHandledExternallyEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryMaxPluginInstances, ("BlackBerryMaxPluginInstances"));
-DEFINE_STATIC_LOCAL(String, BlackBerryOverZoomColor, ("BlackBerryOverZoomColor"));
-DEFINE_STATIC_LOCAL(String, BlackBerryOverScrollImagePath, ("BlackBerryOverScrollImagePath"));
+DEFINE_STATIC_LOCAL(String, BlackBerryOverScrollColor, ("BlackBerryOverScrollColor"));
+DEFINE_STATIC_LOCAL(String, BlackBerryEnableDefaultOverScrollBackground, ("BlackBerryEnableDefaultOverScrollBackground"));
 DEFINE_STATIC_LOCAL(String, BlackBerryRenderAnimationsOnScrollOrZoomEnabled, ("BlackBerryRenderAnimationsOnScrollOrZoomEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryScrollbarsEnabled, ("BlackBerryScrollbarsEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryTextReflowMode, ("BlackBerryTextReflowMode"));
@@ -164,8 +164,8 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setBoolean(BlackBerryCookiesEnabled, true);
     settings->m_private->setDouble(BlackBerryInitialScale, -1);
     settings->m_private->setUnsigned(BlackBerryMaxPluginInstances, 1);
-    settings->m_private->setUnsigned(BlackBerryOverZoomColor, WebCore::Color::white);
-    settings->m_private->setString(BlackBerryOverScrollImagePath, "");
+    settings->m_private->setUnsigned(BlackBerryOverScrollColor, WebCore::Color::white);
+    settings->m_private->setBoolean(BlackBerryEnableDefaultOverScrollBackground, true);
     settings->m_private->setBoolean(BlackBerryScrollbarsEnabled, true);
 
     // FIXME: We should detect whether we are embedded in a browser or an email client and default to TextReflowEnabledOnlyForBlockZoom and TextReflowEnabled, respectively.
@@ -707,24 +707,24 @@ void WebSettings::setShouldRenderAnimationsOnScrollOrZoom(bool enable)
     m_private->setBoolean(BlackBerryRenderAnimationsOnScrollOrZoomEnabled, enable);
 }
 
-unsigned WebSettings::overZoomColor() const
+unsigned WebSettings::overScrollColor() const
 {
-    return m_private->getUnsigned(BlackBerryOverZoomColor);
+    return m_private->getUnsigned(BlackBerryOverScrollColor);
 }
 
-void WebSettings::setOverZoomColor(unsigned color)
+void WebSettings::setOverScrollColor(unsigned color)
 {
-    m_private->setUnsigned(BlackBerryOverZoomColor, color);
+    m_private->setUnsigned(BlackBerryOverScrollColor, color);
 }
 
-WebString WebSettings::overScrollImagePath() const
+bool WebSettings::isEnableDefaultOverScrollBackground() const
 {
-    return m_private->getString(BlackBerryOverScrollImagePath);
+    return m_private->getBoolean(BlackBerryEnableDefaultOverScrollBackground);
 }
 
-void WebSettings::setOverScrollImagePath(const char* path)
+void WebSettings::setEnableDefaultOverScrollBackground(bool enabled)
 {
-    m_private->setString(BlackBerryOverScrollImagePath, path);
+    m_private->setBoolean(BlackBerryEnableDefaultOverScrollBackground, enabled);
 }
 
 unsigned WebSettings::backgroundColor() const
