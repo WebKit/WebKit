@@ -1,3 +1,19 @@
+2012-07-13  Oliver Hunt  <oliver@apple.com>
+
+        LLInt fails to mark structures stored in the bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=91296
+
+        Reviewed by Geoffrey Garen.
+
+        LLInt stores structures in the bytecode, so we need to visit the appropriate
+        instructions as we would if we were running in the classic interpreter.
+        This requires adding additional checks for the LLInt specific opcodes, and
+        the lint specific variants of operand ordering. 
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitStructures):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+
 2012-07-13  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Implement GCActivityCallback with platform timer

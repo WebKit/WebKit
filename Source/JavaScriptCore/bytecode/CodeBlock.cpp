@@ -1840,11 +1840,11 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC)
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) && vPC[4].u.structure) {
+    if ((vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_out_of_line)) && vPC[4].u.structure) {
         visitor.append(&vPC[4].u.structure);
         return;
     }
-
+    
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self)) {
         visitor.append(&vPC[4].u.structure);
         return;
@@ -1860,6 +1860,16 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC)
             visitor.append(&vPC[5].u.structureChain);
         return;
     }
+#if ENABLE(LLINT)
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition_direct) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition_direct_out_of_line) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition_normal) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition_normal_out_of_line)) {
+        visitor.append(&vPC[4].u.structure);
+        visitor.append(&vPC[6].u.structure);
+        if (vPC[7].u.structureChain)
+            visitor.append(&vPC[7].u.structureChain);
+        return;
+    }
+#endif
+        
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
         visitor.append(&vPC[4].u.structure);
         visitor.append(&vPC[5].u.structure);
@@ -1867,7 +1877,7 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC)
             visitor.append(&vPC[6].u.structureChain);
         return;
     }
-    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) && vPC[4].u.structure) {
+    if ((vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_out_of_line)) && vPC[4].u.structure) {
         visitor.append(&vPC[4].u.structure);
         return;
     }
@@ -2232,6 +2242,14 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
         visitor.append(&m_functionDecls[i]);
 #if ENABLE(CLASSIC_INTERPRETER)
     if (m_globalData->interpreter->classicEnabled() && !!numberOfInstructions()) {
+        for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
+            visitStructures(visitor, &instructions()[m_propertyAccessInstructions[i]]);
+        for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i)
+            visitStructures(visitor, &instructions()[m_globalResolveInstructions[i]]);
+    }
+#endif
+#if ENABLE(LLINT)
+    if (!m_globalData->interpreter->classicEnabled() && !!numberOfInstructions() && getJITType() < JITCode::bottomTierJIT()) {
         for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
             visitStructures(visitor, &instructions()[m_propertyAccessInstructions[i]]);
         for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i)
