@@ -564,7 +564,6 @@ EOF
                     filepaths = from_filepath, to_filepath
 
                     binary_contents = filepaths.collect { |filepath| File.exists?(filepath) ? File.read(filepath) : nil }
-
                     @image_urls = binary_contents.collect { |content| (content and not content.empty?) ? "data:image/png;base64," + [content].pack("m") : nil }
                     @image_checksums = binary_contents.collect { |content| FileDiff.read_checksum_from_png(content) }
                 rescue
@@ -586,7 +585,7 @@ EOF
             image_checksum = ""
             if @image_checksum
                 image_checksum = @image_checksum
-            elsif @filename.include? "-expected.png"
+            elsif @filename.include? "-expected.png" and @image_url
                 image_checksum = IMAGE_CHECKSUM_ERROR
             end
 
@@ -611,7 +610,7 @@ EOF
 
                         if image_checksum
                             str += image_checksum
-                        elsif @filename.include? "-expected.png"
+                        elsif @filename.include? "-expected.png" and image_url
                             str += IMAGE_CHECKSUM_ERROR
                         end
 

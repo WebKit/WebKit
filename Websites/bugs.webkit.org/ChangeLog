@@ -1,3 +1,18 @@
+2012-07-13  Ojan Vafai  <ojan@chromium.org>
+
+        PrettyPatch.rb complains about missing checksum for new pixel results
+        https://bugs.webkit.org/show_bug.cgi?id=88368
+
+        Reviewed by Tony Chang.
+
+        When adding or removing a file, we incorrectly iterpreted not having an image
+        as not having a checksum.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * PrettyPatch/PrettyPatch_test.rb:
+        I tried to fix the TempFile issue in these tests, but after a couple hours
+        of banging my head against this, I have no idea what's breaking.
+
 2012-07-11  Alice Cheng  <alice_cheng@apple.com>
 
         Deleting content at the top of prettypatch emails destroys HTML formatting
