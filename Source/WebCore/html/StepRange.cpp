@@ -69,7 +69,7 @@ Decimal StepRange::acceptableError() const
 {
     // FIXME: We should use DBL_MANT_DIG instead of FLT_MANT_DIG regarding to HTML5 specification.
     DEFINE_STATIC_LOCAL(const Decimal, twoPowerOfFloatMantissaBits, (Decimal::Positive, 0, UINT64_C(1) << FLT_MANT_DIG));
-    return m_step / twoPowerOfFloatMantissaBits;
+    return m_stepDescription.stepValueShouldBe == StepValueShouldBeReal ? m_step / twoPowerOfFloatMantissaBits : Decimal(0);
 }
 
 Decimal StepRange::alignValueForStep(const Decimal& currentValue, const Decimal& newValue) const
