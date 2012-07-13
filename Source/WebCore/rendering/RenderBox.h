@@ -290,7 +290,7 @@ public:
     void computeInlineDirectionMargins(RenderBlock* containingBlock, LayoutUnit containerWidth, LayoutUnit childWidth);
 
     // Used to resolve margins in the containing block's block-flow direction.
-    void computeBlockDirectionMargins(RenderBlock* containingBlock);
+    void computeBlockDirectionMargins(const RenderBlock* containingBlock);
 
     enum RenderBoxRegionInfoFlags { CacheRenderBoxRegionInfo, DoNotCacheRenderBoxRegionInfo };
     LayoutRect borderBoxRectInRegion(RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage = 0, RenderBoxRegionInfoFlags = CacheRenderBoxRegionInfo) const;

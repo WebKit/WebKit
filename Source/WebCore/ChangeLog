@@ -1,3 +1,27 @@
+2012-07-13  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=91278
+        Improve block margin estimation function to account for not having a layout and for quirks mode
+        
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::marginBeforeEstimateForChild):
+        Revise marginBeforeEstimateForChild so that it computes block margins for the grandchild before
+        recurring. This includes the quirks margin information as well. This ensures that the margins are
+        up-to-date when checked, even before the object has had its first layout.
+        
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::setMarginStartForChild):
+        (WebCore::RenderBlock::setMarginEndForChild):
+        (WebCore::RenderBlock::setMarginBeforeForChild):
+        (WebCore::RenderBlock::setMarginAfterForChild):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeBlockDirectionMargins):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        Add consts in order to compile.
+
 2012-07-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         NodeLists should not invalidate on irreleavnt attribute changes

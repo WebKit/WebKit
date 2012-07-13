@@ -2334,7 +2334,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
     return containingBlock()->availableLogicalHeight();
 }
 
-void RenderBox::computeBlockDirectionMargins(RenderBlock* containingBlock)
+void RenderBox::computeBlockDirectionMargins(const RenderBlock* containingBlock)
 {
     if (isTableCell()) {
         // FIXME: Not right if we allow cells to have different directionality than the table.  If we do allow this, though,

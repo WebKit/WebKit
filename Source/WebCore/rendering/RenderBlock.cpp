@@ -2091,8 +2091,11 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
 
 void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& positiveMarginBefore, LayoutUnit& negativeMarginBefore) const
 {
-    // FIXME: We could get even more quirks mode cases right if we dealt with quirk containers.
     // FIXME: We should deal with the margin-collapse-* style extensions that prevent collapsing and that discard margins.
+    // Give up if in quirks mode and we're a body/table cell and the top margin of the child box is quirky.
+    if (document()->inQuirksMode() && child->isMarginBeforeQuirk() && (isTableCell() || isBody()))
+        return;
+
     LayoutUnit beforeChildMargin = marginBeforeForChild(child);
     positiveMarginBefore = max(positiveMarginBefore, beforeChildMargin);
     negativeMarginBefore = max(negativeMarginBefore, -beforeChildMargin);
@@ -2117,6 +2120,13 @@ void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& pos
     // Give up if there is clearance on the box, since it probably won't collapse into us.
     if (!grandchildBox || grandchildBox->style()->clear() != CNONE)
         return;
+
+    // Make sure to update the block margins now for the grandchild box so that we're looking at current values.
+    if (grandchildBox->needsLayout()) {
+        grandchildBox->computeBlockDirectionMargins(this); 
+        grandchildBox->setMarginBeforeQuirk(grandchildBox->style()->marginBefore().quirk());
+        grandchildBox->setMarginAfterQuirk(grandchildBox->style()->marginAfter().quirk());
+    }
 
     // Collapse the margin of the grandchild box with our own to produce an estimate.
     childBlock->marginBeforeEstimateForChild(grandchildBox, positiveMarginBefore, negativeMarginBefore);

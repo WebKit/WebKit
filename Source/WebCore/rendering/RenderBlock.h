@@ -295,10 +295,10 @@ public:
     LayoutUnit marginAfterForChild(const RenderBoxModelObject* child) const { return child->marginAfter(style()); }
     LayoutUnit marginStartForChild(const RenderBoxModelObject* child) const { return child->marginStart(style()); }
     LayoutUnit marginEndForChild(const RenderBoxModelObject* child) const { return child->marginEnd(style()); }
-    void setMarginStartForChild(RenderBox* child, LayoutUnit value) { child->setMarginStart(value, style()); }
-    void setMarginEndForChild(RenderBox* child, LayoutUnit value) { child->setMarginEnd(value, style()); }
-    void setMarginBeforeForChild(RenderBox* child, LayoutUnit value) { child->setMarginBefore(value, style()); }
-    void setMarginAfterForChild(RenderBox* child, LayoutUnit value) { child->setMarginAfter(value, style()); }
+    void setMarginStartForChild(RenderBox* child, LayoutUnit value) const { child->setMarginStart(value, style()); }
+    void setMarginEndForChild(RenderBox* child, LayoutUnit value) const { child->setMarginEnd(value, style()); }
+    void setMarginBeforeForChild(RenderBox* child, LayoutUnit value) const { child->setMarginBefore(value, style()); }
+    void setMarginAfterForChild(RenderBox* child, LayoutUnit value) const { child->setMarginAfter(value, style()); }
     LayoutUnit collapsedMarginBeforeForChild(const RenderBox* child) const;
     LayoutUnit collapsedMarginAfterForChild(const RenderBox* child) const;
 
