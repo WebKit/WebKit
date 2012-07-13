@@ -113,3 +113,6 @@ BUGWK84186 SKIP : fast/text-autosizing = PASS
 
 // Dialog element is not yet enabled.
 BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
+
+// Skip tests in fast/text/shaping
+BUGWK90951 SKIP : fast/text/shaping = PASS

@@ -3748,3 +3748,7 @@ BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 
 // Started crashing after 122286
 BUGWK91133 WIN : storage/indexeddb/constants.html = PASS CRASH
+
+// Need rebaseline
+BUGWK90951 : fast/text/shaping/shaping-selection-rect.html = MISSING
+BUGWK90951 : fast/text/shaping/shaping-script-order.html = MISSING

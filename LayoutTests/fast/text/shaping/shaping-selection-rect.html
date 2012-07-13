@@ -1,0 +1,23 @@
+<html>
+<head>
+<style>
+    #target {
+        font-family: "times new roman"; /* non AAT font on mac */
+        -webkit-font-feature-settings: 'kern';
+    };
+</style>
+<script>
+function test()
+{
+    var targetText = document.getElementById("target").firstChild;
+    window.getSelection().setBaseAndExtent(target, 0, target, 9);
+}
+</script>
+</head>
+<body onload="test()">
+<p>The selection should cover the all of the below text. There should be no blank between C and F.
+<div id="target">
+ABC<span style="direction: rtl; unicode-bidi: bidi-override;">DEF</span>GHI
+</div>
+</body>
+</html>

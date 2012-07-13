@@ -32,6 +32,7 @@
 #include "HarfBuzzShaper.h"
 
 #include "Font.h"
+#include "HarfBuzzFace.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 #include "hb-icu.h"
@@ -43,19 +44,47 @@
 
 namespace WebCore {
 
+template<typename T>
+class HarfBuzzScopedPtr {
+public:
+    typedef void (*DestroyFunction)(T*);
+
+    HarfBuzzScopedPtr(T* ptr, DestroyFunction destroy)
+        : m_ptr(ptr)
+        , m_destroy(destroy)
+    {
+        ASSERT(m_destroy);
+    }
+    ~HarfBuzzScopedPtr()
+    {
+        if (m_ptr)
+            (*m_destroy)(m_ptr);
+    }
+
+    T* get() { return m_ptr; }
+private:
+    T* m_ptr;
+    DestroyFunction m_destroy;
+};
+
 static inline float harfbuzzPositionToFloat(hb_position_t value)
 {
     return static_cast<float>(value) / (1 << 16);
 }
 
-HarfBuzzShaper::HarfBuzzRun::HarfBuzzRun(unsigned numCharacters, TextDirection direction, hb_buffer_t* harfbuzzBuffer)
-    : m_numCharacters(numCharacters)
+HarfBuzzShaper::HarfBuzzRun::HarfBuzzRun(const SimpleFontData* fontData, unsigned startIndex, unsigned numCharacters, TextDirection direction)
+    : m_fontData(fontData)
+    , m_startIndex(startIndex)
+    , m_numCharacters(numCharacters)
     , m_direction(direction)
+{
+}
+
+void HarfBuzzShaper::HarfBuzzRun::applyShapeResult(hb_buffer_t* harfbuzzBuffer)
 {
     m_numGlyphs = hb_buffer_get_length(harfbuzzBuffer);
     m_glyphs.resize(m_numGlyphs);
     m_advances.resize(m_numGlyphs);
-    m_offsets.resize(m_numGlyphs);
     m_glyphToCharacterIndex.resize(m_numGlyphs);
     m_logClusters.resize(m_numCharacters);
 
@@ -82,10 +111,9 @@ HarfBuzzShaper::HarfBuzzRun::HarfBuzzRun(unsigned numCharacters, TextDirection d
     }
 }
 
-void HarfBuzzShaper::HarfBuzzRun::setGlyphAndPositions(unsigned index, uint16_t glyphId, float x, float y, float advance)
+void HarfBuzzShaper::HarfBuzzRun::setGlyphAndAdvance(unsigned index, uint16_t glyphId, float advance)
 {
     m_glyphs[index] = glyphId;
-    m_offsets[index].set(x, y);
     m_advances[index] = advance;
 }
 
@@ -106,31 +134,49 @@ int HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition(int targetX)
     return rtl() ? 0 : m_numCharacters;
 }
 
-int HarfBuzzShaper::HarfBuzzRun::xPositionForOffset(unsigned offset)
+float HarfBuzzShaper::HarfBuzzRun::xPositionForOffset(unsigned offset)
 {
     ASSERT(offset < m_numCharacters);
     unsigned glyphIndex = m_logClusters[offset];
-    ASSERT(glyphIndex < m_numGlyphs);
-    float position = m_offsets[glyphIndex].x();
+    ASSERT(glyphIndex <= m_numGlyphs);
+    float position = 0;
+    for (unsigned i = 0; i < glyphIndex; ++i)
+        position += m_advances[i];
     if (rtl())
         position += m_advances[glyphIndex];
-    return roundf(position);
+    return position;
+}
+
+static void normalizeCharacters(const UChar* source, UChar* destination, int length)
+{
+    int position = 0;
+    bool error = false;
+    while (position < length) {
+        UChar32 character;
+        int nextPosition = position;
+        U16_NEXT(source, nextPosition, length, character);
+        if (Font::treatAsSpace(character))
+            character = ' ';
+        else if (Font::treatAsZeroWidthSpaceInComplexScript(character))
+            character = zeroWidthSpace;
+        U16_APPEND(destination, position, length, character, error);
+        ASSERT_UNUSED(error, !error);
+        position = nextPosition;
+    }
 }
 
 HarfBuzzShaper::HarfBuzzShaper(const Font* font, const TextRun& run)
     : HarfBuzzShaperBase(font, run)
-    , m_startIndexOfCurrentRun(0)
-    , m_numCharactersOfCurrentRun(0)
-    , m_harfbuzzBuffer(0)
 {
-    setNormalizedBuffer();
+    m_normalizedBuffer = adoptArrayPtr(new UChar[m_run.length() + 1]);
+    m_normalizedBufferLength = m_run.length();
+    normalizeCharacters(m_run.characters(), m_normalizedBuffer.get(), m_normalizedBufferLength);
+    setPadding(m_run.expansion());
     setFontFeatures();
 }
 
 HarfBuzzShaper::~HarfBuzzShaper()
 {
-    if (m_harfbuzzBuffer)
-        hb_buffer_destroy(m_harfbuzzBuffer);
 }
 
 void HarfBuzzShaper::setFontFeatures()
@@ -152,101 +198,101 @@ void HarfBuzzShaper::setFontFeatures()
 
 bool HarfBuzzShaper::shape(GlyphBuffer* glyphBuffer)
 {
-    m_totalWidth = 0;
-    while (setupHarfBuzzRun()) {
-        if (!shapeHarfBuzzRun())
-            return false;
-        setGlyphPositionsForHarfBuzzRun(glyphBuffer);
-    }
-
-    if (!m_harfbuzzRuns.size())
+    if (!collectHarfBuzzRuns())
         return false;
 
+    m_totalWidth = 0;
+    if (!shapeHarfBuzzRuns(glyphBuffer))
+        return false;
+    m_totalWidth = roundf(m_totalWidth);
     return true;
 }
 
-bool HarfBuzzShaper::setupHarfBuzzRun()
+FloatPoint HarfBuzzShaper::adjustStartPoint(const FloatPoint& point)
 {
-    m_startIndexOfCurrentRun += m_numCharactersOfCurrentRun;
+    return point + m_startOffset;
+}
 
-    // Iterate through the text to take the largest range that stays within
-    // a single font.
-    int endOfRunIndex = m_normalizedBufferLength - m_startIndexOfCurrentRun;
-    SurrogatePairAwareTextIterator iterator(m_normalizedBuffer.get() + m_startIndexOfCurrentRun, 0, endOfRunIndex, endOfRunIndex);
+bool HarfBuzzShaper::collectHarfBuzzRuns()
+{
+    SurrogatePairAwareTextIterator iterator(m_normalizedBuffer.get(), 0, m_normalizedBufferLength, m_normalizedBufferLength);
     UChar32 character;
     unsigned clusterLength = 0;
+    unsigned startIndexOfCurrentRun = 0;
     if (!iterator.consume(character, clusterLength))
         return false;
 
-    m_currentFontData = m_font->glyphDataForCharacter(character, false).fontData;
+    const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(character, false).fontData;
     UErrorCode errorCode = U_ZERO_ERROR;
-    UScriptCode currentScript = uscript_getScript(character, &errorCode);
+    UScriptCode nextScript = uscript_getScript(character, &errorCode);
     if (U_FAILURE(errorCode))
         return false;
-    if (currentScript == USCRIPT_INHERITED)
-        currentScript = USCRIPT_COMMON;
-    for (iterator.advance(clusterLength); iterator.consume(character, clusterLength); iterator.advance(clusterLength)) {
-        const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(character, false).fontData;
-        if (nextFontData != m_currentFontData)
-            break;
-        UScriptCode nextScript = uscript_getScript(character, &errorCode);
-        if (U_FAILURE(errorCode))
+
+    do {
+        const SimpleFontData* currentFontData = nextFontData;
+        UScriptCode currentScript = nextScript;
+
+        for (iterator.advance(clusterLength); iterator.consume(character, clusterLength); iterator.advance(clusterLength)) {
+            nextFontData = m_font->glyphDataForCharacter(character, false).fontData;
+            if (nextFontData != currentFontData)
+                break;
+            nextScript = uscript_getScript(character, &errorCode);
+            if (U_FAILURE(errorCode))
+                return false;
+            if ((currentScript != nextScript) && (currentScript != USCRIPT_INHERITED))
+                break;
+        }
+        unsigned numCharactersOfCurrentRun = iterator.currentCharacter() - startIndexOfCurrentRun;
+        m_harfbuzzRuns.append(HarfBuzzRun::create(currentFontData, startIndexOfCurrentRun, numCharactersOfCurrentRun, m_run.direction()));
+        currentFontData = nextFontData;
+        startIndexOfCurrentRun = iterator.currentCharacter();
+    } while (iterator.consume(character, clusterLength));
+
+    return !m_harfbuzzRuns.isEmpty();
+}
+
+bool HarfBuzzShaper::shapeHarfBuzzRuns(GlyphBuffer* glyphBuffer)
+{
+    HarfBuzzScopedPtr<hb_buffer_t> harfbuzzBuffer(hb_buffer_create(), hb_buffer_destroy);
+    hb_buffer_set_unicode_funcs(harfbuzzBuffer.get(), hb_icu_get_unicode_funcs());
+    if (m_run.directionalOverride())
+        hb_buffer_set_direction(harfbuzzBuffer.get(), m_run.rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
+
+    for (unsigned i = 0; i < m_harfbuzzRuns.size(); ++i) {
+        unsigned runIndex = m_run.rtl() ? m_harfbuzzRuns.size() - i - 1 : i;
+        HarfBuzzRun* currentRun = m_harfbuzzRuns[runIndex].get();
+        const SimpleFontData* currentFontData = currentRun->fontData();
+
+        if (m_font->isSmallCaps() && u_islower(m_normalizedBuffer[currentRun->startIndex()])) {
+            String upperText = String(m_normalizedBuffer.get() + currentRun->startIndex(), currentRun->numCharacters());
+            upperText.makeUpper();
+            currentFontData = m_font->glyphDataForCharacter(upperText[0], false, SmallCapsVariant).fontData;
+            hb_buffer_add_utf16(harfbuzzBuffer.get(), upperText.characters(), currentRun->numCharacters(), 0, currentRun->numCharacters());
+        } else
+            hb_buffer_add_utf16(harfbuzzBuffer.get(), m_normalizedBuffer.get() + currentRun->startIndex(), currentRun->numCharacters(), 0, currentRun->numCharacters());
+
+        FontPlatformData* platformData = const_cast<FontPlatformData*>(&currentFontData->platformData());
+        HarfBuzzFace* face = platformData->harfbuzzFace();
+        if (!face)
             return false;
-        if (currentScript == nextScript || nextScript == USCRIPT_INHERITED || nextScript == USCRIPT_COMMON)
-            continue;
-        if (currentScript == USCRIPT_COMMON)
-            currentScript = nextScript;
-        else
-            break;
+        HarfBuzzScopedPtr<hb_font_t> harfbuzzFont(face->createFont(), hb_font_destroy);
+        hb_shape(harfbuzzFont.get(), harfbuzzBuffer.get(), m_features.isEmpty() ? 0 : m_features.data(), m_features.size());
+
+        currentRun->applyShapeResult(harfbuzzBuffer.get());
+        setGlyphPositionsForHarfBuzzRun(currentRun, i, harfbuzzBuffer.get(), glyphBuffer);
+
+        hb_buffer_reset(harfbuzzBuffer.get());
+        if (m_run.directionalOverride())
+            hb_buffer_set_direction(harfbuzzBuffer.get(), m_run.rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
     }
-    m_numCharactersOfCurrentRun = iterator.currentCharacter();
-
-    if (!m_harfbuzzBuffer) {
-        m_harfbuzzBuffer = hb_buffer_create();
-        hb_buffer_set_unicode_funcs(m_harfbuzzBuffer, hb_icu_get_unicode_funcs());
-    } else
-        hb_buffer_reset(m_harfbuzzBuffer);
-    hb_buffer_set_script(m_harfbuzzBuffer, hb_icu_script_to_script(currentScript));
-
-    // WebKit always sets direction to LTR during width calculation.
-    // We only set direction when direction is explicitly set to RTL so that
-    // preventng wrong width calculation.
-    if (m_run.rtl())
-        hb_buffer_set_direction(m_harfbuzzBuffer, HB_DIRECTION_RTL);
-
-    // Determine whether this run needs to be converted to small caps.
-    // nextScriptRun() will always send us a run of the same case, because a
-    // case change while in small-caps mode always results in different
-    // FontData, so we only need to check the first character's case.
-    if (m_font->isSmallCaps() && u_islower(m_normalizedBuffer[m_startIndexOfCurrentRun])) {
-        String upperText = String(m_normalizedBuffer.get() + m_startIndexOfCurrentRun, m_numCharactersOfCurrentRun);
-        upperText.makeUpper();
-        m_currentFontData = m_font->glyphDataForCharacter(upperText[0], false, SmallCapsVariant).fontData;
-        hb_buffer_add_utf16(m_harfbuzzBuffer, upperText.characters(), m_numCharactersOfCurrentRun, 0, m_numCharactersOfCurrentRun);
-    } else
-        hb_buffer_add_utf16(m_harfbuzzBuffer, m_normalizedBuffer.get() + m_startIndexOfCurrentRun, m_numCharactersOfCurrentRun, 0, m_numCharactersOfCurrentRun);
-
     return true;
 }
 
-bool HarfBuzzShaper::shapeHarfBuzzRun()
+void HarfBuzzShaper::setGlyphPositionsForHarfBuzzRun(HarfBuzzRun* currentRun, unsigned runIndexInVisualOrder, hb_buffer_t* harfbuzzBuffer, GlyphBuffer* glyphBuffer)
 {
-    FontPlatformData* platformData = const_cast<FontPlatformData*>(&m_currentFontData->platformData());
-    HarfBuzzFace* face = platformData->harfbuzzFace();
-    if (!face)
-        return false;
-    hb_font_t* harfbuzzFont = face->createFont();
-    hb_shape(harfbuzzFont, m_harfbuzzBuffer, m_features.size() > 0 ? m_features.data() : 0, m_features.size());
-    hb_font_destroy(harfbuzzFont);
-    m_harfbuzzRuns.append(HarfBuzzRun::create(m_numCharactersOfCurrentRun, m_run.direction(), m_harfbuzzBuffer));
-    return true;
-}
-
-void HarfBuzzShaper::setGlyphPositionsForHarfBuzzRun(GlyphBuffer* glyphBuffer)
-{
-    hb_glyph_info_t* glyphInfos = hb_buffer_get_glyph_infos(m_harfbuzzBuffer, 0);
-    hb_glyph_position_t* glyphPositions = hb_buffer_get_glyph_positions(m_harfbuzzBuffer, 0);
-    HarfBuzzRun* currentRun = m_harfbuzzRuns.last().get();
+    const SimpleFontData* currentFontData = currentRun->fontData();
+    hb_glyph_info_t* glyphInfos = hb_buffer_get_glyph_infos(harfbuzzBuffer, 0);
+    hb_glyph_position_t* glyphPositions = hb_buffer_get_glyph_positions(harfbuzzBuffer, 0);
 
     unsigned numGlyphs = currentRun->numGlyphs();
     float totalAdvance = 0;
@@ -262,26 +308,29 @@ void HarfBuzzShaper::setGlyphPositionsForHarfBuzzRun(GlyphBuffer* glyphBuffer)
         nextOffsetX = runEnd ? 0 : harfbuzzPositionToFloat(glyphPositions[i + 1].x_offset);
         nextOffsetY = runEnd ? 0 : -harfbuzzPositionToFloat(glyphPositions[i + 1].y_offset);
 
-        unsigned currentCharacterIndex = m_startIndexOfCurrentRun + glyphInfos[i].cluster;
+        unsigned currentCharacterIndex = currentRun->startIndex() + glyphInfos[i].cluster;
         bool isClusterEnd = runEnd || glyphInfos[i].cluster != glyphInfos[i + 1].cluster;
         float spacing = isClusterEnd ? m_letterSpacing : 0;
 
         if (isClusterEnd && isWordEnd(currentCharacterIndex))
             spacing += determineWordBreakSpacing();
 
-        if (m_currentFontData->isZeroWidthSpaceGlyph(glyph)) {
-            currentRun->setGlyphAndPositions(i, glyph, 0, 0, 0);
+        if (currentFontData->isZeroWidthSpaceGlyph(glyph)) {
+            currentRun->setGlyphAndAdvance(i, glyph, 0);
             if (glyphBuffer)
-                glyphBuffer->add(glyph, m_currentFontData, createGlyphBufferAdvance(0, 0));
+                glyphBuffer->add(glyph, currentFontData, createGlyphBufferAdvance(0, 0));
             continue;
         }
 
         advance += spacing;
-        currentRun->setGlyphAndPositions(i, glyph, totalAdvance + offsetX, offsetY, advance);
+
+        currentRun->setGlyphAndAdvance(i, glyph, advance);
         if (glyphBuffer) {
+            if (!i && !runIndexInVisualOrder)
+                m_startOffset.set(offsetX, offsetY);
             float glyphAdvanceX = advance + nextOffsetX - offsetX;
             float glyphAdvanceY = nextOffsetY - offsetY;
-            glyphBuffer->add(glyph, m_currentFontData, createGlyphBufferAdvance(glyphAdvanceX, glyphAdvanceY));
+            glyphBuffer->add(glyph, currentFontData, createGlyphBufferAdvance(glyphAdvanceX, glyphAdvanceY));
         }
 
         totalAdvance += advance;
@@ -324,37 +373,46 @@ int HarfBuzzShaper::offsetForPosition(float targetX)
 
 FloatRect HarfBuzzShaper::selectionRect(const FloatPoint& point, int height, int from, int to)
 {
-    int fromX = -1, toX = -1;
-    int currentX = 0;
-    // Iterate through the script runs in logical order, searching for the run covering the positions of interest.
+    float currentX = 0;
+    float fromX;
+    float toX;
+    bool foundFromX = false;
+    bool foundToX = false;
+
+    if (m_run.rtl())
+        currentX = m_totalWidth;
     for (unsigned i = 0; i < m_harfbuzzRuns.size(); ++i) {
+        if (m_run.rtl())
+            currentX -= m_harfbuzzRuns[i]->width();
         int numCharacters = m_harfbuzzRuns[i]->numCharacters();
-        if (fromX == -1 && from >= 0 && from < numCharacters)
+        if (!foundFromX && from >= 0 && from < numCharacters) {
             fromX = m_harfbuzzRuns[i]->xPositionForOffset(from) + currentX;
-        else
+            foundFromX = true;
+        } else
             from -= numCharacters;
 
-        if (toX == -1 && to >= 0 && to < numCharacters)
+        if (!foundToX && to >= 0 && to < numCharacters) {
             toX = m_harfbuzzRuns[i]->xPositionForOffset(to) + currentX;
-        else
+            foundToX = true;
+        } else
             to -= numCharacters;
 
-        if (fromX != -1 && toX != -1)
+        if (foundFromX && foundToX)
             break;
-        currentX += m_harfbuzzRuns[i]->width();
+        if (!m_run.rtl())
+            currentX += m_harfbuzzRuns[i]->width();
     }
 
     // The position in question might be just after the text.
-    if (fromX == -1)
+    if (!foundFromX)
         fromX = 0;
-    if (toX == -1)
+    if (!foundToX)
         toX = m_run.rtl() ? 0 : m_totalWidth;
 
-    ASSERT(fromX != -1 && toX != -1);
-
+    // Using floorf() and roundf() as the same as mac port.
     if (fromX < toX)
-        return FloatRect(point.x() + fromX, point.y(), toX - fromX, height);
-    return FloatRect(point.x() + toX, point.y(), fromX - toX, height);
+        return FloatRect(floorf(point.x() + fromX), point.y(), roundf(toX - fromX), height);
+    return FloatRect(floorf(point.x() + toX), point.y(), roundf(fromX - toX), height);
 }
 
 } // namespace WebCore

@@ -187,7 +187,8 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
     HarfBuzzShaper shaper(this, run);
     if (!shaper.shape(&glyphBuffer))
         return;
-    drawGlyphBuffer(gc, run, glyphBuffer, point);
+    FloatPoint adjustedPoint = shaper.adjustStartPoint(point);
+    drawGlyphBuffer(gc, run, glyphBuffer, adjustedPoint);
 #else
     SkCanvas* canvas = gc->platformContext()->canvas();
     ComplexTextController controller(this, run, point.x(), point.y());

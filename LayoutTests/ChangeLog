@@ -1,3 +1,25 @@
+2012-07-13  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Fix bugs in HarfBuzzShaper
+        https://bugs.webkit.org/show_bug.cgi?id=90951
+
+        Reviewed by Tony Chang.
+
+        Add tests for harfbuzz-ng shaper. I tried to use -expected.html style expectations,
+        but it didn't work because there are very slight difference between CoreText and HarfBuzz in
+        rendering result.
+
+        * fast/text/shaping/shaping-script-order.html: Added.
+        * fast/text/shaping/shaping-selection-rect.html: Added.
+        * platform/chromium/TestExpectations: Need rebaseline.
+        * platform/efl/TestExpectations: Skip added tests because the port doesn't use harfbuzz.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+        * platform/qt/TestExpectations: Ditto.
+        * platform/win/Skipped: Ditto.
+        * platform/wincairo/Skipped: Ditto.
+        * platform/wk2/Skipped: Ditto.
+
 2012-07-13  Kent Tamura  <tkent@chromium.org>
 
         Make calendar pickers testable

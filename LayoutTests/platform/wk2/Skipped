@@ -1419,6 +1419,9 @@ fast/parser/pre-html5-parser-quirks.html
 # https://bugs.webkit.org/show_bug.cgi?id=90177
 fast/events/drag-display-none-element.html
 
+# Skip tests in fast/text/shaping
+fast/text/shaping
+
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
 

@@ -1,3 +1,59 @@
+2012-07-13  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Fix bugs in HarfBuzzShaper
+        https://bugs.webkit.org/show_bug.cgi?id=90951
+
+        Reviewed by Tony Chang.
+
+        The current implementation has following problems:
+        - Cannot render RTL text if the TextRun is divided into more than two
+          HarfBuzzRun.
+        - Script handling in TextRun partitioning is incorrect.
+        - Inaccurate calculation of selection rect.
+        - Wrong rendering position when the first glyph of the TextRun have
+          non-zero offsets in terms of HarfBuzz.
+
+        To fix these problems I rewrote HarfBuzzShaper class. Here is the summary:
+        - Divide the whole range of TextRun first, then shape them in visual
+          order.
+        - Divide TextRun in the same way of old-harfbuzz's
+          hb_utf16_script_run_next().
+        - Prefer float than int when calculating selection.
+        - Adjust the drawing point after shaping.
+
+        Added tests covers the fix except for the last problem. The last problem will be covered
+        by fast/text/international/complex-joining-using-gpos.html after chromium linux port switches
+        to use HarfBuzzShaper.
+
+        Tests: fast/text/shaping/shaping-script-order.html
+               fast/text/shaping/shaping-selection-rect.html
+
+        * platform/graphics/harfbuzz/FontHarfBuzz.cpp:
+        (WebCore::Font::drawComplexText): Adjusts point after shaping.
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::HarfBuzzRun):
+        (WebCore):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::applyShapeResult): Added.
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::setGlyphAndAdvance): Offsets are no longer needed.
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::xPositionForOffset): Calculates character offset based on advance.
+        (WebCore::normalizeCharacters): Added.
+        (WebCore::HarfBuzzShaper::HarfBuzzShaper):
+        (WebCore::HarfBuzzShaper::~HarfBuzzShaper):
+        (WebCore::HarfBuzzShaper::shape): Divides TextRun first, then shapes them.
+        (WebCore::HarfBuzzShaper::adjustStartPoint): Added.
+        (WebCore::HarfBuzzShaper::collectHarfBuzzRuns): Added.
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns): Added.
+        (WebCore::HarfBuzzShaper::setGlyphPositionsForHarfBuzzRun): Followed other changes.
+        (WebCore::HarfBuzzShaper::selectionRect): Use float for calculating selection.
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.h:
+        (HarfBuzzShaper): Holds the start index of character. Removed unnecessary variables.
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::create): Ditto.
+        (HarfBuzzRun):
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::fontData): Added.
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::startIndex): Ditto.
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::glyphs): Ditto.
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::advances): Ditto.
+
 2012-07-13  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r122545.
