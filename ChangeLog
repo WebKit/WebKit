@@ -1,3 +1,19 @@
+2012-07-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [CMake] Proper handling of ENABLE_API_TESTS build option
+        https://bugs.webkit.org/show_bug.cgi?id=91221
+
+        Reviewed by Rob Buis.
+
+        Make the flag reusable across the ports using CMake. We are about to enable the WTF,
+        WebCore and WebKit 2 API's at Tools/TestWebKitAPI and other ports using CMake can get
+        it almost for free.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-07-11  Matt Falkenhagen  <falken@chromium.org>
 
         Add dialog element feature toggle to InternalSettings

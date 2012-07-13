@@ -136,6 +136,13 @@ INCLUDE(OptionsCommon)
 INCLUDE(Options${PORT})
 
 # -----------------------------------------------------------------------------
+# Enable API unit tests and create a target for the test runner
+# -----------------------------------------------------------------------------
+IF (ENABLE_API_TESTS)
+    ENABLE_TESTING()
+ENDIF ()
+
+# -----------------------------------------------------------------------------
 # Install JavaScript shell
 # -----------------------------------------------------------------------------
 OPTION(SHOULD_INSTALL_JS_SHELL "generate an installation rule to install the built JavaScript shell")

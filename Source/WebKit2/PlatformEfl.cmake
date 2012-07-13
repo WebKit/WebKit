@@ -220,9 +220,11 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_view
 )
 
-FOREACH(testName ${EWK2UnitTests_BINARIES})
-    ADD_EXECUTABLE(${testName} ${WEBKIT2_EFL_TEST_DIR}/${testName}.cpp)
-    ADD_TEST(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName})
-    SET_TESTS_PROPERTIES(${testName} PROPERTIES TIMEOUT 60)
-    TARGET_LINK_LIBRARIES(${testName} ${EWK2UnitTests_LIBRARIES} ewk2UnitTestUtils gtest pthread)
-ENDFOREACH()
+IF (ENABLE_API_TESTS)
+    FOREACH (testName ${EWK2UnitTests_BINARIES})
+        ADD_EXECUTABLE(${testName} ${WEBKIT2_EFL_TEST_DIR}/${testName}.cpp)
+        ADD_TEST(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName})
+        SET_TESTS_PROPERTIES(${testName} PROPERTIES TIMEOUT 60)
+        TARGET_LINK_LIBRARIES(${testName} ${EWK2UnitTests_LIBRARIES} ewk2UnitTestUtils gtest pthread)
+    ENDFOREACH ()
+ENDIF ()

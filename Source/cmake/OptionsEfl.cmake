@@ -16,12 +16,6 @@ ADD_DEFINITIONS(-DWTF_PLATFORM_EFL=1)
 SET(WTF_PLATFORM_EFL 1)
 
 # -----------------------------------------------------------------------------
-# Enable CTest for the public API unit testing
-# -----------------------------------------------------------------------------
-ENABLE_TESTING()
-SET(ENABLE_API_TESTS ON)
-
-# -----------------------------------------------------------------------------
 # Determine which font backend will be used
 # -----------------------------------------------------------------------------
 SET(ALL_FONT_BACKENDS freetype pango)
@@ -73,6 +67,7 @@ SET(THEME_BINARY_DIR ${CMAKE_BINARY_DIR}/WebKit/efl/DefaultTheme)
 SET(VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/eflsymbols.filter")
 
 WEBKIT_OPTION_BEGIN()
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_API_TESTS ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_BATTERY_STATUS ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_BLOB ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_IMAGE_SET ON)
