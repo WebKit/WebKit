@@ -1,3 +1,28 @@
+2012-07-13  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Add support for attributes to define keyboard and enter key type on the Virtual Keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=91248
+
+        Reviewed by Antonio Gomes.
+
+        PR 174733.
+
+        Add data-blackberry-virtual-keyboard-type and
+        data-blackberry-virtual-keyboard-enter-key to
+        enable configuration of the desired virtual keyboard
+        using element attributes.
+
+        Reviewed Internally by Gen Mak.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::convertStringToKeyboardType):
+        (WebKit):
+        (BlackBerry::WebKit::keyboardTypeAttribute):
+        (BlackBerry::WebKit::convertStringToKeyboardEnterKeyType):
+        (BlackBerry::WebKit::keyboardEnterKeyTypeAttribute):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+
 2012-07-13  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] resetBitmapZoomScale called while zooming preventing pinch zoom
