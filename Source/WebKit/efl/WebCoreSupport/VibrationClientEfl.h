@@ -27,7 +27,7 @@ namespace WebCore {
 
 class VibrationClientEfl : public VibrationClient {
 public:
-    VibrationClientEfl(Evas_Object* view);
+    explicit VibrationClientEfl(Evas_Object* view);
     virtual ~VibrationClientEfl() { }
 
     virtual void vibrate(const unsigned long& time);

@@ -43,7 +43,7 @@ class Page;
 
 class InspectorClientEfl : public InspectorClient {
 public:
-    InspectorClientEfl(Evas_Object*);
+    explicit InspectorClientEfl(Evas_Object*);
     ~InspectorClientEfl();
 
     virtual void inspectorDestroyed();

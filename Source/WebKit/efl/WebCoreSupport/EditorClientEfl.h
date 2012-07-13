@@ -77,7 +77,7 @@ protected:
     WTF::Deque<WTF::RefPtr<WebCore::UndoStep> > redoStack;
 
 public:
-    EditorClientEfl(Evas_Object *view);
+    explicit EditorClientEfl(Evas_Object* view);
     ~EditorClientEfl();
 
     // from EditorClient

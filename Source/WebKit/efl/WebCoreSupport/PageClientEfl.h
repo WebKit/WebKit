@@ -31,7 +31,7 @@ class GraphicsContext3D;
 
 class PageClientEfl {
 public:
-    PageClientEfl(Evas_Object* view);
+    explicit PageClientEfl(Evas_Object* view);
     virtual ~PageClientEfl();
 
 #if USE(ACCELERATED_COMPOSITING)

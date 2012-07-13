@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    WebFrameNetworkingContext(WebKit::WebFrame* frame)
+    explicit WebFrameNetworkingContext(WebKit::WebFrame* frame)
         : WebCore::FrameNetworkingContext(frame->coreFrame())
     {
     }

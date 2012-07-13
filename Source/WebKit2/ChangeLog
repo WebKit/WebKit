@@ -1,3 +1,15 @@
+2012-07-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Add *explicit* keyword to constructor which has a parameter
+        https://bugs.webkit.org/show_bug.cgi?id=91207
+
+        Reviewed by Zoltan Herczeg.
+
+        Add *explicit* keyword to contructor which has a parameter in order to avoid implicit type conversion.
+
+        * WebProcess/WebCoreSupport/efl/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+
 2012-07-13  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][WK2] Implement GraphicsSurface for Linux/GLX.
