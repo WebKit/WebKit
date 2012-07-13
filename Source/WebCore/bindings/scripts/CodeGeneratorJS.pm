@@ -1796,7 +1796,7 @@ sub GenerateImplementation
                             $functionName = "impl->${functionName}";
                         }
 
-                        push(@arguments, @callWithArgs);
+                        unshift(@arguments, @callWithArgs);
 
                         my $jsType = NativeToJSValue($attribute->signature, 0, $implClassName, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
                         push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(castedThis->impl());\n");
