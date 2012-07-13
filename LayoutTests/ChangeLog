@@ -1,3 +1,19 @@
+2012-07-13  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Add unexpectedUpgradeNeededCallback to shared.js
+        https://bugs.webkit.org/show_bug.cgi?id=91176
+
+        Reviewed by Tony Chang.
+
+        This is just used in our layout tests.  It's the simplest possible piece
+        I could break off of the upgradeneeded changes.
+
+        No tests because no change in behavior expected.
+
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedBlockedCallback):
+        (unexpectedUpgradeNeededCallback):
+
 2012-07-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, removing timeout expectations for a few

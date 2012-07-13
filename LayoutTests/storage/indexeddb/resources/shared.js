@@ -71,6 +71,12 @@ function unexpectedBlockedCallback()
     finishJSTest();
 }
 
+function unexpectedUpgradeNeededCallback()
+{
+    testFailed("onupgradeneeded called unexpectedly");
+    finishJSTest();
+}
+
 function evalAndExpectException(cmd, exceptionCode, exceptionName)
 {
     debug("Expecting exception from " + cmd);
