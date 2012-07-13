@@ -1,3 +1,62 @@
+2012-07-13  Emil A Eklund  <eae@chromium.org>
+
+        Use LayoutBoxExtent for image outsets
+        https://bugs.webkit.org/show_bug.cgi?id=91166
+
+        Reviewed by Tony Chang.
+
+        Change RenderStyle and calling code to use LayoutBoxExtent for image
+        outsets and remove text direction and writing mode versions of the
+        outline getters from RenderStyle as LayoutBoxExtent provides the same
+        functionality.
+
+        No new tests, no change in functionality.
+
+        * platform/graphics/FractionalLayoutBoxExtent.h:
+        * platform/graphics/FractionalLayoutBoxExtent.cpp:
+        (WebCore::FractionalLayoutBoxExtent::logicalTop):
+        (WebCore::FractionalLayoutBoxExtent::logicalBottom):
+        Add logicalTop and logicalBottom methods to go with the existing
+        logicalLeft and logicalRight ones.
+
+        * platform/graphics/FractionalLayoutRect.h:
+        (WebCore::FractionalLayoutRect::expand):
+        Add FractionalLayoutBoxExtent version of expand method.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addBorderOutsetVisualOverflow):
+        Change implementation to use the new FractionalLayoutBoxExtent version of
+        borderImageOutsets and the logicalTop/Bottom/Left/Right methods.
+        
+        (WebCore::clipRectForNinePieceImageStrip):
+        Change implementation to use the new FractionalLayoutBoxExtent version of
+        borderImageOutsets.
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::maskClipRect):
+        Change implementation to use the new FractionalLayoutBoxExtent version of
+        borderImageOutsets and the new FractionalLayoutRect::expand method.
+        
+        (WebCore::RenderBox::addVisualEffectOverflow):
+        Change implementation to use the new FractionalLayoutBoxExtent version of
+        borderImageOutsets.
+        
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        Change implementation to use the new FractionalLayoutBoxExtent version of
+        borderImageOutsets and the new FractionalLayoutRect::expand method.
+
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::imageOutsets):
+        Change getImageOutsets to return a FractionalLayoutBoxExtent object and
+        rename to imageOutsets to match the webkit naming convention for getters.
+
+        Remove getBorderImageHorizontalOutsets, getBorderImageVerticalOutsets,
+        getBorderImageInlineDirectionOutsets, getImageHorizontalOutsets,
+        getImageVerticalOutsets and getBorderImageBlockDirectionOutsets methods
+        as the same functionality is provided by FractionalLayoutBoxExtent.
+
 2012-07-13  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=91278

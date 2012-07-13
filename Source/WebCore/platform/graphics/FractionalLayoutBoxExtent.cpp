@@ -35,6 +35,16 @@
 
 namespace WebCore {
 
+FractionalLayoutUnit FractionalLayoutBoxExtent::logicalTop(const RenderStyle* style) const
+{
+    return style->isHorizontalWritingMode() ? m_top : m_left;
+}
+
+FractionalLayoutUnit FractionalLayoutBoxExtent::logicalBottom(const RenderStyle* style) const
+{
+    return style->isHorizontalWritingMode() ? m_bottom : m_right;
+}
+
 FractionalLayoutUnit FractionalLayoutBoxExtent::logicalLeft(const RenderStyle* style) const
 {
     return style->isHorizontalWritingMode() ? m_left : m_top;

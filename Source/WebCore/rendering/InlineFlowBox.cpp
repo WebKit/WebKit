@@ -788,10 +788,13 @@ inline void InlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logicalVisu
     RenderStyle* style = renderer()->style(isFirstLineStyle());
     if (!style->hasBorderImageOutsets())
         return;
-    
-    LayoutUnit borderOutsetLogicalTop;
-    LayoutUnit borderOutsetLogicalBottom;
-    style->getBorderImageBlockDirectionOutsets(borderOutsetLogicalTop, borderOutsetLogicalBottom);
+
+    FractionalLayoutBoxExtent borderOutsets = style->borderImageOutsets();
+
+    LayoutUnit borderOutsetLogicalTop = borderOutsets.logicalTop(style);
+    LayoutUnit borderOutsetLogicalBottom = borderOutsets.logicalBottom(style);
+    LayoutUnit borderOutsetLogicalLeft = borderOutsets.logicalLeft(style);
+    LayoutUnit borderOutsetLogicalRight = borderOutsets.logicalRight(style);
 
     // Similar to how glyph overflow works, if our lines are flipped, then it's actually the opposite border that applies, since
     // the line is "upside down" in terms of block coordinates. vertical-rl and horizontal-bt are the flipped line modes.
@@ -800,10 +803,6 @@ inline void InlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logicalVisu
 
     LayoutUnit logicalTopVisualOverflow = min(pixelSnappedLogicalTop() - outsetLogicalTop, logicalVisualOverflow.y());
     LayoutUnit logicalBottomVisualOverflow = max(pixelSnappedLogicalBottom() + outsetLogicalBottom, logicalVisualOverflow.maxY());
-    
-    LayoutUnit borderOutsetLogicalLeft;
-    LayoutUnit borderOutsetLogicalRight;
-    style->getBorderImageInlineDirectionOutsets(borderOutsetLogicalLeft, borderOutsetLogicalRight);
 
     LayoutUnit outsetLogicalLeft = includeLogicalLeftEdge() ? borderOutsetLogicalLeft : ZERO_LAYOUT_UNIT;
     LayoutUnit outsetLogicalRight = includeLogicalRightEdge() ? borderOutsetLogicalRight : ZERO_LAYOUT_UNIT;
@@ -1187,29 +1186,25 @@ static LayoutRect clipRectForNinePieceImageStrip(InlineFlowBox* box, const NineP
 {
     LayoutRect clipRect(paintRect);
     RenderStyle* style = box->renderer()->style();
-    LayoutUnit topOutset;
-    LayoutUnit rightOutset;
-    LayoutUnit bottomOutset;
-    LayoutUnit leftOutset;
-    style->getImageOutsets(image, topOutset, rightOutset, bottomOutset, leftOutset);
+    LayoutBoxExtent outsets = style->imageOutsets(image);
     if (box->isHorizontal()) {
-        clipRect.setY(paintRect.y() - topOutset);
-        clipRect.setHeight(paintRect.height() + topOutset + bottomOutset);
+        clipRect.setY(paintRect.y() - outsets.top());
+        clipRect.setHeight(paintRect.height() + outsets.top() + outsets.bottom());
         if (box->includeLogicalLeftEdge()) {
-            clipRect.setX(paintRect.x() - leftOutset);
-            clipRect.setWidth(paintRect.width() + leftOutset);
+            clipRect.setX(paintRect.x() - outsets.left());
+            clipRect.setWidth(paintRect.width() + outsets.left());
         }
         if (box->includeLogicalRightEdge())
-            clipRect.setWidth(clipRect.width() + rightOutset);
+            clipRect.setWidth(clipRect.width() + outsets.right());
     } else {
-        clipRect.setX(paintRect.x() - leftOutset);
-        clipRect.setWidth(paintRect.width() + leftOutset + rightOutset);
+        clipRect.setX(paintRect.x() - outsets.left());
+        clipRect.setWidth(paintRect.width() + outsets.left() + outsets.right());
         if (box->includeLogicalLeftEdge()) {
-            clipRect.setY(paintRect.y() - topOutset);
-            clipRect.setHeight(paintRect.height() + topOutset);
+            clipRect.setY(paintRect.y() - outsets.top());
+            clipRect.setHeight(paintRect.height() + outsets.top());
         }
         if (box->includeLogicalRightEdge())
-            clipRect.setHeight(clipRect.height() + bottomOutset);
+            clipRect.setHeight(clipRect.height() + outsets.bottom());
     }
     return clipRect;
 }

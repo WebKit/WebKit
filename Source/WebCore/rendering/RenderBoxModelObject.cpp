@@ -1234,17 +1234,9 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
 
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
     // doesn't have any understanding of the zoom that is in effect on the tile.
-    LayoutUnit topOutset;
-    LayoutUnit rightOutset;
-    LayoutUnit bottomOutset;
-    LayoutUnit leftOutset;
-    style->getImageOutsets(ninePieceImage, topOutset, rightOutset, bottomOutset, leftOutset);
-
-    LayoutUnit topWithOutset = rect.y() - topOutset;
-    LayoutUnit bottomWithOutset = rect.maxY() + bottomOutset;
-    LayoutUnit leftWithOutset = rect.x() - leftOutset;
-    LayoutUnit rightWithOutset = rect.maxX() + rightOutset;
-    IntRect borderImageRect = pixelSnappedIntRect(leftWithOutset, topWithOutset, rightWithOutset - leftWithOutset, bottomWithOutset - topWithOutset);
+    LayoutRect rectWithOutsets = rect;
+    rectWithOutsets.expand(style->imageOutsets(ninePieceImage));
+    IntRect borderImageRect = pixelSnappedIntRect(rectWithOutsets);
 
     IntSize imageSize = calculateImageIntrinsicDimensions(styleImage, borderImageRect.size(), DoNotScaleByEffectiveZoom);
 

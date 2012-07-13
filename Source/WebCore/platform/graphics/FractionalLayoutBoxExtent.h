@@ -53,6 +53,8 @@ public:
     inline void setBottom(FractionalLayoutUnit value) { m_bottom = value; }
     inline void setLeft(FractionalLayoutUnit value) { m_left = value; }
 
+    FractionalLayoutUnit logicalTop(const RenderStyle*) const;
+    FractionalLayoutUnit logicalBottom(const RenderStyle*) const;
     FractionalLayoutUnit logicalLeft(const RenderStyle*) const;
     FractionalLayoutUnit logicalRight(const RenderStyle*) const;
 

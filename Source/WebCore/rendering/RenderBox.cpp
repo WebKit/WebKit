@@ -934,17 +934,7 @@ LayoutRect RenderBox::maskClipRect()
         LayoutRect borderImageRect = borderBoxRect();
         
         // Apply outsets to the border box.
-        LayoutUnit topOutset;
-        LayoutUnit rightOutset;
-        LayoutUnit bottomOutset;
-        LayoutUnit leftOutset;
-        style()->getMaskBoxImageOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
-         
-        borderImageRect.setX(borderImageRect.x() - leftOutset);
-        borderImageRect.setY(borderImageRect.y() - topOutset);
-        borderImageRect.setWidth(borderImageRect.width() + leftOutset + rightOutset);
-        borderImageRect.setHeight(borderImageRect.height() + topOutset + bottomOutset);
-
+        borderImageRect.expand(style()->maskBoxImageOutsets());
         return borderImageRect;
     }
     
@@ -3585,18 +3575,14 @@ void RenderBox::addVisualEffectOverflow()
 
     // Now compute border-image-outset overflow.
     if (style()->hasBorderImageOutsets()) {
-        LayoutUnit borderOutsetLeft;
-        LayoutUnit borderOutsetRight;
-        LayoutUnit borderOutsetTop;
-        LayoutUnit borderOutsetBottom;
-        style()->getBorderImageOutsets(borderOutsetTop, borderOutsetRight, borderOutsetBottom, borderOutsetLeft);
+        LayoutBoxExtent borderOutsets = style()->borderImageOutsets();
         
         // In flipped blocks writing modes, the physical sides are inverted. For example in vertical-rl, the right
         // border is at the lower x coordinate value.
-        overflowMinX = min(overflowMinX, borderBox.x() - ((!isFlipped || isHorizontal) ? borderOutsetLeft : borderOutsetRight));
-        overflowMaxX = max(overflowMaxX, borderBox.maxX() + ((!isFlipped || isHorizontal) ? borderOutsetRight : borderOutsetLeft));
-        overflowMinY = min(overflowMinY, borderBox.y() - ((!isFlipped || !isHorizontal) ? borderOutsetTop : borderOutsetBottom));
-        overflowMaxY = max(overflowMaxY, borderBox.maxY() + ((!isFlipped || !isHorizontal) ? borderOutsetBottom : borderOutsetTop));
+        overflowMinX = min(overflowMinX, borderBox.x() - ((!isFlipped || isHorizontal) ? borderOutsets.left() : borderOutsets.right()));
+        overflowMaxX = max(overflowMaxX, borderBox.maxX() + ((!isFlipped || isHorizontal) ? borderOutsets.right() : borderOutsets.left()));
+        overflowMinY = min(overflowMinY, borderBox.y() - ((!isFlipped || !isHorizontal) ? borderOutsets.top() : borderOutsets.bottom()));
+        overflowMaxY = max(overflowMaxY, borderBox.maxY() + ((!isFlipped || !isHorizontal) ? borderOutsets.bottom() : borderOutsets.top()));
     }
 
     // Add in the final overflow with shadows and outsets combined.

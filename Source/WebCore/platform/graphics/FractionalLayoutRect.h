@@ -31,6 +31,7 @@
 #ifndef FractionalLayoutRect_h
 #define FractionalLayoutRect_h
 
+#include "FractionalLayoutBoxExtent.h"
 #include "FractionalLayoutPoint.h"
 #include "IntRect.h"
 #include <wtf/Vector.h>
@@ -99,6 +100,11 @@ public:
     void move(FractionalLayoutUnit dx, FractionalLayoutUnit dy) { m_location.move(dx, dy); } 
 
     void expand(const FractionalLayoutSize& size) { m_size += size; }
+    void expand(const FractionalLayoutBoxExtent& box)
+    {
+        m_location.move(-box.left(), -box.top());
+        m_size.expand(box.left() + box.right(), box.top() + box.bottom());
+    }
     void expand(FractionalLayoutUnit dw, FractionalLayoutUnit dh) { m_size.expand(dw, dh); }
     void contract(const FractionalLayoutSize& size) { m_size -= size; }
     void contract(FractionalLayoutUnit dw, FractionalLayoutUnit dh) { m_size.expand(-dw, -dh); }

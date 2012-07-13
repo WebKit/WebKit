@@ -1478,24 +1478,12 @@ Color RenderStyle::initialTapHighlightColor()
 }
 #endif
 
-void RenderStyle::getImageOutsets(const NinePieceImage& image, LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const
+LayoutBoxExtent RenderStyle::imageOutsets(const NinePieceImage& image) const
 {
-    top = NinePieceImage::computeOutset(image.outset().top(), borderTopWidth());
-    right = NinePieceImage::computeOutset(image.outset().right(), borderRightWidth());
-    bottom = NinePieceImage::computeOutset(image.outset().bottom(), borderBottomWidth());
-    left = NinePieceImage::computeOutset(image.outset().left(), borderLeftWidth());
-}
-
-void RenderStyle::getImageHorizontalOutsets(const NinePieceImage& image, LayoutUnit& left, LayoutUnit& right) const
-{
-    right = NinePieceImage::computeOutset(image.outset().right(), borderRightWidth());
-    left = NinePieceImage::computeOutset(image.outset().left(), borderLeftWidth());
-}
-
-void RenderStyle::getImageVerticalOutsets(const NinePieceImage& image, LayoutUnit& top, LayoutUnit& bottom) const
-{
-    top = NinePieceImage::computeOutset(image.outset().top(), borderTopWidth());
-    bottom = NinePieceImage::computeOutset(image.outset().bottom(), borderBottomWidth());
+    return LayoutBoxExtent(NinePieceImage::computeOutset(image.outset().top(), borderTopWidth()),
+                           NinePieceImage::computeOutset(image.outset().right(), borderRightWidth()),
+                           NinePieceImage::computeOutset(image.outset().bottom(), borderBottomWidth()),
+                           NinePieceImage::computeOutset(image.outset().left(), borderLeftWidth()));
 }
 
 } // namespace WebCore
