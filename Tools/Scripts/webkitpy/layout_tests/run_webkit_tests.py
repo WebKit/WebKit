@@ -254,6 +254,11 @@ def parse_args(args=None):
             help="Arguments parsed to Android adb, to select device, etc."),
     ]))
 
+    option_group_definitions.append(("EFL-specific Options", [
+        optparse.make_option("--webprocess-cmd-prefix", type="string",
+            default=False, help="Prefix used when spawning the Web process (Debug mode only)"),
+    ]))
+
     option_group_definitions.append(("WebKit Options", [
         optparse.make_option("--gc-between-tests", action="store_true", default=False,
             help="Force garbage collection between each test"),

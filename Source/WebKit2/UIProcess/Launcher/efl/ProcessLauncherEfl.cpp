@@ -70,7 +70,19 @@ void ProcessLauncher::launchProcess()
             executablePath = String(executablePathPtr);
         }
         String fullPath = executablePath + "/" + processName;
-        execl(fullPath.utf8().data(), processName.utf8().data(), socket.utf8().data(), static_cast<char*>(0));
+#ifndef NDEBUG
+        if (m_launchOptions.processCmdPrefix.isEmpty())
+#endif
+            execl(fullPath.utf8().data(), processName.utf8().data(), socket.utf8().data(), static_cast<char*>(0));
+#ifndef NDEBUG
+        else {
+            String cmd = makeString(m_launchOptions.processCmdPrefix, ' ', fullPath, ' ', socket);
+            if (system(cmd.utf8().data()) == -1) {
+                ASSERT_NOT_REACHED();
+                return;
+            }
+        }
+#endif
     } else if (pid > 0) { // parent process;
         close(sockets[0]);
         m_processIdentifier = pid;

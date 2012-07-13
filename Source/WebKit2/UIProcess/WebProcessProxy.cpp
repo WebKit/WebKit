@@ -110,6 +110,11 @@ void WebProcessProxy::connect()
         launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
         launchOptions.executableHeap = false;
 #endif
+#ifndef NDEBUG
+        const char* webProcessCmdPrefix = getenv("WEB_PROCESS_CMD_PREFIX");
+        if (webProcessCmdPrefix && *webProcessCmdPrefix)
+            launchOptions.processCmdPrefix = String::fromUTF8(webProcessCmdPrefix);
+#endif
         m_processLauncher = ProcessLauncher::create(this, launchOptions);
     }
 }

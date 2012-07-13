@@ -51,8 +51,16 @@ void TestController::platformInitialize()
 {
 }
 
-void TestController::platformRunUntil(bool&, double timeout)
+void TestController::platformRunUntil(bool& condition, double timeout)
 {
+    if (timeout == m_noTimeout) {
+        // Never timeout if we are debugging or not meant to timeout.
+        while (!condition) {
+            ecore_main_loop_iterate();
+            sleep(1);
+        }
+        return;
+    }
     timer = ecore_timer_loop_add(timeout, timerFired, 0);
     ecore_main_loop_begin();
 }

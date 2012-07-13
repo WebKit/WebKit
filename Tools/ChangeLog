@@ -1,3 +1,26 @@
+2012-07-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][EFL] Facilitate debugging of the Web Process
+        https://bugs.webkit.org/show_bug.cgi?id=90768
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a new --webprocess-cmd-prefix argument to
+        run-webkit-tests script for EFL port. If provided,
+        the prefix will be prepended to the command used
+        to spawn the Web process. This can be used for
+        debugging purposes with prefixes such as:
+        "xterm -title renderer -e gdb --args".
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.__init__):
+        (EflPort.setup_environ_for_server):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::platformRunUntil): Implement support for
+        m_noTimeout timeout value.
+
 2012-07-12  Adam Barth  <abarth@webkit.org>
 
         Fix crash in the commit-queue.  We need to initialize self.port during __init__.

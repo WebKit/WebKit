@@ -1,3 +1,23 @@
+2012-07-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][EFL] Facilitate debugging of the Web Process
+        https://bugs.webkit.org/show_bug.cgi?id=90768
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The EFL port now checks if the WEB_PROCESS_CMD_PREFIX
+        environment variable is set and uses it as prefix
+        when spawning the Web process if it is. This is used
+        for debugging purposes with prefixes such as:
+        "xterm -title renderer -e gdb --args".
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (LaunchOptions):
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connect):
+
 2012-07-12  Timothy Hatcher  <timothy@apple.com>
 
         Make the "Inspect Element" context menu item appear in nightly builds again.

@@ -31,6 +31,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 
+#ifndef NDEBUG
+#include <wtf/text/WTFString.h>
+#endif
+
 namespace WebKit {
 
 class ProcessLauncher : public ThreadSafeRefCounted<ProcessLauncher> {
@@ -53,6 +57,9 @@ public:
         static const cpu_type_t MatchCurrentArchitecture = 0;
         cpu_type_t architecture;
         bool executableHeap;
+#endif
+#ifndef NDEBUG
+        String processCmdPrefix;
 #endif
     };
 
