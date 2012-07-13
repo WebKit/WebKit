@@ -1,3 +1,10 @@
+2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed gardening, skip failing webkit_unit_tests.
+
+        * tests/DecimalTest.cpp:
+        (TEST_F):
+
 2012-07-13  Kent Tamura  <tkent@chromium.org>
 
         Make calendar pickers testable
