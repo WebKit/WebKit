@@ -211,12 +211,14 @@ TEST_F(DecimalTest, AddSpecialValues)
 TEST_F(DecimalTest, Ceiling)
 {
     EXPECT_EQ(Decimal(1), Decimal(1).ceiling());
+    EXPECT_EQ(Decimal(1), encode(1, -10, Positive).ceiling());
     EXPECT_EQ(Decimal(2), encode(11, -1, Positive).ceiling());
     EXPECT_EQ(Decimal(2), encode(13, -1, Positive).ceiling());
     EXPECT_EQ(Decimal(2), encode(15, -1, Positive).ceiling());
     EXPECT_EQ(Decimal(2), encode(19, -1, Positive).ceiling());
 
     EXPECT_EQ(Decimal(-1), Decimal(-1).ceiling());
+    EXPECT_EQ(Decimal(0), encode(1, -10, Negative).ceiling());
     EXPECT_EQ(Decimal(-1), encode(11, -1, Negative).ceiling());
     EXPECT_EQ(Decimal(-1), encode(13, -1, Negative).ceiling());
     EXPECT_EQ(Decimal(-1), encode(15, -1, Negative).ceiling());
@@ -525,12 +527,14 @@ TEST_F(DecimalTest, EncodedData)
 TEST_F(DecimalTest, Floor)
 {
     EXPECT_EQ(Decimal(1), Decimal(1).floor());
+    EXPECT_EQ(Decimal(0), encode(1, -10, Positive).floor());
     EXPECT_EQ(Decimal(1), encode(11, -1, Positive).floor());
     EXPECT_EQ(Decimal(1), encode(13, -1, Positive).floor());
     EXPECT_EQ(Decimal(1), encode(15, -1, Positive).floor());
     EXPECT_EQ(Decimal(1), encode(19, -1, Positive).floor());
 
     EXPECT_EQ(Decimal(-1), Decimal(-1).floor());
+    EXPECT_EQ(Decimal(-1), encode(1, -10, Negative).floor());
     EXPECT_EQ(Decimal(-2), encode(11, -1, Negative).floor());
     EXPECT_EQ(Decimal(-2), encode(13, -1, Negative).floor());
     EXPECT_EQ(Decimal(-2), encode(15, -1, Negative).floor());

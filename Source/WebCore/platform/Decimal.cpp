@@ -628,7 +628,7 @@ Decimal Decimal::ceiling() const
     const int numberOfDigits = countDigits(result);
     const int numberOfDropDigits = -exponent();
     if (numberOfDigits < numberOfDropDigits)
-        return zero(Positive);
+        return isPositive() ? Decimal(1) : zero(Positive);
 
     result = scaleDown(result, numberOfDropDigits - 1);
     if (sign() == Positive && result % 10 > 0)
@@ -670,7 +670,7 @@ Decimal Decimal::floor() const
     const int numberOfDigits = countDigits(result);
     const int numberOfDropDigits = -exponent();
     if (numberOfDigits < numberOfDropDigits)
-        return zero(Positive);
+        return isPositive() ? zero(Positive) : Decimal(-1);
 
     result = scaleDown(result, numberOfDropDigits - 1);
     if (isNegative() && result % 10 > 0)

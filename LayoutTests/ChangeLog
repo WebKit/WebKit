@@ -1,3 +1,15 @@
+2012-07-13  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r119948): [Forms] Spin button Up/Down actions make value to zero for input type "number" when step mismatched
+        https://bugs.webkit.org/show_bug.cgi?id=91197
+
+        Reviewed by Kent Tamura.
+
+        This patch adds new test cases.
+
+        * fast/forms/number/number-stepup-stepdown-from-renderer-expected.txt: Updated for new test cases.
+        * fast/forms/number/number-stepup-stepdown-from-renderer.html: Added new test cases.
+
 2012-07-13  Dominic Mazzoni  <dmazzoni@google.com>
 
         Should be possible to focus elements within canvas fallback content

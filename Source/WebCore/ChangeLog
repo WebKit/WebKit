@@ -1,3 +1,28 @@
+2012-07-13  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r119948): [Forms] Spin button Up/Down actions make value to zero for input type "number" when step mismatched
+        https://bugs.webkit.org/show_bug.cgi?id=91197
+
+        Reviewed by Kent Tamura.
+
+        This patch fixes implementation of Decimal::ceiling() and floor().
+        They return wrong value for small fractional numbers.
+
+        The bug is occurred when:
+          - Step-able input type, e.g. number, date, datetime, and so on.
+          - Current value is step mismatched
+          - Current value is smaller than step
+          - Step up/down by spin button
+        because spin button up/down actions are implemented in InputType::setpUpFromRenderer
+        which calls Decimal::ceiling() and floor() for step mismatched case.
+
+        Tests: fast/forms/number/number-stepup-stepdown-from-renderer.html: Added test cases
+               WebKit/chromium/tests/DecimalTest.cpp: Added test cases
+
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::ceiling): Changed to return 1 for positive small fractional number.
+        (WebCore::Decimal::floor): Changed to return -1 for negative small fractional number.
+
 2012-07-13  Dominic Mazzoni  <dmazzoni@google.com>
 
         Should be possible to focus elements within canvas fallback content
