@@ -1,3 +1,74 @@
+2012-07-13  Keishi Hattori  <keishi@webkit.org>
+
+        Form of FormAssociatedElement is not updated when id target changes.
+        https://bugs.webkit.org/show_bug.cgi?id=91042
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/forms/update-form-attribute-element.html
+
+        This patch introduces the IdTargetObserver and IdTargetObserverRegistry class.
+        They can be used to be notified when the element that an id is pointing to (the id target)
+        changes.
+
+        * CMakeLists.txt: Added IdTargetObserverRegistry.{h,cpp} and IdTargetObserver.{h,cpp}
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/DOMAllInOne.cpp:
+        * dom/IdTargetObserver.cpp: Added. When you want notified of changes to an id target, you should create a new class that inherits this.
+        (WebCore):
+        (WebCore::IdTargetObserver::IdTargetObserver):
+        (WebCore::IdTargetObserver::~IdTargetObserver):
+        * dom/IdTargetObserver.h: Added.
+        (WebCore):
+        (IdTargetObserver):
+        * dom/IdTargetObserverRegistry.cpp: Added.
+        (WebCore):
+        (WebCore::IdTargetObserverRegistry::create):
+        (WebCore::IdTargetObserverRegistry::addObserver): Register an IdTargetObserver to observe an id target.
+        (WebCore::IdTargetObserverRegistry::removeObserver): Unregisters an IdTargetObserver from observing.
+        (WebCore::IdTargetObserverRegistry::notifyObserversInternal):
+        * dom/IdTargetObserverRegistry.h: Added.
+        (WebCore):
+        (IdTargetObserverRegistry):
+        (WebCore::IdTargetObserverRegistry::IdTargetObserverRegistry):
+        (WebCore::IdTargetObserverRegistry::notifyObservers): Calls idTargetChanged on all observers for an id. Inlining first part of function for performance.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::addElementById): Calls IdTargetObserverRegistry::notifyObservers because the id target might have changed.
+        (WebCore::TreeScope::removeElementById): Ditto.
+        * dom/TreeScope.h:
+        (WebCore):
+        (WebCore::TreeScope::idTargetObserverRegistry):
+        (TreeScope):
+        * html/FormAssociatedElement.cpp: Observer for id targets defined by the form attribute.
+        (WebCore::FormAssociatedElement::didMoveToNewDocument):
+        (WebCore::FormAssociatedElement::insertedInto):
+        (WebCore::FormAssociatedElement::removedFrom):
+        (WebCore::FormAssociatedElement::formAttributeChanged):
+        (WebCore::FormAssociatedElement::resetFormAttributeTargetObserver): Creates and sets up a new FormAttributeTargetObserver.
+        (WebCore):
+        (WebCore::FormAssociatedElement::formAttributeTargetChanged):
+        (WebCore::FormAttributeTargetObserver::create):
+        (WebCore::FormAttributeTargetObserver::FormAttributeTargetObserver):
+        (WebCore::FormAttributeTargetObserver::idTargetChanged):
+        * html/FormAssociatedElement.h:
+        (FormAssociatedElement):
+        * html/FormController.cpp:
+        * html/FormController.h:
+        (FormController):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::removedFrom):
+        (WebCore::HTMLFormElement::formElementIndexWithFormAttribute): Modified to take a range. It
+        scans the range and returns the index to insert the element in m_associatedElement.
+        (WebCore::HTMLFormElement::formElementIndex): Modified to only scan the elements in
+        m_associatedElement that precede and follow the form element.
+        * html/HTMLFormElement.h:
+        (HTMLFormElement):
+
 2012-07-13  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Optimizing blend filter to ARM-NEON with intrinsics

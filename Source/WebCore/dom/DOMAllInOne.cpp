@@ -84,6 +84,8 @@
 #include "ExceptionBase.cpp"
 #include "ExceptionCodePlaceholder.cpp"
 #include "IconURL.cpp"
+#include "IdTargetObserver.cpp"
+#include "IdTargetObserverRegistry.cpp"
 #include "KeyboardEvent.cpp"
 #include "MessageChannel.cpp"
 #include "MessageEvent.cpp"

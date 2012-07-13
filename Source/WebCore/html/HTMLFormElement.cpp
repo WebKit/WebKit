@@ -141,14 +141,6 @@ Node::InsertionNotificationRequest HTMLFormElement::insertedInto(ContainerNode* 
     return InsertionDone;
 }
 
-void HTMLFormElement::didNotifyDescendantInsertions(ContainerNode* insertionPoint)
-{
-    ASSERT(insertionPoint->inDocument());
-    HTMLElement::didNotifyDescendantInsertions(insertionPoint);
-    if (hasID())
-        document()->formController()->resetFormElementsOwner();
-}
-
 static inline Node* findRoot(Node* n)
 {
     Node* root = n;
@@ -164,8 +156,6 @@ void HTMLFormElement::removedFrom(ContainerNode* insertionPoint)
     for (unsigned i = 0; i < associatedElements.size(); ++i)
         associatedElements[i]->formRemovedFromTree(root);
     HTMLElement::removedFrom(insertionPoint);
-    if (insertionPoint->inDocument() && hasID())
-        document()->formController()->resetFormElementsOwner();
 }
 
 void HTMLFormElement::handleLocalEvents(Event* event)
@@ -436,33 +426,33 @@ template<class T, size_t n> static void removeFromVector(Vector<T*, n> & vec, T*
         }
 }
 
-unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element)
+unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, unsigned rangeStart, unsigned rangeEnd)
 {
-    // Compares the position of the form element and the inserted element.
-    // Updates the indeces in order to the relation of the position:
-    unsigned short position = compareDocumentPosition(element);
-    if (position & (DOCUMENT_POSITION_CONTAINS | DOCUMENT_POSITION_CONTAINED_BY))
-        ++m_associatedElementsAfterIndex;
-    else if (position & DOCUMENT_POSITION_PRECEDING) {
-        ++m_associatedElementsBeforeIndex;
-        ++m_associatedElementsAfterIndex;
-    }
-
     if (m_associatedElements.isEmpty())
         return 0;
 
+    ASSERT(rangeStart <= rangeEnd);
+
+    if (rangeStart == rangeEnd)
+        return rangeStart;
+
+    unsigned left = rangeStart;
+    unsigned right = rangeEnd - 1;
+    unsigned short position;
+
     // Does binary search on m_associatedElements in order to find the index
     // to be inserted.
-    unsigned left = 0, right = m_associatedElements.size() - 1;
     while (left != right) {
         unsigned middle = left + ((right - left) / 2);
+        ASSERT(middle < m_associatedElementsBeforeIndex || middle >= m_associatedElementsAfterIndex);
         position = element->compareDocumentPosition(toHTMLElement(m_associatedElements[middle]));
         if (position & DOCUMENT_POSITION_FOLLOWING)
             right = middle;
         else
             left = middle + 1;
     }
-
+    
+    ASSERT(left < m_associatedElementsBeforeIndex || left >= m_associatedElementsAfterIndex);
     position = element->compareDocumentPosition(toHTMLElement(m_associatedElements[left]));
     if (position & DOCUMENT_POSITION_FOLLOWING)
         return left;
@@ -474,8 +464,16 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
     HTMLElement* element = toHTMLElement(associatedElement);
     // Treats separately the case where this element has the form attribute
     // for performance consideration.
-    if (element->fastHasAttribute(formAttr))
-        return formElementIndexWithFormAttribute(element);
+    if (element->fastHasAttribute(formAttr)) {
+        unsigned short position = compareDocumentPosition(element);
+        if (position & DOCUMENT_POSITION_PRECEDING) {
+            ++m_associatedElementsBeforeIndex;
+            ++m_associatedElementsAfterIndex;
+            return HTMLFormElement::formElementIndexWithFormAttribute(element, 0, m_associatedElementsBeforeIndex - 1);
+        }
+        if (position & DOCUMENT_POSITION_FOLLOWING && !(position & DOCUMENT_POSITION_CONTAINED_BY))
+            return HTMLFormElement::formElementIndexWithFormAttribute(element, m_associatedElementsAfterIndex, m_associatedElements.size());
+    }
 
     // Check for the special case where this element is the very last thing in
     // the form's tree of children; we don't want to walk the entire tree in that

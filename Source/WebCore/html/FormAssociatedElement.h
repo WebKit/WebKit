@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class FormAttributeTargetObserver;
 class FormDataList;
 class HTMLFormElement;
 class ValidationMessage;
@@ -80,6 +81,8 @@ public:
     bool valid() const;
     virtual void setCustomValidity(const String&);
 
+    void formAttributeTargetChanged();
+
 protected:
     FormAssociatedElement();
 
@@ -102,6 +105,9 @@ private:
     virtual void refFormAssociatedElement() = 0;
     virtual void derefFormAssociatedElement() = 0;
 
+    void resetFormAttributeTargetObserver();
+
+    OwnPtr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
     HTMLFormElement* m_form;
     OwnPtr<ValidityState> m_validityState;
     String m_customValidationMessage;

@@ -36,6 +36,7 @@ class ContainerNode;
 class DOMSelection;
 class Element;
 class HTMLMapElement;
+class IdTargetObserverRegistry;
 class Node;
 
 // A class which inherits both Node and TreeScope must call clearRareData() in its destructor
@@ -78,6 +79,8 @@ public:
 
     ContainerNode* rootNode() const { return m_rootNode; }
 
+    IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
+
 protected:
     TreeScope(ContainerNode*);
     virtual ~TreeScope();
@@ -90,6 +93,8 @@ private:
 
     DocumentOrderedMap m_elementsById;
     DocumentOrderedMap m_imageMapsByName;
+
+    OwnPtr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
 
     mutable RefPtr<DOMSelection> m_selection;
 };

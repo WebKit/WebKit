@@ -610,6 +610,8 @@ SET(WebCore_SOURCES
     dom/ExceptionCodePlaceholder.cpp
     dom/GenericEventQueue.cpp
     dom/IconURL.cpp
+    dom/IdTargetObserver.cpp
+    dom/IdTargetObserverRegistry.cpp
     dom/KeyboardEvent.cpp
     dom/MessageChannel.cpp
     dom/MessageEvent.cpp

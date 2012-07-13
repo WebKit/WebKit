@@ -1942,6 +1942,10 @@ webcore_sources += \
 	Source/WebCore/dom/GenericEventQueue.h \
 	Source/WebCore/dom/IconURL.cpp \
 	Source/WebCore/dom/IconURL.h \
+	Source/WebCore/dom/IdTargetObserver.cpp \
+	Source/WebCore/dom/IdTargetObserver.h \
+	Source/WebCore/dom/IdTargetObserverRegistry.cpp \
+	Source/WebCore/dom/IdTargetObserverRegistry.h \
 	Source/WebCore/dom/HashChangeEvent.h \
 	Source/WebCore/dom/KeyboardEvent.cpp \
 	Source/WebCore/dom/KeyboardEvent.h \

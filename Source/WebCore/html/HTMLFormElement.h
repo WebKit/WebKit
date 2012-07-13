@@ -119,7 +119,6 @@ private:
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
-    virtual void didNotifyDescendantInsertions(ContainerNode*) OVERRIDE;
     virtual void removedFrom(ContainerNode*) OVERRIDE;
     virtual void finishParsingChildren() OVERRIDE;
 
@@ -136,7 +135,7 @@ private:
 
     void submit(Event*, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger);
 
-    unsigned formElementIndexWithFormAttribute(Element*);
+    unsigned formElementIndexWithFormAttribute(Element*, unsigned rangeStart, unsigned rangeEnd);
     unsigned formElementIndex(FormAssociatedElement*);
 
     // Returns true if the submission should proceed.

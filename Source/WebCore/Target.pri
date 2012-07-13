@@ -573,6 +573,8 @@ SOURCES += \
     dom/ExceptionCodePlaceholder.cpp \
     dom/GenericEventQueue.cpp \
     dom/IconURL.cpp \
+    dom/IdTargetObserver.cpp \
+    dom/IdTargetObserverRegistry.cpp \
     dom/KeyboardEvent.cpp \
     dom/MessageChannel.cpp \
     dom/MessageEvent.cpp \
@@ -1760,6 +1762,8 @@ HEADERS += \
     dom/ExceptionBase.h \
     dom/ExceptionCode.h \
     dom/FragmentScriptingPermission.h \
+    dom/IdTargetObserver.h \
+    dom/IdTargetObserverRegistry.h \
     dom/KeyboardEvent.h \
     dom/MemoryInstrumentation.h \
     dom/MessageChannel.h \
