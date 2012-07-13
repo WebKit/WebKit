@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool shouldIncludeChildren(CollectionType type)
+static bool shouldOnlyIncludeDirectChildren(CollectionType type)
 {
     switch (type) {
     case DocAll:
@@ -63,19 +63,21 @@ static bool shouldIncludeChildren(CollectionType type)
     case ItemProperties:
 #endif
     case FormControls:
-        return true;
+        return false;
     case NodeChildren:
     case TRCells:
     case TSectionRows:
     case TableTBodies:
-        return false;
+        return true;
+    case InvalidCollectionType:
+        break;
     }
     ASSERT_NOT_REACHED();
     return false;
 }
 
 HTMLCollection::HTMLCollection(Node* base, CollectionType type)
-    : HTMLCollectionCacheBase(type, shouldIncludeChildren(type))
+    : HTMLCollectionCacheBase(type)
     , m_base(base)
 {
     ASSERT(m_base);
@@ -170,31 +172,27 @@ inline bool HTMLCollection::isAcceptableElement(Element* element) const
     case DocumentNamedItems:
     case TableRows:
     case WindowNamedItems:
+    case InvalidCollectionType:
         ASSERT_NOT_REACHED();
     }
     return false;
 }
 
-static Node* nextNodeOrSibling(Node* base, Node* node, bool includeChildren)
+static ALWAYS_INLINE Node* nextNode(Node* base, Node* previous, bool onlyIncludeDirectChildren)
 {
-    return includeChildren ? node->traverseNextNode(base) : node->traverseNextSibling(base);
+    return onlyIncludeDirectChildren ? previous->traverseNextSibling(base) : previous->traverseNextNode(base);
 }
 
 Element* HTMLCollection::itemAfter(unsigned& offsetInArray, Element* previous) const
 {
     ASSERT_UNUSED(offsetInArray, !offsetInArray);
-    Node* current;
-    if (!previous)
-        current = m_base->firstChild();
-    else
-        current = nextNodeOrSibling(base(), previous, includeChildren());
+    bool onlyIncludeDirectChildren = shouldOnlyIncludeDirectChildren(type());
+    Node* rootNode = base();
+    Node* current = previous ? nextNode(rootNode, previous, onlyIncludeDirectChildren) : m_base->firstChild();
 
-    for (; current; current = nextNodeOrSibling(base(), current, includeChildren())) {
-        if (!current->isElementNode())
-            continue;
-        Element* element = static_cast<Element*>(current);
-        if (isAcceptableElement(element))
-            return element;
+    for (; current; current = nextNode(rootNode, current, onlyIncludeDirectChildren)) {
+        if (current->isElementNode() && isAcceptableElement(toElement(current)))
+            return toElement(current);
     }
 
     return 0;

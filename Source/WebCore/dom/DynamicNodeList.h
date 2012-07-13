@@ -24,6 +24,7 @@
 #ifndef DynamicNodeList_h
 #define DynamicNodeList_h
 
+#include "CollectionType.h"
 #include "Document.h"
 #include "NodeList.h"
 #include <wtf/Forward.h>
@@ -39,8 +40,16 @@ public:
     DynamicNodeListCacheBase(NodeListRootType rootType, NodeListInvalidationType invalidationType)
         : m_rootedAtDocument(rootType == NodeListIsRootedAtDocument)
         , m_invalidationType(invalidationType)
+        , m_collectionType(InvalidCollectionType)
     {
         ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
+        clearCache();
+    }
+
+    DynamicNodeListCacheBase(CollectionType collectionType)
+        : m_collectionType(collectionType)
+    {
+        ASSERT(m_collectionType == static_cast<unsigned>(collectionType));
         clearCache();
     }
 
@@ -49,6 +58,7 @@ public:
     ALWAYS_INLINE bool shouldInvalidateOnAttributeChange() const { return m_invalidationType != DoNotInvalidateOnAttributeChanges; }
     ALWAYS_INLINE NodeListRootType rootType() { return m_rootedAtDocument ? NodeListIsRootedAtDocument : NodeListIsRootedAtNode; }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
+    ALWAYS_INLINE CollectionType type() const { return static_cast<CollectionType>(m_collectionType); }
 
 protected:
     ALWAYS_INLINE bool isItemCacheValid() const { return m_isItemCacheValid; }
@@ -70,11 +80,15 @@ protected:
         m_isItemCacheValid = true;
     }
 
+    bool hasNameCache() const { return m_isNameCacheValid; }
+    void setHasNameCache() const { m_isNameCacheValid = true; }
+
     void clearCache() const
     {
         m_cachedItem = 0;
         m_isLengthCacheValid = false;
         m_isItemCacheValid = false;
+        m_isNameCacheValid = false;
     }
 
 private:
@@ -87,6 +101,10 @@ private:
     // From DynamicNodeList
     const unsigned m_rootedAtDocument : 1;
     const unsigned m_invalidationType : 3;
+
+    // From HTMLCollection
+    mutable unsigned m_isNameCacheValid : 1;
+    const unsigned m_collectionType : 5;
 };
 
 class DynamicNodeList : public NodeList, public DynamicNodeListCacheBase {

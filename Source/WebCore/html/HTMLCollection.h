@@ -39,18 +39,12 @@ class NodeList;
 
 class HTMLCollectionCacheBase : public DynamicNodeListCacheBase {
 public:
-    HTMLCollectionCacheBase(CollectionType type, bool includeChildren)
-        : DynamicNodeListCacheBase(NodeListIsRootedAtNode, DoNotInvalidateOnAttributeChanges) // These two flags are never used
+    HTMLCollectionCacheBase(CollectionType type)
+        : DynamicNodeListCacheBase(type)
         , m_cachedElementsArrayOffset(0)
         , m_cacheTreeVersion(0)
-        , m_hasNameCache(false)
-        , m_type(type)
-        , m_includeChildren(includeChildren)
     {
-        ASSERT(static_cast<CollectionType>(m_type) == type);
     }
-
-    CollectionType type() const { return static_cast<CollectionType>(m_type); }
 
 protected:
     void clearCache(uint64_t currentDomTreeVersion) const
@@ -60,7 +54,6 @@ protected:
         m_nameCache.clear();
         m_cachedElementsArrayOffset = 0;
         m_cacheTreeVersion = currentDomTreeVersion;
-        m_hasNameCache = false;
     }
 
     void setItemCache(Node* item, unsigned offset, unsigned elementsArrayOffset) const
@@ -70,7 +63,6 @@ protected:
     }
     unsigned cachedElementsArrayOffset() const { return m_cachedElementsArrayOffset; }
 
-    bool includeChildren() const { return m_includeChildren; }
     uint64_t cacheTreeVersion() const { return m_cacheTreeVersion; }
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<Element*> > > NodeCacheMap;
@@ -78,9 +70,6 @@ protected:
     Vector<Element*>* nameCache(const AtomicString& name) const { return m_nameCache.get(name.impl()); }
     void appendIdCache(const AtomicString& name, Element* element) const { append(m_idCache, name, element); }
     void appendNameCache(const AtomicString& name, Element* element) const { append(m_nameCache, name, element); }
-
-    bool hasNameCache() const { return m_hasNameCache; }
-    void setHasNameCache() const { m_hasNameCache = true; }
 
     static void append(NodeCacheMap&, const AtomicString&, Element*);
 
@@ -94,11 +83,6 @@ private:
     mutable NodeCacheMap m_nameCache;
     mutable unsigned m_cachedElementsArrayOffset;
     mutable uint64_t m_cacheTreeVersion;
-
-    // FIXME: Move these bit flags to DynamicNodeListCacheBase to pack them better.
-    mutable unsigned m_hasNameCache : 1;
-    const unsigned m_type : 5; // CollectionType
-    const unsigned m_includeChildren : 1;
 };
 
 class HTMLCollection : public RefCounted<HTMLCollection>, public HTMLCollectionCacheBase {
