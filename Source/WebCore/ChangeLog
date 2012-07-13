@@ -1,3 +1,17 @@
+2012-07-13  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Make the v8 i18n API dependency conditional for Android, disable strict aliasing
+        https://bugs.webkit.org/show_bug.cgi?id=91240
+
+        Reviewed by Adam Barth.
+
+        Disable the v8 internationalization API for Chromium Android, as it's
+        disabled and not always available in checkouts. Furthermore, disable
+        strict aliasing for the webkit_remaining target, similar to what
+        x11-based builds are doing (see the webcore_prerequisites target).
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-07-13  Kentaro Hara  <haraken@chromium.org>
 
         [CallWith=XXX] arguments should be placed at the head of method arguments
