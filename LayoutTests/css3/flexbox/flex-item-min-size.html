@@ -44,9 +44,9 @@ iframe {
 if (window.testRunner)
     testRunner.dumpAsText();
 </script>
-<script src="resources/flexbox.js"></script>
+<script src="../../resources/check-layout.js"></script>
 
-<body onload="checkFlexBoxen()">
+<body onload="checkLayout('.flexbox')">
     <div>Tests that flex items have default min-size to min-content in the main axis direction.</div>
     <div class="flexbox">
         <div class="flexitem" data-expected-width=20 data-expected-height=0>

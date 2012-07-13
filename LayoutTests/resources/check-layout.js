@@ -1,3 +1,5 @@
+(function() {
+
 function insertAfter(nodeToAdd, referenceNode)
 {
     if (referenceNode.nextSibling)
@@ -74,15 +76,19 @@ function checkExpectedValues(node, failures)
     }
 }
 
-function checkFlexBoxen()
+window.checkLayout = function(selectorList)
 {
-    var flexboxen = document.getElementsByClassName("flexbox");
-    Array.prototype.forEach.call(flexboxen, function(flexbox) {
+    if (!selectorList) {
+        console.error("You must provide a CSS selector of nodes to check.");
+        return;
+    }
+    var nodes = document.querySelectorAll(selectorList);
+    Array.prototype.forEach.call(nodes, function(node) {
         var failures = [];
-        checkExpectedValues(flexbox.parentNode, failures);
-        checkSubtreeExpectedValues(flexbox, failures);
+        checkExpectedValues(node.parentNode, failures);
+        checkSubtreeExpectedValues(node, failures);
 
-        var container = flexbox.parentNode.className == 'container' ? flexbox.parentNode : flexbox;
+        var container = node.parentNode.className == 'container' ? node.parentNode : node;
 
         var pre = document.createElement('pre');
         if (failures.length)
@@ -94,3 +100,5 @@ function checkFlexBoxen()
     if (pre)
         setTimeout(function() { pre.previousSibling.scrollIntoView(); }, 0);
 }
+
+})();

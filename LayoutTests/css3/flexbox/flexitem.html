@@ -21,8 +21,8 @@
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
 </script>
-<script src="resources/flexbox.js"></script>
-<body onload="checkFlexBoxen()">
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
 <div class="flexbox">
   <button data-expected-display="block" data-expected-width="100">button</button>
   <canvas data-expected-display="block" data-expected-width="100">canvas</canvas>

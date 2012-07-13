@@ -28,7 +28,7 @@ body {
 if (window.testRunner)
     testRunner.dumpAsText();
 </script>
-<script src="resources/flexbox.js"></script>
+<script src="../../resources/check-layout.js"></script>
 <body>
 
 <p>This test verifies that changing order, align-content, align-items, align-self, or justify-content will relayout.</p>
@@ -49,7 +49,7 @@ function checkValues(aXOffset, aYOffset, bXOffset, bYOffset)
     aDiv.setAttribute("data-offset-y", aYOffset);
     bDiv.setAttribute("data-offset-x", bXOffset);
     bDiv.setAttribute("data-offset-y", bYOffset);
-    checkFlexBoxen();
+    checkLayout('.flexbox');
 }
 
 checkValues(0, 0, 100, 0);

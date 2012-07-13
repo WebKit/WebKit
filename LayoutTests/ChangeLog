@@ -1,3 +1,61 @@
+2012-07-13  Tony Chang  <tony@chromium.org>
+
+        Move layout checking js script into LayoutTest/resources and generalize
+        https://bugs.webkit.org/show_bug.cgi?id=91268
+
+        Reviewed by Ojan Vafai.
+
+        flexbox.js contains helper scripts for verifying the size and position of nodes.
+        I will be writing similar tests for grid, so move the js file into a location
+        for sharing and generalize the script.
+
+        * css3/flexbox/align-absolute-child.html: Change include path and call.
+        * css3/flexbox/auto-height-dynamic.html:
+        * css3/flexbox/columns-auto-size.html:
+        * css3/flexbox/flex-algorithm-min-max.html:
+        * css3/flexbox/flex-algorithm-with-margins.html:
+        * css3/flexbox/flex-algorithm.html:
+        * css3/flexbox/flex-align-column.html:
+        * css3/flexbox/flex-align-end.html:
+        * css3/flexbox/flex-align-max.html:
+        * css3/flexbox/flex-align-percent-height.html:
+        * css3/flexbox/flex-align-stretch.html:
+        * css3/flexbox/flex-align-vertical-writing-mode.html:
+        * css3/flexbox/flex-align.html:
+        * css3/flexbox/flex-flow-auto-margins.html:
+        * css3/flexbox/flex-flow-border.html:
+        * css3/flexbox/flex-flow-margins-auto-size.html:
+        * css3/flexbox/flex-flow-margins.html:
+        * css3/flexbox/flex-flow-orientations.html:
+        * css3/flexbox/flex-flow-overflow.html:
+        * css3/flexbox/flex-flow-padding.html:
+        * css3/flexbox/flex-flow.html:
+        * css3/flexbox/flex-item-child-overflow.html:
+        * css3/flexbox/flex-item-min-size.html:
+        * css3/flexbox/flex-justify-content.html:
+        * css3/flexbox/flex-no-flex.html:
+        * css3/flexbox/flexitem.html:
+        * css3/flexbox/floated-flexbox.html:
+        * css3/flexbox/line-wrapping.html:
+        * css3/flexbox/multiline-align-content-horizontal-column.html:
+        * css3/flexbox/multiline-align-content.html:
+        * css3/flexbox/multiline-align-self.html:
+        * css3/flexbox/multiline-column-auto.html:
+        * css3/flexbox/multiline-justify-content.html:
+        * css3/flexbox/multiline-reverse-wrap-overflow.html:
+        * css3/flexbox/multiline.html:
+        * css3/flexbox/nested-stretch.html:
+        * css3/flexbox/orthogonal-flex-directions.html:
+        * css3/flexbox/perpendicular-writing-modes-inside-flex-item.html:
+        * css3/flexbox/position-absolute-child.html:
+        * css3/flexbox/preferred-widths-orthogonal.html:
+        * css3/flexbox/preferred-widths.html:
+        * css3/flexbox/style-change.html:
+        * css3/flexbox/true-centering.html:
+        * css3/flexbox/writing-modes.html:
+        * resources/check-layout.js: Renamed from LayoutTests/css3/flexbox/resources/flexbox.js.
+        (.): Rename checkFlexboxen to checkLayout that takes a CSS selector. Hide functions in a closure.
+
 2012-07-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding a baseline required after unskipping

@@ -29,8 +29,8 @@ body {
 if (window.testRunner)
     testRunner.dumpAsText();
 </script>
-<script src="resources/flexbox.js"></script>
-<body onload="checkFlexBoxen()">
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
 <div class="flexbox">
   <div data-expected-width="100" style="-webkit-flex: 1 0 0; max-width: 100px;"></div>
   <div data-expected-width="250" style="-webkit-flex: 1 0 0;"></div>

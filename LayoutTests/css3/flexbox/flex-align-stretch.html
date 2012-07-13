@@ -34,8 +34,8 @@ body {
 if (window.testRunner)
     testRunner.dumpAsText();
 </script>
-<script src="resources/flexbox.js"></script>
-<body onload="checkFlexBoxen()">
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
 <div class="flexbox" style="width: 600px">
   <div data-expected-height="100" style="-webkit-flex: 1 0 0; position: relative">
     <div data-offset-x="0" data-offset-y="50" class="absolute" style="bottom:0;"></div>
