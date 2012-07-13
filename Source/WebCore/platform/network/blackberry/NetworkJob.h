@@ -80,6 +80,7 @@ public:
     void handleNotifyDataSent(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void notifyClose(int status);
     void handleNotifyClose(int status);
+    virtual int status() const { return m_extendedStatusCode; }
 
 private:
     bool isClientAvailable() const { return !m_cancelled && m_handle && m_handle->client(); }

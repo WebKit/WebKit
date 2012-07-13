@@ -105,7 +105,7 @@ void SocketStreamHandle::notifyStatusReceived(int status, const char* message)
 
     // The client can close the handle, potentially removing the last reference.
     RefPtr<SocketStreamHandle> protect(this);
-
+    m_status = status;
     if (FilterStream::StatusSuccess != status)
         m_client->didFailSocketStream(this, SocketStreamError(status));
     else {
@@ -134,6 +134,9 @@ void SocketStreamHandle::notifyClose(int status)
 
     // The client can close the handle, potentially removing the last reference.
     RefPtr<SocketStreamHandle> protect(this);
+
+    if (status < 0 || (400 <= status && status < 600))
+        m_status = status;
 
     if (FilterStream::StatusSuccess != status)
         m_client->didFailSocketStream(this, SocketStreamError(status));

@@ -1,3 +1,30 @@
+2012-07-13  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] Some small changes in network code
+        https://bugs.webkit.org/show_bug.cgi?id=90974
+
+        Reviewed by Rob Buis.
+
+        1. Set status in NetworkJob/SocketStreamHandleBlackBerry so that
+        its wrapped stream can also query the stream result.
+        2. pass download attribute to NetworkRequest.
+
+        RIM PR# 171555
+        Reviewed internally by Lyon Chen and Joe Mason.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleNotifyClose):
+        * platform/network/blackberry/NetworkJob.h:
+        (WebCore::NetworkJob::status):
+        * platform/network/blackberry/ResourceRequestBlackBerry.cpp:
+        (WebCore::platformTargetTypeForRequest):
+        * platform/network/blackberry/SocketStreamHandle.h:
+        (WebCore::SocketStreamHandle::status):
+        (SocketStreamHandle):
+        * platform/network/blackberry/SocketStreamHandleBlackBerry.cpp:
+        (WebCore::SocketStreamHandle::notifyStatusReceived):
+        (WebCore::SocketStreamHandle::notifyClose):
+
 2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove uiSourceCode from Resource.

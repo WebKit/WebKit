@@ -55,6 +55,8 @@ static inline NetworkRequest::TargetType platformTargetTypeForRequest(const Reso
 {
     if (request.isXMLHTTPRequest())
         return NetworkRequest::TargetIsXMLHTTPRequest;
+    if (request.forceDownload())
+        return NetworkRequest::TargetIsDownload;
 
     switch (request.targetType()) {
     case ResourceRequest::TargetIsMainFrame:

@@ -57,6 +57,7 @@ public:
     virtual void notifyDataReceived(BlackBerry::Platform::NetworkBuffer*);
     virtual void notifyReadyToSendData();
     virtual void notifyClose(int status);
+    virtual int status() const { return m_status; }
 
 protected:
     virtual int platformSend(const char* data, int length);
@@ -66,6 +67,7 @@ private:
     SocketStreamHandle(const String& groupName, const KURL&, SocketStreamHandleClient*);
 
     OwnPtr<BlackBerry::Platform::FilterStream> m_socketStream;
+    int m_status;
 };
 
 } // namespace WebCore

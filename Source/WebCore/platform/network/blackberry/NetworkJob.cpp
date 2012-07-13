@@ -481,7 +481,8 @@ void NetworkJob::handleNotifyClose(int status)
 
             sendResponseIfNeeded();
             if (isClientAvailable()) {
-
+                if (isError(status))
+                    m_extendedStatusCode = status;
                 RecursionGuard guard(m_callingClient);
                 if (shouldNotifyClientFailed()) {
                     String domain = m_extendedStatusCode < 0 ? ResourceError::platformErrorDomain : ResourceError::httpErrorDomain;
