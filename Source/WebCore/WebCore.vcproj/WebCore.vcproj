@@ -31549,6 +31549,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\arm\FEBlendNEON.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\FEColorMatrix.cpp"
 						>
 					</File>

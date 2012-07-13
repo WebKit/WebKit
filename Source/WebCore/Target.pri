@@ -2278,6 +2278,7 @@ HEADERS += \
     platform/graphics/filters/SourceAlpha.h \
     platform/graphics/filters/SourceGraphic.h \
     platform/graphics/filters/arm/NEONHelpers.h \
+    platform/graphics/filters/arm/FEBlendNEON.h \
     platform/graphics/filters/arm/FECompositeArithmeticNEON.h \
     platform/graphics/filters/arm/FEGaussianBlurNEON.h \
     platform/graphics/filters/arm/FELightingNEON.h \

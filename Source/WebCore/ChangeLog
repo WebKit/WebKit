@@ -1,3 +1,41 @@
+2012-07-13  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Optimizing blend filter to ARM-NEON with intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=90949
+
+        Reviewed by Zoltan Herczeg.
+
+        The feBlend SVG filter modes can be greatly fasten up with ARM-NEON since
+        we are able to calculate with 2 pixels (8 channels) at the same time.
+        The code is written with NEON intrinsics and it doesn't affect the
+        general - it has the same behaviour as the original algorithm.
+        With this NEON optimization the calculation is ~4.5 times faster for each mode.
+
+        Existing tests cover this issue.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::platformApplyGeneric):
+        (WebCore):
+        (WebCore::FEBlend::platformApplySoftware):
+        * platform/graphics/filters/FEBlend.h:
+        (FEBlend):
+        * platform/graphics/filters/arm/FEBlendNEON.h: Added.
+        (WebCore):
+        (FEBlendUtilitiesNEON):
+        (WebCore::FEBlendUtilitiesNEON::div255): integer divison with 255
+        (WebCore::FEBlendUtilitiesNEON::normal): calculate normal mode blending for two pixels
+        (WebCore::FEBlendUtilitiesNEON::multiply): calculate multiply mode blending for two pixels
+        (WebCore::FEBlendUtilitiesNEON::screen): calculate screen mode blending for two pixels
+        (WebCore::FEBlendUtilitiesNEON::darken): calculate darken mode blending for two pixels
+        (WebCore::FEBlendUtilitiesNEON::lighten): calculate lighten mode blending for two pixels
+        (WebCore::FEBlend::platformApplyNEON):
+
 2012-07-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: native memory instrumentation: extract instrumentation methods into MemoryClassInfo

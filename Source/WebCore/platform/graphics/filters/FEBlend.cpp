@@ -24,6 +24,7 @@
 
 #if ENABLE(FILTERS)
 #include "FEBlend.h"
+#include "FEBlendNEON.h"
 
 #include "Filter.h"
 #include "FloatPoint.h"
@@ -86,26 +87,12 @@ static inline unsigned char lighten(unsigned char colorA, unsigned char colorB, 
     return ((std::max((255 - alphaA) * colorB + colorA * 255, (255 - alphaB) * colorA + colorB * 255)) / 255);
 }
 
-void FEBlend::platformApplySoftware()
+void FEBlend::platformApplyGeneric(PassRefPtr<Uint8ClampedArray> pixelArrayA, PassRefPtr<Uint8ClampedArray> pixelArrayB,
+                                   Uint8ClampedArray* dstPixelArray, unsigned pixelArrayLength)
 {
-    FilterEffect* in = inputEffect(0);
-    FilterEffect* in2 = inputEffect(1);
+    RefPtr<Uint8ClampedArray> srcPixelArrayA = pixelArrayA;
+    RefPtr<Uint8ClampedArray> srcPixelArrayB = pixelArrayB;
 
-    ASSERT(m_mode > FEBLEND_MODE_UNKNOWN);
-    ASSERT(m_mode <= FEBLEND_MODE_LIGHTEN);
-
-    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
-    if (!dstPixelArray)
-        return;
-
-    IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<Uint8ClampedArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
-
-    IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<Uint8ClampedArray> srcPixelArrayB = in2->asPremultipliedImage(effectBDrawingRect);
-
-    unsigned pixelArrayLength = srcPixelArrayA->length();
-    ASSERT(pixelArrayLength == srcPixelArrayB->length());
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
         unsigned char alphaA = srcPixelArrayA->item(pixelOffset + 3);
         unsigned char alphaB = srcPixelArrayB->item(pixelOffset + 3);
@@ -141,6 +128,45 @@ void FEBlend::platformApplySoftware()
         unsigned char alphaR = 255 - ((255 - alphaA) * (255 - alphaB)) / 255;
         dstPixelArray->set(pixelOffset + 3, alphaR);
     }
+}
+
+void FEBlend::platformApplySoftware()
+{
+    FilterEffect* in = inputEffect(0);
+    FilterEffect* in2 = inputEffect(1);
+
+    ASSERT(m_mode > FEBLEND_MODE_UNKNOWN);
+    ASSERT(m_mode <= FEBLEND_MODE_LIGHTEN);
+
+    Uint8ClampedArray* dstPixelArray = createPremultipliedImageResult();
+    if (!dstPixelArray)
+        return;
+
+    IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
+    RefPtr<Uint8ClampedArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
+
+    IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
+    RefPtr<Uint8ClampedArray> srcPixelArrayB = in2->asPremultipliedImage(effectBDrawingRect);
+
+    unsigned pixelArrayLength = srcPixelArrayA->length();
+    ASSERT(pixelArrayLength == srcPixelArrayB->length());
+
+#if HAVE(ARM_NEON_INTRINSICS)
+    if (pixelArrayLength >= 8)
+        platformApplyNEON(srcPixelArrayA->data(), srcPixelArrayB->data(), dstPixelArray->data(), pixelArrayLength);
+    else { // If there is just one pixel we expand it to two.
+        ASSERT(pixelArrayLength > 0);
+        uint32_t sourceA[2] = {0, 0};
+        uint32_t sourceBAndDest[2] = {0, 0};
+
+        sourceA[0] = reinterpret_cast<uint32_t*>(srcPixelArrayA->data())[0];
+        sourceBAndDest[0] = reinterpret_cast<uint32_t*>(srcPixelArrayB->data())[0];
+        platformApplyNEON(reinterpret_cast<uint8_t*>(sourceA), reinterpret_cast<uint8_t*>(sourceBAndDest), reinterpret_cast<uint8_t*>(sourceBAndDest), 8);
+        reinterpret_cast<uint32_t*>(dstPixelArray->data())[0] = sourceBAndDest[0];
+    }
+#else
+    platformApplyGeneric(srcPixelArrayA, srcPixelArrayB, dstPixelArray, pixelArrayLength);
+#endif
 }
 
 void FEBlend::dump()
