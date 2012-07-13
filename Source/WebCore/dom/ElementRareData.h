@@ -76,7 +76,8 @@ public:
     OwnPtr<ElementShadow> m_shadow;
     OwnPtr<NamedNodeMap> m_attributeMap;
 
-    bool m_styleAffectedByEmpty;
+    bool m_styleAffectedByEmpty : 1;
+    bool m_isInCanvasSubtree : 1;
 
     IntSize m_savedLayerScrollOffset;
 
@@ -94,6 +95,7 @@ inline ElementRareData::ElementRareData()
     : NodeRareData()
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
     , m_styleAffectedByEmpty(false)
+    , m_isInCanvasSubtree(false)
 #if ENABLE(FULLSCREEN_API)
     , m_containsFullScreenElement(false)
 #endif

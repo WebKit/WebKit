@@ -283,6 +283,9 @@ public:
     void setStyleAffectedByEmpty();
     bool styleAffectedByEmpty() const;
 
+    void setIsInCanvasSubtree(bool);
+    bool isInCanvasSubtree() const;
+
     AtomicString computeInheritedLanguage() const;
 
     virtual void accessKeyAction(bool /*sendToAnyEvent*/) { }

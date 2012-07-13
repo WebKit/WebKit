@@ -1,3 +1,13 @@
+2012-07-13  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Should be possible to focus elements within canvas fallback content
+        https://bugs.webkit.org/show_bug.cgi?id=87898
+
+        Reviewed by Chris Fleizach.
+
+        * fast/canvas/fallback-content-expected.txt: Added.
+        * fast/canvas/fallback-content.html: Added.
+
 2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed inspector test fix.

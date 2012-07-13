@@ -135,6 +135,12 @@ RenderObject* HTMLCanvasElement::createRenderer(RenderArena* arena, RenderStyle*
     return HTMLElement::createRenderer(arena, style);
 }
 
+void HTMLCanvasElement::attach()
+{
+    setIsInCanvasSubtree(true);
+    HTMLElement::attach();
+}
+
 void HTMLCanvasElement::addObserver(CanvasObserver* observer)
 {
     m_observers.add(observer);

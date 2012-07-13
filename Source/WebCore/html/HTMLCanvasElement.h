@@ -142,6 +142,7 @@ private:
 
     virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void attach();
 
     void reset();
 

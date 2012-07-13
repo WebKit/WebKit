@@ -1,3 +1,39 @@
+2012-07-13  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Should be possible to focus elements within canvas fallback content
+        https://bugs.webkit.org/show_bug.cgi?id=87898
+
+        Reviewed by Chris Fleizach.
+
+        Patches isFocusable in dom/Node.cpp and html/HTMLFormControlElement.cpp
+        to make elements focusable if they're a descendent of a canvas element
+        if they would otherwise have been focusable but just didn't have
+        a renderer. Adds a bit to ElementRareData to efficiently keep track
+        of elements in a canvas subtree.
+
+        Test: fast/canvas/fallback-content.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        (WebCore::Element::setIsInCanvasSubtree):
+        (WebCore):
+        (WebCore::Element::isInCanvasSubtree):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::Node::isFocusable):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::attach):
+        (WebCore):
+        * html/HTMLCanvasElement.h:
+        (HTMLCanvasElement):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isFocusable):
+
 2012-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get HTTPS status to WebKit2 GTK+

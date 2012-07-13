@@ -938,6 +938,9 @@ void Element::attach()
     createRendererIfNeeded();
     StyleResolverParentPusher parentPusher(this);
 
+    if (parentElement() && parentElement()->isInCanvasSubtree())
+        setIsInCanvasSubtree(true);
+
     // When a shadow root exists, it does the work of attaching the children.
     if (ElementShadow* shadow = this->shadow()) {
         parentPusher.push();
@@ -976,8 +979,10 @@ void Element::detach()
     RenderWidget::suspendWidgetHierarchyUpdates();
     unregisterNamedFlowContentNode();
     cancelFocusAppearanceUpdate();
-    if (hasRareData())
+    if (hasRareData()) {
+        setIsInCanvasSubtree(false);
         elementRareData()->resetComputedStyle();
+    }
 
     if (ElementShadow* shadow = this->shadow()) {
         detachChildrenIfNeeded();
@@ -1668,6 +1673,17 @@ void Element::setStyleAffectedByEmpty()
 bool Element::styleAffectedByEmpty() const
 {
     return hasRareData() && elementRareData()->m_styleAffectedByEmpty;
+}
+
+void Element::setIsInCanvasSubtree(bool isInCanvasSubtree)
+{
+    ElementRareData* data = ensureElementRareData();
+    data->m_isInCanvasSubtree = isInCanvasSubtree;
+}
+
+bool Element::isInCanvasSubtree() const
+{
+    return hasRareData() && elementRareData()->m_isInCanvasSubtree;
 }
 
 AtomicString Element::computeInheritedLanguage() const
