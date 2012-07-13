@@ -1,5 +1,12 @@
 2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed chromium gardening, updated test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=91254
+
+        * platform/chromium/TestExpectations:
+
+2012-07-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Unreviewed gardening, marked chromium test as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=91252
 

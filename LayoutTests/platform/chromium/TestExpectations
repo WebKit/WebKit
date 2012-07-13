@@ -3756,6 +3756,9 @@ BUGWK91252 WIN : http/tests/w3c/webperf/approved/navigation-timing/html5/test_pe
 // Started crashing after 122286
 BUGWK91133 WIN : storage/indexeddb/constants.html = PASS CRASH
 
+// Started crashing after 122450
+BUGWK91254 WIN LINUX DEBUG : fast/dom/attribute-empty-value-no-children.html = CRASH
+
 // Need rebaseline
 BUGWK90951 : fast/text/shaping/shaping-selection-rect.html = MISSING
 BUGWK90951 : fast/text/shaping/shaping-script-order.html = MISSING
