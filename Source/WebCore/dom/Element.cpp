@@ -913,6 +913,10 @@ void Element::removedFrom(ContainerNode* insertionPoint)
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 #endif
+#if ENABLE(POINTER_LOCK)
+    if (document()->page())
+        document()->page()->pointerLockController()->elementRemoved(this);
+#endif
 
     setSavedLayerScrollOffset(IntSize());
 
@@ -1890,7 +1894,8 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
 #if ENABLE(POINTER_LOCK)
 void Element::webkitRequestPointerLock()
 {
-    document()->frame()->page()->pointerLockController()->requestPointerLock(this, 0, 0);
+    if (document()->page())
+        document()->page()->pointerLockController()->requestPointerLock(this, 0, 0);
 }
 #endif
 

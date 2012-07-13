@@ -48,15 +48,12 @@ PassOwnPtr<PointerLockController> PointerLockController::create(Page* page)
 
 void PointerLockController::requestPointerLock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback)
 {
-    if (!target)
-        return;
-
-    if (!target->inDocument()) {
+    if (!target || !target->inDocument() || m_documentOfRemovedElementWhileWaitingForUnlock) {
         enqueueEvent(eventNames().webkitpointerlockerrorEvent, target);
         return;
     }
 
-    if (isLocked()) {
+    if (m_element) {
         // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
         enqueueEvent(eventNames().webkitpointerlockchangeEvent, target);
         if (m_element->document() != target->document())
@@ -89,6 +86,25 @@ void PointerLockController::requestPointerLock(Element* target, PassRefPtr<VoidC
 void PointerLockController::requestPointerUnlock()
 {
     return m_page->chrome()->client()->requestPointerUnlock();
+}
+
+void PointerLockController::elementRemoved(Element* element)
+{
+    if (m_element == element) {
+        m_documentOfRemovedElementWhileWaitingForUnlock = m_element->document();
+        // Set element null immediately to block any future interaction with it
+        // including mouse events received before the unlock completes.
+        m_element = 0;
+        requestPointerUnlock();
+    }
+}
+
+void PointerLockController::documentDetached(Document* document)
+{
+    if (m_element && m_element->document() == document) {
+        m_element = 0;
+        requestPointerUnlock();
+    }
 }
 
 bool PointerLockController::isLocked()
@@ -136,11 +152,12 @@ void PointerLockController::didLosePointerLock(bool sendChangeEvent)
 {
     // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
     if (sendChangeEvent)
-        enqueueEvent(eventNames().webkitpointerlockchangeEvent, m_element.get());
+        enqueueEvent(eventNames().webkitpointerlockchangeEvent, m_element ? m_element->document() : m_documentOfRemovedElementWhileWaitingForUnlock.get());
 
     // FIXME: Remove callback usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
     RefPtr<Element> elementToNotify(m_element);
     m_element = 0;
+    m_documentOfRemovedElementWhileWaitingForUnlock = 0;
     m_successCallback = 0;
     m_failureCallback = 0;
     if (elementToNotify && elementToNotify->document()->frame())
@@ -161,9 +178,14 @@ void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& e
 
 void PointerLockController::enqueueEvent(const AtomicString& type, Element* element)
 {
-    if (!element)
-        return;
-    element->document()->enqueueDocumentEvent(Event::create(type, true, false));
+    if (element)
+        enqueueEvent(type, element->document());
+}
+
+void PointerLockController::enqueueEvent(const AtomicString& type, Document* document)
+{
+    if (document)
+        document->enqueueDocumentEvent(Event::create(type, true, false));
 }
 
 } // namespace WebCore

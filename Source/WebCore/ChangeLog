@@ -1,3 +1,32 @@
+2012-07-13  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock handles disconnected DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=77029
+
+        Reviewed by Adrienne Walker.
+
+        Pointer Lock Controller now checks when elements or documents are
+        removed, and unlocks if the target element is being removed.
+
+        Tests: pointer-lock/locked-element-iframe-removed-from-dom.html
+               pointer-lock/locked-element-removed-from-dom.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        * dom/Element.cpp:
+        (WebCore::Element::removedFrom):
+        (WebCore::Element::webkitRequestPointerLock):
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::requestPointerLock):
+        (WebCore::PointerLockController::elementRemoved):
+        (WebCore):
+        (WebCore::PointerLockController::documentDetached):
+        (WebCore::PointerLockController::didLosePointerLock):
+        (WebCore::PointerLockController::enqueueEvent):
+        * page/PointerLockController.h:
+        (WebCore):
+        (PointerLockController):
+
 2012-07-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLCollection should use DynamicNodeList's invalidation model

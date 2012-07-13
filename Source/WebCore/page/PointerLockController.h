@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class Element;
+class Document;
 class Page;
 class PlatformMouseEvent;
 class VoidCallback;
@@ -45,7 +46,9 @@ public:
 
     void requestPointerLock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback);
     void requestPointerUnlock();
-    bool isLocked();
+    void elementRemoved(Element*);
+    void documentDetached(Document*);
+    bool isLocked(); // FIXME: Rename to isClientLocked and move to private when removing old API. (https://bugs.webkit.org/show_bug.cgi?id=84402)
     Element* element() const;
 
     void didAcquirePointerLock();
@@ -56,8 +59,10 @@ public:
 private:
     explicit PointerLockController(Page*);
     void enqueueEvent(const AtomicString& type, Element*);
+    void enqueueEvent(const AtomicString& type, Document*);
     Page* m_page;
     RefPtr<Element> m_element;
+    RefPtr<Document> m_documentOfRemovedElementWhileWaitingForUnlock;
 
     // FIXME: Remove callback usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
     RefPtr<VoidCallback> m_successCallback;

@@ -1,3 +1,18 @@
+2012-07-13  Vincent Scheib  <scheib@chromium.org>
+
+        Pointer Lock handles disconnected DOM elements
+        https://bugs.webkit.org/show_bug.cgi?id=77029
+
+        Reviewed by Adrienne Walker.
+
+        Two new tests that verify pointer lock is released when the target
+        is removed from the document.
+
+        * pointer-lock/locked-element-iframe-removed-from-dom-expected.txt: Added.
+        * pointer-lock/locked-element-iframe-removed-from-dom.html: Added.
+        * pointer-lock/locked-element-removed-from-dom-expected.txt: Added.
+        * pointer-lock/locked-element-removed-from-dom.html: Added.
+
 2012-07-13  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Unreviewed gardening. storage/indexeddb/cursor-key-order.html has starting crashing on occassion.

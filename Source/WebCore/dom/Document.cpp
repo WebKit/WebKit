@@ -2080,6 +2080,11 @@ void Document::detach()
     ASSERT(attached());
     ASSERT(!m_inPageCache);
 
+#if ENABLE(POINTER_LOCK)
+    if (page())
+        page()->pointerLockController()->documentDetached(this);
+#endif
+
     if (this == topDocument())
         clearAXObjectCache();
 
