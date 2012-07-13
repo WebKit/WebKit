@@ -1,3 +1,38 @@
+2012-07-13  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] resetBitmapZoomScale called while zooming preventing pinch zoom
+        https://bugs.webkit.org/show_bug.cgi?id=91247
+
+        Reviewed by Antonio Gomes.
+
+        PR: 175432
+        On yahoo.com, the web page stopped zooming while trying to pinch as
+        WebPageClient::resetBitmapZoomScale(double) was being called by
+        WebPagePrivate::zoomToInitialScaleOnLoad() after load finished.
+        And also yahoo.com was keeping updating layout, which made it really
+        bad that zoomToInitialScaleOnLoad() was called many times when load
+        finished and the load type was FrameLoadTypeStandard or FrameLoadTypeSame.
+        As we only care about the situation that dispatchDidFirstVisuallyNonEmptyLayout()
+        happens after load finished, we can move the code to that method and
+        set a flag for WebPage layoutFinished() and zoomToInitialScaleOnLoad()
+        instead. In this way, we can ensure that the flag is only enabled when
+        dispatchDidFirstVisuallyNonEmptyLayout() is called after load finished
+        and get rid of calling zoomToInitialScaleOnLoad() lots of times when
+        keeping updating layout in such kind of situation.
+
+        Internally reviewed by Arvid Nilsson
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::layoutFinished):
+        * Api/WebPage_p.h:
+        (BlackBerry::WebKit::WebPagePrivate::shouldZoomToInitialScaleOnLoad):
+        (BlackBerry::WebKit::WebPagePrivate::setShouldZoomToInitialScaleAfterLoadFinished):
+        (WebPagePrivate):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFirstVisuallyNonEmptyLayout):
+
 2012-07-13  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Use fillBuffer() instead of a user-defined background image.

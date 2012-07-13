@@ -207,7 +207,12 @@ public:
     void notifyPopupAutofillDialog(const Vector<String>&, const WebCore::IntRect&);
     void notifyDismissAutofillDialog();
 
-    bool shouldZoomToInitialScaleOnLoad() const;
+    bool shouldZoomToInitialScaleOnLoad() const { return loadState() == Committed || m_shouldZoomToInitialScaleAfterLoadFinished; }
+    void setShouldZoomToInitialScaleAfterLoadFinished(bool shouldZoomToInitialScaleAfterLoadFinished)
+    {
+        m_shouldZoomToInitialScaleAfterLoadFinished = shouldZoomToInitialScaleAfterLoadFinished;
+    }
+
     // Called according to our heuristic or from setLoadState depending on whether we have a virtual viewport.
     void zoomToInitialScaleOnLoad();
 
@@ -460,6 +465,7 @@ public:
     bool m_visible;
     ActivationStateType m_activationState;
     bool m_shouldResetTilesWhenShown;
+    bool m_shouldZoomToInitialScaleAfterLoadFinished;
     bool m_userScalable;
     bool m_userPerformedManualZoom;
     bool m_userPerformedManualScroll;

@@ -825,6 +825,14 @@ void FrameLoaderClientBlackBerry::dispatchDidFirstVisuallyNonEmptyLayout()
 
     readyToRender(true);
 
+    // For FrameLoadTypeSame or FrameLoadTypeStandard load, the layout timer can be fired which can call
+    // dispatchDidFirstVisuallyNonEmptyLayout() after the load Finished state, in which case the web page
+    // will have no chance to zoom to initial scale. So we should give it a chance, otherwise the scale of
+    // the web page can be incorrect.
+    FrameLoadType frameLoadType = m_frame->loader()->loadType();
+    if (m_webPagePrivate->loadState() == WebPagePrivate::Finished && (frameLoadType == FrameLoadTypeSame || frameLoadType == FrameLoadTypeStandard))
+        m_webPagePrivate->setShouldZoomToInitialScaleAfterLoadFinished(true);
+
     if (m_webPagePrivate->shouldZoomToInitialScaleOnLoad()) {
         m_webPagePrivate->zoomToInitialScaleOnLoad(); // Set the proper zoom level first.
         m_webPagePrivate->m_backingStore->d->clearVisibleZoom(); // Clear the visible zoom since we're explicitly rendering+blitting below.

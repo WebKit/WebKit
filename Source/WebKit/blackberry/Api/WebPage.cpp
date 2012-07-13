@@ -337,6 +337,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_visible(false)
     , m_activationState(ActivationActive)
     , m_shouldResetTilesWhenShown(false)
+    , m_shouldZoomToInitialScaleAfterLoadFinished(false)
     , m_userScalable(true)
     , m_userPerformedManualZoom(false)
     , m_userPerformedManualScroll(false)
@@ -1054,6 +1055,7 @@ void WebPagePrivate::setLoadState(LoadState state)
             m_backingStore->d->resetRenderQueue();
             m_backingStore->d->resetTiles(true /* resetBackground */);
             m_backingStore->d->setScrollingOrZooming(false, false /* shouldBlit */);
+            m_shouldZoomToInitialScaleAfterLoadFinished = false;
             m_userPerformedManualZoom = false;
             m_userPerformedManualScroll = false;
             m_shouldUseFixedDesktopMode = false;
@@ -1699,9 +1701,10 @@ void WebPagePrivate::layoutFinished()
 
     m_nestedLayoutFinishedCount++;
 
-    if (shouldZoomToInitialScaleOnLoad())
+    if (shouldZoomToInitialScaleOnLoad()) {
         zoomToInitialScaleOnLoad();
-    else if (loadState() != None)
+        m_shouldZoomToInitialScaleAfterLoadFinished = false;
+    } else if (loadState() != None)
         notifyTransformedContentsSizeChanged();
 
     m_nestedLayoutFinishedCount--;
@@ -1734,19 +1737,6 @@ void WebPagePrivate::layoutFinished()
             }
         }
     }
-}
-
-bool WebPagePrivate::shouldZoomToInitialScaleOnLoad() const
-{
-    // For FrameLoadTypeSame or FrameLoadTypeStandard load, the layout timer can be fired which can call dispatchDidFirstVisuallyNonEmptyLayout()
-    // after the load Finished state, in which case the web page will have no chance to zoom to initial scale. So we should give it a chance,
-    // otherwise the scale of the web page can be incorrect.
-    FrameLoadType frameLoadType = FrameLoadTypeStandard;
-    if (m_mainFrame && m_mainFrame->loader())
-        frameLoadType = m_mainFrame->loader()->loadType();
-    if (m_loadState == Committed || (m_loadState == Finished && (frameLoadType == FrameLoadTypeSame || frameLoadType == FrameLoadTypeStandard)))
-        return true;
-    return false;
 }
 
 void WebPagePrivate::zoomToInitialScaleOnLoad()
