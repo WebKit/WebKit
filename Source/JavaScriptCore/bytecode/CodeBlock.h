@@ -104,6 +104,7 @@ namespace JSC {
     class DFGCodeBlocks;
     class ExecState;
     class LLIntOffsetsExtractor;
+    class RepatchBuffer;
 
     inline int unmodifiedArgumentsRegister(int argumentsRegister) { return argumentsRegister - 1; }
 
@@ -205,6 +206,8 @@ namespace JSC {
         {
             return *(binarySearch<StructureStubInfo, unsigned, getStructureStubInfoBytecodeIndex>(m_structureStubInfos.begin(), m_structureStubInfos.size(), bytecodeIndex));
         }
+        
+        void resetStub(StructureStubInfo&);
 
         CallLinkInfo& getCallLinkInfo(ReturnAddressPtr returnAddress)
         {
@@ -1233,6 +1236,10 @@ namespace JSC {
             if (!m_rareData)
                 m_rareData = adoptPtr(new RareData);
         }
+
+#if ENABLE(JIT)
+        void resetStubInternal(RepatchBuffer&, StructureStubInfo&);
+#endif
         
         int m_numParameters;
 

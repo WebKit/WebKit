@@ -2026,16 +2026,16 @@ void CodeBlock::visitWeakReferences(SlotVisitor& visitor)
     performTracingFixpointIteration(visitor);
 }
 
-void CodeBlock::finalizeUnconditionally()
-{
 #if ENABLE(JIT)
 #if ENABLE(JIT_VERBOSE_OSR)
-    static const bool verboseUnlinking = true;
+static const bool verboseUnlinking = true;
 #else
-    static const bool verboseUnlinking = false;
+static const bool verboseUnlinking = false;
 #endif
 #endif // ENABLE(JIT)
     
+void CodeBlock::finalizeUnconditionally()
+{
 #if ENABLE(LLINT)
     Interpreter* interpreter = m_globalData->interpreter;
     // interpreter->classicEnabled() returns true if the old C++ interpreter is enabled. If that's enabled
@@ -2141,28 +2141,10 @@ void CodeBlock::finalizeUnconditionally()
         for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i) {
             StructureStubInfo& stubInfo = m_structureStubInfos[i];
             
-            AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
-            
             if (stubInfo.visitWeakReferences())
                 continue;
             
-            if (verboseUnlinking)
-                dataLog("Clearing structure cache (kind %d) in %p.\n", stubInfo.accessType, this);
-            
-            if (isGetByIdAccess(accessType)) {
-                if (getJITCode().jitType() == JITCode::DFGJIT)
-                    DFG::dfgResetGetByID(repatchBuffer, stubInfo);
-                else
-                    JIT::resetPatchGetById(repatchBuffer, &stubInfo);
-            } else {
-                ASSERT(isPutByIdAccess(accessType));
-                if (getJITCode().jitType() == JITCode::DFGJIT)
-                    DFG::dfgResetPutByID(repatchBuffer, stubInfo);
-                else 
-                    JIT::resetPatchPutById(repatchBuffer, &stubInfo);
-            }
-            
-            stubInfo.reset();
+            resetStubInternal(repatchBuffer, stubInfo);
         }
 
         for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
@@ -2197,6 +2179,40 @@ void CodeBlock::finalizeUnconditionally()
     }
 #endif
 }
+
+#if ENABLE(JIT)
+void CodeBlock::resetStub(StructureStubInfo& stubInfo)
+{
+    if (stubInfo.accessType == access_unset)
+        return;
+    
+    RepatchBuffer repatchBuffer(this);
+    resetStubInternal(repatchBuffer, stubInfo);
+}
+
+void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
+{
+    AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
+    
+    if (verboseUnlinking)
+        dataLog("Clearing structure cache (kind %d) in %p.\n", stubInfo.accessType, this);
+    
+    if (isGetByIdAccess(accessType)) {
+        if (getJITCode().jitType() == JITCode::DFGJIT)
+            DFG::dfgResetGetByID(repatchBuffer, stubInfo);
+        else
+            JIT::resetPatchGetById(repatchBuffer, &stubInfo);
+    } else {
+        ASSERT(isPutByIdAccess(accessType));
+        if (getJITCode().jitType() == JITCode::DFGJIT)
+            DFG::dfgResetPutByID(repatchBuffer, stubInfo);
+        else 
+            JIT::resetPatchPutById(repatchBuffer, &stubInfo);
+    }
+    
+    stubInfo.reset();
+}
+#endif
 
 void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
 {

@@ -27,6 +27,7 @@
 #define JumpReplacementWatchpoint_h
 
 #include "Watchpoint.h"
+#include <wtf/Platform.h>
 
 #if ENABLE(JIT)
 

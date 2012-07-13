@@ -134,6 +134,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/StructureSet.h \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.cpp \
 	Source/JavaScriptCore/bytecode/StructureStubInfo.h \
+	Source/JavaScriptCore/bytecode/StructureStubClearingWatchpoint.cpp \
+	Source/JavaScriptCore/bytecode/StructureStubClearingWatchpoint.h \
 	Source/JavaScriptCore/bytecode/ValueProfile.h \
 	Source/JavaScriptCore/bytecode/ValueRecovery.h \
 	Source/JavaScriptCore/bytecode/VirtualRegister.h \

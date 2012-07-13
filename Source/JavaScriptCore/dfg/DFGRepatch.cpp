@@ -71,6 +71,48 @@ static void dfgRepatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& st
 #endif
 }
 
+static void addStructureTransitionCheck(
+    JSCell* object, Structure* structure, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
+    MacroAssembler& jit, MacroAssembler::JumpList& failureCases, GPRReg scratchGPR)
+{
+    if (object->structure() == structure && structure->transitionWatchpointSetIsStillValid()) {
+        structure->addTransitionWatchpoint(stubInfo.addWatchpoint(codeBlock));
+#if DFG_ENABLE(JIT_ASSERT)
+        // If we execute this code, the object must have the structure we expect. Assert
+        // this in debug modes.
+        jit.move(MacroAssembler::TrustedImmPtr(object), scratchGPR);
+        MacroAssembler::Jump ok = jit.branchPtr(
+            MacroAssembler::Equal,
+            MacroAssembler::Address(scratchGPR, JSCell::structureOffset()),
+            MacroAssembler::TrustedImmPtr(structure));
+        jit.breakpoint();
+        ok.link(&jit);
+#endif
+        return;
+    }
+    
+    jit.move(MacroAssembler::TrustedImmPtr(object), scratchGPR);
+    failureCases.append(
+        jit.branchPtr(
+            MacroAssembler::NotEqual,
+            MacroAssembler::Address(scratchGPR, JSCell::structureOffset()),
+            MacroAssembler::TrustedImmPtr(structure)));
+}
+
+static void addStructureTransitionCheck(
+    JSValue prototype, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
+    MacroAssembler& jit, MacroAssembler::JumpList& failureCases, GPRReg scratchGPR)
+{
+    if (prototype.isNull())
+        return;
+    
+    ASSERT(prototype.isCell());
+    
+    addStructureTransitionCheck(
+        prototype.asCell(), prototype.asCell()->structure(), codeBlock, stubInfo, jit,
+        failureCases, scratchGPR);
+}
+
 static void emitRestoreScratch(MacroAssembler& stubJit, bool needToRestoreScratch, GPRReg scratchGPR, MacroAssembler::Jump& success, MacroAssembler::Jump& fail, MacroAssembler::JumpList failureCases)
 {
     if (needToRestoreScratch) {
@@ -137,8 +179,9 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     JSObject* protoObject = 0;
     for (unsigned i = 0; i < count; ++i, ++it) {
         protoObject = asObject(currStructure->prototypeForLookup(exec));
-        stubJit.move(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR);
-        failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(scratchGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(protoObject->structure())));
+        addStructureTransitionCheck(
+            protoObject, protoObject->structure(), exec->codeBlock(), stubInfo, stubJit,
+            failureCases, scratchGPR);
         currStructure = it->get();
     }
     
@@ -569,17 +612,6 @@ static V_DFGOperation_EJCI appropriateListBuildingPutByIdFunction(const PutPrope
     return operationPutByIdNonStrictBuildList;
 }
 
-static void testPrototype(MacroAssembler &stubJit, GPRReg scratchGPR, JSValue prototype, MacroAssembler::JumpList& failureCases)
-{
-    if (prototype.isNull())
-        return;
-    
-    ASSERT(prototype.isCell());
-    
-    stubJit.move(MacroAssembler::TrustedImmPtr(prototype.asCell()), scratchGPR);
-    failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(scratchGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(prototype.asCell()->structure())));
-}
-
 static void emitPutReplaceStub(
     ExecState* exec,
     JSValue,
@@ -708,12 +740,17 @@ static void emitPutTransitionStub(
     ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
     
     failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(oldStructure)));
-            
-    testPrototype(stubJit, scratchGPR, oldStructure->storedPrototype(), failureCases);
+    
+    addStructureTransitionCheck(
+        oldStructure->storedPrototype(), exec->codeBlock(), stubInfo, stubJit, failureCases,
+        scratchGPR);
             
     if (putKind == NotDirect) {
-        for (WriteBarrier<Structure>* it = prototypeChain->head(); *it; ++it)
-            testPrototype(stubJit, scratchGPR, (*it)->storedPrototype(), failureCases);
+        for (WriteBarrier<Structure>* it = prototypeChain->head(); *it; ++it) {
+            addStructureTransitionCheck(
+                (*it)->storedPrototype(), exec->codeBlock(), stubInfo, stubJit, failureCases,
+                scratchGPR);
+        }
     }
 
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)

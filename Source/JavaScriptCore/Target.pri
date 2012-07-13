@@ -67,6 +67,7 @@ SOURCES += \
     bytecode/ResolveGlobalStatus.cpp \
     bytecode/SamplingTool.cpp \
     bytecode/SpeculatedType.cpp \
+    bytecode/StructureStubClearingWatchpoint.cpp \
     bytecode/StructureStubInfo.cpp \
     bytecode/Watchpoint.cpp \
     bytecompiler/BytecodeGenerator.cpp \

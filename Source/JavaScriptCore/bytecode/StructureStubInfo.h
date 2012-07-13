@@ -36,6 +36,8 @@
 #include "MacroAssembler.h"
 #include "Opcode.h"
 #include "Structure.h"
+#include "StructureStubClearingWatchpoint.h"
+#include <wtf/OwnPtr.h>
 
 namespace JSC {
 
@@ -170,6 +172,7 @@ namespace JSC {
             deref();
             accessType = access_unset;
             stubRoutine.clear();
+            watchpoints.clear();
         }
 
         void deref();
@@ -184,6 +187,12 @@ namespace JSC {
         void setSeen()
         {
             seen = true;
+        }
+        
+        StructureStubClearingWatchpoint* addWatchpoint(CodeBlock* codeBlock)
+        {
+            return WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
+                watchpoints, codeBlock, this);
         }
         
         unsigned bytecodeIndex;
@@ -290,6 +299,7 @@ namespace JSC {
         RefPtr<JITStubRoutine> stubRoutine;
         CodeLocationCall callReturnLocation;
         CodeLocationLabel hotPathBegin;
+        RefPtr<WatchpointsOnStructureStubInfo> watchpoints;
     };
 
     inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStubInfo)

@@ -1,5 +1,56 @@
 2012-07-12  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG property access stubs should use structure transition watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=91135
+
+        Reviewed by Geoffrey Garen.
+
+        This adds a Watchpoint subclass that will clear a structure stub (i.e.
+        a property access stub) when fired. The DFG stub generation code now
+        uses this optimization.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::resetStub):
+        (JSC::CodeBlock::resetStubInternal):
+        * bytecode/CodeBlock.h:
+        (JSC):
+        (CodeBlock):
+        * bytecode/StructureStubClearingWatchpoint.cpp: Added.
+        (JSC):
+        (JSC::StructureStubClearingWatchpoint::~StructureStubClearingWatchpoint):
+        (JSC::StructureStubClearingWatchpoint::push):
+        (JSC::StructureStubClearingWatchpoint::fireInternal):
+        (JSC::WatchpointsOnStructureStubInfo::~WatchpointsOnStructureStubInfo):
+        (JSC::WatchpointsOnStructureStubInfo::addWatchpoint):
+        (JSC::WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint):
+        * bytecode/StructureStubClearingWatchpoint.h: Added.
+        (JSC):
+        (StructureStubClearingWatchpoint):
+        (JSC::StructureStubClearingWatchpoint::StructureStubClearingWatchpoint):
+        (WatchpointsOnStructureStubInfo):
+        (JSC::WatchpointsOnStructureStubInfo::WatchpointsOnStructureStubInfo):
+        (JSC::WatchpointsOnStructureStubInfo::codeBlock):
+        (JSC::WatchpointsOnStructureStubInfo::stubInfo):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::addWatchpoint):
+        (StructureStubInfo):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::addStructureTransitionCheck):
+        (DFG):
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::emitPutTransitionStub):
+        * jit/JumpReplacementWatchpoint.h:
+
+2012-07-12  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CFA may get overzealous in loops that have code that must exit
         https://bugs.webkit.org/show_bug.cgi?id=91188
 

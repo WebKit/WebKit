@@ -1682,6 +1682,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecode\StructureStubClearingWatchpoint.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\StructureStubClearingWatchpoint.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\StructureStubInfo.cpp"
 				>
 			</File>
