@@ -1,3 +1,17 @@
+2012-07-13  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: too many hardcoded strings in InspectorBackendDispatcher.
+        https://bugs.webkit.org/show_bug.cgi?id=89198
+
+        Reviewed by Yury Semikhatsky.
+
+        Instead of generating error message string on every call (mostly for nothing),
+        error message is generated deeper inside the handler and only command name
+        is passed every time.
+
+        * inspector/CodeGeneratorInspector.py:
+        (Generator.process_command):
+
 2012-07-13  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Update about:* pages

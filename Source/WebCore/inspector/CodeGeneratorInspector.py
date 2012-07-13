@@ -1791,7 +1791,7 @@ $methodInCode
 
 ${responseCook}
     }
-    sendResponse(callId, result, String::format("Some arguments of method '%s' can't be processed", "$domainName.$methodName"), protocolErrors, error);
+    sendResponse(callId, result, commandNames[$commandNameIndex], protocolErrors, error);
 }
 """)
 
@@ -1886,6 +1886,8 @@ $virtualSetters
 
     enum MethodNames {
 $methodNamesEnumContent
+
+        kMethodNamesEnumSize
     };
 
     static const char* commandNames[];
@@ -1949,7 +1951,7 @@ $fieldDeclarations
     static PassRefPtr<InspectorObject> getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static PassRefPtr<InspectorArray> getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
 
-    void sendResponse(long callId, PassRefPtr<InspectorObject> result, const String& errorMessage, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError);
+    void sendResponse(long callId, PassRefPtr<InspectorObject> result, const char* commandName, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError);
 
 };
 
@@ -1973,7 +1975,7 @@ void InspectorBackendDispatcherImpl::dispatch(const String& message)
         static CallHandler handlers[] = {
 $messageHandlers
         };
-        size_t length = sizeof(commandNames) / sizeof(commandNames[0]);
+        size_t length = WTF_ARRAY_LENGTH(commandNames);
         for (size_t i = 0; i < length; ++i)
             dispatchMap.add(commandNames[i], handlers[i]);
     }
@@ -2022,9 +2024,10 @@ $messageHandlers
     ((*this).*it->second)(callId, messageObject.get());
 }
 
-void InspectorBackendDispatcherImpl::sendResponse(long callId, PassRefPtr<InspectorObject> result, const String& errorMessage, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError)
+void InspectorBackendDispatcherImpl::sendResponse(long callId, PassRefPtr<InspectorObject> result, const char* commandName, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError)
 {
     if (protocolErrors->length()) {
+        String errorMessage = String::format("Some arguments of method '%s' can't be processed", commandName);
         reportProtocolError(&callId, InvalidParams, errorMessage, protocolErrors);
         return;
     }
@@ -2165,6 +2168,7 @@ bool InspectorBackendDispatcher::getCommandName(const String& message, String* r
     return true;
 }
 
+COMPILE_ASSERT(static_cast<int>(InspectorBackendDispatcher::kMethodNamesEnumSize) == WTF_ARRAY_LENGTH(InspectorBackendDispatcher::commandNames), command_name_array_problem);
 
 } // namespace WebCore
 
@@ -2684,7 +2688,9 @@ class Generator:
     def process_command(json_command, domain_name, agent_field_name, agent_interface_name):
         json_command_name = json_command["name"]
 
-        Generator.method_name_enum_list.append("        k%s_%sCmd," % (domain_name, json_command["name"]))
+        cmd_enum_name = "k%s_%sCmd" % (domain_name, json_command["name"])
+
+        Generator.method_name_enum_list.append("        %s," % cmd_enum_name)
         Generator.method_handler_list.append("            &InspectorBackendDispatcherImpl::%s_%s," % (domain_name, json_command_name))
         Generator.backend_method_declaration_list.append("    void %s_%s(long callId, InspectorObject* requestMessageObject);" % (domain_name, json_command_name))
 
@@ -2813,7 +2819,8 @@ class Generator:
             methodOutCode=method_out_code,
             agentCallParams=join(agent_call_param_list, ""),
             requestMessageObject=request_message_param,
-            responseCook=response_cook_text))
+            responseCook=response_cook_text,
+            commandNameIndex=cmd_enum_name))
         Generator.backend_method_name_declaration_list.append("    \"%s.%s\"," % (domain_name, json_command_name))
 
         Generator.backend_js_domain_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", [%s], %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
