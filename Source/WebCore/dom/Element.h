@@ -269,6 +269,7 @@ public:
 
     ElementShadow* shadow() const;
     ElementShadow* ensureShadow();
+    virtual void willAddAuthorShadowRoot() { }
 
     // FIXME: Remove Element::ensureShadowRoot
     // https://bugs.webkit.org/show_bug.cgi?id=77608

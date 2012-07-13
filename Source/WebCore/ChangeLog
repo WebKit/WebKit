@@ -1,3 +1,26 @@
+2012-07-12  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Needs callback before AuthorShadowRoot is added.
+        https://bugs.webkit.org/show_bug.cgi?id=91167
+
+        Reviewed by Hajime Morita.
+
+        This is a preliminary patch for adding multiple Shadow DOM support for media elements and form elements.
+        They assume that UserAgentShadowRoot is the oldest, however currently a page author may try to add
+        AuthorShadowRoot before adding UserAgentShadowRoot.
+
+        This patch adds a callback before AuthorShadowRoot is being added, and allow us to add UserAgentShadowRoot
+        for those elements. See also Bug 77936, Bug 77937, Bug 90532.
+
+        * dom/Element.h:
+        (WebCore::Element::willAddAuthorShadowRoot):
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::addShadowRoot):
+        * dom/ElementShadow.h:
+        (ElementShadow):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+
 2012-07-12  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove the RenderPass pointer from RenderPassDrawQuad

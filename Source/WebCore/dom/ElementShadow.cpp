@@ -65,13 +65,16 @@ static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, Excep
     return true;
 }
 
-void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shadowRoot, ExceptionCode& ec)
+void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shadowRoot, ShadowRoot::ShadowRootType type, ExceptionCode& ec)
 {
     ASSERT(shadowHost);
     ASSERT(shadowRoot);
 
     if (!validateShadowRoot(shadowHost->document(), shadowRoot.get(), ec))
         return;
+
+    if (type == ShadowRoot::AuthorShadowRoot)
+        shadowHost->willAddAuthorShadowRoot();
 
     shadowRoot->setHost(shadowHost);
     shadowRoot->setParentTreeScope(shadowHost->treeScope());

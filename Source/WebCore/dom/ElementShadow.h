@@ -53,7 +53,7 @@ public:
     ShadowRoot* oldestShadowRoot() const;
 
     void removeAllShadowRoots();
-    void addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot>, ExceptionCode&);
+    void addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot>, ShadowRoot::ShadowRootType, ExceptionCode&);
 
     void attach();
     void detach();

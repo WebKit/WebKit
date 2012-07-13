@@ -122,7 +122,7 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootType type,
 #endif
 
     ec = 0;
-    element->ensureShadow()->addShadowRoot(element, shadowRoot, ec);
+    element->ensureShadow()->addShadowRoot(element, shadowRoot, type, ec);
     if (ec)
         return 0;
     ASSERT(element == shadowRoot->host());
