@@ -70,7 +70,8 @@ size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeI
     RetainPtr<CFLocaleRef> locale = cfLocaleCache().get(localeIdentifier);
     ASSERT(locale);
 
-    CFIndex result = CFStringGetHyphenationLocationBeforeIndex(string.get(), beforeIndex, CFRangeMake(0, length), 0, locale.get(), 0);
+    CFOptionFlags searchAcrossWordBoundaries = 1;
+    CFIndex result = CFStringGetHyphenationLocationBeforeIndex(string.get(), beforeIndex, CFRangeMake(0, length), searchAcrossWordBoundaries, locale.get(), 0);
     return result == kCFNotFound ? 0 : result;
 }
 

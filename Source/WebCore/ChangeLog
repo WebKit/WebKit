@@ -1,3 +1,15 @@
+2012-07-12  Dan Bernstein  <mitz@apple.com>
+
+        Pass an option flag to CFStringGetHyphenationLocationBeforeIndex() that tells it to not
+        terminate the search at the last word boundary before the given index.
+
+        Reviewed by Adele Peterson.
+
+        No test, because the current version of Core Foundation ignores the options parameter.
+
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::lastHyphenLocation): Changed the options parameter from 0 to 1.
+
 2012-07-12  Eric Seidel  <eric@webkit.org>
 
         Incorrect behaviour calling Range setStart or setEnd with boundary in different document
