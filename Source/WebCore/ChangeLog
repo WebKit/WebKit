@@ -1,3 +1,19 @@
+2012-07-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: align scope filters
+        https://bugs.webkit.org/show_bug.cgi?id=91213
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/elementsPanel.css:
+        (.crumbs):
+        * inspector/front-end/inspector.css:
+        (.status-bar > div):
+        (.scope-bar):
+        (.scope-bar li):
+        (.scope-bar li.all):
+        * inspector/front-end/networkLogView.css:
+
 2012-07-13  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: too many hardcoded strings in InspectorBackendDispatcher.

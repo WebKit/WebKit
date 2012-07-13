@@ -465,9 +465,6 @@
 }
 
 /* Filters */
-#network-filter {
-    margin-top: 1px;
-}
 
 .network-log-grid.data-grid table.data tr.revealed.network-item {
     display: none;

@@ -71,7 +71,6 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.currentGroup = this.topGroup;
 
     this._filterBarElement = document.createElement("div");
-    this._filterBarElement.id = "console-filter";
     this._filterBarElement.className = "scope-bar status-bar-item";
 
     function createDividerElement() {

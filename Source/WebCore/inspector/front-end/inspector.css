@@ -316,7 +316,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     position: relative;
     background-color: white;
     border: 1px solid rgb(202, 202, 202);
-    margin: 2px;
+    margin: 1px 2px;
     height: 20px;
     border-radius: 2px;
     padding-right: 36px;
@@ -511,7 +511,6 @@ body.drawer-visible #main-panels {
     display: inline-block;
     vertical-align: top;
     overflow: visible;
-    margin-top: -1px;
 }
 
 .status-bar-item {
@@ -1830,20 +1829,16 @@ button.edit-source-status-bar-item.toggled-on .glyph {
     margin-top: 23px;
 }
 
-#console-filter {
-    margin-top: 1px;
-}
-
 .scope-bar {
-    height: 23px;
-    padding: 2px 10px 0;
+    line-height: 19px;
+    padding-right: 10px;
     overflow: hidden;
 }
 
 .scope-bar li {
     display: inline-block;
-    margin: 1px 2px 0 0;
-    padding: 1px 7px 3px;
+    margin: 0 2px;
+    padding: 2px 6px;
     font-size: 11px;
     line-height: 12px;
     font-weight: bold;
@@ -1855,7 +1850,6 @@ button.edit-source-status-bar-item.toggled-on .glyph {
 }
 
 .scope-bar-divider {
-    margin: 1px 9px 0 8px;
     background-color: rgba(0, 0, 0, 0.4);
     height: 16px;
     width: 1px;
@@ -1866,6 +1860,10 @@ button.edit-source-status-bar-item.toggled-on .glyph {
 .scope-bar li.selected, .scope-bar li:hover, .scope-bar li:active {
     color: white;
     text-shadow: rgba(0, 0, 0, 0.4) 0 1px 0;
+}
+
+.scope-bar li.all {
+    margin: 0 8px;
 }
 
 .scope-bar li:hover {
