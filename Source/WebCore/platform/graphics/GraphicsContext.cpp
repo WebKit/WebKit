@@ -490,10 +490,7 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
 #endif
     }
 
-    if (image->isBitmapImage())
-        static_cast<BitmapImage*>(image)->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op, shouldRespectImageOrientation);
-    else
-        image->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op);
+    image->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op, shouldRespectImageOrientation);
 
     if (useLowQualityScale)
         setImageInterpolationQuality(previousInterpolationQuality);

@@ -563,11 +563,4 @@ Color BitmapImage::solidColor() const
     return m_solidColor;
 }
 
-#if !USE(CG)
-void BitmapImage::draw(GraphicsContext* ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, RespectImageOrientationEnum)
-{
-    draw(ctx, dstRect, srcRect, styleColorSpace, op);
-}
-#endif
-
 }
