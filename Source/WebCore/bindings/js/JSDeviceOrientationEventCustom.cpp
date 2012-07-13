@@ -81,7 +81,7 @@ JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState* exec)
     double beta = exec->argument(4).toNumber(exec);
     bool gammaProvided = !exec->argument(5).isUndefinedOrNull();
     double gamma = exec->argument(5).toNumber(exec);
-    bool absoluteProvided = !exec->argument(5).isUndefinedOrNull();
+    bool absoluteProvided = !exec->argument(6).isUndefinedOrNull();
     bool absolute = exec->argument(6).toBoolean();
     RefPtr<DeviceOrientationData> orientation = DeviceOrientationData::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, absoluteProvided, absolute);
     DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());

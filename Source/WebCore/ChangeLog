@@ -1,3 +1,15 @@
+2012-07-13  Olivier Blin  <olivier.blin@softathome.com>
+
+        Fix checking for optional DeviceOrientationEvent.absolute in JSC bindings
+        https://bugs.webkit.org/show_bug.cgi?id=91225
+
+        Reviewed by Steve Block.
+
+        This issue comes from r105036
+
+        * bindings/js/JSDeviceOrientationEventCustom.cpp:
+        (WebCore::JSDeviceOrientationEvent::initDeviceOrientationEvent):
+
 2012-07-13  Andrei Bucur  <abucur@adobe.com>
         [CSS Regions] Fix build for bug 89000
         https://bugs.webkit.org/show_bug.cgi?id=91215
