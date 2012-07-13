@@ -1,3 +1,14 @@
+2012-07-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make new public Ewk headers as installable
+        https://bugs.webkit.org/show_bug.cgi?id=91232
+
+        Reviewed by Antonio Gomes.
+
+        Make new public Ewk headers installable.
+
+        * PlatformEfl.cmake:
+
 2012-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement disk cache in WebKit2
