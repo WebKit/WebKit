@@ -241,3 +241,53 @@ WebInspector.StatusBarButton.prototype = {
 }
 
 WebInspector.StatusBarButton.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ * @param {?function(Event)} changeHandler
+ * @param {string=} className
+ */
+WebInspector.StatusBarComboBox = function(changeHandler, className)
+{
+    this.element = document.createElement("span");
+    this.element.className = "status-bar-select-container";
+
+    this._selectElement = this.element.createChild("select", "status-bar-item");
+    if (changeHandler)
+        this._selectElement.addEventListener("change", changeHandler, false);
+    if (className)
+        this._selectElement.addStyleClass(className);
+}
+
+WebInspector.StatusBarComboBox.prototype = {
+    /**
+     * @param {Element} option
+     */
+    addOption: function(option)
+    {
+        this._selectElement.appendChild(option);
+    },
+
+    /**
+     * @param {Element} option
+     */
+    removeOption: function(option)
+    {
+        this._selectElement.removeChild(option);
+    },
+
+    removeOptions: function()
+    {
+        this._selectElement.removeChildren();
+    },
+
+    /**
+     * @return {?Element}
+     */
+    selectedOption: function()
+    {
+        if (this._selectElement.selectedIndex >= 0)
+            return this._selectElement[this._selectElement.selectedIndex];
+        return null;
+    }
+}
