@@ -1,3 +1,34 @@
+2012-07-12  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: Geolocation override
+        https://bugs.webkit.org/show_bug.cgi?id=89365
+
+        Reviewed by Pavel Feldman.
+
+        Reverted original patch.
+        Change has not been reviewed by the right people. It declares
+        public protocol methods and is wrong in several ways.
+
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::GeolocationController):
+        (WebCore::GeolocationController::positionChanged):
+        * Modules/geolocation/GeolocationController.h:
+        (GeolocationController):
+        * inspector/Inspector.json:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore):
+        (InspectorInstrumentation):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.UserAgentSettingsTab):
+        (WebInspector.UserAgentSettingsTab.prototype._createDeviceMetricsElement):
+        * inspector/front-end/UserAgentSupport.js:
+
 2012-07-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move m_type and m_hasNameCache from HTMLCollectionCacheBase to DynamicNodeListCacheBase for better bit packing

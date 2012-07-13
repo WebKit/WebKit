@@ -364,20 +364,6 @@
                 "parameters": [
                     { "name": "value", "type": "boolean", "description": "Whether script execution should be disabled in the page." }
                 ]
-            },
-            {
-                "name": "setGeolocationData",
-                "description": "overrides the GeolocationPosition or GeolocationError in the GeolocationController.",
-                "parameters": [
-                    { "name": "longitude", "type": "number", "optional": true, "description": "Mock longitude"},
-                    { "name": "latitude", "type": "number", "optional": true, "description": "Mock latitude"},
-                    { "name": "accuracy", "type": "number", "optional": true, "description": "Mock accuracy"},
-                    { "name": "errorType", "type": "string", "optional": true, "enum": ["PermissionDenied", "PositionUnavailable"], "description": "Error type"}
-                ]
-            },
-            {
-                "name": "clearGeolocationData",
-                "description": "clears the overriden GeolocationPosition and GeolocationError."
             }
         ],
         "events": [

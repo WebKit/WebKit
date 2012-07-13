@@ -1186,19 +1186,6 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocument
 }
 #endif
 
-#if ENABLE(GEOLOCATION)
-GeolocationPosition* InspectorInstrumentation::checkGeolocationPositionOrErrorImpl(InstrumentingAgents* instrumentingAgents, GeolocationPosition* position)
-{
-    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent()) {
-        if (pageAgent->sendGeolocationError())
-            return 0;
-        if (pageAgent->geolocationPosition())
-            position = pageAgent->geolocationPosition();
-    }
-    return position;
-}
-#endif
-
 } // namespace WebCore
 
 #endif // !ENABLE(INSPECTOR)

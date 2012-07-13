@@ -1,3 +1,19 @@
+2012-07-12  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: Geolocation override
+        https://bugs.webkit.org/show_bug.cgi?id=89365
+
+        Reviewed by Pavel Feldman.
+        Change has not been reviewed by the right people. It declares
+        public protocol methods and is wrong in several ways.
+
+        Reverted original patch.
+
+        * inspector/geolocation-error-expected.txt: Removed.
+        * inspector/geolocation-error.html: Removed.
+        * inspector/geolocation-success-expected.txt: Removed.
+        * inspector/geolocation-success.html: Removed.
+
 2012-07-12  Adrienne Walker  <enne@google.com>
 
         [chromium] Root invalidations for RTL pages need to be in the right space
