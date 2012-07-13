@@ -1,3 +1,13 @@
+2012-07-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Always aggressively preload on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=91276
+
+        Reviewed by Simon Fraser.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::preload):
+
 2012-07-13  Vineet Chaudhary  <rgf748@motorola.com>
 
         Restructure V8Utilities::extractTransferables() with help of toV8Sequence()
