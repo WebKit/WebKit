@@ -1,5 +1,26 @@
 2012-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Implement disk cache in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=90797
+
+        Reviewed by Xan Lopez.
+
+        * WebProcess/gtk/WebProcessGtk.cpp:
+        (WebKit::getCacheDiskFreeSize): Use an ASSERT instead of an early
+        return since the cache feature is now always added to the session.
+        (WebKit::WebProcess::platformSetCacheModel): Get the cache from
+        the session and set the maximum cache size as computed by
+        calculateCacheSizes().
+        (WebKit::WebProcess::platformClearResourceCaches): Call
+        soup_cache_clear().
+        (WebKit::WebProcess::platformTerminate): Make sure all pending
+        data is saved to the disk before the web process finishes.
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk): Create a SoupCache feature and add it
+        to the default SoupSession.
+
+2012-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix disk cache size computation in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=91226
 

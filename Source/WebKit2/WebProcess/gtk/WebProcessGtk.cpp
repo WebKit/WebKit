@@ -47,8 +47,7 @@ namespace WebKit {
 
 static uint64_t getCacheDiskFreeSize(SoupCache* cache)
 {
-    if (!cache)
-        return 0;
+    ASSERT(cache);
 
     GOwnPtr<char> cacheDir;
     g_object_get(G_OBJECT(cache), "cache-dir", &cacheDir.outPtr(), NULL);
@@ -89,7 +88,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     unsigned long urlCacheDiskCapacity = 0;
 
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    SoupCache* cache = reinterpret_cast<SoupCache*>(soup_session_get_feature(session, SOUP_TYPE_CACHE));
+    SoupCache* cache = SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE));
     uint64_t diskFreeSize = getCacheDiskFreeSize(cache) / 1024 / 1024;
 
     uint64_t memSize = getMemorySize();
@@ -101,15 +100,17 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     WebCore::memoryCache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     WebCore::pageCache()->setCapacity(pageCacheCapacity);
 
-    if (cache) {
-        if (urlCacheDiskCapacity > soup_cache_get_max_size(cache))
-            soup_cache_set_max_size(cache, urlCacheDiskCapacity);
-    }
+    if (urlCacheDiskCapacity > soup_cache_get_max_size(cache))
+        soup_cache_set_max_size(cache, urlCacheDiskCapacity);
 }
 
-void WebProcess::platformClearResourceCaches(ResourceCachesToClear)
+void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear)
 {
-    notImplemented();
+    if (cachesToClear == InMemoryResourceCachesOnly)
+        return;
+
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+    soup_cache_clear(SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE)));
 }
 
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters&, CoreIPC::ArgumentDecoder*)
@@ -119,6 +120,10 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
 void WebProcess::platformTerminate()
 {
+    SoupSession* session = WebCore::ResourceHandle::defaultSession();
+    SoupCache* cache = SOUP_CACHE(soup_session_get_feature(session, SOUP_TYPE_CACHE));
+    soup_cache_flush(cache);
+    soup_cache_dump(cache);
 }
 
 } // namespace WebKit

@@ -27,6 +27,8 @@
 #include "config.h"
 #include "WebProcessMainGtk.h"
 
+#define LIBSOUP_USE_UNSTABLE_REQUEST_API
+
 #include "WebAuthDialog.h"
 #include "WKBase.h"
 #include <WebCore/GtkAuthenticationDialog.h>
@@ -34,9 +36,12 @@
 #include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>
 #include <gtk/gtk.h>
+#include <libsoup/soup-cache.h>
 #include <runtime/InitializeThreading.h>
 #include <unistd.h>
 #include <wtf/MainThread.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 
 using namespace WebCore;
 
@@ -69,6 +74,11 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
     // added later to let client accept/discard invalid certificates.
     g_object_set(session, SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
                  SOUP_SESSION_SSL_STRICT, FALSE, NULL);
+
+    GOwnPtr<char> soupCacheDirectory(g_build_filename(g_get_user_cache_dir(), g_get_prgname(), NULL));
+    GRefPtr<SoupCache> soupCache = adoptGRef(soup_cache_new(soupCacheDirectory.get(), SOUP_CACHE_SINGLE_USER));
+    soup_session_add_feature(session, SOUP_SESSION_FEATURE(soupCache.get()));
+    soup_cache_load(soupCache.get());
 
     RunLoop::run();
 
