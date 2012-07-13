@@ -1,5 +1,53 @@
 2012-07-13  Kent Tamura  <tkent@chromium.org>
 
+        Change the timing of form state restore
+        https://bugs.webkit.org/show_bug.cgi?id=89962
+
+        Reviewed by Hajime Morita.
+
+        For a preparation to fix a form identification problem (Bug 91209),
+        restore controls states when the parsing of their owner forms is
+        completed. For controls without owners, their states are restored when
+        their parsing is completed as ever.
+
+        No new tests. This doesn't change observable behavior.
+
+        * html/FormController.cpp:
+        (WebCore::ownerFormForState):
+        Added. This code was used in formKey(), and restoreControlState*() use it.
+        (WebCore::FormKeyGenerator::formKey): Use ownerFormForState(). No behavior change.
+        (WebCore::FormController::restoreControlStateFor):
+        Moved some code from HTMLFormControlElementWithState::finishParsingChildren().
+        The difference is we don't resotre state if this control is owned by a form.
+        (WebCore::FormController::restoreControlStateIn):
+        Restore states of associated controls. This is called from
+        finishParsingChildren() for <form>.
+        * html/FormController.h:
+        (FormController):
+        - Declare restoreControlStateFor() and restoreControlStateIn().
+        - Make takeStateForFormElement() private.
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::isFormControlElementWithState):
+        Added. The default implementation returns false.
+        * html/FormAssociatedElement.h:
+        (FormAssociatedElement):
+        Added isFormControlElementWithState() for FormController::restoreControlStateIn().
+        * html/HTMLFormControlElementWithState.cpp:
+        (WebCore::HTMLFormControlElementWithState::finishParsingChildren):
+        Some code was moved to FormController:restoreControlStateFor().
+        (WebCore::HTMLFormControlElementWithState::isFormControlElementWithState):
+        Added. Returns true.
+        * html/HTMLFormControlElementWithState.h:
+        (HTMLFormControlElementWithState): Declare isFormControlElementWithState().
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::finishParsingChildren):
+        Added. Calls FormController::restoreControlStateIn().
+        * html/HTMLFormElement.h:
+        (HTMLFormElement): Declare finishParsingChildren().
+
+2012-07-13  Kent Tamura  <tkent@chromium.org>
+
         Make calendar pickers testable
         https://bugs.webkit.org/show_bug.cgi?id=84827
 

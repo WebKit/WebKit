@@ -227,6 +227,11 @@ const AtomicString& FormAssociatedElement::name() const
     return name.isNull() ? emptyAtom : name;
 }
 
+bool FormAssociatedElement::isFormControlElementWithState() const
+{
+    return false;
+}
+
 const HTMLElement* toHTMLElement(const FormAssociatedElement* associatedElement)
 {
     if (associatedElement->isFormControlElement())

@@ -685,4 +685,10 @@ bool HTMLFormElement::shouldAutocomplete() const
     return !equalIgnoringCase(fastGetAttribute(autocompleteAttr), "off");
 }
 
+void HTMLFormElement::finishParsingChildren()
+{
+    HTMLElement::finishParsingChildren();
+    document()->formController()->restoreControlStateIn(*this);
+}
+
 } // namespace

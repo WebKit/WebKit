@@ -129,8 +129,9 @@ public:
     Vector<String> formElementsState() const;
     // This should be callled only by Document::setStateForNewFormElements().
     void setStateForNewFormElements(const Vector<String>&);
-    FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);
     void willDeleteForm(HTMLFormElement*);
+    void restoreControlStateFor(HTMLFormControlElementWithState&);
+    void restoreControlStateIn(HTMLFormElement&);
 
     void registerFormElementWithFormAttribute(FormAssociatedElement*);
     void unregisterFormElementWithFormAttribute(FormAssociatedElement*);
@@ -138,6 +139,7 @@ public:
 
 private:
     FormController();
+    FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);
 
     CheckedRadioButtons m_checkedRadioButtons;
 

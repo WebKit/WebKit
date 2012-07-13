@@ -47,6 +47,7 @@ protected:
     virtual bool shouldAutocomplete() const;
     virtual void finishParsingChildren();
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
+    virtual bool isFormControlElementWithState() const OVERRIDE;
 };
 
 } // namespace

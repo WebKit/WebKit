@@ -46,6 +46,7 @@ public:
     ValidityState* validity();
 
     virtual bool isFormControlElement() const = 0;
+    virtual bool isFormControlElementWithState() const;
     virtual bool isEnumeratable() const = 0;
 
     // Returns the 'name' attribute value. If this element has no name

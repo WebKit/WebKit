@@ -121,6 +121,7 @@ private:
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual void didNotifyDescendantInsertions(ContainerNode*) OVERRIDE;
     virtual void removedFrom(ContainerNode*) OVERRIDE;
+    virtual void finishParsingChildren() OVERRIDE;
 
     virtual void handleLocalEvents(Event*);
 
