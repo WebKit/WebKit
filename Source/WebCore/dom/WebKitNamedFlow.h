@@ -70,8 +70,6 @@ private:
 
     RefPtr<WebKitNamedFlowCollection> m_flowManager;
     RenderNamedFlowThread* m_parentFlowThread;
-
-    FlowState m_state;
 };
 
 }

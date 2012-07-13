@@ -41,7 +41,6 @@ WebKitNamedFlow::WebKitNamedFlow(PassRefPtr<WebKitNamedFlowCollection> manager, 
     : m_flowThreadName(flowThreadName)
     , m_flowManager(manager)
     , m_parentFlowThread(0)
-    , m_state(FlowStateCreated)
 {
 }
 
