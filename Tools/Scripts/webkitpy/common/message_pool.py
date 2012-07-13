@@ -242,7 +242,7 @@ class _Worker(multiprocessing.Process):
                 message = self._messages_to_worker.get()
                 if message.from_user:
                     worker.handle(message.name, message.src, *message.args)
-                    self.yield_to_caller()
+                    self._yield_to_manager()
                 else:
                     assert message.name == 'stop', 'bad message %s' % repr(message)
                     break
@@ -264,8 +264,9 @@ class _Worker(multiprocessing.Process):
 
     def post(self, name, *args):
         self._post(name, args, from_user=True)
+        self._yield_to_manager()
 
-    def yield_to_caller(self):
+    def _yield_to_manager(self):
         if self._running_inline:
             self._manager._loop(block=False)
 

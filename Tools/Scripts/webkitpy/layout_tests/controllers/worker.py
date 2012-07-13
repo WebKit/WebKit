@@ -79,7 +79,6 @@ class Worker(object):
         start_time = time.time()
         for test_input in test_inputs:
             self._run_test(test_input)
-            self._caller.yield_to_caller()
         elapsed_time = time.time() - start_time
         self._caller.post('finished_test_list', test_list_name, len(test_inputs), elapsed_time)
 

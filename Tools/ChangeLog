@@ -1,3 +1,29 @@
+2012-07-13  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: hide yield_to_caller from callers in MessagePool :)
+        https://bugs.webkit.org/show_bug.cgi?id=91269
+
+        Reviewed by Adam Barth.
+
+        yield_to_caller() was an optimization/hack to allow us to run
+        both manager and worker in a single process/loop without
+        starving the manager while the worker is running tests. The
+        worker was required to call yield_to_caller() periodically. It
+        turns out that I can get equivalent responsiveness by yielding
+        inside the MessagePool every time the worker posts a message, and this
+        allows me to no longer need the worker to call the routine. Thus
+        I rename yield_to_caller() to _yield_to_manager() to be a little
+        clearer about its purpose.
+
+        Tested by existing tests.
+
+        * Scripts/webkitpy/common/message_pool.py:
+        (_Worker.run):
+        (_Worker.post):
+        (_Worker._yield_to_manager):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.handle):
+
 2012-07-13  Adam Barth  <abarth@webkit.org>
 
         EWSTools should be able to build a commit-queue instance from scratch
