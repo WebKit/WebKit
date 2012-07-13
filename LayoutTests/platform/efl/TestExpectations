@@ -597,6 +597,7 @@ BUGWK88191 : fast/viewport/viewport-legacy-mobileoptimized.html = TEXT
 BUGWK88191 : fast/viewport/viewport-legacy-ordering-5.html = TEXT
 BUGWK88191 : fast/viewport/viewport-legacy-ordering-6.html = TEXT
 BUGWK88191 : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
+BUGWK88191 : fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html = TEXT
 
 // The EFL port has no support for the FileSystem API
 BUGWK68591 SKIP : fast/filesystem = PASS
@@ -741,3 +742,9 @@ BUGWK68979 : http/tests/multipart/multipart-replace-non-html-content.php = TEXT
 
 // Skip tests in fast/text/shaping
 BUGWK90951 SKIP : fast/text/shaping = PASS
+
+// These tests are failing after r122528.
+BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = TEXT
+BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html = TEXT
+BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist_in_object.html = TEXT
+BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_xserver_redirect.html = TEXT
