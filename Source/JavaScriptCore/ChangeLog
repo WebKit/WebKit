@@ -1,3 +1,16 @@
+2012-07-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122640.
+        http://trac.webkit.org/changeset/122640
+        https://bugs.webkit.org/show_bug.cgi?id=91298
+
+        LLInt apparently does not expect to mark these (Requested by
+        olliej on #webkit).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitStructures):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+
 2012-07-13  Oliver Hunt  <oliver@apple.com>
 
         LLInt fails to mark structures stored in the bytecode
