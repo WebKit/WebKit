@@ -38,6 +38,7 @@ from optparse import make_option
 from StringIO import StringIO
 
 from webkitpy.common.config.committervalidator import CommitterValidator
+from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.deprecated_logging import error, log
@@ -257,10 +258,16 @@ class AbstractPatchQueue(AbstractQueue):
 
 class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
     name = "commit-queue"
+    port_name = "chromium-xvfb"
 
     # AbstractPatchQueue methods
 
     def begin_work_queue(self):
+        if not self._options.port:
+            self.port = DeprecatedPort.port(self.port_name)
+            # FIXME: This violates abstraction
+            self._tool._deprecated_port = self.port
+
         AbstractPatchQueue.begin_work_queue(self)
         self.committer_validator = CommitterValidator(self._tool)
         self._expected_failures = ExpectedFailures()
@@ -305,7 +312,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     # CommitQueueTaskDelegate methods
 
     def run_command(self, command):
-        self.run_webkit_patch(command)
+        self.run_webkit_patch(command + [self.port.flag()])
 
     def command_passed(self, message, patch):
         self._update_status(message, patch=patch)

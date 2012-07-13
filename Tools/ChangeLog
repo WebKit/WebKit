@@ -1,3 +1,33 @@
+2012-07-12  Adam Barth  <abarth@webkit.org>
+
+        CommitQueue is confused about what port it is using
+        https://bugs.webkit.org/show_bug.cgi?id=91040
+
+        Reviewed by Dirk Pranke.
+
+        On EC2, we explicitly pass --port to the commit-queue, but that
+        requires editing the start-queue.sh script locally on each bot. In
+        moving to Google Compute Engine, we're try to avoid any local edits to
+        the EWSTools.
+
+        Rather than passing --port to the commit-queue, this patch teaches the
+        CommitQueue which port its running, which is the approach we use for
+        the EWS bots.
+
+        Mutating tool._deprecated_port is a bit ugly, but it's what we're doing
+        currently for the EWS bots.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (CommitQueue):
+        (CommitQueue.begin_work_queue):
+        (CommitQueue.run_command):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (CommitQueueTest.test_commit_queue):
+        (mock_run_webkit_patch):
+        (test_rollout):
+        (test_rollout_lands):
+        (test_manual_reject_during_processing):
+
 2012-07-12  James Simonsen  <simonjam@chromium.org>
 
         [Navigation Timing] Import the W3C Navigation Timing test suite
