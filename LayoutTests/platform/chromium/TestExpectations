@@ -3749,16 +3749,12 @@ BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 // Started crashing after 122558
 BUGWK91250 DEBUG : fast/forms/date/date-appearance.html = CRASH
 
-// Flaky since creation in 122528
-BUGWK91252 WIN : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = PASS TEXT
-BUGWK91252 WIN : http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist_in_object.html = PASS TEXT
-
 // Started crashing after 122286
 BUGWK91133 WIN : storage/indexeddb/constants.html = PASS CRASH
 
-// This test has been flaky since it was landed.
-BUGWK84887 : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = PASS TEXT
-BUGWK84887 : http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist_in_object.html = PASS TEXT
+// Flaky since creation in 122528
+BUGWK91252 : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = PASS TEXT
+BUGWK91252 : http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist_in_object.html = PASS TEXT
 
 // Fails on Mac 10.7
 BUGWK91255 LION : fast/multicol/table-vertical-align.html = TEXT
