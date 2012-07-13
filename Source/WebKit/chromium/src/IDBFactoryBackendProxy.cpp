@@ -156,7 +156,8 @@ bool IDBFactoryBackendProxy::allowIndexedDB(ScriptExecutionContext* context, con
         Document* document = static_cast<Document*>(context);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
         WebViewImpl* webView = webFrame->viewImpl();
-        allowed = webView->permissionClient() && webView->permissionClient()->allowIndexedDB(webFrame, name, origin);
+        // FIXME: webView->permissionClient() returns 0 in test_shell and content_shell http://crbug.com/137269
+        allowed = !webView->permissionClient() || webView->permissionClient()->allowIndexedDB(webFrame, name, origin);
     } else {
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         WebWorkerBase* webWorkerBase = static_cast<WebWorkerBase*>(&workerContext->thread()->workerLoaderProxy());

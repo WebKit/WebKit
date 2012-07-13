@@ -1,3 +1,31 @@
+2012-07-13  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Re-enable indexeddb in test_shell
+        https://bugs.webkit.org/show_bug.cgi?id=91161
+
+        Reviewed by Tony Chang.
+
+        IDB used to be allowed to run if webView->permissionClient() was NULL,
+        as is the case in test_shell. This was inadvertently changed in
+        http://wkb.ug/90310.
+
+        We still don't have an automated test for this (http://crbug.com/113738)
+        Tested manually:
+
+        * In test_shell:
+        1) Open an IDB page
+        2) Verify IDB has permission to open a DB
+
+        * In chrome:
+        1) Open an IDB page
+        2) Verify IDB has permission to open a DB
+        3) Revoke IDB permissions in chrome://chrome/settings/content
+        4) Reload the IDB page
+        5) Verify IDB doesn't have permission to open a DB
+
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::allowIndexedDB):
+
 2012-07-13  Wei James  <james.wei@intel.com>
 
         enable TestWebKitAPI/webkit_unit_tests apk on x86 android platform by adding abi support
