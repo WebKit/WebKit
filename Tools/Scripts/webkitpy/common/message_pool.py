@@ -128,6 +128,8 @@ class _MessagePool(object):
                 worker.join()
         self._workers = []
         if not self._running_inline:
+            # FIXME: This is a hack to get multiprocessing to not log tracebacks during shutdown :(.
+            multiprocessing.util._exiting = True
             if self._messages_to_worker:
                 self._messages_to_worker.close()
                 self._messages_to_worker = None
@@ -146,8 +148,6 @@ class _MessagePool(object):
     def _handle_worker_exception(source, exception_type, exception_value, _):
         if exception_type == KeyboardInterrupt:
             raise exception_type(exception_value)
-        _log.error("%s raised %s('%s'):" % (
-                   source, exception_value.__class__.__name__, str(exception_value)))
         raise WorkerException(str(exception_value))
 
     def _can_pickle(self, host):
@@ -245,21 +245,14 @@ class _Worker(multiprocessing.Process):
                     assert message.name == 'stop', 'bad message %s' % repr(message)
                     break
 
+            _log.debug("%s exiting" % self.name)
         except Queue.Empty:
             assert False, '%s: ran out of messages in worker queue.' % self.name
         except KeyboardInterrupt, e:
-            exception_msg = ", interrupted"
-            if not self._running_inline:
-                _log.warning('worker exception')
-                self._raise(sys.exc_info())
-            raise
+            self._raise(sys.exc_info())
         except Exception, e:
-            exception_msg = ", exception raised: %s" % str(e)
-            if not self._running_inline:
-                self._raise(sys.exc_info())
-            raise
+            self._raise(sys.exc_info())
         finally:
-            _log.debug("%s exiting%s" % (self.name, exception_msg))
             try:
                 worker.stop()
             finally:
@@ -279,9 +272,17 @@ class _Worker(multiprocessing.Process):
         self._messages_to_manager.put(_Message(self.name, name, args, from_user, log_messages))
 
     def _raise(self, exc_info):
-        # Since tracebacks aren't picklable, send the extracted stack instead.
         exception_type, exception_value, exception_traceback = exc_info
-        stack_utils.log_traceback(_log.error, exception_traceback)
+        if self._running_inline:
+            raise exception_type, exception_value, exception_traceback
+
+        if exception_type == KeyboardInterrupt:
+            _log.debug("%s: interrupted, exiting" % self.name)
+            stack_utils.log_traceback(_log.debug, exception_traceback)
+        else:
+            _log.error("%s: %s('%s') raised:" % (self.name, exception_value.__class__.__name__, str(exception_value)))
+            stack_utils.log_traceback(_log.error, exception_traceback)
+        # Since tracebacks aren't picklable, send the extracted stack instead.
         stack = traceback.extract_tb(exception_traceback)
         self._post(name='worker_exception', args=(exception_type, exception_value, stack), from_user=False)
 

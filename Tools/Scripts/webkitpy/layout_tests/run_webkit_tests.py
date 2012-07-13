@@ -35,6 +35,7 @@ import optparse
 import os
 import signal
 import sys
+import traceback
 
 from webkitpy.common.host import Host
 from webkitpy.common.system import stack_utils
@@ -469,6 +470,9 @@ def main(argv=None):
         # FIXME: is this the best way to handle unsupported port names?
         print >> sys.stderr, str(e)
         return EXCEPTIONAL_EXIT_STATUS
+    except:
+        traceback.print_exc(file=sys.stderr)
+        raise
 
     logging.getLogger().setLevel(logging.DEBUG if options.verbose else logging.INFO)
     return run(port, options, args)
@@ -477,7 +481,7 @@ def main(argv=None):
 if '__main__' == __name__:
     try:
         sys.exit(main())
-    except Exception, e:
+    except BaseException, e:
         if e.__class__ in (KeyboardInterrupt, TestRunInterruptedException):
             sys.exit(INTERRUPTED_EXIT_STATUS)
         sys.exit(EXCEPTIONAL_EXIT_STATUS)

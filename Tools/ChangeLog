@@ -1,3 +1,30 @@
+2012-07-13  Dirk Pranke  <dpranke@chromium.org>
+
+        NRWT doesn't print exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=91129
+
+        Reviewed by Ojan Vafai.
+
+        Although we printed exceptions in most cases, if an unexpected
+        exception (like a runtime error) was raised when creating a
+        port, we wouldn't. This patch fixes that, and also cleans up
+        how we were logging exceptions from the workers to be less
+        verbose.
+
+        Because of the corner cases where these errors are occurring,
+        it's difficult to write automated unit tests for them. I've
+        tested it quite a bit by hand, though.
+
+        * Scripts/webkitpy/common/message_pool.py:
+        (_MessagePool._close):
+        (_MessagePool._handle_worker_exception):
+        (_Worker.run):
+        (_Worker._raise):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main):
+
 2012-07-13  Wei James  <james.wei@intel.com>
 
         enable TestWebKitAPI/webkit_unit_tests apk on x86 android platform by adding abi support

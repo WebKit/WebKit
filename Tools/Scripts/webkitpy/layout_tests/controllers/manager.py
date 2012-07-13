@@ -782,8 +782,8 @@ class Manager(object):
         except TestRunInterruptedException, e:
             _log.warning(e.reason)
             interrupted = True
-        except:
-            _log.error("Exception raised, exiting")
+        except Exception, e:
+            _log.debug('%s("%s") raised, exiting' % (e.__class__.__name__, str(e)))
             raise
         finally:
             self.stop_servers_with_lock()
