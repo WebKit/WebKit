@@ -21,6 +21,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+require "config"
 require "ast"
 require "opt"
 
@@ -147,6 +148,7 @@ def armV7LowerBranchOps(list)
     list.each {
         | node |
         if node.is_a? Instruction
+            annotation = node.annotation
             case node.opcode
             when /^b(addi|subi|ori|addp)/
                 op = $1
@@ -161,17 +163,17 @@ def armV7LowerBranchOps(list)
                     op = "oris"
                 end
                 
-                newList << Instruction.new(node.codeOrigin, op, node.operands[0..-2])
+                newList << Instruction.new(node.codeOrigin, op, node.operands[0..-2], annotation)
                 newList << Instruction.new(node.codeOrigin, branch, [node.operands[-1]])
             when "bmulio"
                 tmp1 = Tmp.new(node.codeOrigin, :gpr)
                 tmp2 = Tmp.new(node.codeOrigin, :gpr)
-                newList << Instruction.new(node.codeOrigin, "smulli", [node.operands[0], node.operands[1], node.operands[1], tmp1])
+                newList << Instruction.new(node.codeOrigin, "smulli", [node.operands[0], node.operands[1], node.operands[1], tmp1], annotation)
                 newList << Instruction.new(node.codeOrigin, "rshifti", [node.operands[-2], Immediate.new(node.codeOrigin, 31), tmp2])
                 newList << Instruction.new(node.codeOrigin, "bineq", [tmp1, tmp2, node.operands[-1]])
             when /^bmuli/
                 condition = $~.post_match
-                newList << Instruction.new(node.codeOrigin, "muli", node.operands[0..-2])
+                newList << Instruction.new(node.codeOrigin, "muli", node.operands[0..-2], annotation)
                 newList << Instruction.new(node.codeOrigin, "bti" + condition, [node.operands[-2], node.operands[-1]])
             else
                 newList << node
@@ -210,9 +212,9 @@ def armV7LowerShiftOps(list)
             case node.opcode
             when "lshifti", "rshifti", "urshifti", "lshiftp", "rshiftp", "urshiftp"
                 if node.operands.size == 2
-                    newList << Instruction.new(node.codeOrigin, node.opcode, [armV7SanitizeShift(node.operands[0], newList), node.operands[1]])
+                    newList << Instruction.new(node.codeOrigin, node.opcode, [armV7SanitizeShift(node.operands[0], newList), node.operands[1]], node.annotation)
                 else
-                    newList << Instruction.new(node.codeOrigin, node.opcode, [node.operands[0], armV7SanitizeShift(node.operands[1], newList), node.operands[2]])
+                    newList << Instruction.new(node.codeOrigin, node.opcode, [node.operands[0], armV7SanitizeShift(node.operands[1], newList), node.operands[2]], node.annotation)
                     raise "Wrong number of operands for shift at #{node.codeOriginString}" unless node.operands.size == 3
                 end
             else
@@ -321,9 +323,9 @@ def armV7LowerMalformedAddressesDouble(list)
         if node.is_a? Instruction
             case node.opcode
             when "loadd"
-                newList << Instruction.new(node.codeOrigin, "loadd", [node.operands[0].armV7DoubleAddress(newList), node.operands[1]])
+                newList << Instruction.new(node.codeOrigin, "loadd", [node.operands[0].armV7DoubleAddress(newList), node.operands[1]], node.annotation)
             when "stored"
-                newList << Instruction.new(node.codeOrigin, "stored", [node.operands[0], node.operands[1].armV7DoubleAddress(newList)])
+                newList << Instruction.new(node.codeOrigin, "stored", [node.operands[0], node.operands[1].armV7DoubleAddress(newList)], node.annotation)
             else
                 newList << node
             end
@@ -364,7 +366,7 @@ def armV7LowerMisplacedImmediates(list)
                         newOperands << operand
                     end
                 }
-                newList << Instruction.new(node.codeOrigin, node.opcode, newOperands)
+                newList << Instruction.new(node.codeOrigin, node.opcode, newOperands, node.annotation)
             else
                 newList << node
             end
@@ -431,6 +433,7 @@ def armV7LowerMalformedImmediates(list)
     list.each {
         | node |
         if node.is_a? Instruction
+            annotation = node.annotation
             case node.opcode
             when "move"
                 newList << node
@@ -445,14 +448,15 @@ def armV7LowerMalformedImmediates(list)
                         newOpcode = "add" + node.opcode[-1..-1]
                     end
                     newList << Instruction.new(node.codeOrigin, newOpcode,
-                                               [Immediate.new(-node.operands[0].value)] + node.operands[1..-1])
+                                               [Immediate.new(-node.operands[0].value)] + node.operands[1..-1],
+                                               annotation)
                 else
                     newList << node.armV7LowerMalformedImmediatesRecurse(newList)
                 end
             when "muli", "mulp"
                 if node.operands[0].is_a? Immediate
                     tmp = Tmp.new(codeOrigin, :gpr)
-                    newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp])
+                    newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp], annotation)
                     newList << Instruction.new(node.codeOrigin, "muli", [tmp] + node.operands[1..-1])
                 else
                     newList << node.armV7LowerMalformedImmediatesRecurse(newList)
@@ -514,30 +518,36 @@ def armV7LowerMisplacedAddresses(list)
         | node |
         if node.is_a? Instruction
             postInstructions = []
+            annotation = node.annotation
             case node.opcode
             when "addi", "addp", "addis", "andi", "andp", "lshifti", "lshiftp", "muli", "mulp", "negi",
                 "negp", "noti", "ori", "oris", "orp", "rshifti", "urshifti", "rshiftp", "urshiftp", "subi",
                 "subp", "subis", "xori", "xorp", /^bi/, /^bp/, /^bti/, /^btp/, /^ci/, /^cp/, /^ti/
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
-                                           armV7AsRegisters(newList, postInstructions, node.operands, "i"))
+                                           armV7AsRegisters(newList, postInstructions, node.operands, "i"),
+                                           annotation)
             when "bbeq", "bbneq", "bba", "bbaeq", "bbb", "bbbeq", "btbo", "btbz", "btbnz", "tbz", "tbnz",
                 "tbo", "cbeq", "cbneq", "cba", "cbaeq", "cbb", "cbbeq"
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
-                                           armV7AsRegisters(newList, postInstructions, node.operands, "b"))
+                                           armV7AsRegisters(newList, postInstructions, node.operands, "b"),
+                                           annotation)
             when "bbgt", "bbgteq", "bblt", "bblteq", "btbs", "tbs", "cbgt", "cbgteq", "cblt", "cblteq"
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
-                                           armV7AsRegisters(newList, postInstructions, node.operands, "bs"))
+                                           armV7AsRegisters(newList, postInstructions, node.operands, "bs"),
+                                           annotation)
             when "addd", "divd", "subd", "muld", "sqrtd", /^bd/
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
-                                           armV7AsRegisters(newList, postInstructions, node.operands, "d"))
+                                           armV7AsRegisters(newList, postInstructions, node.operands, "d"),
+                                           annotation)
             when "jmp", "call"
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
-                                           [armV7AsRegister(newList, postInstructions, node.operands[0], "p", false)])
+                                           [armV7AsRegister(newList, postInstructions, node.operands[0], "p", false)],
+                                           annotation)
             else
                 newList << node
             end
@@ -565,6 +575,7 @@ def armV7LowerRegisterReuse(list)
     list.each {
         | node |
         if node.is_a? Instruction
+            annotation = node.annotation
             case node.opcode
             when "cieq", "cineq", "cia", "ciaeq", "cib", "cibeq", "cigt", "cigteq", "cilt", "cilteq",
                 "cpeq", "cpneq", "cpa", "cpaeq", "cpb", "cpbeq", "cpgt", "cpgteq", "cplt", "cplteq",
@@ -573,7 +584,7 @@ def armV7LowerRegisterReuse(list)
                 if node.operands.size == 2
                     if node.operands[0] == node.operands[1]
                         tmp = Tmp.new(node.codeOrigin, :gpr)
-                        newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp])
+                        newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp], annotation)
                         newList << Instruction.new(node.codeOrigin, node.opcode, [tmp, node.operands[1]])
                     else
                         newList << node
@@ -582,11 +593,11 @@ def armV7LowerRegisterReuse(list)
                     raise "Wrong number of arguments at #{node.codeOriginString}" unless node.operands.size == 3
                     if node.operands[0] == node.operands[2]
                         tmp = Tmp.new(node.codeOrigin, :gpr)
-                        newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp])
+                        newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp], annotation)
                         newList << Instruction.new(node.codeOrigin, node.opcode, [tmp, node.operands[1], node.operands[2]])
                     elsif node.operands[1] == node.operands[2]
                         tmp = Tmp.new(node.codeOrigin, :gpr)
-                        newList << Instruction.new(node.codeOrigin, "move", [node.operands[1], tmp])
+                        newList << Instruction.new(node.codeOrigin, "move", [node.operands[1], tmp], annotation)
                         newList << Instruction.new(node.codeOrigin, node.opcode, [node.operands[0], tmp, node.operands[2]])
                     else
                         newList << node
@@ -732,7 +743,9 @@ end
 
 class Instruction
     def lowerARMv7
-        $asm.comment codeOriginString
+        $asm.codeOrigin codeOriginString
+        $asm.annotation annotation
+
         case opcode
         when "addi", "addp", "addis"
             if opcode == "addis"

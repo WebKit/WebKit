@@ -21,6 +21,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+require "config"
 require "ast"
 require "instructions"
 require "pathname"
@@ -81,11 +82,20 @@ def lex(str, fileName)
     fileName = Pathname.new(fileName)
     result = []
     lineNumber = 1
+    annotation = nil
     while not str.empty?
         case str
         when /\A\#([^\n]*)/
             # comment, ignore
+        when /\A\/\/([^\n]*)/
+            # annotation
+            annotation = $1
         when /\A\n/
+            # We've found a '\n'.  Emit the last comment recorded if appropriate:
+            if $enableInstrAnnotations and annotation
+                result << Token.new(CodeOrigin.new(fileName, lineNumber), "@" + annotation)
+                annotation = nil
+            end
             result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
             lineNumber += 1
         when /\A[a-zA-Z]([a-zA-Z0-9_]*)/
@@ -134,6 +144,10 @@ end
 
 def isIdentifier(token)
     token =~ /\A[a-zA-Z]([a-zA-Z0-9_]*)\Z/ and not isKeyword(token)
+end
+
+def isAnnotation(token)
+    token =~ /\A\@([^\n]*)/
 end
 
 def isLabel(token)
@@ -535,6 +549,10 @@ class Parser
                     # Zero operand instruction, and it's the last one.
                     list << Instruction.new(codeOrigin, name, [])
                     break
+                elsif isAnnotation @tokens[@idx]
+                    annotation = @tokens[@idx].string
+                    list << Instruction.new(codeOrigin, name, [], annotation)
+                    @idx += 2 # Consume the newline as well.
                 elsif @tokens[@idx] == "\n"
                     # Zero operand instruction.
                     list << Instruction.new(codeOrigin, name, [])
@@ -543,6 +561,7 @@ class Parser
                     # It's definitely an instruction, and it has at least one operand.
                     operands = []
                     endOfSequence = false
+                    annotation = nil
                     loop {
                         operands << parseOperand("while inside of instruction #{name}")
                         if (not final and @idx == @tokens.size) or (final and @tokens[@idx] =~ final)
@@ -552,6 +571,10 @@ class Parser
                         elsif @tokens[@idx] == ","
                             # Has another operand.
                             @idx += 1
+                        elsif isAnnotation @tokens[@idx]
+                            annotation = @tokens[@idx].string
+                            @idx += 2 # Consume the newline as well.
+                            break
                         elsif @tokens[@idx] == "\n"
                             # The end of the instruction.
                             @idx += 1
@@ -560,7 +583,7 @@ class Parser
                             parseError("Expected a comma, newline, or #{final} after #{operands.last.dump}")
                         end
                     }
-                    list << Instruction.new(codeOrigin, name, operands)
+                    list << Instruction.new(codeOrigin, name, operands, annotation)
                     if endOfSequence
                         break
                     end

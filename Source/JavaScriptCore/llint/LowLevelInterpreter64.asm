@@ -182,8 +182,8 @@ end
 
 _llint_op_enter:
     traceExecution()
-    loadp CodeBlock[cfr], t2
-    loadi CodeBlock::m_numVars[t2], t2
+    loadp CodeBlock[cfr], t2                // t2<CodeBlock> = cfr.CodeBlock
+    loadi CodeBlock::m_numVars[t2], t2      // t2<size_t> = t2<CodeBlock>.m_numVars
     btiz t2, .opEnterDone
     move ValueUndefined, t0
 .opEnterLoop:

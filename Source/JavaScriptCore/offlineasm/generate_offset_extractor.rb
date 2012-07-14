@@ -25,6 +25,7 @@
 
 $: << File.dirname(__FILE__)
 
+require "config"
 require "backends"
 require "digest/sha1"
 require "offsets"

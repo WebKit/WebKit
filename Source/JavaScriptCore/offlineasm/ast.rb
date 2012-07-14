@@ -21,6 +21,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+require "config"
+
 #
 # Base utility types for the AST.
 #
@@ -784,12 +786,13 @@ class AbsoluteAddress < NoChildren
 end
 
 class Instruction < Node
-    attr_reader :opcode, :operands
+    attr_reader :opcode, :operands, :annotation
     
-    def initialize(codeOrigin, opcode, operands)
+    def initialize(codeOrigin, opcode, operands, annotation=nil)
         super(codeOrigin)
         @opcode = opcode
         @operands = operands
+        @annotation = annotation
     end
     
     def children
@@ -797,7 +800,7 @@ class Instruction < Node
     end
     
     def mapChildren(&proc)
-        Instruction.new(codeOrigin, @opcode, @operands.map(&proc))
+        Instruction.new(codeOrigin, @opcode, @operands.map(&proc), @annotation)
     end
     
     def dump

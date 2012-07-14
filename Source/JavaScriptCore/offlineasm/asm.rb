@@ -25,6 +25,7 @@
 
 $: << File.dirname(__FILE__)
 
+require "config"
 require "backends"
 require "digest/sha1"
 require "offsets"
@@ -39,16 +40,21 @@ class Assembler
         @state = :cpp
         @commentState = :none
         @comment = nil
+        @internalComment = nil
+        @annotation = nil
+        @codeOrigin = nil
+        @numLocalLabels = 0
+        @numGlobalLabels = 0
     end
     
     def enterAsm
-        @outp.puts "asm ("
+        @outp.puts "OFFLINE_ASM_BEGIN"
         @state = :asm
     end
     
     def leaveAsm
         putsLastComment
-        @outp.puts ");"
+        @outp.puts "OFFLINE_ASM_END"
         @state = :cpp
     end
     
@@ -58,17 +64,35 @@ class Assembler
         leaveAsm
     end
     
+    # Concatenates all the various components of the comment to dump.
     def lastComment
-        if @comment
-            result = "// #{@comment}"
-        else
-            result = ""
+        result = ""
+        result = " #{@comment} ." if @comment
+        result += " #{@annotation} ." if @annotation and $enableTrailingInstrAnnotations
+        result += " #{@internalComment} ." if @internalComment
+        result += " #{@codeOrigin} ." if @codeOrigin and $enableCodeOriginComments
+        if result != ""
+            result = "  //" + result
         end
+
+        # Reset all the components that we've just sent to be dumped.
         @commentState = :none
         @comment = nil
+        @internalComment = nil
+        @annotation = nil
+        @codeOrigin = nil
         result
     end
     
+    # Dumps the current instruction annotation in interlaced mode if appropriate.
+    def putInterlacedAnnotation()
+        raise unless @state == :asm
+        if $enableInterlacedInstrAnnotations
+            @outp.puts("    // #{@annotation}") if @annotation
+            @annotation = nil
+        end
+    end
+
     def putsLastComment
         comment = lastComment
         unless comment.empty?
@@ -78,7 +102,8 @@ class Assembler
     
     def puts(*line)
         raise unless @state == :asm
-        @outp.puts("\"\\t" + line.join('') + "\\n\" #{lastComment}")
+        putInterlacedAnnotation
+        @outp.puts("    \"\\t" + line.join('') + "\\n\"#{lastComment}")
     end
     
     def print(line)
@@ -88,12 +113,18 @@ class Assembler
     
     def putsLabel(labelName)
         raise unless @state == :asm
-        @outp.puts("OFFLINE_ASM_GLOBAL_LABEL(#{labelName}) #{lastComment}")
+        @numGlobalLabels += 1
+        @outp.puts("\n")
+        @internalComment = $enableLabelCountComments ? "Global Label #{@numGlobalLabels}" : nil
+        @outp.puts("OFFLINE_ASM_GLOBAL_LABEL(#{labelName})#{lastComment}")
     end
     
     def putsLocalLabel(labelName)
         raise unless @state == :asm
-        @outp.puts("LOCAL_LABEL_STRING(#{labelName}) \":\\n\" #{lastComment}")
+        @numLocalLabels += 1
+        @outp.puts("\n")
+        @internalComment = $enableLabelCountComments ? "Local Label #{@numLocalLabels}" : nil
+        @outp.puts("OFFLINE_ASM_LOCAL_LABEL(#{labelName})#{lastComment}")
     end
     
     def self.labelReference(labelName)
@@ -104,21 +135,30 @@ class Assembler
         "\" LOCAL_LABEL_STRING(#{labelName}) \""
     end
     
-    def comment(text)
+    def codeOrigin(text)
         case @commentState
         when :none
-            @comment = text
+            @codeOrigin = text
             @commentState = :one
         when :one
-            @outp.puts "// #{@comment}"
-            @outp.puts "// #{text}"
-            @comment = nil
+            if $enableCodeOriginComments
+                @outp.puts "    // #{@codeOrigin}"
+                @outp.puts "    // #{text}"
+            end
+            @codeOrigin = nil
             @commentState = :many
         when :many
-            @outp.puts "// #{text}"
+            @outp.puts "// #{text}" if $enableCodeOriginComments
         else
             raise
         end
+    end
+
+    def comment(text)
+        @comment = text
+    end
+    def annotation(text)
+        @annotation = text
     end
 end
 

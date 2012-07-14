@@ -1,3 +1,44 @@
+2012-07-13  Mark Lam  <mark.lam@apple.com>
+
+        OfflineASM Pretty printing and commenting enhancements.
+        https://bugs.webkit.org/show_bug.cgi?id=91281
+
+        Reviewed by Filip Pizlo.
+
+        Added some minor pretty printing in the OfflineASM.
+        Also added infrastruture for adding multiple types of comments and
+        annotations with the ability to enable/disable them in the generated
+        output as desired.
+
+        * GNUmakefile.list.am: add new file config.rb.
+        * llint/LLIntOfflineAsmConfig.h:
+          Added OFFLINE_ASM_BEGIN, OFFLINE_ASM_END, and OFFLINE_ASM_LOCAL_LABEL macros.
+          This will allow us to redefine these for other backends later.
+        * llint/LowLevelInterpreter32_64.asm:
+          Add a small example of instruction annotations for now.
+        * llint/LowLevelInterpreter64.asm:
+          Add a small example of instruction annotations for now.
+        * offlineasm/armv7.rb: Added handling of annotations.
+        * offlineasm/asm.rb:
+          Added machinery to dump the new comments and annotations.
+          Also added some indentations to make the output a little prettier.
+        * offlineasm/ast.rb: Added annotation field in class Instruction. 
+        * offlineasm/backends.rb:
+        * offlineasm/config.rb: Added.
+          Currently only contains commenting options.  This file is meant to be
+          a centralized place for build config values much like config.h for
+          JavaScriptCore.
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/offsets.rb:
+        * offlineasm/opt.rb:
+        * offlineasm/parser.rb: Parse and record annotations.
+        * offlineasm/registers.rb:
+        * offlineasm/self_hash.rb:
+        * offlineasm/settings.rb:
+        * offlineasm/transform.rb:
+        * offlineasm/x86.rb: Added handling of annotations.
+
 2012-07-13  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILED: use.useKind() != DoubleUse

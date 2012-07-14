@@ -21,6 +21,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+require "config"
+
 # Interesting invariant, which we take advantage of: branching instructions
 # always begin with "b", and no non-branching instructions begin with "b".
 # Terminal instructions are "jmp" and "ret".
