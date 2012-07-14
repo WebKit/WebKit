@@ -242,7 +242,7 @@ public:
 
     // Screen -------------------------------------------------------------
 
-    // Supplies the system monitor color profile ("monitor") or a named ICC profile.
+    // Supplies the system monitor color profile.
     virtual void screenColorProfile(WebVector<char>* profile) { }
 
 

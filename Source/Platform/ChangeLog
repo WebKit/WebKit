@@ -1,3 +1,13 @@
+2012-07-13  Tony Payne  <tpayne@chromium.org>
+
+        Remove Widget from screenColorProfile
+        https://bugs.webkit.org/show_bug.cgi?id=91300
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/Platform.h:
+        (Platform): Updated comment to reflect that we no longer have a type param.
+
 2012-07-11  Alexandre Elias  <aelias@google.com>
 
         [chromium] Move compositor quads to Platform/chromium/public

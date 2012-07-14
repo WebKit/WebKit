@@ -137,7 +137,7 @@ FloatRect screenAvailableRect(Widget* widget)
 
 }
 
-void screenColorProfile(Widget*, ColorProfile&)
+void screenColorProfile(ColorProfile&)
 {
     notImplemented();
 }

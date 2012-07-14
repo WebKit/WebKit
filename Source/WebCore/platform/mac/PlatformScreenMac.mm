@@ -76,7 +76,7 @@ FloatRect screenAvailableRect(Widget* widget)
     return toUserSpace([screenForWindow(window) visibleFrame], window);
 }
 
-void screenColorProfile(Widget*, ColorProfile&)
+void screenColorProfile(ColorProfile&)
 {
     notImplemented();
 }

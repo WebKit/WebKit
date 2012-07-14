@@ -315,7 +315,7 @@ namespace WebCore {
 #else
                 // FIXME: add support for multiple monitors.
                 ColorProfile profile;
-                screenColorProfile(0, profile);
+                screenColorProfile(profile);
                 if (!profile.isEmpty())
                     outputDeviceProfile = qcms_profile_from_memory(profile.data(), profile.size());
 #endif
