@@ -93,6 +93,14 @@ public:
     void framebufferTexture2D(CCGraphicsContext*, TextureAllocator*);
     unsigned textureId();
 
+    // Self-managed textures are accounted for when prioritizing other textures,
+    // but they are not allocated/recycled/deleted, so this needs to be done
+    // externally. canAcquireBackingTexture() indicates if the texture would have
+    // been allowed given its priority.
+    void setIsSelfManaged(bool isSelfManaged) { m_isSelfManaged = isSelfManaged; }
+    bool isSelfManaged() { return m_isSelfManaged; }
+    void setToSelfManagedMemoryPlaceholder(size_t bytes);
+
 private:
     friend class CCPrioritizedTextureManager;
 
@@ -125,6 +133,7 @@ private:
 
     size_t m_priority;
     bool m_isAbovePriorityCutoff;
+    bool m_isSelfManaged;
 
     Backing* m_backing;
     CCPrioritizedTextureManager* m_manager;

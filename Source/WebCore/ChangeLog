@@ -1,3 +1,45 @@
+2012-07-13  Eric Penner  <epenner@google.com>
+
+        [chromium] Add 'self-managed' option to CCPrioritizedTexture to enable render-surface and canvas use cases.
+        https://bugs.webkit.org/show_bug.cgi?id=91177
+
+        Reviewed by Adrienne Walker.
+
+        This makes the render-surface memory use case generic as 'self-managed' textures,
+        as this use case is popping up in other places (eg. canvases). It's exactly the
+        same idea except we can have as many place-holders as we want at arbitrary
+        priorities.
+
+        This already tested by the render surface unit tests which now also use the 
+        generic placeholder.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::setPrioritiesForSurfaces):
+        (WebCore):
+        (WebCore::CCLayerTreeHost::setPrioritiesForLayers):
+        (WebCore::CCLayerTreeHost::prioritizeTextures):
+        (WebCore::CCLayerTreeHost::calculateMemoryForRenderSurfaces):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCPrioritizedTexture.cpp:
+        (WebCore::CCPrioritizedTexture::CCPrioritizedTexture):
+        (WebCore::CCPrioritizedTexture::setToSelfManagedMemoryPlaceholder):
+        * platform/graphics/chromium/cc/CCPrioritizedTexture.h:
+        (CCPrioritizedTexture):
+        (WebCore::CCPrioritizedTexture::setIsSelfManaged):
+        (WebCore::CCPrioritizedTexture::isSelfManaged):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.cpp:
+        (WebCore::CCPrioritizedTextureManager::prioritizeTextures):
+        (WebCore::CCPrioritizedTextureManager::acquireBackingTextureIfNeeded):
+        (WebCore::CCPrioritizedTextureManager::destroyBacking):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.h:
+        (CCPrioritizedTextureManager):
+        (WebCore::CCPrioritizedTextureManager::memoryForSelfManagedTextures):
+
 2012-07-13  Kent Tamura  <tkent@chromium.org>
 
         Internals: Clean up the mock PagePopupDriver correctly.

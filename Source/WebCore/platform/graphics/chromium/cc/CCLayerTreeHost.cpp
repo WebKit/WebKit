@@ -152,6 +152,7 @@ void CCLayerTreeHost::initializeLayerRenderer()
     m_settings.maxPartialTextureUpdates = min(m_settings.maxPartialTextureUpdates, m_proxy->maxPartialTextureUpdates());
 
     m_contentsTextureManager = CCPrioritizedTextureManager::create(0, m_proxy->layerRendererCapabilities().maxTextureSize);
+    m_surfaceMemoryPlaceholder = m_contentsTextureManager->createTexture(IntSize(), GraphicsContext3D::RGBA);
 
     m_layerRendererInitialized = true;
 
@@ -489,8 +490,6 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
     // Reset partial texture update requests.
     m_partialTextureUpdateRequests = 0;
 
-    prioritizeTextures(updateList);
-
     bool needMoreUpdates = paintLayerContents(updateList, updater);
     if (m_triggerIdleUpdates && needMoreUpdates)
         setNeedsCommit();
@@ -499,12 +498,19 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
         updateList[i]->clearRenderSurface();
 }
 
-void CCLayerTreeHost::prioritizeTextures(const LayerList& updateList)
+void CCLayerTreeHost::setPrioritiesForSurfaces(size_t surfaceMemoryBytes)
+{
+    // Surfaces have a place holder for their memory since they are managed
+    // independantly but should still be tracked and reduce other memory usage.
+    m_surfaceMemoryPlaceholder->setTextureManager(m_contentsTextureManager.get());
+    m_surfaceMemoryPlaceholder->setRequestPriority(CCPriorityCalculator::renderSurfacePriority());
+    m_surfaceMemoryPlaceholder->setToSelfManagedMemoryPlaceholder(surfaceMemoryBytes);
+}
+
+void CCLayerTreeHost::setPrioritiesForLayers(const LayerList& updateList)
 {
     // Use BackToFront since it's cheap and this isn't order-dependent.
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
-
-    m_contentsTextureManager->clearPriorities();
 
     CCPriorityCalculator calculator;
     CCLayerIteratorType end = CCLayerIteratorType::end(&updateList);
@@ -518,7 +524,25 @@ void CCLayerTreeHost::prioritizeTextures(const LayerList& updateList)
                 it->replicaLayer()->maskLayer()->setTexturePriorities(calculator);
         }
     }
+}
 
+void CCLayerTreeHost::prioritizeTextures(const LayerList& renderSurfaceLayerList, CCOverdrawMetrics& metrics)
+{
+    m_contentsTextureManager->clearPriorities();
+
+    size_t memoryForRenderSurfacesMetric = calculateMemoryForRenderSurfaces(renderSurfaceLayerList);
+
+    setPrioritiesForLayers(renderSurfaceLayerList);
+    setPrioritiesForSurfaces(memoryForRenderSurfacesMetric);
+
+    metrics.didUseContentsTextureMemoryBytes(m_contentsTextureManager->memoryAboveCutoffBytes());
+    metrics.didUseRenderSurfaceTextureMemoryBytes(memoryForRenderSurfacesMetric);
+
+    m_contentsTextureManager->prioritizeTextures();
+}
+
+size_t CCLayerTreeHost::calculateMemoryForRenderSurfaces(const LayerList& updateList)
+{
     size_t readbackBytes = 0;
     size_t maxBackgroundTextureBytes = 0;
     size_t contentsTextureBytes = 0;
@@ -539,9 +563,7 @@ void CCLayerTreeHost::prioritizeTextures(const LayerList& updateList)
         if (!readbackBytes)
             readbackBytes = CCTexture::memorySizeBytes(m_deviceViewportSize, GraphicsContext3D::RGBA);
     }
-    size_t renderSurfacesBytes = readbackBytes + maxBackgroundTextureBytes + contentsTextureBytes;
-
-    m_contentsTextureManager->prioritizeTextures(renderSurfacesBytes);
+    return readbackBytes + maxBackgroundTextureBytes + contentsTextureBytes;
 }
 
 bool CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLayer, CCTextureUpdater& updater)
@@ -575,6 +597,8 @@ bool CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), deviceViewportSize()), recordMetricsForFrame);
     occlusionTracker.setMinimumTrackingSize(m_settings.minimumOcclusionTrackingSize);
 
+    prioritizeTextures(renderSurfaceLayerList, occlusionTracker.overdrawMetrics());
+
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
         occlusionTracker.enterLayer(it);
@@ -591,8 +615,6 @@ bool CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
         occlusionTracker.leaveLayer(it);
     }
 
-    occlusionTracker.overdrawMetrics().didUseContentsTextureMemoryBytes(m_contentsTextureManager->memoryAboveCutoffBytes());
-    occlusionTracker.overdrawMetrics().didUseRenderSurfaceTextureMemoryBytes(m_contentsTextureManager->memoryForRenderSurfacesBytes());
     occlusionTracker.overdrawMetrics().recordMetrics(this);
 
     return needMoreUpdates;

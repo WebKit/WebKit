@@ -285,7 +285,10 @@ private:
 
     void updateLayers(LayerChromium*, CCTextureUpdater&);
 
-    void prioritizeTextures(const LayerList& updateList);
+    void prioritizeTextures(const LayerList&, CCOverdrawMetrics&); 
+    void setPrioritiesForSurfaces(size_t surfaceMemoryBytes);
+    void setPrioritiesForLayers(const LayerList&);
+    size_t calculateMemoryForRenderSurfaces(const LayerList& updateList);
 
     void animateLayers(double monotonicTime);
     bool animateLayersRecursive(LayerChromium* current, double monotonicTime);
@@ -309,6 +312,7 @@ private:
 
     RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<CCPrioritizedTextureManager> m_contentsTextureManager;
+    OwnPtr<CCPrioritizedTexture> m_surfaceMemoryPlaceholder;
 
     CCLayerTreeSettings m_settings;
 

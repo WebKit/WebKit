@@ -55,7 +55,7 @@ CCPrioritizedTextureManager::~CCPrioritizedTextureManager()
         destroyBacking(*m_backings.begin(), 0);
 }
 
-void CCPrioritizedTextureManager::prioritizeTextures(size_t renderSurfacesMemoryBytes)
+void CCPrioritizedTextureManager::prioritizeTextures()
 {
     TRACE_EVENT0("cc", "CCPrioritizedTextureManager::prioritizeTextures");
 
@@ -79,31 +79,29 @@ void CCPrioritizedTextureManager::prioritizeTextures(size_t renderSurfacesMemory
 
     m_memoryAvailableBytes = m_maxMemoryLimitBytes;
     m_priorityCutoff = CCPriorityCalculator::lowestPriority();
-    bool reservedRenderSurfaces = false;
     size_t memoryBytes = 0;
     for (TextureVector::iterator it = sortedTextures.begin(); it != sortedTextures.end(); ++it) {
         if ((*it)->requestPriority() == CCPriorityCalculator::lowestPriority())
             break;
 
-        // FIXME: We can make placeholder objects similar to textures to represent the render surface memory request.
-        if (!reservedRenderSurfaces && CCPriorityCalculator::priorityIsLower((*it)->requestPriority(), CCPriorityCalculator::renderSurfacePriority())) {
-            size_t newMemoryBytes = memoryBytes + renderSurfacesMemoryBytes;
+        if ((*it)->isSelfManaged()) {
+            // Account for self-managed memory immediately by reducing the memory
+            // available (since it never gets acquired).
+            size_t newMemoryBytes = memoryBytes + (*it)->bytes();
             if (newMemoryBytes > m_memoryAvailableBytes) {
                 m_priorityCutoff = (*it)->requestPriority();
                 m_memoryAvailableBytes = memoryBytes;
                 break;
             }
-            m_memoryAvailableBytes -= renderSurfacesMemoryBytes;
-            reservedRenderSurfaces = true;
+            m_memoryAvailableBytes -= (*it)->bytes();
+        } else {
+            size_t newMemoryBytes = memoryBytes + (*it)->bytes();
+            if (newMemoryBytes > m_memoryAvailableBytes) {
+                m_priorityCutoff = (*it)->requestPriority();
+                break;
+            }
+            memoryBytes = newMemoryBytes;
         }
-
-        size_t newMemoryBytes = memoryBytes + (*it)->bytes();
-        if (newMemoryBytes > m_memoryAvailableBytes) {
-            m_priorityCutoff = (*it)->requestPriority();
-            break;
-        }
-
-        memoryBytes = newMemoryBytes;
     }
 
     // Only allow textures if they are higher than the cutoff. All textures
@@ -113,7 +111,7 @@ void CCPrioritizedTextureManager::prioritizeTextures(size_t renderSurfacesMemory
     for (TextureVector::iterator it = sortedTextures.begin(); it != sortedTextures.end(); ++it) {
         bool isAbovePriorityCutoff = CCPriorityCalculator::priorityIsHigher((*it)->requestPriority(), m_priorityCutoff);
         (*it)->setAbovePriorityCutoff(isAbovePriorityCutoff);
-        if (isAbovePriorityCutoff)
+        if (isAbovePriorityCutoff && !(*it)->isSelfManaged())
             m_memoryAboveCutoffBytes += (*it)->bytes();
     }
     ASSERT(m_memoryAboveCutoffBytes <= m_memoryAvailableBytes);
@@ -172,6 +170,7 @@ bool CCPrioritizedTextureManager::requestLate(CCPrioritizedTexture* texture)
 
 void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTexture* texture, TextureAllocator* allocator)
 {
+    ASSERT(!texture->isSelfManaged());
     ASSERT(texture->isAbovePriorityCutoff());
     if (texture->backing() || !texture->isAbovePriorityCutoff())
         return;
@@ -307,6 +306,7 @@ void CCPrioritizedTextureManager::destroyBacking(CCPrioritizedTexture::Backing* 
 {
     ASSERT(backing);
     ASSERT(!backing->owner() || !backing->owner()->isAbovePriorityCutoff());
+    ASSERT(!backing->owner() || !backing->owner()->isSelfManaged());
     ASSERT(m_backings.find(backing) != m_backings.end());
 
     if (allocator)

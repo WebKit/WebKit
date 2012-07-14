@@ -105,7 +105,7 @@ TEST_F(TiledLayerChromiumTest, pushDirtyTiles)
     layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updateTextures();
@@ -119,7 +119,7 @@ TEST_F(TiledLayerChromiumTest, pushDirtyTiles)
     layer->invalidateContentRect(IntRect(0, 0, 100, 200));
     // ....but then only update one of them.
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
     layer->pushPropertiesTo(layerImpl.get());
 
@@ -144,7 +144,7 @@ TEST_F(TiledLayerChromiumTest, pushOccludedDirtyTiles)
     layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     layer->updateContentRect(updater, IntRect(0, 0, 100, 200), &occluded);
     updateTextures();
@@ -188,7 +188,7 @@ TEST_F(TiledLayerChromiumTest, pushDeletedTiles)
     layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updateTextures();
@@ -211,7 +211,7 @@ TEST_F(TiledLayerChromiumTest, pushDeletedTiles)
 
     // This should recreate and update the deleted textures.
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
@@ -239,7 +239,7 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintTiles)
     layer->invalidateContentRect(contentRect);
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     layer->updateContentRect(updater, visibleRect, 0);
     updateTextures();
@@ -255,7 +255,7 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintTiles)
     // For the next four updates, we should detect we still need idle painting.
     for (int i = 0; i < 4; i++) {
         layer->setTexturePriorities(priorityCalculator);
-        textureManager->prioritizeTextures(0);
+        textureManager->prioritizeTextures();
 
         layer->updateContentRect(updater, visibleRect, 0);
         EXPECT_TRUE(layer->needsIdlePaint(visibleRect));
@@ -307,7 +307,7 @@ TEST_F(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     // Paint a single tile in layer2 so that it will idle paint.
     layer2->setTexturePriorities(priorityCalculator);
     layer1->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer1->updateContentRect(updater, layerRect, 0);
     layer2->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
 
@@ -325,7 +325,7 @@ TEST_F(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     // Now idle paint layer2. We are going to run out of memory though!
     layer2->setTexturePriorities(priorityCalculator);
     layer1->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer2->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
 
     // Oh well, commit the frame and push.
@@ -345,7 +345,7 @@ TEST_F(TiledLayerChromiumTest, pushTilesAfterIdlePaintFailed)
     // Now if layer2 becomes fully visible, we should be able to paint it and push valid textures.
     layer2->setTexturePriorities(priorityCalculator);
     layer1->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer2->updateContentRect(updater, layer2Rect, 0);
     layer1->updateContentRect(updater, layerRect, 0);
 
@@ -378,7 +378,7 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintedOccludedTiles)
     layer->invalidateContentRect(IntRect(0, 0, 100, 100));
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 100, 100), &occluded);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
@@ -403,7 +403,7 @@ TEST_F(TiledLayerChromiumTest, pushTilesMarkedDirtyDuringPaint)
     layer->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(0, 50, 100, 50), layer.get());
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
@@ -432,7 +432,7 @@ TEST_F(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnNextLayer)
 
     layer1->setTexturePriorities(priorityCalculator);
     layer2->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     layer1->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
 
@@ -470,7 +470,7 @@ TEST_F(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnPreviousLay
 
     layer1->setTexturePriorities(priorityCalculator);
     layer2->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     // Invalidate a tile on layer2
     layer1->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(0, 50, 100, 50), layer2.get());
@@ -508,7 +508,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintOutOfMemory)
     layer->invalidateContentRect(contentRect);
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, visibleRect, 0);
 
     // Idle-painting should see no more priority tiles for painting.
@@ -521,7 +521,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintOutOfMemory)
     EXPECT_TRUE(layerImpl->hasTileAt(1, 1));
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, visibleRect, 0);
 
     // We shouldn't signal we need another idle paint.
@@ -548,7 +548,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintZeroSizedLayer)
         layer->invalidateContentRect(contentRect);
 
         layer->setTexturePriorities(priorityCalculator);
-        textureManager->prioritizeTextures(0);
+        textureManager->prioritizeTextures();
 
         // Empty layers don't paint or idle-paint.
         layer->updateContentRect(updater, contentRect, 0);
@@ -586,7 +586,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleLayers)
     for (int i = 0; i < 2; i++) {
         // Paint / idle-paint.
         layer->setTexturePriorities(priorityCalculator);
-        textureManager->prioritizeTextures(0);
+        textureManager->prioritizeTextures();
         layer->updateContentRect(updater, visibleRect, 0);
 
         // Non-visible layers don't need idle paint.
@@ -636,7 +636,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
             layer->invalidateContentRect(contentRect);
 
             layer->setTexturePriorities(priorityCalculator);
-            textureManager->prioritizeTextures(0);
+            textureManager->prioritizeTextures();
 
             // If idlePaintRect gives back a non-empty result then we should paint it. Otherwise,
             // we shoud paint nothing.
@@ -648,7 +648,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
             // If the layer is to be prepainted at all, then after four updates we should have the outer row/columns painted.
             for (int k = 0; k < 4; ++k) {
                 layer->setTexturePriorities(priorityCalculator);
-                textureManager->prioritizeTextures(0);
+                textureManager->prioritizeTextures();
 
                 layer->updateContentRect(updater, visibleRect, 0);
                 updateTextures();
@@ -661,7 +661,7 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
             EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
             for (int k = 0; k < 4; ++k) {
                 layer->setTexturePriorities(priorityCalculator);
-                textureManager->prioritizeTextures(0);
+                textureManager->prioritizeTextures();
 
                 layer->updateContentRect(updater, visibleRect, 0);
                 updateTextures();
@@ -690,7 +690,7 @@ TEST_F(TiledLayerChromiumTest, invalidateFromPrepare)
     layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
     layer->invalidateContentRect(IntRect(0, 0, 100, 200));
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     updater.update(ccContext.get(), &fakeAllocator, &fakeCopier, &fakeUploader, 1000);
     layer->pushPropertiesTo(layerImpl.get());
@@ -740,14 +740,14 @@ TEST_F(TiledLayerChromiumTest, verifyUpdateRectWhenContentBoundsAreScaled)
     layer->invalidateContentRect(contentBounds);
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, contentBounds, 0);
     EXPECT_FLOAT_RECT_EQ(FloatRect(0, 0, 300, 300 * 0.8), layer->updateRect());
     updateTextures();
 
     // After the tiles are updated once, another invalidate only needs to update the bounds of the layer.
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->invalidateContentRect(contentBounds);
     layer->updateContentRect(updater, contentBounds, 0);
     EXPECT_FLOAT_RECT_EQ(FloatRect(layerBounds), layer->updateRect());
@@ -757,7 +757,7 @@ TEST_F(TiledLayerChromiumTest, verifyUpdateRectWhenContentBoundsAreScaled)
     IntRect partialDamage(30, 100, 10, 10);
     layer->invalidateContentRect(partialDamage);
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, contentBounds, 0);
     EXPECT_FLOAT_RECT_EQ(FloatRect(45, 80, 15, 8), layer->updateRect());
 }
@@ -779,7 +779,7 @@ TEST_F(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
 
     // Push the tiles to the impl side and check that there is exactly one.
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 100, 100), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
@@ -796,7 +796,7 @@ TEST_F(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
 
     // The impl side should get 2x2 tiles now.
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 200, 200), 0);
     updateTextures();
     layer->pushPropertiesTo(layerImpl.get());
@@ -810,7 +810,7 @@ TEST_F(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
     layer->setNeedsDisplay();
     layer->setTexturePriorities(priorityCalculator);
     layer->updateContentRect(updater, IntRect(1, 0, 0, 1), 0);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     layer->pushPropertiesTo(layerImpl.get());
     EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
@@ -880,7 +880,7 @@ TEST_F(TiledLayerChromiumTest, resizeToSmaller)
     layer->invalidateContentRect(IntRect(0, 0, 700, 700));
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 700, 700), 0);
 
     layer->setBounds(IntSize(200, 200));
@@ -899,7 +899,7 @@ TEST_F(TiledLayerChromiumTest, hugeLayerUpdateCrash)
 
     // Ensure no crash for bounds where size * size would overflow an int.
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 700, 700), 0);
 }
 
@@ -1039,7 +1039,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithoutOcclusion)
     layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 100, 200), 0);
     EXPECT_EQ(2, layer->fakeLayerTextureUpdater()->prepareRectCount());
 }
@@ -1060,7 +1060,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
@@ -1108,7 +1108,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 600, 360), &occluded);
     EXPECT_EQ(24-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
@@ -1123,7 +1123,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
     layer->setVisibleContentRect(IntRect(0, 0, 600, 350));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 600, 350), &occluded);
     EXPECT_EQ(24-6, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
@@ -1138,7 +1138,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
     layer->setVisibleContentRect(IntRect(0, 0, 600, 340));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 600, 340), &occluded);
     EXPECT_EQ(24-6, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
@@ -1163,7 +1163,7 @@ TEST_F(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
     layer->setVisibleContentRect(IntRect(0, 0, 600, 600));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
     updateTextures();
@@ -1203,7 +1203,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndTransforms)
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
@@ -1231,7 +1231,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     // The content is half the size of the layer (so the number of tiles is fewer).
     // In this case, the content is 300x300, and since the tile size is 100, the
@@ -1251,7 +1251,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(9-1, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
@@ -1271,7 +1271,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
     layer->updateContentRect(updater, IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(9-1, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
@@ -1300,7 +1300,7 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     layer->setDrawOpacity(1);
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     // If the layer doesn't paint opaque content, then the visibleContentOpaqueRegion should be empty.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
@@ -1393,7 +1393,7 @@ TEST_F(TiledLayerChromiumTest, pixelsPaintedMetrics)
     layer->setDrawOpacity(1);
 
     layer->setTexturePriorities(priorityCalculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     // Invalidates and paints the whole layer.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
@@ -1636,7 +1636,7 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringPaint)
     layer->setVisibleContentRect(contentRect);
 
     layer->setTexturePriorities(calculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     // Update the whole tile.
     layer->updateContentRect(updater, contentRect, 0);
@@ -1669,7 +1669,7 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringInvali
     layer->setVisibleContentRect(contentRect);
 
     layer->setTexturePriorities(calculator);
-    textureManager->prioritizeTextures(0);
+    textureManager->prioritizeTextures();
 
     // Update the whole tile.
     layer->updateContentRect(updater, contentRect, 0);

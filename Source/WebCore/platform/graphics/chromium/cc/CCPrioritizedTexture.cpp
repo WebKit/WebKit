@@ -42,6 +42,7 @@ CCPrioritizedTexture::CCPrioritizedTexture(CCPrioritizedTextureManager* manager,
     , m_bytes(0)
     , m_priority(CCPriorityCalculator::lowestPriority())
     , m_isAbovePriorityCutoff(false)
+    , m_isSelfManaged(false)
     , m_backing(0)
     , m_manager(0)
 {
@@ -150,7 +151,12 @@ void CCPrioritizedTexture::unlink()
     m_backing = 0;
 }
 
-
+void CCPrioritizedTexture::setToSelfManagedMemoryPlaceholder(size_t bytes)
+{
+    setDimensions(IntSize(), GraphicsContext3D::RGBA);
+    setIsSelfManaged(true);
+    m_bytes = bytes;
+}
 
 } // namespace WebCore
 

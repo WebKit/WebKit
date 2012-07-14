@@ -63,12 +63,12 @@ public:
     // memoryUseBytes() <= memoryAboveCutoffBytes() should always be true.
     size_t memoryUseBytes() const { return m_memoryUseBytes; }
     size_t memoryAboveCutoffBytes() const { return m_memoryAboveCutoffBytes; }
-    size_t memoryForRenderSurfacesBytes() const { return m_maxMemoryLimitBytes - m_memoryAvailableBytes; }
+    size_t memoryForSelfManagedTextures() const { return m_maxMemoryLimitBytes - m_memoryAvailableBytes; }
 
     void setMaxMemoryLimitBytes(size_t bytes) { m_maxMemoryLimitBytes = bytes; }
     size_t maxMemoryLimitBytes() const { return m_maxMemoryLimitBytes; }
 
-    void prioritizeTextures(size_t renderSurfacesMemoryBytes);
+    void prioritizeTextures();
     void clearPriorities();
 
     bool requestLate(CCPrioritizedTexture*);
