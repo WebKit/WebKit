@@ -199,6 +199,8 @@ wtf_sources += \
     Source/WTF/wtf/text/AtomicString.h \
     Source/WTF/wtf/text/AtomicStringHash.h \
     Source/WTF/wtf/text/AtomicStringImpl.h \
+    Source/WTF/wtf/text/Base64.cpp \
+    Source/WTF/wtf/text/Base64.h \
     Source/WTF/wtf/text/CString.cpp \
     Source/WTF/wtf/text/CString.h \
     Source/WTF/wtf/text/StringBuffer.h \

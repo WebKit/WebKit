@@ -30,7 +30,6 @@
 #include "AbstractDatabase.h"
 #include "BackForwardController.h"
 #include "BarInfo.h"
-#include "Base64.h"
 #include "BeforeUnloadEvent.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRuleList.h"
@@ -99,6 +98,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -1070,7 +1070,7 @@ String DOMWindow::atob(const String& encodedString, ExceptionCode& ec)
     }
 
     Vector<char> out;
-    if (!base64Decode(encodedString, out, FailOnInvalidCharacter)) {
+    if (!base64Decode(encodedString, out, Base64FailOnInvalidCharacter)) {
         ec = INVALID_CHARACTER_ERR;
         return String();
     }

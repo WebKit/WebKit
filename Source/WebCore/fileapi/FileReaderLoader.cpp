@@ -34,7 +34,6 @@
 
 #include "FileReaderLoader.h"
 
-#include "Base64.h"
 #include "Blob.h"
 #include "BlobURL.h"
 #include "FileReaderLoaderClient.h"
@@ -48,6 +47,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace std;

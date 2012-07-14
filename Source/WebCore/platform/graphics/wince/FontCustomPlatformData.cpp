@@ -22,11 +22,11 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
-#include "Base64.h"
 #include "CachedFont.h"
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
 #include <wtf/RandomNumber.h>
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 

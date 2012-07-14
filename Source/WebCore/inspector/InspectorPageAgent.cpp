@@ -34,7 +34,6 @@
 
 #include "InspectorPageAgent.h"
 
-#include "Base64.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedFont.h"
 #include "CachedImage.h"
@@ -76,6 +75,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/text/Base64.h>
 
 using namespace std;
 

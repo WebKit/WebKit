@@ -33,7 +33,6 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#include "Base64.h"
 #include "BitmapImage.h"
 #include "BitmapImageSingleFrameSkia.h"
 #include "Extensions3D.h"
@@ -56,6 +55,7 @@
 #include "Canvas2DLayerBridge.h"
 #endif
 
+#include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
 using namespace std;

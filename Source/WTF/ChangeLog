@@ -1,3 +1,25 @@
+2012-07-13  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Move WebCore/platform/text/Base64 to WTF/wtf/text
+        https://bugs.webkit.org/show_bug.cgi?id=91162
+
+        Reviewed by Adam Barth.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/Base64.cpp: Renamed from Source/WebCore/platform/text/Base64.cpp.
+        (WTF):
+        (WTF::base64Encode):
+        (WTF::base64Decode):
+        (WTF::base64DecodeInternal):
+        * wtf/text/Base64.h: Renamed from Source/WebCore/platform/text/Base64.h.
+        (WTF):
+        (WTF::base64Encode):
+
 2012-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to get HTTPS status to WebKit2 GTK+

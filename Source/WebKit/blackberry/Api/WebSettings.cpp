@@ -23,7 +23,6 @@
 #include "WebSettings_p.h"
 
 #include "WebString.h"
-#include <Base64.h>
 #include <BlackBerryPlatformDeviceInfo.h>
 #include <BlackBerryPlatformFontInfo.h>
 #include <BlackBerryPlatformScreen.h>
@@ -33,6 +32,7 @@
 #include <ViewportArguments.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/text/Base64.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -471,7 +471,7 @@ void WebSettings::setUserStyleSheetString(const char* userStyleSheetString)
     data.append(userStyleSheetString, length);
 
     Vector<char> encodedData;
-    WebCore::base64Encode(data, encodedData);
+    base64Encode(data, encodedData);
 
     const char prefix[] = "data:text/css;charset=utf-8;base64,";
     size_t prefixLength = sizeof(prefix) - 1;

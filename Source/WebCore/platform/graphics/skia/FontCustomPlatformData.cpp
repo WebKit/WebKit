@@ -34,7 +34,6 @@
 #include "FontCustomPlatformData.h"
 
 #if OS(WINDOWS)
-#include "Base64.h"
 #include "OpenTypeUtilities.h"
 #include "PlatformSupport.h"
 #elif OS(UNIX)
@@ -48,6 +47,7 @@
 
 #if OS(WINDOWS)
 #include <objbase.h>
+#include <wtf/text/Base64.h>
 #elif OS(UNIX)
 #include <cstring>
 #endif

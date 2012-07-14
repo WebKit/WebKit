@@ -28,7 +28,6 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#include "Base64.h"
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextCG.h"
@@ -42,6 +41,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)

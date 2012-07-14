@@ -21,7 +21,6 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
-#include "Base64.h"
 #include "FontPlatformData.h"
 #include "OpenTypeUtilities.h"
 #include "SharedBuffer.h"
@@ -30,6 +29,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/Base64.h>
 
 // From t2embapi.h, which is missing from the Microsoft Platform SDK.
 typedef unsigned long(WINAPIV *READEMBEDPROC) (void*, void*, unsigned long);

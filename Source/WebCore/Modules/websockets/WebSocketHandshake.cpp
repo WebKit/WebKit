@@ -36,7 +36,6 @@
 #include "WebSocketHandshake.h"
 #include "WebSocket.h"
 
-#include "Base64.h"
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "Document.h"
@@ -53,6 +52,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

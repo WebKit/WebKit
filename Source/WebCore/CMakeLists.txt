@@ -1304,7 +1304,6 @@ SET(WebCore_SOURCES
     platform/sql/SQLiteStatement.cpp
     platform/sql/SQLiteTransaction.cpp
 
-    platform/text/Base64.cpp
     platform/text/BidiContext.cpp
     platform/text/DateTimeFormat.cpp
     platform/text/Hyphenation.cpp

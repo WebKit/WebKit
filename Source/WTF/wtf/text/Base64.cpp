@@ -28,7 +28,7 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WTF {
 
 static const char base64EncMap[64] = {
     0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
@@ -60,14 +60,14 @@ static const char base64DecMap[128] = {
     0x31, 0x32, 0x33, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-String base64Encode(const char* data, unsigned length, bool insertLFs)
+String base64Encode(const char* data, unsigned length, Base64EncodePolicy policy)
 {
     Vector<char> result;
-    base64Encode(data, length, result, insertLFs);
+    base64Encode(data, length, result, policy);
     return String(result.data(), result.size());
 }
 
-void base64Encode(const char* data, unsigned len, Vector<char>& out, bool insertLFs)
+void base64Encode(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy)
 {
     out.clear();
     if (!len)
@@ -86,7 +86,7 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, bool insert
     unsigned outLength = ((len + 2) / 3) * 4;
 
     // Deal with the 76 character per line limit specified in RFC 2045.
-    insertLFs = (insertLFs && outLength > 76);
+    bool insertLFs = (policy == Base64InsertLFs && outLength > 76);
     if (insertLFs)
         outLength += ((outLength - 1) / 76);
 
@@ -159,7 +159,7 @@ static inline bool base64DecodeInternal(const T* data, unsigned len, Vector<char
                 return false;
             out[outLength] = base64DecMap[ch];
             outLength++;
-        } else if (policy == FailOnInvalidCharacter || (policy == IgnoreWhitespace && !isSpaceOrNewline(ch)))
+        } else if (policy == Base64FailOnInvalidCharacter || (policy == Base64IgnoreWhitespace && !isSpaceOrNewline(ch)))
             return false;
     }
 
@@ -209,4 +209,4 @@ bool base64Decode(const String& in, Vector<char>& out, Base64DecodePolicy policy
     return base64DecodeInternal<UChar>(in.characters(), in.length(), out, policy);
 }
 
-} // namespace WebCore
+} // namespace WTF

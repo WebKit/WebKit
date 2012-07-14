@@ -29,7 +29,6 @@
 
 #include "AuthenticationCF.h"
 #include "AuthenticationChallenge.h"
-#include "Base64.h"
 #include "CookieStorageCFNet.h"
 #include "CredentialStorage.h"
 #include "CachedResourceLoader.h"
@@ -48,6 +47,7 @@
 #include <sys/types.h>
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(MAC)

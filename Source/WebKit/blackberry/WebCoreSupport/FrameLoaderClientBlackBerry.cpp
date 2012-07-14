@@ -24,7 +24,6 @@
 #include "BackForwardListImpl.h"
 #include "BackingStoreClient.h"
 #include "BackingStore_p.h"
-#include "Base64.h"
 #include "Chrome.h"
 #include "ChromeClientBlackBerry.h"
 #include "ClientExtension.h"

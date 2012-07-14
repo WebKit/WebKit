@@ -408,6 +408,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\wtf\text\Base64.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\wtf\text\Base64.h"
+				>
+			</File>
+			<File
 				RelativePath="..\wtf\text\CString.cpp"
 				>
 			</File>

@@ -33222,18 +33222,6 @@
 				Name="text"
 				>
 				<File
-					RelativePath="..\platform\text\AtomicStringImpl.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\Base64.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\Base64.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\BidiContext.cpp"
 					>
 				</File>

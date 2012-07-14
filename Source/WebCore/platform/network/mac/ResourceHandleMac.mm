@@ -30,7 +30,6 @@
 
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
-#import "Base64.h"
 #import "BlobRegistry.h"
 #import "BlockExceptions.h"
 #import "CookieStorage.h"
@@ -52,8 +51,9 @@
 #import "SubresourceLoader.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreURLResponse.h"
-#import <wtf/text/CString.h>
 #import <wtf/UnusedParam.h>
+#import <wtf/text/Base64.h>
+#import <wtf/text/CString.h>
 
 using namespace WebCore;
 

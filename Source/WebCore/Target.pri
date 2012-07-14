@@ -1078,7 +1078,6 @@ SOURCES += \
     platform/animation/Animation.cpp \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
-    platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
     platform/text/DateTimeFormat.cpp \
     platform/text/Hyphenation.cpp \
@@ -2434,7 +2433,6 @@ HEADERS += \
     platform/sql/SQLiteStatement.h \
     platform/sql/SQLiteTransaction.h \
     platform/sql/SQLValue.h \
-    platform/text/Base64.h \
     platform/text/BidiContext.h \
     platform/text/DateTimeFormat.h \
     platform/text/DecodeEscapeSequences.h \

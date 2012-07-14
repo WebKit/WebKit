@@ -72,6 +72,9 @@ EXPORTS
     ?append@StringBuilder@WTF@@QAEXPB_WI@Z
     ?ascii@UString@JSC@@QBE?AVCString@WTF@@XZ
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
+    ?base64Decode@WTF@@YA_NABVString@1@AAV?$Vector@D$0A@@1@W4Base64DecodePolicy@1@@Z
+    ?base64Encode@WTF@@YA?AVString@1@PBDIW4Base64EncodePolicy@1@@Z
+    ?base64Encode@WTF@@YAXPBDIAAV?$Vector@D$0A@@1@W4Base64EncodePolicy@1@@Z
     ?broadcast@ThreadCondition@WTF@@QAEXXZ
     ?bufferLengthForStringDecimal@DecimalNumber@WTF@@QBEIXZ
     ?bufferLengthForStringExponential@DecimalNumber@WTF@@QBEIXZ

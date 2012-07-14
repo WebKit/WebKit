@@ -19,10 +19,10 @@
 #include "config.h"
 #include "WebKitTextCodec.h"
 
-#include "Base64.h"
 #include "KURL.h"
 #include "TextCodecICU.h"
 #include <wtf/Vector.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -84,20 +84,30 @@ TranscodeResult transcode(const char* sourceEncoding, const char* targetEncoding
     return Success;
 }
 
-WebCore::Base64DecodePolicy base64DecodePolicyForWebCore(Base64DecodePolicy policy)
+WTF::Base64DecodePolicy base64DecodePolicyForWTF(Base64DecodePolicy policy)
 {
-    // Must make sure Base64DecodePolicy is the same in WebKit and WebCore!
-    return static_cast<WebCore::Base64DecodePolicy>(policy);
+    COMPILE_ASSERT(WTF::Base64FailOnInvalidCharacter == static_cast<WTF::Base64DecodePolicy>(Base64FailOnInvalidCharacter));
+    COMPILE_ASSERT(WTF::Base64IgnoreWhitespace == static_cast<WTF::Base64DecodePolicy>(Base64IgnoreWhitespace));
+    COMPILE_ASSERT(WTF::Base64IgnoreInvalidCharacters == static_cast<WTF::Base64DecodePolicy>(Base64IgnoreInvalidCharacters));
+    return static_cast<WTF::Base64DecodePolicy>(policy);
 }
 
 bool base64Decode(const std::string& base64, std::vector<char>& binary, Base64DecodePolicy policy)
 {
     Vector<char> result;
-    if (!WebCore::base64Decode(base64.c_str(), base64.length(), result, base64DecodePolicyForWebCore(policy)))
+    if (!WTF::base64Decode(base64.c_str(), base64.length(), result, base64DecodePolicyForWTF(policy)))
         return false;
 
     binary.insert(binary.begin(), result.begin(), result.end());
     return true;
+}
+
+WTF::Base64DecodePolicy base64EncodePolicyForWTF(Base64EncodePolicy policy)
+{
+    // FIXME: Base64InsertCRLF should be Base64InsertLFs. WTF::encodeBase64 doesn't insert CR.
+    COMPILE_ASSERT(WTF::Base64DoNotInsertLFs == static_cast<WTF::Base64EncodePolicy>(Base64DoNotInsertCRLF));
+    COMPILE_ASSERT(WTF::Base64InsertLFs == static_cast<WTF::Base64EncodePolicy>(Base64InsertCRLF));
+    return static_cast<WTF::Base64EncodePolicy>(policy);
 }
 
 bool base64Encode(const std::vector<char>& binary, std::string& base64, Base64EncodePolicy policy)
@@ -105,7 +115,7 @@ bool base64Encode(const std::vector<char>& binary, std::string& base64, Base64En
     Vector<char> result;
     result.append(&binary[0], binary.size());
 
-    WebCore::base64Encode(&binary[0], binary.size(), result, Base64InsertCRLF == policy ? true : false);
+    WTF::base64Encode(&binary[0], binary.size(), result, base64EncodePolicyForWTF(policy));
 
     base64.clear();
     base64.append(&result[0], result.size());

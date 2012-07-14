@@ -33,13 +33,13 @@
 #if ENABLE(MHTML)
 #include "MHTMLParser.h"
 
-#include "Base64.h"
 #include "MHTMLArchive.h"
 #include "MIMEHeader.h"
 #include "MIMETypeRegistry.h"
 #include "QuotedPrintable.h"
 #include <wtf/HashMap.h>
 #include <wtf/NotFound.h>
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 

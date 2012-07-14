@@ -131,6 +131,7 @@ HEADERS += \
     text/AtomicString.h \
     text/AtomicStringHash.h \
     text/AtomicStringImpl.h \
+    text/Base64.h \
     text/CString.h \
     text/StringBuffer.h \
     text/StringBuilder.h \
@@ -211,6 +212,7 @@ SOURCES += \
     TypeTraits.cpp \
     WTFThreadData.cpp \
     text/AtomicString.cpp \
+    text/Base64.cpp \
     text/CString.cpp \
     text/StringBuilder.cpp \
     text/StringImpl.cpp \

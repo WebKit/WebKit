@@ -35,7 +35,6 @@
 #include "DOMPatchSupport.h"
 
 #include "Attribute.h"
-#include "Base64.h"
 #include "ContextFeatures.h"
 #include "DOMEditor.h"
 #include "Document.h"
@@ -52,6 +51,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SHA1.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
 using namespace std;

@@ -33,7 +33,6 @@
 #if ENABLE(MHTML)
 #include "MHTMLArchive.h"
 
-#include "Base64.h"
 #include "Document.h"
 #include "Frame.h"
 #include "MHTMLParser.h"
@@ -47,6 +46,7 @@
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/DateMath.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
 #if HAVE(SYS_TIME_H)

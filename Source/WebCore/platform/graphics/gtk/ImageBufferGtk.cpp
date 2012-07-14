@@ -19,13 +19,13 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#include "Base64.h"
 #include "GdkCairoUtilities.h"
 #include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGtk.h"
 #include "MIMETypeRegistry.h"
 #include <cairo.h>
 #include <gtk/gtk.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

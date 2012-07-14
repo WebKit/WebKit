@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#include "Base64.h"
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "Image.h"

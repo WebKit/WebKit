@@ -29,7 +29,6 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#include "Base64.h"
 #include "BitmapImage.h"
 #include "CairoUtilities.h"
 #include "Color.h"
@@ -43,6 +42,7 @@
 #include "RefPtrCairo.h"
 #include <cairo.h>
 #include <wtf/Vector.h>
+#include <wtf/text/Base64.h>
 
 using namespace std;
 
