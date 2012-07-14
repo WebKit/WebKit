@@ -493,7 +493,6 @@ v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, 
         return newString;
 
     stringImpl->ref();
-    wrapper.MarkIndependent();
     wrapper.MakeWeak(stringImpl, cachedStringCallback);
     m_stringCache.set(stringImpl, *wrapper);
 
