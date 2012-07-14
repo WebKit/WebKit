@@ -1,3 +1,18 @@
+2012-07-14  Robert Hogan  <robert@webkit.org>
+
+        Skip test added in r122663 on Qt and GTK
+
+        Unreviewed, gardening.
+
+        Qt has 1px difference tracked under
+         https://bugs.webkit.org/show_bug.cgi?id=89597
+        Gtk has a platform-specific rendering issue with the test.
+         https://bugs.webkit.org/show_bug.cgi?id=91319
+
+
+        * platform/gtk/TestExpectations:
+        * platform/qt/Skipped:
+
 2012-07-05  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: vertical-align-boxes-001 fails
