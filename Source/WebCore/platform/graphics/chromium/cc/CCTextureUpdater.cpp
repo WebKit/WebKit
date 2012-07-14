@@ -39,6 +39,8 @@ using namespace std;
 
 namespace WebCore {
 
+static const int kUploadFlushPeriod = 4;
+
 CCTextureUpdater::CCTextureUpdater()
     : m_entryIndex(0)
 {
@@ -93,11 +95,19 @@ void CCTextureUpdater::update(CCGraphicsContext* context, TextureAllocator* allo
 
         uploader->beginUploads();
 
+        int fullUploadCount = 0;
         size_t maxIndex = min(m_entryIndex + count, m_fullEntries.size());
         for (index = m_entryIndex; index < maxIndex; ++index) {
             UpdateEntry& entry = m_fullEntries[index];
             uploader->uploadTexture(context, entry.texture, allocator, entry.sourceRect, entry.destRect);
+            fullUploadCount++;
+            if (!(fullUploadCount % kUploadFlushPeriod))
+                context->flush();
         }
+
+        // Make sure there are no dangling uploads without a flush.
+        if (fullUploadCount % kUploadFlushPeriod)
+            context->flush();
 
         bool moreUploads = maxIndex < m_fullEntries.size();
 
@@ -116,7 +126,15 @@ void CCTextureUpdater::update(CCGraphicsContext* context, TextureAllocator* allo
         for (index = 0; index < m_partialEntries.size(); ++index) {
             UpdateEntry& entry = m_partialEntries[index];
             uploader->uploadTexture(context, entry.texture, allocator, entry.sourceRect, entry.destRect);
+            if (!((index+1) % kUploadFlushPeriod))
+                context->flush();
         }
+
+        // Make sure there are no dangling partial uploads without a flush.
+        // Note: We don't need to use (index+1) in this case because index was
+        // incremented at the end of the for loop.
+        if (index % kUploadFlushPeriod)
+            context->flush();
 
         uploader->endUploads();
     }

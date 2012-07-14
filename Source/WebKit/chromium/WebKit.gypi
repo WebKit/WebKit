@@ -84,6 +84,7 @@
             'tests/CCScopedTextureTest.cpp',
             'tests/CCSolidColorLayerImplTest.cpp',
             'tests/CCTestCommon.h',
+            'tests/CCTextureUpdaterTest.cpp',
             'tests/CCTiledLayerImplTest.cpp',
             'tests/CCTiledLayerTestCommon.h',
             'tests/CCTiledLayerTestCommon.cpp',

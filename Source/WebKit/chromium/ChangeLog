@@ -1,3 +1,15 @@
+2012-07-13  Brian Anderson  <brianderson@chromium.org>
+
+        Add flushes to CCTextureUpdater::update
+        https://bugs.webkit.org/show_bug.cgi?id=89035
+
+        Reviewed by Adrienne Walker.
+
+        CCTextureUpdaterTest added to verify texture upload/flushing patterns.
+
+        * WebKit.gypi:
+        * tests/CCTextureUpdaterTest.cpp: Added.
+
 2012-07-13  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Re-enable indexeddb in test_shell

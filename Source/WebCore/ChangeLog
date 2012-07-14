@@ -1,3 +1,22 @@
+2012-07-13  Brian Anderson  <brianderson@chromium.org>
+
+        [chromium] Add flushes to CCTextureUpdater::update
+        https://bugs.webkit.org/show_bug.cgi?id=89035
+
+        Reviewed by Adrienne Walker.
+
+        Automatic flushes are being removed from the command buffer, so
+        this moves the flushes into the CCTextureUpdater itself.
+
+        CCTextureUpdaterTest added to verify texture upload/flushing patterns.
+
+        * platform/graphics/chromium/cc/CCGraphicsContext.h:
+        (WebCore::CCGraphicsContext::flush):
+        (CCGraphicsContext):
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore):
+        (WebCore::CCTextureUpdater::update): Manual flushes added here.
+
 2012-07-13  Kiran Muppala  <cmuppala@apple.com>
 
         REGRESSION: RenderInline boundingBox ignores relative position offset
