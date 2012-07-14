@@ -124,11 +124,6 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
 #if ENABLE(DIALOG_ELEMENT)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
 #endif
-
-#if ENABLE(PAGE_POPUP)
-    if (page->chrome())
-        page->chrome()->client()->resetPagePopupDriver();
-#endif
 }
 
 InternalSettings* InternalSettings::from(Page* page)
@@ -155,6 +150,11 @@ void InternalSettings::reset()
     setUserPreferredLanguages(Vector<String>());
     page()->setPagination(Page::Pagination());
     page()->setPageScaleFactor(1, IntPoint(0, 0));
+#if ENABLE(PAGE_POPUP)
+    m_pagePopupDriver.clear();
+    if (page()->chrome())
+        page()->chrome()->client()->resetPagePopupDriver();
+#endif
 
     m_backup.restoreTo(page(), settings());
     m_backup = Backup(page(), settings());

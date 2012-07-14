@@ -101,6 +101,7 @@ PassOwnPtr<MockPagePopupDriver> MockPagePopupDriver::create(Frame* mainFrame)
 
 MockPagePopupDriver::~MockPagePopupDriver()
 {
+    closePagePopup(m_mockPagePopup.get());
 }
 
 PagePopup* MockPagePopupDriver::openPagePopup(PagePopupClient* client, const IntRect& originBoundsInRootView)

@@ -1,3 +1,19 @@
+2012-07-13  Kent Tamura  <tkent@chromium.org>
+
+        Internals: Clean up the mock PagePopupDriver correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=91250
+
+        Unreviewed, a trivial testing code fix.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::reset):
+        Resetting PaePopupDriver here instead of Backup::restoreTo.
+        Also, close the mock popup before resetting PagePopupDriver by clearing m_pagePopupDriver.
+        * testing/MockPagePopupDriver.cpp:
+        (WebCore::MockPagePopupDriver::~MockPagePopupDriver):
+        Close the popup.
+
 2012-07-13  Tony Payne  <tpayne@chromium.org>
 
         Remove Widget from screenColorProfile
