@@ -1,3 +1,15 @@
+2012-07-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Mac] Do not try to update the cache model for every WebPreferences change
+        https://bugs.webkit.org/show_bug.cgi?id=91302
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/SetAndUpdateCacheModel.mm: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-07-13  Dirk Pranke  <dpranke@chromium.org>
 
         run-webkit-test outputs the wrong number of tests executed when some are skipped.

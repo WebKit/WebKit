@@ -46,6 +46,7 @@ typedef enum {
 extern NSString *WebPreferencesChangedNotification;
 extern NSString *WebPreferencesRemovedNotification;
 extern NSString *WebPreferencesChangedInternalNotification;
+extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 
 @interface WebPreferences (WebPrivate)
 

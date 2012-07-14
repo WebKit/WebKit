@@ -3040,7 +3040,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     WebCore::RunLoop::initializeMainRunLoop();
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedInternalNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_cacheModelChangedNotification:) name:WebPreferencesCacheModelChangedInternalNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];    
 
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
@@ -5913,7 +5913,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     return cacheModel;
 }
 
-+ (void)_preferencesChangedNotification:(NSNotification *)notification
++ (void)_cacheModelChangedNotification:(NSNotification *)notification
 {
     WebPreferences *preferences = (WebPreferences *)[notification object];
     ASSERT([preferences isKindOfClass:[WebPreferences class]]);
