@@ -47,6 +47,7 @@ class ResultSummary(object):
         self.unexpected_results = {}
         self.failures = {}
         self.total_failures = 0
+        self.expected_skips = 0
         self.total_tests_by_expectation[SKIP] = 0
         self.tests_by_expectation[SKIP] = set()
         for expectation in TestExpectations.EXPECTATIONS.values():
@@ -65,6 +66,8 @@ class ResultSummary(object):
             self.failures[test_result.test_name] = test_result.failures
         if expected:
             self.expected += 1
+            if test_result.type == SKIP:
+                self.expected_skips += 1
         else:
             self.unexpected_results[test_result.test_name] = test_result
             self.unexpected += 1

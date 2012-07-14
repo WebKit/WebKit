@@ -206,11 +206,11 @@ class  Testprinter(unittest.TestCase):
 
         printer, err, out = self.get_printer(['--print', 'one-line-summary'])
         printer.print_one_line_summary(1, 1, 0)
-        self.assertWritten(err, ["All 1 tests ran as expected.\n", "\n"])
+        self.assertWritten(err, ["The test ran as expected.\n", "\n"])
 
         printer, err, out = self.get_printer(['--print', 'everything'])
         printer.print_one_line_summary(1, 1, 0)
-        self.assertWritten(err, ["All 1 tests ran as expected.\n", "\n"])
+        self.assertWritten(err, ["The test ran as expected.\n", "\n"])
 
         printer, err, out = self.get_printer(['--print', 'everything'])
         printer.print_one_line_summary(2, 1, 1)

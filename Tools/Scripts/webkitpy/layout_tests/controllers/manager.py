@@ -480,19 +480,12 @@ class Manager(object):
         # now make sure we're explicitly running any tests passed on the command line.
         self._test_files.update(found_test_files.intersection(self._paths))
 
-        if not num_all_test_files:
+        num_to_run = len(self._test_files)
+        num_skipped = num_all_test_files - num_to_run
+
+        if not num_to_run:
             _log.critical('No tests to run.')
             return None
-
-        num_skipped = num_all_test_files - len(self._test_files)
-        if num_skipped:
-            self._printer.print_expected("Running %s (found %d, skipping %d)." % (
-                grammar.pluralize('test', num_all_test_files - num_skipped),
-                num_all_test_files, num_skipped))
-        elif len(self._test_files) > 1:
-            self._printer.print_expected("Running all %d tests." % len(self._test_files))
-        else:
-            self._printer.print_expected("Running 1 test.")
 
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
@@ -518,6 +511,8 @@ class Manager(object):
             (self._options.repeat_each if self._options.repeat_each else 1) * \
             (self._options.iterations if self._options.iterations else 1)
         result_summary = ResultSummary(self._expectations, self._test_files | skipped, iterations)
+
+        self._printer.print_expected('Found %s.' % grammar.pluralize('test', num_all_test_files))
         self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes")
         self._print_expected_results_of_type(result_summary, test_expectations.FAIL, "failures")
         self._print_expected_results_of_type(result_summary, test_expectations.FLAKY, "flaky")
@@ -530,17 +525,16 @@ class Manager(object):
             for test in skipped:
                 result = test_results.TestResult(test)
                 result.type = test_expectations.SKIP
-                iterations =  \
-                    (self._options.repeat_each if self._options.repeat_each else 1) * \
-                    (self._options.iterations if self._options.iterations else 1)
                 for iteration in range(iterations):
                     result_summary.add(result, expected=True)
         self._printer.print_expected('')
 
-        # Check to make sure we didn't filter out all of the tests.
-        if not len(self._test_files):
-            _log.info("All tests are being skipped")
-            return None
+        if self._options.repeat_each > 1:
+            self._printer.print_expected('Running each test %d times.' % self._options.repeat_each)
+        if self._options.iterations > 1:
+            self._printer.print_expected('Running %d iterations of the tests.' % self._options.iterations)
+        if iterations > 1:
+            self._printer.print_expected('')
 
         return result_summary
 
@@ -715,11 +709,12 @@ class Manager(object):
     def _log_num_workers(self, num_workers, num_shards, num_locked_shards):
         driver_name = self._port.driver_name()
         if num_workers == 1:
-            self._printer.print_config("Running 1 %s over %s" %
+            self._printer.print_config("Running 1 %s over %s." %
                 (driver_name, grammar.pluralize('shard', num_shards)))
         else:
-            self._printer.print_config("Running %d %ss in parallel over %d shards (%d locked)" %
+            self._printer.print_config("Running %d %ss in parallel over %d shards (%d locked)." %
                 (num_workers, driver_name, num_shards, num_locked_shards))
+        self._printer.print_config('')
 
     def _run_tests(self, file_list, result_summary, num_workers):
         """Runs the tests in the file_list.
@@ -890,7 +885,7 @@ class Manager(object):
         self._print_timing_statistics(end_time - start_time, thread_timings, test_timings, individual_test_timings, result_summary)
         self._print_result_summary(result_summary)
 
-        self._printer.print_one_line_summary(result_summary.total, result_summary.expected, result_summary.unexpected)
+        self._printer.print_one_line_summary(result_summary.total - result_summary.expected_skips, result_summary.expected - result_summary.expected_skips, result_summary.unexpected)
 
         unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=True, interrupted=interrupted)
         self._printer.print_unexpected_results(unexpected_results)
@@ -1331,9 +1326,8 @@ class Manager(object):
           result_summary: information to log
         """
         failed = result_summary.total_failures
-        skipped = result_summary.total_tests_by_expectation[test_expectations.SKIP]
-        total = result_summary.total
-        passed = total - failed - skipped
+        total = result_summary.total - result_summary.expected_skips
+        passed = total - failed
         pct_passed = 0.0
         if total > 0:
             pct_passed = float(passed) * 100 / total

@@ -31,6 +31,7 @@
 
 import optparse
 
+from webkitpy.tool import grammar
 from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
@@ -217,23 +218,21 @@ class Printer(object):
             return
 
         incomplete = total - expected - unexpected
+        incomplete_str = ''
         if incomplete:
             self._write("")
             incomplete_str = " (%d didn't run)" % incomplete
-            expected_str = str(expected)
-        else:
-            incomplete_str = ""
-            expected_str = "All %d" % expected
 
         if unexpected == 0:
-            self._write("%s tests ran as expected%s." %
-                        (expected_str, incomplete_str))
-        elif expected == 1:
-            self._write("1 test ran as expected, %d didn't%s:" %
-                        (unexpected, incomplete_str))
+            if expected == total:
+                if expected > 1:
+                    self._write("All %d tests ran as expected." % expected)
+                else:
+                    self._write("The test ran as expected.")
+            else:
+                self._write("%s ran as expected%s." % (grammar.pluralize('test', expected), incomplete_str))
         else:
-            self._write("%d tests ran as expected, %d didn't%s:" %
-                        (expected, unexpected, incomplete_str))
+            self._write("%s ran as expected, %d didn't%s:" % (grammar.pluralize('test', expected), unexpected, incomplete_str))
         self._write("")
 
     def print_test_result(self, result, expected, exp_str, got_str):

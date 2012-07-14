@@ -1,5 +1,34 @@
 2012-07-13  Dirk Pranke  <dpranke@chromium.org>
 
+        run-webkit-test outputs the wrong number of tests executed when some are skipped.
+        https://bugs.webkit.org/show_bug.cgi?id=89894
+
+        Reviewed by Ojan Vafai.
+
+        Fix the logging of the actual number of tests run so that tests
+        that are skipped aren't included.
+
+        Also revamp the 'expected' output so we distinguish the number
+        of tests found from the number of tests run (to account for
+        --repeat-each and --iterations).
+
+        Covered by existing tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.prepare_lists_and_print_output):
+        (Manager._log_num_workers):
+        (Manager.run):
+        (Manager._print_result_summary):
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        (ResultSummary.__init__):
+        (ResultSummary.add):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_one_line_summary):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_one_line_summary):
+
+2012-07-13  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: actually print the exception name and message for otherwise unhandled exceptions
         https://bugs.webkit.org/show_bug.cgi?id=91305
 
