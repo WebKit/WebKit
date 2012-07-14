@@ -1,5 +1,11 @@
 2012-07-14  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening, marking http/tests/misc/webtiming-origins.html as flaky.
+
+        * platform/gtk/TestExpectations:
+
+2012-07-14  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening, adding an image expectation for a test introduced
         in r122651. Also creating platform-specific baselines for two File API tests
         that behave differently because of function overloading problems but pass otherwise,
