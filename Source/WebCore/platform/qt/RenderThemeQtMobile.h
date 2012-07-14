@@ -53,8 +53,10 @@ public:
 
     virtual bool delegatesMenuListRendering() const { return true; }
 
-    // drawFocusRing() will return early if the color is invalid.
-    virtual Color platformFocusRingColor() const { return Color(); }
+    // We don't want the focus ring to be drawn by the graphics context so we
+    // always claim to support it in the theme.
+    // FIXME: This could be a usability problem in the case of contenteditable divs.
+    virtual bool supportsFocusRing(const RenderStyle*) const { return true; }
 
 protected:
 

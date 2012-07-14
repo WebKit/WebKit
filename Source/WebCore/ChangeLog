@@ -1,3 +1,31 @@
+2012-07-13  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Improve the mobile theme slightly
+        https://bugs.webkit.org/show_bug.cgi?id=90806
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Improve drawing of the mobile theme's controls' background.
+
+        Ensure the focus ring never appears with the mobile theme, since it
+        looks bad in combination with the highlights.
+
+        No new tests. The painting code from the mobile theme is still
+        not covered specifically (it will when we revive pixel tests).
+
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore):
+        (WebCore::addPointToOctants): Added. This is simply a helper to avoid
+            doing too much duplicate work in drawControlBackground.
+        (WebCore::drawControlBackground): Rely on the octant logic added above
+            and take the opportunity to increase the granularity.
+        (WebCore::borderPen):
+        (WebCore::StylePainterMobile::findLineEdit):
+        (WebCore::RenderThemeQtMobile::adjustTextFieldStyle):
+        * platform/qt/RenderThemeQtMobile.h:
+        (RenderThemeQtMobile):
+        (WebCore::RenderThemeQtMobile::supportsFocusRing):
+
 2012-07-13  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Remove an always-failing table-wrapping check in RenderObject::addChild
