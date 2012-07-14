@@ -41,13 +41,14 @@
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
-BUGWKGTK SKIP : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-handheldfriendly.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-mobileoptimized-2.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-mobileoptimized-3.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-mobileoptimized.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-ordering-5.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-ordering-6.html = TEXT
+BUGWKGTK SKIP : fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html = TEXT
+BUGWKGTK SKIP : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
 
 // Ignored because we do not have OBJC bindings (via Chromium).
 BUGWKGTK SKIP : editing/pasteboard/paste-RTFD.html = TEXT
@@ -995,9 +996,6 @@ BUGWK67713 : accessibility/textbox-role-reports-selection.html = TEXT
 
 BUGWK68278 : http/tests/history/back-with-fragment-change.php = TEXT
 
-BUGWK66045 : fast/files/create-blob-url-crash.html = TEXT
-BUGWK66045 : fast/files/url-required-arguments.html = TEXT
-
 BUGWK68512 : accessibility/aria-hidden-updates-alldescendants.html = TEXT
 
 BUGWK68855 : editing/selection/select-bidi-run.html = TEXT
@@ -1241,7 +1239,7 @@ BUGWK91009 DEBUG : fast/xsl/xslt-missing-namespace-in-xslt.xml = TEXT
 // Skip tests in fast/text/shaping
 BUGWK90951 SKIP : fast/text/shaping = PASS
 
-BUGWK91266 : fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html = TEXT
+BUGWK88684 : fast/text/descent-clip-in-scaled-page.html = IMAGE
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
