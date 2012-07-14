@@ -969,9 +969,12 @@ bool WebContext::httpPipeliningEnabled() const
 #endif
 }
 
-void WebContext::getWebCoreStatistics(PassRefPtr<DictionaryCallback> prpCallback)
+void WebContext::getWebCoreStatistics(PassRefPtr<DictionaryCallback> callback)
 {
-    RefPtr<DictionaryCallback> callback = prpCallback;
+    if (!m_process) {
+        callback->invalidate();
+        return;
+    }
     
     uint64_t callbackID = callback->callbackID();
     m_dictionaryCallbacks.set(callbackID, callback.get());

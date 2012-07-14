@@ -1,3 +1,20 @@
+2012-07-13  Josh Hawn  <jhawn@apple.com>
+
+        Fix for WebContext::getWebCoreStatistics() causes crash if no m_process
+        https://bugs.webkit.org/show_bug.cgi?id=91116
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            Added new test file.
+        * TestWebKitAPI/Tests/WebKit2/WebCoreStatisticsWithNoWebProcess.cpp: Added.
+        (TestWebKitAPI::wkContextGetStatisticsCallback):
+            Tests that callback function receives an error.
+        (TestWebKitAPI::TEST):
+            Creates a dummy web context object (no web process).
+            Calls WKContextGetStatistics with the web context and test callback.
+            The test callback should get an expected error.
+
 2012-07-13  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: move printing-related code out of the runner
