@@ -88,7 +88,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
 
         CFStringGetCString(str, buffer, length, kCFStringEncodingUTF8);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         asl_log(0, 0, ASL_LEVEL_NOTICE, "%s", buffer);
 #endif
         fputs(buffer, stderr);
@@ -99,7 +99,7 @@ static void vprintf_stderr_common(const char* format, va_list args)
         return;
     }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     va_list copyOfArgs;
     va_copy(copyOfArgs, args);
     asl_vlog(0, 0, ASL_LEVEL_NOTICE, format, copyOfArgs);
