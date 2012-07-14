@@ -132,6 +132,7 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
     except Exception:
         exception_type, exception_value, exception_traceback = sys.exc_info()
         if exception_type not in (KeyboardInterrupt, TestRunInterruptedException, WorkerException):
+            print >> sys.stderr, '\n%s raised: %s' % (exception_type.__name__, exception_value)
             stack_utils.log_traceback(_log.error, exception_traceback)
         raise
     finally:
@@ -470,7 +471,8 @@ def main(argv=None):
         # FIXME: is this the best way to handle unsupported port names?
         print >> sys.stderr, str(e)
         return EXCEPTIONAL_EXIT_STATUS
-    except:
+    except Exception, e:
+        print >> sys.stderr, '\n%s raised: %s' % (e.__class__.__name__, str(e))
         traceback.print_exc(file=sys.stderr)
         raise
 

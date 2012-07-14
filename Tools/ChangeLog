@@ -1,3 +1,18 @@
+2012-07-13  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: actually print the exception name and message for otherwise unhandled exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=91305
+
+        Reviewed by Adam Barth.
+
+        Two more places where I was printing the stack trace but not the
+        exception itself :(. These two spots can't easily be
+        unit-tested, but I tested them by hand.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        (main):
+
 2012-07-13  Josh Hawn  <jhawn@apple.com>
 
         Fix for WebContext::getWebCoreStatistics() causes crash if no m_process
