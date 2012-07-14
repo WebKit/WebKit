@@ -1,3 +1,9 @@
+2012-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix Chromium Mac build failure after r122670.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+
 2012-07-14  Mark Rowe  <mrowe@apple.com>
 
         Fix the Snow Leopard build.
