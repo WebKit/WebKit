@@ -116,7 +116,7 @@ static CFDictionaryRef imageSourceOptions(ImageSource::ShouldSkipMetadata skipMe
     if (!options) {
         const unsigned numOptions = 3;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
+#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
         // Lion and Snow Leopard only return Orientation when kCGImageSourceSkipMetaData is false,
         // and incorrectly return cached metadata if an image is queried once with kCGImageSourceSkipMetaData true
         // and then subsequently with kCGImageSourceSkipMetaData false.

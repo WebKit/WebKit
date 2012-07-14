@@ -32,7 +32,7 @@
 #include "AccessibilityRenderObject.h"
 #include <wtf/Forward.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
+#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 #define ACCESSIBILITY_TABLES 0
 #else
 #define ACCESSIBILITY_TABLES 1

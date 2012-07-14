@@ -36,7 +36,7 @@
 
 using namespace std;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 @interface CALayer (WebCALayerDetails)
 - (void)setAcceleratesDrawing:(BOOL)flag;
 @end
@@ -157,7 +157,7 @@ void TileCache::setScale(CGFloat scale)
     if (m_scale == scale && m_deviceScaleFactor == deviceScaleFactor)
         return;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     Vector<FloatRect> dirtyRects;
 
     m_deviceScaleFactor = deviceScaleFactor;
@@ -182,7 +182,7 @@ void TileCache::setScale(CGFloat scale)
 
 void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (m_acceleratesDrawing == acceleratesDrawing)
         return;
 
@@ -401,7 +401,7 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer(const IntRect& tileRect)
     [layer.get() setName:@"Tile"];
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     [layer.get() setContentsScale:m_deviceScaleFactor];
     [layer.get() setAcceleratesDrawing:m_acceleratesDrawing];
 #endif

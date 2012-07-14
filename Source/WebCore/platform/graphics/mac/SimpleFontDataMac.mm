@@ -82,7 +82,7 @@ static NSString *webFallbackFontFamily(void)
 }
 
 #if !ERROR_DISABLED
-#if defined(__LP64__) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if defined(__LP64__) || PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static NSString* pathFromFont(NSFont*)
 {
     // FMGetATSFontRefFromFont is not available. As pathFromFont is only used for debugging purposes,
@@ -233,7 +233,7 @@ void SimpleFontData::platformInit()
     NSString *familyName = [m_platformData.font() familyName];
     if ([familyName isEqualToString:@"Times"] || [familyName isEqualToString:@"Helvetica"] || [familyName isEqualToString:@"Courier"])
         ascent += floorf(((ascent + descent) * 0.15f) + 0.5f);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     else if ([familyName isEqualToString:@"Geeza Pro"]) {
         // Geeza Pro has glyphs that draw slightly above the ascent or far below the descent. Adjust
         // those vertical metrics to better match reality, so that diacritics at the bottom of one line

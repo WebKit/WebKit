@@ -42,7 +42,7 @@ MemoryPressureHandler::MemoryPressureHandler()
 {
 }
 
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED == 1060 || PLATFORM(IOS)
+#if !PLATFORM(MAC) || PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 void MemoryPressureHandler::install() { }
 
 void MemoryPressureHandler::uninstall() { }

@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if !PLATFORM(MAC) || PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 static void processProxyServers(Vector<ProxyServer>& proxyServers, CFArrayRef proxies, CFURLRef url);
 

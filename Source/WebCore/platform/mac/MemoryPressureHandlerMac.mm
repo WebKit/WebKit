@@ -33,7 +33,7 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/FastMalloc.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && !PLATFORM(IOS)
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #import "WebCoreSystemInterface.h"
 #import <notify.h>
 #endif
@@ -42,7 +42,7 @@ using std::max;
 
 namespace WebCore {
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 #if !PLATFORM(IOS)
 static dispatch_source_t _cache_event_source = 0;

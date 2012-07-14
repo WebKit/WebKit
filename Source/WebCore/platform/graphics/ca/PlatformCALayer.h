@@ -213,7 +213,7 @@ public:
     void printTree() const;
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
     void synchronouslyDisplayTilesInRect(const FloatRect&);
 #endif
 

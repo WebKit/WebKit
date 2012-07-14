@@ -247,7 +247,7 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
 static inline bool supportsAcceleratedFilterAnimations()
 {
 // <rdar://problem/10907251> - WebKit2 doesn't support CA animations of CI filters on Lion and below
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080)
     return true;
 #else
     return false;
@@ -1883,7 +1883,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
     int numAnimations = isMatrixAnimation ? 1 : operations->size();
 
     bool reverseAnimationList = true;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && !PLATFORM(WIN)
+#if !PLATFORM(IOS) && !PLATFORM(WIN) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         // Old versions of Core Animation apply animations in reverse order (<rdar://problem/7095638>) so we need to flip the list.
         // to be non-additive. For binary compatibility, the current version of Core Animation preserves this behavior for applications linked
         // on or before Snow Leopard.
@@ -2392,7 +2392,7 @@ void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
 FloatSize GraphicsLayerCA::constrainedSize() const
 {
     FloatSize constrainedSize = m_size;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     float tileColumns = ceilf(m_size.width() / kTiledLayerTileSize);
     float tileRows = ceilf(m_size.height() / kTiledLayerTileSize);
     double numTiles = tileColumns * tileRows;

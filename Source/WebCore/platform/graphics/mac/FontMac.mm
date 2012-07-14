@@ -71,7 +71,7 @@ static bool hasBrokenCTFontGetVerticalTranslationsForGlyphs()
         isCached = true;
     }
     return result;
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
+#elif !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     return true;
 #else
     return false;
@@ -119,7 +119,7 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
         } else
             CGContextShowGlyphsWithAdvances(context, glyphs, advances, count);
     }
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     else {
         if (!count)
             return;

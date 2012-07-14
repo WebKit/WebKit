@@ -93,7 +93,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 @interface CATiledLayer(GraphicsLayerCAPrivate)
 - (void)displayInRect:(CGRect)r levelOfDetail:(int)lod options:(NSDictionary *)dict;
 - (BOOL)canDrawConcurrently;
@@ -103,7 +103,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 @interface CALayer(Private)
 - (void)setContentsChanged;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 - (void)setAcceleratesDrawing:(BOOL)flag;
 - (BOOL)acceleratesDrawing;
 #endif
@@ -554,7 +554,7 @@ void PlatformCALayer::setMasksToBounds(bool value)
 
 bool PlatformCALayer::acceleratesDrawing() const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     return [m_layer.get() acceleratesDrawing];
 #else
     return false;
@@ -563,7 +563,7 @@ bool PlatformCALayer::acceleratesDrawing() const
 
 void PlatformCALayer::setAcceleratesDrawing(bool acceleratesDrawing)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setAcceleratesDrawing:acceleratesDrawing];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -910,7 +910,7 @@ void PlatformCALayer::setTimeOffset(CFTimeInterval value)
 
 float PlatformCALayer::contentsScale() const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     return [m_layer.get() contentsScale];
 #else
     return 1;
@@ -919,7 +919,7 @@ float PlatformCALayer::contentsScale() const
 
 void PlatformCALayer::setContentsScale(float value)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setContentsScale:value];
     END_BLOCK_OBJC_EXCEPTIONS
@@ -937,7 +937,7 @@ TiledBacking* PlatformCALayer::tiledBacking()
     return [tileCacheLayer tiledBacking];
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 void PlatformCALayer::synchronouslyDisplayTilesInRect(const FloatRect& rect)
 {
     if (m_layerType != LayerTypeWebTiledLayer)

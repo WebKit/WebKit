@@ -42,7 +42,7 @@
 #include <CFNetwork/CFNetwork.h>
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
+#if !PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 #include <SystemConfiguration/SystemConfiguration.h>
 #endif
 
@@ -56,7 +56,7 @@ bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
     // as it doesn't necessarily look up the actual external IP. Also, if DNS returns a fake internal address,
     // local caches may keep it even after re-connecting to another network.
 
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if !PLATFORM(MAC) || PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     RetainPtr<CFDictionaryRef> proxySettings(AdoptCF, CFNetworkCopySystemProxySettings());
 #else
     RetainPtr<CFDictionaryRef> proxySettings(AdoptCF, SCDynamicStoreCopyProxies(0));

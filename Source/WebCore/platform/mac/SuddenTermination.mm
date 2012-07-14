@@ -26,7 +26,7 @@
 #import "config.h"
 #import "SuddenTermination.h"
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 namespace WebCore {
 

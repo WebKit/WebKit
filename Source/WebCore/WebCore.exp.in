@@ -1989,23 +1989,23 @@ __ZN7WebCore7IntSizeC1ERK7_NSSize
 __ZNK7WebCore7IntSizecv7_NSSizeEv
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060 && !PLATFORM(IOS)
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 _wkGetNSEventMomentumPhase
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 || PLATFORM(IOS)
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 _wkCALayerEnumerateRectsBeingDrawnWithBlock
 _wkCFURLRequestAllowAllPostCaching
 _wkCGPathAddRoundedRect
 _wkCreateCTTypesetterWithUniCharProviderAndOptions
 #endif
 
-#if (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 || PLATFORM(IOS)) && !PLATFORM(IOS_SIMULATOR)
+#if (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070) && !PLATFORM(IOS_SIMULATOR)
 _wkIOSurfaceContextCreate
 _wkIOSurfaceContextCreateImage
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && !PLATFORM(IOS)
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 _wkAVAssetResolvedURL
 _wkCopyDefaultSearchProviderDisplayName
 _wkCreateVMPressureDispatchOnMainQueue
@@ -2014,7 +2014,7 @@ _wkExecutableWasLinkedOnOrBeforeSnowLeopard
 _wkRecommendedScrollerStyle
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 _wkExecutableWasLinkedOnOrBeforeLion
 _wkFilterAddData
 _wkFilterCreateInstance
@@ -2073,7 +2073,7 @@ __ZN7WebCore14ResourceHandle46setPrivateBrowsingStorageSessionIdentifierBaseERKN
 __ZN7WebCore14ResourceHandle21currentStorageSessionEv
 __ZN7WebCore14ResourceHandle29privateBrowsingStorageSessionEv
 __ZN7WebCore26currentCFHTTPCookieStorageEv
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
 __ZN7WebCore14ResourceHandle24setDefaultStorageSessionEP21__CFURLStorageSession
 #else
 __ZN7WebCore14ResourceHandle24setDefaultStorageSessionEPK21__CFURLStorageSession
@@ -2547,7 +2547,7 @@ __ZNK7WebCore4KURL7isValidEv
 __ZNK7WebCore4KURL22protocolIsInHTTPFamilyEv
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 __ZN7WebCore27AlternativeTextUIController15addAlternativesERKN3WTF9RetainPtrI18NSTextAlternativesEE
 __ZN7WebCore27AlternativeTextUIController22alternativesForContextEy
 __ZN7WebCore27AlternativeTextUIController5clearEv

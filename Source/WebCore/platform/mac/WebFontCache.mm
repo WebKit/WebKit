@@ -104,7 +104,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
 // Workaround for <rdar://problem/5781372>.
 static inline void fixUpWeight(NSInteger& weight, NSString *fontName)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     UNUSED_PARAM(weight);
     UNUSED_PARAM(fontName);
 #else

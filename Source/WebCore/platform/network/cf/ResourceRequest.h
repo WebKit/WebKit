@@ -36,7 +36,7 @@ typedef const struct _CFURLRequest* CFURLRequestRef;
 
 OBJC_CLASS NSURLRequest;
 
-#if USE(CFURLSTORAGESESSIONS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
+#if USE(CFURLSTORAGESESSIONS) && PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
 typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
 #elif USE(CFURLSTORAGESESSIONS)
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;

@@ -29,7 +29,7 @@
 #include <IOKit/pwr_mgt/IOPMLib.h>
 #include <wtf/RetainPtr.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 #include <wtf/UnusedParam.h>
 #include <CoreServices/CoreServices.h>
 #endif
@@ -40,11 +40,11 @@ static const double systemActivityInterval = 1;
 
 DisplaySleepDisabler::DisplaySleepDisabler(const char* reason)
     : m_disableDisplaySleepAssertion(0)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
     , m_systemActivityTimer(this, &DisplaySleepDisabler::systemActivityTimerFired)
 #endif
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     RetainPtr<CFStringRef> reasonCF(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
     IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, reasonCF.get(), &m_disableDisplaySleepAssertion);
 #else
@@ -59,7 +59,7 @@ DisplaySleepDisabler::~DisplaySleepDisabler()
     IOPMAssertionRelease(m_disableDisplaySleepAssertion);
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 void DisplaySleepDisabler::systemActivityTimerFired(Timer<DisplaySleepDisabler>*)
 {
     UpdateSystemActivity(OverallAct);

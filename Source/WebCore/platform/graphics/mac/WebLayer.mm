@@ -84,7 +84,7 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     AffineTransform transform = CGContextGetCTM(context);
     ThemeMac::setFocusRingClipRect(transform.mapRect(clipBounds));
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     __block GraphicsContext* ctx = &graphicsContext;
 
     wkCALayerEnumerateRectsBeingDrawnWithBlock(layer, context, ^(CGRect rect){

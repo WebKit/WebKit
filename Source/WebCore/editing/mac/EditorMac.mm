@@ -81,7 +81,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     bool choosePlainText;
     
     m_frame->editor()->client()->setInsertionPasteboard(NSGeneralPboard);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(m_frame, range, allowPlainText, choosePlainText);
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
         pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);

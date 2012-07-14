@@ -1,3 +1,69 @@
+2012-07-14  Mark Rowe  <mrowe@apple.com>
+
+        Make it explicit which code paths iOS should use when doing checks based on OS X versions.
+
+        Rubber-stamped by David Kilzer.
+
+        * WebCore.exp.in:
+        * accessibility/AccessibilityList.h:
+        * accessibility/AccessibilityTable.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        * editing/mac/EditorMac.mm:
+        * loader/MainResourceLoader.cpp:
+        * loader/MainResourceLoader.h:
+        * page/AlternativeTextClient.h:
+        * page/mac/SettingsMac.mm:
+        * platform/LocalizedStrings.cpp:
+        * platform/MemoryPressureHandler.cpp:
+        * platform/audio/mac/AudioBusMac.mm:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        * platform/graphics/ca/mac/TileCache.mm:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/cg/ImageCG.cpp:
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        * platform/graphics/mac/FontCacheMac.mm:
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        * platform/graphics/mac/FontMac.mm:
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/mac/DisplaySleepDisabler.cpp:
+        * platform/mac/DisplaySleepDisabler.h:
+        * platform/mac/HTMLConverter.h:
+        * platform/mac/HTMLConverter.mm:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        * platform/mac/SharedTimerMac.mm:
+        * platform/mac/SuddenTermination.mm:
+        * platform/mac/WebFontCache.mm:
+        * platform/network/Credential.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/DNSCFNet.cpp:
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        * platform/network/mac/AuthenticationMac.mm:
+        * platform/network/mac/CookieStorageMac.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/mac/ResourceRequestMac.mm:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        * platform/text/TextChecking.h:
+        * platform/text/cf/HyphenationCF.cpp:
+        * platform/text/mac/HyphenationMac.mm:
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerCompositor.cpp:
+
 2012-07-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122614.

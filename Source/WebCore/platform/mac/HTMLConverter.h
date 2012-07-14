@@ -79,7 +79,7 @@ namespace WebCore {
     } _flags;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 - (id)init;
 - (id)initWithDOMRange:(DOMRange *)domRange;
 

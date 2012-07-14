@@ -59,13 +59,13 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool isPrinterFon
     CGFontRef cgFont = 0;
     loadFont(nsFont, size, m_font, cgFont);
     
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
     // have blocked font loading, in which case we'll only have the real loaded font file after the call to loadFont().
     {
         CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(m_font));
         m_isColorBitmapFont = traits & kCTFontColorGlyphsTrait;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(IOS)
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         m_isCompositeFontReference = traits & kCTFontCompositeTrait;
 #endif
     }
@@ -150,11 +150,11 @@ void FontPlatformData::setFont(NSFont *font)
 #endif
     
     m_cgFont.adoptCF(cgFont);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     {
         CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(m_font));
         m_isColorBitmapFont = traits & kCTFontColorGlyphsTrait;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         m_isCompositeFontReference = traits & kCTFontCompositeTrait;
 #endif
     }
@@ -251,7 +251,7 @@ static bool canSetCascadeListForCustomFont()
     }
 
     return systemVersion >= 0x1060;
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#elif PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     return true;
 #else
     return false;
