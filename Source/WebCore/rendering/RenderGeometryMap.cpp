@@ -136,6 +136,8 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, con
     do {
         renderer = renderer->pushMappingToContainer(ancestorRenderer, *this);
     } while (renderer && renderer != ancestorRenderer);
+
+    ASSERT(m_mapping.isEmpty() || m_mapping[0].m_renderer->isRenderView());
 }
 
 static bool canMapViaLayer(const RenderLayer* layer)
@@ -205,7 +207,7 @@ void RenderGeometryMap::push(const RenderObject* renderer, const TransformationM
 void RenderGeometryMap::pushView(const RenderView* view, const LayoutSize& scrollOffset, const TransformationMatrix* t)
 {
     ASSERT(m_insertionPosition != notFound);
-    ASSERT(!m_mapping.size()); // The view should always be the first thing pushed.
+    ASSERT(!m_insertionPosition); // The view should always be the first step.
 
     m_mapping.insert(m_insertionPosition, RenderGeometryMapStep(view, false, false, false, t));
     
@@ -235,8 +237,8 @@ void RenderGeometryMap::popMappingsToAncestor(const RenderLayer* ancestorLayer)
 
 void RenderGeometryMap::stepInserted(const RenderGeometryMapStep& step)
 {
-    // Offset on the first step is the RenderView's offset, which is only applied when we have fixed-position.s
-    if (m_mapping.size() > 1)
+    // RenderView's offset, is only applied when we have fixed-positions.
+    if (!step.m_renderer->isRenderView())
         m_accumulatedOffset += step.m_offset;
 
     if (step.m_isNonUniform)
@@ -251,8 +253,8 @@ void RenderGeometryMap::stepInserted(const RenderGeometryMapStep& step)
 
 void RenderGeometryMap::stepRemoved(const RenderGeometryMapStep& step)
 {
-    // Offset on the first step is the RenderView's offset, which is only applied when we have fixed-position.s
-    if (m_mapping.size() > 1)
+    // RenderView's offset, is only applied when we have fixed-positions.
+    if (!step.m_renderer->isRenderView())
         m_accumulatedOffset -= step.m_offset;
 
     if (step.m_isNonUniform) {

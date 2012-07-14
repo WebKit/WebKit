@@ -652,12 +652,7 @@ public:
         , m_wasFixed(wasFixed)
         , m_geometryMap()
     {
-        RenderObject* root = renderer->parent();
-        while (root && root->parent())
-            root = root->parent();
-
-        if (root)
-            m_geometryMap.pushMappingsToAncestor(renderer, toRenderBoxModelObject(root));
+        m_geometryMap.pushMappingsToAncestor(renderer, 0);
     }
 
     void operator()(const FloatRect& rect)

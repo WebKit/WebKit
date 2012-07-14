@@ -1,0 +1,24 @@
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+        description('<a href="https://bugs.webkit.org/show_bug.cgi?id=91168">Bug 91168</a>: REGRESSION: RenderInline boundingBox ignores relative position offset');
+
+        function runTest()
+        {
+            inline = document.getElementById("inlineElement");
+            inlineRect = inline.getBoundingClientRect();
+            inlineLeftOffset = parseInt(inline.style.left);
+            parent = inline.parentNode;
+            parentRect = parent.getBoundingClientRect();
+            shouldBe("inlineRect.left", "parentRect.left + inlineLeftOffset");
+        }
+
+        window.onload = runTest;
+    </script>
+</head>
+<body>
+    <span id="inlineElement" style="position:relative; left:10px;"></span>
+    <script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

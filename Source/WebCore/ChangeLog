@@ -1,3 +1,34 @@
+2012-07-13  Kiran Muppala  <cmuppala@apple.com>
+
+        REGRESSION: RenderInline boundingBox ignores relative position offset
+        https://bugs.webkit.org/show_bug.cgi?id=91168
+
+        Reviewed by Simon Fraser.
+
+        RenderGeometryMap, used for caching the transform to the view,
+        expects the first mapping pushed, to be that of the view itself.
+        RenderInline was instead pushing it's own offset first.  Besides
+        the offset of the view itself was not being pushed.
+
+        Relaxed the RenderGeometryMap restriction that the first pushed
+        step should be of the view.  It is sufficient that the view's mapping
+        is pushed in the first call to pushMappingsToAncestor.  Modified
+        RenderInline to push the offset of the view also to the geometry map.
+
+        Test: fast/inline/inline-relative-offset-boundingbox.html
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor): Add assertion to
+        check if mapping to view was pushed in first invocation.
+        (WebCore::RenderGeometryMap::pushView): Correct assertion that checks
+        if the view's mapping is the first one to be applied.
+        (WebCore::RenderGeometryMap::stepInserted): Use isRenderView to check if
+        a mapping step belongs to a view instead of using mapping size.
+        (WebCore::RenderGeometryMap::stepRemoved): Ditto.
+        * rendering/RenderInline.cpp:
+        (WebCore::(anonymous namespace)::AbsoluteQuadsGeneratorContext::AbsoluteQuadsGeneratorContext):
+        Push mappings all the way up to and including the view.
+
 2012-07-13  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Move WebCore/platform/text/Base64 to WTF/wtf/text
