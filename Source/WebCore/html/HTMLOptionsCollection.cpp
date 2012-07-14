@@ -28,7 +28,7 @@
 namespace WebCore {
 
 HTMLOptionsCollection::HTMLOptionsCollection(Element* select)
-    : HTMLCollection(select, SelectOptions)
+    : HTMLCollection(select, SelectOptions, SupportItemBefore)
 {
     ASSERT(select->hasTagName(HTMLNames::selectTag));
 }

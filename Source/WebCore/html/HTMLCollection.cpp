@@ -152,8 +152,8 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
 }
     
 
-HTMLCollection::HTMLCollection(Node* base, CollectionType type)
-    : HTMLCollectionCacheBase(rootTypeFromCollectionType(type), invalidationTypeExcludingIdAndNameAttributes(type), type)
+HTMLCollection::HTMLCollection(Node* base, CollectionType type, ItemBeforeSupportType itemBeforeSupportType)
+    : HTMLCollectionCacheBase(rootTypeFromCollectionType(type), invalidationTypeExcludingIdAndNameAttributes(type), type, itemBeforeSupportType)
     , m_base(base)
 {
     ASSERT(m_base);
@@ -162,7 +162,7 @@ HTMLCollection::HTMLCollection(Node* base, CollectionType type)
 
 PassRefPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
 {
-    return adoptRef(new HTMLCollection(base, type));
+    return adoptRef(new HTMLCollection(base, type, SupportItemBefore));
 }
 
 HTMLCollection::~HTMLCollection()
@@ -179,12 +179,12 @@ HTMLCollection::~HTMLCollection()
     m_base->document()->unregisterNodeListCache(this);
 }
 
-inline bool HTMLCollection::isAcceptableElement(Element* element) const
+static inline bool isAcceptableElement(CollectionType type, Element* element)
 {
-    if (!element->isHTMLElement() && !(type() == DocAll || type() == NodeChildren))
+    if (!element->isHTMLElement() && !(type == DocAll || type == NodeChildren))
         return false;
 
-    switch (type()) {
+    switch (type) {
     case DocImages:
         return element->hasLocalName(imgTag);
     case DocScripts:
@@ -237,24 +237,52 @@ inline bool HTMLCollection::isAcceptableElement(Element* element) const
     return false;
 }
 
-static ALWAYS_INLINE Node* nextNode(Node* base, Node* previous, bool onlyIncludeDirectChildren)
+template<bool forward>
+static Node* nextNode(Node* base, Node* previous, bool onlyIncludeDirectChildren)
 {
-    return onlyIncludeDirectChildren ? previous->traverseNextSibling(base) : previous->traverseNextNode(base);
+    if (forward)
+        return onlyIncludeDirectChildren ? previous->nextSibling() : previous->traverseNextNode(base);
+    else
+        return onlyIncludeDirectChildren ? previous->previousSibling() : previous->traversePreviousNode(base);
 }
 
-Element* HTMLCollection::itemAfter(unsigned& offsetInArray, Element* previous) const
+template<bool forward>
+static Element* itemBeforeOrAfter(CollectionType type, Node* base, unsigned& offsetInArray, Node* previous)
 {
     ASSERT_UNUSED(offsetInArray, !offsetInArray);
-    bool onlyIncludeDirectChildren = shouldOnlyIncludeDirectChildren(type());
-    Node* rootNode = base();
-    Node* current = previous ? nextNode(rootNode, previous, onlyIncludeDirectChildren) : m_base->firstChild();
+    bool onlyIncludeDirectChildren = shouldOnlyIncludeDirectChildren(type);
+    Node* rootNode = base;
+    Node* current = previous ? nextNode<forward>(rootNode, previous, onlyIncludeDirectChildren) : (forward ? base->firstChild() : base->lastChild());
 
-    for (; current; current = nextNode(rootNode, current, onlyIncludeDirectChildren)) {
-        if (current->isElementNode() && isAcceptableElement(toElement(current)))
+    for (; current; current = nextNode<forward>(rootNode, current, onlyIncludeDirectChildren)) {
+        if (current->isElementNode() && isAcceptableElement(type, toElement(current)))
             return toElement(current);
     }
 
     return 0;
+}
+
+Element* HTMLCollection::itemBefore(unsigned& offsetInArray, Element* previous) const
+{
+    return itemBeforeOrAfter<false>(type(), base(), offsetInArray, previous);
+}
+
+Element* HTMLCollection::itemAfter(unsigned& offsetInArray, Element* previous) const
+{
+    return itemBeforeOrAfter<true>(type(), base(), offsetInArray, previous);
+}
+    
+bool ALWAYS_INLINE HTMLCollection::shouldSearchFromFirstItem(unsigned offset) const
+{
+    if (!isItemCacheValid())
+        return true;
+
+    ASSERT(offset != cachedItemOffset());
+    if (offset > cachedItemOffset())
+        return false;
+
+    unsigned distanceFromCachedItem = cachedItemOffset() - offset;
+    return !supportsItemBefore() || offset < distanceFromCachedItem;
 }
 
 unsigned HTMLCollection::length() const
@@ -272,18 +300,18 @@ unsigned HTMLCollection::length() const
     unsigned offset = cachedItemOffset();
     do {
         offset++;
-    } while (itemAfterCachedItem(offset));
+    } while (itemBeforeOrAfterCachedItem(offset));
 
     setLengthCache(offset);
     return offset;
 }
 
-Node* HTMLCollection::item(unsigned index) const
+Node* HTMLCollection::item(unsigned offset) const
 {
-    if (isItemCacheValid() && cachedItemOffset() == index)
+    if (isItemCacheValid() && cachedItemOffset() == offset)
         return cachedItem();
 
-    if (isLengthCacheValid() && cachedLength() <= index)
+    if (isLengthCacheValid() && cachedLength() <= offset)
         return 0;
 
 #if ENABLE(MICRODATA)
@@ -291,7 +319,7 @@ Node* HTMLCollection::item(unsigned index) const
         static_cast<const HTMLPropertiesCollection*>(this)->updateRefElements();
 #endif
 
-    if (!isItemCacheValid() || cachedItemOffset() > index) {
+    if (shouldSearchFromFirstItem(offset)) {
         unsigned offsetInArray = 0;
         Node* firstItem = itemAfter(offsetInArray, 0);
         if (!firstItem) {
@@ -300,30 +328,45 @@ Node* HTMLCollection::item(unsigned index) const
         }
         setItemCache(firstItem, 0, offsetInArray);
         ASSERT(!cachedItemOffset());
-        if (!index)
+        if (!offset)
             return cachedItem();
     }
 
-    return itemAfterCachedItem(index);
+    return itemBeforeOrAfterCachedItem(offset);
 }
 
-Element* HTMLCollection::itemAfterCachedItem(unsigned index) const
+Element* HTMLCollection::itemBeforeOrAfterCachedItem(unsigned offset) const
 {
-    unsigned currentIndex = cachedItemOffset();
+    unsigned currentOffset = cachedItemOffset();
     ASSERT(cachedItem()->isElementNode());
     Element* currentItem = toElement(cachedItem());
-    ASSERT(currentIndex < index);
+    ASSERT(currentOffset != offset);
 
     unsigned offsetInArray = cachedElementsArrayOffset();
+
+    if (offset < cachedItemOffset()) {
+        ASSERT(supportsItemBefore());
+        while ((currentItem = itemBefore(offsetInArray, currentItem))) {
+            ASSERT(currentOffset);
+            currentOffset--;
+            if (currentOffset == offset) {
+                setItemCache(currentItem, currentOffset, offsetInArray);
+                return currentItem;
+            }
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
     while ((currentItem = itemAfter(offsetInArray, currentItem))) {
-        currentIndex++;
-        if (currentIndex == index) {
-            setItemCache(currentItem, currentIndex, offsetInArray);
+        currentOffset++;
+        if (currentOffset == offset) {
+            setItemCache(currentItem, currentOffset, offsetInArray);
             return currentItem;
         }
     }
 
-    setLengthCache(currentIndex);
+    setLengthCache(currentOffset);
 
     return 0;
 }

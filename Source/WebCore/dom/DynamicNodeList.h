@@ -43,7 +43,13 @@ enum NodeListRootType {
 
 class DynamicNodeListCacheBase {
 public:
-    DynamicNodeListCacheBase(NodeListRootType rootType, NodeListInvalidationType invalidationType, CollectionType collectionType = InvalidCollectionType)
+    enum ItemBeforeSupportType {
+        DoNotSupportItemBefore,
+        SupportItemBefore,
+    };
+
+    DynamicNodeListCacheBase(NodeListRootType rootType, NodeListInvalidationType invalidationType,
+        CollectionType collectionType = InvalidCollectionType, ItemBeforeSupportType itemBeforeSupportType = DoNotSupportItemBefore)
         : m_cachedItem(0)
         , m_isLengthCacheValid(false)
         , m_isItemCacheValid(false)
@@ -51,6 +57,7 @@ public:
         , m_invalidationType(invalidationType)
         , m_isNameCacheValid(false)
         , m_collectionType(collectionType)
+        , m_supportsItemBefore(itemBeforeSupportType == SupportItemBefore)
     {
         ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
         ASSERT(m_collectionType == static_cast<unsigned>(collectionType));
@@ -66,6 +73,8 @@ public:
     static bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
 
 protected:
+    bool supportsItemBefore() const { return m_supportsItemBefore; }
+
     ALWAYS_INLINE bool isItemCacheValid() const { return m_isItemCacheValid; }
     ALWAYS_INLINE Node* cachedItem() const { return m_cachedItem; }
     ALWAYS_INLINE unsigned cachedItemOffset() const { return m_cachedItemOffset; }
@@ -79,7 +88,7 @@ protected:
     }
     ALWAYS_INLINE void setItemCache(Node* item, unsigned offset) const
     {
-        // FIXME: Assert that item is not null once we've updated DynamicNodeList.
+        ASSERT(item);
         m_cachedItem = item;
         m_cachedItemOffset = offset;
         m_isItemCacheValid = true;
@@ -100,6 +109,7 @@ private:
     // From HTMLCollection
     mutable unsigned m_isNameCacheValid : 1;
     const unsigned m_collectionType : 5;
+    const unsigned m_supportsItemBefore : 1;
 };
 
 ALWAYS_INLINE bool DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType type, const QualifiedName& attrName)

@@ -51,7 +51,7 @@ PassRefPtr<HTMLPropertiesCollection> HTMLPropertiesCollection::create(Node* item
 }
 
 HTMLPropertiesCollection::HTMLPropertiesCollection(Node* itemNode)
-    : HTMLCollection(itemNode, ItemProperties)
+    : HTMLCollection(itemNode, ItemProperties, DoNotSupportItemBefore)
     , m_hasPropertyNameCache(false)
     , m_hasItemRefElements(false)
 {

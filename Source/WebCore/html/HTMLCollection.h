@@ -39,8 +39,8 @@ class NodeList;
 
 class HTMLCollectionCacheBase : public DynamicNodeListCacheBase {
 public:
-    HTMLCollectionCacheBase(NodeListRootType rootType, NodeListInvalidationType invalidationType, CollectionType collectionType)
-        : DynamicNodeListCacheBase(rootType, invalidationType, collectionType)
+    HTMLCollectionCacheBase(NodeListRootType rootType, NodeListInvalidationType invalidationType, CollectionType collectionType, ItemBeforeSupportType itemBeforeSupportType)
+        : DynamicNodeListCacheBase(rootType, invalidationType, collectionType, itemBeforeSupportType)
         , m_cachedElementsArrayOffset(0)
     {
     }
@@ -106,7 +106,7 @@ public:
     Node* base() const { return m_base.get(); }
 
 protected:
-    HTMLCollection(Node* base, CollectionType);
+    HTMLCollection(Node* base, CollectionType, ItemBeforeSupportType);
 
     virtual void updateNameCache() const;
     virtual Element* itemAfter(unsigned& offsetInArray, Element*) const;
@@ -114,8 +114,9 @@ protected:
 private:
     bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
-    Element* itemAfterCachedItem(unsigned) const;
-    bool isAcceptableElement(Element*) const;
+    Element* itemBefore(unsigned& offsetInArray, Element*) const;
+    bool shouldSearchFromFirstItem(unsigned offset) const;
+    Element* itemBeforeOrAfterCachedItem(unsigned offset) const;
 
     RefPtr<Node> m_base;
 };

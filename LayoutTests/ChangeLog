@@ -1,3 +1,15 @@
+2012-07-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Iterating backwards over HTMLCollection is O(n^2)
+        https://bugs.webkit.org/show_bug.cgi?id=91306
+
+        Reviewed by Anders Carlsson.
+
+        Add an asymptotic time complexity test.
+
+        * perf/htmlcollection-backwards-iteration-expected.txt: Added.
+        * perf/htmlcollection-backwards-iteration.html: Added.
+
 2012-07-13  Kent Tamura  <tkent@chromium.org>
 
         Internals: Clean up the mock PagePopupDriver correctly.

@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLNameCollection::HTMLNameCollection(Document* document, CollectionType type, const AtomicString& name)
-    : HTMLCollection(document, type)
+    : HTMLCollection(document, type, DoNotSupportItemBefore)
     , m_name(name)
 {
 }

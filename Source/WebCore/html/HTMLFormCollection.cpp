@@ -37,7 +37,7 @@ using namespace HTMLNames;
 // calculation every time if anything has changed.
 
 HTMLFormCollection::HTMLFormCollection(Element* base)
-    : HTMLCollection(base, FormControls)
+    : HTMLCollection(base, FormControls, DoNotSupportItemBefore)
 {
     ASSERT(base->hasTagName(formTag) || base->hasTagName(fieldsetTag));
 }
