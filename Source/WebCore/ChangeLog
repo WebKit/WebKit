@@ -1,3 +1,11 @@
+2012-07-14  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Snow Leopard build.
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore::contextMenuItemTagLookUpInDictionary): Fix a typo in the condition so that Snow Leopard
+        continues to take the expected path.
+
 2012-07-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Accessing the last item in children should be a constant time operation
