@@ -139,6 +139,9 @@ public:
     HarfbuzzFace* harfbuzzFace() const;
 #endif
 
+    // The returned styles are all actual styles without FontRenderStyle::NoPreference.
+    const FontRenderStyle& fontRenderStyle() const { return m_style; }
+
     // -------------------------------------------------------------------------
     // Global font preferences...
 

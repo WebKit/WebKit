@@ -1,3 +1,15 @@
+2012-07-13  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Sometimes bottom of text is truncated when page has a fractional scale
+        https://bugs.webkit.org/show_bug.cgi?id=88684
+
+        Reviewed by Tony Chang.
+
+        New test case.
+
+        * fast/text/descent-clip-in-scaled-page-expected.html: Added.
+        * fast/text/descent-clip-in-scaled-page.html: Added.
+
 2012-07-13  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILED: use.useKind() != DoubleUse

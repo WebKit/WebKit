@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    div {
+        font-family: ahem;
+        font-size: 16px;
+    }
+</style>
+<script>
+    if (window.layoutTestController && window.layoutTestController.setTextSubpixelPositioning)
+        window.layoutTestController.setTextSubpixelPositioning(true);
+    if (window.internals)
+        window.internals.settings.setPageScaleFactor(1.7, 0, 0);
+</script>
+</head>
+<body>
+    Tests if the bottom of the text is truncated when the page is scaled by a fractional factor.
+    If success, the text in the "overflow: hidden" div (the test case) should be displayed
+    the same as in a normal div (the ref html).
+    'p' is the character in ahem font with only the descent part.
+    <div>&nbsp;pppp&nbsp;</div>
+</body>
+</html>

@@ -86,7 +86,7 @@ void SimpleFontData::platformInit()
     float descent;
 
     // Beware those who step here: This code is designed to match Win32 font
-    // metrics *exactly*.
+    // metrics *exactly* (except the adjustment of ascent/descent on Linux/Android).
     if (isVDMXValid) {
         ascent = vdmxAscent;
         descent = -vdmxDescent;
@@ -94,6 +94,16 @@ void SimpleFontData::platformInit()
         SkScalar height = -metrics.fAscent + metrics.fDescent + metrics.fLeading;
         ascent = SkScalarRound(-metrics.fAscent);
         descent = SkScalarRound(height) - ascent;
+#if OS(LINUX) || OS(ANDROID)
+        // When subpixel positioning is enabled, if the descent is rounded down, the descent part
+        // of the glyph may be truncated when displayed in a 'overflow: hidden' container.
+        // To avoid that, borrow 1 unit from the ascent when possible.
+        // FIXME: This can be removed if sub-pixel ascent/descent is supported.
+        if (platformData().fontRenderStyle().useSubpixelPositioning && descent < SkScalarToFloat(metrics.fDescent) && ascent >= 1) {
+            ++descent;
+            --ascent;
+        }
+#endif
     }
 
     m_fontMetrics.setAscent(ascent);
