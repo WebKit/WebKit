@@ -47,7 +47,6 @@ using namespace WebCore;
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 NSString *WebPreferencesRemovedNotification = @"WebPreferencesRemovedNotification";
 NSString *WebPreferencesChangedInternalNotification = @"WebPreferencesChangedInternalNotification";
-NSString *WebPreferencesCacheModelChangedInternalNotification = @"WebPreferencesCacheModelChangedInternalNotification";
 
 #define KEY(x) (_private->identifier ? [_private->identifier stringByAppendingString:(x)] : (x))
 
@@ -223,7 +222,6 @@ static WebCacheModel cacheModelForMainBundle(void)
     [[self class] _setInstance:self forIdentifier:_private->identifier];
 
     [self _postPreferencesChangedNotification];
-    [self _postCacheModelChangedNotification];
 
     return self;
 }
@@ -804,21 +802,10 @@ static WebCacheModel cacheModelForMainBundle(void)
     return [self _boolValueForKey:WebKitUsesPageCachePreferenceKey];
 }
 
-- (void)_postCacheModelChangedNotification
-{
-    if (!pthread_main_np()) {
-        [self performSelectorOnMainThread:_cmd withObject:nil waitUntilDone:NO];
-        return;
-    }
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebPreferencesCacheModelChangedInternalNotification object:self userInfo:nil];
-}
-
 - (void)setCacheModel:(WebCacheModel)cacheModel
 {
     [self _setIntegerValue:cacheModel forKey:WebKitCacheModelPreferenceKey];
     [self setAutomaticallyDetectsCacheModel:NO];
-    [self _postCacheModelChangedNotification];
 }
 
 - (WebCacheModel)cacheModel
