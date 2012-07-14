@@ -1,5 +1,11 @@
 2012-07-14  Mark Rowe  <mrowe@apple.com>
 
+        Fix the Windows build.
+
+        * platform/network/cf/DNSCFNet.cpp: Fix the condition to take Windows in to account.
+
+2012-07-14  Mark Rowe  <mrowe@apple.com>
+
         Make it explicit which code paths iOS should use when doing checks based on OS X versions.
 
         Rubber-stamped by David Kilzer.
