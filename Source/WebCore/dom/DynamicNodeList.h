@@ -122,7 +122,6 @@ ALWAYS_INLINE bool DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChan
         return attrName == HTMLNames::itemscopeAttr || attrName == HTMLNames::itempropAttr || attrName == HTMLNames::itemtypeAttr;
 #endif // Intentionally fall through
     case DoNotInvalidateOnAttributeChanges:
-        ASSERT_NOT_REACHED();
         return false;
     case InvalidateOnAnyAttrChange:
         return true;

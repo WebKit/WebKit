@@ -1,3 +1,10 @@
+2012-07-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove an assertion after r122637.
+
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange):
+
 2012-07-13  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Improve the mobile theme slightly
