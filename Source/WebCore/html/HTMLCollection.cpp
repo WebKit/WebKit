@@ -271,18 +271,25 @@ Element* HTMLCollection::itemAfter(unsigned& offsetInArray, Element* previous) c
 {
     return itemBeforeOrAfter<true>(type(), base(), offsetInArray, previous);
 }
-    
-bool ALWAYS_INLINE HTMLCollection::shouldSearchFromFirstItem(unsigned offset) const
-{
-    if (!isItemCacheValid())
-        return true;
 
-    ASSERT(offset != cachedItemOffset());
-    if (offset > cachedItemOffset())
+bool ALWAYS_INLINE HTMLCollection::isLastItemCloserThanLastOrCachedItem(unsigned offset) const
+{
+    ASSERT(isLengthCacheValid());
+    unsigned distanceFromLastItem = cachedLength() - offset;
+    if (!isItemCacheValid())
+        return distanceFromLastItem < offset;
+
+    return cachedItemOffset() < offset && distanceFromLastItem < offset - cachedItemOffset();
+}
+    
+bool ALWAYS_INLINE HTMLCollection::isFirstItemCloserThanCachedItem(unsigned offset) const
+{
+    ASSERT(isItemCacheValid());
+    if (cachedItemOffset() < offset)
         return false;
 
     unsigned distanceFromCachedItem = cachedItemOffset() - offset;
-    return !supportsItemBefore() || offset < distanceFromCachedItem;
+    return offset < distanceFromCachedItem;
 }
 
 unsigned HTMLCollection::length() const
@@ -319,7 +326,14 @@ Node* HTMLCollection::item(unsigned offset) const
         static_cast<const HTMLPropertiesCollection*>(this)->updateRefElements();
 #endif
 
-    if (shouldSearchFromFirstItem(offset)) {
+    if (isLengthCacheValid() && supportsItemBefore() && isLastItemCloserThanLastOrCachedItem(offset)) {
+        // FIXME: Need to figure out the last offset in array for HTMLFormCollection and HTMLPropertiesCollection
+        unsigned unusedOffsetInArray = 0;
+        Node* lastItem = itemBefore(unusedOffsetInArray, 0);
+        ASSERT(!unusedOffsetInArray);
+        ASSERT(lastItem);
+        setItemCache(lastItem, cachedLength() - 1, 0);
+    } else if (!isItemCacheValid() || isFirstItemCloserThanCachedItem(offset) || (!supportsItemBefore() && offset < cachedItemOffset())) {
         unsigned offsetInArray = 0;
         Node* firstItem = itemAfter(offsetInArray, 0);
         if (!firstItem) {
@@ -328,9 +342,10 @@ Node* HTMLCollection::item(unsigned offset) const
         }
         setItemCache(firstItem, 0, offsetInArray);
         ASSERT(!cachedItemOffset());
-        if (!offset)
-            return cachedItem();
     }
+
+    if (cachedItemOffset() == offset)
+        return cachedItem();
 
     return itemBeforeOrAfterCachedItem(offset);
 }

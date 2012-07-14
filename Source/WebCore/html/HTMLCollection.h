@@ -115,7 +115,8 @@ private:
     bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
     Element* itemBefore(unsigned& offsetInArray, Element*) const;
-    bool shouldSearchFromFirstItem(unsigned offset) const;
+    bool isLastItemCloserThanLastOrCachedItem(unsigned offset) const;
+    bool isFirstItemCloserThanCachedItem(unsigned offset) const;
     Element* itemBeforeOrAfterCachedItem(unsigned offset) const;
 
     RefPtr<Node> m_base;

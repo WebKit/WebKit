@@ -1,3 +1,29 @@
+2012-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Accessing the last item in children should be a constant time operation
+        https://bugs.webkit.org/show_bug.cgi?id=91320
+
+        Reviewed by Ojan Vafai.
+
+        Traverse nodes from the last item when the target offset we're looking for is closer to the last item
+        than to the cached item. e.g. if the cached item was at offset 0 in the collection and length was 100,
+        we should not be looking for the item at offset 95 from the cached item.
+
+        Note that this trick can be only used in HTML collection that supports itemBefore and when the length
+        cache is available.
+
+        Also broke shouldSearchFromFirstItem into smaller logical pieces to clarify the intents.
+
+        Test: perf/htmlcollection-last-item.html
+
+        * html/HTMLCollection.cpp:
+        (WebCore):
+        (WebCore::HTMLCollection::isLastItemCloserThanLastOrCachedItem):
+        (WebCore::HTMLCollection::isFirstItemCloserThanCachedItem):
+        (WebCore::HTMLCollection::item):
+        * html/HTMLCollection.h:
+        (HTMLCollection):
+
 2012-07-14  Mark Rowe  <mrowe@apple.com>
 
         Fix the Windows build.

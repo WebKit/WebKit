@@ -1,3 +1,15 @@
+2012-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Accessing the last item in children should be a constant time operation
+        https://bugs.webkit.org/show_bug.cgi?id=91320
+
+        Reviewed by Ojan Vafai.
+
+        Added an asymptotic time complexity test.
+
+        * perf/htmlcollection-last-item-expected.txt: Added.
+        * perf/htmlcollection-last-item.html: Added.
+
 2012-07-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Tests] Unskip not failing tests previously relying on LTC::nodesFromRect implementation 
