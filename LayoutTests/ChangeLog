@@ -1,3 +1,15 @@
+2012-07-05  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: vertical-align-boxes-001 fails
+        https://bugs.webkit.org/show_bug.cgi?id=90626
+
+        Reviewed by Eric Seidel.
+
+        * css2.1/20110323/vertical-align-boxes-001-expected.html: Added.
+        * css2.1/20110323/vertical-align-boxes-001.htm: Added.
+          This patch fixes the 'percentage' case in this test so that it calculates 50% of the
+          line-height of 60px rather than 50% of the img's margin-box of -8px.
+
 2012-07-14  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, marking http/tests/misc/webtiming-origins.html as flaky.

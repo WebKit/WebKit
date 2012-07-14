@@ -883,8 +883,15 @@ LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositio
                 verticalPosition -= (renderer->lineHeight(firstLine, lineDirection) - renderer->baselinePosition(baselineType(), firstLine, lineDirection));
         } else if (verticalAlign == BASELINE_MIDDLE)
             verticalPosition += -renderer->lineHeight(firstLine, lineDirection) / 2 + renderer->baselinePosition(baselineType(), firstLine, lineDirection);
-        else if (verticalAlign == LENGTH)
-            verticalPosition -= valueForLength(renderer->style()->verticalAlignLength(), renderer->lineHeight(firstLine, lineDirection), renderer->view());
+        else if (verticalAlign == LENGTH) {
+            LayoutUnit lineHeight;
+            //Per http://www.w3.org/TR/CSS21/visudet.html#propdef-vertical-align: 'Percentages: refer to the 'line-height' of the element itself'.
+            if (renderer->style()->verticalAlignLength().isPercent())
+                lineHeight = renderer->style()->computedLineHeight();
+            else
+                lineHeight = renderer->lineHeight(firstLine, lineDirection);
+            verticalPosition -= valueForLength(renderer->style()->verticalAlignLength(), lineHeight, renderer->view());
+        }
     }
 
     // Store the cached value.

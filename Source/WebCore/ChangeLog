@@ -1,3 +1,23 @@
+2012-07-05  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: vertical-align-boxes-001 fails
+        https://bugs.webkit.org/show_bug.cgi?id=90626
+
+        Reviewed by Eric Seidel.
+
+        Tests: css2.1/20110323/vertical-align-boxes-001.htm
+
+        A percentage value vertical-align is always a percentage of the actual line-height rather than
+        the margin box per http://www.w3.org/TR/CSS21/visudet.html#propdef-vertical-align: 'Percentages: 
+        refer to the 'line-height' of the element itself'.  Confusingly, RenderBox::lineheight() is a
+        shorthand into the dimensions of the margin box for replaced elements in the other vertical-align
+        cases, i.e. where it's the margin box that's relevant rather than the 'line-height'. So rather than patch RenderBox's
+        lineHeight() to somehow consider the percentage cases, just give percentage vertical-align the full computedLineHeight()
+        rather than lineHeight()'s margin box.
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::verticalPositionForBox):
+
 2012-07-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Iterating backwards over HTMLCollection is O(n^2)
