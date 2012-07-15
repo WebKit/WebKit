@@ -676,6 +676,9 @@ BUGWK86633 : editing/spelling/spelling-insert-html.html = TEXT
 BUGWK86633 : editing/spelling/spelling-linebreak.html = TEXT
 BUGWK86633 : editing/spelling/spelling-unified-emulation.html = TEXT
 
+// EFL's LayoutTestController does not support setSubpixelTextPositioning()
+BUGWK91341 : fast/text/descent-clip-in-scaled-page.html = IMAGE
+
 // Failing after r119268 on GTK and EFL
 BUGWK88138 : http/tests/media/video-buffered.html = TEXT
 
