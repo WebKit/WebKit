@@ -1,3 +1,22 @@
+2012-07-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Windowless WebView not firing JavaScript load event if there is a media element
+        https://bugs.webkit.org/show_bug.cgi?id=91331
+
+        Reviewed by Eric Carlson.
+
+        In prepareForLoad we start deferring the load event. If we fall into this
+        clause where the page can not start loading media we bail, potentially
+        indefinitely waiting until we can start loading media. Since we can not
+        be certain this will ever happen, we should stop deferring the page's
+        load event.
+
+        Test: WebKit1.WindowlessWebViewWithMedia TestWebKitAPI test. The only
+        way this path was reachable right now is on the mac port.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadInternal):
+
 2012-07-15  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11875795> REGRESSION (tiled drawing): Page’s scroll bars flash with each character you type in a textarea (affects Wikipedia and YouTube)

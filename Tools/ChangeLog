@@ -1,3 +1,21 @@
+2012-07-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Windowless WebView not firing JavaScript load event if there is a media element
+        https://bugs.webkit.org/show_bug.cgi?id=91331
+
+        Reviewed by Eric Carlson.
+
+        Test a windowless WebView loading a page with a media element. The load
+        event should happen on the next spin of the run loop, but we spin check
+        the page, with a timeout of 250ms.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/WindowlessWebViewWithMedia.html: Added.
+        * TestWebKitAPI/Tests/mac/WindowlessWebViewWithMedia.mm: Added.
+        (-[WindowlessWebViewWithMediaFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::spinLoop): Spin check with timeout. Runs a block each spin to early bail.
+        (TestWebKitAPI::TEST):
+
 2012-07-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [Mac] Do not try to update the cache model for every WebPreferences change
