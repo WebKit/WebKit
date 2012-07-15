@@ -109,10 +109,11 @@ namespace JSC { namespace DFG {
     /* Property access. */\
     /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\
     /* Since a put to 'length' may invalidate optimizations here, */\
-    /* this must be the directly subsequent property put. */\
+    /* this must be the directly subsequent property put. Note that PutByVal */\
+    /* opcodes use VarArgs beause they may have up to 4 children. */\
     macro(GetByVal, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
-    macro(PutByVal, NodeMustGenerate | NodeMightClobber) \
-    macro(PutByValAlias, NodeMustGenerate | NodeMightClobber) \
+    macro(PutByVal, NodeMustGenerate | NodeHasVarArgs | NodeMightClobber) \
+    macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs | NodeMightClobber) \
     macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(GetByIdFlush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(PutById, NodeMustGenerate | NodeClobbersWorld) \

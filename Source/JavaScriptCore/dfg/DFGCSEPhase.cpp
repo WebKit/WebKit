@@ -284,15 +284,16 @@ private:
                     return index;
                 break;
             case PutByVal:
-            case PutByValAlias:
+            case PutByValAlias: {
                 if (!m_graph.byValIsPure(node))
                     return NoNode;
-                if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
-                    return node.child3().index();
+                if (m_graph.varArgChild(node, 0) == child1 && canonicalize(m_graph.varArgChild(node, 1)) == canonicalize(child2))
+                    return m_graph.varArgChild(node, 2).index();
                 // We must assume that the PutByVal will clobber the location we're getting from.
                 // FIXME: We can do better; if we know that the PutByVal is accessing an array of a
                 // different type than the GetByVal, then we know that they won't clobber each other.
                 return NoNode;
+            }
             case PutStructure:
             case PutByOffset:
                 // GetByVal currently always speculates that it's accessing an
@@ -634,7 +635,7 @@ private:
                 break;
                 
             case PutByVal:
-                if (isFixedIndexedStorageObjectSpeculation(m_graph[node.child1()].prediction()) && m_graph.byValIsPure(node))
+                if (isFixedIndexedStorageObjectSpeculation(m_graph[m_graph.varArgChild(node, 0)].prediction()) && m_graph.byValIsPure(node))
                     break;
                 return NoNode;
 
@@ -1079,17 +1080,19 @@ private:
                 setReplacement(getByValLoadElimination(node.child1().index(), node.child2().index()));
             break;
             
-        case PutByVal:
-            if (isActionableMutableArraySpeculation(m_graph[node.child1()].prediction())
-                && m_graph[node.child2()].shouldSpeculateInteger()
-                && !m_graph[node.child1()].shouldSpeculateArguments()) {
-                NodeIndex nodeIndex = getByValLoadElimination(
-                    node.child1().index(), node.child2().index());
+        case PutByVal: {
+            Edge child1 = m_graph.varArgChild(node, 0);
+            Edge child2 = m_graph.varArgChild(node, 1);
+            if (isActionableMutableArraySpeculation(m_graph[child1].prediction())
+                && m_graph[child2].shouldSpeculateInteger()
+                && !m_graph[child1].shouldSpeculateArguments()) {
+                NodeIndex nodeIndex = getByValLoadElimination(child1.index(), child2.index());
                 if (nodeIndex == NoNode)
                     break;
                 node.setOp(PutByValAlias);
             }
             break;
+        }
             
         case CheckStructure:
             if (checkStructureLoadElimination(node.structureSet(), node.child1().index()))

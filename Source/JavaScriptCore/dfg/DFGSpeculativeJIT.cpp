@@ -1911,8 +1911,8 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(const TypedArrayDescriptor& 
 
 void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor& descriptor, GPRReg base, GPRReg property, Node& node, size_t elementSize, TypedArraySpeculationRequirements speculationRequirements, TypedArraySignedness signedness, TypedArrayRounding rounding)
 {
-    Edge baseUse = node.child1();
-    Edge valueUse = node.child3();
+    Edge baseUse = m_jit.graph().varArgChild(node, 0);
+    Edge valueUse = m_jit.graph().varArgChild(node, 2);
     
     if (speculationRequirements != NoTypedArrayTypeSpecCheck)
         speculationCheck(BadType, JSValueSource::unboxedCell(base), baseUse, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(descriptor.m_classInfo)));
@@ -2052,8 +2052,8 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(const TypedArrayDescriptor
 
 void SpeculativeJIT::compilePutByValForFloatTypedArray(const TypedArrayDescriptor& descriptor, GPRReg base, GPRReg property, Node& node, size_t elementSize, TypedArraySpeculationRequirements speculationRequirements)
 {
-    Edge baseUse = node.child1();
-    Edge valueUse = node.child3();
+    Edge baseUse = m_jit.graph().varArgChild(node, 0);
+    Edge valueUse = m_jit.graph().varArgChild(node, 2);
     
     SpeculateDoubleOperand valueOp(this, valueUse);
     

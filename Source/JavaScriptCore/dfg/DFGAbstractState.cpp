@@ -946,13 +946,18 @@ bool AbstractState::execute(unsigned indexInBlock)
     case PutByVal:
     case PutByValAlias: {
         node.setCanExit(true);
-        if (!m_graph[node.child1()].prediction() || !m_graph[node.child2()].prediction()) {
+
+        Edge child1 = m_graph.varArgChild(node, 0);
+        Edge child2 = m_graph.varArgChild(node, 1);
+        Edge child3 = m_graph.varArgChild(node, 2);
+            
+        if (!m_graph[child1].prediction() || !m_graph[child2].prediction()) {
             m_isValid = false;
             break;
         }
-        if (!m_graph[node.child2()].shouldSpeculateInteger() || !isActionableMutableArraySpeculation(m_graph[node.child1()].prediction())
+        if (!m_graph[child2].shouldSpeculateInteger() || !isActionableMutableArraySpeculation(m_graph[child1].prediction())
 #if USE(JSVALUE32_64)
-            || m_graph[node.child1()].shouldSpeculateArguments()
+            || m_graph[child1].shouldSpeculateArguments()
 #endif
             ) {
             ASSERT(node.op() == PutByVal);
@@ -961,89 +966,89 @@ bool AbstractState::execute(unsigned indexInBlock)
             break;
         }
         
-        if (m_graph[node.child1()].shouldSpeculateArguments()) {
-            forNode(node.child1()).filter(SpecArguments);
-            forNode(node.child2()).filter(SpecInt32);
+        if (m_graph[child1].shouldSpeculateArguments()) {
+            forNode(child1).filter(SpecArguments);
+            forNode(child2).filter(SpecInt32);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateInt8Array()) {
-            forNode(node.child1()).filter(SpecInt8Array);
-            forNode(node.child2()).filter(SpecInt32);
-            if (m_graph[node.child3()].shouldSpeculateInteger())
-                forNode(node.child3()).filter(SpecInt32);
+        if (m_graph[child1].shouldSpeculateInt8Array()) {
+            forNode(child1).filter(SpecInt8Array);
+            forNode(child2).filter(SpecInt32);
+            if (m_graph[child3].shouldSpeculateInteger())
+                forNode(child3).filter(SpecInt32);
             else
-                forNode(node.child3()).filter(SpecNumber);
+                forNode(child3).filter(SpecNumber);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateInt16Array()) {
-            forNode(node.child1()).filter(SpecInt16Array);
-            forNode(node.child2()).filter(SpecInt32);
-            if (m_graph[node.child3()].shouldSpeculateInteger())
-                forNode(node.child3()).filter(SpecInt32);
+        if (m_graph[child1].shouldSpeculateInt16Array()) {
+            forNode(child1).filter(SpecInt16Array);
+            forNode(child2).filter(SpecInt32);
+            if (m_graph[child3].shouldSpeculateInteger())
+                forNode(child3).filter(SpecInt32);
             else
-                forNode(node.child3()).filter(SpecNumber);
+                forNode(child3).filter(SpecNumber);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateInt32Array()) {
-            forNode(node.child1()).filter(SpecInt32Array);
-            forNode(node.child2()).filter(SpecInt32);
-            if (m_graph[node.child3()].shouldSpeculateInteger())
-                forNode(node.child3()).filter(SpecInt32);
+        if (m_graph[child1].shouldSpeculateInt32Array()) {
+            forNode(child1).filter(SpecInt32Array);
+            forNode(child2).filter(SpecInt32);
+            if (m_graph[child3].shouldSpeculateInteger())
+                forNode(child3).filter(SpecInt32);
             else
-                forNode(node.child3()).filter(SpecNumber);
+                forNode(child3).filter(SpecNumber);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateUint8Array()) {
-            forNode(node.child1()).filter(SpecUint8Array);
-            forNode(node.child2()).filter(SpecInt32);
-            if (m_graph[node.child3()].shouldSpeculateInteger())
-                forNode(node.child3()).filter(SpecInt32);
+        if (m_graph[child1].shouldSpeculateUint8Array()) {
+            forNode(child1).filter(SpecUint8Array);
+            forNode(child2).filter(SpecInt32);
+            if (m_graph[child3].shouldSpeculateInteger())
+                forNode(child3).filter(SpecInt32);
             else
-                forNode(node.child3()).filter(SpecNumber);
+                forNode(child3).filter(SpecNumber);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateUint8ClampedArray()) {
-            forNode(node.child1()).filter(SpecUint8ClampedArray);
-            forNode(node.child2()).filter(SpecInt32);
-            if (m_graph[node.child3()].shouldSpeculateInteger())
-                forNode(node.child3()).filter(SpecInt32);
+        if (m_graph[child1].shouldSpeculateUint8ClampedArray()) {
+            forNode(child1).filter(SpecUint8ClampedArray);
+            forNode(child2).filter(SpecInt32);
+            if (m_graph[child3].shouldSpeculateInteger())
+                forNode(child3).filter(SpecInt32);
             else
-                forNode(node.child3()).filter(SpecNumber);
+                forNode(child3).filter(SpecNumber);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateUint16Array()) {
-            forNode(node.child1()).filter(SpecUint16Array);
-            forNode(node.child2()).filter(SpecInt32);
-            if (m_graph[node.child3()].shouldSpeculateInteger())
-                forNode(node.child3()).filter(SpecInt32);
+        if (m_graph[child1].shouldSpeculateUint16Array()) {
+            forNode(child1).filter(SpecUint16Array);
+            forNode(child2).filter(SpecInt32);
+            if (m_graph[child3].shouldSpeculateInteger())
+                forNode(child3).filter(SpecInt32);
             else
-                forNode(node.child3()).filter(SpecNumber);
+                forNode(child3).filter(SpecNumber);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateUint32Array()) {
-            forNode(node.child1()).filter(SpecUint32Array);
-            forNode(node.child2()).filter(SpecInt32);
-            if (m_graph[node.child3()].shouldSpeculateInteger())
-                forNode(node.child3()).filter(SpecInt32);
+        if (m_graph[child1].shouldSpeculateUint32Array()) {
+            forNode(child1).filter(SpecUint32Array);
+            forNode(child2).filter(SpecInt32);
+            if (m_graph[child3].shouldSpeculateInteger())
+                forNode(child3).filter(SpecInt32);
             else
-                forNode(node.child3()).filter(SpecNumber);
+                forNode(child3).filter(SpecNumber);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {
-            forNode(node.child1()).filter(SpecFloat32Array);
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(node.child3()).filter(SpecNumber);
+        if (m_graph[child1].shouldSpeculateFloat32Array()) {
+            forNode(child1).filter(SpecFloat32Array);
+            forNode(child2).filter(SpecInt32);
+            forNode(child3).filter(SpecNumber);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateFloat64Array()) {
-            forNode(node.child1()).filter(SpecFloat64Array);
-            forNode(node.child2()).filter(SpecInt32);
-            forNode(node.child3()).filter(SpecNumber);
+        if (m_graph[child1].shouldSpeculateFloat64Array()) {
+            forNode(child1).filter(SpecFloat64Array);
+            forNode(child2).filter(SpecInt32);
+            forNode(child3).filter(SpecNumber);
             break;
         }
-        ASSERT(m_graph[node.child1()].shouldSpeculateArray());
-        forNode(node.child1()).filter(SpecArray);
-        forNode(node.child2()).filter(SpecInt32);
+        ASSERT(m_graph[child1].shouldSpeculateArray());
+        forNode(child1).filter(SpecArray);
+        forNode(child2).filter(SpecInt32);
         if (node.op() == PutByVal)
             clobberWorld(node.codeOrigin, indexInBlock);
         break;

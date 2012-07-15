@@ -315,19 +315,22 @@ private:
         }
             
         case PutByVal: {
-            if (!m_graph[node.child1()].prediction() || !m_graph[node.child2()].prediction())
+            Edge child1 = m_graph.varArgChild(node, 0);
+            Edge child2 = m_graph.varArgChild(node, 1);
+            Edge child3 = m_graph.varArgChild(node, 2);
+            if (!m_graph[child1].prediction() || !m_graph[child2].prediction())
                 break;
-            if (!m_graph[node.child2()].shouldSpeculateInteger())
+            if (!m_graph[child2].shouldSpeculateInteger())
                 break;
-            if (isActionableIntMutableArraySpeculation(m_graph[node.child1()].prediction())) {
-                if (m_graph[node.child3()].isConstant())
+            if (isActionableIntMutableArraySpeculation(m_graph[child1].prediction())) {
+                if (m_graph[child3].isConstant())
                     break;
-                if (m_graph[node.child3()].shouldSpeculateInteger())
+                if (m_graph[child3].shouldSpeculateInteger())
                     break;
                 fixDoubleEdge(2);
                 break;
             }
-            if (isActionableFloatMutableArraySpeculation(m_graph[node.child1()].prediction())) {
+            if (isActionableFloatMutableArraySpeculation(m_graph[child1].prediction())) {
                 fixDoubleEdge(2);
                 break;
             }
@@ -368,7 +371,7 @@ private:
     void fixDoubleEdge(unsigned childIndex)
     {
         Node& source = m_graph[m_compileIndex];
-        Edge& edge = source.children.child(childIndex);
+        Edge& edge = m_graph.child(source, childIndex);
         
         if (!m_graph[edge].shouldSpeculateInteger()) {
             edge.setUseKind(DoubleUse);

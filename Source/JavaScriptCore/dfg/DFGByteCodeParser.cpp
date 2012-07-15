@@ -2152,7 +2152,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex property = get(currentInstruction[2].u.operand);
             NodeIndex value = get(currentInstruction[3].u.operand);
 
-            addToGraph(PutByVal, base, property, value);
+            addVarArgChild(base);
+            addVarArgChild(property);
+            addVarArgChild(value);
+            addToGraph(Node::VarArg, PutByVal, OpInfo(0), OpInfo(0));
 
             NEXT_OPCODE(op_put_by_val);
         }

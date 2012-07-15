@@ -463,26 +463,35 @@ public:
     
     bool byValIsPure(Node& node)
     {
-        if (!at(node.child2()).shouldSpeculateInteger())
-            return false;
-        SpeculatedType prediction = at(node.child1()).prediction();
         switch (node.op()) {
-        case PutByVal:
+        case PutByVal: {
+            if (!at(varArgChild(node, 1)).shouldSpeculateInteger())
+                return false;
+            SpeculatedType prediction = at(varArgChild(node, 0)).prediction();
             if (!isActionableMutableArraySpeculation(prediction))
                 return false;
             if (isArraySpeculation(prediction))
                 return false;
             return true;
+        }
             
-        case PutByValAlias:
+        case PutByValAlias: {
+            if (!at(varArgChild(node, 1)).shouldSpeculateInteger())
+                return false;
+            SpeculatedType prediction = at(varArgChild(node, 0)).prediction();
             if (!isActionableMutableArraySpeculation(prediction))
                 return false;
             return true;
+        }
             
-        case GetByVal:
+        case GetByVal: {
+            if (!at(node.child2()).shouldSpeculateInteger())
+                return false;
+            SpeculatedType prediction = at(node.child1()).prediction();
             if (!isActionableArraySpeculation(prediction))
                 return false;
             return true;
+        }
             
         default:
             ASSERT_NOT_REACHED();
@@ -524,17 +533,29 @@ public:
     
     void resetExitStates();
     
+    unsigned varArgNumChildren(Node& node)
+    {
+        ASSERT(node.flags() & NodeHasVarArgs);
+        return node.numChildren();
+    }
+    
     unsigned numChildren(Node& node)
     {
         if (node.flags() & NodeHasVarArgs)
-            return node.numChildren();
+            return varArgNumChildren(node);
         return AdjacencyList::Size;
     }
     
-    Edge child(Node& node, unsigned index)
+    Edge& varArgChild(Node& node, unsigned index)
+    {
+        ASSERT(node.flags() & NodeHasVarArgs);
+        return m_varArgChildren[node.firstChild() + index];
+    }
+    
+    Edge& child(Node& node, unsigned index)
     {
         if (node.flags() & NodeHasVarArgs)
-            return m_varArgChildren[node.firstChild() + index];
+            return varArgChild(node, index);
         return node.children.child(index);
     }
     

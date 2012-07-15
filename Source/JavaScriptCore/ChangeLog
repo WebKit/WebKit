@@ -1,5 +1,45 @@
 2012-07-14  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG PutByVal opcodes should accept more than 3 operands
+        https://bugs.webkit.org/show_bug.cgi?id=91332
+
+        Reviewed by Oliver Hunt.
+
+        Turned PutByVal/PutByValAlias into var-arg nodes, so that we can give them
+        4 or more operands in the future.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getByValLoadElimination):
+        (JSC::DFG::CSEPhase::getIndexedPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixDoubleEdge):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::byValIsPure):
+        (JSC::DFG::Graph::varArgNumChildren):
+        (Graph):
+        (JSC::DFG::Graph::numChildren):
+        (JSC::DFG::Graph::varArgChild):
+        (JSC::DFG::Graph::child):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2012-07-14  Filip Pizlo  <fpizlo@apple.com>
+
         Rationalize and optimize storage allocation
         https://bugs.webkit.org/show_bug.cgi?id=91303
 
