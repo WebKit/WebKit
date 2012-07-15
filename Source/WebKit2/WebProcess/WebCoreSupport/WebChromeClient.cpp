@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -694,6 +694,15 @@ void WebChromeClient::scheduleCompositingLayerSync()
         m_page->drawingArea()->scheduleCompositingLayerSync();
 }
 
+#endif
+
+#if PLATFORM(WIN) && USE(AVFOUNDATION)
+WebCore::GraphicsDeviceAdapter* WebChromeClient::graphicsDeviceAdapter() const
+{
+    if (!m_page->drawingArea())
+        return 0;
+    return m_page->drawingArea()->layerTreeHost()->graphicsDeviceAdapter();
+}
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

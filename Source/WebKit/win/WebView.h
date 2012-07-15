@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -55,6 +55,9 @@ namespace WebCore {
     class CACFLayerTreeHost;
 #endif
     class FullScreenController;
+#if PLATFORM(WIN) && USE(AVFOUNDATION)
+    struct GraphicsDeviceAdapter;
+#endif
 }
 
 namespace WebCore {
@@ -945,6 +948,10 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     void flushPendingGraphicsLayerChangesSoon();
     void setRootChildLayer(WebCore::GraphicsLayer*);
+#endif
+
+#if PLATFORM(WIN) && USE(AVFOUNDATION)
+    WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const;
 #endif
 
     void enterFullscreenForNode(WebCore::Node*);

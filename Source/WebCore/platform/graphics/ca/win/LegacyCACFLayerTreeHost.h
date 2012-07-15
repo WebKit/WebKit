@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,10 @@ private:
     virtual void contextDidChange();
     virtual void paint();
     virtual void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
+
+#if USE(AVFOUNDATION)
+    virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const OVERRIDE { return 0; }
+#endif
 
     Timer<LegacyCACFLayerTreeHost> m_renderTimer;
     COMPtr<IDirect3DDevice9> m_d3dDevice;

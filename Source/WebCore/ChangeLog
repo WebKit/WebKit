@@ -1,3 +1,47 @@
+2012-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Enable AVCF hardware video decoding
+        https://bugs.webkit.org/show_bug.cgi?id=90015
+        <rdar://problem/10770317>
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore):
+        (WebCore::HTMLMediaElement::mediaPlayerGraphicsDeviceAdapter): New, return the client's graphics 
+            device adapter.
+        * html/HTMLMediaElement.h:
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::graphicsDeviceAdapter): New.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::graphicsDeviceAdapter): New, ask the media element for the graphics
+            device adapter.
+        * platform/graphics/MediaPlayer.h:
+
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h: Soft-link AVCFPlayerSetDirect3DDevice
+            and AVCFPlayerEnableHardwareAcceleratedVideoDecoderKey.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: 
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createAVAssetForURL): Pass the current d3d9
+            device interface to the AVFWrapper.
+        (WebCore::AVFWrapper::createAssetForURL): If the d3d9 device implements IDirect3DDevice9Ex,
+            tell the AVAsset to enable hardware video decoding.
+        (WebCore::AVFWrapper::createPlayer): Pass the d3d9 device to the player if it implements IDirect3DDevice9Ex.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.h:
+        (WebCore::CACFLayerTreeHost::graphicsDeviceAdapter): New, default implementation.
+
+        * platform/graphics/ca/win/LegacyCACFLayerTreeHost.h:
+        (WebCore::LegacyCACFLayerTreeHost::graphicsDeviceAdapter): New, default implementation.
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        (WebCore::WKCACFViewLayerTreeHost::graphicsDeviceAdapter): New.
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.h:
+
+        * platform/win/SoftLinking.h: Define SOFT_LINK_DLL_IMPORT_OPTIONAL, SOFT_LINK_LOADED_LIBRARY,
+            and SOFT_LINK_VARIABLE_DLL_IMPORT_OPTIONAL.
+
 2012-07-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Chromium Mac build failure after r122670.

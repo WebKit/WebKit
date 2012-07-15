@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple, Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple, Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
@@ -80,6 +80,10 @@ namespace WebCore {
 #if ENABLE(INPUT_TYPE_COLOR)
     class ColorChooser;
     class ColorChooserClient;
+#endif
+
+#if PLATFORM(WIN) && USE(AVFOUNDATION)
+    struct GraphicsDeviceAdapter;
 #endif
 
     class ChromeClient {
@@ -275,6 +279,10 @@ namespace WebCore {
 
         // Returns a bitfield indicating conditions that can trigger the compositor.
         virtual CompositingTriggerFlags allowedCompositingTriggers() const { return static_cast<CompositingTriggerFlags>(AllTriggers); }
+#endif
+
+#if PLATFORM(WIN) && USE(AVFOUNDATION)
+        virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
 #endif
 
         virtual bool supportsFullscreenForNode(const Node*) { return false; }

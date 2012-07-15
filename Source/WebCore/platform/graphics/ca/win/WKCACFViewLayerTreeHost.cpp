@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,6 +61,7 @@ SOFT_LINK(WebKitQuartzCoreAdditions, WKCACFViewSetContextDidChangeCallback, void
 SOFT_LINK(WebKitQuartzCoreAdditions, WKCACFViewGetLastCommitTime, CFTimeInterval, __cdecl, (WKCACFViewRef view), (view))
 SOFT_LINK(WebKitQuartzCoreAdditions, WKCACFViewSetContextUserData, void, __cdecl, (WKCACFViewRef view, void* userData), (view, userData))
 SOFT_LINK_OPTIONAL(WebKitQuartzCoreAdditions, WKCACFViewSetShouldInvertColors, void, _cdecl, (WKCACFViewRef view, bool shouldInvertColors))
+SOFT_LINK_OPTIONAL(WebKitQuartzCoreAdditions, WKCACFViewGetD3DDevice9, IDirect3DDevice9*, _cdecl, (WKCACFViewRef view))
 
 PassRefPtr<WKCACFViewLayerTreeHost> WKCACFViewLayerTreeHost::create()
 {
@@ -174,6 +175,16 @@ void WKCACFViewLayerTreeHost::setShouldInvertColors(bool shouldInvertColors)
     if (WKCACFViewSetShouldInvertColorsPtr())
         WKCACFViewSetShouldInvertColorsPtr()(m_view.get(), shouldInvertColors);
 }
+
+#if USE(AVFOUNDATION)
+GraphicsDeviceAdapter* WKCACFViewLayerTreeHost::graphicsDeviceAdapter() const
+{
+    if (!WKCACFViewGetD3DDevice9Ptr())
+        return 0;
+
+    return reinterpret_cast<GraphicsDeviceAdapter*>(WKCACFViewGetD3DDevice9Ptr()(m_view.get()));
+}
+#endif
 
 } // namespace WebCore
 

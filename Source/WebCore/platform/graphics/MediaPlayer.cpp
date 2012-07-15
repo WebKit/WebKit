@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -208,7 +208,7 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
         enginesQueried = true;
 
 #if USE(AVFOUNDATION)
-        if (Settings::isAVFoundationEnabled()) {
+        if (1 /* @@Settings::isAVFoundationEnabled() @@ */) {
 #if PLATFORM(MAC)
             MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
 #elif PLATFORM(WIN)
@@ -1067,6 +1067,16 @@ String MediaPlayer::userAgent() const
     
     return m_mediaPlayerClient->mediaPlayerUserAgent();
 }
+
+#if PLATFORM(WIN) && USE(AVFOUNDATION)
+GraphicsDeviceAdapter* MediaPlayer::graphicsDeviceAdapter() const
+{
+    if (!m_mediaPlayerClient)
+        return 0;
+    
+    return m_mediaPlayerClient->mediaPlayerGraphicsDeviceAdapter(this);
+}
+#endif
 
 }
 

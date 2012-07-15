@@ -49,6 +49,10 @@ public:
     static PassRefPtr<LayerTreeHostCAWin> create(WebPage*);
     virtual ~LayerTreeHostCAWin();
 
+#if USE(AVFOUNDATION)
+    virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const OVERRIDE;
+#endif
+
 private:
     explicit LayerTreeHostCAWin(WebPage*);
 
