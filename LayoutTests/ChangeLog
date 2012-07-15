@@ -1,3 +1,13 @@
+2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip css2.1/20110323/vertical-align-boxes-001.htm
+        https://bugs.webkit.org/show_bug.cgi?id=91340
+
+        Unreviewed EFL gardening. Skipping new test introduced in
+        r122663 which is failing on EFL port.
+
+        * platform/efl/TestExpectations:
+
 2012-07-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Accessing the last item in children should be a constant time operation

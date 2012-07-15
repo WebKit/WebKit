@@ -722,6 +722,9 @@ BUGWK88031 : fast/multicol/span/generated-child-split-flow-crash.html = TEXT
 // Flexbox test failing on EFL.
 BUGWK88984 : css3/flexbox/flexitem.html = TEXT
 
+// New test introduced in r122663 failing on GTK and Qt as well
+BUGWK91339 : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
+
 // Failing after r121121 on both GTK and EFL
 BUGWK89845 : fast/forms/input-set-composition-scroll.html = TEXT
 
