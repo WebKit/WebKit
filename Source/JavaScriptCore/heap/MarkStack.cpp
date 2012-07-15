@@ -515,9 +515,8 @@ void MarkStack::mergeOpaqueRoots()
 
 void SlotVisitor::startCopying()
 {
-    ASSERT(!m_copyBlock);
-    m_copyBlock = m_shared.m_copiedSpace->allocateBlockForCopyingPhase();
-}    
+    ASSERT(!m_copiedAllocator.isValid());
+}
 
 void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
 {
@@ -528,18 +527,17 @@ void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
 
     if (m_shared.m_copiedSpace->isPinned(ptr))
         return 0;
+    
+    void* result = 0; // Compilers don't realize that this will be assigned.
+    if (m_copiedAllocator.tryAllocate(bytes, &result))
+        return result;
+    
+    m_shared.m_copiedSpace->doneFillingBlock(m_copiedAllocator.resetCurrentBlock());
+    m_copiedAllocator.setCurrentBlock(m_shared.m_copiedSpace->allocateBlockForCopyingPhase());
 
-    // The only time it's possible to have a null copy block is if we have just started copying.
-    if (!m_copyBlock)
-        startCopying();
-
-    if (!CopiedSpace::fitsInBlock(m_copyBlock, bytes)) {
-        // We don't need to lock across these two calls because the master thread won't 
-        // call doneCopying() because this thread is considered active.
-        m_shared.m_copiedSpace->doneFillingBlock(m_copyBlock);
-        m_copyBlock = m_shared.m_copiedSpace->allocateBlockForCopyingPhase();
-    }
-    return CopiedSpace::allocateFromBlock(m_copyBlock, bytes);
+    CheckedBoolean didSucceed = m_copiedAllocator.tryAllocate(bytes, &result);
+    ASSERT(didSucceed);
+    return result;
 }
 
 ALWAYS_INLINE bool JSString::tryHashConstLock()
@@ -639,12 +637,10 @@ void SlotVisitor::copyAndAppend(void** ptr, size_t bytes, JSValue* values, unsig
     
 void SlotVisitor::doneCopying()
 {
-    if (!m_copyBlock)
+    if (!m_copiedAllocator.isValid())
         return;
 
-    m_shared.m_copiedSpace->doneFillingBlock(m_copyBlock);
-
-    m_copyBlock = 0;
+    m_shared.m_copiedSpace->doneFillingBlock(m_copiedAllocator.resetCurrentBlock());
 }
 
 void SlotVisitor::harvestWeakReferences()

@@ -1,3 +1,123 @@
+2012-07-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize and optimize storage allocation
+        https://bugs.webkit.org/show_bug.cgi?id=91303
+
+        Reviewed by Oliver Hunt.
+
+        This implements a backwards bump allocator for copied space storage
+        allocation, shown in pseudo-code below:
+        
+            pointer bump(size) {
+                pointer tmp = allocator->remaining;
+                tmp -= size;
+                if (tmp < 0)
+                    fail;
+                allocator->remaining = tmp;
+                return allocator->payloadEnd - tmp - size;
+            }
+
+        The advantage of this allocator is that it:
+        
+        - Only requires one comparison in the common case where size is known to
+          not be huge, and this comparison can be done by checking the sign bit
+          of the subtraction.
+        
+        - Can be implemented even when only one register is available. This
+          register is reused for both temporary storage during allocation and
+          for the result.
+        
+        - Preserves the behavior that memory in a block is filled in from lowest
+          address to highest address, which allows for a cheap reallocation fast
+          path.
+        
+        - Is resilient against the block used for allocation being the last one
+          in virtual memory, thereby otherwise leading to the risk of overflow
+          in the bump pointer, despite only doing one branch.
+        
+        In order to implement this allocator using the smallest possible chunk
+        of code, I refactored the copied space code so that all of the allocation
+        logic is in CopiedAllocator, and all of the state is in either
+        CopiedBlock or CopiedAllocator. This should make changing the allocation
+        fast path easier in the future.
+        
+        In order to do this, I needed to add some new assembler support,
+        particularly for various forms of add(address, register) and negPtr().
+        
+        This is performance neutral. The purpose of this change is to facilitate
+        further inlining of storage allocation without having to reserve
+        additional registers or emit too much code.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::addPtr):
+        (MacroAssembler):
+        (JSC::MacroAssembler::negPtr):
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::add32):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::add32):
+        (MacroAssemblerX86):
+        * assembler/MacroAssemblerX86_64.h:
+        (MacroAssemblerX86_64):
+        (JSC::MacroAssemblerX86_64::addPtr):
+        (JSC::MacroAssemblerX86_64::negPtr):
+        * assembler/X86Assembler.h:
+        (X86Assembler):
+        (JSC::X86Assembler::addl_mr):
+        (JSC::X86Assembler::addq_mr):
+        (JSC::X86Assembler::negq_r):
+        * heap/CopiedAllocator.h:
+        (CopiedAllocator):
+        (JSC::CopiedAllocator::isValid):
+        (JSC::CopiedAllocator::CopiedAllocator):
+        (JSC::CopiedAllocator::tryAllocate):
+        (JSC):
+        (JSC::CopiedAllocator::tryReallocate):
+        (JSC::CopiedAllocator::forceAllocate):
+        (JSC::CopiedAllocator::resetCurrentBlock):
+        (JSC::CopiedAllocator::setCurrentBlock):
+        (JSC::CopiedAllocator::currentCapacity):
+        * heap/CopiedBlock.h:
+        (CopiedBlock):
+        (JSC::CopiedBlock::create):
+        (JSC::CopiedBlock::zeroFillWilderness):
+        (JSC::CopiedBlock::CopiedBlock):
+        (JSC::CopiedBlock::payloadEnd):
+        (JSC):
+        (JSC::CopiedBlock::payloadCapacity):
+        (JSC::CopiedBlock::data):
+        (JSC::CopiedBlock::dataEnd):
+        (JSC::CopiedBlock::dataSize):
+        (JSC::CopiedBlock::wilderness):
+        (JSC::CopiedBlock::wildernessEnd):
+        (JSC::CopiedBlock::wildernessSize):
+        (JSC::CopiedBlock::size):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryAllocateSlowCase):
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::tryReallocate):
+        (JSC::CopiedSpace::doneFillingBlock):
+        (JSC::CopiedSpace::doneCopying):
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::startedCopying):
+        (JSC::CopiedSpace::allocateBlockForCopyingPhase):
+        (JSC::CopiedSpace::allocateBlock):
+        (JSC::CopiedSpace::tryAllocate):
+        (JSC):
+        * heap/MarkStack.cpp:
+        (JSC::SlotVisitor::startCopying):
+        (JSC::SlotVisitor::allocateNewSpace):
+        (JSC::SlotVisitor::doneCopying):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::SlotVisitor):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicStorage):
+        (JSC::JIT::emitAllocateJSArray):
+
 2012-07-13  Mark Lam  <mark.lam@apple.com>
 
         OfflineASM Pretty printing and commenting enhancements.

@@ -27,6 +27,8 @@
 #define CopiedAllocator_h
 
 #include "CopiedBlock.h"
+#include <wtf/CheckedBoolean.h>
+#include <wtf/DataLog.h>
 
 namespace JSC {
 
@@ -34,65 +36,109 @@ class CopiedAllocator {
     friend class JIT;
 public:
     CopiedAllocator();
-    void* allocate(size_t);
-    bool fitsInCurrentBlock(size_t);
-    bool wasLastAllocation(void*, size_t);
-    void startedCopying();
-    void resetCurrentBlock(CopiedBlock*);
+    
+    CheckedBoolean tryAllocate(size_t bytes, void** outPtr);
+    CheckedBoolean tryReallocate(void *oldPtr, size_t oldBytes, size_t newBytes);
+    void* forceAllocate(size_t bytes);
+    CopiedBlock* resetCurrentBlock();
+    void setCurrentBlock(CopiedBlock*);
     size_t currentCapacity();
+    
+    bool isValid() { return !!m_currentBlock; }
 
 private:
     CopiedBlock* currentBlock() { return m_currentBlock; }
 
-    char* m_currentOffset;
+    size_t m_currentRemaining;
+    char* m_currentPayloadEnd;
     CopiedBlock* m_currentBlock; 
 };
 
 inline CopiedAllocator::CopiedAllocator()
-    : m_currentOffset(0)
+    : m_currentRemaining(0)
+    , m_currentPayloadEnd(0)
     , m_currentBlock(0)
 {
 }
 
-inline void* CopiedAllocator::allocate(size_t bytes)
+inline CheckedBoolean CopiedAllocator::tryAllocate(size_t bytes, void** outPtr)
 {
-    ASSERT(m_currentOffset);
     ASSERT(is8ByteAligned(reinterpret_cast<void*>(bytes)));
-    ASSERT(fitsInCurrentBlock(bytes));
-    void* ptr = static_cast<void*>(m_currentOffset);
-    m_currentOffset += bytes;
-    ASSERT(is8ByteAligned(ptr));
-    return ptr;
+    
+    // This code is written in a gratuitously low-level manner, in order to
+    // serve as a kind of template for what the JIT would do. Note that the
+    // way it's written it ought to only require one register, which doubles
+    // as the result, provided that the compiler does a minimal amount of
+    // control flow simplification and the bytes argument is a constant.
+    
+    size_t currentRemaining = m_currentRemaining;
+    if (bytes > currentRemaining)
+        return false;
+    currentRemaining -= bytes;
+    m_currentRemaining = currentRemaining;
+    *outPtr = m_currentPayloadEnd - currentRemaining - bytes;
+
+    ASSERT(is8ByteAligned(*outPtr));
+
+    return true;
 }
 
-inline bool CopiedAllocator::fitsInCurrentBlock(size_t bytes)
+inline CheckedBoolean CopiedAllocator::tryReallocate(
+    void* oldPtr, size_t oldBytes, size_t newBytes)
 {
-    return m_currentOffset + bytes < reinterpret_cast<char*>(m_currentBlock) + HeapBlock::s_blockSize && m_currentOffset + bytes > m_currentOffset;
+    ASSERT(is8ByteAligned(oldPtr));
+    ASSERT(is8ByteAligned(reinterpret_cast<void*>(oldBytes)));
+    ASSERT(is8ByteAligned(reinterpret_cast<void*>(newBytes)));
+    
+    ASSERT(newBytes > oldBytes);
+    
+    size_t additionalBytes = newBytes - oldBytes;
+    
+    size_t currentRemaining = m_currentRemaining;
+    if (m_currentPayloadEnd - currentRemaining - oldBytes != static_cast<char*>(oldPtr))
+        return false;
+    
+    if (additionalBytes > currentRemaining)
+        return false;
+    
+    m_currentRemaining = currentRemaining - additionalBytes;
+    
+    return true;
 }
 
-inline bool CopiedAllocator::wasLastAllocation(void* ptr, size_t size)
+inline void* CopiedAllocator::forceAllocate(size_t bytes)
 {
-    return static_cast<char*>(ptr) + size == m_currentOffset && ptr > m_currentBlock && ptr < reinterpret_cast<char*>(m_currentBlock) + HeapBlock::s_blockSize;
+    void* result = 0; // Needed because compilers don't realize this will always be assigned.
+    CheckedBoolean didSucceed = tryAllocate(bytes, &result);
+    ASSERT(didSucceed);
+    return result;
 }
 
-inline void CopiedAllocator::startedCopying()
+inline CopiedBlock* CopiedAllocator::resetCurrentBlock()
 {
-    if (m_currentBlock)
-        m_currentBlock->m_offset = static_cast<void*>(m_currentOffset);
-    m_currentOffset = 0;
-    m_currentBlock = 0;
+    CopiedBlock* result = m_currentBlock;
+    if (result) {
+        result->m_remaining = m_currentRemaining;
+        m_currentBlock = 0;
+        m_currentRemaining = 0;
+        m_currentPayloadEnd = 0;
+    }
+    return result;
 }
 
-inline void CopiedAllocator::resetCurrentBlock(CopiedBlock* newBlock)
+inline void CopiedAllocator::setCurrentBlock(CopiedBlock* newBlock)
 {
-    if (m_currentBlock)
-        m_currentBlock->m_offset = static_cast<void*>(m_currentOffset);
+    ASSERT(!m_currentBlock);
     m_currentBlock = newBlock;
-    m_currentOffset = static_cast<char*>(newBlock->m_offset);
+    ASSERT(newBlock);
+    m_currentRemaining = newBlock->m_remaining;
+    m_currentPayloadEnd = newBlock->payloadEnd();
 }
 
 inline size_t CopiedAllocator::currentCapacity()
 {
+    if (!m_currentBlock)
+        return 0;
     return m_currentBlock->capacity();
 }
 

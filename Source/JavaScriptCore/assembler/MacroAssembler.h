@@ -280,6 +280,16 @@ public:
     // On 32-bit platforms (i.e. x86), these methods directly map onto their 32-bit equivalents.
     // FIXME: should this use a test for 32-bitness instead of this specific exception?
 #if !CPU(X86_64)
+    void addPtr(Address src, RegisterID dest)
+    {
+        add32(src, dest);
+    }
+
+    void addPtr(AbsoluteAddress src, RegisterID dest)
+    {
+        add32(src, dest);
+    }
+
     void addPtr(RegisterID src, RegisterID dest)
     {
         add32(src, dest);
@@ -313,6 +323,11 @@ public:
     void andPtr(TrustedImm32 imm, RegisterID srcDest)
     {
         and32(imm, srcDest);
+    }
+    
+    void negPtr(RegisterID dest)
+    {
+        neg32(dest);
     }
 
     void orPtr(RegisterID src, RegisterID dest)

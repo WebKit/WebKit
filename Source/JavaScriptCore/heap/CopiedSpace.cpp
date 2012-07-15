@@ -71,8 +71,7 @@ CheckedBoolean CopiedSpace::tryAllocateSlowCase(size_t bytes, void** outPtr)
 
     allocateBlock();
 
-    *outPtr = m_allocator.allocate(bytes);
-    ASSERT(*outPtr);
+    *outPtr = m_allocator.forceAllocate(bytes);
     return true;
 }
 
@@ -93,7 +92,10 @@ CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
     m_blockFilter.add(reinterpret_cast<Bits>(block));
     m_blockSet.add(block);
     
-    *outPtr = allocateFromBlock(block, bytes);
+    CopiedAllocator allocator;
+    allocator.setCurrentBlock(block);
+    *outPtr = allocator.forceAllocate(bytes);
+    allocator.resetCurrentBlock();
 
     m_heap->didAllocate(blockSize);
 
@@ -107,17 +109,12 @@ CheckedBoolean CopiedSpace::tryReallocate(void** ptr, size_t oldSize, size_t new
     
     void* oldPtr = *ptr;
     ASSERT(!m_heap->globalData()->isInitializingObject());
-
+    
     if (isOversize(oldSize) || isOversize(newSize))
         return tryReallocateOversize(ptr, oldSize, newSize);
-
-    if (m_allocator.wasLastAllocation(oldPtr, oldSize)) {
-        size_t delta = newSize - oldSize;
-        if (m_allocator.fitsInCurrentBlock(delta)) {
-            (void)m_allocator.allocate(delta);
-            return true;
-        }
-    }
+    
+    if (m_allocator.tryReallocate(oldPtr, oldSize, newSize))
+        return true;
 
     void* result = 0;
     if (!tryAllocate(newSize, &result)) {
@@ -157,16 +154,17 @@ CheckedBoolean CopiedSpace::tryReallocateOversize(void** ptr, size_t oldSize, si
 
 void CopiedSpace::doneFillingBlock(CopiedBlock* block)
 {
-    ASSERT(block);
-    ASSERT(block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
     ASSERT(m_inCopyingPhase);
+    
+    if (!block)
+        return;
 
-    if (block->m_offset == block->payload()) {
+    if (!block->dataSize()) {
         recycleBlock(block);
         return;
     }
 
-    block->zeroFillToEnd();
+    block->zeroFillWilderness();
 
     {
         SpinLockHolder locker(&m_toSpaceLock);
@@ -226,7 +224,7 @@ void CopiedSpace::doneCopying()
     if (!m_toSpace->head())
         allocateBlock();
     else
-        m_allocator.resetCurrentBlock(static_cast<CopiedBlock*>(m_toSpace->head()));
+        m_allocator.setCurrentBlock(static_cast<CopiedBlock*>(m_toSpace->head()));
 }
 
 size_t CopiedSpace::size()

@@ -157,6 +157,12 @@ public:
     {
         add32(imm, dest, dest);
     }
+    
+    void add32(AbsoluteAddress src, RegisterID dest)
+    {
+        load32(src.m_ptr, dataTempRegister);
+        add32(dataTempRegister, dest);
+    }
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {

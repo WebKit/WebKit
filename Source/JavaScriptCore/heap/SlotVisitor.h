@@ -70,12 +70,11 @@ private:
 
     void donateKnownParallel();
 
-    CopiedBlock* m_copyBlock;
+    CopiedAllocator m_copiedAllocator;
 };
 
 inline SlotVisitor::SlotVisitor(MarkStackThreadSharedData& shared)
     : MarkStack(shared)
-    , m_copyBlock(0)
 {
 }
 

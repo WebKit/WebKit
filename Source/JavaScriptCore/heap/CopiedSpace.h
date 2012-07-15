@@ -77,9 +77,7 @@ public:
     static CopiedBlock* blockFor(void*);
 
 private:
-    static void* allocateFromBlock(CopiedBlock*, size_t);
     static bool isOversize(size_t);
-    static bool fitsInBlock(CopiedBlock*, size_t);
     static CopiedBlock* oversizeBlockFor(void* ptr);
 
     CheckedBoolean tryAllocateSlowCase(size_t, void**);

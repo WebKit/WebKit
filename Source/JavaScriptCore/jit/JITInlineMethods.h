@@ -437,25 +437,16 @@ template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, Re
     emitAllocateBasicJSObject<JSFinalObject, false, T>(structure, result, scratch);
 }
 
-inline void JIT::emitAllocateBasicStorage(size_t size, RegisterID result, RegisterID storagePtr)
+inline void JIT::emitAllocateBasicStorage(size_t size, RegisterID result)
 {
     CopiedAllocator* allocator = &m_globalData->heap.storageAllocator();
 
-    // FIXME: We need to check for wrap-around.
-    // Check to make sure that the allocation will fit in the current block.
-    loadPtr(&allocator->m_currentOffset, result);
-    addPtr(TrustedImm32(size), result);
-    loadPtr(&allocator->m_currentBlock, storagePtr);
-    addPtr(TrustedImm32(HeapBlock::s_blockSize), storagePtr);
-    addSlowCase(branchPtr(AboveOrEqual, result, storagePtr));
-
-    // Load the original offset.
-    loadPtr(&allocator->m_currentOffset, result);
-
-    // Bump the pointer forward.
-    move(result, storagePtr);
-    addPtr(TrustedImm32(size), storagePtr);
-    storePtr(storagePtr, &allocator->m_currentOffset);
+    loadPtr(&allocator->m_currentRemaining, result);
+    addSlowCase(branchSubPtr(Signed, TrustedImm32(size), result));
+    storePtr(result, &allocator->m_currentRemaining);
+    negPtr(result);
+    addPtr(AbsoluteAddress(&allocator->m_currentPayloadEnd), result);
+    subPtr(TrustedImm32(size), result);
 }
 
 inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, RegisterID cellResult, RegisterID storageResult, RegisterID storagePtr)
@@ -465,7 +456,7 @@ inline void JIT::emitAllocateJSArray(unsigned valuesRegister, unsigned length, R
 
     // We allocate the backing store first to ensure that garbage collection 
     // doesn't happen during JSArray initialization.
-    emitAllocateBasicStorage(initialStorage, storageResult, storagePtr);
+    emitAllocateBasicStorage(initialStorage, storageResult);
 
     // Allocate the cell for the array.
     emitAllocateBasicJSObject<JSArray, false>(TrustedImmPtr(m_codeBlock->globalObject()->arrayStructure()), cellResult, storagePtr);
