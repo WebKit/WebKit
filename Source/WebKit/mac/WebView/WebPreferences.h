@@ -64,7 +64,7 @@ enum {
 };
 typedef NSUInteger WebCacheModel;
 
-@class WebPreferencesPrivate;
+typedef struct WebPreferencesPrivate WebPreferencesPrivate;
 
 extern NSString *WebPreferencesChangedNotification;
 

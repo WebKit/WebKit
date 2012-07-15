@@ -1,3 +1,38 @@
+2012-07-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make WebPreferencesPrivate a simple struct
+        https://bugs.webkit.org/show_bug.cgi?id=91330
+
+        Reviewed by Filip Pizlo.
+
+        To avoid taking time creating a new Objective-C object for WebPreferencesPrivate, we can just make
+        it a simple struct.
+
+        * WebView/WebPreferences.h:
+        * WebView/WebPreferences.mm:
+        (WebPreferencesPrivate):
+        (WebPreferencesPrivate::WebPreferencesPrivate):
+        Replace the Objective-C WebPreferencesPrivate by a struct.
+        Remove IBCreatorID from the object as it is unused.
+        Use RetainPtr for the Objective-C attribute to avoid tracking their memory manually.
+
+        (-[WebPreferences initWithIdentifier:]):
+        Change the order of the initialization to avoid allocating anyting if a WebPreferences exists
+        for the identifier.
+        Both [NSObject init] and WebPreferencesPrivate allocation are moved after the fast path.
+
+        (-[WebPreferences initWithCoder:]):
+        (-[WebPreferences encodeWithCoder:]):
+        (-[WebPreferences dealloc]):
+        (-[WebPreferences identifier]):
+        (-[WebPreferences _valueForKey:]):
+        (-[WebPreferences _setStringValue:forKey:]):
+        (-[WebPreferences _setIntegerValue:forKey:]):
+        (-[WebPreferences _setFloatValue:forKey:]):
+        (-[WebPreferences _setBoolValue:forKey:]):
+        (-[WebPreferences _setLongLongValue:forKey:]):
+        (-[WebPreferences _setUnsignedLongLongValue:forKey:]):
+
 2012-07-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [Mac] Do not try to update the cache model for every WebPreferences change

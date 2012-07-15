@@ -41,6 +41,7 @@
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/CookieStorageCFNet.h>
 #import <WebCore/ResourceHandle.h>
+#import <WTF/RetainPtr.h>
 
 using namespace WebCore;
 
@@ -49,7 +50,7 @@ NSString *WebPreferencesRemovedNotification = @"WebPreferencesRemovedNotificatio
 NSString *WebPreferencesChangedInternalNotification = @"WebPreferencesChangedInternalNotification";
 NSString *WebPreferencesCacheModelChangedInternalNotification = @"WebPreferencesCacheModelChangedInternalNotification";
 
-#define KEY(x) (_private->identifier ? [_private->identifier stringByAppendingString:(x)] : (x))
+#define KEY(x) (_private->identifier ? [_private->identifier.get() stringByAppendingString:(x)] : (x))
 
 enum { WebPreferencesVersion = 1 };
 
@@ -142,28 +143,6 @@ static WebCacheModel cacheModelForMainBundle(void)
     return cacheModel;
 }
 
-@interface WebPreferencesPrivate : NSObject
-{
-@public
-    NSMutableDictionary *values;
-    NSString *identifier;
-    NSString *IBCreatorID;
-    BOOL autosaves;
-    BOOL automaticallyDetectsCacheModel;
-    unsigned numWebViews;
-}
-@end
-
-@implementation WebPreferencesPrivate
-- (void)dealloc
-{
-    [values release];
-    [identifier release];
-    [IBCreatorID release];
-    [super dealloc];
-}
-@end
-
 @interface WebPreferences ()
 - (void)_postCacheModelChangedNotification;
 @end
@@ -172,6 +151,23 @@ static WebCacheModel cacheModelForMainBundle(void)
 + (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key;
 + (NSString *)_IBCreatorID;
 @end
+
+struct WebPreferencesPrivate
+{
+public:
+    WebPreferencesPrivate()
+    : autosaves(NO)
+    , automaticallyDetectsCacheModel(NO)
+    , numWebViews(0)
+    {
+    }
+
+    RetainPtr<NSMutableDictionary> values;
+    RetainPtr<NSString> identifier;
+    BOOL autosaves;
+    BOOL automaticallyDetectsCacheModel;
+    unsigned numWebViews;
+};
 
 @interface WebPreferences (WebForwardDeclarations)
 // This pseudo-category is needed so these methods can be used from within other category implementations
@@ -207,24 +203,22 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 - (id)initWithIdentifier:(NSString *)anIdentifier
 {
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _private = [[WebPreferencesPrivate alloc] init];
-    _private->IBCreatorID = [[WebPreferences _IBCreatorID] retain];
-
     WebPreferences *instance = [[self class] _getInstanceForIdentifier:anIdentifier];
-    if (instance){
+    if (instance) {
         [self release];
         return [instance retain];
     }
 
-    _private->values = [[NSMutableDictionary alloc] init];
-    _private->identifier = [anIdentifier copy];
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _private = new WebPreferencesPrivate;
+    _private->values.adoptNS([[NSMutableDictionary alloc] init]);
+    _private->identifier.adoptNS([anIdentifier copy]);
     _private->automaticallyDetectsCacheModel = YES;
 
-    [[self class] _setInstance:self forIdentifier:_private->identifier];
+    [[self class] _setInstance:self forIdentifier:_private->identifier.get()];
 
     [self _postPreferencesChangedNotification];
     [self _postCacheModelChangedNotification];
@@ -238,8 +232,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     if (!self)
         return nil;
 
-    _private = [[WebPreferencesPrivate alloc] init];
-    _private->IBCreatorID = [[WebPreferences _IBCreatorID] retain];
+    _private = new WebPreferencesPrivate;
     _private->automaticallyDetectsCacheModel = YES;
 
     @try {
@@ -258,11 +251,11 @@ static WebCacheModel cacheModelForMainBundle(void)
         }
 
         if ([identifier isKindOfClass:[NSString class]])
-            _private->identifier = [identifier copy];
+            _private->identifier.adoptNS([identifier copy]);
         if ([values isKindOfClass:[NSDictionary class]])
-            _private->values = [values mutableCopy]; // ensure dictionary is mutable
+            _private->values.adoptNS([values mutableCopy]); // ensure dictionary is mutable
 
-        LOG(Encoding, "Identifier = %@, Values = %@\n", _private->identifier, _private->values);
+        LOG(Encoding, "Identifier = %@, Values = %@\n", _private->identifier.get(), _private->values.get());
     } @catch(id) {
         [self release];
         return nil;
@@ -270,12 +263,12 @@ static WebCacheModel cacheModelForMainBundle(void)
 
     // If we load a nib multiple times, or have instances in multiple
     // nibs with the same name, the first guy up wins.
-    WebPreferences *instance = [[self class] _getInstanceForIdentifier:_private->identifier];
+    WebPreferences *instance = [[self class] _getInstanceForIdentifier:_private->identifier.get()];
     if (instance) {
         [self release];
         self = [instance retain];
     } else {
-        [[self class] _setInstance:self forIdentifier:_private->identifier];
+        [[self class] _setInstance:self forIdentifier:_private->identifier.get()];
     }
 
     return self;
@@ -284,15 +277,15 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
     if ([encoder allowsKeyedCoding]){
-        [encoder encodeObject:_private->identifier forKey:@"Identifier"];
-        [encoder encodeObject:_private->values forKey:@"Values"];
-        LOG (Encoding, "Identifier = %@, Values = %@\n", _private->identifier, _private->values);
+        [encoder encodeObject:_private->identifier.get() forKey:@"Identifier"];
+        [encoder encodeObject:_private->values.get() forKey:@"Values"];
+        LOG (Encoding, "Identifier = %@, Values = %@\n", _private->identifier.get(), _private->values.get());
     }
     else {
         int version = WebPreferencesVersion;
         [encoder encodeValueOfObjCType:@encode(int) at:&version];
-        [encoder encodeObject:_private->identifier];
-        [encoder encodeObject:_private->values];
+        [encoder encodeObject:_private->identifier.get()];
+        [encoder encodeObject:_private->values.get()];
     }
 }
 
@@ -418,19 +411,19 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 - (void)dealloc
 {
-    [_private release];
+    delete _private;
     [super dealloc];
 }
 
 - (NSString *)identifier
 {
-    return _private->identifier;
+    return _private->identifier.get();
 }
 
 - (id)_valueForKey:(NSString *)key
 {
     NSString *_key = KEY(key);
-    id o = [_private->values objectForKey:_key];
+    id o = [_private->values.get() objectForKey:_key];
     if (o)
         return o;
     o = [[NSUserDefaults standardUserDefaults] objectForKey:_key];
@@ -450,7 +443,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     if ([[self _stringValueForKey:key] isEqualToString:value])
         return;
     NSString *_key = KEY(key);
-    [_private->values setObject:value forKey:_key];
+    [_private->values.get() setObject:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:value forKey:_key];
     [self _postPreferencesChangedNotification];
@@ -467,7 +460,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     if ([self _integerValueForKey:key] == value)
         return;
     NSString *_key = KEY(key);
-    [_private->values _webkit_setInt:value forKey:_key];
+    [_private->values.get() _webkit_setInt:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setInteger:value forKey:_key];
     [self _postPreferencesChangedNotification];
@@ -484,7 +477,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     if ([self _floatValueForKey:key] == value)
         return;
     NSString *_key = KEY(key);
-    [_private->values _webkit_setFloat:value forKey:_key];
+    [_private->values.get() _webkit_setFloat:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setFloat:value forKey:_key];
     [self _postPreferencesChangedNotification];
@@ -500,7 +493,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     if ([self _boolValueForKey:key] == value)
         return;
     NSString *_key = KEY(key);
-    [_private->values _webkit_setBool:value forKey:_key];
+    [_private->values.get() _webkit_setBool:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
     [self _postPreferencesChangedNotification];
@@ -517,7 +510,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     if ([self _longLongValueForKey:key] == value)
         return;
     NSString *_key = KEY(key);
-    [_private->values _webkit_setLongLong:value forKey:_key];
+    [_private->values.get() _webkit_setLongLong:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithLongLong:value] forKey:_key];
     [self _postPreferencesChangedNotification];
@@ -534,7 +527,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     if ([self _unsignedLongLongValueForKey:key] == value)
         return;
     NSString *_key = KEY(key);
-    [_private->values _webkit_setUnsignedLongLong:value forKey:_key];
+    [_private->values.get() _webkit_setUnsignedLongLong:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedLongLong:value] forKey:_key];
     [self _postPreferencesChangedNotification];
