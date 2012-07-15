@@ -1,3 +1,15 @@
+2012-07-15  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11875795> REGRESSION (tiled drawing): Page’s scroll bars flash with each character you type in a textarea (affects Wikipedia and YouTube)
+        https://bugs.webkit.org/show_bug.cgi?id=91348
+
+        Reviewed by Anders Carlsson.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollPositionChanged): Added an early return if the scroll position
+        did not, in fact, change. This avoids the call to ScrollAnimator::notifyContentAreaScrolled,
+        which is what causes the scroll bars to flash.
+
 2012-07-14  Eric Carlson  <eric.carlson@apple.com>
 
         Enable AVCF hardware video decoding
