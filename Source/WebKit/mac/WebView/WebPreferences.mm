@@ -41,7 +41,7 @@
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/CookieStorageCFNet.h>
 #import <WebCore/ResourceHandle.h>
-#import <WTF/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 
 using namespace WebCore;
 

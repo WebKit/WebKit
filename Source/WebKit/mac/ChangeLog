@@ -1,3 +1,11 @@
+2012-07-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix case sensitive build issue.
+
+        Unreviewed build fix.
+
+        * WebView/WebPreferences.mm:
+
 2012-07-15  Benjamin Poulain  <benjamin@webkit.org>
 
         Make WebPreferencesPrivate a simple struct
