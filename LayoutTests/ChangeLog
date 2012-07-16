@@ -1,5 +1,53 @@
 2012-07-16  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening, updating baselines for MathML Presentation
+        layout tests. The tests are currently marked as flaky so bots should
+        do some more iterations to see if that's still the case or those
+        expectations will be removed.
+
+        * platform/gtk/mathml/presentation/attributes-expected.png:
+        * platform/gtk/mathml/presentation/attributes-expected.txt:
+        * platform/gtk/mathml/presentation/fenced-expected.png:
+        * platform/gtk/mathml/presentation/fenced-expected.txt:
+        * platform/gtk/mathml/presentation/fenced-mi-expected.png:
+        * platform/gtk/mathml/presentation/fenced-mi-expected.txt:
+        * platform/gtk/mathml/presentation/fractions-expected.png:
+        * platform/gtk/mathml/presentation/fractions-expected.txt:
+        * platform/gtk/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/gtk/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/gtk/mathml/presentation/mo-expected.png:
+        * platform/gtk/mathml/presentation/mo-expected.txt:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+        * platform/gtk/mathml/presentation/mroot-pref-width-expected.png: Added.
+        * platform/gtk/mathml/presentation/mroot-pref-width-expected.txt:
+        * platform/gtk/mathml/presentation/over-expected.png:
+        * platform/gtk/mathml/presentation/over-expected.txt:
+        * platform/gtk/mathml/presentation/roots-expected.png:
+        * platform/gtk/mathml/presentation/roots-expected.txt:
+        * platform/gtk/mathml/presentation/row-alignment-expected.png:
+        * platform/gtk/mathml/presentation/row-alignment-expected.txt:
+        * platform/gtk/mathml/presentation/row-expected.png:
+        * platform/gtk/mathml/presentation/row-expected.txt:
+        * platform/gtk/mathml/presentation/style-expected.png:
+        * platform/gtk/mathml/presentation/style-expected.txt:
+        * platform/gtk/mathml/presentation/sub-expected.png:
+        * platform/gtk/mathml/presentation/sub-expected.txt:
+        * platform/gtk/mathml/presentation/subsup-expected.png:
+        * platform/gtk/mathml/presentation/subsup-expected.txt:
+        * platform/gtk/mathml/presentation/sup-expected.png:
+        * platform/gtk/mathml/presentation/sup-expected.txt:
+        * platform/gtk/mathml/presentation/tables-expected.png:
+        * platform/gtk/mathml/presentation/tables-expected.txt:
+        * platform/gtk/mathml/presentation/tokenElements-expected.png:
+        * platform/gtk/mathml/presentation/tokenElements-expected.txt:
+        * platform/gtk/mathml/presentation/under-expected.png:
+        * platform/gtk/mathml/presentation/under-expected.txt:
+        * platform/gtk/mathml/presentation/underover-expected.png:
+        * platform/gtk/mathml/presentation/underover-expected.txt:
+
+2012-07-16  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening, generating baselines for three tests that pass
         but require specific baselines. Also removing their test expectations.
 
