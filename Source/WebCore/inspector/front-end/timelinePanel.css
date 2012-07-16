@@ -595,11 +595,6 @@
     border-color: transparent;
 }
 
-.timeline.timeline-frame-overview .resources-divider {
-    height: 19px;
-    bottom: auto;
-}
-
 .timeline .resources-event-divider.timeline-frame-divider {
     background-color: rgba(180, 180, 180, 0.8);
     border-style: none;
@@ -637,4 +632,26 @@
     top: 90px;
     bottom: 0;
     pointer-events: none;
+}
+
+.timeline-cpu-bars {
+    position: absolute;
+    top: 19px;
+    height: 18px;
+    z-index: 350;
+    width: 100%;
+    overflow: hidden;
+}
+
+.timeline-cpu-bars-label {
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 9px;
+    line-height: 7px;
+    position: absolute;
+    top: 5px;
+    left: 4px;
+    color: rgb(51, 51, 51);
+    background-color: rgba(255, 255, 255, 0.75);
+    z-index: 350;
 }

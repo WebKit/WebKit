@@ -187,6 +187,7 @@ WebInspector.ExperimentsSettings = function()
     this.nativeMemorySnapshots = this._createExperiment("nativeMemorySnapshots", "Native memory profiling");
     this.liveNativeMemoryChart = this._createExperiment("liveNativeMemoryChart", "Live native memory chart");
     this.fileSystemInspection = this._createExperiment("fileSystemInspection", "FileSystem inspection");
+    this.mainThreadMonitoring = this._createExperiment("mainThreadMonitoring", "Show CPU activity in Timeline");
 
     this._cleanUpSetting();
 }

@@ -67,6 +67,11 @@ WebInspector.TimelineGrid.prototype = {
         return this._dividersElement;
     },
 
+    get dividersLabelBarElement()
+    {
+        return this._dividersLabelBarElement;
+    },
+
     get gridHeaderElement()
     {
         return this._gridHeaderElement;
