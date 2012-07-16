@@ -1,3 +1,13 @@
+2012-07-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, generating baselines for three tests that pass
+        but require specific baselines. Also removing their test expectations.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/parser/nested-fragment-parser-crash-expected.txt: Added.
+        * platform/gtk/fast/profiler/dead-time-expected.txt: Added.
+        * platform/gtk/fast/profiler/stop-profiling-after-setTimeout-expected.txt: Added.
+
 2012-07-15  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip the new failing test.

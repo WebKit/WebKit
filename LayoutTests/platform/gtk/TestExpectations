@@ -1085,8 +1085,6 @@ BUGWKGTK : http/tests/download = TEXT
 BUGWK77015 : fast/events/clear-drag-state.html = TEXT
 BUGWK77015 : fast/events/clear-edit-drag-state.html = TEXT
 
-BUGWK77413 : fast/parser/nested-fragment-parser-crash.html = TEXT
-
 // These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 BUGWKGTK SKIP : inspector/styles/vendor-prefixes.html = TEXT
 BUGWKGTK : fast/css/apple-prefix.html = TEXT
@@ -1198,9 +1196,6 @@ BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = TEXT
 BUGWK87088 : fast/js/names.html = TEXT
 
 BUGWKGTK   : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT
-
-BUGWK84102 : fast/profiler/dead-time.html = TEXT
-BUGWK84102 : fast/profiler/stop-profiling-after-setTimeout.html = TEXT
 
 BUGWK87734 : svg/dom/complex-svgView-specification.html = IMAGE
 BUGWK87734 : svg/dom/SVGViewSpec.html = TEXT
