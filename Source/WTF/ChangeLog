@@ -1,3 +1,16 @@
+2012-07-16  Adam Treat  <atreat@rim.com>
+
+        [BlackBerry] Use newer version of platform API to implement callOnMainThread
+        https://bugs.webkit.org/show_bug.cgi?id=91404
+
+        Reviewed by Yong Li.
+
+        Right now we're using an outdated API that involves a virtual function call for no reason.
+        Use the new API that is much more direct and to the point.
+
+        * wtf/blackberry/MainThreadBlackBerry.cpp:
+        (WTF::scheduleDispatchFunctionsOnMainThread):
+
 2012-07-14  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, build fix.

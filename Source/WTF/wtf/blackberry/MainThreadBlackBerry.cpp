@@ -19,7 +19,8 @@
 #include "config.h"
 #include "MainThread.h"
 
-#include <BlackBerryPlatformClient.h>
+#include <BlackBerryPlatformExecutableMessage.h>
+#include <BlackBerryPlatformMessageClient.h>
 
 namespace WTF {
 
@@ -29,7 +30,7 @@ void initializeMainThreadPlatform()
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    BlackBerry::Platform::Client::get()->scheduleCallOnMainThread(dispatchFunctionsFromMainThread);
+    BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(BlackBerry::Platform::createFunctionCallMessage(dispatchFunctionsFromMainThread));
 }
 
 } // namespace WTF
