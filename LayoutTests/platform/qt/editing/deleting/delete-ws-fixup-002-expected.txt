@@ -41,30 +41,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 757x42
-          text run at (0,0) width 296: "This testcase demonstrates a bug (9441). "
-          text run at (296,0) width 461: "When 'as' is deleted, there should be a space before and after the"
-          text run at (0,21) width 43: "caret. "
-          text run at (43,21) width 654: "Editing produces a tree that should result in two spaces, but for some reason it isn't rendered."
-      RenderBlock {DIV} at (0,58) size 784x90 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 736x61
-          RenderText {#text} at (14,15) size 96x30
-            text run at (14,15) width 96: "in Liberty"
-          RenderInline {I} at (0,0) size 131x31
-            RenderText {#text} at (110,14) size 131x31
-              text run at (110,14) width 22: "F "
-              text run at (132,14) width 109: "and seven"
-          RenderText {#text} at (241,15) size 72x30
-            text run at (241,15) width 72: " years "
-          RenderInline {B} at (0,0) size 7x32
-            RenderText {#text} at (313,14) size 7x32
-              text run at (313,14) width 7: " "
-          RenderText {#text} at (320,15) size 736x61
-            text run at (320,15) width 121: "our fathers "
-            text run at (441,15) width 290: "f upon this continent, a new"
-            text run at (731,15) width 7: " "
-            text run at (14,46) width 322: "nation, conceived    in Liberty, "
-            text run at (336,46) width 414: "and dedicated to the proposition that all"
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 727x38
+          text run at (0,0) width 252: "This testcase demonstrates a bug (9441). "
+          text run at (252,0) width 434: "When 'as' is deleted, there should be a space before and after the caret. "
+          text run at (686,0) width 41: "Editing"
+          text run at (0,19) width 513: "produces a tree that should result in two spaces, but for some reason it isn't rendered."
+      RenderBlock {DIV} at (0,54) size 784x84 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 736x56
+          RenderText {#text} at (14,14) size 95x28
+            text run at (14,14) width 95: "in Liberty"
+          RenderInline {I} at (0,0) size 117x28
+            RenderText {#text} at (109,14) size 117x28
+              text run at (109,14) width 21: "F "
+              text run at (130,14) width 96: "and seven"
+          RenderText {#text} at (226,14) size 63x28
+            text run at (226,14) width 63: " years "
+          RenderInline {B} at (0,0) size 6x28
+            RenderText {#text} at (289,14) size 6x28
+              text run at (289,14) width 6: " "
+          RenderText {#text} at (295,14) size 736x56
+            text run at (295,14) width 110: "our fathers "
+            text run at (405,14) width 339: "f upon this continent, a new nation,"
+            text run at (744,14) width 6: " "
+            text run at (14,42) width 229: "conceived    in Liberty, "
+            text run at (243,42) width 381: "and dedicated to the proposition that all"
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 2 {#text} of child 1 {SPAN} of child 3 {DIV} of body

@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 760x42
-          text run at (0,0) width 410: "This test places the caret before the 'b' in 'bar' and Delete. "
-          text run at (410,0) width 350: "Afterword, 'foobar' should be in the first paragraph"
-          text run at (0,21) width 240: "and 'baz' should be in the second."
-      RenderBlock {DIV} at (0,58) size 784x51
-        RenderBlock {DIV} at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 45x21
-            text run at (0,0) width 45: "foobar"
-        RenderBlock {PRE} at (0,34) size 784x17
-          RenderText {#text} at (0,0) size 21x17
-            text run at (0,0) width 21: "baz"
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 777x38
+          text run at (0,0) width 352: "This test places the caret before the 'b' in 'bar' and Delete. "
+          text run at (352,0) width 425: "Afterword, 'foobar' should be in the first paragraph and 'baz' should be"
+          text run at (0,19) width 83: "in the second."
+      RenderBlock {DIV} at (0,54) size 784x47
+        RenderBlock {DIV} at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 40x19
+            text run at (0,0) width 40: "foobar"
+        RenderBlock {PRE} at (0,32) size 784x15
+          RenderText {#text} at (0,0) size 24x15
+            text run at (0,0) width 24: "baz"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

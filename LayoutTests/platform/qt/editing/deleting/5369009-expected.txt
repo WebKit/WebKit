@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 771x42
-          text run at (0,0) width 771: "This tests for a hang on delete where a style rule would cause style spans in content moved after the delete to"
-          text run at (0,21) width 323: "be displayed as blocks. You should see Hello"
-        RenderInline {B} at (0,0) size 45x21
-          RenderText {#text} at (323,21) size 45x21
-            text run at (323,21) width 45: "World"
-        RenderText {#text} at (368,21) size 51x21
-          text run at (368,21) width 51: " below."
-      RenderBlock {DIV} at (0,58) size 784x21
-        RenderBlock {DIV} at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 38x21
-            text run at (0,0) width 38: "Hello"
-          RenderInline {SPAN} at (0,0) size 45x21
-            RenderText {#text} at (38,0) size 45x21
-              text run at (38,0) width 45: "World"
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 749x38
+          text run at (0,0) width 749: "This tests for a hang on delete where a style rule would cause style spans in content moved after the delete to be displayed as"
+          text run at (0,19) width 177: "blocks. You should see Hello"
+        RenderInline {B} at (0,0) size 41x19
+          RenderText {#text} at (177,19) size 41x19
+            text run at (177,19) width 41: "World"
+        RenderText {#text} at (218,19) size 45x19
+          text run at (218,19) width 45: " below."
+      RenderBlock {DIV} at (0,54) size 784x19
+        RenderBlock {DIV} at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 32x19
+            text run at (0,0) width 32: "Hello"
+          RenderInline {SPAN} at (0,0) size 41x19
+            RenderText {#text} at (32,0) size 41x19
+              text run at (32,0) width 41: "World"
 caret: position 5 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

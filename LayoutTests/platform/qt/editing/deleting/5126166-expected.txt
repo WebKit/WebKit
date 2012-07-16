@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 763x42
-          text run at (0,0) width 471: "This tests deleting a selection that ends inside an empty table cell. "
-          text run at (471,0) width 292: "No merging should happen, only editable"
-          text run at (0,21) width 260: "selected content should be removed."
-      RenderBlock {DIV} at (0,58) size 784x62
-        RenderTable {TABLE} at (0,0) size 16x31 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 14x29
-            RenderTableRow {TR} at (0,2) size 14x25
-              RenderTableCell {TD} at (2,12) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (8,2) size 4x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x21
-        RenderTable {TABLE} at (0,31) size 388x31 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 386x29
-            RenderTableRow {TR} at (0,2) size 386x25
-              RenderTableCell {TD} at (2,12) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTableCell {TD} at (8,2) size 376x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 372x21
-                  text run at (2,2) width 372: "There should be one empty cell to the left of this one."
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 783x38
+          text run at (0,0) width 393: "This tests deleting a selection that ends inside an empty table cell. "
+          text run at (393,0) width 390: "No merging should happen, only editable selected content should"
+          text run at (0,19) width 76: "be removed."
+      RenderBlock {DIV} at (0,54) size 784x58
+        RenderTable {TABLE} at (0,0) size 16x29 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 14x27
+            RenderTableRow {TR} at (0,2) size 14x23
+              RenderTableCell {TD} at (2,11) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (8,2) size 4x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderBR {BR} at (2,2) size 0x19
+        RenderTable {TABLE} at (0,29) size 334x29 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 332x27
+            RenderTableRow {TR} at (0,2) size 332x23
+              RenderTableCell {TD} at (2,11) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (8,2) size 322x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 318x19
+                  text run at (2,2) width 318: "There should be one empty cell to the left of this one."
 caret: position 0 of child 0 {BR} of child 3 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 3 {DIV} of body

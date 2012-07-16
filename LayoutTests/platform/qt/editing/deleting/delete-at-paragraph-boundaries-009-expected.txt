@@ -16,33 +16,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x288 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x122
-          RenderText {#text} at (0,0) size 77x32
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x240 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x84
+          RenderText {#text} at (0,0) size 66x28
+            text run at (0,0) width 66: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,32) size 729x90
-            text run at (0,32) width 671: "Deleting when a selection starts at the beginning of a paragraph"
-            text run at (0,62) width 729: "preceded by a text element and extends into the middle of a following"
-            text run at (0,92) width 114: "paragraph."
-        RenderBlock {DIV} at (14,152) size 756x122
-          RenderText {#text} at (0,0) size 214x32
-            text run at (0,0) width 214: "Expected Results: "
-          RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,32) size 709x90
-            text run at (0,32) width 709: "Should see the three lines in the red box. First line should be \"one\"."
-            text run at (0,62) width 269: "Next one should be \"ee\". "
-            text run at (269,62) width 433: "Next one should be \"four\". Insertion point"
-            text run at (0,92) width 509: "should be blinking at the start of the second line."
-      RenderBlock {DIV} at (0,312) size 784x94
-        RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (2,2) size 780x30
-            RenderText {#text} at (0,0) size 39x30
-              text run at (0,0) width 39: "one"
-          RenderBlock {P} at (2,32) size 780x30
-            RenderText {#text} at (0,0) size 26x30
-              text run at (0,0) width 26: "ee"
-          RenderBlock {P} at (2,62) size 780x30
-            RenderText {#text} at (0,0) size 41x30
-              text run at (0,0) width 41: "four"
+          RenderText {#text} at (0,28) size 749x56
+            text run at (0,28) width 749: "Deleting when a selection starts at the beginning of a paragraph preceded by a"
+            text run at (0,56) width 637: "text element and extends into the middle of a following paragraph."
+        RenderBlock {DIV} at (14,114) size 756x112
+          RenderText {#text} at (0,0) size 189x28
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 738x84
+            text run at (0,28) width 738: "Should see the three lines in the red box. First line should be \"one\". Next one"
+            text run at (0,56) width 152: "should be \"ee\". "
+            text run at (152,56) width 585: "Next one should be \"four\". Insertion point should be blinking"
+            text run at (0,84) width 284: "at the start of the second line."
+      RenderBlock {DIV} at (0,264) size 784x88
+        RenderBlock {DIV} at (0,0) size 784x88 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (2,2) size 780x28
+            RenderText {#text} at (0,0) size 35x28
+              text run at (0,0) width 35: "one"
+          RenderBlock {P} at (2,30) size 780x28
+            RenderText {#text} at (0,0) size 22x28
+              text run at (0,0) width 22: "ee"
+          RenderBlock {P} at (2,58) size 780x28
+            RenderText {#text} at (0,0) size 40x28
+              text run at (0,0) width 40: "four"
 caret: position 0 of child 0 {#text} of child 1 {P} of child 1 {DIV} of child 3 {DIV} of body
