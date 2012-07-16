@@ -1,3 +1,20 @@
+2012-07-16  Emil A Eklund  <eae@chromium.org>
+
+        Inconsistent rounding in table layout causes background color to bleed through
+        https://bugs.webkit.org/show_bug.cgi?id=91410
+
+        Reviewed by Eric Seidel.
+
+        At certain zoom levels a rounding error in the table layout code cases
+        the table background color to bleed through between cells. Tables layout
+        happens on pixel bounds however the paint offset wasn't correctly rounded.
+
+        Test: fast/sub-pixel/table-rows-no-gaps.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        Round paintOffset before passing it to the paint method of the children.
+
 2012-07-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122739.

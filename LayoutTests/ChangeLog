@@ -1,3 +1,41 @@
+2012-07-16  Emil A Eklund  <eae@chromium.org>
+
+        Inconsistent rounding in table layout causes background color to bleed through
+        https://bugs.webkit.org/show_bug.cgi?id=91410
+
+        Reviewed by Eric Seidel.
+
+        Add test to ensure that the table background color doesn't bleed through
+        when the table and a cell are positioned on a subpixel bound.
+
+        * fast/sub-pixel/table-rows-no-gaps-expected.html: Added.
+        * fast/sub-pixel/table-rows-no-gaps.html: Added.
+        * platform/chromium-linux/css1/basic/inheritance-expected.png:
+        * platform/chromium-linux/plugins/embed-attributes-style-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug73321-expected.png:
+        Updated expectations to match new rounding logic. The new results better
+        match the rendering prior to turning on subpixel layout.
+        
+        * platform/efl/Skipped:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+        Mark new test as skipped on platforms that have not enabled subpixel
+        layout.
+
 2012-07-16  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Unreviewed gardening. Layout Test svg/W3C-SVG-1.1/animate-elem-39-t.svg is flaky
