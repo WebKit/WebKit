@@ -752,6 +752,9 @@ BUGWK90007 : http/tests/security/mixedContent/insecure-audio-video-in-main-frame
 
 BUGWK90334 : css3/flexbox/anonymous-block.html = IMAGE
 
+// Test started failing after r122681 due to wrong scrollbar positioning
+BUGWK91359 : css3/flexbox/flexbox-overflow-auto.html = IMAGE
+
 // Require rebaseline after bug 88171
 BUGWK88171 : fast/block/float/independent-align-positioning.html = TEXT
 BUGWK88171 : fast/block/float/010.html = TEXT
