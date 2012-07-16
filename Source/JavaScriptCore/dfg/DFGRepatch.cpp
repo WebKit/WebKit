@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCCallHelpers.h"
+#include "DFGScratchRegisterAllocator.h"
 #include "DFGSpeculativeJIT.h"
 #include "DFGThunks.h"
 #include "GCAwareJITStubRoutine.h"
@@ -161,7 +162,7 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
     GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
-    GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
+    GPRReg scratchGPR = RegisterSet(stubInfo.patch.dfg.usedRegisters).getFreeGPR();
     bool needToRestoreScratch = false;
     
     if (scratchGPR == InvalidGPRReg) {
@@ -231,7 +232,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
         GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
-        GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
+        GPRReg scratchGPR = RegisterSet(stubInfo.patch.dfg.usedRegisters).getFreeGPR();
         bool needToRestoreScratch = false;
         
         MacroAssembler stubJit;
@@ -384,7 +385,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
         GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
-        GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
+        GPRReg scratchGPR = RegisterSet(stubInfo.patch.dfg.usedRegisters).getFreeGPR();
         
         CCallHelpers stubJit(globalData, codeBlock);
         
@@ -629,7 +630,7 @@ static void emitPutReplaceStub(
     GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
     GPRReg valueGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
-    GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
+    GPRReg scratchGPR = RegisterSet(stubInfo.patch.dfg.usedRegisters).getFreeGPR();
     bool needToRestoreScratch = false;
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
     GPRReg scratchGPR2;
@@ -722,89 +723,203 @@ static void emitPutTransitionStub(
     GPRReg valueTagGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueTagGPR);
 #endif
     GPRReg valueGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
-    GPRReg scratchGPR = static_cast<GPRReg>(stubInfo.patch.dfg.scratchGPR);
-    bool needToRestoreScratch = false;
+    
+    ScratchRegisterAllocator allocator(stubInfo.patch.dfg.usedRegisters);
+    allocator.lock(baseGPR);
+#if USE(JSVALUE32_64)
+    allocator.lock(valueTagGPR);
+#endif
+    allocator.lock(valueGPR);
+    
+    CCallHelpers stubJit(globalData);
             
-    ASSERT(scratchGPR != baseGPR);
+    GPRReg scratchGPR1 = allocator.allocateScratchGPR();
+    ASSERT(scratchGPR1 != baseGPR);
+    ASSERT(scratchGPR1 != valueGPR);
+    
+    bool needSecondScratch = false;
+    bool needThirdScratch = false;
+#if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+    needSecondScratch = true;
+#endif
+    if (structure->outOfLineCapacity() != oldStructure->outOfLineCapacity()
+        && oldStructure->outOfLineCapacity()) {
+        needSecondScratch = true;
+        needThirdScratch = true;
+    }
+
+    GPRReg scratchGPR2;
+    if (needSecondScratch) {
+        scratchGPR2 = allocator.allocateScratchGPR();
+        ASSERT(scratchGPR2 != baseGPR);
+        ASSERT(scratchGPR2 != valueGPR);
+        ASSERT(scratchGPR2 != scratchGPR1);
+    } else
+        scratchGPR2 = InvalidGPRReg;
+    GPRReg scratchGPR3;
+    if (needThirdScratch) {
+        scratchGPR3 = allocator.allocateScratchGPR();
+        ASSERT(scratchGPR3 != baseGPR);
+        ASSERT(scratchGPR3 != valueGPR);
+        ASSERT(scratchGPR3 != scratchGPR1);
+        ASSERT(scratchGPR3 != scratchGPR2);
+    } else
+        scratchGPR3 = InvalidGPRReg;
             
-    MacroAssembler stubJit;
-            
+    allocator.preserveReusedRegistersByPushing(stubJit);
+
     MacroAssembler::JumpList failureCases;
             
-    if (scratchGPR == InvalidGPRReg) {
-        scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR);
-        stubJit.push(scratchGPR);
-        needToRestoreScratch = true;
-    }
-    
     ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
     
     failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(oldStructure)));
     
     addStructureTransitionCheck(
         oldStructure->storedPrototype(), exec->codeBlock(), stubInfo, stubJit, failureCases,
-        scratchGPR);
+        scratchGPR1);
             
     if (putKind == NotDirect) {
         for (WriteBarrier<Structure>* it = prototypeChain->head(); *it; ++it) {
             addStructureTransitionCheck(
                 (*it)->storedPrototype(), exec->codeBlock(), stubInfo, stubJit, failureCases,
-                scratchGPR);
+                scratchGPR1);
         }
     }
 
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+    ASSERT(needSecondScratch);
+    ASSERT(scratchGPR2 != InvalidGPRReg);
     // Must always emit this write barrier as the structure transition itself requires it
-    GPRReg scratch2 = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR, scratchGPR);
-    stubJit.push(scratch2);
-    SpeculativeJIT::writeBarrier(stubJit, baseGPR, scratchGPR, scratch2, WriteBarrierForPropertyAccess);
-    stubJit.pop(scratch2);
+    SpeculativeJIT::writeBarrier(stubJit, baseGPR, scratchGPR1, scratchGPR2, WriteBarrierForPropertyAccess);
 #endif
+    
+    MacroAssembler::JumpList slowPath;
+    
+    bool scratchGPR1HasStorage = false;
+    
+    if (structure->outOfLineCapacity() != oldStructure->outOfLineCapacity()) {
+        size_t newSize = structure->outOfLineCapacity() * sizeof(JSValue);
+        CopiedAllocator* copiedAllocator = &globalData->heap.storageAllocator();
+        
+        if (!oldStructure->outOfLineCapacity()) {
+            stubJit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR1);
+            slowPath.append(stubJit.branchSubPtr(MacroAssembler::Signed, MacroAssembler::TrustedImm32(newSize), scratchGPR1));
+            stubJit.storePtr(scratchGPR1, &copiedAllocator->m_currentRemaining);
+            stubJit.negPtr(scratchGPR1);
+            stubJit.addPtr(MacroAssembler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR1);
+            stubJit.subPtr(MacroAssembler::TrustedImm32(newSize), scratchGPR1);
+        } else {
+            size_t oldSize = oldStructure->outOfLineCapacity() * sizeof(JSValue);
+            ASSERT(newSize > oldSize);
+            
+            // Optimistically assume that the old storage was the very last thing
+            // allocated.
+            stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR3);
+            stubJit.loadPtr(&copiedAllocator->m_currentPayloadEnd, scratchGPR2);
+            stubJit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR1);
+            stubJit.subPtr(scratchGPR1, scratchGPR2);
+            stubJit.subPtr(MacroAssembler::TrustedImm32(oldSize), scratchGPR2);
+            MacroAssembler::Jump needFullRealloc =
+                stubJit.branchPtr(MacroAssembler::NotEqual, scratchGPR2, scratchGPR3);
+            slowPath.append(stubJit.branchSubPtr(MacroAssembler::Signed, MacroAssembler::TrustedImm32(newSize - oldSize), scratchGPR1));
+            stubJit.storePtr(scratchGPR1, &copiedAllocator->m_currentRemaining);
+            stubJit.move(scratchGPR2, scratchGPR1);
+            MacroAssembler::Jump doneRealloc = stubJit.jump();
+            
+            needFullRealloc.link(&stubJit);
+            slowPath.append(stubJit.branchSubPtr(MacroAssembler::Signed, MacroAssembler::TrustedImm32(newSize), scratchGPR1));
+            stubJit.storePtr(scratchGPR1, &copiedAllocator->m_currentRemaining);
+            stubJit.negPtr(scratchGPR1);
+            stubJit.addPtr(MacroAssembler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR1);
+            stubJit.subPtr(MacroAssembler::TrustedImm32(newSize), scratchGPR1);
+            // We have scratchGPR1 = new storage, scratchGPR3 = old storage, scratchGPR2 = available
+            for (size_t offset = 0; offset < oldSize; offset += sizeof(JSValue)) {
+                stubJit.loadPtr(MacroAssembler::Address(scratchGPR3, offset), scratchGPR2);
+                stubJit.storePtr(scratchGPR2, MacroAssembler::Address(scratchGPR1, offset));
+            }
+            
+            doneRealloc.link(&stubJit);
+        }
+        
+        stubJit.storePtr(scratchGPR1, MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()));
+        scratchGPR1HasStorage = true;
+    }
 
     stubJit.storePtr(MacroAssembler::TrustedImmPtr(structure), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
 #if USE(JSVALUE64)
     if (isInlineOffset(slot.cachedOffset()))
         stubJit.storePtr(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue)));
     else {
-        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR);
-        stubJit.storePtr(valueGPR, MacroAssembler::Address(scratchGPR, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue)));
+        if (!scratchGPR1HasStorage)
+            stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR1);
+        stubJit.storePtr(valueGPR, MacroAssembler::Address(scratchGPR1, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue)));
     }
 #elif USE(JSVALUE32_64)
     if (isInlineOffset(slot.cachedOffset())) {
         stubJit.store32(valueGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
         stubJit.store32(valueTagGPR, MacroAssembler::Address(baseGPR, JSObject::offsetOfInlineStorage() + offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     } else {
-        stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR);
-        stubJit.store32(valueGPR, MacroAssembler::Address(scratchGPR, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-        stubJit.store32(valueTagGPR, MacroAssembler::Address(scratchGPR, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+        if (!scratchGPR1HasStorage)
+            stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR1);
+        stubJit.store32(valueGPR, MacroAssembler::Address(scratchGPR1, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
+        stubJit.store32(valueTagGPR, MacroAssembler::Address(scratchGPR1, offsetInOutOfLineStorage(slot.cachedOffset()) * sizeof(JSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     }
 #endif
             
     MacroAssembler::Jump success;
     MacroAssembler::Jump failure;
             
-    if (needToRestoreScratch) {
-        stubJit.pop(scratchGPR);
+    if (allocator.didReuseRegisters()) {
+        allocator.restoreReusedRegistersByPopping(stubJit);
         success = stubJit.jump();
 
         failureCases.link(&stubJit);
-        stubJit.pop(scratchGPR);
+        allocator.restoreReusedRegistersByPopping(stubJit);
         failure = stubJit.jump();
     } else
         success = stubJit.jump();
-            
+    
+    MacroAssembler::Call operationCall;
+    MacroAssembler::Jump successInSlowPath;
+    
+    if (structure->outOfLineCapacity() != oldStructure->outOfLineCapacity()) {
+        slowPath.link(&stubJit);
+        
+        allocator.restoreReusedRegistersByPopping(stubJit);
+        ScratchBuffer* scratchBuffer = globalData->scratchBufferForSize(allocator.desiredScratchBufferSize());
+        allocator.preserveUsedRegistersToScratchBuffer(stubJit, scratchBuffer, scratchGPR1);
+#if USE(JSVALUE64)
+        stubJit.setupArgumentsWithExecState(baseGPR, MacroAssembler::TrustedImmPtr(structure), MacroAssembler::TrustedImm32(slot.cachedOffset()), valueGPR);
+#else
+        stubJit.setupArgumentsWithExecState(baseGPR, MacroAssembler::TrustedImmPtr(structure), MacroAssembler::TrustedImm32(slot.cachedOffset()), valueTagGPR, valueGPR);
+#endif
+        operationCall = stubJit.call();
+        allocator.restoreUsedRegistersFromScratchBuffer(stubJit, scratchBuffer, scratchGPR1);
+        successInSlowPath = stubJit.jump();
+    }
+    
     LinkBuffer patchBuffer(*globalData, &stubJit, exec->codeBlock());
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone));
-    if (needToRestoreScratch)
+    if (allocator.didReuseRegisters())
         patchBuffer.link(failure, failureLabel);
     else
         patchBuffer.link(failureCases, failureLabel);
+    if (structure->outOfLineCapacity() != oldStructure->outOfLineCapacity()) {
+        patchBuffer.link(operationCall, operationReallocateStorageAndFinishPut);
+        patchBuffer.link(successInSlowPath, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone));
+    }
     
-    stubRoutine = FINALIZE_CODE_FOR_STUB(
-        patchBuffer,
-        ("DFG PutById transition stub for CodeBlock %p, return point %p",
-         exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
-             stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
+    stubRoutine =
+        createJITStubRoutine(
+            FINALIZE_CODE(
+                patchBuffer,
+                ("DFG PutById transition stub for CodeBlock %p, return point %p",
+                 exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
+                     stubInfo.patch.dfg.deltaCallToDone).executableAddress())),
+            *globalData,
+            exec->codeBlock()->ownerExecutable(),
+            structure->outOfLineCapacity() != oldStructure->outOfLineCapacity(),
+            structure);
 }
 
 static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
@@ -829,8 +944,11 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             if (structure->isDictionary())
                 return false;
             
-            // skip optimizing the case where we need a realloc
-            if (oldStructure->outOfLineCapacity() != structure->outOfLineCapacity())
+            // Skip optimizing the case where we need a realloc, if we don't have
+            // enough registers to make it happen.
+            if (GPRInfo::numberOfRegisters < 6
+                && oldStructure->outOfLineCapacity() != structure->outOfLineCapacity()
+                && oldStructure->outOfLineCapacity())
                 return false;
             
             normalizePrototypeChain(exec, baseCell);
@@ -892,8 +1010,11 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
             if (structure->isDictionary())
                 return false;
             
-            // skip optimizing the case where we need a realloc
-            if (oldStructure->outOfLineCapacity() != structure->outOfLineCapacity())
+            // Skip optimizing the case where we need a realloc, if we don't have
+            // enough registers to make it happen.
+            if (GPRInfo::numberOfRegisters < 6
+                && oldStructure->outOfLineCapacity() != structure->outOfLineCapacity()
+                && oldStructure->outOfLineCapacity())
                 return false;
             
             normalizePrototypeChain(exec, baseCell);

@@ -492,7 +492,7 @@ void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node& node)
     jsValueResult(result.gpr(), m_compileIndex);
 }
 
-void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
+void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::PatchableJump structureCheck = m_jit.patchableBranchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
@@ -520,13 +520,9 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
         PropertyAccessRecord(
             codeOrigin, structureToCompare, structureCheck, propertyStorageLoad, loadWithPatch,
             slowPath.get(), doneLabel, safeCast<int8_t>(baseGPR), safeCast<int8_t>(resultGPR),
-            safeCast<int8_t>(scratchGPR),
+            usedRegisters(),
             spillMode == NeedToSpill ? PropertyAccessRecord::RegistersInUse : PropertyAccessRecord::RegistersFlushed));
     addSlowPathGenerator(slowPath.release());
-
-
-    if (scratchGPR != resultGPR && scratchGPR != InvalidGPRReg && spillMode == NeedToSpill)
-        unlock(scratchGPR);
 }
 
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg valueGPR, Edge valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
@@ -568,11 +564,15 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
             slowCases, this, optimizedCall, NoResult, valueGPR, baseGPR,
             identifier(identifierNumber));
     }
+    RegisterSet currentlyUsedRegisters = usedRegisters();
+    currentlyUsedRegisters.clear(scratchGPR);
+    ASSERT(currentlyUsedRegisters.get(baseGPR));
+    ASSERT(currentlyUsedRegisters.get(valueGPR));
     m_jit.addPropertyAccess(
         PropertyAccessRecord(
             codeOrigin, structureToCompare, structureCheck, propertyStorageLoad,
             JITCompiler::DataLabelCompact(storeWithPatch.label()), slowPath.get(), doneLabel,
-            safeCast<int8_t>(baseGPR), safeCast<int8_t>(valueGPR), safeCast<int8_t>(scratchGPR)));
+            safeCast<int8_t>(baseGPR), safeCast<int8_t>(valueGPR), currentlyUsedRegisters));
     addSlowPathGenerator(slowPath.release());
 }
 
@@ -3327,16 +3327,10 @@ void SpeculativeJIT::compile(Node& node)
             
             GPRReg baseGPR = base.gpr();
             GPRReg resultGPR = result.gpr();
-            GPRReg scratchGPR;
-            
-            if (resultGPR == baseGPR)
-                scratchGPR = tryAllocate();
-            else
-                scratchGPR = resultGPR;
             
             base.use();
             
-            cachedGetById(node.codeOrigin, baseGPR, resultGPR, scratchGPR, node.identifierNumber());
+            cachedGetById(node.codeOrigin, baseGPR, resultGPR, node.identifierNumber());
             
             jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
             break;
@@ -3347,18 +3341,12 @@ void SpeculativeJIT::compile(Node& node)
         
         GPRReg baseGPR = base.gpr();
         GPRReg resultGPR = result.gpr();
-        GPRReg scratchGPR;
-        
-        if (resultGPR == baseGPR)
-            scratchGPR = tryAllocate();
-        else
-            scratchGPR = resultGPR;
         
         base.use();
         
         JITCompiler::Jump notCell = m_jit.branchTestPtr(JITCompiler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
         
-        cachedGetById(node.codeOrigin, baseGPR, resultGPR, scratchGPR, node.identifierNumber(), notCell);
+        cachedGetById(node.codeOrigin, baseGPR, resultGPR, node.identifierNumber(), notCell);
         
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         
@@ -3379,13 +3367,11 @@ void SpeculativeJIT::compile(Node& node)
             
             GPRReg resultGPR = result.gpr();
             
-            GPRReg scratchGPR = selectScratchGPR(baseGPR, resultGPR);
-            
             base.use();
             
             flushRegisters();
             
-            cachedGetById(node.codeOrigin, baseGPR, resultGPR, scratchGPR, node.identifierNumber(), JITCompiler::Jump(), DontSpill);
+            cachedGetById(node.codeOrigin, baseGPR, resultGPR, node.identifierNumber(), JITCompiler::Jump(), DontSpill);
             
             jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
             break;
@@ -3397,14 +3383,12 @@ void SpeculativeJIT::compile(Node& node)
         GPRResult result(this);
         GPRReg resultGPR = result.gpr();
         
-        GPRReg scratchGPR = selectScratchGPR(baseGPR, resultGPR);
-        
         base.use();
         flushRegisters();
         
         JITCompiler::Jump notCell = m_jit.branchTestPtr(JITCompiler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
         
-        cachedGetById(node.codeOrigin, baseGPR, resultGPR, scratchGPR, node.identifierNumber(), notCell, DontSpill);
+        cachedGetById(node.codeOrigin, baseGPR, resultGPR, node.identifierNumber(), notCell, DontSpill);
         
         jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
         

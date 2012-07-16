@@ -33,10 +33,10 @@
 namespace JSC {
 
 class CopiedAllocator {
-    friend class JIT;
 public:
     CopiedAllocator();
     
+    bool fastPathShouldSucceed(size_t bytes) const;
     CheckedBoolean tryAllocate(size_t bytes, void** outPtr);
     CheckedBoolean tryReallocate(void *oldPtr, size_t oldBytes, size_t newBytes);
     void* forceAllocate(size_t bytes);
@@ -46,9 +46,12 @@ public:
     
     bool isValid() { return !!m_currentBlock; }
 
-private:
     CopiedBlock* currentBlock() { return m_currentBlock; }
 
+    // Yes, these are public. No, that doesn't mean you can play with them.
+    // If I had made them private then I'd have to list off all of the JIT
+    // classes and functions that are entitled to modify these directly, and
+    // that would have been gross.
     size_t m_currentRemaining;
     char* m_currentPayloadEnd;
     CopiedBlock* m_currentBlock; 
@@ -59,6 +62,13 @@ inline CopiedAllocator::CopiedAllocator()
     , m_currentPayloadEnd(0)
     , m_currentBlock(0)
 {
+}
+
+inline bool CopiedAllocator::fastPathShouldSucceed(size_t bytes) const
+{
+    ASSERT(is8ByteAligned(reinterpret_cast<void*>(bytes)));
+    
+    return bytes <= m_currentRemaining;
 }
 
 inline CheckedBoolean CopiedAllocator::tryAllocate(size_t bytes, void** outPtr)

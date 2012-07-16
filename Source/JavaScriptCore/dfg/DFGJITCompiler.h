@@ -35,6 +35,7 @@
 #include "DFGGPRInfo.h"
 #include "DFGGraph.h"
 #include "DFGRegisterBank.h"
+#include "DFGRegisterSet.h"
 #include "JITCode.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
@@ -169,7 +170,7 @@ struct PropertyAccessRecord {
         MacroAssembler::Label done,
         int8_t baseGPR,
         int8_t valueGPR,
-        int8_t scratchGPR,
+        const RegisterSet& usedRegisters,
         RegisterMode registerMode = RegistersInUse)
 #elif USE(JSVALUE32_64)
     PropertyAccessRecord(
@@ -184,7 +185,7 @@ struct PropertyAccessRecord {
         int8_t baseGPR,
         int8_t valueTagGPR,
         int8_t valueGPR,
-        int8_t scratchGPR,
+        const RegisterSet& usedRegisters,
         RegisterMode registerMode = RegistersInUse)
 #endif
         : m_codeOrigin(codeOrigin)
@@ -204,7 +205,7 @@ struct PropertyAccessRecord {
         , m_valueTagGPR(valueTagGPR)
 #endif
         , m_valueGPR(valueGPR)
-        , m_scratchGPR(scratchGPR)
+        , m_usedRegisters(usedRegisters)
         , m_registerMode(registerMode)
     {
     }
@@ -226,7 +227,7 @@ struct PropertyAccessRecord {
     int8_t m_valueTagGPR;
 #endif
     int8_t m_valueGPR;
-    int8_t m_scratchGPR;
+    RegisterSet m_usedRegisters;
     RegisterMode m_registerMode;
 };
 

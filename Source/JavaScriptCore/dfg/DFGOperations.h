@@ -180,6 +180,7 @@ JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*) WTF_IN
 double DFG_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
 size_t DFG_OPERATION operationIsObject(EncodedJSValue) WTF_INTERNAL;
 size_t DFG_OPERATION operationIsFunction(EncodedJSValue) WTF_INTERNAL;
+void DFG_OPERATION operationReallocateStorageAndFinishPut(ExecState*, JSObject*, Structure*, PropertyOffset, EncodedJSValue) WTF_INTERNAL;
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

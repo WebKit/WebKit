@@ -1,3 +1,110 @@
+2012-07-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG PutById transition should handle storage allocation, and inline it
+        https://bugs.webkit.org/show_bug.cgi?id=91337
+
+        Reviewed by Oliver Hunt.
+
+        This enables the patching of DFG PutById to handle the out-of-line storage
+        allocation case. Furthermore, it inlines out-of-line storage allocation (and
+        reallocation) into the generated stubs.  
+        
+        To do this, this patch adds the ability to store the relevant register
+        allocation state (i.e. the set of in-use registers) in the structure stub
+        info so that the stub generation code can more flexibly select scratch
+        registers: sometimes it needs none, sometimes one - or sometimes up to
+        three. Moreover, to make the stub generation register allocation simple and
+        maintainable, this patch introduces a reusable scratch register allocator
+        class. This register allocator understands that some registers are in use by
+        the main path code and so must be spilled as necessary, other registers are
+        locked for use in the stub itself and so cannot even be spilled, while still
+        others may be allocated for scratch purposes. A scratch register that is
+        used must be spilled. If a register is locked, it cannot be used as a
+        scratch register. If a register is used, it can be used as a scratch
+        register so long as it is spilled.
+        
+        This is a sub-1% speed-up on V8 and neutral elsewhere.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerCodeRef.h:
+        (FunctionPtr):
+        (JSC::FunctionPtr::FunctionPtr):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+        * dfg/DFGGPRInfo.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::PropertyAccessRecord::PropertyAccessRecord):
+        (PropertyAccessRecord):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRegisterBank.h:
+        (JSC::DFG::RegisterBank::isInUse):
+        (RegisterBank):
+        * dfg/DFGRegisterSet.h: Added.
+        (DFG):
+        (RegisterSet):
+        (JSC::DFG::RegisterSet::RegisterSet):
+        (JSC::DFG::RegisterSet::asPOD):
+        (JSC::DFG::RegisterSet::copyInfo):
+        (JSC::DFG::RegisterSet::set):
+        (JSC::DFG::RegisterSet::setGPRByIndex):
+        (JSC::DFG::RegisterSet::clear):
+        (JSC::DFG::RegisterSet::get):
+        (JSC::DFG::RegisterSet::getGPRByIndex):
+        (JSC::DFG::RegisterSet::getFreeGPR):
+        (JSC::DFG::RegisterSet::setFPRByIndex):
+        (JSC::DFG::RegisterSet::getFPRByIndex):
+        (JSC::DFG::RegisterSet::setByIndex):
+        (JSC::DFG::RegisterSet::getByIndex):
+        (JSC::DFG::RegisterSet::numberOfSetGPRs):
+        (JSC::DFG::RegisterSet::numberOfSetFPRs):
+        (JSC::DFG::RegisterSet::numberOfSetRegisters):
+        (JSC::DFG::RegisterSet::setBit):
+        (JSC::DFG::RegisterSet::clearBit):
+        (JSC::DFG::RegisterSet::getBit):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::emitPutReplaceStub):
+        (JSC::DFG::emitPutTransitionStub):
+        (JSC::DFG::tryCachePutByID):
+        (JSC::DFG::tryBuildPutByIdList):
+        * dfg/DFGScratchRegisterAllocator.h: Added.
+        (DFG):
+        (ScratchRegisterAllocator):
+        (JSC::DFG::ScratchRegisterAllocator::ScratchRegisterAllocator):
+        (JSC::DFG::ScratchRegisterAllocator::lock):
+        (JSC::DFG::ScratchRegisterAllocator::allocateScratch):
+        (JSC::DFG::ScratchRegisterAllocator::allocateScratchGPR):
+        (JSC::DFG::ScratchRegisterAllocator::allocateScratchFPR):
+        (JSC::DFG::ScratchRegisterAllocator::didReuseRegisters):
+        (JSC::DFG::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::DFG::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        (JSC::DFG::ScratchRegisterAllocator::desiredScratchBufferSize):
+        (JSC::DFG::ScratchRegisterAllocator::preserveUsedRegistersToScratchBuffer):
+        (JSC::DFG::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBuffer):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::usedRegisters):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/CopiedAllocator.h:
+        (CopiedAllocator):
+        (JSC::CopiedAllocator::fastPathShouldSucceed):
+        (JSC):
+
 2012-07-16  Patrick Gansterer  <paroga@webkit.org>
 
         Add dfg switch to create_jit_stubs script

@@ -179,7 +179,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         info.patch.dfg.valueTagGPR = m_propertyAccesses[i].m_valueTagGPR;
         info.patch.dfg.valueGPR = m_propertyAccesses[i].m_valueGPR;
 #endif
-        info.patch.dfg.scratchGPR = m_propertyAccesses[i].m_scratchGPR;
+        m_propertyAccesses[i].m_usedRegisters.copyInfo(info.patch.dfg.usedRegisters);
         info.patch.dfg.registersFlushed = m_propertyAccesses[i].m_registerMode == PropertyAccessRecord::RegistersFlushed;
     }
     

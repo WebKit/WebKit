@@ -150,6 +150,8 @@
 		0F766D3515AE253B008F363E /* JumpReplacementWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D3815AE4A1C008F363E /* StructureStubClearingWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D3615AE4A1A008F363E /* StructureStubClearingWatchpoint.cpp */; };
 		0F766D3915AE4A1F008F363E /* StructureStubClearingWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F766D4415B2A3C0008F363E /* DFGRegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D4215B2A3BD008F363E /* DFGRegisterSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F766D4615B3701F008F363E /* DFGScratchRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D4515B3701D008F363E /* DFGScratchRegisterAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F7700911402FF280078EB39 /* SamplingCounter.cpp */; };
 		0F7B294A14C3CD29007C3DB1 /* DFGCCallHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7B294B14C3CD2F007C3DB1 /* DFGCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD82E1F14172C2F00179C94 /* DFGCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -895,6 +897,8 @@
 		0F766D3315AE2535008F363E /* JumpReplacementWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JumpReplacementWatchpoint.h; sourceTree = "<group>"; };
 		0F766D3615AE4A1A008F363E /* StructureStubClearingWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureStubClearingWatchpoint.cpp; sourceTree = "<group>"; };
 		0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureStubClearingWatchpoint.h; sourceTree = "<group>"; };
+		0F766D4215B2A3BD008F363E /* DFGRegisterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRegisterSet.h; path = dfg/DFGRegisterSet.h; sourceTree = "<group>"; };
+		0F766D4515B3701D008F363E /* DFGScratchRegisterAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGScratchRegisterAllocator.h; path = dfg/DFGScratchRegisterAllocator.h; sourceTree = "<group>"; };
 		0F77008E1402FDD60078EB39 /* SamplingCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SamplingCounter.h; sourceTree = "<group>"; };
 		0F7700911402FF280078EB39 /* SamplingCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SamplingCounter.cpp; sourceTree = "<group>"; };
 		0F7B294814C3CD23007C3DB1 /* DFGCCallHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCCallHelpers.h; path = dfg/DFGCCallHelpers.h; sourceTree = "<group>"; };
@@ -2304,9 +2308,11 @@
 				0A4337BA1506218800991C95 /* DFGRedundantPhiEliminationPhase.cpp */,
 				0A4337BD1506219B00991C95 /* DFGRedundantPhiEliminationPhase.h */,
 				86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */,
+				0F766D4215B2A3BD008F363E /* DFGRegisterSet.h */,
 				86BB09BE138E381B0056702F /* DFGRepatch.cpp */,
 				86BB09BF138E381B0056702F /* DFGRepatch.h */,
 				86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */,
+				0F766D4515B3701D008F363E /* DFGScratchRegisterAllocator.h */,
 				0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */,
 				0F1E3A501537C2CB000F9456 /* DFGSlowPathGenerator.h */,
 				86EC9DC21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp */,
@@ -2850,6 +2856,8 @@
 				0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */,
 				0F766D3515AE253B008F363E /* JumpReplacementWatchpoint.h in Headers */,
 				0F766D3915AE4A1F008F363E /* StructureStubClearingWatchpoint.h in Headers */,
+				0F766D4415B2A3C0008F363E /* DFGRegisterSet.h in Headers */,
+				0F766D4615B3701F008F363E /* DFGScratchRegisterAllocator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

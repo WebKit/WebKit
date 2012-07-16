@@ -226,6 +226,11 @@ public:
         return nameAtIndex(BankInfo::toIndex(reg));
     }
     
+    bool isInUse(RegID reg) const
+    {
+        return isLocked(reg) || name(reg) != InvalidVirtualRegister;
+    }
+    
 #ifndef NDEBUG
     void dump()
     {

@@ -216,9 +216,11 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGRedundantPhiEliminationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGRedundantPhiEliminationPhase.h \
 	Source/JavaScriptCore/dfg/DFGRegisterBank.h \
+	Source/JavaScriptCore/dfg/DFGRegisterSet.h \
 	Source/JavaScriptCore/dfg/DFGRepatch.cpp \
 	Source/JavaScriptCore/dfg/DFGRepatch.h \
 	Source/JavaScriptCore/dfg/DFGScoreBoard.h \
+	Source/JavaScriptCore/dfg/DFGScratchRegisterAllocator.h \
 	Source/JavaScriptCore/dfg/DFGSilentRegisterSavePlan.h \
 	Source/JavaScriptCore/dfg/DFGSlowPathGenerator.h \
 	Source/JavaScriptCore/dfg/DFGSpeculativeJIT32_64.cpp \

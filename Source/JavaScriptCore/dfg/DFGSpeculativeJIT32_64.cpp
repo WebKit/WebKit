@@ -503,7 +503,7 @@ void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node& node)
     jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
 }
 
-void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
+void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::PatchableJump structureCheck = m_jit.patchableBranchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(basePayloadGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
@@ -553,7 +553,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseTagGPROrNon
             codeOrigin, structureToCompare, structureCheck, propertyStorageLoad,
             tagLoadWithPatch, payloadLoadWithPatch, slowPath.get(), doneLabel,
             safeCast<int8_t>(basePayloadGPR), safeCast<int8_t>(resultTagGPR),
-            safeCast<int8_t>(resultPayloadGPR), safeCast<int8_t>(scratchGPR),
+            safeCast<int8_t>(resultPayloadGPR), usedRegisters(),
             spillMode == NeedToSpill ? PropertyAccessRecord::RegistersInUse : PropertyAccessRecord::RegistersFlushed));
     addSlowPathGenerator(slowPath.release());
 }
@@ -595,6 +595,11 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
             slowCases, this, optimizedCall, NoResult, valueTagGPR, valuePayloadGPR,
             basePayloadGPR, identifier(identifierNumber));
     }
+    RegisterSet currentlyUsedRegisters = usedRegisters();
+    currentlyUsedRegisters.clear(scratchGPR);
+    ASSERT(currentlyUsedRegisters.get(basePayloadGPR));
+    ASSERT(currentlyUsedRegisters.get(valueTagGPR));
+    ASSERT(currentlyUsedRegisters.get(valuePayloadGPR));
     m_jit.addPropertyAccess(
         PropertyAccessRecord(
             codeOrigin, structureToCompare, structureCheck, propertyStorageLoad,
@@ -602,7 +607,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
             JITCompiler::DataLabelCompact(payloadStoreWithPatch.label()),
             slowPath.get(), doneLabel, safeCast<int8_t>(basePayloadGPR),
             safeCast<int8_t>(valueTagGPR), safeCast<int8_t>(valuePayloadGPR),
-            safeCast<int8_t>(scratchGPR)));
+            usedRegisters()));
     addSlowPathGenerator(slowPath.release());
 }
 
@@ -3298,16 +3303,10 @@ void SpeculativeJIT::compile(Node& node)
             GPRReg baseGPR = base.gpr();
             GPRReg resultTagGPR = resultTag.gpr();
             GPRReg resultPayloadGPR = resultPayload.gpr();
-            GPRReg scratchGPR;
-            
-            if (resultTagGPR == baseGPR)
-                scratchGPR = resultPayloadGPR;
-            else
-                scratchGPR = resultTagGPR;
-            
+
             base.use();
             
-            cachedGetById(node.codeOrigin, InvalidGPRReg, baseGPR, resultTagGPR, resultPayloadGPR, scratchGPR, node.identifierNumber());
+            cachedGetById(node.codeOrigin, InvalidGPRReg, baseGPR, resultTagGPR, resultPayloadGPR, node.identifierNumber());
             
             jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
             break;
@@ -3321,18 +3320,12 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg basePayloadGPR = base.payloadGPR();
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
-        GPRReg scratchGPR;
-
-        if (resultTagGPR == basePayloadGPR)
-            scratchGPR = resultPayloadGPR;
-        else
-            scratchGPR = resultTagGPR;
         
         base.use();
         
         JITCompiler::Jump notCell = m_jit.branch32(JITCompiler::NotEqual, baseTagGPR, TrustedImm32(JSValue::CellTag));
         
-        cachedGetById(node.codeOrigin, baseTagGPR, basePayloadGPR, resultTagGPR, resultPayloadGPR, scratchGPR, node.identifierNumber(), notCell);
+        cachedGetById(node.codeOrigin, baseTagGPR, basePayloadGPR, resultTagGPR, resultPayloadGPR, node.identifierNumber(), notCell);
         
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;
@@ -3354,13 +3347,11 @@ void SpeculativeJIT::compile(Node& node)
             GPRReg resultTagGPR = resultTag.gpr();
             GPRReg resultPayloadGPR = resultPayload.gpr();
 
-            GPRReg scratchGPR = selectScratchGPR(baseGPR, resultTagGPR, resultPayloadGPR);
-            
             base.use();
             
             flushRegisters();
             
-            cachedGetById(node.codeOrigin, InvalidGPRReg, baseGPR, resultTagGPR, resultPayloadGPR, scratchGPR, node.identifierNumber(), JITCompiler::Jump(), DontSpill);
+            cachedGetById(node.codeOrigin, InvalidGPRReg, baseGPR, resultTagGPR, resultPayloadGPR, node.identifierNumber(), JITCompiler::Jump(), DontSpill);
             
             jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
             break;
@@ -3375,15 +3366,13 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg resultTagGPR = resultTag.gpr();
         GPRReg resultPayloadGPR = resultPayload.gpr();
 
-        GPRReg scratchGPR = selectScratchGPR(baseTagGPR, basePayloadGPR, resultTagGPR, resultPayloadGPR);
-        
         base.use();
         
         flushRegisters();
         
         JITCompiler::Jump notCell = m_jit.branch32(JITCompiler::NotEqual, baseTagGPR, TrustedImm32(JSValue::CellTag));
         
-        cachedGetById(node.codeOrigin, baseTagGPR, basePayloadGPR, resultTagGPR, resultPayloadGPR, scratchGPR, node.identifierNumber(), notCell, DontSpill);
+        cachedGetById(node.codeOrigin, baseTagGPR, basePayloadGPR, resultTagGPR, resultPayloadGPR, node.identifierNumber(), notCell, DontSpill);
         
         jsValueResult(resultTagGPR, resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
         break;

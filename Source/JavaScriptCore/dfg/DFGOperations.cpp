@@ -1232,6 +1232,15 @@ size_t DFG_OPERATION operationIsFunction(EncodedJSValue value)
     return jsIsFunctionType(JSValue::decode(value));
 }
 
+void DFG_OPERATION operationReallocateStorageAndFinishPut(ExecState* exec, JSObject* base, Structure* structure, PropertyOffset offset, EncodedJSValue value)
+{
+    JSGlobalData& globalData = exec->globalData();
+    ASSERT(structure->outOfLineCapacity() > base->structure()->outOfLineCapacity());
+    ASSERT(!globalData.heap.storageAllocator().fastPathShouldSucceed(structure->outOfLineCapacity() * sizeof(JSValue)));
+    base->setStructureAndReallocateStorageIfNecessary(globalData, structure);
+    base->putDirectOffset(globalData, offset, JSValue::decode(value));
+}
+
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);

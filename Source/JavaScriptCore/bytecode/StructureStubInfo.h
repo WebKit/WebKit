@@ -31,6 +31,7 @@
 #if ENABLE(JIT)
 
 #include "CodeOrigin.h"
+#include "DFGRegisterSet.h"
 #include "Instruction.h"
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
@@ -212,7 +213,7 @@ namespace JSC {
                 int8_t valueTagGPR;
 #endif
                 int8_t valueGPR;
-                int8_t scratchGPR;
+                DFG::RegisterSetPOD usedRegisters;
                 int32_t deltaCallToDone;
                 int32_t deltaCallToStorageLoad;
                 int32_t deltaCallToStructCheck;

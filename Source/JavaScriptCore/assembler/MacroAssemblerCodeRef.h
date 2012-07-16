@@ -126,6 +126,13 @@ public:
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
+    template<typename returnType, typename argType1, typename argType2, typename argType3, typename argType4, typename argType5>
+    FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4, argType5))
+        : m_value((void*)value)
+    {
+        ASSERT_VALID_CODE_POINTER(m_value);
+    }
+
 // MSVC doesn't seem to treat functions with different calling conventions as
 // different types; these methods already defined for fastcall, below.
 #if CALLING_CONVENTION_IS_STDCALL && !OS(WINDOWS)
