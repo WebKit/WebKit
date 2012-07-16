@@ -1043,7 +1043,11 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement* resultElement, b
     // This call may obtain a new interval -- never call calculateAnimationPercentAndRepeat() before!
     if (seekToTime) {
         seekToIntervalCorrespondingToTime(elapsed);
-        ASSERT(elapsed >= m_intervalBegin);
+        if (elapsed < m_intervalBegin) {
+            // elapsed is not within an interval.
+            m_nextProgressTime = m_intervalBegin;
+            return false;
+        }
     }
 
     unsigned repeat = 0;

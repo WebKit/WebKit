@@ -1,3 +1,18 @@
+2012-07-16  Florin Malita  <fmalita@chromium.org>
+
+        SVGAnimationElement::currentValuesForValuesAnimation crash
+        https://bugs.webkit.org/show_bug.cgi?id=91326
+
+        Reviewed by Simon Fraser.
+
+        SVGSMILElement::progress() assumes that seekToIntervalCorrespondingToTime() always
+        lands inside a defined interval, but one can force arbitrary time offsets using
+        setCurrentTime(). This patch adds logic for handling non-interval time offsets
+        gracefully.
+
+        * svg/animations/smil-setcurrenttime-crash-expected.txt: Added.
+        * svg/animations/smil-setcurrenttime-crash.svg: Added.
+
 2012-07-16  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Unreviewed gardening. Layout Test fast/frames/calculate-fixed.html is flaky
