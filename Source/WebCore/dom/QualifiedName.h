@@ -53,10 +53,10 @@ public:
         void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         {
             MemoryClassInfo<QualifiedNameImpl> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
-            info.reportObject(m_prefix);
-            info.reportObject(m_localName);
-            info.reportObject(m_namespace);
-            info.reportObject(m_localNameUpper);
+            info.addMember(m_prefix);
+            info.addMember(m_localName);
+            info.addMember(m_namespace);
+            info.addMember(m_localNameUpper);
         }
     private:
         QualifiedNameImpl(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI)
@@ -105,7 +105,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo<QualifiedName> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
-        info.reportInstrumentedPointer(m_impl);
+        info.addInstrumentedMember(m_impl);
     }
 private:
     void init(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);

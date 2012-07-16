@@ -120,7 +120,7 @@ public:
     {
         MemoryClassInfo<StylePropertySet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         if (m_isMutable)
-            info.reportPointer(m_mutablePropertyVector);
+            info.addMember(m_mutablePropertyVector);
     }
 
 private:

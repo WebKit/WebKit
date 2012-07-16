@@ -1,3 +1,70 @@
+2012-07-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: moving forward to the better memory instrumentation API
+        https://bugs.webkit.org/show_bug.cgi?id=91259
+
+        Reviewed by Pavel Feldman.
+
+        I'm trying to remove unnecessary complexity of the API
+        reportInstrumentedObject and reportInstrumentedPointer will be replaced with addInstrumentedMember
+        The same will happen with reportPointer, reportObject pair.
+        Also info.report* will be replaced with info.add*
+
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::ChunkedTable::reportMemoryUsage):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::collectBindingMemoryInfo):
+        * bindings/v8/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::reportMemoryUsage):
+        (WebCore::StringCache::reportMemoryUsage):
+        * bindings/v8/V8DOMMap.h:
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::reportMemoryUsage):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::reportMemoryUsage):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::reportMemoryUsage):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/Element.h:
+        (WebCore::Element::reportMemoryUsage):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryInstrumentation::addInstrumentedMember):
+        (MemoryInstrumentation):
+        (WebCore::MemoryInstrumentation::addMember):
+        (WebCore::MemoryInstrumentation::OwningTraits::addInstrumentedMember):
+        (WebCore::MemoryInstrumentation::OwningTraits::addMember):
+        (WebCore::MemoryInstrumentation::addInstrumentedMemberImpl):
+        (WebCore::MemoryInstrumentation::addMemberImpl):
+        (WebCore::MemoryClassInfo::addInstrumentedMember):
+        (WebCore::MemoryClassInfo::addMember):
+        (WebCore::MemoryClassInfo::addHashMap):
+        (WebCore::MemoryClassInfo::addHashSet):
+        (WebCore::MemoryClassInfo::addListHashSet):
+        (WebCore::MemoryClassInfo::addVector):
+        (WebCore::MemoryClassInfo::addString):
+        (WebCore::MemoryInstrumentation::addHashMap):
+        (WebCore::MemoryInstrumentation::addHashSet):
+        (WebCore::MemoryInstrumentation::addListHashSet):
+        (WebCore::MemoryInstrumentation::addVector):
+        * dom/Node.cpp:
+        (WebCore::Node::reportMemoryUsage):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::reportMemoryUsage):
+        (WebCore::QualifiedName::reportMemoryUsage):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::reportMemoryUsage):
+
 2012-07-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r122714.

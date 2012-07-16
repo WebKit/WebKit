@@ -103,8 +103,8 @@ public:
     {
         MemoryClassInfo<ContainerNode> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         info.visitBaseClass<Node>(this);
-        info.reportInstrumentedPointer(m_firstChild);
-        info.reportInstrumentedPointer(m_lastChild);
+        info.addInstrumentedMember(m_firstChild);
+        info.addInstrumentedMember(m_lastChild);
     }
 
 protected:

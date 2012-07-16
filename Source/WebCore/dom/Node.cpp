@@ -2771,9 +2771,9 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo<Node> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
     info.visitBaseClass<TreeShared<Node, ContainerNode> >(this);
     info.visitBaseClass<ScriptWrappable>(this);
-    info.reportInstrumentedPointer(m_document);
-    info.reportInstrumentedPointer(m_next);
-    info.reportInstrumentedPointer(m_previous);
+    info.addInstrumentedMember(m_document);
+    info.addInstrumentedMember(m_next);
+    info.addInstrumentedMember(m_previous);
 }
 
 } // namespace WebCore

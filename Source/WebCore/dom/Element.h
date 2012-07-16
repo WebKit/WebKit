@@ -431,8 +431,8 @@ public:
     {
         MemoryClassInfo<Element> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         info.visitBaseClass<ContainerNode>(this);
-        info.reportInstrumentedObject(m_tagName);
-        info.reportInstrumentedPointer(m_attributeData.get());
+        info.addInstrumentedMember(m_tagName);
+        info.addInstrumentedMember(m_attributeData.get());
     }
 
 protected:
