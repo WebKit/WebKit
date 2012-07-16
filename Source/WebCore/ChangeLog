@@ -1,3 +1,10 @@
+2012-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add missing idl directory.
+        * GNUmakefile.list.am: Add missing files to compilation.
+
 2012-07-16  Eugene Klyuchnikov  <eustas.big@gmail.com>
 
         Web Inspector: Implement message loop instrumentation for timeline

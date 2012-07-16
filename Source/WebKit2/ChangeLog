@@ -1,3 +1,10 @@
+2012-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add test resources to
+        EXTRA_DIST.
+
 2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Define destructors for Ewk structures

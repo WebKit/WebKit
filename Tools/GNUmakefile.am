@@ -47,6 +47,8 @@ libWebCoreInternals_la_SOURCES = \
 	Source/WebCore/testing/Internals.h \
 	Source/WebCore/testing/InternalSettings.cpp \
 	Source/WebCore/testing/InternalSettings.h \
+	Source/WebCore/testing/MockPagePopupDriver.cpp \
+	Source/WebCore/testing/MockPagePopupDriver.h \
 	Source/WebCore/testing/js/WebCoreTestSupport.cpp \
 	Source/WebCore/testing/js/WebCoreTestSupport.h
 

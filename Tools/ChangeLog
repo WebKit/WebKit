@@ -1,3 +1,9 @@
+2012-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add missing file to compilation.
+
 2012-07-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Add EFLWebKit2PublicAPI, EFLWebKit2PlatformSpecific to watch list.
