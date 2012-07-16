@@ -1,5 +1,12 @@
 2012-07-16  Gabor Rapcsanyi  <rgabor@webkit.org>
 
+        Unreviewed buildfix after r122729. Typo fix.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::add32):
+
+2012-07-16  Gabor Rapcsanyi  <rgabor@webkit.org>
+
         Unreviewed buildfix from Zoltan Herczeg after r122677.
         Implement missing add32 function to MacroAssemblerARM.
 

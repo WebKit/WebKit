@@ -109,7 +109,7 @@ public:
 
     void add32(AbsoluteAddress src, RegisterID dest)
     {
-        move(TrustedImmPtr(address.m_ptr), ARMRegisters::S1);
+        move(TrustedImmPtr(src.m_ptr), ARMRegisters::S1);
         m_assembler.dtr_u(ARMAssembler::LoadUint32, ARMRegisters::S1, ARMRegisters::S1, 0);
         add32(ARMRegisters::S1, dest);
     }
