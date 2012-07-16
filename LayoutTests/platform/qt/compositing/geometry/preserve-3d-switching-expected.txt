@@ -8,7 +8,7 @@ The green box appear angled out from the yellow box and embedded in it.
       (bounds 800.00 600.00)
       (children 1
         (GraphicsLayer
-          (position 108.00 74.00)
+          (position 108.00 72.00)
           (bounds 304.00 304.00)
           (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 -0.00] [0.00 0.00 0.00 1.00])
           (children 1

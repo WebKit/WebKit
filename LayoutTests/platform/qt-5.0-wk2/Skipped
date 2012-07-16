@@ -400,24 +400,6 @@ http/tests/ssl
 # https://bugs.webkit.org/show_bug.cgi?id=90985
 fast/repaint/background-scaling.html
 
-# [Qt] remaining compositing tests after rebaseline for new testfonts
-# https://bugs.webkit.org/show_bug.cgi?id=91377
-compositing/backing/no-backing-for-clip-overlap.html
-compositing/backing/no-backing-for-clip.html
-compositing/backing/no-backing-for-perspective.html
-compositing/geometry/composited-html-size.html
-compositing/geometry/composited-in-columns.html
-compositing/geometry/fixed-in-composited.html
-compositing/geometry/limit-layer-bounds-overflow-repaint.html
-compositing/geometry/object-clip-rects-assertion.html
-compositing/geometry/partial-layout-update.html
-compositing/geometry/preserve-3d-switching.html
-compositing/iframes/composited-iframe-scroll.html
-compositing/iframes/iframe-content-flipping.html
-compositing/iframes/invisible-nested-iframe-show.html
-compositing/layer-creation/no-compositing-for-preserve-3d.html
-compositing/overflow/theme-affects-visual-overflow.html
-
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203

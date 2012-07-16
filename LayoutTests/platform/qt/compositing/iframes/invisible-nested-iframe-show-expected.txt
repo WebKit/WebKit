@@ -18,10 +18,10 @@
                     (GraphicsLayer
                       (children 1
                         (GraphicsLayer
-                          (bounds 284.00 193.00)
+                          (bounds 284.00 192.00)
                           (children 1
                             (GraphicsLayer
-                              (bounds 284.00 193.00)
+                              (bounds 284.00 192.00)
                               (drawsContent 1)
                               (children 1
                                 (GraphicsLayer
@@ -74,7 +74,7 @@
           )
         )
         (GraphicsLayer
-          (position 18.00 203.00)
+          (position 18.00 202.00)
           (bounds 210.00 210.00)
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
