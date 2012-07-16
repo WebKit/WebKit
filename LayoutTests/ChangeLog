@@ -1,3 +1,9 @@
+2012-07-16  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Fix TestExpectations after r122718.
+
+        * platform/qt/TestExpectations:
+
 2012-07-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] compositing tests need rebaseline with new testfonts
