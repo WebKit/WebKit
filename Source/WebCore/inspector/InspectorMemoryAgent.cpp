@@ -500,7 +500,7 @@ public:
     }
 
 private:
-    virtual void addString(const String& string, ObjectType objectType)
+    virtual void reportString(ObjectType objectType, const String& string)
     {
         if (string.isNull() || visited(string.impl()))
             return;
@@ -541,7 +541,7 @@ public:
         if (node->document() && node->document()->frame() && m_page != node->document()->frame()->page())
             return;
 
-        m_domMemoryUsage.addInstrumentedMember(node);
+        m_domMemoryUsage.reportInstrumentedPointer(node);
         m_domMemoryUsage.processDeferredInstrumentedPointers();
     }
 
