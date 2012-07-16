@@ -482,8 +482,10 @@ def main(argv=None):
 
 if '__main__' == __name__:
     try:
-        sys.exit(main())
+        return_code = main()
     except BaseException, e:
         if e.__class__ in (KeyboardInterrupt, TestRunInterruptedException):
             sys.exit(INTERRUPTED_EXIT_STATUS)
         sys.exit(EXCEPTIONAL_EXIT_STATUS)
+
+    sys.exit(return_code)
