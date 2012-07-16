@@ -1,3 +1,12 @@
+2012-07-16  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Unreviewed gardening. Layout Test fast/frames/calculate-fixed.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=91415
+
+        Has been intermittently failing TEXT since at least r122699.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-16  Ojan Vafai  <ojan@chromium.org>
 
         Cleanup a bunch of invalid BUG* lines. Rebaseline tests that were straightfoward
