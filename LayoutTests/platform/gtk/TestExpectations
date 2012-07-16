@@ -1195,7 +1195,7 @@ BUGWK86971 : svg/hittest/svg-shapes-non-scale-stroke.html = TEXT
 
 BUGWK87088 : fast/js/names.html = TEXT
 
-BUGWKGTK   : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT
+BUGWKGTK : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT
 
 BUGWK87734 : svg/dom/complex-svgView-specification.html = IMAGE
 BUGWK87734 : svg/dom/SVGViewSpec.html = TEXT

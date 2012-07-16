@@ -1,3 +1,21 @@
+2012-07-16  Ojan Vafai  <ojan@chromium.org>
+
+        Cleanup a bunch of invalid BUG* lines. Rebaseline tests that were straightfoward
+        rebaselines and update the expectations to match what's actually happening on the bots.
+
+        * platform/chromium-linux/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-linux/http/tests/misc/slow-loading-image-in-pattern-expected.png:
+        * platform/chromium-mac-snowleopard/fast/backgrounds/solid-color-context-restore-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/reflections/inline-crash-expected.png: Added.
+        * platform/chromium-mac-snowleopard/http/tests/misc/slow-loading-image-in-pattern-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/solid-color-context-restore-expected.png: Added.
+        * platform/chromium-mac/fast/reflections/inline-crash-expected.png: Added.
+        * platform/chromium-mac/http/tests/misc/slow-loading-image-in-pattern-expected.png: Added.
+        * platform/chromium-mac/transforms/2d/zoom-menulist-expected.png: Added.
+        * platform/chromium-win/http/tests/misc/slow-loading-image-in-pattern-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2012-07-16  Tony Chang  <tony@chromium.org>
 
         Position grid items by row/column index
