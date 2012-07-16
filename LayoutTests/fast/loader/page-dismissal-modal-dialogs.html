@@ -21,9 +21,9 @@ function registerEvents(name, thisFrame, otherFrame) {
 
 addEventListener("load", function() {
     registerEvents("mainFrame", window, frames[0]);
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     location = "resources/pass-and-notify-done.html";
 }, false);

@@ -7,8 +7,8 @@
 <script>
     description('This test calls pushState with state objects of all the different object types supported by the HTML5 "internal structured cloning algorithm" and makes sure the state attribute returns the expected objects.');
 
-    if (window.layoutTestController)
-        layoutTestController.clearBackForwardList();
+    if (window.testRunner)
+        testRunner.clearBackForwardList();
 
     shouldBeDefined("history.state");
     debug("\nhistory.state should initially be null.");

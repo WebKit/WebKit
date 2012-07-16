@@ -5,9 +5,9 @@
 <form name="form" method="POST" action="resources/submit-form-while-parsing-success.html"/>
 <script type="text/javascript">
 <![CDATA[
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 document.forms.form.submit();
 ]]>

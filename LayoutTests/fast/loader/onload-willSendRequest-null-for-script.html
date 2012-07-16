@@ -4,14 +4,14 @@
     <title>Test for Bug 33687: window.onload never fires if page contains a &lt;script src=foo>
     whose load is cancelled by resource load delegate returning null from willSendRequest</title>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setWillSendRequestReturnsNull(true);
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setWillSendRequestReturnsNull(true);
         }
 
         window.onload = function() {
             var result = document.getElementById("result");
-            if (!window.layoutTestController) {
+            if (!window.testRunner) {
                 result.innerText = "This test can only be run in DumpRenderTree.";
                 return;
             }

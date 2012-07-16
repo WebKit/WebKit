@@ -10,8 +10,8 @@
         document.getElementById("log").appendChild(document.createTextNode(message + '\n'));
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
 
         eventSender.zoomPageIn();
         eventSender.zoomPageIn();
@@ -22,7 +22,7 @@
         var x = (link.offsetLeft + link.offsetWidth / 2) * zoomFactor;
         var y = (link.offsetTop + link.offsetHeight / 2) * zoomFactor;
 
-        layoutTestController.setCustomPolicyDelegate(true, false);
+        testRunner.setCustomPolicyDelegate(true, false);
 
         log("The policy delegate message should indicate that the originating node is the text child of an anchor element.");
 

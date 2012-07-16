@@ -64,15 +64,15 @@
         {
             var isNegativeNumber = listItemElement.parentNode.className && listItemElement.parentNode.className.split(" ").indexOf("negative-number") > -1;
             var expectedMarkerText = (isNegativeNumber ? "-" : "") + listItemElement.innerText;
-            return testListItemMarkerEquals(layoutTestController.markerTextForListItem(listItemElement), expectedMarkerText);
+            return testListItemMarkerEquals(testRunner.markerTextForListItem(listItemElement), expectedMarkerText);
         }
 
         function runTest()
         {
-            if (!window.layoutTestController)
+            if (!window.testRunner)
                 return;
             
-            layoutTestController.dumpAsText();
+            testRunner.dumpAsText();
             filterListsWithReplacement(document.querySelectorAll(".test ol"), testListItemMarkerEqualsListItemText);
             document.body.removeChild(document.getElementById("description")); // Remove description when running in DRT.
         }

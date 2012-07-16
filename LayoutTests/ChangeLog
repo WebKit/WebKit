@@ -1,3 +1,103 @@
+2012-07-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in fast/js, layers, leaks, line-grid, lists, loader, loading, media, mediastream, multicol, and mutation tests
+        https://bugs.webkit.org/show_bug.cgi?id=91315
+
+        Reviewed by Adam Barth.
+
+        * fast/js/:
+        * fast/layers/add-layer-with-nested-stacking.html:
+        * fast/layers/assert-RenderLayer-update-positions.html:
+        * fast/layers/clip-rects-assertion.html:
+        * fast/layers/clip-rects-transformed-2.html:
+        * fast/layers/clip-rects-transformed.html:
+        * fast/layers/generated-layer-scrollbar-crash.html:
+        * fast/layers/inline-dirty-z-order-lists.html:
+        * fast/layers/layer-content-visibility-change.html:
+        * fast/layers/layer-visibility.html:
+        * fast/layers/nested-layers-1.html:
+        * fast/layers/nested-layers-2.html:
+        * fast/layers/nested-layers-3.html:
+        * fast/layers/nested-layers-4.html:
+        * fast/layers/remove-layer-with-nested-stacking.html:
+        * fast/layers/remove-only-this-layer-update.html:
+        * fast/layers/removed-by-scroll-handler.html:
+        * fast/layers/resize-layer-deletion-crash.html:
+        * fast/layers/scroll-with-transform-composited-layer.html:
+        * fast/layers/scroll-with-transform-layer.html:
+        * fast/layers/scrollByLines-overflow-no-layer.html:
+        * fast/layers/visible-layer-with-hidden-parent.html:
+        * fast/layers/zindex-hit-test.html:
+        * fast/leaks/001.html:
+        * fast/leaks/002.html:
+        * fast/leaks/003.html-disabled:
+        * fast/line-grid/line-grid-nested.html:
+        * fast/lists/alpha-boundary-values.html:
+        * fast/lists/alpha-list-wrap.html:
+        * fast/lists/calc-width-with-space.html:
+        * fast/lists/decimal-leading-zero.html:
+        * fast/lists/drag-into-marker.html:
+        * fast/lists/item-not-in-list-line-wrapping.html:
+        * fast/lists/li-values.html:
+        * fast/lists/list-style-type-dynamic-change.html:
+        * fast/lists/ol-nested-items-dynamic-insert.html:
+        * fast/lists/ol-nested-items-dynamic-remove.html:
+        * fast/lists/ol-nested-items.html:
+        * fast/lists/ol-nested-list-dynamic-insert.html:
+        * fast/lists/ol-nested-list-dynamic-remove.html:
+        * fast/lists/ol-nested-list.html:
+        * fast/lists/ol-reversed-dynamic-simple.html:
+        * fast/lists/ol-reversed-dynamic.html:
+        * fast/lists/ol-reversed-nested-items.html:
+        * fast/lists/ol-reversed-nested-list.html:
+        * fast/lists/ol-reversed-simple.html:
+        * fast/lists/ol-reversed-simple.xhtml:
+        * fast/lists/ol-start-roman.html:
+        * fast/lists/parent-box-not-box-crash.html:
+        * fast/lists/positioned-count-crash.html:
+        * fast/lists/remove-listmarker-from-anonblock-with-continuation-crash.html:
+        * fast/lists/resources/dump-list.js:
+        (dumpListItemAsHTML):
+        (testListItemMarkerEqualsListItemText):
+        * fast/lists/w3-css3-list-styles-alphabetic.html:
+        * fast/lists/w3-css3-list-styles-fallback-style.html:
+        * fast/lists/w3-css3-list-styles-numeric.html:
+        * fast/lists/w3-css3-list-styles-symbolic.html:
+        * fast/lists/w3-css3-lower-armenian.html:
+        * fast/lists/w3-css3-upper-armenian.html:
+        * fast/lists/w3-list-styles.html:
+        * fast/loader/:
+        * fast/media/color-does-not-include-alpha.html:
+        * fast/media/invalid-lengths.html:
+        * fast/media/lifetime.html:
+        * fast/media/matchmedium-query-api.html:
+        * fast/media/media-query-list-01.html:
+        * fast/media/media-query-list-02.html:
+        * fast/media/media-query-list-03.html:
+        * fast/media/media-query-list-04.html:
+        * fast/media/media-query-list-05.html:
+        * fast/media/media-query-list-06.html:
+        * fast/media/media-query-list-07.html:
+        * fast/media/media-query-list-callback.html:
+        * fast/media/media-svg-crash.html:
+        * fast/media/mq-pointer.html:
+        * fast/media/print-restores-previous-mediatype.html:
+        * fast/media/update-media-query-css-parser.html:
+        * fast/media/view-mode-media-feature.html:
+        * fast/multicol/:
+        * fast/mutation/end-of-task-delivery.html:
+        * fast/mutation/inline-event-listener.html:
+        * fast/mutation/mutation-callback-non-element-crash.html:
+        * platform/chromium/fast/loader/create-view-target-blank.html:
+        * platform/chromium/fast/loader/resources/done.html:
+        * platform/gtk/fast/loader/crash-display-local-directory.html:
+        * platform/mac/fast/loader/file-url-mimetypes-2.html:
+        * platform/mac/fast/loader/file-url-mimetypes-3.html:
+        * platform/mac/fast/loader/file-url-mimetypes.html:
+        * platform/mac/fast/loader/non-html-load-event.html:
+        * platform/mac/fast/loader/webarchive-encoding-respected.html:
+        * platform/qt/fast/loader/user-stylesheet-qrc-path.html:
+
 2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip fast/text/descent-clip-in-scaled-page.html

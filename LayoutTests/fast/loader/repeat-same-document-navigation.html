@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function clickLink() {
@@ -21,7 +21,7 @@ function run() {
     var line = document.createElement('div');
     line.appendChild(document.createTextNode("Scroll position is " + scrollY + "px"));
     document.getElementById('anchor').appendChild(line);
-    layoutTestController.notifyDone();    
+    testRunner.notifyDone();    
 }
 
 </script>

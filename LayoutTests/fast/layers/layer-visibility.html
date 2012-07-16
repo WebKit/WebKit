@@ -13,8 +13,8 @@
 </style>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var node1;
 var node2;
@@ -94,8 +94,8 @@ document.getElementById('22').style.setProperty('visibility','hidden','');
 // force layout
 document.body.offsetTop;
 
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 </script>

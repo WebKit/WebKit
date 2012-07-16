@@ -1,8 +1,8 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.setShouldStayOnPageAfterHandlingBeforeUnload(true);
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.setShouldStayOnPageAfterHandlingBeforeUnload(true);
 }
 
 _confirmationDialogDisplayedOnce = false;
@@ -13,13 +13,13 @@ window.addEventListener("beforeunload", function() {
         return "Click 'Leave Page'";
 
     window.setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.setShouldStayOnPageAfterHandlingBeforeUnload(false);
+        if (window.testRunner)
+            testRunner.setShouldStayOnPageAfterHandlingBeforeUnload(false);
 
         window.setTimeout(function() {
             document.getElementById("console").innerHTML = "FAIL";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 1000);
 
         document.forms[0].submit();

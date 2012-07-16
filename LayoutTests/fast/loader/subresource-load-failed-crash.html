@@ -1,9 +1,9 @@
 <html>
 <body id='console'>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var xhr = new XMLHttpRequest;
@@ -13,7 +13,7 @@ function secondRequest()
     {
         if (xhr.readyState == xhr.DONE) {
             document.getElementById('console').appendChild(document.createTextNode("PASS"));
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
     xhr.open("GET", "", true);

@@ -1,16 +1,16 @@
 <html>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 var target;
 function check_blank() {
   var x = target.location.private;
   result.innerHTML = "Test PASSED";
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 function reload_blank() {

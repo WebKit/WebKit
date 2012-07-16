@@ -17,9 +17,9 @@ if (sessionStorage.totalEventsFired == targetNumberOfEventsForFirstTest)
 sessionStorage.clear();
 sessionStorage.totalEventsFired = 0;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function startTest()
@@ -54,8 +54,8 @@ function hashChanged(eventHandlerName)
         location.hash="";
         location.href=location.href.substr(0, location.href.length - 1);
     }
-    if (testNumber == 2 && sessionStorage.totalEventsFired == targetNumberOfEventsForSecondTest && window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (testNumber == 2 && sessionStorage.totalEventsFired == targetNumberOfEventsForSecondTest && window.testRunner) {
+        testRunner.notifyDone();
         sessionStorage.clear();
     }
 }

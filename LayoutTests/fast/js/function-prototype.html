@@ -2,9 +2,9 @@
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 </script>
 </head>
@@ -34,8 +34,8 @@ shouldBe("actual", "'function () { }'");
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 <script>
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 </script>
 </body>
 </html>

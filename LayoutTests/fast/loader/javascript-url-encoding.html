@@ -1,8 +1,8 @@
 <meta charset="windows-1251">
 <body onload="test()">
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function test() {
     document.getElementById("result").innerHTML = "1. " + (window.frames[0].document.body.innerHTML == "SUССЕSS" ? "SUCCESS" : "FAILURE: " + window.frames[0].document.body.innerHTML) + ".\r";

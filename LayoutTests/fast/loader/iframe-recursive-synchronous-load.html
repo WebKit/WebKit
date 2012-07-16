@@ -5,8 +5,8 @@ from another iframe's onload handler.
 <p>PASS: You didn't crash.</p>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function addFrame()
 {

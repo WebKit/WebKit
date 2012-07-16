@@ -4,8 +4,8 @@
         <script>
             function test()
             {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
 
                 var list1 = document.getElementById("list1");
                 list1.offsetTop; // Force a relayout.

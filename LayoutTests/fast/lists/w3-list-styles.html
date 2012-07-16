@@ -23,8 +23,8 @@ ol ol { margin-bottom: 0em; margin-top: 0.5em; }
 <script>
     window.onload = function()
     {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
             filterListsWithReplacement(document.querySelectorAll(".test ol"));
         }
     }

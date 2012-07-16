@@ -1,7 +1,7 @@
 <script>
 
 function loaded() {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         var element = document.getElementById("fragmentlink");
         eventSender.mouseMoveTo(element.offsetLeft + (element.offsetWidth / 2), element.offsetTop + (element.offsetHeight / 2));
         eventSender.mouseDown();
@@ -11,8 +11,8 @@ function loaded() {
 
 function hashChanged()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

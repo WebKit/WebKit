@@ -8,8 +8,8 @@ function runTest()
     history.pushState("New history Item", "2Ping!");
     history.pushState("New history Item", "3Ping!");
     window.opener.document.getElementById("result").innerText = "history.length is: " + history.length;
-    if (window.opener.layoutTestController)
-        window.opener.layoutTestController.notifyDone();
+    if (window.opener.testRunner)
+        window.opener.testRunner.notifyDone();
     window.close()
 }
 

@@ -32,8 +32,8 @@
         }
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         document.getElementById("tests").style.display = "none";
     }
 

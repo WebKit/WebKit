@@ -13,8 +13,8 @@ function log(s)
     document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // these should not crash
 

@@ -6,15 +6,15 @@ function finishTest()
     document.getElementById("removeMyValue").removeAttribute("value");
     document.getElementById("changeMyValue").setAttribute("value", "-5");
     filterListsWithReplacement(document.querySelectorAll("ol"));
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function init()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     setTimeout(finishTest, 0);
 }

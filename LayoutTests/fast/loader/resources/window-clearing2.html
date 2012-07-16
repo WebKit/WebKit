@@ -20,8 +20,8 @@ function test() {
         o = o.__proto__;
     } while(o);
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>

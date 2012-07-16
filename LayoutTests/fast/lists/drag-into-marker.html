@@ -7,10 +7,10 @@
 <script>
 
 function runTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
-    window.layoutTestController.waitUntilDone();
+    window.testRunner.waitUntilDone();
     
     var spanToDrag = document.getElementById("spanToDrag");
     var x = spanToDrag.offsetLeft + spanToDrag.offsetWidth / 2;
@@ -40,7 +40,7 @@ function runTest() {
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
 
-    window.layoutTestController.notifyDone();
+    window.testRunner.notifyDone();
 }
 
 runTest();

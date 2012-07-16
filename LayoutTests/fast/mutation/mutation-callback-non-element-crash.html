@@ -2,8 +2,8 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function mutationCallback(mutations, observer) {
     mutations[0].addedNodes[-1];

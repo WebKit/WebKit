@@ -2,9 +2,9 @@
 <head>
 <script>
 function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     // set up test variables -- they should be cleared

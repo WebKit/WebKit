@@ -9,8 +9,8 @@ function log(s)
     document.getElementById("console").innerHTML = s + "\n";
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var passed = true;
 

@@ -4,9 +4,9 @@
 </ol>
 <p>Then click here</p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var list = document.querySelector('ol');
@@ -16,8 +16,8 @@
     observer.observe(list, {childList: true});
     list.addEventListener('blur', function() {
         document.body.innerHTML = observerRuns == 1 ? 'PASSED' : 'FAILED';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     });
     list.focus();
     if (window.eventSender) {

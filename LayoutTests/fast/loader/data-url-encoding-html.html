@@ -3,8 +3,8 @@
 <p>Test that non-ASCII data: URLs are handled correctly.</p>
 <pre id=result></pre>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function test() {
     document.getElementById("result").innerHTML += "1. " + (window.frames[0].document.body.innerHTML == "Проверка" ? "SUCCESS" : "FAILURE") + ".\r";

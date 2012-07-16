@@ -6,8 +6,8 @@ description(
 // cost to the garbage collector.  It should be improved to be less tied to these implementation details.
 // <https://bugs.webkit.org/show_bug.cgi?id=20871>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 if (window.GCController)
     GCController.collect();

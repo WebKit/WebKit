@@ -1,7 +1,7 @@
 This test ensure that global-to-global re-entry works correctly and does not clobber anything.  This passes if it does not crash.
 <script>
-if (this.layoutTestController)
-    layoutTestController.dumpAsText();
+if (this.testRunner)
+    testRunner.dumpAsText();
 try {
     // The important part of the test is the global reentry from the document.write passed implicitly to eval
     // the rest is just to ensure the test crahes reliably (errr... or something) if something goes wrong with

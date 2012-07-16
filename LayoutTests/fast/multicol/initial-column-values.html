@@ -35,8 +35,8 @@ Vestibulum a sapien. Phasellus ante lacus, vehicula non, cursus a, tempor ut, ma
         output += (result == value) ? "\n" : (" expected " + value + "\n");
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         document.getElementById("columns-test").style.display = "none";
         document.getElementById("count-test").style.display = "none";
         document.getElementById("gap-test").style.display = "none";

@@ -3,9 +3,9 @@
 <div id=result>Testing...</div>
 <iframe src="about:blank"></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function gc()
@@ -39,8 +39,8 @@ function test()
         gc();
         try { m.matchMedium("foobar") } catch (ex) { }
         document.getElementById("result").innerHTML = "PASS";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 </script>

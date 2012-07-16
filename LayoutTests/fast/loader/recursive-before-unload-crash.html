@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 var haveAddedIFrame = false;
@@ -26,8 +26,8 @@ function addiframe() {
     frame.src = "http://localhost:1234/"
     document.body.appendChild(frame);
     haveAddedIFrame = true;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function runTest() {

@@ -2,10 +2,10 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpResourceResponseMIMETypes();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceResponseMIMETypes();
+    testRunner.waitUntilDone();
 }
 
 var testImage;
@@ -154,8 +154,8 @@ function imageLoaded()
 
 function finish()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

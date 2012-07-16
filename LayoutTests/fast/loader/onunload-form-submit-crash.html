@@ -1,9 +1,9 @@
 <html>
     <body onUnload="document.myForm.submit()">
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             window.setTimeout("location.href='resources/onunload-form-submit-success.html'", 0);

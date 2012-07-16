@@ -3,9 +3,9 @@
 <head>
     <title>Bug 53123: Crashes loading pages when cancelling subresource loads through WebKit</title>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setWillSendRequestReturnsNull(true);
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setWillSendRequestReturnsNull(true);
         }
     </script>
     <script type="text/javascript" src="resources/empty-script.js"></script>

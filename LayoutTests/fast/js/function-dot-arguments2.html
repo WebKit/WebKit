@@ -23,8 +23,8 @@ function shouldBeNoEval(aDescription, a, b)
     log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // eval should lazily create 'arguments'.
 function f1() {

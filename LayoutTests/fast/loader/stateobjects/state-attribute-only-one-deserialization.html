@@ -8,9 +8,9 @@
     description("Make sure the same deserialization of the state object is used every time (both in the history object and popstate events).");
 
     window.jsTestIsAsync = true;
-    if (window.layoutTestController) {
-        layoutTestController.clearBackForwardList();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearBackForwardList();
+        testRunner.waitUntilDone();
     }
 
     shouldBeDefined("history.state");

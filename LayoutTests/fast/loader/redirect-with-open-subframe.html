@@ -3,11 +3,11 @@
 <iframe id="ifrm" src="about:blank"></iframe>
 <script>
     document.getElementById("ifrm").contentDocument.open();
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
-    var newDoc = "SUCCESS<script>if (window.layoutTestController) layoutTestController.notifyDone();</scr" + "ipt>";
+    var newDoc = "SUCCESS<script>if (window.testRunner) testRunner.notifyDone();</scr" + "ipt>";
     setTimeout("window.location='data:text/html," + newDoc + "'", 500);
 </script>
 <div>FAILURE: should redirect.</div>

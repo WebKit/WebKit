@@ -11,8 +11,8 @@ onpopstate = function() {
   } else {
     topWin.document.body.innerHTML = "PASS";
   }
-  if (topWin.layoutTestController)
-    topWin.layoutTestController.notifyDone();
+  if (topWin.testRunner)
+    topWin.testRunner.notifyDone();
 }
 
 onload = function() {

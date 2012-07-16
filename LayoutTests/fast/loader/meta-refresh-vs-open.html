@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 <meta http-equiv="refresh" content="0;url=data:text/plain,You should not have been redirected here.">
@@ -12,7 +12,7 @@ if (window.layoutTestController) {
 <iframe id="ifrm" src="about:blank"></iframe>
 <script>
     document.body.onload = function() {
-        if (window.layoutTestController)
+        if (window.testRunner)
             document.write('<p>FAIL: onload</p>');
         else
             alert('FAIL: onload');
@@ -27,8 +27,8 @@ if (window.layoutTestController) {
         if (window.stop)
             stop();
         document.getElementById("ifrm").contentDocument.close();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
       }, 500);
 </script>
 <p>SUCCESS - shouldn't refresh or invoke onload.</p>

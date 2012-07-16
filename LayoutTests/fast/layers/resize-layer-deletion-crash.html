@@ -3,16 +3,16 @@
     <script>
         function test()
         {
-            if (!window.layoutTestController)
+            if (!window.testRunner)
                 return;
-            layoutTestController.dumpAsText();
+            testRunner.dumpAsText();
             document.body.offsetTop;
             eventSender.mouseMoveTo(50, 50);
             eventSender.mouseDown();
             eventSender.mouseMoveTo(125, 125);
             eventSender.mouseMoveTo(135, 135);
             eventSender.mouseUp();
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     </script>
 </head>

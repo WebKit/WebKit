@@ -6,11 +6,11 @@
 <script>
 var otherWindow;
 function runTest() {
-	if (window.layoutTestController) {
-		layoutTestController.dumpAsText();
-		layoutTestController.waitUntilDone();
-		layoutTestController.setCanOpenWindows();
-		layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+	if (window.testRunner) {
+		testRunner.dumpAsText();
+		testRunner.waitUntilDone();
+		testRunner.setCanOpenWindows();
+		testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 	}
 
 	// This test open two windows. One primary window will load animated-image.html.

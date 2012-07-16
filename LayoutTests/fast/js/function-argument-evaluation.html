@@ -35,8 +35,8 @@ function test2(callback, x) {
 };
 
 (function () {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var callback = function callback(x) {
         return x;

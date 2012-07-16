@@ -11,9 +11,9 @@ var testWindow;
 
 onload = function()
 {
-    if (window.layoutTestController) {
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+    if (window.testRunner) {
+        testRunner.setCanOpenWindows();
+        testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
     }
     testWindow = window.open('resources/popstate-fires-with-page-cache-1.html');
     if (!testWindow)

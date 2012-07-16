@@ -19,11 +19,11 @@
         document.getElementById("test").style.display = "block";
     }
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         setTimeout(test, 0);
     else {
         document.body.offsetTop;
-        layoutTestController.display();
+        testRunner.display();
         test();
     }
 </script>

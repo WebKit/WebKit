@@ -27,8 +27,8 @@
             log ("FAIL: Character at " + x + ", " + y + " is " + actualCharacter + ". Expected " + character + ".");
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     test(150, 25, "1");
     test(350, 25, "d");

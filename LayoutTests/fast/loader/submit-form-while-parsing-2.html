@@ -5,9 +5,9 @@ var testIsStarted = false;
 
 function startTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     testIsStarted = true;
@@ -29,8 +29,8 @@ function frameLoaded()
 
     document.getElementById("message").firstChild.data = "PASSED: If we successfully got here without an assertion or crash, all is well.";
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

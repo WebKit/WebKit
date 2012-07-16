@@ -1,8 +1,8 @@
 This test ensures that exceptions are handled correctly by the various callback mechanisms present in WebCore.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var db = openDatabase("exception-info-test", "1.0", "Test for exception information thrown by callbacks and timers", 1);
@@ -36,8 +36,8 @@ function dbStatementTest() {
 }
 
 function timerTest() {
-    if (window.layoutTestController)
-        setTimeout("layoutTestController.notifyDone()", 0);
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 0);
     throw errorObject("timer");
 }
 

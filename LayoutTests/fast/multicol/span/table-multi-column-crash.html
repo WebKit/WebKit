@@ -7,8 +7,8 @@ Test passes if it does not crash.
 .table_container { -webkit-column-count: 2; }
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.body.offsetTop;
 table_span = document.createElement('table');

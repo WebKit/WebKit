@@ -5,9 +5,9 @@
 function test()
 {
     document.body.offsetTop;
-    if (window.layoutTestController) {
-        layoutTestController.display();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.display();
+        testRunner.dumpAsText();
         finish();
     } else {
         window.setTimeout(finish, 50);

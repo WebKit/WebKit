@@ -1,8 +1,8 @@
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.setCanOpenWindows();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setCanOpenWindows();
+  testRunner.waitUntilDone();
 }
 
 // This is a test that replaceState called on an inner frame does not modify
@@ -18,8 +18,8 @@ function notifyDone(result) {
 
   document.body.innerText = result;
 
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 function windowLoaded() {

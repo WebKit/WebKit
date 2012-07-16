@@ -1,8 +1,8 @@
 <iframe src="http://does.not.exist/" id="target"></iframe>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 setTimeout(function() {
@@ -11,7 +11,7 @@ setTimeout(function() {
 
 window.addEventListener("popstate", function() {
         document.write("PASS - Javascript URL blocked without crashing.");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, false);
 </script>

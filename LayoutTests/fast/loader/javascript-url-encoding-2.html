@@ -3,11 +3,11 @@
 <script>
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
-    window.location.href="javascript:'<p foo=\"?\">Should be Cyrillic text, not U+FFFD REPLACEMENT CHARACTERS: Проверка</p><script>if (window.layoutTestController) layoutTestController.notifyDone()</scr" + "ipt>'";
+    window.location.href="javascript:'<p foo=\"?\">Should be Cyrillic text, not U+FFFD REPLACEMENT CHARACTERS: Проверка</p><script>if (window.testRunner) testRunner.notifyDone()</scr" + "ipt>'";
 }
 </script>
 </head>

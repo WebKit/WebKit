@@ -5,9 +5,9 @@ if (!sessionStorage.in_document_with_fragment_url_4)
 else
     delete sessionStorage.in_document_with_fragment_url_4;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function documentURLHash()
@@ -35,8 +35,8 @@ function loaded()
         eventSender.mouseUp();
     } else {
         alert("Second load complete.  URL's current hash is " + documentURLHash());
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

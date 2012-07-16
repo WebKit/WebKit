@@ -6,8 +6,8 @@
 <p>Test that a programmatically created empty iframe inherits charset from the parent.
 <p id=result>
 <script type="text/javascript">
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function createEmptyIframe() {
    if (!document.getElementById('containerName')) {

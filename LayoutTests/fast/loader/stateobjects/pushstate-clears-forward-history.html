@@ -2,10 +2,10 @@
 onload = function() {
   if (location.search.substring(1).length == 0) {
     sessionStorage.testStage = 0;
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.dumpBackForwardList();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.dumpBackForwardList();
+      testRunner.waitUntilDone();
     }
   }
 
@@ -23,8 +23,8 @@ onload = function() {
         break;
       case 3:
         history.pushState(null, null);
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
         break;
       }
     }, 0);

@@ -3,10 +3,10 @@
 <title>Test CSSOM View module: MediaQueryList interface</title>
 <script type="text/javascript" charset="utf-8">
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-        layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
 
     function log(m) {
@@ -47,21 +47,21 @@
             // if this point is reached the page is comming from the page cache.
 
             log("------------- minimized -------------");
-            layoutTestController.setViewModeMediaFeature("minimized");
+            testRunner.setViewModeMediaFeature("minimized");
             log("------------- maximized -------------");
-            layoutTestController.setViewModeMediaFeature("maximized");
+            testRunner.setViewModeMediaFeature("maximized");
             log("------------- windowed -------------");
-            layoutTestController.setViewModeMediaFeature("windowed");
+            testRunner.setViewModeMediaFeature("windowed");
             log("------------- floating -------------");
-            layoutTestController.setViewModeMediaFeature("floating");
+            testRunner.setViewModeMediaFeature("floating");
 
-            setTimeout(function() { if (window.layoutTestController) layoutTestController.notifyDone(); }, 0);
+            setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 0);
 
         }
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.setViewModeMediaFeature("windowed");
+    if (window.testRunner) {
+        testRunner.setViewModeMediaFeature("windowed");
         window.onpageshow = pageshow;
     }
 

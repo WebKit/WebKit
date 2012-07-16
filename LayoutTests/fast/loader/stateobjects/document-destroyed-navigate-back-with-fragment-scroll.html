@@ -2,11 +2,11 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     if (!sessionStorage.stage)
-        layoutTestController.clearBackForwardList();
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+        testRunner.clearBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function lastPathComponent(url)
@@ -90,8 +90,8 @@ onhashchange = function(event)
    if (hashOf(event.newURL) == "#FirstEntryWillLaterBeReactivated") {
         alert("Test complete");
         sessionStorage.clear();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

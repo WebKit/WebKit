@@ -27,8 +27,8 @@ function shouldBe(aDescription, a, b)
 function f1(a, b) { return a[b]; }
 function f2(a, b, c) { return a[b] = c; }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 shouldBe("f1(0, 0)", f1(0, 0), undefined);
 shouldBe("f2(0, 0, 0)", f2(0, 0, 0), 0);

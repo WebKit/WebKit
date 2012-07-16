@@ -20,8 +20,8 @@ function shouldBe(a, aDescription, b)
         log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 frames[0].document.open();
 frames[0].document.write("<\script>function O() { }</script\>");

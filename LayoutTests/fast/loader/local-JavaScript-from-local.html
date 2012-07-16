@@ -4,14 +4,14 @@
     var secretness = 0;
 
     function test() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         var localScriptLocation = "file:///tmp/LayoutTests/http/tests/security/resources/localScript.js";
-        if (window.layoutTestController)
-            localScriptLocation = layoutTestController.pathToLocalResource(localScriptLocation);
+        if (window.testRunner)
+            localScriptLocation = testRunner.pathToLocalResource(localScriptLocation);
 
         var localScriptElement = document.createElement("script");
         localScriptElement.setAttribute("src", localScriptLocation);
@@ -22,15 +22,15 @@
             else
                 tag.innerHTML = "Test Failed. Local script loaded, but not successfully run.";
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         });
         localScriptElement.addEventListener("error", function() {
             var tag = document.getElementById("result");
             tag.innerHTML = "Test Failed: Local script not loaded.";
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         });
 
         document.body.appendChild(localScriptElement)

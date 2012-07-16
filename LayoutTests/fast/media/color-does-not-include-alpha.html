@@ -13,8 +13,8 @@
 </style>
 <div id=test>This box should be green.</div>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var backgroundColor = getComputedStyle(document.getElementById("test"), null).backgroundColor;
     const expectedBackgroundColor = "rgb(0, 128, 0)";
     if (backgroundColor === expectedBackgroundColor)

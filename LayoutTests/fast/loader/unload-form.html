@@ -5,9 +5,9 @@ addEventListener("unload", function() {
 </script>
 <form id="fm" action="resources/fail-and-notify-done.html" method="GET"></form>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 window.location = "resources/pass-and-notify-done.html";
 </script>

@@ -1,8 +1,8 @@
 wasPostTestScriptParsed = true;
 
 if (window.jsTestIsAsync) {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     if (window.wasFinishJSTestCalled)
         finishJSTest();
 } else

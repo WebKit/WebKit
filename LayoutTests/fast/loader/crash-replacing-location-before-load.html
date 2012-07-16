@@ -1,8 +1,8 @@
 <script>
 if (parent == window) {
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
   }
   function replaceHash(frag) {
     frames[0].location.replace('#' + frag);
@@ -13,8 +13,8 @@ if (parent == window) {
     f.onload = function() {
       delete f.onload;
       replaceHash('bar');
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
     document.body.appendChild(f);
     replaceHash('foo');

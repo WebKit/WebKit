@@ -9,8 +9,8 @@ Test passes if it does not crash.
 .flexbox1 { display: -webkit-flexbox; padding-right: 10px; -webkit-transform: rotate3d(0, 1, 0, 90deg); }
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function runTest() {
     caption1 = document.createElement('caption');

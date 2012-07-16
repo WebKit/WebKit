@@ -16,9 +16,9 @@
         document.getElementById("inner").style.display = "none";
     }
 
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         document.body.offsetTop;
-        layoutTestController.display();
+        testRunner.display();
         test();
     } else
         setTimeout(test, 0);

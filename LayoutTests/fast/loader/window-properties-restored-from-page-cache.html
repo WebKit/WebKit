@@ -1,8 +1,8 @@
 <script>
-if (window.layoutTestController) {
-	layoutTestController.dumpAsText();
-	layoutTestController.waitUntilDone();
-	layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.waitUntilDone();
+	testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 }
 
 var cachedApplicationCache = window.applicationCache;
@@ -98,8 +98,8 @@ window.onpageshow = function(evt) {
 	if (document.getElementById("errorDiv").innerText == "")
 		document.getElementById("errorDiv").innerText = "All tests passed.";
 
-	if (window.layoutTestController)
-		layoutTestController.notifyDone();
+	if (window.testRunner)
+		testRunner.notifyDone();
 }
 
 </script>

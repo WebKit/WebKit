@@ -3,14 +3,14 @@
 <head>
     <title>Test for Bug 33533: window.onload never fires if page contains an &lt;iframe> with a bad scheme or whose load is cancelled by returning null from resource load delegate's willSendRequest</title>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setWillSendRequestReturnsNull(true);
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setWillSendRequestReturnsNull(true);
         }
 
         window.onload = function() {
             var result = document.getElementById("result");
-            if (!window.layoutTestController) {
+            if (!window.testRunner) {
                 result.innerText = "This test can only be run in DumpRenderTree.";
                 return;
             }

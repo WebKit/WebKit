@@ -2,12 +2,12 @@
 <head>
     <script>
         function iFrameTest() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             var localPageLocation = "file:///tmp/LayoutTests/http/tests/security/resources/localPage.html";
-            if (window.layoutTestController)
-                localPageLocation = layoutTestController.pathToLocalResource(localPageLocation);
+            if (window.testRunner)
+                localPageLocation = testRunner.pathToLocalResource(localPageLocation);
 
             var localIframeElement = document.createElement("iFrame");
             localIframeElement.setAttribute("id", "myFrame");

@@ -3,9 +3,9 @@
         <script>
             function test()
             {
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.waitUntilDone();
                 }
                     
                 if (window.navigationController)
@@ -18,8 +18,8 @@
                 e.initEvent("click", true, false);
                 document.getElementById('button').dispatchEvent(e);
                 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
 
             function button_onClick()

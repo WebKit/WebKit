@@ -2,10 +2,10 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.clearBackForwardList();
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.clearBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(txt)
@@ -59,8 +59,8 @@ onpopstate = function(event)
     
     if (event.state != "FirstEntry")
         history.back();
-    else if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    else if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

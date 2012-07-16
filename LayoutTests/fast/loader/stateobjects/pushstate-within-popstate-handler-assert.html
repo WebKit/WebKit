@@ -1,15 +1,15 @@
 <script>
 
-if (window.layoutTestController) {
-  layoutTestController.clearBackForwardList();
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.clearBackForwardList();
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 onpopstate = function() {
     history.pushState(null, null);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 onload = function() {

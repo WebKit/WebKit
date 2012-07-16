@@ -8,8 +8,8 @@
 
         window.onload = function()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             var tagName = document.createElement('html').tagName;
             log(tagName == "html" ? "PASS: File parsed as XHTML" : "FAIL: document.createElement('html').tagName was '" + tagName + "', expected 'html'");
         }

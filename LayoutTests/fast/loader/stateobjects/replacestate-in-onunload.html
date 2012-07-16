@@ -2,9 +2,9 @@
 <head>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(txt)
@@ -20,8 +20,8 @@ window.onload = function()
         window.location = window.location.href + "?PASS";
     } else {
         log(window.location.search.slice(1));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

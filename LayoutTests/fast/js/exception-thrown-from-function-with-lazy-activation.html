@@ -20,8 +20,8 @@ function shouldBe(aDescription, a, b)
     }
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 try {
     // Lazily create an activation for a function that otherwise wouldn't need one, then throw.

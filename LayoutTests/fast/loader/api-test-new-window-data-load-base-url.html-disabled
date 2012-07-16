@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     var dataURL = "<a id='anchor' href='#foo'>Hello</a><br><div id='foo'></div><s" + "cript>" +
                   "var evt = document.createEvent('MouseEvent');" +
@@ -8,7 +8,7 @@ if (window.layoutTestController) {
                   "document.getElementById('anchor').dispatchEvent(evt);" +
                   "</s" + "cript>";
     
-    layoutTestController.apiTestNewWindowDataLoadBaseURL(dataURL, "http://example.com/example.html");
+    testRunner.apiTestNewWindowDataLoadBaseURL(dataURL, "http://example.com/example.html");
 }
 </script>
 <body>

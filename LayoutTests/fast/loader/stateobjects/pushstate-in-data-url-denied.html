@@ -1,7 +1,7 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 window.onload = function() {
     window.location = 'data:text/html,' +
@@ -12,8 +12,8 @@ window.onload = function() {
     '} catch(e) {' +
         'document.write("PASS: data URLs cannot be manipulated via pushState.");' +
     '}' +
-    'if (window.layoutTestController)' +
-        'layoutTestController.notifyDone();' +
+    'if (window.testRunner)' +
+        'testRunner.notifyDone();' +
     '%3C/script%3E';
 }
 </script>

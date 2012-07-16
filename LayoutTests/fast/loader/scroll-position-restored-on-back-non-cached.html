@@ -5,9 +5,9 @@
 function navigate()
 {
     if (location.hash == "") {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         scrollTo(0,100);
@@ -21,8 +21,8 @@ function navigate()
         var result = document.getElementById("result");
         if (scrollPosition == 100)
             result.innerHTML = "Success! The scroll position was restored after navigation."
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 

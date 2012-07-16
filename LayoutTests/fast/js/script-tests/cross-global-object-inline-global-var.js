@@ -2,8 +2,8 @@ description(
 "This tests that function inlining in the DFG JIT doesn't get confused by different global objects."
 );
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var b = 321;
 
@@ -19,7 +19,7 @@ function done(value) {
         testPassed("done() called with " + expected);
     else
         testFailed("done() called with " + value + ", but expected " + expected);
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function doit() {

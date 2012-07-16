@@ -45,8 +45,8 @@ function printProperties(object)
 }
 
 function test() {
-    if (window.layoutTestController)  
-        layoutTestController.dumpAsText();
+    if (window.testRunner)  
+        testRunner.dumpAsText();
 
     print("Properties of RegExp at startup:");
     printPropertiesWithReadOnly(RegExp);

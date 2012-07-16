@@ -4,8 +4,8 @@ if the call throws a "not a function" exception.
 <pre id="console">FAIL: arguments were not evaluated.</pre>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 window.__defineGetter__("x", function() { document.getElementById("console").innerHTML = "PASS: arguments were evaluated"; });
 

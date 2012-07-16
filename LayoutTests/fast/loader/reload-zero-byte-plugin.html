@@ -1,17 +1,17 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.setCanOpenWindows(true);
-    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows(true);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
 
 var win = window.open('data:application/x-webkit-test-netscape,');
 setTimeout(function() {
     win.location.reload();
     setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 100);
 }, 100);
 </script>

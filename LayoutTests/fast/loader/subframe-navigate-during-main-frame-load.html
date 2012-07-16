@@ -4,10 +4,10 @@
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpBackForwardList();
+        testRunner.waitUntilDone();
     }
 
     // Location changes need to happen outside the onload handler to generate history entries.

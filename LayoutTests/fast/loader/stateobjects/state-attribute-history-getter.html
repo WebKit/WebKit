@@ -6,10 +6,10 @@ function log(msg) {
     document.querySelector("#log").innerHTML += msg + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.clearBackForwardList();
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.clearBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function test() {
@@ -23,7 +23,7 @@ function test() {
     } catch (e) {
         // history.state is not configurable in JSC.
         log(e.name == "TypeError" ? "PASS" : ("FAIL: unexpected exception: " + e));
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
         return;
     }
 
@@ -39,8 +39,8 @@ function test() {
             log("FAIL: e.state expected 42, was " + e.state + " (of type " + typeof e.state + ")");
         else
             log("PASS");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     history.back();

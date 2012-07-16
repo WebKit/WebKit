@@ -31,8 +31,8 @@
         output += (result == value) ? "\n" : (" expected " + value + "\n");
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         document.getElementById("parent").style.display = "none";
     }
 

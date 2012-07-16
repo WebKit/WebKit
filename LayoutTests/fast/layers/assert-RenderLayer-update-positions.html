@@ -22,16 +22,16 @@
                     </div>
                 </div>
                 <script>
-                    if (window.layoutTestController) {
-                        layoutTestController.dumpAsText();
-                        layoutTestController.waitUntilDone();
+                    if (window.testRunner) {
+                        testRunner.dumpAsText();
+                        testRunner.waitUntilDone();
                     }
 
                     function assert() {
                         var dimensionsContainer = document.getElementById("assertTrigger");
                         dimensionsContainer.setAttribute("class", "");
-                        if (window.layoutTestController)
-                            layoutTestController.notifyDone();
+                        if (window.testRunner)
+                            testRunner.notifyDone();
                     }
 
                     // Asynchronously change the style to force a style recalc later.

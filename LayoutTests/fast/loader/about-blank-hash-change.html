@@ -9,8 +9,8 @@ https://bugs.webkit.org/show_bug.cgi?id=35180</a>.</p>
 says "FAIL" then it fired two or more times. Also, the test may time out
 looping on this event handler (which is also a failure). If the text says "No callback" then something else is broken :)</p>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 }
 
 function onload_callback() {

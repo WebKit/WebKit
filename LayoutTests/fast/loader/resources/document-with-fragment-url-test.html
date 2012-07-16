@@ -28,8 +28,8 @@ function loaded()
         eventSender.mouseUp();
     } else {
         alert("Second load complete.  URL's current hash is " + documentURLHash());
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

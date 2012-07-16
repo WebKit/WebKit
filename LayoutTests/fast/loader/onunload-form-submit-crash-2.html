@@ -5,15 +5,15 @@
         function test()
         {
             if (location.href.indexOf("?") == -1) {
-                if (window.layoutTestController) {
-                    layoutTestController.dumpAsText();
-                    layoutTestController.waitUntilDone();
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.waitUntilDone();
                 }
                 location.href = "resources/onunload-form-submit-success.html";
             } else {
                 document.getElementById("result").innerText = "FAIL";
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         }
 

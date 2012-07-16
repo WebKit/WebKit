@@ -11,8 +11,8 @@ function runTest() {
 
   f.onload = function() {
     document.body.innerText = "history.length = " + history.length;
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }
 }
 
@@ -21,11 +21,11 @@ onunload = function() {
 }
 
 onload = function() {
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.clearBackForwardList();
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpBackForwardList();
+    testRunner.clearBackForwardList();
+    testRunner.waitUntilDone();
   }
   setTimeout(runTest, 0);
 }

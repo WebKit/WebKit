@@ -20,8 +20,8 @@ function shouldBe(a, aDescription, b)
     log ("FAIL: " + aDescription + " should be '" + String(b) + "' but instead is '" + String(a) + "'.");
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var result = /define/.test();
 shouldBe(result, "result", true);

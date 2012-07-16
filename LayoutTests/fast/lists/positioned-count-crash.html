@@ -12,8 +12,8 @@ For manual test: If you see no crash and "II II", it means this test PASS.
 
 <script src="resources/dump-list.js"></script>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
         document.write(testListItemMarkerEqualsListItemText(document.getElementById("test")));
     }
 </script>

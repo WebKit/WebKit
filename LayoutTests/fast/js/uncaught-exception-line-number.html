@@ -5,7 +5,7 @@ example for display in the JavaScript error console. To run the test manually,
 look in the JS console for an uncaught exception on line 11.<br>
 
 <script>
-if (window.layoutTestController) layoutTestController.dumpAsText();
+if (window.testRunner) testRunner.dumpAsText();
 
 function foo() {
   throw 'uh oh, an exception!';

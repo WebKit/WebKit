@@ -5,8 +5,8 @@
     <script>
         function test()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             var list1 = document.getElementById("list1");
             document.getElementById("console1").innerHTML = dumpList(list1);

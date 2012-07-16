@@ -24,8 +24,8 @@ function shouldBe(aDescription, a, b)
 }
 
 (function () {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     // Can be constant-folded by the parser.
     var x = -(-2147483648);

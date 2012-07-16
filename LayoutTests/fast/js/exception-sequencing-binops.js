@@ -1,5 +1,5 @@
-if (this.layoutTestController)
-    layoutTestController.dumpAsText();
+if (this.testRunner)
+    testRunner.dumpAsText();
 
 if (this.document) {
     log = function(msg) {document.getElementById("log").innerHTML += msg + "<br />";};

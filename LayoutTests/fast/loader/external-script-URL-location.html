@@ -1,8 +1,8 @@
 <body onload="test()">
 FAILURE
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 function test()
 {
     document.write("<br>Test 1<br>File in URL: " + leafName(document.URL) + "<br><script src='resources/external-script-URL-location.js'></scr" + "ipt>");

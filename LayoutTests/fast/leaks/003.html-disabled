@@ -15,13 +15,13 @@ var wiggleRoom = 20;
 
 window.onload = function main()
 {
-    if (!window.layoutTestController || !window.GCController) {
-        log("FAIL: This test uses the layoutTestController and the GCController, so it can only run in DumpRenderTree.\n");
+    if (!window.testRunner || !window.GCController) {
+        log("FAIL: This test uses the testRunner and the GCController, so it can only run in DumpRenderTree.\n");
         return;
     }
     
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     // Start with no garbage, so GC doesn't run automatically during the test.
     GCController.collect();
@@ -54,7 +54,7 @@ window.onload = function main()
             log("PASS: " + wiggleRoom + " garbage JS objects or fewer left uncollected after destroying a frame.\n");
         }
 
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
     setTimeout(continueTest, 10);
 }

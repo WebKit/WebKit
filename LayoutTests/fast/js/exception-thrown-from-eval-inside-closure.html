@@ -20,8 +20,8 @@ function shouldBe(aDescription, a, b)
     }
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // Create a function with an activation.
 (function () {

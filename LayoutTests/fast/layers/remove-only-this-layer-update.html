@@ -8,11 +8,11 @@ You should see a 100x100 green rect at 100x100 above with the word PASS.  There 
     <script>
         function doTest() {
             document.getElementById("outer").style.opacity = 1.0;
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         // Delay until after the first paint
         setTimeout(doTest, 0);
     </script>

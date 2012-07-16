@@ -1,12 +1,12 @@
 <html>
 <head>
     <script>        
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         var localImageLocation = "file:///tmp/LayoutTests/http/tests/security/resources/compass.jpg";
-        if (window.layoutTestController)
-            localImageLocation = layoutTestController.pathToLocalResource(localImageLocation);
+        if (window.testRunner)
+            localImageLocation = testRunner.pathToLocalResource(localImageLocation);
 
         var localImageElement = document.createElement("img");
         localImageElement.setAttribute("id", "myImg");

@@ -1,8 +1,8 @@
 This test checks whether funky scope chains created by catch blocks
 are properly protected from GC. It should not crash.
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function Test_Error() {
     for( var i = 0; i <= 5000; i++ ) {

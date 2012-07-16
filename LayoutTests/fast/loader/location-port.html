@@ -51,16 +51,16 @@
         var internalFrame = document.getElementById ('internal');
         shouldBe('internalFrame.contentWindow.location.host', ':0');
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
 
     function runTests() {
-        if (window.layoutTestController) {
-            layoutTestController.clearBackForwardList();
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.clearBackForwardList();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         var internalFrame = document.getElementById ('internal');

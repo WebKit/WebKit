@@ -1,19 +1,19 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpFrameLoadCallbacks();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
     if (sessionStorage.api_goto_current_bf_item) {
         delete sessionStorage.api_goto_current_bf_item;
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
     }
 }
 
 function loaded()
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         sessionStorage.api_goto_current_bf_item = true;
-        layoutTestController.apiTestGoToCurrentBackForwardItem();
+        testRunner.apiTestGoToCurrentBackForwardItem();
     }
 }
 

@@ -1,8 +1,8 @@
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.keepWebHistory();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.keepWebHistory();
+    testRunner.dumpAsText();
 }
 
 function loaded()
@@ -10,9 +10,9 @@ function loaded()
     window.history.replaceState(null, "Title", "replacedURL.html");
     window.history.pushState(null, "Title", "pushedURL.html");
 
-    if (window.layoutTestController) {
-        var style1 = window.layoutTestController.computedStyleIncludingVisitedInfo(document.getElementById('link1'));
-        var style2 = window.layoutTestController.computedStyleIncludingVisitedInfo(document.getElementById('link2'));
+    if (window.testRunner) {
+        var style1 = window.testRunner.computedStyleIncludingVisitedInfo(document.getElementById('link1'));
+        var style2 = window.testRunner.computedStyleIncludingVisitedInfo(document.getElementById('link2'));
         var result = document.createElement("p");
         if (style1.color != "rgb(255, 165, 0)" || style2.color != "rgb(255, 165, 0)")
             result.innerText = "FAIL";

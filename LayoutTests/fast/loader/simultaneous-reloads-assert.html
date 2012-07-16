@@ -2,9 +2,9 @@
 <head>
     <title>Test for http://bugs.webkit.org/show_bug.cgi?id=12479</title>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
             alert("If you do not hit an assertion failure when running this test with a debug build and you get a SUCCESS message, then you pass the test.");
         }
 
@@ -15,9 +15,9 @@
                 reloaded = true;
                 frames[0].location.reload();
             } else {
-                if (window.layoutTestController) {
+                if (window.testRunner) {
                     alert("SUCCESS");
-                    layoutTestController.notifyDone();
+                    testRunner.notifyDone();
                 }
             }
         }

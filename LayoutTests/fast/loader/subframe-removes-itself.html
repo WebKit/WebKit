@@ -1,8 +1,8 @@
 This tests a subframe that removes itself to make sure a delegate message to indicate the interrupted load fires.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpFrameLoadCallbacks();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
 }
 </script>
 <iframe src="resources/subframe-that-removes-itself.html"></iframe>

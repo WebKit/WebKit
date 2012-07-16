@@ -1,11 +1,11 @@
 <html>
 <head>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpResourceLoadCallbacks();
-        if (layoutTestController.setSerializeHTTPLoads)
-            layoutTestController.setSerializeHTTPLoads();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceLoadCallbacks();
+        if (testRunner.setSerializeHTTPLoads)
+            testRunner.setSerializeHTTPLoads();
     } else {
         document.write ('This test must be run through DumpRenderTree.')
     }

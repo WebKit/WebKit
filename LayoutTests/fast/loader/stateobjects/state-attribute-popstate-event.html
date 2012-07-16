@@ -8,9 +8,9 @@
     description("Check that PopStateEvent.state always has a correct value.");
 
     window.jsTestIsAsync = true;
-    if (window.layoutTestController) {
-        layoutTestController.clearBackForwardList();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.clearBackForwardList();
+        testRunner.waitUntilDone();
     }
 
     shouldBeDefined("history.state");

@@ -18,8 +18,8 @@ function shouldThrow(expression, exception, didCorrectlyThrow)
         log("FAIL: " + expression + " should throw a " + exception + ", but didn't.");
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var o = {
     valueOf: function() {

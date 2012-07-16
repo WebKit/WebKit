@@ -16,8 +16,8 @@ function shouldBe(a, aDescription, b)
         log("FAIL: " + aDescription + " should be " + b + " but instead is " + a + ".");
 }
 
-if (this.layoutTestController)
-    layoutTestController.dumpAsText();
+if (this.testRunner)
+    testRunner.dumpAsText();
     
 var valueOfIsZero = {
     valueOf: function valueOf() { return 0; },
