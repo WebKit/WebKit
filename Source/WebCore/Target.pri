@@ -511,6 +511,7 @@ SOURCES += \
     css/WebKitCSSSVGDocumentValue.cpp \
     css/WebKitCSSShaderValue.cpp \
     css/WebKitCSSTransformValue.cpp \
+    css/WrapShapeFunctions.cpp \
     dom/ActiveDOMObject.cpp \
     dom/Attr.cpp \
     dom/BeforeTextInsertedEvent.cpp \
@@ -1703,6 +1704,7 @@ HEADERS += \
     css/WebKitCSSSVGDocumentValue.h \
     css/WebKitCSSShaderValue.h \
     css/WebKitCSSTransformValue.h \
+    css/WrapShapeFunctions.h \
     dom/ActiveDOMObject.h \
     dom/Attr.h \
     dom/Attribute.h \

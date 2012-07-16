@@ -37646,6 +37646,14 @@
 				RelativePath="..\css\WebKitCSSTransformValue.h"
 				>
 			</File>
+			<File
+			    RelativePath="..\css\WrapShapeFunctions.cpp"
+			    >
+			</File>
+			<File
+			    RelativePath="..\css\WrapShapeFunctions.h"
+			    >
+			</File>
 		</Filter>
 		<Filter
 			Name="rendering"

@@ -47,7 +47,7 @@ public:
         CSS_WRAP_SHAPE_POLYGON = 4
     };
 
-    virtual Type type() = 0;
+    virtual Type type() const = 0;
     virtual String cssText() const = 0;
 
 public:
@@ -75,7 +75,7 @@ public:
     void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
     void setRadiusY(PassRefPtr<CSSPrimitiveValue> radiusY) { m_radiusY = radiusY; }
 
-    virtual Type type() { return CSS_WRAP_SHAPE_RECTANGLE; }
+    virtual Type type() const { return CSS_WRAP_SHAPE_RECTANGLE; }
     virtual String cssText() const;
 
 private:
@@ -101,7 +101,7 @@ public:
     void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
     void setRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_radius = radius; }
 
-    virtual Type type() { return CSS_WRAP_SHAPE_CIRCLE; }
+    virtual Type type() const { return CSS_WRAP_SHAPE_CIRCLE; }
     virtual String cssText() const;
 
 private:
@@ -126,7 +126,7 @@ public:
     void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
     void setRadiusY(PassRefPtr<CSSPrimitiveValue> radiusY) { m_radiusY = radiusY; }
 
-    virtual Type type() { return CSS_WRAP_SHAPE_ELLIPSE; }
+    virtual Type type() const { return CSS_WRAP_SHAPE_ELLIPSE; }
     virtual String cssText() const;
 
 private:
@@ -148,13 +148,14 @@ public:
         m_values.append(y);
     }
 
-    PassRefPtr<CSSPrimitiveValue> getXAt(unsigned i) { return m_values.at(i * 2); }
-    PassRefPtr<CSSPrimitiveValue> getYAt(unsigned i) { return m_values.at(i * 2 + 1); }
+    PassRefPtr<CSSPrimitiveValue> getXAt(unsigned i) const { return m_values.at(i * 2); }
+    PassRefPtr<CSSPrimitiveValue> getYAt(unsigned i) const { return m_values.at(i * 2 + 1); }
+    const Vector<RefPtr<CSSPrimitiveValue> >& values() const { return m_values; }
 
     void setWindRule(WindRule w) { m_windRule = w; }
     WindRule windRule() const { return m_windRule; }
 
-    virtual Type type() { return CSS_WRAP_SHAPE_POLYGON; }
+    virtual Type type() const { return CSS_WRAP_SHAPE_POLYGON; }
     virtual String cssText() const;
 
 private:

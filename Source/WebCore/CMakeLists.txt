@@ -547,6 +547,7 @@ SET(WebCore_SOURCES
     css/WebKitCSSRegionRule.cpp
     css/WebKitCSSSVGDocumentValue.cpp
     css/WebKitCSSTransformValue.cpp
+    css/WrapShapeFunctions.cpp
 
     dom/ActiveDOMObject.cpp
     dom/Attr.cpp

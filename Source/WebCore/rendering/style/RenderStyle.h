@@ -1427,22 +1427,22 @@ public:
     void setKerning(SVGLength k) { accessSVGStyle()->setKerning(k); }
 #endif
 
-    void setWrapShapeInside(PassRefPtr<CSSWrapShape> shape)
+    void setWrapShapeInside(PassRefPtr<WrapShape> shape)
     {
         if (rareNonInheritedData->m_wrapShapeInside != shape)
             rareNonInheritedData.access()->m_wrapShapeInside = shape;
     }
-    CSSWrapShape* wrapShapeInside() const { return rareNonInheritedData->m_wrapShapeInside.get(); }
+    WrapShape* wrapShapeInside() const { return rareNonInheritedData->m_wrapShapeInside.get(); }
 
-    void setWrapShapeOutside(PassRefPtr<CSSWrapShape> shape)
+    void setWrapShapeOutside(PassRefPtr<WrapShape> shape)
     {
         if (rareNonInheritedData->m_wrapShapeOutside != shape)
             rareNonInheritedData.access()->m_wrapShapeOutside = shape;
     }
-    CSSWrapShape* wrapShapeOutside() const { return rareNonInheritedData->m_wrapShapeOutside.get(); }
+    WrapShape* wrapShapeOutside() const { return rareNonInheritedData->m_wrapShapeOutside.get(); }
 
-    static CSSWrapShape* initialWrapShapeInside() { return 0; }
-    static CSSWrapShape* initialWrapShapeOutside() { return 0; }
+    static WrapShape* initialWrapShapeInside() { return 0; }
+    static WrapShape* initialWrapShapeOutside() { return 0; }
 
     Length wrapPadding() const { return rareNonInheritedData->m_wrapPadding; }
     void setWrapPadding(Length wrapPadding) { SET_VAR(rareNonInheritedData, m_wrapPadding, wrapPadding); }

@@ -44,6 +44,12 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
 
+#if ENABLE(CSS_EXCLUSIONS)
+#include "CSSWrapShapes.h"
+#include "WrapShapeFunctions.h"
+#include "WrapShapes.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -1726,23 +1732,25 @@ public:
 };
 
 #if ENABLE(CSS_EXCLUSIONS)
-template <CSSWrapShape* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<CSSWrapShape>), CSSWrapShape* (*initialFunction)()>
+template <WrapShape* (RenderStyle::*getterFunction)() const, void (RenderStyle::*setterFunction)(PassRefPtr<WrapShape>), WrapShape* (*initialFunction)()>
 class ApplyPropertyWrapShape {
 public:
-    static void setValue(RenderStyle* style, PassRefPtr<CSSWrapShape> value) { (style->*setterFunction)(value); }
+    static void setValue(RenderStyle* style, PassRefPtr<WrapShape> value) { (style->*setterFunction)(value); }
     static void applyValue(StyleResolver* styleResolver, CSSValue* value)
     {
         if (value->isPrimitiveValue()) {
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
             if (primitiveValue->getIdent() == CSSValueAuto)
                 setValue(styleResolver->style(), 0);
-            else if (primitiveValue->isShape())
-                setValue(styleResolver->style(), primitiveValue->getShapeValue());
+            else if (primitiveValue->isShape()) {
+                RefPtr<WrapShape> wrapShape = wrapShapeForValue(styleResolver, primitiveValue->getShapeValue());
+                setValue(styleResolver->style(), wrapShape.release());
+            }
         }
     }
     static PropertyHandler createHandler()
     {
-        PropertyHandler handler = ApplyPropertyDefaultBase<CSSWrapShape*, getterFunction, PassRefPtr<CSSWrapShape>, setterFunction, CSSWrapShape*, initialFunction>::createHandler();
+        PropertyHandler handler = ApplyPropertyDefaultBase<WrapShape*, getterFunction, PassRefPtr<WrapShape>, setterFunction, WrapShape*, initialFunction>::createHandler();
         return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
     }
 };

@@ -1,3 +1,111 @@
+2012-07-16  Bear Travis  <betravis@adobe.com>
+
+        Resolve CSS Exclusions shapeInside, shapeOutside properties to Length based WrapShape classes
+        https://bugs.webkit.org/show_bug.cgi?id=89670
+
+        Reviewed by Dirk Schulze.
+
+        Layout of CSS Exclusions requires length based WrapShape classes,
+        rather than the existing CSSValue based CSSWrapShape classes. This
+        patch adds length based WrapShape analogs to the CSSWrapShapes, and
+        modifies RenderStyle to use a WrapShape instead of a CSSWrapShape.
+        The translation between WrapShape and CSSWrapShape classes
+        is handled by helper functions in the new WrapShapeFunctions files.
+        StyleBuilder resolves CSSWrapShapes to WrapShapes for layout use.
+        CSSComputedStyleDeclaration translates WrapShapes to CSSWrapShapes
+        for style use.
+
+        There are existing tests that cover the style serialization / resolution
+        in fast/exclusions/parsing-wrap-shape-inside.html and
+        fast/exclusions/parsing/wrap-shape-outside.html
+
+        Test: fast/exclusions/parsing-wrap-shape-lengths.html
+
+        * CMakeLists.txt: Build system changes for adding new files
+        * GNUmakefile.list.am: Ditto
+        * Target.pri: Ditto
+        * WebCore.gypi: Ditto
+        * WebCore.vcproj/WebCore.vcproj: Ditto
+        * WebCore.xcodeproj/project.pbxproj: Ditto
+        * css/CSSComputedStyleDeclaration.cpp: Translate WrapShapes back to CSSWrapShapes
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSWrapShapes.h: Mostly changing functions to be const
+        (WebCore::CSSWrapShapeRectangle::type):
+        (WebCore::CSSWrapShapeCircle::type):
+        (WebCore::CSSWrapShapeEllipse::type):
+        (WebCore::CSSWrapShapePolygon::getXAt):
+        (WebCore::CSSWrapShapePolygon::getYAt):
+        (WebCore::CSSWrapShapePolygon::values):
+        (WebCore::CSSWrapShapePolygon::type):
+        * css/StyleBuilder.cpp: Resolve CSSWrapShapes to WrapShapes
+        (WebCore):
+        (WebCore::ApplyPropertyWrapShape::setValue):
+        (WebCore::ApplyPropertyWrapShape::applyValue):
+        (WebCore::ApplyPropertyWrapShape::createHandler):
+        * css/WrapShapeFunctions.cpp: Added.
+        (WebCore):
+        (WebCore::valueForWrapShape):
+        (WebCore::convertToLength):
+        (WebCore::wrapShapeForValue):
+        * css/WrapShapeFunctions.h: Added.
+        (WebCore):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+        * rendering/style/WrapShapes.h: Added.
+        (WebCore):
+        (WrapShape):
+        (WebCore::WrapShape::~WrapShape):
+        (WebCore::WrapShape::WrapShape):
+        (WrapShapeRectangle):
+        (WebCore::WrapShapeRectangle::create):
+        (WebCore::WrapShapeRectangle::left):
+        (WebCore::WrapShapeRectangle::top):
+        (WebCore::WrapShapeRectangle::width):
+        (WebCore::WrapShapeRectangle::height):
+        (WebCore::WrapShapeRectangle::cornerRadiusX):
+        (WebCore::WrapShapeRectangle::cornerRadiusY):
+        (WebCore::WrapShapeRectangle::setLeft):
+        (WebCore::WrapShapeRectangle::setTop):
+        (WebCore::WrapShapeRectangle::setWidth):
+        (WebCore::WrapShapeRectangle::setHeight):
+        (WebCore::WrapShapeRectangle::setCornerRadiusX):
+        (WebCore::WrapShapeRectangle::setCornerRadiusY):
+        (WebCore::WrapShapeRectangle::type):
+        (WebCore::WrapShapeRectangle::WrapShapeRectangle):
+        (WrapShapeCircle):
+        (WebCore::WrapShapeCircle::create):
+        (WebCore::WrapShapeCircle::left):
+        (WebCore::WrapShapeCircle::top):
+        (WebCore::WrapShapeCircle::radius):
+        (WebCore::WrapShapeCircle::setLeft):
+        (WebCore::WrapShapeCircle::setTop):
+        (WebCore::WrapShapeCircle::setRadius):
+        (WebCore::WrapShapeCircle::type):
+        (WebCore::WrapShapeCircle::WrapShapeCircle):
+        (WrapShapeEllipse):
+        (WebCore::WrapShapeEllipse::create):
+        (WebCore::WrapShapeEllipse::top):
+        (WebCore::WrapShapeEllipse::left):
+        (WebCore::WrapShapeEllipse::radiusX):
+        (WebCore::WrapShapeEllipse::radiusY):
+        (WebCore::WrapShapeEllipse::setTop):
+        (WebCore::WrapShapeEllipse::setLeft):
+        (WebCore::WrapShapeEllipse::setRadiusX):
+        (WebCore::WrapShapeEllipse::setRadiusY):
+        (WebCore::WrapShapeEllipse::type):
+        (WebCore::WrapShapeEllipse::WrapShapeEllipse):
+        (WrapShapePolygon):
+        (WebCore::WrapShapePolygon::create):
+        (WebCore::WrapShapePolygon::windRule):
+        (WebCore::WrapShapePolygon::values):
+        (WebCore::WrapShapePolygon::getXAt):
+        (WebCore::WrapShapePolygon::getYAt):
+        (WebCore::WrapShapePolygon::setWindRule):
+        (WebCore::WrapShapePolygon::appendPoint):
+        (WebCore::WrapShapePolygon::type):
+        (WebCore::WrapShapePolygon::WrapShapePolygon):
+
 2012-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix compositing layers in columns when in paginated mode

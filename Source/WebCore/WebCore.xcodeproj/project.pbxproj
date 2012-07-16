@@ -6459,6 +6459,9 @@
 		FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */; };
 		FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */; };
 		FDC54F051399B0DA008D9117 /* BiquadFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */; };
+		FDE6860215B0A93B00BB480C /* WrapShapeFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7E95A215ACD6090039E3D0 /* WrapShapeFunctions.cpp */; };
+		FDE6860315B0A96100BB480C /* WrapShapeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7E95A015ACD5620039E3D0 /* WrapShapeFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FDE6860415B0A96100BB480C /* WrapShapes.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB51CF4159CD70300E227C5 /* WrapShapes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FDEA6242152102E200479DF0 /* JSOscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6240152102E200479DF0 /* JSOscillator.cpp */; };
 		FDEA6243152102E200479DF0 /* JSOscillator.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6241152102E200479DF0 /* JSOscillator.h */; };
 		FDEA6246152102FC00479DF0 /* JSWaveTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */; };
@@ -13738,6 +13741,8 @@
 		FD6F252B13F5EF0E0065165F /* MediaElementAudioSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaElementAudioSourceNode.idl; sourceTree = "<group>"; };
 		FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDynamicsCompressorNode.cpp; sourceTree = "<group>"; };
 		FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDynamicsCompressorNode.h; sourceTree = "<group>"; };
+		FD7E95A015ACD5620039E3D0 /* WrapShapeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapShapeFunctions.h; sourceTree = "<group>"; };
+		FD7E95A215ACD6090039E3D0 /* WrapShapeFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WrapShapeFunctions.cpp; sourceTree = "<group>"; };
 		FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveShaperDSPKernel.cpp; sourceTree = "<group>"; };
 		FD7F298B13D4C0CB00AD9535 /* WaveShaperDSPKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveShaperDSPKernel.h; sourceTree = "<group>"; };
 		FD7F298C13D4C0CB00AD9535 /* WaveShaperNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveShaperNode.cpp; sourceTree = "<group>"; };
@@ -13797,6 +13802,7 @@
 		FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSummingJunction.h; sourceTree = "<group>"; };
 		FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiChannelResampler.cpp; sourceTree = "<group>"; };
 		FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiChannelResampler.h; sourceTree = "<group>"; };
+		FDB51CF4159CD70300E227C5 /* WrapShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WrapShapes.h; path = style/WrapShapes.h; sourceTree = "<group>"; };
 		FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadFilterNode.cpp; sourceTree = "<group>"; };
 		FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadFilterNode.h; sourceTree = "<group>"; };
 		FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BiquadFilterNode.idl; sourceTree = "<group>"; };
@@ -20293,6 +20299,7 @@
 				BC2274750E8366E200E7F975 /* SVGRenderStyle.h */,
 				BC2274760E8366E200E7F975 /* SVGRenderStyleDefs.cpp */,
 				BC2274770E8366E200E7F975 /* SVGRenderStyleDefs.h */,
+				FDB51CF4159CD70300E227C5 /* WrapShapes.h */,
 			);
 			name = style;
 			sourceTree = "<group>";
@@ -21056,6 +21063,8 @@
 				BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */,
 				BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */,
 				31611E540E1C4D4A00F6A579 /* WebKitCSSTransformValue.idl */,
+				FD7E95A215ACD6090039E3D0 /* WrapShapeFunctions.cpp */,
+				FD7E95A015ACD5620039E3D0 /* WrapShapeFunctions.h */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -21979,6 +21988,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				97BC69DB1505F076001B74AC /* AbstractDatabase.h in Headers */,
+				FDE6860415B0A96100BB480C /* WrapShapes.h in Headers */,
+				FDE6860315B0A96100BB480C /* WrapShapeFunctions.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
 				29A812330FBB9C1D00510293 /* AccessibilityARIAGridRow.h in Headers */,
@@ -25585,6 +25596,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDE6860215B0A93B00BB480C /* WrapShapeFunctions.cpp in Sources */,
 				97BC69DA1505F076001B74AC /* AbstractDatabase.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
 				0F29C16E1300C2E2002D794E /* AccessibilityAllInOne.cpp in Sources */,

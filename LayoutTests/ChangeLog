@@ -1,3 +1,16 @@
+2012-07-16  Bear Travis  <betravis@adobe.com>
+
+        Resolve CSS Exclusions shapeInside, shapeOutside properties to Length based WrapShape classes
+        https://bugs.webkit.org/show_bug.cgi?id=89670
+
+        Reviewed by Dirk Schulze.
+
+        Test that wrap shapes accept different length types
+        Wrap shape parsing and serialization is tested by parsing-wrap-shape-inside/outside
+
+        * fast/exclusions/parsing-wrap-shape-lengths-expected.txt: Added.
+        * fast/exclusions/parsing-wrap-shape-lengths.html: Added.
+
 2012-07-16  Ojan Vafai  <ojan@chromium.org>
 
         [chromium] Assign some bug numbers to failing tests.
