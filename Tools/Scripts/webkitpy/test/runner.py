@@ -60,6 +60,7 @@ class Runner(object):
     def run(self, suite):
         run_start_time = time.time()
         all_test_names = self.all_test_names(suite)
+        self.printer.num_tests = len(all_test_names)
 
         with message_pool.get(self, self.worker_factory, int(self.options.child_processes)) as pool:
             pool.run(('test', test_name) for test_name in all_test_names)

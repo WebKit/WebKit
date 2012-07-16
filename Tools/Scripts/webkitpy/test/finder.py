@@ -165,11 +165,6 @@ class Finder(object):
                                    'webkitpy.tool')
                 self._exclude(modules, win32_blacklist, 'fail horribly on win32', 54526)
 
-        if skip_if_parallel:
-            serial_tests = ('webkitpy.common.system.executive_unittest.ExecutiveTest.test_running_in_parallel',
-                            'webkitpy.test')
-            self._exclude(modules, serial_tests, 'tests fail when run in parallel with other tests', 12345)
-
         return modules
 
     def _exclude(self, modules, module_prefixes, reason, bugid):

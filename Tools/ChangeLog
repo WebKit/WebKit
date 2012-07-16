@@ -1,5 +1,84 @@
 2012-07-16  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: clean up logging to make it ninja-esque
+        https://bugs.webkit.org/show_bug.cgi?id=91297
+
+        Reviewed by Adam Barth.
+
+        This patch changes the output of test-webkitpy to be closer to
+        what ninja produces. Namely:
+
+        If you are running with stderr writing to a tty (and not -v), we
+        will no longer print '...' as tests complete. Instead, we use a
+        metered stream and print entries of the form:
+           '[X/Y] test_name passed/failed/erred'
+        where X is the current test # and Y is the total number of tests.
+
+        If you are running with stderr piped to a file or other non-tty
+        object (or with -v), you get the same output, one per line for
+        every test.
+
+        In addition, if tests fail or err out, you get the stack trace
+        immediately; you don't have to wait until the end of the run.
+
+        Lastly, this change cleans up the unit tests for test-webkitpy
+        itself to not confuse the logger and to work cleanly w/ multiple
+        processes. It looks like between this and all the clean up in
+        MessagePool that happened as it landed, we can now run
+        multiprocessing tests in parallel.
+
+        * Scripts/webkitpy/test/finder.py:
+        (Finder._default_names):
+        * Scripts/webkitpy/test/finder_unittest.py:
+        (FinderTest.setUp):
+        (FinderTest.tearDown):
+        * Scripts/webkitpy/test/printer.py:
+        (Printer.__init__):
+        (Printer.configure):
+        (Printer.print_started_test):
+        (Printer.print_finished_test):
+        (Printer._test_line):
+        (Printer.print_result):
+        * Scripts/webkitpy/test/runner.py:
+        (Runner.run):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (RunnerTest.setUp):
+        (RunnerTest):
+        (RunnerTest.tearDown):
+        (RunnerTest.assert_run):
+        (RunnerTest.test_regular):
+        (RunnerTest.test_verbose):
+        (RunnerTest.test_timing):
+
+2012-07-16  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: handle failures properly when running in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=91416
+
+        Reviewed by Adam Barth.
+
+        It turns out that unittest.TestResults contain a handle to the
+        test method itself, which isn't picklable; it's sufficient to just
+        store the test name instead of the actual method. By doing so
+        we can move the test_name() method from the printer to the
+        runner where it belongs (so the printer is less dependent on the
+        unittest framework's data structures).
+
+        This change should really have a test but I don't know how to
+        write one that properly captures the behavior and won't cause
+        test-webkitpy itself to fail. I've verified the fix by hand, at
+        least, in the meantime.
+
+        * Scripts/webkitpy/test/printer.py:
+        (Printer.__init__):
+        (Printer.print_result):
+        * Scripts/webkitpy/test/runner.py:
+        (_test_name):
+        (Runner.all_test_names):
+        (_Worker.handle):
+
+2012-07-16  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: handle failures properly when running in parallel
         https://bugs.webkit.org/show_bug.cgi?id=91416
 

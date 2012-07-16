@@ -25,6 +25,7 @@ import logging
 import StringIO
 
 from webkitpy.common.system import outputcapture
+from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
 _log = logging.getLogger(__name__)
 
@@ -32,7 +33,14 @@ _log = logging.getLogger(__name__)
 class Printer(object):
     def __init__(self, stream, options=None):
         self.stream = stream
+        self.meter = None
         self.options = options
+        self.num_tests = 0
+        self.num_completed = 0
+        self.running_tests = []
+        self.completed_tests = []
+        if options:
+            self.configure(options)
 
     def configure(self, options):
         self.options = options
@@ -46,6 +54,8 @@ class Printer(object):
             log_level = logging.WARNING
         elif options.verbose == 2:
             log_level = logging.DEBUG
+
+        self.meter = MeteredStream(self.stream, (options.verbose == 2))
 
         handler = logging.StreamHandler(self.stream)
         # We constrain the level on the handler rather than on the root
@@ -93,58 +103,64 @@ class Printer(object):
             outputcapture.OutputCapture.stream_wrapper = _CaptureAndPassThroughStream
 
     def print_started_test(self, source, test_name):
+        self.running_tests.append(test_name)
+        if len(self.running_tests) > 1:
+            suffix = ' (+%d)' % (len(self.running_tests) - 1)
+        else:
+            suffix = ''
+
         if self.options.verbose:
-            self.stream.write(test_name)
+            write = self.meter.write_update
+        else:
+            write = self.meter.write_throttled_update
+
+        write(self._test_line(self.running_tests[0], suffix))
 
     def print_finished_test(self, result, test_name, test_time, failure, err):
-        timing = ''
-        if self.options.timing:
-            timing = ' %.4fs' % test_time
-        if self.options.verbose:
-            if failure:
-                msg = ' failed'
-            elif err:
-                msg = ' erred'
-            else:
-                msg = ' passed'
-            self.stream.write(msg + timing + '\n')
+        write = self.meter.writeln
+        if failure:
+            lines = failure[0][1].splitlines() + ['']
+            suffix = ' failed:'
+        elif err:
+            lines = err[0][1].splitlines() + ['']
+            suffix = ' erred:'
         else:
-            if failure:
-                msg = 'F'
-            elif err:
-                msg = 'E'
+            suffix = ' passed'
+            lines = []
+            if self.options.verbose:
+                write = self.meter.writeln
             else:
-                msg = '.'
-            self.stream.write(msg)
+                write = self.meter.write_throttled_update
+        if self.options.timing:
+            suffix += ' %.4fs' % test_time
+
+        self.num_completed += 1
+
+        if test_name == self.running_tests[0]:
+            self.completed_tests.insert(0, [test_name, suffix, lines])
+        else:
+            self.completed_tests.append([test_name, suffix, lines])
+        self.running_tests.remove(test_name)
+
+        for test_name, msg, lines in self.completed_tests:
+            if lines:
+                self.meter.writeln(self._test_line(test_name, msg))
+                for line in lines:
+                    self.meter.writeln('  ' + line)
+            else:
+                write(self._test_line(test_name, msg))
+        self.completed_tests = []
+
+    def _test_line(self, test_name, suffix):
+        return '[%d/%d] %s%s' % (self.num_completed, self.num_tests, test_name, suffix)
 
     def print_result(self, result, run_time):
-        self.stream.write('\n')
-
-        for (test_name, err) in result.errors:
-            self.stream.write("=" * 80 + '\n')
-            self.stream.write("ERROR: " + test_name + '\n')
-            self.stream.write("-" * 80 + '\n')
-            for line in err.splitlines():
-                self.stream.write(line + '\n')
-            self.stream.write('\n')
-
-        for (test_name, failure) in result.failures:
-            self.stream.write("=" * 80 + '\n')
-            self.stream.write("FAILURE: " + test_name + '\n')
-            self.stream.write("-" * 80 + '\n')
-            for line in failure.splitlines():
-                self.stream.write(line + '\n')
-            self.stream.write('\n')
-
-        self.stream.write('-' * 80 + '\n')
-        self.stream.write('Ran %d test%s in %.3fs\n' %
-            (result.testsRun, result.testsRun != 1 and "s" or "", run_time))
-
+        write = self.meter.writeln
+        write('Ran %d test%s in %.3fs' % (result.testsRun, result.testsRun != 1 and "s" or "", run_time))
         if result.wasSuccessful():
-            self.stream.write('\nOK\n')
+            write('\nOK\n')
         else:
-            self.stream.write('FAILED (failures=%d, errors=%d)\n' %
-                (len(result.failures), len(result.errors)))
+            write('FAILED (failures=%d, errors=%d)\n' % (len(result.failures), len(result.errors)))
 
 
 class _CaptureAndPassThroughStream(object):

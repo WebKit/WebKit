@@ -47,18 +47,15 @@ class FinderTest(unittest.TestCase):
         # Here we have to jump through a hoop to make sure test-webkitpy doesn't log
         # any messages from these tests :(.
         self.root_logger = logging.getLogger()
-        self.log_handler = None
-        for h in self.root_logger.handlers:
-            if getattr(h, 'name', None) == 'webkitpy.test.printer':
-                self.log_handler = h
-                break
-        if self.log_handler:
-            self.log_level = self.log_handler.level
-            self.log_handler.level = logging.CRITICAL
+        self.log_levels = []
+        self.log_handlers = self.root_logger.handlers[:]
+        for handler in self.log_handlers:
+            self.log_levels.append(handler.level)
+            handler.level = logging.CRITICAL
 
     def tearDown(self):
-        if self.log_handler:
-            self.log_handler.setLevel(self.log_level)
+        for handler in self.log_handlers:
+            handler.level = self.log_levels.pop(0)
 
     def test_additional_system_paths(self):
         self.assertEquals(self.finder.additional_paths(['/usr']),

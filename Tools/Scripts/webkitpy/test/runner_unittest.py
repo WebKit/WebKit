@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import re
 import StringIO
 import unittest
@@ -69,7 +70,22 @@ class FakeLoader(object):
 
 
 class RunnerTest(unittest.TestCase):
-    def assert_run(self, options):
+    def setUp(self):
+        # Here we have to jump through a hoop to make sure test-webkitpy doesn't log
+        # any messages from these tests :(.
+        self.root_logger = logging.getLogger()
+        self.log_levels = []
+        self.log_handlers = self.root_logger.handlers[:]
+        for handler in self.log_handlers:
+            self.log_levels.append(handler.level)
+            handler.level = logging.CRITICAL
+
+    def tearDown(self):
+        for handler in self.log_handlers:
+            handler.level = self.log_levels.pop(0)
+
+    def assert_run(self, verbose=0, timing=False, child_processes=1, quiet=False):
+        options = MockOptions(verbose=verbose, timing=timing, child_processes=child_processes, quiet=quiet, pass_through=False)
         stream = StringIO.StringIO()
         loader = FakeLoader(('test1 (Foo)', '.', ''),
                             ('test2 (Foo)', 'F', 'test2\nfailed'),
@@ -83,13 +99,13 @@ class RunnerTest(unittest.TestCase):
         # FIXME: check the output from the test
 
     def test_regular(self):
-        self.assert_run(MockOptions(verbose=0, timing=False, child_processes=1))
+        self.assert_run()
 
     def test_verbose(self):
-        self.assert_run(MockOptions(verbose=1, timing=False, child_processes=1))
+        self.assert_run(verbose=1)
 
     def test_timing(self):
-        self.assert_run(MockOptions(verbose=0, timing=True, child_processes=1))
+        self.assert_run(timing=True)
 
 
 if __name__ == '__main__':
