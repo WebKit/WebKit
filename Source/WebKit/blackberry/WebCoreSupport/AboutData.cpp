@@ -241,6 +241,19 @@ String memoryPage()
     OwnPtr<JSC::TypeCountSet> objectTypeCounts = mainHeap.objectTypeCounts();
     OwnPtr<JSC::TypeCountSet> protectedObjectTypeCounts = mainHeap.protectedObjectTypeCounts();
 
+    // Malloc info.
+    struct mallinfo mallocInfo = mallinfo();
+
+    page += "<div class='box'><div class='box-title'>Process memory usage summary</div><table class='fixed-table'><col width=75%><col width=25%>";
+
+    page += numberToHTMLTr("Total memory usage (malloc + JSC)", mallocInfo.arena + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
+
+    struct stat processInfo;
+    if (!stat(String::format("/proc/%u/as", getpid()).latin1().data(), &processInfo))
+        page += numberToHTMLTr("Total mapped memory", processInfo.st_size);
+
+    page += "</table></div><br>";
+
     page += "<div class='box'><div class='box-title'>JS engine memory usage</div><table class='fixed-table'><col width=75%><col width=25%>";
 
     page += numberToHTMLTr("Stack size", jscMemoryStat.stackBytes);
@@ -254,16 +267,13 @@ String memoryPage()
 
     page += "</table></div><br>";
 
-    page += "<div class='box'><div class='box-title'>Object type counts</div><table class='fixed-table'><col width=75%><col width=25%>";
+    page += "<div class='box'><div class='box-title'>JS object type counts</div><table class='fixed-table'><col width=75%><col width=25%>";
     dumpJSCTypeCountSetToTableHTML(page, objectTypeCounts.get());
     page += "</table></div><br>";
 
-    page += "<div class='box'><div class='box-title'>Protected object type counts</div><table class='fixed-table'><col width=75%><col width=25%>";
+    page += "<div class='box'><div class='box-title'>JS protected object type counts</div><table class='fixed-table'><col width=75%><col width=25%>";
     dumpJSCTypeCountSetToTableHTML(page, protectedObjectTypeCounts.get());
     page += "</table></div><br>";
-
-    // Malloc info.
-    struct mallinfo mallocInfo = mallinfo();
 
     page += "<div class='box'><div class='box-title'>Malloc Information</div><table class='fixed-table'><col width=75%><col width=25%>";
 
@@ -278,10 +288,6 @@ String memoryPage()
     page += numberToHTMLTr("Memory in free small blocks", mallocInfo.fsmblks);
     page += numberToHTMLTr("Space in big blocks in use", mallocInfo.uordblks);
     page += numberToHTMLTr("Memory in free big blocks", mallocInfo.fordblks);
-
-    struct stat processInfo;
-    if (!stat(String::format("/proc/%u/as", getpid()).latin1().data(), &processInfo))
-        page += numberToHTMLTr("Process total mapped memory", processInfo.st_size);
 
     page += "</table></div>";
 #endif
