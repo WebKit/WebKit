@@ -142,12 +142,8 @@ void ScrollableArea::notifyScrollPositionChanged(const IntPoint& position)
 
 void ScrollableArea::scrollPositionChanged(const IntPoint& position)
 {
-    IntPoint oldPosition = scrollPosition();
     // Tell the derived class to scroll its contents.
     setScrollOffset(position);
-
-    if (scrollPosition() == oldPosition)
-        return;
 
     Scrollbar* verticalScrollbar = this->verticalScrollbar();
 
