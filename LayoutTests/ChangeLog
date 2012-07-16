@@ -1,3 +1,10 @@
+2012-07-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium gardening, skipped failing test.
+        https://bugs.webkit.org/show_bug.cgi?id=91372
+
+        * platform/chromium/TestExpectations:
+
 2012-07-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Mark fast/forms/number/spin-button-gets-disabled-or-readonly.html as flaky
