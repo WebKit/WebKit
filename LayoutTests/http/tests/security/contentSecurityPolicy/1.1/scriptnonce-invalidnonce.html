@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='../resources/multiple-iframe-test.js'></script>
+<script>
+var tests = [
+    ['no', 'script-src 127.0.0.1:8000; script-nonce;', 'resources/script.js', ''],
+    ['no', 'script-src 127.0.0.1:8000; script-nonce ;', 'resources/script.js', ''],
+    ['no', 'script-src 127.0.0.1:8000; script-nonce      ;', 'resources/script.js', ''],
+    ['no', 'script-src 127.0.0.1:8000; script-nonce nonces have no spaces;', 'resources/script.js', ''],
+];
+</script>
+</head>
+<body onload="test()">
+  <p>
+      None of these scripts should execute, as all the nonces are invalid.
+  </p>

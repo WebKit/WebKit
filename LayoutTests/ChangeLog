@@ -1,3 +1,19 @@
+2012-07-16  Mike West  <mkwst@chromium.org>
+
+        Invalid `script-nonce` directives should block script execution.
+        https://bugs.webkit.org/show_bug.cgi?id=91353
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-badnonce-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-badnonce.html: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-emptynonce-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-emptynonce.html: Removed.
+            Replaced these two tests with the following.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html: Added.
+            This tests variously invalid nonces to ensure they block execution.
+
 2012-07-16  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Unreviewed gardening. Layout Test storage/indexeddb/cursor-update-value-argument-required.html is flaky

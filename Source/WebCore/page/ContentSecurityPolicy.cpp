@@ -722,7 +722,7 @@ bool CSPDirectiveList::checkInlineAndReportViolation(CSPDirective* directive, co
 
 bool CSPDirectiveList::checkNonceAndReportViolation(const String& nonce, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const
 {
-    if (m_scriptNonce.isEmpty() || nonce.stripWhiteSpace() == m_scriptNonce)
+    if (m_scriptNonce.isNull() || (!m_scriptNonce.isEmpty() && nonce.stripWhiteSpace() == m_scriptNonce))
         return true;
     reportViolation(m_scriptNonce, consoleMessage + "\"script-nonce " + m_scriptNonce + "\".\n", KURL(), contextURL, contextLine);
     return denyIfEnforcingPolicy();
@@ -930,7 +930,7 @@ void CSPDirectiveList::parseReportURI(const String& name, const String& value)
 
 void CSPDirectiveList::parseScriptNonce(const String& name, const String& value)
 {
-    if (!m_scriptNonce.isEmpty()) {
+    if (!m_scriptNonce.isNull()) {
         logDuplicateDirective(name);
         return;
     }
@@ -943,6 +943,7 @@ void CSPDirectiveList::parseScriptNonce(const String& name, const String& value)
     const UChar* nonceBegin = position;
     if (position == end) {
         logInvalidNonce(String());
+        m_scriptNonce = "";
         return;
     }
     skipWhile<isNotASCIISpace>(position, end);
@@ -952,9 +953,10 @@ void CSPDirectiveList::parseScriptNonce(const String& name, const String& value)
     // Trim off trailing whitespace: If we're not at the end of the string, log
     // an error.
     skipWhile<isASCIISpace>(position, end);
-    if (position < end)
+    if (position < end) {
         logInvalidNonce(value);
-    else
+        m_scriptNonce = "";
+    } else
         m_scriptNonce = nonce;
 }
 

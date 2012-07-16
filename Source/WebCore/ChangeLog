@@ -1,3 +1,26 @@
+2012-07-16  Mike West  <mkwst@chromium.org>
+
+        Invalid `script-nonce` directives should block script execution.
+        https://bugs.webkit.org/show_bug.cgi?id=91353
+
+        Reviewed by Adam Barth.
+
+        If the `script-nonce` Content Security Policy directive contains an
+        invalid value, we should fail loudly, throwing a warning to the console
+        and denying execution of script on the page. The is in line with the
+        current state of the experimental CSP 1.1 Editors Draft[1].
+
+        [1]: https://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#script-nonce--experimental
+
+        Test: http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::checkNonceAndReportViolation):
+            Check against null rather than empty for early exit, otherwise
+            only compare nonces if the stored nonce isn't empty.
+        (WebCore::CSPDirectiveList::parseScriptNonce):
+            Assign the empty string if nonce is invalid.
+
 2012-07-16  Min Qin  <qinmin@chromium.org>
 
         [Android] remove RenderThemeChromiumAndroid::paintMediaFullscreenButton()
