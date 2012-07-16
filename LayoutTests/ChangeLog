@@ -1,3 +1,10 @@
+2012-07-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium gardening, skipped failing test. 
+        https://bugs.webkit.org/show_bug.cgi?id=91386
+
+        * platform/chromium/TestExpectations:
+
 2012-07-16  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         [Qt] platform/qt/tables/mozilla tests needs update after rebaseline and new testfonts
