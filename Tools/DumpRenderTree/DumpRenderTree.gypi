@@ -65,6 +65,9 @@
             'chromium/WebViewHost.cpp',
             'chromium/WebViewHost.h',
         ],
+        'test_runner_files': [
+            'chromium/TestRunner/Stub.cpp',
+        ],
         'test_plugin_files': [
             'TestNetscapePlugIn/PluginObject.cpp',
             'TestNetscapePlugIn/PluginObject.h',

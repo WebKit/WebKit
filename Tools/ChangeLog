@@ -1,3 +1,14 @@
+2012-07-16  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Create a stub TestRunner.a target
+        https://bugs.webkit.org/show_bug.cgi?id=91309
+
+        Reviewed by Ryosuke Niwa.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/Stub.cpp: Added.
+
 2012-07-16  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: clean up logging to make it ninja-esque
