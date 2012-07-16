@@ -1,5 +1,11 @@
 2012-07-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed. Add EFLWebKit2PublicAPI, EFLWebKit2PlatformSpecific to watch list.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2012-07-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed. Add gyuyoung.kim@samsung.com to watch list.
 
         * Scripts/webkitpy/common/config/watchlist:
