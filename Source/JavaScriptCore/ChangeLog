@@ -1,3 +1,13 @@
+2012-07-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Add dfg switch to create_jit_stubs script
+        https://bugs.webkit.org/show_bug.cgi?id=91256
+
+        Reviewed by Geoffrey Garen.
+
+        * create_jit_stubs: Add a switch to enable or disable the generation of
+                            stub functions in #if ENABLE(DFG_JIT) conditions.
+
 2012-07-16  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Unreviewed buildfix after r122729. Typo fix.

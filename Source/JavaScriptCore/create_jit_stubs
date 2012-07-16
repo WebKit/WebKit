@@ -28,10 +28,12 @@ my $rtype_template = quotemeta("#rtype#");
 my $op_template = quotemeta("#op#");
 
 my $prefix;
+my $enable_dfg = 0;
 my $file;
 
 my $getOptionsResult = GetOptions(
-    'prefix=s' => \$prefix
+    'prefix=s' => \$prefix,
+    'dfg!' => \$enable_dfg
 );
 
 $file = $ARGV[0];
@@ -44,11 +46,25 @@ my $stub = "";
 
 my $rtype = "";
 my $op = "";
+my $if_counter = 0;
+my $dfg_begin = 0;
 
 print STDERR "Creating JIT stubs for $file \n";
 open(IN, $file) or die "No such file $file";
 
 while ( $_ = <IN> ) {
+    if ( /^#if (.*)/ ) {
+        $if_counter++;
+        if ( $1 eq "ENABLE(DFG_JIT)" ) {
+            $dfg_begin = $if_counter;
+        }
+    }
+    if ( /^#endif/ ) {
+        if ( $if_counter == $dfg_begin ) {
+            $dfg_begin = 0;
+        }
+        $if_counter--;
+    }
     if ( /^$prefix\_BEGIN\((.*)\)/ ) {
         $stub = $1;
         print $stub . "\n";
@@ -66,7 +82,9 @@ while ( $_ = <IN> ) {
         $stub =~ s/$rtype_template/$rtype/g;
         $stub =~ s/$op_template/$op/g;
         $stub =~ s/\\\*/\*/g;
-        print $stub;
+        if ( $enable_dfg == 1 || $dfg_begin == 0 ) {
+            print $stub;
+        }
     }
 }
 
