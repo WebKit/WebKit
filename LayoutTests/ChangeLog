@@ -1,3 +1,13 @@
+2012-07-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Mark fast/forms/number/spin-button-gets-disabled-or-readonly.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=91367
+
+        Unreviewed EFL gardening. Mark fast/forms/number/spin-button-gets-disabled-or-readonly.html
+        as flaky.
+
+        * platform/efl/TestExpectations:
+
 2012-07-16  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating baselines for MathML Presentation
