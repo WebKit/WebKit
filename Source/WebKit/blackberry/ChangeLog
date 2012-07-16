@@ -1,3 +1,20 @@
+2012-07-15  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Move icon database to application data directory.
+        https://bugs.webkit.org/show_bug.cgi?id=91195
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 156852
+        Create icon database in application data directory instead of
+        database or local storage directory, by doing this we can make
+        things easier when clearing database or local storage data files.
+
+        Internally reviewed by Charles Wei <charles.wei@torchmobile.com.cn>
+
+        * WebCoreSupport/IconDatabaseClientBlackBerry.cpp:
+        (WebCore::IconDatabaseClientBlackBerry::initIconDatabase):
+
 2012-07-13  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Move WebCore/platform/text/Base64 to WTF/wtf/text

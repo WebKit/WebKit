@@ -19,6 +19,7 @@
 #include "config.h"
 #include "IconDatabaseClientBlackBerry.h"
 
+#include "BlackBerryPlatformClient.h"
 #include "IconDatabase.h"
 #include "WebSettings.h"
 #include "WebString.h"
@@ -50,12 +51,8 @@ bool IconDatabaseClientBlackBerry::initIconDatabase(const BlackBerry::WebKit::We
 
     iconDatabase().setClient(this);
 
-    BlackBerry::WebKit::WebString path = settings->databasePath();
-
-    if (path.isEmpty())
-        path = settings->localStoragePath();
-
-    m_initState = iconDatabase().open(path, IconDatabase::defaultDatabaseFilename()) ? InitializeSucceeded : InitializeFailed;
+    m_initState = iconDatabase().open(BlackBerry::Platform::Client::get()->getApplicationDataDirectory().c_str(),
+                                      IconDatabase::defaultDatabaseFilename()) ? InitializeSucceeded : InitializeFailed;
 
     return m_initState == InitializeSucceeded;
 }
