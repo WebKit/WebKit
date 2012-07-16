@@ -1,3 +1,12 @@
+2012-07-16  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Unreviewed buildfix from Zoltan Herczeg after r122677.
+        Implement missing add32 function to MacroAssemblerARM.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::add32):
+        (MacroAssemblerARM):
+
 2012-07-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG PutByVal opcodes should accept more than 3 operands

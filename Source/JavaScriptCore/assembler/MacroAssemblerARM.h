@@ -107,6 +107,13 @@ public:
         m_assembler.adds_r(dest, dest, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
+    void add32(AbsoluteAddress src, RegisterID dest)
+    {
+        move(TrustedImmPtr(address.m_ptr), ARMRegisters::S1);
+        m_assembler.dtr_u(ARMAssembler::LoadUint32, ARMRegisters::S1, ARMRegisters::S1, 0);
+        add32(ARMRegisters::S1, dest);
+    }
+
     void add32(Address src, RegisterID dest)
     {
         load32(src, ARMRegisters::S1);
