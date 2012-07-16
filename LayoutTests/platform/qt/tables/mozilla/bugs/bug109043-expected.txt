@@ -3,28 +3,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x91 [bgcolor=#FFFF00] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x89
-          RenderTableRow {TR} at (0,0) size 782x89
-            RenderTableCell {TD} at (0,32) size 74x25 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (25,2) size 24x21
-                text run at (25,2) width 24: "xxx"
-            RenderTableCell {TD} at (74,0) size 634x89 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 630x27 [bgcolor=#00FF00] [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 628x25
-                  RenderTableRow {TR} at (0,0) size 628x25
-                    RenderTableCell {TH} at (0,0) size 628x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (157,2) size 314x21
-                        text run at (157,2) width 314: "IceWM, The Window Manager Cool As Ice"
-              RenderBlock {P} at (2,45) size 630x42
-                RenderText {#text} at (0,0) size 393x21
-                  text run at (0,0) width 393: "IceWM is a small, but powerful window manager for the "
-                RenderInline {A} at (0,0) size 148x21 [color=#0000EE]
-                  RenderText {#text} at (393,0) size 148x21
-                    text run at (393,0) width 148: "X11 Window System"
-                RenderText {#text} at (541,0) size 592x42
-                  text run at (541,0) width 51: " whose"
-                  text run at (0,21) width 203: "main goals are the following:"
-            RenderTableCell {TD} at (708,32) size 74x25 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (25,2) size 24x21
-                text run at (25,2) width 24: "yyy"
+      RenderTable {TABLE} at (0,0) size 784x85 [bgcolor=#FFFF00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x83
+          RenderTableRow {TR} at (0,0) size 782x83
+            RenderTableCell {TD} at (0,30) size 74x23 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (26,2) size 22x19
+                text run at (26,2) width 22: "xxx"
+            RenderTableCell {TD} at (74,0) size 634x83 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 630x25 [bgcolor=#00FF00] [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 628x23
+                  RenderTableRow {TR} at (0,0) size 628x23
+                    RenderTableCell {TH} at (0,0) size 628x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (168,2) size 292x19
+                        text run at (168,2) width 292: "IceWM, The Window Manager Cool As Ice"
+              RenderBlock {P} at (2,43) size 630x38
+                RenderText {#text} at (0,0) size 344x19
+                  text run at (0,0) width 344: "IceWM is a small, but powerful window manager for the "
+                RenderInline {A} at (0,0) size 131x19 [color=#0000EE]
+                  RenderText {#text} at (344,0) size 131x19
+                    text run at (344,0) width 131: "X11 Window System"
+                RenderText {#text} at (475,0) size 630x38
+                  text run at (475,0) width 155: " whose main goals are the"
+                  text run at (0,19) width 57: "following:"
+            RenderTableCell {TD} at (708,30) size 74x23 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (26,2) size 22x19
+                text run at (26,2) width 22: "yyy"

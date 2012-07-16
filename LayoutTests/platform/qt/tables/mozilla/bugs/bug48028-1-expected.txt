@@ -5,31 +5,31 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {FONT} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,0) size 117x52 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 117x21
-          RenderText {#text} at (33,0) size 51x21
-            text run at (33,0) width 51: "TEST1"
-        RenderTableSection {TBODY} at (1,22) size 115x29
-          RenderTableRow {TR} at (0,2) size 115x25
-            RenderTableCell {TD} at (2,2) size 111x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 107x21
-                text run at (2,2) width 107: "TABLE TEXT1"
-      RenderBlock (anonymous) at (0,52) size 784x21
-        RenderInline {FONT} at (0,0) size 51x21
-          RenderText {#text} at (0,0) size 51x21
-            text run at (0,0) width 51: "TEST2"
-      RenderTable {TABLE} at (0,73) size 117x31 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 115x29
-          RenderTableRow {TR} at (0,2) size 115x25
-            RenderTableCell {TD} at (2,2) size 111x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 107x21
-                text run at (2,2) width 107: "TABLE TEXT2"
-      RenderTable {TABLE} at (0,104) size 117x52 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 117x21
-          RenderText {#text} at (33,0) size 51x21
-            text run at (33,0) width 51: "TEST3"
-        RenderTableSection {TBODY} at (1,22) size 115x29
-          RenderTableRow {TR} at (0,2) size 115x25
-            RenderTableCell {TD} at (2,2) size 111x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 107x21
-                text run at (2,2) width 107: "TABLE TEXT3"
+      RenderTable {TABLE} at (0,0) size 108x48 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 108x19
+          RenderText {#text} at (32,0) size 44x19
+            text run at (32,0) width 44: "TEST1"
+        RenderTableSection {TBODY} at (1,20) size 106x27
+          RenderTableRow {TR} at (0,2) size 106x23
+            RenderTableCell {TD} at (2,2) size 102x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 98x19
+                text run at (2,2) width 98: "TABLE TEXT1"
+      RenderBlock (anonymous) at (0,48) size 784x19
+        RenderInline {FONT} at (0,0) size 44x19
+          RenderText {#text} at (0,0) size 44x19
+            text run at (0,0) width 44: "TEST2"
+      RenderTable {TABLE} at (0,67) size 108x29 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 106x27
+          RenderTableRow {TR} at (0,2) size 106x23
+            RenderTableCell {TD} at (2,2) size 102x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 98x19
+                text run at (2,2) width 98: "TABLE TEXT2"
+      RenderTable {TABLE} at (0,96) size 108x48 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 108x19
+          RenderText {#text} at (32,0) size 44x19
+            text run at (32,0) width 44: "TEST3"
+        RenderTableSection {TBODY} at (1,20) size 106x27
+          RenderTableRow {TR} at (0,2) size 106x23
+            RenderTableCell {TD} at (2,2) size 102x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 98x19
+                text run at (2,2) width 98: "TABLE TEXT3"

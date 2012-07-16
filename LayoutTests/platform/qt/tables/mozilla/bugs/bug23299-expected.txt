@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderTable {TABLE} at (0,0) size 109x42 [bgcolor=#0000FF]
-        RenderTableSection {TBODY} at (0,0) size 109x42
-          RenderTableRow {TR} at (0,0) size 109x42
-            RenderTableCell {TD} at (0,0) size 109x42 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 71x21
-                text run at (0,0) width 71: "Left Table"
-              RenderBR {BR} at (71,16) size 0x0
-              RenderText {#text} at (0,21) size 109x21
-                text run at (0,21) width 109: "ALIGN=\"LEFT\""
-              RenderBR {BR} at (109,37) size 0x0
-      RenderTable {TABLE} at (109,0) size 109x42 [bgcolor=#0000FF]
-        RenderTableSection {TBODY} at (0,0) size 109x42
-          RenderTableRow {TR} at (0,0) size 109x42
-            RenderTableCell {TD} at (0,0) size 109x42 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 93x21
-                text run at (0,0) width 93: "Center Table"
-              RenderBR {BR} at (93,16) size 0x0
-              RenderText {#text} at (0,21) size 109x21
-                text run at (0,21) width 109: "ALIGN=\"LEFT\""
-              RenderBR {BR} at (109,37) size 0x0
-      RenderTable {TABLE} at (218,0) size 109x42 [bgcolor=#0000FF]
-        RenderTableSection {TBODY} at (0,0) size 109x42
-          RenderTableRow {TR} at (0,0) size 109x42
-            RenderTableCell {TD} at (0,0) size 109x42 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 83x21
-                text run at (0,0) width 83: "Right Table"
-              RenderBR {BR} at (83,16) size 0x0
-              RenderText {#text} at (0,21) size 109x21
-                text run at (0,21) width 109: "ALIGN=\"LEFT\""
-              RenderBR {BR} at (109,37) size 0x0
-      RenderBR {BR} at (327,0) size 0x21
-      RenderBR {BR} at (0,42) size 0x21
-      RenderText {#text} at (0,63) size 542x21
-        text run at (0,63) width 542: "The three tables above should abut each other. (in NN3/4 and IE4/5 they do)."
+      RenderTable {TABLE} at (0,0) size 103x38 [bgcolor=#0000FF]
+        RenderTableSection {TBODY} at (0,0) size 103x38
+          RenderTableRow {TR} at (0,0) size 103x38
+            RenderTableCell {TD} at (0,0) size 103x38 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 62x19
+                text run at (0,0) width 62: "Left Table"
+              RenderBR {BR} at (62,15) size 0x0
+              RenderText {#text} at (0,19) size 103x19
+                text run at (0,19) width 103: "ALIGN=\"LEFT\""
+              RenderBR {BR} at (103,34) size 0x0
+      RenderTable {TABLE} at (103,0) size 103x38 [bgcolor=#0000FF]
+        RenderTableSection {TBODY} at (0,0) size 103x38
+          RenderTableRow {TR} at (0,0) size 103x38
+            RenderTableCell {TD} at (0,0) size 103x38 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 79x19
+                text run at (0,0) width 79: "Center Table"
+              RenderBR {BR} at (79,15) size 0x0
+              RenderText {#text} at (0,19) size 103x19
+                text run at (0,19) width 103: "ALIGN=\"LEFT\""
+              RenderBR {BR} at (103,34) size 0x0
+      RenderTable {TABLE} at (206,0) size 103x38 [bgcolor=#0000FF]
+        RenderTableSection {TBODY} at (0,0) size 103x38
+          RenderTableRow {TR} at (0,0) size 103x38
+            RenderTableCell {TD} at (0,0) size 103x38 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 69x19
+                text run at (0,0) width 69: "Right Table"
+              RenderBR {BR} at (69,15) size 0x0
+              RenderText {#text} at (0,19) size 103x19
+                text run at (0,19) width 103: "ALIGN=\"LEFT\""
+              RenderBR {BR} at (103,34) size 0x0
+      RenderBR {BR} at (309,0) size 0x19
+      RenderBR {BR} at (0,38) size 0x19
+      RenderText {#text} at (0,57) size 470x19
+        text run at (0,57) width 470: "The three tables above should abut each other. (in NN3/4 and IE4/5 they do)."

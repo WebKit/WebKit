@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 63x584
-        RenderTableSection {THEAD} at (0,0) size 63x27
-          RenderTableRow {TR} at (0,2) size 63x23
-            RenderTableCell {TD} at (2,2) size 59x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 57x21
-                text run at (1,1) width 57: "THEAD"
-        RenderTableSection {TFOOT} at (0,557) size 63x27
-          RenderTableRow {TR} at (0,2) size 63x23
-            RenderTableCell {TD} at (2,2) size 59x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 54x21
-                text run at (1,1) width 54: "TFOOT"
-        RenderTableSection {TBODY} at (0,27) size 63x530
-          RenderTableRow {TR} at (0,2) size 63x526
-            RenderTableCell {TD} at (2,253) size 59x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 56x21
-                text run at (1,1) width 56: "TBODY"
+      RenderTable {TABLE} at (0,0) size 61x584
+        RenderTableSection {THEAD} at (0,0) size 61x25
+          RenderTableRow {TR} at (0,2) size 61x21
+            RenderTableCell {TD} at (2,2) size 57x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 55x19
+                text run at (1,1) width 55: "THEAD"
+        RenderTableSection {TFOOT} at (0,559) size 61x25
+          RenderTableRow {TR} at (0,2) size 61x21
+            RenderTableCell {TD} at (2,2) size 57x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 53x19
+                text run at (1,1) width 53: "TFOOT"
+        RenderTableSection {TBODY} at (0,25) size 61x534
+          RenderTableRow {TR} at (0,2) size 61x530
+            RenderTableCell {TD} at (2,256) size 57x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 53x19
+                text run at (1,1) width 53: "TBODY"

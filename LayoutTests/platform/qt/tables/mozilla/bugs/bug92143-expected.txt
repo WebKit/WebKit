@@ -3,48 +3,46 @@ layer at (0,0) size 2410x584
 layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
     RenderBody {BODY} at (8,8) size 784x568
-      RenderBlock (anonymous) at (0,0) size 784x21
-        RenderBR {BR} at (0,0) size 0x21
-      RenderTable {TABLE} at (0,21) size 324x67 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 322x65
-          RenderTableRow {TR} at (0,0) size 322x65
-            RenderTableCell {TD} at (0,0) size 322x65 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 308x63
-                text run at (1,1) width 307: "Hotmail's Junk Mail spreading effort just got"
-                text run at (1,22) width 48: "better! "
-                text run at (49,22) width 260: "Now you can choose from 3 levels of"
-                text run at (1,43) width 68: "junk mail!"
-      RenderBlock (anonymous) at (0,88) size 784x84
-        RenderBR {BR} at (0,0) size 0x21
-        RenderBR {BR} at (0,21) size 0x21
-        RenderText {#text} at (0,42) size 479x21
-          text run at (0,42) width 479: "the next table must overrun the visible part of the view (width=2400) "
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderTable {TABLE} at (0,19) size 324x42 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 322x40
+          RenderTableRow {TR} at (0,0) size 322x40
+            RenderTableCell {TD} at (0,0) size 322x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 309x38
+                text run at (1,1) width 309: "Hotmail's Junk Mail spreading effort just got better!"
+                text run at (1,20) width 289: "Now you can choose from 3 levels of junk mail!"
+      RenderBlock (anonymous) at (0,61) size 784x76
+        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,19) size 0x19
+        RenderText {#text} at (0,38) size 415x19
+          text run at (0,38) width 415: "the next table must overrun the visible part of the view (width=2400) "
         RenderBR {BR} at (0,0) size 0x0
-        RenderBR {BR} at (0,63) size 0x21
-      RenderTable {TABLE} at (0,172) size 2402x67 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 2400x65
-          RenderTableRow {TR} at (0,0) size 2400x65
-            RenderTableCell {TD} at (0,0) size 2400x65 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 2393x63
-                text run at (1,1) width 359: "Hotmail's Junk Mail spreading effort just got better! "
-                text run at (360,1) width 336: "Now you can choose from 3 levels of junk mail! "
-                text run at (696,1) width 359: "Hotmail's Junk Mail spreading effort just got better! "
-                text run at (1055,1) width 336: "Now you can choose from 3 levels of junk mail! "
-                text run at (1391,1) width 359: "Hotmail's Junk Mail spreading effort just got better! "
-                text run at (1750,1) width 336: "Now you can choose from 3 levels of junk mail! "
-                text run at (2086,1) width 307: "Hotmail's Junk Mail spreading effort just got"
-                text run at (1,22) width 48: "better! "
-                text run at (49,22) width 336: "Now you can choose from 3 levels of junk mail! "
-                text run at (385,22) width 359: "Hotmail's Junk Mail spreading effort just got better! "
-                text run at (744,22) width 336: "Now you can choose from 3 levels of junk mail! "
-                text run at (1080,22) width 359: "Hotmail's Junk Mail spreading effort just got better! "
-                text run at (1439,22) width 336: "Now you can choose from 3 levels of junk mail! "
-                text run at (1775,22) width 359: "Hotmail's Junk Mail spreading effort just got better! "
-                text run at (2134,22) width 260: "Now you can choose from 3 levels of"
-                text run at (1,43) width 72: "junk mail! "
-                text run at (73,43) width 359: "Hotmail's Junk Mail spreading effort just got better! "
-                text run at (432,43) width 336: "Now you can choose from 3 levels of junk mail! "
-                text run at (768,43) width 359: "Hotmail's Junk Mail spreading effort just got better! "
-                text run at (1127,43) width 336: "Now you can choose from 3 levels of junk mail! "
-                text run at (1463,43) width 359: "Hotmail's Junk Mail spreading effort just got better! "
-                text run at (1822,43) width 332: "Now you can choose from 3 levels of junk mail!"
+        RenderBR {BR} at (0,57) size 0x19
+      RenderTable {TABLE} at (0,137) size 2402x61 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 2400x59
+          RenderTableRow {TR} at (0,0) size 2400x59
+            RenderTableCell {TD} at (0,0) size 2400x59 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 2390x57
+                text run at (1,1) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (314,1) width 293: "Now you can choose from 3 levels of junk mail! "
+                text run at (607,1) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (920,1) width 293: "Now you can choose from 3 levels of junk mail! "
+                text run at (1213,1) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (1526,1) width 293: "Now you can choose from 3 levels of junk mail! "
+                text run at (1819,1) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (2132,1) width 256: "Now you can choose from 3 levels of junk"
+                text run at (1,20) width 33: "mail! "
+                text run at (34,20) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (347,20) width 293: "Now you can choose from 3 levels of junk mail! "
+                text run at (640,20) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (953,20) width 293: "Now you can choose from 3 levels of junk mail! "
+                text run at (1246,20) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (1559,20) width 293: "Now you can choose from 3 levels of junk mail! "
+                text run at (1852,20) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (2165,20) width 226: "Now you can choose from 3 levels of"
+                text run at (1,39) width 63: "junk mail! "
+                text run at (64,39) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (377,39) width 293: "Now you can choose from 3 levels of junk mail! "
+                text run at (670,39) width 313: "Hotmail's Junk Mail spreading effort just got better! "
+                text run at (983,39) width 289: "Now you can choose from 3 levels of junk mail!"

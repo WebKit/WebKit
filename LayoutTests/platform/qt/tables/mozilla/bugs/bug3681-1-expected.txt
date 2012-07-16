@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 627x73
-        RenderTableSection {TBODY} at (0,0) size 627x73
-          RenderTableRow {TR} at (0,2) size 627x69
-            RenderTableCell {TD} at (2,23) size 204x27 [border: (2px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 139x21
-                text run at (3,3) width 139: "Cell 1 (width=33%)."
-            RenderTableCell {TD} at (208,23) size 204x27 [border: (2px solid #008000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 139x21
-                text run at (3,3) width 139: "Cell 2 (width=33%)."
-            RenderTableCell {TD} at (414,2) size 211x69 [border: (2px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 192x63
-                text run at (3,3) width 192: "Cell 3 (width=*) - should be"
-                text run at (3,24) width 190: "67% when cell 2 is hidden,"
-                text run at (3,45) width 187: "33% when cell 2 is visible."
+      RenderTable {TABLE} at (0,0) size 627x67
+        RenderTableSection {TBODY} at (0,0) size 627x67
+          RenderTableRow {TR} at (0,2) size 627x63
+            RenderTableCell {TD} at (2,21) size 204x25 [border: (2px solid #FF0000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 125x19
+                text run at (3,3) width 125: "Cell 1 (width=33%)."
+            RenderTableCell {TD} at (208,21) size 204x25 [border: (2px solid #008000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 125x19
+                text run at (3,3) width 125: "Cell 2 (width=33%)."
+            RenderTableCell {TD} at (414,2) size 211x63 [border: (2px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 205x57
+                text run at (3,3) width 205: "Cell 3 (width=*) - should be 67%"
+                text run at (3,22) width 198: "when cell 2 is hidden, 33% when"
+                text run at (3,41) width 90: "cell 2 is visible."

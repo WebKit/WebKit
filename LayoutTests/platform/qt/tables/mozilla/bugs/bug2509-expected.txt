@@ -3,25 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 400x163 [border: (1px solid #FF0000)]
-        RenderTableSection {TBODY} at (1,1) size 398x161
-          RenderTableRow {TR} at (0,2) size 398x25
-            RenderTableCell {TD} at (2,2) size 304x25 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 252x21
-                text run at (2,2) width 252: "What's New on WebDeveloper.com"
-            RenderTableCell {TD} at (308,2) size 88x25 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 35x21
-                text run at (2,2) width 35: "umm"
-          RenderTableRow {TR} at (0,29) size 398x130
-            RenderTableCell {TD} at (2,71) size 304x46 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 276x42
-                text run at (2,2) width 276: "blah blah blah blah blah blah blah blah"
-                text run at (2,23) width 136: "blah blah blah blah"
-            RenderTableCell {TD} at (308,29) size 88x130 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 66x126
-                text run at (2,2) width 66: "blah blah"
-                text run at (2,23) width 66: "blah blah"
-                text run at (2,44) width 66: "blah blah"
-                text run at (2,65) width 66: "blah blah"
-                text run at (2,86) width 66: "blah blah"
-                text run at (2,107) width 66: "blah blah"
+      RenderTable {TABLE} at (0,0) size 400x111 [border: (1px solid #FF0000)]
+        RenderTableSection {TBODY} at (1,1) size 398x109
+          RenderTableRow {TR} at (0,2) size 398x23
+            RenderTableCell {TD} at (2,2) size 304x23 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 222x19
+                text run at (2,2) width 222: "What's New on WebDeveloper.com"
+            RenderTableCell {TD} at (308,2) size 88x23 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x19
+                text run at (2,2) width 29: "umm"
+          RenderTableRow {TR} at (0,27) size 398x80
+            RenderTableCell {TD} at (2,46) size 304x42 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 286x38
+                text run at (2,2) width 286: "blah blah blah blah blah blah blah blah blah blah"
+                text run at (2,21) width 54: "blah blah"
+            RenderTableCell {TD} at (308,27) size 88x80 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 83x76
+                text run at (2,2) width 83: "blah blah blah"
+                text run at (2,21) width 83: "blah blah blah"
+                text run at (2,40) width 83: "blah blah blah"
+                text run at (2,59) width 83: "blah blah blah"
