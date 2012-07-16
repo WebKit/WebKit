@@ -1,3 +1,9 @@
+2012-07-15  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip the new failing test.
+
+        * platform/qt/Skipped:
+
 2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Mark a few media tests as flaky on RELEASE bot as well
