@@ -1,3 +1,9 @@
+2012-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.9.5 release
+
+        * configure.ac: Bump version number.
+
 2012-07-12 Josh Hawn <jhawn@apple.com>
 
         Fix for WebContext::getWebCoreStatistics() causes crash if no m_process

@@ -1,4 +1,34 @@
 =================
+WebKitGTK+ 1.9.5
+=================
+
+What's new in WebKitGTK+ 1.9.5?
+
+  - Add API to get HTTPS status to WebKit2 GTK+.
+  - Add API to clear the cache to WebKit2 GTK+.
+  - Add webkit_cookie_manager_set_persistent_storage() to WebKit2 GTK+
+    API.
+  - Improve performance of searching in WebKit2.
+  - Implement disk cache in WebKit2.
+  - Add site specific quirks setting to WebKit2 GTK+ API.
+  - Add a setting to enable/disable page cache to WebKit2 GTK+ API.
+  - Add WebKitWebView::context-menu-dismissed signal to WebKit2 GTK+
+    API.
+  - Add webkit_web_frame_get_dom_document() to WebKit GTK+ API.
+  - Use soup_cookie_jar_is_persistent() to set whether cookie is a
+    session one or not.
+  - Fix recognition of contractions (apostrophes) in spell checker.
+  - Fix a crash when showing the context menu in the Web Inspector.
+  - WebKitWebView::mouse-target-changed is not emitted when moved
+    to/from editable content.
+  - Fix inspector detach when inspector was attached by the client in
+    WebKit2.
+  - Don't show accel labels in WebKit2 context menu items.
+  - Cache the video dimensions to not query the video-sink sink-pad
+    caps every time.
+  - Fix several memory leaks.
+
+=================
 WebKitGTK+ 1.9.4
 =================
 
