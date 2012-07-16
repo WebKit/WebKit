@@ -1,3 +1,14 @@
+2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Disable perf tests for DEBUG builds
+        https://bugs.webkit.org/show_bug.cgi?id=91358
+
+        Unreviewed EFL gardening. Disable performance tests
+        in DEBUG builds since they are really slow and there
+        are very few benefits in running them.
+
+        * platform/efl/TestExpectations:
+
 2012-07-15  Mike Lawther  <mikelawther@chromium.org>
 
         Fix calculation of rgba's alpha in CSS custom text

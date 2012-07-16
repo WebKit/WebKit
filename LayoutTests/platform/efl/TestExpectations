@@ -55,6 +55,10 @@ BUGWK85262 SKIP : fast/css/image-resolution = PASS
 // This test assumes we cannot play RTSP, but we can.
 BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
 
+// Perf tests are really slow in debug builds and there are few benefits in
+// running them.
+WONTFIX SKIP DEBUG : perf = TIMEOUT
+
 // Link prefetch is disabled by default
 BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html = PASS
 BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PASS
