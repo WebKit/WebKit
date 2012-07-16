@@ -1,3 +1,29 @@
+2012-07-16  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Only apply page scale delta to root scroll layer
+        https://bugs.webkit.org/show_bug.cgi?id=91374
+
+        Reviewed by Adrienne Walker.
+
+        When the user pinch-zooms the web page though the Chromium compositor, the
+        per-layer page scale delta is used to keep track of the difference between the
+        page scale on the compositor thread versus the main thread. On the next
+        commit to the main thread these values are reset to 1.
+
+        When calculating layer positions, the compositor applies a layer's page scale
+        delta both to the layer itself as well as all of its children. Since we are
+        currently updating the page scale delta on all scrollable layers, this results
+        in scrollable child layers getting scaled multiple times.
+
+        This patch changes the compositor to only apply the page scale delta on the
+        root scroll layer.
+
+        New unit test: CCLayerTreeHostImplTest.pageScaleDeltaAppliedToRootScrollLayerOnly
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::setPageScaleFactorAndLimits):
+        (WebCore::CCLayerTreeHostImpl::setPageScaleDelta):
+
 2012-07-16  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Remove setController from BatteryClient

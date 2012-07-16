@@ -761,18 +761,6 @@ static void adjustScrollsForPageScaleChange(CCLayerImpl* layerImpl, float pageSc
         adjustScrollsForPageScaleChange(layerImpl->children()[i].get(), pageScaleChange);
 }
 
-static void applyPageScaleDeltaToScrollLayers(CCLayerImpl* layerImpl, float pageScaleDelta)
-{
-    if (!layerImpl)
-        return;
-
-    if (layerImpl->scrollable())
-        layerImpl->setPageScaleDelta(pageScaleDelta);
-
-    for (size_t i = 0; i < layerImpl->children().size(); ++i)
-        applyPageScaleDeltaToScrollLayers(layerImpl->children()[i].get(), pageScaleDelta);
-}
-
 void CCLayerTreeHostImpl::setDeviceScaleFactor(float deviceScaleFactor)
 {
     if (deviceScaleFactor == m_deviceScaleFactor)
@@ -807,7 +795,8 @@ void CCLayerTreeHostImpl::setPageScaleFactorAndLimits(float pageScale, float min
     // Clamp delta to limits and refresh display matrix.
     setPageScaleDelta(m_pageScaleDelta / m_sentPageScaleDelta);
     m_sentPageScaleDelta = 1;
-    applyPageScaleDeltaToScrollLayers(m_rootScrollLayerImpl, m_pageScaleDelta);
+    if (m_rootScrollLayerImpl)
+        m_rootScrollLayerImpl->setPageScaleDelta(m_pageScaleDelta);
 }
 
 void CCLayerTreeHostImpl::setPageScaleDelta(float delta)
@@ -825,7 +814,8 @@ void CCLayerTreeHostImpl::setPageScaleDelta(float delta)
     m_pageScaleDelta = delta;
 
     updateMaxScrollPosition();
-    applyPageScaleDeltaToScrollLayers(m_rootScrollLayerImpl, m_pageScaleDelta);
+    if (m_rootScrollLayerImpl)
+        m_rootScrollLayerImpl->setPageScaleDelta(m_pageScaleDelta);
 }
 
 void CCLayerTreeHostImpl::updateMaxScrollPosition()

@@ -989,6 +989,45 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnImplThread)
     EXPECT_EQ(m_hostImpl->rootLayer()->pageScaleDelta(), pageScale);
 }
 
+TEST_F(CCLayerTreeHostImplTest, pageScaleDeltaAppliedToRootScrollLayerOnly)
+{
+    IntSize surfaceSize(10, 10);
+    float defaultPageScale = 1;
+    float newPageScale = 2;
+
+    // Create a normal scrollable root layer and another scrollable child layer.
+    setupScrollAndContentsLayers(surfaceSize);
+    CCLayerImpl* root = m_hostImpl->rootLayer();
+    CCLayerImpl* child = root->children()[0].get();
+
+    OwnPtr<CCLayerImpl> scrollableChild = createScrollableLayer(3, FloatPoint(5, 5), surfaceSize);
+    child->addChild(scrollableChild.release());
+    CCLayerImpl* grandChild = child->children()[0].get();
+
+    // Set new page scale on impl thread by pinching.
+    m_hostImpl->pinchGestureBegin();
+    m_hostImpl->pinchGestureUpdate(newPageScale, IntPoint());
+    m_hostImpl->pinchGestureEnd();
+
+    // The page scale delta should only be applied to the scrollable root layer.
+    EXPECT_EQ(root->pageScaleDelta(), newPageScale);
+    EXPECT_EQ(child->pageScaleDelta(), defaultPageScale);
+    EXPECT_EQ(grandChild->pageScaleDelta(), defaultPageScale);
+
+    // Make sure all the layers are drawn with the page scale delta applied, i.e., the page scale
+    // delta on the root layer is applied hierarchically.
+    CCLayerTreeHostImpl::FrameData frame;
+    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+    m_hostImpl->drawLayers(frame);
+    m_hostImpl->didDrawAllLayers(frame);
+
+    WebTransformationMatrix pageScaleTransform;
+    pageScaleTransform.scale(newPageScale);
+    EXPECT_EQ(root->drawTransform(), pageScaleTransform);
+    EXPECT_EQ(child->drawTransform(), pageScaleTransform);
+    EXPECT_EQ(grandChild->drawTransform(), pageScaleTransform);
+}
+
 TEST_F(CCLayerTreeHostImplTest, scrollChildAndChangePageScaleOnMainThread)
 {
     IntSize surfaceSize(10, 10);
