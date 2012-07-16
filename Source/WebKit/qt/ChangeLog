@@ -1,3 +1,15 @@
+2012-07-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix inconsistent DLL linkage on Windows with WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=91375
+
+        Reviewed by Laszlo Gombos.
+
+        Export QWebHistoryItemPrivate as required for tests. Unfortunately we cannot use
+        Q_AUTOTEST_EXPORT outside of Qt.
+
+        * Api/qwebhistory_p.h:
+
 2012-07-16  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Change NativeImagePtr from QPixmap* to QImage*
