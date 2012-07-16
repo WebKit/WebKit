@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x271
+  RenderBlock {HTML} at (0,0) size 800x271
+    RenderBody {BODY} at (8,16) size 784x245
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 456x19
+          text run at (0,0) width 456: "You should see scrollbars on the gray square, and a resizer control below it."
+layer at (18,51) size 100x100 clip at (18,51) size 84x84 scrollWidth 500 scrollHeight 500
+  RenderBlock (relative positioned) {DIV} at (10,35) size 100x100
+layer at (18,51) size 500x500 backgroundClip at (18,51) size 84x84 clip at (18,51) size 84x84 outlineClip at (18,51) size 84x84
+  RenderBlock {DIV} at (0,0) size 500x500 [bgcolor=#808080]
+layer at (18,161) size 100x100
+  RenderBlock {DIV} at (10,145) size 100x100

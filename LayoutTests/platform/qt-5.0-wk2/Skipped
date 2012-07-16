@@ -400,78 +400,27 @@ http/tests/ssl
 # https://bugs.webkit.org/show_bug.cgi?id=90985
 fast/repaint/background-scaling.html
 
-# [Qt] The test fonts used for Qt tests changed to the Liberation font family,
-# due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
-# https://bugs.webkit.org/show_bug.cgi?id=85203
-compositing/animation/state-at-end-event-transform-layer.html
+# [Qt] remaining compositing tests after rebaseline for new testfonts
+# https://bugs.webkit.org/show_bug.cgi?id=91377
 compositing/backing/no-backing-for-clip-overlap.html
 compositing/backing/no-backing-for-clip.html
 compositing/backing/no-backing-for-perspective.html
-compositing/color-matching/image-color-matching.html
-compositing/color-matching/pdf-image-match.html
-compositing/compositing-visible-descendant.html
-compositing/direct-image-compositing.html
-compositing/generated-content.html
-compositing/geometry/abs-position-inside-opacity.html
-compositing/geometry/clipping-foreground.html
 compositing/geometry/composited-html-size.html
 compositing/geometry/composited-in-columns.html
 compositing/geometry/fixed-in-composited.html
-compositing/geometry/fixed-position.html
-compositing/geometry/layer-due-to-layer-children-deep.html
-compositing/geometry/layer-due-to-layer-children.html
 compositing/geometry/limit-layer-bounds-overflow-repaint.html
 compositing/geometry/object-clip-rects-assertion.html
-compositing/geometry/outline-change.html
 compositing/geometry/partial-layout-update.html
 compositing/geometry/preserve-3d-switching.html
-compositing/geometry/root-layer-update.html
-compositing/geometry/transfrom-origin-on-zero-size-layer.html
-compositing/geometry/video-fixed-scrolling.html
-compositing/iframes/composited-iframe-alignment.html
 compositing/iframes/composited-iframe-scroll.html
 compositing/iframes/iframe-content-flipping.html
-compositing/iframes/iframe-copy-on-scroll.html
 compositing/iframes/invisible-nested-iframe-show.html
-compositing/images/direct-image-background-color.html
 compositing/layer-creation/no-compositing-for-preserve-3d.html
-compositing/masks/direct-image-mask.html
-compositing/masks/masked-ancestor.html
-compositing/masks/multiple-masks.html
-compositing/masks/simple-composited-mask.html
-compositing/overflow/ancestor-overflow.html
-compositing/overflow/fixed-position-ancestor-clip.html
-compositing/overflow/overflow-compositing-descendant.html
-compositing/overflow/overflow-positioning.html
-compositing/overflow/overflow-scroll.html
-compositing/overflow/parent-overflow.html
-compositing/overflow/scroll-ancestor-update.html
-compositing/overflow/scrollbar-painting.html
 compositing/overflow/theme-affects-visual-overflow.html
-compositing/reflections/compositing-change-inside-reflection.html
-compositing/reflections/masked-reflection-on-composited.html
-compositing/reflections/nested-reflection-mask-change.html
-compositing/reflections/nested-reflection-transformed.html
-compositing/reflections/nested-reflection-transformed2.html
-compositing/reflections/reflection-in-composited.html
-compositing/reflections/reflection-on-composited.html
-compositing/reflections/reflection-opacity.html
-compositing/reflections/reflection-ordering.html
-compositing/reflections/reflection-positioning.html
-compositing/reflections/reflection-positioning2.html
-compositing/reflections/simple-composited-reflections.html
-compositing/repaint/become-overlay-composited-layer.html
-compositing/repaint/composited-document-element.html
-compositing/repaint/layer-repaint-rects.html
-compositing/repaint/layer-repaint.html
-compositing/repaint/opacity-between-absolute.html
-compositing/repaint/opacity-between-absolute2.html
-compositing/self-painting-layers.html
-compositing/shadows/shadow-drawing.html
-compositing/sibling-positioning.html
-compositing/text-on-large-layer.html
-compositing/transitions/scale-transition-no-start.html
-compositing/transitions/singular-scale-transition.html
+
+# [Qt] The test fonts used for Qt tests changed to the Liberation font family,
+# due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
+# https://bugs.webkit.org/show_bug.cgi?id=85203
 css1/basic/class_as_selector.html
 css1/basic/comments.html
 css1/basic/containment.html

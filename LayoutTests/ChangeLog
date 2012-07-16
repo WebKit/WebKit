@@ -1,3 +1,201 @@
+2012-07-16  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] compositing tests need rebaseline with new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91234
+
+        Unreviewed rebaseline.
+
+        Rebaseline compositing tests. Move expectations from qt-5.0-wk2 to qt because these
+        results should not vary across Qt versions. Co-authored with Csaba Osztrogonác. Some
+        tests were produced uncorrect result, I keep skipped them and filed
+        https://bugs.webkit.org/show_bug.cgi?id=91377. Compositing tests are still skipped on
+        qt-4.8 and qt-5.0-wk1.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/compositing/animation/state-at-end-event-transform-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/animation/state-at-end-event-transform-layer-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/color-matching/image-color-matching-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/color-matching/pdf-image-match-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/color-matching/pdf-image-match-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/compositing-visible-descendant-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/direct-image-compositing-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/direct-image-compositing-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/generated-content-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/generated-content-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/abs-position-inside-opacity-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/clipping-foreground-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/clipping-foreground-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/fixed-in-composited-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/fixed-position-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/layer-due-to-layer-children-deep-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/layer-due-to-layer-children-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/layer-due-to-layer-children-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/outline-change-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/outline-change-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/partial-layout-update-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/root-layer-update-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/geometry/video-fixed-scrolling-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/composited-iframe-alignment-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/iframe-copy-on-scroll-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/images/direct-image-background-color-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/masks/masked-ancestor-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/fixed-position-ancestor-clip-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-compositing-descendant-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-compositing-descendant-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-positioning-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-positioning-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scroll-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scroll-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/parent-overflow-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/parent-overflow-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/scroll-ancestor-update-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/scrollbar-painting-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/scrollbar-painting-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/compositing-change-inside-reflection-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/masked-reflection-on-composited-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/nested-reflection-mask-change-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/nested-reflection-transformed-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/nested-reflection-transformed2-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/reflection-in-composited-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/reflection-opacity-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/reflection-ordering-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/become-overlay-composited-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/become-overlay-composited-layer-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/composited-document-element-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/composited-document-element-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/layer-repaint-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/layer-repaint-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/layer-repaint-rects-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/opacity-between-absolute-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/opacity-between-absolute-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/opacity-between-absolute2-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/repaint/opacity-between-absolute2-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/self-painting-layers-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/self-painting-layers-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/shadows/shadow-drawing-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/shadows/shadow-drawing-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/sibling-positioning-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/text-on-large-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/transitions/scale-transition-no-start-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/transitions/scale-transition-no-start-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/transitions/singular-scale-transition-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/transitions/singular-scale-transition-expected.txt: Removed.
+        * platform/qt/animations/3d/change-transform-in-end-event-expected.txt: Removed.
+        * platform/qt/animations/3d/state-at-end-event-transform-expected.png: Added.
+        * platform/qt/compositing/animation/state-at-end-event-transform-layer-expected.png: Added.
+        * platform/qt/compositing/animation/state-at-end-event-transform-layer-expected.txt: Added.
+        * platform/qt/compositing/color-matching/image-color-matching-expected.png: Added.
+        * platform/qt/compositing/color-matching/image-color-matching-expected.txt: Added.
+        * platform/qt/compositing/color-matching/pdf-image-match-expected.png: Added.
+        * platform/qt/compositing/color-matching/pdf-image-match-expected.txt: Added.
+        * platform/qt/compositing/compositing-visible-descendant-expected.png: Added.
+        * platform/qt/compositing/compositing-visible-descendant-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/compositing-visible-descendant-expected.txt.
+        * platform/qt/compositing/direct-image-compositing-expected.png: Added.
+        * platform/qt/compositing/direct-image-compositing-expected.txt: Added.
+        * platform/qt/compositing/generated-content-expected.png: Added.
+        * platform/qt/compositing/generated-content-expected.txt: Added.
+        * platform/qt/compositing/geometry/abs-position-inside-opacity-expected.png: Added.
+        * platform/qt/compositing/geometry/abs-position-inside-opacity-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/geometry/abs-position-inside-opacity-expected.txt.
+        * platform/qt/compositing/geometry/clipping-foreground-expected.png: Added.
+        * platform/qt/compositing/geometry/clipping-foreground-expected.txt: Added.
+        * platform/qt/compositing/geometry/fixed-in-composited-expected.png: Added.
+        * platform/qt/compositing/geometry/fixed-in-composited-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/geometry/fixed-in-composited-expected.txt.
+        * platform/qt/compositing/geometry/fixed-position-expected.png: Added.
+        * platform/qt/compositing/geometry/fixed-position-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/geometry/fixed-position-expected.txt.
+        * platform/qt/compositing/geometry/layer-due-to-layer-children-deep-expected.png: Added.
+        * platform/qt/compositing/geometry/layer-due-to-layer-children-deep-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/geometry/layer-due-to-layer-children-deep-expected.txt.
+        * platform/qt/compositing/geometry/layer-due-to-layer-children-expected.png: Added.
+        * platform/qt/compositing/geometry/layer-due-to-layer-children-expected.txt: Added.
+        * platform/qt/compositing/geometry/outline-change-expected.png: Added.
+        * platform/qt/compositing/geometry/outline-change-expected.txt: Added.
+        * platform/qt/compositing/geometry/partial-layout-update-expected.png: Added.
+        * platform/qt/compositing/geometry/partial-layout-update-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/geometry/partial-layout-update-expected.txt.
+        * platform/qt/compositing/geometry/root-layer-update-expected.png: Added.
+        * platform/qt/compositing/geometry/root-layer-update-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/geometry/root-layer-update-expected.txt.
+        * platform/qt/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png: Added.
+        * platform/qt/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.txt.
+        * platform/qt/compositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/qt/compositing/geometry/video-fixed-scrolling-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/geometry/video-fixed-scrolling-expected.txt.
+        * platform/qt/compositing/iframes/composited-iframe-alignment-expected.png: Added.
+        * platform/qt/compositing/iframes/composited-iframe-alignment-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/iframes/composited-iframe-alignment-expected.txt.
+        * platform/qt/compositing/iframes/iframe-copy-on-scroll-expected.png: Added.
+        * platform/qt/compositing/iframes/iframe-copy-on-scroll-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/iframes/iframe-copy-on-scroll-expected.txt.
+        * platform/qt/compositing/images/direct-image-background-color-expected.png: Added.
+        * platform/qt/compositing/images/direct-image-background-color-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/images/direct-image-background-color-expected.txt.
+        * platform/qt/compositing/masks/direct-image-mask-expected.png: Added.
+        * platform/qt/compositing/masks/direct-image-mask-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/masks/direct-image-mask-expected.txt.
+        * platform/qt/compositing/masks/masked-ancestor-expected.png: Added.
+        * platform/qt/compositing/masks/masked-ancestor-expected.txt: Added.
+        * platform/qt/compositing/masks/multiple-masks-expected.png: Added.
+        * platform/qt/compositing/masks/multiple-masks-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/masks/multiple-masks-expected.txt.
+        * platform/qt/compositing/masks/simple-composited-mask-expected.png: Added.
+        * platform/qt/compositing/masks/simple-composited-mask-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/masks/simple-composited-mask-expected.txt.
+        * platform/qt/compositing/overflow/ancestor-overflow-expected.png:
+        * platform/qt/compositing/overflow/ancestor-overflow-expected.txt:
+        * platform/qt/compositing/overflow/fixed-position-ancestor-clip-expected.png: Added.
+        * platform/qt/compositing/overflow/fixed-position-ancestor-clip-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/overflow/fixed-position-ancestor-clip-expected.txt.
+        * platform/qt/compositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/qt/compositing/overflow/overflow-compositing-descendant-expected.txt: Added.
+        * platform/qt/compositing/overflow/overflow-positioning-expected.png: Added.
+        * platform/qt/compositing/overflow/overflow-positioning-expected.txt: Added.
+        * platform/qt/compositing/overflow/overflow-scroll-expected.png: Added.
+        * platform/qt/compositing/overflow/overflow-scroll-expected.txt: Added.
+        * platform/qt/compositing/overflow/parent-overflow-expected.png: Added.
+        * platform/qt/compositing/overflow/parent-overflow-expected.txt: Added.
+        * platform/qt/compositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/qt/compositing/overflow/scroll-ancestor-update-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/overflow/scroll-ancestor-update-expected.txt.
+        * platform/qt/compositing/overflow/scrollbar-painting-expected.png: Added.
+        * platform/qt/compositing/overflow/scrollbar-painting-expected.txt: Added.
+        * platform/qt/compositing/reflections/compositing-change-inside-reflection-expected.png: Added.
+        * platform/qt/compositing/reflections/compositing-change-inside-reflection-expected.txt: Added.
+        * platform/qt/compositing/reflections/masked-reflection-on-composited-expected.png: Added.
+        * platform/qt/compositing/reflections/masked-reflection-on-composited-expected.txt: Added.
+        * platform/qt/compositing/reflections/nested-reflection-mask-change-expected.png: Added.
+        * platform/qt/compositing/reflections/nested-reflection-mask-change-expected.txt: Added.
+        * platform/qt/compositing/reflections/nested-reflection-transformed-expected.png: Added.
+        * platform/qt/compositing/reflections/nested-reflection-transformed-expected.txt: Added.
+        * platform/qt/compositing/reflections/nested-reflection-transformed2-expected.png: Added.
+        * platform/qt/compositing/reflections/nested-reflection-transformed2-expected.txt: Added.
+        * platform/qt/compositing/reflections/reflection-in-composited-expected.png: Added.
+        * platform/qt/compositing/reflections/reflection-in-composited-expected.txt: Added.
+        * platform/qt/compositing/reflections/reflection-on-composited-expected.png: Added.
+        * platform/qt/compositing/reflections/reflection-on-composited-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/reflections/reflection-on-composited-expected.txt.
+        * platform/qt/compositing/reflections/reflection-opacity-expected.png: Added.
+        * platform/qt/compositing/reflections/reflection-opacity-expected.txt: Added.
+        * platform/qt/compositing/reflections/reflection-ordering-expected.png: Added.
+        * platform/qt/compositing/reflections/reflection-ordering-expected.txt: Added.
+        * platform/qt/compositing/reflections/reflection-positioning-expected.png: Added.
+        * platform/qt/compositing/reflections/reflection-positioning-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/reflections/reflection-positioning-expected.txt.
+        * platform/qt/compositing/reflections/reflection-positioning2-expected.png: Added.
+        * platform/qt/compositing/reflections/reflection-positioning2-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/reflections/reflection-positioning2-expected.txt.
+        * platform/qt/compositing/reflections/simple-composited-reflections-expected.png: Added.
+        * platform/qt/compositing/reflections/simple-composited-reflections-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/reflections/simple-composited-reflections-expected.txt.
+        * platform/qt/compositing/repaint/become-overlay-composited-layer-expected.png: Added.
+        * platform/qt/compositing/repaint/become-overlay-composited-layer-expected.txt: Added.
+        * platform/qt/compositing/repaint/composited-document-element-expected.png: Added.
+        * platform/qt/compositing/repaint/composited-document-element-expected.txt: Added.
+        * platform/qt/compositing/repaint/layer-repaint-expected.png: Added.
+        * platform/qt/compositing/repaint/layer-repaint-expected.txt: Added.
+        * platform/qt/compositing/repaint/layer-repaint-rects-expected.png: Added.
+        * platform/qt/compositing/repaint/layer-repaint-rects-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/repaint/layer-repaint-rects-expected.txt.
+        * platform/qt/compositing/repaint/opacity-between-absolute-expected.png: Added.
+        * platform/qt/compositing/repaint/opacity-between-absolute-expected.txt: Added.
+        * platform/qt/compositing/repaint/opacity-between-absolute2-expected.png: Added.
+        * platform/qt/compositing/repaint/opacity-between-absolute2-expected.txt: Added.
+        * platform/qt/compositing/self-painting-layers-expected.png: Added.
+        * platform/qt/compositing/self-painting-layers-expected.txt: Added.
+        * platform/qt/compositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/qt/compositing/shadows/shadow-drawing-expected.txt: Added.
+        * platform/qt/compositing/sibling-positioning-expected.png: Added.
+        * platform/qt/compositing/sibling-positioning-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/sibling-positioning-expected.txt.
+        * platform/qt/compositing/text-on-large-layer-expected.png: Added.
+        * platform/qt/compositing/text-on-large-layer-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/compositing/text-on-large-layer-expected.txt.
+        * platform/qt/compositing/transitions/scale-transition-no-start-expected.png: Added.
+        * platform/qt/compositing/transitions/scale-transition-no-start-expected.txt: Added.
+        * platform/qt/compositing/transitions/singular-scale-transition-expected.png: Added.
+        * platform/qt/compositing/transitions/singular-scale-transition-expected.txt: Added.
+
 2012-07-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium gardening, skipped failing test. 

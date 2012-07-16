@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x326
+  RenderBlock {HTML} at (0,0) size 800x326
+    RenderBody {BODY} at (8,16) size 784x290
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 739x38
+          text run at (0,0) width 739: "Test transform change on reflected elements, with compositing layers larger than render layers. Left and right side should be"
+          text run at (0,19) width 75: "symmetrical."
+layer at (28,74) size 122x232
+  RenderBlock {DIV} at (20,58) size 122x232 [border: (1px solid #000000)]
+layer at (39,85) size 100x100
+  RenderBlock {DIV} at (11,11) size 100x100 [bgcolor=#008000]
+    RenderText {#text} at (33,1) size 34x75
+      text run at (33,1) width 34: "1"
