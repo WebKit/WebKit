@@ -137,7 +137,7 @@ namespace WebCore {
         virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
         {
             MemoryClassInfo<WeakReferenceMap<KeyType, ValueType> > info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
-            info.reportHashMap(m_map);
+            info.addHashMap(m_map);
         }
 
     protected:

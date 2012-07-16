@@ -55,7 +55,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo<ScriptWrappable> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
-        info.reportPointer(m_wrapper);
+        info.addMember(m_wrapper);
     }
 
 private:

@@ -6064,36 +6064,36 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<Document> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
     info.visitBaseClass<ContainerNode>(this);
-    info.reportVector(m_customFonts);
-    info.reportString(m_documentURI);
-    info.reportString(m_baseTarget);
+    info.addVector(m_customFonts);
+    info.addString(m_documentURI);
+    info.addString(m_baseTarget);
     if (m_pageGroupUserSheets)
-        info.reportVector(*m_pageGroupUserSheets.get());
+        info.addVector(*m_pageGroupUserSheets.get());
     if (m_userSheets)
-        info.reportVector(*m_userSheets.get());
-    info.reportHashSet(m_nodeIterators);
-    info.reportHashSet(m_ranges);
-    info.reportListHashSet(m_styleSheetCandidateNodes);
-    info.reportString(m_preferredStylesheetSet);
-    info.reportString(m_selectedStylesheetSet);
-    info.reportString(m_title.string());
-    info.reportString(m_rawTitle.string());
-    info.reportString(m_xmlEncoding);
-    info.reportString(m_xmlVersion);
-    info.reportString(m_contentLanguage);
-    info.reportHashMap(m_documentNamedItemCollections);
-    info.reportHashMap(m_windowNamedItemCollections);
+        info.addVector(*m_userSheets.get());
+    info.addHashSet(m_nodeIterators);
+    info.addHashSet(m_ranges);
+    info.addListHashSet(m_styleSheetCandidateNodes);
+    info.addString(m_preferredStylesheetSet);
+    info.addString(m_selectedStylesheetSet);
+    info.addString(m_title.string());
+    info.addString(m_rawTitle.string());
+    info.addString(m_xmlEncoding);
+    info.addString(m_xmlVersion);
+    info.addString(m_contentLanguage);
+    info.addHashMap(m_documentNamedItemCollections);
+    info.addHashMap(m_windowNamedItemCollections);
 #if ENABLE(DASHBOARD_SUPPORT)
-    info.reportVector(m_dashboardRegions);
+    info.addVector(m_dashboardRegions);
 #endif
-    info.reportHashMap(m_cssCanvasElements);
-    info.reportVector(m_iconURLs);
-    info.reportHashSet(m_documentSuspensionCallbackElements);
-    info.reportHashSet(m_mediaVolumeCallbackElements);
-    info.reportHashSet(m_privateBrowsingStateChangedElements);
-    info.reportHashMap(m_elementsByAccessKey);
-    info.reportHashSet(m_mediaCanStartListeners);
-    info.reportVector(m_pendingTasks);
+    info.addHashMap(m_cssCanvasElements);
+    info.addVector(m_iconURLs);
+    info.addHashSet(m_documentSuspensionCallbackElements);
+    info.addHashSet(m_mediaVolumeCallbackElements);
+    info.addHashSet(m_privateBrowsingStateChangedElements);
+    info.addHashMap(m_elementsByAccessKey);
+    info.addHashSet(m_mediaCanStartListeners);
+    info.addVector(m_pendingTasks);
 }
 
 #if ENABLE(UNDO_MANAGER)
