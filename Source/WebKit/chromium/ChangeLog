@@ -1,3 +1,18 @@
+2012-07-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Incorrect assertion: Replicas will cause a RenderPass to be removed twice
+        https://bugs.webkit.org/show_bug.cgi?id=91328
+
+        Reviewed by Adrienne Walker.
+
+        Add replicas to the surfaces in the test.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit):
+        (WTF::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit::beginTest):
+        (WTF::CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit::afterTest):
+        (CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit):
+
 2012-07-13  Eric Penner  <epenner@google.com>
 
         [chromium] Add 'self-managed' option to CCPrioritizedTexture to enable render-surface and canvas use cases.

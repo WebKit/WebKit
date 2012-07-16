@@ -447,7 +447,10 @@ bool CCLayerTreeHostImpl::CullRenderPassesWithNoQuads::shouldRemoveRenderPass(co
 {
     const CCRenderPass* renderPass = findRenderPassById(quad.renderPassId(), frame);
     size_t passIndex = frame.renderPasses.find(renderPass);
-    ASSERT(passIndex != notFound);
+
+    bool renderPassAlreadyRemoved = passIndex == notFound;
+    if (renderPassAlreadyRemoved)
+        return false;
 
     // If any quad or RenderPass draws into this RenderPass, then keep it.
     const CCQuadList& quadList = frame.renderPasses[passIndex]->quadList();

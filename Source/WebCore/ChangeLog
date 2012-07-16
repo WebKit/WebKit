@@ -1,3 +1,20 @@
+2012-07-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Incorrect assertion: Replicas will cause a RenderPass to be removed twice
+        https://bugs.webkit.org/show_bug.cgi?id=91328
+
+        Reviewed by Adrienne Walker.
+
+        We asserted that we would never attempt to remove a render pass that had
+        already been removed. This was incorrect as a surface with a replica has
+        two quads and both may cause us to attempt its removal. We must handle
+        this case gracefully.
+
+        Test: CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CullRenderPassesWithNoQuads::shouldRemoveRenderPass):
+
 2012-07-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: native memory: fix instrumentation for string members

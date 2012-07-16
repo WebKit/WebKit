@@ -2267,7 +2267,9 @@ public:
     CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit()
         : m_rootLayer(ContentLayerChromiumWithUpdateTracking::create(&m_mockDelegate))
         , m_surfaceLayer1(ContentLayerChromiumWithUpdateTracking::create(&m_mockDelegate))
+        , m_replicaLayer1(ContentLayerChromiumWithUpdateTracking::create(&m_mockDelegate))
         , m_surfaceLayer2(ContentLayerChromiumWithUpdateTracking::create(&m_mockDelegate))
+        , m_replicaLayer2(ContentLayerChromiumWithUpdateTracking::create(&m_mockDelegate))
     {
     }
 
@@ -2282,6 +2284,9 @@ public:
         m_surfaceLayer2->setBounds(IntSize(100, 100));
         m_surfaceLayer2->setForceRenderSurface(true);
         m_surfaceLayer2->setOpacity(0.5);
+
+        m_surfaceLayer1->setReplicaLayer(m_replicaLayer1.get());
+        m_surfaceLayer2->setReplicaLayer(m_replicaLayer2.get());
 
         m_rootLayer->addChild(m_surfaceLayer1);
         m_surfaceLayer1->addChild(m_surfaceLayer2);
@@ -2321,14 +2326,18 @@ public:
         // Clear layer references so CCLayerTreeHost dies.
         m_rootLayer.clear();
         m_surfaceLayer1.clear();
+        m_replicaLayer1.clear();
         m_surfaceLayer2.clear();
+        m_replicaLayer2.clear();
     }
 
 private:
     MockContentLayerDelegate m_mockDelegate;
     RefPtr<ContentLayerChromiumWithUpdateTracking> m_rootLayer;
     RefPtr<ContentLayerChromiumWithUpdateTracking> m_surfaceLayer1;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_replicaLayer1;
     RefPtr<ContentLayerChromiumWithUpdateTracking> m_surfaceLayer2;
+    RefPtr<ContentLayerChromiumWithUpdateTracking> m_replicaLayer2;
 };
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit)
