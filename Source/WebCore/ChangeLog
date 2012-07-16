@@ -1,3 +1,19 @@
+2012-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix compositing layers in columns when in paginated mode
+        https://bugs.webkit.org/show_bug.cgi?id=91425
+
+        Reviewed by Dave Hyatt.
+
+        Enhance a hack that was added to allow composited layers to
+        display in columns to work for paginated mode, where the
+        RenderView is renderer with columns.
+
+        Test: compositing/columns/composited-in-paginated.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+
 2012-07-16  Emil A Eklund  <eae@chromium.org>
 
         Inconsistent rounding in table layout causes background color to bleed through
