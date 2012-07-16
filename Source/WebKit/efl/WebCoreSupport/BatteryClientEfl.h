@@ -35,11 +35,10 @@ class BatteryController;
 
 class BatteryClientEfl : public WebCore::BatteryClient, public WebCore::BatteryProviderEflClient {
 public:
-    BatteryClientEfl();
+    explicit BatteryClientEfl(Evas_Object* view);
     virtual ~BatteryClientEfl() { }
 
     // BatteryClient interface.
-    virtual void setController(WebCore::BatteryController*);
     virtual void startUpdating();
     virtual void stopUpdating();
     virtual void batteryControllerDestroyed();
@@ -48,7 +47,7 @@ private:
     // BatteryProviderEflClient interface.
     virtual void didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<WebCore::BatteryStatus>);
 
-    WebCore::BatteryController* m_controller;
+    Evas_Object* m_view;
     WebCore::BatteryProviderEfl m_provider;
 };
 

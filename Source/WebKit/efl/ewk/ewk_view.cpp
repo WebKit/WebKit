@@ -754,7 +754,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #endif
 
 #if ENABLE(BATTERY_STATUS)
-    WebCore::provideBatteryTo(priv->page.get(), new BatteryClientEfl);
+    WebCore::provideBatteryTo(priv->page.get(), new BatteryClientEfl(smartData->self));
 #endif
 
     priv->pageSettings = priv->page->settings();

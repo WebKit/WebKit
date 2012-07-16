@@ -28,15 +28,13 @@
 
 namespace WebCore {
 
-class BatteryController;
 class BatteryStatus;
 
 class BatteryClientBlackBerry : public BatteryClient, public BlackBerry::Platform::BatteryStatusTrackerListener {
 public:
-    BatteryClientBlackBerry();
+    explicit BatteryClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
     ~BatteryClientBlackBerry() { }
 
-    virtual void setController(BatteryController*);
     virtual void startUpdating();
     virtual void stopUpdating();
     virtual void batteryControllerDestroyed();
@@ -47,8 +45,8 @@ public:
     void onDischargingTimeChange(bool charging, double chargingTime, double dischargingTime, double level);
 
 private:
+    BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
     BlackBerry::Platform::BatteryStatusTracker* m_tracker;
-    BatteryController* m_controller;
 };
 
 }

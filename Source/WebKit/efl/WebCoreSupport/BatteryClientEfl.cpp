@@ -24,16 +24,12 @@
 #if ENABLE(BATTERY_STATUS)
 
 #include "BatteryController.h"
+#include "ewk_view_private.h"
 
-BatteryClientEfl::BatteryClientEfl()
-    : m_controller(0)
+BatteryClientEfl::BatteryClientEfl(Evas_Object* view)
+    : m_view(view)
     , m_provider(this)
 {
-}
-
-void BatteryClientEfl::setController(WebCore::BatteryController* controller)
-{
-    m_controller = controller;
 }
 
 void BatteryClientEfl::startUpdating()
@@ -53,8 +49,7 @@ void BatteryClientEfl::batteryControllerDestroyed()
 
 void BatteryClientEfl::didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<WebCore::BatteryStatus> status)
 {
-    ASSERT(m_controller);
-    m_controller->didChangeBatteryStatus(eventType, status);
+    WebCore::BatteryController::from(EWKPrivate::corePage(m_view))->didChangeBatteryStatus(eventType, status);
 }
 
 #endif // ENABLE(BATTERY_STATUS)

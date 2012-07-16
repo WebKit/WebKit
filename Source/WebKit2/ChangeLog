@@ -1,3 +1,16 @@
+2012-07-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Remove setController from BatteryClient
+        https://bugs.webkit.org/show_bug.cgi?id=90944
+
+        Reviewed by Adam Barth.
+
+        Remove WebBatteryClient::setController function.
+
+        * WebProcess/WebCoreSupport/WebBatteryClient.cpp:
+        * WebProcess/WebCoreSupport/WebBatteryClient.h:
+        (WebBatteryClient):
+
 2012-07-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Make Ewk_Navigation_Policy_Decision ref counted

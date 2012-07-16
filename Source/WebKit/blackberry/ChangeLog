@@ -1,3 +1,26 @@
+2012-07-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Remove setController from BatteryClient
+        https://bugs.webkit.org/show_bug.cgi?id=90944
+
+        Reviewed by Adam Barth.
+
+        BatteryClient doesn't need to keep m_controller,
+        because BatteryController can be accessed using BatteryController::from().
+        Remove m_controller and Add webPagePrivate to BatteryClientBlackBerry.
+        And change all m_controller to BatteryController::from.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebCoreSupport/BatteryClientBlackBerry.cpp:
+        (WebCore::BatteryClientBlackBerry::BatteryClientBlackBerry):
+        (WebCore::BatteryClientBlackBerry::onLevelChange):
+        (WebCore::BatteryClientBlackBerry::onChargingChange):
+        (WebCore::BatteryClientBlackBerry::onChargingTimeChange):
+        (WebCore::BatteryClientBlackBerry::onDischargingTimeChange):
+        * WebCoreSupport/BatteryClientBlackBerry.h:
+        (BatteryClientBlackBerry):
+
 2012-07-16  Yongxin Dai  <yodai@rim.com>
 
         [BlackBerry] Text selection with touch hold does not start on text field in some cases

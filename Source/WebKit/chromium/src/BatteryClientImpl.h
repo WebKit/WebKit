@@ -36,6 +36,8 @@
 #include "BatteryClient.h"
 #include "WebBatteryStatus.h"
 
+namespace WebCore { class BatteryController; }
+
 namespace WebKit {
 
 class WebBatteryStatusClient;
@@ -46,9 +48,9 @@ public:
     virtual ~BatteryClientImpl() { }
 
     void updateBatteryStatus(const WebBatteryStatus&);
+    void setController(WebCore::BatteryController*);
 
     // WebCore::BatteryClient methods:
-    virtual void setController(WebCore::BatteryController*) OVERRIDE;
     virtual void startUpdating() OVERRIDE;
     virtual void stopUpdating() OVERRIDE;
     virtual void batteryControllerDestroyed() OVERRIDE;

@@ -36,6 +36,7 @@
 #include "AutofillPopupMenuClient.h"
 #include "BackForwardListChromium.h"
 #include "BatteryClientImpl.h"
+#include "BatteryController.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "Color.h"
@@ -464,6 +465,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 
 #if ENABLE(BATTERY_STATUS)
     provideBatteryTo(m_page.get(), m_batteryClient.get());
+    m_batteryClient->setController(BatteryController::from(m_page.get()));
 #endif
 
     m_page->setGroupName(pageGroupName);

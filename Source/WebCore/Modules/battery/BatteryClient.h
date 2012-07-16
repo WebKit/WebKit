@@ -24,14 +24,12 @@
 
 namespace WebCore {
 
-class BatteryController;
 class Page;
 
 class BatteryClient {
 public:
     virtual ~BatteryClient() { }
 
-    virtual void setController(BatteryController*) = 0;
     virtual void startUpdating() = 0;
     virtual void stopUpdating() = 0;
     virtual void batteryControllerDestroyed() = 0;

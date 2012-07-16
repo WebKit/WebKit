@@ -1,3 +1,18 @@
+2012-07-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Remove setController from BatteryClient
+        https://bugs.webkit.org/show_bug.cgi?id=90944
+
+        Reviewed by Adam Barth.
+
+        Remove virtual identifier from setController because setController is removed from WebCore::BatteryClient.
+        In addition, BatteryController is set to instance of BatteryClientImpl in the constructor of WebViewImpl.
+
+        * src/BatteryClientImpl.h:
+        (BatteryClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+
 2012-07-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Incorrect assertion: Replicas will cause a RenderPass to be removed twice

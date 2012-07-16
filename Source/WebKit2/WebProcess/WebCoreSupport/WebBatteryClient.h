@@ -44,7 +44,6 @@ public:
     virtual ~WebBatteryClient() { }
 
 private:
-    virtual void setController(WebCore::BatteryController*) OVERRIDE;
     virtual void startUpdating() OVERRIDE;
     virtual void stopUpdating() OVERRIDE;
     virtual void batteryControllerDestroyed() OVERRIDE;

@@ -36,14 +36,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebBatteryClient::setController(WebCore::BatteryController*)
-{
-    // We provide an empty implementation for this method so that
-    // it compiles. We don't need it since WebBatteryManager
-    // retrieves the controller directly from the page by calling
-    // BatteryController::from().
-}
-
 void WebBatteryClient::startUpdating()
 {
     WebProcess::shared().batteryManager().registerWebPage(m_page);

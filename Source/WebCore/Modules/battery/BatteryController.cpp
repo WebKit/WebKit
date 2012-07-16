@@ -33,7 +33,6 @@ BatteryController::BatteryController(BatteryClient* client)
     : m_client(client)
 {
     ASSERT(m_client);
-    m_client->setController(this);
 }
 
 BatteryController::~BatteryController()

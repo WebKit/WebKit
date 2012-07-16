@@ -1,3 +1,23 @@
+2012-07-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Remove setController from BatteryClient
+        https://bugs.webkit.org/show_bug.cgi?id=90944
+
+        Reviewed by Adam Barth.
+
+        BatteryClient doesn't need to keep m_controller,
+        because BatteryController can be accessed using BatteryController::from().
+        Remove m_controller and Add ewk view evas object to BatteryClientEfl.
+        And change all m_controller to BatteryController::from.
+
+        * WebCoreSupport/BatteryClientEfl.cpp:
+        (BatteryClientEfl::BatteryClientEfl):
+        (BatteryClientEfl::didChangeBatteryStatus):
+        * WebCoreSupport/BatteryClientEfl.h:
+        (BatteryClientEfl):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2012-07-15  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Add a API for getting security origin string

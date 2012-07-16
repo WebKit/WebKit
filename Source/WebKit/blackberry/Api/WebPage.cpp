@@ -520,7 +520,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #endif
 
 #if ENABLE(BATTERY_STATUS)
-    WebCore::provideBatteryTo(m_page, new WebCore::BatteryClientBlackBerry);
+    WebCore::provideBatteryTo(m_page, new WebCore::BatteryClientBlackBerry(this));
 #endif
 
 #if ENABLE(MEDIA_STREAM)

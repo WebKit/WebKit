@@ -1,3 +1,20 @@
+2012-07-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Remove setController from BatteryClient
+        https://bugs.webkit.org/show_bug.cgi?id=90944
+
+        Reviewed by Adam Barth.
+
+        BatteryClient doesn't need to keep m_controller,
+        because BatteryController can be accessed using BatteryController::from().
+        Remove BatteryClient::setController function.
+
+        No new tests. Covered by existing tests.
+
+        * Modules/battery/BatteryClient.h:
+        * Modules/battery/BatteryController.cpp:
+        (WebCore::BatteryController::BatteryController):
+
 2012-07-16  Mike West  <mkwst@chromium.org>
 
         Invalid `script-nonce` directives should block script execution.
