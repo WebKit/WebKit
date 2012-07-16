@@ -501,7 +501,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(QT)
-        void pushTransparencyLayerInternal(const QRect &rect, qreal opacity, QPixmap& alphaMask);
+        void pushTransparencyLayerInternal(const QRect&, qreal, QImage&);
         void takeOwnershipOfPlatformContext();
 #endif
 

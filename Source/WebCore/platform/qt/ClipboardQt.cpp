@@ -50,6 +50,7 @@
 
 #include <QGuiApplication>
 #include <QClipboard>
+#include <QImage>
 #include <QList>
 #include <QMimeData>
 #include <QStringList>
@@ -243,7 +244,7 @@ DragImageRef ClipboardQt::createDragImage(IntPoint& dragLoc) const
     if (!m_dragImage)
         return 0;
     dragLoc = m_dragLoc;
-    return m_dragImage->image()->nativeImageForCurrentFrame();
+    return new QImage(*m_dragImage->image()->nativeImageForCurrentFrame());
 }
 
 
@@ -273,9 +274,9 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
     CachedImage* cachedImage = getCachedImage(element);
     if (!cachedImage || !cachedImage->imageForRenderer(element->renderer()) || !cachedImage->isLoaded())
         return;
-    QPixmap* pixmap = cachedImage->imageForRenderer(element->renderer())->nativeImageForCurrentFrame();
-    if (pixmap)
-        m_writableData->setImageData(*pixmap);
+    QImage* image = cachedImage->imageForRenderer(element->renderer())->nativeImageForCurrentFrame();
+    if (image)
+        m_writableData->setImageData(*image);
 
     QList<QUrl> urls;
     urls.append(url);

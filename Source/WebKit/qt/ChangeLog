@@ -1,3 +1,31 @@
+2012-07-16  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Change NativeImagePtr from QPixmap* to QImage*
+        https://bugs.webkit.org/show_bug.cgi?id=88785
+
+        Reviewed by Simon Hausmann.
+
+        Since we use raster engine there is no difference between QPixmap and QImage, so we are going
+        to use QImage everywhere where it is possible. This refactoring contains the change of the
+        NativeImagePtr typedef from QPixmap* to QImage* and covers the related modifications.
+
+        Part of the change is similar to Viatcheslav Ostapenko's internal work.
+
+        Covered by existing tests.
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        * Api/qwebhistory.cpp:
+        (QWebHistoryItem::icon):
+        * Api/qwebsettings.cpp:
+        (QWebSettings::iconForUrl):
+        (QWebSettings::setWebGraphic):
+        (QWebSettings::webGraphic):
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag):
+        * WebCoreSupport/InitWebCoreQt.cpp:
+        (WebCore::initializeWebCoreQt):
+
 2012-07-16  Frederik Gladhorn  <frederik.gladhorn@nokia.com>
 
         Accessible Widget for QWebView

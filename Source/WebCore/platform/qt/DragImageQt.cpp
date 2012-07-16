@@ -29,6 +29,8 @@
 #include "CachedImage.h"
 #include "Image.h"
 
+#include <QImage>
+
 namespace WebCore {
 
 IntSize dragImageSize(DragImageRef image)
@@ -66,7 +68,7 @@ DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum)
     if (!image || !image->nativeImageForCurrentFrame())
         return 0;
 
-    return new QPixmap(*image->nativeImageForCurrentFrame());
+    return new QImage(*image->nativeImageForCurrentFrame());
 }
 
 DragImageRef createDragImageIconForCachedImage(CachedImage*)

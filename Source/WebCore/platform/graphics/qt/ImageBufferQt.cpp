@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
+#include "NativeImageQt.h"
 #include "StillImageQt.h"
 #include "TransparencyLayer.h"
 #include <wtf/text/CString.h>
@@ -42,23 +43,22 @@
 #include <QImage>
 #include <QImageWriter>
 #include <QPainter>
-#include <QPixmap>
 #include <math.h>
 
 namespace WebCore {
 
 ImageBufferData::ImageBufferData(const IntSize& size)
-    : m_pixmap(size)
+    : m_nativeImage(size, NativeImageQt::defaultFormatForAlphaEnabledImages())
 {
-    if (m_pixmap.isNull())
+    if (m_nativeImage.isNull())
         return;
 
-    m_pixmap.fill(QColor(Qt::transparent));
+    m_nativeImage.fill(QColor(Qt::transparent));
 
     QPainter* painter = new QPainter;
     m_painter = adoptPtr(painter);
 
-    if (!painter->begin(&m_pixmap))
+    if (!painter->begin(&m_nativeImage))
         return;
 
     // Since ImageBuffer is used mainly for Canvas, explicitly initialize
@@ -76,22 +76,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     painter->setBrush(brush);
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     
-    m_image = StillImage::createForRendering(&m_pixmap);
-}
-
-QImage ImageBufferData::toQImage() const
-{
-    QPaintEngine* paintEngine = m_pixmap.paintEngine();
-    if (!paintEngine || paintEngine->type() != QPaintEngine::Raster)
-        return m_pixmap.toImage();
-
-    // QRasterPixmapData::toImage() will deep-copy the backing QImage if there's an active QPainter on it.
-    // For performance reasons, we don't want that here, so we temporarily redirect the paint engine.
-    QPaintDevice* currentPaintDevice = paintEngine->paintDevice();
-    paintEngine->setPaintDevice(0);
-    QImage image = m_pixmap.toImage();
-    paintEngine->setPaintDevice(currentPaintDevice);
-    return image;
+    m_image = StillImage::createForRendering(&m_nativeImage);
 }
 
 ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, ColorSpace, RenderingMode, DeferralMode, bool& success)
@@ -120,9 +105,9 @@ GraphicsContext* ImageBuffer::context() const
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
 {
     if (copyBehavior == CopyBackingStore)
-        return StillImage::create(m_data.m_pixmap);
+        return StillImage::create(m_data.m_nativeImage);
 
-    return StillImage::createForRendering(&m_data.m_pixmap);
+    return StillImage::createForRendering(&m_data.m_nativeImage);
 }
 
 void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
@@ -149,12 +134,12 @@ void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& src
 
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& floatRect) const
 {
-    QPixmap* nativeImage = m_data.m_image->nativeImageForCurrentFrame();
+    QImage* nativeImage = m_data.m_image->nativeImageForCurrentFrame();
     if (!nativeImage)
         return;
 
     IntRect rect = enclosingIntRect(floatRect);
-    QPixmap alphaMask = *nativeImage;
+    QImage alphaMask = *nativeImage;
 
     context->pushTransparencyLayerInternal(rect, 1.0, alphaMask);
 }
@@ -165,7 +150,7 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
     if (isPainting)
         m_data.m_painter->end();
 
-    QImage image = m_data.toQImage().convertToFormat(QImage::Format_ARGB32);
+    QImage image = m_data.m_nativeImage;
     ASSERT(!image.isNull());
 
     uchar* bits = image.bits();
@@ -182,10 +167,10 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
         }
     }
 
-    m_data.m_pixmap = QPixmap::fromImage(image);
+    m_data.m_nativeImage = image;
 
     if (isPainting)
-        m_data.m_painter->begin(&m_data.m_pixmap);
+        m_data.m_painter->begin(&m_data.m_nativeImage);
 }
 
 template <Multiply multiplied>
@@ -224,7 +209,7 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
     int numRows = endy - originy;
 
     // NOTE: For unmultiplied data, we undo the premultiplication below.
-    QImage image = imageData.toQImage().convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    QImage image = imageData.m_nativeImage.convertToFormat(NativeImageQt::defaultFormatForAlphaEnabledImages());
 
     ASSERT(!image.isNull());
 
@@ -358,7 +343,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
 
     bool isPainting = m_data.m_painter->isActive();
     if (!isPainting)
-        m_data.m_painter->begin(&m_data.m_pixmap);
+        m_data.m_painter->begin(&m_data.m_nativeImage);
     else {
         m_data.m_painter->save();
 
@@ -377,7 +362,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
         m_data.m_painter->restore();
 }
 
-static bool encodeImage(const QPixmap& pixmap, const String& format, const double* quality, QByteArray& data)
+static bool encodeImage(const QImage& image, const String& format, const double* quality, QByteArray& data)
 {
     int compressionQuality = 100;
     if (quality && *quality >= 0.0 && *quality <= 1.0)
@@ -385,7 +370,7 @@ static bool encodeImage(const QPixmap& pixmap, const String& format, const doubl
 
     QBuffer buffer(&data);
     buffer.open(QBuffer::WriteOnly);
-    bool success = pixmap.save(&buffer, format.utf8().data(), compressionQuality);
+    bool success = image.save(&buffer, format.utf8().data(), compressionQuality);
     buffer.close();
 
     return success;
@@ -397,10 +382,10 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
 
     // QImageWriter does not support mimetypes. It does support Qt image formats (png,
     // gif, jpeg..., xpm) so skip the image/ to get the Qt image format used to encode
-    // the m_pixmap image.
+    // the m_nativeImage image.
 
     QByteArray data;
-    if (!encodeImage(m_data.m_pixmap, mimeType.substring(sizeof "image"), quality, data))
+    if (!encodeImage(m_data.m_nativeImage, mimeType.substring(sizeof "image"), quality, data))
         return "data:,";
 
     return "data:" + mimeType + ";base64," + data.toBase64().data();

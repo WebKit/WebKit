@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2012 Zoltan Horvath (zoltan@webkit.org) 2012 University of Szeged.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,38 +10,39 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY UNIVERSITY OF SZEGED ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL UNIVERSITY OF SZEGED OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Pattern.h"
+#ifndef NativeImageQt_h
+#define NativeImageQt_h
 
-#include "AffineTransform.h"
-#include "GraphicsContext.h"
+#include <QImage>
 
 namespace WebCore {
 
-QBrush Pattern::createPlatformPattern() const
-{
-    QImage* image = tileImage()->nativeImageForCurrentFrame();
-    if (!image)
-        return QBrush();
+class NativeImageQt {
+public:
+    static QImage::Format defaultFormatForAlphaEnabledImages()
+    {
+        return QImage::Format_ARGB32_Premultiplied;
+    }
 
-    // Qt merges patter space and user space itself
-    QBrush brush(*image);
-    brush.setTransform(m_patternSpaceTransformation);
+    static QImage::Format defaultFormatForOpaqueImages()
+    {
+        return QImage::Format_RGB32;
+    }
+};
 
-    return brush;
 }
 
-}
+#endif // NativeImageQt_h

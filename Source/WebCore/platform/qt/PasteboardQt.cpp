@@ -166,10 +166,10 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     Image* image = cachedImage->imageForRenderer(node->renderer());
     ASSERT(image);
 
-    QPixmap* pixmap = image->nativeImageForCurrentFrame();
-    if (!pixmap)
+    QImage* nativeImage = image->nativeImageForCurrentFrame();
+    if (!image)
         return;
-    QGuiApplication::clipboard()->setPixmap(*pixmap, QClipboard::Clipboard);
+    QGuiApplication::clipboard()->setImage(*nativeImage, QClipboard::Clipboard);
 #endif
 }
 

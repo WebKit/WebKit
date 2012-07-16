@@ -1,3 +1,95 @@
+2012-07-16  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Change NativeImagePtr from QPixmap* to QImage*
+        https://bugs.webkit.org/show_bug.cgi?id=88785
+
+        Reviewed by Simon Hausmann.
+
+        Since we use raster engine there is no difference between QPixmap and QImage, so we are going
+        to use QImage everywhere where it is possible. This refactoring contains the change of the
+        NativeImagePtr typedef from QPixmap* to QImage* and covers the related modifications.
+
+        Part of the change is similar to Viatcheslav Ostapenko's internal work.
+
+        Covered by existing tests.
+
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapAssignToElementMethod::invoke):
+        (JSC::Bindings::QtPixmapInstance::variantFromObject):
+        * platform/DragImage.h:
+        (WebCore):
+        * platform/graphics/GraphicsContext.h:
+        (GraphicsContext):
+        * platform/graphics/Image.h:
+        (Image):
+        * platform/graphics/ImageSource.h:
+        (WebCore):
+        * platform/graphics/gstreamer/ImageGStreamer.h:
+        * platform/graphics/gstreamer/ImageGStreamerQt.cpp:
+        (ImageGStreamer::ImageGStreamer):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::pushTransparencyLayerInternal):
+        (WebCore::GraphicsContext::beginPlatformTransparencyLayer):
+        (WebCore::GraphicsContext::endPlatformTransparencyLayer):
+        * platform/graphics/qt/ImageBufferDataQt.h:
+        (ImageBufferData):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBuffer::copyImage):
+        (WebCore::ImageBuffer::clip):
+        (WebCore::ImageBuffer::platformTransformColorSpace):
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::putByteArray):
+        (WebCore::encodeImage):
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+        * platform/graphics/qt/ImageQt.cpp:
+        (graphics):
+        (loadResourceImage):
+        (WebCore::Image::loadPlatformResource):
+        (WebCore::Image::setPlatformResource):
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::checkForSolidColor):
+        (WebCore::BitmapImage::create):
+        * platform/graphics/qt/NativeImageQt.h: Added.
+        (WebCore):
+        (NativeImageQt):
+        (WebCore::NativeImageQt::defaultFormatForAlphaEnabledImages):
+        (WebCore::NativeImageQt::defaultFormatForOpaqueImages):
+         * platform/graphics/qt/PatternQt.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/qt/StillImageQt.cpp:
+        (WebCore::StillImage::StillImage):
+        (WebCore::StillImage::~StillImage):
+        (WebCore::StillImage::currentFrameHasAlpha):
+        (WebCore::StillImage::size):
+        (WebCore::StillImage::nativeImageForCurrentFrame):
+        (WebCore::StillImage::draw):
+        * platform/graphics/qt/StillImageQt.h:
+        (WebCore::StillImage::create):
+        (WebCore::StillImage::createForRendering):
+        (StillImage):
+        * platform/graphics/qt/TransparencyLayer.h:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+        (TransparencyLayer):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        * platform/graphics/surfaces/qt/GraphicsSurfaceQt.cpp:
+        (WebCore::GraphicsSurface::createReadOnlyImage):
+         * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::createDragImage):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        * platform/qt/CursorQt.cpp:
+        (WebCore::createCustomCursor):
+        * platform/qt/DragImageQt.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage):
+
 2012-07-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: moving forward to the better memory instrumentation API

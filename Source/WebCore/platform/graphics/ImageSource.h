@@ -43,7 +43,7 @@ typedef const struct __CFData* CFDataRef;
 #elif PLATFORM(QT)
 #include <qglobal.h>
 QT_BEGIN_NAMESPACE
-class QPixmap;
+class QImage;
 QT_END_NAMESPACE
 #elif USE(CAIRO)
 #include "NativeImageCairo.h"
@@ -90,7 +90,7 @@ class ImageDecoder;
 typedef ImageDecoder* NativeImageSourcePtr;
 typedef void* NativeImagePtr;
 #elif PLATFORM(QT)
-typedef QPixmap* NativeImagePtr;
+typedef QImage* NativeImagePtr;
 #endif
 #endif
 

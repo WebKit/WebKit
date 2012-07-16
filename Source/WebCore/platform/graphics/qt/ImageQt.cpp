@@ -37,6 +37,7 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
+#include "NativeImageQt.h"
 #include "PlatformString.h"
 #include "ShadowBlur.h"
 #include "StillImageQt.h"
@@ -55,7 +56,7 @@
 Q_GUI_EXPORT QPixmap qt_pixmapFromWinHBITMAP(HBITMAP, int hbitmapFormat = 0);
 #endif
 
-typedef QHash<QByteArray, QPixmap> WebGraphicHash;
+typedef QHash<QByteArray, QImage> WebGraphicHash;
 Q_GLOBAL_STATIC(WebGraphicHash, _graphics)
 
 static void earlyClearGraphics()
@@ -69,28 +70,28 @@ static WebGraphicHash* graphics()
 
     if (hash->isEmpty()) {
 
-        // prevent ~QPixmap running after ~QApplication (leaks native pixmaps)
+        // prevent ~QImage running after ~QApplication (leaks native images)
         qAddPostRoutine(earlyClearGraphics);
 
         // QWebSettings::MissingImageGraphic
-        hash->insert("missingImage", QPixmap(QLatin1String(":webkit/resources/missingImage.png")));
+        hash->insert("missingImage", QImage(QLatin1String(":webkit/resources/missingImage.png")));
         // QWebSettings::MissingPluginGraphic
-        hash->insert("nullPlugin", QPixmap(QLatin1String(":webkit/resources/nullPlugin.png")));
+        hash->insert("nullPlugin", QImage(QLatin1String(":webkit/resources/nullPlugin.png")));
         // QWebSettings::DefaultFrameIconGraphic
-        hash->insert("urlIcon", QPixmap(QLatin1String(":webkit/resources/urlIcon.png")));
+        hash->insert("urlIcon", QImage(QLatin1String(":webkit/resources/urlIcon.png")));
         // QWebSettings::TextAreaSizeGripCornerGraphic
-        hash->insert("textAreaResizeCorner", QPixmap(QLatin1String(":webkit/resources/textAreaResizeCorner.png")));
+        hash->insert("textAreaResizeCorner", QImage(QLatin1String(":webkit/resources/textAreaResizeCorner.png")));
         // QWebSettings::DeleteButtonGraphic
-        hash->insert("deleteButton", QPixmap(QLatin1String(":webkit/resources/deleteButton.png")));
+        hash->insert("deleteButton", QImage(QLatin1String(":webkit/resources/deleteButton.png")));
         // QWebSettings::InputSpeechButtonGraphic
-        hash->insert("inputSpeech", QPixmap(QLatin1String(":webkit/resources/inputSpeech.png")));
+        hash->insert("inputSpeech", QImage(QLatin1String(":webkit/resources/inputSpeech.png")));
     }
 
     return hash;
 }
 
 // This function loads resources into WebKit
-static QPixmap loadResourcePixmap(const char *name)
+static QImage loadResourceImage(const char *name)
 {
     return graphics()->value(name);
 }
@@ -117,23 +118,23 @@ bool FrameData::clear(bool clearMetadata)
 
 PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 {
-    return StillImage::create(loadResourcePixmap(name));
+    return StillImage::create(loadResourceImage(name));
 }
 
-void Image::setPlatformResource(const char* name, const QPixmap& pixmap)
+void Image::setPlatformResource(const char* name, const QImage& image)
 {
     WebGraphicHash* h = graphics();
-    if (pixmap.isNull())
+    if (image.isNull())
         h->remove(name);
     else
-        h->insert(name, pixmap);
+        h->insert(name, image);
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
                         const FloatPoint& phase, ColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
-    QPixmap* framePixmap = nativeImageForCurrentFrame();
-    if (!framePixmap) // If it's too early we won't have an image yet.
+    QImage* frameImage = nativeImageForCurrentFrame();
+    if (!frameImage) // If it's too early we won't have an image yet.
         return;
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
@@ -148,34 +149,38 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     if (!dr.width() || !dr.height() || !tr.width() || !tr.height())
         return;
 
-    QPixmap pixmap = *framePixmap;
-    if (tr.x() || tr.y() || tr.width() != pixmap.width() || tr.height() != pixmap.height())
-        pixmap = pixmap.copy(tr);
+    QImage image = *frameImage;
+    if (tr.x() || tr.y() || tr.width() != image.width() || tr.height() != image.height())
+        image = image.copy(tr);
 
     CompositeOperator previousOperator = ctxt->compositeOperation();
 
-    ctxt->setCompositeOperation(!pixmap.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
+    ctxt->setCompositeOperation(!image.hasAlphaChannel() && op == CompositeSourceOver ? CompositeCopy : op);
 
     QPainter* p = ctxt->platformContext();
     QTransform transform(patternTransform);
 
-    // If this would draw more than one scaled tile, we scale the pixmap first and then use the result to draw.
+    // If this would draw more than one scaled tile, we scale the image first and then use the result to draw.
     if (transform.type() == QTransform::TxScale) {
         QRectF tileRectInTargetCoords = (transform * QTransform().translate(phase.x(), phase.y())).mapRect(tr);
 
         bool tileWillBePaintedOnlyOnce = tileRectInTargetCoords.contains(dr);
         if (!tileWillBePaintedOnlyOnce) {
-            QSizeF scaledSize(float(pixmap.width()) * transform.m11(), float(pixmap.height()) * transform.m22());
-            QPixmap scaledPixmap(scaledSize.toSize());
-            if (pixmap.hasAlpha())
-                scaledPixmap.fill(Qt::transparent);
+            QSizeF scaledSize(float(image.width()) * transform.m11(), float(image.height()) * transform.m22());
+            QImage scaledImage;
+            if (image.hasAlphaChannel()) {
+                scaledImage = QImage(scaledSize.toSize(), NativeImageQt::defaultFormatForAlphaEnabledImages());
+                scaledImage.fill(Qt::transparent);
+            } else
+                scaledImage = QImage(scaledSize.toSize(), NativeImageQt::defaultFormatForOpaqueImages());
+
             {
-                QPainter painter(&scaledPixmap);
+                QPainter painter(&scaledImage);
                 painter.setCompositionMode(QPainter::CompositionMode_Source);
                 painter.setRenderHints(p->renderHints());
-                painter.drawPixmap(QRect(0, 0, scaledPixmap.width(), scaledPixmap.height()), pixmap);
+                painter.drawImage(QRect(0, 0, scaledImage.width(), scaledImage.height()), image);
             }
-            pixmap = scaledPixmap;
+            image = scaledImage;
             transform = QTransform::fromTranslate(transform.dx(), transform.dy());
         }
     }
@@ -184,7 +189,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     transform *= QTransform().translate(phase.x(), phase.y());
     transform.translate(tr.x(), tr.y());
 
-    QBrush b(pixmap);
+    QBrush b(image);
     b.setTransform(transform);
     p->fillRect(dr, b);
 
@@ -194,7 +199,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
         imageObserver()->didDraw(this);
 }
 
-BitmapImage::BitmapImage(QPixmap* pixmap, ImageObserver* observer)
+BitmapImage::BitmapImage(QImage* image, ImageObserver* observer)
     : Image(observer)
     , m_currentFrame(0)
     , m_frames(0)
@@ -212,14 +217,14 @@ BitmapImage::BitmapImage(QPixmap* pixmap, ImageObserver* observer)
     , m_sizeAvailable(true)
     , m_haveFrameCount(true)
 {
-    int width = pixmap->width();
-    int height = pixmap->height();
+    int width = image->width();
+    int height = image->height();
     m_decodedSize = width * height * 4;
     m_size = IntSize(width, height);
 
     m_frames.grow(1);
-    m_frames[0].m_frame = pixmap;
-    m_frames[0].m_hasAlpha = pixmap->hasAlpha();
+    m_frames[0].m_frame = image;
+    m_frames[0].m_hasAlpha = image->hasAlphaChannel();
     m_frames[0].m_haveMetadata = true;
     checkForSolidColor();
 }
@@ -240,7 +245,8 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     if (normalizedSrc.isEmpty() || normalizedDst.isEmpty())
         return;
 
-    QPixmap* image = nativeImageForCurrentFrame();
+    QImage* image = nativeImageForCurrentFrame();
+
     if (!image)
         return;
 
@@ -254,19 +260,19 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
 #endif
 
     CompositeOperator previousOperator = ctxt->compositeOperation();
-    ctxt->setCompositeOperation(!image->hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
+    ctxt->setCompositeOperation(!image->hasAlphaChannel() && op == CompositeSourceOver ? CompositeCopy : op);
 
     if (ctxt->hasShadow()) {
         ShadowBlur* shadow = ctxt->shadowBlur();
         GraphicsContext* shadowContext = shadow->beginShadowLayer(ctxt, normalizedDst);
         if (shadowContext) {
             QPainter* shadowPainter = shadowContext->platformContext();
-            shadowPainter->drawPixmap(normalizedDst, *image, normalizedSrc);
+            shadowPainter->drawImage(normalizedDst, *image, normalizedSrc);
             shadow->endShadowLayer(ctxt);
         }
     }
 
-    ctxt->platformContext()->drawPixmap(normalizedDst, *image, normalizedSrc);
+    ctxt->platformContext()->drawImage(normalizedDst, *image, normalizedSrc);
 
     ctxt->setCompositeOperation(previousOperator);
 
@@ -282,24 +288,24 @@ void BitmapImage::checkForSolidColor()
     if (frameCount() > 1)
         return;
 
-    QPixmap* framePixmap = frameAtIndex(0);
-    if (!framePixmap || framePixmap->width() != 1 || framePixmap->height() != 1)
+    QImage* frameImage = frameAtIndex(0);
+    if (!frameImage || frameImage->width() != 1 || frameImage->height() != 1)
         return;
 
     m_isSolidColor = true;
-    m_solidColor = QColor::fromRgba(framePixmap->toImage().pixel(0, 0));
+    m_solidColor = QColor::fromRgba(frameImage->pixel(0, 0));
 }
 
 #if OS(WINDOWS)
 PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
 {
 #if HAVE(QT5)
-    QPixmap* qPixmap = new QPixmap(qt_pixmapFromWinHBITMAP(hBitmap));
+    QImage* nativeImage = new QImage(qt_pixmapFromWinHBITMAP(hBitmap).toImage());
 #else
-    QPixmap* qPixmap = new QPixmap(QPixmap::fromWinHBITMAP(hBitmap));
+    QImage* nativeImage = new QImage(QPixmap::fromWinHBITMAP(hBitmap).toImage());
 #endif
 
-    return BitmapImage::create(qPixmap);
+    return BitmapImage::create(nativeImage);
 }
 #endif
 

@@ -38,15 +38,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static PassRefPtr<ShareableBitmap> convertQPixmapToShareableBitmap(QPixmap* pixmap)
+static PassRefPtr<ShareableBitmap> convertQImageToShareableBitmap(QImage* image)
 {
-    if (!pixmap)
+    if (!image)
         return 0;
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(pixmap->size()), ShareableBitmap::SupportsAlpha);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
     OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
 
-    graphicsContext->platformContext()->drawPixmap(0, 0, *pixmap);
+    graphicsContext->platformContext()->drawImage(0, 0, *image);
     return bitmap.release();
 }
 
@@ -57,7 +57,7 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosi
     static_cast<ClipboardQt*>(clipboard)->invalidateWritableData();
     DragData dragData(clipboardData, clientPosition, globalPosition, dragOperationMask);
 
-    RefPtr<ShareableBitmap> bitmap = convertQPixmapToShareableBitmap(dragImage);
+    RefPtr<ShareableBitmap> bitmap = convertQImageToShareableBitmap(dragImage);
     ShareableBitmap::Handle handle;
     if (bitmap && !bitmap->createHandle(handle))
         return;

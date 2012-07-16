@@ -25,8 +25,8 @@
 
 #include "Image.h"
 
+#include <QImage>
 #include <QPainter>
-#include <QPixmap>
 
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -39,9 +39,7 @@ class ImageBufferData {
 public:
     ImageBufferData(const IntSize&);
 
-    QImage toQImage() const;
-
-    QPixmap m_pixmap;
+    QImage m_nativeImage;
     OwnPtr<QPainter> m_painter;
     RefPtr<Image> m_image;
 };

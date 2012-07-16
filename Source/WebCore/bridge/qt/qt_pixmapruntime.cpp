@@ -146,8 +146,8 @@ public:
         if (!objectArg->inherits(&JSHTMLImageElement::s_info))
             return jsUndefined();
 
-        // we now know that we have a valid <img> element as the argument, we can attach the pixmap to it.
-        PassRefPtr<StillImage> stillImage = WebCore::StillImage::create(instance->toPixmap());
+        // we now know that we have a valid <img> element as the argument, we can attach the image to it.
+        RefPtr<StillImage> stillImage = WebCore::StillImage::create(instance->toImage());
         HTMLImageElement* imageElement = static_cast<HTMLImageElement*>(static_cast<JSHTMLImageElement*>(objectArg)->impl());
         imageElement->setCachedImage(new CachedImage(stillImage.get()));
         JSDOMGlobalObject* global = static_cast<JSDOMGlobalObject*>(instance->rootObject()->globalObject());
@@ -383,13 +383,13 @@ QVariant QtPixmapInstance::variantFromObject(JSObject* object, QMetaType::Type h
         if (!image)
             goto returnEmptyVariant;
 
-        QPixmap* pixmap = image->nativeImageForCurrentFrame();
-        if (!pixmap)
+        QImage* nativeImage = image->nativeImageForCurrentFrame();
+        if (!nativeImage)
             goto returnEmptyVariant;
 
         return (hint == static_cast<QMetaType::Type>(qMetaTypeId<QPixmap>()))
-                  ? QVariant::fromValue<QPixmap>(*pixmap)
-                  : QVariant::fromValue<QImage>(pixmap->toImage());
+                  ? QVariant::fromValue<QPixmap>(QPixmap::fromImage(*nativeImage))
+                  : QVariant::fromValue<QImage>(*nativeImage);
     }
 
     if (object->inherits(&QtPixmapRuntimeObject::s_info)) {

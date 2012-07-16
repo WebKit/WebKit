@@ -90,11 +90,11 @@ QImage QtWebIconDatabaseClient::iconImageForPageURL(const WTF::String& pageURL, 
 
     WebCore::IntSize size(iconSize.width(), iconSize.height());
 
-    QPixmap* nativeImage = m_iconDatabase->nativeImageForPageURL(pageURL, size);
+    QImage* nativeImage = m_iconDatabase->nativeImageForPageURL(pageURL, size);
     if (!nativeImage)
         return QImage();
 
-    return nativeImage->toImage();
+    return *nativeImage;
 }
 
 void QtWebIconDatabaseClient::retainIconForPageURL(const String& pageURL)

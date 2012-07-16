@@ -2321,6 +2321,7 @@ HEADERS += \
     platform/graphics/Region.h \
     platform/graphics/RoundedRect.h \
     platform/graphics/qt/FontCustomPlatformData.h \
+    platform/graphics/qt/NativeImageQt.h \
     platform/graphics/qt/StillImageQt.h \
     platform/graphics/qt/TransparencyLayer.h \
     platform/graphics/SegmentedFontData.h \

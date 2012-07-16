@@ -409,12 +409,12 @@ int64_t LayerTreeCoordinator::adoptImageBackingStore(Image* image)
     int64_t key = 0;
 
 #if PLATFORM(QT)
-    QPixmap* pixmap = image->nativeImageForCurrentFrame();
+    QImage* nativeImage = image->nativeImageForCurrentFrame();
 
-    if (!pixmap)
+    if (!nativeImage)
         return InvalidWebLayerID;
 
-    key = pixmap->cacheKey();
+    key = nativeImage->cacheKey();
 #endif
 
     HashMap<int64_t, int>::iterator it = m_directlyCompositedImageRefCounts.find(key);

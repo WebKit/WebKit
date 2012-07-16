@@ -36,7 +36,6 @@ using namespace WebCore;
 ImageGStreamer::ImageGStreamer(GstBuffer* buffer, GstCaps* caps)
     : m_image(0)
 {
-    QPixmap* surface = new QPixmap;
     GstVideoFormat format;
     IntSize size;
     int pixelAspectRatioNumerator, pixelAspectRatioDenominator, stride;
@@ -69,8 +68,7 @@ ImageGStreamer::ImageGStreamer(GstBuffer* buffer, GstCaps* caps)
     image.invertPixels(invertMode);
 #endif
 
-    surface->convertFromImage(image);
-    m_image = BitmapImage::create(surface);
+    m_image = BitmapImage::create(new QImage(image));
 
 #ifdef GST_API_VERSION_1
     if (GstVideoCropMeta* cropMeta = gst_buffer_get_video_crop_meta(buffer))

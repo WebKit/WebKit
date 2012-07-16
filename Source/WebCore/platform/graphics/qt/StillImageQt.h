@@ -34,14 +34,14 @@ namespace WebCore {
 
     class StillImage : public Image {
     public:
-        static PassRefPtr<StillImage> create(const QPixmap& pixmap)
+        static PassRefPtr<StillImage> create(const QImage& image)
         {
-            return adoptRef(new StillImage(pixmap));
+            return adoptRef(new StillImage(image));
         }
 
-        static PassRefPtr<StillImage> createForRendering(const QPixmap* pixmap)
+        static PassRefPtr<StillImage> createForRendering(const QImage* image)
         {
-            return adoptRef(new StillImage(pixmap));
+            return adoptRef(new StillImage(image));
         }
 
         virtual bool currentFrameHasAlpha();
@@ -56,12 +56,12 @@ namespace WebCore {
         virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);
 
     private:
-        StillImage(const QPixmap& pixmap);
-        StillImage(const QPixmap* pixmap);
+        StillImage(const QImage&);
+        StillImage(const QImage*);
         virtual ~StillImage();
         
-        const QPixmap* m_pixmap;
-        bool m_ownsPixmap;
+        const QImage* m_image;
+        bool m_ownsImage;
     };
 
 }

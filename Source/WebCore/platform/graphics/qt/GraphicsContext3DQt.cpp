@@ -495,23 +495,16 @@ bool GraphicsContext3D::getImageData(Image* image,
     if (!image)
         return false;
 
-    QImage qtImage;
+    QImage nativeImage;
     // Is image already loaded? If not, load it.
     if (image->data())
-        qtImage = QImage::fromData(reinterpret_cast<const uchar*>(image->data()->data()), image->data()->size());
-    else {
-        QPixmap* nativePixmap = image->nativeImageForCurrentFrame();
-#if HAVE(QT5)
-        // With QPA, we can avoid a deep copy.
-        qtImage = *nativePixmap->handle()->buffer();
-#else
-        // This might be a deep copy, depending on other references to the pixmap.
-        qtImage = nativePixmap->toImage();
-#endif
-    }
+        nativeImage = QImage::fromData(reinterpret_cast<const uchar*>(image->data()->data()), image->data()->size());
+    else
+        nativeImage = *image->nativeImageForCurrentFrame();
+
 
     AlphaOp alphaOp = AlphaDoNothing;
-    switch (qtImage.format()) {
+    switch (nativeImage.format()) {
     case QImage::Format_RGB32:
         // For opaque images, we should not premultiply or unmultiply alpha.
         break;
@@ -525,7 +518,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         break;
     default:
         // The image has a format that is not supported in packPixels. We have to convert it here.
-        qtImage = qtImage.convertToFormat(premultiplyAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_ARGB32);
+        nativeImage = nativeImage.convertToFormat(premultiplyAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_ARGB32);
         break;
     }
 
@@ -536,7 +529,7 @@ bool GraphicsContext3D::getImageData(Image* image,
 
     outputVector.resize(packedSize);
 
-    return packPixels(qtImage.constBits(), SourceFormatBGRA8, image->width(), image->height(), 0, format, type, alphaOp, outputVector.data());
+    return packPixels(nativeImage.constBits(), SourceFormatBGRA8, image->width(), image->height(), 0, format, type, alphaOp, outputVector.data());
 }
 
 void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
