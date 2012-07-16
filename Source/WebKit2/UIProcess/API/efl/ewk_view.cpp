@@ -55,6 +55,12 @@ struct _Ewk_View_Private_Data {
         : uri(0)
         , title(0)
     { }
+
+    ~_Ewk_View_Private_Data()
+    {
+        eina_stringshare_del(uri);
+        eina_stringshare_del(title);
+    }
 };
 
 #define EWK_VIEW_TYPE_CHECK(ewkView, result)                                   \
@@ -276,12 +282,6 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
 static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
 {
-    if (!priv)
-        return;
-
-    priv->pageClient = nullptr;
-    eina_stringshare_del(priv->uri);
-    eina_stringshare_del(priv->title);
     delete priv;
 }
 

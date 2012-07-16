@@ -1,3 +1,48 @@
+2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Define destructors for Ewk structures
+        https://bugs.webkit.org/show_bug.cgi?id=91338
+
+        Reviewed by Kentaro Hara.
+
+        Add destructors to Ewk structures and move
+        memory freeing code from *_free() or *_unref()
+        functions to the destructors.
+
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (_Ewk_Intent::_Ewk_Intent):
+        (_Ewk_Intent):
+        (_Ewk_Intent::~_Ewk_Intent):
+        (ewk_intent_unref):
+        * UIProcess/API/efl/ewk_intent_service.cpp:
+        (_Ewk_Intent_Service):
+        (_Ewk_Intent_Service::~_Ewk_Intent_Service):
+        (ewk_intent_service_unref):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::~_Ewk_Navigation_Policy_Decision):
+        (ewk_navigation_policy_decision_free):
+        * UIProcess/API/efl/ewk_url_request.cpp:
+        (_Ewk_Url_Request):
+        (_Ewk_Url_Request::~_Ewk_Url_Request):
+        (ewk_url_request_unref):
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (_Ewk_Url_Response):
+        (_Ewk_Url_Response::~_Ewk_Url_Response):
+        (ewk_url_response_unref):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (_ewk_view_priv_del):
+        * UIProcess/API/efl/ewk_web_error.cpp:
+        (_Ewk_Web_Error):
+        (_Ewk_Web_Error::~_Ewk_Web_Error):
+        (ewk_web_error_free):
+        * UIProcess/API/efl/ewk_web_resource.cpp:
+        (_Ewk_Web_Resource):
+        (_Ewk_Web_Resource::~_Ewk_Web_Resource):
+        (ewk_web_resource_unref):
+
 2012-07-14  Eric Carlson  <eric.carlson@apple.com>
 
         Enable AVCF hardware video decoding

@@ -57,18 +57,22 @@ struct _Ewk_Navigation_Policy_Decision {
         , request(_request)
         , frameName(eina_stringshare_add(_frameName))
     { }
+
+    ~_Ewk_Navigation_Policy_Decision()
+    {
+        // This is the default choice for all policy decisions in WebPageProxy.cpp.
+        if (!actedUponByClient)
+            WKFramePolicyListenerUse(listener.get());
+
+        ewk_url_request_unref(request);
+        eina_stringshare_del(frameName);
+    }
 };
 
 void ewk_navigation_policy_decision_free(Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN(decision);
 
-    // This is the default choice for all policy decisions in WebPageProxy.cpp.
-    if (!decision->actedUponByClient)
-        WKFramePolicyListenerUse(decision->listener.get());
-
-    ewk_url_request_unref(decision->request);
-    eina_stringshare_del(decision->frameName);
     delete decision;
 }
 

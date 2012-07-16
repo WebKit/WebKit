@@ -56,6 +56,14 @@ struct _Ewk_Url_Request {
         , first_party(0)
         , http_method(0)
     { }
+
+    ~_Ewk_Url_Request()
+    {
+        ASSERT(!__ref);
+        eina_stringshare_del(url);
+        eina_stringshare_del(first_party);
+        eina_stringshare_del(http_method);
+    }
 };
 
 #define EWK_URL_REQUEST_WK_GET_OR_RETURN(request, wkRequest_, ...)    \
@@ -82,9 +90,6 @@ void ewk_url_request_unref(Ewk_Url_Request* request)
     if (--request->__ref)
         return;
 
-    eina_stringshare_del(request->url);
-    eina_stringshare_del(request->first_party);
-    eina_stringshare_del(request->http_method);
     delete request;
 }
 

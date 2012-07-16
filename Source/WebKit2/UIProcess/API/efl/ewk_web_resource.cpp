@@ -39,6 +39,12 @@ struct _Ewk_Web_Resource {
          , url(eina_stringshare_add(_url))
         , isMainResource(_isMainResource)
     { }
+
+    ~_Ewk_Web_Resource()
+    {
+        ASSERT(!__ref);
+        eina_stringshare_del(url);
+    }
 };
 
 void ewk_web_resource_ref(Ewk_Web_Resource* resource)
@@ -55,7 +61,6 @@ void ewk_web_resource_unref(Ewk_Web_Resource* resource)
     if (--resource->__ref)
         return;
 
-    eina_stringshare_del(resource->url);
     delete resource;
 }
 

@@ -50,6 +50,12 @@ struct _Ewk_Web_Error {
         , url(0)
         , description(0)
     { }
+
+    ~_Ewk_Web_Error()
+    {
+        eina_stringshare_del(url);
+        eina_stringshare_del(description);
+    }
 };
 
 #define EWK_WEB_ERROR_WK_GET_OR_RETURN(error, wkError_, ...)    \
@@ -63,12 +69,10 @@ struct _Ewk_Web_Error {
     }                                                          \
     WKErrorRef wkError_ = (error)->wkError.get()
 
-void ewk_web_error_free(Ewk_Web_Error *error)
+void ewk_web_error_free(Ewk_Web_Error* error)
 {
     EINA_SAFETY_ON_NULL_RETURN(error);
 
-    eina_stringshare_del(error->url);
-    eina_stringshare_del(error->description);
     delete error;
 }
 

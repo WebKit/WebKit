@@ -59,7 +59,14 @@ struct _Ewk_Intent {
         , action(0)
         , type(0)
         , service(0)
+    { }
+
+    ~_Ewk_Intent()
     {
+        ASSERT(!__ref);
+        eina_stringshare_del(action);
+        eina_stringshare_del(type);
+        eina_stringshare_del(service);
     }
 };
 
@@ -90,9 +97,6 @@ void ewk_intent_unref(Ewk_Intent* intent)
     if (--intent->__ref)
         return;
 
-    eina_stringshare_del(intent->action);
-    eina_stringshare_del(intent->type);
-    eina_stringshare_del(intent->service);
     delete intent;
 #endif
 }

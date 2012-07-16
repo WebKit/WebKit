@@ -62,6 +62,16 @@ struct _Ewk_Intent_Service {
         , title(0)
         , disposition(0)
     { }
+
+    ~_Ewk_Intent_Service()
+    {
+        ASSERT(!__ref);
+        eina_stringshare_del(action);
+        eina_stringshare_del(type);
+        eina_stringshare_del(href);
+        eina_stringshare_del(title);
+        eina_stringshare_del(disposition);
+    }
 };
 
 #define EWK_INTENT_SERVICE_WK_GET_OR_RETURN(service, wkService_, ...) \
@@ -91,11 +101,6 @@ void ewk_intent_service_unref(Ewk_Intent_Service* service)
     if (--service->__ref)
         return;
 
-    eina_stringshare_del(service->action);
-    eina_stringshare_del(service->type);
-    eina_stringshare_del(service->href);
-    eina_stringshare_del(service->title);
-    eina_stringshare_del(service->disposition);
     delete service;
 #endif
 }
