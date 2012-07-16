@@ -102,6 +102,9 @@ public:
     IDBObjectStoreMetadata metadata() const { return m_metadata; }
     void setMetadata(const IDBObjectStoreMetadata& metadata) { m_metadata = metadata; }
 
+    typedef Vector<RefPtr<IDBKey> > IndexKeys;
+    typedef HashMap<String, IndexKeys> IndexKeyMap;
+
 private:
     IDBObjectStore(const IDBObjectStoreMetadata&, PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);
 

@@ -141,9 +141,11 @@ static PassRefPtr<SerializedScriptValue> injectKeyIntoKeyPath(PassRefPtr<IDBKey>
     return IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(key, value, keyPath);
 }
 
+// FIXME: Remove this method when get-side key injection is the norm.
 void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::put");
+    IDB_TRACE("IDBObjectStoreBackendImpl::putWithIndexKeys");
 
     ASSERT(transactionPtr->mode() != IDBTransaction::READ_ONLY);
 
@@ -153,8 +155,33 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
 
+    // Null pointers here signify that index keys should be generated as a part of this put.
+    OwnPtr<Vector<String> > nullIndexNames;
+    OwnPtr<Vector<IndexKeys> > nullIndexKeys;
     if (!transaction->scheduleTask(
-            createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction),
+            createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction, nullIndexNames.release(), nullIndexKeys.release()),
+            // FIXME: One of these per put() is overkill, since it's simply a cache invalidation.
+            createCallbackTask(&IDBObjectStoreBackendImpl::revertAutoIncrementKeyCache, objectStore)))
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+}
+
+void IDBObjectStoreBackendImpl::putWithIndexKeys(PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, const Vector<String>& indexNames, const Vector<IndexKeys>& indexKeys, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBObjectStoreBackendImpl::putWithIndexKeys");
+
+    ASSERT(transactionPtr->mode() != IDBTransaction::READ_ONLY);
+
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
+    RefPtr<SerializedScriptValue> value = prpValue;
+    RefPtr<IDBKey> key = prpKey;
+    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
+    RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
+
+    OwnPtr<Vector<String> > newIndexNames = adoptPtr(new Vector<String>(indexNames));
+    OwnPtr<Vector<IndexKeys> > newIndexKeys = adoptPtr(new Vector<IndexKeys>(indexKeys));
+
+    if (!transaction->scheduleTask(
+            createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction, newIndexNames.release(), newIndexKeys.release()),
             // FIXME: One of these per put() is overkill, since it's simply a cache invalidation.
             createCallbackTask(&IDBObjectStoreBackendImpl::revertAutoIncrementKeyCache, objectStore)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
@@ -168,72 +195,102 @@ void IDBObjectStoreBackendImpl::revertAutoIncrementKeyCache(ScriptExecutionConte
 namespace {
 class IndexWriter {
 public:
-    explicit IndexWriter(PassRefPtr<IDBIndexBackendImpl> index)
-        : m_index(index)
-    {
-    }
+    explicit IndexWriter(const IDBIndexMetadata& indexMetadata)
+        : m_indexMetadata(indexMetadata)
+    { }
 
-    bool loadIndexKeysForValue(SerializedScriptValue* objectValue, const IDBKey* primaryKey = 0, String* errorMessage = 0)
+    IndexWriter(const IDBIndexMetadata& indexMetadata,
+                const IDBObjectStoreBackendInterface::IndexKeys& indexKeys)
+        : m_indexMetadata(indexMetadata)
+        , m_indexKeys(indexKeys)
+    { }
+
+    bool generateIndexKeysForValue(SerializedScriptValue* objectValue)
     {
         m_indexKeys.clear();
 
-        RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(objectValue, m_index->keyPath());
+        RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(objectValue, m_indexMetadata.keyPath);
 
         if (!indexKey)
             return true;
 
-        if (!m_index->multiEntry() || indexKey->type() != IDBKey::ArrayType) {
+        if (!m_indexMetadata.multiEntry || indexKey->type() != IDBKey::ArrayType) {
             if (!indexKey->isValid())
                 return true;
 
-            if (!m_index->addingKeyAllowed(indexKey.get(), primaryKey)) {
-                if (errorMessage)
-                    *errorMessage = String::format("Unable to add key to index '%s': the key does not satisfy its uniqueness requirements.",
-                                                   m_index->name().utf8().data());
-                return false;
-            }
             m_indexKeys.append(indexKey);
         } else {
-            ASSERT(m_index->multiEntry());
+            ASSERT(m_indexMetadata.multiEntry);
             ASSERT(indexKey->type() == IDBKey::ArrayType);
             indexKey = IDBKey::createMultiEntryArray(indexKey->array());
 
             for (size_t i = 0; i < indexKey->array().size(); ++i) {
-                if (!m_index->addingKeyAllowed(indexKey->array()[i].get(), primaryKey)) {
-                    if (errorMessage)
-                        *errorMessage = String::format("Unable to add key to index '%s': at least one key does not satisfy the uniqueness requirements.",
-                                                       m_index->name().utf8().data());
-                    return false;
-                }
                 m_indexKeys.append(indexKey->array()[i]);
             }
         }
         return true;
     }
 
-    bool writeIndexKeys(const IDBBackingStore::ObjectStoreRecordIdentifier* recordIdentifier, IDBBackingStore& backingStore, int64_t databaseId, int64_t objectStoreId, String* errorMessage = 0)
+    bool verifyIndexKeys(IDBBackingStore& backingStore,
+                         int64_t databaseId, int64_t objectStoreId, int64_t indexId,
+                         const IDBKey* primaryKey = 0, String* errorMessage = 0)
     {
         for (size_t i = 0; i < m_indexKeys.size(); ++i) {
-            if (!backingStore.deleteIndexDataForRecord(databaseId, objectStoreId, m_index->id(), recordIdentifier))
+            if (!addingKeyAllowed(backingStore, databaseId, objectStoreId, indexId,
+                                  (m_indexKeys)[i].get(), primaryKey)) {
+                if (errorMessage)
+                    *errorMessage = String::format("Unable to add key to index '%s': at least one key does not satisfy the uniqueness requirements.",
+                                                   m_indexMetadata.name.utf8().data());
                 return false;
-            if (!backingStore.putIndexDataForRecord(databaseId, objectStoreId, m_index->id(), *m_indexKeys[i].get(), recordIdentifier))
+            }
+        }
+        return true;
+    }
+
+    bool writeIndexKeys(const IDBBackingStore::ObjectStoreRecordIdentifier* recordIdentifier, IDBBackingStore& backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId) const
+    {
+        for (size_t i = 0; i < m_indexKeys.size(); ++i) {
+            if (!backingStore.deleteIndexDataForRecord(databaseId, objectStoreId, indexId, recordIdentifier))
+                return false;
+            if (!backingStore.putIndexDataForRecord(databaseId, objectStoreId, indexId, *(m_indexKeys)[i].get(), recordIdentifier))
                 return false;
         }
         return true;
     }
 
+    const String& indexName() const { return m_indexMetadata.name; }
+
 private:
-    RefPtr<IDBIndexBackendImpl> m_index;
-    Vector<RefPtr<IDBKey> > m_indexKeys;
+
+    bool addingKeyAllowed(IDBBackingStore& backingStore,
+                          int64_t databaseId, int64_t objectStoreId, int64_t indexId,
+                          const IDBKey* indexKey, const IDBKey* primaryKey)
+    {
+        if (!m_indexMetadata.unique)
+            return true;
+
+        RefPtr<IDBKey> foundPrimaryKey;
+        bool found = backingStore.keyExistsInIndex(databaseId, objectStoreId, indexId, *indexKey, foundPrimaryKey);
+        if (!found)
+            return true;
+        if (primaryKey && foundPrimaryKey->isEqual(primaryKey))
+            return true;
+        return false;
+    }
+    const IDBIndexMetadata m_indexMetadata;
+    IDBObjectStoreBackendInterface::IndexKeys m_indexKeys;
 };
 }
 
-void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction, PassOwnPtr<Vector<String> > popIndexNames, PassOwnPtr<Vector<IndexKeys> > popIndexKeys)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::putInternal");
     ASSERT(transaction->mode() != IDBTransaction::READ_ONLY);
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
+    OwnPtr<Vector<String> > indexNames = popIndexNames;
+    OwnPtr<Vector<IndexKeys> > indexKeys = popIndexKeys;
+    ASSERT((!indexNames && !indexKeys) || indexNames->size() == indexKeys->size());
 
     if (putMode != CursorUpdate) {
         const bool autoIncrement = objectStore->autoIncrement();
@@ -251,6 +308,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
                     callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "Maximum key generator value reached."));
                     return;
                 }
+                // FIXME: Remove this when get-side key injection is the norm.
                 if (hasKeyPath) {
                     RefPtr<SerializedScriptValue> valueAfterInjection = injectKeyIntoKeyPath(autoIncKey, value, objectStore->m_keyPath);
                     ASSERT(valueAfterInjection);
@@ -280,15 +338,31 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
     }
 
     Vector<OwnPtr<IndexWriter> > indexWriters;
+    HashMap<String, IndexKeys> indexKeyMap;
+    if (indexKeys) {
+        for (size_t i = 0; i < indexNames->size(); ++i)
+            indexKeyMap.add(indexNames->at(i), indexKeys->at(i));
+    }
+
     for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it) {
 
         const RefPtr<IDBIndexBackendImpl>& index = it->second;
         if (!index->hasValidId())
             continue; // The index object has been created, but does not exist in the database yet.
 
-        OwnPtr<IndexWriter> indexWriter(adoptPtr(new IndexWriter(index)));
+        OwnPtr<IndexWriter> indexWriter;
+        // FIXME: Turn this into an ASSERT(indexKeys) when get-side key injection is the norm.
+        if (indexKeys)
+            indexWriter = adoptPtr(new IndexWriter(index->metadata(), indexKeyMap.get(it->first)));
+        else {
+            indexWriter = adoptPtr(new IndexWriter(index->metadata()));
+            indexWriter->generateIndexKeysForValue(value.get());
+        }
         String errorMessage;
-        if (!indexWriter->loadIndexKeysForValue(value.get(), key.get(), &errorMessage)) {
+        if (!indexWriter->verifyIndexKeys(*objectStore->backingStore(),
+                                          objectStore->databaseId(),
+                                          objectStore->id(),
+                                          index->id(), key.get(), &errorMessage)) {
             objectStore->resetAutoIncrementKeyCache();
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, errorMessage));
             return;
@@ -306,9 +380,13 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
     }
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
-        if (!indexWriters[i]->writeIndexKeys(recordIdentifier.get(),
-                                             *objectStore->backingStore(), objectStore->databaseId(),
-                                             objectStore->m_id)) {
+        IndexWriter* indexWriter = indexWriters[i].get();
+        if (!indexWriter->writeIndexKeys(recordIdentifier.get(),
+                                         *objectStore->backingStore(),
+                                         objectStore->databaseId(),
+                                         objectStore->m_id,
+                                         objectStore->m_indexes.get(indexWriter->indexName())->id())) {
+
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
             transaction->abort();
             return;
@@ -383,33 +461,36 @@ void IDBObjectStoreBackendImpl::clearInternal(ScriptExecutionContext*, PassRefPt
 namespace {
 class PopulateIndexCallback : public IDBBackingStore::ObjectStoreRecordCallback {
 public:
-    PopulateIndexCallback(IDBBackingStore& backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBIndexBackendImpl> index)
+    PopulateIndexCallback(IDBBackingStore& backingStore, const IDBIndexMetadata& indexMetadata, int64_t databaseId, int64_t objectStoreId, int64_t indexId)
         : m_backingStore(backingStore)
         , m_databaseId(databaseId)
         , m_objectStoreId(objectStoreId)
-        , m_writer(index)
+        , m_indexId(indexId)
+        , m_writer(indexMetadata)
     {
     }
 
     virtual bool callback(const IDBBackingStore::ObjectStoreRecordIdentifier* recordIdentifier, const String& value)
     {
         RefPtr<SerializedScriptValue> objectValue = SerializedScriptValue::createFromWire(value);
-        if (!m_writer.loadIndexKeysForValue(objectValue.get()))
+        m_writer.generateIndexKeysForValue(objectValue.get());
+        if (!m_writer.verifyIndexKeys(m_backingStore, m_databaseId, m_objectStoreId, m_indexId))
             return false;
-        return m_writer.writeIndexKeys(recordIdentifier, m_backingStore, m_databaseId, m_objectStoreId);
+        return m_writer.writeIndexKeys(recordIdentifier, m_backingStore, m_databaseId, m_objectStoreId, m_indexId);
     }
 
 private:
     IDBBackingStore& m_backingStore;
     int64_t m_databaseId;
     int64_t m_objectStoreId;
+    int64_t m_indexId;
     IndexWriter m_writer;
 };
 }
 
 bool IDBObjectStoreBackendImpl::populateIndex(IDBBackingStore& backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBIndexBackendImpl> index)
 {
-    PopulateIndexCallback callback(backingStore, databaseId, objectStoreId, index);
+    PopulateIndexCallback callback(backingStore, index->metadata(), databaseId, objectStoreId, index->id());
     if (!backingStore.forEachObjectStoreRecord(databaseId, objectStoreId, callback))
         return false;
     return true;

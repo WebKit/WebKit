@@ -219,20 +219,6 @@ void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
-bool IDBIndexBackendImpl::addingKeyAllowed(const IDBKey* indexKey, const IDBKey* primaryKey)
-{
-    if (!m_unique)
-        return true;
-
-    RefPtr<IDBKey> foundPrimaryKey;
-    bool found = backingStore()->keyExistsInIndex(databaseId(), m_objectStoreBackend->id(), m_id, *indexKey, foundPrimaryKey);
-    if (!found)
-        return true;
-    if (primaryKey && foundPrimaryKey->isEqual(primaryKey))
-        return true;
-    return false;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

@@ -276,6 +276,7 @@ void IDBCursor::setValueReady()
         if (objectStore->autoIncrement() && !objectStore->metadata().keyPath.isNull()) {
             const IDBKeyPath& keyPath = objectStore->metadata().keyPath;
             RefPtr<IDBKey> expectedKey = createIDBKeyFromSerializedValueAndKeyPath(value, keyPath);
+            ASSERT(m_currentPrimaryKey);
             ASSERT(expectedKey->isEqual(m_currentPrimaryKey.get()));
         }
     }

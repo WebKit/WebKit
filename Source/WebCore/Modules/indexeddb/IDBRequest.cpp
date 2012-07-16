@@ -332,6 +332,7 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScript
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
     RefPtr<IDBKey> expectedKey =
               createIDBKeyFromSerializedValueAndKeyPath(serializedScriptValue, keyPath);
+    ASSERT(primaryKey);
     ASSERT(expectedKey->isEqual(primaryKey.get()));
 #endif
     onSuccess(serializedScriptValue.release());

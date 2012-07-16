@@ -1,3 +1,40 @@
+2012-07-16  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Introduce putWithIndexKeys and calculate them in the renderer
+        https://bugs.webkit.org/show_bug.cgi?id=90923
+
+        Reviewed by Darin Fisher.
+
+        Refactor IndexWriter to depend only on IDBIndexMetadata and on
+        (databaseId, objectStoreId, indexId) so that it can talk directly
+        to the backing store, and also eventually be moved into the renderer.
+
+        This also introduces IDBObjectStoreBackendInterface::putWithIndexKeys
+        as a replacement for IDBObjectStoreBackendInterface::put, already
+        stubbed out in the chromium port. It will fully replace put()
+        after both chromium and webkit sides have reached alignment.
+
+        No new tests as this is just a refactor and existing tests cover
+        correctness.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setValueReady):
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        * Modules/indexeddb/IDBIndexBackendImpl.h:
+        * Modules/indexeddb/IDBObjectStore.h:
+        (IDBObjectStore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore):
+        (WebCore::IDBObjectStoreBackendImpl::putWithIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::populateIndex):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (IDBObjectStoreBackendImpl):
+        * Modules/indexeddb/IDBObjectStoreBackendInterface.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+
 2012-07-16  Adrienne Walker  <enne@google.com>
 
         [chromium] Unify compositor quad transforms into content space

@@ -1,3 +1,21 @@
+2012-07-16  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Introduce putWithIndexKeys and calculate them in the renderer
+        https://bugs.webkit.org/show_bug.cgi?id=90923
+
+        Reviewed by Darin Fisher.
+
+        Stub out implementations of putWithIndexKeys(), already implemented
+        on the chromium side.
+
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::putWithIndexKeys):
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::putWithIndexKeys):
+        (WebKit):
+        * src/IDBObjectStoreBackendProxy.h:
+        (IDBObjectStoreBackendProxy):
+
 2012-07-16  Adrienne Walker  <enne@google.com>
 
         [chromium] Unify compositor quad transforms into content space

@@ -51,7 +51,10 @@ public:
         CursorUpdate
     };
 
+    typedef WebVector<WebIDBKey> WebIndexKeys;
+
     virtual void put(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void putWithIndexKeys(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, const WebVector<WebString>& indexNames, const WebVector<WebIndexKeys>&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void deleteFunction(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual WebIDBIndex* createIndex(const WebString&, const WebIDBKeyPath&, bool, bool, const WebIDBTransaction&, WebExceptionCode&)
