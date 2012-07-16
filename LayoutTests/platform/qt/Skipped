@@ -2570,3 +2570,7 @@ inspector/timeline/timeline-frames.html
 # https://bugs.webkit.org/show_bug.cgi?id=91063
 compositing/columns/geometry-map-paginated-assert.html
 
+# [QT] REGRESSION (r122720): svg/filters/feSpecularLight-premultiplied.svg
+# https://bugs.webkit.org/show_bug.cgi?id=91390
+svg/filters/feSpecularLight-premultiplied.svg
+

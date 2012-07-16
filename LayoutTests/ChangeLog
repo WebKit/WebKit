@@ -1,3 +1,14 @@
+2012-07-16  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] REGRESSION (r122720): svg/filters/feSpecularLight-premultiplied.svg
+        https://bugs.webkit.org/show_bug.cgi?id=91390
+
+        Unreviewed gardening.
+
+        Skip until proper fix.
+
+        * platform/qt/Skipped: Add the test to the skiplist
+
 2012-07-16  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Fix TestExpectations after r122718.
