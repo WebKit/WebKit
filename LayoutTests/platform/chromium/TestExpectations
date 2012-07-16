@@ -3752,3 +3752,5 @@ BUGWK90951 : fast/text/shaping/shaping-script-order.html = MISSING
 // Recently(?) started crashing on occassion
 BUGWK91275 WIN : storage/indexeddb/cursor-key-order.html = PASS CRASH
 BUGWK91403 WIN : storage/indexeddb/cursor-update-value-argument-required.html = PASS CRASH
+
+BUGWK91421 WIN7 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = PASS CRASH

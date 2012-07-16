@@ -1,3 +1,12 @@
+2012-07-16  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Unreviewed gardening. Layout Test svg/W3C-SVG-1.1/animate-elem-39-t.svg is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=91421
+
+        This test is flaky (crashing) on the Win7 bot and has been for some time.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-16  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=91299
