@@ -124,7 +124,8 @@ public:
     void setJavaScriptProfilingEnabled(bool enabled, ExceptionCode&);
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);
-    void setPagination(const String& mode, int gap, ExceptionCode&);
+    void setPagination(const String& mode, int gap, ExceptionCode& ec) { setPagination(mode, gap, 0, ec); }
+    void setPagination(const String& mode, int gap, int pageLength, ExceptionCode&);
     void allowRoundingHacks() const;
     void setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode&);
     bool shouldDisplayTrackKind(const String& kind, ExceptionCode&);

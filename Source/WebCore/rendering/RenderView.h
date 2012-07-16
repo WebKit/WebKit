@@ -63,6 +63,8 @@ public:
     // it only exists to make computePreferredLogicalWidths public.
     virtual void computePreferredLogicalWidths() OVERRIDE;
 
+    virtual LayoutUnit availableLogicalHeight() const OVERRIDE;
+
     // The same as the FrameView's layoutHeight/layoutWidth but with null check guards.
     int viewHeight() const;
     int viewWidth() const;

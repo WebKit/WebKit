@@ -108,6 +108,14 @@ void RenderView::computePreferredLogicalWidths()
     RenderBlock::computePreferredLogicalWidths();
 }
 
+LayoutUnit RenderView::availableLogicalHeight() const
+{
+    // If we have columns, then the available logical height is reduced to the column height.
+    if (hasColumns())
+        return columnInfo()->columnHeight();
+    return RenderBlock::availableLogicalHeight();
+}
+
 bool RenderView::isChildAllowed(RenderObject* child, RenderStyle*) const
 {
     return child->isBox();

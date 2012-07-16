@@ -520,7 +520,7 @@ bool InternalSettings::shouldDisplayTrackKind(const String& kind, ExceptionCode&
 #endif
 }
 
-void InternalSettings::setPagination(const String& mode, int gap, ExceptionCode& ec)
+void InternalSettings::setPagination(const String& mode, int gap, int pageLength, ExceptionCode& ec)
 {
     if (!page()) {
         ec = INVALID_ACCESS_ERR;
@@ -544,6 +544,7 @@ void InternalSettings::setPagination(const String& mode, int gap, ExceptionCode&
     }
 
     pagination.gap = gap;
+    pagination.pageLength = pageLength;
     page()->setPagination(pagination);
 }
 

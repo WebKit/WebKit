@@ -628,9 +628,9 @@ void Internals::setScrollViewPosition(Document* document, long x, long y, Except
     frameView->setConstrainsScrollingToContentEdge(constrainsScrollingToContentEdgeOldValue);
 }
 
-void Internals::setPagination(Document*, const String& mode, int gap, ExceptionCode& ec)
+void Internals::setPagination(Document*, const String& mode, int gap, int pageLength, ExceptionCode& ec)
 {
-    settings()->setPagination(mode, gap, ec);
+    settings()->setPagination(mode, gap, pageLength, ec);
 }
 
 String Internals::configurationForViewport(Document*, float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode& ec)

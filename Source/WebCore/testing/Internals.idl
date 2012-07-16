@@ -86,7 +86,7 @@ module window {
 
         void setScrollViewPosition(in Document document, in long x, in long y) raises(DOMException);
 
-        void setPagination(in Document document, in DOMString mode, in long gap) raises(DOMException);
+        void setPagination(in Document document, in DOMString mode, in long gap, in [Optional] long pageLength) raises(DOMException);
 
         DOMString configurationForViewport(in Document document,
                                            in float devicePixelRatio,

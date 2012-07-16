@@ -115,7 +115,8 @@ public:
     String markerDescriptionForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
 
     void setScrollViewPosition(Document*, long x, long y, ExceptionCode&);
-    void setPagination(Document*, const String& mode, int gap, ExceptionCode&);
+    void setPagination(Document* document, const String& mode, int gap, ExceptionCode& ec) { setPagination(document, mode, gap, 0, ec); }
+    void setPagination(Document*, const String& mode, int gap, int pageLength, ExceptionCode&);
     String configurationForViewport(Document*, float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);
 
     bool wasLastChangeUserEdit(Element* textField, ExceptionCode&);

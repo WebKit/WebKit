@@ -1,3 +1,41 @@
+2012-07-16  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=91299
+        Paginated views should restrict available height to column height
+        -and corresponding-
+        <rdar://problem/11152108>
+
+        Reviewed by Dan Bernstein.
+
+        Now that RenderViews can have columns, availableLogicalHeight needs to consider 
+        that column height, much like how availableLogicalWidth already considers column 
+        width.
+
+        availableLogicalHeight is newly virtual, like the already-virtual 
+        availableLogicalWidth.
+        * rendering/RenderBox.h:
+        (RenderBox):
+
+        Check with the columnHeight.
+        * rendering/RenderView.cpp:
+        (WebCore):
+        (WebCore::RenderView::availableLogicalHeight):
+        * rendering/RenderView.h:
+
+        setPagination now takes pageLength as an optional parameter. 
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setPagination):
+        * testing/InternalSettings.h:
+        (WebCore::InternalSettings::setPagination):
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPagination):
+        * testing/Internals.h:
+        (WebCore::Internals::setPagination):
+        (Internals):
+        * testing/Internals.idl:
+
 2012-07-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove targetRenderSurface concept, give layers a renderTarget which is the layer whose coordinate space they draw into

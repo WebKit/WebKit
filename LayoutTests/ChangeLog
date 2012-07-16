@@ -1,3 +1,18 @@
+2012-07-16  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=91299
+        Paginated views should restrict available height to column height
+        -and corresponding-
+        <rdar://problem/11152108>
+
+        Reviewed by Dan Bernstein.
+
+        New test.
+        * fast/multicol/resources/big-green.png: Added.
+        * fast/multicol/shrink-to-column-height-for-pagination.html: Added.
+        * platform/mac/fast/multicol/shrink-to-column-height-for-pagination-expected.png: Added.
+        * platform/mac/fast/multicol/shrink-to-column-height-for-pagination-expected.txt: Added.
+
 2012-07-16  Vincent Scheib  <scheib@chromium.org>
 
         Fix Layout Test pointer-lock/locked-element-removed-from-dom.html flakiness.

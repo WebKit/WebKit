@@ -353,9 +353,9 @@ public:
 
     LayoutUnit computePercentageLogicalHeight(const Length& height);
 
-    // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
+    // Block flows subclass availableWidth/Height to handle multi column layout (shrinking the width/height available to children when laying out.)
     virtual LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
-    LayoutUnit availableLogicalHeight() const;
+    virtual LayoutUnit availableLogicalHeight() const;
     LayoutUnit availableLogicalHeightUsing(const Length&) const;
     
     // There are a few cases where we need to refer specifically to the available physical width and available physical height.
