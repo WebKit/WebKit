@@ -1,3 +1,29 @@
+2012-07-16  Tony Chang  <tony@chromium.org>
+
+        Position grid items by row/column index
+        https://bugs.webkit.org/show_bug.cgi?id=91293
+
+        Reviewed by Ojan Vafai.
+
+        Do some initial grid positioning. Only handle the simple case where tracks are
+        fixed values and don't properly size the grid items. This gives us something to
+        work with and starts implementing the "Grid Track Sizing Algorithm":
+        http://dev.w3.org/csswg/css3-grid-layout/#grid-track-sizing-algorithm0
+
+        Test: fast/css-grid-layout/place-cell-by-index.html
+
+        * rendering/RenderGrid.cpp:
+        (RenderGrid::GridTrack): Data structure for holding the track size. UsedBreadth matches the terminology
+        used in the spec.
+        (WebCore::RenderGrid::layoutBlock): Pull in some boiler plate code and put the
+        grid specific code in layoutGridItems.
+        (WebCore::RenderGrid::computedUsedBreadthOfGridTracks): Implement part of the grid track sizing algorithm.
+        (WebCore::RenderGrid::layoutGridItems): Compute the size of grid tracks, layout and position children.
+        (WebCore::RenderGrid::findChildLogicalPosition): Map track sizes to the actual position of the child.
+        * rendering/RenderGrid.h:
+        * rendering/style/RenderStyle.h: Just return a copy of Length rather than a reference to Length. This seems
+        more consistent with other getters that return a Length.
+
 2012-07-16  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Only apply page scale delta to root scroll layer

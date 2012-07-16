@@ -814,8 +814,8 @@ public:
     const Vector<Length>& gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
     const Vector<Length>& gridRows() const { return rareNonInheritedData->m_grid->m_gridRows; }
 
-    const Length& gridItemColumn() const { return rareNonInheritedData->m_gridItem->m_gridColumn; }
-    const Length& gridItemRow() const { return rareNonInheritedData->m_gridItem->m_gridRow; }
+    Length gridItemColumn() const { return rareNonInheritedData->m_gridItem->m_gridColumn; }
+    Length gridItemRow() const { return rareNonInheritedData->m_gridItem->m_gridRow; }
 
     const ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
     void getBoxShadowExtent(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const { getShadowExtent(boxShadow(), top, right, bottom, left); }

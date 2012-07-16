@@ -40,6 +40,14 @@ public:
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
 
     virtual bool avoidsFloats() const OVERRIDE { return true; }
+
+private:
+    class GridTrack;
+    enum TrackSizingDirection { ForColumns, ForRows };
+    void computedUsedBreadthOfGridTracks(TrackSizingDirection, Vector<GridTrack>&);
+    void layoutGridItems();
+
+    LayoutPoint findChildLogicalPosition(RenderBox*, const Vector<GridTrack>& columnTracks, const Vector<GridTrack>& rowTracks);
 };
 
 } // namespace WebCore
