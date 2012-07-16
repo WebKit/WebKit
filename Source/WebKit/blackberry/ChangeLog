@@ -1,3 +1,21 @@
+2012-07-16  Yongxin Dai  <yodai@rim.com>
+
+        [BlackBerry] Text selection with touch hold does not start on text field in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=91267
+
+        Reviewed by Antonio Gomes.
+
+        Input fields host node is by spec non-editable unless the field itself has content editable enabled.
+        We enable selection if the shadow tree for the input field is selectable.
+        PR # 173450
+
+        Reviewed Internally by Mike Fenton.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+
 2012-07-15  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Move icon database to application data directory.

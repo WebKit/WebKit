@@ -2383,9 +2383,6 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
         }
     }
 
-    if (!nodeAllowSelectionOverride && !node->canStartSelection())
-        context.resetFlag(Platform::WebContext::IsSelectable);
-
     if (node->isHTMLElement()) {
         HTMLImageElement* imageElement = 0;
         HTMLMediaElement* mediaElement = 0;
@@ -2429,9 +2426,18 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
             context.setText(curText->wholeText().utf8().data());
     }
 
+    bool canStartSelection = node->canStartSelection();
+
     if (node->isElementNode()) {
         Element* element = static_cast<Element*>(node->shadowAncestorNode());
         if (DOMSupport::isTextBasedContentEditableElement(element)) {
+            if (!canStartSelection) {
+                // Input fields host node is by spec non-editable unless the field itself has content editable enabled.
+                // Enable selection if the shadow tree for the input field is selectable.
+                Node* nodeUnderFinger = m_touchEventHandler->lastFatFingersResult().isValid() ? m_touchEventHandler->lastFatFingersResult().node(FatFingersResult::ShadowContentAllowed) : 0;
+                if (nodeUnderFinger)
+                    canStartSelection = nodeUnderFinger->canStartSelection();
+            }
             context.setFlag(Platform::WebContext::IsInput);
             if (element->hasTagName(HTMLNames::inputTag))
                 context.setFlag(Platform::WebContext::IsSingleLine);
@@ -2443,6 +2449,9 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
                 context.setText(elementText.utf8().data());
         }
     }
+
+    if (!nodeAllowSelectionOverride && !canStartSelection)
+        context.resetFlag(Platform::WebContext::IsSelectable);
 
     if (node->isFocusable())
         context.setFlag(Platform::WebContext::IsFocusable);
