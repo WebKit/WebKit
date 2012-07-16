@@ -1,5 +1,16 @@
 2012-07-16  Zoltan Horvath  <zoltan@webkit.org>
 
+        Unreviewed. Remove unnecessary executable bits after r122720.
+
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        * platform/graphics/qt/ImageQt.cpp:
+        * platform/graphics/qt/StillImageQt.h:
+        * platform/graphics/qt/TransparencyLayer.h:
+
+2012-07-16  Zoltan Horvath  <zoltan@webkit.org>
+
         [Qt] Change NativeImagePtr from QPixmap* to QImage*
         https://bugs.webkit.org/show_bug.cgi?id=88785
 
