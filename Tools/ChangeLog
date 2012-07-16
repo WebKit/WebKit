@@ -1,3 +1,14 @@
+2012-07-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix Qt5 module dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=91388
+
+        Reviewed by Laszlo Gombos.
+
+        Removed ancient qtscript and qtxmlpatterns module dependencies.
+
+        * qmake/qt_webkit.pri:
+
 2012-07-16  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         run-webkit-test returns 254 at exit even when it succeeds
