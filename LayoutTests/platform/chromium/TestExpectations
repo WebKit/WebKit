@@ -46,7 +46,6 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/misc/dns-prefetch-control.html = 
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/shadow/tree-scope-crash.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html = PASS
-BUGCR24182 SLOW DEBUG : svg/as-background-image/svg-as-background-5.html = PASS
 BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
 
 // V8 roll to 3.9.24.1. Remember to remove WIN LINUX from the line below upon fixing.
@@ -1594,6 +1593,12 @@ BUGCR23473 LION SNOWLEOPARD : fast/repaint/transform-translate.html = IMAGE
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
+
+// To rebaseline after Skia 4600 lands
+BUGCR137508 : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
+BUGCR137508 : svg/hixie/perf/001.xml = IMAGE+TEXT
+BUGCR137508 : svg/hixie/perf/002.xml = IMAGE+TEXT
+BUGCR137508 : svg/as-background-image/svg-as-background-5.html = IMAGE
 
 // Rebaseline to take advantage of skia ColorFilter optimization.
 // Note that two of tests below are broken on Leopard for other reasons (search

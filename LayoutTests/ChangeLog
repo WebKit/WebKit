@@ -1,3 +1,13 @@
+2012-07-16  Mike Reed  <reed@google.com>
+
+        Update expectations : rebaseline images after skia 4600 lands
+        https://bugs.webkit.org/show_bug.cgi?id=91392
+
+        Reviewed by NOBODY : expectations change only
+
+
+        * platform/chromium/TestExpectations:
+
 2012-07-16  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] REGRESSION (r122720): svg/filters/feSpecularLight-premultiplied.svg
