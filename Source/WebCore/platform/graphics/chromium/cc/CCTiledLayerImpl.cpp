@@ -123,21 +123,6 @@ DrawableTile* CCTiledLayerImpl::createTile(int i, int j)
     return addedTile;
 }
 
-WebTransformationMatrix CCTiledLayerImpl::quadTransform() const
-{
-    WebTransformationMatrix transform = drawTransform();
-
-    if (contentBounds().isEmpty())
-        return transform;
-
-    transform.scaleNonUniform(bounds().width() / static_cast<double>(contentBounds().width()),
-                              bounds().height() / static_cast<double>(contentBounds().height()));
-
-    // Tiler draws with a different origin from other layers.
-    transform.translate(-contentBounds().width() / 2.0, -contentBounds().height() / 2.0);
-    return transform;
-}
-
 void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool& hadMissingTiles)
 {
     const IntRect& contentRect = visibleContentRect();

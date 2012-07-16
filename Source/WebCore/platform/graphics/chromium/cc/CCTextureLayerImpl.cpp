@@ -50,7 +50,7 @@ CCTextureLayerImpl::~CCTextureLayerImpl()
 
 void CCTextureLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
-    IntRect quadRect(IntPoint(), bounds());
+    IntRect quadRect(IntPoint(), contentBounds());
     quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_premultipliedAlpha, m_uvRect, m_flipped));
 }
 

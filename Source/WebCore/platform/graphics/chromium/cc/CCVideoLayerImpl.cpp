@@ -183,7 +183,7 @@ void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
     // FIXME: When we pass quads out of process, we need to double-buffer, or
     // otherwise synchonize use of all textures in the quad.
 
-    IntRect quadRect(IntPoint(), bounds());
+    IntRect quadRect(IntPoint(), contentBounds());
 
     switch (m_format) {
     case GraphicsContext3D::LUMINANCE: {

@@ -49,20 +49,12 @@ CCSolidColorLayerImpl::~CCSolidColorLayerImpl()
 {
 }
 
-WebTransformationMatrix CCSolidColorLayerImpl::quadTransform() const
-{
-    WebTransformationMatrix solidColorTransform = drawTransform();
-    solidColorTransform.translate(-bounds().width() / 2.0, -bounds().height() / 2.0);
-
-    return solidColorTransform;
-}
-
 void CCSolidColorLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     // We create a series of smaller quads instead of just one large one so that the
     // culler can reduce the total pixels drawn.
-    int width = bounds().width();
-    int height = bounds().height();
+    int width = contentBounds().width();
+    int height = contentBounds().height();
     for (int x = 0; x < width; x += m_tileSize) {
         for (int y = 0; y < height; y += m_tileSize) {
             IntRect solidTileRect(x, y, min(width - x, m_tileSize), min(height - y, m_tileSize));

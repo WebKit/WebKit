@@ -282,9 +282,6 @@ protected:
     virtual void dumpLayerProperties(TextStream&, int indent) const;
     static void writeIndent(TextStream&, int indent);
 
-    // Transformation used to transform quads provided in appendQuads.
-    virtual WebKit::WebTransformationMatrix quadTransform() const;
-
 private:
     void setParent(CCLayerImpl* parent) { m_parent = parent; }
     friend class TreeSynchronizer;

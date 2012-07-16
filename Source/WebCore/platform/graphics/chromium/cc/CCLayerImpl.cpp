@@ -147,7 +147,14 @@ bool CCLayerImpl::descendantDrawsContent()
 
 PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
 {
-    return CCSharedQuadState::create(quadTransform(), m_visibleContentRect, m_scissorRect, m_drawOpacity, m_opaque);
+    WebTransformationMatrix quadTransformation = drawTransform();
+    if (!contentBounds().isEmpty() && !bounds().isEmpty()) {
+        quadTransformation.scaleNonUniform(bounds().width() / static_cast<double>(contentBounds().width()),
+                                           bounds().height() / static_cast<double>(contentBounds().height()));
+        quadTransformation.translate(-contentBounds().width() / 2.0, -contentBounds().height() / 2.0);
+    }
+
+    return CCSharedQuadState::create(quadTransformation, m_visibleContentRect, m_scissorRect, m_drawOpacity, m_opaque);
 }
 
 void CCLayerImpl::willDraw(CCRenderer*, CCGraphicsContext*)
@@ -233,17 +240,6 @@ const IntRect CCLayerImpl::getDrawRect() const
     FloatRect layerRect(-0.5 * bounds().width(), -0.5 * bounds().height(), bounds().width(), bounds().height());
     IntRect mappedRect = enclosingIntRect(CCMathUtil::mapClippedRect(drawTransform(), layerRect));
     return mappedRect;
-}
-
-WebTransformationMatrix CCLayerImpl::quadTransform() const
-{
-    WebTransformationMatrix quadTransformation = drawTransform();
-
-    float offsetX = -0.5 * bounds().width();
-    float offsetY = -0.5 * bounds().height();
-    quadTransformation.translate(offsetX, offsetY);
-
-    return quadTransformation;
 }
 
 void CCLayerImpl::writeIndent(TextStream& ts, int indent)

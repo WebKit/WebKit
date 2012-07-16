@@ -1,3 +1,42 @@
+2012-07-16  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unify compositor quad transforms into content space
+        https://bugs.webkit.org/show_bug.cgi?id=91350
+
+        Reviewed by Kenneth Russell.
+
+        For the purpose of simplification and as a first step towards removing
+        any transform that takes a centered rect, remove the ability of layers
+        to override the quad transform. All quads and quad transforms operate
+        on content space with the origin in the top left.
+
+        The gutter quads used to use the root layer (that doesn't draw
+        content) as the layer to create the shared quad state from. This is
+        now created manually as a layer without bounds should never in general
+        need a shared quad state created for it.
+
+        No change in functionality; tested by existing layout and unit tests.
+
+        * platform/graphics/chromium/cc/CCIOSurfaceLayerImpl.cpp:
+        (WebCore::CCIOSurfaceLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::createSharedQuadState):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::appendQuadsToFillScreen):
+        * platform/graphics/chromium/cc/CCSolidColorLayerImpl.cpp:
+        (WebCore::CCSolidColorLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCSolidColorLayerImpl.h:
+        (CCSolidColorLayerImpl):
+        * platform/graphics/chromium/cc/CCTextureLayerImpl.cpp:
+        (WebCore::CCTextureLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (CCTiledLayerImpl):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads):
+
 2012-07-16  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Resolve test and IDL FIXMEs for a handful of landed patches

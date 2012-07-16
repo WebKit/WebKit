@@ -1,3 +1,21 @@
+2012-07-16  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unify compositor quad transforms into content space
+        https://bugs.webkit.org/show_bug.cgi?id=91350
+
+        Reviewed by Kenneth Russell.
+
+        Update tests to add bounds/contentBounds properties to layers. This
+        exposed a bug in the quad culler tests where the draw transform was
+        incorrectly being set to the origin transform rather than being a
+        transform that operates on centered layer rects. Fixed this bug.
+
+        * tests/CCQuadCullerTest.cpp:
+        * tests/CCSolidColorLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (CCLayerTestCommon::createLayer):
+
 2012-07-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove targetRenderSurface concept, give layers a renderTarget which is the layer whose coordinate space they draw into

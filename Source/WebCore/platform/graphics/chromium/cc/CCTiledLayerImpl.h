@@ -64,8 +64,6 @@ protected:
     bool hasTileAt(int, int) const;
     bool hasTextureIdForTileAt(int, int) const;
 
-    virtual WebKit::WebTransformationMatrix quadTransform() const OVERRIDE;
-
 private:
 
     virtual const char* layerTypeAsString() const OVERRIDE { return "ContentLayer"; }

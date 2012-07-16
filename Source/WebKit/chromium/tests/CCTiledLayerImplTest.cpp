@@ -50,6 +50,8 @@ static PassOwnPtr<CCTiledLayerImpl> createLayer(const IntSize& tileSize, const I
     layer->setSkipsDraw(false);
     layer->setVisibleContentRect(IntRect(IntPoint(), layerSize));
     layer->setDrawOpacity(1);
+    layer->setBounds(layerSize);
+    layer->setContentBounds(layerSize);
 
     int textureId = 1;
     for (int i = 0; i < tiler->numTilesX(); ++i)
