@@ -66,6 +66,17 @@ EAPI const char          *ewk_security_origin_protocol_get(const Ewk_Security_Or
 EAPI const char          *ewk_security_origin_host_get(const Ewk_Security_Origin *o);
 
 /**
+ * Convert this Ewk_Security_Origin into a string.
+ * The string representation of a security origin is similar to a URL, except it lacks a path component.
+ * The string representation does not encode the value of the security origin's domain property.
+ *
+ * @param o security origin object
+ *
+ * @return the string representation of security origin or @c 0 if there is not a proper security origin scheme
+ */
+EAPI const char          *ewk_security_origin_string_get(const Ewk_Security_Origin *o);
+
+/**
  * Returns the port of the security origin.
  *
  * @param o security origin object
@@ -157,7 +168,6 @@ EAPI void                 ewk_security_origin_free(Ewk_Security_Origin *o);
  * @return the security origin object
  */
 EAPI Ewk_Security_Origin *ewk_security_origin_new_from_string(const char *url);
-
 
 #ifdef __cplusplus
 }

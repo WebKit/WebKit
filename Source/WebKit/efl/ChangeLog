@@ -1,3 +1,20 @@
+2012-07-15  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Add a API for getting security origin string
+        https://bugs.webkit.org/show_bug.cgi?id=90936
+
+        Reviewed by Ryosuke Niwa.
+
+        Support to change from Ewk_Security_Origin to string on the API level.
+        Add ewk_security_origin_string_get for getting security origin string.
+
+        * ewk/ewk_security_origin.cpp:
+        (_Ewk_Security_Origin):
+        (ewk_security_origin_string_get):
+        (ewk_security_origin_free):
+        (ewk_security_origin_new):
+        * ewk/ewk_security_origin.h:
+
 2012-07-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Move files guarded by #ifdef to existing file list.
