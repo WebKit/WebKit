@@ -1,3 +1,25 @@
+2012-07-15  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] We shouldn't call didFinishLoading for the old request when a new request has been sent by notifyAuthReceived.
+        https://bugs.webkit.org/show_bug.cgi?id=90962
+
+        Reviewed by Rob Buis.
+
+        We start a new NetworkJob with credentials after receiving 401/407 status.
+        We should not release resources in webcore when the old job is closed because
+        they are needed by the new one.
+        We should do as 3XX.
+
+        No new tests. No change in behaviour.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::NetworkJob):
+        (WebCore::NetworkJob::notifyAuthReceived):
+        (WebCore::NetworkJob::shouldReleaseClientResource):
+        (WebCore::NetworkJob::handleRedirect):
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+
 2012-07-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r122660): Cannot iterate over HTMLCollection that contains non-child descendent nodes in some conditions

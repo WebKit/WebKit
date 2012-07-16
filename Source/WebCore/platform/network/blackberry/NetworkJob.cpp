@@ -83,6 +83,7 @@ NetworkJob::NetworkJob()
     , m_callingClient(false)
     , m_needsRetryAsFTPDirectory(false)
     , m_isOverrideContentType(false)
+    , m_newJobWithCredentialsStarted(false)
     , m_extendedStatusCode(0)
     , m_redirectCount(0)
     , m_deferredData(*this)
@@ -282,7 +283,7 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
         return;
     }
 
-    sendRequestWithCredentials(serverType, scheme, realm);
+    m_newJobWithCredentialsStarted = sendRequestWithCredentials(serverType, scheme, realm);
 }
 
 void NetworkJob::notifyStringHeaderReceived(const String& key, const String& value)
@@ -505,15 +506,8 @@ void NetworkJob::handleNotifyClose(int status)
 
 bool NetworkJob::shouldReleaseClientResource()
 {
-    if (m_redirectCount >= s_redirectMaximum)
-        return true;
-
-    if (m_needsRetryAsFTPDirectory && retryAsFTPDirectory())
+    if ((m_needsRetryAsFTPDirectory && retryAsFTPDirectory()) || (isRedirect(m_extendedStatusCode) && handleRedirect()) || m_newJobWithCredentialsStarted)
         return false;
-
-    if (isRedirect(m_extendedStatusCode) && handleRedirect())
-        return false;
-
     return true;
 }
 
@@ -576,7 +570,7 @@ bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increa
 bool NetworkJob::handleRedirect()
 {
     ASSERT(m_handle);
-    if (!m_handle)
+    if (!m_handle || m_redirectCount >= s_redirectMaximum)
         return false;
 
     String location = m_response.httpHeaderField("Location");
