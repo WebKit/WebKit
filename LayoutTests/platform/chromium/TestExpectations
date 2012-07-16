@@ -926,9 +926,9 @@ WONTFIX SKIP : http/tests/inspector/network/network-content-replacement-embed.ht
 // Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
 WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIMEOUT PASS
 
-BUGFLAKY WIN LINUX : http/tests/inspector/extensions-ignore-cache.html = PASS TIMEOUT
-BUGFLAKY WIN LINUX : inspector/timeline/timeline-network-received-data.html = PASS TEXT
-BUGFLAKY WIN LINUX : inspector/debugger/live-edit.html = PASS TEXT TIMEOUT
+BUGWK91435 WIN LINUX : http/tests/inspector/extensions-ignore-cache.html = PASS TIMEOUT
+BUGWK91435 WIN LINUX : inspector/timeline/timeline-network-received-data.html = PASS TEXT
+BUGWK91435 WIN LINUX : inspector/debugger/live-edit.html = PASS TEXT TIMEOUT
 BUGCR89357 SKIP MAC : http/tests/inspector/extensions-ignore-cache.html = TIMEOUT
 BUGCR89357 SKIP MAC : inspector/timeline/timeline-network-received-data.html = TIMEOUT
 BUGCR89357 SKIP MAC : inspector/debugger/live-edit.html = TIMEOUT
@@ -2103,20 +2103,20 @@ BUGWK45737 BUGCR100056 DEBUG : fast/frames/frame-limit.html = TIMEOUT
 BUGWK60092 SLOW LINUX WIN DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
 BUGWK60093 SLOW LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = PASS
 
-BUGWEBGL : fast/canvas/webgl/read-pixels-test.html = TIMEOUT
-BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/read-pixels-test.html = TIMEOUT
-BUGWEBGL : fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html = TIMEOUT
-BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html = TIMEOUT
+BUGWK91432 : fast/canvas/webgl/read-pixels-test.html = TIMEOUT
+BUGWK91432 : platform/chromium/virtual/gpu/fast/canvas/webgl/read-pixels-test.html = TIMEOUT
+BUGWK91432 : fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html = TIMEOUT
+BUGWK91432 : platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html = TIMEOUT
 
 // These three failures are due to Mesa bugs
-BUGWEBGL : fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
-BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
-BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
-BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
-BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-uniform-arrays.html = TEXT
-BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/point-size.html = TEXT
-BUGWEBGL LINUX MAC : fast/canvas/webgl/gl-object-get-calls.html = TEXT
-BUGWEBGL LINUX MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-get-calls.html = TEXT
+BUGWK91431 : fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
+BUGWK91431 : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
+BUGWK91431 : fast/canvas/webgl/point-size.html = TEXT
+BUGWK91431 : platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
+BUGWK91431 : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-uniform-arrays.html = TEXT
+BUGWK91431 : platform/chromium/virtual/gpu/fast/canvas/webgl/point-size.html = TEXT
+BUGWK91431 LINUX MAC : fast/canvas/webgl/gl-object-get-calls.html = TEXT
+BUGWK91431 LINUX MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-get-calls.html = TEXT
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = PASS TIMEOUT TEXT
@@ -2241,11 +2241,12 @@ BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = PASS
 // Occasionally times out with, only under the DRT for Linux
 BUGCR58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT
 
-BUG_DRT DEBUG : fast/frames/calculate-round.html = PASS TIMEOUT
-BUG_DRT : fast/repaint/iframe-scroll-repaint.html = IMAGE
-BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS TEXT
-BUG_DRT LINUX MAC : http/tests/plugins/post-url-file.html = TIMEOUT
-BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = TEXT
+BUGWK91429 DEBUG : fast/frames/calculate-round.html = PASS TIMEOUT
+BUGWK91429 : fast/repaint/iframe-scroll-repaint.html = IMAGE
+BUGWK91429 LINUX : fast/text/justification-padding-mid-word.html = PASS TEXT
+BUGWK91429 LINUX MAC : http/tests/plugins/post-url-file.html = TIMEOUT
+BUGWK91429 : platform/gtk/fast/forms/menulist-typeahead-find.html = TEXT
+
 BUGCR8729 LINUX MAC : http/tests/multipart/invalid-image-data.html = PASS IMAGE
 
 // The test says you should see numbers, but we display letters.
@@ -3667,7 +3668,7 @@ BUGWK90234 : css3/calc/transitions.html = PASS TEXT
 
 BUGWK89820 : fast/text/hyphen-min-preferred-width.html = IMAGE
 
-BUGFLAKY LINUX : fast/forms/placeholder-position.html = PASS IMAGE
+BUGWK91433 LINUX : fast/forms/placeholder-position.html = PASS IMAGE
 
 BUGWK89936 WIN : compositing/shadows/shadow-drawing.html = IMAGE
 BUGWK89936 WIN : fast/text/atsui-kerning-and-ligatures.html = IMAGE

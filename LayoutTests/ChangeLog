@@ -1,3 +1,8 @@
+2012-07-16  Ojan Vafai  <ojan@chromium.org>
+
+        [chromium] Assign some bug numbers to failing tests.
+        * platform/chromium/TestExpectations:
+
 2012-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix compositing layers in columns when in paginated mode
