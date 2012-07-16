@@ -22,7 +22,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import re
 import StringIO
 
 from webkitpy.common.system import outputcapture
@@ -34,11 +33,6 @@ class Printer(object):
     def __init__(self, stream, options=None):
         self.stream = stream
         self.options = options
-        self.test_description = re.compile("(\w+) \(([\w.]+)\)")
-
-    def test_name(self, test):
-        m = self.test_description.match(str(test))
-        return "%s.%s" % (m.group(2), m.group(1))
 
     def configure(self, options):
         self.options = options
@@ -126,17 +120,17 @@ class Printer(object):
     def print_result(self, result, run_time):
         self.stream.write('\n')
 
-        for (test, err) in result.errors:
+        for (test_name, err) in result.errors:
             self.stream.write("=" * 80 + '\n')
-            self.stream.write("ERROR: " + self.test_name(test) + '\n')
+            self.stream.write("ERROR: " + test_name + '\n')
             self.stream.write("-" * 80 + '\n')
             for line in err.splitlines():
                 self.stream.write(line + '\n')
             self.stream.write('\n')
 
-        for (test, failure) in result.failures:
+        for (test_name, failure) in result.failures:
             self.stream.write("=" * 80 + '\n')
-            self.stream.write("FAILURE: " + self.test_name(test) + '\n')
+            self.stream.write("FAILURE: " + test_name + '\n')
             self.stream.write("-" * 80 + '\n')
             for line in failure.splitlines():
                 self.stream.write(line + '\n')

@@ -23,12 +23,21 @@
 """code to actually run a list of python tests."""
 
 import logging
+import re
 import time
 import unittest
 
 from webkitpy.common import message_pool
 
 _log = logging.getLogger(__name__)
+
+
+_test_description = re.compile("(\w+) \(([\w.]+)\)")
+
+
+def _test_name(test):
+    m = _test_description.match(str(test))
+    return "%s.%s" % (m.group(2), m.group(1))
 
 
 class Runner(object):
@@ -45,7 +54,7 @@ class Runner(object):
             for t in suite._tests:
                 names.extend(self.all_test_names(t))
         else:
-            names.append(self.printer.test_name(suite))
+            names.append(_test_name(suite))
         return names
 
     def run(self, suite):
@@ -80,4 +89,12 @@ class _Worker(object):
         start = time.time()
         self._caller.post('started_test', test_name)
         self._loader.loadTestsFromName(test_name, None).run(result)
+
+        # The tests in the TestResult contain file objects and other unpicklable things; we only
+        # care about the test name, so we rewrite the result to replace the test with the test name.
+        # FIXME: We need an automated test for this, but I don't know how to write an automated
+        # test that will fail in this case that doesn't get picked up by test-webkitpy normally :(.
+        result.failures = [(_test_name(failure[0]), failure[1]) for failure in result.failures]
+        result.errors = [(_test_name(error[0]), error[1]) for error in result.errors]
+
         self._caller.post('finished_test', test_name, time.time() - start, result)

@@ -1,5 +1,32 @@
 2012-07-16  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: handle failures properly when running in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=91416
+
+        Reviewed by Tony Chang.
+
+        It turns out that unittest.TestResults contain a handle to the
+        test method itself, which isn't picklable; it's sufficient to just
+        store the test name instead of the actual method. By doing so
+        we can move the test_name() method from the printer to the
+        runner where it belongs (so the printer is less dependent on the
+        unittest framework's data structures).
+
+        This change should really have a test but I don't know how to
+        write one that properly captures the behavior and won't cause
+        test-webkitpy itself to fail. I've verified the fix by hand, at
+        least, in the meantime.
+
+        * Scripts/webkitpy/test/printer.py:
+        (Printer.__init__):
+        (Printer.print_result):
+        * Scripts/webkitpy/test/runner.py:
+        (_test_name):
+        (Runner.all_test_names):
+        (_Worker.handle):
+
+2012-07-16  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: run tests in parallel
         https://bugs.webkit.org/show_bug.cgi?id=91294
 
