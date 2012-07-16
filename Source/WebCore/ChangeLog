@@ -1,3 +1,19 @@
+2012-07-16  Luke Macpherson  <macpherson@chromium.org>
+
+        Compilation failure in StyleResolver.cpp (clang)
+        https://bugs.webkit.org/show_bug.cgi?id=89892
+
+        Reviewed by Ryosuke Niwa.
+
+        Patch adds assertions that unreachable code is in fact not reached.
+
+        Covered by fast/css/variables tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-07-15  Mike Lawther  <mikelawther@chromium.org>
 
         Fix calculation of rgba's alpha in CSS custom text
