@@ -357,7 +357,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
 
     // Render surface should have been created now.
     ASSERT_TRUE(child->renderSurface());
-    ASSERT_EQ(child->renderSurface(), child->targetRenderSurface());
+    ASSERT_EQ(child, child->renderTarget());
 
     // The child layer's draw transform should refer to its new render surface; they only differ by a translation to center.
     // The screen-space transform, however, should still refer to the root.
@@ -365,11 +365,11 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
 
     // Without clipping, the origin transform and draw transform (in this particular case) should be the same.
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->targetRenderSurface()->originTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->targetRenderSurface()->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->renderTarget()->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->renderTarget()->renderSurface()->drawTransform());
 
     // The screen space is the same as the target since the child surface draws into the root.
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->targetRenderSurface()->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->renderTarget()->renderSurface()->screenSpaceTransform());
 }
 
 TEST(CCLayerTreeHostCommonTest, scissorRectNoClip)
@@ -464,11 +464,11 @@ TEST(CCLayerTreeHostCommonTest, scissorRectNoClip)
     IntRect rootDamage(rootRect);
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // child surface doesn't have a clip rect, therefore it will be computed as intersection
     // between root surface's contentrect and child surface's drawable content rect.
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(childRect.x(), childRect.y(), rootRect.width() - childRect.x(), rootRect.height() - childRect.y()));
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), IntRect(childRect.x(), childRect.y(), rootRect.width() - childRect.x(), rootRect.height() - childRect.y()));
 
     EXPECT_EQ(root->scissorRect(), IntRect(rootRect));
 
@@ -486,8 +486,8 @@ TEST(CCLayerTreeHostCommonTest, scissorRectNoClip)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Empty damage == empty scissor
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
     
     EXPECT_EQ(root->scissorRect(), IntRect(0, 0, 0, 0));
     EXPECT_EQ(childPtr->scissorRect(), IntRect(0, 0, 0, 0));
@@ -498,10 +498,10 @@ TEST(CCLayerTreeHostCommonTest, scissorRectNoClip)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Scissors are not computed for root
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // Entire damage rect is within the root surface
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), rootDamage);
     
     // Entire damage rect is within the layer
     EXPECT_EQ(root->scissorRect(), rootDamage);
@@ -517,10 +517,10 @@ TEST(CCLayerTreeHostCommonTest, scissorRectNoClip)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Scissors are not computed for root
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // Entire damage rect is within the root surface
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), rootDamage);
     
     // Entire damage rect is within the layer
     EXPECT_EQ(root->scissorRect(), rootDamage);
@@ -536,11 +536,11 @@ TEST(CCLayerTreeHostCommonTest, scissorRectNoClip)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Scissors are not computed for root
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // Root surface does not have a clipRect, so its contentRect will be used to intersect with damage.
     // Result is that root damage rect is clipped at root layer boundary
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
     
     // Root does not use layer clipping, so its content rect will be used to intersect with damage
     // Result is that root damage rect is clipped at root layer boundary
@@ -648,8 +648,8 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClip)
     IntRect rootDamage(rootRect);
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootRect));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), IntRect(rootRect));
     
     EXPECT_EQ(root->scissorRect(), IntRect(rootRect));
 
@@ -667,8 +667,8 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClip)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Empty damage == empty scissor
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
     
     EXPECT_EQ(root->scissorRect(), IntRect(0, 0, 0, 0));
     EXPECT_EQ(childPtr->scissorRect(), IntRect(0, 0, 0, 0));
@@ -679,10 +679,10 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClip)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Scissors are not computed for root
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // Entire damage rect is within the root surface
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), rootDamage);
     
     // Entire damage rect is within the layer
     EXPECT_EQ(root->scissorRect(), rootDamage);
@@ -698,10 +698,10 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClip)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Scissors are not computed for root
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // Entire damage rect is within the root surface
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), rootDamage);
     
     // Entire damage rect is within the layer
     EXPECT_EQ(root->scissorRect(), rootDamage);
@@ -717,11 +717,11 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClip)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Scissors are not computed for root
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // Root surface does not have a clipRect, so its contentRect will be used to intersect with damage.
     // Result is that root damage rect is clipped at root layer boundary
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
     
     // Root does not use layer clipping, so its content rect will be used to intersect with damage
     // Result is that root damage rect is clipped at root layer boundary
@@ -839,8 +839,8 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClipAndSpaceTransform)
     IntRect rootDamage(rootRect);
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootRect));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), IntRect(rootRect));
     
     EXPECT_EQ(root->scissorRect(), IntRect(rootRect));
 
@@ -857,8 +857,8 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClipAndSpaceTransform)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Empty damage == empty scissor
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
     
     EXPECT_EQ(root->scissorRect(), IntRect(0, 0, 0, 0));
     EXPECT_EQ(childPtr->scissorRect(), IntRect(0, 0, 0, 0));
@@ -869,10 +869,10 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClipAndSpaceTransform)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Scissors are not computed for root
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // Entire damage rect is within the root surface
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), rootDamage);
     
     // Entire damage rect is within the layer
     EXPECT_EQ(root->scissorRect(), rootDamage);
@@ -888,10 +888,10 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClipAndSpaceTransform)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Scissors are not computed for root
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // Entire damage rect is within the root surface
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), rootDamage);
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), rootDamage);
     
     // Entire damage rect is within the layer
     EXPECT_EQ(root->scissorRect(), rootDamage);
@@ -907,11 +907,11 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClipAndSpaceTransform)
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootDamage);
     
     // Scissors are not computed for root
-    EXPECT_EQ(root->targetRenderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
+    EXPECT_EQ(root->renderTarget()->renderSurface()->scissorRect(), IntRect(0, 0, 0, 0));
 
     // Root surface does not have a clipRect, so its contentRect will be used to intersect with damage.
     // Result is that root damage rect is clipped at root layer boundary
-    EXPECT_EQ(childPtr->targetRenderSurface()->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
+    EXPECT_EQ(childPtr->renderTarget()->renderSurface()->scissorRect(), IntRect(rootDamage.x(), rootDamage.y(), rootRect.width() - rootDamage.x(), rootRect.height() - rootDamage.y()));
     
     // Root does not use layer clipping, so its content rect will be used to intersect with damage
     // Result is that root damage rect is clipped at root layer boundary
@@ -966,10 +966,10 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForReplica)
 
     // Render surface should have been created now.
     ASSERT_TRUE(child->renderSurface());
-    ASSERT_EQ(child->renderSurface(), child->targetRenderSurface());
+    ASSERT_EQ(child, child->renderTarget());
 
-    EXPECT_TRANSFORMATION_MATRIX_EQ(replicaCompositeTransform, child->targetRenderSurface()->replicaOriginTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(replicaCompositeTransform, child->targetRenderSurface()->replicaScreenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(replicaCompositeTransform, child->renderTarget()->renderSurface()->replicaOriginTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(replicaCompositeTransform, child->renderTarget()->renderSurface()->replicaScreenSpaceTransform());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
@@ -979,7 +979,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     //   - A render surface described w.r.t. an ancestor render surface: should have a draw transform described w.r.t. that ancestor surface
     //   - Replicas of a render surface are described w.r.t. the replica's transform around its anchor, along with the surface itself.
     //   - Sanity check on recursion: verify transforms of layers described w.r.t. a render surface that is described w.r.t. an ancestor render surface.
-    //   - verifying that each layer has a reference to the correct renderSurface and targetRenderSurface values.
+    //   - verifying that each layer has a reference to the correct renderSurface and renderTarget values.
 
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
@@ -1058,19 +1058,19 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     ASSERT_FALSE(childOfRS2->renderSurface());
     ASSERT_FALSE(grandChildOfRS2->renderSurface());
 
-    // Verify all targetRenderSurface accessors
+    // Verify all renderTarget accessors
     //
-    EXPECT_EQ(parent->renderSurface(), parent->targetRenderSurface());
-    EXPECT_EQ(parent->renderSurface(), childOfRoot->targetRenderSurface());
-    EXPECT_EQ(parent->renderSurface(), grandChildOfRoot->targetRenderSurface());
+    EXPECT_EQ(parent, parent->renderTarget());
+    EXPECT_EQ(parent, childOfRoot->renderTarget());
+    EXPECT_EQ(parent, grandChildOfRoot->renderTarget());
 
-    EXPECT_EQ(renderSurface1->renderSurface(), renderSurface1->targetRenderSurface());
-    EXPECT_EQ(renderSurface1->renderSurface(), childOfRS1->targetRenderSurface());
-    EXPECT_EQ(renderSurface1->renderSurface(), grandChildOfRS1->targetRenderSurface());
+    EXPECT_EQ(renderSurface1, renderSurface1->renderTarget());
+    EXPECT_EQ(renderSurface1, childOfRS1->renderTarget());
+    EXPECT_EQ(renderSurface1, grandChildOfRS1->renderTarget());
 
-    EXPECT_EQ(renderSurface2->renderSurface(), renderSurface2->targetRenderSurface());
-    EXPECT_EQ(renderSurface2->renderSurface(), childOfRS2->targetRenderSurface());
-    EXPECT_EQ(renderSurface2->renderSurface(), grandChildOfRS2->targetRenderSurface());
+    EXPECT_EQ(renderSurface2, renderSurface2->renderTarget());
+    EXPECT_EQ(renderSurface2, childOfRS2->renderTarget());
+    EXPECT_EQ(renderSurface2, grandChildOfRS2->renderTarget());
 
     // Verify layer draw transforms
     //  note that draw transforms are described with respect to the nearest ancestor render surface
@@ -1278,7 +1278,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     CCLayerImpl* child = root->children()[0].get();
     CCLayerImpl* grandChild = child->children()[0].get();
 
-    // This scale will cause child and grandChild to be effectively 200 x 800 with respect to the targetRenderSurface.
+    // This scale will cause child and grandChild to be effectively 200 x 800 with respect to the renderTarget.
     WebTransformationMatrix nonUniformScale;
     nonUniformScale.scaleNonUniform(2, 8);
     child->setTransform(nonUniformScale);
@@ -1378,7 +1378,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     child->setTransform(rotationAboutZ);
     grandChild->setPosition(FloatPoint(8, 6));
     grandChild->setTransform(rotationAboutZ);
-    greatGrandChild->setFixedToContainerLayer(true); // greatGrandChild is positioned upside-down with respect to the targetRenderSurface
+    greatGrandChild->setFixedToContainerLayer(true); // greatGrandChild is positioned upside-down with respect to the renderTarget.
 
     // Case 1: scrollDelta of 0, 0
     child->setScrollDelta(IntSize(0, 0));
@@ -1444,7 +1444,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     child->setTransform(rotationAboutZ);
     grandChild->setPosition(FloatPoint(8, 6));
     grandChild->setTransform(rotationAboutZ);
-    greatGrandChild->setFixedToContainerLayer(true); // greatGrandChild is positioned upside-down with respect to the targetRenderSurface
+    greatGrandChild->setFixedToContainerLayer(true); // greatGrandChild is positioned upside-down with respect to the renderTarget.
 
     // Case 1: scrollDelta of 0, 0
     child->setScrollDelta(IntSize(0, 0));
@@ -1685,7 +1685,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 {
     // This test checks for correct scroll compensation when the fixed-position container
     // itself has a renderSurface. In this case, the container layer should be treated
-    // like a layer that contributes to a targetRenderSurface, and that targetRenderSurface
+    // like a layer that contributes to a renderTarget, and that renderTarget
     // is completely irrelevant; it should not affect the scroll compensation.
     DebugScopedSetImplThread scopedImplThread;
 
@@ -2231,19 +2231,19 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     ASSERT_FALSE(childOfRS2->renderSurface());
     ASSERT_FALSE(grandChildOfRS2->renderSurface());
 
-    // Verify all targetRenderSurface accessors
+    // Verify all renderTarget accessors
     //
-    EXPECT_EQ(parent->renderSurface(), parent->targetRenderSurface());
-    EXPECT_EQ(parent->renderSurface(), childOfRoot->targetRenderSurface());
-    EXPECT_EQ(parent->renderSurface(), grandChildOfRoot->targetRenderSurface());
+    EXPECT_EQ(parent, parent->renderTarget());
+    EXPECT_EQ(parent, childOfRoot->renderTarget());
+    EXPECT_EQ(parent, grandChildOfRoot->renderTarget());
 
-    EXPECT_EQ(renderSurface1->renderSurface(), renderSurface1->targetRenderSurface());
-    EXPECT_EQ(renderSurface1->renderSurface(), childOfRS1->targetRenderSurface());
-    EXPECT_EQ(renderSurface1->renderSurface(), grandChildOfRS1->targetRenderSurface());
+    EXPECT_EQ(renderSurface1, renderSurface1->renderTarget());
+    EXPECT_EQ(renderSurface1, childOfRS1->renderTarget());
+    EXPECT_EQ(renderSurface1, grandChildOfRS1->renderTarget());
 
-    EXPECT_EQ(renderSurface2->renderSurface(), renderSurface2->targetRenderSurface());
-    EXPECT_EQ(renderSurface2->renderSurface(), childOfRS2->targetRenderSurface());
-    EXPECT_EQ(renderSurface2->renderSurface(), grandChildOfRS2->targetRenderSurface());
+    EXPECT_EQ(renderSurface2, renderSurface2->renderTarget());
+    EXPECT_EQ(renderSurface2, childOfRS2->renderTarget());
+    EXPECT_EQ(renderSurface2, grandChildOfRS2->renderTarget());
 
     // Verify drawOpacityIsAnimating values
     //
@@ -3789,7 +3789,7 @@ TEST(CCLayerTreeHostCommonTest, verifySubtreeSearch)
 //  - add a case that checks if a render surface's replicaTransform is computed correctly.
 //  - test all the conditions under which render surfaces are created
 //  - if possible, test all conditions under which render surfaces are not created
-//  - verify that the layer lists of render surfaces are correct, verify that "targetRenderSurface" values for each layer are correct.
+//  - verify that the layer lists of render surfaces are correct, verify that renderTarget's RenderSurface values for each layer are correct.
 //  - test the computation of clip rects and content rects
 //  - test the special cases for mask layers and replica layers
 //  - test the other functions in CCLayerTreeHostCommon

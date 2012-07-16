@@ -84,7 +84,7 @@ bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
 
 bool CCQuadCuller::appendSurface(PassOwnPtr<CCDrawQuad> passDrawQuad)
 {
-    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer->renderSurface(), false, passDrawQuad->quadRect());
+    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer, false, passDrawQuad->quadRect());
     return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker, m_showCullingWithDebugBorderQuads);
 }
 

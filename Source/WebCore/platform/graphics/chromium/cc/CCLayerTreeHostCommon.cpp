@@ -68,7 +68,8 @@ IntRect CCLayerTreeHostCommon::calculateVisibleRect(const IntRect& targetSurface
 template<typename LayerType, typename RenderSurfaceType>
 static IntRect calculateLayerScissorRect(LayerType* layer, const FloatRect& rootScissorRect)
 {
-    RenderSurfaceType* targetSurface = layer->targetRenderSurface();
+    LayerType* renderTarget = layer->renderTarget();
+    RenderSurfaceType* targetSurface = renderTarget->renderSurface();
 
     FloatRect rootScissorRectInTargetSurface = targetSurface->computeRootScissorRectInCurrentSurface(rootScissorRect);
     FloatRect clipAndDamage;
@@ -84,7 +85,9 @@ template<typename LayerType, typename RenderSurfaceType>
 static IntRect calculateSurfaceScissorRect(LayerType* layer, const FloatRect& rootScissorRect)
 {
     LayerType* parentLayer = layer->parent();
-    RenderSurfaceType* targetSurface = parentLayer->targetRenderSurface();
+    LayerType* renderTarget = parentLayer->renderTarget();
+
+    RenderSurfaceType* targetSurface = renderTarget->renderSurface();
     ASSERT(targetSurface);
 
     RenderSurfaceType* currentSurface = layer->renderSurface();
@@ -155,9 +158,9 @@ static bool isSurfaceBackFaceVisible(LayerType* layer, const WebTransformationMa
 template<typename LayerType>
 static IntRect calculateVisibleContentRect(LayerType* layer)
 {
-    ASSERT(layer->targetRenderSurface());
+    ASSERT(layer->renderTarget());
 
-    IntRect targetSurfaceRect = layer->targetRenderSurface()->contentRect();
+    IntRect targetSurfaceRect = layer->renderTarget()->renderSurface()->contentRect();
 
     if (layer->usesLayerClipping())
         targetSurfaceRect.intersect(layer->clipRect());
@@ -321,7 +324,7 @@ WebTransformationMatrix computeScrollCompensationForThisLayer(CCLayerImpl* scrol
     //
     // These steps create a matrix that both start and end in targetSurfaceSpace. So this matrix can
     // pre-multiply any fixed-position layer's drawTransform to undo the scrollDeltas -- as long as
-    // that fixed position layer is fixed onto the same targetRenderSurface as this scrollingLayer.
+    // that fixed position layer is fixed onto the same renderTarget as this scrollingLayer.
     //
 
     WebTransformationMatrix partialLayerOriginTransform = parentMatrix;
@@ -610,10 +613,10 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
         layer->setClipRect(IntRect());
 
         if (layer->maskLayer())
-            layer->maskLayer()->setTargetRenderSurface(renderSurface);
+            layer->maskLayer()->setRenderTarget(layer);
 
         if (layer->replicaLayer() && layer->replicaLayer()->maskLayer())
-            layer->replicaLayer()->maskLayer()->setTargetRenderSurface(renderSurface);
+            layer->replicaLayer()->maskLayer()->setRenderTarget(layer);
 
         renderSurface->setFilters(layer->filters());
         if (renderSurface->filters().hasFilterThatMovesPixels())
@@ -641,8 +644,8 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
             if (layer->parent()->usesLayerClipping())
                 layer->setUsesLayerClipping(true);
 
-            // Layers without their own renderSurface will render into the nearest ancestor surface.
-            layer->setTargetRenderSurface(layer->parent()->targetRenderSurface());
+            // Layers that are not their own renderTarget will render into the target of their nearest ancestor.
+            layer->setRenderTarget(layer->parent()->renderTarget());
         }
     }
 
@@ -918,7 +921,8 @@ static bool pointIsClippedBySurfaceOrClipRect(const IntPoint& viewportPoint, CCL
 
         // Note that clipRects are actually in targetSurface space, so the transform we
         // have to provide is the target surface's screenSpaceTransform.
-        if (currentLayer->usesLayerClipping() && !pointHitsRect(viewportPoint, currentLayer->targetRenderSurface()->screenSpaceTransform(), currentLayer->clipRect()))
+        CCLayerImpl* renderTarget = currentLayer->renderTarget();
+        if (currentLayer->usesLayerClipping() && !pointHitsRect(viewportPoint, renderTarget->renderSurface()->screenSpaceTransform(), currentLayer->clipRect()))
             return true;
 
         currentLayer = currentLayer->parent();

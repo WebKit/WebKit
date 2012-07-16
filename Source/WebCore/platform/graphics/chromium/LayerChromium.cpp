@@ -87,7 +87,7 @@ LayerChromium::LayerChromium()
     , m_replicaLayer(0)
     , m_drawOpacity(0)
     , m_drawOpacityIsAnimating(false)
-    , m_targetRenderSurface(0)
+    , m_renderTarget(0)
     , m_drawTransformIsAnimating(false)
     , m_screenSpaceTransformIsAnimating(false)
     , m_contentsScale(1.0)
@@ -629,7 +629,7 @@ void LayerChromium::createRenderSurface()
 {
     ASSERT(!m_renderSurface);
     m_renderSurface = adoptPtr(new RenderSurfaceChromium(this));
-    setTargetRenderSurface(m_renderSurface.get());
+    setRenderTarget(this);
 }
 
 bool LayerChromium::descendantDrawsContent()

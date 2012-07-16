@@ -125,18 +125,16 @@ void FakeTiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& ca
 {
     // Ensure there is always a target render surface available. If none has been
     // set (the layer is an orphan for the test), then just set a surface on itself.
-    bool missingTargetRenderSurface = !targetRenderSurface();
+    bool missingTargetRenderSurface = !renderTarget();
 
-    if (missingTargetRenderSurface) {
+    if (missingTargetRenderSurface)
         createRenderSurface();
-        setTargetRenderSurface(renderSurface());
-    }
 
     TiledLayerChromium::setTexturePriorities(calculator);
 
     if (missingTargetRenderSurface) {
         clearRenderSurface();
-        setTargetRenderSurface(0);
+        setRenderTarget(0);
     }
 }
 

@@ -80,11 +80,10 @@ static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const We
 
     if (!parent) {
         layer->createRenderSurface();
-        layer->setTargetRenderSurface(layer->renderSurface());
         surfaceLayerList.append(layer.get());
         layer->renderSurface()->layerList().append(layer.get());
     } else {
-        layer->setTargetRenderSurface(parent->targetRenderSurface());
+        layer->setRenderTarget(parent->renderTarget());
         parent->renderSurface()->layerList().append(layer.get());
     }
 

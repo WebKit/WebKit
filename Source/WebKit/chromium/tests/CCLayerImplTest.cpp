@@ -170,7 +170,7 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setClipRect(arbitraryIntRect));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setUsesLayerClipping(true));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setDrawOpacity(arbitraryNumber));
-    EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setTargetRenderSurface(0));
+    EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setRenderTarget(0));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setDrawTransform(arbitraryTransform));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setScreenSpaceTransform(arbitraryTransform));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setDrawableContentRect(arbitraryIntRect));

@@ -71,7 +71,7 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_isContainerForFixedPositionLayers(false)
     , m_fixedToContainerLayer(false)
     , m_pageScaleDelta(1)
-    , m_targetRenderSurface(0)
+    , m_renderTarget(0)
     , m_drawDepth(0)
     , m_drawOpacity(0)
     , m_drawOpacityIsAnimating(false)
@@ -133,7 +133,7 @@ void CCLayerImpl::createRenderSurface()
 {
     ASSERT(!m_renderSurface);
     m_renderSurface = adoptPtr(new CCRenderSurface(this));
-    setTargetRenderSurface(m_renderSurface.get());
+    setRenderTarget(this);
 }
 
 bool CCLayerImpl::descendantDrawsContent()
@@ -260,9 +260,9 @@ void CCLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
     writeIndent(ts, indent);
     ts << "bounds: " << bounds().width() << ", " << bounds().height() << "\n";
 
-    if (m_targetRenderSurface) {
+    if (m_renderTarget) {
         writeIndent(ts, indent);
-        ts << "targetRenderSurface: " << m_targetRenderSurface->name() << "\n";
+        ts << "renderTarget: " << m_renderTarget->m_layerId << "\n";
     }
 
     writeIndent(ts, indent);

@@ -114,7 +114,6 @@ public:
     Vector<CCLayerImpl*>& layerList() { return m_layerList; }
 
     int owningLayerId() const;
-    CCRenderSurface* targetRenderSurface() const;
 
     bool hasReplica() const;
 

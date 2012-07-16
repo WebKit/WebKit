@@ -1044,7 +1044,7 @@ protected:
         occlusion.setLayerScissorRect(IntRect(-20, -20, 1000, 1000));
 
         // There is nothing above child2's surface in the z-order.
-        EXPECT_INT_RECT_EQ(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2->renderSurface(), false, IntRect(-10, 420, 70, 80)));
+        EXPECT_INT_RECT_EQ(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2, false, IntRect(-10, 420, 70, 80)));
 
         this->leaveContributingSurface(child2, occlusion);
         this->visitLayer(layer1, occlusion);
@@ -1062,7 +1062,7 @@ protected:
         EXPECT_FALSE(occlusion.occluded(child1, IntRect(-10, 430, 80, 71)));
 
         // child2's contents will occlude child1 below it.
-        EXPECT_INT_RECT_EQ(IntRect(-10, 430, 10, 70), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(-10, 430, 80, 70)));
+        EXPECT_INT_RECT_EQ(IntRect(-10, 430, 10, 70), occlusion.unoccludedContributingSurfaceContentRect(child1, false, IntRect(-10, 430, 80, 70)));
 
         this->leaveContributingSurface(child1, occlusion);
         this->enterLayer(parent, occlusion);
@@ -1153,7 +1153,7 @@ protected:
         this->enterContributingSurface(child2, occlusion);
 
         // There is nothing above child2's surface in the z-order.
-        EXPECT_INT_RECT_EQ(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2->renderSurface(), false, IntRect(-10, 420, 70, 80)));
+        EXPECT_INT_RECT_EQ(IntRect(-10, 420, 70, 80), occlusion.unoccludedContributingSurfaceContentRect(child2, false, IntRect(-10, 420, 70, 80)));
 
         this->leaveContributingSurface(child2, occlusion);
         this->visitLayer(layer1, occlusion);
@@ -1171,9 +1171,9 @@ protected:
         EXPECT_FALSE(occlusion.occluded(child1, IntRect(421, -20, 80, 90)));
 
         // child2's contents will occlude child1 below it.
-        EXPECT_INT_RECT_EQ(IntRect(420, -20, 80, 90), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(420, -20, 80, 90)));
-        EXPECT_INT_RECT_EQ(IntRect(490, -10, 10, 80), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(420, -10, 80, 90)));
-        EXPECT_INT_RECT_EQ(IntRect(420, -20, 70, 10), occlusion.unoccludedContributingSurfaceContentRect(child1->renderSurface(), false, IntRect(420, -20, 70, 90)));
+        EXPECT_INT_RECT_EQ(IntRect(420, -20, 80, 90), occlusion.unoccludedContributingSurfaceContentRect(child1, false, IntRect(420, -20, 80, 90)));
+        EXPECT_INT_RECT_EQ(IntRect(490, -10, 10, 80), occlusion.unoccludedContributingSurfaceContentRect(child1, false, IntRect(420, -10, 80, 90)));
+        EXPECT_INT_RECT_EQ(IntRect(420, -20, 70, 10), occlusion.unoccludedContributingSurfaceContentRect(child1, false, IntRect(420, -20, 70, 90)));
 
         this->leaveContributingSurface(child1, occlusion);
         this->enterLayer(parent, occlusion);
@@ -2077,7 +2077,7 @@ protected:
 
         this->enterContributingSurface(surface, occlusion);
         // Occlusion within the surface is lost when leaving the animating surface.
-        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 300, 300)));
         this->leaveContributingSurface(surface, occlusion);
 
         this->visitLayer(layer, occlusion);
@@ -2129,7 +2129,7 @@ protected:
 
         this->enterContributingSurface(surface, occlusion);
         // Occlusion within the surface is lost when leaving the animating surface.
-        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 250, 300), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 300, 300)));
         this->leaveContributingSurface(surface, occlusion);
 
         this->visitLayer(layer, occlusion);
@@ -2218,7 +2218,7 @@ protected:
 
         this->enterContributingSurface(surface, occlusion);
         // The contributing |surface| is animating so it can't be occluded.
-        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 300), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 300, 300), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 300, 300)));
         this->leaveContributingSurface(surface, occlusion);
 
         this->enterLayer(layer, occlusion);
@@ -2333,7 +2333,7 @@ protected:
         this->enterContributingSurface(surface, occlusion);
 
         // Surface is not occluded so it shouldn't think it is.
-        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
     }
 };
 
@@ -2371,8 +2371,8 @@ protected:
         this->enterContributingSurface(surface, occlusion);
 
         // Surface is occluded, but only the top 10px of the replica.
-        EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
-        EXPECT_INT_RECT_EQ(IntRect(0, 10, 100, 90), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), true, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 0, 0), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 10, 100, 90), occlusion.unoccludedContributingSurfaceContentRect(surface, true, IntRect(0, 0, 100, 100)));
     }
 };
 
@@ -2412,8 +2412,8 @@ protected:
         this->enterContributingSurface(surface, occlusion);
 
         // Surface and replica are occluded different amounts.
-        EXPECT_INT_RECT_EQ(IntRect(40, 0, 60, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
-        EXPECT_INT_RECT_EQ(IntRect(50, 0, 50, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), true, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(40, 0, 60, 100), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(50, 0, 50, 100), occlusion.unoccludedContributingSurfaceContentRect(surface, true, IntRect(0, 0, 100, 100)));
     }
 };
 
@@ -2458,7 +2458,7 @@ protected:
         this->enterContributingSurface(surfaceChild, occlusion);
         // The surfaceChild's parent does not have a clipRect as it owns a render surface. Make sure the unoccluded rect
         // does not get clipped away inappropriately.
-        EXPECT_INT_RECT_EQ(IntRect(0, 40, 100, 10), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild->renderSurface(), false, IntRect(0, 0, 100, 50)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 40, 100, 10), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild, false, IntRect(0, 0, 100, 50)));
         this->leaveContributingSurface(surfaceChild, occlusion);
 
         // When the surfaceChild's occlusion is transformed up to its parent, make sure it is not clipped away inappropriately also.
@@ -2471,7 +2471,7 @@ protected:
 
         this->enterContributingSurface(surface, occlusion);
         // The surface's parent does have a clipRect as it is the root layer.
-        EXPECT_INT_RECT_EQ(IntRect(0, 50, 100, 50), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 50, 100, 50), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
     }
 };
 
@@ -2497,7 +2497,7 @@ protected:
             // The root layer always has a clipRect. So the parent of |surface| has a clipRect giving the surface itself a clipRect.
             this->enterContributingSurface(surface, occlusion);
             // Make sure the parent's clipRect clips the unoccluded region of the child surface.
-            EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 200), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 300)));
+            EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 200), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 300)));
         }
         this->resetLayerIterator();
         {
@@ -2509,7 +2509,7 @@ protected:
             // The root layer always has a clipRect. So the parent of |surface| has a clipRect giving the surface itself a clipRect.
             this->enterContributingSurface(surface, occlusion);
             // Make sure the screen scissor rect clips the unoccluded region of the child surface.
-            EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 300)));
+            EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 300)));
         }
     }
 };
@@ -2554,13 +2554,13 @@ protected:
 
         this->enterContributingSurface(surfaceChild, occlusion);
         // The surfaceChild's parent does not have a clipRect as it owns a render surface.
-        EXPECT_INT_RECT_EQ(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surfaceChild, false, IntRect(0, 0, 100, 100)));
         this->leaveContributingSurface(surfaceChild, occlusion);
 
         this->visitLayer(surface, occlusion);
         this->enterContributingSurface(surface, occlusion);
         // The surface's parent does have a clipRect as it is the root layer.
-        EXPECT_INT_RECT_EQ(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surface->renderSurface(), false, IntRect(0, 0, 100, 100)));
+        EXPECT_INT_RECT_EQ(IntRect(0, 50, 80, 50), occlusion.unoccludedContributingSurfaceContentRect(surface, false, IntRect(0, 0, 100, 100)));
     }
 };
 

@@ -525,7 +525,7 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
     resetUpdateState();
 
     IntRect prepaintRect = idlePaintRect(visibleContentRect);
-    bool drawsToRootSurface = !targetRenderSurface()->targetRenderSurface();
+    bool drawsToRoot = !renderTarget()->parent();
 
     // Minimally create the tiles in the desired pre-paint rect.
     if (!prepaintRect.isEmpty()) {
@@ -561,7 +561,7 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
 
                 tile->dirtyRect = m_tiler->tileRect(tile);
                 LayerTextureUpdater::Texture* backBuffer = tile->texture();
-                backBuffer->texture()->setRequestPriority(priorityCalc.priorityFromVisibility(true, drawsToRootSurface));
+                backBuffer->texture()->setRequestPriority(priorityCalc.priorityFromVisibility(true, drawsToRoot));
                 OwnPtr<CCPrioritizedTexture> frontBuffer = CCPrioritizedTexture::create(backBuffer->texture()->textureManager(),
                                                                                         backBuffer->texture()->size(),
                                                                                         backBuffer->texture()->format());
@@ -581,9 +581,9 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
         // 512 pixels of pre-painting. Later we can just pass an animating flag etc. to the
         // calculator and it can take care of this special case if we still need it.
         if (visibleContentRect.isEmpty() && !prepaintRect.isEmpty())
-            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(512, drawsToRootSurface));
+            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(512, drawsToRoot));
         else if (!visibleContentRect.isEmpty())
-            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(visibleContentRect, tileRect, drawsToRootSurface));
+            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(visibleContentRect, tileRect, drawsToRoot));
     }
 }
 

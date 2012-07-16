@@ -1107,7 +1107,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForEmptyLayerList)
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     root->createRenderSurface();
 
-    ASSERT_TRUE(root->renderSurface() == root->targetRenderSurface());
+    ASSERT_TRUE(root == root->renderTarget());
     CCRenderSurface* targetSurface = root->renderSurface();
     targetSurface->clearLayerList();
     targetSurface->damageTracker()->updateDamageTrackingState(targetSurface->layerList(), targetSurface->owningLayerId(), false, IntRect(), 0, WebFilterOperations());

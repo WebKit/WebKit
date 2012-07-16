@@ -258,19 +258,19 @@ void ScrollbarLayerChromium::setTexturePriorities(const CCPriorityCalculator&)
 
     createTextureUpdaterIfNeeded();
 
-    bool drawsToRootSurface = !targetRenderSurface()->targetRenderSurface();
+    bool drawsToRoot = !renderTarget()->parent();
     if (m_backTrack) {
         m_backTrack->texture()->setDimensions(contentBounds(), m_textureFormat);
-        m_backTrack->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRootSurface));
+        m_backTrack->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRoot));
     }
     if (m_foreTrack) {
         m_foreTrack->texture()->setDimensions(contentBounds(), m_textureFormat);
-        m_foreTrack->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRootSurface));
+        m_foreTrack->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRoot));
     }
     if (m_thumb) {
         IntSize thumbSize = theme()->thumbRect(m_scrollbar.get()).size();
         m_thumb->texture()->setDimensions(thumbSize, m_textureFormat);
-        m_thumb->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRootSurface));
+        m_thumb->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRoot));
     }
 }
 

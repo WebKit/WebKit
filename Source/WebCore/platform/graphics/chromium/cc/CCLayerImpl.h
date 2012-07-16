@@ -181,8 +181,8 @@ public:
     const IntRect& scissorRect() const { return m_scissorRect; }
     void setScissorRect(const IntRect& rect) { m_scissorRect = rect; }
 
-    CCRenderSurface* targetRenderSurface() const { return m_targetRenderSurface; }
-    void setTargetRenderSurface(CCRenderSurface* surface) { m_targetRenderSurface = surface; }
+    CCLayerImpl* renderTarget() const { ASSERT(!m_renderTarget || m_renderTarget->renderSurface()); return m_renderTarget; }
+    void setRenderTarget(CCLayerImpl* target) { m_renderTarget = target; }
 
     void setBounds(const IntSize&);
     const IntSize& bounds() const { return m_bounds; }
@@ -358,11 +358,10 @@ private:
     IntSize m_maxScrollPosition;
     float m_pageScaleDelta;
 
-    // Render surface this layer draws into. This is a surface that can belong
-    // either to this layer (if m_targetRenderSurface == m_renderSurface) or
-    // to an ancestor of this layer. The target render surface determines the
-    // coordinate system the layer's transforms are relative to.
-    CCRenderSurface* m_targetRenderSurface;
+    // The layer whose coordinate space this layer draws into. This can be
+    // either the same layer (m_renderTarget == this) or an ancestor of this
+    // layer.
+    CCLayerImpl* m_renderTarget;
 
     // The global depth value of the center of the layer. This value is used
     // to sort layers from back to front.

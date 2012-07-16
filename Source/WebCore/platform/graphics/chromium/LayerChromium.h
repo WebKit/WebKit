@@ -234,8 +234,8 @@ public:
 
     const IntRect& clipRect() const { return m_clipRect; }
     void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
-    RenderSurfaceChromium* targetRenderSurface() const { return m_targetRenderSurface; }
-    void setTargetRenderSurface(RenderSurfaceChromium* surface) { m_targetRenderSurface = surface; }
+    LayerChromium* renderTarget() const { ASSERT(!m_renderTarget || m_renderTarget->renderSurface()); return m_renderTarget; }
+    void setRenderTarget(LayerChromium* target) { m_renderTarget = target; }
 
     bool drawTransformIsAnimating() const { return m_drawTransformIsAnimating; }
     void setDrawTransformIsAnimating(bool animating) { m_drawTransformIsAnimating = animating; }
@@ -348,7 +348,7 @@ private:
 
     // During drawing, identifies the region outside of which nothing should be drawn.
     // Currently this is set to layer's clipRect if usesLayerClipping is true, otherwise
-    // it's targetRenderSurface's contentRect.
+    // it's renderTarget's RenderSurface contentRect.
     // Uses target surface's space.
     IntRect m_scissorRect;
     IntPoint m_scrollPosition;
@@ -395,7 +395,7 @@ private:
 
     // Uses target surface space.
     IntRect m_clipRect;
-    RenderSurfaceChromium* m_targetRenderSurface;
+    LayerChromium* m_renderTarget;
     WebKit::WebTransformationMatrix m_drawTransform;
     WebKit::WebTransformationMatrix m_screenSpaceTransform;
     bool m_drawTransformIsAnimating;
