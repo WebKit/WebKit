@@ -1,3 +1,13 @@
+2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Several media tests are flaky in DEBUG mode
+        https://bugs.webkit.org/show_bug.cgi?id=91347
+
+        Unreviewed EFL gardening. Add to TestExpectations a
+        few media tests which are flaky in DEBUG mode only.
+
+        * platform/efl/TestExpectations:
+
 2012-07-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r122660): Cannot iterate over HTMLCollection that contains non-child descendent nodes in some conditions
