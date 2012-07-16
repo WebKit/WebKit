@@ -1,3 +1,17 @@
+2012-07-16  Min Qin  <qinmin@chromium.org>
+
+        [Android] remove RenderThemeChromiumAndroid::paintMediaFullscreenButton()
+        https://bugs.webkit.org/show_bug.cgi?id=91291
+
+        Reviewed by Adam Barth.
+
+        The recent media control refactoring added paintMediaFullscreenButton() in RenderThemeChromiumSkia.
+        Since RenderThemeChromiumAndroid inherits from that class, we don't need to redefine this function.
+        No test needed as this change just removes an unnecessary override.
+
+        * rendering/RenderThemeChromiumAndroid.cpp:
+        * rendering/RenderThemeChromiumAndroid.h:
+
 2012-07-16  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: fix output write logic to support incremental build
