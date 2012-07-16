@@ -1,5 +1,15 @@
 2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Mark a few media tests as flaky on RELEASE bot as well
+        https://bugs.webkit.org/show_bug.cgi?id=91361
+
+        Unreviewed EFL gardening. Mark a few media test as flaky on
+        the RELEASE bot as well.
+
+        * platform/efl/TestExpectations:
+
+2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Skip css3/flexbox/flexbox-overflow-auto.html
         https://bugs.webkit.org/show_bug.cgi?id=91360
 

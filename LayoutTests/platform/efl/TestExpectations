@@ -165,18 +165,18 @@ BUGWK86082 : security/block-test.html = TEXT PASS
 BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
 BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
 
-// Several media tests are flaky in DEBUG mode only
-BUGWKEFL DEBUG : media/controls-styling.html = TEXT PASS
-BUGWKEFL DEBUG : media/video-display-toggle.html = TEXT PASS
-BUGWKEFL DEBUG : media/controls-after-reload.html = TEXT PASS
-BUGWKEFL DEBUG : media/controls-without-preload.html = TEXT PASS
-BUGWKEFL DEBUG : media/video-controls-rendering.html = TEXT PASS
-BUGWKEFL DEBUG : media/video-zoom-controls.html = TEXT PASS
-BUGWKEFL DEBUG : media/video-empty-source.html = TEXT PASS
-BUGWKEFL DEBUG : media/controls-strict.html = TEXT PASS
-BUGWKEFL DEBUG : media/media-volume-slider-rendered-normal.html = TEXT PASS
-BUGWKEFL DEBUG : media/media-document-audio-repaint.html = TEXT PASS
-BUGWKEFL DEBUG : media/media-controls-clone.html = TEXT PASS
+// Several media tests are flaky on the bots
+BUGWKEFL : media/controls-styling.html = TEXT PASS
+BUGWKEFL : media/video-display-toggle.html = TEXT PASS
+BUGWKEFL : media/controls-after-reload.html = TEXT PASS
+BUGWKEFL : media/controls-without-preload.html = TEXT PASS
+BUGWKEFL : media/video-controls-rendering.html = TEXT PASS
+BUGWKEFL : media/video-zoom-controls.html = TEXT PASS
+BUGWKEFL : media/video-empty-source.html = TEXT PASS
+BUGWKEFL : media/controls-strict.html = TEXT PASS
+BUGWKEFL : media/media-volume-slider-rendered-normal.html = TEXT PASS
+BUGWKEFL : media/media-document-audio-repaint.html = TEXT PASS
+BUGWKEFL : media/media-controls-clone.html = TEXT PASS
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FAILING TESTS
