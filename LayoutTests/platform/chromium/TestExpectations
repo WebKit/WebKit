@@ -3737,6 +3737,9 @@ BUGWK90900 MAC : tables/mozilla_expected_failures/other/empty_cells.html = PASS 
 BUGWK90980 LINUX MAC DEBUG : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 
+// Flaky since creation in 122626
+BUGWK91373 WIN : pointer-lock/locked-element-removed-from-dom.html = PASS TEXT
+
 // Started crashing after 122286
 BUGWK91133 WIN : storage/indexeddb/constants.html = PASS CRASH
 
