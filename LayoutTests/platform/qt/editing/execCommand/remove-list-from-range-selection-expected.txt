@@ -9,27 +9,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 580x21
-          text run at (0,0) width 580: "This tests Insert{Un}OrderedList on a range selection that is entirely within one list."
-      RenderBlock {DIV} at (0,37) size 784x121
-        RenderBlock (anonymous) at (0,0) size 784x84
-          RenderText {#text} at (0,0) size 82x21
-            text run at (0,0) width 82: "None of the"
-          RenderBR {BR} at (82,16) size 0x0
-          RenderText {#text} at (0,21) size 116x21
-            text run at (0,21) width 116: "selected content"
-          RenderBR {BR} at (116,37) size 0x0
-          RenderText {#text} at (0,42) size 70x21
-            text run at (0,42) width 70: "should be"
-          RenderBR {BR} at (70,58) size 0x0
-          RenderText {#text} at (0,63) size 54x21
-            text run at (0,63) width 54: "in a list."
-          RenderBR {BR} at (54,79) size 0x0
-        RenderBlock {OL} at (0,100) size 784x21
-          RenderListItem {LI} at (40,0) size 744x21
-            RenderListMarker at (-22,0) size 17x21: "1"
-            RenderText {#text} at (0,0) size 358x21
-              text run at (0,0) width 358: "This should be in a list and should not be selected."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 499x19
+          text run at (0,0) width 499: "This tests Insert{Un}OrderedList on a range selection that is entirely within one list."
+      RenderBlock {DIV} at (0,35) size 784x111
+        RenderBlock (anonymous) at (0,0) size 784x76
+          RenderText {#text} at (0,0) size 72x19
+            text run at (0,0) width 72: "None of the"
+          RenderBR {BR} at (72,15) size 0x0
+          RenderText {#text} at (0,19) size 97x19
+            text run at (0,19) width 97: "selected content"
+          RenderBR {BR} at (97,34) size 0x0
+          RenderText {#text} at (0,38) size 58x19
+            text run at (0,38) width 58: "should be"
+          RenderBR {BR} at (58,53) size 0x0
+          RenderText {#text} at (0,57) size 45x19
+            text run at (0,57) width 45: "in a list."
+          RenderBR {BR} at (45,72) size 0x0
+        RenderBlock {OL} at (0,92) size 784x19
+          RenderListItem {LI} at (40,0) size 744x19
+            RenderListMarker at (-21,0) size 16x19: "1"
+            RenderText {#text} at (0,0) size 300x19
+              text run at (0,0) width 300: "This should be in a list and should not be selected."
 selection start: position 2 of child 0 {#text} of child 2 {DIV} of body
 selection end:   position 2 of child 6 {#text} of child 2 {DIV} of body

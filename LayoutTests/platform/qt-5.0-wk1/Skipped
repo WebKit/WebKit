@@ -425,7 +425,6 @@ tables/mozilla_expected_failures/bugs/bug8499.html
 # new failures after https://trac.webkit.org/changeset/121971 - needs more investigation
 css3/calc/table-calcs.html
 editing/deleting/delete-block-table.html
-editing/execCommand/createLink.html
 editing/pasteboard/paste-plaintext-user-select-none.html
 fast/canvas/canvas-strokeText-strokes-shadow.html
 fast/css/counters/counter-traverse-table-cell.html

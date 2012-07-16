@@ -1,3 +1,87 @@
+2012-07-16  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] platform/qt/editing/execCommand tests update after the font change.
+        https://bugs.webkit.org/show_bug.cgi?id=91246.
+
+        Unreviewed rebaseline.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt/editing/execCommand/4580583-1-expected.png:
+        * platform/qt/editing/execCommand/4580583-1-expected.txt:
+        * platform/qt/editing/execCommand/4580583-2-expected.png:
+        * platform/qt/editing/execCommand/4580583-2-expected.txt:
+        * platform/qt/editing/execCommand/4641880-1-expected.png:
+        * platform/qt/editing/execCommand/4641880-1-expected.txt:
+        * platform/qt/editing/execCommand/4641880-2-expected.png:
+        * platform/qt/editing/execCommand/4641880-2-expected.txt:
+        * platform/qt/editing/execCommand/4747450-expected.png:
+        * platform/qt/editing/execCommand/4747450-expected.txt:
+        * platform/qt/editing/execCommand/4916402-expected.png:
+        * platform/qt/editing/execCommand/4916402-expected.txt:
+        * platform/qt/editing/execCommand/4916541-expected.png:
+        * platform/qt/editing/execCommand/4916541-expected.txt:
+        * platform/qt/editing/execCommand/4924441-expected.png:
+        * platform/qt/editing/execCommand/4924441-expected.txt:
+        * platform/qt/editing/execCommand/5080333-1-expected.png:
+        * platform/qt/editing/execCommand/5080333-1-expected.txt:
+        * platform/qt/editing/execCommand/5080333-2-expected.png:
+        * platform/qt/editing/execCommand/5080333-2-expected.txt:
+        * platform/qt/editing/execCommand/5136770-expected.png:
+        * platform/qt/editing/execCommand/5136770-expected.txt:
+        * platform/qt/editing/execCommand/5138441-expected.png:
+        * platform/qt/editing/execCommand/5138441-expected.txt:
+        * platform/qt/editing/execCommand/5142012-1-expected.png:
+        * platform/qt/editing/execCommand/5142012-1-expected.txt:
+        * platform/qt/editing/execCommand/5142012-2-expected.png:
+        * platform/qt/editing/execCommand/5142012-2-expected.txt:
+        * platform/qt/editing/execCommand/5190926-expected.png:
+        * platform/qt/editing/execCommand/5190926-expected.txt:
+        * platform/qt/editing/execCommand/5481523-expected.png:
+        * platform/qt/editing/execCommand/5481523-expected.txt:
+        * platform/qt/editing/execCommand/5482023-expected.png:
+        * platform/qt/editing/execCommand/5482023-expected.txt:
+        * platform/qt/editing/execCommand/5569741-expected.png:
+        * platform/qt/editing/execCommand/5569741-expected.txt:
+        * platform/qt/editing/execCommand/create-list-with-hr-expected.png:
+        * platform/qt/editing/execCommand/create-list-with-hr-expected.txt:
+        * platform/qt/editing/execCommand/find-after-replace-expected.png:
+        * platform/qt/editing/execCommand/find-after-replace-expected.txt:
+        * platform/qt/editing/execCommand/findString-2-expected.png:
+        * platform/qt/editing/execCommand/findString-2-expected.txt:
+        * platform/qt/editing/execCommand/findString-expected.png:
+        * platform/qt/editing/execCommand/findString-expected.txt:
+        * platform/qt/editing/execCommand/format-block-with-trailing-br-expected.png:
+        * platform/qt/editing/execCommand/format-block-with-trailing-br-expected.txt:
+        * platform/qt/editing/execCommand/indent-empty-root-expected.png:
+        * platform/qt/editing/execCommand/indent-empty-root-expected.txt:
+        * platform/qt/editing/execCommand/indent-list-item-expected.png:
+        * platform/qt/editing/execCommand/indent-list-item-expected.txt:
+        * platform/qt/editing/execCommand/indent-selection-expected.png:
+        * platform/qt/editing/execCommand/indent-selection-expected.txt:
+        * platform/qt/editing/execCommand/insert-list-and-stitch-expected.png:
+        * platform/qt/editing/execCommand/insert-list-and-stitch-expected.txt:
+        * platform/qt/editing/execCommand/insertHorizontalRule-expected.png:
+        * platform/qt/editing/execCommand/insertHorizontalRule-expected.txt:
+        * platform/qt/editing/execCommand/insertImage-expected.png:
+        * platform/qt/editing/execCommand/insertImage-expected.txt:
+        * platform/qt/editing/execCommand/nsresponder-indent-expected.png:
+        * platform/qt/editing/execCommand/nsresponder-indent-expected.txt:
+        * platform/qt/editing/execCommand/nsresponder-outdent-expected.png:
+        * platform/qt/editing/execCommand/nsresponder-outdent-expected.txt:
+        * platform/qt/editing/execCommand/paste-1-expected.png:
+        * platform/qt/editing/execCommand/paste-1-expected.txt:
+        * platform/qt/editing/execCommand/paste-2-expected.png:
+        * platform/qt/editing/execCommand/paste-2-expected.txt:
+        * platform/qt/editing/execCommand/print-expected.png:
+        * platform/qt/editing/execCommand/print-expected.txt:
+        * platform/qt/editing/execCommand/remove-list-from-range-selection-expected.png:
+        * platform/qt/editing/execCommand/remove-list-from-range-selection-expected.txt:
+        * platform/qt/editing/execCommand/remove-list-item-1-expected.png:
+        * platform/qt/editing/execCommand/remove-list-item-1-expected.txt:
+        * platform/qt/editing/execCommand/selectAll-expected.png:
+        * platform/qt/editing/execCommand/selectAll-expected.txt:
+
 2012-07-16  Adam Barth  <abarth@webkit.org>
 
         jquery/manipulation.html times out in release too.

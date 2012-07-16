@@ -9,20 +9,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 572x21
-          text run at (0,0) width 572: "This test pushes a horizontal rule into an unordered list with InsertUnorderedList. "
-        RenderInline {B} at (0,0) size 754x42
-          RenderText {#text} at (572,0) size 754x42
-            text run at (572,0) width 182: "This demonstrates what"
-            text run at (0,21) width 118: "might be a bug:"
-        RenderText {#text} at (118,21) size 473x21
-          text run at (118,21) width 473: " the horizontal rule appears before the list marker in the render tree."
-      RenderBlock {DIV} at (0,58) size 784x31
-        RenderBlock {UL} at (0,0) size 784x31
-          RenderListItem {LI} at (40,0) size 744x31
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 487x19
+          text run at (0,0) width 487: "This test pushes a horizontal rule into an unordered list with InsertUnorderedList. "
+        RenderInline {B} at (0,0) size 264x19
+          RenderText {#text} at (487,0) size 264x19
+            text run at (487,0) width 264: "This demonstrates what might be a bug:"
+        RenderText {#text} at (751,0) size 773x38
+          text run at (751,0) width 22: " the"
+          text run at (0,19) width 378: "horizontal rule appears before the list marker in the render tree."
+      RenderBlock {DIV} at (0,54) size 784x29
+        RenderBlock {UL} at (0,0) size 784x29
+          RenderListItem {LI} at (40,0) size 744x29
             RenderBlock {HR} at (0,0) size 744x2 [border: (1px inset #000000)]
-            RenderBlock (anonymous) at (0,10) size 744x21
-              RenderListMarker at (-18,0) size 7x21: bullet
-        RenderBlock (anonymous) at (0,47) size 784x0
+            RenderBlock (anonymous) at (0,10) size 744x19
+              RenderListMarker at (-18,0) size 7x19: bullet
+        RenderBlock (anonymous) at (0,45) size 784x0
 caret: position 0 of child 0 {HR} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body
