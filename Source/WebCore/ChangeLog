@@ -1,3 +1,21 @@
+2012-07-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r122660): Cannot iterate over HTMLCollection that contains non-child descendent nodes in some conditions
+        https://bugs.webkit.org/show_bug.cgi?id=91334
+
+        Reviewed by Ojan Vafai.
+
+        The bug was caused by using lastChild() as the starting node for traversePreviousNode. Since it's the inverse of
+        Node::traverseNextNode(), which visits nodes in pre order, we must start our search from the last descendent node,
+        which is visited traverseNextNode immediately before reaching the root node.
+
+        Test: fast/dom/htmlcollection-backwards-subtree-iteration.html
+
+        * html/HTMLCollection.cpp:
+        (WebCore::lastDescendent):
+        (WebCore):
+        (WebCore::itemBeforeOrAfter):
+
 2012-07-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Windowless WebView not firing JavaScript load event if there is a media element

@@ -1,3 +1,16 @@
+2012-07-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r122660): Cannot iterate over HTMLCollection that contains non-child descendent nodes in some conditions
+        https://bugs.webkit.org/show_bug.cgi?id=91334
+
+        Reviewed by Ojan Vafai.
+
+        Add a regression test. Without this patch, it results in an console error in release builds and an assertion failure
+        in debug builds.
+
+        * fast/dom/htmlcollection-backwards-subtree-iteration-expected.txt: Added.
+        * fast/dom/htmlcollection-backwards-subtree-iteration.html: Added.
+
 2012-07-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in fast/js, layers, leaks, line-grid, lists, loader, loading, media, mediastream, multicol, and mutation tests
