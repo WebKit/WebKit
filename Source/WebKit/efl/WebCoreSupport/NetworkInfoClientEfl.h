@@ -29,6 +29,8 @@
 #ifndef NetworkInfoClientEfl_h
 #define NetworkInfoClientEfl_h
 
+#if ENABLE(NETWORK_INFO)
+
 #include "NetworkInfoClient.h"
 #include "NetworkInfoController.h"
 
@@ -51,4 +53,5 @@ private:
 };
 }
 
+#endif
 #endif // NetworkInfoClientEfl_h

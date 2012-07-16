@@ -20,6 +20,8 @@
 #ifndef DeviceMotionClientEfl_h
 #define DeviceMotionClientEfl_h
 
+#if ENABLE(DEVICE_ORIENTATION)
+
 #include "DeviceMotionClient.h"
 #include "DeviceMotionData.h"
 
@@ -42,4 +44,5 @@ private:
 
 } // namespece WebCore
 
+#endif
 #endif // DeviceMotionClientEfl_h

@@ -75,9 +75,6 @@ IF (ENABLE_NETWORK_INFO)
     "${WEBCORE_DIR}/Modules/networkinfo"
      ${EEZE_INCLUDE_DIRS}
   )
-  LIST(APPEND WebKit_SOURCES
-    efl/WebCoreSupport/NetworkInfoClientEfl.cpp
-  )
   LIST(APPEND WebKit_LIBRARIES
     ${EEZE_LIBRARIES}
   )
@@ -86,6 +83,18 @@ ENDIF ()
 IF (ENABLE_NOTIFICATIONS)
   LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/notifications"
+  )
+ENDIF ()
+
+IF (ENABLE_VIBRATION)
+  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/Modules/vibration"
+  )
+ENDIF ()
+
+IF (ENABLE_BATTERY_STATUS)
+  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/Modules/battery"
   )
 ENDIF ()
 
@@ -102,16 +111,19 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/FrameNetworkingContextEfl.cpp
     efl/WebCoreSupport/FullscreenVideoControllerEfl.cpp
     efl/WebCoreSupport/IconDatabaseClientEfl.cpp
-    efl/WebCoreSupport/StorageTrackerClientEfl.cpp
     efl/WebCoreSupport/InspectorClientEfl.cpp
+    efl/WebCoreSupport/NetworkInfoClientEfl.cpp
     efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
     efl/WebCoreSupport/PageClientEfl.cpp
     efl/WebCoreSupport/PlatformStrategiesEfl.cpp 
+    efl/WebCoreSupport/StorageTrackerClientEfl.cpp
+    efl/WebCoreSupport/VibrationClientEfl.cpp
 
     efl/ewk/ewk_auth.cpp
     efl/ewk/ewk_auth_soup.cpp
     efl/ewk/ewk_contextmenu.cpp
     efl/ewk/ewk_cookies.cpp
+    efl/ewk/ewk_custom_handler.cpp
     efl/ewk/ewk_frame.cpp
     efl/ewk/ewk_history.cpp
     efl/ewk/ewk_intent.cpp
@@ -150,25 +162,6 @@ LIST(APPEND WebKit_LIBRARIES
     ${Glib_LIBRARIES}
     ${LIBSOUP24_LIBRARIES}
 )
-
-IF (ENABLE_VIBRATION)
-    LIST(APPEND WebKit_INCLUDE_DIRECTORIES
-        ${WEBCORE_DIR}/Modules/vibration
-    )
-    LIST(APPEND WebKit_SOURCES
-        efl/WebCoreSupport/VibrationClientEfl.cpp
-    )
-ENDIF ()
-
-IF (ENABLE_BATTERY_STATUS)
-    LIST(APPEND WebKit_INCLUDE_DIRECTORIES ${WEBCORE_DIR}/Modules/battery)
-ENDIF ()
-
-IF (ENABLE_REGISTER_PROTOCOL_HANDLER)
-    LIST(APPEND WebKit_SOURCES
-        efl/ewk/ewk_custom_handler.cpp
-    )
-ENDIF ()
 
 SET(WebKit_THEME_DEFINITION "")
 IF (ENABLE_PROGRESS_TAG)

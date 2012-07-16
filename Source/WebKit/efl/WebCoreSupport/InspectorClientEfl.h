@@ -32,6 +32,8 @@
 #ifndef InspectorClientEfl_h
 #define InspectorClientEfl_h
 
+#if ENABLE(INSPECTOR)
+
 #include "InspectorClient.h"
 #include "InspectorFrontendClientLocal.h"
 #include <Evas.h>
@@ -95,4 +97,5 @@ private:
 };
 }
 
+#endif
 #endif // InspectorClientEfl_h

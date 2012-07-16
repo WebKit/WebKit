@@ -1,3 +1,15 @@
+2012-07-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Move files guarded by #ifdef to existing file list.
+        https://bugs.webkit.org/show_bug.cgi?id=91336
+
+        Reviewed by Ryosuke Niwa.
+
+        Some EFL files are already guared by #ifdef. So, cmake files doesn't need to guard
+        them again. In addition, some files are missing #ifdef guard its header files. 
+
+        * PlatformEfl.cmake:
+
 2012-07-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [CMake] Proper handling of ENABLE_API_TESTS build option

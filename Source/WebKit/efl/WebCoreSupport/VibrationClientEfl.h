@@ -20,6 +20,8 @@
 #ifndef VibrationClientEfl_h
 #define VibrationClientEfl_h
 
+#if ENABLE(VIBRATION)
+
 #include "VibrationClient.h"
 #include <Evas.h>
 
@@ -41,5 +43,6 @@ private:
 
 } // namespace WebCore
 
+#endif
 #endif // VibrationClientEfl_h
 
