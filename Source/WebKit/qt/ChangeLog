@@ -1,3 +1,47 @@
+2012-07-16  Frederik Gladhorn  <frederik.gladhorn@nokia.com>
+
+        Accessible Widget for QWebView
+        https://bugs.webkit.org/show_bug.cgi?id=91073
+
+        Added classes that allow navigation to the web view widget.
+        This is the glue to later access webkit's accessible objects
+        though the Qt accessibility framework.
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+        * Api/qwebviewaccessible.cpp: Added.
+        (accessibleInterfaceFactory):
+        (QWebFrameAccessible::QWebFrameAccessible):
+        (QWebFrameAccessible::frame):
+        (QWebFrameAccessible::parent):
+        (QWebFrameAccessible::text):
+        (QWebFrameAccessible::childCount):
+        (QWebFrameAccessible::child):
+        (QWebFrameAccessible::indexOfChild):
+        (QWebFrameAccessible::state):
+        (QWebFrameAccessible::role):
+        (QWebFrameAccessible::navigate):
+        (QWebPageAccessible::QWebPageAccessible):
+        (QWebPageAccessible::page):
+        (QWebPageAccessible::text):
+        (QWebPageAccessible::parent):
+        (QWebPageAccessible::child):
+        (QWebPageAccessible::childCount):
+        (QWebPageAccessible::indexOfChild):
+        (QWebPageAccessible::navigate):
+        (QWebPageAccessible::role):
+        (QWebPageAccessible::state):
+        (QWebViewAccessible::QWebViewAccessible):
+        (QWebViewAccessible::view):
+        (QWebViewAccessible::childCount):
+        (QWebViewAccessible::child):
+        * Api/qwebviewaccessible_p.h: Added.
+        (QWebFrameAccessible):
+        (QWebPageAccessible):
+        (QWebViewAccessible):
+
 2012-07-12  Huang Dongsung  <luxtella@company100.net>
 
         [Qt] Increase the drawing performance by merging dirty rects.

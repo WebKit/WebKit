@@ -33,6 +33,11 @@
 #include "qprinter.h"
 #include "qdir.h"
 #include "qfile.h"
+#ifndef QT_NO_ACCESSIBILITY
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include "qwebviewaccessible_p.h"
+#endif
+#endif
 
 class QWebViewPrivate {
 public:
@@ -148,6 +153,23 @@ void QWebViewPrivate::_q_pageDestroyed()
     {Google Chat Example}, {Fancy Browser Example}
 */
 
+#ifndef QT_NO_ACCESSIBILITY
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+static QAccessibleInterface* accessibleInterfaceFactory(const QString& key, QObject* object)
+{
+    Q_UNUSED(key)
+
+    if (QWebPage* page = qobject_cast<QWebPage*>(object))
+        return new QWebPageAccessible(page);
+    if (QWebView* view = qobject_cast<QWebView*>(object))
+        return new QWebViewAccessible(view);
+    if (QWebFrame* frame = qobject_cast<QWebFrame*>(object))
+        return new QWebFrameAccessible(frame);
+    return 0;
+}
+#endif
+#endif
+
 /*!
     Constructs an empty QWebView with parent \a parent.
 
@@ -167,6 +189,12 @@ QWebView::QWebView(QWidget *parent)
 
     setMouseTracking(true);
     setFocusPolicy(Qt::WheelFocus);
+
+#ifndef QT_NO_ACCESSIBILITY
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    QAccessible::installFactory(accessibleInterfaceFactory);
+#endif
+#endif
 }
 
 /*!
