@@ -26,7 +26,7 @@ import unittest
 
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.test.printer import Printer
-from webkitpy.test.runner import Runner
+from webkitpy.test.runner import Runner, _Worker
 
 
 class FakeModuleSuite(object):
@@ -69,44 +69,27 @@ class FakeLoader(object):
 
 
 class RunnerTest(unittest.TestCase):
-    def test_regular(self):
-        options = MockOptions(verbose=0, timing=False)
+    def assert_run(self, options):
         stream = StringIO.StringIO()
         loader = FakeLoader(('test1 (Foo)', '.', ''),
                             ('test2 (Foo)', 'F', 'test2\nfailed'),
                             ('test3 (Foo)', 'E', 'test3\nerred'))
-        result = Runner(Printer(stream, options), options, loader).run(loader.top_suite())
+        runner = Runner(Printer(stream, options), options, loader)
+        result = runner.run(loader.top_suite())
         self.assertFalse(result.wasSuccessful())
         self.assertEquals(result.testsRun, 3)
         self.assertEquals(len(result.failures), 1)
         self.assertEquals(len(result.errors), 1)
         # FIXME: check the output from the test
+
+    def test_regular(self):
+        self.assert_run(MockOptions(verbose=0, timing=False))
 
     def test_verbose(self):
-        options = MockOptions(verbose=1, timing=False)
-        stream = StringIO.StringIO()
-        loader = FakeLoader(('test1 (Foo)', '.', ''),
-                            ('test2 (Foo)', 'F', 'test2\nfailed'),
-                            ('test3 (Foo)', 'E', 'test3\nerred'))
-        result = Runner(Printer(stream, options), options, loader).run(loader.top_suite())
-        self.assertFalse(result.wasSuccessful())
-        self.assertEquals(result.testsRun, 3)
-        self.assertEquals(len(result.failures), 1)
-        self.assertEquals(len(result.errors), 1)
-        # FIXME: check the output from the test
+        self.assert_run(MockOptions(verbose=1, timing=False))
 
     def test_timing(self):
-        options = MockOptions(verbose=0, timing=True)
-        stream = StringIO.StringIO()
-        loader = FakeLoader(('test1 (Foo)', '.', ''),
-                            ('test2 (Foo)', 'F', 'test2\nfailed'),
-                            ('test3 (Foo)', 'E', 'test3\nerred'))
-        result = Runner(Printer(stream, options), options, loader).run(loader.top_suite())
-        self.assertFalse(result.wasSuccessful())
-        self.assertEquals(result.testsRun, 3)
-        self.assertEquals(len(result.failures), 1)
-        self.assertEquals(len(result.errors), 1)
-        # FIXME: check the output from the test
+        self.assert_run(MockOptions(verbose=0, timing=True))
 
 
 if __name__ == '__main__':

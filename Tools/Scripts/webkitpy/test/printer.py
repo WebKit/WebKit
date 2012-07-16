@@ -98,7 +98,7 @@ class Printer(object):
         if self.options.pass_through:
             outputcapture.OutputCapture.stream_wrapper = _CaptureAndPassThroughStream
 
-    def print_started_test(self, test_name):
+    def print_started_test(self, source, test_name):
         if self.options.verbose:
             self.stream.write(test_name)
 

@@ -1,3 +1,36 @@
+2012-07-16  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: use message pools
+        https://bugs.webkit.org/show_bug.cgi?id=91292
+
+        Reviewed by Ojan Vafai.
+
+        Restructure the test-running code to be message-driven and
+        use a MessagePool; note that this does not yet actually run the
+        tests in parallel.
+
+        Also clean up the unit tests so that the fake loader is passed
+        to the _Worker properly, and reduce a lot of the cut&pasted code
+        in the tests.
+
+        No functional changes; covered by existing tests.
+
+        * Scripts/webkitpy/test/printer.py:
+        (Printer.print_started_test):
+        (Printer.print_finished_test):
+        * Scripts/webkitpy/test/runner.py:
+        (Runner.__init__):
+        (Runner.run):
+        (Runner.handle):
+        (_Worker):
+        (_Worker.__init__):
+        (_Worker.handle):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (RunnerTest.assert_run):
+        (RunnerTest.test_regular):
+        (RunnerTest.test_verbose):
+        (RunnerTest.test_timing):
+
 2012-07-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix Qt5 module dependencies

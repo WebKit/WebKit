@@ -26,6 +26,7 @@ import logging
 import time
 import unittest
 
+from webkitpy.common import message_pool
 
 _log = logging.getLogger(__name__)
 
@@ -35,6 +36,8 @@ class Runner(object):
         self.options = options
         self.printer = printer
         self.loader = loader
+        self.result = unittest.TestResult()
+        self.worker_factory = lambda caller: _Worker(caller, self.loader)
 
     def all_test_names(self, suite):
         names = []
@@ -48,28 +51,33 @@ class Runner(object):
     def run(self, suite):
         run_start_time = time.time()
         all_test_names = self.all_test_names(suite)
+
+        with message_pool.get(self, self.worker_factory, 1) as pool:
+            pool.run(('test', test_name) for test_name in all_test_names)
+
+        self.printer.print_result(self.result, time.time() - run_start_time)
+        return self.result
+
+    def handle(self, message_name, source, test_name, delay=None, result=None):
+        if message_name == 'started_test':
+            self.printer.print_started_test(source, test_name)
+            return
+
+        self.result.testsRun += 1
+        self.result.errors.extend(result.errors)
+        self.result.failures.extend(result.failures)
+        self.printer.print_finished_test(source, test_name, delay, result.failures, result.errors)
+
+
+class _Worker(object):
+    def __init__(self, caller, loader):
+        self._caller = caller
+        self._loader = loader
+
+    def handle(self, message_name, source, test_name):
+        assert message_name == 'test'
         result = unittest.TestResult()
-        stop = run_start_time
-        for test_name in all_test_names:
-            self.printer.print_started_test(test_name)
-            num_failures = len(result.failures)
-            num_errors = len(result.errors)
-
-            start = time.time()
-            # FIXME: it's kinda lame that we re-load the test suites for each
-            # test, and this may slow things down, but this makes implementing
-            # the logging easy and will also allow us to parallelize nicely.
-            self.loader.loadTestsFromName(test_name, None).run(result)
-            stop = time.time()
-
-            err = None
-            failure = None
-            if len(result.failures) > num_failures:
-                failure = result.failures[num_failures][1]
-            elif len(result.errors) > num_errors:
-                err = result.errors[num_errors][1]
-            self.printer.print_finished_test(result, test_name, stop - start, failure, err)
-
-        self.printer.print_result(result, stop - run_start_time)
-
-        return result
+        start = time.time()
+        self._caller.post('started_test', test_name)
+        self._loader.loadTestsFromName(test_name, None).run(result)
+        self._caller.post('finished_test', test_name, time.time() - start, result)
