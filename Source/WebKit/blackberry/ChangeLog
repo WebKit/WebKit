@@ -1,3 +1,23 @@
+2012-07-16  Benjamin C Meyer  <bmeyer@rim.com>
+
+        Any webpage can crash webkit via qnx.callExtensionMethod assuming 'this' is the 'qnx' object.
+        https://bugs.webkit.org/show_bug.cgi?id=91419
+
+        Run the following in inspector to crash WebKit
+
+        qnx.callExtensionMethod.apply(window, []);
+
+        In the c++ that handles the function it assumes that when callExtensionMethod
+        is called that 'this' is the object 'qnx'.  The qnx object has a hidden
+        variable that the code casts and uses, but when 'this' is not qnx such as the
+        example this will cause a crash.  Any website can insert the above JavaScript
+        to cause the crash.
+
+        Reviewed by Yong Li.
+
+        * WebCoreSupport/ClientExtension.cpp:
+        (clientExtensionMethod):
+
 2012-07-16  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Improve about:memory page

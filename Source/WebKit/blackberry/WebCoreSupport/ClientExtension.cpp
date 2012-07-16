@@ -50,7 +50,9 @@ static JSValueRef clientExtensionMethod(
     }
 
     WebPageClient* client = reinterpret_cast<WebPageClient*>(JSObjectGetPrivate(thisObject));
-    string retVal = client->invokeClientJavaScriptCallback(strArgs, argumentCount).utf8();
+    string retVal;
+    if (client)
+        retVal = client->invokeClientJavaScriptCallback(strArgs, argumentCount).utf8();
     if (!retVal.empty())
         jsRetVal = JSValueMakeString(ctx, JSStringCreateWithUTF8CString(retVal.c_str()));
 
