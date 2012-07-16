@@ -78,7 +78,7 @@ FloatRect CCRenderSurface::drawableContentRect() const
     FloatRect localContentRect(-0.5 * m_contentRect.width(), -0.5 * m_contentRect.height(),
                                m_contentRect.width(), m_contentRect.height());
     FloatRect drawableContentRect = CCMathUtil::mapClippedRect(m_drawTransform, localContentRect);
-    if (hasReplica())
+    if (m_owningLayer->hasReplica())
         drawableContentRect.unite(CCMathUtil::mapClippedRect(m_replicaDrawTransform, localContentRect));
 
     return drawableContentRect;
@@ -120,20 +120,6 @@ int CCRenderSurface::owningLayerId() const
     return m_owningLayer ? m_owningLayer->id() : 0;
 }
 
-bool CCRenderSurface::hasReplica() const
-{
-    return m_owningLayer->replicaLayer();
-}
-
-bool CCRenderSurface::hasMask() const
-{
-    return m_owningLayer->maskLayer();
-}
-
-bool CCRenderSurface::replicaHasMask() const
-{
-    return hasReplica() && (m_owningLayer->maskLayer() || m_owningLayer->replicaLayer()->maskLayer());
-}
 
 void CCRenderSurface::setClipRect(const IntRect& clipRect)
 {
@@ -197,7 +183,7 @@ FloatRect CCRenderSurface::computeRootScissorRectInCurrentSurface(const FloatRec
 
 void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sharedQuadState, bool forReplica, int renderPassId)
 {
-    ASSERT(!forReplica || hasReplica());
+    ASSERT(!forReplica || m_owningLayer->hasReplica());
 
     if (m_owningLayer->hasDebugBorders()) {
         int red = forReplica ? debugReplicaBorderColorRed : debugSurfaceBorderColorRed;
@@ -227,7 +213,10 @@ void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sha
     WebTransformationMatrix drawTransform = forReplica ? m_replicaDrawTransform : m_drawTransform;
     IntRect contentsChangedSinceLastFrame = contentsChanged() ? m_contentRect : IntRect();
 
-    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, drawTransform, filters(), backgroundFilters(), maskTextureId, contentsChangedSinceLastFrame));
+    const WebKit::WebFilterOperations& filters = m_owningLayer->filters();
+    const WebKit::WebFilterOperations& backgroundFilters = m_owningLayer->backgroundFilters();
+
+    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, drawTransform, filters, backgroundFilters, maskTextureId, contentsChangedSinceLastFrame));
 }
 
 }

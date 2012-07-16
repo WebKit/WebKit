@@ -129,12 +129,12 @@ public:
     bool opacityIsAnimating() const;
 
     void setFilters(const WebKit::WebFilterOperations&);
-    const WebKit::WebFilterOperations& filters() { return m_filters; }
+    const WebKit::WebFilterOperations& filters() const { return m_filters; }
 
     // Background filters are filters applied to what is behind this layer, when they are viewed through non-opaque
     // regions in this layer. They are used through the WebLayer interface, and are not exposed to HTML.
     void setBackgroundFilters(const WebKit::WebFilterOperations&);
-    const WebKit::WebFilterOperations& backgroundFilters() { return m_backgroundFilters; }
+    const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
 
     virtual void setOpaque(bool);
     bool opaque() const { return m_opaque; }
@@ -207,6 +207,10 @@ public:
 
     void setReplicaLayer(LayerChromium*);
     LayerChromium* replicaLayer() const { return m_replicaLayer.get(); }
+
+    bool hasMask() const { return m_maskLayer; }
+    bool hasReplica() const { return m_replicaLayer; }
+    bool replicaHasMask() const { return m_replicaLayer && (m_maskLayer || m_replicaLayer->m_maskLayer); }
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return m_isDrawable; }

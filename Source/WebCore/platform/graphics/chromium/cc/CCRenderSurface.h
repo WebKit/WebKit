@@ -32,7 +32,6 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "cc/CCSharedQuadState.h"
-#include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
@@ -62,12 +61,6 @@ public:
 
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
-
-    void setFilters(const WebKit::WebFilterOperations& filters) { m_filters = filters; }
-    const WebKit::WebFilterOperations& filters() const { return m_filters; }
-
-    void setBackgroundFilters(const WebKit::WebFilterOperations& filters) { m_backgroundFilters = filters; }
-    const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
 
     void setNearestAncestorThatMovesPixels(CCRenderSurface* surface) { m_nearestAncestorThatMovesPixels = surface; }
     const CCRenderSurface* nearestAncestorThatMovesPixels() const { return m_nearestAncestorThatMovesPixels; }
@@ -115,11 +108,6 @@ public:
 
     int owningLayerId() const;
 
-    bool hasReplica() const;
-
-    bool hasMask() const;
-    bool replicaHasMask() const;
-
     void resetPropertyChangedFlag() { m_surfacePropertyChanged = false; }
     bool surfacePropertyChanged() const;
     bool surfacePropertyChangedOnlyFromDescendant() const;
@@ -150,8 +138,6 @@ private:
     WebKit::WebTransformationMatrix m_replicaScreenSpaceTransform;
     bool m_targetSurfaceTransformsAreAnimating;
     bool m_screenSpaceTransformsAreAnimating;
-    WebKit::WebFilterOperations m_filters;
-    WebKit::WebFilterOperations m_backgroundFilters;
 
     // Uses the space of the surface's target surface.
     IntRect m_clipRect;

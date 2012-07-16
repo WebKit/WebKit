@@ -75,7 +75,7 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, const CC
     surface->appendQuads(quadCuller, sharedQuadState.get(), isReplica, contributingRenderPass->id());
     m_sharedQuadStateList.append(sharedQuadState.release());
 
-    if (!surface->hasReplica())
+    if (!layer->hasReplica())
         return;
 
     // Add replica after the surface so that it appears below the surface.

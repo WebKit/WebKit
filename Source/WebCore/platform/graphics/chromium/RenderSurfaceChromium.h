@@ -31,13 +31,11 @@
 
 #include "FloatRect.h"
 #include "IntRect.h"
-#include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class FilterOperations;
 class LayerChromium;
 class LayerRendererChromium;
 
@@ -90,36 +88,18 @@ public:
     const IntRect& scissorRect() const { return m_scissorRect; }
     void setScissorRect(const IntRect& scissorRect) { m_scissorRect = scissorRect; }
 
-    void setFilters(const WebKit::WebFilterOperations& filters) { m_filters = filters; }
-    const WebKit::WebFilterOperations& filters() const { return m_filters; }
-
-    void setBackgroundFilters(const WebKit::WebFilterOperations& filters) { m_backgroundFilters = filters; }
-    const WebKit::WebFilterOperations& backgroundFilters() const { return m_backgroundFilters; }
-
-    bool skipsDraw() const { return m_skipsDraw; }
-    void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
-
     void clearLayerList() { m_layerList.clear(); }
     Vector<RefPtr<LayerChromium> >& layerList() { return m_layerList; }
-
-    void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; }
 
     void setNearestAncestorThatMovesPixels(RenderSurfaceChromium* surface) { m_nearestAncestorThatMovesPixels = surface; }
     const RenderSurfaceChromium* nearestAncestorThatMovesPixels() const { return m_nearestAncestorThatMovesPixels; }
 
-    bool hasReplica() const;
-
-    bool hasMask() const;
-    bool replicaHasMask() const;
-
     FloatRect computeRootScissorRectInCurrentSurface(const FloatRect& rootScissorRect) const;
 private:
     LayerChromium* m_owningLayer;
-    LayerChromium* m_maskLayer;
 
     // Uses this surface's space.
     IntRect m_contentRect;
-    bool m_skipsDraw;
 
     float m_drawOpacity;
     bool m_drawOpacityIsAnimating;
@@ -131,8 +111,6 @@ private:
     WebKit::WebTransformationMatrix m_replicaScreenSpaceTransform;
     bool m_targetSurfaceTransformsAreAnimating;
     bool m_screenSpaceTransformsAreAnimating;
-    WebKit::WebFilterOperations m_filters;
-    WebKit::WebFilterOperations m_backgroundFilters;
 
     // Uses the space of the surface's target surface.
     IntRect m_clipRect;

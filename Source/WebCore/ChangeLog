@@ -1,3 +1,48 @@
+2012-07-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove non-ephemeral data from RenderSurface as it duplicates data from the owning layer
+        https://bugs.webkit.org/show_bug.cgi?id=91418
+
+        Reviewed by Adrienne Walker.
+
+        This removes the filters and masks from render surfaces, and makes them
+        used directly from the owning layer. Also removes skipsDraw from
+        surfaces as it was just not used at all.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::filters):
+        (WebCore::LayerChromium::backgroundFilters):
+        (WebCore::LayerChromium::hasMask):
+        (WebCore::LayerChromium::hasReplica):
+        (WebCore::LayerChromium::replicaHasMask):
+        (LayerChromium):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::RenderSurfaceChromium):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (RenderSurfaceChromium):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::hasMask):
+        (WebCore::CCLayerImpl::hasReplica):
+        (WebCore::CCLayerImpl::replicaHasMask):
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::calculateMemoryForRenderSurfaces):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateDrawTransformsInternal):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::finishedRenderTarget):
+        (WebCore::reduceOcclusionBelowSurface):
+        (WebCore::::leaveToRenderTarget):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::appendQuadsForRenderSurfaceLayer):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::drawableContentRect):
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (CCRenderSurface):
+
 2012-07-16  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=91299

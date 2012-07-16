@@ -555,7 +555,7 @@ size_t CCLayerTreeHost::calculateMemoryForRenderSurfaces(const LayerList& update
         size_t bytes = CCTexture::memorySizeBytes(renderSurface->contentRect().size(), GraphicsContext3D::RGBA);
         contentsTextureBytes += bytes;
 
-        if (renderSurface->backgroundFilters().isEmpty())
+        if (renderSurfaceLayer->backgroundFilters().isEmpty())
             continue;
 
         if (bytes > maxBackgroundTextureBytes)

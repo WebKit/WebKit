@@ -618,12 +618,9 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
         if (layer->replicaLayer() && layer->replicaLayer()->maskLayer())
             layer->replicaLayer()->maskLayer()->setRenderTarget(layer);
 
-        renderSurface->setFilters(layer->filters());
-        if (renderSurface->filters().hasFilterThatMovesPixels())
+        if (layer->filters().hasFilterThatMovesPixels())
             nearestAncestorThatMovesPixels = renderSurface;
         renderSurface->setNearestAncestorThatMovesPixels(nearestAncestorThatMovesPixels);
-
-        renderSurface->setBackgroundFilters(layer->backgroundFilters());
 
         renderSurfaceLayerList.append(layer);
     } else {

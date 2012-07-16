@@ -124,7 +124,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::finishedRenderTarget(
     RenderSurfaceType* surface = finishedTarget->renderSurface();
 
     // If the occlusion within the surface can not be applied to things outside of the surface's subtree, then clear the occlusion here so it won't be used.
-    if (finishedTarget->maskLayer() || !surfaceOpacityKnown(surface) || surface->drawOpacity() < 1 || surface->filters().hasFilterThatAffectsOpacity()) {
+    if (finishedTarget->maskLayer() || !surfaceOpacityKnown(surface) || surface->drawOpacity() < 1 || finishedTarget->filters().hasFilterThatAffectsOpacity()) {
         m_stack.last().occlusionInScreen = Region();
         m_stack.last().occlusionInTarget = Region();
     } else {
@@ -209,7 +209,7 @@ static void reduceOcclusionBelowSurface(LayerType* contributingLayer, const IntR
         boundsInTarget.intersect(contributingLayer->renderSurface()->clipRect());
 
     int outsetTop, outsetRight, outsetBottom, outsetLeft;
-    contributingLayer->renderSurface()->backgroundFilters().getOutsets(outsetTop, outsetRight, outsetBottom, outsetLeft);
+    contributingLayer->backgroundFilters().getOutsets(outsetTop, outsetRight, outsetBottom, outsetLeft);
 
     // The filter can move pixels from outside of the clip, so allow affectedArea to expand outside the clip.
     boundsInTarget.move(-outsetLeft, -outsetTop);
@@ -236,14 +236,14 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::leaveToRenderTarget(c
     const LayerType* oldTarget = m_stack[lastIndex].target;
     const RenderSurfaceType* oldSurface = oldTarget->renderSurface();
     Region oldTargetOcclusionInNewTarget = transformSurfaceOpaqueRegion<RenderSurfaceType>(oldSurface, m_stack[lastIndex].occlusionInTarget, oldSurface->originTransform());
-    if (oldSurface->hasReplica() && !oldSurface->replicaHasMask())
+    if (oldTarget->hasReplica() && !oldTarget->replicaHasMask())
         oldTargetOcclusionInNewTarget.unite(transformSurfaceOpaqueRegion<RenderSurfaceType>(oldSurface, m_stack[lastIndex].occlusionInTarget, oldSurface->replicaOriginTransform()));
 
     IntRect unoccludedSurfaceRect;
     IntRect unoccludedReplicaRect;
-    if (oldSurface->backgroundFilters().hasFilterThatMovesPixels()) {
+    if (oldTarget->backgroundFilters().hasFilterThatMovesPixels()) {
         unoccludedSurfaceRect = unoccludedContributingSurfaceContentRect(oldTarget, false, oldSurface->contentRect());
-        if (oldSurface->hasReplica())
+        if (oldTarget->hasReplica())
             unoccludedReplicaRect = unoccludedContributingSurfaceContentRect(oldTarget, true, oldSurface->contentRect());
     }
 
@@ -258,9 +258,9 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::leaveToRenderTarget(c
         m_stack.last().occlusionInTarget = oldTargetOcclusionInNewTarget;
     }
 
-    if (oldSurface->backgroundFilters().hasFilterThatMovesPixels()) {
+    if (oldTarget->backgroundFilters().hasFilterThatMovesPixels()) {
         reduceOcclusionBelowSurface(oldTarget, unoccludedSurfaceRect, oldSurface->originTransform(), newTarget, m_stack.last().occlusionInTarget, m_stack.last().occlusionInScreen);
-        if (oldSurface->hasReplica())
+        if (oldTarget->hasReplica())
             reduceOcclusionBelowSurface(oldTarget, unoccludedReplicaRect, oldSurface->replicaOriginTransform(), newTarget, m_stack.last().occlusionInTarget, m_stack.last().occlusionInScreen);
     }
 }
