@@ -1,3 +1,22 @@
+2012-07-16  Vincent Scheib  <scheib@chromium.org>
+
+        Fix Layout Test pointer-lock/locked-element-removed-from-dom.html flakiness.
+        https://bugs.webkit.org/show_bug.cgi?id=91373
+
+        Reviewed by Adrienne Walker.
+
+        pointer-lock-test-harness corrected to no longer silently allow too many
+        asynchronous doNextStep calls in a test. The locked-element-removed-from-dom test
+        generated too many events and incorrectly exited the test early.
+
+        * platform/chromium/TestExpectations:
+            Re-enabled locked-element-removed-from-dom test.html
+        * pointer-lock/locked-element-removed-from-dom.html:
+            Absorb extra doNextStep.
+        * pointer-lock/resources/pointer-lock-test-harness.js:
+        (doNextStep.setTimeout):
+            Fail tests that call doNextStep too many times.
+
 2012-07-16  Florin Malita  <fmalita@chromium.org>
 
         SVGAnimationElement::currentValuesForValuesAnimation crash

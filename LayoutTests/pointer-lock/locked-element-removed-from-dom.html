@@ -42,6 +42,9 @@
             shouldBe("targetDiv1.parentElement.parentElement", "null");
             // doNextStep called by event handler.
         },
+        function () {
+            // Absorb an extra doNextStep() from previous event handlers.
+        },
     ];
     doNextStep();
 </script>
