@@ -1,3 +1,10 @@
+2012-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed build fix.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+
 2012-07-16  Adam Treat  <atreat@rim.com>
 
         [BlackBerry] Use newer version of platform API to implement callOnMainThread
