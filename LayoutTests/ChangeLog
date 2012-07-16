@@ -1,3 +1,11 @@
+2012-07-16  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Adding flaky tests to TextExpectations.
+        https://bugs.webkit.org/show_bug.cgi?id=91379
+        https://bugs.webkit.org/show_bug.cgi?id=91376
+
+        * platform/qt/TestExpectations:
+
 2012-07-16  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         [Qt] platform/qt/editing/selection tests needs update after rebaseline and new testfonts

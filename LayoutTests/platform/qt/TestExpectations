@@ -116,3 +116,8 @@ BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
 
 // Skip tests in fast/text/shaping
 BUGWK90951 SKIP : fast/text/shaping = PASS
+
+// Flaky tests
+BUGWK91376 : http/tests/security/sandboxed-iframe-modify-self.html = PASS FAIL
+BUGWK91379 : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = PASS FAIL
+BUGWK91379 : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = PASS FAIL
