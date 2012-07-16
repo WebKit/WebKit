@@ -1,3 +1,18 @@
+2012-07-15  Mike Lawther  <mikelawther@chromium.org>
+
+        Fix calculation of rgba's alpha in CSS custom text
+        https://bugs.webkit.org/show_bug.cgi?id=91355
+
+        Reviewed by Ryosuke Niwa.
+
+        * css3/calc/color-hsl-expected.txt:
+        * css3/calc/color-rgb-expected.txt:
+        * editing/execCommand/query-command-value-background-color-expected.txt:
+        * editing/execCommand/query-command-value-background-color.html:
+        * fast/css/rgba-custom-text-expected.txt: Added.
+        * fast/css/rgba-custom-text.html: Added.
+        * media/track/track-cue-rendering-expected.txt:
+
 2012-07-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Several media tests are flaky in DEBUG mode

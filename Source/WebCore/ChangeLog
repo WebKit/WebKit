@@ -1,3 +1,18 @@
+2012-07-15  Mike Lawther  <mikelawther@chromium.org>
+
+        Fix calculation of rgba's alpha in CSS custom text
+        https://bugs.webkit.org/show_bug.cgi?id=91355
+
+        Reviewed by Ryosuke Niwa.
+
+        Alpha values are stored as an 8 bit value. To convert this to a float in the
+        range [0,1], we need to divide by 255, not 256. 
+
+        Test: fast/css/rgba-custom-text.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::customCssText):
+
 2012-07-15  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         [BlackBerry] We shouldn't call didFinishLoading for the old request when a new request has been sent by notifyAuthReceived.
