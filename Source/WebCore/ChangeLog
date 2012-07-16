@@ -1,3 +1,74 @@
+2012-07-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: native memory instrumentation: extract instrumentation methods into MemoryClassInfo
+        https://bugs.webkit.org/show_bug.cgi?id=91227
+
+        Reviewed by Pavel Feldman.
+
+        void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+        {
+            MemoryClassInfo<Node> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+            info.visitBaseClass<ScriptWrappable>(this);
+
+            info.addMember(m_notInstrumentedPointer); // automatically detects poniter/reference
+            info.addInstrumentedMember(m_next);
+            info.addHashSet<MemoryInstrumentation::NonClass>(m_aHash);                // NonClass value_type (report only size of internal template structures)
+            info.addHashSet<MemoryInstrumentation::NotInstrumentedClass>(m_aHashSet); // not instrumented value_type (use sizeof)
+            info.addHashSet<MemoryInstrumentation::InstrumentedClass>(m_aHashSet);    // instrumented value_type (call visit)
+        }
+
+        The change is covered by existing tests for native memory snapshot.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::ChunkedTable::reportMemoryUsage):
+        * bindings/v8/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::reportMemoryUsage):
+        (WebCore::StringCache::reportMemoryUsage):
+        * bindings/v8/V8DOMMap.h:
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::reportMemoryUsage):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::reportMemoryUsage):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::reportMemoryUsage):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/Element.h:
+        (WebCore::Element::reportMemoryUsage):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (WebCore::MemoryObjectInfo::objectType):
+        (WebCore::MemoryObjectInfo::objectSize):
+        (WebCore::MemoryObjectInfo::memoryInstrumentation):
+        (MemoryObjectInfo):
+        (WebCore::MemoryObjectInfo::reportObjectInfo):
+        (WebCore):
+        (MemoryClassInfo):
+        (WebCore::MemoryClassInfo::MemoryClassInfo):
+        (WebCore::MemoryClassInfo::visitBaseClass):
+        (WebCore::MemoryClassInfo::reportInstrumentedPointer):
+        (WebCore::MemoryClassInfo::reportInstrumentedObject):
+        (WebCore::MemoryClassInfo::reportPointer):
+        (WebCore::MemoryClassInfo::reportObject):
+        (WebCore::MemoryClassInfo::reportHashMap):
+        (WebCore::MemoryClassInfo::reportHashSet):
+        (WebCore::MemoryClassInfo::reportListHashSet):
+        (WebCore::MemoryClassInfo::reportVector):
+        (WebCore::MemoryClassInfo::reportString):
+        * dom/Node.cpp:
+        (WebCore::Node::reportMemoryUsage):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::reportMemoryUsage):
+        (WebCore::QualifiedName::reportMemoryUsage):
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::reportMemoryUsage):
+
 2012-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

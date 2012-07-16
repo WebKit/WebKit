@@ -118,9 +118,9 @@ public:
     
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::CSS);
+        MemoryClassInfo<StylePropertySet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         if (m_isMutable)
-            memoryObjectInfo->reportPointer(m_mutablePropertyVector, MemoryInstrumentation::CSS);
+            info.reportPointer(m_mutablePropertyVector);
     }
 
 private:

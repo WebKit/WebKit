@@ -92,14 +92,14 @@ void V8BindingPerIsolateData::dispose(v8::Isolate* isolate)
 
 void V8BindingPerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::Binding);
-    memoryObjectInfo->reportHashMap(m_rawTemplates);
-    memoryObjectInfo->reportHashMap(m_templates);
-    memoryObjectInfo->reportInstrumentedObject(m_stringCache);
-    memoryObjectInfo->reportVector(m_domDataList);
+    MemoryClassInfo<V8BindingPerIsolateData> info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
+    info.reportHashMap(m_rawTemplates);
+    info.reportHashMap(m_templates);
+    info.reportInstrumentedObject(m_stringCache);
+    info.reportVector(m_domDataList);
 
     for (size_t i = 0; i < m_domDataList.size(); i++)
-        memoryObjectInfo->reportInstrumentedPointer(m_domDataList[i]);
+        info.reportInstrumentedPointer(m_domDataList[i]);
 }
 
 // WebCoreStringResource is a helper class for v8ExternalString. It is used
@@ -590,8 +590,8 @@ v8::Persistent<v8::FunctionTemplate> getToStringTemplate()
 
 void StringCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    memoryObjectInfo->reportObjectInfo(this, MemoryInstrumentation::Binding);
-    memoryObjectInfo->reportHashMap(m_stringCache);
+    MemoryClassInfo<StringCache> info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
+    info.reportHashMap(m_stringCache);
 }
     
 PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value> value)
