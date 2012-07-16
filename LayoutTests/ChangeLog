@@ -1,3 +1,12 @@
+2012-07-16  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Unreviewed gardening. Layout Test storage/indexeddb/cursor-update-value-argument-required.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=91403
+
+        This test crashes occasionally, not sure how long it has been flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-16  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] platform/qt/editing/execCommand tests update after the font change.

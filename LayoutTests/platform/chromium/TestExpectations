@@ -3768,3 +3768,4 @@ BUGWK90951 : fast/text/shaping/shaping-script-order.html = MISSING
 
 // Recently(?) started crashing on occassion
 BUGWK91275 WIN : storage/indexeddb/cursor-key-order.html = PASS CRASH
+BUGWK91403 WIN : storage/indexeddb/cursor-update-value-argument-required.html = PASS CRASH
