@@ -1,3 +1,9 @@
+2012-07-16  Adam Barth  <abarth@webkit.org>
+
+        jquery/manipulation.html times out in release too.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-16  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] remaining compositing tests after rebaseline for new testfonts
