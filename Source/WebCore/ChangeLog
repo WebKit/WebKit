@@ -1,3 +1,22 @@
+2012-07-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Resolve test and IDL FIXMEs for a handful of landed patches
+        https://bugs.webkit.org/show_bug.cgi?id=91423
+
+        Reviewed by Tony Chang.
+
+        IDBObjectStore.createIndex() had a hack to handle a null keyPath argument for the
+        DOMString[] overload and treat it as the string "null". Now that IDL arrays are not
+        nullable by default following r121817 this hack can be removed and the binding layer
+        will automagically coerce to DOMString.
+
+        Test: storage/indexeddb/keypath-basics.html
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex): Remove special case for null in DOMString[] overload.
+        * Modules/indexeddb/IDBObjectStore.idl: Remove Nullable suffix from DOMString[] overload
+        so that the DOMString overload will match null.
+
 2012-07-16  Bear Travis  <betravis@adobe.com>
 
         Resolve CSS Exclusions shapeInside, shapeOutside properties to Length based WrapShape classes

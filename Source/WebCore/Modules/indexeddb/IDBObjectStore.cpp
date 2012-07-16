@@ -252,9 +252,6 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const Strin
 
 PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, PassRefPtr<DOMStringList> keyPath, const Dictionary& options, ExceptionCode& ec)
 {
-    // FIXME: Binding code for DOMString[] should not match null. http://webkit.org/b/84217
-    if (!keyPath)
-        return createIndex(name, IDBKeyPath("null"), options, ec);
     return createIndex(name, IDBKeyPath(*keyPath), options, ec);
 }
 

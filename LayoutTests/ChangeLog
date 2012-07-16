@@ -1,3 +1,18 @@
+2012-07-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Resolve test and IDL FIXMEs for a handful of landed patches
+        https://bugs.webkit.org/show_bug.cgi?id=91423
+
+        Reviewed by Tony Chang.
+
+        Resolve a couple of test-only FIXMEs: range deletion is now supported and
+        empty transactions commit.
+
+        * storage/indexeddb/key-generator-expected.txt:
+        * storage/indexeddb/resources/database-closepending-flag.js:
+        (testDatabaseClosingSteps): Don't need a dummy request to keep transaction alive.
+        * storage/indexeddb/resources/key-generator.js: Can test a range delete now.
+
 2012-07-16  Bear Travis  <betravis@adobe.com>
 
         Resolve CSS Exclusions shapeInside, shapeOutside properties to Length based WrapShape classes

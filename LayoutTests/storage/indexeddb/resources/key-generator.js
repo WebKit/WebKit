@@ -126,9 +126,7 @@ defineTest(
         evalAndLog("store.clear()");
         evalAndLog("store.put('c')");
         check(store, 3, 'c');
-        // FIXME: IDBObjectStore.delete(IDBKeyRange) is not yet implemented in Chromium.
-        // http://crbug.com/101384
-        //evalAndLog("store.delete(IDBKeyRange.lowerBound(0))");
+        evalAndLog("store.delete(IDBKeyRange.lowerBound(0))");
         evalAndLog("store.put('d')");
         check(store, 4, 'd');
     }

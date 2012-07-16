@@ -60,6 +60,7 @@ request = store.get(2)
 store.clear()
 store.put('c')
 request = store.get(3)
+store.delete(IDBKeyRange.lowerBound(0))
 store.put('d')
 request = store.get(4)
 PASS Got "a" for key: 1

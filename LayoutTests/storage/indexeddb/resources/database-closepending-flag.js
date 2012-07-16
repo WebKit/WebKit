@@ -39,7 +39,6 @@ function testDatabaseClosingSteps()
     debug("");
     debug("First, verify that the database connection is not closed:");
     shouldNotThrow("transaction = connection.transaction('store')");
-    transaction.objectStore('store').get(0); // FIXME: Can remove this line when WK89379 lands
 
     debug("");
     debug("Database closing steps");
