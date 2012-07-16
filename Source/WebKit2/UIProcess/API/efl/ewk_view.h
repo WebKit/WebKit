@@ -35,7 +35,11 @@
  * - "load,provisional,redirect", void: view received redirect for provisional load.
  * - "load,provisional,started", void: view started provisional load.
  * - "policy,decision,navigation", Ewk_Navigation_Policy_Decision*: a navigation policy decision should be taken.
+ *   To make a policy decision asynchronously, simply increment the reference count of the
+ *   #Ewk_Navigation_Policy_Decision object using ewk_navigation_policy_decision_ref().
  * - "policy,decision,new,window", Ewk_Navigation_Policy_Decision*: a new window policy decision should be taken.
+ *   To make a policy decision asynchronously, simply increment the reference count of the
+ *   #Ewk_Navigation_Policy_Decision object using ewk_navigation_policy_decision_ref().
  * - "resource,request,failed", const Ewk_Web_Resource_Load_Error*: a resource failed loading.
  * - "resource,request,finished", const Ewk_Web_Resource*: a resource finished loading.
  * - "resource,request,new", const Ewk_Web_Resource_Request*: a resource request was initiated.

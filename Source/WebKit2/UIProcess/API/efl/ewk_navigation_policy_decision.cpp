@@ -40,6 +40,7 @@ using namespace WebKit;
  * @brief   Contains the navigation policy decision data.
  */
 struct _Ewk_Navigation_Policy_Decision {
+    unsigned int __ref; /**< the reference count of the object */
     WKRetainPtr<WKFramePolicyListenerRef> listener;
     bool actedUponByClient;
     Ewk_Navigation_Type navigationType;
@@ -49,7 +50,8 @@ struct _Ewk_Navigation_Policy_Decision {
     const char* frameName;
 
     _Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef _listener, Ewk_Navigation_Type _navigationType, Event_Mouse_Button _mouseButton, Event_Modifier_Keys _modifiers, Ewk_Url_Request* _request, const char* _frameName)
-        : listener(_listener)
+        : __ref(1)
+        , listener(_listener)
         , actedUponByClient(false)
         , navigationType(_navigationType)
         , mouseButton(_mouseButton)
@@ -60,6 +62,8 @@ struct _Ewk_Navigation_Policy_Decision {
 
     ~_Ewk_Navigation_Policy_Decision()
     {
+        ASSERT(!__ref);
+
         // This is the default choice for all policy decisions in WebPageProxy.cpp.
         if (!actedUponByClient)
             WKFramePolicyListenerUse(listener.get());
@@ -69,9 +73,19 @@ struct _Ewk_Navigation_Policy_Decision {
     }
 };
 
-void ewk_navigation_policy_decision_free(Ewk_Navigation_Policy_Decision* decision)
+void ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision* decision)
 {
     EINA_SAFETY_ON_NULL_RETURN(decision);
+
+    ++decision->__ref;
+}
+
+void ewk_navigation_policy_decision_unref(Ewk_Navigation_Policy_Decision* decision)
+{
+    EINA_SAFETY_ON_NULL_RETURN(decision);
+
+    if (--decision->__ref)
+        return;
 
     delete decision;
 }

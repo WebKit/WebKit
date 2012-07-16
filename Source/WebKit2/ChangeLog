@@ -1,3 +1,27 @@
+2012-07-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make Ewk_Navigation_Policy_Decision ref counted
+        https://bugs.webkit.org/show_bug.cgi?id=91343
+
+        Reviewed by Antonio Gomes.
+
+        Make Ewk_Navigation_Policy_Decision ref counted so that the
+        client can make navigation policy decisions asynchronously
+        by ref'ing the Ewk_Navigation_Policy_Decision object passed
+        with the "policy,*" signals.
+
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::~_Ewk_Navigation_Policy_Decision):
+        (ewk_navigation_policy_decision_ref):
+        (ewk_navigation_policy_decision_unref):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.h:
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_policy_client.cpp:
+        (decidePolicyForNavigationAction):
+        (decidePolicyForNewWindowAction):
+
 2012-07-16  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Change NativeImagePtr from QPixmap* to QImage*

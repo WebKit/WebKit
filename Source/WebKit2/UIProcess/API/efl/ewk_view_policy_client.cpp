@@ -43,14 +43,14 @@ static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WK
 {
     Ewk_Navigation_Policy_Decision* decision = ewk_navigation_policy_decision_new(navigationType, mouseButton, modifiers, request, 0, listener);
     ewk_view_navigation_policy_decision(toEwkView(clientInfo), decision);
-    ewk_navigation_policy_decision_free(decision);
+    ewk_navigation_policy_decision_unref(decision);
 }
 
 static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     Ewk_Navigation_Policy_Decision* decision = ewk_navigation_policy_decision_new(navigationType, mouseButton, modifiers, request, toImpl(frameName)->string().utf8().data(), listener);
     ewk_view_new_window_policy_decision(toEwkView(clientInfo), decision);
-    ewk_navigation_policy_decision_free(decision);
+    ewk_navigation_policy_decision_unref(decision);
 }
 
 void ewk_view_policy_client_attach(WKPageRef pageRef, Evas_Object* ewkView)

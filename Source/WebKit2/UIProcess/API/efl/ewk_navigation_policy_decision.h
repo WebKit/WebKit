@@ -67,11 +67,20 @@ typedef enum {
 } Event_Modifier_Keys;
 
 /**
- * Frees the given object.
+ * Increases the reference count of the given object.
  *
- * @param decision the policy decision object to free
+ * @param decision the policy decision object to increase the reference count
  */
-EAPI void ewk_navigation_policy_decision_free(Ewk_Navigation_Policy_Decision *decision);
+EAPI void ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision *decision);
+
+/**
+ * Decreases the reference count of the given object, possibly freeing it.
+ *
+ * When the reference count reaches 0, the object is freed.
+ *
+ * @param decision the policy decision object to decrease the reference count
+ */
+EAPI void ewk_navigation_policy_decision_unref(Ewk_Navigation_Policy_Decision *decision);
 
 /**
  * Query type for this navigation policy decision.
