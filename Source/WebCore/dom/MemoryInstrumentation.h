@@ -31,6 +31,7 @@
 #ifndef MemoryInstrumentation_h
 #define MemoryInstrumentation_h
 
+#include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -159,6 +160,10 @@ private:
     size_t m_objectSize;
 };
 
+// Link time guard for string members. They produce link error is a string is reported via addMember.
+template <> void MemoryInstrumentation::addMemberImpl<AtomicString>(const AtomicString* const&, MemoryInstrumentation::ObjectType, MemoryInstrumentation::OwningType);
+template <> void MemoryInstrumentation::addMemberImpl<String>(const String* const&, MemoryInstrumentation::ObjectType, MemoryInstrumentation::OwningType);
+
 template <typename T>
 void MemoryInstrumentation::addInstrumentedMemberImpl(const T* const& object, MemoryInstrumentation::OwningType owningType)
 {
@@ -193,6 +198,7 @@ public:
     template <typename VectorType> void addVector(const VectorType& vector) { m_memoryInstrumentation->addVector(vector, m_objectType, true); }
 
     void addString(const String& string) { m_memoryInstrumentation->addString(string, m_objectType); }
+    void addString(const AtomicString& string) { m_memoryInstrumentation->addString((const String&)string, m_objectType); }
 
 private:
     MemoryObjectInfo* m_memoryObjectInfo;

@@ -1,3 +1,23 @@
+2012-07-16  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: native memory: fix instrumentation for string members
+        https://bugs.webkit.org/show_bug.cgi?id=91384
+
+        Reviewed by Pavel Feldman.
+
+        It was possible to report a string member via addMember instead of addString.
+        This patch is fixing the problem and adding a link time guard.
+
+        Covered by existing inspector performance tests infrastructure.
+
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        * dom/MemoryInstrumentation.h:
+        (WebCore):
+        (WebCore::MemoryClassInfo::addString):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::reportMemoryUsage):
+
 2012-07-16  Zoltan Horvath  <zoltan@webkit.org>
 
         Unreviewed. Remove unnecessary executable bits after r122720.

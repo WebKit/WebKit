@@ -106,7 +106,7 @@ public:
         info.addInstrumentedMember(m_inlineStyleDecl.get());
         info.addInstrumentedMember(m_attributeStyle.get());
         info.addMember(m_classNames);
-        info.addMember(m_idForStyleResolution);
+        info.addString(m_idForStyleResolution);
         info.addVector(m_attributes);
     }
 
