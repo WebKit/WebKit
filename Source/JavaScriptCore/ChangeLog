@@ -1,3 +1,44 @@
+2012-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, adding forgotten files.
+
+        * dfg/DFGRegisterSet.h: Added.
+        (DFG):
+        (RegisterSet):
+        (JSC::DFG::RegisterSet::RegisterSet):
+        (JSC::DFG::RegisterSet::asPOD):
+        (JSC::DFG::RegisterSet::copyInfo):
+        (JSC::DFG::RegisterSet::set):
+        (JSC::DFG::RegisterSet::setGPRByIndex):
+        (JSC::DFG::RegisterSet::clear):
+        (JSC::DFG::RegisterSet::get):
+        (JSC::DFG::RegisterSet::getGPRByIndex):
+        (JSC::DFG::RegisterSet::getFreeGPR):
+        (JSC::DFG::RegisterSet::setFPRByIndex):
+        (JSC::DFG::RegisterSet::getFPRByIndex):
+        (JSC::DFG::RegisterSet::setByIndex):
+        (JSC::DFG::RegisterSet::getByIndex):
+        (JSC::DFG::RegisterSet::numberOfSetGPRs):
+        (JSC::DFG::RegisterSet::numberOfSetFPRs):
+        (JSC::DFG::RegisterSet::numberOfSetRegisters):
+        (JSC::DFG::RegisterSet::setBit):
+        (JSC::DFG::RegisterSet::clearBit):
+        (JSC::DFG::RegisterSet::getBit):
+        * dfg/DFGScratchRegisterAllocator.h: Added.
+        (DFG):
+        (ScratchRegisterAllocator):
+        (JSC::DFG::ScratchRegisterAllocator::ScratchRegisterAllocator):
+        (JSC::DFG::ScratchRegisterAllocator::lock):
+        (JSC::DFG::ScratchRegisterAllocator::allocateScratch):
+        (JSC::DFG::ScratchRegisterAllocator::allocateScratchGPR):
+        (JSC::DFG::ScratchRegisterAllocator::allocateScratchFPR):
+        (JSC::DFG::ScratchRegisterAllocator::didReuseRegisters):
+        (JSC::DFG::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::DFG::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        (JSC::DFG::ScratchRegisterAllocator::desiredScratchBufferSize):
+        (JSC::DFG::ScratchRegisterAllocator::preserveUsedRegistersToScratchBuffer):
+        (JSC::DFG::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBuffer):
+
 2012-07-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG PutById transition should handle storage allocation, and inline it
