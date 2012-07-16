@@ -55,8 +55,9 @@ class ResultSummary(object):
             self.total_tests_by_expectation[expectation] = 0
         for timeline in TestExpectations.TIMELINES.values():
             self.tests_by_timeline[timeline] = expectations.get_tests_with_timeline(timeline)
+        self.slow_tests = set()
 
-    def add(self, test_result, expected):
+    def add(self, test_result, expected, test_is_slow):
         self.total_tests_by_expectation[test_result.type] += 1
         self.tests_by_expectation[test_result.type].add(test_result.test_name)
         self.results[test_result.test_name] = test_result
@@ -77,3 +78,5 @@ class ResultSummary(object):
                 self.unexpected_crashes += 1
             elif test_result.type == TIMEOUT:
                 self.unexpected_timeouts += 1
+        if test_is_slow:
+            self.slow_tests.add(test_result.test_name)

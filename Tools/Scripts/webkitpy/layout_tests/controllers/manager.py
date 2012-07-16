@@ -526,7 +526,7 @@ class Manager(object):
                 result = test_results.TestResult(test)
                 result.type = test_expectations.SKIP
                 for iteration in range(iterations):
-                    result_summary.add(result, expected=True)
+                    result_summary.add(result, expected=True, test_is_slow=self._test_is_slow(test))
         self._printer.print_expected('')
 
         if self._options.repeat_each > 1:
@@ -882,13 +882,9 @@ class Manager(object):
         self._look_for_new_crash_logs(retry_summary, start_time)
         self._clean_up_run()
 
-        self._print_timing_statistics(end_time - start_time, thread_timings, test_timings, individual_test_timings, result_summary)
-        self._print_result_summary(result_summary)
-
-        self._printer.print_one_line_summary(result_summary.total - result_summary.expected_skips, result_summary.expected - result_summary.expected_skips, result_summary.unexpected)
-
         unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=True, interrupted=interrupted)
-        self._printer.print_unexpected_results(unexpected_results)
+
+        self._printer.print_results(end_time - start_time, thread_timings, test_timings, individual_test_timings, result_summary, unexpected_results)
 
         # Re-raise a KeyboardInterrupt if necessary so the caller can handle it.
         if keyboard_interrupted:
@@ -985,7 +981,7 @@ class Manager(object):
                 # FIXME: We probably need to loop here if there are multiple iterations.
                 # FIXME: Also, these results are really neither expected nor unexpected. We probably
                 # need a third type of result.
-                result_summary.add(result, expected=False)
+                result_summary.add(result, expected=False, test_is_slow=self._test_is_slow(test_name))
 
     def _interrupt_if_at_failure_limits(self, result_summary):
         # Note: The messages in this method are constructed to match old-run-webkit-tests
@@ -1010,10 +1006,10 @@ class Manager(object):
 
     def _update_summary_with_result(self, result_summary, result):
         if result.type == test_expectations.SKIP:
-            result_summary.add(result, expected=True)
+            result_summary.add(result, expected=True, test_is_slow=self._test_is_slow(result.test_name))
         else:
             expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or test_failures.is_reftest_failure(result.failures))
-            result_summary.add(result, expected)
+            result_summary.add(result, expected, self._test_is_slow(result.test_name))
             exp_str = self._expectations.get_expectations_string(result.test_name)
             got_str = self._expectations.expectation_to_string(result.type)
             self._printer.print_test_result(result, expected, exp_str, got_str)
@@ -1159,217 +1155,6 @@ class Manager(object):
         if len(num):
             ndigits = int(math.log10(len(num))) + 1
         return ndigits
-
-    def _print_timing_statistics(self, total_time, thread_timings,
-                               directory_test_timings, individual_test_timings,
-                               result_summary):
-        """Record timing-specific information for the test run.
-
-        Args:
-          total_time: total elapsed time (in seconds) for the test run
-          thread_timings: wall clock time each thread ran for
-          directory_test_timings: timing by directory
-          individual_test_timings: timing by file
-          result_summary: summary object for the test run
-        """
-        self._printer.print_timing("Test timing:")
-        self._printer.print_timing("  %6.2f total testing time" % total_time)
-        self._printer.print_timing("")
-        self._printer.print_timing("Thread timing:")
-        cuml_time = 0
-        for t in thread_timings:
-            self._printer.print_timing("    %10s: %5d tests, %6.2f secs" %
-                  (t['name'], t['num_tests'], t['total_time']))
-            cuml_time += t['total_time']
-        self._printer.print_timing("   %6.2f cumulative, %6.2f optimal" %
-              (cuml_time, cuml_time / int(self._options.child_processes)))
-        self._printer.print_timing("")
-
-        self._print_aggregate_test_statistics(individual_test_timings)
-        self._print_individual_test_times(individual_test_timings,
-                                          result_summary)
-        self._print_directory_timings(directory_test_timings)
-
-    def _print_aggregate_test_statistics(self, individual_test_timings):
-        """Prints aggregate statistics (e.g. median, mean, etc.) for all tests.
-        Args:
-          individual_test_timings: List of TestResults for all tests.
-        """
-        times_for_dump_render_tree = [test_stats.test_run_time for test_stats in individual_test_timings]
-        self._print_statistics_for_test_timings("PER TEST TIME IN TESTSHELL (seconds):",
-                                                times_for_dump_render_tree)
-
-    def _print_individual_test_times(self, individual_test_timings,
-                                  result_summary):
-        """Prints the run times for slow, timeout and crash tests.
-        Args:
-          individual_test_timings: List of TestStats for all tests.
-          result_summary: summary object for test run
-        """
-        # Reverse-sort by the time spent in DumpRenderTree.
-        individual_test_timings.sort(lambda a, b:
-            cmp(b.test_run_time, a.test_run_time))
-
-        num_printed = 0
-        slow_tests = []
-        timeout_or_crash_tests = []
-        unexpected_slow_tests = []
-        for test_tuple in individual_test_timings:
-            test_name = test_tuple.test_name
-            is_timeout_crash_or_slow = False
-            if self._test_is_slow(test_name):
-                is_timeout_crash_or_slow = True
-                slow_tests.append(test_tuple)
-
-            if test_name in result_summary.failures:
-                result = result_summary.results[test_name].type
-                if (result == test_expectations.TIMEOUT or
-                    result == test_expectations.CRASH):
-                    is_timeout_crash_or_slow = True
-                    timeout_or_crash_tests.append(test_tuple)
-
-            if (not is_timeout_crash_or_slow and
-                num_printed < printing.NUM_SLOW_TESTS_TO_LOG):
-                num_printed = num_printed + 1
-                unexpected_slow_tests.append(test_tuple)
-
-        self._printer.print_timing("")
-        self._print_test_list_timing("%s slowest tests that are not "
-            "marked as SLOW and did not timeout/crash:" %
-            printing.NUM_SLOW_TESTS_TO_LOG, unexpected_slow_tests)
-        self._printer.print_timing("")
-        self._print_test_list_timing("Tests marked as SLOW:", slow_tests)
-        self._printer.print_timing("")
-        self._print_test_list_timing("Tests that timed out or crashed:",
-                                     timeout_or_crash_tests)
-        self._printer.print_timing("")
-
-    def _print_test_list_timing(self, title, test_list):
-        """Print timing info for each test.
-
-        Args:
-          title: section heading
-          test_list: tests that fall in this section
-        """
-        if self._printer.disabled('slowest'):
-            return
-
-        self._printer.print_timing(title)
-        for test_tuple in test_list:
-            test_run_time = round(test_tuple.test_run_time, 1)
-            self._printer.print_timing("  %s took %s seconds" % (test_tuple.test_name, test_run_time))
-
-    def _print_directory_timings(self, directory_test_timings):
-        """Print timing info by directory for any directories that
-        take > 10 seconds to run.
-
-        Args:
-          directory_test_timing: time info for each directory
-        """
-        timings = []
-        for directory in directory_test_timings:
-            num_tests, time_for_directory = directory_test_timings[directory]
-            timings.append((round(time_for_directory, 1), directory,
-                            num_tests))
-        timings.sort()
-
-        self._printer.print_timing("Time to process slowest subdirectories:")
-        min_seconds_to_print = 10
-        for timing in timings:
-            if timing[0] > min_seconds_to_print:
-                self._printer.print_timing(
-                    "  %s took %s seconds to run %s tests." % (timing[1],
-                    timing[0], timing[2]))
-        self._printer.print_timing("")
-
-    def _print_statistics_for_test_timings(self, title, timings):
-        """Prints the median, mean and standard deviation of the values in
-        timings.
-
-        Args:
-          title: Title for these timings.
-          timings: A list of floats representing times.
-        """
-        self._printer.print_timing(title)
-        timings.sort()
-
-        num_tests = len(timings)
-        if not num_tests:
-            return
-        percentile90 = timings[int(.9 * num_tests)]
-        percentile99 = timings[int(.99 * num_tests)]
-
-        if num_tests % 2 == 1:
-            median = timings[((num_tests - 1) / 2) - 1]
-        else:
-            lower = timings[num_tests / 2 - 1]
-            upper = timings[num_tests / 2]
-            median = (float(lower + upper)) / 2
-
-        mean = sum(timings) / num_tests
-
-        for timing in timings:
-            sum_of_deviations = math.pow(timing - mean, 2)
-
-        std_deviation = math.sqrt(sum_of_deviations / num_tests)
-        self._printer.print_timing("  Median:          %6.3f" % median)
-        self._printer.print_timing("  Mean:            %6.3f" % mean)
-        self._printer.print_timing("  90th percentile: %6.3f" % percentile90)
-        self._printer.print_timing("  99th percentile: %6.3f" % percentile99)
-        self._printer.print_timing("  Standard dev:    %6.3f" % std_deviation)
-        self._printer.print_timing("")
-
-    def _print_result_summary(self, result_summary):
-        """Print a short summary about how many tests passed.
-
-        Args:
-          result_summary: information to log
-        """
-        failed = result_summary.total_failures
-        total = result_summary.total - result_summary.expected_skips
-        passed = total - failed
-        pct_passed = 0.0
-        if total > 0:
-            pct_passed = float(passed) * 100 / total
-
-        self._printer.print_actual("")
-        self._printer.print_actual("=> Results: %d/%d tests passed (%.1f%%)" %
-                     (passed, total, pct_passed))
-        self._printer.print_actual("")
-        self._print_result_summary_entry(result_summary,
-            test_expectations.NOW, "Tests to be fixed")
-
-        self._printer.print_actual("")
-        self._print_result_summary_entry(result_summary,
-            test_expectations.WONTFIX,
-            "Tests that will only be fixed if they crash (WONTFIX)")
-        self._printer.print_actual("")
-
-    def _print_result_summary_entry(self, result_summary, timeline,
-                                    heading):
-        """Print a summary block of results for a particular timeline of test.
-
-        Args:
-          result_summary: summary to print results for
-          timeline: the timeline to print results for (NOT, WONTFIX, etc.)
-          heading: a textual description of the timeline
-        """
-        total = len(result_summary.tests_by_timeline[timeline])
-        not_passing = (total -
-           len(result_summary.tests_by_expectation[test_expectations.PASS] &
-               result_summary.tests_by_timeline[timeline]))
-        self._printer.print_actual("=> %s (%d):" % (heading, not_passing))
-
-        for result in TestExpectations.EXPECTATION_ORDER:
-            if result == test_expectations.PASS:
-                continue
-            results = (result_summary.tests_by_expectation[result] &
-                       result_summary.tests_by_timeline[timeline])
-            desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result]
-            if not_passing and len(results):
-                pct = len(results) * 100.0 / not_passing
-                self._printer.print_actual("  %5d %-24s (%4.1f%%)" %
-                    (len(results), desc[len(results) != 1], pct))
 
     def _copy_results_html_file(self):
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')

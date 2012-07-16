@@ -405,25 +405,26 @@ class  Testprinter(unittest.TestCase):
                     all pass on the second run).
 
             """
+            test_is_slow = False
             paths, rs, exp = self.get_result_summary(tests, expectations)
             if expected:
-                rs.add(self.get_result('passes/text.html', test_expectations.PASS), expected)
-                rs.add(self.get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected)
-                rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), expected)
+                rs.add(self.get_result('passes/text.html', test_expectations.PASS), expected, test_is_slow)
+                rs.add(self.get_result('failures/expected/timeout.html', test_expectations.TIMEOUT), expected, test_is_slow)
+                rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), expected, test_is_slow)
             elif passing:
-                rs.add(self.get_result('passes/text.html'), expected)
-                rs.add(self.get_result('failures/expected/timeout.html'), expected)
-                rs.add(self.get_result('failures/expected/crash.html'), expected)
+                rs.add(self.get_result('passes/text.html'), expected, test_is_slow)
+                rs.add(self.get_result('failures/expected/timeout.html'), expected, test_is_slow)
+                rs.add(self.get_result('failures/expected/crash.html'), expected, test_is_slow)
             else:
-                rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected)
-                rs.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected)
-                rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected)
+                rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected, test_is_slow)
+                rs.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected, test_is_slow)
+                rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
             retry = rs
             if flaky:
                 paths, retry, exp = self.get_result_summary(tests, expectations)
-                retry.add(self.get_result('passes/text.html'), True)
-                retry.add(self.get_result('failures/expected/timeout.html'), True)
-                retry.add(self.get_result('failures/expected/crash.html'), True)
+                retry.add(self.get_result('passes/text.html'), True, test_is_slow)
+                retry.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)
+                retry.add(self.get_result('failures/expected/crash.html'), True, test_is_slow)
             unexpected_results = manager.summarize_results(self._port, exp, rs, retry, test_timings={}, only_unexpected=True, interrupted=False)
             return unexpected_results
 

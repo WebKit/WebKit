@@ -1,3 +1,52 @@
+2012-07-16  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: move a bunch of printing code from manager.py to printing.py
+        https://bugs.webkit.org/show_bug.cgi?id=91439
+
+        Reviewed by Ojan Vafai.
+
+        All of the logic that handles what gets logged should eventually
+        live in printing.py; this patch moves a large chunk of code that
+        prints all of the stuff after the run completes.
+
+        There are no functional changes, this is just moving code
+        around. Covered by existing tests (updated as necessary).
+
+        This code is all pretty messy and most of it should be deleted
+        (or extracted after the fact from results.json), but I'm saving
+        that for further patches. My goal is just to manager.py to a
+        more manageable state.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.prepare_lists_and_print_output):
+        (Manager.run):
+        (Manager._mark_interrupted_tests_as_skipped):
+        (Manager._update_summary_with_result):
+        (Manager._num_digits):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_interrupt_if_at_failure_limits):
+        (ResultSummaryTest.summarized_results):
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        (ResultSummary.__init__):
+        (ResultSummary.add):
+        Here we had to add a list of the slow tests to the result
+        summary so that we didn't need to call back into the manager and
+        the test expectations object to figure out if a test is SLOW.
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_results):
+        (Printer):
+        (Printer._print_timing_statistics):
+        (Printer._print_aggregate_test_statistics):
+        (Printer._print_individual_test_times):
+        (Printer._print_test_list_timing):
+        (Printer._print_directory_timings):
+        (Printer._print_statistics_for_test_timings):
+        (Printer._print_result_summary):
+        (Printer._print_result_summary_entry):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_unexpected_results.get_unexpected_results):
+        (Testprinter):
+
 2012-07-16  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Create a stub TestRunner.a target
