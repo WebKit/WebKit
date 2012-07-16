@@ -63,6 +63,8 @@ class Tester(object):
                           help='do not run the integration tests')
         parser.add_option('-p', '--pass-through', action='store_true', default=False,
                           help='be debugger friendly by passing captured output through to the system')
+        parser.add_option('-j', '--child-processes', action='store', type='int', default=1,
+                          help='number of tests to run in parallel')
 
         parser.epilog = ('[args...] is an optional list of modules, test_classes, or individual tests. '
                          'If no args are given, all the tests will be run.')
@@ -75,7 +77,7 @@ class Tester(object):
 
         self.finder.clean_trees()
 
-        names = self.finder.find_names(args, self._options.skip_integrationtests, self._options.all)
+        names = self.finder.find_names(args, self._options.skip_integrationtests, self._options.all, self._options.child_processes != 1)
         if not names:
             _log.error('No tests to run')
             return False

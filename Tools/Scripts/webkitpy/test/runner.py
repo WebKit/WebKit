@@ -52,7 +52,7 @@ class Runner(object):
         run_start_time = time.time()
         all_test_names = self.all_test_names(suite)
 
-        with message_pool.get(self, self.worker_factory, 1) as pool:
+        with message_pool.get(self, self.worker_factory, int(self.options.child_processes)) as pool:
             pool.run(('test', test_name) for test_name in all_test_names)
 
         self.printer.print_result(self.result, time.time() - run_start_time)

@@ -83,13 +83,13 @@ class RunnerTest(unittest.TestCase):
         # FIXME: check the output from the test
 
     def test_regular(self):
-        self.assert_run(MockOptions(verbose=0, timing=False))
+        self.assert_run(MockOptions(verbose=0, timing=False, child_processes=1))
 
     def test_verbose(self):
-        self.assert_run(MockOptions(verbose=1, timing=False))
+        self.assert_run(MockOptions(verbose=1, timing=False, child_processes=1))
 
     def test_timing(self):
-        self.assert_run(MockOptions(verbose=0, timing=True))
+        self.assert_run(MockOptions(verbose=0, timing=True, child_processes=1))
 
 
 if __name__ == '__main__':

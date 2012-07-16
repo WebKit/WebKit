@@ -1,5 +1,37 @@
 2012-07-16  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: run tests in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=91294
+
+        Reviewed by Ojan Vafai.
+
+        This change adds support for running tests in parallel. This is
+        not yet on by default, since the logging isn't very pretty w/
+        parallel tests.
+
+        Also, there are some (multiprocessing-related) tests that can't be
+        run in parallel and so we skip them in that situation; I need to
+        come up with a mechanism for dealing with this, since you
+        apparently can't use multiprocessing as both a parent and a
+        child process.
+
+        * Scripts/webkitpy/test/finder.py:
+        (Finder.find_names):
+        (Finder._default_names):
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args):
+        (Tester.run):
+        * Scripts/webkitpy/test/main_unittest.py:
+        (TesterTest.test_no_tests_found):
+        * Scripts/webkitpy/test/runner.py:
+        (Runner.run):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (RunnerTest.test_regular):
+        (RunnerTest.test_verbose):
+        (RunnerTest.test_timing):
+
+2012-07-16  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: use message pools
         https://bugs.webkit.org/show_bug.cgi?id=91292
 

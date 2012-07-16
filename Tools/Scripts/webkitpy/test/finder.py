@@ -101,7 +101,7 @@ class Finder(object):
                 return tree.to_module(path)
         return None
 
-    def find_names(self, args, skip_integrationtests, find_all):
+    def find_names(self, args, skip_integrationtests, find_all, skip_if_parallel=True):
         suffixes = ['_unittest.py']
         if not skip_integrationtests:
             suffixes.append('_integrationtest.py')
@@ -112,7 +112,7 @@ class Finder(object):
                 names.extend(self._find_names_for_arg(arg, suffixes))
             return names
 
-        return self._default_names(suffixes, find_all)
+        return self._default_names(suffixes, find_all, skip_if_parallel)
 
     def _find_names_for_arg(self, arg, suffixes):
         realpath = self.filesystem.realpath(arg)
@@ -145,7 +145,7 @@ class Finder(object):
                 return tree.find_modules(suffixes, path)
         return []
 
-    def _default_names(self, suffixes, find_all):
+    def _default_names(self, suffixes, find_all, skip_if_parallel):
         modules = []
         for tree in self.trees:
             modules.extend(tree.find_modules(suffixes))
@@ -164,6 +164,11 @@ class Finder(object):
                                    'webkitpy.common.config',
                                    'webkitpy.tool')
                 self._exclude(modules, win32_blacklist, 'fail horribly on win32', 54526)
+
+        if skip_if_parallel:
+            serial_tests = ('webkitpy.common.system.executive_unittest.ExecutiveTest.test_running_in_parallel',
+                            'webkitpy.test')
+            self._exclude(modules, serial_tests, 'tests fail when run in parallel with other tests', 12345)
 
         return modules
 

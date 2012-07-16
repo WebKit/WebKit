@@ -41,7 +41,7 @@ class TesterTest(unittest.TestCase):
         root_logger.handlers = []
 
         tester.printer.stream = errors
-        tester.finder.find_names = lambda args, skip_integration, run_all: []
+        tester.finder.find_names = lambda args, skip_integration, run_all, skip_if_parallel: []
         oc = OutputCapture()
         try:
             oc.capture_output()
