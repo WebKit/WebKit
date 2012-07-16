@@ -99,10 +99,20 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     }
 
     delete [] canvasData;
+#if PLATFORM(BLACKBERRY)
+    // Imagination specific fix
+    if (m_isImaginationHardware)
+        readPixelsIMG(x, y, width, height, format, type, data);
+    else
+        ::glReadPixels(x, y, width, height, format, type, data);
+
+    // Note: BlackBerries have a different anti-aliasing pipeline.
+#else
     ::glReadPixels(x, y, width, height, format, type, data);
 
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+#endif
 }
 
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
@@ -115,6 +125,8 @@ void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int 
     }
 }
 
+#if !PLATFORM(BLACKBERRY)
+// The BlackBerry port uses a special implementation of reshapeFBOs. See GraphicsContext3DBlackBerry.cpp
 bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 {
     const int width = size.width();
@@ -183,6 +195,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
     return mustRestoreFBO;
 }
+#endif
 
 void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
 {

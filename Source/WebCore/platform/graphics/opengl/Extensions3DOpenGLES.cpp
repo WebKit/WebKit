@@ -76,7 +76,10 @@ void Extensions3DOpenGLES::blitFramebuffer(long srcX0, long srcY0, long srcX1, l
 
 void Extensions3DOpenGLES::renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height)
 {
-    notImplemented();
+    if (m_glRenderbufferStorageMultisampleIMG)
+        renderbufferStorageMultisampleIMG(target, samples, internalformat, width, height);
+    else
+        notImplemented();
 }
 
 void Extensions3DOpenGLES::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum)

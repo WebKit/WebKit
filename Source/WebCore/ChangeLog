@@ -1,3 +1,47 @@
+2012-07-16  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Upstream WebGL Code
+        https://bugs.webkit.org/show_bug.cgi?id=91143
+
+        Reviewed by Rob Buis.
+
+        This patch includes BlackBerry-specific fixes for anti-aliasing, logging, and shader compilation.
+
+        No new tests, because there is no new functionality.
+
+        * platform/graphics/GraphicsContext3D.h: Add a value for TI Imagination chipsets on BlackBerry platforms
+        * platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp: Multiple downstream changes
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        (WebCore):
+        (WebCore::GraphicsContext3D::logFrameBufferStatus):
+        (WebCore::GraphicsContext3D::readPixelsIMG): BlackBerry-specific fix for Imagination hardware.
+        (WebCore::GraphicsContext3D::paintsIntoCanvasBuffer):
+        (WebCore::GraphicsContext3D::platformTexture):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/opengl/Extensions3DOpenGL.h: Remove unnecessary whitespace.
+        (Extensions3DOpenGL):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE): Hack to fix ANGLE-generated code on BlackBerry platforms.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h:
+        (Extensions3DOpenGLCommon):
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp: I am not in a position to change system headers from correct to incorrect.
+        (WebCore::Extensions3DOpenGLES::renderbufferStorageMultisample):
+        (WebCore::Extensions3DOpenGLES::supportsExtension):
+        * platform/graphics/opengl/Extensions3DOpenGLES.h: I am not in a position to change system headers from correct to incorrect.
+        (Extensions3DOpenGLES):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp: Add a BlackBerry-specific anti-aliasing fix.
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3D::prepareTexture):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::copyTexImage2D):
+        (WebCore::GraphicsContext3D::copyTexSubImage2D):
+        (WebCore):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore):
+
 2012-07-16  Tony Chang  <tony@chromium.org>
 
         Position grid items by row/column index

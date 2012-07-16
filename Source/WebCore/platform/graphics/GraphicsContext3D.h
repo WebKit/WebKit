@@ -931,6 +931,11 @@ public:
     void readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels);
 #endif
 
+#if PLATFORM(BLACKBERRY)
+    void logFrameBufferStatus(int line);
+    void readPixelsIMG(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data);
+#endif
+
     bool reshapeFBOs(const IntSize&);
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
 #if PLATFORM(QT) && USE(GRAPHICS_SURFACE)
@@ -943,6 +948,11 @@ public:
 #if PLATFORM(MAC)
     CGLContextObj m_contextObj;
     RetainPtr<WebGLLayer> m_webGLLayer;
+#elif PLATFORM(BLACKBERRY)
+#if USE(ACCELERATED_COMPOSITING)
+    RefPtr<PlatformLayer> m_compositingLayer;
+#endif
+    void* m_context;
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(BLACKBERRY)
@@ -996,9 +1006,14 @@ public:
     // Errors raised by synthesizeGLError().
     ListHashSet<GC3Denum> m_syntheticErrors;
 
+#if PLATFORM(BLACKBERRY)
+    bool m_isImaginationHardware;
+#endif
+
+#if !PLATFORM(BLACKBERRY)
     friend class GraphicsContext3DPrivate;
     OwnPtr<GraphicsContext3DPrivate> m_private;
-
+#endif
     bool systemAllowsMultisamplingOnATICards() const;
 };
 

@@ -53,13 +53,13 @@ public:
     virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
 
 protected:
+    friend class Extensions3DOpenGLES;
     Extensions3DOpenGLCommon(GraphicsContext3D*);
 
     virtual bool supportsExtension(const String&) = 0;
     virtual String getExtensions() = 0;
 
     virtual void initializeAvailableExtensions();
-
     bool m_initializedAvailableExtensions;
     HashSet<String> m_availableExtensions;
 

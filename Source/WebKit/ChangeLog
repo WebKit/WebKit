@@ -1,3 +1,14 @@
+2012-07-16  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Upstream WebGL Code
+        https://bugs.webkit.org/show_bug.cgi?id=91143
+
+        Reviewed by Rob Buis.
+
+        This patch includes BlackBerry-specific fixes for anti-aliasing, logging, and shader compilation.
+
+        * PlatformBlackBerry.cmake: Define WTF_USE_OPENGL_ES_2 on WebGL-enabled builds.
+
 2012-07-16  Frederik Gladhorn  <frederik.gladhorn@nokia.com>
 
         Add accessible for QWebView.
