@@ -6,28 +6,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 413x21
-          text run at (0,0) width 413: "This tests the caret position for the caret after a block table."
-      RenderBlock {DIV} at (0,37) size 784x127
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 22x21
-            text run at (0,0) width 22: "foo"
-        RenderTable {TABLE} at (0,21) size 58x85 [border: (1px solid #999999)]
-          RenderTableSection {TBODY} at (1,1) size 56x83
-            RenderTableRow {TR} at (0,2) size 56x25
-              RenderTableCell {TD} at (2,2) size 52x25 [border: (1px solid #999999)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 25x21
-                  text run at (2,2) width 25: "this"
-            RenderTableRow {TR} at (0,29) size 56x25
-              RenderTableCell {TD} at (2,29) size 52x25 [border: (1px solid #999999)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 12x21
-                  text run at (2,2) width 12: "is"
-            RenderTableRow {TR} at (0,56) size 56x25
-              RenderTableCell {TD} at (2,56) size 52x25 [border: (1px solid #999999)] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 48x21
-                  text run at (2,2) width 48: "a table"
-        RenderBlock (anonymous) at (0,106) size 784x21
-          RenderText {#text} at (0,0) size 26x21
-            text run at (0,0) width 26: "baz"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 357x19
+          text run at (0,0) width 357: "This tests the caret position for the caret after a block table."
+      RenderBlock {DIV} at (0,35) size 784x117
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 20x19
+            text run at (0,0) width 20: "foo"
+        RenderTable {TABLE} at (0,19) size 50x79 [border: (1px solid #999999)]
+          RenderTableSection {TBODY} at (1,1) size 48x77
+            RenderTableRow {TR} at (0,2) size 48x23
+              RenderTableCell {TD} at (2,2) size 44x23 [border: (1px solid #999999)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 20x19
+                  text run at (2,2) width 20: "this"
+            RenderTableRow {TR} at (0,27) size 48x23
+              RenderTableCell {TD} at (2,27) size 44x23 [border: (1px solid #999999)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 9x19
+                  text run at (2,2) width 9: "is"
+            RenderTableRow {TR} at (0,52) size 48x23
+              RenderTableCell {TD} at (2,52) size 44x23 [border: (1px solid #999999)] [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 40x19
+                  text run at (2,2) width 40: "a table"
+        RenderBlock (anonymous) at (0,98) size 784x19
+          RenderText {#text} at (0,0) size 21x19
+            text run at (0,0) width 21: "baz"
 caret: position 1 of child 1 {TABLE} of child 2 {DIV} of body

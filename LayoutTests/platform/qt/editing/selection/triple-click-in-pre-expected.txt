@@ -9,24 +9,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 756x21
-          text run at (0,0) width 422: "This tests modifying a selection created with a double click. "
-          text run at (422,0) width 334: "The new selection should use word granularity."
-      RenderBlock {P} at (0,37) size 784x63 [color=#008000]
-        RenderText {#text} at (0,0) size 780x63
-          text run at (0,0) width 249: "This test does not run interactively. "
-          text run at (249,0) width 400: "It uses the testRunners eventSender to do mouse clicks. "
-          text run at (649,0) width 131: "To run it manually,"
-          text run at (0,21) width 576: "triple click on the second line in the box below (anywhere after \"whitespace:pre\"). "
-          text run at (576,21) width 201: "The triple click should select"
-          text run at (0,42) width 100: "the entire line."
-      RenderBlock {DIV} at (0,116) size 784x62
-        RenderBlock {DIV} at (0,0) size 784x62 [border: (1px solid #0000FF)]
-          RenderBlock {PRE} at (1,14) size 782x34
-            RenderText {#text} at (0,0) size 87x34
-              text run at (0,0) width 75: "this text is in"
-              text run at (75,0) width 0: " "
-              text run at (0,17) width 87: "whitespace:pre"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 640x19
+          text run at (0,0) width 359: "This tests modifying a selection created with a double click. "
+          text run at (359,0) width 281: "The new selection should use word granularity."
+      RenderBlock {P} at (0,35) size 784x38 [color=#008000]
+        RenderText {#text} at (0,0) size 769x38
+          text run at (0,0) width 212: "This test does not run interactively. "
+          text run at (212,0) width 339: "It uses the testRunners eventSender to do mouse clicks. "
+          text run at (551,0) width 218: "To run it manually, triple click on the"
+          text run at (0,19) width 386: "second line in the box below (anywhere after \"whitespace:pre\"). "
+          text run at (386,19) width 257: "The triple click should select the entire line."
+      RenderBlock {DIV} at (0,89) size 784x58
+        RenderBlock {DIV} at (0,0) size 784x58 [border: (1px solid #0000FF)]
+          RenderBlock {PRE} at (1,14) size 782x30
+            RenderText {#text} at (0,0) size 120x30
+              text run at (0,0) width 120: "this text is in"
+              text run at (120,0) width 0: " "
+              text run at (0,15) width 112: "whitespace:pre"
 selection start: position 16 of child 0 {#text} of child 1 {PRE} of child 1 {DIV} of child 5 {DIV} of body
 selection end:   position 30 of child 0 {#text} of child 1 {PRE} of child 1 {DIV} of child 5 {DIV} of body

@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 380x21
-          text run at (0,0) width 380: "This tests Range.selectNode() of a text node and a br."
-      RenderBlock {DIV} at (0,37) size 784x21
-        RenderText {#text} at (0,0) size 27x21
-          text run at (0,0) width 27: "one"
-      RenderBlock {DIV} at (0,58) size 784x42
-        RenderText {#text} at (0,0) size 25x21
-          text run at (0,0) width 25: "two"
-        RenderBR {BR} at (25,16) size 0x0
-        RenderText {#text} at (0,21) size 36x21
-          text run at (0,21) width 36: "three"
-      RenderBlock {DIV} at (0,100) size 784x21
-        RenderText {#text} at (0,0) size 27x21
-          text run at (0,0) width 27: "four"
-      RenderBlock {UL} at (0,137) size 784x21
-        RenderListItem {LI} at (40,0) size 744x21
-          RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 65x21
-            text run at (0,0) width 65: "Success."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 326x19
+          text run at (0,0) width 326: "This tests Range.selectNode() of a text node and a br."
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 22x19
+          text run at (0,0) width 22: "one"
+      RenderBlock {DIV} at (0,54) size 784x38
+        RenderText {#text} at (0,0) size 23x19
+          text run at (0,0) width 23: "two"
+        RenderBR {BR} at (23,15) size 0x0
+        RenderText {#text} at (0,19) size 30x19
+          text run at (0,19) width 30: "three"
+      RenderBlock {DIV} at (0,92) size 784x19
+        RenderText {#text} at (0,0) size 24x19
+          text run at (0,0) width 24: "four"
+      RenderBlock {UL} at (0,127) size 784x19
+        RenderListItem {LI} at (40,0) size 744x19
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 53x19
+            text run at (0,0) width 53: "Success."

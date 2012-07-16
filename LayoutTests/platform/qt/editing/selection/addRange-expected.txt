@@ -3,14 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 726x42
-          text run at (0,0) width 240: "This tests Selection::addRange(). "
-          text run at (240,0) width 486: "It should have no effect if the range passed to it does not intersect the"
-          text run at (0,21) width 178: "currently selected range. "
-          text run at (178,21) width 184: "'3456' should be selected."
-      RenderBlock {DIV} at (0,58) size 784x21
-        RenderText {#text} at (0,0) size 81x21
-          text run at (0,0) width 81: "123456789"
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 765x38
+          text run at (0,0) width 200: "This tests Selection::addRange(). "
+          text run at (200,0) width 565: "It should have no effect if the range passed to it does not intersect the currently selected range."
+          text run at (0,19) width 157: "'3456' should be selected."
+      RenderBlock {DIV} at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 72x19
+          text run at (0,0) width 72: "123456789"
 selection start: position 2 of child 0 {#text} of child 2 {DIV} of body
 selection end:   position 6 of child 0 {#text} of child 2 {DIV} of body

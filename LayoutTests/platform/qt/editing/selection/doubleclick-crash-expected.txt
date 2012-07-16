@@ -7,15 +7,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x587
-      RenderBlock {PRE} at (0,0) size 800x85
-        RenderText {#text} at (0,0) size 30x68
-          text run at (0,0) width 30: "Test."
-          text run at (30,0) width 0: " "
-          text run at (0,17) width 30: "Test."
-          text run at (30,17) width 0: " "
-          text run at (0,34) width 0: " "
-          text run at (0,51) width 0: " "
-        RenderText {#text} at (0,68) size 0x17
-          text run at (0,68) width 0: " "
+      RenderBlock {PRE} at (0,0) size 800x75
+        RenderText {#text} at (0,0) size 40x60
+          text run at (0,0) width 40: "Test."
+          text run at (40,0) width 0: " "
+          text run at (0,15) width 40: "Test."
+          text run at (40,15) width 0: " "
+          text run at (0,30) width 0: " "
+          text run at (0,45) width 0: " "
+        RenderText {#text} at (0,60) size 0x15
+          text run at (0,60) width 0: " "
 selection start: position 5 of child 0 {#text} of child 1 {PRE} of body
 selection end:   position 6 of child 0 {#text} of child 1 {PRE} of body

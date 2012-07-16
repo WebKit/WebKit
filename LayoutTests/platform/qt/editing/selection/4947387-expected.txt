@@ -17,19 +17,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x84
-        RenderText {#text} at (0,0) size 759x84
-          text run at (0,0) width 448: "This tests moveTo{Beginning, End}OfLineAndModifySelection. "
-          text run at (448,0) width 311: "It should operate on line boundaries and not"
-          text run at (0,21) width 165: "paragraph boundaries. "
-          text run at (165,21) width 552: "To run it manually, click inside the first line of the editable region below and do"
-          text run at (0,42) width 759: "Command+Shift+Left/Right Arrow, the selection should extend to the start/end of the line, not the start/end of"
-          text run at (0,63) width 107: "the paragraph. "
-          text run at (107,63) width 546: "Also, moveTo{Beginning, End}OfParagraphAndModifySelection should work."
-      RenderBlock {DIV} at (0,100) size 200x42
-        RenderText {#text} at (0,0) size 200x42
-          text run at (0,0) width 200: "The quick brown fox jumped"
-          text run at (200,0) width 0: " "
-          text run at (0,21) width 173: "over the lazy brown dog."
+      RenderBlock {P} at (0,0) size 784x76
+        RenderText {#text} at (0,0) size 763x76
+          text run at (0,0) width 390: "This tests moveTo{Beginning, End}OfLineAndModifySelection. "
+          text run at (390,0) width 329: "It should operate on line boundaries and not paragraph"
+          text run at (0,19) width 74: "boundaries. "
+          text run at (74,19) width 689: "To run it manually, click inside the first line of the editable region below and do Command+Shift+Left/Right Arrow,"
+          text run at (0,38) width 533: "the selection should extend to the start/end of the line, not the start/end of the paragraph. "
+          text run at (533,38) width 155: "Also, moveTo{Beginning,"
+          text run at (0,57) width 318: "End}OfParagraphAndModifySelection should work."
+      RenderBlock {DIV} at (0,92) size 200x38
+        RenderText {#text} at (0,0) size 179x38
+          text run at (0,0) width 175: "The quick brown fox jumped"
+          text run at (175,0) width 4: " "
+          text run at (0,19) width 150: "over the lazy brown dog."
 selection start: position 0 of child 0 {#text} of child 2 {DIV} of body
 selection end:   position 51 of child 0 {#text} of child 2 {DIV} of body

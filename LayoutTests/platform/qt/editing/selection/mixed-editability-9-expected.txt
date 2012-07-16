@@ -12,26 +12,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 772x42
-          text run at (0,0) width 772: "This tests moving the caret backward through content of mixed editability. The caret should back to just before"
-          text run at (0,21) width 126: "the outlined table."
-      RenderBlock {DIV} at (0,58) size 784x73
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 57x21
-            text run at (0,0) width 57: "editable"
-        RenderTable {TABLE} at (0,21) size 104x31 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 102x29
-            RenderTableRow {TR} at (0,2) size 102x25
-              RenderTableCell {TD} at (2,2) size 98x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderBlock {DIV} at (2,2) size 94x21
-                  RenderInline {SPAN} at (0,0) size 37x21
-                    RenderText {#text} at (0,0) size 37x21
-                      text run at (0,0) width 37: "static"
-                  RenderInline {SPAN} at (0,0) size 57x21
-                    RenderText {#text} at (37,0) size 57x21
-                      text run at (37,0) width 57: "editable"
-        RenderBlock (anonymous) at (0,52) size 784x21
-          RenderText {#text} at (0,0) size 57x21
-            text run at (0,0) width 57: "editable"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 774x19
+          text run at (0,0) width 774: "This tests moving the caret backward through content of mixed editability. The caret should back to just before the outlined table."
+      RenderBlock {DIV} at (0,35) size 784x67
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 47x19
+            text run at (0,0) width 47: "editable"
+        RenderTable {TABLE} at (0,19) size 88x29 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 86x27
+            RenderTableRow {TR} at (0,2) size 86x23
+              RenderTableCell {TD} at (2,2) size 82x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 78x19
+                  RenderInline {SPAN} at (0,0) size 31x19
+                    RenderText {#text} at (0,0) size 31x19
+                      text run at (0,0) width 31: "static"
+                  RenderInline {SPAN} at (0,0) size 47x19
+                    RenderText {#text} at (31,0) size 47x19
+                      text run at (31,0) width 47: "editable"
+        RenderBlock (anonymous) at (0,48) size 784x19
+          RenderText {#text} at (0,0) size 47x19
+            text run at (0,0) width 47: "editable"
 caret: position 0 of child 1 {TABLE} of child 2 {DIV} of body

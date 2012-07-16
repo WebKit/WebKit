@@ -8,13 +8,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 458x21
-          text run at (0,0) width 458: "This tests for a bug where images would act as word boundaries."
-      RenderBlock {DIV} at (0,37) size 784x108
-        RenderText {#text} at (0,87) size 28x21
-          text run at (0,87) width 28: "The"
-        RenderImage {IMG} at (28,0) size 76x103
-        RenderText {#text} at (104,87) size 413x21
-          text run at (104,87) width 413: "caret should be just after the second word in this sentence."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 390x19
+          text run at (0,0) width 390: "This tests for a bug where images would act as word boundaries."
+      RenderBlock {DIV} at (0,35) size 784x107
+        RenderText {#text} at (0,88) size 23x19
+          text run at (0,88) width 23: "The"
+        RenderImage {IMG} at (23,0) size 76x103
+        RenderText {#text} at (99,88) size 351x19
+          text run at (99,88) width 351: "caret should be just after the second word in this sentence."
 caret: position 5 of child 2 {#text} of child 2 {DIV} of body

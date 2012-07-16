@@ -1,35 +1,33 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 19 of #text > DIV > BODY > HTML > #document to 19 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 10 of #text > DIV > BODY > HTML > #document to 10 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 115x21
-          text run at (0,0) width 115: "This is a test for "
-        RenderInline {I} at (0,0) size 729x42
-          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
-            RenderText {#text} at (115,0) size 379x21
-              text run at (115,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9978"
-          RenderText {#text} at (494,0) size 729x42
-            text run at (494,0) width 4: " "
-            text run at (498,0) width 231: "REGRESSION (r12949-r12988):"
-            text run at (0,21) width 545: "Clicking the first letter on a line places the caret at the end of the previous line"
-        RenderText {#text} at (545,21) size 4x21
-          text run at (545,21) width 4: "."
-      RenderBlock {P} at (0,58) size 784x42
-        RenderText {#text} at (0,0) size 774x42
-          text run at (0,0) width 611: "To test interactively, click the left side of the W on the second line. The caret should be "
-          text run at (611,0) width 163: "move to the start of that"
-          text run at (0,21) width 30: "line."
-      RenderBlock {HR} at (0,116) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,126) size 250x180
-        RenderText {#text} at (0,0) size 234x180
-          text run at (0,0) width 156: "Alice in"
-          text run at (156,0) width 13: " "
-          text run at (0,60) width 234: "Wonderlan"
-          text run at (0,120) width 27: "d"
-caret: position 19 of child 0 {#text} of child 7 {DIV} of body
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 99x19
+          text run at (0,0) width 99: "This is a test for "
+        RenderInline {I} at (0,0) size 774x38
+          RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
+            RenderText {#text} at (99,0) size 350x19
+              text run at (99,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9978"
+          RenderText {#text} at (449,0) size 774x38
+            text run at (449,0) width 4: " "
+            text run at (453,0) width 321: "REGRESSION (r12949-r12988): Clicking the first"
+            text run at (0,19) width 393: "letter on a line places the caret at the end of the previous line"
+        RenderText {#text} at (393,19) size 4x19
+          text run at (393,19) width 4: "."
+      RenderBlock {P} at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 696x19
+          text run at (0,0) width 525: "To test interactively, click the left side of the W on the second line. The caret should be "
+          text run at (525,0) width 171: "move to the start of that line."
+      RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,99) size 250x110
+        RenderText {#text} at (0,0) size 232x109
+          text run at (0,0) width 147: "Alice in"
+          text run at (147,0) width 12: " "
+          text run at (0,55) width 232: "Wonderland"
+caret: position 10 of child 0 {#text} of child 7 {DIV} of body
