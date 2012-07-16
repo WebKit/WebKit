@@ -1,3 +1,19 @@
+2012-07-16  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: fix output write logic to support incremental build
+        https://bugs.webkit.org/show_bug.cgi?id=90642
+
+        Reviewed by Yury Semikhatsky.
+
+        A small intermediate writer is added. It handles comparing old and new source before actual writing.
+
+        * inspector/CodeGeneratorInspector.py:
+        (flatten_list):
+        (SmartOutput):
+        (SmartOutput.__init__):
+        (SmartOutput.write):
+        (SmartOutput.close):
+
 2012-07-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Incorrect assertion: Replicas will cause a RenderPass to be removed twice
