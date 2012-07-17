@@ -1218,8 +1218,6 @@ BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-pro
 BUGWK80517 DEBUG : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE PASS
 
 BUGWK81217 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE
-BUGWK81217 WIN : svg/custom/use-detach.svg = IMAGE
-BUGWK81217 WIN : svg/carto.net/tabgroup.svg = IMAGE
 BUGWK81217 : svg/hixie/perf/003.xml = PASS IMAGE
 
 BUGWK81240 MAC : svg/text/bidi-reorder-value-lists.svg = PASS IMAGE+TEXT
@@ -2498,7 +2496,6 @@ BUGWK57785 WIN MAC : fast/frames/iframe-scaling-with-scroll.html = IMAGE MISSING
 BUGWK58193 WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS TIMEOUT TEXT
 
 // Regression caused by r83514.
-BUGCR79110 WIN : fast/block/float/021.html = TEXT
 BUGCR79110 LINUX WIN : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
 
 // Regression caused by r83628.
@@ -2653,7 +2650,7 @@ BUGWK74137 SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-visible.html
 BUGWK74137 WIN LINUX LION : fast/regions/region-overflow-auto-overflow-visible.html = PASS MISSING
 
 // CSS custom() filters are not currently supported
-BUGWK71392 WIN : css3/filters/custom = IMAGE IMAGE+TEXT
+BUGWK71392 WIN : css3/filters/custom = IMAGE IMAGE+TEXT PASS
 
 BUGWK82783 SKIP : css3/filters/filter-change-repaint-composited.html = PASS
 BUGWK82783 SKIP : css3/filters/filter-change-repaint.html = PASS
@@ -3595,8 +3592,6 @@ BUGWK87772 SLOW RELEASE : svg/dom/viewspec-parser-4.html = PASS
 BUGWK87772 DEBUG : svg/dom/viewspec-parser-4.html = TIMEOUT
 BUGWK87772 SLOW RELEASE : svg/dom/viewspec-parser-5.html = PASS
 BUGWK87772 DEBUG : svg/dom/viewspec-parser-5.html = TIMEOUT
-
-BUGWK87870 MAC DEBUG : css3/filters/custom/custom-filter-property-computed-style.html = TEXT PASS
 
 BUGWK87880 : fast/layers/scroll-with-transform-composited-layer.html = PASS IMAGE
 
