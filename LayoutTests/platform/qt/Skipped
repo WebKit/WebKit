@@ -179,6 +179,7 @@ fast/dom/shadow/content-element-in-meter-element.html
 fast/dom/shadow/drop-event-for-input-in-shadow.html
 fast/dom/shadow/drop-event-in-shadow.html
 fast/dom/shadow/elements-in-frameless-document.html
+fast/dom/shadow/events-stopped-at-shadow-boundary.html
 fast/dom/shadow/focus-navigation.html
 fast/dom/shadow/form-in-shadow.html
 fast/dom/shadow/get-element-by-id-in-shadow-mutation.html

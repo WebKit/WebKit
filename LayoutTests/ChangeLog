@@ -1,3 +1,10 @@
+2012-07-17  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/sub-pixel/selection/selection-gaps-at-fractional-offsets-expected.txt: Added.
+
 2012-07-16  Pete Williamson  <petewil@google.com>
 
         Add some new unit tests to test the favicon changing dynamically
