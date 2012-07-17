@@ -1,3 +1,21 @@
+2012-07-17  Stephen Chenney  <schenney@chromium.org>
+
+        Crash in SVGStopElement::stopColorIncludingOpacity
+        https://bugs.webkit.org/show_bug.cgi?id=90814
+
+        Reviewed by Dirk Schulze.
+
+        No new tests as there should be no change in functionality.
+
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::stopColorIncludingOpacity): Added a check for null
+        renderer and style. It is hard to see how this is happening because
+        the code is only invoked if the parent gradient has a renderer, and it seems
+        the stop element should always have a renderer when the parent has a renderer.
+        Still, it obviously can happen and does so frequently enough to generate multiple
+        Chromium crash reports per day. The fix is marked with a FIXME, as we expect to
+        remove this code entirely soon.
+
 2012-07-17  Emil A Eklund  <eae@chromium.org>
 
         Incorrect offset used for scrollWidth/Height calculation
