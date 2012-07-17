@@ -1,3 +1,23 @@
+2012-07-16  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r119948): [Form] HTMLInputElement.valueAsNumber for input type "month" should return number of month since January 1970
+        https://bugs.webkit.org/show_bug.cgi?id=91211
+
+        Reviewed by Kent Tamura.
+
+        This patch changes BaseDateAndTimeInputType::valueAsDouble() to call
+        virtual function parseToNumber() which "month" input type overrides
+        instead of non-virtual function parseToDouble() which returns number
+        of milliseconds.
+
+        No new tests. Existing test (fast/form/month/input-valueasnumber-month.html) coverts this, although it is disabled.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::valueAsDouble): Changed to call parseToNumber().
+        (WebCore::BaseDateAndTimeInputType::parseToNumber): Changed to what parseToDouble() did.
+        * html/BaseDateAndTimeInputType.h:
+        (BaseDateAndTimeInputType): Remove parseToDouble().
+
 2012-07-16  Adrienne Walker  <enne@google.com>
 
         [chromium] Turn off ScrollbarLayerChromium for Windows due to bad alpha values

@@ -62,7 +62,8 @@ void BaseDateAndTimeInputType::setValueAsDate(double value, ExceptionCode&) cons
 
 double BaseDateAndTimeInputType::valueAsDouble() const
 {
-    return parseToDouble(element()->value());
+    const Decimal value = parseToNumber(element()->value(), Decimal::nan());
+    return value.isFinite() ? value.toDouble() : DateComponents::invalidMilliseconds();
 }
 
 void BaseDateAndTimeInputType::setValueAsDecimal(const Decimal& newValue, TextFieldEventBehavior eventBehavior, ExceptionCode&) const
@@ -108,20 +109,14 @@ void BaseDateAndTimeInputType::handleWheelEvent(WheelEvent* event)
         handleWheelEventForSpinButton(event);
 }
 
-double BaseDateAndTimeInputType::parseToDouble(const String& source) const
+Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Decimal& defaultValue) const
 {
     DateComponents date;
     if (!parseToDateComponents(source, &date))
-        return DateComponents::invalidMilliseconds();
+        return defaultValue;
     double msec = date.millisecondsSinceEpoch();
     ASSERT(isfinite(msec));
-    return msec;
-}
-
-Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Decimal& defaultValue) const
-{
-    const double doubleValue = parseToDouble(source);
-    return isfinite(doubleValue) ? Decimal::fromDouble(doubleValue) : defaultValue;
+    return Decimal::fromDouble(msec);
 }
 
 bool BaseDateAndTimeInputType::parseToDateComponents(const String& source, DateComponents* out) const

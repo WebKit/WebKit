@@ -65,7 +65,6 @@ private:
     virtual String visibleValue() const OVERRIDE;
     virtual String convertFromVisibleValue(const String&) const OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
-    double parseToDouble(const String&) const;
 };
 
 } // namespace WebCore
