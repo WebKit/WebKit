@@ -1,3 +1,21 @@
+2012-07-17  Ojan Vafai  <ojan@chromium.org>
+
+        A couple of UI nits about the flagging feature in results.html
+        https://bugs.webkit.org/show_bug.cgi?id=86798
+
+        Reviewed by Dirk Pranke.
+
+        -Clicking the flag unflags it now
+        -There's a flag all link for each test list
+        -Make the flag list always show up at the bottom of the viewport
+        when there are flagged tests. This makes it both less annoying
+        and easier to understand what's going on when you flag a test.
+        This required wrapping all the content in a div so that we could
+        make the body be a flexbox.
+        * fast/harness/resources/results-test.js:
+        (runSingleRowTest):
+        * fast/harness/results.html:
+
 2012-07-17  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] fast/forms tests needs update after rebaseline and new testfonts

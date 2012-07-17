@@ -105,7 +105,7 @@ function runSingleRowTest(results, isExpected, textResults, imageResults)
         else
             assertTrue(document.querySelector('tbody').className.indexOf('expected') == -1);
 
-        assertTrue(document.querySelector('tbody td:nth-child(1)').textContent == '+' + test);
+        assertTrue(document.querySelector('tbody td:nth-child(1)').textContent == '+' + test + ' \u2691');
         assertTrue(document.querySelector('tbody td:nth-child(2)').textContent == textResults);
         assertTrue(document.querySelector('tbody td:nth-child(3)').textContent == imageResults);
         assertTrue(document.querySelector('tbody td:nth-child(4)').textContent == actual);
@@ -684,22 +684,22 @@ function runTests()
     subtree['bar-missing.html'].is_missing_text = true;
     runTest(results, function() {
         var titles = document.getElementsByTagName('h1');
-        assertTrue(titles[0].textContent == 'Tests that crashed (1):');
-        assertTrue(titles[1].textContent == 'Tests that failed text/pixel/audio diff (3):');
-        assertTrue(titles[2].textContent == 'Tests that had no expected results (probably new) (1):');
-        assertTrue(titles[3].textContent == 'Tests that timed out (0):');
-        assertTrue(titles[4].textContent == 'Tests that had stderr output (1):');
-        assertTrue(titles[5].textContent == 'Tests expected to fail but passed (1):');
+        assertTrue(titles[0].textContent == 'Tests that crashed (1): flag all');
+        assertTrue(titles[1].textContent == 'Tests that failed text/pixel/audio diff (3): flag all');
+        assertTrue(titles[2].textContent == 'Tests that had no expected results (probably new) (1): flag all');
+        assertTrue(titles[3].textContent == 'Tests that timed out (0): flag all');
+        assertTrue(titles[4].textContent == 'Tests that had stderr output (1): flag all');
+        assertTrue(titles[5].textContent == 'Tests expected to fail but passed (1): flag all');
 
         document.getElementById('unexpected-results').checked = false;
         document.getElementById('unexpected-results').onchange();
 
-        assertTrue(titles[0].textContent == 'Tests that crashed (2):');
-        assertTrue(titles[1].textContent == 'Tests that failed text/pixel/audio diff (5):');
-        assertTrue(titles[2].textContent == 'Tests that had no expected results (probably new) (1):');
-        assertTrue(titles[3].textContent == 'Tests that timed out (1):');
-        assertTrue(titles[4].textContent == 'Tests that had stderr output (1):');
-        assertTrue(titles[5].textContent == 'Tests expected to fail but passed (1):');
+        assertTrue(titles[0].textContent == 'Tests that crashed (2): flag all');
+        assertTrue(titles[1].textContent == 'Tests that failed text/pixel/audio diff (5): flag all');
+        assertTrue(titles[2].textContent == 'Tests that had no expected results (probably new) (1): flag all');
+        assertTrue(titles[3].textContent == 'Tests that timed out (1): flag all');
+        assertTrue(titles[4].textContent == 'Tests that had stderr output (1): flag all');
+        assertTrue(titles[5].textContent == 'Tests expected to fail but passed (1): flag all');
     });
 
     results = mockResults();
@@ -710,11 +710,32 @@ function runTests()
     subtree['bar-3.html'] = mockExpectation('PASS TEXT', 'TEXT PASS');
     runTest(results, function() {
         var titles = document.getElementsByTagName('h1');
-        assertTrue(titles[0].textContent == 'Tests that failed text/pixel/audio diff (1):');
-        assertTrue(titles[1].textContent =='Flaky tests (failed the first run and passed on retry) (1):');
+        assertTrue(titles[0].textContent == 'Tests that failed text/pixel/audio diff (1): flag all');
+        assertTrue(titles[1].textContent =='Flaky tests (failed the first run and passed on retry) (1): flag all');
 
         assertTrue(document.querySelectorAll('#results-table tbody').length == 2);
         assertTrue(document.querySelectorAll('#flaky-tests-table tbody').length == 2);
+    });
+
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['bar.html'] = mockExpectation('TEXT', 'IMAGE');
+    subtree['bar1.html'] = mockExpectation('TEXT', 'TEXT');
+    subtree['bar2.html'] = mockExpectation('TEXT', 'TEXT');
+    runTest(results, function() {
+        var flaggedTestsTextbox = document.getElementById('flagged-tests');
+
+        flagAll(document.querySelector('.flag-all'));
+        assertTrue(flaggedTestsTextbox.innerText == 'foo/bar.html');
+
+        document.getElementById('unexpected-results').checked = false;
+        document.getElementById('unexpected-results').onchange();
+
+        flagAll(document.querySelector('.flag-all'));
+        assertTrue(flaggedTestsTextbox.innerText == 'foo/bar.html\nfoo/bar1.html\nfoo/bar2.html');
+
+        unflag(document.querySelector('.flag'));
+        assertTrue(flaggedTestsTextbox.innerText == 'foo/bar1.html\nfoo/bar2.html');
     });
 
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';

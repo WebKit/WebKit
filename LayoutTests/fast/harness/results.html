@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <style>
+html {
+    height: 100%;
+}
 body {
-    margin: 4px;
+    margin: 0;
     font-family: Helvetica, sans-serif;
     font-size: 11pt;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    height: 100%;
 }
 
-body > p:first-of-type {
-    margin-top: 0;
+body > * {
+    margin-left: 4px;
+    margin-top: 4px;
 }
 
 h1 {
@@ -42,6 +49,12 @@ th:empty, td:empty {
 th {
     -webkit-user-select: none;
     -moz-user-select: none;
+}
+
+.content-container {
+    -webkit-flex: 1;
+    min-height: 0;
+    overflow: auto;
 }
 
 .note {
@@ -98,8 +111,12 @@ th {
     left: 1px;
 }
 
-.test-link.flagged:after {
-    content: ' \2691';
+tbody .flag {
+    display: none;
+}
+
+tbody.flagged .flag {
+    display: inline;
 }
 
 .stopped-running-early-message {
@@ -193,6 +210,7 @@ th {
 
 #flagged-tests {
     padding: 5px;
+    height: 100px;
 }
 </style>
 <style id="unexpected-style"></style>
@@ -252,8 +270,6 @@ function parentOfType(node, selector)
     }
     return null;
 }
-
-
 
 function remove(node)
 {
@@ -388,6 +404,14 @@ function async(func, args)
     setTimeout(function() { func.apply(null, args); }, 100);
 }
 
+function visibleTests(container)
+{
+    if (onlyShowUnexpectedFailures())
+        return container.querySelectorAll('tbody:not(.expected)');
+    else
+        return container.querySelectorAll('tbody');
+}
+
 function visibleExpandLinks()
 {
     if (onlyShowUnexpectedFailures())
@@ -428,9 +452,16 @@ function testLink(test)
     return '<a class=test-link href="' + basePath + test + '">' + test + '</a>';
 }
 
+function unflag(flag)
+{
+    var shouldFlag = false;
+    TestNavigator.flagTest(parentOfType(flag, 'tbody'), shouldFlag);
+}
+
 function testLinkWithExpandButton(test)
 {
-    return '<span class=expand-button onclick="toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + testLink(test);
+    return '<span class=expand-button onclick="toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + testLink(test) +
+        '<span class=flag onclick="unflag(this)"> \u2691</span>';
 }
 
 function resultLink(testPrefix, suffix, contents)
@@ -643,9 +674,18 @@ function updateTestlistCounts()
     })
 }
 
+function flagAll(headerLink)
+{
+    var tests = visibleTests(parentOfType(headerLink, 'div'));
+    forEach(tests, function(tests) {
+        var shouldFlag = true;
+        TestNavigator.flagTest(tests, shouldFlag);
+    })
+}
+
 function testListHeaderHtml(header)
 {
-    return '<h1>' + header + ' (<span class=test-list-count></span>):</h1>';
+    return '<h1>' + header + ' (<span class=test-list-count></span>): <a href="#" class=flag-all onclick="flagAll(this)">flag all</a></h1>';
 }
 
 function testList(tests, header, tableId)
@@ -1007,15 +1047,21 @@ TestNavigator._toggleCurrentTest = function()
 
 TestNavigator._toggleCurrentTestFlagged = function()
 {
-    var testLink = parentOfType(TestNavigator._currentTestLink(), 'tbody').querySelector('.test-link');
-    var testName = testLink.innerText;
+    var testLink = parentOfType(TestNavigator._currentTestLink(), 'tbody');
+    TestNavigator.flagTest(testLink, !testLink.classList.contains('flagged'));
+}
+
+// FIXME: Test navigator shouldn't know anything about flagging. It should probably call out to TestFlagger or something.
+TestNavigator.flagTest = function(testTbody, shouldFlag)
+{
+    var testName = testTbody.querySelector('.test-link').innerText;
     
-    if (testLink.classList.contains('flagged')) {
-        testLink.classList.remove('flagged');
-        delete TestNavigator.flaggedTests[testName];
-    } else {
-        testLink.classList.add('flagged');
+    if (shouldFlag) {
+        testTbody.classList.add('flagged');
         TestNavigator.flaggedTests[testName] = 1;
+    } else {
+        testTbody.classList.remove('flagged');
+        delete TestNavigator.flaggedTests[testName];
     }
 
     TestNavigator.updateFlaggedTests();
@@ -1258,7 +1304,7 @@ function generatePage()
 {
     forEachTest(processGlobalStateFor);
 
-    var html = '<div id=toolbar>' +
+    var html = '<div class=content-container><div id=toolbar>' +
         '<div class="note">Use the i, j, k and l keys to navigate, e, c to expand and collapse, and f to flag</div>' +
         '<a href="javascript:void()" onclick="expandAllExpectations()">expand all</a> ' +
         '<a href="javascript:void()" onclick="collapseAllExpectations()">collapse all</a> ' +
@@ -1298,7 +1344,7 @@ function generatePage()
             '<p>httpd error log: <a href="error_log.txt">error_log.txt</a></p>';
     }
 
-    document.body.innerHTML = html;
+    document.body.innerHTML = html + '</div>';
 
     if (document.getElementById('results-table')) {
         document.getElementById('results-table').addEventListener('click', TableSorter.handleClick, false);
