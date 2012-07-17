@@ -33,8 +33,8 @@
 
 #include "WebAccessibilityObject.h"
 #include "WebFrame.h"
-#include "platform/WebString.h"
 #include "WebView.h"
+#include "platform/WebString.h"
 
 using namespace WebKit;
 

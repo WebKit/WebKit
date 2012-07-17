@@ -1,5 +1,20 @@
 2012-07-16  Adam Barth  <abarth@webkit.org>
 
+        [Chromium] Move AccessibilityController and AccessibilityUIElement into TestRunner.a
+        https://bugs.webkit.org/show_bug.cgi?id=91443
+
+        Reviewed by Tony Chang.
+
+        Purely a file move (and a sorting of #includes).
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/AccessibilityController.cpp: Renamed from Tools/DumpRenderTree/chromium/AccessibilityController.cpp.
+        * DumpRenderTree/chromium/TestRunner/AccessibilityController.h: Renamed from Tools/DumpRenderTree/chromium/AccessibilityController.h.
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElement.cpp: Renamed from Tools/DumpRenderTree/chromium/AccessibilityUIElement.cpp.
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElement.h: Renamed from Tools/DumpRenderTree/chromium/AccessibilityUIElement.h.
+
+2012-07-16  Adam Barth  <abarth@webkit.org>
+
         [Chromium] AccessibilityController shouldn't know anything about TestShell
         https://bugs.webkit.org/show_bug.cgi?id=91441
 

@@ -1,10 +1,6 @@
 {
     'variables': {
         'drt_files': [
-            'chromium/AccessibilityController.cpp',
-            'chromium/AccessibilityController.h',
-            'chromium/AccessibilityUIElement.cpp',
-            'chromium/AccessibilityUIElement.h',
             'chromium/DRTDevToolsAgent.cpp',
             'chromium/DRTDevToolsAgent.h',
             'chromium/DRTDevToolsClient.cpp',
@@ -60,6 +56,10 @@
             'chromium/WebViewHost.h',
         ],
         'test_runner_files': [
+            'chromium/TestRunner/AccessibilityController.cpp',
+            'chromium/TestRunner/AccessibilityController.h',
+            'chromium/TestRunner/AccessibilityUIElement.cpp',
+            'chromium/TestRunner/AccessibilityUIElement.h',
             'chromium/TestRunner/CppBoundClass.cpp',
             'chromium/TestRunner/CppBoundClass.h',
             'chromium/TestRunner/CppVariant.cpp',
