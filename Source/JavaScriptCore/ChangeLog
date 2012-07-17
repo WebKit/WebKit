@@ -1,3 +1,28 @@
+2012-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out 122790 because it broke the Windows build. I'm not
+        sure what to do with exported symbols that are predicated on NDEBUG.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * interpreter/Interpreter.cpp:
+        (JSC):
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::getCallerInfo):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::retrieveCallerFromVMCode):
+        * interpreter/Interpreter.h:
+        (Interpreter):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+
 2012-07-16  Oliver Hunt  <oliver@apple.com>
 
         dumpCallFrame is broken in ToT

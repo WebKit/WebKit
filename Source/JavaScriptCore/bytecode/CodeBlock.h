@@ -578,9 +578,7 @@ namespace JSC {
         void createActivation(CallFrame*);
 
         void clearEvalCache();
-        
-        UString nameForRegister(int registerNumber);
-        
+
         void addPropertyAccessInstruction(unsigned propertyAccessInstruction)
         {
             m_propertyAccessInstructions.append(propertyAccessInstruction);

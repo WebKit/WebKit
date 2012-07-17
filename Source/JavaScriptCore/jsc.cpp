@@ -88,7 +88,6 @@ static EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGC(ExecState*);
 #ifndef NDEBUG
 static EncodedJSValue JSC_HOST_CALL functionReleaseExecutableMemory(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState*);
 #endif
 static EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionRun(ExecState*);
@@ -195,7 +194,6 @@ protected:
         addFunction(globalData, "quit", functionQuit, 0);
         addFunction(globalData, "gc", functionGC, 0);
 #ifndef NDEBUG
-        addFunction(globalData, "dumpCallFrame", functionDumpCallFrame, 0);
         addFunction(globalData, "releaseExecutableMemory", functionReleaseExecutableMemory, 0);
 #endif
         addFunction(globalData, "version", functionVersion, 1);
@@ -282,15 +280,6 @@ EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
     fflush(stdout);
     return JSValue::encode(jsUndefined());
 }
-
-#ifndef NDEBUG
-EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState* exec)
-{
-    if (!exec->callerFrame()->hasHostCallFrameFlag())
-        exec->globalData().interpreter->dumpCallFrame(exec->callerFrame());
-    return JSValue::encode(jsUndefined());
-}
-#endif
 
 EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
 {
