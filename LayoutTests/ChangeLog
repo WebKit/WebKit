@@ -1,5 +1,14 @@
 2012-07-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed chromium tests rebaselines after r122791.
+
+        * platform/chromium-win/platform/chromium/compositing/scrollbars/custom-composited-different-track-parts-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+
+2012-07-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Unreviewed chromium tests rebaselines after r122785.
 
         * platform/chromium-linux-x86/fast/borders/border-image-scaled-gradient-expected.png: Added.
