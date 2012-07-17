@@ -1468,21 +1468,9 @@ void HTMLTreeBuilder::processAnyOtherEndTagForInBody(AtomicHTMLToken& token)
     while (1) {
         RefPtr<ContainerNode> node = record->node();
         if (node->hasLocalName(token.name())) {
-            m_tree.generateImpliedEndTags();
-            // FIXME: The ElementRecord pointed to by record might be deleted by
-            // the preceding call. Perhaps we should hold a RefPtr so that it
-            // stays alive for the duration of record's scope.
-            record = 0;
-            if (!m_tree.currentNode()->hasLocalName(token.name())) {
+            m_tree.generateImpliedEndTagsWithExclusion(token.name());
+            if (!m_tree.currentNode()->hasLocalName(token.name()))
                 parseError(token);
-                // FIXME: This is either a bug in the spec, or a bug in our
-                // implementation.  Filed a bug with HTML5:
-                // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10080
-                // We might have already popped the node for the token in
-                // generateImpliedEndTags, just abort.
-                if (!m_tree.openElements()->contains(toElement(node.get())))
-                    return;
-            }
             m_tree.openElements()->popUntilPopped(toElement(node.get()));
             return;
         }

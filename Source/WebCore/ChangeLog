@@ -1,3 +1,23 @@
+2012-07-17  Kwang Yul Seo  <skyul@company100.net>
+
+        "in body" insertion mode, "any other end tag" step 2.1 is updated
+        https://bugs.webkit.org/show_bug.cgi?id=91473
+
+        Reviewed by Eric Seidel.
+
+        The HTML5 spec is updated to change the 'end tag' processing to not imply
+        its own end tag, since that makes no sense. Step 2.1 now says
+        "Generate implied end tags, except for elements with the same tag name as the token."
+        Modified to follow the updated spec. Also removed the first FIXME because now
+        ElementRecord can't be deleted by the preceeding call.
+
+        This patch does not actually change the behavior because of the previous
+        check (aborts if generateImpliedEndTags has already popped the node for the token),
+        so no new tests.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+
 2012-07-17  Shinya Kawanaka  <shinyak@chromium.org> 
 
         [Regression] Infinite loop in document.elementFromPoint
