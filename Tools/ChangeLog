@@ -1,5 +1,20 @@
 2012-07-17  Adam Barth  <abarth@webkit.org>
 
+        [Chromium] Move TextInputController into TestRunner.a
+        https://bugs.webkit.org/show_bug.cgi?id=91457
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch is purely moving code. TextInputController is one of the
+        objects exposed to JavaScript and so should be in the TestRunner
+        library.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/TextInputController.cpp: Renamed from Tools/DumpRenderTree/chromium/TextInputController.cpp.
+        * DumpRenderTree/chromium/TestRunner/TextInputController.h: Renamed from Tools/DumpRenderTree/chromium/TextInputController.h.
+
+2012-07-17  Adam Barth  <abarth@webkit.org>
+
         [Chromium] TextInputController shouldn't know about TestShell
         https://bugs.webkit.org/show_bug.cgi?id=91455
 
