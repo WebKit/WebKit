@@ -1,3 +1,41 @@
+2012-07-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium tests rebaselines after r122785.
+
+        * platform/chromium-linux-x86/fast/borders/border-image-scaled-gradient-expected.png: Added.
+        * platform/chromium-linux-x86/fast/reflections/reflection-with-zoom-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/reflections/reflection-with-zoom-expected.png.
+        * platform/chromium-linux/fast/borders/border-image-scaled-gradient-expected.png:
+        * platform/chromium-linux/fast/css/transformed-mask-expected.png:
+        * platform/chromium-linux/fast/gradients/css3-linear-angle-gradients-expected.png:
+        * platform/chromium-linux/fast/gradients/css3-linear-right-angle-gradients-expected.png:
+        * platform/chromium-linux/fast/gradients/css3-radial-gradients-expected.png:
+        * platform/chromium-linux/fast/gradients/css3-radial-gradients2-expected.png:
+        * platform/chromium-linux/fast/gradients/css3-repeating-linear-gradients-expected.png:
+        * platform/chromium-linux/fast/gradients/css3-repeating-radial-gradients-expected.png:
+        * platform/chromium-linux/fast/reflections/reflection-with-zoom-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/border-image-scaled-gradient-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/transformed-mask-expected.png:
+        * platform/chromium-mac-snowleopard/fast/reflections/reflection-with-zoom-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-scaled-gradient-expected.png:
+        * platform/chromium-mac/fast/css/transformed-mask-expected.png:
+        * platform/chromium-mac/fast/gradients/border-image-gradient-sides-and-corners-expected.png:
+        * platform/chromium-mac/fast/gradients/css3-linear-angle-gradients-expected.png:
+        * platform/chromium-mac/fast/gradients/css3-linear-right-angle-gradients-expected.png:
+        * platform/chromium-mac/fast/gradients/css3-radial-gradients-expected.png:
+        * platform/chromium-mac/fast/gradients/css3-repeating-linear-gradients-expected.png:
+        * platform/chromium-mac/fast/gradients/css3-repeating-radial-gradients-expected.png:
+        * platform/chromium-mac/fast/reflections/reflection-with-zoom-expected.png:
+        * platform/chromium-win-xp/fast/borders/border-image-scaled-gradient-expected.png: Added.
+        * platform/chromium-win-xp/fast/reflections/reflection-with-zoom-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/reflections/reflection-with-zoom-expected.png.
+        * platform/chromium-win/fast/borders/border-image-scaled-gradient-expected.png:
+        * platform/chromium-win/fast/css/transformed-mask-expected.png:
+        * platform/chromium-win/fast/gradients/border-image-gradient-sides-and-corners-expected.png:
+        * platform/chromium-win/fast/gradients/css3-linear-angle-gradients-expected.png:
+        * platform/chromium-win/fast/gradients/css3-linear-right-angle-gradients-expected.png:
+        * platform/chromium-win/fast/gradients/css3-radial-gradients-expected.png:
+        * platform/chromium-win/fast/gradients/gradient-after-transparent-border-expected.png:
+        * platform/chromium-win/fast/reflections/reflection-with-zoom-expected.png:
+
 2012-07-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         HTMLMediaElement should not use Element::ensureShadowRoot()
