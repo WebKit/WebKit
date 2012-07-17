@@ -1,3 +1,22 @@
+2012-07-16  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix the Chromium Mac build after <http://trac.webkit.org/changeset/122802>
+        (https://bugs.webkit.org/show_bug.cgi?id=91451)
+ 
+        Remove unused private instance variable AbsoluteQuadsGeneratorContext::m_wasFixed.
+        This instance variable has remained unused since it was added in
+        <http://trac.webkit.org/changeset/116718> (https://bugs.webkit.org/show_bug.cgi?id=85725).
+
+        I'm unclear as to why the Chromium Mac build began to complain about this
+        unused instance variable following <http://trac.webkit.org/changeset/122802>, since this
+        code has been in the tree for a while and we previously instantiated AbsoluteQuadsGeneratorContext
+        with wasFixed (even though it wasn't used). Regardless, we should remove the unused
+        instance variable AbsoluteQuadsGeneratorContext::m_wasFixed.
+
+        * rendering/RenderInline.cpp:
+        (WebCore): Remove AbsoluteQuadsGeneratorContext::m_wasFixed.
+        (WebCore::RenderInline::absoluteQuads):
+
 2012-07-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add RegisterProtocolHandlerClient to the Modules/protocolhandler

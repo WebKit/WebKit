@@ -648,9 +648,8 @@ namespace {
 
 class AbsoluteQuadsGeneratorContext {
 public:
-    AbsoluteQuadsGeneratorContext(const RenderInline* renderer, Vector<FloatQuad>& quads, bool* wasFixed)
+    AbsoluteQuadsGeneratorContext(const RenderInline* renderer, Vector<FloatQuad>& quads)
         : m_quads(quads)
-        , m_wasFixed(wasFixed)
         , m_geometryMap()
     {
         m_geometryMap.pushMappingsToAncestor(renderer, 0);
@@ -662,7 +661,6 @@ public:
     }
 private:
     Vector<FloatQuad>& m_quads;
-    bool* m_wasFixed;
     RenderGeometryMap m_geometryMap;
 };
 
@@ -670,7 +668,7 @@ private:
 
 void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    AbsoluteQuadsGeneratorContext context(this, quads, wasFixed);
+    AbsoluteQuadsGeneratorContext context(this, quads);
     generateLineBoxRects(context);
 
     if (continuation())
