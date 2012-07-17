@@ -18,3 +18,4 @@ layer at (0,0) size 785x894
           text run at (0,0) width 78: "Test Passed."
       RenderBlock {DIV} at (0,878) size 769x0
 caret: position 0 of child 0 {#text} of child 5 {DIV} of body
+scrolled to 0,276

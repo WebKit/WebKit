@@ -50,6 +50,7 @@
 #include <unistd.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 OwnPtr<DumpRenderTreeChrome> browser;
 Evas_Object* topLoadingFrame = 0;
@@ -101,9 +102,40 @@ static String dumpFramesAsText(Evas_Object* frame)
     return result;
 }
 
-static void dumpFrameScrollPosition(Evas_Object*)
+static void dumpFrameScrollPosition(Evas_Object* frame)
 {
-    notImplemented();
+    int x, y;
+    ewk_frame_scroll_pos_get(frame, &x, &y);
+    if (abs(x) > 0 || abs(y) > 0) {
+        StringBuilder result;
+
+        Evas_Object* parent = evas_object_smart_parent_get(frame);
+
+        // smart parent of main frame is view object.
+        if (parent != browser->mainView()) {
+            result.append("frame '");
+            result.append(ewk_frame_name_get(frame));
+            result.append("' ");
+        }
+
+        result.append("scrolled to ");
+        result.append(WTF::String::number(x));
+        result.append(",");
+        result.append(WTF::String::number(y));
+        result.append("\n");
+
+        printf("%s", result.toString().utf8().data());
+    }
+
+    if (gLayoutTestController->dumpChildFrameScrollPositions()) {
+        Eina_List* children = DumpRenderTreeSupportEfl::frameChildren(frame);
+        void* iterator;
+
+        EINA_LIST_FREE(children, iterator) {
+            Evas_Object* currentFrame = static_cast<Evas_Object*>(iterator);
+            dumpFrameScrollPosition(currentFrame);
+        }
+    }
 }
 
 static bool shouldLogFrameLoadDelegates(const String& pathOrURL)
@@ -306,7 +338,7 @@ static void dumpFrameContentsAsText(Evas_Object* frame)
 
 static bool shouldDumpFrameScrollPosition()
 {
-    return gLayoutTestController->dumpAsText() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive();
+    return !gLayoutTestController->dumpAsText() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive();
 }
 
 static bool shouldDumpPixelsAndCompareWithExpected()

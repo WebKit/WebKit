@@ -1,3 +1,41 @@
+2012-07-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][DRT] Implement dumpFrameScrollPosition
+        https://bugs.webkit.org/show_bug.cgi?id=87638
+
+        Reviewed by Hajime Morita.
+
+        Updated expected results to dump scrolled position.
+
+        * platform/efl/compositing/geometry/fixed-in-composited-expected.txt:
+        * platform/efl/compositing/geometry/horizontal-scroll-composited-expected.txt:
+        * platform/efl/compositing/geometry/video-fixed-scrolling-expected.txt:
+        * platform/efl/compositing/overflow/fixed-position-ancestor-clip-expected.txt:
+        * platform/efl/css2.1/20110323/abspos-containing-block-initial-001-expected.txt:
+        * platform/efl/fast/block/positioning/rtl-fixed-positioning-expected.txt:
+        * platform/efl/fast/block/positioning/vertical-rl/fixed-positioning-expected.txt:
+        * platform/efl/fast/dom/focus-contenteditable-expected.txt:
+        * platform/efl/fast/dom/scroll-reveal-left-overflow-expected.txt:
+        * platform/efl/fast/dom/scroll-reveal-top-overflow-expected.txt:
+        * platform/efl/fast/dynamic/anchor-lock-expected.txt:
+        * platform/efl/fast/events/autoscroll-expected.txt:
+        * platform/efl/fast/events/reveal-link-when-focused-expected.txt:
+        * platform/efl/fast/layers/scroll-rect-to-visible-expected.txt:
+        * platform/efl/fast/multicol/scrolling-overflow-expected.txt: Added.
+        * platform/efl/fast/overflow/clip-rects-fixed-ancestor-expected.txt: Added.
+        * platform/efl/fast/overflow/overflow_hidden-expected.txt:
+        * platform/efl/fast/overflow/position-fixed-transform-clipping-expected.txt:
+        * platform/efl/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/efl/fast/repaint/fixed-child-move-after-scroll-expected.txt:
+        * platform/efl/fast/repaint/fixed-child-of-fixed-move-after-scroll-expected.txt:
+        * platform/efl/fast/repaint/fixed-child-of-transformed-move-after-scroll-expected.txt:
+        * platform/efl/fast/repaint/fixed-expected.txt:
+        * platform/efl/fast/repaint/fixed-move-after-scroll-expected.txt:
+        * platform/efl/fast/repaint/fixed-tranformed-expected.txt:
+        * platform/efl/fast/repaint/repaint-during-scroll-expected.txt:
+        * platform/efl/http/tests/navigation/postredirect-goback1-expected.txt:
+        * platform/efl/transforms/2d/transform-fixed-container-expected.txt:
+
 2012-07-16  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium mac rebaseline of fast/text/textIteratorNilRenderer for r122769.

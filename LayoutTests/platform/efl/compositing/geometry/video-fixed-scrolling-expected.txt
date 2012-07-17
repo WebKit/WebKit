@@ -12,3 +12,4 @@ layer at (8,88) size 400x300
   RenderVideo {VIDEO} at (0,80) size 400x300
 layer at (0,50) size 500x60
   RenderBlock (positioned) {DIV} at (0,0) size 500x60 [bgcolor=#0000FFCC]
+scrolled to 0,50

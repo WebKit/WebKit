@@ -1,3 +1,14 @@
+2012-07-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][DRT] Implement dumpFrameScrollPosition
+        https://bugs.webkit.org/show_bug.cgi?id=87638
+
+        Reviewed by Hajime Morita.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (dumpFrameScrollPosition): Implemented.
+        (shouldDumpFrameScrollPosition): Fixed wrong condition like other ports.
+
 2012-07-16  Don Olmstead  <don.olmstead@am.sony.com>
 
         NRWRT Should provide a VS project to work on

@@ -16,25 +16,24 @@ layer at (0,0) size 785x1666
         RenderBR {BR} at (0,222) size 0x36
       RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
       RenderBlock {FORM} at (0,293) size 769x540
-        RenderButton {INPUT} at (2,2) size 161x36 [color=#202020]
+        RenderButton {INPUT} at (2,2) size 161x36 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (15,8) size 131x18
             RenderText at (0,0) size 131x19
               text run at (0,0) width 131: "Submit with POST"
         RenderBR {BR} at (165,25) size 0x0
-        RenderButton {INPUT} at (2,42) size 316x36 [color=#202020]
+        RenderButton {INPUT} at (2,42) size 316x36 [bgcolor=#C0C0C0]
           RenderBlock (anonymous) at (15,8) size 286x18
             RenderText at (0,0) size 286x19
               text run at (0,0) width 286: "Submit with POST followed by a redirect"
         RenderBR {BR} at (320,65) size 0x0
         RenderText {#text} at (0,80) size 376x36
           text run at (0,80) width 376: "Here are some form elements"
-        RenderTextControl {INPUT} at (378,88) size 195x28 [color=#202020]
-        RenderBR {BR} at (575,109) size 0x0
+        RenderTextControl {INPUT} at (378,88) size 193x28 [bgcolor=#FFFFFF]
+        RenderBR {BR} at (573,109) size 0x0
         RenderText {#text} at (0,118) size 334x36
           text run at (0,118) width 334: "that we can use for testing"
-        RenderTextControl {INPUT} at (336,126) size 195x28 [color=#202020]
-          RenderBlock {DIV} at (4,6) size 188x18
-        RenderBR {BR} at (533,147) size 0x0
+        RenderTextControl {INPUT} at (336,126) size 193x28 [bgcolor=#FFFFFF]
+        RenderBR {BR} at (531,147) size 0x0
         RenderBlock {INPUT} at (4,176) size 12x12
         RenderText {#text} at (20,156) size 73x36
           text run at (20,156) width 73: " Male"
@@ -51,7 +50,7 @@ layer at (0,0) size 785x1666
         RenderText {#text} at (20,267) size 130x36
           text run at (20,267) width 130: " option #2"
         RenderBR {BR} at (150,296) size 0x0
-        RenderMenuList {SELECT} at (2,306) size 355x38 [color=#202020]
+        RenderMenuList {SELECT} at (2,306) size 355x38 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (15,10) size 299x18
             RenderText at (0,0) size 299x19
               text run at (0,0) width 299: "Value set by User that should be Restored"
@@ -92,17 +91,22 @@ layer at (0,0) size 785x1666
         RenderInline {A} at (0,0) size 531x36
           RenderText {#text} at (0,0) size 531x36
             text run at (0,0) width 531: "This is an anchor point named \"anchor1\"."
-layer at (390,395) size 188x18 scrollHeight 19
-  RenderBlock {DIV} at (4,6) size 188x18
-    RenderText {#text} at (1,0) size 167x19
-      text run at (1,0) width 167: "New form text from user"
+layer at (390,395) size 186x18 scrollHeight 19
+  RenderBlock {DIV} at (4,6) size 186x18
+    RenderText {#text} at (0,0) size 167x19
+      text run at (0,0) width 167: "New form text from user"
+layer at (348,433) size 186x18
+  RenderBlock {DIV} at (4,6) size 186x18
 layer at (10,649) size 292x190
-  RenderTextControl {TEXTAREA} at (2,348) size 292x190 [color=#202020]
+  RenderTextControl {TEXTAREA} at (2,348) size 292x190 [bgcolor=#FFFFFF]
     RenderBlock {DIV} at (4,6) size 285x54
-      RenderText {#text} at (0,0) size 284x55
-        text run at (0,0) width 284: "More new form text from user, which sho"
-        text run at (0,18) width 278: "uld be restored when we return to this p"
-        text run at (0,36) width 31: "age."
+      RenderText {#text} at (0,0) size 266x55
+        text run at (0,0) width 254: "More new form text from user, which"
+        text run at (254,0) width 4: " "
+        text run at (0,18) width 262: "should be restored when we return to"
+        text run at (262,18) width 4: " "
+        text run at (0,36) width 69: "this page."
+scrolled to 0,50
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/postredirect-goback1.html  **nav target**
