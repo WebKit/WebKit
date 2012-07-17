@@ -1,3 +1,24 @@
+2012-07-16  Adrienne Walker  <enne@google.com>
+
+        [chromium] Turn off ScrollbarLayerChromium for Windows due to bad alpha values
+        https://bugs.webkit.org/show_bug.cgi?id=91438
+
+        Reviewed by Kenneth Russell.
+
+        r120509 turned on blending for scrollbar thumbs. Unfortunately for
+        Windows XP scrollbar thumbs, their alpha channel is bogus and so the
+        thumb ends up being completely transparent. This should ultimately be
+        fixed in Chromium theme code, but in the meantime this patch turns
+        off the use of ScrollbarLayerChromium.
+
+        This change makes Windows scrollbars fall back to using normal
+        ContentLayerChromiums and being painted all in one layer on the main
+        thread rather than being painted separately and composited on the
+        compositor thread.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::createScrollbarLayer):
+
 2012-07-16  Koji Ishii  <kojiishi@gmail.com>
 
         Vertical alternate glyph (GSUB) support for OpenTypeVerticalData
