@@ -166,7 +166,11 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     bool needToRestoreScratch = false;
     
     if (scratchGPR == InvalidGPRReg) {
+#if USE(JSVALUE64)
         scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR);
+#else
+        scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
+#endif
         stubJit.push(scratchGPR);
         needToRestoreScratch = true;
     }
@@ -238,7 +242,11 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         MacroAssembler stubJit;
         
         if (scratchGPR == InvalidGPRReg) {
+#if USE(JSVALUE64)
             scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR);
+#else
+            scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR, resultTagGPR);
+#endif
             stubJit.push(scratchGPR);
             needToRestoreScratch = true;
         }
@@ -405,6 +413,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         if (slot.cachedPropertyType() == PropertySlot::Getter
             || slot.cachedPropertyType() == PropertySlot::Custom) {
             if (slot.cachedPropertyType() == PropertySlot::Getter) {
+                ASSERT(scratchGPR != InvalidGPRReg);
                 ASSERT(baseGPR != scratchGPR);
                 if (isInlineOffset(slot.cachedOffset())) {
 #if USE(JSVALUE64)
@@ -642,7 +651,11 @@ static void emitPutReplaceStub(
     MacroAssembler stubJit;
     
     if (scratchGPR == InvalidGPRReg && (writeBarrierNeeded || isOutOfLineOffset(slot.cachedOffset()))) {
+#if USE(JSVALUE64)
         scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR);
+#else
+        scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR, valueTagGPR);
+#endif
         needToRestoreScratch = true;
         stubJit.push(scratchGPR);
     }
@@ -653,7 +666,11 @@ static void emitPutReplaceStub(
         MacroAssembler::TrustedImmPtr(structure));
     
 #if ENABLE(GGC) || ENABLE(WRITE_BARRIER_PROFILING)
+#if USE(JSVALUE64)
     scratchGPR2 = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR, scratchGPR);
+#else
+    scratchGPR2 = SpeculativeJIT::selectScratchGPR(baseGPR, valueGPR, valueTagGPR, scratchGPR);
+#endif
     stubJit.push(scratchGPR2);
     SpeculativeJIT::writeBarrier(stubJit, baseGPR, scratchGPR, scratchGPR2, WriteBarrierForPropertyAccess);
     stubJit.pop(scratchGPR2);

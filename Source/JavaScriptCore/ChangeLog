@@ -1,3 +1,20 @@
+2012-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        [Qt] REGRESSION(r122768, r122771): They broke jquery/data.html and inspector/elements/edit-dom-actions.html
+        https://bugs.webkit.org/show_bug.cgi?id=91476
+
+        Reviewed by Mark Hahnenberg.
+
+        The 32-bit repatching code was not correctly adapted to the new world where there may not always
+        be an available scratch register. Fixed it by ensuring that the scratch register we select does
+        not overlap with the value tag.
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::emitPutReplaceStub):
+
 2012-07-17  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Unreviewed buildfix from Zoltan Herczeg after 122768.
