@@ -1,5 +1,18 @@
 2012-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Don't use deprecated soup API in WebKit2APITests/TestResources
+        https://bugs.webkit.org/show_bug.cgi?id=91496
+
+        Reviewed by Martin Robinson.
+
+        soup_message_headers_get() is deprecated, use
+        soup_message_headers_get_one() instead.
+
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (serverCallback):
+
+2012-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix a typo in WebKit2APITests/TestResources
         https://bugs.webkit.org/show_bug.cgi?id=91495
 

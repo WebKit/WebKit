@@ -543,7 +543,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
     soup_message_set_status(message, SOUP_STATUS_OK);
 
-    if (soup_message_headers_get(message->request_headers, "If-Modified-Since")) {
+    if (soup_message_headers_get_one(message->request_headers, "If-Modified-Since")) {
         soup_message_set_status(message, SOUP_STATUS_NOT_MODIFIED);
         soup_message_body_complete(message->response_body);
         return;
