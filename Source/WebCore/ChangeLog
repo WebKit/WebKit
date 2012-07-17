@@ -1,3 +1,21 @@
+2012-07-17  Shinya Kawanaka  <shinyak@chromium.org> 
+
+        [Regression] Infinite loop in document.elementFromPoint
+        https://bugs.webkit.org/show_bug.cgi?id=90820
+
+        Reviewed by Nikolas Zimmermann.
+
+        Node::shadowAncestorNode returns the caller node itself for SVGElement. However,
+        since we have already implemented event retargeting algorithm in Shadow DOM, we don't have to
+        take a special care of SVGElement for Node.shadowAncestorNode() now.
+
+        This patch will removes the special care code and fixes infinite loop in document.elementFromPoint().
+
+        Test: svg/hittest/svg-use-element-from-point.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::shadowAncestorNode):
+
 2012-07-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         Shadow DOM for img element

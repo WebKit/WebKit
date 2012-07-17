@@ -1397,15 +1397,6 @@ bool Node::canStartSelection() const
 
 Node* Node::shadowAncestorNode() const
 {
-#if ENABLE(SVG)
-    // SVG elements living in a shadow tree only occur when <use> created them.
-    // For these cases we do NOT want to return the shadowParentNode() here
-    // but the actual shadow tree element - as main difference to the HTML forms
-    // shadow tree concept. (This function _could_ be made virtual - opinions?)
-    if (isSVGElement())
-        return const_cast<Node*>(this);
-#endif
-
     if (ShadowRoot* root = shadowRoot())
         return root->host();
 
