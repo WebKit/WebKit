@@ -1,3 +1,25 @@
+2012-07-17  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [BlackBerry] Enable registerProtocolHandler for Blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=90422
+
+        Reviewed by George Staikos.
+
+        Implements APIs were added in Custom Scheme Handler specification
+        which is at http://dev.w3.org/html5/spec/Overview.html#custom-handlers.
+
+        Test cases:
+        fast/dom/register-protocol-handler.html
+        fast/dom/unregister-protocol-handler.html
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::isProtocolHandlerRegistered):
+        (WebCore::ChromeClientBlackBerry::unregisterProtocolHandler):
+        (WebCore::ChromeClientBlackBerry::registerProtocolHandler):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+
 2012-07-16  Benjamin C Meyer  <bmeyer@rim.com>
 
         Any webpage can crash webkit via qnx.callExtensionMethod assuming 'this' is the 'qnx' object.

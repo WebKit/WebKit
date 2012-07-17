@@ -817,19 +817,21 @@ PassOwnPtr<ColorChooser> ChromeClientBlackBerry::createColorChooser(ColorChooser
 }
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
-ChromeClient::CustomHandlersState ChromeClientBlackBerry::isProtocolHandlerRegistered(const String&, const String&, const String&)
+ChromeClient::CustomHandlersState ChromeClientBlackBerry::isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url)
 {
-    return ChromeClient::CustomHandlersDeclined;
+    return static_cast<CustomHandlersState>(m_webPagePrivate->m_client->isProtocolHandlerRegistered(scheme, baseURL, url));
 }
 
-void ChromeClientBlackBerry::unregisterProtocolHandler(const String&, const String&, const String&)
+void ChromeClientBlackBerry::unregisterProtocolHandler(const String& scheme, const String& baseURL, const String& url)
 {
+    m_webPagePrivate->m_client->unregisterProtocolHandler(scheme, baseURL, url);
 }
 #endif
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
-void ChromeClientBlackBerry::registerProtocolHandler(const WTF::String&, const WTF::String&, const WTF::String&, const WTF::String&)
+void ChromeClientBlackBerry::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
 {
+    m_webPagePrivate->m_client->registerProtocolHandler(scheme, baseURL, url, title);
 }
 #endif
 

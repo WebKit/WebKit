@@ -259,6 +259,16 @@ public:
     virtual bool hasKeyboardFocus() = 0;
     virtual bool createPopupWebView(const Platform::IntRect&) = 0;
     virtual void closePopupWebView() = 0;
+
+    // Match with ChromeClient::CustomHandlersState.
+    enum ProtocolHandlersState {
+        ProtocolHandlersNew,
+        ProtocolHandlersRegistered,
+        ProtocolHandlersDeclined
+    };
+    virtual void registerProtocolHandler(const WebString& /*scheme*/, const WebString& /*baseURL*/, const WebString& /*url*/, const WebString& /*title*/) = 0;
+    virtual ProtocolHandlersState isProtocolHandlerRegistered(const WebString& /*scheme*/, const WebString& /*baseURL*/, const WebString& /*url*/) = 0;
+    virtual void unregisterProtocolHandler(const WebString& /*scheme*/, const WebString& /*baseURL*/, const WebString& /*url*/) = 0;
 };
 } // namespace WebKit
 } // namespace BlackBerry
