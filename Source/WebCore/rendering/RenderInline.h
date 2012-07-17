@@ -106,9 +106,9 @@ private:
     InlineBox* culledInlineLastLineBox() const;
 
     template<typename GeneratorContext>
-    void generateLineBoxRects(GeneratorContext yield) const;
+    void generateLineBoxRects(GeneratorContext& yield) const;
     template<typename GeneratorContext>
-    void generateCulledLineBoxRects(GeneratorContext yield, const RenderInline* container) const;
+    void generateCulledLineBoxRects(GeneratorContext& yield, const RenderInline* container) const;
 
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0);

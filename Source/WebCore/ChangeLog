@@ -1,3 +1,38 @@
+2012-07-16  Kiran Muppala  <cmuppala@apple.com>
+
+        REGRESSION: RenderInline::absoluteQuads produces incorrect results for fixed position.
+        https://bugs.webkit.org/show_bug.cgi?id=91451
+
+        Reviewed by Simon Fraser.
+
+        RenderInline::absoluteQuads relies on copies of RenderGeometryMap,
+        created indirectly by passing AbsoluteQuadsGeneratorContext object by
+        value.  These copies are unsafe because the individual transform steps
+        within the geometry map include a owned poitner to their respective
+        transform.
+
+        Modify the callee methods to take context by reference and disable
+        copy constructor for RenderGeometryMap.
+
+        Test: fast/inline/inline-fixed-position-boundingbox.html
+
+        * rendering/RenderGeometryMap.h:
+        (WebCore::RenderGeometryMapStep::RenderGeometryMapStep): Add missing
+        m_offset to copy constructor initialization list.
+        (RenderGeometryMap): Disable copy constructor.
+        * rendering/RenderInline.cpp: Pass context object by reference.
+        (WebCore::RenderInline::generateLineBoxRects): 
+        (WebCore::RenderInline::generateCulledLineBoxRects):
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::absoluteQuads):
+        (WebCore::RenderInline::linesBoundingBox):
+        (WebCore::RenderInline::culledInlineVisualOverflowBoundingBox):
+        (WebCore::RenderInline::addFocusRingRects):
+        * rendering/RenderInline.h:
+        (RenderInline::generateLineBoxRects): Update method declarations to
+        show pass by reference context parameter.
+        (RenderInline::generateCulledLineBoxRects): Ditto.
+
 2012-07-16  Hayato Ito  <hayato@chromium.org>
 
         Some events should be always stopped at shadow boundary.

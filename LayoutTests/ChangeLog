@@ -1,3 +1,15 @@
+2012-07-16  Kiran Muppala  <cmuppala@apple.com>
+
+        REGRESSION: RenderInline::absoluteQuads produces incorrect results for fixed position.
+        https://bugs.webkit.org/show_bug.cgi?id=91451
+
+        Reviewed by Simon Fraser.
+
+        Add a regression test for boundingBox of an inline element with fixed position.
+
+        * fast/inline/inline-fixed-position-boundingbox-expected.txt: Added.
+        * fast/inline/inline-fixed-position-boundingbox.html: Added.
+
 2012-07-16  Hayato Ito  <hayato@chromium.org>
 
         Some events should be always stopped at shadow boundary.

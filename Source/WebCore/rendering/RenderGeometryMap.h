@@ -41,6 +41,7 @@ class RenderLayer;
 struct RenderGeometryMapStep {
     RenderGeometryMapStep(const RenderGeometryMapStep& o)
         : m_renderer(o.m_renderer)
+        , m_offset(o.m_offset)
         , m_accumulatingTransform(o.m_accumulatingTransform)
         , m_isNonUniform(o.m_isNonUniform)
         , m_isFixedPosition(o.m_isFixedPosition)
@@ -67,6 +68,7 @@ struct RenderGeometryMapStep {
 
 // Can be used while walking the Renderer tree to cache data about offsets and transforms.
 class RenderGeometryMap {
+    WTF_MAKE_NONCOPYABLE(RenderGeometryMap);
 public:
     RenderGeometryMap();
     ~RenderGeometryMap();

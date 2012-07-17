@@ -533,7 +533,7 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 }
 
 template<typename GeneratorContext>
-void RenderInline::generateLineBoxRects(GeneratorContext yield) const
+void RenderInline::generateLineBoxRects(GeneratorContext& yield) const
 {
     if (!alwaysCreateLineBoxes())
         generateCulledLineBoxRects(yield, this);
@@ -545,7 +545,7 @@ void RenderInline::generateLineBoxRects(GeneratorContext yield) const
 }
 
 template<typename GeneratorContext>
-void RenderInline::generateCulledLineBoxRects(GeneratorContext yield, const RenderInline* container) const
+void RenderInline::generateCulledLineBoxRects(GeneratorContext& yield, const RenderInline* container) const
 {
     if (!culledInlineFirstLineBox()) {
         yield(FloatRect());
@@ -631,7 +631,8 @@ private:
 
 void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    generateLineBoxRects(AbsoluteRectsGeneratorContext(rects, accumulatedOffset));
+    AbsoluteRectsGeneratorContext context(rects, accumulatedOffset);
+    generateLineBoxRects(context);
 
     if (continuation()) {
         if (continuation()->isBox()) {
@@ -669,7 +670,8 @@ private:
 
 void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    generateLineBoxRects(AbsoluteQuadsGeneratorContext(this, quads, wasFixed));
+    AbsoluteQuadsGeneratorContext context(this, quads, wasFixed);
+    generateLineBoxRects(context);
 
     if (continuation())
         continuation()->absoluteQuads(quads, wasFixed);
@@ -804,7 +806,8 @@ IntRect RenderInline::linesBoundingBox() const
     if (!alwaysCreateLineBoxes()) {
         ASSERT(!firstLineBox());
         FloatRect floatResult;
-        generateCulledLineBoxRects(LinesBoundingBoxGeneratorContext(floatResult), this);
+        LinesBoundingBoxGeneratorContext context(floatResult);
+        generateCulledLineBoxRects(context, this);
         return enclosingIntRect(floatResult);
     }
 
@@ -888,7 +891,8 @@ InlineBox* RenderInline::culledInlineLastLineBox() const
 LayoutRect RenderInline::culledInlineVisualOverflowBoundingBox() const
 {
     FloatRect floatResult;
-    generateCulledLineBoxRects(LinesBoundingBoxGeneratorContext(floatResult), this);
+    LinesBoundingBoxGeneratorContext context(floatResult);
+    generateCulledLineBoxRects(context, this);
     LayoutRect result(enclosingLayoutRect(floatResult));
     bool isHorizontal = style()->isHorizontalWritingMode();
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
@@ -1354,7 +1358,8 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
 
 void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& additionalOffset)
 {
-    generateLineBoxRects(AbsoluteRectsGeneratorContext(rects, additionalOffset));
+    AbsoluteRectsGeneratorContext context(rects, additionalOffset);
+    generateLineBoxRects(context);
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isText() && !curr->isListMarker()) {
