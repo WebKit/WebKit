@@ -44,6 +44,7 @@ class Frame;
 class Document;
 class MockPagePopupDriver;
 class Page;
+class PagePopupController;
 class Settings;
 
 class InternalSettings : public RefCountedSupplement<Page, InternalSettings> {
@@ -81,7 +82,9 @@ public:
     static InternalSettings* from(Page*);
 
     virtual ~InternalSettings();
-
+#if ENABLE(PAGE_POPUP)
+    PagePopupController* pagePopupController();
+#endif
     void reset();
 
     void setInspectorResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&);

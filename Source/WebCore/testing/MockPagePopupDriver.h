@@ -37,11 +37,13 @@ class Frame;
 class IntRect;
 class MockPagePopup;
 class PagePopup;
+class PagePopupController;
 
 class MockPagePopupDriver : public PagePopupDriver {
 public:
     static PassOwnPtr<MockPagePopupDriver> create(Frame* mainFrame);
     virtual ~MockPagePopupDriver();
+    PagePopupController* pagePopupController() { return m_pagePopupController.get(); }
 
 private:
     MockPagePopupDriver(Frame* mainFrame);
@@ -52,6 +54,7 @@ private:
 
     OwnPtr<MockPagePopup> m_mockPagePopup;
     Frame* m_mainFrame;
+    RefPtr<PagePopupController> m_pagePopupController;
 };
 
 }

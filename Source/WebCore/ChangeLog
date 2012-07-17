@@ -1,3 +1,46 @@
+2012-07-17  Kent Tamura  <tkent@chromium.org>
+
+        Internals: Remove injectPagePopupController()
+        https://bugs.webkit.org/show_bug.cgi?id=91471
+
+        Reviewed by Hajime Morita.
+
+        r122558 introduced injectPagePopupController(), however we'd like to
+        avoid adding such JavaScript binding code. We can avoid it by exposing a
+        PagePopupController for a mock and injecting the following code to the
+        popup document:
+
+        <script>window.pagePopupController = window.internals.pagePopupController</script>
+
+        No new tests. This is a kind of refactoring.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::pagePopupController):
+        Added. Accessor for PagePopupControler owned by the MockPagePopupDriver.
+        * testing/InternalSettings.h:
+        (InternalSettings): Declare pagePopupController() for Internals::pagePopupController().
+        * testing/Internals.cpp:
+        (WebCore::Internals::pagePopupController):
+        Added. This uses InternalSettings::pagePopupController().
+        * testing/Internals.h:
+        (Internals): Declare pagePopupController() for Internals.idl.
+        * testing/Internals.idl: Declare pagePopupController.
+
+        * testing/MockPagePopupDriver.cpp:
+        Moved m_pagePopupController from MockPagePopup to MockPagePopupDriver.
+        (WebCore::MockPagePopup::MockPagePopup):
+        Added a script element to prepare window.pagePopupController.
+        Removed a callsite of injectPagePopupController().
+        (WebCore::MockPagePopupDriver::openPagePopup):
+        (WebCore::MockPagePopupDriver::closePagePopup):
+        * testing/MockPagePopupDriver.h:
+        (WebCore::MockPagePopupDriver::pagePopupController):
+        Accessor for a PagePopupController object.
+        (MockPagePopupDriver): Add RefPtr<PagePopupController> data member.
+
+        * testing/v8/WebCoreTestSupport.cpp: Remove injectPagePopupController().
+        * testing/v8/WebCoreTestSupport.h: ditto.
+
 2012-07-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Move codes related to theme setting from Widget to RenderTheme

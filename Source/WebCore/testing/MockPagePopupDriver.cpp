@@ -50,12 +50,10 @@ private:
 
     PagePopupClient* m_popupClient;
     RefPtr<HTMLIFrameElement> m_iframe;
-    RefPtr<PagePopupController> m_controller;
 };
 
 inline MockPagePopup::MockPagePopup(PagePopupClient* client, const IntRect& originBoundsInRootView, Frame* mainFrame)
     : m_popupClient(client)
-    , m_controller(PagePopupController::create(client))
 {
     Document* document = mainFrame->document();
     m_iframe = HTMLIFrameElement::create(HTMLNames::iframeTag, document);
@@ -71,10 +69,10 @@ inline MockPagePopup::MockPagePopup(PagePopupClient* client, const IntRect& orig
     writer->setMIMEType("text/html");
     writer->setEncoding("UTF-8", false);
     writer->begin();
+    const char scriptToSetUpPagePopupController[] = "<script>window.pagePopupController = parent.internals.pagePopupController;</script>";
+    writer->addData(scriptToSetUpPagePopupController, sizeof(scriptToSetUpPagePopupController));
     m_popupClient->writeDocument(*writer);
     writer->end();
-
-    WebCoreTestSupport::injectPagePopupController(contentFrame, m_controller.get());
 }
 
 PassOwnPtr<MockPagePopup> MockPagePopup::create(PagePopupClient* client, const IntRect& originBoundsInRootView, Frame* mainFrame)
@@ -110,6 +108,7 @@ PagePopup* MockPagePopupDriver::openPagePopup(PagePopupClient* client, const Int
         closePagePopup(m_mockPagePopup.get());
     if (!client || !m_mainFrame)
         return 0;
+    m_pagePopupController = PagePopupController::create(client);
     m_mockPagePopup = MockPagePopup::create(client, originBoundsInRootView, m_mainFrame);
     return m_mockPagePopup.get();
 }
@@ -119,6 +118,7 @@ void MockPagePopupDriver::closePagePopup(PagePopup* popup)
     if (!popup || popup != m_mockPagePopup.get())
         return;
     m_mockPagePopup.clear();
+    m_pagePopupController.clear();
 }
 
 }

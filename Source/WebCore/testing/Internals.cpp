@@ -79,6 +79,10 @@
 #include "NetworkInfoController.h"
 #endif
 
+#if ENABLE(PAGE_POPUP)
+#include "PagePopupController.h"
+#endif
+
 #if ENABLE(TOUCH_ADJUSTMENT)
 #include "EventHandler.h"
 #include "WebKitPoint.h"
@@ -480,6 +484,16 @@ void Internals::setFormControlStateOfPreviousHistoryItem(PassRefPtr<DOMStringLis
     else
         ec = INVALID_ACCESS_ERR;
 }
+
+#if ENABLE(PAGE_POPUP)
+PassRefPtr<PagePopupController> Internals::pagePopupController()
+{
+    InternalSettings* settings = this->settings();
+    if (!settings)
+        return 0;
+    return settings->pagePopupController();
+}
+#endif
 
 PassRefPtr<ClientRect> Internals::absoluteCaretBounds(Document* document, ExceptionCode& ec)
 {

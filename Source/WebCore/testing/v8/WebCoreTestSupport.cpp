@@ -63,14 +63,4 @@ void resetInternalsObject(v8::Local<v8::Context> context)
     InternalSettings::from(static_cast<Document*>(scriptContext)->frame()->page())->reset();
 }
 
-#if ENABLE(PAGE_POPUP)
-void injectPagePopupController(Frame* frame, PagePopupController* controller)
-{
-    ASSERT(frame);
-    ASSERT(controller);
-    v8::HandleScope scope;
-    V8Proxy::mainWorldContext(frame)->Global()->Set(v8::String::New("pagePopupController"), toV8(controller));
-}
-#endif
-
 }

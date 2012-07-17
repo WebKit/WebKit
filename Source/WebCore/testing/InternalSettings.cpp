@@ -144,6 +144,13 @@ InternalSettings::InternalSettings(Page* page)
 {
 }
 
+#if ENABLE(PAGE_POPUP)
+PagePopupController* InternalSettings::pagePopupController()
+{
+    return m_pagePopupDriver ? m_pagePopupDriver->pagePopupController() : 0;
+}
+#endif
+
 void InternalSettings::reset()
 {
     TextRun::setAllowsRoundingHacks(false);

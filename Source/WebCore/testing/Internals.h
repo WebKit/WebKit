@@ -44,6 +44,7 @@ class Element;
 class Frame;
 class InternalSettings;
 class Node;
+class PagePopupController;
 class Range;
 class ScriptExecutionContext;
 class ShadowRoot;
@@ -101,6 +102,9 @@ public:
 #endif
     PassRefPtr<DOMStringList> formControlStateOfPreviousHistoryItem(ExceptionCode&);
     void setFormControlStateOfPreviousHistoryItem(PassRefPtr<DOMStringList>, ExceptionCode&);
+#if ENABLE(PAGE_POPUP)
+    PassRefPtr<PagePopupController> pagePopupController();
+#endif
 
     PassRefPtr<ClientRect> absoluteCaretBounds(Document*, ExceptionCode&);
 
