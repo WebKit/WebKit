@@ -1,3 +1,26 @@
+2012-07-16  Vincent Scheib  <scheib@chromium.org>
+
+        Fix spelling of EnforceIFrameAllowFullScreenRequirement and ExemptIFrameAllowFullScreenRequirement.
+        https://bugs.webkit.org/show_bug.cgi?id=91437
+
+        Reviewed by Adrienne Walker.
+
+        Document contained spelling errors of 'FulScreen' instead of 'FullScreen'
+        for the FullScreenCheckType enumeration.
+
+        No test changes needed.
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestFullScreenForElement):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRequestFullscreen):
+        (WebCore::Element::webkitRequestFullScreen):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+
 2012-07-16  MORITA Hajime  <morrita@google.com>
 
         Comment on WebCore::HTMLMediaElement::childShouldCreateRenderer() should explain why
