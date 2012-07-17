@@ -689,16 +689,6 @@ class Manager(object):
                                         extract_and_flatten(some_shards)))
         return new_shards
 
-    def _log_num_workers(self, num_workers, num_shards, num_locked_shards):
-        driver_name = self._port.driver_name()
-        if num_workers == 1:
-            self._printer.print_config("Running 1 %s over %s." %
-                (driver_name, grammar.pluralize('shard', num_shards)))
-        else:
-            self._printer.print_config("Running %d %ss in parallel over %d shards (%d locked)." %
-                (num_workers, driver_name, num_shards, num_locked_shards))
-        self._printer.print_config('')
-
     def _run_tests(self, file_list, result_summary, num_workers):
         """Runs the tests in the file_list.
 
@@ -740,7 +730,7 @@ class Manager(object):
             self.start_servers_with_lock(2 * min(num_workers, len(locked_shards)))
 
         num_workers = min(num_workers, len(all_shards))
-        self._log_num_workers(num_workers, len(all_shards), len(locked_shards))
+        self._printer.print_workers_and_shards(num_workers, len(all_shards), len(locked_shards))
 
         def worker_factory(worker_connection):
             return worker.Worker(worker_connection, self.results_directory(), self._options)
@@ -1083,33 +1073,6 @@ class Manager(object):
         # The tools use the version we uploaded to the results server anyway.
         self._filesystem.remove(times_json_path)
         self._filesystem.remove(incremental_results_path)
-
-    def print_config(self):
-        """Prints the configuration for the test run."""
-        p = self._printer
-        p.print_config("Using port '%s'" % self._port.name())
-        p.print_config("Test configuration: %s" % self._port.test_configuration())
-        p.print_config("Placing test results in %s" % self._results_directory)
-        if self._options.new_baseline:
-            p.print_config("Placing new baselines in %s" %
-                           self._port.baseline_path())
-
-        fallback_path = [self._filesystem.split(x)[1] for x in self._port.baseline_search_path()]
-        p.print_config("Baseline search path: %s -> generic" % " -> ".join(fallback_path))
-
-        p.print_config("Using %s build" % self._options.configuration)
-        if self._options.pixel_tests:
-            p.print_config("Pixel tests enabled")
-        else:
-            p.print_config("Pixel tests disabled")
-
-        p.print_config("Regular timeout: %s, slow test timeout: %s" %
-                       (self._options.time_out_ms,
-                        self._options.slow_time_out_ms))
-
-        p.print_config('Command line: ' +
-                       ' '.join(self._port.driver_cmd_line()))
-        p.print_config("")
 
     def _num_digits(self, num):
         """Returns the number of digits needed to represent the length of a

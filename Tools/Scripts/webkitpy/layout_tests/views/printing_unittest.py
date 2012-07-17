@@ -184,8 +184,19 @@ class  Testprinter(unittest.TestCase):
         # buildbot is expecting.
         pass
 
+    def test_fallback_path_in_config(self):
+        printer, err, out = self.get_printer(['--print', 'everything'])
+        # FIXME: it's lame that i have to set these options directly.
+        printer._options.results_directory = '/tmp'
+        printer._options.pixel_tests = True
+        printer._options.new_baseline = True
+        printer._options.time_out_ms = 6000
+        printer._options.slow_time_out_ms = 12000
+        printer.print_config()
+        self.assertTrue('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic' in err.getvalue())
+
     def test_print_config(self):
-        self.do_switch_tests('print_config', 'config', to_buildbot=False)
+        self.do_switch_tests('_print_config', 'config', to_buildbot=False)
 
     def test_print_expected(self):
         self.do_switch_tests('_print_expected', 'expected', to_buildbot=False)

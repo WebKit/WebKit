@@ -109,7 +109,7 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
     unexpected_result_count = -1
     try:
         manager = Manager(port, options, printer)
-        manager.print_config()
+        printer.print_config()
 
         printer.print_update("Collecting tests ...")
         try:

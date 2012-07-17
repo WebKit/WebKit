@@ -194,6 +194,32 @@ class Printer(object):
     def help_printing(self):
         self._write(HELP_PRINTING)
 
+    def print_config(self):
+        """Prints the configuration for the test run."""
+        self._print_config("Using port '%s'" % self._port.name())
+        self._print_config("Test configuration: %s" % self._port.test_configuration())
+        self._print_config("Placing test results in %s" % self._options.results_directory)
+
+        # FIXME: should these options be in printing_options?
+        if self._options.new_baseline:
+            self._print_config("Placing new baselines in %s" % self._port.baseline_path())
+
+        fs = self._port.host.filesystem
+        fallback_path = [fs.split(x)[1] for x in self._port.baseline_search_path()]
+        self._print_config("Baseline search path: %s -> generic" % " -> ".join(fallback_path))
+
+        self._print_config("Using %s build" % self._options.configuration)
+        if self._options.pixel_tests:
+            self._print_config("Pixel tests enabled")
+        else:
+            self._print_config("Pixel tests disabled")
+
+        self._print_config("Regular timeout: %s, slow test timeout: %s" %
+                           (self._options.time_out_ms, self._options.slow_time_out_ms))
+
+        self._print_config('Command line: ' + ' '.join(self._port.driver_cmd_line()))
+        self._print_config('')
+
     def print_expected(self, num_all_test_files, result_summary, tests_with_result_type_callback):
         self._print_expected('Found %s.' % grammar.pluralize('test', num_all_test_files))
         self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes", tests_with_result_type_callback)
@@ -208,6 +234,16 @@ class Printer(object):
             self._print_expected('Running %d iterations of the tests.' % self._options.iterations)
         if self._options.iterations > 1 or self._options.repeat_each > 1:
             self._print_expected('')
+
+    def print_workers_and_shards(self, num_workers, num_shards, num_locked_shards):
+        driver_name = self._port.driver_name()
+        if num_workers == 1:
+            self._print_config("Running 1 %s over %s." %
+                (driver_name, grammar.pluralize('shard', num_shards)))
+        else:
+            self._print_config("Running %d %ss in parallel over %d shards (%d locked)." %
+                (num_workers, driver_name, num_shards, num_locked_shards))
+        self._print_config('')
 
     def _print_expected_results_of_type(self, result_summary,
                                         result_type, result_type_str, tests_with_result_type_callback):
@@ -461,7 +497,7 @@ class Printer(object):
             return
         self._buildbot_stream.write("%s\n" % msg)
 
-    def print_config(self, msg):
+    def _print_config(self, msg):
         self.write(msg, 'config')
 
     def _print_expected(self, msg):

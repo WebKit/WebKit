@@ -200,25 +200,6 @@ class ManagerTest(unittest.TestCase):
     def get_options(self):
         return MockOptions(pixel_tests=False, new_baseline=False, time_out_ms=6000, slow_time_out_ms=30000, worker_model='inline')
 
-    def get_printer(self):
-        class FakePrinter(object):
-            def __init__(self):
-                self.output = []
-
-            def print_config(self, msg):
-                self.output.append(msg)
-
-        return FakePrinter()
-
-    def test_fallback_path_in_config(self):
-        options = self.get_options()
-        host = MockHost()
-        port = host.port_factory.get('test-mac-leopard', options=options)
-        printer = self.get_printer()
-        manager = Manager(port, options, printer)
-        manager.print_config()
-        self.assertTrue('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic' in printer.output)
-
     def test_http_locking(tester):
         options, args = run_webkit_tests.parse_args(['--platform=test', '--print=nothing', 'http/tests/passes', 'passes'])
         host = MockHost()
