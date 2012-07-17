@@ -1,5 +1,44 @@
 2012-07-17  Tony Chang  <tony@chromium.org>
 
+        [chromium] Unreviewed gardening. These tests are in chromium's test_expectations.txt and can be rebaselined (skia change in r4600).
+
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/paths-data-12-t-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt: Removed.
+        * platform/chromium-linux-x86/svg/hixie/perf/001-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/hixie/perf/001-expected.txt:
+        * platform/chromium-linux-x86/svg/hixie/perf/002-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/hixie/perf/002-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-12-t-expected.png:
+        * platform/chromium-linux/svg/as-background-image/svg-as-background-5-expected.png:
+        * platform/chromium-linux/svg/hixie/perf/001-expected.png:
+        * platform/chromium-linux/svg/hixie/perf/001-expected.txt:
+        * platform/chromium-linux/svg/hixie/perf/002-expected.png:
+        * platform/chromium-linux/svg/hixie/perf/002-expected.txt:
+        * platform/chromium-mac-snowleopard/svg/as-background-image/svg-as-background-5-expected.png:
+        * platform/chromium-mac-snowleopard/svg/hixie/perf/001-expected.png:
+        * platform/chromium-mac-snowleopard/svg/hixie/perf/001-expected.txt: Copied from LayoutTests/platform/chromium-mac/svg/hixie/perf/001-expected.txt.
+        * platform/chromium-mac-snowleopard/svg/hixie/perf/002-expected.png:
+        * platform/chromium-mac-snowleopard/svg/hixie/perf/002-expected.txt: Copied from LayoutTests/platform/chromium-mac/svg/hixie/perf/002-expected.txt.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/paths-data-12-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt:
+        * platform/chromium-mac/svg/as-background-image/svg-as-background-5-expected.png:
+        * platform/chromium-mac/svg/hixie/perf/001-expected.png:
+        * platform/chromium-mac/svg/hixie/perf/001-expected.txt:
+        * platform/chromium-mac/svg/hixie/perf/002-expected.png:
+        * platform/chromium-mac/svg/hixie/perf/002-expected.txt:
+        * platform/chromium-win-xp/svg/hixie/perf/001-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/hixie/perf/001-expected.txt.
+        * platform/chromium-win-xp/svg/hixie/perf/002-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/hixie/perf/002-expected.txt.
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-12-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-5-expected.png:
+        * platform/chromium-win/svg/hixie/perf/001-expected.png:
+        * platform/chromium-win/svg/hixie/perf/001-expected.txt:
+        * platform/chromium-win/svg/hixie/perf/002-expected.png:
+        * platform/chromium-win/svg/hixie/perf/002-expected.txt:
+        * platform/chromium/TestExpectations:
+
+2012-07-17  Tony Chang  <tony@chromium.org>
+
         Unreviewed gardening.  Remove tests that have been passing consistently according to the flakiness dashboard.
 
         * platform/chromium/TestExpectations:

@@ -3756,3 +3756,6 @@ BUGWK91421 WIN7 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = PASS CRASH
 
 // Started failing around r122770
 BUGWK91445 LINUX : plugins/embed-attributes-style.html = PASS IMAGE
+
+BUGCR131187 : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT 
+BUGCR131187 : fast/canvas/canvas-currentColor.html = TEXT
