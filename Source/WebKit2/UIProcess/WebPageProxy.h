@@ -362,6 +362,9 @@ public:
     void proxyAuthenticationRequiredRequest(const String& hostname, uint16_t port, const String& prefilledUsername, String& username, String& password);
     void setUserScripts(const Vector<String>&);
 #endif // PLATFORM(QT).
+#if PLATFORM(EFL)
+    void setThemePath(const String&);
+#endif
 
 #if PLATFORM(QT)
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd);

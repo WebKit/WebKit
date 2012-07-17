@@ -28,6 +28,8 @@
 
 #include "NotImplemented.h"
 #include "PageClientImpl.h"
+#include "WebPageMessages.h"
+#include "WebProcessProxy.h"
 
 #include <sys/utsname.h>
 
@@ -74,6 +76,11 @@ void WebPageProxy::saveRecentSearches(const String&, const Vector<String>&)
 void WebPageProxy::loadRecentSearches(const String&, Vector<String>&)
 {
     notImplemented();
+}
+
+void WebPageProxy::setThemePath(const String& themePath)
+{
+    process()->send(Messages::WebPage::SetThemePath(themePath), m_pageID, 0);
 }
 
 } // namespace WebKit

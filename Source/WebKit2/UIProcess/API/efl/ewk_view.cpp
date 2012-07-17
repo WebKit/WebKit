@@ -49,17 +49,20 @@ struct _Ewk_View_Private_Data {
     OwnPtr<PageClientImpl> pageClient;
     const char* uri;
     const char* title;
+    const char* theme;
     LoadingResourcesMap loadingResourcesMap;
 
     _Ewk_View_Private_Data()
         : uri(0)
         , title(0)
+        , theme(0)
     { }
 
     ~_Ewk_View_Private_Data()
     {
         eina_stringshare_del(uri);
         eina_stringshare_del(title);
+        eina_stringshare_del(theme);
     }
 };
 
@@ -507,6 +510,8 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
     ewk_view_policy_client_attach(toAPI(priv->pageClient->page()), ewkView);
     ewk_view_resource_load_client_attach(toAPI(priv->pageClient->page()), ewkView);
 
+    ewk_view_theme_set(ewkView, DEFAULT_THEME_PATH"/default.edj");
+
     return ewkView;
 }
 
@@ -736,6 +741,24 @@ void ewk_view_intent_request_new(Evas_Object* ewkView, const Ewk_Intent* ewkInte
 #if ENABLE(WEB_INTENTS)
     evas_object_smart_callback_call(ewkView, "intent,request,new", const_cast<Ewk_Intent*>(ewkIntent));
 #endif
+}
+
+void ewk_view_theme_set(Evas_Object* ewkView, const char* path)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (!eina_stringshare_replace(&priv->theme, path))
+        return;
+
+    priv->pageClient->page()->setThemePath(path);
+}
+
+const char* ewk_view_theme_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+    return priv->theme;
 }
 
 void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)

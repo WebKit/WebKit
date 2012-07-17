@@ -397,6 +397,29 @@ EAPI float ewk_view_device_pixel_ratio_get(const Evas_Object *o);
  */
 EAPI Eina_Bool ewk_view_device_pixel_ratio_set(Evas_Object *o, float ratio);
 
+/**
+ * Sets the theme path that will be used by this view.
+ *
+ * This also sets the theme on the main frame. As frames inherit theme
+ * from their parent, this will have all frames with unset theme to
+ * use this one.
+ *
+ * @param o view object to change theme
+ * @param path theme path, may be @c 0 to reset to the default theme
+ */
+EAPI void ewk_view_theme_set(Evas_Object *o, const char *path);
+
+/**
+ * Gets the theme set on this view.
+ *
+ * This returns the value set by ewk_view_theme_set().
+ *
+ * @param o view object to get theme path
+ *
+ * @return the theme path, may be @c 0 if not set
+ */
+EAPI const char *ewk_view_theme_get(const Evas_Object *o);
+
 #ifdef __cplusplus
 }
 #endif

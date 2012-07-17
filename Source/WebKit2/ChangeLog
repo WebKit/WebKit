@@ -1,3 +1,30 @@
+2012-07-16  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add APIs to support theme.
+        https://bugs.webkit.org/show_bug.cgi?id=90107
+
+        Reviewed by Hajime Morita.
+
+        RenderThemeEfl uses edj file to render native theme of form elements.
+        This patch provides default theme and a way to change edj theme file for
+        WebKit2/Efl.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (ewk_view_base_add):
+        (ewk_view_theme_set):
+        (ewk_view_theme_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::setThemePath):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::setThemePath):
+
 2012-07-16  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Remove setController from BatteryClient

@@ -163,6 +163,7 @@ static MiniBrowser *browserCreate(const char *url)
 
     /* Create webview */
     app->browser = ewk_view_add(app->evas);
+    ewk_view_theme_set(app->browser, THEME_DIR"/default.edj");
     evas_object_name_set(app->browser, "browser");
 
     evas_object_smart_callback_add(app->browser, "load,error", on_error, app);

@@ -26,6 +26,7 @@ LIST(APPEND WebKitTestRunner_SOURCES
 
 LIST(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${TOOLS_DIR}/DumpRenderTree/efl/
+    ${WEBKIT2_DIR}/UIProcess/API/efl
     "${WTF_DIR}/wtf/gobject"
 
     ${CAIRO_INCLUDE_DIRS}
@@ -56,4 +57,4 @@ LIST(APPEND WebKitTestRunnerInjectedBundle_SOURCES
 # structure. See <https://bugs.webkit.org/show_bug.cgi?id=81475>.
 ADD_DEFINITIONS(-DFONTS_CONF_DIR="${TOOLS_DIR}/DumpRenderTree/gtk/fonts"
                 -DDOWNLOADED_FONTS_DIR="${CMAKE_SOURCE_DIR}/WebKitBuild/Dependencies/Source/webkitgtk-test-fonts-0.0.3"
-                -DDATA_DIR="${THEME_BINARY_DIR}")
+                -DTHEME_DIR="${THEME_BINARY_DIR}")

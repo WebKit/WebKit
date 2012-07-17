@@ -55,6 +55,8 @@ ADD_CUSTOM_TARGET(forwarding-headerMiniBrowserSoup
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${MiniBrowser_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
 )
 
+ADD_DEFINITIONS(-DTHEME_DIR=\"${THEME_BINARY_DIR}\")
+
 INCLUDE_DIRECTORIES(${MiniBrowser_INCLUDE_DIRECTORIES})
 
 ADD_EXECUTABLE(MiniBrowser ${MiniBrowser_SOURCES})
