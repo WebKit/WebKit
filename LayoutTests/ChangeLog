@@ -1,5 +1,12 @@
 2012-07-16  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium mac rebaseline of fast/text/textIteratorNilRenderer for r122769.
+
+        * platform/chromium-mac-snowleopard/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac/fast/text/textIteratorNilRenderer-expected.png:
+
+2012-07-16  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium mac/win rebaseline for r122769.
 
         * platform/chromium-mac-snowleopard/css1/basic/inheritance-expected.png:
