@@ -1,5 +1,19 @@
 2012-07-17  Ojan Vafai  <ojan@chromium.org>
 
+        results.html should handle flaky tests differently
+        https://bugs.webkit.org/show_bug.cgi?id=90892
+
+        Reviewed by Dirk Pranke.
+
+        -Put tests that failed both runs into the main failures table.
+        -Put flaky passes below the list of timeout tests.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
+2012-07-17  Ojan Vafai  <ojan@chromium.org>
+
         results.html doesn't hide the right data when not showing expected failures
         https://bugs.webkit.org/show_bug.cgi?id=90889
 

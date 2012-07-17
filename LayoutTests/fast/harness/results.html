@@ -204,14 +204,14 @@ function globalState()
     if (!g_state) {
         g_state = {
             crashTests: [],
-            flakyTests: [],
+            flakyPassTests: [],
             hasHttpTests: false,
             hasImageFailures: false,
             hasTextFailures: false,
             missingResults: [],
             results: {},
             shouldToggleImages: true,
-            nonFlakyFailingTests: [],
+            failingTests: [],
             testsWithStderr: [],
             timeoutTests: [],
             unexpectedPassTests: []
@@ -475,8 +475,8 @@ function processGlobalStateFor(testObject)
         return;
     }
 
-    if (actual.indexOf(' ') != -1) {
-        globalState().flakyTests.push(testObject);
+    if (actual.indexOf(' ') != -1 && actual.indexOf('PASS') != -1) {
+        globalState().flakyPassTests.push(testObject);
         return;
     }
 
@@ -497,7 +497,7 @@ function processGlobalStateFor(testObject)
         return;
     }
     
-    globalState().nonFlakyFailingTests.push(testObject);
+    globalState().failingTests.push(testObject);
 }
 
 function toggleImages()
@@ -1275,20 +1275,20 @@ function generatePage()
     if (globalState().crashTests.length)
         html += testList(globalState().crashTests, 'Tests that crashed', 'crash-tests-table');
 
-    html += failingTestsTable(globalState().nonFlakyFailingTests,
-        'Tests where results did not match expected results', 'results-table');
+    html += failingTestsTable(globalState().failingTests,
+        'Tests that failed text/pixel/audio diff', 'results-table');
 
     html += failingTestsTable(globalState().missingResults,
         'Tests that had no expected results (probably new)', 'missing-table');
-
-    html += failingTestsTable(globalState().flakyTests,
-        'Flaky tests (failed the first run and got a different result on retry)', 'flaky-tests-table');
 
     if (globalState().timeoutTests.length)
         html += testList(globalState().timeoutTests, 'Tests that timed out', 'timeout-tests-table');
 
     if (globalState().testsWithStderr.length)
         html += testList(globalState().testsWithStderr, 'Tests that had stderr output', 'stderr-table');
+
+    html += failingTestsTable(globalState().flakyPassTests,
+        'Flaky tests (failed the first run and passed on retry)', 'flaky-tests-table');
 
     if (globalState().results.uses_expectations_file && globalState().unexpectedPassTests.length)
         html += testList(globalState().unexpectedPassTests, 'Tests expected to fail but passed', 'passes-table');
