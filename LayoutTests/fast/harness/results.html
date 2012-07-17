@@ -487,12 +487,12 @@ function processGlobalStateFor(testObject)
         return;
     }
 
-    if (actual == 'CRASH' && expected != 'CRASH') {
+    if (actual == 'CRASH') {
         globalState().crashTests.push(testObject);
         return;
     }
 
-    if (actual == 'TIMEOUT' && expected != 'TIMEOUT') {
+    if (actual == 'TIMEOUT') {
         globalState().timeoutTests.push(testObject);
         return;
     }
@@ -629,14 +629,31 @@ function hasUnexpected(tests)
     return tests.some(function (test) { return !test.isExpected; });
 }
 
+function updateTestlistCounts()
+{
+    forEach(document.querySelectorAll('.test-list-count'), function(count) {
+        var container = parentOfType(count, 'div');
+        var testContainers;
+        if (onlyShowUnexpectedFailures())
+            testContainers = container.querySelectorAll('tbody:not(.expected)');
+        else
+            testContainers = container.querySelectorAll('tbody');
+
+        count.textContent = testContainers.length;
+    })
+}
+
+function testListHeaderHtml(header)
+{
+    return '<h1>' + header + ' (<span class=test-list-count></span>):</h1>';
+}
+
 function testList(tests, header, tableId)
 {
     tests.sort();
 
-    var html = '<h1>' + header + ' (' + tests.length + '):</h1><table id="' + tableId + '"';
-    if (!hasUnexpected(tests))
-        html += ' class=expected';
-    html += '>';
+    var html = '<div' + ((!hasUnexpected(tests) && tableId != 'stderr-table') ? ' class=expected' : '') + ' id=' + tableId + '>' +
+        testListHeaderHtml(header) + '<table>';
 
     // FIXME: add the expected failure column for all the test lists if globalState().results.uses_expectations_file
     if (tableId == 'passes-table')
@@ -647,7 +664,7 @@ function testList(tests, header, tableId)
         var test = testObject.name;
         html += '<tbody';
         if (globalState().results.uses_expectations_file)
-            html += ' class="' + (testObject.isExpected ? 'expected' : '') + '"';
+            html += ' class="' + ((testObject.isExpected && tableId != 'stderr-table') ? 'expected' : '') + '"';
         html += '><tr><td>';
         html += (tableId == 'passes-table') ? testLink(test) : testLinkWithExpandButton(test);
         html += '</td><td>';
@@ -665,7 +682,7 @@ function testList(tests, header, tableId)
         
         html += '</td></tr></tbody>';
     }
-    html += '</table>';
+    html += '</table></div>';
     return html;
 }
 
@@ -1088,6 +1105,7 @@ function updateExpectedFailures()
     document.getElementById('unexpected-style').textContent = onlyShowUnexpectedFailures() ?
         '.expected { display: none; }' : '';
 
+    updateTestlistCounts();
     TestNavigator.onlyShowUnexpectedFailuresChanged();
 }
 
@@ -1217,7 +1235,7 @@ function failingTestsTable(tests, title, id)
     if (!hasUnexpected(tests))
         header += ' class=expected';
 
-    header += '><h1>' + title + ' (' + numberofUnexpectedFailures + '):</h1>' +
+    header += '>' + testListHeaderHtml(title) +
         '<table id="' + id + '"><thead><tr>' +
         '<th>test</th>' +
         '<th id="text-results-header">results</th>' +
@@ -1294,6 +1312,8 @@ function generatePage()
             parentOfType(document.getElementById('toggle-images'), 'label').style.display = 'none';
         }
     }
+
+    updateTestlistCounts();
 
     TestNavigator.reset();
     OptionWriter.apply();

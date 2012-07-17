@@ -1,3 +1,18 @@
+2012-07-17  Ojan Vafai  <ojan@chromium.org>
+
+        results.html doesn't hide the right data when not showing expected failures
+        https://bugs.webkit.org/show_bug.cgi?id=90889
+
+        Reviewed by Dirk Pranke.
+
+        -Properly hide test lists that have no unexpected items.
+        -Show the correct counts of tests in each test list when only showing unexpected.
+        -Always show tests with stderr output.
+        -Put tests with expected crash/timeout in the crash/timeout lists.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results.html:
+
 2012-07-17  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, remove timeout lines for tests on snowleopard that no longer apply.
