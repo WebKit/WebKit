@@ -417,19 +417,14 @@ class Manager(object):
 
         files = test_files[slice_start:slice_end]
 
-        tests_run_msg = 'Running: %d tests (chunk slice [%d:%d] of %d)' % ((slice_end - slice_start), slice_start, slice_end, num_tests)
-        self._printer._print_expected(tests_run_msg)
+        _log.debug('chunk slice [%d:%d] of %d is %d tests' % (slice_start, slice_end, num_tests, (slice_end - slice_start)))
 
         # If we reached the end and we don't have enough tests, we run some
         # from the beginning.
         if slice_end - slice_start < chunk_len:
             extra = chunk_len - (slice_end - slice_start)
-            extra_msg = ('   last chunk is partial, appending [0:%d]' % extra)
-            self._printer._print_expected(extra_msg)
-            tests_run_msg += "\n" + extra_msg
+            _log.debug('   last chunk is partial, appending [0:%d]' % extra)
             files.extend(test_files[0:extra])
-        tests_run_filename = self._filesystem.join(self._results_directory, "tests_run.txt")
-        self._filesystem.write_text_file(tests_run_filename, tests_run_msg)
 
         len_skip_chunk = int(len(files) * len(skipped) / float(len(self._test_files)))
         skip_chunk_list = list(skipped)[0:len_skip_chunk]
