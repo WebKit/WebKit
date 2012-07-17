@@ -3243,12 +3243,6 @@ svg/text/text-ws-01-t.svg
 svg/text/text-ws-02-t.svg
 svg/text/textPathBoundsBug.svg
 svg/text/tspan-dynamic-positioning.svg
-svg/transforms/animated-path-inside-transformed-html.xhtml
-svg/transforms/svg-css-transforms-clip-path.xhtml
-svg/transforms/svg-css-transforms.xhtml
-svg/transforms/text-with-mask-with-svg-transform.svg
-svg/transforms/text-with-pattern-inside-transformed-html.xhtml
-svg/transforms/text-with-pattern-with-svg-transform.svg
 svg/wicd/rightsizing-grid.xhtml
 svg/wicd/sizing-flakiness.html
 svg/wicd/test-rightsizing-a.xhtml
