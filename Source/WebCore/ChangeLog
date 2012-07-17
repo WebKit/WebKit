@@ -1,3 +1,19 @@
+2012-07-17  Adrienne Walker  <enne@google.com>
+
+        REGRESSION(r122215) - RenderObject::willRenderImage crashes on null view()
+        https://bugs.webkit.org/show_bug.cgi?id=91525
+
+        Reviewed by Julien Chaffraix.
+
+        Fix by doing an early out check.  This is intended to fix the crash in
+        http://crbug.com/137161.
+
+        No new test, because unfortunately a layout test is ill-suited to
+        reproing this kind of Document creation/destruction bug.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willRenderImage):
+
 2012-07-17  Emil A Eklund  <eae@chromium.org>
 
         vertical-align: middle causes overflow with subpixel layout

@@ -2692,6 +2692,11 @@ bool RenderObject::willRenderImage(CachedImage*)
     if (document()->inPageCache() || document()->view()->isOffscreen())
         return false;
 
+    // If the document is being destroyed or has not been attached, then this
+    // RenderObject will not be rendered.
+    if (!view())
+        return false;
+
     // If a renderer is outside the viewport, we won't render.
     return viewRect().intersects(absoluteClippedOverflowRect());
 }
