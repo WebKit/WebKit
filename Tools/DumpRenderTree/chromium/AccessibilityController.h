@@ -37,13 +37,12 @@
 namespace WebKit {
 class WebAccessibilityObject;
 class WebFrame;
+class WebView;
 }
-
-class TestShell;
 
 class AccessibilityController : public CppBoundClass {
 public:
-    explicit AccessibilityController(TestShell*);
+    AccessibilityController();
 
     // Shadow to include accessibility initialization.
     void bindToJavascript(WebKit::WebFrame*, const WebKit::WebString& classname);
@@ -56,6 +55,8 @@ public:
     bool shouldLogAccessibilityEvents();
 
     void notificationReceived(const WebKit::WebAccessibilityObject& target, const char* notificationName);
+
+    void setWebView(WebKit::WebView* webView) { m_webView = webView; }
 
 private:
     // If true, will log all accessibility notifications.
@@ -77,7 +78,7 @@ private:
 
     std::vector<CppVariant> m_notificationCallbacks;
 
-    TestShell* m_shell;
+    WebKit::WebView* m_webView;
 };
 
 #endif // AccessibilityController_h

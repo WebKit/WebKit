@@ -146,7 +146,7 @@ TestShell::TestShell()
 void TestShell::initialize()
 {
     m_webPermissions = adoptPtr(new WebPermissions(this));
-    m_accessibilityController = adoptPtr(new AccessibilityController(this));
+    m_accessibilityController = adoptPtr(new AccessibilityController());
     m_testInterfaces = adoptPtr(new TestInterfaces());
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
     m_eventSender = adoptPtr(new EventSender(this));
@@ -175,15 +175,13 @@ void TestShell::createMainWindow()
     m_drtDevToolsAgent = adoptPtr(new DRTDevToolsAgent);
     m_webViewHost = adoptPtr(createNewWindow(WebURL(), m_drtDevToolsAgent.get()));
     m_webView = m_webViewHost->webView();
+    m_accessibilityController->setWebView(m_webView);
     m_drtDevToolsAgent->setWebView(m_webView);
 }
 
 TestShell::~TestShell()
 {
-    // Note: DevTools are closed together with all the other windows in the
-    // windows list.
-
-    // Destroy the WebView before its WebViewHost.
+    m_accessibilityController->setWebView(0);
     m_drtDevToolsAgent->setWebView(0);
 }
 

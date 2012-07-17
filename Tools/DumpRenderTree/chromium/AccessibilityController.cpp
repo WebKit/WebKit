@@ -31,7 +31,6 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
-#include "TestShell.h"
 #include "WebAccessibilityObject.h"
 #include "WebFrame.h"
 #include "platform/WebString.h"
@@ -39,9 +38,8 @@
 
 using namespace WebKit;
 
-AccessibilityController::AccessibilityController(TestShell* shell)
+AccessibilityController::AccessibilityController()
     : m_logAccessibilityEvents(false)
-    , m_shell(shell)
 {
 
     bindMethod("logAccessibilityEvents", &AccessibilityController::logAccessibilityEventsCallback);
@@ -77,14 +75,14 @@ void AccessibilityController::setFocusedElement(const WebAccessibilityObject& fo
 AccessibilityUIElement* AccessibilityController::getFocusedElement()
 {
     if (m_focusedElement.isNull())
-        m_focusedElement = m_shell->webView()->accessibilityObject();
+        m_focusedElement = m_webView->accessibilityObject();
     return m_elements.getOrCreate(m_focusedElement);
 }
 
 AccessibilityUIElement* AccessibilityController::getRootElement()
 {
     if (m_rootElement.isNull())
-        m_rootElement = m_shell->webView()->accessibilityObject();
+        m_rootElement = m_webView->accessibilityObject();
     return m_elements.createRoot(m_rootElement);
 }
 
