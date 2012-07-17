@@ -53,6 +53,7 @@ my (
     $cssBoxDecorationBreakSupport,
     $cssExclusionsSupport,
     $cssFiltersSupport,
+    $cssImageOrientationSupport,
     $cssImageResolutionSupport,
     $cssRegionsSupport,
     $cssShadersSupport,
@@ -165,6 +166,9 @@ my @features = (
 
     { option => "css-box-decoration-break", desc => "Toggle CSS box-decoration-break support",
       define => "ENABLE_CSS_BOX_DECORATION_BREAK", default => 1, value => \$cssBoxDecorationBreakSupport },
+
+    { option => "css-image-orientation", desc => "Toggle CSS image-orientation support",
+      define => "ENABLE_CSS_IMAGE_ORIENTATION", default => 0, value => \$cssImageOrientationSupport },
 
     { option => "css-image-resolution", desc => "Toggle CSS image-resolution support",
       define => "ENABLE_CSS_IMAGE_RESOLUTION", default => 0, value => \$cssImageResolutionSupport },
