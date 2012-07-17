@@ -1,3 +1,18 @@
+2012-07-17  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Add intVersion to chromium/public/WebIDBMetadata.h
+        https://bugs.webkit.org/show_bug.cgi?id=91408
+
+        Reviewed by Adam Barth.
+
+        This is in support of the new upgradeneeded versioning api.
+        intVersion will eventually replace the WebString version member.
+
+        * public/WebIDBMetadata.h:
+        (WebIDBMetadata): The spec uses unsigned long long for version
+        numbers but we use int64_t here so that we can use -1 as a sentinel.
+        It indicates that a database still uses a string version.
+
 2012-07-17  Tony Chang  <tony@chromium.org>
 
         Unreviewed.  Rolled DEPS.
