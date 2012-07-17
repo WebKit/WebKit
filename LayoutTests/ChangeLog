@@ -1,3 +1,10 @@
+2012-07-17  Andy Estes  <aestes@apple.com>
+
+        [Mac] REGRESSION (r122651): fast/text/descent-clip-in-scaled-page.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=91552
+
+        * platform/mac/TestExpectations: Mark the test as expected to fail.
+
 2012-07-17  Emil A Eklund  <eae@chromium.org>
 
         vertical-align: middle causes overflow with subpixel layout

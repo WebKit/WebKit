@@ -301,3 +301,6 @@ BUGWK90951 SKIP : fast/text/shaping = PASS
 
 // [Mac] REGRESSION (r122494): Running platform/mac/plugins/root-object-premature-delete-crash.html results in a crash
 BUGWK91505 MAC : platform/mac/plugins/root-object-premature-delete-crash.html = CRASH
+
+// [Mac] REGRESSION (r122651): fast/text/descent-clip-in-scaled-page.html fails
+BUGWK91552 MAC : fast/text/descent-clip-in-scaled-page.html = FAIL
