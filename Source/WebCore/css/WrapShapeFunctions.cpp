@@ -46,8 +46,8 @@ PassRefPtr<CSSValue> valueForWrapShape(const WrapShape* wrapShape)
         const WrapShapeRectangle* rectangle = static_cast<const WrapShapeRectangle*>(wrapShape);
         RefPtr<CSSWrapShapeRectangle> rectangleValue = CSSWrapShapeRectangle::create();
 
-        rectangleValue->setLeft(cssValuePool().createValue(rectangle->left()));
-        rectangleValue->setTop(cssValuePool().createValue(rectangle->top()));
+        rectangleValue->setX(cssValuePool().createValue(rectangle->x()));
+        rectangleValue->setY(cssValuePool().createValue(rectangle->y()));
         rectangleValue->setWidth(cssValuePool().createValue(rectangle->width()));
         rectangleValue->setHeight(cssValuePool().createValue(rectangle->height()));
         if (!rectangle->cornerRadiusX().isUndefined()) {
@@ -63,8 +63,8 @@ PassRefPtr<CSSValue> valueForWrapShape(const WrapShape* wrapShape)
         const WrapShapeCircle* circle = static_cast<const WrapShapeCircle*>(wrapShape);
         RefPtr<CSSWrapShapeCircle> circleValue = CSSWrapShapeCircle::create();
 
-        circleValue->setLeft(cssValuePool().createValue(circle->left()));
-        circleValue->setTop(cssValuePool().createValue(circle->top()));
+        circleValue->setCenterX(cssValuePool().createValue(circle->centerX()));
+        circleValue->setCenterY(cssValuePool().createValue(circle->centerY()));
         circleValue->setRadius(cssValuePool().createValue(circle->radius()));
 
         wrapShapeValue = circleValue.release();
@@ -74,8 +74,8 @@ PassRefPtr<CSSValue> valueForWrapShape(const WrapShape* wrapShape)
         const WrapShapeEllipse* ellipse = static_cast<const WrapShapeEllipse*>(wrapShape);
         RefPtr<CSSWrapShapeEllipse> ellipseValue = CSSWrapShapeEllipse::create();
 
-        ellipseValue->setLeft(cssValuePool().createValue(ellipse->left()));
-        ellipseValue->setTop(cssValuePool().createValue(ellipse->top()));
+        ellipseValue->setCenterX(cssValuePool().createValue(ellipse->centerX()));
+        ellipseValue->setCenterY(cssValuePool().createValue(ellipse->centerY()));
         ellipseValue->setRadiusX(cssValuePool().createValue(ellipse->radiusX()));
         ellipseValue->setRadiusY(cssValuePool().createValue(ellipse->radiusY()));
 
@@ -114,8 +114,8 @@ PassRefPtr<WrapShape> wrapShapeForValue(const StyleResolver* styleResolver, cons
         const CSSWrapShapeRectangle* rectValue = static_cast<const CSSWrapShapeRectangle *>(wrapShapeValue);
         RefPtr<WrapShapeRectangle> rect = WrapShapeRectangle::create();
 
-        rect->setLeft(convertToLength(styleResolver, rectValue->left()));
-        rect->setTop(convertToLength(styleResolver, rectValue->top()));
+        rect->setX(convertToLength(styleResolver, rectValue->x()));
+        rect->setY(convertToLength(styleResolver, rectValue->y()));
         rect->setWidth(convertToLength(styleResolver, rectValue->width()));
         rect->setHeight(convertToLength(styleResolver, rectValue->height()));
         if (rectValue->radiusX()) {
@@ -130,8 +130,8 @@ PassRefPtr<WrapShape> wrapShapeForValue(const StyleResolver* styleResolver, cons
         const CSSWrapShapeCircle* circleValue = static_cast<const CSSWrapShapeCircle *>(wrapShapeValue);
         RefPtr<WrapShapeCircle> circle = WrapShapeCircle::create();
 
-        circle->setLeft(convertToLength(styleResolver, circleValue->left()));
-        circle->setTop(convertToLength(styleResolver, circleValue->top()));
+        circle->setCenterX(convertToLength(styleResolver, circleValue->centerX()));
+        circle->setCenterY(convertToLength(styleResolver, circleValue->centerY()));
         circle->setRadius(convertToLength(styleResolver, circleValue->radius()));
 
         wrapShape = circle.release();
@@ -141,8 +141,8 @@ PassRefPtr<WrapShape> wrapShapeForValue(const StyleResolver* styleResolver, cons
         const CSSWrapShapeEllipse* ellipseValue = static_cast<const CSSWrapShapeEllipse *>(wrapShapeValue);
         RefPtr<WrapShapeEllipse> ellipse = WrapShapeEllipse::create();
 
-        ellipse->setLeft(convertToLength(styleResolver, ellipseValue->left()));
-        ellipse->setTop(convertToLength(styleResolver, ellipseValue->top()));
+        ellipse->setCenterX(convertToLength(styleResolver, ellipseValue->centerX()));
+        ellipse->setCenterY(convertToLength(styleResolver, ellipseValue->centerY()));
         ellipse->setRadiusX(convertToLength(styleResolver, ellipseValue->radiusX()));
         ellipse->setRadiusY(convertToLength(styleResolver, ellipseValue->radiusY()));
 

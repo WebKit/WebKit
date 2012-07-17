@@ -61,15 +61,15 @@ class CSSWrapShapeRectangle : public CSSWrapShape {
 public:
     static PassRefPtr<CSSWrapShapeRectangle> create() { return adoptRef(new CSSWrapShapeRectangle); }
 
-    CSSPrimitiveValue* left() const { return m_left.get(); }
-    CSSPrimitiveValue* top() const { return m_top.get(); }
+    CSSPrimitiveValue* x() const { return m_x.get(); }
+    CSSPrimitiveValue* y() const { return m_y.get(); }
     CSSPrimitiveValue* width() const { return m_width.get(); }
     CSSPrimitiveValue* height() const { return m_height.get(); }
     CSSPrimitiveValue* radiusX() const { return m_radiusX.get(); }
     CSSPrimitiveValue* radiusY() const { return m_radiusY.get(); }
 
-    void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
-    void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
+    void setX(PassRefPtr<CSSPrimitiveValue> x) { m_x = x; }
+    void setY(PassRefPtr<CSSPrimitiveValue> y) { m_y = y; }
     void setWidth(PassRefPtr<CSSPrimitiveValue> width) { m_width = width; }
     void setHeight(PassRefPtr<CSSPrimitiveValue> height) { m_height = height; }
     void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
@@ -81,8 +81,8 @@ public:
 private:
     CSSWrapShapeRectangle() { }
 
-    RefPtr<CSSPrimitiveValue> m_top;
-    RefPtr<CSSPrimitiveValue> m_left;
+    RefPtr<CSSPrimitiveValue> m_y;
+    RefPtr<CSSPrimitiveValue> m_x;
     RefPtr<CSSPrimitiveValue> m_width;
     RefPtr<CSSPrimitiveValue> m_height;
     RefPtr<CSSPrimitiveValue> m_radiusX;
@@ -93,12 +93,12 @@ class CSSWrapShapeCircle : public CSSWrapShape {
 public:
     static PassRefPtr<CSSWrapShapeCircle> create() { return adoptRef(new CSSWrapShapeCircle); }
 
-    CSSPrimitiveValue* left() const { return m_left.get(); }
-    CSSPrimitiveValue* top() const { return m_top.get(); }
+    CSSPrimitiveValue* centerX() const { return m_centerX.get(); }
+    CSSPrimitiveValue* centerY() const { return m_centerY.get(); }
     CSSPrimitiveValue* radius() const { return m_radius.get(); }
 
-    void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
-    void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
+    void setCenterX(PassRefPtr<CSSPrimitiveValue> centerX) { m_centerX = centerX; }
+    void setCenterY(PassRefPtr<CSSPrimitiveValue> centerY) { m_centerY = centerY; }
     void setRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_radius = radius; }
 
     virtual Type type() const { return CSS_WRAP_SHAPE_CIRCLE; }
@@ -107,8 +107,8 @@ public:
 private:
     CSSWrapShapeCircle() { }
 
-    RefPtr<CSSPrimitiveValue> m_top;
-    RefPtr<CSSPrimitiveValue> m_left;
+    RefPtr<CSSPrimitiveValue> m_centerY;
+    RefPtr<CSSPrimitiveValue> m_centerX;
     RefPtr<CSSPrimitiveValue> m_radius;
 };
 
@@ -116,13 +116,13 @@ class CSSWrapShapeEllipse : public CSSWrapShape {
 public:
     static PassRefPtr<CSSWrapShapeEllipse> create() { return adoptRef(new CSSWrapShapeEllipse); }
 
-    CSSPrimitiveValue* left() const { return m_left.get(); }
-    CSSPrimitiveValue* top() const { return m_top.get(); }
+    CSSPrimitiveValue* centerX() const { return m_centerX.get(); }
+    CSSPrimitiveValue* centerY() const { return m_centerY.get(); }
     CSSPrimitiveValue* radiusX() const { return m_radiusX.get(); }
     CSSPrimitiveValue* radiusY() const { return m_radiusY.get(); }
 
-    void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
-    void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
+    void setCenterX(PassRefPtr<CSSPrimitiveValue> centerX) { m_centerX = centerX; }
+    void setCenterY(PassRefPtr<CSSPrimitiveValue> centerY) { m_centerY = centerY; }
     void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
     void setRadiusY(PassRefPtr<CSSPrimitiveValue> radiusY) { m_radiusY = radiusY; }
 
@@ -132,8 +132,8 @@ public:
 private:
     CSSWrapShapeEllipse() { }
 
-    RefPtr<CSSPrimitiveValue> m_top;
-    RefPtr<CSSPrimitiveValue> m_left;
+    RefPtr<CSSPrimitiveValue> m_centerX;
+    RefPtr<CSSPrimitiveValue> m_centerY;
     RefPtr<CSSPrimitiveValue> m_radiusX;
     RefPtr<CSSPrimitiveValue> m_radiusY;
 };

@@ -55,15 +55,15 @@ class WrapShapeRectangle : public WrapShape {
 public:
     static PassRefPtr<WrapShapeRectangle> create() { return adoptRef(new WrapShapeRectangle); }
 
-    Length left() const { return m_left; }
-    Length top() const { return m_top; }
+    Length x() const { return m_x; }
+    Length y() const { return m_y; }
     Length width() const { return m_width; }
     Length height() const { return m_height; }
     Length cornerRadiusX() const { return m_cornerRadiusX; }
     Length cornerRadiusY() const { return m_cornerRadiusY; }
 
-    void setLeft(Length left) { m_left = left; }
-    void setTop(Length top) { m_top = top; }
+    void setX(Length x) { m_x = x; }
+    void setY(Length y) { m_y = y; }
     void setWidth(Length width) { m_width = width; }
     void setHeight(Length height) { m_height = height; }
     void setCornerRadiusX(Length radiusX) { m_cornerRadiusX = radiusX; }
@@ -77,8 +77,8 @@ private:
         , m_cornerRadiusY(Undefined)
     { }
 
-    Length m_top;
-    Length m_left;
+    Length m_y;
+    Length m_x;
     Length m_width;
     Length m_height;
     Length m_cornerRadiusX;
@@ -89,20 +89,20 @@ class WrapShapeCircle : public WrapShape {
 public:
     static PassRefPtr<WrapShapeCircle> create() { return adoptRef(new WrapShapeCircle); }
 
-    Length left() const { return m_left; }
-    Length top() const { return m_top; }
+    Length centerX() const { return m_centerX; }
+    Length centerY() const { return m_centerY; }
     Length radius() const { return m_radius; }
 
-    void setLeft(Length left) { m_left = left; }
-    void setTop(Length top) { m_top = top; }
+    void setCenterX(Length centerX) { m_centerX = centerX; }
+    void setCenterY(Length centerY) { m_centerY = centerY; }
     void setRadius(Length radius) { m_radius = radius; }
 
     virtual Type type() const { return WRAP_SHAPE_CIRCLE; }
 private:
     WrapShapeCircle() { }
 
-    Length m_top;
-    Length m_left;
+    Length m_centerX;
+    Length m_centerY;
     Length m_radius;
 };
 
@@ -110,13 +110,13 @@ class WrapShapeEllipse : public WrapShape {
 public:
     static PassRefPtr<WrapShapeEllipse> create() { return adoptRef(new WrapShapeEllipse); }
 
-    Length top() const { return m_top; }
-    Length left() const { return m_left; }
+    Length centerX() const { return m_centerX; }
+    Length centerY() const { return m_centerY; }
     Length radiusX() const { return m_radiusX; }
     Length radiusY() const { return m_radiusY; }
 
-    void setTop(Length top) { m_top = top; }
-    void setLeft(Length left) { m_left = left; }
+    void setCenterX(Length centerX) { m_centerX = centerX; }
+    void setCenterY(Length centerY) { m_centerY = centerY; }
     void setRadiusX(Length radiusX) { m_radiusX = radiusX; }
     void setRadiusY(Length radiusY) { m_radiusY = radiusY; }
 
@@ -124,8 +124,8 @@ public:
 private:
     WrapShapeEllipse() { }
 
-    Length m_top;
-    Length m_left;
+    Length m_centerX;
+    Length m_centerY;
     Length m_radiusX;
     Length m_radiusY;
 };

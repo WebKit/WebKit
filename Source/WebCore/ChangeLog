@@ -1,3 +1,63 @@
+2012-07-17  Hans Muller  <hmuller@adobe.com>
+
+        Rename CSS Exclusions CSSWrapShape class properties to match Exclusion shape function parameters
+        https://bugs.webkit.org/show_bug.cgi?id=89669
+
+        Reviewed by Dirk Schulze.
+
+        Renamed left,top properties in the exclusion shape types to better match the specification
+        http://dev.w3.org/csswg/css3-exclusions/#shapes-from-svg-syntax:
+
+        WrapShapeRectangle, CSSWrapShapeRectangle - left,top should be x, y
+        WrapShapeCircle, CSSWrapShapeCircle - left,top should be centerX, centerY
+        WrapShapeEllipse, CSSWrapShapeEllipse - left,top should be centerX, centerY
+
+        No new tests or tests revisions were needed, the existing tests cover these APIs.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseExclusionShapeRectangle):
+        (WebCore::CSSParser::parseExclusionShapeCircle):
+        (WebCore::CSSParser::parseExclusionShapeEllipse):
+        * css/CSSWrapShapes.cpp:
+        (WebCore::CSSWrapShapeRectangle::cssText):
+        (WebCore::CSSWrapShapeCircle::cssText):
+        (WebCore::CSSWrapShapeEllipse::cssText):
+        * css/CSSWrapShapes.h:
+        (WebCore::CSSWrapShapeRectangle::x):
+        (WebCore::CSSWrapShapeRectangle::y):
+        (WebCore::CSSWrapShapeRectangle::setX):
+        (WebCore::CSSWrapShapeRectangle::setY):
+        (CSSWrapShapeRectangle):
+        (WebCore::CSSWrapShapeCircle::centerX):
+        (WebCore::CSSWrapShapeCircle::centerY):
+        (WebCore::CSSWrapShapeCircle::setCenterX):
+        (WebCore::CSSWrapShapeCircle::setCenterY):
+        (CSSWrapShapeCircle):
+        (WebCore::CSSWrapShapeEllipse::centerX):
+        (WebCore::CSSWrapShapeEllipse::centerY):
+        (WebCore::CSSWrapShapeEllipse::setCenterX):
+        (WebCore::CSSWrapShapeEllipse::setCenterY):
+        (CSSWrapShapeEllipse):
+        * css/WrapShapeFunctions.cpp:
+        (WebCore::valueForWrapShape):
+        (WebCore::wrapShapeForValue):
+        * rendering/style/WrapShapes.h:
+        (WebCore::WrapShapeRectangle::x):
+        (WebCore::WrapShapeRectangle::y):
+        (WebCore::WrapShapeRectangle::setX):
+        (WebCore::WrapShapeRectangle::setY):
+        (WrapShapeRectangle):
+        (WebCore::WrapShapeCircle::centerX):
+        (WebCore::WrapShapeCircle::centerY):
+        (WebCore::WrapShapeCircle::setCenterX):
+        (WebCore::WrapShapeCircle::setCenterY):
+        (WrapShapeCircle):
+        (WebCore::WrapShapeEllipse::centerX):
+        (WebCore::WrapShapeEllipse::centerY):
+        (WebCore::WrapShapeEllipse::setCenterX):
+        (WebCore::WrapShapeEllipse::setCenterY):
+        (WrapShapeEllipse):
+
 2012-07-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: implement search / replace in source files (behind experiment flag)

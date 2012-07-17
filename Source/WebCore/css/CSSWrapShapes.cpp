@@ -46,10 +46,10 @@ String CSSWrapShapeRectangle::cssText() const
     result.reserveCapacity(32);
     result.append(rectangleParen);
 
-    result.append(m_left->cssText());
+    result.append(m_x->cssText());
     result.append(comma);
 
-    result.append(m_top->cssText());
+    result.append(m_y->cssText());
     result.append(comma);
 
     result.append(m_width->cssText());
@@ -81,10 +81,10 @@ String CSSWrapShapeCircle::cssText() const
     result.reserveCapacity(32);
     result.append(circleParen);
 
-    result.append(m_left->cssText());
+    result.append(m_centerX->cssText());
     result.append(comma);
 
-    result.append(m_top->cssText());
+    result.append(m_centerY->cssText());
     result.append(comma);
 
     result.append(m_radius->cssText());
@@ -102,10 +102,10 @@ String CSSWrapShapeEllipse::cssText() const
     result.reserveCapacity(32);
     result.append(ellipseParen);
 
-    result.append(m_left->cssText());
+    result.append(m_centerX->cssText());
     result.append(comma);
 
-    result.append(m_top->cssText());
+    result.append(m_centerY->cssText());
     result.append(comma);
 
     result.append(m_radiusX->cssText());
