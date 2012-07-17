@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="sandbox"></div>
+<pre id="console"></pre>
+<script>
+description("Tests to ensure that some kinds of events are stopeed at shadow boundary.");
+
+var eventRecords = {};
+
+function dispatchedEvent(eventType)
+{
+    var events = eventRecords[eventType];
+    if (!events)
+        return [];
+    return events;
+}
+
+function dumpDispatchedEvent(eventType)
+{
+    debug('\n  ' + eventType);
+    var events = dispatchedEvent(eventType);
+    for (var i = 0; i < events.length; ++i)
+        debug('    ' + events[i])
+}
+
+function recordEvent(event)
+{
+    var eventType = event.type
+    if (!eventRecords[eventType]) {
+        eventRecords[eventType] = []
+    }
+    var eventString = '';
+    if (event.currentTarget)
+        eventString += ' @' + event.currentTarget.id;
+    if (event.target)
+        eventString += ' (target: ' + event.target.id + ')';
+    if (event.relatedTarget)
+        eventString += ' (related: ' + event.relatedTarget.id + ')';
+    if (event.eventPhase == 1)
+        eventString += '(capturing phase)';
+    if (event.target && event.currentTarget && event.target.id == event.currentTarget.id)
+        shouldBe("event.eventPhase", "2", true);
+    eventRecords[eventType].push(eventString);
+}
+
+debug('Other events than "click" should be stopped at shadow boundary.  A "click" is added for the purpose of comparing results.'); 
+
+var events = ['abort', 'select', 'change', 'reset', 'resize', 'scroll', 'selectstart', 'click'];
+
+function addEventListeners(nodes)
+{
+    for (var i = 0; i < nodes.length; ++i) {
+        var node = getNodeInShadowTreeStack(nodes[i]);
+        for (var j = 0; j < events.length; ++j)
+            node.addEventListener(events[j], recordEvent, false);
+    }
+}
+
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var sandbox = document.getElementById('sandbox');
+    sandbox.appendChild(
+        createDOM('div', {'id': 'top'},
+                  createDOM('div', {'id': 'host'},
+                            createShadowRoot(
+                                createDOM('div', {'id': 'parent-of-target'},
+                                          createDOM('div', {'id': 'target'}))))));
+
+    addEventListeners(['top', 'host', 'host/parent-of-target', 'host/target']);
+
+    for (var i = 0; i < events.length; ++i) {
+        var event = document.createEvent('UIEvent');
+        event.initEvent(events[i], true, false);
+        getNodeInShadowTreeStack('host/target').dispatchEvent(event);
+        dumpDispatchedEvent(events[i]);
+    }
+}
+
+test();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

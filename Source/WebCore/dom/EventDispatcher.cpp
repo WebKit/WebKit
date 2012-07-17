@@ -365,7 +365,14 @@ EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, S
     // WebKit never allowed selectstart event to cross the the shadow DOM boundary.
     // Changing this breaks existing sites.
     // See https://bugs.webkit.org/show_bug.cgi?id=52195 for details.
-    if (event->type() == eventNames().selectstartEvent)
+    const AtomicString eventType = event->type();
+    if (eventType == eventNames().abortEvent
+            || eventType == eventNames().changeEvent
+            || eventType == eventNames().resetEvent
+            || eventType == eventNames().resizeEvent
+            || eventType == eventNames().scrollEvent
+            || eventType == eventNames().selectEvent
+            || eventType == eventNames().selectstartEvent)
         return StayInsideShadowDOM;
 
     return RetargetEvent;
