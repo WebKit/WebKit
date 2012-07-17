@@ -231,9 +231,9 @@ TEST_F(DecimalTest, CeilingBigExponent)
     EXPECT_EQ(encode(1, 1000, Negative), encode(1, 1000, Negative).ceiling());
 }
 
-TEST_F(DecimalTest, DISABLED_CeilingSmallExponent)
+TEST_F(DecimalTest, CeilingSmallExponent)
 {
-    EXPECT_EQ(encode(0, 0, Positive), encode(1, -1000, Positive).ceiling());
+    EXPECT_EQ(encode(1, 0, Positive), encode(1, -1000, Positive).ceiling());
     EXPECT_EQ(encode(0, 0, Negative), encode(1, -1000, Negative).ceiling());
 }
 
@@ -547,10 +547,10 @@ TEST_F(DecimalTest, FloorBigExponent)
     EXPECT_EQ(encode(1, 1000, Negative), encode(1, 1000, Negative).floor());
 }
 
-TEST_F(DecimalTest, DISABLED_FloorSmallExponent)
+TEST_F(DecimalTest, FloorSmallExponent)
 {
     EXPECT_EQ(encode(0, 0, Positive), encode(1, -1000, Positive).floor());
-    EXPECT_EQ(encode(0, 0, Negative), encode(1, -1000, Negative).floor());
+    EXPECT_EQ(encode(1, 0, Negative), encode(1, -1000, Negative).floor());
 }
 
 TEST_F(DecimalTest, FloorSpecialValues)

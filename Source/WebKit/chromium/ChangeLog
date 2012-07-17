@@ -1,3 +1,22 @@
+2012-07-16  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r122552): DecimalTest tests (CeilingSmallExponent and FloorSmallExponent) started failing.
+        https://bugs.webkit.org/show_bug.cgi?id=91244
+
+        Reviewed by Kent Tamura.
+
+        This patch enables and updates disabled test cases of DecimalTest
+        caused by fixes in r122552 of Decimal::ceiling() and Decimal::floor()
+        for small fraction numbers and added test cases. Fixes in r122552
+        itself is correct however, it didn't update existing tests for very small
+        fraction numbers.
+
+        * tests/DecimalTest.cpp:
+        (TEST_F): CeilingSmallExponent: Change expected value to 1 for ceiling(1e-1000),
+        ceiling rounds number toward positive infinity.
+        (TEST_F): FloorSmallExponent: Change expected value to -1 for floor(-1e-1000),
+        floor rounds number toward negative infinity.
+
 2012-07-16  Koji Ishii  <kojiishi@gmail.com>
 
         Vertical alternate glyph (GSUB) support for OpenTypeVerticalData
