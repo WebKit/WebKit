@@ -35,20 +35,29 @@
 
 namespace WebKit {
 class WebFrame;
+class WebView;
 }
 
+class AccessibilityController;
 class GamepadController;
+class TextInputController;
 
 class TestInterfaces {
 public:
     TestInterfaces();
     ~TestInterfaces();
 
+    void setWebView(WebKit::WebView*);
+
     void bindTo(WebKit::WebFrame*);
     void resetAll();
 
+    AccessibilityController* accessibilityController() { return m_accessibilityController.get(); }
+
 private:
+    OwnPtr<AccessibilityController> m_accessibilityController;
     OwnPtr<GamepadController> m_gamepadController;
+    OwnPtr<TextInputController> m_textInputController;
 };
 
 #endif // TestInterfaces_h
