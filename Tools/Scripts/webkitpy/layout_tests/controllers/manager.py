@@ -766,9 +766,6 @@ class Manager(object):
             self._filesystem.maybe_make_directory(self._filesystem.join(self._results_directory, 'retries'))
             return self._filesystem.join(self._results_directory, 'retries')
 
-    def update(self):
-        self.update_summary(self._current_result_summary)
-
     def needs_servers(self):
         return any(self._test_requires_lock(test_name) for test_name in self._test_files) and self._options.http
 
@@ -936,17 +933,6 @@ class Manager(object):
                 writer = TestResultWriter(self._port._filesystem, self._port, self._port.results_directory(), test)
                 writer.write_crash_log(crash_log)
 
-    def update_summary(self, result_summary):
-        """Update the summary and print results with any completed tests."""
-        while True:
-            try:
-                result = test_results.TestResult.loads(self._result_queue.get_nowait())
-            except Queue.Empty:
-                self._printer.print_progress(result_summary, self._retrying, self._test_files_list)
-                return
-
-            self._update_summary_with_result(result_summary, result)
-
     def _mark_interrupted_tests_as_skipped(self, result_summary):
         for test_name in self._test_files:
             if test_name not in result_summary.results:
@@ -979,14 +965,18 @@ class Manager(object):
 
     def _update_summary_with_result(self, result_summary, result):
         if result.type == test_expectations.SKIP:
-            result_summary.add(result, expected=True, test_is_slow=self._test_is_slow(result.test_name))
+            exp_str = got_str = 'SKIP'
+            expected = True
         else:
             expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or test_failures.is_reftest_failure(result.failures))
-            result_summary.add(result, expected, self._test_is_slow(result.test_name))
             exp_str = self._expectations.get_expectations_string(result.test_name)
             got_str = self._expectations.expectation_to_string(result.type)
-            self._printer.print_test_result(result, expected, exp_str, got_str)
-        self._printer.print_progress(result_summary, self._retrying, self._test_files_list)
+
+        result_summary.add(result, expected, self._test_is_slow(result.test_name))
+
+        # FIXME: there's too many arguments to this function.
+        self._printer.print_finished_test(result, expected, exp_str, got_str, result_summary, self._retrying, self._test_files_list)
+
         self._interrupt_if_at_failure_limits(result_summary)
 
     def _clobber_old_results(self):

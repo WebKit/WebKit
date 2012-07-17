@@ -535,6 +535,10 @@ class Printer(object):
             self._write("%s ran as expected, %d didn't%s:" % (grammar.pluralize('test', expected), unexpected, incomplete_str))
         self._write("")
 
+    def print_finished_test(self, result, expected, exp_str, got_str, result_summary, retrying, test_files_list):
+        self.print_test_result(result, expected, exp_str, got_str)
+        self.print_progress(result_summary, retrying, test_files_list)
+
     def print_test_result(self, result, expected, exp_str, got_str):
         """Print the result of the test as determined by --print.
 

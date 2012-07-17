@@ -1,5 +1,29 @@
 2012-07-17  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: move per-test result output into printing.py
+        https://bugs.webkit.org/show_bug.cgi?id=91465
+
+        Reviewed by Ojan Vafai.
+
+        This moves the last substantive logging/printing code from the
+        manager into printing.py. Subsequent patches in this thread can
+        largely focus on cleaning up printing.py and will leave the rest
+        of the code alone.
+
+        This patch also removes manager.update() and
+        manager.update_summary(), two routines that were no longer being
+        used or needed (they have been dead for a long time but I didn't
+        notice them until now).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.results_directory):
+        (Manager._look_for_new_crash_logs):
+        (Manager._update_summary_with_result):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_finished_test):
+
+2012-07-17  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: move config-specific logging to printing.py
         https://bugs.webkit.org/show_bug.cgi?id=91450
 
