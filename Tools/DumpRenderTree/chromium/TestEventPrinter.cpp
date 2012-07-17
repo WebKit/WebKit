@@ -36,83 +36,49 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/Base64.h>
 
-class DRTPrinter : public TestEventPrinter {
-public:
-    DRTPrinter() { }
-    void handleTestHeader(const char* url) const;
-    void handleTimedOut() const;
-    void handleTextHeader() const;
-    void handleTextFooter() const;
-    void handleAudioHeader() const;
-    void handleAudioFooter() const;
-    void handleImage(const char* actualHash, const char* expectedHash, const unsigned char* imageData, size_t imageSize, const char* fileName) const;
-    void handleImageFooter() const;
-    void handleTestFooter(bool dumpedAnything) const;
-};
-
-class TestShellPrinter : public TestEventPrinter {
-public:
-    TestShellPrinter() { }
-    void handleTestHeader(const char* url) const;
-    void handleTimedOut() const;
-    void handleTextHeader() const;
-    void handleTextFooter() const;
-    void handleAudioHeader() const;
-    void handleAudioFooter() const;
-    void handleImage(const char* actualHash, const char* expectedHash, const unsigned char* imageData, size_t imageSize, const char* fileName) const;
-    void handleImageFooter() const;
-    void handleTestFooter(bool dumpedAnything) const;
-};
+TestEventPrinter::TestEventPrinter()
+{
+}
 
 TestEventPrinter::~TestEventPrinter()
 {
 }
 
-PassOwnPtr<TestEventPrinter> TestEventPrinter::createDRTPrinter()
-{
-    return adoptPtr(new DRTPrinter);
-}
-
-PassOwnPtr<TestEventPrinter> TestEventPrinter::createTestShellPrinter()
-{
-    return adoptPtr(new TestShellPrinter);
-}
-
 // ----------------------------------------------------------------
 
-void DRTPrinter::handleTestHeader(const char*) const
+void TestEventPrinter::handleTestHeader(const char*) const
 {
 }
 
-void DRTPrinter::handleTimedOut() const
+void TestEventPrinter::handleTimedOut() const
 {
     fprintf(stderr, "FAIL: Timed out waiting for notifyDone to be called\n");
     fprintf(stdout, "FAIL: Timed out waiting for notifyDone to be called\n");
 }
 
-void DRTPrinter::handleTextHeader() const
+void TestEventPrinter::handleTextHeader() const
 {
     printf("Content-Type: text/plain\n");
 }
 
-void DRTPrinter::handleTextFooter() const
+void TestEventPrinter::handleTextFooter() const
 {
     printf("#EOF\n");
     fprintf(stderr, "#EOF\n");
 }
 
-void DRTPrinter::handleAudioHeader() const
+void TestEventPrinter::handleAudioHeader() const
 {
     printf("Content-Type: audio/wav\n");
 }
 
-void DRTPrinter::handleAudioFooter() const
+void TestEventPrinter::handleAudioFooter() const
 {
     printf("#EOF\n");
     fprintf(stderr, "#EOF\n");
 }
 
-void DRTPrinter::handleImage(const char* actualHash, const char* expectedHash, const unsigned char* imageData, size_t imageSize, const char*) const
+void TestEventPrinter::handleImage(const char* actualHash, const char* expectedHash, const void* imageData, size_t imageSize) const
 {
     ASSERT(actualHash);
     printf("\nActualHash: %s\n", actualHash);
@@ -139,63 +105,7 @@ void DRTPrinter::handleImage(const char* actualHash, const char* expectedHash, c
     }
 }
 
-void DRTPrinter::handleTestFooter(bool) const
+void TestEventPrinter::handleTestFooter(bool) const
 {
     printf("#EOF\n");
-}
-
-// ----------------------------------------------------------------
-
-void TestShellPrinter::handleTestHeader(const char* url) const
-{
-    printf("#URL:%s\n", url);
-}
-
-void TestShellPrinter::handleTimedOut() const
-{
-    puts("#TEST_TIMED_OUT\n");
-}
-
-void TestShellPrinter::handleTextHeader() const
-{
-}
-
-void TestShellPrinter::handleTextFooter() const
-{
-}
-
-void TestShellPrinter::handleAudioHeader() const
-{
-    printf("Content-Type: audio/wav\n");
-}
-
-void TestShellPrinter::handleAudioFooter() const
-{
-    printf("\n");
-}
-
-void TestShellPrinter::handleImage(const char* actualHash, const char*, const unsigned char* imageData, size_t imageSize, const char* fileName) const
-{
-    ASSERT(actualHash);
-    if (imageData && imageSize) {
-        ASSERT(fileName);
-        FILE* fp = fopen(fileName, "wb");
-        if (!fp) {
-            perror(fileName);
-            exit(EXIT_FAILURE);
-        }
-        if (fwrite(imageData, 1, imageSize, fp) != imageSize) {
-            perror(fileName);
-            fclose(fp);
-            exit(EXIT_FAILURE);
-        }
-        fclose(fp);
-    }
-    printf("#MD5:%s\n", actualHash);
-}
-
-void TestShellPrinter::handleTestFooter(bool dumpedAnything) const
-{
-    if (dumpedAnything)
-        printf("#EOF\n");
 }

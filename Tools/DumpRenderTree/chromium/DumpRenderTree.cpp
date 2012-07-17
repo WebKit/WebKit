@@ -47,8 +47,6 @@ static const char optionThreaded[] = "--threaded";
 static const char optionDebugRenderTree[] = "--debug-render-tree";
 static const char optionDebugLayerTree[] = "--debug-layer-tree";
 
-static const char optionPixelTestsWithName[] = "--pixel-tests=";
-static const char optionTestShell[] = "--test-shell";
 static const char optionAllowExternalPages[] = "--allow-external-pages";
 static const char optionStartupDialog[] = "--testshell-startup-dialog";
 static const char optionCheckLayoutTestSystemDeps[] = "--check-layout-test-sys-deps";
@@ -81,30 +79,15 @@ public:
     }
 };
 
-static void runTest(TestShell& shell, TestParams& params, const string& testName, bool testShellMode)
+static void runTest(TestShell& shell, TestParams& params, const string& testName)
 {
     int oldTimeoutMsec = shell.layoutTestTimeout();
     params.pixelHash = "";
     string pathOrURL = testName;
-    if (testShellMode) {
-        string timeOut;
-        string::size_type separatorPosition = pathOrURL.find(' ');
-        if (separatorPosition != string::npos) {
-            timeOut = pathOrURL.substr(separatorPosition + 1);
-            pathOrURL.erase(separatorPosition);
-            separatorPosition = timeOut.find_first_of(' ');
-            if (separatorPosition != string::npos) {
-                params.pixelHash = timeOut.substr(separatorPosition + 1);
-                timeOut.erase(separatorPosition);
-            }
-            shell.setLayoutTestTimeout(atoi(timeOut.c_str()));
-        }
-    } else {
-        string::size_type separatorPosition = pathOrURL.find("'");
-        if (separatorPosition != string::npos) {
-            params.pixelHash = pathOrURL.substr(separatorPosition + 1);
-            pathOrURL.erase(separatorPosition);
-        }
+    string::size_type separatorPosition = pathOrURL.find("'");
+    if (separatorPosition != string::npos) {
+        params.pixelHash = pathOrURL.substr(separatorPosition + 1);
+        pathOrURL.erase(separatorPosition);
     }
     params.testUrl = webkit_support::CreateURLForPathOrURL(pathOrURL);
     webkit_support::SetCurrentDirectoryForFileURL(params.testUrl);
@@ -136,7 +119,6 @@ int main(int argc, char* argv[])
     TestParams params;
     Vector<string> tests;
     bool serverMode = false;
-    bool testShellMode = false;
     bool allowExternalPages = false;
     bool startupDialog = false;
     bool acceleratedCompositingForVideoEnabled = false;
@@ -159,17 +141,11 @@ int main(int argc, char* argv[])
             params.dumpTree = false;
         else if (argument == optionPixelTests)
             params.dumpPixels = true;
-        else if (!argument.find(optionPixelTestsWithName)) {
-            params.dumpPixels = true;
-            params.pixelFileName = argument.substr(strlen(optionPixelTestsWithName));
-        } else if (argument == optionDebugRenderTree)
+        else if (argument == optionDebugRenderTree)
             params.debugRenderTree = true;
         else if (argument == optionDebugLayerTree)
             params.debugLayerTree = true;
-        else if (argument == optionTestShell) {
-            testShellMode = true;
-            serverMode = true;
-        } else if (argument == optionAllowExternalPages)
+        else if (argument == optionAllowExternalPages)
             allowExternalPages = true;
         else if (argument == optionStartupDialog)
             startupDialog = true;
@@ -215,10 +191,6 @@ int main(int argc, char* argv[])
         else
             tests.append(argument);
     }
-    if (testShellMode && params.dumpPixels && params.pixelFileName.empty()) {
-        fprintf(stderr, "--pixel-tests with --test-shell requires a file name.\n");
-        return EXIT_FAILURE;
-    }
     if (stressOpt && stressDeopt) {
         fprintf(stderr, "--stress-opt and --stress-deopt are mutually exclusive.\n");
         return EXIT_FAILURE;
@@ -231,7 +203,6 @@ int main(int argc, char* argv[])
 
     { // Explicit scope for the TestShell instance.
         TestShell shell;
-        shell.setTestShellMode(testShellMode);
         shell.setAllowExternalPages(allowExternalPages);
         shell.setAcceleratedCompositingForVideoEnabled(acceleratedCompositingForVideoEnabled);
         shell.setThreadedCompositingEnabled(threadedCompositingEnabled);
@@ -265,14 +236,14 @@ int main(int argc, char* argv[])
                 // Explicitly quit on platforms where EOF is not reliable.
                 if (!strcmp(testString, "QUIT"))
                     break;
-                runTest(shell, params, testString, testShellMode);
+                runTest(shell, params, testString);
             }
         } else if (!tests.size())
             puts("#EOF");
         else {
             params.printSeparators = tests.size() > 1;
             for (unsigned i = 0; i < tests.size(); i++)
-                runTest(shell, params, tests[i], testShellMode);
+                runTest(shell, params, tests[i]);
         }
 
         shell.callJSGC();

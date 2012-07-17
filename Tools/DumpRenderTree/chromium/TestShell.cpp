@@ -105,7 +105,6 @@ TestShell::TestShell()
     : m_testIsPending(false)
     , m_testIsPreparing(false)
     , m_focusedWidget(0)
-    , m_testShellMode(false)
     , m_devTools(0)
     , m_allowExternalPages(false)
     , m_acceleratedCompositingForVideoEnabled(false)
@@ -154,7 +153,7 @@ void TestShell::initialize()
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
-    m_printer = m_testShellMode ? TestEventPrinter::createTestShellPrinter() : TestEventPrinter::createDRTPrinter();
+    m_printer = adoptPtr(new TestEventPrinter());
 #if ENABLE(LINK_PRERENDER)
     m_prerenderingSupport = adoptPtr(new MockWebPrerenderingSupport());
 #endif
@@ -720,9 +719,9 @@ void TestShell::dumpImage(SkCanvas* canvas) const
             sourceBitmap.height(), static_cast<int>(sourceBitmap.rowBytes()), discardTransparency, md5hash, &png);
 #endif
 
-        m_printer->handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), &png[0], png.size(), m_params.pixelFileName.c_str());
+        m_printer->handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), &png[0], png.size());
     } else
-        m_printer->handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), 0, 0, m_params.pixelFileName.c_str());
+        m_printer->handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), 0, 0);
 }
 
 void TestShell::bindJSObjectsToWindow(WebFrame* frame)

@@ -70,8 +70,6 @@ struct TestParams {
     bool debugLayerTree;
     bool printSeparators;
     WebKit::WebURL testUrl;
-    // Resultant image file name. Required only if the test_shell mode.
-    std::string pixelFileName;
     std::string pixelHash;
 
     TestParams()
@@ -135,7 +133,6 @@ public:
     bool allowExternalPages() const { return m_allowExternalPages; }
     void setAllowExternalPages(bool allowExternalPages) { m_allowExternalPages = allowExternalPages; }
 
-    void setTestShellMode(bool testShellMode) { m_testShellMode = testShellMode; }
     void setAcceleratedCompositingForVideoEnabled(bool enabled) { m_acceleratedCompositingForVideoEnabled = enabled; }
     void setThreadedCompositingEnabled(bool enabled) { m_threadedCompositingEnabled = enabled; }
     void setForceCompositingMode(bool enabled) { m_forceCompositingMode = enabled; }
@@ -207,7 +204,6 @@ private:
     bool m_isLoading;
     WebKit::WebView* m_webView;
     WebKit::WebWidget* m_focusedWidget;
-    bool m_testShellMode;
     WebViewHost* m_devTools;
 
     // Be careful of the destruction order of the following objects.

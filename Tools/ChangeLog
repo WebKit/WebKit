@@ -1,5 +1,38 @@
 2012-07-17  Xianzhu Wang  <wangxianzhu@chromium.org>
 
+        [chromium] remove --test-shell support from DRT
+        https://bugs.webkit.org/show_bug.cgi?id=86927
+
+        Reviewed by Adam Barth.
+
+        Now no one use --test-shell. All of us use the standard DRT mode.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp: Removed support of --test-shell and --pixel-tests=filename options. (--pixel-tests without '=' is kept for DRT mode.)
+        (runTest):
+        (main):
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (TestEventPrinter::TestEventPrinter):
+        (TestEventPrinter::~TestEventPrinter):
+        (TestEventPrinter::handleTestHeader):
+        (TestEventPrinter::handleTimedOut):
+        (TestEventPrinter::handleTextHeader):
+        (TestEventPrinter::handleTextFooter):
+        (TestEventPrinter::handleAudioHeader):
+        (TestEventPrinter::handleAudioFooter):
+        (TestEventPrinter::handleImage): Removed the unused filename parameter.
+        (TestEventPrinter::handleTestFooter):
+        * DumpRenderTree/chromium/TestEventPrinter.h:
+        (TestEventPrinter): Made it a concrete class because we have only one implementation.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::initialize):
+        (TestShell::dumpImage):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestParams): Removed pixelFileName field.
+        (TestShell):
+
+2012-07-17  Xianzhu Wang  <wangxianzhu@chromium.org>
+
         remove ChromiumDriver from NRWT
         https://bugs.webkit.org/show_bug.cgi?id=88478
 
