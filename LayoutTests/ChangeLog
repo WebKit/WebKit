@@ -1,3 +1,13 @@
+2012-07-17  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Gardening of failing tests and new passes
+        https://bugs.webkit.org/show_bug.cgi?id=91479
+
+        Unreviewed gardening.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
 2012-07-17  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] fast/box-{shadow,sizing} tests needs update after rebaseline and new testfonts

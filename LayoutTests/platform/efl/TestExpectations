@@ -141,6 +141,10 @@ BUGWK84186 SKIP : fast/text-autosizing = PASS
 
 // Dialog element is not yet enabled.
 BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
+
+// Subpixel layout is not enabled.
+BUGWK85532 SKIP : fast/sub-pixel = MISSING
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -458,6 +462,7 @@ BUGWK82294 : compositing/tiled-layers-hidpi.html = TEXT
 BUGWK82294 : compositing/visibility/layer-visible-content.html = TEXT
 BUGWK82294 : compositing/visibility/visibility-image-layers-dynamic.html = TEXT
 BUGWK82294 : compositing/layer-creation/no-compositing-for-preserve-3d.html = TEXT
+BUGWK82294 : compositing/columns/composited-in-paginated.html = TEXT
 
 // EFL's LayoutTestController does not implement displayInvalidatedRegion
 BUGWK86727 : compositing/plugins/invalidate_rect.html = TEXT
@@ -553,7 +558,6 @@ BUGWK85594 : fast/dom/navigator-detached-no-crash.html = TEXT
 
 // Incorrect rendering results after r115846
 BUGWK85599 : http/tests/navigation/postredirect-basic.html = TEXT
-BUGWK85599 : http/tests/navigation/postredirect-goback1.html = TEXT
 
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
@@ -766,6 +770,9 @@ BUGWK68979 : http/tests/multipart/multipart-replace-non-html-content.php = TEXT
 
 // Skip tests in fast/text/shaping
 BUGWK90951 SKIP : fast/text/shaping = PASS
+
+// Test added by Mac port, rendering results totally different on EFL.
+BUGWK91477 : fast/multicol/shrink-to-column-height-for-pagination.html = MISSING
 
 // These tests are failing after r122528.
 BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = TEXT
