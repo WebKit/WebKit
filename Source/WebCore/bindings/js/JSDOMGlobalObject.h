@@ -27,12 +27,10 @@
 #ifndef JSDOMGlobalObject_h
 #define JSDOMGlobalObject_h
 
+#include "PlatformExportMacros.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSGlobalThis.h>
 
-#ifndef WEBKIT_EXPORTDATA
-#define WEBKIT_EXPORTDATA
-#endif
 
 namespace WebCore {
 

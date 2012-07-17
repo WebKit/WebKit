@@ -1,3 +1,15 @@
+2012-07-16  Hajime Morrita  <morrita@chromium.org>
+
+        WebCore needs WEBCORE_TESTING macro to mark methods being exported for testing.
+        https://bugs.webkit.org/show_bug.cgi?id=90764
+
+        Reviewed by Adam Barth.
+
+        Removed symbols which are now covered by WEBCORE_TESTING.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-07-16  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Implement decidePolicyForResponse in policy client

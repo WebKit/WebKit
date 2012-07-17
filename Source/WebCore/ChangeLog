@@ -1,3 +1,18 @@
+2012-07-16  Hajime Morrita  <morrita@chromium.org>
+
+        WebCore needs WEBCORE_TESTING macro to mark methods being exported for testing.
+        https://bugs.webkit.org/show_bug.cgi?id=90764
+
+        Reviewed by Adam Barth.
+
+        Defined WEBCORE_TESTING based on USE(EXPORT_MACROS_FOR_TESTING) and
+        applied it to FrameDestructionObserver.
+
+        * bindings/js/JSDOMGlobalObject.h: Removed conflicting symbols
+        * page/FrameDestructionObserver.h: Added WEBKIT_TESTING
+        (FrameDestructionObserver):
+        * platform/PlatformExportMacros.h:
+
 2012-07-16  Kiran Muppala  <cmuppala@apple.com>
 
         REGRESSION: RenderInline::absoluteQuads produces incorrect results for fixed position.

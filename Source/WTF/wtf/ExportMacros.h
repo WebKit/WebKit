@@ -48,26 +48,40 @@
 #define WTF_INTERNAL
 #endif
 
+#if !PLATFORM(CHROMIUM) && OS(WINDOWS)
+
+#define WTF_EXPORT_DECLARATION __declspec(dllexport)
+#define WTF_IMPORT_DECLARATION __declspec(dllimport)
+#define WTF_HIDDEN_DECLARATION
+
+#elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
+
+#define WTF_EXPORT_DECLARATION __attribute__((visibility("default")))
+#define WTF_IMPORT_DECLARATION WTF_EXPORT_DECLARATION
+#define WTF_HIDDEN_DECLARATION __attribute__((visibility("hidden")))
+
+#else
+
+#define WTF_EXPORT_DECLARATION
+#define WTF_IMPORT_DECLARATION
+#define WTF_HIDDEN_DECLARATION
+
+#endif
+
+#if defined(BUILDING_WTF) || defined(STATICALLY_LINKED_WITH_WTF) || (PLATFORM(WX) && defined(BUILDING_JavaScriptCore))
+#define WTF_IS_LINKED_IN_SAME_BINARY 1
+#endif
+
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
-#if !PLATFORM(CHROMIUM) && OS(WINDOWS)
-#define WTF_EXPORT __declspec(dllexport)
-#define WTF_IMPORT __declspec(dllimport)
-#define WTF_HIDDEN
-#elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
-#define WTF_EXPORT __attribute__((visibility("default")))
-#define WTF_IMPORT WTF_EXPORT
-#define WTF_HIDDEN __attribute__((visibility("hidden")))
-#else
-#define WTF_EXPORT
-#define WTF_IMPORT
-#define WTF_HIDDEN
-#endif
+#define WTF_EXPORT WTF_EXPORT_DECLARATION
+#define WTF_IMPORT WTF_IMPORT_DECLARATION
+#define WTF_HIDDEN WTF_IMPORT_DECLARATION
 
 // FIXME: When all ports are using the export macros, we should replace
 // WTF_EXPORTDATA with WTF_EXPORT_PRIVATE macros.
-#if defined(BUILDING_WTF) || defined(STATICALLY_LINKED_WITH_WTF) || (PLATFORM(WX) && defined(BUILDING_JavaScriptCore))
+#if defined(WTF_IS_LINKED_IN_SAME_BINARY)
 #define WTF_EXPORTDATA WTF_EXPORT
 #else
 #define WTF_EXPORTDATA WTF_IMPORT
@@ -93,7 +107,25 @@
 
 #endif // USE(EXPORT_MACROS)
 
-#if defined(BUILDING_WTF) || defined(STATICALLY_LINKED_WITH_WTF) || (PLATFORM(WX) && defined(BUILDING_JavaScriptCore))
+// WTF_TESTING (and WEBCORE_TESTING in PlatformExportMacros.h) is used for
+// exporting symbols which are referred from WebCoreTestSupport library.
+// Since the set of APIs is common between ports,
+// it is rather worth annotating inside the code than maintaining port specific export lists.
+#if USE(EXPORT_MACROS_FOR_TESTING)
+
+#if defined(WTF_IS_LINKED_IN_SAME_BINARY)
+#define WTF_TESTING WTF_EXPORT_DECLARATION
+#else
+#define WTF_TESTING WTF_IMPORT_DECLARATION
+#endif
+
+#else // USE(EXPORT_MACROS_FOR_TESTING)
+
+#define WTF_TESTING
+
+#endif // USE(EXPORT_MACROS_FOR_TESTING)
+
+#if defined(WTF_IS_LINKED_IN_SAME_BINARY)
 #define WTF_EXPORT_PRIVATE WTF_EXPORT
 #else
 #define WTF_EXPORT_PRIVATE WTF_IMPORT

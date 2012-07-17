@@ -32,11 +32,15 @@
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
 
+#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit) || \
+    defined(STATICALLY_LINKED_WITH_WebCore) || defined(STATICALLY_LINKED_WITH_WebKit)
+#define WEBCORE_IS_LINKED_IN_SAME_BINARY 1
+#endif
+
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
-#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit) || \
-    defined(STATICALLY_LINKED_WITH_WebCore) || defined(STATICALLY_LINKED_WITH_WebKit)
+#if defined(WEBCORE_IS_LINKED_IN_SAME_BINARY)
 #define WEBKIT_EXPORTDATA WTF_EXPORT
 #else
 #define WEBKIT_EXPORTDATA WTF_IMPORT
@@ -46,8 +50,7 @@
 
 #if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
 
-#if defined(BUILDING_WebCore) || defined(BUILDING_WebKit) || \
-    defined(STATICALLY_LINKED_WITH_WebCore) || defined(STATICALLY_LINKED_WITH_WebKit)
+#if defined(WEBCORE_IS_LINKED_IN_SAME_BINARY)
 #define WEBKIT_EXPORTDATA __declspec(dllexport)
 #else
 #define WEBKIT_EXPORTDATA __declspec(dllimport)
@@ -60,5 +63,19 @@
 #endif // !PLATFORM...
 
 #endif // USE(EXPORT_MACROS)
+
+#if USE(EXPORT_MACROS_FOR_TESTING)
+
+#if defined(WEBCORE_IS_LINKED_IN_SAME_BINARY)
+#define WEBCORE_TESTING WTF_EXPORT_DECLARATION
+#else
+#define WEBCORE_TESTING WTF_IMPORT_DECLARATION
+#endif
+
+#else // USE(EXPORT_MACROS_FOR_TESTING)
+
+#define WEBCORE_TESTING
+
+#endif // USE(EXPORT_MACROS_FOR_TESTING)
 
 #endif // PlatformExportMacros_h
