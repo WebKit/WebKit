@@ -1,3 +1,17 @@
+2012-07-17  Roger Fong  <roger_fong@apple.com>
+
+        Assertion failure/crash on Windows when using a font in an SVG 
+        element with an unresaonbly large font size
+        https://bugs.webkit.org/show_bug.cgi?id=91273
+        Radar: <rdar://problem/8355401>
+
+        Reviewed by Tim Horton.
+        
+        Test to make sure that having an overly large font size won't crash on Windows.
+
+        * svg/text/font-size-too-large-crash-expected.txt: Added.
+        * svg/text/font-size-too-large-crash.svg: Added.
+
 2012-07-17  David Barr  <davidbarr@chromium.org>
 
         Add parsing and style application for css3-images image-orientation

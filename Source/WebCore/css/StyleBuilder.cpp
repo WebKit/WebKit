@@ -768,6 +768,10 @@ public:
         if (size < 0)
             return;
 
+        // Overly large font sizes will cause crashes on some platforms (such as Windows).
+        // Cap font size here to make sure that doesn't happen.
+        size = min(1000000.0f, size);
+
         styleResolver->setFontSize(fontDescription, size);
         styleResolver->setFontDescription(fontDescription);
         return;

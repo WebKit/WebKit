@@ -1,3 +1,29 @@
+2012-07-17  Roger Fong  <roger_fong@apple.com>
+
+        Assertion failure/crash on Windows when using a font in an SVG 
+        element with an unresaonbly large font size
+        https://bugs.webkit.org/show_bug.cgi?id=91273
+        Radar: <rdar://problem/8355401>
+
+        Reviewed by Tim Horton.
+
+        When using a font in an SVG element with an unreasonably large 
+        font size in Windows, WebKit crashes. The problem has to do with 
+        font sizes overflowing into negative values in the Windows specific code.
+        The fix is to cap the font sizes to something reasonable when the font style is getting processed. 
+        The fix will apply to both CSS and SVG so that behaviour is consistent.
+
+        Test: svg/text/font-size-too-large-crash.svg
+
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        This is where the font size capping now occurs. Caps size to 1000000.
+        Both CSS and SVG reach the font size capping code here.
+        
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        Capping here removed, moved to StyleBuilder.cpp.
+
 2012-07-17  David Barr  <davidbarr@chromium.org>
 
         Add parsing and style application for css3-images image-orientation
