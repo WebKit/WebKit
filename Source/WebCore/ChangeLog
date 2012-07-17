@@ -1,3 +1,32 @@
+2012-07-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        invalidateNodeListCachesInAncestors walks up ancestors even when an attribute that doesn't invalidate node lists changes
+        https://bugs.webkit.org/show_bug.cgi?id=91530
+
+        Reviewed by Ojan Vafai.
+
+        The bug was caused by invalidateNodeListCachesInAncestors not calling Document::shouldInvalidateNodeListCaches with
+        attrName. Done that.
+        
+        This chance revealed a bug in shouldInvalidateTypeOnAttributeChange that we weren't checking form attribute changes for
+        RadioNodeList and HTMLCollection, so fixed the bug.
+
+        Also renamed Document::clearNodeListCaches to invalidateNodeListCaches to match the name convention used elsewhere,
+        and added a new version of DynamicNodeListCacheBase::invalidateCache that takes attrName to reduce the code duplication.
+
+        Test: fast/forms/elements-invalidate-on-form-attribute-invalidation.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::invalidateNodeListCaches):
+        * dom/Document.h:
+        (Document):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::invalidateCache):
+        (WebCore::DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange):
+        * dom/Node.cpp:
+        (WebCore::Node::invalidateNodeListCachesInAncestors):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+
 2012-07-17  Max Vujovic  <mvujovic@adobe.com>
 
         Update ANGLE in WebKit

@@ -738,7 +738,7 @@ public:
     void registerNodeListCache(DynamicNodeListCacheBase*);
     void unregisterNodeListCache(DynamicNodeListCacheBase*);
     bool shouldInvalidateNodeListCaches(const QualifiedName* attrName = 0) const;
-    void clearNodeListCaches();
+    void invalidateNodeListCaches(const QualifiedName* attrName);
 
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);

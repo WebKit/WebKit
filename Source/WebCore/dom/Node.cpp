@@ -974,7 +974,7 @@ void Node::invalidateNodeListCachesInAncestors(const QualifiedName* attrName, El
     if (!document()->shouldInvalidateNodeListCaches())
         return;
 
-    document()->clearNodeListCaches();
+    document()->invalidateNodeListCaches(attrName);
 
     for (Node* node = this; node; node = node->parentNode()) {
         if (!node->hasRareData())
@@ -2214,18 +2214,12 @@ void Node::showTreeForThisAcrossFrame() const
 void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
 {
     NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
-    for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
-        DynamicNodeList* list = it->second;
-        if (!attrName || DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(list->invalidationType(), *attrName))
-            list->invalidateCache();
-    }
+    for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it)
+        it->second->invalidateCache(attrName);
 
     NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
-    for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
-        DynamicNodeList* list = it->second;
-        if (!attrName || DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(list->invalidationType(), *attrName))
-            list->invalidateCache();
-    }
+    for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it)
+        it->second->invalidateCache(attrName);
 
     if (!attrName)
         return;

@@ -68,6 +68,11 @@ public:
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
     ALWAYS_INLINE CollectionType type() const { return static_cast<CollectionType>(m_collectionType); }
 
+    ALWAYS_INLINE void invalidateCache(const QualifiedName* attrName) const
+    {
+        if (!attrName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attrName))
+            invalidateCache();
+    }
     void invalidateCache() const;
 
     static bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
@@ -124,7 +129,8 @@ ALWAYS_INLINE bool DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChan
     case InvalidateOnForAttrChange:
         return attrName == HTMLNames::forAttr;
     case InvalidateForFormControls:
-        return attrName == HTMLNames::nameAttr || attrName == HTMLNames::idAttr || attrName == HTMLNames::forAttr || attrName == HTMLNames::typeAttr;
+        return attrName == HTMLNames::nameAttr || attrName == HTMLNames::idAttr || attrName == HTMLNames::forAttr
+            || attrName == HTMLNames::formAttr || attrName == HTMLNames::typeAttr;
     case InvalidateOnHRefAttrChange:
         return attrName == HTMLNames::hrefAttr;
     case InvalidateOnItemAttrChange:

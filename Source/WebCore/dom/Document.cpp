@@ -3904,11 +3904,11 @@ bool Document::shouldInvalidateNodeListCaches(const QualifiedName* attrName) con
     return false;
 }
 
-void Document::clearNodeListCaches()
+void Document::invalidateNodeListCaches(const QualifiedName* attrName)
 {
     HashSet<DynamicNodeListCacheBase*>::iterator end = m_listsInvalidatedAtDocument.end();
     for (HashSet<DynamicNodeListCacheBase*>::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
-        (*it)->invalidateCache();
+        (*it)->invalidateCache(attrName);
 }
 
 void Document::attachNodeIterator(NodeIterator* ni)

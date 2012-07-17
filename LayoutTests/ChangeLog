@@ -1,3 +1,17 @@
+2012-07-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        invalidateNodeListCachesInAncestors walks up ancestors even when an attribute that doesn't invalidate node lists changes
+        https://bugs.webkit.org/show_bug.cgi?id=91530
+
+        Reviewed by Ojan Vafai.
+
+        Add a regression test for invalidating HTMLFormColletion on form attribute changes. This invalidation worked before
+        because we weren't properly exiting early in Node::invalidateNodeListCachesInAncestors and 
+        Document::invalidateNodeListCaches invalidated all node lists regardless of the attribute type.
+
+        * fast/forms/elements-invalidate-on-form-attribute-invalidation-expected.txt: Added.
+        * fast/forms/elements-invalidate-on-form-attribute-invalidation.html: Added.
+
 2012-07-17  Florin Malita  <fmalita@chromium.org>
 
         SVG getBBox does not update bound after path data change
