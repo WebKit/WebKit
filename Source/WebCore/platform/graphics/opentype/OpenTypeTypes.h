@@ -25,6 +25,8 @@
 #ifndef OpenTypeTypes_h
 #define OpenTypeTypes_h
 
+#include "SharedBuffer.h"
+
 namespace WebCore {
 namespace OpenType {
 
@@ -66,6 +68,37 @@ typedef UInt16 GlyphID;
 // Note that multi-character literal is implementation-defined in C++0x.
 typedef uint32_t Tag;
 #define OT_MAKE_TAG(ch1, ch2, ch3, ch4) ((((uint32_t)(ch4)) << 24) | (((uint32_t)(ch3)) << 16) | (((uint32_t)(ch2)) << 8) | ((uint32_t)(ch1)))
+
+template <typename T> static const T* validateTable(const RefPtr<SharedBuffer>& buffer, size_t count = 1)
+{
+    if (!buffer || buffer->size() < sizeof(T) * count)
+        return 0;
+    return reinterpret_cast<const T*>(buffer->data());
+}
+
+struct TableBase {
+protected:
+    static bool isValidEnd(const SharedBuffer& buffer, const void* position)
+    {
+        if (position < buffer.data())
+            return false;
+        size_t offset = reinterpret_cast<const char*>(position) - buffer.data();
+        return offset <= buffer.size(); // "<=" because end is included as valid
+    }
+
+    template <typename T> static const T* validatePtr(const SharedBuffer& buffer, const void* position)
+    {
+        const T* casted = reinterpret_cast<const T*>(position);
+        if (!isValidEnd(buffer, &casted[1]))
+            return 0;
+        return casted;
+    }
+
+    template <typename T> const T* validateOffset(const SharedBuffer& buffer, uint16_t offset) const
+    {
+        return validatePtr<T>(buffer, reinterpret_cast<const int8_t*>(this) + offset);
+    }
+};
 
 } // namespace OpenType
 } // namespace WebCore

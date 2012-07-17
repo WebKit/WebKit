@@ -1,3 +1,68 @@
+2012-07-16  Koji Ishii  <kojiishi@gmail.com>
+
+        Vertical alternate glyph (GSUB) support for OpenTypeVerticalData
+        https://bugs.webkit.org/show_bug.cgi?id=81389
+
+        Reviewed by Tony Chang.
+
+        This patch adds support for reading 'GSUB' OpenType table to get
+        vertical alternate glyphs.
+        http://www.microsoft.com/typography/otspec/gsub.htm
+
+        Like bug 81326, this code isn't on any code path yet.
+
+        Tests: WebKit/chromium/tests/OpenTypeVerticalDataTest.cpp
+
+        * platform/graphics/opentype/OpenTypeTypes.h:
+        (WebCore::OpenType::validateTable): Moved from OpenTypeVerticalData.cpp for unit tests.
+        (OpenType):
+        (TableBase): Ditto.
+        (WebCore::OpenType::TableBase::isValidEnd):
+        (WebCore::OpenType::TableBase::validatePtr):
+        (WebCore::OpenType::TableBase::validateOffset):
+        * platform/graphics/opentype/OpenTypeVerticalData.cpp:
+        (OpenType): Added several OpenType tables used by 'GSUB' table.
+        (CoverageTable):
+        (Coverage1Table):
+        (Coverage2Table):
+        (RangeRecord):
+        (SubstitutionSubTable):
+        (WebCore::OpenType::SubstitutionSubTable::coverage):
+        (SingleSubstitution2SubTable):
+        (LookupTable):
+        (WebCore::OpenType::LookupTable::getSubstitutions):
+        (LookupList):
+        (WebCore::OpenType::LookupList::lookup):
+        (FeatureTable):
+        (WebCore::OpenType::FeatureTable::getGlyphSubstitutions):
+        (FeatureList):
+        (FeatureRecord):
+        (WebCore::OpenType::FeatureList::feature):
+        (LangSysTable):
+        (WebCore::OpenType::LangSysTable::feature):
+        (ScriptTable):
+        (LangSysRecord):
+        (WebCore::OpenType::ScriptTable::defaultLangSys):
+        (ScriptList):
+        (ScriptRecord):
+        (WebCore::OpenType::ScriptList::script):
+        (WebCore::OpenType::ScriptList::defaultScript):
+        (WebCore::OpenType::ScriptList::defaultLangSys):
+        (GSUBTable):
+        (WebCore::OpenType::GSUBTable::scriptList):
+        (WebCore::OpenType::GSUBTable::featureList):
+        (WebCore::OpenType::GSUBTable::lookupList):
+        (WebCore::OpenType::GSUBTable::defaultLangSys):
+        (WebCore::OpenType::GSUBTable::feature):
+        (WebCore::OpenType::GSUBTable::getVerticalGlyphSubstitutions):
+        (WebCore::OpenTypeVerticalData::OpenTypeVerticalData):
+        (WebCore::OpenTypeVerticalData::loadMetrics): Split code to load metrics from ctor.
+        (WebCore::OpenTypeVerticalData::loadVerticalGlyphSubstitutions): Load the vertical alternate Glyph substitution table.
+        (WebCore):
+        (WebCore::OpenTypeVerticalData::substituteWithVerticalGlyphs): Substitute Glyph IDs with vertical alternate Glyph IDs.
+        * platform/graphics/opentype/OpenTypeVerticalData.h:
+        (OpenTypeVerticalData): Added m_verticalGlyphMap.
+
 2012-07-16  Vincent Scheib  <scheib@chromium.org>
 
         Fix spelling of EnforceIFrameAllowFullScreenRequirement and ExemptIFrameAllowFullScreenRequirement.

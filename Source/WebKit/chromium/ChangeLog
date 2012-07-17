@@ -1,3 +1,19 @@
+2012-07-16  Koji Ishii  <kojiishi@gmail.com>
+
+        Vertical alternate glyph (GSUB) support for OpenTypeVerticalData
+        https://bugs.webkit.org/show_bug.cgi?id=81389
+
+        Reviewed by Tony Chang.
+
+        Tests for pointer validations for OpenType tables.
+
+        * WebKit.gypi:
+        * tests/OpenTypeVerticalDataTest.cpp: Added.
+        (WebCore):
+        (TestTable):
+        (WebCore::TestTable::validateOffset):
+        (WebCore::TEST):
+
 2012-07-16  Alexandre Elias  <aelias@google.com>
 
         [chromium] Fix WebFrameTest flakiness due to synthetic mouse events

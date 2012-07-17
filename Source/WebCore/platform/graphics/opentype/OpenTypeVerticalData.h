@@ -43,10 +43,14 @@ public:
     bool hasVerticalMetrics() const { return !m_advanceHeights.isEmpty(); }
     float advanceHeight(const SimpleFontData*, Glyph) const;
     void getVerticalTranslationsForGlyphs(const SimpleFontData*, const Glyph*, size_t, float* outXYArray) const;
+    void substituteWithVerticalGlyphs(const SimpleFontData*, GlyphPage*, unsigned offset, unsigned length) const;
 
 private:
+    void loadMetrics(const FontPlatformData&);
+    void loadVerticalGlyphSubstitutions(const FontPlatformData&);
     bool hasVORG() const { return !m_vertOriginY.isEmpty(); }
 
+    HashMap<Glyph, Glyph> m_verticalGlyphMap;
     Vector<uint16_t> m_advanceWidths;
     Vector<uint16_t> m_advanceHeights;
     Vector<int16_t> m_topSideBearings;

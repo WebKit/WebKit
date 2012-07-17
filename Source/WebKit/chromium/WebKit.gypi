@@ -126,6 +126,7 @@
             'tests/LocalizedNumberICUTest.cpp',
             'tests/MockCCQuadCuller.h',
             'tests/OpaqueRectTrackingContentLayerDelegateTest.cpp',
+            'tests/OpenTypeVerticalDataTest.cpp',
             'tests/PaintAggregatorTest.cpp',
             'tests/PlatformGestureCurveTest.cpp',
             'tests/PlatformContextSkiaTest.cpp',
