@@ -24,6 +24,7 @@
 #define HTMLPlugInElement_h
 
 #include "HTMLFrameOwnerElement.h"
+#include "ImageLoaderClient.h"
 #include "ScriptInstance.h"
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -36,7 +37,7 @@ class RenderEmbeddedObject;
 class RenderWidget;
 class Widget;
 
-class HTMLPlugInElement : public HTMLFrameOwnerElement {
+class HTMLPlugInElement : public HTMLFrameOwnerElement, public ImageLoaderClientBase<HTMLPlugInElement> {
 public:
     virtual ~HTMLPlugInElement();
 

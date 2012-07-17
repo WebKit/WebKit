@@ -26,6 +26,7 @@
 #define HTMLInputElement_h
 
 #include "HTMLTextFormControlElement.h"
+#include "ImageLoaderClient.h"
 #include "StepRange.h"
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class Icon;
 class InputType;
 class KURL;
 
-class HTMLInputElement : public HTMLTextFormControlElement {
+class HTMLInputElement : public HTMLTextFormControlElement, public ImageLoaderClientBase<HTMLInputElement> {
 public:
     static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();

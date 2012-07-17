@@ -930,6 +930,7 @@ SET(WebCore_SOURCES
     html/shadow/DetailsMarkerControl.cpp
     html/shadow/HTMLContentElement.cpp
     html/shadow/HTMLShadowElement.cpp
+    html/shadow/ImageInnerElement.cpp
     html/shadow/InsertionPoint.cpp
     html/shadow/MediaControls.cpp
     html/shadow/MediaControlRootElement.cpp

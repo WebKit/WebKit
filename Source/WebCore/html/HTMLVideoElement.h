@@ -29,12 +29,13 @@
 #if ENABLE(VIDEO)
 
 #include "HTMLMediaElement.h"
+#include "ImageLoaderClient.h"
 
 namespace WebCore {
 
 class HTMLImageLoader;
 
-class HTMLVideoElement : public HTMLMediaElement {
+class HTMLVideoElement : public HTMLMediaElement, public ImageLoaderClientBase<HTMLVideoElement> {
 public:
     static PassRefPtr<HTMLVideoElement> create(const QualifiedName&, Document*, bool);
 

@@ -27,19 +27,30 @@
 #include "GraphicsTypes.h"
 #include "HTMLElement.h"
 #include "HTMLImageLoader.h"
+#include "ImageLoaderClient.h"
 
 namespace WebCore {
 
 class HTMLFormElement;
+class ImageInnerElement;
 
-class HTMLImageElement : public HTMLElement {
+class ImageElement {
+protected:
+    void setImageIfNecessary(RenderObject*, ImageLoader*);
+    RenderObject* createRendererForImage(HTMLElement*, RenderArena*);
+};
+
+class HTMLImageElement : public HTMLElement, public ImageElement, public ImageLoaderClient {
     friend class HTMLFormElement;
+    friend class ImageInnerElement;
 public:
     static PassRefPtr<HTMLImageElement> create(Document*);
     static PassRefPtr<HTMLImageElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     static PassRefPtr<HTMLImageElement> createForJSConstructor(Document*, const int* optionalWidth, const int* optionalHeight);
 
     virtual ~HTMLImageElement();
+
+    virtual void willAddAuthorShadowRoot() OVERRIDE;
 
     int width(bool ignorePendingStylesheets = false);
     int height(bool ignorePendingStylesheets = false);
@@ -84,6 +95,14 @@ protected:
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
 private:
+    virtual void createShadowSubtree();
+
+    // Implementation of ImageLoaderClient
+    Element* sourceElement() { return this; }
+    Element* imageElement();
+    void refSourceElement() { ref(); }
+    void derefSourceElement() { deref(); }
+
     virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
@@ -109,10 +128,25 @@ private:
     virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
 #endif
 
+    RenderObject* imageRenderer() const { return HTMLElement::renderer(); }
+    HTMLImageLoader* imageLoader() { return &m_imageLoader; }
+    ImageInnerElement* innerElement() const;
+
     HTMLImageLoader m_imageLoader;
     HTMLFormElement* m_form;
     CompositeOperator m_compositeOperator;
 };
+
+inline bool isHTMLImageElement(Node* node)
+{
+    return node->hasTagName(HTMLNames::imgTag);
+}
+
+inline HTMLImageElement* toHTMLImageElement(Node* node)
+{
+    ASSERT(!node || isHTMLImageElement(node));
+    return static_cast<HTMLImageElement*>(node);
+}
 
 } //namespace
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+
+<div>
+    <div>
+        <img id="host1" style="display: none" src="../resources/apple.gif" width="20" height="20">
+    </div>
+</div>
+
+<div>
+    <div>
+        <img id="host2" style="display: block" src="../resources/apple.gif" width="20" height="20">
+    </div>
+</div>
+
+<div>
+    <div>
+        <img id="host3" style="display: inline" src="../resources/apple.gif" width="20" height="20">
+    </div>
+</div>
+
+<script>
+function addShadowDOM(host) {
+    var shadowRoot = new WebKitShadowRoot(host);
+    shadowRoot.innerHTML = "(before)<shadow></shadow>(after)";
+}
+
+addShadowDOM(host1);
+addShadowDOM(host2);
+addShadowDOM(host3);
+</script>
+
+</body>
+</html>

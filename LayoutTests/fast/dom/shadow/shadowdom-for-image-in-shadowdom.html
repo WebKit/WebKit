@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+
+<div id="container">
+    <div id="host"></div>
+</div>
+
+<script>
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = "before<img id='img' src='../resources/apple.gif'>after";
+
+var img = shadowRoot.getElementById('img');
+var nestedShadowRoot = new WebKitShadowRoot(img);
+
+nestedShadowRoot.innerHTML = "(before)<shadow></shadow>(after)";
+</script>
+
+</body>
+</html>

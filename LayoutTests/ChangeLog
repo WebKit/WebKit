@@ -1,3 +1,46 @@
+2012-07-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Shadow DOM for img element
+        https://bugs.webkit.org/show_bug.cgi?id=90532
+
+        Reviewed by Hajime Morita.
+
+        Contains the following test cases.
+        (1) ShadowDOM is attached to an img element and use a shadow element
+        (2) ShadowDOM is attached to an img element and use a content element
+        (3) width and height are specified
+        (4) src attribute is dynamically changed
+        (5) multiple ShadowDOMs are attached to an img element
+        (6) ShadowDOM is attached to an img element in Shadow DOM
+        (7) event retargetting
+        (8) img with display: none, display: inline, display: block
+        (9) image map
+        (10) alt text
+        (11) alt text with dynamic update
+
+        * fast/dom/shadow/shadowdom-for-image-alt-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-alt-update-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-alt-update.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-alt.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-content-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-content.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-dynamic-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-dynamic.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-event-click-expected.txt: Added.
+        * fast/dom/shadow/shadowdom-for-image-event-click.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-in-shadowdom-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-in-shadowdom.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-map-expected.txt: Added.
+        * fast/dom/shadow/shadowdom-for-image-map.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-style-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-style.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-with-multiple-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-with-multiple-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-with-width-and-height-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-with-width-and-height.html: Added.
+        * fast/dom/shadow/shadowdom-for-image.html: Added.
+
 2012-07-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium tests rebaselines after r122791.

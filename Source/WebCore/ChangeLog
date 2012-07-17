@@ -1,3 +1,141 @@
+2012-07-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Shadow DOM for img element
+        https://bugs.webkit.org/show_bug.cgi?id=90532
+
+        Reviewed by Hajime Morita.
+
+        This patch adds Shadow DOM support for img element.
+
+        According to the Shadow DOM spec, img element should behave like having a user agent Shadow DOM.
+        However, if we add Shadow DOM to img by default, it will cause performance regression and memory bloat.
+
+        So, we would like to postpone adding a Shadow DOM to img until when we really need it. In other words,
+        we add our User Agent Shadow DOM to img just before a user adds Author Shadow DOM.
+
+        The User Agent Shadow DOM for img has only one element, which displays an image. If img has
+        a Shadow DOM, img will behave like <span style="display: inline-block"> by default. The display style can
+        be chagned using CSS though.
+
+        This patch also adds ImageLoaderClient. The element we render an image and the element we take an argument
+        from were the same, however not they might be different. We would like to encapsulate the fact into
+        ImageLoaderClient.
+
+        Tests: fast/dom/shadow/shadowdom-for-image-alt-update.html
+               fast/dom/shadow/shadowdom-for-image-alt.html
+               fast/dom/shadow/shadowdom-for-image-content.html
+               fast/dom/shadow/shadowdom-for-image-dynamic.html
+               fast/dom/shadow/shadowdom-for-image-event-click.html
+               fast/dom/shadow/shadowdom-for-image-in-shadowdom.html
+               fast/dom/shadow/shadowdom-for-image-map.html
+               fast/dom/shadow/shadowdom-for-image-style.html
+               fast/dom/shadow/shadowdom-for-image-with-multiple-shadow.html
+               fast/dom/shadow/shadowdom-for-image-with-width-and-height.html
+               fast/dom/shadow/shadowdom-for-image.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/html.css:
+        (img):
+        * html/HTMLImageElement.cpp:
+        (WebCore::ImageElement::setImageIfNecessary):
+        (WebCore):
+        (WebCore::ImageElement::createRendererForImage):
+        (WebCore::HTMLImageElement::willAddAuthorShadowRoot): When we don't have a user agent Shadow DOM yet
+        we add it.
+        (WebCore::HTMLImageElement::createShadowSubtree):
+        (WebCore::HTMLImageElement::imageElement):
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::createRenderer): If a user agent Shadow DOM is attached, we create
+        Renderer from style, instead of creating RenderImage.
+        (WebCore::HTMLImageElement::attach):
+        (WebCore::HTMLImageElement::innerElement):
+        * html/HTMLImageElement.h:
+        (WebCore):
+        (ImageElement):
+        (HTMLImageElement):
+        (WebCore::HTMLImageElement::sourceElement):
+        (WebCore::HTMLImageElement::refSourceElement):
+        (WebCore::HTMLImageElement::derefSourceElement):
+        (WebCore::HTMLImageElement::imageRenderer):
+        (WebCore::HTMLImageElement::imageLoader):
+        (WebCore::isHTMLImageElement):
+        (WebCore::toHTMLImageElement):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::HTMLImageLoader):
+        (WebCore::HTMLImageLoader::dispatchLoadEvent):
+        (WebCore::HTMLImageLoader::sourceURI):
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * html/HTMLImageLoader.h:
+        (HTMLImageLoader):
+        * html/HTMLInputElement.h:
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInElement.h:
+        * html/HTMLTagNames.in:
+        * html/HTMLVideoElement.h:
+        * html/shadow/ImageInnerElement.cpp: Added.
+        (WebCore):
+        (WebCore::ImageInnerElement::ImageInnerElement):
+        (WebCore::ImageInnerElement::hostImage):
+        (WebCore::ImageInnerElement::imageLoader):
+        (WebCore::ImageInnerElement::attach):
+        (WebCore::ImageInnerElement::createRenderer):
+        * html/shadow/ImageInnerElement.h: Added.
+        (WebCore):
+        (ImageInnerElement):
+        (WebCore::ImageInnerElement::imageRenderer):
+        (WebCore::ImageInnerElement::create):
+        (WebCore::isImageInnerElement):
+        (WebCore::toImageInnerElement):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::ImageLoader):
+        (WebCore::ImageLoader::~ImageLoader):
+        (WebCore):
+        (WebCore::ImageLoader::document):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::renderImageResource):
+        (WebCore::ImageLoader::updatedHasPendingLoadEvent):
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        (WebCore::ImageLoader::dispatchPendingLoadEvent):
+        (WebCore::ImageLoader::dispatchPendingErrorEvent):
+        * loader/ImageLoader.h:
+        (WebCore):
+        (ImageLoader):
+        (WebCore::ImageLoader::client):
+        * loader/ImageLoaderClient.h: Added.
+        (WebCore):
+        (ImageLoaderClient): Provides the necessary interfaces to ImageLoader.
+        (WebCore::ImageLoaderClient::~ImageLoaderClient):
+        (ImageLoaderClientBase):
+        (WebCore::ImageLoaderClientBase::sourceElement):
+        (WebCore::ImageLoaderClientBase::imageElement):
+        (WebCore::ImageLoaderClientBase::refSourceElement):
+        (WebCore::ImageLoaderClientBase::derefSourceElement):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+        (WebCore::RenderImage::imageMap):
+        (WebCore::RenderImage::updateAltText):
+        (WebCore::RenderImage::hostImageElement):
+        (WebCore):
+        * rendering/RenderImage.h:
+        (WebCore):
+        (RenderImage):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldRespectImageOrientation):
+        * svg/SVGImageElement.h:
+        (SVGImageElement):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::SVGImageLoader):
+        (WebCore::SVGImageLoader::dispatchLoadEvent):
+        (WebCore::SVGImageLoader::sourceURI):
+        * svg/SVGImageLoader.h:
+        (SVGImageLoader):
+
 2012-07-17  Kent Tamura  <tkent@chromium.org>
 
         Internals: Remove injectPagePopupController()

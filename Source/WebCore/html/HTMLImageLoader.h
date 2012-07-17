@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLImageLoader : public ImageLoader {
 public:
-    HTMLImageLoader(Element*);
+    HTMLImageLoader(ImageLoaderClient*);
     virtual ~HTMLImageLoader();
 
     virtual void dispatchLoadEvent();

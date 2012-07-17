@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+
+<div id="container">
+    <div>
+        <img id="host" src="../resources/apple.gif">
+    </div>
+</div>
+
+<script>
+function addShadowDOM(host) {
+    var shadowRoot = new WebKitShadowRoot(host);
+    shadowRoot.innerHTML = "(before)<shadow></shadow>(after)";
+}
+
+addShadowDOM(host);
+</script>
+
+</body>
+</html>
