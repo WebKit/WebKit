@@ -2880,9 +2880,11 @@ BUGWK70988 SNOWLEOPARD : fast/parser/residual-style-dom.html = PASS TIMEOUT
 BUGWK70988 SNOWLEOPARD : fast/text/khmer-crash.html = PASS TIMEOUT
 BUGWK70988 SNOWLEOPARD : http/tests/navigation/navigation-interrupted-by-fragment.html = PASS TIMEOUT
 BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
-BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
-// Crashing since on or before r122699
-BUGWK91415 MAC : fast/frames/calculate-fixed.html = PASS TEXT
+
+// BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
+// Crashing since on or before r122699, please uncomment previous line before removing.
+BUGWK91415 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS TEXT
+BUGWK91415 MAC RELEASE : fast/frames/calculate-fixed.html = PASS TEXT
 
 BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
