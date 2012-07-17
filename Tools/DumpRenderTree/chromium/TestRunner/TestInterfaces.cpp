@@ -31,47 +31,27 @@
 #include "config.h"
 #include "TestInterfaces.h"
 
-#include "AccessibilityController.h"
 #include "GamepadController.h"
-#include "TextInputController.h"
 #include "platform/WebString.h"
 
 using WebKit::WebFrame;
 using WebKit::WebString;
-using WebKit::WebView;
 
 TestInterfaces::TestInterfaces()
 {
-    m_accessibilityController = adoptPtr(new AccessibilityController());
     m_gamepadController = adoptPtr(new GamepadController());
-    m_textInputController = adoptPtr(new TextInputController());
 }
 
 TestInterfaces::~TestInterfaces()
 {
-    m_accessibilityController->setWebView(0);
-    // m_gamepadController doesn't depend on WebView.
-    m_textInputController->setWebView(0);
 }
-
-void TestInterfaces::setWebView(WebView* webView)
-{
-    m_accessibilityController->setWebView(webView);
-    // m_gamepadController doesn't depend on WebView.
-    m_textInputController->setWebView(webView);
-}
-
 
 void TestInterfaces::bindTo(WebFrame* frame)
 {
-    m_accessibilityController->bindToJavascript(frame, WebString::fromUTF8("accessibilityController"));
     m_gamepadController->bindToJavascript(frame, WebString::fromUTF8("gamepadController"));
-    m_textInputController->bindToJavascript(frame, WebString::fromUTF8("textInputController"));
 }
 
 void TestInterfaces::resetAll()
 {
-    m_accessibilityController->reset();
     m_gamepadController->reset();
-    // m_textInputController doesn't have any state to reset.
 }
