@@ -221,10 +221,6 @@ public:
 
     void setEvasObject(Evas_Object*);
     Evas_Object* evasObject() const;
-
-    const String edjeTheme() const;
-    void setEdjeTheme(const String &);
-    const String edjeThemeRecursive() const;
 #endif
 
 #if PLATFORM(CHROMIUM)

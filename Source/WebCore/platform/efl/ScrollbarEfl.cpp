@@ -23,13 +23,13 @@
 #include "config.h"
 #include "ScrollbarEfl.h"
 
-#include "ChromeClient.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "IntRect.h"
 #include "Page.h"
+#include "RenderThemeEfl.h"
 #include "ScrollbarTheme.h"
 #include "Settings.h"
 
@@ -112,9 +112,17 @@ void ScrollbarEfl::setParent(ScrollView* view)
         return;
     }
 
+    Frame* frame = static_cast<FrameView*>(view)->frame();
+    if (!frame)
+        return;
+
+    Page* page = frame->page();
+    if (!page)
+        return;
+
     const char* group = (orientation() == HorizontalScrollbar)
         ? "scrollbar.horizontal" : "scrollbar.vertical";
-    String theme(edjeThemeRecursive());
+    String theme = static_cast<RenderThemeEfl*>(page->theme())->themePath();
 
     if (theme.isEmpty()) {
         EINA_LOG_ERR("Could not load theme '%s': no theme path set.", group);

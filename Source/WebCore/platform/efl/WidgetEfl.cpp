@@ -51,7 +51,6 @@ class WidgetPrivate {
 public:
     Evas* m_evas;
     Evas_Object* m_evasObject;
-    String m_theme;
 
     WidgetPrivate()
         : m_evas(0)
@@ -143,29 +142,6 @@ void Widget::paint(GraphicsContext* context, const IntRect&)
 void Widget::setIsSelected(bool)
 {
     notImplemented();
-}
-
-const String Widget::edjeTheme() const
-{
-    return m_data->m_theme;
-}
-
-void Widget::setEdjeTheme(const String& themePath)
-{
-    if (m_data->m_theme == themePath)
-        return;
-
-    m_data->m_theme = themePath;
-}
-
-const String Widget::edjeThemeRecursive() const
-{
-    if (!m_data->m_theme.isNull())
-        return m_data->m_theme;
-    if (m_parent)
-        return m_parent->edjeThemeRecursive();
-
-    return String();
 }
 
 Evas* Widget::evas() const

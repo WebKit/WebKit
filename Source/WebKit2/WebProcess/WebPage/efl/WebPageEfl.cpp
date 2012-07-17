@@ -38,7 +38,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
-#include <WebCore/RenderTheme.h>
+#include <WebCore/RenderThemeEfl.h>
 #include <WebCore/Settings.h>
 
 using namespace WebCore;
@@ -108,15 +108,8 @@ const char* WebPage::interpretKeyEvent(const KeyboardEvent* event)
 
 void WebPage::setThemePath(const String& themePath)
 {
-    Frame* mainFrame = m_page->mainFrame();
-    if (!mainFrame)
-        return;
-
-    WebCore::FrameView* view = mainFrame->view();
-    if (view) {
-        view->setEdjeTheme(themePath);
-        m_page->theme()->themeChanged();
-    }
+    WebCore::RenderThemeEfl* theme = static_cast<WebCore::RenderThemeEfl*>(m_page->theme());
+    theme->setThemePath(themePath);
 }
 
 } // namespace WebKit

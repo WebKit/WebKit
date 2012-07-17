@@ -1,3 +1,14 @@
+2012-07-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Move codes related to theme setting from Widget to RenderTheme
+        https://bugs.webkit.org/show_bug.cgi?id=89842
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * CMakeLists.txt: Added html/shadow to WebKit_INCLUDE_DIRECTORIES.
+        * WebProcess/WebPage/efl/WebPageEfl.cpp:
+        (WebKit::WebPage::setThemePath): Called RenderThemeEfl::setThemePath instead of setting theme in FrameView.
+
 2012-07-17  David Barr  <davidbarr@chromium.org>
 
         Introduce ENABLE_CSS_IMAGE_ORIENTATION compile flag

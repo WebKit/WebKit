@@ -27,9 +27,6 @@
 #include "RenderThemeEfl.h"
 
 #include "CSSValueKeywords.h"
-#include "FileSystem.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "NotImplemented.h"
@@ -422,6 +419,15 @@ static void renderThemeEflColorClassFocusRing(void* data, Evas_Object* object, c
     that->setFocusRingColor(fr, fg, fb, fa);
 }
 
+void RenderThemeEfl::setThemePath(const String& path)
+{
+    if (path == m_themePath)
+        return;
+
+    m_themePath = path;
+    themeChanged();
+}
+
 void RenderThemeEfl::createCanvas()
 {
     ASSERT(!m_canvas);
@@ -432,20 +438,17 @@ void RenderThemeEfl::createCanvas()
 void RenderThemeEfl::createEdje()
 {
     ASSERT(!m_edje);
-    Frame* frame = m_page ? m_page->mainFrame() : 0;
-    FrameView* view = frame ? frame->view() : 0;
-    String theme = view ? view->edjeThemeRecursive() : "";
-    if (theme.isEmpty())
+    if (m_themePath.isEmpty())
         EINA_LOG_ERR("No theme defined, unable to set RenderThemeEfl.");
     else {
         m_edje = edje_object_add(ecore_evas_get(m_canvas));
         if (!m_edje)
             EINA_LOG_ERR("Could not create base edje object.");
-        else if (!edje_object_file_set(m_edje, theme.utf8().data(), "webkit/base")) {
+        else if (!edje_object_file_set(m_edje, m_themePath.utf8().data(), "webkit/base")) {
             Edje_Load_Error err = edje_object_load_error_get(m_edje);
             const char* errmsg = edje_load_error_str(err);
             EINA_LOG_ERR("Could not load 'webkit/base' from theme %s: %s",
-                         theme.utf8().data(), errmsg);
+                         m_themePath.utf8().data(), errmsg);
             evas_object_del(m_edje);
             m_edje = 0;
         } else {
@@ -660,8 +663,6 @@ RenderThemeEfl::RenderThemeEfl(Page* page)
     , m_canvas(0)
     , m_edje(0)
 {
-    if (page && page->mainFrame() && page->mainFrame()->view())
-        themeChanged();
 }
 
 RenderThemeEfl::~RenderThemeEfl()

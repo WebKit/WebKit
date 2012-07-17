@@ -1654,8 +1654,6 @@ void ewk_frame_view_create_for_view(Evas_Object* ewkFrame, Evas_Object* view)
     if (!smartData->frame->view())
         return;
 
-    const char* theme = ewk_view_theme_get(view);
-    smartData->frame->view()->setEdjeTheme(theme);
     smartData->frame->view()->setEvasObject(ewkFrame);
 
     ewk_frame_mixed_content_displayed_set(ewkFrame, false);

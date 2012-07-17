@@ -1,3 +1,28 @@
+2012-07-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Move codes related to theme setting from Widget to RenderTheme
+        https://bugs.webkit.org/show_bug.cgi?id=89842
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebKit/Efl uses custom theme for Scrollbar, RenderTheme and Cursor.
+        However, theme information itself is in WidgetEfl so it is accessed by
+        calling recursive function.
+        Because theme is managed by each page, this patch moves codes related to
+        theme from WidgetEfl to RenderThemeEfl which is contained by page.
+
+        * platform/Widget.h: Removed functions related to theme.
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::setThemePath): Added to set theme path.
+        (WebCore::RenderThemeEfl::createEdje): Updated method to use RenderThemeEfl's theme.
+        (WebCore::RenderThemeEfl::RenderThemeEfl):
+        * platform/efl/RenderThemeEfl.h:
+        (WebCore::RenderThemeEfl::themePath): Added to get theme path
+        * platform/efl/ScrollbarEfl.cpp: Updated method to use RenderThemeEfl's theme.
+        (ScrollbarEfl::setParent):
+        * platform/efl/WidgetEfl.cpp: Removed codes related theme.
+        (WidgetPrivate):
+
 2012-07-17  Shinya Kawanaka  <shinyak@chromium.org>
 
         HTMLMediaElement should not use Element::ensureShadowRoot()

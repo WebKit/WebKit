@@ -1,3 +1,15 @@
+2012-07-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Move codes related to theme setting from Widget to RenderTheme
+        https://bugs.webkit.org/show_bug.cgi?id=89842
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_view_create_for_view): Removed codes which set theme in FrameView.
+        * ewk/ewk_view.cpp:
+        (ewk_view_theme_set): Called RenderThemeEfl::setThemePath instead of setting theme in FrameView.
+
 2012-07-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add RegisterProtocolHandlerClient to the Modules/protocolhandler
