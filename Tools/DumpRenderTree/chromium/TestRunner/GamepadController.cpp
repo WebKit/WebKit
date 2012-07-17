@@ -31,11 +31,9 @@
 #include "config.h"
 #include "GamepadController.h"
 
-#include "TestShell.h"
-
 using namespace WebKit;
 
-GamepadController::GamepadController(TestShell*)
+GamepadController::GamepadController()
 {
     bindMethod("connect", &GamepadController::connect);
     bindMethod("disconnect", &GamepadController::disconnect);

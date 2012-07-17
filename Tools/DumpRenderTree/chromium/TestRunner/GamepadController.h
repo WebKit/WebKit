@@ -39,11 +39,9 @@ class WebGamepads;
 class WebFrame;
 }
 
-class TestShell;
-
 class GamepadController : public CppBoundClass {
 public:
-    explicit GamepadController(TestShell*);
+    GamepadController();
 
     void bindToJavascript(WebKit::WebFrame*, const WebKit::WebString& classname);
     void reset();

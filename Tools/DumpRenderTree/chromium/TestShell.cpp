@@ -147,7 +147,7 @@ void TestShell::initialize()
 {
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_accessibilityController = adoptPtr(new AccessibilityController(this));
-    m_gamepadController = adoptPtr(new GamepadController(this));
+    m_gamepadController = adoptPtr(new GamepadController());
 
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
     m_eventSender = adoptPtr(new EventSender(this));

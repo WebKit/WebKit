@@ -1,3 +1,29 @@
+2012-07-16  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Move GamepadController into TestRunner.a
+        https://bugs.webkit.org/show_bug.cgi?id=91311
+
+        Reviewed by Tony Chang.
+
+        GamepadController looks like a simple class to move into TestRunner.a
+        because it has almost zero dependence on TestShell.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/CppBoundClass.cpp: Renamed from Tools/DumpRenderTree/chromium/CppBoundClass.cpp.
+        * DumpRenderTree/chromium/TestRunner/CppBoundClass.h: Renamed from Tools/DumpRenderTree/chromium/CppBoundClass.h.
+        * DumpRenderTree/chromium/TestRunner/CppVariant.cpp: Renamed from Tools/DumpRenderTree/chromium/CppVariant.cpp.
+        * DumpRenderTree/chromium/TestRunner/CppVariant.h: Renamed from Tools/DumpRenderTree/chromium/CppVariant.h.
+            - GamepadController depends on these bindings helpers.
+        * DumpRenderTree/chromium/TestRunner/GamepadController.cpp: Renamed from Tools/DumpRenderTree/chromium/GamepadController.cpp.
+        * DumpRenderTree/chromium/TestRunner/GamepadController.h: Renamed from Tools/DumpRenderTree/chromium/GamepadController.h.
+            - Just moved these files and removed the unused TestShell
+              references.
+        * DumpRenderTree/chromium/TestRunner/Stub.cpp: Removed.
+            - No longer needed.
+        * DumpRenderTree/chromium/TestShell.cpp:
+            - Update call to constructor to avoid passing in this.
+
 2012-07-16  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-android] Don't use test_shell mode of DRT
