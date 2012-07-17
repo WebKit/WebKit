@@ -1,3 +1,222 @@
+2012-07-16  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] platfrom/qt/editing/inserting tests needs update after test font change.
+        https://bugs.webkit.org/show_bug.cgi?id=91378.
+
+        Unreviewed rebaseline.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk1/editing/inserting/4960120-1-expected.png: Removed.
+        * platform/qt-5.0-wk1/editing/inserting/4960120-1-expected.txt: Removed.
+        * platform/qt-5.0-wk1/editing/inserting/before-after-input-element-expected.png: Removed.
+        * platform/qt-5.0-wk1/editing/inserting/before-after-input-element-expected.txt: Removed.
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt/editing/inserting/12882-expected.png: Added.
+        * platform/qt/editing/inserting/12882-expected.txt:
+        * platform/qt/editing/inserting/4278698-expected.png:
+        * platform/qt/editing/inserting/4278698-expected.txt:
+        * platform/qt/editing/inserting/4840662-expected.png: Added.
+        * platform/qt/editing/inserting/4840662-expected.txt:
+        * platform/qt/editing/inserting/4875189-1-expected.png: Added.
+        * platform/qt/editing/inserting/4875189-1-expected.txt:
+        * platform/qt/editing/inserting/4875189-2-expected.png: Added.
+        * platform/qt/editing/inserting/4875189-2-expected.txt:
+        * platform/qt/editing/inserting/4959067-expected.png: Added.
+        * platform/qt/editing/inserting/4959067-expected.txt:
+        * platform/qt/editing/inserting/4960120-1-expected.png:
+        * platform/qt/editing/inserting/4960120-1-expected.txt:
+        * platform/qt/editing/inserting/4960120-2-expected.png: Added.
+        * platform/qt/editing/inserting/4960120-2-expected.txt:
+        * platform/qt/editing/inserting/5002441-expected.png: Added.
+        * platform/qt/editing/inserting/5002441-expected.txt:
+        * platform/qt/editing/inserting/5058163-1-expected.png: Added.
+        * platform/qt/editing/inserting/5058163-1-expected.txt:
+        * platform/qt/editing/inserting/5058163-2-expected.png: Added.
+        * platform/qt/editing/inserting/5058163-2-expected.txt:
+        * platform/qt/editing/inserting/5156401-2-expected.png: Added.
+        * platform/qt/editing/inserting/5156401-2-expected.txt:
+        * platform/qt/editing/inserting/5418891-expected.png: Added.
+        * platform/qt/editing/inserting/5418891-expected.txt:
+        * platform/qt/editing/inserting/5510537-expected.png: Added.
+        * platform/qt/editing/inserting/5510537-expected.txt:
+        * platform/qt/editing/inserting/5549929-2-expected.png: Added.
+        * platform/qt/editing/inserting/5549929-2-expected.txt:
+        * platform/qt/editing/inserting/5549929-3-expected.png: Added.
+        * platform/qt/editing/inserting/5549929-3-expected.txt:
+        * platform/qt/editing/inserting/6703873-expected.png: Added.
+        * platform/qt/editing/inserting/6703873-expected.txt:
+        * platform/qt/editing/inserting/before-after-input-element-expected.png:
+        * platform/qt/editing/inserting/before-after-input-element-expected.txt:
+        * platform/qt/editing/inserting/break-blockquote-after-delete-expected.png: Added.
+        * platform/qt/editing/inserting/break-blockquote-after-delete-expected.txt:
+        * platform/qt/editing/inserting/editable-html-element-expected.png:
+        * platform/qt/editing/inserting/editable-html-element-expected.txt:
+        * platform/qt/editing/inserting/editable-inline-element-expected.png: Added.
+        * platform/qt/editing/inserting/editable-inline-element-expected.txt:
+        * platform/qt/editing/inserting/edited-whitespace-1-expected.png: Added.
+        * platform/qt/editing/inserting/edited-whitespace-1-expected.txt:
+        * platform/qt/editing/inserting/editing-empty-divs-expected.png:
+        * platform/qt/editing/inserting/editing-empty-divs-expected.txt:
+        * platform/qt/editing/inserting/insert-3654864-fix-expected.txt: Removed.
+        * platform/qt/editing/inserting/insert-3775316-fix-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-text-at-tabspan-002-expected.png.
+        * platform/qt/editing/inserting/insert-3775316-fix-expected.txt:
+        * platform/qt/editing/inserting/insert-3778059-fix-expected.png: Added.
+        * platform/qt/editing/inserting/insert-3778059-fix-expected.txt:
+        * platform/qt/editing/inserting/insert-3800346-fix-expected.png: Added.
+        * platform/qt/editing/inserting/insert-3800346-fix-expected.txt:
+        * platform/qt/editing/inserting/insert-3851164-fix-expected.txt: Removed.
+        * platform/qt/editing/inserting/insert-after-delete-001-expected.png:
+        * platform/qt/editing/inserting/insert-after-delete-001-expected.txt:
+        * platform/qt/editing/inserting/insert-at-end-01-expected.png: Added.
+        * platform/qt/editing/inserting/insert-at-end-01-expected.txt:
+        * platform/qt/editing/inserting/insert-at-end-02-expected.png: Added.
+        * platform/qt/editing/inserting/insert-at-end-02-expected.txt:
+        * platform/qt/editing/inserting/insert-br-001-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-text-at-tabspan-002-expected.png.
+        * platform/qt/editing/inserting/insert-br-001-expected.txt:
+        * platform/qt/editing/inserting/insert-br-002-expected.png: Added.
+        * platform/qt/editing/inserting/insert-br-002-expected.txt:
+        * platform/qt/editing/inserting/insert-br-003-expected.png:
+        * platform/qt/editing/inserting/insert-br-003-expected.txt:
+        * platform/qt/editing/inserting/insert-br-004-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-3851164-fix-expected.png.
+        * platform/qt/editing/inserting/insert-br-004-expected.txt:
+        * platform/qt/editing/inserting/insert-br-005-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-text-at-tabspan-002-expected.png.
+        * platform/qt/editing/inserting/insert-br-005-expected.txt:
+        * platform/qt/editing/inserting/insert-br-006-expected.png:
+        * platform/qt/editing/inserting/insert-br-006-expected.txt:
+        * platform/qt/editing/inserting/insert-br-007-expected.png:
+        * platform/qt/editing/inserting/insert-br-007-expected.txt:
+        * platform/qt/editing/inserting/insert-br-008-expected.png:
+        * platform/qt/editing/inserting/insert-br-008-expected.txt:
+        * platform/qt/editing/inserting/insert-br-009-expected.png:
+        * platform/qt/editing/inserting/insert-br-009-expected.txt:
+        * platform/qt/editing/inserting/insert-br-at-tabspan-001-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-text-at-tabspan-002-expected.png.
+        * platform/qt/editing/inserting/insert-br-at-tabspan-001-expected.txt:
+        * platform/qt/editing/inserting/insert-br-at-tabspan-002-expected.png:
+        * platform/qt/editing/inserting/insert-br-at-tabspan-002-expected.txt:
+        * platform/qt/editing/inserting/insert-br-at-tabspan-003-expected.png:
+        * platform/qt/editing/inserting/insert-br-at-tabspan-003-expected.txt:
+        * platform/qt/editing/inserting/insert-br-quoted-001-expected.png: Added.
+        * platform/qt/editing/inserting/insert-br-quoted-001-expected.txt:
+        * platform/qt/editing/inserting/insert-br-quoted-002-expected.png: Added.
+        * platform/qt/editing/inserting/insert-br-quoted-002-expected.txt:
+        * platform/qt/editing/inserting/insert-br-quoted-003-expected.png: Added.
+        * platform/qt/editing/inserting/insert-br-quoted-003-expected.txt:
+        * platform/qt/editing/inserting/insert-br-quoted-004-expected.png: Added.
+        * platform/qt/editing/inserting/insert-br-quoted-004-expected.txt:
+        * platform/qt/editing/inserting/insert-br-quoted-005-expected.png: Added.
+        * platform/qt/editing/inserting/insert-br-quoted-005-expected.txt:
+        * platform/qt/editing/inserting/insert-br-quoted-006-expected.png: Added.
+        * platform/qt/editing/inserting/insert-br-quoted-006-expected.txt:
+        * platform/qt/editing/inserting/insert-div-001-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-text-at-tabspan-002-expected.png.
+        * platform/qt/editing/inserting/insert-div-001-expected.txt:
+        * platform/qt/editing/inserting/insert-div-002-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-text-at-tabspan-002-expected.png.
+        * platform/qt/editing/inserting/insert-div-002-expected.txt:
+        * platform/qt/editing/inserting/insert-div-003-expected.png:
+        * platform/qt/editing/inserting/insert-div-003-expected.txt:
+        * platform/qt/editing/inserting/insert-div-004-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-after-delete-001-expected.png.
+        * platform/qt/editing/inserting/insert-div-004-expected.txt:
+        * platform/qt/editing/inserting/insert-div-005-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-005-expected.txt:
+        * platform/qt/editing/inserting/insert-div-006-expected.png:
+        * platform/qt/editing/inserting/insert-div-006-expected.txt:
+        * platform/qt/editing/inserting/insert-div-007-expected.png:
+        * platform/qt/editing/inserting/insert-div-007-expected.txt:
+        * platform/qt/editing/inserting/insert-div-008-expected.png:
+        * platform/qt/editing/inserting/insert-div-008-expected.txt:
+        * platform/qt/editing/inserting/insert-div-009-expected.txt: Removed.
+        * platform/qt/editing/inserting/insert-div-010-expected.txt: Removed.
+        * platform/qt/editing/inserting/insert-div-011-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-011-expected.txt:
+        * platform/qt/editing/inserting/insert-div-012-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-012-expected.txt:
+        * platform/qt/editing/inserting/insert-div-013-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-013-expected.txt:
+        * platform/qt/editing/inserting/insert-div-014-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-014-expected.txt:
+        * platform/qt/editing/inserting/insert-div-015-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-015-expected.txt:
+        * platform/qt/editing/inserting/insert-div-016-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-016-expected.txt:
+        * platform/qt/editing/inserting/insert-div-017-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-017-expected.txt:
+        * platform/qt/editing/inserting/insert-div-018-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-018-expected.txt:
+        * platform/qt/editing/inserting/insert-div-019-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-019-expected.txt:
+        * platform/qt/editing/inserting/insert-div-020-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-020-expected.txt:
+        * platform/qt/editing/inserting/insert-div-022-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-022-expected.txt:
+        * platform/qt/editing/inserting/insert-div-023-expected.png:
+        * platform/qt/editing/inserting/insert-div-023-expected.txt:
+        * platform/qt/editing/inserting/insert-div-024-expected.png:
+        * platform/qt/editing/inserting/insert-div-024-expected.txt:
+        * platform/qt/editing/inserting/insert-div-025-expected.png:
+        * platform/qt/editing/inserting/insert-div-025-expected.txt:
+        * platform/qt/editing/inserting/insert-div-026-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-026-expected.txt:
+        * platform/qt/editing/inserting/insert-div-027-expected.png: Added.
+        * platform/qt/editing/inserting/insert-div-027-expected.txt:
+        * platform/qt/editing/inserting/insert-paragraph-01-expected.png: Added.
+        * platform/qt/editing/inserting/insert-paragraph-01-expected.txt:
+        * platform/qt/editing/inserting/insert-paragraph-02-expected.png: Added.
+        * platform/qt/editing/inserting/insert-paragraph-02-expected.txt:
+        * platform/qt/editing/inserting/insert-paragraph-03-expected.png: Added.
+        * platform/qt/editing/inserting/insert-paragraph-03-expected.txt:
+        * platform/qt/editing/inserting/insert-paragraph-04-expected.png: Added.
+        * platform/qt/editing/inserting/insert-paragraph-04-expected.txt:
+        * platform/qt/editing/inserting/insert-paragraph-05-expected.png: Added.
+        * platform/qt/editing/inserting/insert-paragraph-05-expected.txt:
+        * platform/qt/editing/inserting/insert-space-in-empty-doc-expected.png:
+        * platform/qt/editing/inserting/insert-space-in-empty-doc-expected.txt:
+        * platform/qt/editing/inserting/insert-tab-001-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-after-delete-001-expected.png.
+        * platform/qt/editing/inserting/insert-tab-001-expected.txt:
+        * platform/qt/editing/inserting/insert-tab-002-expected.png: Copied from LayoutTests/platform/qt/editing/inserting/insert-after-delete-001-expected.png.
+        * platform/qt/editing/inserting/insert-tab-002-expected.txt:
+        * platform/qt/editing/inserting/insert-tab-004-expected.png: Renamed from LayoutTests/platform/qt/editing/inserting/insert-3851164-fix-expected.png.
+        * platform/qt/editing/inserting/insert-tab-004-expected.txt:
+        * platform/qt/editing/inserting/insert-text-at-tabspan-001-expected.png:
+        * platform/qt/editing/inserting/insert-text-at-tabspan-001-expected.txt:
+        * platform/qt/editing/inserting/insert-text-at-tabspan-002-expected.png:
+        * platform/qt/editing/inserting/insert-text-at-tabspan-002-expected.txt:
+        * platform/qt/editing/inserting/insert-text-at-tabspan-003-expected.png: Renamed from LayoutTests/platform/qt/editing/inserting/insert-3654864-fix-expected.png.
+        * platform/qt/editing/inserting/insert-text-at-tabspan-003-expected.txt:
+        * platform/qt/editing/inserting/insert-text-with-newlines-expected.png:
+        * platform/qt/editing/inserting/insert-text-with-newlines-expected.txt:
+        * platform/qt/editing/inserting/line-break-expected.png: Added.
+        * platform/qt/editing/inserting/line-break-expected.txt:
+        * platform/qt/editing/inserting/multiple-lines-selected-expected.png:
+        * platform/qt/editing/inserting/multiple-lines-selected-expected.txt:
+        * platform/qt/editing/inserting/paragraph-separator-01-expected.png: Added.
+        * platform/qt/editing/inserting/paragraph-separator-01-expected.txt:
+        * platform/qt/editing/inserting/paragraph-separator-02-expected.png: Added.
+        * platform/qt/editing/inserting/paragraph-separator-02-expected.txt:
+        * platform/qt/editing/inserting/paragraph-separator-03-expected.png:
+        * platform/qt/editing/inserting/paragraph-separator-03-expected.txt:
+        * platform/qt/editing/inserting/paragraph-separator-in-table-1-expected.png: Added.
+        * platform/qt/editing/inserting/paragraph-separator-in-table-1-expected.txt:
+        * platform/qt/editing/inserting/paragraph-separator-in-table-2-expected.png: Added.
+        * platform/qt/editing/inserting/paragraph-separator-in-table-2-expected.txt:
+        * platform/qt/editing/inserting/redo-expected.png:
+        * platform/qt/editing/inserting/redo-expected.txt:
+        * platform/qt/editing/inserting/return-key-with-selection-001-expected.png: Added.
+        * platform/qt/editing/inserting/return-key-with-selection-001-expected.txt:
+        * platform/qt/editing/inserting/return-key-with-selection-002-expected.png: Added.
+        * platform/qt/editing/inserting/return-key-with-selection-002-expected.txt:
+        * platform/qt/editing/inserting/return-key-with-selection-003-expected.png:
+        * platform/qt/editing/inserting/return-key-with-selection-003-expected.txt:
+        * platform/qt/editing/inserting/typing-001-expected.png:
+        * platform/qt/editing/inserting/typing-001-expected.txt:
+        * platform/qt/editing/inserting/typing-002-expected.png:
+        * platform/qt/editing/inserting/typing-002-expected.txt:
+        * platform/qt/editing/inserting/typing-003-expected.png:
+        * platform/qt/editing/inserting/typing-003-expected.txt:
+        * platform/qt/editing/inserting/typing-around-br-001-expected.png:
+        * platform/qt/editing/inserting/typing-around-br-001-expected.txt:
+        * platform/qt/editing/inserting/typing-around-image-001-expected.png:
+        * platform/qt/editing/inserting/typing-around-image-001-expected.txt:
+
 2012-07-17  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium  gardening, skipped failing test.

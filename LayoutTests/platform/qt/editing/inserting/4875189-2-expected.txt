@@ -3,15 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 745x42
-          text run at (0,0) width 492: "This tests for a bug when replacing the contents of a floating element. "
-          text run at (492,0) width 253: "Just its contents should be removed"
-          text run at (0,21) width 132: "during the replace."
-      RenderBlock {DIV} at (0,58) size 784x21
-        RenderText {#text} at (325,0) size 261x21
-          text run at (325,0) width 261: "This shouldn't be in the bordered div."
-        RenderBlock (floating) {DIV} at (0,0) size 325x23 [border: (1px solid #0000FF)]
-          RenderText {#text} at (1,1) size 323x21
-            text run at (1,1) width 323: "This should be in a floating blue bordered div."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 744x19
+          text run at (0,0) width 416: "This tests for a bug when replacing the contents of a floating element. "
+          text run at (416,0) width 328: "Just its contents should be removed during the replace."
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderText {#text} at (276,0) size 223x19
+          text run at (276,0) width 223: "This shouldn't be in the bordered div."
+        RenderBlock (floating) {DIV} at (0,0) size 276x21 [border: (1px solid #0000FF)]
+          RenderText {#text} at (1,1) size 274x19
+            text run at (1,1) width 274: "This should be in a floating blue bordered div."
 caret: position 47 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

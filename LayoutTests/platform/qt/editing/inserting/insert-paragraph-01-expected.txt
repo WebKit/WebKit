@@ -8,18 +8,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 779x42
-          text run at (0,0) width 403: "This tests inserting a paragraph separator before a table. "
-          text run at (403,0) width 376: "There should be an empty paragraph before the table"
-          text run at (0,21) width 313: "and the caret should be just before the table."
-      RenderBlock {DIV} at (0,58) size 784x52
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderBR {BR} at (0,0) size 0x21
-        RenderTable {TABLE} at (0,21) size 32x31 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 30x29
-            RenderTableRow {TR} at (0,2) size 30x25
-              RenderTableCell {TD} at (2,2) size 26x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 22x21
-                  text run at (2,2) width 22: "foo"
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 742x38
+          text run at (0,0) width 341: "This tests inserting a paragraph separator before a table. "
+          text run at (341,0) width 401: "There should be an empty paragraph before the table and the caret"
+          text run at (0,19) width 185: "should be just before the table."
+      RenderBlock {DIV} at (0,54) size 784x48
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderBR {BR} at (0,0) size 0x19
+        RenderTable {TABLE} at (0,19) size 30x29 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 28x27
+            RenderTableRow {TR} at (0,2) size 28x23
+              RenderTableCell {TD} at (2,2) size 24x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 20x19
+                  text run at (2,2) width 20: "foo"
 caret: position 0 of child 1 {TABLE} of child 2 {DIV} of body

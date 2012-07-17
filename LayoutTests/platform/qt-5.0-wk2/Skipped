@@ -32,8 +32,6 @@
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
 editing/input/option-page-up-down.html
 editing/input/scroll-viewport-page-up-down.html
-editing/inserting/typing-tab-designmode-forms.html
-editing/inserting/typing-tab-designmode.html
 editing/pasteboard/copy-standalone-image-crash.html
 editing/selection/5354455-1.html
 editing/selection/button-right-click.html

@@ -311,7 +311,6 @@ editing/execCommand/find-after-replace.html
 editing/input/caret-at-the-edge-of-contenteditable.html
 editing/input/emacs-ctrl-o.html
 editing/input/reveal-caret-of-multiline-contenteditable.html
-editing/inserting/break-blockquote-after-delete.html
 editing/pasteboard/emacs-cntl-y-001.html
 editing/style/smoosh-styles-001.html
 editing/style/smoosh-styles-003.html
