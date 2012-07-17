@@ -195,6 +195,17 @@ fast/dom/shadow/multiple-shadowroot-adopt.html
 fast/dom/shadow/parent-tree-scope-in-shadow.html
 fast/dom/shadow/selections-in-shadow.html
 fast/dom/shadow/selection-shouldnt-expose-shadow-dom.html
+fast/dom/shadow/shadowdom-for-image-alt-update.html
+fast/dom/shadow/shadowdom-for-image-alt.html
+fast/dom/shadow/shadowdom-for-image-content.html
+fast/dom/shadow/shadowdom-for-image-dynamic.html
+fast/dom/shadow/shadowdom-for-image-event-click.html
+fast/dom/shadow/shadowdom-for-image-in-shadowdom.html
+fast/dom/shadow/shadowdom-for-image-map.html
+fast/dom/shadow/shadowdom-for-image-style.html
+fast/dom/shadow/shadowdom-for-image-with-multiple-shadow.html
+fast/dom/shadow/shadowdom-for-image-with-width-and-height.html
+fast/dom/shadow/shadowdom-for-image.html
 fast/dom/shadow/shadowdom-for-media.html
 fast/dom/shadow/shadow-boundary-events.html
 fast/dom/shadow/shadow-content-crash.html

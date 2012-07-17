@@ -1,5 +1,11 @@
 2012-07-17  János Badics  <jbadics@inf.u-szeged.hu>
 
+        [Qt] Unreviewed gardening after r122824.
+
+        * platform/qt/Skipped:
+
+2012-07-17  János Badics  <jbadics@inf.u-szeged.hu>
+
         [Qt] REGRESSION(r122768, r122771) - it made ~ 160 fails on WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=91490
 
