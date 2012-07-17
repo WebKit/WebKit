@@ -1,3 +1,20 @@
+2012-07-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Replace 0 by NULL in public headers documentation
+        https://bugs.webkit.org/show_bug.cgi?id=91470
+
+        Reviewed by Dirk Pranke.
+
+        Use NULL instead of 0 for pointer types in public
+        C headers.
+
+        * UIProcess/API/efl/ewk_intent.h:
+        * UIProcess/API/efl/ewk_intent_service.h:
+        * UIProcess/API/efl/ewk_url_request.h:
+        * UIProcess/API/efl/ewk_url_response.h:
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_web_resource.h:
+
 2012-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Don't use deprecated soup API in WebKit2APITests/TestResources

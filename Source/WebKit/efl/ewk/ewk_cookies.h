@@ -50,7 +50,7 @@ struct _Ewk_Cookie {
     char *value;
     /// the "domain" attribute, or else the hostname that the cookie came from
     char *domain;
-    /// the "path" attribute, or @c 0
+    /// the "path" attribute, or @c NULL
     char *path;
     /// the cookie expiration time, or @c 0 for a session cookie
     time_t expires;
@@ -83,7 +83,7 @@ typedef enum _Ewk_Cookie_Policy Ewk_Cookie_Policy;
 /**
  * Sets the path where the cookies are going to be stored. 
  *
- * @param filename path to the cookies.txt file, use @c 0 for keep
+ * @param filename path to the cookies.txt file, use @c NULL for keep
  *        cookies just in memory.
  *
  * @return @c EINA_FALSE if it wasn't possible to create the cookie jar,

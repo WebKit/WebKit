@@ -50,7 +50,7 @@ EAPI void ewk_url_request_ref(Ewk_Url_Request *request);
 /**
  * Decreases the reference count of the given object, possibly freeing it.
  *
- * When the reference count it's reached 0, the URL request is freed.
+ * When the reference count reaches 0, the URL request is freed.
  *
  * @param request the URL request object to decrease the reference count
  */

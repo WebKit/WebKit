@@ -50,7 +50,7 @@ EAPI void ewk_web_resource_ref(Ewk_Web_Resource *resource);
 /**
  * Decreases the reference count of the given object, possibly freeing it.
  *
- * When the reference count it's reached 0, the resource is freed.
+ * When the reference count reaches 0, the resource is freed.
  *
  * @param resource the resource object to decrease the reference count
  */

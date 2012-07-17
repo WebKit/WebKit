@@ -38,7 +38,7 @@ typedef struct _Ewk_Window_Features Ewk_Window_Features;
 /**
  * Decreases the referece count of an Ewk_Window_Features, possibly freeing it.
  *
- * When the reference count of the object reaches 0, the one is freed.
+ * When the reference count of the object reaches 0, it is freed.
  *
  * @param window_features the object to decrease reference count
  */
@@ -54,8 +54,8 @@ EAPI void         ewk_window_features_ref(Ewk_Window_Features *window_features);
 /**
  * Gets boolean properties of an Ewk_Window_Features.
  *
- * Properties are returned in the respective pointers. Passing @c 0 to any of
- * these pointers will make that property to not be returned.
+ * Properties are returned in the respective pointers. Passing @c NULL to any of
+ * these pointers will cause that property to not be returned.
  *
  * @param window_features the object to get boolean properties
  * @param toolbar_visible the pointer to store if toolbar is visible
@@ -72,11 +72,11 @@ EAPI void         ewk_window_features_bool_property_get(const Ewk_Window_Feature
 /**
  * Gets int properties of an Ewk_Window_Features.
  *
- * Properties are returned in the respective pointers. Passing @c 0 to any of
- * these pointers will make that property to not be returned.
+ * Properties are returned in the respective pointers. Passing @c NULL to any of
+ * these pointers will cause that property to not be returned.
  *
  * Make sure to check if the value returned is less than 0 before using it, since in
- * that case it means that property was not set in winwdow_features object.
+ * that case it means that property was not set in window_features object.
  *
  * @param window_features the window's features
  * @param x the pointer to store x position

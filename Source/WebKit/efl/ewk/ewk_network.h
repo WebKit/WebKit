@@ -49,7 +49,7 @@ EAPI void             ewk_network_proxy_uri_set(const char *proxy);
  *
  * The returned string should be freed by eina_stringshare_del() after use.
  *
- * @return current proxy URI or @c 0 if it's not set
+ * @return current proxy URI or @c NULL if it's not set
  *
  * @note If the libsoup backend is being used, this function has effect on
  * the @b default SoupSession, returned by ewk_network_default_soup_session_get().

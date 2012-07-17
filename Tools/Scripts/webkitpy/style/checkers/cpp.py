@@ -1161,14 +1161,18 @@ class _FileState(object):
         self._clean_lines = clean_lines
         if file_extension in ['m', 'mm']:
             self._is_objective_c = True
+            self._is_c = False
         elif file_extension == 'h':
             # In the case of header files, it is unknown if the file
-            # is objective c or not, so set this value to None and then
+            # is c / objective c or not, so set this value to None and then
             # if it is requested, use heuristics to guess the value.
             self._is_objective_c = None
+            self._is_c = None
+        elif file_extension == 'c':
+            self._is_c = True
         else:
             self._is_objective_c = False
-        self._is_c = file_extension == 'c'
+            self._is_c = False
 
     def set_did_inside_namespace_indent_warning(self):
         self._did_inside_namespace_indent_warning = True
@@ -1188,9 +1192,21 @@ class _FileState(object):
                 self._is_objective_c = False
         return self._is_objective_c
 
+    def is_c(self):
+        if self._is_c is None:
+            for line in self._clean_lines.lines:
+                # if extern "C" is found, then it is a good indication
+                # that we have a C header file.
+                if line.startswith('extern "C"'):
+                    self._is_c = True
+                    break
+            else:
+                self._is_c = False
+        return self._is_c
+
     def is_c_or_objective_c(self):
         """Return whether the file extension corresponds to C or Objective-C."""
-        return self._is_c or self.is_objective_c()
+        return self.is_c() or self.is_objective_c()
 
 
 def check_for_non_standard_constructs(clean_lines, line_number,

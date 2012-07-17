@@ -293,7 +293,7 @@ typedef enum {
  *
  * @param o frame object to get view object
  *
- * @return view object or @c 0 on failure
+ * @return view object or @c NULL on failure
  */
 EAPI Evas_Object *ewk_frame_view_get(const Evas_Object *o);
 
@@ -321,7 +321,7 @@ EAPI Ewk_Security_Origin *ewk_frame_security_origin_get(const Evas_Object *o);
  *
  * @param o frame object to create the iterator
  *
- * @return a newly allocated iterator on sucess, or @c 0 if not possible to
+ * @return a newly allocated iterator on sucess, or @c NULL if not possible to
  *      create the iterator
  */
 EAPI Eina_Iterator *ewk_frame_children_iterator_new(Evas_Object *o);
@@ -343,7 +343,7 @@ EAPI Eina_Iterator *ewk_frame_children_iterator_new(Evas_Object *o);
  * @param o frame object to find a child frame
  * @param name child frame name
  *
- * @return child frame of the given frame, or @c 0 if the the child wasn't found
+ * @return child frame of the given frame, or @c NULL if the the child wasn't found
  */
 EAPI Evas_Object   *ewk_frame_child_find(Evas_Object *o, const char *name);
 
@@ -365,7 +365,7 @@ EAPI Eina_Bool    ewk_frame_uri_set(Evas_Object *o, const char *uri);
  *
  * @param o frame object to get uri
  *
- * @return frame uri on success or @c 0 on failure
+ * @return frame uri on success or @c NULL on failure
  */
 EAPI const char  *ewk_frame_uri_get(const Evas_Object *o);
 
@@ -377,7 +377,7 @@ EAPI const char  *ewk_frame_uri_get(const Evas_Object *o);
  *
  * @param o frame object to get title
  *
- * @return frame title on success or @c 0 on failure
+ * @return frame title on success or @c NULL on failure
  */
 EAPI const Ewk_Text_With_Direction  *ewk_frame_title_get(const Evas_Object *o);
 
@@ -389,7 +389,7 @@ EAPI const Ewk_Text_With_Direction  *ewk_frame_title_get(const Evas_Object *o);
  *
  * @param o frame object to get name
  *
- * @return frame name on success or @c 0 on failure
+ * @return frame name on success or @c NULL on failure
  */
 EAPI const char  *ewk_frame_name_get(const Evas_Object *o);
 
@@ -397,8 +397,8 @@ EAPI const char  *ewk_frame_name_get(const Evas_Object *o);
  * Gets last known contents size.
  *
  * @param o frame object to get contents size
- * @param w pointer to store contents size width, may be @c 0
- * @param h pointer to store contents size height, may be @c 0
+ * @param w pointer to store contents size width, may be @c NULL
+ * @param h pointer to store contents size height, may be @c NULL
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure and
  *         @a w and @a h will be zeroed
@@ -412,9 +412,9 @@ EAPI Eina_Bool    ewk_frame_contents_size_get(const Evas_Object *o, Evas_Coord *
  * @param contents what to load into frame
  * @param contents_size size of @a contents (in bytes),
  *        if @c 0 is given, length of @a contents is used
- * @param mime_type type of @a contents data, if @c 0 is given "text/html" is assumed
- * @param encoding encoding for @a contents data, if @c 0 is given "UTF-8" is assumed
- * @param base_uri base uri to use for relative resources, may be @c 0,
+ * @param mime_type type of @a contents data, if @c NULL is given "text/html" is assumed
+ * @param encoding encoding for @a contents data, if @c NULL is given "UTF-8" is assumed
+ * @param base_uri base uri to use for relative resources, may be @c NULL,
  *        if provided @b must be an absolute uri
  *
  * @return @c EINA_TRUE on successful request, @c EINA_FALSE on errors
@@ -429,15 +429,15 @@ EAPI Eina_Bool    ewk_frame_contents_set(Evas_Object *o, const char *contents, s
  * difference is that back-forward navigation list is not changed.
  *
  * @param o frame object to load alternative content
- * @param contents what to load into frame, must @b not be @c 0
+ * @param contents what to load into frame, must @b not be @c NULL
  * @param contents_size size of @a contents (in bytes),
  *        if @c 0 is given, length of @a contents is used
- * @param mime_type type of @a contents data, if @c 0 is given "text/html" is assumed
- * @param encoding encoding used for @a contents data, if @c 0 is given "UTF-8" is assumed
- * @param base_uri base URI to use for relative resources, may be @c 0,
+ * @param mime_type type of @a contents data, if @c NULL is given "text/html" is assumed
+ * @param encoding encoding used for @a contents data, if @c NULL is given "UTF-8" is assumed
+ * @param base_uri base URI to use for relative resources, may be @c NULL,
  *        if provided must be an absolute uri
  * @param unreachable_uri the URI that failed to load and is getting the
- *        alternative representation, must @b not be @c 0
+ *        alternative representation, must @b not be @c NULL
  *
  * @return @c EINA_TRUE on successful request, @c EINA_FALSE on errors
  */
@@ -451,7 +451,7 @@ EAPI Eina_Bool    ewk_frame_contents_alternate_set(Evas_Object *o, const char *c
  * @param o frame object to execute script
  * @param script Java Script to execute
  *
- * @return newly allocated string for result or @c 0 if the result cannot be converted to string or failure
+ * @return newly allocated string for result or @c NULL if the result cannot be converted to string or failure
  */
 EAPI char        *ewk_frame_script_execute(Evas_Object *o, const char *script);
 
@@ -481,7 +481,7 @@ EAPI Eina_Bool    ewk_frame_editable_set(Evas_Object *o, Eina_Bool editable);
  *
  * @param o the frame object to get selected text
  *
- * @return a newly allocated string or @c 0 if nothing is selected or on failure
+ * @return a newly allocated string or @c NULL if nothing is selected or on failure
  */
 EAPI char        *ewk_frame_selection_get(const Evas_Object *o);
 
@@ -545,8 +545,8 @@ EAPI Eina_Bool    ewk_frame_text_matches_highlight_get(const Evas_Object *o);
  *
  * @param o frame object where matches are marked
  * @param n index of element 
- * @param x the pointer to store the horizontal position of @a n matched text, may be @c 0
- * @param y the pointer to store the vertical position of @a n matched text, may be @c 0
+ * @param x the pointer to store the horizontal position of @a n matched text, may be @c NULL
+ * @param y the pointer to store the vertical position of @a n matched text, may be @c NULL
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE when no matches were found or
  *         @a n is bigger than search results or on failure
@@ -710,7 +710,7 @@ EAPI void          ewk_frame_hit_test_free(Ewk_Hit_Test *hit_test);
  * @param x the horizontal position to query
  * @param y the vertical position to query
  *
- * @return a newly allocated hit test on success, @c 0 otherwise
+ * @return a newly allocated hit test on success, @c NULL otherwise
  */
 EAPI Ewk_Hit_Test *ewk_frame_hit_test_new(const Evas_Object *o, int x, int y);
 
@@ -758,9 +758,9 @@ EAPI Eina_Bool    ewk_frame_scroll_set(Evas_Object *o, int x, int y);
  *
  * @param o frame object to get scroll size
  * @param w the pointer to store the horizontal size that is possible to scroll,
- *        may be @c 0
+ *        may be @c NULL
  * @param h the pointer to store the vertical size that is possible to scroll,
- *        may be @c 0
+ *        may be @c NULL
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise and
  *         values are zeroed
@@ -771,8 +771,8 @@ EAPI Eina_Bool    ewk_frame_scroll_size_get(const Evas_Object *o, int *w, int *h
  * Gets the current scroll position of given frame.
  *
  * @param o frame object to get the current scroll position
- * @param x the pointer to store the horizontal position, may be @c 0
- * @param y the pointer to store the vertical position. may be @c 0
+ * @param x the pointer to store the horizontal position, may be @c NULL
+ * @param y the pointer to store the vertical position. may be @c NULL
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise and
  *         values are zeroed.
@@ -784,10 +784,10 @@ EAPI Eina_Bool    ewk_frame_scroll_pos_get(const Evas_Object *o, int *x, int *y)
  *
  * @param o frame object to query visible content geometry
  * @param include_scrollbars whenever to include scrollbars size
- * @param x the pointer to store the horizontal position, may be @c 0
- * @param y the pointer to store the vertical position, may be @c 0
- * @param w the pointer to store width, may be @c 0
- * @param h the pointer to store height, may be @c 0
+ * @param x the pointer to store the horizontal position, may be @c NULL
+ * @param y the pointer to store the vertical position, may be @c NULL
+ * @param w the pointer to store width, may be @c NULL
+ * @param h the pointer to store height, may be @c NULL
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise and
  *         values are zeroed
@@ -842,10 +842,10 @@ EAPI Eina_Bool    ewk_frame_feed_focus_out(Evas_Object *o);
  * document.
  *
  * @param o frame object containing the focused element
- * @param x pointer where to store the X value of the geometry, may be @c 0
- * @param x pointer where to store the Y value of the geometry, may be @c 0
- * @param x pointer where to store width of the geometry, may be @c 0
- * @param x pointer where to store height of the geometry, may be @c 0
+ * @param x pointer where to store the X value of the geometry, may be @c NULL
+ * @param x pointer where to store the Y value of the geometry, may be @c NULL
+ * @param x pointer where to store width of the geometry, may be @c NULL
+ * @param x pointer where to store height of the geometry, may be @c NULL
  *
  * @return @c EINA_TRUE if the frame contains the currently focused element and
  * its geometry was correctly fetched, @c EINA_FALSE in any other case
@@ -939,7 +939,7 @@ EAPI Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(const Evas_Object
  *
  * @param o frame smart object to get the frame source
  * @param frame_source a pointer to store the source of frame,
- *        must @b not be @c 0, this value @b should be freed after use
+ *        must @b not be @c NULL, this value @b should be freed after use
  *
  * @return @c length of @a frame_source on success, or @c -1 on failure
  *
@@ -955,7 +955,7 @@ EAPI ssize_t ewk_frame_source_get(const Evas_Object *o, char **frame_source);
  * replace them to the local paths. Values are not duplicated and they are decoded.
  *
  * @param o frame smart object to get the resources list
- * @return @c Eina_List with location of resources on success, or @c 0 on failure,
+ * @return @c Eina_List with location of resources on success, or @c NULL on failure,
  *         the Eina_List should be freed after use
  *
  * @see ewk_frame_source_get()
@@ -971,7 +971,7 @@ EAPI Eina_List *ewk_frame_resources_location_get(const Evas_Object *o);
  * @param ewkFrame Frame object whose contents to retrieve.
  *
  * @return A newly allocated string (which must be freed by the caller with @c free())
- *         or @c 0 in case of failure.
+ *         or @c NULL in case of failure.
  */
 EAPI char *ewk_frame_plain_text_get(const Evas_Object *o);
 

@@ -1,3 +1,24 @@
+2012-07-17  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Replace 0 by NULL in public headers documentation
+        https://bugs.webkit.org/show_bug.cgi?id=91470
+
+        Reviewed by Dirk Pranke.
+
+        Use NULL instead of 0 for pointer types in public
+        C headers.
+
+        * ewk/ewk_contextmenu.h:
+        * ewk/ewk_cookies.h:
+        * ewk/ewk_frame.h:
+        * ewk/ewk_intent.h:
+        * ewk/ewk_intent_request.h:
+        * ewk/ewk_network.h:
+        * ewk/ewk_security_origin.h:
+        * ewk/ewk_settings.h:
+        * ewk/ewk_view.h:
+        * ewk/ewk_window_features.h:
+
 2012-07-17  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: refactor InspectorController::connectFrontend() to accept InspectorFrontendChannel.

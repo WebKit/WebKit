@@ -119,7 +119,7 @@ EAPI void ewk_settings_local_storage_database_origin_clear(const char *url);
  * save yourself some cpu cycles and use eina_stringshare_ref()
  * instead of eina_stringshare_add() or strdup().
  *
- * @return database path or @c 0 if none or web database is not supported
+ * @return database path or @c NULL if none or web database is not supported
  */
 EAPI const char      *ewk_settings_web_database_path_get(void);
 
@@ -130,7 +130,7 @@ EAPI const char      *ewk_settings_web_database_path_get(void);
  * database is already open, this function returns @c EINA_FALSE.
  *
  * @param directory where to store icon database, must be
- *        write-able, if @c 0 is given, then database is closed
+ *        write-able, if @c NULL is given, then database is closed
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on errors
  */
@@ -143,7 +143,7 @@ EAPI Eina_Bool        ewk_settings_icon_database_path_set(const char *path);
  * save yourself some cpu cycles and use eina_stringshare_ref()
  * instead of eina_stringshare_add() or strdup().
  *
- * @return database path or @c 0 if none is set
+ * @return database path or @c NULL if none is set
  */
 EAPI const char      *ewk_settings_icon_database_path_get(void);
 
@@ -166,7 +166,7 @@ EAPI Eina_Bool        ewk_settings_icon_database_clear(void);
  *
  * @param url which url to query icon
  *
- * @return cairo surface if any, or @c 0 on failure
+ * @return cairo surface if any, or @c NULL on failure
  */
 EAPI cairo_surface_t *ewk_settings_icon_database_icon_surface_get(const char *url);
 
@@ -186,7 +186,7 @@ EAPI cairo_surface_t *ewk_settings_icon_database_icon_surface_get(const char *ur
  * @param url which url to query icon
  * @param canvas evas instance where to add resulting object
  *
- * @return newly allocated Evas_Object instance or @c 0 on
+ * @return newly allocated Evas_Object instance or @c NULL on
  *         errors. Delete the object with evas_object_del().
  */
 EAPI Evas_Object     *ewk_settings_icon_database_icon_object_get(const char *url, Evas *canvas);

@@ -163,7 +163,7 @@ EAPI void                        ewk_context_menu_ref(Ewk_Context_Menu *menu);
 /**
  * Decreases the reference count of the given object, possibly freeing it.
  *
- * When the reference count it's reached 0, the menu with all items are freed.
+ * When the reference count reaches 0, the menu with all its items are freed.
  *
  * @param menu the context menu object to decrease the reference count
  */
@@ -183,7 +183,7 @@ EAPI Eina_Bool                   ewk_context_menu_destroy(Ewk_Context_Menu *menu
  * Gets the list of items.
  *
  * @param o the context menu object to get list of the items
- * @return the list of the items on success or @c 0 on failure
+ * @return the list of the items on success or @c NULL on failure
  */
 EAPI const Eina_List            *ewk_context_menu_item_list_get(const Ewk_Context_Menu *o);
 
@@ -196,7 +196,7 @@ EAPI const Eina_List            *ewk_context_menu_item_list_get(const Ewk_Contex
  * @param title specifies a title of the item
  * @param checked @c EINA_TRUE if the item should be toggled or @c EINA_FALSE if not
  * @param enabled @c EINA_TRUE to enable the item or @c EINA_FALSE to disable
- * @return the pointer to the new item on success or @c 0 on failure
+ * @return the pointer to the new item on success or @c NULL on failure
  *
  * @note The return value @b should @b be freed after use.
  */
@@ -267,7 +267,7 @@ EAPI Eina_Bool                   ewk_context_menu_item_action_set(Ewk_Context_Me
  * Gets a title of the item.
  *
  * @param o the item to get the title
- * @return a title of the item on success, or @c 0 on failure
+ * @return a title of the item on success, or @c NULL on failure
  *
  * @see ewk_context_menu_item_title_set
  */
@@ -278,7 +278,7 @@ EAPI const char                 *ewk_context_menu_item_title_get(const Ewk_Conte
  *
  * @param o the item to set the title
  * @param title a new title for the item object
- * @return a new title of the item on success or @c 0 on failure
+ * @return a new title of the item on success or @c NULL on failure
  *
  * @see ewk_context_menu_item_title_get
  */

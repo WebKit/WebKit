@@ -193,7 +193,7 @@ struct _Ewk_Web_Resource_Load_Error {
  *
  * @param e canvas object where to create the view object
  *
- * @return view object on success or @c 0 on failure
+ * @return view object on success or @c NULL on failure
  */
 EAPI Evas_Object *ewk_view_add(Evas *e);
 
@@ -203,7 +203,7 @@ EAPI Evas_Object *ewk_view_add(Evas *e);
  * @param e canvas object where to create the view object
  * @param context Ewk_Context object to declare process model
  *
- * @return view object on success or @c 0 on failure
+ * @return view object on success or @c NULL on failure
  */
 EAPI Evas_Object *ewk_view_add_with_context(Evas *e, Ewk_Context *context);
 
@@ -225,7 +225,7 @@ EAPI Eina_Bool ewk_view_uri_set(Evas_Object *o, const char *uri);
  *
  * @param o view object to get current URI
  *
- * @return current URI on success or @c 0 on failure
+ * @return current URI on success or @c NULL on failure
  */
 EAPI const char *ewk_view_uri_get(const Evas_Object *o);
 
@@ -315,7 +315,7 @@ EAPI Eina_Bool    ewk_view_forward_possible(Evas_Object *o);
  *
  * @param o view object to get current title
  *
- * @return current title on success or @c 0 on failure
+ * @return current title on success or @c NULL on failure
  */
 EAPI const char *ewk_view_title_get(const Evas_Object *o);
 
@@ -405,7 +405,7 @@ EAPI Eina_Bool ewk_view_device_pixel_ratio_set(Evas_Object *o, float ratio);
  * use this one.
  *
  * @param o view object to change theme
- * @param path theme path, may be @c 0 to reset to the default theme
+ * @param path theme path, may be @c NULL to reset to the default theme
  */
 EAPI void ewk_view_theme_set(Evas_Object *o, const char *path);
 
@@ -416,7 +416,7 @@ EAPI void ewk_view_theme_set(Evas_Object *o, const char *path);
  *
  * @param o view object to get theme path
  *
- * @return the theme path, may be @c 0 if not set
+ * @return the theme path, may be @c NULL if not set
  */
 EAPI const char *ewk_view_theme_get(const Evas_Object *o);
 

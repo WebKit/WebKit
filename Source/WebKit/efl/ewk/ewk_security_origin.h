@@ -49,7 +49,7 @@ typedef struct _Ewk_Security_Origin Ewk_Security_Origin;
  * It returns a internal string which should not
  * be modified. The string is guaranteed to be stringshared.
  *
- * @return the protocol scheme or @c 0 if there is not a protocol scheme
+ * @return the protocol scheme or @c NULL if there is not a protocol scheme
  */
 EAPI const char          *ewk_security_origin_protocol_get(const Ewk_Security_Origin *o);
 
@@ -61,7 +61,7 @@ EAPI const char          *ewk_security_origin_protocol_get(const Ewk_Security_Or
  *
  * @param o security origin object
  *
- * @return the host domain or @c 0 if there is not a host scheme
+ * @return the host domain or @c NULL if there is not a host scheme
  */
 EAPI const char          *ewk_security_origin_host_get(const Ewk_Security_Origin *o);
 
@@ -72,7 +72,7 @@ EAPI const char          *ewk_security_origin_host_get(const Ewk_Security_Origin
  *
  * @param o security origin object
  *
- * @return the string representation of security origin or @c 0 if there is not a proper security origin scheme
+ * @return the string representation of security origin or @c NULL if there is not a proper security origin scheme
  */
 EAPI const char          *ewk_security_origin_string_get(const Ewk_Security_Origin *o);
 
@@ -142,7 +142,7 @@ EAPI void                 ewk_security_origin_application_cache_clear(const Ewk_
  * use ewk_web_database_list_free() as convenience.
  *
  * This function won't work if Web SQL Database was not enabled when
- * building WebKit and will just return 0.
+ * building WebKit and will just return @c NULL.
  *
  * @param o security origin object
  *

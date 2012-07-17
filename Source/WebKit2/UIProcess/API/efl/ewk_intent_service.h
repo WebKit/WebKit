@@ -50,7 +50,7 @@ EAPI void ewk_intent_service_ref(Ewk_Intent_Service *service);
 /**
  * Decreases the reference count of the given object, possibly freeing it.
  *
- * When the reference count it's reached 0, the intent service is freed.
+ * When the reference count reaches 0, the intent service is freed.
  *
  * @param service the intent service object to decrease the reference count
  */

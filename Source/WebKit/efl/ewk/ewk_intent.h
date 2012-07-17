@@ -76,7 +76,7 @@ EAPI const char *ewk_intent_service_get(const Ewk_Intent *intent);
  *
  * @param intent intent item to query.
  *
- * @return @c Eina_List with suggested service URLs on success, or @c 0 on failure,
+ * @return @c Eina_List with suggested service URLs on success, or @c NULL on failure,
  *         the Eina_List and its items should be freed after use. Use free() to free the
  *         items.
  */
@@ -97,7 +97,7 @@ EAPI char *ewk_intent_extra_get(const Ewk_Intent *intent, const char *key);
  *
  * @param intent intent item to query.
  *
- * @return @c Eina_List with names of extra metadata on success, or @c 0 on failure,
+ * @return @c Eina_List with names of extra metadata on success, or @c NULL on failure,
  *         the Eina_List and its items should be freed after use. Use free() to free the
  *         items.
  */

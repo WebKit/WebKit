@@ -41,7 +41,7 @@ EAPI void ewk_intent_request_ref(Ewk_Intent_Request *request);
 /**
  * Decreases the reference count of the given object, possibly freeing it.
  *
- * When the reference count it's reached 0, the intent request is freed.
+ * When the reference count reaches 0, the intent request is freed.
  *
  * @param request the intent request object to decrease the reference count
  */
