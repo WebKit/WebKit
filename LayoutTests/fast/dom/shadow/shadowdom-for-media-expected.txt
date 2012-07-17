@@ -1,0 +1,9 @@
+ 
+PASS shadowRootForVideoWithControls is youngerShadowRootForVideoWithControls
+PASS shadowRootForVideoWithControls is not oldestShadowRootForVideoWithControls
+PASS shadowRootForVideoWithoutControls is youngerShadowRootForVideoWithoutControls
+PASS shadowRootForVideoWithoutControls is not oldestShadowRootForVideoWithoutControls
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

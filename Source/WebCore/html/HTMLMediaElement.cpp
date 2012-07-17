@@ -1860,6 +1860,24 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
     }
 }
 
+void HTMLMediaElement::createShadowSubtree()
+{
+    ASSERT(!shadow() || !shadow()->oldestShadowRoot());
+
+    ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot);
+}
+
+void HTMLMediaElement::willAddAuthorShadowRoot()
+{
+    ASSERT(shadow());
+    if (shadow()->oldestShadowRoot()) {
+        ASSERT(shadow()->oldestShadowRoot()->type() == ShadowRoot::UserAgentShadowRoot);
+        return;
+    }
+
+    createShadowSubtree();
+}
+
 void HTMLMediaElement::rewind(float timeDelta)
 {
     LOG(Media, "HTMLMediaElement::rewind(%f)", timeDelta);
@@ -4190,7 +4208,11 @@ bool HTMLMediaElement::createMediaControls()
     if (isFullscreen())
         controls->enteredFullscreen();
 
-    ensureShadowRoot()->appendChild(controls, ec);
+    if (!shadow())
+        createShadowSubtree();
+
+    ASSERT(shadow()->oldestShadowRoot()->type() == ShadowRoot::UserAgentShadowRoot);
+    shadow()->oldestShadowRoot()->appendChild(controls, ec);
     return true;
 }
 

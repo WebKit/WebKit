@@ -1,3 +1,17 @@
+2012-07-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        HTMLMediaElement should not use Element::ensureShadowRoot()
+        https://bugs.webkit.org/show_bug.cgi?id=77936
+
+        Reviewed by Hajime Morita.
+
+        Adding Shadow DOM to a video element and an audio element is allowed now.
+
+        * fast/dom/shadow/shadow-disable-expected.txt:
+        * fast/dom/shadow/shadow-disable.html:
+        * fast/dom/shadow/shadowdom-for-media-expected.txt: Added.
+        * fast/dom/shadow/shadowdom-for-media.html: Added.
+
 2012-07-17  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Test expectations of datetime/datetime-local/time should not contain milliseconds when they aren't expected

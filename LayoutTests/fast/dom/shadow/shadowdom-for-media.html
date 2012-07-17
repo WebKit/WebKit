@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
+
+<div id="container">
+<video id='videoWithControls' controls width="320" height="240"></video>
+<video id='videoWithoutControls' width="320" height="240"></video>
+</div>
+<pre id="console"></pre>
+
+<script>
+function addShadowDOM(host) {
+    var shadowRoot = new WebKitShadowRoot(host);
+    shadowRoot.innerHTML = "<div style='margin: 10px'><shadow></shadow></div>"
+    return shadowRoot;
+}
+
+var shadowRootForVideoWithControls = addShadowDOM(videoWithControls);
+var oldestShadowRootForVideoWithControls = internals.oldestShadowRoot(videoWithControls);
+var youngerShadowRootForVideoWithControls = internals.youngerShadowRoot(oldestShadowRootForVideoWithControls);
+
+var shadowRootForVideoWithoutControls = addShadowDOM(videoWithoutControls);
+var oldestShadowRootForVideoWithoutControls = internals.oldestShadowRoot(videoWithoutControls);
+var youngerShadowRootForVideoWithoutControls = internals.youngerShadowRoot(oldestShadowRootForVideoWithoutControls);
+
+
+shouldBe("shadowRootForVideoWithControls", "youngerShadowRootForVideoWithControls");
+shouldNotBe("shadowRootForVideoWithControls", "oldestShadowRootForVideoWithControls");
+shouldBe("shadowRootForVideoWithoutControls", "youngerShadowRootForVideoWithoutControls");
+shouldNotBe("shadowRootForVideoWithoutControls", "oldestShadowRootForVideoWithoutControls");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -83,7 +83,10 @@ class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, public Me
 {
 public:
     MediaPlayer* player() const { return m_player.get(); }
-    
+
+    void createShadowSubtree();
+    virtual void willAddAuthorShadowRoot() OVERRIDE;
+
     virtual bool isVideo() const = 0;
     virtual bool hasVideo() const { return false; }
     virtual bool hasAudio() const;

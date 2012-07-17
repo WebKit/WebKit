@@ -1,3 +1,32 @@
+2012-07-17  Shinya Kawanaka  <shinyak@chromium.org>
+
+        HTMLMediaElement should not use Element::ensureShadowRoot()
+        https://bugs.webkit.org/show_bug.cgi?id=77936
+
+        Reviewed by Hajime Morita.
+
+        a video element and an audio element add UserAgentShadowRoot dynamically, and they assume that it's the oldest ShadowRoot.
+        However an AuthorShadowRoot could be added by a user before a video element and an audio element add UserAgentShadowRoot.
+        It breaks the assumption that the UserAgentShadowRoot is the oldest.
+
+        If the UserAgentShadowRoot is not the oldest, the AuthorShadowRoot a page author added might be ignored.
+        Since the timing to add UserAgentShadowRoot is not known by a user, the fact that UserAgentShadorRoot is
+        not the oldest will cause inconsistent behavior.
+
+        Adding AuthorShadowRoot to a video element and an audio element is allowed by this patch.
+
+        Test: fast/dom/shadow/shadowdom-for-media.html
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::allowsAuthorShadowRoot):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createShadowSubtree):
+        (WebCore):
+        (WebCore::HTMLMediaElement::willAddAuthorShadowRoot):
+        (WebCore::HTMLMediaElement::createMediaControls):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+
 2012-07-16  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the Chromium Mac build after <http://trac.webkit.org/changeset/122802>
