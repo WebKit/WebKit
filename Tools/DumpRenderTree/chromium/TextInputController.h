@@ -37,15 +37,15 @@
 
 #include "CppBoundClass.h"
 
-class TestShell;
-
 namespace WebKit {
-class WebFrame;
+class WebView;
 }
 
 class TextInputController : public CppBoundClass {
 public:
-    TextInputController(TestShell*);
+    TextInputController();
+
+    void setWebView(WebKit::WebView* webView) { m_webView = webView; }
 
     void insertText(const CppArgumentList&, CppVariant*);
     void doCommand(const CppArgumentList&, CppVariant*);
@@ -64,11 +64,7 @@ public:
     void setComposition(const CppArgumentList&, CppVariant*);
 
 private:
-    // Returns the test shell's main WebFrame.
-    static WebKit::WebFrame* getMainFrame();
-
-    // Non-owning pointer. The TextInputController is owned by the TestShell.
-    static TestShell* testShell;
+    WebKit::WebView* m_webView;
 };
 
 #endif // TextInputController_h

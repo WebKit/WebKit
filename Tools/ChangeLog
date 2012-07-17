@@ -1,3 +1,34 @@
+2012-07-17  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] TextInputController shouldn't know about TestShell
+        https://bugs.webkit.org/show_bug.cgi?id=91455
+
+        Reviewed by Kent Tamura.
+
+        This patch uses the same pattern we used for the
+        AccessibilityController to remove the dependency on TestShell.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        (TextInputController::TextInputController):
+        (TextInputController::insertText):
+        (TextInputController::doCommand):
+        (TextInputController::setMarkedText):
+        (TextInputController::unmarkText):
+        (TextInputController::hasMarkedText):
+        (TextInputController::markedRange):
+        (TextInputController::selectedRange):
+        (TextInputController::firstRectForCharacterRange):
+        (TextInputController::validAttributesForMarkedText):
+        (TextInputController::setComposition):
+        * DumpRenderTree/chromium/TextInputController.h:
+        (WebKit):
+        (TextInputController):
+        (TextInputController::setWebView):
+
 2012-07-17  David Barr  <davidbarr@chromium.org>
 
         Introduce ENABLE_CSS_IMAGE_ORIENTATION compile flag

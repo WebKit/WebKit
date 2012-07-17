@@ -150,7 +150,7 @@ void TestShell::initialize()
     m_testInterfaces = adoptPtr(new TestInterfaces());
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
     m_eventSender = adoptPtr(new EventSender(this));
-    m_textInputController = adoptPtr(new TextInputController(this));
+    m_textInputController = adoptPtr(new TextInputController());
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
@@ -176,12 +176,14 @@ void TestShell::createMainWindow()
     m_webViewHost = adoptPtr(createNewWindow(WebURL(), m_drtDevToolsAgent.get()));
     m_webView = m_webViewHost->webView();
     m_accessibilityController->setWebView(m_webView);
+    m_textInputController->setWebView(m_webView);
     m_drtDevToolsAgent->setWebView(m_webView);
 }
 
 TestShell::~TestShell()
 {
     m_accessibilityController->setWebView(0);
+    m_textInputController->setWebView(0);
     m_drtDevToolsAgent->setWebView(0);
 }
 
