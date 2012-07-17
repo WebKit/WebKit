@@ -1,3 +1,22 @@
+2012-07-17  Emil A Eklund  <eae@chromium.org>
+
+        Incorrect offset used for scrollWidth/Height calculation
+        https://bugs.webkit.org/show_bug.cgi?id=91461
+
+        Reviewed by Eric Seidel.
+
+        Add new test ensuring that a block that shouldn't have overflow doesn't
+        have scrollbars.
+
+        * fast/sub-pixel/block-with-margin-overflow-expected.html: Added.
+        * fast/sub-pixel/block-with-margin-overflow.html: Added.
+        * platform/chromium-win/fast/block/float/026-expected.txt:
+        * platform/chromium-win/fast/block/float/028-expected.txt:
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/mac/fast/multicol/shrink-to-column-height-for-pagination-expected.png:
+        * platform/mac/fast/multicol/shrink-to-column-height-for-pagination-expected.txt:
+        Update test expectations that incorrectly had overflow.
+
 2012-07-17  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed. Remove duplicate lines added in r122857.

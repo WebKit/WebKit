@@ -1,3 +1,36 @@
+2012-07-17  Emil A Eklund  <eae@chromium.org>
+
+        Incorrect offset used for scrollWidth/Height calculation
+        https://bugs.webkit.org/show_bug.cgi?id=91461
+
+        Reviewed by Eric Seidel.
+
+        Due to a different offset being used to calculate the scrollWidth/Height
+        and pixelSnappedClientWidth/Height the scroll value can be off by one in
+        same cases. This can causes scrollbars to appear even when there is no
+        overflow.
+
+        Test: fast/sub-pixel/block-with-margin-overflow.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollWidth):
+        Change location offset passed to snapSizeToPixel to include x() to match
+        offset used by pixelSnappedClientWidth.
+        
+        (WebCore::RenderBox::scrollHeight):
+        Change location offset passed to snapSizeToPixel to include y() to match
+        offset used by pixelSnappedClientHeight.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clampScrollOffset):
+        Change calculation to use pixelSnappedClientWidth/Height as it is
+        subtracted from the pixel snapped scrollWidth/Height values.
+        
+        (WebCore::RenderLayer::scrollWidth):
+        (WebCore::RenderLayer::scrollHeight):
+        Change RenderLayer versions of scrollWidth/Height to include x()/y() as
+        per the RenderBox versions.
+
 2012-07-17  Hans Muller  <hmuller@adobe.com>
 
         Rename CSS Exclusions CSSWrapShape class properties to match Exclusion shape function parameters

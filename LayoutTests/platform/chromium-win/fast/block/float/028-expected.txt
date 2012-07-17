@@ -42,7 +42,7 @@ layer at (8,208) size 569x59 clip at (25,210) size 550x40
       text run at (39,2) width 513: "This is an overflow:scroll region. It should sit on the same line as the float and wrap as"
       text run at (290,22) width 4 RTL: "."
       text run at (294,22) width 258: "needed to fit within the remaining line width"
-layer at (189,816) size 388x79 clip at (206,818) size 369x60 scrollWidth 370
+layer at (189,816) size 388x79 clip at (206,818) size 369x60
   RenderBlock {DIV} at (180,0) size 389x79 [border: (2px solid #0000FF)]
     RenderText {#text} at (5,2) size 368x59
       text run at (5,2) width 366: "This is an overflow:scroll region. It should sit on the same line"
