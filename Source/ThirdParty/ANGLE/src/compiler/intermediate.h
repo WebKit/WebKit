@@ -433,15 +433,15 @@ protected:
 
 typedef TVector<TIntermNode*> TIntermSequence;
 typedef TVector<int> TQualifierList;
-typedef TMap<TString, TString> TPragmaTable;
+
 //
 // Nodes that operate on an arbitrary sized set of children.
 //
 class TIntermAggregate : public TIntermOperator {
 public:
-    TIntermAggregate() : TIntermOperator(EOpNull), userDefined(false), pragmaTable(0), endLine(0), useEmulatedFunction(false) { }
-    TIntermAggregate(TOperator o) : TIntermOperator(o), pragmaTable(0), useEmulatedFunction(false) { }
-    ~TIntermAggregate() { delete pragmaTable; }
+    TIntermAggregate() : TIntermOperator(EOpNull), userDefined(false), endLine(0), useEmulatedFunction(false) { }
+    TIntermAggregate(TOperator o) : TIntermOperator(o), useEmulatedFunction(false) { }
+    ~TIntermAggregate() { }
 
     virtual TIntermAggregate* getAsAggregate() { return this; }
     virtual void traverse(TIntermTraverser*);
@@ -452,14 +452,13 @@ public:
     const TString& getName() const { return name; }
 
     void setUserDefined() { userDefined = true; }
-    bool isUserDefined() { return userDefined; }
+    bool isUserDefined() const { return userDefined; }
 
     void setOptimize(bool o) { optimize = o; }
     bool getOptimize() { return optimize; }
     void setDebug(bool d) { debug = d; }
     bool getDebug() { return debug; }
-    void addToPragmaTable(const TPragmaTable& pTable);
-    const TPragmaTable& getPragmaTable() const { return *pragmaTable; }
+
     void setEndLine(TSourceLoc line) { endLine = line; }
     TSourceLoc getEndLine() const { return endLine; }
 
@@ -475,7 +474,6 @@ protected:
 
     bool optimize;
     bool debug;
-    TPragmaTable *pragmaTable;
     TSourceLoc endLine;
 
     // If set to true, replace the built-in function call with an emulated one
@@ -533,6 +531,7 @@ public:
             postVisit(postVisit),
             rightToLeft(rightToLeft),
             depth(0) {}
+    virtual ~TIntermTraverser() {};
 
     virtual void visitSymbol(TIntermSymbol*) {}
     virtual void visitConstantUnion(TIntermConstantUnion*) {}

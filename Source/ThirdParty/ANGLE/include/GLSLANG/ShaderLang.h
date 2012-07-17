@@ -34,7 +34,7 @@ extern "C" {
 
 // Version number for shader translation API.
 // It is incremented everytime the API changes.
-#define SH_VERSION 105
+#define SH_VERSION 107
 
 //
 // The names of the following enums have been derived by replacing GL prefix
@@ -49,7 +49,29 @@ typedef enum {
 
 typedef enum {
   SH_GLES2_SPEC = 0x8B40,
-  SH_WEBGL_SPEC = 0x8B41
+  SH_WEBGL_SPEC = 0x8B41,
+
+  // The CSS Shaders spec is a subset of the WebGL spec.
+  //
+  // In both CSS vertex and fragment shaders, ANGLE:
+  // (1) Reserves the "css_" prefix.
+  // (2) Renames the main function to css_main.
+  // (3) Disables the gl_MaxDrawBuffers built-in.
+  //
+  // In CSS fragment shaders, ANGLE:
+  // (1) Disables the gl_FragColor built-in.
+  // (2) Disables the gl_FragData built-in.
+  // (3) Enables the css_MixColor built-in.
+  // (4) Enables the css_ColorMatrix built-in.
+  //
+  // After passing a CSS shader through ANGLE, the browser is expected to append
+  // a new main function to it.
+  // This new main function will call the css_main function.
+  // It may also perform additional operations like varying assignment, texture
+  // access, and gl_FragColor assignment in order to implement the CSS Shaders
+  // blend modes.
+  //
+  SH_CSS_SHADERS_SPEC = 0x8B42
 } ShShaderSpec;
 
 typedef enum {
@@ -104,7 +126,23 @@ typedef enum {
   SH_UNROLL_FOR_LOOP_WITH_INTEGER_INDEX = 0x0080,
 
   // This is needed only as a workaround for certain OpenGL driver bugs.
-  SH_EMULATE_BUILT_IN_FUNCTIONS = 0x0100
+  SH_EMULATE_BUILT_IN_FUNCTIONS = 0x0100,
+
+  // This is an experimental flag to enforce restrictions that aim to prevent 
+  // timing attacks.
+  // It generates compilation errors for shaders that could expose sensitive
+  // texture information via the timing channel.
+  // To use this flag, you must compile the shader under the WebGL spec
+  // (using the SH_WEBGL_SPEC flag).
+  SH_TIMING_RESTRICTIONS = 0x0200,
+    
+  // This flag prints the dependency graph that is used to enforce timing
+  // restrictions on fragment shaders.
+  // This flag only has an effect if all of the following are true:
+  // - The shader spec is SH_WEBGL_SPEC.
+  // - The compile options contain the SH_TIMING_RESTRICTIONS flag.
+  // - The shader type is SH_FRAGMENT_SHADER.
+  SH_DEPENDENCY_GRAPH = 0x0400
 } ShCompileOptions;
 
 //

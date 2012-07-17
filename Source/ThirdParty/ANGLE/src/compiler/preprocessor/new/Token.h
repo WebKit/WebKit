@@ -7,42 +7,94 @@
 #ifndef COMPILER_PREPROCESSOR_TOKEN_H_
 #define COMPILER_PREPROCESSOR_TOKEN_H_
 
+#include <ostream>
 #include <string>
-#include <vector>
 
-#include "common/angleutils.h"
+#include "SourceLocation.h"
 
 namespace pp
 {
 
-class Token
+struct Token
 {
-  public:
-    typedef int Location;
-    static Location encodeLocation(int line, int file);
-    static void decodeLocation(Location loc, int* line, int* file);
+    enum Type
+    {
+        LAST = 0,  // EOF.
 
-    // Takes ownership of string.
-    Token(Location location, int type, std::string* value);
-    ~Token();
+        IDENTIFIER = 258,
 
-    Location location() const { return mLocation; }
-    int type() const { return mType; }
-    const std::string* value() const { return mValue; }
+        CONST_INT,
+        CONST_FLOAT,
 
-  private:
-    DISALLOW_COPY_AND_ASSIGN(Token);
+        OP_INC,
+        OP_DEC,
+        OP_LEFT,
+        OP_RIGHT,
+        OP_LE,
+        OP_GE,
+        OP_EQ,
+        OP_NE,
+        OP_AND,
+        OP_XOR,
+        OP_OR,
+        OP_ADD_ASSIGN,
+        OP_SUB_ASSIGN,
+        OP_MUL_ASSIGN,
+        OP_DIV_ASSIGN,
+        OP_MOD_ASSIGN,
+        OP_LEFT_ASSIGN,
+        OP_RIGHT_ASSIGN,
+        OP_AND_ASSIGN,
+        OP_XOR_ASSIGN,
+        OP_OR_ASSIGN,
 
-    Location mLocation;
-    int mType;
-    std::string* mValue;
+        // Preprocessing token types.
+        // These types are used by the preprocessor internally.
+        // Preprocessor clients must not depend or check for them.
+        PP_HASH,
+        PP_NUMBER,
+        PP_OTHER
+    };
+    enum Flags
+    {
+        AT_START_OF_LINE   = 1 << 0,
+        HAS_LEADING_SPACE  = 1 << 1,
+        EXPANSION_DISABLED = 1 << 2
+    };
+
+    Token() : type(0), flags(0) { }
+
+    void reset();
+    bool equals(const Token& other) const;
+
+    // Returns true if this is the first token on line.
+    // It disregards any leading whitespace.
+    bool atStartOfLine() const { return (flags & AT_START_OF_LINE) != 0; }
+    void setAtStartOfLine(bool start);
+
+    bool hasLeadingSpace() const { return (flags & HAS_LEADING_SPACE) != 0; }
+    void setHasLeadingSpace(bool space);
+
+    bool expansionDisabled() const { return (flags & EXPANSION_DISABLED) != 0; }
+    void setExpansionDisabled(bool disable);
+
+    int type;
+    unsigned int flags;
+    SourceLocation location;
+    std::string value;
 };
 
-typedef std::vector<Token*> TokenVector;
-typedef TokenVector::const_iterator TokenIterator;
+inline bool operator==(const Token& lhs, const Token& rhs)
+{
+    return lhs.equals(rhs);
+}
+
+inline bool operator!=(const Token& lhs, const Token& rhs)
+{
+    return !lhs.equals(rhs);
+}
 
 extern std::ostream& operator<<(std::ostream& out, const Token& token);
 
 }  // namepsace pp
 #endif  // COMPILER_PREPROCESSOR_TOKEN_H_
-

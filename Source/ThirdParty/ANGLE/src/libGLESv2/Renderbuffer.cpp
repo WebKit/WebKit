@@ -63,67 +63,143 @@ GLuint RenderbufferInterface::getStencilSize() const
     return dx2es::GetStencilSize(getD3DFormat());
 }
 
-RenderbufferTexture::RenderbufferTexture(Texture *texture, GLenum target) : mTarget(target)
+///// RenderbufferTexture2D Implementation ////////
+
+RenderbufferTexture2D::RenderbufferTexture2D(Texture2D *texture, GLenum target) : mTarget(target)
 {
-    mTexture.set(texture);
+    mTexture2D.set(texture);
 }
 
-RenderbufferTexture::~RenderbufferTexture()
+RenderbufferTexture2D::~RenderbufferTexture2D()
 {
-    mTexture.set(NULL);
+    mTexture2D.set(NULL);
 }
 
 // Textures need to maintain their own reference count for references via
 // Renderbuffers acting as proxies. Here, we notify the texture of a reference.
-void RenderbufferTexture::addProxyRef(const Renderbuffer *proxy)
+void RenderbufferTexture2D::addProxyRef(const Renderbuffer *proxy)
 {
-    mTexture->addProxyRef(proxy);
+    mTexture2D->addProxyRef(proxy);
 }
 
-void RenderbufferTexture::releaseProxy(const Renderbuffer *proxy)
+void RenderbufferTexture2D::releaseProxy(const Renderbuffer *proxy)
 {
-    mTexture->releaseProxy(proxy);
+    mTexture2D->releaseProxy(proxy);
 }
 
-IDirect3DSurface9 *RenderbufferTexture::getRenderTarget()
+// Increments refcount on surface.
+// caller must Release() the returned surface
+IDirect3DSurface9 *RenderbufferTexture2D::getRenderTarget()
 {
-    return mTexture->getRenderTarget(mTarget);
+    return mTexture2D->getRenderTarget(mTarget);
 }
 
-IDirect3DSurface9 *RenderbufferTexture::getDepthStencil()
+// Increments refcount on surface.
+// caller must Release() the returned surface
+IDirect3DSurface9 *RenderbufferTexture2D::getDepthStencil()
 {
-    return NULL;
+    return mTexture2D->getDepthStencil(mTarget);
 }
 
-GLsizei RenderbufferTexture::getWidth() const
+GLsizei RenderbufferTexture2D::getWidth() const
 {
-    return mTexture->getWidth(0);
-}
- 
-GLsizei RenderbufferTexture::getHeight() const
-{
-    return mTexture->getHeight(0);
-}
- 
-GLenum RenderbufferTexture::getInternalFormat() const
-{
-    return mTexture->getInternalFormat();
+    return mTexture2D->getWidth(0);
 }
 
-D3DFORMAT RenderbufferTexture::getD3DFormat() const
+GLsizei RenderbufferTexture2D::getHeight() const
 {
-    return mTexture->getD3DFormat();
+    return mTexture2D->getHeight(0);
 }
 
-GLsizei RenderbufferTexture::getSamples() const
+GLenum RenderbufferTexture2D::getInternalFormat() const
+{
+    return mTexture2D->getInternalFormat(0);
+}
+
+D3DFORMAT RenderbufferTexture2D::getD3DFormat() const
+{
+    return mTexture2D->getD3DFormat(0);
+}
+
+GLsizei RenderbufferTexture2D::getSamples() const
 {
     return 0;
 }
 
-unsigned int RenderbufferTexture::getSerial() const
+unsigned int RenderbufferTexture2D::getSerial() const
 {
-    return mTexture->getRenderTargetSerial(mTarget);
+    return mTexture2D->getRenderTargetSerial(mTarget);
 }
+
+///// RenderbufferTextureCubeMap Implementation ////////
+
+RenderbufferTextureCubeMap::RenderbufferTextureCubeMap(TextureCubeMap *texture, GLenum target) : mTarget(target)
+{
+    mTextureCubeMap.set(texture);
+}
+
+RenderbufferTextureCubeMap::~RenderbufferTextureCubeMap()
+{
+    mTextureCubeMap.set(NULL);
+}
+
+// Textures need to maintain their own reference count for references via
+// Renderbuffers acting as proxies. Here, we notify the texture of a reference.
+void RenderbufferTextureCubeMap::addProxyRef(const Renderbuffer *proxy)
+{
+    mTextureCubeMap->addProxyRef(proxy);
+}
+
+void RenderbufferTextureCubeMap::releaseProxy(const Renderbuffer *proxy)
+{
+    mTextureCubeMap->releaseProxy(proxy);
+}
+
+// Increments refcount on surface.
+// caller must Release() the returned surface
+IDirect3DSurface9 *RenderbufferTextureCubeMap::getRenderTarget()
+{
+    return mTextureCubeMap->getRenderTarget(mTarget);
+}
+
+// Increments refcount on surface.
+// caller must Release() the returned surface
+IDirect3DSurface9 *RenderbufferTextureCubeMap::getDepthStencil()
+{
+    return NULL;
+}
+
+GLsizei RenderbufferTextureCubeMap::getWidth() const
+{
+    return mTextureCubeMap->getWidth(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0);
+}
+
+GLsizei RenderbufferTextureCubeMap::getHeight() const
+{
+    return mTextureCubeMap->getHeight(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0);
+}
+
+GLenum RenderbufferTextureCubeMap::getInternalFormat() const
+{
+    return mTextureCubeMap->getInternalFormat(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0);
+}
+
+D3DFORMAT RenderbufferTextureCubeMap::getD3DFormat() const
+{
+    return mTextureCubeMap->getD3DFormat(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0);
+}
+
+GLsizei RenderbufferTextureCubeMap::getSamples() const
+{
+    return 0;
+}
+
+unsigned int RenderbufferTextureCubeMap::getSerial() const
+{
+    return mTextureCubeMap->getRenderTargetSerial(mTarget);
+}
+
+////// Renderbuffer Implementation //////
 
 Renderbuffer::Renderbuffer(GLuint id, RenderbufferInterface *instance) : RefCountObject(id)
 {
@@ -152,11 +228,15 @@ void Renderbuffer::release() const
     RefCountObject::release();
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *Renderbuffer::getRenderTarget()
 {
     return mInstance->getRenderTarget();
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *Renderbuffer::getDepthStencil()
 {
     return mInstance->getDepthStencil();
@@ -243,11 +323,15 @@ RenderbufferStorage::~RenderbufferStorage()
 {
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *RenderbufferStorage::getRenderTarget()
 {
     return NULL;
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *RenderbufferStorage::getDepthStencil()
 {
     return NULL;
@@ -356,6 +440,8 @@ Colorbuffer::~Colorbuffer()
     }
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *Colorbuffer::getRenderTarget()
 {
     if (mRenderTarget)
@@ -428,8 +514,15 @@ DepthStencilbuffer::~DepthStencilbuffer()
     }
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *DepthStencilbuffer::getDepthStencil()
 {
+    if (mDepthStencil)
+    {
+        mDepthStencil->AddRef();
+    }
+
     return mDepthStencil;
 }
 

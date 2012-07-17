@@ -69,6 +69,7 @@ private:
 
     Display *const mDisplay;
     IDirect3DSwapChain9 *mSwapChain;
+    IDirect3DSurface9 *mBackBuffer;
     IDirect3DSurface9 *mDepthStencil;
     IDirect3DSurface9* mRenderTarget;
     IDirect3DTexture9* mOffscreenTexture;
@@ -78,6 +79,7 @@ private:
     void subclassWindow();
     void unsubclassWindow();
     bool resetSwapChain(int backbufferWidth, int backbufferHeight);
+    bool swapRect(EGLint x, EGLint y, EGLint width, EGLint height);
     static DWORD convertInterval(EGLint interval);
 
     const HWND mWindow;            // Window that the surface is created for.

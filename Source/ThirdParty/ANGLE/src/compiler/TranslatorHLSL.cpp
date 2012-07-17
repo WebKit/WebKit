@@ -6,6 +6,7 @@
 
 #include "compiler/TranslatorHLSL.h"
 
+#include "compiler/InitializeParseContext.h"
 #include "compiler/OutputHLSL.h"
 
 TranslatorHLSL::TranslatorHLSL(ShShaderType type, ShShaderSpec spec)

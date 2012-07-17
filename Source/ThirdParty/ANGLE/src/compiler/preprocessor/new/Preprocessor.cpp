@@ -6,47 +6,108 @@
 
 #include "Preprocessor.h"
 
-#include <algorithm>
+#include <cassert>
+#include <sstream>
 
-#include "compiler/debug.h"
-#include "Context.h"
-#include "stl_utils.h"
+#include "Diagnostics.h"
+#include "DirectiveParser.h"
+#include "Macro.h"
+#include "MacroExpander.h"
+#include "Token.h"
+#include "Tokenizer.h"
 
 namespace pp
 {
 
-Preprocessor::Preprocessor() : mContext(NULL)
+struct PreprocessorImpl
 {
+    Diagnostics* diagnostics;
+    MacroSet macroSet;
+    Tokenizer tokenizer;
+    DirectiveParser directiveParser;
+    MacroExpander macroExpander;
+
+    PreprocessorImpl(Diagnostics* diag,
+                     DirectiveHandler* directiveHandler) :
+        diagnostics(diag),
+        tokenizer(diag),
+        directiveParser(&tokenizer, &macroSet, diag, directiveHandler),
+        macroExpander(&directiveParser, &macroSet, diag)
+    {
+    }
+};
+
+Preprocessor::Preprocessor(Diagnostics* diagnostics,
+                           DirectiveHandler* directiveHandler)
+{
+    mImpl = new PreprocessorImpl(diagnostics, directiveHandler);
 }
 
 Preprocessor::~Preprocessor()
 {
-    delete mContext;
+    delete mImpl;
 }
 
-bool Preprocessor::init()
+bool Preprocessor::init(int count,
+                        const char* const string[],
+                        const int length[])
 {
-    mContext = new Context;
-    return mContext->init();
+    static const int kGLSLVersion = 100;
+
+    // Add standard pre-defined macros.
+    predefineMacro("__LINE__", 0);
+    predefineMacro("__FILE__", 0);
+    predefineMacro("__VERSION__", kGLSLVersion);
+    predefineMacro("GL_ES", 1);
+
+    return mImpl->tokenizer.init(count, string, length);
 }
 
-bool Preprocessor::process(int count,
-                           const char* const string[],
-                           const int length[])
+void Preprocessor::predefineMacro(const char* name, int value)
 {
-    ASSERT((count >=0) && (string != NULL));
-    if ((count < 0) || (string == NULL))
-        return false;
+    std::stringstream stream;
+    stream << value;
 
-    reset();
+    Token token;
+    token.type = Token::CONST_INT;
+    token.value = stream.str();
 
-    return mContext->process(count, string, length, &mTokens);
+    Macro macro;
+    macro.predefined = true;
+    macro.type = Macro::kTypeObj;
+    macro.name = name;
+    macro.replacements.push_back(token);
+
+    mImpl->macroSet[name] = macro;
 }
 
-void Preprocessor::reset()
+void Preprocessor::lex(Token* token)
 {
-    std::for_each(mTokens.begin(), mTokens.end(), Delete());
-    mTokens.clear();
+    bool validToken = false;
+    while (!validToken)
+    {
+        mImpl->macroExpander.lex(token);
+        switch (token->type)
+        {
+          // We should not be returning internal preprocessing tokens.
+          // Convert preprocessing tokens to compiler tokens or report
+          // diagnostics.
+          case Token::PP_HASH:
+            assert(false);
+            break;
+          case Token::PP_NUMBER:
+            mImpl->diagnostics->report(Diagnostics::INVALID_NUMBER,
+                                       token->location, token->value);
+            break;
+          case Token::PP_OTHER:
+            mImpl->diagnostics->report(Diagnostics::INVALID_CHARACTER,
+                                       token->location, token->value);
+            break;
+          default:
+            validToken = true;
+            break;
+        }
+    }
 }
 
 }  // namespace pp

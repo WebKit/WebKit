@@ -1,3 +1,915 @@
+2012-07-17  Max Vujovic  <mvujovic@adobe.com>
+
+        Update ANGLE in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=89039
+
+        Reviewed by Dean Jackson and Mark Rowe.
+
+        Update ANGLE to r1170, with the following modifications:
+
+        (1) Use Bison 2.3 instead of Bison 2.4.2 to generate ExpressionParser.cpp and
+        glslang_tab.cpp. I had to modify ExpressionParser.y to make it compatible with Bison
+        2.3. The changes have been contributed back to ANGLE in r1224.
+
+        (2) Continue to recognize QNX as POSIX in ANGLE. This has been contributed back to ANGLE
+        in r1223.
+
+        (3) Rename ANGLE/src/compiler/preprocessor/new/Diagnostic.cpp to DiagnosticBase.cpp.
+        Rename ANGLE/src/compiler/preprocessor/new/DirectiveHandler.cpp to DirectiveHandlerBase.cpp.
+
+        With the introduction of ANGLE's new preprocessor, there were two files named Diagnostic.cpp
+        in ANGLE under different folders. This caused problems on the QT build when their object
+        files, both named Diagnostic.o, tried to go in the same folder. Renaming one of them to
+        DiagnosticBase.cpp avoids this conflict. The same situation occurred with
+        DirectiveHandler.cpp. I will work on contributing this change back to ANGLE for future
+        updates.
+
+        (4) Add the following lines to glslang.y and ExpressionParser.y:
+        #define YYENABLE_NLS 0
+        #define YYLTYPE_IS_TRIVIAL 1
+
+        Bison 2.3 doesn't first check that these macros are defined before reading their value,
+        which causes the QT build to fail.
+
+        We work around this issue in the same way in CSSGrammar.y.
+
+        I will work on contributing this change back to ANGLE.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * include/GLES2/gl2ext.h:
+        * include/GLSLANG/ShaderLang.h:
+        * src/build_angle.xcodeproj/project.pbxproj:
+        * src/common/angleutils.h:
+        * src/common/debug.cpp:
+        (gl):
+        (gl::output):
+        (gl::trace):
+        (gl::perfActive):
+        (gl::ScopedPerfEventHelper::ScopedPerfEventHelper):
+        (gl::ScopedPerfEventHelper::~ScopedPerfEventHelper):
+        * src/common/version.h:
+        * src/compiler/BuiltInFunctionEmulator.cpp:
+        (BuiltInFunctionEmulator::IdentifyFunction):
+        * src/compiler/BuiltInFunctionEmulator.h:
+        * src/compiler/Compiler.cpp:
+        (isWebGLBasedSpec):
+        (TCompiler::compile):
+        (TCompiler::rewriteCSSShader):
+        (TCompiler::enforceTimingRestrictions):
+        (TCompiler::enforceFragmentShaderTimingRestrictions):
+        (TCompiler::enforceVertexShaderTimingRestrictions):
+        * src/compiler/DetectDiscontinuity.cpp: Added.
+        (sh::DetectLoopDiscontinuity::traverse):
+        (sh):
+        (sh::DetectLoopDiscontinuity::visitBranch):
+        (sh::DetectLoopDiscontinuity::visitAggregate):
+        (sh::containsLoopDiscontinuity):
+        (sh::DetectGradientOperation::traverse):
+        (sh::DetectGradientOperation::visitUnary):
+        (sh::DetectGradientOperation::visitAggregate):
+        (sh::containsGradientOperation):
+        * src/compiler/DetectDiscontinuity.h: Added.
+        (sh):
+        (DetectLoopDiscontinuity):
+        (DetectGradientOperation):
+        * src/compiler/Diagnostics.cpp: Added.
+        (TDiagnostics::TDiagnostics):
+        (TDiagnostics::~TDiagnostics):
+        (TDiagnostics::writeInfo):
+        (TDiagnostics::writeDebug):
+        (TDiagnostics::print):
+        * src/compiler/Diagnostics.h: Added.
+        (TDiagnostics):
+        (TDiagnostics::infoSink):
+        * src/compiler/DirectiveHandler.cpp: Added.
+        (getBehavior):
+        (TDirectiveHandler::TDirectiveHandler):
+        (TDirectiveHandler::~TDirectiveHandler):
+        (TDirectiveHandler::handleError):
+        (TDirectiveHandler::handlePragma):
+        (TDirectiveHandler::handleExtension):
+        (TDirectiveHandler::handleVersion):
+        * src/compiler/DirectiveHandler.h: Added.
+        (TDirectiveHandler):
+        (TDirectiveHandler::pragma):
+        (TDirectiveHandler::extensionBehavior):
+        * src/compiler/ExtensionBehavior.h:
+        (getBehaviorString):
+        * src/compiler/Initialize.cpp:
+        (BuiltInConstants):
+        (TBuiltIns::initialize):
+        (IdentifyBuiltIns):
+        * src/compiler/InitializeParseContext.cpp: Added.
+        (InitializeParseContextIndex):
+        (FreeParseContextIndex):
+        (InitializeGlobalParseContext):
+        (FreeParseContext):
+        (GetGlobalParseContext):
+        * src/compiler/InitializeParseContext.h:
+        (TThreadParseContextRec):
+        * src/compiler/Intermediate.cpp:
+        (TIntermediate::addSelection):
+        * src/compiler/MapLongVariableNames.cpp:
+        * src/compiler/OutputHLSL.cpp:
+        (sh::str):
+        (sh::OutputHLSL::OutputHLSL):
+        (sh::OutputHLSL::~OutputHLSL):
+        (sh::OutputHLSL::output):
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitBinary):
+        (sh::OutputHLSL::visitUnary):
+        (sh::OutputHLSL::visitAggregate):
+        (sh::OutputHLSL::visitSelection):
+        (sh::OutputHLSL::visitLoop):
+        (sh::OutputHLSL::traverseStatements):
+        (sh):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        (sh::OutputHLSL::typeString):
+        (sh::OutputHLSL::addConstructor):
+        (sh::OutputHLSL::decorateField):
+        * src/compiler/OutputHLSL.h:
+        (sh):
+        (OutputHLSL):
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::parseVectorFields):
+        (TParseContext::parseMatrixFields):
+        (TParseContext::error):
+        (TParseContext::warning):
+        (TParseContext::trace):
+        (TParseContext::assignError):
+        (TParseContext::unaryOpError):
+        (TParseContext::binaryOpError):
+        (TParseContext::precisionErrorCheck):
+        (TParseContext::lValueErrorCheck):
+        (TParseContext::constErrorCheck):
+        (TParseContext::integerErrorCheck):
+        (TParseContext::globalErrorCheck):
+        (TParseContext::reservedErrorCheck):
+        (TParseContext::constructorErrorCheck):
+        (TParseContext::voidErrorCheck):
+        (TParseContext::boolErrorCheck):
+        (TParseContext::samplerErrorCheck):
+        (TParseContext::structQualifierErrorCheck):
+        (TParseContext::parameterSamplerErrorCheck):
+        (TParseContext::arraySizeErrorCheck):
+        (TParseContext::arrayQualifierErrorCheck):
+        (TParseContext::arrayTypeErrorCheck):
+        (TParseContext::arrayErrorCheck):
+        (TParseContext::arraySetMaxSize):
+        (TParseContext::nonInitConstErrorCheck):
+        (TParseContext::nonInitErrorCheck):
+        (TParseContext::paramErrorCheck):
+        (TParseContext::extensionErrorCheck):
+        (TParseContext::supportsExtension):
+        (TParseContext::handleExtensionDirective):
+        (TParseContext::handlePragmaDirective):
+        (TParseContext::findFunction):
+        (TParseContext::executeInitializer):
+        (TParseContext::constructBuiltIn):
+        (TParseContext::constructStruct):
+        (TParseContext::addConstVectorNode):
+        (TParseContext::addConstMatrixNode):
+        (TParseContext::addConstArrayNode):
+        (TParseContext::addConstStruct):
+        (TParseContext::enterStructDeclaration):
+        (TParseContext::structNestingErrorCheck):
+        (PaParseStrings):
+        * src/compiler/ParseHelper.h:
+        (TParseContext::TParseContext):
+        (TParseContext):
+        (TParseContext::infoSink):
+        (TParseContext::extensionBehavior):
+        (TParseContext::pragma):
+        * src/compiler/PoolAlloc.cpp:
+        (TAllocation::checkGuardBlock):
+        * src/compiler/Pragma.h: Added.
+        (TPragma):
+        (TPragma::TPragma):
+        * src/compiler/RenameFunction.h: Added.
+        (RenameFunction):
+        (RenameFunction::RenameFunction):
+        (RenameFunction::visitAggregate):
+        * src/compiler/ShHandle.h:
+        (TCompiler):
+        * src/compiler/ShaderLang.cpp:
+        (getVariableInfo):
+        * src/compiler/SymbolTable.cpp:
+        (TType::buildMangledName):
+        * src/compiler/TranslatorHLSL.cpp:
+        * src/compiler/UnfoldSelect.cpp: Removed.
+        * src/compiler/UnfoldSelect.h: Removed.
+        * src/compiler/UnfoldShortCircuit.cpp: Added.
+        (sh::UnfoldShortCircuit::UnfoldShortCircuit):
+        (sh):
+        (sh::UnfoldShortCircuit::traverse):
+        (sh::UnfoldShortCircuit::visitBinary):
+        (sh::UnfoldShortCircuit::visitSelection):
+        (sh::UnfoldShortCircuit::visitLoop):
+        (sh::UnfoldShortCircuit::getNextTemporaryIndex):
+        * src/compiler/UnfoldShortCircuit.h: Added.
+        (sh):
+        (UnfoldShortCircuit):
+        * src/compiler/ValidateLimitations.cpp:
+        * src/compiler/debug.cpp:
+        * src/compiler/depgraph: Added.
+        * src/compiler/depgraph/DependencyGraph.cpp: Added.
+        (TDependencyGraph::TDependencyGraph):
+        (TDependencyGraph::~TDependencyGraph):
+        (TDependencyGraph::createArgument):
+        (TDependencyGraph::createFunctionCall):
+        (TDependencyGraph::getOrCreateSymbol):
+        (TDependencyGraph::createSelection):
+        (TDependencyGraph::createLoop):
+        (TDependencyGraph::createLogicalOp):
+        (TGraphLogicalOp::getOpString):
+        * src/compiler/depgraph/DependencyGraph.h: Added.
+        (TGraphNode):
+        (TGraphNode::TGraphNode):
+        (TGraphNode::~TGraphNode):
+        (TGraphParentNode):
+        (TGraphParentNode::TGraphParentNode):
+        (TGraphParentNode::~TGraphParentNode):
+        (TGraphParentNode::addDependentNode):
+        (TGraphArgument):
+        (TGraphArgument::TGraphArgument):
+        (TGraphArgument::~TGraphArgument):
+        (TGraphArgument::getIntermFunctionCall):
+        (TGraphArgument::getArgumentNumber):
+        (TGraphFunctionCall):
+        (TGraphFunctionCall::TGraphFunctionCall):
+        (TGraphFunctionCall::~TGraphFunctionCall):
+        (TGraphFunctionCall::getIntermFunctionCall):
+        (TGraphSymbol):
+        (TGraphSymbol::TGraphSymbol):
+        (TGraphSymbol::~TGraphSymbol):
+        (TGraphSymbol::getIntermSymbol):
+        (TGraphSelection):
+        (TGraphSelection::TGraphSelection):
+        (TGraphSelection::~TGraphSelection):
+        (TGraphSelection::getIntermSelection):
+        (TGraphLoop):
+        (TGraphLoop::TGraphLoop):
+        (TGraphLoop::~TGraphLoop):
+        (TGraphLoop::getIntermLoop):
+        (TGraphLogicalOp):
+        (TGraphLogicalOp::TGraphLogicalOp):
+        (TGraphLogicalOp::~TGraphLogicalOp):
+        (TGraphLogicalOp::getIntermLogicalOp):
+        (TDependencyGraph):
+        (TDependencyGraph::begin):
+        (TDependencyGraph::end):
+        (TDependencyGraph::beginSamplerSymbols):
+        (TDependencyGraph::endSamplerSymbols):
+        (TDependencyGraph::beginUserDefinedFunctionCalls):
+        (TDependencyGraph::endUserDefinedFunctionCalls):
+        (TDependencyGraphTraverser):
+        (TDependencyGraphTraverser::TDependencyGraphTraverser):
+        (TDependencyGraphTraverser::visitSymbol):
+        (TDependencyGraphTraverser::visitArgument):
+        (TDependencyGraphTraverser::visitFunctionCall):
+        (TDependencyGraphTraverser::visitSelection):
+        (TDependencyGraphTraverser::visitLoop):
+        (TDependencyGraphTraverser::visitLogicalOp):
+        (TDependencyGraphTraverser::getDepth):
+        (TDependencyGraphTraverser::incrementDepth):
+        (TDependencyGraphTraverser::decrementDepth):
+        (TDependencyGraphTraverser::clearVisited):
+        (TDependencyGraphTraverser::markVisited):
+        (TDependencyGraphTraverser::isVisited):
+        * src/compiler/depgraph/DependencyGraphBuilder.cpp: Added.
+        (TDependencyGraphBuilder::build):
+        (TDependencyGraphBuilder::visitAggregate):
+        (TDependencyGraphBuilder::visitFunctionDefinition):
+        (TDependencyGraphBuilder::visitFunctionCall):
+        (TDependencyGraphBuilder::visitAggregateChildren):
+        (TDependencyGraphBuilder::visitSymbol):
+        (TDependencyGraphBuilder::visitBinary):
+        (TDependencyGraphBuilder::visitAssignment):
+        (TDependencyGraphBuilder::visitLogicalOp):
+        (TDependencyGraphBuilder::visitBinaryChildren):
+        (TDependencyGraphBuilder::visitSelection):
+        (TDependencyGraphBuilder::visitLoop):
+        (TDependencyGraphBuilder::connectMultipleNodesToSingleNode):
+        * src/compiler/depgraph/DependencyGraphBuilder.h: Added.
+        (TDependencyGraphBuilder):
+        (TNodeSetStack):
+        (TDependencyGraphBuilder::TNodeSetStack::TNodeSetStack):
+        (TDependencyGraphBuilder::TNodeSetStack::~TNodeSetStack):
+        (TDependencyGraphBuilder::TNodeSetStack::getTopSet):
+        (TDependencyGraphBuilder::TNodeSetStack::pushSet):
+        (TDependencyGraphBuilder::TNodeSetStack::popSet):
+        (TDependencyGraphBuilder::TNodeSetStack::popSetIntoNext):
+        (TDependencyGraphBuilder::TNodeSetStack::insertIntoTopSet):
+        (TDependencyGraphBuilder::TNodeSetStack::clear):
+        (TNodeSetMaintainer):
+        (TDependencyGraphBuilder::TNodeSetMaintainer::TNodeSetMaintainer):
+        (TDependencyGraphBuilder::TNodeSetMaintainer::~TNodeSetMaintainer):
+        (TNodeSetPropagatingMaintainer):
+        (TDependencyGraphBuilder::TNodeSetPropagatingMaintainer::TNodeSetPropagatingMaintainer):
+        (TDependencyGraphBuilder::TNodeSetPropagatingMaintainer::~TNodeSetPropagatingMaintainer):
+        (TLeftmostSymbolMaintainer):
+        (TDependencyGraphBuilder::TLeftmostSymbolMaintainer::TLeftmostSymbolMaintainer):
+        (TDependencyGraphBuilder::TLeftmostSymbolMaintainer::~TLeftmostSymbolMaintainer):
+        (TDependencyGraphBuilder::TDependencyGraphBuilder):
+        (TDependencyGraphBuilder::build):
+        * src/compiler/depgraph/DependencyGraphOutput.cpp: Added.
+        (TDependencyGraphOutput::outputIndentation):
+        (TDependencyGraphOutput::visitArgument):
+        (TDependencyGraphOutput::visitFunctionCall):
+        (TDependencyGraphOutput::visitSymbol):
+        (TDependencyGraphOutput::visitSelection):
+        (TDependencyGraphOutput::visitLoop):
+        (TDependencyGraphOutput::visitLogicalOp):
+        (TDependencyGraphOutput::outputAllSpanningTrees):
+        * src/compiler/depgraph/DependencyGraphOutput.h: Added.
+        (TDependencyGraphOutput):
+        (TDependencyGraphOutput::TDependencyGraphOutput):
+        * src/compiler/depgraph/DependencyGraphTraverse.cpp: Added.
+        (TGraphNode::traverse):
+        (TGraphParentNode::traverse):
+        (TGraphArgument::traverse):
+        (TGraphFunctionCall::traverse):
+        (TGraphSymbol::traverse):
+        (TGraphSelection::traverse):
+        (TGraphLoop::traverse):
+        (TGraphLogicalOp::traverse):
+        * src/compiler/glslang.h:
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp:
+        (yy_buffer_state):
+        (yyguts_t):
+        (yy_get_previous_state):
+        (yy_try_NUL_trans):
+        (input):
+        (yyensure_buffer_stack):
+        (yy_scan_bytes):
+        (yyget_leng):
+        (string_input):
+        (yyerror):
+        (glslang_finalize):
+        (glslang_scan):
+        * src/compiler/glslang_tab.cpp:
+        * src/compiler/intermediate.h:
+        (TIntermAggregate::TIntermAggregate):
+        (TIntermAggregate::~TIntermAggregate):
+        (TIntermAggregate::isUserDefined):
+        (TIntermAggregate):
+        (TIntermTraverser::~TIntermTraverser):
+        * src/compiler/osinclude.h:
+        * src/compiler/preprocessor/atom.c:
+        (FindHashLoc):
+        (PrintAtomTable):
+        * src/compiler/preprocessor/cpp.c:
+        (CPPpragma):
+        (readCPPline):
+        (PredefineIntMacro):
+        (MacroExpand):
+        * src/compiler/preprocessor/cpp.h:
+        * src/compiler/preprocessor/memory.h:
+        * src/compiler/preprocessor/new: Added properties allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs, allow-tabs and allow-tabs.
+        * src/compiler/preprocessor/new/Context.cpp: Removed.
+        * src/compiler/preprocessor/new/Context.h: Removed.
+        * src/compiler/preprocessor/new/Diagnostics.h: Added.
+        (pp):
+        (Diagnostics):
+        * src/compiler/preprocessor/new/DiagnosticsBase.cpp: Added.
+        (pp):
+        (pp::Diagnostics::~Diagnostics):
+        (pp::Diagnostics::report):
+        (pp::Diagnostics::severity):
+        * src/compiler/preprocessor/new/DirectiveHandler.h: Added.
+        (pp):
+        (DirectiveHandler):
+        * src/compiler/preprocessor/new/DirectiveHandlerBase.cpp: Added.
+        (pp):
+        (pp::DirectiveHandler::~DirectiveHandler):
+        * src/compiler/preprocessor/new/DirectiveParser.cpp: Added.
+        (getDirective):
+        (isConditionalDirective):
+        (isEOD):
+        (skipUntilEOD):
+        (isMacroNameReserved):
+        (isMacroPredefined):
+        (pp):
+        (DefinedParser):
+        (pp::DefinedParser::DefinedParser):
+        (pp::DefinedParser::lex):
+        (pp::DirectiveParser::DirectiveParser):
+        (pp::DirectiveParser::lex):
+        (pp::DirectiveParser::parseDirective):
+        (pp::DirectiveParser::parseDefine):
+        (pp::DirectiveParser::parseUndef):
+        (pp::DirectiveParser::parseIf):
+        (pp::DirectiveParser::parseIfdef):
+        (pp::DirectiveParser::parseIfndef):
+        (pp::DirectiveParser::parseElse):
+        (pp::DirectiveParser::parseElif):
+        (pp::DirectiveParser::parseEndif):
+        (pp::DirectiveParser::parseError):
+        (pp::DirectiveParser::parsePragma):
+        (pp::DirectiveParser::parseExtension):
+        (pp::DirectiveParser::parseVersion):
+        (pp::DirectiveParser::parseLine):
+        (pp::DirectiveParser::skipping):
+        (pp::DirectiveParser::parseConditionalIf):
+        (pp::DirectiveParser::parseExpressionIf):
+        (pp::DirectiveParser::parseExpressionIfdef):
+        * src/compiler/preprocessor/new/DirectiveParser.h: Added.
+        (pp):
+        (DirectiveParser):
+        (ConditionalBlock):
+        (pp::DirectiveParser::ConditionalBlock::ConditionalBlock):
+        * src/compiler/preprocessor/new/ExpressionParser.cpp: Added.
+        (yysyntax_error):
+        (yylex):
+        (yyerror):
+        (pp):
+        (pp::ExpressionParser::ExpressionParser):
+        (pp::ExpressionParser::parse):
+        * src/compiler/preprocessor/new/ExpressionParser.h: Added.
+        (pp):
+        (ExpressionParser):
+        * src/compiler/preprocessor/new/ExpressionParser.y: Added.
+        * src/compiler/preprocessor/new/Input.cpp: Added property allow-tabs.
+        (pp::Input::Input):
+        (pp::Input::read):
+        * src/compiler/preprocessor/new/Input.h: Added property allow-tabs.
+        (pp):
+        (Input):
+        (pp::Input::count):
+        (pp::Input::string):
+        (pp::Input::length):
+        (Location):
+        (pp::Input::Location::Location):
+        (pp::Input::readLoc):
+        * src/compiler/preprocessor/new/Lexer.cpp: Added.
+        (pp):
+        (pp::Lexer::~Lexer):
+        * src/compiler/preprocessor/new/Lexer.h: Added.
+        (pp):
+        (Lexer):
+        * src/compiler/preprocessor/new/Macro.cpp: Added property allow-tabs.
+        (pp::Macro::equals):
+        * src/compiler/preprocessor/new/Macro.h: Added property allow-tabs.
+        (pp):
+        (pp::Macro::Macro):
+        (Macro):
+        * src/compiler/preprocessor/new/MacroExpander.cpp: Added.
+        (pp):
+        (TokenLexer):
+        (pp::TokenLexer::TokenLexer):
+        (pp::TokenLexer::lex):
+        (pp::MacroExpander::MacroExpander):
+        (pp::MacroExpander::~MacroExpander):
+        (pp::MacroExpander::lex):
+        (pp::MacroExpander::getToken):
+        (pp::MacroExpander::ungetToken):
+        (pp::MacroExpander::isNextTokenLeftParen):
+        (pp::MacroExpander::pushMacro):
+        (pp::MacroExpander::popMacro):
+        (pp::MacroExpander::expandMacro):
+        (pp::MacroExpander::collectMacroArgs):
+        (pp::MacroExpander::replaceMacroParams):
+        * src/compiler/preprocessor/new/MacroExpander.h: Added.
+        (pp):
+        (MacroExpander):
+        (MacroContext):
+        (pp::MacroExpander::MacroContext::MacroContext):
+        (pp::MacroExpander::MacroContext::empty):
+        (pp::MacroExpander::MacroContext::get):
+        (pp::MacroExpander::MacroContext::unget):
+        * src/compiler/preprocessor/new/Preprocessor.cpp: Added property allow-tabs.
+        (PreprocessorImpl):
+        (pp::PreprocessorImpl::PreprocessorImpl):
+        (pp):
+        (pp::Preprocessor::Preprocessor):
+        (pp::Preprocessor::~Preprocessor):
+        (pp::Preprocessor::init):
+        (pp::Preprocessor::predefineMacro):
+        (pp::Preprocessor::lex):
+        * src/compiler/preprocessor/new/Preprocessor.h: Added property allow-tabs.
+        (pp):
+        (Preprocessor):
+        * src/compiler/preprocessor/new/SourceLocation.h: Added.
+        (pp):
+        (pp::SourceLocation::SourceLocation):
+        (SourceLocation):
+        (pp::SourceLocation::equals):
+        (pp::operator==):
+        (pp::operator!=):
+        * src/compiler/preprocessor/new/Token.cpp: Added property allow-tabs.
+        (pp::Token::reset):
+        (pp::Token::equals):
+        (pp::Token::setAtStartOfLine):
+        (pp::Token::setHasLeadingSpace):
+        (pp):
+        (pp::Token::setExpansionDisabled):
+        (pp::operator<<):
+        * src/compiler/preprocessor/new/Token.h: Added property allow-tabs.
+        (pp::Token::Token):
+        (Token):
+        (pp::Token::atStartOfLine):
+        (pp::Token::hasLeadingSpace):
+        (pp::Token::expansionDisabled):
+        (pp::operator==):
+        (pp):
+        (pp::operator!=):
+        * src/compiler/preprocessor/new/Tokenizer.cpp: Added.
+        (yy_buffer_state):
+        (yy_trans_info):
+        (yyguts_t):
+        (yy_get_previous_state):
+        (yy_try_NUL_trans):
+        (input):
+        (pprestart):
+        (pp_switch_to_buffer):
+        (pp_load_buffer_state):
+        (pp_create_buffer):
+        (pp_delete_buffer):
+        (pp_init_buffer):
+        (pp_flush_buffer):
+        (pppush_buffer_state):
+        (pppop_buffer_state):
+        (ppensure_buffer_stack):
+        (pp_scan_buffer):
+        (pp_scan_string):
+        (pp_scan_bytes):
+        (yy_fatal_error):
+        (ppget_extra):
+        (ppget_lineno):
+        (ppget_column):
+        (ppget_in):
+        (ppget_out):
+        (ppget_leng):
+        (ppget_text):
+        (ppset_extra):
+        (ppset_lineno):
+        (ppset_column):
+        (ppset_in):
+        (ppset_out):
+        (ppget_debug):
+        (ppset_debug):
+        (ppget_lval):
+        (ppset_lval):
+        (ppget_lloc):
+        (ppset_lloc):
+        (pplex_init):
+        (pplex_init_extra):
+        (yy_init_globals):
+        (pplex_destroy):
+        (yy_flex_strncpy):
+        (yy_flex_strlen):
+        (ppalloc):
+        (pprealloc):
+        (ppfree):
+        (pp):
+        (pp::Tokenizer::Tokenizer):
+        (pp::Tokenizer::~Tokenizer):
+        (pp::Tokenizer::init):
+        (pp::Tokenizer::setFileNumber):
+        (pp::Tokenizer::setLineNumber):
+        (pp::Tokenizer::lex):
+        (pp::Tokenizer::initScanner):
+        (pp::Tokenizer::destroyScanner):
+        * src/compiler/preprocessor/new/Tokenizer.h: Added.
+        (pp):
+        (Tokenizer):
+        (Context):
+        * src/compiler/preprocessor/new/Tokenizer.l: Added.
+        * src/compiler/preprocessor/new/generate_parser.sh: Added property allow-tabs.
+        * src/compiler/preprocessor/new/pp.l: Removed.
+        * src/compiler/preprocessor/new/pp.y: Removed.
+        * src/compiler/preprocessor/new/pp_lex.cpp: Removed.
+        * src/compiler/preprocessor/new/pp_tab.cpp: Removed.
+        * src/compiler/preprocessor/new/pp_tab.h: Removed.
+        * src/compiler/preprocessor/new/pp_utils.h: Added.
+        * src/compiler/preprocessor/new/preprocessor.vcproj: Added.
+        * src/compiler/preprocessor/new/stl_utils.h: Removed.
+        * src/compiler/preprocessor/new/token_type.h: Removed.
+        * src/compiler/preprocessor/preprocess.h:
+        * src/compiler/preprocessor/scanner.c:
+        (InitScannerInput):
+        * src/compiler/preprocessor/scanner.h:
+        * src/compiler/preprocessor/symbols.h:
+        * src/compiler/preprocessor/tokens.c:
+        (ReadToken):
+        (DumpTokenStream):
+        * src/compiler/preprocessor/tokens.h:
+        * src/compiler/timing: Added.
+        * src/compiler/timing/RestrictFragmentShaderTiming.cpp: Added.
+        (RestrictFragmentShaderTiming::RestrictFragmentShaderTiming):
+        (RestrictFragmentShaderTiming::enforceRestrictions):
+        (RestrictFragmentShaderTiming::validateUserDefinedFunctionCallUsage):
+        (RestrictFragmentShaderTiming::beginError):
+        (RestrictFragmentShaderTiming::isSamplingOp):
+        (RestrictFragmentShaderTiming::visitArgument):
+        (RestrictFragmentShaderTiming::visitSelection):
+        (RestrictFragmentShaderTiming::visitLoop):
+        (RestrictFragmentShaderTiming::visitLogicalOp):
+        * src/compiler/timing/RestrictFragmentShaderTiming.h: Added.
+        (RestrictFragmentShaderTiming):
+        (RestrictFragmentShaderTiming::numErrors):
+        * src/compiler/timing/RestrictVertexShaderTiming.cpp: Added.
+        (RestrictVertexShaderTiming::visitSymbol):
+        * src/compiler/timing/RestrictVertexShaderTiming.h: Added.
+        (RestrictVertexShaderTiming):
+        (RestrictVertexShaderTiming::RestrictVertexShaderTiming):
+        (RestrictVertexShaderTiming::enforceRestrictions):
+        (RestrictVertexShaderTiming::numErrors):
+        * src/libEGL/Display.cpp:
+        (egl):
+        (egl::Display::getDepthTextureSupport):
+        (egl::Display::getTexturePool):
+        * src/libEGL/Display.h:
+        (Display):
+        * src/libEGL/Surface.cpp:
+        (egl::Surface::Surface):
+        (egl::Surface::release):
+        (egl::Surface::resetSwapChain):
+        (egl::Surface::swapRect):
+        (egl):
+        (egl::Surface::swap):
+        (egl::Surface::postSubBuffer):
+        * src/libEGL/Surface.h:
+        (Surface):
+        * src/libEGL/libEGL.cpp:
+        * src/libGLESv2/Context.cpp:
+        (gl::Context::makeCurrent):
+        (gl::Context::markDxUniformsDirty):
+        (gl):
+        (gl::Context::getIntegerv):
+        (gl::Context::getQueryParameterInfo):
+        (gl::Context::applyRenderTarget):
+        (gl::Context::applyState):
+        (gl::Context::applyShaders):
+        (gl::Context::applyTextures):
+        (gl::Context::readPixels):
+        (gl::Context::clear):
+        (gl::Context::drawArrays):
+        (gl::Context::drawElements):
+        (gl::Context::supportsDepthTextures):
+        (gl::Context::initExtensionString):
+        (gl::Context::blitFramebuffer):
+        (gl::VertexDeclarationCache::applyDeclaration):
+        * src/libGLESv2/Context.h:
+        (Context):
+        * src/libGLESv2/Framebuffer.cpp:
+        (gl::Framebuffer::~Framebuffer):
+        (gl):
+        (gl::Framebuffer::getNullColorbuffer):
+        (gl::Framebuffer::completeness):
+        * src/libGLESv2/Framebuffer.h:
+        (Framebuffer):
+        * src/libGLESv2/Program.cpp:
+        (gl):
+        (gl::AttributeBindings::AttributeBindings):
+        (gl::AttributeBindings::~AttributeBindings):
+        (gl::InfoLog::InfoLog):
+        (gl::InfoLog::~InfoLog):
+        (gl::InfoLog::getLength):
+        (gl::InfoLog::getLog):
+        (gl::InfoLog::appendSanitized):
+        (gl::InfoLog::append):
+        (gl::InfoLog::reset):
+        (gl::Program::Program):
+        (gl::Program::~Program):
+        (gl::Program::attachShader):
+        (gl::Program::detachShader):
+        (gl::Program::getAttachedShadersCount):
+        (gl::AttributeBindings::bindAttributeLocation):
+        (gl::Program::bindAttributeLocation):
+        (gl::Program::link):
+        (gl::AttributeBindings::getAttributeBinding):
+        (gl::Program::unlink):
+        (gl::Program::getProgramBinary):
+        (gl::Program::setProgramBinary):
+        (gl::Program::getInfoLogLength):
+        (gl::Program::getInfoLog):
+        (gl::Program::getActiveAttribute):
+        (gl::Program::getActiveAttributeCount):
+        (gl::Program::getActiveAttributeMaxLength):
+        (gl::Program::getActiveUniform):
+        (gl::Program::getActiveUniformCount):
+        (gl::Program::getActiveUniformMaxLength):
+        (gl::Program::validate):
+        (gl::Program::isValidated):
+        * src/libGLESv2/Program.h:
+        (gl):
+        (AttributeBindings):
+        (InfoLog):
+        (Program):
+        * src/libGLESv2/ProgramBinary.cpp: Added.
+        (gl::str):
+        (gl):
+        (gl::Uniform::Uniform):
+        (gl::Uniform::~Uniform):
+        (gl::Uniform::isArray):
+        (gl::UniformLocation::UniformLocation):
+        (gl::ProgramBinary::ProgramBinary):
+        (gl::ProgramBinary::~ProgramBinary):
+        (gl::ProgramBinary::getPixelShader):
+        (gl::ProgramBinary::getVertexShader):
+        (gl::ProgramBinary::getAttributeLocation):
+        (gl::ProgramBinary::getSemanticIndex):
+        (gl::ProgramBinary::getUsedSamplerRange):
+        (gl::ProgramBinary::getSamplerMapping):
+        (gl::ProgramBinary::getSamplerTextureType):
+        (gl::ProgramBinary::getUniformLocation):
+        (gl::ProgramBinary::setUniform1fv):
+        (gl::ProgramBinary::setUniform2fv):
+        (gl::ProgramBinary::setUniform3fv):
+        (gl::ProgramBinary::setUniform4fv):
+        (gl::transposeMatrix):
+        (gl::ProgramBinary::setUniformMatrix2fv):
+        (gl::ProgramBinary::setUniformMatrix3fv):
+        (gl::ProgramBinary::setUniformMatrix4fv):
+        (gl::ProgramBinary::setUniform1iv):
+        (gl::ProgramBinary::setUniform2iv):
+        (gl::ProgramBinary::setUniform3iv):
+        (gl::ProgramBinary::setUniform4iv):
+        (gl::ProgramBinary::getUniformfv):
+        (gl::ProgramBinary::getUniformiv):
+        (gl::ProgramBinary::dirtyAllUniforms):
+        (gl::ProgramBinary::applyUniforms):
+        (gl::ProgramBinary::compileToBinary):
+        (gl::ProgramBinary::packVaryings):
+        (gl::ProgramBinary::linkVaryings):
+        (gl::ProgramBinary::link):
+        (gl::ProgramBinary::linkAttributes):
+        (gl::ProgramBinary::linkUniforms):
+        (gl::ProgramBinary::defineUniform):
+        (gl::ProgramBinary::createUniform):
+        (gl::ProgramBinary::decorateAttribute):
+        (gl::ProgramBinary::undecorateUniform):
+        (gl::ProgramBinary::applyUniformnbv):
+        (gl::ProgramBinary::applyUniformnfv):
+        (gl::ProgramBinary::applyUniform1iv):
+        (gl::ProgramBinary::applyUniform2iv):
+        (gl::ProgramBinary::applyUniform3iv):
+        (gl::ProgramBinary::applyUniform4iv):
+        (gl::ProgramBinary::applyUniformniv):
+        (gl::ProgramBinary::isValidated):
+        (gl::ProgramBinary::getActiveAttribute):
+        (gl::ProgramBinary::getActiveAttributeCount):
+        (gl::ProgramBinary::getActiveAttributeMaxLength):
+        (gl::ProgramBinary::getActiveUniform):
+        (gl::ProgramBinary::getActiveUniformCount):
+        (gl::ProgramBinary::getActiveUniformMaxLength):
+        (gl::ProgramBinary::validate):
+        (gl::ProgramBinary::validateSamplers):
+        (gl::ProgramBinary::getDxDepthRangeLocation):
+        (gl::ProgramBinary::getDxDepthLocation):
+        (gl::ProgramBinary::getDxCoordLocation):
+        (gl::ProgramBinary::getDxHalfPixelSizeLocation):
+        (gl::ProgramBinary::getDxFrontCCWLocation):
+        (gl::ProgramBinary::getDxPointsOrLinesLocation):
+        * src/libGLESv2/ProgramBinary.h: Added.
+        (gl):
+        (Uniform):
+        (gl::Uniform::RegisterInfo::RegisterInfo):
+        (RegisterInfo):
+        (gl::Uniform::RegisterInfo::set):
+        (UniformLocation):
+        (ProgramBinary):
+        (Sampler):
+        * src/libGLESv2/Renderbuffer.cpp:
+        (gl):
+        (gl::RenderbufferTexture2D::RenderbufferTexture2D):
+        (gl::RenderbufferTexture2D::~RenderbufferTexture2D):
+        (gl::RenderbufferTexture2D::addProxyRef):
+        (gl::RenderbufferTexture2D::releaseProxy):
+        (gl::RenderbufferTexture2D::getRenderTarget):
+        (gl::RenderbufferTexture2D::getDepthStencil):
+        (gl::RenderbufferTexture2D::getWidth):
+        (gl::RenderbufferTexture2D::getHeight):
+        (gl::RenderbufferTexture2D::getInternalFormat):
+        (gl::RenderbufferTexture2D::getD3DFormat):
+        (gl::RenderbufferTexture2D::getSamples):
+        (gl::RenderbufferTexture2D::getSerial):
+        (gl::RenderbufferTextureCubeMap::RenderbufferTextureCubeMap):
+        (gl::RenderbufferTextureCubeMap::~RenderbufferTextureCubeMap):
+        (gl::RenderbufferTextureCubeMap::addProxyRef):
+        (gl::RenderbufferTextureCubeMap::releaseProxy):
+        (gl::RenderbufferTextureCubeMap::getRenderTarget):
+        (gl::RenderbufferTextureCubeMap::getDepthStencil):
+        (gl::RenderbufferTextureCubeMap::getWidth):
+        (gl::RenderbufferTextureCubeMap::getHeight):
+        (gl::RenderbufferTextureCubeMap::getInternalFormat):
+        (gl::RenderbufferTextureCubeMap::getD3DFormat):
+        (gl::RenderbufferTextureCubeMap::getSamples):
+        (gl::RenderbufferTextureCubeMap::getSerial):
+        (gl::DepthStencilbuffer::getDepthStencil):
+        * src/libGLESv2/Renderbuffer.h:
+        (gl):
+        (RenderbufferTexture2D):
+        (RenderbufferTextureCubeMap):
+        * src/libGLESv2/Shader.cpp:
+        (gl::Shader::getInfoLog):
+        (gl::Shader::getSourceImpl):
+        * src/libGLESv2/Shader.h:
+        (Shader):
+        (VertexShader):
+        * src/libGLESv2/Texture.cpp:
+        (gl::ConvertTextureFormatType):
+        (gl::IsTextureFormatRenderable):
+        (gl::GetTextureUsage):
+        (gl):
+        (gl::Image::createSurface):
+        (gl::Image::updateSurface):
+        (gl::Image::loadData):
+        (gl::Image::loadAlphaData):
+        (gl::Image::loadAlphaDataSSE2):
+        (gl::Image::loadAlphaFloatData):
+        (gl::Image::loadAlphaHalfFloatData):
+        (gl::Image::loadLuminanceData):
+        (gl::Image::loadLuminanceFloatData):
+        (gl::Image::loadLuminanceHalfFloatData):
+        (gl::Image::loadLuminanceAlphaData):
+        (gl::Image::loadLuminanceAlphaFloatData):
+        (gl::Image::loadLuminanceAlphaHalfFloatData):
+        (gl::Image::loadRGBUByteData):
+        (gl::Image::loadRGB565Data):
+        (gl::Image::loadRGBFloatData):
+        (gl::Image::loadRGBHalfFloatData):
+        (gl::Image::loadRGBAUByteDataSSE2):
+        (gl::Image::loadRGBAUByteData):
+        (gl::Image::loadRGBA4444Data):
+        (gl::Image::loadRGBA5551Data):
+        (gl::Image::loadRGBAFloatData):
+        (gl::Image::loadRGBAHalfFloatData):
+        (gl::Image::loadBGRAData):
+        (gl::Image::loadCompressedData):
+        (gl::Image::copy):
+        (gl::TextureStorage::TextureStorage):
+        (gl::TextureStorage::isRenderTarget):
+        (gl::TextureStorage::getUsage):
+        (gl::Texture::setImage):
+        (gl::Texture::setCompressedImage):
+        (gl::Texture::subImage):
+        (gl::Texture::subImageCompressed):
+        (gl::TextureStorage2D::TextureStorage2D):
+        (gl::Texture2D::getInternalFormat):
+        (gl::Texture2D::getD3DFormat):
+        (gl::Texture2D::copyImage):
+        (gl::Texture2D::copySubImage):
+        (gl::Texture2D::storage):
+        (gl::Texture2D::isSamplerComplete):
+        (gl::Texture2D::isCompressed):
+        (gl::Texture2D::isDepth):
+        (gl::Texture2D::createTexture):
+        (gl::Texture2D::convertToRenderTarget):
+        (gl::Texture2D::getRenderbuffer):
+        (gl::Texture2D::getRenderTarget):
+        (gl::Texture2D::getDepthStencil):
+        (gl::TextureStorageCubeMap::TextureStorageCubeMap):
+        (gl::TextureCubeMap::getWidth):
+        (gl::TextureCubeMap::getHeight):
+        (gl::TextureCubeMap::getInternalFormat):
+        (gl::TextureCubeMap::getD3DFormat):
+        (gl::TextureCubeMap::isSamplerComplete):
+        (gl::TextureCubeMap::isCompressed):
+        (gl::TextureCubeMap::createTexture):
+        (gl::TextureCubeMap::convertToRenderTarget):
+        (gl::TextureCubeMap::copyImage):
+        (gl::TextureCubeMap::copySubImage):
+        (gl::TextureCubeMap::storage):
+        (gl::TextureCubeMap::getRenderbuffer):
+        * src/libGLESv2/Texture.h:
+        (Image):
+        (TextureStorage):
+        (Texture):
+        (TextureStorage2D):
+        (Texture2D):
+        (TextureStorageCubeMap):
+        (TextureCubeMap):
+        * src/libGLESv2/VertexDataManager.cpp:
+        (gl::VertexDataManager::prepareVertexData):
+        * src/libGLESv2/libGLESv2.cpp:
+        (checkTextureFormatType):
+        (validateSubImageParams2D):
+        (validateSubImageParamsCube):
+        * src/libGLESv2/libGLESv2.vcproj:
+        * src/libGLESv2/mathutil.h:
+        (gl):
+        * src/libGLESv2/utilities.cpp:
+        (gl::IsDepthTexture):
+        (gl):
+        (gl::ComputePixelSize):
+        (gl::ExtractFormat):
+        (gl::ExtractType):
+        (es2dx::ConvertCubeFace):
+        (es2dx::ConvertRenderbufferFormat):
+        (dx2es::GetStencilSize):
+        (dx2es::GetDepthSize):
+        (dx2es::IsDepthTextureFormat):
+        (dx2es):
+        (dx2es::IsStencilTextureFormat):
+        (dx2es::ConvertDepthStencilFormat):
+        * src/libGLESv2/utilities.h:
+        (gl):
+        (dx2es):
+
 2012-07-11  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/91024> Build against the latest SDK when targeting older OS X versions.

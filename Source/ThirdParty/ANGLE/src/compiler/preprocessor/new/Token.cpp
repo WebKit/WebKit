@@ -6,50 +6,56 @@
 
 #include "Token.h"
 
-#include "token_type.h"
-
-static const int kLocationLineSize = 16;  // in bits.
-static const int kLocationLineMask = (1 << kLocationLineSize) - 1;
-
 namespace pp
 {
 
-Token::Location Token::encodeLocation(int line, int file)
+void Token::reset()
 {
-    return (file << kLocationLineSize) | (line & kLocationLineMask);
+    type = 0;
+    flags = 0;
+    location = SourceLocation();
+    value.clear();
 }
 
-void Token::decodeLocation(Location loc, int* line, int* file)
+bool Token::equals(const Token& other) const
 {
-    if (file) *file = loc >> kLocationLineSize;
-    if (line) *line = loc & kLocationLineMask;
+    return (type == other.type) &&
+           (flags == other.flags) &&
+           (location == other.location) &&
+           (value == other.value);
 }
 
-Token::Token(Location location, int type, std::string* value)
-    : mLocation(location),
-      mType(type),
-      mValue(value)
+void Token::setAtStartOfLine(bool start)
 {
+    if (start)
+        flags |= AT_START_OF_LINE;
+    else
+        flags &= ~AT_START_OF_LINE;
 }
 
-Token::~Token() {
-    delete mValue;
+void Token::setHasLeadingSpace(bool space)
+{
+    if (space)
+        flags |= HAS_LEADING_SPACE;
+    else
+        flags &= ~HAS_LEADING_SPACE;
+}
+
+void Token::setExpansionDisabled(bool disable)
+{
+    if (disable)
+        flags |= EXPANSION_DISABLED;
+    else
+        flags &= ~EXPANSION_DISABLED;
 }
 
 std::ostream& operator<<(std::ostream& out, const Token& token)
 {
-    switch (token.type())
-    {
-      case INT_CONSTANT:
-      case FLOAT_CONSTANT:
-      case IDENTIFIER:
-        out << *(token.value());
-        break;
-      default:
-        out << static_cast<char>(token.type());
-        break;
-    }
+    if (token.hasLeadingSpace())
+        out << " ";
+
+    out << token.value;
     return out;
 }
-}  // namespace pp
 
+}  // namespace pp

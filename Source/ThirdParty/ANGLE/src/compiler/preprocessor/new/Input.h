@@ -7,66 +7,40 @@
 #ifndef COMPILER_PREPROCESSOR_INPUT_H_
 #define COMPILER_PREPROCESSOR_INPUT_H_
 
+#include <vector>
+
 namespace pp
 {
 
-// Reads the given set of strings into input buffer.
-// Strips comments.
+// Holds and reads input for Lexer.
 class Input
 {
   public:
+    Input();
     Input(int count, const char* const string[], const int length[]);
 
-    enum Error
+    int count() const { return mCount; }
+    const char* string(int index) const { return mString[index]; }
+    int length(int index) const { return mLength[index]; }
+
+    int read(char* buf, int maxSize);
+
+    struct Location
     {
-        kErrorNone,
-        kErrorUnexpectedEOF
+        int sIndex;  // String index;
+        int cIndex;  // Char index.
+
+        Location() : sIndex(0), cIndex(0) { }
     };
-    Error error() const { return mError; }
+    const Location& readLoc() const { return mReadLoc; }
 
-    // Returns the index of string currently being scanned.
-    int stringIndex() const { return mIndex; }
-    // Returns true if EOF has reached.
-    bool eof() const;
-
-    // Reads up to bufSize characters into buf.
-    // Returns the number of characters read.
-    // It replaces each comment by a whitespace. It reads only one string
-    // at a time so that the lexer has opportunity to update the string number
-    // for meaningful diagnostic messages.
-    int read(char* buf, int bufSize);
-
-private:
-    enum State
-    {
-        kStateInitial,
-        kStateLineComment,
-        kStateBlockComment
-    };
-
-    int getChar();
-    int peekChar();
-    // Switches input buffer to the next non-empty string.
-    // This is called when the current string is fully read.
-    void switchToNextString();
-    // Returns true if the given string is empty.
-    bool isStringEmpty(int index);
-    // Return the length of the given string.
-    // Returns a negative value for null-terminated strings.
-    int stringLength(int index);
-
+  private:
     // Input.
     int mCount;
     const char* const* mString;
-    const int* mLength;
+    std::vector<int> mLength;
 
-    // Current read position.
-    int mIndex;   // Index of string currently being scanned.
-    int mSize;    // Size of string already scanned.
-
-    // Current error and state.
-    Error mError;
-    State mState;
+    Location mReadLoc;
 };
 
 }  // namespace pp

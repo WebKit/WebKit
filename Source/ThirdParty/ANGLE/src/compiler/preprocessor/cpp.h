@@ -73,8 +73,8 @@ void  CPPShInfoLogMsg(const char*);         // Store cpp Err Msg into Sh.Info.Lo
 void  CPPWarningToInfoLog(const char *msg); // Prints warning messages into info log
 void  HandlePragma(const char**, int numTokens);  // #pragma directive container.
 void  ResetTString(void);                   // #error Message as TString.
-void  CPPErrorToInfoLog(char*);             // Stick all cpp errors into Sh.Info.log   .
-void  StoreStr(char*);                      // Store the TString in Parse Context.
+void  CPPErrorToInfoLog(const char*);       // Stick all cpp errors into Sh.Info.log.
+void  StoreStr(const char*);                // Store the TString in Parse Context.
 void  SetLineNumber(int);                   // Set line number.  
 void  SetStringNumber(int);                 // Set string number.    
 int   GetLineNumber(void);                  // Get the current String Number. 

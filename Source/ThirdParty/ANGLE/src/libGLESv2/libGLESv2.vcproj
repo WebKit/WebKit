@@ -401,6 +401,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ProgramBinary.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Query.cpp"
 				>
 			</File>
@@ -488,6 +492,10 @@
 			</File>
 			<File
 				RelativePath=".\Program.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ProgramBinary.h"
 				>
 			</File>
 			<File

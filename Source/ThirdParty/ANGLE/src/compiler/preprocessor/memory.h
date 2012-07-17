@@ -45,6 +45,8 @@ NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef __MEMORY_H
 #define __MEMORY_H
 
+#include <stddef.h>
+
 typedef struct MemoryPool_rec MemoryPool;
 
 extern MemoryPool *mem_CreatePool(size_t chunksize, unsigned int align);

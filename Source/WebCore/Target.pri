@@ -3724,7 +3724,13 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/Common.h \
         $$ANGLE_DIR/src/compiler/ConstantUnion.h \
         $$ANGLE_DIR/src/compiler/debug.h \
+        $$ANGLE_DIR/src/compiler/depgraph/DependencyGraph.h \
+        $$ANGLE_DIR/src/compiler/depgraph/DependencyGraphBuilder.h \
+        $$ANGLE_DIR/src/compiler/depgraph/DependencyGraphOutput.h \
+        $$ANGLE_DIR/src/compiler/DetectDiscontinuity.h \
         $$ANGLE_DIR/src/compiler/DetectRecursion.h \
+        $$ANGLE_DIR/src/compiler/Diagnostics.h \
+        $$ANGLE_DIR/src/compiler/DirectiveHandler.h \
         $$ANGLE_DIR/src/compiler/ExtensionBehavior.h \
         $$ANGLE_DIR/src/compiler/ForLoopUnroll.h \
         $$ANGLE_DIR/src/compiler/glslang.h \
@@ -3739,11 +3745,24 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/MMap.h \
         $$ANGLE_DIR/src/compiler/MapLongVariableNames.h \
         $$ANGLE_DIR/src/compiler/osinclude.h \
+        $$ANGLE_DIR/src/compiler/Pragma.h \
         $$ANGLE_DIR/src/compiler/preprocessor/atom.h \
         $$ANGLE_DIR/src/compiler/preprocessor/compile.h \
         $$ANGLE_DIR/src/compiler/preprocessor/cpp.h \
         $$ANGLE_DIR/src/compiler/preprocessor/length_limits.h \
         $$ANGLE_DIR/src/compiler/preprocessor/memory.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Diagnostics.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/DirectiveHandler.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/DirectiveParser.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/ExpressionParser.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Input.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Lexer.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Macro.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/MacroExpander.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Preprocessor.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/SourceLocation.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Token.h \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Tokenizer.h \
         $$ANGLE_DIR/src/compiler/preprocessor/parser.h \
         $$ANGLE_DIR/src/compiler/preprocessor/preprocess.h \
         $$ANGLE_DIR/src/compiler/preprocessor/scanner.h \
@@ -3758,14 +3777,17 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/PoolAlloc.h \
         $$ANGLE_DIR/src/compiler/QualifierAlive.h \
         $$ANGLE_DIR/src/compiler/RemoveTree.h \
+        $$ANGLE_DIR/src/compiler/RenameFunction.h \
         $$ANGLE_DIR/src/compiler/SearchSymbol.h \
         $$ANGLE_DIR/src/compiler/ShHandle.h \
         $$ANGLE_DIR/src/compiler/SymbolTable.h \
+        $$ANGLE_DIR/src/compiler/timing/RestrictFragmentShaderTiming.h \
+        $$ANGLE_DIR/src/compiler/timing/RestrictVertexShaderTiming.h \
         $$ANGLE_DIR/src/compiler/TranslatorESSL.h \
         $$ANGLE_DIR/src/compiler/TranslatorGLSL.h \
         $$ANGLE_DIR/src/compiler/TranslatorHLSL.h \
         $$ANGLE_DIR/src/compiler/Types.h \
-        $$ANGLE_DIR/src/compiler/UnfoldSelect.h \
+        $$ANGLE_DIR/src/compiler/UnfoldShortCircuit.h \
         $$ANGLE_DIR/src/compiler/util.h \
         $$ANGLE_DIR/src/compiler/ValidateLimitations.h \
         $$ANGLE_DIR/src/compiler/VariableInfo.h \
@@ -3778,13 +3800,21 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/CodeGenGLSL.cpp \
         $$ANGLE_DIR/src/compiler/Compiler.cpp \
         $$ANGLE_DIR/src/compiler/debug.cpp \
+        $$ANGLE_DIR/src/compiler/depgraph/DependencyGraph.cpp \
+        $$ANGLE_DIR/src/compiler/depgraph/DependencyGraphBuilder.cpp \
+        $$ANGLE_DIR/src/compiler/depgraph/DependencyGraphOutput.cpp \
+        $$ANGLE_DIR/src/compiler/depgraph/DependencyGraphTraverse.cpp \
+        $$ANGLE_DIR/src/compiler/DetectDiscontinuity.cpp \
         $$ANGLE_DIR/src/compiler/DetectRecursion.cpp \
+        $$ANGLE_DIR/src/compiler/Diagnostics.cpp \
+        $$ANGLE_DIR/src/compiler/DirectiveHandler.cpp \
         $$ANGLE_DIR/src/compiler/ForLoopUnroll.cpp \
         $$ANGLE_DIR/src/compiler/glslang_lex.cpp \
         $$ANGLE_DIR/src/compiler/glslang_tab.cpp \
         $$ANGLE_DIR/src/compiler/InfoSink.cpp \
         $$ANGLE_DIR/src/compiler/Initialize.cpp \
         $$ANGLE_DIR/src/compiler/InitializeDll.cpp \
+        $$ANGLE_DIR/src/compiler/InitializeParseContext.cpp \ 
         $$ANGLE_DIR/src/compiler/Intermediate.cpp \
         $$ANGLE_DIR/src/compiler/intermOut.cpp \
         $$ANGLE_DIR/src/compiler/IntermTraverse.cpp \
@@ -3802,10 +3832,12 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/SearchSymbol.cpp \
         $$ANGLE_DIR/src/compiler/ShaderLang.cpp \
         $$ANGLE_DIR/src/compiler/SymbolTable.cpp \
+        $$ANGLE_DIR/src/compiler/timing/RestrictFragmentShaderTiming.cpp \
+        $$ANGLE_DIR/src/compiler/timing/RestrictVertexShaderTiming.cpp \
         $$ANGLE_DIR/src/compiler/TranslatorESSL.cpp \
         $$ANGLE_DIR/src/compiler/TranslatorGLSL.cpp \
         $$ANGLE_DIR/src/compiler/TranslatorHLSL.cpp \
-        $$ANGLE_DIR/src/compiler/UnfoldSelect.cpp \
+        $$ANGLE_DIR/src/compiler/UnfoldShortCircuit.cpp \
         $$ANGLE_DIR/src/compiler/util.cpp \
         $$ANGLE_DIR/src/compiler/ValidateLimitations.cpp \
         $$ANGLE_DIR/src/compiler/VariableInfo.cpp \
@@ -3816,6 +3848,17 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/preprocessor/cpp.c \
         $$ANGLE_DIR/src/compiler/preprocessor/cppstruct.c \
         $$ANGLE_DIR/src/compiler/preprocessor/memory.c \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/DiagnosticsBase.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/DirectiveHandlerBase.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/DirectiveParser.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/ExpressionParser.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Input.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Lexer.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Macro.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/MacroExpander.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Preprocessor.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Token.cpp \
+        $$ANGLE_DIR/src/compiler/preprocessor/new/Tokenizer.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/scanner.c \
         $$ANGLE_DIR/src/compiler/preprocessor/symbols.c \
         $$ANGLE_DIR/src/compiler/preprocessor/tokens.c

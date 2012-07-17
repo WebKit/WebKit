@@ -6,39 +6,17 @@
 
 #include "Macro.h"
 
-#include <algorithm>
-
-#include "stl_utils.h"
+#include "Token.h"
 
 namespace pp
 {
 
-Macro::Macro(Type type,
-             std::string* name,
-             TokenVector* parameters,
-             TokenVector* replacements)
-    : mType(type),
-      mName(name),
-      mParameters(parameters),
-      mReplacements(replacements)
+bool Macro::equals(const Macro& other) const
 {
-}
-
-Macro::~Macro()
-{
-    delete mName;
-
-    if (mParameters)
-    {
-        std::for_each(mParameters->begin(), mParameters->end(), Delete());
-        delete mParameters;
-    }
-
-    if (mReplacements)
-    {
-        std::for_each(mReplacements->begin(), mReplacements->end(), Delete());
-        delete mReplacements;
-    }
+    return (type == other.type) &&
+           (name == other.name) &&
+           (parameters == other.parameters) &&
+           (replacements == other.replacements);
 }
 
 }  // namespace pp

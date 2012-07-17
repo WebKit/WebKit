@@ -238,6 +238,11 @@ typedef void* GLeglImageOES;
 #define GL_VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE                    0x88FE
 #endif
 
+/* GL_ANGLE_program_binary */
+#ifndef GL_ANGLE_program_binary
+#define GL_PROGRAM_BINARY_ANGLE                                 0x93A6
+#endif
+
 /*------------------------------------------------------------------------*
  * APPLE extension tokens
  *------------------------------------------------------------------------*/
@@ -1485,6 +1490,11 @@ typedef void (GL_APIENTRYP PFNGLENDTILINGQCOMPROC) (GLbitfield preserveMask);
 /* GL_VIV_shader_binary */
 #ifndef GL_VIV_shader_binary
 #define GL_VIV_shader_binary 1
+#endif
+
+/* GL_ANGLE_program_binary */
+#ifndef GL_ANGLE_program_binary
+#define GL_ANGLE_program_binary 1
 #endif
 
 #ifdef __cplusplus

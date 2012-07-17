@@ -50,6 +50,7 @@ NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <string.h>
 
+#include "common/angleutils.h"
 #include "compiler/debug.h"
 #include "compiler/preprocessor/slglobals.h"
 
@@ -307,7 +308,7 @@ struct AtomTable_Rec {
     int size;
 };
 
-static AtomTable latable = { { 0 } };
+static AtomTable latable = { { NULL, 0, 0 }, { NULL, 0, 0, {0} }, NULL, NULL, 0, 0 };
 AtomTable *atable = &latable;
 
 static int AddAtomFixed(AtomTable *atable, const char *s, int atom);
@@ -434,14 +435,14 @@ static int FindHashLoc(AtomTable *atable, const char *s)
             if (cpp->options.DumpAtomTable) {
                 int ii;
                 char str[200];
-                sprintf(str, "*** Hash failed with more than %d collisions. Must increase hash table size. ***",
+                snprintf(str, sizeof(str), "*** Hash failed with more than %d collisions. Must increase hash table size. ***",
                        HASH_TABLE_MAX_COLLISIONS);
                 CPPShInfoLogMsg(str);
 
-                sprintf(str, "*** New string \"%s\", hash=%04x, delta=%04x", s, collision[0], hashdelta);
+                snprintf(str, sizeof(str), "*** New string \"%s\", hash=%04x, delta=%04x", s, collision[0], hashdelta);
                 CPPShInfoLogMsg(str);
                 for (ii = 0; ii <= HASH_TABLE_MAX_COLLISIONS; ii++) {
-                    sprintf(str, "*** Collides on try %d at hash entry %04x with \"%s\"",
+                    snprintf(str, sizeof(str), "*** Collides on try %d at hash entry %04x with \"%s\"",
                            ii + 1, collision[ii], GetAtomString(atable, atable->htable.entry[collision[ii]].value));
                     CPPShInfoLogMsg(str);
                 }
@@ -685,14 +686,14 @@ void PrintAtomTable(AtomTable *atable)
     char str[200];
 
     for (ii = 0; ii < atable->nextFree; ii++) {
-        sprintf(str, "%d: \"%s\"", ii, &atable->stable.strings[atable->amap[ii]]);
+        snprintf(str, sizeof(str), "%d: \"%s\"", ii, &atable->stable.strings[atable->amap[ii]]);
         CPPDebugLogMsg(str);
     }
-    sprintf(str, "Hash table: size=%d, entries=%d, collisions=",
+    snprintf(str, sizeof(str), "Hash table: size=%d, entries=%d, collisions=",
            atable->htable.size, atable->htable.entries);
     CPPDebugLogMsg(str);
     for (ii = 0; ii < HASH_TABLE_MAX_COLLISIONS; ii++) {
-        sprintf(str, " %d", atable->htable.counts[ii]);
+        snprintf(str, sizeof(str), " %d", atable->htable.counts[ii]);
         CPPDebugLogMsg(str);
     }
 

@@ -102,14 +102,14 @@ void Shader::getInfoLog(GLsizei bufSize, GLsizei *length, char *infoLog)
 {
     int index = 0;
 
-    if (mInfoLog)
+    if (bufSize > 0)
     {
-        index = std::min(bufSize - 1, (int)strlen(mInfoLog));
-        memcpy(infoLog, mInfoLog, index);
-    }
+        if (mInfoLog)
+        {
+            index = std::min(bufSize - 1, (int)strlen(mInfoLog));
+            memcpy(infoLog, mInfoLog, index);
+        }
 
-    if (bufSize)
-    {
         infoLog[index] = '\0';
     }
 
@@ -147,14 +147,14 @@ void Shader::getSourceImpl(char *source, GLsizei bufSize, GLsizei *length, char 
 {
     int index = 0;
 
-    if (source)
+    if (bufSize > 0)
     {
-        index = std::min(bufSize - 1, (int)strlen(source));
-        memcpy(buffer, source, index);
-    }
+        if (source)
+        {
+            index = std::min(bufSize - 1, (int)strlen(source));
+            memcpy(buffer, source, index);
+        }
 
-    if (bufSize)
-    {
         buffer[index] = '\0';
     }
 

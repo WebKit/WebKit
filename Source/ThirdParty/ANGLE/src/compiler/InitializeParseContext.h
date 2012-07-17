@@ -13,4 +13,14 @@ bool FreeParseContextIndex();
 bool InitializeGlobalParseContext();
 bool FreeParseContext();
 
+struct TParseContext;
+typedef TParseContext* TParseContextPointer;
+extern TParseContextPointer& GetGlobalParseContext();
+#define GlobalParseContext GetGlobalParseContext()
+
+typedef struct TThreadParseContextRec
+{
+    TParseContext *lpGlobalParseContext;
+} TThreadParseContext;
+
 #endif // __INITIALIZE_PARSE_CONTEXT_INCLUDED_

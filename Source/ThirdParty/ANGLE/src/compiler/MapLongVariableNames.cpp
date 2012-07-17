@@ -15,7 +15,9 @@ TString mapLongName(int id, const TString& name, bool isGlobal)
     stream << "webgl_";
     if (isGlobal)
         stream << "g";
-    stream << id << "_";
+    stream << id;
+    if (name[0] != '_')
+        stream << "_";
     stream << name.substr(0, MAX_SHORTENED_IDENTIFIER_SIZE - stream.str().size());
     return stream.str();
 }

@@ -15,7 +15,7 @@
 
 namespace sh
 {
-class UnfoldSelect;
+class UnfoldShortCircuit;
 
 class OutputHLSL : public TIntermTraverser
 {
@@ -33,6 +33,7 @@ class OutputHLSL : public TIntermTraverser
     static TString initializer(const TType &type);
     static TString decorate(const TString &string);                      // Prepends an underscore to avoid naming clashes
     static TString decorateUniform(const TString &string, const TType &type);
+    static TString decorateField(const TString &string, const TType &structure);
 
   protected:
     void header();
@@ -47,6 +48,7 @@ class OutputHLSL : public TIntermTraverser
     bool visitLoop(Visit visit, TIntermLoop*);
     bool visitBranch(Visit visit, TIntermBranch*);
 
+    void traverseStatements(TIntermNode *node);
     bool isSingleStatement(TIntermNode *node);
     bool handleExcessiveLoop(TIntermLoop *node);
     void outputTriplet(Visit visit, const TString &preString, const TString &inString, const TString &postString);
@@ -62,7 +64,7 @@ class OutputHLSL : public TIntermTraverser
     TString structLookup(const TString &typeName);
 
     TParseContext &mContext;
-    UnfoldSelect *mUnfoldSelect;
+    UnfoldShortCircuit *mUnfoldShortCircuit;
     bool mInsideFunction;
 
     // Output streams
@@ -84,6 +86,12 @@ class OutputHLSL : public TIntermTraverser
     bool mUsesTextureCube;
     bool mUsesTextureCube_bias;
     bool mUsesTextureCubeLod;
+    bool mUsesTexture2DLod0;
+    bool mUsesTexture2DLod0_bias;
+    bool mUsesTexture2DProjLod0;
+    bool mUsesTexture2DProjLod0_bias;
+    bool mUsesTextureCubeLod0;
+    bool mUsesTextureCubeLod0_bias;
     bool mUsesDepthRange;
     bool mUsesFragCoord;
     bool mUsesPointCoord;
@@ -132,6 +140,10 @@ class OutputHLSL : public TIntermTraverser
     unsigned int mScopeDepth;
 
     int mUniqueIndex;   // For creating unique names
+
+    bool mContainsLoopDiscontinuity;
+    bool mOutputLod0Function;
+    bool mInsideDiscontinuousLoop;
 };
 }
 

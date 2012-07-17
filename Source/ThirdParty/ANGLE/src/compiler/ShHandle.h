@@ -24,6 +24,13 @@
 
 class LongNameMap;
 class TCompiler;
+class TDependencyGraph;
+
+//
+// Helper function to identify specs that are based on the WebGL spec,
+// like the CSS Shaders spec.
+//
+bool isWebGLBasedSpec(ShShaderSpec spec);
 
 //
 // The base class used to back handles returned to the driver.
@@ -70,6 +77,8 @@ protected:
     void clearResults();
     // Return true if function recursion is detected.
     bool detectRecursion(TIntermNode* root);
+    // Rewrites a shader's intermediate tree according to the CSS Shaders spec.
+    void rewriteCSSShader(TIntermNode* root);
     // Returns true if the given shader does not exceed the minimum
     // functionality mandated in GLSL 1.0 spec Appendix A.
     bool validateLimitations(TIntermNode* root);
@@ -79,6 +88,13 @@ protected:
     void mapLongVariableNames(TIntermNode* root);
     // Translate to object code.
     virtual void translate(TIntermNode* root) = 0;
+    // Returns true if the shader passes the restrictions that aim to prevent timing attacks.
+    bool enforceTimingRestrictions(TIntermNode* root, bool outputGraph);
+    // Returns true if the shader does not use samplers.
+    bool enforceVertexShaderTimingRestrictions(TIntermNode* root);
+    // Returns true if the shader does not use sampler dependent values to affect control 
+    // flow or in operations whose time can depend on the input values.
+    bool enforceFragmentShaderTimingRestrictions(const TDependencyGraph& graph);
     // Get built-in extensions with default behavior.
     const TExtensionBehavior& getExtensionBehavior() const;
 

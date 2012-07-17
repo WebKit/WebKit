@@ -72,12 +72,14 @@ static void getVariableInfo(ShShaderInfo varType,
     int activeUniformAndAttribLength = 1 + MAX_SYMBOL_NAME_LEN;
     ASSERT(checkActiveUniformAndAttribMaxLengths(handle, activeUniformAndAttribLength));
     strncpy(name, varInfo.name.c_str(), activeUniformAndAttribLength);
+    name[activeUniformAndAttribLength - 1] = 0;
     if (mappedName) {
         // This size must match that queried by
         // SH_MAPPED_NAME_MAX_LENGTH in ShGetInfo, below.
         int maxMappedNameLength = 1 + MAX_SYMBOL_NAME_LEN;
         ASSERT(checkMappedNameMaxLength(handle, maxMappedNameLength));
         strncpy(mappedName, varInfo.mappedName.c_str(), maxMappedNameLength);
+        mappedName[maxMappedNameLength - 1] = 0;
     }
 }
 

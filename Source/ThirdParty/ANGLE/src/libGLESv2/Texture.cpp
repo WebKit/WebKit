@@ -31,8 +31,12 @@ unsigned int TextureStorage::mCurrentTextureSerial = 1;
 
 static D3DFORMAT ConvertTextureFormatType(GLenum format, GLenum type)
 {
-    if (format == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ||
-        format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT)
+    if (IsDepthTexture(format))
+    {
+        return D3DFMT_INTZ;
+    }
+    else if (format == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ||
+             format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT)
     {
         return D3DFMT_DXT1;
     }
@@ -75,6 +79,10 @@ static D3DFORMAT ConvertTextureFormatType(GLenum format, GLenum type)
 
 static bool IsTextureFormatRenderable(D3DFORMAT format)
 {
+    if (format == D3DFMT_INTZ)
+    {
+        return true;
+    }
     switch(format)
     {
       case D3DFMT_L8:
@@ -93,6 +101,21 @@ static bool IsTextureFormatRenderable(D3DFORMAT format)
     }
 
     return false;
+}
+
+static inline DWORD GetTextureUsage(D3DFORMAT d3dfmt, GLenum glusage, bool forceRenderable)
+{
+    DWORD d3dusage = 0;
+
+    if (d3dfmt == D3DFMT_INTZ)
+    {
+        d3dusage |= D3DUSAGE_DEPTHSTENCIL;
+    }
+    else if(forceRenderable || (IsTextureFormatRenderable(d3dfmt) && (glusage == GL_FRAMEBUFFER_ATTACHMENT_ANGLE)))
+    {
+        d3dusage |= D3DUSAGE_RENDERTARGET;
+    }
+    return d3dusage;
 }
 
 Image::Image()
@@ -155,6 +178,8 @@ void Image::createSurface()
     IDirect3DTexture9 *newTexture = NULL;
     IDirect3DSurface9 *newSurface = NULL;
     const D3DPOOL poolToUse = D3DPOOL_SYSTEMMEM;
+    const D3DFORMAT d3dFormat = getD3DFormat();
+    ASSERT(d3dFormat != D3DFMT_INTZ); // We should never get here for depth textures
 
     if (mWidth != 0 && mHeight != 0)
     {
@@ -178,7 +203,7 @@ void Image::createSurface()
             levelToFetch = upsampleCount;
         }
 
-        HRESULT result = getDevice()->CreateTexture(requestWidth, requestHeight, levelToFetch + 1, NULL, getD3DFormat(),
+        HRESULT result = getDevice()->CreateTexture(requestWidth, requestHeight, levelToFetch + 1, NULL, d3dFormat,
                                                     poolToUse, &newTexture, NULL);
 
         if (FAILED(result))
@@ -264,9 +289,13 @@ void Image::updateSurface(IDirect3DSurface9 *destSurface, GLint xoffset, GLint y
 {
     IDirect3DSurface9 *sourceSurface = getSurface();
 
-    if (sourceSurface != destSurface)
+    if (sourceSurface && sourceSurface != destSurface)
     {
-        RECT rect = transformPixelRect(xoffset, yoffset, width, height, mHeight);
+        RECT rect;
+        rect.left = xoffset;
+        rect.top = yoffset;
+        rect.right = xoffset + width;
+        rect.bottom = yoffset + height;
 
         if (mD3DPool == D3DPOOL_MANAGED)
         {
@@ -284,12 +313,24 @@ void Image::updateSurface(IDirect3DSurface9 *destSurface, GLint xoffset, GLint y
 }
 
 // Store the pixel rectangle designated by xoffset,yoffset,width,height with pixels stored as format/type at input
-// into the target pixel rectangle at output with outputPitch bytes in between each line.
+// into the target pixel rectangle.
 void Image::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum type,
-                     GLint unpackAlignment, const void *input, size_t outputPitch, void *output) const
+                     GLint unpackAlignment, const void *input)
 {
-    GLsizei inputPitch = -ComputePitch(width, mFormat, type, unpackAlignment);
-    input = ((char*)input) - inputPitch * (height - 1);
+    RECT lockRect =
+    {
+        xoffset, yoffset,
+        xoffset + width, yoffset + height
+    };
+
+    D3DLOCKED_RECT locked;
+    HRESULT result = lock(&locked, &lockRect);
+    if (FAILED(result))
+    {
+        return;
+    }
+
+    GLsizei inputPitch = ComputePitch(width, mFormat, type, unpackAlignment);
 
     switch (type)
     {
@@ -297,29 +338,36 @@ void Image::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height
         switch (mFormat)
         {
           case GL_ALPHA:
-            loadAlphaData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            if (supportsSSE2())
+            {
+                loadAlphaDataSSE2(width, height, inputPitch, input, locked.Pitch, locked.pBits);
+            }
+            else
+            {
+                loadAlphaData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
+            }
             break;
           case GL_LUMINANCE:
-            loadLuminanceData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output, getD3DFormat() == D3DFMT_L8);
+            loadLuminanceData(width, height, inputPitch, input, locked.Pitch, locked.pBits, getD3DFormat() == D3DFMT_L8);
             break;
           case GL_LUMINANCE_ALPHA:
-            loadLuminanceAlphaData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output, getD3DFormat() == D3DFMT_A8L8);
+            loadLuminanceAlphaData(width, height, inputPitch, input, locked.Pitch, locked.pBits, getD3DFormat() == D3DFMT_A8L8);
             break;
           case GL_RGB:
-            loadRGBUByteData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadRGBUByteData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           case GL_RGBA:
             if (supportsSSE2())
             {
-                loadRGBAUByteDataSSE2(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+                loadRGBAUByteDataSSE2(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             }
             else
             {
-                loadRGBAUByteData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+                loadRGBAUByteData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             }
             break;
           case GL_BGRA_EXT:
-            loadBGRAData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadBGRAData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           default: UNREACHABLE();
         }
@@ -328,7 +376,7 @@ void Image::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height
         switch (mFormat)
         {
           case GL_RGB:
-            loadRGB565Data(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadRGB565Data(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           default: UNREACHABLE();
         }
@@ -337,7 +385,7 @@ void Image::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height
         switch (mFormat)
         {
           case GL_RGBA:
-            loadRGBA4444Data(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadRGBA4444Data(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           default: UNREACHABLE();
         }
@@ -346,7 +394,7 @@ void Image::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height
         switch (mFormat)
         {
           case GL_RGBA:
-            loadRGBA5551Data(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadRGBA5551Data(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           default: UNREACHABLE();
         }
@@ -356,19 +404,19 @@ void Image::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height
         {
           // float textures are converted to RGBA, not BGRA, as they're stored that way in D3D
           case GL_ALPHA:
-            loadAlphaFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadAlphaFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           case GL_LUMINANCE:
-            loadLuminanceFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadLuminanceFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           case GL_LUMINANCE_ALPHA:
-            loadLuminanceAlphaFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadLuminanceAlphaFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           case GL_RGB:
-            loadRGBFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadRGBFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           case GL_RGBA:
-            loadRGBAFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadRGBAFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           default: UNREACHABLE();
         }
@@ -378,28 +426,30 @@ void Image::loadData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height
         {
           // float textures are converted to RGBA, not BGRA, as they're stored that way in D3D
           case GL_ALPHA:
-            loadAlphaHalfFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadAlphaHalfFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           case GL_LUMINANCE:
-            loadLuminanceHalfFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadLuminanceHalfFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           case GL_LUMINANCE_ALPHA:
-            loadLuminanceAlphaHalfFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadLuminanceAlphaHalfFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           case GL_RGB:
-            loadRGBHalfFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadRGBHalfFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           case GL_RGBA:
-            loadRGBAHalfFloatData(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
+            loadRGBAHalfFloatData(width, height, inputPitch, input, locked.Pitch, locked.pBits);
             break;
           default: UNREACHABLE();
         }
         break;
       default: UNREACHABLE();
     }
+
+    unlock();
 }
 
-void Image::loadAlphaData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadAlphaData(GLsizei width, GLsizei height,
                           int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned char *source = NULL;
@@ -408,7 +458,7 @@ void Image::loadAlphaData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei h
     for (int y = 0; y < height; y++)
     {
         source = static_cast<const unsigned char*>(input) + y * inputPitch;
-        dest = static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 4;
+        dest = static_cast<unsigned char*>(output) + y * outputPitch;
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = 0;
@@ -419,7 +469,47 @@ void Image::loadAlphaData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei h
     }
 }
 
-void Image::loadAlphaFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadAlphaDataSSE2(GLsizei width, GLsizei height,
+                              int inputPitch, const void *input, size_t outputPitch, void *output) const
+{
+    const unsigned char *source = NULL;
+    unsigned int *dest = NULL;
+    __m128i zeroWide = _mm_setzero_si128();
+
+    for (int y = 0; y < height; y++)
+    {
+        source = static_cast<const unsigned char*>(input) + y * inputPitch;
+        dest = reinterpret_cast<unsigned int*>(static_cast<unsigned char*>(output) + y * outputPitch);
+
+        int x;
+        // Make output writes aligned
+        for (x = 0; ((reinterpret_cast<intptr_t>(&dest[x]) & 0xF) != 0 && x < width); x++)
+        {
+            dest[x] = static_cast<unsigned int>(source[x]) << 24;
+        }
+
+        for (; x + 7 < width; x += 8)
+        {
+            __m128i sourceData = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(&source[x]));
+            // Interleave each byte to 16bit, make the lower byte to zero
+            sourceData = _mm_unpacklo_epi8(zeroWide, sourceData);
+            // Interleave each 16bit to 32bit, make the lower 16bit to zero
+            __m128i lo = _mm_unpacklo_epi16(zeroWide, sourceData);
+            __m128i hi = _mm_unpackhi_epi16(zeroWide, sourceData);
+
+            _mm_store_si128(reinterpret_cast<__m128i*>(&dest[x]), lo);
+            _mm_store_si128(reinterpret_cast<__m128i*>(&dest[x + 4]), hi);
+        }
+
+        // Handle the remainder
+        for (; x < width; x++)
+        {
+            dest[x] = static_cast<unsigned int>(source[x]) << 24;
+        }
+    }
+}
+
+void Image::loadAlphaFloatData(GLsizei width, GLsizei height,
                                int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const float *source = NULL;
@@ -428,7 +518,7 @@ void Image::loadAlphaFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsi
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const float*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch  + xoffset * 16);
+        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + y * outputPitch);
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = 0;
@@ -439,7 +529,7 @@ void Image::loadAlphaFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsi
     }
 }
 
-void Image::loadAlphaHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadAlphaHalfFloatData(GLsizei width, GLsizei height,
                                    int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned short *source = NULL;
@@ -448,7 +538,7 @@ void Image::loadAlphaHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, 
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const unsigned short*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<unsigned short*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 8);
+        dest = reinterpret_cast<unsigned short*>(static_cast<unsigned char*>(output) + y * outputPitch);
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = 0;
@@ -459,17 +549,16 @@ void Image::loadAlphaHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, 
     }
 }
 
-void Image::loadLuminanceData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadLuminanceData(GLsizei width, GLsizei height,
                               int inputPitch, const void *input, size_t outputPitch, void *output, bool native) const
 {
-    const int destBytesPerPixel = native? 1: 4;
     const unsigned char *source = NULL;
     unsigned char *dest = NULL;
 
     for (int y = 0; y < height; y++)
     {
         source = static_cast<const unsigned char*>(input) + y * inputPitch;
-        dest = static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * destBytesPerPixel;
+        dest = static_cast<unsigned char*>(output) + y * outputPitch;
 
         if (!native)   // BGRA8 destination format
         {
@@ -488,7 +577,7 @@ void Image::loadLuminanceData(GLint xoffset, GLint yoffset, GLsizei width, GLsiz
     }
 }
 
-void Image::loadLuminanceFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadLuminanceFloatData(GLsizei width, GLsizei height,
                                    int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const float *source = NULL;
@@ -497,7 +586,7 @@ void Image::loadLuminanceFloatData(GLint xoffset, GLint yoffset, GLsizei width, 
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const float*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch  + xoffset * 16);
+        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + y * outputPitch);
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = source[x];
@@ -508,7 +597,7 @@ void Image::loadLuminanceFloatData(GLint xoffset, GLint yoffset, GLsizei width, 
     }
 }
 
-void Image::loadLuminanceHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadLuminanceHalfFloatData(GLsizei width, GLsizei height,
                                        int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned short *source = NULL;
@@ -517,7 +606,7 @@ void Image::loadLuminanceHalfFloatData(GLint xoffset, GLint yoffset, GLsizei wid
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const unsigned short*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<unsigned short*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 8);
+        dest = reinterpret_cast<unsigned short*>(static_cast<unsigned char*>(output) + y * outputPitch);
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = source[x];
@@ -528,17 +617,16 @@ void Image::loadLuminanceHalfFloatData(GLint xoffset, GLint yoffset, GLsizei wid
     }
 }
 
-void Image::loadLuminanceAlphaData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadLuminanceAlphaData(GLsizei width, GLsizei height,
                                    int inputPitch, const void *input, size_t outputPitch, void *output, bool native) const
 {
-    const int destBytesPerPixel = native? 2: 4;
     const unsigned char *source = NULL;
     unsigned char *dest = NULL;
 
     for (int y = 0; y < height; y++)
     {
         source = static_cast<const unsigned char*>(input) + y * inputPitch;
-        dest = static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * destBytesPerPixel;
+        dest = static_cast<unsigned char*>(output) + y * outputPitch;
         
         if (!native)   // BGRA8 destination format
         {
@@ -557,7 +645,7 @@ void Image::loadLuminanceAlphaData(GLint xoffset, GLint yoffset, GLsizei width, 
     }
 }
 
-void Image::loadLuminanceAlphaFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadLuminanceAlphaFloatData(GLsizei width, GLsizei height,
                                         int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const float *source = NULL;
@@ -566,7 +654,7 @@ void Image::loadLuminanceAlphaFloatData(GLint xoffset, GLint yoffset, GLsizei wi
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const float*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch  + xoffset * 16);
+        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + y * outputPitch);
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = source[2*x+0];
@@ -577,7 +665,7 @@ void Image::loadLuminanceAlphaFloatData(GLint xoffset, GLint yoffset, GLsizei wi
     }
 }
 
-void Image::loadLuminanceAlphaHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadLuminanceAlphaHalfFloatData(GLsizei width, GLsizei height,
                                             int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned short *source = NULL;
@@ -586,7 +674,7 @@ void Image::loadLuminanceAlphaHalfFloatData(GLint xoffset, GLint yoffset, GLsize
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const unsigned short*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<unsigned short*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 8);
+        dest = reinterpret_cast<unsigned short*>(static_cast<unsigned char*>(output) + y * outputPitch);
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = source[2*x+0];
@@ -597,7 +685,7 @@ void Image::loadLuminanceAlphaHalfFloatData(GLint xoffset, GLint yoffset, GLsize
     }
 }
 
-void Image::loadRGBUByteData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGBUByteData(GLsizei width, GLsizei height,
                              int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned char *source = NULL;
@@ -606,7 +694,7 @@ void Image::loadRGBUByteData(GLint xoffset, GLint yoffset, GLsizei width, GLsize
     for (int y = 0; y < height; y++)
     {
         source = static_cast<const unsigned char*>(input) + y * inputPitch;
-        dest = static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 4;
+        dest = static_cast<unsigned char*>(output) + y * outputPitch;
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = source[x * 3 + 2];
@@ -617,7 +705,7 @@ void Image::loadRGBUByteData(GLint xoffset, GLint yoffset, GLsizei width, GLsize
     }
 }
 
-void Image::loadRGB565Data(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGB565Data(GLsizei width, GLsizei height,
                            int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned short *source = NULL;
@@ -626,7 +714,7 @@ void Image::loadRGB565Data(GLint xoffset, GLint yoffset, GLsizei width, GLsizei 
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const unsigned short*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 4;
+        dest = static_cast<unsigned char*>(output) + y * outputPitch;
         for (int x = 0; x < width; x++)
         {
             unsigned short rgba = source[x];
@@ -638,7 +726,7 @@ void Image::loadRGB565Data(GLint xoffset, GLint yoffset, GLsizei width, GLsizei 
     }
 }
 
-void Image::loadRGBFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGBFloatData(GLsizei width, GLsizei height,
                              int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const float *source = NULL;
@@ -647,7 +735,7 @@ void Image::loadRGBFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsize
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const float*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch  + xoffset * 16);
+        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + y * outputPitch);
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = source[x * 3 + 0];
@@ -658,7 +746,7 @@ void Image::loadRGBFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsize
     }
 }
 
-void Image::loadRGBHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGBHalfFloatData(GLsizei width, GLsizei height,
                                  int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned short *source = NULL;
@@ -667,7 +755,7 @@ void Image::loadRGBHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, GL
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const unsigned short*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<unsigned short*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch  + xoffset * 8);
+        dest = reinterpret_cast<unsigned short*>(static_cast<unsigned char*>(output) + y * outputPitch);
         for (int x = 0; x < width; x++)
         {
             dest[4 * x + 0] = source[x * 3 + 0];
@@ -678,7 +766,7 @@ void Image::loadRGBHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, GL
     }
 }
 
-void Image::loadRGBAUByteDataSSE2(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGBAUByteDataSSE2(GLsizei width, GLsizei height,
                                   int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned int *source = NULL;
@@ -688,7 +776,7 @@ void Image::loadRGBAUByteDataSSE2(GLint xoffset, GLint yoffset, GLsizei width, G
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const unsigned int*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<unsigned int*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 4);
+        dest = reinterpret_cast<unsigned int*>(static_cast<unsigned char*>(output) + y * outputPitch);
         int x = 0;
 
         // Make output writes aligned
@@ -720,7 +808,7 @@ void Image::loadRGBAUByteDataSSE2(GLint xoffset, GLint yoffset, GLsizei width, G
     }
 }
 
-void Image::loadRGBAUByteData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGBAUByteData(GLsizei width, GLsizei height,
                               int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned int *source = NULL;
@@ -728,7 +816,7 @@ void Image::loadRGBAUByteData(GLint xoffset, GLint yoffset, GLsizei width, GLsiz
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const unsigned int*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<unsigned int*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 4);
+        dest = reinterpret_cast<unsigned int*>(static_cast<unsigned char*>(output) + y * outputPitch);
 
         for (int x = 0; x < width; x++)
         {
@@ -738,7 +826,7 @@ void Image::loadRGBAUByteData(GLint xoffset, GLint yoffset, GLsizei width, GLsiz
     }
 }
 
-void Image::loadRGBA4444Data(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGBA4444Data(GLsizei width, GLsizei height,
                              int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned short *source = NULL;
@@ -747,7 +835,7 @@ void Image::loadRGBA4444Data(GLint xoffset, GLint yoffset, GLsizei width, GLsize
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const unsigned short*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 4;
+        dest = static_cast<unsigned char*>(output) + y * outputPitch;
         for (int x = 0; x < width; x++)
         {
             unsigned short rgba = source[x];
@@ -759,7 +847,7 @@ void Image::loadRGBA4444Data(GLint xoffset, GLint yoffset, GLsizei width, GLsize
     }
 }
 
-void Image::loadRGBA5551Data(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGBA5551Data(GLsizei width, GLsizei height,
                              int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned short *source = NULL;
@@ -768,7 +856,7 @@ void Image::loadRGBA5551Data(GLint xoffset, GLint yoffset, GLsizei width, GLsize
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const unsigned short*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 4;
+        dest = static_cast<unsigned char*>(output) + y * outputPitch;
         for (int x = 0; x < width; x++)
         {
             unsigned short rgba = source[x];
@@ -780,7 +868,7 @@ void Image::loadRGBA5551Data(GLint xoffset, GLint yoffset, GLsizei width, GLsize
     }
 }
 
-void Image::loadRGBAFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGBAFloatData(GLsizei width, GLsizei height,
                               int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const float *source = NULL;
@@ -789,12 +877,12 @@ void Image::loadRGBAFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsiz
     for (int y = 0; y < height; y++)
     {
         source = reinterpret_cast<const float*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch  + xoffset * 16);
+        dest = reinterpret_cast<float*>(static_cast<unsigned char*>(output) + y * outputPitch);
         memcpy(dest, source, width * 16);
     }
 }
 
-void Image::loadRGBAHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadRGBAHalfFloatData(GLsizei width, GLsizei height,
                                   int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned char *source = NULL;
@@ -803,12 +891,12 @@ void Image::loadRGBAHalfFloatData(GLint xoffset, GLint yoffset, GLsizei width, G
     for (int y = 0; y < height; y++)
     {
         source = static_cast<const unsigned char*>(input) + y * inputPitch;
-        dest = static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch  + xoffset * 8;
+        dest = static_cast<unsigned char*>(output) + y * outputPitch;
         memcpy(dest, source, width * 8);
     }
 }
 
-void Image::loadBGRAData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+void Image::loadBGRAData(GLsizei width, GLsizei height,
                          int inputPitch, const void *input, size_t outputPitch, void *output) const
 {
     const unsigned char *source = NULL;
@@ -817,283 +905,37 @@ void Image::loadBGRAData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei he
     for (int y = 0; y < height; y++)
     {
         source = static_cast<const unsigned char*>(input) + y * inputPitch;
-        dest = static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 4;
+        dest = static_cast<unsigned char*>(output) + y * outputPitch;
         memcpy(dest, source, width*4);
     }
 }
 
 void Image::loadCompressedData(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-                               int inputPitch, const void *input, size_t outputPitch, void *output) const {
-    switch (getD3DFormat())
-    {
-        case D3DFMT_DXT1:
-          loadDXT1Data(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
-          break;
-        case D3DFMT_DXT3:
-          loadDXT3Data(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
-          break;
-        case D3DFMT_DXT5:
-          loadDXT5Data(xoffset, yoffset, width, height, inputPitch, input, outputPitch, output);
-          break;
-    }
-}
-
-static void FlipCopyDXT1BlockFull(const unsigned int* source, unsigned int* dest) {
-  // A DXT1 block layout is:
-  // [0-1] color0.
-  // [2-3] color1.
-  // [4-7] color bitmap, 2 bits per pixel.
-  // So each of the 4-7 bytes represents one line, flipping a block is just
-  // flipping those bytes.
-
-  // First 32-bits is two RGB565 colors shared by tile and does not need to be modified.
-  dest[0] = source[0];
-
-  // Second 32-bits contains 4 rows of 4 2-bit interpolants between the colors. All rows should be flipped.
-  dest[1] = (source[1] >> 24) |
-            ((source[1] << 8) & 0x00FF0000) |
-            ((source[1] >> 8) & 0x0000FF00) |
-            (source[1] << 24);
-}
-
-// Flips the first 2 lines of a DXT1 block in the y direction.
-static void FlipCopyDXT1BlockHalf(const unsigned int* source, unsigned int* dest) {
-  // See layout above.
-  dest[0] = source[0];
-  dest[1] = ((source[1] << 8) & 0x0000FF00) |
-            ((source[1] >> 8) & 0x000000FF);
-}
-
-// Flips a full DXT3 block in the y direction.
-static void FlipCopyDXT3BlockFull(const unsigned int* source, unsigned int* dest) {
-  // A DXT3 block layout is:
-  // [0-7]  alpha bitmap, 4 bits per pixel.
-  // [8-15] a DXT1 block.
-
-  // First and Second 32 bits are 4bit per pixel alpha and need to be flipped.
-  dest[0] = (source[1] >> 16) | (source[1] << 16);
-  dest[1] = (source[0] >> 16) | (source[0] << 16);
-
-  // And flip the DXT1 block using the above function.
-  FlipCopyDXT1BlockFull(source + 2, dest + 2);
-}
-
-// Flips the first 2 lines of a DXT3 block in the y direction.
-static void FlipCopyDXT3BlockHalf(const unsigned int* source, unsigned int* dest) {
-  // See layout above.
-  dest[0] = (source[1] >> 16) | (source[1] << 16);
-  FlipCopyDXT1BlockHalf(source + 2, dest + 2);
-}
-
-// Flips a full DXT5 block in the y direction.
-static void FlipCopyDXT5BlockFull(const unsigned int* source, unsigned int* dest) {
-  // A DXT5 block layout is:
-  // [0]    alpha0.
-  // [1]    alpha1.
-  // [2-7]  alpha bitmap, 3 bits per pixel.
-  // [8-15] a DXT1 block.
-
-  // The alpha bitmap doesn't easily map lines to bytes, so we have to
-  // interpret it correctly.  Extracted from
-  // http://www.opengl.org/registry/specs/EXT/texture_compression_s3tc.txt :
-  //
-  //   The 6 "bits" bytes of the block are decoded into one 48-bit integer:
-  //
-  //     bits = bits_0 + 256 * (bits_1 + 256 * (bits_2 + 256 * (bits_3 +
-  //                   256 * (bits_4 + 256 * bits_5))))
-  //
-  //   bits is a 48-bit unsigned integer, from which a three-bit control code
-  //   is extracted for a texel at location (x,y) in the block using:
-  //
-  //       code(x,y) = bits[3*(4*y+x)+1..3*(4*y+x)+0]
-  //
-  //   where bit 47 is the most significant and bit 0 is the least
-  //   significant bit.
-  const unsigned char* sourceBytes = static_cast<const unsigned char*>(static_cast<const void*>(source));
-  unsigned char* destBytes = static_cast<unsigned char*>(static_cast<void*>(dest));
-  unsigned int line_0_1 = sourceBytes[2] + 256 * (sourceBytes[3] + 256 * sourceBytes[4]);
-  unsigned int line_2_3 = sourceBytes[5] + 256 * (sourceBytes[6] + 256 * sourceBytes[7]);
-  // swap lines 0 and 1 in line_0_1.
-  unsigned int line_1_0 = ((line_0_1 & 0x000fff) << 12) |
-                          ((line_0_1 & 0xfff000) >> 12);
-  // swap lines 2 and 3 in line_2_3.
-  unsigned int line_3_2 = ((line_2_3 & 0x000fff) << 12) |
-                          ((line_2_3 & 0xfff000) >> 12);
-  destBytes[0] = sourceBytes[0];
-  destBytes[1] = sourceBytes[1];
-  destBytes[2] = line_3_2 & 0xff;
-  destBytes[3] = (line_3_2 & 0xff00) >> 8;
-  destBytes[4] = (line_3_2 & 0xff0000) >> 16;
-  destBytes[5] = line_1_0 & 0xff;
-  destBytes[6] = (line_1_0 & 0xff00) >> 8;
-  destBytes[7] = (line_1_0 & 0xff0000) >> 16;
-
-  // And flip the DXT1 block using the above function.
-  FlipCopyDXT1BlockFull(source + 2, dest + 2);
-}
-
-// Flips the first 2 lines of a DXT5 block in the y direction.
-static void FlipCopyDXT5BlockHalf(const unsigned int* source, unsigned int* dest) {
-  // See layout above.
-  const unsigned char* sourceBytes = static_cast<const unsigned char*>(static_cast<const void*>(source));
-  unsigned char* destBytes = static_cast<unsigned char*>(static_cast<void*>(dest));
-  unsigned int line_0_1 = sourceBytes[2] + 256 * (sourceBytes[3] + 256 * sourceBytes[4]);
-  unsigned int line_1_0 = ((line_0_1 & 0x000fff) << 12) |
-                          ((line_0_1 & 0xfff000) >> 12);
-  destBytes[0] = sourceBytes[0];
-  destBytes[1] = sourceBytes[1];
-  destBytes[2] = line_1_0 & 0xff;
-  destBytes[3] = (line_1_0 & 0xff00) >> 8;
-  destBytes[4] = (line_1_0 & 0xff0000) >> 16;
-  FlipCopyDXT1BlockHalf(source + 2, dest + 2);
-}
-
-void Image::loadDXT1Data(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-                         int inputPitch, const void *input, size_t outputPitch, void *output) const
-{
+                               const void *input) {
     ASSERT(xoffset % 4 == 0);
     ASSERT(yoffset % 4 == 0);
-    ASSERT(width % 4 == 0 || width == 2 || width == 1);
-    ASSERT(inputPitch % 8 == 0);
-    ASSERT(outputPitch % 8 == 0);
 
-    const unsigned int *source = reinterpret_cast<const unsigned int*>(input);
-    unsigned int *dest = reinterpret_cast<unsigned int*>(output);
+    RECT lockRect = {
+        xoffset, yoffset,
+        xoffset + width, yoffset + height
+    };
 
-    // Round width up in case it is less than 4.
-    int blocksAcross = (width + 3) / 4;
-    int intsAcross = blocksAcross * 2;
-
-    switch (height)
+    D3DLOCKED_RECT locked;
+    HRESULT result = lock(&locked, &lockRect);
+    if (FAILED(result))
     {
-        case 1:
-            for (int x = 0; x < intsAcross; x += 2)
-            {
-                // just copy the block
-                dest[x] = source[x];
-                dest[x + 1] = source[x + 1];
-            }
-            break;
-        case 2:
-            for (int x = 0; x < intsAcross; x += 2)
-            {
-                FlipCopyDXT1BlockHalf(source + x, dest + x);
-            }
-            break;
-        default:
-            ASSERT(height % 4 == 0);
-            for (int y = 0; y < height / 4; ++y)
-            {
-                const unsigned int *source = reinterpret_cast<const unsigned int*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-                unsigned int *dest = reinterpret_cast<unsigned int*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 8);
-
-                for (int x = 0; x < intsAcross; x += 2)
-                {
-                    FlipCopyDXT1BlockFull(source + x, dest + x);
-                }
-            }
-            break;
+        return;
     }
-}
 
-void Image::loadDXT3Data(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-                         int inputPitch, const void *input, size_t outputPitch, void *output) const
-{
-    ASSERT(xoffset % 4 == 0);
-    ASSERT(yoffset % 4 == 0);
-    ASSERT(width % 4 == 0 || width == 2 || width == 1);
-    ASSERT(inputPitch % 16 == 0);
-    ASSERT(outputPitch % 16 == 0);
-
-    const unsigned int *source = reinterpret_cast<const unsigned int*>(input);
-    unsigned int *dest = reinterpret_cast<unsigned int*>(output);
-
-    // Round width up in case it is less than 4.
-    int blocksAcross = (width + 3) / 4;
-    int intsAcross = blocksAcross * 4;
-
-    switch (height)
+    GLsizei inputSize = ComputeCompressedSize(width, height, mFormat);
+    GLsizei inputPitch = ComputeCompressedPitch(width, mFormat);
+    int rows = inputSize / inputPitch;
+    for (int i = 0; i < rows; ++i)
     {
-        case 1:
-            for (int x = 0; x < intsAcross; x += 4)
-            {
-                // just copy the block
-                dest[x] = source[x];
-                dest[x + 1] = source[x + 1];
-                dest[x + 2] = source[x + 2];
-                dest[x + 3] = source[x + 3];
-            }
-            break;
-        case 2:
-            for (int x = 0; x < intsAcross; x += 4)
-            {
-                FlipCopyDXT3BlockHalf(source + x, dest + x);
-            }
-            break;
-        default:
-            ASSERT(height % 4 == 0);
-            for (int y = 0; y < height / 4; ++y)
-            {
-                const unsigned int *source = reinterpret_cast<const unsigned int*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-                unsigned int *dest = reinterpret_cast<unsigned int*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 16);
-
-                for (int x = 0; x < intsAcross; x += 4)
-                {
-                  FlipCopyDXT3BlockFull(source + x, dest + x);
-                }
-            }
-            break;
+        memcpy((void*)((BYTE*)locked.pBits + i * locked.Pitch), (void*)((BYTE*)input + i * inputPitch), inputPitch);
     }
-}
 
-void Image::loadDXT5Data(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
-                         int inputPitch, const void *input, size_t outputPitch, void *output) const
-{
-    ASSERT(xoffset % 4 == 0);
-    ASSERT(yoffset % 4 == 0);
-    ASSERT(width % 4 == 0 || width == 2 || width == 1);
-    ASSERT(inputPitch % 16 == 0);
-    ASSERT(outputPitch % 16 == 0);
-
-    const unsigned int *source = reinterpret_cast<const unsigned int*>(input);
-    unsigned int *dest = reinterpret_cast<unsigned int*>(output);
-
-    // Round width up in case it is less than 4.
-    int blocksAcross = (width + 3) / 4;
-    int intsAcross = blocksAcross * 4;
-
-    switch (height)
-    {
-        case 1:
-            for (int x = 0; x < intsAcross; x += 4)
-            {
-                // just copy the block
-                dest[x] = source[x];
-                dest[x + 1] = source[x + 1];
-                dest[x + 2] = source[x + 2];
-                dest[x + 3] = source[x + 3];
-            }
-            break;
-        case 2:
-            for (int x = 0; x < intsAcross; x += 4)
-            {
-                FlipCopyDXT5BlockHalf(source + x, dest + x);
-            }
-            break;
-        default:
-            ASSERT(height % 4 == 0);
-            for (int y = 0; y < height / 4; ++y)
-            {
-                const unsigned int *source = reinterpret_cast<const unsigned int*>(static_cast<const unsigned char*>(input) + y * inputPitch);
-                unsigned int *dest = reinterpret_cast<unsigned int*>(static_cast<unsigned char*>(output) + (y + yoffset) * outputPitch + xoffset * 16);
-
-                for (int x = 0; x < intsAcross; x += 4)
-                {
-                    FlipCopyDXT5BlockFull(source + x, dest + x);
-                }
-            }
-            break;
-    }
+    unlock();
 }
 
 // This implements glCopyTex[Sub]Image2D for non-renderable internal texture formats and incomplete textures
@@ -1121,9 +963,8 @@ void Image::copy(GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, 
         return error(GL_OUT_OF_MEMORY);
     }
 
-    RECT sourceRect = transformPixelRect(x, y, width, height, description.Height);
-    int destYOffset = transformPixelYOffset(yoffset, height, mHeight);
-    RECT destRect = {xoffset, destYOffset, xoffset + width, destYOffset + height};
+    RECT sourceRect = {x, y, x + width, y + height};
+    RECT destRect = {xoffset, yoffset, xoffset + width, yoffset + height};
 
     if (isRenderableFormat())
     {
@@ -1267,9 +1108,9 @@ void Image::copy(GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, 
     mDirty = true;
 }
 
-TextureStorage::TextureStorage(bool renderTarget)
-    : mRenderTarget(renderTarget),
-      mD3DPool(getDisplay()->getTexturePool(mRenderTarget)),
+TextureStorage::TextureStorage(DWORD usage)
+    : mD3DUsage(usage),
+      mD3DPool(getDisplay()->getTexturePool(usage)),
       mTextureSerial(issueTextureSerial())
 {
 }
@@ -1280,7 +1121,7 @@ TextureStorage::~TextureStorage()
 
 bool TextureStorage::isRenderTarget() const
 {
-    return mRenderTarget;
+    return (mD3DUsage & (D3DUSAGE_RENDERTARGET | D3DUSAGE_DEPTHSTENCIL)) != 0;
 }
 
 bool TextureStorage::isManaged() const
@@ -1291,6 +1132,11 @@ bool TextureStorage::isManaged() const
 D3DPOOL TextureStorage::getPool() const
 {
     return mD3DPool;
+}
+
+DWORD TextureStorage::getUsage() const
+{
+    return mD3DUsage;
 }
 
 unsigned int TextureStorage::getTextureSerial() const
@@ -1450,15 +1296,7 @@ void Texture::setImage(GLint unpackAlignment, const void *pixels, Image *image)
 {
     if (pixels != NULL)
     {
-        D3DLOCKED_RECT locked;
-        HRESULT result = image->lock(&locked, NULL);
-
-        if (SUCCEEDED(result))
-        {
-            image->loadData(0, 0, image->getWidth(), image->getHeight(), image->getType(), unpackAlignment, pixels, locked.Pitch, locked.pBits);
-            image->unlock();
-        }
-
+        image->loadData(0, 0, image->getWidth(), image->getHeight(), image->getType(), unpackAlignment, pixels);
         mDirtyImages = true;
     }
 }
@@ -1467,52 +1305,16 @@ void Texture::setCompressedImage(GLsizei imageSize, const void *pixels, Image *i
 {
     if (pixels != NULL)
     {
-        D3DLOCKED_RECT locked;
-        HRESULT result = image->lock(&locked, NULL);
-
-        if (SUCCEEDED(result))
-        {
-            int inputPitch = ComputeCompressedPitch(image->getWidth(), image->getFormat());
-            int inputSize = ComputeCompressedSize(image->getWidth(), image->getHeight(), image->getFormat());
-            image->loadCompressedData(0, 0, image->getWidth(), image->getHeight(), -inputPitch, static_cast<const char*>(pixels) + inputSize - inputPitch, locked.Pitch, locked.pBits);
-            image->unlock();
-        }
-
+        image->loadCompressedData(0, 0, image->getWidth(), image->getHeight(), pixels);
         mDirtyImages = true;
     }
 }
 
 bool Texture::subImage(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, GLint unpackAlignment, const void *pixels, Image *image)
 {
-    if (width + xoffset > image->getWidth() || height + yoffset > image->getHeight())
-    {
-        error(GL_INVALID_VALUE);
-        return false;
-    }
-
-    if (IsCompressed(image->getFormat()))
-    {
-        error(GL_INVALID_OPERATION);
-        return false;
-    }
-
-    if (format != image->getFormat())
-    {
-        error(GL_INVALID_OPERATION);
-        return false;
-    }
-
     if (pixels != NULL)
     {
-        D3DLOCKED_RECT locked;
-        HRESULT result = image->lock(&locked, NULL);
-
-        if (SUCCEEDED(result))
-        {
-            image->loadData(xoffset, transformPixelYOffset(yoffset, height, image->getHeight()), width, height, type, unpackAlignment, pixels, locked.Pitch, locked.pBits);
-            image->unlock();
-        }
-
+        image->loadData(xoffset, yoffset, width, height, type, unpackAlignment, pixels);
         mDirtyImages = true;
     }
 
@@ -1521,37 +1323,9 @@ bool Texture::subImage(GLint xoffset, GLint yoffset, GLsizei width, GLsizei heig
 
 bool Texture::subImageCompressed(GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *pixels, Image *image)
 {
-    if (width + xoffset > image->getWidth() || height + yoffset > image->getHeight())
-    {
-        error(GL_INVALID_VALUE);
-        return false;
-    }
-
-    if (format != getInternalFormat())
-    {
-        error(GL_INVALID_OPERATION);
-        return false;
-    }
-
     if (pixels != NULL)
     {
-        RECT updateRegion;
-        updateRegion.left = xoffset;
-        updateRegion.right = xoffset + width;
-        updateRegion.bottom = yoffset + height;
-        updateRegion.top = yoffset;
-
-        D3DLOCKED_RECT locked;
-        HRESULT result = image->lock(&locked, &updateRegion);
-
-        if (SUCCEEDED(result))
-        {
-            int inputPitch = ComputeCompressedPitch(width, format);
-            int inputSize = ComputeCompressedSize(width, height, format);
-            image->loadCompressedData(xoffset, transformPixelYOffset(yoffset, height, image->getHeight()), width, height, -inputPitch, static_cast<const char*>(pixels) + inputSize - inputPitch, locked.Pitch, locked.pBits);
-            image->unlock();
-        }
-
+        image->loadCompressedData(xoffset, yoffset, width, height, pixels);
         mDirtyImages = true;
     }
 
@@ -1667,23 +1441,27 @@ bool Texture::copyToRenderTarget(IDirect3DSurface9 *dest, IDirect3DSurface9 *sou
     return true;
 }
 
-TextureStorage2D::TextureStorage2D(IDirect3DTexture9 *surfaceTexture) : TextureStorage(true), mRenderTargetSerial(RenderbufferStorage::issueSerial())
+TextureStorage2D::TextureStorage2D(IDirect3DTexture9 *surfaceTexture) : TextureStorage(D3DUSAGE_RENDERTARGET), mRenderTargetSerial(RenderbufferStorage::issueSerial())
 {
     mTexture = surfaceTexture;
 }
 
-TextureStorage2D::TextureStorage2D(int levels, D3DFORMAT format, int width, int height, bool renderTarget)
-    : TextureStorage(renderTarget), mRenderTargetSerial(RenderbufferStorage::issueSerial())
+TextureStorage2D::TextureStorage2D(int levels, D3DFORMAT format, DWORD usage, int width, int height)
+    : TextureStorage(usage), mRenderTargetSerial(RenderbufferStorage::issueSerial())
 {
-    IDirect3DDevice9 *device = getDevice();
-
     mTexture = NULL;
-    HRESULT result = device->CreateTexture(width, height, levels, isRenderTarget() ? D3DUSAGE_RENDERTARGET : 0, format, getPool(), &mTexture, NULL);
-
-    if (FAILED(result))
+    // if the width or height is not positive this should be treated as an incomplete texture
+    // we handle that here by skipping the d3d texture creation
+    if (width > 0 && height > 0)
     {
-        ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY);
-        error(GL_OUT_OF_MEMORY);
+        IDirect3DDevice9 *device = getDevice();
+        HRESULT result = device->CreateTexture(width, height, levels, getUsage(), format, getPool(), &mTexture, NULL);
+
+        if (FAILED(result))
+        {
+            ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY);
+            error(GL_OUT_OF_MEMORY);
+        }
     }
 }
 
@@ -1695,6 +1473,8 @@ TextureStorage2D::~TextureStorage2D()
     }
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *TextureStorage2D::getSurfaceLevel(int level)
 {
     IDirect3DSurface9 *surface = NULL;
@@ -1778,19 +1558,20 @@ GLsizei Texture2D::getHeight(GLint level) const
         return 0;
 }
 
-GLenum Texture2D::getInternalFormat() const
+GLenum Texture2D::getInternalFormat(GLint level) const
 {
-    return mImageArray[0].getFormat();
+    if (level < IMPLEMENTATION_MAX_TEXTURE_LEVELS)
+        return mImageArray[level].getFormat();
+    else
+        return GL_NONE;
 }
 
-GLenum Texture2D::getType() const
+D3DFORMAT Texture2D::getD3DFormat(GLint level) const
 {
-    return mImageArray[0].getType();
-}
-
-D3DFORMAT Texture2D::getD3DFormat() const
-{
-    return mImageArray[0].getD3DFormat();
+    if (level < IMPLEMENTATION_MAX_TEXTURE_LEVELS)
+        return mImageArray[level].getD3DFormat();
+    else
+        return D3DFMT_UNKNOWN;
 }
 
 void Texture2D::redefineImage(GLint level, GLenum format, GLsizei width, GLsizei height, GLenum type)
@@ -1938,19 +1719,17 @@ void Texture2D::copyImage(GLint level, GLenum format, GLint x, GLint y, GLsizei 
 
         if (width != 0 && height != 0 && level < levelCount())
         {
-            RECT sourceRect = transformPixelRect(x, y, width, height, source->getColorbuffer()->getHeight());
-            sourceRect.left = clamp(sourceRect.left, 0, source->getColorbuffer()->getWidth());
-            sourceRect.top = clamp(sourceRect.top, 0, source->getColorbuffer()->getHeight());
-            sourceRect.right = clamp(sourceRect.right, 0, source->getColorbuffer()->getWidth());
-            sourceRect.bottom = clamp(sourceRect.bottom, 0, source->getColorbuffer()->getHeight());
-
-            GLint destYOffset = transformPixelYOffset(0, height, mImageArray[level].getHeight());
+            RECT sourceRect;
+            sourceRect.left = x;
+            sourceRect.right = x + width;
+            sourceRect.top = y;
+            sourceRect.bottom = y + height;
             
             IDirect3DSurface9 *dest = mTexStorage->getSurfaceLevel(level);
 
             if (dest)
             {
-                getBlitter()->copy(renderTarget, sourceRect, format, 0, destYOffset, dest);
+                getBlitter()->copy(renderTarget, sourceRect, format, 0, 0, dest);
                 dest->Release();
             }
         }
@@ -1990,19 +1769,18 @@ void Texture2D::copySubImage(GLenum target, GLint level, GLint xoffset, GLint yo
 
         if (level < levelCount())
         {
-            RECT sourceRect = transformPixelRect(x, y, width, height, source->getColorbuffer()->getHeight());
-            sourceRect.left = clamp(sourceRect.left, 0, source->getColorbuffer()->getWidth());
-            sourceRect.top = clamp(sourceRect.top, 0, source->getColorbuffer()->getHeight());
-            sourceRect.right = clamp(sourceRect.right, 0, source->getColorbuffer()->getWidth());
-            sourceRect.bottom = clamp(sourceRect.bottom, 0, source->getColorbuffer()->getHeight());
+            RECT sourceRect;
+            sourceRect.left = x;
+            sourceRect.right = x + width;
+            sourceRect.top = y;
+            sourceRect.bottom = y + height;
 
-            GLint destYOffset = transformPixelYOffset(yoffset, height, mImageArray[level].getHeight());
 
             IDirect3DSurface9 *dest = mTexStorage->getSurfaceLevel(level);
 
             if (dest)
             {
-                getBlitter()->copy(renderTarget, sourceRect, mImageArray[0].getFormat(), xoffset, destYOffset, dest);
+                getBlitter()->copy(renderTarget, sourceRect, mImageArray[0].getFormat(), xoffset, yoffset, dest);
                 dest->Release();
             }
         }
@@ -2016,10 +1794,10 @@ void Texture2D::storage(GLsizei levels, GLenum internalformat, GLsizei width, GL
     GLenum format = gl::ExtractFormat(internalformat);
     GLenum type = gl::ExtractType(internalformat);
     D3DFORMAT d3dfmt = ConvertTextureFormatType(format, type);
-    const bool renderTarget = IsTextureFormatRenderable(d3dfmt) && (mUsage == GL_FRAMEBUFFER_ATTACHMENT_ANGLE);
+    DWORD d3dusage = GetTextureUsage(d3dfmt, mUsage, false);
 
     delete mTexStorage;
-    mTexStorage = new TextureStorage2D(levels, d3dfmt, width, height, renderTarget);
+    mTexStorage = new TextureStorage2D(levels, d3dfmt, d3dusage, width, height);
     mImmutable = true;
 
     for (int level = 0; level < levels; level++)
@@ -2074,8 +1852,8 @@ bool Texture2D::isSamplerComplete() const
       default: UNREACHABLE();
     }
 
-    if ((getInternalFormat() == GL_FLOAT && !getContext()->supportsFloat32LinearFilter()) ||
-        (getInternalFormat() == GL_HALF_FLOAT_OES && !getContext()->supportsFloat16LinearFilter()))
+    if ((getInternalFormat(0) == GL_FLOAT && !getContext()->supportsFloat32LinearFilter()) ||
+        (getInternalFormat(0) == GL_HALF_FLOAT_OES && !getContext()->supportsFloat16LinearFilter()))
     {
         if (mMagFilter != GL_NEAREST || (mMinFilter != GL_NEAREST && mMinFilter != GL_NEAREST_MIPMAP_NEAREST))
         {
@@ -2157,9 +1935,14 @@ bool Texture2D::isMipmapComplete() const
     return true;
 }
 
-bool Texture2D::isCompressed() const
+bool Texture2D::isCompressed(GLint level) const
 {
-    return IsCompressed(getInternalFormat());
+    return IsCompressed(getInternalFormat(level));
+}
+
+bool Texture2D::isDepth(GLint level) const
+{
+    return IsDepthTexture(getInternalFormat(level));
 }
 
 IDirect3DBaseTexture9 *Texture2D::getBaseTexture() const
@@ -2173,11 +1956,11 @@ void Texture2D::createTexture()
     GLsizei width = mImageArray[0].getWidth();
     GLsizei height = mImageArray[0].getHeight();
     GLint levels = creationLevels(width, height);
-    D3DFORMAT format = mImageArray[0].getD3DFormat();
-    const bool renderTarget = IsTextureFormatRenderable(format) && (mUsage == GL_FRAMEBUFFER_ATTACHMENT_ANGLE);
+    D3DFORMAT d3dfmt = mImageArray[0].getD3DFormat();
+    DWORD d3dusage = GetTextureUsage(d3dfmt, mUsage, false);
 
     delete mTexStorage;
-    mTexStorage = new TextureStorage2D(levels, format, width, height, renderTarget);
+    mTexStorage = new TextureStorage2D(levels, d3dfmt, d3dusage, width, height);
     
     if (mTexStorage->isManaged())
     {
@@ -2217,9 +2000,10 @@ void Texture2D::convertToRenderTarget()
         GLsizei width = mImageArray[0].getWidth();
         GLsizei height = mImageArray[0].getHeight();
         GLint levels = creationLevels(width, height);
-        D3DFORMAT format = mImageArray[0].getD3DFormat();
+        D3DFORMAT d3dfmt = mImageArray[0].getD3DFormat();
+        DWORD d3dusage = GetTextureUsage(d3dfmt, GL_FRAMEBUFFER_ATTACHMENT_ANGLE, true);
 
-        newTexStorage = new TextureStorage2D(levels, format, width, height, true);
+        newTexStorage = new TextureStorage2D(levels, d3dfmt, d3dusage, width, height);
 
         if (mTexStorage != NULL)
         {
@@ -2232,8 +2016,8 @@ void Texture2D::convertToRenderTarget()
                 if (!copyToRenderTarget(dest, source, mTexStorage->isManaged()))
                 {   
                    delete newTexStorage;
-                   source->Release();
-                   dest->Release();
+                   if (source) source->Release();
+                   if (dest) dest->Release();
                    return error(GL_OUT_OF_MEMORY);
                 }
 
@@ -2315,12 +2099,14 @@ Renderbuffer *Texture2D::getRenderbuffer(GLenum target)
 
     if (mColorbufferProxy == NULL)
     {
-        mColorbufferProxy = new Renderbuffer(id(), new RenderbufferTexture(this, target));
+        mColorbufferProxy = new Renderbuffer(id(), new RenderbufferTexture2D(this, target));
     }
 
     return mColorbufferProxy;
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *Texture2D::getRenderTarget(GLenum target)
 {
     ASSERT(target == GL_TEXTURE_2D);
@@ -2333,6 +2119,33 @@ IDirect3DSurface9 *Texture2D::getRenderTarget(GLenum target)
 
     updateTexture();
     
+    // ensure this is NOT a depth texture
+    if (isDepth(0))
+    {
+        return NULL;
+    }
+    return mTexStorage->getSurfaceLevel(0);
+}
+
+// Increments refcount on surface.
+// caller must Release() the returned surface
+IDirect3DSurface9 *Texture2D::getDepthStencil(GLenum target)
+{
+    ASSERT(target == GL_TEXTURE_2D);
+
+    // ensure the underlying texture is created
+    if (getStorage(true) == NULL)
+    {
+        return NULL;
+    }
+
+    updateTexture();
+
+    // ensure this is actually a depth texture
+    if (!isDepth(0))
+    {
+        return NULL;
+    }
     return mTexStorage->getSurfaceLevel(0);
 }
 
@@ -2353,18 +2166,22 @@ TextureStorage *Texture2D::getStorage(bool renderTarget)
     return mTexStorage;
 }
 
-TextureStorageCubeMap::TextureStorageCubeMap(int levels, D3DFORMAT format, int size, bool renderTarget)
-    : TextureStorage(renderTarget), mFirstRenderTargetSerial(RenderbufferStorage::issueCubeSerials())
+TextureStorageCubeMap::TextureStorageCubeMap(int levels, D3DFORMAT format, DWORD usage, int size)
+    : TextureStorage(usage), mFirstRenderTargetSerial(RenderbufferStorage::issueCubeSerials())
 {
-    IDirect3DDevice9 *device = getDevice();
-
     mTexture = NULL;
-    HRESULT result = device->CreateCubeTexture(size, levels, isRenderTarget() ? D3DUSAGE_RENDERTARGET : 0, format, getPool(), &mTexture, NULL);
-
-    if (FAILED(result))
+    // if the size is not positive this should be treated as an incomplete texture
+    // we handle that here by skipping the d3d texture creation
+    if (size > 0)
     {
-        ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY);
-        error(GL_OUT_OF_MEMORY);
+        IDirect3DDevice9 *device = getDevice();
+        HRESULT result = device->CreateCubeTexture(size, levels, getUsage(), format, getPool(), &mTexture, NULL);
+
+        if (FAILED(result))
+        {
+            ASSERT(result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY);
+            error(GL_OUT_OF_MEMORY);
+        }
     }
 }
 
@@ -2376,6 +2193,8 @@ TextureStorageCubeMap::~TextureStorageCubeMap()
     }
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *TextureStorageCubeMap::getCubeMapSurface(GLenum faceTarget, int level)
 {
     IDirect3DSurface9 *surface = NULL;
@@ -2454,35 +2273,36 @@ GLenum TextureCubeMap::getTarget() const
     return GL_TEXTURE_CUBE_MAP;
 }
 
-GLsizei TextureCubeMap::getWidth(GLint level) const
+GLsizei TextureCubeMap::getWidth(GLenum target, GLint level) const
 {
     if (level < IMPLEMENTATION_MAX_TEXTURE_LEVELS)
-        return mImageArray[0][level].getWidth();
+        return mImageArray[faceIndex(target)][level].getWidth();
     else
         return 0;
 }
 
-GLsizei TextureCubeMap::getHeight(GLint level) const
+GLsizei TextureCubeMap::getHeight(GLenum target, GLint level) const
 {
     if (level < IMPLEMENTATION_MAX_TEXTURE_LEVELS)
-        return mImageArray[0][level].getHeight();
+        return mImageArray[faceIndex(target)][level].getHeight();
     else
         return 0;
 }
 
-GLenum TextureCubeMap::getInternalFormat() const
+GLenum TextureCubeMap::getInternalFormat(GLenum target, GLint level) const
 {
-    return mImageArray[0][0].getFormat();
+    if (level < IMPLEMENTATION_MAX_TEXTURE_LEVELS)
+        return mImageArray[faceIndex(target)][level].getFormat();
+    else
+        return GL_NONE;
 }
 
-GLenum TextureCubeMap::getType() const
+D3DFORMAT TextureCubeMap::getD3DFormat(GLenum target, GLint level) const
 {
-    return mImageArray[0][0].getType();
-}
-
-D3DFORMAT TextureCubeMap::getD3DFormat() const
-{
-    return mImageArray[0][0].getD3DFormat();
+    if (level < IMPLEMENTATION_MAX_TEXTURE_LEVELS)
+        return mImageArray[faceIndex(target)][level].getD3DFormat();
+    else
+        return D3DFMT_UNKNOWN;
 }
 
 void TextureCubeMap::setImagePosX(GLint level, GLsizei width, GLsizei height, GLenum format, GLenum type, GLint unpackAlignment, const void *pixels)
@@ -2582,8 +2402,8 @@ bool TextureCubeMap::isSamplerComplete() const
         return false;
     }
 
-    if ((getInternalFormat() == GL_FLOAT && !getContext()->supportsFloat32LinearFilter()) ||
-        (getInternalFormat() == GL_HALF_FLOAT_OES && !getContext()->supportsFloat16LinearFilter()))
+    if ((getInternalFormat(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0) == GL_FLOAT && !getContext()->supportsFloat32LinearFilter()) ||
+        (getInternalFormat(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0) == GL_HALF_FLOAT_OES && !getContext()->supportsFloat16LinearFilter()))
     {
         if (mMagFilter != GL_NEAREST || (mMinFilter != GL_NEAREST && mMinFilter != GL_NEAREST_MIPMAP_NEAREST))
         {
@@ -2679,9 +2499,9 @@ bool TextureCubeMap::isMipmapCubeComplete() const
     return true;
 }
 
-bool TextureCubeMap::isCompressed() const
+bool TextureCubeMap::isCompressed(GLenum target, GLint level) const
 {
-    return IsCompressed(getInternalFormat());
+    return IsCompressed(getInternalFormat(target, level));
 }
 
 IDirect3DBaseTexture9 *TextureCubeMap::getBaseTexture() const
@@ -2694,11 +2514,11 @@ void TextureCubeMap::createTexture()
 {
     GLsizei size = mImageArray[0][0].getWidth();
     GLint levels = creationLevels(size, 0);
-    D3DFORMAT format = mImageArray[0][0].getD3DFormat();
-    const bool renderTarget = IsTextureFormatRenderable(format) && (mUsage == GL_FRAMEBUFFER_ATTACHMENT_ANGLE);
+    D3DFORMAT d3dfmt = mImageArray[0][0].getD3DFormat();
+    DWORD d3dusage = GetTextureUsage(d3dfmt, mUsage, false);
 
     delete mTexStorage;
-    mTexStorage = new TextureStorageCubeMap(levels, format, size, renderTarget);
+    mTexStorage = new TextureStorageCubeMap(levels, d3dfmt, d3dusage, size);
 
     if (mTexStorage->isManaged())
     {
@@ -2742,9 +2562,10 @@ void TextureCubeMap::convertToRenderTarget()
     {
         GLsizei size = mImageArray[0][0].getWidth();
         GLint levels = creationLevels(size, 0);
-        D3DFORMAT format = mImageArray[0][0].getD3DFormat();
+        D3DFORMAT d3dfmt = mImageArray[0][0].getD3DFormat();
+        DWORD d3dusage = GetTextureUsage(d3dfmt, GL_FRAMEBUFFER_ATTACHMENT_ANGLE, true);
 
-        newTexStorage = new TextureStorageCubeMap(levels, format, size, true);
+        newTexStorage = new TextureStorageCubeMap(levels, d3dfmt, d3dusage, size);
 
         if (mTexStorage != NULL)
         {
@@ -2759,8 +2580,8 @@ void TextureCubeMap::convertToRenderTarget()
                     if (!copyToRenderTarget(dest, source, mTexStorage->isManaged()))
                     {
                        delete newTexStorage;
-                       source->Release();
-                       dest->Release();
+                       if (source) source->Release();
+                       if (dest) dest->Release();
                        return error(GL_OUT_OF_MEMORY);
                     }
 
@@ -2847,19 +2668,17 @@ void TextureCubeMap::copyImage(GLenum target, GLint level, GLenum format, GLint 
 
         if (width > 0 && level < levelCount())
         {
-            RECT sourceRect = transformPixelRect(x, y, width, height, source->getColorbuffer()->getHeight());
-            sourceRect.left = clamp(sourceRect.left, 0, source->getColorbuffer()->getWidth());
-            sourceRect.top = clamp(sourceRect.top, 0, source->getColorbuffer()->getHeight());
-            sourceRect.right = clamp(sourceRect.right, 0, source->getColorbuffer()->getWidth());
-            sourceRect.bottom = clamp(sourceRect.bottom, 0, source->getColorbuffer()->getHeight());
-
-            GLint destYOffset = transformPixelYOffset(0, height, mImageArray[faceindex][level].getWidth());
+            RECT sourceRect;
+            sourceRect.left = x;
+            sourceRect.right = x + width;
+            sourceRect.top = y;
+            sourceRect.bottom = y + height;
 
             IDirect3DSurface9 *dest = mTexStorage->getCubeMapSurface(target, level);
 
             if (dest)
             {
-                getBlitter()->copy(renderTarget, sourceRect, format, 0, destYOffset, dest);
+                getBlitter()->copy(renderTarget, sourceRect, format, 0, 0, dest);
                 dest->Release();
             }
         }
@@ -2903,19 +2722,17 @@ void TextureCubeMap::copySubImage(GLenum target, GLint level, GLint xoffset, GLi
 
         if (level < levelCount())
         {
-            RECT sourceRect = transformPixelRect(x, y, width, height, source->getColorbuffer()->getHeight());
-            sourceRect.left = clamp(sourceRect.left, 0, source->getColorbuffer()->getWidth());
-            sourceRect.top = clamp(sourceRect.top, 0, source->getColorbuffer()->getHeight());
-            sourceRect.right = clamp(sourceRect.right, 0, source->getColorbuffer()->getWidth());
-            sourceRect.bottom = clamp(sourceRect.bottom, 0, source->getColorbuffer()->getHeight());
-
-            GLint destYOffset = transformPixelYOffset(yoffset, height, mImageArray[faceindex][level].getWidth());
+            RECT sourceRect;
+            sourceRect.left = x;
+            sourceRect.right = x + width;
+            sourceRect.top = y;
+            sourceRect.bottom = y + height;
 
             IDirect3DSurface9 *dest = mTexStorage->getCubeMapSurface(target, level);
 
             if (dest)
             {
-                getBlitter()->copy(renderTarget, sourceRect, mImageArray[0][0].getFormat(), xoffset, destYOffset, dest);
+                getBlitter()->copy(renderTarget, sourceRect, mImageArray[0][0].getFormat(), xoffset, yoffset, dest);
                 dest->Release();
             }
         }
@@ -2929,10 +2746,10 @@ void TextureCubeMap::storage(GLsizei levels, GLenum internalformat, GLsizei size
     GLenum format = gl::ExtractFormat(internalformat);
     GLenum type = gl::ExtractType(internalformat);
     D3DFORMAT d3dfmt = ConvertTextureFormatType(format, type);
-    const bool renderTarget = IsTextureFormatRenderable(d3dfmt) && (mUsage == GL_FRAMEBUFFER_ATTACHMENT_ANGLE);
+    DWORD d3dusage = GetTextureUsage(d3dfmt, mUsage, false);
 
     delete mTexStorage;
-    mTexStorage = new TextureStorageCubeMap(levels, d3dfmt, size, renderTarget);
+    mTexStorage = new TextureStorageCubeMap(levels, d3dfmt, d3dusage, size);
     mImmutable = true;
 
     for (int level = 0; level < levels; level++)
@@ -3049,12 +2866,14 @@ Renderbuffer *TextureCubeMap::getRenderbuffer(GLenum target)
 
     if (mFaceProxies[face] == NULL)
     {
-        mFaceProxies[face] = new Renderbuffer(id(), new RenderbufferTexture(this, target));
+        mFaceProxies[face] = new Renderbuffer(id(), new RenderbufferTextureCubeMap(this, target));
     }
 
     return mFaceProxies[face];
 }
 
+// Increments refcount on surface.
+// caller must Release() the returned surface
 IDirect3DSurface9 *TextureCubeMap::getRenderTarget(GLenum target)
 {
     ASSERT(IsCubemapTextureTarget(target));

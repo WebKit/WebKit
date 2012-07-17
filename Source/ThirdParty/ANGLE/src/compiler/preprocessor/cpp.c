@@ -51,6 +51,7 @@ NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <ctype.h>
 
+#include "common/angleutils.h"
 #include "compiler/preprocessor/slglobals.h"
 
 #if defined(_MSC_VER)
@@ -678,7 +679,7 @@ static int CPPpragma(yystypepp * yylvalpp)
 		case -1:
             // EOF
             CPPShInfoLogMsg("#pragma directive must end with a newline");			
-			return token;
+			goto freeMemoryAndReturnToken;
 		default:
 			SrcStrName[0] = token;
 			SrcStrName[1] = '\0';
@@ -688,10 +689,9 @@ static int CPPpragma(yystypepp * yylvalpp)
 		token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
 	}
 
-	cpp->currentInput->ungetch(cpp->currentInput, token, yylvalpp);
 	HandlePragma((const char**)allTokens, tokenCount);
-	token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
 	
+freeMemoryAndReturnToken:
 	for (i = 0; i < tokenCount; ++i) {
 		free (allTokens[i]);
 	}
@@ -784,7 +784,6 @@ int readCPPline(yystypepp * yylvalpp)
 {
     int token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
     const char *message;
-    int isVersion = 0;
 
     if (token == CPP_IDENTIFIER) {
         if (yylvalpp->sc_ident == defineAtom) {
@@ -861,7 +860,6 @@ int readCPPline(yystypepp * yylvalpp)
              token = CPPerror(yylvalpp);
         } else if (yylvalpp->sc_ident == versionAtom) {
             token = CPPversion(yylvalpp);
-            isVersion = 1;
         } else if (yylvalpp->sc_ident == extensionAtom) {
             token = CPPextension(yylvalpp);
         } else {
@@ -886,15 +884,15 @@ void FreeMacro(MacroSymbol *s) {
 }
 
 void PredefineIntMacro(const char *name, int value) {
-    SourceLoc location = {0};
+    SourceLoc location = {0, 0};
     Symbol *symbol = NULL;
-    MacroSymbol macro = {0};
-    yystypepp val = {0};
+    MacroSymbol macro = {0, NULL, NULL, 0, 0};
+    yystypepp val = {0, 0.0, 0, {0}};
     int atom = 0;
 
     macro.body = NewTokenStream(name, macros->pool);
     val.sc_int = value;
-    sprintf(val.symbol_name, "%d", value);
+    snprintf(val.symbol_name, MAX_SYMBOL_NAME_LEN+1, "%d", value);
     RecordToken(macro.body, CPP_INTCONSTANT, &val);
     atom = LookUpAddString(atable, name);
     symbol = AddSymbol(&location, macros, atom, MACRO_S);
@@ -991,13 +989,13 @@ int MacroExpand(int atom, yystypepp * yylvalpp)
     const char *message;
 	if (atom == __LINE__Atom) {
         yylvalpp->sc_int = GetLineNumber();
-        sprintf(yylvalpp->symbol_name,"%d",yylvalpp->sc_int);
+        snprintf(yylvalpp->symbol_name, MAX_SYMBOL_NAME_LEN+1, "%d", yylvalpp->sc_int);
         UngetToken(CPP_INTCONSTANT, yylvalpp);
         return 1;
     }
     if (atom == __FILE__Atom) {
         yylvalpp->sc_int = GetStringNumber();
-        sprintf(yylvalpp->symbol_name,"%d",yylvalpp->sc_int);
+        snprintf(yylvalpp->symbol_name, MAX_SYMBOL_NAME_LEN+1, "%d", yylvalpp->sc_int);
         UngetToken(CPP_INTCONSTANT, yylvalpp);
         return 1;
     }

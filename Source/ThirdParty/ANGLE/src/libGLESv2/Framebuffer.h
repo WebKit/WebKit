@@ -49,6 +49,7 @@ class Framebuffer
     Renderbuffer *getColorbuffer();
     Renderbuffer *getDepthbuffer();
     Renderbuffer *getStencilbuffer();
+    Renderbuffer *getNullColorbuffer();
 
     GLenum getColorbufferType();
     GLenum getDepthbufferType();
@@ -72,6 +73,8 @@ class Framebuffer
 
     GLenum mStencilbufferType;
     BindingPointer<Renderbuffer> mStencilbufferPointer;
+
+    BindingPointer<Renderbuffer> mNullColorbufferPointer;
 
   private:
     DISALLOW_COPY_AND_ASSIGN(Framebuffer);

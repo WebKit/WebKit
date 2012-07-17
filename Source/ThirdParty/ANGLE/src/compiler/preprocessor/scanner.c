@@ -66,6 +66,8 @@ typedef struct StringInputSrc {
     char *p;
 } StringInputSrc;
 
+static int ScanFromString(const char *s);
+
 static int eof_scan(InputSrc *is, yystypepp * yylvalpp)
 {
     return EOF;
@@ -73,7 +75,7 @@ static int eof_scan(InputSrc *is, yystypepp * yylvalpp)
 
 static void noop(InputSrc *in, int ch, yystypepp * yylvalpp) {}
 
-static InputSrc eof_inputsrc = { 0, &eof_scan, &eof_scan, &noop };
+static InputSrc eof_inputsrc = { 0, &eof_scan, &eof_scan, &noop, 0, 0 };
 
 static int byte_scan(InputSrc *, yystypepp * yylvalpp);
 
@@ -124,6 +126,16 @@ int InitScanner(CPPStruct *cpp)
 int FreeScanner(void)
 {
     return (FreeCPP());
+}
+
+int InitScannerInput(CPPStruct *cpp, int count, const char* const string[], const int length[])
+{
+    cpp->PaWhichStr = 0;
+    cpp->PaArgv     = string;
+    cpp->PaArgc     = count;
+    cpp->PaStrLen   = length;
+    ScanFromString(string[0]);
+    return 0;
 }
 
 /*

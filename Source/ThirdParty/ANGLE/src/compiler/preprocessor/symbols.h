@@ -105,7 +105,6 @@ Symbol *NewSymbol(SourceLoc *loc, Scope *fScope, int name, symbolkind kind);
 Symbol *AddSymbol(SourceLoc *loc, Scope *fScope, int atom, symbolkind kind);
 Symbol *LookUpLocalSymbol(Scope *fScope, int atom);
 Symbol *LookUpSymbol(Scope *fScope, int atom);
-void CPPErrorToInfoLog(char *);
 
 
 #endif // !defined(__SYMBOLS_H)
