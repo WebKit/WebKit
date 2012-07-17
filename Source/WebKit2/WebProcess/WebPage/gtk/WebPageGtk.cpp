@@ -37,6 +37,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
+#include <WebCore/PasteboardHelper.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Settings.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -159,7 +160,31 @@ void WebPage::widgetMapped(int64_t nativeWindowHandle)
 {
     m_nativeWindowHandle = nativeWindowHandle;
 }
-
 #endif
+
+bool WebPage::handleMousePressedEvent(const PlatformMouseEvent& platformMouseEvent)
+{
+    bool returnValue = false;
+    if (platformMouseEvent.button() != WebCore::MiddleButton)
+        return returnValue;
+
+#if PLATFORM(X11)
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return returnValue;
+
+    PasteboardHelper* pasteboardHelper = PasteboardHelper::defaultPasteboardHelper();
+    bool wasUsingPrimary = pasteboardHelper->usePrimarySelectionClipboard();
+    pasteboardHelper->setUsePrimarySelectionClipboard(true);
+
+    Editor* editor = frame->editor();
+    returnValue = editor->canPaste() || editor->canDHTMLPaste();
+    editor->paste();
+
+    pasteboardHelper->setUsePrimarySelectionClipboard(wasUsingPrimary);
+#endif
+
+    return returnValue;
+}
 
 } // namespace WebKit

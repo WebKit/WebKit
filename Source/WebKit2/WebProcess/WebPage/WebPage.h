@@ -449,6 +449,7 @@ public:
 
 #elif PLATFORM(GTK)
     void updateAccessibilityTree();
+    bool handleMousePressedEvent(const WebCore::PlatformMouseEvent&);
 #if USE(TEXTURE_MAPPER_GL)
     void widgetMapped(int64_t nativeWindowHandle);
 #endif

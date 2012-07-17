@@ -1339,6 +1339,10 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
             if (isContextClick(platformMouseEvent))
                 handled = handleContextMenuEvent(platformMouseEvent, page);
 #endif
+#if PLATFORM(GTK)
+            bool gtkMouseButtonPressHandled = page->handleMousePressedEvent(platformMouseEvent);
+            handled = handled || gtkMouseButtonPressHandled;
+#endif
 
             return handled;
         }

@@ -1,3 +1,22 @@
+2012-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Paste primary selection when middle clicking in X11 WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=91411
+
+        Reviewed by Xan Lopez.
+
+        Handle middle click events to paste primary selection as expected
+        in any X11 application.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleMouseEvent): Call handleMousePressedEvent() for GTK+
+        platform.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Add handleMousePressedEvent() for GTK+ platform.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::handleMousePressedEvent): Handle middle click
+        events to paste primary selection like we do in WebKit1.
+
 2012-07-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Move codes related to theme setting from Widget to RenderTheme
