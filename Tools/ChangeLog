@@ -1,5 +1,18 @@
 2012-07-16  Adam Barth  <abarth@webkit.org>
 
+        [Chromium] Move Task.(cpp|h) into TestRunner.a
+        https://bugs.webkit.org/show_bug.cgi?id=91446
+
+        Reviewed by Ryosuke Niwa.
+
+        Task is a dependency of EventSender, which needs to move into TestRunner.a.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/Task.cpp: Renamed from Tools/DumpRenderTree/chromium/Task.cpp.
+        * DumpRenderTree/chromium/TestRunner/Task.h: Renamed from Tools/DumpRenderTree/chromium/Task.h.
+
+2012-07-16  Adam Barth  <abarth@webkit.org>
+
         [Chromium] Move AccessibilityController and AccessibilityUIElement into TestRunner.a
         https://bugs.webkit.org/show_bug.cgi?id=91443
 
