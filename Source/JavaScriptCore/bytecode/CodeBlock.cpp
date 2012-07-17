@@ -2942,4 +2942,29 @@ bool CodeBlock::usesOpcode(OpcodeID opcodeID)
     return false;
 }
 
+UString CodeBlock::nameForRegister(int registerNumber)
+{
+    SymbolTable::iterator end = m_symbolTable->end();
+    for (SymbolTable::iterator ptr = m_symbolTable->begin(); ptr != end; ++ptr) {
+        if (ptr->second.getIndex() == registerNumber)
+            return UString(ptr->first);
+    }
+    if (needsActivation() && registerNumber == activationRegister())
+        return "activation";
+    if (registerNumber == thisRegister())
+        return "this";
+    if (usesArguments()) {
+        if (registerNumber == argumentsRegister())
+            return "arguments";
+        if (unmodifiedArgumentsRegister(argumentsRegister()) == registerNumber)
+            return "real arguments";
+    }
+    if (registerNumber < 0) {
+        int argumentPosition = -registerNumber;
+        argumentPosition -= RegisterFile::CallFrameHeaderSize + 1;
+        return String::format("arguments[%3d]", argumentPosition - 1).impl();
+    }
+    return "";
+}
+
 } // namespace JSC

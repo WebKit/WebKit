@@ -248,6 +248,11 @@ namespace JSC {
         void dumpSampleData(ExecState* exec);
         void startSampling();
         void stopSampling();
+
+#ifndef NDEBUG
+        JS_EXPORT_PRIVATE void dumpCallFrame(CallFrame*);
+#endif
+
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
@@ -279,7 +284,6 @@ namespace JSC {
 
         JSValue privateExecute(ExecutionFlag, RegisterFile*, CallFrame*);
 
-        void dumpCallFrame(CallFrame*);
         void dumpRegisters(CallFrame*);
         
         bool isCallBytecode(Opcode opcode) { return opcode == getOpcode(op_call) || opcode == getOpcode(op_construct) || opcode == getOpcode(op_call_eval); }
