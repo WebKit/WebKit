@@ -1,3 +1,10 @@
+2012-07-17  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, stop marking all editing tests as slow.
+        The cause for the flakiness was determined to be hardware related.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-17  Andy Estes  <aestes@apple.com>
 
         [Mac] REGRESSION (r122494): Running platform/mac/plugins/root-object-premature-delete-crash.html results in a crash
