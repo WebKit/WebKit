@@ -1,3 +1,12 @@
+2012-07-17  Filip Pizlo  <fpizlo@apple.com>
+
+        [Mac] REGRESSION (r122494): Running platform/mac/plugins/root-object-premature-delete-crash.html results in a crash
+        https://bugs.webkit.org/show_bug.cgi?id=91505
+
+        Skip this test so we don't see it in the results.
+
+        * platform/mac/Skipped:
+
 2012-07-17  Andy Estes  <aestes@apple.com>
 
         [Mac] REGRESSION (r122651): fast/text/descent-clip-in-scaled-page.html fails
