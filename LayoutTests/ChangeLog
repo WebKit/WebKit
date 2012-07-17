@@ -1,5 +1,11 @@
 2012-07-17  Tony Chang  <tony@chromium.org>
 
+        [chromium] Unreviewed. Remove duplicate lines added in r122857.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-17  Tony Chang  <tony@chromium.org>
+
         [chromium] Unreviewed, stop marking all editing tests as slow.
         The cause for the flakiness was determined to be hardware related.
 
