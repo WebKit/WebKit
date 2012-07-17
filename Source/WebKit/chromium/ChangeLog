@@ -1,3 +1,9 @@
+2012-07-17  Tony Chang  <tony@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-07-17  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: refactor InspectorController::connectFrontend() to accept InspectorFrontendChannel.
