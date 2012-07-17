@@ -188,7 +188,7 @@ class  Testprinter(unittest.TestCase):
         self.do_switch_tests('print_config', 'config', to_buildbot=False)
 
     def test_print_expected(self):
-        self.do_switch_tests('print_expected', 'expected', to_buildbot=False)
+        self.do_switch_tests('_print_expected', 'expected', to_buildbot=False)
 
     def test_print_timing(self):
         self.do_switch_tests('print_timing', 'timing', to_buildbot=False)

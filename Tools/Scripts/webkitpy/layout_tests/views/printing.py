@@ -194,6 +194,50 @@ class Printer(object):
     def help_printing(self):
         self._write(HELP_PRINTING)
 
+    def print_expected(self, num_all_test_files, result_summary, tests_with_result_type_callback):
+        self._print_expected('Found %s.' % grammar.pluralize('test', num_all_test_files))
+        self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes", tests_with_result_type_callback)
+        self._print_expected_results_of_type(result_summary, test_expectations.FAIL, "failures", tests_with_result_type_callback)
+        self._print_expected_results_of_type(result_summary, test_expectations.FLAKY, "flaky", tests_with_result_type_callback)
+        self._print_expected_results_of_type(result_summary, test_expectations.SKIP, "skipped", tests_with_result_type_callback)
+        self._print_expected('')
+
+        if self._options.repeat_each > 1:
+            self._print_expected('Running each test %d times.' % self._options.repeat_each)
+        if self._options.iterations > 1:
+            self._print_expected('Running %d iterations of the tests.' % self._options.iterations)
+        if self._options.iterations > 1 or self._options.repeat_each > 1:
+            self._print_expected('')
+
+    def _print_expected_results_of_type(self, result_summary,
+                                        result_type, result_type_str, tests_with_result_type_callback):
+        """Print the number of the tests in a given result class.
+
+        Args:
+          result_summary - the object containing all the results to report on
+          result_type - the particular result type to report in the summary.
+          result_type_str - a string description of the result_type.
+          expectations - populated TestExpectations object for stats
+        """
+        tests = tests_with_result_type_callback(result_type)
+        now = result_summary.tests_by_timeline[test_expectations.NOW]
+        wontfix = result_summary.tests_by_timeline[test_expectations.WONTFIX]
+
+        # We use a fancy format string in order to print the data out in a
+        # nicely-aligned table.
+        fmtstr = ("Expect: %%5d %%-8s (%%%dd now, %%%dd wontfix)"
+                  % (self._num_digits(now), self._num_digits(wontfix)))
+        self._print_expected(fmtstr %
+            (len(tests), result_type_str, len(tests & now), len(tests & wontfix)))
+
+    def _num_digits(self, num):
+        """Returns the number of digits needed to represent the length of a
+        sequence."""
+        ndigits = 1
+        if len(num):
+            ndigits = int(math.log10(len(num))) + 1
+        return ndigits
+
     def print_results(self, run_time, thread_timings, test_timings, individual_test_timings, result_summary, unexpected_results):
         self._print_timing_statistics(run_time, thread_timings, test_timings, individual_test_timings, result_summary)
         self._print_result_summary(result_summary)
@@ -420,7 +464,7 @@ class Printer(object):
     def print_config(self, msg):
         self.write(msg, 'config')
 
-    def print_expected(self, msg):
+    def _print_expected(self, msg):
         self.write(msg, 'expected')
 
     def print_timing(self, msg):

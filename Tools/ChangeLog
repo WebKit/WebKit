@@ -1,3 +1,29 @@
+2012-07-17  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: move the bulk of the "expected" output to printing.py
+        https://bugs.webkit.org/show_bug.cgi?id=91442
+
+        Reviewed by Ojan Vafai.
+
+        More printing-related refactoring. This moves all of the code
+        that prints the results we expect to get, but doesn't move a few
+        dangling printfs (those'll get hit in a later patch).
+        
+        No functional changes; covered by existing tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._split_into_chunks_if_necessary):
+        (Manager.prepare_lists_and_print_output):
+        (Manager.print_config):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_expected):
+        (Printer):
+        (Printer._print_expected_results_of_type):
+        (Printer._num_digits):
+        (Printer._print_expected):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_expected):
+
 2012-07-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Replace 0 by NULL in public headers documentation

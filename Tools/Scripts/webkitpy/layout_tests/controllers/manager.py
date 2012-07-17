@@ -418,14 +418,14 @@ class Manager(object):
         files = test_files[slice_start:slice_end]
 
         tests_run_msg = 'Running: %d tests (chunk slice [%d:%d] of %d)' % ((slice_end - slice_start), slice_start, slice_end, num_tests)
-        self._printer.print_expected(tests_run_msg)
+        self._printer._print_expected(tests_run_msg)
 
         # If we reached the end and we don't have enough tests, we run some
         # from the beginning.
         if slice_end - slice_start < chunk_len:
             extra = chunk_len - (slice_end - slice_start)
             extra_msg = ('   last chunk is partial, appending [0:%d]' % extra)
-            self._printer.print_expected(extra_msg)
+            self._printer._print_expected(extra_msg)
             tests_run_msg += "\n" + extra_msg
             files.extend(test_files[0:extra])
         tests_run_filename = self._filesystem.join(self._results_directory, "tests_run.txt")
@@ -512,11 +512,7 @@ class Manager(object):
             (self._options.iterations if self._options.iterations else 1)
         result_summary = ResultSummary(self._expectations, self._test_files | skipped, iterations)
 
-        self._printer.print_expected('Found %s.' % grammar.pluralize('test', num_all_test_files))
-        self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes")
-        self._print_expected_results_of_type(result_summary, test_expectations.FAIL, "failures")
-        self._print_expected_results_of_type(result_summary, test_expectations.FLAKY, "flaky")
-        self._print_expected_results_of_type(result_summary, test_expectations.SKIP, "skipped")
+        self._printer.print_expected(num_all_test_files, result_summary, self._expectations.get_tests_with_result_type)
 
         if self._options.skipped != 'ignore':
             # Note that we don't actually run the skipped tests (they were
@@ -527,14 +523,6 @@ class Manager(object):
                 result.type = test_expectations.SKIP
                 for iteration in range(iterations):
                     result_summary.add(result, expected=True, test_is_slow=self._test_is_slow(test))
-        self._printer.print_expected('')
-
-        if self._options.repeat_each > 1:
-            self._printer.print_expected('Running each test %d times.' % self._options.repeat_each)
-        if self._options.iterations > 1:
-            self._printer.print_expected('Running %d iterations of the tests.' % self._options.iterations)
-        if iterations > 1:
-            self._printer.print_expected('')
 
         return result_summary
 
@@ -1127,26 +1115,6 @@ class Manager(object):
         p.print_config('Command line: ' +
                        ' '.join(self._port.driver_cmd_line()))
         p.print_config("")
-
-    def _print_expected_results_of_type(self, result_summary,
-                                        result_type, result_type_str):
-        """Print the number of the tests in a given result class.
-
-        Args:
-          result_summary - the object containing all the results to report on
-          result_type - the particular result type to report in the summary.
-          result_type_str - a string description of the result_type.
-        """
-        tests = self._expectations.get_tests_with_result_type(result_type)
-        now = result_summary.tests_by_timeline[test_expectations.NOW]
-        wontfix = result_summary.tests_by_timeline[test_expectations.WONTFIX]
-
-        # We use a fancy format string in order to print the data out in a
-        # nicely-aligned table.
-        fmtstr = ("Expect: %%5d %%-8s (%%%dd now, %%%dd wontfix)"
-                  % (self._num_digits(now), self._num_digits(wontfix)))
-        self._printer.print_expected(fmtstr %
-            (len(tests), result_type_str, len(tests & now), len(tests & wontfix)))
 
     def _num_digits(self, num):
         """Returns the number of digits needed to represent the length of a
