@@ -1,3 +1,41 @@
+2012-07-17  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        [Qt][V8] Remove the V8 related codepaths and configuration
+        https://bugs.webkit.org/show_bug.cgi?id=90863
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebelement.cpp:
+        (setupScriptContext):
+        (QWebElement::evaluateJavaScript):
+        (convertWebElementVariantToJSValue):
+        (QtWebElementRuntime::initialize):
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::didClearWindowObject):
+        (QWebFramePrivate::addQtSenderToGlobalObject):
+        (QWebFrame::addToJavaScriptWindowObject):
+        (QWebFrame::evaluateJavaScript):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (convertNodeVariantToJSValue):
+        (QtDRTNodeRuntime::initialize):
+        (DumpRenderTreeSupportQt::javaScriptObjectsCount):
+        (DumpRenderTreeSupportQt::garbageCollectorCollect):
+        (DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread):
+        (DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld):
+        (DumpRenderTreeSupportQt::injectInternalsObject):
+        (DumpRenderTreeSupportQt::resetInternalsObject):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createDocumentLoader):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        (FrameLoaderClientQt):
+        * v8/ForwardingHeaders/v8-debug.h: Removed.
+        * v8/ForwardingHeaders/v8-preparser.h: Removed.
+        * v8/ForwardingHeaders/v8-profiler.h: Removed.
+        * v8/ForwardingHeaders/v8-testing.h: Removed.
+        * v8/ForwardingHeaders/v8.h: Removed.
+        * v8/ForwardingHeaders/v8stdint.h: Removed.
+
 2012-07-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix inconsistent DLL linkage on Windows with WebKit1

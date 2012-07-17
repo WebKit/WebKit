@@ -54,7 +54,6 @@ my $showHelp = 0;
 my $clean = 0;
 my $useGYP = 0;
 my $minimal = 0;
-my $v8 = 0;
 my $installHeaders;
 my $installLibs;
 my $prefixPath;
@@ -96,8 +95,6 @@ push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'})
 foreach (@ARGV) {
     if ($_ eq '--minimal') {
         $minimal = 1;
-    } elsif ($_ eq '--v8') {
-        $v8 = 1;
     }
 }
 
@@ -128,7 +125,6 @@ Usage: $programName [options] [options to pass to build system]
 
   --install-headers=<path>          Set installation path for the headers (Qt only)
   --install-libs=<path>             Set installation path for the libraries (Qt only)
-  --v8                              Use V8 as JavaScript engine (Qt only)
 
   --prefix=<path>                   Set installation prefix to the given path (Gtk/Efl/BlackBerry only)
   --makeargs=<arguments>            Optional Makefile flags
@@ -152,7 +148,6 @@ my %options = (
     'makeargs=s' => \$makeArgs,
     'cmakeargs=s' => \$cmakeArgs,
     'minimal' => \$minimal,
-    'v8' => \$v8,
     'only-webkit' => \$onlyWebKitProject,
     'no-webkit2' => \$noWebKit2,
     'coverage' => \$coverageSupport,
@@ -271,13 +266,6 @@ if (isGtk()) {
 
     foreach (@features) {
         push @options, "DEFINES+=$_->{define}=${$_->{value}}" if $_->{define} && ${$_->{value}} != $_->{default};
-    }
-
-    if ($v8) {
-        print "Building WebKit2 with v8 is not supported currently. Disabling WebKit2.\n";
-        # FIXME: Deal with this in defaults_pre, once Qt has support for getting at the
-        # command line arguments at that stage.
-        push @options, "CONFIG+=v8 CONFIG+=no_webkit2";
     }
 }
 

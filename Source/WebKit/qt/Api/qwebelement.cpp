@@ -33,7 +33,6 @@
 #include "HTMLElement.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
-#if USE(JSC)
 #include "Completion.h"
 #include "JSGlobalObject.h"
 #include "JSHTMLElement.h"
@@ -41,11 +40,6 @@
 #include "PropertyNameArray.h"
 #include <parser/SourceCode.h>
 #include "qt_runtime.h"
-#elif USE(V8)
-#include "V8DOMWindow.h"
-#include "V8Binding.h"
-#include "NotImplemented.h"
-#endif
 #include "NodeList.h"
 #include "RenderImage.h"
 #include "ScriptState.h"
@@ -54,10 +48,8 @@
 #include "markup.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
-#if USE(JSC)
 #include "runtime_root.h"
 #include <JSDocument.h>
-#endif
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
@@ -716,7 +708,6 @@ QWebFrame *QWebElement::webFrame() const
     return QWebFramePrivate::kit(frame);
 }
 
-#if USE(JSC)
 static bool setupScriptContext(WebCore::Element* element, JSC::JSValue& thisValue, ScriptState*& state, ScriptController*& scriptController)
 {
     if (!element)
@@ -744,27 +735,6 @@ static bool setupScriptContext(WebCore::Element* element, JSC::JSValue& thisValu
 
     return true;
 }
-#elif USE(V8)
-static bool setupScriptContext(WebCore::Element* element, v8::Handle<v8::Value>& thisValue, ScriptState*& state, ScriptController*& scriptController)
-{
-    if (!element)
-        return false;
-
-    Document* document = element->document();
-    if (!document)
-        return false;
-
-    Frame* frame = document->frame();
-    if (!frame)
-        return false;
-
-    state = mainWorldScriptState(frame);
-    // Get V8 wrapper for DOM element
-    thisValue = toV8(frame->domWindow());
-    return true;
-}
-#endif
-
 
 /*!
     Executes \a scriptSource with this element as \c this object.
@@ -775,16 +745,11 @@ QVariant QWebElement::evaluateJavaScript(const QString& scriptSource)
         return QVariant();
 
     ScriptState* state = 0;
-#if USE(JSC)
     JSC::JSValue thisValue;
-#elif USE(V8)
-    v8::Handle<v8::Value> thisValue;
-#endif
     ScriptController* scriptController = 0;
 
     if (!setupScriptContext(m_element, thisValue, state, scriptController))
         return QVariant();
-#if USE(JSC)
     JSC::ScopeChainNode* scopeChain = state->dynamicGlobalObject()->globalScopeChain();
     JSC::UString script(reinterpret_cast_ptr<const UChar*>(scriptSource.data()), scriptSource.length());
 
@@ -795,10 +760,6 @@ QVariant QWebElement::evaluateJavaScript(const QString& scriptSource)
 
     int distance = 0;
     return JSC::Bindings::convertValueToQVariant(state, evaluationResult, QMetaType::Void, &distance);
-#elif USE(V8)
-    notImplemented();
-    return QVariant();
-#endif
 }
 
 /*!
@@ -2075,7 +2036,6 @@ QList<QWebElement> QWebElementCollection::toList() const
     element pointed to by the \a other iterator.
 */
 
-#if USE(JSC)
 QWebElement QtWebElementRuntime::create(Element* element)
 {
     return QWebElement(element);
@@ -2111,7 +2071,6 @@ static JSC::JSValue convertWebElementVariantToJSValue(JSC::ExecState* exec, WebC
 {
     return WebCore::toJS(exec, globalObject, QtWebElementRuntime::get(variant.value<QWebElement>()));
 }
-#endif
 
 void QtWebElementRuntime::initialize()
 {
@@ -2119,8 +2078,6 @@ void QtWebElementRuntime::initialize()
     if (initialized)
         return;
     initialized = true;
-#if USE(JSC)
     int id = qRegisterMetaType<QWebElement>();
     JSC::Bindings::registerCustomType(id, convertJSValueToWebElementVariant, convertWebElementVariantToJSValue);
-#endif
 }

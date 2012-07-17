@@ -77,7 +77,7 @@ runSyncQt() # Generate forwarding headers for the QtWebKit API
 
 WEBKIT += wtf
 
-!v8:WEBKIT += javascriptcore
+WEBKIT += javascriptcore
 
 WEBKIT += webcore
 

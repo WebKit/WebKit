@@ -1,3 +1,12 @@
+2012-07-17  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        [Qt][V8] Remove the V8 related codepaths and configuration
+        https://bugs.webkit.org/show_bug.cgi?id=90863
+
+        Reviewed by Simon Hausmann.
+
+        * WTF.pri:
+
 2012-07-16  Hajime Morrita  <morrita@chromium.org>
 
         WebCore needs WEBCORE_TESTING macro to mark methods being exported for testing.
