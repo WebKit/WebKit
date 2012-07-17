@@ -75,10 +75,8 @@ public:
 
     // Implement the IDBTransaction IDL
     const String& mode() const;
-    IDBDatabase* db() const;
-    PassRefPtr<DOMError> error(ExceptionCode&) const;
-    void setError(PassRefPtr<DOMError>);
-
+    IDBDatabase* db() const { return m_database.get(); }
+    PassRefPtr<DOMError> error() const { return m_error; }
     PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&);
     void abort();
 
@@ -96,6 +94,7 @@ public:
     void objectStoreCreated(const String&, PassRefPtr<IDBObjectStore>);
     void objectStoreDeleted(const String&);
     void setActive(bool);
+    void setError(PassRefPtr<DOMError>);
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);

@@ -23,10 +23,7 @@ store.add({x: 'value2', y: 'zzz2'}, 'key2')
 store.add({x: 'value3', y: 'zzz3'}, 'key3')
 PASS event.target.errorCode is DOMException.ABORT_ERR
 PASS event.target.error.name is 'AbortError'
-Expecting exception from trans.error
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
+PASS trans.error is null
 PASS firstError is false
 PASS secondError is false
 PASS abortFired is false
@@ -36,17 +33,14 @@ PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
 PASS ename is 'TransactionInactiveError'
 PASS event.target.errorCode is DOMException.ABORT_ERR
 PASS event.target.error.name is 'AbortError'
-Expecting exception from trans.error
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
+PASS trans.error is null
 PASS firstError is true
 PASS secondError is false
 PASS abortFired is false
 PASS firstError is true
 PASS secondError is true
 PASS abortFired is false
-PASS trans.error is firstDOMError
+PASS trans.error is null
 Expecting exception from store.add({x: 'value5', y: 'zzz5'}, 'key5')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR

@@ -1,3 +1,36 @@
+2012-07-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement spec updates to IDBTransaction.error
+        https://bugs.webkit.org/show_bug.cgi?id=91409
+
+        Reviewed by Tony Chang.
+
+        Update transaction-abort test to accomodate refinements in the spec around
+        IDBTransaction.error and add a dedicated test to exercise all spec behavior 
+        for the property.
+
+        * storage/indexeddb/resources/transaction-abort.js:
+        (startTest):
+        (firstAdd):
+        (secondAdd):
+        (transactionAborted):
+        * storage/indexeddb/resources/transaction-error.js: Added.
+        (test.request.onsuccess.request.onsuccess.request.onsuccess):
+        (test.request.onsuccess.request.onsuccess):
+        (test.request.onsuccess):
+        (test):
+        (startTest.trans.onabort):
+        (startTest):
+        (testErrorFromRequest.request.onerror):
+        (testErrorFromRequest.trans.onabort):
+        (testErrorFromRequest):
+        (testErrorFromException.request.onerror):
+        (testErrorFromException.trans.onabort):
+        (testErrorFromException):
+        * storage/indexeddb/transaction-abort-expected.txt:
+        * storage/indexeddb/transaction-error-expected.txt: Added.
+        * storage/indexeddb/transaction-error.html: Added.
+
 2012-07-16  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Unreviewed gardening. Layout Test plugins/embed-attributes-style.html is failing

@@ -1,3 +1,34 @@
+2012-07-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement spec updates to IDBTransaction.error
+        https://bugs.webkit.org/show_bug.cgi?id=91409
+
+        Reviewed by Tony Chang.
+
+        The Indexed DB spec was updated to resolve some edge cases around the
+        IDBTransaction.error attribute. It was agreed that accessing error should
+        never throw, error should be null if the transaction is not finished or
+        abort() was explicitly called, an appropriate error should be returned if
+        a commit failed, and a generic AbortError should be used if a request
+        callback throws. These cases are now handled per spec, except that a reason
+        is not provided for the commit failure (it's always UnknownError).
+
+        Test: storage/indexeddb/transaction-error.html
+              storage/indexeddb/transaction-abort.html
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent): Refactor some nested if() blocks; don't
+        re-abort the transaction if dispatching in response to an abort.
+        (WebCore::IDBRequest::uncaughtExceptionInEventHandler): Abort transaction
+        only if not already aborting, and set it's error to AbortError.
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::onAbort): Set error if abort triggered by back end.
+        * Modules/indexeddb/IDBTransaction.h:
+        (WebCore::IDBTransaction::db): Move impl to header file.
+        (WebCore::IDBTransaction::error): Move impl to header file, simplify.
+        (IDBTransaction):
+        * Modules/indexeddb/IDBTransaction.idl: The error attribute no longer throws.
+
 2012-07-16  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Introduce putWithIndexKeys and calculate them in the renderer

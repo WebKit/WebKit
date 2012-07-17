@@ -439,25 +439,28 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     if (cursorToNotify)
         cursorToNotify->postSuccessHandlerCallback();
 
-    if (m_transaction && event->type() != eventNames().blockedEvent) {
-        // If an error event and the default wasn't prevented...
-        if (dontPreventDefault && event->type() == eventNames().errorEvent) {
+    if (m_transaction) {
+        if (event->type() == eventNames().errorEvent && dontPreventDefault &&  !m_requestAborted) {
             m_transaction->setError(m_error);
             m_transaction->abort();
         }
-        m_transaction->backend()->didCompleteTaskEvents();
-    }
 
-    if (m_transaction && m_readyState == DONE)
-        m_transaction->unregisterRequest(this);
+        if (event->type() != eventNames().blockedEvent)
+            m_transaction->backend()->didCompleteTaskEvents();
+
+        if (m_readyState == DONE)
+            m_transaction->unregisterRequest(this);
+    }
 
     return dontPreventDefault;
 }
 
 void IDBRequest::uncaughtExceptionInEventHandler()
 {
-    if (m_transaction)
-        m_transaction->backend()->abort();
+    if (m_transaction && !m_requestAborted) {
+        m_transaction->setError(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::IDB_ABORT_ERR)));
+        m_transaction->abort();
+    }
 }
 
 void IDBRequest::enqueueEvent(PassRefPtr<Event> event)

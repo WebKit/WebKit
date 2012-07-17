@@ -49,6 +49,7 @@ function startTest()
     request.onsuccess = unexpectedSuccessCallback;
     request = evalAndLog("store.add({x: 'value3', y: 'zzz3'}, 'key3')");
     request.onerror = secondAdd;
+    request.onsuccess = unexpectedSuccessCallback;
     trans.abort();
 
     firstError = false;
@@ -60,10 +61,7 @@ function firstAdd()
 {
     shouldBe("event.target.errorCode", "DOMException.ABORT_ERR");
     shouldBe("event.target.error.name", "'AbortError'");
-    firstDOMError = event.target.error;
-    // FIXME: Ambiguous spec. See: https://www.w3.org/Bugs/Public/show_bug.cgi?id=17236
-    evalAndExpectException("trans.error", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-
+    shouldBeNull("trans.error");
     shouldBeFalse("firstError");
     shouldBeFalse("secondError");
     shouldBeFalse("abortFired");
@@ -76,8 +74,7 @@ function secondAdd()
 {
     shouldBe("event.target.errorCode", "DOMException.ABORT_ERR");
     shouldBe("event.target.error.name", "'AbortError'");
-    // FIXME: Ambiguous spec. See: https://www.w3.org/Bugs/Public/show_bug.cgi?id=17236
-    evalAndExpectException("trans.error", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+    shouldBeNull("trans.error");
     shouldBeTrue("firstError");
     shouldBeFalse("secondError");
     shouldBeFalse("abortFired");
@@ -89,7 +86,7 @@ function transactionAborted()
     shouldBeTrue("firstError");
     shouldBeTrue("secondError");
     shouldBeFalse("abortFired");
-    shouldBe("trans.error", "firstDOMError");
+    shouldBeNull("trans.error");
     abortFired = true;
 
     evalAndExpectException("store.add({x: 'value5', y: 'zzz5'}, 'key5')", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");

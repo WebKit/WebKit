@@ -122,20 +122,6 @@ const String& IDBTransaction::mode() const
     return mode;
 }
 
-IDBDatabase* IDBTransaction::db() const
-{
-    return m_database.get();
-}
-
-PassRefPtr<DOMError> IDBTransaction::error(ExceptionCode& ec) const
-{
-    if (m_state != Finished) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
-        return 0;
-    }
-    return m_error;
-}
-
 void IDBTransaction::setError(PassRefPtr<DOMError> error)
 {
     ASSERT(m_state != Finished);
@@ -276,6 +262,9 @@ void IDBTransaction::onAbort()
     ASSERT(m_state != Finished);
 
     if (m_state != Finishing) {
+        // FIXME: Propagate true cause from back end (e.g. QuotaError, UnknownError, etc.)
+        setError(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::UNKNOWN_ERR)));
+
         // Abort was not triggered by front-end, so outstanding requests must
         // be aborted now.
         while (!m_requestList.isEmpty()) {
