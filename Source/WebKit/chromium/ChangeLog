@@ -1,3 +1,22 @@
+2012-07-16  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Fix WebFrameTest flakiness due to synthetic mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=91428
+
+        Reviewed by Adam Barth.
+
+        Synthetic mouse move events on scrolling can cause segfaults in
+        WebFrameTest due to delayed callbacks on the message loop after
+        state destruction. This is currently only affecting
+        the Android port, but has the potential to affect other platforms in the
+        future.
+
+        We can avoid the issue by disabling the deviceSupportsMouse
+        setting, which shouldn't be needed by any WebFrameTest.
+
+        * tests/FrameTestHelpers.cpp:
+        (WebKit::FrameTestHelpers::createWebViewAndLoad):
+
 2012-07-16  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Introduce putWithIndexKeys and calculate them in the renderer

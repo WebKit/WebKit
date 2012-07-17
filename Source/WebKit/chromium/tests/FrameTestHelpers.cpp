@@ -80,6 +80,7 @@ WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript, Web
         webViewClient = defaultWebViewClient();
     WebView* webView = WebView::create(webViewClient);
     webView->settings()->setJavaScriptEnabled(enableJavascript);
+    webView->settings()->setDeviceSupportsMouse(false);
     webView->initializeMainFrame(webFrameClient);
 
     loadFrame(webView->mainFrame(), url);
