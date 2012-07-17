@@ -1,3 +1,10 @@
+2012-07-16  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. Remove two empty directories.
+
+        * public/linuxish: Removed.
+        * src/linuxish: Removed.
+
 2012-07-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add RegisterProtocolHandlerClient to the Modules/protocolhandler
