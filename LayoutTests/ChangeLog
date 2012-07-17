@@ -1,3 +1,10 @@
+2012-07-17  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed gardening.
+        Mark media/media-continues-playing-after-replace-source.html as flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         invalidateNodeListCachesInAncestors walks up ancestors even when an attribute that doesn't invalidate node lists changes
