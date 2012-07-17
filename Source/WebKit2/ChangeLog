@@ -1,3 +1,17 @@
+2012-07-16  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement decidePolicyForResponse in policy client
+        https://bugs.webkit.org/show_bug.cgi?id=91401
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Provide implementation for decidePolicyForResponse callback
+        in WebKit2 EFL's policy client.
+
+        * UIProcess/API/efl/ewk_view_policy_client.cpp:
+        (decidePolicyForResponseCallback):
+        (ewk_view_policy_client_attach):
+
 2012-07-16  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add APIs to support theme.

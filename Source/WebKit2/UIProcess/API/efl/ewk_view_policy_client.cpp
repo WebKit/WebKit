@@ -26,12 +26,14 @@
 #include "config.h"
 
 #include "WKFrame.h"
+#include "WKFramePolicyListener.h"
 #include "ewk_navigation_policy_decision.h"
 #include "ewk_navigation_policy_decision_private.h"
 #include "ewk_view_policy_client_private.h"
 #include "ewk_view_private.h"
 #include <wtf/text/CString.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
 static inline Evas_Object* toEwkView(const void* clientInfo)
@@ -53,6 +55,39 @@ static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKF
     ewk_navigation_policy_decision_unref(decision);
 }
 
+static void decidePolicyForResponseCallback(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+{
+    const ResourceResponse resourceResponse = toImpl(response)->resourceResponse();
+    // If the URL Response has "Content-Disposition: attachment;" header, then
+    // we should download it.
+    if (resourceResponse.isAttachment()) {
+        WKFramePolicyListenerDownload(listener);
+        return;
+    }
+
+    String mimeType = toImpl(response)->resourceResponse().mimeType().lower();
+    bool canShowMIMEType = toImpl(frame)->canShowMIMEType(mimeType);
+    if (WKFrameIsMainFrame(frame)) {
+        if (canShowMIMEType) {
+            WKFramePolicyListenerUse(listener);
+            return;
+        }
+
+        // If we can't use (show) it then we should download it.
+        WKFramePolicyListenerDownload(listener);
+        return;
+    }
+
+    // We should ignore downloadable top-level content for subframes, with an exception for text/xml and application/xml so we can still support Acid3 test.
+    // It makes the browser intentionally behave differently when it comes to text(application)/xml content in subframes vs. mainframe.
+    if (!canShowMIMEType && !(mimeType == "text/xml" || mimeType == "application/xml")) {
+        WKFramePolicyListenerIgnore(listener);
+        return;
+    }
+
+    WKFramePolicyListenerUse(listener);
+}
+
 void ewk_view_policy_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 {
     WKPagePolicyClient policyClient;
@@ -61,6 +96,7 @@ void ewk_view_policy_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     policyClient.clientInfo = ewkView;
     policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
     policyClient.decidePolicyForNewWindowAction = decidePolicyForNewWindowAction;
+    policyClient.decidePolicyForResponse = decidePolicyForResponseCallback;
 
     WKPageSetPagePolicyClient(pageRef, &policyClient);
 }
