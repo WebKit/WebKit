@@ -150,7 +150,7 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
     if (isPainting)
         m_data.m_painter->end();
 
-    QImage image = m_data.m_nativeImage;
+    QImage image = m_data.m_nativeImage.convertToFormat(QImage::Format_ARGB32);
     ASSERT(!image.isNull());
 
     uchar* bits = image.bits();
