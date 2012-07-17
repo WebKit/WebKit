@@ -1,3 +1,28 @@
+2012-07-17  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Remove unnecessary clearWindow() calls and the method itself
+        https://bugs.webkit.org/show_bug.cgi?id=91540
+        RIM PR 174365
+
+        Reviewed by Adam Treat.
+
+        If we resume the backingstore right afterwards with
+        RenderAndBlit then that'll fill the whole visible area
+        with content, making a clearWindow() call unnecessary.
+        This call is a remnant from ages ago, and is well suited
+        to disappear into nothingness.
+
+        (There is still a clearWindow() call, with rect argument,
+        which we continue using. This commit only removes the
+        rect-less version.)
+
+        * Api/BackingStore.cpp:
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::zoomBlock):
+
 2012-07-17  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: refactor InspectorController::connectFrontend() to accept InspectorFrontendChannel.

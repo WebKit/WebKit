@@ -311,7 +311,6 @@ public:
 
     void invalidateWindow();
     void invalidateWindow(const Platform::IntRect& dst);
-    void clearWindow();
     void clearWindow(const Platform::IntRect&, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
 
     bool isScrollingOrZooming() const;

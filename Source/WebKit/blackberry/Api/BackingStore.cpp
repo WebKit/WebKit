@@ -2520,30 +2520,6 @@ void BackingStorePrivate::invalidateWindow(const Platform::IntRect& dst)
         window->post(dstRect);
 }
 
-void BackingStorePrivate::clearWindow()
-{
-    if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread() && !shouldDirectRenderingToWindow()) {
-        typedef void (BlackBerry::WebKit::BackingStorePrivate::*FunctionType)();
-        BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchMessage(
-            BlackBerry::Platform::createMethodCallMessage<FunctionType, BackingStorePrivate>(
-                &BackingStorePrivate::clearWindow, this));
-        return;
-    }
-
-    BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
-    ASSERT(dstBuffer);
-    if (!dstBuffer)
-        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelWarn, "Empty window buffer, couldn't clearWindow");
-
-    windowFrontBufferState()->clearBlittedRegion();
-    windowBackBufferState()->addBlittedRegion(Platform::IntRect(
-        Platform::IntPoint(0, 0), surfaceSize()));
-
-    Color color(m_webPage->settings()->backgroundColor());
-    BlackBerry::Platform::Graphics::clearBuffer(dstBuffer,
-        color.red(), color.green(), color.blue(), color.alpha());
-}
-
 void BackingStorePrivate::clearWindow(const Platform::IntRect& rect,
                                       unsigned char red,
                                       unsigned char green,
