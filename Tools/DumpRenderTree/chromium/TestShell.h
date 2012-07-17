@@ -37,6 +37,7 @@
 #include "LayoutTestController.h"
 #include "NotificationPresenter.h"
 #include "TestEventPrinter.h"
+#include "TestInterfaces.h"
 #include "TextInputController.h"
 #include "WebPreferences.h"
 #include "WebViewHost.h"
@@ -95,7 +96,6 @@ public:
     LayoutTestController* layoutTestController() const { return m_layoutTestController.get(); }
     EventSender* eventSender() const { return m_eventSender.get(); }
     AccessibilityController* accessibilityController() const { return m_accessibilityController.get(); }
-    GamepadController* gamepadController() const { return m_gamepadController.get(); }
 #if ENABLE(NOTIFICATIONS)
     NotificationPresenter* notificationPresenter() const { return m_notificationPresenter.get(); }
 #endif
@@ -216,7 +216,7 @@ private:
     OwnPtr<DRTDevToolsAgent> m_drtDevToolsAgent;
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;
     OwnPtr<AccessibilityController> m_accessibilityController;
-    OwnPtr<GamepadController> m_gamepadController;
+    OwnPtr<TestInterfaces> m_testInterfaces;
     OwnPtr<EventSender> m_eventSender;
     OwnPtr<LayoutTestController> m_layoutTestController;
     OwnPtr<TextInputController> m_textInputController;

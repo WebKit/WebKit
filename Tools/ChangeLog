@@ -1,3 +1,24 @@
+2012-07-16  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Introduce TestInterfaces to hold all the JavaScript interfaces needed for LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=91312
+
+        Reviewed by Ryosuke Niwa.
+
+        Looking forward to moving more objects into TestRunner.a, we're going
+        to need an object to own all the interfaces and to put them through
+        their lifecycle.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::resetTestController):
+        (TestShell::bindJSObjectsToWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.cpp: Added.
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.h: Added.
+
 2012-07-16  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add APIs to support theme.

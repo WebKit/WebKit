@@ -64,6 +64,8 @@
             'chromium/TestRunner/CppBoundClass.h',
             'chromium/TestRunner/CppVariant.cpp',
             'chromium/TestRunner/CppVariant.h',
+            'chromium/TestRunner/TestInterfaces.cpp',
+            'chromium/TestRunner/TestInterfaces.h',
             'chromium/TestRunner/GamepadController.cpp',
             'chromium/TestRunner/GamepadController.h',
         ],
