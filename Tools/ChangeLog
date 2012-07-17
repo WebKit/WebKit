@@ -1,3 +1,17 @@
+2012-07-16  Don Olmstead  <don.olmstead@am.sony.com>
+
+        NRWRT Should provide a VS project to work on
+        https://bugs.webkit.org/show_bug.cgi?id=91436
+
+        Reviewed by Dirk Pranke.
+
+        Adding VS2010 project for modifying webkitpy. Uses pytools
+        <http://pytools.codeplex.com> which integrates python into 
+        Visual Studio.
+
+        * Scripts/webkitpy/webkitpy.pyproj: Added.
+        * Scripts/webkitpy/webkitpy.sln: Added.
+
 2012-07-16  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Move GamepadController into TestRunner.a
