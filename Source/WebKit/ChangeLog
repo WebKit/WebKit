@@ -1,3 +1,16 @@
+2012-07-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add RegisterProtocolHandlerClient to the Modules/protocolhandler
+        https://bugs.webkit.org/show_bug.cgi?id=90940
+
+        Reviewed by Hajime Morita.
+
+        As a step to let protocol handler be moved to the modules, RegisterProtocolHandlerClient needs
+        to be added to the Modules/protocolhandler. Because ChromeClient has some virtual functions for
+        protocol handlers, virtual functions should be moved to RegisterProtocolHandlerClient.
+
+        * PlatformEfl.cmake: Add RegisterProtocolHandlerEfl files and include path.
+
 2012-07-16  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Upstream WebGL Code

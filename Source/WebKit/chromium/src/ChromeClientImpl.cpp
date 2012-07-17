@@ -103,6 +103,7 @@
 #include "WindowFeatures.h"
 #include "WrappedResourceRequest.h"
 #include <public/Platform.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -495,13 +496,6 @@ IntRect ChromeClientImpl::windowResizerRect() const
         result = m_webView->client()->windowResizerRect();
     return result;
 }
-
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-void ChromeClientImpl::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
-{
-    m_webView->client()->registerProtocolHandler(scheme, baseURL, url, title);
-}
-#endif
 
 void ChromeClientImpl::invalidateRootView(const IntRect&, bool)
 {
@@ -1116,6 +1110,23 @@ bool ChromeClientImpl::isPointerLocked()
 {
     return m_webView->isPointerLocked();
 }
+#endif
+
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+PassOwnPtr<RegisterProtocolHandlerClientImpl> RegisterProtocolHandlerClientImpl::create(WebViewImpl* webView)
+{
+    return adoptPtr(new RegisterProtocolHandlerClientImpl(webView));
+}
+
+RegisterProtocolHandlerClientImpl::RegisterProtocolHandlerClientImpl(WebViewImpl* webView)
+    : m_webView(webView)
+{
+}
+
+void RegisterProtocolHandlerClientImpl::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) 
+{ 
+    m_webView->client()->registerProtocolHandler(scheme, baseURL, url, title);
+} 
 #endif
 
 } // namespace WebKit

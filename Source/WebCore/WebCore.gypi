@@ -1584,6 +1584,7 @@
             'Modules/notifications/WorkerContextNotifications.h',
             'Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp',
             'Modules/protocolhandler/NavigatorRegisterProtocolHandler.h',
+            'Modules/protocolhandler/RegisterProtocolHandlerClient.h',
             'Modules/quota/DOMWindowQuota.cpp',
             'Modules/quota/DOMWindowQuota.h',
             'Modules/quota/StorageInfo.cpp',

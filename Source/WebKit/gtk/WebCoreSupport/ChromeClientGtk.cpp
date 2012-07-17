@@ -386,13 +386,6 @@ IntRect ChromeClient::windowResizerRect() const
     return IntRect();
 }
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER) 
-void ChromeClient::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) 
-{ 
-    notImplemented(); 
-} 
-#endif 
-
 static gboolean repaintEverythingSoonTimeout(ChromeClient* client)
 {
     client->paint(0);

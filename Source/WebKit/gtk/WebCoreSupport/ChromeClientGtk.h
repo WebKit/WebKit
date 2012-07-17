@@ -99,9 +99,6 @@ namespace WebKit {
         virtual KeyboardUIMode keyboardUIMode();
 
         virtual IntRect windowResizerRect() const;
-#if ENABLE(REGISTER_PROTOCOL_HANDLER) 
-        virtual void registerProtocolHandler(const WTF::String&, const WTF::String&, const WTF::String&, const WTF::String&); 
-#endif 
         virtual void invalidateRootView(const IntRect&, bool);
         virtual void invalidateContentsAndRootView(const IntRect&, bool);
         virtual void invalidateContentsForSlowScroll(const IntRect&, bool);

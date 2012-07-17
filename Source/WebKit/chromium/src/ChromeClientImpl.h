@@ -34,8 +34,10 @@
 
 #include "ChromeClientChromium.h"
 #include "PopupMenu.h"
+#include "RegisterProtocolHandlerClient.h"
 #include "SearchPopupMenu.h"
 #include "WebNavigationPolicy.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 class AccessibilityObject;
@@ -107,9 +109,6 @@ public:
     virtual bool shouldInterruptJavaScript();
     virtual WebCore::KeyboardUIMode keyboardUIMode();
     virtual WebCore::IntRect windowResizerRect() const;
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-    virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
-#endif
     virtual void invalidateRootView(const WebCore::IntRect&, bool);
     virtual void invalidateContentsAndRootView(const WebCore::IntRect&, bool);
     virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool);
@@ -233,6 +232,19 @@ private:
 #if ENABLE(PAGE_POPUP)
     WebCore::PagePopupDriver* m_pagePopupDriver;
 #endif
+};
+
+class RegisterProtocolHandlerClientImpl : public WebCore::RegisterProtocolHandlerClient {
+public:
+    static PassOwnPtr<RegisterProtocolHandlerClientImpl> create(WebViewImpl*);
+    ~RegisterProtocolHandlerClientImpl() { }
+
+    virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) OVERRIDE;
+
+private:
+    explicit RegisterProtocolHandlerClientImpl(WebViewImpl*);
+
+    WebViewImpl* m_webView;
 };
 
 } // namespace WebKit

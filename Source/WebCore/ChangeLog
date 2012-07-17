@@ -1,3 +1,45 @@
+2012-07-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add RegisterProtocolHandlerClient to the Modules/protocolhandler
+        https://bugs.webkit.org/show_bug.cgi?id=90940
+
+        Reviewed by Hajime Morita.
+
+        As a step to let protocol handler be moved to the modules, RegisterProtocolHandlerClient needs
+        to be added to the Modules/protocolhandler. Because ChromeClient has some virtual functions for
+        protocol handlers, virtual functions should be moved to RegisterProtocolHandlerClient.
+
+        In addition, NavigatorRegisterProtocolHandler should be supplementable.
+
+        No new tests. Covered by existing tests.
+
+        * GNUmakefile.list.am:
+        * Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp:
+        (WebCore::NavigatorRegisterProtocolHandler::from):
+        (WebCore::NavigatorRegisterProtocolHandler::create):
+        (WebCore):
+        (WebCore::NavigatorRegisterProtocolHandler::registerProtocolHandler):
+        (WebCore::customHandlersStateString):
+        (WebCore::NavigatorRegisterProtocolHandler::isProtocolHandlerRegistered):
+        (WebCore::NavigatorRegisterProtocolHandler::unregisterProtocolHandler):
+        (WebCore::NavigatorRegisterProtocolHandler::supplementName):
+        (WebCore::provideRegisterProtocolHandlerTo):
+        * Modules/protocolhandler/NavigatorRegisterProtocolHandler.h:
+        (WebCore):
+        (NavigatorRegisterProtocolHandler):
+        (WebCore::NavigatorRegisterProtocolHandler::NavigatorRegisterProtocolHandler):
+        (WebCore::NavigatorRegisterProtocolHandler::client):
+        * Modules/protocolhandler/RegisterProtocolHandlerClient.h: Added.
+        (WebCore):
+        (RegisterProtocolHandlerClient):
+        * WebCore.gypi:
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        (ChromeClient):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::setCookies):
+        (WebCore::getRawCookies):
+
 2012-07-16  Pete Williamson  <petewil@google.com>
 
         Changed the behavior of iconURLs to always recalculate the list.

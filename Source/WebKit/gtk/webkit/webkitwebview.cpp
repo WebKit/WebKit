@@ -118,6 +118,10 @@
 #include "DeviceOrientationClientGtk.h"
 #endif
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+#include "RegisterProtocolHandlerClientGtk.h"
+#endif
+
 /**
  * SECTION:webkitwebview
  * @short_description: The central class of the WebKitGTK+ API
@@ -3628,6 +3632,10 @@ static void webkit_web_view_init(WebKitWebView* webView)
 #if ENABLE(MEDIA_STREAM)
     priv->userMediaClient = adoptPtr(new UserMediaClientGtk);
     WebCore::provideUserMediaTo(priv->corePage, priv->userMediaClient.get());
+#endif
+
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+    WebCore::provideRegisterProtocolHandlerTo(priv->corePage, new WebKit::RegisterProtocolHandlerClient);
 #endif
 
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {

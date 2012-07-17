@@ -98,6 +98,12 @@ IF (ENABLE_BATTERY_STATUS)
   )
 ENDIF ()
 
+IF (ENABLE_REGISTER_PROTOCOL_HANDLER OR ENABLE_CUSTOM_SCHEME_HANDLER)
+  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/Modules/protocolhandler"
+  )
+ENDIF ()
+
 LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/AssertMatchingEnums.cpp
     efl/WebCoreSupport/BatteryClientEfl.cpp
@@ -116,6 +122,7 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
     efl/WebCoreSupport/PageClientEfl.cpp
     efl/WebCoreSupport/PlatformStrategiesEfl.cpp 
+    efl/WebCoreSupport/RegisterProtocolHandlerClientEfl.cpp 
     efl/WebCoreSupport/StorageTrackerClientEfl.cpp
     efl/WebCoreSupport/VibrationClientEfl.cpp
 

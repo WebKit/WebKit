@@ -146,21 +146,6 @@ namespace WebCore {
 
         virtual void* webView() const = 0;
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-        virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) = 0;
-#endif
-
-#if ENABLE(CUSTOM_SCHEME_HANDLER)
-        enum CustomHandlersState {
-            CustomHandlersNew,
-            CustomHandlersRegistered,
-            CustomHandlersDeclined
-        };
-
-        virtual CustomHandlersState isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url) = 0;
-        virtual void unregisterProtocolHandler(const String& scheme, const String& baseURL, const String& url) = 0;
-#endif
-
         virtual IntRect windowResizerRect() const = 0;
 
         // Methods used by HostWindow.

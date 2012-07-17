@@ -103,6 +103,10 @@
 #include "ColorChooserClient.h"
 #endif
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+#include "RegisterProtocolHandlerClientEfl.h"
+#endif
+
 static const float zoomMinimum = 0.05;
 static const float zoomMaximum = 4.0;
 
@@ -755,6 +759,10 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
 #if ENABLE(BATTERY_STATUS)
     WebCore::provideBatteryTo(priv->page.get(), new BatteryClientEfl(smartData->self));
+#endif
+
+#if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+    WebCore::provideRegisterProtocolHandlerTo(priv->page.get(), new WebCore::RegisterProtocolHandlerClientEfl(smartData->self));
 #endif
 
     priv->pageSettings = priv->page->settings();

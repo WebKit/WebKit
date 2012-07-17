@@ -1,3 +1,24 @@
+2012-07-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add RegisterProtocolHandlerClient to the Modules/protocolhandler
+        https://bugs.webkit.org/show_bug.cgi?id=90940
+
+        Reviewed by Hajime Morita.
+
+        As a step to let protocol handler be moved to the modules, RegisterProtocolHandlerClient needs
+        to be added to the Modules/protocolhandler. Because ChromeClient has some virtual functions for
+        protocol handlers, virtual functions should be moved to RegisterProtocolHandlerClient.
+
+        In order to support this, WebRegisterProtocolHandlerClient class is added. However, this is not implemented yet.
+        In addition, existing virtual functions in WebChromeClient are moved to WebRegisterProtocolHandlerClient.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebRegisterProtocolHandlerClient.h: Added.
+        (WebKit):
+        (WebRegisterProtoclHandlerClient):
+        (WebKit::WebRegisterProtoclHandlerClient::isProtocolHandlerRegistered):
+        (WebKit::WebRegisterProtoclHandlerClient::unregisterProtocolHandler):
+
 2012-07-16  Pete Williamson  <petewil@google.com>
 
         Export the iconURL list to make it available to the Internals class for testing

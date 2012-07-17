@@ -29,8 +29,6 @@
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
 
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -112,12 +110,18 @@ static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
     return false;
 }
 
-NavigatorRegisterProtocolHandler::NavigatorRegisterProtocolHandler()
+NavigatorRegisterProtocolHandler* NavigatorRegisterProtocolHandler::from(Page* page)
 {
+    return static_cast<NavigatorRegisterProtocolHandler*>(RefCountedSupplement<Page, NavigatorRegisterProtocolHandler>::from(page, NavigatorRegisterProtocolHandler::supplementName()));
 }
 
 NavigatorRegisterProtocolHandler::~NavigatorRegisterProtocolHandler()
 {
+}
+
+PassRefPtr<NavigatorRegisterProtocolHandler> NavigatorRegisterProtocolHandler::create(RegisterProtocolHandlerClient* client)
+{
+    return adoptRef(new NavigatorRegisterProtocolHandler(client));
 }
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
@@ -138,27 +142,23 @@ void NavigatorRegisterProtocolHandler::registerProtocolHandler(Navigator* naviga
     if (!verifyProtocolHandlerScheme(scheme, ec))
         return;
 
-    Page* page = navigator->frame()->page();
-    if (!page)
-        return;
-
-    page->chrome()->client()->registerProtocolHandler(scheme, baseURL, url, navigator->frame()->displayStringModifiedByEncoding(title));
+    NavigatorRegisterProtocolHandler::from(navigator->frame()->page())->client()->registerProtocolHandler(scheme, baseURL, url, navigator->frame()->displayStringModifiedByEncoding(title));
 }
 #endif
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
-static String customHandlersStateString(const ChromeClient::CustomHandlersState state)
+static String customHandlersStateString(const RegisterProtocolHandlerClient::CustomHandlersState state)
 {
     DEFINE_STATIC_LOCAL(const String, newHandler, ("new"));
     DEFINE_STATIC_LOCAL(const String, registeredHandler, ("registered"));
     DEFINE_STATIC_LOCAL(const String, declinedHandler, ("declined"));
 
     switch (state) {
-    case ChromeClient::CustomHandlersNew:
+    case RegisterProtocolHandlerClient::CustomHandlersNew:
         return newHandler;
-    case ChromeClient::CustomHandlersRegistered:
+    case RegisterProtocolHandlerClient::CustomHandlersRegistered:
         return registeredHandler;
-    case ChromeClient::CustomHandlersDeclined:
+    case RegisterProtocolHandlerClient::CustomHandlersDeclined:
         return declinedHandler;
     }
 
@@ -182,11 +182,7 @@ String NavigatorRegisterProtocolHandler::isProtocolHandlerRegistered(Navigator* 
     if (!verifyProtocolHandlerScheme(scheme, ec))
         return declined;
 
-    Page* page = navigator->frame()->page();
-    if (!page)
-        return declined;
-
-    return customHandlersStateString(page->chrome()->client()->isProtocolHandlerRegistered(scheme, baseURL, url));
+    return customHandlersStateString(NavigatorRegisterProtocolHandler::from(navigator->frame()->page())->client()->isProtocolHandlerRegistered(scheme, baseURL, url));
 }
 
 void NavigatorRegisterProtocolHandler::unregisterProtocolHandler(Navigator* navigator, const String& scheme, const String& url, ExceptionCode& ec)
@@ -203,13 +199,20 @@ void NavigatorRegisterProtocolHandler::unregisterProtocolHandler(Navigator* navi
     if (!verifyProtocolHandlerScheme(scheme, ec))
         return;
 
-    Page* page = navigator->frame()->page();
-    if (!page)
-        return;
-
-    page->chrome()->client()->unregisterProtocolHandler(scheme, baseURL, url);
+    NavigatorRegisterProtocolHandler::from(navigator->frame()->page())->client()->unregisterProtocolHandler(scheme, baseURL, url);
 }
 #endif
+
+const AtomicString& NavigatorRegisterProtocolHandler::supplementName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorRegisterProtocolHandler"));
+    return name;
+}
+
+void provideRegisterProtocolHandlerTo(Page* page, RegisterProtocolHandlerClient* client)
+{
+    RefCountedSupplement<Page, NavigatorRegisterProtocolHandler>::provideTo(page, NavigatorRegisterProtocolHandler::supplementName(), NavigatorRegisterProtocolHandler::create(client));
+}
 
 } // namespace WebCore
 

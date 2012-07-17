@@ -29,17 +29,25 @@
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
 
+#include "RefCountedSupplement.h"
+#include "RegisterProtocolHandlerClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class Page;
 class Navigator;
 
 typedef int ExceptionCode;
 
-class NavigatorRegisterProtocolHandler {
+class NavigatorRegisterProtocolHandler : public RefCountedSupplement<Page, NavigatorRegisterProtocolHandler> {
 public:
+    virtual ~NavigatorRegisterProtocolHandler();
+
+    static const AtomicString& supplementName();
+    static NavigatorRegisterProtocolHandler* from(Page*);
+
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
     static void registerProtocolHandler(Navigator*, const String& scheme, const String& url, const String& title, ExceptionCode&);
 #endif 
@@ -49,9 +57,16 @@ public:
     static void unregisterProtocolHandler(Navigator*, const String& scheme, const String& url, ExceptionCode&);
 #endif
 
+    static PassRefPtr<NavigatorRegisterProtocolHandler> create(RegisterProtocolHandlerClient*);
+
 private:
-    NavigatorRegisterProtocolHandler();
-    ~NavigatorRegisterProtocolHandler();
+    explicit NavigatorRegisterProtocolHandler(RegisterProtocolHandlerClient* client)
+        : m_client(client)
+    { }
+
+    RegisterProtocolHandlerClient* client() { return m_client; }
+
+    RegisterProtocolHandlerClient* m_client;
 };
 
 } // namespace WebCore

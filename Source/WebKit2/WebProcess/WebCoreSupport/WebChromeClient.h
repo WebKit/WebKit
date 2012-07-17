@@ -220,15 +220,6 @@ private:
     virtual void numWheelEventHandlersChanged(unsigned) OVERRIDE;
     virtual void numTouchEventHandlersChanged(unsigned) OVERRIDE { }
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
-    virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) OVERRIDE { }
-#endif
-
-#if ENABLE(CUSTOM_SCHEME_HANDLER)
-    virtual CustomHandlersState isProtocolHandlerRegistered(const String&, const String&, const String&) { return CustomHandlersDeclined; }
-    virtual void unregisterProtocolHandler(const String&, const String&, const String&) { }
-#endif
-
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar;
