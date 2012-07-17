@@ -1,3 +1,9 @@
+2012-07-17  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, remove timeout lines for tests on snowleopard that no longer apply.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-17  Emil A Eklund  <eae@chromium.org>
 
         Incorrect offset used for scrollWidth/Height calculation
