@@ -102,6 +102,17 @@
                         r"|Source/WebKit2/UIProcess/API/cpp/qt/"
                         r"|Source/WebKit2/UIProcess/API/C/qt/",
         },
+        "QtGraphics": {
+            "filename": r"Source/WebCore/platform/graphics/qt/"
+                        r"|Source/WebKit2/WebProcess/WebPage/LayerTreeCoordinator/"
+                        r"|Source/WebKit2/UIProcess/WebLayerTreeRenderer(?!\.(h|cpp))",
+        },
+        "TextureMapper": {
+            "filename": r"Source/WebCore/platform/graphics/texmap/",
+        },
+        "OpenGL": {
+            "filename": r"Source/WebCore/platform/graphics/opengl/",
+        },
         "QtWebKit2PlatformSpecific": {
             "filename": r"Source/WebKit2/.*\.(pri|pro)"
                         r"|Source/WebKit2/Platform/qt/"
@@ -229,7 +240,9 @@
         "MathML": [ "dbarton@mathscribe.com" ],
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
         "NetworkInfo": [ "gyuyoung.kim@samsung.com" ],
+        "OpenGL" : [ "noam.rosenthal@nokia.com" ],
         "QtBuildSystem" : [ "vestbo@webkit.org", ],
+        "QtGraphics" : [ "noam.rosenthal@nokia.com" ],
         "QtWebKit2PlatformSpecific": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", "cmarcelo@webkit.org" ],
         "QtWebKit2PublicAPI": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", "cmarcelo@webkit.org" ],
         "Rendering": [ "eric@webkit.org" ],
@@ -238,6 +251,7 @@
         "SoupNetwork": [ "rakuco@webkit.org", "gns@gnome.org", "mrobinson@webkit.org", "danw@gnome.org" ],
         "StyleChecker": [ "levin@chromium.org", ],
         "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],
+        "TextureMapper" : [ "noam.rosenthal@nokia.com" ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "V8Bindings|BindingsScripts": [ "abarth@webkit.org", "japhet@chromium.org", "haraken@chromium.org", "jochen@chromium.org" ],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
