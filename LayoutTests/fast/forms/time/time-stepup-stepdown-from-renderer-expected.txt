@@ -16,7 +16,7 @@ PASS stepUp("20:13", "any", null) is "20:14"
 PASS stepDown("20:13", "any", null) is "20:12"
 Overflow/underflow
 PASS stepUp("20:13", "3.40282346e+38", null) is "23:59:59.999"
-PASS stepDown("20:13", "3.40282346e+38", null) is "00:00:00.000"
+PASS stepDown("20:13", "3.40282346e+38", null) is "00:00:00"
 PASS stepUp("20:13", "1", "20:13") is "20:13"
 PASS stepDown("20:13", "1", "20:13") is "20:13"
 PASS stepUp("23:59", null, null) is "23:59"

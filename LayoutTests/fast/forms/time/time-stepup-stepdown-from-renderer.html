@@ -67,7 +67,7 @@ shouldBe('stepUp("20:13", "any", null)', '"20:14"');
 shouldBe('stepDown("20:13", "any", null)', '"20:12"');
 debug('Overflow/underflow');
 shouldBe('stepUp("20:13", "3.40282346e+38", null)', '"23:59:59.999"');
-shouldBe('stepDown("20:13", "3.40282346e+38", null)', '"00:00:00.000"');
+shouldBe('stepDown("20:13", "3.40282346e+38", null)', '"00:00:00"');
 shouldBe('stepUp("20:13", "1", "20:13")', '"20:13"');
 shouldBe('stepDown("20:13", "1", "20:13")', '"20:13"');
 shouldBe('stepUp("23:59", null, null)', '"23:59"');

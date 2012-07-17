@@ -15,8 +15,8 @@ Step=any
 PASS stepUp("2010-02-10T20:13", "any", null) is "2010-02-10T20:14"
 PASS stepDown("2010-02-10T20:13", "any", null) is "2010-02-10T20:12"
 Overflow/underflow
-PASS stepUp("2010-02-10T20:13", "3.40282346e+38", null) is "275760-09-13T00:00:00.000"
-PASS stepDown("2010-02-10T20:13", "3.40282346e+38", null) is "1970-01-01T00:00:00.000"
+PASS stepUp("2010-02-10T20:13", "3.40282346e+38", null) is "275760-09-13T00:00:00"
+PASS stepDown("2010-02-10T20:13", "3.40282346e+38", null) is "1970-01-01T00:00:00"
 PASS stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13") is "2010-02-10T20:13"
 PASS stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13") is "2010-02-10T20:13"
 stepDown()/stepUp() for stepMismatch values

@@ -1,3 +1,30 @@
+2012-07-17  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Test expectations of datetime/datetime-local/time should not contain milliseconds when they aren't expected
+        https://bugs.webkit.org/show_bug.cgi?id=91469
+
+        Reviewed by Kent Tamura.
+
+        This patch gets rid of unexpected millisecond strings from both test
+        cases and expected text.
+
+        This is adaptation of behavior change caused by r119948, introducing
+        decimal arithmetic, which corrected the expression step mod 1000 used
+        in BaseDateAndTimeInputType::serialize for checking adding milliseconds
+        or not, which converts internal date time representation into string.
+
+        Before r119948, we used fmod(step, 1000) for this. However, it doesn't
+        return mathematically correct value when quotient is very large, e.g.
+        fmod(3.40282346e+38, 1000) returns 616 on x86 linux, although we
+        expect that it is 0.
+
+        * fast/forms/datetime/datetime-stepup-stepdown-from-renderer-expected.txt: Get rid of millig seconds for big step value tests.
+        * fast/forms/datetime/datetime-stepup-stepdown-from-renderer.html: ditto.
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown-from-renderer-expected.txt: ditto.
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown-from-renderer.html: ditto.
+        * fast/forms/time/time-stepup-stepdown-from-renderer-expected.txt: Get rid of millig seconds for a big step value test and expected value's fractinal second is zero.
+        * fast/forms/time/time-stepup-stepdown-from-renderer.html: ditto.
+
 2012-07-17  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
