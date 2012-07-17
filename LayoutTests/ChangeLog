@@ -1,3 +1,37 @@
+2012-07-16  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium mac/win rebaseline for r122769.
+
+        * platform/chromium-mac-snowleopard/css1/basic/inheritance-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug73321-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug73321-expected.png:
+        * platform/chromium-win-xp/css1: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-win-xp/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-win/css1/basic/inheritance-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug73321-expected.png:
+
 2012-07-16  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Implement spec updates to IDBTransaction.error
