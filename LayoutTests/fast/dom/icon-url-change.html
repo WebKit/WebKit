@@ -2,24 +2,18 @@
 <head>
 <title>Original Title</title>
 <link rel="shortcut icon" type="image/x-icon" href="http://test.com/oldfavicon.ico"/>
+<script src="../js/resources/js-test-pre.js"></script>
 <script>
-function debugOutput(str) {
-    text = document.createTextNode(str);
-    debugDiv = document.getElementById('debugDiv');
-    div = document.createElement ('div');
-    div.appendChild(text);
-    debugDiv.appendChild(div);
-}
 
 function setFavIcon(iconURL) {
     var docHead = document.getElementsByTagName("head")[0];
     var links = docHead.getElementsByTagName("link");
     for (var i = 0; i < links.length; ++i) {
-      var link = links[i];
-      if (link.type=="image/x-icon" && link.rel=="shortcut icon") {
-        docHead.removeChild(link);
-        break; // Assuming only one match at most.
-      }
+        var link = links[i];
+        if (link.type=="image/x-icon" && link.rel=="shortcut icon") {
+            docHead.removeChild(link);
+            break; // Assuming only one match at most.
+        }
     }
     var link = document.createElement("link");
     link.type = "image/x-icon";
@@ -33,28 +27,34 @@ function runTests() {
         testRunner.dumpAsText();
 
     iconURL = document.getElementsByTagName("head")[0].getElementsByTagName("link")[0].href;
-    debugOutput ('Original iconURL is: ' + iconURL);
-    newURL = 'http://test.com/newfavicon.ico';
-    debugOutput ('Setting new icon URL to: ' + newURL);
-    setFavIcon(newURL);
-    iconURL = document.getElementsByTagName("head")[0].getElementsByTagName("link")[0].href;
+    debug('Original iconURL is: ' + iconURL);
 
-    debugOutput ('New iconURL is: ' + iconURL);
+    // change icon to new icon
+    newURL = 'http://test.com/newfavicon.ico';
+    debug('Setting new icon URL to: ' + newURL);
+    setFavIcon(newURL);
+    iconURL = document.getElementsByTagName("link")[0].href;
+    debug('New iconURL is: ' + iconURL);
+
+    // change icon back to old icon and ensure it changes properly
+    oldURL = 'http://test.com/oldfavicon.ico';
+    debug('Setting icon URL back to: ' + oldURL);
+    setFavIcon(oldURL);
+    iconURL = document.getElementsByTagName("link")[0].href;
+    debug('Original iconURL is still: ' + iconURL);
 
     // check that the URL list in the document is as we expect
-    var expectedURLs = "http://test.com/newfavicon.ico";
+    var expectedURLs = "http://test.com/oldfavicon.ico";
     var iconURLs = window.internals.iconURLs(document);
     if (expectedURLs == iconURLs[0])
-        debugOutput('PASS - URL list matches expected');
+        testPassed('URL list matches expected');
     else
-        debugOutput('FAIL - URL list does not match expected');
-
+        testFailed('URL list does not match expected');
 }
 
 </script>
 </head>
 <body onload='runTests();'>
-<div id='debugDiv'>
 </div>
 </body>
 </html>

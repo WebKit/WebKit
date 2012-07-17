@@ -4894,8 +4894,31 @@ PassRefPtr<XPathResult> Document::evaluate(const String& expression,
     return m_xpathEvaluator->evaluate(expression, contextNode, resolver, type, result, ec);
 }
 
-const Vector<IconURL>& Document::iconURLs() const
+const Vector<IconURL>& Document::iconURLs()
 {
+    m_iconURLs.clear();
+
+    if (!head() || !(head()->children()))
+        return m_iconURLs;
+
+    // Include any icons where type = link, rel = "shortcut icon".
+    RefPtr<HTMLCollection> children = head()->children();
+    unsigned int length = children->length();
+    for (unsigned int i = 0; i < length; ++i) {
+        Node* child = children->item(i);
+        if (!child->hasTagName(linkTag))
+            continue;
+        HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(child);
+        if (linkElement->iconType() != Favicon)
+            continue;
+        if (linkElement->href().isEmpty())
+            continue;
+
+        // Put it at the front to ensure that icons seen later take precedence as required by the spec.
+        IconURL newURL(linkElement->href(), linkElement->iconSizes(), linkElement->type(), linkElement->iconType());
+        m_iconURLs.prepend(newURL);
+    }
+
     return m_iconURLs;
 }
 
@@ -4906,7 +4929,6 @@ void Document::addIconURL(const String& url, const String& mimeType, const Strin
 
     // FIXME - <rdar://problem/4727645> - At some point in the future, we might actually honor the "mimeType"
     IconURL newURL(KURL(ParsedURLString, url), sizes, mimeType, iconType);
-    m_iconURLs.append(newURL);
 
     if (Frame* f = frame()) {
         IconURL iconURL = f->loader()->icon()->iconURL(iconType);
@@ -4919,7 +4941,7 @@ void Document::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)
 {
     if (m_useSecureKeyboardEntryWhenActive == usesSecureKeyboard)
         return;
-        
+
     m_useSecureKeyboardEntryWhenActive = usesSecureKeyboard;
     m_frame->selection()->updateSecureKeyboardEntryIfActive();
 }

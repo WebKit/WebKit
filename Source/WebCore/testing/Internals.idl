@@ -165,6 +165,7 @@ module window {
         [Conditional=INSPECTOR] sequence<String> consoleMessageArgumentCounts(in Document document);
 
         DOMString counterValue(in Element element);
+        DOMString[] iconURLs(in Document document);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
         void webkitWillEnterFullScreenForElement(in Document document, in Element element);

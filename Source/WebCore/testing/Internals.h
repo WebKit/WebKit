@@ -185,6 +185,7 @@ public:
 #endif
 
     String counterValue(Element*);
+    PassRefPtr<DOMStringList> iconURLs(Document*) const;
 
 #if ENABLE(FULLSCREEN_API)
     void webkitWillEnterFullScreenForElement(Document*, Element*);
