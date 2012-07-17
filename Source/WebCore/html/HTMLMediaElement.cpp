@@ -490,7 +490,10 @@ bool HTMLMediaElement::childShouldCreateRenderer(const NodeRenderingContext& chi
 {
     if (!hasMediaControls())
         return false;
-    // Only allows nodes from the controls shadow subtree.
+    // <media> doesn't allow its content, including shadow subtree, to
+    // be rendered. So this should return false for most of the children.
+    // One exception is a shadow tree built for rendering controls which should be visible.
+    // So we let them go here by comparing its subtree root with one of the controls.
     return (mediaControls()->treeScope() == childContext.node()->treeScope()
             && childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext));
 }
