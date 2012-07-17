@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x512
-  RenderBlock {HTML} at (0,0) size 800x512
-    RenderBody {BODY} at (8,21) size 784x475
+layer at (0,0) size 800x513
+  RenderBlock {HTML} at (0,0) size 800x513
+    RenderBody {BODY} at (8,21) size 784x476
       RenderBlock {H1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 462x37
           text run at (0,0) width 462: "Bidirectional Text Test 2 - HTML"
@@ -28,7 +28,7 @@ layer at (0,0) size 800x512
       RenderBlock {P} at (0,92) size 784x19
         RenderText {#text} at (0,0) size 281x18
           text run at (0,0) width 281: "In each box, all the lines should be the same."
-      RenderBlock (anonymous) at (0,126) size 784x237
+      RenderBlock (anonymous) at (0,126) size 784x238
         RenderBlock {DIV} at (3,7) size 102x170 [border: (1px solid #008000)]
           RenderBlock {P} at (4,4) size 94x18
             RenderText {#text} at (0,0) size 94x18
@@ -87,8 +87,8 @@ layer at (0,0) size 800x512
                 text run at (34,0) width 31 LTR override: "DEF"
             RenderText {#text} at (0,0) size 34x18
               text run at (0,0) width 34 RTL override: "CBA"
-        RenderText {#text} at (108,81) size 4x18
-          text run at (108,81) width 4: " "
+        RenderText {#text} at (108,82) size 4x18
+          text run at (108,82) width 4: " "
         RenderBlock {DIV} at (115,50) size 35x84 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 25x19
             RenderTableSection {TBODY} at (0,0) size 25x19
@@ -111,9 +111,9 @@ layer at (0,0) size 800x512
           RenderBlock {P} at (4,61) size 27x19
             RenderText {#text} at (0,1) size 27x18
               text run at (0,1) width 27 LTR override: "\x{5D2}\x{5D1}\x{5D0}"
-        RenderText {#text} at (152,81) size 5x18
-          text run at (152,81) width 5: " "
-        RenderBlock {DIV} at (159,59) size 101x66 [border: (1px solid #008000)]
+        RenderText {#text} at (152,82) size 5x18
+          text run at (152,82) width 5: " "
+        RenderBlock {DIV} at (159,60) size 101x65 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 91x19
             RenderTableSection {TBODY} at (0,0) size 91x19
               RenderTableRow {TR} at (0,0) size 91x19
@@ -160,9 +160,9 @@ layer at (0,0) size 800x512
               text run at (0,1) width 30 RTL: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (29,1) width 35: "ABC"
               text run at (63,1) width 29 RTL: "\x{5D3}\x{5D4}\x{5D5} "
-        RenderText {#text} at (262,81) size 5x18
-          text run at (262,81) width 5: " "
-        RenderBlock {DIV} at (269,2) size 168x180 [border: (1px solid #008000)]
+        RenderText {#text} at (262,82) size 5x18
+          text run at (262,82) width 5: " "
+        RenderBlock {DIV} at (269,3) size 168x179 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 156x19
             RenderTableSection {TBODY} at (0,0) size 156x19
               RenderTableRow {TR} at (0,0) size 156x19
@@ -301,8 +301,8 @@ layer at (0,0) size 800x512
             RenderText {#text} at (0,1) size 128x18
               text run at (0,1) width 30 RTL: " \x{5D0}\x{5D1}\x{5D2}"
               text run at (91,1) width 36: " DEF"
-        RenderText {#text} at (439,81) size 5x18
-          text run at (439,81) width 5: " "
+        RenderText {#text} at (439,82) size 5x18
+          text run at (439,82) width 5: " "
         RenderBlock {DIV} at (446,69) size 201x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 189x19
             RenderTableSection {TBODY} at (0,0) size 189x19
@@ -383,10 +383,10 @@ layer at (0,0) size 800x512
               text run at (68,1) width 25 RTL: "\x{5D3}\x{5D4}\x{5D5}"
               text run at (92,1) width 73: " DEF GHI "
               text run at (164,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (649,81) size 5x18
-          text run at (649,81) width 5: " "
-        RenderBR {BR} at (653,81) size 1x18
-        RenderBlock {DIV} at (3,187) size 200x46 [border: (1px solid #008000)]
+        RenderText {#text} at (649,82) size 5x18
+          text run at (649,82) width 5: " "
+        RenderBR {BR} at (653,82) size 1x18
+        RenderBlock {DIV} at (3,188) size 200x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 189x19
             RenderTableSection {TBODY} at (0,0) size 189x19
               RenderTableRow {TR} at (0,0) size 189x19
@@ -468,9 +468,9 @@ layer at (0,0) size 800x512
             RenderText {#text} at (127,1) size 65x18
               text run at (127,1) width 38: " GHI "
               text run at (164,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (205,199) size 5x18
-          text run at (205,199) width 5: " "
-        RenderBlock {DIV} at (212,187) size 201x46 [border: (1px solid #008000)]
+        RenderText {#text} at (205,201) size 5x18
+          text run at (205,201) width 5: " "
+        RenderBlock {DIV} at (212,188) size 201x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 189x19
             RenderTableSection {TBODY} at (0,0) size 189x19
               RenderTableRow {TR} at (0,0) size 189x19
@@ -554,8 +554,8 @@ layer at (0,0) size 800x512
               text run at (127,1) width 38: " GHI "
               text run at (164,1) width 28 RTL: "\x{5D6}\x{5D7}\x{5D8}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,370) size 784x3 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,388) size 784x19
+      RenderBlock {HR} at (0,371) size 784x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,389) size 784x19
         RenderText {#text} at (0,0) size 58x18
           text run at (0,0) width 58: "(Back to "
         RenderInline {A} at (0,0) size 158x18 [color=#0000EE]
@@ -568,7 +568,7 @@ layer at (0,0) size 800x512
             text run at (224,0) width 82: "David Baron"
         RenderText {#text} at (306,0) size 5x18
           text run at (306,0) width 5: ")"
-      RenderBlock {P} at (0,422) size 784x19
+      RenderBlock {P} at (0,423) size 784x19
         RenderInline {A} at (0,0) size 33x18 [color=#0000EE]
           RenderText {#text} at (0,0) size 33x18
             text run at (0,0) width 33: "LDB"
@@ -579,6 +579,6 @@ layer at (0,0) size 800x512
             text run at (41,0) width 128: "dbaron@dbaron.org"
         RenderText {#text} at (169,0) size 82x18
           text run at (169,0) width 82: ", 2001-06-05"
-      RenderBlock {P} at (0,456) size 784x19
+      RenderBlock {P} at (0,457) size 784x19
         RenderText {#text} at (0,0) size 304x18
           text run at (0,0) width 304: "Modified and used with the author\x{2019}s permission."

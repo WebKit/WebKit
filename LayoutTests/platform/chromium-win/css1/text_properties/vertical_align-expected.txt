@@ -246,10 +246,10 @@ layer at (0,0) size 785x4501
         RenderImage {IMG} at (666,24) size 6x20
         RenderText {#text} at (672,22) size 76x19
           text run at (672,22) width 76: " all of which "
-        RenderImage {IMG} at (748,1) size 20x66
+        RenderImage {IMG} at (748,1) size 20x65
         RenderText {#text} at (0,106) size 108x19
           text run at (0,106) width 108: "should be aligned "
-        RenderImage {IMG} at (108,100) size 11x36
+        RenderImage {IMG} at (108,100) size 11x35
         RenderText {#text} at (119,106) size 4x19
           text run at (119,106) width 4: " "
         RenderInline {SPAN} at (0,0) size 231x36
@@ -277,7 +277,7 @@ layer at (0,0) size 785x4501
             text run at (0,176) width 176: "regardless of the line in which"
         RenderText {#text} at (176,176) size 4x19
           text run at (176,176) width 4: " "
-        RenderImage {IMG} at (180,180) size 5x16
+        RenderImage {IMG} at (180,180) size 5x15
         RenderText {#text} at (185,176) size 4x19
           text run at (185,176) width 4: " "
         RenderInline {BIG} at (0,0) size 152x23
@@ -586,10 +586,10 @@ layer at (0,0) size 785x4501
                 RenderImage {IMG} at (666,24) size 6x20
                 RenderText {#text} at (672,22) size 72x19
                   text run at (672,22) width 72: " all of which"
-                RenderImage {IMG} at (0,78) size 20x66
+                RenderImage {IMG} at (0,78) size 20x65
                 RenderText {#text} at (20,99) size 112x19
                   text run at (20,99) width 112: " should be aligned "
-                RenderImage {IMG} at (132,93) size 11x36
+                RenderImage {IMG} at (132,93) size 11x35
                 RenderText {#text} at (143,99) size 4x19
                   text run at (143,99) width 4: " "
                 RenderInline {SPAN} at (0,0) size 231x36
@@ -617,7 +617,7 @@ layer at (0,0) size 785x4501
                     text run at (19,176) width 176: "regardless of the line in which"
                 RenderText {#text} at (195,176) size 4x19
                   text run at (195,176) width 4: " "
-                RenderImage {IMG} at (199,180) size 5x16
+                RenderImage {IMG} at (199,180) size 5x15
                 RenderText {#text} at (204,176) size 4x19
                   text run at (204,176) width 4: " "
                 RenderInline {BIG} at (0,0) size 152x23

@@ -1,3 +1,48 @@
+2012-07-17  Emil A Eklund  <eae@chromium.org>
+
+        vertical-align: middle causes overflow with subpixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=91464
+
+        Reviewed by Eric Seidel.
+
+        Add new test for vertical-align: middle and adjust existing results to
+        reflect the improved alignment calculation.
+
+        * fast/sub-pixel/vertical-align-middle-overflow-expected.txt: Added.
+        * fast/sub-pixel/vertical-align-middle-overflow.html: Added.
+        * platform/chromium-linux/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/chromium-linux/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/chromium-linux/fast/inline-block/inline-block-vertical-align-expected.png:
+        * platform/chromium-linux/fast/inline/002-expected.png:
+        * platform/chromium-linux/fast/table/table-display-types-strict-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/basic/014-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/line-height-determined-by-primary-font-expected.png:
+        * platform/chromium-mac-snowleopard/fast/inline/002-expected.png:
+        * platform/chromium-mac-snowleopard/fast/table/table-display-types-strict-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac/css1/text_properties/vertical_align-expected.txt:
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/chromium-mac/fast/block/basic/014-expected.txt:
+        * platform/chromium-mac/fast/inline-block/inline-block-vertical-align-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/chromium-win/css1/text_properties/vertical_align-expected.txt:
+        * platform/chromium-win/fast/block/basic/014-expected.txt:
+        * platform/chromium-win/fast/inline-block/inline-block-vertical-align-expected.txt:
+        * platform/chromium-win/fast/inline/002-expected.txt:
+        * platform/chromium-win/fast/table/table-display-types-strict-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/fast/inline/002-expected.txt:
+        * platform/mac/fast/replaced/008-expected.png:
+        * platform/mac/fast/table/table-display-types-strict-expected.txt:
+
 2012-07-17  Ojan Vafai  <ojan@chromium.org>
 
         A couple of UI nits about the flagging feature in results.html

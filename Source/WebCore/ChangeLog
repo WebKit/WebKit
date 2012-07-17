@@ -1,3 +1,23 @@
+2012-07-17  Emil A Eklund  <eae@chromium.org>
+
+        vertical-align: middle causes overflow with subpixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=91464
+
+        Reviewed by Eric Seidel.
+
+        Using vertical-align: middle in combination with an overflow value other
+        than visible can cause the overflow height to be computed incorrectly.
+
+        Test: fast/sub-pixel/vertical-align-middle-overflow.html
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::verticalPositionForBox):
+        Round verticalPosition after calculation instead of flooring the result
+        of the xHeight calculation. By flooring it the resulting value is in
+        effect rounded up which can cause the height of the box to grow by one.
+        By rounding the resulting value thevertical position is more accurate and
+        the off by one error is avoided.
+
 2012-07-17  Philip Rogers  <pdr@google.com>
 
         Move zero-length-subpaths from RenderSVGShape to RenderSVGPath
