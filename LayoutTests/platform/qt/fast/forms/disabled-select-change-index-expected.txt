@@ -1,57 +1,57 @@
-layer at (0,0) size 784x676
+layer at (0,0) size 784x620
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x676
-  RenderBlock {HTML} at (0,0) size 784x676
-    RenderBody {BODY} at (8,8) size 768x660
-      RenderMenuList {SELECT} at (2,2) size 72x26 [color=#808080] [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 44x21
-          RenderText at (0,0) size 44x21
-            text run at (0,0) width 44: "PASS"
-      RenderBR {BR} at (76,20) size 0x0
-      RenderMenuList {SELECT} at (2,32) size 72x26 [color=#808080] [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 44x21
-          RenderText at (0,0) size 44x21
-            text run at (0,0) width 44: "PASS"
-      RenderBR {BR} at (76,50) size 0x0
-      RenderMenuList {SELECT} at (2,62) size 72x26 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 44x21
-          RenderText at (0,0) size 44x21
-            text run at (0,0) width 44: "PASS"
-      RenderBR {BR} at (76,80) size 0x0
-      RenderMenuList {SELECT} at (2,92) size 72x26 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 44x21
-          RenderText at (0,0) size 44x21
-            text run at (0,0) width 44: "PASS"
-      RenderBR {BR} at (76,110) size 0x0
-      RenderListBox {SELECT} at (2,122) size 66x89 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (70,206) size 0x0
-      RenderListBox {SELECT} at (2,215) size 66x89 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (70,299) size 0x0
-      RenderListBox {SELECT} at (2,308) size 66x89 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (70,392) size 0x0
-      RenderListBox {SELECT} at (2,401) size 66x89 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderBR {BR} at (70,485) size 0x0
-      RenderText {#text} at (0,492) size 544x21
-        text run at (0,492) width 544: "PASS: sel1 correctly set to selectedIndex 1 by sel1.options[1].selected = true."
-      RenderBR {BR} at (544,508) size 0x0
-      RenderText {#text} at (0,513) size 492x21
-        text run at (0,513) width 492: "PASS: sel2 correctly set to selectedIndex 1 by sel2.selectedIndex = 1."
-      RenderBR {BR} at (492,529) size 0x0
-      RenderText {#text} at (0,534) size 544x21
-        text run at (0,534) width 544: "PASS: sel3 correctly set to selectedIndex 1 by sel3.options[1].selected = true."
-      RenderBR {BR} at (544,550) size 0x0
-      RenderText {#text} at (0,555) size 492x21
-        text run at (0,555) width 492: "PASS: sel4 correctly set to selectedIndex 1 by sel4.selectedIndex = 1."
-      RenderBR {BR} at (492,571) size 0x0
-      RenderText {#text} at (0,576) size 544x21
-        text run at (0,576) width 544: "PASS: sel5 correctly set to selectedIndex 1 by sel5.options[1].selected = true."
-      RenderBR {BR} at (544,592) size 0x0
-      RenderText {#text} at (0,597) size 492x21
-        text run at (0,597) width 492: "PASS: sel6 correctly set to selectedIndex 1 by sel6.selectedIndex = 1."
-      RenderBR {BR} at (492,613) size 0x0
-      RenderText {#text} at (0,618) size 544x21
-        text run at (0,618) width 544: "PASS: sel7 correctly set to selectedIndex 1 by sel7.options[1].selected = true."
-      RenderBR {BR} at (544,634) size 0x0
-      RenderText {#text} at (0,639) size 492x21
-        text run at (0,639) width 492: "PASS: sel8 correctly set to selectedIndex 1 by sel8.selectedIndex = 1."
-      RenderBR {BR} at (492,655) size 0x0
+layer at (0,0) size 784x620
+  RenderBlock {HTML} at (0,0) size 784x620
+    RenderBody {BODY} at (8,8) size 768x604
+      RenderMenuList {SELECT} at (2,2) size 66x24 [color=#808080] [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 38x19
+          RenderText at (0,0) size 38x19
+            text run at (0,0) width 38: "PASS"
+      RenderBR {BR} at (70,19) size 0x0
+      RenderMenuList {SELECT} at (2,30) size 66x24 [color=#808080] [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 38x19
+          RenderText at (0,0) size 38x19
+            text run at (0,0) width 38: "PASS"
+      RenderBR {BR} at (70,47) size 0x0
+      RenderMenuList {SELECT} at (2,58) size 66x24 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 38x19
+          RenderText at (0,0) size 38x19
+            text run at (0,0) width 38: "PASS"
+      RenderBR {BR} at (70,75) size 0x0
+      RenderMenuList {SELECT} at (2,86) size 66x24 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 38x19
+          RenderText at (0,0) size 38x19
+            text run at (0,0) width 38: "PASS"
+      RenderBR {BR} at (70,103) size 0x0
+      RenderListBox {SELECT} at (2,114) size 60x81 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (64,190) size 0x0
+      RenderListBox {SELECT} at (2,199) size 60x81 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (64,275) size 0x0
+      RenderListBox {SELECT} at (2,284) size 60x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (64,360) size 0x0
+      RenderListBox {SELECT} at (2,369) size 60x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (64,445) size 0x0
+      RenderText {#text} at (0,452) size 472x19
+        text run at (0,452) width 472: "PASS: sel1 correctly set to selectedIndex 1 by sel1.options[1].selected = true."
+      RenderBR {BR} at (472,467) size 0x0
+      RenderText {#text} at (0,471) size 425x19
+        text run at (0,471) width 425: "PASS: sel2 correctly set to selectedIndex 1 by sel2.selectedIndex = 1."
+      RenderBR {BR} at (425,486) size 0x0
+      RenderText {#text} at (0,490) size 472x19
+        text run at (0,490) width 472: "PASS: sel3 correctly set to selectedIndex 1 by sel3.options[1].selected = true."
+      RenderBR {BR} at (472,505) size 0x0
+      RenderText {#text} at (0,509) size 425x19
+        text run at (0,509) width 425: "PASS: sel4 correctly set to selectedIndex 1 by sel4.selectedIndex = 1."
+      RenderBR {BR} at (425,524) size 0x0
+      RenderText {#text} at (0,528) size 472x19
+        text run at (0,528) width 472: "PASS: sel5 correctly set to selectedIndex 1 by sel5.options[1].selected = true."
+      RenderBR {BR} at (472,543) size 0x0
+      RenderText {#text} at (0,547) size 425x19
+        text run at (0,547) width 425: "PASS: sel6 correctly set to selectedIndex 1 by sel6.selectedIndex = 1."
+      RenderBR {BR} at (425,562) size 0x0
+      RenderText {#text} at (0,566) size 472x19
+        text run at (0,566) width 472: "PASS: sel7 correctly set to selectedIndex 1 by sel7.options[1].selected = true."
+      RenderBR {BR} at (472,581) size 0x0
+      RenderText {#text} at (0,585) size 425x19
+        text run at (0,585) width 425: "PASS: sel8 correctly set to selectedIndex 1 by sel8.selectedIndex = 1."
+      RenderBR {BR} at (425,600) size 0x0

@@ -3,46 +3,45 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 769x42
-          text run at (0,0) width 769: "Test appearances of spin buttons. Disabled state and read-only state should have appearances different from"
-          text run at (0,21) width 117: "the normal state."
-      RenderBlock {DIV} at (0,58) size 784x34
-        RenderInline {LABEL} at (0,0) size 322x21
-          RenderTextControl {INPUT} at (2,2) size 224x30
-            RenderDeprecatedFlexibleBox {DIV} at (2,2) size 220x26
-              RenderBlock {DIV} at (0,0) size 204x26
-          RenderText {#text} at (228,8) size 94x21
-            text run at (228,8) width 94: " Normal state"
-      RenderBlock {DIV} at (0,92) size 784x34
-        RenderInline {LABEL} at (0,0) size 334x21
-          RenderTextControl {INPUT} at (2,2) size 224x30
-            RenderDeprecatedFlexibleBox {DIV} at (2,2) size 220x26
-              RenderBlock {DIV} at (0,0) size 204x26
-          RenderText {#text} at (228,8) size 106x21
-            text run at (228,8) width 106: " Disabled state"
-      RenderBlock {DIV} at (0,126) size 784x34
-        RenderInline {LABEL} at (0,0) size 344x21
-          RenderTextControl {INPUT} at (2,2) size 224x30
-            RenderDeprecatedFlexibleBox {DIV} at (2,2) size 220x26
-              RenderBlock {DIV} at (0,0) size 204x26
-          RenderText {#text} at (228,8) size 116x21
-            text run at (228,8) width 116: " Read-only state"
-layer at (12,70) size 204x26
-  RenderBlock {DIV} at (0,0) size 204x26
-    RenderText {#text} at (0,0) size 11x26
-      text run at (0,0) width 11: "0"
-layer at (12,104) size 204x26
-  RenderBlock {DIV} at (0,0) size 204x26 [color=#545454]
-    RenderText {#text} at (0,0) size 11x26
-      text run at (0,0) width 11: "0"
-layer at (12,138) size 204x26
-  RenderBlock {DIV} at (0,0) size 204x26
-    RenderText {#text} at (0,0) size 11x26
-      text run at (0,0) width 11: "0"
-layer at (218,68) size 16x30
-  RenderBlock (relative positioned) {DIV} at (206,-2) size 16x30
-layer at (218,102) size 16x30
-  RenderBlock (relative positioned) {DIV} at (206,-2) size 16x30
-layer at (218,136) size 16x30
-  RenderBlock (relative positioned) {DIV} at (206,-2) size 16x30
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 754x19
+          text run at (0,0) width 754: "Test appearances of spin buttons. Disabled state and read-only state should have appearances different from the normal state."
+      RenderBlock {DIV} at (0,35) size 784x31
+        RenderInline {LABEL} at (0,0) size 320x19
+          RenderTextControl {INPUT} at (2,2) size 234x27
+            RenderDeprecatedFlexibleBox {DIV} at (2,2) size 230x23
+              RenderBlock {DIV} at (0,0) size 214x23
+          RenderText {#text} at (238,7) size 82x19
+            text run at (238,7) width 82: " Normal state"
+      RenderBlock {DIV} at (0,66) size 784x31
+        RenderInline {LABEL} at (0,0) size 327x19
+          RenderTextControl {INPUT} at (2,2) size 234x27
+            RenderDeprecatedFlexibleBox {DIV} at (2,2) size 230x23
+              RenderBlock {DIV} at (0,0) size 214x23
+          RenderText {#text} at (238,7) size 89x19
+            text run at (238,7) width 89: " Disabled state"
+      RenderBlock {DIV} at (0,97) size 784x31
+        RenderInline {LABEL} at (0,0) size 337x19
+          RenderTextControl {INPUT} at (2,2) size 234x27
+            RenderDeprecatedFlexibleBox {DIV} at (2,2) size 230x23
+              RenderBlock {DIV} at (0,0) size 214x23
+          RenderText {#text} at (238,7) size 99x19
+            text run at (238,7) width 99: " Read-only state"
+layer at (12,47) size 214x23
+  RenderBlock {DIV} at (0,0) size 214x23
+    RenderText {#text} at (0,0) size 10x23
+      text run at (0,0) width 10: "0"
+layer at (12,78) size 214x23
+  RenderBlock {DIV} at (0,0) size 214x23 [color=#545454]
+    RenderText {#text} at (0,0) size 10x23
+      text run at (0,0) width 10: "0"
+layer at (12,109) size 214x23
+  RenderBlock {DIV} at (0,0) size 214x23
+    RenderText {#text} at (0,0) size 10x23
+      text run at (0,0) width 10: "0"
+layer at (228,45) size 16x27
+  RenderBlock (relative positioned) {DIV} at (216,-2) size 16x27
+layer at (228,76) size 16x27
+  RenderBlock (relative positioned) {DIV} at (216,-2) size 16x27
+layer at (228,107) size 16x27
+  RenderBlock (relative positioned) {DIV} at (216,-2) size 16x27

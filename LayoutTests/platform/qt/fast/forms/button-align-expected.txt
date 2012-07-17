@@ -3,39 +3,39 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 661x21
-          text run at (0,0) width 661: "The following button elements should all be rendered on the left, with their text center justified."
-      RenderBlock (anonymous) at (0,37) size 784x148
-        RenderButton {BUTTON} at (0,2) size 300x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 288x21
-            RenderText {#text} at (28,0) size 232x21
-              text run at (28,0) width 232: "This is should be center justified."
-        RenderText {#text} at (300,8) size 4x21
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 563x19
+          text run at (0,0) width 563: "The following button elements should all be rendered on the left, with their text center justified."
+      RenderBlock (anonymous) at (0,35) size 784x140
+        RenderButton {BUTTON} at (0,2) size 300x31 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 288x19
+            RenderText {#text} at (46,0) size 196x19
+              text run at (46,0) width 196: "This is should be center justified."
+        RenderText {#text} at (300,8) size 4x19
           text run at (300,8) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderButton {BUTTON} at (0,39) size 300x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 288x21
-            RenderText {#text} at (28,0) size 232x21
-              text run at (28,0) width 232: "This is should be center justified."
-        RenderText {#text} at (300,45) size 4x21
-          text run at (300,45) width 4: " "
+        RenderButton {BUTTON} at (0,37) size 300x31 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 288x19
+            RenderText {#text} at (46,0) size 196x19
+              text run at (46,0) width 196: "This is should be center justified."
+        RenderText {#text} at (300,43) size 4x19
+          text run at (300,43) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderButton {BUTTON} at (0,76) size 300x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 288x21
-            RenderText {#text} at (28,0) size 232x21
-              text run at (28,0) width 232: "This is should be center justified."
-        RenderText {#text} at (300,82) size 4x21
-          text run at (300,82) width 4: " "
+        RenderButton {BUTTON} at (0,72) size 300x31 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 288x19
+            RenderText {#text} at (46,0) size 196x19
+              text run at (46,0) width 196: "This is should be center justified."
+        RenderText {#text} at (300,78) size 4x19
+          text run at (300,78) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderButton {BUTTON} at (0,113) size 300x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 288x21
-            RenderText {#text} at (28,0) size 232x21
-              text run at (28,0) width 232: "This is should be center justified."
+        RenderButton {BUTTON} at (0,107) size 300x31 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 288x19
+            RenderText {#text} at (46,0) size 196x19
+              text run at (46,0) width 196: "This is should be center justified."
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,185) size 784x37
-        RenderButton {BUTTON} at (0,2) size 300x33 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (6,6) size 288x21
-            RenderText {#text} at (28,0) size 232x21
-              text run at (28,0) width 232: "This is should be center justified."
+      RenderBlock {DIV} at (0,175) size 784x35
+        RenderButton {BUTTON} at (0,2) size 300x31 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 288x19
+            RenderText {#text} at (46,0) size 196x19
+              text run at (46,0) width 196: "This is should be center justified."
