@@ -1170,6 +1170,7 @@ class _FileState(object):
             self._is_c = None
         elif file_extension == 'c':
             self._is_c = True
+            self._is_objective_c = False
         else:
             self._is_objective_c = False
             self._is_c = False
