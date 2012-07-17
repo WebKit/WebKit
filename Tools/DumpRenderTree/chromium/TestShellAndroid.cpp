@@ -50,7 +50,7 @@ const char fontsDir[] = "/data/drt/fonts/";
 
 const char optionInFIFO[] = "--in-fifo=";
 const char optionOutFIFO[] = "--out-fifo=";
-const char optionErrFile[] = "--err-file=";
+const char optionErrFIFO[] = "--err-fifo=";
 
 void androidLogError(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
 
@@ -78,18 +78,7 @@ void createFIFO(const char* fifoPath)
     }
 }
 
-void createFile(const char* filePath)
-{
-    unlink(filePath);
-    int fd = creat(filePath, 0600);
-    if (fd < 0) {
-        androidLogError("Failed to create file %s: %s\n", filePath, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-    close(fd);
-}
-
-void redirectToFile(FILE* stream, const char* path, const char* mode)
+void redirect(FILE* stream, const char* path, const char* mode)
 {
     if (!freopen(path, mode, stream)) {
         androidLogError("Failed to redirect stream to file: %s: %s\n", path, strerror(errno));
@@ -106,7 +95,7 @@ void platformInit(int* argc, char*** argv)
 
     const char* inFIFO = 0;
     const char* outFIFO = 0;
-    const char* errFile = 0;
+    const char* errFIFO = 0;
     for (int i = 1; i < *argc; ) {
         const char* argument = (*argv)[i];
         if (strstr(argument, optionInFIFO) == argument) {
@@ -117,9 +106,9 @@ void platformInit(int* argc, char*** argv)
             outFIFO = argument + WTF_ARRAY_LENGTH(optionOutFIFO) - 1;
             createFIFO(outFIFO);
             removeArg(i, argc, argv);
-        } else if (strstr(argument, optionErrFile) == argument) {
-            errFile = argument + WTF_ARRAY_LENGTH(optionErrFile) - 1;
-            createFile(errFile);
+        } else if (strstr(argument, optionErrFIFO) == argument) {
+            errFIFO = argument + WTF_ARRAY_LENGTH(optionErrFIFO) - 1;
+            createFIFO(errFIFO);
             removeArg(i, argc, argv);
         } else
             ++i;
@@ -127,11 +116,11 @@ void platformInit(int* argc, char*** argv)
 
     // The order of createFIFO() and redirectToFIFO() is important to avoid deadlock.
     if (outFIFO)
-        redirectToFile(stdout, outFIFO, "w");
+        redirect(stdout, outFIFO, "w");
     if (inFIFO)
-        redirectToFile(stdin, inFIFO, "r");
-    if (errFile)
-        redirectToFile(stderr, errFile, "w");
+        redirect(stdin, inFIFO, "r");
+    if (errFIFO)
+        redirect(stderr, errFIFO, "w");
     else {
         // Redirect stderr to stdout.
         dup2(1, 2);

@@ -1,3 +1,64 @@
+2012-07-16  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-android] Don't use test_shell mode of DRT
+        https://bugs.webkit.org/show_bug.cgi?id=88542
+
+        Reviewed by Dirk Pranke.
+
+        Test shell mode is about to be removed.
+        Switch to use DRT mode for chromium-android.
+
+        Summary of changes:
+        1. ChromiumAndroidDriver now inherits from WebKitDriver instead of ChromiumDriver (to be deprecated).
+        2. Conforms to the DRT mode protocol for input/output of DumpRenderTree.
+        3. Added support for Android 'adb shell' input/output (base64, newline mode, etc.)
+
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (DRTPrinter::handleImage): Outputs base64 on Android.
+        * DumpRenderTree/chromium/TestShellAndroid.cpp:
+        (platformInit): Changed err_file to err_fifo, required by python ServerProcess.
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        (ChromiumAndroidPort.create_driver): Override to create driver without DriverProxy to ensure 1 Driver per run.
+        (ChromiumAndroidDriver):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver.cmd_line):
+        (ChromiumAndroidDriver._deadlock_detector):
+        (ChromiumAndroidDriver._drt_cmd_line):
+        (ChromiumAndroidDriver.start):
+        (ChromiumAndroidDriver._start):
+        (ChromiumAndroidDriver._start_once):
+        (ChromiumAndroidDriver.run_test):
+        (ChromiumAndroidDriver.stop):
+        (ChromiumAndroidDriver._command_from_driver_input):
+        (ChromiumAndroidDriver._read_prompt):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest.test_driver_cmd_line):
+        (ChromiumAndroidDriverTest.test_cmd_line):
+        (ChromiumAndroidDriverTest):
+        (ChromiumAndroidDriverTest.test_drt_cmd_line):
+        (ChromiumAndroidDriverTest.test_read_prompt):
+        (ChromiumAndroidDriverTest.test_command_from_driver_input):
+        (ChromiumAndroidDriverTest.test_write_command_and_read_line):
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.__init__): Added universal_newlines to handle Android 'adb shell' line ends.
+        (ServerProcess._start):
+        (ServerProcess._wait_for_data_and_update_buffers_using_select): Handles unexpected EOF which indicates crash on Android.
+        (ServerProcess.stop): Added kill_directly parameter to kill the process without waiting it (which always timeouts for Android).
+        (ServerProcess.replace_outputs): Added to combine different input/output pipes into one ServerProcess.
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver._command_from_driver_input):
+        (WebKitDriver.run_test): Changed timeout origin so that slow start() on Android won't cause timeout of layout test case.
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (MockServerProcess.read_stdout):
+        (MockServerProcess.start):
+        (MockServerProcess):
+        (MockServerProcess.stop):
+        (MockServerProcess.kill):
+        (WebKitDriverTest.test_read_block):
+        (WebKitDriverTest.test_read_binary_block):
+        (WebKitDriverTest.test_read_base64_block):
+
 2012-07-16  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: move a bunch of printing code from manager.py to printing.py

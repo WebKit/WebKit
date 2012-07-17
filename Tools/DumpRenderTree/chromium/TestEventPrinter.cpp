@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/Base64.h>
 
 class DRTPrinter : public TestEventPrinter {
 public:
@@ -119,6 +120,16 @@ void DRTPrinter::handleImage(const char* actualHash, const char* expectedHash, c
         printf("\nExpectedHash: %s\n", expectedHash);
     if (imageData && imageSize) {
         printf("Content-Type: image/png\n");
+#if OS(ANDROID)
+        // On Android, the layout test driver needs to read the image data through 'adb shell' which can't
+        // handle binary data properly. Need to encode the binary data into base64.
+        // FIXME: extract this into a function so that we can also use it to output audio data. Will do when removing test_shell mode.
+        Vector<char> base64;
+        base64Encode(reinterpret_cast<const char*>(imageData), imageSize, base64, Base64InsertLFs);
+        imageData = reinterpret_cast<const unsigned char*>(base64.data());
+        imageSize = base64.size();
+        printf("Content-Transfer-Encoding: base64\n");
+#endif
         // Printf formatting for size_t on 32-bit, 64-bit, and on Windows is hard so just cast to an int.
         printf("Content-Length: %d\n", static_cast<int>(imageSize));
         if (fwrite(imageData, 1, imageSize, stdout) != imageSize) {

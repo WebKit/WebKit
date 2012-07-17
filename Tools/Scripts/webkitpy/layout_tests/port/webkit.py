@@ -531,7 +531,7 @@ class WebKitDriver(Driver):
                 command = cygpath(command)
 
         if driver_input.image_hash:
-            # FIXME: Why the leading quote?
+            # "'" is the separator of command fields.
             command += "'" + driver_input.image_hash
         return command + "\n"
 
@@ -552,11 +552,12 @@ class WebKitDriver(Driver):
     def run_test(self, driver_input):
         start_time = time.time()
         self.start(driver_input.should_run_pixel_test, driver_input.args)
+        test_begin_time = time.time()
         self.error_from_test = str()
         self.err_seen_eof = False
 
         command = self._command_from_driver_input(driver_input)
-        deadline = start_time + int(driver_input.timeout) / 1000.0
+        deadline = test_begin_time + int(driver_input.timeout) / 1000.0
 
         self._server_process.write(command)
         text, audio = self._read_first_block(deadline)  # First block is either text or audio
@@ -587,7 +588,7 @@ class WebKitDriver(Driver):
             self._server_process.kill()
 
         return DriverOutput(text, image, actual_image_hash, audio,
-            crash=self.has_crashed(), test_time=time.time() - start_time,
+            crash=self.has_crashed(), test_time=time.time() - test_begin_time,
             timeout=timeout, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
             crashed_pid=self._crashed_pid, crash_log=crash_log)

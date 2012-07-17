@@ -61,11 +61,14 @@ class ServerProcess(object):
     indefinitely. The class also handles transparently restarting processes
     as necessary to keep issuing commands."""
 
-    def __init__(self, port_obj, name, cmd, env=None):
+    def __init__(self, port_obj, name, cmd, env=None, universal_newlines=False):
         self._port = port_obj
         self._name = name  # Should be the command name (e.g. DumpRenderTree, ImageDiff)
         self._cmd = cmd
         self._env = env
+        # Set if the process outputs non-standard newlines like '\r\n' or '\r'.
+        # Don't set if there will be binary data or the data must be ASCII encoded.
+        self._universal_newlines = universal_newlines
         self._host = self._port.host
         self._pid = None
         self._reset()
@@ -100,7 +103,8 @@ class ServerProcess(object):
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE,
                                       close_fds=close_fds,
-                                      env=self._env)
+                                      env=self._env,
+                                      universal_newlines=self._universal_newlines)
         self._pid = self._proc.pid
         fd = self._proc.stdout.fileno()
         if not self._use_win32_apis:
@@ -225,9 +229,18 @@ class ServerProcess(object):
 
         try:
             if out_fd in read_fds:
-                self._output += self._proc.stdout.read()
+                data = self._proc.stdout.read()
+                if not data:
+                    _log.warning('unexpected EOF of stdout')
+                    self._crashed = True
+                self._output += data
+
             if err_fd in read_fds:
-                self._error += self._proc.stderr.read()
+                data = self._proc.stderr.read()
+                if not data:
+                    _log.warning('unexpected EOF of stderr')
+                    self._crashed = True
+                self._error += data
         except IOError, e:
             # We can ignore the IOErrors because we will detect if the subporcess crashed
             # the next time through the loop in _read()
@@ -295,7 +308,7 @@ class ServerProcess(object):
         if not self._proc:
             self._start()
 
-    def stop(self):
+    def stop(self, kill_directly=False):
         if not self._proc:
             return
 
@@ -307,12 +320,14 @@ class ServerProcess(object):
         self._proc.stdout.close()
         if self._proc.stderr:
             self._proc.stderr.close()
-        if not self._host.platform.is_win():
+
+        if kill_directly:
+            self.kill()
+        elif not self._host.platform.is_win():
             # Closing stdin/stdout/stderr hangs sometimes on OS X,
-            # (see restart(), above), and anyway we don't want to hang
-            # the harness if DumpRenderTree is buggy, so we wait a couple
-            # seconds to give DumpRenderTree a chance to clean up, but then
-            # force-kill the process if necessary.
+            # and anyway we don't want to hang the harness if DumpRenderTree
+            # is buggy, so we wait a couple seconds to give DumpRenderTree a
+            # chance to clean up, but then force-kill the process if necessary.
             KILL_TIMEOUT = 3.0
             timeout = time.time() + KILL_TIMEOUT
             while self._proc.poll() is None and time.time() < timeout:
@@ -329,3 +344,12 @@ class ServerProcess(object):
             if self._proc.poll() is not None:
                 self._proc.wait()
             self._reset()
+
+    def replace_outputs(self, stdout, stderr):
+        assert self._proc
+        if stdout:
+            self._proc.stdout.close()
+            self._proc.stdout = stdout
+        if stderr:
+            self._proc.stderr.close()
+            self._proc.stderr = stderr

@@ -246,14 +246,29 @@ class MockServerProcess(object):
         return self.lines.pop(0) + "\n"
 
     def read_stdout(self, deadline, size):
-        # read_stdout doesn't actually function on lines, but this is sufficient for our testing.
-        line = self.lines.pop(0)
-        assert len(line) == size
-        return line
+        first_line = self.lines[0]
+        if size > len(first_line):
+            self.lines.pop(0)
+            remaining_size = size - len(first_line) - 1
+            if not remaining_size:
+                return first_line + "\n"
+            return first_line + "\n" + self.read_stdout(deadline, remaining_size)
+        result = self.lines[0][:size]
+        self.lines[0] = self.lines[0][size:]
+        return result
 
     def read_either_stdout_or_stderr_line(self, deadline):
         # FIXME: We should have tests which intermix stderr and stdout lines.
         return self.read_stdout_line(deadline), None
+
+    def start(self):
+        return
+
+    def stop(self, kill_directly=False):
+        return
+
+    def kill(self):
+        return
 
 
 class WebKitDriverTest(unittest.TestCase):
@@ -279,16 +294,34 @@ class WebKitDriverTest(unittest.TestCase):
             'ActualHash: actual',
             'ExpectedHash: expected',
             'Content-Type: image/png',
-            'Content-Length: 8',
+            'Content-Length: 9',
             "12345678",
             "#EOF",
         ])
         content_block = driver._read_block(0)
         self.assertEquals(content_block.content_type, 'image/png')
         self.assertEquals(content_block.content_hash, 'actual')
-        self.assertEquals(content_block.content, '12345678')
-        self.assertEquals(content_block.decoded_content, '12345678')
+        self.assertEquals(content_block.content, '12345678\n')
+        self.assertEquals(content_block.decoded_content, '12345678\n')
         driver._server_process = None
+
+    def test_read_base64_block(self):
+        port = TestWebKitPort()
+        driver = WebKitDriver(port, 0, pixel_tests=True)
+        driver._server_process = MockServerProcess([
+            'ActualHash: actual',
+            'ExpectedHash: expected',
+            'Content-Type: image/png',
+            'Content-Transfer-Encoding: base64',
+            'Content-Length: 12',
+            'MTIzNDU2NzgK#EOF',
+        ])
+        content_block = driver._read_block(0)
+        self.assertEquals(content_block.content_type, 'image/png')
+        self.assertEquals(content_block.content_hash, 'actual')
+        self.assertEquals(content_block.encoding, 'base64')
+        self.assertEquals(content_block.content, 'MTIzNDU2NzgK')
+        self.assertEquals(content_block.decoded_content, '12345678\n')
 
     def test_no_timeout(self):
         port = TestWebKitPort()
