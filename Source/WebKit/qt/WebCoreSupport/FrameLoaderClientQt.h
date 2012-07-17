@@ -218,21 +218,6 @@ public:
     virtual void documentElementAvailable();
     virtual void didPerformFirstNavigation() const;
 
-#if USE(V8)
-    // A frame's V8 context was created or destroyed.
-    virtual void didCreateScriptContext(v8::Handle<v8::Context>, int, int);
-    virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int);
-
-    // A context untied to a frame was created (through evaluateInIsolatedWorld).
-    // This context is not tied to the lifetime of its frame, and is destroyed
-    // in garbage collection.
-    virtual void didCreateIsolatedScriptContext();
-
-    // Returns true if we should allow the given V8 extension to be added to
-    // the script context at the currently loading page and given extension group.
-    virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldID) { return false; }
-#endif
-
     virtual void registerForIconNotification(bool);
 
     QString chooseFile(const QString& oldFile);

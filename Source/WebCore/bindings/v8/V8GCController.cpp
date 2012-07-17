@@ -509,7 +509,7 @@ void V8GCController::gcEpilogue()
 
 void V8GCController::checkMemoryUsage()
 {
-#if PLATFORM(CHROMIUM) || PLATFORM(QT)
+#if PLATFORM(CHROMIUM)
     const int lowMemoryUsageMB = MemoryUsageSupport::lowMemoryUsageMB();
     const int highMemoryUsageMB = MemoryUsageSupport::highMemoryUsageMB();
     const int highUsageDeltaMB = MemoryUsageSupport::highUsageDeltaMB();

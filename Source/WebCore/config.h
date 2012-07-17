@@ -36,11 +36,7 @@
 #include <wtf/ExportMacros.h>
 #include "PlatformExportMacros.h"
 
-#if PLATFORM(QT) && USE(V8)
-#include <JavaScriptCore/runtime/JSExportMacros.h>
-#else
 #include <runtime/JSExportMacros.h>
-#endif
 
 #ifdef __APPLE__
 #define HAVE_FUNC_USLEEP 1
@@ -156,11 +152,6 @@ typedef float CGFloat;
 // CoreAnimation is available to IOS, Mac and Windows if using CG
 #if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && USE(CG))
 #define WTF_USE_CA 1
-#endif
-
-#if PLATFORM(QT) && USE(V8) && defined(Q_WS_X11)
-/* protect ourselves from evil X11 defines */
-#include <bridge/npruntime_internal.h>
 #endif
 
 // FIXME: Move this to JavaScriptCore/wtf/Platform.h, which is where we define WTF_USE_AVFOUNDATION on the Mac.

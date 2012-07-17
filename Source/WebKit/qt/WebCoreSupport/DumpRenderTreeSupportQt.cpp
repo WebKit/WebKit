@@ -23,9 +23,7 @@
 #include "config.h"
 #include "DumpRenderTreeSupportQt.h"
 
-#if USE(JSC)
 #include "APICast.h"
-#endif
 #include "ApplicationCacheStorage.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "ChromeClientQt.h"
@@ -44,14 +42,9 @@
 #include "Frame.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
-#if USE(JSC)
 #include "GCController.h"
 #include "JSNode.h"
 #include "qt_runtime.h"
-#elif USE(V8)
-#include "V8GCController.h"
-#include "V8Proxy.h"
-#endif
 #include "GeolocationClient.h"
 #include "GeolocationClientMock.h"
 #include "GeolocationController.h"
@@ -163,7 +156,6 @@ QDRTNode& QDRTNode::operator=(const QDRTNode& other)
     return *this;
 }
 
-#if USE(JSC)
 QDRTNode QtDRTNodeRuntime::create(WebCore::Node* node)
 {
     return QDRTNode(node);
@@ -185,7 +177,6 @@ static JSC::JSValue convertNodeVariantToJSValue(JSC::ExecState* exec, WebCore::J
 {
     return toJS(exec, globalObject, QtDRTNodeRuntime::get(variant.value<QDRTNode>()));
 }
-#endif
 
 void QtDRTNodeRuntime::initialize()
 {
@@ -193,10 +184,8 @@ void QtDRTNodeRuntime::initialize()
     if (initialized)
         return;
     initialized = true;
-#if USE(JSC)
     int id = qRegisterMetaType<QDRTNode>();
     JSC::Bindings::registerCustomType(id, convertJSValueToNodeVariant, convertNodeVariantToJSValue);
-#endif
 }
 
 DumpRenderTreeSupportQt::DumpRenderTreeSupportQt()
@@ -384,31 +373,17 @@ void DumpRenderTreeSupportQt::clearFrameName(QWebFrame* frame)
 
 int DumpRenderTreeSupportQt::javaScriptObjectsCount()
 {
-#if USE(JSC)
     return JSDOMWindowBase::commonJSGlobalData()->heap.globalObjectCount();
-#elif USE(V8)
-    // FIXME: Find a way to do this using V8.
-    return 1;
-#endif
 }
 
 void DumpRenderTreeSupportQt::garbageCollectorCollect()
 {
-#if USE(JSC)
     gcController().garbageCollectNow();
-#elif USE(V8)
-    v8::V8::LowMemoryNotification();
-#endif
 }
 
 void DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread(bool waitUntilDone)
 {
-#if USE(JSC)
     gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
-#elif USE(V8)
-    // FIXME: Find a way to do this using V8.
-    garbageCollectorCollect();
-#endif
 }
 
 int DumpRenderTreeSupportQt::pageNumberForElementById(QWebFrame* frame, const QString& id, float width, float height)
@@ -893,15 +868,7 @@ void DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(QWebFrame* frame, in
 
     if (!proxy)
         return;
-#if USE(JSC)
     proxy->executeScriptInWorld(scriptWorld->world(), script, true);
-#elif USE(V8)
-    ScriptSourceCode source(script);
-    Vector<ScriptSourceCode> sources;
-    sources.append(source);
-    Vector<ScriptValue> result;
-    proxy->evaluateInIsolatedWorld(0, sources, &result);
-#endif
 }
 
 QString DumpRenderTreeSupportQt::pageSizeAndMarginsInPixels(QWebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
@@ -1095,7 +1062,6 @@ QString DumpRenderTreeSupportQt::layerTreeAsText(QWebFrame* frame)
 void DumpRenderTreeSupportQt::injectInternalsObject(QWebFrame* frame)
 {
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
-#if USE(JSC)
     JSDOMWindow* window = toJSDOMWindow(coreFrame, mainThreadNormalWorld());
     Q_ASSERT(window);
 
@@ -1105,23 +1071,16 @@ void DumpRenderTreeSupportQt::injectInternalsObject(QWebFrame* frame)
 
     JSContextRef context = toRef(exec);
     WebCoreTestSupport::injectInternalsObject(context);
-#elif USE(V8)
-    v8::HandleScope handleScope;
-    WebCoreTestSupport::injectInternalsObject(V8Proxy::mainWorldContext(coreFrame));
-#endif
 }
 
 void DumpRenderTreeSupportQt::injectInternalsObject(JSContextRef context)
 {
-#if USE(JSC)
     WebCoreTestSupport::injectInternalsObject(context);
-#endif
 }
 
 void DumpRenderTreeSupportQt::resetInternalsObject(QWebFrame* frame)
 {
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
-#if USE(JSC)
     JSDOMWindow* window = toJSDOMWindow(coreFrame, mainThreadNormalWorld());
     Q_ASSERT(window);
 
@@ -1131,10 +1090,6 @@ void DumpRenderTreeSupportQt::resetInternalsObject(QWebFrame* frame)
 
     JSContextRef context = toRef(exec);
     WebCoreTestSupport::resetInternalsObject(context);
-#elif USE(V8)
-    v8::HandleScope handleScope;
-    WebCoreTestSupport::resetInternalsObject(V8Proxy::mainWorldContext(coreFrame));
-#endif
 }
 
 QImage DumpRenderTreeSupportQt::paintPagesWithBoundaries(QWebFrame* qframe)

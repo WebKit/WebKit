@@ -2183,7 +2183,6 @@
             'bindings/v8/ScriptCallStackFactory.h',
             'bindings/v8/ScriptController.cpp',
             'bindings/v8/ScriptController.h',
-            'bindings/v8/ScriptControllerQt.cpp',
             'bindings/v8/ScriptDebugServer.cpp',
             'bindings/v8/ScriptDebugServer.h',
             'bindings/v8/ScriptEventListener.cpp',

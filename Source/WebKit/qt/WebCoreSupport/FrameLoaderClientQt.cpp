@@ -50,9 +50,7 @@
 #if ENABLE(ICONDATABASE)
 #include "IconDatabaseClientQt.h"
 #endif
-#if USE(JSC)
 #include "JSDOMWindowBase.h"
-#endif
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
@@ -69,9 +67,6 @@
 #include "ResourceResponse.h"
 #include "ScriptController.h"
 #include "Settings.h"
-#if USE(V8)
-#include "V8DOMWindow.h"
-#endif
 #include "ViewportArguments.h"
 #include "WebEventConversion.h"
 
@@ -390,17 +385,6 @@ void FrameLoaderClientQt::dispatchDidChangeLocationWithinPage()
     m_webFrame->page()->d->updateNavigationActions();
 }
 
-#if USE(V8)
-void FrameLoaderClientQt::didCreateScriptContext(v8::Handle<v8::Context>, int, int)
-{
-}
-void FrameLoaderClientQt::willReleaseScriptContext(v8::Handle<v8::Context>, int)
-{
-}
-void FrameLoaderClientQt::didCreateIsolatedScriptContext()
-{
-}
-#endif
 
 void FrameLoaderClientQt::dispatchDidPushStateWithinPage()
 {
@@ -989,12 +973,7 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoad
         // Use the default timeout interval for JS as the HTML tokenizer delay. This ensures
         // that long-running JavaScript will still allow setHtml() to be synchronous, while
         // still giving a reasonable timeout to prevent deadlock.
-#if USE(JSC)
         double delay = JSDOMWindowBase::commonJSGlobalData()->timeoutChecker.timeoutInterval() / 1000.0f;
-#elif USE(V8)
-        // FIXME: Hard coded for now.
-        double delay = 10000 / 1000.0f;
-#endif
         m_frame->page()->setCustomHTMLTokenizerTimeDelay(delay);
     } else
         m_frame->page()->setCustomHTMLTokenizerTimeDelay(-1);

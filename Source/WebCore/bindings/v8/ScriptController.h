@@ -44,13 +44,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(QT)
-#include <qglobal.h>
-QT_BEGIN_NAMESPACE
-class QJSEngine;
-QT_END_NAMESPACE
-#endif
-
 struct NPObject;
 
 namespace WebCore {
@@ -180,10 +173,6 @@ public:
     NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
     NPObject* windowScriptNPObject();
 
-#if PLATFORM(QT)
-    QJSEngine* qtScriptEngine();
-#endif
-
     // Dummy method to avoid a bunch of ifdef's in WebCore.
     void evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld*);
     static void getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds);
@@ -196,9 +185,6 @@ private:
 
     OwnPtr<V8Proxy> m_proxy;
     typedef HashMap<Widget*, NPObject*> PluginObjectMap;
-#if PLATFORM(QT)
-    OwnPtr<QJSEngine> m_qtScriptEngine;
-#endif
 
     // A mapping between Widgets and their corresponding script object.
     // This list is used so that when the plugin dies, we can immediately

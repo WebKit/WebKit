@@ -67,10 +67,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(QT)
-#include <QtQml/QJSEngine>
-#endif
-
 namespace WebCore {
 
 void ScriptController::initializeThreading()

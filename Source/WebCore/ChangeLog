@@ -1,3 +1,31 @@
+2012-07-17  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        [Qt][V8] Remove the V8 related codepaths and configuration
+        https://bugs.webkit.org/show_bug.cgi?id=90863
+
+        Reviewed by Simon Hausmann.
+
+        No new tests because no new functionality.
+
+        * DerivedSources.pri:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * bindings/v8/ScriptCachedFrameData.cpp:
+        * bindings/v8/ScriptCachedFrameData.h:
+        * bindings/v8/ScriptController.cpp:
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+        * bindings/v8/ScriptControllerQt.cpp: Removed.
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::checkMemoryUsage):
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::histogramEnumeration):
+        (WebCore::V8InspectorFrontendHost::recordActionTakenCallback):
+        (WebCore::V8InspectorFrontendHost::recordPanelShownCallback):
+        (WebCore::V8InspectorFrontendHost::recordSettingChangedCallback):
+        * config.h:
+
 2012-07-17  Zoltan Horvath  <zoltan@webkit.org>
 
         [QT] REGRESSION (r122720): svg/filters/feSpecularLight-premultiplied.svg

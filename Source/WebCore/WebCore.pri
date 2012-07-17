@@ -94,24 +94,12 @@ INCLUDEPATH += \
     $$SOURCE_DIR/xml/parser \
     $$SOURCE_DIR/../ThirdParty
 
-v8 {
-    DEFINES *= V8_BINDING=1
-
-    INCLUDEPATH += \
-        $$SOURCE_DIR/bindings/v8 \
-        $$SOURCE_DIR/bindings/v8/custom \
-        $$SOURCE_DIR/bindings/v8/specialization \
-        $$SOURCE_DIR/bridge/qt/v8 \
-        $$SOURCE_DIR/testing/v8
-
-} else {
-    INCLUDEPATH += \
-        $$SOURCE_DIR/bridge/jsc \
-        $$SOURCE_DIR/bindings/js \
-        $$SOURCE_DIR/bindings/js/specialization \
-        $$SOURCE_DIR/bridge/c \
-        $$SOURCE_DIR/testing/js
-}
+INCLUDEPATH += \
+    $$SOURCE_DIR/bridge/jsc \
+    $$SOURCE_DIR/bindings/js \
+    $$SOURCE_DIR/bindings/js/specialization \
+    $$SOURCE_DIR/bridge/c \
+    $$SOURCE_DIR/testing/js
 
 INCLUDEPATH += $$WEBCORE_GENERATED_SOURCES_DIR
 
