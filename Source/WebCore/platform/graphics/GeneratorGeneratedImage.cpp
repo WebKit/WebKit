@@ -32,25 +32,16 @@
 
 namespace WebCore {
 
-void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
+void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
 {
-    unsigned generatorHash = m_generator->hash();
-    if (!m_cachedImageBuffer || m_cachedGeneratorHash != generatorHash || m_cachedAdjustedSize != m_size || !destContext->isCompatibleWithBuffer(m_cachedImageBuffer.get())) {
-        // Create a BitmapImage and call draw on it.
-        m_cachedImageBuffer = destContext->createCompatibleBuffer(m_size);
-        if (!m_cachedImageBuffer)
-            return;
-
-        // Fill with the generated image.
-        m_cachedImageBuffer->context()->fillRect(FloatRect(FloatPoint(), m_size), *m_generator);
-
-        m_cachedGeneratorHash = generatorHash;
-        m_cachedAdjustedSize = m_size;
-    }
-
-    // Draw the image buffer to the destination
-    m_cachedImageBuffer->draw(destContext, styleColorSpace, destRect, srcRect, compositeOp);
-    m_cacheTimer.restart();
+    GraphicsContextStateSaver stateSaver(*destContext);
+    destContext->setCompositeOperation(compositeOp);
+    destContext->clip(destRect);
+    destContext->translate(destRect.x(), destRect.y());
+    if (destRect.size() != srcRect.size())
+        destContext->scale(FloatSize(destRect.width() / srcRect.width(), destRect.height() / srcRect.height()));
+    destContext->translate(-srcRect.x(), -srcRect.y());
+    destContext->fillRect(FloatRect(FloatPoint(), m_size), *m_generator.get());
 }
 
 void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
