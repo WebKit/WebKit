@@ -1,3 +1,64 @@
+2012-07-17  Philip Rogers  <pdr@google.com>
+
+        Move zero-length-subpaths from RenderSVGShape to RenderSVGPath
+        https://bugs.webkit.org/show_bug.cgi?id=90716
+
+        Reviewed by Nikolas Zimmermann.
+
+        Previously zero-length-subpath code was present in RenderSVGShape but it is
+        only needed in RenderSVGPath. This patch moves the zero-length-subpath code
+        to RenderSVGPath.
+
+        In this change, we gain:
+        1) Ellipses, Circles, and Rects will no longer carry an empty Vector nor
+           checks for zero-length subpaths which (per the spec) they cannot have.
+        2) RenderSVGShape, the superclass of all shape rendering, has been
+           drastically simplified by removing 70 lines of code that only applies
+           to Path rendering. This generally aids in code understandability.
+
+        The patch is primarily a straightforward code move but useStrokeStyleToFill
+        needs further explanation:
+        Zero-length-subpaths are drawn using rectangular and circular paths which
+        are filled.
+        Previously in RenderSVGShape::fillAndStrokePath, strokePath was called for
+        the main path with ApplyToStrokeMode and then strokePath was called for
+        each zero-length-subpath with ApplyToFillMode.
+        ApplyToFillMode had the effect of setting the context's stroke style to
+        the fill style so zero-length-subpaths were "filled" with the stroke style.
+        After this patch, the context is only setup once (which is faster!) using
+        ApplyToStrokeMode so we manually set the stroke style to the fill style
+        using useStrokeStyleToFill.
+
+        No new tests, just a refactoring.
+
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::updateShapeFromElement):
+        (WebCore):
+        (WebCore::RenderSVGPath::calculateUpdatedStrokeBoundingBox):
+        (WebCore::useStrokeStyleToFill):
+        (WebCore::RenderSVGPath::strokeShape):
+        (WebCore::RenderSVGPath::shapeDependentStrokeContains):
+        (WebCore::RenderSVGPath::shouldStrokeZeroLengthSubpath):
+        (WebCore::RenderSVGPath::zeroLengthLinecapPath):
+        (WebCore::RenderSVGPath::zeroLengthSubpathRect):
+        (WebCore::RenderSVGPath::updateZeroLengthSubpaths):
+        * rendering/svg/RenderSVGPath.h:
+        (RenderSVGPath):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::updateShapeFromElement):
+        (WebCore::RenderSVGShape::strokeShape):
+        (WebCore::RenderSVGShape::strokeContains):
+        (WebCore):
+        (WebCore::RenderSVGShape::fillShape):
+        (WebCore::RenderSVGShape::fillAndStrokeShape):
+        (WebCore::RenderSVGShape::paint):
+        (WebCore::RenderSVGShape::calculateStrokeBoundingBox):
+        * rendering/svg/RenderSVGShape.h:
+        (WebCore::RenderSVGShape::hasPath):
+        (WebCore::RenderSVGShape::hasNonScalingStroke):
+        (RenderSVGShape):
+        (WebCore::RenderSVGShape::strokeBoundingBox):
+
 2012-07-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         invalidateNodeListCachesInAncestors walks up ancestors even when an attribute that doesn't invalidate node lists changes

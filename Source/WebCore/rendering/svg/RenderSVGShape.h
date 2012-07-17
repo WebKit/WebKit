@@ -89,8 +89,11 @@ protected:
     virtual bool shapeDependentFillContains(const FloatPoint&, const WindRule) const;
     float strokeWidth() const;
     bool hasPath() const { return m_path.get(); }
-    bool hasNonScalingStroke() const { return style()->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE; }
     bool hasSmoothStroke() const;
+
+    bool hasNonScalingStroke() const { return style()->svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE; }
+    AffineTransform nonScalingStrokeTransform() const;
+    Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
 
     FloatRect m_fillBoundingBox;
     FloatRect m_strokeBoundingBox;
@@ -115,35 +118,25 @@ private:
 
     virtual FloatRect objectBoundingBox() const { return m_fillBoundingBox; }
     virtual FloatRect strokeBoundingBox() const { return m_strokeBoundingBox; }
-
     FloatRect calculateObjectBoundingBox() const;
     FloatRect calculateStrokeBoundingBox() const;
     void updateRepaintBoundingBox();
 
-    AffineTransform nonScalingStrokeTransform() const;
     bool setupNonScalingStrokeContext(AffineTransform&, GraphicsContextStateSaver&);
-    Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
-
-    Path* zeroLengthLinecapPath(const FloatPoint&);
-    bool shouldStrokeZeroLengthSubpath() const;
-    FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
-    void processZeroLengthSubpaths();
 
     bool shouldGenerateMarkerPositions() const;
     FloatRect markerRect(float strokeWidth) const;
     void processMarkerPositions();
 
-    void fillShape(RenderStyle*, GraphicsContext*, Path*, RenderSVGShape*);
-    void strokePath(RenderStyle*, GraphicsContext*, Path*, RenderSVGResource*,
-                    const Color&, int);
-    void fillAndStrokePath(GraphicsContext*);
+    void fillShape(RenderStyle*, GraphicsContext*);
+    void strokeShape(RenderStyle*, GraphicsContext*);
+    void fillAndStrokeShape(GraphicsContext*);
     void drawMarkers(PaintInfo&);
 
 private:
     FloatRect m_repaintBoundingBox;
     AffineTransform m_localTransform;
     OwnPtr<Path> m_path;
-    Vector<FloatPoint> m_zeroLengthLinecapLocations;
     Vector<MarkerPosition> m_markerPositions;
 
     bool m_needsBoundariesUpdate : 1;

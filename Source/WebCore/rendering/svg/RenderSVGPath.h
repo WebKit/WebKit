@@ -39,6 +39,19 @@ public:
 private:
     virtual bool isSVGPath() const { return true; }
     virtual const char* renderName() const { return "RenderSVGPath"; }
+
+    virtual void updateShapeFromElement() OVERRIDE;
+    FloatRect calculateUpdatedStrokeBoundingBox() const;
+
+    virtual void strokeShape(GraphicsContext*) const OVERRIDE;
+    virtual bool shapeDependentStrokeContains(const FloatPoint&) OVERRIDE;
+
+    bool shouldStrokeZeroLengthSubpath() const;
+    Path* zeroLengthLinecapPath(const FloatPoint&) const;
+    FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
+    void updateZeroLengthSubpaths();
+
+    Vector<FloatPoint> m_zeroLengthLinecapLocations;
 };
 
 }
