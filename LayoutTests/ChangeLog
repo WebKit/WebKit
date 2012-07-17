@@ -1,3 +1,38 @@
+2012-07-17  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] fast/box-{shadow,sizing} tests needs update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91397
+
+        Reviewed by Simon Hausmann.
+
+        Updated expected Qt results for most box-shadow/ and box-sizing layout tests,
+        after testfonts changes made by bug 85203.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.png:
+        * platform/qt/fast/box-shadow/basic-shadows-expected.txt:
+        * platform/qt/fast/box-shadow/border-radius-big-expected.png:
+        * platform/qt/fast/box-shadow/border-radius-big-expected.txt:
+        * platform/qt/fast/box-shadow/box-shadow-radius-expected.txt:
+        * platform/qt/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/qt/fast/box-shadow/box-shadow-transformed-expected.txt:
+        * platform/qt/fast/box-shadow/inset-box-shadow-radius-expected.png:
+        * platform/qt/fast/box-shadow/inset-box-shadow-radius-expected.txt:
+        * platform/qt/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/qt/fast/box-shadow/inset-box-shadows-expected.txt:
+        * platform/qt/fast/box-shadow/inset-expected.png:
+        * platform/qt/fast/box-shadow/inset-expected.txt:
+        * platform/qt/fast/box-shadow/scaled-box-shadow-expected.png:
+        * platform/qt/fast/box-shadow/scaled-box-shadow-expected.txt:
+        * platform/qt/fast/box-shadow/transform-fringing-expected.png:
+        * platform/qt/fast/box-shadow/transform-fringing-expected.txt:
+        * platform/qt/fast/box-sizing/box-sizing-expected.png:
+        * platform/qt/fast/box-sizing/box-sizing-expected.txt:
+        * platform/qt/fast/box-sizing/panels-one-expected.png:
+        * platform/qt/fast/box-sizing/panels-one-expected.txt:
+        * platform/qt/fast/box-sizing/panels-two-expected.png:
+        * platform/qt/fast/box-sizing/panels-two-expected.txt:
+
 2012-07-17  Zoltan Horvath  <zoltan@webkit.org>
 
         [QT] REGRESSION (r122720): svg/filters/feSpecularLight-premultiplied.svg
