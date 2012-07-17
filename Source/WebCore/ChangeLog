@@ -1,3 +1,38 @@
+2012-07-17  David Barr  <davidbarr@chromium.org>
+
+        Add parsing and style application for css3-images image-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=89624
+
+        Reviewed by Tony Chang.
+
+        The css3-images module is at candidate recommendation.
+        http://www.w3.org/TR/2012/CR-css3-images-20120417/#the-image-orientation
+
+        Test: fast/css/image-orientation/image-orientation.html
+
+        * css/CSSComputedStyleDeclaration.cpp: Add computed style for image-orientation.
+        (WebCore): Add CSSPropertyImageOrientation to computedProperties.
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Map CSSPropertyImageOrientation using cast operator from PrimitiveValueMappings.
+        * css/CSSParser.cpp: Add parsing rule for image-orientation.
+        (WebCore::CSSParser::parseValue): Parse the value of CSSPropertyImageOrientation as an angle.
+        * css/CSSPrimitiveValueMappings.h: Add mappings between CSSPrimitiveValue and ImageOrientationEnum.
+        (WebCore): Add conditional include for ImageOrientation.h.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Map the natural orientations to angles.
+        (WebCore::CSSPrimitiveValue::operator ImageOrientationEnum): Round angles away from zero to quarter turns and map to the natural orientations.
+        * css/CSSProperty.cpp: Add CSSPropertyImageOrientation.
+        (WebCore::CSSProperty::isInheritedProperty): Map CSSPropertyImageOrientation inherited.
+        * css/CSSPropertyNames.in: Add image-orientation.
+        * css/StyleBuilder.cpp: Add style application logic for CSSPropertyImageOrientation.
+        (WebCore::StyleBuilder::StyleBuilder): Map CSSPropertyImageOrientation to RenderStyle::imageOrientation with type ImageOrientationEnum.
+        * css/StyleResolver.cpp: Handle CSSPropertyImageOrientation.
+        (WebCore::StyleResolver::applyProperty): Expect CSSPropertyImageOrientation to be handled by StyleBuilder.
+        * rendering/style/RenderStyle.h: Add imageOrientation, setImageOrientation and initialImageOrientation.
+        * rendering/style/StyleRareInheritedData.cpp: Add m_imageOrientation.
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Add m_imageOrientation to default and copy contructors.
+        (WebCore::StyleRareInheritedData::operator==): Include m_imageOrientation in comparison.
+        * rendering/style/StyleRareInheritedData.h: Add m_imageOrientation.
+        (StyleRareInheritedData): Add 4-bit field m_imageOrientation, mapping to ImageOrientationEnum.
+
 2012-07-17  Adrienne Walker  <enne@google.com>
 
         REGRESSION(r122215) - RenderObject::willRenderImage crashes on null view()

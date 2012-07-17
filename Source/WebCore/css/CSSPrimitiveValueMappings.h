@@ -37,6 +37,9 @@
 #include "FontDescription.h"
 #include "FontSmoothingMode.h"
 #include "GraphicsTypes.h"
+#if ENABLE(CSS_IMAGE_ORIENTATION)
+#include "ImageOrientation.h"
+#endif
 #include "Length.h"
 #include "LineClampValue.h"
 #include "Path.h"
@@ -4107,6 +4110,55 @@ template<> inline CSSPrimitiveValue::operator EVectorEffect() const
 }
 
 #endif // ENABLE(SVG)
+
+#if ENABLE(CSS_IMAGE_ORIENTATION)
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ImageOrientationEnum e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_DEG;
+    switch (e) {
+    case OriginTopLeft:
+        m_value.num = 0;
+        break;
+    case OriginRightTop:
+        m_value.num = 90;
+        break;
+    case OriginBottomRight:
+        m_value.num = 180;
+        break;
+    case OriginLeftBottom:
+        m_value.num = 270;
+        break;
+    case OriginTopRight:
+    case OriginLeftTop:
+    case OriginBottomLeft:
+    case OriginRightBottom:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ImageOrientationEnum() const
+{
+    ASSERT(isAngle());
+    double quarters = 4 * getDoubleValue(CSS_TURN);
+    int orientation = 3 & static_cast<int>(quarters < 0 ? floor(quarters) : ceil(quarters));
+    switch (orientation) {
+    case 0:
+        return OriginTopLeft;
+    case 1:
+        return OriginRightTop;
+    case 2:
+        return OriginBottomRight;
+    case 3:
+        return OriginLeftBottom;
+    default:
+        ASSERT_NOT_REACHED();
+        return OriginTopLeft;
+    }
+}
+
+#endif // ENABLE(CSS_IMAGE_ORIENTATION)
 
 }
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style src="../../js/resources/js-test-style.css"></style>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Apply image-resolution property and check computed style.');
+
+var expectations = {
+    '0deg': ['-360deg', '-315deg', '0deg', '315deg', '360deg'],
+    '90deg': ['-270deg', '-225deg', '45deg', '90deg'],
+    '180deg': ['-180deg', '-135deg', '135deg', '-180deg'],
+    '270deg': ['-90deg', '-45deg', '225deg', '270deg']};
+
+var p = document.createElement('p');
+document.body.appendChild(p);
+for (expected in expectations) {
+    expectations[expected].forEach(function(test) {
+        p.style.imageOrientation = '';
+        p.style.imageOrientation = test;
+        shouldBe('p.style.cssText', '"image-orientation: ' + test + '; "');
+        shouldBe('getComputedStyle(p).imageOrientation', '"' + expected + '"');
+    });
+}
+document.body.removeChild(p);
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

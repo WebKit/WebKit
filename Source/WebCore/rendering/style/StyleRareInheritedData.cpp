@@ -81,6 +81,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textEmphasisMark(TextEmphasisMarkNone)
     , textEmphasisPosition(TextEmphasisPositionOver)
     , m_lineBoxContain(RenderStyle::initialLineBoxContain())
+#if ENABLE(CSS_IMAGE_ORIENTATION)
+    , m_imageOrientation(RenderStyle::initialImageOrientation())
+#endif
     , m_imageRendering(RenderStyle::initialImageRendering())
     , m_lineSnap(RenderStyle::initialLineSnap())
     , m_lineAlign(RenderStyle::initialLineAlign())
@@ -140,6 +143,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textEmphasisMark(o.textEmphasisMark)
     , textEmphasisPosition(o.textEmphasisPosition)
     , m_lineBoxContain(o.m_lineBoxContain)
+#if ENABLE(CSS_IMAGE_ORIENTATION)
+    , m_imageOrientation(o.m_imageOrientation)
+#endif
     , m_imageRendering(o.m_imageRendering)
     , m_lineSnap(o.m_lineSnap)
     , m_lineAlign(o.m_lineAlign)
@@ -230,6 +236,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && QuotesData::equal(quotes.get(), o.quotes.get())
         && m_tabSize == o.m_tabSize
         && m_lineGrid == o.m_lineGrid
+#if ENABLE(CSS_IMAGE_ORIENTATION)
+        && m_imageOrientation == o.m_imageOrientation
+#endif
         && m_imageRendering == o.m_imageRendering
 #if ENABLE(CSS_IMAGE_RESOLUTION)
         && m_imageResolutionSource == o.m_imageResolutionSource

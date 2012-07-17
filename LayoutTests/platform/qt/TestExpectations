@@ -82,6 +82,9 @@ BUGWK87908 SKIP : editing/undomanager = PASS
 // CSS image-resolution is not yet enabled.
 BUGWK85262 SKIP : fast/css/image-resolution = PASS
 
+// CSS image-orientation is not yet enabled.
+BUGWK89052 SKIP : fast/css/image-orientation = PASS
+
 // Needs rebaseline after bug 86441
 // failing new tests
 BUGWK86441 SKIP : fast/borders/border-antialiasing.html = IMAGE

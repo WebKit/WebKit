@@ -1,0 +1,43 @@
+Apply image-resolution property and check computed style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS p.style.cssText is "image-orientation: -360deg; "
+PASS getComputedStyle(p).imageOrientation is "0deg"
+PASS p.style.cssText is "image-orientation: -315deg; "
+PASS getComputedStyle(p).imageOrientation is "0deg"
+PASS p.style.cssText is "image-orientation: 0deg; "
+PASS getComputedStyle(p).imageOrientation is "0deg"
+PASS p.style.cssText is "image-orientation: 315deg; "
+PASS getComputedStyle(p).imageOrientation is "0deg"
+PASS p.style.cssText is "image-orientation: 360deg; "
+PASS getComputedStyle(p).imageOrientation is "0deg"
+PASS p.style.cssText is "image-orientation: -270deg; "
+PASS getComputedStyle(p).imageOrientation is "90deg"
+PASS p.style.cssText is "image-orientation: -225deg; "
+PASS getComputedStyle(p).imageOrientation is "90deg"
+PASS p.style.cssText is "image-orientation: 45deg; "
+PASS getComputedStyle(p).imageOrientation is "90deg"
+PASS p.style.cssText is "image-orientation: 90deg; "
+PASS getComputedStyle(p).imageOrientation is "90deg"
+PASS p.style.cssText is "image-orientation: -180deg; "
+PASS getComputedStyle(p).imageOrientation is "180deg"
+PASS p.style.cssText is "image-orientation: -135deg; "
+PASS getComputedStyle(p).imageOrientation is "180deg"
+PASS p.style.cssText is "image-orientation: 135deg; "
+PASS getComputedStyle(p).imageOrientation is "180deg"
+PASS p.style.cssText is "image-orientation: -180deg; "
+PASS getComputedStyle(p).imageOrientation is "180deg"
+PASS p.style.cssText is "image-orientation: -90deg; "
+PASS getComputedStyle(p).imageOrientation is "270deg"
+PASS p.style.cssText is "image-orientation: -45deg; "
+PASS getComputedStyle(p).imageOrientation is "270deg"
+PASS p.style.cssText is "image-orientation: 225deg; "
+PASS getComputedStyle(p).imageOrientation is "270deg"
+PASS p.style.cssText is "image-orientation: 270deg; "
+PASS getComputedStyle(p).imageOrientation is "270deg"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

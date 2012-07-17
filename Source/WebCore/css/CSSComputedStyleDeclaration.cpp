@@ -130,6 +130,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyFontVariant,
     CSSPropertyFontWeight,
     CSSPropertyHeight,
+#if ENABLE(CSS_IMAGE_ORIENTATION)
+    CSSPropertyImageOrientation,
+#endif
     CSSPropertyImageRendering,
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     CSSPropertyImageResolution,
@@ -1775,6 +1778,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             if (style->borderFit() == BorderFitBorder)
                 return cssValuePool().createIdentifierValue(CSSValueBorder);
             return cssValuePool().createIdentifierValue(CSSValueLines);
+#if ENABLE(CSS_IMAGE_ORIENTATION)
+        case CSSPropertyImageOrientation:
+            return cssValuePool().createValue(style->imageOrientation());
+#endif
         case CSSPropertyImageRendering:
             return CSSPrimitiveValue::create(style->imageRendering());
 #if ENABLE(CSS_IMAGE_RESOLUTION)

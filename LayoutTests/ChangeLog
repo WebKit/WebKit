@@ -1,3 +1,21 @@
+2012-07-17  David Barr  <davidbarr@chromium.org>
+
+        Add parsing and style application for css3-images image-orientation
+        https://bugs.webkit.org/show_bug.cgi?id=89624
+
+        Reviewed by Tony Chang.
+
+        The css3-images module is at candidate recommendation.
+        http://www.w3.org/TR/2012/CR-css3-images-20120417/#the-image-orientation
+
+        * fast/css/image-orientation/image-orientation-expected.txt: Added.
+        * fast/css/image-orientation/image-orientation.html: Added.
+        * platform/chromium/TestExpectations: Skip tests until image-orientation implementation lands.
+        * platform/efl/TestExpectations: Skip tests until image-orientation implementation lands.
+        * platform/gtk/TestExpectations: Skip tests until image-orientation implementation lands.
+        * platform/mac/TestExpectations: Skip tests until image-orientation implementation lands.
+        * platform/qt/TestExpectations: Skip tests until image-orientation implementation lands.
+
 2012-07-17  Andy Estes  <aestes@apple.com>
 
         Fix two mistakes I made when modifying TestExpectations.
