@@ -34,11 +34,20 @@ class Text;
 class Node;
 }
 
+
+#if defined(WTF_USE_V8) && WTF_USE_V8
+namespace V8 {
+namespace Bindings {
+class QtDRTNodeRuntime;
+}
+}
+#else
 namespace JSC {
 namespace Bindings {
 class QtDRTNodeRuntime;
 }
 }
+#endif
 
 class QWebElement;
 class QWebFrame;
@@ -65,7 +74,11 @@ private:
 
     friend class DumpRenderTreeSupportQt;
 
+#if defined(WTF_USE_V8) && WTF_USE_V8
+    friend class V8::Bindings::QtDRTNodeRuntime;
+#else
     friend class QtDRTNodeRuntime;
+#endif
 
     WebCore::Node* m_node;
 };

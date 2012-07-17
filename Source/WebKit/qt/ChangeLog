@@ -1,3 +1,45 @@
+2012-07-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122834.
+        http://trac.webkit.org/changeset/122834
+        https://bugs.webkit.org/show_bug.cgi?id=91492
+
+        it broke the chromium (Requested by kkristof on #webkit).
+
+        * Api/qwebelement.cpp:
+        (setupScriptContext):
+        (QWebElement::evaluateJavaScript):
+        (QtWebElementRuntime::initialize):
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::didClearWindowObject):
+        (QWebFrame::addToJavaScriptWindowObject):
+        (QWebFrame::evaluateJavaScript):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (QtDRTNodeRuntime::initialize):
+        (DumpRenderTreeSupportQt::javaScriptObjectsCount):
+        (DumpRenderTreeSupportQt::garbageCollectorCollect):
+        (DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread):
+        (DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld):
+        (DumpRenderTreeSupportQt::injectInternalsObject):
+        (DumpRenderTreeSupportQt::resetInternalsObject):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        (Bindings):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore):
+        (WebCore::FrameLoaderClientQt::didCreateScriptContext):
+        (WebCore::FrameLoaderClientQt::willReleaseScriptContext):
+        (WebCore::FrameLoaderClientQt::didCreateIsolatedScriptContext):
+        (WebCore::FrameLoaderClientQt::createDocumentLoader):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        (FrameLoaderClientQt):
+        (WebCore::FrameLoaderClientQt::allowScriptExtension):
+        * v8/ForwardingHeaders/v8-debug.h: Added.
+        * v8/ForwardingHeaders/v8-preparser.h: Added.
+        * v8/ForwardingHeaders/v8-profiler.h: Added.
+        * v8/ForwardingHeaders/v8-testing.h: Added.
+        * v8/ForwardingHeaders/v8.h: Added.
+        * v8/ForwardingHeaders/v8stdint.h: Added.
+
 2012-07-17  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt][V8] Remove the V8 related codepaths and configuration

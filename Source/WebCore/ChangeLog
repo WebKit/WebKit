@@ -1,3 +1,39 @@
+2012-07-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r122834.
+        http://trac.webkit.org/changeset/122834
+        https://bugs.webkit.org/show_bug.cgi?id=91492
+
+        it broke the chromium (Requested by kkristof on #webkit).
+
+        * DerivedSources.pri:
+        * Target.pri:
+        * WebCore.pri:
+        * bindings/v8/ScriptCachedFrameData.cpp:
+        (WebCore):
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::domWindow):
+        (WebCore::ScriptCachedFrameData::restore):
+        (WebCore::ScriptCachedFrameData::clear):
+        * bindings/v8/ScriptCachedFrameData.h:
+        (WebCore):
+        (ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::~ScriptCachedFrameData):
+        * bindings/v8/ScriptController.cpp:
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+        * bindings/v8/ScriptControllerQt.cpp: Copied from Source/WebCore/bindings/v8/ScriptCachedFrameData.cpp.
+        (WebCore):
+        (WebCore::ScriptController::qtScriptEngine):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::checkMemoryUsage):
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore):
+        (WebCore::V8InspectorFrontendHost::recordActionTakenCallback):
+        (WebCore::V8InspectorFrontendHost::recordPanelShownCallback):
+        (WebCore::V8InspectorFrontendHost::recordSettingChangedCallback):
+        * config.h:
+
 2012-07-17  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt][V8] Remove the V8 related codepaths and configuration

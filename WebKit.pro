@@ -20,9 +20,11 @@ WTF.file = Source/WTF/WTF.pro
 WTF.makefile = Makefile.WTF
 SUBDIRS += WTF
 
-JavaScriptCore.file = Source/JavaScriptCore/JavaScriptCore.pro
-JavaScriptCore.makefile = Makefile.JavaScriptCore
-SUBDIRS += JavaScriptCore
+!v8 {
+    JavaScriptCore.file = Source/JavaScriptCore/JavaScriptCore.pro
+    JavaScriptCore.makefile = Makefile.JavaScriptCore
+    SUBDIRS += JavaScriptCore
+}
 
 WebCore.file = Source/WebCore/WebCore.pro
 WebCore.makefile = Makefile.WebCore

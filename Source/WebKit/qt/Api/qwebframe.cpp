@@ -21,9 +21,14 @@
 #include "config.h"
 #include "qwebframe.h"
 
+#if USE(JSC)
 #include "APICast.h"
 #include "BridgeJSC.h"
 #include "CallFrame.h"
+#elif USE(V8)
+#include "V8Binding.h"
+#include <QJSEngine>
+#endif
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DragData.h"
@@ -34,7 +39,11 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#if USE(JSC)
 #include "GCController.h"
+#elif USE(V8)
+#include "V8GCController.h"
+#endif
 #include "GraphicsContext.h"
 #include "HTMLFormElement.h"
 #include "HTMLMetaElement.h"
@@ -42,6 +51,7 @@
 #include "HTTPParsers.h"
 #include "IconDatabase.h"
 #include "InspectorController.h"
+#if USE(JSC)
 #include "JavaScript.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindowBase.h"
@@ -49,14 +59,20 @@
 #include "JSObject.h"
 #include "JSRetainPtr.h"
 #include "OpaqueJSString.h"
+#elif USE(V8)
+#include "V8DOMWrapper.h"
+#include "V8DOMWindowShell.h"
+#endif
 #include "NetworkingContext.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PrintContext.h"
+#if USE(JSC)
 #include "PropertyDescriptor.h"
 #include "PutPropertySlot.h"
+#endif
 #include "RenderLayer.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
@@ -71,8 +87,10 @@
 #include "TiledBackingStore.h"
 #include "htmlediting.h"
 #include "markup.h"
+#if USE(JSC)
 #include "qt_instance.h"
 #include "qt_runtime.h"
+#endif
 #include "qwebelement.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
@@ -81,8 +99,10 @@
 #include "qwebsecurityorigin_p.h"
 #include "qwebscriptworld.h"
 #include "qwebscriptworld_p.h"
+#if USE(JSC)
 #include "runtime_object.h"
 #include "runtime_root.h"
+#endif
 #if USE(TEXTURE_MAPPER)
 #include "texmap/TextureMapper.h"
 #include "texmap/TextureMapperLayer.h"
@@ -492,11 +512,14 @@ void QWebFramePrivate::_q_orientationChanged()
 
 void QWebFramePrivate::didClearWindowObject()
 {
+#if USE(JSC)
     if (page->settings()->testAttribute(QWebSettings::JavascriptEnabled))
         addQtSenderToGlobalObject();
+#endif
     emit q->javaScriptWindowObjectCleared();
 }
 
+#if USE(JSC)
 static JSValueRef qtSenderCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
 {
     QObject* sender = JSC::Bindings::QtInstance::qtSenderStack()->top();
@@ -530,6 +553,7 @@ void QWebFramePrivate::addQtSenderToGlobalObject()
     descriptor.setConfigurable(false);
     window->methodTable()->defineOwnProperty(window, exec, propertyName.get()->identifier(&exec->globalData()), descriptor, false);
 }
+#endif
 
 /*!
     \class QWebFrame
@@ -658,6 +682,7 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
 {
     if (!page()->settings()->testAttribute(QWebSettings::JavascriptEnabled))
         return;
+#if USE(JSC)
     JSC::Bindings::QtInstance::ValueOwnership valueOwnership = static_cast<JSC::Bindings::QtInstance::ValueOwnership>(ownership);
     JSDOMWindow* window = toJSDOMWindow(d->frame, mainThreadNormalWorld());
     JSC::Bindings::RootObject* root;
@@ -683,6 +708,13 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
 
     JSC::PutPropertySlot slot;
     window->methodTable()->put(window, exec, JSC::Identifier(&exec->globalData(), reinterpret_cast_ptr<const UChar*>(name.constData()), name.length()), runtimeObject, slot);
+#elif USE(V8)
+    QJSEngine* engine = d->frame->script()->qtScriptEngine();
+    if (!engine)
+        return;
+    QJSValue v = engine->newQObject(object); // FIXME: Ownership not propagated yet.
+    engine->globalObject().property(QLatin1String("window")).setProperty(name, v);
+#endif
 }
 
 /*!
@@ -1572,10 +1604,17 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
     ScriptController *proxy = d->frame->script();
     QVariant rc;
     if (proxy) {
+#if USE(JSC)
         int distance = 0;
         JSC::JSValue v = d->frame->script()->executeScript(ScriptSourceCode(scriptSource)).jsValue();
 
         rc = JSC::Bindings::convertValueToQVariant(proxy->globalObject(mainThreadNormalWorld())->globalExec(), v, QMetaType::Void, &distance);
+#elif USE(V8)
+        QJSEngine* engine = d->frame->script()->qtScriptEngine();
+        if (!engine)
+            return rc;
+        rc = engine->evaluate(scriptSource).toVariant();
+#endif
     }
     return rc;
 }
