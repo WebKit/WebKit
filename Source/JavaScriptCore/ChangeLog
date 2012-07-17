@@ -1,3 +1,11 @@
+2012-07-17  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Unreviewed buildfix from Zoltan Herczeg after 122768.
+
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+
 2012-07-17  David Barr  <davidbarr@chromium.org>
 
         Introduce ENABLE_CSS_IMAGE_ORIENTATION compile flag
