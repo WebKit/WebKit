@@ -208,9 +208,11 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
         m_inspectorFrontendClient->windowObjectCleared();
 }
 
-void InspectorController::connectFrontend()
+void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChannel)
 {
-    m_inspectorFrontend = adoptPtr(new InspectorFrontend(m_inspectorClient));
+    ASSERT(frontendChannel);
+
+    m_inspectorFrontend = adoptPtr(new InspectorFrontend(frontendChannel));
     // We can reconnect to existing front-end -> unmute state.
     m_state->unmute();
 
@@ -223,7 +225,7 @@ void InspectorController::connectFrontend()
     InspectorInstrumentation::frontendCreated();
 
     ASSERT(m_inspectorClient);
-    m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(m_inspectorClient);
+    m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(frontendChannel);
 
     InspectorBackendDispatcher* dispatcher = m_inspectorBackendDispatcher.get();
     for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
@@ -259,8 +261,9 @@ void InspectorController::show()
     if (m_inspectorFrontend)
         m_inspectorClient->bringFrontendToFront();
     else {
-        m_inspectorClient->openInspectorFrontend(this);
-        connectFrontend();
+        InspectorFrontendChannel* frontendChannel = m_inspectorClient->openInspectorFrontend(this);
+        if (frontendChannel)
+            connectFrontend(frontendChannel);
     }
 }
 
@@ -272,10 +275,10 @@ void InspectorController::close()
     m_inspectorClient->closeInspectorFrontend();
 }
 
-void InspectorController::restoreInspectorStateFromCookie(const String& inspectorStateCookie)
+void InspectorController::reconnectFrontend(InspectorFrontendChannel* frontendChannel, const String& inspectorStateCookie)
 {
     ASSERT(!m_inspectorFrontend);
-    connectFrontend();
+    connectFrontend(frontendChannel);
     m_state->loadFromCookie(inspectorStateCookie);
 
     for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)

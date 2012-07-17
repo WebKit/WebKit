@@ -27,23 +27,23 @@
 #ifndef InspectorClient_h
 #define InspectorClient_h
 
-#include "InspectorFrontendChannel.h"
 #include "InspectorStateClient.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class InspectorController;
+class InspectorFrontendChannel;
 class Frame;
 class Page;
 
-class InspectorClient : public InspectorFrontendChannel, public InspectorStateClient {
+class InspectorClient : public InspectorStateClient {
 public:
     virtual ~InspectorClient() { }
 
     virtual void inspectorDestroyed() = 0;
 
-    virtual void openInspectorFrontend(InspectorController*) = 0;
+    virtual InspectorFrontendChannel* openInspectorFrontend(InspectorController*) = 0;
     virtual void closeInspectorFrontend() = 0;
     virtual void bringFrontendToFront() = 0;
     virtual void didResizeMainFrame(Frame*) { }

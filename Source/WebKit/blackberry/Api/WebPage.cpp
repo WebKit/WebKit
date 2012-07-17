@@ -330,6 +330,7 @@ void WebPage::autofillTextField(const string& item)
 WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const IntRect& rect)
     : m_webPage(webPage)
     , m_client(client)
+    , m_inspectorClient(0)
     , m_page(0) // Initialized by init.
     , m_mainFrame(0) // Initialized by init.
     , m_currentContextNode(0)
@@ -488,9 +489,8 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #if ENABLE(DRAG_SUPPORT)
     dragClient = new DragClientBlackBerry();
 #endif
-    InspectorClientBlackBerry* inspectorClient = 0;
 #if ENABLE(INSPECTOR)
-    inspectorClient = new InspectorClientBlackBerry(this);
+    m_inspectorClient = new InspectorClientBlackBerry(this);
 #endif
 
     FrameLoaderClientBlackBerry* frameLoaderClient = new FrameLoaderClientBlackBerry();
@@ -500,7 +500,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     pageClients.contextMenuClient = contextMenuClient;
     pageClients.editorClient = editorClient;
     pageClients.dragClient = dragClient;
-    pageClients.inspectorClient = inspectorClient;
+    pageClients.inspectorClient = m_inspectorClient;
 
     m_page = new Page(pageClients);
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
@@ -5718,7 +5718,10 @@ void WebPage::onCertificateStoreLocationSet(const WebString& caPath)
 
 void WebPage::enableWebInspector()
 {
-    d->m_page->inspectorController()->connectFrontend();
+    if (!d->m_inspectorClient)
+        return;
+
+    d->m_page->inspectorController()->connectFrontend(d->m_inspectorClient);
     d->m_page->settings()->setDeveloperExtrasEnabled(true);
 }
 

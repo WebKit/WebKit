@@ -1,3 +1,18 @@
+2012-07-17  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: refactor InspectorController::connectFrontend() to accept InspectorFrontendChannel.
+        https://bugs.webkit.org/show_bug.cgi?id=91196
+
+        Reviewed by Pavel Feldman.
+
+        Refactoring InspectorClients. InspectorClient::openInspectorFrontend
+        now returning the InspectorFrontendChannel.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::openInspectorFrontend):
+        * WebCoreSupport/WebInspectorClient.h:
+        (WebInspectorClient):
+
 2012-07-14  Eric Carlson  <eric.carlson@apple.com>
 
         Enable AVCF hardware video decoding

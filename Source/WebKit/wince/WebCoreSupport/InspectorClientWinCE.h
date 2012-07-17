@@ -26,19 +26,20 @@
 #define InspectorClientWinCE_h
 
 #include "InspectorClient.h"
+#include "InspectorFrontendChannel.h"
 
 class WebView;
 
 namespace WebKit {
 
-class InspectorClientWinCE : public WebCore::InspectorClient {
+class InspectorClientWinCE : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
 public:
     InspectorClientWinCE(WebView* webView);
     ~InspectorClientWinCE();
 
     virtual void inspectorDestroyed();
 
-    virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
     virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 

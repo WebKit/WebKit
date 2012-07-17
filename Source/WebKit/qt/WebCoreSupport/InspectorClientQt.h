@@ -31,6 +31,7 @@
 #define InspectorClientQt_h
 
 #include "InspectorClient.h"
+#include "InspectorFrontendChannel.h"
 #include "InspectorFrontendClientLocal.h"
 #include <QtCore/QString>
 #include <wtf/Forward.h>
@@ -45,13 +46,13 @@ class InspectorFrontendClientQt;
 class InspectorServerRequestHandlerQt;
 class Page;
 
-class InspectorClientQt : public InspectorClient {
+class InspectorClientQt : public InspectorClient, public InspectorFrontendChannel {
 public:
     InspectorClientQt(QWebPage*);
 
     virtual void inspectorDestroyed();
 
-    virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
     virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 

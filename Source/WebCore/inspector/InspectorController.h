@@ -50,6 +50,7 @@ class InspectorClient;
 class InspectorDOMAgent;
 class InspectorDebuggerAgent;
 class InspectorFrontend;
+class InspectorFrontendChannel;
 class InspectorFrontendClient;
 class InspectorPageAgent;
 class InspectorProfilerAgent;
@@ -85,9 +86,9 @@ public:
     void dispatchMessageFromFrontend(const String& message);
 
     bool hasFrontend() const { return m_inspectorFrontend; }
-    void connectFrontend();
+    void connectFrontend(InspectorFrontendChannel*);
     void disconnectFrontend();
-    void restoreInspectorStateFromCookie(const String& inspectorCookie);
+    void reconnectFrontend(InspectorFrontendChannel*, const String& inspectorStateCookie);
     void setProcessId(long);
 
     void inspect(Node*);

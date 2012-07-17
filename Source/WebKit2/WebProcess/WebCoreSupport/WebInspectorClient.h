@@ -31,6 +31,7 @@
 #include "PageOverlay.h"
 
 #include <WebCore/InspectorClient.h>
+#include <WebCore/InspectorFrontendChannel.h>
 
 namespace WebCore {
     class GraphicsContext;
@@ -41,7 +42,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebInspectorClient : public WebCore::InspectorClient, private PageOverlay::Client {
+class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel, private PageOverlay::Client {
 public:
     WebInspectorClient(WebPage* page)
         : m_page(page)
@@ -52,7 +53,7 @@ public:
 private:
     virtual void inspectorDestroyed() OVERRIDE;
 
-    virtual void openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
+    virtual InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
     virtual void closeInspectorFrontend() OVERRIDE;
     virtual void bringFrontendToFront() OVERRIDE;
     virtual void didResizeMainFrame(WebCore::Frame*) OVERRIDE;

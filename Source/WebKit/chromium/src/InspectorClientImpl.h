@@ -33,6 +33,7 @@
 
 #include "InspectorClient.h"
 #include "InspectorController.h"
+#include "InspectorFrontendChannel.h"
 #include "platform/WebThread.h"
 #include <wtf/OwnPtr.h>
 
@@ -43,6 +44,7 @@ class WebDevToolsAgentImpl;
 class WebViewImpl;
 
 class InspectorClientImpl : public WebCore::InspectorClient,
+                            public WebCore::InspectorFrontendChannel,
                             public WebThread::TaskObserver {
 public:
     InspectorClientImpl(WebViewImpl*);
@@ -50,7 +52,7 @@ public:
 
     // InspectorClient methods:
     virtual void inspectorDestroyed();
-    virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
     virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 

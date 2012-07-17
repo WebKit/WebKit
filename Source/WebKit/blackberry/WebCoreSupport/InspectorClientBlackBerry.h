@@ -21,6 +21,7 @@
 #define InspectorClientBlackBerry_h
 
 #include "InspectorClient.h"
+#include "InspectorFrontendChannel.h"
 #include "InspectorOverlay.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
@@ -33,7 +34,7 @@ class WebPagePrivate;
 
 namespace WebCore {
 
-class InspectorClientBlackBerry : public InspectorClient, public InspectorOverlay::InspectorOverlayClient {
+class InspectorClientBlackBerry : public InspectorClient, public InspectorFrontendChannel, public InspectorOverlay::InspectorOverlayClient {
 public:
     InspectorClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
     virtual void inspectorDestroyed();
@@ -41,7 +42,7 @@ public:
     virtual void highlight();
     virtual void hideHighlight();
 
-    virtual void openInspectorFrontend(InspectorController*);
+    virtual InspectorFrontendChannel* openInspectorFrontend(InspectorController*);
     virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 

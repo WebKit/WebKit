@@ -32,6 +32,7 @@
 #define WebDevToolsAgentImpl_h
 
 #include "InspectorClient.h"
+#include "InspectorFrontendChannel.h"
 
 #include "WebDevToolsAgentPrivate.h"
 #include "WebPageOverlay.h"
@@ -65,6 +66,7 @@ struct WebDevToolsMessageData;
 
 class WebDevToolsAgentImpl : public WebDevToolsAgentPrivate,
                              public WebCore::InspectorClient,
+                             public WebCore::InspectorFrontendChannel,
                              public WebPageOverlay {
 public:
     WebDevToolsAgentImpl(WebViewImpl* webViewImpl, WebDevToolsAgentClient* client);
@@ -88,7 +90,7 @@ public:
 
     // InspectorClient implementation.
     virtual void inspectorDestroyed();
-    virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
     virtual void closeInspectorFrontend();
 
     virtual void bringFrontendToFront();

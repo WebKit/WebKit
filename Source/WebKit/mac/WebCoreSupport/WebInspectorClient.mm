@@ -92,7 +92,7 @@ void WebInspectorClient::inspectorDestroyed()
     delete this;
 }
 
-void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
+InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
 {
     RetainPtr<WebInspectorWindowController> windowController(AdoptNS, [[WebInspectorWindowController alloc] initWithInspectedWebView:m_webView]);
     [windowController.get() setInspectorClient:this];
@@ -103,6 +103,7 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     RetainPtr<WebInspectorFrontend> webInspectorFrontend(AdoptNS, [[WebInspectorFrontend alloc] initWithFrontendClient:frontendClient.get()]);
     [[m_webView inspector] setFrontend:webInspectorFrontend.get()];
     m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
+    return this;
 }
 
 void WebInspectorClient::closeInspectorFrontend()

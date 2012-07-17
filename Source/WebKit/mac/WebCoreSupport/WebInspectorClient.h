@@ -27,6 +27,7 @@
  */
 
 #import <WebCore/InspectorClient.h>
+#import <WebCore/InspectorFrontendChannel.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/PlatformString.h>
 
@@ -54,13 +55,13 @@ class Page;
 
 class WebInspectorFrontendClient;
 
-class WebInspectorClient : public WebCore::InspectorClient {
+class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
 public:
     WebInspectorClient(WebView *);
 
     virtual void inspectorDestroyed() OVERRIDE;
 
-    virtual void openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
+    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
     virtual void closeInspectorFrontend() OVERRIDE;
     virtual void bringFrontendToFront() OVERRIDE;
     virtual void didResizeMainFrame(WebCore::Frame*) OVERRIDE;

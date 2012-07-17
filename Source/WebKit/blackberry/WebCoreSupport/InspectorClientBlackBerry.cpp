@@ -53,9 +53,10 @@ void InspectorClientBlackBerry::hideHighlight()
     m_webPagePrivate->setInspectorOverlayClient(0);
 }
 
-void InspectorClientBlackBerry::openInspectorFrontend(InspectorController*)
+InspectorFrontendChannel* InspectorClientBlackBerry::openInspectorFrontend(InspectorController*)
 {
     notImplemented();
+    return 0;
 }
 
 void InspectorClientBlackBerry::closeInspectorFrontend()

@@ -45,9 +45,10 @@ void InspectorClientWinCE::inspectorDestroyed()
     delete this;
 }
 
-void InspectorClientWinCE::openInspectorFrontend(InspectorController* controller)
+InspectorFrontendChannel* InspectorClientWinCE::openInspectorFrontend(InspectorController* controller)
 {
     notImplemented();
+    return 0;
 }
 
 void InspectorClientWinCE::closeInspectorFrontend()

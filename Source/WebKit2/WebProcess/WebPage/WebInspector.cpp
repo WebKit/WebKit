@@ -27,7 +27,6 @@
 #include "WebInspector.h"
 
 #if ENABLE(INSPECTOR)
-
 #include "WebFrame.h"
 #include "WebInspectorFrontendClient.h"
 #include "WebInspectorProxyMessages.h"
@@ -35,21 +34,23 @@
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
 #include <WebCore/InspectorController.h>
+#include <WebCore/InspectorFrontendChannel.h>
 #include <WebCore/Page.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebInspector> WebInspector::create(WebPage* page)
+PassRefPtr<WebInspector> WebInspector::create(WebPage* page, InspectorFrontendChannel* frontendChannel)
 {
-    return adoptRef(new WebInspector(page));
+    return adoptRef(new WebInspector(page, frontendChannel));
 }
 
-WebInspector::WebInspector(WebPage* page)
+WebInspector::WebInspector(WebPage* page, InspectorFrontendChannel* frontendChannel)
     : m_page(page)
     , m_inspectorPage(0)
     , m_frontendClient(0)
+    , m_frontendChannel(frontendChannel)
 #if ENABLE(INSPECTOR_SERVER)
     , m_remoteFrontendConnected(false)
 #endif
@@ -91,6 +92,7 @@ void WebInspector::destroyInspectorPage()
 {
     m_inspectorPage = 0;
     m_frontendClient = 0;
+    m_frontendChannel = 0;
 }
 
 // Called from WebInspectorFrontendClient
@@ -255,8 +257,8 @@ void WebInspector::remoteFrontendConnected()
     ASSERT(!m_remoteFrontendConnected);
     // Switching between in-process and remote inspectors isn't supported yet.
     ASSERT(!m_inspectorPage);
-
-    m_page->corePage()->inspectorController()->connectFrontend();
+    
+    m_page->corePage()->inspectorController()->connectFrontend(m_frontendChannel);
     m_remoteFrontendConnected = true;
 }
 

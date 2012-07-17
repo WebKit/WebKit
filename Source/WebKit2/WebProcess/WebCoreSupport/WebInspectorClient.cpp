@@ -43,10 +43,11 @@ void WebInspectorClient::inspectorDestroyed()
     delete this;
 }
 
-void WebInspectorClient::openInspectorFrontend(InspectorController*)
+WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController*)
 {
     WebPage* inspectorPage = m_page->inspector()->createInspectorPage();
     ASSERT_UNUSED(inspectorPage, inspectorPage);
+    return this;
 }
 
 void WebInspectorClient::closeInspectorFrontend()

@@ -1,3 +1,18 @@
+2012-07-17  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: refactor InspectorController::connectFrontend() to accept InspectorFrontendChannel.
+        https://bugs.webkit.org/show_bug.cgi?id=91196
+
+        Reviewed by Pavel Feldman.
+
+        Refactoring InspectorClients. InspectorClient::openInspectorFrontend
+        now returning the InspectorFrontendChannel.
+
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::openInspectorFrontend):
+        * WebCoreSupport/InspectorClientEfl.h:
+        (InspectorClientEfl):
+
 2012-07-17  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Move codes related to theme setting from Widget to RenderTheme

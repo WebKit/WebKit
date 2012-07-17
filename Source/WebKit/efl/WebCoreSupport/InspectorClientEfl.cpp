@@ -72,13 +72,13 @@ void InspectorClientEfl::inspectorDestroyed()
     delete this;
 }
 
-void InspectorClientEfl::openInspectorFrontend(InspectorController*)
+InspectorFrontendChannel* InspectorClientEfl::openInspectorFrontend(InspectorController*)
 {
     evas_object_smart_callback_call(m_inspectedView, "inspector,view,create", 0);
 
     Evas_Object* inspectorView = ewk_view_web_inspector_view_get(m_inspectedView);
     if (!inspectorView)
-        return;
+        return 0;
 
     m_inspectorView = inspectorView;
 
@@ -90,6 +90,8 @@ void InspectorClientEfl::openInspectorFrontend(InspectorController*)
 
     InspectorController* controller = EWKPrivate::corePage(m_inspectorView)->inspectorController();
     controller->setInspectorFrontendClient(frontendClient.release());
+    
+    return this;
 }
 
 void InspectorClientEfl::closeInspectorFrontend()

@@ -20,6 +20,7 @@
 #define WebPage_p_h
 
 #include "ChromeClient.h"
+#include "InspectorClientBlackBerry.h"
 #include "InspectorOverlay.h"
 #if USE(ACCELERATED_COMPOSITING)
 #include "GLES2Context.h"
@@ -451,6 +452,7 @@ public:
 
     WebPage* m_webPage;
     WebPageClient* m_client;
+    WebCore::InspectorClientBlackBerry* m_inspectorClient;
     WebCore::Page* m_page;
     WebCore::Frame* m_mainFrame;
     RefPtr<WebCore::Node> m_currentContextNode;

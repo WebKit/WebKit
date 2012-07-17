@@ -87,7 +87,7 @@ void WebInspectorClient::inspectorDestroyed()
     delete this;
 }
 
-void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
+WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(InspectorController* inspectorController)
 {
     registerWindowClass();
 
@@ -96,21 +96,21 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
         0, 0, 0, 0);
 
     if (!frontendHwnd)
-        return;
+        return 0;
 
     COMPtr<WebView> frontendWebView(AdoptCOM, WebView::createInstance());
 
     if (FAILED(frontendWebView->setHostWindow((OLE_HANDLE)(ULONG64)frontendHwnd)))
-        return;
+        return 0;
 
     RECT rect;
     GetClientRect(frontendHwnd, &rect);
     if (FAILED(frontendWebView->initWithFrame(rect, 0, 0)))
-        return;
+        return 0;
 
     COMPtr<WebInspectorDelegate> delegate(AdoptCOM, WebInspectorDelegate::createInstance());
     if (FAILED(frontendWebView->setUIDelegate(delegate.get())))
-        return;
+        return 0;
 
     // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
     // FIXME: It's crazy that we have to do this song and dance to end up with
@@ -120,64 +120,65 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     COMPtr<WebPreferences> tempPreferences(AdoptCOM, WebPreferences::createInstance());
     COMPtr<IWebPreferences> iPreferences;
     if (FAILED(tempPreferences->initWithIdentifier(BString(L"WebInspectorPreferences"), &iPreferences)))
-        return;
+        return 0;
     COMPtr<WebPreferences> preferences(Query, iPreferences);
     if (!preferences)
-        return;
+        return 0;
     if (FAILED(preferences->setAutosaves(FALSE)))
-        return;
+        return 0;
     if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
-        return;
+        return 0;
     if (FAILED(preferences->setAuthorAndUserStylesEnabled(TRUE)))
-        return;
+        return 0;
     if (FAILED(preferences->setAllowsAnimatedImages(TRUE)))
-        return;
+        return 0;
     if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
-        return;
+        return 0;
     if (FAILED(preferences->setPlugInsEnabled(FALSE)))
-        return;
+        return 0;
     if (FAILED(preferences->setJavaEnabled(FALSE)))
-        return;
+        return 0;
     if (FAILED(preferences->setUserStyleSheetEnabled(FALSE)))
-        return;
+        return 0;
     if (FAILED(preferences->setTabsToLinks(FALSE)))
-        return;
+        return 0;
     if (FAILED(preferences->setMinimumFontSize(0)))
-        return;
+        return 0;
     if (FAILED(preferences->setMinimumLogicalFontSize(9)))
-        return;
+        return 0;
     if (FAILED(preferences->setFixedFontFamily(BString(L"Courier New"))))
-        return;
+        return 0;
     if (FAILED(preferences->setDefaultFixedFontSize(13)))
-        return;
+        return 0;
 
     if (FAILED(frontendWebView->setPreferences(preferences.get())))
-        return;
+        return 0;
 
     frontendWebView->setProhibitsMainFrameScrolling(TRUE);
 
     HWND frontendWebViewHwnd;
     if (FAILED(frontendWebView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&frontendWebViewHwnd))))
-        return;
+        return 0;
 
     COMPtr<WebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance());
 
     RetainPtr<CFURLRef> htmlURLRef(AdoptCF, CFBundleCopyResourceURL(getWebKitBundle(), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
     if (!htmlURLRef)
-        return;
+        return 0;
 
     CFStringRef urlStringRef = ::CFURLGetString(htmlURLRef.get());
     if (FAILED(request->initWithURL(BString(urlStringRef), WebURLRequestUseProtocolCachePolicy, 60)))
-        return;
+        return 0;
 
     if (FAILED(frontendWebView->topLevelFrame()->loadRequest(request.get())))
-        return;
+        return 0;
 
     m_frontendPage = core(frontendWebView.get());
     OwnPtr<WebInspectorFrontendClient> frontendClient = adoptPtr(new WebInspectorFrontendClient(m_inspectedWebView, m_inspectedWebViewHwnd, frontendHwnd, frontendWebView, frontendWebViewHwnd, this, createFrontendSettings()));
     m_frontendClient = frontendClient.get();
     m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
     m_frontendHwnd = frontendHwnd;
+    return this;
 }
 
 void WebInspectorClient::closeInspectorFrontend()

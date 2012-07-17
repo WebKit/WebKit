@@ -27,20 +27,21 @@
 #define InspectorClientWx_h
 
 #include "InspectorClient.h"
+#include "InspectorFrontendChannel.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class Page;
 
-class InspectorClientWx : public InspectorClient {
+class InspectorClientWx : public InspectorClient, public InspectorFrontendChannel {
 public:
     InspectorClientWx();
     ~InspectorClientWx();
 
     virtual void inspectorDestroyed();
 
-    virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
     virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 

@@ -30,6 +30,7 @@
 #define InspectorClientGtk_h
 
 #include "InspectorClient.h"
+#include "InspectorFrontendChannel.h"
 #include "InspectorFrontendClientLocal.h"
 #include "webkitwebview.h"
 #include "webkitwebinspector.h"
@@ -45,7 +46,7 @@ namespace WebKit {
 
     class InspectorFrontendClient;
 
-    class InspectorClient : public WebCore::InspectorClient {
+    class InspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
     public:
         InspectorClient(WebKitWebView* webView);
         ~InspectorClient();
@@ -54,7 +55,7 @@ namespace WebKit {
 
         virtual void inspectorDestroyed();
 
-        virtual void openInspectorFrontend(WebCore::InspectorController*);
+        virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
         virtual void closeInspectorFrontend();
         virtual void bringFrontendToFront();
 

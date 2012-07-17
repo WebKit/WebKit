@@ -1,3 +1,24 @@
+2012-07-17  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: refactor InspectorController::connectFrontend() to accept InspectorFrontendChannel.
+        https://bugs.webkit.org/show_bug.cgi?id=91196
+
+        Reviewed by Pavel Feldman.
+
+        Refactoring InspectorClients. InspectorClient::openInspectorFrontend
+        now returning the InspectorFrontendChannel.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPage::enableWebInspector):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/InspectorClientBlackBerry.cpp:
+        (WebCore::InspectorClientBlackBerry::openInspectorFrontend):
+        * WebCoreSupport/InspectorClientBlackBerry.h:
+        (InspectorClientBlackBerry):
+
 2012-07-17  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [BlackBerry] Enable registerProtocolHandler for Blackberry

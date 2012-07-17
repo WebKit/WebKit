@@ -65,10 +65,11 @@ void InspectorClientImpl::inspectorDestroyed()
         agent->inspectorDestroyed();
 }
 
-void InspectorClientImpl::openInspectorFrontend(InspectorController* controller)
+InspectorFrontendChannel* InspectorClientImpl::openInspectorFrontend(InspectorController* controller)
 {
     if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->openInspectorFrontend(controller);
+        return agent->openInspectorFrontend(controller);
+    return 0;
 }
 
 void InspectorClientImpl::closeInspectorFrontend()

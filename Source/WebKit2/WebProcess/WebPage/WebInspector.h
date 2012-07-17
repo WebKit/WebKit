@@ -33,6 +33,10 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class InspectorFrontendChannel;
+}
+
 namespace WebKit {
 
 class WebInspectorFrontendClient;
@@ -43,7 +47,7 @@ class WebInspector : public APIObject {
 public:
     static const Type APIType = TypeBundleInspector;
 
-    static PassRefPtr<WebInspector> create(WebPage*);
+    static PassRefPtr<WebInspector> create(WebPage*, WebCore::InspectorFrontendChannel*);
 
     WebPage* page() const { return m_page; }
     WebPage* inspectorPage() const { return m_inspectorPage; }
@@ -77,7 +81,7 @@ private:
     friend class WebInspectorClient;
     friend class WebInspectorFrontendClient;
 
-    explicit WebInspector(WebPage*);
+    explicit WebInspector(WebPage*, WebCore::InspectorFrontendChannel*);
 
     virtual Type type() const { return APIType; }
 
@@ -116,6 +120,7 @@ private:
     WebPage* m_page;
     WebPage* m_inspectorPage;
     WebInspectorFrontendClient* m_frontendClient;
+    WebCore::InspectorFrontendChannel* m_frontendChannel;
 #if PLATFORM(MAC)
     String m_localizedStringsURL;
 #endif

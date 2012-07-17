@@ -389,7 +389,7 @@ void WebDevToolsAgentImpl::attach()
         return;
 
     ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
-    inspectorController()->connectFrontend();
+    inspectorController()->connectFrontend(this);
     m_attached = true;
 }
 
@@ -399,7 +399,7 @@ void WebDevToolsAgentImpl::reattach(const WebString& savedState)
         return;
 
     ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
-    inspectorController()->restoreInspectorStateFromCookie(savedState);
+    inspectorController()->reconnectFrontend(this, savedState);
     m_attached = true;
 }
 
@@ -492,8 +492,9 @@ void WebDevToolsAgentImpl::inspectorDestroyed()
     // Our lifetime is bound to the WebViewImpl.
 }
 
-void WebDevToolsAgentImpl::openInspectorFrontend(InspectorController*)
+InspectorFrontendChannel* WebDevToolsAgentImpl::openInspectorFrontend(InspectorController*)
 {
+    return 0;
 }
 
 void WebDevToolsAgentImpl::closeInspectorFrontend()

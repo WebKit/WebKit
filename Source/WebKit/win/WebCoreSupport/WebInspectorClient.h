@@ -31,6 +31,7 @@
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/InspectorClient.h>
+#include <WebCore/InspectorFrontendChannel.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/WindowMessageListener.h>
@@ -50,14 +51,14 @@ class WebInspectorFrontendClient;
 class WebNodeHighlight;
 class WebView;
 
-class WebInspectorClient : public WebCore::InspectorClient {
+class WebInspectorClient : public WebCore::InspectorClient, public WebCore::InspectorFrontendChannel {
 public:
     WebInspectorClient(WebView*);
 
     // InspectorClient
     virtual void inspectorDestroyed();
 
-    virtual void openInspectorFrontend(WebCore::InspectorController*);
+    virtual WebCore::InspectorFrontendChannel* openInspectorFrontend(WebCore::InspectorController*);
     virtual void closeInspectorFrontend();
     virtual void bringFrontendToFront();
 

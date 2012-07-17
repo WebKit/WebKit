@@ -201,8 +201,9 @@ void InspectorClientQt::inspectorDestroyed()
 }
 
     
-void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* inspectorController)
+WebCore::InspectorFrontendChannel* InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* inspectorController)
 {
+    WebCore::InspectorFrontendChannel* frontendChannel = 0;
 #if ENABLE(INSPECTOR)
     OwnPtr<QWebView> inspectorView = adoptPtr(new QWebView);
     // FIXME: Where does inspectorPage get deleted?
@@ -212,7 +213,7 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* insp
     QWebInspector* inspector = m_inspectedWebPage->d->getOrCreateInspector();
     // Remote frontend was attached.
     if (m_remoteFrontEndChannel)
-        return;
+        return 0;
 
     // This is a known hook that allows changing the default URL for the
     // Web inspector. This is used for SDK purposes. Please keep this hook
@@ -243,7 +244,9 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* insp
 
     // Web Inspector should not belong to any other page groups since it is a specialized debugger window.
     m_frontendWebPage->handle()->page->setGroupName("__WebInspectorPageGroup__");
+    frontendChannel = this;
 #endif
+    return frontendChannel;
 }
 
 void InspectorClientQt::closeInspectorFrontend()
@@ -271,7 +274,7 @@ void InspectorClientQt::attachAndReplaceRemoteFrontend(InspectorServerRequestHan
 {
 #if ENABLE(INSPECTOR)
     m_remoteFrontEndChannel = channel;
-    m_inspectedWebPage->d->inspectorController()->connectFrontend();
+    m_inspectedWebPage->d->inspectorController()->connectFrontend(this);
 #endif
 }
 

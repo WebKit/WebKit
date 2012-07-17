@@ -131,6 +131,7 @@ class WebFrame;
 class WebFullScreenManager;
 class WebImage;
 class WebInspector;
+class WebInspectorClient;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebNotificationClient;
@@ -876,6 +877,7 @@ private:
 #if ENABLE(PAGE_VISIBILITY_API)
     WebCore::PageVisibilityState m_visibilityState;
 #endif
+    WebInspectorClient* m_inspectorClient;
 };
 
 } // namespace WebKit

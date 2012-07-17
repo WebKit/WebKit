@@ -560,14 +560,12 @@ public:
 
     virtual void inspectorDestroyed() { }
     
-    virtual void openInspectorFrontend(InspectorController*) { }
+    virtual InspectorFrontendChannel* openInspectorFrontend(InspectorController*) { return 0; }
     virtual void closeInspectorFrontend() { }
     virtual void bringFrontendToFront() { }
 
     virtual void highlight() { }
     virtual void hideHighlight() { }
-
-    virtual bool sendMessageToFrontend(const String&) { return false; }
 };
 
 class EmptyDeviceMotionClient : public DeviceMotionClient {

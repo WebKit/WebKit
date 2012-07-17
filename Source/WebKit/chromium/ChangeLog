@@ -1,3 +1,23 @@
+2012-07-17  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: refactor InspectorController::connectFrontend() to accept InspectorFrontendChannel.
+        https://bugs.webkit.org/show_bug.cgi?id=91196
+
+        Reviewed by Pavel Feldman.
+
+        Refactoring InspectorClients. InspectorClient::openInspectorFrontend
+        now returning the InspectorFrontendChannel.
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::openInspectorFrontend):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::reattach):
+        (WebKit::WebDevToolsAgentImpl::openInspectorFrontend):
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+
 2012-07-16  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. Remove two empty directories.
