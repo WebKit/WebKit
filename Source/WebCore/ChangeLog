@@ -1,3 +1,107 @@
+2012-07-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: implement search / replace in source files (behind experiment flag)
+        https://bugs.webkit.org/show_bug.cgi?id=91394
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change adds "loop" parameter to the go to next / previous search + adds a UI component
+        for search / replace of text in the sources panel. New UI component is behind the experiment.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel.prototype.performSearch):
+        (WebInspector.ConsolePanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ConsolePanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ElementsPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionPanel.prototype.performSearch):
+        (WebInspector.ExtensionPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ExtensionPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.afterTextChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype.beforeTextChanged):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._sortItems):
+        (WebInspector.NetworkLogView.prototype._updateFilter):
+        (WebInspector.NetworkLogView.prototype.performSearch):
+        (WebInspector.NetworkLogView.prototype.jumpToPreviousSearchResult):
+        (WebInspector.NetworkLogView.prototype.jumpToNextSearchResult):
+        (WebInspector.NetworkPanel.prototype.performSearch):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.performSearch):
+        (WebInspector.Panel.prototype.jumpToNextSearchResult):
+        (WebInspector.Panel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.Panel.prototype.canSearchAndReplace):
+        (WebInspector.Panel.prototype.replaceSelectionWith):
+        (WebInspector.Panel.prototype.replaceAllWith):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ProfilesPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ResourcesPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.performSearch.finishedCallback):
+        (WebInspector.ScriptsPanel.prototype.performSearch):
+        (WebInspector.ScriptsPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ScriptsPanel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.ScriptsPanel.prototype.canSearchAndReplace):
+        (WebInspector.ScriptsPanel.prototype.replaceSelectionWith):
+        (WebInspector.ScriptsPanel.prototype.replaceAllWith):
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController):
+        (WebInspector.SearchController.prototype.cancelSearch):
+        (WebInspector.SearchController.prototype.disableSearchUntilExplicitAction):
+        (WebInspector.SearchController.prototype.handleShortcut):
+        (WebInspector.SearchController.prototype.activePanelChanged.performPanelSearch):
+        (WebInspector.SearchController.prototype.activePanelChanged):
+        (WebInspector.SearchController.prototype._updateSearchNavigationButtonState):
+        (WebInspector.SearchController.prototype.showSearchField):
+        (WebInspector.SearchController.prototype._onKeyDown):
+        (WebInspector.SearchController.prototype._onInput):
+        (WebInspector.SearchController.prototype._onNextButtonSearch):
+        (WebInspector.SearchController.prototype._onPrevButtonSearch):
+        (WebInspector.SearchController.prototype._performSearch):
+        (WebInspector.SearchController.prototype._toggleReplaceVisibility):
+        (WebInspector.SearchController.prototype._replace):
+        (WebInspector.SearchController.prototype._replaceAll):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.createSearchRegex):
+        (WebInspector.SourceFrame.prototype.beforeTextChanged):
+        (WebInspector.SourceFrame.prototype.replaceSearchMatchWith):
+        (WebInspector.SourceFrame.prototype.replaceAllWith):
+        (WebInspector.TextEditorDelegateForSourceFrame.prototype.beforeTextChanged):
+        (WebInspector.TextEditorDelegateForSourceFrame.prototype.commitEditing):
+        * inspector/front-end/StylesPanel.js:
+        (WebInspector.StyleSourceFrame.prototype.afterTextChanged):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor.prototype._commitEditing):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextEditorModel.endsWithBracketRegex.):
+        * inspector/front-end/inspector.css:
+        (.search-replace):
+        (.search-replace:focus):
+        (.toolbar-search-navigation-controls):
+        (.toolbar-search-navigation.enabled):
+        (.toolbar-search):
+        (.toolbar-search input[type="checkbox"]):
+        (.toolbar-search button):
+        (.toolbar-search button:active):
+        (.toolbar-search-control):
+        (.toolbar-replace-control):
+        (.toolbar-search-navigation.enabled:active):
+        (.toolbar-search-navigation.toolbar-search-navigation-prev):
+        (.toolbar-search-navigation.toolbar-search-navigation-prev.enabled:active):
+        (.toolbar-search-navigation.toolbar-search-navigation-next):
+        (.toolbar-search-navigation.toolbar-search-navigation-next.enabled:active):
+        (.drawer-header-close-button):
+        (.inspector-footer):
+
 2012-07-17  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt][V8] Remove the V8 related codepaths and configuration

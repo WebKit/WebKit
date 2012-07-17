@@ -201,7 +201,7 @@ WebInspector.StyleSourceFrame.prototype = {
 
     afterTextChanged: function(oldRange, newRange)
     {
-        this._styleSource.setWorkingCopy(this.textModel.text);
+        this._styleSource.setWorkingCopy(this.textModel.text());
     },
 
     _didEditContent: function(error)

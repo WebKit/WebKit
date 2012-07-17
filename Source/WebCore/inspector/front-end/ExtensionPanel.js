@@ -151,22 +151,36 @@ WebInspector.ExtensionPanel.prototype = {
         WebInspector.Panel.prototype.searchCanceled.apply(this, arguments);
     },
 
-    performSearch: function(query)
+    /**
+     * @param {string} query
+     * @param {boolean} loop
+     */
+    performSearch: function(query, loop)
     {
         WebInspector.extensionServer.notifySearchAction(this.name, WebInspector.extensionAPI.panels.SearchAction.PerformSearch, query);
         WebInspector.Panel.prototype.performSearch.apply(this, arguments);
     },
 
-    jumpToNextSearchResult: function()
+    /**
+     * @param {boolean} loop
+     * @return {boolean}
+     */
+    jumpToNextSearchResult: function(loop)
     {
         WebInspector.extensionServer.notifySearchAction(this.name, WebInspector.extensionAPI.panels.SearchAction.NextSearchResult);
-        WebInspector.Panel.prototype.jumpToNextSearchResult.call(this);
+        WebInspector.Panel.prototype.jumpToNextSearchResult.call(this, loop);
+        return true;
     },
 
-    jumpToPreviousSearchResult: function()
+    /**
+     * @param {boolean} loop
+     * @return {boolean}
+     */
+    jumpToPreviousSearchResult: function(loop)
     {
         WebInspector.extensionServer.notifySearchAction(this.name, WebInspector.extensionAPI.panels.SearchAction.PreviousSearchResult);
-        WebInspector.Panel.prototype.jumpToPreviousSearchResult.call(this);
+        WebInspector.Panel.prototype.jumpToPreviousSearchResult.call(this, loop);
+        return true;
     },
 
     _addStyleRule: function(selector, body)

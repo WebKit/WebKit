@@ -721,3 +721,6 @@ localizedStrings["Encoded Data Length"] = "Encoded Data Length";
 localizedStrings["%d Bytes"] = "%d Bytes";
 localizedStrings["Time End"] = "Time End";
 localizedStrings["Find"] = "Find";
+localizedStrings["Replace"] = "Replace";
+localizedStrings["Replace All"] = "Replace All";
+localizedStrings["Skip"] = "Skip";

@@ -150,13 +150,13 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     afterTextChanged: function(oldRange, newRange)
     {
         WebInspector.SourceFrame.prototype.afterTextChanged.call(this, oldRange, newRange);
-        this._javaScriptSource.setWorkingCopy(this.textModel.text);
+        this._javaScriptSource.setWorkingCopy(this.textModel.text());
         this._restoreBreakpointsAfterEditing();
     },
 
-    beforeTextChanged: function()
+    beforeTextChanged: function(userInput)
     {
-        WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
+        WebInspector.SourceFrame.prototype.beforeTextChanged.call(this, userInput);
         this._removeBreakpointsBeforeEditing();
     },
 

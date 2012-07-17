@@ -85,7 +85,7 @@ WebInspector.InspectorView.prototype = {
             x.show();
             this.dispatchEventToListeners(WebInspector.InspectorView.Events.PanelSelected);
             // FIXME: remove search controller.
-            WebInspector.searchController.activePanelChanged();
+            WebInspector.searchController.cancelSearch();
         }
         for (var panelName in WebInspector.panels) {
             if (WebInspector.panels[panelName] === x) {

@@ -106,17 +106,53 @@ WebInspector.Panel.prototype = {
         WebInspector.searchController.updateSearchMatchesCount(0, this);
     },
 
-    performSearch: function(query)
+    /**
+     * @param {string} query
+     * @param {boolean} loop
+     */
+    performSearch: function(query, loop)
     {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
     },
 
-    jumpToNextSearchResult: function()
+    /**
+     * @param {boolean} loop
+     * @return {boolean} true iff operation is successful
+     */
+    jumpToNextSearchResult: function(loop)
+    {
+        return false;
+    },
+
+    /**
+     * @param {boolean} loop
+     * @return {boolean} true iff operation is successful
+     */
+    jumpToPreviousSearchResult: function(loop)
+    {
+        return false;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    canSearchAndReplace: function()
+    {
+        return false;
+    },
+
+    /**
+     * @param {string} text
+     */
+    replaceSelectionWith: function(text)
     {
     },
 
-    jumpToPreviousSearchResult: function()
+    /**
+     * @param {string} text
+     */
+    replaceAllWith: function(text)
     {
     },
 

@@ -876,7 +876,11 @@ WebInspector.ScriptsPanel.prototype = {
         delete this._searchQuery;
     },
 
-    performSearch: function(query)
+    /**
+     * @param {string} query
+     * @param {boolean} loop
+     */
+    performSearch: function(query, loop)
     {
         WebInspector.searchController.updateSearchMatchesCount(0, this);
 
@@ -895,47 +899,87 @@ WebInspector.ScriptsPanel.prototype = {
                 return;
 
             WebInspector.searchController.updateSearchMatchesCount(searchMatches, this);
-            view.jumpToNextSearchResult();
+            view.jumpToNextSearchResult(loop);
             WebInspector.searchController.updateCurrentMatchIndex(view.currentSearchResultIndex, this);
         }
 
         this._searchView.performSearch(query, finishedCallback.bind(this));
     },
 
-    jumpToNextSearchResult: function()
+    /**
+     * @param {boolean} loop
+     * @return {boolean}
+     */
+    jumpToNextSearchResult: function(loop)
     {
         if (!this._searchView)
-            return;
+            return false;
 
         if (this._searchView !== this.visibleView) {
-            this.performSearch(this._searchQuery);
-            return;
+            this.performSearch(this._searchQuery, loop);
+            return false;
         }
 
-        if (this._searchView.showingLastSearchResult())
+        if (this._searchView.showingLastSearchResult()) {
+            if (!loop)
+                return false;
             this._searchView.jumpToFirstSearchResult();
-        else
+        } else
             this._searchView.jumpToNextSearchResult();
         WebInspector.searchController.updateCurrentMatchIndex(this._searchView.currentSearchResultIndex, this);
+        return true;
     },
 
-    jumpToPreviousSearchResult: function()
+    /**
+     * @param {boolean} loop
+     */
+    jumpToPreviousSearchResult: function(loop)
     {
         if (!this._searchView)
-            return;
+            return false;
 
         if (this._searchView !== this.visibleView) {
-            this.performSearch(this._searchQuery);
+            this.performSearch(this._searchQuery, loop);
             if (this._searchView)
                 this._searchView.jumpToLastSearchResult();
             return;
         }
 
-        if (this._searchView.showingFirstSearchResult())
+        if (this._searchView.showingFirstSearchResult()) {
+            if (!loop)
+                return false;
             this._searchView.jumpToLastSearchResult();
-        else
+        } else
             this._searchView.jumpToPreviousSearchResult();
         WebInspector.searchController.updateCurrentMatchIndex(this._searchView.currentSearchResultIndex, this);
+    },
+
+    /**
+     * @return {boolean}
+     */
+    canSearchAndReplace: function()
+    {
+        var view = /** @type {WebInspector.SourceFrame} */ this.visibleView;
+        return !!view && view.canEditSource();
+    },
+
+    /**
+     * @param {string} text
+     */
+    replaceSelectionWith: function(text)
+    {
+        var view = /** @type {WebInspector.SourceFrame} */ this._searchView;
+        view.replaceSearchMatchWith(text);
+    },
+
+    /**
+     * @param {string} query
+     * @param {string} text
+     */
+    replaceAllWith: function(query, text)
+    {
+        var view = /** @type {WebInspector.SourceFrame} */ this._searchView;
+        view.replaceAllWith(query, text);
     },
 
     _toggleFormatSource: function()

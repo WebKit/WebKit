@@ -179,9 +179,17 @@ WebInspector.TextEditorModel.prototype = {
     /**
      * @return {string}
      */
-    get text()
+    text: function()
     {
         return this._lines.join(this._lineBreak);
+    },
+
+    /**
+     * @return {WebInspector.TextRange}
+     */
+    range: function()
+    {
+        return new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
     },
 
     /**
@@ -218,7 +226,7 @@ WebInspector.TextEditorModel.prototype = {
     setText: function(text)
     {
         text = text || "";
-        var range = new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
+        var range = this.range();
         this._lineBreak = /\r\n/.test(text) ? "\r\n" : "\n";
         var newRange = this._innerSetText(range, text);
         this.dispatchEventToListeners(WebInspector.TextEditorModel.Events.TextChanged, { oldRange: range, newRange: newRange});
@@ -372,7 +380,7 @@ WebInspector.TextEditorModel.prototype = {
     copyRange: function(range)
     {
         if (!range)
-            range = new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
+            range = this.range();
 
         var clip = [];
         if (range.startLine === range.endLine) {

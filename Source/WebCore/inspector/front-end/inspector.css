@@ -263,15 +263,17 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     border-radius: 5px;
 }
 
-#search {
+.search-replace {
     -webkit-appearance: none;
     border: 0;
     padding: 0 2px;
     margin: 0;
     width: 165px;
+    position: relative;
+    top: 1px;
 }
 
-#search:focus {
+.search-replace:focus {
     outline: none;
 }
 
@@ -280,7 +282,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     top: 0;
     right: 0;
     height: 18px;
-    background-image: -webkit-linear-gradient(rgb(228, 228, 228), rgb(204, 204, 204) 75%, rgb(206, 206, 206));
+    background-image: -webkit-linear-gradient(rgb(228, 228, 228), rgb(206, 206, 206));
 }
 
 .toolbar-search-navigation {
@@ -293,45 +295,72 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     opacity: 0.3;
 }
 
-.toolbar-search-navigation.enabled:hover {
-    border-left: 1px solid rgb(190, 190, 190);
-    opacity: 0.9;
-}
-
-.toolbar-search-navigation.enabled, .toolbar-search-navigation.enabled:active {
-    border-left: 1px solid rgb(170, 170, 170);
-    opacity: 0.7;
-}
-
-#search:focus {
-    outline: none;
+.toolbar-search-navigation.enabled {
+    opacity: 1.0;
 }
 
 .toolbar-search {
     line-height: 19px;
+    height: 22px;
+}
+
+.toolbar-search input[type="checkbox"] {
+    position: relative;
+    margin-top: -1px;
+    margin-left: 15px;
+    top: 2px;
+}
+
+.toolbar-search button {
+    border: 1px solid rgb(163, 163, 163);
+    border-radius: 12px;
+    margin: 0 0 0 6px;
+    font-size: 11px;
+    background-image: -webkit-linear-gradient(rgb(241, 241, 241), rgb(220, 220, 220));
+}
+
+.toolbar-search button:active {
+    background-image: -webkit-linear-gradient(rgb(185, 185, 185), rgb(156, 156, 156));
 }
 
 .toolbar-search-control {
     display: inline-block;
     position: relative;
     background-color: white;
-    border: 1px solid rgb(202, 202, 202);
-    margin: 1px 2px;
+    border: 1px solid rgb(163, 163, 163);
+    margin: 1px 2px 1px 5px;
     height: 20px;
     border-radius: 2px;
     padding-right: 36px;
 }
 
+.toolbar-replace-control {
+    border: 1px solid rgb(163, 163, 163);
+    height: 20px;
+    border-radius: 2px;
+    margin-left: 5px;
+}
+
+.toolbar-search-navigation.enabled:active {
+    background-position: 4px 7px, 0px 0px;
+}
+
 .toolbar-search-navigation.toolbar-search-navigation-prev {
     background-image: url(Images/searchPrev.png);
+    border-left: 1px solid rgb(163, 163, 163);
+}
+
+.toolbar-search-navigation.toolbar-search-navigation-prev.enabled:active {
+    background-image: url(Images/searchPrev.png), -webkit-linear-gradient(rgb(168, 168, 168), rgb(116, 116, 116));
 }
 
 .toolbar-search-navigation.toolbar-search-navigation-next {
     background-image: url(Images/searchNext.png);
+    border-left: 1px solid rgb(230, 230, 230);
 }
 
-body.compact #search {
-    font-size: 11px;
+.toolbar-search-navigation.toolbar-search-navigation-next.enabled:active {
+    background-image: url(Images/searchNext.png), -webkit-linear-gradient(rgb(168, 168, 168), rgb(116, 116, 116));
 }
 
 .search-results-matches {
@@ -2514,7 +2543,7 @@ body.platform-mac .search-drawer-header input[type="checkbox"].search-config-che
 
 .drawer-header-close-button {
     font-family: Arial, monospace;
-    padding: 3px 6px;
+    padding: 3px 8px;
     font-size: 14px;
     color:rgb(80, 80, 80);
     opacity: 0.5;
@@ -2836,5 +2865,6 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
     left: 0;
     right: 0;
     font-size: 11px;
+    height: auto;
     padding-left: 5px;
 }

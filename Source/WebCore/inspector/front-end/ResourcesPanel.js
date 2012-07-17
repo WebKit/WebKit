@@ -635,7 +635,11 @@ WebInspector.ResourcesPanel.prototype = {
         this.storageViewStatusBarItemsContainer.style.left = width + "px";
     },
 
-    performSearch: function(query)
+    /**
+     * @param {string} query
+     * @param {boolean} loop
+     */
+    performSearch: function(query, loop)
     {
         this._resetSearchResults();
         var regex = WebInspector.SourceFrame.createSearchRegex(query);
@@ -701,7 +705,7 @@ WebInspector.ResourcesPanel.prototype = {
         // At first show view for treeElement.
         if (searchResult.treeElement !== this.sidebarTree.selectedTreeElement) {
             this.showResource(searchResult.treeElement.representedObject);
-            WebInspector.searchController.focusSearchField();
+            WebInspector.searchController.showSearchField();
         }
 
         function callback(searchId)
@@ -745,22 +749,32 @@ WebInspector.ResourcesPanel.prototype = {
         this._forAllResourceTreeElements(callback);
     },
 
-    jumpToNextSearchResult: function()
+    /**
+     * @param {boolean} loop
+     * @return {boolean}
+     */
+    jumpToNextSearchResult: function(loop)
     {
         if (!this.currentSearchMatches)
-            return;
+            return false;
         var currentTreeElement = this.sidebarTree.selectedTreeElement;
         var nextSearchResult = this._searchController.nextSearchResult(currentTreeElement);
         this._showSearchResult(nextSearchResult);
+        return true;
     },
 
-    jumpToPreviousSearchResult: function()
+    /**
+     * @param {boolean} loop
+     * @return {boolean}
+     */
+    jumpToPreviousSearchResult: function(loop)
     {
         if (!this.currentSearchMatches)
-            return;
+            return false;
         var currentTreeElement = this.sidebarTree.selectedTreeElement;
         var previousSearchResult = this._searchController.previousSearchResult(currentTreeElement);
         this._showSearchResult(previousSearchResult);
+        return true;
     },
 
     _forAllResourceTreeElements: function(callback)

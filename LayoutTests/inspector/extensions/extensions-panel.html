@@ -122,8 +122,8 @@ function extension_testSearch(nextTest)
         });
 
         extension_showPanel("extension");
+        evaluateOnFrontend("WebInspector.searchController._performSearch('hello', true, false, true); reply()");
     }
-    evaluateOnFrontend("WebInspector.searchController._performSearch('hello', true, false, false); reply()");
     var basePath = location.pathname.replace(/\/[^/]*$/, "/");
     webInspector.panels.create("Test Panel", basePath + "extension-panel.png", basePath + "non-existent.html", onPanelCreated);
 }

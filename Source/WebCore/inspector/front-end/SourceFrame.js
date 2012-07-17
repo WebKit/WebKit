@@ -56,21 +56,26 @@ WebInspector.SourceFrame = function(contentProvider)
     this._textEditor.setReadOnly(!this.canEditSource());
 }
 
-WebInspector.SourceFrame.createSearchRegex = function(query)
+/**
+ * @param {string} query
+ * @param {string=} modifiers
+ */
+WebInspector.SourceFrame.createSearchRegex = function(query, modifiers)
 {
     var regex;
+    modifiers = modifiers || "";
 
     // First try creating regex if user knows the / / hint.
     try {
         if (/^\/.*\/$/.test(query))
-            regex = new RegExp(query.substring(1, query.length - 1));
+            regex = new RegExp(query.substring(1, query.length - 1), modifiers);
     } catch (e) {
         // Silent catch.
     }
 
     // Otherwise just do case-insensitive search.
     if (!regex)
-        regex = createPlainTextSearchRegex(query, "i");
+        regex = createPlainTextSearchRegex(query, "i" + modifiers);
 
     return regex;
 }
@@ -265,9 +270,13 @@ WebInspector.SourceFrame.prototype = {
         this._innerSetSelectionIfNeeded();
     },
 
-    beforeTextChanged: function()
+    /**
+     * @param {boolean} userInput
+     */
+    beforeTextChanged: function(userInput)
     {
-        WebInspector.searchController.cancelSearch();
+        if (userInput)
+            WebInspector.searchController.cancelSearch();
         this.clearMessages();
     },
 
@@ -319,6 +328,10 @@ WebInspector.SourceFrame.prototype = {
         this._textEditor.endUpdates();
     },
 
+    /**
+     * @param {string} query
+     * @param {function(WebInspector.View, number)} callback
+     */
     performSearch: function(query, callback)
     {
         // Call searchCanceled since it will reset everything we need before doing a new search.
@@ -331,14 +344,18 @@ WebInspector.SourceFrame.prototype = {
 
             var regex = WebInspector.SourceFrame.createSearchRegex(query);
             this._searchResults = this._collectRegexMatches(regex);
+            var shiftToIndex = 0;
             var selection = this._textEditor.lastSelection();
             for (var i = 0; selection && i < this._searchResults.length; ++i) {
                 if (this._searchResults[i].compareTo(selection) >= 0) {
-                    this._currentSearchResultIndex = i - 1;
+                    shiftToIndex = i;
                     break;
                 }
             }
 
+            if (shiftToIndex)
+                this._searchResults = this._searchResults.rotate(shiftToIndex);
+            
             callback(this, this._searchResults.length);
         }
 
@@ -407,6 +424,38 @@ WebInspector.SourceFrame.prototype = {
             return;
         this._currentSearchResultIndex = (index + this._searchResults.length) % this._searchResults.length;
         this._textEditor.markAndRevealRange(this._searchResults[this._currentSearchResultIndex]);
+    },
+
+    /**
+     * @param {string} text
+     */
+    replaceSearchMatchWith: function(text)
+    {
+        this.beforeTextChanged(false);
+
+        var range = this._searchResults[this._currentSearchResultIndex];
+        if (!range)
+            return;
+        this._textEditor.markAndRevealRange(null);
+        var newRange = this._textModel.editRange(range, text);
+        this.afterTextChanged(range, newRange);
+
+        // Collapse current match so that we don't replace things twice. 
+        this._textEditor.markAndRevealRange(newRange.collapseToEnd());
+    },
+
+    /**
+     * @param {string} query
+     * @param {string} replacement
+     */
+    replaceAllWith: function(query, replacement)
+    {
+        this.beforeTextChanged(false);
+        var text = this._textModel.text();
+        var range = this._textModel.range();
+        text = text.replace(WebInspector.SourceFrame.createSearchRegex(query, "g"), replacement);
+        var newRange = this._textModel.editRange(range, text);
+        this.afterTextChanged(range, newRange);
     },
 
     _collectRegexMatches: function(regexObject)
@@ -596,7 +645,7 @@ WebInspector.TextEditorDelegateForSourceFrame = function(sourceFrame)
 WebInspector.TextEditorDelegateForSourceFrame.prototype = {
     beforeTextChanged: function()
     {
-        this._sourceFrame.beforeTextChanged();
+        this._sourceFrame.beforeTextChanged(true);
     },
 
     afterTextChanged: function(oldRange, newRange)
@@ -606,7 +655,7 @@ WebInspector.TextEditorDelegateForSourceFrame.prototype = {
 
     commitEditing: function()
     {
-        this._sourceFrame.commitEditing(this._sourceFrame._textModel.text);
+        this._sourceFrame.commitEditing(this._sourceFrame._textModel.text());
     },
 
     /**

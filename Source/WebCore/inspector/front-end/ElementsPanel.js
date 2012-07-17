@@ -292,7 +292,11 @@ WebInspector.ElementsPanel.prototype = {
         WebInspector.domAgent.cancelSearch();
     },
 
-    performSearch: function(query)
+    /**
+     * @param {string} query
+     * @param {boolean} loop
+     */
+    performSearch: function(query, loop)
     {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
@@ -489,28 +493,44 @@ WebInspector.ElementsPanel.prototype = {
         }
     },
 
-    jumpToNextSearchResult: function()
+    /**
+     * @param {boolean} loop
+     * @return {boolean}
+     */
+    jumpToNextSearchResult: function(loop)
     {
         if (!this._searchResults)
-            return;
+            return false;
 
         this._hideSearchHighlights();
-        if (++this._currentSearchResultIndex >= this._searchResults.length)
+        if (++this._currentSearchResultIndex >= this._searchResults.length) {
+            if (!loop)
+                return false;
             this._currentSearchResultIndex = 0;
+        }
             
         this._highlightCurrentSearchResult();
+        return true;
     },
 
-    jumpToPreviousSearchResult: function()
+    /**
+     * @param {boolean} loop
+     * @return {boolean}
+     */
+    jumpToPreviousSearchResult: function(loop)
     {
         if (!this._searchResults)
-            return;
+            return false;
 
         this._hideSearchHighlights();
-        if (--this._currentSearchResultIndex < 0)
+        if (--this._currentSearchResultIndex < 0) {
+            if (!loop)
+                return false;
             this._currentSearchResultIndex = (this._searchResults.length - 1);
+        }
 
         this._highlightCurrentSearchResult();
+        return true;
     },
 
     _highlightCurrentSearchResult: function()

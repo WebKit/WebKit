@@ -232,6 +232,22 @@ Object.defineProperty(Array.prototype, "upperBound",
     }
 });
 
+Object.defineProperty(Array.prototype, "rotate",
+{
+    /**
+     * @this {Array.<*>}
+     * @param {number} index
+     * @return {Array.<*>}
+     */
+    value: function(index)
+    {
+        var result = [];
+        for (var i = index; i < index + this.length; ++i)
+            result.push(this[i % this.length]);
+        return result;
+    }
+});
+
 Object.defineProperty(Uint32Array.prototype, "sort", {
    value: Array.prototype.sort
 });
