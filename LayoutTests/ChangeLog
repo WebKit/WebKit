@@ -1,3 +1,17 @@
+2012-07-17  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium lion/snowleopard rebaseline for r122883.
+
+        * platform/chromium-mac-snowleopard/fast/css/line-height-determined-by-primary-font-expected.png:
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/chromium-mac/fast/block/basic/014-expected.png:
+        * platform/chromium-mac/fast/inline/002-expected.png:
+        * platform/chromium-mac/fast/table/table-display-types-strict-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png:
+
 2012-07-17  Roger Fong  <roger_fong@apple.com>
 
         Assertion failure/crash on Windows when using a font in an SVG 
