@@ -1,3 +1,17 @@
+2012-07-18  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r122660-r122663): mathml/presentation/mo.xhtml, mathml/presentation/row.xhtml failing on Mountain Lion Production Tests
+        https://bugs.webkit.org/show_bug.cgi?id=91677
+
+        Reviewed by Eric Seidel.
+
+        Rebaseline after r122663.
+
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/mo-expected.png:
+        * platform/mac/mathml/presentation/row-expected.png:
+
 2012-07-18  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Not reviewed. Build fix.
