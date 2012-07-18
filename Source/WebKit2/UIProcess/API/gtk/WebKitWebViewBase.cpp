@@ -188,7 +188,7 @@ static void webkitWebViewBaseContainerAdd(GtkContainer* container, GtkWidget* wi
 
     if (WEBKIT_IS_WEB_VIEW_BASE(widget)
         && WebInspectorProxy::isInspectorPage(WEBKIT_WEB_VIEW_BASE(widget)->priv->pageProxy.get())) {
-        ASSERT(priv->inspectorView);
+        ASSERT(!priv->inspectorView);
         priv->inspectorView = widget;
         priv->inspectorViewHeight = gMinimumAttachedInspectorHeight;
     } else {
