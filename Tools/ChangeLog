@@ -1,3 +1,11 @@
+2012-07-18  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [NRWT] Unreviewed gardening after r122913
+        https://bugs.webkit.org/show_bug.cgi?id=91601
+
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (TrivialMockPort.process_kill_time):
+
 2012-07-17  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Run ref tests together to avoid expensive driver restarts

@@ -48,6 +48,9 @@ class TrivialMockPort(object):
     def check_for_leaks(self, process_name, process_pid):
         pass
 
+    def process_kill_time(self):
+        return 1
+
 
 class MockFile(object):
     def __init__(self, server_process):
