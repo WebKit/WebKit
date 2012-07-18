@@ -1,3 +1,35 @@
+2012-07-17  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Add --encode-binary command line option for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=91532
+
+        Reviewed by Adam Barth.
+
+        When the option presents, DRT will encode binary output data in base64.
+        ChromiumAndroidPort will pass the option because 'adb shell' doesn't support
+        binary data output.
+
+        This change is a refactoring to replace the original hard-coded code for Android.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (TestEventPrinter::TestEventPrinter):
+        (TestEventPrinter::handleAudio): New function replacing the original handleAudioHeader
+        (TestEventPrinter::handleImage):
+        (TestEventPrinter::handleBinary): Extracted common function for handleAudio and handleImage
+        * DumpRenderTree/chromium/TestEventPrinter.h:
+        (TestEventPrinter):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::initialize):
+        (TestShell::dump):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        (TestShell::setEncodeBinary):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py: Add --encode-binary to additional_drt_flags
+        (ChromiumAndroidPort.__init__):
+
 2012-07-17  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: move per-test result output into printing.py

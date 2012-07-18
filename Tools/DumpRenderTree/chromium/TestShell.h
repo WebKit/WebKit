@@ -97,7 +97,7 @@ public:
 #if ENABLE(NOTIFICATIONS)
     NotificationPresenter* notificationPresenter() const { return m_notificationPresenter.get(); }
 #endif
-    TestEventPrinter* printer() const { return m_printer.get(); }
+    const TestEventPrinter* printer() const { return &m_printer; }
 
     WebPreferences* preferences() { return &m_prefs; }
     void applyPreferences() { m_prefs.applyTo(m_webView); }
@@ -167,6 +167,9 @@ public:
     void setIsDisplayingModalDialog(bool isDisplayingModalDialog) { m_isDisplayingModalDialog = isDisplayingModalDialog; }
     bool isDisplayingModalDialog() const { return m_isDisplayingModalDialog; }
 
+    // Set whether the binary data output should be encoded in base64 text.
+    void setEncodeBinary(bool encodeBinary) { m_printer.setEncodeBinary(encodeBinary); }
+
     WebViewHost* createNewWindow(const WebKit::WebURL&);
     void closeWindow(WebViewHost*);
     void closeRemainingWindows();
@@ -207,7 +210,7 @@ private:
     WebViewHost* m_devTools;
 
     // Be careful of the destruction order of the following objects.
-    OwnPtr<TestEventPrinter> m_printer;
+    TestEventPrinter m_printer;
     OwnPtr<WebPermissions> m_webPermissions;
     OwnPtr<DRTDevToolsAgent> m_drtDevToolsAgent;
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;

@@ -37,6 +37,7 @@
 #include <wtf/text/Base64.h>
 
 TestEventPrinter::TestEventPrinter()
+    : m_encodeBinary(false)
 {
 }
 
@@ -67,9 +68,10 @@ void TestEventPrinter::handleTextFooter() const
     fprintf(stderr, "#EOF\n");
 }
 
-void TestEventPrinter::handleAudioHeader() const
+void TestEventPrinter::handleAudio(const void* audioData, size_t audioSize) const
 {
     printf("Content-Type: audio/wav\n");
+    handleBinary(audioData, audioSize);
 }
 
 void TestEventPrinter::handleAudioFooter() const
@@ -86,26 +88,28 @@ void TestEventPrinter::handleImage(const char* actualHash, const char* expectedH
         printf("\nExpectedHash: %s\n", expectedHash);
     if (imageData && imageSize) {
         printf("Content-Type: image/png\n");
-#if OS(ANDROID)
-        // On Android, the layout test driver needs to read the image data through 'adb shell' which can't
-        // handle binary data properly. Need to encode the binary data into base64.
-        // FIXME: extract this into a function so that we can also use it to output audio data. Will do when removing test_shell mode.
-        Vector<char> base64;
-        base64Encode(reinterpret_cast<const char*>(imageData), imageSize, base64, Base64InsertLFs);
-        imageData = reinterpret_cast<const unsigned char*>(base64.data());
-        imageSize = base64.size();
-        printf("Content-Transfer-Encoding: base64\n");
-#endif
-        // Printf formatting for size_t on 32-bit, 64-bit, and on Windows is hard so just cast to an int.
-        printf("Content-Length: %d\n", static_cast<int>(imageSize));
-        if (fwrite(imageData, 1, imageSize, stdout) != imageSize) {
-            fprintf(stderr, "Short write to stdout.\n");
-            exit(1);
-        }
+        handleBinary(imageData, imageSize);
     }
 }
 
 void TestEventPrinter::handleTestFooter(bool) const
 {
     printf("#EOF\n");
+}
+
+void TestEventPrinter::handleBinary(const void* data, size_t size) const
+{
+    Vector<char> base64;
+    if (m_encodeBinary) {
+        base64Encode(static_cast<const char*>(data), size, base64, Base64InsertLFs);
+        data = base64.data();
+        size = base64.size();
+        printf("Content-Transfer-Encoding: base64\n");
+    }
+    // Printf formatting for size_t on 32-bit, 64-bit, and on Windows is hard so just cast to an int.
+    printf("Content-Length: %d\n", static_cast<int>(size));
+    if (fwrite(data, 1, size, stdout) != size) {
+        fprintf(stderr, "Short write to stdout.\n");
+        exit(1);
+    }
 }

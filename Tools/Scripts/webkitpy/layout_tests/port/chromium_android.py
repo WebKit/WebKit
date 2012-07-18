@@ -155,6 +155,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def __init__(self, host, port_name, **kwargs):
         super(ChromiumAndroidPort, self).__init__(host, port_name, **kwargs)
 
+        if not hasattr(self._options, 'additional_drt_flag'):
+            self._options.additional_drt_flag = []
+        self._options.additional_drt_flag.append('--encode-binary')
+
         # The Chromium port for Android always uses the hardware GPU path.
         self._options.enable_hardware_gpu = True
 

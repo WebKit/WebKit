@@ -153,7 +153,6 @@ void TestShell::initialize()
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
-    m_printer = adoptPtr(new TestEventPrinter());
 #if ENABLE(LINK_PRERENDER)
     m_prerenderingSupport = adoptPtr(new MockWebPrerenderingSupport());
 #endif
@@ -264,7 +263,7 @@ void TestShell::runFileTest(const TestParams& params)
         m_layoutTestController->setShowDebugLayerTree(true);
 
     if (m_dumpWhenFinished)
-        m_printer->handleTestHeader(testUrl.c_str());
+        m_printer.handleTestHeader(testUrl.c_str());
     loadURL(m_params.testUrl);
 
     m_testIsPreparing = false;
@@ -372,7 +371,7 @@ void TestShell::testFinished()
 
 void TestShell::testTimedOut()
 {
-    m_printer->handleTimedOut();
+    m_printer.handleTimedOut();
     testFinished();
 }
 
@@ -560,15 +559,10 @@ void TestShell::dump()
     bool dumpedAnything = false;
 
     if (shouldDumpAsAudio) {
-        m_printer->handleAudioHeader();
-
         const WebKit::WebArrayBufferView& webArrayBufferView = m_layoutTestController->audioData();
-        printf("Content-Length: %d\n", webArrayBufferView.byteLength());
-
-        if (fwrite(webArrayBufferView.baseAddress(), 1, webArrayBufferView.byteLength(), stdout) != webArrayBufferView.byteLength())
-            FATAL("Short write to stdout, disk full?\n");
-        m_printer->handleAudioFooter();
-        m_printer->handleTestFooter(true);
+        m_printer.handleAudio(webArrayBufferView.baseAddress(), webArrayBufferView.byteLength());
+        m_printer.handleAudioFooter();
+        m_printer.handleTestFooter(true);
 
         fflush(stdout);
         fflush(stderr);
@@ -577,7 +571,7 @@ void TestShell::dump()
 
     if (m_params.dumpTree) {
         dumpedAnything = true;
-        m_printer->handleTextHeader();
+        m_printer.handleTextHeader();
         // Text output: the test page can request different types of output
         // which we handle here.
         if (!shouldDumpAsText) {
@@ -607,7 +601,7 @@ void TestShell::dump()
             printf("%s", dumpAllBackForwardLists().c_str());
     }
     if (dumpedAnything && m_params.printSeparators)
-        m_printer->handleTextFooter();
+        m_printer.handleTextFooter();
 
     if (m_params.dumpPixels && shouldGeneratePixelResults) {
         // Image output: we write the image data to the file given on the
@@ -652,7 +646,7 @@ void TestShell::dump()
 
         dumpImage(m_webViewHost->canvas());
     }
-    m_printer->handleTestFooter(dumpedAnything);
+    m_printer.handleTestFooter(dumpedAnything);
     fflush(stdout);
     fflush(stderr);
 }
@@ -719,9 +713,9 @@ void TestShell::dumpImage(SkCanvas* canvas) const
             sourceBitmap.height(), static_cast<int>(sourceBitmap.rowBytes()), discardTransparency, md5hash, &png);
 #endif
 
-        m_printer->handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), &png[0], png.size());
+        m_printer.handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), &png[0], png.size());
     } else
-        m_printer->handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), 0, 0);
+        m_printer.handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), 0, 0);
 }
 
 void TestShell::bindJSObjectsToWindow(WebFrame* frame)

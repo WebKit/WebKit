@@ -64,6 +64,7 @@ static const char optionEnablePerTilePainting[] = "--enable-per-tile-painting";
 static const char optionStressOpt[] = "--stress-opt";
 static const char optionStressDeopt[] = "--stress-deopt";
 static const char optionJavaScriptFlags[] = "--js-flags=";
+static const char optionEncodeBinary[] = "--encode-binary";
 static const char optionNoTimeout[] = "--no-timeout";
 static const char optionWebCoreLogChannels[] = "--webcore-log-channels=";
 
@@ -132,6 +133,7 @@ int main(int argc, char* argv[])
     bool stressDeopt = false;
     bool hardwareAcceleratedGL = false;
     string javaScriptFlags;
+    bool encodeBinary = false;
     bool noTimeout = false;
     for (int i = 1; i < argc; ++i) {
         string argument(argv[i]);
@@ -181,6 +183,8 @@ int main(int argc, char* argv[])
             stressDeopt = true;
         else if (!argument.find(optionJavaScriptFlags))
             javaScriptFlags = argument.substr(strlen(optionJavaScriptFlags));
+        else if (argument == optionEncodeBinary)
+            encodeBinary = true;
         else if (argument == optionNoTimeout)
             noTimeout = true;
         else if (!argument.find(optionWebCoreLogChannels)) {
@@ -214,6 +218,7 @@ int main(int argc, char* argv[])
         shell.setJavaScriptFlags(javaScriptFlags);
         shell.setStressOpt(stressOpt);
         shell.setStressDeopt(stressDeopt);
+        shell.setEncodeBinary(encodeBinary);
         if (noTimeout) {
             // 0x20000000ms is big enough for the purpose to avoid timeout in debugging.
             shell.setLayoutTestTimeout(0x20000000);
