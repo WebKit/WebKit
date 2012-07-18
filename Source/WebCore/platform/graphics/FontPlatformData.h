@@ -72,7 +72,7 @@ typedef const struct __CTFont* CTFontRef;
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
 #include "CrossProcessFontLoading.h"  
-#include "HarfBuzzFace.h"
+#include "HarfBuzzNGFace.h"
 #endif
 
 #if PLATFORM(WIN)
@@ -257,7 +257,7 @@ public:
 #endif
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
-    HarfBuzzFace* harfbuzzFace();
+    HarfBuzzNGFace* harfbuzzFace();
 #endif
 
     unsigned hash() const
@@ -363,7 +363,7 @@ private:
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     RefPtr<MemoryActivatedFont> m_inMemoryFont;
-    RefPtr<HarfBuzzFace> m_harfbuzzFace;
+    RefPtr<HarfBuzzNGFace> m_harfbuzzFace;
 #endif
 
     bool m_isColorBitmapFont;

@@ -34,7 +34,7 @@
 #include "FontOrientation.h"
 #include "FontRenderStyle.h"
 #if USE(HARFBUZZ_NG)
-#include "HarfBuzzFace.h"
+#include "HarfBuzzNGFace.h"
 #else
 #include "HarfBuzzSkia.h"
 #endif
@@ -133,8 +133,7 @@ public:
 #endif
 
 #if USE(HARFBUZZ_NG)
-    // FIXME: Rename this like "harfbuzzNGFace()" because difference is too subtle.
-    HarfBuzzFace* harfbuzzFace() const;
+    HarfBuzzNGFace* harfbuzzFace() const;
 #else
     HarfbuzzFace* harfbuzzFace() const;
 #endif
@@ -166,7 +165,7 @@ private:
     TextOrientation m_textOrientation;
     FontRenderStyle m_style;
 #if USE(HARFBUZZ_NG)
-    mutable RefPtr<HarfBuzzFace> m_harfbuzzFace;
+    mutable RefPtr<HarfBuzzNGFace> m_harfbuzzFace;
 #else
     mutable RefPtr<HarfbuzzFace> m_harfbuzzFace;
 #endif

@@ -32,7 +32,7 @@
 #include "HarfBuzzShaper.h"
 
 #include "Font.h"
-#include "HarfBuzzFace.h"
+#include "HarfBuzzNGFace.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 #include "hb-icu.h"
@@ -272,7 +272,7 @@ bool HarfBuzzShaper::shapeHarfBuzzRuns(GlyphBuffer* glyphBuffer)
             hb_buffer_add_utf16(harfbuzzBuffer.get(), m_normalizedBuffer.get() + currentRun->startIndex(), currentRun->numCharacters(), 0, currentRun->numCharacters());
 
         FontPlatformData* platformData = const_cast<FontPlatformData*>(&currentFontData->platformData());
-        HarfBuzzFace* face = platformData->harfbuzzFace();
+        HarfBuzzNGFace* face = platformData->harfbuzzFace();
         if (!face)
             return false;
         HarfBuzzScopedPtr<hb_font_t> harfbuzzFont(face->createFont(), hb_font_destroy);

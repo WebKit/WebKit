@@ -315,7 +315,7 @@ static bool isAATFont(CTFontRef ctFont)
     return false;
 }
 
-HarfBuzzFace* FontPlatformData::harfbuzzFace()
+HarfBuzzNGFace* FontPlatformData::harfbuzzFace()
 {
     CTFontRef font = ctFont();
     // HarfBuzz can't handle AAT font
@@ -324,7 +324,7 @@ HarfBuzzFace* FontPlatformData::harfbuzzFace()
 
     if (!m_harfbuzzFace) {
         uint64_t uniqueID = reinterpret_cast<uintptr_t>(font);
-        m_harfbuzzFace = HarfBuzzFace::create(const_cast<FontPlatformData*>(this), uniqueID);
+        m_harfbuzzFace = HarfBuzzNGFace::create(const_cast<FontPlatformData*>(this), uniqueID);
     }
     return m_harfbuzzFace.get();
 }

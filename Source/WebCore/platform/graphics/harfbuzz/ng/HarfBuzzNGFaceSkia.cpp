@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "HarfBuzzFace.h"
+#include "HarfBuzzNGFace.h"
 
 #include "FontPlatformData.h"
 #include "GlyphBuffer.h"
@@ -157,14 +157,14 @@ static void destroyPaint(void* userData)
     delete paint;
 }
 
-hb_face_t* HarfBuzzFace::createFace()
+hb_face_t* HarfBuzzNGFace::createFace()
 {
     hb_face_t* face = hb_face_create_for_tables(harfbuzzSkiaGetTable, m_platformData, 0);
     ASSERT(face);
     return face;
 }
 
-hb_font_t* HarfBuzzFace::createFont()
+hb_font_t* HarfBuzzNGFace::createFont()
 {
     hb_font_t* font = hb_font_create(m_face);
     SkPaint* paint = new SkPaint;

@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "HarfBuzzFace.h"
+#include "HarfBuzzNGFace.h"
 
 #include "FontPlatformData.h"
 #include "HarfBuzzShaper.h"
@@ -123,14 +123,14 @@ static hb_blob_t* harfbuzzCoreTextGetTable(hb_face_t* face, hb_tag_t tag, void* 
     return hb_blob_create(data, length, HB_MEMORY_MODE_READONLY, reinterpret_cast<void*>(const_cast<__CFData*>(cfData)), releaseTableData);
 }
 
-hb_face_t* HarfBuzzFace::createFace()
+hb_face_t* HarfBuzzNGFace::createFace()
 {
     hb_face_t* face = hb_face_create_for_tables(harfbuzzCoreTextGetTable, m_platformData, 0);
     ASSERT(face);
     return face;
 }
 
-hb_font_t* HarfBuzzFace::createFont()
+hb_font_t* HarfBuzzNGFace::createFont()
 {
     hb_font_t* font = hb_font_create(m_face);
     hb_font_set_funcs(font, harfbuzzCoreTextGetFontFuncs(), m_platformData, 0);

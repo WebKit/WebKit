@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "HarfBuzzFace.h"
+#include "HarfBuzzNGFace.h"
 
 #include "FontPlatformData.h"
 #include "hb.h"
@@ -42,19 +42,19 @@ namespace WebCore {
 // to reduce the memory consumption because hb_face_t should be associated with
 // underling font data (e.g. CTFontRef, FTFace).
 typedef pair<hb_face_t*, unsigned> FaceCacheEntry;
-typedef HashMap<uint64_t, FaceCacheEntry, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t> > HarfBuzzFaceCache;
+typedef HashMap<uint64_t, FaceCacheEntry, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t> > HarfBuzzNGFaceCache;
 
-static HarfBuzzFaceCache* harfbuzzFaceCache()
+static HarfBuzzNGFaceCache* harfbuzzFaceCache()
 {
-    DEFINE_STATIC_LOCAL(HarfBuzzFaceCache, s_harfbuzzFaceCache, ());
+    DEFINE_STATIC_LOCAL(HarfBuzzNGFaceCache, s_harfbuzzFaceCache, ());
     return &s_harfbuzzFaceCache;
 }
 
-HarfBuzzFace::HarfBuzzFace(FontPlatformData* platformData, uint64_t uniqueID)
+HarfBuzzNGFace::HarfBuzzNGFace(FontPlatformData* platformData, uint64_t uniqueID)
     : m_platformData(platformData)
     , m_uniqueID(uniqueID)
 {
-    HarfBuzzFaceCache::iterator result = harfbuzzFaceCache()->find(m_uniqueID);
+    HarfBuzzNGFaceCache::iterator result = harfbuzzFaceCache()->find(m_uniqueID);
     if (result == harfbuzzFaceCache()->end()) {
         m_face = createFace();
         ASSERT(m_face);
@@ -65,9 +65,9 @@ HarfBuzzFace::HarfBuzzFace(FontPlatformData* platformData, uint64_t uniqueID)
     }
 }
 
-HarfBuzzFace::~HarfBuzzFace()
+HarfBuzzNGFace::~HarfBuzzNGFace()
 {
-    HarfBuzzFaceCache::iterator result = harfbuzzFaceCache()->find(m_uniqueID);
+    HarfBuzzNGFaceCache::iterator result = harfbuzzFaceCache()->find(m_uniqueID);
     ASSERT(result != harfbuzzFaceCache()->end());
     ASSERT(result.get()->second.second > 0);
     --(result.get()->second.second);

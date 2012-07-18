@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HarfBuzzFace_h
-#define HarfBuzzFace_h
+#ifndef HarfBuzzNGFace_h
+#define HarfBuzzNGFace_h
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,18 +44,18 @@ namespace WebCore {
 
 class FontPlatformData;
 
-class HarfBuzzFace : public RefCounted<HarfBuzzFace> {
+class HarfBuzzNGFace : public RefCounted<HarfBuzzNGFace> {
 public:
-    static PassRefPtr<HarfBuzzFace> create(FontPlatformData* platformData, uint64_t uniqueID)
+    static PassRefPtr<HarfBuzzNGFace> create(FontPlatformData* platformData, uint64_t uniqueID)
     {
-        return adoptRef(new HarfBuzzFace(platformData, uniqueID));
+        return adoptRef(new HarfBuzzNGFace(platformData, uniqueID));
     }
-    ~HarfBuzzFace();
+    ~HarfBuzzNGFace();
 
     hb_font_t* createFont();
 
 private:
-    HarfBuzzFace(FontPlatformData*, uint64_t);
+    HarfBuzzNGFace(FontPlatformData*, uint64_t);
 
     hb_face_t* createFace();
 
@@ -66,4 +66,4 @@ private:
 
 }
 
-#endif // HarfBuzzFace_h
+#endif // HarfBuzzNGFace_h

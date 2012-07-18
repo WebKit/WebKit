@@ -240,10 +240,10 @@ bool FontPlatformData::isFixedPitch() const
 }
 
 #if USE(HARFBUZZ_NG)
-HarfBuzzFace* FontPlatformData::harfbuzzFace() const
+HarfBuzzNGFace* FontPlatformData::harfbuzzFace() const
 {
     if (!m_harfbuzzFace)
-        m_harfbuzzFace = HarfBuzzFace::create(const_cast<FontPlatformData*>(this), uniqueID());
+        m_harfbuzzFace = HarfBuzzNGFace::create(const_cast<FontPlatformData*>(this), uniqueID());
 
     return m_harfbuzzFace.get();
 }
