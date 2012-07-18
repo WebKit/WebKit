@@ -3629,10 +3629,9 @@ BUGWK90207 SLOW LINUX DEBUG : fast/forms/select/select-state-restore.html = PASS
 // Flaky
 BUGWK90430 : inspector/timeline/timeline-receive-response-event.html = PASS TEXT TIMEOUT
 
-// Flaky on windows
+// Flaky crashes on windows circa r121610 - all of these seem to be related
 BUGWK90469 WIN : storage/indexeddb/mozilla/indexes.html = PASS CRASH
 BUGWK90469 WIN : storage/indexeddb/mozilla/key-requirements-inline-and-passed.html = PASS CRASH
-BUGWK90469 WIN : storage/websql/multiple-databases-garbage-collection.html = PASS CRASH
 BUGWK90469 WIN : storage/indexeddb/mozilla/key-requirements.html = PASS CRASH
 BUGWK90469 WIN : storage/indexeddb/mozilla/objectstorenames.html = PASS CRASH
 BUGWK90469 WIN : storage/indexeddb/mozilla/autoincrement-indexes.html = PASS CRASH
@@ -3642,21 +3641,28 @@ BUGWK90469 WIN : storage/indexeddb/mozilla/create-objectstore-null-name.html = P
 BUGWK90469 WIN : storage/indexeddb/mozilla/index-prev-no-duplicate.html = PASS CRASH
 BUGWK90469 WIN : storage/indexeddb/mozilla/cursors.html = PASS CRASH
 BUGWK90469 WIN : storage/indexeddb/mozilla/create-index-with-integer-keys.html = PASS CRASH
+// Started crashing after 122286
+BUGWK91133 WIN : storage/indexeddb/constants.html = PASS CRASH
+// Started flaky after r121629.
+BUGWK90469 WIN : storage/indexeddb/cursor-delete.html = PASS CRASH
+BUGWK90469 WIN : storage/indexeddb/cursor-added-bug.html = PASS CRASH
+// Recently(?) started crashing on occassion
+BUGWK91275 WIN : storage/indexeddb/cursor-key-order.html = PASS CRASH
+BUGWK91403 WIN : storage/indexeddb/cursor-update-value-argument-required.html = PASS CRASH
+BUGWK90517 WIN : svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg = PASS CRASH
+BUGWK91421 WIN7 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = PASS CRASH
+// Temporarily marking as SKIP to see if crashes shift to later tests
+//BUGWK90469 WIN : storage/websql/multiple-databases-garbage-collection.html = PASS CRASH
+BUG_JSBELL SKIP : storage/websql/multiple-databases-garbage-collection.html = PASS CRASH
 
 // Require rebaseline after bug 88171
 BUGWK88171 WIN : css1/formatting_model/floating_elements.html = IMAGE
-
-BUGWK90517 WIN : svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg = PASS CRASH
 
 // webkitIsFullScreen does not have the correct value after an iframe exits fullscreen
 BUGWK90704 : fullscreen/exit-full-screen-iframe.html = TEXT
 
 // Started failing after r121907.
 BUGWK90741 MAC : fast/text-autosizing/simple-paragraph.html = IMAGE
-
-// Started flaky after r121629.
-BUGWK90469 WIN : storage/indexeddb/cursor-delete.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/cursor-added-bug.html = PASS CRASH
 
 // Flaky
 BUGWK90743 : fast/events/display-none-on-focus-crash.html = PASS TEXT
@@ -3674,9 +3680,6 @@ BUGWK90900 MAC : tables/mozilla_expected_failures/other/empty_cells.html = PASS 
 BUGWK90980 LINUX MAC DEBUG : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 
-// Started crashing after 122286
-BUGWK91133 WIN : storage/indexeddb/constants.html = PASS CRASH
-
 BUGWK91183 : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = PASS TEXT
 
 // Fails on Mac 10.7
@@ -3692,11 +3695,6 @@ BUGWK91372 WIN : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 BUGWK90951 : fast/text/shaping/shaping-selection-rect.html = MISSING
 BUGWK90951 : fast/text/shaping/shaping-script-order.html = MISSING
 
-// Recently(?) started crashing on occassion
-BUGWK91275 WIN : storage/indexeddb/cursor-key-order.html = PASS CRASH
-BUGWK91403 WIN : storage/indexeddb/cursor-update-value-argument-required.html = PASS CRASH
-
-BUGWK91421 WIN7 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = PASS CRASH
 
 // Started failing around r122770
 BUGWK91445 LINUX : plugins/embed-attributes-style.html = PASS IMAGE
