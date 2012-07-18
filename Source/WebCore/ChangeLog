@@ -1,3 +1,20 @@
+2012-07-18  Oliver Hunt  <oliver@apple.com>
+
+        WebKit provides APIs that make it possible for JSC to attempt to initialise the heap without initialising threading
+        https://bugs.webkit.org/show_bug.cgi?id=91663
+
+        Reviewed by Filip Pizlo.
+
+        Initialising a JSGlobalData now requires us to have initialised JSC's threading
+        logic, as that also initialises the JSC VM runtime options.  WebKit provides a
+        number of routines that make use of commonJSGlobalData() that can be used before
+        webcore has called the appropriate initialisation routine.  This patch makes the
+        minimal change of ensuring that commonJSGlobalData initialises threading before
+        attempting to create the common heap.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonJSGlobalData):
+
 2012-07-18  Michael Saboff  <msaboff@apple.com>
 
         Make TextCodecUTF8 handle 8 bit data without converting to UChar's
