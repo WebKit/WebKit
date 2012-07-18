@@ -1,3 +1,25 @@
+2012-07-18  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry] We should update the status in NetworkJob if there is a new one from libcurl.
+        https://bugs.webkit.org/show_bug.cgi?id=91475
+
+        Reviewed by Yong Li.
+
+        Libcurl sometimes sends multiple status messages, we need to keep the last 
+        one in NetworkJob.
+        We originally had the m_statusReceived check, then we found out that libcurl 
+        sometimes sent additional 401 codes and added the 401 exception to the check, 
+        and now we're removing the whole check(so we don't need the exception either).
+
+        RIM PR# 163172
+        Reviewed internally by Joe Mason.
+
+        No new tests. This is caused by libcurl's multiple status messages.
+        So we don't need to write a test case for webkit.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleNotifyStatusReceived):
+
 2012-07-18  Kevin Ellis  <kevers@chromium.org>
 
         TOUCH_ADJUSTMENT is too aggressive when snapping to large elements.

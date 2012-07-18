@@ -192,7 +192,7 @@ void NetworkJob::notifyStatusReceived(int status, const char* message)
 void NetworkJob::handleNotifyStatusReceived(int status, const String& message)
 {
     // Check for messages out of order or after cancel.
-    if ((m_statusReceived && m_extendedStatusCode != 401) || m_responseSent || m_cancelled)
+    if (m_responseSent || m_cancelled)
         return;
 
     if (isInfo(status))
