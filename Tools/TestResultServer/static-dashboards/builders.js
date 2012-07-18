@@ -217,7 +217,9 @@ function onErrorLoadingBuilderList(url, builderGroups, groupName)
 }
 
 function loadBuildersList(groupName, testType) {
-    if (testType == 'gpu_tests') {
+    switch (testType) {
+    case 'gl_tests':
+    case 'gpu_tests':
         switch(groupName) {
         case '@DEPS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
@@ -234,7 +236,9 @@ function loadBuildersList(groupName, testType) {
             requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, isChromiumTipOfTreeGpuTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, BuilderGroup.TOT_WEBKIT, builderGroup);
             break;
         }
-    } else if (testType == 'layout-tests') {
+        break;
+
+    case 'layout-tests':
         switch(groupName) {
         case '@ToT - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
@@ -251,7 +255,9 @@ function loadBuildersList(groupName, testType) {
             requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumWebkitDepsTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, BuilderGroup.DEPS_WEBKIT, builderGroup);
             break;
         }
-    } else {
+        break;
+
+    default:
         switch(groupName) {
         case '@DEPS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
@@ -271,6 +277,7 @@ function loadBuildersList(groupName, testType) {
             requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumTipOfTreeGTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, BuilderGroup.TOT_WEBKIT, builderGroup);
             break;
         }
+        break;
     }
 }
 

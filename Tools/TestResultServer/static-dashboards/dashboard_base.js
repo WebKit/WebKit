@@ -124,6 +124,7 @@ var TEST_TYPES = [
     'crypto_unittests',
     'googleurl_unittests',
     'gfx_unittests',
+    'gl_tests',
     'gpu_tests',
     'gpu_unittests',
     'installer_util_unittests',
@@ -448,11 +449,15 @@ function isGPUTestResults()
 
 function currentBuilderGroupCategory()
 {
-    if (g_crossDashboardState.testType == 'layout-tests')
-        return LAYOUT_TESTS_BUILDER_GROUPS;
-    if (g_crossDashboardState.testType == 'gpu_tests')
+    switch (g_crossDashboardState.testType) {
+    case 'gl_tests':
+    case 'gpu_tests':
         return CHROMIUM_GPU_TESTS_BUILDER_GROUPS;
-    return CHROMIUM_GTESTS_BUILDER_GROUPS;
+    case 'layout-tests':
+        return LAYOUT_TESTS_BUILDER_GROUPS;
+    default:
+        return CHROMIUM_GTESTS_BUILDER_GROUPS;
+    }
 }
 
 function currentBuilderGroup()
