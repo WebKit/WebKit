@@ -324,6 +324,8 @@ JSC::JSValue jsTestObjDescription(JSC::ExecState*, JSC::JSValue, JSC::PropertyNa
 JSC::JSValue jsTestObjId(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 void setJSTestObjId(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjHash(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::JSValue jsTestObjReplaceableAttribute(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestObjReplaceableAttribute(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 // Constants
 

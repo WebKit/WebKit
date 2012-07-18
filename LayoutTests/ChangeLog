@@ -1,3 +1,17 @@
+2012-07-18  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Improve Replaceable extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=91668
+
+        Reviewed by Adam Barth.
+
+        Replaceable is working by chance in the V8 bindings because V8 does not correctly handle
+        read only properties on the prototype chain. With this change we generate a setter that
+        uses ForceSet to replace the existing property when set.
+
+        * fast/dom/Window/replaceable-expected.txt: Added.
+        * fast/dom/Window/replaceable.html: Added.
+
 2012-07-18  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening.

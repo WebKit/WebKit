@@ -1,5 +1,48 @@
 2012-07-18  Erik Arvidsson  <arv@chromium.org>
 
+        [V8] Improve Replaceable extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=91668
+
+        Reviewed by Adam Barth.
+
+        Replaceable is working by chance in the V8 bindings because V8 does not correctly handle
+        read only properties on the prototype chain. With this change we generate a setter that
+        uses ForceSet to replace the existing property when set.
+
+        Test: fast/dom/Window/replaceable.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateReplaceableAttrSetter):
+        (GenerateFunctionCallback):
+        (GenerateSingleBatchedAttribute):
+        (GenerateImplementation):
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::replaceableAttribute):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        (webkit_dom_test_obj_get_replaceable_attribute):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+        (WebCore::jsTestObjReplaceableAttribute):
+        (WebCore::setJSTestObjReplaceableAttribute):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj replaceableAttribute]):
+        (-[DOMTestObj setReplaceableAttribute:]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::replaceableAttributeAttrGetter):
+        (TestObjV8Internal):
+        (WebCore::TestObjV8Internal::TestObjReplaceableAttrSetter):
+        (WebCore):
+
+2012-07-18  Erik Arvidsson  <arv@chromium.org>
+
         [V8] Remove temporary flag override for es52_globals
         https://bugs.webkit.org/show_bug.cgi?id=91681
 

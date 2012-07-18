@@ -144,6 +144,7 @@ enum {
     PROP_DESCRIPTION,
     PROP_ID,
     PROP_HASH,
+    PROP_REPLACEABLE_ATTRIBUTE,
 };
 
 static void webkit_dom_test_obj_finalize(GObject* object)
@@ -517,6 +518,10 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         g_value_take_string(value, convertToUTF8String(coreSelf->hash()));
         break;
     }
+    case PROP_REPLACEABLE_ATTRIBUTE: {
+        g_value_set_long(value, coreSelf->replaceableAttribute());
+        break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
@@ -885,6 +890,15 @@ G_MAXLONG, /* max */
                                                            "read-only  gchar* TestObj.hash", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_REPLACEABLE_ATTRIBUTE,
+                                    g_param_spec_long("replaceable-attribute", /* name */
+                                                           "test_obj_replaceable-attribute", /* short description */
+                                                           "read-write  glong TestObj.replaceable-attribute", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
 
 
 }
@@ -2380,6 +2394,16 @@ webkit_dom_test_obj_get_hash(WebKitDOMTestObj* self)
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj* item = WebKit::core(self);
     gchar* result = convertToUTF8String(item->hash());
+    return result;
+}
+
+glong
+webkit_dom_test_obj_get_replaceable_attribute(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj* item = WebKit::core(self);
+    glong result = item->replaceableAttribute();
     return result;
 }
 

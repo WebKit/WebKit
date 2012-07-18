@@ -1081,6 +1081,32 @@ END
     push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
+sub GenerateReplaceableAttrSetter
+{
+    my $dataNode = shift;
+    my $implClassName = shift;
+
+    push(@implContentDecls, <<END);
+static void ${implClassName}ReplaceableAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.$implClassName.replaceable._set");
+END
+
+    if ($implClassName eq "DOMWindow" || $dataNode->extendedAttributes->{"CheckSecurity"}) {
+        push(@implContentDecls, <<END);
+    ${implClassName}* imp = V8${implClassName}::toNative(info.Holder());
+    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
+        return;
+END
+    }
+
+    push(@implContentDecls, <<END);
+    info.This()->ForceSet(name, value);
+}
+
+END
+}
+
 sub GenerateNormalAttrSetter
 {
     my $attribute = shift;
@@ -1468,10 +1494,10 @@ END
 
     # Check domain security if needed
     if (($dataNode->extendedAttributes->{"CheckSecurity"}
-       || $interfaceName eq "DOMWindow")
-       && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
-    # We have not find real use cases yet.
-    push(@implContentDecls, <<END);
+        || $interfaceName eq "DOMWindow")
+        && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
+        # We have not find real use cases yet.
+        push(@implContentDecls, <<END);
     if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
         return v8::Handle<v8::Value>();
 END
@@ -2113,13 +2139,15 @@ sub GenerateSingleBatchedAttribute
             $data = "&V8${constructorType}::info";
             $getter = "${interfaceName}V8Internal::${interfaceName}ConstructorGetter";
         }
-        $setter = "0";
-        $propAttr = "v8::ReadOnly";
-
+        $setter = "${interfaceName}V8Internal::${interfaceName}ReplaceableAttrSetter";
     } else {
         # Default Getter and Setter
         $getter = "${interfaceName}V8Internal::${attrName}AttrGetter";
         $setter = "${interfaceName}V8Internal::${attrName}AttrSetter";
+
+        if ($attrExt->{"Replaceable"}) {
+            $setter = "${interfaceName}V8Internal::${interfaceName}ReplaceableAttrSetter";
+        }
 
         # Custom Setter
         if ($attrExt->{"CustomSetter"} || $attrExt->{"V8CustomSetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
@@ -2130,17 +2158,6 @@ sub GenerateSingleBatchedAttribute
         # Custom Getter
         if ($attrExt->{"CustomGetter"} || $attrExt->{"V8CustomGetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
             $getter = "V8${customAccessor}AccessorGetter";
-        }
-    }
-
-    # Replaceable
-    if ($attrExt->{"Replaceable"} && !$hasCustomSetter) {
-        $setter = "0";
-        # Handle the special case of window.top being marked as Replaceable.
-        # FIXME: Investigate whether we could treat window.top as replaceable
-        # and allow shadowing without it being a security hole.
-        if (!($interfaceName eq "DOMWindow" and $attrName eq "top")) {
-            $propAttr .= " | v8::ReadOnly";
         }
     }
 
@@ -2502,6 +2519,8 @@ sub GenerateImplementation
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
 
     my $hasConstructors = 0;
+    my $hasReplaceable = 0;
+
     # Generate property accessors for attributes.
     for (my $index = 0; $index < @{$dataNode->attributes}; $index++) {
         my $attribute = @{$dataNode->attributes}[$index];
@@ -2537,9 +2556,11 @@ sub GenerateImplementation
             $attribute->signature->extendedAttributes->{"V8CustomGetter"})) {
             GenerateNormalAttrGetter($attribute, $dataNode, $implClassName, $interfaceName);
         }
-        if (!$attribute->signature->extendedAttributes->{"CustomSetter"} &&
+
+        if ($attribute->signature->extendedAttributes->{"Replaceable"}) {
+            $hasReplaceable = 1;
+        } elsif (!$attribute->signature->extendedAttributes->{"CustomSetter"} &&
             !$attribute->signature->extendedAttributes->{"V8CustomSetter"} &&
-            !$attribute->signature->extendedAttributes->{"Replaceable"} &&
             $attribute->type !~ /^readonly/ &&
             !$attribute->signature->extendedAttributes->{"V8ReadOnly"}) {
             GenerateNormalAttrSetter($attribute, $dataNode, $implClassName, $interfaceName);
@@ -2548,6 +2569,10 @@ sub GenerateImplementation
 
     if ($hasConstructors) {
         GenerateConstructorGetter($dataNode, $implClassName);
+    }
+
+    if ($hasConstructors || $hasReplaceable) {
+        GenerateReplaceableAttrSetter($dataNode, $implClassName);
     }
 
     if (NeedsToVisitDOMWrapper($dataNode)) {

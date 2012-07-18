@@ -167,6 +167,8 @@ enum {
 - (int)idName;
 - (void)setIdName:(int)newIdName;
 - (NSString *)hashName;
+- (int)replaceableAttribute;
+- (void)setReplaceableAttribute:(int)newReplaceableAttribute;
 - (void)voidMethod;
 - (void)voidMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (int)intMethod;

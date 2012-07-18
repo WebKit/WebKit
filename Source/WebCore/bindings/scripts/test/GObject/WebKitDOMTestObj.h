@@ -1345,6 +1345,16 @@ webkit_dom_test_obj_set_id(WebKitDOMTestObj* self, glong value);
 WEBKIT_API gchar*
 webkit_dom_test_obj_get_hash(WebKitDOMTestObj* self);
 
+/**
+ * webkit_dom_test_obj_get_replaceable_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API glong
+webkit_dom_test_obj_get_replaceable_attribute(WebKitDOMTestObj* self);
+
 G_END_DECLS
 
 #endif /* WebKitDOMTestObj_h */

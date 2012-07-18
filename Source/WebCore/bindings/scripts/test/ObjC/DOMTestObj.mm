@@ -707,6 +707,18 @@
     return IMPL->hash();
 }
 
+- (int)replaceableAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->replaceableAttribute();
+}
+
+- (void)setReplaceableAttribute:(int)newReplaceableAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setReplaceableAttribute(newReplaceableAttribute);
+}
+
 - (void)voidMethod
 {
     WebCore::JSMainThreadNullState state;

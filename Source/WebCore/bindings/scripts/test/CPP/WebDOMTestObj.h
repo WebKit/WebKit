@@ -142,6 +142,7 @@ public:
     int id() const;
     void setId(int);
     WebDOMString hash() const;
+    int replaceableAttribute() const;
 
     void voidMethod();
     void voidMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);

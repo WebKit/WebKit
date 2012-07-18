@@ -142,11 +142,12 @@ static const HashTableValue JSTestObjTableValues[] =
     { "description", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjDescription), (intptr_t)0, NoIntrinsic },
     { "id", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjId), (intptr_t)setJSTestObjId, NoIntrinsic },
     { "hash", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjHash), (intptr_t)0, NoIntrinsic },
+    { "replaceableAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReplaceableAttribute), (intptr_t)setJSTestObjReplaceableAttribute, NoIntrinsic },
     { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructor), (intptr_t)0, NoIntrinsic },
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestObjTable = { 138, 127, JSTestObjTableValues, 0 };
+static const HashTable JSTestObjTable = { 139, 127, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestObjConstructorTableValues[] =
@@ -923,6 +924,16 @@ JSValue jsTestObjHash(ExecState* exec, JSValue slotBase, PropertyName)
 }
 
 
+JSValue jsTestObjReplaceableAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(impl->replaceableAttribute());
+    return result;
+}
+
+
 JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* domObject = jsCast<JSTestObj*>(asObject(slotBase));
@@ -1357,6 +1368,14 @@ void setJSTestObjId(ExecState* exec, JSObject* thisObject, JSValue value)
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     impl->setId(value.toInt32(exec));
+}
+
+
+void setJSTestObjReplaceableAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    UNUSED_PARAM(exec);
+    // Shadowing a built-in object
+    jsCast<JSTestObj*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, "replaceableAttribute"), value);
 }
 
 

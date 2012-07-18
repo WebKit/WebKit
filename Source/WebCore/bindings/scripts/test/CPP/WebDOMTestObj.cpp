@@ -645,6 +645,14 @@ WebDOMString WebDOMTestObj::hash() const
     return static_cast<const WTF::String&>(impl()->hash());
 }
 
+int WebDOMTestObj::replaceableAttribute() const
+{
+    if (!impl())
+        return 0;
+
+    return impl()->replaceableAttribute();
+}
+
 void WebDOMTestObj::voidMethod()
 {
     if (!impl())
