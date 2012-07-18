@@ -1,3 +1,14 @@
+2012-07-18  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [EFL] Build fix in WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=91567
+
+        Reviewed by Kentaro Hara.
+
+        sleep() is defined in unistd.h, we need to include it.
+
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+
 2012-07-18  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [NRWT] Unreviewed gardening after r122913

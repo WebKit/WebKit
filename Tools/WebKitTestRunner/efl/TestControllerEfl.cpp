@@ -23,6 +23,7 @@
 #include <Ecore.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
