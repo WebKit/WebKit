@@ -634,8 +634,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForNestedSurfaces)
     // - child1 surface damage in root surface space: FloatRect(300, 300, 6, 8);
     // - child2 damage in root surface space: FloatRect(11, 11, 18, 18);
     clearDamageForAllSurfaces(root.get());
-    grandChild1->setOpacity(0.7);
-    child2->setOpacity(0.7);
+    grandChild1->setOpacity(0.7f);
+    child2->setOpacity(0.7f);
     emulateDrawingOneFrame(root.get());
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();

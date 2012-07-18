@@ -1663,7 +1663,7 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringInvali
     IntRect layerRect(0, 0, 30, 31);
     layer->setPosition(layerRect.location());
     layer->setBounds(layerRect.size());
-    layer->setContentsScale(1.3);
+    layer->setContentsScale(1.3f);
 
     IntRect contentRect(IntPoint(), layer->contentBounds());
     layer->setVisibleContentRect(contentRect);
