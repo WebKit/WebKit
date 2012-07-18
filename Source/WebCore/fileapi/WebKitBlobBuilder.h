@@ -64,6 +64,8 @@ public:
 private:
     WebKitBlobBuilder();
 
+    void appendBytesData(const void*, size_t);
+
     Vector<char>& getBuffer();
 
     long long m_size;

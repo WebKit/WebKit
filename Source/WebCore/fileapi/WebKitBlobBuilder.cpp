@@ -35,6 +35,7 @@
 #include "Blob.h"
 #include "ExceptionCode.h"
 #include "File.h"
+#include "HistogramSupport.h"
 #include "LineEnding.h"
 #include "ScriptExecutionContext.h"
 #include "TextEncoding.h"
@@ -46,6 +47,12 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+enum BlobConstructorArrayBufferOrView {
+    BlobConstructorArrayBuffer,
+    BlobConstructorArrayBufferView,
+    BlobConstructorArrayBufferOrViewMax,
+};
 
 // static
 PassRefPtr<WebKitBlobBuilder> WebKitBlobBuilder::create(ScriptExecutionContext* context)
@@ -101,22 +108,23 @@ void WebKitBlobBuilder::append(ScriptExecutionContext* context, ArrayBuffer* arr
 {
     String consoleMessage("ArrayBuffer values are deprecated in Blob Constructor. Use ArrayBufferView instead.");
     context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
+
+    HistogramSupport::histogramEnumeration("WebCore.Blob.constructor.ArrayBufferOrView", BlobConstructorArrayBuffer, BlobConstructorArrayBufferOrViewMax);
+
     if (!arrayBuffer)
         return;
-    Vector<char>& buffer = getBuffer();
-    size_t oldSize = buffer.size();
-    buffer.append(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength());
-    m_size += buffer.size() - oldSize;
+
+    appendBytesData(arrayBuffer->data(), arrayBuffer->byteLength());
 }
 
 void WebKitBlobBuilder::append(ArrayBufferView* arrayBufferView)
 {
+    HistogramSupport::histogramEnumeration("WebCore.Blob.constructor.ArrayBufferOrView", BlobConstructorArrayBufferView, BlobConstructorArrayBufferOrViewMax);
+
     if (!arrayBufferView)
         return;
-    Vector<char>& buffer = getBuffer();
-    size_t oldSize = buffer.size();
-    buffer.append(static_cast<const char*>(arrayBufferView->baseAddress()), arrayBufferView->byteLength());
-    m_size += buffer.size() - oldSize;
+
+    appendBytesData(arrayBufferView->baseAddress(), arrayBufferView->byteLength());
 }
 #endif
 
@@ -139,6 +147,15 @@ void WebKitBlobBuilder::append(Blob* blob)
         m_size += blobSize;
         m_items.append(BlobDataItem(blob->url(), 0, blobSize));
     }
+}
+
+
+void WebKitBlobBuilder::appendBytesData(const void* data, size_t length)
+{
+    Vector<char>& buffer = getBuffer();
+    size_t oldSize = buffer.size();
+    buffer.append(static_cast<const char*>(data), length);
+    m_size += buffer.size() - oldSize;
 }
 
 PassRefPtr<Blob> WebKitBlobBuilder::getBlob(const String& contentType)

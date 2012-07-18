@@ -1,3 +1,19 @@
+2012-07-17  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Record metrics to measure the usage of Blob([ArrayBuffer]) to eventually deprecate it
+        https://bugs.webkit.org/show_bug.cgi?id=90534
+
+        Reviewed by Jian Li.
+
+        We are removing ArrayBuffer support in Blob constructor (in favor of
+        ArrayBufferView) but before doing that we should record its use relative to ArrayBufferView.
+        http://dev.w3.org/2006/webapi/FileAPI/#dfn-Blob
+
+        No new tests as this has no functional changes.
+
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::WebKitBlobBuilder::append):
+
 2012-07-17  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Key generator state not maintained across connections
