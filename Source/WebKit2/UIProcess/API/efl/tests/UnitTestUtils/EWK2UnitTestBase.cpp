@@ -62,6 +62,8 @@ void EWK2UnitTestBase::SetUp()
     Evas* evas = ecore_evas_get(m_ecoreEvas);
 
     m_webView = ewk_view_add(evas);
+    ewk_view_theme_set(m_webView, environment->defaultTheme());
+
     evas_object_resize(m_webView, width, height);
     evas_object_show(m_webView);
     evas_object_focus_set(m_webView, true);

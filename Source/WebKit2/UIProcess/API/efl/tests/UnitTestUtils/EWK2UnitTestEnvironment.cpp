@@ -34,4 +34,9 @@ const char* EWK2UnitTestEnvironment::defaultTestPageUrl() const
     return "file://"TEST_RESOURCES_DIR"/default_test_page.html";
 }
 
+const char* EWK2UnitTestEnvironment::defaultTheme() const
+{
+    return TEST_THEME_DIR"/default.edj";
+}
+
 } // namespace EWK2UnitTest

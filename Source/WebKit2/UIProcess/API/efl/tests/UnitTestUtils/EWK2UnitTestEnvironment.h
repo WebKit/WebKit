@@ -29,6 +29,7 @@ public:
 
     bool useX11Window() const { return m_useX11Window; }
     const char* defaultTestPageUrl() const;
+    const char* defaultTheme() const;
 
     virtual unsigned int defaultWidth() const { return m_defaultWidth; }
     virtual unsigned int defaultHeight() const { return m_defaultHeight; }
