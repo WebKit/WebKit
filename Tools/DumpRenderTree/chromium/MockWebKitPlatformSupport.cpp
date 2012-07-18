@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,15 +28,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef config_h
-#define config_h
+#include "config.h"
+#include "MockWebKitPlatformSupport.h"
 
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
+#include <wtf/Assertions.h>
 
-#if OS(WINDOWS) && !COMPILER(GCC)
-// Allow 'this' to be used in base member initializer list.
-#pragma warning(disable : 4355)
-#endif
+using namespace WebKit;
 
-#endif // config_h
+Platform* MockWebKitPlatformSupport::create()
+{
+    return new MockWebKitPlatformSupport();
+}
+
+MockWebKitPlatformSupport::MockWebKitPlatformSupport()
+{
+}
+
+void MockWebKitPlatformSupport::cryptographicallyRandomValues(unsigned char*, size_t)
+{
+    CRASH();
+}
+
+WebMediaStreamCenter* MockWebKitPlatformSupport::createMediaStreamCenter(WebMediaStreamCenterClient*)
+{
+    return 0;
+}

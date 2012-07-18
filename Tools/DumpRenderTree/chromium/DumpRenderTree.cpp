@@ -30,6 +30,7 @@
 
 #include "config.h"
 
+#include "MockWebKitPlatformSupport.h"
 #include "TestShell.h"
 #include "WebCompositor.h"
 #include "webkit/support/webkit_support.h"
@@ -72,7 +73,7 @@ class WebKitSupportTestEnvironment {
 public:
     WebKitSupportTestEnvironment()
     {
-        webkit_support::SetUpTestEnvironment();
+        webkit_support::SetUpTestEnvironment(MockWebKitPlatformSupport::create());
     }
     ~WebKitSupportTestEnvironment()
     {

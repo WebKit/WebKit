@@ -1,3 +1,25 @@
+2012-07-18  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Moving the mock create* WebRTC calls into a shadow Platform class
+        https://bugs.webkit.org/show_bug.cgi?id=86215
+
+        Reviewed by Adam Barth.
+
+        Adding a shadow Platform object that is used to override some WebKit::Platform funtions to
+        instead create mock objects. No actual mock objects created yet.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (WebKitSupportTestEnvironment::WebKitSupportTestEnvironment):
+        * DumpRenderTree/chromium/MockWebKitPlatformSupport.cpp: Copied from Tools/DumpRenderTree/chromium/config.h.
+        (MockWebKitPlatformSupport::create):
+        (MockWebKitPlatformSupport::MockWebKitPlatformSupport):
+        (MockWebKitPlatformSupport::cryptographicallyRandomValues):
+        (MockWebKitPlatformSupport::createMediaStreamCenter):
+        * DumpRenderTree/chromium/MockWebKitPlatformSupport.h: Copied from Tools/DumpRenderTree/chromium/config.h.
+        (MockWebKitPlatformSupport):
+        * DumpRenderTree/chromium/config.h:
+
 2012-07-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [CMake][EFL] Build and run TestWebKitAPI unit tests
