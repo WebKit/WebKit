@@ -89,7 +89,7 @@ protected:
         return Decimal::fromString(string);
     }
 
-    protected: String stepDown(const String& minimum, const String& maximum, const String& step, const String& valueString, int numberOfStepTimes)
+    protected: Decimal stepDown(const String& minimum, const String& maximum, const String& step, const String& valueString, int numberOfStepTimes)
     {
         DecimalStepRange stepRange(fromString(minimum), fromString(maximum), fromString(step));
         Decimal value = fromString(valueString);
@@ -97,10 +97,10 @@ protected:
             value -= stepRange.step;
             value = stepRange.clampValue(value);
         }
-        return value.toString();
+        return value;
     }
 
-    protected: String stepUp(const String& minimum, const String& maximum, const String& step, const String& valueString, int numberOfStepTimes)
+    protected: Decimal stepUp(const String& minimum, const String& maximum, const String& step, const String& valueString, int numberOfStepTimes)
     {
         DecimalStepRange stepRange(fromString(minimum), fromString(maximum), fromString(step));
         Decimal value = fromString(valueString);
@@ -108,9 +108,11 @@ protected:
             value += stepRange.step;
             value = stepRange.clampValue(value);
         }
-        return value.toString();
+        return value;
     }
 };
+
+#define EXPECT_DECIMAL_STREQ(expected, decimal) EXPECT_STREQ((expected), (decimal).toString().ascii().data())
 
 TEST_F(DecimalTest, Abs)
 {
@@ -840,29 +842,29 @@ TEST_F(DecimalTest, PredicatesSpecialValues)
 // LayoutTests/fast/forms/number/number-stepup-stepdown-from-renderer
 TEST_F(DecimalTest, RealWorldExampleNumberStepUpStepDownFromRenderer)
 {
-    EXPECT_EQ(String("10"), stepDown("0", "100", "10", "19", 1));
-    EXPECT_EQ(String("90"), stepUp("0", "99", "10", "89", 1));
-    EXPECT_EQ(String("1"), stepUp("0", "1", "0.33333333333333333", "0", 3)); // step=1/3
-    EXPECT_EQ(String("0.01"), stepUp("0", "0.01", "0.0033333333333333333", "0", 3)); // step=1/300
-    EXPECT_EQ(String("1"), stepUp("0", "1", "0.003921568627450980", "0", 255)); // step=1/255
-    EXPECT_EQ(String("1"), stepUp("0", "1", "0.1", "0", 10));
+    EXPECT_DECIMAL_STREQ("10", stepDown("0", "100", "10", "19", 1));
+    EXPECT_DECIMAL_STREQ("90", stepUp("0", "99", "10", "89", 1));
+    EXPECT_DECIMAL_STREQ("1", stepUp("0", "1", "0.33333333333333333", "0", 3)); // step=1/3
+    EXPECT_DECIMAL_STREQ("0.01", stepUp("0", "0.01", "0.0033333333333333333", "0", 3)); // step=1/300
+    EXPECT_DECIMAL_STREQ("1", stepUp("0", "1", "0.003921568627450980", "0", 255)); // step=1/255
+    EXPECT_DECIMAL_STREQ("1", stepUp("0", "1", "0.1", "0", 10));
 }
 
 TEST_F(DecimalTest, RealWorldExampleNumberStepUpStepDownFromRendererRounding)
 {
-    EXPECT_EQ(String("5.015"), stepUp("0", "100", "0.005", "5.005", 2));
-    EXPECT_EQ(String("5.06"), stepUp("0", "100", "0.005", "5.005", 11));
-    EXPECT_EQ(String("5.065"), stepUp("0", "100", "0.005", "5.005", 12));
+    EXPECT_DECIMAL_STREQ("5.015", stepUp("0", "100", "0.005", "5.005", 2));
+    EXPECT_DECIMAL_STREQ("5.06", stepUp("0", "100", "0.005", "5.005", 11));
+    EXPECT_DECIMAL_STREQ("5.065", stepUp("0", "100", "0.005", "5.005", 12));
 
-    EXPECT_EQ(String("5.015"), stepUp("4", "9", "0.005", "5.005", 2));
-    EXPECT_EQ(String("5.06"), stepUp("4", "9", "0.005", "5.005", 11));
-    EXPECT_EQ(String("5.065"), stepUp("4", "9", "0.005", "5.005", 12));
+    EXPECT_DECIMAL_STREQ("5.015", stepUp("4", "9", "0.005", "5.005", 2));
+    EXPECT_DECIMAL_STREQ("5.06", stepUp("4", "9", "0.005", "5.005", 11));
+    EXPECT_DECIMAL_STREQ("5.065", stepUp("4", "9", "0.005", "5.005", 12));
 }
 
 TEST_F(DecimalTest, RealWorldExampleRangeStepUpStepDown)
 {
-    EXPECT_EQ(String("1e+38"), stepUp("0", "1E38", "1", "1E38", 9));
-    EXPECT_EQ(String("1e+38"), stepDown("0", "1E38", "1", "1E38", 9));
+    EXPECT_DECIMAL_STREQ("1e+38", stepUp("0", "1E38", "1", "1E38", 9));
+    EXPECT_DECIMAL_STREQ("1e+38", stepDown("0", "1E38", "1", "1E38", 9));
 }
 
 TEST_F(DecimalTest, Remainder)
@@ -1022,31 +1024,31 @@ TEST_F(DecimalTest, ToDoubleSpecialValues)
 
 TEST_F(DecimalTest, ToString)
 {
-    EXPECT_EQ(String("0"), Decimal::zero(Positive).toString());
-    EXPECT_EQ(String("-0"), Decimal::zero(Negative).toString());
-    EXPECT_EQ(String("1"), Decimal(1).toString());
-    EXPECT_EQ(String("-1"), Decimal(-1).toString());
-    EXPECT_EQ(String("1234567"), Decimal(1234567).toString());
-    EXPECT_EQ(String("-1234567"), Decimal(-1234567).toString());
-    EXPECT_EQ(String("0.5"), encode(5, -1, Positive).toString());
-    EXPECT_EQ(String("-0.5"), encode(5, -1, Negative).toString());
-    EXPECT_EQ(String("12.345"), encode(12345, -3, Positive).toString());
-    EXPECT_EQ(String("-12.345"), encode(12345, -3, Negative).toString());
-    EXPECT_EQ(String("0.12345"), encode(12345, -5, Positive).toString());
-    EXPECT_EQ(String("-0.12345"), encode(12345, -5, Negative).toString());
-    EXPECT_EQ(String("50"), encode(50, 0, Positive).toString());
-    EXPECT_EQ(String("-50"), encode(50, 0, Negative).toString());
-    EXPECT_EQ(String("5e+1"), encode(5, 1, Positive).toString());
-    EXPECT_EQ(String("-5e+1"), encode(5, 1, Negative).toString());
-    EXPECT_EQ(String("5.678e+103"), encode(5678, 100, Positive).toString());
-    EXPECT_EQ(String("-5.678e+103"), encode(5678, 100, Negative).toString());
-    EXPECT_EQ(String("5.678e-97"), encode(5678, -100, Positive).toString());
-    EXPECT_EQ(String("-5.678e-97"), encode(5678, -100, Negative).toString());
+    EXPECT_DECIMAL_STREQ("0", Decimal::zero(Positive));
+    EXPECT_DECIMAL_STREQ("-0", Decimal::zero(Negative));
+    EXPECT_DECIMAL_STREQ("1", Decimal(1));
+    EXPECT_DECIMAL_STREQ("-1", Decimal(-1));
+    EXPECT_DECIMAL_STREQ("1234567", Decimal(1234567));
+    EXPECT_DECIMAL_STREQ("-1234567", Decimal(-1234567));
+    EXPECT_DECIMAL_STREQ("0.5", encode(5, -1, Positive));
+    EXPECT_DECIMAL_STREQ("-0.5", encode(5, -1, Negative));
+    EXPECT_DECIMAL_STREQ("12.345", encode(12345, -3, Positive));
+    EXPECT_DECIMAL_STREQ("-12.345", encode(12345, -3, Negative));
+    EXPECT_DECIMAL_STREQ("0.12345", encode(12345, -5, Positive));
+    EXPECT_DECIMAL_STREQ("-0.12345", encode(12345, -5, Negative));
+    EXPECT_DECIMAL_STREQ("50", encode(50, 0, Positive));
+    EXPECT_DECIMAL_STREQ("-50", encode(50, 0, Negative));
+    EXPECT_DECIMAL_STREQ("5e+1", encode(5, 1, Positive));
+    EXPECT_DECIMAL_STREQ("-5e+1", encode(5, 1, Negative));
+    EXPECT_DECIMAL_STREQ("5.678e+103", encode(5678, 100, Positive));
+    EXPECT_DECIMAL_STREQ("-5.678e+103", encode(5678, 100, Negative));
+    EXPECT_DECIMAL_STREQ("5.678e-97", encode(5678, -100, Positive));
+    EXPECT_DECIMAL_STREQ("-5.678e-97", encode(5678, -100, Negative));
 }
 
 TEST_F(DecimalTest, ToStringSpecialValues)
 {
-    EXPECT_EQ(String("Infinity"), Decimal::infinity(Positive).toString());
-    EXPECT_EQ(String("-Infinity"), Decimal::infinity(Negative).toString());
-    EXPECT_EQ(String("NaN"), Decimal::nan().toString());
+    EXPECT_DECIMAL_STREQ("Infinity", Decimal::infinity(Positive));
+    EXPECT_DECIMAL_STREQ("-Infinity", Decimal::infinity(Negative));
+    EXPECT_DECIMAL_STREQ("NaN", Decimal::nan());
 }

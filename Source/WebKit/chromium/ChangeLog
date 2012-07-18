@@ -1,3 +1,20 @@
+2012-07-17  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Test cases in DecimalTest should use EXPECT_STREQ for ease of debugging test case
+        https://bugs.webkit.org/show_bug.cgi?id=91572
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces EXPECT_DECIMAL_STREQ macro to replace EXPECT_EQ
+        with String class for displaying text string rather than object dump
+        for ease of debugging test cases.
+
+        * tests/DecimalTest.cpp:
+        (DecimalTest::stepDown): Changed to return Decimal instead of String
+        to use EXPECT_DECIMAL_STREQ.
+        (DecimalTest::stepUp): ditto.
+        (TEST_F): Replaced EXPECT_EQ + String class to EXPECT_DECIMAL_STREQ.
+
 2012-07-17  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Key generator state not maintained across connections
