@@ -52,7 +52,8 @@ IntSize dragImageSize(DragImageRef image)
 
 void deleteDragImage(DragImageRef image)
 {
-    delete image->bitmap;
+    if (image)
+        delete image->bitmap;
     delete image;
 }
 
