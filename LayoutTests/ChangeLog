@@ -1,3 +1,17 @@
+2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium gardening, rebaselined tests.
+
+        * platform/chromium-win-xp/css2.1/t100801-c544-valgn-03-d-agi-expected.png: Removed.
+        * platform/chromium-win-xp/css2.1/t100801-c544-valgn-03-d-agi-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/inline-block/inline-block-vertical-align-expected.png: Removed.
+        * platform/chromium-win-xp/fast/inline/002-expected.png: Removed.
+        * platform/chromium-win/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/chromium-win/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/chromium-win/fast/inline-block/inline-block-vertical-align-expected.png:
+        * platform/chromium-win/fast/inline/002-expected.png:
+        * platform/chromium-win/fast/table/table-display-types-strict-expected.png:
+
 2012-07-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] REGRESSION(r122376): It made 68 tests flakey (TEXT PASS)
