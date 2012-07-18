@@ -141,7 +141,8 @@ void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const
         static bool shouldDebug = shouldShowTileDebugVisuals();
         if (!shouldDebug)
             continue;
-        textureMapper->drawBorder(QColor(Qt::red), 2, tile->rect(), transform);
+
+        textureMapper->drawBorder(Color(0xFF, 0, 0), 2, tile->rect(), transform);
         textureMapper->drawRepaintCounter(static_cast<LayerBackingStoreTile*>(tile)->repaintCount(), 8, tilesToPaint[i]->rect().location(), transform);
     }
 }
