@@ -82,7 +82,7 @@ int chromiumOpen(sqlite3_vfs*, const char* fileName,
 //           should be synched after the file is deleted.
 int chromiumDelete(sqlite3_vfs*, const char* fileName, int)
 {
-    return WebKit::Platform::current()->databaseDeleteFile(String(fileName));
+    return WebKit::Platform::current()->databaseDeleteFile(String(fileName), false);
 }
 
 // Check the existance and status of the given file.
