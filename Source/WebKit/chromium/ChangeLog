@@ -1,3 +1,13 @@
+2012-07-18  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed compile fix for Android.
+        
+        Source/WebKit/chromium/tests/CCDamageTrackerTest.cpp: In member function 'virtual void<unnamed>::CCDamageTrackerTest_verifyDamageForTransformedLayer_Test::TestBody()':
+        Source/WebKit/chromium/tests/CCDamageTrackerTest.cpp:332: error: call of overloaded 'sqrt(int)' is ambiguous
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-07-18  Varun Jain  <varunjain@chromium.org>
 
         [chromium] Drag image for image elements should be scaled with device scale factor.

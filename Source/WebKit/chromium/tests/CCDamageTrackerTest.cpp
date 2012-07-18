@@ -329,7 +329,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForTransformedLayer)
     // Since the child layer is square, rotation by 45 degrees about the center should
     // increase the size of the expected rect by sqrt(2), centered around (100, 100). The
     // old exposed region should be fully contained in the new region.
-    double expectedWidth = 30 * sqrt(2);
+    double expectedWidth = 30 * sqrt(2.0);
     double expectedPosition = 100 - 0.5 * expectedWidth;
     FloatRect expectedRect(expectedPosition, expectedPosition, expectedWidth, expectedWidth);
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
