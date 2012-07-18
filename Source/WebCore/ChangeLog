@@ -1,3 +1,25 @@
+2012-07-18  Vincent Scheib  <scheib@chromium.org>
+
+        Unify allowfullscreen logic in Document::webkitFullScreenEnabled and fullScreenIsAllowedForElement.
+        https://bugs.webkit.org/show_bug.cgi?id=91448
+
+        Reviewed by Adrienne Walker.
+
+        Unifies redundant traversal logic and static cast previously used
+        to determine if an element or document can be made fullscreen.
+        This clean up prepares for pointer lock, which will use the same logic.
+
+        Added a test to detect an edge case of an owning document with
+        fullscreen permision moving an iframe to fullscreen, while that iframe
+        does not have permision for its contents to be made fullscreen.
+
+        Test: fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent.html
+
+        * dom/Document.cpp:
+        (WebCore::isAttributeOnAllOwners):
+        (WebCore::Document::fullScreenIsAllowedForElement):
+        (WebCore::Document::webkitFullscreenEnabled):
+
 2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add central error management to EFL port

@@ -42,10 +42,6 @@ public:
     int width();
     int height();
 
-#if ENABLE(FULLSCREEN_API)
-    virtual bool allowFullScreen() const;
-#endif
-
     virtual bool canContainRangeEndPoint() const { return false; }
 
 protected:

@@ -246,11 +246,4 @@ int HTMLFrameElementBase::height()
     return renderBox()->height();
 }
 
-#if ENABLE(FULLSCREEN_API)
-bool HTMLFrameElementBase::allowFullScreen() const
-{
-    return hasAttribute(webkitallowfullscreenAttr);
-}
-#endif
-
 } // namespace WebCore
