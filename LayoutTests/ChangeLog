@@ -1,3 +1,14 @@
+2012-07-18  Tony Chang  <tony@chromium.org>
+
+        Convert svg/css/scientific-numbers.html to a text only test
+        https://bugs.webkit.org/show_bug.cgi?id=91641
+
+        Reviewed by Dirk Schulze.
+
+        This is a JS test so we don't need the pixel dump.
+
+        * svg/css/script-tests/scientific-numbers.js:
+
 2012-07-18  Alex Bravo  <alex.bravo@nokia.com>
 
         [Qt] platform/qt/http tests needs update after rebaseline and new testfonts

@@ -1,4 +1,6 @@
 description("Test scientific numbers on <length> values for SVG presentation attributes.")
+if (window.testRunner)
+    testRunner.dumpAsText();
 createSVGTestCase();
 
 var text = createSVGElement("text");
