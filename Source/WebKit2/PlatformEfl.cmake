@@ -37,6 +37,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/BatteryProvider.cpp
     UIProcess/API/efl/PageClientImpl.cpp
     UIProcess/API/efl/ewk_context.cpp
+    UIProcess/API/efl/ewk_cookie_manager.cpp
     UIProcess/API/efl/ewk_intent.cpp
     UIProcess/API/efl/ewk_intent_service.cpp
     UIProcess/API/efl/ewk_navigation_policy_decision.cpp
@@ -172,6 +173,7 @@ CONFIGURE_FILE(efl/ewebkit2.pc.in ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc @O
 SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/EWebKit2.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_context.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_cookie_manager.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_intent.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_intent_service.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_navigation_policy_decision.h"

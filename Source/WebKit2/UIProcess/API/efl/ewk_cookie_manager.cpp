@@ -1,0 +1,197 @@
+/*
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "ewk_cookie_manager.h"
+
+#include "SoupCookiePersistentStorageType.h"
+#include "WKAPICast.h"
+#include "WKArray.h"
+#include "WKCookieManager.h"
+#include "WKRetainPtr.h"
+#include "WKString.h"
+#include "WebCookieManagerProxy.h"
+#include "ewk_private.h"
+#include "ewk_web_error_private.h"
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+
+using namespace WebKit;
+
+/**
+ * \struct  _Ewk_Cookie_Manager
+ * @brief   Contains the cookie manager data.
+ */
+struct _Ewk_Cookie_Manager {
+    WKRetainPtr<WKCookieManagerRef> wkCookieManager;
+
+    _Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef)
+        : wkCookieManager(cookieManagerRef)
+    { }
+};
+
+#define EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager_, ...)    \
+    if (!(manager)) {                                                    \
+        EINA_LOG_CRIT("manager is NULL.");                               \
+        return __VA_ARGS__;                                              \
+    }                                                                    \
+    if (!(manager)->wkCookieManager) {                                   \
+        EINA_LOG_CRIT("manager->wkCookieManager is NULL.");              \
+        return __VA_ARGS__;                                              \
+    }                                                                    \
+    WKCookieManagerRef wkManager_ = (manager)->wkCookieManager.get()
+
+// Ewk_Cookie_Accept_Policy enum validation
+COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_ACCEPT_POLICY_ALWAYS, kWKHTTPCookieAcceptPolicyAlways);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_ACCEPT_POLICY_NEVER, kWKHTTPCookieAcceptPolicyNever);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY, kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
+
+// Ewk_Cookie_Persistent_Storage enum validation
+COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_PERSISTENT_STORAGE_TEXT, SoupCookiePersistentStorageText);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_PERSISTENT_STORAGE_SQLITE, SoupCookiePersistentStorageSQLite);
+
+void ewk_cookie_manager_persistent_storage_set(Ewk_Cookie_Manager* manager, const char* filename, Ewk_Cookie_Persistent_Storage storage)
+{
+    EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager);
+    EINA_SAFETY_ON_NULL_RETURN(filename);
+
+    toImpl(wkManager)->setCookiePersistentStorage(String::fromUTF8(filename), storage);
+}
+
+void ewk_cookie_manager_accept_policy_set(Ewk_Cookie_Manager* manager, Ewk_Cookie_Accept_Policy policy)
+{
+    EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager);
+
+    WKCookieManagerSetHTTPCookieAcceptPolicy(wkManager, static_cast<WKHTTPCookieAcceptPolicy>(policy));
+}
+
+struct Get_Policy_Async_Data {
+    Ewk_Cookie_Manager_Async_Policy_Get_Cb callback;
+    void* userData;
+};
+
+static void getAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef wkError, void* data)
+{
+    Get_Policy_Async_Data* callbackData = static_cast<Get_Policy_Async_Data*>(data);
+    Ewk_Web_Error* ewkError = wkError ? ewk_web_error_new(wkError) : 0;
+
+    callbackData->callback(static_cast<Ewk_Cookie_Accept_Policy>(policy), ewkError, callbackData->userData);
+
+    if (ewkError)
+        ewk_web_error_free(ewkError);
+    delete callbackData;
+}
+
+void ewk_cookie_manager_async_accept_policy_get(const Ewk_Cookie_Manager* manager, Ewk_Cookie_Manager_Async_Policy_Get_Cb callback, void* data)
+{
+    EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager);
+    EINA_SAFETY_ON_NULL_RETURN(callback);
+
+    Get_Policy_Async_Data* callbackData = new Get_Policy_Async_Data;
+    callbackData->callback = callback;
+    callbackData->userData = data;
+
+    WKCookieManagerGetHTTPCookieAcceptPolicy(wkManager, callbackData, getAcceptPolicyCallback);
+}
+
+struct Get_Hostnames_Async_Data {
+    Ewk_Cookie_Manager_Async_Hostnames_Get_Cb callback;
+    void* userData;
+};
+
+static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef wkError, void* context)
+{
+    Eina_List* hostnames = 0;
+    Get_Hostnames_Async_Data* callbackData = static_cast<Get_Hostnames_Async_Data*>(context);
+    Ewk_Web_Error* ewkError = wkError ? ewk_web_error_new(wkError) : 0;
+
+    const size_t hostnameCount = WKArrayGetSize(wkHostnames);
+    for (size_t i = 0; i < hostnameCount; ++i) {
+        WKStringRef wkHostname = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkHostnames, i));
+        String hostname = toImpl(wkHostname)->string();
+        if (hostname.isEmpty())
+            continue;
+        hostnames = eina_list_append(hostnames, eina_stringshare_add(hostname.utf8().data()));
+    }
+
+    callbackData->callback(hostnames, ewkError, callbackData->userData);
+
+    void* item;
+    EINA_LIST_FREE(hostnames, item)
+      eina_stringshare_del(static_cast<Eina_Stringshare*>(item));
+    if (ewkError)
+        ewk_web_error_free(ewkError);
+    delete callbackData;
+}
+
+void ewk_cookie_manager_async_hostnames_with_cookies_get(const Ewk_Cookie_Manager* manager, Ewk_Cookie_Manager_Async_Hostnames_Get_Cb callback, void* data)
+{
+    EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager);
+    EINA_SAFETY_ON_NULL_RETURN(callback);
+
+    Get_Hostnames_Async_Data* callbackData = new Get_Hostnames_Async_Data;
+    callbackData->callback = callback;
+    callbackData->userData = data;
+
+    WKCookieManagerGetHostnamesWithCookies(wkManager, callbackData, getHostnamesWithCookiesCallback);
+}
+
+void ewk_cookie_manager_hostname_cookies_clear(Ewk_Cookie_Manager* manager, const char* hostName)
+{
+    EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager);
+    EINA_SAFETY_ON_NULL_RETURN(hostName);
+
+    WKRetainPtr<WKStringRef> wkHostName(AdoptWK, WKStringCreateWithUTF8CString(hostName));
+    WKCookieManagerDeleteCookiesForHostname(wkManager, wkHostName.get());
+}
+
+void ewk_cookie_manager_cookies_clear(Ewk_Cookie_Manager* manager)
+{
+    EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager);
+
+    WKCookieManagerDeleteAllCookies(wkManager);
+}
+
+/**
+ * @internal
+ * Frees a Ewk_Cookie_Manager object.
+ */
+void ewk_cookie_manager_free(Ewk_Cookie_Manager* manager)
+{
+    EINA_SAFETY_ON_NULL_RETURN(manager);
+
+    delete manager;
+}
+
+/**
+ * @internal
+ * Constructs a Ewk_Cookie_Manager from a WKCookieManagerRef.
+ */
+Ewk_Cookie_Manager* ewk_cookie_manager_new(WKCookieManagerRef wkCookieManager)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(wkCookieManager, 0);
+
+    return new Ewk_Cookie_Manager(wkCookieManager);
+}

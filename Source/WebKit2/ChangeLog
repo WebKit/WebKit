@@ -1,3 +1,43 @@
+2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add Ewk class for cookie manager
+        https://bugs.webkit.org/show_bug.cgi?id=91053
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add new Ewk_Cookie_Manager class to allow the client
+        to set/get the cookie acceptance policy, support
+        persistent cookie storage and clear cookies.
+
+        The Ewk_Cookie_Manager instance can be retrieved
+        from the Ewk_Context API.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context):
+        (_Ewk_Context::_Ewk_Context):
+        (_Ewk_Context::~_Ewk_Context):
+        (ewk_context_cookie_manager_get):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_cookie_manager.cpp: Added.
+        (_Ewk_Cookie_Manager):
+        (_Ewk_Cookie_Manager::_Ewk_Cookie_Manager):
+        (ewk_cookie_manager_persistent_storage_set):
+        (ewk_cookie_manager_accept_policy_set):
+        (Get_Policy_Async_Data):
+        (getAcceptPolicyCallback):
+        (ewk_cookie_manager_async_accept_policy_get):
+        (Get_Hostnames_Async_Data):
+        (getHostnamesWithCookiesCallback):
+        (ewk_cookie_manager_async_hostnames_with_cookies_get):
+        (ewk_cookie_manager_hostname_cookies_clear):
+        (ewk_cookie_manager_cookies_clear):
+        (ewk_cookie_manager_free):
+        (ewk_cookie_manager_new):
+        * UIProcess/API/efl/ewk_cookie_manager.h: Added.
+        * UIProcess/API/efl/ewk_cookie_manager_private.h: Added.
+
 2012-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitWebView::submit-form signal to WebKit2 GTK+ API
