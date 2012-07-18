@@ -3719,9 +3719,6 @@ BUGWK91372 WIN : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 // Started crashing after 122450
 BUGWK91254 WIN LINUX DEBUG : fast/dom/attribute-empty-value-no-children.html = CRASH
 
-// Fails since creation in 122761
-BUGWK91477 : fast/multicol/shrink-to-column-height-for-pagination.html = IMAGE+TEXT
-
 // Need rebaseline
 BUGWK90951 : fast/text/shaping/shaping-selection-rect.html = MISSING
 BUGWK90951 : fast/text/shaping/shaping-script-order.html = MISSING
