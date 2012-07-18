@@ -41,6 +41,7 @@ namespace WebKit {
 
 WebCompositorQuad::WebCompositorQuad(const WebCompositorSharedQuadState* sharedQuadState, Material material, const IntRect& quadRect)
     : m_sharedQuadState(sharedQuadState)
+    , m_sharedQuadStateId(sharedQuadState->id)
     , m_material(material)
     , m_quadRect(quadRect)
     , m_quadVisibleRect(quadRect)
@@ -92,6 +93,12 @@ unsigned WebCompositorQuad::size() const
 
     CRASH();
     return sizeof(WebCompositorQuad);
+}
+
+void WebCompositorQuad::setSharedQuadState(const WebCompositorSharedQuadState* sharedQuadState)
+{
+    m_sharedQuadState = sharedQuadState;
+    m_sharedQuadStateId = sharedQuadState->id;
 }
 
 }

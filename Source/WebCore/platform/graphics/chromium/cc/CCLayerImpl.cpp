@@ -145,7 +145,7 @@ bool CCLayerImpl::descendantDrawsContent()
     return false;
 }
 
-PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
+PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState(int id) const
 {
     WebTransformationMatrix quadTransformation = drawTransform();
     if (!contentBounds().isEmpty() && !bounds().isEmpty()) {
@@ -154,7 +154,7 @@ PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
         quadTransformation.translate(-contentBounds().width() / 2.0, -contentBounds().height() / 2.0);
     }
 
-    return CCSharedQuadState::create(quadTransformation, m_visibleContentRect, m_scissorRect, m_drawOpacity, m_opaque);
+    return CCSharedQuadState::create(id, quadTransformation, m_visibleContentRect, m_scissorRect, m_drawOpacity, m_opaque);
 }
 
 void CCLayerImpl::willDraw(CCRenderer*, CCGraphicsContext*)

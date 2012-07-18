@@ -1,5 +1,46 @@
 2012-07-18  Alexandre Elias  <aelias@google.com>
 
+        [chromium] Ubercomp: add id to SharedQuadState
+        https://bugs.webkit.org/show_bug.cgi?id=91670
+
+        Reviewed by Adrienne Walker.
+
+        This assigns an integer ID to SharedQuadState objects and a
+        corresponding ID to quads.  This ID is unique only within a
+        RenderPass and currently is just set to the index in the shared quad
+        state list.  This is redundant with the pointer and exists to
+        simplify serialization.
+
+        I found out that pointer rewriting within a pickler is blocked by
+        pointers to memory being const there, so the reassignment will have to
+        be performed in the application layer anyway.  In that case, it's
+        simplest to add some ID integers.
+
+        No new tests (will introduce them when making use of the ID).
+
+        * platform/chromium/support/WebCompositorQuad.cpp:
+        (WebKit::WebCompositorQuad::WebCompositorQuad):
+        (WebKit::WebCompositorQuad::setSharedQuadState):
+        (WebKit):
+        * platform/chromium/support/WebCompositorSharedQuadState.cpp:
+        (WebKit::WebCompositorSharedQuadState::WebCompositorSharedQuadState):
+        (WebKit::WebCompositorSharedQuadState::create):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::createSharedQuadState):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::appendQuadsForLayer):
+        (WebCore::CCRenderPass::appendQuadsForRenderSurfaceLayer):
+        (WebCore::CCRenderPass::appendQuadsToFillScreen):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::createSharedQuadState):
+        (WebCore::CCRenderSurface::createReplicaSharedQuadState):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (CCRenderSurface):
+
+2012-07-18  Alexandre Elias  <aelias@google.com>
+
         [chromium] Ubercomp: clean up CCRenderer interface
         https://bugs.webkit.org/show_bug.cgi?id=91555
 

@@ -36,18 +36,20 @@ using WebCore::IntRect;
 namespace WebKit {
 
 WebCompositorSharedQuadState::WebCompositorSharedQuadState()
-    : opacity(0)
+    : id(0)
+    , opacity(0)
     , opaque(false)
 {
 }
 
-PassOwnPtr<WebCompositorSharedQuadState> WebCompositorSharedQuadState::create(const WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
+PassOwnPtr<WebCompositorSharedQuadState> WebCompositorSharedQuadState::create(int id, const WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
 {
-    return adoptPtr(new WebCompositorSharedQuadState(quadTransform, visibleContentRect, scissorRect, opacity, opaque));
+    return adoptPtr(new WebCompositorSharedQuadState(id, quadTransform, visibleContentRect, scissorRect, opacity, opaque));
 }
 
-WebCompositorSharedQuadState::WebCompositorSharedQuadState(const WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
-    : quadTransform(quadTransform)
+WebCompositorSharedQuadState::WebCompositorSharedQuadState(int id, const WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
+    : id(id)
+    , quadTransform(quadTransform)
     , visibleContentRect(visibleContentRect)
     , scissorRect(scissorRect)
     , opacity(opacity)

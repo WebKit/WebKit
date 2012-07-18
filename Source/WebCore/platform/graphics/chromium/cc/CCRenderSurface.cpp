@@ -163,16 +163,16 @@ bool CCRenderSurface::surfacePropertyChangedOnlyFromDescendant() const
     return m_surfacePropertyChanged && !m_owningLayer->layerPropertyChanged();
 }
 
-PassOwnPtr<CCSharedQuadState> CCRenderSurface::createSharedQuadState() const
+PassOwnPtr<CCSharedQuadState> CCRenderSurface::createSharedQuadState(int id) const
 {
     bool isOpaque = false;
-    return CCSharedQuadState::create(m_originTransform, m_contentRect, m_scissorRect, m_drawOpacity, isOpaque);
+    return CCSharedQuadState::create(id, m_originTransform, m_contentRect, m_scissorRect, m_drawOpacity, isOpaque);
 }
 
-PassOwnPtr<CCSharedQuadState> CCRenderSurface::createReplicaSharedQuadState() const
+PassOwnPtr<CCSharedQuadState> CCRenderSurface::createReplicaSharedQuadState(int id) const
 {
     bool isOpaque = false;
-    return CCSharedQuadState::create(m_replicaOriginTransform, m_contentRect, m_scissorRect, m_drawOpacity, isOpaque);
+    return CCSharedQuadState::create(id, m_replicaOriginTransform, m_contentRect, m_scissorRect, m_drawOpacity, isOpaque);
 }
 
 FloatRect CCRenderSurface::computeRootScissorRectInCurrentSurface(const FloatRect& rootScissorRect) const

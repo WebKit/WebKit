@@ -39,6 +39,8 @@ namespace WebKit {
 
 class WebCompositorSharedQuadState {
 public:
+    int id;
+
     // Transforms from quad's original content space to its target content space.
     WebTransformationMatrix quadTransform;
     // This rect lives in the content space for the quad's originating layer.
@@ -51,8 +53,8 @@ public:
     WebCompositorSharedQuadState();
 
 #if WEBKIT_IMPLEMENTATION
-    static PassOwnPtr<WebCompositorSharedQuadState> create(const WebTransformationMatrix& quadTransform, const WebCore::IntRect& visibleContentRect, const WebCore::IntRect& scissorRect, float opacity, bool opaque);
-    WebCompositorSharedQuadState(const WebTransformationMatrix& quadTransform, const WebCore::IntRect& visibleContentRect, const WebCore::IntRect& scissorRect, float opacity, bool opaque);
+    static PassOwnPtr<WebCompositorSharedQuadState> create(int id, const WebTransformationMatrix& quadTransform, const WebCore::IntRect& visibleContentRect, const WebCore::IntRect& scissorRect, float opacity, bool opaque);
+    WebCompositorSharedQuadState(int id, const WebTransformationMatrix& quadTransform, const WebCore::IntRect& visibleContentRect, const WebCore::IntRect& scissorRect, float opacity, bool opaque);
     bool isLayerAxisAlignedIntRect() const;
 #endif
 };

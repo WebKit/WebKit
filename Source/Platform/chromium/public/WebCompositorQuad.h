@@ -85,7 +85,8 @@ public:
     unsigned size() const;
 
     const WebCompositorSharedQuadState* sharedQuadState() const { return m_sharedQuadState; }
-    void setSharedQuadState(const WebCompositorSharedQuadState* sharedQuadState) { m_sharedQuadState = sharedQuadState; }
+    int sharedQuadStateId() const { return m_sharedQuadStateId; }
+    void setSharedQuadState(const WebCompositorSharedQuadState*);
 
 protected:
 #if WEBKIT_IMPLEMENTATION
@@ -96,6 +97,7 @@ protected:
     // efficiency. There is special treatment to reconstruct these pointers
     // during serialization.
     const WebCompositorSharedQuadState* m_sharedQuadState;
+    int m_sharedQuadStateId;
 
     Material m_material;
     WebRect m_quadRect;

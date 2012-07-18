@@ -52,7 +52,7 @@ TEST(CCSolidColorLayerImplTest, verifyTilingCompleteAndNoOverlap)
     layer->setBounds(layerSize);
     layer->setContentBounds(layerSize);
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
+    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState(0);
     bool hadMissingTiles = false;
     layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
 
@@ -75,7 +75,7 @@ TEST(CCSolidColorLayerImplTest, verifyCorrectBackgroundColorInQuad)
     layer->setContentBounds(layerSize);
     layer->setBackgroundColor(testColor);
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
+    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState(0);
     bool hadMissingTiles = false;
     layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
 
@@ -99,7 +99,7 @@ TEST(CCSolidColorLayerImplTest, verifyCorrectOpacityInQuad)
     layer->setContentBounds(layerSize);
     layer->setDrawOpacity(opacity);
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
+    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState(0);
     bool hadMissingTiles = false;
     layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
 

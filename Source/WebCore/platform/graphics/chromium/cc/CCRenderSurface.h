@@ -114,8 +114,8 @@ public:
 
     CCDamageTracker* damageTracker() const { return m_damageTracker.get(); }
 
-    PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
-    PassOwnPtr<CCSharedQuadState> createReplicaSharedQuadState() const;
+    PassOwnPtr<CCSharedQuadState> createSharedQuadState(int id) const;
+    PassOwnPtr<CCSharedQuadState> createReplicaSharedQuadState(int id) const;
 
     void appendQuads(CCQuadCuller&, CCSharedQuadState*, bool forReplica, int renderPassId);
 

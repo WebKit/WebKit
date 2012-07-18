@@ -3020,7 +3020,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
     renderer->clearCachedTextures();
 
     // One shared state for all quads - we don't need the correct details
-    testData.sharedQuadState = CCSharedQuadState::create(WebTransformationMatrix(), IntRect(), IntRect(), 1.0, true);
+    testData.sharedQuadState = CCSharedQuadState::create(0, WebTransformationMatrix(), IntRect(), IntRect(), 1.0, true);
 
     const char* currentChar = testScript;
 

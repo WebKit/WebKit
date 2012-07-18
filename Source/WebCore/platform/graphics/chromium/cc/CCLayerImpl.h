@@ -87,7 +87,7 @@ public:
     CCLayerTreeHostImpl* layerTreeHostImpl() const { return m_layerTreeHostImpl; }
     void setLayerTreeHostImpl(CCLayerTreeHostImpl* hostImpl) { m_layerTreeHostImpl = hostImpl; }
 
-    PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
+    PassOwnPtr<CCSharedQuadState> createSharedQuadState(int id) const;
     // willDraw must be called before appendQuads. If willDraw is called,
     // didDraw is guaranteed to be called before another willDraw or before
     // the layer is destroyed. To enforce this, any class that overrides

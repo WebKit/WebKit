@@ -112,7 +112,7 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
     renderSurface->setScissorRect(clipRect);
     renderSurface->setDrawOpacity(1);
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = renderSurface->createSharedQuadState();
+    OwnPtr<CCSharedQuadState> sharedQuadState = renderSurface->createSharedQuadState(0);
 
     EXPECT_EQ(30, sharedQuadState->quadTransform.m41());
     EXPECT_EQ(40, sharedQuadState->quadTransform.m42());

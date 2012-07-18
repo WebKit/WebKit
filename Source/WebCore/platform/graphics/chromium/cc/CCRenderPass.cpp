@@ -56,7 +56,7 @@ void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImp
 {
     CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker, layer->hasDebugBorders());
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
+    OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState(m_sharedQuadStateList.size());
     layer->appendDebugBorderQuad(quadCuller, sharedQuadState.get());
     layer->appendQuads(quadCuller, sharedQuadState.get(), hadMissingTiles);
     m_sharedQuadStateList.append(sharedQuadState.release());
@@ -70,7 +70,7 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, const CC
 
     CCRenderSurface* surface = layer->renderSurface();
 
-    OwnPtr<CCSharedQuadState> sharedQuadState = surface->createSharedQuadState();
+    OwnPtr<CCSharedQuadState> sharedQuadState = surface->createSharedQuadState(m_sharedQuadStateList.size());
     bool isReplica = false;
     surface->appendQuads(quadCuller, sharedQuadState.get(), isReplica, contributingRenderPass->id());
     m_sharedQuadStateList.append(sharedQuadState.release());
@@ -79,7 +79,7 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer, const CC
         return;
 
     // Add replica after the surface so that it appears below the surface.
-    OwnPtr<CCSharedQuadState> replicaSharedQuadState = surface->createReplicaSharedQuadState();
+    OwnPtr<CCSharedQuadState> replicaSharedQuadState = surface->createReplicaSharedQuadState(m_sharedQuadStateList.size());
     isReplica = true;
     surface->appendQuads(quadCuller, replicaSharedQuadState.get(), isReplica, contributingRenderPass->id());
     m_sharedQuadStateList.append(replicaSharedQuadState.release());
@@ -96,7 +96,7 @@ void CCRenderPass::appendQuadsToFillScreen(CCLayerImpl* rootLayer, SkColor scree
 
     // Manually create the quad state for the gutter quads, as the root layer
     // doesn't have any bounds and so can't generate this itself.
-    OwnPtr<CCSharedQuadState> sharedQuadState = rootLayer->createSharedQuadState();
+    OwnPtr<CCSharedQuadState> sharedQuadState = rootLayer->createSharedQuadState(m_sharedQuadStateList.size());
     WebTransformationMatrix transformToLayerSpace = rootLayer->screenSpaceTransform().inverse();
     Vector<IntRect> fillRects = fillRegion.rects();
     for (size_t i = 0; i < fillRects.size(); ++i) {
