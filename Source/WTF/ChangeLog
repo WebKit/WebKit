@@ -1,3 +1,17 @@
+2012-07-18  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Implement currentTime() and monotonicallyIncreasingTime() for OS(QNX)
+        https://bugs.webkit.org/show_bug.cgi?id=91659
+
+        Reviewed by Rob Buis.
+
+        Implement currentTime() and monotonicallyIncreasingTime() for OS(QNX) with clock_gettime().
+
+        * wtf/CurrentTime.cpp:
+        (WTF):
+        (WTF::currentTime):
+        (WTF::monotonicallyIncreasingTime):
+
 2012-07-18  Tom Sepez  <tsepez@chromium.org>
 
         OOB read of stack buffer below DoubleToStringConverter::CreateExponentialRepresentation() in debug builds

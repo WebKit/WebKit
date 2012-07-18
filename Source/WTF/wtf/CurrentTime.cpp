@@ -252,6 +252,16 @@ double currentTime()
     return ecore_time_unix_get();
 }
 
+#elif OS(QNX)
+
+double currentTime()
+{
+    struct timespec time;
+    if (clock_gettime(CLOCK_REALTIME, &time))
+        CRASH();
+    return time.tv_sec + time.tv_nsec / 1.0e9;
+}
+
 #else
 
 double currentTime()
@@ -297,6 +307,16 @@ double monotonicallyIncreasingTime()
     ASSERT(QElapsedTimer::isMonotonic());
     static QElapsedTimer timer;
     return timer.nsecsElapsed() / 1.0e9;
+}
+
+#elif OS(QNX)
+
+double monotonicallyIncreasingTime()
+{
+    struct timespec time;
+    if (clock_gettime(CLOCK_MONOTONIC, &time))
+        CRASH();
+    return time.tv_sec + time.tv_nsec / 1.0e9;
 }
 
 #else
