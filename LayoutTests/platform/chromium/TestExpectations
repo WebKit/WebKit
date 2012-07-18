@@ -1529,7 +1529,7 @@ BUGCR23473 MAC : fast/repaint/containing-block-position-change.html = IMAGE
 BUGCR23473 MAC : fast/repaint/content-into-overflow.html = IMAGE
 BUGCR23473 LION SNOWLEOPARD : fast/repaint/control-clip.html = IMAGE
 BUGCR23473 MAC : fast/repaint/create-layer-repaint.html = IMAGE
-BUGCR23473 LION SNOWLEOPARD : fast/repaint/delete-into-nested-block.html = IMAGE
+BUGCR23473 LION : fast/repaint/delete-into-nested-block.html = IMAGE
 BUGCR23473 MAC : fast/repaint/dynamic-table-vertical-alignment-change.html = IMAGE
 BUGCR23473 MAC : fast/repaint/erase-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/fixed-child-move-after-scroll.html = IMAGE
@@ -3531,7 +3531,7 @@ BUGWK87364 DEBUG : fast/dom/shadow/drop-event-in-shadow.html = TEXT PASS
 BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html = PASS
 
 // A few pixels off from the baseline, added by r118567.
-BUGWK87653 : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
+BUGWK87653 WIN LINUX : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
 // Needs Rebaseline.
 BUGWK88705 : fast/css/text-overflow-ellipsis-text-align-center.html = MISSING
@@ -3597,7 +3597,7 @@ BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = PASS TEXT
 BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT PASS
 
 // Needs Rebaseline after bug 86942
-BUGWK86942 : fast/backgrounds/size/zero.html = IMAGE+TEXT
+BUGWK86942 WIN LINUX : fast/backgrounds/size/zero.html = IMAGE+TEXT
 
 // Timing out on some Windows bots
 BUGWK89510 WIN : gamepad/gamepad-polling-access.html = PASS TIMEOUT

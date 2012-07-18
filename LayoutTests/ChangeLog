@@ -1,6 +1,12 @@
 2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium gardening, unskipped tests.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium gardening, unskipped tests.
         https://bugs.webkit.org/show_bug.cgi?id=84764
         https://bugs.webkit.org/show_bug.cgi?id=84767
         https://bugs.webkit.org/show_bug.cgi?id=84768
