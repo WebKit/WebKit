@@ -122,10 +122,6 @@ void WorkerContextExecutionProxy::initIsolate()
     v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
     v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
 
-    // FIXME: Remove the following 2 lines when V8 default has changed.
-    const char es52GlobalsFlag[] = "--es52_globals";
-    v8::V8::SetFlagsFromString(es52GlobalsFlag, sizeof(es52GlobalsFlag));
-
     v8::ResourceConstraints resource_constraints;
     uint32_t here;
     resource_constraints.set_stack_limit(&here - kWorkerMaxStackSize / sizeof(uint32_t*));
