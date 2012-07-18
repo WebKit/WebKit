@@ -630,7 +630,7 @@ TEST(IDBLevelDBCodingTest, ComparisonTest)
     keys.append(DatabaseNameKey::encode("", ""));
     keys.append(DatabaseNameKey::encode("", "a"));
     keys.append(DatabaseNameKey::encode("a", "a"));
-    keys.append(DatabaseMetaDataKey::encode(1, DatabaseMetaDataKey::kOriginName));
+    keys.append(DatabaseMetaDataKey::encode(1, DatabaseMetaDataKey::OriginName));
     keys.append(ObjectStoreMetaDataKey::encode(1, 1, 0));
     keys.append(ObjectStoreMetaDataKey::encode(1, 1, 1));
     keys.append(ObjectStoreMetaDataKey::encodeMaxKey(1, 1));
@@ -645,9 +645,9 @@ TEST(IDBLevelDBCodingTest, ComparisonTest)
     keys.append(IndexMetaDataKey::encodeMaxKey(1, 2));
     keys.append(ObjectStoreFreeListKey::encode(1, 1));
     keys.append(ObjectStoreFreeListKey::encodeMaxKey(1));
-    keys.append(IndexFreeListKey::encode(1, 1, kMinimumIndexId));
+    keys.append(IndexFreeListKey::encode(1, 1, MinimumIndexId));
     keys.append(IndexFreeListKey::encodeMaxKey(1, 1));
-    keys.append(IndexFreeListKey::encode(1, 2, kMinimumIndexId));
+    keys.append(IndexFreeListKey::encode(1, 2, MinimumIndexId));
     keys.append(IndexFreeListKey::encodeMaxKey(1, 2));
     keys.append(ObjectStoreNamesKey::encode(1, ""));
     keys.append(ObjectStoreNamesKey::encode(1, "a"));

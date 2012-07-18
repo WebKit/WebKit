@@ -44,8 +44,8 @@ namespace WebCore {
 
 static String computeFileIdentifier(SecurityOrigin* securityOrigin)
 {
-    static const char kLevelDBFileSuffix[] = "@1";
-    return securityOrigin->databaseIdentifier() + kLevelDBFileSuffix;
+    static const char levelDBFileSuffix[] = "@1";
+    return securityOrigin->databaseIdentifier() + levelDBFileSuffix;
 }
 
 static String computeUniqueIdentifier(const String& name, SecurityOrigin* securityOrigin)

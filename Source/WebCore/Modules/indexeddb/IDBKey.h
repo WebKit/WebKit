@@ -148,10 +148,10 @@ public:
     using ThreadSafeRefCounted<IDBKey>::deref;
 
 private:
-    IDBKey() : m_type(InvalidType), m_number(0), m_sizeEstimate(kOverheadSize) { }
-    IDBKey(Type type, double number) : m_type(type), m_number(number), m_sizeEstimate(kOverheadSize + sizeof(double)) { }
-    explicit IDBKey(const String& value) : m_type(StringType), m_string(value), m_number(0), m_sizeEstimate(kOverheadSize + value.length() * sizeof(UChar)) { }
-    IDBKey(const KeyArray& keyArray, size_t arraySize) : m_type(ArrayType), m_array(keyArray), m_number(0), m_sizeEstimate(kOverheadSize + arraySize) { }
+    IDBKey() : m_type(InvalidType), m_number(0), m_sizeEstimate(OverheadSize) { }
+    IDBKey(Type type, double number) : m_type(type), m_number(number), m_sizeEstimate(OverheadSize + sizeof(double)) { }
+    explicit IDBKey(const String& value) : m_type(StringType), m_string(value), m_number(0), m_sizeEstimate(OverheadSize + value.length() * sizeof(UChar)) { }
+    IDBKey(const KeyArray& keyArray, size_t arraySize) : m_type(ArrayType), m_array(keyArray), m_number(0), m_sizeEstimate(OverheadSize + arraySize) { }
 
     const Type m_type;
     const KeyArray m_array;
@@ -161,7 +161,7 @@ private:
     const size_t m_sizeEstimate;
 
     // Very rough estimate of minimum key size overhead.
-    enum { kOverheadSize = 16 };
+    enum { OverheadSize = 16 };
 };
 
 }

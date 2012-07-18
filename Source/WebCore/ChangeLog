@@ -1,3 +1,86 @@
+2012-07-18  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Fix some coding style violations
+        https://bugs.webkit.org/show_bug.cgi?id=91565
+
+        Reviewed by Tony Chang.
+
+        In declarations, put the * next to the type not the identifier.
+        Remove k as a prefix for various constants.
+
+        No new tests - no functional changes.
+
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::prefetchContinueInternal):
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        (WebCore::computeFileIdentifier):
+        * Modules/indexeddb/IDBKey.h:
+        (WebCore::IDBKey::IDBKey):
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::getDatabaseNames):
+        (WebCore::IDBLevelDBBackingStore::getIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::createIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::deleteDatabase):
+        (WebCore::IDBLevelDBBackingStore::getObjectStores):
+        (WebCore::getNewObjectStoreId):
+        (WebCore::IDBLevelDBBackingStore::createObjectStore):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStore):
+        (WebCore::getNewVersionNumber):
+        (WebCore::IDBLevelDBBackingStore::nextAutoIncrementNumber):
+        (WebCore::IDBLevelDBBackingStore::forEachObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::getIndexes):
+        (WebCore::getNewIndexId):
+        (WebCore::IDBLevelDBBackingStore::createIndex):
+        (WebCore::IDBLevelDBBackingStore::putIndexDataForRecord):
+        (WebCore):
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (IDBLevelDBCoding):
+        (WebCore::IDBLevelDBCoding::maxIDBKey):
+        (WebCore::IDBLevelDBCoding::minIDBKey):
+        (WebCore::IDBLevelDBCoding::decodeVarInt):
+        (WebCore::IDBLevelDBCoding::encodeIDBKey):
+        (WebCore::IDBLevelDBCoding::decodeIDBKey):
+        (WebCore::IDBLevelDBCoding::extractEncodedIDBKey):
+        (WebCore::IDBLevelDBCoding::keyTypeByteToKeyType):
+        (WebCore::IDBLevelDBCoding::compareEncodedIDBKeys):
+        (WebCore::IDBLevelDBCoding::encodeIDBKeyPath):
+        (WebCore::IDBLevelDBCoding::decodeIDBKeyPath):
+        (WebCore::IDBLevelDBCoding::compare):
+        (WebCore::IDBLevelDBCoding::KeyPrefix::KeyPrefix):
+        (WebCore::IDBLevelDBCoding::KeyPrefix::encode):
+        (WebCore::IDBLevelDBCoding::KeyPrefix::compare):
+        (WebCore::IDBLevelDBCoding::KeyPrefix::type):
+        (WebCore::IDBLevelDBCoding::SchemaVersionKey::encode):
+        (WebCore::IDBLevelDBCoding::MaxDatabaseIdKey::encode):
+        (WebCore::IDBLevelDBCoding::DatabaseFreeListKey::decode):
+        (WebCore::IDBLevelDBCoding::DatabaseFreeListKey::encode):
+        (WebCore::IDBLevelDBCoding::DatabaseNameKey::decode):
+        (WebCore::IDBLevelDBCoding::DatabaseNameKey::encode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::encode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::encodeMaxKey):
+        (WebCore::IDBLevelDBCoding::IndexMetaDataKey::decode):
+        (WebCore::IDBLevelDBCoding::IndexMetaDataKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexMetaDataKey::encodeMaxKey):
+        (WebCore::IDBLevelDBCoding::ObjectStoreFreeListKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreFreeListKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexFreeListKey::decode):
+        (WebCore::IDBLevelDBCoding::IndexFreeListKey::encode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreNamesKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreNamesKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexNamesKey::decode):
+        (WebCore::IDBLevelDBCoding::IndexNamesKey::encode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreDataKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreDataKey::encode):
+        (WebCore::IDBLevelDBCoding::ExistsEntryKey::decode):
+        (WebCore::IDBLevelDBCoding::ExistsEntryKey::encode):
+        (WebCore::IDBLevelDBCoding::IndexDataKey::decode):
+        * Modules/indexeddb/IDBLevelDBCoding.h:
+        (IDBLevelDBCoding):
+        (ObjectStoreDataKey):
+        (ExistsEntryKey):
+
 2012-07-18  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Call SQLiteFileSystem-related functions directly

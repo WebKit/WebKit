@@ -189,7 +189,7 @@ void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, Pas
     if (cursor->m_cursor)
         cursor->m_savedCursor = cursor->m_cursor->clone();
 
-    const size_t kMaxSizeEstimate = 10 * 1024 * 1024;
+    const size_t maxSizeEstimate = 10 * 1024 * 1024;
     size_t sizeEstimate = 0;
 
     for (int i = 0; i < numberToFetch; ++i) {
@@ -211,7 +211,7 @@ void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, Pas
         if (cursor->m_cursorType != IDBCursorBackendInterface::IndexKeyCursor)
             sizeEstimate += cursor->m_cursor->value().length() * sizeof(UChar);
 
-        if (sizeEstimate > kMaxSizeEstimate)
+        if (sizeEstimate > maxSizeEstimate)
             break;
     }
 

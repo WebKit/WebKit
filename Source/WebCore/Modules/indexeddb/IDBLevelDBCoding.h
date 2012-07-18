@@ -41,7 +41,7 @@ class LevelDBSlice;
 
 namespace IDBLevelDBCoding {
 
-const unsigned char kMinimumIndexId = 30;
+const unsigned char MinimumIndexId = 30;
 
 Vector<char> encodeByte(unsigned char);
 Vector<char> maxIDBKey();
@@ -51,7 +51,7 @@ bool decodeBool(const char* begin, const char* end);
 Vector<char> encodeInt(int64_t);
 int64_t decodeInt(const char* begin, const char* end);
 Vector<char> encodeVarInt(int64_t);
-const char* decodeVarInt(const char *p, const char* limit, int64_t& foundInt);
+const char* decodeVarInt(const char* p, const char* limit, int64_t& foundInt);
 Vector<char> encodeString(const String&);
 String decodeString(const char* p, const char* end);
 Vector<char> encodeStringWithLength(const String&);
@@ -79,12 +79,12 @@ public:
     int compare(const KeyPrefix& other) const;
 
     enum Type {
-        kGlobalMetaData,
-        kDatabaseMetaData,
-        kObjectStoreData,
-        kExistsEntry,
-        kIndexData,
-        kInvalidType
+        GlobalMetaData,
+        DatabaseMetaData,
+        ObjectStoreData,
+        ExistsEntry,
+        IndexData,
+        InvalidType
     };
 
     Type type() const;
@@ -93,7 +93,7 @@ public:
     int64_t m_objectStoreId;
     int64_t m_indexId;
 
-    static const int64_t kInvalidId = -1;
+    static const int64_t InvalidId = -1;
 };
 
 class SchemaVersionKey {
@@ -137,10 +137,10 @@ private:
 class DatabaseMetaDataKey {
 public:
     enum MetaDataType {
-        kOriginName = 0,
-        kDatabaseName = 1,
-        kUserVersion = 2,
-        kMaxObjectStoreId = 3
+        OriginName = 0,
+        DatabaseName = 1,
+        UserVersion = 2,
+        MaxObjectStoreId = 3
     };
 
     static Vector<char> encode(int64_t databaseId, MetaDataType);
@@ -149,14 +149,14 @@ public:
 class ObjectStoreMetaDataKey {
 public:
     enum MetaDataType {
-        kName = 0,
-        kKeyPath = 1,
-        kAutoIncrement = 2,
-        kEvictable = 3,
-        kLastVersion = 4,
-        kMaxIndexId = 5,
-        kHasKeyPath = 6,
-        kKeyGeneratorCurrentNumber = 7
+        Name = 0,
+        KeyPath = 1,
+        AutoIncrement = 2,
+        Evictable = 3,
+        LastVersion = 4,
+        MaxIndexId = 5,
+        HasKeyPath = 6,
+        KeyGeneratorCurrentNumber = 7
     };
 
     ObjectStoreMetaDataKey();
@@ -176,10 +176,10 @@ private:
 class IndexMetaDataKey {
 public:
     enum MetaDataType {
-        kName = 0,
-        kUnique = 1,
-        kKeyPath = 2,
-        kMultiEntry = 3
+        Name = 0,
+        Unique = 1,
+        KeyPath = 2,
+        MultiEntry = 3
     };
 
     IndexMetaDataKey();
@@ -261,7 +261,7 @@ public:
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, const IDBKey& userKey);
     int compare(const ObjectStoreDataKey& other);
     PassRefPtr<IDBKey> userKey() const;
-    static const int64_t kSpecialIndexNumber;
+    static const int64_t SpecialIndexNumber;
 
 private:
     Vector<char> m_encodedUserKey;
@@ -275,7 +275,7 @@ public:
     int compare(const ExistsEntryKey& other);
     PassRefPtr<IDBKey> userKey() const;
 
-    static const int64_t kSpecialIndexNumber;
+    static const int64_t SpecialIndexNumber;
 
 private:
     Vector<char> m_encodedUserKey;

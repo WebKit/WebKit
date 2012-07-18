@@ -223,8 +223,8 @@ void IDBLevelDBBackingStore::getDatabaseNames(Vector<String>& foundNames)
 
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
-        const char *p = it->key().begin();
-        const char *limit = it->key().end();
+        const char* p = it->key().begin();
+        const char* limit = it->key().end();
 
         DatabaseNameKey databaseNameKey;
         p = DatabaseNameKey::decode(p, limit, &databaseNameKey);
@@ -242,7 +242,7 @@ bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& 
     if (!ok)
         return false;
 
-    ok = getString(m_db.get(), DatabaseMetaDataKey::encode(foundId, DatabaseMetaDataKey::kUserVersion), foundVersion);
+    ok = getString(m_db.get(), DatabaseMetaDataKey::encode(foundId, DatabaseMetaDataKey::UserVersion), foundVersion);
     if (!ok)
         return false;
 
@@ -273,7 +273,7 @@ bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
     if (!putInt(m_db.get(), key, rowId))
         return false;
-    if (!putString(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::kUserVersion), version))
+    if (!putString(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version))
         return false;
     return true;
 }
@@ -281,7 +281,7 @@ bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const
 bool IDBLevelDBBackingStore::updateIDBDatabaseMetaData(int64_t rowId, const String& version)
 {
     ASSERT(m_currentTransaction);
-    if (!putString(m_currentTransaction.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::kUserVersion), version))
+    if (!putString(m_currentTransaction.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version))
         return false;
 
     return true;
@@ -310,8 +310,8 @@ bool IDBLevelDBBackingStore::deleteDatabase(const String& name)
         return true;
     }
 
-    const Vector<char> startKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::kOriginName);
-    const Vector<char> stopKey = DatabaseMetaDataKey::encode(databaseId + 1, DatabaseMetaDataKey::kOriginName);
+    const Vector<char> startKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::OriginName);
+    const Vector<char> stopKey = DatabaseMetaDataKey::encode(databaseId + 1, DatabaseMetaDataKey::OriginName);
     if (!deleteRange(transaction.get(), startKey, stopKey)) {
         transaction->rollback();
         return false;
@@ -351,13 +351,13 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     it->seek(startKey);
     while (it->isValid() && compareKeys(it->key(), stopKey) < 0) {
-        const char *p = it->key().begin();
-        const char *limit = it->key().end();
+        const char* p = it->key().begin();
+        const char* limit = it->key().end();
 
         ObjectStoreMetaDataKey metaDataKey;
         p = ObjectStoreMetaDataKey::decode(p, limit, &metaDataKey);
         ASSERT(p);
-        if (metaDataKey.metaDataType() != ObjectStoreMetaDataKey::kName) {
+        if (metaDataKey.metaDataType() != ObjectStoreMetaDataKey::Name) {
             LOG_ERROR("Internal Indexed DB error.");
             // Possible stale metadata, but don't fail the load.
             it->next();
@@ -370,39 +370,39 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
         String objectStoreName = decodeString(it->value().begin(), it->value().end());
 
         it->next();
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kKeyPath)) {
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::KeyPath)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
         IDBKeyPath keyPath = decodeIDBKeyPath(it->value().begin(), it->value().end());
 
         it->next();
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kAutoIncrement)) {
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::AutoIncrement)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
         bool autoIncrement = decodeBool(it->value().begin(), it->value().end());
 
         it->next(); // Is evicatble.
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kEvictable)) {
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::Evictable)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
 
         it->next(); // Last version.
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kLastVersion)) {
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::LastVersion)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
 
         it->next(); // Maximum index id allocated.
-        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kMaxIndexId)) {
+        if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::MaxIndexId)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
 
         it->next(); // [optional] has key path (is not null)
-        if (checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kHasKeyPath)) {
+        if (checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::HasKeyPath)) {
             bool hasKeyPath = decodeBool(it->value().begin(), it->value().end());
             // This check accounts for two layers of legacy coding:
             // (1) Initially, hasKeyPath was added to distinguish null vs. string.
@@ -418,7 +418,7 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
         }
 
         int64_t keyGeneratorCurrentNumber = -1;
-        if (checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kKeyGeneratorCurrentNumber)) {
+        if (checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber)) {
             keyGeneratorCurrentNumber = decodeInt(it->value().begin(), it->value().end());
             // FIXME: Return keyGeneratorCurrentNumber, cache in object store, and write lazily to backing store.
             // For now, just assert that if it was written it was valid.
@@ -436,7 +436,7 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
 static int64_t getNewObjectStoreId(LevelDBTransaction* transaction, int64_t databaseId)
 {
     int64_t maxObjectStoreId = -1;
-    const Vector<char> maxObjectStoreIdKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::kMaxObjectStoreId);
+    const Vector<char> maxObjectStoreIdKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::MaxObjectStoreId);
     if (!getInt(transaction, maxObjectStoreIdKey, maxObjectStoreId))
         maxObjectStoreId = 0;
 
@@ -456,14 +456,14 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
     if (objectStoreId < 0)
         return false;
 
-    const Vector<char> nameKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kName);
-    const Vector<char> keyPathKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kKeyPath);
-    const Vector<char> autoIncrementKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kAutoIncrement);
-    const Vector<char> evictableKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kEvictable);
-    const Vector<char> lastVersionKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kLastVersion);
-    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kMaxIndexId);
-    const Vector<char> hasKeyPathKey  = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kHasKeyPath);
-    const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kKeyGeneratorCurrentNumber);
+    const Vector<char> nameKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::Name);
+    const Vector<char> keyPathKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyPath);
+    const Vector<char> autoIncrementKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::AutoIncrement);
+    const Vector<char> evictableKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::Evictable);
+    const Vector<char> lastVersionKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::LastVersion);
+    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::MaxIndexId);
+    const Vector<char> hasKeyPathKey  = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::HasKeyPath);
+    const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber);
     const Vector<char> namesKey = ObjectStoreNamesKey::encode(databaseId, name);
 
     bool ok = putString(m_currentTransaction.get(), nameKey, name);
@@ -496,7 +496,7 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
         return false;
     }
 
-    ok = putInt(m_currentTransaction.get(), maxIndexIdKey, kMinimumIndexId);
+    ok = putInt(m_currentTransaction.get(), maxIndexIdKey, MinimumIndexId);
     if (!ok) {
         LOG_ERROR("Internal Indexed DB error.");
         return false;
@@ -530,7 +530,7 @@ void IDBLevelDBBackingStore::deleteObjectStore(int64_t databaseId, int64_t objec
     ASSERT(m_currentTransaction);
 
     String objectStoreName;
-    getString(m_currentTransaction.get(), ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kName), objectStoreName);
+    getString(m_currentTransaction.get(), ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::Name), objectStoreName);
 
     if (!deleteRange(m_currentTransaction.get(), ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0), ObjectStoreMetaDataKey::encodeMaxKey(databaseId, objectStoreId)))
         return; // FIXME: Report error.
@@ -586,7 +586,7 @@ private:
 
 static int64_t getNewVersionNumber(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
 {
-    const Vector<char> lastVersionKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kLastVersion);
+    const Vector<char> lastVersionKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::LastVersion);
 
     int64_t lastVersion = -1;
     if (!getInt(transaction, lastVersionKey, lastVersion))
@@ -658,7 +658,7 @@ int64_t IDBLevelDBBackingStore::getKeyGeneratorCurrentNumber(int64_t databaseId,
 {
     ASSERT(m_currentTransaction);
 
-    const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kKeyGeneratorCurrentNumber);
+    const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber);
 
     int64_t keyGeneratorCurrentNumber = -1;
     Vector<char> data;
@@ -706,7 +706,7 @@ bool IDBLevelDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber(int64_t databa
             return true;
     }
 
-    const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kKeyGeneratorCurrentNumber);
+    const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber);
     bool ok = putInt(m_currentTransaction.get(), keyGeneratorCurrentNumberKey, newNumber);
     if (!ok) {
         LOG_ERROR("Internal Indexed DB error.");
@@ -742,8 +742,8 @@ bool IDBLevelDBBackingStore::forEachObjectStoreRecord(int64_t databaseId, int64_
 
     OwnPtr<LevelDBIterator> it = m_currentTransaction->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
-        const char *p = it->key().begin();
-        const char *limit = it->key().end();
+        const char* p = it->key().begin();
+        const char* limit = it->key().end();
         ObjectStoreDataKey dataKey;
         p = ObjectStoreDataKey::decode(p, limit, &dataKey);
         ASSERT(p);
@@ -801,7 +801,7 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
         IndexMetaDataKey metaDataKey;
         p = IndexMetaDataKey::decode(p, limit, &metaDataKey);
         ASSERT(p);
-        if (metaDataKey.metaDataType() != IndexMetaDataKey::kName) {
+        if (metaDataKey.metaDataType() != IndexMetaDataKey::Name) {
             LOG_ERROR("Internal Indexed DB error.");
             // Possible stale metadata due to http://webkit.org/b/85557 but don't fail the load.
             it->next();
@@ -813,14 +813,14 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
         String indexName = decodeString(it->value().begin(), it->value().end());
 
         it->next(); // unique flag
-        if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::kUnique)) {
+        if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::Unique)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
         bool indexUnique = decodeBool(it->value().begin(), it->value().end());
 
         it->next(); // keyPath
-        if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::kKeyPath)) {
+        if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::KeyPath)) {
             LOG_ERROR("Internal Indexed DB error.");
             return;
         }
@@ -828,7 +828,7 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
 
         it->next(); // [optional] multiEntry flag
         bool indexMultiEntry = false;
-        if (checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::kMultiEntry)) {
+        if (checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::MultiEntry)) {
             indexMultiEntry = decodeBool(it->value().begin(), it->value().end());
             it->next();
         }
@@ -844,9 +844,9 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
 static int64_t getNewIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
 {
     int64_t maxIndexId = -1;
-    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kMaxIndexId);
+    const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::MaxIndexId);
     if (!getInt(transaction, maxIndexIdKey, maxIndexId))
-        maxIndexId = kMinimumIndexId;
+        maxIndexId = MinimumIndexId;
 
     ASSERT(maxIndexId >= 0);
 
@@ -864,10 +864,10 @@ bool IDBLevelDBBackingStore::createIndex(int64_t databaseId, int64_t objectStore
     if (indexId < 0)
         return false;
 
-    const Vector<char> nameKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::kName);
-    const Vector<char> uniqueKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::kUnique);
-    const Vector<char> keyPathKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::kKeyPath);
-    const Vector<char> multiEntryKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::kMultiEntry);
+    const Vector<char> nameKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::Name);
+    const Vector<char> uniqueKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::Unique);
+    const Vector<char> keyPathKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::KeyPath);
+    const Vector<char> multiEntryKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::MultiEntry);
 
     bool ok = putString(m_currentTransaction.get(), nameKey, name);
     if (!ok) {
@@ -920,7 +920,7 @@ void IDBLevelDBBackingStore::deleteIndex(int64_t databaseId, int64_t objectStore
 bool IDBLevelDBBackingStore::putIndexDataForRecord(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, const ObjectStoreRecordIdentifier* recordIdentifier)
 {
     ASSERT(key.isValid());
-    ASSERT(indexId >= kMinimumIndexId);
+    ASSERT(indexId >= MinimumIndexId);
     const LevelDBRecordIdentifier* levelDBRecordIdentifier = static_cast<const LevelDBRecordIdentifier*>(recordIdentifier);
 
     ASSERT(m_currentTransaction);
@@ -1422,16 +1422,16 @@ private:
 
 bool IndexCursorImpl::loadCurrentRow()
 {
-    const char *p = m_iterator->key().begin();
-    const char *limit = m_iterator->key().end();
+    const char* p = m_iterator->key().begin();
+    const char* limit = m_iterator->key().end();
 
     IndexDataKey indexDataKey;
     p = IndexDataKey::decode(p, limit, &indexDataKey);
 
     m_currentKey = indexDataKey.userKey();
 
-    const char *q = m_iterator->value().begin();
-    const char *valueLimit = m_iterator->value().end();
+    const char* q = m_iterator->value().begin();
+    const char* valueLimit = m_iterator->value().end();
 
     int64_t indexDataVersion;
     q = decodeVarInt(q, valueLimit, indexDataVersion);
