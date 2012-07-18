@@ -3634,9 +3634,9 @@ BUGWK89820 : fast/text/hyphen-min-preferred-width.html = IMAGE
 
 BUGWK91433 LINUX : fast/forms/placeholder-position.html = PASS IMAGE
 
-BUGWK89936 WIN : compositing/shadows/shadow-drawing.html = IMAGE
-BUGWK89936 WIN : fast/text/atsui-kerning-and-ligatures.html = IMAGE
-BUGWK89936 WIN : fast/css/text-rendering.html = IMAGE+TEXT
+BUGWK89936 XP : compositing/shadows/shadow-drawing.html = IMAGE
+BUGWK89936 XP : fast/text/atsui-kerning-and-ligatures.html = IMAGE
+BUGWK89936 XP : fast/css/text-rendering.html = IMAGE+TEXT
 
 // Started timeout between r121233:r121239.
 BUGWK90003 WIN DEBUG : fast/js/repeat-cached-vm-reentry.html = TIMEOUT PASS
