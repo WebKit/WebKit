@@ -1,3 +1,17 @@
+2012-07-17  Adam Barth  <abarth@webkit.org>
+
+        DragImageChromiumMac.cpp is never compiled and can be removed
+        https://bugs.webkit.org/show_bug.cgi?id=91545
+
+        Reviewed by Tony Chang.
+
+        This file would only be compiled on chromium-mac, but it's excluded
+        from that build. This is likely left over from the CG configuration.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/DragImageChromiumMac.cpp: Removed.
+
 2012-07-17  Roger Fong  <roger_fong@apple.com>
 
         Assertion failure/crash on Windows when using a font in an SVG 

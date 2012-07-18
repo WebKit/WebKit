@@ -3360,7 +3360,6 @@
             'platform/chromium/CursorChromium.cpp',
             'platform/chromium/DragDataChromium.cpp',
             'platform/chromium/DragDataRef.h',
-            'platform/chromium/DragImageChromiumMac.cpp',
             'platform/chromium/DragImageChromiumSkia.cpp',
             'platform/chromium/DragImageRef.h',
             'platform/chromium/EventTracerChromium.cpp',

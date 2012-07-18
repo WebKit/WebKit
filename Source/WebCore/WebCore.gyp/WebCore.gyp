@@ -1703,7 +1703,6 @@
             ['exclude', 'platform/graphics/skia/FontCacheSkia\\.cpp$'],
             ['exclude', 'platform/graphics/skia/GlyphPageTreeNodeSkia\\.cpp$'],
             ['exclude', 'platform/graphics/skia/SimpleFontDataSkia\\.cpp$'],
-            ['exclude', 'platform/chromium/DragImageChromiumMac\\.cpp$'],
 
             # Mac uses Harfbuzz-ng.
             ['include', 'platform/graphics/harfbuzz/HarfBuzzShaperBase\\.(cpp|h)$'],
