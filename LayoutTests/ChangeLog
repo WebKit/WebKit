@@ -1,3 +1,22 @@
+2012-07-18  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening.
+
+        Correct a path error introduced by r122769 for the fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html
+        test in many Skipped lists.
+
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-07-18  Joshua Bell  <jsbell@chromium.org>
 
         [chromium] Unreviewed TestExpectations update for WK90469.
