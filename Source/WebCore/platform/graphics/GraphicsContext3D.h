@@ -510,7 +510,7 @@ public:
     PlatformLayer* platformLayer() const;
 #endif
 #elif PLATFORM(EFL)
-    PlatformGraphicsContext3D platformGraphicsContext3D() const;
+    PlatformGraphicsContext3D platformGraphicsContext3D();
     Platform3DObject platformTexture() const { return m_texture; }
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;

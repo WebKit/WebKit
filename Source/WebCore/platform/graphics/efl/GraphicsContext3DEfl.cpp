@@ -51,7 +51,7 @@ GraphicsContext3D::~GraphicsContext3D()
 {
 }
 
-PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const
+PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
 {
     return m_private->platformGraphicsContext3D();
 }

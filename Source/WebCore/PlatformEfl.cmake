@@ -263,24 +263,30 @@ IF (ENABLE_VIDEO)
   )
 ENDIF ()
 
-IF (ENABLE_WEBGL)
+IF (WTF_USE_3D_GRAPHICS)
+  SET(WTF_USE_OPENGL 1)
+  ADD_DEFINITIONS(-DWTF_USE_OPENGL=1)
+
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    ${OPENGL_INCLUDE_DIR}
     "${WEBCORE_DIR}/platform/graphics/cairo"
-    "${WEBCORE_DIR}/platform/graphics/glx"
     "${WEBCORE_DIR}/platform/graphics/opengl"
+    "${WEBCORE_DIR}/platform/graphics/texmap"
   )
   LIST(APPEND WebCore_LIBRARIES
     ${OPENGL_gl_LIBRARY}
   )
   LIST(APPEND WebCore_SOURCES
-    platform/graphics/cairo/DrawingBufferCairo.cpp
-    platform/graphics/cairo/GraphicsContext3DCairo.cpp
-    platform/graphics/glx/GraphicsContext3DPrivate.cpp
     platform/graphics/OpenGLShims.cpp
+    platform/graphics/cairo/DrawingBufferCairo.cpp
+    platform/graphics/cairo/GLContext.cpp
+    platform/graphics/cairo/GraphicsContext3DCairo.cpp
+    platform/graphics/cairo/GraphicsContext3DPrivate.cpp
     platform/graphics/opengl/Extensions3DOpenGL.cpp
+    platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
     platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
     platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+    platform/graphics/texmap/TextureMapperGL.cpp
+    platform/graphics/texmap/TextureMapperShaderManager.cpp
   )
 ENDIF ()
 

@@ -2310,12 +2310,74 @@ IF (ENABLE_MHTML)
 ENDIF ()
 
 IF (ENABLE_WEBGL)
-    #ANGLE
+    SET(WTF_USE_3D_GRAPHICS 1)
+    ADD_DEFINITIONS(-DWTF_USE_3D_GRAPHICS=1)
+
+    LIST(APPEND WebCore_SOURCES
+        html/canvas/OESStandardDerivatives.cpp
+        html/canvas/OESTextureFloat.cpp
+        html/canvas/OESVertexArrayObject.cpp
+        html/canvas/WebGLBuffer.cpp
+        html/canvas/WebGLCompressedTextureS3TC.cpp
+        html/canvas/WebGLContextAttributes.cpp
+        html/canvas/WebGLContextEvent.cpp
+        html/canvas/WebGLContextGroup.cpp
+        html/canvas/WebGLContextObject.cpp
+        html/canvas/WebGLDebugRendererInfo.cpp
+        html/canvas/WebGLDebugShaders.cpp
+        html/canvas/WebGLDepthTexture.cpp
+        html/canvas/WebGLFramebuffer.cpp
+        html/canvas/WebGLGetInfo.cpp
+        html/canvas/WebGLLoseContext.cpp
+        html/canvas/WebGLObject.cpp
+        html/canvas/WebGLProgram.cpp
+        html/canvas/WebGLRenderbuffer.cpp
+        html/canvas/WebGLRenderingContext.cpp
+        html/canvas/WebGLShader.cpp
+        html/canvas/WebGLShaderPrecisionFormat.cpp
+        html/canvas/WebGLSharedObject.cpp
+        html/canvas/WebGLTexture.cpp
+        html/canvas/WebGLUniformLocation.cpp
+        html/canvas/WebGLVertexArrayObjectOES.cpp
+        html/canvas/WebGLExtension.cpp
+        html/canvas/EXTTextureFilterAnisotropic.cpp
+        html/canvas/OESStandardDerivatives.cpp
+        html/canvas/OESTextureFloat.cpp
+        html/canvas/OESVertexArrayObject.cpp
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        html/canvas/EXTTextureFilterAnisotropic.idl
+        html/canvas/OESStandardDerivatives.idl
+        html/canvas/OESTextureFloat.idl
+        html/canvas/OESVertexArrayObject.idl
+        html/canvas/WebGLActiveInfo.idl
+        html/canvas/WebGLBuffer.idl
+        html/canvas/WebGLCompressedTextureS3TC.idl
+        html/canvas/WebGLContextAttributes.idl
+        html/canvas/WebGLContextEvent.idl
+        html/canvas/WebGLDebugRendererInfo.idl
+        html/canvas/WebGLDebugShaders.idl
+        html/canvas/WebGLDepthTexture.idl
+        html/canvas/WebGLFramebuffer.idl
+        html/canvas/WebGLLoseContext.idl
+        html/canvas/WebGLProgram.idl
+        html/canvas/WebGLRenderbuffer.idl
+        html/canvas/WebGLRenderingContext.idl
+        html/canvas/WebGLShader.idl
+        html/canvas/WebGLShaderPrecisionFormat.idl
+        html/canvas/WebGLTexture.idl
+        html/canvas/WebGLUniformLocation.idl
+        html/canvas/WebGLVertexArrayObjectOES.idl
+    )
+ENDIF ()
+
+IF (WTF_USE_3D_GRAPHICS)
     LIST(APPEND WebCore_INCLUDE_DIRECTORIES
         ${OPENGL_INCLUDE_DIR}
-        ${THIRDPARTY_DIR}/ANGLE/src
-       #${THIRDPARTY_DIR}/ANGLE/include #Defined as SYSTEM include in order to have less priority than actual system headers
-        ${THIRDPARTY_DIR}/ANGLE/include/GLSLANG
+        "${THIRDPARTY_DIR}/ANGLE/src"
+        "${THIRDPARTY_DIR}/ANGLE/include"
+        "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
+        "${WEBCORE_DIR}/platform/graphics/gpu"
     )
     LIST(APPEND WebCore_LIBRARIES
         ${OPENGL_gl_LIBRARY}
@@ -2413,63 +2475,9 @@ IF (ENABLE_WEBGL)
     )
 
     LIST(APPEND WebCore_SOURCES
-        html/canvas/OESStandardDerivatives.cpp
-        html/canvas/OESTextureFloat.cpp
-        html/canvas/OESVertexArrayObject.cpp
-        html/canvas/WebGLBuffer.cpp
-        html/canvas/WebGLCompressedTextureS3TC.cpp
-        html/canvas/WebGLContextAttributes.cpp
-        html/canvas/WebGLContextEvent.cpp
-        html/canvas/WebGLContextGroup.cpp
-        html/canvas/WebGLContextObject.cpp
-        html/canvas/WebGLDebugRendererInfo.cpp
-        html/canvas/WebGLDebugShaders.cpp
-        html/canvas/WebGLDepthTexture.cpp
-        html/canvas/WebGLFramebuffer.cpp
-        html/canvas/WebGLGetInfo.cpp
-        html/canvas/WebGLLoseContext.cpp
-        html/canvas/WebGLObject.cpp
-        html/canvas/WebGLProgram.cpp
-        html/canvas/WebGLRenderbuffer.cpp
-        html/canvas/WebGLRenderingContext.cpp
-        html/canvas/WebGLShader.cpp
-        html/canvas/WebGLShaderPrecisionFormat.cpp
-        html/canvas/WebGLSharedObject.cpp
-        html/canvas/WebGLTexture.cpp
-        html/canvas/WebGLUniformLocation.cpp
-        html/canvas/WebGLVertexArrayObjectOES.cpp
-        html/canvas/WebGLExtension.cpp
-        html/canvas/EXTTextureFilterAnisotropic.cpp
-        html/canvas/OESStandardDerivatives.cpp
-        html/canvas/OESTextureFloat.cpp
-        html/canvas/OESVertexArrayObject.cpp
         platform/graphics/ANGLEWebKitBridge.cpp
         platform/graphics/GraphicsContext3D.cpp
         platform/graphics/gpu/DrawingBuffer.cpp
-    )
-    LIST(APPEND WebCore_IDL_FILES
-        html/canvas/EXTTextureFilterAnisotropic.idl
-        html/canvas/OESStandardDerivatives.idl
-        html/canvas/OESTextureFloat.idl
-        html/canvas/OESVertexArrayObject.idl
-        html/canvas/WebGLActiveInfo.idl
-        html/canvas/WebGLBuffer.idl
-        html/canvas/WebGLCompressedTextureS3TC.idl
-        html/canvas/WebGLContextAttributes.idl
-        html/canvas/WebGLContextEvent.idl
-        html/canvas/WebGLDebugRendererInfo.idl
-        html/canvas/WebGLDebugShaders.idl
-        html/canvas/WebGLDepthTexture.idl
-        html/canvas/WebGLFramebuffer.idl
-        html/canvas/WebGLLoseContext.idl
-        html/canvas/WebGLProgram.idl
-        html/canvas/WebGLRenderbuffer.idl
-        html/canvas/WebGLRenderingContext.idl
-        html/canvas/WebGLShader.idl
-        html/canvas/WebGLShaderPrecisionFormat.idl
-        html/canvas/WebGLTexture.idl
-        html/canvas/WebGLUniformLocation.idl
-        html/canvas/WebGLVertexArrayObjectOES.idl
     )
 ENDIF ()
 
