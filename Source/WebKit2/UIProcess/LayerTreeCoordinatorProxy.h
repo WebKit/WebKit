@@ -79,7 +79,7 @@ protected:
     DrawingAreaProxy* m_drawingAreaProxy;
     RefPtr<WebLayerTreeRenderer> m_renderer;
 #if USE(GRAPHICS_SURFACE)
-    HashMap<uint64_t, RefPtr<ShareableSurface> > m_surfaces;
+    HashMap<uint32_t, RefPtr<ShareableSurface> > m_surfaces;
 #endif
 };
 
