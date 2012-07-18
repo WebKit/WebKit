@@ -850,7 +850,7 @@ static void emitPutTransitionStub(
             stubJit.addPtr(MacroAssembler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR1);
             stubJit.subPtr(MacroAssembler::TrustedImm32(newSize), scratchGPR1);
             // We have scratchGPR1 = new storage, scratchGPR3 = old storage, scratchGPR2 = available
-            for (size_t offset = 0; offset < oldSize; offset += sizeof(JSValue)) {
+            for (size_t offset = 0; offset < oldSize; offset += sizeof(void*)) {
                 stubJit.loadPtr(MacroAssembler::Address(scratchGPR3, offset), scratchGPR2);
                 stubJit.storePtr(scratchGPR2, MacroAssembler::Address(scratchGPR1, offset));
             }

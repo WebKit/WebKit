@@ -1,3 +1,29 @@
+2012-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG 32-bit PutById transition stub storage reallocation case copies the first pointer of each JSValue instead of the whole JSValue
+        https://bugs.webkit.org/show_bug.cgi?id=91599
+
+        Rubber stamped by Mark Hahnenberg.
+
+        It turns out we previously didn't have adequate coverage for this. Now we do.
+
+        * fast/js/dfg-put-by-id-allocate-storage-expected.txt: Added.
+        * fast/js/dfg-put-by-id-allocate-storage-polymorphic-expected.txt: Added.
+        * fast/js/dfg-put-by-id-allocate-storage-polymorphic.html: Added.
+        * fast/js/dfg-put-by-id-allocate-storage.html: Added.
+        * fast/js/dfg-put-by-id-reallocate-storage-expected.txt: Added.
+        * fast/js/dfg-put-by-id-reallocate-storage-polymorphic-expected.txt: Added.
+        * fast/js/dfg-put-by-id-reallocate-storage-polymorphic.html: Added.
+        * fast/js/dfg-put-by-id-reallocate-storage.html: Added.
+        * fast/js/script-tests/dfg-put-by-id-allocate-storage-polymorphic.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-put-by-id-allocate-storage.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-put-by-id-reallocate-storage-polymorphic.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-put-by-id-reallocate-storage.js: Added.
+        (foo):
+
 2012-07-18  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Unreviewed gardening.
