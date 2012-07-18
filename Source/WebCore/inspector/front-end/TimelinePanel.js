@@ -1048,14 +1048,15 @@ WebInspector.TimelineRecordListRow.prototype = {
 
         if (this._dataElement.firstChild)
             this._dataElement.removeChildren();
-        if (record.details) {
+        var details = record.details();
+        if (details) {
             var detailsContainer = document.createElement("span");
-            if (typeof record.details === "object") {
+            if (typeof details === "object") {
                 detailsContainer.appendChild(document.createTextNode("("));
-                detailsContainer.appendChild(record.details);
+                detailsContainer.appendChild(details);
                 detailsContainer.appendChild(document.createTextNode(")"));
             } else
-                detailsContainer.textContent = "(" + record.details + ")";
+                detailsContainer.textContent = "(" + details + ")";
             this._dataElement.appendChild(detailsContainer);
         }
     },

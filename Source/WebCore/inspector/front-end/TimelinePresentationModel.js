@@ -605,8 +605,8 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
                     contentHelper._appendTextRow(WebInspector.UIString("Interval Duration"), Number.secondsToString(this.intervalDuration, true));
                 break;
             default:
-                if (this.details)
-                    contentHelper._appendTextRow(WebInspector.UIString("Details"), this.details);
+                if (this.details())
+                    contentHelper._appendTextRow(WebInspector.UIString("Details"), this.details());
                 break;
         }
 
@@ -627,7 +627,17 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
 
     _refreshDetails: function()
     {
-        this.details = this._getRecordDetails();
+        delete this._details;
+    },
+
+    /**
+     * @return {Object?|string}
+     */
+    details: function()
+    {
+        if (!this._details)
+            this._details = this._getRecordDetails();
+        return this._details;
     },
 
     _getRecordDetails: function()
