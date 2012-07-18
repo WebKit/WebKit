@@ -1,3 +1,16 @@
+2012-07-18  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        [chromium] Ensure that the compositor code which is aware of flipped status of video-textures
+        per platform sets the flipped bit to false on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=91562
+        
+        Reviewed by Adrienne Walker.
+
+        No new tests. (HW video decode is still only being tested manually for orientation)
+
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads):
+
 2012-07-18  Emil A Eklund  <eae@chromium.org>
 
         Replace uses of RenderBox::x(), y() in rendering code with with point and size methods

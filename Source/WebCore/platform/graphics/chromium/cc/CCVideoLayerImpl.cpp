@@ -215,7 +215,7 @@ void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
 #if defined(OS_CHROMEOS) && defined(__ARMEL__)
         bool flipped = true; // Under the covers, implemented by OpenMAX IL.
 #elif OS(WINDOWS)
-        bool flipped = true; // Under the covers, implemented by DXVA.
+        bool flipped = false; // Under the covers, implemented by DXVA.
 #else
         bool flipped = false; // LibVA (cros/intel), MacOS.
 #endif
