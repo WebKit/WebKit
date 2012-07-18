@@ -422,7 +422,7 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
             keyGeneratorCurrentNumber = decodeInt(it->value().begin(), it->value().end());
             // FIXME: Return keyGeneratorCurrentNumber, cache in object store, and write lazily to backing store.
             // For now, just assert that if it was written it was valid.
-            ASSERT(keyGeneratorCurrentNumber >= KeyGeneratorInitialNumber);
+            ASSERT_UNUSED(keyGeneratorCurrentNumber, keyGeneratorCurrentNumber >= KeyGeneratorInitialNumber);
             it->next();
         }
 
