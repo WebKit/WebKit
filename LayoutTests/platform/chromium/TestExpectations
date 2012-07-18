@@ -2559,7 +2559,7 @@ BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = PA
 BUGWK59673 : http/tests/history/cross-origin-replace-history-object-child.html = TIMEOUT
 
 // Flakiness on canaries (noted ~ r85140)
-BUGKBR WIN DEBUG : fast/filesystem/file-writer-truncate-extend.html = PASS TEXT
+BUGWK91673 WIN DEBUG : fast/filesystem/file-writer-truncate-extend.html = PASS TEXT
 BUGWK70886 DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TIMEOUT
 
 BUGWK60112 : fast/css/epub-properties.html = TEXT

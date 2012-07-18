@@ -1,3 +1,9 @@
+2012-07-18  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed test expectations update. Added bug ID for fast/filesystem/file-writer-truncate-extend.html flakiness.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed gardening.
