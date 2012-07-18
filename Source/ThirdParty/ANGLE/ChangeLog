@@ -1,3 +1,13 @@
+2012-07-18  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Buildfix after r122870.
+        https://bugs.webkit.org/show_bug.cgi?id=89039
+
+        Reviewed by Csaba Osztrogonác
+
+        * src/compiler/preprocessor/new/MacroExpander.cpp:
+        (pp::MacroExpander::ungetToken):
+
 2012-07-17  Max Vujovic  <mvujovic@adobe.com>
 
         Update ANGLE in WebKit
