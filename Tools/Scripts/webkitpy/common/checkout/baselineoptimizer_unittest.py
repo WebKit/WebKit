@@ -45,12 +45,19 @@ class TestBaselineOptimizer(BaselineOptimizer):
     def _read_results_by_directory(self, baseline_name):
         return self._mock_results_by_directory
 
+    def _move_baselines(self, baseline_name, results_by_directory, new_results_by_directory):
+        self.new_results_by_directory = new_results_by_directory
+
 
 class BaselineOptimizerTest(unittest.TestCase):
     def _assertOptimization(self, results_by_directory, expected_new_results_by_directory):
         baseline_optimizer = TestBaselineOptimizer(results_by_directory)
-        _, new_results_by_directory = baseline_optimizer._find_optimal_result_placement('mock-baseline.png')
-        self.assertEqual(new_results_by_directory, expected_new_results_by_directory)
+        self.assertTrue(baseline_optimizer.optimize('mock-baseline.png'))
+        self.assertEqual(baseline_optimizer.new_results_by_directory, expected_new_results_by_directory)
+
+    def _assertOptimizationFailed(self, results_by_directory):
+        baseline_optimizer = TestBaselineOptimizer(results_by_directory)
+        self.assertFalse(baseline_optimizer.optimize('mock-baseline.png'))
 
     def test_move_baselines(self):
         host = MockHost()
@@ -135,18 +142,13 @@ class BaselineOptimizerTest(unittest.TestCase):
         })
 
     def test_common_directory_includes_root(self):
-        # Note: The resulting directories are "wrong" in the sense that
-        # enacting this plan would change semantics. However, this test case
-        # demonstrates that we don't throw an exception in this case. :)
-        self._assertOptimization({
+        # This test case checks that we don't throw an exception when we fail
+        # to optimize.
+        self._assertOptimizationFailed({
             'LayoutTests/platform/gtk': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
             'LayoutTests/platform/qt': 'bcbd457d545986b7abf1221655d722363079ac87',
             'LayoutTests/platform/chromium-win': '3764ac11e1f9fbadd87a90a2e40278319190a0d3',
             'LayoutTests/platform/mac': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
-        }, {
-            'LayoutTests/platform/qt': 'bcbd457d545986b7abf1221655d722363079ac87',
-            'LayoutTests/platform/chromium-win': '3764ac11e1f9fbadd87a90a2e40278319190a0d3',
-            'LayoutTests': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
         })
 
         self._assertOptimization({
@@ -180,4 +182,21 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/chromium-win': 'f83af9732ce74f702b8c9c4a3d9a4c6636b8d3bd',
             'LayoutTests/platform/win-xp': '5b1253ef4d5094530d5f1bc6cdb95c90b446bec7',
             'LayoutTests/platform/chromium-linux': 'f52fcdde9e4be8bd5142171cd859230bd4471036'
+        })
+
+    def test_virtual_ports_filtered(self):
+        self._assertOptimization({
+            'LayoutTests/platform/chromium-mac': '1',
+            'LayoutTests/platform/chromium-mac-snowleopard': '1',
+            'LayoutTests/platform/chromium-win': '2',
+            'LayoutTests/platform/gtk': '3',
+            'LayoutTests/platform/efl': '3',
+            'LayoutTests/platform/qt': '4',
+            'LayoutTests/platform/mac': '5',
+        }, {
+            'LayoutTests/platform/chromium-mac': '1',
+            'LayoutTests/platform/chromium-win': '2',
+            'LayoutTests': '3',
+            'LayoutTests/platform/qt': '4',
+            'LayoutTests/platform/mac': '5',
         })

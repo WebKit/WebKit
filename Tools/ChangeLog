@@ -1,3 +1,25 @@
+2012-07-17  Tony Chang  <tony@chromium.org>
+
+        Fix a bug where optimize-baselines would incorrectly fail to optimize
+        https://bugs.webkit.org/show_bug.cgi?id=91551
+
+        Reviewed by Adam Barth.
+
+        In some cases, optimize-baseline would correctly optimize the results, but because
+        we weren't filtering the virtual ports out of _results_by_port_name, we thought
+        that we had failed to optimize.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        (BaselineOptimizer._find_optimal_result_placement): No virtual filtering here.
+        (BaselineOptimizer._filtered_results_by_port_name): New function that filters out virtual directories.
+        (BaselineOptimizer.optimize): Filter out virtual ports.
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (TestBaselineOptimizer._move_baselines): Add a stub so we don't actual move results.
+        (BaselineOptimizerTest._assertOptimization): Call optimize and verify that the right files were moved.
+        (BaselineOptimizerTest._assertOptimizationFailed): Add a method for when optimization should fail.
+        (BaselineOptimizerTest.test_common_directory_includes_root): Update since this test should fail.
+        (BaselineOptimizerTest.test_virtual_ports_filtered): New test case that demonstrates the bug.
+
 2012-07-17  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Add --encode-binary command line option for DRT

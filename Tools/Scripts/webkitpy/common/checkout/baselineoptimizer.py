@@ -136,17 +136,14 @@ class BaselineOptimizer(object):
                 break  # Frowns. We do not appear to be converging.
             unsatisfied_port_names_by_result = new_unsatisfied_port_names_by_result
 
-        self._filter_virtual_ports(new_results_by_directory)
         return results_by_directory, new_results_by_directory
 
-    def _filter_virtual_ports(self, new_results_by_directory):
-        for port in _VIRTUAL_PORTS:
-            virtual_directory = _VIRTUAL_PORTS[port][0]
-            if virtual_directory in new_results_by_directory:
-                real_directory = _VIRTUAL_PORTS[port][1]
-                if real_directory not in new_results_by_directory:
-                    new_results_by_directory[real_directory] = new_results_by_directory[virtual_directory]
-                del new_results_by_directory[virtual_directory]
+    def _filtered_results_by_port_name(self, results_by_directory):
+        results_by_port_name = self._results_by_port_name(results_by_directory)
+        for port_name in _VIRTUAL_PORTS.keys():
+            if port_name in results_by_port_name:
+                del results_by_port_name[port_name]
+        return results_by_port_name
 
     def _move_baselines(self, baseline_name, results_by_directory, new_results_by_directory):
         data_for_result = {}
@@ -178,7 +175,7 @@ class BaselineOptimizer(object):
 
     def optimize(self, baseline_name):
         results_by_directory, new_results_by_directory = self._find_optimal_result_placement(baseline_name)
-        if self._results_by_port_name(results_by_directory) != self._results_by_port_name(new_results_by_directory):
+        if self._filtered_results_by_port_name(results_by_directory) != self._filtered_results_by_port_name(new_results_by_directory):
             return False
         self._move_baselines(baseline_name, results_by_directory, new_results_by_directory)
         return True
