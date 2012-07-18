@@ -1,3 +1,16 @@
+2012-07-17  Philip Rogers  <pdr@google.com>
+
+        Remove entries in TestExpectations for passing non-scaling-stroke-pattern.svg
+        https://bugs.webkit.org/show_bug.cgi?id=88230
+
+        Unreviewed update of test expecatations.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-07-17  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium lion/snowleopard rebaseline for r122883.
