@@ -324,7 +324,8 @@ void TestController::initialize(int argc, const char* argv[])
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient);
 
-    WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
+    if (testPluginDirectory())
+        WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
 
     m_mainWebView = adoptPtr(new PlatformWebView(m_context.get(), m_pageGroup.get()));
 

@@ -1,3 +1,20 @@
+2012-07-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] plugin tests should not be disabled for WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=91604
+
+        Reviewed by Simon Hausmann.
+
+        Instead of not building TestNetscapePlugIn, we could programatically
+        disable actually loading it from WTR until https://bugs.webkit.org/show_bug.cgi?id=86620
+        has been solved, so we can still test plugins on WebKit1.
+
+        * Tools.pro:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::initializeTestPluginDirectory):
+
 2012-07-18  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Implement AccessibilityUIElement in WKTR for GTK
