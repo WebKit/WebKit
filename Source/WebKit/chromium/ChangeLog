@@ -1,3 +1,16 @@
+2012-07-18  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Decimal::toString should not round integer value.
+        https://bugs.webkit.org/show_bug.cgi?id=91481
+
+        Reviewed by Kent Tamura.
+
+        This patch adds a new test cases for Decimal::toString() for failed
+        value and maximum coefficient value with various exponent.
+
+        * tests/DecimalTest.cpp:
+        (TEST_F): DecimalTest.toString: Add test cases for big coefficient values.
+
 2012-07-18  Hans Wennborg  <hans@chromium.org>
 
         Add copy constructor to WebSpeechGrammar.h

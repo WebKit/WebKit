@@ -1,3 +1,20 @@
+2012-07-18  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Decimal::toString should not round integer value.
+        https://bugs.webkit.org/show_bug.cgi?id=91481
+
+        Reviewed by Kent Tamura.
+
+        This patch makes Decimal::toString not to round an integer value
+        before converting string.
+
+        Tests: WebKit/chromium/tests/DecimalTest.cpp: DecimalTest.toString
+
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::toString): When the value is an integer, we don't
+        round coefficient to be DBL_DIG(15) digits because double can
+        represent an integer without rounding error.
+
 2012-07-18  Luke Macpherson   <macpherson@chromium.org>
 
         Fix null pointer dereference introduced by Changeset 121874.
