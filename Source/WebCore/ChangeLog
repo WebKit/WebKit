@@ -1,3 +1,55 @@
+2012-07-17  Kent Tamura  <tkent@chromium.org>
+
+        Form state: Make a new class handling HashMap<FormElementKey, Deque<>>
+        https://bugs.webkit.org/show_bug.cgi?id=91480
+
+        Reviewed by Hajime Morita.
+
+        This is a preparation of Bug 91209, "Form state restore: Need to
+        identify a from by its content."
+
+        Make a new class which is responsible to handle "HashMap<FormElementKey,
+        Deque<FormControlState>, FormElementKeyHash, FormElementKeyHashTraits>."
+        Also, move the FormElementKey class declaration and related structs from
+        FormController.h to FormController.cpp because FormElementKey is used
+        only in FormController.cpp.
+
+        No new tests. Just a refactoring.
+
+        * html/FormController.cpp:
+        (WebCore::FormElementKey): Moeved from FormController.h.
+        (WebCore::FormElementKey::FormElementKey):
+        Moved from the bottom of FormController.cpp
+        (WebCore::FormElementKey::~FormElementKey): ditto.
+        (WebCore::FormElementKey::operator=): ditto.
+        (WebCore::FormElementKey::ref): ditto.
+        (WebCore::FormElementKey::deref): ditto.
+        (WebCore::operator==): Moved from FormController.h
+        (FormElementKeyHash): ditto.
+        (WebCore::FormElementKeyHash::equal): ditto.
+        (WebCore::FormElementKeyHash::hash):
+        Moved from the bottom of FormController.cpp
+        (WebCore::FormElementKeyHashTraits::constructDeletedValue):
+        Moved from FormController.h
+        (WebCore::FormElementKeyHashTraits::isDeletedValue): ditto.
+
+        (WebCore::SavedFormState): Added.
+        (WebCore::SavedFormState::isEmpty):
+        (WebCore::SavedFormState::SavedFormState): Added. The constructor.
+        (WebCore::SavedFormState::create): Added. A factory function.
+        (WebCore::SavedFormState::appendControlState):
+        Moved some code from FormController::setStateForNewFormElements.
+        (WebCore::SavedFormState::takeControlState):
+        Moved some code from FormController::takeStateForFormElement.
+
+        (WebCore::FormController::setStateForNewFormElements):
+        - Creates SavedFormState if needed.
+        - Uses SavedFormState::appendControlState.
+        (WebCore::FormController::takeStateForFormElement):
+        Uses SavedFormState.
+        * html/FormController.h:
+        (FormController):
+
 2012-07-17  MORITA Hajime <morrita@google.com>
 
         [Shadow DOM] Some distribution invalidation can drop necessary reattachment.
