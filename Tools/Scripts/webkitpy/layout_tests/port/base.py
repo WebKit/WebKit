@@ -36,6 +36,7 @@ import errno
 import os
 import optparse
 import re
+import sys
 
 try:
     from collections import OrderedDict
@@ -184,12 +185,39 @@ class Port(object):
     def baseline_search_path(self):
         """Return a list of absolute paths to directories to search under for
         baselines. The directories are searched in order."""
-        raise NotImplementedError('Port.baseline_search_path')
+        search_paths = []
+        if self.get_option('webkit_test_runner'):
+            search_paths.append(self._wk2_port_name())
+        search_paths.append(self.name())
+        if self.name() != self.port_name:
+            search_paths.append(self.port_name)
+        return map(self._webkit_baseline_path, search_paths)
 
     def check_build(self, needs_http):
         """This routine is used to ensure that the build is up to date
         and all the needed binaries are present."""
-        raise NotImplementedError('Port.check_build')
+        # If we're using a pre-built copy of WebKit (--root), we assume it also includes a build of DRT.
+        if not self.get_option('root') and self.get_option('build') and not self._build_driver():
+            return False
+        if not self._check_driver():
+            return False
+        if self.get_option('pixel_tests'):
+            if not self.check_image_diff():
+                return False
+        if not self._check_port_build():
+            return False
+        return True
+
+    def _check_driver(self):
+        driver_path = self._path_to_driver()
+        if not self._filesystem.exists(driver_path):
+            _log.error("%s was not found at %s" % (self.driver_name(), driver_path))
+            return False
+        return True
+
+    def _check_port_build(self):
+        # Ports can override this method to do additional checks.
+        return True
 
     def check_sys_deps(self, needs_http):
         """If the port needs to do some runtime checks to ensure that the
@@ -203,7 +231,11 @@ class Port(object):
 
     def check_image_diff(self, override_step=None, logging=True):
         """This routine is used to check whether image_diff binary exists."""
-        raise NotImplementedError('Port.check_image_diff')
+        image_diff_path = self._path_to_image_diff()
+        if not self._filesystem.exists(image_diff_path):
+            _log.error("ImageDiff was not found at %s" % image_diff_path)
+            return False
+        return True
 
     def check_pretty_patch(self, logging=True):
         """Checks whether we can use the PrettyPatch ruby script."""
@@ -308,9 +340,10 @@ class Port(object):
         pass
 
     def driver_name(self):
-        # FIXME: Seems we should get this from the Port's Driver class.
         if self.get_option('driver_name'):
             return self.get_option('driver_name')
+        if self.get_option('webkit_test_runner'):
+            return 'WebKitTestRunner'
         return 'DumpRenderTree'
 
     def expected_baselines_by_extension(self, test_name):
@@ -733,7 +766,9 @@ class Port(object):
 
     def default_results_directory(self):
         """Absolute path to the default place to store the test results."""
-        raise NotImplementedError()
+        # Results are store relative to the built products to make it easy
+        # to have multiple copies of webkit checked out and built.
+        return self._build_path('layout-test-results')
 
     def setup_test_run(self):
         """Perform port-specific work at the beginning of a test run."""
@@ -777,6 +812,9 @@ class Port(object):
 
             # Windows:
             'PATH',
+
+            # Most ports (?):
+            'WEBKIT_TESTFONTS',
         ]
         for variable in variables_to_copy:
             self._copy_value_from_environ_if_set(clean_env, variable)
@@ -1038,25 +1076,63 @@ class Port(object):
     def _uses_apache(self):
         return True
 
+    # FIXME: This does not belong on the port object.
+    @memoized
     def _path_to_apache(self):
         """Returns the full path to the apache binary.
 
         This is needed only by ports that use the apache_http_server module."""
-        raise NotImplementedError('Port.path_to_apache')
+        # The Apache binary path can vary depending on OS and distribution
+        # See http://wiki.apache.org/httpd/DistrosDefaultLayout
+        for path in ["/usr/sbin/httpd", "/usr/sbin/apache2"]:
+            if self._filesystem.exists(path):
+                return path
+        _log.error("Could not find apache. Not installed or unknown path.")
+        return None
+
+    # FIXME: This belongs on some platform abstraction instead of Port.
+    def _is_redhat_based(self):
+        return self._filesystem.exists('/etc/redhat-release')
+
+    def _is_debian_based(self):
+        return self._filesystem.exists('/etc/debian_version')
+
+    # We pass sys_platform into this method to make it easy to unit test.
+    def _apache_config_file_name_for_platform(self, sys_platform):
+        if sys_platform == 'cygwin':
+            return 'cygwin-httpd.conf'  # CYGWIN is the only platform to still use Apache 1.3.
+        if sys_platform.startswith('linux'):
+            if self._is_redhat_based():
+                return 'fedora-httpd.conf'  # This is an Apache 2.x config file despite the naming.
+            if self._is_debian_based():
+                return 'apache2-debian-httpd.conf'
+        # All platforms use apache2 except for CYGWIN (and Mac OS X Tiger and prior, which we no longer support).
+        return "apache2-httpd.conf"
 
     def _path_to_apache_config_file(self):
         """Returns the full path to the apache binary.
 
         This is needed only by ports that use the apache_http_server module."""
-        raise NotImplementedError('Port.path_to_apache_config_file')
+        config_file_name = self._apache_config_file_name_for_platform(sys.platform)
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', config_file_name)
+
+    def _build_path(self, *comps):
+        # --root is used for running with a pre-built root (like from a nightly zip).
+        build_directory = self.get_option('root') or self.get_option('build_directory')
+        if not build_directory:
+            build_directory = self._config.build_directory(self.get_option('configuration'))
+            # Set --build-directory here Since this modifies the options object used by the worker subprocesses,
+            # it avoids the slow call out to build_directory in each subprocess.
+            self.set_option_default('build_directory', build_directory)
+        return self._filesystem.join(self._filesystem.abspath(build_directory), *comps)
 
     def _path_to_driver(self, configuration=None):
         """Returns the full path to the test driver (DumpRenderTree)."""
-        raise NotImplementedError('Port._path_to_driver')
+        return self._build_path(self.driver_name())
 
     def _path_to_webcore_library(self):
         """Returns the full path to a built copy of WebCore."""
-        raise NotImplementedError('Port.path_to_webcore_library')
+        return None
 
     def _path_to_helper(self):
         """Returns the full path to the layout_test_helper binary, which
@@ -1064,13 +1140,13 @@ class Port(object):
         if no helper is needed.
 
         This is likely only used by start/stop_helper()."""
-        raise NotImplementedError('Port._path_to_helper')
+        return None
 
     def _path_to_image_diff(self):
         """Returns the full path to the image_diff binary, or None if it is not available.
 
         This is likely used only by diff_image()"""
-        raise NotImplementedError('Port.path_to_image_diff')
+        return self._build_path('ImageDiff')
 
     def _path_to_lighttpd(self):
         """Returns the path to the LigHTTPd binary.
@@ -1094,7 +1170,7 @@ class Port(object):
         """Returns the full path to the wdiff binary, or None if it is not available.
 
         This is likely used only by wdiff_text()"""
-        raise NotImplementedError('Port._path_to_wdiff')
+        return 'wdiff'
 
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a

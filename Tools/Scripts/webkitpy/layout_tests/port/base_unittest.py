@@ -383,28 +383,6 @@ class PortTest(unittest.TestCase):
         _, _, logs = capture.restore_output()
         self.assertEqual('httpd seems broken. Cannot run http tests.\n', logs)
 
-    def assertVirtual(self, method, *args, **kwargs):
-        self.assertRaises(NotImplementedError, method, *args, **kwargs)
-
-    def test_virtual_methods(self):
-        port = Port(MockSystemHost())
-        self.assertVirtual(port.baseline_path)
-        self.assertVirtual(port.baseline_search_path)
-        self.assertVirtual(port.check_build, None)
-        self.assertVirtual(port.check_image_diff)
-        self.assertVirtual(port.create_driver, 0)
-        self.assertVirtual(port.diff_image, None, None)
-        self.assertVirtual(port.default_results_directory)
-        self.assertVirtual(port._path_to_apache)
-        self.assertVirtual(port._path_to_apache_config_file)
-        self.assertVirtual(port._path_to_driver)
-        self.assertVirtual(port._path_to_helper)
-        self.assertVirtual(port._path_to_image_diff)
-        self.assertVirtual(port._path_to_lighttpd)
-        self.assertVirtual(port._path_to_lighttpd_modules)
-        self.assertVirtual(port._path_to_lighttpd_php)
-        self.assertVirtual(port._path_to_wdiff)
-
     def test_test_exists(self):
         port = self.make_port(with_tests=True)
         self.assertTrue(port.test_exists('passes'))

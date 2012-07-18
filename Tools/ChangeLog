@@ -1,3 +1,52 @@
+2012-07-18  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: start merging port/webkit.py into port/base.py
+        https://bugs.webkit.org/show_bug.cgi?id=91559
+
+        Reviewed by Ojan Vafai.
+
+        Since all the non-test port implementations now derive from
+        WebKitPort, there's no real point in keeping WebKitPort distinct
+        from Port. This patch starts merging the two by moving nearly
+        all of the webkit implementations of routines with no default
+        behavior into base.py. The few that didn't move rely on
+        additional infrastructure that should be refactored differently
+        (like the image diffing, which should probably be its own
+        class) and deserve their own patches.
+
+        This patch should just be moving code around, and require no
+        additional tests; in fact, we can delete the tests that were
+        asserting virtual methods in the base class.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.baseline_search_path):
+        (Port.check_build):
+        (Port):
+        (Port._check_driver):
+        (Port._check_port_build):
+        (Port.check_image_diff):
+        (Port.driver_name):
+        (Port.default_results_directory):
+        (Port.to.setup_environ_for_server):
+        (Port._path_to_apache):
+        (Port._is_redhat_based):
+        (Port._is_debian_based):
+        (Port._apache_config_file_name_for_platform):
+        (Port._path_to_apache_config_file):
+        (Port._build_path):
+        (Port._path_to_driver):
+        (Port._path_to_webcore_library):
+        (Port._path_to_helper):
+        (Port._path_to_image_diff):
+        (Port._path_to_wdiff):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_httpd_returns_error_code):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort):
+        (WebKitPort._build_driver_flags):
+        (WebKitPort._read_image_diff):
+        (WebKitPort.skipped_layout_tests):
+
 2012-07-18  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Moving the mock create* WebRTC calls into a shadow Platform class
