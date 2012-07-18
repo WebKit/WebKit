@@ -1,3 +1,17 @@
+2012-07-18  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Build fix for ENABLE_TOUCH_EVENTS=0
+
+        Rubber-stamped by No'am Rosenthal.
+
+        Add the appropriate ENABLE(TOUCH_EVENTS) where they're needed.
+
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        * UIProcess/API/qt/raw/qrawwebview_p.h: include Platform.h so we can use the ENABLE macro.
+        * UIProcess/InspectorServer/qt/WebInspectorServerQt.cpp: Also add the missing QFile include.
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::deactivateTapHighlight):
+
 2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add Ewk class for cookie manager

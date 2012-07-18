@@ -246,12 +246,14 @@ void QtWebPageEventHandler::activateTapHighlight(const QTouchEvent::TouchPoint& 
 
 void QtWebPageEventHandler::deactivateTapHighlight()
 {
+#if ENABLE(TOUCH_EVENTS)
     if (!m_isTapHighlightActive)
         return;
 
     // An empty point deactivates the highlighting.
     m_webPageProxy->handlePotentialActivation(IntPoint(), IntSize());
     m_isTapHighlightActive = false;
+#endif
 }
 
 void QtWebPageEventHandler::handleSingleTapEvent(const QTouchEvent::TouchPoint& point)

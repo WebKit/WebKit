@@ -25,7 +25,9 @@
 #include "LayerTreeCoordinatorProxy.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
+#if ENABLE(TOUCH_EVENTS)
 #include "NativeWebTouchEvent.h"
+#endif
 #include "NativeWebWheelEvent.h"
 #include "NotImplemented.h"
 #include "WebContext.h"
@@ -378,7 +380,9 @@ void QRawWebView::sendWheelEvent(QWheelEvent* event)
     d->m_webPageProxy->handleWheelEvent(WebKit::NativeWebWheelEvent(event, QTransform()));
 }
 
+#if ENABLE(TOUCH_EVENTS)
 void QRawWebView::sendTouchEvent(QTouchEvent* event)
 {
     d->m_webPageProxy->handleTouchEvent(WebKit::NativeWebTouchEvent(event, QTransform()));
 }
+#endif

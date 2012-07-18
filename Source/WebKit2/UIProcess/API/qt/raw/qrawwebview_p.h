@@ -30,6 +30,7 @@
 #include <WebKit2/WKContext.h>
 #include <WebKit2/WKPage.h>
 #include <WebKit2/WKPageGroup.h>
+#include <wtf/Platform.h>
 
 class QRect;
 class QRectF;
@@ -92,7 +93,9 @@ public:
     void sendKeyEvent(QKeyEvent*);
     void sendMouseEvent(QMouseEvent*, int clickCount = 0);
     void sendWheelEvent(QWheelEvent*);
+#if ENABLE(TOUCH_EVENTS)
     void sendTouchEvent(QTouchEvent*);
+#endif
 
 private:
     QRawWebViewPrivate* d;
