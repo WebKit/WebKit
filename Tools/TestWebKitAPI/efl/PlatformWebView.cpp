@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +24,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H
-#ifdef BUILDING_WITH_CMAKE
-#include "cmakeconfig.h"
-#endif
-#endif
+#include "config.h"
+#include "PlatformWebView.h"
 
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
-#if USE(JSC)
-#include <runtime/JSExportMacros.h>
-#endif
+#include "WebKit2/WKAPICast.h"
+#include <Ecore_Evas.h>
 
-#if defined(__APPLE__) && __APPLE__
+extern bool useX11Window;
 
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#endif
+using namespace WebKit;
 
-#elif defined(WIN32) || defined(_WIN32)
+namespace TestWebKitAPI {
 
-#define NOMINMAX
+static Ecore_Evas* initEcoreEvas()
+{
+    ASSERT(ecore_evas_init());
 
-#endif
+    Ecore_Evas* ecoreEvas;
 
-#include <stdint.h>
+    if (useX11Window)
+        ecoreEvas = ecore_evas_new(0, 0, 0, 800, 600, 0);
+    else
+        ecoreEvas = ecore_evas_buffer_new(800, 600);
 
-#if !PLATFORM(CHROMIUM) || (PLATFORM(GTK) && defined(BUILDING_WEBKIT2__))
-#include <WebKit2/WebKit2.h>
-#endif
+    ASSERT(ecoreEvas);
 
-#ifdef __clang__
-// Work around the less strict coding standards of the gtest framework.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-#endif
+    ecore_evas_show(ecoreEvas);
 
-#ifdef __cplusplus
-#include <gtest/gtest.h>
-#endif
+    return ecoreEvas;
+}
 
-#ifdef __clang__
-// Finish working around the less strict coding standards of the gtest framework.
-#pragma clang diagnostic pop
-#endif
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+{
+    m_window = initEcoreEvas();
+    Evas* evas = ecore_evas_get(m_window);
+    m_view = toImpl(WKViewCreate(evas, contextRef, pageGroupRef));
+}
 
-#if PLATFORM(MAC) && defined(__OBJC__)
-#import <WebKit/WebKit.h>
-#endif
+PlatformWebView::~PlatformWebView()
+{
+    evas_object_del(m_view);
+    ecore_evas_free(m_window);
+    ecore_evas_shutdown();
+}
+
+WKPageRef PlatformWebView::page() const
+{
+    return WKViewGetPage(toAPI(m_view));
+}
+
+} // namespace TestWebKitAPI

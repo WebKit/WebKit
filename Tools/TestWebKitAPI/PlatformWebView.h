@@ -46,6 +46,11 @@ typedef HWND PlatformWindow;
 #elif PLATFORM(GTK)
 typedef WKViewRef PlatformWKView;
 typedef GtkWidget *PlatformWindow;
+#elif PLATFORM(EFL)
+typedef struct _Evas_Object Evas_Object;
+typedef struct _Ecore_Evas Ecore_Evas;
+typedef Evas_Object* PlatformWKView;
+typedef Ecore_Evas* PlatformWindow;
 #endif
 
 namespace TestWebKitAPI {

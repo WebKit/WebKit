@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +24,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H
-#ifdef BUILDING_WITH_CMAKE
-#include "cmakeconfig.h"
-#endif
-#endif
+#include "config.h"
+#include "TestsController.h"
+#include <Ecore.h>
+#include <Eina.h>
+#include <getopt.h>
 
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
-#if USE(JSC)
-#include <runtime/JSExportMacros.h>
-#endif
+bool useX11Window = false;
 
-#if defined(__APPLE__) && __APPLE__
+static bool checkForUseX11WindowArgument(int argc, char** argv)
+{
+    int hasUseX11Window = 0;
 
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#endif
+    static const option options[] = {
+        {"useX11Window", no_argument, &hasUseX11Window, 1},
+        {0, 0, 0, 0}
+    };
 
-#elif defined(WIN32) || defined(_WIN32)
+    while (getopt_long(argc, argv, "", options, 0) != -1) { }
 
-#define NOMINMAX
+    return hasUseX11Window;
+}
 
-#endif
+int main(int argc, char** argv)
+{
+    if (!eina_init())
+        return EXIT_FAILURE;
 
-#include <stdint.h>
+    if (!ecore_init())
+        return EXIT_FAILURE;
 
-#if !PLATFORM(CHROMIUM) || (PLATFORM(GTK) && defined(BUILDING_WEBKIT2__))
-#include <WebKit2/WebKit2.h>
-#endif
+    useX11Window = checkForUseX11WindowArgument(argc, argv);
 
-#ifdef __clang__
-// Work around the less strict coding standards of the gtest framework.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-#endif
+    int returnCode = TestWebKitAPI::TestsController::shared().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 
-#ifdef __cplusplus
-#include <gtest/gtest.h>
-#endif
+    ecore_shutdown();
+    eina_shutdown();
 
-#ifdef __clang__
-// Finish working around the less strict coding standards of the gtest framework.
-#pragma clang diagnostic pop
-#endif
-
-#if PLATFORM(MAC) && defined(__OBJC__)
-#import <WebKit/WebKit.h>
-#endif
+    return returnCode;
+}

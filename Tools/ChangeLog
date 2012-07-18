@@ -1,5 +1,43 @@
 2012-07-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
+        [CMake][EFL] Build and run TestWebKitAPI unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=90671
+
+        Reviewed by Daniel Bates.
+
+        This patch enables almost for free a significant amount of test for the
+        WebKit C API, WTF and KURL. It makes easy for CMake based ports to
+        enable TestWebKitAPI since the missing bits to implement are
+        relatively simple.
+
+        * CMakeLists.txt:
+        * TestWebKitAPI/CMakeLists.txt: Added.
+        * TestWebKitAPI/PlatformEfl.cmake: Added.
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/config.h:
+        * TestWebKitAPI/efl/InjectedBundleController.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * TestWebKitAPI/efl/PlatformUtilities.cpp: Added.
+        (TestWebKitAPI):
+        (Util):
+        (TestWebKitAPI::Util::run):
+        (TestWebKitAPI::Util::sleep):
+        (TestWebKitAPI::Util::createURLForResource):
+        (TestWebKitAPI::Util::createInjectedBundlePath):
+        (TestWebKitAPI::Util::URLForNonExistentResource):
+        * TestWebKitAPI/efl/PlatformWebView.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::initEcoreEvas):
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::page):
+        * TestWebKitAPI/efl/main.cpp: Added.
+        (checkForUseX11WindowArgument):
+        (main):
+
+2012-07-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
         [CMake][EFL] Building jsc causes reconfiguration
         https://bugs.webkit.org/show_bug.cgi?id=91387
 

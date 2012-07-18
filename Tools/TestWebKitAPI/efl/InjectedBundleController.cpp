@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H
-#ifdef BUILDING_WITH_CMAKE
-#include "cmakeconfig.h"
-#endif
-#endif
+#include "config.h"
+#include "InjectedBundleController.h"
 
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
-#if USE(JSC)
-#include <runtime/JSExportMacros.h>
-#endif
+namespace TestWebKitAPI {
 
-#if defined(__APPLE__) && __APPLE__
+void InjectedBundleController::platformInitialize()
+{
+}
 
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#endif
-
-#elif defined(WIN32) || defined(_WIN32)
-
-#define NOMINMAX
-
-#endif
-
-#include <stdint.h>
-
-#if !PLATFORM(CHROMIUM) || (PLATFORM(GTK) && defined(BUILDING_WEBKIT2__))
-#include <WebKit2/WebKit2.h>
-#endif
-
-#ifdef __clang__
-// Work around the less strict coding standards of the gtest framework.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-#endif
-
-#ifdef __cplusplus
-#include <gtest/gtest.h>
-#endif
-
-#ifdef __clang__
-// Finish working around the less strict coding standards of the gtest framework.
-#pragma clang diagnostic pop
-#endif
-
-#if PLATFORM(MAC) && defined(__OBJC__)
-#import <WebKit/WebKit.h>
-#endif
+} // namespace TestWebKitAPI
