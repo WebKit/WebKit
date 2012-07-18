@@ -2128,6 +2128,12 @@ sub jhbuildWrapperPrefixIfNeeded()
     return "";
 }
 
+sub removeCMakeCache()
+{
+    my $cacheFilePath = File::Spec->catdir(baseProductDir(), configuration(), "CMakeCache.txt");
+    unlink($cacheFilePath) if -e $cacheFilePath;
+}
+
 sub generateBuildSystemFromCMakeProject
 {
     my ($port, $prefixPath, @cmakeArgs, $additionalCMakeArgs) = @_;
@@ -2165,12 +2171,6 @@ sub generateBuildSystemFromCMakeProject
 
     if (isEfl()) {
         saveJhbuildMd5();
-    }
-
-    # Remove CMakeCache.txt to avoid using outdated build flags
-    if (isEfl()) {
-        my $cacheFilePath = File::Spec->catdir($buildPath, "CMakeCache.txt");
-        unlink($cacheFilePath) if -e $cacheFilePath;
     }
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is

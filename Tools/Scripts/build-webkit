@@ -319,6 +319,11 @@ if (isEfl()) {
     $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
     $cmakeArgs .= ($cmakeArgs ? " " : "") . "-DENABLE_WEBKIT=ON";
     $cmakeArgs .= " -DENABLE_WEBKIT2=ON" if !$noWebKit2;
+
+    # We remove CMakeCache to avoid the bots to reuse cached flags when
+    # we enable new features. This forces a reconfiguration.
+    removeCMakeCache();
+
     buildCMakeProjectOrExit($clean, "Efl", $prefixPath, $makeArgs, (cmakeBasedPortArguments(), cMakeArgsFromFeatures()), $cmakeArgs);
 }
 

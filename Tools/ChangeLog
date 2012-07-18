@@ -1,3 +1,21 @@
+2012-07-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [CMake][EFL] Building jsc causes reconfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=91387
+
+        Reviewed by Daniel Bates.
+
+        We should remove CMakeCache only when running build-webkit script,
+        otherwise it will cause a reconfiguration every time someone calls
+        generateBuildSystemFromCMakeProject(). We were re-building "jsc" and
+        not running WebKit2 unit tests on the bots because the project was
+        reconfigured with default values by the scripts that run these tests.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+        (removeCMakeCache):
+        (generateBuildSystemFromCMakeProject):
+
 2012-07-18  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL][DRT] Add support for Web Inspector in WebKit-EFL DRT
