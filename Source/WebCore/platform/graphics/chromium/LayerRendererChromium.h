@@ -81,8 +81,7 @@ public:
     virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) OVERRIDE;
     virtual bool haveCachedResourcesForRenderPassId(int id) const OVERRIDE;
 
-    virtual void beginDrawingFrame(const CCRenderPass* defaultRenderPass) OVERRIDE;
-    virtual void drawRenderPass(const CCRenderPass*, const FloatRect& framebufferDamageRect) OVERRIDE;
+    virtual void drawFrame(const CCRenderPassList&, const FloatRect& rootScissorRect) OVERRIDE;
     virtual void finishDrawingFrame() OVERRIDE;
 
     virtual void drawHeadsUpDisplay(const CCScopedTexture*, const IntSize& hudSize) OVERRIDE;
@@ -106,8 +105,6 @@ public:
     virtual TextureAllocator* implTextureAllocator() const OVERRIDE { return m_implTextureAllocator.get(); }
     virtual TextureAllocator* contentsTextureAllocator() const OVERRIDE { return m_contentsTextureAllocator.get(); }
 
-    virtual void setScissorToRect(const IntRect&) OVERRIDE;
-
     virtual bool isContextLost() OVERRIDE;
 
     virtual void setVisible(bool) OVERRIDE;
@@ -128,6 +125,9 @@ protected:
 private:
     static void toGLMatrix(float*, const WebKit::WebTransformationMatrix&);
 
+    void beginDrawingFrame(const CCRenderPass* rootRenderPass);
+    void drawRenderPass(const CCRenderPass*, const FloatRect& framebufferDamageRect);
+
     void drawQuad(const CCDrawQuad*);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
@@ -139,6 +139,8 @@ private:
     void drawIOSurfaceQuad(const CCIOSurfaceDrawQuad*);
     void drawTileQuad(const CCTileDrawQuad*);
     void drawYUVVideoQuad(const CCYUVVideoDrawQuad*);
+
+    void setScissorToRect(const IntRect&);
 
     void setDrawFramebufferRect(const IntRect&, bool flipY);
 

@@ -67,24 +67,23 @@ public:
     int viewportWidth() { return viewportSize().width(); }
     int viewportHeight() { return viewportSize().height(); }
 
-    virtual void viewportChanged() = 0;
+    virtual void viewportChanged() { }
 
     const WebKit::WebTransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
     const WebKit::WebTransformationMatrix& windowMatrix() const { return m_windowMatrix; }
 
-    virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) = 0;
-    virtual bool haveCachedResourcesForRenderPassId(int) const = 0;
+    virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) { }
+    virtual bool haveCachedResourcesForRenderPassId(int) const { return false; }
 
-    virtual void beginDrawingFrame(const CCRenderPass* defaultRenderPass) = 0;
-    virtual void drawRenderPass(const CCRenderPass*, const FloatRect& rootScissorRectInCurrentPass) = 0;
-    virtual void finishDrawingFrame() = 0;
+    virtual void drawFrame(const CCRenderPassList&, const FloatRect& rootScissorRect) = 0;
+    virtual void finishDrawingFrame() { }
 
     virtual void drawHeadsUpDisplay(const CCScopedTexture*, const IntSize& hudSize) = 0;
 
     // waits for rendering to finish
     virtual void finish() = 0;
 
-    virtual void doNoOp() = 0;
+    virtual void doNoOp() { }
     // puts backbuffer onscreen
     virtual bool swapBuffers(const IntRect& subBuffer) = 0;
 
@@ -95,9 +94,7 @@ public:
     virtual TextureAllocator* implTextureAllocator() const = 0;
     virtual TextureAllocator* contentsTextureAllocator() const = 0;
 
-    virtual void setScissorToRect(const IntRect&) = 0;
-
-    virtual bool isContextLost() = 0;
+    virtual bool isContextLost() { return false; }
 
     virtual void setVisible(bool) = 0;
 

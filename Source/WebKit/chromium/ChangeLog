@@ -1,3 +1,27 @@
+2012-07-18  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Ubercomp: clean up CCRenderer interface
+        https://bugs.webkit.org/show_bug.cgi?id=91555
+
+        Reviewed by Adrienne Walker.
+
+        I replaced the one-by-one RenderPass calls with a new drawFrame()
+        method that directly takes a CCRenderPassList, and moved a small
+        amount of code from CCLayerTreeHostImpl to implement it.  In ubercomp
+        mode, we will produce a frame bundle rather than a command-stream, so
+        the full list is easier to work with.
+
+        Also, give empty default implementations for the methods that don't
+        need to do anything in a non-GL context, and make private
+        setScissorToRect.
+
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeCCRendererClient::FakeCCRendererClient):
+        (FakeCCRendererClient::renderPasses):
+        (FakeCCRendererClient):
+        (TEST_F):
+        (TEST):
+
 2012-07-18  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Fix some coding style violations

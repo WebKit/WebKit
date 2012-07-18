@@ -1,3 +1,38 @@
+2012-07-18  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Ubercomp: clean up CCRenderer interface
+        https://bugs.webkit.org/show_bug.cgi?id=91555
+
+        Reviewed by Adrienne Walker.
+
+        I replaced the one-by-one RenderPass calls with a new drawFrame()
+        method that directly takes a CCRenderPassList, and moved a small
+        amount of code from CCLayerTreeHostImpl to implement it.  In ubercomp
+        mode, we will produce a frame bundle rather than a command-stream, so
+        the full list is easier to work with.
+
+        Also, give empty default implementations for the methods that don't
+        need to do anything in a non-GL context, and make private
+        setScissorToRect.
+
+        No new tests (no-op refactoring).
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawFrame):
+        (WebCore):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (WebCore::CCRenderer::viewportChanged):
+        (WebCore::CCRenderer::decideRenderPassAllocationsForFrame):
+        (WebCore::CCRenderer::haveCachedResourcesForRenderPassId):
+        (CCRenderer):
+        (WebCore::CCRenderer::finishDrawingFrame):
+        (WebCore::CCRenderer::doNoOp):
+        (WebCore::CCRenderer::isContextLost):
+
 2012-07-18  Pravin D  <pravind.2k4@gmail.com>
 
         Content size of child having percent height inside a fixed height container having overflow:auto is wrongly calculated

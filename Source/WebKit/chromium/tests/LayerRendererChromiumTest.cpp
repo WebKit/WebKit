@@ -81,6 +81,7 @@ public:
     {
         m_rootLayer->createRenderSurface();
         m_rootRenderPass = CCRenderPass::create(m_rootLayer->renderSurface(), m_rootLayer->id());
+        m_renderPasses.append(m_rootRenderPass.get());
     }
 
     // CCRendererClient methods.
@@ -96,6 +97,7 @@ public:
     int setFullRootLayerDamageCount() const { return m_setFullRootLayerDamageCount; }
 
     CCRenderPass* rootRenderPass() { return m_rootRenderPass.get(); }
+    const CCRenderPassList& renderPasses() { return m_renderPasses; }
 
     size_t memoryAllocationLimitBytes() const { return m_memoryAllocationLimitBytes; }
 
@@ -104,6 +106,7 @@ private:
     DebugScopedSetImplThread m_implThread;
     OwnPtr<CCLayerImpl> m_rootLayer;
     OwnPtr<CCRenderPass> m_rootRenderPass;
+    CCRenderPassList m_renderPasses;
     size_t m_memoryAllocationLimitBytes;
 };
 
@@ -215,7 +218,7 @@ TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatedForScopeDuration
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
     m_layerRendererChromium.setVisible(true);
-    m_layerRendererChromium.beginDrawingFrame(m_mockClient.rootRenderPass());
+    m_layerRendererChromium.drawFrame(m_mockClient.renderPasses(), FloatRect());
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
     swapBuffers();
@@ -230,7 +233,7 @@ TEST_F(LayerRendererChromiumTest, FramebufferDiscardedAfterReadbackWhenNotVisibl
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
     char pixels[4];
-    m_layerRendererChromium.beginDrawingFrame(m_mockClient.rootRenderPass());
+    m_layerRendererChromium.drawFrame(m_mockClient.renderPasses(), FloatRect());
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
     m_layerRendererChromium.getFramebufferPixels(pixels, IntRect(0, 0, 1, 1));
@@ -406,8 +409,7 @@ TEST(LayerRendererChromiumTest2, opaqueBackground)
 
     EXPECT_TRUE(layerRendererChromium.initialize());
 
-    layerRendererChromium.beginDrawingFrame(mockClient.rootRenderPass());
-    layerRendererChromium.drawRenderPass(mockClient.rootRenderPass(), FloatRect());
+    layerRendererChromium.drawFrame(mockClient.renderPasses(), FloatRect());
     layerRendererChromium.finishDrawingFrame();
 
     // On DEBUG builds, render passes with opaque background clear to blue to
@@ -429,8 +431,7 @@ TEST(LayerRendererChromiumTest2, transparentBackground)
 
     EXPECT_TRUE(layerRendererChromium.initialize());
 
-    layerRendererChromium.beginDrawingFrame(mockClient.rootRenderPass());
-    layerRendererChromium.drawRenderPass(mockClient.rootRenderPass(), FloatRect());
+    layerRendererChromium.drawFrame(mockClient.renderPasses(), FloatRect());
     layerRendererChromium.finishDrawingFrame();
 
     EXPECT_EQ(1, context->clearCount());

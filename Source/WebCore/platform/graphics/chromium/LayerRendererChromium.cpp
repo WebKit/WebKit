@@ -46,6 +46,7 @@
 #include "ThrottledTextureUploader.h"
 #include "TraceEvent.h"
 #include "TrackingTextureAllocator.h"
+#include "cc/CCDamageTracker.h"
 #include "cc/CCLayerQuad.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCProxy.h"
@@ -351,6 +352,19 @@ bool LayerRendererChromium::haveCachedResourcesForRenderPassId(int id) const
 {
     CCScopedTexture* texture = m_renderPassTextures.get(id);
     return texture && texture->id();
+}
+
+void LayerRendererChromium::drawFrame(const CCRenderPassList& renderPasses, const FloatRect& rootScissorRect)
+{
+    const CCRenderPass* rootRenderPass = renderPasses.last();
+    beginDrawingFrame(rootRenderPass);
+
+    for (size_t i = 0; i < renderPasses.size(); ++i) {
+        const CCRenderPass* renderPass = renderPasses[i];
+
+        FloatRect rootScissorRectInCurrentSurface = renderPass->targetSurface()->computeRootScissorRectInCurrentSurface(rootScissorRect);
+        drawRenderPass(renderPass, rootScissorRectInCurrentSurface);
+    }
 }
 
 void LayerRendererChromium::beginDrawingFrame(const CCRenderPass* rootRenderPass)

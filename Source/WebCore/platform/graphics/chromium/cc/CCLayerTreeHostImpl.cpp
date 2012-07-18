@@ -547,29 +547,18 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     // FIXME: use the frame begin time from the overall compositor scheduler.
     // This value is currently inaccessible because it is up in Chromium's
     // RenderWidget.
-
-    // The root RenderPass is the last one to be drawn.
-    const CCRenderPass* rootRenderPass = frame.renderPasses.last();
-
     m_fpsCounter->markBeginningOfFrame(currentTime());
-    m_layerRenderer->beginDrawingFrame(rootRenderPass);
 
-    for (size_t i = 0; i < frame.renderPasses.size(); ++i) {
-        const CCRenderPass* renderPass = frame.renderPasses[i];
+    m_layerRenderer->drawFrame(frame.renderPasses, m_rootScissorRect);
+    if (m_headsUpDisplay->enabled(settings()))
+        m_headsUpDisplay->draw(this);
+    m_layerRenderer->finishDrawingFrame();
 
-        FloatRect rootScissorRectInCurrentSurface = renderPass->targetSurface()->computeRootScissorRectInCurrentSurface(m_rootScissorRect);
-        m_layerRenderer->drawRenderPass(renderPass, rootScissorRectInCurrentSurface);
-
-        renderPass->targetSurface()->damageTracker()->didDrawDamagedArea();
-    }
+    for (unsigned int i = 0; i < frame.renderPasses.size(); i++)
+        frame.renderPasses[i]->targetSurface()->damageTracker()->didDrawDamagedArea();
 
     if (m_debugRectHistory->enabled(settings()))
         m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), *frame.renderSurfaceLayerList, frame.occludingScreenSpaceRects, settings());
-
-    if (m_headsUpDisplay->enabled(settings()))
-        m_headsUpDisplay->draw(this);
-
-    m_layerRenderer->finishDrawingFrame();
 
     ++m_sourceAnimationFrameNumber;
 
