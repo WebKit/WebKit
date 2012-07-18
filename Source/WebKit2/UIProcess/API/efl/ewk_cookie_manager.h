@@ -102,7 +102,7 @@ typedef void (*Ewk_Cookie_Manager_Async_Hostnames_Get_Cb)(Eina_List* hostnames, 
  * @param filename the filename to read to/write from.
  * @param storage the type of storage.
  */
-void ewk_cookie_manager_persistent_storage_set(Ewk_Cookie_Manager *manager, const char *filename, Ewk_Cookie_Persistent_Storage storage);
+EAPI void ewk_cookie_manager_persistent_storage_set(Ewk_Cookie_Manager *manager, const char *filename, Ewk_Cookie_Persistent_Storage storage);
 
 /**
  * Set @a policy as the cookie acceptance policy for @a manager.
