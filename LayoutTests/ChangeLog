@@ -1,3 +1,13 @@
+2012-07-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <input type="submit"> unlabelled.
+        https://bugs.webkit.org/show_bug.cgi?id=91563
+
+        Reviewed by Adele Peterson.
+
+        * platform/mac/accessibility/submit-button-default-value-expected.txt: Added.
+        * platform/mac/accessibility/submit-button-default-value.html: Added.
+
 2012-07-17  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Remove awkward anchorPoint usage that implicity affects layer position

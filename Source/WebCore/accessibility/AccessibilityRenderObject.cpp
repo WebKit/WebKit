@@ -1363,7 +1363,7 @@ String AccessibilityRenderObject::title() const
     if (isInputTag) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
         if (input->isTextButton())
-            return input->value();
+            return input->valueWithDefault();
     }
     
     if (isInputTag || AccessibilityObject::isARIAInput(ariaRoleAttribute()) || isControl()) {

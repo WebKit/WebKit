@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="submit" tabindex="0" id="submitButton1">
+
+<input type="submit" tabindex="0" id="submitButton2" value="non-default value">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a submit button will return its default value as the title.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("submitButton1").focus();
+        var button = accessibilityController.focusedElement;
+        shouldBe("button.title", "'AXTitle: Submit'");
+
+        document.getElementById("submitButton2").focus();
+        button = accessibilityController.focusedElement;
+        shouldBe("button.title", "'AXTitle: non-default value'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
