@@ -1,3 +1,29 @@
+2012-07-18  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Rename WebInspectorEfl.cpp as WebInspectorProxyEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=91585
+
+        Reviewed by Andreas Kling.
+
+        Rename WebInspectorEfl.cpp as WebInspectorProxyEfl.cpp
+        since it implements the platform specific methods of WebInspectorProxy.
+
+        * PlatformEfl.cmake:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp: Renamed from Source/WebKit2/UIProcess/efl/WebInspectorEfl.cpp.
+        (WebKit):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformOpen):
+        (WebKit::WebInspectorProxy::platformDidClose):
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        (WebKit::WebInspectorProxy::platformIsFront):
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged):
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight):
+
 2012-07-18  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Modify the using of the QImage::Format enum to the appropriate functions from NativeImageQt

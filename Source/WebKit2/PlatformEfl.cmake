@@ -54,7 +54,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/efl/TextCheckerEfl.cpp
     UIProcess/efl/WebContextEfl.cpp
     UIProcess/efl/WebFullScreenManagerProxyEfl.cpp
-    UIProcess/efl/WebInspectorEfl.cpp
+    UIProcess/efl/WebInspectorProxyEfl.cpp
     UIProcess/efl/WebPageProxyEfl.cpp
     UIProcess/efl/WebPreferencesEfl.cpp
 
