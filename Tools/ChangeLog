@@ -1,3 +1,17 @@
+2012-07-18  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: run tests in parallel by default
+        https://bugs.webkit.org/show_bug.cgi?id=91422
+
+        Reviewed by Adam Barth.
+
+        We use multiprocessing.cpu_count() for the default number of
+        jobs to run; memory overhead should be very low, so this should
+        be fine.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args):
+
 2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Pravin D to the list of contributors.

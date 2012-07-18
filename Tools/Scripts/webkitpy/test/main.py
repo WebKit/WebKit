@@ -24,6 +24,7 @@
 """unit testing code for webkitpy."""
 
 import logging
+import multiprocessing
 import optparse
 import StringIO
 import sys
@@ -63,8 +64,8 @@ class Tester(object):
                           help='do not run the integration tests')
         parser.add_option('-p', '--pass-through', action='store_true', default=False,
                           help='be debugger friendly by passing captured output through to the system')
-        parser.add_option('-j', '--child-processes', action='store', type='int', default=1,
-                          help='number of tests to run in parallel')
+        parser.add_option('-j', '--child-processes', action='store', type='int', default=multiprocessing.cpu_count(),
+                          help='number of tests to run in parallel (default=%default)')
 
         parser.epilog = ('[args...] is an optional list of modules, test_classes, or individual tests. '
                          'If no args are given, all the tests will be run.')
