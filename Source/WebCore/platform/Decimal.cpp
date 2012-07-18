@@ -246,7 +246,7 @@ Decimal::EncodedData::EncodedData(Sign sign, int exponent, uint64_t coefficient)
     , m_sign(sign)
 {
     if (exponent >= ExponentMin && exponent <= ExponentMax) {
-        while (coefficient >= MaxCoefficient) {
+        while (coefficient > MaxCoefficient) {
             coefficient /= 10;
             ++exponent;
         }

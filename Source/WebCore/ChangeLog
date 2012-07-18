@@ -1,3 +1,20 @@
+2012-07-17  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Decimal constructor with 99999999999999999 loses last digit
+        https://bugs.webkit.org/show_bug.cgi?id=91579
+
+        Reviewed by Kent Tamura.
+
+        This patch changes maximum coefficient value handling in Decimal::EncodedData
+        constructor not to lose the last digit. It was used ">=" operator for
+        comparison instead of ">" operator.
+
+        Tests: WebKit/chromium/tests/DecimalTest.cpp
+
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::EncodedData::EncodedData): Replace ">=" to ">" for
+        not getting rid of the last digit for maximum coefficient value.
+
 2012-07-17  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed Web Inspector: followup fix for r122920.

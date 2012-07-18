@@ -1,5 +1,21 @@
 2012-07-17  Yoshifumi Inoue  <yosin@chromium.org>
 
+        Decimal constructor with 99999999999999999 loses last digit
+        https://bugs.webkit.org/show_bug.cgi?id=91579
+
+        Reviewed by Kent Tamura.
+
+        This patch adds test cases for Decimal::EncodedData constructors for
+        testing edge cases in addition to common cases which they aren't
+        covered by other test cases.
+
+        * tests/DecimalTest.cpp:
+        (EXPECT_DECIMAL_ENCODED_DATA_EQ): Introduce a new macro for ease of
+        writing test cases for verifying components of Decimal::EncodedData.
+        (TEST_F): Added a new test entry DecimalTest.Constructor.
+
+2012-07-17  Yoshifumi Inoue  <yosin@chromium.org>
+
         Test cases in DecimalTest should use EXPECT_STREQ for ease of debugging test case
         https://bugs.webkit.org/show_bug.cgi?id=91572
 

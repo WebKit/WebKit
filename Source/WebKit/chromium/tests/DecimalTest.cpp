@@ -112,6 +112,12 @@ protected:
     }
 };
 
+// FIXME: We should use expectedSign without "Decimal::", however, g++ causes undefined references for DecimalTest::Positive and Negative.
+#define EXPECT_DECIMAL_ENCODED_DATA_EQ(expectedCoefficient, expectedExponent,  expectedSign, decimal) \
+    EXPECT_EQ((expectedCoefficient), (decimal).value().coefficient()); \
+    EXPECT_EQ((expectedExponent), (decimal).value().exponent()); \
+    EXPECT_EQ(Decimal::expectedSign, (decimal).value().sign());
+
 #define EXPECT_DECIMAL_STREQ(expected, decimal) EXPECT_STREQ((expected), (decimal).toString().ascii().data())
 
 TEST_F(DecimalTest, Abs)
@@ -445,6 +451,28 @@ TEST_F(DecimalTest, CompareSpecialValues)
     EXPECT_TRUE(NaN <= NaN);
     EXPECT_FALSE(NaN > NaN);
     EXPECT_TRUE(NaN >= NaN);
+}
+
+TEST_F(DecimalTest, Constructor)
+{
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(0u, 0, Positive, encode(0, 0, Positive));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(0u, 0, Negative, encode(0, 0, Negative));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(1u, 0, Positive, encode(1, 0, Positive));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(1u, 0, Negative, encode(1, 0, Negative));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(1u, 1022, Positive, encode(1, 1022, Positive));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(1u, 1022, Negative, encode(1, 1022, Negative));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(1u, 1023, Positive, encode(1, 1023, Positive));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(1u, 1023, Negative, encode(1, 1023, Negative));
+    EXPECT_TRUE(encode(1, 2000, Positive).isInfinity());
+    EXPECT_TRUE(encode(1, 2000, Negative).isInfinity());
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(0u, 0, Positive, encode(1, -2000, Positive));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(0u, 0, Negative, encode(1, -2000, Negative));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(UINT64_C(99999999999999998), 0, Positive, encode(UINT64_C(99999999999999998), 0, Positive));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(UINT64_C(99999999999999998), 0, Negative, encode(UINT64_C(99999999999999998), 0, Negative));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(UINT64_C(99999999999999999), 0, Positive, encode(UINT64_C(99999999999999999), 0, Positive));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(UINT64_C(99999999999999999), 0, Negative, encode(UINT64_C(99999999999999999), 0, Negative));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(UINT64_C(10000000000000000), 1, Positive, encode(UINT64_C(100000000000000000), 0, Positive));
+    EXPECT_DECIMAL_ENCODED_DATA_EQ(UINT64_C(10000000000000000), 1, Negative, encode(UINT64_C(100000000000000000), 0, Negative));
 }
 
 TEST_F(DecimalTest, Division)
