@@ -1,3 +1,49 @@
+2012-07-18  Alex Bravo  <alex.bravo@nokia.com>
+
+        [Qt] platform/qt/http tests needs update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91119
+
+        Reviewed by Noam Rosenthal.
+
+        Rebased platform/qt/http tests and unskipped them from qt-5.0
+
+        * platform/qt/http/tests/loading/simple-subframe-expected.png: Added.
+        * platform/qt/http/tests/loading/simple-subframe-expected.txt:
+        * platform/qt/http/tests/local/file-url-sent-as-referer-expected.png:
+        * platform/qt/http/tests/local/file-url-sent-as-referer-expected.txt:
+        * platform/qt/http/tests/misc/acid2-expected.png:
+        * platform/qt/http/tests/misc/acid2-expected.txt:
+        * platform/qt/http/tests/misc/acid2-pixel-expected.png:
+        * platform/qt/http/tests/misc/acid2-pixel-expected.txt:
+        * platform/qt/http/tests/misc/error404-expected.png:
+        * platform/qt/http/tests/misc/error404-expected.txt:
+        * platform/qt/http/tests/misc/favicon-as-image-expected.png:
+        * platform/qt/http/tests/misc/favicon-as-image-expected.txt:
+        * platform/qt/http/tests/misc/frame-access-during-load-expected.png:
+        * platform/qt/http/tests/misc/frame-access-during-load-expected.txt:
+        * platform/qt/http/tests/misc/generated-content-inside-table-expected.png:
+        * platform/qt/http/tests/misc/generated-content-inside-table-expected.txt:
+        * platform/qt/http/tests/misc/iframe404-expected.png:
+        * platform/qt/http/tests/misc/iframe404-expected.txt:
+        * platform/qt/http/tests/misc/slow-loading-image-in-pattern-expected.png:
+        * platform/qt/http/tests/misc/slow-loading-image-in-pattern-expected.txt:
+        * platform/qt/http/tests/misc/slow-loading-mask-expected.png:
+        * platform/qt/http/tests/misc/slow-loading-mask-expected.txt:
+        * platform/qt/http/tests/navigation/error404-basic-expected.png: Added.
+        * platform/qt/http/tests/navigation/error404-basic-expected.txt:
+        * platform/qt/http/tests/navigation/error404-goback-expected.png: Added.
+        * platform/qt/http/tests/navigation/error404-goback-expected.txt:
+        * platform/qt/http/tests/navigation/error404-subframeload-expected.png: Added.
+        * platform/qt/http/tests/navigation/error404-subframeload-expected.txt:
+        * platform/qt/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/qt/http/tests/navigation/javascriptlink-frames-expected.txt:
+        * platform/qt/http/tests/navigation/postredirect-basic-expected.png: Added.
+        * platform/qt/http/tests/navigation/postredirect-basic-expected.txt:
+        * platform/qt/http/tests/navigation/postredirect-goback1-expected.png: Added.
+        * platform/qt/http/tests/navigation/postredirect-goback1-expected.txt:
+        * platform/qt/http/tests/uri/css-href-expected.png:
+        * platform/qt/http/tests/uri/css-href-expected.txt:
+
 2012-07-18  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] fast/table tests needs update after rebaseline and new testfonts

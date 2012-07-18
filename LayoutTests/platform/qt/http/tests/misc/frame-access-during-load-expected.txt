@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 761x42
-          text run at (0,0) width 149: "This test verifies that "
-          text run at (149,0) width 612: "accessing a frame's document while it is still loading does not prevent the load, but can"
-          text run at (0,21) width 318: "access at least a temporary empty document."
-      RenderBlock (anonymous) at (0,58) size 784x122
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 743x38
+          text run at (0,0) width 126: "This test verifies that "
+          text run at (126,0) width 617: "accessing a frame's document while it is still loading does not prevent the load, but can access at least a"
+          text run at (0,19) width 170: "temporary empty document."
+      RenderBlock (anonymous) at (0,54) size 784x118
         RenderPartObject {IFRAME} at (0,0) size 300x40
           layer at (0,0) size 300x40
             RenderView at (0,0) size 300x40
           layer at (0,0) size 300x40
             RenderBlock {HTML} at (0,0) size 300x40
               RenderBody {BODY} at (8,8) size 284x24
-                RenderText {#text} at (0,0) size 80x21
-                  text run at (0,0) width 80: "SUCCESS"
+                RenderText {#text} at (0,0) size 69x19
+                  text run at (0,0) width 69: "SUCCESS"
         RenderBR {BR} at (300,40) size 0x0
         RenderPartObject {IFRAME} at (0,40) size 300x40
           layer at (0,0) size 300x40
@@ -24,14 +24,14 @@ layer at (0,0) size 800x600
           layer at (0,0) size 300x40
             RenderBlock {HTML} at (0,0) size 300x40
               RenderBody {BODY} at (8,8) size 284x24
-                RenderText {#text} at (0,0) size 80x21
-                  text run at (0,0) width 80: "SUCCESS"
+                RenderText {#text} at (0,0) size 69x19
+                  text run at (0,0) width 69: "SUCCESS"
         RenderBR {BR} at (300,80) size 0x0
-        RenderText {#text} at (0,80) size 172x21
-          text run at (0,80) width 172: "[object HTMLDocument]"
-        RenderBR {BR} at (172,96) size 0x0
-        RenderText {#text} at (0,101) size 172x21
-          text run at (0,101) width 172: "[object HTMLDocument]"
-      RenderBlock {P} at (0,196) size 784x21
-        RenderText {#text} at (0,0) size 672x21
-          text run at (0,0) width 672: "If this test passes, you should see SUCCESS twice, followed by [object HTMLDocument] twice."
+        RenderText {#text} at (0,80) size 157x19
+          text run at (0,80) width 157: "[object HTMLDocument]"
+        RenderBR {BR} at (157,95) size 0x0
+        RenderText {#text} at (0,99) size 157x19
+          text run at (0,99) width 157: "[object HTMLDocument]"
+      RenderBlock {P} at (0,188) size 784x19
+        RenderText {#text} at (0,0) size 588x19
+          text run at (0,0) width 588: "If this test passes, you should see SUCCESS twice, followed by [object HTMLDocument] twice."
