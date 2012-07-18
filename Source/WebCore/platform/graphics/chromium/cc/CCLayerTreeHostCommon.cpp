@@ -414,15 +414,7 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     //    the transform to the anchor point is specified in "pixel layer space", where the bounds
     //    of the layer map to [bounds.width(), bounds.height()].
     //
-    // 3. The value of layer->position() is actually the position of the anchor point with respect to the position
-    //    of the layer's origin. That is:
-    //        layer->position() = positionOfLayerOrigin + anchorPoint (in pixel units)
-    //
-    //    Or, equivalently,
-    //        positionOfLayerOrigin.x =  layer->position.x - (layer->anchorPoint.x * bounds.width)
-    //        positionOfLayerOrigin.y =  layer->position.y - (layer->anchorPoint.y * bounds.height)
-    //
-    // 4. Definition of various transforms used:
+    // 3. Definition of various transforms used:
     //        M[parent] is the parent matrix, with respect to the nearest render surface, passed down recursively.
     //        M[root] is the full hierarchy, with respect to the root, passed down recursively.
     //        Tr[origin] is the translation matrix from the parent's origin to this layer's origin.
@@ -433,7 +425,6 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     //        Tr[anchor2center] is the translation offset from the anchor point and the center of the layer
     //
     //    Some shortcuts and substitutions are used in the code to reduce matrix multiplications:
-    //        Translating by the value of layer->position(), Tr[layer->position()] = Tr[origin] * Tr[origin2anchor]
     //        Tr[anchor2center] = Tr[origin2anchor].inverse() * Tr[origin2center]
     //
     //    Some composite transforms can help in understanding the sequence of transforms:
@@ -443,7 +434,7 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     //    In words, the layer transform is applied about the anchor point, and the sublayer transform is
     //    applied about the center of the layer.
     //
-    // 5. When a layer (or render surface) is drawn, it is drawn into a "target render surface". Therefore the draw
+    // 4. When a layer (or render surface) is drawn, it is drawn into a "target render surface". Therefore the draw
     //    transform does not necessarily transform from screen space to local layer space. Instead, the draw transform
     //    is the transform between the "target render surface space" and local layer space. Note that render surfaces,
     //    except for the root, also draw themselves into a different target render surface, and so their draw
@@ -487,11 +478,11 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     //        M[surface2root] =  M[owningLayer->screenspace] * S[contentsScale].inverse()
     //
     // The replica draw transform is:
-    //        M[replicaDraw] = M[surfaceOrigin] * S[contentsScale] * Tr[replica->position()] * Tr[replica] * Tr[anchor2center] * S[contentsScale].inverse()
-    //                       = M[owningLayer->draw] * Tr[origin2center].inverse() * S[contentsScale] * Tr[replica->position()] * Tr[replica] * Tr[anchor2clippedCenter] * S[contentsScale].inverse()
+    //        M[replicaDraw] = M[surfaceOrigin] * S[contentsScale] * Tr[replica->position() + replica->anchor()] * Tr[replica] * Tr[anchor2center] * S[contentsScale].inverse()
+    //                       = M[owningLayer->draw] * Tr[origin2center].inverse() * S[contentsScale] * Tr[replica->position() + replica->anchor()] * Tr[replica] * Tr[anchor2clippedCenter] * S[contentsScale].inverse()
     //
     // The replica origin transform to its target surface origin is:
-    //        M[replicaOrigin] = S[contentsScale] * M[surfaceOrigin] * Tr[replica->position()] * Tr[replica] * Tr[origin2anchor].inverse() * S[contentsScale].invers()
+    //        M[replicaOrigin] = S[contentsScale] * M[surfaceOrigin] * Tr[replica->position() + replica->anchor()] * Tr[replica] * Tr[origin2anchor].inverse() * S[contentsScale].invers()
     //
     // The replica origin transform to the root (screen space) origin is:
     //        M[replica2root] = M[surface2root] * Tr[replica->position()] * Tr[replica] * Tr[origin2anchor].inverse()
@@ -516,13 +507,13 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     float centerOffsetY = (0.5 - anchorPoint.y()) * bounds.height();
 
     WebTransformationMatrix layerLocalTransform;
-    // LT = Tr[origin] * S[pageScaleDelta]
+    // LT = S[pageScaleDelta]
     layerLocalTransform.scale(layer->pageScaleDelta());
-    // LT = Tr[origin] * S[pageScaleDelta] * Tr[origin2anchor]
-    layerLocalTransform.translate3d(position.x(), position.y(), layer->anchorPointZ());
-    // LT = Tr[origin] * S[pageScaleDelta] * Tr[origin2anchor] * M[layer]
+    // LT = S[pageScaleDelta] * Tr[origin] * Tr[origin2anchor]
+    layerLocalTransform.translate3d(position.x() + anchorPoint.x() * bounds.width(), position.y() + anchorPoint.y() * bounds.height(), layer->anchorPointZ());
+    // LT = S[pageScaleDelta] * Tr[origin] * Tr[origin2anchor] * M[layer]
     layerLocalTransform.multiply(layer->transform());
-    // LT = Tr[origin] * S[pageScaleDelta] * Tr[origin2anchor] * M[layer] * Tr[anchor2center]
+    // LT = S[pageScaleDelta] * Tr[origin] * Tr[origin2anchor] * M[layer] * Tr[anchor2center]
     layerLocalTransform.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
 
     // The combinedTransform that gets computed below is effectively the layer's drawTransform, unless
@@ -781,20 +772,22 @@ static bool calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
             WebTransformationMatrix replicaDrawTransform = renderSurface->originTransform();
 
             replicaDrawTransform.scale(contentsScale);
-            replicaDrawTransform.translate(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y());
+            replicaDrawTransform.translate(layer->replicaLayer()->position().x() + layer->replicaLayer()->anchorPoint().x() * bounds.width(),
+                                           layer->replicaLayer()->position().y() + layer->replicaLayer()->anchorPoint().y() * bounds.height());
             replicaDrawTransform.multiply(layer->replicaLayer()->transform());
             FloatPoint layerSpaceSurfaceCenter = surfaceCenter;
             layerSpaceSurfaceCenter.scale(1 / contentsScale, 1 / contentsScale);
-            replicaDrawTransform.translate(layerSpaceSurfaceCenter.x() - anchorPoint.x() * bounds.width(), layerSpaceSurfaceCenter.y() - anchorPoint.y() * bounds.height());
+            replicaDrawTransform.translate(layerSpaceSurfaceCenter.x() - layer->replicaLayer()->anchorPoint().x() * bounds.width(), layerSpaceSurfaceCenter.y() - layer->replicaLayer()->anchorPoint().y() * bounds.height());
             replicaDrawTransform.scale(1 / contentsScale);
 
             renderSurface->setReplicaDrawTransform(replicaDrawTransform);
 
             WebTransformationMatrix surfaceOriginToReplicaOriginTransform;
             surfaceOriginToReplicaOriginTransform.scale(contentsScale);
-            surfaceOriginToReplicaOriginTransform.translate(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y());
+            surfaceOriginToReplicaOriginTransform.translate(layer->replicaLayer()->position().x() + layer->replicaLayer()->anchorPoint().x() * bounds.width(),
+                                                            layer->replicaLayer()->position().y() + layer->replicaLayer()->anchorPoint().y() * bounds.height());
             surfaceOriginToReplicaOriginTransform.multiply(layer->replicaLayer()->transform());
-            surfaceOriginToReplicaOriginTransform.translate(-anchorPoint.x() * bounds.width(), -anchorPoint.y() * bounds.height());
+            surfaceOriginToReplicaOriginTransform.translate(-layer->replicaLayer()->anchorPoint().x() * bounds.width(), -layer->replicaLayer()->anchorPoint().y() * bounds.height());
             surfaceOriginToReplicaOriginTransform.scale(1 / contentsScale);
 
             // Compute the replica's "originTransform" that maps from the replica's origin space to the target surface origin space.

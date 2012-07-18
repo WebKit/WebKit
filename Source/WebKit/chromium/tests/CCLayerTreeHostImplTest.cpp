@@ -134,6 +134,8 @@ public:
         root->setScrollable(true);
         root->setScrollPosition(IntPoint(0, 0));
         root->setMaxScrollPosition(contentSize);
+        root->setBounds(contentSize);
+        root->setContentBounds(contentSize);
         OwnPtr<CCLayerImpl> contents = CCLayerImpl::create(2);
         contents->setDrawsContent(true);
         contents->setBounds(contentSize);
@@ -857,7 +859,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildCallsCommitAndRedraw)
 {
     IntSize surfaceSize(10, 10);
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
-    root->addChild(createScrollableLayer(2, FloatPoint(5, 5), surfaceSize));
+    root->addChild(createScrollableLayer(2, FloatPoint(0, 0), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     initializeLayerRendererAndDrawFrame();
@@ -873,7 +875,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollMissesChild)
 {
     IntSize surfaceSize(10, 10);
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
-    root->addChild(createScrollableLayer(2, FloatPoint(5, 5), surfaceSize));
+    root->addChild(createScrollableLayer(2, FloatPoint(0, 0), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     initializeLayerRendererAndDrawFrame();
@@ -888,7 +890,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollMissesBackfacingChild)
 {
     IntSize surfaceSize(10, 10);
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
-    OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(0, 0), surfaceSize);
     m_hostImpl->setViewportSize(surfaceSize);
 
     WebTransformationMatrix matrix;
@@ -910,11 +912,11 @@ TEST_F(CCLayerTreeHostImplTest, scrollMissesBackfacingChild)
 TEST_F(CCLayerTreeHostImplTest, scrollBlockedByContentLayer)
 {
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> contentLayer = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> contentLayer = createScrollableLayer(1, FloatPoint(0, 0), surfaceSize);
     contentLayer->setShouldScrollOnMainThread(true);
     contentLayer->setScrollable(false);
 
-    OwnPtr<CCLayerImpl> scrollLayer = createScrollableLayer(2, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> scrollLayer = createScrollableLayer(2, FloatPoint(0, 0), surfaceSize);
     scrollLayer->addChild(contentLayer.release());
 
     m_hostImpl->setRootLayer(scrollLayer.release());
@@ -929,7 +931,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnMainThread)
 {
     IntSize surfaceSize(10, 10);
     float pageScale = 2;
-    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(0, 0), surfaceSize);
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     initializeLayerRendererAndDrawFrame();
@@ -960,7 +962,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnImplThread)
 {
     IntSize surfaceSize(10, 10);
     float pageScale = 2;
-    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(0, 0), surfaceSize);
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     m_hostImpl->setPageScaleFactorAndLimits(1, 1, pageScale);
@@ -1000,7 +1002,7 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleDeltaAppliedToRootScrollLayerOnly)
     CCLayerImpl* root = m_hostImpl->rootLayer();
     CCLayerImpl* child = root->children()[0].get();
 
-    OwnPtr<CCLayerImpl> scrollableChild = createScrollableLayer(3, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> scrollableChild = createScrollableLayer(3, FloatPoint(0, 0), surfaceSize);
     child->addChild(scrollableChild.release());
     CCLayerImpl* grandChild = child->children()[0].get();
 
@@ -1023,6 +1025,7 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleDeltaAppliedToRootScrollLayerOnly)
 
     WebTransformationMatrix pageScaleTransform;
     pageScaleTransform.scale(newPageScale);
+    pageScaleTransform.translate(0.5 * surfaceSize.width(), 0.5 * surfaceSize.height());
     EXPECT_EQ(root->drawTransform(), pageScaleTransform);
     EXPECT_EQ(child->drawTransform(), pageScaleTransform);
     EXPECT_EQ(grandChild->drawTransform(), pageScaleTransform);
@@ -1035,7 +1038,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildAndChangePageScaleOnMainThread)
     // Also mark the root scrollable so it becomes the root scroll layer.
     root->setScrollable(true);
     int scrollLayerId = 2;
-    root->addChild(createScrollableLayer(scrollLayerId, FloatPoint(5, 5), surfaceSize));
+    root->addChild(createScrollableLayer(scrollLayerId, FloatPoint(0, 0), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
     initializeLayerRendererAndDrawFrame();
@@ -1070,12 +1073,12 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildBeyondLimit)
     // parent layer is scrolled on the axis on which the child was unable to
     // scroll.
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(0, 0), surfaceSize);
 
-    OwnPtr<CCLayerImpl> grandChild = createScrollableLayer(3, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> grandChild = createScrollableLayer(3, FloatPoint(0, 0), surfaceSize);
     grandChild->setScrollPosition(IntPoint(0, 5));
 
-    OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(0, 0), surfaceSize);
     child->setScrollPosition(IntPoint(3, 0));
     child->addChild(grandChild.release());
 
@@ -1106,8 +1109,8 @@ TEST_F(CCLayerTreeHostImplTest, scrollEventBubbling)
     // When we try to scroll a non-scrollable child layer, the scroll delta
     // should be applied to one of its ancestors if possible.
     IntSize surfaceSize(10, 10);
-    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(5, 5), surfaceSize);
-    OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(5, 5), surfaceSize);
+    OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(0, 0), surfaceSize);
+    OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(0, 0), surfaceSize);
 
     child->setScrollable(false);
     root->addChild(child.release());
@@ -1132,13 +1135,13 @@ TEST_F(CCLayerTreeHostImplTest, scrollEventBubbling)
 TEST_F(CCLayerTreeHostImplTest, scrollBeforeRedraw)
 {
     IntSize surfaceSize(10, 10);
-    m_hostImpl->setRootLayer(createScrollableLayer(1, FloatPoint(5, 5), surfaceSize));
+    m_hostImpl->setRootLayer(createScrollableLayer(1, FloatPoint(0, 0), surfaceSize));
     m_hostImpl->setViewportSize(surfaceSize);
 
     // Draw one frame and then immediately rebuild the layer tree to mimic a tree synchronization.
     initializeLayerRendererAndDrawFrame();
     m_hostImpl->detachLayerTree();
-    m_hostImpl->setRootLayer(createScrollableLayer(2, FloatPoint(5, 5), surfaceSize));
+    m_hostImpl->setRootLayer(createScrollableLayer(2, FloatPoint(0, 0), surfaceSize));
 
     // Scrolling should still work even though we did not draw yet.
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(5, 5), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);

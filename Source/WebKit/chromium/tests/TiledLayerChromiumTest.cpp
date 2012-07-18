@@ -840,10 +840,10 @@ TEST_F(TiledLayerChromiumTest, skipsDrawGetsReset)
 
     rootLayer->setBounds(contentBounds);
     rootLayer->setVisibleContentRect(contentRect);
-    rootLayer->setPosition(FloatPoint(150, 150));
+    rootLayer->setPosition(FloatPoint(0, 0));
     childLayer->setBounds(contentBounds);
     childLayer->setVisibleContentRect(contentRect);
-    childLayer->setPosition(FloatPoint(150, 150));
+    childLayer->setPosition(FloatPoint(0, 0));
     rootLayer->invalidateContentRect(contentRect);
     childLayer->invalidateContentRect(contentRect);
 
@@ -921,7 +921,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
 
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(ccLayerTreeHost->contentsTextureManager()));
     layer->setBounds(contentBounds);
-    layer->setPosition(FloatPoint(150, 150));
+    layer->setPosition(FloatPoint(0, 0));
     layer->setVisibleContentRect(contentRect);
     layer->invalidateContentRect(contentRect);
 

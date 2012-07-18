@@ -1,3 +1,31 @@
+2012-07-17  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Remove awkward anchorPoint usage that implicity affects layer position
+        https://bugs.webkit.org/show_bug.cgi?id=91472
+
+        Reviewed by Adrienne Walker.
+
+        Covered by existing layout tests and unit tests, several existing unit tests updated.
+
+        In GraphicsLayerChromium, anchorPoint() implicity affects
+        position(). Therefore, unit tests needed to remember to set
+        anchorPoint correctly when trying to position layers for
+        testing. However, it's easy to forget that initialization, and
+        probably shouldn't be necessary anyway since conceptually
+        anchorPoint does not affect layer position.
+
+        This patch removes the "actualPosition + anchorPoint" quirk in
+        GraphicsLayerChromium, so that this problem is avoided.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::updateLayerPosition): No longer computes position + anchorPoint. Instead this is done in calcDrawTransformsInternal.
+        (WebCore::GraphicsLayerChromium::updateLayerSize): No longer affects computation of position.
+        (WebCore::GraphicsLayerChromium::updateAnchorPoint): No longer affects computation of position
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D): Position is initialized to zero instead of relative to anchorPoint
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateDrawTransformsInternal): explicitly use position + anchorPoint in this code, for both layer and replica.
+            Note that replicaLayer now uses its own anchorPoint, which seems to be more consistent with Safari behavior.
+
 2012-07-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [Regression] Save as file is missing in Network panel preview/response tabs.

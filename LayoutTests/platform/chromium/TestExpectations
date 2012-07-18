@@ -3705,3 +3705,6 @@ BUGWK91445 LINUX : plugins/embed-attributes-style.html = PASS IMAGE
 BUGWK91620 : css3/filters/blur-filter-page-scroll-self.html = PASS IMAGE
 
 BUGWK91544 : media/media-continues-playing-after-replace-source.html = PASS TIMEOUT
+
+// Needs rebaseline. Behavior should now be the same as Safari.
+BUGWK91472 : compositing/reflections/nested-reflection-anchor-point.html = IMAGE

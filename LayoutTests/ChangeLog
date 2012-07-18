@@ -1,3 +1,13 @@
+2012-07-17  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Remove awkward anchorPoint usage that implicity affects layer position
+        https://bugs.webkit.org/show_bug.cgi?id=91472
+
+        Reviewed by Adrienne Walker.
+
+        * platform/chromium/TestExpectations: marked compositing/reflections/nested-reflection-anchor-point.html as needing
+                                              rebaselining.  Its behavior should now be similar to Safari.
+
 2012-07-18  Dirk Schulze  <krit@webkit.org>
 
         SVG CSS property types with <number> don't support exponents

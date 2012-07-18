@@ -663,11 +663,7 @@ void GraphicsLayerChromium::updateChildList()
 
 void GraphicsLayerChromium::updateLayerPosition()
 {
-    // Position is offset on the layer by the layer anchor point.
-    FloatPoint layerPosition(m_position.x() + m_anchorPoint.x() * m_size.width(),
-                             m_position.y() + m_anchorPoint.y() * m_size.height());
-
-    primaryLayer().setPosition(layerPosition);
+    primaryLayer().setPosition(m_position);
 }
 
 void GraphicsLayerChromium::updateLayerSize()
@@ -675,26 +671,18 @@ void GraphicsLayerChromium::updateLayerSize()
     IntSize layerSize(m_size.width(), m_size.height());
     if (!m_transformLayer.isNull()) {
         m_transformLayer.setBounds(layerSize);
-        // The anchor of the contents layer is always at 0.5, 0.5, so the position is center-relative.
-        FloatPoint centerPoint(m_size.width() / 2, m_size.height() / 2);
-        m_layer.setPosition(centerPoint);
+        m_layer.setPosition(FloatPoint());
     }
 
     m_layer.setBounds(layerSize);
 
     // Note that we don't resize m_contentsLayer. It's up the caller to do that.
-
-    // If we've changed the bounds, we need to recalculate the position
-    // of the layer, taking anchor point into account.
-    updateLayerPosition();
 }
 
 void GraphicsLayerChromium::updateAnchorPoint()
 {
     primaryLayer().setAnchorPoint(FloatPoint(m_anchorPoint.x(), m_anchorPoint.y()));
     primaryLayer().setAnchorPointZ(m_anchorPoint.z());
-
-    updateLayerPosition();
 }
 
 void GraphicsLayerChromium::updateTransform()
@@ -729,7 +717,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         updateTransform();
         updateChildrenTransform();
 
-        m_layer.setPosition(FloatPoint(m_size.width() / 2.0f, m_size.height() / 2.0f));
+        m_layer.setPosition(FloatPoint::zero());
 
         m_layer.setAnchorPoint(FloatPoint(0.5f, 0.5f));
         m_layer.setTransform(SkMatrix44());
