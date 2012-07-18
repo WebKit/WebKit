@@ -64,7 +64,7 @@ static const struct IDBDatabaseExceptionNameDescription {
     { "DataCloneError", "The data being stored could not be cloned by the internal structured cloning algorithm.", DATA_CLONE_ERR },
     // FIXME: should be a JavaScript TypeError. See https://bugs.webkit.org/show_bug.cgi?id=85513
     { "TypeError", "This should be a TypeError", 0 },
-    { "NotSupportedError", "Cannot use multiEntry indexed with an array keypath", NOT_SUPPORTED_ERR },
+    { 0, 0, 0 }, // FIXME: Previous/legacy value was IDB_NOT_SUPPORTED_ERR.
 };
 
 static const IDBDatabaseExceptionNameDescription* getErrorEntry(ExceptionCode ec)

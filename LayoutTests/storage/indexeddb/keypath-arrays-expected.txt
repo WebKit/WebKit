@@ -18,7 +18,7 @@ PASS Exception was thrown.
 PASS code is DOMException.INVALID_ACCESS_ERR
 Expecting exception from store.createIndex('index-multientry', ['e', 'f'], {multiEntry: true})
 PASS Exception was thrown.
-PASS code is DOMException.NOT_SUPPORTED_ERR
+PASS code is DOMException.INVALID_ACCESS_ERR
 
 Empty arrays are not valid key paths:
 Expecting exception from db.createObjectStore('store-keypath-empty-array', {keyPath: []})

@@ -32,7 +32,7 @@ function openSuccess()
         evalAndLog("store.createIndex('index', ['c', 'd'])");
 
         evalAndExpectException("db.createObjectStore('store-with-generator', {keyPath: ['a', 'b'], autoIncrement: true})", "DOMException.INVALID_ACCESS_ERR");
-        evalAndExpectException("store.createIndex('index-multientry', ['e', 'f'], {multiEntry: true})", "DOMException.NOT_SUPPORTED_ERR");
+        evalAndExpectException("store.createIndex('index-multientry', ['e', 'f'], {multiEntry: true})", "DOMException.INVALID_ACCESS_ERR");
 
         debug("");
         debug("Empty arrays are not valid key paths:");

@@ -287,7 +287,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const IDBKe
     options.get("multiEntry", multiEntry);
 
     if (keyPath.type() == IDBKeyPath::ArrayType && multiEntry) {
-        ec = IDBDatabaseException::IDB_NOT_SUPPORTED_ERR;
+        ec = IDBDatabaseException::IDB_INVALID_ACCESS_ERR;
         return 0;
     }
 
