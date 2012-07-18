@@ -1,3 +1,11 @@
+2012-07-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] REGRESSION(r122376): It made 68 tests flakey (TEXT PASS)
+        https://bugs.webkit.org/show_bug.cgi?id=91063
+
+        * platform/qt-5.0-wk2/Skipped: Skip one more test.
+        * platform/qt/Skipped: Move a skipped test to the proper Skipped list.
+
 2012-07-18  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip the new failing tests.

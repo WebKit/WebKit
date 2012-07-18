@@ -398,6 +398,11 @@ http/tests/ssl
 # https://bugs.webkit.org/show_bug.cgi?id=90985
 fast/repaint/background-scaling.html
 
+# [Qt][WK2] REGRESSION(r122376): It made 68 tests flakey (TEXT PASS)
+# https://bugs.webkit.org/show_bug.cgi?id=91063
+compositing/columns/geometry-map-paginated-assert.html
+fast/multicol/shrink-to-column-height-for-pagination.html
+
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
