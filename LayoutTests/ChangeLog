@@ -1,3 +1,11 @@
+2012-07-18  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Not reviewed. Build fix.
+
+        Add CR before bug number to avoid lint error.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Pravin D  <pravind.2k4@gmail.com>
 
         Content size of child having percent height inside a fixed height container having overflow:auto is wrongly calculated

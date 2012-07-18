@@ -2572,7 +2572,7 @@ BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 BUGWK91676 : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 
 // Failure introduced by Chromium r83848.
-BUG137938 : fast/url/ipv6.html = TEXT
+BUGCR137938 : fast/url/ipv6.html = TEXT
 
 // New tests in r85961 and r86442
 BUGWK60414 WIN : platform/win/plugins/visibility-hidden.html = IMAGE+TEXT
