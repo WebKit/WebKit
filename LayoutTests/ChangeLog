@@ -1,3 +1,9 @@
+2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium gardening, unskipped tests.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] editing/input and editing/unsupported-content tests needs update after rebaseline and new testfonts
