@@ -3482,8 +3482,6 @@ BUGWK86592 LINUX : http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html
 BUGWK86592 LINUX : fast/loader/unload-form-about-blank.html = TIMEOUT PASS
 BUGWK86592 LINUX : http/tests/xmlhttprequest/zero-length-response-sync.html = TIMEOUT PASS
 
-BUGWK89126 MAC : platform/chromium/compositing/accelerated-drawing/svg-filters.html = IMAGE
-
 // strange "Unexpected no expected results found" on cr-linux ews
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload-within-iframe.html = MISSING PASS
 BUGWK86600 LINUX : http/tests/cache/loaded-from-cache-after-reload.html = MISSING PASS
@@ -3602,8 +3600,7 @@ BUGWK88832 XP : http/tests/xmlhttprequest/origin-exact-matching.html = PASS TIME
 BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = PASS TEXT
 
 // Flaky
-BUGWK89166 MAC : http/tests/messaging/cross-domain-message-event-dispatch.html = TEXT
-BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT
+BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT PASS
 
 // Needs Rebaseline after bug 86942
 BUGWK86942 : fast/backgrounds/size/zero.html = IMAGE+TEXT
