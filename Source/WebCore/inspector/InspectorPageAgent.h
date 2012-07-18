@@ -53,6 +53,7 @@ class InspectorAgent;
 class InspectorArray;
 class InspectorClient;
 class InspectorObject;
+class InspectorOverlay;
 class InspectorState;
 class InstrumentingAgents;
 class KURL;
@@ -77,7 +78,7 @@ public:
         OtherResource
     };
 
-    static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorClient*);
+    static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorClient*, InspectorOverlay*);
 
     static bool cachedResourceContent(CachedResource*, String* result, bool* base64Encoded);
     static bool sharedBufferContent(PassRefPtr<SharedBuffer>, const String& textEncodingName, bool withBase64Encode, String* result);
@@ -137,7 +138,7 @@ public:
     static DocumentLoader* assertDocumentLoader(ErrorString*, Frame*);
 
 private:
-    InspectorPageAgent(InstrumentingAgents*, Page*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorClient*);
+    InspectorPageAgent(InstrumentingAgents*, Page*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorClient*, InspectorOverlay*);
     void updateViewMetrics(int, int, double, bool);
 
     PassRefPtr<TypeBuilder::Page::Frame> buildObjectForFrame(Frame*);
@@ -147,6 +148,7 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorClient* m_client;
     InspectorFrontend::Page* m_frontend;
+    InspectorOverlay* m_overlay;
     long m_lastScriptIdentifier;
     String m_pendingScriptToEvaluateOnLoadOnce;
     String m_scriptToEvaluateOnLoadOnce;

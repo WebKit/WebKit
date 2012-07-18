@@ -133,17 +133,18 @@ protected:
     InjectedScriptManager* injectedScriptManager() { return m_injectedScriptManager; }
     virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId) = 0;
 
+    virtual void disable();
+    virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
+    virtual void didContinue();
+
 private:
     void enable();
-    void disable();
     bool enabled();
 
     PassRefPtr<TypeBuilder::Array<TypeBuilder::Debugger::CallFrame> > currentCallFrames();
 
     virtual void didParseSource(const String& scriptId, const Script&);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
-    virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
-    virtual void didContinue();
 
     void setPauseOnExceptionsImpl(ErrorString*, int);
 

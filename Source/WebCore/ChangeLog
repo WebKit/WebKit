@@ -1,3 +1,75 @@
+2012-07-18  Sergey Rogulenko  <rogulenko@google.com>
+
+        Web Inspector: adding pause icon for JavaScript debugging
+        https://bugs.webkit.org/show_bug.cgi?id=90880
+
+        Reviewed by Pavel Feldman.
+
+        Refactored DOMNodeHighlighter into InspectorOverlay class and added a feature to show a "pause" screen when
+        the Javascript debugger is paused.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::InspectorOverlay::InspectorOverlay):
+        (WebCore::InspectorOverlay::paint):
+        (WebCore::InspectorOverlay::drawOutline):
+        (WebCore::InspectorOverlay::getHighlight):
+        (WebCore::InspectorOverlay::setPausedInDebugger):
+        (WebCore::InspectorOverlay::hideHighlight):
+        (WebCore):
+        (WebCore::InspectorOverlay::highlightNode):
+        (WebCore::InspectorOverlay::setHighlightData):
+        (WebCore::InspectorOverlay::clearHighlightData):
+        (WebCore::InspectorOverlay::highlightedNode):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::drawHighlight):
+        (WebCore::InspectorOverlay::drawPausedInDebugger):
+        * inspector/DOMNodeHighlighter.h:
+        (WebCore):
+        (InspectorOverlay):
+        (WebCore::InspectorOverlay::create):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::drawHighlight):
+        (WebCore::InspectorController::getHighlight):
+        (WebCore::InspectorController::highlightedNode):
+        * inspector/InspectorController.h:
+        (WebCore):
+        (InspectorController):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::~InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::handleMousePress):
+        (WebCore::InspectorDOMAgent::mouseDidMoveOverElement):
+        (WebCore::InspectorDOMAgent::setSearchingForNode):
+        (WebCore::InspectorDOMAgent::setHighlightDataFromConfig):
+        (WebCore::InspectorDOMAgent::setInspectModeEnabled):
+        (WebCore::InspectorDOMAgent::highlightRect):
+        (WebCore::InspectorDOMAgent::highlightNode):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        (WebCore::InspectorDOMAgent::hideHighlight):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore):
+        (WebCore::InspectorDOMAgent::create):
+        (InspectorDOMAgent):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::create):
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::didPaint):
+        * inspector/InspectorPageAgent.h:
+        (WebCore):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::create):
+        (WebCore::PageDebuggerAgent::PageDebuggerAgent):
+        (WebCore::PageDebuggerAgent::disable):
+        (WebCore):
+        (WebCore::PageDebuggerAgent::didPause):
+        (WebCore::PageDebuggerAgent::didContinue):
+        * inspector/PageDebuggerAgent.h:
+        (WebCore):
+        (PageDebuggerAgent):
+
 2012-07-17  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: intern strings when processing timeline records

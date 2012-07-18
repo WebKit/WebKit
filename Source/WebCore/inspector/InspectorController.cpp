@@ -34,6 +34,7 @@
 
 #include "InspectorController.h"
 
+#include "DOMNodeHighlighter.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "IdentifiersFactory.h"
@@ -78,6 +79,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     : m_instrumentingAgents(adoptPtr(new InstrumentingAgents()))
     , m_injectedScriptManager(InjectedScriptManager::createForPage())
     , m_state(adoptPtr(new InspectorState(inspectorClient)))
+    , m_overlay(InspectorOverlay::create(page, inspectorClient))
     , m_page(page)
     , m_inspectorClient(inspectorClient)
 {
@@ -85,12 +87,12 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_inspectorAgent = inspectorAgentPtr.get();
     m_agents.append(inspectorAgentPtr.release());
 
-    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_inspectorAgent, m_state.get(), m_injectedScriptManager.get(), inspectorClient));
+    OwnPtr<InspectorPageAgent> pageAgentPtr(InspectorPageAgent::create(m_instrumentingAgents.get(), page, m_inspectorAgent, m_state.get(), m_injectedScriptManager.get(), inspectorClient, m_overlay.get()));
     InspectorPageAgent* pageAgent = pageAgentPtr.get();
     m_pageAgent = pageAgentPtr.get();
     m_agents.append(pageAgentPtr.release());
 
-    OwnPtr<InspectorDOMAgent> domAgentPtr(InspectorDOMAgent::create(m_instrumentingAgents.get(), pageAgent, inspectorClient, m_state.get(), m_injectedScriptManager.get()));
+    OwnPtr<InspectorDOMAgent> domAgentPtr(InspectorDOMAgent::create(m_instrumentingAgents.get(), pageAgent, m_state.get(), m_injectedScriptManager.get(), m_overlay.get()));
     m_domAgent = domAgentPtr.get();
     m_agents.append(domAgentPtr.release());
 
@@ -130,7 +132,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_agents.append(consoleAgentPtr.release());
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    OwnPtr<InspectorDebuggerAgent> debuggerAgentPtr(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptManager.get()));
+    OwnPtr<InspectorDebuggerAgent> debuggerAgentPtr(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptManager.get(), m_overlay.get()));
     m_debuggerAgent = debuggerAgentPtr.get();
     m_agents.append(debuggerAgentPtr.release());
 
@@ -297,12 +299,12 @@ void InspectorController::evaluateForTestInFrontend(long callId, const String& s
 
 void InspectorController::drawHighlight(GraphicsContext& context) const
 {
-    m_domAgent->drawHighlight(context);
+    m_overlay->paint(context);
 }
 
 void InspectorController::getHighlight(Highlight* highlight) const
 {
-    m_domAgent->getHighlight(highlight);
+    m_overlay->getHighlight(highlight);
 }
 
 void InspectorController::inspect(Node* node)
@@ -344,7 +346,7 @@ void InspectorController::hideHighlight()
 
 Node* InspectorController::highlightedNode() const
 {
-    return m_domAgent->highlightedNode();
+    return m_overlay->highlightedNode();
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

@@ -39,6 +39,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
+#include "InspectorClient.h"
 #include "Node.h"
 #include "Page.h"
 #include "Range.h"
@@ -462,9 +463,9 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
         drawElementTitle(*context, node, renderer, pixelSnappedIntRect(boundingBox), pixelSnappedIntRect(titleAnchorBox), visibleRect, containingFrame->settings());
 }
 
-static void getOrDrawRectHighlight(GraphicsContext* context, Document* document, HighlightData* highlightData, Highlight *highlight)
+static void getOrDrawRectHighlight(GraphicsContext* context, Page* page, HighlightData* highlightData, Highlight *highlight)
 {
-    if (!document)
+    if (!page)
         return;
 
     FloatRect highlightRect(*(highlightData->rect));
@@ -473,7 +474,7 @@ static void getOrDrawRectHighlight(GraphicsContext* context, Document* document,
     highlight->quads.append(highlightRect);
 
     if (context) {
-        FrameView* view = document->frame()->view();
+        FrameView* view = page->mainFrame()->view();
         if (!view->delegatesScrolling()) {
             FloatRect visibleRect = view->visibleContentRect();
             context->translate(-visibleRect.x(), -visibleRect.y());
@@ -485,44 +486,137 @@ static void getOrDrawRectHighlight(GraphicsContext* context, Document* document,
 
 } // anonymous namespace
 
-namespace DOMNodeHighlighter {
-
-void drawHighlight(GraphicsContext& context, Document* document, HighlightData* highlightData)
+InspectorOverlay::InspectorOverlay(Page* page, InspectorClient* client)
+    : m_page(page)
+    , m_client(client)
+    , m_pausedInDebugger(false)
 {
-    if (!highlightData)
-        return;
-
-    Highlight highlight;
-    if (highlightData->node)
-        getOrDrawNodeHighlight(&context, highlightData, &highlight);
-    else if (highlightData->rect)
-        getOrDrawRectHighlight(&context, document, highlightData, &highlight);
 }
 
-void getHighlight(Document* document, HighlightData* highlightData, Highlight* highlight)
+void InspectorOverlay::paint(GraphicsContext& context)
 {
-    if (!highlightData)
-        return;
-
-    highlight->contentColor = highlightData->content;
-    highlight->paddingColor = highlightData->padding;
-    highlight->borderColor = highlightData->border;
-    highlight->marginColor = highlightData->margin;
-    highlight->type = HighlightTypeRects;
-
-    if (highlightData->node)
-        getOrDrawNodeHighlight(0, highlightData, highlight);
-    else if (highlightData->rect)
-        getOrDrawRectHighlight(0, document, highlightData, highlight);
+    drawPausedInDebugger(context);
+    drawHighlight(context);
 }
 
-void drawOutline(GraphicsContext& context, const LayoutRect& rect, const Color& color)
+void InspectorOverlay::drawOutline(GraphicsContext& context, const LayoutRect& rect, const Color& color)
 {
     FloatRect outlineRect = rect;
     drawOutlinedQuad(context, outlineRect, Color(), color);
 }
 
-} // namespace DOMNodeHighlighter
+void InspectorOverlay::getHighlight(Highlight* highlight) const
+{
+    if (!m_highlightData)
+        return;
+
+    highlight->contentColor = m_highlightData->content;
+    highlight->paddingColor = m_highlightData->padding;
+    highlight->borderColor = m_highlightData->border;
+    highlight->marginColor = m_highlightData->margin;
+    highlight->type = HighlightTypeRects;
+
+    if (m_highlightData->node)
+        getOrDrawNodeHighlight(0, m_highlightData.get(), highlight);
+    else if (m_highlightData->rect)
+        getOrDrawRectHighlight(0, m_page, m_highlightData.get(), highlight);
+}
+
+void InspectorOverlay::setPausedInDebugger(bool flag)
+{
+    m_pausedInDebugger = flag;
+    update();
+}
+
+void InspectorOverlay::hideHighlight()
+{
+    if (m_highlightData) {
+        // FIXME: Clear entire highlight data here, store config upon setInspectModeEnabled
+        m_highlightData->rect.clear();
+        m_highlightData->node.clear();
+    }
+    update();
+}
+
+void InspectorOverlay::highlightNode(Node* node)
+{
+    if (m_highlightData)
+        m_highlightData->node = node;
+    update();
+}
+
+void InspectorOverlay::setHighlightData(PassOwnPtr<HighlightData> highlightData)
+{
+    m_highlightData = highlightData;
+    update();
+}
+
+void InspectorOverlay::clearHighlightData()
+{
+    m_highlightData.clear();
+    update();
+}
+
+Node* InspectorOverlay::highlightedNode() const
+{
+    return m_highlightData ? m_highlightData->node.get() : 0;
+}
+
+void InspectorOverlay::update()
+{
+    if (m_highlightData || m_pausedInDebugger)
+        m_client->highlight();
+    else
+        m_client->hideHighlight();
+}
+
+void InspectorOverlay::drawHighlight(GraphicsContext& context)
+{
+    if (!m_highlightData || (!m_highlightData->rect && !m_highlightData->node))
+        return;
+
+    Highlight highlight;
+    if (m_highlightData->node)
+        getOrDrawNodeHighlight(&context, m_highlightData.get(), &highlight);
+    else if (m_highlightData->rect)
+        getOrDrawRectHighlight(&context, m_page, m_highlightData.get(), &highlight);
+}
+
+void InspectorOverlay::drawPausedInDebugger(GraphicsContext& context)
+{
+    if (!m_pausedInDebugger)
+        return;
+
+    DEFINE_STATIC_LOCAL(Color, backgroundColor, (0, 0, 0, 31));
+    DEFINE_STATIC_LOCAL(Color, textBackgroundColor, (255, 255, 194));
+    DEFINE_STATIC_LOCAL(Color, borderColor, (128, 128, 128));
+    DEFINE_STATIC_LOCAL(int, fontHeight, (24));
+
+    Frame* frame = m_page->mainFrame();
+    Settings* settings = frame->settings();
+    IntRect visibleRect = frame->view()->visibleContentRect();
+
+    context.setFillColor(backgroundColor, ColorSpaceDeviceRGB);
+    context.drawRect(visibleRect);
+
+    FontDescription desc;
+    setUpFontDescription(desc, settings);
+    desc.setComputedSize(fontHeight);
+    Font font = Font(desc, 0, 0);
+    font.update(0);
+
+    String text = "Paused in debugger.";
+    TextRun textRun(text);
+    IntRect titleRect = enclosingIntRect(font.selectionRectForText(textRun, IntPoint(), fontHeight));
+    titleRect.inflate(rectInflatePx);
+    titleRect.setLocation(IntPoint(visibleRect.width() / 2 - titleRect.width() / 2, 0));
+
+    context.setFillColor(textBackgroundColor, ColorSpaceDeviceRGB);
+    context.setStrokeColor(borderColor, ColorSpaceDeviceRGB);
+    context.drawRect(titleRect);
+    context.setFillColor(Color::black, ColorSpaceDeviceRGB);
+    context.drawText(font, textRun, IntPoint(titleRect.x() + rectInflatePx, titleRect.y() + fontHeight));
+}
 
 } // namespace WebCore
 

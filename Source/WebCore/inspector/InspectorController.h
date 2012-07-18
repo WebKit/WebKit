@@ -52,6 +52,7 @@ class InspectorDebuggerAgent;
 class InspectorFrontend;
 class InspectorFrontendChannel;
 class InspectorFrontendClient;
+class InspectorOverlay;
 class InspectorPageAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
@@ -120,6 +121,7 @@ private:
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
     OwnPtr<InspectorState> m_state;
+    OwnPtr<InspectorOverlay> m_overlay;
 
     InspectorAgent* m_inspectorAgent;
     InspectorDOMAgent* m_domAgent;

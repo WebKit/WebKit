@@ -32,18 +32,21 @@
 #include "Color.h"
 #include "FloatQuad.h"
 #include "LayoutTypes.h"
+#include "Node.h"
 
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Color;
-class Document;
-class FrameView;
 class GraphicsContext;
+class InspectorClient;
+class IntRect;
 class Node;
+class Page;
 
 struct HighlightData {
     Color content;
@@ -75,13 +78,38 @@ struct Highlight {
     Vector<FloatQuad> quads;
 };
 
-namespace DOMNodeHighlighter {
+class InspectorOverlay {
+public:
+    static PassOwnPtr<InspectorOverlay> create(Page* page, InspectorClient* client)
+    {
+        return adoptPtr(new InspectorOverlay(page, client));
+    }
 
-void drawHighlight(GraphicsContext&, Document*, HighlightData*);
-void getHighlight(Document*, HighlightData*, Highlight*);
-void drawOutline(GraphicsContext&, const LayoutRect&, const Color&);
+    void paint(GraphicsContext&);
+    void drawOutline(GraphicsContext&, const LayoutRect&, const Color&);
+    void getHighlight(Highlight*) const;
 
-} // namespace DOMNodeHighlighter
+    void setPausedInDebugger(bool);
+
+    void hideHighlight();
+    void highlightNode(Node*);
+    void setHighlightData(PassOwnPtr<HighlightData>);
+    void clearHighlightData();
+
+    Node* highlightedNode() const;
+
+private:
+    InspectorOverlay(Page*, InspectorClient*);
+
+    void update();
+    void drawHighlight(GraphicsContext&);
+    void drawPausedInDebugger(GraphicsContext&);
+
+    Page* m_page;
+    InspectorClient* m_client;
+    bool m_pausedInDebugger;
+    OwnPtr<HighlightData> m_highlightData;
+};
 
 } // namespace WebCore
 

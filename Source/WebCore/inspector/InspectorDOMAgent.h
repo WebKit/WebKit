@@ -55,12 +55,10 @@ class DOMEditor;
 class Document;
 class Element;
 class Event;
-class GraphicsContext;
-class InspectorClient;
 class InspectorFrontend;
 class InspectorHistory;
+class InspectorOverlay;
 class InspectorPageAgent;
-class IntRect;
 class HitTestResult;
 class HTMLElement;
 class InspectorState;
@@ -70,9 +68,6 @@ class Node;
 class RevalidateStyleAttributeTask;
 class ScriptValue;
 class ShadowRoot;
-
-struct Highlight;
-struct HighlightData;
 
 typedef String ErrorString;
 
@@ -103,9 +98,9 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
     {
-        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, client, inspectorState, injectedScriptManager));
+        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, inspectorState, injectedScriptManager, overlay));
     }
 
     static String toErrorString(const ExceptionCode&);
@@ -151,8 +146,6 @@ public:
     virtual void redo(ErrorString*);
     virtual void markUndoableState(ErrorString*);
 
-    Node* highlightedNode() const;
-
     void getEventListeners(Node*, Vector<EventListenerInfo>& listenersArray, bool includeAncestors);
 
     // Methods called from the InspectorInstrumentation.
@@ -185,9 +178,6 @@ public:
     void inspect(Node*);
     void focusNode();
 
-    void drawHighlight(GraphicsContext&) const;
-    void getHighlight(Highlight*) const;
-
     InspectorHistory* history() { return m_history.get(); }
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
@@ -205,11 +195,10 @@ public:
     InspectorPageAgent* pageAgent() { return m_pageAgent; }
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*, InjectedScriptManager*);
+    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*, InjectedScriptManager*, InspectorOverlay*);
 
     void setSearchingForNode(bool enabled, InspectorObject* highlightConfig);
     bool setHighlightDataFromConfig(InspectorObject* highlightConfig);
-    void highlight();
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
@@ -241,8 +230,8 @@ private:
 #endif
 
     InspectorPageAgent* m_pageAgent;
-    InspectorClient* m_client;
     InjectedScriptManager* m_injectedScriptManager;
+    InspectorOverlay* m_overlay;
     InspectorFrontend::DOM* m_frontend;
     DOMListener* m_domListener;
     NodeToIdMap m_documentNodeToIdMap;
@@ -256,7 +245,6 @@ private:
     typedef HashMap<String, Vector<RefPtr<Node> > > SearchResults;
     SearchResults m_searchResults;
     OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
-    OwnPtr<HighlightData> m_highlightData;
     RefPtr<Node> m_nodeToFocus;
     bool m_searchingForNode;
     OwnPtr<InspectorHistory> m_history;

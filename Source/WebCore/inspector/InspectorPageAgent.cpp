@@ -223,9 +223,9 @@ bool InspectorPageAgent::sharedBufferContent(PassRefPtr<SharedBuffer> buffer, co
     return decodeSharedBuffer(buffer, textEncodingName, result);
 }
 
-PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorClient* client)
+PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorState* state, InjectedScriptManager* injectedScriptManager, InspectorClient* client, InspectorOverlay* overlay)
 {
-    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, inspectorAgent, state, injectedScriptManager, client));
+    return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, inspectorAgent, state, injectedScriptManager, client, overlay));
 }
 
 // static
@@ -308,13 +308,14 @@ TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::cachedResourceTypeJson
     return resourceTypeJson(cachedResourceType(cachedResource));
 }
 
-InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorClient* client)
+InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorClient* client, InspectorOverlay* overlay)
     : InspectorBaseAgent<InspectorPageAgent>("Page", instrumentingAgents, inspectorState)
     , m_page(page)
     , m_inspectorAgent(inspectorAgent)
     , m_injectedScriptManager(injectedScriptManager)
     , m_client(client)
     , m_frontend(0)
+    , m_overlay(overlay)
     , m_lastScriptIdentifier(0)
     , m_lastPaintContext(0)
     , m_didLoadEventFire(false)
@@ -885,7 +886,7 @@ void InspectorPageAgent::didPaint()
         Color(0, 0, 0xFF, 0x3F),
     };
 
-    DOMNodeHighlighter::drawOutline(*m_lastPaintContext, m_lastPaintRect, colors[colorSelector++ % WTF_ARRAY_LENGTH(colors)]);
+    m_overlay->drawOutline(*m_lastPaintContext, m_lastPaintRect, colors[colorSelector++ % WTF_ARRAY_LENGTH(colors)]);
 
     m_lastPaintContext = 0;
 }
