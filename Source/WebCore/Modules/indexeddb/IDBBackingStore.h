@@ -67,7 +67,8 @@ public:
     virtual bool putObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, ObjectStoreRecordIdentifier*) = 0;
     virtual void clearObjectStore(int64_t databaseId, int64_t objectStoreId) = 0;
     virtual void deleteObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const ObjectStoreRecordIdentifier*) = 0;
-    virtual int64_t nextAutoIncrementNumber(int64_t databaseId, int64_t objectStoreId) = 0;
+    virtual int64_t getKeyGeneratorCurrentNumber(int64_t databaseId, int64_t objectStoreId) = 0;
+    virtual bool maybeUpdateKeyGeneratorCurrentNumber(int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent) = 0;
     virtual bool keyExistsInObjectStore(int64_t databaseId, int64_t objectStoreId, const IDBKey&, ObjectStoreRecordIdentifier* foundRecordIdentifier) = 0;
 
     class ObjectStoreRecordCallback {

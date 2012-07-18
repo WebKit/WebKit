@@ -48,7 +48,8 @@ public:
     virtual bool putObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, ObjectStoreRecordIdentifier*) OVERRIDE { return false; }
     virtual void clearObjectStore(int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
     virtual void deleteObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, const ObjectStoreRecordIdentifier*) OVERRIDE { }
-    virtual int64_t nextAutoIncrementNumber(int64_t databaseId, int64_t objectStoreId) OVERRIDE { return 0.0; }
+    virtual int64_t getKeyGeneratorCurrentNumber(int64_t databaseId, int64_t objectStoreId) OVERRIDE { return 0; }
+    virtual bool maybeUpdateKeyGeneratorCurrentNumber(int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent) OVERRIDE { return false; }
     virtual bool keyExistsInObjectStore(int64_t databaseId, int64_t objectStoreId, const IDBKey&, ObjectStoreRecordIdentifier* foundRecordIdentifier) OVERRIDE { return false; }
 
     virtual bool forEachObjectStoreRecord(int64_t databaseId, int64_t objectStoreId, ObjectStoreRecordCallback&) OVERRIDE { return false; }

@@ -1,3 +1,44 @@
+2012-07-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Key generator state not maintained across connections
+        https://bugs.webkit.org/show_bug.cgi?id=91456
+
+        Reviewed by Tony Chang.
+
+        Explicitly store key generator state for each object store in the backing store,
+        rather than deriving it from the maximum key in the data (which violates the spec
+        if data is deleted).
+
+        This change eliminates a (fragile) per-store cache of the value to simplify the
+        code. A cache could be re-introduced, requiring an "onbeforecommit" hook for
+        object stores, but it seems cleaner to save that for a follow-up patch.
+
+        Test: storage/indexeddb/key-generator.html
+
+        * Modules/indexeddb/IDBBackingStore.h: New APIs for getting/setting generator states.
+        (IDBBackingStore):
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::getObjectStores): Read generator state (but currently ignored).
+        (WebCore::IDBLevelDBBackingStore::createObjectStore): Write generator state.
+        (WebCore):
+        (WebCore::IDBLevelDBBackingStore::getKeyGeneratorCurrentNumber):
+        (WebCore::IDBLevelDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber): Update, optionally
+        checking to see if the new value is greater than the old. (If caller got the value via
+        getKeyGeneratorCurrentNumber it is safe to skip the check.)
+        * Modules/indexeddb/IDBLevelDBBackingStore.h:
+        (IDBLevelDBBackingStore):
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        * Modules/indexeddb/IDBLevelDBCoding.h:
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl): Ditch the cache.
+        (WebCore::IDBObjectStoreBackendImpl::put): No need for abort task.
+        (WebCore::IDBObjectStoreBackendImpl::putWithIndexKeys): Ditto.
+        (WebCore::IDBObjectStoreBackendImpl::putInternal): Use the newfangled APIs below.
+        (WebCore::IDBObjectStoreBackendImpl::generateKey):
+        (WebCore::IDBObjectStoreBackendImpl::updateKeyGenerator):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (IDBObjectStoreBackendImpl):
+
 2012-07-17  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: createIndex should throw INVALID_ACCESS_ERR instead of NOT_SUPPORTED_ERR

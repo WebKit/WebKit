@@ -1,3 +1,14 @@
+2012-07-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Key generator state not maintained across connections
+        https://bugs.webkit.org/show_bug.cgi?id=91456
+
+        Reviewed by Tony Chang.
+
+        Add stub method implementations to test class.
+
+        * tests/IDBFakeBackingStore.h:
+
 2012-07-17  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r122884.

@@ -155,7 +155,8 @@ public:
         kEvictable = 3,
         kLastVersion = 4,
         kMaxIndexId = 5,
-        kHasKeyPath = 6
+        kHasKeyPath = 6,
+        kKeyGeneratorCurrentNumber = 7
     };
 
     ObjectStoreMetaDataKey();

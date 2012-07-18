@@ -89,8 +89,8 @@ private:
     IDBObjectStoreBackendImpl(const IDBDatabaseBackendImpl*, const String& name, const IDBKeyPath&, bool autoIncrement);
 
     void loadIndexes();
-    PassRefPtr<IDBKey> genAutoIncrementKey();
-    void resetAutoIncrementKeyCache() { m_autoIncrementNumber = -1; }
+    PassRefPtr<IDBKey> generateKey();
+    void updateKeyGenerator(const IDBKey*, bool checkCurrent);
 
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     static void putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>, PassOwnPtr<Vector<String> > popIndexNames, PassOwnPtr<Vector<IndexKeys> >);
@@ -104,7 +104,6 @@ private:
     // These are used as setVersion transaction abort tasks.
     static void removeIndexFromMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);
     static void addIndexToMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);
-    static void revertAutoIncrementKeyCache(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>);
 
     PassRefPtr<IDBBackingStore> backingStore() const { return m_database->backingStore(); }
     int64_t databaseId() const { return m_database->id(); }
@@ -117,7 +116,6 @@ private:
 
     typedef HashMap<String, RefPtr<IDBIndexBackendImpl> > IndexMap;
     IndexMap m_indexes;
-    int64_t m_autoIncrementNumber;
 };
 
 } // namespace WebCore

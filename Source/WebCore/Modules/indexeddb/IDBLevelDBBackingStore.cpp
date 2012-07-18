@@ -32,6 +32,7 @@
 #include <wtf/Assertions.h>
 #include "FileSystem.h"
 #include "IDBFactoryBackendImpl.h"
+#include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBLevelDBCoding.h"
@@ -45,6 +46,8 @@
 namespace WebCore {
 
 using namespace IDBLevelDBCoding;
+
+const int64_t KeyGeneratorInitialNumber = 1; // From the IndexedDB specification.
 
 template <typename DBOrTransaction>
 static bool getBool(DBOrTransaction* db, const Vector<char>& key, bool& foundBool)
@@ -414,6 +417,15 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
             it->next();
         }
 
+        int64_t keyGeneratorCurrentNumber = -1;
+        if (checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::kKeyGeneratorCurrentNumber)) {
+            keyGeneratorCurrentNumber = decodeInt(it->value().begin(), it->value().end());
+            // FIXME: Return keyGeneratorCurrentNumber, cache in object store, and write lazily to backing store.
+            // For now, just assert that if it was written it was valid.
+            ASSERT(keyGeneratorCurrentNumber >= KeyGeneratorInitialNumber);
+            it->next();
+        }
+
         foundIds.append(objectStoreId);
         foundNames.append(objectStoreName);
         foundKeyPaths.append(keyPath);
@@ -451,6 +463,7 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
     const Vector<char> lastVersionKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kLastVersion);
     const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kMaxIndexId);
     const Vector<char> hasKeyPathKey  = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kHasKeyPath);
+    const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kKeyGeneratorCurrentNumber);
     const Vector<char> namesKey = ObjectStoreNamesKey::encode(databaseId, name);
 
     bool ok = putString(m_currentTransaction.get(), nameKey, name);
@@ -490,6 +503,12 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
     }
 
     ok = putBool(m_currentTransaction.get(), hasKeyPathKey, !keyPath.isNull());
+    if (!ok) {
+        LOG_ERROR("Internal Indexed DB error.");
+        return false;
+    }
+
+    ok = putInt(m_currentTransaction.get(), keyGeneratorCurrentNumberKey, KeyGeneratorInitialNumber);
     if (!ok) {
         LOG_ERROR("Internal Indexed DB error.");
         return false;
@@ -634,35 +653,66 @@ void IDBLevelDBBackingStore::deleteObjectStoreRecord(int64_t databaseId, int64_t
     m_currentTransaction->remove(existsEntryKey);
 }
 
-int64_t IDBLevelDBBackingStore::nextAutoIncrementNumber(int64_t databaseId, int64_t objectStoreId)
+
+int64_t IDBLevelDBBackingStore::getKeyGeneratorCurrentNumber(int64_t databaseId, int64_t objectStoreId)
 {
     ASSERT(m_currentTransaction);
-    const Vector<char> startKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
-    const Vector<char> stopKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, maxIDBKey());
 
-    OwnPtr<LevelDBIterator> it = m_currentTransaction->createIterator();
+    const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kKeyGeneratorCurrentNumber);
 
-    int64_t maxNumericKey = 0;
+    int64_t keyGeneratorCurrentNumber = -1;
+    Vector<char> data;
 
-    // FIXME: This does a forward scan over all keys. Improve it.
-    // Since all dates > all numbers, create Date(-Infinity) and seek backwards.
+    if (m_currentTransaction->get(keyGeneratorCurrentNumberKey, data))
+        keyGeneratorCurrentNumber = decodeInt(data.begin(), data.end());
+    else {
+        // Previously, the key generator state was not stored explicitly but derived from the
+        // maximum numeric key present in existing data. This violates the spec as the data may
+        // be cleared but the key generator state must be preserved.
+        const Vector<char> startKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
+        const Vector<char> stopKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, maxIDBKey());
 
-    for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
-        const char *p = it->key().begin();
-        const char *limit = it->key().end();
+        OwnPtr<LevelDBIterator> it = m_currentTransaction->createIterator();
+        int64_t maxNumericKey = 0;
 
-        ObjectStoreDataKey dataKey;
-        p = ObjectStoreDataKey::decode(p, limit, &dataKey);
-        ASSERT(p);
+        for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
+            const char* p = it->key().begin();
+            const char* limit = it->key().end();
 
-        if (dataKey.userKey()->type() == IDBKey::NumberType) {
-            int64_t n = static_cast<int64_t>(dataKey.userKey()->number());
-            if (n > maxNumericKey)
-                maxNumericKey = n;
+            ObjectStoreDataKey dataKey;
+            p = ObjectStoreDataKey::decode(p, limit, &dataKey);
+            ASSERT(p);
+
+            if (dataKey.userKey()->type() == IDBKey::NumberType) {
+                int64_t n = static_cast<int64_t>(dataKey.userKey()->number());
+                if (n > maxNumericKey)
+                    maxNumericKey = n;
+            }
         }
+
+        keyGeneratorCurrentNumber = maxNumericKey + 1;
     }
 
-    return maxNumericKey + 1;
+    return keyGeneratorCurrentNumber;
+}
+
+bool IDBLevelDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber(int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent)
+{
+    ASSERT(m_currentTransaction);
+
+    if (checkCurrent) {
+        int64_t currentNumber = getKeyGeneratorCurrentNumber(databaseId, objectStoreId);
+        if (newNumber <= currentNumber)
+            return true;
+    }
+
+    const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::kKeyGeneratorCurrentNumber);
+    bool ok = putInt(m_currentTransaction.get(), keyGeneratorCurrentNumberKey, newNumber);
+    if (!ok) {
+        LOG_ERROR("Internal Indexed DB error.");
+        return false;
+    }
+    return true;
 }
 
 bool IDBLevelDBBackingStore::keyExistsInObjectStore(int64_t databaseId, int64_t objectStoreId, const IDBKey& key, ObjectStoreRecordIdentifier* foundRecordIdentifier)

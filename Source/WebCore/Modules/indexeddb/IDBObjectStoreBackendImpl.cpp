@@ -57,7 +57,6 @@ IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(const IDBDatabaseBackendImp
     , m_name(name)
     , m_keyPath(keyPath)
     , m_autoIncrement(autoIncrement)
-    , m_autoIncrementNumber(-1)
 {
     loadIndexes();
 }
@@ -68,7 +67,6 @@ IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(const IDBDatabaseBackendImp
     , m_name(name)
     , m_keyPath(keyPath)
     , m_autoIncrement(autoIncrement)
-    , m_autoIncrementNumber(-1)
 {
 }
 
@@ -159,9 +157,7 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
     OwnPtr<Vector<String> > nullIndexNames;
     OwnPtr<Vector<IndexKeys> > nullIndexKeys;
     if (!transaction->scheduleTask(
-            createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction, nullIndexNames.release(), nullIndexKeys.release()),
-            // FIXME: One of these per put() is overkill, since it's simply a cache invalidation.
-            createCallbackTask(&IDBObjectStoreBackendImpl::revertAutoIncrementKeyCache, objectStore)))
+            createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction, nullIndexNames.release(), nullIndexKeys.release())))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
@@ -181,15 +177,8 @@ void IDBObjectStoreBackendImpl::putWithIndexKeys(PassRefPtr<SerializedScriptValu
     OwnPtr<Vector<IndexKeys> > newIndexKeys = adoptPtr(new Vector<IndexKeys>(indexKeys));
 
     if (!transaction->scheduleTask(
-            createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction, newIndexNames.release(), newIndexKeys.release()),
-            // FIXME: One of these per put() is overkill, since it's simply a cache invalidation.
-            createCallbackTask(&IDBObjectStoreBackendImpl::revertAutoIncrementKeyCache, objectStore)))
+            createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction, newIndexNames.release(), newIndexKeys.release())))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
-}
-
-void IDBObjectStoreBackendImpl::revertAutoIncrementKeyCache(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore)
-{
-    objectStore->resetAutoIncrementKeyCache();
 }
 
 namespace {
@@ -291,9 +280,10 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
     OwnPtr<Vector<String> > indexNames = popIndexNames;
     OwnPtr<Vector<IndexKeys> > indexKeys = popIndexKeys;
     ASSERT((!indexNames && !indexKeys) || indexNames->size() == indexKeys->size());
+    const bool autoIncrement = objectStore->autoIncrement();
+    bool keyWasGenerated = false;
 
     if (putMode != CursorUpdate) {
-        const bool autoIncrement = objectStore->autoIncrement();
         const bool hasKeyPath = !objectStore->m_keyPath.isNull();
         if (hasKeyPath) {
             ASSERT(!key);
@@ -303,7 +293,8 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         }
         if (autoIncrement) {
             if (!key) {
-                RefPtr<IDBKey> autoIncKey = objectStore->genAutoIncrementKey();
+                RefPtr<IDBKey> autoIncKey = objectStore->generateKey();
+                keyWasGenerated = true;
                 if (!autoIncKey->isValid()) {
                     callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "Maximum key generator value reached."));
                     return;
@@ -313,7 +304,6 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
                     RefPtr<SerializedScriptValue> valueAfterInjection = injectKeyIntoKeyPath(autoIncKey, value, objectStore->m_keyPath);
                     ASSERT(valueAfterInjection);
                     if (!valueAfterInjection) {
-                        objectStore->resetAutoIncrementKeyCache();
                         // Checks in put() ensure this should only happen if I/O error occurs.
                         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error inserting generated key into the object."));
                         return;
@@ -321,9 +311,6 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
                     value = valueAfterInjection;
                 }
                 key = autoIncKey;
-            } else {
-                // FIXME: Logic to update generator state should go here. Currently it does a scan.
-                objectStore->resetAutoIncrementKeyCache();
             }
         }
     }
@@ -332,7 +319,6 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     RefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> recordIdentifier = objectStore->backingStore()->createInvalidRecordIdentifier();
     if (putMode == AddOnly && objectStore->backingStore()->keyExistsInObjectStore(objectStore->databaseId(), objectStore->id(), *key, recordIdentifier.get())) {
-        objectStore->resetAutoIncrementKeyCache();
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
         return;
     }
@@ -363,7 +349,6 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
                                           objectStore->databaseId(),
                                           objectStore->id(),
                                           index->id(), key.get(), &errorMessage)) {
-            objectStore->resetAutoIncrementKeyCache();
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, errorMessage));
             return;
         }
@@ -393,7 +378,10 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         }
     }
 
-    callbacks->onSuccess(key.get());
+    if (autoIncrement && putMode != CursorUpdate && key->type() == IDBKey::NumberType)
+        objectStore->updateKeyGenerator(key.get(), !keyWasGenerated);
+
+    callbacks->onSuccess(key.release());
 }
 
 void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
@@ -657,18 +645,20 @@ void IDBObjectStoreBackendImpl::addIndexToMap(ScriptExecutionContext*, PassRefPt
     objectStore->m_indexes.set(indexPtr->name(), indexPtr);
 }
 
-PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::genAutoIncrementKey()
+PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::generateKey()
 {
-    const int64_t kMaxGeneratorValue = 9007199254740992LL; // Maximum integer storable as ECMAScript number.
-    if (m_autoIncrementNumber > kMaxGeneratorValue)
+    const int64_t maxGeneratorValue = 9007199254740992LL; // Maximum integer storable as ECMAScript number.
+    int64_t currentNumber = backingStore()->getKeyGeneratorCurrentNumber(databaseId(), id());
+    if (currentNumber < 0 || currentNumber > maxGeneratorValue)
         return IDBKey::createInvalid();
-    if (m_autoIncrementNumber > 0)
-        return IDBKey::createNumber(m_autoIncrementNumber++);
 
-    m_autoIncrementNumber = backingStore()->nextAutoIncrementNumber(databaseId(), id());
-    if (m_autoIncrementNumber > kMaxGeneratorValue)
-        return IDBKey::createInvalid();
-    return IDBKey::createNumber(m_autoIncrementNumber++);
+    return IDBKey::createNumber(currentNumber);
+}
+
+void IDBObjectStoreBackendImpl::updateKeyGenerator(const IDBKey* key, bool checkCurrent)
+{
+    ASSERT(key && key->type() == IDBKey::NumberType);
+    backingStore()->maybeUpdateKeyGeneratorCurrentNumber(databaseId(), id(), static_cast<int64_t>(floor(key->number())) + 1, checkCurrent);
 }
 
 

@@ -1,3 +1,25 @@
+2012-07-17  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Key generator state not maintained across connections
+        https://bugs.webkit.org/show_bug.cgi?id=91456
+
+        Reviewed by Tony Chang.
+
+        Added key generator test case that spans database connections.
+
+        * storage/indexeddb/key-generator-expected.txt:
+        * storage/indexeddb/resources/key-generator.js:
+        (testAcrossConnections.request.onsuccess.request.onsuccess.request.onsuccess):
+        (testAcrossConnections.request.onsuccess.request.onsuccess):
+        (testAcrossConnections.request.onsuccess):
+        (testAcrossConnections.doFirstWrite.request.onsuccess):
+        (testAcrossConnections.doFirstWrite):
+        (testAcrossConnections.closeAndReopen.request.onsuccess):
+        (testAcrossConnections.closeAndReopen):
+        (testAcrossConnections.doSecondWrite.request.onsuccess):
+        (testAcrossConnections.doSecondWrite.trans.oncomplete):
+        (testAcrossConnections.doSecondWrite):
+
 2012-07-17  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium windows rebaseline for r122883.

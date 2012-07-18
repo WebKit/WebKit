@@ -73,6 +73,7 @@
 //     <database id, 0, 0, 50, object store id, 4> => last "version" number [ObjectStoreMetaDataKey]
 //     <database id, 0, 0, 50, object store id, 5> => maximum index id ever allocated [ObjectStoreMetaDataKey]
 //     <database id, 0, 0, 50, object store id, 6> => has key path (vs. null) [ObjectStoreMetaDataKey]
+//     <database id, 0, 0, 50, object store id, 7> => key generator current number [ObjectStoreMetaDataKey]
 //
 //
 // Index meta-data:
