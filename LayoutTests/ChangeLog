@@ -1,3 +1,142 @@
+2012-07-18  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] fast/text tests needs update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91570
+
+        Reviewed by Simon Hausmann.
+
+        After the rebaseline from changeset 121971 - [Qt] DumpRenderTree does not use
+        'monospace' font when directed, fast/text tests directory needs to be updated.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/fast/text/large-text-composed-char-expected.png:
+        * platform/qt-5.0-wk2/fast/text/large-text-composed-char-expected.txt:
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/qt-5.0/fast/text/backslash-to-yen-sign-expected.txt:
+        * platform/qt-5.0/fast/text/basic/003-expected.png:
+        * platform/qt-5.0/fast/text/basic/003-expected.txt:
+        * platform/qt-5.0/fast/text/fallback-traits-fixup-expected.txt:
+        * platform/qt-5.0/fast/text/international/hindi-whitespace-expected.txt:
+        * platform/qt-5.0/fast/text/international/text-spliced-font-expected.png:
+        * platform/qt-5.0/fast/text/international/text-spliced-font-expected.txt:
+        * platform/qt-5.0/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/qt-5.0/fast/text/large-text-composed-char-expected.png:
+        * platform/qt-5.0/fast/text/large-text-composed-char-expected.txt:
+        * platform/qt-5.0/fast/text/letter-spacing-negative-opacity-expected.png:
+        * platform/qt-5.0/fast/text/letter-spacing-negative-opacity-expected.txt:
+        * platform/qt-5.0/fast/text/softHyphen-expected.txt:
+        * platform/qt-5.0/fast/text/text-letter-spacing-expected.txt:
+        * platform/qt/fast/text/atsui-kerning-and-ligatures-expected.txt:
+        * platform/qt/fast/text/atsui-small-caps-punctuation-size-expected.png:
+        * platform/qt/fast/text/atsui-small-caps-punctuation-size-expected.txt:
+        * platform/qt/fast/text/backslash-to-yen-sign-dynamic-expected.png:
+        * platform/qt/fast/text/backslash-to-yen-sign-dynamic-expected.txt:
+        * platform/qt/fast/text/basic/001-expected.png:
+        * platform/qt/fast/text/basic/001-expected.txt:
+        * platform/qt/fast/text/basic/002-expected.txt:
+        * platform/qt/fast/text/basic/004-expected.txt:
+        * platform/qt/fast/text/basic/005-expected.txt:
+        * platform/qt/fast/text/basic/006-expected.txt:
+        * platform/qt/fast/text/basic/007-expected.txt:
+        * platform/qt/fast/text/basic/008-expected.txt:
+        * platform/qt/fast/text/basic/009-expected.png:
+        * platform/qt/fast/text/basic/009-expected.txt:
+        * platform/qt/fast/text/basic/011-expected.txt:
+        * platform/qt/fast/text/basic/012-expected.txt:
+        * platform/qt/fast/text/basic/generic-family-changes-expected.png:
+        * platform/qt/fast/text/basic/generic-family-changes-expected.txt:
+        * platform/qt/fast/text/basic/generic-family-reset-expected.png:
+        * platform/qt/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/qt/fast/text/break-word-expected.png:
+        * platform/qt/fast/text/break-word-expected.txt:
+        * platform/qt/fast/text/capitalize-empty-generated-string-expected.txt:
+        * platform/qt/fast/text/capitalize-preserve-nbsp-expected.txt:
+        * platform/qt/fast/text/cg-vs-atsui-expected.png:
+        * platform/qt/fast/text/cg-vs-atsui-expected.txt:
+        * platform/qt/fast/text/complex-preferred-logical-widths-expected.png:
+        * platform/qt/fast/text/complex-preferred-logical-widths-expected.txt:
+        * platform/qt/fast/text/complex-synthetic-bold-space-width-expected.png:
+        * platform/qt/fast/text/complex-synthetic-bold-space-width-expected.txt:
+        * platform/qt/fast/text/delete-hard-break-character-expected.txt:
+        * platform/qt/fast/text/embed-at-end-of-pre-wrap-line-expected.png:
+        * platform/qt/fast/text/embed-at-end-of-pre-wrap-line-expected.txt:
+        * platform/qt/fast/text/fake-italic-expected.txt:
+        * platform/qt/fast/text/firstline/001-expected.txt:
+        * platform/qt/fast/text/firstline/002-expected.txt:
+        * platform/qt/fast/text/firstline/003-expected.txt:
+        * platform/qt/fast/text/font-initial-expected.txt:
+        * platform/qt/fast/text/hyphenate-limit-before-after-expected.png:
+        * platform/qt/fast/text/hyphenate-limit-before-after-expected.txt:
+        * platform/qt/fast/text/hyphenate-limit-lines-expected.png:
+        * platform/qt/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/qt/fast/text/justified-selection-at-edge-expected.txt:
+        * platform/qt/fast/text/justified-selection-expected.txt:
+        * platform/qt/fast/text/line-breaks-after-white-space-expected.png:
+        * platform/qt/fast/text/line-breaks-after-white-space-expected.txt:
+        * platform/qt/fast/text/midword-break-before-surrogate-pair-2-expected.txt:
+        * platform/qt/fast/text/midword-break-hang-expected.txt:
+        * platform/qt/fast/text/reset-emptyRun-expected.txt:
+        * platform/qt/fast/text/selection-hard-linebreak-expected.png:
+        * platform/qt/fast/text/selection-hard-linebreak-expected.txt:
+        * platform/qt/fast/text/shadow-no-blur-expected.png:
+        * platform/qt/fast/text/shadow-no-blur-expected.txt:
+        * platform/qt/fast/text/shadow-translucent-fill-expected.txt:
+        * platform/qt/fast/text/should-use-atsui-expected.txt:
+        * platform/qt/fast/text/stroking-decorations-expected.txt:
+        * platform/qt/fast/text/stroking-expected.txt:
+        * platform/qt/fast/text/text-shadow-no-default-color-expected.txt:
+        * platform/qt/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/qt/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/qt/fast/text/unicode-variation-selector-expected.png:
+        * platform/qt/fast/text/unicode-variation-selector-expected.txt:
+        * platform/qt/fast/text/updateNewFont-expected.txt:
+        * platform/qt/fast/text/wbr-expected.txt:
+        * platform/qt/fast/text/wbr-in-pre-crash-expected.txt:
+        * platform/qt/fast/text/wbr-pre-expected.png:
+        * platform/qt/fast/text/wbr-pre-expected.txt:
+        * platform/qt/fast/text/wbr-styled-expected.png:
+        * platform/qt/fast/text/wbr-styled-expected.txt:
+        * platform/qt/fast/text/whitespace/002-expected.png:
+        * platform/qt/fast/text/whitespace/002-expected.txt:
+        * platform/qt/fast/text/whitespace/003-expected.png:
+        * platform/qt/fast/text/whitespace/003-expected.txt:
+        * platform/qt/fast/text/whitespace/006-expected.txt:
+        * platform/qt/fast/text/whitespace/007-expected.txt:
+        * platform/qt/fast/text/whitespace/008-expected.txt:
+        * platform/qt/fast/text/whitespace/009-expected.txt:
+        * platform/qt/fast/text/whitespace/012-expected.png:
+        * platform/qt/fast/text/whitespace/012-expected.txt:
+        * platform/qt/fast/text/whitespace/013-expected.txt:
+        * platform/qt/fast/text/whitespace/014-expected.txt:
+        * platform/qt/fast/text/whitespace/018-expected.txt:
+        * platform/qt/fast/text/whitespace/019-expected.png:
+        * platform/qt/fast/text/whitespace/019-expected.txt:
+        * platform/qt/fast/text/whitespace/020-expected.txt:
+        * platform/qt/fast/text/whitespace/021-expected.txt:
+        * platform/qt/fast/text/whitespace/022-expected.png:
+        * platform/qt/fast/text/whitespace/022-expected.txt:
+        * platform/qt/fast/text/whitespace/023-expected.png:
+        * platform/qt/fast/text/whitespace/023-expected.txt:
+        * platform/qt/fast/text/whitespace/025-expected.txt:
+        * platform/qt/fast/text/whitespace/026-expected.txt:
+        * platform/qt/fast/text/whitespace/027-expected.txt:
+        * platform/qt/fast/text/whitespace/029-expected.png:
+        * platform/qt/fast/text/whitespace/029-expected.txt:
+        * platform/qt/fast/text/whitespace/nbsp-mode-and-linewraps-expected.txt:
+        * platform/qt/fast/text/whitespace/normal-after-nowrap-breaking-expected.png:
+        * platform/qt/fast/text/whitespace/normal-after-nowrap-breaking-expected.txt:
+        * platform/qt/fast/text/whitespace/nowrap-clear-float-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-break-word-expected.png:
+        * platform/qt/fast/text/whitespace/pre-break-word-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-newline-box-test-expected.png:
+        * platform/qt/fast/text/whitespace/pre-newline-box-test-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-wrap-last-char-expected.txt:
+        * platform/qt/fast/text/whitespace/pre-wrap-line-test-expected.png:
+        * platform/qt/fast/text/whitespace/pre-wrap-line-test-expected.txt:
+        * platform/qt/fast/text/whitespace/span-in-word-space-causes-overflow-expected.txt:
+
 2012-07-18  Kevin Ellis  <kevers@chromium.org>
 
         TOUCH_ADJUSTMENT is too aggressive when snapping to large elements.

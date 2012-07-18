@@ -3,31 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 117x21
-          text run at (0,0) width 117: "Test for revision "
-        RenderInline {A} at (0,0) size 54x21 [color=#0000EE]
-          RenderText {#text} at (117,0) size 54x21
-            text run at (117,0) width 54: "#20574"
-        RenderText {#text} at (171,0) size 4x21
-          text run at (171,0) width 4: "."
-      RenderBlock {P} at (0,37) size 784x21
-        RenderText {#text} at (0,0) size 281x21
-          text run at (0,0) width 281: "The two blue boxes should be identical."
-      RenderBlock {DIV} at (0,74) size 106x48 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 9x21
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 101x19
+          text run at (0,0) width 101: "Test for revision "
+        RenderInline {A} at (0,0) size 48x19 [color=#0000EE]
+          RenderText {#text} at (101,0) size 48x19
+            text run at (101,0) width 48: "#20574"
+        RenderText {#text} at (149,0) size 4x19
+          text run at (149,0) width 4: "."
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 238x19
+          text run at (0,0) width 238: "The two blue boxes should be identical."
+      RenderBlock {DIV} at (0,70) size 106x44 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 9x19
           text run at (3,3) width 9: "L"
-        RenderInline {SPAN} at (0,0) size 39x21 [color=#008000] [bgcolor=#FFFF00]
-          RenderText {#text} at (12,3) size 39x21
-            text run at (12,3) width 39: "o r"
-        RenderText {#text} at (51,3) size 100x42
-          text run at (51,3) width 52: "e mi"
-          text run at (3,24) width 75: "psumdolor"
-      RenderBlock (anonymous) at (0,122) size 784x21
-        RenderBR {BR} at (0,0) size 0x21
-      RenderBlock {DIV} at (0,143) size 106x48 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 100x42
+        RenderInline {SPAN} at (0,0) size 41x19 [color=#008000] [bgcolor=#FFFF00]
+          RenderText {#text} at (12,3) size 41x19
+            text run at (12,3) width 41: "o r"
+        RenderText {#text} at (53,3) size 100x38
+          text run at (53,3) width 50: "e mi"
+          text run at (3,22) width 64: "psumdolor"
+      RenderBlock (anonymous) at (0,114) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,133) size 106x44 [border: (3px solid #0000FF)]
+        RenderText {#text} at (3,3) size 100x38
           text run at (3,3) width 100: "Lo re mi"
-          text run at (3,24) width 75: "psumdolor"
+          text run at (3,22) width 64: "psumdolor"
 selection start: position 1 of child 0 {#text} of child 8 {DIV} of body
 selection end:   position 4 of child 0 {#text} of child 8 {DIV} of body

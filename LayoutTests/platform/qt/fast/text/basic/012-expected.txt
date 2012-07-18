@@ -3,34 +3,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderBlock {H2} at (0,0) size 784x32
-        RenderText {#text} at (0,0) size 386x32
-          text run at (0,0) width 386: "Safari Whitespace/Non-ASCII Bug"
-      RenderBlock {P} at (0,51) size 784x42
-        RenderText {#text} at (0,0) size 771x42
-          text run at (0,0) width 706: "Apart from whitespace (tab and linefeed characters), the two lists below (in red) use identical HTML. "
-          text run at (706,0) width 65: "Both lists"
-          text run at (0,21) width 727: "should be rendered on a single line. In Safari, however, the first list shows each item on a separate line."
-      RenderBlock {P} at (0,109) size 784x42
-        RenderText {#text} at (0,0) size 770x42
-          text run at (0,0) width 770: "This bug only seems to occur if the bullet character is non-ASCII (has a Unicode value higher than 127). Non-"
-          text run at (0,21) width 381: "breaking spaces (&#160;), however, are an exception."
-      RenderBlock (anonymous) at (0,167) size 784x84
-        RenderBR {BR} at (0,0) size 0x21
-        RenderInline {FONT} at (0,0) size 372x63 [color=#CC0000]
-          RenderText {#text} at (0,21) size 372x21
-            text run at (0,21) width 77: "\x{BB} England "
-            text run at (77,21) width 66: "\x{BB} Ireland "
-            text run at (143,21) width 80: "\x{BB} Scotland "
-            text run at (223,21) width 82: "\x{BB} Germany "
-            text run at (305,21) width 67: "\x{BB} France "
-          RenderBR {BR} at (372,37) size 0x0
-          RenderBR {BR} at (0,42) size 0x21
-          RenderText {#text} at (0,63) size 372x21
-            text run at (0,63) width 77: "\x{BB} England "
-            text run at (77,63) width 66: "\x{BB} Ireland "
-            text run at (143,63) width 80: "\x{BB} Scotland "
-            text run at (223,63) width 82: "\x{BB} Germany "
-            text run at (305,63) width 67: "\x{BB} France "
+      RenderBlock {H2} at (0,0) size 784x28
+        RenderText {#text} at (0,0) size 355x28
+          text run at (0,0) width 355: "Safari Whitespace/Non-ASCII Bug"
+      RenderBlock {P} at (0,47) size 784x38
+        RenderText {#text} at (0,0) size 730x38
+          text run at (0,0) width 613: "Apart from whitespace (tab and linefeed characters), the two lists below (in red) use identical HTML. "
+          text run at (613,0) width 117: "Both lists should be"
+          text run at (0,19) width 552: "rendered on a single line. In Safari, however, the first list shows each item on a separate line."
+      RenderBlock {P} at (0,101) size 784x38
+        RenderText {#text} at (0,0) size 760x38
+          text run at (0,0) width 760: "This bug only seems to occur if the bullet character is non-ASCII (has a Unicode value higher than 127). Non-breaking spaces"
+          text run at (0,19) width 229: "(&#160;), however, are an exception."
+      RenderBlock (anonymous) at (0,155) size 784x76
+        RenderBR {BR} at (0,0) size 0x19
+        RenderInline {FONT} at (0,0) size 315x57 [color=#CC0000]
+          RenderText {#text} at (0,19) size 315x19
+            text run at (0,19) width 63: "\x{BB} England "
+            text run at (63,19) width 57: "\x{BB} Ireland "
+            text run at (120,19) width 68: "\x{BB} Scotland "
+            text run at (188,19) width 70: "\x{BB} Germany "
+            text run at (258,19) width 57: "\x{BB} France "
+          RenderBR {BR} at (315,34) size 0x0
+          RenderBR {BR} at (0,38) size 0x19
+          RenderText {#text} at (0,57) size 315x19
+            text run at (0,57) width 63: "\x{BB} England "
+            text run at (63,57) width 57: "\x{BB} Ireland "
+            text run at (120,57) width 68: "\x{BB} Scotland "
+            text run at (188,57) width 70: "\x{BB} Germany "
+            text run at (258,57) width 57: "\x{BB} France "
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
