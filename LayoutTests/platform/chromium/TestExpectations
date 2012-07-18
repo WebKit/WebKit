@@ -2115,11 +2115,6 @@ BUGCR60651 : platform/chromium/virtual/gpu/fast/canvas/webgl/uniform-location.ht
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 
-BUG_HCLAM : http/tests/css/border-image-loading.html = PASS TIMEOUT
-BUG_HCLAM : http/tests/css/css-image-loading.html = PASS TIMEOUT TEXT
-BUG_HCLAM : http/tests/css/mask-image-loading.html = PASS TIMEOUT TEXT
-BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = PASS TIMEOUT TEXT
-
 BUGCR57934 WIN DEBUG : http/tests/appcache/fail-on-update-2.html = PASS TIMEOUT
 
 // Issues starting from

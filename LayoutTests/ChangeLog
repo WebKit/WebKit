@@ -1,3 +1,11 @@
+2012-07-18  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Unreviewed gardening.
+
+        Remove some test expectations with my name on it, they are currently passing.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Vincent Scheib  <scheib@chromium.org>
 
         Unify allowfullscreen logic in Document::webkitFullScreenEnabled and fullScreenIsAllowedForElement.
