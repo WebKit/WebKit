@@ -3643,9 +3643,7 @@ BUGWK91275 WIN : storage/indexeddb/cursor-key-order.html = PASS CRASH
 BUGWK91403 WIN : storage/indexeddb/cursor-update-value-argument-required.html = PASS CRASH
 BUGWK90517 WIN : svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg = PASS CRASH
 BUGWK91421 WIN7 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = PASS CRASH
-// Temporarily marking as SKIP to see if crashes shift to later tests
-//BUGWK90469 WIN : storage/websql/multiple-databases-garbage-collection.html = PASS CRASH
-BUG_JSBELL SKIP : storage/websql/multiple-databases-garbage-collection.html = PASS CRASH
+BUGWK90469 WIN : storage/websql/multiple-databases-garbage-collection.html = PASS CRASH
 
 // Require rebaseline after bug 88171
 BUGWK88171 WIN : css1/formatting_model/floating_elements.html = IMAGE

@@ -1,3 +1,11 @@
+2012-07-18  Joshua Bell  <jsbell@chromium.org>
+
+        [chromium] Unreviewed TestExpectations update for WK90469.
+        Restore a test that was skipped to test a theory.
+        https://bugs.webkit.org/show_bug.cgi?id=90469
+
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL][DRT] Add heap profiling tests to Skipped list
