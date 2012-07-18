@@ -1,3 +1,22 @@
+2012-07-18  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][WK2] Too early assertion failure if default theme is not available
+        https://bugs.webkit.org/show_bug.cgi?id=91608
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        After bug 90107 we're setting a default theme path, which leads to a
+        themeChanged() call initializing edje in createEdje() - if that theme
+        path is not available we run into a premature assertion failure.
+        We need to give the embedder a chance to override the default theme path
+        before failing - so only the usages of m_edje should be guarded with assertions.
+
+        No new tests, no change in rendering behavior.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::themePartCacheEntryReset): Adding an assertion to ensure m_edje is present - so that all usages of m_edje are now guarded.
+        (WebCore::RenderThemeEfl::createEdje): Not hitting assertion if theme path doesn't contain the theme object file, allowing the embedder to override with a new path.
+
 2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         IndexedDB: IDBLevelDBBackingStore compilation fails because of unused variable.

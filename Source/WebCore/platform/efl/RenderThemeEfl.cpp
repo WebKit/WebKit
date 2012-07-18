@@ -100,6 +100,7 @@ bool RenderThemeEfl::themePartCacheEntryReset(struct ThemePartCacheEntry* entry,
     const char *file, *group;
 
     ASSERT(entry);
+    ASSERT(m_edje);
 
     edje_object_file_get(m_edje, &file, 0);
     group = edjeGroupFromFormType(type);
@@ -464,7 +465,6 @@ void RenderThemeEfl::createEdje()
 #undef CONNECT
         }
     }
-    ASSERT(m_edje);
 }
 
 void RenderThemeEfl::applyEdjeColors()
