@@ -1,5 +1,20 @@
 2012-07-18  Pierre Rossi  <pierre.rossi@gmail.com>
 
+        [Qt] QQuickWebView shouldn't recieve mouse events while dialogs are active
+        https://bugs.webkit.org/show_bug.cgi?id=91634
+
+        Reviewed by Alexis Menard.
+
+        One side-effect of reimplementing childMouseEventFilter() in r122438 is that it can end up
+        bypassing the mouseArea mechanism used in QML dialogs and still forward some mouse events
+        over to the web process. We can rely on the same m_dialogActive mechanism already used for
+        touch events in there as well.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::childMouseEventFilter): ignore events and return early if a dialog is active.
+
+2012-07-18  Pierre Rossi  <pierre.rossi@gmail.com>
+
         [Qt] Build fix for ENABLE_TOUCH_EVENTS=0
 
         Rubber-stamped by No'am Rosenthal.

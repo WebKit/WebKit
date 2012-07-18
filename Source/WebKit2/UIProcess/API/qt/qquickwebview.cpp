@@ -1660,6 +1660,12 @@ bool QQuickWebView::childMouseEventFilter(QQuickItem* item, QEvent* event)
     if (!isVisible() || !isEnabled() || !s_flickableViewportEnabled)
         return QQuickFlickable::childMouseEventFilter(item, event);
 
+    Q_D(QQuickWebView);
+    if (d->m_dialogActive) {
+        event->ignore();
+        return false;
+    }
+
     // This function is used by MultiPointTouchArea and PinchArea to filter
     // touch events, thus to hinder the canvas from sending synthesized
     // mouse events to the Flickable implementation we need to reimplement
