@@ -420,6 +420,11 @@ def parse_args(args=None):
             help="Don't re-try any tests that produce unexpected results."),
         optparse.make_option("--max-locked-shards", type="int",
             help="Set the maximum number of locked shards"),
+        # For chromium-android to reduce the cost of restarting the driver.
+        # FIXME: Remove the option once per-test arg is supported:
+        # https://bugs.webkit.org/show_bug.cgi?id=91539.
+        optparse.make_option("--shard-ref-tests", action="store_true",
+            help="Run ref tests in dedicated shard(s). Enabled on Android by default."),
     ]))
 
     option_group_definitions.append(("Miscellaneous Options", [

@@ -1,3 +1,33 @@
+2012-07-17  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Run ref tests together to avoid expensive driver restarts
+        https://bugs.webkit.org/show_bug.cgi?id=91533
+
+        Reviewed by Dirk Pranke.
+
+        Though DriverProxy maintains two drivers to support pixel tests and non-pixel tests,
+        chromium-android uses another way because it can't support multiple drivers.
+        It restarts the driver when pixel-test mode changes (e.g. when running a ref test after
+        a normal test in --no-pixel-tests mode). However restarting driver is expensive on
+        Android (several seconds each time). To reduce the cost, a command line option
+        '--shard-ref-tests' is added to group ref tests in dedicated shards.
+        The option is by default enabled on Android.
+
+        Will remove the option once DRT supports switching pixel test mode during one run.
+        (https://bugs.webkit.org/show_bug.cgi?id=91538, https://bugs.webkit.org/show_bug.cgi?id=91539)
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._shard_tests):
+        (Manager._shard_in_two):
+        (Manager._shard_by_directory):
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker._update_test_input):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2012-07-17  Don Olmstead  <don.olmstead@am.sony.com>
 
         NRWT The time before server_process kills DRT should be variable

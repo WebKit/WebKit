@@ -162,6 +162,9 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         # The Chromium port for Android always uses the hardware GPU path.
         self._options.enable_hardware_gpu = True
 
+        # Shard ref tests so that they run together to avoid repeatedly driver restarts.
+        self._options.shard_ref_tests = True
+
         self._operating_system = 'android'
         self._version = 'icecreamsandwich'
         self._original_governor = None

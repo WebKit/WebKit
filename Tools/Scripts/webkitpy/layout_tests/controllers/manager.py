@@ -550,7 +550,13 @@ class Manager(object):
     def _test_is_slow(self, test_file):
         return self._expectations.has_modifier(test_file, test_expectations.SLOW)
 
-    def _shard_tests(self, test_files, num_workers, fully_parallel):
+    def _is_ref_test(self, test_input):
+        if test_input.reference_files is None:
+            # Lazy initialization.
+            test_input.reference_files = self._port.reference_files(test_input.test_name)
+        return bool(test_input.reference_files)
+
+    def _shard_tests(self, test_files, num_workers, fully_parallel, shard_ref_tests):
         """Groups tests into batches.
         This helps ensure that tests that depend on each other (aka bad tests!)
         continue to run together as most cross-tests dependencies tend to
@@ -564,30 +570,40 @@ class Manager(object):
         # own class or module. Consider grouping it with the chunking logic
         # in prepare_lists as well.
         if num_workers == 1:
-            return self._shard_in_two(test_files)
+            return self._shard_in_two(test_files, shard_ref_tests)
         elif fully_parallel:
             return self._shard_every_file(test_files)
-        return self._shard_by_directory(test_files, num_workers)
+        return self._shard_by_directory(test_files, num_workers, shard_ref_tests)
 
-    def _shard_in_two(self, test_files):
+    def _shard_in_two(self, test_files, shard_ref_tests):
         """Returns two lists of shards, one with all the tests requiring a lock and one with the rest.
 
         This is used when there's only one worker, to minimize the per-shard overhead."""
         locked_inputs = []
+        locked_ref_test_inputs = []
         unlocked_inputs = []
+        unlocked_ref_test_inputs = []
         for test_file in test_files:
             test_input = self._get_test_input_for_file(test_file)
             if self._test_requires_lock(test_file):
-                locked_inputs.append(test_input)
+                if shard_ref_tests and self._is_ref_test(test_input):
+                    locked_ref_test_inputs.append(test_input)
+                else:
+                    locked_inputs.append(test_input)
             else:
-                unlocked_inputs.append(test_input)
+                if shard_ref_tests and self._is_ref_test(test_input):
+                    unlocked_ref_test_inputs.append(test_input)
+                else:
+                    unlocked_inputs.append(test_input)
+        locked_inputs.extend(locked_ref_test_inputs)
+        unlocked_inputs.extend(unlocked_ref_test_inputs)
 
         locked_shards = []
         unlocked_shards = []
         if locked_inputs:
             locked_shards = [TestShard('locked_tests', locked_inputs)]
         if unlocked_inputs:
-            unlocked_shards = [TestShard('unlocked_tests', unlocked_inputs)]
+            unlocked_shards.append(TestShard('unlocked_tests', unlocked_inputs))
 
         return locked_shards, unlocked_shards
 
@@ -610,7 +626,7 @@ class Manager(object):
 
         return locked_shards, unlocked_shards
 
-    def _shard_by_directory(self, test_files, num_workers):
+    def _shard_by_directory(self, test_files, num_workers, shard_ref_tests):
         """Returns two lists of shards, each shard containing all the files in a directory.
 
         This is the default mode, and gets as much parallelism as we can while
@@ -618,16 +634,29 @@ class Manager(object):
         locked_shards = []
         unlocked_shards = []
         tests_by_dir = {}
+        ref_tests_by_dir = {}
         # FIXME: Given that the tests are already sorted by directory,
         # we can probably rewrite this to be clearer and faster.
         for test_file in test_files:
             directory = self._get_dir_for_test_file(test_file)
             test_input = self._get_test_input_for_file(test_file)
-            tests_by_dir.setdefault(directory, [])
-            tests_by_dir[directory].append(test_input)
+            if shard_ref_tests and self._is_ref_test(test_input):
+                ref_tests_by_dir.setdefault(directory, [])
+                ref_tests_by_dir[directory].append(test_input)
+            else:
+                tests_by_dir.setdefault(directory, [])
+                tests_by_dir[directory].append(test_input)
 
         for directory, test_inputs in tests_by_dir.iteritems():
             shard = TestShard(directory, test_inputs)
+            if self._test_requires_lock(directory):
+                locked_shards.append(shard)
+            else:
+                unlocked_shards.append(shard)
+
+        for directory, test_inputs in ref_tests_by_dir.iteritems():
+            # '~' to place the ref tests after other tests after sorted.
+            shard = TestShard('~ref:' + directory, test_inputs)
             if self._test_requires_lock(directory):
                 locked_shards.append(shard)
             else:
@@ -714,7 +743,7 @@ class Manager(object):
         interrupted = False
 
         self._printer.write_update('Sharding tests ...')
-        locked_shards, unlocked_shards = self._shard_tests(file_list, int(self._options.child_processes), self._options.fully_parallel)
+        locked_shards, unlocked_shards = self._shard_tests(file_list, int(self._options.child_processes), self._options.fully_parallel, self._options.shard_ref_tests)
 
         # FIXME: We don't have a good way to coordinate the workers so that
         # they don't try to run the shards that need a lock if we don't actually

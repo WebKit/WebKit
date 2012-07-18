@@ -83,7 +83,9 @@ class Worker(object):
         self._caller.post('finished_test_list', test_list_name, len(test_inputs), elapsed_time)
 
     def _update_test_input(self, test_input):
-        test_input.reference_files = self._port.reference_files(test_input.test_name)
+        if test_input.reference_files is None:
+            # Lazy initialization.
+            test_input.reference_files = self._port.reference_files(test_input.test_name)
         if test_input.reference_files:
             test_input.should_run_pixel_test = True
         elif self._options.pixel_tests:
