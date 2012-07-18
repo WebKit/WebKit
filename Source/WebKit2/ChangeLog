@@ -1,5 +1,53 @@
 2012-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add WebKitWebView::submit-form signal to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=91605
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The signal is emitted when a form is about to submitted, with a
+        form submission request that can be used to get the text fields
+        and to continue the form submission wheh done.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitFormClient.cpp: Added.
+        (willSubmitForm): Create a WebKitFormSubmissionRequest and call
+        webkitWebViewSubmitFormRequest() with the request.
+        (attachFormClientToView): Add impementation for willSubmitForm
+        callback.
+        * UIProcess/API/gtk/WebKitFormClient.h: Added.
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp: Added.
+        (webkit_form_submission_request_init):
+        (webkitFormSubmissionRequestFinalize):
+        (webkit_form_submission_request_class_init):
+        (webkitFormSubmissionRequestCreate): Create a new
+        WebKitFormSubmissionRequest for the given values dictionary and
+        submission listener.
+        (webkit_form_submission_request_get_text_fields): Create a
+        GHashTable with the text fields values and return it.
+        (webkit_form_submission_request_submit): Continue the form
+        submission.
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.h: Added.
+        * UIProcess/API/gtk/WebKitFormSubmissionRequestPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Attach web view to form client.
+        (webkit_web_view_class_init): Add WebKitWebView::submit-form
+        signal.
+        (webkitWebViewSubmitFormRequest): Emit WebKitWebView::submit-form
+        signal.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for
+        WebKitFormSubmissionRequest.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewSubmitForm):
+        (beforeAll):
+        * UIProcess/API/gtk/webkit2.h: Include
+        WebKitFormSubmissionRequest.h.
+
+2012-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] No main resource in WebView when page has been loaded from history cache
         https://bugs.webkit.org/show_bug.cgi?id=91478
 

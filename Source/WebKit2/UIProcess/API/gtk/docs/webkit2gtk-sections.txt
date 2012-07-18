@@ -814,3 +814,23 @@ WEBKIT_CONTEXT_MENU_ITEM_GET_CLASS
 WebKitContextMenuItemPrivate
 webkit_context_menu_item_get_type
 </SECTION>
+
+<SECTION>
+<FILE>WebKitFormSubmissionRequest</FILE>
+WebKitFormSubmissionRequest
+webkit_form_submission_request_get_text_fields
+webkit_form_submission_request_submit
+
+<SUBSECTION Standard>
+WebKitFormSubmissionRequestClass
+WEBKIT_TYPE_FORM_SUBMISSION_REQUEST
+WEBKIT_FORM_SUBMISSION_REQUEST
+WEBKIT_IS_FORM_SUBMISSION_REQUEST
+WEBKIT_FORM_SUBMISSION_REQUEST_CLASS
+WEBKIT_IS_FORM_SUBMISSION_REQUEST_CLASS
+WEBKIT_FORM_SUBMISSION_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitFormSubmissionRequestPrivate
+webkit_form_submission_request_get_type
+</SECTION>

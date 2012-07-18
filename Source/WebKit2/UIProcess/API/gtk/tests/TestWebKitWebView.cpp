@@ -865,6 +865,87 @@ static void testWebViewCanShowMIMEType(WebViewTest* test, gconstpointer)
     g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/octet-stream"));
 }
 
+class FormClientTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(FormClientTest);
+
+    static void submitFormCallback(WebKitWebView*, WebKitFormSubmissionRequest* request, FormClientTest* test)
+    {
+        test->submitForm(request);
+    }
+
+    FormClientTest()
+        : m_submitPositionX(0)
+        , m_submitPositionY(0)
+    {
+        g_signal_connect(m_webView, "submit-form", G_CALLBACK(submitFormCallback), this);
+    }
+
+    ~FormClientTest()
+    {
+        g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+    }
+
+    void submitForm(WebKitFormSubmissionRequest* request)
+    {
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
+        m_request = request;
+        webkit_form_submission_request_submit(request);
+        quitMainLoop();
+    }
+
+    GHashTable* waitUntilFormSubmittedAndGetTextFields()
+    {
+        g_main_loop_run(m_mainLoop);
+        return webkit_form_submission_request_get_text_fields(m_request.get());
+    }
+
+    static gboolean doClickIdleCallback(FormClientTest* test)
+    {
+        test->clickMouseButton(test->m_submitPositionX, test->m_submitPositionY, 1);
+        return FALSE;
+    }
+
+    void submitFormAtPosition(int x, int y)
+    {
+        m_submitPositionX = x;
+        m_submitPositionY = y;
+        g_idle_add(reinterpret_cast<GSourceFunc>(doClickIdleCallback), this);
+    }
+
+    int m_submitPositionX;
+    int m_submitPositionY;
+    GRefPtr<WebKitFormSubmissionRequest> m_request;
+};
+
+static void testWebViewSubmitForm(FormClientTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    const char* formHTML =
+        "<html><body>"
+        " <form action='#'>"
+        "  <input type='text' name='text1' value='value1'>"
+        "  <input type='text' name='text2' value='value2'>"
+        "  <input type='password' name='password' value='secret'>"
+        "  <textarea cols='5' rows='5' name='textarea'>Text</textarea>"
+        "  <input type='hidden' name='hidden1' value='hidden1'>"
+        "  <input type='submit' value='Submit' style='position:absolute; left:1; top:1' size='10'>"
+        " </form>"
+        "</body></html>";
+
+    test->loadHtml(formHTML, "file:///");
+    test->waitUntilLoadFinished();
+
+    test->submitFormAtPosition(5, 5);
+    GHashTable* values = test->waitUntilFormSubmittedAndGetTextFields();
+    g_assert(values);
+    g_assert_cmpuint(g_hash_table_size(values), ==, 3);
+    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(values, "text1")), ==, "value1");
+    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(values, "text2")), ==, "value2");
+    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(values, "password")), ==, "secret");
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -883,6 +964,7 @@ void beforeAll()
     FileChooserTest::add("WebKitWebView", "file-chooser-request", testWebViewFileChooserRequest);
     FullScreenClientTest::add("WebKitWebView", "fullscreen", testWebViewFullScreen);
     WebViewTest::add("WebKitWebView", "can-show-mime-type", testWebViewCanShowMIMEType);
+    FormClientTest::add("WebKitWebView", "submit-form", testWebViewSubmitForm);
 }
 
 void afterAll()

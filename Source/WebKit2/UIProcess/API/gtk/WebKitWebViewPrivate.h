@@ -55,5 +55,6 @@ WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView*, uint64_t re
 bool webkitWebViewEnterFullScreen(WebKitWebView*);
 bool webkitWebViewLeaveFullScreen(WebKitWebView*);
 void webkitWebViewPopulateContextMenu(WebKitWebView*, WKArrayRef proposedMenu, WKHitTestResultRef);
+void webkitWebViewSubmitFormRequest(WebKitWebView*, WebKitFormSubmissionRequest*);
 
 #endif // WebKitWebViewPrivate_h

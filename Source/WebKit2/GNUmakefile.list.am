@@ -104,6 +104,7 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitError.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFileChooserRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFindController.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitFormSubmissionRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitHitTestResult.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitJavascriptResult.h \
@@ -637,6 +638,11 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequestPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFormSubmissionRequest.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFormSubmissionRequestPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFormClient.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitFormClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFullscreenClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFullscreenClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitGeolocationPermissionRequest.cpp \
