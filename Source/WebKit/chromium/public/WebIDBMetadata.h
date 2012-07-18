@@ -38,21 +38,13 @@ struct IDBDatabaseMetadata;
 namespace WebKit {
 
 struct WebIDBMetadata {
-    enum {
-        NoIntVersion = -1
-    };
     struct Index;
     struct ObjectStore;
 
     WebString name;
-    // FIXME: Both version members need to be present while we support both the
-    // old setVersion and new upgradeneeded API. Once we no longer support
-    // setVersion, WebString version can be removed.
     WebString version;
-    int64_t intVersion;
     WebVector<ObjectStore> objectStores;
-    WebIDBMetadata()
-        : intVersion(NoIntVersion) { }
+    WebIDBMetadata() { }
 
     struct ObjectStore {
         WebString name;

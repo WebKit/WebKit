@@ -1,3 +1,15 @@
+2012-07-17  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rolling out r122884.
+        http://trac.webkit.org/changeset/122884
+        https://bugs.webkit.org/show_bug.cgi?id=91408
+
+        Broke the chromium-win build.
+
+        * public/WebIDBMetadata.h:
+        (WebIDBMetadata):
+        (WebKit::WebIDBMetadata::WebIDBMetadata):
+
 2012-07-17  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Add intVersion to chromium/public/WebIDBMetadata.h
