@@ -102,8 +102,9 @@ namespace double_conversion {
         }
         ASSERT(exponent < 1e4);
         const int kMaxExponentLength = 5;
-        char buffer[kMaxExponentLength];
+        char buffer[kMaxExponentLength + 1];
         int first_char_pos = kMaxExponentLength;
+        buffer[first_char_pos] = '\0';
         while (exponent > 0) {
             buffer[--first_char_pos] = '0' + (exponent % 10);
             exponent /= 10;
