@@ -709,3 +709,59 @@ Map.prototype = {
         this._map = {};
     }
 };
+
+
+/**
+ * @constructor
+ */
+function StringPool()
+{
+    this.reset();
+}
+
+StringPool.prototype = {
+    /**
+     * @param {string} string
+     * @return {string}
+     */
+    intern: function(string)
+    {
+        // Do not mess with setting __proto__ to anything but null, just handle it explicitly.
+        if (string === "__proto__")
+            return "__proto__";
+        var result = this._strings[string];
+        if (result === undefined) {
+            this._strings[string] = string;
+            result = string;
+        }
+        return result;
+    },
+
+    reset: function()
+    {
+        this._strings = Object.create(null);
+    },
+
+    /**
+     * @param {Object} obj
+     * @param {number=} depthLimit
+     */
+    internObjectStrings: function(obj, depthLimit)
+    {
+        if (typeof depthLimit !== "number")
+            depthLimit = 100;
+        else if (--depthLimit < 0)
+            throw "recursion depth limit reached in StringPool.deepIntern(), perhaps attempting to traverse cyclical references?";
+
+        for (var field in obj) {
+            switch (typeof obj[field]) {
+            case "string":
+                obj[field] = this.intern(obj[field]);
+                break;
+            case "object":
+                this.internObjectStrings(obj[field], depthLimit);
+                break;
+            }
+        }
+    }
+}

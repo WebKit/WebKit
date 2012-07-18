@@ -1,3 +1,19 @@
+2012-07-17  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: intern strings when processing timeline records
+        https://bugs.webkit.org/show_bug.cgi?id=91531
+
+        Reviewed by Pavel Feldman.
+
+        - added StringPool that is capable of interning strings;
+        - used it in TimelineModel to process all incoming records;
+
+        * inspector/front-end/TimelineModel.js:
+        (WebInspector.TimelineModel):
+        (WebInspector.TimelineModel.prototype._addRecord):
+        (WebInspector.TimelineModel.prototype.reset):
+        * inspector/front-end/utilities.js:
+
 2012-07-18  Scott Graham  <scottmg@chromium.org>
 
         Use cl to preprocess IDL for Chromium Windows generate_supplemental_dependency
