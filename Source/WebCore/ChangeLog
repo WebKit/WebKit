@@ -1,3 +1,24 @@
+2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r122345): HTMLCollection::length() sometimes returns a wrong value
+        https://bugs.webkit.org/show_bug.cgi?id=91587
+
+        Reviewed by Benjamin Poulain.
+
+        The bug was caused by my douchey code that set the length cache to be the *offset*
+        of the last item in a HTMLCollection. Clearly, the length of a collection that contains
+        the last item at offset n is n + 1. Fixed that.
+
+        Also removed the call to setLengthCache in HTMLCollection::length since it must have set
+        by previous calls to itemBeforeOrAfterCachedItem already. This will allow us to catch
+        regressions like this in ports that use JSC bindings as well.
+
+        Test: fast/dom/htmlcollection-length-after-item.html
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::itemBeforeOrAfterCachedItem):
+
 2012-07-18  Yoshifumi Inoue  <yosin@chromium.org>
 
         Decimal::toString should not round integer value.

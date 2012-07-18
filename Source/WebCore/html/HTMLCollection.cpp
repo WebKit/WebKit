@@ -324,8 +324,8 @@ unsigned HTMLCollection::length() const
     do {
         offset++;
     } while (itemBeforeOrAfterCachedItem(offset));
+    ASSERT(isLengthCacheValid());
 
-    setLengthCache(offset);
     return offset;
 }
 
@@ -397,7 +397,8 @@ Element* HTMLCollection::itemBeforeOrAfterCachedItem(unsigned offset) const
         }
     }
 
-    setLengthCache(currentOffset);
+    unsigned offsetOfLastItem = currentOffset;
+    setLengthCache(offsetOfLastItem + 1);
 
     return 0;
 }

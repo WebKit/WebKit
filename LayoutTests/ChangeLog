@@ -1,3 +1,16 @@
+2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r122345): HTMLCollection::length() sometimes returns a wrong value
+        https://bugs.webkit.org/show_bug.cgi?id=91587
+
+        Reviewed by Benjamin Poulain.
+
+        Add a regression test. It only fails on Chromium port before the patch is applied because JSC binding code
+        has a bug (?) that it always checks index > length() to throw an exception before accessing an item in HTMLCollection.
+
+        * fast/dom/htmlcollection-length-after-item-expected.txt: Added.
+        * fast/dom/htmlcollection-length-after-item.html: Added.
+
 2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium gardening, rebaselined tests.
