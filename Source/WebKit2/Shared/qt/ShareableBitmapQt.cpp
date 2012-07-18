@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
+#include "NativeImageQt.h"
 #include <QImage>
 #include <QPainter>
 #include <QtGlobal>
@@ -41,7 +42,7 @@ QImage ShareableBitmap::createQImage()
 {
     ref(); // Balanced by deref in releaseSharedMemoryData
     return QImage(reinterpret_cast<uchar*>(data()), m_size.width(), m_size.height(), m_size.width() * 4,
-                  m_flags & SupportsAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_RGB32,
+                  m_flags & SupportsAlpha ? NativeImageQt::defaultFormatForAlphaEnabledImages() : NativeImageQt::defaultFormatForOpaqueImages(),
                   releaseSharedMemoryData, this);
 }
 

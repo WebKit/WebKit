@@ -38,6 +38,7 @@
 #endif
 
 #if PLATFORM(QT)
+#include "NativeImageQt.h"
 #if HAVE(QT5)
 #include <QOpenGLContext>
 #else
@@ -377,7 +378,7 @@ void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPo
     IntRect sourceRect(IntPoint::zero(), size);
     IntRect targetRect(roundedIntPoint(targetPoint), size);
 
-    QImage image(size, QImage::Format_ARGB32_Premultiplied);
+    QImage image(size, NativeImageQt::defaultFormatForAlphaEnabledImages());
     QPainter painter(&image);
     painter.fillRect(sourceRect, Qt::blue); // Since we won't swap R+B for speed, this will paint red.
     painter.setFont(font);

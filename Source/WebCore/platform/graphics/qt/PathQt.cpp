@@ -35,6 +35,7 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "NativeImageQt.h"
 #include "PlatformString.h"
 #include "StrokeStyleApplier.h"
 #include <QPainterPath>
@@ -118,7 +119,7 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
 
 static GraphicsContext* scratchContext()
 {
-    static QImage image(1, 1, QImage::Format_ARGB32_Premultiplied);
+    static QImage image(1, 1, NativeImageQt::defaultFormatForAlphaEnabledImages());
     static QPainter painter(&image);
     static GraphicsContext* context = new GraphicsContext(&painter);
     return context;

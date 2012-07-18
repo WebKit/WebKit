@@ -21,6 +21,10 @@
 #include "TextureMapperImageBuffer.h"
 
 #include "FilterEffectRenderer.h"
+#if PLATFORM(QT)
+#include "NativeImageQt.h"
+#endif
+
 
 #if USE(TEXTURE_MAPPER)
 namespace WebCore {
@@ -28,7 +32,7 @@ namespace WebCore {
 void BitmapTextureImageBuffer::updateContents(const void* data, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
 {
 #if PLATFORM(QT)
-    QImage image(reinterpret_cast<const uchar*>(data), targetRect.width(), targetRect.height(), bytesPerLine, QImage::Format_ARGB32_Premultiplied);
+    QImage image(reinterpret_cast<const uchar*>(data), targetRect.width(), targetRect.height(), bytesPerLine, NativeImageQt::defaultFormatForAlphaEnabledImages());
 
     QPainter* painter = m_image->context()->platformContext();
     painter->save();

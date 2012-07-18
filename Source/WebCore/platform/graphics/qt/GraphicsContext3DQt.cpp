@@ -29,6 +29,7 @@
 #include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "NativeImageQt.h"
 #include "NotImplemented.h"
 #include "OpenGLShims.h"
 #include "QWebPageClient.h"
@@ -468,7 +469,7 @@ bool GraphicsContext3D::makeContextCurrent()
 void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                                       int canvasWidth, int canvasHeight, QPainter* context)
 {
-    QImage image(imagePixels, imageWidth, imageHeight, QImage::Format_ARGB32_Premultiplied);
+    QImage image(imagePixels, imageWidth, imageHeight, NativeImageQt::defaultFormatForAlphaEnabledImages());
     context->save();
     context->translate(0, imageHeight);
     context->scale(1, -1);

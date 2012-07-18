@@ -1,3 +1,24 @@
+2012-07-18  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Modify the using of the QImage::Format enum to the appropriate functions from NativeImageQt
+        https://bugs.webkit.org/show_bug.cgi?id=91600
+
+        Reviewed by Andreas Kling.
+
+        Use NativeImageQt::defaultFormatForAlphaEnabledImages() and NativeImageQt::defaultFormatForOpaqueImages()
+        instead of the direct imagetypes at the appropriate places.
+
+        Covered by existing tests.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::scratchContext):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawRepaintCounter):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::updateContents):
+
 2012-07-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: create timeline detail records lazily
