@@ -1,3 +1,22 @@
+2012-07-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed rebaseline of compositing tests on Qt-WebKit2.
+
+        Mark pixel tests with wrong output as failing (IMAGE) Rebaseline some pixel
+        results where only scrollbar theme or antialiasing was the difference
+        between actual and expected.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/compositing/color-matching/image-color-matching-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/culling/clear-fixed-iframe-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/direct-image-compositing-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/geometry/fixed-in-composited-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/masks/multiple-masks-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/masks/simple-composited-mask-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scroll-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/self-painting-layers-expected.png: Added.
+
 2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium gardening, updated test expectations.
