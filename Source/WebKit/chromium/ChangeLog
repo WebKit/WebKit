@@ -1,3 +1,29 @@
+2012-07-18  Hans Wennborg  <hans@chromium.org>
+
+        Add copy constructor to WebSpeechGrammar.h
+        https://bugs.webkit.org/show_bug.cgi?id=91484
+
+        Reviewed by Adam Barth.
+
+        Provide user-defined copy constructor (and assign function) for WebSpeechGrammar.
+        Without this, we were hitting the implicit copy constructor, which in
+        turn used the implicit copy constructor of WebPrivatePtr. This was bad,
+        because the implicit copy constructor wouldn't increace the reference
+        count on the wrapped object, causing us to crash.
+
+        Also add one for WebSpeechRecognitionResult; haven't seen any problems
+        here, but I noticed it was missing.
+
+        * public/WebSpeechGrammar.h:
+        (WebKit::WebSpeechGrammar::WebSpeechGrammar):
+        (WebSpeechGrammar):
+        * public/WebSpeechRecognitionResult.h:
+        (WebKit::WebSpeechRecognitionResult::WebSpeechRecognitionResult):
+        (WebSpeechRecognitionResult):
+        * src/WebSpeechGrammar.cpp:
+        (WebKit::WebSpeechGrammar::assign):
+        (WebKit):
+
 2012-07-17  Yoshifumi Inoue  <yosin@chromium.org>
 
         Decimal constructor with 99999999999999999 loses last digit

@@ -40,6 +40,7 @@ namespace WebKit {
 class WebSpeechRecognitionResult {
 public:
     WebSpeechRecognitionResult() { }
+    WebSpeechRecognitionResult(const WebSpeechRecognitionResult& result) { assign(result); }
     ~WebSpeechRecognitionResult() { reset(); }
 
     WEBKIT_EXPORT void assign(const WebVector<WebString>& transcripts, const WebVector<float>& confidences, bool final);

@@ -36,6 +36,11 @@ void WebSpeechGrammar::reset()
     m_private.reset();
 }
 
+void WebSpeechGrammar::assign(const WebSpeechGrammar& other)
+{
+    m_private = other.m_private;
+}
+
 WebSpeechGrammar::WebSpeechGrammar(const PassRefPtr<WebCore::SpeechGrammar>& value)
     : m_private(value)
 {

@@ -39,12 +39,14 @@ namespace WebKit {
 class WebSpeechGrammar {
 public:
     WebSpeechGrammar() { }
+    WebSpeechGrammar(const WebSpeechGrammar& grammar) { assign(grammar); }
     ~WebSpeechGrammar() { reset(); }
 
     WEBKIT_EXPORT WebURL src() const;
     WEBKIT_EXPORT float weight() const;
 
     WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebSpeechGrammar&);
 
 #if WEBKIT_IMPLEMENTATION
     WebSpeechGrammar(const WTF::PassRefPtr<WebCore::SpeechGrammar>&);
