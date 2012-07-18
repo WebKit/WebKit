@@ -170,6 +170,7 @@ editing/shadow
 fast/dom/shadow/access-key.html
 fast/dom/shadow/adopt-node-with-shadow-root.html
 fast/dom/shadow/composed-shadow-tree-walker.html
+fast/dom/shadow/content-after-style.html
 fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-move.html
 fast/dom/shadow/content-element-outside-shadow.html
@@ -2482,6 +2483,7 @@ fast/css/empty-cell-baseline.html
 fast/multicol/cell-shrinkback.html
 fast/multicol/overflow-into-columngap.html
 fast/table/td-width-fifty-percent-regression.html
+fast/sub-pixel/block-with-margin-overflow.html
 svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg
 svg/animations/animateMotion-additive-1.svg
