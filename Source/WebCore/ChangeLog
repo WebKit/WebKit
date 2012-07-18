@@ -1,3 +1,18 @@
+2012-07-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Cursor is not drawn when opengl_x11 backend is choosen.
+        https://bugs.webkit.org/show_bug.cgi?id=89142
+
+        Reviewed by Simon Hausmann.
+
+        If theme based cursor is not given, WebKit/Efl only uses Ecore_X based
+        cursor as a fallback after checked whether current engine is using EcoreX.
+        This patch adds opengl_x11 which is one of Ecore_X based engine in check
+        lists to draw fallback cursor.
+
+        * platform/efl/EflScreenUtilities.cpp:
+        (WebCore::isUsingEcoreX):
+
 2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r122345): HTMLCollection::length() sometimes returns a wrong value

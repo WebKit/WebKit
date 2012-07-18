@@ -149,7 +149,8 @@ bool isUsingEcoreX(const Evas* evas)
 #ifdef HAVE_ECORE_X
     Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(evas);
     const char* engine = ecore_evas_engine_name_get(ecoreEvas);
-    return !strcmp(engine, "software_x11")
+    return !strcmp(engine, "opengl_x11")
+        || !strcmp(engine, "software_x11")
         || !strcmp(engine, "software_xcb")
         || !strcmp(engine, "software_16_x11")
         || !strncmp(engine, "xrender", sizeof("xrender") - 1);
