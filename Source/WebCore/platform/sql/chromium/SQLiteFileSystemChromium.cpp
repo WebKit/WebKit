@@ -31,8 +31,8 @@
 #include "config.h"
 #include "SQLiteFileSystem.h"
 
-#include "PlatformSupport.h"
 #include "SQLiteDatabase.h"
+#include <public/Platform.h>
 #include <sqlite3.h>
 #include <wtf/text/CString.h>
 
@@ -92,12 +92,12 @@ bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String&)
 
 bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
 {
-    return (PlatformSupport::databaseDeleteFile(fileName) == SQLITE_OK);
+    return (WebKit::Platform::current()->databaseDeleteFile(fileName, false) == SQLITE_OK);
 }
 
 long long SQLiteFileSystem::getDatabaseFileSize(const String& fileName)
 {
-    return PlatformSupport::databaseGetFileSize(fileName);
+    return WebKit::Platform::current()->databaseGetFileSize(fileName);
 }
 
 } // namespace WebCore

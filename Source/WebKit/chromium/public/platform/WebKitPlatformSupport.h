@@ -57,31 +57,6 @@ class WebSharedWorkerRepository; // FIXME: Does this belong in platform?
 // FIXME: Eventually all these API will need to move to WebKit::Platform.
 class WebKitPlatformSupport : public Platform {
 public:
-    // HTML5 Database ------------------------------------------------------
-
-#ifdef WIN32
-    typedef HANDLE FileHandle;
-#else
-    typedef int FileHandle;
-#endif
-
-    // Opens a database file; dirHandle should be 0 if the caller does not need
-    // a handle to the directory containing this file
-    virtual FileHandle databaseOpenFile(
-        const WebString& vfsFileName, int desiredFlags) { return FileHandle(); }
-
-    // Deletes a database file and returns the error code
-    virtual int databaseDeleteFile(const WebString& vfsFileName, bool syncDir) { return 0; }
-
-    // Returns the attributes of the given database file
-    virtual long databaseGetFileAttributes(const WebString& vfsFileName) { return 0; }
-
-    // Returns the size of the given database file
-    virtual long long databaseGetFileSize(const WebString& vfsFileName) { return 0; }
-
-    // Returns the space available for the given origin
-    virtual long long databaseGetSpaceAvailableForOrigin(const WebKit::WebString& originIdentifier) { return 0; }
-
     // Indexed Database ----------------------------------------------------
 
     virtual WebIDBFactory* idbFactory() { return 0; }

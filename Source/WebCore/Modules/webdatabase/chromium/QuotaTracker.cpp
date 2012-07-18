@@ -30,10 +30,10 @@
 
 #include "config.h"
 #include "QuotaTracker.h"
-#include "PlatformSupport.h"
 
 #if ENABLE(SQL_DATABASE)
 
+#include <public/Platform.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -48,7 +48,7 @@ void QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin(
     const String& originIdentifier, const String& databaseName,
     unsigned long long* databaseSize, unsigned long long* spaceAvailable)
 {
-    // Extra scope to unlock prior to potentially calling PlatformSupport.
+    // Extra scope to unlock prior to potentially calling WebKit::Platform.
     {
         MutexLocker lockData(m_dataGuard);
         ASSERT(m_databaseSizes.contains(originIdentifier));
@@ -63,7 +63,7 @@ void QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin(
     }
 
     // The embedder hasn't pushed this value to us, so we pull it as needed.
-    *spaceAvailable = PlatformSupport::databaseGetSpaceAvailableForOrigin(originIdentifier);
+    *spaceAvailable = WebKit::Platform::current()->databaseGetSpaceAvailableForOrigin(originIdentifier);
 }
 
 void QuotaTracker::updateDatabaseSize(

@@ -1,3 +1,22 @@
+2012-07-18  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Call SQLiteFileSystem-related functions directly
+        https://bugs.webkit.org/show_bug.cgi?id=91631
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * Modules/webdatabase/chromium/QuotaTracker.cpp:
+        (WebCore::QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin):
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp:
+        (WebCore::SQLiteFileSystem::deleteDatabaseFile):
+        (WebCore::SQLiteFileSystem::getDatabaseFileSize):
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp:
+
 2012-07-18  Oliver Hunt  <oliver@apple.com>
 
         WebKit provides APIs that make it possible for JSC to attempt to initialise the heap without initialising threading

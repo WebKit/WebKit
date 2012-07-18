@@ -117,18 +117,6 @@ public:
     // Forms --------------------------------------------------------------
     static void notifyFormStateChanged(const Document*);
 
-    // Databases ----------------------------------------------------------
-    // Returns a handle to the DB file and ooptionally a handle to its containing directory
-    static PlatformFileHandle databaseOpenFile(const String& vfsFleName, int desiredFlags);
-    // Returns a SQLite code (SQLITE_OK = 0, on success)
-    static int databaseDeleteFile(const String& vfsFileName, bool syncDir = false);
-    // Returns the attributes of the DB file
-    static long databaseGetFileAttributes(const String& vfsFileName);
-    // Returns the size of the DB file
-    static long long databaseGetFileSize(const String& vfsFileName);
-    // Returns the space available for the origin
-    static long long databaseGetSpaceAvailableForOrigin(const String& originIdentifier);
-
     // IndexedDB ----------------------------------------------------------
     static PassRefPtr<IDBFactoryBackendInterface> idbFactory();
     // Extracts keyPath from values and returns the corresponding keys.

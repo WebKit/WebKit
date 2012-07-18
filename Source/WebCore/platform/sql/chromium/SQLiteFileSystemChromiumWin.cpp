@@ -31,7 +31,7 @@
 #include "config.h"
 #include "SQLiteFileSystem.h"
 
-#include "PlatformSupport.h"
+#include <public/Platform.h>
 #include <sqlite3.h>
 #include <windows.h>
 
@@ -55,7 +55,7 @@ namespace {
 int chromiumOpen(sqlite3_vfs*, const char* fileName,
                  sqlite3_file* id, int desiredFlags, int* usedFlags)
 {
-    HANDLE h = PlatformSupport::databaseOpenFile(fileName, desiredFlags);
+    HANDLE h = WebKit::Platform::current()->databaseOpenFile(String(fileName), desiredFlags);
     if (h == INVALID_HANDLE_VALUE) {
         if (desiredFlags & SQLITE_OPEN_READWRITE) {
             int newFlags = (desiredFlags | SQLITE_OPEN_READONLY) & ~SQLITE_OPEN_READWRITE;
@@ -82,7 +82,7 @@ int chromiumOpen(sqlite3_vfs*, const char* fileName,
 //           should be synched after the file is deleted.
 int chromiumDelete(sqlite3_vfs*, const char* fileName, int)
 {
-    return PlatformSupport::databaseDeleteFile(fileName);
+    return WebKit::Platform::current()->databaseDeleteFile(String(fileName));
 }
 
 // Check the existance and status of the given file.
@@ -93,7 +93,7 @@ int chromiumDelete(sqlite3_vfs*, const char* fileName, int)
 // res - the result.
 int chromiumAccess(sqlite3_vfs*, const char* fileName, int flag, int* res)
 {
-    DWORD attr = PlatformSupport::databaseGetFileAttributes(fileName);
+    DWORD attr = WebKit::Platform::current()->databaseGetFileAttributes(String(fileName));
     switch (flag) {
     case SQLITE_ACCESS_READ:
     case SQLITE_ACCESS_EXISTS:

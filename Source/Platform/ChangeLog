@@ -1,3 +1,20 @@
+2012-07-18  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Call SQLiteFileSystem-related functions directly
+        https://bugs.webkit.org/show_bug.cgi?id=91631
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+        
+        * chromium/public/Platform.h:
+        (Platform):
+        (WebKit::Platform::databaseOpenFile):
+        (WebKit::Platform::databaseDeleteFile):
+        (WebKit::Platform::databaseGetFileAttributes):
+        (WebKit::Platform::databaseGetFileSize):
+        (WebKit::Platform::databaseGetSpaceAvailableForOrigin):
+
 2012-07-18  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium Mac: Add TEXTURE_RECTANGLE_ARB support to CCVideoLayerImpl
