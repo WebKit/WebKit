@@ -1,3 +1,50 @@
+2012-07-16  Oliver Hunt  <oliver@apple.com>
+
+        dumpCallFrame is broken in ToT
+        https://bugs.webkit.org/show_bug.cgi?id=91444
+
+        Reviewed by Gavin Barraclough.
+
+        Various changes have been made to the SF calling convention, but
+        dumpCallFrame has not been updated to reflect these changes.
+        That resulted in both bogus information, as well as numerous
+        assertions of sadness.
+
+        This patch makes dumpCallFrame actually work again and adds the
+        wonderful feature of telling you the name of the variable that a
+        register reflects, or what value it contains.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::nameForRegister):
+            A really innefficient mechanism for finding the name of a local register.
+            This should only ever be used by debug code so this should be okay.
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+            Debug builds no longer throw away a functions symbol table, this allows
+            us to actually perform a register# to name mapping
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+            We weren't propogating the bytecode offset here leading to assertions
+            in debug builds when dumping bytecode of DFG compiled code.
+        * interpreter/Interpreter.cpp:
+        (JSC):
+        (JSC::Interpreter::dumpRegisters):
+             Rework to actually be correct.
+        (JSC::getCallerInfo):
+             Return the byteocde offset as well now, given we have to determine it
+             anyway.
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::retrieveCallerFromVMCode):
+        * interpreter/Interpreter.h:
+        (Interpreter):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionDumpCallFrame):
+             Give debug builds of JSC a method for calling dumpCallFrame so we can
+             inspect a callframe without requiring us to break in a debugger.
+
 2012-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG 32-bit PutById transition stub storage reallocation case copies the first pointer of each JSValue instead of the whole JSValue

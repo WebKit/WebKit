@@ -163,6 +163,7 @@ EXPORTS
     ?displayName@JSFunction@JSC@@QAE?BVUString@2@PAVExecState@2@@Z
     ?dtoa@WTF@@YAXQADNAA_NAAHAAI@Z
     ?dumpAllOptions@Options@JSC@@SAXPAU_iobuf@@@Z
+    ?dumpCallFrame@Interpreter@JSC@@QAEXPAVExecState@2@@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
     ?empty@StringImpl@WTF@@SAPAV12@XZ
     ?enumerable@PropertyDescriptor@JSC@@QBE_NXZ

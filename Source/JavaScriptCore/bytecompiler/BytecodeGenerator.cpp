@@ -193,8 +193,10 @@ JSObject* BytecodeGenerator::generate()
     if (s_dumpsGeneratedCode)
         m_codeBlock->dump(m_scopeChain->globalObject->globalExec());
 
+#ifdef NDEBUG
     if ((m_codeType == FunctionCode && !m_codeBlock->needsFullScopeChain() && !m_codeBlock->usesArguments()) || m_codeType == EvalCode)
         symbolTable().clear();
+#endif
 
     m_codeBlock->shrinkToFit(CodeBlock::EarlyShrink);
 

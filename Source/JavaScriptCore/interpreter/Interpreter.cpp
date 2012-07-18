@@ -77,6 +77,8 @@ using namespace std;
 
 namespace JSC {
 
+static CallFrame* getCallerInfo(JSGlobalData*, CallFrame*, int& lineNumber, unsigned& bytecodeOffset);
+
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, ScopeChainNode* sc)
 {
@@ -606,7 +608,13 @@ void Interpreter::initialize(LLInt::Data* llintData, bool canUseJIT)
 #endif
 }
 
-#ifndef NDEBUG
+#ifdef NDEBUG
+
+void Interpreter::dumpCallFrame(CallFrame*)
+{
+}
+
+#else
 
 void Interpreter::dumpCallFrame(CallFrame* callFrame)
 {
@@ -624,34 +632,42 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     CodeBlock* codeBlock = callFrame->codeBlock();
     const Register* it;
     const Register* end;
-    JSValue v;
 
-    it = callFrame->registers() - RegisterFile::CallFrameHeaderSize - codeBlock->numParameters();
-    v = (*it).jsValue();
+    it = callFrame->registers() - RegisterFile::CallFrameHeaderSize - callFrame->argumentCountIncludingThis();
+    end = callFrame->registers() - RegisterFile::CallFrameHeaderSize;
+    while (it < end) {
+        JSValue v = it->jsValue();
+        int registerNumber = it - callFrame->registers();
+        UString name = codeBlock->nameForRegister(registerNumber);
 #if USE(JSVALUE32_64)
-    dataLog("[this]                     | %10p | %-16s 0x%llx \n", it, v.description(), JSValue::encode(v)); ++it;
+        dataLog("[r% 3d %14s]      | %10p | %-16s 0x%llx \n", registerNumber, name.ascii().data(), it, v.description(), JSValue::encode(v));
 #else
-    dataLog("[this]                     | %10p | %-16s %p \n", it, v.description(), JSValue::encode(v)); ++it;
+        dataLog("[r% 3d %14s]      | %10p | %-16s %p \n", registerNumber, name.ascii().data(), it, v.description(), JSValue::encode(v));
 #endif
-    end = it + max(codeBlock->numParameters() - 1, 0); // - 1 to skip "this"
-    if (it != end) {
-        do {
-            v = (*it).jsValue();
-#if USE(JSVALUE32_64)
-            dataLog("[param]                    | %10p | %-16s 0x%llx \n", it, v.description(), JSValue::encode(v));
-#else
-            dataLog("[param]                    | %10p | %-16s %p \n", it, v.description(), JSValue::encode(v));
-#endif
-            ++it;
-        } while (it != end);
+        it++;
     }
+    
     dataLog("-----------------------------------------------------------------------------\n");
-    dataLog("[CodeBlock]                | %10p | %p \n", it, (*it).codeBlock()); ++it;
-    dataLog("[ScopeChain]               | %10p | %p \n", it, (*it).scopeChain()); ++it;
-    dataLog("[CallerRegisters]          | %10p | %d \n", it, (*it).i()); ++it;
-    dataLog("[ReturnPC]                 | %10p | %p \n", it, (*it).vPC()); ++it;
-    dataLog("[ArgumentCount]            | %10p | %d \n", it, (*it).i()); ++it;
-    dataLog("[Callee]                   | %10p | %p \n", it, (*it).function()); ++it;
+    dataLog("[ArgumentCount]            | %10p | %ld \n", it, callFrame->argumentCount());
+    ++it;
+    dataLog("[CallerFrame]              | %10p | %p \n", it, callFrame->callerFrame());
+    ++it;
+    dataLog("[Callee]                   | %10p | %p \n", it, callFrame->callee());
+    ++it;
+    dataLog("[ScopeChain]               | %10p | %p \n", it, callFrame->scopeChain());
+    ++it;
+#if ENABLE(JIT)
+    AbstractPC pc = callFrame->abstractReturnPC(callFrame->globalData());
+    if (pc.hasJITReturnAddress())
+        dataLog("[ReturnJITPC]              | %10p | %p \n", it, pc.jitReturnAddress().value());
+#endif
+    unsigned bytecodeOffset = 0;
+    int line = 0;
+    getCallerInfo(&callFrame->globalData(), callFrame, line, bytecodeOffset);
+    dataLog("[ReturnVPC]                | %10p | %d (line %d)\n", it, bytecodeOffset, line);
+    ++it;
+    dataLog("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
+    ++it;
     dataLog("-----------------------------------------------------------------------------\n");
 
     int registerCount = 0;
@@ -659,11 +675,13 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     end = it + codeBlock->m_numVars;
     if (it != end) {
         do {
-            v = (*it).jsValue();
+            JSValue v = it->jsValue();
+            int registerNumber = it - callFrame->registers();
+            UString name = codeBlock->nameForRegister(registerNumber);
 #if USE(JSVALUE32_64)
-            dataLog("[r%2d]                      | %10p | %-16s 0x%llx \n", registerCount, it, v.description(), JSValue::encode(v));
+            dataLog("[r% 3d %14s]      | %10p | %-16s 0x%llx \n", registerNumber, name.ascii().data(), it, v.description(), JSValue::encode(v));
 #else
-            dataLog("[r%2d]                      | %10p | %-16s %p \n", registerCount, it, v.description(), JSValue::encode(v));
+            dataLog("[r% 3d %14s]      | %10p | %-16s %p \n", registerNumber, name.ascii().data(), it, v.description(), JSValue::encode(v));
 #endif
             ++it;
             ++registerCount;
@@ -674,11 +692,11 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     end = it + codeBlock->m_numCalleeRegisters - codeBlock->m_numVars;
     if (it != end) {
         do {
-            v = (*it).jsValue();
+            JSValue v = (*it).jsValue();
 #if USE(JSVALUE32_64)
-            dataLog("[r%2d]                      | %10p | %-16s 0x%llx \n", registerCount, it, v.description(), JSValue::encode(v));
+            dataLog("[r% 3d]                     | %10p | %-16s 0x%llx \n", registerCount, it, v.description(), JSValue::encode(v));
 #else
-            dataLog("[r%2d]                      | %10p | %-16s %p \n", registerCount, it, v.description(), JSValue::encode(v));
+            dataLog("[r% 3d]                     | %10p | %-16s %p \n", registerCount, it, v.description(), JSValue::encode(v));
 #endif
             ++it;
             ++registerCount;
@@ -838,10 +856,10 @@ static int getLineNumberForCallFrame(JSGlobalData* globalData, CallFrame* callFr
 #endif
 }
 
-static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, int& lineNumber)
+static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, int& lineNumber, unsigned& bytecodeOffset)
 {
     UNUSED_PARAM(globalData);
-    unsigned bytecodeOffset = 0;
+    bytecodeOffset = 0;
     lineNumber = -1;
     ASSERT(!callFrame->hasHostCallFrameFlag());
     CallFrame* callerFrame = callFrame->codeBlock() ? callFrame->trueCallerFrame() : callFrame->callerFrame()->removeHostCallFrameFlag();
@@ -973,7 +991,8 @@ void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& re
             StackFrame s = { Strong<JSObject>(*globalData, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), -1, UString()};
             results.append(s);
         }
-        callFrame = getCallerInfo(globalData, callFrame, line);
+        unsigned unusedBytecodeOffset = 0;
+        callFrame = getCallerInfo(globalData, callFrame, line, unusedBytecodeOffset);
     }
 }
 
@@ -5330,7 +5349,8 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
         return jsNull();
     
     int lineNumber;
-    CallFrame* callerFrame = getCallerInfo(&callFrame->globalData(), functionCallFrame, lineNumber);
+    unsigned bytecodeOffset;
+    CallFrame* callerFrame = getCallerInfo(&callFrame->globalData(), functionCallFrame, lineNumber, bytecodeOffset);
     if (!callerFrame)
         return jsNull();
     JSValue caller = callerFrame->callee();
@@ -5340,7 +5360,7 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     // Skip over function bindings.
     ASSERT(caller.isObject());
     while (asObject(caller)->inherits(&JSBoundFunction::s_info)) {
-        callerFrame = getCallerInfo(&callFrame->globalData(), callerFrame, lineNumber);
+        callerFrame = getCallerInfo(&callFrame->globalData(), callerFrame, lineNumber, bytecodeOffset);
         if (!callerFrame)
             return jsNull();
         caller = callerFrame->callee();
