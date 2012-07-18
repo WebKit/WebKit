@@ -111,7 +111,7 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
         manager = Manager(port, options, printer)
         printer.print_config()
 
-        printer.print_update("Collecting tests ...")
+        printer.write_update("Collecting tests ...")
         try:
             manager.collect_tests(args)
         except IOError, e:
@@ -119,12 +119,12 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
                 return -1
             raise
 
-        printer.print_update("Checking build ...")
+        printer.write_update("Checking build ...")
         if not port.check_build(manager.needs_servers()):
             _log.error("Build check failed")
             return -1
 
-        printer.print_update("Parsing expectations ...")
+        printer.write_update("Parsing expectations ...")
         manager.parse_expectations()
 
         unexpected_result_count = manager.run()

@@ -713,7 +713,7 @@ class Manager(object):
         keyboard_interrupted = False
         interrupted = False
 
-        self._printer.print_update('Sharding tests ...')
+        self._printer.write_update('Sharding tests ...')
         locked_shards, unlocked_shards = self._shard_tests(file_list, int(self._options.child_processes), self._options.fully_parallel)
 
         # FIXME: We don't have a good way to coordinate the workers so that
@@ -738,7 +738,7 @@ class Manager(object):
         if self._options.dry_run:
             return (keyboard_interrupted, interrupted, self._worker_stats.values(), self._group_stats, self._all_results)
 
-        self._printer.print_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
+        self._printer.write_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
 
         try:
             with message_pool.get(self, worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:
@@ -779,12 +779,12 @@ class Manager(object):
         # This must be started before we check the system dependencies,
         # since the helper may do things to make the setup correct.
         if self._options.pixel_tests:
-            self._printer.print_update("Starting pixel test helper ...")
+            self._printer.write_update("Starting pixel test helper ...")
             self._port.start_helper()
 
         # Check that the system dependencies (themes, fonts, ...) are correct.
         if not self._options.nocheck_sys_deps:
-            self._printer.print_update("Checking system dependencies ...")
+            self._printer.write_update("Checking system dependencies ...")
             if not self._port.check_sys_deps(self.needs_servers()):
                 self._port.stop_helper()
                 return None
@@ -797,7 +797,7 @@ class Manager(object):
 
         self._port.setup_test_run()
 
-        self._printer.print_update("Preparing tests ...")
+        self._printer.write_update("Preparing tests ...")
         result_summary = self.prepare_lists_and_print_output()
         if not result_summary:
             return None
@@ -877,25 +877,25 @@ class Manager(object):
         return self._port.exit_code_from_summarized_results(unexpected_results)
 
     def start_servers_with_lock(self, number_of_servers):
-        self._printer.print_update('Acquiring http lock ...')
+        self._printer.write_update('Acquiring http lock ...')
         self._port.acquire_http_lock()
         if self._http_tests():
-            self._printer.print_update('Starting HTTP server ...')
+            self._printer.write_update('Starting HTTP server ...')
             self._port.start_http_server(number_of_servers=number_of_servers)
         if self._websocket_tests():
-            self._printer.print_update('Starting WebSocket server ...')
+            self._printer.write_update('Starting WebSocket server ...')
             self._port.start_websocket_server()
         self._has_http_lock = True
 
     def stop_servers_with_lock(self):
         if self._has_http_lock:
             if self._http_tests():
-                self._printer.print_update('Stopping HTTP server ...')
+                self._printer.write_update('Stopping HTTP server ...')
                 self._port.stop_http_server()
             if self._websocket_tests():
-                self._printer.print_update('Stopping WebSocket server ...')
+                self._printer.write_update('Stopping WebSocket server ...')
                 self._port.stop_websocket_server()
-            self._printer.print_update('Releasing server lock ...')
+            self._printer.write_update('Releasing server lock ...')
             self._port.release_http_lock()
             self._has_http_lock = False
 
@@ -983,7 +983,7 @@ class Manager(object):
         # Just clobber the actual test results directories since the other
         # files in the results directory are explicitly used for cross-run
         # tracking.
-        self._printer.print_update("Clobbering old results in %s" %
+        self._printer.write_update("Clobbering old results in %s" %
                                    self._results_directory)
         layout_tests_dir = self._port.layout_tests_dir()
         possible_dirs = self._port.test_dirs()

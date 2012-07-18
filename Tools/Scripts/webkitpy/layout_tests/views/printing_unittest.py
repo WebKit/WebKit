@@ -204,10 +204,10 @@ class  Testprinter(unittest.TestCase):
     def test_print_timing(self):
         self.do_switch_tests('print_timing', 'timing', to_buildbot=False)
 
-    def test_print_update(self):
+    def test_write_update(self):
         # Note that there shouldn't be a carriage return here; updates()
         # are meant to be overwritten.
-        self.do_switch_tests('print_update', 'updates', to_buildbot=False,
+        self.do_switch_tests('write_update', 'updates', to_buildbot=False,
                              message='hello', exp_err=['hello'])
 
     def test_print_one_line_summary(self):

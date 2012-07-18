@@ -1,3 +1,27 @@
+2012-07-17  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: rename printer.print_update to printer.write_update to match metered_stream
+        https://bugs.webkit.org/show_bug.cgi?id=91557
+
+        Reviewed by Ojan Vafai.
+
+        Now that all of the printing logic is in printer.py, I want the
+        public interface to printer to follow the meteredstream
+        interface where possible. renaming write_update() gets us close.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        (Manager._set_up_run):
+        (Manager.start_servers_with_lock):
+        (Manager.stop_servers_with_lock):
+        (Manager._clobber_old_results):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.write_update):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_write_update):
+
 2012-07-17  Tony Chang  <tony@chromium.org>
 
         Fix a bug where optimize-baselines would incorrectly fail to optimize
