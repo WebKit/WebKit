@@ -33,6 +33,11 @@ namespace WebCore {
 
 template<size_t size> struct UCharByteFiller;
 template<> struct UCharByteFiller<4> {
+    static void copy(LChar* destination, const uint8_t* source)
+    {
+        memcpy(destination, source, 4);
+    }
+    
     static void copy(UChar* destination, const uint8_t* source)
     {
         destination[0] = source[0];
@@ -42,6 +47,11 @@ template<> struct UCharByteFiller<4> {
     }
 };
 template<> struct UCharByteFiller<8> {
+    static void copy(LChar* destination, const uint8_t* source)
+    {
+        memcpy(destination, source, 8);
+    }
+
     static void copy(UChar* destination, const uint8_t* source)
     {
         destination[0] = source[0];
@@ -54,6 +64,11 @@ template<> struct UCharByteFiller<8> {
         destination[7] = source[7];
     }
 };
+
+inline void copyASCIIMachineWord(LChar* destination, const uint8_t* source)
+{
+    UCharByteFiller<sizeof(WTF::MachineWord)>::copy(destination, source);
+}
 
 inline void copyASCIIMachineWord(UChar* destination, const uint8_t* source)
 {

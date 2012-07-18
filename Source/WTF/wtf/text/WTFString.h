@@ -321,6 +321,7 @@ public:
     // into the buffer returned in data before the returned string is used.
     // Failure to do this will have unpredictable results.
     static String createUninitialized(unsigned length, UChar*& data) { return StringImpl::createUninitialized(length, data); }
+    static String createUninitialized(unsigned length, LChar*& data) { return StringImpl::createUninitialized(length, data); }
 
     WTF_EXPORT_PRIVATE void split(const String& separator, Vector<String>& result) const;
     WTF_EXPORT_PRIVATE void split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const;

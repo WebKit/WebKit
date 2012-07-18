@@ -1,3 +1,23 @@
+2012-07-18  Michael Saboff  <msaboff@apple.com>
+
+        Make TextCodecLatin1 handle 8 bit data without converting to UChar's
+        https://bugs.webkit.org/show_bug.cgi?id=90319
+
+        Reviewed by Oliver Hunt.
+
+        Updated codec to create 8 bit strings where possible.
+        We assume that the incoming stream can all be decoded as 8-bit values.
+        If we find a 16-bit value, we take the already decoded data and
+        copy / convert it to a 16-bit buffer and then continue process the rest
+        of the stream as 16-bits.
+
+        No new tests, functionality covered with existing tests.
+
+        * platform/text/TextCodecASCIIFastPath.h:
+        (WebCore::copyASCIIMachineWord):
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::TextCodecLatin1::decode):
+
 2012-07-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Fix up old name in RuleSet::addRulesFromSheet

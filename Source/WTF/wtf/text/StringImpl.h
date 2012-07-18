@@ -282,7 +282,7 @@ public:
         return adoptRef(new StringImpl(rep->m_data16 + offset, length, ownerRep));
     }
 
-    static PassRefPtr<StringImpl> createUninitialized(unsigned length, LChar*& data);
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> createUninitialized(unsigned length, LChar*& data);
     WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> createUninitialized(unsigned length, UChar*& data);
     template <typename T> static ALWAYS_INLINE PassRefPtr<StringImpl> tryCreateUninitialized(unsigned length, T*& output)
     {
@@ -336,8 +336,8 @@ public:
         return empty();
     }
 
-    static PassRefPtr<StringImpl> adopt(StringBuffer<LChar>& buffer);
-    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> adopt(StringBuffer<UChar>& buffer);
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> adopt(StringBuffer<UChar>&);
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> adopt(StringBuffer<LChar>&);
 
 #if PLATFORM(QT) && HAVE(QT5)
     static PassRefPtr<StringImpl> adopt(QStringData*);

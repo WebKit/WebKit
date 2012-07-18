@@ -120,13 +120,15 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
 
 String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, bool&)
 {
-    UChar* characters;
+    LChar* characters;
+    if (!length)
+        return emptyString();
     String result = String::createUninitialized(length, characters);
 
     const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
     const uint8_t* end = reinterpret_cast<const uint8_t*>(bytes + length);
     const uint8_t* alignedEnd = alignToMachineWord(end);
-    UChar* destination = characters;
+    LChar* destination = characters;
 
     while (source < end) {
         if (isASCII(*source)) {
@@ -149,6 +151,9 @@ String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, boo
             *destination = *source;
         } else {
 useLookupTable:
+            if (table[*source] > 0xff)
+                goto upConvertTo16Bit;
+
             *destination = table[*source];
         }
 
@@ -157,6 +162,54 @@ useLookupTable:
     }
 
     return result;
+    
+upConvertTo16Bit:
+    UChar* characters16;
+    String result16 = String::createUninitialized(length, characters16);
+
+    UChar* destination16 = characters16;
+
+    // Zero extend and copy already processed 8 bit data
+    LChar* ptr8 = characters;
+    LChar* endPtr8 = destination;
+
+    while (ptr8 < endPtr8)
+        *destination16++ = *ptr8++;
+
+    // Handle the character that triggered the 16 bit path
+    *destination16 = table[*source];
+    ++source;
+    ++destination16;
+
+    while (source < end) {
+        if (isASCII(*source)) {
+            // Fast path for ASCII. Most Latin-1 text will be ASCII.
+            if (isAlignedToMachineWord(source)) {
+                while (source < alignedEnd) {
+                    MachineWord chunk = *reinterpret_cast_ptr<const MachineWord*>(source);
+                    
+                    if (!isAllASCII<LChar>(chunk))
+                        goto useLookupTable16;
+                    
+                    copyASCIIMachineWord(destination16, source);
+                    source += sizeof(MachineWord);
+                    destination16 += sizeof(MachineWord);
+                }
+                
+                if (source == end)
+                    break;
+            }
+            *destination16 = *source;
+        } else {
+useLookupTable16:
+            *destination16 = table[*source];
+        }
+        
+        ++source;
+        ++destination16;
+    }
+    
+    return result16;
 }
 
 static CString encodeComplexWindowsLatin1(const UChar* characters, size_t length, UnencodableHandling handling)

@@ -1,3 +1,15 @@
+2012-07-18  Michael Saboff  <msaboff@apple.com>
+
+        Make TextCodecLatin1 handle 8 bit data without converting to UChar's
+        https://bugs.webkit.org/show_bug.cgi?id=90319
+
+        Reviewed by Oliver Hunt.
+
+        * wtf/text/StringImpl.h:
+        (StringImpl): Exported LChar variant of adopt().
+        * wtf/text/WTFString.h:
+        (WTF::String::createUninitialized): Exported LChar variant.
+
 2012-07-18  Rob Buis  <rbuis@rim.com>
 
         Alignment crash in MIMESniffer
