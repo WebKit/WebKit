@@ -1,3 +1,19 @@
+2012-07-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed gardening.
+        More pixel rebaseline in compositing for qt-5.0-wk2.
+
+        Added baselines, mark failing tests.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/compositing/culling/filter-occlusion-blur-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/culling/filter-occlusion-blur-large-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/fixed-position-scroll-offset-history-restore-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/flat-with-transformed-child-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/images/content-image-change-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-scroll-expected.png: Added.
+        * platform/qt-5.0-wk2/compositing/layer-creation/fixed-position-scroll-expected.txt: Added.
+
 2012-07-18  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] fast/text tests needs update after rebaseline and new testfonts
