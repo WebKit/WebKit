@@ -1,3 +1,16 @@
+2012-07-18  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Direction parameter ignored by some openCursor() overloads
+        https://bugs.webkit.org/show_bug.cgi?id=91687
+
+        Reviewed by Tony Chang.
+
+        Test the overloads to ensure cursor direction is set correctly.
+
+        * storage/indexeddb/cursor-overloads-expected.txt: Added.
+        * storage/indexeddb/cursor-overloads.html: Added.
+        * storage/indexeddb/legacy-constants-expected.txt: Fix whitespace in console warnings.
+
 2012-07-18  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Improve Replaceable extended attribute
