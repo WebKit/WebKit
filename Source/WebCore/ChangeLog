@@ -1,3 +1,35 @@
+2012-07-17  MORITA Hajime <morrita@google.com>
+
+        [Shadow DOM] Some distribution invalidation can drop necessary reattachment.
+        https://bugs.webkit.org/show_bug.cgi?id=88843
+
+        Reviewed by Dimitri Glazkov.
+
+        Following scenario caused this problem:
+
+        - Inserting a Text node as a shadow child triggers invalidateDistribution(),
+          which doen't reattach the shadow's host element.
+        - Then inserting a <content> element after that triggers another invalidateDistribution(),
+          which should reattach its host because <content> can affect not only distribution of new nodes,
+          but also existing distribution.
+        - Since the first invalidateDistribution() has marked the distribution as invalidated,
+          the second invalidateDistribution() call returns early without any reattachment,
+          even though it needs one.
+
+        This change adds InvalidationType parameter to invalidateDistribution(), which asks ElementShadow to
+        reattach the host regardless of its validity state. InsertionPoint::insertedInto() uses
+        this flag to ensure that its insertion always results a reattachment.
+
+        Test: fast/dom/shadow/content-after-style.html
+
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::addShadowRoot): Passes InvalidationType.
+        (WebCore::ElementShadow::removeAllShadowRoots): Passes InvalidationType.
+        (WebCore::ElementShadow::invalidateDistribution): Added a InvalidationType parameter.
+        * dom/ElementShadow.h:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::insertedInto): Passes InvalidationType.
+
 2012-07-17  Jon Lee  <jonlee@apple.com>
 
         Teach CodeGenerator to support for static, readonly, attributes

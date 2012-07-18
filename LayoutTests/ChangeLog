@@ -1,3 +1,13 @@
+2012-07-17  MORITA Hajime <morrita@google.com>
+
+        [Shadow DOM] Some distribution invalidation can drop necessary reattachment.
+        https://bugs.webkit.org/show_bug.cgi?id=88843
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/content-after-style-expected.html: Added.
+        * fast/dom/shadow/content-after-style.html: Added.
+
 2012-07-17  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Key generator state not maintained across connections
