@@ -50,6 +50,23 @@
         (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
         Subtracting the height of the scrollbar from the client height when the client has percentage height.
 
+2012-07-18  Pravin D  <pravind.2k4@gmail.com>
+
+        Content size of child having percent height inside a fixed height container having overflow:auto is wrongly calculated
+        https://bugs.webkit.org/show_bug.cgi?id=11355
+
+        Reviewed by Julien Chaffraix.
+
+        The content height of a child must be container height minus padding, border width and height of horizontal scrollbar(if any).
+
+        Tests: fast/overflow/child-100percent-height-inside-fixed-container-with-overflow-auto.html
+               fast/overflow/replaced-child-100percent-height-inside-fixed-container-with-overflow-auto.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        Subtracting the height of the scrollbar from the client height when the client has percentage height.
+
 2012-07-18  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         [chromium] Ensure that the compositor code which is aware of flipped status of video-textures

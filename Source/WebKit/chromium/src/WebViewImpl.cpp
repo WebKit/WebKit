@@ -2071,11 +2071,11 @@ WebTextInputType WebViewImpl::textInputType()
         if (textarea->readOnly() || textarea->disabled())
             return WebTextInputTypeNone;
 
-        return WebTextInputTypeText;
+        return WebTextInputTypeTextArea;
     }
 
     if (node->shouldUseInputMethod())
-        return WebTextInputTypeText;
+        return WebTextInputTypeContentEditable;
 
     return WebTextInputTypeNone;
 }
