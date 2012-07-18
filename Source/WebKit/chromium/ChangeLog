@@ -1,6 +1,14 @@
 2012-07-18  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed compile fix for Android.
+
+        More sqrt fixes.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
+2012-07-18  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed compile fix for Android.
         
         Source/WebKit/chromium/tests/CCDamageTrackerTest.cpp: In member function 'virtual void<unnamed>::CCDamageTrackerTest_verifyDamageForTransformedLayer_Test::TestBody()':
         Source/WebKit/chromium/tests/CCDamageTrackerTest.cpp:332: error: call of overloaded 'sqrt(int)' is ambiguous

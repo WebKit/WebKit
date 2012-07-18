@@ -2394,7 +2394,7 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor2DRotations)
     //         overlaps the right side of the layer. The visible rect should be the
     //         layer's right half.
     layerToSurfaceTransform.makeIdentity();
-    layerToSurfaceTransform.translate(0, -sqrt(2) * 15);
+    layerToSurfaceTransform.translate(0, -sqrt(2.0) * 15);
     layerToSurfaceTransform.rotate(45);
     expected = IntRect(IntPoint(15, 0), IntSize(15, 30)); // right half of layer bounds.
     actual = CCLayerTreeHostCommon::calculateVisibleRect(targetSurfaceRect, layerContentRect, layerToSurfaceTransform);
@@ -2419,7 +2419,7 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor3dOrthographicTransform)
     // Case 2: Orthographic projection of a layer rotated about y-axis by 45 degrees, but
     //         shifted to the side so only the right-half the layer would be visible on
     //         the surface.
-    double halfWidthOfRotatedLayer = (100 / sqrt(2)) * 0.5; // 100 is the un-rotated layer width; divided by sqrt(2) is the rotated width.
+    double halfWidthOfRotatedLayer = (100 / sqrt(2.0)) * 0.5; // 100 is the un-rotated layer width; divided by sqrt(2) is the rotated width.
     layerToSurfaceTransform.makeIdentity();
     layerToSurfaceTransform.translate(-halfWidthOfRotatedLayer, 0);
     layerToSurfaceTransform.rotate3d(0, 45, 0); // rotates about the left edge of the layer
