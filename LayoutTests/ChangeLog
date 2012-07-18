@@ -1,5 +1,13 @@
 2012-07-18  Tony Chang  <tony@chromium.org>
 
+        [chromium] Unreviewed gardening.
+
+        svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context.svg flakily crashes on Chromium Win.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-18  Tony Chang  <tony@chromium.org>
+
         Unreviewed gardening.
         http/tests/loading/307-after-303-after-post.html is flaky on win debug too.
 
