@@ -33,7 +33,12 @@ class SkBitmap;
 
 namespace WebCore {
 
-typedef SkBitmap* DragImageRef;
+struct DragImageChromium {
+    SkBitmap* bitmap;
+    float resolutionScale;
+};
+
+typedef DragImageChromium* DragImageRef;
 
 } // namespace WebCore
 

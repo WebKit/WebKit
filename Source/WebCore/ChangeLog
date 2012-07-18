@@ -1,3 +1,38 @@
+2012-07-18  Varun Jain  <varunjain@chromium.org>
+
+        [chromium] Drag image for image elements should be scaled with device scale factor.
+        https://bugs.webkit.org/show_bug.cgi?id=89688
+
+        Reviewed by Adam Barth.
+
+        Modified ManualTest: ManualTests/chromium/drag-image-accounts-for-device-scale.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+        * platform/chromium/DragImageChromiumSkia.cpp:
+        (WebCore::dragImageSize):
+        (WebCore::deleteDragImage):
+        (WebCore::scaleDragImage):
+        (WebCore::dissolveDragImageToFraction):
+        (WebCore::createDragImageFromImage):
+        * platform/chromium/DragImageRef.h:
+        (DragImageChromium):
+        (WebCore):
+        * platform/graphics/skia/BitmapImageSingleFrameSkia.h:
+        (BitmapImageSingleFrameSkia):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::copyImage):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImageSingleFrameSkia::BitmapImageSingleFrameSkia):
+        (WebCore::BitmapImageSingleFrameSkia::create):
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::NativeImageSkia):
+        * platform/graphics/skia/NativeImageSkia.h:
+        (NativeImageSkia):
+        (WebCore::NativeImageSkia::resolutionScale):
+
 2012-07-18  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Move about: URL handling out of WebCore

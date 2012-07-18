@@ -108,11 +108,11 @@ static SkCanvas* createNonPlatformCanvas(const IntSize& size)
     return canvas;
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, ColorSpace, RenderingMode renderingMode, DeferralMode deferralMode, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace, RenderingMode renderingMode, DeferralMode deferralMode, bool& success)
     : m_data(size)
     , m_size(size)
     , m_logicalSize(size)
-    , m_resolutionScale(1)
+    , m_resolutionScale(resolutionScale)
 {
     OwnPtr<SkCanvas> canvas;
 
@@ -133,6 +133,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, Color
     m_data.m_platformContext.setCanvas(m_data.m_canvas.get());
     m_context = adoptPtr(new GraphicsContext(&m_data.m_platformContext));
     m_context->platformContext()->setDrawingToImageBuffer(true);
+    m_context->scale(FloatSize(m_resolutionScale, m_resolutionScale));
 
     // Make the background transparent. It would be nice if this wasn't
     // required, but the canvas is currently filled with the magic transparency
@@ -160,7 +161,7 @@ GraphicsContext* ImageBuffer::context() const
 
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
 {
-    return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), copyBehavior == CopyBackingStore);
+    return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), copyBehavior == CopyBackingStore, m_resolutionScale);
 }
 
 PlatformLayer* ImageBuffer::platformLayer() const

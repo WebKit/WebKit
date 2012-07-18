@@ -1,3 +1,15 @@
+2012-07-18  Varun Jain  <varunjain@chromium.org>
+
+        [chromium] Drag image for image elements should be scaled with device scale factor.
+        https://bugs.webkit.org/show_bug.cgi?id=89688
+
+        Reviewed by Adam Barth.
+
+        * src/DragClientImpl.cpp:
+        (WebKit::DragClientImpl::startDrag):
+        * tests/DragImageTest.cpp:
+        (WebCore::TEST):
+
 2012-07-18  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Fix style for numeric literals in chromium unit test code

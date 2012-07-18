@@ -49,7 +49,7 @@ public:
     // Creates a new Image from the given SkBitmap.  If "copyPixels" is true, a
     // deep copy is done.  Otherwise, a shallow copy is done (pixel data is
     // ref'ed).
-    static PassRefPtr<BitmapImageSingleFrameSkia> create(const SkBitmap&, bool copyPixels);
+    static PassRefPtr<BitmapImageSingleFrameSkia> create(const SkBitmap&, bool copyPixels, float resolutionScale = 1);
 
     virtual bool isBitmapImage() const;
 
@@ -76,7 +76,7 @@ private:
     NativeImageSkia m_nativeImage;
 
     // Creates a new Image from the given SkBitmap, using a shallow copy.
-    explicit BitmapImageSingleFrameSkia(const SkBitmap&);
+    BitmapImageSingleFrameSkia(const SkBitmap&, float resolutionScale);
 };
 
 FloatRect normalizeRect(const FloatRect&);

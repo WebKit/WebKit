@@ -139,8 +139,8 @@ TEST(DragImageTest, CreateDragImage)
         RefPtr<TestImage> testImage(TestImage::create(IntSize(1, 1)));
         DragImageRef dragImage = createDragImageFromImage(testImage.get());
         ASSERT_TRUE(dragImage);
-        SkAutoLockPixels lock1(*dragImage), lock2(testImage->nativeImageForCurrentFrame()->bitmap());
-        EXPECT_NE(dragImage->getPixels(), testImage->nativeImageForCurrentFrame()->bitmap().getPixels());
+        SkAutoLockPixels lock1(*dragImage->bitmap), lock2(testImage->nativeImageForCurrentFrame()->bitmap());
+        EXPECT_NE(dragImage->bitmap->getPixels(), testImage->nativeImageForCurrentFrame()->bitmap().getPixels());
     }
 }
 

@@ -43,12 +43,14 @@
 namespace WebCore {
 
 NativeImageSkia::NativeImageSkia()
-    : m_resizeRequests(0)
+    : m_resolutionScale(1),
+      m_resizeRequests(0)
 {
 }
 
-NativeImageSkia::NativeImageSkia(const SkBitmap& other)
+NativeImageSkia::NativeImageSkia(const SkBitmap& other, float resolutionScale)
     : m_image(other),
+      m_resolutionScale(resolutionScale),
       m_resizeRequests(0)
 {
 }

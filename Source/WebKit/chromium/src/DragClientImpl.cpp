@@ -87,7 +87,13 @@ void DragClientImpl::startDrag(DragImageRef dragImage,
 
     IntSize offsetSize(eventPos - dragImageOrigin);
     WebPoint offsetPoint(offsetSize.width(), offsetSize.height());
-    m_webView->startDragging(frame, dragData, static_cast<WebDragOperationsMask>(dragOperationMask), dragImage ? WebImage(*dragImage) : WebImage(), offsetPoint);
+
+    if (dragImage && dragImage->bitmap && m_webView->deviceScaleFactor() != dragImage->resolutionScale) {
+        ASSERT(dragImage->resolutionScale > 0);
+        float scale = m_webView->deviceScaleFactor() / dragImage->resolutionScale;
+        dragImage = scaleDragImage(dragImage, WebCore::FloatSize(scale, scale));
+    }
+    m_webView->startDragging(frame, dragData, static_cast<WebDragOperationsMask>(dragOperationMask), (dragImage && dragImage->bitmap) ? WebImage(*dragImage->bitmap) : WebImage(), offsetPoint);
 }
 
 void DragClientImpl::dragControllerDestroyed()

@@ -496,20 +496,20 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
         observer->didDraw(this);
 }
 
-BitmapImageSingleFrameSkia::BitmapImageSingleFrameSkia(const SkBitmap& bitmap)
-    : m_nativeImage(bitmap)
+BitmapImageSingleFrameSkia::BitmapImageSingleFrameSkia(const SkBitmap& bitmap, float resolutionScale)
+    : m_nativeImage(bitmap, resolutionScale)
 {
 }
 
-PassRefPtr<BitmapImageSingleFrameSkia> BitmapImageSingleFrameSkia::create(const SkBitmap& bitmap, bool copyPixels)
+PassRefPtr<BitmapImageSingleFrameSkia> BitmapImageSingleFrameSkia::create(const SkBitmap& bitmap, bool copyPixels, float resolutionScale)
 {
     if (copyPixels) {
         SkBitmap temp;
         if (!bitmap.deepCopyTo(&temp, bitmap.config()))
             bitmap.copyTo(&temp, bitmap.config());
-        return adoptRef(new BitmapImageSingleFrameSkia(temp));
+        return adoptRef(new BitmapImageSingleFrameSkia(temp, resolutionScale));
     }
-    return adoptRef(new BitmapImageSingleFrameSkia(bitmap));
+    return adoptRef(new BitmapImageSingleFrameSkia(bitmap, resolutionScale));
 }
 
 } // namespace WebCore
