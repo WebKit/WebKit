@@ -1,3 +1,19 @@
+2012-07-17  Don Olmstead  <don.olmstead@am.sony.com>
+
+        NRWT The time before server_process kills DRT should be variable
+        https://bugs.webkit.org/show_bug.cgi?id=91542
+
+        Reviewed by Dirk Pranke.
+
+        Added the ability to configure the amount of time
+        server_process waits before killing the DRT process
+        during the call to stop.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.variable.process_kill_time):
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.stop):
+
 2012-07-17  Alexis Menard  <alexis.menard@openbossa.org>
 
         webkitdirs.pm should fallback to uname -m if arch is not present.

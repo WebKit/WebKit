@@ -1019,6 +1019,15 @@ class Port(object):
     def default_configuration(self):
         return self._config.default_configuration()
 
+    def process_kill_time(self):
+        """ Returns the amount of time in seconds to wait before killing the process.
+
+        Within server_process.stop there is a time delta before the test is explictly
+        killed. By changing this the time can be extended in case the process needs
+        more time to cleanly exit on its own.
+        """
+        return 3.0
+
     #
     # PROTECTED ROUTINES
     #

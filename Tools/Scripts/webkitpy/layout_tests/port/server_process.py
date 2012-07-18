@@ -328,8 +328,7 @@ class ServerProcess(object):
             # and anyway we don't want to hang the harness if DumpRenderTree
             # is buggy, so we wait a couple seconds to give DumpRenderTree a
             # chance to clean up, but then force-kill the process if necessary.
-            KILL_TIMEOUT = 3.0
-            timeout = time.time() + KILL_TIMEOUT
+            timeout = time.time() + self._port.process_kill_time()
             while self._proc.poll() is None and time.time() < timeout:
                 time.sleep(0.01)
             if self._proc.poll() is None:
