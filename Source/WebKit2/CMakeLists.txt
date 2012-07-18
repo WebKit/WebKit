@@ -298,6 +298,7 @@ SET(WebKit2_SOURCES
     UIProcess/API/C/WKKeyValueStorageManager.cpp
     UIProcess/API/C/WKMediaCacheManager.cpp
     UIProcess/API/C/WKNavigationData.cpp
+    UIProcess/API/C/WKNetworkInfo.cpp
     UIProcess/API/C/WKNetworkInfoManager.cpp
     UIProcess/API/C/WKNotification.cpp
     UIProcess/API/C/WKNotificationManager.cpp

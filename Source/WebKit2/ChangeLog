@@ -1,5 +1,30 @@
 2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2] Add C API for Network Information API
+        https://bugs.webkit.org/show_bug.cgi?id=90762
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add C API for WKNetworkInfo and WKNetworkInfoManager
+        so that they can be used by the client.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetNetworkInfoManager):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKNetworkInfo.cpp: Copied from Source/WebKit2/UIProcess/API/C/WKNetworkInfoManager.cpp.
+        (WKNetworkInfoGetTypeID):
+        (WKNetworkInfoCreate):
+        * UIProcess/API/C/WKNetworkInfo.h: Copied from Source/WebKit2/UIProcess/API/C/WKNetworkInfoManager.cpp.
+        * UIProcess/API/C/WKNetworkInfoManager.cpp:
+        (WKNetworkInfoManagerSetProvider):
+        (WKNetworkInfoManagerProviderDidChangeNetworkInformation):
+        * UIProcess/API/C/WKNetworkInfoManager.h:
+
+2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] ewk_cookie_manager_persistent_storage_set is not exported
         https://bugs.webkit.org/show_bug.cgi?id=91647
 

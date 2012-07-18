@@ -23,33 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKNetworkInfoManager.h"
+#ifndef WKNetworkInfo_h
+#define WKNetworkInfo_h
 
-#include "WKAPICast.h"
-#include "WebNetworkInfoManagerProxy.h"
+#include <WebKit2/WKBase.h>
 
-using namespace WebKit;
-
-WKTypeID WKNetworkInfoManagerGetTypeID()
-{
-#if ENABLE(NETWORK_INFO)
-    return toAPI(WebNetworkInfoManagerProxy::APIType);
-#else
-    return 0;
+#ifdef __cplusplus
+extern "C" {
 #endif
-}
 
-void WKNetworkInfoManagerSetProvider(WKNetworkInfoManagerRef networkInfoManager, const WKNetworkInfoProvider* provider)
-{
-#if ENABLE(NETWORK_INFO)
-    toImpl(networkInfoManager)->initializeProvider(provider);
-#endif
-}
+WK_EXPORT WKTypeID WKNetworkInfoGetTypeID();
 
-void WKNetworkInfoManagerProviderDidChangeNetworkInformation(WKNetworkInfoManagerRef networkInfoManager, WKStringRef eventType, WKNetworkInfoRef networkInfo)
-{
-#if ENABLE(NETWORK_INFO)
-    toImpl(networkInfoManager)->providerDidChangeNetworkInformation(AtomicString(toImpl(eventType)->string()), toImpl(networkInfo));
-#endif
+WK_EXPORT WKNetworkInfoRef WKNetworkInfoCreate(double bandwidth, bool isMetered);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif // WKNetworkInfo_h

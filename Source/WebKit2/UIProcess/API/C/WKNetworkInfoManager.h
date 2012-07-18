@@ -52,6 +52,10 @@ enum { kWKNetworkInfoProviderCurrentVersion = 0 };
 
 WK_EXPORT WKTypeID WKNetworkInfoManagerGetTypeID();
 
+WK_EXPORT void WKNetworkInfoManagerSetProvider(WKNetworkInfoManagerRef networkInfoManager, const WKNetworkInfoProvider* provider);
+
+WK_EXPORT void WKNetworkInfoManagerProviderDidChangeNetworkInformation(WKNetworkInfoManagerRef networkInfoManager, WKStringRef eventType, WKNetworkInfoRef networkInfo);
+
 #ifdef __cplusplus
 }
 #endif

@@ -71,6 +71,7 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/WKMediaCacheManager.h \
 	$(WebKit2)/UIProcess/API/C/WKNativeEvent.h \
 	$(WebKit2)/UIProcess/API/C/WKNavigationData.h \
+	$(WebKit2)/UIProcess/API/C/WKNetworkInfo.h \
 	$(WebKit2)/UIProcess/API/C/WKNetworkInfoManager.h \
 	$(WebKit2)/UIProcess/API/C/WKNotification.h \
 	$(WebKit2)/UIProcess/API/C/WKNotificationManager.h \
@@ -572,6 +573,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/WKNativeEvent.h \
 	Source/WebKit2/UIProcess/API/C/WKNavigationData.cpp \
 	Source/WebKit2/UIProcess/API/C/WKNavigationData.h \
+	Source/WebKit2/UIProcess/API/C/WKNetworkInfo.cpp \
+	Source/WebKit2/UIProcess/API/C/WKNetworkInfo.h \
 	Source/WebKit2/UIProcess/API/C/WKNetworkInfoManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKNetworkInfoManager.h \
 	Source/WebKit2/UIProcess/API/C/WKNotification.cpp \

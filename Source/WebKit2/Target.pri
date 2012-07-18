@@ -167,6 +167,7 @@ HEADERS += \
     UIProcess/API/C/WKOpenPanelParameters.h \
     UIProcess/API/C/WKOpenPanelResultListener.h \
     UIProcess/API/C/WKNavigationData.h \
+    UIProcess/API/C/WKNetworkInfo.h \
     UIProcess/API/C/WKNetworkInfoManager.h \
     UIProcess/API/C/WKNotification.h \
     UIProcess/API/C/WKNotificationManager.h \
@@ -547,6 +548,7 @@ SOURCES += \
     UIProcess/API/C/WKOpenPanelParameters.cpp \
     UIProcess/API/C/WKOpenPanelResultListener.cpp \
     UIProcess/API/C/WKNavigationData.cpp \
+    UIProcess/API/C/WKNetworkInfo.cpp \
     UIProcess/API/C/WKNetworkInfoManager.cpp \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageGroup.cpp \

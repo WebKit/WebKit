@@ -24,32 +24,30 @@
  */
 
 #include "config.h"
-#include "WKNetworkInfoManager.h"
+#include "WKNetworkInfo.h"
 
+#if ENABLE(NETWORK_INFO)
 #include "WKAPICast.h"
-#include "WebNetworkInfoManagerProxy.h"
+#include "WebNetworkInfo.h"
 
 using namespace WebKit;
+#endif
 
-WKTypeID WKNetworkInfoManagerGetTypeID()
+WKTypeID WKNetworkInfoGetTypeID()
 {
 #if ENABLE(NETWORK_INFO)
-    return toAPI(WebNetworkInfoManagerProxy::APIType);
+    return toAPI(WebNetworkInfo::APIType);
 #else
     return 0;
 #endif
 }
 
-void WKNetworkInfoManagerSetProvider(WKNetworkInfoManagerRef networkInfoManager, const WKNetworkInfoProvider* provider)
+WKNetworkInfoRef WKNetworkInfoCreate(double bandwidth, bool isMetered)
 {
 #if ENABLE(NETWORK_INFO)
-    toImpl(networkInfoManager)->initializeProvider(provider);
-#endif
-}
-
-void WKNetworkInfoManagerProviderDidChangeNetworkInformation(WKNetworkInfoManagerRef networkInfoManager, WKStringRef eventType, WKNetworkInfoRef networkInfo)
-{
-#if ENABLE(NETWORK_INFO)
-    toImpl(networkInfoManager)->providerDidChangeNetworkInformation(AtomicString(toImpl(eventType)->string()), toImpl(networkInfo));
+    RefPtr<WebNetworkInfo> networkInfo = WebNetworkInfo::create(bandwidth, isMetered);
+    return toAPI(networkInfo.release().leakRef());
+#else
+    return 0;
 #endif
 }

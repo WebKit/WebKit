@@ -189,6 +189,15 @@ WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->geolocationManagerProxy());
 }
 
+WKNetworkInfoManagerRef WKContextGetNetworkInfoManager(WKContextRef contextRef)
+{
+#if ENABLE(NETWORK_INFO)
+    return toAPI(toImpl(contextRef)->networkInfoManagerProxy());
+#else
+    return 0;
+#endif
+}
+
 WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->iconDatabase());
