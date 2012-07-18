@@ -154,9 +154,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForNoOpLayer)
     child->addChild(grandChild);
 
     WebTransformationMatrix identityMatrix;
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(0, 0), false);
-    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(0, 0), false);
-    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(0, 0), false);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(0, 0), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(0, 0), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(0, 0), false);
 
     executeCalculateDrawTransformsAndVisibility(parent.get());
 
@@ -176,8 +176,8 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
 
     // Case 1: setting the sublayer transform should not affect this layer's draw transform or screen-space transform.
     WebTransformationMatrix arbitraryTranslation;
-    arbitraryTranslation.translate(10.0, 20.0);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, arbitraryTranslation, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(0, 0), false);
+    arbitraryTranslation.translate(10, 20);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, arbitraryTranslation, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(0, 0), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
@@ -185,22 +185,22 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     // Case 2: setting the bounds of the layer should result in a draw transform that translates to half the width and height.
     //         The screen-space transform should remain as the identity, because it does not deal with transforming to/from the center of the layer.
     WebTransformationMatrix translationToCenter;
-    translationToCenter.translate(5.0, 6.0);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
+    translationToCenter.translate(5, 6);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
 
     // Case 3: The anchor point by itself (without a layer transform) should have no effect on the transforms.
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 0), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
 
     // Case 4: A change in actual position affects both the draw transform and screen space transform.
     WebTransformationMatrix positionTransform;
-    positionTransform.translate(0.0, 1.2);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(0.0f, 1.2f), IntSize(10, 12), false);
+    positionTransform.translate(0, 1.2);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 1.2), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(positionTransform * translationToCenter, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(positionTransform, layer->screenSpaceTransform());
@@ -208,17 +208,17 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     // Case 5: In the correct sequence of transforms, the layer transform should pre-multiply the translationToCenter. This is easily tested by
     //         using a scale transform, because scale and translation are not commutative.
     WebTransformationMatrix layerTransform;
-    layerTransform.scale3d(2.0, 2.0, 1.0);
-    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
+    layerTransform.scale3d(2, 2, 1);
+    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(layerTransform * translationToCenter, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(layerTransform, layer->screenSpaceTransform());
 
     // Case 6: The layer transform should occur with respect to the anchor point.
     WebTransformationMatrix translationToAnchor;
-    translationToAnchor.translate(5.0, 0.0);
+    translationToAnchor.translate(5, 0);
     WebTransformationMatrix expectedResult = translationToAnchor * layerTransform * translationToAnchor.inverse();
-    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5, 0), FloatPoint(0, 0), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult * translationToCenter, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->screenSpaceTransform());
@@ -227,7 +227,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     //         The current implementation of calculateDrawTransforms does this implicitly, but it is
     //         still worth testing to detect accidental regressions.
     expectedResult = positionTransform * translationToAnchor * layerTransform * translationToAnchor.inverse();
-    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5f, 0.0f), FloatPoint(0.0f, 1.2f), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5, 0), FloatPoint(0, 1.2), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult * translationToCenter, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->screenSpaceTransform());
@@ -245,11 +245,11 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
 
     // Case 1: parent's anchorPoint should not affect child or grandChild.
     WebTransformationMatrix childTranslationToCenter, grandChildTranslationToCenter;
-    childTranslationToCenter.translate(8.0, 9.0);
-    grandChildTranslationToCenter.translate(38.0, 39.0);
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
-    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
-    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
+    childTranslationToCenter.translate(8, 9);
+    grandChildTranslationToCenter.translate(38, 39);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 0), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(childTranslationToCenter, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->screenSpaceTransform());
@@ -258,10 +258,10 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
 
     // Case 2: parent's position affects child and grandChild.
     WebTransformationMatrix parentPositionTransform;
-    parentPositionTransform.translate(0.0, 1.2);
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(0.0f, 1.2f), IntSize(10, 12), false);
-    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
-    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
+    parentPositionTransform.translate(0, 1.2);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 1.2), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform * childTranslationToCenter, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform, child->screenSpaceTransform());
@@ -270,13 +270,13 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
 
     // Case 3: parent's local transform affects child and grandchild
     WebTransformationMatrix parentLayerTransform;
-    parentLayerTransform.scale3d(2.0, 2.0, 1.0);
+    parentLayerTransform.scale3d(2, 2, 1);
     WebTransformationMatrix parentTranslationToAnchor;
-    parentTranslationToAnchor.translate(2.5, 3.0);
+    parentTranslationToAnchor.translate(2.5, 3);
     WebTransformationMatrix parentCompositeTransform = parentTranslationToAnchor * parentLayerTransform * parentTranslationToAnchor.inverse();
-    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, identityMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
-    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
-    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
+    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 0), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
@@ -288,16 +288,16 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     //         Note that preserves3D is false, but the sublayer matrix should retain its 3D properties when given to child.
     //         But then, the child also does not preserve3D. When it gives its hierarchy to the grandChild, it should be flattened to 2D.
     WebTransformationMatrix parentSublayerMatrix;
-    parentSublayerMatrix.scale3d(10.0, 10.0, 3.3);
+    parentSublayerMatrix.scale3d(10, 10, 3.3);
     WebTransformationMatrix parentTranslationToCenter;
-    parentTranslationToCenter.translate(5.0, 6.0);
+    parentTranslationToCenter.translate(5, 6);
     // Sublayer matrix is applied to the center of the parent layer.
     parentCompositeTransform = parentTranslationToAnchor * parentLayerTransform * parentTranslationToAnchor.inverse()
             * parentTranslationToCenter * parentSublayerMatrix * parentTranslationToCenter.inverse();
     WebTransformationMatrix flattenedCompositeTransform = remove3DComponentOfMatrix(parentCompositeTransform);
-    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, parentSublayerMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
-    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
-    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
+    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, parentSublayerMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 0), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
@@ -306,9 +306,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
 
     // Case 5: same as Case 4, except that child does preserve 3D, so the grandChild should receive the non-flattened composite transform.
     //
-    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, parentSublayerMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
-    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), true);
-    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(76, 78), false);
+    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, parentSublayerMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 0), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), true);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
@@ -326,28 +326,28 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
     child->addChild(grandChild);
 
     // Child is set up so that a new render surface should be created.
-    child->setOpacity(0.5f);
+    child->setOpacity(0.5);
 
     WebTransformationMatrix identityMatrix;
     WebTransformationMatrix parentLayerTransform;
-    parentLayerTransform.scale3d(2.0, 2.0, 1.0);
+    parentLayerTransform.scale3d(2, 2, 1);
     WebTransformationMatrix parentTranslationToAnchor;
-    parentTranslationToAnchor.translate(2.5, 3.0);
+    parentTranslationToAnchor.translate(2.5, 3);
     WebTransformationMatrix parentSublayerMatrix;
-    parentSublayerMatrix.scale3d(10.0, 10.0, 3.3);
+    parentSublayerMatrix.scale3d(10, 10, 3.3);
     WebTransformationMatrix parentTranslationToCenter;
-    parentTranslationToCenter.translate(5.0, 6.0);
+    parentTranslationToCenter.translate(5, 6);
     WebTransformationMatrix parentCompositeTransform = parentTranslationToAnchor * parentLayerTransform * parentTranslationToAnchor.inverse()
             * parentTranslationToCenter * parentSublayerMatrix * parentTranslationToCenter.inverse();
     WebTransformationMatrix childTranslationToCenter;
-    childTranslationToCenter.translate(8.0, 9.0);
+    childTranslationToCenter.translate(8, 9);
 
     // Child's render surface should not exist yet.
     ASSERT_FALSE(child->renderSurface());
 
-    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, parentSublayerMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
-    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
-    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(-0.5f, -0.5f), IntSize(1, 1), false);
+    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, parentSublayerMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 0), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(-0.5, -0.5), IntSize(1, 1), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
 
     // Render surface should have been created now.
@@ -406,7 +406,7 @@ TEST(CCLayerTreeHostCommonTest, scissorRectNoClip)
 
     child->setAnchorPoint(FloatPoint(0, 0));
     child->setPosition(FloatPoint(childRect.x(), childRect.y()));
-    child->setOpacity(0.5f);
+    child->setOpacity(0.5);
     child->setBounds(IntSize(childRect.width(), childRect.height()));
     child->setDrawsContent(true);
 
@@ -585,7 +585,7 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClip)
 
     child->setAnchorPoint(FloatPoint(0, 0));
     child->setPosition(FloatPoint(childRect.x(), childRect.y()));
-    child->setOpacity(0.5f);
+    child->setOpacity(0.5);
     child->setBounds(IntSize(childRect.width(), childRect.height()));
     child->setDrawsContent(true);
 
@@ -767,19 +767,19 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClipAndSpaceTransform)
 
     child->setAnchorPoint(FloatPoint(0, 0));
     child->setPosition(FloatPoint(childRect.x(), childRect.y()));
-    child->setOpacity(0.5f);
+    child->setOpacity(0.5);
     child->setBounds(IntSize(childRect.width(), childRect.height()));
     child->setDrawsContent(true);
 
     grandChild->setAnchorPoint(FloatPoint(0, 0));
     grandChild->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
-    grandChild->setOpacity(0.5f);
+    grandChild->setOpacity(0.5);
     grandChild->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
     grandChild->setDrawsContent(true);
 
     grandChild2->setAnchorPoint(FloatPoint(0, 0));
     grandChild2->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
-    grandChild2->setOpacity(0.5f);
+    grandChild2->setOpacity(0.5);
     grandChild2->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
     grandChild2->setDrawsContent(true);
 
@@ -931,32 +931,32 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForReplica)
     child->setReplicaLayer(childReplica.get());
 
     // Child is set up so that a new render surface should be created.
-    child->setOpacity(0.5f);
+    child->setOpacity(0.5);
 
     WebTransformationMatrix identityMatrix;
     WebTransformationMatrix parentLayerTransform;
-    parentLayerTransform.scale3d(2.0, 2.0, 1.0);
+    parentLayerTransform.scale3d(2, 2, 1);
     WebTransformationMatrix parentTranslationToAnchor;
-    parentTranslationToAnchor.translate(2.5, 3.0);
+    parentTranslationToAnchor.translate(2.5, 3);
     WebTransformationMatrix parentSublayerMatrix;
-    parentSublayerMatrix.scale3d(10.0, 10.0, 3.3);
+    parentSublayerMatrix.scale3d(10, 10, 3.3);
     WebTransformationMatrix parentTranslationToCenter;
-    parentTranslationToCenter.translate(5.0, 6.0);
+    parentTranslationToCenter.translate(5, 6);
     WebTransformationMatrix parentCompositeTransform = parentTranslationToAnchor * parentLayerTransform * parentTranslationToAnchor.inverse()
             * parentTranslationToCenter * parentSublayerMatrix * parentTranslationToCenter.inverse();
     WebTransformationMatrix childTranslationToCenter;
-    childTranslationToCenter.translate(8.0, 9.0);
+    childTranslationToCenter.translate(8, 9);
     WebTransformationMatrix replicaLayerTransform;
-    replicaLayerTransform.scale3d(3.0, 3.0, 1.0);
+    replicaLayerTransform.scale3d(3, 3, 1);
     WebTransformationMatrix replicaCompositeTransform = parentCompositeTransform * replicaLayerTransform;
 
     // Child's render surface should not exist yet.
     ASSERT_FALSE(child->renderSurface());
 
-    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, parentSublayerMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(0.0f, 0.0f), IntSize(10, 12), false);
-    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
-    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(-0.5f, -0.5f), IntSize(1, 1), false);
-    setLayerPropertiesForTesting(childReplica.get(), replicaLayerTransform, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(0, 0), false);
+    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, parentSublayerMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 0), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(-0.5, -0.5), IntSize(1, 1), false);
+    setLayerPropertiesForTesting(childReplica.get(), replicaLayerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(0, 0), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
 
     // Render surface should have been created now.
@@ -1000,8 +1000,8 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     renderSurface2->setReplicaLayer(replicaOfRS2.get());
 
     // In combination with descendantDrawsContent, opacity != 1 forces the layer to have a new renderSurface.
-    renderSurface1->setOpacity(0.5f);
-    renderSurface2->setOpacity(0.33f);
+    renderSurface1->setOpacity(0.5);
+    renderSurface2->setOpacity(0.33);
 
     // All layers in the tree are initialized with an anchor at .25 and a size of (10,10).
     // matrix "A" is the composite layer transform used in all layers, centered about the anchor point
@@ -1009,33 +1009,33 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     // matrix "R" is the composite replica transform used in all replica layers.
     //
     // x component tests that layerTransform and sublayerTransform are done in the right order (translation and scale are noncommutative).
-    // y component has a translation by 1.0 for every ancestor, which indicates the "depth" of the layer in the hierarchy.
+    // y component has a translation by 1 for every ancestor, which indicates the "depth" of the layer in the hierarchy.
     WebTransformationMatrix translationToAnchor;
-    translationToAnchor.translate(2.5, 0.0);
+    translationToAnchor.translate(2.5, 0);
     WebTransformationMatrix translationToCenter;
-    translationToCenter.translate(5.0, 5.0);
+    translationToCenter.translate(5, 5);
     WebTransformationMatrix layerTransform;
-    layerTransform.translate(1.0, 1.0);
+    layerTransform.translate(1, 1);
     WebTransformationMatrix sublayerTransform;
-    sublayerTransform.scale3d(10.0, 1.0, 1.0);
+    sublayerTransform.scale3d(10, 1, 1);
     WebTransformationMatrix replicaLayerTransform;
-    replicaLayerTransform.scale3d(-2.0, 5.0, 1.0);
+    replicaLayerTransform.scale3d(-2, 5, 1);
 
     WebTransformationMatrix A = translationToAnchor * layerTransform * translationToAnchor.inverse();
     WebTransformationMatrix B = translationToCenter * sublayerTransform * translationToCenter.inverse();
     WebTransformationMatrix R = A * translationToAnchor * replicaLayerTransform * translationToAnchor.inverse();
 
-    setLayerPropertiesForTesting(parent.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(renderSurface1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(renderSurface2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(childOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(childOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(childOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(grandChildOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(grandChildOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(grandChildOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(replicaOfRS1.get(), replicaLayerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(), false);
-    setLayerPropertiesForTesting(replicaOfRS2.get(), replicaLayerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(), false);
+    setLayerPropertiesForTesting(parent.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(renderSurface1.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(renderSurface2.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(childOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(childOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(childOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChildOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChildOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChildOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(replicaOfRS1.get(), replicaLayerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(), false);
+    setLayerPropertiesForTesting(replicaOfRS2.get(), replicaLayerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(), false);
 
     executeCalculateDrawTransformsAndVisibility(parent.get());
 
@@ -1113,17 +1113,17 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     // Sanity check. If these fail there is probably a bug in the test itself.
     // It is expected that we correctly set up transforms so that the y-component of the screen-space transform
     // encodes the "depth" of the layer in the tree.
-    EXPECT_FLOAT_EQ(1.0, parent->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(2.0, childOfRoot->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(3.0, grandChildOfRoot->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(1, parent->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(2, childOfRoot->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(3, grandChildOfRoot->screenSpaceTransform().m42());
 
-    EXPECT_FLOAT_EQ(2.0, renderSurface1->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(3.0, childOfRS1->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(4.0, grandChildOfRS1->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(2, renderSurface1->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(3, childOfRS1->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(4, grandChildOfRS1->screenSpaceTransform().m42());
 
-    EXPECT_FLOAT_EQ(3.0, renderSurface2->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(4.0, childOfRS2->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(5.0, grandChildOfRS2->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(3, renderSurface2->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(4, childOfRS2->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(5, grandChildOfRS2->screenSpaceTransform().m42());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForClipLayer)
@@ -1131,7 +1131,7 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForClipLayer)
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
     RefPtr<LayerChromiumWithForcedDrawsContent> child = adoptRef(new LayerChromiumWithForcedDrawsContent());
-    renderSurface1->setOpacity(0.9f);
+    renderSurface1->setOpacity(0.9);
 
     const WebTransformationMatrix identityMatrix;
     setLayerPropertiesForTesting(renderSurface1.get(), identityMatrix, identityMatrix, FloatPoint::zero(), FloatPoint::zero(), IntSize(10, 10), false);
@@ -1854,9 +1854,9 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     setLayerPropertiesForTesting(leafNode2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
 
     child->setMasksToBounds(true);
-    child->setOpacity(0.4f);
-    grandChild->setOpacity(0.5f);
-    greatGrandChild->setOpacity(0.4f);
+    child->setOpacity(0.4);
+    grandChild->setOpacity(0.5);
+    greatGrandChild->setOpacity(0.4);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1907,9 +1907,9 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfacesCrashRepro)
     setLayerPropertiesForTesting(leafNode2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
 
     child->setMasksToBounds(true);
-    child->setOpacity(0.4f);
-    grandChild->setOpacity(0.5f);
-    greatGrandChild->setOpacity(0.4f);
+    child->setOpacity(0.4);
+    grandChild->setOpacity(0.5);
+    greatGrandChild->setOpacity(0.4);
 
     // Contaminate the grandChild and greatGrandChild's clipRect to reproduce the crash
     // bug found in http://code.google.com/p/chromium/issues/detail?id=106734. In this
@@ -1971,8 +1971,8 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsSurfaceWithoutVisibleContent)
     setLayerPropertiesForTesting(leafNode.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), false);
 
     parent->setMasksToBounds(true);
-    child->setOpacity(0.4f);
-    grandChild->setOpacity(0.4f);
+    child->setOpacity(0.4);
+    grandChild->setOpacity(0.4);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -2047,11 +2047,11 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToLayers)
     grandChild4->setMasksToBounds(true);
 
     // Force everyone to be a render surface.
-    child->setOpacity(0.4f);
-    grandChild1->setOpacity(0.5f);
-    grandChild2->setOpacity(0.5f);
-    grandChild3->setOpacity(0.5f);
-    grandChild4->setOpacity(0.5f);
+    child->setOpacity(0.4);
+    grandChild1->setOpacity(0.5);
+    grandChild2->setOpacity(0.5);
+    grandChild3->setOpacity(0.5);
+    grandChild4->setOpacity(0.5);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -2122,11 +2122,11 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToSurfaces)
     grandChild4->setMasksToBounds(true);
 
     // Force everyone to be a render surface.
-    child->setOpacity(0.4f);
-    grandChild1->setOpacity(0.5f);
-    grandChild2->setOpacity(0.5f);
-    grandChild3->setOpacity(0.5f);
-    grandChild4->setOpacity(0.5f);
+    child->setOpacity(0.4);
+    grandChild1->setOpacity(0.5);
+    grandChild2->setOpacity(0.5);
+    grandChild3->setOpacity(0.5);
+    grandChild4->setOpacity(0.5);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -2189,9 +2189,9 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     addOpacityTransitionToController(*grandChildOfRoot->layerAnimationController(), 10, 1, 0, false);
 
     WebTransformationMatrix layerTransform;
-    layerTransform.translate(1.0, 1.0);
+    layerTransform.translate(1, 1);
     WebTransformationMatrix sublayerTransform;
-    sublayerTransform.scale3d(10.0, 1.0, 1.0);
+    sublayerTransform.scale3d(10, 1, 1);
 
     // Put a transform animation on the render surface.
     addAnimatedTransformToController(*renderSurface2->layerAnimationController(), 10, 30, 0);
@@ -2200,15 +2200,15 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     addAnimatedTransformToController(*grandChildOfRoot->layerAnimationController(), 10, 30, 0);
     addAnimatedTransformToController(*grandChildOfRS2->layerAnimationController(), 10, 30, 0);
 
-    setLayerPropertiesForTesting(parent.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(renderSurface1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(renderSurface2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(childOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(childOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(childOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(grandChildOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(grandChildOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(grandChildOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(parent.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(2.5, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(renderSurface1.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(2.5, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(renderSurface2.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(2.5, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(childOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(2.5, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(childOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(2.5, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(childOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(2.5, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChildOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(2.5, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChildOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(2.5, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChildOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(2.5, 0), IntSize(10, 10), false);
 
     executeCalculateDrawTransformsAndVisibility(parent.get());
 
@@ -2286,17 +2286,17 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     // Sanity check. If these fail there is probably a bug in the test itself.
     // It is expected that we correctly set up transforms so that the y-component of the screen-space transform
     // encodes the "depth" of the layer in the tree.
-    EXPECT_FLOAT_EQ(1.0, parent->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(2.0, childOfRoot->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(3.0, grandChildOfRoot->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(1, parent->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(2, childOfRoot->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(3, grandChildOfRoot->screenSpaceTransform().m42());
 
-    EXPECT_FLOAT_EQ(2.0, renderSurface1->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(3.0, childOfRS1->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(4.0, grandChildOfRS1->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(2, renderSurface1->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(3, childOfRS1->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(4, grandChildOfRS1->screenSpaceTransform().m42());
 
-    EXPECT_FLOAT_EQ(3.0, renderSurface2->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(4.0, childOfRS2->screenSpaceTransform().m42());
-    EXPECT_FLOAT_EQ(5.0, grandChildOfRS2->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(3, renderSurface2->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(4, childOfRS2->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(5, grandChildOfRS2->screenSpaceTransform().m42());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyVisibleRectForIdentityTransform)
@@ -2394,7 +2394,7 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor2DRotations)
     //         overlaps the right side of the layer. The visible rect should be the
     //         layer's right half.
     layerToSurfaceTransform.makeIdentity();
-    layerToSurfaceTransform.translate(0, -sqrt(2.0) * 15);
+    layerToSurfaceTransform.translate(0, -sqrt(2) * 15);
     layerToSurfaceTransform.rotate(45);
     expected = IntRect(IntPoint(15, 0), IntSize(15, 30)); // right half of layer bounds.
     actual = CCLayerTreeHostCommon::calculateVisibleRect(targetSurfaceRect, layerContentRect, layerToSurfaceTransform);
@@ -2419,7 +2419,7 @@ TEST(CCLayerTreeHostCommonTest, verifyVisibleRectFor3dOrthographicTransform)
     // Case 2: Orthographic projection of a layer rotated about y-axis by 45 degrees, but
     //         shifted to the side so only the right-half the layer would be visible on
     //         the surface.
-    double halfWidthOfRotatedLayer = (100.0 / sqrt(2.0)) * 0.5; // 100.0 is the un-rotated layer width; divided by sqrt(2.0) is the rotated width.
+    double halfWidthOfRotatedLayer = (100 / sqrt(2)) * 0.5; // 100 is the un-rotated layer width; divided by sqrt(2) is the rotated width.
     layerToSurfaceTransform.makeIdentity();
     layerToSurfaceTransform.translate(-halfWidthOfRotatedLayer, 0);
     layerToSurfaceTransform.rotate3d(0, 45, 0); // rotates about the left edge of the layer
@@ -2600,8 +2600,8 @@ TEST(CCLayerTreeHostCommonTest, verifyBackFaceCullingWithoutPreserves3d)
     backfaceMatrix.translate(-50, -50);
 
     // Having a descendant and opacity will force these to have render surfaces.
-    frontFacingSurface->setOpacity(0.5f);
-    backFacingSurface->setOpacity(0.5f);
+    frontFacingSurface->setOpacity(0.5);
+    backFacingSurface->setOpacity(0.5);
 
     // Nothing preserves 3d. According to current W3C CSS Transforms spec, these layers
     // should blindly use their own local transforms to determine back-face culling.

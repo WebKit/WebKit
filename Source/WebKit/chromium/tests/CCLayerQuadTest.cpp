@@ -57,7 +57,7 @@ TEST(CCLayerQuadTest, Inflate)
 
     FloatQuad quad(p1, p2, p3, p4);
     CCLayerQuad layerQuad(quad);
-    quad.scale(2.0, 2.0);
+    quad.scale(2, 2);
     layerQuad.inflate(0.5);
     EXPECT_TRUE(layerQuad.floatQuad() == quad);
 }

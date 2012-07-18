@@ -329,8 +329,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForTransformedLayer)
     // Since the child layer is square, rotation by 45 degrees about the center should
     // increase the size of the expected rect by sqrt(2), centered around (100, 100). The
     // old exposed region should be fully contained in the new region.
-    double expectedWidth = 30.0 * sqrt(2.0);
-    double expectedPosition = 100.0 - 0.5 * expectedWidth;
+    double expectedWidth = 30 * sqrt(2);
+    double expectedPosition = 100 - 0.5 * expectedWidth;
     FloatRect expectedRect(expectedPosition, expectedPosition, expectedWidth, expectedWidth);
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
     EXPECT_FLOAT_RECT_EQ(expectedRect, rootDamageRect);
@@ -634,8 +634,8 @@ TEST_F(CCDamageTrackerTest, verifyDamageForNestedSurfaces)
     // - child1 surface damage in root surface space: FloatRect(300, 300, 6, 8);
     // - child2 damage in root surface space: FloatRect(11, 11, 18, 18);
     clearDamageForAllSurfaces(root.get());
-    grandChild1->setOpacity(0.7f);
-    child2->setOpacity(0.7f);
+    grandChild1->setOpacity(0.7);
+    child2->setOpacity(0.7);
     emulateDrawingOneFrame(root.get());
     childDamageRect = child1->renderSurface()->damageTracker()->currentDamageRect();
     rootDamageRect = root->renderSurface()->damageTracker()->currentDamageRect();
@@ -826,7 +826,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplica)
         grandChild1Replica->setPosition(FloatPoint::zero());
         grandChild1Replica->setAnchorPoint(FloatPoint::zero());
         WebTransformationMatrix reflection;
-        reflection.scale3d(-1.0, 1.0, 1.0);
+        reflection.scale3d(-1, 1, 1);
         grandChild1Replica->setTransform(reflection);
         grandChild1->setReplicaLayer(grandChild1Replica.release());
     }
@@ -846,7 +846,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplica)
     //         areas to be damaged on the target.
     clearDamageForAllSurfaces(root.get());
     IntRect oldContentRect = child1->renderSurface()->contentRect();
-    grandChild1->setPosition(FloatPoint(195.0, 205.0));
+    grandChild1->setPosition(FloatPoint(195, 205));
     emulateDrawingOneFrame(root.get());
     ASSERT_EQ(oldContentRect.width(), child1->renderSurface()->contentRect().width());
     ASSERT_EQ(oldContentRect.height(), child1->renderSurface()->contentRect().height());
@@ -902,7 +902,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForMask)
     child->setOpacity(0.5);
     {
         OwnPtr<CCLayerImpl> grandChild = CCLayerImpl::create(4);
-        grandChild->setPosition(FloatPoint(2.0, 2.0));
+        grandChild->setPosition(FloatPoint(2, 2));
         grandChild->setAnchorPoint(FloatPoint::zero());
         grandChild->setBounds(IntSize(2, 2));
         grandChild->setDrawsContent(true);
@@ -977,7 +977,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMask)
         grandChild1Replica->setPosition(FloatPoint::zero());
         grandChild1Replica->setAnchorPoint(FloatPoint::zero());
         WebTransformationMatrix reflection;
-        reflection.scale3d(-1.0, 1.0, 1.0);
+        reflection.scale3d(-1, 1, 1);
         grandChild1Replica->setTransform(reflection);
         grandChild1->setReplicaLayer(grandChild1Replica.release());
     }
@@ -1038,7 +1038,7 @@ TEST_F(CCDamageTrackerTest, verifyDamageForReplicaMaskWithAnchor)
         grandChild1Replica->setPosition(FloatPoint::zero());
         grandChild1Replica->setAnchorPoint(FloatPoint(1, 0)); // This is the anchor being tested.
         WebTransformationMatrix reflection;
-        reflection.scale3d(-1.0, 1.0, 1.0);
+        reflection.scale3d(-1, 1, 1);
         grandChild1Replica->setTransform(reflection);
         grandChild1->setReplicaLayer(grandChild1Replica.release());
     }

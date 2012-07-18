@@ -1,3 +1,23 @@
+2012-07-18  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Fix style for numeric literals in chromium unit test code
+        https://bugs.webkit.org/show_bug.cgi?id=91635
+
+        Reviewed by Adrienne Walker.
+
+        Where possible, removed ".0" and "f" suffixes on numeric literals,
+        to be more consistent with WebKit style rules.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::TEST_F):
+        * tests/CCLayerQuadTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCQuadCullerTest.cpp:
+        * tests/LayerChromiumTest.cpp:
+        * tests/WebTransformationMatrixTest.cpp:
+        (WebKit::TEST):
+
 2012-07-17  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Remove awkward anchorPoint usage that implicity affects layer position
