@@ -1,3 +1,9 @@
+2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Pravin D to the list of contributors.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] feature detection in orwt/nrwt does not work with force_static_libs_as_shared

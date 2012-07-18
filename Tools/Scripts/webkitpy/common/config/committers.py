@@ -147,6 +147,7 @@ contributors_who_are_not_committers = [
     Contributor("Oliver Varga", ["voliver@inf.u-szeged.hu", "Varga.Oliver@stud.u-szeged.hu"], "TwistO"),
     Contributor("Peter Gal", "galpeter@inf.u-szeged.hu", "elecro"),
     Contributor("Peter Linss", "peter.linss@hp.com", "plinss"),
+    Contributor("Pravin D", "pravind.2k4@gmail.com", 'pravind'),
     Contributor("Radar WebKit Bug Importer", "webkit-bug-importer@group.apple.com"),
     Contributor("Roland Takacs", "rtakacs@inf.u-szeged.hu", "rtakacs"),
     Contributor("Szilard Ledan-Muntean", "szledan@inf.u-szeged.hu", "szledan"),
