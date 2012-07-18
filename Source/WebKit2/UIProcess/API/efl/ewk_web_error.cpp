@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ewk_web_error.h"
 
+#include "ErrorsEfl.h"
 #include "WKString.h"
 #include "WKURL.h"
 #include "ewk_web_error_private.h"
@@ -34,10 +35,8 @@
 #include <WKRetainPtr.h>
 #include <wtf/text/CString.h>
 
+using namespace WebCore;
 using namespace WebKit;
-
-// Copied from ErrorsGtk.h which is used by DownloadSoup.cpp.
-static const char errorDomainDownload[] = "WebKitDownloadError";
 
 struct _Ewk_Web_Error {
     WKRetainPtr<WKErrorRef> wkError;
@@ -83,12 +82,16 @@ Ewk_Web_Error_Type ewk_web_error_type_get(const Ewk_Web_Error* error)
     WKRetainPtr<WKStringRef> wkDomain(AdoptWK, WKErrorCopyDomain(wkError));
     WTF::String errorDomain = toWTFString(wkDomain.get());
 
-    if (errorDomain == String(g_quark_to_string(SOUP_HTTP_ERROR)))
-        return EWK_WEB_ERROR_TYPE_HTTP;
-    if (errorDomain == String(g_quark_to_string(G_IO_ERROR)))
-        return EWK_WEB_ERROR_TYPE_IO;
+    if (errorDomain == errorDomainNetwork)
+        return EWK_WEB_ERROR_TYPE_NETWORK;
+    if (errorDomain == errorDomainPolicy)
+        return EWK_WEB_ERROR_TYPE_POLICY;
+    if (errorDomain == errorDomainPlugin)
+        return EWK_WEB_ERROR_TYPE_PLUGIN;
     if (errorDomain == errorDomainDownload)
         return EWK_WEB_ERROR_TYPE_DOWNLOAD;
+    if (errorDomain == errorDomainPrint)
+        return EWK_WEB_ERROR_TYPE_PRINT;
     return EWK_WEB_ERROR_TYPE_INTERNAL;
 }
 

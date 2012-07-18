@@ -38,6 +38,7 @@
 
 #include "APICast.h"
 #include "DocumentLoader.h"
+#include "ErrorsEfl.h"
 #include "FormState.h"
 #include "FrameLoader.h"
 #include "FrameNetworkingContextEfl.h"
@@ -867,69 +868,44 @@ void FrameLoaderClientEfl::download(ResourceHandle*, const ResourceRequest& requ
     ewk_view_download_request(m_view, &download);
 }
 
-// copied from WebKit/Misc/WebKitErrors[Private].h
-enum {
-    WebKitErrorCannotShowMIMEType = 100,
-    WebKitErrorCannotShowURL = 101,
-    WebKitErrorFrameLoadInterruptedByPolicyChange = 102,
-    WebKitErrorCannotUseRestrictedPort = 103,
-    WebKitErrorCannotFindPlugIn = 200,
-    WebKitErrorCannotLoadPlugIn = 201,
-    WebKitErrorJavaUnavailable = 202,
-    WebKitErrorPluginWillHandleLoad = 204
-};
-
-// Domains used for ResourceError
-const char* const NSURLErrorDomain = "NSURLErrorDomain";
-const char* const WebKitErrorDomain = "WebKitErrorDomain";
-
 ResourceError FrameLoaderClientEfl::cancelledError(const ResourceRequest& request)
 {
-    ResourceError error(NSURLErrorDomain, -999, request.url().string(),
-                        "Request cancelled");
-    error.setIsCancellation(true);
-    return error;
+    return WebCore::cancelledError(request);
 }
 
 ResourceError FrameLoaderClientEfl::blockedError(const ResourceRequest& request)
 {
-    return ResourceError(WebKitErrorDomain, WebKitErrorCannotUseRestrictedPort, request.url().string(),
-                         "Request blocked");
+    return WebCore::blockedError(request);
 }
 
 ResourceError FrameLoaderClientEfl::cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError(WebKitErrorDomain, WebKitErrorCannotShowURL, request.url().string(),
-                         "Cannot show URL");
+    return WebCore::cannotShowURLError(request);
 }
 
 ResourceError FrameLoaderClientEfl::interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError(WebKitErrorDomain, WebKitErrorFrameLoadInterruptedByPolicyChange,
-                         request.url().string(), "Frame load interrupted by policy change");
+    return WebCore::interruptedForPolicyChangeError(request);
 }
 
 ResourceError FrameLoaderClientEfl::cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError(NSURLErrorDomain, WebKitErrorCannotShowMIMEType, response.url().string(),
-                         "Cannot show mimetype");
+    return WebCore::cannotShowMIMETypeError(response);
 }
 
 ResourceError FrameLoaderClientEfl::fileDoesNotExistError(const ResourceResponse& response)
 {
-    return ResourceError(NSURLErrorDomain, -998 /* ### */, response.url().string(),
-                         "File does not exist");
+    return WebCore::fileDoesNotExistError(response);
 }
 
 ResourceError FrameLoaderClientEfl::pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    return ResourceError(WebKitErrorDomain, WebKitErrorPluginWillHandleLoad, response.url().string(),
-                         "Plugin will handle load");
+    return WebCore::pluginWillHandleLoadError(response);
 }
 
 bool FrameLoaderClientEfl::shouldFallBack(const ResourceError& error)
 {
-    return !(error.isCancellation() || error.errorCode() == WebKitErrorFrameLoadInterruptedByPolicyChange || error.errorCode() == WebKitErrorPluginWillHandleLoad);
+    return !(error.isCancellation() || error.errorCode() == PolicyErrorFrameLoadInterruptedByPolicyChange || error.errorCode() == PluginErrorWillHandleLoad);
 }
 
 bool FrameLoaderClientEfl::canCachePage() const

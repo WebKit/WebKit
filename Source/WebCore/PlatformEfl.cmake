@@ -33,6 +33,7 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/DragImageEfl.cpp
   platform/efl/EflKeyboardUtilities.cpp
   platform/efl/EflScreenUtilities.cpp
+  platform/efl/ErrorsEfl.cpp
   platform/efl/EventLoopEfl.cpp
   platform/efl/FileSystemEfl.cpp
   platform/efl/GamepadsEfl.cpp

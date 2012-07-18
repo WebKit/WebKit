@@ -401,16 +401,23 @@ static CString descriptionSuitableForTestResult(const Ewk_Frame_Resource_Respons
 
 static CString descriptionSuitableForTestResult(Ewk_Frame_Load_Error* error)
 {
-    String ret = "<NSError domain ";
-    ret += error->domain;
-    ret += ", code ";
-    ret += String::number(error->code);
-    if (error->failing_url && *error->failing_url != '\0') {
-        ret += ", failing URL \"";
-        ret += error->failing_url;
-        ret += "\"";
+    const char* errorDomain = error->domain;
+    int errorCode = error->code;
+
+    // We need to do some error mapping here to match
+    // the test expectations.
+    if (!strcmp(error->domain, "WebKitNetworkError")) {
+        errorDomain = "NSURLErrorDomain";
+        errorCode = -999;
     }
-    ret += ">";
+
+    if (!strcmp(errorDomain, "WebKitPolicyError"))
+        errorDomain = "WebKitErrorDomain";
+
+    String ret = makeString("<NSError domain ", errorDomain, ", code ", String::number(errorCode));
+    if (error->failing_url && *error->failing_url != '\0')
+        ret = makeString(ret, ", failing URL \"", error->failing_url, "\"");
+    ret = makeString(ret, ">");
 
     return ret.utf8();
 }

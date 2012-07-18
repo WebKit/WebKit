@@ -26,8 +26,7 @@
 #include "config.h"
 #include "WebErrors.h"
 
-#include "WKError.h"
-#include "WebError.h"
+#include <WebCore/ErrorsEfl.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -36,47 +35,39 @@ using namespace WebCore;
 
 namespace WebKit {
 
-// FIXME: Export following error codes so that application can understand.
-// We should establish Efl port's error system because application cannot understand those local define.
-// See https://bugs.webkit.org/show_bug.cgi?id=90783 for detail.
-enum {
-    kWKErrorCodeCancelled =                             300,
-    kWKErrorCodeFileDoesNotExist =                      301,
-};
-
 ResourceError cancelledError(const ResourceRequest& request)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeCancelled, request.url().string(), "Request cancelled");
+    return WebCore::cancelledError(request);
 }
 
 ResourceError blockedError(const ResourceRequest& request)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeCannotUseRestrictedPort, request.url().string(), "Request blocked");
+    return WebCore::blockedError(request);
 }
 
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeCannotShowURL, request.url().string(), "Cannot show URL");
+    return WebCore::cannotShowURLError(request);
 }
 
 ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeFrameLoadInterruptedByPolicyChange, request.url().string(), "Frame load interrupted by policy change");
+    return WebCore::interruptedForPolicyChangeError(request);
 }
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeCannotShowMIMEType, response.url().string(), "Cannot show mimetype");
+    return WebCore::cannotShowMIMETypeError(response);
 }
 
 ResourceError fileDoesNotExistError(const ResourceResponse& response)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeFileDoesNotExist, response.url().string(), "File does not exist");
+    return WebCore::fileDoesNotExistError(response);
 }
 
 ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodePlugInWillHandleLoad, response.url().string(), "Plugin will handle load");
+    return WebCore::pluginWillHandleLoadError(response);
 }
 
 } // namespace WebKit

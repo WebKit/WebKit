@@ -1,3 +1,17 @@
+2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Add central error management to EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=91598
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Map WebKitNetworkError to NSURLErrorDomain when
+        printing in DumpRenderTree so that the output
+        matches the expected one.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (descriptionSuitableForTestResult):
+
 2012-07-18  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: start merging port/webkit.py into port/base.py
