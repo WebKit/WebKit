@@ -511,6 +511,17 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
           ],
+          'conditions': [
+            ['OS=="win"', {
+              'variables': {
+                # Using cl instead of cygwin gcc cuts the processing time from
+                # 1m58s to 0m52s.
+                'preprocessor': '--preprocessor "cl.exe /nologo /EP /TP"',
+              },
+            }, {
+              'variables': { 'preprocessor': '', }
+            }],
+          ],
           'action': [
             'perl',
             '-w',
@@ -524,6 +535,7 @@
             '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
             '--idlAttributesFile',
             '../bindings/scripts/IDLAttributes.txt',
+            '<@(preprocessor)',
           ],
           'message': 'Resolving [Supplemental=XXX] dependencies in all IDL files',
         }
