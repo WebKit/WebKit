@@ -2123,12 +2123,11 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height)
             result = cb->overrideLogicalContentHeight();
             includeBorderPadding = true;
         }
-    }
-    // Otherwise we only use our percentage height if our containing block had a specified
-    // height.
-    else if (cbstyle->logicalHeight().isFixed())
-        result = cb->computeContentBoxLogicalHeight(cbstyle->logicalHeight().value());
-    else if (cbstyle->logicalHeight().isPercent() && !isOutOfFlowPositionedWithSpecifiedHeight) {
+    } else if (cbstyle->logicalHeight().isFixed()) {
+        // Otherwise we only use our percentage height if our containing block had a specified height.
+        LayoutUnit contentBoxHeightWithScrollbar = cb->computeContentBoxLogicalHeight(cbstyle->logicalHeight().value());
+        result = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
+    } else if (cbstyle->logicalHeight().isPercent() && !isOutOfFlowPositionedWithSpecifiedHeight) {
         // We need to recur and compute the percentage height for our containing block.
         result = cb->computePercentageLogicalHeight(cbstyle->logicalHeight());
         if (result != -1)
@@ -2265,7 +2264,10 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType sizeType, Lengt
                     cb = cb->containingBlock();
                 }
             }
-            return computeContentBoxLogicalHeight(valueForLength(logicalHeight, availableHeight));
+            availableHeight = computeContentBoxLogicalHeight(valueForLength(logicalHeight, availableHeight));
+            if (cb->style()->logicalHeight().isFixed())
+                availableHeight = max<LayoutUnit>(0, availableHeight - toRenderBox(cb)->scrollbarLogicalHeight());
+            return availableHeight;
         }
         case ViewportPercentageWidth:
         case ViewportPercentageHeight:
