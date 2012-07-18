@@ -1,3 +1,38 @@
+2012-07-18  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] editing/input and editing/unsupported-content tests needs update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91400
+
+        Unreviewed rebaseline.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt/editing/input/caret-at-the-edge-of-contenteditable-expected.png: Added.
+        * platform/qt/editing/input/caret-at-the-edge-of-contenteditable-expected.txt:
+        * platform/qt/editing/input/emacs-ctrl-o-expected.png:
+        * platform/qt/editing/input/emacs-ctrl-o-expected.txt:
+        * platform/qt/editing/input/reveal-caret-of-multiline-contenteditable-expected.png: Added.
+        * platform/qt/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt:
+        * platform/qt/editing/input/reveal-caret-of-multiline-input-expected.png: Added.
+        * platform/qt/editing/unsupported-content/list-delete-001-expected.png:
+        * platform/qt/editing/unsupported-content/list-delete-001-expected.txt:
+        * platform/qt/editing/unsupported-content/list-delete-003-expected.png:
+        * platform/qt/editing/unsupported-content/list-delete-003-expected.txt:
+        * platform/qt/editing/unsupported-content/list-type-after-expected.png:
+        * platform/qt/editing/unsupported-content/list-type-after-expected.txt:
+        * platform/qt/editing/unsupported-content/list-type-before-expected.png:
+        * platform/qt/editing/unsupported-content/list-type-before-expected.txt:
+        * platform/qt/editing/unsupported-content/table-delete-001-expected.png:
+        * platform/qt/editing/unsupported-content/table-delete-001-expected.txt:
+        * platform/qt/editing/unsupported-content/table-delete-002-expected.png:
+        * platform/qt/editing/unsupported-content/table-delete-002-expected.txt:
+        * platform/qt/editing/unsupported-content/table-delete-003-expected.png:
+        * platform/qt/editing/unsupported-content/table-delete-003-expected.txt:
+        * platform/qt/editing/unsupported-content/table-type-after-expected.png:
+        * platform/qt/editing/unsupported-content/table-type-after-expected.txt:
+        * platform/qt/editing/unsupported-content/table-type-before-expected.png:
+        * platform/qt/editing/unsupported-content/table-type-before-expected.txt:
+
 2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium gardening, updated test expectations.

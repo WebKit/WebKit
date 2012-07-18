@@ -746,15 +746,6 @@ editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html
 editing/undo/5378473.html
 editing/undo/undo-misspellings.html
 editing/undo/undo-typing-001.html
-editing/unsupported-content/list-delete-001.html
-editing/unsupported-content/list-delete-003.html
-editing/unsupported-content/list-type-after.html
-editing/unsupported-content/list-type-before.html
-editing/unsupported-content/table-delete-001.html
-editing/unsupported-content/table-delete-002.html
-editing/unsupported-content/table-delete-003.html
-editing/unsupported-content/table-type-after.html
-editing/unsupported-content/table-type-before.html
 fast/backgrounds/001.html
 fast/backgrounds/animated-svg-as-mask.html
 fast/backgrounds/background-clip-text.html

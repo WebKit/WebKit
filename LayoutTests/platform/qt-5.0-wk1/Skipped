@@ -264,9 +264,6 @@ fast/table/table-style-not-updated.html
 # https://bugs.webkit.org/show_bug.cgi?id=85203
 editing/deleting/deletionUI-single-instance.html
 editing/execCommand/find-after-replace.html
-editing/input/caret-at-the-edge-of-contenteditable.html
-editing/input/emacs-ctrl-o.html
-editing/input/reveal-caret-of-multiline-contenteditable.html
 editing/pasteboard/emacs-cntl-y-001.html
 fast/block/basic/020.html
 fast/block/basic/truncation-rtl.html

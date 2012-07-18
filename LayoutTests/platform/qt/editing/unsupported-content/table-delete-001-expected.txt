@@ -29,43 +29,43 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x272 [border: (4px solid #0000FF)]
-        RenderBlock {DIV} at (20,20) size 744x80
-          RenderText {#text} at (0,0) size 77x32
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x243 [border: (4px solid #0000FF)]
+        RenderBlock {DIV} at (20,20) size 744x70
+          RenderText {#text} at (0,0) size 66x28
+            text run at (0,0) width 66: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,32) size 705x24
-            text run at (0,32) width 705: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well. "
-          RenderBR {BR} at (705,50) size 0x0
-          RenderInline {I} at (0,0) size 104x24
-            RenderText {#text} at (0,56) size 104x24
-              text run at (0,56) width 104: "For this test: "
-          RenderText {#text} at (104,56) size 203x24
-            text run at (104,56) width 203: "Select and delete a table."
-        RenderBlock (anonymous) at (20,100) size 744x24
-          RenderBR {BR} at (0,0) size 0x24
-        RenderBlock {DIV} at (20,124) size 744x128
-          RenderText {#text} at (0,0) size 214x32
-            text run at (0,0) width 214: "Expected Results: "
-          RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,32) size 716x48
-            text run at (0,32) width 716: "The content in the red box must exactly match the content in the green box (except for the"
-            text run at (0,56) width 112: "border color). "
-          RenderBR {BR} at (112,74) size 0x0
-          RenderInline {I} at (0,0) size 104x24
-            RenderText {#text} at (0,80) size 104x24
-              text run at (0,80) width 104: "For this test: "
-          RenderText {#text} at (104,80) size 722x48
-            text run at (104,80) width 618: "Only table should get deleted. Surrounding content that is not selected should"
-            text run at (0,104) width 216: "(obviously) not be affected."
-      RenderBlock {DIV} at (0,282) size 784x34 [border: (2px solid #008000)]
-        RenderText {#text} at (2,2) size 115x30
-          text run at (2,2) width 115: "beforeafter"
-      RenderBlock {DIV} at (0,326) size 784x64
-        RenderBlock {DIV} at (0,0) size 784x64 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 67x30
-            text run at (2,2) width 67: "before"
-          RenderBR {BR} at (69,25) size 0x0
-          RenderText {#text} at (2,32) size 48x30
-            text run at (2,32) width 48: "after"
+          RenderText {#text} at (0,28) size 654x21
+            text run at (0,28) width 654: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well. "
+          RenderBR {BR} at (654,45) size 0x0
+          RenderInline {I} at (0,0) size 100x21
+            RenderText {#text} at (0,49) size 100x21
+              text run at (0,49) width 100: "For this test: "
+          RenderText {#text} at (100,49) size 178x21
+            text run at (100,49) width 178: "Select and delete a table."
+        RenderBlock (anonymous) at (20,90) size 744x21
+          RenderBR {BR} at (0,0) size 0x21
+        RenderBlock {DIV} at (20,111) size 744x112
+          RenderText {#text} at (0,0) size 189x28
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 702x42
+            text run at (0,28) width 702: "The content in the red box must exactly match the content in the green box (except for the border"
+            text run at (0,49) width 52: "color). "
+          RenderBR {BR} at (52,66) size 0x0
+          RenderInline {I} at (0,0) size 100x21
+            RenderText {#text} at (0,70) size 100x21
+              text run at (0,70) width 100: "For this test: "
+          RenderText {#text} at (100,70) size 740x42
+            text run at (100,70) width 640: "Only table should get deleted. Surrounding content that is not selected should (obviously)"
+            text run at (0,91) width 113: "not be affected."
+      RenderBlock {DIV} at (0,253) size 784x32 [border: (2px solid #008000)]
+        RenderText {#text} at (2,2) size 107x28
+          text run at (2,2) width 107: "beforeafter"
+      RenderBlock {DIV} at (0,295) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 62x28
+            text run at (2,2) width 62: "before"
+          RenderBR {BR} at (64,24) size 0x0
+          RenderText {#text} at (2,30) size 45x28
+            text run at (2,30) width 45: "after"
 caret: position 0 of child 2 {#text} of child 1 {DIV} of child 5 {DIV} of body
