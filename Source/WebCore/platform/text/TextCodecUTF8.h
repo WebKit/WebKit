@@ -42,7 +42,8 @@ private:
     virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
     virtual CString encode(const UChar*, size_t length, UnencodableHandling);
 
-    void handlePartialSequence(UChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool stopOnError, bool& sawError);
+    template <typename CharType>
+    bool handlePartialSequence(CharType*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool stopOnError, bool& sawError);
     void handleError(UChar*& destination, bool stopOnError, bool& sawError);
     void consumePartialSequenceByte();
 

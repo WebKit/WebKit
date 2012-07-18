@@ -1,3 +1,24 @@
+2012-07-18  Michael Saboff  <msaboff@apple.com>
+
+        Make TextCodecUTF8 handle 8 bit data without converting to UChar's
+        https://bugs.webkit.org/show_bug.cgi?id=90320
+
+        Reviewed by Oliver Hunt.
+
+        Change UTF8 Codec to produce 8-bit strings when data fits in 8-bit range.
+        First we try decoding the string as all 8-bit and then fall back to 16 bit
+        when we find the first character that doesn't fit in 8 bits.  Then we take
+        the already decoded data and copy / convert it to a 16-bit buffer and then
+        continue process the rest of the stream as 16-bits.
+
+        No new tests, no change in functionality.
+
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::handleError):
+        (WebCore::TextCodecUTF8::decode):
+        * platform/text/TextCodecUTF8.h:
+        (TextCodecUTF8):
+
 2012-07-18  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium Mac: Add TEXTURE_RECTANGLE_ARB support to CCVideoLayerImpl

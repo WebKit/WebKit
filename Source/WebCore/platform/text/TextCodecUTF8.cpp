@@ -167,7 +167,51 @@ void TextCodecUTF8::handleError(UChar*& destination, bool stopOnError, bool& saw
     consumePartialSequenceByte();
 }
 
-void TextCodecUTF8::handlePartialSequence(UChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool stopOnError, bool& sawError)
+template <>
+bool TextCodecUTF8::handlePartialSequence<LChar>(LChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool, bool&)
+{
+    ASSERT(m_partialSequenceSize);
+    do {
+        if (isASCII(m_partialSequence[0])) {
+            *destination++ = m_partialSequence[0];
+            consumePartialSequenceByte();
+            continue;
+        }
+        int count = nonASCIISequenceLength(m_partialSequence[0]);
+        if (!count)
+            return true;
+
+        if (count > m_partialSequenceSize) {
+            if (count - m_partialSequenceSize > end - source) {
+                if (!flush) {
+                    // The new data is not enough to complete the sequence, so
+                    // add it to the existing partial sequence.
+                    memcpy(m_partialSequence + m_partialSequenceSize, source, end - source);
+                    m_partialSequenceSize += end - source;
+                    return false;
+                }
+                // An incomplete partial sequence at the end is an error, but it will create
+                // a 16 bit string due to the replacementCharacter. Let the 16 bit path handle
+                // the error.
+                return true;
+            }
+            memcpy(m_partialSequence + m_partialSequenceSize, source, count - m_partialSequenceSize);
+            source += count - m_partialSequenceSize;
+            m_partialSequenceSize = count;
+        }
+        int character = decodeNonASCIISequence(m_partialSequence, count);
+        if ((character == nonCharacter) || (character > 0xff))
+            return true;
+
+        m_partialSequenceSize -= count;
+        *destination++ = character;
+    } while (m_partialSequenceSize);
+
+    return false;
+}
+
+template <>
+bool TextCodecUTF8::handlePartialSequence<UChar>(UChar*& destination, const uint8_t*& source, const uint8_t* end, bool flush, bool stopOnError, bool& sawError)
 {
     ASSERT(m_partialSequenceSize);
     do {
@@ -180,7 +224,7 @@ void TextCodecUTF8::handlePartialSequence(UChar*& destination, const uint8_t*& s
         if (!count) {
             handleError(destination, stopOnError, sawError);
             if (stopOnError)
-                return;
+                return false;
             continue;
         }
         if (count > m_partialSequenceSize) {
@@ -190,12 +234,12 @@ void TextCodecUTF8::handlePartialSequence(UChar*& destination, const uint8_t*& s
                     // add it to the existing partial sequence.
                     memcpy(m_partialSequence + m_partialSequenceSize, source, end - source);
                     m_partialSequenceSize += end - source;
-                    return;
+                    return false;
                 }
                 // An incomplete partial sequence at the end is an error.
                 handleError(destination, stopOnError, sawError);
                 if (stopOnError)
-                    return;
+                    return false;
                 continue;
             }
             memcpy(m_partialSequence + m_partialSequenceSize, source, count - m_partialSequenceSize);
@@ -206,34 +250,40 @@ void TextCodecUTF8::handlePartialSequence(UChar*& destination, const uint8_t*& s
         if (character == nonCharacter) {
             handleError(destination, stopOnError, sawError);
             if (stopOnError)
-                return;
+                return false;
             continue;
         }
+
         m_partialSequenceSize -= count;
         destination = appendCharacter(destination, character);
     } while (m_partialSequenceSize);
-}
 
+    return false;
+}
+    
 String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
     // Each input byte might turn into a character.
     // That includes all bytes in the partial-sequence buffer because
     // each byte in an invalid sequence will turn into a replacement character.
-    StringBuffer<UChar> buffer(m_partialSequenceSize + length);
+    StringBuffer<LChar> buffer(m_partialSequenceSize + length);
 
     const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
     const uint8_t* end = source + length;
     const uint8_t* alignedEnd = alignToMachineWord(end);
-    UChar* destination = buffer.characters();
+    LChar* destination = buffer.characters();
 
     do {
         if (m_partialSequenceSize) {
             // Explicitly copy destination and source pointers to avoid taking pointers to the
             // local variables, which may harm code generation by disabling some optimizations
             // in some compilers.
-            UChar* destinationForHandlePartialSequence = destination;
+            LChar* destinationForHandlePartialSequence = destination;
             const uint8_t* sourceForHandlePartialSequence = source;
-            handlePartialSequence(destinationForHandlePartialSequence, sourceForHandlePartialSequence, end, flush, stopOnError, sawError);
+            if (handlePartialSequence(destinationForHandlePartialSequence, sourceForHandlePartialSequence, end, flush, stopOnError, sawError)) {
+                source = sourceForHandlePartialSequence;
+                goto upConvertTo16Bit;
+            }
             destination = destinationForHandlePartialSequence;
             source = sourceForHandlePartialSequence;
             if (m_partialSequenceSize)
@@ -279,19 +329,96 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
                 sawError = true;
                 if (stopOnError)
                     break;
-                // Each error generates a replacement character and consumes one byte.
-                *destination++ = replacementCharacter;
-                ++source;
-                continue;
+                
+                goto upConvertTo16Bit;
             }
+            if (character > 0xff)
+                goto upConvertTo16Bit;
+
             source += count;
-            destination = appendCharacter(destination, character);
+            *destination++ = character;
         }
     } while (flush && m_partialSequenceSize);
 
     buffer.shrink(destination - buffer.characters());
 
     return String::adopt(buffer);
+
+upConvertTo16Bit:
+    StringBuffer<UChar> buffer16(m_partialSequenceSize + length);
+
+    UChar* destination16 = buffer16.characters();
+
+    // Copy the already converted characters
+    for (LChar* converted8 = buffer.characters(); converted8 < destination;)
+        *destination16++ = *converted8++;
+
+    do {
+        if (m_partialSequenceSize) {
+            // Explicitly copy destination and source pointers to avoid taking pointers to the
+            // local variables, which may harm code generation by disabling some optimizations
+            // in some compilers.
+            UChar* destinationForHandlePartialSequence = destination16;
+            const uint8_t* sourceForHandlePartialSequence = source;
+            handlePartialSequence(destinationForHandlePartialSequence, sourceForHandlePartialSequence, end, flush, stopOnError, sawError);
+            destination16 = destinationForHandlePartialSequence;
+            source = sourceForHandlePartialSequence;
+            if (m_partialSequenceSize)
+                break;
+        }
+        
+        while (source < end) {
+            if (isASCII(*source)) {
+                // Fast path for ASCII. Most UTF-8 text will be ASCII.
+                if (isAlignedToMachineWord(source)) {
+                    while (source < alignedEnd) {
+                        MachineWord chunk = *reinterpret_cast_ptr<const MachineWord*>(source);
+                        if (!isAllASCII<LChar>(chunk))
+                            break;
+                        copyASCIIMachineWord(destination16, source);
+                        source += sizeof(MachineWord);
+                        destination16 += sizeof(MachineWord);
+                    }
+                    if (source == end)
+                        break;
+                    if (!isASCII(*source))
+                        continue;
+                }
+                *destination16++ = *source++;
+                continue;
+            }
+            int count = nonASCIISequenceLength(*source);
+            int character;
+            if (!count)
+                character = nonCharacter;
+            else {
+                if (count > end - source) {
+                    ASSERT(end - source < static_cast<ptrdiff_t>(sizeof(m_partialSequence)));
+                    ASSERT(!m_partialSequenceSize);
+                    m_partialSequenceSize = end - source;
+                    memcpy(m_partialSequence, source, m_partialSequenceSize);
+                    source = end;
+                    break;
+                }
+                character = decodeNonASCIISequence(source, count);
+            }
+            if (character == nonCharacter) {
+                sawError = true;
+                if (stopOnError)
+                    break;
+                // Each error generates a replacement character and consumes one byte.
+                *destination16++ = replacementCharacter;
+                ++source;
+                continue;
+            }
+            source += count;
+            destination16 = appendCharacter(destination16, character);
+        }
+    } while (flush && m_partialSequenceSize);
+    
+    buffer16.shrink(destination16 - buffer16.characters());
+    
+    return String::adopt(buffer16);
 }
 
 CString TextCodecUTF8::encode(const UChar* characters, size_t length, UnencodableHandling)
