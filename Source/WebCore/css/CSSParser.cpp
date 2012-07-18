@@ -69,6 +69,7 @@
 #include "Rect.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGParserUtilities.h"
 #include "Settings.h"
 #include "ShadowValue.h"
 #include "StylePropertySet.h"
@@ -8967,8 +8968,29 @@ restartAfterComment:
             break;
         }
 
-        yylval->number = charactersToDouble(m_tokenStart, m_currentCharacter - m_tokenStart);
-
+#if ENABLE(SVG)
+        // Use SVG parser for numbers on SVG presentation attributes.
+        if (m_context.mode == SVGAttributeMode) {
+            // We need to take care of units like 'em' or 'ex'.
+            UChar* currentCharacter = m_currentCharacter;
+            if (isASCIIAlphaCaselessEqual(*currentCharacter, 'e')) {
+                ASSERT(currentCharacter - m_tokenStart > 0);
+                ++currentCharacter;
+                if (*currentCharacter == '-' || *currentCharacter == '+' || isASCIIDigit(*currentCharacter)) {
+                    ++currentCharacter;
+                    while (isASCIIDigit(*currentCharacter))
+                        ++currentCharacter;
+                    // Use FLOATTOKEN if the string contains exponents.
+                    dotSeen = true;
+                    m_currentCharacter = currentCharacter;
+                }
+            }
+            if (!parseSVGNumber(m_tokenStart, currentCharacter - m_tokenStart, yylval->number))
+                break;
+        } else
+#endif
+            yylval->number = charactersToDouble(m_tokenStart, m_currentCharacter - m_tokenStart);
+ 
         // Type of the function.
         if (isIdentifierStart()) {
             UChar* type = m_currentCharacter;

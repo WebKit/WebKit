@@ -1,3 +1,16 @@
+2012-07-18  Dirk Schulze  <krit@webkit.org>
+
+        SVG CSS property types with <number> don't support exponents
+        https://bugs.webkit.org/show_bug.cgi?id=52542
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test scientific number values on SVG presentation attributes.
+
+        * svg/css/scientific-numbers-expected.txt: Added.
+        * svg/css/scientific-numbers.html: Added.
+        * svg/css/script-tests/scientific-numbers.js: Added.
+
 2012-07-18  Douglas Stockwell  <dstockwell@chromium.org>
 
         WebCore::StylePropertySet::addParsedProperties - crash

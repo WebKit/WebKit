@@ -1,0 +1,115 @@
+Test scientific numbers on values for SVG presentation attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test positive exponent values with 'e'
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+
+Test positive exponent values with 'E'
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+
+Test negative exponent values with 'e'
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+
+Test negative exponent values with 'E'
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+
+Test negative numbers with exponents
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "-50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "-50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "-50px"
+
+Test if value and 'em' still works
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50em"
+
+Test if value and 'ex' still works
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50ex"
+
+Trailing and leading whitespaces
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "50px"
+
+Test behavior on overflow
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+
+Invalid values
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS getComputedStyle(text).baselineShift is "baseline"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

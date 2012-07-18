@@ -142,6 +142,13 @@ template <typename FloatType> static bool genericParseNumber(const UChar*& ptr, 
     return true;
 }
 
+bool parseSVGNumber(UChar*& begin, size_t length, double& number)
+{
+    const UChar* ptr = begin;
+    const UChar* end = ptr + length;
+    return genericParseNumber(ptr, end, number, false);
+}
+
 bool parseNumber(const UChar*& ptr, const UChar* end, float& number, bool skip) 
 {
     return genericParseNumber(ptr, end, number, skip);

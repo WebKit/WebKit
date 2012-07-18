@@ -1,3 +1,27 @@
+2012-07-18  Dirk Schulze  <krit@webkit.org>
+
+        SVG CSS property types with <number> don't support exponents
+        https://bugs.webkit.org/show_bug.cgi?id=52542
+
+        Reviewed by Nikolas Zimmermann.
+
+        Parse numbers in SVG presentation attributes with SVG parser to support scientific notations.
+        The SVG parser is already well tested and has some extra checks for edge like protection from
+        overflow.
+        
+        The patch is based upon a patch of Bear Travis.
+
+        Test: svg/css/scientific-numbers.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::lex): Use SVG parser to parse numbers of SVG attributes.
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::parseSVGNumber): Added accessor to call from CSSParser with double value.
+        (WebCore):
+        * svg/SVGParserUtilities.h:
+        (WebCore):
+
+
 2012-07-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: beautify the paused in debugger message, make it configurable from the front-end.
