@@ -96,6 +96,7 @@ static const char domTreeOther[] = "DOMTreeOther";
 static const char domTreeDOM[] = "DOMTreeDOM";
 static const char domTreeCSS[] = "DOMTreeCSS";
 static const char domTreeBinding[] = "DOMTreeBinding";
+static const char domTreeLoader[] = "DOMTreeLoader";
 }
 
 namespace {
@@ -483,6 +484,7 @@ public:
         addMemoryBlockFor(domChildren.get(), m_totalSizes[DOM], MemoryBlockName::domTreeDOM);
         addMemoryBlockFor(domChildren.get(), m_totalSizes[CSS], MemoryBlockName::domTreeCSS);
         addMemoryBlockFor(domChildren.get(), m_totalSizes[Binding], MemoryBlockName::domTreeBinding);
+        addMemoryBlockFor(domChildren.get(), m_totalSizes[Loader], MemoryBlockName::domTreeLoader);
 
         RefPtr<InspectorMemoryBlock> dom = InspectorMemoryBlock::create().setName(MemoryBlockName::dom);
         dom->setSize(totalSize);
