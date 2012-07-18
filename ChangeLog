@@ -1,3 +1,17 @@
+2012-07-18  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [CMake] Make gtest a shared library
+        https://bugs.webkit.org/show_bug.cgi?id=90973
+
+        Reviewed by Daniel Bates.
+
+        It's nicer to make it a shared library because it might improve
+        linking time and we don't need to force gtest users to link with gtest
+        dependencies like pthreads (which causes linking errors when it is not
+        available).
+
+        * Source/cmake/gtest/CMakeLists.txt:
+
 2012-07-17  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt][V8] Remove the V8 related codepaths and configuration
