@@ -54,7 +54,7 @@ bool AccessibilityUIElement::isValid() const
 }
     
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(GTK)
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement) { }
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement&) { }
 AccessibilityUIElement::~AccessibilityUIElement() { }

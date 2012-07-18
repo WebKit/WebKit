@@ -76,8 +76,9 @@
             cell = table.cellForColumnAndRow(10,10); 
             result.innerText += "----------------------\n";
             result.innerText += "{ 10, 10 }\n";
-            result.innerText += cell.allAttributes() + "\n";
-            result.innerText += cell.rowIndexRange() + ", " + cell.columnIndexRange()  + "\n\n"; 
+            result.innerText += (cell != null ? cell.allAttributes() : "") + "\n";
+            result.innerText += cell != null ? cell.rowIndexRange() : "{0, 0}";
+            result.innerText += ", " + (cell != null ? cell.columnIndexRange() : "{0, 0}") + "\n\n";
         }
     </script>
 </body>

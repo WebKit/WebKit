@@ -243,6 +243,9 @@ private:
 
     void getLinkedUIElements(Vector<RefPtr<AccessibilityUIElement> >&);
     void getDocumentLinks(Vector<RefPtr<AccessibilityUIElement> >&);
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(GTK)
     void getChildren(Vector<RefPtr<AccessibilityUIElement> >&);
     void getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >&, unsigned location, unsigned length);
 #endif

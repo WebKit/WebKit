@@ -1,3 +1,22 @@
+2012-07-18  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Implement AccessibilityUIElement in WKTR for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=89223
+
+        Reviewed by Chris Fleizach.
+
+        Removed lines skipping all the accessibility tests and replace
+        them with the specific ones that are still not passing, which
+        are just a few now, and will hopefully get fixed later on.
+
+        * platform/gtk-wk2/Skipped: Reduce the list of skipped tests.
+
+        Updated two layout tests to consider nulls, something that didn't
+        happen with DumpRenderTree, but that we need to check now.
+
+        * accessibility/table-cell-spans.html: Update test.
+        * accessibility/table-cells.html: Update test.
+
 2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium gardening, unskipped test.

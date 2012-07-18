@@ -83,6 +83,41 @@ editing/input/emacs-ctrl-o.html
 # https://bugs.webkit.org/show_bug.cgi?id=69512
 plugins/destroy-during-npp-new.html
 
+# accessibility tests failing in WK1 but crashing in WK2
+accessibility/aria-hidden-with-elements.html
+accessibility/inline-continuations.html
+accessibility/loading-iframe-sends-notification.html
+platform/gtk/accessibility/input-slider.html
+
+# accessibility tests passing in WK1 but crashing in WK2
+accessibility/accessibility-object-detached.html
+accessibility/adjacent-continuations-cause-assertion-failure.html
+accessibility/anonymous-render-block-in-continuation-causes-crash.html
+accessibility/aria-hidden-updates-alldescendants.html
+accessibility/aria-menubar-menuitems.html
+accessibility/content-changed-notification-causes-crash.html
+accessibility/crash-determining-aria-role-when-label-present.html
+accessibility/deleting-iframe-destroys-axcache.html
+accessibility/div-within-anchors-causes-crash.html
+accessibility/duplicate-child-nodes.html
+accessibility/first-letter-text-transform-causes-crash.html
+accessibility/iframe-bastardization.html
+accessibility/ignore-spacer-elements.html
+accessibility/image-link-inline-cont.html
+accessibility/image-map-title-causes-crash.html
+accessibility/image-map-update-parent-crash.html
+accessibility/img-alt-tag-only-whitespace.html
+accessibility/img-aria-button-alt-tag.html
+accessibility/media-element.html
+accessibility/presentational-elements-with-focus.html
+accessibility/removed-anonymous-block-child-causes-crash.html
+accessibility/table-with-empty-thead-causes-crash.html
+platform/gtk/accessibility/aria-list-and-listitem.html
+platform/gtk/accessibility/aria-option-role.html
+platform/gtk/accessibility/aria-table-hierarchy.html
+platform/gtk/accessibility/input-slider.html
+platform/gtk/accessibility/table-hierarchy.html
+
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
@@ -269,9 +304,12 @@ http/tests/misc/bubble-drag-events.html
 # eventSender.scheduleAsynchronousClick support
 fast/events/popup-blocking-click-in-iframe.html
 
-# Implement accessibility support for WebKit2
-accessibility
-platform/gtk/accessibility
+# accessibility tests failing due to missing WKTR features
+accessibility/aria-describedby-on-input.html
+accessibility/aria-help.html
+platform/gtk/accessibility/aria-slider-required-attributes.html
+platform/gtk/accessibility/caret-browsing-text-focus.html
+platform/gtk/accessibility/combo-box-collapsed-selection-changed.html
 
 # Implement textInputController.firstRectForCharacterRange interface
 fast/forms/cursor-at-editable-content-boundary.html

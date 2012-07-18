@@ -28,6 +28,10 @@ module WTR {
     interface AccessibilityUIElement {
         boolean isEqual(in AccessibilityUIElement otherElement);
 
+        // Document information
+        readonly attribute DOMString documentEncoding;
+        readonly attribute DOMString documentURI;
+
         // Element access.
         AccessibilityUIElement elementAtPoint(in int x, in int y);
         AccessibilityUIElement childAtIndex(in unsigned long index);

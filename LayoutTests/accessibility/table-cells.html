@@ -69,9 +69,15 @@
             result.innerText += "------------------------\n"; 
             result.innerText += "[3,5]\n" + table.cellForColumnAndRow(3,5).allAttributes() + "\n"; 
             result.innerText += "------------------------\n"; 
-            result.innerText += "[100,0]\n" + table.cellForColumnAndRow(100,0).allAttributes() + "\n"; 
-            result.innerText += "------------------------\n"; 
-            result.innerText += "[0,100]\n" + table.cellForColumnAndRow(0,100).allAttributes() + "\n"; 
+            result.innerText += "[100,0]\n";
+            outOfRangeCell = table.cellForColumnAndRow(100,0);
+            result.innerText += outOfRangeCell != null ? outOfRangeCell.allAttributes() : "";
+            result.innerText += "\n";
+            result.innerText += "------------------------\n";
+            outOfRangeCell = table.cellForColumnAndRow(0,100);
+            result.innerText += "[0,100]\n";
+            result.innerText += outOfRangeCell != null ? outOfRangeCell.allAttributes() : "";
+            result.innerText += "\n";
         }
     </script>
 </body>
