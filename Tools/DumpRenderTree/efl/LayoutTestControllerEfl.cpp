@@ -765,17 +765,18 @@ void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
 
 void LayoutTestController::showWebInspector()
 {
-    notImplemented();
+    ewk_view_web_inspector_show(browser->mainView());
+    browser->waitInspectorLoadFinished();
 }
 
 void LayoutTestController::closeWebInspector()
 {
-    notImplemented();
+    ewk_view_web_inspector_close(browser->mainView());
 }
 
-void LayoutTestController::evaluateInWebInspector(long, JSStringRef)
+void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
 {
-    notImplemented();
+    DumpRenderTreeSupportEfl::evaluateInWebInspector(browser->mainView(), callId, String(script->ustring().impl()));
 }
 
 void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned, JSObjectRef, JSStringRef)

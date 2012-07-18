@@ -114,6 +114,8 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(view, "perform,server,redirect", onWebViewServerRedirect, 0);
     evas_object_smart_callback_add(view, "perform,client,redirect", onWebViewClientRedirect, 0);
     evas_object_smart_callback_add(view, "populate,visited,links", onWebViewPopulateVisitedLinks, 0);
+    evas_object_smart_callback_add(view, "inspector,view,create", onInspectorViewCreate, 0);
+    evas_object_smart_callback_add(view, "inspector,view,close", onInspectorViewClose, 0);
 
     connectEditingCallbacks(view);
 
@@ -133,6 +135,46 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     evas_object_smart_callback_add(mainFrame, "xss,detected", onDidDetectXSS, 0);
 
     return view;
+}
+
+Evas_Object* DumpRenderTreeChrome::createWebInspectorView()
+{
+    Evas_Object* inspectorView = drtViewAdd(m_evas);
+    if (!inspectorView)
+        return 0;
+
+    ewk_view_theme_set(inspectorView, DATA_DIR"/default.edj");
+
+    Evas_Object* mainFrame = ewk_view_frame_main_get(inspectorView);
+    evas_object_smart_callback_add(mainFrame, "load,finished", onInspectorFrameLoadFinished, 0);
+
+    evas_object_resize(inspectorView, LayoutTestController::maxViewWidth, LayoutTestController::maxViewHeight);
+    evas_object_show(inspectorView);
+    evas_object_focus_set(inspectorView, true);
+
+    return inspectorView;
+}
+
+void DumpRenderTreeChrome::removeWebInspectorView()
+{
+    Evas_Object* inspectorView = ewk_view_web_inspector_view_get(mainView());
+    if (!inspectorView)
+        return;
+
+    Evas_Object* mainFrame = ewk_view_frame_main_get(inspectorView);
+    evas_object_smart_callback_del(mainFrame, "load,finished", onInspectorFrameLoadFinished);
+
+    evas_object_del(inspectorView);
+    ewk_view_web_inspector_view_set(mainView(), 0);
+}
+
+void DumpRenderTreeChrome::waitInspectorLoadFinished()
+{
+    // Waits until the page has finished loading.
+    // Because it can't complete loading inspector.html before loading testURL.
+    Evas_Object* inspectorView = ewk_view_web_inspector_view_get(mainView());
+    if (inspectorView)
+        ecore_main_loop_begin();
 }
 
 void DumpRenderTreeChrome::removeWindow(Evas_Object* view)
@@ -617,6 +659,25 @@ void DumpRenderTreeChrome::onWebViewPopulateVisitedLinks(void*, Evas_Object* ewk
         return;
 
     printf("Asked to populate visited links for WebView \"%s\"\n", ewk_view_uri_get(ewkView));
+}
+
+void DumpRenderTreeChrome::onInspectorViewCreate(void*, Evas_Object*, void*)
+{
+    Evas_Object* inspectorView = browser->createWebInspectorView();
+    if (inspectorView)
+        ewk_view_web_inspector_view_set(browser->mainView(), inspectorView);
+}
+
+void DumpRenderTreeChrome::onInspectorViewClose(void*, Evas_Object*, void*)
+{
+    browser->removeWebInspectorView();
+}
+
+void DumpRenderTreeChrome::onInspectorFrameLoadFinished(void*, Evas_Object*, void*)
+{
+    Evas_Object* inspectorView = ewk_view_web_inspector_view_get(browser->mainView());
+    if (inspectorView)
+        ecore_main_loop_quit();
 }
 
 void DumpRenderTreeChrome::onFrameProvisionalLoad(void*, Evas_Object* frame, void*)

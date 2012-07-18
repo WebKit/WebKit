@@ -65,6 +65,10 @@ static void onConsoleMessage(Ewk_View_Smart_Data*, const char* message, unsigned
             newMessage = newMessage.left(fileProtocol) + urlSuitableForTestResult(newMessage.substring(fileProtocol));
     }
 
+    // Ignore simple translation-related messages and unnecessary messages
+    if (newMessage.contains("Localized string") || newMessage.contains("Protocol Error: the message is for non-existing domain 'Profiler'"))
+        return;
+
     printf("CONSOLE MESSAGE: ");
     if (lineNumber)
         printf("line %u: ", lineNumber);

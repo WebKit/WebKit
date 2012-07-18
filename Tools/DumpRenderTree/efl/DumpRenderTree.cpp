@@ -148,6 +148,11 @@ static bool shouldDumpAsText(const String& pathOrURL)
     return pathOrURL.contains("dumpAsText/");
 }
 
+static bool shouldOpenWebInspector(const String& pathOrURL)
+{
+    return pathOrURL.contains("inspector/");
+}
+
 static void sendPixelResultsEOF()
 {
     puts("#EOF");
@@ -251,6 +256,9 @@ static void createLayoutTestController(const String& testURL, const String& expe
         gLayoutTestController->setDumpFrameLoadCallbacks(true);
 
     gLayoutTestController->setDeveloperExtrasEnabled(true);
+    if (shouldOpenWebInspector(testURL))
+        gLayoutTestController->showWebInspector();
+
     gLayoutTestController->setDumpHistoryDelegateCallbacks(isGlobalHistoryTest(testURL));
 
     if (shouldDumpAsText(testURL)) {

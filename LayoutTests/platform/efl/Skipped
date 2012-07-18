@@ -234,11 +234,6 @@ plugins
 # The EFL port has no support for accessibility features
 accessibility
 
-# The EFL port has no support for the web inspector
-inspector
-http/tests/inspector
-http/tests/inspector-enabled
-
 # The EFL port has no support for device motion and orientation
 fast/dom/DeviceMotion
 fast/dom/DeviceOrientation
@@ -541,7 +536,6 @@ fast/events/tab-focus-anchor.html
 fast/history/back-forward-reset-after-error-handling.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 http/tests/canvas/webgl/origin-clean-conformance.html
-http/tests/inspector/network/ping.html
 http/tests/navigation/go-back-to-error-page.html
 loader/go-back-to-different-window-size.html
 userscripts/user-script-plugin-document.html

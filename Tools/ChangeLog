@@ -1,3 +1,35 @@
+2012-07-18  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL][DRT] Add support for Web Inspector in WebKit-EFL DRT
+        https://bugs.webkit.org/show_bug.cgi?id=87935
+
+        Reviewed by Andreas Kling.
+
+        Web Inspector will be shown when path or url contains "inspector/".
+        Dumprendertree should wait util web inspector resources are loaded totally
+        and handle the signals for creating or removing a view of web inspector.
+        ("inspector,view,create" and "inspector,view,close")
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (shouldOpenWebInspector):
+        (createLayoutTestController):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::createView):
+        (DumpRenderTreeChrome::createWebInspectorView):
+        (DumpRenderTreeChrome::removeWebInspectorView):
+        (DumpRenderTreeChrome::waitInspectorLoadFinished):
+        (DumpRenderTreeChrome::onInspectorViewCreate):
+        (DumpRenderTreeChrome::onInspectorViewClose):
+        (DumpRenderTreeChrome::onInspectorFrameLoadFinished):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onConsoleMessage):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::showWebInspector):
+        (LayoutTestController::closeWebInspector):
+        (LayoutTestController::evaluateInWebInspector):
+
 2012-07-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [ANGLE] On QT, use Bison and Flex during ANGLE build

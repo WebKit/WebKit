@@ -48,6 +48,10 @@ public:
     Evas_Object* createNewWindow();
     void removeWindow(Evas_Object*);
 
+    Evas_Object* createWebInspectorView();
+    void removeWebInspectorView();
+    void waitInspectorLoadFinished();
+
     const Vector<Evas_Object*>& extraViews() const;
     void clearExtraViews();
 
@@ -104,6 +108,12 @@ private:
     static void onInsecureContentDisplayed(void*, Evas_Object*, void*);
 
     static void onFrameCreated(void*, Evas_Object*, void*);
+
+    static void onInspectorViewCreate(void*, Evas_Object*, void*);
+
+    static void onInspectorViewClose(void*, Evas_Object*, void*);
+
+    static void onInspectorFrameLoadFinished(void*, Evas_Object*, void*);
 
     static void onFrameIconChanged(void*, Evas_Object*, void*);
 

@@ -520,6 +520,18 @@ bool DumpRenderTreeSupportEfl::isTargetItem(const Ewk_History_Item* ewkHistoryIt
     return historyItem->isTargetItem();
 }
 
+void DumpRenderTreeSupportEfl::evaluateInWebInspector(const Evas_Object* ewkView, long callId, const String& script)
+{
+#if ENABLE(INSPECTOR)
+    WebCore::Page* page = EWKPrivate::corePage(ewkView);
+    if (!page)
+        return;
+
+    if (page->inspectorController())
+        page->inspectorController()->evaluateForTestInFrontend(callId, script);
+#endif
+}
+
 void DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld(const Evas_Object* ewkFrame, int worldID, JSObjectRef globalObject, const String& script)
 {
     WebCore::Frame* coreFrame = EWKPrivate::coreFrame(ewkFrame);

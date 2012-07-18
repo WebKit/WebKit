@@ -1,3 +1,17 @@
+2012-07-18  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL][DRT] Add support for Web Inspector in WebKit-EFL DRT
+        https://bugs.webkit.org/show_bug.cgi?id=87935
+
+        Reviewed by Andreas Kling.
+
+        Add implementation of DumpRenderTreeSupportEfl::evaluateInWebInspector().
+        Some scripts for test should be evaluated in frontend.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::evaluateInWebInspector):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-07-17  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Replace 0 by NULL in public headers documentation
