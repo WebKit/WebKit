@@ -1801,7 +1801,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* eleme
     loadPendingResources();
     
     // Add all the animating properties to the keyframe.
-    if (StylePropertySet* styleDeclaration = keyframe->properties()) {
+    if (const StylePropertySet* styleDeclaration = keyframe->properties()) {
         unsigned propertyCount = styleDeclaration->propertyCount();
         for (unsigned i = 0; i < propertyCount; ++i) {
             CSSPropertyID property = styleDeclaration->propertyAt(i).id();

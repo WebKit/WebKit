@@ -49,7 +49,8 @@ public:
 
     void getKeys(Vector<float>& keys) const   { parseKeyString(m_key, keys); }
     
-    StylePropertySet* properties() const { return m_properties.get(); }
+    const StylePropertySet* properties() const { return m_properties.get(); }
+    StylePropertySet* mutableProperties();
     void setProperties(PassRefPtr<StylePropertySet>);
     
     String cssText() const;

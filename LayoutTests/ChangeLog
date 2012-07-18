@@ -1,3 +1,13 @@
+2012-07-18  Douglas Stockwell  <dstockwell@chromium.org>
+
+        WebCore::StylePropertySet::addParsedProperties - crash
+        https://bugs.webkit.org/show_bug.cgi?id=91153
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/css-keyframe-style-mutate-crash-expected.txt: Added.
+        * fast/css/css-keyframe-style-mutate-crash.html: Added.
+
 2012-07-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed gardening.

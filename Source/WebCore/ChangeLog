@@ -1,3 +1,23 @@
+2012-07-18  Douglas Stockwell  <dstockwell@chromium.org>
+
+        WebCore::StylePropertySet::addParsedProperties - crash
+        https://bugs.webkit.org/show_bug.cgi?id=91153
+
+        Reviewed by Andreas Kling.
+
+        WebKitCSSKeyframeRule::style exposed an immutable StylePropertySet.
+        Modified to create a mutable copy on demand.
+
+        Test: fast/css/css-keyframe-style-mutate-crash.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::StyleKeyframe::mutableProperties): Added, creates a mutable copy of properties as required.
+        (WebCore::WebKitCSSKeyframeRule::style):
+        * css/WebKitCSSKeyframeRule.h:
+        (WebCore::StyleKeyframe::properties): Made const, use mutableProperties to mutate.
+
 2012-07-18  Huang Dongsung  <luxtella@company100.net>
 
         [Texmap] Make TextureMapperLayer clip m_state.needsDisplayRect with the layerRect.

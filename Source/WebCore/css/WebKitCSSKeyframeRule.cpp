@@ -31,6 +31,13 @@
 #include "WebKitCSSKeyframesRule.h"
 
 namespace WebCore {
+
+StylePropertySet* StyleKeyframe::mutableProperties()
+{
+    if (!m_properties->isMutable())
+        m_properties = m_properties->copy();
+    return m_properties.get();
+}
     
 void StyleKeyframe::setProperties(PassRefPtr<StylePropertySet> properties)
 {
@@ -94,7 +101,7 @@ WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule()
 CSSStyleDeclaration* WebKitCSSKeyframeRule::style() const
 {
     if (!m_propertiesCSSOMWrapper)
-        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_keyframe->properties(), const_cast<WebKitCSSKeyframeRule*>(this));
+        m_propertiesCSSOMWrapper = StyleRuleCSSStyleDeclaration::create(m_keyframe->mutableProperties(), const_cast<WebKitCSSKeyframeRule*>(this));
     return m_propertiesCSSOMWrapper.get();
 }
 
