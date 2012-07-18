@@ -489,7 +489,6 @@ static void getOrDrawRectHighlight(GraphicsContext* context, Page* page, Highlig
 InspectorOverlay::InspectorOverlay(Page* page, InspectorClient* client)
     : m_page(page)
     , m_client(client)
-    , m_pausedInDebugger(false)
 {
 }
 
@@ -522,9 +521,9 @@ void InspectorOverlay::getHighlight(Highlight* highlight) const
         getOrDrawRectHighlight(0, m_page, m_highlightData.get(), highlight);
 }
 
-void InspectorOverlay::setPausedInDebugger(bool flag)
+void InspectorOverlay::setPausedInDebuggerMessage(const String* message)
 {
-    m_pausedInDebugger = flag;
+    m_pausedInDebuggerMessage = message ? *message : String();
     update();
 }
 
@@ -564,7 +563,7 @@ Node* InspectorOverlay::highlightedNode() const
 
 void InspectorOverlay::update()
 {
-    if (m_highlightData || m_pausedInDebugger)
+    if (m_highlightData || !m_pausedInDebuggerMessage.isNull())
         m_client->highlight();
     else
         m_client->hideHighlight();
@@ -584,38 +583,34 @@ void InspectorOverlay::drawHighlight(GraphicsContext& context)
 
 void InspectorOverlay::drawPausedInDebugger(GraphicsContext& context)
 {
-    if (!m_pausedInDebugger)
+    if (m_pausedInDebuggerMessage.isNull())
         return;
 
     DEFINE_STATIC_LOCAL(Color, backgroundColor, (0, 0, 0, 31));
     DEFINE_STATIC_LOCAL(Color, textBackgroundColor, (255, 255, 194));
     DEFINE_STATIC_LOCAL(Color, borderColor, (128, 128, 128));
-    DEFINE_STATIC_LOCAL(int, fontHeight, (24));
 
     Frame* frame = m_page->mainFrame();
     Settings* settings = frame->settings();
     IntRect visibleRect = frame->view()->visibleContentRect();
 
     context.setFillColor(backgroundColor, ColorSpaceDeviceRGB);
-    context.drawRect(visibleRect);
+    context.fillRect(visibleRect);
 
     FontDescription desc;
     setUpFontDescription(desc, settings);
-    desc.setComputedSize(fontHeight);
     Font font = Font(desc, 0, 0);
     font.update(0);
 
-    String text = "Paused in debugger.";
-    TextRun textRun(text);
-    IntRect titleRect = enclosingIntRect(font.selectionRectForText(textRun, IntPoint(), fontHeight));
+    TextRun textRun(m_pausedInDebuggerMessage);
+    IntRect titleRect = enclosingIntRect(font.selectionRectForText(textRun, IntPoint(), fontHeightPx));
     titleRect.inflate(rectInflatePx);
     titleRect.setLocation(IntPoint(visibleRect.width() / 2 - titleRect.width() / 2, 0));
 
     context.setFillColor(textBackgroundColor, ColorSpaceDeviceRGB);
     context.setStrokeColor(borderColor, ColorSpaceDeviceRGB);
     context.drawRect(titleRect);
-    context.setFillColor(Color::black, ColorSpaceDeviceRGB);
-    context.drawText(font, textRun, IntPoint(titleRect.x() + rectInflatePx, titleRect.y() + fontHeight));
+    drawSubstring(textRun, 0, m_pausedInDebuggerMessage.length(), Color::black, font, context, titleRect);
 }
 
 } // namespace WebCore

@@ -724,3 +724,4 @@ localizedStrings["Find"] = "Find";
 localizedStrings["Replace"] = "Replace";
 localizedStrings["Replace All"] = "Replace All";
 localizedStrings["Previous"] = "Previous";
+localizedStrings["Paused in debugger"] = "Paused in debugger";

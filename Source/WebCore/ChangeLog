@@ -1,3 +1,35 @@
+2012-07-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: beautify the paused in debugger message, make it configurable from the front-end.
+        https://bugs.webkit.org/show_bug.cgi?id=91628
+
+        Reviewed by Vsevolod Vlasov.
+
+        Made message smaller, using consistent font;
+        Made message configurable from the front-end.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::InspectorOverlay::InspectorOverlay):
+        (WebCore::InspectorOverlay::setPausedInDebuggerMessage):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::drawPausedInDebugger):
+        * inspector/DOMNodeHighlighter.h:
+        (InspectorOverlay):
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setOverlayMessage):
+        (WebCore):
+        (WebCore::InspectorDebuggerAgent::clear):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::setOverlayMessage):
+        * inspector/PageDebuggerAgent.h:
+        (PageDebuggerAgent):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._setDebuggerPausedDetails):
+
 2012-07-18  Douglas Stockwell  <dstockwell@chromium.org>
 
         WebCore::StylePropertySet::addParsedProperties - crash

@@ -94,22 +94,9 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString* errorString
     return injectedScript;
 }
 
-void PageDebuggerAgent::disable()
+void PageDebuggerAgent::setOverlayMessage(ErrorString*, const String* message)
 {
-    InspectorDebuggerAgent::disable();
-    m_overlay->setPausedInDebugger(false);
-}
-
-void PageDebuggerAgent::didPause(ScriptState* scriptState, const ScriptValue& callFrames, const ScriptValue& exception)
-{
-    InspectorDebuggerAgent::didPause(scriptState, callFrames, exception);
-    m_overlay->setPausedInDebugger(true);
-}
-
-void PageDebuggerAgent::didContinue()
-{
-    InspectorDebuggerAgent::didContinue();
-    m_overlay->setPausedInDebugger(false);
+    m_overlay->setPausedInDebuggerMessage(message);
 }
 
 } // namespace WebCore

@@ -570,6 +570,10 @@ void InspectorDebuggerAgent::runScript(ErrorString* errorString, const ScriptId&
     }
 }
 
+void InspectorDebuggerAgent::setOverlayMessage(ErrorString*, const String*)
+{
+}
+
 PassRefPtr<Array<TypeBuilder::Debugger::CallFrame> > InspectorDebuggerAgent::currentCallFrames()
 {
     if (!m_pausedScriptState)
@@ -690,6 +694,8 @@ void InspectorDebuggerAgent::clear()
     m_continueToLocationBreakpointId = String();
     clearBreakDetails();
     m_javaScriptPauseScheduled = false;
+    ErrorString error;
+    setOverlayMessage(&error, 0);
 }
 
 bool InspectorDebuggerAgent::assertPaused(ErrorString* errorString)

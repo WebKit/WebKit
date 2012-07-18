@@ -89,7 +89,7 @@ public:
     void drawOutline(GraphicsContext&, const LayoutRect&, const Color&);
     void getHighlight(Highlight*) const;
 
-    void setPausedInDebugger(bool);
+    void setPausedInDebuggerMessage(const String*);
 
     void hideHighlight();
     void highlightNode(Node*);
@@ -107,7 +107,7 @@ private:
 
     Page* m_page;
     InspectorClient* m_client;
-    bool m_pausedInDebugger;
+    String m_pausedInDebuggerMessage;
     OwnPtr<HighlightData> m_highlightData;
 };
 

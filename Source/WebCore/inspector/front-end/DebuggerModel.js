@@ -298,10 +298,13 @@ WebInspector.DebuggerModel.prototype = {
         this._debuggerPausedDetails = debuggerPausedDetails;
         if (this._debuggerPausedDetails)
             this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPausedDetails);
-        if (debuggerPausedDetails)
+        if (debuggerPausedDetails) {
             this.setSelectedCallFrame(debuggerPausedDetails.callFrames[0]);
-        else
+            DebuggerAgent.setOverlayMessage(WebInspector.UIString("Paused in debugger"));
+        } else {
             this.setSelectedCallFrame(null);
+            DebuggerAgent.setOverlayMessage();
+        }
     },
 
     /**

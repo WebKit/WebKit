@@ -56,10 +56,7 @@ private:
     virtual void unmuteConsole();
 
     virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
-
-    virtual void disable();
-    virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
-    virtual void didContinue();
+    virtual void setOverlayMessage(ErrorString*, const String*);
 
     PageDebuggerAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*, InspectorOverlay*);
     Page* const m_inspectedPage;
