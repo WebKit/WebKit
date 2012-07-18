@@ -31,15 +31,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<WebCompositorIOSurfaceQuad> WebCompositorIOSurfaceQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+PassOwnPtr<WebCompositorIOSurfaceQuad> WebCompositorIOSurfaceQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId, Orientation orientation)
 {
-    return adoptPtr(new WebCompositorIOSurfaceQuad(sharedQuadState, quadRect, ioSurfaceSize, ioSurfaceTextureId));
+    return adoptPtr(new WebCompositorIOSurfaceQuad(sharedQuadState, quadRect, ioSurfaceSize, ioSurfaceTextureId, orientation));
 }
 
-WebCompositorIOSurfaceQuad::WebCompositorIOSurfaceQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+WebCompositorIOSurfaceQuad::WebCompositorIOSurfaceQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId, Orientation orientation)
     : WebCompositorQuad(sharedQuadState, WebCompositorQuad::IOSurfaceContent, quadRect)
     , m_ioSurfaceSize(ioSurfaceSize)
     , m_ioSurfaceTextureId(ioSurfaceTextureId)
+    , m_orientation(orientation)
 {
 }
 

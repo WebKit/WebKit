@@ -37,20 +37,27 @@ namespace WebKit {
 class WebCompositorIOSurfaceQuad : public WebCompositorQuad {
 public:
 #if WEBKIT_IMPLEMENTATION
-    static PassOwnPtr<WebCompositorIOSurfaceQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, const WebCore::IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
+    enum Orientation {
+      Flipped,
+      Unflipped
+    };
+
+    static PassOwnPtr<WebCompositorIOSurfaceQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, const WebCore::IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId, Orientation);
 
     WebCore::IntSize ioSurfaceSize() const { return m_ioSurfaceSize; }
     unsigned ioSurfaceTextureId() const { return m_ioSurfaceTextureId; }
+    Orientation orientation() const { return m_orientation; }
 #endif
 
     static const WebCompositorIOSurfaceQuad* materialCast(const WebCompositorQuad*);
 private:
 #if WEBKIT_IMPLEMENTATION
-    WebCompositorIOSurfaceQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect&, const WebCore::IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
+    WebCompositorIOSurfaceQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect&, const WebCore::IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId, Orientation);
 #endif
 
     WebSize m_ioSurfaceSize;
     unsigned m_ioSurfaceTextureId;
+    Orientation m_orientation;
 };
 
 #pragma pack(pop)

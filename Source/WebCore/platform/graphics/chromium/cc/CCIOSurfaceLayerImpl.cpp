@@ -99,7 +99,7 @@ void CCIOSurfaceLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext
 void CCIOSurfaceLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     IntRect quadRect(IntPoint(), contentBounds());
-    quadList.append(CCIOSurfaceDrawQuad::create(sharedQuadState, quadRect, m_ioSurfaceSize, m_ioSurfaceTextureId));
+    quadList.append(CCIOSurfaceDrawQuad::create(sharedQuadState, quadRect, m_ioSurfaceSize, m_ioSurfaceTextureId, CCIOSurfaceDrawQuad::Flipped));
 }
 
 void CCIOSurfaceLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const

@@ -37,6 +37,7 @@
 #include "TextStream.h"
 #include "TextureAllocator.h"
 #include "cc/CCGraphicsContext.h"
+#include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"
@@ -220,6 +221,12 @@ void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
 #endif
         OwnPtr<CCTextureDrawQuad> textureQuad = CCTextureDrawQuad::create(sharedQuadState, quadRect, m_frame->textureId(), premultipliedAlpha, uvRect, flipped);
         quadList.append(textureQuad.release());
+        break;
+    }
+    case Extensions3D::TEXTURE_RECTANGLE_ARB: {
+        IntSize textureSize(m_frame->width(), m_frame->height()); 
+        OwnPtr<CCIOSurfaceDrawQuad> ioSurfaceQuad = CCIOSurfaceDrawQuad::create(sharedQuadState, quadRect, textureSize, m_frame->textureId(), CCIOSurfaceDrawQuad::Unflipped);
+        quadList.append(ioSurfaceQuad.release());
         break;
     }
     case Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES: {

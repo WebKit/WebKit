@@ -1072,7 +1072,10 @@ void LayerRendererChromium::drawIOSurfaceQuad(const CCIOSurfaceDrawQuad* quad)
 
     GLC(context(), context()->useProgram(binding.programId));
     GLC(context(), context()->uniform1i(binding.samplerLocation, 0));
-    GLC(context(), context()->uniform4f(binding.texTransformLocation, 0, 0, quad->ioSurfaceSize().width(), quad->ioSurfaceSize().height()));
+    if (quad->orientation() == CCIOSurfaceDrawQuad::Flipped)
+        GLC(context(), context()->uniform4f(binding.texTransformLocation, 0, quad->ioSurfaceSize().height(), quad->ioSurfaceSize().width(), quad->ioSurfaceSize().height() * -1.0));
+    else
+        GLC(context(), context()->uniform4f(binding.texTransformLocation, 0, 0, quad->ioSurfaceSize().width(), quad->ioSurfaceSize().height()));
 
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, quad->ioSurfaceTextureId()));

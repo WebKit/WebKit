@@ -1,3 +1,26 @@
+2012-07-18  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium Mac: Add TEXTURE_RECTANGLE_ARB support to CCVideoLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=91169
+
+        Reviewed by Adrienne Walker.
+
+        This extends CCVideoLayerImpl to support TEXTURE_RECTANGLE_ARB. This texture target is used by the Mac hardware accelerated video decoder.
+
+        No new tests (HW video decode on Mac is being tested manually.).
+
+        * platform/chromium/support/WebCompositorIOSurfaceQuad.cpp:
+        (WebKit::WebCompositorIOSurfaceQuad::create): Added an orientation argument.
+        (WebKit::WebCompositorIOSurfaceQuad::WebCompositorIOSurfaceQuad): Added an orientation argument.
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawIOSurfaceQuad): Added support for non-flipped IOSurface textures.
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium): Changed TextureIOSurfaceProgram to be non-flipped. To draw flipped textures drawIOSurfaceQuad sets a different value for texTransformLocation.
+        * platform/graphics/chromium/cc/CCIOSurfaceLayerImpl.cpp:
+        (WebCore::CCIOSurfaceLayerImpl::appendQuads): Updated call to CCIOSurfaceDrawQuad constructor.
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads): Added support for drawing TEXTURE_RECTANGLE_ARB textures.
+
 2012-07-18  Michael Saboff  <msaboff@apple.com>
 
         Make TextCodecLatin1 handle 8 bit data without converting to UChar's
