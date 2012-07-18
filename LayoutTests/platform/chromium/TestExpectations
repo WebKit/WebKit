@@ -3707,9 +3707,6 @@ BUGWK91386 LINUX : fast/text/descent-clip-in-scaled-page.html = IMAGE
 // Fails since creation in 122663
 BUGWK91372 WIN : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 
-// Started crashing after 122450
-BUGWK91254 WIN LINUX DEBUG : fast/dom/attribute-empty-value-no-children.html = CRASH
-
 // Need rebaseline
 BUGWK90951 : fast/text/shaping/shaping-selection-rect.html = MISSING
 BUGWK90951 : fast/text/shaping/shaping-script-order.html = MISSING
