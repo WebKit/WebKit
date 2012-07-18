@@ -1,3 +1,15 @@
+2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium gardening, unskipped tests.
+        https://bugs.webkit.org/show_bug.cgi?id=84764
+        https://bugs.webkit.org/show_bug.cgi?id=84767
+        https://bugs.webkit.org/show_bug.cgi?id=84768
+        https://bugs.webkit.org/show_bug.cgi?id=84769
+        https://bugs.webkit.org/show_bug.cgi?id=84775
+        https://bugs.webkit.org/show_bug.cgi?id=84776
+
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Implement AccessibilityUIElement in WKTR for GTK
