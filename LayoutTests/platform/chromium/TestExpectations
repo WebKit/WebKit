@@ -1592,12 +1592,6 @@ BUGCR23473 LION SNOWLEOPARD : fast/repaint/transform-translate.html = IMAGE
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
 
-// To rebaseline after Skia 4600 lands
-BUGCR137508 : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
-BUGCR137508 : svg/hixie/perf/001.xml = IMAGE+TEXT
-BUGCR137508 : svg/hixie/perf/002.xml = IMAGE+TEXT
-BUGCR137508 : svg/as-background-image/svg-as-background-5.html = IMAGE
-
 // Rebaseline to take advantage of skia ColorFilter optimization.
 // Note that two of tests below are broken on Leopard for other reasons (search
 // elsewhere within this file) and thus should not be blindly rebaselined there.

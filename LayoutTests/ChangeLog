@@ -4,6 +4,12 @@
 
         * platform/chromium/TestExpectations:
 
+2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium gardening, unskipped test.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r122345): HTMLCollection::length() sometimes returns a wrong value
