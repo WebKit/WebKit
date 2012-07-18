@@ -95,6 +95,8 @@ contains(TEMPLATE, derived) {
         output = $$eval($${generator}.output)
         input = $$eval($${generator}.input)
         input_files = $$eval($$input)
+        output_variable = $$eval($${generator}.variable_out)
+        isEmpty(output_variable): output_variable = SOURCES
 
         isEmpty($${generator}.output_function) {
             prependEach(output, $${GENERATED_SOURCES_DESTDIR}/)
@@ -104,13 +106,13 @@ contains(TEMPLATE, derived) {
                 base ~= s/\\..+//
                 output_file = $$replace(output,\\$\\{QMAKE_FILE_BASE\\}, $$base)
 
-                SOURCES += $$output_file
+                eval($$output_variable += $$output_file)
             }
         } else {
             function = $$eval($${generator}.output_function)
             for(input_file, input_files) {
                 eval(output_file = \$\$$$function\($$input_file\))
-                SOURCES += $$output_file
+                eval($$output_variable += $$output_file)
             }
         }
 

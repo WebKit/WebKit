@@ -3716,7 +3716,10 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
 
     ANGLE_DIR = $$replace(PWD, "WebCore", "ThirdParty/ANGLE")
 
-    INCLUDEPATH += $$ANGLE_DIR/src $$ANGLE_DIR/include
+    INCLUDEPATH += \
+        $$ANGLE_DIR/src \
+        $$ANGLE_DIR/src/compiler/preprocessor/new \
+        $$ANGLE_DIR/include
 
     ANGLE_HEADERS += \
         $$ANGLE_DIR/src/compiler/BaseTypes.h \
@@ -3734,7 +3737,6 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/ExtensionBehavior.h \
         $$ANGLE_DIR/src/compiler/ForLoopUnroll.h \
         $$ANGLE_DIR/src/compiler/glslang.h \
-        $$ANGLE_DIR/src/compiler/glslang_tab.h \
         $$ANGLE_DIR/src/compiler/InfoSink.h \
         $$ANGLE_DIR/src/compiler/InitializeDll.h \
         $$ANGLE_DIR/src/compiler/InitializeGlobals.h \
@@ -3754,7 +3756,6 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/preprocessor/new/Diagnostics.h \
         $$ANGLE_DIR/src/compiler/preprocessor/new/DirectiveHandler.h \
         $$ANGLE_DIR/src/compiler/preprocessor/new/DirectiveParser.h \
-        $$ANGLE_DIR/src/compiler/preprocessor/new/ExpressionParser.h \
         $$ANGLE_DIR/src/compiler/preprocessor/new/Input.h \
         $$ANGLE_DIR/src/compiler/preprocessor/new/Lexer.h \
         $$ANGLE_DIR/src/compiler/preprocessor/new/Macro.h \
@@ -3809,8 +3810,6 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/Diagnostics.cpp \
         $$ANGLE_DIR/src/compiler/DirectiveHandler.cpp \
         $$ANGLE_DIR/src/compiler/ForLoopUnroll.cpp \
-        $$ANGLE_DIR/src/compiler/glslang_lex.cpp \
-        $$ANGLE_DIR/src/compiler/glslang_tab.cpp \
         $$ANGLE_DIR/src/compiler/InfoSink.cpp \
         $$ANGLE_DIR/src/compiler/Initialize.cpp \
         $$ANGLE_DIR/src/compiler/InitializeDll.cpp \
@@ -3851,14 +3850,12 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         $$ANGLE_DIR/src/compiler/preprocessor/new/DiagnosticsBase.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/new/DirectiveHandlerBase.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/new/DirectiveParser.cpp \
-        $$ANGLE_DIR/src/compiler/preprocessor/new/ExpressionParser.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/new/Input.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/new/Lexer.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/new/Macro.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/new/MacroExpander.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/new/Preprocessor.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/new/Token.cpp \
-        $$ANGLE_DIR/src/compiler/preprocessor/new/Tokenizer.cpp \
         $$ANGLE_DIR/src/compiler/preprocessor/scanner.c \
         $$ANGLE_DIR/src/compiler/preprocessor/symbols.c \
         $$ANGLE_DIR/src/compiler/preprocessor/tokens.c

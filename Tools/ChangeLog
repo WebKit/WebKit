@@ -1,3 +1,13 @@
+2012-07-18  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [ANGLE] On QT, use Bison and Flex during ANGLE build
+        https://bugs.webkit.org/show_bug.cgi?id=91108
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * qmake/mkspecs/features/default_post.prf: Add support for variable_out to our generators, to allow
+        generating not only for SOURCES but also ANGLE_SOURCES (in this bug)
+
 2012-07-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] plugin tests should not be disabled for WebKit1
