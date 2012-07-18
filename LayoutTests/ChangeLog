@@ -1,3 +1,14 @@
+2012-07-18  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL][DRT] Add heap profiling tests to Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=91684
+
+        Unreviewed gardening.
+
+        JSC doesn't support heap profiling.
+
+        * platform/efl/Skipped:
+
 2012-07-18  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r122660-r122663): mathml/presentation/mo.xhtml, mathml/presentation/row.xhtml failing on Mountain Lion Production Tests

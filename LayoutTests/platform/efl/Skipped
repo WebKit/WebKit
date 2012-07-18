@@ -1127,3 +1127,15 @@ fast/profiler/dead-time.html
 # http://webkit.org/b/35981
 # Needs a text rebaseline: 30px height difference.
 fast/block/basic/fieldset-stretch-to-legend.html
+
+# JSC doesn't support heap profiling
+inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
+inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
+inspector/profiler/heap-snapshot-comparison-show-all.html
+inspector/profiler/heap-snapshot-loader.html
+inspector/profiler/heap-snapshot-reveal-in-dominators-view.html
+inspector/profiler/heap-snapshot-summary-retainers.html
+inspector/profiler/heap-snapshot-summary-show-ranges.html
+inspector/profiler/heap-snapshot-summary-sorting-fields.html
+inspector/profiler/heap-snapshot-summary-sorting.html
+inspector/profiler/heap-snapshot-summary-sorting-instances.html
