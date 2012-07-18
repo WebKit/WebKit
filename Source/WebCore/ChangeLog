@@ -1,3 +1,23 @@
+2012-07-18  Huang Dongsung  <luxtella@company100.net>
+
+        [Texmap] Make TextureMapperLayer clip m_state.needsDisplayRect with the layerRect.
+        https://bugs.webkit.org/show_bug.cgi?id=91595
+
+        Reviewed by Noam Rosenthal.
+
+        Internal review by Kwang Yul Seo.
+
+        Currently, TextureMapperLayer creates an ImageBuffer as big as
+        m_state.needsDisplayRect if m_state.needsDispaly is false. The size of
+        m_state.needsDisplayRect can be bigger than the size of the layerRect, so we may
+        consume more memory than the size of the layerRect. It even can cause crash if
+        m_state.needsDisplayRect is too big.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::updateBackingStore):
+
 2012-07-18  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         [BlackBerry] We should update the status in NetworkJob if there is a new one from libcurl.

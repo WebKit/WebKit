@@ -108,7 +108,9 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
         return;
     }
 
-    IntRect dirtyRect = enclosingIntRect(m_state.needsDisplay ? layerRect() : m_state.needsDisplayRect);
+    IntRect dirtyRect = enclosingIntRect(layerRect());
+    if (!m_state.needsDisplay)
+        dirtyRect.intersect(enclosingIntRect(m_state.needsDisplayRect));
     if (dirtyRect.isEmpty())
         return;
 
