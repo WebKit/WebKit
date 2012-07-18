@@ -1250,7 +1250,7 @@ void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WKFrameRef wkFrame
 
     WebKitWebViewPrivate* priv = webView->priv;
     WebKitWebResource* resource = webkitWebResourceCreate(wkFrame, request, isMainResource);
-    if (WKFrameIsMainFrame(wkFrame) && isMainResource)
+    if (WKFrameIsMainFrame(wkFrame) && (isMainResource || !priv->mainResource))
         priv->mainResource = resource;
     priv->loadingResourcesMap.set(resourceIdentifier, adoptGRef(resource));
     g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, request);

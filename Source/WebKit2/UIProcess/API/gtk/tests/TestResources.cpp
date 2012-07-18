@@ -520,6 +520,25 @@ static void testWebViewResourcesReplacedContent(ResourcesTest* test, gconstpoint
     g_assert(!webkit_web_view_get_subresources(test->m_webView));
 }
 
+static void testWebViewResourcesHistoryCache(SingleResourceLoadTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/").data());
+    test->waitUntilResourceLoadFinished();
+    g_assert(webkit_web_view_get_main_resource(test->m_webView));
+
+    test->loadURI(kServer->getURIForPath("/javascript.html").data());
+    test->waitUntilResourceLoadFinished();
+    g_assert(webkit_web_view_get_main_resource(test->m_webView));
+
+    test->goBack();
+    test->waitUntilResourceLoadFinished();
+    g_assert(webkit_web_view_get_main_resource(test->m_webView));
+
+    test->goForward();
+    test->waitUntilResourceLoadFinished();
+    g_assert(webkit_web_view_get_main_resource(test->m_webView));
+}
+
 static void addCacheHTTPHeadersToResponse(SoupMessage* message)
 {
     // The actual date doesn't really matter.
@@ -604,6 +623,7 @@ void beforeAll()
     ResourceURITrackingTest::add("WebKitWebResource", "active-uri", testWebResourceActiveURI);
     ResourcesTest::add("WebKitWebResource", "get-data", testWebResourceGetData);
     ResourcesTest::add("WebKitWebView", "replaced-content", testWebViewResourcesReplacedContent);
+    SingleResourceLoadTest::add("WebKitWebView", "history-cache", testWebViewResourcesHistoryCache);
 }
 
 void afterAll()

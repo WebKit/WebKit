@@ -1,3 +1,26 @@
+2012-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] No main resource in WebView when page has been loaded from history cache
+        https://bugs.webkit.org/show_bug.cgi?id=91478
+
+        Reviewed by Gustavo Noronha Silva.
+
+        We are assuming that a resource loaded for the main frame that is
+        provisionally loading is the main resource of the web view. However
+        that's not true for pages loaded from history cache, so when you
+        go back/forward webkit_web_view_get_main_resource() always returns
+        NULL. We can assume that the first resource loaded for the main
+        frame is the main resource of the web view when
+        pageIsProvisionallyLoading is false.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewResourceLoadStarted): Make sure we always have a
+        main resource for the web view.
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (testWebViewResourcesHistoryCache): Test we always have a main
+        resource even after going back/forward.
+        (beforeAll): Add new test case.
+
 2012-07-18  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Rename WebInspectorEfl.cpp as WebInspectorProxyEfl.cpp
