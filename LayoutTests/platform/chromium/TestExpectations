@@ -74,10 +74,10 @@ BUGWK77523 WIN RELEASE SLOW : media/media-fragments/TC0080-TC0089.html = PASS
 BUGWK79679 DEBUG SLOW : platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html = PASS
 
 BUGWK82097 SLOW : editing/selection/move-by-word-visually-crash-test-5.html = PASS
-BUGRNIWA SLOW MAC : editing/pasteboard/emacs-cntl-y-001.html = IMAGE
-BUGRNIWA SLOW MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = IMAGE+TEXT
-BUGRNIWA SLOW MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = IMAGE+TEXT
-BUGRNIWA SLOW MAC : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
+BUGWK91666 SLOW MAC : editing/pasteboard/emacs-cntl-y-001.html = IMAGE
+BUGWK91666 SLOW MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = IMAGE+TEXT
+BUGWK91666 SLOW MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = IMAGE+TEXT
+BUGWK91666 SLOW MAC : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS

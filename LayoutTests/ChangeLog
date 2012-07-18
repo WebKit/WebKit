@@ -1,3 +1,9 @@
+2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update Chromium test expectations after filing the bug 91666.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Unreviewed gardening.
