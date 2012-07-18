@@ -1,5 +1,18 @@
 2012-07-18  Dirk Pranke  <dpranke@chromium.org>
 
+        fix python unit tests failing under cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=91678
+
+        Reviewed by Adam Barth.
+
+        Fix a case where executive.kill_process was failing under cygwin
+        (apple win port) in an unexpected way.
+        
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.kill_process):
+
+2012-07-18  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: run tests in parallel by default
         https://bugs.webkit.org/show_bug.cgi?id=91422
 

@@ -211,6 +211,8 @@ class Executive(object):
                     continue
                 if e.errno == errno.ESRCH:  # The process does not exist.
                     return
+                if e.errno == errno.EPIPE:  # The process has exited already on cygwin
+                    return
                 if e.errno == errno.ECHILD:
                     # Can't wait on a non-child process, but the kill worked.
                     return
