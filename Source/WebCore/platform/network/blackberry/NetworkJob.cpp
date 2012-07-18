@@ -19,8 +19,6 @@
 #include "config.h"
 #include "NetworkJob.h"
 
-#include "AboutData.h"
-#include "AboutTemplate.html.cpp"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CookieManager.h"
@@ -39,8 +37,6 @@
 
 #include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformLog.h>
-#include <BlackBerryPlatformWebKitCredits.h>
-#include <BuildInformation.h>
 #include <LocalizeResource.h>
 #include <network/MultipartStream.h>
 #include <network/NetworkStreamFactory.h>
@@ -66,11 +62,9 @@ inline static bool isUnauthorized(int statusCode)
 
 NetworkJob::NetworkJob()
     : m_playerId(0)
-    , m_loadAboutTimer(this, &NetworkJob::fireLoadAboutTimer)
     , m_deleteJobTimer(this, &NetworkJob::fireDeleteJobTimer)
     , m_streamFactory(0)
     , m_isFile(false)
-    , m_isAbout(false)
     , m_isFTP(false)
     , m_isFTPDir(true)
 #ifndef NDEBUG
@@ -107,7 +101,6 @@ bool NetworkJob::initialize(int playerId,
 
     m_response.setURL(url);
     m_isFile = url.protocolIs("file") || url.protocolIs("local");
-    m_isAbout = url.protocolIs("about");
     m_isFTP = url.protocolIs("ftp");
 
     m_handle = handle;
@@ -132,10 +125,6 @@ bool NetworkJob::initialize(int playerId,
         m_isOverrideContentType = true;
     }
 
-    // No need to create the streams for about.
-    if (m_isAbout)
-        return true;
-
     if (!request.getSuggestedSaveName().empty()) {
         m_contentDisposition = "filename=";
         m_contentDisposition += request.getSuggestedSaveName().c_str();
@@ -149,23 +138,9 @@ bool NetworkJob::initialize(int playerId,
     return true;
 }
 
-void NetworkJob::loadAboutURL()
-{
-    m_loadAboutTimer.startOneShot(0);
-}
-
 int NetworkJob::cancelJob()
 {
     m_cancelled = true;
-
-    // Cancel jobs loading local data by killing the timer, and jobs
-    // getting data from the network by calling the inherited URLStream::cancel.
-
-    if (m_loadAboutTimer.isActive()) {
-        m_loadAboutTimer.stop();
-        notifyClose(BlackBerry::Platform::FilterStream::StatusCancelled);
-        return 0;
-    }
 
     return streamCancel();
 }
@@ -610,7 +585,7 @@ void NetworkJob::sendResponseIfNeeded()
         return;
 
     String urlFilename;
-    if (!m_response.url().protocolIsData() && !m_response.url().protocolIs("about"))
+    if (!m_response.url().protocolIsData())
         urlFilename = m_response.url().lastPathComponent();
 
     // Get the MIME type that was set by the content sniffer
@@ -638,32 +613,23 @@ void NetworkJob::sendResponseIfNeeded()
     if (!contentLength.isNull())
         m_response.setExpectedContentLength(contentLength.toInt64());
 
-    // Set suggested filename for downloads from the Content-Disposition header; if this fails,
-    // fill it in from the url and sniffed mime type;Skip this for about URLs,
-    // because they have no Content-Disposition header and the format is wrong to be a filename.
-    if (!m_isAbout) {
-        String suggestedFilename = filenameFromHTTPContentDisposition(m_contentDisposition);
-        if (suggestedFilename.isEmpty()) {
-            // Check and see if an extension already exists.
-            String mimeExtension = MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
-            if (urlFilename.isEmpty()) {
-                if (mimeExtension.isEmpty()) // No extension found for the mimeType.
-                    suggestedFilename = String(BlackBerry::Platform::LocalizeResource::getString(BlackBerry::Platform::FILENAME_UNTITLED));
-                else
-                    suggestedFilename = String(BlackBerry::Platform::LocalizeResource::getString(BlackBerry::Platform::FILENAME_UNTITLED)) + "." + mimeExtension;
-            } else {
-                if (urlFilename.reverseFind('.') == notFound && !mimeExtension.isEmpty())
-                   suggestedFilename = urlFilename + '.' + mimeExtension;
-                else
-                   suggestedFilename = urlFilename;
-            }
+    String suggestedFilename = filenameFromHTTPContentDisposition(m_contentDisposition);
+    if (suggestedFilename.isEmpty()) {
+        // Check and see if an extension already exists.
+        String mimeExtension = MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
+        if (urlFilename.isEmpty()) {
+            if (mimeExtension.isEmpty()) // No extension found for the mimeType.
+                suggestedFilename = String(BlackBerry::Platform::LocalizeResource::getString(BlackBerry::Platform::FILENAME_UNTITLED));
+            else
+                suggestedFilename = String(BlackBerry::Platform::LocalizeResource::getString(BlackBerry::Platform::FILENAME_UNTITLED)) + "." + mimeExtension;
+        } else {
+            if (urlFilename.reverseFind('.') == notFound && !mimeExtension.isEmpty())
+               suggestedFilename = urlFilename + '.' + mimeExtension;
+            else
+               suggestedFilename = urlFilename;
         }
-        m_response.setSuggestedFilename(suggestedFilename);
     }
-
-    // Don't cache resources for "about:"
-    if (m_isAbout)
-        m_response.setHTTPHeaderField("Cache-Control", "no-cache");
+    m_response.setSuggestedFilename(suggestedFilename);
 
     if (isClientAvailable()) {
         RecursionGuard guard(m_callingClient);
@@ -826,102 +792,6 @@ bool NetworkJob::shouldSendClientData() const
 void NetworkJob::fireDeleteJobTimer(Timer<NetworkJob>*)
 {
     NetworkManager::instance()->deleteJob(this);
-}
-
-void NetworkJob::handleAbout()
-{
-    // First 6 chars are "about:".
-    String aboutWhat(m_response.url().string().substring(6));
-
-    String result;
-
-    bool handled = false;
-    if (equalIgnoringCase(aboutWhat, "blank")) {
-        handled = true;
-    } else if (equalIgnoringCase(aboutWhat, "credits")) {
-        result.append(writeHeader("Credits"));
-        result.append(String("<style> .about {padding:14px;} </style>"));
-        result.append(String(BlackBerry::Platform::WEBKITCREDITS));
-        result.append(String("</body></html>"));
-        handled = true;
-    } else if (aboutWhat.startsWith("cache?query=", false)) {
-        BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
-        ASSERT(client);
-        std::string key(aboutWhat.substring(12, aboutWhat.length() - 12).utf8().data()); // 12 is length of "cache?query=".
-        result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>"));
-        result.append(String(key.data()));
-        result.append(String("<hr>"));
-        result.append(String(client->generateHtmlFragmentForCacheHeaders(key).data()));
-        result.append(String("</body></html>"));
-        handled = true;
-    } else if (equalIgnoringCase(aboutWhat, "cache")) {
-        BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
-        ASSERT(client);
-        result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>"));
-        result.append(String(client->generateHtmlFragmentForCacheKeys().data()));
-        result.append(String("</body></html>"));
-        handled = true;
-#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-    } else if (equalIgnoringCase(aboutWhat, "cache/disable")) {
-        BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
-        ASSERT(client);
-        client->setDiskCacheEnabled(false);
-        result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>Http disk cache is disabled.</body></html>"));
-        handled = true;
-    } else if (equalIgnoringCase(aboutWhat, "cache/enable")) {
-        BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
-        ASSERT(client);
-        client->setDiskCacheEnabled(true);
-        result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>Http disk cache is enabled.</body></html>"));
-        handled = true;
-    } else if (equalIgnoringCase(aboutWhat, "cookie")) {
-        result.append(String("<html><head><title>BlackBerry Browser cookie information</title></head><body>"));
-        result.append(cookieManager().generateHtmlFragmentForCookies());
-        result.append(String("</body></html>"));
-        handled = true;
-    } else if (equalIgnoringCase(aboutWhat, "version")) {
-        result.append(writeHeader("Version"));
-        result.append(String("<div class='box'><div class='box-title'>Build Time</div><br>"));
-        result.append(String(BlackBerry::Platform::BUILDTIME));
-        result.append(String("</div><br><div style='font-size:10px;text-align:center;'>Also see the <A href='about:build'>build information</A>.</body></html>"));
-        handled = true;
-    } else if (BlackBerry::Platform::debugSetting() > 0 && equalIgnoringCase(aboutWhat, "config")) {
-        result = configPage();
-        handled = true;
-    } else if (BlackBerry::Platform::debugSetting() > 0 && equalIgnoringCase(aboutWhat, "build")) {
-        result.append(writeHeader("Build"));
-        result.append(String("<div class='box'><div class='box-title'>Basic</div><table>"));
-        result.append(String("<tr><td>Built On:  </td><td>"));
-        result.append(String(BlackBerry::Platform::BUILDCOMPUTER));
-        result.append(String("</td></tr>"));
-        result.append(String("<tr><td>Build User:  </td><td>"));
-        result.append(String(BlackBerry::Platform::BUILDUSER));
-        result.append(String("</td></tr>"));
-        result.append(String("<tr><td>Build Time:  </td><td>"));
-        result.append(String(BlackBerry::Platform::BUILDTIME));
-        result.append(String("</table></div><br>"));
-        result.append(String(BlackBerry::Platform::BUILDINFO_WEBKIT));
-        result.append(String(BlackBerry::Platform::BUILDINFO_PLATFORM));
-        result.append(String(BlackBerry::Platform::BUILDINFO_LIBWEBVIEW));
-        result.append(String("</body></html>"));
-        handled = true;
-    } else if (equalIgnoringCase(aboutWhat, "memory")) {
-        result = memoryPage();
-        handled = true;
-#endif
-    }
-    if (handled) {
-        CString resultString = result.utf8();
-        notifyStatusReceived(BlackBerry::Platform::FilterStream::StatusSuccess, 0);
-        notifyStringHeaderReceived("Content-Length", String::number(resultString.length()));
-        notifyStringHeaderReceived("Content-Type", "text/html");
-        notifyDataReceivedPlain(resultString.data(), resultString.length());
-        notifyClose(BlackBerry::Platform::FilterStream::StatusSuccess);
-    } else {
-        // If we can not handle it, we take it as an error of invalid URL.
-        notifyStatusReceived(BlackBerry::Platform::FilterStream::StatusErrorInvalidUrl, 0);
-        notifyClose(BlackBerry::Platform::FilterStream::StatusErrorInvalidUrl);
-    }
 }
 
 } // namespace WebCore

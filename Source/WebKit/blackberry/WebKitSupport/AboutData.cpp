@@ -18,8 +18,8 @@
 
 #include "config.h"
 #include "AboutData.h"
-#include "AboutTemplate.html.cpp"
 
+#include "AboutTemplate.html.cpp"
 #include "CString.h"
 #include "JSDOMWindow.h"
 #include "MemoryCache.h"
@@ -27,14 +27,17 @@
 #include "SurfacePool.h"
 #include "WebKitVersion.h"
 
-#include <process.h>
 #include <BlackBerryPlatformSettings.h>
 #include <heap/Heap.h>
+#include <process.h>
 #include <runtime/JSGlobalData.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace BlackBerry {
+namespace WebKit {
 
 static String writeFeatures(const Vector<String>& trueList, const Vector<String>& falseList)
 {
@@ -61,7 +64,7 @@ String configPage()
 {
     String page;
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-    page = writeHeader("Configuration");
+    page = writeHeader("Configuration")
     + "<div class=\"box\"><div class=\"box-title\">Compiler Information</div><table class='fixed-table'><col width=75%><col width=25%>"
 #if COMPILER(MSVC)
     + "<tr><td>Microsoft Visual C++</td><td>MSVC</td></tr>"
@@ -246,7 +249,7 @@ String memoryPage()
 
     page += "<div class='box'><div class='box-title'>Process memory usage summary</div><table class='fixed-table'><col width=75%><col width=25%>";
 
-    page += numberToHTMLTr("Total memory usage (malloc + JSC)", mallocInfo.arena + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
+    page += numberToHTMLTr("Total memory usage (malloc + JSC)", mallocInfo.usmblks + mallocInfo.uordblks + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
 
     struct stat processInfo;
     if (!stat(String::format("/proc/%u/as", getpid()).latin1().data(), &processInfo))
@@ -296,4 +299,5 @@ String memoryPage()
     return page;
 }
 
-}
+} // namespace WebKit
+} // namespace BlackBerry

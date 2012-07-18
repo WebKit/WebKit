@@ -1,3 +1,37 @@
+2012-07-18  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Move about: URL handling out of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=91541
+
+        Reviewed by Rob Buis.
+
+        Move about URL handling code to WebKit/blackberry. Now when WebPage is asked to load an about URL,
+        it directly calls loadString() with the generated source.
+
+        Also move AboutData.h/cpp from WebCoreSupport to WebKitSupport and change their namespace from WebCore
+        to BlackBerry::WebKit.
+
+        The change is very mechanical except "procss total memory usage" in about:memory now only accounts used
+        bytes and ignore free spaces in malloc.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::loadAbout):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::load):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/AboutData.cpp: Renamed from Source/WebKit/blackberry/WebCoreSupport/AboutData.cpp.
+        (WebKit):
+        (BlackBerry::WebKit::writeFeatures):
+        (BlackBerry::WebKit::numberToHTMLTr):
+        (BlackBerry::WebKit::bool):
+        (BlackBerry::WebKit::configPage):
+        (BlackBerry::WebKit::cacheTypeStatisticToHTMLTr):
+        (BlackBerry::WebKit::dumpJSCTypeCountSetToTableHTML):
+        (BlackBerry::WebKit::memoryPage):
+        * WebKitSupport/AboutData.h: Renamed from Source/WebKit/blackberry/WebCoreSupport/AboutData.h.
+        (WebKit):
+
 2012-07-17  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Remove unnecessary clearWindow() calls and the method itself

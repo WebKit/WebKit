@@ -136,12 +136,6 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
 
     m_jobs.append(networkJob);
 
-    if (url.protocolIs("about")) {
-        // If the protocol matches "about", loadAboutURL should recognize and handle it.
-        networkJob->loadAboutURL();
-        return true;
-    }
-
     int result = networkJob->streamOpen();
     if (result)
         return false;

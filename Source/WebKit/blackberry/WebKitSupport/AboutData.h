@@ -21,11 +21,13 @@
 
 #include "PlatformString.h"
 
-namespace WebCore {
+namespace BlackBerry {
+namespace WebKit {
 
 String configPage();
 String memoryPage();
 
-} // namespace WebCore
+} // namespace WebKit
+} // namespace BlackBerry
 
 #endif // AboutData_h
