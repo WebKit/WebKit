@@ -1,3 +1,17 @@
+2012-07-17  Alexis Menard  <alexis.menard@openbossa.org>
+
+        webkitdirs.pm should fallback to uname -m if arch is not present.
+        https://bugs.webkit.org/show_bug.cgi?id=91543
+
+        Reviewed by Martin Robinson.
+
+        It seems that coreutils is moving away from the 'arch' command. Archlinux
+        for example doesn't ship it anymore (coreutils 8.17). We can then fallback
+        to 'uname -m' to find out the architecture.
+
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+
 2012-07-17  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: rename printer.print_update to printer.write_update to match metered_stream

@@ -335,6 +335,12 @@ sub determineArchitecture
         $architecture = `arch`;
         chomp $architecture;
     }
+
+    if (!$architecture && (isGtk() || isAppleMacWebKit() || isEfl())) {
+        # Fall back to output of `uname -m', if it is present.
+        $architecture = `uname -m`;
+        chomp $architecture;
+    }
 }
 
 sub determineNumberOfCPUs
