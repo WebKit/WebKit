@@ -1,5 +1,45 @@
 2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] EFL should use DownloadSoup instead of defining DownloadEfl
+        https://bugs.webkit.org/show_bug.cgi?id=91602
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Reuse WebProcess/Downloads/soup/DownloadSoup.cpp in EFL port
+        instead of redefining our own DownloadEfl.cpp. The EFL port
+        is also using libsoup so it is best to avoid code duplication.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * WebProcess/Downloads/Download.h:
+        (WebKit):
+        (Download):
+        * WebProcess/Downloads/efl/DownloadEfl.cpp: Removed.
+        * WebProcess/Downloads/efl/DownloadSoupErrorsEfl.cpp: Added.
+        (WebKit):
+        (WebKit::platformDownloadNetworkError):
+        (WebKit::platformDownloadDestinationError):
+        * WebProcess/Downloads/efl/FileDownloaderEfl.cpp: Removed.
+        * WebProcess/Downloads/efl/FileDownloaderEfl.h: Removed.
+        * WebProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp: Added.
+        (WebKit):
+        (WebKit::platformDownloadNetworkError):
+        (WebKit::platformDownloadDestinationError):
+        * WebProcess/Downloads/soup/DownloadSoup.cpp: Make the code
+        compile for other ports than GTK.
+        (WebKit::DownloadClient::didReceiveResponse):
+        (WebKit::DownloadClient::didReceiveData):
+        (WebKit::DownloadClient::didFail):
+        (WebKit::Download::continueWithoutCredential):
+        (WebKit):
+        (WebKit::Download::useCredential):
+        (WebKit::Download::cancelAuthenticationChallenge):
+        * WebProcess/Downloads/soup/DownloadSoupErrors.h: Added.
+        (WebKit):
+
+2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2] Add C API for Network Information API
         https://bugs.webkit.org/show_bug.cgi?id=90762
 

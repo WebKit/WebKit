@@ -929,7 +929,9 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/Downloads/DownloadAuthenticationClient.h \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.cpp \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.h \
+	Source/WebKit2/WebProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp \
 	Source/WebKit2/WebProcess/Downloads/soup/DownloadSoup.cpp \
+	Source/WebKit2/WebProcess/Downloads/soup/DownloadSoupErrors.h \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.cpp \
 	Source/WebKit2/WebProcess/FullScreen/WebFullScreenManager.h \
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \

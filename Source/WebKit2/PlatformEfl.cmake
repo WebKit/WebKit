@@ -71,8 +71,8 @@ LIST(APPEND WebKit2_SOURCES
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
 
-    WebProcess/Downloads/efl/DownloadEfl.cpp
-    WebProcess/Downloads/efl/FileDownloaderEfl.cpp
+    WebProcess/Downloads/efl/DownloadSoupErrorsEfl.cpp
+    WebProcess/Downloads/soup/DownloadSoup.cpp
 
     WebProcess/efl/WebProcessEfl.cpp
     WebProcess/efl/WebProcessMainEfl.cpp
@@ -109,7 +109,7 @@ LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/C/soup"
     "${WEBKIT2_DIR}/UIProcess/API/efl"
     "${WEBKIT2_DIR}/UIProcess/soup"
-    "${WEBKIT2_DIR}/WebProcess/Downloads/efl"
+    "${WEBKIT2_DIR}/WebProcess/Downloads/soup"
     "${WEBKIT2_DIR}/WebProcess/efl"
     "${WEBKIT2_DIR}/WebProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/efl"

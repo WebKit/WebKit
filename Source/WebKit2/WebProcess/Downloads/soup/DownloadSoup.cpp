@@ -28,14 +28,17 @@
 #include "Download.h"
 
 #include "DataReference.h"
-#include <WebCore/ErrorsGtk.h>
+#include "DownloadSoupErrors.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandleInternal.h>
 #include <gio/gio.h>
-#include <glib/gi18n-lib.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(GTK)
+#include <glib/gi18n-lib.h>
+#endif
 
 using namespace WebCore;
 
@@ -60,8 +63,7 @@ public:
         m_download->didReceiveResponse(response);
 
         if (response.httpStatusCode() >= 400) {
-            downloadFailed(downloadNetworkError(ResourceError(errorDomainDownload, response.httpStatusCode(),
-                                                              response.url().string(), response.httpStatusText())));
+            downloadFailed(platformDownloadNetworkError(response.httpStatusCode(), response.url().string(), response.httpStatusText()));
             return;
         }
 
@@ -76,9 +78,13 @@ public:
         bool overwrite;
         String destinationURI = m_download->decideDestinationWithSuggestedFilename(suggestedFilename.utf8().data(), overwrite);
         if (destinationURI.isEmpty()) {
-            GOwnPtr<char> errorMessage(g_strdup_printf(_("Cannot determine destination URI for download with suggested filename %s"),
-                                                       suggestedFilename.utf8().data()));
-            downloadFailed(downloadDestinationError(response, errorMessage.get()));
+#if PLATFORM(GTK)
+            GOwnPtr<char> buffer(g_strdup_printf(_("Cannot determine destination URI for download with suggested filename %s"), suggestedFilename.utf8().data()));
+            String errorMessage = String::fromUTF8(buffer.get());
+#else
+            String errorMessage = makeString("Cannot determine destination URI for download with suggested filename ", suggestedFilename);
+#endif
+            downloadFailed(platformDownloadDestinationError(response, errorMessage));
             return;
         }
 
@@ -86,7 +92,7 @@ public:
         GOwnPtr<GError> error;
         m_outputStream = adoptGRef(g_file_replace(file.get(), 0, TRUE, G_FILE_CREATE_NONE, 0, &error.outPtr()));
         if (!m_outputStream) {
-            downloadFailed(downloadDestinationError(response, error->message));
+            downloadFailed(platformDownloadDestinationError(response, error->message));
             return;
         }
 
@@ -99,7 +105,7 @@ public:
         GOwnPtr<GError> error;
         g_output_stream_write_all(G_OUTPUT_STREAM(m_outputStream.get()), data, length, &bytesWritten, 0, &error.outPtr());
         if (error) {
-            downloadFailed(downloadDestinationError(ResourceResponse(m_response.get()), error->message));
+            downloadFailed(platformDownloadDestinationError(ResourceResponse(m_response.get()), error->message));
             return;
         }
         m_download->didReceiveData(bytesWritten);
@@ -113,7 +119,7 @@ public:
 
     void didFail(ResourceHandle*, const ResourceError& error)
     {
-        downloadFailed(downloadNetworkError(error));
+        downloadFailed(platformDownloadNetworkError(error.errorCode(), error.failingURL(), error.localizedDescription()));
     }
 
     void wasBlocked(ResourceHandle*)
@@ -194,6 +200,21 @@ void Download::receivedRequestToContinueWithoutCredential(const AuthenticationCh
 }
 
 void Download::receivedCancellation(const AuthenticationChallenge& authenticationChallenge)
+{
+    notImplemented();
+}
+
+void Download::continueWithoutCredential(const AuthenticationChallenge &)
+{
+    notImplemented();
+}
+
+void Download::useCredential(const AuthenticationChallenge&, const Credential&)
+{
+    notImplemented();
+}
+
+void Download::cancelAuthenticationChallenge(const AuthenticationChallenge&)
 {
     notImplemented();
 }
