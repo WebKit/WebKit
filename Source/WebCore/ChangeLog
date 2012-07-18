@@ -1,3 +1,18 @@
+2012-07-18  Luke Macpherson   <macpherson@chromium.org>
+
+        Fix null pointer dereference introduced by Changeset 121874.
+        https://bugs.webkit.org/show_bug.cgi?id=91578
+
+        Reviewed by Pavel Feldman.
+
+        In http://trac.webkit.org/changeset/121874/trunk/Source/WebCore/inspector/InspectorStyleSheet.cpp I introduced code that
+        dereferences the return value of ownerDocument() without doing a null check. This was a bad idea.
+
+        No new tests. I don't have a repro case, but it is clear from reading the code for ownerDocument() that it can return null.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::ensureSourceData):
+
 2012-07-17  Yoshifumi Inoue  <yosin@chromium.org>
 
         Decimal constructor with 99999999999999999 loses last digit
