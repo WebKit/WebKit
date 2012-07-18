@@ -637,9 +637,8 @@ WebInspector.ResourcesPanel.prototype = {
 
     /**
      * @param {string} query
-     * @param {boolean} loop
      */
-    performSearch: function(query, loop)
+    performSearch: function(query)
     {
         this._resetSearchResults();
         var regex = WebInspector.SourceFrame.createSearchRegex(query);
@@ -749,32 +748,22 @@ WebInspector.ResourcesPanel.prototype = {
         this._forAllResourceTreeElements(callback);
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToNextSearchResult: function(loop)
+    jumpToNextSearchResult: function()
     {
         if (!this.currentSearchMatches)
-            return false;
+            return;
         var currentTreeElement = this.sidebarTree.selectedTreeElement;
         var nextSearchResult = this._searchController.nextSearchResult(currentTreeElement);
         this._showSearchResult(nextSearchResult);
-        return true;
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToPreviousSearchResult: function(loop)
+    jumpToPreviousSearchResult: function()
     {
         if (!this.currentSearchMatches)
-            return false;
+            return;
         var currentTreeElement = this.sidebarTree.selectedTreeElement;
         var previousSearchResult = this._searchController.previousSearchResult(currentTreeElement);
         this._showSearchResult(previousSearchResult);
-        return true;
     },
 
     _forAllResourceTreeElements: function(callback)

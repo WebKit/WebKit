@@ -270,12 +270,9 @@ WebInspector.SourceFrame.prototype = {
         this._innerSetSelectionIfNeeded();
     },
 
-    /**
-     * @param {boolean} userInput
-     */
-    beforeTextChanged: function(userInput)
+    beforeTextChanged: function()
     {
-        if (userInput)
+        if (!this._isReplacing)
             WebInspector.searchController.cancelSearch();
         this.clearMessages();
     },
@@ -355,7 +352,7 @@ WebInspector.SourceFrame.prototype = {
 
             if (shiftToIndex)
                 this._searchResults = this._searchResults.rotate(shiftToIndex);
-            
+
             callback(this, this._searchResults.length);
         }
 
@@ -431,17 +428,16 @@ WebInspector.SourceFrame.prototype = {
      */
     replaceSearchMatchWith: function(text)
     {
-        this.beforeTextChanged(false);
-
         var range = this._searchResults[this._currentSearchResultIndex];
         if (!range)
             return;
         this._textEditor.markAndRevealRange(null);
-        var newRange = this._textModel.editRange(range, text);
-        this.afterTextChanged(range, newRange);
 
-        // Collapse current match so that we don't replace things twice. 
-        this._textEditor.markAndRevealRange(newRange.collapseToEnd());
+        this._isReplacing = true;
+        var newRange = this._textEditor.editRange(range, text);
+        delete this._isReplacing;
+
+        this._textEditor.setSelection(newRange.collapseToEnd());
     },
 
     /**
@@ -450,12 +446,15 @@ WebInspector.SourceFrame.prototype = {
      */
     replaceAllWith: function(query, replacement)
     {
-        this.beforeTextChanged(false);
+        this._textEditor.markAndRevealRange(null);
+
         var text = this._textModel.text();
         var range = this._textModel.range();
         text = text.replace(WebInspector.SourceFrame.createSearchRegex(query, "g"), replacement);
-        var newRange = this._textModel.editRange(range, text);
-        this.afterTextChanged(range, newRange);
+
+        this._isReplacing = true;
+        this._textEditor.editRange(range, text);
+        delete this._isReplacing;
     },
 
     _collectRegexMatches: function(regexObject)
@@ -645,7 +644,7 @@ WebInspector.TextEditorDelegateForSourceFrame = function(sourceFrame)
 WebInspector.TextEditorDelegateForSourceFrame.prototype = {
     beforeTextChanged: function()
     {
-        this._sourceFrame.beforeTextChanged(true);
+        this._sourceFrame.beforeTextChanged();
     },
 
     afterTextChanged: function(oldRange, newRange)

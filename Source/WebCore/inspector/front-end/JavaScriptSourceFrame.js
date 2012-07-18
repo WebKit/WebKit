@@ -154,9 +154,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         this._restoreBreakpointsAfterEditing();
     },
 
-    beforeTextChanged: function(userInput)
+    beforeTextChanged: function()
     {
-        WebInspector.SourceFrame.prototype.beforeTextChanged.call(this, userInput);
+        WebInspector.SourceFrame.prototype.beforeTextChanged.call(this);
         this._removeBreakpointsBeforeEditing();
     },
 

@@ -1166,32 +1166,18 @@ WebInspector.NetworkLogView.prototype = {
         this._highlightNthMatchedRequest(newMatchedRequestIndex, false);
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToPreviousSearchResult: function(loop)
+    jumpToPreviousSearchResult: function()
     {
         if (!this._matchedRequests.length)
-            return false;
-        if (!loop && this._currentMatchedRequestIndex <= 0)
-            return false;
+            return;
         this._highlightNthMatchedRequest((this._currentMatchedRequestIndex + this._matchedRequests.length - 1) % this._matchedRequests.length, true);
-        return true;
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToNextSearchResult: function(loop)
+    jumpToNextSearchResult: function()
     {
         if (!this._matchedRequests.length)
-            return false;
-        if (!loop && this._currentMatchedRequestIndex + 1 >= this._matchedRequests.length)
-            return false;
+            return;
         this._highlightNthMatchedRequest((this._currentMatchedRequestIndex + 1) % this._matchedRequests.length, true);
-        return true;
     },
 
     searchCanceled: function()
@@ -1438,20 +1424,14 @@ WebInspector.NetworkPanel.prototype = {
         this._networkLogView.performSearch(searchQuery);
     },
 
-    /**
-     * @param {boolean} loop
-     */
-    jumpToPreviousSearchResult: function(loop)
+    jumpToPreviousSearchResult: function()
     {
-        this._networkLogView.jumpToPreviousSearchResult(loop);
+        this._networkLogView.jumpToPreviousSearchResult();
     },
 
-    /**
-     * @param {boolean} loop
-     */
-    jumpToNextSearchResult: function(loop)
+    jumpToNextSearchResult: function()
     {
-        this._networkLogView.jumpToNextSearchResult(loop);
+        this._networkLogView.jumpToNextSearchResult();
     },
 
     searchCanceled: function()

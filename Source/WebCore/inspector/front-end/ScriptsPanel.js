@@ -573,6 +573,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         // ScriptsNavigator does not need to update on EditorClosed.
         this._updateScriptViewStatusBarItems();
+        WebInspector.searchController.resetSearch();
     },
 
     _editorSelected: function(event)
@@ -581,6 +582,7 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame = this._showFile(uiSourceCode);
         this._navigatorController.hideNavigatorOverlay();
         sourceFrame.focus();
+        WebInspector.searchController.resetSearch();
     },
 
     _scriptSelected: function(event)
@@ -878,9 +880,8 @@ WebInspector.ScriptsPanel.prototype = {
 
     /**
      * @param {string} query
-     * @param {boolean} loop
      */
-    performSearch: function(query, loop)
+    performSearch: function(query)
     {
         WebInspector.searchController.updateSearchMatchesCount(0, this);
 
@@ -899,57 +900,46 @@ WebInspector.ScriptsPanel.prototype = {
                 return;
 
             WebInspector.searchController.updateSearchMatchesCount(searchMatches, this);
-            view.jumpToNextSearchResult(loop);
+            view.jumpToNextSearchResult();
             WebInspector.searchController.updateCurrentMatchIndex(view.currentSearchResultIndex, this);
         }
 
         this._searchView.performSearch(query, finishedCallback.bind(this));
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToNextSearchResult: function(loop)
+    jumpToNextSearchResult: function()
     {
         if (!this._searchView)
-            return false;
+            return;
 
         if (this._searchView !== this.visibleView) {
-            this.performSearch(this._searchQuery, loop);
-            return false;
+            this.performSearch(this._searchQuery);
+            return;
         }
 
-        if (this._searchView.showingLastSearchResult()) {
-            if (!loop)
-                return false;
+        if (this._searchView.showingLastSearchResult())
             this._searchView.jumpToFirstSearchResult();
-        } else
+        else
             this._searchView.jumpToNextSearchResult();
         WebInspector.searchController.updateCurrentMatchIndex(this._searchView.currentSearchResultIndex, this);
         return true;
     },
 
-    /**
-     * @param {boolean} loop
-     */
-    jumpToPreviousSearchResult: function(loop)
+    jumpToPreviousSearchResult: function()
     {
         if (!this._searchView)
             return false;
 
         if (this._searchView !== this.visibleView) {
-            this.performSearch(this._searchQuery, loop);
+            this.performSearch(this._searchQuery);
             if (this._searchView)
                 this._searchView.jumpToLastSearchResult();
             return;
         }
 
-        if (this._searchView.showingFirstSearchResult()) {
-            if (!loop)
-                return false;
+        if (this._searchView.showingFirstSearchResult())
             this._searchView.jumpToLastSearchResult();
-        } else
+        else
             this._searchView.jumpToPreviousSearchResult();
         WebInspector.searchController.updateCurrentMatchIndex(this._searchView.currentSearchResultIndex, this);
     },
@@ -968,7 +958,7 @@ WebInspector.ScriptsPanel.prototype = {
      */
     replaceSelectionWith: function(text)
     {
-        var view = /** @type {WebInspector.SourceFrame} */ this._searchView;
+        var view = /** @type {WebInspector.SourceFrame} */ this.visibleView;
         view.replaceSearchMatchWith(text);
     },
 
@@ -978,7 +968,7 @@ WebInspector.ScriptsPanel.prototype = {
      */
     replaceAllWith: function(query, text)
     {
-        var view = /** @type {WebInspector.SourceFrame} */ this._searchView;
+        var view = /** @type {WebInspector.SourceFrame} */ this.visibleView;
         view.replaceAllWith(query, text);
     },
 

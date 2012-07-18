@@ -1,3 +1,92 @@
+2012-07-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: remove search replace from behind experiment, polish the behavior
+        https://bugs.webkit.org/show_bug.cgi?id=91519
+
+        Reviewed by Vsevolod Vlasov.
+
+        - This change makes replace loop with no boundary, removes the loop parameter
+          from jumpToNext/Previous;
+        - Lays out replace as a second row
+        - Fixes replace all with no search matches
+        - Splits Search and Search and Replace
+        - Introduces explicit Next / Previous buttons in the search mode
+        - Introduces editRange on the TextEditor so that it was preserving the undo stack
+          (we'll need to fix editor so that it does not require it).
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ConsolePanel.js:
+        (WebInspector.ConsolePanel.prototype.performSearch):
+        (WebInspector.ConsolePanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ConsolePanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ElementsPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionPanel.prototype.performSearch):
+        (WebInspector.ExtensionPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ExtensionPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.beforeTextChanged):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype.jumpToPreviousSearchResult):
+        (WebInspector.NetworkLogView.prototype.jumpToNextSearchResult):
+        (WebInspector.NetworkPanel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.NetworkPanel.prototype.jumpToNextSearchResult):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.performSearch):
+        (WebInspector.Panel.prototype.jumpToNextSearchResult):
+        (WebInspector.Panel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ProfilesPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ResourcesPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._editorClosed):
+        (WebInspector.ScriptsPanel.prototype._editorSelected):
+        (WebInspector.ScriptsPanel.prototype.performSearch.finishedCallback):
+        (WebInspector.ScriptsPanel.prototype.performSearch):
+        (WebInspector.ScriptsPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ScriptsPanel.prototype.jumpToPreviousSearchResult):
+        (WebInspector.ScriptsPanel.prototype.replaceSelectionWith):
+        (WebInspector.ScriptsPanel.prototype.replaceAllWith):
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController):
+        (WebInspector.SearchController.prototype.cancelSearch):
+        (WebInspector.SearchController.prototype.resetSearch):
+        (WebInspector.SearchController.prototype.handleShortcut):
+        (WebInspector.SearchController.prototype._updateSearchNavigationButtonState):
+        (WebInspector.SearchController.prototype._updateReplaceVisibility):
+        (WebInspector.SearchController.prototype._onKeyDown):
+        (WebInspector.SearchController.prototype._onNextButtonSearch):
+        (WebInspector.SearchController.prototype._onPrevButtonSearch):
+        (WebInspector.SearchController.prototype._performSearch):
+        (WebInspector.SearchController.prototype._updateReplaceDetailsVisibility):
+        (WebInspector.SearchController.prototype._replace):
+        (WebInspector.SearchController.prototype._replaceAll):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.beforeTextChanged):
+        (WebInspector.SourceFrame.prototype.performSearch.doFindSearchMatches):
+        (WebInspector.SourceFrame.prototype.performSearch):
+        (WebInspector.SourceFrame.prototype.replaceSearchMatchWith):
+        (WebInspector.SourceFrame.prototype.replaceAllWith):
+        (WebInspector.TextEditorDelegateForSourceFrame.prototype.beforeTextChanged):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor.prototype.editRange):
+        * inspector/front-end/inspector.css:
+        (.toolbar-search-replace .search-replace):
+        (.toolbar-search):
+        (.toolbar-search-replace):
+        (.toolbar-search-close-button):
+        (.toolbar-search-close-button:hover):
+        (.toolbar-search-close-button:active):
+        (.toolbar-search input[type="checkbox"]):
+        (.toolbar-search-replace .toolbar-replace-control):
+
 2012-07-18  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][EFL] Divide ENABLE(WEBGL) into ENABLE(WEBGL) and USE(3D_GRAPHICS) in CMakeLists.txt

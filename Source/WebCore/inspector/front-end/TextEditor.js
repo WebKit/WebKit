@@ -232,6 +232,20 @@ WebInspector.TextEditor.prototype = {
         this._updatePanelOffsets();
     },
 
+    /**
+     * @param {WebInspector.TextRange} range
+     * @param {string} text
+     * @return {WebInspector.TextRange}
+     */
+    editRange: function(range, text)
+    {
+        this._enterInternalTextChangeMode();
+        this._textModel.markUndoableState();
+        var newRange = this._textModel.editRange(range, text);
+        this._exitInternalTextChangeMode(range, newRange);
+        return newRange;
+    },
+
     _enterInternalTextChangeMode: function()
     {
         this._internalTextChangeMode = true;

@@ -269,12 +269,18 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     padding: 0 2px;
     margin: 0;
     width: 165px;
-    position: relative;
-    top: 1px;
 }
 
 .search-replace:focus {
     outline: none;
+}
+
+.toolbar-search {
+    border-spacing: 1px;
+}
+
+.toolbar-search td {
+    padding: 0 5px 0 0;
 }
 
 .toolbar-search-navigation-controls {
@@ -299,11 +305,6 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     opacity: 1.0;
 }
 
-.toolbar-search {
-    line-height: 19px;
-    height: 22px;
-}
-
 .toolbar-search input[type="checkbox"] {
     position: relative;
     margin-top: -1px;
@@ -314,9 +315,10 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
 .toolbar-search button {
     border: 1px solid rgb(163, 163, 163);
     border-radius: 12px;
-    margin: 0 0 0 6px;
+    margin: 0 6px;
     font-size: 11px;
     background-image: -webkit-linear-gradient(rgb(241, 241, 241), rgb(220, 220, 220));
+    width: 100%;
 }
 
 .toolbar-search button:active {
@@ -328,17 +330,16 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     position: relative;
     background-color: white;
     border: 1px solid rgb(163, 163, 163);
-    margin: 1px 2px 1px 5px;
     height: 20px;
     border-radius: 2px;
-    padding-right: 36px;
+    padding-top: 1px;
 }
 
 .toolbar-replace-control {
     border: 1px solid rgb(163, 163, 163);
     height: 20px;
     border-radius: 2px;
-    margin-left: 5px;
+    width: 100%;
 }
 
 .toolbar-search-navigation.enabled:active {
@@ -2866,5 +2867,4 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
     right: 0;
     font-size: 11px;
     height: auto;
-    padding-left: 5px;
 }

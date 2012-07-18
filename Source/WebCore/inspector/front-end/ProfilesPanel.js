@@ -739,9 +739,8 @@ WebInspector.ProfilesPanel.prototype = {
 
     /**
      * @param {string} query
-     * @param {boolean} loop
      */
-    performSearch: function(query, loop)
+    performSearch: function(query)
     {
         this.searchCanceled();
 
@@ -816,14 +815,10 @@ WebInspector.ProfilesPanel.prototype = {
         this._currentSearchChunkIntervalIdentifier = chunkIntervalIdentifier;
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToNextSearchResult: function(loop)
+    jumpToNextSearchResult: function()
     {
         if (!this.showView || !this._searchResults || !this._searchResults.length)
-            return false;
+            return;
 
         var showFirstResult = false;
 
@@ -853,17 +848,12 @@ WebInspector.ProfilesPanel.prototype = {
             currentView.jumpToFirstSearchResult();
         else
             currentView.jumpToNextSearchResult();
-        return true;
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToPreviousSearchResult: function(loop)
+    jumpToPreviousSearchResult: function()
     {
         if (!this.showView || !this._searchResults || !this._searchResults.length)
-            return false;
+            return;
 
         var showLastResult = false;
 
@@ -893,7 +883,6 @@ WebInspector.ProfilesPanel.prototype = {
             currentView.jumpToLastSearchResult();
         else
             currentView.jumpToPreviousSearchResult();
-        return true;
     },
 
     _searchableViews: function()

@@ -78,9 +78,8 @@ WebInspector.ConsolePanel.prototype = {
 
     /**
      * @param {string} query
-     * @param {boolean} loop
      */
-    performSearch: function(query, loop)
+    performSearch: function(query)
     {
         WebInspector.searchController.updateSearchMatchesCount(0, this);
         this.searchCanceled();
@@ -100,34 +99,20 @@ WebInspector.ConsolePanel.prototype = {
             this._jumpToSearchResult(0);
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToNextSearchResult: function(loop)
+    jumpToNextSearchResult: function()
     {
         if (!this._searchResults || !this._searchResults.length)
-            return false;
-        if (!loop && this._currentSearchResultIndex + 1 >= this._searchResults.length)
-            return false;
+            return;
         this._jumpToSearchResult((this._currentSearchResultIndex + 1) % this._searchResults.length);
-        return true;
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToPreviousSearchResult: function(loop)
+    jumpToPreviousSearchResult: function()
     {
         if (!this._searchResults || !this._searchResults.length)
-            return false;
+            return;
         var index = this._currentSearchResultIndex - 1;
-        if (index === -1) {
-            if (!loop)
-                return false;
+        if (index === -1)
             index = this._searchResults.length - 1;
-        }
         this._jumpToSearchResult(index);
         return true;
     },

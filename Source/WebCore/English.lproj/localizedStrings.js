@@ -723,4 +723,4 @@ localizedStrings["Time End"] = "Time End";
 localizedStrings["Find"] = "Find";
 localizedStrings["Replace"] = "Replace";
 localizedStrings["Replace All"] = "Replace All";
-localizedStrings["Skip"] = "Skip";
+localizedStrings["Previous"] = "Previous";

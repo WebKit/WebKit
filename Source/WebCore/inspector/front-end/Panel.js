@@ -108,30 +108,19 @@ WebInspector.Panel.prototype = {
 
     /**
      * @param {string} query
-     * @param {boolean} loop
      */
-    performSearch: function(query, loop)
+    performSearch: function(query)
     {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean} true iff operation is successful
-     */
-    jumpToNextSearchResult: function(loop)
+    jumpToNextSearchResult: function()
     {
-        return false;
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean} true iff operation is successful
-     */
-    jumpToPreviousSearchResult: function(loop)
+    jumpToPreviousSearchResult: function()
     {
-        return false;
     },
 
     /**

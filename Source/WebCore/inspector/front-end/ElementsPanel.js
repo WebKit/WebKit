@@ -294,9 +294,8 @@ WebInspector.ElementsPanel.prototype = {
 
     /**
      * @param {string} query
-     * @param {boolean} loop
      */
-    performSearch: function(query, loop)
+    performSearch: function(query)
     {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
@@ -493,41 +492,26 @@ WebInspector.ElementsPanel.prototype = {
         }
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToNextSearchResult: function(loop)
+    jumpToNextSearchResult: function()
     {
         if (!this._searchResults)
-            return false;
+            return;
 
         this._hideSearchHighlights();
-        if (++this._currentSearchResultIndex >= this._searchResults.length) {
-            if (!loop)
-                return false;
+        if (++this._currentSearchResultIndex >= this._searchResults.length)
             this._currentSearchResultIndex = 0;
-        }
-            
+
         this._highlightCurrentSearchResult();
-        return true;
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToPreviousSearchResult: function(loop)
+    jumpToPreviousSearchResult: function()
     {
         if (!this._searchResults)
-            return false;
+            return;
 
         this._hideSearchHighlights();
-        if (--this._currentSearchResultIndex < 0) {
-            if (!loop)
-                return false;
+        if (--this._currentSearchResultIndex < 0)
             this._currentSearchResultIndex = (this._searchResults.length - 1);
-        }
 
         this._highlightCurrentSearchResult();
         return true;

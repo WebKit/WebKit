@@ -153,34 +153,23 @@ WebInspector.ExtensionPanel.prototype = {
 
     /**
      * @param {string} query
-     * @param {boolean} loop
      */
-    performSearch: function(query, loop)
+    performSearch: function(query)
     {
         WebInspector.extensionServer.notifySearchAction(this.name, WebInspector.extensionAPI.panels.SearchAction.PerformSearch, query);
         WebInspector.Panel.prototype.performSearch.apply(this, arguments);
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToNextSearchResult: function(loop)
+    jumpToNextSearchResult: function()
     {
         WebInspector.extensionServer.notifySearchAction(this.name, WebInspector.extensionAPI.panels.SearchAction.NextSearchResult);
-        WebInspector.Panel.prototype.jumpToNextSearchResult.call(this, loop);
-        return true;
+        WebInspector.Panel.prototype.jumpToNextSearchResult.call(this);
     },
 
-    /**
-     * @param {boolean} loop
-     * @return {boolean}
-     */
-    jumpToPreviousSearchResult: function(loop)
+    jumpToPreviousSearchResult: function()
     {
         WebInspector.extensionServer.notifySearchAction(this.name, WebInspector.extensionAPI.panels.SearchAction.PreviousSearchResult);
-        WebInspector.Panel.prototype.jumpToPreviousSearchResult.call(this, loop);
-        return true;
+        WebInspector.Panel.prototype.jumpToPreviousSearchResult.call(this);
     },
 
     _addStyleRule: function(selector, body)
