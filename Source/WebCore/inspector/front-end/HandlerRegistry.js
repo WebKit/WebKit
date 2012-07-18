@@ -96,7 +96,7 @@ WebInspector.HandlerRegistry.prototype = {
      */
     appendApplicableItems: function(contextMenu, target)
     {
-        if (!(target instanceof WebInspector.UISourceCode || target instanceof WebInspector.Resource))
+        if (!(target instanceof WebInspector.UISourceCode || target instanceof WebInspector.Resource || target instanceof WebInspector.NetworkRequest))
             return;
         var contentProvider = /** @type {WebInspector.ContentProvider} */ target;
         if (!contentProvider.contentURL())

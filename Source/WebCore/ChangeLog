@@ -1,3 +1,13 @@
+2012-07-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: [Regression] Save as file is missing in Network panel preview/response tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=91625
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/HandlerRegistry.js:
+        * inspector/front-end/NetworkPanel.js:
+
 2012-07-18  Dirk Schulze  <krit@webkit.org>
 
         SVG CSS property types with <number> don't support exponents

@@ -1447,6 +1447,8 @@ WebInspector.NetworkPanel.prototype = {
     {
         if (!(target instanceof WebInspector.NetworkRequest))
             return;
+        if (this.visibleView && this.visibleView.isShowing() && this.visibleView.request() === target)
+            return;
 
         function reveal()
         {

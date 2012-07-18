@@ -63,7 +63,7 @@ WebInspector.NetworkItemView = function(request)
         var timingView = new WebInspector.RequestTimingView(request);
         this.appendTab("timing", WebInspector.UIString("Timing"), timingView);
     }
-
+    this._request = request;
 }
 
 WebInspector.NetworkItemView.prototype = {
@@ -92,6 +92,14 @@ WebInspector.NetworkItemView.prototype = {
     {
         if (event.data.isUserGesture)
             WebInspector.settings.resourceViewTab.set(event.data.tabId);
+    },
+
+    /**
+      * @return {WebInspector.NetworkRequest}
+      */
+    request: function()
+    {
+        return this._request;
     }
 }
 
