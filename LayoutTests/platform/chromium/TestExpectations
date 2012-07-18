@@ -885,7 +885,6 @@ BUGWK66377 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
 BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
-BUGWK66377 MAC : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
 // These tests don't work with fast timers due to setTimeout
 // races. See https://bugs.webkit.org/show_bug.cgi?id=21536
@@ -1586,7 +1585,6 @@ BUGCR23473 MAC : fast/repaint/transform-disable-layoutstate.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-relative-position.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-repaint-descendants.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
-BUGCR23473 LION SNOWLEOPARD : fast/repaint/transform-translate.html = IMAGE
 
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
@@ -2837,8 +2835,7 @@ BUGWK70066 SKIP : fast/hidpi = TIMEOUT
 BUGWK70066 SKIP : svg/as-image/image-respects-deviceScaleFactor.html = TIMEOUT
 
 // Flaky tests from ~r97647
-BUGWK70298 : fast/table/border-collapsing/cached-69296.html = IMAGE PASS
-BUGWK70298 LION : plugins/hidden-iframe-with-swf-plugin.html = TEXT
+BUGWK70298 : fast/table/border-collapsing/cached-69296.html = IMAGE
 
 // Failing since ~r97700.
 BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
@@ -3020,8 +3017,6 @@ BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSI
 
 BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
-BUGV8_1948 MAC : fast/js/dfg-put-by-id-prototype-check.html = TEXT
-
 // Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
 WONTFIX : fast/js/stack-trace.html = TEXT
 
@@ -3093,7 +3088,6 @@ BUGWK81145 LION : fast/repaint/scale-page-shrink.html = IMAGE
 BUGWK81145 LION : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE
 BUGWK81145 LION : fast/writing-mode/vertical-align-table-baseline.html = IMAGE
 BUGWK81145 LION : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
-BUGWK81145 LION : compositing/geometry/empty-embed-rects.html = TEXT
 BUGWK81145 LION : editing/inserting/insert-3907422-fix.html = TEXT
 BUGWK81145 LION : editing/pasteboard/paste-text-002.html = TEXT
 BUGWK81145 LION : editing/pasteboard/paste-text-003.html = TEXT
@@ -3101,9 +3095,6 @@ BUGWK81145 LION : editing/pasteboard/paste-text-004.html = TEXT
 BUGWK81145 LION : editing/pasteboard/paste-text-005.html = TEXT
 BUGWK81145 LION : editing/pasteboard/paste-text-008.html = TEXT
 BUGWK81145 LION : editing/spelling/spelling-backspace-between-lines.html = TEXT
-BUGWK81145 LION : fast/events/offsetX-offsetY.html = TEXT
-BUGWK81145 LION : fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html = TEXT
-BUGWK81145 LION : fast/loader/loadInProgress.html = TEXT
 BUGWK81145 LION : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
 BUGWK81145 LION : plugins/plugin-javascript-access.html = TEXT
 BUGWK81145 LION : fast/writing-mode/broken-ideograph-small-caps.html = CRASH
@@ -3382,11 +3373,7 @@ BUGCR124783 : media/video-currentTime-delay.html = TEXT PASS
 
 BUGWK84688 SNOWLEOPARD : compositing/animation/computed-style-during-delay.html = TEXT PASS
 
-BUGWK84689 SNOWLEOPARD : fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html = TIMEOUT PASS
-
 BUGWK84696 SNOWLEOPARD : fast/workers/storage/interrupt-database.html = TIMEOUT PASS
-
-BUGWK84714 SNOWLEOPARD : compositing/geometry/empty-embed-rects.html = TIMEOUT PASS
 
 BUGWK84720 DEBUG : fast/repaint/fixed-right-in-page-scale.html = IMAGE PASS
 

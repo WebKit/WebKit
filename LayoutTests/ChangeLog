@@ -1,3 +1,9 @@
+2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed chromium gardening, updated test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] editing/style and editing/undo tests needs update after rebaseline and new testfonts
