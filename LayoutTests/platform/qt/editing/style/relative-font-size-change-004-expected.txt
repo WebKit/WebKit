@@ -36,29 +36,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x118 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 752x90
-          text run at (14,14) width 745: "Size check should say: 30px. All text in the red boxes should appear to"
-          text run at (759,14) width 7: " "
-          text run at (14,44) width 711: "be 24px. This test checks removing font size tags when they are no"
-          text run at (725,44) width 7: " "
-          text run at (14,74) width 187: "longer necessary."
-      RenderBlock {DIV} at (0,142) size 784x30
-        RenderText {#text} at (0,0) size 129x30
-          text run at (0,0) width 129: "Size check: "
-        RenderInline {SPAN} at (0,0) size 51x30
-          RenderText {#text} at (129,0) size 51x30
-            text run at (129,0) width 51: "30px"
-      RenderBlock {DIV} at (0,188) size 784x146
-        RenderBlock {DIV} at (0,0) size 784x146 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x30
-            RenderText {#text} at (0,0) size 151x30
-              text run at (0,0) width 151: "There is a tide"
-          RenderBlock {DIV} at (14,44) size 756x58 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 212x30
-              text run at (14,14) width 212: "In the affairs of men"
-          RenderBlock (anonymous) at (14,102) size 756x30
-            RenderText {#text} at (0,0) size 256x30
-              text run at (0,0) width 256: "Which taken at the flood"
+      RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 712x84
+          text run at (14,14) width 706: "Size check should say: 30px. All text in the red boxes should appear to be"
+          text run at (720,14) width 6: " "
+          text run at (14,42) width 678: "24px. This test checks removing font size tags when they are no longer"
+          text run at (692,42) width 6: " "
+          text run at (14,70) width 100: "necessary."
+      RenderBlock {DIV} at (0,136) size 784x28
+        RenderText {#text} at (0,0) size 114x28
+          text run at (0,0) width 114: "Size check: "
+        RenderInline {SPAN} at (0,0) size 48x28
+          RenderText {#text} at (114,0) size 48x28
+            text run at (114,0) width 48: "30px"
+      RenderBlock {DIV} at (0,180) size 784x140
+        RenderBlock {DIV} at (0,0) size 784x140 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x28
+            RenderText {#text} at (0,0) size 136x28
+              text run at (0,0) width 136: "There is a tide"
+          RenderBlock {DIV} at (14,42) size 756x56 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 196x28
+              text run at (14,14) width 196: "In the affairs of men"
+          RenderBlock (anonymous) at (14,98) size 756x28
+            RenderText {#text} at (0,0) size 239x28
+              text run at (0,0) width 239: "Which taken at the flood"
 selection start: position 0 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body
 selection end:   position 21 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body
