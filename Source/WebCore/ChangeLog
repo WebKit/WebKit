@@ -1,3 +1,22 @@
+2012-07-18  Rob Buis  <rbuis@rim.com>
+
+        Alignment crash in MIMESniffer
+        https://bugs.webkit.org/show_bug.cgi?id=89787
+
+        Reviewed by Yong Li.
+
+        PR 169064
+
+        Prevent ASSERT on unaligned data. Special-case handling of unaligned data
+        to maskedCompareSlowCase.
+
+        No test, too hard to reproduce.
+
+        * platform/network/MIMESniffing.cpp:
+        (std::maskedCompareSlowCase):
+        (std):
+        (std::maskedCompare):
+
 2012-07-18  Steve VanDeBogart  <vandebo@chromium.org>
 
         Chrome/Skia: PDF print output does not have clickable links.

@@ -102,6 +102,11 @@ TypePtr reinterpret_cast_ptr(const void* ptr)
     return reinterpret_cast<TypePtr>(ptr);
 }
 #else
+template<typename Type>
+bool isPointerTypeAlignmentOkay(Type*)
+{
+    return true;
+}
 #define reinterpret_cast_ptr reinterpret_cast
 #endif
 

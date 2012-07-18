@@ -233,10 +233,27 @@ static inline size_t dataSizeNeededForImageSniffing()
     return result;
 }
 
+static inline bool maskedCompareSlowCase(const MagicNumbers& info, const char* data)
+{
+    const char* pattern = reinterpret_cast<const char*>(info.pattern);
+    const char* mask = reinterpret_cast<const char*>(info.mask);
+
+    size_t count = info.size;
+
+    for (size_t i = 0; i < count; ++i) {
+        if ((*data++ & *mask++) != *pattern++)
+            return false;
+    }
+    return true;
+}
+
 static inline bool maskedCompare(const MagicNumbers& info, const char* data, size_t dataSize)
 {
     if (dataSize < info.size)
         return false;
+
+    if (!isPointerTypeAlignmentOkay(static_cast<const uint32_t*>(static_cast<const void*>(data))))
+        return maskedCompareSlowCase(info, data);
 
     const uint32_t* pattern32 = reinterpret_cast_ptr<const uint32_t*>(info.pattern);
     const uint32_t* mask32 = reinterpret_cast_ptr<const uint32_t*>(info.mask);
