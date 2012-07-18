@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 225x89
-        RenderTableSection {TBODY} at (0,0) size 225x89
-          RenderTableRow {TR} at (0,2) size 225x85
-            RenderTableCell {TD} at (2,2) size 221x85 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 219x27
-                RenderTableSection {TBODY} at (0,0) size 219x27
-                  RenderTableRow {TR} at (0,2) size 219x23
-                    RenderTableCell {TD} at (2,2) size 215x23 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 213x21
-                        text run at (1,1) width 213: "This should all be on one line."
-              RenderTable {TABLE} at (1,28) size 90x56
-                RenderTableSection {THEAD} at (0,27) size 90x2
-                RenderBlock {CAPTION} at (0,0) size 90x27
-                  RenderTable {TABLE} at (14,0) size 62x27
-                    RenderTableSection {TBODY} at (0,0) size 62x27
-                      RenderTableRow {TR} at (0,2) size 62x23
-                        RenderTableCell {TD} at (2,2) size 58x23 [r=0 c=0 rs=1 cs=1]
-                          RenderText {#text} at (1,1) size 56x21
-                            text run at (1,1) width 56: "Caption"
-                RenderTableSection {TBODY} at (0,29) size 90x27
-                  RenderTableRow {TR} at (0,2) size 90x23
-                    RenderTableCell {TD} at (2,2) size 52x23 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 50x21
-                        text run at (1,1) width 50: "Bottom"
-                    RenderTableCell {TD} at (56,2) size 32x23 [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 30x21
-                        text run at (1,1) width 30: "line."
+      RenderTable {TABLE} at (0,0) size 189x83
+        RenderTableSection {TBODY} at (0,0) size 189x83
+          RenderTableRow {TR} at (0,2) size 189x79
+            RenderTableCell {TD} at (2,2) size 185x79 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 183x25
+                RenderTableSection {TBODY} at (0,0) size 183x25
+                  RenderTableRow {TR} at (0,2) size 183x21
+                    RenderTableCell {TD} at (2,2) size 179x21 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 177x19
+                        text run at (1,1) width 177: "This should all be on one line."
+              RenderTable {TABLE} at (1,26) size 79x52
+                RenderTableSection {THEAD} at (0,25) size 79x2
+                RenderBlock {CAPTION} at (0,0) size 79x25
+                  RenderTable {TABLE} at (12,0) size 54x25
+                    RenderTableSection {TBODY} at (0,0) size 54x25
+                      RenderTableRow {TR} at (0,2) size 54x21
+                        RenderTableCell {TD} at (2,2) size 50x21 [r=0 c=0 rs=1 cs=1]
+                          RenderText {#text} at (1,1) size 48x19
+                            text run at (1,1) width 48: "Caption"
+                RenderTableSection {TBODY} at (0,27) size 79x25
+                  RenderTableRow {TR} at (0,2) size 79x21
+                    RenderTableCell {TD} at (2,2) size 47x21 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 45x19
+                        text run at (1,1) width 45: "Bottom"
+                    RenderTableCell {TD} at (51,2) size 26x21 [r=0 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 24x19
+                        text run at (1,1) width 24: "line."

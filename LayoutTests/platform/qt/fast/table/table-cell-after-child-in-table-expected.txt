@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {DIV} at (0,0) size 209x97 [color=#FF0000] [border: (3px solid #008000)]
-        RenderTableSection (anonymous) at (19,19) size 171x59
-          RenderTableRow (anonymous) at (0,0) size 171x59
-            RenderTableCell (anonymous) at (0,19) size 79x21 [r=0 c=0 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 79x21
-                RenderText {#text} at (0,0) size 79x21
-                  text run at (0,0) width 79: "CONTENT"
-            RenderTableCell (anonymous) at (79,0) size 92x59 [border: (3px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
-              RenderText at (19,19) size 54x21
-                text run at (19,19) width 54: "AFTER"
+      RenderTable {DIV} at (0,0) size 198x95 [color=#FF0000] [border: (3px solid #008000)]
+        RenderTableSection (anonymous) at (19,19) size 160x57
+          RenderTableRow (anonymous) at (0,0) size 160x57
+            RenderTableCell (anonymous) at (0,19) size 74x19 [r=0 c=0 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 74x19
+                RenderText {#text} at (0,0) size 74x19
+                  text run at (0,0) width 74: "CONTENT"
+            RenderTableCell (anonymous) at (74,0) size 86x57 [border: (3px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
+              RenderText at (19,19) size 48x19
+                text run at (19,19) width 48: "AFTER"

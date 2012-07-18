@@ -182,14 +182,6 @@ fast/replaced/replaced-breaking-mixture.html
 fast/replaced/replaced-breaking.html
 fast/replaced/width100percent-searchfield.html
 fast/replaced/width100percent-textfield.html
-fast/table/018.html
-fast/table/border-collapsing/004-vertical.html
-fast/table/border-collapsing/004.html
-fast/table/colspanMinWidth.html
-fast/table/invisible-cell-background.html
-fast/table/prepend-in-anonymous-table.html
-fast/table/spanOverlapRepaint.html
-fast/table/text-field-baseline.html
 fast/transforms/transformed-focused-text-input.html
 http/tests/navigation/javascriptlink-frames.html
 http/tests/navigation/postredirect-basic.html

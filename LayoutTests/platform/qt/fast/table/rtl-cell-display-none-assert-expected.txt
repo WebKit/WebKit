@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 194x21
-          text run at (0,0) width 194: "This is a regression test for "
-        RenderInline {I} at (0,0) size 735x42
-          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
-            RenderText {#text} at (194,0) size 379x21
-              text run at (194,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9652"
-          RenderText {#text} at (573,0) size 735x42
-            text run at (573,0) width 4: " "
-            text run at (577,0) width 158: "Assertion failure when"
-            text run at (0,21) width 303: "changing an RTL table cell to display:none"
-        RenderText {#text} at (303,21) size 4x21
-          text run at (303,21) width 4: "."
-      RenderBlock {HR} at (0,58) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,76) size 784x21
-        RenderText {#text} at (0,0) size 288x21
-          text run at (0,0) width 288: "No assertion failure means TEST PASS."
-      RenderTable {TABLE} at (0,113) size 53x29 [border: (1px solid #008000)]
-        RenderTableSection {TBODY} at (1,1) size 51x27
-          RenderTableRow {TR} at (0,2) size 51x23
-            RenderTableCell {TD} at (2,2) size 47x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 45x21
-                text run at (1,1) width 45: "Lorem"
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 164x19
+          text run at (0,0) width 164: "This is a regression test for "
+        RenderInline {I} at (0,0) size 776x38
+          RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
+            RenderText {#text} at (164,0) size 350x19
+              text run at (164,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9652"
+          RenderText {#text} at (514,0) size 776x38
+            text run at (514,0) width 4: " "
+            text run at (518,0) width 258: "Assertion failure when changing an RTL"
+            text run at (0,19) width 160: "table cell to display:none"
+        RenderText {#text} at (160,19) size 4x19
+          text run at (160,19) width 4: "."
+      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,72) size 784x19
+        RenderText {#text} at (0,0) size 245x19
+          text run at (0,0) width 245: "No assertion failure means TEST PASS."
+      RenderTable {TABLE} at (0,107) size 48x27 [border: (1px solid #008000)]
+        RenderTableSection {TBODY} at (1,1) size 46x25
+          RenderTableRow {TR} at (0,2) size 46x21
+            RenderTableCell {TD} at (2,2) size 42x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 40x19
+                text run at (1,1) width 40: "Lorem"

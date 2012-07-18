@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 166x27
-        RenderTableSection {TBODY} at (0,0) size 166x27
-          RenderTableRow {TR} at (0,2) size 166x23
-            RenderTableCell {TH} at (2,2) size 70x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 68x21
-                text run at (1,1) width 68: "Header 1"
-            RenderTableCell {TD} at (74,2) size 44x23 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 42x21
-                text run at (1,1) width 42: "Cell 1"
-            RenderTableCell {TD} at (120,2) size 44x23 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 42x21
-                text run at (1,1) width 42: "Cell 2"
-      RenderBlock (anonymous) at (0,27) size 784x63
-        RenderText {#text} at (0,0) size 104x21
-          text run at (0,0) width 104: "h1 has index 0"
-        RenderBR {BR} at (104,16) size 0x0
-        RenderText {#text} at (0,21) size 103x21
-          text run at (0,21) width 103: "c1 has index 1"
-        RenderBR {BR} at (103,37) size 0x0
-        RenderText {#text} at (0,42) size 103x21
-          text run at (0,42) width 103: "c2 has index 2"
-        RenderBR {BR} at (103,58) size 0x0
+      RenderTable {TABLE} at (0,0) size 148x25
+        RenderTableSection {TBODY} at (0,0) size 148x25
+          RenderTableRow {TR} at (0,2) size 148x21
+            RenderTableCell {TH} at (2,2) size 64x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 62x19
+                text run at (1,1) width 62: "Header 1"
+            RenderTableCell {TD} at (68,2) size 38x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x19
+                text run at (1,1) width 36: "Cell 1"
+            RenderTableCell {TD} at (108,2) size 38x21 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x19
+                text run at (1,1) width 36: "Cell 2"
+      RenderBlock (anonymous) at (0,25) size 784x57
+        RenderText {#text} at (0,0) size 87x19
+          text run at (0,0) width 87: "h1 has index 0"
+        RenderBR {BR} at (87,15) size 0x0
+        RenderText {#text} at (0,19) size 87x19
+          text run at (0,19) width 87: "c1 has index 1"
+        RenderBR {BR} at (87,34) size 0x0
+        RenderText {#text} at (0,38) size 87x19
+          text run at (0,38) width 87: "c2 has index 2"
+        RenderBR {BR} at (87,53) size 0x0

@@ -3,36 +3,36 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 179x108 [border: (1px solid #000000)]
-        RenderTableSection {THEAD} at (1,1) size 177x27
-          RenderTableRow {TR} at (0,2) size 177x23
-            RenderTableCell (anonymous) at (2,2) size 110x23 [r=0 c=0 rs=1 cs=1]
-              RenderBlock (floating) {TH} at (0,0) size 55x23
-                RenderText {#text} at (1,1) size 53x21
-                  text run at (1,1) width 53: "Head 1"
-              RenderBlock (floating) {TH} at (55,0) size 55x23
-                RenderText {#text} at (1,1) size 53x21
-                  text run at (1,1) width 53: "Head 2"
-        RenderTableSection {TFOOT} at (1,80) size 177x27
-          RenderTableRow {TR} at (0,2) size 177x23
-            RenderTableCell {TD} at (2,2) size 110x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 59x21
-                text run at (1,1) width 59: "Footer 1"
-            RenderTableCell {TD} at (114,2) size 61x23 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 59x21
-                text run at (1,1) width 59: "Footer 2"
-        RenderTableSection {TBODY} at (1,28) size 177x52
-          RenderTableRow {TR} at (0,2) size 177x23
-            RenderTableCell {TD} at (2,2) size 110x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 42x21
-                text run at (1,1) width 42: "Cell 1"
-            RenderTableCell {TD} at (114,2) size 61x23 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 42x21
-                text run at (1,1) width 42: "Cell 2"
-          RenderTableRow {TR} at (0,27) size 177x23
-            RenderTableCell {TD} at (2,27) size 110x23 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 42x21
-                text run at (1,1) width 42: "Cell 3"
-            RenderTableCell {TD} at (114,27) size 61x23 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 42x21
-                text run at (1,1) width 42: "Cell 4"
+      RenderTable {TABLE} at (0,0) size 163x100 [border: (1px solid #000000)]
+        RenderTableSection {THEAD} at (1,1) size 161x25
+          RenderTableRow {TR} at (0,2) size 161x21
+            RenderTableCell (anonymous) at (2,2) size 100x21 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (floating) {TH} at (0,0) size 50x21
+                RenderText {#text} at (1,1) size 48x19
+                  text run at (1,1) width 48: "Head 1"
+              RenderBlock (floating) {TH} at (50,0) size 50x21
+                RenderText {#text} at (1,1) size 48x19
+                  text run at (1,1) width 48: "Head 2"
+        RenderTableSection {TFOOT} at (1,74) size 161x25
+          RenderTableRow {TR} at (0,2) size 161x21
+            RenderTableCell {TD} at (2,2) size 100x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 53x19
+                text run at (1,1) width 53: "Footer 1"
+            RenderTableCell {TD} at (104,2) size 55x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 53x19
+                text run at (1,1) width 53: "Footer 2"
+        RenderTableSection {TBODY} at (1,26) size 161x48
+          RenderTableRow {TR} at (0,2) size 161x21
+            RenderTableCell {TD} at (2,2) size 100x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x19
+                text run at (1,1) width 36: "Cell 1"
+            RenderTableCell {TD} at (104,2) size 55x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x19
+                text run at (1,1) width 36: "Cell 2"
+          RenderTableRow {TR} at (0,25) size 161x21
+            RenderTableCell {TD} at (2,25) size 100x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x19
+                text run at (1,1) width 36: "Cell 3"
+            RenderTableCell {TD} at (104,25) size 55x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 36x19
+                text run at (1,1) width 36: "Cell 4"

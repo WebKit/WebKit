@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x100
-  RenderBlock {html} at (0,0) size 800x100
-    RenderBody {body} at (8,8) size 784x84
-      RenderTable {table} at (0,0) size 52x84
-        RenderBlock {caption} at (0,0) size 52x84
-          RenderText {#text} at (2,0) size 52x84
-            text run at (2,0) width 48: "PASS:"
-            text run at (2,21) width 48: "Text in"
-            text run at (0,42) width 52: "caption"
-            text run at (21,63) width 10: "1"
+layer at (0,0) size 800x92
+  RenderBlock {html} at (0,0) size 800x92
+    RenderBody {body} at (8,8) size 784x76
+      RenderTable {table} at (0,0) size 44x76
+        RenderBlock {caption} at (0,0) size 44x76
+          RenderText {#text} at (1,0) size 44x76
+            text run at (1,0) width 42: "PASS:"
+            text run at (1,19) width 42: "Text in"
+            text run at (0,38) width 44: "caption"
+            text run at (18,57) width 8: "1"
