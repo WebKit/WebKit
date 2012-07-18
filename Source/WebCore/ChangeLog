@@ -1,3 +1,15 @@
+2012-07-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Fix up old name in RuleSet::addRulesFromSheet
+        https://bugs.webkit.org/show_bug.cgi?id=91646
+
+        Reviewed by Andreas Kling.
+
+        Simple parameter rename, no change in functionality.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList): Renamed styleSelector to resolver to reflect recent rename of the parameter type.
+
 2012-07-18  Vincent Scheib  <scheib@chromium.org>
 
         Unify allowfullscreen logic in Document::webkitFullScreenEnabled and fullScreenIsAllowedForElement.
