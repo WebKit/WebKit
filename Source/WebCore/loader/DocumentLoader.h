@@ -55,6 +55,7 @@ namespace WebCore {
     class Frame;
     class FrameLoader;
     class MainResourceLoader;
+    class MemoryObjectInfo;
     class Page;
     class ResourceLoader;
     class SchedulePair;
@@ -241,6 +242,8 @@ namespace WebCore {
         void commitData(const char* bytes, size_t length);
 
         ApplicationCacheHost* applicationCacheHost() const { return m_applicationCacheHost.get(); }
+
+        virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
     protected:
         DocumentLoader(const ResourceRequest&, const SubstituteData&);

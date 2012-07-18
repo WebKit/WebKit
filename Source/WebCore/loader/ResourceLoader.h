@@ -44,6 +44,7 @@ namespace WebCore {
     class Frame;
     class FrameLoader;
     class KURL;
+    class MemoryObjectInfo;
     class ResourceHandle;
     class SharedBuffer;
     
@@ -143,6 +144,8 @@ namespace WebCore {
         bool reachedTerminalState() const { return m_reachedTerminalState; }
 
         void setShouldBufferData(DataBufferingPolicy);
+
+        virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
     protected:
         ResourceLoader(Frame*, ResourceLoaderOptions);

@@ -43,6 +43,7 @@ OBJC_CLASS NSData;
 
 namespace WebCore {
     
+class MemoryObjectInfo;
 class PurgeableBuffer;
 
 class SharedBuffer : public RefCounted<SharedBuffer> {
@@ -113,6 +114,8 @@ public:
     //          pos += length;
     //      }
     unsigned getSomeData(const char*& data, unsigned position = 0) const;
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     SharedBuffer();

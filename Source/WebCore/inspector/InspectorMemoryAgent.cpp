@@ -545,6 +545,12 @@ public:
         m_domMemoryUsage.processDeferredInstrumentedPointers();
     }
 
+    void visitFrame(Frame* frame)
+    {
+        m_domMemoryUsage.addInstrumentedMember(frame);
+        m_domMemoryUsage.processDeferredInstrumentedPointers();
+    }
+
     void visitBindings()
     {
         ScriptProfiler::collectBindingMemoryInfo(&m_domMemoryUsage);
@@ -570,8 +576,10 @@ static PassRefPtr<InspectorMemoryBlock> domTreeInfo(Page* page, VisitedObjects& 
 
     // Make sure all documents reachable from the main frame are accounted.
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (Document* doc = frame->document())
+        if (Document* doc = frame->document()) {
             domTreesIterator.visitNode(doc);
+            domTreesIterator.visitFrame(frame);
+        }
     }
 
     domTreesIterator.visitBindings();

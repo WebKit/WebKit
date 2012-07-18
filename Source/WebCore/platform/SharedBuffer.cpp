@@ -27,6 +27,7 @@
 #include "config.h"
 #include "SharedBuffer.h"
 
+#include "MemoryInstrumentation.h"
 #include "PurgeableBuffer.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -243,6 +244,16 @@ const Vector<char>& SharedBuffer::buffer() const
 #endif
     }
     return m_buffer;
+}
+
+void SharedBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<SharedBuffer> info(memoryObjectInfo, this, MemoryInstrumentation::Other);
+    info.addVector(m_buffer);
+    info.addVector(m_segments);
+    for (unsigned i = 0; i < m_segments.size(); ++i)
+        info.addRawBuffer(m_segments[i], segmentSize);
+    info.addMember(m_purgeableBuffer.get());
 }
 
 unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) const

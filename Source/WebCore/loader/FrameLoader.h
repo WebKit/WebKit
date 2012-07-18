@@ -61,6 +61,7 @@ class FormState;
 class FormSubmission;
 class FrameLoaderClient;
 class FrameNetworkingContext;
+class MemoryObjectInfo;
 class NavigationAction;
 class NetworkingContext;
 class Page;
@@ -282,6 +283,8 @@ public:
     PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
 
     NetworkingContext* networkingContext() const;
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants

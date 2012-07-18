@@ -685,6 +685,13 @@ void Frame::dispatchVisibilityStateChangeEvent()
 }
 #endif
 
+void Frame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<Frame> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    info.addInstrumentedMember(m_doc.get());
+    info.addInstrumentedMember(m_loader);
+}
+
 DOMWindow* Frame::domWindow() const
 {
     if (!m_domWindow)

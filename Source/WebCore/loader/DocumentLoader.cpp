@@ -47,6 +47,7 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MainResourceLoader.h"
+#include "MemoryInstrumentation.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include "Settings.h"
@@ -352,6 +353,24 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
     }
     ASSERT(m_frame->document()->parsing());
     m_writer.addData(bytes, length);
+}
+
+void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<DocumentLoader> info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    info.addInstrumentedMember(m_frame);
+    info.addInstrumentedMember(m_mainResourceLoader);
+    info.addInstrumentedHashSet(m_subresourceLoaders);
+    info.addInstrumentedHashSet(m_multipartSubresourceLoaders);
+    info.addInstrumentedHashSet(m_plugInStreamLoaders);
+    info.addString(m_pageTitle.string());
+    info.addString(m_overrideEncoding);
+    info.addVector(m_responses);
+    info.addHashMap(m_pendingSubstituteResources);
+    info.addHashSet(m_resourcesClientKnowsAbout);
+    info.addVector(m_resourcesLoadedFromMemoryCacheForClientNotification);
+    info.addString(m_clientRedirectSourceForHistory);
+    info.addInstrumentedMember(m_mainResourceData);
 }
 
 bool DocumentLoader::doesProgressiveLoad(const String& MIMEType) const

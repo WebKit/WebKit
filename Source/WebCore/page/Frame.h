@@ -66,6 +66,7 @@ namespace WebCore {
     class FrameDestructionObserver;
     class FrameView;
     class HTMLTableCellElement;
+    class MemoryObjectInfo;
     class RegularExpression;
     class RenderPart;
     class TiledBackingStore;
@@ -116,6 +117,8 @@ namespace WebCore {
 #if ENABLE(PAGE_VISIBILITY_API)
         void dispatchVisibilityStateChangeEvent();
 #endif
+
+        void reportMemoryUsage(MemoryObjectInfo*) const;
 
     // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 

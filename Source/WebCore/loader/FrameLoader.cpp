@@ -77,6 +77,7 @@
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MainResourceLoader.h"
+#include "MemoryInstrumentation.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
@@ -3218,6 +3219,16 @@ void FrameLoader::tellClientAboutPastMemoryCacheLoads()
 NetworkingContext* FrameLoader::networkingContext() const
 {
     return m_networkingContext.get();
+}
+
+void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<FrameLoader> info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    info.addInstrumentedMember(m_documentLoader.get());
+    info.addInstrumentedMember(m_provisionalDocumentLoader.get());
+    info.addInstrumentedMember(m_policyDocumentLoader.get());
+    info.addString(m_outgoingReferrer);
+    info.addInstrumentedHashSet(m_openedFrames);
 }
 
 bool FrameLoaderClient::hasHTMLView() const
