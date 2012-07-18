@@ -28,6 +28,7 @@
 
 """QtWebKit implementation of the Port interface."""
 
+import glob
 import logging
 import re
 import sys
@@ -92,6 +93,15 @@ class QtPort(WebKitPort):
             return self._build_path('lib/QtWebKit.framework/QtWebKit')
         else:
             return self._build_path('lib/libQtWebKit.so')
+
+    def _modules_to_search_for_symbols(self):
+        # We search in every library to be reliable in the case of building with CONFIG+=force_static_libs_as_shared.
+        if self.operating_system() == 'mac':
+            frameworks = glob.glob(os.path.join(self._build_path('lib'), '*.framework'))
+            return [os.path.join(framework, os.path.splitext(os.path.basename(framework))[0]) for framework in frameworks]
+        else:
+            suffix = 'dll' if self.operating_system() == 'win' else 'so'
+            return glob.glob(os.path.join(self._build_path('lib'), 'lib*.' + suffix))
 
     @memoized
     def qt_version(self):

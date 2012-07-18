@@ -1,3 +1,25 @@
+2012-07-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] feature detection in orwt/nrwt does not work with force_static_libs_as_shared
+        https://bugs.webkit.org/show_bug.cgi?id=91514
+
+        Reviewed by Dirk Pranke.
+
+        Analyzing libQtWebKit.so is not enough in the case of force_static_libs_as_shared.
+        We need to analyze all the shared library or at least the WebCore one.
+
+        * Scripts/webkitdirs.pm:
+        (builtDylibPathForName):
+        In orwt it is hard coded to search for symbols in the WebCore library.
+        While in theory it is possible that symbols for a given feature are not
+        located in that, it doesn't happen in practice, so returning the path of
+        the WebCore library for a force_static_libs_as_shared build is enough to
+        fix the bug and it doesn't require a bigger refactoring. For a default
+        build we still return the path of the QtWebKit lib.
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._modules_to_search_for_symbols):
+        Enumerate all dynamic libraries, not just the QtWebKit one.
+
 2012-07-18  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, more compile fixes on Chromium Win.
