@@ -88,6 +88,8 @@ inline HTMLInputElement* CalendarPickerElement::hostInput()
 
 void CalendarPickerElement::defaultEventHandler(Event* event)
 {
+    if (!renderer())
+        return;
     HTMLInputElement* input = hostInput();
     if (input->readOnly() || input->disabled())
         return;

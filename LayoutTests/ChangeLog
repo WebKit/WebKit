@@ -1,3 +1,13 @@
+2012-07-17  Kent Tamura  <tkent@chromium.org>
+
+        Fix an assertion failure in CalendarPickerElement::hostInput().
+        https://bugs.webkit.org/show_bug.cgi?id=91568
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/date/calendar-picker-type-change-onclick-expected.txt: Added.
+        * fast/forms/date/calendar-picker-type-change-onclick.html: Added.
+
 2012-07-17  MORITA Hajime <morrita@google.com>
 
         [Shadow DOM] Some distribution invalidation can drop necessary reattachment.

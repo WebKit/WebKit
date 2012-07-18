@@ -1,5 +1,19 @@
 2012-07-17  Kent Tamura  <tkent@chromium.org>
 
+        Fix an assertion failure in CalendarPickerElement::hostInput().
+        https://bugs.webkit.org/show_bug.cgi?id=91568
+
+        Reviewed by Hajime Morita.
+
+        Test: fast/forms/date/calendar-picker-type-change-onclick.html
+
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::CalendarPickerElement::defaultEventHandler):
+        It's possible that this function is called when the element is detached
+        from the document tree.
+
+2012-07-17  Kent Tamura  <tkent@chromium.org>
+
         Form state: Make a new class handling HashMap<FormElementKey, Deque<>>
         https://bugs.webkit.org/show_bug.cgi?id=91480
 
