@@ -1,3 +1,20 @@
+2012-07-18  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r117738) [Forms] Default step base should be 0 (=1970-01) for input type month
+        https://bugs.webkit.org/show_bug.cgi?id=91603
+
+        Reviewed by Kent Tamura.
+
+        This patch restores default step base value to 0 (=1970-01) as before
+        r117738.
+
+        No new tests. Existing test(fast/forms/month/month-stepup-stepdown-from-renderer.html)
+        covers this case, although it is disabled.
+
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::createStepRange): Changed default value of
+        step base to defaultMonthStepBase instead of DateComponents::minimumMonth().
+
 2012-07-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Cursor is not drawn when opengl_x11 backend is choosen.
