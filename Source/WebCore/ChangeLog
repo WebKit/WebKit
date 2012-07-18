@@ -1,3 +1,15 @@
+2012-07-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] 0.11 build broken
+        https://bugs.webkit.org/show_bug.cgi?id=91629
+
+        Reviewed by Alexis Menard.
+
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkProposeAllocation): Pass null GstStructure to
+        gst_query_add_allocation_meta(). Our propose-allocation method
+        is simple enough to not need to set it.
+
 2012-07-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: <input type="submit"> unlabelled.

@@ -355,8 +355,8 @@ static gboolean webkitVideoSinkProposeAllocation(GstBaseSink* baseSink, GstQuery
     if (!gst_video_info_from_caps(&sink->priv->info, caps))
         return FALSE;
 
-    gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE);
-    gst_query_add_allocation_meta(query, GST_VIDEO_CROP_META_API_TYPE);
+    gst_query_add_allocation_meta(query, GST_VIDEO_META_API_TYPE, 0);
+    gst_query_add_allocation_meta(query, GST_VIDEO_CROP_META_API_TYPE, 0);
     return TRUE;
 }
 #endif
