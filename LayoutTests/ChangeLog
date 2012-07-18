@@ -1,3 +1,17 @@
+2012-07-18  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Unreviewed gardening.
+
+        Updated test expectation for compositing/masks/layer-mask-placement.html.
+        Updated bug number for fast/js/mozilla/strict/assign-to-callee-name.html after filing webkit bug 91676.
+
+        Updated bug number for fast/url/ipv6.html after filing crbug.com/137938.
+
+        * platform/chromium-mac-snowleopard/compositing/masks/layer-mask-placement-expected.png: Removed.
+        * platform/chromium-mac/compositing/masks/layer-mask-placement-expected.png: Added.
+        * platform/chromium-win/compositing/masks/layer-mask-placement-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-07-18  Kenneth Russell  <kbr@google.com>
 
         Unreviewed test expectations update. Added bug ID for fast/filesystem/file-writer-truncate-extend.html flakiness.

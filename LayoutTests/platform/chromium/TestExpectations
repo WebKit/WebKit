@@ -2568,14 +2568,11 @@ BUGWK60136 WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = PASS TEXT
 
 BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 
-// New test added in r85303.
-BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE
-
 // New test added in r85454. Actual failure.
-BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
+BUGWK91676 : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 
 // Failure introduced by Chromium r83848.
-BUG_HCLAM : fast/url/ipv6.html = TEXT
+BUG137938 : fast/url/ipv6.html = TEXT
 
 // New tests in r85961 and r86442
 BUGWK60414 WIN : platform/win/plugins/visibility-hidden.html = IMAGE+TEXT
