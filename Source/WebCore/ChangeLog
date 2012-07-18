@@ -1,3 +1,31 @@
+2012-07-18  Kevin Ellis  <kevers@chromium.org>
+
+        TOUCH_ADJUSTMENT is too aggressive when snapping to large elements.
+        https://bugs.webkit.org/show_bug.cgi?id=91262
+
+        Reviewed by Antonio Gomes.
+
+        Constrains the extent to which the touch point can be adjusted when
+        generating synthetic mouse events when TOUCH_ADJUSTEMNT is enabled.
+        Previously, the target position snapped to the center of the target
+        element, which can be far removed from the touch position when tapping
+        on or near a large element.  The refined strategy is to leave the
+        adjusted position unchanged if tapping within the element or to snap
+        to the center of the overlap region if the touch point lies outside the
+        bounds of the element, but the touch area and element bounds overlap.
+        For non-rectilineary bounds, a point lying outside the element boundary
+        is pulled towards the center of the element, by an amount limited by
+        the radius of the touch area.
+
+        Tests: touchadjustment/big-div.html
+               touchadjustment/rotated-node.html
+
+        * page/TouchAdjustment.cpp:
+        (WebCore::TouchAdjustment::contentsToWindow):
+        (TouchAdjustment):
+        (WebCore::TouchAdjustment::snapTo):
+        (WebCore::TouchAdjustment::findNodeWithLowestDistanceMetric):
+
 2012-07-18  Sergey Rogulenko  <rogulenko@google.com>
 
         Web Inspector: adding pause icon for JavaScript debugging

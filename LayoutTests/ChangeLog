@@ -1,3 +1,24 @@
+2012-07-18  Kevin Ellis  <kevers@chromium.org>
+
+        TOUCH_ADJUSTMENT is too aggressive when snapping to large elements.
+        https://bugs.webkit.org/show_bug.cgi?id=91262
+
+        Reviewed by Antonio Gomes.
+
+        Adding a test case to ensure that the adjusted touch position is 
+        within the bounds of the target element and the touch area.
+        Previously, the target position snapped to the center of the target
+        element, which can be far removed from the touch area.
+
+        The second test is for non-rectilinear elements, and verifies that
+        the touch area must overlap the true bounds of the element for an
+        adjustment to occur.
+
+        * touchadjustment/big-div-expected.txt: Added.
+        * touchadjustment/big-div.html: Added.
+        * touchadjustment/rotated-node-expected.txt: Added.
+        * touchadjustment/rotated-node.html: Added.
+
 2012-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed chromium gardening, unskipped tests.

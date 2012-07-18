@@ -1,0 +1,136 @@
+<html>
+<head>
+<style>
+    #containerDiv {
+        -webkit-box-sizing: border-box;
+        border: 1px solid black;
+        height: 100px;
+        position: relative;
+        width: 100px;
+    }
+    #rotatedDiv {
+      -webkit-box-sizing: border-box;
+      -webkit-transform: rotate(45deg);
+      border: 1px solid black;
+      height: 40px;
+      left: 10px;
+      position: absolute;
+      top: 10px;
+      width: 40px;
+    }
+
+    #testDiv {
+      -webkit-box-sizing: border-box;
+      border: 1px solid black;
+      height: 40px;
+      left: 50px;
+      position: absolute;
+      top: 40px;
+      width: 40px;
+    }
+
+</style>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+
+</head>
+
+<body onload="runTests()">
+
+<div id="containerDiv">
+  <div id="rotatedDiv"></div>
+  <!-- <div id="testDiv"></div> -->
+</div>
+
+<p id='description'></p>
+<div id='console'></div>
+
+<script>
+    var adjustedNode;
+    var adjustedPoint;
+
+    function nodeAtTouch(x, y, radius)
+    {
+        var touchArea = getTouchArea(x, y, radius);
+        adjustedNode = internals.touchNodeAdjustedToBestClickableNode(touchArea.x, touchArea.y, touchArea.width, touchArea.height, document);
+    }
+
+    function getTouchArea(x, y, radius) {
+        var node = document.getElementById('containerDiv');
+        var pos = findAbsolutePosition(node);
+        return {
+            x: pos.left + x - radius,
+            y: pos.top + y - radius,
+            width: 2 * radius,
+            height: 2 * radius
+        };
+    }
+
+    function findAbsolutePosition(node) {
+        var pos = {left: 0, top: 0};
+        do {
+            pos.left += node.offsetLeft;
+            pos.top += node.offsetTop;
+        } while (node = node.offsetParent);
+        return pos;
+    }
+
+    function testDirectTouches()
+    {
+        debug('Direct Touches');
+
+        nodeAtTouch(30, 30, 20);
+        shouldBeEqualToString('adjustedNode.id', 'rotatedDiv');
+        nodeAtTouch(20, 30, 20);
+        shouldBeEqualToString('adjustedNode.id', 'rotatedDiv');
+        nodeAtTouch(40, 30, 20);
+        shouldBeEqualToString('adjustedNode.id', 'rotatedDiv');
+        nodeAtTouch(30, 20, 20);
+        shouldBeEqualToString('adjustedNode.id', 'rotatedDiv');
+        nodeAtTouch(30, 40, 20);
+        shouldBeEqualToString('adjustedNode.id', 'rotatedDiv');
+
+        nodeAtTouch(80, 80, 20);
+        shouldBeEqualToString('adjustedNode.id', 'containerDiv');
+        nodeAtTouch(80, 20, 20);
+        shouldBeEqualToString('adjustedNode.id', 'containerDiv');
+        nodeAtTouch(20, 80, 20);
+        shouldBeEqualToString('adjustedNode.id', 'containerDiv');
+    }
+
+    function testAdjustedTouches()
+    {
+        debug('\nAdjusted Touches');
+
+        // Touch overlaps center of element.
+        nodeAtTouch(10, 10, 30);
+        shouldBeEqualToString('adjustedNode.id', 'rotatedDiv');
+
+        // Touch overlaps corner of element.
+        nodeAtTouch(20, 0, 20);
+        shouldBeEqualToString('adjustedNode.id', 'rotatedDiv');
+
+        debug('\nNear Misses');
+
+        // Touch overlaps bounding-box of element, but not the actual bounds.
+        nodeAtTouch(70, 0, 20);
+        shouldBeEqualToString('adjustedNode.id', 'containerDiv');
+        nodeAtTouch(70, 60, 20);
+        shouldBeEqualToString('adjustedNode.id', 'containerDiv');
+    }
+
+    function runTests()
+    {
+        document.addEventListener('click', function() {}, false);
+        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+            description('Test touch adjustment to a non-rectilinear element.');
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testDirectTouches();
+            testAdjustedTouches();
+            isSuccessfullyParsed();
+            testRunner.notifyDone();
+        }
+    }
+</script>
+</body>
+</html>

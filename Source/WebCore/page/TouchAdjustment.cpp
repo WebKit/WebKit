@@ -239,6 +239,76 @@ float zoomableIntersectionQuotient(const IntPoint& touchHotspot, const IntRect& 
     return rect.size().area() / (float)intersection.size().area();
 }
 
+FloatPoint contentsToWindow(FrameView *view, FloatPoint pt)
+{
+    int x = static_cast<int>(pt.x() + 0.5f);
+    int y = static_cast<int>(pt.y() + 0.5f);
+    IntPoint adjusted = view->contentsToWindow(IntPoint(x, y));
+    return FloatPoint(adjusted.x(), adjusted.y());
+}
+
+bool snapTo(const SubtargetGeometry& geom, const IntPoint& touchPoint, const IntRect& touchArea, IntPoint& adjustedPoint)
+{
+    FrameView* view = geom.node()->document()->view();
+    FloatQuad quad = geom.quad();
+
+    if (quad.isRectilinear()) {
+        IntRect contentBounds = geom.boundingBox();
+        // Convert from frame coordinates to window coordinates.
+        IntRect bounds = view->contentsToWindow(contentBounds);
+        if (bounds.contains(touchPoint)) {
+            adjustedPoint = touchPoint;
+            return true;
+        }
+        if (bounds.intersects(touchArea)) {
+            bounds.intersect(touchArea);
+            adjustedPoint = bounds.center();
+            return true;
+        }
+        return false;
+    }
+
+    // Non-rectilinear element.
+    // Convert quad from content to window coordinates.
+    FloatPoint p1 = contentsToWindow(view, quad.p1());
+    FloatPoint p2 = contentsToWindow(view, quad.p2());
+    FloatPoint p3 = contentsToWindow(view, quad.p3());
+    FloatPoint p4 = contentsToWindow(view, quad.p4());
+    quad = FloatQuad(p1, p2, p3, p4);
+
+    if (quad.containsPoint(touchPoint)) {
+        adjustedPoint = touchPoint;
+        return true;
+    }
+
+    // Pull point towards the center of the element.
+    float cx = 0.25 * (p1.x() + p2.x() + p3.x() + p4.x());
+    float cy = 0.25 * (p1.y() + p2.y() + p3.y() + p4.y());
+    FloatPoint center = FloatPoint(cx, cy);
+
+    FloatSize pullDirection = center - touchPoint;
+    float distanceToCenter = pullDirection.diagonalLength();
+
+    // Use distance from center to corner of touch area to limit adjustment distance.
+    float dx = 0.5f * touchArea.width();
+    float dy = 0.5f * touchArea.height();
+    float touchRadius = sqrt(dx * dx + dy * dy);
+
+    float scaleFactor = touchRadius / distanceToCenter;
+    if (scaleFactor > 1)
+        scaleFactor = 1;
+    pullDirection.scale(scaleFactor);
+
+    int x = static_cast<int>(touchPoint.x() + pullDirection.width());
+    int y = static_cast<int>(touchPoint.y() + pullDirection.height());
+    IntPoint point(x, y);
+
+    if (quad.containsPoint(point)) {
+        adjustedPoint = point;
+        return true;
+    }
+    return false;
+}
 
 // A generic function for finding the target node with the lowest distance metric. A distance metric here is the result
 // of a distance-like function, that computes how well the touch hits the node.
@@ -249,17 +319,21 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
     float bestDistanceMetric = std::numeric_limits<float>::infinity();
     SubtargetGeometryList::const_iterator it = subtargets.begin();
     const SubtargetGeometryList::const_iterator end = subtargets.end();
+    IntPoint adjustedPoint;
     for (; it != end; ++it) {
         Node* node = it->node();
         float distanceMetric = distanceFunction(touchHotspot, touchArea, *it);
         if (distanceMetric < bestDistanceMetric) {
-            targetPoint = roundedIntPoint(it->quad().center());
-            targetArea = it->boundingBox();
-            targetNode = node;
-            bestDistanceMetric = distanceMetric;
+            if (snapTo(*it, touchHotspot, touchArea, adjustedPoint)) {
+                targetPoint = adjustedPoint;
+                targetArea = it->boundingBox();
+                targetNode = node;
+                bestDistanceMetric = distanceMetric;
+            }
         } else if (distanceMetric == bestDistanceMetric) {
             // Try to always return the inner-most element.
-            if (node->isDescendantOf(targetNode)) {
+            if (node->isDescendantOf(targetNode) && snapTo(*it, touchHotspot, touchArea, adjustedPoint)) {
+                targetPoint = adjustedPoint;
                 targetNode = node;
                 targetArea = it->boundingBox();
             }
@@ -267,9 +341,7 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
     }
     if (targetNode) {
         targetArea = targetNode->document()->view()->contentsToWindow(targetArea);
-        targetPoint = targetNode->document()->view()->contentsToWindow(targetPoint);
     }
-
     return (targetNode);
 }
 
