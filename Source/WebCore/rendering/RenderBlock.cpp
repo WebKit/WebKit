@@ -2383,7 +2383,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     LayoutUnit logicalTopEstimate = estimateLogicalTopPosition(child, marginInfo, estimateWithoutPagination);
 
     // Cache our old rect so that we can dirty the proper repaint rects if the child moves.
-    LayoutRect oldRect(child->x(), child->y() , child->width(), child->height());
+    LayoutRect oldRect = child->frameRect();
     LayoutUnit oldLogicalTop = logicalTopForChild(child);
 
 #if !ASSERT_DISABLED
@@ -2478,7 +2478,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     if (childRenderBlock && childRenderBlock->containsFloats())
         maxFloatLogicalBottom = max(maxFloatLogicalBottom, addOverhangingFloats(toRenderBlock(child), !childNeededLayout));
 
-    LayoutSize childOffset(child->x() - oldRect.x(), child->y() - oldRect.y());
+    LayoutSize childOffset = child->location() - oldRect.location();
     if (childOffset.width() || childOffset.height()) {
         view()->addLayoutDelta(childOffset);
 
@@ -3835,7 +3835,7 @@ bool RenderBlock::positionNewFloats()
         RenderBox* childBox = floatingObject->renderer();
         LayoutUnit childLogicalLeftMargin = style()->isLeftToRightDirection() ? marginStartForChild(childBox) : marginEndForChild(childBox);
 
-        LayoutRect oldRect(childBox->x(), childBox->y() , childBox->width(), childBox->height());
+        LayoutRect oldRect = childBox->frameRect();
 
         if (childBox->style()->clear() & CLEFT)
             logicalTop = max(lowestFloatLogicalBottom(FloatingObject::FloatLeft), logicalTop);

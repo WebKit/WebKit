@@ -1604,19 +1604,16 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
     o->computeRectForRepaint(repaintContainer, rect, fixed);
 }
 
-void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& rect)
+void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& oldRect)
 {
-    LayoutUnit newX = x();
-    LayoutUnit newY = y();
-    LayoutUnit newWidth = width();
-    LayoutUnit newHeight = height();
-    if (rect.x() != newX || rect.y() != newY) {
+    if (oldRect.location() != m_frameRect.location()) {
+        LayoutRect newRect = m_frameRect;
         // The child moved.  Invalidate the object's old and new positions.  We have to do this
         // since the object may not have gotten a layout.
-        m_frameRect = rect;
+        m_frameRect = oldRect;
         repaint();
         repaintOverhangingFloats(true);
-        m_frameRect = LayoutRect(newX, newY, newWidth, newHeight);
+        m_frameRect = newRect;
         repaint();
         repaintOverhangingFloats(true);
     }
@@ -3412,7 +3409,7 @@ LayoutRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit
     // FIXME: Paint the carets inside empty blocks differently than the carets before/after elements.
 
     // FIXME: What about border and padding?
-    LayoutRect rect(x(), y(), caretWidth, height());
+    LayoutRect rect(location(), LayoutSize(caretWidth, height()));
     bool ltr = box ? box->isLeftToRightDirection() : style()->isLeftToRightDirection();
 
     if ((!caretOffset) ^ ltr)

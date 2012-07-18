@@ -507,7 +507,7 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         if (HTMLMapElement* map = imageMap()) {
             LayoutRect contentBox = contentBoxRect();
             float scaleFactor = 1 / style()->effectiveZoom();
-            LayoutPoint mapLocation = pointInContainer.point() - toLayoutSize(accumulatedOffset) - LayoutSize(this->x(), this->y()) - toLayoutSize(contentBox.location());
+            LayoutPoint mapLocation = pointInContainer.point() - toLayoutSize(accumulatedOffset) - locationOffset() - toLayoutSize(contentBox.location());
             mapLocation.scale(scaleFactor, scaleFactor);
 
             if (map->mapMouseEvent(mapLocation, contentBox.size(), tempResult))

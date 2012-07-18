@@ -1228,7 +1228,7 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint&
             
             // Get our containing block.
             RenderBox* block = containingBlock();
-            localPoint.move(block->x() - firstBlock->x(), block->y() - firstBlock->y());
+            localPoint.moveBy(block->location() - firstBlock->locationOffset());
         }
 
         result.setInnerNode(n);
@@ -1366,7 +1366,7 @@ void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& 
             if (curr->hasLayer()) 
                 pos = curr->localToAbsolute();
             else if (curr->isBox())
-                pos.move(toRenderBox(curr)->x(), toRenderBox(curr)->y());
+                pos.move(toRenderBox(curr)->locationOffset());
             curr->addFocusRingRects(rects, flooredIntPoint(pos));
         }
     }

@@ -657,7 +657,7 @@ void RenderTableSection::layoutRows()
             cell->setIntrinsicPaddingBefore(intrinsicPaddingBefore);
             cell->setIntrinsicPaddingAfter(intrinsicPaddingAfter);
 
-            LayoutRect oldCellRect(cell->x(), cell->y() , cell->width(), cell->height());
+            LayoutRect oldCellRect = cell->frameRect();
 
             setLogicalPositionForCell(cell, c);
 
@@ -1469,7 +1469,7 @@ RenderTableSection* RenderTableSection::createAnonymousWithParentRenderer(const 
 
 void RenderTableSection::setLogicalPositionForCell(RenderTableCell* cell, unsigned effectiveColumn) const
 {
-    LayoutPoint oldCellLocation(cell->x(), cell->y());
+    LayoutPoint oldCellLocation = cell->location();
 
     LayoutPoint cellLocation(0, m_rowPos[cell->rowIndex()]);
     int horizontalBorderSpacing = table()->hBorderSpacing();

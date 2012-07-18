@@ -1,3 +1,61 @@
+2012-07-18  Emil A Eklund  <eae@chromium.org>
+
+        Replace uses of RenderBox::x(), y() in rendering code with with point and size methods
+        https://bugs.webkit.org/show_bug.cgi?id=91549
+
+        Reviewed by Eric Seidel.
+
+        Replaces uses of RenderBox::x() and RenderBox::y() with
+        RenderBox::location(), RenderBox::locationOffset() and
+        RenderBox::frameRect().
+
+        No new tests, no change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::positionNewFloats):
+        Use child->frameRect() and child->location() instead of constructing a
+        rect and size from the x, y, width and height values.       
+        
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintDuringLayoutIfMoved):
+        Compare and copy m_frameRect directly instead of comparing and copying
+        the individual values.
+        
+        (WebCore::RenderBox::localCaretRect):
+        Use location() instead of x() and y().
+        
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        Use pixelSnappedIntSize and RenderBox::size() instead of computing and
+        snapping the width and height separately.
+        
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint):
+        USe locationOffset() instead of creating a new LayoutSize object from the
+        x() and y() values.
+        
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateHitTestResult):
+        Move by Size instead of x and y value.
+        
+        (WebCore::RenderInline::addFocusRingRects):
+        Move by Size instead of x and y value.
+        
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::offsetFromContainer):
+        Shrink offset by size instead of using x and y values.
+        
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::setLogicalPositionForCell):
+        Use child->frameRect() and child->location() instead of constructing a
+        rect and size from the x, y, width and height values.       
+
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeRenderSVGTextBox):
+        Use location() instead of x() and y().
+
 2012-07-18  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, try to fix the chromium-win build after r123014.
