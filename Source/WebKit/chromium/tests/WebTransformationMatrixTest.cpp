@@ -200,10 +200,10 @@ TEST(WebTransformationMatrixTest, verifyMatrixInversion)
     EXPECT_TRUE(scale.isInvertible());
 
     WebTransformationMatrix inverseScale = scale.inverse();
-    EXPECT_ROW1_EQ(0.25,  0,    0,    0, inverseScale);
-    EXPECT_ROW2_EQ(0,    0.1,   0,    0, inverseScale);
-    EXPECT_ROW3_EQ(0,     0,   0.01,  0, inverseScale);
-    EXPECT_ROW4_EQ(0,     0,    0,    1, inverseScale);
+    EXPECT_ROW1_EQ(0.25,   0,    0, 0, inverseScale);
+    EXPECT_ROW2_EQ(0,    .1f,    0, 0, inverseScale);
+    EXPECT_ROW3_EQ(0,      0, .01f, 0, inverseScale);
+    EXPECT_ROW4_EQ(0,      0,    0, 1, inverseScale);
 
     // Try to invert a matrix that is not invertible.
     // The inverse() function should simply return an identity matrix.

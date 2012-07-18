@@ -1,3 +1,11 @@
+2012-07-18  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, more compile fixes on Chromium Win.
+
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (TestShell::waitTestFinished):
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.cpp:
+
 2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add central error management to EFL port

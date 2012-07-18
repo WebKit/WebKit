@@ -43,6 +43,7 @@
 #include "third_party/skia/include/core/SkPath.h"
 #include "third_party/skia/include/core/SkRect.h"
 
+#include <algorithm>
 #include <wtf/Assertions.h>
 
 using namespace std;
@@ -74,8 +75,8 @@ static SkIRect validate(const SkIRect& rect, WebThemeControlDRTWin::Type ctype)
         // The maximum width and height is 13.
         // Center the square in the passed rectangle.
         const int maxControlSize = 13;
-        int controlSize = min(rect.width(), rect.height());
-        controlSize = min(controlSize, maxControlSize);
+        int controlSize = std::min(rect.width(), rect.height());
+        controlSize = std::min(controlSize, maxControlSize);
 
         retval.fLeft   = rect.fLeft + (rect.width() / 2) - (controlSize / 2);
         retval.fRight  = retval.fLeft + controlSize - 1;

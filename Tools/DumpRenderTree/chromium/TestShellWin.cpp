@@ -78,7 +78,7 @@ unsigned int __stdcall watchDogThread(void* arg)
 
 void TestShell::waitTestFinished()
 {
-    DCHECK(!m_testIsPending) << "cannot be used recursively";
+    ASSERT(!m_testIsPending);
 
     m_testIsPending = true;
 
@@ -89,7 +89,7 @@ void TestShell::waitTestFinished()
     // timeout, it can't do anything except terminate the test
     // shell, which is unfortunate.
     m_finishedEvent = CreateEvent(0, TRUE, FALSE, 0);
-    DCHECK(m_finishedEvent);
+    ASSERT(m_finishedEvent);
 
     HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(
                                                        0,
@@ -98,7 +98,7 @@ void TestShell::waitTestFinished()
                                                        this,
                                                        0,
                                                        0));
-    DCHECK(threadHandle);
+    ASSERT(threadHandle);
 
     // TestFinished() will post a quit message to break this loop when the page
     // finishes loading.

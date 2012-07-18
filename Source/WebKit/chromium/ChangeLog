@@ -1,5 +1,12 @@
 2012-07-18  Tony Chang  <tony@chromium.org>
 
+        [chromium] Unreviewed, more compile fixes on Chromium Win.
+
+        * tests/WebTransformationMatrixTest.cpp:
+        (WebKit::TEST):
+
+2012-07-18  Tony Chang  <tony@chromium.org>
+
         [chromium] Fix compile on Windows.
 
         148>tests\LayerChromiumTest.cpp(510): warning C4305: 'argument' : truncation from 'double' to 'float'
