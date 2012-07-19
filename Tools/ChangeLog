@@ -1,3 +1,10 @@
+2012-07-18  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Unreviewed. Adding Andrei Bucur, Mihai Balan and Raul Hudea to the contributors list.
+        They are Adobe contributors working on CSSRegions.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [CMake][EFL] Should try to find the same libsoup version pulled by jhbuild
