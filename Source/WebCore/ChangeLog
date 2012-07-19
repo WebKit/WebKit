@@ -1,3 +1,18 @@
+2012-07-19  Dongwoo Im  <dw.im@samsung.com>
+
+        CodeGeneratorV8.pm : @enabledAtRuntime is not used in GenerateHeader.
+        https://bugs.webkit.org/show_bug.cgi?id=91715
+
+        Reviewed by Kentaro Hara.
+
+        @enabledAtRuntime is not used in GenerateHeader.
+        We can remove it from GenerateHeader.
+
+        No new tests as this has no functional changes.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Remove @enabledAtRuntime from GenerateHeader.
+        (GenerateHeader):
+
 2012-07-19  Abhishek Arya  <inferno@chromium.org>
 
         Crash in FontCache::releaseFontData.

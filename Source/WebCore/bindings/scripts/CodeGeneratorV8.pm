@@ -409,7 +409,6 @@ END
 END
     }
 
-    my @enabledAtRuntime;
     my @enabledPerContext;
     foreach my $function (@{$dataNode->functions}) {
         my $name = $function->signature->name;
@@ -422,10 +421,6 @@ END
     static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
 END
             push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
-        }
-
-        if ($attrExt->{"V8EnabledAtRuntime"}) {
-            push(@enabledAtRuntime, $function);
         }
     }
 
@@ -457,10 +452,6 @@ END
 END
             push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
         }
-        if ($attrExt->{"V8EnabledAtRuntime"}) {
-            push(@enabledAtRuntime, $attribute);
-        }
-
         if ($attrExt->{"V8EnabledPerContext"}) {
             push(@enabledPerContext, $attribute);
         }
