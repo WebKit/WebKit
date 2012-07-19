@@ -1,3 +1,31 @@
+2012-07-19  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: minimize number of properties on WebInspector.TimelinePresentationModel.Record
+        https://bugs.webkit.org/show_bug.cgi?id=91744
+
+        Reviewed by Pavel Feldman.
+
+        - replace most properties on TimelinePresentationModel.Record with getters;
+
+        This reduces the amount of memory we use for timeline presentation model records almost by 2x.
+
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.Record):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get children):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get category):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get title):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get startTime):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get data):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get type):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get frameId):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get endTime):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get totalHeapSize):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get usedHeapSize):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get _selfTime):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get stackTrace):
+        (WebInspector.TimelinePresentationModel.Record.prototype.generatePopupContent):
+        (WebInspector.TimelinePresentationModel.Record.prototype.calculateAggregatedStats):
+
 2012-07-19  Dongwoo Im  <dw.im@samsung.com>
 
         [EFL] Fix build break when WEB_AUDIO is enabled.

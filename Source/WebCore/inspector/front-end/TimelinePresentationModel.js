@@ -385,31 +385,18 @@ WebInspector.TimelinePresentationModel.prototype.__proto__ = WebInspector.Object
  */
 WebInspector.TimelinePresentationModel.Record = function(presentationModel, record, parentRecord, scriptDetails)
 {
-    this._presentationModel = presentationModel;
-    this._linkifier = this._presentationModel._linkifier;
+    this._linkifier = presentationModel._linkifier;
     this._aggregatedStats = [];
-    var recordTypes = WebInspector.TimelineModel.RecordType;
-    var style = WebInspector.TimelinePresentationModel.recordStyle(record);
+    this._record = record;
+    this._children = [];
     this.parent = parentRecord;
     if (parentRecord)
         parentRecord.children.push(this);
-    this.category = style.category;
-    this.title = record.type === recordTypes.TimeStamp ? record.data["message"] : style.title;
-    this.startTime = WebInspector.TimelineModel.startTimeInSeconds(record);
-    this.data = record.data;
-    this.type = record.type;
-    this.frameId = record.frameId;
-    this.endTime = WebInspector.TimelineModel.endTimeInSeconds(record);
+
     this._selfTime = this.endTime - this.startTime;
     this._lastChildEndTime = this.endTime;
-    this._initiatorOffset = (parentRecord && parentRecord !== presentationModel._rootRecord) ?
-        parentRecord._initiatorOffset + this.startTime - parentRecord.startTime : 0;
     this._startTimeOffset = this.startTime - presentationModel._minimumRecordTime;
 
-    if (record.stackTrace && record.stackTrace.length)
-        this.stackTrace = record.stackTrace;
-    this.totalHeapSize = record.totalHeapSize;
-    this.usedHeapSize = record.usedHeapSize;
     if (record.data && record.data["url"])
         this.url = record.data["url"];
     if (scriptDetails) {
@@ -417,6 +404,7 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         this.scriptLine = scriptDetails.scriptLine;
     }
 
+    var recordTypes = WebInspector.TimelineModel.RecordType;
     switch (record.type) {
     case recordTypes.ResourceSendRequest:
         // Make resource receive record last since request was sent; make finish record last since response received.
@@ -483,7 +471,6 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         }
         break;
     }
-    this._refreshDetails();
 }
 
 WebInspector.TimelinePresentationModel.Record.prototype = {
@@ -517,21 +504,111 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
         return (this._lastChildEndTime - this.startTime) > WebInspector.TimelinePresentationModel.shortRecordThreshold;
     },
 
+    /**
+     * @return {Array.<WebInspector.TimelinePresentationModel.Record>}
+     */
     get children()
     {
-        if (!this._children)
-            this._children = [];
         return this._children;
     },
 
+    /**
+     * @return {number}
+     */
     get visibleChildrenCount()
     {
         return this._visibleChildrenCount || 0;
     },
 
+    /**
+     * @return {number}
+     */
     get invisibleChildrenCount()
     {
         return this._invisibleChildrenCount || 0;
+    },
+
+    /**
+     * @return {WebInspector.TimelineCategory}
+     */
+    get category()
+    {
+        return WebInspector.TimelinePresentationModel.recordStyle(this._record).category
+    },
+
+    /**
+     * @return {string}
+     */
+    get title()
+    {
+        return this.type === WebInspector.TimelineModel.RecordType.TimeStamp ? this._record.data["message"] :
+            WebInspector.TimelinePresentationModel.recordStyle(this._record).title;
+    },
+
+    /**
+     * @return {number}
+     */
+    get startTime()
+    {
+        return WebInspector.TimelineModel.startTimeInSeconds(this._record);
+    },
+
+    /**
+     * @return {number}
+     */
+    get endTime()
+    {
+        return WebInspector.TimelineModel.endTimeInSeconds(this._record);
+    },
+
+    /**
+     * @return {Object}
+     */
+    get data()
+    {
+        return this._record.data;
+    },
+
+    /**
+     * @return {string}
+     */
+    get type()
+    {
+        return this._record.type;
+    },
+
+    /**
+     * @return {string}
+     */
+    get frameId()
+    {
+        return this._record.frameId;
+    },
+
+    /**
+     * @return {number}
+     */
+    get totalHeapSize()
+    {
+        return this._record.totalHeapSize;
+    },
+
+    /**
+     * @return {number}
+     */
+    get usedHeapSize()
+    {
+        return this._record.usedHeapSize;
+    },
+
+    /**
+     * @return {Array.<DebuggerAgent.CallFrame>?}
+     */
+    get stackTrace()
+    {
+        if (this._record.stackTrace && this._record.stackTrace.length)
+            return this._record.stackTrace;
+        return null;
     },
 
     containsTime: function(time)
@@ -547,7 +624,7 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             Number.secondsToString(this._startTimeOffset));
         contentHelper._appendTextRow(WebInspector.UIString("Duration"), text);
 
-        if (this._children && this._children.length) {
+        if (this._children.length) {
             contentHelper._appendTextRow(WebInspector.UIString("Self Time"), Number.secondsToString(this._selfTime, true));
             contentHelper._appendTextRow(WebInspector.UIString("CPU Time"), Number.secondsToString(this._cpuTime, true));
             contentHelper._appendElementRow(WebInspector.UIString("Aggregated Time"),
@@ -722,15 +799,13 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             this._aggregatedStats[category] = 0;
         this._cpuTime = this._selfTime;
 
-        if (this._children) {
-            for (var index = this._children.length; index; --index) {
-                var child = this._children[index - 1];
-                for (var category in categories)
-                    this._aggregatedStats[category] += child._aggregatedStats[category];
-            }
-            for (var category in this._aggregatedStats)
-                this._cpuTime += this._aggregatedStats[category];
+        for (var index = this._children.length; index; --index) {
+            var child = this._children[index - 1];
+            for (var category in categories)
+                this._aggregatedStats[category] += child._aggregatedStats[category];
         }
+        for (var category in this._aggregatedStats)
+            this._cpuTime += this._aggregatedStats[category];
         this._aggregatedStats[this.category.name] += this._selfTime;
     },
 
