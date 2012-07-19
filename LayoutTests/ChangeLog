@@ -1,5 +1,11 @@
 2012-07-19  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening, removing platform-specific baseline redundant after r123066.
+
+        * platform/gtk/fast/forms/state-restore-skip-stateless-expected.txt: Removed.
+
+2012-07-19  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening, removing flaky expectations for MathML Presentations
         layout tests. Their baselines were updated in r122704 and the tests have been
         passing without problems since.
