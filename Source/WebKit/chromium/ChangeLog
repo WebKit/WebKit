@@ -1,3 +1,16 @@
+2012-07-18  Adam Barth  <abarth@webkit.org>
+
+        Disable printing on chromium-android
+        https://bugs.webkit.org/show_bug.cgi?id=91550
+
+        Reviewed by Tony Chang.
+
+        We don't implement printing on Android.
+
+        * features.gypi:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::printPage):
+
 2012-07-18  Alexandre Elias  <aelias@google.com>
 
         [chromium] Ubercomp: add id to SharedQuadState

@@ -155,6 +155,7 @@
           'ENABLE_ORIENTATION_EVENTS=1',
           'ENABLE_OVERFLOW_SCROLLING=1',
           'ENABLE_PAGE_POPUP=0',
+          'ENABLE_PRINTING=0',
           # FIXME: Disable once the linking error has been resolved.
           # https://bugs.webkit.org/show_bug.cgi?id=88636
           'ENABLE_SHARED_WORKERS=1',
@@ -175,6 +176,7 @@
           'ENABLE_ORIENTATION_EVENTS=0',
           'ENABLE_OVERFLOW_SCROLLING=0',
           'ENABLE_PAGE_POPUP=1',
+          'ENABLE_PRINTING=1',
           'ENABLE_SHARED_WORKERS=1',
           'ENABLE_WEB_AUDIO=1',
         ],

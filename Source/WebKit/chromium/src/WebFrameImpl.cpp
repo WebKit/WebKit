@@ -1529,6 +1529,7 @@ float WebFrameImpl::getPrintPageShrink(int page)
 
 float WebFrameImpl::printPage(int page, WebCanvas* canvas)
 {
+#if ENABLE(PRINTING)
     // Ensure correct state.
     if (!m_printContext || page < 0 || !frame() || !frame()->document()) {
         ASSERT_NOT_REACHED();
@@ -1540,6 +1541,9 @@ float WebFrameImpl::printPage(int page, WebCanvas* canvas)
     gc.platformContext()->setPrinting(true);
 
     return m_printContext->spoolPage(gc, page);
+#else
+    return 0;
+#endif
 }
 
 void WebFrameImpl::printEnd()
