@@ -3,137 +3,137 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 200x200 clip at (8,8) size 183x183 scrollWidth 345 scrollHeight 924
+layer at (8,8) size 200x200 clip at (8,8) size 183x183 scrollWidth 296 scrollHeight 836
   RenderBlock {DIV} at (0,0) size 200x200
-    RenderText {#text} at (0,0) size 38x21
-      text run at (0,0) width 38: "Hello"
-    RenderBR {BR} at (38,16) size 0x0
-    RenderText {#text} at (0,21) size 38x21
-      text run at (0,21) width 38: "Hello"
-    RenderBR {BR} at (38,37) size 0x0
-    RenderText {#text} at (0,42) size 38x21
-      text run at (0,42) width 38: "Hello"
-    RenderBR {BR} at (38,58) size 0x0
-    RenderText {#text} at (0,63) size 38x21
-      text run at (0,63) width 38: "Hello"
-    RenderBR {BR} at (38,79) size 0x0
-    RenderText {#text} at (0,84) size 38x21
-      text run at (0,84) width 38: "Hello"
-    RenderBR {BR} at (38,100) size 0x0
-    RenderText {#text} at (0,105) size 38x21
-      text run at (0,105) width 38: "Hello"
-    RenderBR {BR} at (38,121) size 0x0
-    RenderText {#text} at (0,126) size 38x21
-      text run at (0,126) width 38: "Hello"
-    RenderBR {BR} at (38,142) size 0x0
-    RenderText {#text} at (0,147) size 38x21
-      text run at (0,147) width 38: "Hello"
-    RenderBR {BR} at (38,163) size 0x0
-    RenderText {#text} at (0,168) size 38x21
-      text run at (0,168) width 38: "Hello"
-    RenderBR {BR} at (38,184) size 0x0
-    RenderText {#text} at (0,189) size 38x21
-      text run at (0,189) width 38: "Hello"
-    RenderBR {BR} at (38,205) size 0x0
-    RenderText {#text} at (0,210) size 38x21
-      text run at (0,210) width 38: "Hello"
-    RenderBR {BR} at (38,226) size 0x0
-    RenderText {#text} at (0,231) size 38x21
-      text run at (0,231) width 38: "Hello"
-    RenderBR {BR} at (38,247) size 0x0
-    RenderText {#text} at (0,252) size 38x21
-      text run at (0,252) width 38: "Hello"
-    RenderBR {BR} at (38,268) size 0x0
-    RenderText {#text} at (0,273) size 38x21
-      text run at (0,273) width 38: "Hello"
-    RenderBR {BR} at (38,289) size 0x0
-    RenderText {#text} at (0,294) size 38x21
-      text run at (0,294) width 38: "Hello"
-    RenderBR {BR} at (38,310) size 0x0
-    RenderText {#text} at (0,315) size 38x21
-      text run at (0,315) width 38: "Hello"
-    RenderBR {BR} at (38,331) size 0x0
-    RenderInline {SPAN} at (0,0) size 345x21
-      RenderText {#text} at (0,336) size 345x21
-        text run at (0,336) width 345: "Hello world this is a long string and will not wrap."
-    RenderText {#text} at (0,357) size 38x21
-      text run at (0,357) width 38: "Hello"
-    RenderBR {BR} at (38,373) size 0x0
-    RenderText {#text} at (0,378) size 38x21
-      text run at (0,378) width 38: "Hello"
-    RenderBR {BR} at (38,394) size 0x0
-    RenderText {#text} at (0,399) size 38x21
-      text run at (0,399) width 38: "Hello"
-    RenderBR {BR} at (38,415) size 0x0
-    RenderText {#text} at (0,420) size 38x21
-      text run at (0,420) width 38: "Hello"
-    RenderBR {BR} at (38,436) size 0x0
-    RenderText {#text} at (0,441) size 38x21
-      text run at (0,441) width 38: "Hello"
-    RenderBR {BR} at (38,457) size 0x0
-    RenderText {#text} at (0,462) size 38x21
-      text run at (0,462) width 38: "Hello"
-    RenderBR {BR} at (38,478) size 0x0
-    RenderText {#text} at (0,483) size 38x21
-      text run at (0,483) width 38: "Hello"
-    RenderBR {BR} at (38,499) size 0x0
-    RenderText {#text} at (0,504) size 38x21
-      text run at (0,504) width 38: "Hello"
-    RenderBR {BR} at (38,520) size 0x0
-    RenderText {#text} at (0,525) size 38x21
-      text run at (0,525) width 38: "Hello"
-    RenderBR {BR} at (38,541) size 0x0
-    RenderText {#text} at (0,546) size 38x21
-      text run at (0,546) width 38: "Hello"
-    RenderBR {BR} at (38,562) size 0x0
-    RenderText {#text} at (0,567) size 38x21
-      text run at (0,567) width 38: "Hello"
-    RenderBR {BR} at (38,583) size 0x0
-    RenderText {#text} at (0,588) size 38x21
-      text run at (0,588) width 38: "Hello"
-    RenderBR {BR} at (38,604) size 0x0
-    RenderText {#text} at (0,609) size 38x21
-      text run at (0,609) width 38: "Hello"
-    RenderBR {BR} at (38,625) size 0x0
-    RenderText {#text} at (0,630) size 38x21
-      text run at (0,630) width 38: "Hello"
-    RenderBR {BR} at (38,646) size 0x0
-    RenderText {#text} at (0,651) size 38x21
-      text run at (0,651) width 38: "Hello"
-    RenderBR {BR} at (38,667) size 0x0
-    RenderText {#text} at (0,672) size 38x21
-      text run at (0,672) width 38: "Hello"
-    RenderBR {BR} at (38,688) size 0x0
-    RenderText {#text} at (0,693) size 38x21
-      text run at (0,693) width 38: "Hello"
-    RenderBR {BR} at (38,709) size 0x0
-    RenderText {#text} at (0,714) size 38x21
-      text run at (0,714) width 38: "Hello"
-    RenderBR {BR} at (38,730) size 0x0
-    RenderText {#text} at (0,735) size 38x21
-      text run at (0,735) width 38: "Hello"
-    RenderBR {BR} at (38,751) size 0x0
-    RenderText {#text} at (0,756) size 38x21
-      text run at (0,756) width 38: "Hello"
-    RenderBR {BR} at (38,772) size 0x0
-    RenderText {#text} at (0,777) size 38x21
-      text run at (0,777) width 38: "Hello"
-    RenderBR {BR} at (38,793) size 0x0
-    RenderText {#text} at (0,798) size 38x21
-      text run at (0,798) width 38: "Hello"
-    RenderBR {BR} at (38,814) size 0x0
-    RenderText {#text} at (0,819) size 38x21
-      text run at (0,819) width 38: "Hello"
-    RenderBR {BR} at (38,835) size 0x0
-    RenderText {#text} at (0,840) size 38x21
-      text run at (0,840) width 38: "Hello"
-    RenderBR {BR} at (38,856) size 0x0
-    RenderText {#text} at (0,861) size 38x21
-      text run at (0,861) width 38: "Hello"
-    RenderBR {BR} at (38,877) size 0x0
-    RenderText {#text} at (0,882) size 38x21
-      text run at (0,882) width 38: "Hello"
-    RenderBR {BR} at (38,898) size 0x0
-    RenderText {#text} at (0,903) size 38x21
-      text run at (0,903) width 38: "Hello"
-    RenderBR {BR} at (38,919) size 0x0
+    RenderText {#text} at (0,0) size 32x19
+      text run at (0,0) width 32: "Hello"
+    RenderBR {BR} at (32,15) size 0x0
+    RenderText {#text} at (0,19) size 32x19
+      text run at (0,19) width 32: "Hello"
+    RenderBR {BR} at (32,34) size 0x0
+    RenderText {#text} at (0,38) size 32x19
+      text run at (0,38) width 32: "Hello"
+    RenderBR {BR} at (32,53) size 0x0
+    RenderText {#text} at (0,57) size 32x19
+      text run at (0,57) width 32: "Hello"
+    RenderBR {BR} at (32,72) size 0x0
+    RenderText {#text} at (0,76) size 32x19
+      text run at (0,76) width 32: "Hello"
+    RenderBR {BR} at (32,91) size 0x0
+    RenderText {#text} at (0,95) size 32x19
+      text run at (0,95) width 32: "Hello"
+    RenderBR {BR} at (32,110) size 0x0
+    RenderText {#text} at (0,114) size 32x19
+      text run at (0,114) width 32: "Hello"
+    RenderBR {BR} at (32,129) size 0x0
+    RenderText {#text} at (0,133) size 32x19
+      text run at (0,133) width 32: "Hello"
+    RenderBR {BR} at (32,148) size 0x0
+    RenderText {#text} at (0,152) size 32x19
+      text run at (0,152) width 32: "Hello"
+    RenderBR {BR} at (32,167) size 0x0
+    RenderText {#text} at (0,171) size 32x19
+      text run at (0,171) width 32: "Hello"
+    RenderBR {BR} at (32,186) size 0x0
+    RenderText {#text} at (0,190) size 32x19
+      text run at (0,190) width 32: "Hello"
+    RenderBR {BR} at (32,205) size 0x0
+    RenderText {#text} at (0,209) size 32x19
+      text run at (0,209) width 32: "Hello"
+    RenderBR {BR} at (32,224) size 0x0
+    RenderText {#text} at (0,228) size 32x19
+      text run at (0,228) width 32: "Hello"
+    RenderBR {BR} at (32,243) size 0x0
+    RenderText {#text} at (0,247) size 32x19
+      text run at (0,247) width 32: "Hello"
+    RenderBR {BR} at (32,262) size 0x0
+    RenderText {#text} at (0,266) size 32x19
+      text run at (0,266) width 32: "Hello"
+    RenderBR {BR} at (32,281) size 0x0
+    RenderText {#text} at (0,285) size 32x19
+      text run at (0,285) width 32: "Hello"
+    RenderBR {BR} at (32,300) size 0x0
+    RenderInline {SPAN} at (0,0) size 296x19
+      RenderText {#text} at (0,304) size 296x19
+        text run at (0,304) width 296: "Hello world this is a long string and will not wrap."
+    RenderText {#text} at (0,323) size 32x19
+      text run at (0,323) width 32: "Hello"
+    RenderBR {BR} at (32,338) size 0x0
+    RenderText {#text} at (0,342) size 32x19
+      text run at (0,342) width 32: "Hello"
+    RenderBR {BR} at (32,357) size 0x0
+    RenderText {#text} at (0,361) size 32x19
+      text run at (0,361) width 32: "Hello"
+    RenderBR {BR} at (32,376) size 0x0
+    RenderText {#text} at (0,380) size 32x19
+      text run at (0,380) width 32: "Hello"
+    RenderBR {BR} at (32,395) size 0x0
+    RenderText {#text} at (0,399) size 32x19
+      text run at (0,399) width 32: "Hello"
+    RenderBR {BR} at (32,414) size 0x0
+    RenderText {#text} at (0,418) size 32x19
+      text run at (0,418) width 32: "Hello"
+    RenderBR {BR} at (32,433) size 0x0
+    RenderText {#text} at (0,437) size 32x19
+      text run at (0,437) width 32: "Hello"
+    RenderBR {BR} at (32,452) size 0x0
+    RenderText {#text} at (0,456) size 32x19
+      text run at (0,456) width 32: "Hello"
+    RenderBR {BR} at (32,471) size 0x0
+    RenderText {#text} at (0,475) size 32x19
+      text run at (0,475) width 32: "Hello"
+    RenderBR {BR} at (32,490) size 0x0
+    RenderText {#text} at (0,494) size 32x19
+      text run at (0,494) width 32: "Hello"
+    RenderBR {BR} at (32,509) size 0x0
+    RenderText {#text} at (0,513) size 32x19
+      text run at (0,513) width 32: "Hello"
+    RenderBR {BR} at (32,528) size 0x0
+    RenderText {#text} at (0,532) size 32x19
+      text run at (0,532) width 32: "Hello"
+    RenderBR {BR} at (32,547) size 0x0
+    RenderText {#text} at (0,551) size 32x19
+      text run at (0,551) width 32: "Hello"
+    RenderBR {BR} at (32,566) size 0x0
+    RenderText {#text} at (0,570) size 32x19
+      text run at (0,570) width 32: "Hello"
+    RenderBR {BR} at (32,585) size 0x0
+    RenderText {#text} at (0,589) size 32x19
+      text run at (0,589) width 32: "Hello"
+    RenderBR {BR} at (32,604) size 0x0
+    RenderText {#text} at (0,608) size 32x19
+      text run at (0,608) width 32: "Hello"
+    RenderBR {BR} at (32,623) size 0x0
+    RenderText {#text} at (0,627) size 32x19
+      text run at (0,627) width 32: "Hello"
+    RenderBR {BR} at (32,642) size 0x0
+    RenderText {#text} at (0,646) size 32x19
+      text run at (0,646) width 32: "Hello"
+    RenderBR {BR} at (32,661) size 0x0
+    RenderText {#text} at (0,665) size 32x19
+      text run at (0,665) width 32: "Hello"
+    RenderBR {BR} at (32,680) size 0x0
+    RenderText {#text} at (0,684) size 32x19
+      text run at (0,684) width 32: "Hello"
+    RenderBR {BR} at (32,699) size 0x0
+    RenderText {#text} at (0,703) size 32x19
+      text run at (0,703) width 32: "Hello"
+    RenderBR {BR} at (32,718) size 0x0
+    RenderText {#text} at (0,722) size 32x19
+      text run at (0,722) width 32: "Hello"
+    RenderBR {BR} at (32,737) size 0x0
+    RenderText {#text} at (0,741) size 32x19
+      text run at (0,741) width 32: "Hello"
+    RenderBR {BR} at (32,756) size 0x0
+    RenderText {#text} at (0,760) size 32x19
+      text run at (0,760) width 32: "Hello"
+    RenderBR {BR} at (32,775) size 0x0
+    RenderText {#text} at (0,779) size 32x19
+      text run at (0,779) width 32: "Hello"
+    RenderBR {BR} at (32,794) size 0x0
+    RenderText {#text} at (0,798) size 32x19
+      text run at (0,798) width 32: "Hello"
+    RenderBR {BR} at (32,813) size 0x0
+    RenderText {#text} at (0,817) size 32x19
+      text run at (0,817) width 32: "Hello"
+    RenderBR {BR} at (32,832) size 0x0

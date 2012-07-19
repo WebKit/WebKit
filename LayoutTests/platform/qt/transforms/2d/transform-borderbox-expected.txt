@@ -1,19 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x307
-  RenderBlock {HTML} at (0,0) size 800x307
-    RenderBody {BODY} at (8,16) size 784x261
+layer at (0,0) size 800x305
+  RenderBlock {HTML} at (0,0) size 800x305
+    RenderBody {BODY} at (8,16) size 784x259
       RenderBlock {P} at (0,0) size 784x0
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 745x21
-          text run at (0,0) width 745: "Top box should have gray part extending outside the black outline. Lower box should lie inside the outline"
-      RenderBlock {DIV} at (30,51) size 400x210
-layer at (38,67) size 250x100
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 633x19
+          text run at (0,0) width 633: "Top box should have gray part extending outside the black outline. Lower box should lie inside the outline"
+      RenderBlock {DIV} at (30,49) size 400x210
+layer at (38,65) size 250x100
   RenderBlock {DIV} at (0,0) size 250x100 [bgcolor=#008000] [border: (50px solid #808080) none]
-    RenderText {#text} at (0,0) size 112x21
-      text run at (0,0) width 112: "box-sizing: auto"
-layer at (38,177) size 200x100
+    RenderText {#text} at (0,0) size 94x19
+      text run at (0,0) width 94: "box-sizing: auto"
+layer at (38,175) size 200x100
   RenderBlock {DIV} at (0,110) size 200x100 [bgcolor=#008000] [border: (50px solid #808080) none]
-    RenderText {#text} at (0,0) size 132x42
-      text run at (0,0) width 132: "box-sizing: border-"
-      text run at (0,21) width 26: "box"
+    RenderText {#text} at (0,0) size 138x19
+      text run at (0,0) width 138: "box-sizing: border-box"

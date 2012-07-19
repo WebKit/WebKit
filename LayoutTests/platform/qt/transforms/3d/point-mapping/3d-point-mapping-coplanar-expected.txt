@@ -6,27 +6,27 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (1,1) size 798x342
         RenderBlock {DIV} at (20,20) size 302x302 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (1,359) size 798x21
-        RenderText {#text} at (0,0) size 410x21
-          text run at (0,0) width 410: "When hit-testing coplanar elements, document order wins."
-layer at (30,400) size 334x84
-  RenderBlock (positioned) {DIV} at (30,400) size 334x84
-    RenderInline {SPAN} at (0,0) size 325x21 [color=#008000]
-      RenderText {#text} at (0,0) size 325x21
-        text run at (0,0) width 325: "PASS: event at (44, 44) hit box1 at offset (2, 2)"
-    RenderBR {BR} at (325,16) size 0x0
-    RenderInline {SPAN} at (0,0) size 325x21 [color=#008000]
-      RenderText {#text} at (0,21) size 325x21
-        text run at (0,21) width 325: "PASS: event at (70, 59) hit box2 at offset (2, 2)"
-    RenderBR {BR} at (325,37) size 0x0
-    RenderInline {SPAN} at (0,0) size 334x21 [color=#008000]
-      RenderText {#text} at (0,42) size 334x21
-        text run at (0,42) width 334: "PASS: event at (70, 101) hit box3 at offset (2, 2)"
-    RenderBR {BR} at (334,58) size 0x0
-    RenderInline {SPAN} at (0,0) size 334x21 [color=#008000]
-      RenderText {#text} at (0,63) size 334x21
-        text run at (0,63) width 334: "PASS: event at (70, 144) hit box4 at offset (2, 2)"
-    RenderBR {BR} at (334,79) size 0x0
+      RenderBlock {P} at (1,359) size 798x19
+        RenderText {#text} at (0,0) size 349x19
+          text run at (0,0) width 349: "When hit-testing coplanar elements, document order wins."
+layer at (30,400) size 297x76
+  RenderBlock (positioned) {DIV} at (30,400) size 297x76
+    RenderInline {SPAN} at (0,0) size 289x19 [color=#008000]
+      RenderText {#text} at (0,0) size 289x19
+        text run at (0,0) width 289: "PASS: event at (44, 44) hit box1 at offset (2, 2)"
+    RenderBR {BR} at (289,15) size 0x0
+    RenderInline {SPAN} at (0,0) size 289x19 [color=#008000]
+      RenderText {#text} at (0,19) size 289x19
+        text run at (0,19) width 289: "PASS: event at (70, 59) hit box2 at offset (2, 2)"
+    RenderBR {BR} at (289,34) size 0x0
+    RenderInline {SPAN} at (0,0) size 297x19 [color=#008000]
+      RenderText {#text} at (0,38) size 297x19
+        text run at (0,38) width 297: "PASS: event at (70, 101) hit box3 at offset (2, 2)"
+    RenderBR {BR} at (297,53) size 0x0
+    RenderInline {SPAN} at (0,0) size 297x19 [color=#008000]
+      RenderText {#text} at (0,57) size 297x19
+        text run at (0,57) width 297: "PASS: event at (70, 144) hit box4 at offset (2, 2)"
+    RenderBR {BR} at (297,72) size 0x0
 layer at (42,42) size 260x260
   RenderBlock (relative positioned) {DIV} at (21,21) size 260x260 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
 layer at (73,63) size 200x100

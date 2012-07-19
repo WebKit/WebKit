@@ -5,27 +5,27 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600 [border: (1px solid #000000)]
       RenderBlock (anonymous) at (1,1) size 798x342
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (1,359) size 798x21
-        RenderText {#text} at (0,0) size 666x21
-          text run at (0,0) width 666: "The green overlay is translated in Z by 100px, so should hit test in front relative to the blue box."
-layer at (30,400) size 378x84
-  RenderBlock (positioned) {DIV} at (30,400) size 378x84
-    RenderInline {SPAN} at (0,0) size 352x21 [color=#008000]
-      RenderText {#text} at (0,0) size 352x21
-        text run at (0,0) width 352: "PASS: event at (285, 50) hit box2 at offset (198, 2)"
-    RenderBR {BR} at (352,16) size 0x0
-    RenderInline {SPAN} at (0,0) size 352x21 [color=#008000]
-      RenderText {#text} at (0,21) size 352x21
-        text run at (0,21) width 352: "PASS: event at (174, 108) hit box3 at offset (50, 2)"
-    RenderBR {BR} at (352,37) size 0x0
-    RenderInline {SPAN} at (0,0) size 360x21 [color=#008000]
-      RenderText {#text} at (0,42) size 360x21
-        text run at (0,42) width 360: "PASS: event at (61, 50) hit overlay at offset (39, 28)"
-    RenderBR {BR} at (360,58) size 0x0
-    RenderInline {SPAN} at (0,0) size 378x21 [color=#008000]
-      RenderText {#text} at (0,63) size 378x21
-        text run at (0,63) width 378: "PASS: event at (119, 108) hit overlay at offset (97, 86)"
-    RenderBR {BR} at (378,79) size 0x0
+      RenderBlock {P} at (1,359) size 798x19
+        RenderText {#text} at (0,0) size 571x19
+          text run at (0,0) width 571: "The green overlay is translated in Z by 100px, so should hit test in front relative to the blue box."
+layer at (30,400) size 334x76
+  RenderBlock (positioned) {DIV} at (30,400) size 334x76
+    RenderInline {SPAN} at (0,0) size 313x19 [color=#008000]
+      RenderText {#text} at (0,0) size 313x19
+        text run at (0,0) width 313: "PASS: event at (285, 50) hit box2 at offset (198, 2)"
+    RenderBR {BR} at (313,15) size 0x0
+    RenderInline {SPAN} at (0,0) size 313x19 [color=#008000]
+      RenderText {#text} at (0,19) size 313x19
+        text run at (0,19) width 313: "PASS: event at (174, 108) hit box3 at offset (50, 2)"
+    RenderBR {BR} at (313,34) size 0x0
+    RenderInline {SPAN} at (0,0) size 318x19 [color=#008000]
+      RenderText {#text} at (0,38) size 318x19
+        text run at (0,38) width 318: "PASS: event at (61, 50) hit overlay at offset (39, 28)"
+    RenderBR {BR} at (318,53) size 0x0
+    RenderInline {SPAN} at (0,0) size 334x19 [color=#008000]
+      RenderText {#text} at (0,57) size 334x19
+        text run at (0,57) width 334: "PASS: event at (119, 108) hit overlay at offset (97, 86)"
+    RenderBR {BR} at (334,72) size 0x0
 layer at (21,21) size 302x302
   RenderBlock (relative positioned) {DIV} at (20,20) size 302x302 [border: (1px solid #000000)]
 layer at (42,42) size 260x260

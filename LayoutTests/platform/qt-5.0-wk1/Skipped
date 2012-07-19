@@ -152,7 +152,6 @@ http/tests/navigation/postredirect-frames.html
 http/tests/navigation/postredirect-goback1.html
 http/tests/navigation/postredirect-goback2.html
 inspector/extensions/extensions-resources.html
-scrollbars/custom-scrollbar-with-incomplete-style.html
 svg/css/getComputedStyle-basic.xhtml
 svg/custom/dominant-baseline-hanging.svg
 svg/custom/getscreenctm-in-mixed-content.xhtml
