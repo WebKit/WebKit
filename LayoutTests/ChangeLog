@@ -1,3 +1,13 @@
+2012-07-19  Robert Hogan  <robert@webkit.org>
+
+        [Qt] Skip tests after r123130
+
+        Unreviewed.
+
+        Tests added in r123130 fail on Qt. Created bug 91772
+
+        * platform/qt/Skipped:
+
 2012-07-19  Jer Noble  <jer.noble@apple.com>
 
         Layout Test css3/filters/custom/custom-filter-animation.html is failing
