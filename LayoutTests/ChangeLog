@@ -1,3 +1,46 @@
+2012-07-19  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt] [Part 2] platform/qt/css1 tests needs update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91026
+
+        Batch of expected result files reviewed. It comprises
+        /LayoutTests/platform/qt/css1/[basic, cascade, classification] directories
+
+        Reviewed by Simon Hausmann.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt/css1/basic/class_as_selector-expected.png:
+        * platform/qt/css1/basic/class_as_selector-expected.txt:
+        * platform/qt/css1/basic/comments-expected.png:
+        * platform/qt/css1/basic/comments-expected.txt:
+        * platform/qt/css1/basic/containment-expected.png:
+        * platform/qt/css1/basic/containment-expected.txt:
+        * platform/qt/css1/basic/contextual_selectors-expected.png:
+        * platform/qt/css1/basic/contextual_selectors-expected.txt:
+        * platform/qt/css1/basic/grouping-expected.png:
+        * platform/qt/css1/basic/grouping-expected.txt:
+        * platform/qt/css1/basic/id_as_selector-expected.png:
+        * platform/qt/css1/basic/id_as_selector-expected.txt:
+        * platform/qt/css1/basic/inheritance-expected.png:
+        * platform/qt/css1/basic/inheritance-expected.txt:
+        * platform/qt/css1/cascade/cascade_order-expected.png:
+        * platform/qt/css1/cascade/cascade_order-expected.txt:
+        * platform/qt/css1/cascade/important-expected.png:
+        * platform/qt/css1/cascade/important-expected.txt:
+        * platform/qt/css1/classification/display-expected.png:
+        * platform/qt/css1/classification/display-expected.txt:
+        * platform/qt/css1/classification/list_style-expected.png:
+        * platform/qt/css1/classification/list_style-expected.txt:
+        * platform/qt/css1/classification/list_style_image-expected.png:
+        * platform/qt/css1/classification/list_style_image-expected.txt:
+        * platform/qt/css1/classification/list_style_position-expected.png:
+        * platform/qt/css1/classification/list_style_position-expected.txt:
+        * platform/qt/css1/classification/list_style_type-expected.png:
+        * platform/qt/css1/classification/list_style_type-expected.txt:
+        * platform/qt/css1/classification/white_space-expected.png:
+        * platform/qt/css1/classification/white_space-expected.txt:
+
 2012-07-19  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         [Qt] platform/qt/svg/W3C-SVG-* tests needs update after rebaseline and new testfonts
