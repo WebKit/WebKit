@@ -827,8 +827,8 @@ AC_MSG_RESULT([$enable_mathml])
 AC_MSG_CHECKING([whether to enable MHTML support])
 AC_ARG_ENABLE(mhtml,
               AC_HELP_STRING([--enable-mhtml],
-                             [enable support for MHTML [default=no]]),
-              [],[enable_mhtml="no"])
+                             [enable support for MHTML [default=yes]]),
+              [],[enable_mhtml="yes"])
 AC_MSG_RESULT([$enable_mhtml])
 
 # check whether to enable SVG support

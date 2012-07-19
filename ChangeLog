@@ -1,3 +1,14 @@
+2012-07-19  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Enable MHTML support by default at build time
+        https://bugs.webkit.org/show_bug.cgi?id=89987
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable MHTML support by default for GTK in configure.ac.
+
+        * configure.ac:
+
 2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [CMake][EFL] Should try to find the same libsoup version pulled by jhbuild

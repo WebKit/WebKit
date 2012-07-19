@@ -1,3 +1,14 @@
+2012-07-19  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Enable MHTML support by default at build time
+        https://bugs.webkit.org/show_bug.cgi?id=89987
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enable MHTML support by default for GTK in build-webkit.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-07-19  Zoltan Nyul  <zoltan.nyul@intel.com>
 
         [EFL][WK2] Using different cache directory for each WTR process
