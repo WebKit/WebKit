@@ -509,6 +509,11 @@ void MediaPlayerPrivate::updateStates()
 #if USE(ACCELERATED_COMPOSITING)
             setBuffering(false);
             m_mediaIsBuffering = false;
+            // Remove media player from platform layer (remove hole punch rect).
+            if (m_platformLayer) {
+                static_cast<VideoLayerWebKitThread*>(m_platformLayer.get())->setMediaPlayer(0);
+                m_platformLayer.clear();
+            }
 #endif
             if (isFullscreen())
                 element->exitFullscreen();
@@ -517,6 +522,9 @@ void MediaPlayerPrivate::updateStates()
 #if USE(ACCELERATED_COMPOSITING)
             m_showBufferingImage = false;
             m_mediaIsBuffering = false;
+            // Create platform layer for video (create hole punch rect).
+            if (!m_platformLayer)
+                m_platformLayer = VideoLayerWebKitThread::create(m_webCorePlayer);
 #endif
             break;
         case MMRPlayer::MP_STATE_UNSUPPORTED:
@@ -529,14 +537,8 @@ void MediaPlayerPrivate::updateStates()
             m_readyState = MediaPlayer::HaveEnoughData;
     }
 
-    if (m_readyState != oldReadyState) {
+    if (m_readyState != oldReadyState)
         m_webCorePlayer->readyStateChanged();
-#if USE(ACCELERATED_COMPOSITING)
-        // Create platform layer for video.
-        if (!m_platformLayer)
-            m_platformLayer = VideoLayerWebKitThread::create(m_webCorePlayer);
-#endif
-    }
     if (m_networkState != oldNetworkState)
         m_webCorePlayer->networkStateChanged();
 }

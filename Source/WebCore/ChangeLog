@@ -1,3 +1,20 @@
+2012-07-19  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Only maintain the hole punch rect while html5 video is being renderered
+        https://bugs.webkit.org/show_bug.cgi?id=91689
+
+        Reviewed by Antonio Gomes.
+
+        The hole punch rectangle needs to be present if and only if html5
+        video content is being rendered. Otherwise unwanted content may
+        show through from behind the browser tab's window.
+
+        I am not adding any new tests because the difficulty of testing
+        for this case outweighs the benefit.
+
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::updateStates):
+
 2012-07-19  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Exclusions] - Code cleanup: make shape parsing use isComma() instead of manual checks
