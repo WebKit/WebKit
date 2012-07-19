@@ -1135,9 +1135,11 @@ void RenderInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
     if (!o)
         return;
 
-    if (applyContainerFlip && o->isBox() && o->style()->isFlippedBlocksWritingMode()) {
-        IntPoint centerPoint = roundedIntPoint(transformState.mappedPoint());
-        transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(centerPoint) - centerPoint);
+    if (applyContainerFlip && o->isBox()) {
+        if (o->style()->isFlippedBlocksWritingMode()) {
+            IntPoint centerPoint = roundedIntPoint(transformState.mappedPoint());
+            transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(centerPoint) - centerPoint);
+        }
         applyContainerFlip = DoNotApplyContainerFlip;
     }
 

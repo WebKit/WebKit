@@ -1,3 +1,24 @@
+2012-07-19  Dan Bernstein  <mitz@apple.com>
+
+        In flipped blocks writing modes, no flipping occurs when mapping RenderText’s local coordinates to absolute
+        https://bugs.webkit.org/show_bug.cgi?id=91780
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/writing-mode/flipped-blocks-text-map-local-to-container.html
+
+        When RenderObject::mapLocalToContainer() was called on a RenderText with ApplyContainerFlip,
+        it would not flip (if the container was not a box) but it would always pass
+        DoNotApplyContainerFlip when recurring to the parent. This meant that no one applied the flip.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer): Made the setting of applyContainerFlip to
+        false unconditional on the container actually being flipped.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer): Rather than always passing
+        DoNotApplyContainerFlip when recurring to the parent, changed this function to pass through
+        the value of applyContainerFlip it was called with, unless it applied the flip itself.
+
 2012-07-19  Erik Arvidsson  <arv@chromium.org>
 
         Window top should not be replaceable

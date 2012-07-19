@@ -1,3 +1,13 @@
+2012-07-19  Dan Bernstein  <mitz@apple.com>
+
+        In flipped blocks writing modes, no flipping occurs when mapping RenderText’s local coordinates to absolute
+        https://bugs.webkit.org/show_bug.cgi?id=91780
+
+        Reviewed by Anders Carlsson.
+
+        * fast/writing-mode/flipped-blocks-text-map-local-to-container-expected.txt: Added.
+        * fast/writing-mode/flipped-blocks-text-map-local-to-container.html: Added.
+
 2012-07-19  Erik Arvidsson  <arv@chromium.org>
 
         Window top should not be replaceable
