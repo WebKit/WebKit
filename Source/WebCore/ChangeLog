@@ -1,3 +1,25 @@
+2012-07-18  Hironori Bono  <hbono@chromium.org>
+
+        Move contents right when a vertical scrollbar is shown at the left side of an RTL element.
+        https://bugs.webkit.org/show_bug.cgi?id=85856
+
+        Reviewed by Hajime Morita.
+
+        This change prevents the scrollWidth value from being cropped by the width of a
+        scrollbar when a vertical scrollbar is shown at the left side of an RTL element.
+        This change also increases the clientLeft value by this scrollbar width and move
+        contents right to improve compliance with CSSOM <http://www.w3.org/TR/cssom-view>.
+
+        Tests: scrollbars/rtl/div-horizontal.html
+               scrollbars/rtl/div-vertical.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject): Move contents to the right.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::topLeftLocationOffset): Move the top-left corner to the right to prevent WebKit from cropping scrollWidth.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::clientLeft): Increase clientLeft by the width of a scrollbar.
+
 2012-07-18  Kent Tamura  <tkent@chromium.org>
 
         Form state restore: Classify form control sates by owners in internal and serialized representations

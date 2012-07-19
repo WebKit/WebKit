@@ -3645,6 +3645,11 @@ BUGWK90517 WIN : svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg = PASS 
 BUGWK91421 WIN7 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = PASS CRASH
 BUGWK90469 WIN : storage/websql/multiple-databases-garbage-collection.html = PASS CRASH
 
+// Require rebaselines when Bug 85856 is fixed. (The left side of their RTL elements are cropped due to this bug.)
+BUGWK85856 : fast/block/float/028.html = IMAGE
+BUGWK85856 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
+BUGWK85856 : fast/block/float/026.html = IMAGE
+
 // Require rebaseline after bug 88171
 BUGWK88171 WIN : css1/formatting_model/floating_elements.html = IMAGE
 

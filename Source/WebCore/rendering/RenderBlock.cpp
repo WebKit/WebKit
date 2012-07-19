@@ -2967,8 +2967,11 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
     LayoutPoint scrolledOffset = paintOffset;
-    if (hasOverflowClip())
+    if (hasOverflowClip()) {
         scrolledOffset.move(-scrolledContentOffset());
+        if (style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
+            scrolledOffset.move(verticalScrollbarWidth(), 0);
+    }
 
     // 2. paint contents
     if (paintPhase != PaintPhaseSelfOutline) {

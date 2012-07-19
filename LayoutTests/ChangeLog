@@ -1,3 +1,21 @@
+2012-07-18  Hironori Bono  <hbono@chromium.org>
+
+        Move contents right when a vertical scrollbar is shown at the left side of an RTL element.
+        https://bugs.webkit.org/show_bug.cgi?id=85856
+
+        Reviewed by Hajime Morita.
+
+        This changes adds a couple of tests that verify CSSOM properties of RTL elements
+        are compliant with <http://www.w3.org/TR/cssom-view> regardless of their
+        scrollbar positions.
+
+        * platform/chromium/TestExpectations:
+        * scrollbars/rtl: Added.
+        * scrollbars/rtl/div-horizontal-expected.txt: Added.
+        * scrollbars/rtl/div-horizontal.html: Added.
+        * scrollbars/rtl/div-vertical-expected.txt: Added.
+        * scrollbars/rtl/div-vertical.html: Added.
+
 2012-07-18  Kent Tamura  <tkent@chromium.org>
 
         Form state restore: Classify form control sates by owners in internal and serialized representations
