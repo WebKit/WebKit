@@ -1,3 +1,18 @@
+2012-07-19  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Add a callback to handle delete request in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=91483
+
+        Reviewed by Dirk Pranke.
+
+        Add a callback to handle delete request and quit the main loop when
+        window is asked to be deleted so that all the resources allocated
+        for the window will be freed properly.
+
+        * MiniBrowser/efl/main.c:
+        (closeWindow):
+        (browserCreate):
+
 2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Enable CSS shaders in Qt (software mode)

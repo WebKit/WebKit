@@ -49,6 +49,11 @@ static Eina_Bool main_signal_exit(void *data, int ev_type, void *ev)
     return EINA_TRUE;
 }
 
+static void closeWindow(Ecore_Evas *ee)
+{
+    ecore_main_loop_quit();
+}
+
 static void on_ecore_evas_resize(Ecore_Evas *ee)
 {
     Evas_Object *webview;
@@ -149,6 +154,7 @@ static MiniBrowser *browserCreate(const char *url)
     ecore_evas_callback_resize_set(app->ee, on_ecore_evas_resize);
     ecore_evas_borderless_set(app->ee, 0);
     ecore_evas_show(app->ee);
+    ecore_evas_callback_delete_request_set(app->ee, closeWindow);
 
     app->evas = ecore_evas_get(app->ee);
 
