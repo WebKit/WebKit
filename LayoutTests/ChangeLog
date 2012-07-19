@@ -2,6 +2,15 @@
 
         [mac] Unreviewed gardening.
 
+        Rebaseline (by partially reverting) r122883. 
+
+        * platform/mac/fast/inline/002-expected.txt:
+        * platform/mac/fast/table/table-display-types-strict-expected.txt:
+
+2012-07-18  Jer Noble  <jer.noble@apple.com>
+
+        [mac] Unreviewed gardening.
+
         Rebaseline (and add Skipped entries) after r122861.
 
         * platform/mac/Skipped:
