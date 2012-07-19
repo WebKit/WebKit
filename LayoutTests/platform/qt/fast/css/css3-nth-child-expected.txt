@@ -3,66 +3,66 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x186
-        RenderTable {TABLE} at (0,0) size 784x186
-          RenderTableSection {TBODY} at (0,0) size 784x186
-            RenderTableRow {TR} at (0,2) size 784x44 [color=#008000]
-              RenderTableCell {TD} at (2,2) size 380x44 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 348x42
-                  text run at (1,1) width 348: "This is the first cell in the first row of this table,"
-                  text run at (1,22) width 232: "and should be green, and bold"
-              RenderTableCell {TD} at (384,2) size 398x44 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 376x42
-                  text run at (1,1) width 376: "This is the second cell in the first row of this table,"
-                  text run at (1,22) width 228: "and should be green and bold"
-            RenderTableRow {TR} at (0,48) size 784x44 [color=#800080]
-              RenderTableCell {TD} at (2,48) size 380x44 [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 376x42
-                  text run at (1,1) width 376: "This is the first cell in the second row of this table,"
-                  text run at (1,22) width 233: "and should be purple and bold"
-              RenderTableCell {TD} at (384,48) size 398x44 [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 359x42
-                  text run at (1,1) width 359: "This is the second cell in the second row of this"
-                  text run at (1,22) width 278: "table, and should be purple and bold"
-            RenderTableRow {TR} at (0,94) size 784x44 [color=#008000]
-              RenderTableCell {TD} at (2,94) size 380x44 [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 359x42
-                  text run at (1,1) width 359: "This is the first cell in the third row of this table, and"
-                  text run at (1,22) width 115: "should be green"
-              RenderTableCell {TD} at (384,94) size 398x44 [r=2 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 386x42
-                  text run at (1,1) width 386: "This is the second cell in the third row of this table, and"
-                  text run at (1,22) width 115: "should be green"
-            RenderTableRow {TR} at (0,140) size 784x44 [color=#800080]
-              RenderTableCell {TD} at (2,140) size 380x44 [r=3 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 368x42
-                  text run at (1,1) width 368: "This is the first cell in the fourth row of this table, and"
-                  text run at (1,22) width 119: "should be purple"
-              RenderTableCell {TD} at (384,140) size 398x44 [r=3 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 395x42
-                  text run at (1,1) width 395: "This is the second cell in the fourth row of this table, and"
-                  text run at (1,22) width 119: "should be purple"
-      RenderBlock {DIV} at (0,202) size 784x132
-        RenderBlock {P} at (0,0) size 784x21 [color=#000080]
-          RenderText {#text} at (0,0) size 435x21
-            text run at (0,0) width 435: "This should be navy, as this is the first paragraph in this page."
-        RenderBlock {P} at (0,37) size 784x21 [color=#FF0000]
-          RenderText {#text} at (0,0) size 451x21
-            text run at (0,0) width 451: "This should be red, as this is the second paragraph in this page."
-        RenderBlock {P} at (0,74) size 784x21 [color=#000080]
-          RenderText {#text} at (0,0) size 441x21
-            text run at (0,0) width 441: "This should be navy, as this is the third paragraph in this page."
-        RenderBlock {P} at (0,111) size 784x21 [color=#FF0000]
-          RenderText {#text} at (0,0) size 439x21
-            text run at (0,0) width 439: "This should be red, as this is the fourth paragraph in this page."
-      RenderBlock {DIV} at (0,350) size 784x21
-        RenderBlock {P} at (0,0) size 784x21 [color=#000080]
-          RenderInline {SPAN} at (0,0) size 270x21
-            RenderInline {I} at (0,0) size 270x21
-              RenderText {#text} at (0,0) size 270x21
-                text run at (0,0) width 270: "This whole paragraph should be italic."
-          RenderText {#text} at (270,0) size 4x21
-            text run at (270,0) width 4: " "
-          RenderInline {SPAN} at (0,0) size 292x21
-            RenderText {#text} at (274,0) size 292x21
-              text run at (274,0) width 292: "But only this sentence should be bold."
+      RenderBlock {DIV} at (0,0) size 784x170
+        RenderTable {TABLE} at (0,0) size 784x170
+          RenderTableSection {TBODY} at (0,0) size 784x170
+            RenderTableRow {TR} at (0,2) size 784x40 [color=#008000]
+              RenderTableCell {TD} at (2,2) size 382x40 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 341x38
+                  text run at (1,1) width 341: "This is the first cell in the first row of this table, and"
+                  text run at (1,20) width 169: "should be green, and bold"
+              RenderTableCell {TD} at (386,2) size 396x40 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 360x38
+                  text run at (1,1) width 360: "This is the second cell in the first row of this table, and"
+                  text run at (1,20) width 165: "should be green and bold"
+            RenderTableRow {TR} at (0,44) size 784x40 [color=#800080]
+              RenderTableCell {TD} at (2,44) size 382x40 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 360x38
+                  text run at (1,1) width 360: "This is the first cell in the second row of this table, and"
+                  text run at (1,20) width 169: "should be purple and bold"
+              RenderTableCell {TD} at (386,44) size 396x40 [r=1 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 379x38
+                  text run at (1,1) width 379: "This is the second cell in the second row of this table, and"
+                  text run at (1,20) width 169: "should be purple and bold"
+            RenderTableRow {TR} at (0,86) size 784x40 [color=#008000]
+              RenderTableCell {TD} at (2,86) size 382x40 [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 370x38
+                  text run at (1,1) width 370: "This is the first cell in the third row of this table, and should be"
+                  text run at (1,20) width 33: "green"
+              RenderTableCell {TD} at (386,86) size 396x40 [r=2 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 391x38
+                  text run at (1,1) width 391: "This is the second cell in the third row of this table, and should be"
+                  text run at (1,20) width 33: "green"
+            RenderTableRow {TR} at (0,128) size 784x40 [color=#800080]
+              RenderTableCell {TD} at (2,128) size 382x40 [r=3 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 378x38
+                  text run at (1,1) width 378: "This is the first cell in the fourth row of this table, and should be"
+                  text run at (1,20) width 38: "purple"
+              RenderTableCell {TD} at (386,128) size 396x40 [r=3 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 380x38
+                  text run at (1,1) width 380: "This is the second cell in the fourth row of this table, and should"
+                  text run at (1,20) width 57: "be purple"
+      RenderBlock {DIV} at (0,186) size 784x124
+        RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+          RenderText {#text} at (0,0) size 365x19
+            text run at (0,0) width 365: "This should be navy, as this is the first paragraph in this page."
+        RenderBlock {P} at (0,35) size 784x19 [color=#FF0000]
+          RenderText {#text} at (0,0) size 378x19
+            text run at (0,0) width 378: "This should be red, as this is the second paragraph in this page."
+        RenderBlock {P} at (0,70) size 784x19 [color=#000080]
+          RenderText {#text} at (0,0) size 370x19
+            text run at (0,0) width 370: "This should be navy, as this is the third paragraph in this page."
+        RenderBlock {P} at (0,105) size 784x19 [color=#FF0000]
+          RenderText {#text} at (0,0) size 370x19
+            text run at (0,0) width 370: "This should be red, as this is the fourth paragraph in this page."
+      RenderBlock {DIV} at (0,326) size 784x19
+        RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+          RenderInline {SPAN} at (0,0) size 246x19
+            RenderInline {I} at (0,0) size 246x19
+              RenderText {#text} at (0,0) size 246x19
+                text run at (0,0) width 246: "This whole paragraph should be italic."
+          RenderText {#text} at (246,0) size 4x19
+            text run at (246,0) width 4: " "
+          RenderInline {SPAN} at (0,0) size 253x19
+            RenderText {#text} at (250,0) size 253x19
+              text run at (250,0) width 253: "But only this sentence should be bold."

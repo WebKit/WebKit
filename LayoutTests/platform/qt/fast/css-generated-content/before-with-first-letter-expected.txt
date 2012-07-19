@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 57x21
-          text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 719x42
-          RenderInline {A} at (0,0) size 329x21 [color=#0000EE]
-            RenderText {#text} at (57,0) size 329x21
-              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=14221"
-          RenderText {#text} at (386,0) size 719x42
-            text run at (386,0) width 4: " "
-            text run at (390,0) width 329: "Repro crash (ASSERTION FAILED: oldText in"
-            text run at (0,21) width 611: "RenderBlock::updateFirstLetter() during relayout of :before content with first-letter style)"
-        RenderText {#text} at (611,21) size 4x21
-          text run at (611,21) width 4: "."
-      RenderBlock {DIV} at (0,58) size 784x37
-        RenderInline (generated) at (0,0) size 51x30
-          RenderInline (generated) at (0,0) size 18x37 [color=#008000]
-            RenderText at (0,0) size 18x37
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {I} at (0,0) size 660x38
+          RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
+            RenderText {#text} at (51,0) size 305x19
+              text run at (51,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=14221"
+          RenderText {#text} at (356,0) size 660x38
+            text run at (356,0) width 4: " "
+            text run at (360,0) width 300: "Repro crash (ASSERTION FAILED: oldText in"
+            text run at (0,19) width 576: "RenderBlock::updateFirstLetter() during relayout of :before content with first-letter style)"
+        RenderText {#text} at (576,19) size 4x19
+          text run at (576,19) width 4: "."
+      RenderBlock {DIV} at (0,54) size 784x33
+        RenderInline (generated) at (0,0) size 47x28
+          RenderInline (generated) at (0,0) size 18x33 [color=#008000]
+            RenderText at (0,0) size 18x33
               text run at (0,0) width 18: "T"
-          RenderText at (18,5) size 33x30
-            text run at (18,5) width 33: "he "
-        RenderText {#text} at (51,5) size 450x30
-          text run at (51,5) width 450: "first letter is green and larger than the rest."
+          RenderText at (18,4) size 29x28
+            text run at (18,4) width 29: "he "
+        RenderText {#text} at (47,4) size 407x28
+          text run at (47,4) width 407: "first letter is green and larger than the rest."

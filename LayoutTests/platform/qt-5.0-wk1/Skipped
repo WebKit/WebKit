@@ -245,12 +245,6 @@ editing/pasteboard/emacs-cntl-y-001.html
 fast/block/basic/020.html
 fast/block/basic/truncation-rtl.html
 fast/block/float/float-in-float-hit-testing.html
-fast/css/bidi-override-in-anonymous-block.html
-fast/css/compare-content-style.html
-fast/dom/HTMLMeterElement/meter-writing-mode.html
-fast/dom/rtl-scroll-to-leftmost-and-resize.html
-fast/dom/scroll-reveal-left-overflow.html
-fast/dom/scroll-reveal-top-overflow.html
 fast/dynamic/012.html
 fast/dynamic/layer-hit-test-crash.html
 fast/forms/mailto/advanced-get.html

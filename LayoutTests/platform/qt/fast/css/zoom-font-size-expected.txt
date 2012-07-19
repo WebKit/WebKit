@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 237x21
-          text run at (0,0) width 237: "All text below should be 32px tall."
-      RenderBlock {DIV} at (0,21) size 784x41
-        RenderText {#text} at (0,0) size 409x41
-          text run at (0,0) width 409: "This text should be 32px tall."
-      RenderBlock {DIV} at (0,62) size 784x41
-        RenderText {#text} at (0,0) size 409x41
-          text run at (0,0) width 409: "This text should be 32px tall."
-      RenderBlock {DIV} at (0,103) size 784x41
-        RenderText {#text} at (0,0) size 409x41
-          text run at (0,0) width 409: "This text should be 32px tall."
-      RenderBlock {DIV} at (0,144) size 784x41
-        RenderText {#text} at (0,0) size 409x41
-          text run at (0,0) width 409: "This text should be 32px tall."
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 206x19
+          text run at (0,0) width 206: "All text below should be 32px tall."
+      RenderBlock {DIV} at (0,19) size 784x37
+        RenderText {#text} at (0,0) size 365x36
+          text run at (0,0) width 365: "This text should be 32px tall."
+      RenderBlock {DIV} at (0,56) size 784x37
+        RenderText {#text} at (0,0) size 365x36
+          text run at (0,0) width 365: "This text should be 32px tall."
+      RenderBlock {DIV} at (0,93) size 784x37
+        RenderText {#text} at (0,0) size 365x36
+          text run at (0,0) width 365: "This text should be 32px tall."
+      RenderBlock {DIV} at (0,130) size 784x37
+        RenderText {#text} at (0,0) size 365x36
+          text run at (0,0) width 365: "This text should be 32px tall."

@@ -1,12 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x158
-  RenderBlock {HTML} at (0,0) size 800x158
-    RenderBody {BODY} at (8,8) size 784x142
-      RenderBlock (anonymous) at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 762x42
-          text run at (0,0) width 343: "You should see a 100x100 green square below. "
-          text run at (343,0) width 419: "This test makes sure overflow uses containing blocks when"
-          text run at (0,21) width 60: "clipping."
-layer at (8,50) size 100x100 scrollWidth 300 scrollHeight 300
-  RenderBlock {DIV} at (0,42) size 100x100 [bgcolor=#008000]
+layer at (0,0) size 800x135
+  RenderBlock {HTML} at (0,0) size 800x135
+    RenderBody {BODY} at (8,8) size 784x119
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 700x19
+          text run at (0,0) width 293: "You should see a 100x100 green square below. "
+          text run at (293,0) width 407: "This test makes sure overflow uses containing blocks when clipping."
+layer at (8,27) size 100x100 scrollWidth 300 scrollHeight 300
+  RenderBlock {DIV} at (0,19) size 100x100 [bgcolor=#008000]

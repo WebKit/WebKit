@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [color=#FF0000]
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 385x21
-          text run at (0,0) width 385: "Should say \x{201C}BEFORE CONTENT AFTER CONTENT\x{201D}"
-      RenderTable {DIV} at (0,37) size 200x21
-        RenderTableSection (anonymous) at (0,0) size 200x21
-          RenderTableRow (anonymous) at (0,0) size 200x21
-            RenderTableCell (anonymous) at (0,0) size 67x21 [r=0 c=0 rs=1 cs=1]
-              RenderText at (0,0) size 67x21
-                text run at (0,0) width 67: "BEFORE"
-            RenderTableCell (anonymous) at (67,0) size 79x21 [r=0 c=1 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 79x21
-                RenderText {#text} at (0,0) size 79x21
-                  text run at (0,0) width 79: "CONTENT"
-            RenderTableCell (anonymous) at (146,0) size 54x21 [r=0 c=2 rs=1 cs=1]
-              RenderText at (0,0) size 54x21
-                text run at (0,0) width 54: "AFTER"
-      RenderBlock (anonymous) at (0,58) size 784x21
-        RenderText {#text} at (0,0) size 79x21
-          text run at (0,0) width 79: "CONTENT"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 349x19
+          text run at (0,0) width 349: "Should say \x{201C}BEFORE CONTENT AFTER CONTENT\x{201D}"
+      RenderTable {DIV} at (0,35) size 181x19
+        RenderTableSection (anonymous) at (0,0) size 181x19
+          RenderTableRow (anonymous) at (0,0) size 181x19
+            RenderTableCell (anonymous) at (0,0) size 59x19 [r=0 c=0 rs=1 cs=1]
+              RenderText at (0,0) size 59x19
+                text run at (0,0) width 59: "BEFORE"
+            RenderTableCell (anonymous) at (59,0) size 74x19 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 74x19
+                RenderText {#text} at (0,0) size 74x19
+                  text run at (0,0) width 74: "CONTENT"
+            RenderTableCell (anonymous) at (133,0) size 48x19 [r=0 c=2 rs=1 cs=1]
+              RenderText at (0,0) size 48x19
+                text run at (0,0) width 48: "AFTER"
+      RenderBlock (anonymous) at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 74x19
+          text run at (0,0) width 74: "CONTENT"
         RenderText {#text} at (0,0) size 0x0

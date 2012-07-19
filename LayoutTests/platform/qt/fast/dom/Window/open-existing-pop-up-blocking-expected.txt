@@ -9,21 +9,19 @@ layer at (0,0) size 800x600
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-              RenderText {#text} at (0,0) size 267x84
-                text run at (0,0) width 224: "This frame will try to replace the"
-                text run at (0,21) width 267: "contents of the frame to the right. If the"
-                text run at (0,42) width 256: "bug still occurs, pop-up blocking will"
-                text run at (0,63) width 169: "prevent it from doing so."
-      RenderText {#text} at (304,138) size 4x21
-        text run at (304,138) width 4: " "
+              RenderText {#text} at (0,0) size 275x57
+                text run at (0,0) width 263: "This frame will try to replace the contents of"
+                text run at (0,19) width 260: "the frame to the right. If the bug still occurs,"
+                text run at (0,38) width 275: "pop-up blocking will prevent it from doing so."
+      RenderText {#text} at (304,139) size 4x19
+        text run at (304,139) width 4: " "
       RenderPartObject {IFRAME} at (308,0) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
-              RenderText {#text} at (0,0) size 243x63
-                text run at (0,0) width 243: "This text successfully replaced the"
-                text run at (0,21) width 208: "original text in the frame. Test"
-                text run at (0,42) width 82: "succeeded!"
+              RenderText {#text} at (0,0) size 276x38
+                text run at (0,0) width 276: "This text successfully replaced the original text"
+                text run at (0,19) width 177: "in the frame. Test succeeded!"
       RenderText {#text} at (0,0) size 0x0

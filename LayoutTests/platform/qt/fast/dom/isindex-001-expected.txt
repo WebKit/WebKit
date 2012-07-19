@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {FORM} at (0,0) size 784x49
+      RenderBlock {FORM} at (0,0) size 784x47
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-        RenderBlock (anonymous) at (0,10) size 784x29
-          RenderInline {LABEL} at (0,0) size 552x21
-            RenderText {#text} at (0,4) size 364x21
-              text run at (0,4) width 364: "This is a searchable index. Enter search keywords: "
-            RenderTextControl {INPUT} at (366,2) size 184x25
-        RenderBlock {HR} at (0,47) size 784x2 [border: (1px inset #000000)]
-layer at (376,22) size 180x21
-  RenderBlock {DIV} at (2,2) size 180x21
+        RenderBlock (anonymous) at (0,10) size 784x27
+          RenderInline {LABEL} at (0,0) size 503x19
+            RenderText {#text} at (0,4) size 307x19
+              text run at (0,4) width 307: "This is a searchable index. Enter search keywords: "
+            RenderTextControl {INPUT} at (309,2) size 192x23
+        RenderBlock {HR} at (0,45) size 784x2 [border: (1px inset #000000)]
+layer at (319,22) size 188x19
+  RenderBlock {DIV} at (2,2) size 188x19
