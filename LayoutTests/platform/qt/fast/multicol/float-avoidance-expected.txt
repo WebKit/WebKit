@@ -4,16 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (0,0) size 200x100 [bgcolor=#00FF00]
-layer at (208,8) size 435x178
-  RenderBlock {DIV} at (200,0) size 435x178 [border: (10px solid #000000)]
-    RenderBlock {P} at (10,26) size 415x126
-      RenderText {#text} at (0,0) size 415x126
-        text run at (0,0) width 415: "This technology preview of our award winning next"
-        text run at (0,21) width 153: "generation browser "
-        text run at (153,21) width 262: "is a sign of things to come from"
-        text run at (0,42) width 323: "Mozilla. Powerful yet easy to use. This "
-        text run at (323,42) width 92: "maintenance"
-        text run at (0,63) width 415: "release provides a few updates based on user feedback -"
-        text run at (0,84) width 75: "including "
-        text run at (75,84) width 340: "changes to the Extension System and icon"
-        text run at (0,105) width 104: "improvements."
+layer at (208,8) size 435x147
+  RenderBlock {DIV} at (200,0) size 435x147 [border: (10px solid #000000)]
+    RenderBlock {P} at (10,26) size 415x95
+      RenderText {#text} at (0,0) size 415x95
+        text run at (0,0) width 415: "This technology preview of our award winning next generation"
+        text run at (0,19) width 55: "browser "
+        text run at (55,19) width 360: "is a sign of things to come from Mozilla. Powerful yet easy"
+        text run at (0,38) width 78: "to use. This "
+        text run at (78,38) width 337: "maintenance release provides a few updates based on"
+        text run at (0,57) width 158: "user feedback - including "
+        text run at (158,57) width 257: "changes to the Extension System and icon"
+        text run at (0,76) width 88: "improvements."

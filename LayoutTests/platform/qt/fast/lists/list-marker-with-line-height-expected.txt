@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {OL} at (0,0) size 784x24
         RenderListItem {LI} at (40,0) size 744x24
-          RenderListMarker at (-22,1) size 17x21: "1"
-          RenderText {#text} at (0,1) size 458x21
-            text run at (0,1) width 458: "This test passes if the list item and list marker are evenly aligned."
+          RenderListMarker at (-21,2) size 16x19: "1"
+          RenderText {#text} at (0,2) size 384x19
+            text run at (0,2) width 384: "This test passes if the list item and list marker are evenly aligned."

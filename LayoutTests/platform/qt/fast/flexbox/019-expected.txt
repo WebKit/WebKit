@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 781x42
-          text run at (0,0) width 578: "You should see a 350x350 pixel (7 by 7) black/white checkerboard pattern below. "
-          text run at (578,0) width 203: "This test is checking to see if"
-          text run at (0,21) width 209: "box-pack: justify is supported."
-      RenderDeprecatedFlexibleBox {DIV} at (0,58) size 358x358 [border: (4px solid #800000)]
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 780x38
+          text run at (0,0) width 504: "You should see a 350x350 pixel (7 by 7) black/white checkerboard pattern below. "
+          text run at (504,0) width 276: "This test is checking to see if box-pack: justify"
+          text run at (0,19) width 78: "is supported."
+      RenderDeprecatedFlexibleBox {DIV} at (0,54) size 358x358 [border: (4px solid #800000)]
         RenderDeprecatedFlexibleBox {DIV} at (4,4) size 350x50
           RenderDeprecatedFlexibleBox {DIV} at (0,0) size 50x50 [bgcolor=#000000]
           RenderDeprecatedFlexibleBox {DIV} at (100,0) size 50x50 [bgcolor=#000000]

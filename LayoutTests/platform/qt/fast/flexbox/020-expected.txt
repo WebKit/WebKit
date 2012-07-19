@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 774x42
-          text run at (0,0) width 343: "You should see a 100x100 green square below. "
-          text run at (343,0) width 265: "If you see any red, the test has failed. "
-          text run at (608,0) width 166: "This test is checking for"
-          text run at (0,21) width 163: "box-flex-group support."
-      RenderDeprecatedFlexibleBox {DIV} at (0,58) size 100x100 [bgcolor=#FF0000]
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 756x38
+          text run at (0,0) width 293: "You should see a 100x100 green square below. "
+          text run at (293,0) width 227: "If you see any red, the test has failed. "
+          text run at (520,0) width 236: "This test is checking for box-flex-group"
+          text run at (0,19) width 50: "support."
+      RenderDeprecatedFlexibleBox {DIV} at (0,54) size 100x100 [bgcolor=#FF0000]
         RenderDeprecatedFlexibleBox {DIV} at (0,0) size 100x100 [bgcolor=#008000]
         RenderDeprecatedFlexibleBox {DIV} at (100,0) size 0x100

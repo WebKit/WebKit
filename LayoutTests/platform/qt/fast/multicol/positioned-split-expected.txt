@@ -9,23 +9,18 @@ layer at (8,8) size 784x304
     RenderBlock {DIV} at (2,252) size 382x250
 layer at (10,260) size 300x200
   RenderBlock (positioned) {DIV} at (0,0) size 300x200 [bgcolor=#D3D3D3]
-    RenderText {#text} at (0,0) size 255x42
-      text run at (0,0) width 255: "This text should paginate across the"
-      text run at (0,21) width 64: "columns."
-    RenderBR {BR} at (64,37) size 0x0
-    RenderText {#text} at (0,50) size 255x42
-      text run at (0,50) width 255: "This text should paginate across the"
-      text run at (0,71) width 64: "columns."
-    RenderBR {BR} at (64,87) size 0x0
-    RenderText {#text} at (0,92) size 255x42
-      text run at (0,92) width 255: "This text should paginate across the"
-      text run at (0,113) width 64: "columns."
-    RenderBR {BR} at (64,129) size 0x0
-    RenderText {#text} at (0,134) size 255x42
-      text run at (0,134) width 255: "This text should paginate across the"
-      text run at (0,155) width 64: "columns."
-    RenderBR {BR} at (64,171) size 0x0
-    RenderText {#text} at (0,176) size 255x42
-      text run at (0,176) width 255: "This text should paginate across the"
-      text run at (0,197) width 64: "columns."
-    RenderBR {BR} at (64,213) size 0x0
+    RenderText {#text} at (0,0) size 270x19
+      text run at (0,0) width 270: "This text should paginate across the columns."
+    RenderBR {BR} at (270,15) size 0x0
+    RenderText {#text} at (0,19) size 270x19
+      text run at (0,19) width 270: "This text should paginate across the columns."
+    RenderBR {BR} at (270,34) size 0x0
+    RenderText {#text} at (0,50) size 270x19
+      text run at (0,50) width 270: "This text should paginate across the columns."
+    RenderBR {BR} at (270,65) size 0x0
+    RenderText {#text} at (0,69) size 270x19
+      text run at (0,69) width 270: "This text should paginate across the columns."
+    RenderBR {BR} at (270,84) size 0x0
+    RenderText {#text} at (0,88) size 270x19
+      text run at (0,88) width 270: "This text should paginate across the columns."
+    RenderBR {BR} at (270,103) size 0x0

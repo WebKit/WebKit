@@ -4,39 +4,35 @@ layer at (0,0) size 800x8
   RenderBlock {HTML} at (0,0) size 800x8
     RenderBody {BODY} at (8,8) size 784x0
       RenderBlock {DIV} at (0,0) size 784x0
-layer at (20,36) size 424x345
-  RenderBlock (positioned) {P} at (20,36) size 424x345 [border: (2px solid #000000)]
-    RenderBlock (floating) at (2,2) size 22x48
-      RenderText {#text} at (0,0) size 22x48
-        text run at (0,0) width 22: "L"
-    RenderText {#text} at (28,2) size 200x665
-      text run at (28,2) width 174: "orem ipsum dolor sit"
-      text run at (28,23) width 174: "amet, consectetur"
-      text run at (2,44) width 200: "adipiscing elit. Cras"
-      text run at (2,65) width 200: "pharetra mollis pharetra."
-      text run at (2,86) width 200: "Suspendisse lacinia orci"
-      text run at (2,107) width 200: "et felis tristique sit amet"
-      text run at (2,128) width 200: "semper massa tempus."
-      text run at (2,149) width 200: "Suspendisse consectetur"
-      text run at (2,170) width 200: "tempor pulvinar. Proin dui"
-      text run at (2,191) width 200: "eros, ultricies vel"
-      text run at (2,212) width 200: "malesuada vel, tempor at"
-      text run at (2,233) width 200: "ante. Nam eget nisl dui."
-      text run at (2,254) width 200: "Donec molestie lectus a"
-      text run at (2,275) width 200: "nunc scelerisque blandit."
-      text run at (2,296) width 200: "Nam non ligula massa,"
-      text run at (2,352) width 200: "sed suscipit turpis. Etiam"
-      text run at (2,373) width 200: "eget ligula sit amet turpis"
-      text run at (2,394) width 200: "venenatis dictum in"
-      text run at (2,415) width 200: "eleifend augue. Duis tellus"
-      text run at (2,436) width 200: "lectus, volutpat et"
-      text run at (2,457) width 200: "adipiscing a, pellentesque"
-      text run at (2,478) width 200: "eu metus. Aenean"
-      text run at (2,499) width 200: "suscipit congue mauris at"
-      text run at (2,520) width 200: "gravida. Integer lectus"
-      text run at (2,541) width 200: "ligula, consectetur sit"
-      text run at (2,562) width 200: "amet venenatis id,"
-      text run at (2,583) width 200: "scelerisque eget nisl."
-      text run at (2,604) width 200: "Nunc dapibus posuere"
-      text run at (2,625) width 200: "risus, vitae tempor nibh"
-      text run at (2,646) width 71: "iaculis et."
+layer at (20,36) size 424x284
+  RenderBlock (positioned) {P} at (20,36) size 424x284 [border: (2px solid #000000)]
+    RenderBlock (floating) at (2,2) size 24x41
+      RenderText {#text} at (0,0) size 24x41
+        text run at (0,0) width 24: "L"
+    RenderText {#text} at (30,2) size 200x517
+      text run at (30,2) width 172: "orem ipsum dolor sit"
+      text run at (30,21) width 172: "amet, consectetur"
+      text run at (2,40) width 200: "adipiscing elit. Cras pharetra"
+      text run at (2,59) width 200: "mollis pharetra. Suspendisse"
+      text run at (2,78) width 200: "lacinia orci et felis tristique sit"
+      text run at (2,97) width 200: "amet semper massa tempus."
+      text run at (2,116) width 200: "Suspendisse consectetur"
+      text run at (2,135) width 200: "tempor pulvinar. Proin dui"
+      text run at (2,154) width 200: "eros, ultricies vel malesuada"
+      text run at (2,173) width 200: "vel, tempor at ante. Nam eget"
+      text run at (2,192) width 200: "nisl dui. Donec molestie"
+      text run at (2,211) width 200: "lectus a nunc scelerisque"
+      text run at (2,230) width 200: "blandit. Nam non ligula"
+      text run at (2,249) width 200: "massa, sed suscipit turpis."
+      text run at (2,291) width 200: "Etiam eget ligula sit amet"
+      text run at (2,310) width 200: "turpis venenatis dictum in"
+      text run at (2,329) width 200: "eleifend augue. Duis tellus"
+      text run at (2,348) width 200: "lectus, volutpat et adipiscing"
+      text run at (2,367) width 200: "a, pellentesque eu metus."
+      text run at (2,386) width 200: "Aenean suscipit congue"
+      text run at (2,405) width 200: "mauris at gravida. Integer"
+      text run at (2,424) width 200: "lectus ligula, consectetur sit"
+      text run at (2,443) width 200: "amet venenatis id, scelerisque"
+      text run at (2,462) width 200: "eget nisl. Nunc dapibus"
+      text run at (2,481) width 200: "posuere risus, vitae tempor"
+      text run at (2,500) width 95: "nibh iaculis et."

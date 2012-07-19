@@ -3,12 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x63
-        RenderText {#text} at (0,0) size 784x63
-          text run at (0,0) width 744: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is not"
-          text run at (0,21) width 784: "drawn for an <area> with a 0px outline-width. This test PASSED if no red focus ring is drawn around the <area>"
-          text run at (0,42) width 179: "in the imagemap (below)."
-      RenderBlock (anonymous) at (0,79) size 784x128
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 761x38
+          text run at (0,0) width 761: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is not drawn for an <area>"
+          text run at (0,19) width 708: "with a 0px outline-width. This test PASSED if no red focus ring is drawn around the <area> in the imagemap (below)."
+      RenderBlock (anonymous) at (0,54) size 784x128
         RenderInline {MAP} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

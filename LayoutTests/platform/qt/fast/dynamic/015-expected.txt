@@ -4,33 +4,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 769x42
-          text run at (0,0) width 769: "You should see a table with 6 rows, labeled \"Row_0\", \"Row_1\", \"Row_2\", \"Row_3\", \"Row_4\", \"Row_5\", from"
-          text run at (0,21) width 95: "top to bottom."
-      RenderTable {TABLE} at (0,58) size 61x166 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 59x164
-          RenderTableRow {TR} at (0,2) size 59x25
-            RenderTableCell {TD} at (2,2) size 55x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 51x21
-                text run at (2,2) width 51: "Row_0"
-          RenderTableRow {TR} at (0,29) size 59x25
-            RenderTableCell {TD} at (2,29) size 55x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 51x21
-                text run at (2,2) width 51: "Row_1"
-          RenderTableRow {TR} at (0,56) size 59x25
-            RenderTableCell {TD} at (2,56) size 55x25 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 51x21
-                text run at (2,2) width 51: "Row_2"
-          RenderTableRow {TR} at (0,83) size 59x25
-            RenderTableCell {TD} at (2,83) size 55x25 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 51x21
-                text run at (2,2) width 51: "Row_3"
-          RenderTableRow {TR} at (0,110) size 59x25
-            RenderTableCell {TD} at (2,110) size 55x25 [border: (1px inset #808080)] [r=4 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 51x21
-                text run at (2,2) width 51: "Row_4"
-          RenderTableRow {TR} at (0,137) size 59x25
-            RenderTableCell {TD} at (2,137) size 55x25 [border: (1px inset #808080)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 51x21
-                text run at (2,2) width 51: "Row_5"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 764x19
+          text run at (0,0) width 764: "You should see a table with 6 rows, labeled \"Row_0\", \"Row_1\", \"Row_2\", \"Row_3\", \"Row_4\", \"Row_5\", from top to bottom."
+      RenderTable {TABLE} at (0,35) size 55x154 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 53x152
+          RenderTableRow {TR} at (0,2) size 53x23
+            RenderTableCell {TD} at (2,2) size 49x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x19
+                text run at (2,2) width 45: "Row_0"
+          RenderTableRow {TR} at (0,27) size 53x23
+            RenderTableCell {TD} at (2,27) size 49x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x19
+                text run at (2,2) width 45: "Row_1"
+          RenderTableRow {TR} at (0,52) size 53x23
+            RenderTableCell {TD} at (2,52) size 49x23 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x19
+                text run at (2,2) width 45: "Row_2"
+          RenderTableRow {TR} at (0,77) size 53x23
+            RenderTableCell {TD} at (2,77) size 49x23 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x19
+                text run at (2,2) width 45: "Row_3"
+          RenderTableRow {TR} at (0,102) size 53x23
+            RenderTableCell {TD} at (2,102) size 49x23 [border: (1px inset #808080)] [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x19
+                text run at (2,2) width 45: "Row_4"
+          RenderTableRow {TR} at (0,127) size 53x23
+            RenderTableCell {TD} at (2,127) size 49x23 [border: (1px inset #808080)] [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 45x19
+                text run at (2,2) width 45: "Row_5"

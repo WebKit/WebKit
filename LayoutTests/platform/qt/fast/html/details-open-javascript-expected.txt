@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DETAILS} at (0,0) size 784x50
-        RenderBlock {SUMMARY} at (0,0) size 784x21
-          RenderDetailsMarker {DIV} at (0,6) size 10x10: down
-          RenderText {#text} at (16,0) size 56x21
-            text run at (16,0) width 56: "details1"
-        RenderBlock (anonymous) at (0,21) size 784x29
-          RenderTextControl {INPUT} at (2,2) size 184x25
+      RenderBlock {DETAILS} at (0,0) size 784x46
+        RenderBlock {SUMMARY} at (0,0) size 784x19
+          RenderDetailsMarker {DIV} at (0,5) size 10x10: down
+          RenderText {#text} at (16,0) size 46x19
+            text run at (16,0) width 46: "details1"
+        RenderBlock (anonymous) at (0,19) size 784x27
+          RenderTextControl {INPUT} at (2,2) size 192x23
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DETAILS} at (0,50) size 784x21
-        RenderBlock {SUMMARY} at (0,0) size 784x21
-          RenderDetailsMarker {DIV} at (0,6) size 10x10: right
-          RenderText {#text} at (16,0) size 56x21
-            text run at (16,0) width 56: "details2"
-layer at (12,33) size 180x21
-  RenderBlock {DIV} at (2,2) size 180x21
+      RenderBlock {DETAILS} at (0,46) size 784x19
+        RenderBlock {SUMMARY} at (0,0) size 784x19
+          RenderDetailsMarker {DIV} at (0,5) size 10x10: right
+          RenderText {#text} at (16,0) size 46x19
+            text run at (16,0) width 46: "details2"
+layer at (12,31) size 188x19
+  RenderBlock {DIV} at (2,2) size 188x19

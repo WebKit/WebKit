@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x164
-  RenderBlock {HTML} at (0,0) size 800x164
-    RenderBody {BODY} at (8,16) size 784x132
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 293x21
-          text run at (0,0) width 293: "This line should not have red background"
-      RenderBlock {P} at (0,37) size 784x21 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 274x21
-          text run at (0,0) width 274: "This line should have lime background"
-      RenderBlock {P} at (0,74) size 784x21
-        RenderText {#text} at (0,0) size 293x21
-          text run at (0,0) width 293: "This line should not have red background"
-      RenderBlock {P} at (0,111) size 784x21 [bgcolor=#00FF00]
-        RenderText {#text} at (0,0) size 274x21
-          text run at (0,0) width 274: "This line should have lime background"
+layer at (0,0) size 800x156
+  RenderBlock {HTML} at (0,0) size 800x156
+    RenderBody {BODY} at (8,16) size 784x124
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 247x19
+          text run at (0,0) width 247: "This line should not have red background"
+      RenderBlock {P} at (0,35) size 784x19 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 228x19
+          text run at (0,0) width 228: "This line should have lime background"
+      RenderBlock {P} at (0,70) size 784x19
+        RenderText {#text} at (0,0) size 247x19
+          text run at (0,0) width 247: "This line should not have red background"
+      RenderBlock {P} at (0,105) size 784x19 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 228x19
+          text run at (0,0) width 228: "This line should have lime background"

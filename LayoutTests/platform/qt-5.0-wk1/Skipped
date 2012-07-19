@@ -215,17 +215,8 @@ editing/pasteboard/emacs-cntl-y-001.html
 fast/block/basic/020.html
 fast/block/basic/truncation-rtl.html
 fast/block/float/float-in-float-hit-testing.html
-fast/dynamic/012.html
-fast/dynamic/layer-hit-test-crash.html
 fast/forms/mailto/advanced-get.html
 fast/forms/mailto/advanced-put.html
-fast/frames/flattening/frameset-flattening-subframesets.html
-fast/frames/frame-navigation.html
-fast/history/visited-link-background-color.html
-fast/inline/absolute-positioned-inline-in-centred-block.html
-fast/layers/layer-visibility-sublayer.html
-fast/layers/layer-visibility.html
-fast/lists/list-style-none-crash.html
 fast/repaint/no-caret-repaint-in-non-content-editable-element.html
 fast/replaced/applet-disabled-positioned.html
 fast/replaced/applet-rendering-java-disabled.html

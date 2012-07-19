@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x60
-        RenderInline {FONT} at (0,0) size 340x60
-          RenderText {#text} at (0,0) size 340x60
-            text run at (0,0) width 340: "First paragraph."
-      RenderBlock (anonymous) at (0,76) size 784x0
+      RenderBlock {P} at (0,0) size 784x55
+        RenderInline {FONT} at (0,0) size 301x54
+          RenderText {#text} at (0,0) size 301x54
+            text run at (0,0) width 301: "First paragraph."
+      RenderBlock (anonymous) at (0,71) size 784x0
         RenderInline {FONT} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,108) size 784x60
-        RenderBlock {P} at (0,0) size 784x60
-          RenderText {#text} at (0,0) size 411x60
-            text run at (0,0) width 411: "Second paragraph."
-      RenderBlock (anonymous) at (0,216) size 784x0
+      RenderBlock (anonymous) at (0,103) size 784x55
+        RenderBlock {P} at (0,0) size 784x55
+          RenderText {#text} at (0,0) size 353x54
+            text run at (0,0) width 353: "Second paragraph."
+      RenderBlock (anonymous) at (0,206) size 784x0
         RenderInline {FONT} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderInline {B} at (0,0) size 0x0
         RenderInline {B} at (0,0) size 0x0
-      RenderBlock {P} at (0,216) size 784x21
-        RenderInline {B} at (0,0) size 108x21
-          RenderInline {I} at (0,0) size 108x21
-            RenderText {#text} at (0,0) size 108x21
-              text run at (0,0) width 108: "Bold and Italic"
-        RenderInline {I} at (0,0) size 37x21
-          RenderText {#text} at (108,0) size 37x21
-            text run at (108,0) width 37: " Italic"
+      RenderBlock {P} at (0,206) size 784x19
+        RenderInline {B} at (0,0) size 101x19
+          RenderInline {I} at (0,0) size 101x19
+            RenderText {#text} at (0,0) size 101x19
+              text run at (0,0) width 101: "Bold and Italic"
+        RenderInline {I} at (0,0) size 37x19
+          RenderText {#text} at (101,0) size 37x19
+            text run at (101,0) width 37: " Italic"

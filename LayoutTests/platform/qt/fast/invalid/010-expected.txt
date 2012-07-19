@@ -3,42 +3,42 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 373x21
-          text run at (0,0) width 373: "The style rule on this page should be totally ignored. "
-        RenderInline {A} at (0,0) size 90x21
-          RenderText {#text} at (373,0) size 90x21
-            text run at (373,0) width 90: "here is a link"
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 315x19
+          text run at (0,0) width 315: "The style rule on this page should be totally ignored. "
+        RenderInline {A} at (0,0) size 75x19
+          RenderText {#text} at (315,0) size 75x19
+            text run at (315,0) width 75: "here is a link"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H1} at (0,42) size 784x42
-        RenderText {#text} at (0,0) size 125x42
-          text run at (0,0) width 125: "heading"
-      RenderBlock (anonymous) at (0,105) size 784x105
-        RenderInline {SPAN} at (0,0) size 38x21
-          RenderText {#text} at (0,0) size 38x21
-            text run at (0,0) width 38: "issue"
-        RenderBR {BR} at (38,16) size 0x0
-        RenderInline {SPAN} at (0,0) size 21x21
-          RenderText {#text} at (0,21) size 21x21
-            text run at (0,21) width 21: "fail"
-        RenderBR {BR} at (21,37) size 0x0
-        RenderInline {A} at (0,0) size 135x21
-          RenderText {#text} at (0,42) size 135x21
-            text run at (0,42) width 135: "here is another link"
-        RenderBR {BR} at (135,58) size 0x0
-        RenderInline {SPAN} at (0,0) size 22x21
-          RenderText {#text} at (0,63) size 22x21
-            text run at (0,63) width 22: "n/a"
-        RenderBR {BR} at (22,79) size 0x0
-        RenderInline {SPAN} at (0,0) size 34x21
-          RenderText {#text} at (0,84) size 34x21
-            text run at (0,84) width 34: "pass"
-        RenderBR {BR} at (34,100) size 0x0
-      RenderBlock {H1} at (0,231) size 784x42
-        RenderText {#text} at (0,0) size 253x42
-          text run at (0,0) width 253: "another heading"
-      RenderBlock (anonymous) at (0,294) size 784x21
-        RenderInline {SPAN} at (0,0) size 22x21
-          RenderText {#text} at (0,0) size 22x21
-            text run at (0,0) width 22: "n/a"
-        RenderBR {BR} at (22,16) size 0x0
+      RenderBlock {H1} at (0,40) size 784x37
+        RenderText {#text} at (0,0) size 109x36
+          text run at (0,0) width 109: "heading"
+      RenderBlock (anonymous) at (0,98) size 784x95
+        RenderInline {SPAN} at (0,0) size 29x19
+          RenderText {#text} at (0,0) size 29x19
+            text run at (0,0) width 29: "issue"
+        RenderBR {BR} at (29,15) size 0x0
+        RenderInline {SPAN} at (0,0) size 17x19
+          RenderText {#text} at (0,19) size 17x19
+            text run at (0,19) width 17: "fail"
+        RenderBR {BR} at (17,34) size 0x0
+        RenderInline {A} at (0,0) size 113x19
+          RenderText {#text} at (0,38) size 113x19
+            text run at (0,38) width 113: "here is another link"
+        RenderBR {BR} at (113,53) size 0x0
+        RenderInline {SPAN} at (0,0) size 18x19
+          RenderText {#text} at (0,57) size 18x19
+            text run at (0,57) width 18: "n/a"
+        RenderBR {BR} at (18,72) size 0x0
+        RenderInline {SPAN} at (0,0) size 27x19
+          RenderText {#text} at (0,76) size 27x19
+            text run at (0,76) width 27: "pass"
+        RenderBR {BR} at (27,91) size 0x0
+      RenderBlock {H1} at (0,214) size 784x37
+        RenderText {#text} at (0,0) size 224x36
+          text run at (0,0) width 224: "another heading"
+      RenderBlock (anonymous) at (0,272) size 784x19
+        RenderInline {SPAN} at (0,0) size 18x19
+          RenderText {#text} at (0,0) size 18x19
+            text run at (0,0) width 18: "n/a"
+        RenderBR {BR} at (18,15) size 0x0

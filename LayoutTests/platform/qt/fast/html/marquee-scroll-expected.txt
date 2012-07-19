@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 57x21
-          text run at (0,0) width 57: "Test for "
-        RenderInline {A} at (0,0) size 76x21 [color=#0000EE]
-          RenderText {#text} at (57,0) size 76x21
-            text run at (57,0) width 76: "bug 15263"
-        RenderText {#text} at (133,0) size 439x21
-          text run at (133,0) width 439: ": REGRESSION: scrolldelay=0 causes marquee not to display"
-      RenderBlock {P} at (0,37) size 784x42
-        RenderText {#text} at (0,0) size 774x42
-          text run at (0,0) width 774: "The marquee below is defined with a scrollDelay value of zero and with the truespeed attribute assigned to an"
-          text run at (0,21) width 94: "empty string. "
-          text run at (94,21) width 618: "It should scroll until the text, \"The marquee scroll test passed\" is visible and left justified."
-      RenderBlock (anonymous) at (0,95) size 784x21
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {A} at (0,0) size 66x19 [color=#0000EE]
+          RenderText {#text} at (51,0) size 66x19
+            text run at (51,0) width 66: "bug 15263"
+        RenderText {#text} at (117,0) size 376x19
+          text run at (117,0) width 376: ": REGRESSION: scrolldelay=0 causes marquee not to display"
+      RenderBlock {P} at (0,35) size 784x38
+        RenderText {#text} at (0,0) size 749x38
+          text run at (0,0) width 740: "The marquee below is defined with a scrollDelay value of zero and with the truespeed attribute assigned to an empty string. "
+          text run at (740,0) width 9: "It"
+          text run at (0,19) width 511: "should scroll until the text, \"The marquee scroll test passed\" is visible and left justified."
+      RenderBlock (anonymous) at (0,89) size 784x19
         RenderText {#text} at (0,0) size 0x0
-layer at (8,103) size 392x21 scrollX -392
-  RenderBlock {MARQUEE} at (0,0) size 392x21 [bgcolor=#00FFFF]
-    RenderText {#text} at (0,0) size 222x21
-      text run at (0,0) width 222: "The marquee scroll test passed"
+layer at (8,97) size 392x19 scrollX -392
+  RenderBlock {MARQUEE} at (0,0) size 392x19 [bgcolor=#00FFFF]
+    RenderText {#text} at (0,0) size 186x19
+      text run at (0,0) width 186: "The marquee scroll test passed"

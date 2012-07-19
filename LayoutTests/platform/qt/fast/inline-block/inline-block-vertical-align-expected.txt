@@ -3,16 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x65
-        RenderText {#text} at (0,0) size 30x21
-          text run at (0,0) width 30: "One"
-        RenderBR {BR} at (30,16) size 0x0
-        RenderImage {IMG} at (0,38) size 11x11 [border: (1px dotted #FF0000)]
-        RenderText {#text} at (11,31) size 4x21
-          text run at (11,31) width 4: " "
-        RenderBlock {DIV} at (15,21) size 102x44 [border: (1px dotted #FF0000)]
+      RenderBlock {DIV} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 26x19
+          text run at (0,0) width 26: "One"
+        RenderBR {BR} at (26,15) size 0x0
+        RenderImage {IMG} at (0,26) size 11x11 [border: (1px dotted #FF0000)]
+        RenderText {#text} at (11,19) size 4x19
+          text run at (11,19) width 4: " "
+        RenderBlock {DIV} at (15,21) size 102x21 [border: (1px dotted #FF0000)]
           RenderImage {IMG} at (1,1) size 1000x0
-          RenderText {#text} at (14,1) size 74x42
-            text run at (14,1) width 74: "Text Goes"
-            text run at (33,22) width 36: "Here"
+          RenderText {#text} at (2,1) size 98x19
+            text run at (2,1) width 98: "Text Goes Here"
         RenderText {#text} at (0,0) size 0x0
