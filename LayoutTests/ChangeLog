@@ -1,3 +1,10 @@
+2012-07-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding missing baseline required after r122761.
+
+        * platform/gtk/fast/multicol/shrink-to-column-height-for-pagination-expected.png: Added.
+        * platform/gtk/fast/multicol/shrink-to-column-height-for-pagination-expected.txt: Added.
+
 2012-07-19  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] [Part 2] platform/qt/css1 tests needs update after rebaseline and new testfonts
