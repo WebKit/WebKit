@@ -54,6 +54,10 @@ namespace WebCore {
         virtual Color platformActiveSelectionForegroundColor() const;
         virtual Color platformInactiveSelectionForegroundColor() const;
 
+#if ENABLE(DATALIST)        
+        virtual IntSize sliderTickSize() const OVERRIDE;
+        virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
+#endif
         virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
         static void setCaretBlinkInterval(double interval);

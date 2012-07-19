@@ -1,3 +1,76 @@
+2012-07-18  Keishi Hattori  <keishi@webkit.org>
+
+        Implement painting slider tick marks
+        https://bugs.webkit.org/show_bug.cgi?id=87844
+
+        Reviewed by Kent Tamura.
+
+        This implements painting slider tick marks for <datalist> support for input type=range.
+        This does not support automatic update when list target changes, and it will be fixed
+        in a follow up patch (Bug 89544).
+
+        Tests: fast/forms/datalist/input-appearance-range-with-datalist-rtl.html
+               fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html
+               fast/forms/datalist/input-appearance-range-with-datalist.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::sliderThumbElement):
+        (WebCore):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/InputType.h:
+        (WebCore::InputType::sliderThumbElement):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::typeMismatchFor): We need HTMLInputElement::isValidValue("foo") to return false.
+        (WebCore):
+        (WebCore::RangeInputType::sliderThumbElement):
+        * html/RangeInputType.h:
+        (RangeInputType):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::layout): Slider height needs to be increased for the tick marks.
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore):
+        (WebCore::RenderThemeEfl::sliderTickSize):
+        (WebCore::RenderThemeEfl::sliderTickOffsetFromTrackCenter):
+        * platform/efl/RenderThemeEfl.h:
+        (RenderThemeEfl):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::sliderTickSize):
+        (WebCore):
+        (WebCore::RenderThemeQt::sliderTickOffsetFromTrackCenter):
+        * platform/qt/RenderThemeQt.h:
+        (RenderThemeQt):
+        * rendering/RenderTheme.cpp:
+        (WebCore):
+        (WebCore::RenderTheme::paintSliderTicks):
+        * rendering/RenderTheme.h:
+        (RenderTheme):
+        * rendering/RenderThemeChromiumCommon.cpp:
+        (WebCore::RenderThemeChromiumCommon::supportsDataListUI):
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore):
+        (WebCore::RenderThemeChromiumLinux::sliderTickSize): Tick size for horizontal slider. i.e. Width is length along the track.
+        (WebCore::RenderThemeChromiumLinux::sliderTickOffsetFromTrackCenter): Offset from
+        middle of draw rect to draw the ticks. Minus value means above the track.
+        (WebCore::RenderThemeChromiumLinux::paintSliderTrack):
+        * rendering/RenderThemeChromiumLinux.h:
+        (RenderThemeChromiumLinux):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore):
+        (WebCore::RenderThemeChromiumWin::sliderTickSize):
+        (WebCore::RenderThemeChromiumWin::sliderTickOffsetFromTrackCenter):
+        (WebCore::RenderThemeChromiumWin::paintSliderTrack):
+        (WebCore::RenderThemeChromiumWin::paintSliderThumb):
+        * rendering/RenderThemeChromiumWin.h:
+        (RenderThemeChromiumWin):
+        * rendering/RenderThemeMac.h:
+        (RenderThemeMac):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore):
+        (WebCore::RenderThemeMac::sliderTickSize):
+        (WebCore::RenderThemeMac::sliderTickOffsetFromTrackCenter):
+
 2012-07-18  Shinya Kawanaka  <shinyak@chromium.org>
 
         Element wants to have userAgentShadowRoot()

@@ -400,6 +400,20 @@ void RenderThemeQt::adjustSliderThumbStyle(StyleResolver* styleResolver, RenderS
     style->setBoxShadow(nullptr);
 }
 
+#if ENABLE(DATALIST)
+IntSize RenderThemeQt::sliderTickSize() const
+{
+    // FIXME: We need to set this to the size of one tick mark.
+    return IntSize(0, 0);
+}
+
+int RenderThemeQt::sliderTickOffsetFromTrackCenter() const
+{
+    // FIXME: We need to set this to the position of the tick marks.
+    return 0;
+}
+#endif
+
 bool RenderThemeQt::paintSearchField(RenderObject* o, const PaintInfo& pi,
                                      const IntRect& r)
 {

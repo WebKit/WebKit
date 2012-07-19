@@ -122,6 +122,7 @@ public:
 #if ENABLE(INPUT_SPEECH)
     HTMLElement* speechButtonElement() const;
 #endif
+    HTMLElement* sliderThumbElement() const;
     virtual HTMLElement* placeholderElement() const;
 
     bool checked() const { return m_isChecked; }

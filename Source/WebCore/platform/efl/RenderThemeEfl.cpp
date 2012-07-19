@@ -786,6 +786,20 @@ void RenderThemeEfl::adjustSliderThumbSize(RenderStyle* style, Element*) const
 #endif
 }
 
+#if ENABLE(DATALIST)
+IntSize RenderThemeEfl::sliderTickSize() const
+{
+    // FIXME: We need to set this to the size of one tick mark.
+    return IntSize(0, 0);
+}
+
+int RenderThemeEfl::sliderTickOffsetFromTrackCenter() const
+{
+    // FIXME: We need to set this to the position of the tick marks.
+    return 0;
+}
+#endif
+
 bool RenderThemeEfl::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     // We've already painted it in paintSliderTrack(), no need to do anything here.

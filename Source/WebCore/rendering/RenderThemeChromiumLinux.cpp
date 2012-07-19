@@ -146,6 +146,18 @@ Color RenderThemeChromiumLinux::platformInactiveSelectionForegroundColor() const
     return m_inactiveSelectionForegroundColor;
 }
 
+#if ENABLE(DATALIST)
+IntSize RenderThemeChromiumLinux::sliderTickSize() const
+{
+    return IntSize(1, 6);
+}
+
+int RenderThemeChromiumLinux::sliderTickOffsetFromTrackCenter() const
+{
+    return -16;
+}
+#endif
+
 void RenderThemeChromiumLinux::adjustSliderThumbSize(RenderStyle* style, Element* element) const
 {
     IntSize size = PlatformSupport::getThemePartSize(PlatformSupport::PartSliderThumb);
@@ -292,6 +304,11 @@ bool RenderThemeChromiumLinux::paintSliderTrack(RenderObject* o, const PaintInfo
     extraParams.slider.vertical = o->style()->appearance() == SliderVerticalPart;
 
     PlatformSupport::paintThemePart(i.context, PlatformSupport::PartSliderTrack, getWebThemeState(this, o), rect, &extraParams);
+
+#if ENABLE(DATALIST)
+    paintSliderTicks(o, i, rect);
+#endif
+
     return false;
 }
 

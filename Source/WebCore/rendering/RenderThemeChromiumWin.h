@@ -61,6 +61,10 @@ namespace WebCore {
         virtual void systemFont(int propId, FontDescription&) const;
         virtual Color systemColor(int cssValueId) const;
 
+#if ENABLE(DATALIST)        
+        virtual IntSize sliderTickSize() const OVERRIDE;
+        virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
+#endif
         virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
         // Various paint functions.

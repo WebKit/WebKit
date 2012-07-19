@@ -183,6 +183,11 @@ HTMLElement* HTMLInputElement::speechButtonElement() const
 }
 #endif
 
+HTMLElement* HTMLInputElement::sliderThumbElement() const
+{
+    return m_inputType->sliderThumbElement();
+}
+
 HTMLElement* HTMLInputElement::placeholderElement() const
 {
     return m_inputType->placeholderElement();

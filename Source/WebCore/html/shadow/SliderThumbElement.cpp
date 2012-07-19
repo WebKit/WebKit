@@ -148,19 +148,38 @@ void RenderSliderContainer::layout()
     // Sets the concrete height if the height of the <input> is not fixed or a
     // percentage value because a percentage height value of this box won't be
     // based on the <input> height in such case.
-    Length inputHeight = input->renderer()->style()->height();
-    RenderObject* trackRenderer = node()->firstChild()->renderer();
-    if (!isVertical && input->renderer()->isSlider() && !inputHeight.isFixed() && !inputHeight.isPercent()) {
-        RenderObject* thumbRenderer = input->shadow()->oldestShadowRoot()->firstChild()->firstChild()->firstChild()->renderer();
-        if (thumbRenderer) {
-            style()->setHeight(thumbRenderer->style()->height());
-            if (trackRenderer)
-                trackRenderer->style()->setHeight(thumbRenderer->style()->height());
+    if (input->renderer()->isSlider()) {
+        if (!isVertical) {
+            RenderObject* trackRenderer = node()->firstChild()->renderer();
+            Length inputHeight = input->renderer()->style()->height();
+            if (!inputHeight.isSpecified()) {
+                RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
+                if (thumbRenderer) {
+                    Length height = thumbRenderer->style()->height();
+#if ENABLE(DATALIST)
+                    if (input && input->list()) {
+                        int offsetFromCenter = theme()->sliderTickOffsetFromTrackCenter();
+                        int trackHeight = 0;
+                        if (offsetFromCenter < 0)
+                            trackHeight = -2 * offsetFromCenter;
+                        else {
+                            int tickLength = theme()->sliderTickSize().height();
+                            trackHeight = 2 * (offsetFromCenter + tickLength);
+                        }
+                        float zoomFactor = style()->effectiveZoom();
+                        if (zoomFactor != 1.0)
+                            trackHeight *= zoomFactor;
+                        height = Length(trackHeight, Fixed);
+                    }
+#endif
+                    style()->setHeight(height);
+                }
+            } else {
+                style()->setHeight(Length(100, Percent));
+                if (trackRenderer)
+                    trackRenderer->style()->setHeight(Length());
+            }
         }
-    } else {
-        style()->setHeight(Length(100, Percent));
-        if (trackRenderer)
-            trackRenderer->style()->setHeight(Length());
     }
 
     RenderDeprecatedFlexibleBox::layout();

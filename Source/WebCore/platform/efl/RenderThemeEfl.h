@@ -161,6 +161,11 @@ public:
 
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
+#if ENABLE(DATALIST)
+    virtual IntSize sliderTickSize() const OVERRIDE;
+    virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
+#endif
+
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;

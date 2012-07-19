@@ -1,0 +1,26 @@
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText(true);
+</script>
+
+<input type=range list=foo />
+<input type=range list=foo style="width: 50px;" />
+<input type=range list=foo style="-webkit-appearance:slider-vertical;" />
+<input type=range list=foo style="-webkit-appearance:slider-vertical; height: 50px;" />
+<datalist id=foo>
+    <option>0</option>
+    <option>10</option>
+    <option>20</option>
+    <option>40</option>
+    <option>80</option>
+    <option>100</option>
+</datalist>
+
+<input type=range list=invalid />
+<datalist id=invalid>
+    <option>-10</option>
+    <option>120</option>
+    <option>50.1</option>
+    <option>Infinity</option>
+    <option>foo</option>
+</datalist>

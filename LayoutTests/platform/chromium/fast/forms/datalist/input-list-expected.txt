@@ -19,7 +19,7 @@ PASS document.getElementById("week").list is document.getElementById("dl1")
 PASS document.getElementById("time").list is document.getElementById("dl1")
 PASS document.getElementById("datetime-local").list is document.getElementById("dl1")
 PASS document.getElementById("number").list is document.getElementById("dl1")
-FAIL document.getElementById("range").list should be [object HTMLDataListElement]. Was null.
+PASS document.getElementById("range").list is document.getElementById("dl1")
 FAIL document.getElementById("color").list should be [object HTMLDataListElement]. Was null.
 PASS document.getElementById("hidden").list is null
 PASS document.getElementById("password").list is null

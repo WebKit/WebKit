@@ -82,6 +82,11 @@ public:
 
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
+#if ENABLE(DATALIST)
+    virtual IntSize sliderTickSize() const OVERRIDE;
+    virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
+#endif
+
     virtual double caretBlinkInterval() const;
 
     virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color&) const;

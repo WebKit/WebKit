@@ -96,6 +96,11 @@ void RangeInputType::setValueAsDecimal(const Decimal& newValue, TextFieldEventBe
     element()->setValue(serialize(newValue), eventBehavior);
 }
 
+bool RangeInputType::typeMismatchFor(const String& value) const
+{
+    return !value.isEmpty() && !isfinite(parseToDoubleForNumberType(value));
+}
+
 bool RangeInputType::supportsRequired() const
 {
     return false;
@@ -304,6 +309,11 @@ String RangeInputType::sanitizeValue(const String& proposedValue) const
 bool RangeInputType::shouldRespectListAttribute()
 {
     return InputType::themeSupportsDataListUI(this);
+}
+
+HTMLElement* RangeInputType::sliderThumbElement() const
+{
+    return sliderThumbElementOf(element());
 }
 
 } // namespace WebCore

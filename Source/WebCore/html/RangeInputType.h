@@ -47,6 +47,7 @@ private:
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual double valueAsDouble() const OVERRIDE;
     virtual void setValueAsDecimal(const Decimal&, TextFieldEventBehavior, ExceptionCode&) const OVERRIDE;
+    virtual bool typeMismatchFor(const String&) const OVERRIDE;
     virtual bool supportsRequired() const OVERRIDE;
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
@@ -68,6 +69,7 @@ private:
     virtual String fallbackValue() const OVERRIDE;
     virtual String sanitizeValue(const String& proposedValue) const OVERRIDE;
     virtual bool shouldRespectListAttribute() OVERRIDE;
+    virtual HTMLElement* sliderThumbElement() const OVERRIDE;
 };
 
 } // namespace WebCore

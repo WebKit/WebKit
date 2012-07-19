@@ -1372,6 +1372,10 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     CGContextRef context = localContext.cgContext();
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
 
+#if ENABLE(DATALIST)
+    paintSliderTicks(o, paintInfo, r);
+#endif
+
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     CGContextClipToRect(context, bounds);
 
@@ -1739,6 +1743,18 @@ static int mediaControllerTheme()
 
     controllerTheme = MediaControllerThemeQuickTime;
     return controllerTheme;
+}
+#endif
+
+#if ENABLE(DATALIST)
+IntSize RenderThemeMac::sliderTickSize() const
+{
+    return IntSize(1, 3);
+}
+
+int RenderThemeMac::sliderTickOffsetFromTrackCenter() const
+{
+    return -9;
 }
 #endif
 

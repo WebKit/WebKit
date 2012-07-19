@@ -53,6 +53,14 @@
 #include "RenderInputSpeech.h"
 #endif
 
+#if ENABLE(DATALIST)
+#include "ElementShadow.h"
+#include "HTMLCollection.h"
+#include "HTMLDataListElement.h"
+#include "HTMLOptionElement.h"
+#include "HTMLParserIdioms.h"
+#endif
+
 // The methods in this file are shared by all themes on every platform.
 
 namespace WebCore {
@@ -950,6 +958,76 @@ bool RenderTheme::paintMeter(RenderObject*, const PaintInfo&, const IntRect&)
     return true;
 }
 
+#endif
+
+#if ENABLE(DATALIST)
+void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(o->node()->shadowAncestorNode());
+    if (!input)
+        return;
+
+    HTMLDataListElement* dataList = static_cast<HTMLDataListElement*>(input->list());
+    if (!dataList)
+        return;
+
+    double min = input->minimum();
+    double max = input->maximum();
+    ControlPart part = o->style()->appearance();
+    // We don't support ticks on alternate sliders like MediaVolumeSliders.
+    if (part !=  SliderHorizontalPart && part != SliderVerticalPart)
+        return;
+    bool isHorizontal = part ==  SliderHorizontalPart;
+
+    IntSize thumbSize;
+    RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
+    if (thumbRenderer) {
+        RenderStyle* thumbStyle = thumbRenderer->style();
+        int thumbWidth = thumbStyle->width().intValue();
+        int thumbHeight = thumbStyle->height().intValue();
+        thumbSize.setWidth(isHorizontal ? thumbWidth : thumbHeight);
+        thumbSize.setHeight(isHorizontal ? thumbHeight : thumbWidth);
+    }
+
+    IntSize tickSize = sliderTickSize();
+    float zoomFactor = o->style()->effectiveZoom();
+    FloatRect tickRect;
+    int tickRegionMargin = (thumbSize.width() - tickSize.width()) / 2.0;
+    int tickRegionSideMargin = 0;
+    int tickRegionWidth = 0;
+    if (isHorizontal) {
+        tickRect.setWidth(floor(tickSize.width() * zoomFactor));
+        tickRect.setHeight(floor(tickSize.height() * zoomFactor));
+        tickRect.setY(floor(rect.y() + rect.height() / 2.0 + sliderTickOffsetFromTrackCenter() * zoomFactor));
+        tickRegionSideMargin = rect.x() + tickRegionMargin;
+        tickRegionWidth = rect.width() - tickRegionMargin * 2 - tickSize.width() * zoomFactor;
+    } else {
+        tickRect.setWidth(floor(tickSize.height() * zoomFactor));
+        tickRect.setHeight(floor(tickSize.width() * zoomFactor));
+        tickRect.setX(floor(rect.x() + rect.width() / 2.0 + sliderTickOffsetFromTrackCenter() * zoomFactor));
+        tickRegionSideMargin = rect.y() + tickRegionMargin;
+        tickRegionWidth = rect.height() - tickRegionMargin * 2 - tickSize.width() * zoomFactor;
+    }
+    RefPtr<HTMLCollection> options = dataList->options();
+    GraphicsContextStateSaver stateSaver(*paintInfo.context);
+    paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    for (unsigned i = 0; Node* node = options->item(i); i++) {
+        ASSERT(node->hasTagName(optionTag));
+        HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(node);
+        String value = optionElement->value();
+        if (!input->isValidValue(value))
+            continue;
+        double parsedValue = parseToDoubleForNumberType(input->sanitizeValue(value));
+        double tickPosition = (parsedValue - min) / (max - min);
+        if (!o->style()->isLeftToRightDirection())
+            tickPosition = 1.0 - tickPosition;
+        if (isHorizontal)
+            tickRect.setX(floor(tickRegionSideMargin + tickRegionWidth * tickPosition));
+        else
+            tickRect.setY(floor(tickRegionSideMargin + tickRegionWidth * tickPosition));
+        paintInfo.context->fillRect(tickRect);
+    }
+}
 #endif
 
 #if ENABLE(PROGRESS_TAG)

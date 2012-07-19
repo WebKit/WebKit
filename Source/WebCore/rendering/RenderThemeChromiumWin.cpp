@@ -391,6 +391,18 @@ Color RenderThemeChromiumWin::systemColor(int cssValueId) const
     return Color(GetRValue(color), GetGValue(color), GetBValue(color));
 }
 
+#if ENABLE(DATALIST)
+IntSize RenderThemeChromiumWin::sliderTickSize() const
+{
+    return IntSize(1, 3);
+}
+
+int RenderThemeChromiumWin::sliderTickOffsetFromTrackCenter() const
+{
+    return 11;
+}
+#endif
+
 void RenderThemeChromiumWin::adjustSliderThumbSize(RenderStyle* style, Element* element) const
 {
     // These sizes match what WinXP draws for various menus.
@@ -443,12 +455,26 @@ bool RenderThemeChromiumWin::paintSliderTrack(RenderObject* o, const PaintInfo& 
                                   themeData.m_state,
                                   themeData.m_classicState,
                                   painter.drawRect());
+
+#if ENABLE(DATALIST)
+    paintSliderTicks(o, i, r);
+#endif
+
     return false;
 }
 
 bool RenderThemeChromiumWin::paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
-    return paintSliderTrack(o, i, r);
+    const ThemeData& themeData = getThemeData(o);
+
+    ThemePainter painter(i.context, r);
+    PlatformSupport::paintTrackbar(painter.context(),
+                                   themeData.m_part,
+                                   themeData.m_state,
+                                   themeData.m_classicState,
+                                   painter.drawRect());
+
+    return false;
 }
 
 static int menuListButtonWidth()
