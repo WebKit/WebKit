@@ -1,3 +1,14 @@
+2012-07-19  Jer Noble  <jer.noble@apple.com>
+
+        Layout Test css3/filters/custom/custom-filter-animation.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=91769
+
+        Unreviewed gardening. Add this failing test to the Test Expectations, and remove
+        the custom-filter-shader-cache test from the Skipped list.
+
+        * platform/mac/Skipped:
+        * platform/mac/TestExpectations:
+
 2012-07-19  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] [Part 4] platform/qt/css1 tests needs update after rebaseline and new testfonts

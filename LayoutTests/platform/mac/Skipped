@@ -950,6 +950,3 @@ fast/js/global-constructors.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=91505
 platform/mac/plugins/root-object-premature-delete-crash.html
-
-#https://bugs.webkit.org/show_bug.cgi?id=84813
-css3/filters/custom/custom-filter-shader-cache.html
