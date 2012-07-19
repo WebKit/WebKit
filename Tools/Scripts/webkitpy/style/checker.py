@@ -178,8 +178,9 @@ _PATH_RULES_SPECIFIER = [
      ["-build/header_guard"]),
     ([# assembler has lots of opcodes that use underscores, so
       # we don't check for underscores in that directory.
-      "/Source/JavaScriptCore/assembler/"],
-     ["-readability/naming"]),
+      "Source/JavaScriptCore/assembler/",
+      "Source/JavaScriptCore/jit/JIT"],
+     ["-readability/naming/underscores"]),
     ([# JITStubs has an usual syntax which causes false alarms for a few checks.
       "JavaScriptCore/jit/JITStubs.cpp"],
      ["-readability/parameter_name",

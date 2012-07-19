@@ -3137,11 +3137,13 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
                 and not modified_identifier.startswith('Eina_')
                 and not modified_identifier.startswith('Evas_')
                 and not modified_identifier.startswith('Ewk_')
+                and not modified_identifier.startswith('cti_')
                 and not modified_identifier.find('::qt_') >= 0
                 and not modified_identifier.find('::_q_') >= 0
                 and not modified_identifier == "const_iterator"
-                and not modified_identifier == "vm_throw"):
-                error(line_number, 'readability/naming', 4, identifier + " is incorrectly named. Don't use underscores in your identifier names.")
+                and not modified_identifier == "vm_throw"
+                and not modified_identifier == "DFG_OPERATION"):
+                error(line_number, 'readability/naming/underscores', 4, identifier + " is incorrectly named. Don't use underscores in your identifier names.")
 
         # Check for variables named 'l', these are too easy to confuse with '1' in some fonts
         if modified_identifier == 'l':
@@ -3564,6 +3566,7 @@ class CppChecker(object):
         'readability/multiline_string',
         'readability/parameter_name',
         'readability/naming',
+        'readability/naming/underscores',
         'readability/null',
         'readability/pass_ptr',
         'readability/streams',

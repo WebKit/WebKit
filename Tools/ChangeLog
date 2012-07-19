@@ -1,3 +1,23 @@
+2012-07-19  Oliver Hunt  <oliver@apple.com>
+
+        Make style bot handle underscores in names more reasonably
+        https://bugs.webkit.org/show_bug.cgi?id=91777
+
+        Reviewed by Gavin Barraclough.
+
+        This patch adds a naming/readability/underscores category for style errors.
+        That allows us to use underscores in those portions of JSC (and potentially
+        gtk?) without turning off all naming checks for the effected directories.
+        We also filter out the DFG_OPERATION warning, and a few other minor changes
+        to make the style bot less noisy when running over JSC at least.
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_names):
+
 2012-07-19  Dirk Pranke  <dpranke@chromium.org>
 
         config_standalone.py is crashing on apple win's cygwin port

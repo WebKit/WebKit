@@ -4425,7 +4425,7 @@ class WebKitStyleTest(CppStyleTestBase):
             'foo.cpp')
 
     def test_names(self):
-        name_underscore_error_message = " is incorrectly named. Don't use underscores in your identifier names.  [readability/naming] [4]"
+        name_underscore_error_message = " is incorrectly named. Don't use underscores in your identifier names.  [readability/naming/underscores] [4]"
         name_tooshort_error_message = " is incorrectly named. Don't use the single letter 'l' as an identifier name.  [readability/naming] [4]"
 
         # Basic cases from WebKit style guide.
@@ -4569,11 +4569,11 @@ class WebKitStyleTest(CppStyleTestBase):
         # Test that this doesn't also apply to files not in a 'gtk' directory.
         self.assert_lint('void webkit_web_view_load(int var1, int var2)',
             'webkit_web_view_load is incorrectly named. Don\'t use underscores in your identifier names.'
-            '  [readability/naming] [4]', 'Source/Webkit/webkit/foo.cpp')
+            '  [readability/naming/underscores] [4]', 'Source/Webkit/webkit/foo.cpp')
         # Test that this doesn't also apply to names that don't start with 'webkit_'.
         self.assert_lint_one_of_many_errors_re('void otherkit_web_view_load(int var1, int var2)',
             'otherkit_web_view_load is incorrectly named. Don\'t use underscores in your identifier names.'
-            '  [readability/naming] [4]', 'Source/Webkit/webkit/foo.cpp')
+            '  [readability/naming/underscores] [4]', 'Source/Webkit/webkit/foo.cpp')
 
         # There is an exception for some unit tests that begin with "tst_".
         self.assert_lint('void tst_QWebFrame::arrayObjectEnumerable(int var1, int var2)', '')
