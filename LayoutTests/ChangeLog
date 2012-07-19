@@ -1,3 +1,9 @@
+2012-07-19  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Remove the platform specific expected after r123066.
+
+        * platform/qt/fast/forms/state-restore-skip-stateless-expected.txt: Removed.
+
 2012-07-18  Keishi Hattori  <keishi@webkit.org>
 
         Implement painting slider tick marks
