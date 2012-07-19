@@ -90,9 +90,7 @@ public slots:
 private slots:
     void initTestCase();
     void cleanupTestCase();
-#if QT_VERSION >= 0x040800
     void thirdPartyCookiePolicy();
-#endif
     void contextMenuCopy();
     void contextMenuPopulatedOnce();
     void acceptNavigationRequest();
@@ -3042,7 +3040,6 @@ void tst_QWebPage::navigatorCookieEnabled()
     QVERIFY(m_page->mainFrame()->evaluateJavaScript("navigator.cookieEnabled").toBool());
 }
 
-#if QT_VERSION >= 0x040800
 void tst_QWebPage::thirdPartyCookiePolicy()
 {
     QWebSettings::globalSettings()->setThirdPartyCookiePolicy(QWebSettings::AlwaysBlockThirdPartyCookies);
@@ -3081,7 +3078,6 @@ void tst_QWebPage::thirdPartyCookiePolicy()
     QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
             QUrl("http://anotherexample.co.uk"), QUrl("http://example.co.uk")));
 }
-#endif
 
 #ifdef Q_OS_MAC
 void tst_QWebPage::macCopyUnicodeToClipboard()

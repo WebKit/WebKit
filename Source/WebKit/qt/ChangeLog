@@ -1,3 +1,29 @@
+2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove support for Qt versions before 4.8.0
+        https://bugs.webkit.org/show_bug.cgi?id=91730
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove Qt version check #ifdefs for Qt versions before 4.8.0.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate):
+        (QWebSettings::QWebSettings):
+        (QWebSettings::thirdPartyCookiePolicy):
+        * Api/qwebsettings.h:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp:
+        (tst_QDeclarativeWebView):
+        (tst_QDeclarativeWebView::backgroundColor):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::render):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage):
+        (tst_QWebPage::thirdPartyCookiePolicy):
+
 2012-07-17  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt][V8] Remove the V8 related codepaths and configuration

@@ -82,9 +82,7 @@ public:
     QString localStoragePath;
     QString offlineWebApplicationCachePath;
     qint64 offlineStorageDefaultQuota;
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
     QWebSettings::ThirdPartyCookiePolicy thirdPartyCookiePolicy;
-#endif
     void apply();
     WebCore::Settings* settings;
 };
@@ -365,7 +363,6 @@ QWebSettings* QWebSettings::globalSettings()
     \value DefaultFixedFontSize The default font size for fixed-pitch text.
 */
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
 /*!
     \enum QWebSettings::ThirdPartyCookiePolicy
 
@@ -380,7 +377,6 @@ QWebSettings* QWebSettings::globalSettings()
 
     \since QtWebKit 2,3
 */
-#endif
 
 /*!
     \enum QWebSettings::WebGraphic
@@ -530,9 +526,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::SiteSpecificQuirksEnabled, true);
     d->offlineStorageDefaultQuota = 5 * 1024 * 1024;
     d->defaultTextEncoding = QLatin1String("iso-8859-1");
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
     d->thirdPartyCookiePolicy = AlwaysAllowThirdPartyCookies;
-#endif
 }
 
 /*!
@@ -869,7 +863,6 @@ void QWebSettings::setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheM
                                     qMax(0, totalCapacity));
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
 /*!
     Sets the third-party cookie policy, the default is AlwaysAllowThirdPartyCookies.
 */
@@ -885,7 +878,6 @@ QWebSettings::ThirdPartyCookiePolicy QWebSettings::thirdPartyCookiePolicy() cons
 {
     return d->thirdPartyCookiePolicy;
 }
-#endif
 
 /*!
     Sets the actual font family to \a family for the specified generic family,

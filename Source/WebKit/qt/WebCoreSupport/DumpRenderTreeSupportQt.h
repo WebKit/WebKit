@@ -211,9 +211,7 @@ public:
     static void setDefersLoading(QWebPage*, bool flag);
     static void goBack(QWebPage*);
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
     static bool thirdPartyCookiePolicyAllows(QWebPage*, const QUrl&, const QUrl& firstPartyUrl);
-#endif
 
     static QImage paintPagesWithBoundaries(QWebFrame*);
 };

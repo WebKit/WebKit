@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
 inline void removeTopLevelDomain(QString* domain, const QString& topLevelDomain)
 {
     domain->remove(domain->length() - topLevelDomain.length(), topLevelDomain.length());
@@ -57,11 +56,9 @@ static bool urlsShareSameDomain(const QUrl& url, const QUrl& firstPartyUrl)
 
     return false;
 }
-#endif
 
 bool thirdPartyCookiePolicyPermits(NetworkingContext* context, const QUrl& url, const QUrl& firstPartyUrl)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
     if (!context)
         return true;
 
@@ -79,9 +76,6 @@ bool thirdPartyCookiePolicyPermits(NetworkingContext* context, const QUrl& url, 
         return true;
 
     return context->thirdPartyCookiePolicyPermission(url);
-#else
-    return true;
-#endif
 }
 
 }

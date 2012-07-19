@@ -211,11 +211,7 @@ public:
 
     QRectF clipBoundingRect() const
     {
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
         return p()->clipBoundingRect();
-#else
-        return p()->clipRegion().boundingRect();
-#endif
     }
 
     void takeOwnershipOfPlatformContext() { platformContextIsOwned = true; }

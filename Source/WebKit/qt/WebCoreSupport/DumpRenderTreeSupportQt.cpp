@@ -984,13 +984,11 @@ void DumpRenderTreeSupportQt::setMinimumTimerInterval(QWebPage* page, double int
     corePage->settings()->setMinDOMTimerInterval(interval);
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
 bool DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(QWebPage *page, const QUrl& url, const QUrl& firstPartyUrl)
 {
     Page* corePage = QWebPagePrivate::core(page);
     return thirdPartyCookiePolicyPermits(corePage->mainFrame()->loader()->networkingContext(), url, firstPartyUrl);
 }
-#endif
 
 QUrl DumpRenderTreeSupportQt::mediaContentUrlByElementId(QWebFrame* frame, const QString& elementId)
 {

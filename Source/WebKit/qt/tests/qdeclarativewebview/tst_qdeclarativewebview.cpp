@@ -40,9 +40,7 @@ private slots:
     void renderingEnabled();
     void setHtml();
     void settings();
-#if QT_VERSION >= 0x040704
     void backgroundColor();
-#endif
 
 private:
     void checkNoErrors(const QDeclarativeComponent&);
@@ -505,7 +503,6 @@ void tst_QDeclarativeWebView::settings()
     }
 }
 
-#if QT_VERSION >= 0x040704
 void tst_QDeclarativeWebView::backgroundColor()
 {
     // We test here the rendering of the background.
@@ -533,7 +530,6 @@ void tst_QDeclarativeWebView::backgroundColor()
     wv->setProperty("backgroundColor", Qt::green);
     QCOMPARE(spyColorChanged.count(), 1);
 }
-#endif
 
 void tst_QDeclarativeWebView::checkNoErrors(const QDeclarativeComponent& component)
 {
