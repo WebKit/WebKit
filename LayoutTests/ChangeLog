@@ -1,3 +1,33 @@
+2012-07-19  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt] [Part 6] platform/qt/css1 tests needs update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91142
+
+        Batch of expected result files reviewed. It comprises
+        /LayoutTests/platform/qt/css1/text_properties directory
+
+        Reviewed by Simon Hausmann.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/css1/text_properties/letter_spacing-expected.txt: Removed.
+        * platform/qt-5.0/css1/text_properties/text_transform-expected.txt: Removed.
+        * platform/qt/css1/text_properties/letter_spacing-expected.png:
+        * platform/qt/css1/text_properties/letter_spacing-expected.txt:
+        * platform/qt/css1/text_properties/line_height-expected.png:
+        * platform/qt/css1/text_properties/line_height-expected.txt:
+        * platform/qt/css1/text_properties/text_align-expected.png:
+        * platform/qt/css1/text_properties/text_align-expected.txt:
+        * platform/qt/css1/text_properties/text_decoration-expected.png:
+        * platform/qt/css1/text_properties/text_decoration-expected.txt:
+        * platform/qt/css1/text_properties/text_indent-expected.png:
+        * platform/qt/css1/text_properties/text_indent-expected.txt:
+        * platform/qt/css1/text_properties/text_transform-expected.png:
+        * platform/qt/css1/text_properties/vertical_align-expected.png:
+        * platform/qt/css1/text_properties/vertical_align-expected.txt:
+        * platform/qt/css1/text_properties/word_spacing-expected.png:
+        * platform/qt/css1/text_properties/word_spacing-expected.txt:
+
 2012-07-19  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed gardening.  Rebaseline some tests after r115846.
