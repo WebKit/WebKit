@@ -1,3 +1,13 @@
+2012-07-18  Jer Noble  <jer.noble@apple.com>
+
+        [mac] Unreviewed gardening.
+
+        Rebaseline (and add Skipped entries) after r122861.
+
+        * platform/mac/Skipped:
+        * platform/mac/fast/multicol/shrink-to-column-height-for-pagination-expected.png:
+        * platform/mac/fast/multicol/shrink-to-column-height-for-pagination-expected.txt:
+
 2012-07-18  Dan Bernstein  <mitz@apple.com>
 
         Hit testing in the gap between pages returns incorrect results
