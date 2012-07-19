@@ -1,3 +1,18 @@
+2012-07-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Use the WONTFIX modifier for failing tests that the GTK port is not able to pass
+        due to unsupportable features or specific nature of the tests. The WONTFIX tests
+        are placed at the top of the 'Expected failures' section in the TestExpectations
+        file.
+
+        For starters the list contains the harness test for reftests mismatch, the tests
+        that utilize the modal dialog (which won't be supported in WebKit1) and various
+        V8 and Mac-specific tests
+
+        * platform/gtk/TestExpectations:
+
 2012-07-19  Tony Chang  <tony@chromium.org>
 
         Unreviewed gardening.  Update chromium-mac results after r123053.

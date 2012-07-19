@@ -40,6 +40,33 @@
 // Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////
 
+// This test verifies that a mismatch reftest will fail as intended if both results are same.
+WONTFIX : fast/harness/sample-fail-mismatch-reftest.html = IMAGE
+
+// Modal dialogs will not be supported in WebKit1. These expectations should eventually
+// be moved into WebKit1-specific TestExpectations file (once it's created).
+WONTFIX : fast/animation/request-animation-frame-during-modal.html = TEXT
+WONTFIX : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
+WONTFIX : fast/events/scroll-event-during-modal-dialog.html = TEXT
+WONTFIX : fast/harness/show-modal-dialog.html = TEXT
+WONTFIX : http/tests/security/cross-frame-access-call.html = TEXT
+WONTFIX : http/tests/security/cross-frame-access-get.html = TEXT
+WONTFIX SKIP : inspector/console/console-long-eval-crash.html = TEXT
+
+// This port doesn't support v8 i18n extension.
+WONTFIX : fast/js/i18n-bindings-locale.html = TEXT
+
+// Ignored because we do not have OBJC bindings (via Chromium).
+WONTFIX SKIP : editing/pasteboard/paste-RTFD.html = TEXT
+WONTFIX SKIP : editing/pasteboard/paste-TIFF.html = TEXT
+
+// This test assumes we cannot play RTSP, but we can.
+WONTFIX SKIP : media/unsupported-rtsp.html = TIMEOUT
+
+// We have no need to support Dashboard compatibility mode. (via Chromium).
+WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = TEXT
+WONTFIX SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = TEXT
+
 // Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-handheldfriendly.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-mobileoptimized-2.html = TEXT
@@ -50,20 +77,12 @@ BUGWKGTK SKIP : fast/viewport/viewport-legacy-ordering-6.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-xhtmlmp.html = TEXT
 
-// Ignored because we do not have OBJC bindings (via Chromium).
-BUGWKGTK SKIP : editing/pasteboard/paste-RTFD.html = TEXT
-BUGWKGTK SKIP : editing/pasteboard/paste-TIFF.html = TEXT
-
 // Deletion UI is a Mail-ism. We don't need to worry about this (via Chromium).
 BUGWKGTK SKIP : editing/deleting/deletionUI-single-instance.html = TEXT
 BUGWKGTK SKIP : fast/dom/Element/id-in-deletebutton.html = TEXT
 
 // WebKitGTK+ uses different keyboard accelerators than Safari (via Chromium).
 BUGWKGTK SKIP : fast/events/option-tab.html = TEXT
-
-// We have no need to support Dashboard compatibility mode. (via Chromium).
-BUGWKGTK SKIP : fast/canvas/canvas-gradient-addStop-error.html = TEXT
-BUGWKGTK SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = TEXT
 
 // These tests expect a TIFF decoder (via Chromium).
 BUGWKGTK SKIP : fast/images/embed-image.html = TEXT
@@ -91,9 +110,6 @@ BUGWKGTK SKIP : svg/custom/image-with-prefix-in-webarchive.svg = TEXT
 
 // This test is specific to QuickTime media engine.
 BUGWKGTK SKIP : media/video-does-not-loop.html = TEXT
-
-// This test assumes we cannot play RTSP, but we can.
-BUGWKGTK SKIP : media/unsupported-rtsp.html = TIMEOUT
 
 // Requires media engine closed caption support.
 BUGWKGTK SKIP : media/media-captions.html = TEXT
@@ -597,9 +613,6 @@ BUGWK44478 SKIP : fast/text/hyphenate-first-word.html = TEXT
 BUGWK44478 SKIP : fast/text/hyphenate-locale.html = TEXT
 BUGWK44478 SKIP : fast/text/hyphen-min-preferred-width.html = IMAGE
 
-// This port doesn't support v8 i18n extension.
-BUGWKGTK : fast/js/i18n-bindings-locale.html = TEXT
-
 BUGWKGTK : http/tests/appcache/origin-quota.html = TEXT
 BUGWKGTK : http/tests/appcache/origin-quota-continued-download.html = TEXT
 BUGWKGTK : http/tests/appcache/origin-quota-continued-download-multiple-manifests.html = TEXT
@@ -879,15 +892,6 @@ BUGWKGTK : canvas/philip/tests/2d.path.rect.selfintersect.html = TEXT
 // rectangle has zero height.
 BUGWKGTK : canvas/philip/tests/2d.path.rect.zero.6.html = TEXT
 
-// Tests that user modal dialogs fail in the DRT for some reason.
-BUGWK53600 : fast/animation/request-animation-frame-during-modal.html = TEXT
-BUGWK53600 : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
-BUGWK53600 : fast/events/scroll-event-during-modal-dialog.html = TEXT
-BUGWK53600 : fast/harness/show-modal-dialog.html = TEXT
-BUGWK53600 : http/tests/security/cross-frame-access-call.html = TEXT
-BUGWK53600 : http/tests/security/cross-frame-access-get.html = TEXT
-BUGWK53600 SKIP : inspector/console/console-long-eval-crash.html = TEXT
-
 // pastes a space instead of a tab
 BUGWK38437 : editing/pasteboard/5761530-1.html = TEXT
 
@@ -988,9 +992,6 @@ BUGWK61118 : fullscreen/full-screen-element-stack.html = TEXT
 BUGWK61118 : fullscreen/full-screen-restrictions.html = TEXT
 
 BUGWK61630 : fast/events/dropzone-005.html = TEXT
-
-// This test verifies that a mismatch reftest will fail as intended if both results are same.
-BUGWKGTK : fast/harness/sample-fail-mismatch-reftest.html = IMAGE
 
 // Need layoutTestController.setShouldStayOnPageAfterHandlingBeforeUnload
 BUGWK67014 : fast/loader/form-submission-after-beforeunload-cancel.html = TEXT
