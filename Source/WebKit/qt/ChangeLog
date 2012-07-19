@@ -1,3 +1,15 @@
+2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Enable CSS shaders in Qt (software mode)
+        https://bugs.webkit.org/show_bug.cgi?id=85140
+
+        Reviewed by Simon Hausmann.
+
+        Enable CSS Shaders in settings when WebGL is enabled.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+
 2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove support for Qt versions before 4.8.0

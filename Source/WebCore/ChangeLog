@@ -1,3 +1,16 @@
+2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Enable CSS shaders in Qt (software mode)
+        https://bugs.webkit.org/show_bug.cgi?id=85140
+
+        Reviewed by Simon Hausmann.
+
+        Added missing files to the Qt build.
+
+        No new tests, WebGL is still disabled by default in the bots.
+
+        * Target.pri:
+
 2012-07-17  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Out of Memory is observed when a large object is passed to a Web Worker.

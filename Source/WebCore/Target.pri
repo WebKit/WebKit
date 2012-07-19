@@ -3679,6 +3679,8 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         platform/graphics/Extensions3D.h \
         platform/graphics/GraphicsContext3D.h \
         platform/graphics/gpu/DrawingBuffer.h \
+        platform/graphics/gpu/Texture.h \
+        platform/graphics/gpu/TilingData.h \
         platform/graphics/opengl/Extensions3DOpenGL.h \
         platform/graphics/texmap/TextureMapperGL.h \
         platform/graphics/texmap/TextureMapperShaderManager.h
@@ -3688,6 +3690,8 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
         platform/graphics/GraphicsContext3D.cpp \
         platform/graphics/gpu/DrawingBuffer.cpp \
         platform/graphics/gpu/qt/DrawingBufferQt.cpp \
+        platform/graphics/gpu/Texture.cpp \
+        platform/graphics/gpu/TilingData.cpp \
         platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp \
         platform/graphics/opengl/Extensions3DOpenGLCommon.cpp \
         platform/graphics/qt/GraphicsContext3DQt.cpp \

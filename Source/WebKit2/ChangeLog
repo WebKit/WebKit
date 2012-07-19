@@ -1,3 +1,17 @@
+2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Enable CSS shaders in Qt (software mode)
+        https://bugs.webkit.org/show_bug.cgi?id=85140
+
+        Reviewed by Simon Hausmann.
+
+        Add CSSCustomFilterEnabled to QWebPreferences. It's disabled by default.
+
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+
 2012-07-19  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt][WK2] Map the elementRect exposed in QML to the view for popup menu

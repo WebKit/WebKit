@@ -112,6 +112,12 @@ haveQt(4)|haveQtModule(widgets): DEFINES += HAVE_QSTYLE=1
     contains(QT_CONFIG, opengl):!win32-*: DEFINES += ENABLE_WEBGL=1
 }
 
+# CSS Shaders support
+!contains(DEFINES, ENABLE_CSS_SHADERS=.) {
+    # Enable CSS shaders when CSS filters and WebGL are enabled.
+    contains(DEFINES, ENABLE_CSS_FILTERS=1):contains(DEFINES, ENABLE_WEBGL=1): DEFINES += ENABLE_CSS_SHADERS=1
+}
+
 !contains(DEFINES, ENABLE_XSLT=.) {
     # Using QtXmlPatterns
     contains(QT_CONFIG, xmlpatterns): DEFINES += ENABLE_XSLT=1

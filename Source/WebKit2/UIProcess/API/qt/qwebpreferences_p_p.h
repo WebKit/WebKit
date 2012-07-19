@@ -39,7 +39,8 @@ public:
         PrivateBrowsingEnabled,
         DnsPrefetchEnabled,
         DeveloperExtrasEnabled,
-        WebGLEnabled
+        WebGLEnabled,
+        CSSCustomFilterEnabled
     };
 
     enum FontFamily {
