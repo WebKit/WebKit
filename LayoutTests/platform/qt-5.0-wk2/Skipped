@@ -406,18 +406,6 @@ fast/multicol/shrink-to-column-height-for-pagination.html
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
-css1/font_properties/font.html
-css1/font_properties/font_family.html
-css1/font_properties/font_size.html
-css1/font_properties/font_style.html
-css1/font_properties/font_variant.html
-css1/font_properties/font_weight.html
-css1/formatting_model/canvas.html
-css1/formatting_model/height_of_lines.html
-css1/formatting_model/horizontal_formatting.html
-css1/formatting_model/inline_elements.html
-css1/formatting_model/replaced_elements.html
-css1/formatting_model/vertical_formatting.html
 css1/pseudo/anchor.html
 css1/pseudo/firstletter.html
 css1/pseudo/firstline.html
