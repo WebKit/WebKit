@@ -154,7 +154,7 @@
         '<(chromium_src_dir)/third_party/icu/icu.gyp:icui18n',
         '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
       ],
-      'msvs_disabled_warnings': [4127, 4355, 4510, 4512, 4610, 4706],
+      'msvs_disabled_warnings': [4127, 4355, 4510, 4512, 4610, 4706, 4068],
       'conditions': [
         ['OS=="win"', {
           'sources/': [
