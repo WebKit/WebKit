@@ -28,8 +28,6 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(JIT)
-
 #include "JITStubRoutine.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/HashMap.h>
@@ -39,6 +37,8 @@ namespace JSC {
 
 class GCAwareJITStubRoutine;
 class SlotVisitor;
+
+#if ENABLE(JIT)
 
 class JITStubRoutineSet {
     WTF_MAKE_NONCOPYABLE(JITStubRoutineSet);
@@ -72,9 +72,26 @@ private:
     Vector<GCAwareJITStubRoutine*> m_listOfRoutines;
 };
 
-} // namespace JSC
+#else // !ENABLE(JIT)
 
-#endif // ENABLE(JIT)
+class JITStubRoutineSet {
+    WTF_MAKE_NONCOPYABLE(JITStubRoutineSet);
+    WTF_MAKE_FAST_ALLOCATED;
+    
+public:
+    JITStubRoutineSet() { }
+    ~JITStubRoutineSet() { }
+
+    void add(GCAwareJITStubRoutine*) { }
+    void clearMarks() { }
+    void mark(void*) { }
+    void deleteUnmarkedJettisonedStubRoutines() { }
+    void traceMarkedStubRoutines(SlotVisitor&) { }
+};
+
+#endif // !ENABLE(JIT)
+
+} // namespace JSC
 
 #endif // JITStubRoutineSet_h
 

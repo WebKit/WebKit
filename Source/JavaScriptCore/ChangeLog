@@ -1,3 +1,22 @@
+2012-07-19  Mark Lam  <mark.lam@apple.com>
+
+        Fixed broken ENABLE_JIT=0 build.
+        https://bugs.webkit.org/show_bug.cgi?id=91725
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/Watchpoint.cpp:
+        * heap/JITStubRoutineSet.h:
+        (JSC):
+        (JITStubRoutineSet):
+        (JSC::JITStubRoutineSet::JITStubRoutineSet):
+        (JSC::JITStubRoutineSet::~JITStubRoutineSet):
+        (JSC::JITStubRoutineSet::add):
+        (JSC::JITStubRoutineSet::clearMarks):
+        (JSC::JITStubRoutineSet::mark):
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        (JSC::JITStubRoutineSet::traceMarkedStubRoutines):
+
 2012-07-19  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed buildfix after r123042.

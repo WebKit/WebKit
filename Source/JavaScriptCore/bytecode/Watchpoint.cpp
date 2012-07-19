@@ -27,6 +27,7 @@
 #include "Watchpoint.h"
 
 #include "LinkBuffer.h"
+#include <wtf/PassRefPtr.h>
 
 namespace JSC {
 
