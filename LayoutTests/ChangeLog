@@ -1,3 +1,9 @@
+2012-07-19  Tony Chang  <tony@chromium.org>
+
+        Unreviewed gardening.  Update chromium expectations after r123067.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-19  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Throw native TypeErrors per spec
