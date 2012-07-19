@@ -1,3 +1,13 @@
+2012-07-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Disable running python unit tests in parallel on win32 for now.
+        https://bugs.webkit.org/show_bug.cgi?id=91697
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args):
+
 2012-07-18  Dave Tu  <dtu@chromium.org>
 
         [chromium] Add gl_tests to flakiness dashboard.

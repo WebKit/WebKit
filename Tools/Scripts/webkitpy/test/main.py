@@ -64,7 +64,7 @@ class Tester(object):
                           help='do not run the integration tests')
         parser.add_option('-p', '--pass-through', action='store_true', default=False,
                           help='be debugger friendly by passing captured output through to the system')
-        parser.add_option('-j', '--child-processes', action='store', type='int', default=multiprocessing.cpu_count(),
+        parser.add_option('-j', '--child-processes', action='store', type='int', default=(1 if sys.platform == 'win32' else multiprocessing.cpu_count()),
                           help='number of tests to run in parallel (default=%default)')
 
         parser.epilog = ('[args...] is an optional list of modules, test_classes, or individual tests. '
