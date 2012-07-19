@@ -1,5 +1,20 @@
 2012-07-18  Julien Chaffraix  <jchaffraix@webkit.org>
 
+        Crash in RenderTableSection::addCell.
+        http://webkit.org/b/89496
+
+        Reviewed by Abhishek Arya.
+
+        The test is still pretty complex as it involves lots of generated content. It should
+        be possible to get a smaller test case based on the conditions for the crash. However
+        this test is a pretty good stress test so I decided against creating a more simple test
+        case.
+
+        * fast/table/split-table-no-section-update-crash-expected.txt: Added.
+        * fast/table/split-table-no-section-update-crash.html: Added.
+
+2012-07-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
         Avoid calling GraphicsContext drawing primitives for 0px borders
         https://bugs.webkit.org/show_bug.cgi?id=90039
 

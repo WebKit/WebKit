@@ -135,6 +135,12 @@ public:
         unsigned span;
     };
 
+    void forceSectionsRecalc()
+    {
+        setNeedsSectionRecalc();
+        recalcSections();
+    }
+
     Vector<ColumnStruct>& columns() { return m_columns; }
     Vector<int>& columnPositions() { return m_columnPos; }
     RenderTableSection* header() const { return m_head; }
