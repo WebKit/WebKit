@@ -1,3 +1,25 @@
+2012-07-19  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] WebView is missing isSelectionEditable and backgroundColor which are used by chromium-android
+        https://bugs.webkit.org/show_bug.cgi?id=91671
+
+        Reviewed by Darin Fisher.
+
+        I haven't studied what these APIs are used for downstream, but they
+        seem harmless enough.
+
+        * public/WebView.h:
+        (WebView):
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::backgroundColor):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::isSelectionEditable):
+        (WebKit):
+        (WebKit::WebViewImpl::backgroundColor):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-07-19  Andrew Scherkus  <scherkus@chromium.org>
 
         [chromium] Move WebAudioSourceProvider destructor from public to protected

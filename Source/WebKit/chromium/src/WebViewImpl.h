@@ -159,6 +159,8 @@ public:
     virtual WebTextInputInfo textInputInfo();
     virtual WebTextInputType textInputType();
     virtual bool setEditableSelectionOffsets(int start, int end);
+    virtual bool isSelectionEditable() const;
+    virtual WebColor backgroundColor() const;
     virtual bool selectionBounds(WebRect& start, WebRect& end) const;
     virtual bool selectionTextDirection(WebTextDirection& start, WebTextDirection& end) const;
     virtual bool caretOrSelectionRange(size_t* location, size_t* length);

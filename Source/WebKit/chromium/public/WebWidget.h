@@ -221,6 +221,10 @@ public:
     // following the call to instrumentBeginFrame().
     virtual void instrumentCancelFrame() { }
 
+    // The page background color. Can be used for filling in areas without
+    // content.
+    virtual WebColor backgroundColor() const { return 0xFFFFFFFF; /* SK_ColorWHITE */ }
+
 protected:
     ~WebWidget() { }
 };

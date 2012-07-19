@@ -2148,6 +2148,25 @@ bool WebViewImpl::setEditableSelectionOffsets(int start, int end)
     return editor->setSelectionOffsets(start, end);
 }
 
+bool WebViewImpl::isSelectionEditable() const
+{
+    const Frame* frame = focusedWebCoreFrame();
+    if (!frame)
+        return false;
+    return frame->selection()->isContentEditable();
+}
+
+WebColor WebViewImpl::backgroundColor() const
+{
+    if (!m_page)
+        return Color::white;
+    FrameView* view = m_page->mainFrame()->view();
+    Color backgroundColor = view->documentBackgroundColor();
+    if (!backgroundColor.isValid())
+        return Color::white;
+    return backgroundColor.rgb();
+}
+
 bool WebViewImpl::caretOrSelectionRange(size_t* location, size_t* length)
 {
     const Frame* focused = focusedWebCoreFrame();
