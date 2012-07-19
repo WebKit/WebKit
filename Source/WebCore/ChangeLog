@@ -1,3 +1,47 @@
+2012-07-19  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refactoring] Use userAgentShadowRoot() to take user agent shadow root.
+        https://bugs.webkit.org/show_bug.cgi?id=91716
+
+        Reviewed by Hajime Morita.
+
+        We have introduced Element::userAgentShadowRoot in r123071 to take user agent shadow root.
+        We have used shadow()->oldestShadowRoot() to take the user agent shadow root, however its code intention was
+        not so clear. Using userAgentShadowRoot() will make it clearer.
+
+        No new tests, simple refactoring.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        (WebCore::ColorInputType::shadowColorSwatch):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::createShadowSubtree):
+        (WebCore::FileInputType::multipleAttributeChanged):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::findMainSummary):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::willAddAuthorShadowRoot):
+        (WebCore::HTMLImageElement::imageElement):
+        (WebCore::HTMLImageElement::innerElement):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::shadowSelect):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::innerTextElement):
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+        * html/InputType.cpp:
+        (WebCore::InputType::destroyShadowSubtree):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::deleteBubbleTree):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderThumbElementOf):
+        (WebCore::trackLimiterElementOf):
+
 2012-07-19  Keishi Hattori  <keishi@webkit.org>
 
         Redraw slider tick marks when datalist changes.

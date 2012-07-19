@@ -96,7 +96,7 @@ HTMLImageElement::~HTMLImageElement()
 
 void HTMLImageElement::willAddAuthorShadowRoot()
 {
-    if (shadow()->oldestShadowRoot())
+    if (userAgentShadowRoot())
         return;
 
     createShadowSubtree();
@@ -112,9 +112,9 @@ void HTMLImageElement::createShadowSubtree()
 
 Element* HTMLImageElement::imageElement()
 {
-    if (ElementShadow* elementShadow = shadow()) {
-        ASSERT(elementShadow->oldestShadowRoot()->firstChild()->hasTagName(webkitInnerImageTag));
-        return toElement(elementShadow->oldestShadowRoot()->firstChild());
+    if (ShadowRoot* root = userAgentShadowRoot()) {
+        ASSERT(root->firstChild()->hasTagName(webkitInnerImageTag));
+        return toElement(root->firstChild());
     }
 
     return this;
@@ -409,8 +409,8 @@ void HTMLImageElement::setItemValueText(const String& value, ExceptionCode&)
 
 inline ImageInnerElement* HTMLImageElement::innerElement() const
 {
-    ASSERT(shadow());
-    return toImageInnerElement(shadow()->oldestShadowRoot()->firstChild());
+    ASSERT(userAgentShadowRoot());
+    return toImageInnerElement(userAgentShadowRoot()->firstChild());
 }
 
 }

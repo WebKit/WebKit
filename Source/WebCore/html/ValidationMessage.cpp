@@ -196,7 +196,7 @@ void ValidationMessage::deleteBubbleTree(Timer<ValidationMessage>*)
         m_messageBody = 0;
         HTMLElement* host = toHTMLElement(m_element);
         ExceptionCode ec;
-        host->shadow()->oldestShadowRoot()->removeChild(m_bubble.get(), ec);
+        host->userAgentShadowRoot()->removeChild(m_bubble.get(), ec);
         m_bubble = 0;
     }
     m_message = String();

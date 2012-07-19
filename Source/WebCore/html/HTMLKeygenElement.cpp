@@ -136,7 +136,7 @@ bool HTMLKeygenElement::shouldSaveAndRestoreFormControlState() const
 
 HTMLSelectElement* HTMLKeygenElement::shadowSelect() const
 {
-    ShadowRoot* root = this->shadow()->oldestShadowRoot();
+    ShadowRoot* root = userAgentShadowRoot();
     return root ? toHTMLSelectElement(root->firstChild()) : 0;
 }
 

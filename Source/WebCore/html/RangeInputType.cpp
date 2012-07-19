@@ -137,7 +137,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
     if (event->button() != LeftButton || !targetNode)
         return;
     ASSERT(element()->shadow());
-    if (targetNode != element() && !targetNode->isDescendantOf(element()->shadow()->oldestShadowRoot()))
+    if (targetNode != element() && !targetNode->isDescendantOf(element()->userAgentShadowRoot()))
         return;
     SliderThumbElement* thumb = sliderThumbElementOf(element());
     if (targetNode == thumb)
@@ -244,7 +244,7 @@ void RangeInputType::createShadowSubtree()
     RefPtr<HTMLElement> container = SliderContainerElement::create(document);
     container->appendChild(track.release(), ec);
     container->appendChild(TrackLimiterElement::create(document), ec);
-    element()->shadow()->oldestShadowRoot()->appendChild(container.release(), ec);
+    element()->userAgentShadowRoot()->appendChild(container.release(), ec);
 }
 
 RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const

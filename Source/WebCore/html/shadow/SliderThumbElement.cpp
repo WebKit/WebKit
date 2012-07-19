@@ -74,7 +74,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement* input)
 SliderThumbElement* sliderThumbElementOf(Node* node)
 {
     ASSERT(node);
-    ShadowRoot* shadow = node->toInputElement()->shadow()->oldestShadowRoot();
+    ShadowRoot* shadow = node->toInputElement()->userAgentShadowRoot();
     ASSERT(shadow);
     Node* thumb = shadow->firstChild()->firstChild()->firstChild();
     ASSERT(thumb);
@@ -424,8 +424,7 @@ const AtomicString& TrackLimiterElement::shadowPseudoId() const
 TrackLimiterElement* trackLimiterElementOf(Node* node)
 {
     ASSERT(node);
-    ASSERT(node->toInputElement()->shadow());
-    ShadowRoot* shadow = node->toInputElement()->shadow()->oldestShadowRoot();
+    ShadowRoot* shadow = node->toInputElement()->userAgentShadowRoot();
     ASSERT(shadow);
     Node* limiter = shadow->firstChild()->lastChild();
     ASSERT(limiter);
