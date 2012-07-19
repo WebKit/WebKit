@@ -21,6 +21,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
+$preferredCommentStartColumn = 70
+
 
 # Turns on dumping of the count of labels.
 # For example,  the output will look like this:
@@ -45,32 +47,11 @@ $enableCodeOriginComments = true
 
 # Turns on recording and dumping of annotations in the generated output file.
 # An annotations can be specified for each instruction in the source asm files.
-#
-# $enableInterlacedInstrAnnotations will interlace the annotation between
-# instructions.  For example, the output will look like this:
+# For example, the output will look like this:
 #
 #     ...
-#     // @ t2<CodeBlock> = cfr.CodeBlock
-#    "\tmovq -8(%r13), %rcx\n"
-#     // @ t2<size_t> = t2<CodeBlock>.m_numVars
-#    "\tmovl 52(%rcx), %ecx\n"
+#    "\tmovq -8(%r13), %rcx\n"   // t2<CodeBlock> = cfr.CodeBlock
+#    "\tmovl 52(%rcx), %ecx\n"   // t2<size_t> = t2<CodeBlock>.m_numVars
 #     ...
 #
-# $enableTrailingInstrAnnotations will insert the annotation in the trailing
-# comment after your instructions.  For example, the output will look like this:
-#
-#     ...
-#    "\tmovq -8(%r13), %rcx\n"   // @ t2<CodeBlock> = cfr.CodeBlock
-#    "\tmovl 52(%rcx), %ecx\n"   // @ t2<size_t> = t2<CodeBlock>.m_numVars
-#     ...
-#
-# If both $enableInterlacedInstrAnnotations and $enableTrailingInstrAnnotations
-# are enabled, interlaced annotations will take precedence, and any available
-# annotations will only be dumped in the interlaced format.
-#
-$enableInterlacedInstrAnnotations = false
-$enableTrailingInstrAnnotations = false
-
-
-# Sanity check for annotation configs.
-$enableInstrAnnotations = ($enableInterlacedInstrAnnotations or $enableTrailingInstrAnnotations)
+$enableInstrAnnotations = false

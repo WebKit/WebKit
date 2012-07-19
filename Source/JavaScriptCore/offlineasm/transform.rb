@@ -229,6 +229,9 @@ class Sequence
                         mapping[myMacros[item.name].variables[idx]] = item.operands[idx]
                     end
                 }
+                if item.annotation
+                    newList << Instruction.new(item.codeOrigin, "localAnnotation", [], item.annotation)
+                end
                 newList += myMacros[item.name].body.substitute(mapping).demacroify(myMyMacros).renameLabels(item.name).list
             else
                 newList << item.demacroify(myMacros)

@@ -806,6 +806,17 @@ class Instruction < Node
     def dump
         "\t" + opcode.to_s + " " + operands.collect{|v| v.dump}.join(", ")
     end
+
+    def lowerDefault
+        case opcode
+        when "localAnnotation"
+            $asm.putLocalAnnotation
+        when "globalAnnotation"
+            $asm.putGlobalAnnotation
+        else
+            raise "Unhandled opcode #{opcode} at #{codeOriginString}"
+        end
+    end
 end
 
 class Error < NoChildren
@@ -1180,7 +1191,7 @@ end
 
 class Macro < Node
     attr_reader :name, :variables, :body
-    
+
     def initialize(codeOrigin, name, variables, body)
         super(codeOrigin)
         @name = name
@@ -1202,14 +1213,15 @@ class Macro < Node
 end
 
 class MacroCall < Node
-    attr_reader :name, :operands
+    attr_reader :name, :operands, :annotation
     
-    def initialize(codeOrigin, name, operands)
+    def initialize(codeOrigin, name, operands, annotation)
         super(codeOrigin)
         @name = name
         @operands = operands
         raise unless @operands
         @operands.each{|v| raise unless v}
+        @annotation = annotation
     end
     
     def children
@@ -1217,7 +1229,7 @@ class MacroCall < Node
     end
     
     def mapChildren(&proc)
-        MacroCall.new(codeOrigin, @name, @operands.map(&proc))
+        MacroCall.new(codeOrigin, @name, @operands.map(&proc), @annotation)
     end
     
     def dump

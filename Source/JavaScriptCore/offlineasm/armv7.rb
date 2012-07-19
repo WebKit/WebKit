@@ -743,8 +743,8 @@ end
 
 class Instruction
     def lowerARMv7
-        $asm.codeOrigin codeOriginString
-        $asm.annotation annotation
+        $asm.codeOrigin codeOriginString if $enableCodeOriginComments
+        $asm.annotation annotation if $enableInstrAnnotations
 
         case opcode
         when "addi", "addp", "addis"
@@ -1012,7 +1012,7 @@ class Instruction
             raise "Wrong number of arguments to smull in #{self.inspect} at #{codeOriginString}" unless operands.length == 4
             $asm.puts "smull #{operands[2].armV7Operand}, #{operands[3].armV7Operand}, #{operands[0].armV7Operand}, #{operands[1].armV7Operand}"
         else
-            raise "Unhandled opcode #{opcode} at #{codeOriginString}"
+            lowerDefault
         end
     end
 end

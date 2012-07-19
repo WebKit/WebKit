@@ -45,6 +45,8 @@ class Assembler
         @codeOrigin = nil
         @numLocalLabels = 0
         @numGlobalLabels = 0
+
+        @newlineSpacerState = :none
     end
     
     def enterAsm
@@ -66,31 +68,58 @@ class Assembler
     
     # Concatenates all the various components of the comment to dump.
     def lastComment
+        separator = " "
         result = ""
-        result = " #{@comment} ." if @comment
-        result += " #{@annotation} ." if @annotation and $enableTrailingInstrAnnotations
-        result += " #{@internalComment} ." if @internalComment
-        result += " #{@codeOrigin} ." if @codeOrigin and $enableCodeOriginComments
+        result = "#{@comment}" if @comment
+        if @annotation and $enableInstrAnnotations
+            result += separator if result != ""
+            result += "#{@annotation}"
+        end
+        if @internalComment
+            result += separator if result != ""
+            result += "#{@internalComment}"
+        end
+        if @codeOrigin and $enableCodeOriginComments
+            result += separator if result != ""
+            result += "#{@codeOrigin}"
+        end
         if result != ""
-            result = "  //" + result
+            result = "// " + result
         end
 
         # Reset all the components that we've just sent to be dumped.
         @commentState = :none
         @comment = nil
-        @internalComment = nil
         @annotation = nil
         @codeOrigin = nil
+        @internalComment = nil
         result
     end
     
-    # Dumps the current instruction annotation in interlaced mode if appropriate.
-    def putInterlacedAnnotation()
+    def formatDump(dumpStr, comment, commentColumns=$preferredCommentStartColumn)
+        if comment.length > 0
+            "%-#{commentColumns}s %s" % [dumpStr, comment]
+        else
+            dumpStr
+        end
+    end
+
+    # private method for internal use only.
+    def putAnnotation(text)
         raise unless @state == :asm
-        if $enableInterlacedInstrAnnotations
-            @outp.puts("    // #{@annotation}") if @annotation
+        if $enableInstrAnnotations
+            @outp.puts text
             @annotation = nil
         end
+    end
+
+    def putLocalAnnotation()
+        putAnnotation "    // #{@annotation}" if @annotation
+    end
+
+    def putGlobalAnnotation()
+        putsNewlineSpacerIfAppropriate(:annotation)
+        putAnnotation "// #{@annotation}" if @annotation
     end
 
     def putsLastComment
@@ -102,8 +131,7 @@ class Assembler
     
     def puts(*line)
         raise unless @state == :asm
-        putInterlacedAnnotation
-        @outp.puts("    \"\\t" + line.join('') + "\\n\"#{lastComment}")
+        @outp.puts(formatDump("    \"\\t" + line.join('') + "\\n\"", lastComment))
     end
     
     def print(line)
@@ -111,12 +139,20 @@ class Assembler
         @outp.print("\"" + line + "\"")
     end
     
+    def putsNewlineSpacerIfAppropriate(state)
+        if @newlineSpacerState != state
+            @outp.puts("\n")
+            @newlineSpacerState = state
+        end
+    end
+
     def putsLabel(labelName)
         raise unless @state == :asm
         @numGlobalLabels += 1
-        @outp.puts("\n")
+        putsNewlineSpacerIfAppropriate(:global)
         @internalComment = $enableLabelCountComments ? "Global Label #{@numGlobalLabels}" : nil
-        @outp.puts("OFFLINE_ASM_GLOBAL_LABEL(#{labelName})#{lastComment}")
+        @outp.puts(formatDump("OFFLINE_ASM_GLOBAL_LABEL(#{labelName})", lastComment))
+        @newlineSpacerState = :none # After a global label, we can use another spacer.
     end
     
     def putsLocalLabel(labelName)
@@ -124,7 +160,7 @@ class Assembler
         @numLocalLabels += 1
         @outp.puts("\n")
         @internalComment = $enableLabelCountComments ? "Local Label #{@numLocalLabels}" : nil
-        @outp.puts("OFFLINE_ASM_LOCAL_LABEL(#{labelName})#{lastComment}")
+        @outp.puts(formatDump("  OFFLINE_ASM_LOCAL_LABEL(#{labelName})", lastComment))
     end
     
     def self.labelReference(labelName)

@@ -624,8 +624,8 @@ class Instruction
     end
     
     def lowerX86Common
-        $asm.codeOrigin codeOriginString
-        $asm.annotation annotation
+        $asm.codeOrigin codeOriginString if $enableCodeOriginComments
+        $asm.annotation annotation if $enableInstrAnnotations
 
         case opcode
         when "addi"
@@ -1028,7 +1028,7 @@ class Instruction
         when "leap"
             $asm.puts "lea#{x86Suffix(:ptr)} #{operands[0].x86AddressOperand(:ptr)}, #{operands[1].x86Operand(:ptr)}"
         else
-            raise "Bad opcode: #{opcode}"
+            lowerDefault
         end
     end
 end

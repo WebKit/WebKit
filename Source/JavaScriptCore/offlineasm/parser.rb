@@ -74,6 +74,15 @@ class Token
     end
 end
 
+class Annotation
+    attr_reader :codeOrigin, :type, :string
+    def initialize(codeOrigin, type, string)
+        @codeOrigin = codeOrigin
+        @type = type
+        @string = string
+    end
+end
+
 #
 # The lexer. Takes a string and returns an array of tokens.
 #
@@ -83,17 +92,20 @@ def lex(str, fileName)
     result = []
     lineNumber = 1
     annotation = nil
+    whitespaceFound = false
     while not str.empty?
         case str
         when /\A\#([^\n]*)/
             # comment, ignore
-        when /\A\/\/([^\n]*)/
+        when /\A\/\/\ ?([^\n]*)/
             # annotation
             annotation = $1
+            annotationType = whitespaceFound ? :local : :global
         when /\A\n/
             # We've found a '\n'.  Emit the last comment recorded if appropriate:
             if $enableInstrAnnotations and annotation
-                result << Token.new(CodeOrigin.new(fileName, lineNumber), "@" + annotation)
+                result << Annotation.new(CodeOrigin.new(fileName, lineNumber),
+                                         annotationType, annotation)
                 annotation = nil
             end
             result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
@@ -106,6 +118,9 @@ def lex(str, fileName)
             result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
         when /\A([ \t]+)/
             # whitespace, ignore
+            whitespaceFound = true
+            str = $~.post_match
+            next
         when /\A0x([0-9a-fA-F]+)/
             result << Token.new(CodeOrigin.new(fileName, lineNumber), $&.hex.to_s)
         when /\A0([0-7]+)/
@@ -119,6 +134,7 @@ def lex(str, fileName)
         else
             raise "Lexer error at #{CodeOrigin.new(fileName, lineNumber).to_s}, unexpected sequence #{str[0..20].inspect}"
         end
+        whitespaceFound = false
         str = $~.post_match
     end
     result
@@ -146,10 +162,6 @@ def isIdentifier(token)
     token =~ /\A[a-zA-Z]([a-zA-Z0-9_]*)\Z/ and not isKeyword(token)
 end
 
-def isAnnotation(token)
-    token =~ /\A\@([^\n]*)/
-end
-
 def isLabel(token)
     token =~ /\A_([a-zA-Z0-9_]*)\Z/
 end
@@ -175,6 +187,7 @@ class Parser
     def initialize(data, fileName)
         @tokens = lex(data, fileName)
         @idx = 0
+        @annotation = nil
     end
     
     def parseError(*comment)
@@ -487,6 +500,20 @@ class Parser
         loop {
             if (@idx == @tokens.length and not final) or (final and @tokens[@idx] =~ final)
                 break
+            elsif @tokens[@idx].is_a? Annotation
+                # This is the only place where we can encounter a global
+                # annotation, and hence need to be able to distinguish between
+                # them.
+                # globalAnnotations are the ones that start from column 0. All
+                # others are considered localAnnotations.  The only reason to
+                # distinguish between them is so that we can format the output
+                # nicely as one would expect.
+
+                codeOrigin = @tokens[@idx].codeOrigin
+                annotationOpcode = (@tokens[@idx].type == :global) ? "globalAnnotation" : "localAnnotation"
+                list << Instruction.new(codeOrigin, annotationOpcode, [], @tokens[@idx].string)
+                @annotation = nil
+                @idx += 2 # Consume the newline as well.
             elsif @tokens[@idx] == "\n"
                 # ignore
                 @idx += 1
@@ -547,21 +574,22 @@ class Parser
                 @idx += 1
                 if (not final and @idx == @tokens.size) or (final and @tokens[@idx] =~ final)
                     # Zero operand instruction, and it's the last one.
-                    list << Instruction.new(codeOrigin, name, [])
+                    list << Instruction.new(codeOrigin, name, [], @annotation)
+                    @annotation = nil
                     break
-                elsif isAnnotation @tokens[@idx]
-                    annotation = @tokens[@idx].string
-                    list << Instruction.new(codeOrigin, name, [], annotation)
+                elsif @tokens[@idx].is_a? Annotation
+                    list << Instruction.new(codeOrigin, name, [], @tokens[@idx].string)
+                    @annotation = nil
                     @idx += 2 # Consume the newline as well.
                 elsif @tokens[@idx] == "\n"
                     # Zero operand instruction.
-                    list << Instruction.new(codeOrigin, name, [])
+                    list << Instruction.new(codeOrigin, name, [], @annotation)
+                    @annotation = nil
                     @idx += 1
                 else
                     # It's definitely an instruction, and it has at least one operand.
                     operands = []
                     endOfSequence = false
-                    annotation = nil
                     loop {
                         operands << parseOperand("while inside of instruction #{name}")
                         if (not final and @idx == @tokens.size) or (final and @tokens[@idx] =~ final)
@@ -571,8 +599,8 @@ class Parser
                         elsif @tokens[@idx] == ","
                             # Has another operand.
                             @idx += 1
-                        elsif isAnnotation @tokens[@idx]
-                            annotation = @tokens[@idx].string
+                        elsif @tokens[@idx].is_a? Annotation
+                            @annotation = @tokens[@idx].string
                             @idx += 2 # Consume the newline as well.
                             break
                         elsif @tokens[@idx] == "\n"
@@ -583,11 +611,14 @@ class Parser
                             parseError("Expected a comma, newline, or #{final} after #{operands.last.dump}")
                         end
                     }
-                    list << Instruction.new(codeOrigin, name, operands, annotation)
+                    list << Instruction.new(codeOrigin, name, operands, @annotation)
+                    @annotation = nil
                     if endOfSequence
                         break
                     end
                 end
+
+            # Check for potential macro invocation:
             elsif isIdentifier @tokens[@idx]
                 codeOrigin = @tokens[@idx].codeOrigin
                 name = @tokens[@idx].string
@@ -624,7 +655,13 @@ class Parser
                             end
                         }
                     end
-                    list << MacroCall.new(codeOrigin, name, operands)
+                    # Check if there's a trailing annotation after the macro invoke:
+                    if @tokens[@idx].is_a? Annotation
+                        @annotation = @tokens[@idx].string
+                        @idx += 2 # Consume the newline as well.
+                    end
+                    list << MacroCall.new(codeOrigin, name, operands, @annotation)
+                    @annotation = nil
                 else
                     parseError "Expected \"(\" after #{name}"
                 end

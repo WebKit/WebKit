@@ -1,3 +1,18 @@
+2012-07-19  Mark Lam  <mark.lam@apple.com>
+
+        Bug fixes and enhancements for OfflineASM annotation system.
+        https://bugs.webkit.org/show_bug.cgi?id=91690
+
+        Reviewed by Filip Pizlo.
+
+        * offlineasm/armv7.rb: added default handling of Instruction lower().
+        * offlineasm/asm.rb: added more support for annotations and more pretty printing.
+        * offlineasm/ast.rb: added more support for annotations.
+        * offlineasm/config.rb: added $preferredCommentStartColumn, simplified $enableInstrAnnotations.
+        * offlineasm/parser.rb: added more support for annotations.
+        * offlineasm/transform.rb: added more support for annotations.
+        * offlineasm/x86.rb: added default handling of Instruction lower().
+
 2012-07-19  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Fix compilation of JSGlobalData.h with ENABLE(DFG_JIT)
