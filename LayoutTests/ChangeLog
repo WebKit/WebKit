@@ -1,3 +1,16 @@
+2012-07-19  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed gardening.  Rebaseline some tests after r115846.
+
+        * platform/chromium-mac-snowleopard/fast/repaint/inline-relative-positioned-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/lines-with-layout-delta-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/overflow-clip-subtree-layout-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/repaint-resized-overflow-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/subtree-layoutstate-transform-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/subtree-root-clip-2-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/subtree-root-clip-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-07-19  Simon Fraser  <simon.fraser@apple.com>
 
         Keep overlap testing on for descendants of an animating element

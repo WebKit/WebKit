@@ -3045,18 +3045,6 @@ BUGWK80498 WIN : fast/workers/worker-multi-startup.html = CRASH PASS
 
 BUGSENORBLANCO : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
 
-// Need text rebaseline after lazily allocating layers.
-// The difference should be only layer removal, no size or position should change.
-BUGWK83954 SNOWLEOPARD : fast/repaint/inline-relative-positioned.html = IMAGE
-BUGWK83954 SNOWLEOPARD : fast/repaint/lines-with-layout-delta.html = IMAGE
-BUGWK83954 SNOWLEOPARD : fast/repaint/overflow-clip-subtree-layout.html = IMAGE
-BUGWK83954 SNOWLEOPARD : fast/repaint/repaint-resized-overflow.html = IMAGE
-BUGWK83954 SNOWLEOPARD : fast/repaint/subtree-layoutstate-transform.html = IMAGE
-BUGWK83954 SNOWLEOPARD : fast/repaint/subtree-root-clip-2.html = IMAGE
-BUGWK83954 SNOWLEOPARD : fast/repaint/subtree-root-clip.html = IMAGE
-BUGWK83954 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE PASS
-
-
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT IMAGE
 
 BUGWK80665 : fast/js/string-match.html = TEXT
