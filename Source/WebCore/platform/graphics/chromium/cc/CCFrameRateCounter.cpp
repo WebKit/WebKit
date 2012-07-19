@@ -28,6 +28,7 @@
 #include "CCFrameRateCounter.h"
 
 #include "CCProxy.h"
+#include <public/Platform.h>
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -57,6 +58,14 @@ CCFrameRateCounter::CCFrameRateCounter()
 
 void CCFrameRateCounter::markBeginningOfFrame(double timestamp)
 {
+    if (CCProxy::hasImplThread() && m_currentFrameNumber > 0) {
+        double lastFrameTimestamp = frameIndex(m_currentFrameNumber - 1);
+        double drawDelaySeconds = timestamp - lastFrameTimestamp;
+        double drawDelayMs = drawDelaySeconds * 1000.0;
+
+        WebKit::Platform::current()->histogramCustomCounts("Renderer4.CompositorThreadImplDrawDelay", static_cast<int>(drawDelayMs), 1, 120, 60);
+    }
+
     m_timeStampHistory[frameIndex(m_currentFrameNumber)] = timestamp;
 }
 

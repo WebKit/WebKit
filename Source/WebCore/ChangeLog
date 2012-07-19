@@ -1,3 +1,17 @@
+2012-07-18  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add histogram for tracking compositor-thread frame rate
+        https://bugs.webkit.org/show_bug.cgi?id=91692
+
+        Reviewed by Adrienne Walker.
+
+        This patch tracks the interval between compositor thread frames
+        and pushes it into a platform histogram. This allows us to track
+        compositor-thread frame rate in the wild.
+
+        * platform/graphics/chromium/cc/CCFrameRateCounter.cpp:
+        (WebCore::CCFrameRateCounter::markBeginningOfFrame):
+
 2012-07-18  Dan Bernstein  <mitz@apple.com>
 
         Hit testing in the gap between pages returns incorrect results
