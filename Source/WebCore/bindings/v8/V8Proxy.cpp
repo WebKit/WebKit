@@ -593,6 +593,11 @@ v8::Handle<v8::Value> V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
     if (ec <= 0)
         return v8::Handle<v8::Value>();
 
+    if (ec == NATIVE_TYPE_ERR) {
+        const char* message = 0;
+        return throwTypeError(message, isolate);
+    }
+
     ExceptionCodeDescription description(ec);
 
     v8::Handle<v8::Value> exception;

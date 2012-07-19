@@ -329,7 +329,7 @@ function testBadAdvance()
     {
         cursor = event.target.result;
 
-        evalAndExpectException("cursor.advance(0)", "IDBDatabaseException.TYPE_ERR");
+        evalAndExpectExceptionClass("cursor.advance(0)", "TypeError");
         testDelete();
     }
     request.onsuccess = advanceBadly;

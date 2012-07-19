@@ -133,9 +133,9 @@ testBadAdvance()
 trans = db.transaction(objectStoreName, 'readwrite')
 objectStore = trans.objectStore(objectStoreName)
 request = objectStore.openCursor()
-Expecting exception from cursor.advance(0)
+Expecting TypeError exception from cursor.advance(0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TYPE_ERR
+PASS cursor.advance(0) threw TypeError: Type error
 testDelete()
 trans = db.transaction(objectStoreName, 'readwrite')
 objectStore = trans.objectStore(objectStoreName)

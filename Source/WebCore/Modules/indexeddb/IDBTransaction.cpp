@@ -318,7 +318,7 @@ IDBTransaction::Mode IDBTransaction::stringToMode(const String& modeString, Exce
         return IDBTransaction::READ_ONLY;
     if (modeString == IDBTransaction::modeReadWrite())
         return IDBTransaction::READ_WRITE;
-    ec = IDBDatabaseException::IDB_TYPE_ERR;
+    ec = NATIVE_TYPE_ERR;
     return IDBTransaction::READ_ONLY;
 }
 
@@ -338,7 +338,7 @@ const AtomicString& IDBTransaction::modeToString(IDBTransaction::Mode mode, Exce
         break;
 
     default:
-        ec = IDBDatabaseException::IDB_TYPE_ERR;
+        ec = NATIVE_TYPE_ERR;
         return IDBTransaction::modeReadOnly();
     }
 }

@@ -182,7 +182,7 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
     }
 
     if (!count) {
-        ec = IDBDatabaseException::IDB_TYPE_ERR;
+        ec = NATIVE_TYPE_ERR;
         return;
     }
 
@@ -306,7 +306,7 @@ IDBCursor::Direction IDBCursor::stringToDirection(const String& directionString,
     if (directionString == IDBCursor::directionPrevUnique())
         return IDBCursor::PREV_NO_DUPLICATE;
 
-    ec = IDBDatabaseException::IDB_TYPE_ERR;
+    ec = NATIVE_TYPE_ERR;
     return IDBCursor::NEXT;
 }
 
@@ -326,7 +326,7 @@ const AtomicString& IDBCursor::directionToString(unsigned short direction, Excep
         return IDBCursor::directionPrevUnique();
 
     default:
-        ec = IDBDatabaseException::IDB_TYPE_ERR;
+        ec = NATIVE_TYPE_ERR;
         return IDBCursor::directionNext();
     }
 }

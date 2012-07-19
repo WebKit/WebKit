@@ -62,8 +62,7 @@ static const struct IDBDatabaseExceptionNameDescription {
     { "QuotaExceededError", "The operation failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.", QUOTA_EXCEEDED_ERR }, // FIXME: This isn't used yet
     { "SyntaxError", "The keypath argument contains an invalid key path.", SYNTAX_ERR },
     { "DataCloneError", "The data being stored could not be cloned by the internal structured cloning algorithm.", DATA_CLONE_ERR },
-    // FIXME: should be a JavaScript TypeError. See https://bugs.webkit.org/show_bug.cgi?id=85513
-    { "TypeError", "This should be a TypeError", 0 },
+    { 0, 0, 0 }, // FIXME: Previous/legacy value was IDB_TYPE_ERR.
     { 0, 0, 0 }, // FIXME: Previous/legacy value was IDB_NOT_SUPPORTED_ERR.
 };
 

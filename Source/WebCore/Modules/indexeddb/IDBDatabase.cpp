@@ -190,7 +190,7 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
 PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)
 {
     if (version.isNull()) {
-        ec = IDBDatabaseException::IDB_TYPE_ERR;
+        ec = NATIVE_TYPE_ERR;
         return 0;
     }
 

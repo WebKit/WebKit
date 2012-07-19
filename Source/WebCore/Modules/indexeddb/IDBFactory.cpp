@@ -108,7 +108,7 @@ PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* cont
 PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     if (name.isNull()) {
-        ec = IDBDatabaseException::IDB_TYPE_ERR;
+        ec = NATIVE_TYPE_ERR;
         return 0;
     }
     if (!isContextValid(context))
@@ -122,7 +122,7 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
 PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     if (name.isNull()) {
-        ec = IDBDatabaseException::IDB_TYPE_ERR;
+        ec = NATIVE_TYPE_ERR;
         return 0;
     }
     if (!isContextValid(context))

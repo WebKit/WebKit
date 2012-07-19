@@ -63,7 +63,10 @@ namespace WebCore {
         QUOTA_EXCEEDED_ERR = 22,
         TIMEOUT_ERR = 23,
         INVALID_NODE_TYPE_ERR = 24,
-        DATA_CLONE_ERR = 25
+        DATA_CLONE_ERR = 25,
+
+        // Converted to a native TypeError by the script binding layer:
+        NATIVE_TYPE_ERR = 99
     };
 
 } // namespace WebCore

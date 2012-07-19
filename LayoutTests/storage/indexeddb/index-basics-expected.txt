@@ -67,6 +67,12 @@ indexObject.get('does not exist')
 PASS event.target.result is undefined
 indexObject4.getKey('value2')
 PASS event.target.result is "key2"
+
+Verify that specifying an invalid direction raises an exception:
+Expecting TypeError exception from indexObject.openKeyCursor(0, 'invalid-direction')
+PASS Exception was thrown.
+PASS indexObject.openKeyCursor(0, 'invalid-direction') threw TypeError: Type error
+
 indexObject.openKeyCursor()
 PASS event.target.source is indexObject
 PASS event.target.result is non-null.
@@ -86,6 +92,12 @@ PASS event.target.result.key is "value4"
 PASS event.target.result.primaryKey is "key4"
 event.target.result.continue()
 PASS event.target.result is null
+
+Verify that specifying an invalid direction raises an exception:
+Expecting TypeError exception from indexObject.openCursor(0, 'invalid-direction')
+PASS Exception was thrown.
+PASS indexObject.openCursor(0, 'invalid-direction') threw TypeError: Type error
+
 indexObject.openCursor()
 PASS event.target.source is indexObject
 PASS event.target.result is non-null.

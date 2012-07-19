@@ -1,5 +1,47 @@
 2012-07-19  Joshua Bell  <jsbell@chromium.org>
 
+        IndexedDB: Throw native TypeErrors per spec
+        https://bugs.webkit.org/show_bug.cgi?id=91679
+
+        Reviewed by Kentaro Hara.
+
+        Per the IDB spec, the advance(), openCursor(), openKeyCursor() and transaction()
+        methods supposed to throw true native JavaScript TypeError objects as exceptions
+        rather than DOMException objects. Implement this by adding a special DOMException
+        code that is tested for in the binding layer.
+
+        Tests: storage/indexeddb/cursor-advance.html
+               storage/indexeddb/index-basics.html
+               storage/indexeddb/index-basics-workers.html
+               storage/indexeddb/objectstore-cursor.html
+               storage/indexeddb/transaction-basics.html
+
+        * Modules/indexeddb/IDBCursor.cpp: Use the new DOMException code.
+        (WebCore::IDBCursor::advance):
+        (WebCore::IDBCursor::stringToDirection):
+        (WebCore::IDBCursor::directionToString):
+        * Modules/indexeddb/IDBDatabase.cpp: Ditto.
+        (WebCore::IDBDatabase::setVersion):
+        * Modules/indexeddb/IDBDatabaseException.cpp: Remove temporary cruft/mark as legacy.
+        (WebCore):
+        * Modules/indexeddb/IDBDatabaseException.h: Ditto.
+        * Modules/indexeddb/IDBDatabaseException.idl: Ditto.
+        * Modules/indexeddb/IDBFactory.cpp: Use the new DOMException code.
+        (WebCore::IDBFactory::open):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex): Use the new DOMException code.
+        * Modules/indexeddb/IDBTransaction.cpp: Use the new DOMException code.
+        (WebCore::IDBTransaction::stringToMode):
+        (WebCore::IDBTransaction::modeToString):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException): Intercept new DOMException code, throw native TypeError.
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException): Ditto.
+        * dom/ExceptionCode.h: Add new DOMException code.
+
+2012-07-19  Joshua Bell  <jsbell@chromium.org>
+
         Roll out r121610 and r122487 which may have been causing flaky crashes
         https://bugs.webkit.org/show_bug.cgi?id=91637
 

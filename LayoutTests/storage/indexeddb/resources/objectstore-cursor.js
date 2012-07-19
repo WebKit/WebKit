@@ -41,7 +41,13 @@ function deleteExisting()
 
     deleteAllObjectStores(db);
 
-    self.objectStore = evalAndLog("db.createObjectStore('someObjectStore')");
+    evalAndLog("objectStore = db.createObjectStore('someObjectStore')");
+
+    debug("");
+    debug("Verify that specifying an invalid direction raises an exception:");
+    evalAndExpectExceptionClass("objectStore.openCursor(0, 'invalid-direction')", "TypeError");
+    debug("");
+
     self.nextToAdd = 0;
     addData();
 }

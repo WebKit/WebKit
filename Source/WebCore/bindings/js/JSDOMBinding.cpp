@@ -198,6 +198,11 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     if (!ec || exec->hadException())
         return;
 
+    if (ec == NATIVE_TYPE_ERR) {
+        throwTypeError(exec);
+        return;
+    }
+
     // FIXME: All callers to setDOMException need to pass in the right global object
     // for now, we're going to assume the lexicalGlobalObject.  Which is wrong in cases like this:
     // frames[0].document.createElement(null, null); // throws an exception which should have the subframes prototypes.

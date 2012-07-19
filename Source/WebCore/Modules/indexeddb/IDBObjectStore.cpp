@@ -272,7 +272,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const IDBKe
         return 0;
     }
     if (name.isNull()) {
-        ec = IDBDatabaseException::IDB_TYPE_ERR;
+        ec = NATIVE_TYPE_ERR;
         return 0;
     }
     if (m_metadata.indexes.contains(name)) {
