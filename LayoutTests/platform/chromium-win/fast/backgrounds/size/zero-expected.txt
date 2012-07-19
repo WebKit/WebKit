@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (579,0) size 4x19
           text run at (579,0) width 4: "."
       RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 536x19
-          text run at (0,0) width 536: "There should be four blue squares with black borders. WebKit should not hang or assert."
+        RenderText {#text} at (0,0) size 548x19
+          text run at (0,0) width 548: "There should be four empty squares with black borders. WebKit should not hang or assert."
       RenderBlock {DIV} at (8,72) size 106x106 [border: (3px solid #000000)]
       RenderBlock {DIV} at (8,186) size 106x106 [border: (3px solid #000000)]
       RenderBlock {DIV} at (8,300) size 106x106 [border: (3px solid #000000)]

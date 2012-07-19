@@ -3559,9 +3559,6 @@ BUGCR132898 : http/tests/websocket/tests/hybi/workers/close.html = PASS TEXT
 // Flaky
 BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT PASS
 
-// Needs Rebaseline after bug 86942
-BUGWK86942 WIN LINUX : fast/backgrounds/size/zero.html = IMAGE+TEXT
-
 // Timing out on some Windows bots
 BUGWK89510 WIN : gamepad/gamepad-polling-access.html = PASS TIMEOUT
 
