@@ -32,13 +32,13 @@ import signal
 import subprocess
 
 from webkitpy.layout_tests.port.server_process import ServerProcess
-from webkitpy.layout_tests.port.webkit import WebKitDriver
+from webkitpy.layout_tests.port.driver import Driver
 from webkitpy.common.system.executive import Executive
 
 _log = logging.getLogger(__name__)
 
 
-class XvfbDriver(WebKitDriver):
+class XvfbDriver(Driver):
     def _start(self, pixel_tests, per_test_args):
 
         # Collect the number of X servers running already and make
@@ -66,7 +66,7 @@ class XvfbDriver(WebKitDriver):
         self._server_process = ServerProcess(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
 
     def stop(self):
-        WebKitDriver.stop(self)
+        super(XvfbDriver, self).stop()
         if getattr(self, '_xvfb_process', None):
             try:
                 self._xvfb_process.terminate()

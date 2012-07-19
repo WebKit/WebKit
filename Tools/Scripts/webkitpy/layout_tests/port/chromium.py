@@ -42,8 +42,7 @@ from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port, VirtualTestSuite
-from webkitpy.layout_tests.port.driver import DriverOutput
-from webkitpy.layout_tests.port.webkit import WebKitPort, WebKitDriver
+from webkitpy.layout_tests.port.webkit import WebKitPort
 
 
 _log = logging.getLogger(__name__)
@@ -139,12 +138,6 @@ class ChromiumPort(WebKitPort):
                     _log.error('')
             return False
         return True
-
-    def driver_name(self):
-        # FIXME: merge this with Port.driver_name, WebKitPort.driver_name
-        if self.get_option('driver_name'):
-            return self.get_option('driver_name')
-        return 'DumpRenderTree'
 
     def check_build(self, needs_http):
         result = True

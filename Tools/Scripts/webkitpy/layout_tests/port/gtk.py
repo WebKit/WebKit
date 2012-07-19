@@ -33,7 +33,7 @@ import subprocess
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.server_process import ServerProcess
-from webkitpy.layout_tests.port.webkit import WebKitDriver, WebKitPort
+from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.layout_tests.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
 from webkitpy.common.system.executive import Executive

@@ -1,5 +1,88 @@
 2012-07-18  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: merge WebKitDriver into Driver
+        https://bugs.webkit.org/show_bug.cgi?id=91696
+
+        Reviewed by Adam Barth.
+
+        As part of merging WebKitPort into Port, we also should merge
+        WebKitDriver into Driver, since all of the non-test Drivers now
+        inherit from WebKitDriver.
+
+        There are no functional changes in this patch, and all the changes should
+        be covered by the existing tests.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._driver_class):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._check_file_exists):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._drt_cmd_line):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidDriverTest.test_read_prompt):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver):
+        (Driver.__init__):
+        (Driver.__del__):
+        (Driver.run_test):
+        (Driver.has_crashed):
+        (Driver.start):
+        (Driver._start):
+        (Driver.stop):
+        (Driver.cmd_line):
+        (Driver._check_for_driver_crash):
+        (Driver._command_from_driver_input):
+        (Driver._read_first_block):
+        (Driver._read_optional_image_block):
+        (Driver._read_header):
+        (Driver._process_stdout_line):
+        (Driver._strip_eof):
+        (Driver._read_block):
+        (ContentBlock):
+        (ContentBlock.__init__):
+        (ContentBlock.decode_content):
+        * Scripts/webkitpy/layout_tests/port/driver_unittest.py:
+        (DriverTest.make_port):
+        (DriverTest._assert_wrapper):
+        (DriverTest.test_read_block):
+        (DriverTest):
+        (DriverTest.test_read_binary_block):
+        (DriverTest.test_read_base64_block):
+        (DriverTest.test_no_timeout):
+        (DriverTest.test_check_for_driver_crash):
+        (DriverTest.test_check_for_driver_crash.FakeServerProcess):
+        (DriverTest.test_check_for_driver_crash.FakeServerProcess.__init__):
+        (DriverTest.test_check_for_driver_crash.FakeServerProcess.pid):
+        (DriverTest.test_check_for_driver_crash.FakeServerProcess.name):
+        (DriverTest.test_check_for_driver_crash.FakeServerProcess.has_crashed):
+        (DriverTest.test_check_for_driver_crash.FakeServerProcess.stop):
+        (DriverTest.test_check_for_driver_crash.assert_crash):
+        (DriverTest.test_creating_a_port_does_not_write_to_the_filesystem):
+        (DriverTest.test_stop_cleans_up_properly):
+        (DriverTest.test_two_starts_cleans_up_properly):
+        (MockServerProcess):
+        (MockServerProcess.__init__):
+        (MockServerProcess.has_crashed):
+        (MockServerProcess.read_stdout_line):
+        (MockServerProcess.read_stdout):
+        (MockServerProcess.read_either_stdout_or_stderr_line):
+        (MockServerProcess.start):
+        (MockServerProcess.stop):
+        (MockServerProcess.kill):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._read_image_diff):
+        (WebKitPort.skipped_layout_tests):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (test_path_to_apache_config_file):
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py:
+        (XvfbDriver):
+        (XvfbDriver.stop):
+
+2012-07-18  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy.common.system.executive_unittest.ExecutiveTest.test_kill_process is flaky
         https://bugs.webkit.org/show_bug.cgi?id=91698
 

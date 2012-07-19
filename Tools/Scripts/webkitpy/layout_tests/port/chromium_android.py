@@ -34,6 +34,7 @@ import threading
 import time
 
 from webkitpy.layout_tests.port import chromium
+from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import server_process
 from webkitpy.layout_tests.port import webkit
@@ -456,9 +457,9 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         self._original_governor = None
 
 
-class ChromiumAndroidDriver(webkit.WebKitDriver):
+class ChromiumAndroidDriver(driver.Driver):
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
-        webkit.WebKitDriver.__init__(self, port, worker_number, pixel_tests, no_timeout)
+        super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
         self._pixel_tests = pixel_tests
         self._in_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.in'
         self._out_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.out'
@@ -490,7 +491,7 @@ class ChromiumAndroidDriver(webkit.WebKitDriver):
         # Otherwise the main thread has been proceeded normally. This thread just exits silently.
 
     def _drt_cmd_line(self, pixel_tests, per_test_args):
-        return webkit.WebKitDriver.cmd_line(self, pixel_tests, per_test_args) + [
+        return driver.Driver.cmd_line(self, pixel_tests, per_test_args) + [
             '--in-fifo=' + self._in_fifo_path,
             '--out-fifo=' + self._out_fifo_path,
             '--err-fifo=' + self._err_fifo_path,

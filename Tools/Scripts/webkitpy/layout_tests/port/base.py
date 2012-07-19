@@ -1185,7 +1185,7 @@ class Port(object):
 
     def _driver_class(self):
         """Returns the port's driver implementation."""
-        raise NotImplementedError('Port._driver_class')
+        return driver.Driver
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
         name_str = name or '<unknown process name>'
