@@ -1,3 +1,23 @@
+2012-07-14  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: text-indent-intrinsic-003 fails
+        https://bugs.webkit.org/show_bug.cgi?id=80576
+
+        Reviewed by Eric Seidel.
+
+        Negative values of text-indent should be distributed across inline children until used up.
+        This fixes text-indent-intrinsic-003 and text-indent-intrinsic-004.
+
+        Tests: css2.1/20110323/text-indent-intrinsic-001.htm
+               css2.1/20110323/text-indent-intrinsic-002.htm
+               css2.1/20110323/text-indent-intrinsic-003.htm
+               css2.1/20110323/text-indent-intrinsic-004.htm
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths): If text-indent is negative, keep
+         applying it to inline children in the first formatted line until it's reduced to zero. This isn't
+         a consideration when text-indent is a positive value.
+
 2012-07-19  Douglas Stockwell  <dstockwell@google.com>
 
         Crash in WebCore::StyleResolver::collectMatchingRulesForList

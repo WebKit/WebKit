@@ -1,3 +1,19 @@
+2012-07-14  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: text-indent-intrinsic-003 fails
+        https://bugs.webkit.org/show_bug.cgi?id=80576
+
+        Reviewed by Eric Seidel.
+
+        * css2.1/20110323/text-indent-intrinsic-001-expected.html: Added.
+        * css2.1/20110323/text-indent-intrinsic-001.htm: Added.
+        * css2.1/20110323/text-indent-intrinsic-002-expected.html: Added.
+        * css2.1/20110323/text-indent-intrinsic-002.htm: Added.
+        * css2.1/20110323/text-indent-intrinsic-003-expected.html: Added.
+        * css2.1/20110323/text-indent-intrinsic-003.htm: Added.
+        * css2.1/20110323/text-indent-intrinsic-004-expected.html: Added.
+        * css2.1/20110323/text-indent-intrinsic-004.htm: Added.
+
 2012-07-19  Douglas Stockwell  <dstockwell@google.com>
 
         Crash in WebCore::StyleResolver::collectMatchingRulesForList

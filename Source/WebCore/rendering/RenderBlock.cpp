@@ -5619,6 +5619,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
 
     InlineMinMaxIterator childIterator(this);
     bool addedTextIndent = false; // Only gets added in once.
+    LayoutUnit textIndent = minimumValueForLength(styleToUse->textIndent(), cw, view());
     RenderObject* prevFloat = 0;
     while (RenderObject* child = childIterator.next()) {
         autoWrap = child->isReplaced() ? child->parent()->style()->autoWrap() : 
@@ -5722,14 +5723,18 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 // Add in text-indent.  This is added in only once.
                 LayoutUnit ti = 0;
                 if (!addedTextIndent) {
-                    addedTextIndent = true;
-                    ti = minimumValueForLength(styleToUse->textIndent(), cw, view());
+                    ti = textIndent;
                     childMin += ti;
                     childMax += ti;
+
+                    if (childMin < 0)
+                        textIndent = childMin;
+                    else
+                        addedTextIndent = true;
                 }
 
                 // Add our width to the max.
-                inlineMax += childMax;
+                inlineMax += max<float>(0, childMax);
 
                 if (!autoWrap || !canBreakReplacedElement) {
                     if (child->isFloating())
@@ -5793,10 +5798,14 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 // Add in text-indent.  This is added in only once.
                 LayoutUnit ti = 0;
                 if (!addedTextIndent) {
-                    addedTextIndent = true;
-                    ti = minimumValueForLength(styleToUse->textIndent(), cw, view());
+                    ti = textIndent;
                     childMin+=ti; beginMin += ti;
                     childMax+=ti; beginMax += ti;
+                    
+                    if (childMin < 0)
+                        textIndent = childMin;
+                    else
+                        addedTextIndent = true;
                 }
                 
                 // If we have no breakable characters at all,
@@ -5834,8 +5843,9 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     updatePreferredWidth(m_maxPreferredLogicalWidth, inlineMax);
                     updatePreferredWidth(m_maxPreferredLogicalWidth, childMax);
                     inlineMax = endMax;
+                    addedTextIndent = true;
                 } else
-                    inlineMax += childMax;
+                    inlineMax += max<float>(0, childMax);
             }
 
             // Ignore spaces after a list marker.
@@ -5847,6 +5857,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
             inlineMin = inlineMax = 0;
             stripFrontSpaces = true;
             trailingSpaceChild = 0;
+            addedTextIndent = true;
         }
 
         oldAutoWrap = autoWrap;
