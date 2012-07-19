@@ -1,3 +1,18 @@
+2012-07-19  Raymond Toy  <rtoy@google.com>
+
+        Limit maximum delay of DelayNode.
+        https://bugs.webkit.org/show_bug.cgi?id=91675
+
+        Reviewed by Kenneth Russell.
+
+        Clip the maximum delay of a DelayNode to a reasonable maximum.
+        
+        Test: webaudio/delaynode-maxdelaylimit.html
+
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore): Add maximumAllowedDelayTime.
+        (WebCore::DelayNode::DelayNode): Clip max delay.
+
 2012-07-14  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: text-indent-intrinsic-003 fails
