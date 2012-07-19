@@ -4465,7 +4465,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeRectangle(CSSParserValueL
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
-        if (!validUnit(argument, FLength))
+        if (!validUnit(argument, FLength | FPercent))
             return 0;
 
         RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);
@@ -4518,7 +4518,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeCircle(CSSParserValueList
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
-        if (!validUnit(argument, FLength))
+        if (!validUnit(argument, FLength | FPercent))
             return 0;
 
         RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);
@@ -4561,7 +4561,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeEllipse(CSSParserValueLis
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
-        if (!validUnit(argument, FLength))
+        if (!validUnit(argument, FLength | FPercent))
             return 0;
 
         RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);
@@ -4622,11 +4622,11 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapePolygon(CSSParserValueLis
 
     CSSParserValue* argumentX = argument;
     while (argumentX) {
-        if (!validUnit(argumentX, FLength))
+        if (!validUnit(argumentX, FLength | FPercent))
             return 0;
 
         CSSParserValue* argumentY = args->next();
-        if (!argumentY || !validUnit(argumentY, FLength))
+        if (!argumentY || !validUnit(argumentY, FLength | FPercent))
             return 0;
 
         RefPtr<CSSPrimitiveValue> xLength = createPrimitiveNumericValue(argumentX);

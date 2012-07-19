@@ -1,3 +1,15 @@
+2012-07-19  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Shape-inside / shape-outside should support percent-based measurements
+        https://bugs.webkit.org/show_bug.cgi?id=90311
+
+        Reviewed by Andreas Kling.
+
+        Added tests for percent based lengths for exclusion shapes.
+
+        * fast/exclusions/parsing-wrap-shape-lengths-expected.txt:
+        * fast/exclusions/parsing-wrap-shape-lengths.html:
+
 2012-07-19  James Simonsen  <simonjam@chromium.org>
 
         Regression(120096): Protect the element used by ImageLoader until the end of notifyFinished().

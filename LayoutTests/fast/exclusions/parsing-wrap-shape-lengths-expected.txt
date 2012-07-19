@@ -21,6 +21,14 @@ PASS innerStyle("-webkit-shape-inside", "circle(1vmin, 1vmin, 1vmin)") is "circl
 PASS computedStyle("-webkit-shape-inside", "circle(.5vw, 1vw, 1.5vw)") is "circle(0.5vw, 1vw, 1.5vw)"
 PASS computedStyle("-webkit-shape-inside", "circle(.5vh, 1vh, 1.5vh)") is "circle(0.5vh, 1vh, 1.5vh)"
 PASS computedStyle("-webkit-shape-inside", "circle(.5vmin, 1vmin, 1.5vmin)") is "circle(0.5vmin, 1vmin, 1.5vmin)"
+PASS innerStyle("-webkit-shape-inside", "circle(100%, 100%, 100%)") is "circle(100%, 100%, 100%)"
+PASS innerStyle("-webkit-shape-inside", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)") is "rectangle(45%, 45%, 90%, 60%, 25%, 10%)"
+PASS innerStyle("-webkit-shape-inside", "ellipse(100%, 100%, 100%, 100%)") is "ellipse(100%, 100%, 100%, 100%)"
+PASS innerStyle("-webkit-shape-inside", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)"
+PASS computedStyle("-webkit-shape-inside", "circle(50%, 100%, 150%)") is "circle(50%, 100%, 150%)"
+PASS computedStyle("-webkit-shape-inside", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)") is "rectangle(45%, 45%, 90%, 60%, 25%, 10%)"
+PASS computedStyle("-webkit-shape-inside", "ellipse(100%, 100%, 100%, 100%)") is "ellipse(100%, 100%, 100%, 100%)"
+PASS computedStyle("-webkit-shape-inside", "polygon(10% 20%, 30% 40%, 40% 50%)") is "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)"
 PASS innerStyle("-webkit-shape-inside", "circle(1px, 1px, 1)") is null
 PASS computedStyle("-webkit-shape-inside", "circle(1px, 1px, 1)") is "auto"
 PASS innerStyle("-webkit-shape-inside", "circle(1px, 1px, px)") is null

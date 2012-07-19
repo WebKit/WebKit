@@ -72,6 +72,17 @@ testComputed("-webkit-shape-inside", "circle(.5vw, 1vw, 1.5vw)", "circle(0.5vw, 
 testComputed("-webkit-shape-inside", "circle(.5vh, 1vh, 1.5vh)", "circle(0.5vh, 1vh, 1.5vh)");
 testComputed("-webkit-shape-inside", "circle(.5vmin, 1vmin, 1.5vmin)", "circle(0.5vmin, 1vmin, 1.5vmin)");
 
+// percentage lengths - units
+testInner("-webkit-shape-inside", "circle(100%, 100%, 100%)", "circle(100%, 100%, 100%)");
+testInner("-webkit-shape-inside", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
+testInner("-webkit-shape-inside", "ellipse(100%, 100%, 100%, 100%)", "ellipse(100%, 100%, 100%, 100%)");
+testInner("-webkit-shape-inside", "polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
+
+testComputed("-webkit-shape-inside", "circle(50%, 100%, 150%)", "circle(50%, 100%, 150%)");
+testComputed("-webkit-shape-inside", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)", "rectangle(45%, 45%, 90%, 60%, 25%, 10%)");
+testComputed("-webkit-shape-inside", "ellipse(100%, 100%, 100%, 100%)", "ellipse(100%, 100%, 100%, 100%)");
+testComputed("-webkit-shape-inside", "polygon(10% 20%, 30% 40%, 40% 50%)", "polygon(nonzero, 10% 20%, 30% 40%, 40% 50%)");
+
 // reject non-lengths
 negativeTest("-webkit-shape-inside", "circle(1px, 1px, 1)");
 negativeTest("-webkit-shape-inside", "circle(1px, 1px, px)");
