@@ -328,6 +328,9 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 #if USE(SOUP)
         || messageID.is<CoreIPC::MessageClassWebSoupRequestManagerProxy>()
 #endif
+#if ENABLE(VIBRATION)
+        || messageID.is<CoreIPC::MessageClassWebVibrationProxy>()
+#endif
         || messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
         m_context->didReceiveMessage(connection, messageID, arguments);
         return;

@@ -228,6 +228,15 @@ WKResourceCacheManagerRef WKContextGetResourceCacheManager(WKContextRef contextR
     return toAPI(toImpl(contextRef)->resourceCacheManagerProxy());
 }
 
+WKVibrationRef WKContextGetVibration(WKContextRef contextRef)
+{
+#if ENABLE(VIBRATION)
+    return toAPI(toImpl(contextRef)->vibrationProxy());
+#else
+    return 0;
+#endif
+}
+
 void WKContextStartMemorySampler(WKContextRef contextRef, WKDoubleRef interval)
 {
     toImpl(contextRef)->startMemorySampler(toImpl(interval)->value());

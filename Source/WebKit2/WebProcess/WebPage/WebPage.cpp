@@ -138,6 +138,10 @@
 #include "IntentData.h"
 #endif
 
+#if ENABLE(VIBRATION)
+#include "WebVibrationClient.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "BuiltInPDFView.h"
 #endif
@@ -287,6 +291,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));
+#endif
+#if ENABLE(VIBRATION)
+    WebCore::provideVibrationTo(m_page.get(), new WebVibrationClient(this));
 #endif
 
     // Qt does not yet call setIsInWindow. Until it does, just leave

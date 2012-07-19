@@ -1,3 +1,30 @@
+2012-07-19  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [WK2] Add Vibration API integration to WebContext and WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=91081
+
+        Reviewed by Anders Carlsson.
+
+        Integrate Vibration API to WebPage, WebContext and properly route
+        messages to the WebVibrationProxy.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetVibration):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::disconnectProcess):
+        (WebKit::WebContext::didReceiveMessage):
+        * UIProcess/WebContext.h:
+        (WebKit):
+        (WebContext):
+        (WebKit::WebContext::vibrationProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Enable CSS shaders in Qt (software mode)
