@@ -1,5 +1,20 @@
 2012-07-18  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy.common.system.executive_unittest.ExecutiveTest.test_kill_process is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=91698
+
+        Unreviewed, build fix.
+
+        This is a workaround for the test failing (apparently mostly?)
+        when run in parallel with other tests. The underlying bug still
+        needs to be diagnosed as we shouldn't be getting ECHILD from
+        process.wait().
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.test_kill_process):
+
+2012-07-18  Dirk Pranke  <dpranke@chromium.org>
+
         Disable running python unit tests in parallel on win32 for now.
         https://bugs.webkit.org/show_bug.cgi?id=91697
 

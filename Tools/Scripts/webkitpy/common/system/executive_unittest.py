@@ -165,7 +165,12 @@ class ExecutiveTest(unittest.TestCase):
             self.assertTrue(process.wait() in (0, 1))
         else:
             expected_exit_code = -signal.SIGKILL
-            self.assertEqual(process.wait(), expected_exit_code)
+            try:
+                self.assertEqual(process.wait(), expected_exit_code)
+            except OSError, e:
+                # FIXME: This seems to fail sometimes this way when the test is being run in parallel with other tests.
+                assert(e.errno == errno.ECHILD)
+
         # Killing again should fail silently.
         executive.kill_process(process.pid)
 
