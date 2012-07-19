@@ -278,6 +278,7 @@ public:
         const WebVector<int>& itemIDs,
         int separatorIndex);
     virtual void hidePopups();
+    virtual void selectAutofillSuggestionAtIndex(unsigned listIndex);
     virtual void setScrollbarColors(unsigned inactiveColor,
                                     unsigned activeColor,
                                     unsigned trackColor);

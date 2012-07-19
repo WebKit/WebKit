@@ -1,3 +1,23 @@
+2012-07-19  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Support external autofill popups
+        https://bugs.webkit.org/show_bug.cgi?id=91651
+
+        Reviewed by Darin Fisher.
+
+        This looks like the last piece needed to support external autofill
+        popups. This function just lets the embedder select an index
+        (presumably because the user picked an index from the external autofill
+        popup).
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::selectAutofillSuggestionAtIndex):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-07-19  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Textures drawn during occlusion are incorrectly re-used when unoccluded.

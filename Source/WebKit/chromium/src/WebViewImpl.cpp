@@ -3716,6 +3716,12 @@ WebGraphicsContext3D* WebViewImpl::sharedGraphicsContext3D()
     return GraphicsContext3DPrivate::extractWebGraphicsContext3D(SharedGraphicsContext3D::get().get());
 }
 
+void WebViewImpl::selectAutofillSuggestionAtIndex(unsigned listIndex)
+{
+    if (m_autofillPopupClient && listIndex < m_autofillPopupClient->getSuggestionsCount())
+        m_autofillPopupClient->valueChanged(listIndex);
+}
+
 void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
                                      bool isInitialState) {
     if (!page())

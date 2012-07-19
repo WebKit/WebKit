@@ -382,6 +382,8 @@ public:
     // Hides any popup (suggestions, selects...) that might be showing.
     virtual void hidePopups() = 0;
 
+    virtual void selectAutofillSuggestionAtIndex(unsigned listIndex) = 0;
+
 
     // Context menu --------------------------------------------------------
 
