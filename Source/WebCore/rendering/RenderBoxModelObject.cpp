@@ -1408,7 +1408,7 @@ public:
     }
     
     bool hasVisibleColorAndStyle() const { return style > BHIDDEN && !isTransparent; }
-    bool shouldRender() const { return isPresent && hasVisibleColorAndStyle(); }
+    bool shouldRender() const { return isPresent && width && hasVisibleColorAndStyle(); }
     bool presentButInvisible() const { return usedWidth() && !hasVisibleColorAndStyle(); }
     bool obscuresBackgroundEdge(float scale) const
     {
@@ -1646,6 +1646,7 @@ void RenderBoxModelObject::paintOneBorderSide(GraphicsContext* graphicsContext, 
     BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor)
 {
     const BorderEdge& edgeToRender = edges[side];
+    ASSERT(edgeToRender.width);
     const BorderEdge& adjacentEdge1 = edges[adjacentSide1];
     const BorderEdge& adjacentEdge2 = edges[adjacentSide2];
 

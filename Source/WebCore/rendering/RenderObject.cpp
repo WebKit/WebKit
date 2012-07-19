@@ -836,6 +836,11 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
 {
     int width = (side == BSTop || side == BSBottom ? y2 - y1 : x2 - x1);
 
+    // FIXME: We really would like this check to be an ASSERT as we don't want to draw 0px borders. However
+    // nothing guarantees that the following recursive calls to drawLineForBoxSide will have non-null width.
+    if (!width)
+        return;
+
     if (style == DOUBLE && width < 3)
         style = SOLID;
 

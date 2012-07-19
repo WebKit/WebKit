@@ -232,6 +232,8 @@ void GraphicsContext::drawRect(const IntRect& rect)
     if (paintingDisabled())
         return;
 
+    ASSERT(!rect.isEmpty());
+
     cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
 

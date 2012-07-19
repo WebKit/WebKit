@@ -96,6 +96,8 @@ void GraphicsContext::drawRect(const IntRect& rect)
     if (paintingDisabled())
         return;
 
+    ASSERT(!rect.isEmpty());
+
     m_data->drawRect(rect);
 }
 

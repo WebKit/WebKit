@@ -658,6 +658,10 @@ void GraphicsContext::drawRect(const IntRect& rect)
     if (paintingDisabled())
         return;
 
+    ASSERT(!rect.isEmpty());
+    if (rect.isEmpty())
+        return;
+
     platformContext()->drawRect(rect);
 }
 

@@ -1,3 +1,18 @@
+2012-07-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Avoid calling GraphicsContext drawing primitives for 0px borders
+        https://bugs.webkit.org/show_bug.cgi?id=90039
+
+        Reviewed by Eric Seidel.
+
+        The ref-tests are pretty similar and the exact rendering doesn't matter. What matters
+        is that we try to exercise the border painting code with 0px borders. Note that the
+        test were passing before already as they are meant to trigger the newly added ASSERTs
+        if something changes.
+
+        * fast/borders/0px-borders-expected.html: Added.
+        * fast/borders/0px-borders.html: Added.
+
 2012-07-18  Elliott Sprehn  <esprehn@gmail.com>
 
         REGRESSION (r89900): Assertion failure on null view() when destroying the document

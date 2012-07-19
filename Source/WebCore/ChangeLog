@@ -1,3 +1,49 @@
+2012-07-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Avoid calling GraphicsContext drawing primitives for 0px borders
+        https://bugs.webkit.org/show_bug.cgi?id=90039
+
+        Reviewed by Eric Seidel.
+
+        The current code would happily call GraphicsContext to draw empty (0px) borders.
+        There is no good use case for going all the way to GraphicsContext in this case as
+        0px borders, regardless of the border-style, will not be painted. Thus this is a waste
+        of time on all platforms. On Chromium, this trigger some issues with pdf rendering as
+        Skia interprets 0px lines as very thin lines.
+
+        This change adds 0-checks in the border painting code as well as ASSERTs for
+        performance and to catch future bad use.
+
+        Test: fast/borders/0px-borders.html
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        Added an ASSERT on all platforms to catch incorrect use.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::BorderEdge::shouldRender):
+        Changed to not render 0px borders, which should avoid unneeded work
+        in the patining code (context saving / restoring or transparency layer
+        push).
+
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        Added an ASSERT here that the border side is not empty.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        Added an early return with a comment as to why it's not feasible to
+        ASSERT as would be best.
+
 2012-07-18  Elliott Sprehn  <esprehn@gmail.com>
 
         REGRESSION (r89900): Assertion failure on null view() when destroying the document

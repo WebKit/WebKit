@@ -378,6 +378,8 @@ void GraphicsContext::drawRect(const IntRect& rect)
     if (paintingDisabled())
         return;
 
+    ASSERT(!rect.isEmpty());
+
     CGContextRef context = platformContext();
 
     CGContextFillRect(context, rect);
