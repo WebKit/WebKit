@@ -1,3 +1,16 @@
+2012-07-19  Andrew Scherkus  <scherkus@chromium.org>
+
+        [chromium] Move WebAudioSourceProvider destructor from public to protected
+        https://bugs.webkit.org/show_bug.cgi?id=91669
+
+        Reviewed by Darin Fisher.
+
+        The lifetime of a WebAudioSourceProvider is managed by the implementor
+        and should never be deallocted by WebKit.
+
+        * public/WebAudioSourceProvider.h:
+        (WebAudioSourceProvider):
+
 2012-07-19  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r123036.

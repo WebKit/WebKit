@@ -40,6 +40,7 @@ public:
     // If a client is set, we call it back when the audio format is available.
     virtual void setClient(WebAudioSourceProviderClient*) { };
 
+protected:
     virtual ~WebAudioSourceProvider() { }
 };
 
