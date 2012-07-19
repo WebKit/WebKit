@@ -1,3 +1,148 @@
+2012-07-19  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] Added/updated missing fast/forms results after rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=91504
+
+        Reviewed by Noam Rosenthal.
+
+        The following tests were failing after r122879:
+          fast/forms/HTMLOptionElement_label06.html = TEXT
+          fast/forms/HTMLOptionElement_label07.html = TEXT
+          fast/forms/basic-inputs.html = TEXT
+          fast/forms/basic-textareas-quirks.html = TEXT
+          fast/forms/box-shadow-override.html = TEXT
+          fast/forms/control-restrict-line-height.html = TEXT
+          fast/forms/encoding-test.html = TEXT
+          fast/forms/fieldset-align.html = TEXT
+          fast/forms/form-element-geometry.html = TEXT
+          fast/forms/input-appearance-bkcolor.html = TEXT
+          fast/forms/input-appearance-default-bkcolor.html = TEXT
+          fast/forms/input-appearance-disabled.html = TEXT
+          fast/forms/input-appearance-focus.html = TEXT
+          fast/forms/input-appearance-preventDefault.html = TEXT
+          fast/forms/input-appearance-readonly.html = TEXT
+          fast/forms/input-appearance-selection.html = TEXT
+          fast/forms/input-appearance-visibility.html = TEXT
+          fast/forms/input-baseline.html = TEXT
+          fast/forms/input-disabled-color.html = TEXT
+          fast/forms/input-double-click-selection-gap-bug.html = TEXT
+          fast/forms/input-placeholder-visibility-1.html = TEXT
+          fast/forms/input-placeholder-visibility-3.html = TEXT
+          fast/forms/input-readonly-dimmed.html = TEXT
+          fast/forms/input-readonly-empty.html = TEXT
+          fast/forms/input-spaces.html = TEXT
+          fast/forms/input-text-click-inside.html = TEXT
+          fast/forms/input-text-double-click.html = TEXT
+          fast/forms/input-text-option-delete.html = TEXT
+          fast/forms/input-text-self-emptying-click.html = TEXT
+          fast/forms/input-text-word-wrap.html = TEXT
+          fast/forms/input-width.html = TEXT
+          fast/forms/menulist-separator-painting.html = TEXT
+          fast/forms/number/input-appearance-number-rtl.html = TEXT
+          fast/forms/number/input-appearance-spinbutton-disabled-readonly.html = TEXT
+          fast/forms/number/input-appearance-spinbutton-layer.html = TEXT
+          fast/forms/placeholder-position.html = TEXT
+          fast/forms/placeholder-pseudo-style.html = TEXT
+          fast/forms/search-cancel-button-style-sharing.html = TEXT
+          fast/forms/search-display-none-cancel-button.html = TEXT
+          fast/forms/search-rtl.html = TEXT
+          fast/forms/search-vertical-alignment.html = TEXT
+          fast/forms/select-background-none.html = TEXT
+          fast/forms/select-baseline.html = TEXT
+          fast/forms/selectlist-minsize.html = TEXT
+          fast/forms/text-style-color.html = TEXT
+          fast/forms/textarea-align.html = TEXT
+          fast/forms/textarea-placeholder-pseudo-style.html = TEXT
+          fast/forms/textarea-placeholder-visibility-1.html = TEXT
+          fast/forms/textarea-placeholder-visibility-2.html = TEXT
+          fast/forms/textarea-setinnerhtml.html = TEXT
+          fast/forms/textfield-focus-ring.html = TEXT
+          fast/forms/textfield-outline.html = TEXT
+          fast/forms/textfield-overflow.html = TEXT
+
+        This patch includes/updates the missing expectations.
+
+        * platform/qt-5.0-wk2/fast/forms/HTMLOptionElement_label06-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/HTMLOptionElement_label06-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/HTMLOptionElement_label07-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/HTMLOptionElement_label07-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/basic-inputs-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/basic-inputs-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/basic-textareas-quirks-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/basic-textareas-quirks-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/box-shadow-override-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/box-shadow-override-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/control-restrict-line-height-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/control-restrict-line-height-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/encoding-test-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/fieldset-align-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/fieldset-align-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/form-element-geometry-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/form-element-geometry-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-bkcolor-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-default-bkcolor-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-default-bkcolor-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-disabled-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-disabled-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-focus-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-focus-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-preventDefault-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-readonly-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-readonly-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-selection-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-selection-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-visibility-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-baseline-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-baseline-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-disabled-color-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/input-disabled-color-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/input-double-click-selection-gap-bug-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-double-click-selection-gap-bug-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-placeholder-visibility-1-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-placeholder-visibility-3-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-readonly-dimmed-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-readonly-empty-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-spaces-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-text-click-inside-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-text-double-click-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-text-option-delete-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-text-self-emptying-click-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-text-word-wrap-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/input-width-expected.txt: Copied from LayoutTests/platform/qt-5.0-wk2/fast/forms/textarea-setinnerhtml-expected.txt.
+        * platform/qt-5.0-wk2/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-number-rtl-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-number-rtl-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-layer-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/placeholder-position-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/placeholder-position-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/search-cancel-button-style-sharing-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/search-display-none-cancel-button-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/search-rtl-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/search-rtl-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/search-vertical-alignment-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/search-vertical-alignment-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/select-background-none-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/select-baseline-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/select-baseline-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/selectlist-minsize-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/text-style-color-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/text-style-color-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/textarea-align-expected.png:
+        * platform/qt-5.0-wk2/fast/forms/textarea-align-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/textarea-placeholder-pseudo-style-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/forms/textarea-placeholder-pseudo-style-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/textarea-placeholder-visibility-1-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/textarea-placeholder-visibility-2-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/qt-5.0-wk2/fast/forms/textfield-focus-ring-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/textfield-outline-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/forms/textfield-overflow-expected.txt: Added.
+
 2012-07-19  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] [Part 6] platform/qt/css1 tests needs update after rebaseline and new testfonts
