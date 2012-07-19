@@ -22,6 +22,7 @@
 
 #include "InjectedBundle.h"
 #include <Ecore.h>
+#include <WebCore/ApplicationCacheStorage.h>
 
 namespace WTR {
 
@@ -33,6 +34,11 @@ static Eina_Bool waitToDumpWatchdogTimerCallback(void*)
 
 void LayoutTestController::platformInitialize()
 {
+    // The testrunner script is may be running multiple processes in parallel,
+    // and it makes appcache tests fail if they are using the same directory.
+    // DUMPRENDERTREE_TEMP points to a different directory for each process.
+    String appCacheDirectory = makeString(String::fromUTF8(getenv("DUMPRENDERTREE_TEMP")), "/Applications");
+    WebCore::cacheStorage().setCacheDirectory(appCacheDirectory);
     m_waitToDumpWatchdogTimer = 0;
 }
 

@@ -1,3 +1,16 @@
+2012-07-19  Zoltan Nyul  <zoltan.nyul@intel.com>
+
+        [EFL][WK2] Using different cache directory for each WTR process
+        https://bugs.webkit.org/show_bug.cgi?id=91719
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure we return a valid application cache directory in
+        WebContextEfl.
+
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::applicationCacheDirectory):
+
 2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] EFL should use DownloadSoup instead of defining DownloadEfl

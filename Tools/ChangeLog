@@ -1,3 +1,20 @@
+2012-07-19  Zoltan Nyul  <zoltan.nyul@intel.com>
+
+        [EFL][WK2] Using different cache directory for each WTR process
+        https://bugs.webkit.org/show_bug.cgi?id=91719
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The testrunner script may be running multiple processes in
+        parallel, and it makes appcache tests fail if they are using the same
+        directory. I modified the EFL's LayoutTestController to use the
+        DUMPRENDERTREE_TEMP for application cache directory because it's
+        different for each process.
+
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/InjectedBundle/efl/LayoutTestControllerEfl.cpp:
+        (WTR::LayoutTestController::platformInitialize):
+
 2012-07-19  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Complete implementation of AccessibilityController in WKTR for GTK

@@ -27,13 +27,21 @@
 #include "WebContext.h"
 
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 
 String WebContext::applicationCacheDirectory()
 {
-    return WebCore::cacheStorage().cacheDirectory();
+    String cacheDir = WebCore::cacheStorage().cacheDirectory();
+    
+    // The WebKitTestRunner sets the cacheDirectory and
+    // we should not overwrite it.
+    if (cacheDir.isEmpty()) 
+        cacheDir = makeString(WebCore::homeDirectoryPath(), "/.webkit/Applications");
+
+    return cacheDir;
 }
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
