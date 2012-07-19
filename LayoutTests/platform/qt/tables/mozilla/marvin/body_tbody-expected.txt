@@ -3,58 +3,58 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 448x123
-        RenderBlock {CAPTION} at (0,0) size 448x21
-          RenderText {#text} at (11,0) size 426x21
-            text run at (11,0) width 426: "Communicator 4.5 Installers for Mac and Windows Platforms"
-        RenderTableSection {TBODY} at (0,21) size 448x102
-          RenderTableRow {TR} at (0,2) size 448x23
-            RenderTableCell {TH} at (2,12) size 127x2 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TH} at (131,2) size 119x23 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 117x21
-                text run at (1,1) width 117: "Macintosh PPC"
-            RenderTableCell {TH} at (252,2) size 94x23 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 92x21
-                text run at (1,1) width 92: "Windows 95"
-            RenderTableCell {TH} at (348,2) size 98x23 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 96x21
-                text run at (1,1) width 96: "Windows NT"
-          RenderTableRow {TR} at (0,27) size 448x23
-            RenderTableCell {TD} at (2,27) size 127x23 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 83x21
-                text run at (1,1) width 83: "Base Install"
-            RenderTableCell {TD} at (131,27) size 119x23 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x21
-                text run at (1,1) width 25: "yes"
-            RenderTableCell {TD} at (252,27) size 94x23 [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x21
-                text run at (1,1) width 25: "yes"
-            RenderTableCell {TD} at (348,27) size 98x23 [r=1 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x21
-                text run at (1,1) width 25: "yes"
-          RenderTableRow {TR} at (0,52) size 448x23
-            RenderTableCell {TD} at (2,52) size 127x23 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 115x21
-                text run at (1,1) width 115: "Complete Install"
-            RenderTableCell {TD} at (131,52) size 119x23 [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x21
-                text run at (1,1) width 25: "yes"
-            RenderTableCell {TD} at (252,52) size 94x23 [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x21
-                text run at (1,1) width 25: "yes"
-            RenderTableCell {TD} at (348,52) size 98x23 [r=2 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x21
-                text run at (1,1) width 25: "yes"
-          RenderTableRow {TR} at (0,77) size 448x23
-            RenderTableCell {TD} at (2,77) size 127x23 [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 125x21
-                text run at (1,1) width 125: "Pro Edition Install"
-            RenderTableCell {TD} at (131,77) size 119x23 [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x21
-                text run at (1,1) width 25: "yes"
-            RenderTableCell {TD} at (252,77) size 94x23 [r=3 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x21
-                text run at (1,1) width 25: "yes"
-            RenderTableCell {TD} at (348,77) size 98x23 [r=3 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 25x21
-                text run at (1,1) width 25: "yes"
+      RenderTable {TABLE} at (0,0) size 395x113
+        RenderBlock {CAPTION} at (0,0) size 395x19
+          RenderText {#text} at (11,0) size 373x19
+            text run at (11,0) width 373: "Communicator 4.5 Installers for Mac and Windows Platforms"
+        RenderTableSection {TBODY} at (0,19) size 395x94
+          RenderTableRow {TR} at (0,2) size 395x21
+            RenderTableCell {TH} at (2,11) size 109x2 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TH} at (113,2) size 106x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 104x19
+                text run at (1,1) width 104: "Macintosh PPC"
+            RenderTableCell {TH} at (221,2) size 82x21 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 80x19
+                text run at (1,1) width 80: "Windows 95"
+            RenderTableCell {TH} at (305,2) size 88x21 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 86x19
+                text run at (1,1) width 86: "Windows NT"
+          RenderTableRow {TR} at (0,25) size 395x21
+            RenderTableCell {TD} at (2,25) size 109x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 69x19
+                text run at (1,1) width 69: "Base Install"
+            RenderTableCell {TD} at (113,25) size 106x21 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
+                text run at (1,1) width 20: "yes"
+            RenderTableCell {TD} at (221,25) size 82x21 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
+                text run at (1,1) width 20: "yes"
+            RenderTableCell {TD} at (305,25) size 88x21 [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
+                text run at (1,1) width 20: "yes"
+          RenderTableRow {TR} at (0,48) size 395x21
+            RenderTableCell {TD} at (2,48) size 109x21 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 98x19
+                text run at (1,1) width 98: "Complete Install"
+            RenderTableCell {TD} at (113,48) size 106x21 [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
+                text run at (1,1) width 20: "yes"
+            RenderTableCell {TD} at (221,48) size 82x21 [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
+                text run at (1,1) width 20: "yes"
+            RenderTableCell {TD} at (305,48) size 88x21 [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
+                text run at (1,1) width 20: "yes"
+          RenderTableRow {TR} at (0,71) size 395x21
+            RenderTableCell {TD} at (2,71) size 109x21 [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 107x19
+                text run at (1,1) width 107: "Pro Edition Install"
+            RenderTableCell {TD} at (113,71) size 106x21 [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
+                text run at (1,1) width 20: "yes"
+            RenderTableCell {TD} at (221,71) size 82x21 [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
+                text run at (1,1) width 20: "yes"
+            RenderTableCell {TD} at (305,71) size 88x21 [r=3 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 20x19
+                text run at (1,1) width 20: "yes"

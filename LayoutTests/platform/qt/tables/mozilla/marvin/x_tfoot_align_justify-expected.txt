@@ -1,30 +1,29 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x234
-  RenderBlock {html} at (0,0) size 800x234
-    RenderBody {body} at (8,16) size 784x210
-      RenderBlock {p} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 325x21
-          text run at (0,0) width 325: "In this test, the TFOOT text should be justified."
-      RenderTable {table} at (0,37) size 300x173 [border: (1px outset #808080)]
-        RenderTableSection {thead} at (1,1) size 298x29
-          RenderTableRow {tr} at (0,2) size 298x25
-            RenderTableCell {td} at (2,2) size 294x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 179x21
-                text run at (2,2) width 179: "This text is in the THEAD"
-        RenderTableSection {tfoot} at (1,59) size 298x113
-          RenderTableRow {tr} at (0,2) size 298x109
-            RenderTableCell {td} at (2,2) size 294x109 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 290x105
-                text run at (2,2) width 290: "This TFOOT text should be justified"
-                text run at (2,23) width 229: "which means that the right "
-                text run at (231,23) width 61: "and left"
-                text run at (2,44) width 290: "margins should line up, no matter how"
-                text run at (2,65) width 132: "long the content "
-                text run at (134,65) width 158: "becomes (except the"
-                text run at (2,86) width 262: "last line which should be left aligned)"
-        RenderTableSection {tbody} at (1,30) size 298x29
-          RenderTableRow {tr} at (0,2) size 298x25
-            RenderTableCell {td} at (2,2) size 294x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 179x21
-                text run at (2,2) width 179: "This text is in the TBODY"
+layer at (0,0) size 800x199
+  RenderBlock {html} at (0,0) size 800x199
+    RenderBody {body} at (8,16) size 784x175
+      RenderBlock {p} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 284x19
+          text run at (0,0) width 284: "In this test, the TFOOT text should be justified."
+      RenderTable {table} at (0,35) size 300x140 [border: (1px outset #808080)]
+        RenderTableSection {thead} at (1,1) size 298x27
+          RenderTableRow {tr} at (0,2) size 298x23
+            RenderTableCell {td} at (2,2) size 294x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 155x19
+                text run at (2,2) width 155: "This text is in the THEAD"
+        RenderTableSection {tfoot} at (1,55) size 298x84
+          RenderTableRow {tr} at (0,2) size 298x80
+            RenderTableCell {td} at (2,2) size 294x80 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 290x76
+                text run at (2,2) width 290: "This TFOOT text should be justified which"
+                text run at (2,21) width 124: "means that the right "
+                text run at (126,21) width 166: "and left margins should line"
+                text run at (2,40) width 236: "up, no matter how long the content "
+                text run at (238,40) width 54: "becomes"
+                text run at (2,59) width 289: "(except the last line which should be left aligned)"
+        RenderTableSection {tbody} at (1,28) size 298x27
+          RenderTableRow {tr} at (0,2) size 298x23
+            RenderTableCell {td} at (2,2) size 294x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 157x19
+                text run at (2,2) width 157: "This text is in the TBODY"

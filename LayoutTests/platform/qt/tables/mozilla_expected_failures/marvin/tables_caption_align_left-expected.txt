@@ -3,31 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 472x21
-          text run at (0,0) width 472: "The caption should be aligned at the left side of the top of the table."
-      RenderTable {TABLE} at (0,37) size 191x79 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 191x21
-          RenderText {#text} at (61,0) size 69x21
-            text run at (61,0) width 69: "Wild Cats"
-        RenderTableSection {TBODY} at (1,22) size 189x56
-          RenderTableRow {TR} at (0,2) size 189x25
-            RenderTableCell {TD} at (2,2) size 53x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 31x21
-                text run at (2,2) width 31: "Lion"
-            RenderTableCell {TD} at (57,2) size 63x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 59x21
-                text run at (2,2) width 59: "Leopard"
-            RenderTableCell {TD} at (122,2) size 65x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 61x21
-                text run at (2,2) width 61: "Cheetah"
-          RenderTableRow {TR} at (0,29) size 189x25
-            RenderTableCell {TD} at (2,29) size 53x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 49x21
-                text run at (2,2) width 49: "Jaguar"
-            RenderTableCell {TD} at (57,29) size 63x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 50x21
-                text run at (2,2) width 50: "Bobcat"
-            RenderTableCell {TD} at (122,29) size 65x25 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 46x21
-                text run at (2,2) width 46: "Ocelot"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 403x19
+          text run at (0,0) width 403: "The caption should be aligned at the left side of the top of the table."
+      RenderTable {TABLE} at (0,35) size 163x73 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 163x19
+          RenderText {#text} at (51,0) size 61x19
+            text run at (51,0) width 61: "Wild Cats"
+        RenderTableSection {TBODY} at (1,20) size 161x52
+          RenderTableRow {TR} at (0,2) size 161x23
+            RenderTableCell {TD} at (2,2) size 43x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x19
+                text run at (2,2) width 27: "Lion"
+            RenderTableCell {TD} at (47,2) size 56x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 52x19
+                text run at (2,2) width 52: "Leopard"
+            RenderTableCell {TD} at (105,2) size 54x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 50x19
+                text run at (2,2) width 50: "Cheetah"
+          RenderTableRow {TR} at (0,27) size 161x23
+            RenderTableCell {TD} at (2,27) size 43x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 39x19
+                text run at (2,2) width 39: "Jaguar"
+            RenderTableCell {TD} at (47,27) size 56x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 44x19
+                text run at (2,2) width 44: "Bobcat"
+            RenderTableCell {TD} at (105,27) size 54x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 41x19
+                text run at (2,2) width 41: "Ocelot"

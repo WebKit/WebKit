@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 699x21
-          text run at (0,0) width 699: "This table uses a ROWSPAN attribute in the first TD tag. The ROWSPAN attribute has a value of 2."
-        RenderBR {BR} at (699,16) size 0x0
-        RenderBR {BR} at (0,21) size 0x21
-      RenderTable {TABLE} at (0,42) size 298x58 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 296x56
-          RenderTableRow {TR} at (0,2) size 296x25
-            RenderTableCell {TD} at (2,15) size 71x25 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
-              RenderText {#text} at (2,2) size 67x21
-                text run at (2,2) width 67: "Platforms"
-            RenderTableCell {TD} at (75,2) size 219x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 215x21
-                text run at (2,2) width 215: "Netscape Communicator 4.0.6"
-          RenderTableRow {TR} at (0,29) size 296x25
-            RenderTableCell {TD} at (75,29) size 219x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 156x21
-                text run at (2,2) width 156: "Available Everywhere"
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 610x19
+          text run at (0,0) width 610: "This table uses a ROWSPAN attribute in the first TD tag. The ROWSPAN attribute has a value of 2."
+        RenderBR {BR} at (610,15) size 0x0
+        RenderBR {BR} at (0,19) size 0x19
+      RenderTable {TABLE} at (0,38) size 260x54 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 258x52
+          RenderTableRow {TR} at (0,2) size 258x23
+            RenderTableCell {TD} at (2,14) size 61x23 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+              RenderText {#text} at (2,2) size 57x19
+                text run at (2,2) width 57: "Platforms"
+            RenderTableCell {TD} at (65,2) size 191x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 187x19
+                text run at (2,2) width 187: "Netscape Communicator 4.0.6"
+          RenderTableRow {TR} at (0,27) size 258x23
+            RenderTableCell {TD} at (65,27) size 191x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 132x19
+                text run at (2,2) width 132: "Available Everywhere"

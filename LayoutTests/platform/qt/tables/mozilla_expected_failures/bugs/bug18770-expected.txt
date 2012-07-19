@@ -3,34 +3,35 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderTable {TABLE} at (0,0) size 600x105
-        RenderTableSection {TBODY} at (0,0) size 600x105
-          RenderTableRow {TR} at (0,0) size 600x105
-            RenderTableCell {TD} at (0,7) size 119x90 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 119x90 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 117x88
-                  RenderTableRow {TR} at (0,0) size 117x65
-                    RenderTableCell {TD} at (0,0) size 117x65 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-                      RenderText {#text} at (1,1) size 115x63
-                        text run at (1,1) width 46: "R1C1,"
-                        text run at (1,22) width 96: "COLSPAN=2"
-                        text run at (1,43) width 115: "WIDTH=\"100%\""
-                  RenderTableRow {TR} at (0,65) size 117x23
-                    RenderTableCell {TD} at (0,65) size 58x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 42x21
-                        text run at (1,1) width 42: "R2C1"
-                    RenderTableCell {TD} at (58,65) size 59x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 42x21
-                        text run at (1,1) width 42: "R2C2"
-            RenderTableCell {TD} at (119,0) size 481x105 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 219x21
-                text run at (0,0) width 219: "Quotes delayed by 20 minutes."
-              RenderBR {BR} at (219,16) size 0x0
-              RenderText {#text} at (0,21) size 481x84
-                text run at (0,21) width 141: "To ensure that your "
-                text run at (141,21) width 325: "portfolios and other personalized content can't"
-                text run at (0,42) width 77: "be viewed "
-                text run at (77,42) width 404: "by others using this computer, sign out of Netcenter when"
-                text run at (0,63) width 420: "you are finished. When you want to view your personalized "
-                text run at (420,63) width 52: "content"
-                text run at (0,84) width 334: "again, all you have to do is sign in to Netcenter."
+      RenderTable {TABLE} at (0,0) size 600x95
+        RenderTableSection {TBODY} at (0,0) size 600x95
+          RenderTableRow {TR} at (0,0) size 600x95
+            RenderTableCell {TD} at (0,6) size 111x82 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 111x82 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 109x80
+                  RenderTableRow {TR} at (0,0) size 109x59
+                    RenderTableCell {TD} at (0,0) size 109x59 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+                      RenderText {#text} at (1,1) size 107x57
+                        text run at (1,1) width 41: "R1C1,"
+                        text run at (1,20) width 90: "COLSPAN=2"
+                        text run at (1,39) width 107: "WIDTH=\"100%\""
+                  RenderTableRow {TR} at (0,59) size 109x21
+                    RenderTableCell {TD} at (0,59) size 54x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 37x19
+                        text run at (1,1) width 37: "R2C1"
+                    RenderTableCell {TD} at (54,59) size 55x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 37x19
+                        text run at (1,1) width 37: "R2C2"
+            RenderTableCell {TD} at (111,0) size 489x95 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 187x19
+                text run at (0,0) width 187: "Quotes delayed by 20 minutes."
+              RenderBR {BR} at (187,15) size 0x0
+              RenderText {#text} at (0,19) size 483x76
+                text run at (0,19) width 121: "To ensure that your "
+                text run at (121,19) width 347: "portfolios and other personalized content can't be viewed "
+                text run at (468,19) width 15: "by"
+                text run at (0,38) width 330: "others using this computer, sign out of Netcenter when "
+                text run at (330,38) width 138: "you are finished. When"
+                text run at (0,57) width 217: "you want to view your personalized "
+                text run at (217,57) width 264: "content again, all you have to do is sign in to"
+                text run at (0,76) width 64: "Netcenter."

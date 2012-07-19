@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 784x66 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 780x62
-          RenderTableRow {TR} at (0,3) size 780x56
-            RenderTableCell {TD} at (3,3) size 270x56 [bgcolor=#DDDDDD] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 266x52 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 264x50
-                  RenderTableRow {TR} at (0,3) size 264x44
-                    RenderTableCell {TD} at (3,3) size 258x44 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 175x42
-                        text run at (1,1) width 175: "TheMozillaOrganization-"
-                        text run at (1,22) width 170: "TheMozillaOrganization"
-            RenderTableCell {TD} at (276,8) size 501x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 430x42
-                text run at (2,2) width 430: "Checkin Guidelines for the Seamonkey Tree xxxxxxxxxxxxxx"
-                text run at (2,23) width 228: "xxxxxxxxxxxxxxxx xxxxxxxxxxxx"
+      RenderTable {TABLE} at (0,0) size 784x62 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 780x58
+          RenderTableRow {TR} at (0,3) size 780x52
+            RenderTableCell {TD} at (3,3) size 267x52 [bgcolor=#DDDDDD] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 263x48 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 261x46
+                  RenderTableRow {TR} at (0,3) size 261x40
+                    RenderTableCell {TD} at (3,3) size 255x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 149x38
+                        text run at (1,1) width 149: "TheMozillaOrganization-"
+                        text run at (1,20) width 143: "TheMozillaOrganization"
+            RenderTableCell {TD} at (273,8) size 504x42 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 484x38
+                text run at (2,2) width 484: "Checkin Guidelines for the Seamonkey Tree xxxxxxxxxxxxxx xxxxxxxxxxxxxxxx"
+                text run at (2,21) width 84: "xxxxxxxxxxxx"

@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 76x60 [border: (3px solid #008000)]
-        RenderBlock {CAPTION} at (0,0) size 44x27 [border: (3px solid #FFA500)]
-          RenderText {#text} at (9,3) size 26x21
-            text run at (9,3) width 26: "cap"
-        RenderTableSection {TBODY} at (3,30) size 70x27
-          RenderTableRow {TR} at (0,2) size 70x23
-            RenderTableCell {TD} at (2,2) size 66x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 64x21
-                text run at (1,1) width 64: "table cell"
+      RenderTable {TABLE} at (0,0) size 65x56 [border: (3px solid #008000)]
+        RenderBlock {CAPTION} at (0,0) size 38x25 [border: (3px solid #FFA500)]
+          RenderText {#text} at (8,3) size 22x19
+            text run at (8,3) width 22: "cap"
+        RenderTableSection {TBODY} at (3,28) size 59x25
+          RenderTableRow {TR} at (0,2) size 59x21
+            RenderTableCell {TD} at (2,2) size 55x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 53x19
+                text run at (1,1) width 53: "table cell"

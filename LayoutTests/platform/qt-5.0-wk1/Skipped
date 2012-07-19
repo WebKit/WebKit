@@ -197,37 +197,7 @@ svg/custom/inline-svg-in-xhtml.xml
 svg/custom/object-sizing.xhtml
 svg/hixie/mixed/003.xml
 tables/mozilla/bugs/bug53690-2.html
-tables/mozilla/marvin/backgr_index.html
-tables/mozilla/marvin/backgr_layers-opacity.html
-tables/mozilla/marvin/backgr_position-table.html
-tables/mozilla/marvin/backgr_simple-table-cell.html
-tables/mozilla/marvin/backgr_simple-table-column-group.html
-tables/mozilla/marvin/backgr_simple-table-column.html
-tables/mozilla/marvin/backgr_simple-table-row-group.html
-tables/mozilla/marvin/backgr_simple-table-row.html
-tables/mozilla/marvin/backgr_simple-table.html
 tables/mozilla/other/move_row.html
-tables/mozilla/other/test6.html
-tables/mozilla_expected_failures/bugs/bug1055-2.html
-tables/mozilla_expected_failures/bugs/bug1128.html
-tables/mozilla_expected_failures/bugs/bug21518.html
-tables/mozilla_expected_failures/bugs/bug22122.html
-tables/mozilla_expected_failures/bugs/bug92647-1.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-column.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-quirks.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-row.html
-tables/mozilla_expected_failures/marvin/backgr_border-table.html
-tables/mozilla_expected_failures/marvin/backgr_fixed-bg.html
-tables/mozilla_expected_failures/marvin/backgr_layers-hide.html
-tables/mozilla_expected_failures/marvin/backgr_layers-show.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-cell.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
 
 # [Qt] New failing and flakey tests with newer Qt 5
 # https://bugs.webkit.org/show_bug.cgi?id=86452
@@ -337,7 +307,6 @@ svg/text/select-x-list-with-tspans-2.svg
 svg/text/select-x-list-with-tspans-3.svg
 svg/text/select-x-list-with-tspans-4.svg
 svg/text/selection-doubleclick.svg
-tables/mozilla_expected_failures/bugs/bug8499.html
 
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
