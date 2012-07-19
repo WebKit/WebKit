@@ -336,8 +336,9 @@ public:
 
     static WebPage* s_currentBackingStoreOwner;
 
-    bool m_suspendScreenUpdates;
-    bool m_suspendBackingStoreUpdates;
+    unsigned m_suspendScreenUpdates;
+    unsigned m_suspendBackingStoreUpdates;
+    BackingStore::ResumeUpdateOperation m_resumeOperation;
 
     bool m_suspendRenderJobs;
     bool m_suspendRegularRenderJobs;

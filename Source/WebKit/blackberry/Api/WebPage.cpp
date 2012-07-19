@@ -1258,8 +1258,6 @@ bool WebPagePrivate::shouldZoomAboutPoint(double scale, const FloatPoint&, bool 
     *clampedScale = scale;
 
     if (currentScale() == scale) {
-        // Make sure backingstore updates resume from pinch zoom in the case where the final zoom level doesn't change.
-        m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::None);
         m_client->zoomChanged(m_webPage->isMinZoomed(), m_webPage->isMaxZoomed(), !shouldZoomOnEscape(), currentScale());
         return false;
     }
@@ -1451,6 +1449,7 @@ void WebPagePrivate::unscheduleZoomAboutPoint()
 void WebPagePrivate::zoomAboutPointTimerFired(Timer<WebPagePrivate>*)
 {
     zoomAboutPoint(m_delayedZoomArguments.scale, m_delayedZoomArguments.anchor, m_delayedZoomArguments.enforceScaleClamping, m_delayedZoomArguments.forceRendering);
+    m_backingStore->d->resumeScreenAndBackingStoreUpdates(m_delayedZoomArguments.forceRendering ? BackingStore::RenderAndBlit : BackingStore::None);
 }
 
 void WebPagePrivate::setNeedsLayout()
@@ -3160,20 +3159,25 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
     clipToTransformedContentsRect(blockRect);
 
 #if DEBUG_BLOCK_ZOOM
-    // Re-paint the backingstore to screen to erase other annotations.
-    m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::Blit);
+    if (!m_backingStore->d->isSuspended()) {
+        // Re-paint the backingstore to screen to erase other annotations.
+        if (m_backingStore->d->shouldDirectRenderingToWindow())
+            m_backingStore->d->renderVisibleContents();
+        else
+            m_backingStore->d->blitVisibleContents();
 
-    // Render a black square over the calculated block and a gray square over the original block for visual inspection.
-    originalRect = mapToTransformed(originalRect);
-    clipToTransformedContentsRect(originalRect);
-    IntRect renderRect = mapFromTransformedContentsToTransformedViewport(blockRect);
-    IntRect originalRenderRect = mapFromTransformedContentsToTransformedViewport(originalRect);
-    IntSize viewportSize = transformedViewportSize();
-    renderRect.intersect(IntRect(0, 0, viewportSize.width(), viewportSize.height()));
-    originalRenderRect.intersect(IntRect(0, 0, viewportSize.width(), viewportSize.height()));
-    m_backingStore->d->clearWindow(renderRect, 0, 0, 0);
-    m_backingStore->d->clearWindow(originalRenderRect, 120, 120, 120);
-    m_backingStore->d->invalidateWindow(renderRect);
+        // Render a black square over the calculated block and a gray square over the original block for visual inspection.
+        originalRect = mapToTransformed(originalRect);
+        clipToTransformedContentsRect(originalRect);
+        IntRect renderRect = mapFromTransformedContentsToTransformedViewport(blockRect);
+        IntRect originalRenderRect = mapFromTransformedContentsToTransformedViewport(originalRect);
+        IntSize viewportSize = transformedViewportSize();
+        renderRect.intersect(IntRect(0, 0, viewportSize.width(), viewportSize.height()));
+        originalRenderRect.intersect(IntRect(0, 0, viewportSize.width(), viewportSize.height()));
+        m_backingStore->d->clearWindow(renderRect, 0, 0, 0);
+        m_backingStore->d->clearWindow(originalRenderRect, 120, 120, 120);
+        m_backingStore->d->invalidateWindow(renderRect);
+    }
 #endif
 
     return blockRect;

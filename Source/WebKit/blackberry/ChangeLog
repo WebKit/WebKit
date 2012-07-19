@@ -1,3 +1,43 @@
+2012-07-19  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Allow nested suspend/resume screen & backingstore calls.
+        https://bugs.webkit.org/show_bug.cgi?id=91644
+        RIM PR 174365
+
+        Reviewed by Adam Treat and Antonio Gomes.
+
+        We expose suspendScreenAndBackingStoreUpdates() to the
+        outside API, but also use it internally when reacting
+        to a number of happenings, i.e. zooming, viewport resize,
+        resetting view state on Committed state or when restoring
+        it from previous pages, etc.
+
+        These two can clash. For instance, if we get a suspend
+        call from outside that suspends us for app inactivity,
+        or we are told to suspend because the main target surface
+        is not available at the time, and while being suspended
+        we try to rotate, finish loading a page, the we'll end up
+        resuming operations even though we shouldn't.
+
+        This patch changes the suspend flag to be a counter
+        instead, allowing nested suspend/resume calls and making
+        suspend/resume more robust this way. It also changes
+        several call sites to make sure suspend/resume calls are
+        paired up correctly.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::suspendScreenAndBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenAndBackingStoreUpdates):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::shouldZoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPointTimerFired):
+        (BlackBerry::WebKit::WebPagePrivate::blockZoomRectForNode):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+
 2012-07-18  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Move about: URL handling out of WebCore

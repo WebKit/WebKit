@@ -196,8 +196,9 @@ Platform::IntSize BackingStoreGeometry::backingStoreSize() const
 }
 
 BackingStorePrivate::BackingStorePrivate()
-    : m_suspendScreenUpdates(false)
-    , m_suspendBackingStoreUpdates(false)
+    : m_suspendScreenUpdates(0)
+    , m_suspendBackingStoreUpdates(0)
+    , m_resumeOperation(BackingStore::None)
     , m_suspendRenderJobs(false)
     , m_suspendRegularRenderJobs(false)
     , m_isScrollingOrZooming(false)
@@ -279,12 +280,18 @@ bool BackingStorePrivate::isOpenGLCompositing() const
 
 void BackingStorePrivate::suspendScreenAndBackingStoreUpdates()
 {
-    m_suspendBackingStoreUpdates = true;
+    if (m_suspendScreenUpdates) {
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo,
+            "Screen and backingstore already suspended, increasing suspend counter.");
+    }
+
+    ++m_suspendBackingStoreUpdates;
 
     // Make sure the user interface thread gets the message before we proceed
     // because blitContents can be called from this thread and it must honor
     // this flag.
-    m_suspendScreenUpdates = true;
+    ++m_suspendScreenUpdates;
+
     BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -294,14 +301,42 @@ void BackingStorePrivate::suspendScreenAndBackingStoreUpdates()
 
 void BackingStorePrivate::resumeScreenAndBackingStoreUpdates(BackingStore::ResumeUpdateOperation op)
 {
-    m_suspendBackingStoreUpdates = false;
+    ASSERT(m_suspendScreenUpdates);
+    ASSERT(m_suspendBackingStoreUpdates);
+
+    // Both variables are similar except for the timing of setting them.
+    ASSERT(m_suspendScreenUpdates == m_suspendBackingStoreUpdates);
+
+    if (!m_suspendScreenUpdates || !m_suspendBackingStoreUpdates) {
+        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical,
+            "Call mismatch: Screen and backingstore haven't been suspended, therefore won't resume!");
+        return;
+    }
+
+    // Out of all nested resume calls, resume with the maximum-impact operation.
+    if (op == BackingStore::RenderAndBlit
+        || (m_resumeOperation == BackingStore::None && op == BackingStore::Blit))
+        m_resumeOperation = op;
+
+    if (m_suspendScreenUpdates >= 2 && m_suspendBackingStoreUpdates >= 2) { // we're still suspended
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelInfo,
+            "Screen and backingstore still suspended, decreasing suspend counter.");
+        --m_suspendBackingStoreUpdates;
+        --m_suspendScreenUpdates;
+        return;
+    }
+
+    --m_suspendBackingStoreUpdates;
+
+    op = m_resumeOperation;
+    m_resumeOperation = BackingStore::None;
 
 #if USE(ACCELERATED_COMPOSITING)
     if (op != BackingStore::None) {
         if (isOpenGLCompositing() && !isActive()) {
             m_webPage->d->setCompositorDrawsRootLayer(true);
             m_webPage->d->setNeedsOneShotDrawingSynchronization();
-            m_suspendScreenUpdates = false;
+            --m_suspendScreenUpdates;
             BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
             return;
         }
@@ -322,7 +357,7 @@ void BackingStorePrivate::resumeScreenAndBackingStoreUpdates(BackingStore::Resum
     // Make sure the user interface thread gets the message before we proceed
     // because blitContents can be called from the user interface thread and
     // it must honor this flag.
-    m_suspendScreenUpdates = false;
+    --m_suspendScreenUpdates;
     BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
 
     // Do some blitting if necessary.
