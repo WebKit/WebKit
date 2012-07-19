@@ -1,3 +1,15 @@
+2012-07-19  Dongwoo Im  <dw.im@samsung.com>
+
+        [EFL] Fix build break when WEB_AUDIO is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=91735
+
+        Unreviewed build fix.
+
+        New files are added for the Web Audio fearure.
+        These files should be included into the CMakeLists.txt file.
+
+        * CMakeLists.txt: Add the newly created files into the CMakeLists.txt
+
 2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove support for Qt versions before 4.8.0

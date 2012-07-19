@@ -1755,7 +1755,14 @@ SET(WebCore_SOURCES
     platform/audio/HRTFPanner.cpp
     platform/audio/MultiChannelResampler.cpp
     platform/audio/Panner.cpp
+    platform/audio/Reverb.cpp
     platform/audio/ReverbAccumulationBuffer.cpp
+    platform/audio/ReverbConvolver.cpp
+    platform/audio/ReverbConvolverStage.cpp
+    platform/audio/ReverbInputBuffer.cpp
+    platform/audio/SincResampler.cpp
+    platform/audio/VectorMath.cpp
+    platform/audio/ZeroPole.cpp
 
     platform/graphics/BitmapImage.cpp
     platform/graphics/Color.cpp
