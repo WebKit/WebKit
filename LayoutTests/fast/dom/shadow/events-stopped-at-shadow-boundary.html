@@ -62,29 +62,65 @@ function addEventListeners(nodes)
     }
 }
 
-function test()
+function testEventsShoudBeStoppedAtShadowBoundary()
 {
-    if (window.testRunner)
-        testRunner.dumpAsText();
-
     var sandbox = document.getElementById('sandbox');
+    sandbox.innerHTML = '';
     sandbox.appendChild(
         createDOM('div', {'id': 'top'},
                   createDOM('div', {'id': 'host'},
                             createShadowRoot(
                                 createDOM('div', {'id': 'parent-of-target'},
-                                          createDOM('div', {'id': 'target'}))))));
+                                          createDOM('div', {'id': 'target'})),
+                                createDOM('div', {'id': 'parent-of-content'},
+                                          createDOM('content', {'id': 'content'}))),
+                            createDOM('div', {'id': 'distributed-child'}))));
+    document.body.offsetLeft;
 
-    addEventListeners(['top', 'host', 'host/parent-of-target', 'host/target']);
+    addEventListeners(['top', 'host', 'host/parent-of-target', 'host/target', 'host/parent-of-content', 'host/content', 'distributed-child']);
 
     for (var i = 0; i < events.length; ++i) {
+        eventRecords = {};
         var event = document.createEvent('UIEvent');
         event.initEvent(events[i], true, false);
         getNodeInShadowTreeStack('host/target').dispatchEvent(event);
         dumpDispatchedEvent(events[i]);
     }
+
 }
 
+function testEventsFiredOnDistributedNodesShouldNotBeStoppedAtShadowBoundary()
+{
+    var sandbox = document.getElementById('sandbox');
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
+        createDOM('div', {'id': 'host1'},
+                  createShadowRoot(
+                      createDOM('div', {'id': 'host2'},
+                                createShadowRoot(
+                                    createDOM('div', {'id': 'parent-of-content'},
+                                              createDOM('content', {'id': 'content'}))),
+                                createDOM('div', {'id': 'distributed-child'})))));
+    document.body.offsetLeft;
+
+    addEventListeners(['host1', 'host1/host2', 'host1/host2/parent-of-content', 'host1/host2/content', 'host1/distributed-child']);
+
+    debug('\nAn event fired on a distributed child should not be stopped at the shadow boundary of its host (host2), but should be stopped at the nearest shadow boundary (host1).');
+    eventRecords = {};
+    var event = document.createEvent('UIEvent');
+    event.initEvent('selectstart', true, false);
+    getNodeInShadowTreeStack('host1/distributed-child').dispatchEvent(event);
+    dumpDispatchedEvent('selectstart');
+}
+
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    testEventsShoudBeStoppedAtShadowBoundary()
+    testEventsFiredOnDistributedNodesShouldNotBeStoppedAtShadowBoundary();
+}
 test();
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

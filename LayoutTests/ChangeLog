@@ -1,3 +1,13 @@
+2012-07-18  Hayato Ito  <hayato@chromium.org>
+
+        [Shadow] A 'selectstart' event fired on distributed nodes should not be stopped at shadow boundary of the parent shadow host.
+        https://bugs.webkit.org/show_bug.cgi?id=90508
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/events-stopped-at-shadow-boundary-expected.txt:
+        * fast/dom/shadow/events-stopped-at-shadow-boundary.html:
+
 2012-07-18  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderTableSection::addCell.

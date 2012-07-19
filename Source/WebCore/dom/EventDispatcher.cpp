@@ -228,7 +228,7 @@ void EventDispatcher::ensureEventAncestors(Event* event)
         last = node;
         if (!node->isShadowRoot())
             continue;
-        if (determineDispatchBehavior(event, toShadowRoot(node)) == StayInsideShadowDOM)
+        if (determineDispatchBehavior(event, toShadowRoot(node), targetStack.last()) == StayInsideShadowDOM)
             return;
         if (!isSVGElement) {
             ASSERT(!targetStack.isEmpty());
@@ -347,7 +347,12 @@ const EventContext* EventDispatcher::topEventContext()
     return m_ancestors.isEmpty() ? 0 : &m_ancestors.last();
 }
 
-EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, ShadowRoot* shadowRoot)
+static inline bool inTheSameScope(ShadowRoot* shadowRoot, EventTarget* target)
+{
+    return target->toNode() && target->toNode()->treeScope()->rootNode() == shadowRoot;
+}
+
+EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, ShadowRoot* shadowRoot, EventTarget* target)
 {
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     // Video-only full screen is a mode where we use the shadow DOM as an implementation
@@ -366,13 +371,14 @@ EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, S
     // Changing this breaks existing sites.
     // See https://bugs.webkit.org/show_bug.cgi?id=52195 for details.
     const AtomicString eventType = event->type();
-    if (eventType == eventNames().abortEvent
+    if (inTheSameScope(shadowRoot, target)
+        && (eventType == eventNames().abortEvent
             || eventType == eventNames().changeEvent
             || eventType == eventNames().resetEvent
             || eventType == eventNames().resizeEvent
             || eventType == eventNames().scrollEvent
             || eventType == eventNames().selectEvent
-            || eventType == eventNames().selectstartEvent)
+            || eventType == eventNames().selectstartEvent))
         return StayInsideShadowDOM;
 
     return RetargetEvent;

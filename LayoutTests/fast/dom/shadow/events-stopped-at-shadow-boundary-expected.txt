@@ -38,6 +38,14 @@ Other events than "click" should be stopped at shadow boundary.  A "click" is ad
      @parent-of-target (target: target)
      @host (target: host)
      @top (target: host)
+
+An event fired on a distributed child should not be stopped at the shadow boundary of its host (host2), but should be stopped at the nearest shadow boundary (host1).
+
+  selectstart
+     @distributed-child (target: distributed-child)
+     @content (target: distributed-child)
+     @parent-of-content (target: distributed-child)
+     @host2 (target: distributed-child)
 PASS successfullyParsed is true
 
 TEST COMPLETE

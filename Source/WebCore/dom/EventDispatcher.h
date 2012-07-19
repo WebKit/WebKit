@@ -75,7 +75,7 @@ public:
 private:
     EventDispatcher(Node*);
 
-    EventDispatchBehavior determineDispatchBehavior(Event*, ShadowRoot*);
+    EventDispatchBehavior determineDispatchBehavior(Event*, ShadowRoot*, EventTarget*);
 
     void ensureEventAncestors(Event*);
     const EventContext* topEventContext();
