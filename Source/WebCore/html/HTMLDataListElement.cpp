@@ -30,10 +30,12 @@
  */
 
 #include "config.h"
-#if ENABLE(DATALIST)
 #include "HTMLDataListElement.h"
 
 #include "HTMLNames.h"
+#include "IdTargetObserverRegistry.h"
+
+#if ENABLE(DATALIST)
 
 namespace WebCore {
 
@@ -50,6 +52,11 @@ PassRefPtr<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName&
 PassRefPtr<HTMLCollection> HTMLDataListElement::options()
 {
     return ensureCachedHTMLCollection(DataListOptions);
+}
+
+void HTMLDataListElement::optionElementChildrenChanged()
+{
+    treeScope()->idTargetObserverRegistry().notifyObservers(getIdAttribute());
 }
 
 }  // namespace WebCore

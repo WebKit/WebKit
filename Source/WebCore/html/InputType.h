@@ -276,6 +276,9 @@ public:
     virtual void disabledAttributeChanged();
     virtual void readonlyAttributeChanged();
     virtual String defaultToolTip() const;
+#if ENABLE(DATALIST)
+    virtual void listAttributeTargetChanged();
+#endif
 
     // Parses the specified string for the type, and return
     // the Decimal value for the parsing result if the parsing

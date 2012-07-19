@@ -316,4 +316,11 @@ HTMLElement* RangeInputType::sliderThumbElement() const
     return sliderThumbElementOf(element());
 }
 
+#if ENABLE(DATALIST)
+void RangeInputType::listAttributeTargetChanged()
+{
+    element()->setNeedsStyleRecalc();
+}
+#endif
+
 } // namespace WebCore

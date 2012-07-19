@@ -1,3 +1,15 @@
+2012-07-19  Keishi Hattori  <keishi@webkit.org>
+
+        Redraw slider tick marks when datalist changes.
+        https://bugs.webkit.org/show_bug.cgi?id=89544
+
+        Reviewed by Kent Tamura.
+
+        Updating the datalist should redraw the slider tick marks.
+
+        * fast/forms/datalist/update-range-with-datalist-expected.html: Added.
+        * fast/forms/datalist/update-range-with-datalist.html: Added.
+
 2012-07-19  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Remove the platform specific expected after r123066.

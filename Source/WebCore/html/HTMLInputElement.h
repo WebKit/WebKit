@@ -39,6 +39,7 @@ class HTMLOptionElement;
 class Icon;
 class InputType;
 class KURL;
+class ListAttributeTargetObserver;
 
 class HTMLInputElement : public HTMLTextFormControlElement, public ImageLoaderClientBase<HTMLInputElement> {
 public:
@@ -235,6 +236,7 @@ public:
 
 #if ENABLE(DATALIST)
     HTMLElement* list() const;
+    void listAttributeTargetChanged();
 #endif
 
     HTMLInputElement* checkedRadioButtonForGroup() const;
@@ -360,9 +362,9 @@ private:
     
     virtual void subtreeHasChanged();
 
-
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
+    void resetListAttributeTargetObserver();
 #endif
     void parseMaxLengthAttribute(const Attribute&);
     void updateValueIfNeeded();
@@ -395,6 +397,9 @@ private:
     bool m_canReceiveDroppedFiles : 1;
     bool m_hasTouchEventHandler: 1;
     OwnPtr<InputType> m_inputType;
+#if ENABLE(DATALIST)
+    OwnPtr<ListAttributeTargetObserver> m_listAttributeTargetObserver;
+#endif
 };
 
 } //namespace

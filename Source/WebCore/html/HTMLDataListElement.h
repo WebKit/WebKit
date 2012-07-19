@@ -45,6 +45,8 @@ public:
 
     PassRefPtr<HTMLCollection> options();
 
+    void optionElementChildrenChanged();
+
 private:
     HTMLDataListElement(const QualifiedName&, Document*);
 };

@@ -70,6 +70,9 @@ private:
     virtual String sanitizeValue(const String& proposedValue) const OVERRIDE;
     virtual bool shouldRespectListAttribute() OVERRIDE;
     virtual HTMLElement* sliderThumbElement() const OVERRIDE;
+#if ENABLE(DATALIST)
+    virtual void listAttributeTargetChanged() OVERRIDE;
+#endif
 };
 
 } // namespace WebCore

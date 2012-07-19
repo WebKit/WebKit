@@ -1,3 +1,54 @@
+2012-07-19  Keishi Hattori  <keishi@webkit.org>
+
+        Redraw slider tick marks when datalist changes.
+        https://bugs.webkit.org/show_bug.cgi?id=89544
+
+        Reviewed by Kent Tamura.
+
+        Updating the datalist should redraw the slider tick marks. This patch monitors
+        the id target element of the list attribute using ListAttributeTargetObserver
+        and notifies changes to the option element inside of a datalist element.
+
+        Test: fast/forms/datalist/update-range-with-datalist.html
+
+        * html/HTMLDataListElement.cpp:
+        (WebCore::HTMLDataListElement::optionElementChildrenChanged): Called when a child option element's value might have changed.
+        (WebCore):
+        * html/HTMLDataListElement.h:
+        (HTMLDataListElement):
+        * html/HTMLInputElement.cpp:
+        (ListAttributeTargetObserver): Inherits IdTargetObserver.
+        (WebCore):
+        (WebCore::HTMLInputElement::parseAttribute): Observe the form attribute target.
+        (WebCore::HTMLInputElement::insertedInto): Observe the form attribute id target.
+        (WebCore::HTMLInputElement::removedFrom): Remove the observer.
+        (WebCore::HTMLInputElement::resetListAttributeTargetObserver):
+        (WebCore::HTMLInputElement::listAttributeTargetChanged):
+        (WebCore::ListAttributeTargetObserver::create):
+        (WebCore::ListAttributeTargetObserver::ListAttributeTargetObserver):
+        (WebCore::ListAttributeTargetObserver::idTargetChanged):
+        * html/HTMLInputElement.h:
+        (WebCore):
+        (HTMLInputElement):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::parseAttribute): If the value attribute changed, notify the owner datalist element.
+        (WebCore::HTMLOptionElement::childrenChanged): If the children changed, notify the owner datalist element.
+        (WebCore):
+        (WebCore::HTMLOptionElement::ownerDataListElement): The datalist that the option element is inside of.
+        * html/HTMLOptionElement.h:
+        (WebCore):
+        (HTMLOptionElement):
+        * html/InputType.cpp:
+        (WebCore):
+        (WebCore::InputType::listAttributeTargetChanged):
+        * html/InputType.h:
+        (InputType):
+        * html/RangeInputType.cpp:
+        (WebCore):
+        (WebCore::RangeInputType::listAttributeTargetChanged):
+        * html/RangeInputType.h:
+        (RangeInputType):
+
 2012-07-19  Dongwoo Im  <dw.im@samsung.com>
 
         CodeGeneratorV8.pm : @enabledAtRuntime is not used in GenerateHeader.

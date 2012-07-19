@@ -897,6 +897,12 @@ String InputType::defaultToolTip() const
     return String();
 }
 
+#if ENABLE(DATALIST)
+void InputType::listAttributeTargetChanged()
+{
+}
+#endif
+
 bool InputType::supportsIndeterminateAppearance() const
 {
     return false;

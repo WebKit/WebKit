@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class HTMLDataListElement;
 class HTMLSelectElement;
 
 class HTMLOptionElement : public HTMLElement {
@@ -49,6 +50,9 @@ public:
     bool selected();
     void setSelected(bool);
 
+#if ENABLE(DATALIST)
+    HTMLDataListElement* ownerDataListElement() const;
+#endif
     HTMLSelectElement* ownerSelectElement() const;
 
     String label() const;

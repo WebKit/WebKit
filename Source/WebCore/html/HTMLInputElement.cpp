@@ -45,6 +45,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "IdTargetObserver.h"
 #include "InputType.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
@@ -76,6 +77,19 @@ using namespace std;
 namespace WebCore {
 
 using namespace HTMLNames;
+
+#if ENABLE(DATALIST)
+class ListAttributeTargetObserver : IdTargetObserver {
+public:
+    static PassOwnPtr<ListAttributeTargetObserver> create(const AtomicString& id, HTMLInputElement*);
+    virtual void idTargetChanged() OVERRIDE;
+
+private:
+    ListAttributeTargetObserver(const AtomicString& id, HTMLInputElement*);
+
+    HTMLInputElement* m_element;
+};
+#endif
 
 // FIXME: According to HTML4, the length attribute's value can be arbitrarily
 // large. However, due to https://bugs.webkit.org/show_bug.cgi?id=14536 things
@@ -684,9 +698,13 @@ void HTMLInputElement::parseAttribute(const Attribute& attribute)
         m_inputType->readonlyAttributeChanged();
     }
 #if ENABLE(DATALIST)
-    else if (attribute.name() == listAttr)
+    else if (attribute.name() == listAttr) {
         m_hasNonEmptyList = !attribute.isEmpty();
-        // FIXME: we need to tell this change to a renderer if the attribute affects the appearance.
+        if (m_hasNonEmptyList) {
+            resetListAttributeTargetObserver();
+            listAttributeTargetChanged();
+        }
+    }
 #endif
 #if ENABLE(INPUT_SPEECH)
     else if (attribute.name() == webkitspeechAttr) {
@@ -1417,6 +1435,9 @@ Node::InsertionNotificationRequest HTMLInputElement::insertedInto(ContainerNode*
     HTMLTextFormControlElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument() && !form())
         addToRadioButtonGroup();
+#if ENABLE(DATALIST)
+    resetListAttributeTargetObserver();
+#endif
     return InsertionDone;
 }
 
@@ -1425,6 +1446,10 @@ void HTMLInputElement::removedFrom(ContainerNode* insertionPoint)
     if (insertionPoint->inDocument() && !form())
         removeFromRadioButtonGroup();
     HTMLTextFormControlElement::removedFrom(insertionPoint);
+    ASSERT(!inDocument());
+#if ENABLE(DATALIST)
+    resetListAttributeTargetObserver();
+#endif
 }
 
 void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
@@ -1495,6 +1520,19 @@ HTMLDataListElement* HTMLInputElement::dataList() const
         return 0;
 
     return static_cast<HTMLDataListElement*>(element);
+}
+
+void HTMLInputElement::resetListAttributeTargetObserver()
+{
+    if (inDocument())
+        m_listAttributeTargetObserver = ListAttributeTargetObserver::create(fastGetAttribute(listAttr), this);
+    else
+        m_listAttributeTargetObserver = nullptr;
+}
+
+void HTMLInputElement::listAttributeTargetChanged()
+{
+    m_inputType->listAttributeTargetChanged();
 }
 
 #endif // ENABLE(DATALIST)
@@ -1764,5 +1802,23 @@ void HTMLInputElement::setWidth(unsigned width)
 {
     setAttribute(widthAttr, String::number(width));
 }
+
+#if ENABLE(DATALIST)
+PassOwnPtr<ListAttributeTargetObserver> ListAttributeTargetObserver::create(const AtomicString& id, HTMLInputElement* element)
+{
+    return adoptPtr(new ListAttributeTargetObserver(id, element));
+}
+
+ListAttributeTargetObserver::ListAttributeTargetObserver(const AtomicString& id, HTMLInputElement* element)
+    : IdTargetObserver(element->treeScope()->idTargetObserverRegistry(), id)
+    , m_element(element)
+{
+}
+
+void ListAttributeTargetObserver::idTargetChanged()
+{
+    m_element->listAttributeTargetChanged();
+}
+#endif
 
 } // namespace

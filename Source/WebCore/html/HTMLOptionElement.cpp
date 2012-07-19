@@ -30,6 +30,7 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "HTMLDataListElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
@@ -187,6 +188,12 @@ int HTMLOptionElement::index() const
 
 void HTMLOptionElement::parseAttribute(const Attribute& attribute)
 {
+#if ENABLE(DATALIST)
+    if (attribute.name() == valueAttr) {
+        if (HTMLDataListElement* dataList = ownerDataListElement())
+            dataList->optionElementChildrenChanged();
+    } else
+#endif
     if (attribute.name() == disabledAttr) {
         bool oldDisabled = m_disabled;
         m_disabled = !attribute.isNull();
@@ -252,10 +259,26 @@ void HTMLOptionElement::setSelectedState(bool selected)
 
 void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
+#if ENABLE(DATALIST)
+    if (HTMLDataListElement* dataList = ownerDataListElement())
+        dataList->optionElementChildrenChanged();
+    else
+#endif
     if (HTMLSelectElement* select = ownerSelectElement())
         select->optionElementChildrenChanged();
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
+
+#if ENABLE(DATALIST)
+HTMLDataListElement* HTMLOptionElement::ownerDataListElement() const
+{
+    for (ContainerNode* parent = parentNode(); parent ; parent = parent->parentNode()) {
+        if (parent->hasTagName(datalistTag))
+            return static_cast<HTMLDataListElement*>(parent);
+    }
+    return 0;
+}
+#endif
 
 HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 {
