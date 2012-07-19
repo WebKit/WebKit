@@ -8360,6 +8360,7 @@
             'platform/graphics/chromium/cc/CCPriorityCalculator.h',
             'platform/graphics/chromium/cc/CCProxy.cpp',
             'platform/graphics/chromium/cc/CCProxy.h',
+            'platform/graphics/chromium/cc/CCQuadSink.h',
             'platform/graphics/chromium/cc/CCQuadCuller.cpp',
             'platform/graphics/chromium/cc/CCQuadCuller.h',
             'platform/graphics/chromium/cc/CCRenderPass.cpp',

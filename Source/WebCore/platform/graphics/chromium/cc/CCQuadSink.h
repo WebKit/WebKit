@@ -23,42 +23,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCIOSurfaceLayerImpl_h
-#define CCIOSurfaceLayerImpl_h
+#ifndef CCQuadSink_h
+#define CCQuadSink_h
 
-#include "IntSize.h"
-#include "cc/CCLayerImpl.h"
+#include <wtf/PassOwnPtr.h>
+
+namespace WebKit {
+class WebCompositorQuad;
+}
 
 namespace WebCore {
 
-class CCIOSurfaceLayerImpl : public CCLayerImpl {
+class CCQuadSink {
 public:
-    static PassOwnPtr<CCIOSurfaceLayerImpl> create(int id)
-    {
-        return adoptPtr(new CCIOSurfaceLayerImpl(id));
-    }
-    virtual ~CCIOSurfaceLayerImpl();
+    virtual ~CCQuadSink() { }
 
-    void setIOSurfaceProperties(unsigned ioSurfaceId, const IntSize&);
-
-    virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
-
-    virtual void willDraw(CCResourceProvider*) OVERRIDE;
-    virtual void didLoseContext() OVERRIDE;
-
-    virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
-
-private:
-    explicit CCIOSurfaceLayerImpl(int);
-
-    virtual const char* layerTypeAsString() const OVERRIDE { return "IOSurfaceLayer"; }
-
-    unsigned m_ioSurfaceId;
-    IntSize m_ioSurfaceSize;
-    bool m_ioSurfaceChanged;
-    unsigned m_ioSurfaceTextureId;
+    // Returns true if the quad is added to the list, and false if the quad is entirely culled.
+    virtual bool append(PassOwnPtr<WebKit::WebCompositorQuad> passDrawQuad) = 0;
 };
 
 }
-
-#endif // CCIOSurfaceLayerImpl_h
+#endif // CCQuadCuller_h

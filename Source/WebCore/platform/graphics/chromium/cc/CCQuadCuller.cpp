@@ -33,7 +33,9 @@
 #include "SkColor.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCOcclusionTracker.h"
 #include "cc/CCOverdrawMetrics.h"
+#include "cc/CCRenderPass.h"
 #include <public/WebTransformationMatrix.h>
 
 using namespace std;
@@ -46,11 +48,13 @@ static const int debugTileBorderColorRed = 160;
 static const int debugTileBorderColorGreen = 100;
 static const int debugTileBorderColorBlue = 0;
 
-CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, const CCOcclusionTrackerImpl* occlusionTracker, bool showCullingWithDebugBorderQuads)
+CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, const CCOcclusionTrackerImpl* occlusionTracker, bool showCullingWithDebugBorderQuads, bool forSurface)
     : m_quadList(quadList)
     , m_layer(layer)
     , m_occlusionTracker(occlusionTracker)
     , m_showCullingWithDebugBorderQuads(showCullingWithDebugBorderQuads)
+    , m_forSurface(forSurface)
+    , m_hasOcclusionFromOutsideTargetSurface(false)
 {
 }
 
@@ -78,13 +82,15 @@ static inline bool appendQuadInternal(PassOwnPtr<CCDrawQuad> passDrawQuad, const
 
 bool CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
 {
-    IntRect culledRect = m_occlusionTracker->unoccludedContentRect(m_layer, passDrawQuad->quadRect());
-    return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker, m_showCullingWithDebugBorderQuads);
-}
+    IntRect culledRect;
+    bool hasOcclusionFromOutsideTargetSurface;
 
-bool CCQuadCuller::appendSurface(PassOwnPtr<CCDrawQuad> passDrawQuad)
-{
-    IntRect culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer, false, passDrawQuad->quadRect());
+    if (m_forSurface)
+        culledRect = m_occlusionTracker->unoccludedContributingSurfaceContentRect(m_layer, false, passDrawQuad->quadRect(), &hasOcclusionFromOutsideTargetSurface);
+    else
+        culledRect = m_occlusionTracker->unoccludedContentRect(m_layer, passDrawQuad->quadRect(), &hasOcclusionFromOutsideTargetSurface);
+    m_hasOcclusionFromOutsideTargetSurface |= hasOcclusionFromOutsideTargetSurface;
+
     return appendQuadInternal(passDrawQuad, culledRect, m_quadList, *m_occlusionTracker, m_showCullingWithDebugBorderQuads);
 }
 

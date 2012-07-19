@@ -30,7 +30,7 @@
 #include "cc/CCTextureLayerImpl.h"
 
 #include "TextStream.h"
-#include "cc/CCQuadCuller.h"
+#include "cc/CCQuadSink.h"
 #include "cc/CCRenderer.h"
 #include "cc/CCTextureDrawQuad.h"
 
@@ -56,7 +56,7 @@ void CCTextureLayerImpl::willDraw(CCResourceProvider* resourceProvider)
     m_externalTextureResource = resourceProvider->createResourceFromExternalTexture(m_textureId);
 }
 
-void CCTextureLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCTextureLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     ASSERT(m_externalTextureResource);
     IntRect quadRect(IntPoint(), contentBounds());

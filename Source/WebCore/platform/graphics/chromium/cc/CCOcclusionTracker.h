@@ -54,13 +54,13 @@ public:
     void leaveLayer(const CCLayerIteratorPosition<LayerType>&);
 
     // Returns true if the given rect in content space for the layer is fully occluded in either screen space or the layer's target surface.
-    bool occluded(const LayerType*, const IntRect& contentRect) const;
+    bool occluded(const LayerType*, const IntRect& contentRect, bool* hasOcclusionFromOutsideTargetSurface = 0) const;
     // Gives an unoccluded sub-rect of |contentRect| in the content space of the layer. Used when considering occlusion for a layer that paints/draws something.
-    IntRect unoccludedContentRect(const LayerType*, const IntRect& contentRect) const;
+    IntRect unoccludedContentRect(const LayerType*, const IntRect& contentRect, bool* hasOcclusionFromOutsideTargetSurface = 0) const;
 
     // Gives an unoccluded sub-rect of |contentRect| in the content space of the renderTarget owned by the layer.
     // Used when considering occlusion for a contributing surface that is rendering into another target.
-    IntRect unoccludedContributingSurfaceContentRect(const LayerType*, bool forReplica, const IntRect& contentRect) const;
+    IntRect unoccludedContributingSurfaceContentRect(const LayerType*, bool forReplica, const IntRect& contentRect, bool* hasOcclusionFromOutsideTargetSurface = 0) const;
 
     // Report operations for recording overdraw metrics.
     CCOverdrawMetrics& overdrawMetrics() const { return *m_overdrawMetrics.get(); }

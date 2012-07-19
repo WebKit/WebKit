@@ -328,11 +328,16 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
         if (it.representsContributingRenderSurface() && !it->renderSurface()->scissorRect().isEmpty()) {
             CCRenderPass* contributingRenderPass = surfacePassMap.get(it->renderSurface());
             pass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker);
-        } else if (it.representsItself() && !occlusionTracker.occluded(*it, it->visibleContentRect()) && !it->visibleContentRect().isEmpty() && !it->scissorRect().isEmpty()) {
-            it->willDraw(m_resourceProvider.get());
-            frame.willDrawLayers.append(*it);
-
-            pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
+        } else if (it.representsItself() && !it->visibleContentRect().isEmpty() && !it->scissorRect().isEmpty()) {
+            bool hasOcclusionFromOutsideTargetSurface;
+            if (occlusionTracker.occluded(*it, it->visibleContentRect(), &hasOcclusionFromOutsideTargetSurface)) {
+                if (hasOcclusionFromOutsideTargetSurface)
+                    pass->setHasOcclusionFromOutsideTargetSurface(hasOcclusionFromOutsideTargetSurface);
+            } else {
+                it->willDraw(m_resourceProvider.get());
+                frame.willDrawLayers.append(*it);
+                pass->appendQuadsForLayer(*it, &occlusionTracker, hadMissingTiles);
+            }
         }
 
         if (hadMissingTiles) {

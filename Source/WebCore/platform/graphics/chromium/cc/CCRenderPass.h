@@ -71,6 +71,8 @@ public:
     bool hasTransparentBackground() const { return m_hasTransparentBackground; }
     void setHasTransparentBackground(bool transparent) { m_hasTransparentBackground = transparent; }
 
+    bool hasOcclusionFromOutsideTargetSurface() const { return m_hasOcclusionFromOutsideTargetSurface; }
+    void setHasOcclusionFromOutsideTargetSurface(bool hasOcclusionFromOutsideTargetSurface) { m_hasOcclusionFromOutsideTargetSurface = hasOcclusionFromOutsideTargetSurface; }
 protected:
     CCRenderPass(CCRenderSurface*, int id);
 
@@ -80,6 +82,7 @@ protected:
     IntRect m_framebufferOutputRect;
     Vector<OwnPtr<CCSharedQuadState> > m_sharedQuadStateList;
     bool m_hasTransparentBackground;
+    bool m_hasOcclusionFromOutsideTargetSurface;
 };
 
 typedef Vector<CCRenderPass*> CCRenderPassList;

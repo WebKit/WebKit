@@ -26,27 +26,33 @@
 #ifndef CCQuadCuller_h
 #define CCQuadCuller_h
 
-#include "cc/CCRenderPass.h"
+#include "CCQuadSink.h"
 
 namespace WebCore {
 class CCLayerImpl;
-class CCOverdrawMetrics;
+class CCRenderSurface;
+class CCQuadList;
+template<typename LayerType, typename SurfaceType>
+class CCOcclusionTrackerBase;
 
-class CCQuadCuller {
+class CCQuadCuller : public CCQuadSink {
 public:
-    // Passing 0 for CCOverdrawCounts* is valid, and disable the extra computation
-    // done to estimate over draw statistics.
-    CCQuadCuller(CCQuadList&, CCLayerImpl*, const CCOcclusionTrackerImpl*, bool showCullingWithDebugBorderQuads);
+    CCQuadCuller(CCQuadList&, CCLayerImpl*, const CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>*, bool showCullingWithDebugBorderQuads, bool forSurface);
+
+    virtual ~CCQuadCuller() { }
 
     // Returns true if the quad is added to the list, and false if the quad is entirely culled.
-    virtual bool append(PassOwnPtr<CCDrawQuad> passDrawQuad);
-    virtual bool appendSurface(PassOwnPtr<CCDrawQuad> passDrawQuad);
+    virtual bool append(PassOwnPtr<WebKit::WebCompositorQuad> passDrawQuad) OVERRIDE;
+
+    bool hasOcclusionFromOutsideTargetSurface() { return m_hasOcclusionFromOutsideTargetSurface; }
 
 private:
     CCQuadList& m_quadList;
     CCLayerImpl* m_layer;
-    const CCOcclusionTrackerImpl* m_occlusionTracker;
+    const CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>* m_occlusionTracker;
     bool m_showCullingWithDebugBorderQuads;
+    bool m_forSurface;
+    bool m_hasOcclusionFromOutsideTargetSurface;
 };
 
 }

@@ -28,6 +28,7 @@
 
 #include "CCAnimationTestCommon.h"
 #include "CCLayerTestCommon.h"
+#include "CCLayerTreeTestCommon.h"
 #include "CCTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "LayerRendererChromium.h"
@@ -1175,7 +1176,7 @@ class BlendStateCheckLayer : public CCLayerImpl {
 public:
     static PassOwnPtr<BlendStateCheckLayer> create(int id, CCResourceProvider* resourceProvider) { return adoptPtr(new BlendStateCheckLayer(id, resourceProvider)); }
 
-    virtual void appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
+    virtual void appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
     {
         m_quadsAppended = true;
 
@@ -1702,10 +1703,10 @@ class FakeLayerWithQuads : public CCLayerImpl {
 public:
     static PassOwnPtr<FakeLayerWithQuads> create(int id) { return adoptPtr(new FakeLayerWithQuads(id)); }
 
-    virtual void appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
+    virtual void appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
     {
         SkColor gray = SkColorSetRGB(100, 100, 100);
-        IntRect quadRect(0, 0, 5, 5);
+        IntRect quadRect(IntPoint(0, 0), contentBounds());
         OwnPtr<CCDrawQuad> myQuad = CCSolidColorDrawQuad::create(sharedQuadState, quadRect, gray);
         quadList.append(myQuad.release());
     }
@@ -2476,6 +2477,21 @@ TEST_F(CCLayerTreeHostImplTest, hasTransparentBackground)
     Mock::VerifyAndClearExpectations(&mockContext);
 }
 
+static void addDrawingLayerTo(CCLayerImpl* parent, int id, const IntRect& layerRect, CCLayerImpl** result)
+{
+    OwnPtr<CCLayerImpl> layer = FakeLayerWithQuads::create(id);
+    CCLayerImpl* layerPtr = layer.get();
+    layerPtr->setAnchorPoint(FloatPoint(0, 0));
+    layerPtr->setPosition(FloatPoint(layerRect.location()));
+    layerPtr->setBounds(layerRect.size());
+    layerPtr->setContentBounds(layerRect.size());
+    layerPtr->setDrawsContent(true); // only children draw content
+    layerPtr->setOpaque(true);
+    parent->addChild(layer.release());
+    if (result)
+        *result = layerPtr;
+}
+
 static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl, CCLayerImpl*& rootPtr, CCLayerImpl*& intermediateLayerPtr, CCLayerImpl*& surfaceLayerPtr, CCLayerImpl*& childPtr, const IntSize& rootSize)
 {
     OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
@@ -2490,56 +2506,632 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
     root->setPosition(FloatPoint(0, 0));
     root->setBounds(rootSize);
     root->setContentBounds(rootSize);
-    root->setVisibleContentRect(IntRect(IntPoint(0, 0), rootSize));
     root->setDrawsContent(true);
     layerTreeHostImpl->setRootLayer(root.release());
 
-    // Intermediate layer does not own a surface, and does not draw content.
-    OwnPtr<CCLayerImpl> intermediateLayer = CCLayerImpl::create(2);
-    intermediateLayerPtr = intermediateLayer.get();
-
-    intermediateLayerPtr->setAnchorPoint(FloatPoint(0, 0));
-    intermediateLayerPtr->setPosition(FloatPoint(10, 10));
-    intermediateLayerPtr->setBounds(rootSize);
-    intermediateLayerPtr->setContentBounds(rootSize);
-    intermediateLayerPtr->setVisibleContentRect(IntRect(IntPoint(0, 0), rootSize));
+    addDrawingLayerTo(rootPtr, 2, IntRect(10, 10, rootSize.width(), rootSize.height()), &intermediateLayerPtr);
     intermediateLayerPtr->setDrawsContent(false); // only children draw content
-    rootPtr->addChild(intermediateLayer.release());
-
-    OwnPtr<CCLayerImpl> surfaceLayer = CCLayerImpl::create(3);
-    surfaceLayerPtr = surfaceLayer.get();
 
     // Surface layer is the layer that changes its opacity
     // It will contain other layers that draw content.
-    IntSize surfaceSize(rootSize.width(), rootSize.height());
-    surfaceLayerPtr->setAnchorPoint(FloatPoint(0, 0));
-    surfaceLayerPtr->setPosition(FloatPoint(10, 10));
-    surfaceLayerPtr->setBounds(surfaceSize);
-    surfaceLayerPtr->setContentBounds(surfaceSize);
-    surfaceLayerPtr->setVisibleContentRect(IntRect(IntPoint(0, 0), surfaceSize));
+    addDrawingLayerTo(intermediateLayerPtr, 3, IntRect(10, 10, rootSize.width(), rootSize.height()), &surfaceLayerPtr);
     surfaceLayerPtr->setDrawsContent(false); // only children draw content
     surfaceLayerPtr->setOpacity(0.5f); // This will cause it to have a surface
-    intermediateLayerPtr->addChild(surfaceLayer.release());
 
     // Child of the surface layer will produce some quads
-    OwnPtr<FakeLayerWithQuads> child = FakeLayerWithQuads::create(4);
-    childPtr = child.get();
-
-    IntSize childSize(rootSize.width(), rootSize.height());
-    childPtr->setAnchorPoint(FloatPoint(0, 0));
-    childPtr->setPosition(FloatPoint(5, 5));
-    childPtr->setBounds(childSize);
-    childPtr->setContentBounds(childSize);
-    childPtr->setVisibleContentRect(IntRect(IntPoint(0, 0), childSize));
-    childPtr->setDrawsContent(true);
-
-    surfaceLayerPtr->addChild(child.release());
+    addDrawingLayerTo(surfaceLayerPtr, 4, IntRect(5, 5, rootSize.width(), rootSize.height()), &childPtr);
 }
 
 class LayerRendererChromiumWithReleaseTextures : public LayerRendererChromium {
 public:
     using LayerRendererChromium::releaseRenderPassTextures;
 };
+
+TEST_F(CCLayerTreeHostImplTest, textureCachingWithClipping)
+{
+    CCSettings::setPartialSwapEnabled(true);
+
+    CCLayerTreeSettings settings;
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
+
+    CCLayerImpl* rootPtr;
+    CCLayerImpl* surfaceLayerPtr;
+
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
+
+    IntSize rootSize(100, 100);
+
+    myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    rootPtr = root.get();
+
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(0, 0));
+    root->setBounds(rootSize);
+    root->setContentBounds(rootSize);
+    root->setDrawsContent(true);
+    root->setMasksToBounds(true);
+    myHostImpl->setRootLayer(root.release());
+
+    addDrawingLayerTo(rootPtr, 3, IntRect(0, 0, rootSize.width(), rootSize.height()), &surfaceLayerPtr);
+    surfaceLayerPtr->setDrawsContent(false);
+
+    // Surface layer is the layer that changes its opacity
+    // It will contain other layers that draw content.
+    surfaceLayerPtr->setOpacity(0.5f); // This will cause it to have a surface
+
+    addDrawingLayerTo(surfaceLayerPtr, 4, IntRect(0, 0, 100, 3), 0);
+    addDrawingLayerTo(surfaceLayerPtr, 5, IntRect(0, 97, 100, 3), 0);
+
+    // Rotation will put part of the child ouside the bounds of the root layer.
+    // Nevertheless, the child layers should be drawn.
+    WebTransformationMatrix transform = surfaceLayerPtr->transform();
+    transform.translate(50, 50);
+    transform.rotate(35);
+    transform.translate(-50, -50);
+    surfaceLayerPtr->setTransform(transform);
+
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive two render passes, each with one quad
+        ASSERT_EQ(2U, frame.renderPasses.size());
+        EXPECT_EQ(2U, frame.renderPasses[0]->quadList().size());
+        ASSERT_EQ(1U, frame.renderPasses[1]->quadList().size());
+
+        // Verify that the child layers have been drawn entirely.
+        IntRect quadVisibleRect = frame.renderPasses[0]->quadList()[0]->quadVisibleRect();
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 3), quadVisibleRect);
+
+        quadVisibleRect = frame.renderPasses[0]->quadList()[1]->quadVisibleRect();
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 3), quadVisibleRect);
+
+        EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
+        CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
+        EXPECT_FALSE(quad->contentsChangedSinceLastFrame().isEmpty());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    transform = surfaceLayerPtr->transform();
+    transform.translate(50, 50);
+    transform.rotate(-35);
+    transform.translate(-50, -50);
+    surfaceLayerPtr->setTransform(transform);
+
+    // The surface is now aligned again, and the clipped parts are exposed.
+    // That should be OK, as we've already verified that the quads are drawn in full.
+    // Verify that the render pass is removed.
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive a single render pass using a cached texture.
+        ASSERT_EQ(1U, frame.renderPasses.size());
+        EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+}
+
+TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusion)
+{
+    CCSettings::setPartialSwapEnabled(false);
+
+    CCLayerTreeSettings settings;
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
+
+    // Layers are structure as follows:
+    //
+    //  R +-- S1 +- L10 (owning)
+    //    |      +- L11
+    //    |      +- L12
+    //    |
+    //    +-- S2 +- L20 (owning)
+    //           +- L21
+    //
+    // Occlusion:
+    // L12 occludes L11 (internal)
+    // L20 occludes L10 (external)
+    // L21 occludes L20 (internal)
+
+    CCLayerImpl* rootPtr;
+    CCLayerImpl* layerS1Ptr;
+    CCLayerImpl* layerS2Ptr;
+
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
+
+    IntSize rootSize(1000, 1000);
+
+    myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    rootPtr = root.get();
+
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(0, 0));
+    root->setBounds(rootSize);
+    root->setContentBounds(rootSize);
+    root->setDrawsContent(true);
+    root->setMasksToBounds(true);
+    myHostImpl->setRootLayer(root.release());
+
+    addDrawingLayerTo(rootPtr, 2, IntRect(300, 300, 300, 300), &layerS1Ptr);
+    layerS1Ptr->setForceRenderSurface(true);
+
+    addDrawingLayerTo(layerS1Ptr, 3, IntRect(10, 10, 10, 10), 0); // L11
+    addDrawingLayerTo(layerS1Ptr, 4, IntRect(0, 0, 30, 30), 0); // L12
+
+    addDrawingLayerTo(rootPtr, 5, IntRect(550, 250, 300, 400), &layerS2Ptr);
+    layerS2Ptr->setForceRenderSurface(true);
+
+    addDrawingLayerTo(layerS2Ptr, 6, IntRect(20, 20, 5, 5), 0); // L21
+
+    // Initial draw - must receive all quads
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 3 render passes.
+        // For Root, there are 2 quads; for S1, there are 3 quads; for S2, there is 1 quad.
+        ASSERT_EQ(3U, frame.renderPasses.size());
+
+        EXPECT_EQ(2U, frame.renderPasses[0]->quadList().size());
+        EXPECT_EQ(3U, frame.renderPasses[1]->quadList().size());
+        EXPECT_EQ(2U, frame.renderPasses[2]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // "Unocclude" surface S1 and repeat draw.
+    // Must remove S2's render pass since it's cached;
+    // Must keep S1 quads because texture contained external occlusion.
+    WebTransformationMatrix transform = layerS2Ptr->transform();
+    transform.translate(150, 150);
+    layerS2Ptr->setTransform(transform);
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 2 render passes.
+        // For Root, there are 2 quads
+        // For S1, the number of quads depends on what got unoccluded, so not asserted beyond being positive.
+        // For S2, there is no render pass
+        ASSERT_EQ(2U, frame.renderPasses.size());
+
+        EXPECT_GT(frame.renderPasses[0]->quadList().size(), 0U);
+        EXPECT_EQ(2U, frame.renderPasses[1]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // "Re-occlude" surface S1 and repeat draw.
+    // Must remove S1's render pass since it is now available in full.
+    // S2 has no change so must also be removed.
+    transform = layerS2Ptr->transform();
+    transform.translate(-15, -15);
+    layerS2Ptr->setTransform(transform);
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 1 render pass - for the root.
+        ASSERT_EQ(1U, frame.renderPasses.size());
+
+        EXPECT_EQ(2U, frame.renderPasses[0]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+}
+
+TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionEarlyOut)
+{
+    CCSettings::setPartialSwapEnabled(false);
+
+    CCLayerTreeSettings settings;
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
+
+    // Layers are structure as follows:
+    //
+    //  R +-- S1 +- L10 (owning, non drawing)
+    //    |      +- L11 (corner, unoccluded)
+    //    |      +- L12 (corner, unoccluded)
+    //    |      +- L13 (corner, unoccluded)
+    //    |      +- L14 (corner, entirely occluded)
+    //    |
+    //    +-- S2 +- L20 (owning, drawing)
+    //
+
+    CCLayerImpl* rootPtr;
+    CCLayerImpl* layerS1Ptr;
+    CCLayerImpl* layerS2Ptr;
+
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
+
+    IntSize rootSize(1000, 1000);
+
+    myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    rootPtr = root.get();
+
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(0, 0));
+    root->setBounds(rootSize);
+    root->setContentBounds(rootSize);
+    root->setDrawsContent(true);
+    root->setMasksToBounds(true);
+    myHostImpl->setRootLayer(root.release());
+
+    addDrawingLayerTo(rootPtr, 2, IntRect(0, 0, 800, 800), &layerS1Ptr);
+    layerS1Ptr->setForceRenderSurface(true);
+    layerS1Ptr->setDrawsContent(false);
+
+    addDrawingLayerTo(layerS1Ptr, 3, IntRect(0, 0, 300, 300), 0); // L11
+    addDrawingLayerTo(layerS1Ptr, 4, IntRect(0, 500, 300, 300), 0); // L12
+    addDrawingLayerTo(layerS1Ptr, 5, IntRect(500, 0, 300, 300), 0); // L13
+    addDrawingLayerTo(layerS1Ptr, 6, IntRect(500, 500, 300, 300), 0); // L14
+    addDrawingLayerTo(layerS1Ptr, 9, IntRect(500, 500, 300, 300), 0); // L14
+
+    addDrawingLayerTo(rootPtr, 7, IntRect(450, 450, 450, 450), &layerS2Ptr);
+    layerS2Ptr->setForceRenderSurface(true);
+
+    // Initial draw - must receive all quads
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 3 render passes.
+        // For Root, there are 2 quads; for S1, there are 3 quads; for S2, there is 1 quad.
+        ASSERT_EQ(3U, frame.renderPasses.size());
+
+        EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
+
+        // L14 is culled, so only 3 quads.
+        EXPECT_EQ(3U, frame.renderPasses[1]->quadList().size());
+        EXPECT_EQ(2U, frame.renderPasses[2]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // "Unocclude" surface S1 and repeat draw.
+    // Must remove S2's render pass since it's cached;
+    // Must keep S1 quads because texture contained external occlusion.
+    WebTransformationMatrix transform = layerS2Ptr->transform();
+    transform.translate(100, 100);
+    layerS2Ptr->setTransform(transform);
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 2 render passes.
+        // For Root, there are 2 quads
+        // For S1, the number of quads depends on what got unoccluded, so not asserted beyond being positive.
+        // For S2, there is no render pass
+        ASSERT_EQ(2U, frame.renderPasses.size());
+
+        EXPECT_GT(frame.renderPasses[0]->quadList().size(), 0U);
+        EXPECT_EQ(2U, frame.renderPasses[1]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // "Re-occlude" surface S1 and repeat draw.
+    // Must remove S1's render pass since it is now available in full.
+    // S2 has no change so must also be removed.
+    transform = layerS2Ptr->transform();
+    transform.translate(-15, -15);
+    layerS2Ptr->setTransform(transform);
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 1 render pass - for the root.
+        ASSERT_EQ(1U, frame.renderPasses.size());
+
+        EXPECT_EQ(2U, frame.renderPasses[0]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+}
+
+TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionExternalOverInternal)
+{
+    CCSettings::setPartialSwapEnabled(false);
+
+    CCLayerTreeSettings settings;
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
+
+    // Layers are structured as follows:
+    //
+    //  R +-- S1 +- L10 (owning, drawing)
+    //    |      +- L11 (corner, occluded by L12)
+    //    |      +- L12 (opposite corner)
+    //    |
+    //    +-- S2 +- L20 (owning, drawing)
+    //
+
+    CCLayerImpl* rootPtr;
+    CCLayerImpl* layerS1Ptr;
+    CCLayerImpl* layerS2Ptr;
+
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
+
+    IntSize rootSize(1000, 1000);
+
+    myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    rootPtr = root.get();
+
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(0, 0));
+    root->setBounds(rootSize);
+    root->setContentBounds(rootSize);
+    root->setDrawsContent(true);
+    root->setMasksToBounds(true);
+    myHostImpl->setRootLayer(root.release());
+
+    addDrawingLayerTo(rootPtr, 2, IntRect(0, 0, 400, 400), &layerS1Ptr);
+    layerS1Ptr->setForceRenderSurface(true);
+
+    addDrawingLayerTo(layerS1Ptr, 3, IntRect(0, 0, 300, 300), 0); // L11
+    addDrawingLayerTo(layerS1Ptr, 4, IntRect(100, 0, 300, 300), 0); // L12
+
+    addDrawingLayerTo(rootPtr, 7, IntRect(200, 0, 300, 300), &layerS2Ptr);
+    layerS2Ptr->setForceRenderSurface(true);
+
+    // Initial draw - must receive all quads
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 3 render passes.
+        // For Root, there are 2 quads; for S1, there are 3 quads; for S2, there is 1 quad.
+        ASSERT_EQ(3U, frame.renderPasses.size());
+
+        EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
+        EXPECT_EQ(3U, frame.renderPasses[1]->quadList().size());
+        EXPECT_EQ(2U, frame.renderPasses[2]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // "Unocclude" surface S1 and repeat draw.
+    // Must remove S2's render pass since it's cached;
+    // Must keep S1 quads because texture contained external occlusion.
+    WebTransformationMatrix transform = layerS2Ptr->transform();
+    transform.translate(300, 0);
+    layerS2Ptr->setTransform(transform);
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 2 render passes.
+        // For Root, there are 2 quads
+        // For S1, the number of quads depends on what got unoccluded, so not asserted beyond being positive.
+        // For S2, there is no render pass
+        ASSERT_EQ(2U, frame.renderPasses.size());
+
+        EXPECT_GT(frame.renderPasses[0]->quadList().size(), 0U);
+        EXPECT_EQ(2U, frame.renderPasses[1]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+}
+
+TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionExternalNotAligned)
+{
+    CCSettings::setPartialSwapEnabled(false);
+
+    CCLayerTreeSettings settings;
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
+
+    // Layers are structured as follows:
+    //
+    //  R +-- S1 +- L10 (rotated, drawing)
+    //           +- L11 (occupies half surface)
+
+    CCLayerImpl* rootPtr;
+    CCLayerImpl* layerS1Ptr;
+
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
+
+    IntSize rootSize(1000, 1000);
+
+    myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    rootPtr = root.get();
+
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(0, 0));
+    root->setBounds(rootSize);
+    root->setContentBounds(rootSize);
+    root->setDrawsContent(true);
+    root->setMasksToBounds(true);
+    myHostImpl->setRootLayer(root.release());
+
+    addDrawingLayerTo(rootPtr, 2, IntRect(0, 0, 400, 400), &layerS1Ptr);
+    layerS1Ptr->setForceRenderSurface(true);
+    WebTransformationMatrix transform = layerS1Ptr->transform();
+    transform.translate(200, 200);
+    transform.rotate(45);
+    transform.translate(-200, -200);
+    layerS1Ptr->setTransform(transform);
+
+    addDrawingLayerTo(layerS1Ptr, 3, IntRect(200, 0, 200, 400), 0); // L11
+
+    // Initial draw - must receive all quads
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 2 render passes.
+        ASSERT_EQ(2U, frame.renderPasses.size());
+
+        EXPECT_EQ(2U, frame.renderPasses[0]->quadList().size());
+        EXPECT_EQ(1U, frame.renderPasses[1]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // Change opacity and draw. Verify we used cached texture.
+    layerS1Ptr->setOpacity(0.2f);
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // One render pass must be gone due to cached texture.
+        ASSERT_EQ(1U, frame.renderPasses.size());
+
+        EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+}
+
+TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionPartialSwap)
+{
+    CCSettings::setPartialSwapEnabled(true);
+
+    CCLayerTreeSettings settings;
+    OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
+
+    // Layers are structure as follows:
+    //
+    //  R +-- S1 +- L10 (owning)
+    //    |      +- L11
+    //    |      +- L12
+    //    |
+    //    +-- S2 +- L20 (owning)
+    //           +- L21
+    //
+    // Occlusion:
+    // L12 occludes L11 (internal)
+    // L20 occludes L10 (external)
+    // L21 occludes L20 (internal)
+
+    CCLayerImpl* rootPtr;
+    CCLayerImpl* layerS1Ptr;
+    CCLayerImpl* layerS2Ptr;
+
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
+
+    IntSize rootSize(1000, 1000);
+
+    myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    rootPtr = root.get();
+
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setPosition(FloatPoint(0, 0));
+    root->setBounds(rootSize);
+    root->setContentBounds(rootSize);
+    root->setDrawsContent(true);
+    root->setMasksToBounds(true);
+    myHostImpl->setRootLayer(root.release());
+
+    addDrawingLayerTo(rootPtr, 2, IntRect(300, 300, 300, 300), &layerS1Ptr);
+    layerS1Ptr->setForceRenderSurface(true);
+
+    addDrawingLayerTo(layerS1Ptr, 3, IntRect(10, 10, 10, 10), 0); // L11
+    addDrawingLayerTo(layerS1Ptr, 4, IntRect(0, 0, 30, 30), 0); // L12
+
+    addDrawingLayerTo(rootPtr, 5, IntRect(550, 250, 300, 400), &layerS2Ptr);
+    layerS2Ptr->setForceRenderSurface(true);
+
+    addDrawingLayerTo(layerS2Ptr, 6, IntRect(20, 20, 5, 5), 0); // L21
+
+    // Initial draw - must receive all quads
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 3 render passes.
+        // For Root, there are 2 quads; for S1, there are 3 quads; for S2, there is 1 quad.
+        ASSERT_EQ(3U, frame.renderPasses.size());
+
+        EXPECT_EQ(2U, frame.renderPasses[0]->quadList().size());
+        EXPECT_EQ(3U, frame.renderPasses[1]->quadList().size());
+        EXPECT_EQ(2U, frame.renderPasses[2]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // "Unocclude" surface S1 and repeat draw.
+    // Must remove S2's render pass since it's cached;
+    // Must keep S1 quads because texture contained external occlusion.
+    WebTransformationMatrix transform = layerS2Ptr->transform();
+    transform.translate(150, 150);
+    layerS2Ptr->setTransform(transform);
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // Must receive 2 render passes.
+        // For Root, there are 2 quads
+        // For S1, the number of quads depends on what got unoccluded, so not asserted beyond being positive.
+        // For S2, there is no render pass
+        ASSERT_EQ(2U, frame.renderPasses.size());
+
+        EXPECT_GT(frame.renderPasses[0]->quadList().size(), 0U);
+        EXPECT_EQ(2U, frame.renderPasses[1]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+    // "Re-occlude" surface S1 and repeat draw.
+    // Must remove S1's render pass since it is now available in full.
+    // S2 has no change so must also be removed.
+    // FIXME: Due to partial swap, the scissor rect will cause OcclusionTracker
+    // to think there is an external occlusion in the previous step. Therefore,
+    // S1's render pass will not be removed.
+    transform = layerS2Ptr->transform();
+    transform.translate(-15, -15);
+    layerS2Ptr->setTransform(transform);
+    {
+        CCLayerTreeHostImpl::FrameData frame;
+        EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
+
+        // 2 Render passes - Root and S1.
+        ASSERT_EQ(2U, frame.renderPasses.size());
+
+        // Render pass for S1 contains no quads as the scissor rect is now occluded.
+        EXPECT_EQ(0U, frame.renderPasses[0]->quadList().size());
+
+        // Root contains S2 only, as S1 doesn't have any damage.
+        EXPECT_EQ(1U, frame.renderPasses[1]->quadList().size());
+
+        myHostImpl->drawLayers(frame);
+        myHostImpl->didDrawAllLayers(frame);
+    }
+
+}
 
 TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
 {

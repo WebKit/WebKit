@@ -35,7 +35,7 @@
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerTreeHostImpl.h"
-#include "cc/CCQuadCuller.h"
+#include "cc/CCQuadSink.h"
 #include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {
@@ -96,7 +96,7 @@ void CCIOSurfaceLayerImpl::willDraw(CCResourceProvider* resourceProvider)
     }
 }
 
-void CCIOSurfaceLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCIOSurfaceLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     IntRect quadRect(IntPoint(), contentBounds());
     quadList.append(CCIOSurfaceDrawQuad::create(sharedQuadState, quadRect, m_ioSurfaceSize, m_ioSurfaceTextureId, CCIOSurfaceDrawQuad::Flipped));

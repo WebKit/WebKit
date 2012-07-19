@@ -1,3 +1,21 @@
+2012-07-19  Zeev Lieber  <zlieber@chromium.org>
+
+        [Chromium] Textures drawn during occlusion are incorrectly re-used when unoccluded.
+        https://bugs.webkit.org/show_bug.cgi?id=91537
+
+        Reviewed by Adrienne Walker.
+
+        Added unit tests to test texture caching with clipping and
+        occlusion. Removed some minor code duplication when initializing
+        layers for various scenarios.
+
+        MockCCQuadCuller can now implement CCQuadSink.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCQuadCullerTest.cpp:
+        * tests/MockCCQuadCuller.h:
+        (WebCore::MockCCQuadCuller::MockCCQuadCuller):
+
 2012-07-19  Adam Barth  <abarth@webkit.org>
 
         [Chromium] WebView is missing isSelectionEditable and backgroundColor which are used by chromium-android

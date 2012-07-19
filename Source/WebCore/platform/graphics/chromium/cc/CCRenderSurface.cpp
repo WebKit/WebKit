@@ -36,7 +36,7 @@
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCMathUtil.h"
-#include "cc/CCQuadCuller.h"
+#include "cc/CCQuadSink.h"
 #include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCSharedQuadState.h"
 #include <public/WebTransformationMatrix.h>
@@ -181,7 +181,7 @@ FloatRect CCRenderSurface::computeRootScissorRectInCurrentSurface(const FloatRec
     return CCMathUtil::projectClippedRect(inverseScreenSpaceTransform, rootScissorRect);
 }
 
-void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sharedQuadState, bool forReplica, int renderPassId)
+void CCRenderSurface::appendQuads(CCQuadSink& quadList, CCSharedQuadState* sharedQuadState, bool forReplica, int renderPassId)
 {
     ASSERT(!forReplica || m_owningLayer->hasReplica());
 
@@ -190,7 +190,7 @@ void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sha
         int green = forReplica ?  debugReplicaBorderColorGreen : debugSurfaceBorderColorGreen;
         int blue = forReplica ? debugReplicaBorderColorBlue : debugSurfaceBorderColorBlue;
         SkColor color = SkColorSetARGB(debugSurfaceBorderAlpha, red, green, blue);
-        quadList.appendSurface(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect(), color, debugSurfaceBorderWidth));
+        quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect(), color, debugSurfaceBorderWidth));
     }
 
     // FIXME: By using the same RenderSurface for both the content and its reflection,
@@ -216,7 +216,7 @@ void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sha
     const WebKit::WebFilterOperations& filters = m_owningLayer->filters();
     const WebKit::WebFilterOperations& backgroundFilters = m_owningLayer->backgroundFilters();
 
-    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, drawTransform, filters, backgroundFilters, maskResourceId, contentsChangedSinceLastFrame));
+    quadList.append(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, drawTransform, filters, backgroundFilters, maskResourceId, contentsChangedSinceLastFrame));
 }
 
 }

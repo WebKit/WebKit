@@ -35,7 +35,7 @@
 #include "cc/CCLayerSorter.h"
 #include "cc/CCMathUtil.h"
 #include "cc/CCProxy.h"
-#include "cc/CCQuadCuller.h"
+#include "cc/CCQuadSink.h"
 #include <wtf/text/WTFString.h>
 
 using WebKit::WebTransformationMatrix;
@@ -174,7 +174,7 @@ void CCLayerImpl::didDraw(CCResourceProvider*)
 #endif
 }
 
-void CCLayerImpl::appendDebugBorderQuad(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState) const
+void CCLayerImpl::appendDebugBorderQuad(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState) const
 {
     if (!hasDebugBorders())
         return;

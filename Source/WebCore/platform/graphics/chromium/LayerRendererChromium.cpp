@@ -133,6 +133,26 @@ protected:
 
 } // anonymous namespace
 
+class LayerRendererChromium::CachedTexture : public CCScopedTexture {
+    WTF_MAKE_NONCOPYABLE(CachedTexture);
+public:
+    static PassOwnPtr<CachedTexture> create(CCResourceProvider* resourceProvider) { return adoptPtr(new CachedTexture(resourceProvider)); }
+    virtual ~CachedTexture() { }
+
+    bool isComplete() const { return m_isComplete; }
+    void setIsComplete(bool isComplete) { m_isComplete = isComplete; }
+
+protected:
+    explicit CachedTexture(CCResourceProvider* resourceProvider)
+        : CCScopedTexture(resourceProvider)
+        , m_isComplete(false)
+    {
+    }
+
+private:
+    bool m_isComplete;
+};
+
 PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCRendererClient* client, CCResourceProvider* resourceProvider, TextureUploaderOption textureUploaderSetting)
 {
     OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, resourceProvider, textureUploaderSetting)));
@@ -319,7 +339,7 @@ void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPa
         passesInFrame.set(renderPassesInDrawOrder[i]->id(), renderPassesInDrawOrder[i]);
 
     Vector<int> passesToDelete;
-    HashMap<int, OwnPtr<CCScopedTexture> >::const_iterator passIterator;
+    HashMap<int, OwnPtr<CachedTexture> >::const_iterator passIterator;
     for (passIterator = m_renderPassTextures.begin(); passIterator != m_renderPassTextures.end(); ++passIterator) {
         const CCRenderPass* renderPassInFrame = passesInFrame.get(passIterator->first);
         if (!renderPassInFrame) {
@@ -329,7 +349,7 @@ void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPa
 
         const IntSize& requiredSize = renderPassTextureSize(renderPassInFrame);
         GC3Denum requiredFormat = renderPassTextureFormat(renderPassInFrame);
-        CCScopedTexture* texture = passIterator->second.get();
+        CachedTexture* texture = passIterator->second.get();
         ASSERT(texture);
 
         if (texture->id() && (texture->size() != requiredSize || texture->format() != requiredFormat))
@@ -342,7 +362,7 @@ void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPa
 
     for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i) {
         if (!m_renderPassTextures.contains(renderPassesInDrawOrder[i]->id())) {
-            OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(m_resourceProvider);
+            OwnPtr<CachedTexture> texture = CachedTexture::create(m_resourceProvider);
             m_renderPassTextures.set(renderPassesInDrawOrder[i]->id(), texture.release());
         }
     }
@@ -350,8 +370,8 @@ void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPa
 
 bool LayerRendererChromium::haveCachedResourcesForRenderPassId(int id) const
 {
-    CCScopedTexture* texture = m_renderPassTextures.get(id);
-    return texture && texture->id();
+    CachedTexture* texture = m_renderPassTextures.get(id);
+    return texture && texture->id() && texture->isComplete();
 }
 
 void LayerRendererChromium::drawFrame(const CCRenderPassList& renderPasses, const FloatRect& rootScissorRect)
@@ -610,7 +630,7 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
 
 void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
 {
-    CCScopedTexture* contentsTexture = m_renderPassTextures.get(quad->renderPassId());
+    CachedTexture* contentsTexture = m_renderPassTextures.get(quad->renderPassId());
     if (!contentsTexture || !contentsTexture->id())
         return;
 
@@ -1409,8 +1429,10 @@ bool LayerRendererChromium::useRenderPass(const CCRenderPass* renderPass)
         return true;
     }
 
-    CCScopedTexture* texture = m_renderPassTextures.get(renderPass->id());
+    CachedTexture* texture = m_renderPassTextures.get(renderPass->id());
     ASSERT(texture);
+
+    texture->setIsComplete(!renderPass->hasOcclusionFromOutsideTargetSurface());
 
     if (!texture->id() && !texture->allocate(CCRenderer::ImplPool, renderPassTextureSize(renderPass), renderPassTextureFormat(renderPass), CCResourceProvider::TextureUsageFramebuffer))
         return false;

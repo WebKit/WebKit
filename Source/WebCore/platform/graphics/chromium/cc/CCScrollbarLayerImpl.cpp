@@ -31,7 +31,7 @@
 
 #include "ScrollbarTheme.h"
 #include "ScrollbarThemeComposite.h"
-#include "cc/CCQuadCuller.h"
+#include "cc/CCQuadSink.h"
 #include "cc/CCTextureDrawQuad.h"
 
 namespace WebCore {
@@ -62,7 +62,7 @@ FloatRect toUVRect(const IntRect& r, const IntRect& bounds)
 
 }
 
-void CCScrollbarLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     ScrollbarThemeComposite* theme = static_cast<ScrollbarThemeComposite*>(ScrollbarTheme::theme());
     if (!theme)

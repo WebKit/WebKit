@@ -60,7 +60,7 @@ public:
     CCLayerImpl* scrollLayer() const { return m_scrollLayer; }
     void setScrollLayer(CCLayerImpl* scrollLayer) { m_scrollLayer = scrollLayer; }
 
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
+    virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
 protected:
     explicit CCScrollbarLayerImpl(int id);

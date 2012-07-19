@@ -27,21 +27,19 @@
 
 #include "IntRect.h"
 #include "cc/CCDrawQuad.h"
-#include "cc/CCQuadCuller.h"
+#include "cc/CCQuadSink.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class MockCCQuadCuller : public WebCore::CCQuadCuller {
+class MockCCQuadCuller : public WebCore::CCQuadSink {
 public:
     MockCCQuadCuller()
-        : CCQuadCuller(m_quadListStorage, 0, 0, false)
-        , m_activeQuadList(m_quadListStorage)
+        : m_activeQuadList(m_quadListStorage)
     { }
 
     explicit MockCCQuadCuller(CCQuadList& externalQuadList)
-        : CCQuadCuller(externalQuadList, 0, 0, false)
-        , m_activeQuadList(externalQuadList)
+        : m_activeQuadList(externalQuadList)
     { }
 
     virtual bool append(WTF::PassOwnPtr<WebCore::CCDrawQuad> newQuad)

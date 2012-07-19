@@ -182,6 +182,8 @@ private:
     OwnPtr<GeometryBinding> m_sharedGeometry;
     FloatQuad m_sharedGeometryQuad;
 
+    class CachedTexture;
+
     // This block of bindings defines all of the programs used by the compositor itself.
 
     // Tiled layer shaders.
@@ -266,7 +268,7 @@ private:
     OwnPtr<AcceleratedTextureCopier> m_textureCopier;
     OwnPtr<TextureUploader> m_textureUploader;
 
-    HashMap<int, OwnPtr<CCScopedTexture> > m_renderPassTextures;
+    HashMap<int, OwnPtr<CachedTexture> > m_renderPassTextures;
 
     WebKit::WebGraphicsContext3D* m_context;
 

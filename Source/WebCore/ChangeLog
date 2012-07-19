@@ -1,3 +1,102 @@
+2012-07-19  Zeev Lieber  <zlieber@chromium.org>
+
+        [Chromium] Textures drawn during occlusion are incorrectly re-used when unoccluded.
+        https://bugs.webkit.org/show_bug.cgi?id=91537
+
+        Reviewed by Adrienne Walker.
+
+        Detecting if any external occlusion occurs when drawing a
+        texture. If external occlusion happens, the texture is marked as
+        "incomplete" in LayerRendererChromium, and is not being considered
+        for re-use.
+
+        Minor refactoring of CCQuadCuller - extracted interface
+        (CCQuadSink) and united append() and appendSurface() methods.
+
+        Added unit tests to verify this fix; also added test to try
+        clipping instead of occlusion.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (LayerRendererChromium::CachedTexture):
+        (WebCore::LayerRendererChromium::CachedTexture::create):
+        (WebCore::LayerRendererChromium::CachedTexture::~CachedTexture):
+        (WebCore::LayerRendererChromium::CachedTexture::isComplete):
+        (WebCore::LayerRendererChromium::CachedTexture::setIsComplete):
+        (WebCore::LayerRendererChromium::CachedTexture::CachedTexture):
+        (WebCore):
+        (WebCore::LayerRendererChromium::decideRenderPassAllocationsForFrame):
+        (WebCore::LayerRendererChromium::haveCachedResourcesForRenderPassId):
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCIOSurfaceLayerImpl.cpp:
+        (WebCore::CCIOSurfaceLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCIOSurfaceLayerImpl.h:
+        (CCIOSurfaceLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::appendDebugBorderQuad):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore):
+        (WebCore::CCLayerImpl::appendQuads):
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::unoccludedContentRect):
+        (WebCore::::unoccludedContributingSurfaceContentRect):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.h:
+        (CCOcclusionTrackerBase):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::CCQuadCuller::CCQuadCuller):
+        (WebCore::CCQuadCuller::append):
+        * platform/graphics/chromium/cc/CCQuadCuller.h:
+        (WebCore):
+        (CCQuadCuller):
+        (WebCore::CCQuadCuller::~CCQuadCuller):
+        (WebCore::CCQuadCuller::hasExternalOcclusion):
+        * platform/graphics/chromium/cc/CCQuadSink.h:
+        (WebKit):
+        (WebCore):
+        (CCQuadSink):
+        (WebCore::CCQuadSink::~CCQuadSink):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::CCRenderPass):
+        (WebCore::CCRenderPass::appendQuadsForLayer):
+        (WebCore::CCRenderPass::appendQuadsForRenderSurfaceLayer):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        (WebCore::CCRenderPassDrawQuad::hasExternalOcclusion):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::CCRenderSurface):
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore):
+        (WebCore::CCRenderSurface::setHasExternalOcclusion):
+        (WebCore::CCRenderSurface::hasExternalOcclusion):
+        (CCRenderSurface):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (CCScrollbarLayerImpl):
+        * platform/graphics/chromium/cc/CCSolidColorLayerImpl.cpp:
+        (WebCore::CCSolidColorLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCSolidColorLayerImpl.h:
+        (CCSolidColorLayerImpl):
+        * platform/graphics/chromium/cc/CCTextureLayerImpl.cpp:
+        (WebCore::CCTextureLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCTextureLayerImpl.h:
+        (CCTextureLayerImpl):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (CCTiledLayerImpl):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (CCVideoLayerImpl):
+
 2012-07-19  Simon Fraser  <simon.fraser@apple.com>
 
         Keep overlap testing on for descendants of an animating element
@@ -35,6 +134,19 @@
         (WebCore::RenderLayerCompositor::requiresOwnBackingStore): Take IndirectCompositingForStacking into
         account.
         (WebCore::RenderLayerCompositor::reasonForCompositing): Improve the logging output.
+
+2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Enable CSS shaders in Qt (software mode)
+        https://bugs.webkit.org/show_bug.cgi?id=85140
+
+        Reviewed by Simon Hausmann.
+
+        Added missing files to the Qt build.
+
+        No new tests, WebGL is still disabled by default in the bots.
+
+        * Target.pri:
 
 2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
 

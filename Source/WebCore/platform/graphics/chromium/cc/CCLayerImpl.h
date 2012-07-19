@@ -47,8 +47,8 @@ namespace WebCore {
 
 class CCLayerSorter;
 class CCLayerTreeHostImpl;
-class CCQuadCuller;
 class CCRenderer;
+class CCQuadSink;
 class LayerChromium;
 
 class CCLayerImpl : public CCLayerAnimationControllerClient {
@@ -93,9 +93,9 @@ public:
     // the layer is destroyed. To enforce this, any class that overrides
     // willDraw/didDraw must call the base class version.
     virtual void willDraw(CCResourceProvider*);
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) { }
+    virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) { }
     virtual void didDraw(CCResourceProvider*);
-    void appendDebugBorderQuad(CCQuadCuller&, const CCSharedQuadState*) const;
+    void appendDebugBorderQuad(CCQuadSink&, const CCSharedQuadState*) const;
 
     virtual CCResourceProvider::ResourceId contentsResourceId() const;
 

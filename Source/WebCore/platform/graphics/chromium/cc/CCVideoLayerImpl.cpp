@@ -36,7 +36,7 @@
 #include "cc/CCIOSurfaceDrawQuad.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
-#include "cc/CCQuadCuller.h"
+#include "cc/CCQuadSink.h"
 #include "cc/CCResourceProvider.h"
 #include "cc/CCStreamVideoDrawQuad.h"
 #include "cc/CCTextureDrawQuad.h"
@@ -177,7 +177,7 @@ void CCVideoLayerImpl::willDrawInternal(CCResourceProvider* resourceProvider)
         m_externalTextureResource = resourceProvider->createResourceFromExternalTexture(m_frame->textureId());
 }
 
-void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCVideoLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     ASSERT(CCProxy::isImplThread());
 

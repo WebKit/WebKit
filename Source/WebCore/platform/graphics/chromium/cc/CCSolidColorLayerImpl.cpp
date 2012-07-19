@@ -29,7 +29,7 @@
 
 #include "cc/CCSolidColorLayerImpl.h"
 
-#include "cc/CCQuadCuller.h"
+#include "cc/CCQuadSink.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
@@ -49,7 +49,7 @@ CCSolidColorLayerImpl::~CCSolidColorLayerImpl()
 {
 }
 
-void CCSolidColorLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
+void CCSolidColorLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     // We create a series of smaller quads instead of just one large one so that the
     // culler can reduce the total pixels drawn.
