@@ -1,3 +1,16 @@
+2012-07-19  Dirk Pranke  <dpranke@chromium.org>
+
+        config_standalone.py is crashing on apple win's cygwin port
+        https://bugs.webkit.org/show_bug.cgi?id=91682
+
+        Reviewed by Adam Roben.
+
+        Work around a weird interaction of ctypes and cygwin that
+        is causing unit tests to crash for me locally.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive._win32_check_running_pid):
+
 2012-07-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] WebKit test runner ignores all system environment variables
