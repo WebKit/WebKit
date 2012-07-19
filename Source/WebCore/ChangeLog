@@ -1,3 +1,19 @@
+2012-07-18  Elliott Sprehn  <esprehn@gmail.com>
+
+        REGRESSION (r89900): Assertion failure on null view() when destroying the document
+        https://bugs.webkit.org/show_bug.cgi?id=91547
+
+        Reviewed by Abhishek Arya.
+
+        Check for document destruction during insertion to avoid crash on null RenderView when trying
+        to count the number of RenderQuote and RenderCounter objects.
+
+        Test: fast/css-generated-content/bug91547.html
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+
 2012-07-18  Nat Duca  <nduca@chromium.org>
 
         [chromium] Add histogram for tracking compositor-thread frame rate

@@ -214,8 +214,10 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
             containerFlowThread->addFlowChild(newChild);
     }
 
-    RenderCounter::rendererSubtreeAttached(newChild);
-    RenderQuote::rendererSubtreeAttached(newChild);
+    if (!owner->documentBeingDestroyed()) {
+        RenderCounter::rendererSubtreeAttached(newChild);
+        RenderQuote::rendererSubtreeAttached(newChild);
+    }
     newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
     if (!owner->normalChildNeedsLayout())
         owner->setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
@@ -281,8 +283,10 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
             containerFlowThread->addFlowChild(child, beforeChild);
     }
 
-    RenderCounter::rendererSubtreeAttached(child);
-    RenderQuote::rendererSubtreeAttached(child);
+    if (!owner->documentBeingDestroyed()) {
+        RenderCounter::rendererSubtreeAttached(child);
+        RenderQuote::rendererSubtreeAttached(child);
+    }
     child->setNeedsLayoutAndPrefWidthsRecalc();
     if (!owner->normalChildNeedsLayout())
         owner->setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
