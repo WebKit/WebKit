@@ -1,3 +1,20 @@
+2012-07-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Remove duplicated #ifdef guard in CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=91575
+
+        Reviewed by Dirk Pranke.
+
+        CMake files have used ENABLE_XXX macro. However, almost source and idl files are already protected by #ifdef.
+        So, we don't need to guard them in CMake files again.
+
+        In SVG idl files case, blackberry port doesn't support it yet. So, SVG idl files are handled by WebCore_SVG_IDL_FILES macro.
+
+        No new tests. This patch isn't for functionality.
+
+        * CMakeLists.txt:
+        * PlatformBlackBerry.cmake: Change SVG_IDL_FILES with WebCore_SVG_IDL_FILES.
+
 2012-07-18  Hironori Bono  <hbono@chromium.org>
 
         Move contents right when a vertical scrollbar is shown at the left side of an RTL element.
