@@ -287,6 +287,14 @@ class PortTest(unittest.TestCase):
             '/tmp/additional-expectations-1.txt', '/tmp/additional-expectations-2.txt']
         self.assertEquals('\n'.join(port.expectations_dict().values()), '\ncontent1\n\ncontent2\n')
 
+    def test_additional_env_var(self):
+        port = self.make_port(options=optparse.Values({'additional_env_var': ['FOO=BAR', 'BAR=FOO']}))
+        self.assertEqual(port.get_option('additional_env_var'), ['FOO=BAR', 'BAR=FOO'])
+        environment = port.setup_environ_for_server()
+        self.assertTrue(('FOO' in environment) & ('BAR' in environment))
+        self.assertEqual(environment['FOO'], 'BAR')
+        self.assertEqual(environment['BAR'], 'FOO')
+
     def test_uses_test_expectations_file(self):
         port = self.make_port(port_name='foo')
         port.port_name = 'foo'

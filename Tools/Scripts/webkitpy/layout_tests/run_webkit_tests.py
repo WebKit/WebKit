@@ -425,6 +425,8 @@ def parse_args(args=None):
         # https://bugs.webkit.org/show_bug.cgi?id=91539.
         optparse.make_option("--shard-ref-tests", action="store_true",
             help="Run ref tests in dedicated shard(s). Enabled on Android by default."),
+        optparse.make_option("--additional-env-var", type="string", action="append", default=[],
+            help="Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)"),
     ]))
 
     option_group_definitions.append(("Miscellaneous Options", [

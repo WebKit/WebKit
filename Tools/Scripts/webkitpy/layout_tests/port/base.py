@@ -821,6 +821,11 @@ class Port(object):
 
         # For Linux:
         clean_env['DISPLAY'] = self._value_or_default_from_environ('DISPLAY', ':1')
+
+        for string_variable in self.get_option('additional_env_var', []):
+            [name, value] = string_variable.split('=', 1)
+            clean_env[name] = value
+
         return clean_env
 
     def show_results_html_file(self, results_filename):
