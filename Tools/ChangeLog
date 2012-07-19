@@ -1,3 +1,15 @@
+2012-07-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Bump libsoup dependency to v2.39.4.1 to fix cookie issues
+        https://bugs.webkit.org/show_bug.cgi?id=91741
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Bump libsoup dependency in jhbuild to v2.39.4.1 to fix issues
+        with cookies in non-suffixed/private domains [GNOME #679230].
+
+        * efl/jhbuild.modules:
+
 2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove support for Qt versions before 4.8.0

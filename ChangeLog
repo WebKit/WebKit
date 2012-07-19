@@ -1,3 +1,15 @@
+2012-07-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Bump libsoup dependency to v2.39.4.1 to fix cookie issues
+        https://bugs.webkit.org/show_bug.cgi?id=91741
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Bump libsoup dependency in CMake to v2.39.4.1 to fix issues
+        with cookies in non-suffixed/private domains [GNOME #679230].
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-07-19  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Enable MHTML support by default at build time
