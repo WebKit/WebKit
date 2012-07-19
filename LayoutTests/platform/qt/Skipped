@@ -2203,10 +2203,6 @@ fast/text/international/bdi-dir-default-to-auto.html
 # Regressions occured after Qt version update
 # ============================================================================= #
 
-# [Qt] editing/execCommand/move-selection-back-line.html fails with Qt >= 4.7.1
-# https://bugs.webkit.org/show_bug.cgi?id=50144
-editing/execCommand/move-selection-back-line.html
-
 # [Qt] fast/forms/textarea-appearance-wrap.html fails with Qt >= 4.7.1
 # https://bugs.webkit.org/show_bug.cgi?id=50145
 fast/forms/textarea-appearance-wrap.html
@@ -2331,10 +2327,6 @@ fast/css/apple-prefix.html
 # https://bugs.webkit.org/show_bug.cgi?id=65721
 fast/replaced/table-percent-height.html
 fast/forms/basic-buttons.html
-
-# [Qt] move-selection-back-line-strict.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=65801
-editing/execCommand/move-selection-back-line-strict.html
 
 # [Qt] fast/dom/HTMLDocument/hasFocus.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=66076
