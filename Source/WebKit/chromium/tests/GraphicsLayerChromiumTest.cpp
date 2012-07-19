@@ -28,6 +28,7 @@
 
 #include "CCAnimationTestCommon.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
+#include "FakeCCLayerTreeHostClient.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "GraphicsLayer.h"
@@ -61,31 +62,12 @@ class MockGraphicsLayerClient : public GraphicsLayerClient {
     virtual float deviceScaleFactor() const OVERRIDE { return 2; }
 };
 
-class MockLayerTreeHostClient : public CCLayerTreeHostClient {
-public:
-    virtual void willBeginFrame() OVERRIDE { }
-    virtual void didBeginFrame() OVERRIDE { }
-    virtual void updateAnimations(double frameBeginTime) OVERRIDE { }
-    virtual void layout() OVERRIDE { }
-    virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) OVERRIDE { }
-    virtual PassOwnPtr<WebGraphicsContext3D> createContext3D() OVERRIDE
-    {
-        return CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes());
-    }
-    virtual void didRecreateContext(bool success) OVERRIDE { }
-    virtual void willCommit() OVERRIDE { }
-    virtual void didCommit() OVERRIDE { }
-    virtual void didCommitAndDrawFrame() OVERRIDE { }
-    virtual void didCompleteSwapBuffers() OVERRIDE { }
-    virtual void scheduleComposite() OVERRIDE { }
-};
-
 class MockLayerTreeHost : public CCLayerTreeHost {
 public:
     static PassOwnPtr<MockLayerTreeHost> create()
     {
         CCLayerTreeSettings settings;
-        OwnPtr<MockLayerTreeHost> layerTreeHost(adoptPtr(new MockLayerTreeHost(new MockLayerTreeHostClient(), settings)));
+        OwnPtr<MockLayerTreeHost> layerTreeHost(adoptPtr(new MockLayerTreeHost(new FakeCCLayerTreeHostClient(), settings)));
         bool success = layerTreeHost->initialize();
         EXPECT_TRUE(success);
         layerTreeHost->setRootLayer(LayerChromium::create());

@@ -1,3 +1,15 @@
+2012-07-19  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Remove duplicate mock CCLayerTreeHostClient
+        https://bugs.webkit.org/show_bug.cgi?id=89457
+
+        Reviewed by Adrienne Walker.
+
+        This test can reuse the existing CCFakeLayerTreeHostClient.
+
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKitTests::MockLayerTreeHost::create):
+
 2012-07-19  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.
