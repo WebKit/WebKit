@@ -45,7 +45,6 @@
 #include "SkColor.h"
 #include "ThrottledTextureUploader.h"
 #include "TraceEvent.h"
-#include "TrackingTextureAllocator.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCLayerQuad.h"
 #include "cc/CCMathUtil.h"
@@ -126,7 +125,7 @@ public:
     virtual bool isBusy() OVERRIDE { return false; }
     virtual void beginUploads() OVERRIDE { }
     virtual void endUploads() OVERRIDE { }
-    virtual void uploadTexture(CCGraphicsContext* context, LayerTextureUpdater::Texture* texture, TextureAllocator* allocator, const IntRect sourceRect, const IntRect destRect) OVERRIDE { texture->updateRect(context, allocator, sourceRect, destRect); }
+    virtual void uploadTexture(LayerTextureUpdater::Texture* texture, CCResourceProvider* resourceProvider, const IntRect sourceRect, const IntRect destRect) OVERRIDE { texture->updateRect(resourceProvider, sourceRect, destRect); }
 
 protected:
     UnthrottledTextureUploader() { }
@@ -134,9 +133,9 @@ protected:
 
 } // anonymous namespace
 
-PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCRendererClient* client, WebGraphicsContext3D* context, TextureUploaderOption textureUploaderSetting)
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCRendererClient* client, CCResourceProvider* resourceProvider, TextureUploaderOption textureUploaderSetting)
 {
-    OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, context, textureUploaderSetting)));
+    OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, resourceProvider, textureUploaderSetting)));
     if (!layerRenderer->initialize())
         return nullptr;
 
@@ -144,14 +143,15 @@ PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCRendererClient
 }
 
 LayerRendererChromium::LayerRendererChromium(CCRendererClient* client,
-                                             WebGraphicsContext3D* context,
+                                             CCResourceProvider* resourceProvider,
                                              TextureUploaderOption textureUploaderSetting)
     : CCRenderer(client)
     , m_currentRenderPass(0)
     , m_currentTexture(0)
     , m_offscreenFramebufferId(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
-    , m_context(context)
+    , m_resourceProvider(resourceProvider)
+    , m_context(resourceProvider->graphicsContext3D())
     , m_defaultRenderPass(0)
     , m_isViewportChanged(false)
     , m_isFramebufferDiscarded(false)
@@ -342,7 +342,7 @@ void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPa
 
     for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i) {
         if (!m_renderPassTextures.contains(renderPassesInDrawOrder[i]->id())) {
-            OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(m_implTextureAllocator.get());
+            OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(m_resourceProvider);
             m_renderPassTextures.set(renderPassesInDrawOrder[i]->id(), texture.release());
         }
     }
@@ -529,7 +529,9 @@ static inline SkBitmap applyFilters(LayerRendererChromium* layerRenderer, const 
 
     layerRenderer->context()->flush();
 
-    return CCRenderSurfaceFilters::apply(filters, sourceTexture->id(), sourceTexture->size(), filterContext.get());
+    CCScopedLockResourceForWrite lock(layerRenderer->resourceProvider(), sourceTexture->id());
+    SkBitmap source = CCRenderSurfaceFilters::apply(filters, lock.textureId(), sourceTexture->size(), filterContext.get());
+    return source;
 }
 
 PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* quad, const WebTransformationMatrix& contentsDeviceTransform)
@@ -569,7 +571,7 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
 
     deviceRect.intersect(m_currentRenderPass->framebufferOutputRect());
 
-    OwnPtr<CCScopedTexture> deviceBackgroundTexture = CCScopedTexture::create(m_implTextureAllocator.get());
+    OwnPtr<CCScopedTexture> deviceBackgroundTexture = CCScopedTexture::create(m_resourceProvider);
     if (!getFramebufferTexture(deviceBackgroundTexture.get(), deviceRect))
         return nullptr;
 
@@ -580,8 +582,8 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
     GrTexture* texture = reinterpret_cast<GrTexture*>(filteredDeviceBackground.getTexture());
     int filteredDeviceBackgroundTextureId = texture->getTextureHandle();
 
-    OwnPtr<CCScopedTexture> backgroundTexture = CCScopedTexture::create(m_implTextureAllocator.get());
-    if (!backgroundTexture->allocate(quad->quadRect().size(), GraphicsContext3D::RGBA))
+    OwnPtr<CCScopedTexture> backgroundTexture = CCScopedTexture::create(m_resourceProvider);
+    if (!backgroundTexture->allocate(CCRenderer::ImplPool, quad->quadRect().size(), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageFramebuffer))
         return nullptr;
 
     const CCRenderPass* targetRenderPass = m_currentRenderPass;
@@ -626,16 +628,21 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     // FIXME: Cache this value so that we don't have to do it for both the surface and its replica.
     // Apply filters to the contents texture.
     SkBitmap filterBitmap = applyFilters(this, quad->filters(), contentsTexture);
-    int contentsTextureId = contentsTexture->id();
+    OwnPtr<CCScopedLockResourceForRead> contentsResourceLock;
+    unsigned contentsTextureId = 0;
     if (filterBitmap.getTexture()) {
         GrTexture* texture = reinterpret_cast<GrTexture*>(filterBitmap.getTexture());
         contentsTextureId = texture->getTextureHandle();
+    } else {
+        contentsResourceLock = adoptPtr(new CCScopedLockResourceForRead(m_resourceProvider, contentsTexture->id()));
+        contentsTextureId = contentsResourceLock->textureId();
     }
 
     // Draw the background texture if there is one.
     if (backgroundTexture) {
         ASSERT(backgroundTexture->size() == quad->quadRect().size());
-        copyTextureToFramebuffer(backgroundTexture->id(), quad->quadRect().size(), quad->drawTransform());
+        CCScopedLockResourceForRead lock(m_resourceProvider, backgroundTexture->id());
+        copyTextureToFramebuffer(lock.textureId(), quad->quadRect().size(), quad->drawTransform());
     }
 
     bool clipped = false;
@@ -651,7 +658,12 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
         deviceLayerEdges.inflateAntiAliasingDistance();
     }
 
-    bool useMask = quad->maskTextureId();
+    OwnPtr<CCScopedLockResourceForRead> maskResourceLock;
+    unsigned maskTextureId = 0;
+    if (quad->maskResourceId()) {
+        maskResourceLock = adoptPtr(new CCScopedLockResourceForRead(m_resourceProvider, quad->maskResourceId()));
+        maskTextureId = maskResourceLock->textureId();
+    }
 
     // FIXME: use the backgroundTexture and blend the background in with this draw instead of having a separate copy of the background texture.
 
@@ -663,7 +675,7 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     int shaderMaskSamplerLocation = -1;
     int shaderMatrixLocation = -1;
     int shaderAlphaLocation = -1;
-    if (useAA && useMask) {
+    if (useAA && maskTextureId) {
         const RenderPassMaskProgramAA* program = renderPassMaskProgramAA();
         GLC(context(), context()->useProgram(program->program()));
         GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
@@ -673,7 +685,7 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
         shaderMaskSamplerLocation = program->fragmentShader().maskSamplerLocation();
         shaderMatrixLocation = program->vertexShader().matrixLocation();
         shaderAlphaLocation = program->fragmentShader().alphaLocation();
-    } else if (!useAA && useMask) {
+    } else if (!useAA && maskTextureId) {
         const RenderPassMaskProgram* program = renderPassMaskProgram();
         GLC(context(), context()->useProgram(program->program()));
         GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
@@ -681,7 +693,7 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
         shaderMaskSamplerLocation = program->fragmentShader().maskSamplerLocation();
         shaderMatrixLocation = program->vertexShader().matrixLocation();
         shaderAlphaLocation = program->fragmentShader().alphaLocation();
-    } else if (useAA && !useMask) {
+    } else if (useAA && !maskTextureId) {
         const RenderPassProgramAA* program = renderPassProgramAA();
         GLC(context(), context()->useProgram(program->program()));
         GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
@@ -702,7 +714,7 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     if (shaderMaskSamplerLocation != -1) {
         GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE1));
         GLC(context(), context()->uniform1i(shaderMaskSamplerLocation, 1));
-        context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->maskTextureId());
+        context()->bindTexture(GraphicsContext3D::TEXTURE_2D, maskTextureId);
         GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
     }
 
@@ -837,7 +849,8 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
     GLC(context(), context()->useProgram(uniforms.program));
     GLC(context(), context()->uniform1i(uniforms.samplerLocation, 0));
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->textureId()));
+    CCScopedLockResourceForRead quadResourceLock(m_resourceProvider, quad->resourceId());
+    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quadResourceLock.textureId()));
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, quad->textureFilter()));
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, quad->textureFilter()));
 
@@ -931,12 +944,15 @@ void LayerRendererChromium::drawYUVVideoQuad(const CCYUVVideoDrawQuad* quad)
     const CCVideoLayerImpl::FramePlane& uPlane = quad->uPlane();
     const CCVideoLayerImpl::FramePlane& vPlane = quad->vPlane();
 
+    CCScopedLockResourceForRead yPlaneLock(m_resourceProvider, yPlane.resourceId);
+    CCScopedLockResourceForRead uPlaneLock(m_resourceProvider, uPlane.resourceId);
+    CCScopedLockResourceForRead vPlaneLock(m_resourceProvider, vPlane.resourceId);
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE1));
-    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, yPlane.textureId));
+    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, yPlaneLock.textureId()));
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE2));
-    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, uPlane.textureId));
+    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, uPlaneLock.textureId()));
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE3));
-    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, vPlane.textureId));
+    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, vPlaneLock.textureId()));
 
     GLC(context(), context()->useProgram(program->program()));
 
@@ -1047,7 +1063,8 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
     GLC(context(), context()->uniform4f(binding.texTransformLocation, uvRect.x(), uvRect.y(), uvRect.width(), uvRect.height()));
 
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->textureId()));
+    CCScopedLockResourceForRead quadResourceLock(m_resourceProvider, quad->resourceId());
+    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quadResourceLock.textureId()));
 
     // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
     // where it will only happen once per texture.
@@ -1094,13 +1111,6 @@ void LayerRendererChromium::drawIOSurfaceQuad(const CCIOSurfaceDrawQuad* quad)
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, quad->ioSurfaceTextureId()));
 
-    // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
-    // where it will only happen once per texture.
-    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
-    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
-    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
-
     WebTransformationMatrix quadTransform = quad->quadTransform();
     IntRect quadRect = quad->quadRect();
     quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
@@ -1122,7 +1132,8 @@ void LayerRendererChromium::drawHeadsUpDisplay(const CCScopedTexture* hudTexture
     const HeadsUpDisplayProgram* program = headsUpDisplayProgram();
     ASSERT(program && program->initialized());
     GLC(m_context, m_context->activeTexture(GraphicsContext3D::TEXTURE0));
-    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, hudTexture->id()));
+    CCScopedLockResourceForRead lock(m_resourceProvider, hudTexture->id());
+    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, lock.textureId()));
     GLC(m_context, m_context->useProgram(program->program()));
     GLC(m_context, m_context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
@@ -1136,6 +1147,7 @@ void LayerRendererChromium::drawHeadsUpDisplay(const CCScopedTexture* hudTexture
 
 void LayerRendererChromium::finishDrawingFrame()
 {
+    m_currentFramebufferLock.clear();
     GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 }
@@ -1370,10 +1382,11 @@ bool LayerRendererChromium::getFramebufferTexture(CCScopedTexture* texture, cons
 {
     ASSERT(!texture->id() || (texture->size() == deviceRect.size() && texture->format() == GraphicsContext3D::RGB));
 
-    if (!texture->id() && !texture->allocate(deviceRect.size(), GraphicsContext3D::RGB))
+    if (!texture->id() && !texture->allocate(CCRenderer::ImplPool, deviceRect.size(), GraphicsContext3D::RGB, CCResourceProvider::TextureUsageAny))
         return false;
 
-    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, texture->id()));
+    CCScopedLockResourceForWrite lock(m_resourceProvider, texture->id());
+    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, lock.textureId()));
     GLC(m_context, m_context->copyTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, texture->format(),
                                              deviceRect.x(), deviceRect.y(), deviceRect.width(), deviceRect.height(), 0));
     return true;
@@ -1390,6 +1403,7 @@ bool LayerRendererChromium::useRenderPass(const CCRenderPass* renderPass)
     m_currentTexture = 0;
 
     if (renderPass == m_defaultRenderPass) {
+        m_currentFramebufferLock.clear();
         GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
         setDrawFramebufferRect(renderPass->framebufferOutputRect(), true);
         return true;
@@ -1398,7 +1412,7 @@ bool LayerRendererChromium::useRenderPass(const CCRenderPass* renderPass)
     CCScopedTexture* texture = m_renderPassTextures.get(renderPass->id());
     ASSERT(texture);
 
-    if (!texture->id() && !texture->allocate(renderPassTextureSize(renderPass), renderPassTextureFormat(renderPass)))
+    if (!texture->id() && !texture->allocate(CCRenderer::ImplPool, renderPassTextureSize(renderPass), renderPassTextureFormat(renderPass), CCResourceProvider::TextureUsageFramebuffer))
         return false;
 
     return bindFramebufferToTexture(texture, renderPass->framebufferOutputRect());
@@ -1407,7 +1421,6 @@ bool LayerRendererChromium::useRenderPass(const CCRenderPass* renderPass)
 bool LayerRendererChromium::useScopedTexture(const CCScopedTexture* texture, const IntRect& viewportRect)
 {
     ASSERT(texture->id());
-
     m_currentRenderPass = 0;
     m_currentTexture = texture;
 
@@ -1419,7 +1432,8 @@ bool LayerRendererChromium::bindFramebufferToTexture(const CCScopedTexture* text
     ASSERT(texture->id());
 
     GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
-    GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, texture->id(), 0));
+    m_currentFramebufferLock = adoptPtr(new CCScopedLockResourceForWrite(m_resourceProvider, texture->id()));
+    GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_currentFramebufferLock->textureId(), 0));
 
 #if !defined ( NDEBUG )
     if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
@@ -1496,14 +1510,6 @@ bool LayerRendererChromium::initializeSharedObjects()
         m_textureUploader = ThrottledTextureUploader::create(m_context);
     else
         m_textureUploader = UnthrottledTextureUploader::create();
-    m_contentsTextureAllocator = TrackingTextureAllocator::create(m_context, m_capabilities.maxTextureSize);
-    m_implTextureAllocator = TrackingTextureAllocator::create(m_context, m_capabilities.maxTextureSize);
-    if (m_capabilities.usingTextureUsageHint)
-        m_implTextureAllocator->setTextureUsageHint(TrackingTextureAllocator::FramebufferAttachment);
-    if (m_capabilities.usingTextureStorageExtension) {
-        m_contentsTextureAllocator->setUseTextureStorageExt(true);
-        m_implTextureAllocator->setUseTextureStorageExt(true);
-    }
 
     return true;
 }

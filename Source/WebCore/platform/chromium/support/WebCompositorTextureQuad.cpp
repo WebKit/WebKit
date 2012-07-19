@@ -31,14 +31,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<WebCompositorTextureQuad> WebCompositorTextureQuad::create(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
+PassOwnPtr<WebCompositorTextureQuad> WebCompositorTextureQuad::create(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned resourceId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
 {
-    return adoptPtr(new WebCompositorTextureQuad(sharedQuadState, quadRect, textureId, premultipliedAlpha, uvRect, flipped));
+    return adoptPtr(new WebCompositorTextureQuad(sharedQuadState, quadRect, resourceId, premultipliedAlpha, uvRect, flipped));
 }
 
-WebCompositorTextureQuad::WebCompositorTextureQuad(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
+WebCompositorTextureQuad::WebCompositorTextureQuad(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned resourceId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
     : WebCompositorQuad(sharedQuadState, WebCompositorQuad::TextureContent, quadRect)
-    , m_textureId(textureId)
+    , m_resourceId(resourceId)
     , m_premultipliedAlpha(premultipliedAlpha)
     , m_uvRect(uvRect)
     , m_flipped(flipped)

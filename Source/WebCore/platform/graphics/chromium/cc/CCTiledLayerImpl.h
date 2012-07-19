@@ -44,13 +44,13 @@ public:
 
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
-    virtual unsigned contentsTextureId() const OVERRIDE;
+    virtual CCResourceProvider::ResourceId contentsResourceId() const OVERRIDE;
 
     virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
 
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
     void setTilingData(const CCLayerTilingData& tiler);
-    void pushTileProperties(int, int, unsigned textureId, const IntRect& opaqueRect);
+    void pushTileProperties(int, int, CCResourceProvider::ResourceId, const IntRect& opaqueRect);
 
     void setContentsSwizzled(bool contentsSwizzled) { m_contentsSwizzled = contentsSwizzled; }
     bool contentsSwizzled() const { return m_contentsSwizzled; }

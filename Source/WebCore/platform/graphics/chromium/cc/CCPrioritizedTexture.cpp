@@ -29,7 +29,6 @@
 #include "CCPrioritizedTextureManager.h"
 #include "CCPriorityCalculator.h"
 #include "LayerRendererChromium.h"
-#include "TextureAllocator.h"
 #include <algorithm>
 
 using namespace std;
@@ -90,46 +89,29 @@ bool CCPrioritizedTexture::requestLate()
     return m_manager->requestLate(this);
 }
 
-void CCPrioritizedTexture::acquireBackingTexture(TextureAllocator* allocator)
+void CCPrioritizedTexture::acquireBackingTexture(CCResourceProvider* resourceProvider)
 {
     ASSERT(m_isAbovePriorityCutoff);
     if (m_isAbovePriorityCutoff)
-        m_manager->acquireBackingTextureIfNeeded(this, allocator);
+        m_manager->acquireBackingTextureIfNeeded(this, resourceProvider);
 }
 
-unsigned CCPrioritizedTexture::textureId()
+CCResourceProvider::ResourceId CCPrioritizedTexture::resourceId() const
 {
     if (m_backing)
         return m_backing->id();
     return 0;
 }
 
-void CCPrioritizedTexture::bindTexture(CCGraphicsContext* context, TextureAllocator* allocator)
+void CCPrioritizedTexture::upload(CCResourceProvider* resourceProvider,
+                                  const uint8_t* image, const IntRect& imageRect,
+                                  const IntRect& sourceRect, const IntRect& destRect)
 {
     ASSERT(m_isAbovePriorityCutoff);
     if (m_isAbovePriorityCutoff)
-        acquireBackingTexture(allocator);
+        acquireBackingTexture(resourceProvider);
     ASSERT(m_backing);
-    WebKit::WebGraphicsContext3D* context3d = context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
-    context3d->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId());
-}
-
-void CCPrioritizedTexture::framebufferTexture2D(CCGraphicsContext* context, TextureAllocator* allocator)
-{
-    ASSERT(m_isAbovePriorityCutoff);
-    if (m_isAbovePriorityCutoff)
-        acquireBackingTexture(allocator);
-    ASSERT(m_backing);
-    WebKit::WebGraphicsContext3D* context3d = context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
-    context3d->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, textureId(), 0);
+    resourceProvider->upload(resourceId(), image, imageRect, sourceRect, destRect);
 }
 
 void CCPrioritizedTexture::link(Backing* backing)
@@ -159,4 +141,3 @@ void CCPrioritizedTexture::setToSelfManagedMemoryPlaceholder(size_t bytes)
 }
 
 } // namespace WebCore
-

@@ -151,7 +151,7 @@ void CCLayerTreeHost::initializeLayerRenderer()
     // Update m_settings based on partial update capability.
     m_settings.maxPartialTextureUpdates = min(m_settings.maxPartialTextureUpdates, m_proxy->maxPartialTextureUpdates());
 
-    m_contentsTextureManager = CCPrioritizedTextureManager::create(0, m_proxy->layerRendererCapabilities().maxTextureSize);
+    m_contentsTextureManager = CCPrioritizedTextureManager::create(0, m_proxy->layerRendererCapabilities().maxTextureSize, CCRenderer::ContentPool);
     m_surfaceMemoryPlaceholder = m_contentsTextureManager->createTexture(IntSize(), GraphicsContext3D::RGBA);
 
     m_layerRendererInitialized = true;
@@ -197,11 +197,11 @@ CCLayerTreeHost::RecreateResult CCLayerTreeHost::recreateContext()
     return RecreateFailedAndGaveUp;
 }
 
-void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* allocator)
+void CCLayerTreeHost::deleteContentsTexturesOnImplThread(CCResourceProvider* resourceProvider)
 {
     ASSERT(CCProxy::isImplThread());
     if (m_layerRendererInitialized)
-        m_contentsTextureManager->clearAllMemory(allocator);
+        m_contentsTextureManager->clearAllMemory(resourceProvider);
 }
 
 void CCLayerTreeHost::acquireLayerTextures()
@@ -230,7 +230,7 @@ void CCLayerTreeHost::beginCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     ASSERT(CCProxy::isImplThread());
     TRACE_EVENT0("cc", "CCLayerTreeHost::commitTo");
 
-    m_contentsTextureManager->reduceMemory(hostImpl->contentsTextureAllocator());
+    m_contentsTextureManager->reduceMemory(hostImpl->resourceProvider());
 }
 
 // This function commits the CCLayerTreeHost to an impl tree. When modifying

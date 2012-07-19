@@ -66,55 +66,54 @@ AcceleratedTextureCopier::~AcceleratedTextureCopier()
         GLC(m_context, m_context->deleteFramebuffer(m_fbo));
 }
 
-void AcceleratedTextureCopier::copyTexture(CCGraphicsContext* ccContext, unsigned sourceTextureId, unsigned destTextureId, const IntSize& size)
+void AcceleratedTextureCopier::copyTexture(unsigned sourceTextureId, unsigned destTextureId, const IntSize& size)
 {
     TRACE_EVENT0("cc", "TextureCopier::copyTexture");
 
-    WebKit::WebGraphicsContext3D* context = ccContext->context3D();
-    if (!context) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
-
     // Note: this code does not restore the viewport, bound program, 2D texture, framebuffer, buffer or blend enable.
-    GLC(context, context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo));
-    GLC(context, context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, destTextureId, 0));
+    GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo));
+    GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, destTextureId, 0));
 
 #if OS(ANDROID)
     // Clear destination to improve performance on tiling GPUs.
     // TODO: Use EXT_discard_framebuffer or skip clearing if it isn't available.
-    GLC(context, context->clear(GraphicsContext3D::COLOR_BUFFER_BIT));
+    GLC(m_context, m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT));
 #endif
 
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, sourceTextureId));
-    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::NEAREST));
-    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
+    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, sourceTextureId));
+    GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::NEAREST));
+    GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
 
     if (!m_blitProgram->initialized())
-        m_blitProgram->initialize(context, m_usingBindUniforms);
+        m_blitProgram->initialize(m_context, m_usingBindUniforms);
 
     // TODO: Use EXT_framebuffer_blit if available.
-    GLC(context, context->useProgram(m_blitProgram->program()));
+    GLC(m_context, m_context->useProgram(m_blitProgram->program()));
 
     const int kPositionAttribute = 0;
-    GLC(context, context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_positionBuffer));
-    GLC(context, context->vertexAttribPointer(kPositionAttribute, 4, GraphicsContext3D::FLOAT, false, 0, 0));
-    GLC(context, context->enableVertexAttribArray(kPositionAttribute));
-    GLC(context, context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0));
+    GLC(m_context, m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_positionBuffer));
+    GLC(m_context, m_context->vertexAttribPointer(kPositionAttribute, 4, GraphicsContext3D::FLOAT, false, 0, 0));
+    GLC(m_context, m_context->enableVertexAttribArray(kPositionAttribute));
+    GLC(m_context, m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0));
 
-    GLC(context, context->viewport(0, 0, size.width(), size.height()));
-    GLC(context, context->disable(GraphicsContext3D::BLEND));
-    GLC(context, context->drawArrays(GraphicsContext3D::TRIANGLE_FAN, 0, 4));
+    GLC(m_context, m_context->viewport(0, 0, size.width(), size.height()));
+    GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
+    GLC(m_context, m_context->drawArrays(GraphicsContext3D::TRIANGLE_FAN, 0, 4));
 
-    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
-    GLC(context, context->disableVertexAttribArray(kPositionAttribute));
+    GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+    GLC(m_context, m_context->disableVertexAttribArray(kPositionAttribute));
 
-    GLC(context, context->useProgram(0));
+    GLC(m_context, m_context->useProgram(0));
 
-    GLC(context, context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, 0, 0));
-    GLC(context, context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0));
+    GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, 0, 0));
+    GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
+    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0));
+}
+
+void AcceleratedTextureCopier::flush()
+{
+    GLC(m_context, m_context->flush());
 }
 
 }

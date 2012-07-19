@@ -34,6 +34,7 @@
 #include "cc/CCInputHandler.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCRenderSurface.h"
+#include "cc/CCResourceProvider.h"
 #include "cc/CCSharedQuadState.h"
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
@@ -44,7 +45,6 @@
 
 namespace WebCore {
 
-class CCGraphicsContext;
 class CCLayerSorter;
 class CCLayerTreeHostImpl;
 class CCQuadCuller;
@@ -92,12 +92,12 @@ public:
     // didDraw is guaranteed to be called before another willDraw or before
     // the layer is destroyed. To enforce this, any class that overrides
     // willDraw/didDraw must call the base class version.
-    virtual void willDraw(CCRenderer*, CCGraphicsContext*);
+    virtual void willDraw(CCResourceProvider*);
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) { }
-    virtual void didDraw();
+    virtual void didDraw(CCResourceProvider*);
     void appendDebugBorderQuad(CCQuadCuller&, const CCSharedQuadState*) const;
 
-    virtual unsigned contentsTextureId() const;
+    virtual CCResourceProvider::ResourceId contentsResourceId() const;
 
     // Returns true if this layer has content to draw.
     void setDrawsContent(bool);

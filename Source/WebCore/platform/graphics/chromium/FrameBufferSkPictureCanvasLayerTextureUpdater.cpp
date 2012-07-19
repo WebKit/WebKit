@@ -39,20 +39,16 @@
 namespace WebCore {
 
 static PassOwnPtr<SkCanvas> createAcceleratedCanvas(GraphicsContext3D* context,
-                                                    TextureAllocator* allocator,
-                                                    CCPrioritizedTexture* texture)
+                                                    IntSize canvasSize,
+                                                    unsigned textureId)
 {
-    // Allocate so that we have a valid texture id.
-    texture->acquireBackingTexture(allocator);
-
     GrContext* grContext = context->grContext();
-    IntSize canvasSize = texture->size();
     GrPlatformTextureDesc textureDesc;
     textureDesc.fFlags = kRenderTarget_GrPlatformTextureFlag;
     textureDesc.fWidth = canvasSize.width();
     textureDesc.fHeight = canvasSize.height();
     textureDesc.fConfig = kSkia8888_PM_GrPixelConfig;
-    textureDesc.fTextureHandle = texture->textureId();
+    textureDesc.fTextureHandle = textureId;
     SkAutoTUnref<GrTexture> target(grContext->createPlatformTexture(textureDesc));
     SkAutoTUnref<SkDevice> device(new SkGpuDevice(grContext, target.get()));
     return adoptPtr(new SkCanvas(device.get()));
@@ -68,12 +64,12 @@ FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::~Texture()
 {
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCGraphicsContext*, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect)
+void FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCResourceProvider* resourceProvider, const IntRect& sourceRect, const IntRect& destRect)
 {
     RefPtr<GraphicsContext3D> sharedContext = CCProxy::hasImplThread() ? SharedGraphicsContext3D::getForImplThread() : SharedGraphicsContext3D::get();
     if (!sharedContext)
         return;
-    textureUpdater()->updateTextureRect(sharedContext.release(), allocator, texture(), sourceRect, destRect);
+    textureUpdater()->updateTextureRect(sharedContext.release(), resourceProvider, texture(), sourceRect, destRect);
 }
 
 PassRefPtr<FrameBufferSkPictureCanvasLayerTextureUpdater> FrameBufferSkPictureCanvasLayerTextureUpdater::create(PassOwnPtr<LayerPainterChromium> painter)
@@ -101,15 +97,17 @@ LayerTextureUpdater::SampledTexelFormat FrameBufferSkPictureCanvasLayerTextureUp
     return LayerTextureUpdater::SampledTexelFormatRGBA;
 }
 
-void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(PassRefPtr<GraphicsContext3D> prpContext, TextureAllocator* allocator, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(PassRefPtr<GraphicsContext3D> prpContext, CCResourceProvider* resourceProvider, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     RefPtr<GraphicsContext3D> context(prpContext);
 
     // Make sure ganesh uses the correct GL context.
     context->makeContextCurrent();
 
+    texture->acquireBackingTexture(resourceProvider);
+    CCScopedLockResourceForWrite lock(resourceProvider, texture->resourceId());
     // Create an accelerated canvas to draw on.
-    OwnPtr<SkCanvas> canvas = createAcceleratedCanvas(context.get(), allocator, texture);
+    OwnPtr<SkCanvas> canvas = createAcceleratedCanvas(context.get(), texture->size(), lock.textureId());
 
     // The compositor expects the textures to be upside-down so it can flip
     // the final composited image. Ganesh renders the image upright so we

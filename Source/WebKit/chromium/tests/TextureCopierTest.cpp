@@ -52,34 +52,33 @@ public:
 TEST(TextureCopierTest, testDrawArraysCopy)
 {
     GraphicsContext3D::Attributes attrs;
-    OwnPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(adoptPtr(new MockContext));
-    MockContext& mockContext = *static_cast<MockContext*>(ccContext->context3D());
+    OwnPtr<MockContext> mockContext = adoptPtr(new MockContext);
 
     {
         InSequence sequence;
 
         // Here we check just some essential properties of copyTexture() to avoid mirroring the full implementation.
-        EXPECT_CALL(mockContext, bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, _));
+        EXPECT_CALL(*mockContext, bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, _));
 
         // Make sure linear filtering is disabled during the copy.
-        EXPECT_CALL(mockContext, texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::NEAREST));
-        EXPECT_CALL(mockContext, texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
+        EXPECT_CALL(*mockContext, texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::NEAREST));
+        EXPECT_CALL(*mockContext, texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
 
-        EXPECT_CALL(mockContext, drawArrays(_, _, _));
+        EXPECT_CALL(*mockContext, drawArrays(_, _, _));
 
         // Linear filtering should be restored.
-        EXPECT_CALL(mockContext, texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-        EXPECT_CALL(mockContext, texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+        EXPECT_CALL(*mockContext, texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+        EXPECT_CALL(*mockContext, texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
 
         // Default framebuffer should be restored
-        EXPECT_CALL(mockContext, bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
+        EXPECT_CALL(*mockContext, bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
     }
 
     int sourceTextureId = 1;
     int destTextureId = 2;
     IntSize size(256, 128);
-    OwnPtr<AcceleratedTextureCopier> copier(AcceleratedTextureCopier::create(ccContext->context3D(), false));
-    copier->copyTexture(ccContext.get(), sourceTextureId, destTextureId, size);
+    OwnPtr<AcceleratedTextureCopier> copier(AcceleratedTextureCopier::create(mockContext.get(), false));
+    copier->copyTexture(sourceTextureId, destTextureId, size);
 }
 
 } // namespace

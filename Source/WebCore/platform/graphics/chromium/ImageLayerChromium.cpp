@@ -34,7 +34,6 @@
 
 #include "ImageLayerChromium.h"
 
-#include "LayerTextureSubImage.h"
 #include "LayerTextureUpdater.h"
 #include "PlatformColor.h"
 #include "cc/CCLayerTreeHost.h"
@@ -51,9 +50,9 @@ public:
         {
         }
 
-        virtual void updateRect(CCGraphicsContext* context, TextureAllocator* allocator, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE
+        virtual void updateRect(CCResourceProvider* resourceProvider, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE
         {
-            textureUpdater()->updateTextureRect(context, allocator, texture(), sourceRect, destRect);
+            textureUpdater()->updateTextureRect(resourceProvider, texture(), sourceRect, destRect);
         }
 
     private:
@@ -62,9 +61,9 @@ public:
         ImageLayerTextureUpdater* m_textureUpdater;
     };
 
-    static PassRefPtr<ImageLayerTextureUpdater> create(bool useMapTexSubImage)
+    static PassRefPtr<ImageLayerTextureUpdater> create()
     {
-        return adoptRef(new ImageLayerTextureUpdater(useMapTexSubImage));
+        return adoptRef(new ImageLayerTextureUpdater());
     }
 
     virtual ~ImageLayerTextureUpdater() { }
@@ -80,10 +79,8 @@ public:
                 LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
     }
 
-    void updateTextureRect(CCGraphicsContext* context, TextureAllocator* allocator, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+    void updateTextureRect(CCResourceProvider* resourceProvider, CCPrioritizedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
     {
-        texture->bindTexture(context, allocator);
-
         // Source rect should never go outside the image pixels, even if this
         // is requested because the texture extends outside the image.
         IntRect clippedSourceRect = sourceRect;
@@ -95,7 +92,7 @@ public:
         clippedDestRect.setSize(clippedSourceRect.size());
 
         SkAutoLockPixels lock(m_bitmap);
-        m_texSubImage.upload(static_cast<const uint8_t*>(m_bitmap.getPixels()), imageRect, clippedSourceRect, clippedDestRect, texture->format(), context);
+        texture->upload(resourceProvider, static_cast<const uint8_t*>(m_bitmap.getPixels()), imageRect, clippedSourceRect, clippedDestRect);
     }
 
     void setBitmap(const SkBitmap& bitmap)
@@ -104,13 +101,9 @@ public:
     }
 
 private:
-    explicit ImageLayerTextureUpdater(bool useMapTexSubImage)
-        : m_texSubImage(useMapTexSubImage)
-    {
-    }
+    ImageLayerTextureUpdater() { }
 
     SkBitmap m_bitmap;
-    LayerTextureSubImage m_texSubImage;
 };
 
 PassRefPtr<ImageLayerChromium> ImageLayerChromium::create()
@@ -166,7 +159,7 @@ void ImageLayerChromium::createTextureUpdaterIfNeeded()
     if (m_textureUpdater)
         return;
 
-    m_textureUpdater = ImageLayerTextureUpdater::create(layerTreeHost()->layerRendererCapabilities().usingMapSub);
+    m_textureUpdater = ImageLayerTextureUpdater::create();
     GC3Denum textureFormat = layerTreeHost()->layerRendererCapabilities().bestTextureFormat;
     setTextureFormat(textureFormat);
     setSampledTexelFormat(textureUpdater()->sampledTexelFormat(textureFormat));

@@ -28,13 +28,10 @@
 #define BitmapSkPictureCanvasLayerTextureUpdater_h
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "LayerTextureSubImage.h"
 #include "SkBitmap.h"
 #include "SkPictureCanvasLayerTextureUpdater.h"
 
 namespace WebCore {
-
-class TextureAllocator;
 
 // This class records the contentRect into an SkPicture, then software rasterizes
 // the SkPicture into bitmaps for each tile. This implements CCSettings::perTilePainting.
@@ -45,7 +42,7 @@ public:
         Texture(BitmapSkPictureCanvasLayerTextureUpdater*, PassOwnPtr<CCPrioritizedTexture>);
 
         virtual void prepareRect(const IntRect& sourceRect) OVERRIDE;
-        virtual void updateRect(CCGraphicsContext*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE;
+        virtual void updateRect(CCResourceProvider*, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE;
 
     private:
         BitmapSkPictureCanvasLayerTextureUpdater* textureUpdater() { return m_textureUpdater; }
@@ -54,19 +51,15 @@ public:
         BitmapSkPictureCanvasLayerTextureUpdater* m_textureUpdater;
     };
 
-    static PassRefPtr<BitmapSkPictureCanvasLayerTextureUpdater> create(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
+    static PassRefPtr<BitmapSkPictureCanvasLayerTextureUpdater> create(PassOwnPtr<LayerPainterChromium>);
     virtual ~BitmapSkPictureCanvasLayerTextureUpdater();
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE;
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect) OVERRIDE;
     void paintContentsRect(SkCanvas*, const IntRect& sourceRect);
-    void updateTextureRect(CCGraphicsContext*, GC3Denum format, const IntRect& destRect, const uint8_t* pixels);
 
 private:
-    BitmapSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
-
-    LayerTextureSubImage m_texSubImage;
+    explicit BitmapSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 };
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)

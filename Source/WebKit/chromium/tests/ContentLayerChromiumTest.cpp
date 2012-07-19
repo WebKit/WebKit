@@ -99,7 +99,7 @@ TEST(ContentLayerChromiumTest, ContentLayerPainterWithDeviceScale)
     OpaqueRectDrawingGraphicsContextPainter painter(opaqueRectInLayerSpace, contentRect);
     OpaqueRectTrackingContentLayerDelegate opaqueRectTrackingContentLayerDelegate(&painter);
     MockContentLayerDelegate delegate(&opaqueRectTrackingContentLayerDelegate);
-    RefPtr<BitmapCanvasLayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(&delegate), false);
+    RefPtr<BitmapCanvasLayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(&delegate));
 
     IntRect resultingOpaqueRect;
     updater->prepareToUpdate(contentRect, IntSize(256, 256), contentsScale, contentsScale, resultingOpaqueRect);

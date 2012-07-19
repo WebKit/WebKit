@@ -43,11 +43,11 @@ namespace WebKit {
 class WebCompositorTextureQuad : public WebCompositorQuad {
 public:
 #if WEBKIT_IMPLEMENTATION
-    static PassOwnPtr<WebCompositorTextureQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned textureId, bool premultipliedAlpha, const WebCore::FloatRect& uvRect, bool flipped);
+    static PassOwnPtr<WebCompositorTextureQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned resourceId, bool premultipliedAlpha, const WebCore::FloatRect& uvRect, bool flipped);
     WebCore::FloatRect uvRect() const { return m_uvRect; }
 #endif
 
-    unsigned textureId() const { return m_textureId; }
+    unsigned resourceId() const { return m_resourceId; }
     bool premultipliedAlpha() const { return  m_premultipliedAlpha; }
     bool flipped() const { return m_flipped; }
 
@@ -56,10 +56,10 @@ public:
     static const WebCompositorTextureQuad* materialCast(const WebCompositorQuad*);
 private:
 #if WEBKIT_IMPLEMENTATION
-    WebCompositorTextureQuad(const WebKit::WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned texture_id, bool premultipliedAlpha, const WebCore::FloatRect& uvRect, bool flipped);
+    WebCompositorTextureQuad(const WebKit::WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned resourceId, bool premultipliedAlpha, const WebCore::FloatRect& uvRect, bool flipped);
 #endif
 
-    unsigned m_textureId;
+    unsigned m_resourceId;
     bool m_premultipliedAlpha;
     WebFloatRect m_uvRect;
     bool m_flipped;

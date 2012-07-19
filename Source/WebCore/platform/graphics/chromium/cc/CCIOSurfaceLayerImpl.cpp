@@ -60,12 +60,12 @@ CCIOSurfaceLayerImpl::~CCIOSurfaceLayerImpl()
         context3d->deleteTexture(m_ioSurfaceTextureId);
 }
 
-void CCIOSurfaceLayerImpl::willDraw(CCRenderer* layerRenderer, CCGraphicsContext* context)
+void CCIOSurfaceLayerImpl::willDraw(CCResourceProvider* resourceProvider)
 {
-    CCLayerImpl::willDraw(layerRenderer, context);
+    CCLayerImpl::willDraw(resourceProvider);
 
     if (m_ioSurfaceChanged) {
-        WebKit::WebGraphicsContext3D* context3d = context->context3D();
+        WebKit::WebGraphicsContext3D* context3d = resourceProvider->graphicsContext3D();
         if (!context3d) {
             // FIXME: Implement this path for software compositing.
             return;

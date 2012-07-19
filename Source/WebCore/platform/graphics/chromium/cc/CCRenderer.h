@@ -36,9 +36,7 @@
 namespace WebCore {
 
 class CCScopedTexture;
-class TextureAllocator;
 class TextureCopier;
-class TextureManager;
 class TextureUploader;
 
 enum TextureUploaderOption { ThrottledUploader, UnthrottledUploader };
@@ -57,6 +55,13 @@ public:
 class CCRenderer {
     WTF_MAKE_NONCOPYABLE(CCRenderer);
 public:
+    // This enum defines the various resource pools for the CCResourceProvider
+    // where textures get allocated.
+    enum ResourcePool {
+      ImplPool = 1, // This pool is for textures that get allocated on the impl thread (e.g. RenderSurfaces).
+      ContentPool // This pool is for textures that get allocated on the main thread (e.g. tiles).
+    };
+
     virtual ~CCRenderer() { }
 
     virtual const LayerRendererCapabilities& capabilities() const = 0;
@@ -91,8 +96,6 @@ public:
 
     virtual TextureCopier* textureCopier() const = 0;
     virtual TextureUploader* textureUploader() const = 0;
-    virtual TextureAllocator* implTextureAllocator() const = 0;
-    virtual TextureAllocator* contentsTextureAllocator() const = 0;
 
     virtual bool isContextLost() { return false; }
 

@@ -39,9 +39,9 @@ namespace WebKit {
 class WebCompositorTileQuad : public WebCompositorQuad {
 public:
 #if WEBKIT_IMPLEMENTATION
-    static PassOwnPtr<WebCompositorTileQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect& quadRect, const WebCore::IntRect& opaqueRect, Platform3DObject textureId, const WebCore::IntPoint& textureOffset, const WebCore::IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA);
+    static PassOwnPtr<WebCompositorTileQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect& quadRect, const WebCore::IntRect& opaqueRect, unsigned resourceId, const WebCore::IntPoint& textureOffset, const WebCore::IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA);
 
-    Platform3DObject textureId() const { return m_textureId; }
+    unsigned resourceId() const { return m_resourceId; }
     WebCore::IntPoint textureOffset() const { return m_textureOffset; }
     WebCore::IntSize textureSize() const { return m_textureSize; }
     GC3Dint textureFilter() const { return m_textureFilter; }
@@ -58,10 +58,10 @@ public:
     static const WebCompositorTileQuad* materialCast(const WebCompositorQuad*);
 private:
 #if WEBKIT_IMPLEMENTATION
-     WebCompositorTileQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect& quadRect, const WebCore::IntRect& opaqueRect, Platform3DObject textureId, const WebCore::IntPoint& textureOffset, const WebCore::IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA);
+     WebCompositorTileQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect& quadRect, const WebCore::IntRect& opaqueRect, unsigned resourceId, const WebCore::IntPoint& textureOffset, const WebCore::IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA);
 #endif
 
-    Platform3DObject m_textureId;
+    unsigned m_resourceId;
     WebPoint m_textureOffset;
     WebSize m_textureSize;
     GC3Dint m_textureFilter;

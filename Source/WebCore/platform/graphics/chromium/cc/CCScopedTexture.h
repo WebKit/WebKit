@@ -26,7 +26,6 @@
 #ifndef CCScopedTexture_h
 #define CCScopedTexture_h
 
-#include "TextureAllocator.h"
 #include "cc/CCTexture.h"
 
 #if !ASSERT_DISABLED
@@ -35,11 +34,10 @@
 
 namespace WebCore {
 
-
 class CCScopedTexture : protected CCTexture {
     WTF_MAKE_NONCOPYABLE(CCScopedTexture);
 public:
-    static PassOwnPtr<CCScopedTexture> create(TextureAllocator* allocator) { return adoptPtr(new CCScopedTexture(allocator)); }
+    static PassOwnPtr<CCScopedTexture> create(CCResourceProvider* resourceProvider) { return adoptPtr(new CCScopedTexture(resourceProvider)); }
     virtual ~CCScopedTexture();
 
     using CCTexture::id;
@@ -47,15 +45,15 @@ public:
     using CCTexture::format;
     using CCTexture::bytes;
 
-    bool allocate(const IntSize&, GC3Denum format);
+    bool allocate(int pool, const IntSize&, GC3Denum format, CCResourceProvider::TextureUsageHint);
     void free();
     void leak();
 
 protected:
-    explicit CCScopedTexture(TextureAllocator*);
+    explicit CCScopedTexture(CCResourceProvider*);
 
 private:
-    TextureAllocator* m_allocator;
+    CCResourceProvider* m_resourceProvider;
 
 #if !ASSERT_DISABLED
     ThreadIdentifier m_allocateThreadIdentifier;

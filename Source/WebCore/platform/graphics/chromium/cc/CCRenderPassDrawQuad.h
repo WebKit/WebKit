@@ -26,6 +26,7 @@
 #ifndef CCRenderPassDrawQuad_h
 #define CCRenderPassDrawQuad_h
 
+#include "cc/CCResourceProvider.h"
 #include <public/WebCompositorQuad.h>
 #include <public/WebFilterOperations.h>
 #include <public/WebTransformationMatrix.h>
@@ -38,11 +39,11 @@ class CCRenderPass;
 class CCRenderPassDrawQuad : public WebKit::WebCompositorQuad {
     WTF_MAKE_NONCOPYABLE(CCRenderPassDrawQuad);
 public:
-    static PassOwnPtr<CCRenderPassDrawQuad> create(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
+    static PassOwnPtr<CCRenderPassDrawQuad> create(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
 
     int renderPassId() const { return m_renderPassId; }
     bool isReplica() const { return m_isReplica; }
-    unsigned maskTextureId() const { return m_maskTextureId; }
+    CCResourceProvider::ResourceId maskResourceId() const { return m_maskResourceId; }
     const IntRect& contentsChangedSinceLastFrame() const { return m_contentsChangedSinceLastFrame; }
 
     // FIXME: This should be removed and we should draw the RenderPass with the quadTransform.
@@ -53,14 +54,14 @@ public:
 
     static const CCRenderPassDrawQuad* materialCast(const WebKit::WebCompositorQuad*);
 private:
-    CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame);
+    CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix&, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
 
     int m_renderPassId;
     bool m_isReplica;
     WebKit::WebTransformationMatrix m_drawTransform;
     WebKit::WebFilterOperations m_filters;
     WebKit::WebFilterOperations m_backgroundFilters;
-    unsigned m_maskTextureId;
+    CCResourceProvider::ResourceId m_maskResourceId;
     IntRect m_contentsChangedSinceLastFrame;
 };
 

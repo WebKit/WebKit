@@ -34,30 +34,31 @@
 #include "IntSize.h"
 #include <wtf/OwnArrayPtr.h>
 
-namespace WebCore {
+namespace WebKit {
+class WebGraphicsContext3D;
+}
 
-class CCGraphicsContext;
+namespace WebCore {
 
 class LayerTextureSubImage {
 public:
     explicit LayerTextureSubImage(bool useMapSubForUpload);
     ~LayerTextureSubImage();
 
-    void setSubImageSize(const IntSize&);
     void upload(const uint8_t* image, const IntRect& imageRect,
                 const IntRect& sourceRect, const IntRect& destRect,
-                GC3Denum format, CCGraphicsContext*);
+                GC3Denum format, WebKit::WebGraphicsContext3D*);
 
 private:
     void uploadWithTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                const IntRect& sourceRect, const IntRect& destRect,
-                               GC3Denum format, CCGraphicsContext*);
+                               GC3Denum format, WebKit::WebGraphicsContext3D*);
     void uploadWithMapTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                   const IntRect& sourceRect, const IntRect& destRect,
-                                  GC3Denum format, CCGraphicsContext*);
+                                  GC3Denum format, WebKit::WebGraphicsContext3D*);
 
     bool m_useMapTexSubImage;
-    IntSize m_subImageSize;
+    size_t m_subImageSize;
     OwnArrayPtr<uint8_t> m_subImage;
 };
 

@@ -38,7 +38,9 @@ public:
     }
     virtual ~CCTextureLayerImpl();
 
+    virtual void willDraw(CCResourceProvider*) OVERRIDE;
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
+    virtual void didDraw(CCResourceProvider*) OVERRIDE;
 
     virtual void didLoseContext() OVERRIDE;
 
@@ -56,6 +58,7 @@ private:
     virtual const char* layerTypeAsString() const OVERRIDE { return "TextureLayer"; }
 
     unsigned m_textureId;
+    CCResourceProvider::ResourceId m_externalTextureResource;
     bool m_premultipliedAlpha;
     bool m_flipped;
     FloatRect m_uvRect;

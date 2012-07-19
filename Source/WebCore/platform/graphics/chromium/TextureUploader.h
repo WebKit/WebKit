@@ -36,7 +36,7 @@ public:
     virtual bool isBusy() = 0;
     virtual void beginUploads() = 0;
     virtual void endUploads() = 0;
-    virtual void uploadTexture(CCGraphicsContext*, LayerTextureUpdater::Texture*, TextureAllocator*, const IntRect sourceRect, const IntRect destRect) = 0;
+    virtual void uploadTexture(LayerTextureUpdater::Texture*, CCResourceProvider*, const IntRect sourceRect, const IntRect destRect) = 0;
 };
 
 }

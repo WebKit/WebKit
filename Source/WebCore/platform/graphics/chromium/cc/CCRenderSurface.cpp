@@ -209,14 +209,14 @@ void CCRenderSurface::appendQuads(CCQuadCuller& quadList, CCSharedQuadState* sha
             maskLayer = 0;
     }
 
-    int maskTextureId = maskLayer ? maskLayer->contentsTextureId() : 0;
+    CCResourceProvider::ResourceId maskResourceId = maskLayer ? maskLayer->contentsResourceId() : 0;
     WebTransformationMatrix drawTransform = forReplica ? m_replicaDrawTransform : m_drawTransform;
     IntRect contentsChangedSinceLastFrame = contentsChanged() ? m_contentRect : IntRect();
 
     const WebKit::WebFilterOperations& filters = m_owningLayer->filters();
     const WebKit::WebFilterOperations& backgroundFilters = m_owningLayer->backgroundFilters();
 
-    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, drawTransform, filters, backgroundFilters, maskTextureId, contentsChangedSinceLastFrame));
+    quadList.appendSurface(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, drawTransform, filters, backgroundFilters, maskResourceId, contentsChangedSinceLastFrame));
 }
 
 }

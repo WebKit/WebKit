@@ -45,9 +45,9 @@ CCScrollbarLayerImpl::CCScrollbarLayerImpl(int id)
     : CCLayerImpl(id)
     , m_scrollLayer(0)
     , m_scrollbar(this)
-    , m_backTrackTextureId(0)
-    , m_foreTrackTextureId(0)
-    , m_thumbTextureId(0)
+    , m_backTrackResourceId(0)
+    , m_foreTrackResourceId(0)
+    , m_thumbResourceId(0)
 {
 }
 
@@ -76,23 +76,23 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQua
     IntRect thumbRect, backTrackRect, foreTrackRect;
     theme->splitTrack(&m_scrollbar, theme->trackRect(&m_scrollbar), backTrackRect, thumbRect, foreTrackRect);
 
-    if (m_thumbTextureId && theme->hasThumb(&m_scrollbar) && !thumbRect.isEmpty()) {
-        OwnPtr<CCTextureDrawQuad> quad = CCTextureDrawQuad::create(sharedQuadState, thumbRect, m_thumbTextureId, premultipledAlpha, uvRect, flipped);
+    if (m_thumbResourceId && theme->hasThumb(&m_scrollbar) && !thumbRect.isEmpty()) {
+        OwnPtr<CCTextureDrawQuad> quad = CCTextureDrawQuad::create(sharedQuadState, thumbRect, m_thumbResourceId, premultipledAlpha, uvRect, flipped);
         quad->setNeedsBlending();
         quadList.append(quad.release());
     }
 
-    if (!m_backTrackTextureId)
+    if (!m_backTrackResourceId)
         return;
 
     // We only paint the track in two parts if we were given a texture for the forward track part.
-    if (m_foreTrackTextureId && !foreTrackRect.isEmpty())
-        quadList.append(CCTextureDrawQuad::create(sharedQuadState, foreTrackRect, m_foreTrackTextureId, premultipledAlpha, toUVRect(foreTrackRect, boundsRect), flipped));
+    if (m_foreTrackResourceId && !foreTrackRect.isEmpty())
+        quadList.append(CCTextureDrawQuad::create(sharedQuadState, foreTrackRect, m_foreTrackResourceId, premultipledAlpha, toUVRect(foreTrackRect, boundsRect), flipped));
 
     // Order matters here: since the back track texture is being drawn to the entire contents rect, we must append it after the thumb and
     // fore track quads. The back track texture contains (and displays) the buttons.
     if (!boundsRect.isEmpty())
-        quadList.append(CCTextureDrawQuad::create(sharedQuadState, boundsRect, m_backTrackTextureId, premultipledAlpha, uvRect, flipped));
+        quadList.append(CCTextureDrawQuad::create(sharedQuadState, boundsRect, m_backTrackResourceId, premultipledAlpha, uvRect, flipped));
 }
 
 

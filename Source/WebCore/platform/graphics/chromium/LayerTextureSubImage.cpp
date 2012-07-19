@@ -32,12 +32,15 @@
 #include "Extensions3DChromium.h"
 #include "LayerRendererChromium.h" // For GLC() macro
 #include "TraceEvent.h"
-#include "cc/CCGraphicsContext.h"
+#include <public/WebGraphicsContext3D.h>
+
+using WebKit::WebGraphicsContext3D;
 
 namespace WebCore {
 
 LayerTextureSubImage::LayerTextureSubImage(bool useMapTexSubImage)
     : m_useMapTexSubImage(useMapTexSubImage)
+    , m_subImageSize(0)
 {
 }
 
@@ -45,18 +48,9 @@ LayerTextureSubImage::~LayerTextureSubImage()
 {
 }
 
-void LayerTextureSubImage::setSubImageSize(const IntSize& subImageSize)
-{
-    if (subImageSize == m_subImageSize)
-        return;
-
-    m_subImageSize = subImageSize;
-    m_subImage.clear();
-}
-
 void LayerTextureSubImage::upload(const uint8_t* image, const IntRect& imageRect,
                                   const IntRect& sourceRect, const IntRect& destRect,
-                                  GC3Denum format, CCGraphicsContext* context)
+                                  GC3Denum format, WebGraphicsContext3D* context)
 {
     if (m_useMapTexSubImage)
         uploadWithMapTexSubImage(image, imageRect, sourceRect, destRect, format, context);
@@ -66,11 +60,9 @@ void LayerTextureSubImage::upload(const uint8_t* image, const IntRect& imageRect
 
 void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                                  const IntRect& sourceRect, const IntRect& destRect,
-                                                 GC3Denum format, CCGraphicsContext* context)
+                                                 GC3Denum format, WebGraphicsContext3D* context)
 {
     TRACE_EVENT0("cc", "LayerTextureSubImage::uploadWithTexSubImage");
-    if (!m_subImage)
-        m_subImage = adoptArrayPtr(new uint8_t[m_subImageSize.width() * m_subImageSize.height() * 4]);
 
     // Offset from image-rect to source-rect.
     IntPoint offset(sourceRect.x() - imageRect.x(), sourceRect.y() - imageRect.y());
@@ -79,6 +71,11 @@ void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const Int
     if (imageRect.width() == sourceRect.width() && !offset.x())
         pixelSource = &image[4 * offset.y() * imageRect.width()];
     else {
+        size_t neededSize = 4 * destRect.width() * destRect.height();
+        if (m_subImageSize < neededSize) {
+          m_subImage = adoptArrayPtr(new uint8_t[neededSize]);
+          m_subImageSize = neededSize;
+        }
         // Strides not equal, so do a row-by-row memcpy from the
         // paint results into a temp buffer for uploading.
         for (int row = 0; row < destRect.height(); ++row)
@@ -89,30 +86,19 @@ void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const Int
         pixelSource = &m_subImage[0];
     }
 
-    WebKit::WebGraphicsContext3D* context3d = context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
-    GLC(context3d, context3d->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, pixelSource));
+    GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, pixelSource));
 }
 
 void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const IntRect& imageRect,
                                                     const IntRect& sourceRect, const IntRect& destRect,
-                                                    GC3Denum format, CCGraphicsContext* context)
+                                                    GC3Denum format, WebGraphicsContext3D* context)
 {
     TRACE_EVENT0("cc", "LayerTextureSubImage::uploadWithMapTexSubImage");
-    WebKit::WebGraphicsContext3D* context3d = context->context3D();
-    if (!context3d) {
-        // FIXME: Implement this path for software compositing.
-        return;
-    }
-
     // Offset from image-rect to source-rect.
     IntPoint offset(sourceRect.x() - imageRect.x(), sourceRect.y() - imageRect.y());
 
     // Upload tile data via a mapped transfer buffer
-    uint8_t* pixelDest = static_cast<uint8_t*>(context3d->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
+    uint8_t* pixelDest = static_cast<uint8_t*>(context->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
 
     if (!pixelDest) {
         uploadWithTexSubImage(image, imageRect, sourceRect, destRect, format, context);
@@ -136,7 +122,7 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
                    &image[4 * (offset.x() + (offset.y() + row) * imageRect.width())],
                    destRect.width() * componentsPerPixel * bytesPerComponent);
     }
-    GLC(context3d, context3d->unmapTexSubImage2DCHROMIUM(pixelDest));
+    GLC(context, context->unmapTexSubImage2DCHROMIUM(pixelDest));
 }
 
 } // namespace WebCore

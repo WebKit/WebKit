@@ -23,49 +23,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "cc/CCScopedTexture.h"
+#ifndef FakeCCGraphicsContext_h
+#define FakeCCGraphicsContext_h
 
-namespace WebCore {
+#include "CompositorFakeWebGraphicsContext3D.h"
+#include "cc/CCGraphicsContext.h"
 
-CCScopedTexture::CCScopedTexture(CCResourceProvider* resourceProvider)
-    : m_resourceProvider(resourceProvider)
+namespace WebKit {
+
+static inline PassOwnPtr<WebCore::CCGraphicsContext> createFakeCCGraphicsContext()
 {
-    ASSERT(m_resourceProvider);
+    return WebCore::CCGraphicsContext::create3D(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()));
 }
 
-CCScopedTexture::~CCScopedTexture()
-{
-    free();
-}
+} // namespace WebKit
 
-bool CCScopedTexture::allocate(int pool, const IntSize& size, GC3Denum format, CCResourceProvider::TextureUsageHint hint)
-{
-    ASSERT(!id());
-    ASSERT(!size.isEmpty());
-
-    setDimensions(size, format);
-    setId(m_resourceProvider->createResource(pool, size, format, hint));
-
-#if !ASSERT_DISABLED
-    m_allocateThreadIdentifier = WTF::currentThread();
-#endif
-
-    return id();
-}
-
-void CCScopedTexture::free()
-{
-    if (id()) {
-        ASSERT(m_allocateThreadIdentifier == WTF::currentThread());
-        m_resourceProvider->deleteResource(id());
-    }
-    setId(0);
-}
-
-void CCScopedTexture::leak()
-{
-    setId(0);
-}
-
-}
+#endif // FakeCCGraphicsContext_h

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class TextureAllocator;
+class CCResourceProvider;
 class TextureCopier;
 class TextureUploader;
 
@@ -48,7 +48,7 @@ public:
     bool hasMoreUpdates() const;
 
     // Update some textures.
-    void update(CCGraphicsContext*, TextureAllocator*, TextureCopier*, TextureUploader*, size_t count);
+    void update(CCResourceProvider*, TextureCopier*, TextureUploader*, size_t count);
 
     void clear();
 

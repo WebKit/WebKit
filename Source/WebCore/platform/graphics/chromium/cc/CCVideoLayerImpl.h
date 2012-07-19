@@ -50,9 +50,9 @@ public:
     }
     virtual ~CCVideoLayerImpl();
 
-    virtual void willDraw(CCRenderer*, CCGraphicsContext*) OVERRIDE;
+    virtual void willDraw(CCResourceProvider*) OVERRIDE;
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
-    virtual void didDraw() OVERRIDE;
+    virtual void didDraw(CCResourceProvider*) OVERRIDE;
 
     virtual void dumpLayerProperties(TextStream&, int indent) const OVERRIDE;
 
@@ -68,15 +68,15 @@ public:
     void setNeedsRedraw();
 
     struct FramePlane {
-        unsigned textureId;
+        CCResourceProvider::ResourceId resourceId;
         IntSize size;
         GC3Denum format;
         IntSize visibleSize;
 
-        FramePlane() : textureId(0) { }
+        FramePlane() : resourceId(0) { }
 
-        bool allocateData(CCGraphicsContext*);
-        void freeData(CCGraphicsContext*);
+        bool allocateData(CCResourceProvider*);
+        void freeData(CCResourceProvider*);
     };
 
 private:
@@ -85,11 +85,11 @@ private:
     static IntSize computeVisibleSize(const WebKit::WebVideoFrame&, unsigned plane);
     virtual const char* layerTypeAsString() const OVERRIDE { return "VideoLayer"; }
 
-    void willDrawInternal(CCRenderer*, CCGraphicsContext*);
-    bool allocatePlaneData(CCRenderer*, CCGraphicsContext*);
-    bool copyPlaneData(CCRenderer*, CCGraphicsContext*);
-    void freePlaneData(CCGraphicsContext*);
-    void freeUnusedPlaneData(CCGraphicsContext*);
+    void willDrawInternal(CCResourceProvider*);
+    bool allocatePlaneData(CCResourceProvider*);
+    bool copyPlaneData(CCResourceProvider*);
+    void freePlaneData(CCResourceProvider*);
+    void freeUnusedPlaneData(CCResourceProvider*);
 
     // Guards the destruction of m_provider and the frame that it provides
     Mutex m_providerMutex;
@@ -99,6 +99,7 @@ private:
 
     WebKit::WebVideoFrame* m_frame;
     GC3Denum m_format;
+    CCResourceProvider::ResourceId m_externalTextureResource;
 
     // Each index in this array corresponds to a plane in WebKit::WebVideoFrame.
     FramePlane m_framePlanes[WebKit::WebVideoFrame::maxPlanes];

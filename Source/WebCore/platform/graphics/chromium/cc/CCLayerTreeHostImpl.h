@@ -46,8 +46,8 @@ class CCLayerImpl;
 class CCLayerTreeHostImplTimeSourceAdapter;
 class CCPageScaleAnimation;
 class CCRenderPassDrawQuad;
+class CCResourceProvider;
 class LayerRendererChromium;
-class TextureAllocator;
 struct LayerRendererCapabilities;
 
 // CCLayerTreeHost->CCProxy callback interface.
@@ -127,7 +127,6 @@ public:
     bool isContextLost();
     CCRenderer* layerRenderer() { return m_layerRenderer.get(); }
     const LayerRendererCapabilities& layerRendererCapabilities() const;
-    TextureAllocator* contentsTextureAllocator() const;
 
     bool swapBuffers();
 
@@ -177,6 +176,7 @@ public:
 
     CCFrameRateCounter* fpsCounter() const { return m_fpsCounter.get(); }
     CCDebugRectHistory* debugRectHistory() const { return m_debugRectHistory.get(); }
+    CCResourceProvider* resourceProvider() const { return m_resourceProvider.get(); }
 
     class CullRenderPassesWithCachedTextures {
     public:
@@ -252,6 +252,7 @@ private:
     void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
 
     OwnPtr<CCGraphicsContext> m_context;
+    OwnPtr<CCResourceProvider> m_resourceProvider;
     OwnPtr<CCRenderer> m_layerRenderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;
     CCLayerImpl* m_rootScrollLayerImpl;

@@ -30,6 +30,7 @@
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "WebCompositor.h"
+#include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include "platform/WebThread.h"
 
 #include <gtest/gtest.h>
@@ -63,13 +64,12 @@ class TextureUploaderForUploadTest : public FakeTextureUploader {
 public:
     TextureUploaderForUploadTest(CCTextureUpdaterTest *test) : m_test(test) { }
 
-    virtual void beginUploads();
-    virtual void endUploads();
-    virtual void uploadTexture(WebCore::CCGraphicsContext*,
-                               WebCore::LayerTextureUpdater::Texture*,
-                               WebCore::TextureAllocator*,
+    virtual void beginUploads() OVERRIDE;
+    virtual void endUploads() OVERRIDE;
+    virtual void uploadTexture(WebCore::LayerTextureUpdater::Texture*,
+                               WebCore::CCResourceProvider*,
                                const WebCore::IntRect sourceRect,
-                               const WebCore::IntRect destRect);
+                               const WebCore::IntRect destRect) OVERRIDE;
 
 private:
     CCTextureUpdaterTest* m_test;
@@ -79,7 +79,7 @@ private:
 class TextureForUploadTest : public LayerTextureUpdater::Texture {
 public:
     TextureForUploadTest() : LayerTextureUpdater::Texture(adoptPtr<CCPrioritizedTexture>(0)) { }
-    virtual void updateRect(CCGraphicsContext*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect) { }
+    virtual void updateRect(CCResourceProvider*, const IntRect& sourceRect, const IntRect& destRect) { }
 };
 
 
@@ -165,6 +165,8 @@ protected:
 
         m_context = CCGraphicsContext::create3D(
                     adoptPtr(new WebGraphicsContext3DForUploadTest(this)));
+        DebugScopedSetImplThread implThread;
+        m_resourceProvider = CCResourceProvider::create(m_context.get());
     }
 
     virtual void TearDown()
@@ -200,9 +202,9 @@ protected:
 protected:
     // Classes required to interact and test the CCTextureUpdater
     OwnPtr<CCGraphicsContext> m_context;
+    OwnPtr<CCResourceProvider> m_resourceProvider;
     CCTextureUpdater m_updater;
     TextureForUploadTest m_texture;
-    FakeTextureAllocator m_allocator;
     FakeTextureCopier m_copier;
     TextureUploaderForUploadTest m_uploader;
 
@@ -239,11 +241,10 @@ void TextureUploaderForUploadTest::endUploads()
     m_test->onEndUploads();
 }
 
-void TextureUploaderForUploadTest::uploadTexture(WebCore::CCGraphicsContext* context,
-                                          WebCore::LayerTextureUpdater::Texture* texture,
-                                          WebCore::TextureAllocator* allocator,
-                                          const WebCore::IntRect sourceRect,
-                                          const WebCore::IntRect destRect)
+void TextureUploaderForUploadTest::uploadTexture(WebCore::LayerTextureUpdater::Texture* texture,
+                                                 WebCore::CCResourceProvider*,
+                                                 const WebCore::IntRect sourceRect,
+                                                 const WebCore::IntRect destRect)
 {
     m_test->onUpload();
 }
@@ -254,7 +255,7 @@ TEST_F(CCTextureUpdaterTest, ZeroUploads)
 {
     appendFullUploadsToUpdater(0);
     appendPartialUploadsToUpdater(0);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(0, m_numBeginUploads);
     EXPECT_EQ(0, m_numEndUploads);
@@ -268,7 +269,8 @@ TEST_F(CCTextureUpdaterTest, OneFullUpload)
 {
     appendFullUploadsToUpdater(1);
     appendPartialUploadsToUpdater(0);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -280,7 +282,8 @@ TEST_F(CCTextureUpdaterTest, OnePartialUpload)
 {
     appendFullUploadsToUpdater(0);
     appendPartialUploadsToUpdater(1);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -292,7 +295,8 @@ TEST_F(CCTextureUpdaterTest, OneFullOnePartialUpload)
 {
     appendFullUploadsToUpdater(1);
     appendPartialUploadsToUpdater(1);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     // We expect the full uploads to be followed by a flush
     // before the partial uploads begin.
@@ -315,7 +319,8 @@ TEST_F(CCTextureUpdaterTest, ManyFullUploadsNoRemainder)
 {
     appendFullUploadsToUpdater(fullNoRemainderCount);
     appendPartialUploadsToUpdater(0);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -327,7 +332,8 @@ TEST_F(CCTextureUpdaterTest, ManyPartialUploadsNoRemainder)
 {
     appendFullUploadsToUpdater(0);
     appendPartialUploadsToUpdater(partialNoRemainderCount);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -339,7 +345,8 @@ TEST_F(CCTextureUpdaterTest, ManyFullManyPartialUploadsNoRemainder)
 {
     appendFullUploadsToUpdater(fullNoRemainderCount);
     appendPartialUploadsToUpdater(partialNoRemainderCount);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -361,7 +368,8 @@ TEST_F(CCTextureUpdaterTest, ManyFullAndPartialMinRemainder)
 {
     appendFullUploadsToUpdater(fullMinRemainderCount);
     appendPartialUploadsToUpdater(partialMinRemainderCount);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -373,7 +381,8 @@ TEST_F(CCTextureUpdaterTest, ManyFullAndPartialUploadsMaxRemainder)
 {
     appendFullUploadsToUpdater(fullMaxRemainderCount);
     appendPartialUploadsToUpdater(partialMaxRemainderCount);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -385,7 +394,8 @@ TEST_F(CCTextureUpdaterTest, ManyFullMinRemainderManyPartialMaxRemainder)
 {
     appendFullUploadsToUpdater(fullMinRemainderCount);
     appendPartialUploadsToUpdater(partialMaxRemainderCount);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -397,7 +407,8 @@ TEST_F(CCTextureUpdaterTest, ManyFullMaxRemainderManyPartialMinRemainder)
 {
     appendFullUploadsToUpdater(fullMaxRemainderCount);
     appendPartialUploadsToUpdater(partialMinRemainderCount);
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, m_totalUploadCountExpected);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -429,7 +440,8 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateFullAndPartial)
     appendPartialUploadsToUpdater(kPartialUploads);
 
     // First update (40 full)
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -441,7 +453,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateFullAndPartial)
     EXPECT_EQ(expectedPreviousUploads, m_numPreviousUploads);
 
     // Second update (40 full)
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
 
     EXPECT_EQ(2, m_numBeginUploads);
     EXPECT_EQ(2, m_numEndUploads);
@@ -453,7 +465,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateFullAndPartial)
     EXPECT_EQ(expectedPreviousUploads, m_numPreviousUploads);
 
     // Third update (20 full, 20 partial)
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
 
     EXPECT_EQ(3, m_numBeginUploads);
     EXPECT_EQ(3, m_numEndUploads);
@@ -483,7 +495,8 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateAllPartial)
     appendPartialUploadsToUpdater(kPartialUploads);
 
     // First update (40 full)
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    DebugScopedSetImplThread implThread;
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -495,7 +508,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateAllPartial)
     EXPECT_EQ(expectedPreviousUploads, m_numPreviousUploads);
 
     // Second update (30 full, optionally 10 partial)
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
 
     EXPECT_EQ(2, m_numBeginUploads);
     EXPECT_EQ(2, m_numEndUploads);
@@ -505,7 +518,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateAllPartial)
     // onFlush(), onUpload(), and onEndUpload() will do basic flush checks for us anyway.
 
     // Third update (30 partial OR 20 partial if 10 partial uploaded in second update)
-    m_updater.update(m_context.get(), &m_allocator, &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
 
     EXPECT_EQ(3, m_numBeginUploads);
     EXPECT_EQ(3, m_numEndUploads);

@@ -78,6 +78,7 @@
             'tests/CCOcclusionTrackerTestCommon.h',
             'tests/CCQuadCullerTest.cpp',
             'tests/CCRenderSurfaceTest.cpp',
+            'tests/CCResourceProviderTest.cpp',
             'tests/CCSchedulerStateMachineTest.cpp',
             'tests/CCSchedulerTestCommon.h',
             'tests/CCSchedulerTest.cpp',

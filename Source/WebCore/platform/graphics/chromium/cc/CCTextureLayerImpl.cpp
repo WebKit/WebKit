@@ -31,6 +31,7 @@
 
 #include "TextStream.h"
 #include "cc/CCQuadCuller.h"
+#include "cc/CCRenderer.h"
 #include "cc/CCTextureDrawQuad.h"
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace WebCore {
 CCTextureLayerImpl::CCTextureLayerImpl(int id)
     : CCLayerImpl(id)
     , m_textureId(0)
+    , m_externalTextureResource(0)
     , m_premultipliedAlpha(true)
     , m_flipped(true)
     , m_uvRect(0, 0, 1, 1)
@@ -48,10 +50,28 @@ CCTextureLayerImpl::~CCTextureLayerImpl()
 {
 }
 
+void CCTextureLayerImpl::willDraw(CCResourceProvider* resourceProvider)
+{
+    ASSERT(!m_externalTextureResource);
+    m_externalTextureResource = resourceProvider->createResourceFromExternalTexture(m_textureId);
+}
+
 void CCTextureLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
+    ASSERT(m_externalTextureResource);
     IntRect quadRect(IntPoint(), contentBounds());
-    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_premultipliedAlpha, m_uvRect, m_flipped));
+    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_externalTextureResource, m_premultipliedAlpha, m_uvRect, m_flipped));
+}
+
+void CCTextureLayerImpl::didDraw(CCResourceProvider* resourceProvider)
+{
+    ASSERT(m_externalTextureResource);
+    // FIXME: the following assert will not be true when sending resources to a
+    // parent compositor. A synchronization scheme (double-buffering or
+    // pipelining of updates) for the client will need to exist to solve this.
+    ASSERT(!resourceProvider->inUseByConsumer(m_externalTextureResource));
+    resourceProvider->deleteResource(m_externalTextureResource);
+    m_externalTextureResource = 0;
 }
 
 void CCTextureLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const

@@ -157,7 +157,7 @@ PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState(int id) const
     return CCSharedQuadState::create(id, quadTransformation, m_visibleContentRect, m_scissorRect, m_drawOpacity, m_opaque);
 }
 
-void CCLayerImpl::willDraw(CCRenderer*, CCGraphicsContext*)
+void CCLayerImpl::willDraw(CCResourceProvider*)
 {
 #ifndef NDEBUG
     // willDraw/didDraw must be matched.
@@ -166,7 +166,7 @@ void CCLayerImpl::willDraw(CCRenderer*, CCGraphicsContext*)
 #endif
 }
 
-void CCLayerImpl::didDraw()
+void CCLayerImpl::didDraw(CCResourceProvider*)
 {
 #ifndef NDEBUG
     ASSERT(m_betweenWillDrawAndDidDraw);
@@ -183,7 +183,7 @@ void CCLayerImpl::appendDebugBorderQuad(CCQuadCuller& quadList, const CCSharedQu
     quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, contentRect, debugBorderColor(), debugBorderWidth()));
 }
 
-unsigned CCLayerImpl::contentsTextureId() const
+CCResourceProvider::ResourceId CCLayerImpl::contentsResourceId() const
 {
     ASSERT_NOT_REACHED();
     return 0;

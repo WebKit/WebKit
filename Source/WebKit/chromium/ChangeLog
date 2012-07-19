@@ -1,3 +1,96 @@
+2012-07-18  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Introduce CCResourceProvider, replacing TextureAllocator and hiding textures from clients to allow transport
+        https://bugs.webkit.org/show_bug.cgi?id=91044
+
+        Reviewed by Adrienne Walker.
+
+        This does several things:
+        - Add a CCResourceProvider class, that hides textures and the 3D context
+        from layers (except those that need it). Instead layers manage
+        "resources". In the future, resources are expected to be transportable
+        to a "parent" CCResourceProvider to allow flattening of nested
+        compositors.
+        - Replace texture ids by resource ids in DrawQuads (allowing them to be
+        serializable).
+        - Replace TextureAllocator uses by the CCResourceProvider class.
+        - Upload of data is done through the CCResourceProvider instead of
+        explicit GL calls.
+        - External textures are wrapped into a resource at draw time (see
+        caveat/FIXME in CCTextureLayerImpl).
+        - Rendering with the resources is done through an explicit
+        beginRenderFrom/endRenderFrom that exposes the texture only between that
+        pair.
+        - Merge all the LayerTextureSubImage instances (one per layer), into a
+        single instance on the CCResourceProvider.
+
+        Added CCResourceProviderTest, the refactoring is covered by existing tests.
+
+        * WebKit.gypi:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCPrioritizedTextureTest.cpp:
+        (WTF::CCPrioritizedTextureTest::CCPrioritizedTextureTest):
+        (WTF::CCPrioritizedTextureTest::createManager):
+        (WTF::CCPrioritizedTextureTest::validateTexture):
+        (WTF::CCPrioritizedTextureTest::resourceProvider):
+        (CCPrioritizedTextureTest):
+        (WTF::TEST_F):
+        * tests/CCQuadCullerTest.cpp:
+        * tests/CCResourceProviderTest.cpp: Added.
+        (WebKit):
+        (ResourceProviderContext):
+        (WebKit::ResourceProviderContext::create):
+        (WebKit::ResourceProviderContext::bindTexture):
+        (WebKit::ResourceProviderContext::createTexture):
+        (WebKit::ResourceProviderContext::deleteTexture):
+        (WebKit::ResourceProviderContext::texStorage2DEXT):
+        (WebKit::ResourceProviderContext::texImage2D):
+        (WebKit::ResourceProviderContext::texSubImage2D):
+        (WebKit::ResourceProviderContext::getPixels):
+        (WebKit::ResourceProviderContext::textureCount):
+        (WebKit::ResourceProviderContext::textureSize):
+        (WebKit::ResourceProviderContext::ResourceProviderContext):
+        (WebKit::ResourceProviderContext::Texture::Texture):
+        (Texture):
+        (WebKit::ResourceProviderContext::allocateTexture):
+        (WebKit::ResourceProviderContext::setPixels):
+        (CCResourceProviderTest):
+        (WebKit::CCResourceProviderTest::CCResourceProviderTest):
+        (WebKit::CCResourceProviderTest::context):
+        (WebKit::CCResourceProviderTest::getResourcePixels):
+        (WebKit::TEST_F):
+        * tests/CCScopedTextureTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (CCLayerTestCommon::createLayer):
+        (CCLayerTestCommon::TEST):
+        * tests/CCTiledLayerTestCommon.cpp:
+        (WebKitTests::FakeLayerTextureUpdater::Texture::updateRect):
+        * tests/CCTiledLayerTestCommon.h:
+        (Texture):
+        (WebKitTests::FakeTextureCopier::copyTexture):
+        (WebKitTests::FakeTextureCopier::flush):
+        (WebKitTests::FakeTextureUploader::uploadTexture):
+        * tests/ContentLayerChromiumTest.cpp:
+        (WebKit::TEST):
+        * tests/FakeCCGraphicsContext.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCTexture.h.
+        (WebKit):
+        (WebKit::createFakeCCGraphicsContext):
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeLayerRendererChromium::FakeLayerRendererChromium):
+        (LayerRendererChromiumTest::LayerRendererChromiumTest):
+        (LayerRendererChromiumTest::context):
+        (LayerRendererChromiumTest):
+        (TEST_F):
+        (TEST):
+        * tests/TextureCopierTest.cpp:
+        * tests/TextureManagerTest.cpp:
+        (WTF::TextureManagerTest::TextureManagerTest):
+        (WTF::TextureManagerTest::createTextureManager):
+        (WTF::TextureManagerTest::requestTexture):
+        (TextureManagerTest):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-07-18  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Add intVersion to chromium/public/WebIDBMetadata.h

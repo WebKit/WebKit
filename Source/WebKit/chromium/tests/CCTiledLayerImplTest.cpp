@@ -53,10 +53,10 @@ static PassOwnPtr<CCTiledLayerImpl> createLayer(const IntSize& tileSize, const I
     layer->setBounds(layerSize);
     layer->setContentBounds(layerSize);
 
-    int textureId = 1;
+    CCResourceProvider::ResourceId resourceId = 1;
     for (int i = 0; i < tiler->numTilesX(); ++i)
         for (int j = 0; j < tiler->numTilesY(); ++j)
-            layer->pushTileProperties(i, j, static_cast<Platform3DObject>(textureId++), IntRect(0, 0, 1, 1));
+            layer->pushTileProperties(i, j, resourceId++, IntRect(0, 0, 1, 1));
 
     return layer.release();
 }
@@ -146,7 +146,7 @@ TEST(CCTiledLayerImplTest, checkerboarding)
 
     for (int i = 0; i < numTilesX; ++i)
         for (int j = 0; j < numTilesY; ++j)
-            layer->pushTileProperties(i, j, static_cast<Platform3DObject>(0), IntRect());
+            layer->pushTileProperties(i, j, 0, IntRect());
 
     // All checkerboarding
     {
@@ -240,7 +240,7 @@ TEST(CCTiledLayerImplTest, textureInfoForLayerNoBorders)
         ASSERT_EQ(quads[i]->material(), CCDrawQuad::TiledContent) << quadString << i;
         CCTileDrawQuad* quad = static_cast<CCTileDrawQuad*>(quads[i].get());
 
-        EXPECT_NE(quad->textureId(), 0u) << quadString << i;
+        EXPECT_NE(quad->resourceId(), 0u) << quadString << i;
         EXPECT_EQ(quad->textureOffset(), IntPoint()) << quadString << i;
         EXPECT_EQ(quad->textureSize(), tileSize) << quadString << i;
         EXPECT_EQ(IntRect(0, 0, 1, 1), quad->opaqueRect()) << quadString << i;

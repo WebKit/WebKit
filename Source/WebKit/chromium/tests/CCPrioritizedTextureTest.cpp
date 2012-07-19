@@ -27,7 +27,9 @@
 #include "cc/CCPrioritizedTexture.h"
 
 #include "CCTiledLayerTestCommon.h"
+#include "FakeCCGraphicsContext.h"
 #include "cc/CCPrioritizedTextureManager.h"
+#include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include "cc/CCTexture.h"
 #include <gtest/gtest.h>
 
@@ -42,11 +44,16 @@ public:
     CCPrioritizedTextureTest()
         : m_textureSize(256, 256)
         , m_textureFormat(GraphicsContext3D::RGBA)
+        , m_context(WebKit::createFakeCCGraphicsContext())
     {
+        DebugScopedSetImplThread implThread;
+        m_resourceProvider = CCResourceProvider::create(m_context.get());
     }
 
     virtual ~CCPrioritizedTextureTest()
     {
+        DebugScopedSetImplThread implThread;
+        m_resourceProvider.clear();
     }
 
     size_t texturesMemorySize(size_t textureCount)
@@ -56,11 +63,12 @@ public:
 
     PassOwnPtr<CCPrioritizedTextureManager> createManager(size_t maxTextures)
     {
-        return CCPrioritizedTextureManager::create(texturesMemorySize(maxTextures), 1024);
+        return CCPrioritizedTextureManager::create(texturesMemorySize(maxTextures), 1024, 0);
     }
 
     bool validateTexture(OwnPtr<CCPrioritizedTexture>& texture, bool requestLate)
     {
+        DebugScopedSetImplThread implThread;
 #if !ASSERT_DISABLED
         texture->textureManager()->assertInvariants();
 #endif
@@ -68,19 +76,20 @@ public:
             texture->requestLate();
         bool success = texture->canAcquireBackingTexture();
         if (success)
-            texture->acquireBackingTexture(allocator());
+            texture->acquireBackingTexture(resourceProvider());
         return success;
     }
 
-    FakeTextureAllocator* allocator()
+    CCResourceProvider* resourceProvider()
     {
-       return &m_fakeTextureAllocator;
+       return m_resourceProvider.get();
     }
 
 protected:
-    FakeTextureAllocator m_fakeTextureAllocator;
     const IntSize m_textureSize;
     const GC3Denum m_textureFormat;
+    OwnPtr<CCGraphicsContext> m_context;
+    OwnPtr<CCResourceProvider> m_resourceProvider;
 };
 
 TEST_F(CCPrioritizedTextureTest, requestTextureExceedingMaxLimit)
@@ -119,7 +128,8 @@ TEST_F(CCPrioritizedTextureTest, requestTextureExceedingMaxLimit)
     EXPECT_EQ(texturesMemorySize(maxTextures), textureManager->memoryAboveCutoffBytes());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    textureManager->clearAllMemory(allocator());
+    DebugScopedSetImplThread implThread;
+    textureManager->clearAllMemory(resourceProvider());
 }
 
 TEST_F(CCPrioritizedTextureTest, changeMemoryLimits)
@@ -138,7 +148,10 @@ TEST_F(CCPrioritizedTextureTest, changeMemoryLimits)
     textureManager->prioritizeTextures();
     for (size_t i = 0; i < maxTextures; ++i)
         validateTexture(textures[i], false);
-    textureManager->reduceMemory(allocator());
+    {
+        DebugScopedSetImplThread implThread;
+        textureManager->reduceMemory(resourceProvider());
+    }
 
     EXPECT_EQ(texturesMemorySize(8), textureManager->memoryAboveCutoffBytes());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
@@ -148,7 +161,10 @@ TEST_F(CCPrioritizedTextureTest, changeMemoryLimits)
     textureManager->prioritizeTextures();
     for (size_t i = 0; i < maxTextures; ++i)
         EXPECT_EQ(validateTexture(textures[i], false), i < 5);
-    textureManager->reduceMemory(allocator());
+    {
+        DebugScopedSetImplThread implThread;
+        textureManager->reduceMemory(resourceProvider());
+    }
 
     EXPECT_EQ(texturesMemorySize(5), textureManager->memoryAboveCutoffBytes());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
@@ -158,12 +174,16 @@ TEST_F(CCPrioritizedTextureTest, changeMemoryLimits)
     textureManager->prioritizeTextures();
     for (size_t i = 0; i < maxTextures; ++i)
         EXPECT_EQ(validateTexture(textures[i], false), i < 4);
-    textureManager->reduceMemory(allocator());
+    {
+        DebugScopedSetImplThread implThread;
+        textureManager->reduceMemory(resourceProvider());
+    }
 
     EXPECT_EQ(texturesMemorySize(4), textureManager->memoryAboveCutoffBytes());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    textureManager->clearAllMemory(allocator());
+    DebugScopedSetImplThread implThread;
+    textureManager->clearAllMemory(resourceProvider());
 }
 
 TEST_F(CCPrioritizedTextureTest, textureManagerPartialUpdateTextures)
@@ -222,7 +242,8 @@ TEST_F(CCPrioritizedTextureTest, textureManagerPartialUpdateTextures)
     EXPECT_FALSE(textures[2]->haveBackingTexture());
     EXPECT_FALSE(textures[3]->haveBackingTexture());
 
-    textureManager->clearAllMemory(allocator());
+    DebugScopedSetImplThread implThread;
+    textureManager->clearAllMemory(resourceProvider());
 }
 
 TEST_F(CCPrioritizedTextureTest, textureManagerPrioritiesAreEqual)
@@ -261,7 +282,8 @@ TEST_F(CCPrioritizedTextureTest, textureManagerPrioritiesAreEqual)
     EXPECT_EQ(texturesMemorySize(8), textureManager->memoryAboveCutoffBytes());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    textureManager->clearAllMemory(allocator());
+    DebugScopedSetImplThread implThread;
+    textureManager->clearAllMemory(resourceProvider());
 }
 
 TEST_F(CCPrioritizedTextureTest, textureManagerDestroyedFirst)
@@ -279,7 +301,10 @@ TEST_F(CCPrioritizedTextureTest, textureManagerDestroyedFirst)
     EXPECT_TRUE(texture->canAcquireBackingTexture());
     EXPECT_TRUE(texture->haveBackingTexture());
 
-    textureManager->clearAllMemory(allocator());
+    {
+        DebugScopedSetImplThread implThread;
+        textureManager->clearAllMemory(resourceProvider());
+    }
     textureManager.clear();
 
     EXPECT_FALSE(texture->canAcquireBackingTexture());
@@ -304,7 +329,10 @@ TEST_F(CCPrioritizedTextureTest, textureMovedToNewManager)
 
     texture->setTextureManager(0);
 
-    textureManagerOne->clearAllMemory(allocator());
+    {
+        DebugScopedSetImplThread implThread;
+        textureManagerOne->clearAllMemory(resourceProvider());
+    }
     textureManagerOne.clear();
 
     EXPECT_FALSE(texture->canAcquireBackingTexture());
@@ -318,7 +346,8 @@ TEST_F(CCPrioritizedTextureTest, textureMovedToNewManager)
     EXPECT_TRUE(texture->canAcquireBackingTexture());
     EXPECT_TRUE(texture->haveBackingTexture());
 
-    textureManagerTwo->clearAllMemory(allocator());
+    DebugScopedSetImplThread implThread;
+    textureManagerTwo->clearAllMemory(resourceProvider());
 }
 
 TEST_F(CCPrioritizedTextureTest, renderSurfacesReduceMemoryAvailableOutsideRootSurface)
@@ -363,7 +392,8 @@ TEST_F(CCPrioritizedTextureTest, renderSurfacesReduceMemoryAvailableOutsideRootS
     EXPECT_EQ(texturesMemorySize(4), textureManager->memoryForSelfManagedTextures());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    textureManager->clearAllMemory(allocator());
+    DebugScopedSetImplThread implThread;
+    textureManager->clearAllMemory(resourceProvider());
 }
 
 TEST_F(CCPrioritizedTextureTest, renderSurfacesReduceMemoryAvailableForRequestLate)
@@ -399,7 +429,8 @@ TEST_F(CCPrioritizedTextureTest, renderSurfacesReduceMemoryAvailableForRequestLa
     EXPECT_EQ(texturesMemorySize(4), textureManager->memoryForSelfManagedTextures());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    textureManager->clearAllMemory(allocator());
+    DebugScopedSetImplThread implThread;
+    textureManager->clearAllMemory(resourceProvider());
 }
 
 TEST_F(CCPrioritizedTextureTest, whenRenderSurfaceNotAvailableTexturesAlsoNotAvailable)
@@ -438,7 +469,8 @@ TEST_F(CCPrioritizedTextureTest, whenRenderSurfaceNotAvailableTexturesAlsoNotAva
     EXPECT_EQ(texturesMemorySize(2), textureManager->memoryForSelfManagedTextures());
     EXPECT_LE(textureManager->memoryUseBytes(), textureManager->memoryAboveCutoffBytes());
 
-    textureManager->clearAllMemory(allocator());
+    DebugScopedSetImplThread implThread;
+    textureManager->clearAllMemory(resourceProvider());
 }
 
 } // namespace

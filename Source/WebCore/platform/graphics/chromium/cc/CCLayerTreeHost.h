@@ -52,7 +52,6 @@ class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
 class CCTextureUpdater;
 class Region;
-class TextureAllocator;
 class CCPrioritizedTextureManager;
 struct CCRenderingStats;
 struct CCScrollAndScaleSet;
@@ -182,7 +181,7 @@ public:
     void willCommit() { m_client->willCommit(); }
     void didCommitAndDrawFrame() { m_client->didCommitAndDrawFrame(); }
     void didCompleteSwapBuffers() { m_client->didCompleteSwapBuffers(); }
-    void deleteContentsTexturesOnImplThread(TextureAllocator*);
+    void deleteContentsTexturesOnImplThread(CCResourceProvider*);
     virtual void acquireLayerTextures();
     // Returns false if we should abort this frame due to initialization failure.
     bool initializeLayerRendererIfNeeded();

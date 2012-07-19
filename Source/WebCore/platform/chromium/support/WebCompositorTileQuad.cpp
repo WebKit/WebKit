@@ -31,14 +31,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<WebCompositorTileQuad> WebCompositorTileQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntRect& opaqueRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA)
+PassOwnPtr<WebCompositorTileQuad> WebCompositorTileQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntRect& opaqueRect, unsigned resourceId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA)
 {
-    return adoptPtr(new WebCompositorTileQuad(sharedQuadState, quadRect, opaqueRect, textureId, textureOffset, textureSize, textureFilter, swizzleContents, leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
+    return adoptPtr(new WebCompositorTileQuad(sharedQuadState, quadRect, opaqueRect, resourceId, textureOffset, textureSize, textureFilter, swizzleContents, leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
 }
 
-WebCompositorTileQuad::WebCompositorTileQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntRect& opaqueRect, Platform3DObject textureId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA)
+WebCompositorTileQuad::WebCompositorTileQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntRect& opaqueRect, unsigned resourceId, const IntPoint& textureOffset, const IntSize& textureSize, GC3Dint textureFilter, bool swizzleContents, bool leftEdgeAA, bool topEdgeAA, bool rightEdgeAA, bool bottomEdgeAA)
     : WebCompositorQuad(sharedQuadState, WebCompositorQuad::TiledContent, quadRect)
-    , m_textureId(textureId)
+    , m_resourceId(resourceId)
     , m_textureOffset(textureOffset)
     , m_textureSize(textureSize)
     , m_textureFilter(textureFilter)

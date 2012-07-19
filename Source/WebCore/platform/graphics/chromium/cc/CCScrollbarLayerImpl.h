@@ -53,9 +53,9 @@ public:
 
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
-    void setBackTrackTextureId(unsigned id) { m_backTrackTextureId = id; }
-    void setForeTrackTextureId(unsigned id) { m_foreTrackTextureId = id; }
-    void setThumbTextureId(unsigned id) { m_thumbTextureId = id; }
+    void setBackTrackResourceId(CCResourceProvider::ResourceId id) { m_backTrackResourceId = id; }
+    void setForeTrackResourceId(CCResourceProvider::ResourceId id) { m_foreTrackResourceId = id; }
+    void setThumbResourceId(CCResourceProvider::ResourceId id) { m_thumbResourceId = id; }
 
     CCLayerImpl* scrollLayer() const { return m_scrollLayer; }
     void setScrollLayer(CCLayerImpl* scrollLayer) { m_scrollLayer = scrollLayer; }
@@ -124,9 +124,9 @@ private:
     };
     CCScrollbar m_scrollbar;
 
-    unsigned m_backTrackTextureId;
-    unsigned m_foreTrackTextureId;
-    unsigned m_thumbTextureId;
+    CCResourceProvider::ResourceId m_backTrackResourceId;
+    CCResourceProvider::ResourceId m_foreTrackResourceId;
+    CCResourceProvider::ResourceId m_thumbResourceId;
 
     ScrollbarOverlayStyle m_scrollbarOverlayStyle;
     Vector<IntRect> m_tickmarks;

@@ -30,15 +30,12 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "CanvasLayerTextureUpdater.h"
-#include "LayerTextureSubImage.h"
 
 class SkCanvas;
 
 namespace WebCore {
 
 class LayerPainterChromium;
-class CCGraphicsContext;
-class TextureAllocator;
 
 // This class rasterizes the contentRect into a skia bitmap canvas. It then updates
 // textures by copying from the canvas into the texture, using MapSubImage if
@@ -50,7 +47,7 @@ public:
         Texture(BitmapCanvasLayerTextureUpdater*, PassOwnPtr<CCPrioritizedTexture>);
         virtual ~Texture();
 
-        virtual void updateRect(CCGraphicsContext*, TextureAllocator*, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE;
+        virtual void updateRect(CCResourceProvider*, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE;
 
     private:
         BitmapCanvasLayerTextureUpdater* textureUpdater() { return m_textureUpdater; }
@@ -58,23 +55,22 @@ public:
         BitmapCanvasLayerTextureUpdater* m_textureUpdater;
     };
 
-    static PassRefPtr<BitmapCanvasLayerTextureUpdater> create(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
+    static PassRefPtr<BitmapCanvasLayerTextureUpdater> create(PassOwnPtr<LayerPainterChromium>);
     virtual ~BitmapCanvasLayerTextureUpdater();
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*);
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect) OVERRIDE;
-    void updateTextureRect(CCGraphicsContext*, TextureAllocator*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntRect& destRect);
+    void updateTextureRect(CCResourceProvider*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
     virtual void setOpaque(bool) OVERRIDE;
 
 private:
-    BitmapCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>, bool useMapTexSubImage);
+    explicit BitmapCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 
     OwnPtr<SkCanvas> m_canvas;
     IntSize m_canvasSize;
     bool m_opaque;
-    LayerTextureSubImage m_texSubImage;
 };
 
 } // namespace WebCore

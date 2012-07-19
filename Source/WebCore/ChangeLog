@@ -1,3 +1,310 @@
+2012-07-18  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Introduce CCResourceProvider, replacing TextureAllocator and hiding textures from clients to allow transport
+        https://bugs.webkit.org/show_bug.cgi?id=91044
+
+        Reviewed by Adrienne Walker.
+
+        This does several things:
+        - Add a CCResourceProvider class, that hides textures and the 3D context
+        from layers (except those that need it). Instead layers manage
+        "resources". In the future, resources are expected to be transportable
+        to a "parent" CCResourceProvider to allow flattening of nested
+        compositors.
+        - Replace texture ids by resource ids in DrawQuads (allowing them to be
+        serializable).
+        - Replace TextureAllocator uses by the CCResourceProvider class.
+        - Upload of data is done through the CCResourceProvider instead of
+        explicit GL calls.
+        - External textures are wrapped into a resource at draw time (see
+        caveat/FIXME in CCTextureLayerImpl).
+        - Rendering with the resources is done through an explicit
+        beginRenderFrom/endRenderFrom that exposes the texture only between that
+        pair.
+        - Merge all the LayerTextureSubImage instances (one per layer), into a
+        single instance on the CCResourceProvider.
+
+        Added CCResourceProviderTest, the refactoring is covered by existing tests.
+
+        * WebCore.gypi:
+        * platform/chromium/support/WebCompositorTextureQuad.cpp:
+        (WebKit::WebCompositorTextureQuad::create):
+        (WebKit::WebCompositorTextureQuad::WebCompositorTextureQuad):
+        * platform/chromium/support/WebCompositorTileQuad.cpp:
+        (WebKit::WebCompositorTileQuad::create):
+        (WebKit::WebCompositorTileQuad::WebCompositorTileQuad):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::BitmapCanvasLayerTextureUpdater::create):
+        (WebCore::BitmapCanvasLayerTextureUpdater::BitmapCanvasLayerTextureUpdater):
+        (WebCore::BitmapCanvasLayerTextureUpdater::prepareToUpdate):
+        (WebCore::BitmapCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        (WebCore):
+        (Texture):
+        (BitmapCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::create):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::BitmapSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        (Texture):
+        (BitmapSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdaterIfNeeded):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::createAcceleratedCanvas):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.h:
+        (Texture):
+        (FrameBufferSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::create):
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+        (WebCore::ImageLayerTextureUpdater::ImageLayerTextureUpdater):
+        (ImageLayerTextureUpdater):
+        (WebCore::ImageLayerChromium::createTextureUpdaterIfNeeded):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::decideRenderPassAllocationsForFrame):
+        (WebCore::applyFilters):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        (WebCore::LayerRendererChromium::drawTileQuad):
+        (WebCore::LayerRendererChromium::drawYUVVideoQuad):
+        (WebCore::LayerRendererChromium::drawTextureQuad):
+        (WebCore::LayerRendererChromium::drawIOSurfaceQuad):
+        (WebCore::LayerRendererChromium::drawHeadsUpDisplay):
+        (WebCore::LayerRendererChromium::finishDrawingFrame):
+        (WebCore::LayerRendererChromium::getFramebufferTexture):
+        (WebCore::LayerRendererChromium::useRenderPass):
+        (WebCore::LayerRendererChromium::useScopedTexture):
+        (WebCore::LayerRendererChromium::bindFramebufferToTexture):
+        (WebCore::LayerRendererChromium::finishCurrentFramebuffer):
+        (WebCore):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        (WebCore::LayerRendererChromium::resourceProvider):
+        * platform/graphics/chromium/LayerTextureSubImage.cpp:
+        (WebCore::LayerTextureSubImage::LayerTextureSubImage):
+        (WebCore::LayerTextureSubImage::upload):
+        (WebCore::LayerTextureSubImage::uploadWithTexSubImage):
+        (WebCore::LayerTextureSubImage::uploadWithMapTexSubImage):
+        * platform/graphics/chromium/LayerTextureSubImage.h:
+        (WebKit):
+        (LayerTextureSubImage):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore):
+        (Texture):
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::ManagedTexture):
+        (WebCore::ManagedTexture::reserve):
+        (WebCore::ManagedTexture::allocate):
+        (WebCore::ManagedTexture::steal):
+        (WebCore::ManagedTexture::clear):
+        * platform/graphics/chromium/ManagedTexture.h:
+        (WebCore::ManagedTexture::resourceId):
+        (ManagedTexture):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::pushPropertiesTo):
+        (WebCore::ScrollbarLayerChromium::createTextureUpdaterIfNeeded):
+        * platform/graphics/chromium/TextureCopier.cpp:
+        (WebCore::AcceleratedTextureCopier::copyTexture):
+        (WebCore):
+        (WebCore::AcceleratedTextureCopier::flush):
+        * platform/graphics/chromium/TextureCopier.h:
+        (TextureCopier):
+        (AcceleratedTextureCopier):
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::TextureManager):
+        (WebCore::TextureManager::deleteEvictedTextures):
+        (WebCore::TextureManager::removeTexture):
+        (WebCore::TextureManager::allocateTexture):
+        (WebCore::TextureManager::requestTexture):
+        * platform/graphics/chromium/TextureManager.h:
+        (WebCore):
+        (WebCore::TextureManager::create):
+        (TextureManager):
+        (TextureInfo):
+        (EvictionEntry):
+        * platform/graphics/chromium/TextureUploader.h:
+        (TextureUploader):
+        * platform/graphics/chromium/ThrottledTextureUploader.cpp:
+        (WebCore::ThrottledTextureUploader::uploadTexture):
+        * platform/graphics/chromium/ThrottledTextureUploader.h:
+        (ThrottledTextureUploader):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/TrackingTextureAllocator.cpp: Removed.
+        * platform/graphics/chromium/TrackingTextureAllocator.h: Removed.
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCIOSurfaceLayerImpl.cpp:
+        (WebCore::CCIOSurfaceLayerImpl::willDraw):
+        * platform/graphics/chromium/cc/CCIOSurfaceLayerImpl.h:
+        (CCIOSurfaceLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::willDraw):
+        (WebCore::CCLayerImpl::didDraw):
+        (WebCore::CCLayerImpl::contentsResourceId):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::deleteContentsTexturesOnImplThread):
+        (WebCore::CCLayerTreeHost::beginCommitOnImplThread):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::releaseContentsTextures):
+        (WebCore::CCLayerTreeHostImpl::didDrawAllLayers):
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::resourceProvider):
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCPrioritizedTexture.cpp:
+        (WebCore::CCPrioritizedTexture::acquireBackingTexture):
+        (WebCore::CCPrioritizedTexture::resourceId):
+        (WebCore::CCPrioritizedTexture::upload):
+        (WebCore::CCPrioritizedTexture::beginRenderTo):
+        (WebCore::CCPrioritizedTexture::endRenderTo):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCPrioritizedTexture.h:
+        (WebCore):
+        (CCPrioritizedTexture):
+        (WebCore::CCPrioritizedTexture::Backing::resourceId):
+        (WebCore::CCPrioritizedTexture::Backing::Backing):
+        (Backing):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.cpp:
+        (WebCore::CCPrioritizedTextureManager::CCPrioritizedTextureManager):
+        (WebCore::CCPrioritizedTextureManager::~CCPrioritizedTextureManager):
+        (WebCore::CCPrioritizedTextureManager::acquireBackingTextureIfNeeded):
+        (WebCore::CCPrioritizedTextureManager::reduceMemory):
+        (WebCore::CCPrioritizedTextureManager::clearAllMemory):
+        (WebCore::CCPrioritizedTextureManager::allBackingTexturesWereDeleted):
+        (WebCore::CCPrioritizedTextureManager::createBacking):
+        (WebCore::CCPrioritizedTextureManager::destroyBacking):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.h:
+        (WebCore::CCPrioritizedTextureManager::create):
+        (CCPrioritizedTextureManager):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        (WebCore::CCRenderPassDrawQuad::maskResourceId):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (WebCore):
+        (CCRenderer):
+        * platform/graphics/chromium/cc/CCResourceProvider.cpp: Added.
+        (WebCore):
+        (WebCore::textureToStorageFormat):
+        (WebCore::isTextureFormatSupportedForStorage):
+        (WebCore::CCResourceProvider::create):
+        (WebCore::CCResourceProvider::~CCResourceProvider):
+        (WebCore::CCResourceProvider::graphicsContext3D):
+        (WebCore::CCResourceProvider::inUseByConsumer):
+        (WebCore::CCResourceProvider::createResource):
+        (WebCore::CCResourceProvider::createResourceFromExternalTexture):
+        (WebCore::CCResourceProvider::deleteResource):
+        (WebCore::CCResourceProvider::deleteOwnedResources):
+        (WebCore::CCResourceProvider::upload):
+        (WebCore::CCResourceProvider::beginRenderTo):
+        (WebCore::CCResourceProvider::endRenderTo):
+        (WebCore::CCResourceProvider::beginRenderFrom):
+        (WebCore::CCResourceProvider::endRenderFrom):
+        (WebCore::CCResourceProvider::CCResourceProvider):
+        (WebCore::CCResourceProvider::initialize):
+        * platform/graphics/chromium/cc/CCResourceProvider.h: Added.
+        (WebKit):
+        (WebCore):
+        (CCResourceProvider):
+        (WebCore::CCResourceProvider::maxTextureSize):
+        (WebCore::CCResourceProvider::numResources):
+        (Resource):
+        * platform/graphics/chromium/cc/CCScopedTexture.cpp:
+        (WebCore::CCScopedTexture::CCScopedTexture):
+        (WebCore::CCScopedTexture::allocate):
+        (WebCore::CCScopedTexture::free):
+        * platform/graphics/chromium/cc/CCScopedTexture.h:
+        (WebCore::CCScopedTexture::create):
+        (CCScopedTexture):
+        (WebCore::CCScopedTexture::beginRenderTo):
+        (WebCore::CCScopedTexture::endRenderTo):
+        (WebCore::CCScopedTexture::beginRenderFrom):
+        (WebCore::CCScopedTexture::endRenderFrom):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::CCScrollbarLayerImpl):
+        (WebCore):
+        (WebCore::CCScrollbarLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (WebCore::CCScrollbarLayerImpl::setBackTrackResourceId):
+        (WebCore::CCScrollbarLayerImpl::setForeTrackResourceId):
+        (WebCore::CCScrollbarLayerImpl::setThumbResourceId):
+        (CCScrollbarLayerImpl):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::recreateContext):
+        (WebCore::CCSingleThreadProxy::doCommit):
+        (WebCore::CCSingleThreadProxy::stop):
+        * platform/graphics/chromium/cc/CCTexture.h:
+        (WebCore::CCTexture::id):
+        (WebCore::CCTexture::setId):
+        (CCTexture):
+        * platform/graphics/chromium/cc/CCTextureLayerImpl.cpp:
+        (WebCore::CCTextureLayerImpl::CCTextureLayerImpl):
+        (WebCore::CCTextureLayerImpl::willDraw):
+        (WebCore):
+        (WebCore::CCTextureLayerImpl::appendQuads):
+        (WebCore::CCTextureLayerImpl::didDraw):
+        * platform/graphics/chromium/cc/CCTextureLayerImpl.h:
+        (CCTextureLayerImpl):
+        * platform/graphics/chromium/cc/CCTextureUpdater.cpp:
+        (WebCore::CCTextureUpdater::update):
+        * platform/graphics/chromium/cc/CCTextureUpdater.h:
+        (WebCore):
+        (CCTextureUpdater):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::scheduledActionUpdateMoreResources):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnImplThread):
+        (WebCore::CCThreadProxy::recreateContextOnImplThread):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::DrawableTile::resourceId):
+        (WebCore::DrawableTile::setResourceId):
+        (WebCore::DrawableTile::DrawableTile):
+        (DrawableTile):
+        (WebCore::CCTiledLayerImpl::contentsResourceId):
+        (WebCore::CCTiledLayerImpl::hasTextureIdForTileAt):
+        (WebCore::CCTiledLayerImpl::appendQuads):
+        (WebCore::CCTiledLayerImpl::pushTileProperties):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (CCTiledLayerImpl):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::~CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::willDraw):
+        (WebCore::CCVideoLayerImpl::willDrawInternal):
+        (WebCore::CCVideoLayerImpl::appendQuads):
+        (WebCore::CCVideoLayerImpl::didDraw):
+        (WebCore::CCVideoLayerImpl::FramePlane::allocateData):
+        (WebCore::CCVideoLayerImpl::FramePlane::freeData):
+        (WebCore::CCVideoLayerImpl::allocatePlaneData):
+        (WebCore::CCVideoLayerImpl::copyPlaneData):
+        (WebCore::CCVideoLayerImpl::freePlaneData):
+        (WebCore::CCVideoLayerImpl::freeUnusedPlaneData):
+        (WebCore::CCVideoLayerImpl::didLoseContext):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (CCVideoLayerImpl):
+        (FramePlane):
+        (WebCore::CCVideoLayerImpl::FramePlane::FramePlane):
+
 2012-07-18  Hayato Ito  <hayato@chromium.org>
 
         [Shadow] A 'selectstart' event fired on distributed nodes should not be stopped at shadow boundary of the parent shadow host.

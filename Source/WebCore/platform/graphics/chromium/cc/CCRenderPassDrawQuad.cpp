@@ -31,19 +31,19 @@ using WebKit::WebCompositorQuad;
 
 namespace WebCore {
 
-PassOwnPtr<CCRenderPassDrawQuad> CCRenderPassDrawQuad::create(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix& drawTransform, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame)
+PassOwnPtr<CCRenderPassDrawQuad> CCRenderPassDrawQuad::create(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix& drawTransform, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame)
 {
-    return adoptPtr(new CCRenderPassDrawQuad(sharedQuadState, quadRect, renderPassId, isReplica, drawTransform, filters, backgroundFilters, maskTextureId, contentsChangedSinceLastFrame));
+    return adoptPtr(new CCRenderPassDrawQuad(sharedQuadState, quadRect, renderPassId, isReplica, drawTransform, filters, backgroundFilters, maskResourceId, contentsChangedSinceLastFrame));
 }
 
-CCRenderPassDrawQuad::CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix& drawTransform, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, unsigned maskTextureId, const IntRect& contentsChangedSinceLastFrame)
+CCRenderPassDrawQuad::CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix& drawTransform, const WebKit::WebFilterOperations& filters, const WebKit::WebFilterOperations& backgroundFilters, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame)
     : WebCompositorQuad(sharedQuadState, WebCompositorQuad::RenderPass, quadRect)
     , m_renderPassId(renderPassId)
     , m_isReplica(isReplica)
     , m_drawTransform(drawTransform)
     , m_filters(filters)
     , m_backgroundFilters(backgroundFilters)
-    , m_maskTextureId(maskTextureId)
+    , m_maskResourceId(maskResourceId)
     , m_contentsChangedSinceLastFrame(contentsChangedSinceLastFrame)
 {
     ASSERT(m_renderPassId > 0);

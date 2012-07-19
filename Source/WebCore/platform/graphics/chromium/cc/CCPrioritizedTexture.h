@@ -25,18 +25,16 @@
 #ifndef CCPrioritizedTexture_h
 #define CCPrioritizedTexture_h
 
-#include "CCPriorityCalculator.h"
-#include "CCTexture.h"
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "cc/CCPriorityCalculator.h"
+#include "cc/CCResourceProvider.h"
+#include "cc/CCTexture.h"
 
 namespace WebCore {
 
 class CCPrioritizedTextureManager;
-class CCPriorityCalculator;
-class CCGraphicsContext;
-class TextureAllocator;
 
 class CCPrioritizedTexture {
     WTF_MAKE_NONCOPYABLE(CCPrioritizedTexture);
@@ -76,7 +74,7 @@ public:
 
     // If canAcquireBackingTexture() is true acquireBackingTexture() will acquire
     // a backing texture for use. Call this whenever the texture is actually needed.
-    void acquireBackingTexture(TextureAllocator*);
+    void acquireBackingTexture(CCResourceProvider*);
 
     // FIXME: Request late is really a hack for when we are totally out of memory
     //        (all textures are visible) but we can still squeeze into the limit
@@ -87,11 +85,10 @@ public:
     //        regress OOMs situations.
     bool requestLate();
 
-    // These functions will acquire the texture if possible. If neither haveBackingTexture()
-    // nor canAcquireBackingTexture() is true, an ID of zero will be used/returned.
-    void bindTexture(CCGraphicsContext*, TextureAllocator*);
-    void framebufferTexture2D(CCGraphicsContext*, TextureAllocator*);
-    unsigned textureId();
+    // Uploads pixels into the backing resource. This functions will aquire the backing if needed.
+    void upload(CCResourceProvider*, const uint8_t* image, const IntRect& imageRect, const IntRect& sourceRect, const IntRect& destRect);
+
+    CCResourceProvider::ResourceId resourceId() const;
 
     // Self-managed textures are accounted for when prioritizing other textures,
     // but they are not allocated/recycled/deleted, so this needs to be done

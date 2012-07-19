@@ -36,11 +36,12 @@ using namespace std;
 
 namespace WebCore {
 
-CCPrioritizedTextureManager::CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, int)
+CCPrioritizedTextureManager::CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, int, int pool)
     : m_maxMemoryLimitBytes(maxMemoryLimitBytes)
     , m_memoryUseBytes(0)
     , m_memoryAboveCutoffBytes(0)
     , m_memoryAvailableBytes(0)
+    , m_pool(pool)
 {
 }
 
@@ -49,7 +50,7 @@ CCPrioritizedTextureManager::~CCPrioritizedTextureManager()
     while (m_textures.size() > 0)
         unregisterTexture(*m_textures.begin());
 
-    // Each remaining backing is a leaked opengl texture. We don't have the allocator
+    // Each remaining backing is a leaked opengl texture. We don't have the resourceProvider
     // to delete the textures at this time so clearMemory() needs to be called before this.
     while (m_backings.size() > 0)
         destroyBacking(*m_backings.begin(), 0);
@@ -168,7 +169,7 @@ bool CCPrioritizedTextureManager::requestLate(CCPrioritizedTexture* texture)
     return true;
 }
 
-void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTexture* texture, TextureAllocator* allocator)
+void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTexture* texture, CCResourceProvider* resourceProvider)
 {
     ASSERT(!texture->isSelfManaged());
     ASSERT(texture->isAbovePriorityCutoff());
@@ -190,8 +191,8 @@ void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTex
 
     // Otherwise reduce memory and just allocate a new backing texures.
     if (!backing) {
-        reduceMemory(m_memoryAvailableBytes - texture->bytes(), allocator);
-        backing = createBacking(texture->size(), texture->format(), allocator);
+        reduceMemory(m_memoryAvailableBytes - texture->bytes(), resourceProvider);
+        backing = createBacking(texture->size(), texture->format(), resourceProvider);
     }
 
     // Move the used backing texture to the end of the eviction list.
@@ -202,7 +203,7 @@ void CCPrioritizedTextureManager::acquireBackingTextureIfNeeded(CCPrioritizedTex
     m_backings.add(backing);
 }
 
-void CCPrioritizedTextureManager::reduceMemory(size_t limitBytes, TextureAllocator* allocator)
+void CCPrioritizedTextureManager::reduceMemory(size_t limitBytes, CCResourceProvider* resourceProvider)
 {
     if (memoryUseBytes() <= limitBytes)
         return;
@@ -212,13 +213,13 @@ void CCPrioritizedTextureManager::reduceMemory(size_t limitBytes, TextureAllocat
         BackingSet::iterator it = m_backings.begin();
         if ((*it)->owner() && (*it)->owner()->isAbovePriorityCutoff())
             break;
-        destroyBacking((*it), allocator);
+        destroyBacking((*it), resourceProvider);
     }
 }
 
-void CCPrioritizedTextureManager::reduceMemory(TextureAllocator* allocator)
+void CCPrioritizedTextureManager::reduceMemory(CCResourceProvider* resourceProvider)
 {
-    reduceMemory(m_memoryAvailableBytes, allocator);
+    reduceMemory(m_memoryAvailableBytes, resourceProvider);
     ASSERT(memoryUseBytes() <= maxMemoryLimitBytes());
 
     // We currently collect backings from deleted textures for later recycling.
@@ -235,17 +236,17 @@ void CCPrioritizedTextureManager::reduceMemory(TextureAllocator* allocator)
     size_t tenPercentOfMemory = m_memoryAvailableBytes / 10;
     if (wastedMemory <= tenPercentOfMemory)
         return;
-    reduceMemory(memoryUseBytes() - (wastedMemory - tenPercentOfMemory), allocator);
+    reduceMemory(memoryUseBytes() - (wastedMemory - tenPercentOfMemory), resourceProvider);
 }
 
-void CCPrioritizedTextureManager::clearAllMemory(TextureAllocator* allocator)
+void CCPrioritizedTextureManager::clearAllMemory(CCResourceProvider* resourceProvider)
 {
     // Unlink and destroy all backing textures.
     while (m_backings.size() > 0) {
         BackingSet::iterator it = m_backings.begin();
         if ((*it)->owner())
             (*it)->owner()->unlink();
-        destroyBacking((*it), allocator);
+        destroyBacking((*it), resourceProvider);
     }
 }
 
@@ -253,7 +254,7 @@ void CCPrioritizedTextureManager::allBackingTexturesWereDeleted()
 {
     // Same as clearAllMemory, except all our textures were already
     // deleted externally, so we don't delete them. Passing no
-    // allocator results in leaking the (now invalid) texture ids.
+    // resourceProvider results in leaking the (now invalid) texture ids.
     clearAllMemory(0);
 }
 
@@ -291,26 +292,27 @@ void CCPrioritizedTextureManager::returnBackingTexture(CCPrioritizedTexture* tex
     }
 }
 
-CCPrioritizedTexture::Backing* CCPrioritizedTextureManager::createBacking(IntSize size, GC3Denum format, TextureAllocator* allocator)
+CCPrioritizedTexture::Backing* CCPrioritizedTextureManager::createBacking(IntSize size, GC3Denum format, CCResourceProvider* resourceProvider)
 {
-    ASSERT(allocator);
+    ASSERT(resourceProvider);
 
-    CCPrioritizedTexture::Backing* backing = new CCPrioritizedTexture::Backing(allocator->createTexture(size, format), size, format);
+    CCResourceProvider::ResourceId resourceId = resourceProvider->createResource(m_pool, size, format, CCResourceProvider::TextureUsageAny);
+    CCPrioritizedTexture::Backing* backing = new CCPrioritizedTexture::Backing(resourceId, size, format);
     m_memoryUseBytes += backing->bytes();
     // Put backing texture at the front for eviction, since it isn't in use yet.
     m_backings.insertBefore(m_backings.begin(), backing);
     return backing;
 }
 
-void CCPrioritizedTextureManager::destroyBacking(CCPrioritizedTexture::Backing* backing, TextureAllocator* allocator)
+void CCPrioritizedTextureManager::destroyBacking(CCPrioritizedTexture::Backing* backing, CCResourceProvider* resourceProvider)
 {
     ASSERT(backing);
     ASSERT(!backing->owner() || !backing->owner()->isAbovePriorityCutoff());
     ASSERT(!backing->owner() || !backing->owner()->isSelfManaged());
     ASSERT(m_backings.find(backing) != m_backings.end());
 
-    if (allocator)
-        allocator->deleteTexture(backing->id(), backing->size(), backing->format());
+    if (resourceProvider)
+        resourceProvider->deleteResource(backing->id());
     if (backing->owner())
         backing->owner()->unlink();
     m_memoryUseBytes -= backing->bytes();

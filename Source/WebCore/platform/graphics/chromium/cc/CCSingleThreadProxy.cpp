@@ -158,7 +158,7 @@ bool CCSingleThreadProxy::recreateContext()
     bool initialized;
     {
         DebugScopedSetImplThread impl;
-        m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
+        m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->resourceProvider());
         initialized = m_layerTreeHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
         if (initialized) {
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
@@ -213,7 +213,7 @@ void CCSingleThreadProxy::doCommit(CCTextureUpdater& updater)
         // here as the throttled uploader isn't used in single thread mode.
         // For correctness, loop until no more updates are pending.
         while (updater.hasMoreUpdates())
-            updater.update(m_layerTreeHostImpl->context(), m_layerTreeHostImpl->contentsTextureAllocator(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader(), maxPartialTextureUpdates());
+            updater.update(m_layerTreeHostImpl->resourceProvider(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader(), maxPartialTextureUpdates());
 
         m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
 
@@ -262,7 +262,7 @@ void CCSingleThreadProxy::stop()
         DebugScopedSetImplThread impl;
 
         if (!m_layerTreeHostImpl->contentsTexturesWerePurgedSinceLastCommit())
-            m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
+            m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->resourceProvider());
         m_layerTreeHostImpl.clear();
     }
     m_layerTreeHost = 0;

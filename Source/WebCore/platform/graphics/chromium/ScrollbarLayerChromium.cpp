@@ -77,19 +77,19 @@ void ScrollbarLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     scrollbarLayer->setScrollbarOverlayStyle(m_scrollbarOverlayStyle);
 
     if (m_backTrack && m_backTrack->texture()->haveBackingTexture())
-        scrollbarLayer->setBackTrackTextureId(m_backTrack->texture()->textureId());
+        scrollbarLayer->setBackTrackResourceId(m_backTrack->texture()->resourceId());
     else
-        scrollbarLayer->setBackTrackTextureId(0);
+        scrollbarLayer->setBackTrackResourceId(0);
 
     if (m_foreTrack && m_foreTrack->texture()->haveBackingTexture())
-        scrollbarLayer->setForeTrackTextureId(m_foreTrack->texture()->textureId());
+        scrollbarLayer->setForeTrackResourceId(m_foreTrack->texture()->resourceId());
     else
-        scrollbarLayer->setForeTrackTextureId(0);
+        scrollbarLayer->setForeTrackResourceId(0);
 
     if (m_thumb && m_thumb->texture()->haveBackingTexture())
-        scrollbarLayer->setThumbTextureId(m_thumb->texture()->textureId());
+        scrollbarLayer->setThumbResourceId(m_thumb->texture()->resourceId());
     else
-        scrollbarLayer->setThumbTextureId(0);
+        scrollbarLayer->setThumbResourceId(0);
 
     Vector<IntRect> tickmarks;
     m_scrollbar->getTickmarks(tickmarks);
@@ -205,24 +205,23 @@ void ScrollbarLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 
 void ScrollbarLayerChromium::createTextureUpdaterIfNeeded()
 {
-    bool useMapSubImage = layerTreeHost()->layerRendererCapabilities().usingMapSub;
     m_textureFormat = layerTreeHost()->layerRendererCapabilities().bestTextureFormat;
 
     if (!m_backTrackUpdater)
-        m_backTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), theme(), BackTrackPart), useMapSubImage);
+        m_backTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), theme(), BackTrackPart));
     if (!m_backTrack)
         m_backTrack = m_backTrackUpdater->createTexture(layerTreeHost()->contentsTextureManager());
 
     // Only create two-part track if we think the two parts could be different in appearance.
     if (m_scrollbar->isCustomScrollbar()) {
         if (!m_foreTrackUpdater)
-            m_foreTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), theme(), ForwardTrackPart), useMapSubImage);
+            m_foreTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), theme(), ForwardTrackPart));
         if (!m_foreTrack)
             m_foreTrack = m_foreTrackUpdater->createTexture(layerTreeHost()->contentsTextureManager());
     }
 
     if (!m_thumbUpdater)
-        m_thumbUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarThumbPainter::create(m_scrollbar.get(), theme()), useMapSubImage);
+        m_thumbUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarThumbPainter::create(m_scrollbar.get(), theme()));
     if (!m_thumb)
         m_thumb = m_thumbUpdater->createTexture(layerTreeHost()->contentsTextureManager());
 }

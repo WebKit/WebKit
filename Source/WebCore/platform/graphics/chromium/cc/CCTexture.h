@@ -28,6 +28,7 @@
 
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
+#include "cc/CCResourceProvider.h"
 #include "cc/CCTexture.h"
 
 namespace WebCore {
@@ -40,11 +41,11 @@ public:
         , m_size(size)
         , m_format(format) { }
 
-    unsigned id() const { return m_id; }
+    CCResourceProvider::ResourceId id() const { return m_id; }
     const IntSize& size() const { return m_size; }
     GC3Denum format() const { return m_format; }
 
-    void setId(unsigned id) { m_id = id; }
+    void setId(CCResourceProvider::ResourceId id) { m_id = id; }
     void setDimensions(const IntSize&, GC3Denum format);
 
     size_t bytes() const;
@@ -52,7 +53,7 @@ public:
     static size_t memorySizeBytes(const IntSize&, GC3Denum format);
 
 private:
-    unsigned m_id;
+    CCResourceProvider::ResourceId m_id;
     IntSize m_size;
     GC3Denum m_format;
 };

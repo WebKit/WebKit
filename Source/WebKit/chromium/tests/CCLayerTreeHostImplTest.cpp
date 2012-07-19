@@ -600,12 +600,12 @@ class DidDrawCheckLayer : public CCTiledLayerImpl {
 public:
     static PassOwnPtr<DidDrawCheckLayer> create(int id) { return adoptPtr(new DidDrawCheckLayer(id)); }
 
-    virtual void didDraw()
+    virtual void didDraw(CCResourceProvider*) OVERRIDE
     {
         m_didDrawCalled = true;
     }
 
-    virtual void willDraw(CCRenderer*, CCGraphicsContext*)
+    virtual void willDraw(CCResourceProvider*) OVERRIDE
     {
         m_willDrawCalled = true;
     }
@@ -755,18 +755,20 @@ TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
 
 class MissingTextureAnimatingLayer : public DidDrawCheckLayer {
 public:
-    static PassOwnPtr<MissingTextureAnimatingLayer> create(int id, bool tileMissing, bool skipsDraw, bool animating) { return adoptPtr(new MissingTextureAnimatingLayer(id, tileMissing, skipsDraw, animating)); }
+    static PassOwnPtr<MissingTextureAnimatingLayer> create(int id, bool tileMissing, bool skipsDraw, bool animating, CCResourceProvider* resourceProvider) { return adoptPtr(new MissingTextureAnimatingLayer(id, tileMissing, skipsDraw, animating, resourceProvider)); }
 
 private:
-    explicit MissingTextureAnimatingLayer(int id, bool tileMissing, bool skipsDraw, bool animating)
+    explicit MissingTextureAnimatingLayer(int id, bool tileMissing, bool skipsDraw, bool animating, CCResourceProvider* resourceProvider)
         : DidDrawCheckLayer(id)
     {
         OwnPtr<CCLayerTilingData> tilingData = CCLayerTilingData::create(IntSize(10, 10), CCLayerTilingData::NoBorderTexels);
         tilingData->setBounds(bounds());
         setTilingData(*tilingData.get());
         setSkipsDraw(skipsDraw);
-        if (!tileMissing)
-            pushTileProperties(0, 0, 1, IntRect());
+        if (!tileMissing) {
+            CCResourceProvider::ResourceId resource = resourceProvider->createResource(CCRenderer::ContentPool, IntSize(), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny);
+            pushTileProperties(0, 0, resource, IntRect());
+        }
         if (animating)
             addAnimatedTransformToLayer(*this, 10, 3, 0);
     }
@@ -777,7 +779,7 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     // When the texture is not missing, we draw as usual.
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(2, false, false, true));
+    root->addChild(MissingTextureAnimatingLayer::create(2, false, false, true, m_hostImpl->resourceProvider()));
 
     CCLayerTreeHostImpl::FrameData frame;
 
@@ -788,7 +790,7 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     // When a texture is missing and we're not animating, we draw as usual with checkerboarding.
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(2, true, false, false));
+    root->addChild(MissingTextureAnimatingLayer::create(2, true, false, false, m_hostImpl->resourceProvider()));
 
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
@@ -797,7 +799,7 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     // When a texture is missing and we're animating, we don't want to draw anything.
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(2, true, false, true));
+    root->addChild(MissingTextureAnimatingLayer::create(2, true, false, true, m_hostImpl->resourceProvider()));
 
     EXPECT_FALSE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
@@ -806,7 +808,7 @@ TEST_F(CCLayerTreeHostImplTest, prepareToDrawFailsWhenAnimationUsesCheckerboard)
     // When the layer skips draw and we're animating, we still draw the frame.
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
-    root->addChild(MissingTextureAnimatingLayer::create(2, false, true, true));
+    root->addChild(MissingTextureAnimatingLayer::create(2, false, true, true, m_hostImpl->resourceProvider()));
 
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
@@ -1171,7 +1173,7 @@ private:
 
 class BlendStateCheckLayer : public CCLayerImpl {
 public:
-    static PassOwnPtr<BlendStateCheckLayer> create(int id) { return adoptPtr(new BlendStateCheckLayer(id)); }
+    static PassOwnPtr<BlendStateCheckLayer> create(int id, CCResourceProvider* resourceProvider) { return adoptPtr(new BlendStateCheckLayer(id, resourceProvider)); }
 
     virtual void appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&) OVERRIDE
     {
@@ -1182,7 +1184,7 @@ public:
             opaqueRect = m_quadRect;
         else
             opaqueRect = m_opaqueContentRect;
-        OwnPtr<CCDrawQuad> testBlendingDrawQuad = CCTileDrawQuad::create(sharedQuadState, m_quadRect, opaqueRect, 0, IntPoint(), IntSize(1, 1), 0, false, false, false, false, false);
+        OwnPtr<CCDrawQuad> testBlendingDrawQuad = CCTileDrawQuad::create(sharedQuadState, m_quadRect, opaqueRect, m_resourceId, IntPoint(), IntSize(1, 1), 0, false, false, false, false, false);
         testBlendingDrawQuad->setQuadVisibleRect(m_quadVisibleRect);
         EXPECT_EQ(m_blend, testBlendingDrawQuad->needsBlending());
         EXPECT_EQ(m_hasRenderSurface, !!renderSurface());
@@ -1204,7 +1206,7 @@ public:
     void setOpaqueContentRect(const IntRect& rect) { m_opaqueContentRect = rect; }
 
 private:
-    explicit BlendStateCheckLayer(int id)
+    explicit BlendStateCheckLayer(int id, CCResourceProvider* resourceProvider)
         : CCLayerImpl(id)
         , m_blend(false)
         , m_hasRenderSurface(false)
@@ -1212,6 +1214,7 @@ private:
         , m_opaqueContents(false)
         , m_quadRect(5, 5, 5, 5)
         , m_quadVisibleRect(5, 5, 5, 5)
+        , m_resourceId(resourceProvider->createResource(CCRenderer::ContentPool, IntSize(1, 1), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny))
     {
         setAnchorPoint(FloatPoint(0, 0));
         setBounds(IntSize(10, 10));
@@ -1226,6 +1229,7 @@ private:
     IntRect m_quadRect;
     IntRect m_opaqueContentRect;
     IntRect m_quadVisibleRect;
+    CCResourceProvider::ResourceId m_resourceId;
 };
 
 TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
@@ -1240,7 +1244,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     }
     CCLayerImpl* root = m_hostImpl->rootLayer();
 
-    root->addChild(BlendStateCheckLayer::create(2));
+    root->addChild(BlendStateCheckLayer::create(2, m_hostImpl->resourceProvider()));
     BlendStateCheckLayer* layer1 = static_cast<BlendStateCheckLayer*>(root->children()[0].get());
     layer1->setPosition(FloatPoint(2, 2));
 
@@ -1293,7 +1297,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     EXPECT_TRUE(layer1->quadsAppended());
     m_hostImpl->didDrawAllLayers(frame);
 
-    layer1->addChild(BlendStateCheckLayer::create(3));
+    layer1->addChild(BlendStateCheckLayer::create(3, m_hostImpl->resourceProvider()));
     BlendStateCheckLayer* layer2 = static_cast<BlendStateCheckLayer*>(layer1->children()[0].get());
     layer2->setPosition(FloatPoint(4, 4));
 
@@ -1454,7 +1458,7 @@ TEST_F(CCLayerTreeHostImplTest, viewportCovered)
     IntSize viewportSize(1000, 1000);
     m_hostImpl->setViewportSize(viewportSize);
 
-    m_hostImpl->setRootLayer(BlendStateCheckLayer::create(1));
+    m_hostImpl->setRootLayer(BlendStateCheckLayer::create(1, m_hostImpl->resourceProvider()));
     BlendStateCheckLayer* root = static_cast<BlendStateCheckLayer*>(m_hostImpl->rootLayer());
     root->setExpectation(false, true);
     root->setOpaque(true);
@@ -2972,9 +2976,9 @@ protected:
 
 class CCTestRenderer : public LayerRendererChromium, public CCRendererClient {
 public:
-    static PassOwnPtr<CCTestRenderer> create(WebKit::WebGraphicsContext3D* context)
+    static PassOwnPtr<CCTestRenderer> create(CCResourceProvider* resourceProvider)
     {
-        OwnPtr<CCTestRenderer> renderer(adoptPtr(new CCTestRenderer(context)));
+        OwnPtr<CCTestRenderer> renderer(adoptPtr(new CCTestRenderer(resourceProvider)));
         if (!renderer->initialize())
             return nullptr;
 
@@ -2996,7 +3000,7 @@ public:
     virtual void setMemoryAllocationLimitBytes(size_t) OVERRIDE { }
 
 protected:
-    CCTestRenderer(WebKit::WebGraphicsContext3D* context) : LayerRendererChromium(this, context, UnthrottledUploader) { }
+    CCTestRenderer(CCResourceProvider* resourceProvider) : LayerRendererChromium(this, resourceProvider, UnthrottledUploader) { }
 
 private:
     CCLayerTreeSettings m_settings;
@@ -3279,9 +3283,10 @@ static void verifyRenderPassTestData(TestCase& testCase, RenderPassRemovalTestDa
 TEST_F(CCLayerTreeHostImplTest, testRemoveRenderPasses)
 {
     OwnPtr<CCGraphicsContext> context(createContext());
-    WebKit::WebGraphicsContext3D* context3d = context->context3D();
-    ASSERT_TRUE(context3d);
-    OwnPtr<CCTestRenderer> renderer(CCTestRenderer::create(context3d));
+    ASSERT_TRUE(context->context3D());
+    OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
+
+    OwnPtr<CCTestRenderer> renderer(CCTestRenderer::create(resourceProvider.get()));
 
     int testCaseIndex = 0;
     while (removeRenderPassesCases[testCaseIndex].name) {

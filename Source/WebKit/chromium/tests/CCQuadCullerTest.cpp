@@ -75,11 +75,11 @@ static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const We
     layer->setBounds(layerRect.size());
     layer->setContentBounds(layerRect.size());
 
-    int textureId = 1;
+    CCResourceProvider::ResourceId resourceId = 1;
     for (int i = 0; i < tiler->numTilesX(); ++i)
         for (int j = 0; j < tiler->numTilesY(); ++j) {
             IntRect tileOpaqueRect = opaque ? tiler->tileBounds(i, j) : intersection(tiler->tileBounds(i, j), layerOpaqueRect);
-            layer->pushTileProperties(i, j, static_cast<Platform3DObject>(textureId++), tileOpaqueRect);
+            layer->pushTileProperties(i, j, resourceId++, tileOpaqueRect);
         }
 
     if (!parent) {

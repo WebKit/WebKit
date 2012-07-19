@@ -40,9 +40,9 @@ class CCPriorityCalculator;
 class CCPrioritizedTextureManager {
     WTF_MAKE_NONCOPYABLE(CCPrioritizedTextureManager);
 public:
-    static PassOwnPtr<CCPrioritizedTextureManager> create(size_t maxMemoryLimitBytes, int maxTextureSize)
+    static PassOwnPtr<CCPrioritizedTextureManager> create(size_t maxMemoryLimitBytes, int maxTextureSize, int pool)
     {
-        return adoptPtr(new CCPrioritizedTextureManager(maxMemoryLimitBytes, maxTextureSize));
+        return adoptPtr(new CCPrioritizedTextureManager(maxMemoryLimitBytes, maxTextureSize, pool));
     }
     PassOwnPtr<CCPrioritizedTexture> createTexture(IntSize size, GC3Denum format)
     {
@@ -73,11 +73,11 @@ public:
 
     bool requestLate(CCPrioritizedTexture*);
 
-    void reduceMemory(TextureAllocator*);
-    void clearAllMemory(TextureAllocator*);
+    void reduceMemory(CCResourceProvider*);
+    void clearAllMemory(CCResourceProvider*);
     void allBackingTexturesWereDeleted();
 
-    void acquireBackingTextureIfNeeded(CCPrioritizedTexture*, TextureAllocator*);
+    void acquireBackingTextureIfNeeded(CCPrioritizedTexture*, CCResourceProvider*);
 
     void registerTexture(CCPrioritizedTexture*);
     void unregisterTexture(CCPrioritizedTexture*);
@@ -105,18 +105,19 @@ private:
         return CCPriorityCalculator::priorityIsLower(priorityA, priorityB);
     }
 
-    CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, int maxTextureSize);
+    CCPrioritizedTextureManager(size_t maxMemoryLimitBytes, int maxTextureSize, int pool);
 
-    void reduceMemory(size_t limit, TextureAllocator*);
+    void reduceMemory(size_t limit, CCResourceProvider*);
 
-    CCPrioritizedTexture::Backing* createBacking(IntSize, GC3Denum format, TextureAllocator*);
-    void destroyBacking(CCPrioritizedTexture::Backing*, TextureAllocator*);
+    CCPrioritizedTexture::Backing* createBacking(IntSize, GC3Denum format, CCResourceProvider*);
+    void destroyBacking(CCPrioritizedTexture::Backing*, CCResourceProvider*);
 
     size_t m_maxMemoryLimitBytes;
     unsigned m_priorityCutoff;
     size_t m_memoryUseBytes;
     size_t m_memoryAboveCutoffBytes;
     size_t m_memoryAvailableBytes;
+    int m_pool;
 
     typedef HashSet<CCPrioritizedTexture*> TextureSet;
     typedef ListHashSet<CCPrioritizedTexture::Backing*> BackingSet;

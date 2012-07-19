@@ -27,7 +27,10 @@
 #include "cc/CCScopedTexture.h"
 
 #include "CCTiledLayerTestCommon.h"
+#include "FakeCCGraphicsContext.h"
 #include "GraphicsContext3D.h"
+#include "cc/CCRenderer.h"
+#include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 
 #include <gtest/gtest.h>
 
@@ -39,8 +42,10 @@ namespace {
 
 TEST(CCScopedTextureTest, NewScopedTexture)
 {
-    FakeTextureAllocator allocator;
-    OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(&allocator);
+    OwnPtr<CCGraphicsContext> context(createFakeCCGraphicsContext());
+    DebugScopedSetImplThread implThread;
+    OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
+    OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(resourceProvider.get());
 
     // New scoped textures do not hold a texture yet.
     EXPECT_EQ(0u, texture->id());
@@ -52,9 +57,11 @@ TEST(CCScopedTextureTest, NewScopedTexture)
 
 TEST(CCScopedTextureTest, CreateScopedTexture)
 {
-    FakeTextureAllocator allocator;
-    OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(&allocator);
-    texture->allocate(IntSize(30, 30), GraphicsContext3D::RGBA);
+    OwnPtr<CCGraphicsContext> context(createFakeCCGraphicsContext());
+    DebugScopedSetImplThread implThread;
+    OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
+    OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(resourceProvider.get());
+    texture->allocate(CCRenderer::ImplPool, IntSize(30, 30), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny);
 
     // The texture has an allocated byte-size now.
     size_t expectedBytes = 30 * 30 * 4;
@@ -65,95 +72,58 @@ TEST(CCScopedTextureTest, CreateScopedTexture)
     EXPECT_EQ(IntSize(30, 30), texture->size());
 }
 
-// Fake TextureAllocator that tracks the number of textures in use.
-class TrackingTextureAllocator : public TextureAllocator {
-public:
-    TrackingTextureAllocator()
-        : m_nextTextureId(1)
-        , m_numTextures(0)
-    { }
-
-    virtual unsigned createTexture(const WebCore::IntSize&, GC3Denum) OVERRIDE
-    {
-        unsigned id = m_nextTextureId;
-        ++m_nextTextureId;
-
-        m_textures.set(id, true);
-        ++m_numTextures;
-        return id;
-    }
-
-    virtual void deleteTexture(unsigned id, const WebCore::IntSize&, GC3Denum) OVERRIDE
-    {
-        if (!m_textures.get(id))
-            return;
-
-        m_textures.set(id, false);
-        --m_numTextures;
-    }
-
-    virtual void deleteAllTextures() OVERRIDE
-    {
-        m_textures.clear();
-        m_numTextures = 0;
-    }
-
-    unsigned numTextures() const { return m_numTextures; }
-
-private:
-    unsigned m_nextTextureId;
-    HashMap<unsigned, bool> m_textures;
-    unsigned m_numTextures;
-};
-
 TEST(CCScopedTextureTest, ScopedTextureIsDeleted)
 {
-    TrackingTextureAllocator allocator;
+    OwnPtr<CCGraphicsContext> context(createFakeCCGraphicsContext());
+    DebugScopedSetImplThread implThread;
+    OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
 
     {
-        OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(&allocator);
+        OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(resourceProvider.get());
 
-        EXPECT_EQ(0u, allocator.numTextures());
-        texture->allocate(IntSize(30, 30), GraphicsContext3D::RGBA);
+        EXPECT_EQ(0u, resourceProvider->numResources());
+        texture->allocate(CCRenderer::ImplPool, IntSize(30, 30), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny);
         EXPECT_LT(0u, texture->id());
-        EXPECT_EQ(1u, allocator.numTextures());
+        EXPECT_EQ(1u, resourceProvider->numResources());
     }
 
-    EXPECT_EQ(0u, allocator.numTextures());
+    EXPECT_EQ(0u, resourceProvider->numResources());
 
     {
-        OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(&allocator);
-        EXPECT_EQ(0u, allocator.numTextures());
-        texture->allocate(IntSize(30, 30), GraphicsContext3D::RGBA);
+        OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(resourceProvider.get());
+        EXPECT_EQ(0u, resourceProvider->numResources());
+        texture->allocate(CCRenderer::ImplPool, IntSize(30, 30), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny);
         EXPECT_LT(0u, texture->id());
-        EXPECT_EQ(1u, allocator.numTextures());
+        EXPECT_EQ(1u, resourceProvider->numResources());
         texture->free();
-        EXPECT_EQ(0u, allocator.numTextures());
+        EXPECT_EQ(0u, resourceProvider->numResources());
     }
 }
 
 TEST(CCScopedTextureTest, LeakScopedTexture)
 {
-    TrackingTextureAllocator allocator;
+    OwnPtr<CCGraphicsContext> context(createFakeCCGraphicsContext());
+    DebugScopedSetImplThread implThread;
+    OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
 
     {
-        OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(&allocator);
+        OwnPtr<CCScopedTexture> texture = CCScopedTexture::create(resourceProvider.get());
 
-        EXPECT_EQ(0u, allocator.numTextures());
-        texture->allocate(IntSize(30, 30), GraphicsContext3D::RGBA);
+        EXPECT_EQ(0u, resourceProvider->numResources());
+        texture->allocate(CCRenderer::ImplPool, IntSize(30, 30), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny);
         EXPECT_LT(0u, texture->id());
-        EXPECT_EQ(1u, allocator.numTextures());
+        EXPECT_EQ(1u, resourceProvider->numResources());
 
         texture->leak();
         EXPECT_EQ(0u, texture->id());
-        EXPECT_EQ(1u, allocator.numTextures());
+        EXPECT_EQ(1u, resourceProvider->numResources());
 
         texture->free();
         EXPECT_EQ(0u, texture->id());
-        EXPECT_EQ(1u, allocator.numTextures());
+        EXPECT_EQ(1u, resourceProvider->numResources());
     }
 
-    EXPECT_EQ(1u, allocator.numTextures());
+    EXPECT_EQ(1u, resourceProvider->numResources());
 }
 
 }
