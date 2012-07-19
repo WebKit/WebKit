@@ -28,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import errno
 import signal
 import subprocess
 import sys
@@ -77,8 +78,6 @@ def command_line(cmd, *args):
 class ExecutiveTest(unittest.TestCase):
     def assert_interpreter_for_content(self, intepreter, content):
         fs = MockFileSystem()
-        file_path = None
-        file_interpreter = None
 
         tempfile, temp_name = fs.open_binary_tempfile('')
         tempfile.write(content)

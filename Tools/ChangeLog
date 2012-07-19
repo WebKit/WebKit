@@ -1,3 +1,16 @@
+2012-07-19  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: fix executive_unittest nits, including a missing 'errno' import
+        https://bugs.webkit.org/show_bug.cgi?id=91770
+
+        Reviewed by Adam Barth.
+
+        The missing errno import is causing a flaky failure when run in
+        parallel on the bots.
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.assert_interpreter_for_content):
+
 2012-07-19  Oliver Hunt  <oliver@apple.com>
 
         Make style bot handle underscores in names more reasonably
