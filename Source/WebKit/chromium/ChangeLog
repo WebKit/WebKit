@@ -1,3 +1,9 @@
+2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium build fix attempt. Don't use anonymous namespace.
+
+        * tests/TextureCopierTest.cpp:
+
 2012-07-18  Antoine Labour  <piman@chromium.org>
 
         [chromium] Introduce CCResourceProvider, replacing TextureAllocator and hiding textures from clients to allow transport
