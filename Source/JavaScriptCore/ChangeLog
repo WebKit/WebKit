@@ -1,3 +1,10 @@
+2012-07-19  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed buildfix after r123042.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+
 2012-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should emit inline code for property storage (re)allocation

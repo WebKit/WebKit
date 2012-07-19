@@ -648,7 +648,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     }
     
     dataLog("-----------------------------------------------------------------------------\n");
-    dataLog("[ArgumentCount]            | %10p | %ld \n", it, callFrame->argumentCount());
+    dataLog("[ArgumentCount]            | %10p | %lu \n", it, (unsigned long) callFrame->argumentCount());
     ++it;
     dataLog("[CallerFrame]              | %10p | %p \n", it, callFrame->callerFrame());
     ++it;
