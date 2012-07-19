@@ -785,8 +785,6 @@ WebInspector.TimelinePanel.prototype = {
         var endTime = startTime + width * scale;
 
         var tasks = this._mainThreadTasks;
-        if (!tasks.length)
-            return;
 
         function compareEndTime(value, task)
         {
@@ -794,8 +792,6 @@ WebInspector.TimelinePanel.prototype = {
         }
 
         var taskIndex = insertionIndexForObjectInListSortedByFunction(startTime, tasks, compareEndTime);
-        if (taskIndex === tasks.length)
-            return;
 
         var container = this._cpuBarsElement;
         var element = container.firstChild.nextSibling;
