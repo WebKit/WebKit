@@ -8282,7 +8282,6 @@
             'platform/graphics/chromium/TextureCopier.h',
             'platform/graphics/chromium/TextureLayerChromium.cpp',
             'platform/graphics/chromium/TextureLayerChromium.h',
-            'platform/graphics/chromium/TextureAllocator.h',
             'platform/graphics/chromium/TextureUploader.h',
             'platform/graphics/chromium/ThrottledTextureUploader.cpp',
             'platform/graphics/chromium/ThrottledTextureUploader.h',
