@@ -1,3 +1,22 @@
+2012-07-19  Scott Graham  <scottmg@chromium.org>
+
+        Use native (non-cygwin) binaries for perl, gperf, and bison in Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=91667
+
+        Reviewed by Kentaro Hara.
+
+        Using native tools instead of cygwin version improves build time
+        performance by roughly 50% (on top of previous cl-instead-of-gcc
+        change).
+
+        No new tests.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/rule_bison.py:
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+        * make-hash-tools.pl:
+
 2012-07-19  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: CPU bars are not cleared along with the rest of the timeline panel

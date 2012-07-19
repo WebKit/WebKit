@@ -224,10 +224,23 @@
           '../platform/text/win',
           '../platform/win',
         ],
+        # Using native perl rather than cygwin perl cuts execution time of idl
+        # preprocessing rules by a bit more than 50%.
+        'perl_exe': '<(DEPTH)/third_party/perl/perl/bin/perl.exe',
+        'gperf_exe': '<(DEPTH)/third_party/gperf/bin/gperf.exe',
+        'bison_exe': '<(DEPTH)/third_party/bison/bin/bison.exe',
+        # Using cl instead of cygwin gcc cuts the processing time from
+        # 1m58s to 0m52s.
+        'preprocessor': '--preprocessor "cl.exe /nologo /EP /TP"',
       },{
         # enable -Wall and -Werror, just for Mac and Linux builds for now
         # FIXME: Also enable this for Windows after verifying no warnings
         'chromium_code': 1,
+        'perl_exe': 'perl',
+        'gperf_exe': 'gperf',
+        'bison_exe': 'bison',
+        # Without one specified, the scripts default to 'gcc'.
+        'preprocessor': '',
       }],
       ['use_x11==1 or OS=="android"', {
         'webcore_include_dirs': [
@@ -433,8 +446,9 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedScriptSource.h',
           ],
+          'msvs_cygwin_shell': 0,
           'action': [
-            'perl',
+            '<(perl_exe)',
             '../inspector/xxd.pl',
             'InjectedScriptSource_js',
             '<@(_inputs)',
@@ -456,8 +470,9 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedScriptWebGLModuleSource.h',
           ],
+          'msvs_cygwin_shell': 0,
           'action': [
-            'perl',
+            '<(perl_exe)',
             '../inspector/xxd.pl',
             'InjectedScriptWebGLModuleSource_js',
             '<@(_inputs)',
@@ -479,8 +494,9 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/DebuggerScriptSource.h',
           ],
+          'msvs_cygwin_shell': 0,
           'action': [
-            'perl',
+            '<(perl_exe)',
             '../inspector/xxd.pl',
             'DebuggerScriptSource_js',
             '<@(_inputs)',
@@ -511,19 +527,9 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
           ],
-          'conditions': [
-            ['OS=="win"', {
-              'variables': {
-                # Using cl instead of cygwin gcc cuts the processing time from
-                # 1m58s to 0m52s.
-                'preprocessor': '--preprocessor "cl.exe /nologo /EP /TP"',
-              },
-            }, {
-              'variables': { 'preprocessor': '', }
-            }],
-          ],
+          'msvs_cygwin_shell': 0,
           'action': [
-            'perl',
+            '<(perl_exe)',
             '-w',
             '-I../bindings/scripts',
             '../bindings/scripts/preprocess-idls.pl',
@@ -575,8 +581,9 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/V8ArrayBufferViewCustomScript.h',
           ],
+          'msvs_cygwin_shell': 0,
           'action': [
-            'perl',
+            '<(perl_exe)',
             '../inspector/xxd.pl',
             'V8ArrayBufferViewCustomScript_js',
             '<@(_inputs)',
@@ -592,8 +599,9 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerCSS.h',
           ],
+          'msvs_cygwin_shell': 0,
           'action': [
-            'perl',
+            '<(perl_exe)',
             '../inspector/xxd.pl',
             'XMLViewer_css',
             '<@(_inputs)',
@@ -608,8 +616,9 @@
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerJS.h',
           ],
+          'msvs_cygwin_shell': 0,
           'action': [
-            'perl',
+            '<(perl_exe)',
             '../inspector/xxd.pl',
             'XMLViewer_js',
             '<@(_inputs)',
@@ -1017,7 +1026,8 @@
             'python',
             'scripts/rule_bison.py',
             '<(RULE_INPUT_PATH)',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit'
+            '<(SHARED_INTERMEDIATE_DIR)/webkit',
+            '<(bison_exe)',
           ],
         },
         {
@@ -1032,11 +1042,13 @@
           'inputs': [
             '../make-hash-tools.pl',
           ],
+          'msvs_cygwin_shell': 0,
           'action': [
-            'perl',
+            '<(perl_exe)',
             '../make-hash-tools.pl',
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
             '<(RULE_INPUT_PATH)',
+            '<(gperf_exe)',
           ],
         },
         # Rule to build generated JavaScript (V8) bindings from .idl source.
@@ -1084,13 +1096,14 @@
               '--include', '../xml',
             ],
           },
+          'msvs_cygwin_shell': 0,
           # FIXME:  Note that we put the .cpp files in webcore/bindings
           # but the .h files in webkit/bindings.  This is to work around
           # the unfortunate fact that GYP strips duplicate arguments
           # from lists.  When we have a better GYP way to suppress that
           # behavior, change the output location.
           'action': [
-            'perl',
+            '<(perl_exe)',
             '-w',
             '-I../bindings/scripts',
             '../bindings/scripts/generate-bindings.pl',
@@ -1108,6 +1121,7 @@
             '--additionalIdlFilesList',
             '<(additional_idl_files_list)',
             '<(RULE_INPUT_PATH)',
+            '<@(preprocessor)',
           ],
           'message': 'Generating binding from <(RULE_INPUT_PATH)',
         },
