@@ -797,6 +797,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #if ENABLE(FULLSCREEN_API)
     priv->pageSettings->setFullScreenEnabled(true);
 #endif
+    priv->pageSettings->setInteractiveFormValidationEnabled(true);
 
     url = priv->pageSettings->userStyleSheetLocation();
     priv->settings.userStylesheet = eina_stringshare_add(url.string().utf8().data());

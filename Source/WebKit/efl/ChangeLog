@@ -1,3 +1,17 @@
+2012-07-19  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Enable interactive form validation
+        https://bugs.webkit.org/show_bug.cgi?id=91711
+
+        Reviewed by Ryosuke Niwa.
+
+        Enable interactive form validation on the Efl.
+        This makes we can validate data at form elements.
+        In addition, it is already enabled in the DRT.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Add central error management to EFL port
