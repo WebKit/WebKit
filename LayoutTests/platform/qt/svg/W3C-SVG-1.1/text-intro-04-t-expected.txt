@@ -3,10 +3,10 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (10,4) size 449x241
-      RenderSVGText {text} at (10,4) size 138x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 138x21
-          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 138.00: "Test horizontal text."
+    RenderSVGContainer {g} at (10,5) size 449x240
+      RenderSVGText {text} at (10,5) size 132x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 132x19
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 132.00: "Test horizontal text."
       RenderSVGContainer {g} at (10,41) size 449x204
         RenderSVGText {text} at (10,41) size 307x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 307x23
@@ -33,7 +33,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (10,223) size 449x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 449x21
             chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 35 width 448.39: "Japanese: \x{79C1}\x{306F}\x{30AC}\x{30E9}\x{30B9}\x{3092}\x{98DF}\x{3079}\x{3089}\x{308C}\x{307E}\x{3059}\x{3002}\x{305D}\x{308C}\x{306F}\x{79C1}\x{3092}\x{50B7}\x{3064}\x{3051}\x{307E}\x{305B}\x{3093}\x{3002}"
-    RenderSVGText {text} at (10,301) size 307x51 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 307x51
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 307.00: "$Revision: 1.10 $"
+    RenderSVGText {text} at (10,304) size 281x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 281x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 281.00: "$Revision: 1.10 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
