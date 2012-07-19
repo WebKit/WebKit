@@ -1,3 +1,25 @@
+2012-07-19  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] Added/updated missing fast/text results after rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=91570
+
+        Reviewed by Noam Rosenthal.
+
+        The following tests were failing after r122971:
+          fast/text/international/unicode-bidi-plaintext-in-textarea.html = TEXT
+          fast/text/textIteratorNilRenderer.html = TEXT
+          fast/text/whitespace/030.html = TEXT
+
+        This patch includes/updates the missing expectations.
+
+        * platform/qt-5.0-wk2/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/text/textIteratorNilRenderer-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/textIteratorNilRenderer-expected.txt: Added.
+        * platform/qt-5.0/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Added.
+        * platform/qt/fast/text/whitespace/030-expected.png:
+        * platform/qt/fast/text/whitespace/030-expected.txt:
+
 2012-07-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, marking three svg/W3C-SVG-1.1 tests as flaky.
