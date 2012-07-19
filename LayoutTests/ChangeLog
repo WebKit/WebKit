@@ -1,3 +1,28 @@
+2012-07-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS2.1] Anonymous tables should be inline/block-level based off their parent
+        https://bugs.webkit.org/show_bug.cgi?id=15365
+
+        Reviewed by Abhishek Arya.
+
+        * css2.1/20110323/inline-table-002b-expected.htm: Added.
+        * css2.1/20110323/inline-table-002b.html: Added.
+
+        * fast/table/inline-table-in-continuation-expected.html: Added.
+        * fast/table/inline-table-in-continuation.html: Added.
+        Added a test for an anonymous inline table in a continuation.
+
+        * fast/table/inline-table-with-caption-expected.html: Added.
+        * fast/table/inline-table-with-caption.html: Added.
+        Added a test for a table-caption in inline-context.
+
+        * platform/chromium-win/tables/mozilla/bugs/bug3037-1-expected.txt:
+        This is a progression: we now properly make the table inline and don't wrap it in anonymous blocks.
+
+        * platform/chromium-linux/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/chromium-win/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        This is a progression too. However we still have some differences with Firefox and Opera.
+
 2012-07-19  Chris Fleizach  <cfleizach@apple.com>
 
         WebKit should pass <title> element value as the default AXTitle for web views
@@ -195,6 +220,19 @@
         * platform/chromium-mac-snowleopard/fast/repaint/subtree-root-clip-2-expected.png: Removed.
         * platform/chromium-mac-snowleopard/fast/repaint/subtree-root-clip-expected.png: Removed.
         * platform/chromium/TestExpectations:
+
+2012-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Keep overlap testing on for descendants of an animating element
+        https://bugs.webkit.org/show_bug.cgi?id=91787
+
+        Reviewed by Beth Dakin.
+
+        Test with two layers inside an animating container; one should be composited
+        because of overlap, the other should not be.
+
+        * compositing/layer-creation/animation-overlap-with-children-expected.txt: Added.
+        * compositing/layer-creation/animation-overlap-with-children.html: Added.
 
 2012-07-19  Simon Fraser  <simon.fraser@apple.com>
 

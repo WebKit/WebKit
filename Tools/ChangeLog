@@ -24,6 +24,17 @@
 
         * qmake/mkspecs/features/features.prf:
 
+2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Enable CSS shaders in Qt (software mode)
+        https://bugs.webkit.org/show_bug.cgi?id=85140
+
+        Reviewed by Simon Hausmann.
+
+        Enable CSS_SHADERS when WEBGL and CSS_FILTERS are enabled.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-07-19  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: fix executive_unittest nits, including a missing 'errno' import

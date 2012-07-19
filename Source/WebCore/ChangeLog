@@ -1,3 +1,31 @@
+2012-07-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS2.1] Anonymous tables should be inline/block-level based off their parent
+        https://bugs.webkit.org/show_bug.cgi?id=15365
+
+        Reviewed by Abhishek Arya.
+
+        This change makes us match bullet 3 "Generate missing parents" of section 17.2.1 http://www.w3.org/TR/CSS2/tables.html#anonymous-boxes":
+        "If a table is contained by an inline element, then the anonymous tables should be inline-tables."
+
+        Patch based on an earlier change by Kang-Hao (Kenny) Lu <kennyluck@csail.mit.edu>.
+
+        Tests: css2.1/20110323/inline-table-002b.html
+               fast/dynamic/insert-before-table-part-in-continuation.html
+               fast/table/inline-table-in-continuation.html
+               fast/table/inline-table-with-caption.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::createAnonymousWithParentRenderer):
+        Added a check to determine if we should be inline or block based on our parent to match CSS 2.1.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        Changed the child addition logic to not wrap a table part in an inline context. This change works
+        as intended as we will call RenderObject::addChild which will create an anonymous inline table that
+        will be added under |this| instead of the table part. As the table is inline, it doesn't need to be
+        wrapped when we recursively call RenderInline::addChild.
+
 2012-07-19  Chris Fleizach  <cfleizach@apple.com>
 
         WebKit should pass <title> element value as the default description for web views
@@ -165,6 +193,57 @@
         No new tests, WebGL is still disabled by default in the bots.
 
         * Target.pri:
+
+2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Enable CSS shaders in Qt (software mode)
+        https://bugs.webkit.org/show_bug.cgi?id=85140
+
+        Reviewed by Simon Hausmann.
+
+        Added missing files to the Qt build.
+
+        No new tests, WebGL is still disabled by default in the bots.
+
+        * Target.pri:
+
+2012-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Keep overlap testing on for descendants of an animating element
+        https://bugs.webkit.org/show_bug.cgi?id=91787
+
+        Reviewed by Beth Dakin.
+
+        RenderLayerCompositor::computeCompositingRequirements() would turn off
+        overlap testing for descendants of a layer that has a 3D transform,
+        or has an animating transform. This could cause compositing changes
+        inside an animating element when transitions start and stop, which
+        is undesirable.
+        
+        Instead, we can keep overlap testing on for descendants of that
+        animating element, but we have to turn it off for layers later
+        in z-order.
+        
+        Also enhance the "IndirectCompositingReason" flags so that in
+        the compositing log output, we can distinguish between layers that
+        were composited as a result of overlap testing from those compositing
+        for stacking reasons.
+
+        Test: compositing/layer-creation/animation-overlap-with-children.html
+
+        * rendering/RenderLayer.h: New IndirectCompositingReason value to
+        distinguish overlap from stacking.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        Use an IndirectCompositingReason enum rather than a bool to track whether
+        the layer starts as composited.
+        Remove the if (layer->has3DTransform() || isRunningAcceleratedTransformAnimation(layer->renderer()))
+        check that turned off overlap testing for descendants of this layer.
+        Use IndirectCompositingForStacking (somewhat arbitrarily) for reflection layers.
+        Turn overlap testing off for layers later in the z-order.
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore): Take IndirectCompositingForStacking into
+        account.
+        (WebCore::RenderLayerCompositor::reasonForCompositing): Improve the logging output.
 
 2012-07-19  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
