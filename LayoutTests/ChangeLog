@@ -1,3 +1,16 @@
+2012-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Keep overlap testing on for descendants of an animating element
+        https://bugs.webkit.org/show_bug.cgi?id=91787
+
+        Reviewed by Beth Dakin.
+
+        Test with two layers inside an animating container; one should be composited
+        because of overlap, the other should not be.
+
+        * compositing/layer-creation/animation-overlap-with-children-expected.txt: Added.
+        * compositing/layer-creation/animation-overlap-with-children.html: Added.
+
 2012-07-19  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] [Part 5] platform/qt/css1 tests needs update after rebaseline and new testfonts

@@ -845,6 +845,7 @@ private:
     
     enum IndirectCompositingReason {
         NoIndirectCompositingReason,
+        IndirectCompositingForStacking,
         IndirectCompositingForOverlap,
         IndirectCompositingForBackgroundLayer,
         IndirectCompositingForGraphicalEffect, // opacity, mask, filter, transform etc.

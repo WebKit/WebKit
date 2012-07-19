@@ -730,7 +730,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // Clear the flag
     layer->setHasCompositingDescendant(false);
     
-    bool mustOverlapCompositedLayers = compositingState.m_subtreeIsCompositing;
+    RenderLayer::IndirectCompositingReason compositingReason = compositingState.m_subtreeIsCompositing ? RenderLayer::IndirectCompositingForStacking : RenderLayer::NoIndirectCompositingReason;
 
     bool haveComputedBounds = false;
     IntRect absBounds;
@@ -742,10 +742,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         if (absBounds.isEmpty())
             absBounds.setSize(IntSize(1, 1));
         haveComputedBounds = true;
-        mustOverlapCompositedLayers = overlapMap->overlapsLayers(absBounds);
+        compositingReason = overlapMap->overlapsLayers(absBounds) ? RenderLayer::IndirectCompositingForOverlap : RenderLayer::NoIndirectCompositingReason;
     }
     
-    layer->setIndirectCompositingReason(mustOverlapCompositedLayers ? RenderLayer::IndirectCompositingForOverlap : RenderLayer::NoIndirectCompositingReason);
+    layer->setIndirectCompositingReason(compositingReason);
     
     // The children of this layer don't need to composite, unless there is
     // a compositing layer among them, so start by inheriting the compositing
@@ -762,11 +762,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
         if (overlapMap)
             overlapMap->pushCompositingContainer();
-
-        if (layer->has3DTransform() || isRunningAcceleratedTransformAnimation(layer->renderer())) {
-            // If we have a 3D transform, or are animating transform, then turn overlap testing off.
-            childState.m_testingOverlap = false;
-        }
     }
 
 #if ENABLE(VIDEO)
@@ -852,15 +847,15 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     ASSERT(willBeComposited == needsToBeComposited(layer));
     if (layer->reflectionLayer()) {
         // FIXME: Shouldn't we call computeCompositingRequirements to handle a reflection overlapping with another renderer?
-        layer->reflectionLayer()->setIndirectCompositingReason(willBeComposited ? RenderLayer::IndirectCompositingForOverlap : RenderLayer::NoIndirectCompositingReason);
+        layer->reflectionLayer()->setIndirectCompositingReason(willBeComposited ? RenderLayer::IndirectCompositingForStacking : RenderLayer::NoIndirectCompositingReason);
     }
 
     // Subsequent layers in the parent stacking context also need to composite.
     if (childState.m_subtreeIsCompositing)
         compositingState.m_subtreeIsCompositing = true;
 
-    // We have to keep overlap testing disabled for later layers.
-    if (!childState.m_testingOverlap)
+    // Turn overlap testing off for later layers if it's already off, or if we have a 3D transform or an animating transform.
+    if (!childState.m_testingOverlap || layer->has3DTransform() || isRunningAcceleratedTransformAnimation(layer->renderer()))
         compositingState.m_testingOverlap = false;
 
     // Set the flag to say that this SC has compositing children.
@@ -1488,6 +1483,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer* layer, co
     if (layer->mustCompositeForIndirectReasons()) {
         RenderLayer::IndirectCompositingReason reason = layer->indirectCompositingReason();
         return reason == RenderLayer::IndirectCompositingForOverlap
+            || reason == RenderLayer::IndirectCompositingForStacking
             || reason == RenderLayer::IndirectCompositingForBackgroundLayer
             || reason == RenderLayer::IndirectCompositingForGraphicalEffect
             || reason == RenderLayer::IndirectCompositingForPreserve3D; // preserve-3d has to create backing store to ensure that 3d-transformed elements intersect.
@@ -1534,9 +1530,11 @@ const char* RenderLayerCompositor::reasonForCompositing(const RenderLayer* layer
     if (requiresCompositingForPosition(renderer, layer))
         return "position: fixed";
 
-    // This includes layers made composited by requiresCompositingWhenDescendantsAreCompositing().
+    if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForStacking)
+        return "stacking";
+
     if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForOverlap)
-        return "overlap/stacking";
+        return "overlap";
 
     if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForBackgroundLayer)
         return "negative z-index children";
