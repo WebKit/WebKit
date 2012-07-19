@@ -1,3 +1,11 @@
+2012-07-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, removing flaky expectations for MathML Presentations
+        layout tests. Their baselines were updated in r122704 and the tests have been
+        passing without problems since.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-19  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] platform/qt/tables/mozilla tests needs update after rebaseline and new testfonts

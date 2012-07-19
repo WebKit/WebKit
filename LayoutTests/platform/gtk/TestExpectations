@@ -389,7 +389,6 @@ BUGWK90589 RELEASE : fast/css/user-drag-none.html = CRASH TIMEOUT
 //////////////////////////////////////////////////////////////////////////////////////////
 
 BUGWK44199 SKIP : perf = PASS TEXT
-BUGWK47727 : mathml/presentation = PASS TEXT
 
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
 BUGWK55126 : media/video-aspect-ratio.html = PASS TEXT
