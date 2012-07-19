@@ -1,3 +1,37 @@
+2012-07-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Mac] Make WebDataSourcePrivate lighter
+        https://bugs.webkit.org/show_bug.cgi?id=91511
+
+        Reviewed by Anders Carlsson.
+
+        Make WebDataSourcePrivate a simple C++ class and use smart pointers for memory management.
+
+        Since the "loader" attribute is only set on initialization, all the assertions spread in
+        various function are removed in favor of assertions on initialization.
+
+        * WebView/WebDataSource.h:
+        * WebView/WebDataSource.mm:
+        (WebDataSourcePrivate):
+        (WebDataSourcePrivate::WebDataSourcePrivate):
+        (WebDataSourcePrivate::~WebDataSourcePrivate):
+        Use a class instead of a Objective-C object for WebDataSourcePrivate.
+        Use smart pointers instead of ref counting manually.
+
+        (-[WebDataSource _setRepresentation:]):
+        (-[WebDataSource _addSubframeArchives:]):
+        (-[WebDataSource _transferApplicationCache:]):
+        (-[WebDataSource _setDeferMainResourceDataLoad:]):
+        (-[WebDataSource _documentFragmentWithArchive:]):
+        (-[WebDataSource _initWithDocumentLoader:]):
+
+        (+[WebDataSource initialize]):
+        (-[WebDataSource dealloc]):
+        (-[WebDataSource finalize]):
+        WebDataSource takes the special initialization and destruction that was done in WebDataSourcePrivate.
+
+        (-[WebDataSource representation]):
+
 2012-07-17  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: refactor InspectorController::connectFrontend() to accept InspectorFrontendChannel.
