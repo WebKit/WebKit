@@ -1,3 +1,13 @@
+2012-07-18  Dan Bernstein  <mitz@apple.com>
+
+        Hit testing in the gap between pages returns incorrect results
+        https://bugs.webkit.org/show_bug.cgi?id=91695
+
+        Reviewed by Dave Hyatt.
+
+        * fast/multicol/hit-test-gap-between-pages-expected.txt: Added.
+        * fast/multicol/hit-test-gap-between-pages.html: Added.
+
 2012-07-18  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Direction parameter ignored by some openCursor() overloads

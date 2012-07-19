@@ -1,3 +1,18 @@
+2012-07-18  Dan Bernstein  <mitz@apple.com>
+
+        Hit testing in the gap between pages returns incorrect results
+        https://bugs.webkit.org/show_bug.cgi?id=91695
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/multicol/hit-test-gap-between-pages.html
+
+        * rendering/RenderBlock.h:
+        (RenderBlock): Promoted adjustPointToColumnContents from private to protected.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::updateHitTestResult): If we get here, and we make the document element
+        the inner node, adjust the local point for columns.
+
 2012-07-18  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Direction parameter ignored by some openCursor() overloads

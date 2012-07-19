@@ -852,7 +852,11 @@ void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& p
         result.setInnerNode(node);
         if (!result.innerNonSharedNode())
             result.setInnerNonSharedNode(node);
-        result.setLocalPoint(point);
+
+        LayoutPoint adjustedPoint = point;
+        adjustPointToColumnContents(adjustedPoint);
+
+        result.setLocalPoint(adjustedPoint);
     }
 }
 

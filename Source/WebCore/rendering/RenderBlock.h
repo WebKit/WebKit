@@ -806,7 +806,6 @@ private:
 
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
-    void adjustPointToColumnContents(LayoutPoint&) const;
     void adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const; // Helper function for borderFitAdjust
 
     void markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, RootInlineBox* highest = 0);
@@ -963,6 +962,8 @@ protected:
     LayoutUnit adjustForUnsplittableChild(RenderBox* child, LayoutUnit logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.
     void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
     LayoutUnit adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox* child, bool atBeforeSideOfBlock);
+
+    void adjustPointToColumnContents(LayoutPoint&) const;
 
     // This function is called to test a line box that has moved in the block direction to see if it has ended up in a new
     // region/page/column that has a different available line width than the old one. Used to know when you have to dirty a
