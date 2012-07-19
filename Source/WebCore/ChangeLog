@@ -1,3 +1,17 @@
+2012-07-19  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in FontCache::releaseFontData.
+        https://bugs.webkit.org/show_bug.cgi?id=91710
+
+        Reviewed by Tim Horton.
+
+        Revert back change made to StyleResolver in r122896. The
+        maximum font size clamp is required there since transformed
+        sizes use that code path.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix after r123065. Don't list deleted file in gypi.

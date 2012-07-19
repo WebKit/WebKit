@@ -4560,7 +4560,9 @@ float StyleResolver::getComputedSizeFromSpecifiedSize(Document* document, float 
     if (useSmartMinimumForFontSize && zoomedSize < minLogicalSize && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
         zoomedSize = minLogicalSize;
 
-    return zoomedSize;
+    // Also clamp to a reasonable maximum to prevent insane font sizes from causing crashes on various
+    // platforms (I'm looking at you, Windows.)
+    return min(1000000.0f, zoomedSize);
 }
 
 const int fontSizeTableMax = 16;
