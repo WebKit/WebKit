@@ -275,6 +275,9 @@ editing/spelling/grammar-edit-word.html
 # https://bugs.webkit.org/show_bug.cgi?id=90156
 platform/mac/editing/spelling/autocorrection-blockquote-crash.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=91778
+storage/domstorage/storage-close-database-on-idle.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
