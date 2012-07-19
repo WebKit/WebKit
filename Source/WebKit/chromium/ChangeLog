@@ -1,3 +1,15 @@
+2012-07-19  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rolling out r123036.
+        http://trac.webkit.org/changeset/123036
+        https://bugs.webkit.org/show_bug.cgi?id=91555
+
+        Triggers some DCHECKs in Chromium browser_tests
+
+        * public/WebTextInputType.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::textInputType):
+
 2012-07-19  Joshua Bell  <jsbell@chromium.org>
 
         Roll out r121610 and r122487 which may have been causing flaky crashes
