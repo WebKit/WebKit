@@ -75106,6 +75106,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ExtensionView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\FileContentView.js"
 					>
 				</File>

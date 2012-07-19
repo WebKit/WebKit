@@ -283,6 +283,7 @@ modules = [
             "ExtensionPanel.js",
             "ExtensionRegistryStub.js",
             "ExtensionServer.js",
+            "ExtensionView.js",
         ]
     },
     {

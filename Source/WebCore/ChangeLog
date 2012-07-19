@@ -1,3 +1,22 @@
+2012-07-19  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: Factor ExtensionView into separate file
+        https://bugs.webkit.org/show_bug.cgi?id=91699
+
+        Reviewed by Vsevolod Vlasov.
+
+        The class ExtensionView was defined in ExtensionPanel.js but needed to
+        be in a separate file since it is going to be reused somewhere else.
+
+        Current test coverage is enough since no behavior was changed.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/ExtensionPanel.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-07-19  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refactoring] Use userAgentShadowRoot() to take user agent shadow root.

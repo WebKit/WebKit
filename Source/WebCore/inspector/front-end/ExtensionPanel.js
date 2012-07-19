@@ -30,81 +30,10 @@
 
 /**
  * @constructor
- * @extends {WebInspector.View}
- * @param {string} id
- * @param {Element} parent
- * @param {string} src
- * @param {string} className
- */
-WebInspector.ExtensionView = function(id, parent, src, className)
-{
-    WebInspector.View.call(this);
-    this.element.className = "fill";
-
-    this._id = id;
-    this._iframe = document.createElement("iframe");
-    this._iframe.addEventListener("load", this._onLoad.bind(this), false);
-    this._iframe.src = src;
-    this._iframe.className = className;
-
-    this.element.appendChild(this._iframe);
-    this.show(parent);
-}
-
-WebInspector.ExtensionView.prototype = {
-    wasShown: function()
-    {
-        if (typeof this._frameIndex === "number")
-            WebInspector.extensionServer.notifyViewShown(this._id, this._frameIndex);
-    },
-
-    willHide: function()
-    {
-        if (typeof this._frameIndex === "number")
-            WebInspector.extensionServer.notifyViewHidden(this._id);
-    },
-
-    _onLoad: function()
-    {
-        this._frameIndex = Array.prototype.indexOf.call(window.frames, this._iframe.contentWindow);
-        if (this.isShowing())
-            WebInspector.extensionServer.notifyViewShown(this._id, this._frameIndex);
-    }
-}
-
-WebInspector.ExtensionView.prototype.__proto__ = WebInspector.View.prototype;
-
-/**
- * @constructor
- * @extends {WebInspector.View}
- * @param {string} id
- */
-WebInspector.ExtensionNotifierView = function(id)
-{
-    WebInspector.View.call(this);
-
-    this._id = id;
-}
-
-WebInspector.ExtensionNotifierView.prototype = {
-    wasShown: function()
-    {
-        WebInspector.extensionServer.notifyViewShown(this._id);
-    },
-
-    willHide: function()
-    {
-        WebInspector.extensionServer.notifyViewHidden(this._id);
-    }
-}
-
-WebInspector.ExtensionNotifierView.prototype.__proto__ = WebInspector.View.prototype;
-
-/**
- * @constructor
  * @extends {WebInspector.Panel}
  * @param {string} id
  * @param {string} label
+ * @param {string} pageURL
  * @param {string} iconURL
  */
 WebInspector.ExtensionPanel = function(id, label, pageURL, iconURL)
