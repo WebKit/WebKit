@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>FirstTitle</title>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that <title> will be used as the description for a web area.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("body").focus();
+        var webArea = window.accessibilityController.focusedElement;
+        shouldBe("webArea.description", "'AXDescription: FirstTitle'");
+
+        document.title = "SecondTitle";
+        shouldBe("webArea.description", "'AXDescription: SecondTitle'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,21 @@
+2012-07-19  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKit should pass <title> element value as the default description for web views
+        https://bugs.webkit.org/show_bug.cgi?id=91763
+
+        Reviewed by Anders Carlsson.
+
+        Update the logic for determining the description for the AXWebArea to include the document's title.
+
+        Test: platform/mac/accessibility/document-title-used-for-description.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::webAreaAccessibilityDescription):
+           Move web area description handling into a separate method.
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+
 2012-07-19  Zeev Lieber  <zlieber@chromium.org>
 
         [Chromium] Textures drawn during occlusion are incorrectly re-used when unoccluded.

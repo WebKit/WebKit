@@ -318,7 +318,8 @@ private:
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
     void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName&) const;
     String ariaAccessibilityDescription() const;
-    
+    String webAreaAccessibilityDescription() const;
+
     virtual ESpeak speakProperty() const;
     
     virtual const AtomicString& ariaLiveRegionStatus() const;
