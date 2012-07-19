@@ -3700,6 +3700,6 @@ BUGWK91472 : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 
 BUGWK91672 WIN : svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context.svg = PASS CRASH
 
-BUG87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
-BUG87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
-BUG87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist.html = IMAGE
+BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
+BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
+BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist.html = IMAGE

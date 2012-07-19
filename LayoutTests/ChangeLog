@@ -1,3 +1,9 @@
+2012-07-19  Joshua Bell  <jsbell@chromium.org>
+
+        [chromium] Unreviewed gardening, fix malfomed BUG markers in TestExpectations
+
+        * platform/chromium/TestExpectations:
+
 2012-07-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding missing baseline required after r122761.
