@@ -1,3 +1,33 @@
+2012-07-18  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Element wants to have userAgentShadowRoot()
+        https://bugs.webkit.org/show_bug.cgi?id=91564
+
+        Reviewed by Eric Carlson.
+
+        We introduce Element::userAgentShadowRoot() to return a UserAgentShadowRoot.
+        It returns the oldest shadow root if any, and checks the type of ShadowRoot in debug build.
+
+        Previously, we have used elementShadow()->oldestShadowRoot() to get UserAgentShadowRoot.
+        The class implementor will know the oldest shadow root is UserAgentShadowRoot, but it is not
+        clear for the other people. This method will make the code intention clearer.
+
+        We will introduce userAgentShadowRoot to the other elements (e.g. HTMLInputElement) after this patch.
+
+        No new tests, simple refactoring.
+
+        * dom/Element.cpp:
+        (WebCore::Element::userAgentShadowRoot):
+        (WebCore):
+        * dom/Element.h:
+        (Element):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createShadowSubtree):
+        (WebCore::HTMLMediaElement::willAddAuthorShadowRoot):
+        (WebCore::HTMLMediaElement::mediaControls):
+        (WebCore::HTMLMediaElement::hasMediaControls):
+        (WebCore::HTMLMediaElement::createMediaControls):
+
 2012-07-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Remove duplicated #ifdef guard in CMakeLists.txt

@@ -1185,6 +1185,18 @@ ElementShadow* Element::ensureShadow()
     return elementRareData()->m_shadow.get();
 }
 
+ShadowRoot* Element::userAgentShadowRoot() const
+{
+    if (ElementShadow* elementShadow = shadow()) {
+        if (ShadowRoot* shadowRoot = elementShadow->oldestShadowRoot()) {
+            ASSERT(shadowRoot->type() == ShadowRoot::UserAgentShadowRoot);
+            return shadowRoot;
+        }
+    }
+
+    return 0;
+}
+
 ShadowRoot* Element::ensureShadowRoot()
 {
     if (ElementShadow* shadow = this->shadow())

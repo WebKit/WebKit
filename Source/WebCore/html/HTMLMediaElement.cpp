@@ -1862,20 +1862,14 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
 
 void HTMLMediaElement::createShadowSubtree()
 {
-    ASSERT(!shadow() || !shadow()->oldestShadowRoot());
-
+    ASSERT(!userAgentShadowRoot());
     ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot);
 }
 
 void HTMLMediaElement::willAddAuthorShadowRoot()
 {
-    ASSERT(shadow());
-    if (shadow()->oldestShadowRoot()) {
-        ASSERT(shadow()->oldestShadowRoot()->type() == ShadowRoot::UserAgentShadowRoot);
-        return;
-    }
-
-    createShadowSubtree();
+    if (!userAgentShadowRoot())
+        createShadowSubtree();
 }
 
 void HTMLMediaElement::rewind(float timeDelta)
@@ -4180,17 +4174,18 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
 
 MediaControls* HTMLMediaElement::mediaControls() const
 {
-    return toMediaControls(shadow()->oldestShadowRoot()->firstChild());
+    return toMediaControls(userAgentShadowRoot()->firstChild());
 }
 
 bool HTMLMediaElement::hasMediaControls() const
 {
-    ElementShadow* elementShadow = shadow();
-    if (!elementShadow)
-        return false;
+    if (ShadowRoot* userAgent = userAgentShadowRoot()) {
+        Node* node = userAgent->firstChild();
+        ASSERT(!node || node->isMediaControls());
+        return node;
+    }
 
-    Node* node = elementShadow->oldestShadowRoot()->firstChild();
-    return node && node->isMediaControls();
+    return false;
 }
 
 bool HTMLMediaElement::createMediaControls()
@@ -4211,8 +4206,8 @@ bool HTMLMediaElement::createMediaControls()
     if (!shadow())
         createShadowSubtree();
 
-    ASSERT(shadow()->oldestShadowRoot()->type() == ShadowRoot::UserAgentShadowRoot);
-    shadow()->oldestShadowRoot()->appendChild(controls, ec);
+    ASSERT(userAgentShadowRoot());
+    userAgentShadowRoot()->appendChild(controls, ec);
     return true;
 }
 
