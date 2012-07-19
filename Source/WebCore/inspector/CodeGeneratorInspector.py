@@ -2953,18 +2953,46 @@ def flatten_list(input):
     return res
 
 
+# A writer that only updates file if it actually changed to better support incremental build.
+class SmartOutput:
+    def __init__(self, file_name):
+        self.file_name_ = file_name
+        self.output_ = ""
+
+    def write(self, text):
+        self.output_ += text
+
+    def close(self):
+        text_changed = True
+
+        try:
+            read_file = open(self.file_name_, "r")
+            old_text = read_file.read()
+            read_file.close()
+            text_changed = old_text != self.output_
+        except:
+            # Ignore, just overwrite by default
+            pass
+
+        if text_changed:
+            print "    writing " + self.file_name_
+            out_file = open(self.file_name_, "w")
+            out_file.write(self.output_)
+            out_file.close()
+
+
 Generator.go()
 
-backend_h_file = open(output_header_dirname + "/InspectorBackendDispatcher.h", "w")
-backend_cpp_file = open(output_cpp_dirname + "/InspectorBackendDispatcher.cpp", "w")
+backend_h_file = SmartOutput(output_header_dirname + "/InspectorBackendDispatcher.h")
+backend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorBackendDispatcher.cpp")
 
-frontend_h_file = open(output_header_dirname + "/InspectorFrontend.h", "w")
-frontend_cpp_file = open(output_cpp_dirname + "/InspectorFrontend.cpp", "w")
+frontend_h_file = SmartOutput(output_header_dirname + "/InspectorFrontend.h")
+frontend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorFrontend.cpp")
 
-typebuilder_h_file = open(output_header_dirname + "/InspectorTypeBuilder.h", "w")
-typebuilder_cpp_file = open(output_cpp_dirname + "/InspectorTypeBuilder.cpp", "w")
+typebuilder_h_file = SmartOutput(output_header_dirname + "/InspectorTypeBuilder.h")
+typebuilder_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorTypeBuilder.cpp")
 
-backend_js_file = open(output_cpp_dirname + "/InspectorBackendCommands.js", "w")
+backend_js_file = SmartOutput(output_cpp_dirname + "/InspectorBackendCommands.js")
 
 
 backend_h_file.write(Templates.backend_h.substitute(None,
@@ -3006,5 +3034,8 @@ backend_cpp_file.close()
 
 frontend_h_file.close()
 frontend_cpp_file.close()
+
+typebuilder_h_file.close()
+typebuilder_cpp_file.close()
 
 backend_js_file.close()
