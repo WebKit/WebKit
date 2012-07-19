@@ -1,3 +1,14 @@
+2012-07-19  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Inspector tests needs new baselines after r122952
+        https://bugs.webkit.org/show_bug.cgi?id=91624
+
+        Unreviewed gardening.
+
+        Add some tests to Skipped list.
+
+        * platform/efl/Skipped:
+
 2012-07-19  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] fast/selectors tests needs update after rebaseline and new testfonts
