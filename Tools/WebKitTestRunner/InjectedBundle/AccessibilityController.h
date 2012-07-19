@@ -56,15 +56,24 @@ public:
     void logFocusEvents() { }
     void logValueChangeEvents() { }
     void logScrollingStartEvents() { }
-    void logAccessibilityEvents() { }
-    
-    void resetToConsistentState() { }
+    void logAccessibilityEvents();
+
+    void resetToConsistentState();
 
 private:
     AccessibilityController();
 
 #if PLATFORM(MAC)
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
+#endif
+
+#if PLATFORM(GTK)
+    unsigned m_stateChangeListenerId;
+    unsigned m_focusEventListenerId;
+    unsigned m_activeDescendantChangedListenerId;
+    unsigned m_childrenChangedListenerId;
+    unsigned m_propertyChangedListenerId;
+    unsigned m_visibleDataChangedListenerId;
 #endif
 };
 

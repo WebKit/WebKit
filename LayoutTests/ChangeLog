@@ -1,3 +1,14 @@
+2012-07-19  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Complete implementation of AccessibilityController in WKTR for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=89224
+
+        Reviewed by Chris Fleizach.
+
+        Unskip tests now passing.
+
+        * platform/gtk-wk2/Skipped:
+
 2012-07-19  Keishi Hattori  <keishi@webkit.org>
 
         Redraw slider tick marks when datalist changes.

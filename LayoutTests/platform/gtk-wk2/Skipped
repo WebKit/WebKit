@@ -307,9 +307,7 @@ fast/events/popup-blocking-click-in-iframe.html
 # accessibility tests failing due to missing WKTR features
 accessibility/aria-describedby-on-input.html
 accessibility/aria-help.html
-platform/gtk/accessibility/aria-slider-required-attributes.html
 platform/gtk/accessibility/caret-browsing-text-focus.html
-platform/gtk/accessibility/combo-box-collapsed-selection-changed.html
 
 # Implement textInputController.firstRectForCharacterRange interface
 fast/forms/cursor-at-editable-content-boundary.html

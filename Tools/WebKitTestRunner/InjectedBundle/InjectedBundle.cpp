@@ -244,6 +244,8 @@ void InjectedBundle::done()
     page()->stopLoading();
     setTopLoadingFrame(0);
 
+    m_accessibilityController->resetToConsistentState();
+
     WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("Done"));
     WKRetainPtr<WKMutableDictionaryRef> doneMessageBody(AdoptWK, WKMutableDictionaryCreate());
 

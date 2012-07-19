@@ -94,6 +94,7 @@ Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
 	Tools/WebKitTestRunner/InjectedBundle/EventSendingController.h \
 	Tools/WebKitTestRunner/InjectedBundle/GCController.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/GCController.h \
+	Tools/WebKitTestRunner/InjectedBundle/gtk/AccessibilityControllerGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/AccessibilityUIElementGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/InjectedBundleGtk.cpp \

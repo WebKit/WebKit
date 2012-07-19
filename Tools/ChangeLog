@@ -1,3 +1,35 @@
+2012-07-19  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Complete implementation of AccessibilityController in WKTR for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=89224
+
+        Reviewed by Chris Fleizach.
+
+        Implement logAccessibilityEvents() and resetToConsistentState(),
+        so we can ask WKTR from the layout tests for logging all the
+        accessibility related events into the result.
+
+        * WebKitTestRunner/GNUmakefile.am:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::AccessibilityController):
+        (WTR):
+        (WTR::AccessibilityController::logAccessibilityEvents):
+        (WTR::AccessibilityController::resetToConsistentState):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        (AccessibilityController):
+        * WebKitTestRunner/InjectedBundle/gtk/AccessibilityControllerGtk.cpp: Added.
+        (WTR):
+        (WTR::printAccessibilityEvent):
+        (WTR::axObjectEventListener):
+        (WTR::AccessibilityController::logAccessibilityEvents):
+        (WTR::AccessibilityController::resetToConsistentState):
+
+        Ensure we reset the accessibility controller to a consistent
+        whenever a test has finished running.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::done):
+
 2012-07-19  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][Wk2] Add a bot that runs WTR / WebKit2 tests
