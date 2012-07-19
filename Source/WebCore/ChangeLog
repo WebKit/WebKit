@@ -1,3 +1,26 @@
+2012-07-17  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Out of Memory is observed when a large object is passed to a Web Worker.
+        https://bugs.webkit.org/show_bug.cgi?id=91535.
+
+        Reviewed by Dave Levin.
+
+        No new tests because of no new behavior and lack of mechanism to monitor used memory.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::registerMemoryAllocatedWithCurrentScriptContext):
+        (WebCore):
+        (WebCore::SerializedScriptValue::~SerializedScriptValue):
+        * bindings/v8/SerializedScriptValue.h:
+        (SerializedScriptValue):
+        Added a method to SerializedScriptValue to add memory pressure on GC proportional to the size of memory allocated in serialized data.
+        
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::initMessageEvent):
+        Call the new method of SerializedScriptValue during creation of MessageEvent (presumably in the thread which contains the right V8 context).
+
 2012-07-19  Dan Bernstein  <mitz@apple.com>
 
         In flipped blocks writing modes, no flipping occurs when mapping RenderText’s local coordinates to absolute

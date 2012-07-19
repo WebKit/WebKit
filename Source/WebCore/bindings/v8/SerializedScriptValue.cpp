@@ -2201,6 +2201,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()
 }
 
 SerializedScriptValue::SerializedScriptValue()
+    : m_externallyAllocatedMemory(0)
 {
 }
 
@@ -2252,6 +2253,7 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value,
                                              MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
                                              bool& didThrow,
                                              v8::Isolate* isolate)
+    : m_externallyAllocatedMemory(0)
 {
     didThrow = false;
     Writer writer(isolate);
@@ -2298,6 +2300,7 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value,
 }
 
 SerializedScriptValue::SerializedScriptValue(const String& wireData)
+    : m_externallyAllocatedMemory(0)
 {
     m_data = wireData.isolatedCopy();
 }
@@ -2321,5 +2324,18 @@ ScriptValue SerializedScriptValue::deserializeForInspector(ScriptState* scriptSt
     return ScriptValue(deserialize(0, isolate));
 }
 #endif
+
+void SerializedScriptValue::registerMemoryAllocatedWithCurrentScriptContext()
+{
+    if (m_externallyAllocatedMemory)
+        return;
+    m_externallyAllocatedMemory = static_cast<intptr_t>(m_data.length());
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(m_externallyAllocatedMemory);
+}
+
+SerializedScriptValue::~SerializedScriptValue()
+{
+    v8::V8::AdjustAmountOfExternalAllocatedMemory(-m_externallyAllocatedMemory);
+}
 
 } // namespace WebCore
