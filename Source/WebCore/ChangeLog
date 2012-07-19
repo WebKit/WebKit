@@ -1,3 +1,22 @@
+2012-07-19  James Simonsen  <simonjam@chromium.org>
+
+        Regression(120096): Protect the element used by ImageLoader until the end of notifyFinished().
+        https://bugs.webkit.org/show_bug.cgi?id=90471
+
+        Reviewed by Brady Eidson.
+
+        Test: http/tests/security/video-poster-cross-origin-crash.html
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished): Hang on to the element until we're done.
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::setImage): No behavior change.
+        (WebCore):
+        (WebCore::ImageLoader::setImageWithoutConsideringPendingLoadEvent): Split off from old setImage, minus calling updatedHasPendingLoadEvent().
+        (WebCore::ImageLoader::notifyFinished): Invoke updatedHasPendingLoadEvent when done with cross origin errors.
+        * loader/ImageLoader.h:
+        (ImageLoader):
+
 2012-07-19  Scott Graham  <scottmg@chromium.org>
 
         Use native (non-cygwin) binaries for perl, gperf, and bison in Chromium

@@ -1,3 +1,13 @@
+2012-07-19  James Simonsen  <simonjam@chromium.org>
+
+        Regression(120096): Protect the element used by ImageLoader until the end of notifyFinished().
+        https://bugs.webkit.org/show_bug.cgi?id=90471
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/security/video-poster-cross-origin-crash-expected.txt: Added.
+        * http/tests/security/video-poster-cross-origin-crash.html: Added. From fuzzer.
+
 2012-07-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] platform/qt/editing/execCommand tests needs update after rebaseline and new testfonts (37)

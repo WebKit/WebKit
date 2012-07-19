@@ -91,6 +91,8 @@ private:
     RenderImageResource* renderImageResource();
     void updateRenderer();
 
+    void setImageWithoutConsideringPendingLoadEvent(CachedImage*);
+
     ImageLoaderClient* m_client;
     CachedResourceHandle<CachedImage> m_image;
     AtomicString m_failedLoadURL;
