@@ -1,3 +1,27 @@
+2012-07-18  Kent Tamura  <tkent@chromium.org>
+
+        Form state restore: Classify form control sates by owners in internal and serialized representations
+        https://bugs.webkit.org/show_bug.cgi?id=91594
+
+        Reviewed by Hajime Morita.
+
+        Because the state serialization order depends on iteration order of
+        HashMap, serialized state array is not stable. We should remove raw dump
+        of serialized state array.
+
+        * fast/forms/state-restore-per-form.html: Remove the code to dump the
+        form state. It's useless because the test have enough assertions.
+        * fast/forms/state-restore-per-form-expected.txt:
+        * fast/forms/resources/state-restore-per-form-back.html: Removed.
+
+        * fast/forms/resources/state-restore-skip-stateless-dump.html:
+        Instead of dumping form state, check existence of types with JavaScript code.
+        * fast/forms/state-restore-skip-stateless-expected.txt:
+        * fast/forms/state-restore-skip-stateless.html: Fix a typo.
+
+        * fast/forms/state-restore-broken-state-expected.txt:
+        Update the expectation because of the serialization format change.
+
 2012-07-18  Hayato Ito  <hayato@chromium.org>
 
         [Shadow] A 'selectstart' event fired on distributed nodes should not be stopped at shadow boundary of the parent shadow host.

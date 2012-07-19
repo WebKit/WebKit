@@ -93,15 +93,16 @@ public:
     void restoreControlStateIn(HTMLFormElement&);
 
 private:
+    typedef ListHashSet<HTMLFormControlElementWithState*, 64> FormElementListHashSet;
+    typedef HashMap<RefPtr<AtomicStringImpl>, OwnPtr<SavedFormState> > SavedFormStateMap;
+
     FormController();
+    static PassOwnPtr<SavedFormStateMap> createSavedFormStateMap(const FormElementListHashSet&);
     FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);
 
     CheckedRadioButtons m_checkedRadioButtons;
-
-    typedef ListHashSet<HTMLFormControlElementWithState*, 64> FormElementListHashSet;
     FormElementListHashSet m_formElementsWithState;
-
-    OwnPtr<SavedFormState> m_savedFormState;
+    SavedFormStateMap m_savedFormStateMap;
     OwnPtr<FormKeyGenerator> m_formKeyGenerator;
 };
 

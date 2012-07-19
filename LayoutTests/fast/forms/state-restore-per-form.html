@@ -18,7 +18,7 @@ function makeForms(stage) {
         (stage == 1 ? '<input value=initial name=before id=noowner1>' : '') +
         '<input value=initial id=form2-outer1 name=before form=form2>';
 
-    var backForm = '<form action="resources/state-restore-per-form-back.html" id=form1>' +
+    var backForm = '<form action="data:text/html,&lt;script>history.back();&lt;/script>" id=form1>' +
         '<input value=initial id=form1-control1 name=common-name1>' +
         '<input value=initial id=form1-control2 name=common-name1>' +
         '</form>';

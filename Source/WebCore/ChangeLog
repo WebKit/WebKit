@@ -1,3 +1,87 @@
+2012-07-18  Kent Tamura  <tkent@chromium.org>
+
+        Form state restore: Classify form control sates by owners in internal and serialized representations
+        https://bugs.webkit.org/show_bug.cgi?id=91594
+
+        Reviewed by Hajime Morita.
+
+        Before this change, the internal representation of form control states
+        was a map like:
+
+            {name, type, formKey} -> [FormControlState, FormControlState, ...]
+
+        Also, the serialized representation was:
+
+            [name, type, formKey, FormControlState,
+             name, type, formKey, formControlState,
+             ...]
+
+        This changes these represenations. The internal representation is
+
+            A map owned by FormController:
+                formKey -> SavedFormState
+            SavedFormState owns a map like:
+                {name, type} -> [FormControlState, FormControlState, ...]
+
+        The serialized representation is:
+
+            [formKey, count,
+             name, type, FormControlState,
+             name, type, FormControlState,
+             name, type, FormControlState,
+             ....
+             formKey, count,
+             name, type, FormControlState,
+             name, type, FormControlState,
+             name, type, FormControlState,
+             ....]
+
+        The serialized representation would be smaller in many cases because
+        each of items doesn't have formKey.
+
+        Tests: Covered by fast/forms/state-restore-broken-state.html,
+        state-restore-per-form.html, and state-restore-skip-stateless.html.
+
+        * html/FormController.cpp:
+        (FormElementKey): Remove formKey argument and m_formKey.
+        (WebCore::FormElementKey::FormElementKey):
+        (WebCore::FormElementKey::operator=):
+        (WebCore::FormElementKey::ref):
+        (WebCore::FormElementKey::deref):
+        (WebCore::operator==):
+
+        (SavedFormState):
+         - The role of SavedFromState was changed. It represented all of control
+          states. Now it represent control states owned by a signle form.
+         - Make this non-copyable and fast-allocated.
+         - Add m_controlStateCount, a counter of FormControlState
+        (WebCore::SavedFormState::SavedFormState):
+         Initialize m_controlStateCount.
+        (WebCore::isNotFormControlTypeCharacter):
+        Moved from another place in this file.
+        (WebCore::SavedFormState::deserialize):
+        Added. Build a SavedFromState with the specified stateVector.
+        (WebCore::SavedFormState::serializeTo):
+        Added. m_controlStateCount is needed here.
+        (WebCore::SavedFormState::appendControlState):
+         - Remove formKey arguement.
+         - Update m_controlStateCount.
+        (WebCore::SavedFormState::takeControlState): ditto.
+
+        (WebCore::formStateSignature): Bump the version.
+        (WebCore::FormController::createSavedFormStateMap):
+        Added. Build a SavedFormStateMap from the form control list. This is a
+        helper for formElementsState, and classifies controls in the document.
+        (WebCore::FormController::formElementsState):
+        Build a SavedFormStateMap with createSavedFormStateMap(),
+        then serializes it.
+        (WebCore::FormController::setStateForNewFormElements):
+        Deserialize SavedFormState, and build SavedFormStateMap.
+        (WebCore::FormController::takeStateForFormElement):
+        Finds the corresponding SavedFormState with a formKey, and uses it.
+        * html/FormController.h:
+        Declare createSavedFormStateMap(), and moved typedefs for it.
+
 2012-07-18  Antoine Labour  <piman@chromium.org>
 
         [chromium] Introduce CCResourceProvider, replacing TextureAllocator and hiding textures from clients to allow transport

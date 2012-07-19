@@ -1,16 +1,3 @@
-CONSOLE MESSAGE: line 7: Form state vector:
-CONSOLE MESSAGE: line 7: , text, No owner, 1, visited, 
-CONSOLE MESSAGE: line 7: before, text, No owner, 1, form3-outer1-modified, 
-CONSOLE MESSAGE: line 7: before, text, No owner, 1, noowner1-modified, 
-CONSOLE MESSAGE: line 7: before, text, No owner, 1, form2-outer1-modified, 
-CONSOLE MESSAGE: line 7: common-name1, text, state-restore-per-form-back.html #0, 0, common-name1, 
-CONSOLE MESSAGE: line 7: text, state-restore-per-form-back.html #0, 1, form1-control2-modified, common-name1, 
-CONSOLE MESSAGE: line 7: text, http://example.com/foo.cgi#bar #0, 1, query-changed-control1-modified, username, 
-CONSOLE MESSAGE: line 7: text, http://example.com/foo.cgi#bar #1, 1, username-modified, common-name1, 
-CONSOLE MESSAGE: line 7: text, http://example.com/foo.cgi#bar #1, 1, form3-control2-modified, after, 
-CONSOLE MESSAGE: line 7: text, No owner, 1, form3-outer2-modified, after, 
-CONSOLE MESSAGE: line 12: text, No owner, 1, form2-outer2-modified, 
-CONSOLE MESSAGE: line 13: 
 Confirm we can restore correctly even if the order of forms are changed:
 PASS $("form1-control1").value is "initial"
 PASS $("form1-control2").value is "form1-control2-modified"
