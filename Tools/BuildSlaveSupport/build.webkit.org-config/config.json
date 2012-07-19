@@ -62,6 +62,7 @@
                     { "name": "efl-linux-slave-1", "platform": "efl" },
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-slave-3", "platform": "efl" },
+                    { "name": "efl-linux-slave-4", "platform": "efl" },
 
                     { "name": "hfreyther-mipsel-linux1", "platform": "qt"},
                     { "name": "hfreyther-sh4-linux1", "platform": "qt"}
@@ -277,6 +278,11 @@
                       "slavenames": ["efl-linux-slave-2"]
                     },
                     {
+                      "name": "EFL Linux 64-bit Debug WK2", "type": "BuildAndTestWebKit2", "builddir": "efl-linux-64-debug-wk2",
+                      "platform": "efl", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["efl-linux-slave-4"]
+                    },
+                    {
                       "name": "EFL Linux 32-bit Release (Build)", "type": "Build", "builddir": "efl-linux-32-release",
                       "platform": "efl", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["efl-linux-slave-3"]
@@ -291,7 +297,7 @@
                                        "Qt Linux MIPS Release", "Qt Linux SH4 Release",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Android Release",
-                                       "EFL Linux 64-bit Release", "EFL Linux 64-bit Debug", "EFL Linux 32-bit Release (Build)",
+                                       "EFL Linux 64-bit Release", "EFL Linux 64-bit Debug", "EFL Linux 32-bit Release (Build)", "EFL Linux 64-bit Debug WK2",
                                        "WinCairo Release", "WinCE Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-snowleopard", "branch": "trunk", "treeStableTimer": 45.0, 
