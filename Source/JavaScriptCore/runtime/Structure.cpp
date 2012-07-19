@@ -259,8 +259,8 @@ void Structure::materializePropertyMap(JSGlobalData& globalData)
 inline size_t nextOutOfLineStorageCapacity(size_t currentCapacity)
 {
     if (!currentCapacity)
-        return 4;
-    return currentCapacity * 2;
+        return initialOutOfLineCapacity;
+    return currentCapacity * outOfLineGrowthFactor;
 }
 
 void Structure::growOutOfLineCapacity()

@@ -104,7 +104,8 @@ typedef void DFG_OPERATION (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, En
 typedef void DFG_OPERATION (*V_DFGOperation_EJPP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
 typedef void DFG_OPERATION (*V_DFGOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_W)(WatchpointSet*);
-typedef void* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
+typedef char* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
+typedef char* DFG_OPERATION (*P_DFGOperation_ES)(ExecState*, size_t);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 JSCell* DFG_OPERATION operationNewObject(ExecState*) WTF_INTERNAL;
@@ -162,10 +163,10 @@ size_t DFG_OPERATION operationCompareGreaterEq(ExecState*, EncodedJSValue encode
 size_t DFG_OPERATION operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 size_t DFG_OPERATION operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 size_t DFG_OPERATION operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
-void* DFG_OPERATION operationVirtualCall(ExecState*) WTF_INTERNAL;
-void* DFG_OPERATION operationLinkCall(ExecState*) WTF_INTERNAL;
-void* DFG_OPERATION operationVirtualConstruct(ExecState*) WTF_INTERNAL;
-void* DFG_OPERATION operationLinkConstruct(ExecState*) WTF_INTERNAL;
+char* DFG_OPERATION operationVirtualCall(ExecState*) WTF_INTERNAL;
+char* DFG_OPERATION operationLinkCall(ExecState*) WTF_INTERNAL;
+char* DFG_OPERATION operationVirtualConstruct(ExecState*) WTF_INTERNAL;
+char* DFG_OPERATION operationLinkConstruct(ExecState*) WTF_INTERNAL;
 JSCell* DFG_OPERATION operationCreateActivation(ExecState*) WTF_INTERNAL;
 JSCell* DFG_OPERATION operationCreateArguments(ExecState*) WTF_INTERNAL;
 JSCell* DFG_OPERATION operationCreateInlinedArguments(ExecState*, InlineCallFrame*) WTF_INTERNAL;
@@ -181,6 +182,8 @@ double DFG_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
 size_t DFG_OPERATION operationIsObject(EncodedJSValue) WTF_INTERNAL;
 size_t DFG_OPERATION operationIsFunction(EncodedJSValue) WTF_INTERNAL;
 void DFG_OPERATION operationReallocateStorageAndFinishPut(ExecState*, JSObject*, Structure*, PropertyOffset, EncodedJSValue) WTF_INTERNAL;
+char* DFG_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecState*) WTF_INTERNAL;
+char* DFG_OPERATION operationAllocatePropertyStorage(ExecState*, size_t newSize) WTF_INTERNAL;
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

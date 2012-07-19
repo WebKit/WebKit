@@ -53,6 +53,15 @@ namespace JSC {
     class SlotVisitor;
     class JSString;
 
+    // The out-of-line property storage capacity to use when first allocating out-of-line
+    // storage. Note that all objects start out without having any out-of-line storage;
+    // this comes into play only on the first property store that exhausts inline storage.
+    static const unsigned initialOutOfLineCapacity = 4;
+
+    // The factor by which to grow out-of-line storage when it is exhausted, after the
+    // initial allocation.
+    static const unsigned outOfLineGrowthFactor = 2;
+
     class Structure : public JSCell {
     public:
         friend class StructureTransitionTable;

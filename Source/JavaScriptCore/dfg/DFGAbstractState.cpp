@@ -1437,6 +1437,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         m_haveStructures = true;
         break;
     case GetPropertyStorage:
+    case AllocatePropertyStorage:
+    case ReallocatePropertyStorage:
         node.setCanExit(false);
         forNode(node.child1()).filter(SpecCell);
         forNode(nodeIndex).clear(); // The result is not a JS value.

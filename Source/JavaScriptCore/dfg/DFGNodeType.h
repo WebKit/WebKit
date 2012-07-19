@@ -133,6 +133,8 @@ namespace JSC { namespace DFG {
     macro(StructureTransitionWatchpoint, NodeMustGenerate) \
     macro(PutStructure, NodeMustGenerate) \
     macro(PhantomPutStructure, NodeMustGenerate | NodeDoesNotExit) \
+    macro(AllocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \
+    macro(ReallocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \
     macro(GetPropertyStorage, NodeResultStorage) \
     macro(GetIndexedPropertyStorage, NodeMustGenerate | NodeResultStorage) \
     macro(GetByOffset, NodeResultJS) \

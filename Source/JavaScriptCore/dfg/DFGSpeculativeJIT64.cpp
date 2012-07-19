@@ -3557,6 +3557,14 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
+    case AllocatePropertyStorage:
+        compileAllocatePropertyStorage(node);
+        break;
+        
+    case ReallocatePropertyStorage:
+        compileReallocatePropertyStorage(node);
+        break;
+        
     case GetPropertyStorage: {
         SpeculateCellOperand base(this, node.child1());
         GPRTemporary result(this, base);

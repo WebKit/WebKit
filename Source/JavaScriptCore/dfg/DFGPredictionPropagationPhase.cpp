@@ -449,7 +449,9 @@ private:
         }
             
         case GetPropertyStorage: 
-        case GetIndexedPropertyStorage: {
+        case GetIndexedPropertyStorage:
+        case AllocatePropertyStorage:
+        case ReallocatePropertyStorage: {
             changed |= setPrediction(SpecOther);
             changed |= mergeDefaultFlags(node);
             break;

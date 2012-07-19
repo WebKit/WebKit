@@ -1,3 +1,49 @@
+2012-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should emit inline code for property storage (re)allocation
+        https://bugs.webkit.org/show_bug.cgi?id=91597
+
+        Reviewed by Oliver Hunt.
+
+        This adds two new ops to the DFG IR: AllocatePropertyStorage and
+        ReallocatePropertyStorage. It enables these to interact properly with
+        CSE so that a GetPropertyStorage on something for which we have
+        obviously done a (Re)AllocatePropertyStorage will result in the
+        GetPropertyStorage being eliminated. Other than that, the code
+        emitted for these ops is identical to the code we were emitting in
+        the corresponding PutById stub.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        (JSC::DFG::CSEPhase::getPropertyStorageLoadElimination):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasStructureTransitionData):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Structure.cpp:
+        (JSC::nextOutOfLineStorageCapacity):
+        * runtime/Structure.h:
+        (JSC):
+
 2012-07-16  Oliver Hunt  <oliver@apple.com>
 
         dumpCallFrame is broken in ToT

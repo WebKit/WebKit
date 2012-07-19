@@ -465,6 +465,8 @@ private:
             case NewArray:
             case NewObject:
             case CreateThis:
+            case AllocatePropertyStorage:
+            case ReallocatePropertyStorage:
                 return NoNode;
                 
             default:
@@ -581,6 +583,17 @@ private:
                 if (node.child1() == child1)
                     return index;
                 break;
+
+            case AllocatePropertyStorage:
+            case ReallocatePropertyStorage:
+                // If we can cheaply prove this is a change to our object's storage, we
+                // can optimize and use its result.
+                if (node.child1() == child1)
+                    return index;
+                // Otherwise, we currently can't prove that this doesn't change our object's
+                // storage, so we conservatively assume that it may change the storage
+                // pointer of any object, including ours.
+                return NoNode;
                 
             case PutByOffset:
             case PutStructure:

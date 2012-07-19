@@ -2271,7 +2271,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_graph.m_storageAccessData.append(storageAccessData);
             } else if (!hasExitSite
                        && putByIdStatus.isSimpleTransition()
-                       && putByIdStatus.oldStructure()->outOfLineCapacity() == putByIdStatus.newStructure()->outOfLineCapacity()
                        && structureChainIsStillValid(
                            direct,
                            putByIdStatus.oldStructure(),
@@ -2293,20 +2292,38 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     }
                 }
                 ASSERT(putByIdStatus.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
-                addToGraph(
-                    PutStructure,
-                    OpInfo(
-                        m_graph.addStructureTransitionData(
-                            StructureTransitionData(
-                                putByIdStatus.oldStructure(),
-                                putByIdStatus.newStructure()))),
-                    base);
                 
                 NodeIndex propertyStorage;
-                if (isInlineOffset(putByIdStatus.offset()))
-                    propertyStorage = base;
-                else
-                    propertyStorage = addToGraph(GetPropertyStorage, base);
+                StructureTransitionData* transitionData =
+                    m_graph.addStructureTransitionData(
+                        StructureTransitionData(
+                            putByIdStatus.oldStructure(),
+                            putByIdStatus.newStructure()));
+
+                if (putByIdStatus.oldStructure()->outOfLineCapacity()
+                    != putByIdStatus.newStructure()->outOfLineCapacity()) {
+                    
+                    // If we're growing the property storage then it must be because we're
+                    // storing into the out-of-line storage.
+                    ASSERT(!isInlineOffset(putByIdStatus.offset()));
+                    
+                    if (!putByIdStatus.oldStructure()->outOfLineCapacity()) {
+                        propertyStorage = addToGraph(
+                            AllocatePropertyStorage, OpInfo(transitionData), base);
+                    } else {
+                        propertyStorage = addToGraph(
+                            ReallocatePropertyStorage, OpInfo(transitionData),
+                            base, addToGraph(GetPropertyStorage, base));
+                    }
+                } else {
+                    if (isInlineOffset(putByIdStatus.offset()))
+                        propertyStorage = base;
+                    else
+                        propertyStorage = addToGraph(GetPropertyStorage, base);
+                }
+                
+                addToGraph(PutStructure, OpInfo(transitionData), base);
+                
                 addToGraph(
                     PutByOffset,
                     OpInfo(m_graph.m_storageAccessData.size()),

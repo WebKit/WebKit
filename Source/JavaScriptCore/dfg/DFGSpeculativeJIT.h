@@ -1151,6 +1151,16 @@ public:
     // machine registers, and delegate the calling convention specific
     // decision as to how to fill the regsiters to setupArguments* methods.
 #if USE(JSVALUE64)
+    JITCompiler::Call callOperation(P_DFGOperation_E operation, GPRReg result)
+    {
+        m_jit.setupArgumentsExecState();
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(P_DFGOperation_ES operation, GPRReg result, size_t size)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(size));
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_DFGOperation_E operation, GPRReg result)
     {
         m_jit.setupArgumentsExecState();
@@ -1413,6 +1423,16 @@ public:
 #define EABI_32BIT_DUMMY_ARG
 #endif
 
+    JITCompiler::Call callOperation(P_DFGOperation_E operation, GPRReg result)
+    {
+        m_jit.setupArgumentsExecState();
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(P_DFGOperation_ES operation, GPRReg result, size_t size)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(size));
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(Z_DFGOperation_D operation, GPRReg result, FPRReg arg1)
     {
         prepareForExternalCall();
@@ -2047,6 +2067,9 @@ public:
     bool compileStrictEqForConstant(Node&, Edge value, JSValue constant);
     
     bool compileStrictEq(Node&);
+    
+    void compileAllocatePropertyStorage(Node&);
+    void compileReallocatePropertyStorage(Node&);
     
     void compileGetCharCodeAt(Node&);
     void compileGetByValOnString(Node&);

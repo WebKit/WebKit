@@ -632,7 +632,15 @@ struct Node {
 
     bool hasStructureTransitionData()
     {
-        return op() == PutStructure || op() == PhantomPutStructure;
+        switch (op()) {
+        case PutStructure:
+        case PhantomPutStructure:
+        case AllocatePropertyStorage:
+        case ReallocatePropertyStorage:
+            return true;
+        default:
+            return false;
+        }
     }
     
     StructureTransitionData& structureTransitionData()

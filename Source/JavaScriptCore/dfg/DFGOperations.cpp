@@ -28,6 +28,7 @@
 
 #include "Arguments.h"
 #include "CodeBlock.h"
+#include "CopiedSpaceInlineMethods.h"
 #include "DFGOSRExit.h"
 #include "DFGRepatch.h"
 #include "DFGThunks.h"
@@ -894,7 +895,7 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
     return globalData->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress();
 }
 
-inline void* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
+inline char* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
 {
     ExecState* exec = execCallee->callerFrame();
     JSGlobalData* globalData = &exec->globalData();
@@ -903,7 +904,7 @@ inline void* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
     JSValue calleeAsValue = execCallee->calleeAsValue();
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell)
-        return handleHostCall(execCallee, calleeAsValue, kind);
+        return reinterpret_cast<char*>(handleHostCall(execCallee, calleeAsValue, kind));
 
     JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
     execCallee->setScopeChain(callee->scopeUnchecked());
@@ -918,7 +919,7 @@ inline void* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
         JSObject* error = functionExecutable->compileFor(execCallee, callee->scope(), kind);
         if (error) {
             globalData->exception = createStackOverflowError(exec);
-            return globalData->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress();
+            return reinterpret_cast<char*>(globalData->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
         }
         codeBlock = &functionExecutable->generatedBytecodeFor(kind);
         if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
@@ -931,20 +932,20 @@ inline void* linkFor(ExecState* execCallee, CodeSpecializationKind kind)
         callLinkInfo.setSeen();
     else
         dfgLinkFor(execCallee, callLinkInfo, codeBlock, callee, codePtr, kind);
-    return codePtr.executableAddress();
+    return reinterpret_cast<char*>(codePtr.executableAddress());
 }
 
-void* DFG_OPERATION operationLinkCall(ExecState* execCallee)
+char* DFG_OPERATION operationLinkCall(ExecState* execCallee)
 {
     return linkFor(execCallee, CodeForCall);
 }
 
-void* DFG_OPERATION operationLinkConstruct(ExecState* execCallee)
+char* DFG_OPERATION operationLinkConstruct(ExecState* execCallee)
 {
     return linkFor(execCallee, CodeForConstruct);
 }
 
-inline void* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
+inline char* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
 {
     ExecState* exec = execCallee->callerFrame();
     JSGlobalData* globalData = &exec->globalData();
@@ -953,7 +954,7 @@ inline void* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
     JSValue calleeAsValue = execCallee->calleeAsValue();
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (UNLIKELY(!calleeAsFunctionCell))
-        return handleHostCall(execCallee, calleeAsValue, kind);
+        return reinterpret_cast<char*>(handleHostCall(execCallee, calleeAsValue, kind));
     
     JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
     execCallee->setScopeChain(function->scopeUnchecked());
@@ -963,18 +964,18 @@ inline void* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
         JSObject* error = functionExecutable->compileFor(execCallee, function->scope(), kind);
         if (error) {
             exec->globalData().exception = error;
-            return globalData->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress();
+            return reinterpret_cast<char*>(globalData->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
         }
     }
-    return executable->generatedJITCodeWithArityCheckFor(kind).executableAddress();
+    return reinterpret_cast<char*>(executable->generatedJITCodeWithArityCheckFor(kind).executableAddress());
 }
 
-void* DFG_OPERATION operationVirtualCall(ExecState* execCallee)
+char* DFG_OPERATION operationVirtualCall(ExecState* execCallee)
 {    
     return virtualFor(execCallee, CodeForCall);
 }
 
-void* DFG_OPERATION operationVirtualConstruct(ExecState* execCallee)
+char* DFG_OPERATION operationVirtualConstruct(ExecState* execCallee)
 {
     return virtualFor(execCallee, CodeForConstruct);
 }
@@ -1239,6 +1240,24 @@ void DFG_OPERATION operationReallocateStorageAndFinishPut(ExecState* exec, JSObj
     ASSERT(!globalData.heap.storageAllocator().fastPathShouldSucceed(structure->outOfLineCapacity() * sizeof(JSValue)));
     base->setStructureAndReallocateStorageIfNecessary(globalData, structure);
     base->putDirectOffset(globalData, offset, JSValue::decode(value));
+}
+
+char* DFG_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecState* exec)
+{
+    JSGlobalData& globalData = exec->globalData();
+    void* result;
+    if (!globalData.heap.tryAllocateStorage(initialOutOfLineCapacity * sizeof(JSValue), &result))
+        CRASH();
+    return reinterpret_cast<char*>(result);
+}
+
+char* DFG_OPERATION operationAllocatePropertyStorage(ExecState* exec, size_t newSize)
+{
+    JSGlobalData& globalData = exec->globalData();
+    void* result;
+    if (!globalData.heap.tryAllocateStorage(newSize, &result))
+        CRASH();
+    return reinterpret_cast<char*>(result);
 }
 
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
