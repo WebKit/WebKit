@@ -1,3 +1,16 @@
+2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [CMake][EFL] Should try to find the same libsoup version pulled by jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=91626
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update jhbuild to pull libsoup 2.39.3 tarball from Gnome FTP instead
+        of fetching a tag from Gnome GIT. We need to do this to map the version
+        of libsoup that is required by our CMake config.
+
+        * efl/jhbuild.modules:
+
 2012-07-18  MORITA Hajime  <morrita@google.com>
 
         Add window resize benchmark

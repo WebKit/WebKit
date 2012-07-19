@@ -1,3 +1,16 @@
+2012-07-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [CMake][EFL] Should try to find the same libsoup version pulled by jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=91626
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Bump required version of libsoup in CMake to 2.39.3. This is the first
+        tarball version to contain the API we need (soup_cookie_jar_get_cookies()
+        and soup_cookie_jar_set_cookie_with_first_party()).
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-07-18  Varun Jain  <varunjain@chromium.org>
 
         [chromium] Drag image for image elements should be scaled with device scale factor.
