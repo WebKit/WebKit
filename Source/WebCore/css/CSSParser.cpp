@@ -4492,7 +4492,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeRectangle(CSSParserValueL
         }
         argument = args->next();
         if (argument) {
-            if (argument->unit != CSSParserValue::Operator || argument->iValue != ',')
+            if (!isComma(argument))
                 return 0;
 
             argument = args->next();
@@ -4537,7 +4537,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeCircle(CSSParserValueList
 
         argument = args->next();
         if (argument) {
-            if (argument->unit != CSSParserValue::Operator || argument->iValue != ',')
+            if (!isComma(argument))
                 return 0;
             argument = args->next();
         }
@@ -4583,7 +4583,7 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeEllipse(CSSParserValueLis
 
         argument = args->next();
         if (argument) {
-            if (argument->unit != CSSParserValue::Operator || argument->iValue != ',')
+            if (!isComma(argument))
                 return 0;
             argument = args->next();
         }
