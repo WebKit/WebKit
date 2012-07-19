@@ -54,9 +54,8 @@ WrapperTypeInfo* npObjectTypeInfo();
 
 extern NPClass* npScriptObjectClass;
 
-// A V8NPObject is a NPObject which carries additional V8-specific information.
-// It is created with npCreateV8ScriptObject() and deallocated via the deallocate
-// method in the same way as other NPObjects.
+// A V8NPObject is a NPObject which carries additional V8-specific information. It is allocated and deallocated by
+// AllocV8NPObject() and FreeV8NPObject() methods.
 struct V8NPObject {
     NPObject object;
     v8::Persistent<v8::Object> v8Object;
@@ -74,8 +73,6 @@ struct PrivateIdentifier {
 NPObject* npCreateV8ScriptObject(NPP, v8::Handle<v8::Object>, DOMWindow*);
 
 NPObject* v8ObjectToNPObject(v8::Handle<v8::Object>);
-
-void disposeUnderlyingV8Object(NPObject*);
 
 } // namespace WebCore
 

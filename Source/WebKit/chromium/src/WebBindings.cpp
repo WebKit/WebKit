@@ -210,8 +210,6 @@ static bool getRangeImpl(NPObject* object, WebRange* webRange)
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    if (v8Object.IsEmpty())
-        return false;
     if (!V8Range::info.equals(V8DOMWrapper::domWrapperType(v8Object)))
         return false;
 
@@ -245,8 +243,6 @@ static bool getElementImpl(NPObject* object, WebElement* webElement)
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    if (v8Object.IsEmpty())
-        return false;
     Element* native = V8Element::HasInstance(v8Object) ? V8Element::toNative(v8Object) : 0;
     if (!native)
         return false;
@@ -262,8 +258,6 @@ static bool getArrayBufferImpl(NPObject* object, WebArrayBuffer* arrayBuffer)
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    if (v8Object.IsEmpty())
-        return false;
     ArrayBuffer* native = V8ArrayBuffer::HasInstance(v8Object) ? V8ArrayBuffer::toNative(v8Object) : 0;
     if (!native)
         return false;
@@ -279,8 +273,6 @@ static bool getArrayBufferViewImpl(NPObject* object, WebArrayBufferView* arrayBu
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    if (v8Object.IsEmpty())
-        return false;
     ArrayBufferView* native = V8ArrayBufferView::HasInstance(v8Object) ? V8ArrayBufferView::toNative(v8Object) : 0;
     if (!native)
         return false;
@@ -406,8 +398,6 @@ v8::Handle<v8::Value> WebBindings::toV8Value(const NPVariant* variant)
         if (object->_class != npScriptObjectClass)
             return v8::Undefined();
         V8NPObject* v8Object = reinterpret_cast<V8NPObject*>(object);
-        if (v8Object->v8Object.IsEmpty())
-            return v8::Undefined();
         return convertNPVariantToV8Object(variant, v8Object->rootObject->frame()->script()->windowScriptNPObject());
     }
     // Safe to pass 0 since we have checked the script object class to make sure the

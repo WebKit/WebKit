@@ -1,5 +1,19 @@
 2012-07-19  Joshua Bell  <jsbell@chromium.org>
 
+        Roll out r121610 and r122487 which may have been causing flaky crashes
+        https://bugs.webkit.org/show_bug.cgi?id=91637
+
+        Reviewed by Kentaro Hara.
+
+        Flaky crashes started in random tests following r121610. It's not clear
+        that r121610 is to blame, but we'd like to prove or disprove it.
+        If this doesn't resolve the crashes, this patch should be rolled out.
+
+        * plugins/npruntime/leak-window-scriptable-object-expected.txt: Removed.
+        * plugins/npruntime/leak-window-scriptable-object.html: Removed.
+
+2012-07-19  Joshua Bell  <jsbell@chromium.org>
+
         [chromium] Unreviewed gardening, fix malfomed BUG markers in TestExpectations
 
         * platform/chromium/TestExpectations:

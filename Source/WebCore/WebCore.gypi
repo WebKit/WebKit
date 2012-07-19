@@ -2162,6 +2162,8 @@
             'bindings/v8/IsolatedWorld.h',
             'bindings/v8/JavaScriptCallFrame.cpp',
             'bindings/v8/JavaScriptCallFrame.h',
+            'bindings/v8/NPObjectWrapper.cpp',
+            'bindings/v8/NPObjectWrapper.h',
             'bindings/v8/NPV8Object.cpp',
             'bindings/v8/NPV8Object.h',
             'bindings/v8/Dictionary.cpp',
