@@ -4,12 +4,6 @@
 <script src="resources/polyfill.js"></script>
 <script src="../resources/event-sender-util.js"></script>
 <script src="../../js/resources/js-test-pre.js"></script>
-</head>
-<body>
-
-<div id="host"></div>
-<pre id="console"></pre>
-
 <script>
 function createInput(name) {
     var div = document.createElement('input');
@@ -23,17 +17,20 @@ function createInput(name) {
     return div;
 }
 
-var shadowRoot = new WebKitShadowRoot(host);
-var shadowInput = createInput('shadow');
-shadowRoot.appendChild(shadowInput);
+function runTest() {
+    var shadowRoot = new WebKitShadowRoot(host);
+    var shadowInput = createInput('shadow');
+    shadowRoot.appendChild(shadowInput);
 
-eventSender.beginDragWithFiles(["../resources/apple.gif"]);
-mouseMoveToElem(shadowInput);
-eventSender.mouseUp();
-
-var successfullyParsed = true;
+    eventSender.beginDragWithFiles(["../resources/apple.gif"]);
+    mouseMoveToElem(shadowInput);
+    eventSender.mouseUp();
+}
 </script>
+</head>
+<body onload="runTest()">
 
-<script src="../../js/resources/js-test-post.js"></script>
+<div id="host"></div>
+<pre id="console"></pre>
 </body>
 </html>

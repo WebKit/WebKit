@@ -3502,10 +3502,6 @@ BUGWK87321 XP : fast/history/history-traversal-is-asynchronous.html = TEXT PASS
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-async.html = PASS CRASH
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-sync.html = PASS CRASH
 
-// Shadow DOM drop event tests are very flaky since creation
-BUGWK87364 DEBUG : fast/dom/shadow/drop-event-for-input-in-shadow.html = TEXT PASS
-BUGWK87364 DEBUG : fast/dom/shadow/drop-event-in-shadow.html = TEXT PASS
-
 // Requires setUseDeferredFrameLoading() API from LayoutTestController.
 BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html = PASS
 
