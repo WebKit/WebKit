@@ -1,3 +1,9 @@
+2012-07-19  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, marking three svg/W3C-SVG-1.1 tests as flaky.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-19  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] platform/qt/[scrollbars, transforms, transitions] directories need update after rebaseline and new testfonts

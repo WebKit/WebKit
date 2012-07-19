@@ -441,12 +441,15 @@ BUGWK80246 : fast/css/hover-update.html = PASS TEXT
 
 BUGWK86971 : svg/custom/non-scaling-stroke-markers.svg = PASS TEXT
 
+BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-28-t.svg = PASS TEXT
 BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-32-t.svg = PASS TEXT
 BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-33-t.svg = PASS TEXT
 BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-36-t.svg = PASS TEXT
+BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-37-t.svg = PASS TEXT
 BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = PASS TEXT
 BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-41-t.svg = PASS TEXT
 BUGWK89650 : svg/W3C-SVG-1.1/animate-elem-46-t.svg = PASS TEXT
+BUGWK89650 : svg/W3C-SVG-1.1/struct-dom-06-b.svg = PASS TEXT
 
 BUGWK80158 : plugins/netscape-plugin-page-cache-works.html = PASS TEXT
 
