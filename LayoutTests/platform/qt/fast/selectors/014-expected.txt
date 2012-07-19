@@ -1,10 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x116
-  RenderBlock {HTML} at (0,0) size 800x116
-    RenderBody {BODY} at (8,16) size 784x84
-      RenderBlock {P} at (0,0) size 784x84 [bgcolor=#FFFFFF] [border: (5px solid #00FF00)]
-        RenderText {#text} at (21,21) size 707x42
-          text run at (21,21) width 497: "This paragraph should have white background and a green thick solid "
-          text run at (518,21) width 210: "border because it carries both"
-          text run at (21,42) width 119: "classes t1 and t2"
+layer at (0,0) size 800x93
+  RenderBlock {HTML} at (0,0) size 800x93
+    RenderBody {BODY} at (8,16) size 784x61
+      RenderBlock {P} at (0,0) size 784x61 [bgcolor=#FFFFFF] [border: (5px solid #00FF00)]
+        RenderText {#text} at (21,21) size 704x19
+          text run at (21,21) width 420: "This paragraph should have white background and a green thick solid "
+          text run at (441,21) width 284: "border because it carries both classes t1 and t2"
