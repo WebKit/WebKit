@@ -1,3 +1,19 @@
+2012-07-19  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt][WK2] Map the elementRect exposed in QML to the view for popup menu
+        https://bugs.webkit.org/show_bug.cgi?id=91645
+
+        Reviewed by Simon Hausmann.
+
+        This way the geometry of the QML item is still sensible even if we panned
+        and zoomed.
+
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (ItemSelectorContextObject):
+        (WebKit::ItemSelectorContextObject::elementRect):
+        (WebKit::ItemSelectorContextObject::ItemSelectorContextObject):
+        (WebKit::WebPopupMenuProxyQt::showPopupMenu):
+
 2012-07-19  Zoltan Nyul  <zoltan.nyul@intel.com>
 
         [EFL][WK2] Using different cache directory for each WTR process

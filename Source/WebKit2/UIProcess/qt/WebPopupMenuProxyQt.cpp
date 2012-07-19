@@ -90,13 +90,13 @@ private:
 
 class ItemSelectorContextObject : public QObject {
     Q_OBJECT
-    Q_PROPERTY(QRect elementRect READ elementRect CONSTANT FINAL)
+    Q_PROPERTY(QRectF elementRect READ elementRect CONSTANT FINAL)
     Q_PROPERTY(QObject* items READ items CONSTANT FINAL)
 
 public:
-    ItemSelectorContextObject(const IntRect& elementRect, const Vector<WebPopupItem>&, int selectedIndex);
+    ItemSelectorContextObject(const QRectF& elementRect, const Vector<WebPopupItem>&, int selectedIndex);
 
-    QRect elementRect() const { return m_elementRect; }
+    QRectF elementRect() const { return m_elementRect; }
     PopupMenuItemModel* items() { return &m_items; }
 
     Q_INVOKABLE void accept(int index = -1);
@@ -107,11 +107,11 @@ Q_SIGNALS:
     void rejected();
 
 private:
-    QRect m_elementRect;
+    QRectF m_elementRect;
     PopupMenuItemModel m_items;
 };
 
-ItemSelectorContextObject::ItemSelectorContextObject(const IntRect& elementRect, const Vector<WebPopupItem>& webPopupItems, int selectedIndex)
+ItemSelectorContextObject::ItemSelectorContextObject(const QRectF& elementRect, const Vector<WebPopupItem>& webPopupItems, int selectedIndex)
     : m_elementRect(elementRect)
     , m_items(webPopupItems, selectedIndex)
 {
@@ -236,7 +236,8 @@ void WebPopupMenuProxyQt::showPopupMenu(const IntRect& rect, WebCore::TextDirect
 {
     m_selectedIndex = selectedIndex;
 
-    ItemSelectorContextObject* contextObject = new ItemSelectorContextObject(rect, items, m_selectedIndex);
+    const QRectF mappedRect= m_webView->mapRectFromWebContent(QRect(rect));
+    ItemSelectorContextObject* contextObject = new ItemSelectorContextObject(mappedRect, items, m_selectedIndex);
     createItem(contextObject);
     if (!m_itemSelector) {
         notifyValueChanged();

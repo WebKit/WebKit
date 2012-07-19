@@ -35,15 +35,18 @@ MouseArea {
 
     Rectangle {
         clip: true
-        x: selectorModel.elementRect.x
-        y: selectorModel.elementRect.y + selectorModel.elementRect.height
-        height: Math.min(400, parent.height - y)
         width: 200
+        height: Math.min(listView.contentItem.height + listView.anchors.topMargin + listView.anchors.bottomMargin
+                         , Math.max(selectorModel.elementRect.y, parent.height - selectorModel.elementRect.y - selectorModel.elementRect.height))
+        x: (selectorModel.elementRect.x + 200 > parent.width) ? parent.width - 200 : selectorModel.elementRect.x
+        y: (selectorModel.elementRect.y + selectorModel.elementRect.height + height < parent.height ) ? selectorModel.elementRect.y + selectorModel.elementRect.height
+                                                         : selectorModel.elementRect.y - height;
         radius: 5
         color: "gainsboro"
         opacity: 0.8
 
         ListView {
+            id: listView
             anchors.fill: parent
             anchors.margins: 10
             spacing: 5
