@@ -1,3 +1,20 @@
+2012-07-19  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] MHTML files not being loaded due to reported mime type not supported
+        https://bugs.webkit.org/show_bug.cgi?id=89978
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make 'message/rfc822' a supported MIME type for MHTML files in GTK.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterContentPolicy): Add
+        'message/rfc822' to the list of MIME types to be considered to
+        avoid them bypasing cross-domain security checks, only for GTK.
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::archiveMIMETypes): Add 'message/rfc822' to the list of
+        supported MIME types when MHTML support is enabled in GTK.
+
 2012-07-19  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: Factor ExtensionView into separate file

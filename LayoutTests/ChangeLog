@@ -1,3 +1,22 @@
+2012-07-19  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] MHTML files not being loaded due to reported mime type not supported
+        https://bugs.webkit.org/show_bug.cgi?id=89978
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move expectations for MHTML tests out of chromium's specific directory.
+
+        * mhtml/multi_frames_binary-expected.txt: Renamed from LayoutTests/platform/chromium/mhtml/multi_frames_binary-expected.txt.
+        * mhtml/multi_frames_ie-expected.txt: Renamed from LayoutTests/platform/chromium/mhtml/multi_frames_ie-expected.txt.
+        * mhtml/multi_frames_unmht-expected.txt: Renamed from LayoutTests/platform/chromium/mhtml/multi_frames_unmht-expected.txt.
+        * mhtml/page_with_css_and_js_ie-expected.txt: Renamed from LayoutTests/platform/chromium/mhtml/page_with_css_and_js_ie-expected.txt.
+        * mhtml/page_with_css_and_js_unmht-expected.txt: Renamed from LayoutTests/platform/chromium/mhtml/page_with_css_and_js_unmht-expected.txt.
+        * mhtml/page_with_image_ie-expected.txt: Renamed from LayoutTests/platform/chromium/mhtml/page_with_image_ie-expected.txt.
+        * mhtml/page_with_image_unmht-expected.txt: Renamed from LayoutTests/platform/chromium/mhtml/page_with_image_unmht-expected.txt.
+        * mhtml/simple_page_ie-expected.txt: Renamed from LayoutTests/platform/chromium/mhtml/simple_page_ie-expected.txt.
+        * mhtml/simple_page_unmht-expected.txt: Renamed from LayoutTests/platform/chromium/mhtml/simple_page_unmht-expected.txt.
+
 2012-07-19  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Inspector tests needs new baselines after r122952
