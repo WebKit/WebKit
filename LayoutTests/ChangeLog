@@ -1,3 +1,14 @@
+2012-07-20  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        Fix missing css1/text_properties/text_transform.html results (txt)
+        https://bugs.webkit.org/show_bug.cgi?id=91875
+
+        Expected txt result was added.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/qt/css1/text_properties/text_transform-expected.txt: Added.
+
 2012-07-20  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] Added/updated missing fast/table results after rebaseline
