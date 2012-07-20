@@ -1,3 +1,12 @@
+2012-07-20  Stephen Chenney  <schenney@chromium.org>
+
+        Rebaseline failing test svg/as-image/svg-non-integer-scaled-image.html
+
+        Unreviewed test expectations update.
+
+        * platform/chromium/svg/as-image: Added.
+        * platform/chromium/svg/as-image/svg-non-integer-scaled-image-expected.txt: Added.
+
 2012-07-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123182.
