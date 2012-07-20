@@ -1,3 +1,15 @@
+2012-07-18  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [Soup] Unnecessary RefPtr usage and null check
+        https://bugs.webkit.org/show_bug.cgi?id=91636
+
+        Reviewed by Martin Robinson.
+
+        Small clean up of code that is not necessary; no change in functionality.
+
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+        (WebCore::SocketStreamHandle::connected):
+
 2012-07-20  Mark Salisbury  <mark.salisbury@hp.com>
 
         Typo in FontCacheWin.cpp causes return value from getCachedFontData() in getLastResortFallbackFont() to be ignored

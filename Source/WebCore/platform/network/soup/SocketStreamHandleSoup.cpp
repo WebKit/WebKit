@@ -116,12 +116,8 @@ void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* 
     g_input_stream_read_async(m_inputStream.get(), m_readBuffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT, 0,
         reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), m_id);
 
-    // The client can close the handle, potentially removing the last reference.
-    RefPtr<SocketStreamHandle> protect(this); 
     m_state = Open;
     m_client->didOpenSocketStream(this);
-    if (!m_socketConnection) // Client closed the connection.
-        return;
 }
 
 void SocketStreamHandle::readBytes(signed long bytesRead, GError* error)
