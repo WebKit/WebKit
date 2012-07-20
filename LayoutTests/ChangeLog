@@ -1,3 +1,14 @@
+2012-07-20  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening of failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=91838
+
+        Unreviewed EFL gardening. Add failing tests to the Test Expectations.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/state-restore-skip-stateless-expected.txt: Removed
+        the platform specific expected after r123066.
+
 2012-07-20  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r123192. Skipped a new test.

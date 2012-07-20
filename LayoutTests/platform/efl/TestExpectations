@@ -150,6 +150,9 @@ BUGWK85532 SKIP : fast/sub-pixel = MISSING
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
 
+BUGWK91828 DEBUG : fast/css/acid2-pixel.html = CRASH
+BUGWK91828 DEBUG : http/tests/inspector/network/network-sidebar-width.html = CRASH
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -408,6 +411,7 @@ BUGWK82294 : compositing/iframes/page-cache-layer-tree.html = TEXT
 BUGWK82294 : compositing/iframes/resizer.html = MISSING
 BUGWK82294 : compositing/iframes/scrolling-iframe.html = TEXT
 BUGWK82294 : compositing/images/clip-on-directly-composited-image.html = TEXT
+BUGWK82294 : compositing/layer-creation/animation-overlap-with-children.html = TEXT
 BUGWK82294 : compositing/layer-creation/fixed-position-and-transform.html = TEXT
 BUGWK82294 : compositing/layer-creation/fixed-position-under-transform.html = TEXT
 BUGWK82294 : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
@@ -780,3 +784,6 @@ BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html/test_perform
 BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html = TEXT
 BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist_in_object.html = TEXT
 BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_xserver_redirect.html = TEXT
+
+// Failing after r123145 on EFL, GTK and QT.
+BUGWK91843 : http/tests/security/cross-frame-access-put.html = TEXT
