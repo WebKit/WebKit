@@ -1,3 +1,15 @@
+2012-07-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123220.
+        http://trac.webkit.org/changeset/123220
+        https://bugs.webkit.org/show_bug.cgi?id=91880
+
+        broke Debug build (Requested by philn on #webkit).
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+        * gtk/jhbuild.modules:
+
 2012-07-20  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][jhbuild] Switch to GStreamer 0.11 build
