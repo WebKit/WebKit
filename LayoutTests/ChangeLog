@@ -1,3 +1,12 @@
+2012-07-20  Balazs Ankes  <bank@inf.u-szeged.hu>
+
+        [Qt] http/tests/security/cross-frame-access-put.html test fail after r123145
+        https://bugs.webkit.org/show_bug.cgi?id=91830
+
+        Unreviewed gardening.
+
+        * platform/qt/http/tests/security/cross-frame-access-put-expected.txt: Added.
+
 2012-07-20  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol Extension: add getNamedFlowCollection command
