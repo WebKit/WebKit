@@ -1,3 +1,26 @@
+2012-07-20  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use "load,finished" signal in EWK2UnitTestBase::loadUrlSync() instead of "load,progress"
+        https://bugs.webkit.org/show_bug.cgi?id=91721
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The purpose of EWK2UnitTestBase::loadUrlSync() is to load
+        a URL in the view and wait synchronously for the load to finish.
+        The current implementation uses the "load,progress" signal to
+        detect when the load is finished, which is inefficient because
+        it gets emitted several times.
+
+        It is better to wait for the "load,finished" signal which gets
+        emitted only once when the load is complete.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::onLoadFinished):
+        (EWK2UnitTest::EWK2UnitTestBase::EWK2UnitTestBase):
+        (EWK2UnitTest::EWK2UnitTestBase::loadUrlSync):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTestBase):
+
 2012-07-19  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] Replace Node's Document pointer with a TreeScope pointer

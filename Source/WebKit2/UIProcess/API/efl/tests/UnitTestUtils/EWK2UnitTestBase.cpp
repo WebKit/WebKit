@@ -29,19 +29,17 @@ extern EWK2UnitTest::EWK2UnitTestEnvironment* environment;
 
 namespace EWK2UnitTest {
 
-static void onLoadProgress(void* userData, Evas_Object* webView, void* eventInfo)
+static void onLoadFinished(void* userData, Evas_Object* webView, void* eventInfo)
 {
     UNUSED_PARAM(webView);
+    UNUSED_PARAM(eventInfo);
 
-    EWK2UnitTestBase* test = static_cast<EWK2UnitTestBase*>(userData);
-    double progress = *static_cast<double*>(eventInfo);
-
-    test->setLoadProgress(progress);
+    bool* loadFinished = static_cast<bool*>(userData);
+    *loadFinished = true;
 }
 
 EWK2UnitTestBase::EWK2UnitTestBase()
-    : m_loadProgress(0)
-    , m_ecoreEvas(0)
+    : m_ecoreEvas(0)
     , m_webView(0)
 {
 }
@@ -78,15 +76,15 @@ void EWK2UnitTestBase::TearDown()
 
 void EWK2UnitTestBase::loadUrlSync(const char* url)
 {
-    m_loadProgress = 0;
+    bool loadFinished = false;
 
-    evas_object_smart_callback_add(m_webView, "load,progress", onLoadProgress, this);
+    evas_object_smart_callback_add(m_webView, "load,finished", onLoadFinished, &loadFinished);
     ewk_view_uri_set(m_webView, url);
 
-    while (m_loadProgress != 1)
+    while (!loadFinished)
         ecore_main_loop_iterate();
 
-    evas_object_smart_callback_del(m_webView, "load,progress", onLoadProgress);
+    evas_object_smart_callback_del(m_webView, "load,finished", onLoadFinished);
 }
 
 } // namespace EWK2UnitTest
