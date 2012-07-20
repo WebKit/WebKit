@@ -1,3 +1,32 @@
+2012-07-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS2.1] Anonymous tables should be inline/block-level based off their parent
+        https://bugs.webkit.org/show_bug.cgi?id=15365
+
+        Unreviewed gardening after r123159.
+
+        * mathml/msub-anonymous-child-render-crash-expected.txt:
+        MathML wraps msub / mpub in inline-blocks so the table wrapper is now inline too which leads to this
+        baseline change.
+
+        * platform/chromium-mac-snowleopard/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/chromium-mac/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/chromium-win/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/efl/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug3037-1-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug3037-1-expected.txt: Removed.
+        * platform/mac-wk2/fast/dynamic: Added.
+        * platform/mac-wk2/fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Added.
+        * platform/mac-wk2/mathml: Added.
+        * platform/mac-wk2/mathml/msub-anonymous-child-render-crash-expected.txt: Added.
+        * platform/mac-wk2/tables: Added.
+        * platform/mac-wk2/tables/mozilla: Added.
+        * platform/mac-wk2/tables/mozilla/bugs: Added.
+        * platform/mac-wk2/tables/mozilla/bugs/bug3037-1-expected.txt: Added.
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug3037-1-expected.txt:
+        * tables/mozilla/bugs/bug3037-1-expected.txt: Added.
+
 2012-07-19  Tony Chang  <tony@chromium.org>
 
         Unreviewed gardening.  Land chromium win and chromium-linux baselines for
