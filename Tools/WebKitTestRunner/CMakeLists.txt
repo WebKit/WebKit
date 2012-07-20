@@ -24,11 +24,9 @@ SET(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
     ${WEBCORE_DIR}/editing
-    ${WEBCORE_DIR}/page
     ${WEBCORE_DIR}/platform
     ${WEBCORE_DIR}/platform/graphics
     ${WEBCORE_DIR}/platform/network
-    ${WEBCORE_DIR}/platform/sql
     ${WEBCORE_DIR}/platform/text
     ${WEBCORE_DIR}/testing/js
     ${WEBKIT2_DIR}/Shared
