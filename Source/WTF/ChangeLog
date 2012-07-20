@@ -1,3 +1,14 @@
+2012-07-19  Dan Bernstein  <mitz@apple.com>
+
+        The ATSUI-based complex text code is unused
+        https://bugs.webkit.org/show_bug.cgi?id=91816
+
+        Reviewed by Sam Weinig.
+
+        Removed definitions of WTF_USE_ATSUI and WTF_USE_CORE_TEXT.
+
+        * wtf/Platform.h:
+
 2012-07-19  Wei James  <james.wei@intel.com>
 
         enable Web Audio for chromium android port

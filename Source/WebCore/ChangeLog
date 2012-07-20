@@ -1,3 +1,35 @@
+2012-07-19  Dan Bernstein  <mitz@apple.com>
+
+        The ATSUI-based complex text code is unused
+        https://bugs.webkit.org/show_bug.cgi?id=91816
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.gypi: Removed references to the files deleted in this change.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/graphics/FontCache.h:
+        (FontCache): Replaced USE(CORE_TEXT) with PLATFORM(MAC) || PLATFORM(CHROMIUM) && OS(DARWIN).
+        * platform/graphics/SimpleFontData.h:
+        (SimpleFontData): Removed USE(ATSUI)-only code, replaced USE(CORE_TEXT) with
+        (PLATFORM(CHROMIUM) && OS(DARWIN)).
+        * platform/graphics/mac/ComplexTextController.cpp: Removed USE(ATSUI)-only code. Moved
+        collectComplexTextRunsForCharacters() and the ComplexTextRun constructor out of this file.
+        * platform/graphics/mac/ComplexTextController.h: Removed USE(ATSUI)-only code and removed
+        #if USE(CORE_TEXT) because anyone including this header is using Core Text.
+        * platform/graphics/mac/ComplexTextControllerATSUI.cpp: Removed.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Moved from
+        ComplexTextController.cpp into this file and merged with createTextRunFromFontDataCoreText().
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Moved from
+        ComplexTextController.cpp into this file and merged with
+        collectComplexTextRunsForCharactersCoreText().
+        * platform/graphics/mac/SimpleFontDataATSUI.mm: Removed.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit): Remove USE(ATSUI)-only code.
+        (WebCore::SimpleFontData::platformDestroy): Ditto.
+        * platform/text/mac/ShapeArabic.c: Removed.
+        * platform/text/mac/ShapeArabic.h: Removed.
+
 2012-07-19  Kent Tamura  <tkent@chromium.org>
 
         Introduce Node::shadowHost()

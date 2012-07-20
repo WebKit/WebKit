@@ -466,8 +466,6 @@
 #if PLATFORM(CHROMIUM)
 #if OS(DARWIN)
 #define WTF_USE_SKIA 1
-#define WTF_USE_ATSUI 0
-#define WTF_USE_CORE_TEXT 1
 #define WTF_USE_ICCJPEG 1
 #define WTF_USE_QCMSLIB 1
 #elif OS(ANDROID)
@@ -644,7 +642,6 @@
 #define ENABLE_LLINT 0
 #if OS(DARWIN)
 #define WTF_USE_CF 1
-#define WTF_USE_CORE_TEXT 1
 #define ENABLE_WEB_ARCHIVE 1
 #endif
 #endif
@@ -995,12 +992,6 @@
 #define WTF_USE_QXMLSTREAM 1
 #define WTF_USE_QXMLQUERY 1
 #endif
-#endif
-
-#if PLATFORM(MAC)
-/* Complex text framework */
-#define WTF_USE_ATSUI 0
-#define WTF_USE_CORE_TEXT 1
 #endif
 
 /* Accelerated compositing */

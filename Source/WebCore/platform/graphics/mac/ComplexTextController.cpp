@@ -33,11 +33,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
-#if (PLATFORM(MAC) || PLATFORM(CHROMIUM)) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-// Undefined when compiling agains the 10.5 SDK.
-#define kCTVersionNumber10_6 0x00030000
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -316,68 +311,9 @@ void ComplexTextController::collectComplexTextRuns()
         m_complexTextRuns.reverse();
 }
 
-#if USE(CORE_TEXT) && USE(ATSUI)
-static inline bool shouldUseATSUIAPI()
-{
-    enum TypeRenderingAPIToUse { UnInitialized, UseATSUI, UseCoreText };
-    static TypeRenderingAPIToUse apiToUse = UnInitialized;
-
-    if (UNLIKELY(apiToUse == UnInitialized)) {
-        if (&CTGetCoreTextVersion != 0 && CTGetCoreTextVersion() >= kCTVersionNumber10_6)
-            apiToUse = UseCoreText;
-        else
-            apiToUse = UseATSUI;
-    }
-
-    return apiToUse == UseATSUI;
-}
-#endif
-
 CFIndex ComplexTextController::ComplexTextRun::indexAt(size_t i) const
 {
-#if USE(CORE_TEXT) && USE(ATSUI)
-    return shouldUseATSUIAPI() ? m_atsuiIndices[i] : m_coreTextIndices[i];
-#elif USE(ATSUI)
-    return m_atsuiIndices[i];
-#elif USE(CORE_TEXT)
     return m_coreTextIndices[i];
-#endif
-}
-
-void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
-{
-    if (!fontData) {
-        // Create a run of missing glyphs from the primary font.
-        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, length, m_run.ltr()));
-        return;
-    }
-
-#if USE(CORE_TEXT) && USE(ATSUI)
-    if (shouldUseATSUIAPI())
-        return collectComplexTextRunsForCharactersATSUI(cp, length, stringLocation, fontData);
-    return collectComplexTextRunsForCharactersCoreText(cp, length, stringLocation, fontData);
-#elif USE(ATSUI)
-    return collectComplexTextRunsForCharactersATSUI(cp, length, stringLocation, fontData);
-#elif USE(CORE_TEXT)
-    return collectComplexTextRunsForCharactersCoreText(cp, length, stringLocation, fontData);
-#endif
-}
-
-ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
-    : m_fontData(fontData)
-    , m_characters(characters)
-    , m_stringLocation(stringLocation)
-    , m_stringLength(stringLength)
-    , m_indexEnd(stringLength)
-    , m_isMonotonic(true)
-{
-#if USE(CORE_TEXT) && USE(ATSUI)
-    shouldUseATSUIAPI() ? createTextRunFromFontDataATSUI(ltr) : createTextRunFromFontDataCoreText(ltr);
-#elif USE(ATSUI)
-    createTextRunFromFontDataATSUI(ltr);
-#elif USE(CORE_TEXT)
-    createTextRunFromFontDataCoreText(ltr);
-#endif
 }
 
 void ComplexTextController::ComplexTextRun::setIsNonMonotonic()

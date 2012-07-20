@@ -24,8 +24,6 @@
 
 #include "config.h"
 
-#if USE(CORE_TEXT)
-
 #include "ComplexTextController.h"
 
 #include "Font.h"
@@ -135,7 +133,13 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Simp
 
 // Missing glyphs run constructor. Core Text will not generate a run of missing glyphs, instead falling back on
 // glyphs from LastResort. We want to use the primary font's missing glyph in order to match the fast text code path.
-void ComplexTextController::ComplexTextRun::createTextRunFromFontDataCoreText(bool ltr)
+ComplexTextController::ComplexTextRun::ComplexTextRun(const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
+    : m_fontData(fontData)
+    , m_characters(characters)
+    , m_stringLocation(stringLocation)
+    , m_stringLength(stringLength)
+    , m_indexEnd(stringLength)
+    , m_isMonotonic(true)
 {
     m_coreTextIndicesVector.reserveInitialCapacity(m_stringLength);
     unsigned r = 0;
@@ -180,9 +184,13 @@ static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* c
     return info->cp + stringIndex;
 }
 
-void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
+void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned length, unsigned stringLocation, const SimpleFontData* fontData)
 {
-    ASSERT_ARG(fontData, fontData);
+    if (!fontData) {
+        // Create a run of missing glyphs from the primary font.
+        m_complexTextRuns.append(ComplexTextRun::create(m_font.primaryFont(), cp, stringLocation, length, m_run.ltr()));
+        return;
+    }
 
     bool isSystemFallback = false;
 
@@ -295,5 +303,3 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
 }
 
 } // namespace WebCore
-
-#endif // USE(CORE_TEXT)

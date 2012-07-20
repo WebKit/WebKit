@@ -351,7 +351,6 @@
 		15D17D21147231EB005EBCA6 /* InspectorFileSystemAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15D17D1E147231EB005EBCA6 /* InspectorFileSystemAgent.cpp */; };
 		15D17D22147231EB005EBCA6 /* InspectorFileSystemAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 15D17D1F147231EB005EBCA6 /* InspectorFileSystemAgent.h */; };
 		163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */; };
-		163E8B13118B3ADD00ED9231 /* SimpleFontDataATSUI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 163E8B12118B3ADD00ED9231 /* SimpleFontDataATSUI.mm */; };
 		185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 185BCF260F3279CE000EA262 /* ThreadTimers.cpp */; };
 		185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */ = {isa = PBXBuildFile; fileRef = 185BCF270F3279CE000EA262 /* ThreadTimers.h */; };
 		188604B30F2E654A000B6443 /* DOMTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 188604B10F2E654A000B6443 /* DOMTimer.cpp */; };
@@ -992,7 +991,6 @@
 		37C2360B1097EDED00EF9F72 /* FontComplexTextMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */; };
 		37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */; };
 		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; };
-		37C238211098C84200EF9F72 /* ComplexTextControllerATSUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */; };
 		37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */; };
 		37C28A6810F659CC008C7813 /* TypesettingFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C28A6710F659CC008C7813 /* TypesettingFeatures.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C61F0112095C87007A3C67 /* AtomicStringKeyedMRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C61F0012095C87007A3C67 /* AtomicStringKeyedMRUCache.h */; };
@@ -4863,8 +4861,6 @@
 		B2AFFC7F0D00A5C10030074D /* SimpleFontDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC770D00A5C10030074D /* SimpleFontDataMac.mm */; };
 		B2AFFC800D00A5C10030074D /* FontMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC780D00A5C10030074D /* FontMac.mm */; };
 		B2AFFC830D00A5C10030074D /* GlyphPageTreeNodeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC7B0D00A5C10030074D /* GlyphPageTreeNodeMac.cpp */; };
-		B2AFFC930D00A5DF0030074D /* ShapeArabic.c in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC880D00A5DF0030074D /* ShapeArabic.c */; };
-		B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */ = {isa = PBXBuildFile; fileRef = B2AFFC890D00A5DF0030074D /* ShapeArabic.h */; };
 		B2AFFC950D00A5DF0030074D /* StringImplMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC8A0D00A5DF0030074D /* StringImplMac.mm */; };
 		B2AFFC960D00A5DF0030074D /* StringMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC8B0D00A5DF0030074D /* StringMac.mm */; };
 		B2AFFC970D00A5DF0030074D /* TextBoundaries.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC8C0D00A5DF0030074D /* TextBoundaries.mm */; };
@@ -7335,7 +7331,6 @@
 		15D17D1E147231EB005EBCA6 /* InspectorFileSystemAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFileSystemAgent.cpp; sourceTree = "<group>"; };
 		15D17D1F147231EB005EBCA6 /* InspectorFileSystemAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFileSystemAgent.h; sourceTree = "<group>"; };
 		163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleFontDataCoreText.cpp; sourceTree = "<group>"; };
-		163E8B12118B3ADD00ED9231 /* SimpleFontDataATSUI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleFontDataATSUI.mm; sourceTree = "<group>"; };
 		185BCF260F3279CE000EA262 /* ThreadTimers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadTimers.cpp; sourceTree = "<group>"; };
 		185BCF270F3279CE000EA262 /* ThreadTimers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadTimers.h; sourceTree = "<group>"; };
 		188604B10F2E654A000B6443 /* DOMTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMTimer.cpp; sourceTree = "<group>"; };
@@ -8034,7 +8029,6 @@
 		37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontComplexTextMac.cpp; sourceTree = "<group>"; };
 		37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		37C2360F1097EE7700EF9F72 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
-		37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextControllerATSUI.cpp; sourceTree = "<group>"; };
 		37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ComplexTextControllerCoreText.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		37C28A6710F659CC008C7813 /* TypesettingFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypesettingFeatures.h; sourceTree = "<group>"; };
 		37C61F0012095C87007A3C67 /* AtomicStringKeyedMRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringKeyedMRUCache.h; sourceTree = "<group>"; };
@@ -12061,8 +12055,6 @@
 		B2AFFC850D00A5DF0030074D /* character-sets.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "character-sets.txt"; sourceTree = "<group>"; };
 		B2AFFC860D00A5DF0030074D /* mac-encodings.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "mac-encodings.txt"; sourceTree = "<group>"; };
 		B2AFFC870D00A5DF0030074D /* make-charset-table.pl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; path = "make-charset-table.pl"; sourceTree = "<group>"; };
-		B2AFFC880D00A5DF0030074D /* ShapeArabic.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ShapeArabic.c; sourceTree = "<group>"; };
-		B2AFFC890D00A5DF0030074D /* ShapeArabic.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ShapeArabic.h; sourceTree = "<group>"; };
 		B2AFFC8A0D00A5DF0030074D /* StringImplMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringImplMac.mm; sourceTree = "<group>"; };
 		B2AFFC8B0D00A5DF0030074D /* StringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringMac.mm; sourceTree = "<group>"; };
 		B2AFFC8C0D00A5DF0030074D /* TextBoundaries.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = TextBoundaries.mm; sourceTree = "<group>"; };
@@ -19574,7 +19566,6 @@
 				B275354A0B053814002CE64F /* ColorMac.mm */,
 				37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */,
 				37C2360F1097EE7700EF9F72 /* ComplexTextController.h */,
-				37C2381F1098C84200EF9F72 /* ComplexTextControllerATSUI.cpp */,
 				37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */,
 				49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */,
 				B275354B0B053814002CE64F /* FloatPointMac.mm */,
@@ -19596,7 +19587,6 @@
 				E4B41E100CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.h */,
 				E4B41E110CBF90EF00AF2ECE /* MediaPlayerPrivateQTKit.mm */,
 				0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */,
-				163E8B12118B3ADD00ED9231 /* SimpleFontDataATSUI.mm */,
 				163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */,
 				B2AFFC770D00A5C10030074D /* SimpleFontDataMac.mm */,
 				49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */,
@@ -19847,8 +19837,6 @@
 				F5CC42DB12F801CA00D5F7E3 /* LocalizedNumberMac.mm */,
 				B2AFFC860D00A5DF0030074D /* mac-encodings.txt */,
 				B2AFFC870D00A5DF0030074D /* make-charset-table.pl */,
-				B2AFFC880D00A5DF0030074D /* ShapeArabic.c */,
-				B2AFFC890D00A5DF0030074D /* ShapeArabic.h */,
 				B2AFFC8A0D00A5DF0030074D /* StringImplMac.mm */,
 				B2AFFC8B0D00A5DF0030074D /* StringMac.mm */,
 				B2AFFC8C0D00A5DF0030074D /* TextBoundaries.mm */,
@@ -24609,7 +24597,6 @@
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
 				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
-				B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
@@ -25761,7 +25748,6 @@
 				B27535770B053814002CE64F /* ColorMac.mm in Sources */,
 				6550B6A1099DF0270090D781 /* Comment.cpp in Sources */,
 				37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */,
-				37C238211098C84200EF9F72 /* ComplexTextControllerATSUI.cpp in Sources */,
 				37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.mm in Sources */,
 				4A6A0C5B15232F2400B09C6E /* ComposedShadowTreeWalker.cpp in Sources */,
 				316FE1150E6E1DA700BF6088 /* CompositeAnimation.cpp in Sources */,
@@ -27791,7 +27777,6 @@
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,
 				A80E6CF40A1989CA007FB8C5 /* ShadowValue.cpp in Sources */,
-				B2AFFC930D00A5DF0030074D /* ShapeArabic.c in Sources */,
 				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
 				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
@@ -27801,7 +27786,6 @@
 				41D168E710226E89009BC827 /* SharedWorkerContext.cpp in Sources */,
 				41D168ED10226E89009BC827 /* SharedWorkerThread.cpp in Sources */,
 				B2C3DA640D006CD600EF6F26 /* SimpleFontData.cpp in Sources */,
-				163E8B13118B3ADD00ED9231 /* SimpleFontDataATSUI.mm in Sources */,
 				163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */,
 				B2AFFC7F0D00A5C10030074D /* SimpleFontDataMac.mm in Sources */,
 				C5A1EA7C152BCF04004D00B6 /* SimplifyMarkupCommand.cpp in Sources */,

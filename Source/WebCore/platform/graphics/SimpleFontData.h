@@ -36,11 +36,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringHash.h>
 
-#if USE(ATSUI)
-typedef struct OpaqueATSUStyle* ATSUStyle;
-#endif
-
-#if PLATFORM(MAC) || USE(CORE_TEXT)
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -176,22 +172,9 @@ public:
     NSFont* getNSFont() const { return m_platformData.nsFont(); }
 #endif
 
-#if PLATFORM(MAC) || USE(CORE_TEXT)
-    CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
-#endif
-
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+    CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
-#endif
-
-#if USE(ATSUI)
-    void checkShapesArabic() const;
-    bool shapesArabic() const
-    {
-        if (!m_checkedShapesArabic)
-            checkShapesArabic();
-        return m_shapesArabic;
-    }
 #endif
 
 #if PLATFORM(QT)
@@ -290,22 +273,8 @@ private:
     float m_syntheticBoldOffset;
 #endif
 
-
-#if USE(ATSUI)
-public:
-    mutable HashMap<unsigned, ATSUStyle> m_ATSUStyleMap;
-    mutable bool m_ATSUMirrors;
-    mutable bool m_checkedShapesArabic;
-    mutable bool m_shapesArabic;
-
-private:
-#endif
-
-#if PLATFORM(MAC) || USE(CORE_TEXT)
-    mutable HashMap<unsigned, RetainPtr<CFDictionaryRef> > m_CFStringAttributes;
-#endif
-
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+    mutable HashMap<unsigned, RetainPtr<CFDictionaryRef> > m_CFStringAttributes;
     mutable OwnPtr<HashMap<String, bool> > m_combiningCharacterSequenceSupport;
 #endif
 

@@ -142,12 +142,6 @@ const SimpleFontData* SimpleFontData::getCompositeFontReferenceFontData(NSFont *
 
 void SimpleFontData::platformInit()
 {
-#if USE(ATSUI)
-    m_ATSUMirrors = false;
-    m_checkedShapesArabic = false;
-    m_shapesArabic = false;
-#endif
-
     m_syntheticBoldOffset = m_platformData.m_syntheticBold ? 1.0f : 0.f;
 
     bool failedSetup = false;
@@ -319,12 +313,6 @@ void SimpleFontData::platformDestroy()
         if (m_derivedFontData->emphasisMark)
             fontCache()->releaseFontData(m_derivedFontData->emphasisMark.leakPtr());
     }
-
-#if USE(ATSUI)
-    HashMap<unsigned, ATSUStyle>::iterator end = m_ATSUStyleMap.end();
-    for (HashMap<unsigned, ATSUStyle>::iterator it = m_ATSUStyleMap.begin(); it != end; ++it)
-        ATSUDisposeStyle(it->second);
-#endif
 }
 
 PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
