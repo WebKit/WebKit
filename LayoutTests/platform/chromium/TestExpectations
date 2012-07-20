@@ -2639,32 +2639,32 @@ BUGWK74137 WIN LINUX LION : fast/regions/region-overflow-auto-overflow-hidden.ht
 BUGWK74137 SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-visible.html = PASS IMAGE+TEXT TIMEOUT
 BUGWK74137 WIN LINUX LION : fast/regions/region-overflow-auto-overflow-visible.html = PASS MISSING
 
-BUGWK82783 SKIP : css3/filters/filter-change-repaint-composited.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-change-repaint.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-repaint-blur.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-repaint-child-layers.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-repaint-composited-fallback-crash.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-repaint-composited-fallback.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-repaint-shadow-clipped.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-repaint-shadow-rotated.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-repaint-shadow.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-repaint.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-with-transform.html = PASS
-BUGWK82783 SKIP : css3/filters/filter-repaint-sepia.html = PASS
-BUGWK82783 SKIP : css3/filters/nested-filter.html = PASS
-BUGWK82783 SKIP WIN : css3/filters/blur-filter-page-scroll.html = PASS
+BUGWK82783 : css3/filters/filter-change-repaint-composited.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-change-repaint.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-repaint-blur.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-repaint-child-layers.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-repaint-composited-fallback-crash.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-repaint-composited-fallback.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-repaint-shadow-clipped.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-repaint-shadow-rotated.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-repaint-shadow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-repaint.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-with-transform.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/filter-repaint-sepia.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 : css3/filters/nested-filter.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK82783 WIN : css3/filters/blur-filter-page-scroll.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
 // Following tests need baselines on Win and Linux
-BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = PASS
-BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = PASS
-BUGWK84800 SKIP WIN LINUX : css3/filters/custom/filter-repaint-custom.html = PASS
-BUGWK84800 SKIP WIN LINUX : css3/filters/custom/effect-color-check.html = PASS
+BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK84800 WIN LINUX : css3/filters/custom/effect-color-check.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
 // CSS Regions tests for region styling and scoped styles
-BUGWK49142 SKIP : fast/regions/style-scoped-in-flow-override-container-style.html = PASS
-BUGWK49142 SKIP : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = PASS
-BUGWK49142 SKIP : fast/regions/style-scoped-in-flow-override-region-styling.html = PASS
-BUGWK49142 SKIP : fast/regions/style-scoped-in-flow.html = PASS
+BUGWK49142 : fast/regions/style-scoped-in-flow-override-container-style.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK49142 : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK49142 : fast/regions/style-scoped-in-flow-override-region-styling.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK49142 : fast/regions/style-scoped-in-flow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 

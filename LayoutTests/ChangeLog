@@ -1,5 +1,11 @@
 2012-07-20  Tony Chang  <tony@chromium.org>
 
+        [chromium] Unreviewed gardening.  Unskip some tests that just need new baselines.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-20  Tony Chang  <tony@chromium.org>
+
         [chromium] Rebaseline css3/filters/custom tests
         https://bugs.webkit.org/show_bug.cgi?id=82372
 
