@@ -79,7 +79,7 @@ private:
     virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
     void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
 
-    IntSize m_intrinsicSize;
+    mutable IntSize m_intrinsicSize;
 };
 
 }

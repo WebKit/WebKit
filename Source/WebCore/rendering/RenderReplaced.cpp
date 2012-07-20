@@ -286,6 +286,12 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
 
         if (rendererHasAspectRatio(this) && isPercentageIntrinsicSize)
             intrinsicRatio = 1;
+            
+        // Update our intrinsic size to match what the content renderer has computed, so that when we
+        // constrain the size below, the correct intrinsic size will be obtained for comparison against
+        // min and max widths.
+        if (intrinsicRatio && !isPercentageIntrinsicSize && !intrinsicSize.isEmpty())
+            m_intrinsicSize = flooredIntSize(intrinsicSize); // FIXME: This introduces precision errors. We should convert m_intrinsicSize to be a float.
     } else {
         computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
         if (intrinsicRatio)
@@ -299,11 +305,11 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
     // FIXME: In the long term, it might be better to just return this code more to the way it used to be before this
     // function was added, since all it has done is make the code more unclear.
     constrainedSize = intrinsicSize;
-    if (intrinsicRatio && !intrinsicSize.isEmpty() && style()->logicalWidth().isAuto() && style()->logicalHeight().isAuto()) {
+    if (intrinsicRatio && !isPercentageIntrinsicSize && !intrinsicSize.isEmpty() && style()->logicalWidth().isAuto() && style()->logicalHeight().isAuto()) {
         // We can't multiply or divide by 'intrinsicRatio' here, it breaks tests, like fast/images/zoomed-img-size.html, which
         // can only be fixed once subpixel precision is available for things like intrinsicWidth/Height - which include zoom!
         constrainedSize.setWidth(RenderBox::computeReplacedLogicalHeight() * intrinsicSize.width() / intrinsicSize.height());
-        constrainedSize.setHeight(RenderBox::computeReplacedLogicalWidth() * intrinsicSize.width() / intrinsicSize.height());
+        constrainedSize.setHeight(RenderBox::computeReplacedLogicalWidth() * intrinsicSize.height() / intrinsicSize.width());
     }
 }
 

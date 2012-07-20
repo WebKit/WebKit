@@ -1,3 +1,40 @@
+2012-07-19  David Hyatt  <hyatt@apple.com>
+
+        SVG not properly respecting max-width.
+        https://bugs.webkit.org/show_bug.cgi?id=91474
+
+        My previous checkin for 91474 accidentally inverted width and height in the division case for
+        the computation of height. When I fixed this inversion, I discovered that <object> elements
+        are in fact also broken with max-width handling, and that furthermore, trying to apply the same
+        max-width fix by calling RenderBox::computeReplacedLogicalWidth/Height failed because those methods
+        call intrinsicLogicalWidth()/Height(). Becuase m_intrinsicSize is out-of-date and does not reflect
+        the values we just obtained from the contentRenderer, we use the default 300x150 values for object
+        and fail to render.
+        
+        In order to both fix SVG/<object> with max-width constraints and to keep <object> rendering correctly
+        even when there are no max-width constraints, I was forced to update the m_intrinsicSize immediately
+        in order to make sure that the RenderBox methods returned the right values when computing the width/height
+        constrained to max/min-width/height values.
+
+        Reviewed by Dan Bernstein.
+
+        Added two new tests in svg/as-image. One test covers non-rectangular images to test for the inversion
+        mistake I made. The second test applies a max-width to <object> and shows that we have never gotten
+        this right before. An existing test in svg/as-image/ already covers basic <object> use (and tests that
+        the intrinsic size of 300x150 is not used when an explicit non-percentage size is specified on the SVG
+        itself).
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox):
+        Add a check to update m_intrinsicSize when we know it should apply, so that the calls to check against
+        min/max-width fetch this correct size.
+        
+        * rendering/RenderReplaced.h:
+        (RenderReplaced):
+        Make m_intrinsicSize mutable because of the mutation that occurs during the method above. It may be
+        that we should re-evaluate whether all of these methods should be const, but this would impact RenderBox
+        methods as well, so I chose to hold off going down that rabbit hole.
+
 2012-07-19  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Need AccessibilityObjects for nodes without renderers in canvas subtree
