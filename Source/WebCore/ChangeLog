@@ -1,3 +1,45 @@
+2012-07-19  David Hyatt  <hyatt@apple.com>
+
+        SVG images broken when max-width specified.
+        https://bugs.webkit.org/show_bug.cgi?id=91474
+
+        SVG images were computing intrinsic dimensions when width and height were auto that did not
+        respect min-max width/height. Normal images had code that applied these constraints properly.
+        Looking at the code before the check-in that broke things, these constraints used to be
+        applied to all images regardless of type via calcAspectRatioLogicalWidth/Height.
+        
+        This patch leaves the new function structure in place but converts the code to be more like
+        it was prior to the introduction of the regression. Instead of raw intrinsic sizes being
+        used in the SVG case, now all image types get the intrinsic sizes constrained when doing
+        width/height computations.
+
+        Reviewed by Dan Bernstein.
+
+        Test: svg/as-image/svg-intrinsic-size.html
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox):
+        Rename computeIntrinsicRatioInformationForRenderBox to computeAspectRatioInformationForRenderBox.
+        Also rename the intrinsicSize reference to constrainedSize to reflect the fact that the size
+        is not necessarily the intrinsic size any longer but instead a size where both axes have been
+        constrained based off the max-min values of the opposite axes.
+        
+        Move the constraining code out of RenderReplaced::computeIntrinsicRatioInformation into this
+        function so that the SVG code path appies the constraints as well. The movement of this code
+        is what fixes the bug.
+
+        (WebCore::RenderReplaced::computeIntrinsicRatioInformation):
+        Changed to remove the code that constrains the returned size, since it is shifting to
+        computeAspectRatioInformationForRenderBox instead.
+
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        * rendering/RenderReplaced.h:
+        (RenderReplaced):
+        Patch the name of the reference passed in to computeReplacedLogicalWidth/Height to be
+        constrainedSize instead of intrinsicSize, so that it is more obvious that the returned
+        result is not just the intrinsic size of the image.
+
 2012-07-19  Dmitry Titov  <dimich@chromium.org>
 
         Unreviewed, reverting http://trac.webkit.org/changeset/123149.

@@ -77,7 +77,7 @@ private:
     virtual bool canBeSelectionLeaf() const { return true; }
 
     virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* repaintContainer, bool clipToVisibleContent = true);
-    void computeIntrinsicRatioInformationForRenderBox(RenderBox*, FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
+    void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
 
     IntSize m_intrinsicSize;
 };

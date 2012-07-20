@@ -1,3 +1,13 @@
+2012-07-19  David Hyatt  <hyatt@apple.com>
+
+        SVG images broken when max-width specified.
+        https://bugs.webkit.org/show_bug.cgi?id=91474
+
+        Reviewed by Dan Bernstein.
+
+        * svg/as-image/svg-intrinsic-size-expected.html: Added.
+        * svg/as-image/svg-intrinsic-size.html: Added.
+
 2012-07-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [CSS2.1] Anonymous tables should be inline/block-level based off their parent
