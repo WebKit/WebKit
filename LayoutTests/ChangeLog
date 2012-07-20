@@ -1,3 +1,12 @@
+2012-07-20  Joshua Bell  <jsbell@chromium.org>
+
+        [chromium] Unreviewed test expectations update.
+        Un-marking various tests as flaky on WIN following rollback of r121610
+        in http://trac.webkit.org/changeset/123110. Investigation documented in:
+        https://bugs.webkit.org/show_bug.cgi?id=90469
+
+        * platform/chromium/TestExpectations:
+
 2012-07-20  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

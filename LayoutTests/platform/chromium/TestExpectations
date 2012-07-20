@@ -3645,30 +3645,6 @@ BUGWK90207 SLOW LINUX DEBUG : fast/forms/select/select-state-restore.html = PASS
 // Flaky
 BUGWK90430 : inspector/timeline/timeline-receive-response-event.html = PASS TEXT TIMEOUT
 
-// Flaky crashes on windows circa r121610 - all of these seem to be related
-BUGWK90469 WIN : storage/indexeddb/mozilla/indexes.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/key-requirements-inline-and-passed.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/key-requirements.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/objectstorenames.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/autoincrement-indexes.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/delete-result.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/key-requirements-put-no-key.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/create-objectstore-null-name.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/index-prev-no-duplicate.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/cursors.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/mozilla/create-index-with-integer-keys.html = PASS CRASH
-// Started crashing after 122286
-BUGWK91133 WIN : storage/indexeddb/constants.html = PASS CRASH
-// Started flaky after r121629.
-BUGWK90469 WIN : storage/indexeddb/cursor-delete.html = PASS CRASH
-BUGWK90469 WIN : storage/indexeddb/cursor-added-bug.html = PASS CRASH
-// Recently(?) started crashing on occassion
-BUGWK91275 WIN : storage/indexeddb/cursor-key-order.html = PASS CRASH
-BUGWK91403 WIN : storage/indexeddb/cursor-update-value-argument-required.html = PASS CRASH
-BUGWK90517 WIN : svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg = PASS CRASH
-BUGWK91421 WIN7 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = PASS CRASH
-BUGWK90469 WIN : storage/websql/multiple-databases-garbage-collection.html = PASS CRASH
-
 // Require rebaselines when Bug 85856 is fixed. (The left side of their RTL elements are cropped due to this bug.)
 BUGWK85856 BUGWK91756 : fast/block/float/026.html = TEXT IMAGE+TEXT IMAGE
 BUGWK85856 BUGWK91756 : fast/block/float/028.html = TEXT IMAGE+TEXT IMAGE
@@ -3725,8 +3701,6 @@ BUGWK91544 : media/media-continues-playing-after-replace-source.html = PASS TIME
 
 // Needs rebaseline. Behavior should now be the same as Safari.
 BUGWK91472 : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
-
-BUGWK91672 WIN : svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context.svg = PASS CRASH
 
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
