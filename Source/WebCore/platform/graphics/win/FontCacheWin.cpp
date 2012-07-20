@@ -331,7 +331,7 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
     };
     SimpleFontData* simpleFont;
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(fallbackFonts); ++i) {
-        if (simpleFont = getCachedFontData(fontDescription, fallbackFonts[i]), false, shouldRetain) {
+        if (simpleFont = getCachedFontData(fontDescription, fallbackFonts[i], false, shouldRetain)) {
             fallbackFontName = fallbackFonts[i];
             return simpleFont;
         }

@@ -1,3 +1,18 @@
+2012-07-20  Mark Salisbury  <mark.salisbury@hp.com>
+
+        Typo in FontCacheWin.cpp causes return value from getCachedFontData() in getLastResortFallbackFont() to be ignored
+        https://bugs.webkit.org/show_bug.cgi?id=91506
+
+        Reviewed by Joseph Pecoraro.
+
+        No new test.  The "fallback fallback" code ends up creating a font, so you always
+        get a fallback font even with this code bug.  A test would be buggy, being highly
+        platform dependent on what the "fallback fallback" font is on the particular
+        windows machine the test runs on.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+
 2012-07-20  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Clean up scratch texture usage in Chromium's implementation
