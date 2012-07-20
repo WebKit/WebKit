@@ -1,3 +1,17 @@
+2012-07-20  Keishi Hattori  <keishi@webkit.org>
+
+        Fix crash in WebCore::HTMLInputElement::dataList
+        https://bugs.webkit.org/show_bug.cgi?id=91818
+
+        Reviewed by Kent Tamura.
+
+        Fix crash that occurs when setting slider appearance on a regular node.
+
+        Test: fast/forms/range/slider-appearance-crash.html
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintSliderTicks): Check if node is an input element.
+
 2012-07-20  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Fix an assertion failure in TextFieldDecorationElement::hostInput()

@@ -963,7 +963,11 @@ bool RenderTheme::paintMeter(RenderObject*, const PaintInfo&, const IntRect&)
 #if ENABLE(DATALIST)
 void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(o->node()->shadowAncestorNode());
+    Node* node = o->node();
+    if (!node)
+        return;
+
+    HTMLInputElement* input = node->toInputElement();
     if (!input)
         return;
 

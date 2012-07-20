@@ -1,3 +1,13 @@
+2012-07-20  Keishi Hattori  <keishi@webkit.org>
+
+        Fix crash in WebCore::HTMLInputElement::dataList
+        https://bugs.webkit.org/show_bug.cgi?id=91818
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/range/slider-appearance-crash-expected.txt: Added.
+        * fast/forms/range/slider-appearance-crash.html: Added.
+
 2012-07-20  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed. Set svn:mime-type to image/png for PNG files without svn:mime-type.
