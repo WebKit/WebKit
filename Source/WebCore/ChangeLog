@@ -1,3 +1,81 @@
+2012-07-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123182.
+        http://trac.webkit.org/changeset/123182
+        https://bugs.webkit.org/show_bug.cgi?id=91863
+
+        Causing ASSERT crashes in tests accessibility/canvas.html and
+        accessibility/canvas-accessibilitynodeobject.html (Requested
+        by jernoble on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore):
+        * accessibility/AXObjectCache.h:
+        (AXObjectCache):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::AccessibilityARIAGrid):
+        (WebCore::AccessibilityARIAGrid::~AccessibilityARIAGrid):
+        (WebCore):
+        (WebCore::AccessibilityARIAGrid::create):
+        * accessibility/AccessibilityARIAGrid.h:
+        (AccessibilityARIAGrid):
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::create):
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::create):
+        * accessibility/AccessibilityAllInOne.cpp:
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::create):
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::create):
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::create):
+        (WebCore::AccessibilityMediaControlsContainer::create):
+        (WebCore::AccessibilityMediaTimeline::create):
+        (WebCore::AccessibilityMediaTimeDisplay::create):
+        * accessibility/AccessibilityMenuList.cpp:
+        * accessibility/AccessibilityMenuList.h:
+        (WebCore::AccessibilityMenuList::create):
+        * accessibility/AccessibilityNodeObject.cpp: Removed.
+        * accessibility/AccessibilityNodeObject.h: Removed.
+        * accessibility/AccessibilityObject.h:
+        (AccessibilityObject):
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::create):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::create):
+        (WebCore::AccessibilityRenderObject::detach):
+        (WebCore::AccessibilityRenderObject::remapAriaRoleDueToParent):
+        (WebCore):
+        (WebCore::AccessibilityRenderObject::determineAriaRoleAttribute):
+        (WebCore::AccessibilityRenderObject::ariaRoleAttribute):
+        (WebCore::AccessibilityRenderObject::updateAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        (WebCore::AccessibilityRenderObject::childrenChanged):
+        (WebCore::AccessibilityRenderObject::canHaveChildren):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::setRenderer):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::create):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::AccessibilityTable):
+        (WebCore::AccessibilityTable::~AccessibilityTable):
+        (WebCore):
+        (WebCore::AccessibilityTable::create):
+        * accessibility/AccessibilityTable.h:
+        (AccessibilityTable):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::create):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::create):
+
 2012-07-20  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Proxy configuration should honor the no_proxy environment variable

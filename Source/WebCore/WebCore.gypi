@@ -1792,8 +1792,6 @@
             'accessibility/AccessibilityMenuListPopup.h',
             'accessibility/AccessibilityMockObject.cpp',
             'accessibility/AccessibilityMockObject.h',
-            'accessibility/AccessibilityNodeObject.cpp',
-            'accessibility/AccessibilityNodeObject.h',
             'accessibility/AccessibilityObject.cpp',
             'accessibility/AccessibilityProgressIndicator.cpp',
             'accessibility/AccessibilityProgressIndicator.h',

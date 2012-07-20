@@ -50,8 +50,6 @@ public:
     static PassRefPtr<AccessibilityTable> create(RenderObject*);
     virtual ~AccessibilityTable();
 
-    virtual void init();
-
     virtual bool isAccessibilityTable() const;
     virtual bool isDataTable() const;
 

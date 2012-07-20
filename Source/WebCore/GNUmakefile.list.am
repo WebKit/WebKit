@@ -1317,8 +1317,6 @@ webcore_sources += \
 	Source/WebCore/accessibility/AccessibilityMenuListPopup.h \
 	Source/WebCore/accessibility/AccessibilityMockObject.cpp \
 	Source/WebCore/accessibility/AccessibilityMockObject.h \
-	Source/WebCore/accessibility/AccessibilityNodeObject.cpp \
-	Source/WebCore/accessibility/AccessibilityNodeObject.h \
 	Source/WebCore/accessibility/AccessibilityObject.cpp \
 	Source/WebCore/accessibility/AccessibilityObject.h \
 	Source/WebCore/accessibility/AccessibilityProgressIndicator.cpp \
