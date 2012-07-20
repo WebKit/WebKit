@@ -1,3 +1,15 @@
+2012-07-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Fix build when protocol handler and custom scheme is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=91840
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fixed namespace closing bracket positioning.
+
+        * WebCoreSupport/RegisterProtocolHandlerClientEfl.cpp:
+        (WebCore):
+
 2012-07-20  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Check parameters of ewk APIs in ewk_security_origin

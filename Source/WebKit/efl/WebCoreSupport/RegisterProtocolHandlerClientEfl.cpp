@@ -87,5 +87,6 @@ void RegisterProtocolHandlerClientEfl::unregisterProtocolHandler(const String& s
 }
 #endif
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
 }
+
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
