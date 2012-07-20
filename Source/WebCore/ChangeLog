@@ -1,3 +1,9 @@
+2012-07-20  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed Mac build fix against r123184.
+
+        * WebCore.exp.in:
+
 2012-07-17  Kinuko Yasuda  <kinuko@chromium.org>
 
         If value for responseType defined as type that not supported, it should not throw an exception in XHR 2
