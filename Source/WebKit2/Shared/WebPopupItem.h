@@ -44,7 +44,7 @@ struct WebPopupItem {
 
     WebPopupItem();
     WebPopupItem(Type);
-    WebPopupItem(Type, const String& text, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel);
+    WebPopupItem(Type, const String& text, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected);
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebPopupItem&);
@@ -57,6 +57,7 @@ struct WebPopupItem {
     String m_accessibilityText;
     bool m_isEnabled;
     bool m_isLabel;
+    bool m_isSelected;
 };
 
 } // namespace WebKit

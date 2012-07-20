@@ -2401,11 +2401,16 @@ void WebPage::countStringMatches(const String& string, uint32_t options, uint32_
 
 void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
 {
+    changeSelectedIndex(newIndex);
+    m_activePopupMenu = 0;
+}
+
+void WebPage::changeSelectedIndex(int32_t index)
+{
     if (!m_activePopupMenu)
         return;
 
-    m_activePopupMenu->didChangeSelectedIndex(newIndex);
-    m_activePopupMenu = 0;
+    m_activePopupMenu->didChangeSelectedIndex(index);
 }
 
 void WebPage::didChooseFilesForOpenPanel(const Vector<String>& files)

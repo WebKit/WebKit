@@ -719,7 +719,11 @@ private:
     virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index);
 #if PLATFORM(GTK)
     virtual void failedToShowPopupMenu();
-#endif    
+#endif
+#if PLATFORM(QT)
+    virtual void changeSelectedIndex(int32_t newSelectedIndex);
+    virtual void closePopupMenu();
+#endif
 
     // Implemented in generated WebPageProxyMessageReceiver.cpp
     void didReceiveWebPageProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

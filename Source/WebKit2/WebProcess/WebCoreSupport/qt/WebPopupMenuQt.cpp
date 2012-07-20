@@ -27,13 +27,15 @@
 #include "WebPopupMenu.h"
 
 #include "PlatformPopupMenuData.h"
+#include <WebCore/PopupMenuClient.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData&)
+void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data)
 {
+    data.multipleSelections = m_popupClient->multiple();
 }
 
 } // namespace WebKit

@@ -1,3 +1,77 @@
+2012-06-01  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] Add support for multi-select list
+        https://bugs.webkit.org/show_bug.cgi?id=85527
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added support for multi-select list:
+        - Added multi-selection flag to PlatformPopupMenuData to indicate whether to accept multiple selections or not.
+        - Added selected state to WebPopupItem.
+        - Modified WebPopupMenuQt to support multiple selections.
+
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::PlatformPopupMenuData):
+        (WebKit::PlatformPopupMenuData::encode):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h:
+        (PlatformPopupMenuData):
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::WebPopupItem):
+        (WebKit::WebPopupItem::encode):
+        (WebKit::WebPopupItem::decode):
+        * Shared/WebPopupItem.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_multiSelect.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/multiselect.html: Added.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPopupMenuProxy.h:
+        (Client):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::changeSelectedIndex):
+        (WebKit):
+        (WebKit::WebPageProxy::closePopupMenu):
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (WebKit::PopupMenuItemModel::multiple):
+        (PopupMenuItemModel):
+        (WebKit::PopupMenuItemModel::Item::Item):
+        (ItemSelectorContextObject):
+        (WebKit::ItemSelectorContextObject::allowMultiSelect):
+        (WebKit::ItemSelectorContextObject::reject):
+        (WebKit::ItemSelectorContextObject::dismiss):
+        (WebKit::ItemSelectorContextObject::ItemSelectorContextObject):
+        (WebKit):
+        (WebKit::ItemSelectorContextObject::onIndexUpdate):
+        (WebKit::ItemSelectorContextObject::accept):
+        (WebKit::PopupMenuItemModel::PopupMenuItemModel):
+        (WebKit::PopupMenuItemModel::select):
+        (WebKit::PopupMenuItemModel::toggleItem):
+        (WebKit::PopupMenuItemModel::buildItems):
+        (WebKit::WebPopupMenuProxyQt::showPopupMenu):
+        (WebKit::WebPopupMenuProxyQt::hidePopupMenu):
+        (WebKit::WebPopupMenuProxyQt::selectIndex):
+        (WebKit::WebPopupMenuProxyQt::createItem):
+        * UIProcess/qt/WebPopupMenuProxyQt.h:
+        (WebPopupMenuProxyQt):
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::didChangeSelectedIndex):
+        (WebKit::WebPopupMenu::populateItems):
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+        (WebPopupMenu):
+        * WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChangeSelectedIndexForActivePopupMenu):
+        (WebKit):
+        (WebKit::WebPage::changeSelectedIndex):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::selectedIndex):
+        (WebKit):
+        (WebKit::WebPage::hidePopupMenu):
+
 2012-07-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, rolling out r123085.

@@ -55,7 +55,11 @@ public:
         virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent() = 0;
 #if PLATFORM(GTK)
         virtual void failedToShowPopupMenu() = 0;
-#endif        
+#endif
+#if PLATFORM(QT)
+        virtual void changeSelectedIndex(int32_t newSelectedIndex) = 0;
+        virtual void closePopupMenu() = 0;
+#endif
     };
 
     virtual ~WebPopupMenuProxy()

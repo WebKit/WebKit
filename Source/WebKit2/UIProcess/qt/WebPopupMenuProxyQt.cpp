@@ -52,23 +52,28 @@ public:
         IsSeparatorRole = Qt::UserRole + 3
     };
 
-    PopupMenuItemModel(const Vector<WebPopupItem>&, int selectedOriginalIndex);
+    PopupMenuItemModel(const Vector<WebPopupItem>&, bool multiple);
     virtual int rowCount(const QModelIndex& parent = QModelIndex()) const { return m_items.size(); }
     virtual QVariant data(const QModelIndex&, int role = Qt::DisplayRole) const;
 
     Q_INVOKABLE void select(int);
 
     int selectedOriginalIndex() const;
+    bool multiple() const { return m_allowMultiples; }
+    void toggleItem(int);
+
+Q_SIGNALS:
+    void indexUpdated();
 
 private:
     struct Item {
-        Item(const WebPopupItem& webPopupItem, const QString& group, int originalIndex, bool selected)
+        Item(const WebPopupItem& webPopupItem, const QString& group, int originalIndex)
             : text(webPopupItem.m_text)
             , toolTip(webPopupItem.m_toolTip)
             , group(group)
             , originalIndex(originalIndex)
             , enabled(webPopupItem.m_isEnabled)
-            , selected(selected)
+            , selected(webPopupItem.m_isSelected)
             , isSeparator(webPopupItem.m_type == WebPopupItem::Separator)
         { }
 
@@ -82,47 +87,68 @@ private:
         bool isSeparator;
     };
 
-    void buildItems(const Vector<WebPopupItem>& webPopupItems, int selectedOriginalIndex);
+    void buildItems(const Vector<WebPopupItem>& webPopupItems);
 
     Vector<Item> m_items;
     int m_selectedModelIndex;
+    bool m_allowMultiples;
 };
 
 class ItemSelectorContextObject : public QObject {
     Q_OBJECT
     Q_PROPERTY(QRectF elementRect READ elementRect CONSTANT FINAL)
     Q_PROPERTY(QObject* items READ items CONSTANT FINAL)
+    Q_PROPERTY(bool allowMultiSelect READ allowMultiSelect CONSTANT FINAL)
 
 public:
-    ItemSelectorContextObject(const QRectF& elementRect, const Vector<WebPopupItem>&, int selectedIndex);
+    ItemSelectorContextObject(const QRectF& elementRect, const Vector<WebPopupItem>&, bool multiple);
 
     QRectF elementRect() const { return m_elementRect; }
     PopupMenuItemModel* items() { return &m_items; }
+    bool allowMultiSelect() { return m_items.multiple(); }
 
     Q_INVOKABLE void accept(int index = -1);
-    Q_INVOKABLE void reject() { emit rejected(); }
+    Q_INVOKABLE void reject() { emit done(); }
+    Q_INVOKABLE void dismiss() { emit done(); }
 
 Q_SIGNALS:
     void acceptedWithOriginalIndex(int);
-    void rejected();
+    void done();
+
+private Q_SLOTS:
+    void onIndexUpdate();
 
 private:
     QRectF m_elementRect;
     PopupMenuItemModel m_items;
 };
 
-ItemSelectorContextObject::ItemSelectorContextObject(const QRectF& elementRect, const Vector<WebPopupItem>& webPopupItems, int selectedIndex)
+ItemSelectorContextObject::ItemSelectorContextObject(const QRectF& elementRect, const Vector<WebPopupItem>& webPopupItems, bool multiple)
     : m_elementRect(elementRect)
-    , m_items(webPopupItems, selectedIndex)
+    , m_items(webPopupItems, multiple)
 {
+    connect(&m_items, SIGNAL(indexUpdated()), SLOT(onIndexUpdate()));
 }
+
+void ItemSelectorContextObject::onIndexUpdate()
+{
+    // Send the update for multi-select list.
+    if (m_items.multiple())
+        emit acceptedWithOriginalIndex(m_items.selectedOriginalIndex());
+}
+
 
 void ItemSelectorContextObject::accept(int index)
 {
-    if (index != -1)
-        m_items.select(index);
-    int originalIndex = m_items.selectedOriginalIndex();
-    emit acceptedWithOriginalIndex(originalIndex);
+    // If the index is not valid for multi-select lists, just hide the pop up as the selected indices have
+    // already been sent.
+    if ((index == -1) && m_items.multiple())
+        emit done();
+    else {
+        if (index != -1)
+            m_items.toggleItem(index);
+        emit acceptedWithOriginalIndex(m_items.selectedOriginalIndex());
+    }
 }
 
 static QHash<int, QByteArray> createRoleNamesHash()
@@ -137,12 +163,13 @@ static QHash<int, QByteArray> createRoleNamesHash()
     return roles;
 }
 
-PopupMenuItemModel::PopupMenuItemModel(const Vector<WebPopupItem>& webPopupItems, int selectedOriginalIndex)
+PopupMenuItemModel::PopupMenuItemModel(const Vector<WebPopupItem>& webPopupItems, bool multiple)
     : m_selectedModelIndex(-1)
+    , m_allowMultiples(multiple)
 {
     static QHash<int, QByteArray> roles = createRoleNamesHash();
     setRoleNames(roles);
-    buildItems(webPopupItems, selectedOriginalIndex);
+    buildItems(webPopupItems);
 }
 
 QVariant PopupMenuItemModel::data(const QModelIndex& index, int role) const
@@ -177,22 +204,31 @@ QVariant PopupMenuItemModel::data(const QModelIndex& index, int role) const
 
 void PopupMenuItemModel::select(int index)
 {
+    toggleItem(index);
+    emit indexUpdated();
+}
+
+void PopupMenuItemModel::toggleItem(int index)
+{
     int oldIndex = m_selectedModelIndex;
-    if (index == oldIndex)
-        return;
     if (index < 0 || index >= m_items.size())
         return;
     Item& item = m_items[index];
     if (!item.enabled)
         return;
 
-    item.selected = true;
     m_selectedModelIndex = index;
-
-    if (oldIndex != -1) {
-        Item& oldItem = m_items[oldIndex];
-        oldItem.selected = false;
-        emit dataChanged(this->index(oldIndex), this->index(oldIndex));
+    if (m_allowMultiples)
+        item.selected = !item.selected;
+    else {
+        if (index == oldIndex)
+            return;
+        item.selected = true;
+        if (oldIndex != -1) {
+            Item& oldItem = m_items[oldIndex];
+            oldItem.selected = false;
+            emit dataChanged(this->index(oldIndex), this->index(oldIndex));
+        }
     }
 
     emit dataChanged(this->index(index), this->index(index));
@@ -205,7 +241,7 @@ int PopupMenuItemModel::selectedOriginalIndex() const
     return m_items[m_selectedModelIndex].originalIndex;
 }
 
-void PopupMenuItemModel::buildItems(const Vector<WebPopupItem>& webPopupItems, int selectedOriginalIndex)
+void PopupMenuItemModel::buildItems(const Vector<WebPopupItem>& webPopupItems)
 {
     QString currentGroup;
     m_items.reserveInitialCapacity(webPopupItems.size());
@@ -215,10 +251,9 @@ void PopupMenuItemModel::buildItems(const Vector<WebPopupItem>& webPopupItems, i
             currentGroup = webPopupItem.m_text;
             continue;
         }
-        const bool selected = i == selectedOriginalIndex;
-        if (selected)
+        if (webPopupItem.m_isSelected && !m_allowMultiples)
             m_selectedModelIndex = m_items.size();
-        m_items.append(Item(webPopupItem, currentGroup, i, selected));
+        m_items.append(Item(webPopupItem, currentGroup, i));
     }
 }
 
@@ -232,15 +267,15 @@ WebPopupMenuProxyQt::~WebPopupMenuProxyQt()
 {
 }
 
-void WebPopupMenuProxyQt::showPopupMenu(const IntRect& rect, WebCore::TextDirection, double, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
+void WebPopupMenuProxyQt::showPopupMenu(const IntRect& rect, WebCore::TextDirection, double, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& data, int32_t)
 {
-    m_selectedIndex = selectedIndex;
+    m_selectionType = (data.multipleSelections) ? WebPopupMenuProxyQt::MultipleSelection : WebPopupMenuProxyQt::SingleSelection;
 
     const QRectF mappedRect= m_webView->mapRectFromWebContent(QRect(rect));
-    ItemSelectorContextObject* contextObject = new ItemSelectorContextObject(mappedRect, items, m_selectedIndex);
+    ItemSelectorContextObject* contextObject = new ItemSelectorContextObject(mappedRect, items, (m_selectionType == WebPopupMenuProxyQt::MultipleSelection));
     createItem(contextObject);
     if (!m_itemSelector) {
-        notifyValueChanged();
+        hidePopupMenu();
         return;
     }
     QQuickWebViewPrivate::get(m_webView)->setDialogActive(true);
@@ -251,12 +286,16 @@ void WebPopupMenuProxyQt::hidePopupMenu()
     m_itemSelector.clear();
     QQuickWebViewPrivate::get(m_webView)->setDialogActive(false);
     m_context.clear();
-    notifyValueChanged();
+
+    if (m_client) {
+        m_client->closePopupMenu();
+        invalidate();
+    }
 }
 
 void WebPopupMenuProxyQt::selectIndex(int index)
 {
-    m_selectedIndex = index;
+    m_client->changeSelectedIndex(index);
 }
 
 void WebPopupMenuProxyQt::createItem(QObject* contextObject)
@@ -269,23 +308,19 @@ void WebPopupMenuProxyQt::createItem(QObject* contextObject)
 
     createContext(component, contextObject);
     QObject* object = component->beginCreate(m_context.get());
-    if (!object) {
-        m_context.clear();
+    if (!object)
         return;
-    }
 
     m_itemSelector = adoptPtr(qobject_cast<QQuickItem*>(object));
-    if (!m_itemSelector) {
-        m_context.clear();
-        m_itemSelector.clear();
+    if (!m_itemSelector)
         return;
-    }
 
     connect(contextObject, SIGNAL(acceptedWithOriginalIndex(int)), SLOT(selectIndex(int)));
 
     // We enqueue these because they are triggered by m_itemSelector and will lead to its destruction.
-    connect(contextObject, SIGNAL(acceptedWithOriginalIndex(int)), SLOT(hidePopupMenu()), Qt::QueuedConnection);
-    connect(contextObject, SIGNAL(rejected()), SLOT(hidePopupMenu()), Qt::QueuedConnection);
+    connect(contextObject, SIGNAL(done()), SLOT(hidePopupMenu()), Qt::QueuedConnection);
+    if (m_selectionType == WebPopupMenuProxyQt::SingleSelection)
+        connect(contextObject, SIGNAL(acceptedWithOriginalIndex(int)), SLOT(hidePopupMenu()), Qt::QueuedConnection);
 
     QQuickWebViewPrivate::get(m_webView)->addAttachedPropertyTo(m_itemSelector.get());
     m_itemSelector->setParentItem(m_webView);
@@ -306,14 +341,6 @@ void WebPopupMenuProxyQt::createContext(QQmlComponent* component, QObject* conte
     contextObject->setParent(m_context.get());
     m_context->setContextProperty(QLatin1String("model"), contextObject);
     m_context->setContextObject(contextObject);
-}
-
-void WebPopupMenuProxyQt::notifyValueChanged()
-{
-    if (m_client) {
-        m_client->valueChangedForPopupMenu(this, m_selectedIndex);
-        invalidate();
-    }
 }
 
 } // namespace WebKit

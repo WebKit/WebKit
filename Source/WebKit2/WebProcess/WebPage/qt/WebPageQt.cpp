@@ -28,9 +28,11 @@
 #include "WebPage.h"
 
 #include "NotImplemented.h"
+#include "PopupMenuClient.h"
 #include "WebEditorClient.h"
 #include "WebEvent.h"
 #include "WebPageProxyMessages.h"
+#include "WebPopupMenu.h"
 #include "WebProcess.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FocusController.h>
@@ -420,6 +422,20 @@ void WebPage::setUserScripts(const Vector<String>& scripts)
     pageGroup->removeUserScriptsFromWorld(mainThreadNormalWorld());
     for (unsigned i = 0; i < scripts.size(); ++i)
         pageGroup->addUserScriptToWorld(mainThreadNormalWorld(), scripts.at(i), KURL(), nullptr, nullptr, InjectAtDocumentEnd, InjectInTopFrameOnly);
+}
+
+void WebPage::selectedIndex(int32_t newIndex)
+{
+    changeSelectedIndex(newIndex);
+}
+
+void WebPage::hidePopupMenu()
+{
+    if (!m_activePopupMenu)
+        return;
+
+    m_activePopupMenu->client()->popupDidHide();
+    m_activePopupMenu = 0;
 }
 
 } // namespace WebKit

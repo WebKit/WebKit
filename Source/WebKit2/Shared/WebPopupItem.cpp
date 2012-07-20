@@ -39,6 +39,7 @@ WebPopupItem::WebPopupItem()
     , m_textDirection(LTR)
     , m_hasTextDirectionOverride(false)
     , m_isEnabled(true)
+    , m_isSelected(false)
 {
 }
 
@@ -48,10 +49,11 @@ WebPopupItem::WebPopupItem(Type type)
     , m_hasTextDirectionOverride(false)
     , m_isEnabled(true)
     , m_isLabel(false)
+    , m_isSelected(false)
 {
 }
 
-WebPopupItem::WebPopupItem(Type type, const String& text, TextDirection textDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel)
+WebPopupItem::WebPopupItem(Type type, const String& text, TextDirection textDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected)
     : m_type(type)
     , m_text(text)
     , m_textDirection(textDirection)
@@ -60,12 +62,14 @@ WebPopupItem::WebPopupItem(Type type, const String& text, TextDirection textDire
     , m_accessibilityText(accessibilityText)
     , m_isEnabled(isEnabled)
     , m_isLabel(isLabel)
+    , m_isSelected(isSelected)
 {
 }
 
 void WebPopupItem::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(CoreIPC::In(static_cast<uint32_t>(m_type), m_text, static_cast<uint64_t>(m_textDirection), m_hasTextDirectionOverride, m_toolTip, m_accessibilityText, m_isEnabled, m_isLabel));
+    encoder->encode(CoreIPC::In(m_isSelected));
 }
 
 bool WebPopupItem::decode(CoreIPC::ArgumentDecoder* decoder, WebPopupItem& item)
@@ -78,10 +82,15 @@ bool WebPopupItem::decode(CoreIPC::ArgumentDecoder* decoder, WebPopupItem& item)
     String accessibilityText;
     bool isEnabled;
     bool isLabel;
+    bool isSelected;
+
     if (!decoder->decode(CoreIPC::Out(type, text, textDirection, hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel)))
         return false;
 
-    item = WebPopupItem(static_cast<Type>(type), text, static_cast<TextDirection>(textDirection), hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel);
+    if (!decoder->decode(CoreIPC::Out(isSelected)))
+        return false;
+
+    item = WebPopupItem(static_cast<Type>(type), text, static_cast<TextDirection>(textDirection), hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel, isSelected);
     return true;
 }
 

@@ -42,6 +42,11 @@ class WebPopupMenuProxyQt : public QObject, public WebPopupMenuProxy {
     Q_OBJECT
 
 public:
+    enum SelectionType {
+        SingleSelection,
+        MultipleSelection
+    };
+
     static PassRefPtr<WebPopupMenuProxyQt> create(WebPopupMenuProxy::Client* client, QQuickWebView* webView)
     {
         return adoptRef(new WebPopupMenuProxyQt(client, webView));
@@ -61,13 +66,11 @@ private:
     void createItem(QObject*);
     void createContext(QQmlComponent*, QObject*);
 
-    void notifyValueChanged();
-
     OwnPtr<QQmlContext> m_context;
     OwnPtr<QQuickItem> m_itemSelector;
 
     QQuickWebView* m_webView;
-    int32_t m_selectedIndex;
+    SelectionType m_selectionType;
 };
 
 } // namespace WebKit

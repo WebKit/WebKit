@@ -38,6 +38,8 @@ PlatformPopupMenuData::PlatformPopupMenuData()
     , m_clientInsetRight(0)
     , m_popupWidth(0)
     , m_itemHeight(0)
+#elif PLATFORM(QT)
+    : multipleSelections(false)
 #endif
 {
 }
@@ -62,6 +64,8 @@ void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder* encoder) const
 #elif PLATFORM(MAC)
     encoder->encode(fontInfo);
     encoder->encode(shouldPopOver);
+#elif PLATFORM(QT)
+    encoder->encode(multipleSelections);
 #endif
 }
 
@@ -94,6 +98,9 @@ bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder* decoder, PlatformPo
     if (!decoder->decode(data.fontInfo))
         return false;
     if (!decoder->decode(data.shouldPopOver))
+        return false;
+#elif PLATFORM(QT)
+    if (!decoder->decode(data.multipleSelections))
         return false;
 #endif
     

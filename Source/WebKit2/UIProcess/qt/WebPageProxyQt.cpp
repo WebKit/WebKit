@@ -119,4 +119,14 @@ void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frame
 }
 #endif
 
+void WebPageProxy::changeSelectedIndex(int32_t selectedIndex)
+{
+    process()->send(Messages::WebPage::SelectedIndex(selectedIndex), m_pageID);
+}
+
+void WebPageProxy::closePopupMenu()
+{
+    process()->send(Messages::WebPage::HidePopupMenu(), m_pageID);
+}
+
 } // namespace WebKit

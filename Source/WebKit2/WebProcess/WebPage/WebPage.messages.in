@@ -166,7 +166,11 @@ messages -> WebPage {
     SetTextForActivePopupMenu(int32_t index);
 #if PLATFORM(GTK)    
     FailedToShowPopupMenu();
-#endif    
+#endif
+#if PLATFORM(QT)
+    HidePopupMenu();
+    SelectedIndex(int32_t newIndex);
+#endif
     
 #if ENABLE(CONTEXT_MENUS)
     # Context menu.
