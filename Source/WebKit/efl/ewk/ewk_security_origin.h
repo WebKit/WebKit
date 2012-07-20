@@ -81,7 +81,7 @@ EAPI const char          *ewk_security_origin_string_get(const Ewk_Security_Orig
  *
  * @param o security origin object
  *
- * @return the port
+ * @return the port or @c 0 if there is not a proper security origin scheme
  */
 EAPI uint32_t             ewk_security_origin_port_get(const Ewk_Security_Origin *o);
 
@@ -91,7 +91,7 @@ EAPI uint32_t             ewk_security_origin_port_get(const Ewk_Security_Origin
  * This function won't work if Web SQL Database was not enabled when
  * building WebKit and will just return 0.
  *
- * @param o security origin object
+ * @param o security origin object or @c 0 if there is not a proper security origin scheme
  *
  * @return the usage in bytes
  */
@@ -105,7 +105,7 @@ EAPI uint64_t             ewk_security_origin_web_database_usage_get(const Ewk_S
  *
  * @param o security origin object
  *
- * @return the quota in bytes
+ * @return the quota in bytes or @c 0 if there is not a proper security origin scheme
  */
 EAPI uint64_t             ewk_security_origin_web_database_quota_get(const Ewk_Security_Origin *o);
 
@@ -146,7 +146,7 @@ EAPI void                 ewk_security_origin_application_cache_clear(const Ewk_
  *
  * @param o security origin object
  *
- * @return list of web databases in the security origin
+ * @return list of web databases in the security origin or @c NULL if there is not a proper security origin scheme
  *
  * @see ewk_web_database_free()
  * @see ewk_web_database_list_free()

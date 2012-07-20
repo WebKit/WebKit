@@ -60,11 +60,14 @@ const char* ewk_security_origin_string_get(const Ewk_Security_Origin* origin)
 
 uint32_t ewk_security_origin_port_get(const Ewk_Security_Origin* origin)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
     return origin->securityOrigin->port();
 }
 
 uint64_t ewk_security_origin_web_database_usage_get(const Ewk_Security_Origin* origin)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
+
 #if ENABLE(SQL_DATABASE)
     return WebCore::DatabaseTracker::tracker().usageForOrigin(origin->securityOrigin.get());
 #else
@@ -74,6 +77,8 @@ uint64_t ewk_security_origin_web_database_usage_get(const Ewk_Security_Origin* o
 
 uint64_t ewk_security_origin_web_database_quota_get(const Ewk_Security_Origin* origin)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
+
 #if ENABLE(SQL_DATABASE)
     return WebCore::DatabaseTracker::tracker().quotaForOrigin(origin->securityOrigin.get());
 #else
@@ -83,6 +88,8 @@ uint64_t ewk_security_origin_web_database_quota_get(const Ewk_Security_Origin* o
 
 void ewk_security_origin_web_database_quota_set(const Ewk_Security_Origin* origin, uint64_t quota)
 {
+    EINA_SAFETY_ON_NULL_RETURN(origin);
+
 #if ENABLE(SQL_DATABASE)
     WebCore::DatabaseTracker::tracker().setQuota(origin->securityOrigin.get(), quota);
 #endif
@@ -90,16 +97,20 @@ void ewk_security_origin_web_database_quota_set(const Ewk_Security_Origin* origi
 
 void ewk_security_origin_application_cache_quota_set(const Ewk_Security_Origin* origin, int64_t quota)
 {
+    EINA_SAFETY_ON_NULL_RETURN(origin);
     WebCore::cacheStorage().storeUpdatedQuotaForOrigin(origin->securityOrigin.get(), quota);
 }
 
 void ewk_security_origin_application_cache_clear(const Ewk_Security_Origin* origin)
 {
+    EINA_SAFETY_ON_NULL_RETURN(origin);
     WebCore::ApplicationCache::deleteCacheForOrigin(origin->securityOrigin.get());
 }
 
 Eina_List* ewk_security_origin_web_database_get_all(const Ewk_Security_Origin* origin)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
+
     Eina_List* databases = 0;
 #if ENABLE(SQL_DATABASE)
     Vector<WTF::String> names;
@@ -119,6 +130,8 @@ Eina_List* ewk_security_origin_web_database_get_all(const Ewk_Security_Origin* o
 
 void ewk_security_origin_free(Ewk_Security_Origin* origin)
 {
+    EINA_SAFETY_ON_NULL_RETURN(origin);
+
     origin->securityOrigin = 0;
     eina_stringshare_del(origin->host);
     eina_stringshare_del(origin->protocol);
