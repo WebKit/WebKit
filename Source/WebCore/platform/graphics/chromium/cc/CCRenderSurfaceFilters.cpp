@@ -193,12 +193,7 @@ SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filter
     source.setConfig(SkBitmap::kARGB_8888_Config, size.width(), size.height());
     source.setPixelRef(new SkGrTexturePixelRef(texture.get()))->unref();
     
-    GrContext::TextureCacheEntry dest;
-
     for (unsigned i = 0; i < filters.size(); ++i) {
-        // Save the previous texture cache destination (if any), and keep it
-        // locked during draw to prevent it be re-used as destination.
-        GrContext::TextureCacheEntry sourceEntry = dest;
         const WebKit::WebFilterOperation& op = filters.at(i);
         // Allocate a destination texture.
         GrTextureDesc desc;
@@ -208,10 +203,11 @@ SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filter
         desc.fHeight = size.height();
         desc.fConfig = kSkia8888_PM_GrPixelConfig;
         // FIXME: could we use approximate match, and fix texcoords on draw
-        dest = gr->lockScratchTexture(desc, GrContext::kExact_ScratchTexMatch);
-        if (!dest.texture())
+        GrAutoScratchTexture scratchTexture(gr, desc, GrContext::kExact_ScratchTexMatch);
+        SkAutoTUnref<GrTexture> destination(scratchTexture.detach());
+        if (!destination.get())
             return SkBitmap();
-        SkGpuDevice device(gr, dest.texture());
+        SkGpuDevice device(gr, destination.get());
         SkCanvas canvas(&device);
         canvas.clear(0x0);
         switch (op.type()) {
@@ -289,13 +285,8 @@ SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filter
             break;
         }
         // Dest texture from this filter becomes source bitmap for next filter.
-        source.setPixelRef(new SkGrTexturePixelRef(dest.texture()))->unref();
-        // Unlock the previous texture cache entry.
-        if (sourceEntry.texture())
-            gr->unlockTexture(sourceEntry);
+        source.setPixelRef(new SkGrTexturePixelRef(destination.get()))->unref();
     }
-    if (dest.texture())
-        gr->unlockTexture(dest);
     context3D->flush();
     return source;
 }

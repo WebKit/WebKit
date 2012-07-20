@@ -1,3 +1,25 @@
+2012-07-20  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Clean up scratch texture usage in Chromium's implementation
+        of GPU-accelerated filters.
+        https://bugs.webkit.org/show_bug.cgi?id=83370
+
+        Reviewed by Adrienne Walker.
+
+        There didn't used to be a safe way to allocate a scratch texture, and
+        hold into it beyond the lifetime of GrAutoScratchTexture.  Now there is:
+        detach().
+
+        Covered by existing tests in css3/filters.
+
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.cpp:
+        (WebCore::CCRenderSurfaceFilters::apply):
+        Use a GrAutoScratchTexture to allocate the destination texture, and 
+        detach() to detach it from the cache before placing it in an
+        SkGrTexturePixelRef.  This means we no longer need to do any lock/
+        unlock trickery with the TextureCacheEntry, since the refcount is
+        enough to keep the texture away from the cache's prying hands.
+
 2012-07-19  Andrew Scherkus  <scherkus@chromium.org>
 
         [chromium] CSS tweaks to media controls to prevent styles from being overridden
