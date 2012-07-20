@@ -3642,7 +3642,6 @@ BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalis
 
 // Needs rebaseline.
 BUGWK91802 : media/media-document-audio-repaint.html = IMAGE+TEXT
-BUGWK91802 : media/video-controls-audio-only.html = IMAGE+TEXT
 BUGWK91802 : fast/layers/video-layer.html = TEXT
 BUGWK91802 : media/audio-controls-rendering.html = TEXT
 BUGWK91802 : media/audio-repaint.html = TEXT

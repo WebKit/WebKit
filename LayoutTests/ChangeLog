@@ -1,5 +1,12 @@
 2012-07-20  Tony Chang  <tony@chromium.org>
 
+        [chromium] Unreviewed gardening.  Remove a test that hasn't been
+        added to the tree yet.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-20  Tony Chang  <tony@chromium.org>
+
         [chromium] Unreviewed, mark some tests as slow in debug.
 
         * platform/chromium/TestExpectations:
