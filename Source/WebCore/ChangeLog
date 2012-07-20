@@ -1,3 +1,15 @@
+2012-07-20  Andrew Scherkus  <scherkus@chromium.org>
+
+        [chromium] Don't display fullscreen button for video elements not containing video
+        https://bugs.webkit.org/show_bug.cgi?id=91811
+
+        Reviewed by Eric Carlson.
+
+        Covered by media/media-document-audio-repaint.html
+
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::reset):
+
 2012-07-20  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Out of Memory is observed when a large object is passed to a Web Worker.

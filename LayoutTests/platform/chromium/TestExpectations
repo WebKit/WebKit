@@ -3639,3 +3639,6 @@ BUGWK91472 : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist.html = IMAGE
+
+// Needs rebaseline.
+BUGWK91811 : media/media-document-audio-repaint.html = IMAGE+TEXT

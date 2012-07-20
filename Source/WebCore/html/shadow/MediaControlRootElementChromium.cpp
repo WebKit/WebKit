@@ -244,7 +244,7 @@ void MediaControlRootElementChromium::reset()
         }
     }
 
-    if (m_mediaController->supportsFullscreen())
+    if (m_mediaController->supportsFullscreen() && m_mediaController->hasVideo())
         m_fullscreenButton->show();
     else
         m_fullscreenButton->hide();
