@@ -1,3 +1,16 @@
+2012-07-20  Robert Sesek  <rsesek@chromium.org>
+
+        [chromium][Mac] Switch the MACOSX_DEPLOYMENT_TARGET to 10.6
+        https://bugs.webkit.org/show_bug.cgi?id=91752
+
+        Reviewed by Eric Seidel.
+
+        Use 10.6 NSScreen/NSColorSpace APIs to determine if the screen is
+        monochrome rather than comparing against deprecated colorspace names.
+
+        * src/mac/WebScreenInfoFactory.mm:
+        (WebKit::WebScreenInfoFactory::screenInfo):
+
 2012-07-20  Daniel Murphy  <dmurph@chromium.org>
 
         Introduce WebViewBenchmarkSupport for performance experiments on a real WebView

@@ -91,7 +91,7 @@ static float deviceScaleFactor(NSView* view)
 
 WebScreenInfo WebScreenInfoFactory::screenInfo(NSView* view)
 {
-    NSString *colorSpace = NSColorSpaceFromDepth([[NSScreen deepestScreen] depth]);
+    NSScreen* screen = [NSScreen deepestScreen];
 
     WebScreenInfo results;
 
@@ -99,14 +99,10 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(NSView* view)
     results.horizontalDPI = deviceDPI;
     results.verticalDPI = deviceDPI;
 
-    results.depth =
-        NSBitsPerPixelFromDepth([[NSScreen deepestScreen] depth]);
-    results.depthPerComponent =
-        NSBitsPerSampleFromDepth([[NSScreen deepestScreen] depth]);
-    results.isMonochrome = colorSpace == NSCalibratedWhiteColorSpace
-                        || colorSpace == NSCalibratedBlackColorSpace
-                        || colorSpace == NSDeviceWhiteColorSpace
-                        || colorSpace == NSDeviceBlackColorSpace;
+    results.depth = NSBitsPerPixelFromDepth([screen depth]);
+    results.depthPerComponent = NSBitsPerSampleFromDepth([screen depth]);
+    results.isMonochrome =
+        [[screen colorSpace] colorSpaceModel] == NSGrayColorSpaceModel;
     results.rect = convertRect([screenForWindow([view window]) frame], [view window]);
     results.availableRect =
         convertRect([screenForWindow([view window]) visibleFrame], [view window]);
