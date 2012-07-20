@@ -1,3 +1,11 @@
+2012-07-20  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding image baseline for
+        fast/images/paletted-png-with-color-profile.html.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/images/paletted-png-with-color-profile-expected.png: Added.
+
 2012-07-20  Stephen Chenney  <schenney@chromium.org>
 
         SVG Filter Effect sub-region not applied for some filters
