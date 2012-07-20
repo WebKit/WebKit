@@ -2639,9 +2639,6 @@ BUGWK74137 WIN LINUX LION : fast/regions/region-overflow-auto-overflow-hidden.ht
 BUGWK74137 SNOWLEOPARD : fast/regions/region-overflow-auto-overflow-visible.html = PASS IMAGE+TEXT TIMEOUT
 BUGWK74137 WIN LINUX LION : fast/regions/region-overflow-auto-overflow-visible.html = PASS MISSING
 
-// CSS custom() filters are not currently supported
-BUGWK71392 WIN : css3/filters/custom = IMAGE IMAGE+TEXT PASS
-
 BUGWK82783 SKIP : css3/filters/filter-change-repaint-composited.html = PASS
 BUGWK82783 SKIP : css3/filters/filter-change-repaint.html = PASS
 BUGWK82783 SKIP : css3/filters/filter-repaint-blur.html = PASS
@@ -3366,12 +3363,6 @@ BUGWK84724 SNOWLEOPARD : platform/chromium/media/video-frame-size-change.html = 
 BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 
 BUGWK84802 DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
-
-// Suppress the errors at the moment, rebaseline coming soon.
-BUGWK84813 MAC WIN : css3/filters/custom/custom-filter-shader-cache.html = IMAGE
-BUGWK84813 MAC WIN : css3/filters/custom/effect-custom-combined-missing.html = IMAGE
-BUGWK84813 : css3/filters/custom/effect-custom-parameters.html = IMAGE
-BUGWK84813 MAC WIN : css3/filters/custom/effect-custom.html = IMAGE
 
 BUGWK84847 WIN : inspector/timeline/timeline-start-time.html = TEXT PASS
 

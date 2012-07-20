@@ -1,3 +1,25 @@
+2012-07-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] Rebaseline css3/filters/custom tests
+        https://bugs.webkit.org/show_bug.cgi?id=82372
+
+        Unreviewed, but unofficially reviewed by Chiculita Alexandru and Stephen White.
+
+        Add baselines for these tests. They are enabled and use the Mesa
+        software renderer.
+
+        * platform/chromium-linux/css3/filters/custom/effect-custom-parameters-expected.png:
+        * platform/chromium-mac/css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-parameters-expected.png:
+        * platform/chromium-win/css3/filters/custom/custom-filter-shader-cache-expected.png: Added.
+        * platform/chromium-win/css3/filters/custom/effect-custom-combined-missing-expected.png: Added.
+        * platform/chromium-win/css3/filters/custom/effect-custom-expected.png: Added.
+        * platform/chromium-win/css3/filters/custom/effect-custom-parameters-expected.png: Added.
+        * platform/chromium-win/css3/filters/custom/missing-custom-filter-shader-expected.png: Renamed from LayoutTests/platform/chromium-linux/css3/filters/custom/missing-custom-filter-shader-expected.png.
+        * platform/chromium/TestExpectations:
+
 2012-07-20  Vincent Scheib  <scheib@chromium.org>
 
         Move pointer lock test resources to http/tests/resources in preparation for adding new tests to http.
