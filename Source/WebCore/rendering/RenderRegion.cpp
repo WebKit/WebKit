@@ -144,13 +144,22 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
+
+    // If the region is not attached to any thread, there is no need to check
+    // whether the region has region styling since no content will be displayed
+    // into the region.
+    if (!m_flowThread) {
+        setHasCustomRegionStyle(false);
+        return;
+    }
+
     bool customRegionStyle = false;
     if (node()) {
         Element* regionElement = static_cast<Element*>(node());
         customRegionStyle = view()->document()->styleResolver()->checkRegionStyle(regionElement);
     }
     setHasCustomRegionStyle(customRegionStyle);
-    flowThread()->checkRegionsWithStyling();
+    m_flowThread->checkRegionsWithStyling();
 }
 
 void RenderRegion::layout()

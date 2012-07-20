@@ -1,3 +1,20 @@
+2012-07-20  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Crash when flowing a region into itself
+        https://bugs.webkit.org/show_bug.cgi?id=90289
+
+        Reviewed by Andreas Kling.
+
+        If a region is designed to receive itself as content through a named flow, we avoid
+        a circular dependency by not attaching the region to the desired named flow.
+        In such occasions, the region's attached flow thread object is null and
+        we have to check this pointer before using it in RenderRegion::styleDidChange.
+
+        Test: fast/regions/flow-region-into-itself-crash.html
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::styleDidChange):
+
 2012-07-20  MORITA Hajime  <morrita@google.com>
 
         Unreviewed Mac build fix against r123184.

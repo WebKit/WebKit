@@ -1,3 +1,18 @@
+2012-07-20  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Crash when flowing a region into itself
+        https://bugs.webkit.org/show_bug.cgi?id=90289
+
+        Reviewed by Andreas Kling.
+
+        If a region is designed to receive itself as content through a named flow, we avoid
+        a circular dependency by not attaching the region to the desired named flow.
+        In such occasions, the region's attached flow thread object is null and
+        we have to check this pointer before using it in RenderRegion::styleDidChange.
+
+        * fast/regions/flow-region-into-itself-crash-expected.txt: Added.
+        * fast/regions/flow-region-into-itself-crash.html: Added.
+
 2012-07-17  Kinuko Yasuda  <kinuko@chromium.org>
 
         If value for responseType defined as type that not supported, it should not throw an exception in XHR 2
