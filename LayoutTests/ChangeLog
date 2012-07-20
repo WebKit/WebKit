@@ -1,3 +1,11 @@
+2012-07-20  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Unreviewed. Set svn:mime-type to image/png for PNG files without svn:mime-type.
+
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-number-rtl-expected.png: Added property svn:mime-type.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Added property svn:mime-type.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Added property svn:mime-type.
+
 2012-07-19  David Hyatt  <hyatt@apple.com>
 
         SVG not properly respecting max-width.
