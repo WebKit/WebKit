@@ -1,3 +1,19 @@
+2012-07-19  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Add methods to get/set a custom text encoding
+        https://bugs.webkit.org/show_bug.cgi?id=90604
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add methods to get/set custom character encoding.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_del):
+        (ewk_view_setting_encoding_custom_get):
+        (ewk_view_setting_encoding_custom_set):
+        * UIProcess/API/efl/ewk_view.h:
+
 2012-07-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix build break because of changing parameter type of

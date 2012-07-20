@@ -1,3 +1,16 @@
+2012-07-19  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Add methods to get/set a custom text encoding
+        https://bugs.webkit.org/show_bug.cgi?id=90604
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added support for setting custom character encoding in MiniBrowser.
+        Use 'F3' to set the custom character encoding.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+
 2012-07-19  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: executive_unittest still failing when run in parallel

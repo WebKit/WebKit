@@ -420,6 +420,26 @@ EAPI void ewk_view_theme_set(Evas_Object *o, const char *path);
  */
 EAPI const char *ewk_view_theme_get(const Evas_Object *o);
 
+/**
+ * Gets the current custom character encoding name.
+ *
+ * @param o view object to get the current encoding
+ *
+ * @return @c eina_strinshare containing the current encoding, or
+ *         @c NULL if it's not set
+ */
+EAPI const char  *ewk_view_setting_encoding_custom_get(const Evas_Object *o);
+
+/**
+ * Sets the custom character encoding and reloads the page.
+ *
+ * @param o view to set the encoding
+ * @param encoding the new encoding to set or @c NULL to restore the default one
+ *
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool    ewk_view_setting_encoding_custom_set(Evas_Object *o, const char *encoding);
+
 #ifdef __cplusplus
 }
 #endif

@@ -27,6 +27,7 @@
 #include "PageClientImpl.h"
 #include "WKAPICast.h"
 #include "WKRetainPtr.h"
+#include "WKString.h"
 #include "WKURL.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
@@ -50,12 +51,14 @@ struct _Ewk_View_Private_Data {
     const char* uri;
     const char* title;
     const char* theme;
+    const char* customEncoding;
     LoadingResourcesMap loadingResourcesMap;
 
     _Ewk_View_Private_Data()
         : uri(0)
         , title(0)
         , theme(0)
+        , customEncoding(0)
     { }
 
     ~_Ewk_View_Private_Data()
@@ -63,6 +66,7 @@ struct _Ewk_View_Private_Data {
         eina_stringshare_del(uri);
         eina_stringshare_del(title);
         eina_stringshare_del(theme);
+        eina_stringshare_del(customEncoding);
     }
 };
 
@@ -959,4 +963,28 @@ WebPageProxy* ewk_view_page_get(const Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
     return priv->pageClient->page();
+}
+
+const char* ewk_view_setting_encoding_custom_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    WKRetainPtr<WKStringRef> wkEncodingName(AdoptWK, WKPageCopyCustomTextEncodingName(toAPI(priv->pageClient->page())));
+    if (WKStringIsEmpty(wkEncodingName.get()))
+        return 0;
+
+    eina_stringshare_replace(&priv->customEncoding, toImpl(wkEncodingName.get())->string().utf8().data());
+    return priv->customEncoding;
+}
+
+Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char* encoding)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    WKRetainPtr<WKStringRef> wkEncodingName = encoding ? adoptWK(WKStringCreateWithUTF8CString(encoding)) : 0;
+    if (eina_stringshare_replace(&priv->customEncoding, encoding))
+        WKPageSetCustomTextEncodingName(toAPI(priv->pageClient->page()), wkEncodingName.get());
+    return true;
 }
