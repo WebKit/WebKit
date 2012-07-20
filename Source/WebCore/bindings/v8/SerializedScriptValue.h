@@ -45,6 +45,8 @@ typedef Vector<RefPtr<WTF::ArrayBuffer>, 1> ArrayBufferArray;
 
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
 public:
+    virtual ~SerializedScriptValue();
+
     // If a serialization error occurs (e.g., cyclic input value) this
     // function returns an empty representation, schedules a V8 exception to
     // be thrown using v8::ThrowException(), and sets |didThrow|. In this case
@@ -77,6 +79,12 @@ public:
 
     const Vector<String>& blobURLs() const { return m_blobURLs; }
 
+    // Informs the V8 about external memory allocated and owned by this object. Large values should contribute
+    // to GC counters to eventually trigger a GC, otherwise flood of postMessage() can cause OOM.
+    // Ok to invoke multiple times (only adds memory once).
+    // The memory registration is revoked automatically in destructor.
+    void registerMemoryAllocatedWithCurrentScriptContext();
+
 private:
     enum StringDataMode {
         StringValue,
@@ -93,6 +101,7 @@ private:
     String m_data;
     OwnPtr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
     Vector<String> m_blobURLs;
+    intptr_t m_externallyAllocatedMemory;
 };
 
 } // namespace WebCore

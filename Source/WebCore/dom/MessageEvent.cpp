@@ -73,6 +73,10 @@ MessageEvent::MessageEvent(PassRefPtr<SerializedScriptValue> data, const String&
     , m_source(source)
     , m_ports(ports)
 {
+#if USE(V8)
+    if (m_dataAsSerializedScriptValue)
+        m_dataAsSerializedScriptValue->registerMemoryAllocatedWithCurrentScriptContext();
+#endif
 }
 
 MessageEvent::MessageEvent(const String& data)
@@ -134,6 +138,11 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     m_lastEventId = lastEventId;
     m_source = source;
     m_ports = ports;
+
+#if USE(V8)
+    if (m_dataAsSerializedScriptValue)
+        m_dataAsSerializedScriptValue->registerMemoryAllocatedWithCurrentScriptContext();
+#endif
 }
 
 // FIXME: Remove this when we have custom ObjC binding support.
