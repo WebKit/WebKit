@@ -34,24 +34,58 @@
 #include "GamepadController.h"
 #include "platform/WebString.h"
 
+#include <wtf/OwnPtr.h>
+
 using WebKit::WebFrame;
 using WebKit::WebString;
 
-TestInterfaces::TestInterfaces()
+class TestInterfaces::Internal {
+public:
+    Internal();
+    ~Internal();
+
+    void bindTo(WebFrame*);
+    void resetAll();
+
+private:
+    OwnPtr<GamepadController> m_gamepadController;
+};
+
+TestInterfaces::Internal::Internal()
 {
     m_gamepadController = adoptPtr(new GamepadController());
 }
 
-TestInterfaces::~TestInterfaces()
+TestInterfaces::Internal::~Internal()
 {
 }
 
-void TestInterfaces::bindTo(WebFrame* frame)
+void TestInterfaces::Internal::bindTo(WebFrame* frame)
 {
     m_gamepadController->bindToJavascript(frame, WebString::fromUTF8("gamepadController"));
 }
 
-void TestInterfaces::resetAll()
+void TestInterfaces::Internal::resetAll()
 {
     m_gamepadController->reset();
+}
+
+TestInterfaces::TestInterfaces()
+    : m_internal(new TestInterfaces::Internal())
+{
+}
+
+TestInterfaces::~TestInterfaces()
+{
+    delete m_internal;
+}
+
+void TestInterfaces::bindTo(WebFrame* frame)
+{
+    m_internal->bindTo(frame);
+}
+
+void TestInterfaces::resetAll()
+{
+    m_internal->resetAll();
 }

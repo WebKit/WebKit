@@ -1,3 +1,26 @@
+2012-07-20  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Don't include WebCore headers in TestInterfaces so it's safe to include from outside of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=91847
+
+        Reviewed by Adam Barth.
+
+        This allows for including the TestIntefaces.h from content shell
+        without introducing a dependency to WebCore/wtf
+
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.cpp:
+        (TestInterfaces::Internal):
+        (TestInterfaces::Internal::Internal):
+        (TestInterfaces::Internal::~Internal):
+        (TestInterfaces::Internal::bindTo):
+        (TestInterfaces::Internal::resetAll):
+        (TestInterfaces::TestInterfaces):
+        (TestInterfaces::~TestInterfaces):
+        (TestInterfaces::bindTo):
+        (TestInterfaces::resetAll):
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.h:
+        (TestInterfaces):
+
 2012-07-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Make WTR use the same color palette as DRT

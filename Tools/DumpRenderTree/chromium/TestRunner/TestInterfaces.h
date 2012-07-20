@@ -31,13 +31,9 @@
 #ifndef TestInterfaces_h
 #define TestInterfaces_h
 
-#include <wtf/OwnPtr.h>
-
 namespace WebKit {
 class WebFrame;
 }
-
-class GamepadController;
 
 class TestInterfaces {
 public:
@@ -48,7 +44,8 @@ public:
     void resetAll();
 
 private:
-    OwnPtr<GamepadController> m_gamepadController;
+    class Internal;
+    Internal* m_internal;
 };
 
 #endif // TestInterfaces_h
