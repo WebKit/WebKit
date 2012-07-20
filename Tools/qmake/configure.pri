@@ -12,10 +12,12 @@ haveQt(5):!quick_check {
     CONFIG_TESTS = \
         fontconfig \
         gccdepends \
+        glx \
         libpng \
         libjpeg \
         libwebp \
         libXcomposite \
+        libXrender \
         libxml2 \
         libxslt \
         libzlib

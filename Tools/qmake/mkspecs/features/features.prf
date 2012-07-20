@@ -179,12 +179,18 @@ haveQt(4) {
 # Xcomposite Support
 haveQt(5):linux-*:config_libXcomposite: DEFINES += HAVE_XCOMPOSITE=1
 
+# Xrender Support
+haveQt(5):linux-*:config_libXrender: DEFINES += HAVE_XRENDER=1
+
+# GLX Support
+haveQt(5):linux-*:config_glx: DEFINES += HAVE_GLX=1
+
 # Support for Graphics Surface
 !contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=.) {
     haveQt(5) {
         mac: DEFINES += WTF_USE_GRAPHICS_SURFACE=1
-        # On linux we require libXcomposite to enable graphics surface.
-        linux-*:contains(DEFINES, HAVE_XCOMPOSITE=1): DEFINES += WTF_USE_GRAPHICS_SURFACE=1
+        # On linux we require GLX, libXcomposite and libXrender to enable graphics surface.
+        linux-*:contains(DEFINES, HAVE_GLX=1):contains(DEFINES, HAVE_XCOMPOSITE=1):contains(DEFINES, HAVE_XRENDER=1): DEFINES += WTF_USE_GRAPHICS_SURFACE=1
     }
 }
 
