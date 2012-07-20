@@ -5816,23 +5816,6 @@ void Document::addDocumentToFullScreenChangeEventQueue(Document* doc)
 void Document::webkitExitPointerLock()
 {
     if (page())
-        page()->pointerLockController()->requestPointerLock(element, 0, 0);
-    else
-        element->document()->enqueueDocumentEvent(Event::create(eventNames().webkitpointerlockerrorEvent, true, false));
-}
-
-bool Document::webkitPointerLockEnabled() const
-{
-    return isAttributeOnAllOwners(webkitallowpointerlockAttr, ownerElement());
-}
-
-void Document::webkitExitPointerLock()
-{
-    Element* element;
-    if (!page() || !(element = page()->pointerLockController()->element()))
-        return;
-
-    if (securityOrigin()->canAccess(element->document()->securityOrigin()))
         page()->pointerLockController()->requestPointerUnlock();
 }
 
