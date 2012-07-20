@@ -1441,7 +1441,7 @@
             ],
           },
         }],
-        ['OS != "android" and "WTF_USE_WEBAUDIO_FFMPEG=1" in feature_defines', {
+        ['"WTF_USE_WEBAUDIO_FFMPEG=1" in feature_defines', {
           # This directory needs to be on the include path for multiple sub-targets of webcore.
           'direct_dependent_settings': {
             'include_dirs': [

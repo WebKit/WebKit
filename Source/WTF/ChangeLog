@@ -1,3 +1,14 @@
+2012-07-19  Wei James  <james.wei@intel.com>
+
+        enable Web Audio for chromium android port
+        https://bugs.webkit.org/show_bug.cgi?id=89428
+
+        Reviewed by Kenneth Russell.
+
+        * wtf/MathExtras.h:
+        (log2):
+        (log2f):
+
 2012-07-19  Scott Graham  <scottmg@chromium.org>
 
         [Chromium] disable warning on Windows from gcc-only pragma in Assertions.cpp"

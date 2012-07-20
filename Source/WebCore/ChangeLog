@@ -1,3 +1,14 @@
+2012-07-19  Wei James  <james.wei@intel.com>
+
+        enable Web Audio for chromium android port
+        https://bugs.webkit.org/show_bug.cgi?id=89428
+
+        Reviewed by Kenneth Russell.
+
+        * WebCore.gyp/WebCore.gyp:
+        * platform/audio/FFTFrameStub.cpp:
+        (WebCore::FFTFrame::doFFT):
+
 2012-07-19  David Hyatt  <hyatt@apple.com>
 
         SVG images broken when max-width specified.

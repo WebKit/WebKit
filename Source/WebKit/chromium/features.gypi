@@ -189,7 +189,7 @@
         ],
       }],
       # Mac OS X uses Accelerate.framework FFT by default instead of FFmpeg.
-      ['OS!="mac"', {
+      ['OS!="mac" and OS!="android"', {
         'feature_defines': [
           'WTF_USE_WEBAUDIO_FFMPEG=1',
         ],

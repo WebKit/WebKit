@@ -138,6 +138,21 @@ inline double trunc(double num) { return num > 0 ? floor(num) : ceil(num); }
 inline long long abs(long num) { return labs(num); }
 #endif
 
+#if OS(ANDROID) || COMPILER(MSVC)
+// ANDROID and MSVC's math.h does not currently supply log2 or log2f.
+inline double log2(double num)
+{
+    // This constant is roughly M_LN2, which is not provided by default on Windows and Android.
+    return log(num) / 0.693147180559945309417232121458176568;
+}
+
+inline float log2f(float num)
+{
+    // This constant is roughly M_LN2, which is not provided by default on Windows and Android.
+    return logf(num) / 0.693147180559945309417232121458176568f;
+}
+#endif
+
 #if COMPILER(MSVC)
 // The 64bit version of abs() is already defined in stdlib.h which comes with VC10
 #if COMPILER(MSVC9_OR_LOWER)
@@ -153,19 +168,6 @@ inline float nextafterf(float x, float y) { return x > y ? x - FLT_EPSILON : x +
 
 inline double copysign(double x, double y) { return _copysign(x, y); }
 inline int isfinite(double x) { return _finite(x); }
-
-// MSVC's math.h does not currently supply log2 or log2f.
-inline double log2(double num)
-{
-    // This constant is roughly M_LN2, which is not provided by default on Windows.
-    return log(num) / 0.693147180559945309417232121458176568;
-}
-
-inline float log2f(float num)
-{
-    // This constant is roughly M_LN2, which is not provided by default on Windows.
-    return logf(num) / 0.693147180559945309417232121458176568f;
-}
 
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.
 inline double wtf_atan2(double x, double y)
