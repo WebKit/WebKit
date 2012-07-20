@@ -41,6 +41,7 @@ WebIDBMetadata::WebIDBMetadata(const WebCore::IDBDatabaseMetadata& metadata)
 {
     name = metadata.name;
     version = metadata.version;
+    intVersion = metadata.intVersion;
     objectStores = WebVector<ObjectStore>(static_cast<size_t>(metadata.objectStores.size()));
 
     size_t i = 0;
@@ -68,7 +69,7 @@ WebIDBMetadata::WebIDBMetadata(const WebCore::IDBDatabaseMetadata& metadata)
 
 WebIDBMetadata::operator IDBDatabaseMetadata() const
 {
-    IDBDatabaseMetadata db(name, version);
+    IDBDatabaseMetadata db(name, version, intVersion);
     for (size_t i = 0; i < objectStores.size(); ++i) {
         const ObjectStore webObjectStore = objectStores[i];
         IDBObjectStoreMetadata objectStore(webObjectStore.name, webObjectStore.keyPath, webObjectStore.autoIncrement);

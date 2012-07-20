@@ -136,7 +136,7 @@ PassRefPtr<IDBBackingStore> IDBDatabaseBackendImpl::backingStore() const
 
 IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
 {
-    IDBDatabaseMetadata metadata(m_name, m_version);
+    IDBDatabaseMetadata metadata(m_name, m_version, IDBDatabaseMetadata::NoIntVersion);
     for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
         metadata.objectStores.set(it->first, it->second->metadata());
     return metadata;

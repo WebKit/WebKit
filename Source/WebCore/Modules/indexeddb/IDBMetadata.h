@@ -42,12 +42,24 @@ struct IDBObjectStoreMetadata;
 struct IDBIndexMetadata;
 
 struct IDBDatabaseMetadata {
-    IDBDatabaseMetadata() { }
-    IDBDatabaseMetadata(const String& name, const String& version)
+    enum {
+        NoIntVersion = -1
+    };
+
+    IDBDatabaseMetadata()
+        : intVersion(NoIntVersion)
+    {
+    }
+    IDBDatabaseMetadata(const String& name, const String& version, int64_t intVersion)
         : name(name)
-        , version(version) { }
+        , version(version)
+        , intVersion(intVersion)
+    {
+    }
+
     String name;
     String version;
+    int64_t intVersion;
 
     typedef HashMap<String, IDBObjectStoreMetadata> ObjectStoreMap;
     ObjectStoreMap objectStores;
