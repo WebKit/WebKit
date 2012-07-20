@@ -1,3 +1,12 @@
+2012-07-19  Erik Arvidsson  <arv@chromium.org>
+
+        Fix test after r123145.
+
+        Unreviewed.
+
+        * fast/js/var-declarations-shadowing-expected.txt:
+        * fast/js/var-declarations-shadowing.html:
+
 2012-07-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [CSS2.1] Anonymous tables should be inline/block-level based off their parent

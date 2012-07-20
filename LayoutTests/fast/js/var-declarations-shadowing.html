@@ -206,12 +206,6 @@ shouldBe(parent == marker, "parent == marker", true);
 shouldBe(eval('parent == marker'), "eval('parent == marker')", true);
 
 try {
-    eval("var top = marker");
-} catch(e) { }
-shouldBe(top == marker, "top == marker", true);
-shouldBe(eval('top == marker'), "eval('top == marker')", true);
-
-try {
     eval("var devicePixelRatio = marker");
 } catch(e) { }
 shouldBe(devicePixelRatio == marker, "devicePixelRatio == marker", true);
@@ -308,5 +302,11 @@ try {
 } catch(e) { }
 shouldBe(crypto == marker, "crypto == marker", false);
 shouldBe(eval('crypto == marker'), "eval('crypto == marker')", false);
+
+try {
+    eval("var top = marker");
+} catch(e) { }
+shouldBe(top == marker, "top == marker", false);
+shouldBe(eval('top == marker'), "eval('top == marker')", false);
 
 </script>

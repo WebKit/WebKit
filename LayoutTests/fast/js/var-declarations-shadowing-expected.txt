@@ -64,8 +64,6 @@ PASS: opener == marker should be true and is.
 PASS: eval('opener == marker') should be true and is.
 PASS: parent == marker should be true and is.
 PASS: eval('parent == marker') should be true and is.
-PASS: top == marker should be true and is.
-PASS: eval('top == marker') should be true and is.
 PASS: devicePixelRatio == marker should be true and is.
 PASS: eval('devicePixelRatio == marker') should be true and is.
 PASS: devicePixelRatio == marker should be true and is.
@@ -99,4 +97,6 @@ PASS: document == marker should be false and is.
 PASS: eval('document == marker') should be false and is.
 PASS: crypto == marker should be false and is.
 PASS: eval('crypto == marker') should be false and is.
+PASS: top == marker should be false and is.
+PASS: eval('top == marker') should be false and is.
 
