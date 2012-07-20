@@ -130,7 +130,7 @@ public:
     {
         if (isInt32Speculation(prediction))
             return ValueSource(Int32InRegisterFile);
-        if (isArraySpeculation(prediction))
+        if (isArraySpeculation(prediction) || isCellSpeculation(prediction))
             return ValueSource(CellInRegisterFile);
         if (isBooleanSpeculation(prediction))
             return ValueSource(BooleanInRegisterFile);

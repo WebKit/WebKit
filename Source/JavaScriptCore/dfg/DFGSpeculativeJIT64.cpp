@@ -2052,7 +2052,7 @@ void SpeculativeJIT::compile(Node& node)
         // OSR exit, would not be visible to the old JIT in any way.
         m_codeOriginForOSR = nextNode->codeOrigin;
         
-        if (!node.variableAccessData()->isCaptured()) {
+        if (!node.variableAccessData()->isCaptured() && !m_jit.graph().isCreatedThisArgument(node.local())) {
             if (node.variableAccessData()->shouldUseDoubleFormat()) {
                 SpeculateDoubleOperand value(this, node.child1());
                 m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node.local()));
@@ -2077,6 +2077,14 @@ void SpeculativeJIT::compile(Node& node)
                 GPRReg cellGPR = cell.gpr();
                 if (!isArraySpeculation(m_state.forNode(node.child1()).m_type))
                     speculationCheck(BadType, JSValueRegs(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
+                m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
+                noResult(m_compileIndex);
+                recordSetLocal(node.local(), ValueSource(CellInRegisterFile));
+                break;
+            }
+            if (isCellSpeculation(predictedType)) {
+                SpeculateCellOperand cell(this, node.child1());
+                GPRReg cellGPR = cell.gpr();
                 m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
                 noResult(m_compileIndex);
                 recordSetLocal(node.local(), ValueSource(CellInRegisterFile));

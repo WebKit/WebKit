@@ -476,6 +476,12 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branchTestPtr(ResultCondition cond, Address address, RegisterID reg)
+    {
+        m_assembler.testq_rm(reg, address.offset, address.base);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
     Jump branchTestPtr(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         if (mask.m_value == -1)

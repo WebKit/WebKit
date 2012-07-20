@@ -128,6 +128,8 @@ void AbstractState::initialize(Graph& graph)
             root->valuesAtHead.argument(i).set(SpecFloat32Array);
         else if (isFloat64ArraySpeculation(prediction))
             root->valuesAtHead.argument(i).set(SpecFloat64Array);
+        else if (isCellSpeculation(prediction))
+            root->valuesAtHead.argument(i).set(SpecCell);
         else
             root->valuesAtHead.argument(i).makeTop();
         
@@ -272,7 +274,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
         
     case SetLocal: {
-        if (node.variableAccessData()->isCaptured()) {
+        if (node.variableAccessData()->isCaptured()
+            || m_graph.isCreatedThisArgument(node.local())) {
             m_variables.operand(node.local()) = forNode(node.child1());
             node.setCanExit(false);
             break;
@@ -290,6 +293,9 @@ bool AbstractState::execute(unsigned indexInBlock)
         else if (isArraySpeculation(predictedType)) {
             node.setCanExit(!isArraySpeculation(forNode(node.child1()).m_type));
             forNode(node.child1()).filter(SpecArray);
+        } else if (isCellSpeculation(predictedType)) {
+            node.setCanExit(!isCellSpeculation(forNode(node.child1()).m_type));
+            forNode(node.child1()).filter(SpecCell);
         } else if (isBooleanSpeculation(predictedType))
             speculateBooleanUnary(node);
         else

@@ -997,6 +997,11 @@ public:
         m_formatter.oneByteOp64(OP_TEST_EvGv, src, dst);
     }
 
+    void testq_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_TEST_EvGv, src, base, offset);
+    }
+
     void testq_i32r(int imm, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_GROUP3_EvIz, GROUP3_OP_TEST, dst);

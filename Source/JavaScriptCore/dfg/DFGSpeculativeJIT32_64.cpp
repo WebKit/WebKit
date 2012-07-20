@@ -1918,7 +1918,7 @@ void SpeculativeJIT::compile(Node& node)
                 break;
             }
 
-            if (isArraySpeculation(value.m_type)) {
+            if (isArraySpeculation(value.m_type) || isCellSpeculation(value.m_type)) {
                 GPRTemporary result(this);
                 m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
 
@@ -2010,7 +2010,7 @@ void SpeculativeJIT::compile(Node& node)
         // OSR exit, would not be visible to the old JIT in any way.
         m_codeOriginForOSR = nextNode->codeOrigin;
         
-        if (!node.variableAccessData()->isCaptured()) {
+        if (!node.variableAccessData()->isCaptured() && !m_jit.graph().isCreatedThisArgument(node.local())) {
             if (node.variableAccessData()->shouldUseDoubleFormat()) {
                 SpeculateDoubleOperand value(this, node.child1());
                 m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node.local()));
@@ -2041,6 +2041,14 @@ void SpeculativeJIT::compile(Node& node)
                 GPRReg cellGPR = cell.gpr();
                 if (!isArraySpeculation(m_state.forNode(node.child1()).m_type))
                     speculationCheck(BadType, JSValueSource::unboxedCell(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
+                m_jit.storePtr(cellGPR, JITCompiler::payloadFor(node.local()));
+                noResult(m_compileIndex);
+                recordSetLocal(node.local(), ValueSource(CellInRegisterFile));
+                break;
+            }
+            if (isCellSpeculation(predictedType)) {
+                SpeculateCellOperand cell(this, node.child1());
+                GPRReg cellGPR = cell.gpr();
                 m_jit.storePtr(cellGPR, JITCompiler::payloadFor(node.local()));
                 noResult(m_compileIndex);
                 recordSetLocal(node.local(), ValueSource(CellInRegisterFile));

@@ -1,3 +1,58 @@
+2012-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG cell checks should be hoisted
+        https://bugs.webkit.org/show_bug.cgi?id=91717
+
+        Reviewed by Geoffrey Garen.
+
+        The DFG has always had the policy of hoisting array and integer checks to
+        the point of variable assignment. Eventually, we added doubles and booleans
+        to the mix. But cells should really be part of this as well, particularly
+        for 32-bit where accessing a known-type variable is dramatically cheaper
+        than accessing a variable whose types is only predicted but otherwise
+        unproven.
+        
+        This appears to be a definite speed-up for V8 on 32-bit, a possible speed-up
+        for Kraken, and a possible slow-down for V8 on 64-bit (around 0.2% if at
+        all). Any slow-downs can, and should, be addressed by making the hoisting
+        logic cognizant of variables that are never used in a manner that requires
+        type checks, and by sinking argument checks to the point(s) of first use.
+        
+        To make this work I had to change some OSR machinery, and special-case the
+        type predictions of the 'this' argument for constructors. OSR exit normally
+        assumes that arguments are boxed, which happens to be true because the
+        type prediction used for check hoisting is LUB'd with the type of the
+        argument that was passed in - so either the arguments are always stored to
+        with the full tag+payload, or if only the payload is stored then the tag
+        matches whatever the caller would have set. But not so with the 'this'
+        argument for constructors, which is not initialized by the caller. We
+        could make this more precise by having argument types for OSR be inferred
+        using similar machinery to other locals, but I figured that for this patch
+        I should use the surgical fix.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchTestPtr):
+        (MacroAssemblerX86_64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::testq_rm):
+        (X86Assembler):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isCreatedThisArgument):
+        (Graph):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::forSpeculation):
+
 2012-07-19  Filip Pizlo  <fpizlo@apple.com>
 
         Fast path of storage resize should be removed from property storage reallocation, since it is only useful for arrays
