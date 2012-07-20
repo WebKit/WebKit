@@ -530,6 +530,9 @@ void FrameLoaderClientBlackBerry::dispatchDidCommitLoad()
             m_webPagePrivate->m_client->notifyLoadCommitted(
                 originalUrl.characters(), originalUrl.length(),
                     url.characters(), url.length(), token.characters(), token.length());
+            HistoryItem* currentItem = m_frame->loader()->history()->currentItem();
+            if (currentItem && currentItem->isInPageCache())
+                dispatchDidReceiveIcon();
         }
     }
 

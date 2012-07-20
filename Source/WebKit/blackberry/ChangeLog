@@ -1,3 +1,18 @@
+2012-07-19  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] Make sure to send favicon when go back/forward
+        https://bugs.webkit.org/show_bug.cgi?id=91808
+
+        Reviewed by George Staikos.
+
+        When go back/forward, if the page was in page cache, it would have no chance
+        to send favicon. So we'll send it in commitLoad right after send the blank
+        icon.
+        RIM PR# 177495
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidCommitLoad):
+
 2012-07-19  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Suspend when there's no target buffer until an external compositor is set
