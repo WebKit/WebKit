@@ -829,21 +829,8 @@ static void emitPutTransitionStub(
             size_t oldSize = oldStructure->outOfLineCapacity() * sizeof(JSValue);
             ASSERT(newSize > oldSize);
             
-            // Optimistically assume that the old storage was the very last thing
-            // allocated.
             stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()), scratchGPR3);
-            stubJit.loadPtr(&copiedAllocator->m_currentPayloadEnd, scratchGPR2);
             stubJit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR1);
-            stubJit.subPtr(scratchGPR1, scratchGPR2);
-            stubJit.subPtr(MacroAssembler::TrustedImm32(oldSize), scratchGPR2);
-            MacroAssembler::Jump needFullRealloc =
-                stubJit.branchPtr(MacroAssembler::NotEqual, scratchGPR2, scratchGPR3);
-            slowPath.append(stubJit.branchSubPtr(MacroAssembler::Signed, MacroAssembler::TrustedImm32(newSize - oldSize), scratchGPR1));
-            stubJit.storePtr(scratchGPR1, &copiedAllocator->m_currentRemaining);
-            stubJit.move(scratchGPR2, scratchGPR1);
-            MacroAssembler::Jump doneRealloc = stubJit.jump();
-            
-            needFullRealloc.link(&stubJit);
             slowPath.append(stubJit.branchSubPtr(MacroAssembler::Signed, MacroAssembler::TrustedImm32(newSize), scratchGPR1));
             stubJit.storePtr(scratchGPR1, &copiedAllocator->m_currentRemaining);
             stubJit.negPtr(scratchGPR1);
@@ -854,8 +841,6 @@ static void emitPutTransitionStub(
                 stubJit.loadPtr(MacroAssembler::Address(scratchGPR3, offset), scratchGPR2);
                 stubJit.storePtr(scratchGPR2, MacroAssembler::Address(scratchGPR1, offset));
             }
-            
-            doneRealloc.link(&stubJit);
         }
         
         stubJit.storePtr(scratchGPR1, MacroAssembler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()));

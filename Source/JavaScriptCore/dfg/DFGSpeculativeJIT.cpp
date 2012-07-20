@@ -3177,26 +3177,15 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node& node)
     GPRReg scratchGPR1 = scratch1.gpr();
     GPRReg scratchGPR2 = scratch2.gpr();
         
-    JITCompiler::JumpList slowPath;
+    JITCompiler::Jump slowPath;
         
     size_t oldSize = node.structureTransitionData().previousStructure->outOfLineCapacity() * sizeof(JSValue);
     size_t newSize = oldSize * outOfLineGrowthFactor;
     ASSERT(newSize == node.structureTransitionData().newStructure->outOfLineCapacity() * sizeof(JSValue));
     CopiedAllocator* copiedAllocator = &m_jit.globalData()->heap.storageAllocator();
         
-    m_jit.loadPtr(&copiedAllocator->m_currentPayloadEnd, scratchGPR1);
     m_jit.loadPtr(&copiedAllocator->m_currentRemaining, scratchGPR2);
-    m_jit.subPtr(scratchGPR2, scratchGPR1);
-    m_jit.subPtr(JITCompiler::TrustedImm32(oldSize), scratchGPR1);
-    JITCompiler::Jump needFullRealloc = m_jit.branchPtr(JITCompiler::NotEqual, scratchGPR1, oldStorageGPR);
-    
-    slowPath.append(m_jit.branchSubPtr(JITCompiler::Signed, JITCompiler::TrustedImm32(newSize - oldSize), scratchGPR2));
-    m_jit.storePtr(scratchGPR2, &copiedAllocator->m_currentRemaining);
-    m_jit.move(oldStorageGPR, scratchGPR2);
-    JITCompiler::Jump doneRealloc = m_jit.jump();
-        
-    needFullRealloc.link(&m_jit);
-    slowPath.append(m_jit.branchSubPtr(JITCompiler::Signed, JITCompiler::TrustedImm32(newSize), scratchGPR2));
+    slowPath = m_jit.branchSubPtr(JITCompiler::Signed, JITCompiler::TrustedImm32(newSize), scratchGPR2);
     m_jit.storePtr(scratchGPR2, &copiedAllocator->m_currentRemaining);
     m_jit.negPtr(scratchGPR2);
     m_jit.addPtr(JITCompiler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR2);
@@ -3210,9 +3199,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node& node)
         m_jit.storePtr(scratchGPR1, JITCompiler::Address(scratchGPR2, offset));
     }
     m_jit.storePtr(scratchGPR2, JITCompiler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()));
-        
-    doneRealloc.link(&m_jit);
-        
+    
     storageResult(scratchGPR2, m_compileIndex);
 }
 

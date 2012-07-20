@@ -599,19 +599,13 @@ PropertyStorage JSObject::growOutOfLineStorage(JSGlobalData& globalData, size_t 
     PropertyStorage oldPropertyStorage = m_outOfLineStorage.get();
     PropertyStorage newPropertyStorage = 0;
 
-    if (!oldPropertyStorage) {
-        // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
-        void* temp = newPropertyStorage;
-        if (!globalData.heap.tryAllocateStorage(sizeof(WriteBarrierBase<Unknown>) * newSize, &temp))
-            CRASH();
-        newPropertyStorage = static_cast<PropertyStorage>(temp);
-    } else {
-        // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
-        void* temp = oldPropertyStorage;
-        if (!globalData.heap.tryReallocateStorage(&temp, sizeof(WriteBarrierBase<Unknown>) * oldSize, sizeof(WriteBarrierBase<Unknown>) * newSize))
-            CRASH();
-        newPropertyStorage = static_cast<PropertyStorage>(temp);
-    }
+    // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
+    void* temp = newPropertyStorage;
+    if (!globalData.heap.tryAllocateStorage(sizeof(WriteBarrierBase<Unknown>) * newSize, &temp))
+        CRASH();
+    newPropertyStorage = static_cast<PropertyStorage>(temp);
+    
+    memcpy(newPropertyStorage, oldPropertyStorage, sizeof(WriteBarrierBase<Unknown>) * oldSize);
 
     ASSERT(newPropertyStorage);
     return newPropertyStorage;
