@@ -1,5 +1,48 @@
 2012-07-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        [Qt] svg/text rebaseline after new test fonts (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=91902
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/qt-5.0-wk2/svg/text/multichar-glyph-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/text/multichar-glyph-expected.txt: Removed.
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/svg/text/text-align-01-b-expected.png: Removed.
+        * platform/qt-5.0/svg/text/text-align-01-b-expected.txt: Removed.
+        * platform/qt-5.0/svg/text/text-align-02-b-expected.png: Removed.
+        * platform/qt-5.0/svg/text/text-align-02-b-expected.txt: Removed.
+        * platform/qt-5.0/svg/text/text-align-04-b-expected.png: Removed.
+        * platform/qt-5.0/svg/text/text-align-04-b-expected.txt: Removed.
+        * platform/qt-5.0/svg/text/text-align-06-b-expected.png: Removed.
+        * platform/qt-5.0/svg/text/text-align-06-b-expected.txt: Removed.
+        * platform/qt/svg/text/multichar-glyph-expected.png:
+        * platform/qt/svg/text/multichar-glyph-expected.txt:
+        * platform/qt/svg/text/selection-background-color-expected.png: Added.
+        * platform/qt/svg/text/selection-background-color-expected.txt:
+        * platform/qt/svg/text/selection-styles-expected.png:
+        * platform/qt/svg/text/selection-styles-expected.txt:
+        * platform/qt/svg/text/selection-tripleclick-expected.png:
+        * platform/qt/svg/text/selection-tripleclick-expected.txt:
+        * platform/qt/svg/text/text-align-01-b-expected.png:
+        * platform/qt/svg/text/text-align-01-b-expected.txt:
+        * platform/qt/svg/text/text-align-02-b-expected.png:
+        * platform/qt/svg/text/text-align-02-b-expected.txt:
+        * platform/qt/svg/text/text-align-03-b-expected.png:
+        * platform/qt/svg/text/text-align-03-b-expected.txt:
+        * platform/qt/svg/text/text-align-04-b-expected.png:
+        * platform/qt/svg/text/text-align-04-b-expected.txt:
+        * platform/qt/svg/text/text-align-05-b-expected.png:
+        * platform/qt/svg/text/text-align-05-b-expected.txt:
+        * platform/qt/svg/text/text-align-06-b-expected.png:
+        * platform/qt/svg/text/text-align-06-b-expected.txt:
+        * platform/qt/svg/text/text-path-01-b-expected.png:
+        * platform/qt/svg/text/text-path-01-b-expected.txt:
+        * platform/qt/svg/text/tspan-dynamic-positioning-expected.png:
+        * platform/qt/svg/text/tspan-dynamic-positioning-expected.txt:
+
+2012-07-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         [Qt] svg/text rebaseline after new test fonts (part 1)
         https://bugs.webkit.org/show_bug.cgi?id=91762
 
