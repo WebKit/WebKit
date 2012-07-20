@@ -46,6 +46,9 @@ struct FELightingPaintingDataForNeon;
 class FELighting : public FilterEffect {
 public:
     virtual void platformApplySoftware();
+#if USE(SKIA)
+    virtual bool platformApplySkia();
+#endif
 
     virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 

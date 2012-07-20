@@ -1,3 +1,25 @@
+2012-07-20  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Enable GPU-accelerated skia implementation of
+        feDiffuseLighting, feSpecularLighting.
+        https://bugs.webkit.org/show_bug.cgi?id=91865
+
+        Reviewed by Dirk Schulze.
+
+        Translate the light parameters into the appropriate
+        SkLightingImageFilter calls.  This path is only enabled when
+        the filters are created with the Accelerated flag set.
+
+        This will be covered by tests in svg/filters/* when they are
+        added to the virtual GPU tests.
+
+        * WebCore.gypi:
+        * platform/graphics/filters/FELighting.h:
+        (FELighting):
+        * platform/graphics/filters/skia/FELightingSkia.cpp: Added.
+        (WebCore):
+        (WebCore::FELighting::platformApplySkia):
+
 2012-07-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: disable fake workers inspection.
