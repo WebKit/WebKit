@@ -3900,31 +3900,6 @@ void Document::unregisterNodeListCache(DynamicNodeListCacheBase* list)
     }
 }
 
-bool Document::shouldInvalidateNodeListCaches(const QualifiedName* attrName) const
-{
-    if (attrName) {
-        for (int type = DoNotInvalidateOnAttributeChanges + 1; type < numNodeListInvalidationTypes; type++) {
-            if (m_nodeListCounts[type] && DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(static_cast<NodeListInvalidationType>(type), *attrName))
-                return true;
-        }
-        return false;
-    }
-
-    for (int type = 0; type < numNodeListInvalidationTypes; type++) {
-        if (m_nodeListCounts[type])
-            return true;
-    }
-
-    return false;
-}
-
-void Document::invalidateNodeListCaches(const QualifiedName* attrName)
-{
-    HashSet<DynamicNodeListCacheBase*>::iterator end = m_listsInvalidatedAtDocument.end();
-    for (HashSet<DynamicNodeListCacheBase*>::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
-        (*it)->invalidateCache(attrName);
-}
-
 void Document::attachNodeIterator(NodeIterator* ni)
 {
     m_nodeIterators.add(ni);

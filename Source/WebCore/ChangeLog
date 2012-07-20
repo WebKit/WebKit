@@ -1,3 +1,24 @@
+2012-07-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r122873): 15% regression on Dromaeo/dom-attr
+        https://bugs.webkit.org/show_bug.cgi?id=91827
+
+        Reviewed by Anders Carlsson.
+
+        Move shouldInvalidateNodeListCaches from Document.cpp to Node.cpp since it's only called
+        in Node::invalidateNodeListCachesInAncestors.
+
+        Test: PerformanceTests/Dromaeo/dom-attr.html.
+
+        * dom/Document.cpp:
+        (WebCore):
+        * dom/Node.cpp:
+        (WebCore::shouldInvalidateNodeListCachesForAttr): Extracted from shouldInvalidateNodeListCaches
+        to unroll the loop in shouldInvalidateNodeListCaches. Apparently gcc wasn't doing the right thing.
+        (WebCore::Document::shouldInvalidateNodeListCaches):
+        (WebCore::Document::invalidateNodeListCaches):
+        (WebCore::Node::invalidateNodeListCachesInAncestors):
+
 2012-07-20  Nico Weber  <thakis@chromium.org>
 
         Fix more -Wunused-private-field violations
