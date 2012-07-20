@@ -1,3 +1,135 @@
+2012-07-20  Stephen Chenney  <schenney@chromium.org>
+
+        SVG Filter Effect sub-region not applied for some filters
+        https://bugs.webkit.org/show_bug.cgi?id=89767
+
+        Reviewed by Dirk Schulze.
+
+        Unreviewed test expectations update.
+
+        Numerous results changed by one pixel due to the difference between
+        clipping and pre-applying the filter subregion. Some feGaussianBlur
+        and feDropShadow results changed more, but that was expected.
+
+        * platform/chromium-linux-x86/svg/batik/filters: Removed.
+        * platform/chromium-linux-x86/svg/filters/shadow-on-filter-expected.png:
+        * platform/chromium-linux-x86/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-linux/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-linux/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-linux/svg/batik/text/smallFonts-expected.png:
+        * platform/chromium-linux/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-linux/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png:
+        * platform/chromium-linux/svg/filters/feDropShadow-expected.png:
+        * platform/chromium-linux/svg/filters/filter-on-tspan-expected.png:
+        * platform/chromium-linux/svg/filters/filterRes-expected.png:
+        * platform/chromium-linux/svg/filters/shadow-on-filter-expected.png:
+        * platform/chromium-linux/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-linux/svg/filters/subRegion-one-effect-expected.png:
+        * platform/chromium-linux/svg/filters/subRegion-two-effects-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/smallFonts-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png:
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png:
+        * platform/chromium-mac-snowleopard/svg/filters/shadow-on-filter-expected.png:
+        * platform/chromium-mac-snowleopard/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-mac/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-mac/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-mac/svg/batik/text/smallFonts-expected.png:
+        * platform/chromium-mac/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png:
+        * platform/chromium-mac/svg/filters/feDropShadow-expected.png:
+        * platform/chromium-mac/svg/filters/feDropShadow-subregion-expected.png: Added.
+        * platform/chromium-mac/svg/filters/feGaussianBlur-expected.png:
+        * platform/chromium-mac/svg/filters/feGaussianBlur-subregion-expected.png: Added.
+        * platform/chromium-mac/svg/filters/feImage-subregions-expected.png:
+        * platform/chromium-mac/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png:
+        * platform/chromium-mac/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png:
+        * platform/chromium-mac/svg/filters/feOffset-expected.png:
+        * platform/chromium-mac/svg/filters/feTile-expected.png:
+        * platform/chromium-mac/svg/filters/filter-placement-issue-expected.png:
+        * platform/chromium-mac/svg/filters/filter-rounding-issues-expected.png:
+        * platform/chromium-mac/svg/filters/filterRes-expected.png:
+        * platform/chromium-mac/svg/filters/filterRes1-expected.png:
+        * platform/chromium-mac/svg/filters/filterRes3-expected.png:
+        * platform/chromium-mac/svg/filters/parent-children-with-same-filter-expected.png:
+        * platform/chromium-mac/svg/filters/shadow-on-filter-expected.png:
+        * platform/chromium-mac/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-mac/svg/filters/subRegion-one-effect-expected.png:
+        * platform/chromium-mac/svg/filters/subRegion-two-effects-expected.png:
+        * platform/chromium-win-xp/svg/filters/shadow-on-filter-expected.png:
+        * platform/chromium-win-xp/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-win/svg/batik/text/smallFonts-expected.png:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/chromium-win/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png:
+        * platform/chromium-win/svg/filters/feDropShadow-expected.png:
+        * platform/chromium-win/svg/filters/feDropShadow-subregion-expected.png: Added.
+        * platform/chromium-win/svg/filters/feGaussianBlur-expected.png:
+        * platform/chromium-win/svg/filters/feGaussianBlur-subregion-expected.png: Added.
+        * platform/chromium-win/svg/filters/feImage-subregions-expected.png:
+        * platform/chromium-win/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png:
+        * platform/chromium-win/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png:
+        * platform/chromium-win/svg/filters/feOffset-expected.png:
+        * platform/chromium-win/svg/filters/feTile-expected.png:
+        * platform/chromium-win/svg/filters/filter-on-tspan-expected.png:
+        * platform/chromium-win/svg/filters/filter-placement-issue-expected.png:
+        * platform/chromium-win/svg/filters/filter-rounding-issues-expected.png:
+        * platform/chromium-win/svg/filters/filterRes-expected.png:
+        * platform/chromium-win/svg/filters/filterRes1-expected.png:
+        * platform/chromium-win/svg/filters/filterRes3-expected.png:
+        * platform/chromium-win/svg/filters/parent-children-with-same-filter-expected.png:
+        * platform/chromium-win/svg/filters/shadow-on-filter-expected.png:
+        * platform/chromium-win/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-win/svg/filters/subRegion-one-effect-expected.png:
+        * platform/chromium-win/svg/filters/subRegion-two-effects-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-07-20  Joshua Bell  <jsbell@chromium.org>
 
         [chromium] Unreviewed test expectations update.
