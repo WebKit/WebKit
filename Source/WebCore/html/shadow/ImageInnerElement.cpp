@@ -68,4 +68,10 @@ RenderObject* ImageInnerElement::createRenderer(RenderArena* arena, RenderStyle*
     return createRendererForImage(this, arena);
 }
 
+const AtomicString& ImageInnerElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-image-inner-element"));
+    return pseudoId;
+}
+
 }

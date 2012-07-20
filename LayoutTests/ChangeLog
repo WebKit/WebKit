@@ -1,3 +1,15 @@
+2012-07-20  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Needs pseudo id to point the inner element of an img elemnet for styling
+        https://bugs.webkit.org/show_bug.cgi?id=91590
+
+        Reviewed by Hajime Morita.
+
+        Uses pseudo id to confirm the style is applied to the inner element of an img element shadow.
+
+        * fast/dom/shadow/shadowdom-for-image-with-pseudo-id-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-image-with-pseudo-id.html: Added.
+
 2012-07-20  Yoshifumi Inoue  <yosin@chromium.org>
 
         Unreviewed. Set svn:mime-type to image/png for PNG files without svn:mime-type.

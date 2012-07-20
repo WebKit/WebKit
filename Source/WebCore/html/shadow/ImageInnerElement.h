@@ -53,6 +53,8 @@ private:
 
     virtual void attach() OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
+
+    virtual const AtomicString& shadowPseudoId() const OVERRIDE;
 };
 
 inline PassRefPtr<ImageInnerElement> ImageInnerElement::create(Document* document)

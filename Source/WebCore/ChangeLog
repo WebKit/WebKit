@@ -1,3 +1,22 @@
+2012-07-20  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Needs pseudo id to point the inner element of an img elemnet for styling
+        https://bugs.webkit.org/show_bug.cgi?id=91590
+
+        Reviewed by Hajime Morita.
+
+        We introduce pseudo id to point the element in UserAgentShadowDOM.
+        This enables us to style the inner element of an img element shadow.
+        Please see also http://trac.webkit.org/wiki/ShadowDOMForReplacedElements
+
+        Test: fast/dom/shadow/shadowdom-for-image-with-pseudo-id.html
+
+        * html/shadow/ImageInnerElement.cpp:
+        (WebCore::ImageInnerElement::shadowPseudoId):
+        (WebCore):
+        * html/shadow/ImageInnerElement.h:
+        (ImageInnerElement):
+
 2012-07-20  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r121420): Performance regression of form state saving for pages with multiple forms
