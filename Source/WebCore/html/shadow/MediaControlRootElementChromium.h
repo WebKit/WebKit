@@ -149,7 +149,6 @@ private:
     MediaControlTextTrackContainerElement* m_textDisplayContainer;
 #endif
 
-    bool m_opaque;
     Timer<MediaControlRootElementChromium> m_hideFullscreenControlsTimer;
     bool m_isMouseOverControls;
     bool m_isFullscreen;

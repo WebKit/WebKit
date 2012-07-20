@@ -680,7 +680,9 @@ namespace WebCore {
         bool m_needsSiteSpecificQuirks : 1;
         unsigned m_fontRenderingMode : 1;
         bool m_frameFlatteningEnabled : 1;
+#if ENABLE(WEB_ARCHIVE)
         bool m_webArchiveDebugModeEnabled : 1;
+#endif
         bool m_localFileContentSniffingEnabled : 1;
         bool m_inApplicationChromeMode : 1;
         bool m_offlineWebApplicationCacheEnabled : 1;

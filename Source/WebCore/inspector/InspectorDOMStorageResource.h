@@ -66,7 +66,6 @@ private:
     RefPtr<Frame> m_frame;
     InspectorFrontend::DOMStorage* m_frontend;
     String m_id;
-    bool m_reportingChangesToFrontend;
 
     static int s_nextUnusedId;
 };

@@ -88,7 +88,6 @@ private:
     RefPtr<HTMLTableElement> m_tableElement;
 
     bool m_skipLF;
-    bool m_parsedTemplate;
     
     int m_size;
     UChar* m_buffer;
@@ -101,7 +100,6 @@ private:
 FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument* document)
     : HTMLDocumentParser(document, false)
     , m_skipLF(false)
-    , m_parsedTemplate(false)
     , m_size(254)
     , m_buffer(static_cast<UChar*>(fastMalloc(sizeof(UChar) * m_size)))
     , m_dest(m_buffer)

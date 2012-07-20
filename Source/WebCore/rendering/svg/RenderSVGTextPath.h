@@ -40,9 +40,6 @@ public:
 private:
     virtual const char* renderName() const { return "RenderSVGTextPath"; }
 
-    bool m_exactAlignment : 1;
-    bool m_stretchMethod : 1;
-
     Path m_layoutPath;
 };
 

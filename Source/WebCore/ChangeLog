@@ -1,3 +1,40 @@
+2012-07-20  Nico Weber  <thakis@chromium.org>
+
+        Fix more -Wunused-private-field violations
+        https://bugs.webkit.org/show_bug.cgi?id=91876
+
+        Reviewed by Adam Barth.
+
+        As of http://lists.cs.uiuc.edu/pipermail/cfe-commits/Week-of-Mon-20120716/061102.html
+        the warning finds more bugs. Fix them.
+
+        * html/FTPDirectoryDocument.cpp:
+        (FTPDirectoryDocumentParser):
+        (WebCore::FTPDirectoryDocumentParser::FTPDirectoryDocumentParser):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        * html/parser/HTMLTreeBuilder.h:
+        (HTMLTreeBuilder):
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium):
+        * html/shadow/MediaControlRootElementChromium.h:
+        (MediaControlRootElementChromium):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::InspectorDOMStorageResource):
+        * inspector/InspectorDOMStorageResource.h:
+        (InspectorDOMStorageResource):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (Settings):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::RenderSVGTextPath):
+        * rendering/svg/RenderSVGTextPath.h:
+
 2012-07-20  Adam Klein  <adamk@chromium.org>
 
         CodeGeneratorInspector.py is unnecessarily chatty

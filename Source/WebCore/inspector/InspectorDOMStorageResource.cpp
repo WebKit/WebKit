@@ -57,7 +57,6 @@ InspectorDOMStorageResource::InspectorDOMStorageResource(StorageArea* storageAre
     , m_frame(frame)
     , m_frontend(0)
     , m_id(String::number(s_nextUnusedId++))
-    , m_reportingChangesToFrontend(false)
 {
 }
 

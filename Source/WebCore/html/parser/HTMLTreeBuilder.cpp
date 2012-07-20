@@ -346,11 +346,10 @@ private:
 };
 
 
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* document, bool reportErrors, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* document, bool, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth)
     : m_framesetOk(true)
     , m_document(document)
     , m_tree(document, maximumDOMTreeDepth)
-    , m_reportErrors(reportErrors)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_shouldSkipLeadingNewline(false)
@@ -367,7 +366,6 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
     , m_fragmentContext(fragment, contextElement, scriptingPermission)
     , m_document(fragment->document())
     , m_tree(fragment, scriptingPermission, maximumDOMTreeDepth)
-    , m_reportErrors(false) // FIXME: Why not report errors in fragments?
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_shouldSkipLeadingNewline(false)

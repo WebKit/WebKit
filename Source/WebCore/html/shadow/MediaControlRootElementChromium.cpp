@@ -80,7 +80,6 @@ MediaControlRootElementChromium::MediaControlRootElementChromium(Document* docum
 #if ENABLE(VIDEO_TRACK)
     , m_textDisplayContainer(0)
 #endif
-    , m_opaque(true)
     , m_hideFullscreenControlsTimer(this, &MediaControlRootElementChromium::hideFullscreenControlsTimerFired)
     , m_isMouseOverControls(false)
     , m_isFullscreen(false)

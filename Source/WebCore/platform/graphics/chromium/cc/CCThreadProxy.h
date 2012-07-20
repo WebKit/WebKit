@@ -152,7 +152,6 @@ private:
     bool m_animateRequested;
     bool m_commitRequested;
     bool m_forcedCommitRequested;
-    bool m_contextLost;
     OwnPtr<CCThreadProxyContextRecreationTimer> m_contextRecreationTimer;
     CCLayerTreeHost* m_layerTreeHost;
     int m_compositorIdentifier;
