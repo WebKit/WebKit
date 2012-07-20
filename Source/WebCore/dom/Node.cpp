@@ -406,7 +406,7 @@ Node::~Node()
     if (renderer())
         detach();
 
-    Document* doc = m_document;
+    Document* doc = documentInternal();
     if (AXObjectCache::accessibilityEnabled() && doc && doc->axObjectCacheExists())
         doc->axObjectCache()->removeNodeForUse(this);
     
@@ -419,41 +419,6 @@ Node::~Node()
         doc->guardDeref();
 
     InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
-}
-
-void Node::setDocument(Document* document)
-{
-    ASSERT(!inDocument() || m_document == document);
-    if (inDocument() || m_document == document)
-        return;
-
-    m_document = document;
-}
-
-NodeRareData* Node::setTreeScope(TreeScope* scope)
-{
-    if (!scope) {
-        if (hasRareData()) {
-            NodeRareData* data = rareData();
-            data->setTreeScope(0);
-            return data;
-        }
-
-        return 0;
-    }
-
-    NodeRareData* data = ensureRareData();
-    data->setTreeScope(scope);
-    return data;
-}
-
-TreeScope* Node::treeScope() const
-{
-    // FIXME: Using m_document directly is not good -> see comment with document() in the header file.
-    if (!hasRareData())
-        return m_document;
-    TreeScope* scope = rareData()->treeScope();
-    return scope ? scope : m_document;
 }
 
 NodeRareData* Node::rareData() const
@@ -1439,11 +1404,6 @@ ContainerNode* Node::nonShadowBoundaryParentNode() const
 {
     ContainerNode* parent = parentNode();
     return parent && !parent->isShadowRoot() ? parent : 0;
-}
-
-bool Node::isInShadowTree() const
-{
-    return treeScope() != document();
 }
 
 Element* Node::parentOrHostElement() const
@@ -2762,7 +2722,7 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo<Node> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
     info.visitBaseClass<TreeShared<Node, ContainerNode> >(this);
     info.visitBaseClass<ScriptWrappable>(this);
-    info.addInstrumentedMember(m_document);
+    info.addInstrumentedMember(document());
     info.addInstrumentedMember(m_next);
     info.addInstrumentedMember(m_previous);
 }

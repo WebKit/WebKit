@@ -35,6 +35,7 @@
 #include "PageConsoleAgent.h"
 
 #include "DOMWindow.h"
+#include "Document.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"

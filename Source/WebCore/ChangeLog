@@ -1,3 +1,80 @@
+2012-07-19  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring] Replace Node's Document pointer with a TreeScope pointer
+        https://bugs.webkit.org/show_bug.cgi?id=59816
+
+        Reviewed by Ryosuke Niwa.
+
+        Before this change, Node::treeScope() fetches the TreeScope object
+        from ElementRareData. This approach has several shortcomings:
+
+        - rareData() call is slow due to a hashtable lookup.
+        - In shadow tree, each node has its tree scope in ElementRareData,
+          that means the rare-data is no longer rare in that case.
+
+        This change gets rid of ElementRareData::m_treeScope by replacing
+        Node::m_document with Node::m_treeScope. And retrieves the
+        document of Node through m_treeScope.
+
+        Note that Node::document() is a hot function and naive
+        replacemennt of m_document with m_treeScope can hurt the
+        speed. This change employs some tricks to address it.
+
+        - This change introduces Node::InShadowTree flag, if the flag is off,
+          that means m_treeScope is actually a document an can be returned as the result.
+          this eliminates an extract dereference.
+        - Node::m_treeScope can be null. But we don't want to issue any extra
+          conditional statement. So this change represents a null
+          TreeScope as TreeScope::nullInstance(), which saves one conditional
+          statement.
+
+        With these changes, the Node::document() slowdown is minimized to
+        unnoticeable size.
+
+        No new tests. Covered by existing tests.
+
+        * dom/Document.cpp: Took care of connectio betwen TreeScope.
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::suggestedMIMEType):
+        * dom/Document.h:
+        (WebCore::Node::treeScope): Now just return m_treeScope, taking care of nullInstance() case.
+        (WebCore):
+        (WebCore::Node::setTreeScope): Now just sets m_treeScope.
+        (WebCore::Node::documentInternal): Extracted from document() to have ASSERT-free version.
+        (WebCore::Node::document): Re-implemented over treeScope() and the flag.
+        (WebCore::Node::isDocumentNode): Re-implemented using treeScope()
+        (WebCore::Node::Node):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::reportMemoryUsage):
+        * dom/Node.h:
+        (Node):
+        (WebCore::Node::inDocument):
+        (WebCore::Node::isInShadowTree): Rewrote to use InShadowTree flag.
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData): Eliminated m_treeScope.
+        (NodeRareData):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        (WebCore):
+        (WebCore::TreeScope::setParentTreeScope): Added.
+        (WebCore::TreeScope::isDocumentScope): Added.
+        (WebCore::TreeScope::nullInstance): Added.
+        * dom/TreeScope.h: Added m_parentTreeScope.
+        (WebCore):
+        (WebCore::TreeScope::rootDocument): Added.
+        (TreeScope):
+        * dom/TreeScopeAdopter.cpp: No longer calls setDocument()
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        (WebCore::TreeScopeAdopter::moveNodeToNewDocument):
+        * editing/MoveSelectionCommand.cpp: Includes Document.h to find inlined Node functions
+        * editing/RemoveNodeCommand.cpp: Includes Document.h to find inlined Node functions
+        * editing/RemoveNodePreservingChildrenCommand.cpp: Includes Document.h to find inlined Node functions
+        * inspector/PageConsoleAgent.cpp: Includes Document.h to find inlined Node functions
+
 2012-07-19  David Hyatt  <hyatt@apple.com>
 
         SVG not properly respecting max-width.

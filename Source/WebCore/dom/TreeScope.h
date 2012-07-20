@@ -34,6 +34,7 @@ namespace WebCore {
 
 class ContainerNode;
 class DOMSelection;
+class Document;
 class Element;
 class HTMLMapElement;
 class IdTargetObserverRegistry;
@@ -78,17 +79,23 @@ public:
     void adoptIfNeeded(Node*);
 
     ContainerNode* rootNode() const { return m_rootNode; }
-
+    Document* rootDocument() const { return m_rootDocument; }
+    bool isDocumentScope() const;
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
 
+    static TreeScope* nullInstance();
+
 protected:
-    TreeScope(ContainerNode*);
+    TreeScope(ContainerNode*, Document*);
     virtual ~TreeScope();
 
     void destroyTreeScopeData();
 
 private:
+    TreeScope();
+
     ContainerNode* m_rootNode;
+    Document* m_rootDocument;
     TreeScope* m_parentTreeScope;
 
     DocumentOrderedMap m_elementsById;

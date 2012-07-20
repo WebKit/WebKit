@@ -167,6 +167,7 @@ _ZNK7WebCore14InsertionPoint8isActiveEv;
 _ZN7WebCore26ContextDestructionObserverD2Ev;
 _ZN7WebCore26ContextDestructionObserverC2EPNS_22ScriptExecutionContextE;
 _ZN7WebCore26ContextDestructionObserver16contextDestroyedEv;
+_ZN7WebCore9TreeScope12nullInstanceEv;
 local:
 _Z*;
 cti*;

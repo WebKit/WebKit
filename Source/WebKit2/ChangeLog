@@ -1,3 +1,13 @@
+2012-07-19  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring] Replace Node's Document pointer with a TreeScope pointer
+        https://bugs.webkit.org/show_bug.cgi?id=59816
+
+        Reviewed by Ryosuke Niwa.
+
+        * win/WebKit2.def: Added newly exported symbols.
+        * win/WebKit2CFLite.def: Ditto.
+
 2012-07-19  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] Add methods to get/set a custom text encoding

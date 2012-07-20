@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoveNodeCommand.h"
 
+#include "Document.h"
 #include "Node.h"
 #include <wtf/Assertions.h>
 

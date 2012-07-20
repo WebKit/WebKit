@@ -46,7 +46,7 @@ namespace WebCore {
 
 ShadowRoot::ShadowRoot(Document* document)
     : DocumentFragment(document, CreateShadowRoot)
-    , TreeScope(this)
+    , TreeScope(this, document)
     , m_prev(0)
     , m_next(0)
     , m_applyAuthorStyles(false)
@@ -55,11 +55,9 @@ ShadowRoot::ShadowRoot(Document* document)
 {
     ASSERT(document);
     
-    // Assume document as parent scope.
-    setParentTreeScope(document);
     // Shadow tree scopes have the scope pointer point to themselves.
     // This way, direct children will receive the correct scope pointer.
-    ensureRareData()->setTreeScope(this);
+    setTreeScope(this);
 }
 
 ShadowRoot::~ShadowRoot()

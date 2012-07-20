@@ -421,7 +421,7 @@ uint64_t Document::s_globalTreeVersion = 0;
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     : ContainerNode(0, CreateDocument)
-    , TreeScope(this)
+    , TreeScope(this, this)
     , m_guardRefCount(0)
     , m_contextFeatures(ContextFeatures::defaultSwitch())
     , m_compatibilityMode(NoQuirksMode)
@@ -493,7 +493,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_didDispatchViewportPropertiesChanged(false)
 #endif
 {
-    m_document = this;
+    setTreeScope(this);
 
     m_pageGroupUserSheetCacheValid = false;
 
@@ -676,7 +676,7 @@ Document::~Document()
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_collections); i++)
         ASSERT(!m_collections[i]);
 
-    m_document = 0;
+    setTreeScope(0);
 
     InspectorCounters::decrementCounter(InspectorCounters::DocumentCounter);
 }
@@ -1350,13 +1350,14 @@ void Document::setContent(const String& content)
 
 String Document::suggestedMIMEType() const
 {
-    if (m_document->isXHTMLDocument())
+    Document* doc = document();
+    if (doc->isXHTMLDocument())
         return "application/xhtml+xml";
-    if (m_document->isSVGDocument())
+    if (doc->isSVGDocument())
         return "image/svg+xml";
-    if (m_document->xmlStandalone())
+    if (doc->xmlStandalone())
         return "text/xml";
-    if (m_document->isHTMLDocument())
+    if (doc->isHTMLDocument())
         return "text/html";
 
     if (DocumentLoader* documentLoader = loader())

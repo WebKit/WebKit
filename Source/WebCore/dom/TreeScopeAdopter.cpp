@@ -49,7 +49,9 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         oldDocument->incDOMTreeVersion();
 
     for (Node* node = root; node; node = node->traverseNextNode(root)) {
-        if (NodeRareData* rareData = node->setTreeScope(newDocument == m_newScope ? 0 : m_newScope)) {
+        node->setTreeScope(m_newScope);
+        if (node->hasRareData()) {
+            NodeRareData* rareData = node->rareData();
             if (rareData->nodeLists())
                 rareData->nodeLists()->adoptTreeScope(oldDocument, newDocument);
             if (node->isElementNode())
@@ -95,8 +97,6 @@ inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDoc
     newDocument->guardRef();
     if (oldDocument)
         oldDocument->moveNodeIteratorsToNewDocument(node, newDocument);
-
-    node->setDocument(newDocument);
 
 #ifndef NDEBUG
     didMoveToNewDocumentWasCalled = false;
