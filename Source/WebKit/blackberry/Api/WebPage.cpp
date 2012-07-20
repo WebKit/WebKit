@@ -5953,21 +5953,33 @@ void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> composit
 {
     using namespace BlackBerry::Platform;
 
+    // We depend on the current thread being the WebKit thread when it's not the Compositing thread.
+    // That seems extremely likely to be the case, but let's assert just to make sure.
+    ASSERT(webKitThreadMessageClient()->isCurrentThread());
+
+    if (m_backingStore->d->buffer())
+        m_backingStore->d->suspendScreenAndBackingStoreUpdates();
+
+    // This method call always round-trips on the WebKit thread (see WebPageCompositor::WebPageCompositor() and ~WebPageCompositor()),
+    // and the compositing context must be set on the WebKit thread. How convenient!
+    if (compositingContext != EGL_NO_CONTEXT)
+        BlackBerry::Platform::Graphics::setCompositingContext(compositingContext);
+
     // The m_compositor member has to be modified during a sync call for thread
     // safe access to m_compositor and its refcount.
-    if (!userInterfaceThreadMessageClient()->isCurrentThread()) {
-        // We depend on the current thread being the WebKit thread when it's not the Compositing thread.
-        // That seems extremely likely to be the case, but let's assert just to make sure.
-        ASSERT(webKitThreadMessageClient()->isCurrentThread());
+    userInterfaceThreadMessageClient()->dispatchSyncMessage(createMethodCallMessage(&WebPagePrivate::setCompositorHelper, this, compositor, compositingContext));
 
-        // This method call always round-trips on the WebKit thread (see WebPageCompositor::WebPageCompositor() and ~WebPageCompositor()),
-        // and the compositing context must be set on the WebKit thread. How convenient!
-        if (compositingContext != EGL_NO_CONTEXT)
-            BlackBerry::Platform::Graphics::setCompositingContext(compositingContext);
+    if (m_backingStore->d->buffer()) // the new compositor, if one was set
+        m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
+}
 
-        userInterfaceThreadMessageClient()->dispatchSyncMessage(createMethodCallMessage(&WebPagePrivate::setCompositor, this, compositor, compositingContext));
-        return;
-    }
+void WebPagePrivate::setCompositorHelper(PassRefPtr<WebPageCompositorPrivate> compositor, EGLContext compositingContext)
+{
+    using namespace BlackBerry::Platform;
+
+    // The m_compositor member has to be modified during a sync call for thread
+    // safe access to m_compositor and its refcount.
+    ASSERT(userInterfaceThreadMessageClient()->isCurrentThread());
 
     m_compositor = compositor;
     if (m_compositor) {

@@ -1,5 +1,54 @@
 2012-07-19  Jakob Petsovits  <jpetsovits@rim.com>
 
+        [BlackBerry] Suspend when there's no target buffer until an external compositor is set
+        https://bugs.webkit.org/show_bug.cgi?id=91686
+        RIM PR 174365
+
+        Reviewed by Antonio Gomes.
+
+        If we don't have a client window (i.e. rendering to
+        GL directly) and a WebPageCompositor is only set
+        after a rendering operation, then we'll try to render
+        to BackingStorePrivate::buffer() which doesn't exist
+        at this point. That's bad, and gets us various
+        assertions and possibly worse.
+
+        Fix it by starting in a screen-suspended state and only
+        resuming screen and backingstore once a compositor is
+        actually set.
+
+        So, in effect, with this patch applied, the sequence
+        of events will look like this:
+
+        1) WebPage & BackingStore are initialize, neither window
+           nor compositor exists, therefore buffer() returns 0.
+           createSurface() therefore suspends screen and
+           backingstore.
+        2) loadURL() or loadData() is called, web page is
+           fully loaded, however we don't try to render because
+           we're still suspended, still have no target buffer.
+        3) A WebPageCompositor is being set from outside.
+           At the beginning of WebPage::setCompositor() we still
+           don't have a buffer() so there's nothing to suspend,
+           however, after the sync call to setCompositorHelper()
+           the compositor is set so buffer() will return a
+           nonzero value, causing us to resume at this point.
+
+        Using the existence of a target buffer to determine
+        whether or not to enable rendering or keep it suspended
+        seems like a good idea, and the implementation (while
+        not quite perfect yet) is a step forward from before.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::createSurfaces):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+        (BlackBerry::WebKit::WebPagePrivate::setCompositorHelper):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
+2012-07-19  Jakob Petsovits  <jpetsovits@rim.com>
+
         [BlackBerry] Allow nested suspend/resume screen & backingstore calls.
         https://bugs.webkit.org/show_bug.cgi?id=91644
         RIM PR 174365

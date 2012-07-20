@@ -2214,6 +2214,10 @@ void BackingStorePrivate::createSurfaces()
     swapState();
 
     createVisibleTileBufferForWebPage(m_webPage->d);
+
+    // Don't try to blit to screen unless we have a buffer.
+    if (!buffer())
+        suspendScreenAndBackingStoreUpdates();
 }
 
 void BackingStorePrivate::createVisibleTileBuffer()
