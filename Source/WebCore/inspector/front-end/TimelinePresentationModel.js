@@ -57,12 +57,12 @@ WebInspector.TimelinePresentationModel.categories = function()
 };
 
 /**
- * @param {Object} record
+ * @return {!Object.<string, {title: string, category}>}
  */
-WebInspector.TimelinePresentationModel.recordStyle = function(record)
+WebInspector.TimelinePresentationModel.initRecordStyles_ = function()
 {
     if (WebInspector.TimelinePresentationModel._recordStylesMap)
-        return WebInspector.TimelinePresentationModel._recordStylesMap[record.type];
+        return WebInspector.TimelinePresentationModel._recordStylesMap;
 
     var recordTypes = WebInspector.TimelineModel.RecordType;
     var categories = WebInspector.TimelinePresentationModel.categories();
@@ -100,7 +100,24 @@ WebInspector.TimelinePresentationModel.recordStyle = function(record)
     recordStyles[recordTypes.FireAnimationFrame] = { title: WebInspector.UIString("Animation Frame Fired"), category: categories["scripting"] };
 
     WebInspector.TimelinePresentationModel._recordStylesMap = recordStyles;
-    return recordStyles[record.type];
+    return recordStyles;
+}
+
+/**
+ * @param {Object} record
+ */
+WebInspector.TimelinePresentationModel.recordStyle = function(record)
+{
+    var recordStyles = WebInspector.TimelinePresentationModel.initRecordStyles_();
+    var result = recordStyles[record.type];
+    if (!result) {
+        result = {
+            title: WebInspector.UIString("Unknown: %s", record.type),
+            category: WebInspector.TimelinePresentationModel.categories()["program"]
+        };
+        recordStyles[record.type] = result;
+    }
+    return result;
 }
 
 WebInspector.TimelinePresentationModel.categoryForRecord = function(record)
@@ -754,7 +771,7 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             case WebInspector.TimelineModel.RecordType.TimeStamp:
                 return this.data["message"];
             default:
-                return null;
+                return this._linkifyScriptLocation() || this._linkifyTopCallFrame() || null;
         }
     },
 
