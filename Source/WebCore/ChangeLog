@@ -1,3 +1,18 @@
+2012-07-20  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Fix an assertion failure in TextFieldDecorationElement::hostInput()
+        https://bugs.webkit.org/show_bug.cgi?id=91824
+
+        Reviewed by Hajime Morita.
+
+        No new tests. This code is used only in Chromium browser.
+
+        * html/shadow/TextFieldDecorationElement.cpp:
+        (WebCore::TextFieldDecorationElement::hostInput):
+        Use shadowHost(), and allow to return 0.
+        (WebCore::TextFieldDecorationElement::defaultEventHandler):
+        Check 0.
+
 2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Compile WebCore without QtWidgets

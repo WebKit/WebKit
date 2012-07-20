@@ -116,9 +116,10 @@ void TextFieldDecorationElement::decorate(HTMLInputElement* input, bool visible)
 
 inline HTMLInputElement* TextFieldDecorationElement::hostInput()
 {
-    ASSERT(shadowAncestorNode());
-    ASSERT(shadowAncestorNode()->hasTagName(inputTag));
-    return static_cast<HTMLInputElement*>(shadowAncestorNode());
+    // TextFieldDecorationElement is created only by C++ code, and it is always
+    // in <input> shadow.
+    ASSERT(!shadowHost() || shadowHost()->hasTagName(inputTag));
+    return static_cast<HTMLInputElement*>(shadowHost());
 }
 
 bool TextFieldDecorationElement::isTextFieldDecoration() const
@@ -181,7 +182,7 @@ bool TextFieldDecorationElement::isMouseFocusable() const
 void TextFieldDecorationElement::defaultEventHandler(Event* event)
 {
     RefPtr<HTMLInputElement> input(hostInput());
-    if (input->disabled() || input->readOnly() || !event->isMouseEvent()) {
+    if (!input || input->disabled() || input->readOnly() || !event->isMouseEvent()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
