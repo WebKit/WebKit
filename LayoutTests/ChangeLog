@@ -1,3 +1,9 @@
+2012-07-20  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Unreviewed. Skip regions inspector test on EFL.
+
+        * platform/efl/TestExpectations:
+
 2012-07-20  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         [Qt] http/tests/security/cross-frame-access-put.html test fail after r123145
