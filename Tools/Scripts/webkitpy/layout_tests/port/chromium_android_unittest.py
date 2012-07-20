@@ -147,9 +147,9 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
         self.assertTrue('--err-fifo=' + chromium_android.DRT_APP_FILES_DIR + 'DumpRenderTree.err' in cmd_line)
 
     def test_read_prompt(self):
-        self.driver._server_process = driver_unittest.MockServerProcess(['root@android:/ # '])
+        self.driver._server_process = driver_unittest.MockServerProcess(lines=['root@android:/ # '])
         self.assertEquals(self.driver._read_prompt(time.time() + 1), None)
-        self.driver._server_process = driver_unittest.MockServerProcess(['$ '])
+        self.driver._server_process = driver_unittest.MockServerProcess(lines=['$ '])
         self.assertRaises(AssertionError, self.driver._read_prompt, time.time() + 1)
 
     def test_command_from_driver_input(self):

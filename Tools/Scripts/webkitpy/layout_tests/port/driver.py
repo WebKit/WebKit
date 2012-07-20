@@ -115,6 +115,9 @@ class Driver(object):
         self._worker_number = worker_number
         self._no_timeout = no_timeout
 
+        # overridable for testing.
+        self._server_process_constructor = server_process.ServerProcess
+
         self._driver_tempdir = None
         # WebKitTestRunner can report back subprocess crashes by printing
         # "#CRASHED - PROCESSNAME".  Since those can happen at any time
@@ -268,8 +271,8 @@ class Driver(object):
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
         self._crashed_process_name = None
         self._crashed_pid = None
-        self._server_process = server_process.ServerProcess(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
-
+        self._server_process = self._server_process_constructor(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
+        self._server_process.start()
 
     def stop(self):
         if self._server_process:

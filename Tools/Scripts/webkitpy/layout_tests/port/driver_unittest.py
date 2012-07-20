@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
 import unittest
 
 from webkitpy.common.system.systemhost_mock import MockSystemHost
@@ -112,7 +111,7 @@ class DriverTest(unittest.TestCase):
     def test_read_block(self):
         port = TestWebKitPort()
         driver = Driver(port, 0, pixel_tests=False)
-        driver._server_process = MockServerProcess([
+        driver._server_process = MockServerProcess(lines=[
             'ActualHash: foobar',
             'Content-Type: my_type',
             'Content-Transfer-Encoding: none',
@@ -127,7 +126,7 @@ class DriverTest(unittest.TestCase):
     def test_read_binary_block(self):
         port = TestWebKitPort()
         driver = Driver(port, 0, pixel_tests=True)
-        driver._server_process = MockServerProcess([
+        driver._server_process = MockServerProcess(lines=[
             'ActualHash: actual',
             'ExpectedHash: expected',
             'Content-Type: image/png',
@@ -145,7 +144,7 @@ class DriverTest(unittest.TestCase):
     def test_read_base64_block(self):
         port = TestWebKitPort()
         driver = Driver(port, 0, pixel_tests=True)
-        driver._server_process = MockServerProcess([
+        driver._server_process = MockServerProcess(lines=[
             'ActualHash: actual',
             'ExpectedHash: expected',
             'Content-Type: image/png',
@@ -234,6 +233,7 @@ class DriverTest(unittest.TestCase):
     def test_stop_cleans_up_properly(self):
         port = TestWebKitPort()
         driver = Driver(port, 0, pixel_tests=True)
+        driver._server_process_constructor = MockServerProcess
         driver.start(True, [])
         last_tmpdir = port._filesystem.last_tmpdir
         self.assertNotEquals(last_tmpdir, None)
@@ -243,17 +243,26 @@ class DriverTest(unittest.TestCase):
     def test_two_starts_cleans_up_properly(self):
         port = TestWebKitPort()
         driver = Driver(port, 0, pixel_tests=True)
+        driver._server_process_constructor = MockServerProcess
         driver.start(True, [])
         last_tmpdir = port._filesystem.last_tmpdir
         driver._start(True, [])
         self.assertFalse(port._filesystem.isdir(last_tmpdir))
 
+    def test_start_actually_starts(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=True)
+        driver._server_process_constructor = MockServerProcess
+        driver.start(True, [])
+        self.assertTrue(driver._server_process.started)
+
 
 class MockServerProcess(object):
-    def __init__(self, lines=None):
+    def __init__(self, port_obj=None, name=None, cmd=None, env=None, universal_newlines=False, lines=None):
         self.timed_out = False
         self.lines = lines or []
         self.crashed = False
+        self.started = False
 
     def has_crashed(self):
         return self.crashed
@@ -278,7 +287,7 @@ class MockServerProcess(object):
         return self.read_stdout_line(deadline), None
 
     def start(self):
-        return
+        self.started = True
 
     def stop(self, kill_directly=False):
         return
