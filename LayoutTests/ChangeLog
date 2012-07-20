@@ -1,3 +1,10 @@
+2012-07-20  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding platform-specific baseline that's required
+        after changes in r123145.
+
+        * platform/gtk/http/tests/security/cross-frame-access-put-expected.txt: Added.
+
 2012-07-20  Stephen Chenney  <schenney@chromium.org>
 
         Rebaseline failing test svg/as-image/svg-non-integer-scaled-image.html
