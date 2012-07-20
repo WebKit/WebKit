@@ -44,7 +44,7 @@ public:
     virtual ~WebVibrationClient() { }
 
 private:
-    virtual void vibrate(const uint64_t& vibrationTime) OVERRIDE;
+    virtual void vibrate(const unsigned long& vibrationTime) OVERRIDE;
     virtual void cancelVibration() OVERRIDE;
     virtual void vibrationDestroyed() OVERRIDE;
 

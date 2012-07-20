@@ -1,3 +1,13 @@
+2012-07-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix build break because of changing parameter type of
+        vibration virtual function on EFL port.
+
+        * WebProcess/WebCoreSupport/WebVibrationClient.cpp:
+        (WebKit::WebVibrationClient::vibrate):
+        * WebProcess/WebCoreSupport/WebVibrationClient.h:
+        (WebVibrationClient):
+
 2012-07-19  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [WK2] Add Vibration API integration to WebContext and WebPage

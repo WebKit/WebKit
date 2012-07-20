@@ -36,7 +36,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebVibrationClient::vibrate(const uint64_t& vibrationTime)
+void WebVibrationClient::vibrate(const unsigned long& vibrationTime)
 {
     WebProcess::shared().connection()->send(Messages::WebVibrationProxy::Vibrate(vibrationTime), m_page->pageID());
 }
