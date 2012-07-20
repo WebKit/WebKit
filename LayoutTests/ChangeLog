@@ -1,3 +1,25 @@
+2012-07-20  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: "ASSERTION FAILED: !m_requestFinished" hit in IDBRequest::dispatchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=86911
+
+        Reviewed by Tony Chang.
+
+        Added regression test based on repro steps in the bug.
+
+        * storage/indexeddb/request-continue-abort-expected.txt: Added.
+        * storage/indexeddb/request-continue-abort.html: Added.
+        * storage/indexeddb/resources/request-continue-abort.js: Added.
+        (test.request.onsuccess.request.onsuccess.request.onsuccess):
+        (test.request.onsuccess.request.onsuccess):
+        (test.request.onsuccess):
+        (test):
+        (onUpgrade):
+        (testCursor.request.onsuccess):
+        (testCursor.request.onerror):
+        (testCursor.transaction.onabort):
+        (testCursor):
+
 2012-07-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] svg/text rebaseline after new test fonts (part 3)

@@ -73,11 +73,9 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
     void markEarlyDeath();
-    bool resetReadyState(IDBTransaction*);
     void setCursorDetails(IDBCursorBackendInterface::CursorType, IDBCursor::Direction);
-    void setCursor(PassRefPtr<IDBCursor>);
+    void setPendingCursor(PassRefPtr<IDBCursor>);
     void finishCursor();
-    IDBAny* source();
     void abort();
 
     // IDBCallbacks
@@ -122,14 +120,14 @@ private:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
-    void setResultCursor(PassRefPtr<IDBCursor>, IDBCursorBackendInterface::CursorType);
+    PassRefPtr<IDBCursor> getResultCursor();
+    void setResultCursor(PassRefPtr<IDBCursor>);
 
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
 
     ReadyState m_readyState;
     bool m_requestAborted; // May be aborted by transaction then receive async onsuccess; ignore vs. assert.
-    bool m_requestFinished; // Is it possible that we'll fire any more events? If not, we're finished.
     bool m_cursorFinished;
     bool m_contextStopped;
     Vector<RefPtr<Event> > m_enqueuedEvents;
@@ -137,7 +135,7 @@ private:
     // Only used if the result type will be a cursor.
     IDBCursorBackendInterface::CursorType m_cursorType;
     IDBCursor::Direction m_cursorDirection;
-    RefPtr<IDBCursor> m_cursor;
+    RefPtr<IDBCursor> m_pendingCursor;
 
     EventTargetData m_eventTargetData;
 };
