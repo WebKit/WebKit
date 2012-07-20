@@ -935,6 +935,7 @@ SET(WebCore_SOURCES
     accessibility/AccessibilityMenuListOption.cpp
     accessibility/AccessibilityMenuListPopup.cpp
     accessibility/AccessibilityMockObject.cpp
+    accessibility/AccessibilityNodeObject.cpp
     accessibility/AccessibilityObject.cpp
     accessibility/AccessibilityProgressIndicator.cpp
     accessibility/AccessibilityRenderObject.cpp

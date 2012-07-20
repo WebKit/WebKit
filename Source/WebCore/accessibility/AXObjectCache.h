@@ -70,6 +70,7 @@ public:
     // For AX objects with elements that back them.
     AccessibilityObject* getOrCreate(RenderObject*);
     AccessibilityObject* getOrCreate(Widget*);
+    AccessibilityObject* getOrCreate(Node*);
 
     // used for objects without backing elements
     AccessibilityObject* getOrCreate(AccessibilityRole);
@@ -77,8 +78,10 @@ public:
     // will only return the AccessibilityObject if it already exists
     AccessibilityObject* get(RenderObject*);
     AccessibilityObject* get(Widget*);
+    AccessibilityObject* get(Node*);
     
     void remove(RenderObject*);
+    void remove(Node*);
     void remove(Widget*);
     void remove(AXID);
 
@@ -182,6 +185,7 @@ private:
     HashMap<AXID, RefPtr<AccessibilityObject> > m_objects;
     HashMap<RenderObject*, AXID> m_renderObjectMapping;
     HashMap<Widget*, AXID> m_widgetObjectMapping;
+    HashMap<Node*, AXID> m_nodeObjectMapping;
     HashSet<Node*> m_textMarkerNodes;
     static bool gAccessibilityEnabled;
     static bool gAccessibilityEnhancedUserInterfaceEnabled;
@@ -204,9 +208,11 @@ inline AXObjectCache::AXObjectCache(const Document* doc) : m_document(const_cast
 inline AXObjectCache::~AXObjectCache() { }
 inline AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page*) { return 0; }
 inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return 0; }
+inline AccessibilityObject* AXObjectCache::get(Node*) { return 0; }
 inline AccessibilityObject* AXObjectCache::get(Widget*) { return 0; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole) { return 0; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(RenderObject*) { return 0; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(Node*) { return 0; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return 0; }
 inline AccessibilityObject* AXObjectCache::rootObject() { return 0; }
 inline AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame*) { return 0; }
@@ -233,6 +239,7 @@ inline void AXObjectCache::postNotification(RenderObject*, AXNotification, bool 
 inline void AXObjectCache::postPlatformNotification(AccessibilityObject*, AXNotification) { }
 inline void AXObjectCache::remove(AXID) { }
 inline void AXObjectCache::remove(RenderObject*) { }
+inline void AXObjectCache::remove(Node*) { }
 inline void AXObjectCache::remove(Widget*) { }
 inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
 #endif

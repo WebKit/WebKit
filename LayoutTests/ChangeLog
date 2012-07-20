@@ -1,3 +1,19 @@
+2012-07-19  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Need AccessibilityObjects for nodes without renderers in canvas subtree
+        https://bugs.webkit.org/show_bug.cgi?id=87899
+
+        Reviewed by Chris Fleizach.
+
+        This new test adds a bunch of elements to a normal container and the same elements to
+        a canvas subtree, then it iterates over all of the accessible objects within each
+        container and makes sure they have identical roles. Because we know the nodes in the
+        canvas subtree don't have renderers, this successfully tests that AccessibilityNodeObjects
+        are getting created for these nodes.
+
+        * accessibility/canvas-accessibilitynodeobject-expected.txt: Added.
+        * accessibility/canvas-accessibilitynodeobject.html: Added.
+
 2012-07-19  Kent Tamura  <tkent@chromium.org>
 
         Form state restore: Need to identify a form by its content

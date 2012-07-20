@@ -34,6 +34,7 @@
 #include "AccessibilityListBox.cpp"
 #include "AccessibilityListBoxOption.cpp"
 #include "AccessibilityMediaControls.cpp"
+#include "AccessibilityNodeObject.cpp"
 #include "AccessibilityObject.cpp"
 #include "AccessibilityRenderObject.cpp"
 #include "AccessibilityScrollView.cpp"

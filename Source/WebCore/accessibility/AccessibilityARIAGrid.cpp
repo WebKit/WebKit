@@ -43,6 +43,15 @@ namespace WebCore {
 AccessibilityARIAGrid::AccessibilityARIAGrid(RenderObject* renderer)
     : AccessibilityTable(renderer)
 {
+}
+
+AccessibilityARIAGrid::~AccessibilityARIAGrid()
+{
+}
+
+void AccessibilityARIAGrid::init()
+{
+    AccessibilityTable::init();
 #if ACCESSIBILITY_TABLES
     m_isAccessibilityTable = true;
 #else
@@ -50,13 +59,11 @@ AccessibilityARIAGrid::AccessibilityARIAGrid(RenderObject* renderer)
 #endif
 }
 
-AccessibilityARIAGrid::~AccessibilityARIAGrid()
-{
-}
-
 PassRefPtr<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityARIAGrid(renderer));
+    AccessibilityARIAGrid* obj = new AccessibilityARIAGrid(renderer);
+    obj->init();
+    return adoptRef(obj);
 }
 
 bool AccessibilityARIAGrid::addChild(AccessibilityObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
