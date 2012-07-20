@@ -1,3 +1,18 @@
+2012-07-20  Tony Chang  <tony@chromium.org>
+
+        Baseline align text in the flakiness dashboard toolbar
+        https://bugs.webkit.org/show_bug.cgi?id=91784
+
+        Reviewed by Ojan Vafai.
+
+        Baseline align the flex items.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.css:
+        (.forms): Add box-align: baseline
+        (.forms > *): Use block display to force flex items rather than box.
+        (#tests-form): Add box-align: baseline
+        (#tests-form > *): Use block display to force flex items rather than box.
+
 2012-07-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123220.

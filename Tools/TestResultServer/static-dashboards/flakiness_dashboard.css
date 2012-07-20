@@ -49,19 +49,21 @@ label {
 }
 .forms {
     display: -webkit-box;
+    -webkit-box-align: baseline;
 }
 .forms > * {
-    display: -webkit-box;
+    display: block;
 }
 .forms span {
     padding: 0px 3px;
 }
 #tests-form {
     display: -webkit-box;
+    -webkit-box-align: baseline;
     -webkit-box-flex: 1;
 }
 #tests-form > * {
-    display: -webkit-box;
+    display: block;
 }
 #tests-input {
     display: -webkit-box;
