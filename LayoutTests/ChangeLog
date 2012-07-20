@@ -1,3 +1,52 @@
+2012-07-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] svg/text rebaseline after new test fonts (part 4)
+        https://bugs.webkit.org/show_bug.cgi?id=91905
+
+        Unreviewed.
+
+        Two tests, svg/text/foreignObject-text-clipping-bug.xml and
+        svg/text/scaling-font-with-geometric-precision.html, still have incorrect results.
+
+        This is not a regression because they were incorrect before, but had expected files with
+        the wrong results. Instead of updating wrong expectations, I kept them skipped but created
+        a new bug to track each one.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/svg/text/font-size-below-point-five-2-expected.png:
+        * platform/qt/svg/text/font-size-below-point-five-2-expected.txt:
+        * platform/qt/svg/text/font-size-below-point-five-expected.png:
+        * platform/qt/svg/text/font-size-below-point-five-expected.txt:
+        * platform/qt/svg/text/lengthAdjust-text-metrics-expected.txt:
+        * platform/qt/svg/text/modify-text-node-in-tspan-expected.png:
+        * platform/qt/svg/text/modify-text-node-in-tspan-expected.txt:
+        * platform/qt/svg/text/remove-text-node-from-tspan-expected.png:
+        * platform/qt/svg/text/remove-text-node-from-tspan-expected.txt:
+        * platform/qt/svg/text/remove-tspan-from-text-expected.png:
+        * platform/qt/svg/text/remove-tspan-from-text-expected.txt:
+        * platform/qt/svg/text/text-altglyph-01-b-expected.png:
+        * platform/qt/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/qt/svg/text/text-deco-01-b-expected.png:
+        * platform/qt/svg/text/text-deco-01-b-expected.txt:
+        * platform/qt/svg/text/text-fill-opacity-expected.png:
+        * platform/qt/svg/text/text-fill-opacity-expected.txt:
+        * platform/qt/svg/text/text-fonts-02-t-expected.png:
+        * platform/qt/svg/text/text-fonts-02-t-expected.txt:
+        * platform/qt/svg/text/text-gradient-positioning-expected.png:
+        * platform/qt/svg/text/text-gradient-positioning-expected.txt:
+        * platform/qt/svg/text/text-midpoint-split-bug-expected.png:
+        * platform/qt/svg/text/text-midpoint-split-bug-expected.txt:
+        * platform/qt/svg/text/text-path-middle-align-expected.txt:
+        * platform/qt/svg/text/text-repaint-rects-expected.png:
+        * platform/qt/svg/text/text-repaint-rects-expected.txt:
+        * platform/qt/svg/text/text-spacing-01-b-expected.png:
+        * platform/qt/svg/text/text-spacing-01-b-expected.txt:
+        * platform/qt/svg/text/text-tref-01-b-expected.png:
+        * platform/qt/svg/text/text-tref-01-b-expected.txt:
+        * platform/qt/svg/text/text-viewbox-rescale-expected.png:
+        * platform/qt/svg/text/text-viewbox-rescale-expected.txt:
+        * platform/qt/svg/text/textPathBoundsBug-expected.txt:
+
 2012-07-20  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: "ASSERTION FAILED: !m_requestFinished" hit in IDBRequest::dispatchEvent
