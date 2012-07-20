@@ -1,3 +1,40 @@
+2012-07-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] svg/text rebaseline after new test fonts (part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=91904
+
+        Unreviewed.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.png: Removed.
+        * platform/qt-5.0/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt: Removed.
+        * platform/qt-5.0/svg/text/text-overflow-ellipsis-svgfont-expected.png: Removed.
+        * platform/qt-5.0/svg/text/text-overflow-ellipsis-svgfont-expected.txt: Removed.
+        * platform/qt-5.0/svg/text/text-tselect-01-b-expected.png: Removed.
+        * platform/qt-5.0/svg/text/text-tselect-01-b-expected.txt: Removed.
+        * platform/qt-5.0/svg/text/text-tspan-01-b-expected.png: Removed.
+        * platform/qt-5.0/svg/text/text-tspan-01-b-expected.txt: Removed.
+        * platform/qt/svg/text/append-text-node-to-tspan-expected.png:
+        * platform/qt/svg/text/append-text-node-to-tspan-expected.txt:
+        * platform/qt/svg/text/ems-display-none-expected.png:
+        * platform/qt/svg/text/ems-display-none-expected.txt:
+        * platform/qt/svg/text/exs-display-none-expected.png:
+        * platform/qt/svg/text/exs-display-none-expected.txt:
+        * platform/qt/svg/text/foreignObject-repaint-expected.png:
+        * platform/qt/svg/text/foreignObject-repaint-expected.txt:
+        * platform/qt/svg/text/scaled-font-expected.png:
+        * platform/qt/svg/text/scaled-font-expected.txt:
+        * platform/qt/svg/text/text-overflow-ellipsis-svgfont-expected.png:
+        * platform/qt/svg/text/text-overflow-ellipsis-svgfont-expected.txt:
+        * platform/qt/svg/text/text-tselect-01-b-expected.png:
+        * platform/qt/svg/text/text-tselect-01-b-expected.txt:
+        * platform/qt/svg/text/text-tspan-01-b-expected.png:
+        * platform/qt/svg/text/text-tspan-01-b-expected.txt:
+        * platform/qt/svg/text/text-ws-01-t-expected.png:
+        * platform/qt/svg/text/text-ws-01-t-expected.txt:
+        * platform/qt/svg/text/text-ws-02-t-expected.png:
+        * platform/qt/svg/text/text-ws-02-t-expected.txt:
+
 2012-07-20  Andrew Scherkus  <scherkus@chromium.org>
 
         [chromium] Unreviewed rebaselined due to r123259.
