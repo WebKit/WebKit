@@ -1,3 +1,23 @@
+2012-07-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Make WTR use the same color palette as DRT
+        https://bugs.webkit.org/show_bug.cgi?id=91870
+
+        Reviewed by Noam Rosenthal.
+
+        Make sure that WebKitTestRunner and DumpRenderTree use the same palette: the
+        standard from QWindowsStyle.
+
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+        (WTR::activateFonts): Moved code to platformInitialize since setting style is not
+        exactly font related.
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WTR::InjectedBundle::platformInitialize): Force the usage of the style's
+        palette.  Because at this point QApplication was already instantiated, the
+        default palette was already initialized to be the system one, so we need to
+        explicitly set the palette to be the standard from style. This is not needed in
+        DRT because there we set the style before instantiating QApplication.
+
 2012-07-20  Tony Chang  <tony@chromium.org>
 
         Baseline align text in the flakiness dashboard toolbar

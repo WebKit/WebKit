@@ -26,8 +26,9 @@
 
 #include "config.h"
 #include "InjectedBundle.h"
+#include <QApplication>
 #include <QByteArray>
-#include <QtGlobal>
+#include <QWindowsStyle>
 #include <stdio.h>
 #include <stdlib.h>
 #include <wtf/AlwaysInline.h>
@@ -69,6 +70,12 @@ static void crashHook()
 
 void InjectedBundle::platformInitialize(WKTypeRef)
 {
+    QWindowsStyle* styleForTests = new QWindowsStyle;
+    QApplication::setStyle(styleForTests);
+    // Force Qt to use the style's standard palette, instead of platform default palette. This is needed
+    // because we are setting the style after QApplication is instantiated.
+    QApplication::setPalette(styleForTests->standardPalette());
+
     if (qgetenv("QT_WEBKIT2_DEBUG") == "1")
         return;
 
