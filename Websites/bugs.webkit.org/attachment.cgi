@@ -393,9 +393,12 @@ sub prettyPatch
     print $cgi->header(-type => 'text/html',
                        -expires => '+3M');
 
+    my $orig_path = $ENV{'PATH'};
+    $ENV{'PATH'} = "/usr/bin:" . $ENV{'PATH'};
     my @prettyargs = ("-I", "/var/www/html/PrettyPatch", "/var/www/html/PrettyPatch/prettify.rb", "--html-exceptions");
     my $r = Apache2::RequestUtil->request;
     my ($in, $out, $err) = $r->spawn_proc_prog("/usr/bin/ruby", \@prettyargs);
+    $ENV{'PATH'} = $orig_path;
     print $in $attachment->data;
     close($in);
     while (<$out>) {
