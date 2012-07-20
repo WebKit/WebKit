@@ -4,6 +4,7 @@
 #if ENABLE(INPUT_TYPE_COLOR)
 
 #include "ColorChooser.h"
+#include "IntRect.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -17,6 +18,7 @@ public:
 
     virtual void didChooseColor(const Color&) = 0;
     virtual void didEndChooser() = 0;
+    virtual IntRect elementRectRelativeToWindow() const = 0;
 };
 
 } // namespace WebCore

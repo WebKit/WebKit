@@ -46,6 +46,7 @@ public:
     // ColorChooserClient implementation.
     virtual void didChooseColor(const Color&) OVERRIDE;
     virtual void didEndChooser() OVERRIDE;
+    virtual IntRect elementRectRelativeToWindow() const OVERRIDE;
 
 private:
     ColorInputType(HTMLInputElement* element) : BaseClickableWithKeyInputType(element) { }

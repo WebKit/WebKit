@@ -1,3 +1,23 @@
+2012-07-20  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        ColorChooserClient should expose the element's location
+        https://bugs.webkit.org/show_bug.cgi?id=91767
+
+        Reviewed by Kent Tamura.
+
+        The rationale is that the chrome client could have an interest in placing the picker next to
+        the element for usability reasons.
+
+        No new tests as there is not much logic here: Just exposing a geometry information to WebKit.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::elementRectRelativeToWindow):
+        (WebCore):
+        * html/ColorInputType.h:
+        (ColorInputType):
+        * platform/ColorChooserClient.h:
+        (ColorChooserClient):
+
 2012-07-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [WK2] WebIntents doesn't build if mutation observers is disabled

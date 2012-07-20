@@ -38,6 +38,8 @@
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "MouseEvent.h"
+#include "RenderObject.h"
+#include "RenderView.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
 
@@ -193,6 +195,13 @@ HTMLElement* ColorInputType::shadowColorSwatch() const
 {
     ShadowRoot* shadow = element()->userAgentShadowRoot();
     return shadow ? toHTMLElement(shadow->firstChild()->firstChild()) : 0;
+}
+
+IntRect ColorInputType::elementRectRelativeToWindow() const
+{
+    RenderObject* renderer = element()->renderer();
+    ASSERT(renderer);
+    return pixelSnappedIntRect(renderer->view()->frameView()->contentsToWindow(renderer->absoluteBoundingBoxRect()));
 }
 
 } // namespace WebCore
