@@ -1,3 +1,23 @@
+2012-07-20  Vincent Scheib  <scheib@chromium.org>
+
+        Move pointer lock test resources to http/tests/resources in preparation for adding new tests to http.
+        https://bugs.webkit.org/show_bug.cgi?id=91882
+
+        Reviewed by Adrienne Walker.
+
+        * http/tests/resources/pointer-lock/pointer-lock-test-harness.js: Renamed from LayoutTests/pointer-lock/resources/pointer-lock-test-harness.js.
+        * pointer-lock/bug90391-move-then-window-open-crash.html:
+        * pointer-lock/lock-already-locked.html:
+        * pointer-lock/lock-element-not-in-dom.html:
+        * pointer-lock/lock-fail-responses.html:
+        * pointer-lock/locked-element-iframe-removed-from-dom.html:
+        * pointer-lock/locked-element-removed-from-dom.html:
+        * pointer-lock/mouse-event-api.html:
+        * pointer-lock/mouse-event-delivery.html:
+        * pointer-lock/pointer-lock-api.html:
+        * pointer-lock/pointerlockchange-pointerlockerror-events.html:
+        * pointer-lock/pointerlocklost-event.html:
+
 2012-07-20  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding platform-specific baseline for
