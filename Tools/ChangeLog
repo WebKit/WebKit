@@ -1,3 +1,17 @@
+2012-07-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WTR] Add *explicit* keyword to constructor which has a parameter
+        https://bugs.webkit.org/show_bug.cgi?id=91745
+
+        Reviewed by Adam Barth.
+
+        Add *explicit* keyword to contructor which has a parameter in order to avoid implicit type conversion.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        (EventSenderProxy):
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation):
+
 2012-07-19  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] [WK2] Add methods to get/set a custom text encoding

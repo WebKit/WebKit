@@ -45,7 +45,7 @@ struct WTREventQueueItem;
 
 class EventSenderProxy {
 public:
-    EventSenderProxy(TestController*);
+    explicit EventSenderProxy(TestController*);
 
     void mouseDown(unsigned button, WKEventModifiers);
     void mouseUp(unsigned button, WKEventModifiers);

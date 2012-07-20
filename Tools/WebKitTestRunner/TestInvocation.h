@@ -35,7 +35,7 @@ namespace WTR {
 class TestInvocation {
     WTF_MAKE_NONCOPYABLE(TestInvocation);
 public:
-    TestInvocation(const std::string& pathOrURL);
+    explicit TestInvocation(const std::string& pathOrURL);
     ~TestInvocation();
 
     void setIsPixelTest(const std::string& expectedPixelHash);
