@@ -278,8 +278,9 @@ private:
     FormKeyGenerator() { }
 
     typedef HashMap<HTMLFormElement*, AtomicString> FormToKeyMap;
+    typedef HashMap<String, unsigned> FormSignatureToNextIndexMap;
     FormToKeyMap m_formToKeyMap;
-    HashSet<AtomicString> m_existingKeys;
+    FormSignatureToNextIndexMap m_formSignatureToNextIndexMap;
 };
 
 static inline void recordFormStructure(const HTMLFormElement& form, StringBuilder& builder)
@@ -304,10 +305,9 @@ static inline void recordFormStructure(const HTMLFormElement& form, StringBuilde
     builder.append("]");
 }
 
-static inline AtomicString createKey(HTMLFormElement* form, unsigned index)
+static inline String formSignature(const HTMLFormElement& form)
 {
-    ASSERT(form);
-    KURL actionURL = form->getURLAttribute(actionAttr);
+    KURL actionURL = form.getURLAttribute(actionAttr);
     // Remove the query part because it might contain volatile parameters such
     // as a session key.
     actionURL.setQuery(String());
@@ -315,11 +315,8 @@ static inline AtomicString createKey(HTMLFormElement* form, unsigned index)
     if (!actionURL.isEmpty())
         builder.append(actionURL.string());
 
-    recordFormStructure(*form, builder);
-
-    builder.append(" #");
-    builder.append(String::number(index));
-    return builder.toAtomicString();
+    recordFormStructure(form, builder);
+    return builder.toString();
 }
 
 AtomicString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& control)
@@ -333,13 +330,18 @@ AtomicString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& co
     if (it != m_formToKeyMap.end())
         return it->second;
 
-    AtomicString candidateKey;
-    unsigned index = 0;
-    do {
-        candidateKey = createKey(form, index++);
-    } while (!m_existingKeys.add(candidateKey).isNewEntry);
-    m_formToKeyMap.add(form, candidateKey);
-    return candidateKey;
+    String signature = formSignature(*form);
+    ASSERT(!signature.isNull());
+    FormSignatureToNextIndexMap::AddResult result = m_formSignatureToNextIndexMap.add(signature, 0);
+    unsigned nextIndex = result.iterator->second++;
+
+    StringBuilder builder;
+    builder.append(signature);
+    builder.append(" #");
+    builder.append(String::number(nextIndex));
+    AtomicString formKey = builder.toAtomicString();
+    m_formToKeyMap.add(form, formKey);
+    return formKey;
 }
 
 void FormKeyGenerator::willDeleteForm(HTMLFormElement* form)
@@ -350,7 +352,6 @@ void FormKeyGenerator::willDeleteForm(HTMLFormElement* form)
     FormToKeyMap::iterator it = m_formToKeyMap.find(form);
     if (it == m_formToKeyMap.end())
         return;
-    m_existingKeys.remove(it->second);
     m_formToKeyMap.remove(it);
 }
 
