@@ -223,8 +223,6 @@ public:
 #if ENABLE(WORKERS)
     static bool shouldPauseDedicatedWorkerOnStart(ScriptExecutionContext*);
     static void didStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*, const KURL&);
-    static void didCreateWorker(ScriptExecutionContext*, intptr_t id, const String& url, bool isSharedWorker);
-    static void didDestroyWorker(ScriptExecutionContext*, intptr_t id);
     static void workerContextTerminated(ScriptExecutionContext*, WorkerContextProxy*);
     static void willEvaluateWorkerScript(WorkerContext*, int workerThreadStartMode);
 #endif
@@ -389,8 +387,6 @@ private:
 #if ENABLE(WORKERS)
     static bool shouldPauseDedicatedWorkerOnStartImpl(InstrumentingAgents*);
     static void didStartWorkerContextImpl(InstrumentingAgents*, WorkerContextProxy*, const KURL&);
-    static void didCreateWorkerImpl(InstrumentingAgents*, intptr_t id, const String& url, bool isSharedWorker);
-    static void didDestroyWorkerImpl(InstrumentingAgents*, intptr_t id);
     static void workerContextTerminatedImpl(InstrumentingAgents*, WorkerContextProxy*);
 #endif
 
@@ -1247,24 +1243,6 @@ inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionConte
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         didStartWorkerContextImpl(instrumentingAgents, proxy, url);
-#endif
-}
-
-inline void InspectorInstrumentation::didCreateWorker(ScriptExecutionContext* context, intptr_t id, const String& url, bool isSharedWorker)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didCreateWorkerImpl(instrumentingAgents, id, url, isSharedWorker);
-#endif
-}
-
-inline void InspectorInstrumentation::didDestroyWorker(ScriptExecutionContext* context, intptr_t id)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didDestroyWorkerImpl(instrumentingAgents, id);
 #endif
 }
 

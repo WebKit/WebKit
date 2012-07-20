@@ -973,18 +973,6 @@ void InspectorInstrumentation::didStartWorkerContextImpl(InstrumentingAgents* in
         workerAgent->didStartWorkerContext(workerContextProxy, url);
 }
 
-void InspectorInstrumentation::didCreateWorkerImpl(InstrumentingAgents* instrumentingAgents, intptr_t id, const String& url, bool isSharedWorker)
-{
-    if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
-        inspectorAgent->didCreateWorker(id, url, isSharedWorker);
-}
-
-void InspectorInstrumentation::didDestroyWorkerImpl(InstrumentingAgents* instrumentingAgents, intptr_t id)
-{
-    if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
-        inspectorAgent->didDestroyWorker(id);
-}
-
 void InspectorInstrumentation::willEvaluateWorkerScript(WorkerContext* workerContext, int workerThreadStartMode)
 {
     if (workerThreadStartMode != PauseWorkerContextOnStart)

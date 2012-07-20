@@ -77,7 +77,6 @@ InjectedScriptHost::InjectedScriptHost()
 #endif
     , m_domStorageAgent(0)
     , m_domAgent(0)
-    , m_lastWorkerId(1 << 31) // Distinguish ids of fake workers from real ones, to minimize the chances they overlap.
 {
     m_defaultInspectableObject = adoptPtr(new InspectableObject());
 }
@@ -163,25 +162,6 @@ String InjectedScriptHost::storageIdImpl(Storage* storage)
         return m_domStorageAgent->storageId(storage);
     return String();
 }
-
-#if ENABLE(WORKERS)
-long InjectedScriptHost::nextWorkerId()
-{
-    return ++m_lastWorkerId;
-}
-
-void InjectedScriptHost::didCreateWorker(long id, const String& url, bool isSharedWorker)
-{
-    if (m_inspectorAgent)
-        m_inspectorAgent->didCreateWorker(static_cast<int>(id), url, isSharedWorker);
-}
-
-void InjectedScriptHost::didDestroyWorker(long id)
-{
-    if (m_inspectorAgent)
-        m_inspectorAgent->didDestroyWorker(static_cast<int>(id));
-}
-#endif // ENABLE(WORKERS)
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 ScriptDebugServer& InjectedScriptHost::scriptDebugServer()

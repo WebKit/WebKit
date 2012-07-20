@@ -55,14 +55,8 @@ AbstractWorker::~AbstractWorker()
 {
 }
 
-void AbstractWorker::onDestroyWorker()
-{
-    InspectorInstrumentation::didDestroyWorker(scriptExecutionContext(), asID());
-}
-
 void AbstractWorker::contextDestroyed()
 {
-    onDestroyWorker();
     ActiveDOMObject::contextDestroyed(); 
 }
 

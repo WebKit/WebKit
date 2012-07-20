@@ -45,7 +45,6 @@ class Frame;
 class InjectedScriptManager;
 class InspectorFrontend;
 class InspectorObject;
-class InspectorWorkerResource;
 class InstrumentingAgents;
 class KURL;
 class Page;
@@ -82,11 +81,6 @@ public:
     void domContentLoadedEventFired();
     bool didCommitLoadFired() { return m_didCommitLoadFired; }
 
-#if ENABLE(WORKERS)
-    void didCreateWorker(intptr_t, const String& url, bool isSharedWorker);
-    void didDestroyWorker(intptr_t);
-#endif
-
     bool hasFrontend() const { return m_frontend; }
 
     // Generic code called from custom implementations.
@@ -115,10 +109,6 @@ private:
     pair<RefPtr<TypeBuilder::Runtime::RemoteObject>, RefPtr<InspectorObject> > m_pendingInspectData;
     typedef HashMap<String, String> InjectedScriptForOriginMap;
     InjectedScriptForOriginMap m_injectedScriptForOrigin;
-#if ENABLE(WORKERS)
-    typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;
-    WorkersMap m_workers;
-#endif
     bool m_didCommitLoadFired;
 };
 

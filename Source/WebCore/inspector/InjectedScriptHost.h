@@ -109,11 +109,6 @@ public:
     String databaseIdImpl(Database*);
 #endif
     String storageIdImpl(Storage*);
-#if ENABLE(WORKERS)
-    long nextWorkerId();
-    void didCreateWorker(long id, const String& url, bool isSharedWorker);
-    void didDestroyWorker(long id);
-#endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptDebugServer& scriptDebugServer();
@@ -132,7 +127,6 @@ private:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorDebuggerAgent* m_debuggerAgent;
 #endif
-    long m_lastWorkerId;
     Vector<OwnPtr<InspectableObject> > m_inspectedObjects;
     OwnPtr<InspectableObject> m_defaultInspectableObject;
 };

@@ -882,20 +882,6 @@ WebInspector.bringToFront = function()
     InspectorFrontendHost.bringToFront();
 }
 
-WebInspector.didCreateWorker = function()
-{
-    var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
-    if (workersPane)
-        workersPane.addWorker.apply(workersPane, arguments);
-}
-
-WebInspector.didDestroyWorker = function()
-{
-    var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
-    if (workersPane)
-        workersPane.removeWorker.apply(workersPane, arguments);
-}
-
 /**
  * @param {string=} messageLevel
  * @param {boolean=} showConsole

@@ -45,7 +45,6 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorState.h"
 #include "InspectorValues.h"
-#include "InspectorWorkerResource.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "ResourceRequest.h"
@@ -113,22 +112,11 @@ void InspectorAgent::didCommitLoad()
 {
     m_didCommitLoadFired = true;
     m_injectedScriptManager->discardInjectedScripts();
-#if ENABLE(WORKERS)
-    m_workers.clear();
-#endif
 }
 
 void InspectorAgent::enable(ErrorString*)
 {
     m_state->setBoolean(InspectorAgentState::inspectorAgentEnabled, true);
-
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
-    WorkersMap::iterator workersEnd = m_workers.end();
-    for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
-        InspectorWorkerResource* worker = it->second.get();
-        m_frontend->inspector()->didCreateWorker(static_cast<int>(worker->id()), worker->url(), worker->isSharedWorker());
-    }
-#endif
 
     if (m_pendingInspectData.first)
         inspect(m_pendingInspectData.first, m_pendingInspectData.second);
@@ -152,36 +140,6 @@ bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& re
 {
     return loader->frame() == m_inspectedPage->mainFrame() && requestUrl == loader->requestURL();
 }
-
-#if ENABLE(WORKERS)
-void InspectorAgent::didCreateWorker(intptr_t id, const String& url, bool isSharedWorker)
-{
-    if (!developerExtrasEnabled())
-        return;
-
-    RefPtr<InspectorWorkerResource> workerResource(InspectorWorkerResource::create(id, url, isSharedWorker));
-    m_workers.set(id, workerResource);
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (m_inspectedPage && m_frontend && m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
-        m_frontend->inspector()->didCreateWorker(static_cast<int>(id), url, isSharedWorker);
-#endif
-}
-
-void InspectorAgent::didDestroyWorker(intptr_t id)
-{
-    if (!developerExtrasEnabled())
-        return;
-
-    WorkersMap::iterator workerResource = m_workers.find(id);
-    if (workerResource == m_workers.end())
-        return;
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (m_inspectedPage && m_frontend && m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
-        m_frontend->inspector()->didDestroyWorker(static_cast<int>(id));
-#endif
-    m_workers.remove(workerResource);
-}
-#endif // ENABLE(WORKERS)
 
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
 {

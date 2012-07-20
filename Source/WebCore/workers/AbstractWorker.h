@@ -71,7 +71,6 @@ namespace WebCore {
         virtual void derefEventTarget() { deref(); }
         virtual EventTargetData* eventTargetData();
         virtual EventTargetData* ensureEventTargetData();
-        void onDestroyWorker();
         
         EventTargetData m_eventTargetData;
     };

@@ -155,8 +155,6 @@ WebInspector.showConsole = function() {}
  */
 WebInspector.evaluateInConsole = function(expression, showResultOnly) {}
 
-var InjectedFakeWorker = function() {}
-
 WebInspector.queryParamsObject = {}
 
 WebInspector.Events = {

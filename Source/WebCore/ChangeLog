@@ -1,3 +1,51 @@
+2012-07-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: disable fake workers inspection.
+        https://bugs.webkit.org/show_bug.cgi?id=91867
+
+        Reviewed by Vsevolod Vlasov.
+
+        'Fake workers' is unreliable error-prone way to debug workers. There are a
+        lot of frameworks supporting it. Inspector should not do that since it has a more
+        powerful native worker inspection capabilities. Port owners should enable it
+        in case they want to provide workers debugging.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        * inspector/InjectedScriptHost.h:
+        (InjectedScriptHost):
+        * inspector/InjectedScriptHost.idl:
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::enable):
+        * inspector/InspectorAgent.h:
+        (WebCore):
+        (InspectorAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * inspector/front-end/InjectedFakeWorker.js: Removed.
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkersSidebarPane):
+        * inspector/front-end/externs.js:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::contextDestroyed):
+        * workers/AbstractWorker.h:
+        (AbstractWorker):
+        * workers/SharedWorker.cpp:
+        (WebCore::SharedWorker::create):
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+
 2012-07-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123182.

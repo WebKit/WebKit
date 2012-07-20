@@ -75210,10 +75210,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\InjectedFakeWorker.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\inspector.css"
 					>
 				</File>

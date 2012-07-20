@@ -75,7 +75,6 @@ localizedStrings["Aggregated Time"] = "Aggregated Time";
 localizedStrings["All Nodes"] = "All Nodes";
 localizedStrings["All Panels"] = "All Panels";
 localizedStrings["All"] = "All";
-localizedStrings["Allow debugging workers. Enabling this option will replace native workers with the iframe-based JavaScript implementation"] = "Allow debugging workers. Enabling this option will replace native workers with the iframe-based JavaScript implementation";
 localizedStrings["Always enable"] = "Always enable";
 localizedStrings["An error occurred trying to\nread the “%s” table."] = "An error occurred trying to\nread the “%s” table.";
 localizedStrings["An unexpected error %s occurred."] = "An unexpected error %s occurred.";

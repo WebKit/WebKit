@@ -30,86 +30,6 @@
 
 /**
  * @constructor
- * @extends {WebInspector.SidebarPane}
- */
-WebInspector.WorkersSidebarPane = function()
-{
-    WebInspector.SidebarPane.call(this, WebInspector.UIString("Workers"));
-
-    this._workers = {};
-
-    this._enableWorkersCheckbox = new WebInspector.Checkbox(
-        WebInspector.UIString("Debug"),
-        "sidebar-pane-subtitle",
-        WebInspector.UIString("Allow debugging workers. Enabling this option will replace native workers with the iframe-based JavaScript implementation"));
-    this.titleElement.insertBefore(this._enableWorkersCheckbox.element, this.titleElement.firstChild);
-
-    this._enableWorkersCheckbox.addEventListener(this._onTriggerInstrument.bind(this));
-    this._enableWorkersCheckbox.checked = false;
-
-    this._listElement = document.createElement("ol");
-    this._listElement.className = "workers-list";
-
-    this.bodyElement.appendChild(this._listElement);
-    this._treeOutline = new TreeOutline(this._listElement);
-}
-
-WebInspector.WorkersSidebarPane.prototype = {
-    addWorker: function(id, url, isShared)
-    {
-        if (id in this._workers)
-            return;
-        var worker = new WebInspector.Worker(id, url, isShared);
-        this._workers[id] = worker;
-
-        var title = WebInspector.linkifyURLAsNode(url, WebInspector.displayNameForURL(url), "worker-item", true, url);
-        this._treeOutline.appendChild(new TreeElement(title, worker, false));
-    },
-
-    removeWorker: function(id)
-    {
-        if (id in this._workers) {
-            this._treeOutline.removeChild(this._treeOutline.getCachedTreeElement(this._workers[id]));
-            delete this._workers[id];
-        }
-    },
-
-    _setInstrumentation: function(enabled)
-    {
-        if (!enabled === !this._fakeWorkersScriptIdentifier)
-            return;
-
-        if (enabled) {
-            this._enableWorkersCheckbox.disabled = true;
-            function callback(error, identifier)
-            {
-                this._fakeWorkersScriptIdentifier = identifier;
-                this._enableWorkersCheckbox.disabled = false;
-            }
-            PageAgent.addScriptToEvaluateOnLoad("(" + InjectedFakeWorker + ")", callback.bind(this));
-        } else {
-            PageAgent.removeScriptToEvaluateOnLoad(this._fakeWorkersScriptIdentifier);
-            this._fakeWorkersScriptIdentifier = null;
-        }
-    },
-
-    reset: function()
-    {
-        this._setInstrumentation(this._enableWorkersCheckbox.checked);
-        this._treeOutline.removeChildren();
-        this._workers = {};
-    },
-
-    _onTriggerInstrument: function(event)
-    {
-        this._setInstrumentation(this._enableWorkersCheckbox.checked);
-    }
-};
-
-WebInspector.WorkersSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
-
-/**
- * @constructor
  */
 WebInspector.Worker = function(id, url, shared)
 {
@@ -122,7 +42,7 @@ WebInspector.Worker = function(id, url, shared)
  * @constructor
  * @extends {WebInspector.SidebarPane}
  */
-WebInspector.WorkerListSidebarPane = function(workerManager)
+WebInspector.WorkersSidebarPane = function(workerManager)
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Workers"));
 
@@ -159,7 +79,7 @@ WebInspector.WorkerListSidebarPane = function(workerManager)
     workerManager.addEventListener(WebInspector.WorkerManager.Events.WorkersCleared, this._workersCleared, this);
 }
 
-WebInspector.WorkerListSidebarPane.prototype = {
+WebInspector.WorkersSidebarPane.prototype = {
     _workerAdded: function(event)
     {
         this._addWorker(event.data.workerId, event.data.url, event.data.inspectorConnected);
@@ -201,4 +121,4 @@ WebInspector.WorkerListSidebarPane.prototype = {
     }
 }
 
-WebInspector.WorkerListSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+WebInspector.WorkersSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;

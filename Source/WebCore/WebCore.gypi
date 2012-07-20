@@ -6319,7 +6319,6 @@
             'inspector/front-end/InspectorFrontendAPI.js',
             'inspector/front-end/InspectorFrontendHostStub.js',
             'inspector/front-end/InspectorView.js',
-            'inspector/front-end/InjectedFakeWorker.js',
             'inspector/front-end/inspector.js',
             'inspector/front-end/JavaScriptContextManager.js',
             'inspector/front-end/JavaScriptFormatter.js',

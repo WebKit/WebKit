@@ -103,9 +103,8 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
 
     if (Preferences.exposeWorkersInspection && !WebInspector.WorkerManager.isWorkerFrontend()) {
         WorkerAgent.setWorkerInspectionEnabled(true);
-        this.sidebarPanes.workerList = new WebInspector.WorkerListSidebarPane(WebInspector.workerManager);
-    } else
-        this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
+        this.sidebarPanes.workerList = new WebInspector.WorkersSidebarPane(WebInspector.workerManager);
+    }
 
     this._debugSidebarContentsElement = document.createElement("div");
     this._debugSidebarContentsElement.id = "scripts-debug-sidebar-contents";
@@ -364,8 +363,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateScriptViewStatusBarItems();
         this.sidebarPanes.jsBreakpoints.reset();
         this.sidebarPanes.watchExpressions.reset();
-        if (!preserveItems && this.sidebarPanes.workers)
-            this.sidebarPanes.workers.reset();
 
         var uiSourceCodes = this._workspace.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)

@@ -28,20 +28,6 @@
                     { "name": "object", "$ref": "Runtime.RemoteObject" },
                     { "name": "hints", "type": "object" }
                 ]
-            },
-            {
-                "name": "didCreateWorker",
-                "parameters": [
-                    { "name": "id", "type": "integer" },
-                    { "name": "url", "type": "string" },
-                    { "name": "isShared", "type": "boolean" }
-                ]
-            },
-            {
-                "name": "didDestroyWorker",
-                "parameters": [
-                    { "name": "id", "type": "integer" }
-                ]
             }
         ]
     },

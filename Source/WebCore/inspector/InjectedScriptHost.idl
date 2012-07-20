@@ -47,11 +47,6 @@ module core {
 
         [Custom] DOMString databaseId(in DOMObject database);
         [Custom] DOMString storageId(in DOMObject storage);
-
-#if defined(ENABLE_WORKERS) && ENABLE_WORKERS
-        void didCreateWorker(in long id, in DOMString url, in boolean isFakeWorker);
-        void didDestroyWorker(in long id);
-        long nextWorkerId();
-#endif
     };
 }
+

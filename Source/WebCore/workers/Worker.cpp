@@ -75,8 +75,6 @@ PassRefPtr<Worker> Worker::create(ScriptExecutionContext* context, const String&
 #endif
     worker->m_scriptLoader->loadAsynchronously(context, scriptURL, DenyCrossOriginRequests, worker.get());
 
-    InspectorInstrumentation::didCreateWorker(context, worker->asID(), scriptURL.string(), false);
-
     return worker.release();
 }
 
