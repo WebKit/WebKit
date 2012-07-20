@@ -56,6 +56,7 @@
 #include "PageWidgetDelegate.h"
 #include "PlatformGestureCurveTarget.h"
 #include "UserMediaClientImpl.h"
+#include "WebViewBenchmarkSupportImpl.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -106,6 +107,7 @@ class WebFrameImpl;
 class WebGestureEvent;
 class WebPagePopupImpl;
 class WebPrerendererClient;
+class WebViewBenchmarkSupport;
 class WebImage;
 class WebKeyboardEvent;
 class WebMouseEvent;
@@ -295,6 +297,7 @@ public:
 #endif
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&);
     virtual void renderingStats(WebRenderingStats&) const;
+    virtual WebViewBenchmarkSupport* benchmarkSupport();
 
     // WebLayerTreeViewClient
     virtual void willBeginFrame();
@@ -507,6 +510,7 @@ public:
         return m_currentInputEvent;
     }
 
+    WebCore::GraphicsLayer* rootGraphicsLayer();
 #if USE(ACCELERATED_COMPOSITING)
     bool allowsAcceleratedCompositing();
     void setRootGraphicsLayer(WebCore::GraphicsLayer*);
@@ -788,6 +792,8 @@ private:
     // If set, the WebView is in fullscreen mode for an element in this frame.
     RefPtr<WebCore::Frame> m_fullScreenFrame;
     bool m_isCancelingFullScreen;
+
+    WebViewBenchmarkSupportImpl m_benchmarkSupport;
 
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;

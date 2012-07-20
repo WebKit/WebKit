@@ -407,6 +407,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_tabsToLinks(false)
     , m_dragScrollTimer(adoptPtr(new DragScrollTimer))
     , m_isCancelingFullScreen(false)
+    , m_benchmarkSupport(this)
 #if USE(ACCELERATED_COMPOSITING)
     , m_rootGraphicsLayer(0)
     , m_isAcceleratedCompositingActive(false)
@@ -753,6 +754,11 @@ void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor
         m_layerTreeView.startPageScaleAnimation(scroll, useAnchor, newScale, durationInSeconds);
 }
 #endif
+
+WebViewBenchmarkSupport* WebViewImpl::benchmarkSupport()
+{
+    return &m_benchmarkSupport;
+}
 
 bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)
 {
@@ -3499,6 +3505,11 @@ void WebViewImpl::setBackgroundColor(const WebCore::Color& color)
     WebColor webDocumentBackgroundColor = documentBackgroundColor.rgb();
     m_nonCompositedContentHost->setBackgroundColor(documentBackgroundColor);
     m_layerTreeView.setBackgroundColor(webDocumentBackgroundColor);
+}
+
+WebCore::GraphicsLayer* WebViewImpl::rootGraphicsLayer()
+{
+    return m_rootGraphicsLayer;
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)

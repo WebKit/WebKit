@@ -52,6 +52,7 @@ class WebNode;
 class WebPageOverlay;
 class WebPermissionClient;
 class WebPrerendererClient;
+class WebViewBenchmarkSupport;
 class WebRange;
 class WebSettings;
 class WebSpellCheckClient;
@@ -456,6 +457,10 @@ public:
     // Fills in a WebRenderingStats struct containing information about the state of the compositor.
     // This call is relatively expensive in threaded mode as it blocks on the compositor thread.
     virtual void renderingStats(WebRenderingStats&) const { }
+
+    // Benchmarking support --------------------------------------------
+
+    virtual WebViewBenchmarkSupport* benchmarkSupport() { return 0; }
 
     // Visibility -----------------------------------------------------------
 
