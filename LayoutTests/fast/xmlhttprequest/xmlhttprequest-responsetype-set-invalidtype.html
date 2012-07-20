@@ -1,0 +1,20 @@
+<html>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description('This test checks if setting non-supported type does not throw an exception');
+
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'resources/plist.app', true);
+
+// Setting invalid type should not throw an exception.
+shouldNotThrow('xhr.responseType = "dkjdfkjdfkj"');
+
+// Setting invalid type doesn not change the responseType value.
+shouldBeEqualToString('xhr.responseType = "text"; xhr.responseType = "asdfasdfasd"; xhr.responseType', 'text');
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>

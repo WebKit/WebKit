@@ -138,13 +138,6 @@ function runTest() {
         } catch(e) {
             testFailed("unable to set xhr.responseType to a valid value " + e + ".");
         }
-
-        // Make sure exception is thrown if responseType is set to invalid value.
-        try {
-            xhr.responseType = "dkjdfkjdfkj";
-        } catch(e) {
-            testPassed("exception correctly thrown when xhr.responseType is set to invalid value : " + e + ".");
-        }
     } catch(e) {
         testFailed("Caught exception " + e + ".");
     }
