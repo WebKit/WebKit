@@ -562,15 +562,16 @@ body.drawer-visible #main-panels {
 .glyph {
     position: absolute;
     top: -1px;
+    bottom: 1px;
     left: 0;
     right: 0;
-    bottom: 0;
     background-color: rgba(0, 0, 0, 0.75);
     z-index: 1;
 }
 
 .glyph.shadow {
-    top: 1px;
+    top: 0;
+    bottom: 0;
     background-color: white !important;
     z-index: 0;
 }
@@ -593,6 +594,10 @@ button.status-bar-item {
     width: 32px;
     border-left: 1px solid rgb(202, 202, 202);
     border-right: 1px solid rgb(202, 202, 202);
+}
+
+.status-bar button.status-bar-item .glyph {
+    margin: 0 -1px;
 }
 
 .status-bar select.status-bar-item:active,
@@ -625,7 +630,7 @@ button.status-bar-item.extension {
     background-image: url(Images/disclosureTriangleSmallDown.png);
     background-repeat: no-repeat;
     background-position-x: right;
-    background-position-y: 6px;
+    background-position-y: 5px;
     padding-right: 10px;
     border-right: 5px solid transparent;
 }
@@ -642,6 +647,7 @@ select.status-bar-item {
     margin-right: -15px;
     position: relative;
     top: -1px;
+    height: 23px;
 }
 
 select.status-bar-item, select.status-bar-item:hover {

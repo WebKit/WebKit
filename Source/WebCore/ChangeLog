@@ -1,3 +1,14 @@
+2012-07-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: Status bar icons are misaligned by 1px to the right
+        https://bugs.webkit.org/show_bug.cgi?id=91757
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/inspector.css:
+        (.glyph):
+        (.glyph.shadow):
+
 2012-07-20  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol Extension: add getNamedFlowCollection command
