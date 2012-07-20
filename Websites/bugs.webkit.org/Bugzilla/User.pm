@@ -582,7 +582,13 @@ sub can_edit_product {
 sub can_see_bug {
     my ($self, $bugid) = @_;
     my $dbh = Bugzilla->dbh;
-    my $sth  = $self->{sthCanSeeBug};
+
+    #if WEBKIT_CHANGES
+    # FIXME: disable memoization since it results in stale handle
+    my $sth;
+    #my $sth  = $self->{sthCanSeeBug};
+    #endif WEBKIT_CHANGES 
+
     my $userid  = $self->id;
     # Get fields from bug, presence of user on cclist, and determine if
     # the user is missing any groups required by the bug. The prepared query
@@ -610,7 +616,12 @@ sub can_see_bug {
     my ($ready, $reporter, $owner, $qacontact, $reporter_access, $cclist_access,
         $isoncclist, $missinggroup) = $sth->fetchrow_array();
     $sth->finish;
-    $self->{sthCanSeeBug} = $sth;
+
+    #if WEBKIT_CHANGES
+    # FIXME: disable memoization since it results in stale handle
+    #$self->{sthCanSeeBug} = $sth;
+    #endif WEBKIT_CHANGES 
+
     return ($ready
             && ((($reporter == $userid) && $reporter_access)
                 || (Bugzilla->params->{'useqacontact'} 

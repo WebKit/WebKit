@@ -53,7 +53,8 @@ use Bugzilla::Token;
 use Bugzilla::Keyword;
 
 #if WEBKIT_CHANGES
-use IPC::Open2;
+use Apache2::SubProcess ();
+use Apache2::RequestUtil ();
 #endif // WEBKIT_CHANGES
 
 # For most scripts we don't make $cgi and $template global variables. But
@@ -392,16 +393,16 @@ sub prettyPatch
     print $cgi->header(-type => 'text/html',
                        -expires => '+3M');
 
-    my $orig_path = $ENV{'PATH'};
-    $ENV{'PATH'} = "/opt/local/bin:" . $ENV{'PATH'};
-    open2(\*OUT, \*IN, "/usr/bin/ruby", "-I", "PrettyPatch", "PrettyPatch/prettify.rb", "--html-exceptions");
-    $ENV{'PATH'} = $orig_path;
-    print IN $attachment->data;
-    close(IN);
-    while (<OUT>) {
+    my @prettyargs = ("-I", "/var/www/html/PrettyPatch", "/var/www/html/PrettyPatch/prettify.rb", "--html-exceptions");
+    my $r = Apache2::RequestUtil->request;
+    my ($in, $out, $err) = $r->spawn_proc_prog("/usr/bin/ruby", \@prettyargs);
+    print $in $attachment->data;
+    close($in);
+    while (<$out>) {
         print;
     }
-    close(OUT);
+    close($out);
+    close($err);
 }
 #endif // WEBKIT_CHANGES
 

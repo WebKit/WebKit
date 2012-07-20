@@ -15,6 +15,7 @@
 #
 # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
 
+use lib qw(/var/www/html);
 package Bugzilla::ModPerl;
 
 use strict;
@@ -47,9 +48,12 @@ use Bugzilla::Util ();
 # For PerlChildInitHandler
 eval { require Math::Random::Secure };
 
+#if WEBKIT_CHANGES
 # This means that every httpd child will die after processing
-# a CGI if it is taking up more than 70MB of RAM all by itself.
-$Apache2::SizeLimit::MAX_UNSHARED_SIZE = 70000;
+# a CGI if it is taking up more than 700MB of RAM all by itself.
+# our children are normally about 400MB 
+$Apache2::SizeLimit::MAX_UNSHARED_SIZE = 700000;
+#endif // WEBKIT_CHANGES
 
 my $cgi_path = Bugzilla::Constants::bz_locations()->{'cgi_path'};
 
