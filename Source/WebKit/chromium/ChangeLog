@@ -1,3 +1,11 @@
+2012-07-20  Scott Graham  <scottmg@chromium.org>
+
+        Add windows native versions of bison, flex and gperf.
+
+        Reviewed by Tony Chang.
+
+        * DEPS:
+
 2012-07-20  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Include intVersion when converting between WebCore and WebKit IDBMetadata types

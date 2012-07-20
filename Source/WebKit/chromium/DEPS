@@ -143,12 +143,18 @@ deps = {
 
 deps_os = {
   'win': {
+    'third_party/bison':
+      From('chromium_deps', 'src/third_party/bison'),
     'third_party/cygwin':
       From('chromium_deps', 'src/third_party/cygwin'),
+    'third_party/gperf':
+      From('chromium_deps', 'src/third_party/gperf'),
     'third_party/lighttpd':
       From('chromium_deps', 'src/third_party/lighttpd'),
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),
+    'third_party/perl':
+      From('chromium_deps', 'src/third_party/perl'),
     # Dependencies used by libjpeg-turbo
     'third_party/yasm/binaries':
       From('chromium_deps', 'src/third_party/yasm/binaries'),
