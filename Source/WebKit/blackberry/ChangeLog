@@ -1,3 +1,16 @@
+2012-07-20  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] clock_gettime() in BackingStore.cpp should use CLOCK_MONOTONIC
+        https://bugs.webkit.org/show_bug.cgi?id=91898
+
+        Reviewed by Yong Li.
+
+        PR: 181043
+        Use CLOCK_MONOTONIC when we do expect a monotonic timer.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+
 2012-07-20  Crystal Zhang  <haizhang@rim.com>
 
         [BlackBerry] Add Cancel button for Select popup

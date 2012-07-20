@@ -50,6 +50,12 @@
 
         * platform/chromium/TestExpectations:
 
+2012-07-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, mark some tests as slow in debug.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-19  Andrew Scherkus  <scherkus@chromium.org>
 
         [chromium] CSS tweaks to media controls to prevent styles from being overridden

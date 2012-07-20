@@ -1602,7 +1602,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
         for (unsigned int i = 0; i < blittedTiles.size(); ++i)
             blittedTiles[i]->setBlitGeneration(m_blitGeneration);
 
-        clock_gettime(CLOCK_REALTIME, &m_currentBlitEnd);
+        clock_gettime(CLOCK_MONOTONIC, &m_currentBlitEnd);
         m_currentBlitEnd.tv_nsec += 30 * 1000 * 1000;
         if (m_currentBlitEnd.tv_nsec >= 1000000000L) {
             m_currentBlitEnd.tv_sec  += 1;
