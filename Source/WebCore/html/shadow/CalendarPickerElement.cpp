@@ -81,9 +81,11 @@ RenderObject* CalendarPickerElement::createRenderer(RenderArena* arena, RenderSt
 
 inline HTMLInputElement* CalendarPickerElement::hostInput()
 {
-    ASSERT(shadowAncestorNode());
-    ASSERT(shadowAncestorNode()->hasTagName(inputTag));
-    return static_cast<HTMLInputElement*>(shadowAncestorNode());
+    // JavaScript code can't create CalendarPickerElement objects. This is
+    // always in shadow of <input>.
+    ASSERT(shadowHost());
+    ASSERT(shadowHost()->hasTagName(inputTag));
+    return static_cast<HTMLInputElement*>(shadowHost());
 }
 
 void CalendarPickerElement::defaultEventHandler(Event* event)

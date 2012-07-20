@@ -1394,6 +1394,12 @@ bool Node::canStartSelection() const
     return parentOrHostNode() ? parentOrHostNode()->canStartSelection() : true;
 }
 
+Element* Node::shadowHost() const
+{
+    if (ShadowRoot* root = shadowRoot())
+        return root->host();
+    return 0;
+}
 
 Node* Node::shadowAncestorNode() const
 {

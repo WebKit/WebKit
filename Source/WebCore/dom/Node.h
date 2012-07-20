@@ -223,6 +223,10 @@ public:
     bool hasAttrList() const { return getFlag(HasAttrListFlag); }
     bool hasCustomCallbacks() const { return getFlag(HasCustomCallbacksFlag); }
 
+    // If this node is in a shadow tree, returns its shadow host. Otherwise, returns 0.
+    Element* shadowHost() const;
+    // If this node is in a shadow tree, returns its shadow host. Otherwise, returns this.
+    // Deprecated. Should use shadowHost() and check the return value.
     Node* shadowAncestorNode() const;
     ShadowRoot* shadowRoot() const;
     ShadowRoot* youngestShadowRoot() const;

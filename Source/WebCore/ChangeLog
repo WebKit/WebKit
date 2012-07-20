@@ -1,5 +1,28 @@
 2012-07-19  Kent Tamura  <tkent@chromium.org>
 
+        Introduce Node::shadowHost()
+        https://bugs.webkit.org/show_bug.cgi?id=91814
+
+        Reviewed by Hajime Morita.
+
+        Introduce Node::shadowHost(), which return the host element, or 0.
+        Node::shadowAncestorNode() is used to obtain a shadow host. However it
+        is confusing because it returns 'this' if this is not in a shadow tree.
+
+        Replaces one callsite of shadowAncestorNode() with shadowHost().
+
+        No behavior change.
+
+        * dom/Node.cpp:
+        (WebCore::Node::shadowHost): Added.
+        * dom/Node.h:
+        (Node): Declare shadowHost(), and add a comment to shadowAncestorNode().
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::CalendarPickerElement::hostInput):
+        Replace shadowAncestorNode() with shaodwHost().
+
+2012-07-19  Kent Tamura  <tkent@chromium.org>
+
         Form state restore: Need to identify a form by its content
         https://bugs.webkit.org/show_bug.cgi?id=91209
 
