@@ -1423,7 +1423,10 @@ BUGWK75276 : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
 
 // Requires rebaselining after skia roll
 BUGCR138159 : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
+// This test was already marked as failing on mac. It's commented out now to fix the build, but it
+// should be checked carefully before rebaselining.
 BUGCR138159 : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
+// BUGWK77188 MAC : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
 
 // -----------------------------------------------------------------
 // Other failures
@@ -3034,8 +3037,6 @@ BUGWK76572 : http/tests/download = TEXT
 BUGWK76967 : media/media-fragments/TC0030-TC0039.html = PASS TIMEOUT
 
 BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
-
-BUGWK77188 MAC : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
 
 BUGWK77314 WIN MAC : fast/events/touch/send-oncancel-event.html = PASS TEXT
 BUGWK77324 WIN MAC DEBUG SLOW : fast/js/dfg-int32array.html = PASS

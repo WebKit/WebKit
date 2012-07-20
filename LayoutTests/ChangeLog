@@ -1,5 +1,13 @@
 2012-07-20  Stephen Chenney  <schenney@chromium.org>
 
+        Fix chromium TestExpectations file.
+
+        Unreviewed build fix.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-20  Stephen Chenney  <schenney@chromium.org>
+
         Rebaseline Chromium results after r121171
         https://bugs.webkit.org/show_bug.cgi?id=91474
 
