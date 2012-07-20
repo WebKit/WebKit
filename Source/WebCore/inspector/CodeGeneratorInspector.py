@@ -2975,7 +2975,6 @@ class SmartOutput:
             pass
 
         if text_changed:
-            print "    writing " + self.file_name_
             out_file = open(self.file_name_, "w")
             out_file.write(self.output_)
             out_file.close()
