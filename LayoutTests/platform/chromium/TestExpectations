@@ -2887,26 +2887,6 @@ BUGWK73865 : media/track/text-track-is-reachable.html = TEXT
 BUGWK81402 WIN : media/track/track-active-cues.html = PASS TIMEOUT
 BUGWK83882 : media/track/track-mode.html = PASS TEXT TIMEOUT
 
-// Need rebaseline after patch lands.
-BUGWK89696 WIN MAC : media/audio-controls-rendering.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/audio-repaint.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/controls-after-reload.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/controls-layout-direction.html = IMAGE
-BUGWK89696 WIN MAC : media/controls-strict.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/controls-styling.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/controls-without-preload.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/media-controls-clone.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/media-document-audio-repaint.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/video-controls-rendering.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/video-display-toggle.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/video-no-audio.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/video-playing-and-pause.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : media/video-zoom-controls.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : fast/layers/video-layer.html = IMAGE IMAGE+TEXT
-BUGWK89696 WIN MAC : fullscreen/full-screen-stacking-context.html = IMAGE
-BUGWK89696 WIN MAC : http/tests/media/video-buffered-range-contains-currentTime.html = IMAGE
-BUGWK89416 WIN MAC : media/video-empty-source.html = IMAGE IMAGE+TEXT
-
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH
 
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
@@ -3657,3 +3637,21 @@ BUGWK91472 : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist.html = IMAGE
+
+// Needs rebaseline.
+BUGWK91802 : media/media-document-audio-repaint.html = IMAGE+TEXT
+BUGWK91802 : media/video-controls-audio-only.html = IMAGE+TEXT
+BUGWK91802 : fast/layers/video-layer.html = TEXT
+BUGWK91802 : media/audio-controls-rendering.html = TEXT
+BUGWK91802 : media/audio-repaint.html = TEXT
+BUGWK91802 : media/controls-after-reload.html = TEXT
+BUGWK91802 : media/controls-strict.html = TEXT
+BUGWK91802 : media/controls-styling.html = TEXT
+BUGWK91802 : media/controls-without-preload.html = TEXT
+BUGWK91802 : media/media-controls-clone.html = TEXT
+BUGWK91802 : media/video-controls-rendering.html = TEXT
+BUGWK91802 : media/video-display-toggle.html = TEXT
+BUGWK91802 : media/video-empty-source.html = TEXT
+BUGWK91802 : media/video-no-audio.html = TEXT
+BUGWK91802 : media/video-playing-and-pause.html = TEXT
+BUGWK91802 : media/video-zoom-controls.html = TEXT

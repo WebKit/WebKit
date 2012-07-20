@@ -79,7 +79,7 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     -webkit-appearance: media-mute-button;
-    display: inline;
+    display: -webkit-box;
     border: none;
     box-sizing: border-box;
     width: 35px;
@@ -91,7 +91,7 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
-    display: inline;
+    display: -webkit-box;
     border: none;
     box-sizing: border-box;
     width: 30px;
@@ -118,6 +118,7 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     font-family: Arial, Helvetica, sans-serif;
     font-size: 13px;
     font-weight: bold;
+    font-style: normal;
     color: white;
 
     letter-spacing: normal;
@@ -179,7 +180,7 @@ input[type="range"]::-webkit-media-slider-thumb {
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
     -webkit-appearance: media-enter-fullscreen-button;
-    display: inline;
+    display: -webkit-box;
     border: none;
     box-sizing: border-box;
     width: 30px;
