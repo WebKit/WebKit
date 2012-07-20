@@ -1582,7 +1582,6 @@ svg/text/font-size-below-point-five-2.svg
 svg/text/font-size-below-point-five.svg
 svg/text/foreignObject-repaint.xml
 svg/text/foreignObject-text-clipping-bug.xml
-svg/text/kerning.svg
 svg/text/lengthAdjust-text-metrics.html
 svg/text/modify-text-node-in-tspan.html
 svg/text/multichar-glyph.svg
@@ -1593,10 +1592,6 @@ svg/text/scaling-font-with-geometric-precision.html
 svg/text/selection-background-color.xhtml
 svg/text/selection-styles.xhtml
 svg/text/selection-tripleclick.svg
-svg/text/small-fonts-2.svg
-svg/text/small-fonts-3.svg
-svg/text/small-fonts-in-html5.html
-svg/text/small-fonts.svg
 svg/text/text-align-01-b.svg
 svg/text/text-align-02-b.svg
 svg/text/text-align-03-b.svg
@@ -1614,13 +1609,6 @@ svg/text/text-path-01-b.svg
 svg/text/text-path-middle-align.svg
 svg/text/text-repaint-rects.xhtml
 svg/text/text-spacing-01-b.svg
-svg/text/text-text-01-b.svg
-svg/text/text-text-03-b.svg
-svg/text/text-text-04-t.svg
-svg/text/text-text-05-t.svg
-svg/text/text-text-06-t.svg
-svg/text/text-text-07-t.svg
-svg/text/text-text-08-b.svg
 svg/text/text-tref-01-b.svg
 svg/text/text-tselect-01-b.svg
 svg/text/text-tspan-01-b.svg

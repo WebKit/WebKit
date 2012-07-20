@@ -1,3 +1,42 @@
+2012-07-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] svg/text rebaseline after new test fonts (part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=91762
+
+        Reviewed by Andreas Kling.
+
+        * platform/qt-5.0-wk2/svg/text/kerning-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/text/kerning-expected.txt: Removed.
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/svg/text/text-text-01-b-expected.png: Removed.
+        * platform/qt-5.0/svg/text/text-text-01-b-expected.txt: Removed.
+        * platform/qt-5.0/svg/text/text-text-04-t-expected.png: Removed.
+        * platform/qt-5.0/svg/text/text-text-04-t-expected.txt: Removed.
+        * platform/qt/svg/text/kerning-expected.png:
+        * platform/qt/svg/text/kerning-expected.txt:
+        * platform/qt/svg/text/small-fonts-2-expected.png:
+        * platform/qt/svg/text/small-fonts-2-expected.txt:
+        * platform/qt/svg/text/small-fonts-3-expected.png:
+        * platform/qt/svg/text/small-fonts-3-expected.txt:
+        * platform/qt/svg/text/small-fonts-expected.png:
+        * platform/qt/svg/text/small-fonts-expected.txt: Added.
+        * platform/qt/svg/text/small-fonts-in-html5-expected.png:
+        * platform/qt/svg/text/small-fonts-in-html5-expected.txt:
+        * platform/qt/svg/text/text-text-01-b-expected.png:
+        * platform/qt/svg/text/text-text-01-b-expected.txt:
+        * platform/qt/svg/text/text-text-03-b-expected.png:
+        * platform/qt/svg/text/text-text-03-b-expected.txt:
+        * platform/qt/svg/text/text-text-04-t-expected.png:
+        * platform/qt/svg/text/text-text-04-t-expected.txt:
+        * platform/qt/svg/text/text-text-05-t-expected.png:
+        * platform/qt/svg/text/text-text-05-t-expected.txt:
+        * platform/qt/svg/text/text-text-06-t-expected.png:
+        * platform/qt/svg/text/text-text-06-t-expected.txt:
+        * platform/qt/svg/text/text-text-07-t-expected.png:
+        * platform/qt/svg/text/text-text-07-t-expected.txt:
+        * platform/qt/svg/text/text-text-08-b-expected.png:
+        * platform/qt/svg/text/text-text-08-b-expected.txt:
+
 2012-07-20  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed gardening.  Remove a test that hasn't been
