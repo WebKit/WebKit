@@ -257,7 +257,6 @@ fast/forms/onselect-textfield.html
 fast/frames/set-parent-src-synchronously.html
 fast/loader/subframe-removes-itself.html
 http/tests/webfont/fallback-font-while-loading.html
-ietestcenter/css3/flexbox/flexbox-layout-001.htm
 svg/custom/glyph-selection-lang-attribute.svg
 svg/dom/css-transforms.xhtml
 touchadjustment/event-triggered-widgets.html

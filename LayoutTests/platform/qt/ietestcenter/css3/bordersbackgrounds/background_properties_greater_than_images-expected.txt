@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x347
-  RenderBlock {HTML} at (0,0) size 800x347
-    RenderBody {BODY} at (8,16) size 784x323
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 675x21
-          text run at (0,0) width 675: "Test passes if there is green on the page and contents of the black boxes look exactly the same."
-      RenderTable {TABLE} at (0,37) size 570x286
+layer at (0,0) size 800x345
+  RenderBlock {HTML} at (0,0) size 800x345
+    RenderBody {BODY} at (8,16) size 784x321
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 572x19
+          text run at (0,0) width 572: "Test passes if there is green on the page and contents of the black boxes look exactly the same."
+      RenderTable {TABLE} at (0,35) size 570x286
         RenderTableSection {TBODY} at (0,0) size 570x286
           RenderTableRow {TR} at (0,2) size 570x282
             RenderTableCell {TD} at (2,2) size 282x282 [r=0 c=0 rs=1 cs=1]

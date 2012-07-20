@@ -1,13 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x528
-  RenderBlock {HTML} at (0,0) size 800x528
-    RenderBody {BODY} at (8,16) size 784x504
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 740x42
-          text run at (0,0) width 740: "Test passes if the boxes have rounded corners and show a smooth transition between the thicker and the"
-          text run at (0,21) width 95: "thinner sides."
-      RenderTable {TABLE} at (0,58) size 700x446
+layer at (0,0) size 800x505
+  RenderBlock {HTML} at (0,0) size 800x505
+    RenderBody {BODY} at (8,16) size 784x481
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 709x19
+          text run at (0,0) width 709: "Test passes if the boxes have rounded corners and show a smooth transition between the thicker and the thinner sides."
+      RenderTable {TABLE} at (0,35) size 700x446
         RenderTableSection {TBODY} at (0,0) size 700x446
           RenderTableRow {TR} at (0,2) size 700x442
             RenderTableCell {TD} at (2,2) size 272x442 [r=0 c=0 rs=1 cs=1]

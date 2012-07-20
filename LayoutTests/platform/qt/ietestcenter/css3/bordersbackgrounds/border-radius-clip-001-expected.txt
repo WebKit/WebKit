@@ -1,20 +1,26 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x163
-  RenderBlock {HTML} at (0,0) size 800x163
-    RenderBody {BODY} at (8,16) size 784x139
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 577x21
-          text run at (0,0) width 577: "Test passes if the 'Filler Text' below is clipped to the curve of the rounded corners."
-layer at (8,53) size 198x102 clip at (11,56) size 192x96 scrollHeight 189
-  RenderBlock {DIV} at (0,37) size 198x102 [border: (3px solid #000000)]
-    RenderText {#text} at (3,3) size 154x189
-      text run at (3,3) width 154: "Filler Text. Filler Text."
-      text run at (3,24) width 154: "Filler Text. Filler Text."
-      text run at (3,45) width 154: "Filler Text. Filler Text."
-      text run at (3,66) width 154: "Filler Text. Filler Text."
-      text run at (3,87) width 154: "Filler Text. Filler Text."
-      text run at (3,108) width 154: "Filler Text. Filler Text."
-      text run at (3,129) width 154: "Filler Text. Filler Text."
-      text run at (3,150) width 154: "Filler Text. Filler Text."
-      text run at (3,171) width 154: "Filler Text. Filler Text."
+layer at (0,0) size 800x161
+  RenderBlock {HTML} at (0,0) size 800x161
+    RenderBody {BODY} at (8,16) size 784x137
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 496x19
+          text run at (0,0) width 496: "Test passes if the 'Filler Text' below is clipped to the curve of the rounded corners."
+layer at (8,51) size 198x102 clip at (11,54) size 192x96 scrollHeight 152
+  RenderBlock {DIV} at (0,35) size 198x102 [border: (3px solid #000000)]
+    RenderText {#text} at (3,3) size 169x152
+      text run at (3,3) width 138: "Filler Text. Filler Text. "
+      text run at (141,3) width 30: "Filler"
+      text run at (3,22) width 104: "Text. Filler Text. "
+      text run at (107,22) width 65: "Filler Text."
+      text run at (3,41) width 69: "Filler Text. "
+      text run at (72,41) width 99: "Filler Text. Filler"
+      text run at (3,60) width 35: "Text. "
+      text run at (38,60) width 134: "Filler Text. Filler Text."
+      text run at (3,79) width 138: "Filler Text. Filler Text. "
+      text run at (141,79) width 30: "Filler"
+      text run at (3,98) width 104: "Text. Filler Text. "
+      text run at (107,98) width 65: "Filler Text."
+      text run at (3,117) width 69: "Filler Text. "
+      text run at (72,117) width 99: "Filler Text. Filler"
+      text run at (3,136) width 31: "Text."
