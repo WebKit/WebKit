@@ -164,32 +164,13 @@ class ExecutiveTest(unittest.TestCase):
             self.assertTrue(process.wait() in (0, 1))
         else:
             expected_exit_code = -signal.SIGKILL
-            try:
-                self.assertEqual(process.wait(), expected_exit_code)
-            except OSError, e:
-                # FIXME: This seems to fail sometimes this way when the test is being run in parallel with other tests.
-                assert(e.errno == errno.ECHILD)
+            self.assertEqual(process.wait(), expected_exit_code)
 
         # Killing again should fail silently.
         executive.kill_process(process.pid)
 
-    def _assert_windows_image_name(self, name, expected_windows_name):
-        executive = Executive()
-        windows_name = executive._windows_image_name(name)
-        self.assertEqual(windows_name, expected_windows_name)
-
-    def test_windows_image_name(self):
-        self._assert_windows_image_name("foo", "foo.exe")
-        self._assert_windows_image_name("foo.exe", "foo.exe")
-        self._assert_windows_image_name("foo.com", "foo.com")
-        # If the name looks like an extension, even if it isn't
-        # supposed to, we have no choice but to return the original name.
-        self._assert_windows_image_name("foo.baz", "foo.baz")
-        self._assert_windows_image_name("foo.baz.exe", "foo.baz.exe")
-
-    def test_kill_all(self):
-        executive = Executive()
-        # We use "yes" because it loops forever.
+        # Now test kill_all ; we do this in the same test as kill
+        # so that we don't collide when running tests in parallel.
         process = subprocess.Popen(never_ending_command(), stdout=subprocess.PIPE)
         self.assertEqual(process.poll(), None)  # Process is running
         executive.kill_all(never_ending_command()[0])
@@ -206,6 +187,20 @@ class ExecutiveTest(unittest.TestCase):
             self.assertEqual(process.wait(), expected_exit_code)
         # Killing again should fail silently.
         executive.kill_all(never_ending_command()[0])
+
+    def _assert_windows_image_name(self, name, expected_windows_name):
+        executive = Executive()
+        windows_name = executive._windows_image_name(name)
+        self.assertEqual(windows_name, expected_windows_name)
+
+    def test_windows_image_name(self):
+        self._assert_windows_image_name("foo", "foo.exe")
+        self._assert_windows_image_name("foo.exe", "foo.exe")
+        self._assert_windows_image_name("foo.com", "foo.com")
+        # If the name looks like an extension, even if it isn't
+        # supposed to, we have no choice but to return the original name.
+        self._assert_windows_image_name("foo.baz", "foo.baz")
+        self._assert_windows_image_name("foo.baz.exe", "foo.baz.exe")
 
     def test_check_running_pid(self):
         executive = Executive()
