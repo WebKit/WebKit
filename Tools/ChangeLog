@@ -1,3 +1,12 @@
+2012-07-20  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chomium-Android] Place DRT input/output pipes where both app and unrooted shell can read/write
+        https://bugs.webkit.org/show_bug.cgi?id=91873
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+
 2012-07-20  Han Shen  <shenhan@google.com>
 
         [Chromium] Compilation fails under gcc 4.7
