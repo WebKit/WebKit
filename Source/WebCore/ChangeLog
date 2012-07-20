@@ -1,3 +1,36 @@
+2012-07-20  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Proxy configuration should honor the no_proxy environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=91747
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement a custom Proxy URI Resolver for libsoup
+        so that we can use it in EFL port. This custom
+        proxy resolver brings support for setting
+        exceptions so that the proxy is not used for the
+        specified hosts.
+
+        By default, the proxy is not used for localhost and
+        127.0.0.1.
+
+        No new tests, no behavior change for layout tests.
+
+        * PlatformEfl.cmake:
+        * platform/network/soup/ProxyResolverSoup.cpp: Added.
+        (soup_proxy_resolver_wk_init):
+        (soupProxyResolverWkFinalize):
+        (soupProxyResolverWkSetProperty):
+        (soupProxyResolverWkGetProperty):
+        (shouldBypassProxy):
+        (idle_return_proxy_uri):
+        (soupProxyResolverWkGetProxyURIAsync):
+        (soupProxyResolverWkGetProxyURISync):
+        (soup_proxy_resolver_wk_class_init):
+        (soup_proxy_resolver_wk_interface_init):
+        (soupProxyResolverWkNew):
+        * platform/network/soup/ProxyResolverSoup.h: Added.
+
 2012-07-20  Pierre Rossi  <pierre.rossi@gmail.com>
 
         ColorChooserClient should expose the element's location

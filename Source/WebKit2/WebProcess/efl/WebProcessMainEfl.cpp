@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessMainEfl.h"
 
+#include "ProxyResolverSoup.h"
 #include "WKBase.h"
 #include <Ecore.h>
 #include <WebCore/ResourceHandle.h>
@@ -67,11 +68,12 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     RunLoop::initializeMainRunLoop();
 
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
-    const char* httpProxy = g_getenv("http_proxy");
+    const char* httpProxy = getenv("http_proxy");
     if (httpProxy) {
-        SoupURI* proxyUri = soup_uri_new(httpProxy);
-        g_object_set(session, SOUP_SESSION_PROXY_URI, proxyUri, NULL);
-        soup_uri_free(proxyUri);
+        const char* noProxy = getenv("no_proxy");
+        SoupProxyURIResolver* resolverEfl = soupProxyResolverWkNew(httpProxy, noProxy);
+        soup_session_add_feature(session, SOUP_SESSION_FEATURE(resolverEfl));
+        g_object_unref(resolverEfl);
     }
 
     int socket = atoi(argv[1]);

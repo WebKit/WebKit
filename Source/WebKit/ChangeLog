@@ -1,3 +1,14 @@
+2012-07-20  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Proxy configuration should honor the no_proxy environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=91747
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add WebCore/platform/network/soup to INCLUDE paths.
+
+        * PlatformEfl.cmake:
+
 2012-07-18  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Move about: URL handling out of WebCore

@@ -1,3 +1,22 @@
+2012-07-20  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Proxy configuration should honor the no_proxy environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=91747
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use the new custom proxy resolver from WebCore in
+        WebKit2-EFL so that it is possible for the client
+        to set proxy exceptions via the "no_proxy"
+        environment variable.
+
+        By default, the proxy set in the "http_proxy"
+        environment variable will not be used for requests
+        to localhost or 127.0.0.1.
+
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl):
+
 2012-06-01  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2] Add support for multi-select list

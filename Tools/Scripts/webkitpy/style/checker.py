@@ -220,7 +220,9 @@ _PATH_RULES_SPECIFIER = [
       "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer1.cpp",
       "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.cpp",
       "Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp",
-      "Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp"],
+      "Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp",
+      "Source/WebCore/platform/network/soup/ProxyResolverSoup.cpp",
+      "Source/WebCore/platform/network/soup/ProxyResolverSoup.h"],
      ["-readability/naming"]),
 
     # For third-party Python code, keep only the following checks--
