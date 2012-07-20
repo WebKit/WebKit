@@ -1,3 +1,18 @@
+2012-07-19  Kent Tamura  <tkent@chromium.org>
+
+        Form state restore: Need to identify a form by its content
+        https://bugs.webkit.org/show_bug.cgi?id=91209
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/state-restore-broken-state-expected.txt:
+        Updated for the serialized format change.
+        * fast/forms/state-restore-per-form-expected.txt:
+        * fast/forms/state-restore-per-form.html:
+        - Add a control to #form2 before 'additionalControl'
+         We can't identify this form if the second named control is changed.
+        - Add test cases of webkit.org/b/91209#c0.
+
 2012-07-19  Jeff Timanus  <twiz@chromium.org>
 
         [Chromium] Suppress tests requiring a rebaseline.

@@ -16,6 +16,10 @@ FAIL $("form2-outer1").value should be form2-outer1-modified. Was noowner1-modif
 FAIL $("noowner2").value should be initial. Was form3-outer2-modified.
 FAIL $("form3-outer2").value should be form3-outer2-modified. Was form2-outer2-modified.
 FAIL $("form2-outer2").value should be form2-outer2-modified. Was initial.
+
+Controls in forms with an identical action URL. These forms were reordered:
+PASS $("aaa_input1").value is "aaa_input1-modified"
+PASS $("ccc_input1").value is "ccc_input1-modified"
 PASS successfullyParsed is true
 
 TEST COMPLETE

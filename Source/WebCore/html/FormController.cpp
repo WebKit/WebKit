@@ -282,6 +282,28 @@ private:
     HashSet<AtomicString> m_existingKeys;
 };
 
+static inline void recordFormStructure(const HTMLFormElement& form, StringBuilder& builder)
+{
+    // 2 is enough to distinguish forms in webkit.org/b/91209#c0
+    const size_t namedControlsToBeRecorded = 2;
+    const Vector<FormAssociatedElement*>& controls = form.associatedElements();
+    builder.append(" [");
+    for (size_t i = 0, namedControls = 0; i < controls.size() && namedControls < namedControlsToBeRecorded; ++i) {
+        if (!controls[i]->isFormControlElementWithState())
+            continue;
+        HTMLFormControlElementWithState* control = static_cast<HTMLFormControlElementWithState*>(controls[i]);
+        if (!ownerFormForState(*control))
+            continue;
+        AtomicString name = control->name();
+        if (name.isEmpty())
+            continue;
+        namedControls++;
+        builder.append(name);
+        builder.append(" ");
+    }
+    builder.append("]");
+}
+
 static inline AtomicString createKey(HTMLFormElement* form, unsigned index)
 {
     ASSERT(form);
@@ -292,6 +314,9 @@ static inline AtomicString createKey(HTMLFormElement* form, unsigned index)
     StringBuilder builder;
     if (!actionURL.isEmpty())
         builder.append(actionURL.string());
+
+    recordFormStructure(*form, builder);
+
     builder.append(" #");
     builder.append(String::number(index));
     return builder.toAtomicString();
@@ -344,7 +369,7 @@ static String formStateSignature()
     // In the legacy version of serialized state, the first item was a name
     // attribute value of a form control. The following string literal should
     // contain some characters which are rarely used for name attribute values.
-    DEFINE_STATIC_LOCAL(String, signature, ("\n\r?% WebKit serialized form state version 6 \n\r=&"));
+    DEFINE_STATIC_LOCAL(String, signature, ("\n\r?% WebKit serialized form state version 7 \n\r=&"));
     return signature;
 }
 

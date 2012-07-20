@@ -1,3 +1,22 @@
+2012-07-19  Kent Tamura  <tkent@chromium.org>
+
+        Form state restore: Need to identify a form by its content
+        https://bugs.webkit.org/show_bug.cgi?id=91209
+
+        Reviewed by Hajime Morita.
+
+        Add names of the first two controls of a form to its formKey
+        string. By this change, we can correctly restore states to
+        reordered forms like webkit.org/b/91209#c0.
+
+        Tests: Added test cases to fast/forms/state-restore-per-form.html.
+
+        * html/FormController.cpp:
+        (WebCore::recordFormStructure):
+        Append at most two name attribute values.
+        (WebCore::createKey): Insert a string built by recordFromStructure().
+        (WebCore::formStateSignature): Bump the version.
+
 2012-07-19  Wei James  <james.wei@intel.com>
 
         enable Web Audio for chromium android port
