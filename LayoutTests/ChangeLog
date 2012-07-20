@@ -1,3 +1,13 @@
+2012-07-19  Jeff Timanus  <twiz@chromium.org>
+
+        [Chromium] Suppress tests requiring a rebaseline.
+        Skia roll to 4683 changes gradient rendering, and rebaselines are required.
+        https://bugs.webkit.org/show_bug.cgi?id=91797
+
+        Reviewed by Kenneth Russell.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-19  David Hyatt  <hyatt@apple.com>
 
         SVG images broken when max-width specified.

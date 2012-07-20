@@ -1383,6 +1383,10 @@ BUGWK75276 : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGWK75276 : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
 BUGWK75276 : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
 
+// Requires rebaselining after skia roll
+BUGCR138159 : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
+BUGCR138159 : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
+
 // -----------------------------------------------------------------
 // Other failures
 // -----------------------------------------------------------------
