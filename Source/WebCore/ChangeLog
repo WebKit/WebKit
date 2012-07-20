@@ -1,3 +1,9 @@
+2012-07-20  MORITA Hajime  <morrita@google.com>
+
+        Another unreviewed Mac build fix against r123184.
+
+        * WebCore.exp.in:
+
 2012-07-20  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Crash when flowing a region into itself
