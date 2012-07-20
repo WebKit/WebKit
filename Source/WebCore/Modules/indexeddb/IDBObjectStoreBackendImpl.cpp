@@ -78,13 +78,15 @@ IDBObjectStoreMetadata IDBObjectStoreBackendImpl::metadata() const
     return metadata;
 }
 
-void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::get");
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKeyRange> keyRange = prpKeyRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::getInternal, objectStore, keyRange, callbacks)))
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    if (!transaction->scheduleTask(
+            createCallbackTask(&IDBObjectStoreBackendImpl::getInternal, objectStore, keyRange, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
@@ -145,13 +147,12 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
     IDB_TRACE("IDBObjectStoreBackendImpl::put");
     IDB_TRACE("IDBObjectStoreBackendImpl::putWithIndexKeys");
 
-    ASSERT(transactionPtr->mode() != IDBTransaction::READ_ONLY);
-
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    ASSERT(transaction->mode() != IDBTransaction::READ_ONLY);
 
     // Null pointers here signify that index keys should be generated as a part of this put.
     OwnPtr<Vector<String> > nullIndexNames;
@@ -165,13 +166,12 @@ void IDBObjectStoreBackendImpl::putWithIndexKeys(PassRefPtr<SerializedScriptValu
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::putWithIndexKeys");
 
-    ASSERT(transactionPtr->mode() != IDBTransaction::READ_ONLY);
-
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    ASSERT(transaction->mode() != IDBTransaction::READ_ONLY);
 
     OwnPtr<Vector<String> > newIndexNames = adoptPtr(new Vector<String>(indexNames));
     OwnPtr<Vector<IndexKeys> > newIndexKeys = adoptPtr(new Vector<IndexKeys>(indexKeys));
@@ -271,7 +271,7 @@ private:
 };
 }
 
-void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction, PassOwnPtr<Vector<String> > popIndexNames, PassOwnPtr<Vector<IndexKeys> > popIndexKeys)
+void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction, PassOwnPtr<Vector<String> > popIndexNames, PassOwnPtr<Vector<IndexKeys> > popIndexKeys)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::putInternal");
     ASSERT(transaction->mode() != IDBTransaction::READ_ONLY);
@@ -388,13 +388,14 @@ void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKeyRange> prpKeyRan
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::delete");
 
-    ASSERT(transaction->mode() != IDBTransaction::READ_ONLY);
+    ASSERT(IDBTransactionBackendImpl::from(transaction)->mode() != IDBTransaction::READ_ONLY);
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKeyRange> keyRange = prpKeyRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
 
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::deleteInternal, objectStore, keyRange, callbacks)))
+    if (!IDBTransactionBackendImpl::from(transaction)->scheduleTask(
+            createCallbackTask(&IDBObjectStoreBackendImpl::deleteInternal, objectStore, keyRange, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
@@ -431,12 +432,13 @@ void IDBObjectStoreBackendImpl::clear(PassRefPtr<IDBCallbacks> prpCallbacks, IDB
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::clear");
 
-    ASSERT(transaction->mode() != IDBTransaction::READ_ONLY);
+    ASSERT(IDBTransactionBackendImpl::from(transaction)->mode() != IDBTransaction::READ_ONLY);
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
 
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::clearInternal, objectStore, callbacks)))
+    if (!IDBTransactionBackendImpl::from(transaction)->scheduleTask(
+            createCallbackTask(&IDBObjectStoreBackendImpl::clearInternal, objectStore, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
@@ -484,21 +486,20 @@ bool IDBObjectStoreBackendImpl::populateIndex(IDBBackingStore& backingStore, int
     return true;
 }
 
-PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
-    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
     ASSERT(!m_indexes.contains(name));
 
     RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(m_database, this, name, keyPath, unique, multiEntry);
     ASSERT(index->name() == name);
 
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
+
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
-    RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
     if (!transaction->scheduleTask(
-              createCallbackTask(&IDBObjectStoreBackendImpl::createIndexInternal,
-                                 objectStore, index, transactionPtr),
-              createCallbackTask(&IDBObjectStoreBackendImpl::removeIndexFromMap,
-                                 objectStore, index))) {
+              createCallbackTask(&IDBObjectStoreBackendImpl::createIndexInternal, objectStore, index, transaction),
+              createCallbackTask(&IDBObjectStoreBackendImpl::removeIndexFromMap, objectStore, index))) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return 0;
     }
@@ -507,7 +508,7 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(cons
     return index.release();
 }
 
-void IDBObjectStoreBackendImpl::createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBObjectStoreBackendImpl::createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     int64_t id;
     if (!objectStore->backingStore()->createIndex(objectStore->databaseId(), objectStore->id(), index->name(), index->keyPath(), index->unique(), index->multiEntry(), id)) {
@@ -535,46 +536,44 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::index(const Stri
     return index.release();
 }
 
-void IDBObjectStoreBackendImpl::deleteIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendImpl::deleteIndex(const String& name, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
-    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
     ASSERT(m_indexes.contains(name));
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBIndexBackendImpl> index = m_indexes.get(name);
-    RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
+
     if (!transaction->scheduleTask(
-              createCallbackTask(&IDBObjectStoreBackendImpl::deleteIndexInternal,
-                                 objectStore, index, transactionPtr),
-              createCallbackTask(&IDBObjectStoreBackendImpl::addIndexToMap,
-                                 objectStore, index))) {
+              createCallbackTask(&IDBObjectStoreBackendImpl::deleteIndexInternal, objectStore, index, transaction),
+              createCallbackTask(&IDBObjectStoreBackendImpl::addIndexToMap, objectStore, index))) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
     m_indexes.remove(name);
 }
 
-void IDBObjectStoreBackendImpl::deleteIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBObjectStoreBackendImpl::deleteIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     objectStore->backingStore()->deleteIndex(objectStore->databaseId(), objectStore->id(), index->id());
     transaction->didCompleteTaskEvents();
 }
 
-void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::openCursor");
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKeyRange> range = prpRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     if (!transaction->scheduleTask(
-            createCallbackTask(&IDBObjectStoreBackendImpl::openCursorInternal,
-                               objectStore, range, direction, callbacks, transactionPtr))) {
+            createCallbackTask(&IDBObjectStoreBackendImpl::openCursorInternal, objectStore, range, direction, callbacks, transaction))) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
     }
 }
 
-void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> range, unsigned short tmpDirection, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> range, unsigned short tmpDirection, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::openCursorInternal");
     IDBCursor::Direction direction = static_cast<IDBCursor::Direction>(tmpDirection);
@@ -592,11 +591,12 @@ void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, Pass
 void IDBObjectStoreBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::count");
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::countInternal, this, range, callbacks, transaction)))
+    if (!IDBTransactionBackendImpl::from(transaction)->scheduleTask(
+            createCallbackTask(&IDBObjectStoreBackendImpl::countInternal, this, range, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
-void IDBObjectStoreBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface>)
+void IDBObjectStoreBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::countInternal");
     uint32_t count = 0;

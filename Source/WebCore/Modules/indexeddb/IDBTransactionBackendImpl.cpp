@@ -32,6 +32,7 @@
 #include "IDBCursorBackendImpl.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
+#include "IDBObjectStoreBackendImpl.h"
 #include "IDBTracing.h"
 #include "IDBTransactionCoordinator.h"
 
@@ -76,7 +77,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStor
         return 0;
     }
 
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_database->objectStore(name);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_database->objectStore(name);
     // FIXME: This is only necessary right now beacuse a setVersion transaction could modify things
     //        between its creation (where another check occurs) and the .objectStore call.
     //        There's a bug to make this impossible in the spec. When we make it impossible here, we

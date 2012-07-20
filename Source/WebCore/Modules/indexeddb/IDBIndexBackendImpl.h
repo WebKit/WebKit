@@ -61,15 +61,14 @@ public:
     void setId(int64_t id) { m_id = id; }
     bool hasValidId() const { return m_id != InvalidId; };
 
-    // Implements IDBIndexBackendInterface.
-    virtual IDBIndexMetadata metadata() const;
-
+    // IDBIndexBackendInterface
     virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void count(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void openKeyCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void getKey(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
+    IDBIndexMetadata metadata() const;
     const String& name() { return m_name; }
     const IDBKeyPath& keyPath() { return m_keyPath; }
     const bool& unique() { return m_unique; }
@@ -79,8 +78,8 @@ private:
     IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, IDBObjectStoreBackendImpl*, int64_t id, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
     IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, IDBObjectStoreBackendImpl*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
 
-    static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, IDBCursorBackendInterface::CursorType, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
-    static void countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
+    static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, IDBCursorBackendInterface::CursorType, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
+    static void countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     static void getKeyInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
 

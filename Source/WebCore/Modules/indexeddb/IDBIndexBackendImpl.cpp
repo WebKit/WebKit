@@ -39,6 +39,7 @@
 #include "IDBMetadata.h"
 #include "IDBObjectStoreBackendImpl.h"
 #include "IDBTracing.h"
+#include "IDBTransactionBackendImpl.h"
 
 namespace WebCore {
 
@@ -73,7 +74,7 @@ IDBIndexMetadata IDBIndexBackendImpl::metadata() const
     return IDBIndexMetadata(m_name, m_keyPath, m_unique, m_multiEntry);
 }
 
-void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, unsigned short untypedDirection, IDBCursorBackendInterface::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, unsigned short untypedDirection, IDBCursorBackendInterface::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     IDB_TRACE("IDBIndexBackendImpl::openCursorInternal");
     IDBCursor::Direction direction = static_cast<IDBCursor::Direction>(untypedDirection);
@@ -108,8 +109,9 @@ void IDBIndexBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpKeyRange, unsign
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKeyRange> keyRange = prpKeyRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
-    if (!transaction->scheduleTask(createCallbackTask(&openCursorInternal, index, keyRange, direction, IDBCursorBackendInterface::IndexCursor, callbacks, transaction)))
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    if (!transaction->scheduleTask(
+            createCallbackTask(&openCursorInternal, index, keyRange, direction, IDBCursorBackendInterface::IndexCursor, callbacks, transaction)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
@@ -119,12 +121,13 @@ void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> prpKeyRange, uns
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKeyRange> keyRange = prpKeyRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
-    if (!transaction->scheduleTask(createCallbackTask(&openCursorInternal, index, keyRange, direction, IDBCursorBackendInterface::IndexKeyCursor, callbacks, transaction)))
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    if (!transaction->scheduleTask(
+            createCallbackTask(&openCursorInternal, index, keyRange, direction, IDBCursorBackendInterface::IndexKeyCursor, callbacks, transaction)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
-void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface>)
+void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks)
 {
     IDB_TRACE("IDBIndexBackendImpl::countInternal");
     uint32_t count = 0;
@@ -145,7 +148,8 @@ void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBI
 void IDBIndexBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndexBackendImpl::count");
-    if (!transaction->scheduleTask(createCallbackTask(&countInternal, this, range, callbacks, transaction)))
+    if (!IDBTransactionBackendImpl::from(transaction)->scheduleTask(
+            createCallbackTask(&countInternal, this, range, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
@@ -205,7 +209,8 @@ void IDBIndexBackendImpl::get(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr<ID
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKeyRange> keyRange = prpKeyRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&getInternal, index, keyRange, callbacks)))
+    if (!IDBTransactionBackendImpl::from(transaction)->scheduleTask(
+            createCallbackTask(&getInternal, index, keyRange, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 
@@ -215,7 +220,8 @@ void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKeyRange> prpKeyRange, PassRefPtr
     RefPtr<IDBIndexBackendImpl> index = this;
     RefPtr<IDBKeyRange> keyRange = prpKeyRange;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&getKeyInternal, index, keyRange, callbacks)))
+    if (!IDBTransactionBackendImpl::from(transaction)->scheduleTask(
+            createCallbackTask(&getKeyInternal, index, keyRange, callbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
 }
 

@@ -50,15 +50,10 @@ public:
     virtual ~IDBTransactionBackendInterface() { }
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, ExceptionCode&) = 0;
-    virtual unsigned short mode() const = 0;
-    virtual bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr) = 0;
     virtual void didCompleteTaskEvents() = 0;
     virtual void commit() = 0;
     virtual void abort() = 0;
     virtual void setCallbacks(IDBTransactionCallbacks*) = 0;
-    virtual void registerOpenCursor(IDBCursorBackendImpl*) = 0;
-    virtual void unregisterOpenCursor(IDBCursorBackendImpl*) = 0;
-    virtual void addPendingEvents(int) = 0;
 };
 
 } // namespace WebCore

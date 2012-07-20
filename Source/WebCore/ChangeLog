@@ -1,5 +1,76 @@
 2012-07-20  Joshua Bell  <jsbell@chromium.org>
 
+        IndexedDB: Simplify backend interface classes
+        https://bugs.webkit.org/show_bug.cgi?id=91901
+
+        Reviewed by Tony Chang.
+
+        The IDBTransactionBackendInterface included several methods only used by the
+        real implementation objects, not via the interfaces. Expose a static Impl::from(Interface)
+        method for transaction, and migrate all of the backend-internal uses from Interface to Impl.
+
+        No new tests - no functional changes.
+
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        * Modules/indexeddb/IDBCursorBackendImpl.h:
+        (WebCore):
+        (WebCore::IDBCursorBackendImpl::create):
+        (IDBCursorBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStoreInternal):
+        (WebCore::IDBDatabaseBackendImpl::objectStore):
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStoreInternal):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::setVersionInternal):
+        (WebCore::IDBDatabaseBackendImpl::transactionStarted):
+        (WebCore::IDBDatabaseBackendImpl::transactionFinished):
+        (WebCore::IDBDatabaseBackendImpl::transaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (WebCore):
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursorInternal):
+        (WebCore::IDBIndexBackendImpl::openCursor):
+        (WebCore::IDBIndexBackendImpl::openKeyCursor):
+        (WebCore::IDBIndexBackendImpl::countInternal): Drop unused transaction argument.
+        (WebCore::IDBIndexBackendImpl::count):
+        (WebCore::IDBIndexBackendImpl::get):
+        (WebCore::IDBIndexBackendImpl::getKey):
+        * Modules/indexeddb/IDBIndexBackendImpl.h:
+        (IDBIndexBackendImpl):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::putWithIndexKeys):
+        (WebCore):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteFunction):
+        (WebCore::IDBObjectStoreBackendImpl::clear):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::createIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal):
+        (WebCore::IDBObjectStoreBackendImpl::count):
+        (WebCore::IDBObjectStoreBackendImpl::countInternal): Drop unused transaction argument.
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (WebCore):
+        (IDBObjectStoreBackendImpl):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::objectStore):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (WebCore::IDBTransactionBackendImpl::from):
+        (IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::mode):
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+        (IDBTransactionBackendInterface):
+
+2012-07-20  Joshua Bell  <jsbell@chromium.org>
+
         IndexedDB: "ASSERTION FAILED: !m_requestFinished" hit in IDBRequest::dispatchEvent
         https://bugs.webkit.org/show_bug.cgi?id=86911
 

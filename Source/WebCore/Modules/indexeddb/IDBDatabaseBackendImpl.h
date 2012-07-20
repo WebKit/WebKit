@@ -41,6 +41,7 @@ class IDBBackingStore;
 class IDBDatabase;
 class IDBFactoryBackendImpl;
 class IDBObjectStoreBackendImpl;
+class IDBTransactionBackendImpl;
 class IDBTransactionBackendInterface;
 class IDBTransactionCoordinator;
 
@@ -58,18 +59,18 @@ public:
     void openConnection(PassRefPtr<IDBCallbacks>);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
+    // IDBDatabaseBackendInterface
     virtual IDBDatabaseMetadata metadata() const;
-
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, ExceptionCode&);
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* objectStoreNames, unsigned short mode, ExceptionCode&);
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>);
 
-    PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
+    PassRefPtr<IDBObjectStoreBackendImpl> objectStore(const String& name);
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
-    void transactionStarted(PassRefPtr<IDBTransactionBackendInterface>);
-    void transactionFinished(PassRefPtr<IDBTransactionBackendInterface>);
+    void transactionStarted(PassRefPtr<IDBTransactionBackendImpl>);
+    void transactionFinished(PassRefPtr<IDBTransactionBackendImpl>);
 
 private:
     IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
@@ -79,9 +80,9 @@ private:
     int32_t connectionCount();
     void processPendingCalls();
 
-    static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
-    static void deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
-    static void setVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
+    static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
+    static void deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
+    static void setVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
 
     // These are used as setVersion transaction abort tasks.
     static void removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>);
@@ -101,9 +102,9 @@ private:
     ObjectStoreMap m_objectStores;
 
     RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
-    RefPtr<IDBTransactionBackendInterface> m_runningVersionChangeTransaction;
+    RefPtr<IDBTransactionBackendImpl> m_runningVersionChangeTransaction;
 
-    typedef HashSet<IDBTransactionBackendInterface*> TransactionSet;
+    typedef HashSet<IDBTransactionBackendImpl*> TransactionSet;
     TransactionSet m_transactions;
 
     class PendingSetVersionCall;

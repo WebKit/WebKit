@@ -42,19 +42,10 @@ public:
     virtual ~IDBTransactionBackendProxy();
 
     virtual PassRefPtr<WebCore::IDBObjectStoreBackendInterface> objectStore(const String& name, WebCore::ExceptionCode&);
-    virtual unsigned short mode() const
-    {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
     virtual void commit();
     virtual void abort();
-    virtual bool scheduleTask(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     virtual void didCompleteTaskEvents();
     virtual void setCallbacks(WebCore::IDBTransactionCallbacks*);
-    virtual void registerOpenCursor(WebCore::IDBCursorBackendImpl*);
-    virtual void unregisterOpenCursor(WebCore::IDBCursorBackendImpl*);
-    virtual void addPendingEvents(int) { ASSERT_NOT_REACHED(); }
 
     WebIDBTransaction* getWebIDBTransaction() const { return m_webIDBTransaction.get(); }
 

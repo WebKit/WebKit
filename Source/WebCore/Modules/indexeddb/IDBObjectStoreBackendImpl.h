@@ -39,6 +39,7 @@ namespace WebCore {
 
 class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
+class IDBTransactionBackendImpl;
 class IDBTransactionBackendInterface;
 class ScriptExecutionContext;
 struct IDBObjectStoreMetadata;
@@ -63,8 +64,7 @@ public:
     }
     void setId(int64_t id) { m_id = id; }
 
-    virtual IDBObjectStoreMetadata metadata() const;
-
+    // IDBObjectStoreBackendInterface
     virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void put(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void putWithIndexKeys(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, const Vector<String>&, const Vector<IndexKeys>&, ExceptionCode&);
@@ -80,6 +80,7 @@ public:
 
     static bool populateIndex(IDBBackingStore&, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBIndexBackendImpl>);
 
+    IDBObjectStoreMetadata metadata() const;
     const String& name() { return m_name; }
     const IDBKeyPath& keyPath() const { return m_keyPath; }
     const bool& autoIncrement() const { return m_autoIncrement; }
@@ -93,13 +94,13 @@ private:
     void updateKeyGenerator(const IDBKey*, bool checkCurrent);
 
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
-    static void putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>, PassOwnPtr<Vector<String> > popIndexNames, PassOwnPtr<Vector<IndexKeys> >);
+    static void putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>, PassOwnPtr<Vector<String> > popIndexNames, PassOwnPtr<Vector<IndexKeys> >);
     static void deleteInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     static void clearInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBCallbacks>);
-    static void createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
-    static void deleteIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
-    static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
-    static void countInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
+    static void createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
+    static void deleteIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
+    static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
+    static void countInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
 
     // These are used as setVersion transaction abort tasks.
     static void removeIndexFromMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);

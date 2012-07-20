@@ -144,16 +144,18 @@ IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
 
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
-    ASSERT(transactionPtr->mode() == IDBTransaction::VERSION_CHANGE);
     ASSERT(!m_objectStores.contains(name));
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, name, keyPath, autoIncrement);
     ASSERT(objectStore->name() == name);
 
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
+
     RefPtr<IDBDatabaseBackendImpl> database = this;
-    RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::createObjectStoreInternal, database, objectStore, transaction),
-                                   createCallbackTask(&IDBDatabaseBackendImpl::removeObjectStoreFromMap, database, objectStore))) {
+    if (!transaction->scheduleTask(
+            createCallbackTask(&IDBDatabaseBackendImpl::createObjectStoreInternal, database, objectStore, transaction),
+            createCallbackTask(&IDBDatabaseBackendImpl::removeObjectStoreFromMap, database, objectStore))) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return 0;
     }
@@ -162,7 +164,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
     return objectStore.release();
 }
 
-void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore,  PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore,  PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     int64_t objectStoreId;
 
@@ -175,28 +177,30 @@ void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, 
     transaction->didCompleteTaskEvents();
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::objectStore(const String& name)
+PassRefPtr<IDBObjectStoreBackendImpl> IDBDatabaseBackendImpl::objectStore(const String& name)
 {
     return m_objectStores.get(name);
 }
 
 void IDBDatabaseBackendImpl::deleteObjectStore(const String& name, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
-    ASSERT(transactionPtr->mode() == IDBTransaction::VERSION_CHANGE);
     ASSERT(m_objectStores.contains(name));
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(name);
-    RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::deleteObjectStoreInternal, database, objectStore, transaction),
-                                   createCallbackTask(&IDBDatabaseBackendImpl::addObjectStoreToMap, database, objectStore))) {
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
+
+    if (!transaction->scheduleTask(
+            createCallbackTask(&IDBDatabaseBackendImpl::deleteObjectStoreInternal, database, objectStore, transaction),
+            createCallbackTask(&IDBDatabaseBackendImpl::addObjectStoreToMap, database, objectStore))) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
     m_objectStores.remove(name);
 }
 
-void IDBDatabaseBackendImpl::deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBDatabaseBackendImpl::deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     database->m_backingStore->deleteObjectStore(database->id(), objectStore->id());
     transaction->didCompleteTaskEvents();
@@ -230,18 +234,21 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
     }
 
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
-    RefPtr<IDBTransactionBackendInterface> transaction = this->transaction(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, ec);
+    RefPtr<IDBTransactionBackendInterface> transactionInterface = this->transaction(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, ec);
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionInterface.get());
     ASSERT(!ec);
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
-                                   createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
+    if (!transaction->scheduleTask(
+            createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
+            createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
     }
 }
 
-void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
 {
+    RefPtr<IDBTransactionBackendImpl> transaction = prpTransaction;
     int64_t databaseId = database->id();
     database->m_version = version;
     if (!database->m_backingStore->updateIDBDatabaseMetaData(databaseId, database->m_version)) {
@@ -249,21 +256,21 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
         transaction->abort();
         return;
     }
-    callbacks->onSuccess(transaction);
+    callbacks->onSuccess(PassRefPtr<IDBTransactionBackendInterface>(transaction));
 }
 
-void IDBDatabaseBackendImpl::transactionStarted(PassRefPtr<IDBTransactionBackendInterface> prpTransaction)
+void IDBDatabaseBackendImpl::transactionStarted(PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
 {
-    RefPtr<IDBTransactionBackendInterface> transaction = prpTransaction;
+    RefPtr<IDBTransactionBackendImpl> transaction = prpTransaction;
     if (transaction->mode() == IDBTransaction::VERSION_CHANGE) {
         ASSERT(!m_runningVersionChangeTransaction);
         m_runningVersionChangeTransaction = transaction;
     }
 }
 
-void IDBDatabaseBackendImpl::transactionFinished(PassRefPtr<IDBTransactionBackendInterface> prpTransaction)
+void IDBDatabaseBackendImpl::transactionFinished(PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
 {
-    RefPtr<IDBTransactionBackendInterface> transaction = prpTransaction;
+    RefPtr<IDBTransactionBackendImpl> transaction = prpTransaction;
     ASSERT(m_transactions.contains(transaction.get()));
     m_transactions.remove(transaction.get());
     if (transaction->mode() == IDBTransaction::VERSION_CHANGE) {
@@ -338,7 +345,7 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(D
         }
     }
 
-    RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStoreNames, mode, this);
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(objectStoreNames, mode, this);
     m_transactions.add(transaction.get());
     return transaction.release();
 }

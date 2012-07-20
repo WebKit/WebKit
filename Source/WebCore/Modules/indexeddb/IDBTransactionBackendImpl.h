@@ -44,19 +44,24 @@ class IDBDatabaseBackendImpl;
 class IDBTransactionBackendImpl : public IDBTransactionBackendInterface {
 public:
     static PassRefPtr<IDBTransactionBackendImpl> create(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl*);
+    static IDBTransactionBackendImpl* from(IDBTransactionBackendInterface* interface)
+    {
+        return static_cast<IDBTransactionBackendImpl*>(interface);
+    }
     virtual ~IDBTransactionBackendImpl();
 
+    // IDBTransactionBackendInterface
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, ExceptionCode&);
-    virtual unsigned short mode() const { return m_mode; }
-    virtual bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask);
     virtual void didCompleteTaskEvents();
     virtual void abort();
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
-    virtual void registerOpenCursor(IDBCursorBackendImpl*);
-    virtual void unregisterOpenCursor(IDBCursorBackendImpl*);
-    virtual void addPendingEvents(int);
 
     void run();
+    unsigned short mode() const { return m_mode; }
+    bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task>, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr);
+    void registerOpenCursor(IDBCursorBackendImpl*);
+    void unregisterOpenCursor(IDBCursorBackendImpl*);
+    void addPendingEvents(int);
 
 private:
     IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl*);

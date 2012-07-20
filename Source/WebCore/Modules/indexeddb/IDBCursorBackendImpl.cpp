@@ -37,12 +37,12 @@
 #include "IDBObjectStoreBackendImpl.h"
 #include "IDBRequest.h"
 #include "IDBTracing.h"
-#include "IDBTransactionBackendInterface.h"
+#include "IDBTransactionBackendImpl.h"
 #include "SerializedScriptValue.h"
 
 namespace WebCore {
 
-IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, IDBCursor::Direction direction, CursorType cursorType, IDBTransactionBackendInterface* transaction, IDBObjectStoreBackendInterface* objectStore)
+IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, IDBCursor::Direction direction, CursorType cursorType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
     : m_cursor(cursor)
     , m_direction(direction)
     , m_cursorType(cursorType)
