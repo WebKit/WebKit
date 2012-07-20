@@ -19,6 +19,7 @@ SET(ForwardingNetworkHeadersForWebKitTestRunner_NAME forwarding-headersSoupForWe
 LIST(APPEND WebKitTestRunner_SOURCES
     ${WEBKIT_TESTRUNNER_DIR}/cairo/TestInvocationCairo.cpp
 
+    ${WEBKIT_TESTRUNNER_DIR}/efl/EventSenderProxyEfl.cpp
     ${WEBKIT_TESTRUNNER_DIR}/efl/PlatformWebViewEfl.cpp
     ${WEBKIT_TESTRUNNER_DIR}/efl/TestControllerEfl.cpp
     ${WEBKIT_TESTRUNNER_DIR}/efl/main.cpp

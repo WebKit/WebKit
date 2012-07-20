@@ -1,3 +1,57 @@
+2012-07-20  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK2][WTR] Implement EventSenderProxy
+        https://bugs.webkit.org/show_bug.cgi?id=91731
+
+        Reviewed by Kentaro Hara.
+
+        This is an initial EFL port implementation of EventSenderProxy.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        (WTR):
+        (EventSenderProxy):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/PlatformEfl.cmake:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp: Added.
+        (WTR):
+        (WTREvent):
+        (WTR::WTREvent::WTREvent):
+        (WTR::KeyEventInfo::KeyEventInfo):
+        (KeyEventInfo):
+        (WTR::evasMouseButton):
+        (WTR::setEvasModifiers):
+        (WTR::dispatchMouseDownEvent):
+        (WTR::dispatchMouseUpEvent):
+        (WTR::dispatchMouseMoveEvent):
+        (WTR::dispatchMouseScrollByEvent):
+        (WTR::keyPadName):
+        (WTR::keyName):
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::EventSenderProxy::updateClickCountForButton):
+        (WTR::EventSenderProxy::dispatchEvent):
+        (WTR::EventSenderProxy::replaySavedEvents):
+        (WTR::EventSenderProxy::sendOrQueueEvent):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::leapForward):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::addTouchPoint):
+        (WTR::EventSenderProxy::updateTouchPoint):
+        (WTR::EventSenderProxy::setTouchModifier):
+        (WTR::EventSenderProxy::touchStart):
+        (WTR::EventSenderProxy::touchMove):
+        (WTR::EventSenderProxy::touchEnd):
+        (WTR::EventSenderProxy::touchCancel):
+        (WTR::EventSenderProxy::clearTouchPoints):
+        (WTR::EventSenderProxy::releaseTouchPoint):
+        (WTR::EventSenderProxy::cancelTouchPoint):
+        (WTR::EventSenderProxy::setTouchPointRadius):
+
 2012-07-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, rolling out r123085.
