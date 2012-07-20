@@ -1076,8 +1076,8 @@ BUGWK62204 : svg/W3C-SVG-1.1/animate-elem-04-t.svg = TEXT
 BUGWK78673 : svg/animations/animate-text-nested-transforms.html = TEXT
 
 BUGWK73409 : fast/forms/textarea-placeholder-set-attribute.html = IMAGE
-BUGWK73409 : fast/forms/textarea/textarea-placeholder-paint-order.html = MISSING
-BUGWK73409 : fast/forms/input-placeholder-paint-order.html = MISSING
+BUGWK73409 : fast/forms/textarea/textarea-placeholder-paint-order.html = IMAGE
+BUGWK73409 : fast/forms/input-placeholder-paint-order.html = IMAGE
 
 BUGWK73653 : fast/forms/range/slider-in-multi-column.html = TEXT
 

@@ -1,3 +1,19 @@
+2012-07-20  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Generating baselines for two input placeholder tests that fail. The image
+        baselines used are from Chromium Linux that clearly denote what's missing
+        in the GTK port's output for these two tests, ignoring other marginal
+        rendering differences.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/input-placeholder-paint-order-expected.png: Added.
+        * platform/gtk/fast/forms/input-placeholder-paint-order-expected.txt: Added.
+        * platform/gtk/fast/forms/textarea: Added.
+        * platform/gtk/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/gtk/fast/forms/textarea/textarea-placeholder-paint-order-expected.txt: Added.
+
 2012-07-20  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         Fix missing css1/text_properties/text_transform.html results (txt)
