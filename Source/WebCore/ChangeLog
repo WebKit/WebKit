@@ -1,3 +1,13 @@
+2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Compile WebCore without QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=91819
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebCore.pri: QT += opengl is not needed for Qt 5, given that QtGui has OpenGL
+        support built in with the QOpenGL* classes.
+
 2012-07-19  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] Replace Node's Document pointer with a TreeScope pointer

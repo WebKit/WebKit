@@ -193,8 +193,7 @@ contains(DEFINES, WTF_USE_3D_GRAPHICS=1) {
     contains(QT_CONFIG, opengles2): LIBS += -lEGL
     mac: LIBS += -framework IOSurface -framework CoreFoundation
     linux-*:contains(DEFINES, HAVE_XCOMPOSITE=1): LIBS += -lXcomposite
-    # Only WebKit1 needs the opengl module, so it's optional for Qt5.
-    haveQt(4)|contains(QT_CONFIG, opengl): QT *= opengl
+    haveQt(4): QT *= opengl
 }
 
 !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {
