@@ -316,7 +316,6 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
             context->concatCTM(filterData->shearFreeAbsoluteTransform.inverse());
 
             context->scale(FloatSize(1 / filterData->filter->filterResolution().width(), 1 / filterData->filter->filterResolution().height()));
-            context->clip(lastEffect->maxEffectRect());
             context->drawImageBuffer(resultImage, object->style()->colorSpace(), lastEffect->absolutePaintRect());
             context->scale(filterData->filter->filterResolution());
 

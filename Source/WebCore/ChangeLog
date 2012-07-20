@@ -1,3 +1,31 @@
+2012-07-20  Stephen Chenney  <schenney@chromium.org>
+
+        SVG Filter Effect sub-region not applied for some filters
+        https://bugs.webkit.org/show_bug.cgi?id=89767
+
+        Reviewed by Dirk Schulze.
+
+        The filter effect region for SVG feGaussian and feDropShadow filters
+        was incorrectly set, failing to account for the radius of the blur.
+        This patch fixes the problem and removes an unneccessary clip
+        operation when the filter result is blitted into the target. That clip
+        was clipping the shadow from webkit-shadow.
+
+        Tests: svg/filters/feDropShadow-subregion.svg
+               svg/filters/feGaussianBlur-subregion.svg
+
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::determineAbsolutePaintRect): Moved the code
+        that clips the paint rect by the filter effect subregion to come after
+        the paint is modified by the filter radius.
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::determineAbsolutePaintRect):
+        Moved the code that clips the paint rect by the filter effect subregion to
+        come after the paint is modified by the filter radius.
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        Removed a clip that is unnecessary and that was incorrectly clipping drop shadows.
+
 2012-07-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Status bar icons are misaligned by 1px to the right

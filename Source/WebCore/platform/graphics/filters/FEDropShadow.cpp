@@ -61,10 +61,6 @@ void FEDropShadow::determineAbsolutePaintRect()
     FloatRect absoluteOffsetPaintRect(absolutePaintRect);
     absoluteOffsetPaintRect.move(filter->applyHorizontalScale(m_dx), filter->applyVerticalScale(m_dy));
     absolutePaintRect.unite(absoluteOffsetPaintRect);
-    if (clipsToBounds())
-        absolutePaintRect.intersect(maxEffectRect());
-    else
-        absolutePaintRect.unite(maxEffectRect());
     
     unsigned kernelSizeX = 0;
     unsigned kernelSizeY = 0;
@@ -73,6 +69,12 @@ void FEDropShadow::determineAbsolutePaintRect()
     // We take the half kernel size and multiply it with three, because we run box blur three times.
     absolutePaintRect.inflateX(3 * kernelSizeX * 0.5f);
     absolutePaintRect.inflateY(3 * kernelSizeY * 0.5f);
+
+    if (clipsToBounds())
+        absolutePaintRect.intersect(maxEffectRect());
+    else
+        absolutePaintRect.unite(maxEffectRect());
+
     setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
 }
 
