@@ -1,3 +1,23 @@
+2012-07-20  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Assert failure when layout positioned objects in regions
+        https://bugs.webkit.org/show_bug.cgi?id=90792
+
+        Reviewed by Andreas Kling.
+
+        Before clamping the containing block (for an out-of-flow positioned element
+        inside a named flow) to the region, we have to test whether the region is not
+        null, which can happen when the named flow does not have attached regions.
+
+        Tests: fast/regions/positioned-vrl-in-named-flow.html
+               fast/regions/positioned-vrl-in-parent-named-flow.html
+               fast/regions/positioned-with-vrl-parent-in-named-flow.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+
 2012-07-20  Stephen Chenney  <schenney@chromium.org>
 
         SVG Filter Effect sub-region not applied for some filters

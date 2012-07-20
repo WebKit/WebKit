@@ -2365,8 +2365,10 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
                 if (isWritingModeRoot()) {
                     LayoutUnit cbPageOffset = offsetFromLogicalTopOfFirstPage - logicalTop();
                     RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
-                    cbRegion = cb->clampToStartAndEndRegions(cbRegion);
-                    boxInfo = cb->renderBoxRegionInfo(cbRegion, cbPageOffset);
+                    if (cbRegion) {
+                        cbRegion = cb->clampToStartAndEndRegions(cbRegion);
+                        boxInfo = cb->renderBoxRegionInfo(cbRegion, cbPageOffset);
+                    }
                 }
             } else if (region && enclosingRenderFlowThread()->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {
                 RenderRegion* containingBlockRegion = cb->clampToStartAndEndRegions(region);
@@ -2628,11 +2630,13 @@ void RenderBox::computePositionedLogicalWidth(RenderRegion* region, LayoutUnit o
         const RenderBlock* cb = toRenderBlock(containerBlock);
         LayoutUnit cbPageOffset = offsetFromLogicalTopOfFirstPage - logicalTop();
         RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
-        cbRegion = cb->clampToStartAndEndRegions(cbRegion);
-        RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(cbRegion, cbPageOffset);
-        if (boxInfo) {
-            logicalLeftPos += boxInfo->logicalLeft();
-            setLogicalLeft(logicalLeftPos);
+        if (cbRegion) {
+            cbRegion = cb->clampToStartAndEndRegions(cbRegion);
+            RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(cbRegion, cbPageOffset);
+            if (boxInfo) {
+                logicalLeftPos += boxInfo->logicalLeft();
+                setLogicalLeft(logicalLeftPos);
+            }
         }
     }
 }
@@ -2950,11 +2954,13 @@ void RenderBox::computePositionedLogicalHeight()
         const RenderBlock* cb = toRenderBlock(containerBlock);
         LayoutUnit cbPageOffset = cb->offsetFromLogicalTopOfFirstPage() - logicalLeft();
         RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
-        cbRegion = cb->clampToStartAndEndRegions(cbRegion);
-        RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(cbRegion, cbPageOffset);
-        if (boxInfo) {
-            logicalTopPos += boxInfo->logicalLeft();
-            setLogicalTop(logicalTopPos);
+        if (cbRegion) {
+            cbRegion = cb->clampToStartAndEndRegions(cbRegion);
+            RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(cbRegion, cbPageOffset);
+            if (boxInfo) {
+                logicalTopPos += boxInfo->logicalLeft();
+                setLogicalTop(logicalTopPos);
+            }
         }
     }
 }
