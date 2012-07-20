@@ -205,6 +205,7 @@ fast/dom/shadow/shadowdom-for-image-in-shadowdom.html
 fast/dom/shadow/shadowdom-for-image-map.html
 fast/dom/shadow/shadowdom-for-image-style.html
 fast/dom/shadow/shadowdom-for-image-with-multiple-shadow.html
+fast/dom/shadow/shadowdom-for-image-with-pseudo-id.html
 fast/dom/shadow/shadowdom-for-image-with-width-and-height.html
 fast/dom/shadow/shadowdom-for-image.html
 fast/dom/shadow/shadowdom-for-media.html

@@ -1,3 +1,9 @@
+2012-07-20  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r123192. Skipped a new test.
+
+        * platform/qt/Skipped:
+
 2012-07-20  Eugene Klyuchnikov  <eustas.big@gmail.com>
 
         Web Inspector: Timeline: forward compatibility for load.
