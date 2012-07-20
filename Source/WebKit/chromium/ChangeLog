@@ -1,3 +1,26 @@
+2012-07-20  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Add WebView::zoomToFindInPageRect for Android
+        https://bugs.webkit.org/show_bug.cgi?id=91801
+
+        Reviewed by Tony Chang.
+
+        On Android, when you find in page, we scale the viewport to reveal what
+        you've found (because the screen is small). This function instructs the
+        WebView to zoom to display a given rect.
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animateZoomAroundPoint):
+            - This function is a bit more general than necessary for this patch
+              because it is also used in other cases for animating a zoom
+              around a given point (e.g., double-tap to zoom). These uses will
+              be upstreamed in later patches.
+        (WebKit::WebViewImpl::zoomToFindInPageRect):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-07-19  Luke Macpherson   <macpherson@chromium.org>
 
         Enable CSS variables compile time flag in Chrome.

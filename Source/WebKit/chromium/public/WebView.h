@@ -196,6 +196,9 @@ public:
     // previous element in the tab sequence (if reverse is true).
     virtual void advanceFocus(bool reverse) { }
 
+    // Animate a scale into the specified find-in-page rect.
+    virtual void zoomToFindInPageRect(const WebRect&) = 0;
+
 
     // Zoom ----------------------------------------------------------------
 

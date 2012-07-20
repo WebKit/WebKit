@@ -195,6 +195,8 @@ static const int touchPointPadding = 32;
 static const float minScaleDifference = 0.01f;
 static const float doubleTapZoomContentDefaultMargin = 5;
 static const float doubleTapZoomContentMinimumMargin = 2;
+static const double doubleTabZoomAnimationDurationInSeconds = 0.25;
+
 
 namespace WebKit {
 
@@ -745,10 +747,10 @@ void WebViewImpl::renderingStats(WebRenderingStats& stats) const
         m_layerTreeView.renderingStats(stats);
 }
 
-void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationSec)
+void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationInSeconds)
 {
     if (!m_layerTreeView.isNull())
-        m_layerTreeView.startPageScaleAnimation(scroll, useAnchor, newScale, durationSec);
+        m_layerTreeView.startPageScaleAnimation(scroll, useAnchor, newScale, durationInSeconds);
 }
 #endif
 
@@ -1072,6 +1074,27 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
     scroll.y = rect.y;
 }
 #endif
+
+void WebViewImpl::animateZoomAroundPoint(const IntPoint& point, AutoZoomType zoomType)
+{
+#if ENABLE(GESTURE_EVENTS)
+    if (!mainFrameImpl())
+        return;
+
+    float scale;
+    WebPoint scroll;
+    computeScaleAndScrollForHitRect(WebRect(point.x(), point.y(), 0, 0), zoomType, scale, scroll);
+
+    bool isDoubleTap = (zoomType == DoubleTap);
+    double durationInSeconds = isDoubleTap ? doubleTabZoomAnimationDurationInSeconds : 0;
+    startPageScaleAnimation(scroll, isDoubleTap, scale, durationInSeconds);
+#endif
+}
+
+void WebViewImpl::zoomToFindInPageRect(const WebRect& rect)
+{
+    animateZoomAroundPoint(IntRect(rect).center(), FindInPage);
+}
 
 void WebViewImpl::numberOfWheelEventHandlersChanged(unsigned numberOfWheelHandlers)
 {
