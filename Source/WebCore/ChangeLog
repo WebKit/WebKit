@@ -1,3 +1,17 @@
+2012-07-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WK2] WebIntents doesn't build if mutation observers is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=91839
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebIntents was depending on a code protected by ENABLE(MUTATION_OBSERVERS).
+        Now the code is also enabled by ENABLE(WEB_INTENTS).
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore):
+        * bindings/js/JSDictionary.h:
+
 2012-07-20  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Assert failure when layout positioned objects in regions
