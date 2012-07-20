@@ -34,6 +34,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ class WebKitNamedFlowCollection : public RefCounted<WebKitNamedFlowCollection> {
 public:
     static PassRefPtr<WebKitNamedFlowCollection> create(Document* doc) { return adoptRef(new WebKitNamedFlowCollection(doc)); }
 
+    Vector<String> namedFlowsNames();
     WebKitNamedFlow* flowByName(const String&);
     PassRefPtr<WebKitNamedFlow> ensureFlowWithName(const String&);
 

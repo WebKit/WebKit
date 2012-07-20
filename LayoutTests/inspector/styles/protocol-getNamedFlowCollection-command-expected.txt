@@ -1,0 +1,11 @@
+Tests that the "getNamedFlowCollection" command returns the CSS Named Flows in the page. Bug 91607
+
+flow1
+flow2
+flow3
+
+=== CSS Named Flows ===
+flow1
+flow2
+flow3
+

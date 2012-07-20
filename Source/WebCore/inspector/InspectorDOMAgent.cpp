@@ -368,6 +368,19 @@ Node* InspectorDOMAgent::assertNode(ErrorString* errorString, int nodeId)
     return node;
 }
 
+Document* InspectorDOMAgent::assertDocument(ErrorString* errorString, int nodeId)
+{
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
+        return 0;
+
+    if (!(node->isDocumentNode())) {
+        *errorString = "Document is not available";
+        return 0;
+    }
+    return static_cast<Document*>(node);
+}
+
 Element* InspectorDOMAgent::assertElement(ErrorString* errorString, int nodeId)
 {
     Node* node = assertNode(errorString, nodeId);

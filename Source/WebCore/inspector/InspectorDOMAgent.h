@@ -190,6 +190,7 @@ public:
     static bool isWhitespace(Node*);
 
     Node* assertNode(ErrorString*, int nodeId);
+    Document* assertDocument(ErrorString*, int nodeId);
 
     // Methods called from other agents.
     InspectorPageAgent* pageAgent() { return m_pageAgent; }

@@ -43,6 +43,20 @@ WebKitNamedFlowCollection::WebKitNamedFlowCollection(Document* doc)
 {
 }
 
+Vector<String> WebKitNamedFlowCollection::namedFlowsNames()
+{
+    Vector<String> namedFlows;
+
+    for (NamedFlowSet::iterator it = m_namedFlows.begin(); it != m_namedFlows.end(); ++it) {
+        if ((*it)->flowState() == WebKitNamedFlow::FlowStateNull)
+            continue;
+
+        namedFlows.append((*it)->name().string());
+    }
+
+    return namedFlows;
+}
+
 WebKitNamedFlow* WebKitNamedFlowCollection::flowByName(const String& flowName)
 {
     NamedFlowSet::iterator it = m_namedFlows.find<String, NamedFlowHashTranslator>(flowName);

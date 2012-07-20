@@ -1,3 +1,17 @@
+2012-07-20  Andrei Poenaru  <poenaru@adobe.com>
+
+        Web Inspector: Protocol Extension: add getNamedFlowCollection command
+        https://bugs.webkit.org/show_bug.cgi?id=91607
+
+        Reviewed by Pavel Feldman.
+
+        The test builds a webpage with 3 Named Flows in the main frame and 1 Named Flow in an iframe.
+        Because the getNamedFlowCollection command is executed with the main document node id as an argument,
+        it should return only the first 3 Named Flows.
+
+        * inspector/styles/protocol-getNamedFlowCollection-command-expected.txt: Added.
+        * inspector/styles/protocol-getNamedFlowCollection-command.html: Added.
+
 2012-07-20  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening of failing tests

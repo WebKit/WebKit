@@ -51,6 +51,7 @@
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleSheetList.h"
+#include "WebKitNamedFlowCollection.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
@@ -785,6 +786,21 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuild
         properties->addItem(propertyNameStrings[i]);
 
     cssProperties = properties.release();
+}
+
+void InspectorCSSAgent::getNamedFlowCollection(ErrorString* errorString, int nodeId, RefPtr<TypeBuilder::Array<String> >& result)
+{
+    Document* document = m_domAgent->assertDocument(errorString, nodeId);
+    if (!document)
+        return;
+
+    Vector<String> namedFlowsVector = document->namedFlows()->namedFlowsNames();
+    RefPtr<TypeBuilder::Array<String> > namedFlows = TypeBuilder::Array<String>::create();
+
+    for (Vector<String>::iterator it = namedFlowsVector.begin(); it != namedFlowsVector.end(); ++it)
+        namedFlows->addItem(*it);
+
+    result = namedFlows.release();
 }
 
 void InspectorCSSAgent::startSelectorProfiler(ErrorString*)

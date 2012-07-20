@@ -160,6 +160,28 @@ WebInspector.CSSStyleModel.prototype = {
     },
 
     /**
+     * @param {DOMAgent.NodeId} nodeId
+     * @param {function(?Array.<string>)} userCallback
+     */
+    getNamedFlowCollectionAsync: function(nodeId, userCallback)
+    {
+        /**
+         * @param {function(?WebInspector.CSSStyleDeclaration, ?WebInspector.CSSStyleDeclaration)} userCallback
+         * @param {?Protocol.Error} error
+         * @param {?Array.<string>=} namedFlowPayload
+         */
+        function callback(userCallback, error, namedFlowPayload)
+        {
+            if (error || !namedFlowPayload)
+                userCallback(null);
+            else
+                userCallback(namedFlowPayload);
+        }
+
+        CSSAgent.getNamedFlowCollection(nodeId, callback.bind(null, userCallback));
+    },
+
+    /**
      * @param {CSSAgent.CSSRuleId} ruleId
      * @param {DOMAgent.NodeId} nodeId
      * @param {string} newSelector
