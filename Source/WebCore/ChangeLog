@@ -1,3 +1,24 @@
+2012-07-20  Matt Falkenhagen  <falken@chromium.org>
+
+        Show or hide <dialog> depending on the open attribute
+        https://bugs.webkit.org/show_bug.cgi?id=90931
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/dom/HTMLDialogElement/dialog-open.html
+
+        * css/html.css: Add CSS for dialog. This is copied verbatim from the HTML5 spec: http://www.whatwg.org/specs/web-apps/current-work/#flow-content-1
+        (dialog:not([open])):
+        (dialog):
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::close): Set open to false, to hide the dialog.
+        (WebCore::HTMLDialogElement::show): Set open to true, to show the dialog.
+        (WebCore):
+        (WebCore::HTMLDialogElement::isPresentationAttribute): Make openAttr a presentation attribute, to work around bug 91058
+        * html/HTMLDialogElement.h:
+        (HTMLDialogElement):
+        * html/HTMLDialogElement.idl:
+
 2012-07-20  Shinya Kawanaka  <shinyak@chromium.org>
 
         Needs pseudo id to point the inner element of an img elemnet for styling

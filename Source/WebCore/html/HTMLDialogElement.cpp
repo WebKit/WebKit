@@ -28,6 +28,8 @@
 
 #if ENABLE(DIALOG_ELEMENT)
 
+#include "ExceptionCode.h"
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -43,14 +45,30 @@ PassRefPtr<HTMLDialogElement> HTMLDialogElement::create(const QualifiedName& tag
     return adoptRef(new HTMLDialogElement(tagName, document));
 }
 
-void HTMLDialogElement::close()
+void HTMLDialogElement::close(ExceptionCode& ec)
 {
-    // FIXME: Implement.
+    if (!fastHasAttribute(openAttr)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    setBooleanAttribute(openAttr, false);
 }
 
 void HTMLDialogElement::show()
 {
-    // FIXME: Implement.
+    if (fastHasAttribute(openAttr))
+        return;
+    setBooleanAttribute(openAttr, true);
+}
+
+bool HTMLDialogElement::isPresentationAttribute(const QualifiedName& name) const
+{
+    // FIXME: Workaround for <https://bugs.webkit.org/show_bug.cgi?id=91058>: modifying an attribute for which there is an attribute selector
+    // in html.css sometimes does not trigger a style recalc.
+    if (name == openAttr)
+        return true;
+
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 }

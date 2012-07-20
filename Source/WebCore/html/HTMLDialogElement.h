@@ -39,11 +39,13 @@ class HTMLDialogElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLDialogElement> create(const QualifiedName&, Document*);
 
-    void close();
+    void close(ExceptionCode&);
     void show();
 
 private:
     HTMLDialogElement(const QualifiedName&, Document*);
+
+    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
 };
 
 } // namespace WebCore

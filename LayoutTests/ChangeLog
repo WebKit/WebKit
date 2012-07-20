@@ -1,3 +1,13 @@
+2012-07-20  Matt Falkenhagen  <falken@chromium.org>
+
+        Show or hide <dialog> depending on the open attribute
+        https://bugs.webkit.org/show_bug.cgi?id=90931
+
+        Reviewed by Kent Tamura.
+
+        * fast/dom/HTMLDialogElement/dialog-open-expected.txt: Added.
+        * fast/dom/HTMLDialogElement/dialog-open.html: Added.
+
 2012-07-20  Shinya Kawanaka  <shinyak@chromium.org>
 
         Needs pseudo id to point the inner element of an img elemnet for styling

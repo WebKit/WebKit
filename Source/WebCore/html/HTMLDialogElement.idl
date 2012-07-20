@@ -29,7 +29,7 @@ module html {
         Conditional=DIALOG_ELEMENT
     ] HTMLDialogElement : HTMLElement {
         attribute [Reflect] boolean open;
-        void close();
+        void close() raises(DOMException);
         void show();
     };
 
