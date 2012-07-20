@@ -2868,6 +2868,7 @@ BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 // Crashing since on or before r122699, please uncomment previous line before removing.
 BUGWK91415 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS TEXT
 BUGWK91415 MAC RELEASE : fast/frames/calculate-fixed.html = PASS TEXT
+BUGWK91415 WIN DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
 BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
@@ -3091,7 +3092,8 @@ BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-
 BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-sw.html = PASS IMAGE
 BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-w.html = PASS IMAGE
 
-BUGWK81857 SNOWLEOPARD : fast/frames/valid.html = IMAGE
+BUGWK81857 SNOWLEOPARD RELEASE : fast/frames/valid.html = IMAGE
+BUGWK81857 SLOW SNOWLEOPARD DEBUG : fast/frames/valid.html = IMAGE
 BUGWK81931 SNOWLEOPARD WIN DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
 
 BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
