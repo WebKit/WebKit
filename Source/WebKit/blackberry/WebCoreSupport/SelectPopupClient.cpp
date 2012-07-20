@@ -115,6 +115,7 @@ void SelectPopupClient::generateHTML(bool multiple, int size, const ScopeArray<B
             source.append(", ");
     }
     source.append("] ");
+    source.append(", 'Cancel'");
     // If multi-select, add OK button for confirm.
     if (m_multiple)
         source.append(", 'OK'");
@@ -145,7 +146,12 @@ String SelectPopupClient::htmlSource()
 void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
 {
     ASSERT(m_element);
-    ASSERT(m_size == stringValue.length());
+
+    static const char* cancelValue = "-1";
+    if (stringValue == cancelValue) {
+        closePopup();
+        return;
+    }
 
     if (m_size > 0) {
         bool selecteds[m_size];

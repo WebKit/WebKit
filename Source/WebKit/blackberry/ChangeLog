@@ -1,3 +1,16 @@
+2012-07-20  Crystal Zhang  <haizhang@rim.com>
+
+        [BlackBerry] Add Cancel button for Select popup
+        https://bugs.webkit.org/show_bug.cgi?id=91887
+
+        Reviewed by Yong Li.
+
+        PR 177706
+
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::generateHTML):
+        (WebCore::SelectPopupClient::setValueAndClosePopup):
+
 2012-07-19  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] Make sure to send favicon when go back/forward
