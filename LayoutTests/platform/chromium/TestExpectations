@@ -3639,20 +3639,3 @@ BUGWK91472 : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
 BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist.html = IMAGE
-
-// Needs rebaseline.
-BUGWK91802 : media/media-document-audio-repaint.html = IMAGE+TEXT
-BUGWK91802 : fast/layers/video-layer.html = TEXT
-BUGWK91802 : media/audio-controls-rendering.html = TEXT
-BUGWK91802 : media/audio-repaint.html = TEXT
-BUGWK91802 : media/controls-after-reload.html = TEXT
-BUGWK91802 : media/controls-strict.html = TEXT
-BUGWK91802 : media/controls-styling.html = TEXT
-BUGWK91802 : media/controls-without-preload.html = TEXT
-BUGWK91802 : media/media-controls-clone.html = TEXT
-BUGWK91802 : media/video-controls-rendering.html = TEXT
-BUGWK91802 : media/video-display-toggle.html = TEXT
-BUGWK91802 : media/video-empty-source.html = TEXT
-BUGWK91802 : media/video-no-audio.html = TEXT
-BUGWK91802 : media/video-playing-and-pause.html = TEXT
-BUGWK91802 : media/video-zoom-controls.html = TEXT
