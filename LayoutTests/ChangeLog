@@ -1,3 +1,36 @@
+2012-07-20  Stephen Chenney  <schenney@chromium.org>
+
+        Rebaseline Chromium results after r121171
+        https://bugs.webkit.org/show_bug.cgi?id=91474
+
+        Reviewed by Dan Bernstein.
+
+        Unreviewed test expectations update.
+
+        Values have changed by one pixel, which is expected given the description in the bug report.
+
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac/svg/as-image/svg-non-integer-scaled-image-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/chromium-win/svg/as-image/svg-non-integer-scaled-image-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/chromium/svg/as-image: Removed.
+        * platform/chromium/svg/as-image/svg-non-integer-scaled-image-expected.txt: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Removed.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Removed.
+        * svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+
 2012-07-20  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Assert failure when layout positioned objects in regions
