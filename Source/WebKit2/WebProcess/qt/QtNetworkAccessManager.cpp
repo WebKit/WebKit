@@ -45,7 +45,9 @@ QtNetworkAccessManager::QtNetworkAccessManager(WebProcess* webProcess)
 {
     connect(this, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)), SLOT(onAuthenticationRequired(QNetworkReply*, QAuthenticator*)));
     connect(this, SIGNAL(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)), SLOT(onProxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
+#ifndef QT_NO_SSL
     connect(this, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)), SLOT(onSslErrors(QNetworkReply*, QList<QSslError>)));
+#endif
 }
 
 WebPage* QtNetworkAccessManager::obtainOriginatingWebPage(const QNetworkRequest& request)
@@ -126,6 +128,7 @@ void QtNetworkAccessManager::onAuthenticationRequired(QNetworkReply* reply, QAut
 
 void QtNetworkAccessManager::onSslErrors(QNetworkReply* reply, const QList<QSslError>& qSslErrors)
 {
+#ifndef QT_NO_SSL
     WebPage* webPage = obtainOriginatingWebPage(reply->request());
 
     // FIXME: This check can go away once our Qt version is up-to-date. See: QTBUG-23512.
@@ -138,15 +141,10 @@ void QtNetworkAccessManager::onSslErrors(QNetworkReply* reply, const QList<QSslE
     if (webPage->sendSync(
         Messages::WebPageProxy::CertificateVerificationRequest(hostname),
         Messages::WebPageProxy::CertificateVerificationRequest::Reply(ignoreErrors))) {
-        if (ignoreErrors) {
-#ifndef QT_NO_OPENSSL
+        if (ignoreErrors)
             reply->ignoreSslErrors(qSslErrors);
-#else
-            Q_UNUSED(qSslErrors);
-            reply->ignoreSslErrors();
-#endif
-        }
     }
+#endif
 }
 
 }

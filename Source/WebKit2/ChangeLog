@@ -1,3 +1,15 @@
+2012-07-20  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        QtNetworkAccessManager should not rely on signal sslErrors when QT_NO_SSL is defined
+        https://bugs.webkit.org/show_bug.cgi?id=91866
+
+        Reviewed by Noam Rosenthal.
+
+        * WebProcess/qt/QtNetworkAccessManager.cpp:
+        (WebKit::QtNetworkAccessManager::QtNetworkAccessManager): QNAM's signal is only defined when
+        that flag is undefined. Removed the connection when we have the flag set.
+        (WebKit::QtNetworkAccessManager::onSslErrors): When the flag is set, this slot becomes unused.
+
 2012-07-20  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Proxy configuration should honor the no_proxy environment variable
