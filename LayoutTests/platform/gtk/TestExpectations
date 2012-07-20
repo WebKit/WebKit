@@ -175,9 +175,6 @@ BUGWKGTK SKIP : fast/speech = TEXT
 // Speech JavaScript API is not yet enabled.
 BUGWKGTK SKIP : fast/events/constructors/speech-recognition-event-constructor.html = TEXT
 
-// Web Timing issues.
-BUGWKGTK : fast/dom/Window/window-properties-performance.html = TEXT
-
 // FileSystem API is not supported.
 BUGWKGTK SKIP : fast/filesystem = TEXT
 BUGWKGTK SKIP : http/tests/filesystem = TEXT

@@ -1,5 +1,14 @@
 2012-07-20  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed GTK gardening, adding platform-specific baseline for
+        fast/dom/Window/window-properties-performance.html that assumes jsHeapSizeLimit
+        attribute to be undefined, as expected for ports using JavaScriptCore.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/Window/window-properties-performance-expected.txt: Added.
+
+2012-07-20  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening, adding image baseline for
         fast/images/paletted-png-with-color-profile.html.
 
