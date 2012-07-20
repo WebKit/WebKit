@@ -1,5 +1,18 @@
 2012-07-20  Zan Dobersek  <zandobersek@gmail.com>
 
+        [Gtk] Many tests revealed as passing after moving from Skipped to test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=85591
+
+        Unreviewed, managing a few more unexpected passes for the GTK port.
+
+        Remove a few expectations for tests that were passing, reclassify some failures as
+        architecture-specific and add PASS expectations for a few tests that pass even though
+        they test features that are currently not supported on the GTK port.
+
+        * platform/gtk/TestExpectations:
+
+2012-07-20  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening, adding platform-specific baseline that's required
         after changes in r123145.
 
