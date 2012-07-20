@@ -1,3 +1,15 @@
+2012-07-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS2.1] Anonymous tables should be inline/block-level based off their parent
+        https://bugs.webkit.org/show_bug.cgi?id=15365
+
+        Another unreviewed rebaseline after r123159 (gtk).
+
+        * fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Added.
+        * platform/efl/fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Removed.
+        * platform/gtk/fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug3037-1-expected.txt: Added.
+
 2012-07-19  Erik Arvidsson  <arv@chromium.org>
 
         Fix test after r123145.
