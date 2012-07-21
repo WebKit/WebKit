@@ -58,7 +58,7 @@ DEVICE_DRT_STAMP_PATH = DEVICE_DRT_DIR + 'DumpRenderTree.stamp'
 DRT_APP_PACKAGE = 'org.chromium.native_test'
 DRT_ACTIVITY_FULL_NAME = DRT_APP_PACKAGE + '/.ChromeNativeTestActivity'
 DRT_APP_DIR = '/data/user/0/' + DRT_APP_PACKAGE + '/'
-DRT_APP_FILES_DIR = '/sdcard/native_tests/'
+DRT_APP_FILES_DIR = DEVICE_SOURCE_ROOT_DIR
 DRT_APP_CACHE_DIR = DRT_APP_DIR + 'cache/'
 
 # This only works for single core devices so far.
