@@ -1,3 +1,9 @@
+2012-07-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-07-20  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_DATALIST to ENABLE_DATALIST_ELEMENT
