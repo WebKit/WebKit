@@ -1,3 +1,143 @@
+2012-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unify HTMLCollection and DynamicNodeList
+        https://bugs.webkit.org/show_bug.cgi?id=91335
+
+        Reviewed by Anders Carlsson.
+
+        This is the grand unification of HTMLCollection and DynamicNodeList.
+
+        It merges implementations of item() and length() in ChildNodeList, DynamicNodeList,
+        and HTMLCollection. The unified implementation is based on the one used for HTMLCollection,
+        that has been improved over the last few days; see r122660 and r122672 for examples.
+
+        There are five key changes:
+        1. Made itemBeforeOrAfter aware of DynamicNodeList.
+        2. itemBeforeOrAfter and related functions take and return Node* to support ChildNodeList.
+        3. Renamed InvalidCollectionType to NodeListCollectionType since DynamicNodeLists need to be
+        identified itemBeforeOrAfter.
+        4. Renamed itemAfter to virtualItemAfter in subclasses of HTMLCollection, and devirtualized
+        itemAfter used in common cases to avoid performance regressions. To make this intent clear,
+        SupportItemBefore and DoNotSupportItemBefore have been renamed to DoesNotOverrideItemAfter
+        and OverridesItemAfter. This change also help us detect a subclass of HTMLCollection that
+        passes in a wrong value to ItemBeforeSupportType by making forward iterations fail (hit an
+        assertion or doesn't iterate at all) as well as backward iterations.
+        5. Restricted the use of elementsArrayOffset to subclasses that provide virtualItemAfter.
+
+        This patch completes my effort to share code between HTMLCollection and DynamicNodeList.
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+        (WebCore): Removed length() and item().
+        (WebCore::ChildNodeList::nodeMatches):
+        * dom/ChildNodeList.h:
+        (ChildNodeList):
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        * dom/Document.cpp:
+        (WebCore::Document::registerNodeListCache):
+        (WebCore::Document::unregisterNodeListCache):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeListCacheBase::invalidateCache):
+        (WebCore::DynamicNodeList::length):
+        (WebCore::DynamicNodeList::item):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::DynamicNodeListCacheBase): Takes new boolean argument
+        shouldOnlyIncludeDirectChildren indicating whether the non-child descendents should be
+        included or not. This is necessary to identify ChildNodeList in itemBeforeOrAfter.
+        (WebCore::DynamicNodeListCacheBase::ownerNode): Moved from DynamicNodeListCacheBase and
+        HTMLCollectionCacheBase.
+        (WebCore::DynamicNodeListCacheBase::document): Moved from DynamicNodeListCacheBase.
+        (WebCore::DynamicNodeListCacheBase::rootNode): Ditto.
+        (WebCore::DynamicNodeListCacheBase::overridesItemAfter): Renamed from supportsItemBefore
+        and the return value has been negated.
+        (WebCore::DynamicNodeListCacheBase::shouldOnlyIncludeDirectChildren): Added.
+        (WebCore::DynamicNodeListCacheBase):
+        (WebCore::DynamicNodeList::DynamicNodeList): Takes NodeListType to determine the value of
+        shouldOnlyIncludeDirectChildren.
+        (DynamicNodeList):
+        (WebCore::DynamicSubtreeNodeList::~DynamicSubtreeNodeList):
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        * dom/MicroDataItemList.cpp:
+        (WebCore::MicroDataItemList::MicroDataItemList):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        * html/CollectionType.h:
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::HTMLAllCollection):
+        * html/HTMLCollection.cpp:
+        (WebCore::shouldOnlyIncludeDirectChildren):
+        (WebCore::rootTypeFromCollectionType):
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes):
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::create):
+        (WebCore::HTMLCollection::~HTMLCollection):
+        (WebCore::isAcceptableElement):
+        (WebCore::firstNode): Extracted from itemBeforeOrAfter.
+        (WebCore::DynamicNodeListCacheBase::iterateForNextNode): Ditto.
+        (WebCore::DynamicNodeListCacheBase::itemBeforeOrAfter): Takes and returns Node*.
+        Special case ChildNodeList since there is no need to skip any node. When "this" is a
+        node list, call nodeMatches instead of isAcceptableElement.
+        (WebCore::DynamicNodeListCacheBase::itemBefore): No longer takes offsetInArray since
+        the use of elementsArrayOffset has been restricted to HTMLCollections that provides
+        virtualItemAfter.
+        (WebCore::DynamicNodeListCacheBase::itemAfter): Calls virtualItemAfter if necessary.
+        Otherwise assert offsetInArray is zero since we should never be using this variable
+        when virtualItemAfter is not provided.
+        (WebCore::DynamicNodeListCacheBase::isLastItemCloserThanLastOrCachedItem):
+        (WebCore::DynamicNodeListCacheBase::isFirstItemCloserThanCachedItem):
+        (WebCore::DynamicNodeListCacheBase::setItemCache): Updates m_cachedElementsArrayOffset
+        in HTMLCollection if and only if virtualItemAfter is provided. This is safe because
+        node lists never provide virtualItemAfter.
+        (WebCore::DynamicNodeListCacheBase::cachedElementsArrayOffset): Similarly, returns
+        m_cachedElementsArrayOffset if virtualItemAfter is provided.
+        (WebCore::DynamicNodeListCacheBase::lengthCommon):
+        (WebCore::DynamicNodeListCacheBase::itemCommon): Note that supportsItemBefore() is
+        equivalent to !overridesItemAfter() here.
+        (WebCore::DynamicNodeListCacheBase::itemBeforeOrAfterCachedItem): Uses Node* through
+        out the function. Since itemBefore never uses offsetInArray, always sets 0 for that.
+        Note that we never call itemBefore and virtualItemAfter on the same object.
+        (WebCore::HTMLCollection::virtualItemAfter): Added only to make the class "concrete".
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+        (WebCore::HTMLCollection::tags):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollectionCacheBase::HTMLCollectionCacheBase):
+        (HTMLCollectionCacheBase):
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::item):
+        (WebCore::HTMLCollection::base):
+        (HTMLCollection):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::HTMLFormCollection):
+        (WebCore::HTMLFormCollection::virtualItemAfter):
+        * html/HTMLFormCollection.h:
+        (HTMLFormCollection):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection):
+        (WebCore::HTMLNameCollection::virtualItemAfter):
+        * html/HTMLNameCollection.h:
+        (HTMLNameCollection):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::HTMLPropertiesCollection):
+        (WebCore::HTMLPropertiesCollection::virtualItemAfter):
+        (WebCore::HTMLPropertiesCollection::updateNameCache):
+        * html/HTMLPropertiesCollection.h:
+        (HTMLPropertiesCollection):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection):
+        (WebCore::HTMLTableRowsCollection::virtualItemAfter):
+        * html/HTMLTableRowsCollection.h:
+        (HTMLTableRowsCollection):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+
 2012-07-20  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Simplify backend interface classes

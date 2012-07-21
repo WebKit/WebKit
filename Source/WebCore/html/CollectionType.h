@@ -61,7 +61,7 @@ enum CollectionType {
 #endif
 
     FormControls,
-    InvalidCollectionType
+    NodeListCollectionType
 };
 
 static const CollectionType FirstUnnamedDocumentCachedType = DocImages;

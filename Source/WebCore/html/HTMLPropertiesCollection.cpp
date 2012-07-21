@@ -51,7 +51,7 @@ PassRefPtr<HTMLPropertiesCollection> HTMLPropertiesCollection::create(Node* item
 }
 
 HTMLPropertiesCollection::HTMLPropertiesCollection(Node* itemNode)
-    : HTMLCollection(itemNode, ItemProperties, DoNotSupportItemBefore)
+    : HTMLCollection(itemNode, ItemProperties, OverridesItemAfter)
     , m_hasPropertyNameCache(false)
     , m_hasItemRefElements(false)
 {
@@ -112,10 +112,10 @@ static Node* nextNodeWithProperty(Node* base, Node* node)
             ? node->traverseNextNode(base) : node->traverseNextSibling(base);
 }
 
-Element* HTMLPropertiesCollection::itemAfter(unsigned& offsetInArray, Element* previousItem) const
+Element* HTMLPropertiesCollection::virtualItemAfter(unsigned& offsetInArray, Element* previousItem) const
 {
     while (offsetInArray < m_itemRefElements.size()) {
-        if (Element* next = itemAfter(m_itemRefElements[offsetInArray], previousItem))
+        if (Element* next = virtualItemAfter(m_itemRefElements[offsetInArray], previousItem))
             return next;
         offsetInArray++;
         previousItem = 0;
@@ -123,7 +123,7 @@ Element* HTMLPropertiesCollection::itemAfter(unsigned& offsetInArray, Element* p
     return 0;
 }
 
-HTMLElement* HTMLPropertiesCollection::itemAfter(HTMLElement* base, Element* previous) const
+HTMLElement* HTMLPropertiesCollection::virtualItemAfter(HTMLElement* base, Element* previous) const
 {
     Node* current;
     current = previous ? nextNodeWithProperty(base, previous) : base;
@@ -149,7 +149,7 @@ void HTMLPropertiesCollection::updateNameCache() const
 
     for (unsigned i = 0; i < m_itemRefElements.size(); ++i) {
         HTMLElement* refElement = m_itemRefElements[i];
-        for (HTMLElement* element = itemAfter(refElement, 0); element; element = itemAfter(refElement, element)) {
+        for (HTMLElement* element = virtualItemAfter(refElement, 0); element; element = virtualItemAfter(refElement, element)) {
             DOMSettableTokenList* itemProperty = element->itemProp();
             for (unsigned propertyIndex = 0; propertyIndex < itemProperty->length(); ++propertyIndex)
                 updatePropertyCache(element, itemProperty->item(propertyIndex));

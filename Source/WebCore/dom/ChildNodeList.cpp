@@ -28,7 +28,7 @@
 namespace WebCore {
 
 ChildNodeList::ChildNodeList(PassRefPtr<Node> node)
-    : DynamicNodeList(node, NodeListIsRootedAtNode, DoNotInvalidateOnAttributeChanges)
+    : DynamicNodeList(node, ChildNodeListType, NodeListIsRootedAtNode, DoNotInvalidateOnAttributeChanges)
 {
 }
 
@@ -37,73 +37,9 @@ ChildNodeList::~ChildNodeList()
     ownerNode()->removeCachedChildNodeList();
 }
 
-unsigned ChildNodeList::length() const
-{
-    if (isLengthCacheValid())
-        return cachedLength();
-
-    unsigned len = 0;
-    for (Node* n = rootNode()->firstChild(); n; n = n->nextSibling())
-        len++;
-
-    setLengthCache(len);
-
-    return len;
-}
-
-Node* ChildNodeList::item(unsigned index) const
-{
-    unsigned int pos = 0;
-    Node* n = rootNode()->firstChild();
-
-    if (isItemCacheValid()) {
-        if (index == cachedItemOffset())
-            return cachedItem();
-
-        int diff = index - cachedItemOffset();
-        unsigned dist = abs(diff);
-        if (dist < index) {
-            n = cachedItem();
-            pos = cachedItemOffset();
-        }
-    }
-
-    if (isLengthCacheValid()) {
-        if (index >= cachedLength())
-            return 0;
-
-        int diff = index - pos;
-        unsigned dist = abs(diff);
-        if (dist > cachedLength() - 1 - index) {
-            n = rootNode()->lastChild();
-            pos = cachedLength() - 1;
-        }
-    }
-
-    if (pos <= index) {
-        while (n && pos < index) {
-            n = n->nextSibling();
-            ++pos;
-        }
-    } else {
-        while (n && pos > index) {
-            n = n->previousSibling();
-            --pos;
-        }
-    }
-
-    if (n) {
-        setItemCache(n, pos);
-        return n;
-    }
-
-    return 0;
-}
-
 bool ChildNodeList::nodeMatches(Element* testNode) const
 {
-    // Note: Due to the overrides of the length and item functions above,
-    // this function will be called only by DynamicNodeList::itemWithName,
+    // This function will be called only by DynamicNodeList::itemWithName,
     // for an element that was located with getElementById.
     return testNode->parentNode() == rootNode();
 }

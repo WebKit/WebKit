@@ -43,7 +43,7 @@ public:
 private:
     HTMLNameCollection(Document*, CollectionType, const AtomicString& name);
 
-    virtual Element* itemAfter(unsigned& offsetInArray, Element*) const OVERRIDE;
+    virtual Element* virtualItemAfter(unsigned& offsetInArray, Element*) const OVERRIDE;
 
     AtomicString m_name;
 };

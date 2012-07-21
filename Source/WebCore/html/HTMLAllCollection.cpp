@@ -36,7 +36,7 @@ PassRefPtr<HTMLAllCollection> HTMLAllCollection::create(Document* document)
 }
 
 HTMLAllCollection::HTMLAllCollection(Document* document)
-    : HTMLCollection(document, DocAll, SupportItemBefore)
+    : HTMLCollection(document, DocAll, DoesNotOverrideItemAfter)
 {
 }
 

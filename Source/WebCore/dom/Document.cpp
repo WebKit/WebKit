@@ -3882,7 +3882,7 @@ void Document::setCSSTarget(Element* n)
 
 void Document::registerNodeListCache(DynamicNodeListCacheBase* list)
 {
-    if (list->type() != InvalidCollectionType)
+    if (list->type() != NodeListCollectionType)
         m_nodeListCounts[InvalidateOnIdNameAttrChange]++;
     m_nodeListCounts[list->invalidationType()]++;
     if (list->isRootedAtDocument())
@@ -3891,7 +3891,7 @@ void Document::registerNodeListCache(DynamicNodeListCacheBase* list)
 
 void Document::unregisterNodeListCache(DynamicNodeListCacheBase* list)
 {
-    if (list->type() != InvalidCollectionType)
+    if (list->type() != NodeListCollectionType)
         m_nodeListCounts[InvalidateOnIdNameAttrChange]--;
     m_nodeListCounts[list->invalidationType()]--;
     if (list->isRootedAtDocument()) {

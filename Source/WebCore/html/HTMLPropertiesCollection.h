@@ -65,8 +65,8 @@ private:
 
     Node* findRefElements(Node* previous) const;
 
-    virtual Element* itemAfter(unsigned& offsetInArray, Element*) const OVERRIDE;
-    HTMLElement* itemAfter(HTMLElement* base, Element* previous) const;
+    virtual Element* virtualItemAfter(unsigned& offsetInArray, Element*) const OVERRIDE;
+    HTMLElement* virtualItemAfter(HTMLElement* base, Element* previous) const;
 
     void updateNameCache() const;
 

@@ -38,9 +38,6 @@ namespace WebCore {
 
         virtual ~ChildNodeList();
 
-        virtual unsigned length() const;
-        virtual Node* item(unsigned index) const;
-
     protected:
         ChildNodeList(PassRefPtr<Node> rootNode);
 

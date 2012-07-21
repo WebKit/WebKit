@@ -37,7 +37,7 @@ using namespace HTMLNames;
 // calculation every time if anything has changed.
 
 HTMLFormCollection::HTMLFormCollection(Element* base)
-    : HTMLCollection(base, FormControls, DoNotSupportItemBefore)
+    : HTMLCollection(base, FormControls, OverridesItemAfter)
 {
     ASSERT(base->hasTagName(formTag) || base->hasTagName(fieldsetTag));
 }
@@ -67,7 +67,7 @@ const Vector<HTMLImageElement*>& HTMLFormCollection::formImageElements() const
     return static_cast<HTMLFormElement*>(base())->imageElements();
 }
 
-Element* HTMLFormCollection::itemAfter(unsigned& offset, Element* previousItem) const
+Element* HTMLFormCollection::virtualItemAfter(unsigned& offset, Element* previousItem) const
 {
     const Vector<FormAssociatedElement*>& elementsArray = formControlElements();
     if (previousItem)
