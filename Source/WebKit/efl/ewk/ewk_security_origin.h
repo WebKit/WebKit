@@ -33,7 +33,7 @@
 #ifndef ewk_security_origin_h
 #define ewk_security_origin_h
 
-#include <Evas.h>
+#include <Eina.h>
 
 #ifdef __cplusplus
 extern "C" {

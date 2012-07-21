@@ -24,11 +24,9 @@
 #include "ApplicationCacheStorage.h"
 #include "DatabaseTracker.h"
 #include "SecurityOrigin.h"
-#include "ewk_private.h"
 #include "ewk_security_origin_private.h"
 #include "ewk_web_database.h"
 #include "ewk_web_database_private.h"
-#include <Eina.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>

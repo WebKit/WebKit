@@ -1,3 +1,16 @@
+2012-07-20  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Remove unused headers from ewk_security_origin
+        https://bugs.webkit.org/show_bug.cgi?id=91914
+
+        Reviewed by Noam Rosenthal.
+
+        There are some unused header in the ewk_security_origin.h/cpp
+        We need to remove them.
+
+        * ewk/ewk_security_origin.cpp:
+        * ewk/ewk_security_origin.h:
+
 2012-07-20  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Proxy configuration should honor the no_proxy environment variable
