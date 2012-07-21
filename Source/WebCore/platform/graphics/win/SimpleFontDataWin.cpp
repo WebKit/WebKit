@@ -35,8 +35,6 @@
 #include "FontDescription.h"
 #include "HWndDC.h"
 #include <mlang.h>
-#include <unicode/uchar.h>
-#include <unicode/unorm.h>
 #include <winsock2.h>
 #include <wtf/MathExtras.h>
 

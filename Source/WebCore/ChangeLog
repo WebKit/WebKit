@@ -1,3 +1,14 @@
+2012-07-21  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove unnecessary ICU header includes from SimpleFontDataWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=91922
+
+        Reviewed by Kentaro Hara.
+
+        This allows us to use SimpleFontDataWin with an other Unicode implementation too.
+
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+
 2012-07-21  Kwang Yul Seo  <skyul@company100.net>
 
         A start tag whose tag name is "html" in the "in body" insertion mode is a parse error
