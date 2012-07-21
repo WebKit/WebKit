@@ -1,3 +1,62 @@
+2012-07-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] Unreviewed, land new baselines after r123272.
+
+        * platform/chromium-linux/media/controls-styling-strict-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/layers/video-layer-expected.png:
+        * platform/chromium-mac-snowleopard/fullscreen/full-screen-stacking-context-expected.png:
+        * platform/chromium-mac-snowleopard/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac-snowleopard/media/audio-repaint-expected.png:
+        * platform/chromium-mac-snowleopard/media/controls-after-reload-expected.png:
+        * platform/chromium-mac-snowleopard/media/controls-layout-direction-expected.png:
+        * platform/chromium-mac-snowleopard/media/controls-strict-expected.png:
+        * platform/chromium-mac-snowleopard/media/controls-styling-expected.png:
+        * platform/chromium-mac-snowleopard/media/controls-styling-strict-expected.png: Added.
+        * platform/chromium-mac-snowleopard/media/controls-without-preload-expected.png:
+        * platform/chromium-mac-snowleopard/media/media-controls-clone-expected.png:
+        * platform/chromium-mac-snowleopard/media/video-controls-rendering-expected.png:
+        * platform/chromium-mac-snowleopard/media/video-display-toggle-expected.png:
+        * platform/chromium-mac-snowleopard/media/video-empty-source-expected.png:
+        * platform/chromium-mac-snowleopard/media/video-no-audio-expected.png:
+        * platform/chromium-mac-snowleopard/media/video-playing-and-pause-expected.png:
+        * platform/chromium-mac/css1/basic/inheritance-expected.png:
+        * platform/chromium-mac/fast/layers/video-layer-expected.png:
+        * platform/chromium-mac/fullscreen/full-screen-stacking-context-expected.png:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac/media/audio-repaint-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-layout-direction-expected.png:
+        * platform/chromium-mac/media/controls-strict-expected.png:
+        * platform/chromium-mac/media/controls-styling-expected.png:
+        * platform/chromium-mac/media/controls-styling-strict-expected.png: Added.
+        * platform/chromium-mac/media/controls-styling-strict-expected.txt: Added.
+        * platform/chromium-mac/media/controls-without-preload-expected.png:
+        * platform/chromium-mac/media/media-controls-clone-expected.png:
+        * platform/chromium-mac/media/video-controls-rendering-expected.png:
+        * platform/chromium-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-mac/media/video-empty-source-expected.png:
+        * platform/chromium-mac/media/video-no-audio-expected.png:
+        * platform/chromium-mac/media/video-playing-and-pause-expected.png:
+        * platform/chromium-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-win/fast/layers/video-layer-expected.png:
+        * platform/chromium-win/fullscreen/full-screen-stacking-context-expected.png:
+        * platform/chromium-win/media/audio-controls-rendering-expected.png:
+        * platform/chromium-win/media/audio-repaint-expected.png:
+        * platform/chromium-win/media/controls-after-reload-expected.png:
+        * platform/chromium-win/media/controls-layout-direction-expected.png:
+        * platform/chromium-win/media/controls-strict-expected.png:
+        * platform/chromium-win/media/controls-styling-expected.png:
+        * platform/chromium-win/media/controls-styling-strict-expected.png: Added.
+        * platform/chromium-win/media/controls-styling-strict-expected.txt: Added.
+        * platform/chromium-win/media/controls-without-preload-expected.png:
+        * platform/chromium-win/media/media-controls-clone-expected.png:
+        * platform/chromium-win/media/video-controls-rendering-expected.png:
+        * platform/chromium-win/media/video-display-toggle-expected.png:
+        * platform/chromium-win/media/video-empty-source-expected.png:
+        * platform/chromium-win/media/video-no-audio-expected.png:
+        * platform/chromium-win/media/video-playing-and-pause-expected.png:
+        * platform/chromium-win/media/video-zoom-controls-expected.png:
+
 2012-07-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] svg/text rebaseline after new test fonts (part 4)
