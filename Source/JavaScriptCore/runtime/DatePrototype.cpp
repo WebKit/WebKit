@@ -66,10 +66,6 @@
 #include <unicode/udat.h>
 #endif
 
-#if OS(WINCE) && !PLATFORM(QT)
-extern "C" size_t strftime(char * const s, const size_t maxsize, const char * const format, const struct tm * const t); //provided by libce
-#endif
-
 using namespace WTF;
 
 namespace JSC {
@@ -223,22 +219,57 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, doubl
 
 static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, LocaleDateTimeFormat format)
 {
+#if OS(WINDOWS)
+    SYSTEMTIME systemTime;
+    memset(&systemTime, 0, sizeof(systemTime));
+    systemTime.wYear = gdt.year + 1900;
+    systemTime.wMonth = gdt.month + 1;
+    systemTime.wDay = gdt.monthDay;
+    systemTime.wDayOfWeek = gdt.weekDay;
+    systemTime.wHour = gdt.hour;
+    systemTime.wMinute = gdt.minute;
+    systemTime.wSecond = gdt.second;
+
+    Vector<UChar, 128> buffer;
+    size_t length = 0;
+
+    if (format == LocaleDate) {
+        buffer.resize(GetDateFormatW(LOCALE_USER_DEFAULT, DATE_LONGDATE, &systemTime, 0, 0, 0));
+        length = GetDateFormatW(LOCALE_USER_DEFAULT, DATE_LONGDATE, &systemTime, 0, buffer.data(), buffer.size());
+    } else if (format == LocaleTime) {
+        buffer.resize(GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &systemTime, 0, 0, 0));
+        length = GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &systemTime, 0, buffer.data(), buffer.size());
+    } else if (format == LocaleDateAndTime) {
+        buffer.resize(GetDateFormatW(LOCALE_USER_DEFAULT, DATE_LONGDATE, &systemTime, 0, 0, 0) + GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &systemTime, 0, 0, 0));
+        length = GetDateFormatW(LOCALE_USER_DEFAULT, DATE_LONGDATE, &systemTime, 0, buffer.data(), buffer.size());
+        if (length) {
+            buffer[length - 1] = ' ';
+            length += GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &systemTime, 0, buffer.data() + length, buffer.size() - length);
+        }
+    } else
+        ASSERT_NOT_REACHED();
+
+    //  Remove terminating null character.
+    if (length)
+        length--;
+
+    return jsNontrivialString(exec, UString(buffer.data(), length));
+
+#else // OS(WINDOWS)
+
 #if HAVE(LANGINFO_H)
     static const nl_item formats[] = { D_T_FMT, D_FMT, T_FMT };
-#elif (OS(WINCE) && !PLATFORM(QT))
-     // strftime() does not support '#' on WinCE
-    static const char* const formatStrings[] = { "%c", "%x", "%X" };
 #else
     static const char* const formatStrings[] = { "%#c", "%#x", "%X" };
 #endif
- 
+
     // Offset year if needed
     struct tm localTM = gdt;
     int year = gdt.year + 1900;
     bool yearNeedsOffset = year < 1900 || year > 2038;
     if (yearNeedsOffset)
         localTM.tm_year = equivalentYearForDST(year) - 1900;
- 
+
 #if HAVE(LANGINFO_H)
     // We do not allow strftime to generate dates with 2-digits years,
     // both to avoid ambiguity, and a crash in strncpy, for years that
@@ -259,19 +290,19 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
 #else
     size_t ret = strftime(timebuffer, bufsize, formatStrings[format], &localTM);
 #endif
- 
+
     if (ret == 0)
         return jsEmptyString(exec);
- 
+
     // Copy original into the buffer
     if (yearNeedsOffset && format != LocaleTime) {
         static const int yearLen = 5;   // FIXME will be a problem in the year 10,000
         char yearString[yearLen];
- 
+
         snprintf(yearString, yearLen, "%d", localTM.tm_year + 1900);
         char* yearLocation = strstr(timebuffer, yearString);
         snprintf(yearString, yearLen, "%d", year);
- 
+
         strncpy(yearLocation, yearString, yearLen - 1);
     }
 
@@ -296,6 +327,7 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, L
 #endif
 
     return jsNontrivialString(exec, timebuffer);
+#endif // OS(WINDOWS)
 }
 
 static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, double, LocaleDateTimeFormat format)
