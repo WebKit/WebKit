@@ -1,3 +1,19 @@
+2012-07-21  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11928576> SVG-as-image (constrained) intrinsic size calculation is wrong in vertical writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=91918
+
+        Reviewed by Anders Carlsson.
+
+        Test: svg/as-image/svg-intrinsic-size-rectangular-vertical.html
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox): When there is a content
+        renderer, it returns a physical intrinsic size and aspect ratio. The code was already
+        accounting for this by taking the reciprocal of the aspect ratio in the vertical case. Made
+        it also transpose the size itself, turning it from physical to logical. Moved this code
+        after setting m_intrinsicSize, since that member variable is always physical.
+
 2012-07-21  Patrick Gansterer  <paroga@webkit.org>
 
         Cleanup TextEncoding USE(XXX_UNICODE) macros

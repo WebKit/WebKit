@@ -281,9 +281,6 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         if (!isPercentageIntrinsicSize)
             intrinsicSize.scale(style()->effectiveZoom());
 
-        if (intrinsicRatio && !isHorizontalWritingMode())
-            intrinsicRatio = 1 / intrinsicRatio;
-
         if (rendererHasAspectRatio(this) && isPercentageIntrinsicSize)
             intrinsicRatio = 1;
             
@@ -292,6 +289,12 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         // min and max widths.
         if (intrinsicRatio && !isPercentageIntrinsicSize && !intrinsicSize.isEmpty())
             m_intrinsicSize = flooredIntSize(intrinsicSize); // FIXME: This introduces precision errors. We should convert m_intrinsicSize to be a float.
+
+        if (!isHorizontalWritingMode()) {
+            if (intrinsicRatio)
+                intrinsicRatio = 1 / intrinsicRatio;
+            intrinsicSize = intrinsicSize.transposedSize();
+        }
     } else {
         computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
         if (intrinsicRatio)
