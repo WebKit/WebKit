@@ -1962,6 +1962,7 @@ void HTMLTreeBuilder::processEndTagForInTable(AtomicHTMLToken& token)
         parseError(token);
         return;
     }
+    parseError(token);
     // Is this redirection necessary here?
     HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree);
     processEndTagForInBody(token);

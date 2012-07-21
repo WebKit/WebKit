@@ -1,3 +1,17 @@
+2012-07-20  Kwang Yul Seo  <skyul@company100.net>
+
+        Anything else in the "in table" insertion mode is a parse error
+        https://bugs.webkit.org/show_bug.cgi?id=91915
+
+        Reviewed by Adam Barth.
+
+        According to the HTML5 spec, anything else in the "in table" insertion mode is a parse error.
+
+        No behavior change because parseError(token) is just a marker.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTagForInTable):
+
 2012-07-20  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_DATALIST to ENABLE_DATALIST_ELEMENT
