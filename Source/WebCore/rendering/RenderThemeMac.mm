@@ -1372,7 +1372,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     CGContextRef context = localContext.cgContext();
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     paintSliderTicks(o, paintInfo, r);
 #endif
 
@@ -1746,7 +1746,7 @@ static int mediaControllerTheme()
 }
 #endif
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 IntSize RenderThemeMac::sliderTickSize() const
 {
     return IntSize(1, 3);

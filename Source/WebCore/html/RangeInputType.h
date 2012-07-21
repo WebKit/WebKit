@@ -70,7 +70,7 @@ private:
     virtual String sanitizeValue(const String& proposedValue) const OVERRIDE;
     virtual bool shouldRespectListAttribute() OVERRIDE;
     virtual HTMLElement* sliderThumbElement() const OVERRIDE;
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged() OVERRIDE;
 #endif
 };

@@ -39,7 +39,7 @@ module html {
         attribute [Reflect] DOMString formTarget;
         attribute unsigned long height;
         attribute boolean indeterminate;
-        readonly attribute [Conditional=DATALIST] HTMLElement list;
+        readonly attribute [Conditional=DATALIST_ELEMENT] HTMLElement list;
         attribute [Reflect] DOMString max;
         attribute long maxLength setter raises(DOMException);
         attribute [Reflect] DOMString min;

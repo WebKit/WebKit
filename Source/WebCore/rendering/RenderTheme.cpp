@@ -53,7 +53,7 @@
 #include "RenderInputSpeech.h"
 #endif
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 #include "ElementShadow.h"
 #include "HTMLCollection.h"
 #include "HTMLDataListElement.h"
@@ -960,7 +960,7 @@ bool RenderTheme::paintMeter(RenderObject*, const PaintInfo&, const IntRect&)
 
 #endif
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, const IntRect& rect)
 {
     Node* node = o->node();

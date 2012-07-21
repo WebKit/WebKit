@@ -895,7 +895,7 @@ String InputType::defaultToolTip() const
     return String();
 }
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 void InputType::listAttributeTargetChanged()
 {
 }

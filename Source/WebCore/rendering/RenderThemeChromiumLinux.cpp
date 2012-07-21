@@ -146,7 +146,7 @@ Color RenderThemeChromiumLinux::platformInactiveSelectionForegroundColor() const
     return m_inactiveSelectionForegroundColor;
 }
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 IntSize RenderThemeChromiumLinux::sliderTickSize() const
 {
     return IntSize(1, 6);
@@ -305,7 +305,7 @@ bool RenderThemeChromiumLinux::paintSliderTrack(RenderObject* o, const PaintInfo
 
     PlatformSupport::paintThemePart(i.context, PlatformSupport::PartSliderTrack, getWebThemeState(this, o), rect, &extraParams);
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     paintSliderTicks(o, i, rect);
 #endif
 

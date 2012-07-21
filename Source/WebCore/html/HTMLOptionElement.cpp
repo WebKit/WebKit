@@ -188,7 +188,7 @@ int HTMLOptionElement::index() const
 
 void HTMLOptionElement::parseAttribute(const Attribute& attribute)
 {
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     if (attribute.name() == valueAttr) {
         if (HTMLDataListElement* dataList = ownerDataListElement())
             dataList->optionElementChildrenChanged();
@@ -259,7 +259,7 @@ void HTMLOptionElement::setSelectedState(bool selected)
 
 void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     if (HTMLDataListElement* dataList = ownerDataListElement())
         dataList->optionElementChildrenChanged();
     else
@@ -269,7 +269,7 @@ void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 HTMLDataListElement* HTMLOptionElement::ownerDataListElement() const
 {
     for (ContainerNode* parent = parentNode(); parent ; parent = parent->parentNode()) {

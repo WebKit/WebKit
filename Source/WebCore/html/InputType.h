@@ -276,7 +276,7 @@ public:
     virtual void disabledAttributeChanged();
     virtual void readonlyAttributeChanged();
     virtual String defaultToolTip() const;
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged();
 #endif
 

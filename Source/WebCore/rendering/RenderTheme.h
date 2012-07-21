@@ -214,7 +214,7 @@ public:
     virtual bool supportsMeter(ControlPart) const;
 #endif
 
-#if ENABLE(DATALIST)    
+#if ENABLE(DATALIST_ELEMENT)
     // Returns size of one slider tick mark for a horizontal track.
     // For vertical tracks we rotate it and use it. i.e. Width is always length along the track.
     virtual IntSize sliderTickSize() const = 0;

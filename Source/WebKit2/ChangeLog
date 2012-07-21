@@ -1,3 +1,14 @@
+2012-07-20  Kent Tamura  <tkent@chromium.org>
+
+        Rename ENABLE_DATALIST to ENABLE_DATALIST_ELEMENT
+        https://bugs.webkit.org/show_bug.cgi?id=91846
+
+        Reviewed by Kentaro Hara.
+
+        A flag name for an elmement should be ENABLE_*_ELEMENT.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-07-20  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         QtNetworkAccessManager should not rely on signal sslErrors when QT_NO_SSL is defined

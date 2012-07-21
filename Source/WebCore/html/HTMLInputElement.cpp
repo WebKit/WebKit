@@ -78,7 +78,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 class ListAttributeTargetObserver : IdTargetObserver {
 public:
     static PassOwnPtr<ListAttributeTargetObserver> create(const AtomicString& id, HTMLInputElement*);
@@ -697,7 +697,7 @@ void HTMLInputElement::parseAttribute(const Attribute& attribute)
         HTMLTextFormControlElement::parseAttribute(attribute);
         m_inputType->readonlyAttributeChanged();
     }
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     else if (attribute.name() == listAttr) {
         m_hasNonEmptyList = !attribute.isEmpty();
         if (m_hasNonEmptyList) {
@@ -1435,7 +1435,7 @@ Node::InsertionNotificationRequest HTMLInputElement::insertedInto(ContainerNode*
     HTMLTextFormControlElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument() && !form())
         addToRadioButtonGroup();
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
     return InsertionDone;
@@ -1447,7 +1447,7 @@ void HTMLInputElement::removedFrom(ContainerNode* insertionPoint)
         removeFromRadioButtonGroup();
     HTMLTextFormControlElement::removedFrom(insertionPoint);
     ASSERT(!inDocument());
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
 }
@@ -1498,8 +1498,7 @@ void HTMLInputElement::selectColorInColorChooser(const Color& color)
 }
 #endif
     
-#if ENABLE(DATALIST)
-
+#if ENABLE(DATALIST_ELEMENT)
 HTMLElement* HTMLInputElement::list() const
 {
     return dataList();
@@ -1534,8 +1533,7 @@ void HTMLInputElement::listAttributeTargetChanged()
 {
     m_inputType->listAttributeTargetChanged();
 }
-
-#endif // ENABLE(DATALIST)
+#endif // ENABLE(DATALIST_ELEMENT)
 
 bool HTMLInputElement::isSteppable() const
 {
@@ -1803,7 +1801,7 @@ void HTMLInputElement::setWidth(unsigned width)
     setAttribute(widthAttr, String::number(width));
 }
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 PassOwnPtr<ListAttributeTargetObserver> ListAttributeTargetObserver::create(const AtomicString& id, HTMLInputElement* element)
 {
     return adoptPtr(new ListAttributeTargetObserver(id, element));

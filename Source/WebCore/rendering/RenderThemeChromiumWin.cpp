@@ -391,7 +391,7 @@ Color RenderThemeChromiumWin::systemColor(int cssValueId) const
     return Color(GetRValue(color), GetGValue(color), GetBValue(color));
 }
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 IntSize RenderThemeChromiumWin::sliderTickSize() const
 {
     return IntSize(1, 3);
@@ -456,7 +456,7 @@ bool RenderThemeChromiumWin::paintSliderTrack(RenderObject* o, const PaintInfo& 
                                   themeData.m_classicState,
                                   painter.drawRect());
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     paintSliderTicks(o, i, r);
 #endif
 

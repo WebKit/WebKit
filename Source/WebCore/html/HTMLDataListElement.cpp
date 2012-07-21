@@ -32,10 +32,9 @@
 #include "config.h"
 #include "HTMLDataListElement.h"
 
+#if ENABLE(DATALIST_ELEMENT)
 #include "HTMLNames.h"
 #include "IdTargetObserverRegistry.h"
-
-#if ENABLE(DATALIST)
 
 namespace WebCore {
 
@@ -59,5 +58,5 @@ void HTMLDataListElement::optionElementChildrenChanged()
     treeScope()->idTargetObserverRegistry().notifyObservers(getIdAttribute());
 }
 
-}  // namespace WebCore
-#endif  // ENABLE(DATALIST)
+} // namespace WebCore
+#endif // ENABLE(DATALIST_ELEMENT)

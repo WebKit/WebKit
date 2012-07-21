@@ -1,3 +1,16 @@
+2012-07-20  Kent Tamura  <tkent@chromium.org>
+
+        Rename ENABLE_DATALIST to ENABLE_DATALIST_ELEMENT
+        https://bugs.webkit.org/show_bug.cgi?id=91846
+
+        Reviewed by Kentaro Hara.
+
+        A flag name for an elmement should be ENABLE_*_ELEMENT.
+
+        * features.gypi:
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::dataListOptions):
+
 2012-07-20  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Simplify backend interface classes

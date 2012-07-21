@@ -69,7 +69,7 @@ public:
 
     virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     virtual IntSize sliderTickSize() const OVERRIDE;
     virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
 #endif

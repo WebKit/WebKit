@@ -400,7 +400,7 @@ void RenderThemeQt::adjustSliderThumbStyle(StyleResolver* styleResolver, RenderS
     style->setBoxShadow(nullptr);
 }
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 IntSize RenderThemeQt::sliderTickSize() const
 {
     // FIXME: We need to set this to the size of one tick mark.

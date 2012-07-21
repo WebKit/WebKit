@@ -50,7 +50,7 @@ public:
     bool selected();
     void setSelected(bool);
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     HTMLDataListElement* ownerDataListElement() const;
 #endif
     HTMLSelectElement* ownerSelectElement() const;

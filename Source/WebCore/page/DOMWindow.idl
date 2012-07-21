@@ -406,7 +406,7 @@ module window {
         attribute HTMLButtonElementConstructor HTMLButtonElement;
         attribute HTMLCanvasElementConstructor HTMLCanvasElement;
         attribute HTMLDListElementConstructor HTMLDListElement;
-        attribute [Conditional=DATALIST] HTMLDataListElementConstructor HTMLDataListElement;
+        attribute [Conditional=DATALIST_ELEMENT] HTMLDataListElementConstructor HTMLDataListElement;
         attribute [Conditional=DIALOG_ELEMENT, V8EnabledPerContext=dialogElement] HTMLDialogElementConstructor HTMLDialogElement;
         attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
         attribute HTMLDivElementConstructor HTMLDivElement;

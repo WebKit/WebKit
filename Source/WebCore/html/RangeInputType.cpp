@@ -316,7 +316,7 @@ HTMLElement* RangeInputType::sliderThumbElement() const
     return sliderThumbElementOf(element());
 }
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 void RangeInputType::listAttributeTargetChanged()
 {
     element()->setNeedsStyleRecalc();

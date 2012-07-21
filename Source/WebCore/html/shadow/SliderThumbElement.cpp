@@ -156,7 +156,7 @@ void RenderSliderContainer::layout()
                 RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
                 if (thumbRenderer) {
                     Length height = thumbRenderer->style()->height();
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
                     if (input && input->list()) {
                         int offsetFromCenter = theme()->sliderTickOffsetFromTrackCenter();
                         int trackHeight = 0;

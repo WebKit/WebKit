@@ -786,7 +786,7 @@ void RenderThemeEfl::adjustSliderThumbSize(RenderStyle* style, Element*) const
 #endif
 }
 
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
 IntSize RenderThemeEfl::sliderTickSize() const
 {
     // FIXME: We need to set this to the size of one tick mark.

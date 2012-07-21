@@ -815,8 +815,8 @@ WebKitFontFamilyNames.cpp WebKitFontFamilyNames.h : dom/make_names.pl css/WebKit
 
 # HTML tag and attribute names
 
-ifeq ($(findstring ENABLE_DATALIST,$(FEATURE_DEFINES)), ENABLE_DATALIST)
-    HTML_FLAGS := $(HTML_FLAGS) ENABLE_DATALIST=1
+ifeq ($(findstring ENABLE_DATALIST_ELEMENT,$(FEATURE_DEFINES)), ENABLE_DATALIST_ELEMENT)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_DATALIST_ELEMENT=1
 endif
 
 ifeq ($(findstring ENABLE_DETAILS,$(FEATURE_DEFINES)), ENABLE_DETAILS)

@@ -186,7 +186,7 @@ my @features = (
       define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => (isBlackBerry() || isEfl()), value => \$customSchemeHandlerSupport },
 
     { option => "datalist", desc => "Toggle Datalist support",
-      define => "ENABLE_DATALIST", default => isEfl(), value => \$datalistSupport },
+      define => "ENABLE_DATALIST_ELEMENT", default => isEfl(), value => \$datalistSupport },
 
     { option => "data-transfer-items", desc => "Toggle Data Transfer Items support",
       define => "ENABLE_DATA_TRANSFER_ITEMS", default => 0, value => \$dataTransferItemsSupport },

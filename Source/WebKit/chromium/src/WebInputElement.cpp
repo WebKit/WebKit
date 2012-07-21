@@ -175,7 +175,7 @@ bool WebInputElement::isMultiple() const
 
 WebNodeCollection WebInputElement::dataListOptions() const
 {
-#if ENABLE(DATALIST)
+#if ENABLE(DATALIST_ELEMENT)
     HTMLDataListElement* dataList = static_cast<HTMLDataListElement*>(constUnwrap<HTMLInputElement>()->list());
     if (dataList)
         return WebNodeCollection(dataList->options());
