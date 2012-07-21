@@ -45,13 +45,13 @@
 #if PLATFORM(MAC)
 #include "TextCodecMac.h"
 #endif
-#if PLATFORM(QT)
+#if USE(QT4_UNICODE)
 #include "qt/TextCodecQt.h"
 #endif
 #if USE(GLIB_UNICODE)
 #include "gtk/TextCodecGtk.h"
 #endif
-#if OS(WINCE) && !PLATFORM(QT)
+#if USE(WINCE_UNICODE)
 #include "TextCodecWinCE.h"
 #endif
 
@@ -311,7 +311,7 @@ static void extendTextCodecMaps()
     TextCodecGtk::registerExtendedCodecs(addToTextCodecMap);
 #endif
 
-#if OS(WINCE) && !PLATFORM(QT)
+#if USE(WINCE_UNICODE)
     TextCodecWinCE::registerExtendedEncodingNames(addToTextEncodingNameMap);
     TextCodecWinCE::registerExtendedCodecs(addToTextCodecMap);
 #endif

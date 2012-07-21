@@ -1,5 +1,20 @@
 2012-07-21  Patrick Gansterer  <paroga@webkit.org>
 
+        Cleanup TextEncoding USE(XXX_UNICODE) macros
+        https://bugs.webkit.org/show_bug.cgi?id=91923
+
+        Reviewed by Andreas Kling.
+
+        Replace PLATFORM(QT) with USE(QT4_UNICODE) and OS(WINCE) with USE(WINCE_UNICODE).
+        This gives us more flexibility in choosing the unicode backend for a port.
+
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::extendTextCodecMaps):
+
+2012-07-21  Patrick Gansterer  <paroga@webkit.org>
+
         Remove unnecessary ICU header includes from SimpleFontDataWin.cpp
         https://bugs.webkit.org/show_bug.cgi?id=91922
 
