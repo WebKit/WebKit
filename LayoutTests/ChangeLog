@@ -1,3 +1,9 @@
+2012-07-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] Mark anther test as needing a rebaseline due to r123285.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-20  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Mark a test as needing a rebaseline due to image change.
