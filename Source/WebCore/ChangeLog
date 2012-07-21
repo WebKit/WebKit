@@ -1,3 +1,35 @@
+2012-07-20  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Take current transformation matrix into account when
+        deciding on resize algorithm for drawPattern.
+        https://bugs.webkit.org/show_bug.cgi?id=90624
+
+        Reviewed by Adrienne Walker.
+
+        Since the pattern shader uses both the current transformation matrix
+        and the pattern matrix when transforming pixels, we need to
+        do the same when computing the resampling mode.  Also removed the
+        resampling hint code, added in r60658, since it appears to be dead
+        (caller was removed in r76379).
+
+        Covered by existing tests, such as
+        fast/borders/border-image-scale-transform.html.
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::computeResamplingMode):
+        Pass in the matrix to be used for computing the destination width and
+        height (for awesome resampling).  Remove the image resampling hint code.
+        (WebCore::paintSkBitmap):
+        Pass in the CTM to computeResamplingMode().
+        (WebCore::Image::drawPattern):
+        Concatenate the CTM and the pattern matrix, and pass that to 
+        computeResamplingMode() and TransformDimensions().  Invert the
+        CTM's scale and apply it to the pattern transform, so their
+        concatenation gives identity scale.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        * platform/graphics/skia/PlatformContextSkia.h:
+        Remove the image resampling hint (dead code).
+
 2012-07-20  Kwang Yul Seo  <skyul@company100.net>
 
         Anything else in the "in table" insertion mode is a parse error

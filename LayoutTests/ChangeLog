@@ -1,3 +1,12 @@
+2012-07-20  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Mark a test as needing a rebaseline due to image change.
+        https://bugs.webkit.org/show_bug.cgi?id=90624
+
+        Reviewed by Adrienne Walker.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-20  Tony Chang  <tony@chromium.org>
 
         [chromium] Unreviewed, one more new baselines after r123272 (I missed SL).

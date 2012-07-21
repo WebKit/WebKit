@@ -217,8 +217,6 @@ bool PlatformContextSkia::isDrawingToImageBuffer() const
 
 void PlatformContextSkia::save()
 {
-    ASSERT(!hasImageResamplingHint());
-
     m_stateStack.append(m_state->cloneInheritedProperties());
     m_state = &m_stateStack.last();
 
@@ -604,29 +602,6 @@ bool PlatformContextSkia::isNativeFontRenderingAllowed()
         return false;
     return skia::SupportsPlatformPaint(m_canvas);
 #endif
-}
-
-void PlatformContextSkia::getImageResamplingHint(IntSize* srcSize, FloatSize* dstSize) const
-{
-    *srcSize = m_imageResamplingHintSrcSize;
-    *dstSize = m_imageResamplingHintDstSize;
-}
-
-void PlatformContextSkia::setImageResamplingHint(const IntSize& srcSize, const FloatSize& dstSize)
-{
-    m_imageResamplingHintSrcSize = srcSize;
-    m_imageResamplingHintDstSize = dstSize;
-}
-
-void PlatformContextSkia::clearImageResamplingHint()
-{
-    m_imageResamplingHintSrcSize = IntSize();
-    m_imageResamplingHintDstSize = FloatSize();
-}
-
-bool PlatformContextSkia::hasImageResamplingHint() const
-{
-    return !m_imageResamplingHintSrcSize.isEmpty() && !m_imageResamplingHintDstSize.isEmpty();
 }
 
 void PlatformContextSkia::applyClipFromImage(const SkRect& rect, const SkBitmap& imageBuffer)

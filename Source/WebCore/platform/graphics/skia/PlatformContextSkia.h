@@ -178,11 +178,6 @@ public:
     // if USE(SKIA_TEXT) is enabled, this always returns false
     bool isNativeFontRenderingAllowed();
 
-    void getImageResamplingHint(IntSize* srcSize, FloatSize* dstSize) const;
-    void setImageResamplingHint(const IntSize& srcSize, const FloatSize& dstSize);
-    void clearImageResamplingHint();
-    bool hasImageResamplingHint() const;
-
     bool isAccelerated() const { return m_accelerated; }
     void setAccelerated(bool accelerated) { m_accelerated = accelerated; }
 
@@ -235,10 +230,6 @@ private:
     OpaqueRegionSkia m_opaqueRegion;
     bool m_trackOpaqueRegion;
 
-    // Stores image sizes for a hint to compute image resampling modes.
-    // Values are used in ImageSkia.cpp
-    IntSize m_imageResamplingHintSrcSize;
-    FloatSize m_imageResamplingHintDstSize;
     bool m_printing;
     bool m_accelerated;
     bool m_deferred;

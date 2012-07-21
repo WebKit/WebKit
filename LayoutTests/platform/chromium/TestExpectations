@@ -3611,6 +3611,9 @@ BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 
 BUGWK91183 : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = PASS TEXT
 
+// Needs rebaseline.
+BUGWK90624 : fast/borders/border-image-scale-transform.html = IMAGE
+
 // Fails on Mac 10.7
 BUGWK91255 LION : fast/multicol/table-vertical-align.html = TEXT
 
