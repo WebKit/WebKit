@@ -727,7 +727,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLTokenTypes::StartTag);
     if (token.name() == htmlTag) {
-        m_tree.insertHTMLHtmlStartTagInBody(token);
+        processHtmlStartTagForInBody(token);
         return;
     }
     if (token.name() == baseTag
@@ -1140,7 +1140,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case BeforeHeadMode:
         ASSERT(insertionMode() == BeforeHeadMode);
         if (token.name() == htmlTag) {
-            m_tree.insertHTMLHtmlStartTagInBody(token);
+            processHtmlStartTagForInBody(token);
             return;
         }
         if (token.name() == headTag) {
@@ -1159,7 +1159,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case AfterHeadMode:
         ASSERT(insertionMode() == AfterHeadMode);
         if (token.name() == htmlTag) {
-            m_tree.insertHTMLHtmlStartTagInBody(token);
+            processHtmlStartTagForInBody(token);
             return;
         }
         if (token.name() == bodyTag) {
@@ -1222,7 +1222,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case InColumnGroupMode:
         ASSERT(insertionMode() == InColumnGroupMode);
         if (token.name() == htmlTag) {
-            m_tree.insertHTMLHtmlStartTagInBody(token);
+            processHtmlStartTagForInBody(token);
             return;
         }
         if (token.name() == colTag) {
@@ -1309,7 +1309,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case AfterAfterBodyMode:
         ASSERT(insertionMode() == AfterBodyMode || insertionMode() == AfterAfterBodyMode);
         if (token.name() == htmlTag) {
-            m_tree.insertHTMLHtmlStartTagInBody(token);
+            processHtmlStartTagForInBody(token);
             return;
         }
         setInsertionMode(InBodyMode);
@@ -1318,7 +1318,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case InHeadNoscriptMode:
         ASSERT(insertionMode() == InHeadNoscriptMode);
         if (token.name() == htmlTag) {
-            m_tree.insertHTMLHtmlStartTagInBody(token);
+            processHtmlStartTagForInBody(token);
             return;
         }
         if (token.name() == basefontTag
@@ -1341,7 +1341,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case InFramesetMode:
         ASSERT(insertionMode() == InFramesetMode);
         if (token.name() == htmlTag) {
-            m_tree.insertHTMLHtmlStartTagInBody(token);
+            processHtmlStartTagForInBody(token);
             return;
         }
         if (token.name() == framesetTag) {
@@ -1362,7 +1362,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case AfterAfterFramesetMode:
         ASSERT(insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         if (token.name() == htmlTag) {
-            m_tree.insertHTMLHtmlStartTagInBody(token);
+            processHtmlStartTagForInBody(token);
             return;
         }
         if (token.name() == noframesTag) {
@@ -1388,7 +1388,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
     case InSelectMode:
         ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode);
         if (token.name() == htmlTag) {
-            m_tree.insertHTMLHtmlStartTagInBody(token);
+            processHtmlStartTagForInBody(token);
             return;
         }
         if (token.name() == optionTag) {
@@ -1444,6 +1444,12 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken& token)
         ASSERT_NOT_REACHED();
         break;
     }
+}
+
+void HTMLTreeBuilder::processHtmlStartTagForInBody(AtomicHTMLToken& token)
+{
+    parseError(token);
+    m_tree.insertHTMLHtmlStartTagInBody(token);
 }
 
 bool HTMLTreeBuilder::processBodyEndTagForInBody(AtomicHTMLToken& token)
@@ -2557,7 +2563,7 @@ bool HTMLTreeBuilder::processStartTagForInHead(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLTokenTypes::StartTag);
     if (token.name() == htmlTag) {
-        m_tree.insertHTMLHtmlStartTagInBody(token);
+        processHtmlStartTagForInBody(token);
         return true;
     }
     if (token.name() == baseTag

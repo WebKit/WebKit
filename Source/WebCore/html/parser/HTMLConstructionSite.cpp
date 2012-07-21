@@ -220,8 +220,6 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomicHTMLToken& 
 
 void HTMLConstructionSite::insertHTMLHtmlStartTagInBody(AtomicHTMLToken& token)
 {
-    // FIXME: parse error
-
     // Fragments do not have a root HTML element, so any additional HTML elements
     // encountered during fragment parsing should be ignored.
     if (m_isParsingFragment)
@@ -232,7 +230,6 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagInBody(AtomicHTMLToken& token)
 
 void HTMLConstructionSite::insertHTMLBodyStartTagInBody(AtomicHTMLToken& token)
 {
-    // FIXME: parse error
     mergeAttributesFromTokenIntoElement(token, m_openElements.bodyElement());
 }
 

@@ -137,6 +137,7 @@ private:
     void processEndTagForInCell(AtomicHTMLToken&);
 
     void processIsindexStartTagForInBody(AtomicHTMLToken&);
+    void processHtmlStartTagForInBody(AtomicHTMLToken&);
     bool processBodyEndTagForInBody(AtomicHTMLToken&);
     bool processTableEndTagForInTable();
     bool processCaptionEndTagForInCaption();
