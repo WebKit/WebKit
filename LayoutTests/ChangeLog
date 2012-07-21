@@ -1,5 +1,11 @@
 2012-07-20  Tony Chang  <tony@chromium.org>
 
+        [chromium] Unreviewed, one more new baselines after r123272 (I missed SL).
+
+        * platform/chromium-mac-snowleopard/http/tests/media/video-buffered-range-contains-currentTime-expected.png:
+
+2012-07-20  Tony Chang  <tony@chromium.org>
+
         [chromium] Unreviewed, one more new baselines after r123272.
 
         * platform/chromium-linux/http/tests/media/video-buffered-range-contains-currentTime-expected.png:
