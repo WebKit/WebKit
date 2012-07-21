@@ -73,12 +73,12 @@ bool FEColorMatrix::setValues(const Vector<float> &values)
     return true;
 }
 
-inline void matrix(double& red, double& green, double& blue, double& alpha, const Vector<float>& values)
+inline void matrix(float& red, float& green, float& blue, float& alpha, const Vector<float>& values)
 {
-    double r = values[0]  * red + values[1]  * green + values[2]  * blue + values[3]  * alpha + values[4] * 255;
-    double g = values[5]  * red + values[6]  * green + values[7]  * blue + values[8]  * alpha + values[9] * 255;
-    double b = values[10]  * red + values[11]  * green + values[12] * blue + values[13] * alpha + values[14] * 255;
-    double a = values[15] * red + values[16] * green + values[17] * blue + values[18] * alpha + values[19] * 255;
+    float r = values[0]  * red + values[1]  * green + values[2]  * blue + values[3]  * alpha + values[4] * 255;
+    float g = values[5]  * red + values[6]  * green + values[7]  * blue + values[8]  * alpha + values[9] * 255;
+    float b = values[10]  * red + values[11]  * green + values[12] * blue + values[13] * alpha + values[14] * 255;
+    float a = values[15] * red + values[16] * green + values[17] * blue + values[18] * alpha + values[19] * 255;
 
     red = r;
     green = g;
@@ -86,28 +86,28 @@ inline void matrix(double& red, double& green, double& blue, double& alpha, cons
     alpha = a;
 }
 
-inline void saturate(double& red, double& green, double& blue, const float& s)
+inline void saturate(float& red, float& green, float& blue, const float& s)
 {
-    double r = (0.213 + 0.787 * s) * red + (0.715 - 0.715 * s) * green + (0.072 - 0.072 * s) * blue;
-    double g = (0.213 - 0.213 * s) * red + (0.715 + 0.285 * s) * green + (0.072 - 0.072 * s) * blue;
-    double b = (0.213 - 0.213 * s) * red + (0.715 - 0.715 * s) * green + (0.072 + 0.928 * s) * blue;
+    float r = (0.213 + 0.787 * s) * red + (0.715 - 0.715 * s) * green + (0.072 - 0.072 * s) * blue;
+    float g = (0.213 - 0.213 * s) * red + (0.715 + 0.285 * s) * green + (0.072 - 0.072 * s) * blue;
+    float b = (0.213 - 0.213 * s) * red + (0.715 - 0.715 * s) * green + (0.072 + 0.928 * s) * blue;
 
     red = r;
     green = g;
     blue = b;
 }
 
-inline void huerotate(double& red, double& green, double& blue, const float& hue)
+inline void huerotate(float& red, float& green, float& blue, const float& hue)
 {
-    double cosHue = cos(hue * piDouble / 180); 
-    double sinHue = sin(hue * piDouble / 180); 
-    double r = red   * (0.213 + cosHue * 0.787 - sinHue * 0.213) +
+    float cosHue = cos(hue * piDouble / 180); 
+    float sinHue = sin(hue * piDouble / 180); 
+    float r = red   * (0.213 + cosHue * 0.787 - sinHue * 0.213) +
                green * (0.715 - cosHue * 0.715 - sinHue * 0.715) +
                blue  * (0.072 - cosHue * 0.072 + sinHue * 0.928);
-    double g = red   * (0.213 - cosHue * 0.213 + sinHue * 0.143) +
+    float g = red   * (0.213 - cosHue * 0.213 + sinHue * 0.143) +
                green * (0.715 + cosHue * 0.285 + sinHue * 0.140) +
                blue  * (0.072 - cosHue * 0.072 - sinHue * 0.283);
-    double b = red   * (0.213 - cosHue * 0.213 - sinHue * 0.787) +
+    float b = red   * (0.213 - cosHue * 0.213 - sinHue * 0.787) +
                green * (0.715 - cosHue * 0.715 + sinHue * 0.715) +
                blue  * (0.072 + cosHue * 0.928 + sinHue * 0.072);
 
@@ -116,7 +116,7 @@ inline void huerotate(double& red, double& green, double& blue, const float& hue
     blue = b;
 }
 
-inline void luminance(double& red, double& green, double& blue, double& alpha)
+inline void luminance(float& red, float& green, float& blue, float& alpha)
 {
     alpha = 0.2125 * red + 0.7154 * green + 0.0721 * blue;
     red = 0;
@@ -129,10 +129,10 @@ void effectType(Uint8ClampedArray* pixelArray, const Vector<float>& values)
 {
     unsigned pixelArrayLength = pixelArray->length();
     for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
-        double red = pixelArray->item(pixelByteOffset);
-        double green = pixelArray->item(pixelByteOffset + 1);
-        double blue = pixelArray->item(pixelByteOffset + 2);
-        double alpha = pixelArray->item(pixelByteOffset + 3);
+        float red = pixelArray->item(pixelByteOffset);
+        float green = pixelArray->item(pixelByteOffset + 1);
+        float blue = pixelArray->item(pixelByteOffset + 2);
+        float alpha = pixelArray->item(pixelByteOffset + 3);
 
         switch (filterType) {
             case FECOLORMATRIX_TYPE_MATRIX:

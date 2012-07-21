@@ -1,3 +1,17 @@
+2012-07-20  Czene Tamás  <tczene@inf.u-szeged.hu>
+
+        double data type shoud be changed to float in ColorMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=91499
+
+        Reviewed by Nikolas Zimmermann.
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::matrix):
+        (WebCore::saturate):
+        (WebCore::huerotate):
+        (WebCore::luminance):
+        (WebCore::effectType):
+
 2012-07-20  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Take current transformation matrix into account when
