@@ -21,8 +21,7 @@
 #ifndef RenderDetailsMarker_h
 #define RenderDetailsMarker_h
 
-#if ENABLE(DETAILS) || ENABLE(CALENDAR_PICKER)
-
+#if ENABLE(DETAILS_ELEMENT) || ENABLE(CALENDAR_PICKER)
 #include "RenderBlock.h"
 
 namespace WebCore {

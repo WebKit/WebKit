@@ -1,3 +1,27 @@
+2012-07-22  Kent Tamura  <tkent@chromium.org>
+
+        Rename ENABLE_DETAILS to ENABLE_DETAILS_ELEMENT
+        https://bugs.webkit.org/show_bug.cgi?id=91928
+
+        Reviewed by Kentaro Hara.
+
+        A flag name for an elmement should be ENABLE_*_ELEMENT.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * html/HTMLDetailsElement.cpp:
+        * html/HTMLDetailsElement.idl:
+        * html/HTMLSummaryElement.cpp:
+        * html/HTMLTagNames.in:
+        * html/shadow/DetailsMarkerControl.cpp:
+        * rendering/RenderDetailsMarker.cpp:
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderObject.h:
+        (RenderObject):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+
 2012-07-21  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11928576> SVG-as-image (constrained) intrinsic size calculation is wrong in vertical writing modes

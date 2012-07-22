@@ -21,8 +21,7 @@
 #include "config.h"
 #include "HTMLDetailsElement.h"
 
-#if ENABLE(DETAILS)
-
+#if ENABLE(DETAILS_ELEMENT)
 #include "ElementShadow.h"
 #include "HTMLContentElement.h"
 #include "HTMLNames.h"

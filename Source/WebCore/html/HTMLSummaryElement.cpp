@@ -21,8 +21,7 @@
 #include "config.h"
 #include "HTMLSummaryElement.h"
 
-#if ENABLE(DETAILS)
-
+#if ENABLE(DETAILS_ELEMENT)
 #include "DetailsMarkerControl.h"
 #include "ElementShadow.h"
 #include "HTMLContentElement.h"

@@ -21,8 +21,7 @@
 #include "config.h"
 #include "RenderDetailsMarker.h"
 
-#if ENABLE(DETAILS) || ENABLE(CALENDAR_PICKER)
-
+#if ENABLE(DETAILS_ELEMENT) || ENABLE(CALENDAR_PICKER)
 #include "Element.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"

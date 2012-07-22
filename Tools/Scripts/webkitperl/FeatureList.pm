@@ -192,7 +192,7 @@ my @features = (
       define => "ENABLE_DATA_TRANSFER_ITEMS", default => 0, value => \$dataTransferItemsSupport },
 
     { option => "details", desc => "Toggle Details support",
-      define => "ENABLE_DETAILS", default => 1, value => \$detailsSupport },
+      define => "ENABLE_DETAILS_ELEMENT", default => 1, value => \$detailsSupport },
 
     { option => "device-orientation", desc => "Toggle Device Orientation support",
       define => "ENABLE_DEVICE_ORIENTATION", default => isBlackBerry(), value => \$deviceOrientationSupport },

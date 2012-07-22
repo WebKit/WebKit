@@ -18,8 +18,9 @@
  */
 
 module html {
-
-    interface HTMLDetailsElement : HTMLElement {
+    interface [
+        Conditional=DETAILS_ELEMENT
+    ] HTMLDetailsElement : HTMLElement {
         attribute [Reflect] boolean open;
     };
 
