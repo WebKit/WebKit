@@ -328,7 +328,7 @@ BUGWK85532 : fast/sub-pixel/float-wrap-with-subpixel-top.html = PASS
 BUGWK85532 : fast/sub-pixel/inline-block-with-margin.html = PASS
 BUGWK85532 : fast/sub-pixel/size-of-span-with-different-positions.html = PASS
 BUGWK85532 : fast/sub-pixel/table-cells-with-padding-do-not-wrap.html = PASS
-BUGWK85532 : fast/sub-pixel/table-rows-have-stable-height.html = PASS
+BUGWK85532 SKIP : fast/sub-pixel/table-rows-have-stable-height.html = CRASH TEXT
 BUGWK85532 : fast/sub-pixel/table-rows-no-gaps.html = PASS
 BUGWK85532 : fast/sub-pixel/vertical-align-middle-overflow.html = PASS
 

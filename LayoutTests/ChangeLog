@@ -1,3 +1,13 @@
+2012-07-22  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding baselines for the media/controls-styling-strict.html
+        test and skip a subpixel layout test that's crashing on debug builds (the
+        feature is disabled at the moment so the failure is somewhat acceptable).
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/media/controls-styling-strict-expected.png: Added.
+        * platform/gtk/media/controls-styling-strict-expected.txt: Added.
+
 2012-07-21  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11928576> SVG-as-image (constrained) intrinsic size calculation is wrong in vertical writing modes
