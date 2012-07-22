@@ -1,5 +1,14 @@
 2012-07-22  Stephen White  <senorblanco@chromium.org>
 
+        [chromium] Unreviewed gardening.
+        
+        Shamed into removing some BUGSENORBLANCOs from previous gardening
+        stints.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-22  Stephen White  <senorblanco@chromium.org>
+
         [chromium] Test result gardening; unreviewed.
 
         * platform/chromium-mac-snowleopard/fast/borders/border-image-rotate-transform-expected.png:

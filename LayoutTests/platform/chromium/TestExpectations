@@ -2873,7 +2873,7 @@ BUGRICOW : fast/js/array-functions-non-arrays.html = TEXT
 BUGRICOW : fast/js/eval-cross-window.html = TEXT
 BUGRICOW : fast/js/toString-overrides.html = TEXT
 
-BUG_SENORBLANCO : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
+BUGWK91944 : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK66953 : transitions/default-timing-function.html = IMAGE
 
@@ -3016,11 +3016,11 @@ BUGWK78684 : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE+TEXT
 BUGWK78684 : fast/borders/fieldsetBorderRadius.html = IMAGE+TEXT
 
 // New test; landed at r109779 but results look wrong on most Chrome platforms.
-BUGSENORBLANCO : http/tests/incremental/partial-jpeg.html = IMAGE PASS
+BUGWK91945 : http/tests/incremental/partial-jpeg.html = IMAGE PASS
 
 BUGWK80498 WIN : fast/workers/worker-multi-startup.html = CRASH PASS
 
-BUGSENORBLANCO : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
+BUGWK91946 : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
 
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT IMAGE
 
