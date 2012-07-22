@@ -1,3 +1,13 @@
+2012-07-22  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Test result gardening; unreviewed.
+
+        * platform/chromium-mac-snowleopard/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium-win/fast/borders/border-image-scale-transform-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-07-22  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding baselines for the media/controls-styling-strict.html

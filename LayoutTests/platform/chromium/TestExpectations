@@ -2197,7 +2197,6 @@ BUGCR61739 WIN RELEASE : animations/suspend-resume-animation-events.html = TEXT 
 // New tests added with http://trac.webkit.org/changeset/72472 and further.
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
 BUGCR63921 : fast/canvas/canvas-fillPath-shadow.html = TEXT
-BUGCR63921 : platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html = TEXT
 
 // FIXME: Need to add tooling support for V8 bugs.
 BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
@@ -2334,10 +2333,6 @@ BUGCR71783 LION SNOWLEOPARD : scrollbars/custom-scrollbar-with-incomplete-style.
 /////////////////////////////////////////////////////////////////////////////
 // GPU
 /////////////////////////////////////////////////////////////////////////////
-
-// Combination of unpremul plus gradient computation at half-integer coords causes
-// this to fail.
-BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
 
 // These will have slight differences on the edges of antialiased paths and need rebaseling
 BUGBSALOMON WIN LINUX : platform/chromium/virtual/gpu/fast/canvas/arc360.html = IMAGE
@@ -3610,10 +3605,6 @@ BUGWK90980 LINUX MAC DEBUG : fast/forms/textarea/textarea-state-restore.html = P
 BUGWK90980 WIN : fast/forms/textarea/textarea-state-restore.html = PASS TIMEOUT
 
 BUGWK91183 : http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html = PASS TEXT
-
-// Needs rebaseline.
-BUGWK90624 : fast/borders/border-image-scale-transform.html = IMAGE
-BUGWK90624 SNOWLEOPARD : fast/borders/border-image-rotate-transform.html = IMAGE
 
 // Fails on Mac 10.7
 BUGWK91255 LION : fast/multicol/table-vertical-align.html = TEXT
