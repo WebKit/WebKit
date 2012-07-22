@@ -588,7 +588,7 @@ bool RenderThemeChromiumSkia::shouldShowPlaceholderWhenFocused() const
     return true;
 }
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 
 //
 // Following values are come from default of GTK+

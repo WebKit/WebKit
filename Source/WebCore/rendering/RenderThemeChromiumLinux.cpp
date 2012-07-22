@@ -340,7 +340,7 @@ bool RenderThemeChromiumLinux::paintInnerSpinButton(RenderObject* o, const Paint
     return false;
 }
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 
 bool RenderThemeChromiumLinux::paintProgressBar(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {

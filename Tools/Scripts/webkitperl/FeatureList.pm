@@ -291,7 +291,7 @@ my @features = (
       define => "ENABLE_MEDIA_STREAM", default => (isChromium() || isGtk() || isBlackBerry()), value => \$mediaStreamSupport },
 
     { option => "meter-tag", desc => "Toggle Meter Tag support",
-      define => "ENABLE_METER_TAG", default => !isAppleWinWebKit(), value => \$meterTagSupport },
+      define => "ENABLE_METER_ELEMENT", default => !isAppleWinWebKit(), value => \$meterTagSupport },
 
     { option => "mhtml", desc => "Toggle MHTML support",
       define => "ENABLE_MHTML", default => isGtk(), value => \$mhtmlSupport },
@@ -318,7 +318,7 @@ my @features = (
       define => "ENABLE_PAGE_VISIBILITY_API", default => (isBlackBerry() || isEfl()), value => \$pageVisibilityAPISupport },
 
     { option => "progress-tag", desc => "Toggle Progress Tag support",
-      define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },
+      define => "ENABLE_PROGRESS_ELEMENT", default => 1, value => \$progressTagSupport },
 
     { option => "quota", desc => "Toggle Quota support",
       define => "ENABLE_QUOTA", default => 0, value => \$quotaSupport },

@@ -34,7 +34,7 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 class RenderProgress;
 #endif
 class RenderStyle;
@@ -113,7 +113,7 @@ protected:
 
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;
     // Returns the repeat interval of the animation for the progress bar.
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;

@@ -19,11 +19,9 @@
  */
 
 #include "config.h"
-
-#if ENABLE(PROGRESS_TAG)
-
 #include "AccessibilityProgressIndicator.h"
 
+#if ENABLE(PROGRESS_ELEMENT)
 #include "FloatConversion.h"
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
@@ -75,4 +73,4 @@ HTMLProgressElement* AccessibilityProgressIndicator::element() const
 
 } // namespace WebCore
 
-#endif // ENABLE(PROGRESS_TAG)
+#endif // ENABLE(PROGRESS_ELEMENT)

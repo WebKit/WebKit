@@ -168,7 +168,7 @@ protected:
     virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
     virtual double animationDurationForProgressBar(RenderProgress*) const;
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;
@@ -191,7 +191,7 @@ private:
     bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* iconName);
 #endif
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
     static IntRect calculateProgressRect(RenderObject*, const IntRect&);
 #endif
 

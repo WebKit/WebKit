@@ -1420,7 +1420,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
 #endif
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
     if (element->hasTagName(progressTag)) {
         if (!m_element->hasTagName(progressTag))
             return false;

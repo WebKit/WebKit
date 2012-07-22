@@ -36,7 +36,7 @@
 #include "PaintInfo.h"
 #include "QWebPageClient.h"
 #include "RenderBox.h"
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 #include "RenderProgress.h"
 #endif
 #include "StyleResolver.h"
@@ -69,7 +69,7 @@ static const float menuListPadding = 9;
 static const float textFieldPadding = 10;
 static const float radiusFactor = 0.36;
 static const float progressBarChunkPercentage = 0.2;
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 static const int progressAnimationGranularity = 2;
 #endif
 static const float sliderGrooveBorderRatio = 0.2;
@@ -822,7 +822,7 @@ bool RenderThemeQtMobile::paintMenuListButton(RenderObject* o, const PaintInfo& 
     return false;
 }
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 double RenderThemeQtMobile::animationDurationForProgressBar(RenderProgress* renderProgress) const
 {
     if (renderProgress->isDeterminate())

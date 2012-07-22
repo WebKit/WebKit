@@ -48,7 +48,7 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     TextField,
     CheckBox,
     ComboBox,
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
     ProgressBar,
 #endif
     SearchField,
@@ -173,7 +173,7 @@ public:
 
     static void setDefaultFontSize(int fontsize);
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
     virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
     virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;

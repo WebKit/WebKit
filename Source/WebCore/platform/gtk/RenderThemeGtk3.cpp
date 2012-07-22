@@ -730,7 +730,7 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style, Element*) const
     style->setHeight(Length(sliderLength, Fixed));
 }
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!renderObject->isProgress())

@@ -21,7 +21,7 @@
 #ifndef RenderMeter_h
 #define RenderMeter_h
 
-#if ENABLE(METER_TAG)
+#if ENABLE(METER_ELEMENT)
 #include "RenderBlock.h"
 #include "RenderWidget.h"
 

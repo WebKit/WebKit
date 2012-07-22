@@ -80,7 +80,7 @@ namespace WebCore {
 
         virtual bool popsMenuBySpaceOrReturn() const OVERRIDE { return true; }
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
         virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 

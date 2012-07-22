@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
-#if ENABLE(PROGRESS_TAG)
 #include "ProgressShadowElement.h"
 
+#if ENABLE(PROGRESS_ELEMENT)
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "RenderObject.h"
@@ -78,4 +78,3 @@ void ProgressValueElement::setWidthPercentage(double width)
 
 }
 #endif
-

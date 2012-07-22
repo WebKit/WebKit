@@ -50,7 +50,7 @@
 #include "PaintInfo.h"
 #include "QWebPageClient.h"
 #include "RenderBox.h"
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 #include "RenderProgress.h"
 #endif
 #include "RenderTheme.h"
@@ -372,7 +372,7 @@ void RenderThemeQt::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* style
     setPopupPadding(style);
 }
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 double RenderThemeQt::animationRepeatIntervalForProgressBar(RenderProgress* renderProgress) const
 {
     if (renderProgress->position() >= 0)

@@ -71,7 +71,7 @@ protected:
 
     virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
     // Returns the duration of the animation for the progress bar.
     virtual double animationDurationForProgressBar(RenderProgress*) const;
     virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);

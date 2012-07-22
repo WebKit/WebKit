@@ -1103,7 +1103,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             {
                 if (!element)
                     break;
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
                 if (element->hasTagName(progressTag)) {
                     HTMLProgressElement* progress = static_cast<HTMLProgressElement*>(element);
                     if (progress && !progress->isDeterminate())

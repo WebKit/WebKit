@@ -19,7 +19,7 @@
 
 module html {
     interface [
-        Conditional=PROGRESS_TAG
+        Conditional=PROGRESS_ELEMENT
     ] HTMLProgressElement : HTMLElement {
                  attribute  double                value
                      setter raises(DOMException);

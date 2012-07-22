@@ -1,3 +1,92 @@
+2012-07-23  Kent Tamura  <tkent@chromium.org>
+
+        Rename ENABLE_METER_TAG and ENABLE_PROGRESS_TAG to ENABLE_METER_ELEMENT and ENABLE_PROGRESS_ELEMENT respectively
+        https://bugs.webkit.org/show_bug.cgi?id=91941
+
+        Reviewed by Kentaro Hara.
+
+        A flag name for an elmement should be ENABLE_*_ELEMENT.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        * accessibility/AccessibilityProgressIndicator.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/html.css:
+        * html/HTMLMeterElement.cpp:
+        * html/HTMLMeterElement.h:
+        * html/HTMLMeterElement.idl:
+        * html/HTMLProgressElement.cpp:
+        * html/HTMLProgressElement.h:
+        * html/HTMLProgressElement.idl:
+        * html/HTMLTagNames.in:
+        * html/shadow/MeterShadowElement.cpp:
+        * html/shadow/MeterShadowElement.h: Wrap with #if ENABLE(METER_ELEMENT).
+        * html/shadow/ProgressShadowElement.cpp:
+        * html/shadow/ProgressShadowElement.h: Wrap with #if ENABLE(PROGRESS_ELEMENT).
+        * page/DOMWindow.idl:
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintThemePart):
+        (WebCore::RenderThemeEfl::edjeGroupFromFormType):
+        (WebCore):
+        * platform/efl/RenderThemeEfl.h:
+        (RenderThemeEfl):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore):
+        * platform/gtk/RenderThemeGtk.h:
+        (RenderThemeGtk):
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore):
+        * platform/qt/RenderThemeQt.h:
+        (WebCore):
+        (RenderThemeQt):
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore):
+        * platform/qt/RenderThemeQtMobile.h:
+        (RenderThemeQtMobile):
+        * rendering/RenderMeter.cpp:
+        * rendering/RenderMeter.h:
+        * rendering/RenderObject.h:
+        (RenderObject):
+        * rendering/RenderProgress.cpp:
+        * rendering/RenderProgress.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore):
+        * rendering/RenderTheme.h:
+        (WebCore):
+        (RenderTheme):
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore):
+        * rendering/RenderThemeChromiumLinux.h:
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore):
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore):
+        * rendering/RenderThemeChromiumWin.h:
+        (RenderThemeChromiumWin):
+        * rendering/RenderThemeMac.h:
+        (RenderThemeMac):
+        * rendering/RenderThemeMac.mm:
+        (WebCore):
+
 2012-07-22  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_DETAILS to ENABLE_DETAILS_ELEMENT

@@ -47,7 +47,7 @@
 #include "PaintInfo.h"
 #include "QWebPageClient.h"
 #include "RenderBox.h"
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 #include "RenderProgress.h"
 #endif
 #include "RenderSlider.h"
@@ -70,7 +70,7 @@
 #include <QStyleFactory>
 #include <QStyleOptionButton>
 #include <QStyleOptionFrameV2>
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 #include <QStyleOptionProgressBarV2>
 #endif
 #include <QStyleOptionSlider>
@@ -492,7 +492,7 @@ bool RenderThemeQStyle::paintMenuListButton(RenderObject* o, const PaintInfo& i,
     return false;
 }
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 double RenderThemeQStyle::animationDurationForProgressBar(RenderProgress* renderProgress) const
 {
     if (renderProgress->position() >= 0)

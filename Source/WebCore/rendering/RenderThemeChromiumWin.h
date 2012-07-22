@@ -93,7 +93,7 @@ namespace WebCore {
         virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
         virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
         virtual double animationDurationForProgressBar(RenderProgress*) const;
         virtual void adjustProgressBarStyle(StyleResolver*, RenderStyle*, Element*) const;

@@ -797,7 +797,7 @@ output {
     height: 16px;
 }
 
-#if defined(ENABLE_METER_TAG) && ENABLE_METER_TAG
+#if defined(ENABLE_METER_ELEMENT) && ENABLE_METER_ELEMENT
 /* meter */
 
 meter {
@@ -835,7 +835,7 @@ meter::-webkit-meter-even-less-good-value {
 }
 #endif
 
-#if defined(ENABLE_PROGRESS_TAG) && ENABLE_PROGRESS_TAG
+#if defined(ENABLE_PROGRESS_ELEMENT) && ENABLE_PROGRESS_ELEMENT
 /* progress */
 
 progress {

@@ -19,7 +19,7 @@
 
 module html {
     interface [
-        Conditional=METER_TAG
+        Conditional=METER_ELEMENT
     ] HTMLMeterElement : HTMLElement {
                  attribute double value
                      setter raises(DOMException);

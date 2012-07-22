@@ -465,12 +465,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
             m_value.ident = CSSValueRatingLevelIndicator;
             break;
         case ProgressBarPart:
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
             m_value.ident = CSSValueProgressBar;
 #endif
             break;
         case ProgressBarValuePart:
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
             m_value.ident = CSSValueProgressBarValue;
 #endif
             break;

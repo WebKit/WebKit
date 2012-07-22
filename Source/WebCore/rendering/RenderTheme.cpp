@@ -44,7 +44,7 @@
 #include "StringTruncator.h"
 #include "TextControlInnerElements.h"
 
-#if ENABLE(METER_TAG)
+#if ENABLE(METER_ELEMENT)
 #include "HTMLMeterElement.h"
 #include "RenderMeter.h"
 #endif
@@ -237,11 +237,11 @@ void RenderTheme::adjustStyle(StyleResolver* styleResolver, RenderStyle* style, 
             return adjustSearchFieldResultsDecorationStyle(styleResolver, style, e);
         case SearchFieldResultsButtonPart:
             return adjustSearchFieldResultsButtonStyle(styleResolver, style, e);
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
         case ProgressBarPart:
             return adjustProgressBarStyle(styleResolver, style, e);
 #endif
-#if ENABLE(METER_TAG)
+#if ENABLE(METER_ELEMENT)
         case MeterPart:
         case RelevancyLevelIndicatorPart:
         case ContinuousCapacityLevelIndicatorPart:
@@ -306,7 +306,7 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
 #endif
         case MenulistPart:
             return paintMenuList(o, paintInfo, r);
-#if ENABLE(METER_TAG)
+#if ENABLE(METER_ELEMENT)
         case MeterPart:
         case RelevancyLevelIndicatorPart:
         case ContinuousCapacityLevelIndicatorPart:
@@ -314,7 +314,7 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
         case RatingLevelIndicatorPart:
             return paintMeter(o, paintInfo, r);
 #endif
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
         case ProgressBarPart:
             return paintProgressBar(o, paintInfo, r);
 #endif
@@ -411,14 +411,14 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, c
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:
-#if ENABLE(METER_TAG)
+#if ENABLE(METER_ELEMENT)
         case MeterPart:
         case RelevancyLevelIndicatorPart:
         case ContinuousCapacityLevelIndicatorPart:
         case DiscreteCapacityLevelIndicatorPart:
         case RatingLevelIndicatorPart:
 #endif
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
         case ProgressBarPart:
 #endif
         case SliderHorizontalPart:
@@ -458,14 +458,14 @@ bool RenderTheme::paintDecorations(RenderObject* o, const PaintInfo& paintInfo, 
         case DefaultButtonPart:
         case ButtonPart:
         case MenulistPart:
-#if ENABLE(METER_TAG)
+#if ENABLE(METER_ELEMENT)
         case MeterPart:
         case RelevancyLevelIndicatorPart:
         case ContinuousCapacityLevelIndicatorPart:
         case DiscreteCapacityLevelIndicatorPart:
         case RatingLevelIndicatorPart:
 #endif
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
         case ProgressBarPart:
 #endif
         case SliderHorizontalPart:
@@ -937,7 +937,7 @@ bool RenderTheme::paintInputFieldSpeechButton(RenderObject* object, const PaintI
 }
 #endif
 
-#if ENABLE(METER_TAG)
+#if ENABLE(METER_ELEMENT)
 void RenderTheme::adjustMeterStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
@@ -1034,7 +1034,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
 }
 #endif
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 double RenderTheme::animationRepeatIntervalForProgressBar(RenderProgress*) const
 {
     return 0;

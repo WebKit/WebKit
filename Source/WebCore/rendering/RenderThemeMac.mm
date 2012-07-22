@@ -58,7 +58,7 @@
 
 #import "RenderProgress.h"
 
-#if ENABLE(METER_TAG)
+#if ENABLE(METER_ELEMENT)
 #include "RenderMeter.h"
 #include "HTMLMeterElement.h"
 #endif
@@ -857,7 +857,7 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
     return false;
 }
 
-#if ENABLE(METER_TAG)
+#if ENABLE(METER_ELEMENT)
 
 IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter* renderMeter, const IntRect& bounds) const
 {
@@ -961,7 +961,7 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter* rende
 
 #endif
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 const IntSize* RenderThemeMac::progressBarSizes() const
 {
     static const IntSize sizes[3] = { IntSize(0, 20), IntSize(0, 12), IntSize(0, 12) };

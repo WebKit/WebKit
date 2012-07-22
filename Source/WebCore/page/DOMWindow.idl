@@ -432,7 +432,7 @@ module window {
         attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
         attribute HTMLMenuElementConstructor HTMLMenuElement;
         attribute HTMLMetaElementConstructor HTMLMetaElement;
-#if defined(ENABLE_METER_TAG) && ENABLE_METER_TAG
+#if defined(ENABLE_METER_ELEMENT) && ENABLE_METER_ELEMENT
         attribute HTMLMeterElementConstructor HTMLMeterElement;
 #endif
         attribute HTMLModElementConstructor HTMLModElement;
@@ -444,7 +444,7 @@ module window {
         attribute HTMLParagraphElementConstructor HTMLParagraphElement;
         attribute HTMLParamElementConstructor HTMLParamElement;
         attribute HTMLPreElementConstructor HTMLPreElement;
-#if defined(ENABLE_PROGRESS_TAG) && ENABLE_PROGRESS_TAG
+#if defined(ENABLE_PROGRESS_ELEMENT) && ENABLE_PROGRESS_ELEMENT
         attribute HTMLProgressElementConstructor HTMLProgressElement;
 #endif
         attribute HTMLQuoteElementConstructor HTMLQuoteElement;

@@ -48,7 +48,7 @@
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 #include "RenderProgress.h"
 #endif
 
@@ -641,7 +641,7 @@ bool RenderThemeGtk::paintMediaCurrentTime(RenderObject* renderObject, const Pai
 }
 #endif
 
-#if ENABLE(PROGRESS_TAG)
+#if ENABLE(PROGRESS_ELEMENT)
 void RenderThemeGtk::adjustProgressBarStyle(StyleResolver*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(nullptr);
