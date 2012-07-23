@@ -3232,9 +3232,9 @@ fast/forms/menulist-separator-painting.html
 fast/forms/menulist-style-color.html
 fast/forms/minWidthPercent.html
 fast/forms/negativeLineHeight.html
-fast/forms/number/input-appearance-number-rtl.html
-fast/forms/number/input-appearance-spinbutton-disabled-readonly.html
-fast/forms/number/input-appearance-spinbutton-layer.html
+fast/forms/number/number-appearance-rtl.html
+fast/forms/number/number-appearance-spinbutton-disabled-readonly.html
+fast/forms/number/number-appearance-spinbutton-layer.html
 fast/forms/option-index.html
 fast/forms/option-script.html
 fast/forms/option-strip-whitespace.html

@@ -1952,9 +1952,9 @@ fast/dom/gc-attribute-node.html
 # https://bugs.webkit.org/show_bug.cgi?id=89656
 fast/forms/datalist/input-list.html
 
-# [Qt] New fast/forms/number/input-number-validation-message.html introduced in r121019 fails.
+# [Qt] New fast/forms/number/number-validation-message.html introduced in r121019 fails.
 # https://bugs.webkit.org/show_bug.cgi?id=89760
-fast/forms/number/input-number-validation-message.html
+fast/forms/number/number-validation-message.html
 
 # ============================================================================= #
 # failing fonts tests
@@ -2343,9 +2343,9 @@ fast/harness/sample-fail-mismatch-reftest.html
 # [Qt] REGRESSION(r93937): 4 failing and 3 flaky tests
 # https://bugs.webkit.org/show_bug.cgi?id=67118
 # Flaky
-fast/forms/number/input-number-large-padding.html
-fast/forms/number/input-spinbutton-capturing.html
-fast/forms/number/input-number-events.html
+fast/forms/number/number-large-padding.html
+fast/forms/number/number-spinbutton-capturing.html
+fast/forms/number/number-events.html
 
 # [Qt] Incorrect results for new fast/multicol tests added in r94084
 # https://bugs.webkit.org/show_bug.cgi?id=67293

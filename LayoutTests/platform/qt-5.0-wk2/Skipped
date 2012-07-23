@@ -594,7 +594,7 @@ fast/events/scroll-after-click-on-tab-index.html
 fast/events/touch/scroll-without-mouse-lacks-mousemove-events.html
 fast/events/touch/touch-coords-in-zoom-and-scroll.html
 fast/flexbox/flex-hang.html
-fast/forms/number/spin-in-multi-column.html
+fast/forms/number/number-spinbutton-in-multi-column.html
 fast/frames/frame-set-rotation-hit.html
 fast/gradients/background-clipped.html
 fast/images/gray-scale-jpeg-with-color-profile.html

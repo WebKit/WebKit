@@ -1,3 +1,226 @@
+2012-07-22  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Rename fast/forms/number/*.html to number-*.html
+        https://bugs.webkit.org/show_bug.cgi?id=91806
+
+        Reviewed by Kent Tamura.
+
+        This patch renames test scripts and expected text/images to same
+        naming scheme(name starts with "number-"), for fast/forms/number.
+
+        This patch also updates TestExpectations and Skipped files in platform
+        directory for test name change.
+
+        This patch is a part of forms input type test arrangement.
+        https://bugs.webkit.org/show_bug.cgi?id=91805
+
+        * fast/forms/number/ValidityState-rangeOverflow-number-expected.txt: Removed.
+        * fast/forms/number/ValidityState-rangeOverflow-number.html: Removed.
+        * fast/forms/number/ValidityState-rangeUnderflow-number-expected.txt: Removed.
+        * fast/forms/number/ValidityState-rangeUnderflow-number.html: Removed.
+        * fast/forms/number/ValidityState-stepMismatch-number-expected.txt: Removed.
+        * fast/forms/number/ValidityState-stepMismatch-number.html: Removed.
+        * fast/forms/number/ValidityState-typeMismatch-number-expected.txt: Removed.
+        * fast/forms/number/ValidityState-typeMismatch-number.html: Removed.
+        * fast/forms/number/input-appearance-number-rtl.html: Removed.
+        * fast/forms/number/input-appearance-spinbutton-disabled-readonly.html: Removed.
+        * fast/forms/number/input-appearance-spinbutton-layer.html: Removed.
+        * fast/forms/number/input-appearance-spinbutton-visibility-expected.html: Removed.
+        * fast/forms/number/input-appearance-spinbutton-visibility.html: Removed.
+        * fast/forms/number/input-number-blur-twice-expected.txt: Removed.
+        * fast/forms/number/input-number-blur-twice.html: Removed.
+        * fast/forms/number/input-number-change-type-on-focus-expected.txt: Removed.
+        * fast/forms/number/input-number-change-type-on-focus.html: Removed.
+        * fast/forms/number/input-number-commit-valid-only-expected.txt: Removed.
+        * fast/forms/number/input-number-commit-valid-only.html: Removed.
+        * fast/forms/number/input-number-crash-expected.txt: Removed.
+        * fast/forms/number/input-number-crash.html: Removed.
+        * fast/forms/number/input-number-events-expected.txt: Removed.
+        * fast/forms/number/input-number-events.html: Removed.
+        * fast/forms/number/input-number-keyoperation-expected.txt: Removed.
+        * fast/forms/number/input-number-keyoperation.html: Removed.
+        * fast/forms/number/input-number-large-padding-expected.txt: Removed.
+        * fast/forms/number/input-number-large-padding.html: Removed.
+        * fast/forms/number/input-number-outofrange-expected.txt: Removed.
+        * fast/forms/number/input-number-outofrange.html: Removed.
+        * fast/forms/number/input-number-size-expected.txt: Removed.
+        * fast/forms/number/input-number-size.html: Removed.
+        * fast/forms/number/input-number-spinbutton-crash-expected.txt: Removed.
+        * fast/forms/number/input-number-spinbutton-crash.html: Removed.
+        * fast/forms/number/input-number-unacceptable-style-expected.txt: Removed.
+        * fast/forms/number/input-number-unacceptable-style.html: Removed.
+        * fast/forms/number/input-number-validation-message-expected.txt: Removed.
+        * fast/forms/number/input-number-validation-message.html: Removed.
+        * fast/forms/number/input-number-wheel-expected.txt: Removed.
+        * fast/forms/number/input-number-wheel.html: Removed.
+        * fast/forms/number/input-spinbutton-capturing-expected.txt: Removed.
+        * fast/forms/number/input-spinbutton-capturing.html: Removed.
+        * fast/forms/number/input-valueasnumber-number-expected.txt: Removed.
+        * fast/forms/number/input-valueasnumber-number.html: Removed.
+        * fast/forms/number/number-appearance-rtl.html: Copied from LayoutTests/fast/forms/number/input-appearance-number-rtl.html.
+        * fast/forms/number/number-appearance-spinbutton-disabled-readonly.html: Copied from LayoutTests/fast/forms/number/input-appearance-spinbutton-disabled-readonly.html.
+        * fast/forms/number/number-appearance-spinbutton-layer.html: Copied from LayoutTests/fast/forms/number/input-appearance-spinbutton-layer.html.
+        * fast/forms/number/number-appearance-spinbutton-visibility-expected.html: Copied from LayoutTests/fast/forms/number/input-appearance-spinbutton-visibility-expected.html.
+        * fast/forms/number/number-appearance-spinbutton-visibility.html: Copied from LayoutTests/fast/forms/number/input-appearance-spinbutton-visibility.html.
+        * fast/forms/number/number-blur-twice-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-blur-twice-expected.txt.
+        * fast/forms/number/number-blur-twice.html: Copied from LayoutTests/fast/forms/number/input-number-blur-twice.html.
+        * fast/forms/number/number-change-type-on-focus-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-change-type-on-focus-expected.txt.
+        * fast/forms/number/number-change-type-on-focus.html: Copied from LayoutTests/fast/forms/number/input-number-change-type-on-focus.html.
+        * fast/forms/number/number-commit-valid-only-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-commit-valid-only-expected.txt.
+        * fast/forms/number/number-commit-valid-only.html: Copied from LayoutTests/fast/forms/number/input-number-commit-valid-only.html.
+        * fast/forms/number/number-crash-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-crash-expected.txt.
+        * fast/forms/number/number-crash.html: Copied from LayoutTests/fast/forms/number/input-number-crash.html.
+        * fast/forms/number/number-events-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-events-expected.txt.
+        * fast/forms/number/number-events.html: Copied from LayoutTests/fast/forms/number/input-number-events.html.
+        * fast/forms/number/number-keyoperation-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-keyoperation-expected.txt.
+        * fast/forms/number/number-keyoperation.html: Copied from LayoutTests/fast/forms/number/input-number-keyoperation.html.
+        * fast/forms/number/number-large-padding-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-large-padding-expected.txt.
+        * fast/forms/number/number-large-padding.html: Copied from LayoutTests/fast/forms/number/input-number-large-padding.html.
+        * fast/forms/number/number-outofrange-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-outofrange-expected.txt.
+        * fast/forms/number/number-outofrange.html: Copied from LayoutTests/fast/forms/number/input-number-outofrange.html.
+        * fast/forms/number/number-size-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-size-expected.txt.
+        * fast/forms/number/number-size.html: Copied from LayoutTests/fast/forms/number/input-number-size.html.
+        * fast/forms/number/number-spinbutton-capturing-expected.txt: Copied from LayoutTests/fast/forms/number/input-spinbutton-capturing-expected.txt.
+        * fast/forms/number/number-spinbutton-capturing.html: Copied from LayoutTests/fast/forms/number/input-spinbutton-capturing.html.
+        * fast/forms/number/number-spinbutton-crash-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-spinbutton-crash-expected.txt.
+        * fast/forms/number/number-spinbutton-crash.html: Copied from LayoutTests/fast/forms/number/input-number-spinbutton-crash.html.
+        * fast/forms/number/number-spinbutton-events-expected.txt: Copied from LayoutTests/fast/forms/number/spin-button-events-expected.txt.
+        * fast/forms/number/number-spinbutton-events.html: Copied from LayoutTests/fast/forms/number/spin-button-events.html.
+        * fast/forms/number/number-spinbutton-gets-disabled-or-readonly-expected.txt: Copied from LayoutTests/fast/forms/number/spin-button-gets-disabled-or-readonly-expected.txt.
+        * fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html: Copied from LayoutTests/fast/forms/number/spin-button-gets-disabled-or-readonly.html.
+        * fast/forms/number/number-spinbutton-in-multi-column-expected.txt: Copied from LayoutTests/fast/forms/number/spin-in-multi-column-expected.txt.
+        * fast/forms/number/number-spinbutton-in-multi-column.html: Copied from LayoutTests/fast/forms/number/spin-in-multi-column.html.
+        * fast/forms/number/number-spinbutton-state-expected.txt: Copied from LayoutTests/fast/forms/number/spin-button-state-expected.txt.
+        * fast/forms/number/number-spinbutton-state.html: Copied from LayoutTests/fast/forms/number/spin-button-state.html.
+        * fast/forms/number/number-unacceptable-style-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-unacceptable-style-expected.txt.
+        * fast/forms/number/number-unacceptable-style.html: Copied from LayoutTests/fast/forms/number/input-number-unacceptable-style.html.
+        * fast/forms/number/number-validation-message-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-validation-message-expected.txt.
+        * fast/forms/number/number-validation-message.html: Copied from LayoutTests/fast/forms/number/input-number-validation-message.html.
+        * fast/forms/number/number-validity-state-range-underflow-expected.txt: Copied from LayoutTests/fast/forms/number/ValidityState-rangeUnderflow-number-expected.txt.
+        * fast/forms/number/number-validity-state-range-underflow.html: Copied from LayoutTests/fast/forms/number/ValidityState-rangeUnderflow-number.html.
+        * fast/forms/number/number-validity-state-step-mismatch-expected.txt: Copied from LayoutTests/fast/forms/number/ValidityState-stepMismatch-number-expected.txt.
+        * fast/forms/number/number-validity-state-step-mismatch.html: Copied from LayoutTests/fast/forms/number/ValidityState-stepMismatch-number.html.
+        * fast/forms/number/number-validity-state-type-mismatch-expected.txt: Copied from LayoutTests/fast/forms/number/ValidityState-typeMismatch-number-expected.txt.
+        * fast/forms/number/number-validity-state-type-mismatch.html: Copied from LayoutTests/fast/forms/number/ValidityState-typeMismatch-number.html.
+        * fast/forms/number/number-validitystate-range-overflow-expected.txt: Copied from LayoutTests/fast/forms/number/ValidityState-rangeOverflow-number-expected.txt.
+        * fast/forms/number/number-validitystate-range-overflow.html: Copied from LayoutTests/fast/forms/number/ValidityState-rangeOverflow-number.html.
+        * fast/forms/number/number-valueasnumber-expected.txt: Copied from LayoutTests/fast/forms/number/input-valueasnumber-number-expected.txt.
+        * fast/forms/number/number-valueasnumber.html: Copied from LayoutTests/fast/forms/number/input-valueasnumber-number.html.
+        * fast/forms/number/number-wheel-expected.txt: Copied from LayoutTests/fast/forms/number/input-number-wheel-expected.txt.
+        * fast/forms/number/number-wheel.html: Copied from LayoutTests/fast/forms/number/input-number-wheel.html.
+        * fast/forms/number/spin-button-events-expected.txt: Removed.
+        * fast/forms/number/spin-button-events.html: Removed.
+        * fast/forms/number/spin-button-gets-disabled-or-readonly-expected.txt: Removed.
+        * fast/forms/number/spin-button-gets-disabled-or-readonly.html: Removed.
+        * fast/forms/number/spin-button-state-expected.txt: Removed.
+        * fast/forms/number/spin-button-state.html: Removed.
+        * fast/forms/number/spin-in-multi-column-expected.txt: Removed.
+        * fast/forms/number/spin-in-multi-column.html: Removed.
+        * platform/chromium-linux/fast/forms/number/input-appearance-number-rtl-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/number/number-appearance-rtl-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/number/input-appearance-number-rtl-expected.png.
+        * platform/chromium-linux/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png.
+        * platform/chromium-linux/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/chromium-linux/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/number/input-appearance-spinbutton-layer-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/number/input-appearance-number-rtl-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/number/number-appearance-rtl-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/number/input-appearance-number-rtl-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/number/input-appearance-spinbutton-layer-expected.png.
+        * platform/chromium-mac/fast/forms/number/input-appearance-number-rtl-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/chromium-mac/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/number/number-appearance-rtl-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/number/input-appearance-number-rtl-expected.png.
+        * platform/chromium-mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png.
+        * platform/chromium-mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/chromium-mac/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/number/input-appearance-spinbutton-layer-expected.png.
+        * platform/chromium-win/fast/forms/number/input-appearance-number-rtl-expected.png: Removed.
+        * platform/chromium-win/fast/forms/number/input-appearance-number-rtl-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/chromium-win/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/chromium-win/fast/forms/number/input-appearance-spinbutton-layer-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/number/number-appearance-rtl-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/number/input-appearance-number-rtl-expected.png.
+        * platform/chromium-win/fast/forms/number/number-appearance-rtl-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/number/input-appearance-number-rtl-expected.txt.
+        * platform/chromium-win/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png.
+        * platform/chromium-win/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/chromium-win/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/number/input-appearance-spinbutton-layer-expected.png.
+        * platform/chromium-win/fast/forms/number/number-appearance-spinbutton-layer-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/number/input-appearance-spinbutton-layer-expected.txt.
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/number/input-appearance-number-rtl-expected.png: Removed.
+        * platform/efl/fast/forms/number/input-appearance-number-rtl-expected.txt: Removed.
+        * platform/efl/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/efl/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/efl/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/efl/fast/forms/number/input-appearance-spinbutton-layer-expected.txt: Removed.
+        * platform/efl/fast/forms/number/number-appearance-rtl-expected.png: Copied from LayoutTests/platform/efl/fast/forms/number/input-appearance-number-rtl-expected.png.
+        * platform/efl/fast/forms/number/number-appearance-rtl-expected.txt: Copied from LayoutTests/platform/efl/fast/forms/number/input-appearance-number-rtl-expected.txt.
+        * platform/efl/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Copied from LayoutTests/platform/efl/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png.
+        * platform/efl/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/efl/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/efl/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Copied from LayoutTests/platform/efl/fast/forms/number/input-appearance-spinbutton-layer-expected.png.
+        * platform/efl/fast/forms/number/number-appearance-spinbutton-layer-expected.txt: Copied from LayoutTests/platform/efl/fast/forms/number/input-appearance-spinbutton-layer-expected.txt.
+        * platform/gtk/fast/forms/number/input-appearance-number-rtl-expected.png: Removed.
+        * platform/gtk/fast/forms/number/input-appearance-number-rtl-expected.txt: Removed.
+        * platform/gtk/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/gtk/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/gtk/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/gtk/fast/forms/number/input-appearance-spinbutton-layer-expected.txt: Removed.
+        * platform/gtk/fast/forms/number/number-appearance-rtl-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/number/input-appearance-number-rtl-expected.png.
+        * platform/gtk/fast/forms/number/number-appearance-rtl-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/number/input-appearance-number-rtl-expected.txt.
+        * platform/gtk/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png.
+        * platform/gtk/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/gtk/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/number/input-appearance-spinbutton-layer-expected.png.
+        * platform/gtk/fast/forms/number/number-appearance-spinbutton-layer-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/number/input-appearance-spinbutton-layer-expected.txt.
+        * platform/mac/fast/forms/number/input-appearance-number-rtl-expected.png: Removed.
+        * platform/mac/fast/forms/number/input-appearance-number-rtl-expected.txt: Removed.
+        * platform/mac/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/mac/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/mac/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/mac/fast/forms/number/input-appearance-spinbutton-layer-expected.txt: Removed.
+        * platform/mac/fast/forms/number/number-appearance-rtl-expected.png: Copied from LayoutTests/platform/mac/fast/forms/number/input-appearance-number-rtl-expected.png.
+        * platform/mac/fast/forms/number/number-appearance-rtl-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/number/input-appearance-number-rtl-expected.txt.
+        * platform/mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Copied from LayoutTests/platform/mac/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png.
+        * platform/mac/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/mac/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Copied from LayoutTests/platform/mac/fast/forms/number/input-appearance-spinbutton-layer-expected.png.
+        * platform/mac/fast/forms/number/number-appearance-spinbutton-layer-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/number/input-appearance-spinbutton-layer-expected.txt.
+        * platform/qt-4.8/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-number-rtl-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-number-rtl-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-layer-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-rtl-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/forms/number/input-appearance-number-rtl-expected.png.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-rtl-expected.txt: Copied from LayoutTests/platform/qt-5.0-wk2/fast/forms/number/input-appearance-number-rtl-expected.txt.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Copied from LayoutTests/platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-layer-expected.png.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-spinbutton-layer-expected.txt: Copied from LayoutTests/platform/qt-5.0-wk2/fast/forms/number/input-appearance-spinbutton-layer-expected.txt.
+        * platform/qt-arm/TestExpectations:
+        * platform/qt-mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/fast/forms/number/input-appearance-number-rtl-expected.png: Removed.
+        * platform/qt/fast/forms/number/input-appearance-number-rtl-expected.txt: Removed.
+        * platform/qt/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/qt/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/qt/fast/forms/number/input-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/qt/fast/forms/number/input-appearance-spinbutton-layer-expected.txt: Removed.
+        * platform/qt/fast/forms/number/number-appearance-rtl-expected.png: Copied from LayoutTests/platform/qt/fast/forms/number/input-appearance-number-rtl-expected.png.
+        * platform/qt/fast/forms/number/number-appearance-rtl-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/number/input-appearance-number-rtl-expected.txt.
+        * platform/qt/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Copied from LayoutTests/platform/qt/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.png.
+        * platform/qt/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/number/input-appearance-spinbutton-disabled-readonly-expected.txt.
+        * platform/qt/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Copied from LayoutTests/platform/qt/fast/forms/number/input-appearance-spinbutton-layer-expected.png.
+        * platform/qt/fast/forms/number/number-appearance-spinbutton-layer-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/number/input-appearance-spinbutton-layer-expected.txt.
+        * platform/win-wk2/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-07-22  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_METER_TAG and ENABLE_PROGRESS_TAG to ENABLE_METER_ELEMENT and ENABLE_PROGRESS_ELEMENT respectively

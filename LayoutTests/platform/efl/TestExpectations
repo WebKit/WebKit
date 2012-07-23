@@ -173,7 +173,7 @@ BUGWK86081 : loader/navigation-while-deferring-loads.html = TEXT PASS
 BUGWK86082 : security/block-test.html = TEXT PASS
 BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
 BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
-BUGWK91366 : fast/forms/number/spin-button-gets-disabled-or-readonly.html = TEXT PASS
+BUGWK91366 : fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html = TEXT PASS
 
 // Several media tests are flaky on the bots
 BUGWKEFL : media/controls-styling.html = TEXT PASS
@@ -193,10 +193,10 @@ BUGWKEFL : media/media-controls-clone.html = TEXT PASS
 //////////////////////////////////////////////////////////////////////////////////////////
 
 // Needs inner spin button to respect -webkit-inner-spin-button style
-BUGWK87619 : fast/forms/number/input-appearance-number-rtl.html = TEXT
-BUGWK87619 : fast/forms/number/input-appearance-spinbutton-disabled-readonly.html = TEXT
-BUGWK87619 : fast/forms/number/input-appearance-spinbutton-layer.html = TEXT
-BUGWK87619 : fast/forms/number/input-number-size.html = TEXT
+BUGWK87619 : fast/forms/number/number-appearance-rtl.html = TEXT
+BUGWK87619 : fast/forms/number/number-appearance-spinbutton-disabled-readonly.html = TEXT
+BUGWK87619 : fast/forms/number/number-appearance-spinbutton-layer.html = TEXT
+BUGWK87619 : fast/forms/number/number-size.html = TEXT
 
 BUGWK83007 : fast/repaint/region-painting-invalidation.html = TEXT IMAGE IMAGE+TEXT MISSING
 

@@ -274,7 +274,7 @@ fast/forms/file/get-file-upload.html
 fast/forms/implicit-submission.html
 fast/forms/file/input-file-re-render.html
 fast/forms/input-live-pseudo-selectors.html
-fast/forms/number/input-number-keyoperation.html
+fast/forms/number/number-keyoperation.html
 fast/forms/radio/input-radio-checked-tab.html
 fast/forms/input-readonly-autoscroll.html
 fast/forms/input-text-double-click.html
