@@ -3637,3 +3637,6 @@ BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalis
 
 // Needs rebaseline.
 BUGWK91811 : media/media-document-audio-repaint.html = IMAGE+TEXT
+
+// Layout test fails due to r147845.
+BUGCR68648 : http/tests/multipart/policy-ignore-crash.php = TEXT

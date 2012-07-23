@@ -1,3 +1,9 @@
+2012-07-23  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change to ignore failures for policy-ignore-crash.php.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-23  Vincent Scheib  <scheib@chromium.org>
 
         Skip http/tests/pointer-lock on ports that do not support pointer lock.
