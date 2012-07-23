@@ -206,6 +206,9 @@ public:
 
     void overridePreference(JSStringRef preference, bool value);
 
+    // Cookies testing
+    void setAlwaysAcceptCookies(bool);
+
     // Custom full screen behavior.
     void setHasCustomFullScreenBehavior(bool value) { m_customFullScreenBehavior = value; }
     bool hasCustomFullScreenBehavior() const { return m_customFullScreenBehavior; }

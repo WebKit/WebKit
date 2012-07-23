@@ -613,6 +613,11 @@ void LayoutTestController::overridePreference(JSStringRef preference, bool value
     WKBundleOverrideBoolPreferenceForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), toWK(preference).get(), value);
 }
 
+void LayoutTestController::setAlwaysAcceptCookies(bool accept)
+{
+    WKBundleSetAlwaysAcceptCookies(InjectedBundle::shared().bundle(), accept);
+}
+
 double LayoutTestController::preciseTime()
 {
     return currentTime();

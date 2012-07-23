@@ -139,6 +139,9 @@ module WTR {
 
         void setWindowIsKey(in boolean isKey);
 
+        // Cookies testing
+        void setAlwaysAcceptCookies(in boolean accept);
+
         // FIXME: handle non-boolean preferences.
         void overridePreference(in DOMString preference, in boolean value);
 

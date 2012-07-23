@@ -101,6 +101,7 @@ public:
 
     // TestRunner only SPI
     void setShouldTrackVisitedLinks(bool);
+    void setAlwaysAcceptCookies(bool);
     void removeAllVisitedLinks();
     void activateMacFontAscentHack();
     void overrideBoolPreferenceForTestRunner(WebPageGroupProxy*, const String& preference, bool enabled);

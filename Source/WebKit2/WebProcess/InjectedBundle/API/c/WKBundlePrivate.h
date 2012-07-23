@@ -86,6 +86,7 @@ WK_EXPORT bool WKBundleIsPageBoxVisible(WKBundleRef bundle, WKBundleFrameRef fra
 WK_EXPORT void WKBundleAddOriginAccessWhitelistEntry(WKBundleRef bundle, WKStringRef, WKStringRef, WKStringRef, bool);
 WK_EXPORT void WKBundleRemoveOriginAccessWhitelistEntry(WKBundleRef bundle, WKStringRef, WKStringRef, WKStringRef, bool);
 WK_EXPORT void WKBundleResetOriginAccessWhitelists(WKBundleRef bundle);
+WK_EXPORT void WKBundleSetAlwaysAcceptCookies(WKBundleRef bundle, bool);
 
 WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
 
