@@ -1,3 +1,9 @@
+2012-07-23  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped:
+
 2012-07-23  Andrei Poenaru  <poenaru@adobe.com>
 
         [Qt] new test introduced in r123205 fails on Qt
