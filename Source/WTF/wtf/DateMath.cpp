@@ -356,6 +356,12 @@ int equivalentYearForDST(int year)
 
 int32_t calculateUTCOffset()
 {
+#if OS(WINDOWS)
+    TIME_ZONE_INFORMATION timeZoneInformation;
+    GetTimeZoneInformation(&timeZoneInformation);
+    int32_t bias = timeZoneInformation.Bias + timeZoneInformation.StandardBias;
+    return -bias * 60 * 1000;
+#else
     time_t localTime = time(0);
     tm localt;
     getLocalTime(&localTime, &localt);
@@ -376,7 +382,7 @@ int32_t calculateUTCOffset()
 #if HAVE(TM_ZONE)
     localt.tm_zone = 0;
 #endif
-    
+
 #if HAVE(TIMEGM)
     time_t utcOffset = timegm(&localt) - mktime(&localt);
 #else
@@ -386,6 +392,7 @@ int32_t calculateUTCOffset()
 #endif
 
     return static_cast<int32_t>(utcOffset * 1000);
+#endif
 }
 
 /*
