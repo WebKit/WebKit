@@ -1,3 +1,17 @@
+2012-07-22  Daniel Bates  <dbates@webkit.org>
+
+        Fix the Windows CE build after <http://trac.webkit.org/changeset/123298>
+        (https://bugs.webkit.org/show_bug.cgi?id=91939)
+
+        Disable the DFG JIT across all CMake ports (by default) (*). Enabling DFG JIT
+        breaks the Windows CE build as the Windows CE port builds with the JIT disabled
+        (ENABLE_JIT := 0) and hence ENABLE_ASSEMBLER := 0.
+
+        (*) We should look to further discuss with CMake port maintainers about enabling
+        the DFG JIT by default.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2012-07-23  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_METER_TAG and ENABLE_PROGRESS_TAG to ENABLE_METER_ELEMENT and ENABLE_PROGRESS_ELEMENT respectively
