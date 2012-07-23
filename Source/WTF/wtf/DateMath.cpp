@@ -86,6 +86,10 @@
 #include <time.h>
 #include <wtf/text/StringBuilder.h>
 
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 #if HAVE(ERRNO_H)
 #include <errno.h>
 #endif

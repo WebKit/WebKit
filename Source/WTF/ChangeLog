@@ -1,5 +1,11 @@
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
+        Build fix for Windows after r123317.
+
+        * wtf/DateMath.cpp: Added missing header include.
+
+2012-07-23  Patrick Gansterer  <paroga@webkit.org>
+
         [WIN] Use GetTimeZoneInformation() for calculateUTCOffset()
         https://bugs.webkit.org/show_bug.cgi?id=91935
 
