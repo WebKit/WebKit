@@ -1,3 +1,21 @@
+2012-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Exclusions] SVG shape errors should invalidate exclusion shapes
+        https://bugs.webkit.org/show_bug.cgi?id=91761
+
+        Reviewed by Andreas Kling.
+
+        CSS exclusion shapes that are specified with negative radiuses or
+        height/width are now considered invalid and ignored.
+
+        Tests added to
+        LayoutTests/fast/exclusions/parsing-wrap-shape-lengths.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseExclusionShapeRectangle):
+        (WebCore::CSSParser::parseExclusionShapeCircle):
+        (WebCore::CSSParser::parseExclusionShapeEllipse):
+
 2012-07-23  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] Implement scrollbar theme for Android

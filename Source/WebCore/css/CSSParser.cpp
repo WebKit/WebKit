@@ -4469,7 +4469,12 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeRectangle(CSSParserValueL
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
-        if (!validUnit(argument, FLength | FPercent))
+        Units unitFlags = FLength | FPercent;
+        if (argumentNumber > 1) {
+            // Arguments width, height, rx, and ry cannot be negative.
+            unitFlags = unitFlags | FNonNeg;
+        }
+        if (!validUnit(argument, unitFlags))
             return 0;
 
         RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);
@@ -4522,7 +4527,13 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeCircle(CSSParserValueList
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
-        if (!validUnit(argument, FLength | FPercent))
+        Units unitFlags = FLength | FPercent;
+        if (argumentNumber == 2) {
+            // Argument radius cannot be negative.
+            unitFlags = unitFlags | FNonNeg;
+        }
+
+        if (!validUnit(argument, unitFlags))
             return 0;
 
         RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);
@@ -4565,7 +4576,12 @@ PassRefPtr<CSSWrapShape> CSSParser::parseExclusionShapeEllipse(CSSParserValueLis
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
-        if (!validUnit(argument, FLength | FPercent))
+        Units unitFlags = FLength | FPercent;
+        if (argumentNumber > 1) {
+            // Arguments radiusX and radiusY cannot be negative.
+            unitFlags = unitFlags | FNonNeg;
+        }
+        if (!validUnit(argument, unitFlags))
             return 0;
 
         RefPtr<CSSPrimitiveValue> length = createPrimitiveNumericValue(argument);

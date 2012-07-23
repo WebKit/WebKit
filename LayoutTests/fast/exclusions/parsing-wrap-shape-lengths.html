@@ -88,6 +88,18 @@ negativeTest("-webkit-shape-inside", "circle(1px, 1px, 1)");
 negativeTest("-webkit-shape-inside", "circle(1px, 1px, px)");
 negativeTest("-webkit-shape-inside", "circle(1px, 1px, 1p)");
 negativeTest("-webkit-shape-inside", "circle(1px, 1px, calc())");
+
+// reject negative radiuses
+negativeTest("-webkit-shape-inside", "circle(-1.5px, +1.5px, -1.5px)");
+negativeTest("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, 1px, -1pt, 1pc)");
+negativeTest("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, 1px, 1pt, -1pc)");
+negativeTest("-webkit-shape-inside", "ellipse(1em, 1em, -1em, 1em)");
+negativeTest("-webkit-shape-inside", "ellipse(1em, 1em, 1em, -1em)");
+
+// reject negative height and width
+negativeTest("-webkit-shape-inside", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)");
+negativeTest("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)");
+
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

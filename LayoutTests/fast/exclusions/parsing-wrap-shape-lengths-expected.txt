@@ -37,6 +37,20 @@ PASS innerStyle("-webkit-shape-inside", "circle(1px, 1px, 1p)") is null
 PASS computedStyle("-webkit-shape-inside", "circle(1px, 1px, 1p)") is "auto"
 PASS innerStyle("-webkit-shape-inside", "circle(1px, 1px, calc())") is null
 PASS computedStyle("-webkit-shape-inside", "circle(1px, 1px, calc())") is "auto"
+PASS innerStyle("-webkit-shape-inside", "circle(-1.5px, +1.5px, -1.5px)") is null
+PASS computedStyle("-webkit-shape-inside", "circle(-1.5px, +1.5px, -1.5px)") is "auto"
+PASS innerStyle("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, 1px, -1pt, 1pc)") is null
+PASS computedStyle("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, 1px, -1pt, 1pc)") is "auto"
+PASS innerStyle("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, 1px, 1pt, -1pc)") is null
+PASS computedStyle("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, 1px, 1pt, -1pc)") is "auto"
+PASS innerStyle("-webkit-shape-inside", "ellipse(1em, 1em, -1em, 1em)") is null
+PASS computedStyle("-webkit-shape-inside", "ellipse(1em, 1em, -1em, 1em)") is "auto"
+PASS innerStyle("-webkit-shape-inside", "ellipse(1em, 1em, 1em, -1em)") is null
+PASS computedStyle("-webkit-shape-inside", "ellipse(1em, 1em, 1em, -1em)") is "auto"
+PASS innerStyle("-webkit-shape-inside", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)") is null
+PASS computedStyle("-webkit-shape-inside", "rectangle(1cm, 1mm, -1in, 1px, 1pt, 1pc)") is "auto"
+PASS innerStyle("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)") is null
+PASS computedStyle("-webkit-shape-inside", "rectangle(1cm, 1mm, 1in, -1px, 1pt, 1pc)") is "auto"
 PASS successfullyParsed is true
 
 TEST COMPLETE
