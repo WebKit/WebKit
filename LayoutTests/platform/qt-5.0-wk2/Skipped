@@ -693,8 +693,3 @@ editing/inserting/typing-tab-designmode.html
 # https://bugs.webkit.org/show_bug.cgi?id=91990
 editing/inserting/4960120-1.html
 editing/inserting/before-after-input-element.html
-tables/mozilla_expected_failures/bugs/bug92647-1.html
-
-# [Qt] Image in tables/mozilla_expected_failures/bugs/bug85016.html scales different in WK1 and WK2
-# https://bugs.webkit.org/show_bug.cgi?id=92015
-tables/mozilla_expected_failures/bugs/bug85016.html

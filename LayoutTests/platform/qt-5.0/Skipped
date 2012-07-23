@@ -1576,6 +1576,12 @@ tables/mozilla/marvin/colgroup_width_pct.html
 tables/mozilla/marvin/table_overflow_hidden_td.html
 tables/mozilla/marvin/tfoot_char.html
 tables/mozilla/other/move_row.html
+tables/mozilla_expected_failures/bugs/bug178855.xml
+tables/mozilla_expected_failures/bugs/bug23847.html
+tables/mozilla_expected_failures/bugs/bug2479-5.html
+tables/mozilla_expected_failures/bugs/bug8499.html
+tables/mozilla_expected_failures/bugs/bug85016.html
+tables/mozilla_expected_failures/bugs/bug92647-1.html
 tables/mozilla_expected_failures/marvin/table_overflow_caption.html
 tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom.html
 tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden.html
