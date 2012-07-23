@@ -1,3 +1,14 @@
+2012-07-23  Andrei Poenaru  <poenaru@adobe.com>
+
+        [Qt] new test introduced in r123205 fails on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=91967
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Skipped WebInspector test that needs CSS Regions enabled.
+
+        * platform/qt/Skipped:
+
 2012-07-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

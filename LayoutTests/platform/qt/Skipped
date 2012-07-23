@@ -254,6 +254,7 @@ fast/regions
 
 # CSS Exclusions support not yet enabled. http://webkit.org/b/57311
 fast/exclusions
+inspector/styles/protocol-getNamedFlowCollection-command.html
 
 # USE(V8)
 
