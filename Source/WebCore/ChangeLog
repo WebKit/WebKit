@@ -1,3 +1,48 @@
+2012-07-23  Kent Tamura  <tkent@chromium.org>
+
+        Replace some instances of shadowAncestorNode() with shadowHost()
+        https://bugs.webkit.org/show_bug.cgi?id=91966
+
+        Reviewed by Hajime Morita.
+
+        shadowAncestorNode() is deprecated. We should use shadowHost().
+        No new tests. This doesn't change any behavior.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        * dom/TreeScope.cpp:
+        (WebCore::listTreeScopes):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::isClickableControl):
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::summaryElement):
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterShadowElement::meterElement):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressShadowElement::progressElement):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::layout):
+        (WebCore::RenderSliderContainer::layout):
+        (WebCore::SliderThumbElement::hostInput):
+        (WebCore::TrackLimiterElement::shadowPseudoId):
+        (WebCore::SliderContainerElement::shadowPseudoId):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::customStyleForRenderer):
+        (WebCore::TextControlInnerTextElement::defaultEventHandler):
+        (WebCore::TextControlInnerTextElement::createRenderer):
+        (WebCore::TextControlInnerTextElement::customStyleForRenderer):
+        (WebCore::SearchFieldResultsButtonElement::shadowPseudoId):
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        (WebCore::SpinButtonElement::step):
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        (WebCore::InputFieldSpeechButtonElement::setState):
+        (WebCore::InputFieldSpeechButtonElement::setRecognitionResult):
+        (WebCore::InputFieldSpeechButtonElement::startSpeechInput):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlInnerBlock::positionForPoint):
+
 2012-07-23  Pavel Feldman  <pfeldman@chromium.org>
 
         [WK2] REGRESSION r122966: Crash when closing tab with Web Inspector open in WebKit::PageOverlay

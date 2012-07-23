@@ -266,8 +266,8 @@ static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)
 {
     while (true) {
         treeScopes.append(node->treeScope());
-        Node* ancestor = node->shadowAncestorNode();
-        if (node == ancestor)
+        Element* ancestor = node->shadowHost();
+        if (!ancestor)
             break;
         node = ancestor;
     }

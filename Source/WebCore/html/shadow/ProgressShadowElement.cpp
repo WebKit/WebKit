@@ -47,9 +47,9 @@ ProgressShadowElement::ProgressShadowElement(Document* document)
 
 HTMLProgressElement* ProgressShadowElement::progressElement() const
 {
-    Node* node = const_cast<ProgressShadowElement*>(this)->shadowAncestorNode();
-    ASSERT(!node || progressTag == toElement(node)->tagQName());
-    return static_cast<HTMLProgressElement*>(node);
+    Element* element = shadowHost();
+    ASSERT(!element || element->hasTagName(progressTag));
+    return static_cast<HTMLProgressElement*>(element);
 }
 
 bool ProgressShadowElement::rendererIsNeeded(const NodeRenderingContext& context)

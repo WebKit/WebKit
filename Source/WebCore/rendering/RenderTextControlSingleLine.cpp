@@ -53,10 +53,10 @@ VisiblePosition RenderTextControlInnerBlock::positionForPoint(const LayoutPoint&
 {
     LayoutPoint contentsPoint(point);
 
-    // Multiline text controls have the scroll on shadowAncestorNode, so we need to take that
-    // into account here.
+    // Multiline text controls have the scroll on shadowHost, so we need to take
+    // that into account here.
     if (m_multiLine) {
-        RenderTextControl* renderer = toRenderTextControl(node()->shadowAncestorNode()->renderer());
+        RenderTextControl* renderer = toRenderTextControl(node()->shadowHost()->renderer());
         if (renderer->hasOverflowClip())
             contentsPoint += renderer->scrolledContentOffset();
     }

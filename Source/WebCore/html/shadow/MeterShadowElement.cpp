@@ -50,9 +50,9 @@ MeterShadowElement::MeterShadowElement(Document* document)
 
 HTMLMeterElement* MeterShadowElement::meterElement() const
 {
-    Node* node = const_cast<MeterShadowElement*>(this)->shadowAncestorNode();
-    ASSERT(!node || meterTag == toElement(node)->tagQName());
-    return static_cast<HTMLMeterElement*>(node);
+    Element* element = shadowHost();
+    ASSERT(!element || element->hasTagName(meterTag));
+    return static_cast<HTMLMeterElement*>(element);
 }
 
 bool MeterShadowElement::rendererIsNeeded(const NodeRenderingContext& context)

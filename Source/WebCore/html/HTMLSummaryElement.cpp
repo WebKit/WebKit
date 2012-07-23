@@ -108,7 +108,7 @@ static bool isClickableControl(Node* node)
     Element* element = toElement(node);
     if (element->isFormControlElement())
         return true;
-    Element* host = toElement(element->shadowAncestorNode());
+    Element* host = element->shadowHost();
     return host && host->isFormControlElement();
 }
 
