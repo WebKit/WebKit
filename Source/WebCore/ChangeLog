@@ -1,3 +1,19 @@
+2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] media/controls-styling-strict.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=91960
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use "display: -webkit-box;" instead of inline-block
+        for current-time control. This is needed because
+        inline-block behaves differently in strict mode.
+
+        No new test, already tested by media/controls-styling-strict.html
+
+        * css/mediaControlsEfl.css:
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+
 2012-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with ENABLE_DATALIST_ELEMENT.

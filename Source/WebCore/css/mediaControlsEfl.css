@@ -84,7 +84,7 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
-    display: inline-block;
+    display: -webkit-box;
     height: 20px;
 
     padding: 4px;
