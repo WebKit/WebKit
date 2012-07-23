@@ -1,5 +1,5 @@
 <?php
-require('/www/auth/webkit-blog-config.php');
+require('/var/www/config/webkit-blog-config.php');
 
 define('WP_CACHE', true); //Added by WP-Cache Manager
 define('ABSPATH', dirname(__FILE__).'/');
