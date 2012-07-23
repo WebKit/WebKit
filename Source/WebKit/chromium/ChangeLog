@@ -1,3 +1,17 @@
+2012-07-23  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Buildfix for fixing gclient on the Chromium Windows bot
+        https://bugs.webkit.org/show_bug.cgi?id=91977
+
+        Unreviewed build fix.
+
+        Add the tools/isolate directory to the Windows checkout as these files
+        currently are missing during gyp generation. maruel introduced the need
+        for these in this isolate refactoring, specifically this Chromium CL:
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=147689
+
+        * DEPS:
+
 2012-07-22  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-Mac] Fix a build error.
