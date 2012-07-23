@@ -57,9 +57,9 @@ namespace WebCore {
 inline LocaleWin::LocaleWin(LCID lcid)
     : m_lcid(lcid)
 {
-    struct tm tm;
-    getCurrentLocalTime(&tm);
-    m_baseYear = tm.tm_year + 1900;
+    SYSTEMTIME systemTime;
+    GetLocalTime(&systemTime);
+    m_baseYear = systemTime.wYear;
 
 #if ENABLE(CALENDAR_PICKER)
     DWORD value = 0;
