@@ -1,7 +1,6 @@
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/wince"
     "${WEBCORE_DIR}/platform/win"
-    "${WEBCORE_DIR}/platform/text/wince"
     "${WEBCORE_DIR}/platform/graphics/wince"
     "${WEBCORE_DIR}/platform/graphics/win"
     "${WEBCORE_DIR}/platform/network/win"
@@ -114,8 +113,9 @@ LIST(APPEND WebCore_SOURCES
 
     platform/text/TextEncodingDetectorNone.cpp
 
+    platform/text/win/TextCodecWin.cpp
+
     platform/text/wince/TextBreakIteratorWince.cpp
-    platform/text/wince/TextCodecWinCE.cpp
 )
 
 LIST(APPEND WebCore_LIBRARIES

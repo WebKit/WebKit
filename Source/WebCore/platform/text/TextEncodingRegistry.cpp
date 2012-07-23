@@ -52,7 +52,7 @@
 #include "gtk/TextCodecGtk.h"
 #endif
 #if USE(WINCE_UNICODE)
-#include "TextCodecWinCE.h"
+#include "win/TextCodecWin.h"
 #endif
 
 #include <wtf/CurrentTime.h>
@@ -312,8 +312,8 @@ static void extendTextCodecMaps()
 #endif
 
 #if USE(WINCE_UNICODE)
-    TextCodecWinCE::registerExtendedEncodingNames(addToTextEncodingNameMap);
-    TextCodecWinCE::registerExtendedCodecs(addToTextCodecMap);
+    TextCodecWin::registerExtendedEncodingNames(addToTextEncodingNameMap);
+    TextCodecWin::registerExtendedCodecs(addToTextCodecMap);
 #endif
 
     pruneBlacklistedCodecs();

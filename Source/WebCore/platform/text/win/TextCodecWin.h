@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
- * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
+ * Copyright (C) 2010-2012 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,27 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextCodecWinCE_h
-#define TextCodecWinCE_h
+#ifndef TextCodecWin_h
+#define TextCodecWin_h
 
 #include "PlatformString.h"
 #include "TextCodec.h"
 #include "TextEncoding.h"
-#include <wtf/Vector.h>
 #include <windows.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class TextCodecWinCE : public TextCodec {
+class TextCodecWin : public TextCodec {
 public:
     static void registerExtendedEncodingNames(EncodingNameRegistrar);
     static void registerExtendedCodecs(TextCodecRegistrar);
 
-    TextCodecWinCE(UINT codePage);
-    virtual ~TextCodecWinCE();
+    TextCodecWin(UINT codePage);
+    virtual ~TextCodecWin();
 
     virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
     virtual CString encode(const UChar*, size_t length, UnencodableHandling);
@@ -58,7 +58,7 @@ public:
         virtual bool receive(const char* encoding, const wchar_t* friendlyName, unsigned int codePage) = 0;
     };
 
-    static void enumerateSupportedEncodings(EncodingReceiver& receiver);
+    static void enumerateSupportedEncodings(EncodingReceiver&);
 
 private:
     UINT m_codePage;
@@ -67,4 +67,4 @@ private:
 
 } // namespace WebCore
 
-#endif // TextCodecWinCE_h
+#endif // TextCodecWin_h

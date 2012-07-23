@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007-2009 Torch Mobile, Inc. All rights reserved.
- * Copyright (C) 2010-2011 Patrick Gansterer <paroga@paroga.com>
+ * Copyright (C) 2010-2012 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,16 @@
  */
 
 #include "config.h"
-#include "TextCodecWinCE.h"
+#include "TextCodecWin.h"
 
-#include "FontCache.h"
+#include "COMPtr.h"
 #include <mlang.h>
-#include <winbase.h>
-#include <winnls.h>
+#include <windows.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -82,39 +81,42 @@ static LanguageManager& languageManager()
 
 LanguageManager::LanguageManager()
 {
-    IEnumCodePage* enumInterface;
-    IMultiLanguage* mli = FontCache::getMultiLanguageInterface();
-    if (mli && S_OK == mli->EnumCodePages(MIMECONTF_BROWSER, &enumInterface)) {
-        MIMECPINFO cpInfo;
-        ULONG ccpInfo;
-        while (S_OK == enumInterface->Next(1, &cpInfo, &ccpInfo) && ccpInfo) {
-            if (!IsValidCodePage(cpInfo.uiCodePage))
-                continue;
+    COMPtr<IMultiLanguage> multiLanguage;
+    if (FAILED(::CoCreateInstance(CLSID_CMultiLanguage, 0, CLSCTX_INPROC_SERVER, IID_IMultiLanguage, reinterpret_cast<LPVOID*>(&multiLanguage))))
+        return;
 
-            HashMap<UINT, CString>::iterator i = codePageCharsets().find(cpInfo.uiCodePage);
+    COMPtr<IEnumCodePage> enumInterface;
+    if (FAILED(multiLanguage->EnumCodePages(MIMECONTF_BROWSER, &enumInterface)))
+        return;
 
-            CString name(String(cpInfo.wszWebCharset).latin1());
-            if (i == codePageCharsets().end()) {
-                CharsetInfo info;
-                info.m_codePage = cpInfo.uiCodePage;
-                knownCharsets().set(name.data(), info);
-                i = codePageCharsets().set(cpInfo.uiCodePage, name).iterator;
-            }
-            if (i != codePageCharsets().end()) {
-                HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(String(i->second.data(), i->second.length()));
-                ASSERT(j != knownCharsets().end());
-                CharsetInfo& info = j->second;
-                info.m_name = i->second.data();
-                info.m_friendlyName = cpInfo.wszDescription;
-                info.m_aliases.append(name);
-                info.m_aliases.append(String(cpInfo.wszHeaderCharset).latin1());
-                info.m_aliases.append(String(cpInfo.wszBodyCharset).latin1());
-                String cpName = "cp" + String::number(cpInfo.uiCodePage);
-                info.m_aliases.append(cpName.latin1());
-                supportedCharsets().add(i->second.data());
-            }
+    MIMECPINFO cpInfo;
+    ULONG ccpInfo;
+    while (SUCCEEDED(enumInterface->Next(1, &cpInfo, &ccpInfo)) && ccpInfo) {
+        if (!IsValidCodePage(cpInfo.uiCodePage))
+            continue;
+
+        HashMap<UINT, CString>::iterator i = codePageCharsets().find(cpInfo.uiCodePage);
+
+        CString name(String(cpInfo.wszWebCharset).latin1());
+        if (i == codePageCharsets().end()) {
+            CharsetInfo info;
+            info.m_codePage = cpInfo.uiCodePage;
+            knownCharsets().set(name.data(), info);
+            i = codePageCharsets().set(cpInfo.uiCodePage, name).iterator;
         }
-        enumInterface->Release();
+        if (i != codePageCharsets().end()) {
+            HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(String(i->second.data(), i->second.length()));
+            ASSERT(j != knownCharsets().end());
+            CharsetInfo& info = j->second;
+            info.m_name = i->second.data();
+            info.m_friendlyName = cpInfo.wszDescription;
+            info.m_aliases.append(name);
+            info.m_aliases.append(String(cpInfo.wszHeaderCharset).latin1());
+            info.m_aliases.append(String(cpInfo.wszBodyCharset).latin1());
+            String cpName = "cp" + String::number(cpInfo.uiCodePage);
+            info.m_aliases.append(cpName.latin1());
+            supportedCharsets().add(i->second.data());
+        }
     }
 }
 
@@ -127,21 +129,21 @@ static UINT getCodePage(const char* name)
     return i == charsets.end() ? CP_ACP : i->second.m_codePage;
 }
 
-static PassOwnPtr<TextCodec> newTextCodecWinCE(const TextEncoding& encoding, const void*)
+static PassOwnPtr<TextCodec> newTextCodecWin(const TextEncoding& encoding, const void*)
 {
-    return adoptPtr(new TextCodecWinCE(getCodePage(encoding.name())));
+    return adoptPtr(new TextCodecWin(getCodePage(encoding.name())));
 }
 
-TextCodecWinCE::TextCodecWinCE(UINT codePage)
+TextCodecWin::TextCodecWin(UINT codePage)
     : m_codePage(codePage)
 {
 }
 
-TextCodecWinCE::~TextCodecWinCE()
+TextCodecWin::~TextCodecWin()
 {
 }
 
-void TextCodecWinCE::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
+void TextCodecWin::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
 {
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
@@ -154,13 +156,13 @@ void TextCodecWinCE::registerExtendedEncodingNames(EncodingNameRegistrar registr
     }
 }
 
-void TextCodecWinCE::registerExtendedCodecs(TextCodecRegistrar registrar)
+void TextCodecWin::registerExtendedCodecs(TextCodecRegistrar registrar)
 {
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
         HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
         if (j != knownCharsets().end())
-            registrar(j->second.m_name.data(), newTextCodecWinCE, 0);
+            registrar(j->second.m_name.data(), newTextCodecWin, 0);
     }
 }
 
@@ -232,7 +234,7 @@ static void decodeInternal(Vector<UChar, 8192>& result, UINT codePage, const cha
     }
 }
 
-String TextCodecWinCE::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
+String TextCodecWin::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
 {
     if (!m_decodeBuffer.isEmpty()) {
         m_decodeBuffer.append(bytes, length);
@@ -274,7 +276,7 @@ String TextCodecWinCE::decode(const char* bytes, size_t length, bool flush, bool
     return String::adopt(result);
 }
 
-CString TextCodecWinCE::encode(const UChar* characters, size_t length, UnencodableHandling)
+CString TextCodecWin::encode(const UChar* characters, size_t length, UnencodableHandling)
 {
     if (!characters || !length)
         return CString();
@@ -294,7 +296,7 @@ CString TextCodecWinCE::encode(const UChar* characters, size_t length, Unencodab
     return result;
 }
 
-void TextCodecWinCE::enumerateSupportedEncodings(EncodingReceiver& receiver)
+void TextCodecWin::enumerateSupportedEncodings(EncodingReceiver& receiver)
 {
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
