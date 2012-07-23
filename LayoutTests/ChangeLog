@@ -1,5 +1,14 @@
 2012-07-23  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed chromium expectations change after r123302.
+        https://bugs.webkit.org/show_bug.cgi?id-91806
+
+        * platform/chromium-win/fast/forms/number/number-appearance-rtl-expected.png:
+        * platform/chromium-win/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png:
+        * platform/chromium-win/fast/forms/number/number-appearance-spinbutton-layer-expected.png:
+
+2012-07-23  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed chromium expectations change to ignore failures for policy-ignore-crash.php.
 
         * platform/chromium/TestExpectations:
