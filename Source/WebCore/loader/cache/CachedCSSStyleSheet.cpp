@@ -43,6 +43,7 @@ namespace WebCore {
 CachedCSSStyleSheet::CachedCSSStyleSheet(const ResourceRequest& resourceRequest, const String& charset)
     : CachedResource(resourceRequest, CSSStyleSheet)
     , m_decoder(TextResourceDecoder::create("text/css", charset))
+    , m_decodedDataDeletionTimer(this, &CachedCSSStyleSheet::decodedDataDeletionTimerFired)
 {
     // Prefer text/css but accept any type (dell.com serves a stylesheet
     // as text/html; see <http://bugs.webkit.org/show_bug.cgi?id=11451>).
@@ -58,14 +59,17 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 void CachedCSSStyleSheet::didAddClient(CachedResourceClient* c)
 {
     ASSERT(c->resourceClientType() == CachedStyleSheetClient::expectedType());
+    if (m_decodedDataDeletionTimer.isActive())
+        m_decodedDataDeletionTimer.stop();
+
     if (!isLoading())
         static_cast<CachedStyleSheetClient*>(c)->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
 void CachedCSSStyleSheet::allClientsRemoved()
 {
-    if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
-        makePurgeable(true);
+    if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
+        m_decodedDataDeletionTimer.startOneShot(interval);
 }
 
 void CachedCSSStyleSheet::setEncoding(const String& chs)
@@ -163,6 +167,14 @@ void CachedCSSStyleSheet::destroyDecodedData()
     m_parsedStyleSheetCache.clear();
 
     setDecodedSize(0);
+
+    if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
+        makePurgeable(true);
+}
+
+void CachedCSSStyleSheet::decodedDataDeletionTimerFired(Timer<CachedCSSStyleSheet>*)
+{
+    destroyDecodedData();
 }
 
 PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(const CSSParserContext& context)

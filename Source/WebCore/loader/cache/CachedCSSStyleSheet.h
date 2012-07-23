@@ -27,6 +27,7 @@
 #define CachedCSSStyleSheet_h
 
 #include "CachedResource.h"
+#include "Timer.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -61,12 +62,14 @@ namespace WebCore {
         void saveParsedStyleSheet(PassRefPtr<StyleSheetContents>);
     
     private:
+        void decodedDataDeletionTimerFired(Timer<CachedCSSStyleSheet>*);
         bool canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const;
         virtual PurgePriority purgePriority() const { return PurgeLast; }
 
     protected:
         RefPtr<TextResourceDecoder> m_decoder;
         String m_decodedSheetText;
+        Timer<CachedCSSStyleSheet> m_decodedDataDeletionTimer;
 
         RefPtr<StyleSheetContents> m_parsedStyleSheetCache;
     };

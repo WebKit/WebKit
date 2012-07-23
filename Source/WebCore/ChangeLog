@@ -1,3 +1,32 @@
+2012-07-23  Huang Dongsung  <luxtella@company100.net>
+
+        Destroy CSS decoded data more eagerly once they become dead caches.
+        https://bugs.webkit.org/show_bug.cgi?id=91733
+
+        Reviewed by Geoffrey Garen.
+
+        Internal review by Kwang Yul Seo.
+
+        There are three CachedResources with decoded data: CachedImage, CachedScript
+        and CachedCSSStyleSheet. In the cases of CachedImage and CachedScript, we
+        eagerly destroy the decoded data using Timer in CacehdResource::allClientsRemoved().
+        We must apply the same policy here in CachedCSSStyleSheet because priority
+        inversion can occur. For example, we can't destroy the decoded data of CachedImages
+        when they are referenced by CachedCSSStyleSheet as background, mask or border
+        images.
+
+        No new tests - no new testable functionality.
+
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        (WebCore::CachedCSSStyleSheet::allClientsRemoved):
+        (WebCore::CachedCSSStyleSheet::destroyDecodedData):
+        (WebCore):
+        (WebCore::CachedCSSStyleSheet::decodedDataDeletionTimerFired):
+        * loader/cache/CachedCSSStyleSheet.h:
+        (CachedCSSStyleSheet):
+
 2012-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         Part 2 of: Implement sticky positioning
