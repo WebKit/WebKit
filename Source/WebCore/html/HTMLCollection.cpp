@@ -288,7 +288,7 @@ Node* DynamicNodeListCacheBase::itemBeforeOrAfter(Node* previous) const
     if (LIKELY(!!previous)) // Without this LIKELY, length() and item() can be 10% slower.
         current = nextNode<forward>(rootNode(), previous, shouldOnlyIncludeDirectChildren());
     else
-        current = firstNode(forward, rootNode(), previous);
+        current = firstNode(forward, rootNode(), shouldOnlyIncludeDirectChildren());
 
     if (type() == NodeListCollectionType && shouldOnlyIncludeDirectChildren()) // ChildNodeList
         return current;

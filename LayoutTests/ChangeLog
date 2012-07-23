@@ -1,3 +1,15 @@
+2012-07-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r123281): childNodes sometimes returns wrong nodes
+        https://bugs.webkit.org/show_bug.cgi?id=92014
+
+        Reviewed by Anders Carlsson.
+
+        Added an integration regression test that caught this bug.
+
+        * fast/dom/NodeList/childNodes-reverse-iteration-expected.txt: Added.
+        * fast/dom/NodeList/childNodes-reverse-iteration.html: Added.
+
 2012-07-23  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] animations needs rebaseline after new test fonts

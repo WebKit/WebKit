@@ -1,3 +1,20 @@
+2012-07-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r123281): childNodes sometimes returns wrong nodes
+        https://bugs.webkit.org/show_bug.cgi?id=92014
+
+        Reviewed by Anders Carlsson.
+
+        The bug was caused by a typo in itemBeforeOrAfter. Namely, it should have been calling firstNode as
+        firstNode(forward, rootNode(), shouldOnlyIncludeDirectChildren()),
+        NOT firstNode(forward, rootNode(), previous)
+        as evident from the argument list of the function.
+
+        Test: fast/dom/NodeList/childNodes-reverse-iteration.html
+
+        * html/HTMLCollection.cpp:
+        (WebCore::DynamicNodeListCacheBase::itemBeforeOrAfter):
+
 2012-07-23  Steve VanDeBogart  <vandebo@chromium.org>
 
         Chrome/Skia: PDF print output does not have clickable links.
