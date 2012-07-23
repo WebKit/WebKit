@@ -633,10 +633,12 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
+#if ENABLE(SQL_DATABASE)
     if (messageID.is<CoreIPC::MessageClassWebDatabaseManager>()) {
         WebDatabaseManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;
     }
+#endif
 
     if (messageID.is<CoreIPC::MessageClassWebGeolocationManager>()) {
         m_geolocationManager.didReceiveMessage(connection, messageID, arguments);

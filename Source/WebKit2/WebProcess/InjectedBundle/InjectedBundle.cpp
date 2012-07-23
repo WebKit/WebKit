@@ -263,12 +263,16 @@ void InjectedBundle::resetOriginAccessWhitelists()
 
 void InjectedBundle::clearAllDatabases()
 {
+#if ENABLE(SQL_DATABASE)
     WebDatabaseManager::shared().deleteAllDatabases();
+#endif
 }
 
 void InjectedBundle::setDatabaseQuota(uint64_t quota)
 {
+#if ENABLE(SQL_DATABASE)
     WebDatabaseManager::shared().setQuotaForOrigin("file:///", quota);
+#endif
 }
 
 void InjectedBundle::clearApplicationCache()

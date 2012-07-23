@@ -167,7 +167,9 @@ public:
     WebBatteryManagerProxy* batteryManagerProxy() const { return m_batteryManagerProxy.get(); }
 #endif
     WebCookieManagerProxy* cookieManagerProxy() const { return m_cookieManagerProxy.get(); }
+#if ENABLE(SQL_DATABASE)
     WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
+#endif
     WebGeolocationManagerProxy* geolocationManagerProxy() const { return m_geolocationManagerProxy.get(); }
     WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
     WebKeyValueStorageManagerProxy* keyValueStorageManagerProxy() const { return m_keyValueStorageManagerProxy.get(); }
@@ -321,7 +323,9 @@ private:
     RefPtr<WebBatteryManagerProxy> m_batteryManagerProxy;
 #endif
     RefPtr<WebCookieManagerProxy> m_cookieManagerProxy;
+#if ENABLE(SQL_DATABASE)
     RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
+#endif
     RefPtr<WebGeolocationManagerProxy> m_geolocationManagerProxy;
     RefPtr<WebIconDatabase> m_iconDatabase;
     RefPtr<WebKeyValueStorageManagerProxy> m_keyValueStorageManagerProxy;

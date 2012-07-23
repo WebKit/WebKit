@@ -20,9 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if ENABLE(SQL_DATABASE)
+
 messages -> WebDatabaseManagerProxy {
     DidGetDatabasesByOrigin(Vector<WebKit::OriginAndDatabases> originAndDatabases, uint64_t callbackID);
     DidGetDatabaseOrigins(Vector<WTF::String> originIdentifiers, uint64_t callbackID)
     DidModifyOrigin(WTF::String originIdentifier)
     DidModifyDatabase(WTF::String originIdentifier, WTF::String databaseIdentifier)
 }
+
+#endif // ENABLE(SQL_DATABASE)

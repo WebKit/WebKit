@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebDatabaseManagerProxy.h"
 
+#if ENABLE(SQL_DATABASE)
+
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
 #include "WebDatabaseManagerMessages.h"
@@ -231,3 +233,4 @@ void WebDatabaseManagerProxy::didModifyDatabase(const String& originIdentifier, 
 
 } // namespace WebKit
 
+#endif // ENABLE(SQL_DATABASE)

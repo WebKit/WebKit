@@ -495,7 +495,7 @@ bool ArgumentCoder<CompositionUnderline>::decode(ArgumentDecoder* decoder, Compo
     return true;
 }
 
-
+#if ENABLE(SQL_DATABASE)
 void ArgumentCoder<DatabaseDetails>::encode(ArgumentEncoder* encoder, const DatabaseDetails& details)
 {
     encoder->encode(details.name());
@@ -525,6 +525,7 @@ bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder* decoder, DatabaseDe
     details = DatabaseDetails(name, displayName, expectedUsage, currentUsage);
     return true;
 }
+#endif
 
 void ArgumentCoder<DictationAlternative>::encode(ArgumentEncoder* encoder, const DictationAlternative& dictationAlternative)
 {

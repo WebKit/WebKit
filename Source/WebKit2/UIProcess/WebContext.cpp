@@ -146,7 +146,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_batteryManagerProxy(WebBatteryManagerProxy::create(this))
 #endif
     , m_cookieManagerProxy(WebCookieManagerProxy::create(this))
+#if ENABLE(SQL_DATABASE)
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
+#endif
     , m_geolocationManagerProxy(WebGeolocationManagerProxy::create(this))
     , m_iconDatabase(WebIconDatabase::create(this))
     , m_keyValueStorageManagerProxy(WebKeyValueStorageManagerProxy::create(this))
@@ -210,8 +212,10 @@ WebContext::~WebContext()
     m_cookieManagerProxy->invalidate();
     m_cookieManagerProxy->clearContext();
 
+#if ENABLE(SQL_DATABASE)
     m_databaseManagerProxy->invalidate();
     m_databaseManagerProxy->clearContext();
+#endif
     
     m_geolocationManagerProxy->invalidate();
     m_geolocationManagerProxy->clearContext();
@@ -381,8 +385,10 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
         return false;
     if (!m_cookieManagerProxy->shouldTerminate(process))
         return false;
+#if ENABLE(SQL_DATABASE)
     if (!m_databaseManagerProxy->shouldTerminate(process))
         return false;
+#endif
     if (!m_keyValueStorageManagerProxy->shouldTerminate(process))
         return false;
     if (!m_mediaCacheManagerProxy->shouldTerminate(process))
@@ -438,7 +444,9 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_batteryManagerProxy->invalidate();
 #endif
     m_cookieManagerProxy->invalidate();
+#if ENABLE(SQL_DATABASE)
     m_databaseManagerProxy->invalidate();
+#endif
     m_geolocationManagerProxy->invalidate();
     m_keyValueStorageManagerProxy->invalidate();
     m_mediaCacheManagerProxy->invalidate();
@@ -788,10 +796,12 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
+#if ENABLE(SQL_DATABASE)
     if (messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()) {
         m_databaseManagerProxy->didReceiveWebDatabaseManagerProxyMessage(connection, messageID, arguments);
         return;
     }
+#endif
 
     if (messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()) {
         m_geolocationManagerProxy->didReceiveMessage(connection, messageID, arguments);

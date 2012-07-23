@@ -181,7 +181,11 @@ WKBatteryManagerRef WKContextGetBatteryManager(WKContextRef contextRef)
 
 WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef contextRef)
 {
+#if ENABLE(SQL_DATABASE)
     return toAPI(toImpl(contextRef)->databaseManagerProxy());
+#else
+    return 0;
+#endif
 }
 
 WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)

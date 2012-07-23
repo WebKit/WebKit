@@ -26,6 +26,8 @@
 #include "config.h"
 #include "OriginAndDatabases.h"
 
+#if ENABLE(SQL_DATABASE)
+
 #include "WebCoreArgumentCoders.h"
 
 using namespace WebCore;
@@ -55,3 +57,5 @@ bool OriginAndDatabases::decode(CoreIPC::ArgumentDecoder* decoder, OriginAndData
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(SQL_DATABASE)

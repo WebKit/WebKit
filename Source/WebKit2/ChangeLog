@@ -1,3 +1,60 @@
+2012-07-23  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WK2] SQL Database cannot be disabled at build time
+        https://bugs.webkit.org/show_bug.cgi?id=91837
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebKit2 had no #ifdefs for SQL Database. This patch adds these
+        statments and it can now be disabled at build time.
+
+        * Shared/OriginAndDatabases.cpp:
+        * Shared/OriginAndDatabases.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetDatabaseManager):
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerGetTypeID):
+        (WKDatabaseManagerGetOriginKey):
+        (WKDatabaseManagerGetOriginQuotaKey):
+        (WKDatabaseManagerGetOriginUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsKey):
+        (WKDatabaseManagerGetDatabaseDetailsNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsDisplayNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey):
+        (WKDatabaseManagerSetClient):
+        (WKDatabaseManagerGetDatabasesByOrigin):
+        (callGetDatabasesByOriginBlockAndDispose):
+        (WKDatabaseManagerGetDatabasesByOrigin_b):
+        (WKDatabaseManagerGetDatabaseOrigins):
+        (callGetDatabaseOriginsBlockBlockAndDispose):
+        (WKDatabaseManagerGetDatabaseOrigins_b):
+        (WKDatabaseManagerDeleteDatabasesWithNameForOrigin):
+        (WKDatabaseManagerDeleteDatabasesForOrigin):
+        (WKDatabaseManagerDeleteAllDatabases):
+        (WKDatabaseManagerSetQuotaForOrigin):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::shouldTerminate):
+        (WebKit::WebContext::disconnectProcess):
+        (WebKit::WebContext::didReceiveMessage):
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        * UIProcess/WebDatabaseManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxy.messages.in:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::clearAllDatabases):
+        (WebKit::InjectedBundle::setDatabaseQuota):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage):
+
 2012-07-23  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_METER_TAG and ENABLE_PROGRESS_TAG to ENABLE_METER_ELEMENT and ENABLE_PROGRESS_ELEMENT respectively
