@@ -1063,7 +1063,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
                             valueSource = ValueSource(DoubleInRegisterFile);
                         else if (isInt32Speculation(argumentPosition.prediction()))
                             valueSource = ValueSource(Int32InRegisterFile);
-                        else if (isArraySpeculation(argumentPosition.prediction()))
+                        else if (isArraySpeculation(argumentPosition.prediction()) || isCellSpeculation(argumentPosition.prediction()))
                             valueSource = ValueSource(CellInRegisterFile);
                         else if (isBooleanSpeculation(argumentPosition.prediction()))
                             valueSource = ValueSource(BooleanInRegisterFile);

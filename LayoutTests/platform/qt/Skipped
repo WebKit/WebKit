@@ -2595,10 +2595,6 @@ css2.1/20110323/text-indent-intrinsic-004.htm
 # https://bugs.webkit.org/show_bug.cgi?id=91968
 fast/sub-pixel/table-rows-have-stable-height.html
 
-# REGRESSION(r123169): It made fast/js/dfg-inline-arguments-use-from-uninlined-code.html fail on 32 bit platforms
-# https://bugs.webkit.org/show_bug.cgi?id=92002
-fast/js/dfg-inline-arguments-use-from-uninlined-code.html
-
 # [Qt] svg/zoom/{page,text}/zoom-hixie-mixed-009.xml fails
 # https://bugs.webkit.org/show_bug.cgi?id=92018
 svg/zoom/text/zoom-hixie-mixed-009.xml
