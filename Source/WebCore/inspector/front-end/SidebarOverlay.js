@@ -134,12 +134,13 @@ WebInspector.SidebarOverlay.prototype = {
 
     /**
      * @param {Event} event
+     * @return {boolean}
      */
     _startResizerDragging: function(event)
     {
         var width = this._width;
         this._dragOffset = width - event.pageX;
-        WebInspector.elementDragStart(this._resizerElement, this._resizerDragging.bind(this), this._endResizerDragging.bind(this), event, "ew-resize");
+        return true;
     },
 
     /**
@@ -158,7 +159,6 @@ WebInspector.SidebarOverlay.prototype = {
     _endResizerDragging: function(event)
     {
         delete this._dragOffset;
-        WebInspector.elementDragEnd(event);
     },
 
     /**
@@ -166,7 +166,7 @@ WebInspector.SidebarOverlay.prototype = {
      */
     _installResizer: function(resizerElement)
     {
-        resizerElement.addEventListener("mousedown", this._startResizerDragging.bind(this), false);
+        WebInspector.installDragHandle(resizerElement, this._startResizerDragging.bind(this), this._resizerDragging.bind(this), this._endResizerDragging.bind(this), "ew-resize");
     },
 
     /**

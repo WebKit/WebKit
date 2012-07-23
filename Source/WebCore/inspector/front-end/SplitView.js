@@ -353,16 +353,16 @@ WebInspector.SplitView.prototype = {
 
     /**
      * @param {Event} event
+     * @return {boolean}
      */
     _startResizerDragging: function(event)
     {
         if (!this._resizable)
-            return;
+            return false;
 
         var leftWidth = this.hasLeftSidebar ? this._sidebarWidth : this._totalWidth - this._sidebarWidth;
         this._dragOffset = leftWidth - event.pageX;
-
-        WebInspector.elementDragStart(this.sidebarResizerElement, this._resizerDragging.bind(this), this._endResizerDragging.bind(this), event, "ew-resize");
+        return true;
     },
 
     /**
@@ -384,7 +384,6 @@ WebInspector.SplitView.prototype = {
     _endResizerDragging: function(event)
     {
         delete this._dragOffset;
-        WebInspector.elementDragEnd(event);
     },
 
     /**
@@ -392,7 +391,7 @@ WebInspector.SplitView.prototype = {
      */
     installResizer: function(resizerElement)
     {
-        resizerElement.addEventListener("mousedown", this._startResizerDragging.bind(this), false);
+        WebInspector.installDragHandle(resizerElement, this._startResizerDragging.bind(this), this._resizerDragging.bind(this), this._endResizerDragging.bind(this), "ew-resize");
     },
 
     /**

@@ -61,7 +61,7 @@ WebInspector.TimelinePanel = function()
 
     this._timelineMemorySplitter = this.element.createChild("div");
     this._timelineMemorySplitter.id = "timeline-memory-splitter";
-    this._timelineMemorySplitter.addEventListener("mousedown", this._startSplitterDragging.bind(this), false);
+    WebInspector.installDragHandle(this._timelineMemorySplitter, this._startSplitterDragging.bind(this), this._splitterDragging.bind(this), this._endSplitterDragging.bind(this), "ns-resize");
     this._timelineMemorySplitter.addStyleClass("hidden");
     this._memoryStatistics = new WebInspector.MemoryStatistics(this, this._model, this.splitView.preferredSidebarWidth());
     WebInspector.settings.memoryCounterGraphsHeight = WebInspector.settings.createSetting("memoryCounterGraphsHeight", 150);
@@ -149,11 +149,12 @@ WebInspector.TimelinePanel.rowHeight = 18;
 WebInspector.TimelinePanel.prototype = {
     /**
      * @param {Event} event
+     * @return {boolean}
      */
     _startSplitterDragging: function(event)
     {
         this._dragOffset = this._timelineMemorySplitter.offsetTop + 2 - event.pageY;
-        WebInspector.elementDragStart(this._timelineMemorySplitter, this._splitterDragging.bind(this), this._endSplitterDragging.bind(this), event, "ns-resize");
+        return true;
     },
 
     /**
@@ -172,7 +173,6 @@ WebInspector.TimelinePanel.prototype = {
     _endSplitterDragging: function(event)
     {
         delete this._dragOffset;
-        WebInspector.elementDragEnd(event);
         this._memoryStatistics.show();
         WebInspector.settings.memoryCounterGraphsHeight.set(this.splitView.element.offsetHeight);
     },

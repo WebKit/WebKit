@@ -166,7 +166,7 @@ WebInspector.CSSStyleModel.prototype = {
     getNamedFlowCollectionAsync: function(nodeId, userCallback)
     {
         /**
-         * @param {function(?WebInspector.CSSStyleDeclaration, ?WebInspector.CSSStyleDeclaration)} userCallback
+         * @param {function(?Array.<string>)} userCallback
          * @param {?Protocol.Error} error
          * @param {?Array.<string>=} namedFlowPayload
          */

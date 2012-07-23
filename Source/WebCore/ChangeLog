@@ -1,3 +1,72 @@
+2012-07-23  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Drag and drop should not be started on right mouse click.
+        https://bugs.webkit.org/show_bug.cgi?id=91728
+
+        Reviewed by Pavel Feldman.
+
+        Introduced WebInspector.installDragHandle method to control drag and drop support, checking whichg mouse button is pressed.
+        Simplified WebInspector._elementDragStart, removed "element" parameter.
+        Simplified tab moving support in TabbedPane, removed "mousemove" handler.
+        Removed while loop determining which element was dragged in TimelineOverviewPane, each drag support is now installed independently.
+        Drive-by: fixed TimelineOverviewPane window moving on resources-dividers-label-bar drang-and-drop.
+        Drive-by: fixed CSSStyleModel compilation.
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getNamedFlowCollectionAsync):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype._positionResizers):
+        (WebInspector.DataGrid.prototype._startResizerDragging):
+        (WebInspector.DataGrid.prototype._endResizerDragging):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer):
+        (WebInspector.Drawer.prototype._animationDuration):
+        (WebInspector.Drawer.prototype._startStatusBarDragging):
+        (WebInspector.Drawer.prototype._endStatusBarDragging):
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotView.prototype._startRetainersHeaderDragging):
+        (WebInspector.HeapSnapshotView.prototype._endRetainersHeaderDragging):
+        * inspector/front-end/SidebarOverlay.js:
+        (WebInspector.SidebarOverlay.prototype.set _startResizerDragging):
+        (WebInspector.SidebarOverlay.prototype._endResizerDragging):
+        (WebInspector.SidebarOverlay.prototype._installResizer):
+        * inspector/front-end/Spectrum.js:
+        * inspector/front-end/SplitView.js:
+        (WebInspector.SplitView.prototype._startResizerDragging):
+        (WebInspector.SplitView.prototype._endResizerDragging):
+        (WebInspector.SplitView.prototype.installResizer):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPaneTab.prototype._createTabElement):
+        (WebInspector.TabbedPaneTab.prototype._tabMouseDown):
+        (WebInspector.TabbedPaneTab.prototype._startTabDragging):
+        (WebInspector.TabbedPaneTab.prototype._endTabDragging):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewWindow):
+        (WebInspector.TimelineOverviewWindow.prototype._leftResizeElementDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._rightResizeElementDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._startWindowSelectorDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._endWindowSelectorDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._startWindowDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._windowDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._endWindowDragging):
+        (WebInspector.TimelineOverviewWindow.prototype._moveWindow):
+        (WebInspector.TimelineOverviewWindow.prototype._onMouseWheel):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._startSplitterDragging):
+        (WebInspector.TimelinePanel.prototype._endSplitterDragging):
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.Toolbar):
+        (WebInspector.Toolbar.prototype._toolbarDragStart):
+        (WebInspector.Toolbar.prototype._toolbarDragEnd):
+        * inspector/front-end/UIUtils.js:
+        (WebInspector.installDragHandle):
+        (WebInspector._elementDragStart):
+        (WebInspector._elementDragEnd):
+        * inspector/front-end/timelinePanel.css:
+        (#timeline-overview-grid .resources-dividers-label-bar):
+
 2012-07-23  Hayato Ito  <hayato@chromium.org>
 
         ComposedShadowTreeWalker should skip an empty insertion points.

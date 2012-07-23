@@ -81,7 +81,7 @@ WebInspector.HeapSnapshotView = function(parent, profile)
 
     this.retainmentViewHeader = document.createElement("div");
     this.retainmentViewHeader.addStyleClass("retainers-view-header");
-    this.retainmentViewHeader.addEventListener("mousedown", this._startRetainersHeaderDragging.bind(this), true);
+    WebInspector.installDragHandle(this.retainmentViewHeader, this._startRetainersHeaderDragging.bind(this), this._retainersHeaderDragging.bind(this), this._endRetainersHeaderDragging.bind(this), "row-resize");
     var retainingPathsTitleDiv = document.createElement("div");
     retainingPathsTitleDiv.className = "title";
     var retainingPathsTitle = document.createElement("span");
@@ -635,14 +635,16 @@ WebInspector.HeapSnapshotView.prototype = {
             this.helpPopover.show(this._helpPopoverContentElement, this.helpButton.element);
     },
 
+    /**
+     * @return {boolean}
+     */
     _startRetainersHeaderDragging: function(event)
     {
         if (!this.isShowing())
-            return;
+            return false;
 
-        WebInspector.elementDragStart(this.retainmentViewHeader, this._retainersHeaderDragging.bind(this), this._endRetainersHeaderDragging.bind(this), event, "row-resize");
         this._previousDragPosition = event.pageY;
-        event.consume();
+        return true;
     },
 
     _retainersHeaderDragging: function(event)
@@ -656,7 +658,6 @@ WebInspector.HeapSnapshotView.prototype = {
 
     _endRetainersHeaderDragging: function(event)
     {
-        WebInspector.elementDragEnd(event);
         delete this._previousDragPosition;
         event.consume();
     },

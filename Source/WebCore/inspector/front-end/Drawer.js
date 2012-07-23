@@ -37,14 +37,15 @@ WebInspector.Drawer = function()
     this._mainElement = document.getElementById("main");
     this._toolbarElement = document.getElementById("toolbar");
     this._mainStatusBar = document.getElementById("main-status-bar");
-    this._mainStatusBar.addEventListener("mousedown", this._startStatusBarDragging.bind(this), true);
+    WebInspector.installDragHandle(this._mainStatusBar, this._startStatusBarDragging.bind(this), this._statusBarDragging.bind(this), this._endStatusBarDragging.bind(this), "row-resize");
+
     this._counters = document.getElementById("counters");
 
     this._drawerContentsElement = document.createElement("div");
     this._drawerContentsElement.id = "drawer-contents";
     this._drawerContentsElement.className = "drawer-contents";
     this.element.appendChild(this._drawerContentsElement);
-    
+
     this._drawerStatusBar = document.createElement("div");
     this._drawerStatusBar.id = "drawer-status-bar";
     this._drawerStatusBar.className = "status-bar";
@@ -238,20 +239,20 @@ WebInspector.Drawer.prototype = {
             return 250;
         default:
             return 0;
-        }        
+        }
     },
 
+    /**
+     * @return {boolean}
+     */
     _startStatusBarDragging: function(event)
     {
         if (!this.visible || event.target !== this._mainStatusBar)
-            return;
+            return false;
 
         this._view.storeScrollPositions();
-        WebInspector.elementDragStart(this._mainStatusBar, this._statusBarDragging.bind(this), this._endStatusBarDragging.bind(this), event, "row-resize");
-
         this._statusBarDragOffset = event.pageY - this.element.totalOffsetTop();
-
-        event.consume();
+        return true;
     },
 
     _statusBarDragging: function(event)
@@ -270,8 +271,6 @@ WebInspector.Drawer.prototype = {
 
     _endStatusBarDragging: function(event)
     {
-        WebInspector.elementDragEnd(event);
-
         this._savedHeight = this.element.offsetHeight;
         delete this._statusBarDragOffset;
 

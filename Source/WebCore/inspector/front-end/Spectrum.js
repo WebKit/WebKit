@@ -185,7 +185,7 @@ WebInspector.Spectrum.rgbaToHSVA = function(r, g, b, a)
     return [h, s, v, a];
 };
 
-//FIXME: migrate to WebInspector.elementDragStart
+//FIXME: migrate to WebInspector.installDragHandle
 /**
  * @param {Function=} onmove
  * @param {Function=} onstart

@@ -29,47 +29,75 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor)
+/**
+ * @param {Element} element
+ * @param {?function(Event): boolean} elementDragStart
+ * @param {function(Event)} elementDrag
+ * @param {?function(Event)} elementDragEnd
+ * @param {string} cursor
+ */
+WebInspector.installDragHandle = function(element, elementDragStart, elementDrag, elementDragEnd, cursor)
 {
-    if (WebInspector._elementDraggingEventListener || WebInspector._elementEndDraggingEventListener)
-        WebInspector.elementDragEnd(event);
+    element.addEventListener("mousedown", WebInspector._elementDragStart.bind(WebInspector, elementDragStart, elementDrag, elementDragEnd, cursor), false);
+}
 
-    if (element) {
-        // Install glass pane
-        if (WebInspector._elementDraggingGlassPane)
-            WebInspector._elementDraggingGlassPane.dispose();
+/**
+ * @param {?function(Event)} elementDragStart
+ * @param {function(Event)} elementDrag
+ * @param {?function(Event)} elementDragEnd
+ * @param {string} cursor
+ * @param {Event} event
+ */
+WebInspector._elementDragStart = function(elementDragStart, elementDrag, elementDragEnd, cursor, event)
+{
+    // Only drag upon left button. Right will likely cause a context menu.
+    if (event.button)
+        return;
 
-        WebInspector._elementDraggingGlassPane = new WebInspector.GlassPane();
-    }
+    if (WebInspector._elementDraggingEventListener)
+        return;
 
-    WebInspector._elementDraggingEventListener = dividerDrag;
+    if (elementDragStart && !elementDragStart(event))
+        return;
+
+    // Install glass pane
+    if (WebInspector._elementDraggingGlassPane)
+        WebInspector._elementDraggingGlassPane.dispose();
+
+    WebInspector._elementDraggingGlassPane = new WebInspector.GlassPane();
+
+    WebInspector._elementDraggingEventListener = elementDrag;
     WebInspector._elementEndDraggingEventListener = elementDragEnd;
 
     var targetDocument = event.target.ownerDocument;
-    targetDocument.addEventListener("mousemove", dividerDrag, true);
-    targetDocument.addEventListener("mouseup", elementDragEnd, true);
+    targetDocument.addEventListener("mousemove", WebInspector._elementDraggingEventListener, true);
+    targetDocument.addEventListener("mouseup", WebInspector._elementDragEnd, true);
 
     targetDocument.body.style.cursor = cursor;
 
     event.preventDefault();
 }
 
-WebInspector.elementDragEnd = function(event)
+WebInspector._elementDragEnd = function(event)
 {
     var targetDocument = event.target.ownerDocument;
     targetDocument.removeEventListener("mousemove", WebInspector._elementDraggingEventListener, true);
-    targetDocument.removeEventListener("mouseup", WebInspector._elementEndDraggingEventListener, true);
+    targetDocument.removeEventListener("mouseup", WebInspector._elementDragEnd, true);
 
     targetDocument.body.style.removeProperty("cursor");
 
     if (WebInspector._elementDraggingGlassPane)
         WebInspector._elementDraggingGlassPane.dispose();
 
+    var elementDragEnd = WebInspector._elementEndDraggingEventListener;
+
     delete WebInspector._elementDraggingGlassPane;
     delete WebInspector._elementDraggingEventListener;
     delete WebInspector._elementEndDraggingEventListener;
 
     event.preventDefault();
+    if (elementDragEnd)
+        elementDragEnd(event);
 }
 
 /**

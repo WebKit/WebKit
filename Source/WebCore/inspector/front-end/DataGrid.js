@@ -653,7 +653,7 @@ WebInspector.DataGrid.prototype = {
                 resizer = document.createElement("div");
                 resizer.addStyleClass("data-grid-resizer");
                 // This resizer is associated with the column to its right.
-                resizer.addEventListener("mousedown", this._startResizerDragging.bind(this), false);
+                WebInspector.installDragHandle(resizer, this._startResizerDragging.bind(this), this._resizerDragging.bind(this), this._endResizerDragging.bind(this), "col-resize");
                 this.element.appendChild(resizer);
                 this.resizers[i] = resizer;
             }
@@ -933,13 +933,13 @@ WebInspector.DataGrid.prototype = {
         this._resizeMethod = method;
     },
 
+    /**
+     * @return {boolean}
+     */
     _startResizerDragging: function(event)
     {
         this._currentResizer = event.target;
-        if (!this._currentResizer.rightNeighboringColumnID)
-            return;
-        WebInspector.elementDragStart(this._currentResizer, this._resizerDragging.bind(this),
-            this._endResizerDragging.bind(this), event, "col-resize");
+        return !!this._currentResizer.rightNeighboringColumnID
     },
 
     _resizerDragging: function(event)
@@ -993,7 +993,6 @@ WebInspector.DataGrid.prototype = {
 
     _endResizerDragging: function(event)
     {
-        WebInspector.elementDragEnd(event);
         this._currentResizer = null;
         this.dispatchEventToListeners("width changed");
     },
