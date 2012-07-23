@@ -405,6 +405,7 @@ webintents/
 
 # Pointer Lock is not implemented.
 pointer-lock/
+http/tests/pointer-lock/
 
 # Skip because this platform does not support a paging mouse wheel event
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html

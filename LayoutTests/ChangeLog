@@ -1,3 +1,15 @@
+2012-07-23  Vincent Scheib  <scheib@chromium.org>
+
+        Skip http/tests/pointer-lock on ports that do not support pointer lock.
+
+        Unreviewed.
+
+        * platform/efl/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-07-21  Vincent Scheib  <scheib@chromium.org>
 
         webkitFullscreenElement, webkitCurrentFullScreenElement, webkitPointerLockElement block cross origin access.

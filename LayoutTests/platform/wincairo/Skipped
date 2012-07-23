@@ -2079,6 +2079,7 @@ webintents/
 
 # Pointer Lock is not implemented.
 pointer-lock/
+http/tests/pointer-lock/
 
 # https://bugs.webkit.org/show_bug.cgi?id=72435
 fast/dom/Window/window-postmessage-arrays.html
