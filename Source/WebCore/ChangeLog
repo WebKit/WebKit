@@ -1,3 +1,33 @@
+2012-07-23  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] Implement scrollbar theme for Android
+        https://bugs.webkit.org/show_bug.cgi?id=91674
+
+        Reviewed by Adam Barth.
+
+        Previously the scrollbar for Android was implemented as an extra
+        drawing pass in the compositor. Now we switch to use the standard
+        ScrollbarTheme mechanism.
+
+        No new tests. We use mock scrollbars during layout test to share
+        pixel results with Linux.
+
+        * platform/chromium/ScrollbarThemeChromiumAndroid.cpp:
+        (WebCore::ScrollbarThemeChromiumAndroid::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumAndroid::thumbPosition):
+        (WebCore::ScrollbarThemeChromiumAndroid::thumbLength):
+        (WebCore::ScrollbarThemeChromiumAndroid::backButtonRect):
+        (WebCore::ScrollbarThemeChromiumAndroid::forwardButtonRect):
+        (WebCore::ScrollbarThemeChromiumAndroid::trackRect):
+        (WebCore):
+        (WebCore::ScrollbarThemeChromiumAndroid::paintThumb):
+        (WebCore::ScrollbarThemeChromiumAndroid::paintScrollbarBackground):
+        * platform/chromium/ScrollbarThemeChromiumAndroid.h:
+        (WebCore::ScrollbarThemeChromiumAndroid::usesOverlayScrollbars):
+        (ScrollbarThemeChromiumAndroid):
+        (WebCore::ScrollbarThemeChromiumAndroid::hasButtons):
+        (WebCore::ScrollbarThemeChromiumAndroid::hasThumb):
+
 2012-07-23  Kwang Yul Seo  <skyul@company100.net>
 
         Use the original token to create an element in "reconstruct the active formatting elements" and "call the adoption agency"

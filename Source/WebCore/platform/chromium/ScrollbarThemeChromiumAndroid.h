@@ -30,15 +30,23 @@
 
 namespace WebCore {
 
-class ScrollbarThemeChromiumAndroid : public ScrollbarThemeChromium {
+class ScrollbarThemeChromiumAndroid : public ScrollbarThemeComposite {
 public:
     virtual int scrollbarThickness(ScrollbarControlSize);
+    virtual bool usesOverlayScrollbars() const { return true; }
 
-protected:
+    virtual int thumbPosition(ScrollbarThemeClient*);
+    virtual int thumbLength(ScrollbarThemeClient*);
+
+    virtual bool hasButtons(ScrollbarThemeClient*) { return false; };
+    virtual bool hasThumb(ScrollbarThemeClient*) { return true; };
+
+    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
+    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
+    virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false);
+
+    virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
     virtual void paintScrollbarBackground(GraphicsContext*, ScrollbarThemeClient*);
-    virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
-    virtual IntSize buttonSize(ScrollbarThemeClient*);
-    virtual int minimumThumbLength(ScrollbarThemeClient*);
 };
 
 } // namespace WebCore
