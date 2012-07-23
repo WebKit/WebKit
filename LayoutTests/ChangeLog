@@ -1,5 +1,18 @@
 2012-07-23  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        [Qt] editing/inserting/multiple-lines-selected.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=91993
+
+        Reviewed by Simon Hausmann.
+
+        Removing wrong expected results, adding it to the skipped list.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/editing/inserting/multiple-lines-selected-expected.png: Removed.
+        * platform/qt/editing/inserting/multiple-lines-selected-expected.txt: Removed.
+
+2012-07-23  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         [Qt] editing/inserting rebaseline after new test fonts
         https://bugs.webkit.org/show_bug.cgi?id=91985
 

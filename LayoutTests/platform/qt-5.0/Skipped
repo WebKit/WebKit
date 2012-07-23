@@ -115,6 +115,10 @@ svg/text/foreignObject-text-clipping-bug.xml
 # https://bugs.webkit.org/show_bug.cgi?id=91895
 svg/text/scaling-font-with-geometric-precision.html
 
+# [Qt] editing/inserting/multiple-lines-selected.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=91993
+editing/inserting/multiple-lines-selected.html
+
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
