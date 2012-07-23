@@ -169,22 +169,22 @@ void WebLoaderClient::didDetectXSSForFrame(WebPageProxy* page, WebFrameProxy* fr
 }
 
 #if ENABLE(WEB_INTENTS)
-void WebLoaderClient::didReceiveIntentForFrame(WebPageProxy* page, WebFrameProxy* frame, WebIntentData* intentData)
+void WebLoaderClient::didReceiveIntentForFrame(WebPageProxy* page, WebFrameProxy* frame, WebIntentData* intentData, APIObject* userData)
 {
     if (!m_client.didReceiveIntentForFrame)
         return;
 
-    m_client.didReceiveIntentForFrame(toAPI(page), toAPI(frame), toAPI(intentData), m_client.clientInfo);
+    m_client.didReceiveIntentForFrame(toAPI(page), toAPI(frame), toAPI(intentData), toAPI(userData), m_client.clientInfo);
 }
 #endif
 
 #if ENABLE(WEB_INTENTS_TAG)
-void WebLoaderClient::registerIntentServiceForFrame(WebPageProxy* page, WebFrameProxy* frame, WebIntentServiceInfo* serviceInfo)
+void WebLoaderClient::registerIntentServiceForFrame(WebPageProxy* page, WebFrameProxy* frame, WebIntentServiceInfo* serviceInfo, APIObject* userData)
 {
     if (!m_client.registerIntentServiceForFrame)
         return;
 
-    m_client.registerIntentServiceForFrame(toAPI(page), toAPI(frame), toAPI(serviceInfo), m_client.clientInfo);
+    m_client.registerIntentServiceForFrame(toAPI(page), toAPI(frame), toAPI(serviceInfo), toAPI(userData), m_client.clientInfo);
 }
 #endif
 

@@ -75,8 +75,13 @@
 
 #if ENABLE(WEB_INTENTS)
 #include "IntentData.h"
-#include "IntentServiceInfo.h"
+#include "WebIntentData.h"
 #include <WebCore/IntentRequest.h>
+#endif
+
+#if ENABLE(WEB_INTENTS_TAG)
+#include "IntentServiceInfo.h"
+#include "WebIntentServiceInfo.h"
 #endif
 
 using namespace WebCore;
@@ -1567,7 +1572,11 @@ void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest> request)
     intentData.extras = coreIntent->extras();
     intentData.suggestions = coreIntent->suggestions();
 
-    webPage->send(Messages::WebPageProxy::DidReceiveIntentForFrame(m_frame->frameID(), intentData));
+    RefPtr<APIObject> userData;
+    RefPtr<WebIntentData> webIntent = WebIntentData::create(intentData);
+    webPage->injectedBundleLoaderClient().didReceiveIntentForFrame(webPage, m_frame, webIntent.get(), userData);
+
+    webPage->send(Messages::WebPageProxy::DidReceiveIntentForFrame(m_frame->frameID(), intentData, InjectedBundleUserMessageEncoder(userData.get())));
 }
 #endif
 
@@ -1585,7 +1594,11 @@ void WebFrameLoaderClient::registerIntentService(const String& action, const Str
     serviceInfo.title = title;
     serviceInfo.disposition = disposition;
 
-    webPage->send(Messages::WebPageProxy::RegisterIntentServiceForFrame(m_frame->frameID(), serviceInfo));
+    RefPtr<APIObject> userData;
+    RefPtr<WebIntentServiceInfo> webIntentServiceInfo = WebIntentServiceInfo::create(serviceInfo);
+    webPage->injectedBundleLoaderClient().registerIntentServiceForFrame(webPage, m_frame, webIntentServiceInfo.get(), userData);
+
+    webPage->send(Messages::WebPageProxy::RegisterIntentServiceForFrame(m_frame->frameID(), serviceInfo, InjectedBundleUserMessageEncoder(userData.get())));
 }
 #endif
 

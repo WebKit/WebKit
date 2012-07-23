@@ -46,6 +46,12 @@ class APIObject;
 class InjectedBundleBackForwardListItem;
 class WebPage;
 class WebFrame;
+#if ENABLE(WEB_INTENTS)
+class WebIntentData;
+#endif
+#if ENABLE(WEB_INTENTS_TAG)
+class WebIntentServiceInfo;
+#endif
 
 class InjectedBundlePageLoaderClient : public APIClient<WKBundlePageLoaderClient, kWKBundlePageLoaderClientCurrentVersion> {
 public:
@@ -64,6 +70,13 @@ public:
     void didDisplayInsecureContentForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didRunInsecureContentForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didDetectXSSForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
+
+#if ENABLE(WEB_INTENTS)
+    void didReceiveIntentForFrame(WebPage*, WebFrame*, WebIntentData*, RefPtr<APIObject>& userData);
+#endif
+#if ENABLE(WEB_INTENTS_TAG)
+    void registerIntentServiceForFrame(WebPage*, WebFrame*, WebIntentServiceInfo*, RefPtr<APIObject>& userData);
+#endif
 
     void didFirstLayoutForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);

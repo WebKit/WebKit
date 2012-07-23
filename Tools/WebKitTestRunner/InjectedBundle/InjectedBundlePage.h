@@ -72,6 +72,8 @@ private:
     static void didReceiveContentLengthForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, uint64_t length, const void*);
     static void didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, const void*);
     static void didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKErrorRef, const void*);
+    static void didReceiveIntentForFrame(WKBundlePageRef, WKBundleFrameRef, WKIntentDataRef, WKTypeRef*, const void*);
+    static void registerIntentServiceForFrame(WKBundlePageRef, WKBundleFrameRef, WKIntentServiceInfoRef, WKTypeRef*, const void*);
 
     void didStartProvisionalLoadForFrame(WKBundleFrameRef);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundleFrameRef);

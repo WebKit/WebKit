@@ -112,6 +112,8 @@ HEADERS += \
     Shared/WebGraphicsContext.h \
     Shared/WebHitTestResult.h \
     Shared/WebImage.h \
+    Shared/WebIntentData.h \
+    Shared/WebIntentServiceInfo.h \
     Shared/WebLayerTreeInfo.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
@@ -265,8 +267,6 @@ HEADERS += \
     UIProcess/WebIconDatabase.h \
     UIProcess/WebIconDatabaseClient.h \
     UIProcess/WebInspectorProxy.h \
-    UIProcess/WebIntentData.h \
-    UIProcess/WebIntentServiceInfo.h \
     UIProcess/WebKeyValueStorageManagerProxy.h \
     UIProcess/WebLayerTreeRenderer.h \
     UIProcess/WebLoaderClient.h \
@@ -492,6 +492,8 @@ SOURCES += \
     Shared/WebHitTestResult.cpp \
     Shared/WebKeyboardEvent.cpp \
     Shared/WebImage.cpp \
+    Shared/WebIntentData.cpp \
+    Shared/WebIntentServiceInfo.cpp \
     Shared/WebLayerTreeInfo.cpp \
     Shared/WebMouseEvent.cpp \
     Shared/WebNetworkInfo.cpp \
@@ -633,8 +635,6 @@ SOURCES += \
     UIProcess/WebIconDatabase.cpp \
     UIProcess/WebIconDatabaseClient.cpp \
     UIProcess/WebInspectorProxy.cpp \
-    UIProcess/WebIntentData.cpp \
-    UIProcess/WebIntentServiceInfo.cpp \
     UIProcess/WebKeyValueStorageManagerProxy.cpp \
     UIProcess/WebLayerTreeRenderer.cpp \
     UIProcess/WebLoaderClient.cpp \

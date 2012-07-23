@@ -109,6 +109,8 @@ typedef void (*WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallb
 typedef void (*WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 typedef void (*WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 typedef bool (*WKBundlePageShouldForceUniversalAccessFromLocalURLCallback)(WKBundlePageRef, WKStringRef url, const void* clientInfo);
+typedef void (*WKBundlePageDidReceiveIntentForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKIntentDataRef intent, WKTypeRef* userData, const void* clientInfo);
+typedef void (*WKBundlePageRegisterIntentServiceForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKIntentServiceInfoRef serviceInfo, WKTypeRef* userData, const void* clientInfo);
 
 struct WKBundlePageLoaderClient {
     int                                                                     version;
@@ -147,10 +149,14 @@ struct WKBundlePageLoaderClient {
     // Version 2
     WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
     WKBundlePageShouldForceUniversalAccessFromLocalURLCallback              shouldForceUniversalAccessFromLocalURL;
+
+    // Version 3
+    WKBundlePageDidReceiveIntentForFrameCallback                            didReceiveIntentForFrame;
+    WKBundlePageRegisterIntentServiceForFrameCallback                       registerIntentServiceForFrame;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
-enum { kWKBundlePageLoaderClientCurrentVersion = 2 };
+enum { kWKBundlePageLoaderClientCurrentVersion = 3 };
 
 enum {
     WKBundlePagePolicyActionPassThrough,

@@ -1,3 +1,22 @@
+2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2] WebKitTestRunner needs to print information about Web intents
+        https://bugs.webkit.org/show_bug.cgi?id=90873
+
+        Reviewed by Anders Carlsson.
+
+        Print out information about new intents requests and intent
+        services registrations in WebKitTestRunner. This is expected
+        by tests under webintents/*.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::didReceiveIntentForFrame):
+        (WTR):
+        (WTR::InjectedBundlePage::registerIntentServiceForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        (InjectedBundlePage):
+
 2012-07-23  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: never finds binaries in the 'out' dir on chromium win

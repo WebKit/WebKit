@@ -48,7 +48,7 @@ static void didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef fra
 }
 
 #if ENABLE(WEB_INTENTS)
-static void didReceiveIntentForFrame(WKPageRef page, WKFrameRef frame, WKIntentDataRef intent, const void* clientInfo)
+static void didReceiveIntentForFrame(WKPageRef page, WKFrameRef frame, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
 {
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
     Ewk_Intent* ewkIntent = ewk_intent_new(intent);
@@ -58,7 +58,7 @@ static void didReceiveIntentForFrame(WKPageRef page, WKFrameRef frame, WKIntentD
 #endif
 
 #if ENABLE(WEB_INTENTS_TAG)
-static void registerIntentServiceForFrame(WKPageRef page, WKFrameRef frame, WKIntentServiceInfoRef serviceInfo, const void *clientInfo)
+static void registerIntentServiceForFrame(WKPageRef page, WKFrameRef frame, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void *clientInfo)
 {
     Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
     Ewk_Intent_Service* ewkIntentService = ewk_intent_service_new(serviceInfo);

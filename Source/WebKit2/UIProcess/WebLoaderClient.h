@@ -73,11 +73,11 @@ public:
     void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didDetectXSSForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
 #if ENABLE(WEB_INTENTS)
-    void didReceiveIntentForFrame(WebPageProxy*, WebFrameProxy*, WebIntentData*);
+    void didReceiveIntentForFrame(WebPageProxy*, WebFrameProxy*, WebIntentData*, APIObject*);
 #endif
 
 #if ENABLE(WEB_INTENTS_TAG)
-    void registerIntentServiceForFrame(WebPageProxy*, WebFrameProxy*, WebIntentServiceInfo*);
+    void registerIntentServiceForFrame(WebPageProxy*, WebFrameProxy*, WebIntentServiceInfo*, APIObject*);
 #endif
 
     // FIXME: didFirstVisuallyNonEmptyLayoutForFrame and didNewFirstVisuallyNonEmptyLayout should be merged.

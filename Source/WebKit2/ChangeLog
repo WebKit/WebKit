@@ -1,5 +1,83 @@
 2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2] WebKitTestRunner needs to print information about Web intents
+        https://bugs.webkit.org/show_bug.cgi?id=90873
+
+        Reviewed by Anders Carlsson.
+
+        Add Bundle API for Web Intents. This is needed by the WebKitTestRunner
+        to print information about the new intent requests and the intent
+        service registrations.
+
+        * CMakeLists.txt: Move WebIntentData and WebIntentServiceInfo from
+        UIProcess/ to Shared/.
+        * GNUmakefile.list.am: Move WebIntentData and WebIntentServiceInfo from
+        UIProcess/ to Shared/.
+        * Shared/APIClientTraits.h:
+        * Shared/WebIntentData.cpp: Renamed from Source/WebKit2/UIProcess/WebIntentData.cpp.
+        (WebKit):
+        (WebKit::WebIntentData::WebIntentData):
+        (WebKit::WebIntentData::data):
+        (WebKit::WebIntentData::suggestions):
+        (WebKit::WebIntentData::extra):
+        (WebKit::WebIntentData::extras):
+        * Shared/WebIntentData.h: Renamed from Source/WebKit2/UIProcess/WebIntentData.h.
+        (WebKit):
+        (WebIntentData):
+        (WebKit::WebIntentData::create):
+        (WebKit::WebIntentData::~WebIntentData):
+        (WebKit::WebIntentData::action):
+        (WebKit::WebIntentData::payloadType):
+        (WebKit::WebIntentData::service):
+        (WebKit::WebIntentData::store):
+        (WebKit::WebIntentData::type):
+        * Shared/WebIntentServiceInfo.cpp: Renamed from Source/WebKit2/UIProcess/WebIntentServiceInfo.cpp.
+        (WebKit):
+        (WebKit::WebIntentServiceInfo::WebIntentServiceInfo):
+        * Shared/WebIntentServiceInfo.h: Renamed from Source/WebKit2/UIProcess/WebIntentServiceInfo.h.
+        (WebKit):
+        (WebIntentServiceInfo):
+        (WebKit::WebIntentServiceInfo::create):
+        (WebKit::WebIntentServiceInfo::~WebIntentServiceInfo):
+        (WebKit::WebIntentServiceInfo::action):
+        (WebKit::WebIntentServiceInfo::payloadType):
+        (WebKit::WebIntentServiceInfo::href):
+        (WebKit::WebIntentServiceInfo::title):
+        (WebKit::WebIntentServiceInfo::disposition):
+        (WebKit::WebIntentServiceInfo::type):
+        * Target.pri: Move WebIntentData and WebIntentServiceInfo from
+        UIProcess/ to Shared/.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didReceiveIntentForFrame):
+        (registerIntentServiceForFrame):
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didReceiveIntentForFrame):
+        (WebKit::WebLoaderClient::registerIntentServiceForFrame):
+        * UIProcess/WebLoaderClient.h:
+        (WebLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::registerIntentServiceForFrame):
+        (WebKit::WebPageProxy::didReceiveIntentForFrame):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit):
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveIntentForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::registerIntentServiceForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        (WebKit):
+        (InjectedBundlePageLoaderClient):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchIntent):
+        (WebKit::WebFrameLoaderClient::registerIntentService):
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+
+2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Add unit tests for Ewk_Cookie_Manager
         https://bugs.webkit.org/show_bug.cgi?id=91639
 
