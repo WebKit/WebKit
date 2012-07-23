@@ -711,4 +711,18 @@ String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font
     return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
 }
 
+#if ENABLE(DATALIST_ELEMENT)
+IntSize RenderThemeGtk::sliderTickSize() const
+{
+    // FIXME: We need to set this to the size of one tick mark.
+    return IntSize(0, 0);
+}
+
+int RenderThemeGtk::sliderTickOffsetFromTrackCenter() const
+{
+    // FIXME: We need to set this to the position of the tick marks.
+    return 0;
+}
+#endif
+
 }

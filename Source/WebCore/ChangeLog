@@ -1,3 +1,17 @@
+2012-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with ENABLE_DATALIST_ELEMENT.
+
+        Add an implementation for virtual pure methods sliderTickSize()
+        and sliderTickOffsetFromTrackCenter() when HTML5 datalist element
+        is enabled.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore):
+        (WebCore::RenderThemeGtk::sliderTickSize):
+        (WebCore::RenderThemeGtk::sliderTickOffsetFromTrackCenter):
+        * platform/gtk/RenderThemeGtk.h:
+
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         Replace getCurrentLocalTime() with GetLocalTime() in LocaleWin.cpp
