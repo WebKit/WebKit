@@ -59,11 +59,6 @@
 #include <objc/objc-auto.h>
 #endif
 
-#if PLATFORM(BLACKBERRY)
-#include <BlackBerryPlatformMisc.h>
-#include <BlackBerryPlatformSettings.h>
-#endif
-
 namespace WTF {
 
 typedef HashMap<ThreadIdentifier, pthread_t> ThreadMap;
@@ -164,45 +159,6 @@ static void* wtfThreadEntryPoint(void* param)
     return 0;
 }
 
-#if PLATFORM(BLACKBERRY)
-ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char* threadName)
-{
-    pthread_attr_t attr;
-    if (pthread_attr_init(&attr)) {
-        LOG_ERROR("pthread_attr_init() failed: %d", errno);
-        return 0;
-    }
-
-    void* stackAddr;
-    size_t stackSize;
-    if (pthread_attr_getstack(&attr, &stackAddr, &stackSize))
-        LOG_ERROR("pthread_attr_getstack() failed: %d", errno);
-    else {
-        stackSize = BlackBerry::Platform::Settings::instance()->secondaryThreadStackSize();
-        if (pthread_attr_setstack(&attr, stackAddr, stackSize))
-            LOG_ERROR("pthread_attr_getstack() failed: %d", errno);
-    }
-
-    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(new ThreadFunctionInvocation(entryPoint, data));
-    pthread_t threadHandle;
-    if (pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, invocation.get())) {
-        LOG_ERROR("pthread_create() failed: %d", errno);
-        threadHandle = 0;
-    }
-    pthread_setname_np(threadHandle, threadName);
-
-    pthread_attr_destroy(&attr);
-
-    if (!threadHandle)
-        return 0;
-
-    // Balanced by adoptPtr() in wtfThreadEntryPoint.
-    ThreadFunctionInvocation* leakedInvocation = invocation.leakPtr();
-    UNUSED_PARAM(leakedInvocation);
-
-    return establishIdentifierForPthreadHandle(threadHandle);
-}
-#else
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
     OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(new ThreadFunctionInvocation(entryPoint, data));
@@ -218,12 +174,13 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
 
     return establishIdentifierForPthreadHandle(threadHandle);
 }
-#endif
 
 void initializeCurrentThreadInternal(const char* threadName)
 {
 #if HAVE(PTHREAD_SETNAME_NP)
     pthread_setname_np(threadName);
+#elif OS(QNX)
+    pthread_setname_np(pthread_self(), threadName);
 #else
     UNUSED_PARAM(threadName);
 #endif

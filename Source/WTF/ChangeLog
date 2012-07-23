@@ -1,3 +1,18 @@
+2012-07-23  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Merge createThreadInternal implementations
+        https://bugs.webkit.org/show_bug.cgi?id=91899
+
+        Reviewed by Yong Li.
+
+        PR 111675
+
+        Remove our implementation since the default thread stack size on QNX is fine.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::createThreadInternal):
+        (WTF::initializeCurrentThreadInternal): make sure we set the thread name.
+
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         [WINCE] Define NOMINMAX in the build system instead of Platform.h
