@@ -1,3 +1,15 @@
+2012-07-23  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Build fix for the Windows builder following r123311
+        https://bugs.webkit.org/show_bug.cgi?id=91979
+
+        Unreviewed build fix.
+
+        Changeset r123311 moved the TextCodecWinCE.{cpp,h} files to the Windows
+        directory. Update Chromium's references to these files to fix the build.
+
+        * WebCore.gypi:
+
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Remove ICU dependencies from UniscribeController
