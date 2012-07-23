@@ -1,3 +1,8 @@
+2012-07-23  Andrew Wilson  <atwilson@chromium.org>
+
+        More unreviewed chromium expectation changes to mark tests as failing/slow.
+        * platform/chromium/TestExpectations:
+
 2012-06-12  Jer Noble  <jer.noble@apple.com>
 
         MediaController.currentTime should be kept stable during script execution.
