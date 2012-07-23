@@ -8,7 +8,6 @@
 
 BUGCR24182 SLOW MAC DEBUG : fast/css/large-list-of-rules-crash.html = PASS
 BUGCR24182 SLOW LINUX MAC DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
-BUGCR24182 SLOW MAC DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
 BUGCR24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
@@ -2097,7 +2096,7 @@ BUGWK45652 : fast/viewport/viewport-128.html = TIMEOUT
 BUGWK45737 BUGCR100056 DEBUG : fast/frames/frame-limit.html = TIMEOUT
 
 // Regressions from webkit roll r67178:t67358
-BUGWK60092 SLOW LINUX WIN DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
+BUGWK60092 SLOW DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS CRASH
 BUGWK60093 SLOW LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = PASS
 
 BUGWK91432 : fast/canvas/webgl/read-pixels-test.html = TIMEOUT

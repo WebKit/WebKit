@@ -1,3 +1,9 @@
+2012-07-23  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change to mark test as slow: fast/forms/select-set-length-with-mutation-remove.html.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-23  Kwang Yul Seo  <skyul@company100.net>
 
         Use the original token to create an element in "reconstruct the active formatting elements" and "call the adoption agency"
