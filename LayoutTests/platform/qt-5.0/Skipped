@@ -1554,17 +1554,6 @@ tables/mozilla/marvin/colgroup_width_pct.html
 tables/mozilla/marvin/table_overflow_hidden_td.html
 tables/mozilla/marvin/tfoot_char.html
 tables/mozilla/other/move_row.html
-tables/mozilla_expected_failures/marvin/table_overflow_caption.html
-tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom.html
-tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden.html
-tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table.html
-tables/mozilla_expected_failures/marvin/table_overflow_caption_left.html
-tables/mozilla_expected_failures/marvin/table_overflow_caption_right.html
-tables/mozilla_expected_failures/marvin/table_overflow_caption_top.html
-tables/mozilla_expected_failures/marvin/table_overflow_hidden_table.html
-tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html
-tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html
-tables/mozilla_expected_failures/marvin/table_overflow_td_align_right.html
 
 # [Qt] Tests still fail after the update to new fonts
 # https://bugs.webkit.org/show_bug.cgi?id=91610
