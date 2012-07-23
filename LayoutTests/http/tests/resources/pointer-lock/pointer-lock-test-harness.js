@@ -1,21 +1,42 @@
 // Automatically add doNextStepButton to document for manual tests.
 if (!window.testRunner) {
     setTimeout(function () {
+        if (window.doNextStepButtonDisabled)
+            return;
         doNextStepButton = document.body.insertBefore(document.createElement("button"), document.body.firstChild);
         doNextStepButton.onclick = doNextStep;
         doNextStepButton.innerText = "doNextStep button for manual testing. Use keyboard to select button and press (TAB, then SPACE).";
     }, 0);
 }
 
-function doNextStep()
+function runOnKeyPress(fn)
 {
+    function keypressHandler() {
+        document.removeEventListener('keypress', keypressHandler, false);
+        fn();
+    }
+    document.addEventListener('keypress', keypressHandler, false);
+
+    if (window.testRunner)
+        eventSender.keyDown(" ", []);
+}
+
+function doNextStep(args)
+{
+    args = args || {};
+    if (!window.testRunner && args.withUserGesture)
+      return; // Wait for human to press doNextStep button.
+
     if (typeof(currentStep) == "undefined")
         currentStep = 0;
 
     setTimeout(function () {
         var thisStep = currentStep++;
         if (thisStep < todo.length)
-            todo[thisStep]();
+            if (args.withUserGesture)
+                runOnKeyPress(todo[thisStep]);
+            else
+                todo[thisStep]();
         else if (thisStep == todo.length)
             setTimeout(function () { finishJSTest(); }, 0); // Deferred so that excessive doNextStep calls will be observed.
         else
@@ -25,9 +46,7 @@ function doNextStep()
 
 function doNextStepWithUserGesture()
 {
-    if (!window.testRunner)
-        return; // Wait for human to press doNextStep button.
-    doNextStep();
+    doNextStep({withUserGesture: true});
 }
 
 function eventExpected(eventHandlerName, message, expectedCalls, targetHanderNode)

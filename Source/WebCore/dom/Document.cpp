@@ -5821,7 +5821,13 @@ void Document::webkitExitPointerLock()
 
 Element* Document::webkitPointerLockElement() const
 {
-    return page() ? page()->pointerLockController()->element() : 0;
+    if (!page())
+        return 0;
+    if (Element* element = page()->pointerLockController()->element()) {
+        if (element->document() == this)
+            return element;
+    }
+    return 0;
 }
 #endif
 

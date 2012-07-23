@@ -1,3 +1,33 @@
+2012-07-21  Vincent Scheib  <scheib@chromium.org>
+
+        webkitFullscreenElement, webkitCurrentFullScreenElement, webkitPointerLockElement block cross origin access.
+        https://bugs.webkit.org/show_bug.cgi?id=91892
+
+        Reviewed by Adam Barth.
+
+        Tests verifying the behavior of accessing
+        webkitFullscreenElement, webkitCurrentFullScreenElement, webkitPointerLockElement
+        from different origins.
+
+        * http/tests/fullscreen/fullscreenelement-different-origin-expected.txt: Added.
+        * http/tests/fullscreen/fullscreenelement-different-origin.html: Added.
+        * http/tests/fullscreen/fullscreenelement-same-origin-expected.txt: Added.
+        * http/tests/fullscreen/fullscreenelement-same-origin.html: Added.
+        * http/tests/pointer-lock/pointerlockelement-different-origin-expected.txt: Added.
+        * http/tests/pointer-lock/pointerlockelement-different-origin.html: Added.
+        * http/tests/pointer-lock/pointerlockelement-same-origin-expected.txt: Added.
+        * http/tests/pointer-lock/pointerlockelement-same-origin.html: Added.
+        * http/tests/resources/pointer-lock/iframe-common.js: Added.
+        (thisFileName):
+        (window.onmessage):
+        * http/tests/resources/pointer-lock/inner-iframe.html: Added.
+        * http/tests/resources/pointer-lock/pointer-lock-test-harness.js:
+        (runOnKeyPress.keypressHandler):
+        * pointer-lock/locked-element-iframe-removed-from-dom-expected.txt:
+        * pointer-lock/locked-element-iframe-removed-from-dom.html:
+        * pointer-lock/locked-element-removed-from-dom-expected.txt:
+        * pointer-lock/locked-element-removed-from-dom.html:
+
 2012-07-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding the WONTFIX modifier to a few more tests,
