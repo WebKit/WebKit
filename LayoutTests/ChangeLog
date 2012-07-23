@@ -1,3 +1,24 @@
+2012-07-23  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] css3/selectors3 rebaseline after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92038
+
+        Reviewed by Alexis Menard.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped: These tests are failing because of <input> default size in
+        WK2, which is different than the expected results generated from WK1. Moved them to
+        appropriate block in skipped list.
+        * platform/qt-5.0/Skipped:
+        * platform/qt/css3/selectors3/html/css3-modsel-21c-expected.png:
+        * platform/qt/css3/selectors3/html/css3-modsel-21c-expected.txt:
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-21c-expected.png:
+        * platform/qt/css3/selectors3/xhtml/css3-modsel-21c-expected.txt:
+        * platform/qt/css3/selectors3/xml/css3-modsel-148-expected.png:
+        * platform/qt/css3/selectors3/xml/css3-modsel-148-expected.txt:
+        * platform/qt/css3/selectors3/xml/css3-modsel-21c-expected.png:
+        * platform/qt/css3/selectors3/xml/css3-modsel-21c-expected.txt:
+
 2012-07-23  Tony Chang  <tony@chromium.org>
 
         Unreviewed gardening. Land pixel results for fast/frames/valid.html on chromium mac snowleopard.
