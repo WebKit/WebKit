@@ -157,12 +157,12 @@ public:
 private:
     template <typename T> friend class MemoryClassInfo;
 
-    template <typename T> void reportObjectInfo(const T*, MemoryInstrumentation::ObjectType objectType)
+    template <typename T> void reportObjectInfo(const T*, MemoryInstrumentation::ObjectType objectType, size_t extraObjectSize)
     {
         if (m_objectType != MemoryInstrumentation::Other)
             return;
         m_objectType = objectType;
-        m_objectSize = sizeof(T);
+        m_objectSize = sizeof(T) + extraObjectSize;
     }
 
     MemoryInstrumentation* m_memoryInstrumentation;
@@ -191,11 +191,11 @@ void MemoryInstrumentation::addInstrumentedMemberImpl(const T* const& object, Me
 template <typename T>
 class MemoryClassInfo {
 public:
-    MemoryClassInfo(MemoryObjectInfo* memoryObjectInfo, const T* ptr, MemoryInstrumentation::ObjectType objectType)
+    MemoryClassInfo(MemoryObjectInfo* memoryObjectInfo, const T* ptr, MemoryInstrumentation::ObjectType objectType, size_t extraObjectSize = 0)
         : m_memoryObjectInfo(memoryObjectInfo)
         , m_memoryInstrumentation(memoryObjectInfo->memoryInstrumentation())
     {
-        m_memoryObjectInfo->reportObjectInfo(ptr, objectType);
+        m_memoryObjectInfo->reportObjectInfo(ptr, objectType, extraObjectSize);
         m_objectType = memoryObjectInfo->objectType();
     }
 

@@ -118,7 +118,7 @@ public:
     
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<StylePropertySet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo<StylePropertySet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS, m_arraySize * sizeof(CSSProperty));
         if (m_isMutable)
             info.addMember(m_mutablePropertyVector);
     }

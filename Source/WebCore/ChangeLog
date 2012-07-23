@@ -1,3 +1,22 @@
+2012-07-23  Andreas Kling  <kling@webkit.org>
+
+        Report the extra memory used by immutable StylePropertySet objects.
+        <http://webkit.org/b/92032>
+
+        Reviewed by Anders Carlsson.
+
+        Add an optional parameter to the MemoryClassInfo constructor for passing in additional base object
+        size on top of sizeof(T).
+
+        Use this in StylePropertySet::reportMemoryUsage() to properly account for the CSSProperty array
+        tacked onto the end of the object when m_isMutable == false.
+
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::reportMemoryUsage):
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryObjectInfo::reportObjectInfo):
+        (WebCore::MemoryClassInfo::MemoryClassInfo):
+
 2012-07-23  Gregg Tavares  <gman@google.com>
 
         Fix WebGL texSubImage2D for cube maps
