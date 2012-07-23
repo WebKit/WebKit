@@ -502,7 +502,6 @@
 #endif
 
 #if OS(WINCE) && !PLATFORM(QT)
-#define NOMINMAX       /* Windows min and max conflict with standard macros */
 #define NOSHLWAPI      /* shlwapi.h not available on WinCe */
 
 /* MSDN documentation says these functions are provided with uspce.lib.  But we cannot find this file. */

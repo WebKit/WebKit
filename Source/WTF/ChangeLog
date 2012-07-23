@@ -1,5 +1,14 @@
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
+        [WINCE] Define NOMINMAX in the build system instead of Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=91938
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/Platform.h:
+
+2012-07-23  Patrick Gansterer  <paroga@webkit.org>
+
         Build fix for Windows after r123317.
 
         * wtf/DateMath.cpp: Added missing header include.
