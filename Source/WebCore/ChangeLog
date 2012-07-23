@@ -1,3 +1,27 @@
+2012-07-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Part 2 of: Implement sticky positioning
+        https://bugs.webkit.org/show_bug.cgi?id=90046
+
+        Reviewed by Ojan Vafai.
+
+        Turn on ENABLE_CSS_STICKY_POSITION. Add support for parsing the new '-webkit-sticky'
+        value for position, returning it from getComputedStyle(), and storing it in RenderStyle.
+
+        Test: fast/css/sticky/parsing-position-sticky.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::getPositionOffsetValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EPosition):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2012-07-23  Stephen Chenney  <schenney@chromium.org>
 
         Crash when setting empty class name on a new element

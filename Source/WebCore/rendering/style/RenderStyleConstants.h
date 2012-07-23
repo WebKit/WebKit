@@ -94,7 +94,7 @@ enum EBorderPrecedence { BOFF, BTABLE, BCOLGROUP, BCOL, BROWGROUP, BROW, BCELL }
 enum OutlineIsAuto { AUTO_OFF = 0, AUTO_ON };
 
 enum EPosition {
-    StaticPosition, RelativePosition, AbsolutePosition, FixedPosition
+    StaticPosition, RelativePosition, AbsolutePosition, FixedPosition, StickyPosition
 };
 
 enum EFloat {

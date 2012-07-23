@@ -1,3 +1,18 @@
+2012-07-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Part 2 of: Implement sticky positioning
+        https://bugs.webkit.org/show_bug.cgi?id=90046
+
+        Reviewed by Ojan Vafai.
+
+        Test for parsing and returning fro getComputedStyle() the new
+        -webkit-sticky value for position.
+
+        * fast/css/sticky/parsing-position-sticky-expected.txt: Added.
+        * fast/css/sticky/parsing-position-sticky.html: Added.
+        * fast/css/sticky/resources/parsing-position-sticky.js: Added.
+        (test):
+
 2012-07-23  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations change to mark media/media-fragments/TC0010-TC0019.html as flaky/crashy.

@@ -615,8 +615,12 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueVisible || valueID == CSSValueNone || valueID == CSSValueAll || valueID == CSSValueAuto || (valueID >= CSSValueVisiblepainted && valueID <= CSSValueStroke))
             return true;
         break;
-    case CSSPropertyPosition: // static | relative | absolute | fixed | inherit
-        if (valueID == CSSValueStatic || valueID == CSSValueRelative || valueID == CSSValueAbsolute || valueID == CSSValueFixed)
+    case CSSPropertyPosition: // static | relative | absolute | fixed | sticky | inherit
+        if (valueID == CSSValueStatic || valueID == CSSValueRelative || valueID == CSSValueAbsolute || valueID == CSSValueFixed
+#if ENABLE(CSS_STICKY_POSITION)
+            || valueID == CSSValueWebkitSticky
+#endif
+            )
             return true;
         break;
     case CSSPropertyResize: // none | both | horizontal | vertical | auto

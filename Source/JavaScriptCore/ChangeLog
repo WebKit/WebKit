@@ -1,3 +1,14 @@
+2012-07-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Part 2 of: Implement sticky positioning
+        https://bugs.webkit.org/show_bug.cgi?id=90046
+
+        Reviewed by Ojan Vafai.
+
+        Turn on ENABLE_CSS_STICKY_POSITION.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         Move JSC::parseDate() from DateConversion to JSDateMath

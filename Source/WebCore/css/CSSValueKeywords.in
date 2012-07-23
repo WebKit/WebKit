@@ -915,6 +915,11 @@ wrap
 // -webkit-line-align
 edges
 
+// position
+#if defined(ENABLE_CSS_STICKY_POSITION) && ENABLE_CSS_STICKY_POSITION
+-webkit-sticky
+#endif // CSS_STICKY_POSITION
+
 // (pointer:) media feature
 // none
 coarse

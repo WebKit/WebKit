@@ -304,7 +304,7 @@ protected:
         unsigned _overflowY : 3; // EOverflow
         unsigned _vertical_align : 4; // EVerticalAlign
         unsigned _clear : 2; // EClear
-        unsigned _position : 2; // EPosition
+        unsigned _position : 3; // EPosition
         unsigned _floating : 2; // EFloat
         unsigned _table_layout : 1; // ETableLayout
 
@@ -331,7 +331,7 @@ protected:
         unsigned _affectedByDrag : 1;
         unsigned _isLink : 1;
         // If you add more style bits here, you will also need to update RenderStyle::copyNonInheritedFrom()
-        // 53 bits
+        // 54 bits
     } noninherited_flags;
 
 // !END SYNC!
