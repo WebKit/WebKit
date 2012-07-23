@@ -1,3 +1,13 @@
+2012-07-23  Tony Chang  <tony@chromium.org>
+
+        Unreviewed gardening. Land pixel results for fast/frames/valid.html on chromium mac snowleopard.
+
+        * fast/frames/valid-expected.txt: Renamed from LayoutTests/platform/efl/fast/frames/valid-expected.txt.
+        * platform/chromium-mac-snowleopard/fast/frames/valid-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/gtk/fast/frames/valid-expected.txt: Removed.
+        * platform/mac/fast/frames/valid-expected.txt: Removed.
+
 2012-07-23  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations change to mark test as slow: fast/forms/select-set-length-with-mutation-remove.html.

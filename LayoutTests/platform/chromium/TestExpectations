@@ -78,7 +78,7 @@ BUGWK91666 SLOW MAC : editing/pasteboard/emacs-cntl-y-001.html = IMAGE
 BUGWK91666 SLOW MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = IMAGE+TEXT
 BUGWK91666 SLOW MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = IMAGE+TEXT
 BUGWK91666 SLOW MAC : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
-BUGCR24182 SLOW WIN LINUX DEBUG : fast/frames/valid.html = PASS
+BUGCR24182 SLOW DEBUG : fast/frames/valid.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/cache/stopped-revalidation.html = PASS
 
 // -----------------------------------------------------------------
@@ -3089,8 +3089,6 @@ BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-
 BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-sw.html = PASS IMAGE
 BUGWK81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-w.html = PASS IMAGE
 
-BUGWK81857 SNOWLEOPARD RELEASE : fast/frames/valid.html = IMAGE
-BUGWK81857 SLOW SNOWLEOPARD DEBUG : fast/frames/valid.html = IMAGE
 BUGWK81931 SNOWLEOPARD WIN DEBUG : fast/images/destroyed-image-load-event.html = PASS TIMEOUT
 
 BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
