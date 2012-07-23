@@ -34,6 +34,7 @@ DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
 
 void DefaultGCActivityCallback::doWork()
 {
+    JSLock lock(SilenceAssertionsOnly);
     m_globalData->heap.collect(Heap::DoNotSweep);
 }
 

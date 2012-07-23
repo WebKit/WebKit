@@ -1,3 +1,15 @@
+2012-07-23  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Implement GCActivityCallback with platform timer
+        https://bugs.webkit.org/show_bug.cgi?id=90175
+
+        Reviewed by Rob Buis.
+
+        Use JSLock when performing GC to avoid assertions.
+
+        * runtime/GCActivityCallbackBlackBerry.cpp:
+        (JSC::DefaultGCActivityCallback::doWork):
+
 2012-07-23  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_METER_TAG and ENABLE_PROGRESS_TAG to ENABLE_METER_ELEMENT and ENABLE_PROGRESS_ELEMENT respectively
