@@ -1,3 +1,13 @@
+2012-07-23  Hayato Ito  <hayato@chromium.org>
+
+        ComposedShadowTreeWalker should skip an empty insertion points.
+        https://bugs.webkit.org/show_bug.cgi?id=91826
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/composed-shadow-tree-walker-expected.txt:
+        * fast/dom/shadow/composed-shadow-tree-walker.html:
+
 2012-07-23  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip the new failing tests.

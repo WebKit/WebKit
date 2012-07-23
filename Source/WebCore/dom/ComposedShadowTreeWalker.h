@@ -139,7 +139,10 @@ private:
     static Node* traverseSiblingOrBackToInsertionPoint(const Node*, TraversalDirection);
     static Node* traverseSiblingInCurrentTree(const Node*, TraversalDirection);
 
-    static Node* traverseSiblingOrBackToYoungerShadowRoot(const Node*, TraversalDirection);
+    static Node* traverseSiblings(const Node*, TraversalDirection);
+    static Node* traverseDistributedNodes(const Node*, const InsertionPoint*, TraversalDirection);
+
+    static Node* traverseBackToYoungerShadowRoot(const Node*, TraversalDirection);
     static Node* escapeFallbackContentElement(const Node*, TraversalDirection);
 
     Node* traverseNodeEscapingFallbackContents(const Node*, ParentTraversalDetails* = 0) const;

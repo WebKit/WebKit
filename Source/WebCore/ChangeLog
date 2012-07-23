@@ -1,3 +1,30 @@
+2012-07-23  Hayato Ito  <hayato@chromium.org>
+
+        ComposedShadowTreeWalker should skip an empty insertion points.
+        https://bugs.webkit.org/show_bug.cgi?id=91826
+
+        Reviewed by Hajime Morita.
+
+        ComposedShadowTreeWalker wrongly returns 'null' if it encounters
+        an insertion point into where no nodes are distributed.  We should
+        skip such an insertion point and continue walking using the next
+        possible node, which might be a next sibling or a next distributed
+        node, and resolve the next node recursively.
+
+        Test: fast/dom/shadow/composed-shadow-tree-walker.html
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseLightChildren):
+        (WebCore):
+        (WebCore::ComposedShadowTreeWalker::traverseSiblings):
+        (WebCore::ComposedShadowTreeWalker::traverseNode):
+        (WebCore::ComposedShadowTreeWalker::traverseDistributedeNodes):
+        (WebCore::ComposedShadowTreeWalker::traverseSiblingOrBackToInsertionPoint):
+        (WebCore::ComposedShadowTreeWalker::traverseSiblingInCurrentTree):
+        (WebCore::ComposedShadowTreeWalker::traverseBackToYoungerShadowRoot):
+        * dom/ComposedShadowTreeWalker.h:
+        (ComposedShadowTreeWalker):
+
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         Rename TextCodecWinCE to TextCodecWin

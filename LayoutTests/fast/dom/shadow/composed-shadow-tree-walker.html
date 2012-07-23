@@ -194,6 +194,40 @@ testComposedShadowTree(
 debug('Test for traversal, starting with a node in an orphaned shadow subtree.');
 showComposedShadowTree(getNodeInShadowTreeStack('a/b'));
 
+debug('Test for a content element which does not select any nodes nor have fallback elements.');
+testComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('content', {'select': '#none'}),
+                               createDOM('div', {'id': 'b'}),
+                               createDOM('content', {'select': '#none'}),
+                               createDOM('div', {'id': 'c'}),
+                               createDOM('content', {'select': '#none'}))));
+
+debug('Test for a nested insertion point.');
+testComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('div', {'id': 'b'},
+                                         createShadowRoot(createDOM('content', {})),
+                                         createDOM('content', {}))),
+              createDOM('div', {'id': 'c'})));
+
+debug('Test for nested insertion points. Some of them are either empty insertion points or inactive insertion points.');
+testComposedShadowTree(
+    createDOM('div', {'id': 'a'},
+              createShadowRoot(createDOM('content', {'select': '#none'}),
+                               createDOM('div', {'id': 'b'},
+                                         createShadowRoot(createDOM('content', {'select': '.select-1'}),
+                                                          createDOM('div', {'id': 'c'}),
+                                                          createDOM('content', {'select': '.select-2'})),
+                                         createDOM('content', {'class': 'select-1', 'select': '.select-4'}),
+                                         createDOM('content', {'class': 'select-2', 'select': '#none'}),
+                                         createDOM('div', {'id': 'd', 'class': 'select-2'}),
+                                         createDOM('content', {'class': 'select-2', 'select': '#none'}),
+                                         createDOM('div', {'id': 'e', 'class': 'select-2'}),
+                                         createDOM('content', {'class': 'select-2', 'select': '#none'}))),
+              createDOM('content', {'id': 'inactive-insertion-point', 'class': 'select-4'}),
+              createDOM('div', {'id': 'should-not-be-selected'}),
+              createDOM('div', {'id': 'f', 'class': 'select-4'})));
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

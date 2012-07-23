@@ -213,6 +213,63 @@ Traverse in backward.
 DIV	 id=c
 DIV	 id=b
 
+Test for a content element which does not select any nodes nor have fallback elements.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+	DIV	 id=c
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=c
+Traverse in backward.
+DIV	 id=c
+DIV	 id=b
+DIV	 id=a
+
+Test for a nested insertion point.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+		DIV	 id=c
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=c
+Traverse in backward.
+DIV	 id=c
+DIV	 id=b
+DIV	 id=a
+
+Test for nested insertion points. Some of them are either empty insertion points or inactive insertion points.
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+		CONTENT	 id=inactive-insertion-point class=select-4
+		DIV	 id=f class=select-4
+		DIV	 id=c
+		DIV	 id=d class=select-2
+		DIV	 id=e class=select-2
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+CONTENT	 id=inactive-insertion-point class=select-4
+DIV	 id=f class=select-4
+DIV	 id=c
+DIV	 id=d class=select-2
+DIV	 id=e class=select-2
+Traverse in backward.
+DIV	 id=e class=select-2
+DIV	 id=d class=select-2
+DIV	 id=c
+DIV	 id=f class=select-4
+CONTENT	 id=inactive-insertion-point class=select-4
+DIV	 id=b
+DIV	 id=a
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
