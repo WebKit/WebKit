@@ -31,6 +31,8 @@
 #include "TextRun.h"
 #include <wtf/MathExtras.h>
 
+using namespace WTF;
+using namespace Unicode;
 using namespace std;
 
 namespace WebCore {
@@ -131,7 +133,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     UChar newC = 0;
 
     bool isSmallCaps;
-    bool nextIsSmallCaps = m_font.isSmallCaps() && !(U_GET_GC_MASK(*curr) & U_GC_M_MASK) && (newC = u_toupper(*curr)) != *curr;
+    bool nextIsSmallCaps = m_font.isSmallCaps() && !(category(*curr) & (Mark_NonSpacing | Mark_Enclosing | Mark_SpacingCombining)) && (newC = toUpper(*curr)) != *curr;
 
     if (nextIsSmallCaps)
         smallCapsBuffer[curr - cp] = newC;
@@ -146,10 +148,10 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
         int index = curr - cp;
         UChar c = *curr;
 
-        bool forceSmallCaps = isSmallCaps && (U_GET_GC_MASK(c) & U_GC_M_MASK);
+        bool forceSmallCaps = isSmallCaps && (category(c) & (Mark_NonSpacing | Mark_Enclosing | Mark_SpacingCombining));
         nextFontData = m_font.glyphDataForCharacter(*curr, false, forceSmallCaps ? SmallCapsVariant : AutoVariant).fontData;
         if (m_font.isSmallCaps()) {
-            nextIsSmallCaps = forceSmallCaps || (newC = u_toupper(c)) != c;
+            nextIsSmallCaps = forceSmallCaps || (newC = toUpper(c)) != c;
             if (nextIsSmallCaps)
                 smallCapsBuffer[index] = forceSmallCaps ? c : newC;
         }

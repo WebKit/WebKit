@@ -1,3 +1,16 @@
+2012-07-23  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Remove ICU dependencies from UniscribeController
+        https://bugs.webkit.org/show_bug.cgi?id=91921
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace ICU specific functions and macros with the corresponding code from WTF::Unicode.
+        This allows us to use UniscribeController with an other Unicode implementation too.
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance):
+
 2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] media/controls-styling-strict.html is failing
