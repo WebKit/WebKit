@@ -122,17 +122,6 @@ editing/inserting/multiple-lines-selected.html
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
-animations/3d/change-transform-in-end-event.html
-animations/3d/state-at-end-event-transform.html
-animations/additive-transform-animations.html
-animations/cross-fade-background-image.html
-animations/cross-fade-border-image-source.html
-animations/cross-fade-list-style-image.html
-animations/cross-fade-webkit-mask-box-image.html
-animations/cross-fade-webkit-mask-image.html
-animations/missing-values-first-keyframe.html
-animations/missing-values-last-keyframe.html
-animations/state-at-end-event.html
 css2.1/t010403-shand-border-00-c.html
 css2.1/t010403-shand-font-00-b.html
 css2.1/t010403-shand-font-01-b.html
