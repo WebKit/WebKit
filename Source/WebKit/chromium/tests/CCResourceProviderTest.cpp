@@ -239,9 +239,8 @@ TEST_F(CCResourceProviderTest, DeleteOwnedResources)
     int pool = 1;
 
     const int count = 3;
-    CCResourceProvider::ResourceId ids[count] = {0};
     for (int i = 0; i < count; ++i)
-        ids[i] = m_resourceProvider->createResource(pool, size, format, CCResourceProvider::TextureUsageAny);
+        m_resourceProvider->createResource(pool, size, format, CCResourceProvider::TextureUsageAny);
     EXPECT_EQ(3, context()->textureCount());
 
     m_resourceProvider->deleteOwnedResources(pool+1);

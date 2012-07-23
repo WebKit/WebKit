@@ -1,3 +1,15 @@
+2012-07-23  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Fix build on Ubuntu Precise.
+        https://bugs.webkit.org/show_bug.cgi?id=92021
+
+        Reviewed by Adrienne Walker.
+
+        Remove an array that's written but never read.
+
+        * tests/CCResourceProviderTest.cpp:
+        (WebKit::TEST_F):
+
 2012-07-23  Nate Chapin  <japhet@chromium.org>
 
         Add WebTextInputType enum values for text areas and
