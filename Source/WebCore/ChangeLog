@@ -1,3 +1,40 @@
+2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client
+        https://bugs.webkit.org/show_bug.cgi?id=91006
+
+        Reviewed by Ryosuke Niwa.
+
+        The rationale here is that the client doesn't need to know about the touch
+        event handler count. needTouchEvents was already used for that purpose.
+
+        Test: fast/events/touch/touch-handler-count.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::didAddTouchEventHandler): Only notify the client if needed.
+        (WebCore::Document::didRemoveTouchEventHandler): Ditto. Also unset the TOUCH_LISTENER
+        flag for the document if we reach a count of zero. The rationale being that
+        hasListenerType() is relied upon in other places in combination with TOUCH_LISTENER for
+        the same purpose.
+        * dom/Document.h:
+        (Document):
+        (WebCore::Document::touchEventHandlerCount):
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        (ChromeClient):
+        * page/Frame.cpp: Removed notifyChromeClientTouchEventHandlerCountChanged.
+        (WebCore::Frame::setDocument): call needsTouchEvents directly.
+        * page/Frame.h: Ditto.
+        (Frame):
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasTouchEventListener): expose Document::hasListenerType indirectly
+        for additional testing.
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-07-23  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] RenderThemeQtMobile highlight colors are not being used

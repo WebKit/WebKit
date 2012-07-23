@@ -1,3 +1,14 @@
+2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client
+        https://bugs.webkit.org/show_bug.cgi?id=91006
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove numTouchEventHandlersChanged stub.
+
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2012-07-17  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: refactor InspectorController::connectFrontend() to accept InspectorFrontendChannel.

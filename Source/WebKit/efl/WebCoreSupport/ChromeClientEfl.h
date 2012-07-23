@@ -179,7 +179,6 @@ public:
 
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
     virtual void numWheelEventHandlersChanged(unsigned) { }
-    virtual void numTouchEventHandlersChanged(unsigned) { }
 
     Evas_Object* m_view;
     KURL m_hoveredLinkURL;

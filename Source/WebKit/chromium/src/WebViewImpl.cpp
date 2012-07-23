@@ -1108,10 +1108,10 @@ void WebViewImpl::numberOfWheelEventHandlersChanged(unsigned numberOfWheelHandle
         m_client->numberOfWheelEventHandlersChanged(numberOfWheelHandlers);
 }
 
-void WebViewImpl::numberOfTouchEventHandlersChanged(unsigned numberOfTouchHandlers)
+void WebViewImpl::hasTouchEventHandlers(bool hasTouchHandlers)
 {
     if (m_client)
-        m_client->numberOfTouchEventHandlersChanged(numberOfTouchHandlers);
+        m_client->hasTouchEventHandlers(hasTouchHandlers);
 }
 
 #if !OS(DARWIN)

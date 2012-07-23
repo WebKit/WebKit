@@ -1090,10 +1090,12 @@ void ChromeClientImpl::numWheelEventHandlersChanged(unsigned numberOfWheelHandle
     m_webView->numberOfWheelEventHandlersChanged(numberOfWheelHandlers);
 }
 
-void ChromeClientImpl::numTouchEventHandlersChanged(unsigned numberOfTouchHandlers)
+#if ENABLE(TOUCH_EVENTS)
+void ChromeClientImpl::needTouchEvents(bool needsTouchEvents)
 {
-    m_webView->numberOfTouchEventHandlersChanged(numberOfTouchHandlers);
+    m_webView->hasTouchEventHandlers(needsTouchEvents);
 }
+#endif // ENABLE(TOUCH_EVENTS)
 
 #if ENABLE(POINTER_LOCK)
 bool ChromeClientImpl::requestPointerLock()

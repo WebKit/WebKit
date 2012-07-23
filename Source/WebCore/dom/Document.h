@@ -1124,7 +1124,12 @@ public:
     void didAddWheelEventHandler();
     void didRemoveWheelEventHandler();
 
+#if ENABLE(TOUCH_EVENTS)
     unsigned touchEventHandlerCount() const { return m_touchEventHandlerCount; }
+#else
+    unsigned touchEventHandlerCount() const { return 0; }
+#endif
+
     void didAddTouchEventHandler();
     void didRemoveTouchEventHandler();
 
@@ -1504,7 +1509,9 @@ private:
     unsigned m_writeRecursionDepth;
     
     unsigned m_wheelEventHandlerCount;
+#if ENABLE(TOUCH_EVENTS)
     unsigned m_touchEventHandlerCount;
+#endif
     
 #if ENABLE(UNDO_MANAGER)
     RefPtr<UndoManager> m_undoManager;

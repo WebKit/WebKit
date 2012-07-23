@@ -383,7 +383,7 @@ public:
     void startPageScaleAnimation(const WebCore::IntPoint& targetPosition, bool useAnchor, float newScale, double durationInSeconds);
 
     void numberOfWheelEventHandlersChanged(unsigned);
-    void numberOfTouchEventHandlersChanged(unsigned);
+    void hasTouchEventHandlers(bool);
 
     // PlatformGestureCurveTarget implementation for wheel fling.
     virtual void scrollBy(const WebCore::IntPoint&);

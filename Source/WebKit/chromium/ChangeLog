@@ -1,3 +1,24 @@
+2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client
+        https://bugs.webkit.org/show_bug.cgi?id=91006
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename the functions to follow a more boolean logic.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::hasTouchEventHandlers):
+        * src/ChromeClientImpl.cpp:
+        (WebKit):
+        (WebKit::ChromeClientImpl::needTouchEvents):
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::hasTouchEventHandlers):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         Implement sticky positioning

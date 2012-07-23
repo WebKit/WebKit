@@ -273,7 +273,7 @@ public:
     virtual void focusedNodeChanged(const WebNode&) { }
 
     virtual void numberOfWheelEventHandlersChanged(unsigned) { }
-    virtual void numberOfTouchEventHandlersChanged(unsigned) { }
+    virtual void hasTouchEventHandlers(bool) { }
 
     // Indicates two things:
     //   1) This view may have a new layout now.

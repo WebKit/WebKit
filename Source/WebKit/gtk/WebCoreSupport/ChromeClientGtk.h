@@ -152,7 +152,6 @@ namespace WebKit {
 
         virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
         virtual void numWheelEventHandlersChanged(unsigned) { }
-        virtual void numTouchEventHandlersChanged(unsigned) { }
 
 #if USE(ACCELERATED_COMPOSITING) 
         virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);

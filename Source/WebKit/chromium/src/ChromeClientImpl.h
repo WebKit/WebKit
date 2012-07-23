@@ -148,8 +148,7 @@ public:
     virtual void setCursorHiddenUntilMouseMoves(bool);
     virtual void formStateDidChange(const WebCore::Node*);
 #if ENABLE(TOUCH_EVENTS)
-    // FIXME: All touch events are forwarded regardless of whether or not they are needed.
-    virtual void needTouchEvents(bool needTouchEvents) { }
+    virtual void needTouchEvents(bool needTouchEvents) OVERRIDE;
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -207,7 +206,6 @@ public:
 
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const;
     virtual void numWheelEventHandlersChanged(unsigned);
-    virtual void numTouchEventHandlersChanged(unsigned);
 
 #if ENABLE(POINTER_LOCK)
     virtual bool requestPointerLock();

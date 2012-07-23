@@ -1,3 +1,15 @@
+2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client
+        https://bugs.webkit.org/show_bug.cgi?id=91006
+
+        Reviewed by Ryosuke Niwa.
+
+        Extend the touch-handler-count test to also cover the hasListenerType logic.
+
+        * fast/events/touch/touch-handler-count-expected.txt:
+        * fast/events/touch/touch-handler-count.html:
+
 2012-07-23  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations change to mark fast/frames/frameset-frameborder-boolean-values.html as slow on snowleopard.

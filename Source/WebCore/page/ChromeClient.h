@@ -340,7 +340,6 @@ namespace WebCore {
         virtual bool shouldRunModalDialogDuringPageDismissal(const DialogType&, const String& dialogMessage, FrameLoader::PageDismissalType) const { UNUSED_PARAM(dialogMessage); return true; }
 
         virtual void numWheelEventHandlersChanged(unsigned) = 0;
-        virtual void numTouchEventHandlersChanged(unsigned) = 0;
         
         virtual bool isSVGImageChromeClient() const { return false; }
 

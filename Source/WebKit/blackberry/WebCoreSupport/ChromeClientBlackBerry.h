@@ -90,7 +90,6 @@ public:
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const;
     virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
     virtual void numWheelEventHandlersChanged(unsigned) { }
-    virtual void numTouchEventHandlersChanged(unsigned) { }
     virtual void print(Frame*);
     virtual void exceededDatabaseQuota(Frame*, const String&);
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);

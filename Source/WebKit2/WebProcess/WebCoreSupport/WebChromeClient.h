@@ -218,7 +218,6 @@ private:
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const OVERRIDE;
     
     virtual void numWheelEventHandlersChanged(unsigned) OVERRIDE;
-    virtual void numTouchEventHandlersChanged(unsigned) OVERRIDE { }
 
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;

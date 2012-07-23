@@ -481,7 +481,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
     , m_wheelEventHandlerCount(0)
+#if ENABLE(TOUCH_EVENTS)
     , m_touchEventHandlerCount(0)
+#endif
 #if ENABLE(UNDO_MANAGER)
     , m_undoManager(0)
 #endif
@@ -5932,19 +5934,33 @@ void Document::didRemoveWheelEventHandler()
 
 void Document::didAddTouchEventHandler()
 {
+#if ENABLE(TOUCH_EVENTS)
     ++m_touchEventHandlerCount;
-    Frame* mainFrame = page() ? page()->mainFrame() : 0;
-    if (mainFrame)
-        mainFrame->notifyChromeClientTouchEventHandlerCountChanged();
+    if (m_touchEventHandlerCount > 1)
+        return;
+    if (Page* page = this->page())
+        page->chrome()->client()->needTouchEvents(true);
+#endif
 }
 
 void Document::didRemoveTouchEventHandler()
 {
-    ASSERT(m_touchEventHandlerCount > 0);
+#if ENABLE(TOUCH_EVENTS)
+    ASSERT(m_touchEventHandlerCount);
     --m_touchEventHandlerCount;
-    Frame* mainFrame = page() ? page()->mainFrame() : 0;
-    if (mainFrame)
-        mainFrame->notifyChromeClientTouchEventHandlerCountChanged();
+    if (m_touchEventHandlerCount)
+        return;
+
+    m_listenerTypes &= ~TOUCH_LISTENER;
+    Page* page = this->page();
+    if (!page)
+        return;
+    for (const Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->document() && frame->document()->touchEventHandlerCount())
+            return;
+    }
+    page->chrome()->client()->needTouchEvents(false);
+#endif
 }
 
 HTMLIFrameElement* Document::seamlessParentIFrame() const

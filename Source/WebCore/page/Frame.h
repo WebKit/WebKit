@@ -199,7 +199,6 @@ namespace WebCore {
 
         // Should only be called on the main frame of a page.
         void notifyChromeClientWheelEventHandlerCountChanged() const;
-        void notifyChromeClientTouchEventHandlerCountChanged() const;
 
     // ========
 
