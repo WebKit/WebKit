@@ -1,3 +1,16 @@
+2012-07-23  Balazs Kelemen  <kbalazs@webkit.org>
+
+        nrwt swallows early exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=91884
+
+        Reviewed by Dirk Pranke.
+
+        Put everything in a try block so we won't miss any error.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        (main):
+
 2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] WebKitTestRunner needs to print information about Web intents

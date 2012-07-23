@@ -89,25 +89,26 @@ def lint(port, options):
 
 
 def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdout):
-    warnings = _set_up_derived_options(port, options)
-
-    printer = printing.Printer(port, options, regular_output, buildbot_output, logger=logging.getLogger())
-
-    for warning in warnings:
-        _log.warning(warning)
-
-    if options.help_printing:
-        printer.help_printing()
-        printer.cleanup()
-        return 0
-
-    if options.lint_test_files:
-        return lint(port, options)
-
-    # We wrap any parts of the run that are slow or likely to raise exceptions
-    # in a try/finally to ensure that we clean up the logging configuration.
-    unexpected_result_count = -1
     try:
+        warnings = _set_up_derived_options(port, options)
+
+        printer = printing.Printer(port, options, regular_output, buildbot_output, logger=logging.getLogger())
+
+        for warning in warnings:
+            _log.warning(warning)
+
+        if options.help_printing:
+            printer.help_printing()
+            printer.cleanup()
+            return 0
+
+        if options.lint_test_files:
+            return lint(port, options)
+
+        # We wrap any parts of the run that are slow or likely to raise exceptions
+        # in a try/finally to ensure that we clean up the logging configuration.
+        unexpected_result_count = -1
+
         manager = Manager(port, options, printer)
         printer.print_config()
 
@@ -462,17 +463,16 @@ def parse_args(args=None):
 
 
 def main(argv=None):
-    options, args = parse_args(argv)
-    if options.platform and 'test' in options.platform:
-        # It's a bit lame to import mocks into real code, but this allows the user
-        # to run tests against the test platform interactively, which is useful for
-        # debugging test failures.
-        from webkitpy.common.host_mock import MockHost
-        host = MockHost()
-    else:
-        host = Host()
-
     try:
+        options, args = parse_args(argv)
+        if options.platform and 'test' in options.platform:
+            # It's a bit lame to import mocks into real code, but this allows the user
+            # to run tests against the test platform interactively, which is useful for
+            # debugging test failures.
+            from webkitpy.common.host_mock import MockHost
+            host = MockHost()
+        else:
+            host = Host()
         port = host.port_factory.get(options.platform, options)
     except NotImplementedError, e:
         # FIXME: is this the best way to handle unsupported port names?
