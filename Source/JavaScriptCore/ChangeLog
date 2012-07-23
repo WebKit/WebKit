@@ -1,3 +1,22 @@
+2012-07-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Move JSC::parseDate() from DateConversion to JSDateMath
+        https://bugs.webkit.org/show_bug.cgi?id=91982
+
+        Reviewed by Geoffrey Garen.
+
+        Moveing this function into the other files removes the dependency
+        on JSC spcific classes in DateConversion.{cpp|h}.
+
+        * runtime/DateConversion.cpp:
+        * runtime/DateConversion.h:
+        (JSC):
+        * runtime/JSDateMath.cpp:
+        (JSC::parseDate):
+        (JSC):
+        * runtime/JSDateMath.h:
+        (JSC):
+
 2012-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         Part 1 of: Implement sticky positioning

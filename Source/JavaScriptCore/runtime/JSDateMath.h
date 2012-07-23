@@ -48,12 +48,14 @@
 namespace JSC {
 
 class ExecState;
+class UString;
 struct GregorianDateTime;
 
 void msToGregorianDateTime(ExecState*, double, bool outputIsUTC, GregorianDateTime&);
 double gregorianDateTimeToMS(ExecState*, const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset(ExecState*);
 double parseDateFromNullTerminatedCharacters(ExecState*, const char* dateString);
+double parseDate(ExecState*, const UString&);
 
 // Intentionally overridding the default tm of the system.
 // The members of tm differ on various operating systems.

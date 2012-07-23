@@ -259,4 +259,16 @@ double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateSt
     return ms - (offset * WTF::msPerMinute);
 }
 
+double parseDate(ExecState* exec, const UString& date)
+{
+    if (date == exec->globalData().cachedDateString)
+        return exec->globalData().cachedDateStringValue;
+    double value = parseES5DateFromNullTerminatedCharacters(date.utf8().data());
+    if (isnan(value))
+        value = parseDateFromNullTerminatedCharacters(exec, date.utf8().data());
+    exec->globalData().cachedDateString = date;
+    exec->globalData().cachedDateStringValue = value;
+    return value;
+}
+
 } // namespace JSC
