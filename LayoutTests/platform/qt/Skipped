@@ -2599,3 +2599,7 @@ fast/sub-pixel/table-rows-have-stable-height.html
 # https://bugs.webkit.org/show_bug.cgi?id=92018
 svg/zoom/text/zoom-hixie-mixed-009.xml
 svg/zoom/page/zoom-hixie-mixed-009.xml
+
+# [Qt] svg/repaint/container-repaint.svg fails
+# https://bugs.webkit.org/show_bug.cgi?id=92039
+svg/repaint/container-repaint.svg

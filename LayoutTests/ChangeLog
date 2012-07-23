@@ -1,3 +1,43 @@
+2012-07-23  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt] svg/{in-html,overflow,repaint,wicd} needs update after new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=92023
+
+        Unreviewed gardening.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/svg/wicd/test-rightsizing-b-expected.png: Removed.
+        * platform/qt-5.0/svg/wicd/test-rightsizing-b-expected.txt: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/svg/in-html/by-reference-expected.txt:
+        * platform/qt/svg/in-html/circle-expected.png:
+        * platform/qt/svg/in-html/circle-expected.txt:
+        * platform/qt/svg/overflow/overflow-on-foreignObject-expected.png:
+        * platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.txt:
+        * platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults-expected.txt:
+        * platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.txt:
+        * platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.txt:
+        * platform/qt/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.txt:
+        * platform/qt/svg/repaint/inner-svg-change-viewBox-contract-expected.png: Copied from LayoutTests/platform/qt/svg/overflow/overflow-on-foreignObject-expected.png.
+        * platform/qt/svg/repaint/inner-svg-change-viewBox-contract-expected.txt: Added.
+        * platform/qt/svg/repaint/inner-svg-change-viewBox-expected.png: Added.
+        * platform/qt/svg/repaint/inner-svg-change-viewBox-expected.txt: Added.
+        * platform/qt/svg/repaint/inner-svg-change-viewPort-relative-expected.txt:
+        * platform/qt/svg/repaint/mask-clip-target-transform-expected.png: Added.
+        * platform/qt/svg/repaint/text-mask-update-expected.png: Copied from LayoutTests/platform/qt/svg/overflow/overflow-on-foreignObject-expected.png.
+        * platform/qt/svg/repaint/text-mask-update-expected.txt: Added.
+        * platform/qt/svg/wicd/rightsizing-grid-expected.png:
+        * platform/qt/svg/wicd/rightsizing-grid-expected.txt:
+        * platform/qt/svg/wicd/sizing-flakiness-expected.txt:
+        * platform/qt/svg/wicd/test-rightsizing-a-expected.png:
+        * platform/qt/svg/wicd/test-rightsizing-a-expected.txt:
+        * platform/qt/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/qt/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/qt/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/qt/svg/wicd/test-scalable-background-image1-expected.txt:
+        * platform/qt/svg/wicd/test-scalable-background-image2-expected.png:
+        * platform/qt/svg/wicd/test-scalable-background-image2-expected.txt:
+
 2012-07-23  Gregg Tavares  <gman@google.com>
 
         Fix WebGL texSubImage2D for cube maps
