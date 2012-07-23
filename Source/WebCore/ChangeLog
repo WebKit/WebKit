@@ -1,3 +1,15 @@
+2012-07-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        [WK2] REGRESSION r122966: Crash when closing tab with Web Inspector open in WebKit::PageOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=91782
+
+        Reviewed by Yury Semikhatsky.
+
+        hideHighlight was never called once user hovered over a node.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::InspectorOverlay::update):
+
 2012-07-23  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Build fix for the Windows builder following r123311

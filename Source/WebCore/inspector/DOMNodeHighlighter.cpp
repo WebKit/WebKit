@@ -563,7 +563,8 @@ Node* InspectorOverlay::highlightedNode() const
 
 void InspectorOverlay::update()
 {
-    if (m_highlightData || !m_pausedInDebuggerMessage.isNull())
+    // FIXME(91926) Refactor highlightNode to pass highlight data along with the call.
+    if ((m_highlightData && (m_highlightData->rect || m_highlightData->node)) || !m_pausedInDebuggerMessage.isNull())
         m_client->highlight();
     else
         m_client->hideHighlight();
