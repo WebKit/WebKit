@@ -47,10 +47,12 @@ MediaController::MediaController(ScriptExecutionContext* context)
     : m_paused(false)
     , m_defaultPlaybackRate(1)
     , m_volume(1)
+    , m_position(MediaPlayer::invalidTime())
     , m_muted(false)
     , m_readyState(HAVE_NOTHING)
     , m_playbackState(WAITING)
     , m_asyncEventTimer(this, &MediaController::asyncEventTimerFired)
+    , m_clearPositionTimer(this, &MediaController::clearPositionTimerFired)
     , m_closedCaptionsVisible(false)
     , m_clock(Clock::create())
     , m_scriptExecutionContext(context)
@@ -143,8 +145,13 @@ float MediaController::currentTime() const
     if (m_mediaElements.isEmpty())
         return 0;
 
-    // Some clocks may return times outside the range of [0..duration].
-    return max(0.0f, min(duration(), m_clock->currentTime()));
+    if (m_position == MediaPlayer::invalidTime()) {
+        // Some clocks may return times outside the range of [0..duration].
+        m_position = max(0.0f, min(duration(), m_clock->currentTime()));
+        m_clearPositionTimer.startOneShot(0);
+    }
+
+    return m_position;
 }
 
 void MediaController::setCurrentTime(float time, ExceptionCode& code)
@@ -491,6 +498,11 @@ void MediaController::asyncEventTimerFired(Timer<MediaController>*)
     size_t count = pendingEvents.size();
     for (size_t index = 0; index < count; ++index)
         dispatchEvent(pendingEvents[index].release(), ec);
+}
+
+void MediaController::clearPositionTimerFired(Timer<MediaController>*)
+{
+    m_position = MediaPlayer::invalidTime();
 }
 
 bool MediaController::hasAudio() const

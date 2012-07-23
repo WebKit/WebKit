@@ -1,0 +1,11 @@
+This tests that currentTime is kept stable during script execution.
+RUN(controller = video.controller)
+EVENT(canplaythrough)
+RUN(video.play())
+RUN(controller.play())
+EVENT(playing)
+RUN(firstTime = controller.currentTime)
+RUN(secondTime = controller.currentTime)
+EXPECTED (firstTime - secondTime == '0') OK
+END OF TEST
+

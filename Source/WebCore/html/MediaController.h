@@ -123,6 +123,7 @@ private:
     void bringElementUpToSpeed(HTMLMediaElement*);
     void scheduleEvent(const AtomicString& eventName);
     void asyncEventTimerFired(Timer<MediaController>*);
+    void clearPositionTimerFired(Timer<MediaController>*);
     bool hasEnded() const;
 
     // EventTarget
@@ -140,11 +141,13 @@ private:
     bool m_paused;
     float m_defaultPlaybackRate;
     float m_volume;
+    mutable float m_position;
     bool m_muted;
     ReadyState m_readyState;
     PlaybackState m_playbackState;
     Vector<RefPtr<Event> > m_pendingEvents;
     Timer<MediaController> m_asyncEventTimer;
+    mutable Timer<MediaController> m_clearPositionTimer;
     String m_mediaGroup;
     bool m_closedCaptionsVisible;
     PassRefPtr<Clock> m_clock;

@@ -1,3 +1,13 @@
+2012-06-12  Jer Noble  <jer.noble@apple.com>
+
+        MediaController.currentTime should be kept stable during script execution.
+        https://bugs.webkit.org/show_bug.cgi?id=88555
+
+        Reviewed by Eric Carlson.
+
+        * media/media-controller-time-constant-expected.txt: Added.
+        * media/media-controller-time-constant.html: Added.
+
 2012-07-23  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] dom/xhtml/level3/core rebaseline after new test fonts
