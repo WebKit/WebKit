@@ -1,3 +1,17 @@
+2012-07-23  Steve VanDeBogart  <vandebo@chromium.org>
+
+        Chrome/Skia: PDF print output does not have clickable links.
+        https://bugs.webkit.org/show_bug.cgi?id=91171
+
+        Reviewed by Stephen White.
+
+        Connect GraphicsContext::setURLForRect to Skia's new API for annotations.
+
+        Printing is not generally testable.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setURLForRect):
+
 2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client
