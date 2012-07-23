@@ -2,6 +2,8 @@ Basic tests for BiquadFilterNode.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
+PASS BiquadFilterNode has one iutput.
+PASS BiquadFilterNode has one output.
 PASS Biquad filter defaults to low-pass filter.
 PASS Biquad filter type 0 is settable.
 PASS Biquad filter type 1 is settable.
