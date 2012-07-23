@@ -24,6 +24,7 @@ LIST(APPEND WebKit2_SOURCES
     Shared/efl/NativeWebKeyboardEventEfl.cpp
     Shared/efl/NativeWebWheelEventEfl.cpp
     Shared/efl/NativeWebMouseEventEfl.cpp
+    Shared/efl/ProcessExecutablePathEfl.cpp
     Shared/efl/WebEventFactory.cpp
     Shared/efl/WebCoreArgumentCodersEfl.cpp
 
@@ -213,6 +214,9 @@ SET(TEST_RESOURCES_DIR ${WEBKIT2_EFL_TEST_DIR}/resources)
 ADD_DEFINITIONS(-DTEST_RESOURCES_DIR=\"${TEST_RESOURCES_DIR}\"
     -DTEST_THEME_DIR=\"${THEME_BINARY_DIR}\"
     -DGTEST_LINKED_AS_SHARED_LIBRARY=1
+    -DLIBEXECDIR=\"${CMAKE_INSTALL_PREFIX}/${EXEC_INSTALL_DIR}\"
+    -DWEBPROCESSNAME=\"${WebProcess_EXECUTABLE_NAME}\"
+    -DPLUGINPROCESSNAME=\"${PluginProcess_EXECUTABLE_NAME}\"
 )
 
 ADD_LIBRARY(ewk2UnitTestUtils

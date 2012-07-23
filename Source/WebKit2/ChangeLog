@@ -1,3 +1,22 @@
+2012-07-23  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL][WK2] ProcessExecutablePath is required
+        https://bugs.webkit.org/show_bug.cgi?id=89719
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added executablePathOfWebProcess and executablePathOfPluginProcess.
+        It's used for getting the location of WebProcess and PluginProcess.
+
+        * PlatformEfl.cmake: Added LIBEXECDIR definition
+        * Shared/efl/ProcessExecutablePathEfl.cpp: Added.
+        (WebKit):
+        (WebKit::findWebKitProcess):
+        (WebKit::executablePathOfWebProcess): Get the absolute path of WebProcess
+        (WebKit::executablePathOfPluginProcess): Get the absolute path of PluginProcess
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Modified to use above routines
+
 2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         WebKit2 needs layoutTestController.setAlwaysAcceptCookies

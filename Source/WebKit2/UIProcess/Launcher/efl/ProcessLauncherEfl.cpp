@@ -21,11 +21,10 @@
 #include "ProcessLauncher.h"
 
 #include "Connection.h"
+#include "ProcessExecutablePath.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RunLoop.h>
-#include <libgen.h>
-#include <unistd.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,38 +44,26 @@ void ProcessLauncher::launchProcess()
     if (!pid) { // child process
         close(sockets[1]);
         String socket = String::format("%d", sockets[0]);
-        String processName;
+        String executablePath;
         switch (m_launchOptions.processType) {
         case WebProcess:
-            processName = "WebProcess";
+            executablePath = executablePathOfWebProcess();
             break;
         case PluginProcess:
-            processName = "PluginProcess";
+            executablePath = executablePathOfPluginProcess();
             break;
         default:
             ASSERT_NOT_REACHED();
             return;
         }
 
-        String executablePath;
-        char readLinkBuffer[PATH_MAX];
-        memset(readLinkBuffer, 0, PATH_MAX);
-        ssize_t result = readlink("/proc/self/exe", readLinkBuffer, PATH_MAX);
-
-        if (result == -1)
-            executablePath = String("/usr/bin");
-        else {
-            char* executablePathPtr = dirname(readLinkBuffer);
-            executablePath = String(executablePathPtr);
-        }
-        String fullPath = executablePath + "/" + processName;
 #ifndef NDEBUG
         if (m_launchOptions.processCmdPrefix.isEmpty())
 #endif
-            execl(fullPath.utf8().data(), processName.utf8().data(), socket.utf8().data(), static_cast<char*>(0));
+            execl(executablePath.utf8().data(), executablePath.utf8().data(), socket.utf8().data(), static_cast<char*>(0));
 #ifndef NDEBUG
         else {
-            String cmd = makeString(m_launchOptions.processCmdPrefix, ' ', fullPath, ' ', socket);
+            String cmd = makeString(m_launchOptions.processCmdPrefix, ' ', executablePath, ' ', socket);
             if (system(cmd.utf8().data()) == -1) {
                 ASSERT_NOT_REACHED();
                 return;
@@ -92,7 +79,6 @@ void ProcessLauncher::launchProcess()
         ASSERT_NOT_REACHED();
         return;
     }
-
 }
 
 void ProcessLauncher::terminateProcess()
