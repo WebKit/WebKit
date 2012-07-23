@@ -54,6 +54,10 @@ enum WebTextInputType {
     WebTextInputTypeMonth,
     WebTextInputTypeTime,
     WebTextInputTypeWeek,
+    WebTextInputTypeTextArea,
+
+    // Input caret is in a contenteditable node (not an INPUT field).
+    WebTextInputTypeContentEditable,
 };
 
 } // namespace WebKit

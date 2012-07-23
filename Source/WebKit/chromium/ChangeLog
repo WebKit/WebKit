@@ -1,3 +1,17 @@
+2012-07-23  Nate Chapin  <japhet@chromium.org>
+
+        Add WebTextInputType enum values for text areas and
+        content-editable.
+        https://bugs.webkit.org/show_bug.cgi?id=91654
+
+        Reviewed by Adam Barth.
+
+        No new tests, no behavior change without corresponding chromium.org changes.
+
+        * public/WebTextInputType.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::textInputType):
+
 2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client
