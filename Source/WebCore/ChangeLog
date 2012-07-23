@@ -1,3 +1,9 @@
+2012-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header files.
+
 2012-07-23  Kent Tamura  <tkent@chromium.org>
 
         Replace some instances of shadowAncestorNode() with shadowHost()

@@ -4111,6 +4111,7 @@ webcore_sources += \
 	Source/WebCore/rendering/style/SVGRenderStyleDefs.cpp \
 	Source/WebCore/rendering/style/SVGRenderStyleDefs.h \
 	Source/WebCore/rendering/style/SVGRenderStyle.h \
+	Source/WebCore/rendering/style/WrapShapes.h \
 	Source/WebCore/rendering/svg/RenderSVGBlock.cpp \
 	Source/WebCore/rendering/svg/RenderSVGBlock.h \
 	Source/WebCore/rendering/svg/RenderSVGContainer.cpp \
@@ -5914,6 +5915,7 @@ webcore_built_sources += \
 
 webcore_sources += \
 	Source/ThirdParty/ANGLE/include/GLSLANG/ShaderLang.h \
+	Source/ThirdParty/ANGLE/src/common/angleutils.h \
 	Source/ThirdParty/ANGLE/src/compiler/BaseTypes.h \
 	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.h \
@@ -6007,6 +6009,7 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Token.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Tokenizer.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/Tokenizer.h \
+	Source/ThirdParty/ANGLE/src/compiler/preprocessor/new/pp_utils.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/parser.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/preprocess.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/scanner.c \
