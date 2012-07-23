@@ -1,3 +1,19 @@
+2012-07-23  Stephen Chenney  <schenney@chromium.org>
+
+        Crash when setting empty class name on a new element
+        https://bugs.webkit.org/show_bug.cgi?id=92024
+
+        Reviewed by Andreas Kling.
+
+        Add a check for null attributeData() when setting the className to an
+        empty string on a newly created element. New SVG elements have null
+        attributeData() on baseVal upon creation.
+
+        Test: svg/custom/empty-className-baseVal-crash.html
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged): Add check for null attributeData()
+
 2012-07-23  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Refactor CCLayerTreeHostCommon: clean up clipRect and drawableContentRect design
