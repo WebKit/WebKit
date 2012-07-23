@@ -35,12 +35,16 @@
 
 using namespace WebKit;
 
-Platform* MockWebKitPlatformSupport::create()
+PassOwnPtr<MockWebKitPlatformSupport> MockWebKitPlatformSupport::create()
 {
-    return new MockWebKitPlatformSupport();
+    return WTF::adoptPtr(new MockWebKitPlatformSupport());
 }
 
 MockWebKitPlatformSupport::MockWebKitPlatformSupport()
+{
+}
+
+MockWebKitPlatformSupport::~MockWebKitPlatformSupport()
 {
 }
 

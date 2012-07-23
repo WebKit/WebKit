@@ -1,3 +1,15 @@
+2012-07-23  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Clean up the MockWebKitPlatformSupport object at shutdown
+        https://bugs.webkit.org/show_bug.cgi?id=91857
+
+        Reviewed by Adam Barth.
+
+        Made Platforms destructor virtual.
+
+        * chromium/public/Platform.h:
+        (WebKit::Platform::~Platform):
+
 2012-07-18  Antoine Labour  <piman@chromium.org>
 
         [chromium] Introduce CCResourceProvider, replacing TextureAllocator and hiding textures from clients to allow transport

@@ -32,10 +32,12 @@
 #define MockWebKitPlatformSupport_h
 
 #include <public/Platform.h>
+#include <wtf/PassOwnPtr.h>
 
 class MockWebKitPlatformSupport : public WebKit::Platform {
 public:
-    static WebKit::Platform* create();
+    static PassOwnPtr<MockWebKitPlatformSupport> create();
+    ~MockWebKitPlatformSupport();
 
     virtual void cryptographicallyRandomValues(unsigned char* buffer, size_t length) OVERRIDE;
 

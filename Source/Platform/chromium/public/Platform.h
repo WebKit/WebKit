@@ -424,7 +424,7 @@ public:
     virtual void didStopWorkerRunLoop(const WebWorkerRunLoop&) { }
 
 protected:
-    ~Platform() { }
+    virtual ~Platform() { }
 };
 
 } // namespace WebKit

@@ -36,6 +36,7 @@
 #include "webkit/support/webkit_support.h"
 #include <v8/include/v8-testing.h>
 #include <v8/include/v8.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
 using namespace std;
@@ -73,12 +74,15 @@ class WebKitSupportTestEnvironment {
 public:
     WebKitSupportTestEnvironment()
     {
-        webkit_support::SetUpTestEnvironment(MockWebKitPlatformSupport::create());
+        m_mockPlatform = MockWebKitPlatformSupport::create();
+        webkit_support::SetUpTestEnvironment(m_mockPlatform.get());
     }
     ~WebKitSupportTestEnvironment()
     {
         webkit_support::TearDownTestEnvironment();
     }
+private:
+    OwnPtr<MockWebKitPlatformSupport> m_mockPlatform;
 };
 
 static void runTest(TestShell& shell, TestParams& params, const string& testName)
