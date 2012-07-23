@@ -1,3 +1,10 @@
+2012-07-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix if NOMINMAX is defined by the build system.
+
+        * COMEnumVariant.h: Added #ifndef NOMINMAX around #define NOMINMAX.
+        * COMPropertyBag.h: Ditto.
+
 2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client
