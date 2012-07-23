@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
+#include "HTMLStackItem.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
 #include "LocalizedStrings.h"
@@ -380,7 +381,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
         // For efficiency, we skip step 4.2 ("Let root be a new html element with no attributes")
         // and instead use the DocumentFragment as a root node.
-        m_tree.openElements()->pushRootNode(fragment);
+        m_tree.openElements()->pushRootNode(HTMLStackItem::create(fragment));
         resetInsertionModeAppropriately();
         m_tree.setForm(closestFormAncestor(contextElement));
     }
@@ -1184,7 +1185,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken* token)
             || token->name() == titleTag) {
             parseError(token);
             ASSERT(m_tree.head());
-            m_tree.openElements()->pushHTMLHeadElement(m_tree.head());
+            m_tree.openElements()->pushHTMLHeadElement(HTMLStackItem::create(m_tree.head(), token));
             processStartTagForInHead(token);
             m_tree.openElements()->removeHTMLHeadElement(m_tree.head());
             return;
@@ -1559,10 +1560,11 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
             if (node == formattingElementRecord)
                 break;
             // 6.5
-            RefPtr<Element> newElement = m_tree.createHTMLElementFromElementRecord(node);
+            RefPtr<HTMLStackItem> newItem = m_tree.createElementFromSavedToken(node->stackItem().get());
+
             HTMLFormattingElementList::Entry* nodeEntry = m_tree.activeFormattingElements()->find(node->element());
-            nodeEntry->replaceElement(newElement.get());
-            node->replaceElement(newElement.release());
+            nodeEntry->replaceElement(newItem);
+            node->replaceElement(newItem.release());
             // 6.4 -- Intentionally out of order to handle the case where node
             // was replaced in 6.5.
             // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10096
@@ -1595,25 +1597,25 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
                 lastNode->element()->lazyAttach();
         }
         // 8
-        RefPtr<Element> newElement = m_tree.createHTMLElementFromElementRecord(formattingElementRecord);
+        RefPtr<HTMLStackItem> newItem = m_tree.createElementFromSavedToken(formattingElementRecord->stackItem().get());
         // 9
-        newElement->takeAllChildrenFrom(furthestBlock->element());
+        newItem->element()->takeAllChildrenFrom(furthestBlock->element());
         // 10
         Element* furthestBlockElement = furthestBlock->element();
         // FIXME: All this creation / parserAddChild / attach business should
         //        be in HTMLConstructionSite.  My guess is that steps 8--12
         //        should all be in some HTMLConstructionSite function.
-        furthestBlockElement->parserAddChild(newElement);
-        if (furthestBlockElement->attached() && !newElement->attached()) {
-            // Notice that newElement might already be attached if, for example, one of the reparented
+        furthestBlockElement->parserAddChild(newItem->element());
+        if (furthestBlockElement->attached() && !newItem->element()->attached()) {
+            // Notice that newItem->element() might already be attached if, for example, one of the reparented
             // children is a style element, which attaches itself automatically.
-            newElement->attach();
+            newItem->element()->attach();
         }
         // 11
-        m_tree.activeFormattingElements()->swapTo(formattingElement, newElement.get(), bookmark);
+        m_tree.activeFormattingElements()->swapTo(formattingElement, newItem, bookmark);
         // 12
         m_tree.openElements()->remove(formattingElement);
-        m_tree.openElements()->insertAbove(newElement, furthestBlock);
+        m_tree.openElements()->insertAbove(newItem, furthestBlock);
     }
 }
 

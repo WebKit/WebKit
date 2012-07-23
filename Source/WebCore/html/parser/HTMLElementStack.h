@@ -29,6 +29,7 @@
 
 #include "Element.h"
 #include "HTMLNames.h"
+#include "HTMLStackItem.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -55,23 +56,23 @@ public:
     public:
         ~ElementRecord(); // Public for ~PassOwnPtr()
     
-        Element* element() const { return toElement(m_node.get()); }
-        ContainerNode* node() const { return m_node.get(); }
-        void replaceElement(PassRefPtr<Element>);
+        Element* element() const { return m_item->element(); }
+        ContainerNode* node() const { return m_item->node(); }
+        PassRefPtr<HTMLStackItem> stackItem() const { return m_item; }
+        void replaceElement(PassRefPtr<HTMLStackItem>);
 
         bool isAbove(ElementRecord*) const;
 
         ElementRecord* next() const { return m_next.get(); }
-
     private:
         friend class HTMLElementStack;
 
-        ElementRecord(PassRefPtr<ContainerNode>, PassOwnPtr<ElementRecord>);
+        ElementRecord(PassRefPtr<HTMLStackItem>, PassOwnPtr<ElementRecord>);
 
         PassOwnPtr<ElementRecord> releaseNext() { return m_next.release(); }
         void setNext(PassOwnPtr<ElementRecord> next) { m_next = next; }
 
-        RefPtr<ContainerNode> m_node;
+        RefPtr<HTMLStackItem> m_item;
         OwnPtr<ElementRecord> m_next;
     };
 
@@ -97,13 +98,13 @@ public:
     ElementRecord* find(Element*) const;
     ElementRecord* topmost(const AtomicString& tagName) const;
 
-    void insertAbove(PassRefPtr<Element>, ElementRecord*);
+    void insertAbove(PassRefPtr<HTMLStackItem>, ElementRecord*);
 
-    void push(PassRefPtr<Element>);
-    void pushRootNode(PassRefPtr<ContainerNode>);
-    void pushHTMLHtmlElement(PassRefPtr<Element>);
-    void pushHTMLHeadElement(PassRefPtr<Element>);
-    void pushHTMLBodyElement(PassRefPtr<Element>);
+    void push(PassRefPtr<HTMLStackItem>);
+    void pushRootNode(PassRefPtr<HTMLStackItem>);
+    void pushHTMLHtmlElement(PassRefPtr<HTMLStackItem>);
+    void pushHTMLHeadElement(PassRefPtr<HTMLStackItem>);
+    void pushHTMLBodyElement(PassRefPtr<HTMLStackItem>);
 
     void pop();
     void popUntil(const AtomicString& tagName);
@@ -156,8 +157,8 @@ public:
 #endif
 
 private:
-    void pushCommon(PassRefPtr<ContainerNode>);
-    void pushRootNodeCommon(PassRefPtr<ContainerNode>);
+    void pushCommon(PassRefPtr<HTMLStackItem>);
+    void pushRootNodeCommon(PassRefPtr<HTMLStackItem>);
     void popCommon();
     void removeNonTopCommon(Element*);
 

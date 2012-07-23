@@ -39,6 +39,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
+#include "HTMLStackItem.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
 #include "LocalizedStrings.h"
@@ -197,7 +198,7 @@ void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken* tok
     RefPtr<HTMLHtmlElement> element = HTMLHtmlElement::create(m_document);
     element->parserSetAttributes(token->attributes(), m_fragmentScriptingPermission);
     attachLater(m_attachmentRoot, element);
-    m_openElements.pushHTMLHtmlElement(element);
+    m_openElements.pushHTMLHtmlElement(HTMLStackItem::create(element, token));
 
     executeQueuedTasks();
     element->insertedByParser();
@@ -282,7 +283,7 @@ void HTMLConstructionSite::insertHTMLHeadElement(AtomicHTMLToken* token)
     ASSERT(!shouldFosterParent());
     m_head = createHTMLElement(token);
     attachLater(currentNode(), m_head);
-    m_openElements.pushHTMLHeadElement(m_head);
+    m_openElements.pushHTMLHeadElement(HTMLStackItem::create(m_head, token));
 }
 
 void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken* token)
@@ -290,7 +291,7 @@ void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken* token)
     ASSERT(!shouldFosterParent());
     RefPtr<Element> body = createHTMLElement(token);
     attachLater(currentNode(), body);
-    m_openElements.pushHTMLBodyElement(body.release());
+    m_openElements.pushHTMLBodyElement(HTMLStackItem::create(body.release(), token));
 }
 
 void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken* token, bool isDemoted)
@@ -300,14 +301,14 @@ void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken* token, bool is
     m_form = static_pointer_cast<HTMLFormElement>(element.release());
     m_form->setDemoted(isDemoted);
     attachLater(currentNode(), m_form);
-    m_openElements.push(m_form);
+    m_openElements.push(HTMLStackItem::create(m_form, token));
 }
 
 void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken* token)
 {
     RefPtr<Element> element = createHTMLElement(token);
     attachLater(currentNode(), element);
-    m_openElements.push(element.release());
+    m_openElements.push(HTMLStackItem::create(element.release(), token));
 }
 
 void HTMLConstructionSite::insertSelfClosingHTMLElement(AtomicHTMLToken* token)
@@ -327,7 +328,7 @@ void HTMLConstructionSite::insertFormattingElement(AtomicHTMLToken* token)
     // Possible active formatting elements include:
     // a, b, big, code, em, font, i, nobr, s, small, strike, strong, tt, and u.
     insertHTMLElement(token);
-    m_activeFormattingElements.append(currentElement());
+    m_activeFormattingElements.append(currentElementRecord()->stackItem());
 }
 
 void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken* token)
@@ -343,7 +344,7 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken* token)
     if (m_fragmentScriptingPermission != DisallowScriptingContent)
         element->parserSetAttributes(token->attributes(), m_fragmentScriptingPermission);
     attachLater(currentNode(), element);
-    m_openElements.push(element.release());
+    m_openElements.push(HTMLStackItem::create(element.release(), token));
 }
 
 void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken* token, const AtomicString& namespaceURI)
@@ -354,7 +355,7 @@ void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken* token, const At
     RefPtr<Element> element = createElement(token, namespaceURI);
     attachLater(currentNode(), element, token->selfClosing());
     if (!token->selfClosing())
-        m_openElements.push(element.release());
+        m_openElements.push(HTMLStackItem::create(element.release(), token, namespaceURI));
 }
 
 void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMode whitespaceMode)
@@ -418,28 +419,14 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* tok
     return element.release();
 }
 
-PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromElementRecord(HTMLElementStack::ElementRecord* record)
+PassRefPtr<HTMLStackItem> HTMLConstructionSite::createElementFromSavedToken(HTMLStackItem* item)
 {
-    return createHTMLElementFromSavedElement(record->element());
-}
-
-PassRefPtr<Element> HTMLConstructionSite::createHTMLElementFromSavedElement(Element* element)
-{
-    // FIXME: This method is wrong.  We should be using the original token.
-    // Using an Element* causes us to fail examples like this:
-    // <b id="1"><p><script>document.getElementById("1").id = "2"</script></p>TEXT</b>
-    // When reconstructTheActiveFormattingElements calls this method to open
-    // a second <b> tag to wrap TEXT, it will have id "2", even though the HTML5
-    // spec implies it should be "1".  Minefield matches the HTML5 spec here.
-
-    ASSERT(element->isHTMLElement()); // otherwise localName() might be wrong.
-
-    Vector<Attribute> clonedAttributes;
-    if (ElementAttributeData* attributeData = element->updatedAttributeData())
-        clonedAttributes = attributeData->clonedAttributeVector();
-
-    RefPtr<AtomicHTMLToken> fakeToken = AtomicHTMLToken::create(HTMLTokenTypes::StartTag, element->localName(), clonedAttributes);
-    return createHTMLElement(fakeToken.get());
+    RefPtr<Element> element;
+    if (item->namespaceURI() == HTMLNames::xhtmlNamespaceURI)
+        element = createHTMLElement(item->token());
+    else
+        element = createElement(item->token(), item->namespaceURI());
+    return HTMLStackItem::create(element.release(), item->token(), item->namespaceURI());
 }
 
 bool HTMLConstructionSite::indexOfFirstUnopenFormattingElement(unsigned& firstUnopenElementIndex) const
@@ -469,10 +456,10 @@ void HTMLConstructionSite::reconstructTheActiveFormattingElements()
     ASSERT(unopenEntryIndex < m_activeFormattingElements.size());
     for (; unopenEntryIndex < m_activeFormattingElements.size(); ++unopenEntryIndex) {
         HTMLFormattingElementList::Entry& unopenedEntry = m_activeFormattingElements.at(unopenEntryIndex);
-        RefPtr<Element> reconstructed = createHTMLElementFromSavedElement(unopenedEntry.element());
-        attachLater(currentNode(), reconstructed);
-        m_openElements.push(reconstructed.release());
-        unopenedEntry.replaceElement(currentElement());
+        RefPtr<HTMLStackItem> reconstructed = createElementFromSavedToken(unopenedEntry.stackItem().get());
+        attachLater(currentNode(), reconstructed->node());
+        m_openElements.push(reconstructed);
+        unopenedEntry.replaceElement(reconstructed.release());
     }
 }
 

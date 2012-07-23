@@ -106,7 +106,7 @@ public:
     void insertHTMLBodyStartTagInBody(AtomicHTMLToken*);
 
     PassRefPtr<Element> createHTMLElement(AtomicHTMLToken*);
-    PassRefPtr<Element> createHTMLElementFromElementRecord(HTMLElementStack::ElementRecord*);
+    PassRefPtr<HTMLStackItem> createElementFromSavedToken(HTMLStackItem*);
 
     bool shouldFosterParent() const;
     void fosterParent(PassRefPtr<Node>);
@@ -118,6 +118,7 @@ public:
     void generateImpliedEndTagsWithExclusion(const AtomicString& tagName);
 
     bool isEmpty() const { return !m_openElements.stackDepth(); }
+    HTMLElementStack::ElementRecord* currentElementRecord() const { return m_openElements.topRecord(); }
     Element* currentElement() const { return m_openElements.top(); }
     ContainerNode* currentNode() const { return m_openElements.topNode(); }
     Element* oneBelowTop() const { return m_openElements.oneBelowTop(); }
@@ -160,7 +161,6 @@ private:
 
     void findFosterSite(HTMLConstructionSiteTask&);
 
-    PassRefPtr<Element> createHTMLElementFromSavedElement(Element*);
     PassRefPtr<Element> createElement(AtomicHTMLToken*, const AtomicString& namespaceURI);
 
     void mergeAttributesFromTokenIntoElement(AtomicHTMLToken*, Element*);

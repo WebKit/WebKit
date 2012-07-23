@@ -125,23 +125,23 @@ inline bool isSelectScopeMarker(ContainerNode* node)
 
 }
 
-HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<ContainerNode> node, PassOwnPtr<ElementRecord> next)
-    : m_node(node)
+HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<HTMLStackItem> item, PassOwnPtr<ElementRecord> next)
+    : m_item(item)
     , m_next(next)
 {
-    ASSERT(m_node);
+    ASSERT(m_item);
 }
 
 HTMLElementStack::ElementRecord::~ElementRecord()
 {
 }
 
-void HTMLElementStack::ElementRecord::replaceElement(PassRefPtr<Element> element)
+void HTMLElementStack::ElementRecord::replaceElement(PassRefPtr<HTMLStackItem> item)
 {
-    ASSERT(element);
-    ASSERT(!m_node || m_node->isElementNode());
+    ASSERT(item);
+    ASSERT(!m_item || m_item->node()->isElementNode());
     // FIXME: Should this call finishParsingChildren?
-    m_node = element;
+    m_item = item;
 }
 
 bool HTMLElementStack::ElementRecord::isAbove(ElementRecord* other) const
@@ -307,62 +307,62 @@ void HTMLElementStack::popUntilForeignContentScopeMarker()
         pop();
 }
     
-void HTMLElementStack::pushRootNode(PassRefPtr<ContainerNode> rootNode)
+void HTMLElementStack::pushRootNode(PassRefPtr<HTMLStackItem> rootItem)
 {
-    ASSERT(rootNode->nodeType() == Node::DOCUMENT_FRAGMENT_NODE);
-    pushRootNodeCommon(rootNode);
+    ASSERT(rootItem->node()->nodeType() == Node::DOCUMENT_FRAGMENT_NODE);
+    pushRootNodeCommon(rootItem);
 }
 
-void HTMLElementStack::pushHTMLHtmlElement(PassRefPtr<Element> element)
+void HTMLElementStack::pushHTMLHtmlElement(PassRefPtr<HTMLStackItem> item)
 {
-    ASSERT(element->hasTagName(HTMLNames::htmlTag));
-    pushRootNodeCommon(element);
+    ASSERT(item->element()->hasTagName(HTMLNames::htmlTag));
+    pushRootNodeCommon(item);
 }
     
-void HTMLElementStack::pushRootNodeCommon(PassRefPtr<ContainerNode> rootNode)
+void HTMLElementStack::pushRootNodeCommon(PassRefPtr<HTMLStackItem> rootItem)
 {
     ASSERT(!m_top);
     ASSERT(!m_rootNode);
-    m_rootNode = rootNode.get();
-    pushCommon(rootNode);
+    m_rootNode = rootItem->node();
+    pushCommon(rootItem);
 }
 
-void HTMLElementStack::pushHTMLHeadElement(PassRefPtr<Element> element)
+void HTMLElementStack::pushHTMLHeadElement(PassRefPtr<HTMLStackItem> item)
 {
-    ASSERT(element->hasTagName(HTMLNames::headTag));
+    ASSERT(item->element()->hasTagName(HTMLNames::headTag));
     ASSERT(!m_headElement);
-    m_headElement = element.get();
-    pushCommon(element);
+    m_headElement = item->element();
+    pushCommon(item);
 }
 
-void HTMLElementStack::pushHTMLBodyElement(PassRefPtr<Element> element)
+void HTMLElementStack::pushHTMLBodyElement(PassRefPtr<HTMLStackItem> item)
 {
-    ASSERT(element->hasTagName(HTMLNames::bodyTag));
+    ASSERT(item->element()->hasTagName(HTMLNames::bodyTag));
     ASSERT(!m_bodyElement);
-    m_bodyElement = element.get();
-    pushCommon(element);
+    m_bodyElement = item->element();
+    pushCommon(item);
 }
 
-void HTMLElementStack::push(PassRefPtr<Element> element)
+void HTMLElementStack::push(PassRefPtr<HTMLStackItem> item)
 {
-    ASSERT(!element->hasTagName(HTMLNames::htmlTag));
-    ASSERT(!element->hasTagName(HTMLNames::headTag));
-    ASSERT(!element->hasTagName(HTMLNames::bodyTag));
+    ASSERT(!item->element()->hasTagName(HTMLNames::htmlTag));
+    ASSERT(!item->element()->hasTagName(HTMLNames::headTag));
+    ASSERT(!item->element()->hasTagName(HTMLNames::bodyTag));
     ASSERT(m_rootNode);
-    pushCommon(element);
+    pushCommon(item);
 }
 
-void HTMLElementStack::insertAbove(PassRefPtr<Element> element, ElementRecord* recordBelow)
+void HTMLElementStack::insertAbove(PassRefPtr<HTMLStackItem> item, ElementRecord* recordBelow)
 {
-    ASSERT(element);
+    ASSERT(item);
     ASSERT(recordBelow);
     ASSERT(m_top);
-    ASSERT(!element->hasTagName(HTMLNames::htmlTag));
-    ASSERT(!element->hasTagName(HTMLNames::headTag));
-    ASSERT(!element->hasTagName(HTMLNames::bodyTag));
+    ASSERT(!item->element()->hasTagName(HTMLNames::htmlTag));
+    ASSERT(!item->element()->hasTagName(HTMLNames::headTag));
+    ASSERT(!item->element()->hasTagName(HTMLNames::bodyTag));
     ASSERT(m_rootNode);
     if (recordBelow == m_top) {
-        push(element);
+        push(item);
         return;
     }
 
@@ -371,7 +371,7 @@ void HTMLElementStack::insertAbove(PassRefPtr<Element> element, ElementRecord* r
             continue;
 
         m_stackDepth++;
-        recordAbove->setNext(adoptPtr(new ElementRecord(element, recordAbove->releaseNext())));
+        recordAbove->setNext(adoptPtr(new ElementRecord(item, recordAbove->releaseNext())));
         recordAbove->next()->element()->beginParsingChildren();
         return;
     }
@@ -567,12 +567,12 @@ ContainerNode* HTMLElementStack::rootNode() const
     return m_rootNode;
 }
 
-void HTMLElementStack::pushCommon(PassRefPtr<ContainerNode> node)
+void HTMLElementStack::pushCommon(PassRefPtr<HTMLStackItem> item)
 {
     ASSERT(m_rootNode);
 
     m_stackDepth++;
-    m_top = adoptPtr(new ElementRecord(node, m_top.release()));
+    m_top = adoptPtr(new ElementRecord(item, m_top.release()));
 }
 
 void HTMLElementStack::popCommon()

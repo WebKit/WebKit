@@ -1,3 +1,90 @@
+2012-07-23  Kwang Yul Seo  <skyul@company100.net>
+
+        Use the original token to create an element in "reconstruct the active formatting elements" and "call the adoption agency"
+        https://bugs.webkit.org/show_bug.cgi?id=91703
+
+        Reviewed by Adam Barth.
+
+        The current WebKit HTML5 parser implementation does not hold the original token
+        in the stack of open elements and the active formatting elements. This is
+        problematic because the original token is used to create an element in
+        "reconstruct the active formatting elements" and "call the adoption agency".
+
+        As a workaround, WebKit uses the saved element instead of the original token
+        to create an element. But this causes us to fail examples like this:
+        <b id="1"><p><script>document.getElementById("1").id = "2"</script></p>TEXT</b>
+        reconstructTheActiveFormattingElements calls this method to open a second <b>
+        tag to wrap TEXT, it will have id "2", even though the HTML5 spec implies it
+        should be "1".
+
+        Created a ref-counted container class, HTMLStackItem to hold the original token
+        and the namespace URI as well as the element. Changed HTMLElementStack and
+        HTMLFormattingElementList to use HTMLStackItem.
+        Changed HTMLConstructionSite::reconstructTheActiveFormattingElements and
+        HTMLTreeBuilder::callTheAdoptionAgency to create an element from the saved token
+        instead of the saved element.
+
+        Updated test expectation for html5lib/runner-expected.txt
+        because now resources/scripted/adoption01.dat passes.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement):
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement):
+        (WebCore::HTMLConstructionSite::insertHTMLElement):
+        (WebCore::HTMLConstructionSite::insertFormattingElement):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::insertForeignElement):
+        (WebCore::HTMLConstructionSite::createElementFromSavedToken):
+        (WebCore::HTMLConstructionSite::reconstructTheActiveFormattingElements):
+        * html/parser/HTMLConstructionSite.h:
+        (HTMLConstructionSite):
+        (WebCore::HTMLConstructionSite::currentElementRecord):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::ElementRecord::ElementRecord):
+        (WebCore::HTMLElementStack::ElementRecord::replaceElement):
+        (WebCore::HTMLElementStack::pushRootNode):
+        (WebCore::HTMLElementStack::pushHTMLHtmlElement):
+        (WebCore::HTMLElementStack::pushRootNodeCommon):
+        (WebCore::HTMLElementStack::pushHTMLHeadElement):
+        (WebCore::HTMLElementStack::pushHTMLBodyElement):
+        (WebCore::HTMLElementStack::push):
+        (WebCore::HTMLElementStack::insertAbove):
+        (WebCore::HTMLElementStack::pushCommon):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::ElementRecord::element):
+        (WebCore::HTMLElementStack::ElementRecord::node):
+        (WebCore::HTMLElementStack::ElementRecord::stackItem):
+        (ElementRecord):
+        (HTMLElementStack):
+        * html/parser/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::swapTo):
+        (WebCore::HTMLFormattingElementList::append):
+        * html/parser/HTMLFormattingElementList.h:
+        (WebCore::HTMLFormattingElementList::Entry::Entry):
+        (WebCore::HTMLFormattingElementList::Entry::isMarker):
+        (WebCore::HTMLFormattingElementList::Entry::stackItem):
+        (WebCore::HTMLFormattingElementList::Entry::element):
+        (WebCore::HTMLFormattingElementList::Entry::replaceElement):
+        (WebCore::HTMLFormattingElementList::Entry::operator==):
+        (WebCore::HTMLFormattingElementList::Entry::operator!=):
+        (Entry):
+        (HTMLFormattingElementList):
+        * html/parser/HTMLStackItem.h: Added.
+        (WebCore):
+        (HTMLStackItem):
+        (WebCore::HTMLStackItem::create):
+        (WebCore::HTMLStackItem::element):
+        (WebCore::HTMLStackItem::node):
+        (WebCore::HTMLStackItem::token):
+        (WebCore::HTMLStackItem::namespaceURI):
+        (WebCore::HTMLStackItem::HTMLStackItem):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2012-07-23  Andreas Kling  <kling@webkit.org>
 
         Report the extra memory used by immutable StylePropertySet objects.

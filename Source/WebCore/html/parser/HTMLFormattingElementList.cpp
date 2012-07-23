@@ -87,25 +87,25 @@ HTMLFormattingElementList::Bookmark HTMLFormattingElementList::bookmarkFor(Eleme
     return Bookmark(&at(index));
 }
 
-void HTMLFormattingElementList::swapTo(Element* oldElement, Element* newElement, const Bookmark& bookmark)
+void HTMLFormattingElementList::swapTo(Element* oldElement, PassRefPtr<HTMLStackItem> newItem, const Bookmark& bookmark)
 {
     ASSERT(contains(oldElement));
-    ASSERT(!contains(newElement));
+    ASSERT(!contains(newItem->element()));
     if (!bookmark.hasBeenMoved()) {
         ASSERT(bookmark.mark()->element() == oldElement);
-        bookmark.mark()->replaceElement(newElement);
+        bookmark.mark()->replaceElement(newItem);
         return;
     }
     size_t index = bookmark.mark() - first();
     ASSERT(index < size());
-    m_entries.insert(index + 1, newElement);
+    m_entries.insert(index + 1, newItem);
     remove(oldElement);
 }
 
-void HTMLFormattingElementList::append(Element* element)
+void HTMLFormattingElementList::append(PassRefPtr<HTMLStackItem> item)
 {
-    ensureNoahsArkCondition(element);
-    m_entries.append(element);
+    ensureNoahsArkCondition(item->element());
+    m_entries.append(item);
 }
 
 void HTMLFormattingElementList::remove(Element* element)

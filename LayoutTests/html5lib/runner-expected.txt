@@ -43,33 +43,6 @@ resources/tables01.dat: PASS
 
 resources/tricky01.dat: PASS
 
-resources/scripted/adoption01.dat:
-1
+resources/scripted/adoption01.dat: PASS
 
-Test 1 of 1 in resources/scripted/adoption01.dat failed. Input:
-<p><b id="A"><script>document.getElementById("A").id = "B"</script></p>TEXT</b>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         id="B"
-|         <script>
-|           "document.getElementById("A").id = "B""
-|     <b>
-|       id="B"
-|       "TEXT"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <p>
-|       <b>
-|         id="B"
-|         <script>
-|           "document.getElementById("A").id = "B""
-|     <b>
-|       id="A"
-|       "TEXT"
 resources/scripted/webkit01.dat: PASS

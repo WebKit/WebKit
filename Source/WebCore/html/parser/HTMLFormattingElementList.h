@@ -26,6 +26,7 @@
 #ifndef HTMLFormattingElementList_h
 #define HTMLFormattingElementList_h
 
+#include "HTMLStackItem.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -47,35 +48,35 @@ public:
     class Entry {
     public:
         // Inline because they're hot and Vector<T> uses them.
-        explicit Entry(Element* element)
-            : m_element(element)
+        explicit Entry(PassRefPtr<HTMLStackItem> item)
+            : m_item(item)
         {
-            ASSERT(element);
         }
         enum MarkerEntryType { MarkerEntry };
         Entry(MarkerEntryType)
-            : m_element(0)
+            : m_item(0)
         {
         }
         ~Entry() {}
 
-        bool isMarker() const { return !m_element; }
+        bool isMarker() const { return !m_item; }
 
+        PassRefPtr<HTMLStackItem> stackItem() const { return m_item; }
         Element* element() const
         {
-            // The fact that !m_element == isMarker() is an implementation detail
+            // The fact that !m_item == isMarker() is an implementation detail
             // callers should check isMarker() before calling element().
-            ASSERT(m_element);
-            return m_element.get();
+            ASSERT(m_item);
+            return m_item->element();
         }
-        void replaceElement(PassRefPtr<Element> element) { m_element = element; }
+        void replaceElement(PassRefPtr<HTMLStackItem> item) { m_item = item; }
 
         // Needed for use with Vector.  These are super-hot and must be inline.
-        bool operator==(Element* element) const { return m_element == element; }
-        bool operator!=(Element* element) const { return m_element != element; }
+        bool operator==(Element* element) const { return !m_item ? !element : m_item->element() == element; }
+        bool operator!=(Element* element) const { return !m_item ? !!element : m_item->element() != element; }
 
     private:
-        RefPtr<Element> m_element;
+        RefPtr<HTMLStackItem> m_item;
     };
 
     class Bookmark {
@@ -107,11 +108,11 @@ public:
 
     Entry* find(Element*);
     bool contains(Element*);
-    void append(Element*);
+    void append(PassRefPtr<HTMLStackItem>);
     void remove(Element*);
 
     Bookmark bookmarkFor(Element*);
-    void swapTo(Element* oldElement, Element* newElement, const Bookmark&);
+    void swapTo(Element* oldElement, PassRefPtr<HTMLStackItem> newItem, const Bookmark&);
 
     void appendMarker();
     // clearToLastMarker also clears the marker (per the HTML5 spec).

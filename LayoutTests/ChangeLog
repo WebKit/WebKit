@@ -1,3 +1,15 @@
+2012-07-23  Kwang Yul Seo  <skyul@company100.net>
+
+        Use the original token to create an element in "reconstruct the active formatting elements" and "call the adoption agency"
+        https://bugs.webkit.org/show_bug.cgi?id=91703
+
+        Reviewed by Adam Barth.
+
+        Updated test expectation for html5lib/runner-expected.txt
+        because now resources/scripted/adoption01.dat passes.
+
+        * html5lib/runner-expected.txt:
+
 2012-07-23  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt] svg/{in-html,overflow,repaint,wicd} needs update after new testfonts
