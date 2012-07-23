@@ -162,6 +162,8 @@ deps_os = {
   'mac': {
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),
+    'third_party/GTM':
+      From('chromium_deps', 'src/third_party/GTM'),
   },
   'unix': {
     # Linux, actually.
