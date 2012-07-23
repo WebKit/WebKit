@@ -1,3 +1,9 @@
+2012-07-23  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMAKE] Added missing RenderLayerFilterInfo.cpp to build system.
+
+        * CMakeLists.txt:
+
 2012-07-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r123281): childNodes sometimes returns wrong nodes
