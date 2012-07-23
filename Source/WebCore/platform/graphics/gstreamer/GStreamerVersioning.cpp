@@ -105,3 +105,12 @@ void setGstElementClassMetadata(GstElementClass* elementClass, const char* name,
     gst_element_class_set_details_simple(elementClass, name, longName, description, author);
 #endif
 }
+
+bool gstObjectIsFloating(GstObject* gstObject)
+{
+#ifdef GST_API_VERSION_1
+    return g_object_is_floating(G_OBJECT(gstObject));
+#else
+    return GST_OBJECT_IS_FLOATING(gstObject);
+#endif
+}

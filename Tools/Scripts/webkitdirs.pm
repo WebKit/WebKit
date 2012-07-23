@@ -2090,6 +2090,11 @@ sub buildAutotoolsProject($@)
     # Enable unstable features when building through build-webkit.
     push @buildArgs, "--enable-unstable-features";
 
+    # Enable upcoming GStreamer 1.0 build support through build-webkit.
+    if ($project eq 'WebKit') {
+        push @buildArgs, "--with-gstreamer=1.0";
+    }
+
     # We might need to update jhbuild dependencies.
     my $needUpdate = 0;
     if (jhbuildConfigurationChanged()) {
