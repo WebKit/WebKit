@@ -97,6 +97,33 @@ function runTest() {
         testPassed("Exception been thrown for numberOfOutputs >= 32.");
     }
 
+    try {
+        var splitternode = context.createChannelSplitter(32);
+        testPassed("AudioChannelSplitter created successfully with numberOfOutputs = 32.");
+        if (splitternode.numberOfOutputs === 32)
+            testPassed("AudioChannelSplitter has 32 outputs when it is created with numberOfOutputs = 32.");
+        else
+            testFailed("AudioChannelSplitter should have 32 outputs when it is created with numberOfOutputs = 32.");
+
+        if (splitternode.numberOfInputs === 1)
+            testPassed("AudioChannelSplitter has one input.");
+        else
+            testFailed("AudioChannelSplitter should have one input.");
+    } catch(e) {
+        testFailed("Failed to create AudioChannelSplitter with numberOfInputs = 32.");
+    }
+
+    try {
+        var splitternode = context.createChannelSplitter();
+        testPassed("AudioChannelSplitter created successfully with empty parameter.");
+        if (splitternode.numberOfOutputs === 6)
+            testPassed("AudioChannelSplitter has 6 outputs when it is created with empty parameter.");
+        else
+            testFailed("AudioChannelSplitter should have 6 outputs when it is created with empty parameter.");
+    } catch(e) {
+        testFailed("Failed to create AudioChannelSplitter with empty parameter.");
+    }
+
     // Create a stereo buffer, with all +1 values in left channel, all -1 in right channel.
     sourceBuffer = createStereoBufferWithDCOffset(lengthInSampleFrames, sampleRate, 1);
 

@@ -1,3 +1,17 @@
+2012-07-23  Li Yin  <li.yin@intel.com>
+
+        Improve AudioChannelSplitter test
+        https://bugs.webkit.org/show_bug.cgi?id=91962
+
+        Reviewed by Kentaro Hara.
+
+        Spec: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#AudioChannelSplitter-section
+        The numberOfOutputs parameter determines the number of outputs.
+        Values of up to 32 must be supported. If not specified, then 6 will be used.
+
+        * webaudio/audiochannelsplitter-expected.txt:
+        * webaudio/audiochannelsplitter.html:
+
 2012-07-22  Li Yin  <li.yin@intel.com>
 
         Improve BiquadFilterNode test case
