@@ -1,3 +1,15 @@
+2012-07-23  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Fix unit tests in debug mode after r123375
+        https://bugs.webkit.org/show_bug.cgi?id=92030
+
+        Reviewed by Adrienne Walker.
+
+        Fixed two unit tests that were causing debug assertions because
+        they gave calcDrawTransforms an empty sized root layer.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         Part 2 of: Implement sticky positioning

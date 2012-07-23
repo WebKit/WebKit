@@ -160,14 +160,12 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForNoOpLayer)
     child->addChild(grandChild);
 
     WebTransformationMatrix identityMatrix;
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(0, 0), false);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(0, 0), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(0, 0), false);
 
     executeCalculateDrawTransformsAndVisibility(parent.get());
 
-    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, parent->drawTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, parent->screenSpaceTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->screenSpaceTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, grandChild->drawTransform());
@@ -183,9 +181,11 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     // Case 1: setting the sublayer transform should not affect this layer's draw transform or screen-space transform.
     WebTransformationMatrix arbitraryTranslation;
     arbitraryTranslation.translate(10, 20);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, arbitraryTranslation, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(0, 0), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, arbitraryTranslation, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->drawTransform());
+    WebTransformationMatrix expectedDrawTransform = identityMatrix;
+    expectedDrawTransform.translate(50, 50);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedDrawTransform, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
 
     // Case 2: setting the bounds of the layer should result in a draw transform that translates to half the width and height.
