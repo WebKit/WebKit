@@ -1,3 +1,25 @@
+2012-07-23  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] dom/xhtml/level3/core rebaseline after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92028
+
+        Unreviewed.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/dom/xhtml/level3/core/documentgetinputencoding03-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/entitygetinputencoding02-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/entitygetxmlversion02-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodegetbaseuri05-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodegetbaseuri07-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodegetbaseuri09-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodegetbaseuri10-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodegetbaseuri11-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodegetbaseuri15-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodegetbaseuri17-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodegetbaseuri18-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodelookupnamespaceuri01-expected.txt:
+        * platform/qt/dom/xhtml/level3/core/nodelookupprefix19-expected.txt:
+
 2012-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         Part 2 of: Implement sticky positioning
