@@ -21,13 +21,19 @@
 
 #include "AboutTemplate.html.cpp"
 #include "CString.h"
+#include "CookieManager.h"
 #include "JSDOMWindow.h"
 #include "MemoryCache.h"
 #include "MemoryStatistics.h"
 #include "SurfacePool.h"
 #include "WebKitVersion.h"
 
+#include <BlackBerryPlatformClient.h>
+#include <BlackBerryPlatformLog.h>
+#include <BlackBerryPlatformMemory.h>
 #include <BlackBerryPlatformSettings.h>
+#include <BlackBerryPlatformWebKitCredits.h>
+#include <BuildInformation.h>
 #include <heap/Heap.h>
 #include <process.h>
 #include <runtime/JSGlobalData.h>
@@ -50,7 +56,7 @@ static String writeFeatures(const Vector<String>& trueList, const Vector<String>
     return ret;
 }
 
-template<class T> String numberToHTMLTr(const String& description, T number)
+template<class T> static String numberToHTMLTr(const String& description, T number)
 {
     return String("<tr><td>") + description + "</td><td>" + String::number(number) + "</td></tr>";
 }
@@ -60,7 +66,7 @@ template<> String numberToHTMLTr<bool>(const String& description, bool truth)
     return String("<tr><td>") + description + "</td><td>" + (truth?"true":"false") + "</td></tr>";
 }
 
-String configPage()
+static String configPage()
 {
     String page;
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
@@ -202,7 +208,7 @@ static void dumpJSCTypeCountSetToTableHTML(String& tableHTML, JSC::TypeCountSet*
         tableHTML += numberToHTMLTr(iter->first, iter->second);
 }
 
-String memoryPage()
+static String memoryPage()
 {
     String page;
 
@@ -255,6 +261,8 @@ String memoryPage()
     if (!stat(String::format("/proc/%u/as", getpid()).latin1().data(), &processInfo))
         page += numberToHTMLTr("Total mapped memory", processInfo.st_size);
 
+    page += numberToHTMLTr("System free memory", BlackBerry::Platform::systemFreeMemory());
+
     page += "</table></div><br>";
 
     page += "<div class='box'><div class='box-title'>JS engine memory usage</div><table class='fixed-table'><col width=75%><col width=25%>";
@@ -297,6 +305,113 @@ String memoryPage()
 
     page += "</body></html>";
     return page;
+}
+
+static String cachePage(String cacheCommand)
+{
+    String result;
+
+    result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>"));
+
+    BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
+    ASSERT(client);
+
+    if (cacheCommand.isEmpty())
+        result.append(String(client->generateHtmlFragmentForCacheKeys().data()));
+    else if (cacheCommand.startsWith("?query=", false)) {
+        std::string key(cacheCommand.substring(7).utf8().data()); // 7 is length of "query=".
+        result.append(String(key.data()));
+        result.append(String("<hr>"));
+        result.append(String(client->generateHtmlFragmentForCacheHeaders(key).data()));
+    }
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
+    else if (equalIgnoringCase(cacheCommand, "/disable")) {
+        client->setDiskCacheEnabled(false);
+        result.append("Http disk cache is disabled.");
+    } else if (equalIgnoringCase(cacheCommand, "/enable")) {
+        client->setDiskCacheEnabled(true);
+        result.append("Http disk cache is enabled.");
+    }
+#endif
+    else {
+        // Unknown cache command.
+        return String();
+    }
+
+    result.append(String("</body></html>"));
+
+    return result;
+}
+
+static String buildPage()
+{
+    String result;
+
+    result.append(writeHeader("Build"));
+    result.append(String("<div class='box'><div class='box-title'>Basic</div><table>"));
+    result.append(String("<tr><td>Built On:  </td><td>"));
+    result.append(String(BlackBerry::Platform::BUILDCOMPUTER));
+    result.append(String("</td></tr>"));
+    result.append(String("<tr><td>Build User:  </td><td>"));
+    result.append(String(BlackBerry::Platform::BUILDUSER));
+    result.append(String("</td></tr>"));
+    result.append(String("<tr><td>Build Time:  </td><td>"));
+    result.append(String(BlackBerry::Platform::BUILDTIME));
+    result.append(String("</table></div><br>"));
+    result.append(String(BlackBerry::Platform::BUILDINFO_WEBKIT));
+    result.append(String(BlackBerry::Platform::BUILDINFO_PLATFORM));
+    result.append(String(BlackBerry::Platform::BUILDINFO_LIBWEBVIEW));
+    result.append(String("</body></html>"));
+
+    return result;
+}
+
+static String creditsPage()
+{
+    String result;
+
+    result.append(writeHeader("Credits"));
+    result.append(String("<style> .about {padding:14px;} </style>"));
+    result.append(String(BlackBerry::Platform::WEBKITCREDITS));
+    result.append(String("</body></html>"));
+
+    return result;
+}
+
+static String cookiePage()
+{
+    String result;
+
+    result.append(String("<html><head><title>BlackBerry Browser cookie information</title></head><body>"));
+    result.append(cookieManager().generateHtmlFragmentForCookies());
+    result.append(String("</body></html>"));
+
+    return result;
+}
+
+String aboutData(String aboutWhat)
+{
+    if (equalIgnoringCase(aboutWhat, "credits"))
+        return creditsPage();
+
+    if (aboutWhat.startsWith("cache"))
+        return cachePage(aboutWhat.substring(5));
+
+    if (equalIgnoringCase(aboutWhat, "memory"))
+        return memoryPage();
+
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
+    if (equalIgnoringCase(aboutWhat, "cookie"))
+        return cookiePage();
+
+    if (BlackBerry::Platform::debugSetting() > 0 && equalIgnoringCase(aboutWhat, "build"))
+        return buildPage();
+
+    if (BlackBerry::Platform::debugSetting() > 0 && equalIgnoringCase(aboutWhat, "config"))
+        return configPage();
+#endif
+
+    return String();
 }
 
 } // namespace WebKit

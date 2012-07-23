@@ -97,7 +97,6 @@ public:
     bool handleMouseEvent(WebCore::PlatformMouseEvent&);
     bool handleWheelEvent(WebCore::PlatformWheelEvent&);
 
-    bool loadAbout(const char* aboutURL);
     void load(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally = false, bool forceDownload = false, const char* overrideContentType = "", const char* suggestedSaveName = "");
     void loadString(const char* string, const char* baseURL, const char* mimeType, const char* failingURL = 0);
     bool executeJavaScript(const char* script, JavaScriptDataType& returnType, WebString& returnValue);

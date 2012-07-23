@@ -24,8 +24,7 @@
 namespace BlackBerry {
 namespace WebKit {
 
-String configPage();
-String memoryPage();
+String aboutData(String aboutWhat);
 
 } // namespace WebKit
 } // namespace BlackBerry

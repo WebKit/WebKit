@@ -19,8 +19,6 @@
 #include "config.h"
 #include "WebPage.h"
 
-#include "AboutData.h"
-#include "AboutTemplate.html.cpp"
 #include "ApplicationCacheStorage.h"
 #include "AutofillManager.h"
 #include "BackForwardController.h"
@@ -157,8 +155,6 @@
 #include <BlackBerryPlatformMouseEvent.h>
 #include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformSettings.h>
-#include <BlackBerryPlatformWebKitCredits.h>
-#include <BuildInformation.h>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSStringRef.h>
@@ -619,84 +615,6 @@ private:
     }
 };
 
-bool WebPagePrivate::loadAbout(const char* aboutURL)
-{
-    if (strncasecmp(aboutURL, "about:", 6))
-        return false;
-
-    // First 6 chars are "about:".
-    String aboutWhat(aboutURL + 6);
-
-    String result;
-
-    if (equalIgnoringCase(aboutWhat, "credits")) {
-        result.append(writeHeader("Credits"));
-        result.append(String("<style> .about {padding:14px;} </style>"));
-        result.append(String(BlackBerry::Platform::WEBKITCREDITS));
-        result.append(String("</body></html>"));
-    } else if (aboutWhat.startsWith("cache?query=", false)) {
-        BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
-        ASSERT(client);
-        std::string key(aboutWhat.substring(12, aboutWhat.length() - 12).utf8().data()); // 12 is length of "cache?query=".
-        result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>"));
-        result.append(String(key.data()));
-        result.append(String("<hr>"));
-        result.append(String(client->generateHtmlFragmentForCacheHeaders(key).data()));
-        result.append(String("</body></html>"));
-    } else if (equalIgnoringCase(aboutWhat, "cache")) {
-        BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
-        ASSERT(client);
-        result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>"));
-        result.append(String(client->generateHtmlFragmentForCacheKeys().data()));
-        result.append(String("</body></html>"));
-#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
-    } else if (equalIgnoringCase(aboutWhat, "cache/disable")) {
-        BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
-        ASSERT(client);
-        client->setDiskCacheEnabled(false);
-        result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>Http disk cache is disabled.</body></html>"));
-    } else if (equalIgnoringCase(aboutWhat, "cache/enable")) {
-        BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
-        ASSERT(client);
-        client->setDiskCacheEnabled(true);
-        result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>Http disk cache is enabled.</body></html>"));
-    } else if (equalIgnoringCase(aboutWhat, "cookie")) {
-        result.append(String("<html><head><title>BlackBerry Browser cookie information</title></head><body>"));
-        result.append(cookieManager().generateHtmlFragmentForCookies());
-        result.append(String("</body></html>"));
-    } else if (equalIgnoringCase(aboutWhat, "version")) {
-        result.append(writeHeader("Version"));
-        result.append(String("<div class='box'><div class='box-title'>Build Time</div><br>"));
-        result.append(String(BlackBerry::Platform::BUILDTIME));
-        result.append(String("</div><br><div style='font-size:10px;text-align:center;'>Also see the <A href='about:build'>build information</A>.</body></html>"));
-    } else if (BlackBerry::Platform::debugSetting() > 0 && equalIgnoringCase(aboutWhat, "config")) {
-        result = configPage();
-    } else if (BlackBerry::Platform::debugSetting() > 0 && equalIgnoringCase(aboutWhat, "build")) {
-        result.append(writeHeader("Build"));
-        result.append(String("<div class='box'><div class='box-title'>Basic</div><table>"));
-        result.append(String("<tr><td>Built On:  </td><td>"));
-        result.append(String(BlackBerry::Platform::BUILDCOMPUTER));
-        result.append(String("</td></tr>"));
-        result.append(String("<tr><td>Build User:  </td><td>"));
-        result.append(String(BlackBerry::Platform::BUILDUSER));
-        result.append(String("</td></tr>"));
-        result.append(String("<tr><td>Build Time:  </td><td>"));
-        result.append(String(BlackBerry::Platform::BUILDTIME));
-        result.append(String("</table></div><br>"));
-        result.append(String(BlackBerry::Platform::BUILDINFO_WEBKIT));
-        result.append(String(BlackBerry::Platform::BUILDINFO_PLATFORM));
-        result.append(String(BlackBerry::Platform::BUILDINFO_LIBWEBVIEW));
-        result.append(String("</body></html>"));
-    } else if (equalIgnoringCase(aboutWhat, "memory")) {
-        result = memoryPage();
-#endif
-    } else
-        return false;
-
-    loadString(result.latin1().data(), aboutURL, "text/html");
-    return true;
-}
-
 void WebPagePrivate::load(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy cachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally, bool forceDownload, const char* overrideContentType, const char* suggestedSaveName)
 {
     stopCurrentLoad();
@@ -747,8 +665,6 @@ void WebPagePrivate::load(const char* url, const char* networkToken, const char*
 
 void WebPage::load(const char* url, const char* networkToken, bool isInitial)
 {
-    if (d->loadAbout(url))
-        return;
     d->load(url, networkToken, "GET", Platform::NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, isInitial, false);
 }
 

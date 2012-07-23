@@ -19,6 +19,7 @@
 #include "config.h"
 #include "FrameLoaderClientBlackBerry.h"
 
+#include "AboutData.h"
 #include "AutofillManager.h"
 #include "BackForwardController.h"
 #include "BackForwardListImpl.h"
@@ -386,9 +387,21 @@ PassRefPtr<DocumentLoader> FrameLoaderClientBlackBerry::createDocumentLoader(con
             newRequest.setToken(originalRequest.token());
     }
 
+    SubstituteData substituteDataLocal = substituteData;
+    if (isMainFrame() && request.url().protocolIs("about")) {
+        // The first 6 letters is "about:"
+        String aboutWhat = request.url().string().substring(6);
+        String source = aboutData(aboutWhat);
+        if (!source.isEmpty()) {
+            // Always ignore existing substitute data if any.
+            WTF::RefPtr<SharedBuffer> buffer = SharedBuffer::create(source.is8Bit() ? reinterpret_cast<const char*>(source.characters8()) : source.latin1().data(), source.length());
+            substituteDataLocal = SubstituteData(buffer, "text/html", "latin1", KURL());
+        }
+    }
+
     // FIXME: This should probably be shared.
-    RefPtr<DocumentLoader> loader = DocumentLoader::create(newRequest, substituteData);
-    if (substituteData.isValid())
+    RefPtr<DocumentLoader> loader = DocumentLoader::create(newRequest, substituteDataLocal);
+    if (substituteDataLocal.isValid())
         loader->setDeferMainResourceDataLoad(false);
     return loader.release();
 }
