@@ -1,5 +1,21 @@
 2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] media/controls-styling.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=91984
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline media controls styling tests now that the
+        EFL port properly ensures that overriding CSS
+        properties won't affect the media controls.
+
+        * platform/efl/media/controls-styling-expected.png:
+        * platform/efl/media/controls-styling-expected.txt:
+        * platform/efl/media/controls-styling-strict-expected.png:
+        * platform/efl/media/controls-styling-strict-expected.txt:
+
+2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] fast/layers/video-layer.html needs rebasing after r123320
         https://bugs.webkit.org/show_bug.cgi?id=91978
 

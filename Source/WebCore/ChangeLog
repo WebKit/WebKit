@@ -1,3 +1,21 @@
+2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] media/controls-styling.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=91984
+
+        Reviewed by Eric Carlson.
+
+        Make sure that the CSS properties letter-spacing, word-spacing,
+        line-height, text-transform, text-indent, text-shadow,
+        text-decoration and color do not affect the media element controls,
+        that display text.
+
+        No new tests. Already tested by media/controls-styling.html and
+        media/controls-styling-strict.html
+
+        * css/mediaControlsEfl.css:
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+
 2012-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
