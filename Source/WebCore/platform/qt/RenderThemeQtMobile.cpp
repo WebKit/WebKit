@@ -202,6 +202,12 @@ QSharedPointer<StylePainter> RenderThemeQtMobile::getStylePainter(const PaintInf
     return QSharedPointer<StylePainter>(new StylePainterMobile(this, pi));
 }
 
+QPalette RenderThemeQtMobile::colorPalette() const
+{
+    static QPalette lightGrayPalette(Qt::lightGray);
+    return lightGrayPalette;
+}
+
 StylePainterMobile::StylePainterMobile(RenderThemeQtMobile* theme, const PaintInfo& paintInfo)
     : StylePainter(theme, paintInfo)
 {
@@ -894,13 +900,6 @@ bool RenderThemeQtMobile::checkMultiple(RenderObject* o) const
 {
     HTMLSelectElement* select = o ? static_cast<HTMLSelectElement*>(o->node()) : 0;
     return select ? select->multiple() : false;
-}
-
-void RenderThemeQtMobile::setPaletteFromPageClientIfExists(QPalette& palette) const
-{
-    static QPalette lightGrayPalette(Qt::lightGray);
-    palette = lightGrayPalette;
-    return;
 }
 
 void RenderThemeQtMobile::adjustSliderThumbSize(RenderStyle* style, Element* element) const

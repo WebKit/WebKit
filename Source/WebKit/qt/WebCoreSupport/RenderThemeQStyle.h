@@ -97,6 +97,8 @@ protected:
 
     virtual void setPopupPadding(RenderStyle*) const;
 
+    virtual QPalette colorPalette() const;
+
 private:
     ControlPart initializeCommonQStyleOptions(QStyleOption&, RenderObject*) const;
 
@@ -105,6 +107,8 @@ private:
     int findFrameLineWidth(QStyle*) const;
 
     QStyle* fallbackStyle() const;
+
+    void setPaletteFromPageClientIfExists(QPalette&) const;
 
 #ifdef Q_OS_MAC
     int m_buttonFontPixelSize;

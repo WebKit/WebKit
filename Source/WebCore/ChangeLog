@@ -1,3 +1,41 @@
+2012-07-23  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] RenderThemeQtMobile highlight colors are not being used
+        https://bugs.webkit.org/show_bug.cgi?id=92004
+
+        Reviewed by Noam Rosenthal.
+
+        The issue here is that setPaletteFromPageClientIfExists() is being used as a
+        virtual function, but it isn't, so when platformActiveSelectionBackgroundColor()
+        runs, it doesn't pick the right palette.
+
+        Besides fixing this virtual behavior, the patch changes the structure a bit,
+        because setPaletteFromPageClientIfExists() was being "overriden" in mobile theme
+        to set the palette, which isn't exactly what the function name says.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeQt::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeQt::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeQt::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeQt::platformFocusRingColor):
+        (WebCore::RenderThemeQt::systemColor):
+        (WebCore::RenderThemeQt::getMediaControlForegroundColor):
+        (WebCore::RenderThemeQt::paintMediaVolumeSliderTrack):
+        Use the virtual colorPalette() to get the palette.
+
+        (WebCore::RenderThemeQt::colorPalette):
+        (WebCore): Removed the code for getting the page client from here since it is
+        used only by the QStyle variant.
+
+        * platform/qt/RenderThemeQt.h:
+        (RenderThemeQt):
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::RenderThemeQtMobile::colorPalette):
+        (WebCore):
+        * platform/qt/RenderThemeQtMobile.h:
+        (RenderThemeQtMobile):
+
 2012-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         Part 1 of: Implement sticky positioning

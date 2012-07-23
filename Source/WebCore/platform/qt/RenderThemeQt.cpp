@@ -48,7 +48,6 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PaintInfo.h"
-#include "QWebPageClient.h"
 #include "RenderBox.h"
 #if ENABLE(PROGRESS_ELEMENT)
 #include "RenderProgress.h"
@@ -235,37 +234,27 @@ void RenderThemeQt::adjustRepaintRect(const RenderObject* o, IntRect& rect)
 
 Color RenderThemeQt::platformActiveSelectionBackgroundColor() const
 {
-    QPalette pal = QGuiApplication::palette();
-    setPaletteFromPageClientIfExists(pal);
-    return pal.brush(QPalette::Active, QPalette::Highlight).color();
+    return colorPalette().brush(QPalette::Active, QPalette::Highlight).color();
 }
 
 Color RenderThemeQt::platformInactiveSelectionBackgroundColor() const
 {
-    QPalette pal = QGuiApplication::palette();
-    setPaletteFromPageClientIfExists(pal);
-    return pal.brush(QPalette::Inactive, QPalette::Highlight).color();
+    return colorPalette().brush(QPalette::Inactive, QPalette::Highlight).color();
 }
 
 Color RenderThemeQt::platformActiveSelectionForegroundColor() const
 {
-    QPalette pal = QGuiApplication::palette();
-    setPaletteFromPageClientIfExists(pal);
-    return pal.brush(QPalette::Active, QPalette::HighlightedText).color();
+    return colorPalette().brush(QPalette::Active, QPalette::HighlightedText).color();
 }
 
 Color RenderThemeQt::platformInactiveSelectionForegroundColor() const
 {
-    QPalette pal = QGuiApplication::palette();
-    setPaletteFromPageClientIfExists(pal);
-    return pal.brush(QPalette::Inactive, QPalette::HighlightedText).color();
+    return colorPalette().brush(QPalette::Inactive, QPalette::HighlightedText).color();
 }
 
 Color RenderThemeQt::platformFocusRingColor() const
 {
-    QPalette pal = QGuiApplication::palette();
-    setPaletteFromPageClientIfExists(pal);
-    return pal.brush(QPalette::Active, QPalette::Highlight).color();
+    return colorPalette().brush(QPalette::Active, QPalette::Highlight).color();
 }
 
 void RenderThemeQt::systemFont(int, FontDescription&) const
@@ -275,8 +264,7 @@ void RenderThemeQt::systemFont(int, FontDescription&) const
 
 Color RenderThemeQt::systemColor(int cssValueId) const
 {
-    QPalette pal = QGuiApplication::palette();
-    setPaletteFromPageClientIfExists(pal);
+    QPalette pal = colorPalette();
     switch (cssValueId) {
     case CSSValueButtontext:
         return pal.brush(QPalette::Active, QPalette::ButtonText).color();
@@ -456,6 +444,11 @@ IntRect RenderThemeQt::convertToPaintingRect(RenderObject* inputRenderer, const 
     return partRect;
 }
 
+QPalette RenderThemeQt::colorPalette() const
+{
+    return QGuiApplication::palette();
+}
+
 bool RenderThemeQt::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& pi,
                                                  const IntRect& r)
 {
@@ -539,23 +532,6 @@ bool RenderThemeQt::supportsFocus(ControlPart appearance) const
     }
 }
 
-void RenderThemeQt::setPaletteFromPageClientIfExists(QPalette& palette) const
-{
-    // If the webview has a custom palette, use it
-    if (!m_page)
-        return;
-    Chrome* chrome = m_page->chrome();
-    if (!chrome)
-        return;
-    ChromeClient* chromeClient = chrome->client();
-    if (!chromeClient)
-        return;
-    QWebPageClient* pageClient = chromeClient->platformPageClient();
-    if (!pageClient)
-        return;
-    palette = pageClient->palette();
-}
-
 #if ENABLE(VIDEO)
 
 String RenderThemeQt::extraMediaControlsStyleSheet()
@@ -620,11 +596,8 @@ QColor RenderThemeQt::getMediaControlForegroundColor(RenderObject* o) const
     if (o->node()->active())
         fgColor = fgColor.lighter();
 
-    if (!mediaElementCanPlay(o)) {
-        QPalette pal = QGuiApplication::palette();
-        setPaletteFromPageClientIfExists(pal);
-        fgColor = pal.brush(QPalette::Disabled, QPalette::Text).color();
-    }
+    if (!mediaElementCanPlay(o))
+        fgColor = colorPalette().brush(QPalette::Disabled, QPalette::Text).color();
 
     return fgColor;
 }
@@ -759,9 +732,7 @@ bool RenderThemeQt::paintMediaVolumeSliderTrack(RenderObject *o, const PaintInfo
     int width = b.width();
     int height = b.height();
 
-    // Get the scale color from the page client
-    QPalette pal = QGuiApplication::palette();
-    setPaletteFromPageClientIfExists(pal);
+    QPalette pal = colorPalette();
     const QColor highlightText = pal.brush(QPalette::Active, QPalette::HighlightedText).color();
     const QColor scaleColor(highlightText.red(), highlightText.green(), highlightText.blue(), mediaControlsBaselineOpacity() * 255);
 

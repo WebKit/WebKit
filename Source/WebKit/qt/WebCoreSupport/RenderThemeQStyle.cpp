@@ -161,6 +161,20 @@ QStyle* RenderThemeQStyle::fallbackStyle() const
     return (m_fallbackStyle) ? m_fallbackStyle : QApplication::style();
 }
 
+void RenderThemeQStyle::setPaletteFromPageClientIfExists(QPalette& palette) const
+{
+    if (!m_page)
+        return;
+
+    ASSERT(m_page->chrome());
+    ChromeClient* chromeClient = m_page->chrome()->client();
+    if (!chromeClient)
+        return;
+
+    if (QWebPageClient* pageClient = chromeClient->platformPageClient())
+        palette = pageClient->palette();
+}
+
 QStyle* RenderThemeQStyle::qStyle() const
 {
     if (m_page) {
@@ -432,6 +446,12 @@ void RenderThemeQStyle::setPopupPadding(RenderStyle* style) const
     style->setPaddingBottom(Length(2, Fixed));
 }
 
+QPalette RenderThemeQStyle::colorPalette() const
+{
+    QPalette palette = RenderThemeQt::colorPalette();
+    setPaletteFromPageClientIfExists(palette);
+    return palette;
+}
 
 bool RenderThemeQStyle::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {

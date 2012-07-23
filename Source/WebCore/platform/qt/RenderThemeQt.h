@@ -25,6 +25,7 @@
 #include "RenderTheme.h"
 
 #include <QBrush>
+#include <QPalette>
 #include <QSharedPointer>
 #include <QString>
 
@@ -164,8 +165,6 @@ protected:
 
     virtual QRect inflateButtonRect(const QRect& originalRect) const;
 
-    void setPaletteFromPageClientIfExists(QPalette&) const;
-
     virtual void setPopupPadding(RenderStyle*) const = 0;
 
     virtual QSharedPointer<StylePainter> getStylePainter(const PaintInfo&) = 0;
@@ -173,6 +172,8 @@ protected:
     bool supportsFocus(ControlPart) const;
 
     IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, IntRect partRect, const IntRect& localOffset) const;
+
+    virtual QPalette colorPalette() const;
 
     Page* m_page;
 
