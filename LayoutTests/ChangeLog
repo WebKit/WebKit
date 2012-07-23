@@ -1,3 +1,9 @@
+2012-07-23  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change to ignore DEBUG failures for policy-ignore-crash.php.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123362.
