@@ -48,7 +48,7 @@ namespace WebCore {
         virtual const AtomicString& interfaceName() const;
 
     private:
-        SharedWorker(ScriptExecutionContext*);
+        explicit SharedWorker(ScriptExecutionContext*);
 
         virtual SharedWorker* toSharedWorker() { return this; }
 

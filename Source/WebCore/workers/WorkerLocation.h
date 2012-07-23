@@ -60,7 +60,7 @@ namespace WebCore {
         String toString() const { return href(); }
 
     private:
-        WorkerLocation(const KURL& url) : m_url(url) { }
+        explicit WorkerLocation(const KURL& url) : m_url(url) { }
 
         KURL m_url;
     };

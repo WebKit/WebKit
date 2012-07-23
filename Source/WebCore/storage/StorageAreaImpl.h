@@ -70,7 +70,7 @@ namespace WebCore {
 
     private:
         StorageAreaImpl(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
-        StorageAreaImpl(StorageAreaImpl*);
+        explicit StorageAreaImpl(StorageAreaImpl*);
 
         void blockUntilImportComplete() const;
         void closeDatabaseTimerFired(Timer<StorageAreaImpl>*);

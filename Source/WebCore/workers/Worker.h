@@ -70,7 +70,7 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
     private:
-        Worker(ScriptExecutionContext*);
+        explicit Worker(ScriptExecutionContext*);
 
         // WorkerScriptLoaderClient callbacks
         virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&);

@@ -78,7 +78,7 @@ public:
     void setStorageDatabaseIdleInterval(double interval) { m_StorageDatabaseIdleInterval = interval; }
 
 private:
-    StorageTracker(const String& storagePath);
+    explicit StorageTracker(const String& storagePath);
     static void scheduleTask(void*);
 
     void internalInitialize();

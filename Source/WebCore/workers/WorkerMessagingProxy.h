@@ -49,7 +49,7 @@ namespace WebCore {
     class WorkerMessagingProxy : public WorkerContextProxy, public WorkerObjectProxy, public WorkerLoaderProxy {
         WTF_MAKE_NONCOPYABLE(WorkerMessagingProxy); WTF_MAKE_FAST_ALLOCATED;
     public:
-        WorkerMessagingProxy(Worker*);
+        explicit WorkerMessagingProxy(Worker*);
 
         // Implementations of WorkerContextProxy.
         // (Only use these methods in the worker object thread.)

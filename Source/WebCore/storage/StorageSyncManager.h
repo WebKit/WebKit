@@ -50,7 +50,7 @@ namespace WebCore {
         void close();
 
     private:
-        StorageSyncManager(const String& path);
+        explicit StorageSyncManager(const String& path);
 
         OwnPtr<StorageThread> m_thread;
 

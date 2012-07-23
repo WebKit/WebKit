@@ -54,7 +54,7 @@ namespace WebCore {
         static const unsigned noQuota = UINT_MAX;
 
     private:
-        StorageMap(unsigned quota);
+        explicit StorageMap(unsigned quota);
         PassRefPtr<StorageMap> copy();
         void invalidateIterator();
         void setIteratorToIndex(unsigned);

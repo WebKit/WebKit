@@ -58,7 +58,7 @@ namespace WebCore {
         StorageTask(Type, StorageThread*);
         StorageTask(Type, const String& originIdentifier);
         StorageTask(Type, const String& originIdentifier, const String& databaseFilename);
-        StorageTask(Type);
+        explicit StorageTask(Type);
 
         Type m_type;
         StorageAreaSync* m_area;
