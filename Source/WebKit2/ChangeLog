@@ -1,3 +1,56 @@
+2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add request manager client
+        https://bugs.webkit.org/show_bug.cgi?id=91193
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a URL request manager client and attach it
+        to the Ewk_Context.
+
+        The client application can now register a URL scheme
+        via the Ewk_Context API and provide a callback handler
+        that will get called whenever a URL request with this
+        scheme is made.
+
+        A new Ewk_Url_Scheme_Request type is introduced to
+        provide information about the request to the client
+        and to allow the client to finish it by setting its
+        contents.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Url_Scheme_Handler):
+        (_Ewk_Url_Scheme_Handler::_Ewk_Url_Scheme_Handler):
+        (_Ewk_Context):
+        (_Ewk_Context::_Ewk_Context):
+        (ewk_context_request_manager_get):
+        (ewk_context_url_scheme_request_received):
+        (createDefaultEwkContext):
+        (ewk_context_uri_scheme_register):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_context_request_manager_client.cpp: Added.
+        (toEwkContext):
+        (didReceiveURIRequest):
+        (ewk_context_request_manager_client_attach):
+        * UIProcess/API/efl/ewk_context_request_manager_client_private.h: Added.
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp: Added.
+        (_Ewk_Url_Scheme_Request):
+        (_Ewk_Url_Scheme_Request::_Ewk_Url_Scheme_Request):
+        (_Ewk_Url_Scheme_Request::~_Ewk_Url_Scheme_Request):
+        (ewk_url_scheme_request_ref):
+        (ewk_url_scheme_request_unref):
+        (ewk_url_scheme_request_scheme_get):
+        (ewk_url_scheme_request_url_get):
+        (ewk_url_scheme_request_path_get):
+        (ewk_url_scheme_request_id_get):
+        (ewk_url_scheme_request_finish):
+        (ewk_url_scheme_request_new):
+        * UIProcess/API/efl/ewk_url_scheme_request.h: Added.
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h: Added.
+
 2012-07-23  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL][WK2] ProcessExecutablePath is required
