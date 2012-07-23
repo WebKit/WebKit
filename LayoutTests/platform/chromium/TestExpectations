@@ -3642,3 +3642,4 @@ BUGWK91811 : media/media-document-audio-repaint.html = IMAGE+TEXT
 // Layout test fails due to r147845.
 BUGCR68648 : http/tests/multipart/policy-ignore-crash.php = TEXT
 
+BUGWK92019 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
