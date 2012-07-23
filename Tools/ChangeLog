@@ -1,3 +1,15 @@
+2012-07-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123339.
+        http://trac.webkit.org/changeset/123339
+        https://bugs.webkit.org/show_bug.cgi?id=92006
+
+        massive media tests failure (Requested by philn on #webkit).
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+        * gtk/jhbuild.modules:
+
 2012-07-23  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Clean up the MockWebKitPlatformSupport object at shutdown

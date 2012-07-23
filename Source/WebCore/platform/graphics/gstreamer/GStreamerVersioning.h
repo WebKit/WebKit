@@ -32,5 +32,4 @@ GstCaps* webkitGstGetPadCaps(GstPad*);
 bool getVideoSizeAndFormatFromCaps(GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride);
 GstBuffer* createGstBuffer(GstBuffer*);
 void setGstElementClassMetadata(GstElementClass*, const char* name, const char* longName, const char* description, const char* author);
-bool gstObjectIsFloating(GstObject*);
 #endif // GStreamerVersioning_h
