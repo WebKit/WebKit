@@ -650,7 +650,6 @@ svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1.svg
 svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2.svg
 svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg
 svg/zoom/page/absolute-sized-document-scrollbars.svg
-svg/zoom/page/zoom-foreign-content.svg
 tables/mozilla/bugs/bug101674.html
 tables/mozilla/bugs/bug113235-3.html
 tables/mozilla/bugs/bug11944.html

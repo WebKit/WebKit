@@ -1,3 +1,62 @@
+2012-07-23  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt] svg/zoom needs update after new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=92007
+
+        Reviewed by Alexis Menard.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Removed.
+        * platform/qt-5.0/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Removed.
+        * platform/qt/Skipped:
+        * platform/qt/svg/zoom/page/absolute-sized-document-no-scrollbars-expected.png: Added.
+        * platform/qt/svg/zoom/page/absolute-sized-document-scrollbars-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-background-image-tiled-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-background-images-expected.png:
+        * platform/qt/svg/zoom/page/zoom-background-images-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-foreign-content-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/qt/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-hixie-mixed-008-expected.png:
+        * platform/qt/svg/zoom/page/zoom-hixie-mixed-008-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-hixie-rendering-model-004-expected.png:
+        * platform/qt/svg/zoom/page/zoom-hixie-rendering-model-004-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/qt/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/qt/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png:
+        * platform/qt/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-float-border-padding-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-float-border-padding-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/qt/svg/zoom/text/absolute-sized-document-no-scrollbars-expected.png: Added.
+        * platform/qt/svg/zoom/text/absolute-sized-document-scrollbars-expected.png: Added.
+        * platform/qt/svg/zoom/text/relative-sized-document-scrollbars-expected.png: Added.
+        * platform/qt/svg/zoom/text/zoom-foreignObject-expected.png:
+        * platform/qt/svg/zoom/text/zoom-foreignObject-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-008-expected.png:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-008-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-009-expected.png:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-009-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-hixie-rendering-model-004-expected.png:
+        * platform/qt/svg/zoom/text/zoom-hixie-rendering-model-004-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+        * platform/qt/svg/zoom/text/zoom-svg-float-border-padding-expected.txt:
+
 2012-07-23  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations change to ignore DEBUG failures for policy-ignore-crash.php.
