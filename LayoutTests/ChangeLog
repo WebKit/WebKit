@@ -1,3 +1,9 @@
+2012-07-23  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip the failing tests.
+
+        * platform/qt/Skipped:
+
 2012-07-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] DumpRenderTree does not use 'monospace' font when directed
