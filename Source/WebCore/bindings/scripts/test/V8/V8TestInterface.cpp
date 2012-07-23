@@ -50,6 +50,38 @@ template <typename T> void V8_USE(T) { }
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
+static v8::Handle<v8::Value> supplementalStaticReadOnlyAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestInterface.supplementalStaticReadOnlyAttr._get");
+    return v8Integer(TestSupplemental::supplementalStaticReadOnlyAttr(), info.GetIsolate());
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
+static v8::Handle<v8::Value> supplementalStaticAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestInterface.supplementalStaticAttr._get");
+    return v8String(TestSupplemental::supplementalStaticAttr(), info.GetIsolate());
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
+static void supplementalStaticAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestInterface.supplementalStaticAttr._set");
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
+    TestSupplemental::setSupplementalStaticAttr(v);
+    return;
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
 static v8::Handle<v8::Value> supplementalStr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestInterface.supplementalStr1._get");
@@ -159,6 +191,14 @@ static v8::Handle<v8::Value> supplementalMethod4Callback(const v8::Arguments& ar
 } // namespace TestInterfaceV8Internal
 
 static const BatchedAttribute TestInterfaceAttrs[] = {
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    // Attribute 'supplementalStaticReadOnlyAttr' (Type: 'readonly attribute' ExtAttr: 'Conditional ImplementedBy')
+    {"supplementalStaticReadOnlyAttr", TestInterfaceV8Internal::supplementalStaticReadOnlyAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    // Attribute 'supplementalStaticAttr' (Type: 'attribute' ExtAttr: 'Conditional ImplementedBy')
+    {"supplementalStaticAttr", TestInterfaceV8Internal::supplementalStaticAttrAttrGetter, TestInterfaceV8Internal::supplementalStaticAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
 #if ENABLE(Condition11) || ENABLE(Condition12)
     // Attribute 'supplementalStr1' (Type: 'readonly attribute' ExtAttr: 'Conditional ImplementedBy')
     {"supplementalStr1", TestInterfaceV8Internal::supplementalStr1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},

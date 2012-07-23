@@ -170,6 +170,13 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplemental
 // Attributes
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+JSC::JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+JSC::JSValue jsTestInterfaceConstructorSupplementalStaticAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestInterfaceConstructorSupplementalStaticAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::JSValue jsTestInterfaceSupplementalStr1(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)

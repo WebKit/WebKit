@@ -109,6 +109,26 @@ static v8::Handle<v8::Value> readOnlyTestObjAttrAttrGetter(v8::Local<v8::String>
     return wrapper;
 }
 
+static v8::Handle<v8::Value> staticReadOnlyIntAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.staticReadOnlyIntAttr._get");
+    return v8Integer(TestObj::staticReadOnlyIntAttr(), info.GetIsolate());
+}
+
+static v8::Handle<v8::Value> staticStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.staticStringAttr._get");
+    return v8String(TestObj::staticStringAttr(), info.GetIsolate());
+}
+
+static void staticStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.staticStringAttr._set");
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
+    TestObj::setStaticStringAttr(v);
+    return;
+}
+
 static v8::Handle<v8::Value> shortAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.shortAttr._get");
@@ -1852,6 +1872,10 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"readOnlyStringAttr", TestObjV8Internal::readOnlyStringAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'readOnlyTestObjAttr' (Type: 'readonly attribute' ExtAttr: '')
     {"readOnlyTestObjAttr", TestObjV8Internal::readOnlyTestObjAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'staticReadOnlyIntAttr' (Type: 'readonly attribute' ExtAttr: '')
+    {"staticReadOnlyIntAttr", TestObjV8Internal::staticReadOnlyIntAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'staticStringAttr' (Type: 'attribute' ExtAttr: '')
+    {"staticStringAttr", TestObjV8Internal::staticStringAttrAttrGetter, TestObjV8Internal::staticStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'shortAttr' (Type: 'attribute' ExtAttr: '')
     {"shortAttr", TestObjV8Internal::shortAttrAttrGetter, TestObjV8Internal::shortAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'unsignedShortAttr' (Type: 'attribute' ExtAttr: '')

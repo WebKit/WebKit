@@ -81,12 +81,18 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
     { "SUPPLEMENTALCONSTANT2", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSUPPLEMENTALCONSTANT2), (intptr_t)0, NoIntrinsic },
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
+    { "supplementalStaticReadOnlyAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr), (intptr_t)0, NoIntrinsic },
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "supplementalStaticAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceConstructorSupplementalStaticAttr), (intptr_t)setJSTestInterfaceConstructorSupplementalStaticAttr, NoIntrinsic },
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalMethod4", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestInterfaceConstructorFunctionSupplementalMethod4), (intptr_t)0, NoIntrinsic },
 #endif
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestInterfaceConstructorTable = { 4, 3, JSTestInterfaceConstructorTableValues, 0 };
+static const HashTable JSTestInterfaceConstructorTable = { 5, 3, JSTestInterfaceConstructorTableValues, 0 };
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 COMPILE_ASSERT(1 == TestSupplemental::SUPPLEMENTALCONSTANT1, TestInterfaceEnumSUPPLEMENTALCONSTANT1IsWrongUseDoNotCheckConstants);
@@ -236,6 +242,30 @@ bool JSTestInterface::getOwnPropertyDescriptor(JSObject* object, ExecState* exec
 }
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec, JSValue, PropertyName)
+{
+    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return jsUndefined();
+    JSC::JSValue result = jsNumber(TestInterface::supplementalStaticReadOnlyAttr(scriptContext));
+    return result;
+}
+
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+JSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSValue, PropertyName)
+{
+    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return jsUndefined();
+    JSC::JSValue result = jsString(exec, TestInterface::supplementalStaticAttr(scriptContext));
+    return result;
+}
+
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSValue jsTestInterfaceSupplementalStr1(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(asObject(slotBase));
@@ -294,6 +324,17 @@ void JSTestInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyNa
         return;
     lookupPut<JSTestInterface, Base>(exec, propertyName, value, &JSTestInterfaceTable, thisObject, slot);
 }
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+void setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSObject*, JSValue value)
+{
+    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return;
+    TestInterface::setSupplementalStaticAttr(scriptContext, ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
+}
+
+#endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, JSValue value)

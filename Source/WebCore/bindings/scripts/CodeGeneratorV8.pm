@@ -892,9 +892,11 @@ END
         return value;
 END
         }
-        push(@implContentDecls, <<END);
+        if (!$attribute->isStatic) {
+            push(@implContentDecls, <<END);
     ${implClassName}* imp = V8${implClassName}::toNative(info.Holder());
 END
+        }
     }
 
     # Generate security checks if necessary
@@ -917,8 +919,10 @@ END
         if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
             my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
             AddToImplIncludes("${implementedBy}.h");
-            unshift(@arguments, "imp");
+            unshift(@arguments, "imp") if !$attribute->isStatic;
             $functionName = "${implementedBy}::${functionName}";
+        } elsif ($attribute->isStatic) {
+            $functionName = "${implClassName}::${functionName}";
         } else {
             $functionName = "imp->${functionName}";
         }
@@ -1169,9 +1173,11 @@ END
             # Skip the rest of the function!
         }
 
-        push(@implContentDecls, <<END);
+        if (!$attribute->isStatic) {
+            push(@implContentDecls, <<END);
     ${implClassName}* imp = V8${implClassName}::toNative(info.Holder());
 END
+        }
     }
 
     my $nativeType = GetNativeTypeFromSignature($attribute->signature, 0);
@@ -1235,8 +1241,10 @@ END
             if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                 AddToImplIncludes("${implementedBy}.h");
-                unshift(@arguments, "imp");
+                unshift(@arguments, "imp") if !$attribute->isStatic;
                 $functionName = "${implementedBy}::${functionName}";
+            } elsif ($attribute->isStatic) {
+                $functionName = "${interfaceName}::${functionName}";
             } else {
                 $functionName = "imp->${functionName}";
             }
