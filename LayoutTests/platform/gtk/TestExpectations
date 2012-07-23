@@ -67,6 +67,14 @@ WONTFIX SKIP : media/unsupported-rtsp.html = TIMEOUT
 WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = TEXT
 WONTFIX SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = TEXT
 
+// These test -apple- and -khtml- prefixed CSS properties, which we don't support.
+WONTFIX SKIP : inspector/styles/vendor-prefixes.html = TEXT
+WONTFIX : fast/css/apple-prefix.html = TEXT
+
+// This port doesn't support detecting slow unload handlers.
+WONTFIX SKIP : fast/dom/Window/slow-unload-handler.html = TEXT
+WONTFIX SKIP : fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html = TEXT
+
 // Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-handheldfriendly.html = TEXT
 BUGWKGTK SKIP : fast/viewport/viewport-legacy-mobileoptimized-2.html = TEXT
@@ -709,10 +717,6 @@ BUGWK51104 : http/tests/xmlhttprequest/basic-auth-nouser.html = TEXT
 BUGWK51104 : http/tests/xmlhttprequest/basic-auth-nopassword.html = TEXT
 BUGWK51104 : http/tests/xmlhttprequest/remember-bad-password.html = TEXT
 
-// This port doesn't support detecting slow unload handlers.
-BUGWKGTK : fast/dom/Window/slow-unload-handler.html = TEXT
-BUGWKGTK : fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html = TEXT
-
 // This port doesn't have a global history delegate yet
 BUGWKGTK : http/tests/globalhistory = TEXT
 
@@ -1105,10 +1109,6 @@ BUGWKGTK : http/tests/download = TEXT
 
 BUGWK77015 : fast/events/clear-drag-state.html = TEXT
 BUGWK77015 : fast/events/clear-edit-drag-state.html = TEXT
-
-// These test -apple- and -khtml- prefixed CSS properties, which we don't support.
-BUGWKGTK SKIP : inspector/styles/vendor-prefixes.html = TEXT
-BUGWKGTK : fast/css/apple-prefix.html = TEXT
 
 // Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
 BUGWK76564 : fast/workers/worker-crash-with-invalid-location.html = TEXT
