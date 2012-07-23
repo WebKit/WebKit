@@ -1,3 +1,26 @@
+2012-07-23  Scott Graham  <scottmg@google.com>
+
+        Use native (non-cygwin) binaries for perl, gperf, and bison in Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=91667
+
+        Reviewed by Tony Chang.
+
+        Using native tools instead of cygwin version improves build time
+        performance by roughly 50% (on top of previous cl-instead-of-gcc
+        change).
+
+        Also, use - instead of / for cl flags because a layer of project
+        generator converts them to \ otherwise, which causes the preprocessing
+        to fail (very slowly because of the cygwin-loop with a sleep 1).
+
+        No new tests.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/rule_bison.py:
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+        * make-hash-tools.pl:
+
 2012-06-12  Jer Noble  <jer.noble@apple.com>
 
         MediaController.currentTime should be kept stable during script execution.
