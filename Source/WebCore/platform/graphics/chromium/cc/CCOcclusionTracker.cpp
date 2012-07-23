@@ -510,11 +510,9 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContribu
 template<typename LayerType, typename RenderSurfaceType>
 IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::layerScissorRectInTargetSurface(const LayerType* layer) const
 {
-    const LayerType* renderTarget = m_stack.last().target;
-    FloatRect totalScissor = renderTarget->renderSurface()->contentRect();
-    if (layer->usesLayerClipping())
-        totalScissor.intersect(layer->clipRect());
-    return enclosingIntRect(totalScissor);
+    // FIXME: we could remove this helper function, but unit tests currently override this
+    //        function, and they need to be verified/adjusted before this can be removed.
+    return layer->scissorRect();
 }
 
 // Declare the possible functions here for the linker.

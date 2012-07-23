@@ -91,7 +91,6 @@ public:
     bool screenSpaceTransformsAreAnimating() const { return m_screenSpaceTransformsAreAnimating; }
     void setScreenSpaceTransformsAreAnimating(bool animating) { m_screenSpaceTransformsAreAnimating = animating; }
 
-    // Usage: this clipRect should not be used if one of the two conditions is true: (a) clipRect() is empty, or (b) owningLayer->parent()->usesLayerClipping() is false.
     void setClipRect(const IntRect&);
     const IntRect& clipRect() const { return m_clipRect; }
 

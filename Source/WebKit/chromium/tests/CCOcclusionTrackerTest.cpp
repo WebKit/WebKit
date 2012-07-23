@@ -263,7 +263,6 @@ protected:
         ASSERT(!root->renderSurface());
         root->createRenderSurface();
         root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), root->bounds()));
-        root->setClipRect(IntRect(IntPoint::zero(), root->bounds()));
         m_renderSurfaceLayerListImpl.append(m_root.get());
 
         CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListImpl, dummyLayerList, &layerSorter, dummyMaxTextureSize);
@@ -282,7 +281,6 @@ protected:
         ASSERT(!root->renderSurface());
         root->createRenderSurface();
         root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), root->bounds()));
-        root->setClipRect(IntRect(IntPoint::zero(), root->bounds()));
         m_renderSurfaceLayerListChromium.append(m_root);
 
         CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListChromium, dummyLayerList, dummyMaxTextureSize);
@@ -2069,7 +2067,7 @@ protected:
 
         this->visitLayer(surfaceChild2, occlusion);
         this->enterLayer(surfaceChild, occlusion);
-        EXPECT_INT_RECT_EQ(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 0, 100, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
         this->leaveLayer(surfaceChild, occlusion);
         this->enterLayer(surface, occlusion);
         EXPECT_INT_RECT_EQ(IntRect(200, 0, 50, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
@@ -2121,7 +2119,7 @@ protected:
 
         this->visitLayer(surfaceChild2, occlusion);
         this->enterLayer(surfaceChild, occlusion);
-        EXPECT_INT_RECT_EQ(IntRect(100, 0, 150, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
+        EXPECT_INT_RECT_EQ(IntRect(100, 0, 100, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 300, 300)));
         this->leaveLayer(surfaceChild, occlusion);
         this->enterLayer(surface, occlusion);
         EXPECT_INT_RECT_EQ(IntRect(200, 0, 50, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));

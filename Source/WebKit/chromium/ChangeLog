@@ -1,3 +1,32 @@
+2012-07-23  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Refactor CCLayerTreeHostCommon: clean up clipRect and drawableContentRect design
+        https://bugs.webkit.org/show_bug.cgi?id=80622
+
+        Reviewed by Adrienne Walker.
+
+        Many tests needed to be updated because the semantics of the layer tree have changed:
+          - a few tests that were no longer applicable were removed.
+          - many tests needed to have fixed initialization, properly
+            setting surface contentRect and rootLayer bounds.
+          - because clipRect and usesLayerClipping no longer exists, those places in code had to be removed/changed
+          - the scissorRect tests needed to have updated expectations
+            because after this patch, the rootLayer Surface now clips
+            to its contentBounds.
+          - the clipRect tests were changed to test the layer's new semantics for the drawableContentRect instead.
+
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerIteratorTest.cpp:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTest::calcDrawEtc):
+        (WebKitTests::CCOcclusionTrackerTestAnimationOpacity1OnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationOpacity0OnMainThread::runMyTest):
+        * tests/LayerChromiumTest.cpp:
+
 2012-07-23  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Fix build on Ubuntu Precise.

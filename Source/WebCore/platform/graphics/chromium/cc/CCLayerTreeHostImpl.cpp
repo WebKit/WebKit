@@ -259,8 +259,6 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
     m_rootLayerImpl->renderSurface()->clearLayerList();
     m_rootLayerImpl->renderSurface()->setContentRect(IntRect(IntPoint(), deviceViewportSize()));
 
-    m_rootLayerImpl->setClipRect(IntRect(IntPoint(), deviceViewportSize()));
-
     {
         TRACE_EVENT0("cc", "CCLayerTreeHostImpl::calcDrawEtc");
         WebTransformationMatrix identityMatrix;

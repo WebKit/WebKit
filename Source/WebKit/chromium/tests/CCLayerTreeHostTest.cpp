@@ -2176,8 +2176,14 @@ public:
     virtual void beginTest() OVERRIDE
     {
         m_layerTreeHost->setViewportSize(IntSize(10, 10));
+        m_layerTreeHost->rootLayer()->setBounds(IntSize(10, 10));
+        
         m_rootScrollLayer = ContentLayerChromium::create(&m_mockDelegate);
         m_rootScrollLayer->setBounds(IntSize(10, 10));
+
+        m_rootScrollLayer->setPosition(FloatPoint(0, 0));
+        m_rootScrollLayer->setAnchorPoint(FloatPoint(0, 0));
+
         m_rootScrollLayer->setIsDrawable(true);
         m_rootScrollLayer->setScrollable(true);
         m_rootScrollLayer->setMaxScrollPosition(IntSize(100, 100));
@@ -2188,6 +2194,10 @@ public:
         m_childLayer->setIsDrawable(true);
         m_childLayer->setScrollable(true);
         m_childLayer->setMaxScrollPosition(IntSize(100, 100));
+
+        m_childLayer->setPosition(FloatPoint(0, 0));
+        m_childLayer->setAnchorPoint(FloatPoint(0, 0));
+
         m_rootScrollLayer->addChild(m_childLayer);
         postSetNeedsCommitToMainThread();
     }

@@ -137,10 +137,15 @@ public:
         root->setMaxScrollPosition(contentSize);
         root->setBounds(contentSize);
         root->setContentBounds(contentSize);
+        root->setPosition(FloatPoint(0, 0));
+        root->setAnchorPoint(FloatPoint(0, 0));
+
         OwnPtr<CCLayerImpl> contents = CCLayerImpl::create(2);
         contents->setDrawsContent(true);
         contents->setBounds(contentSize);
         contents->setContentBounds(contentSize);
+        contents->setPosition(FloatPoint(0, 0));
+        contents->setAnchorPoint(FloatPoint(0, 0));
         root->addChild(contents.release());
         m_hostImpl->setRootLayer(root.release());
     }
@@ -838,13 +843,18 @@ TEST_F(CCLayerTreeHostImplTest, scrollNonCompositedRoot)
     OwnPtr<CCLayerImpl> contentLayer = CCLayerImpl::create(1);
     contentLayer->setIsNonCompositedContent(true);
     contentLayer->setDrawsContent(true);
-    contentLayer->setPosition(IntPoint(5, 5));
+    contentLayer->setPosition(FloatPoint(0, 0));
+    contentLayer->setAnchorPoint(FloatPoint(0, 0));
     contentLayer->setBounds(surfaceSize);
     contentLayer->setContentBounds(IntSize(surfaceSize.width() * 2, surfaceSize.height() * 2));
 
     OwnPtr<CCLayerImpl> scrollLayer = CCLayerImpl::create(2);
     scrollLayer->setScrollable(true);
     scrollLayer->setMaxScrollPosition(surfaceSize);
+    scrollLayer->setBounds(surfaceSize);
+    scrollLayer->setContentBounds(surfaceSize);
+    scrollLayer->setPosition(FloatPoint(0, 0));
+    scrollLayer->setAnchorPoint(FloatPoint(0, 0));
     scrollLayer->addChild(contentLayer.release());
 
     m_hostImpl->setRootLayer(scrollLayer.release());
@@ -862,6 +872,8 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildCallsCommitAndRedraw)
 {
     IntSize surfaceSize(10, 10);
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    root->setBounds(surfaceSize);
+    root->setContentBounds(surfaceSize);
     root->addChild(createScrollableLayer(2, FloatPoint(0, 0), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
     m_hostImpl->setViewportSize(surfaceSize);
@@ -1038,6 +1050,8 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildAndChangePageScaleOnMainThread)
 {
     IntSize surfaceSize(10, 10);
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    root->setBounds(surfaceSize);
+    root->setContentBounds(surfaceSize);
     // Also mark the root scrollable so it becomes the root scroll layer.
     root->setScrollable(true);
     int scrollLayerId = 2;

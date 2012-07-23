@@ -1,3 +1,73 @@
+2012-07-23  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Refactor CCLayerTreeHostCommon: clean up clipRect and drawableContentRect design
+        https://bugs.webkit.org/show_bug.cgi?id=80622
+
+        Reviewed by Adrienne Walker.
+
+        clipRect(), usesLayerClipping(), and drawableContentRect() have been
+        very confusing in CCLayerTreeHostCommon for a while. This patch
+        refactors it so that (1) clipping is only done locally in
+        calcDrawTransforms, and (2) the layer's drawableContentRect value
+        is now meaningful value outside of calcDrawTransforms.
+        Additionally, the layer is now always clipped to the root
+        surface's contentBounds (which are set to the viewport bounds).
+        This refactor not only makes calcDrawTransforms far more readable and intuitive, but
+        this patch enables more upcoming beneficial refactors, including
+        the pending refactor in https://bugs.webkit.org/show_bug.cgi?id=88953.
+
+        Tests are also significantly updated to keep up with this refactoring change.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        Removed m_usesLayerClipping and m_clipRect and associated accessors.
+
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (RenderSurfaceChromium):
+        Updated comment
+
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        Removed m_usesLayerClipping and m_clipRect and associated accessors.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::updateLayers):
+        removed setClipRect code that no longer applies
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateLayerScissorRect):
+        scissor rect is now a little bit tighter, the intersection between damage and layer's new drawableContentRect.
+
+        (WebCore::calculateSurfaceScissorRect):
+        scissor rect is now a little bit tighter, except when filters are involved.
+
+        (WebCore::layerClipsSubtree):
+        new helper function
+
+        (WebCore):
+        (WebCore::calculateVisibleContentRect):
+        (WebCore::subtreeShouldRenderToSeparateSurface):
+        (WebCore::calculateDrawTransformsInternal):
+           - added drawableContentRectOfSubtree to the function args, it is valid only after recursion returns,
+           - added clipRectFromAncestor and bool ancestorClipsSubtree to function args, this replaces the layer's clipRect and usesLayerClipping.
+           - removed the boolean return value, which was redundant with drawableContentRectOfSubtree.
+           - replaced all the "setDrawableContentRect" logic with more intuitive, clear logic.
+           - now, layer's drawableContentRect represents the clipped bounds of the layer expressed in the target surface space.
+
+        (WebCore::CCLayerTreeHostCommon::calculateDrawTransforms):
+        (WebCore::pointIsClippedBySurfaceOrClipRect):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderSurfaceLayerList):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::layerScissorRectInTargetSurface):
+        Updated this accessor.  It could be removed in the future, but not appropriate for this patch.
+
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         [CMAKE] Added missing RenderLayerFilterInfo.cpp to build system.

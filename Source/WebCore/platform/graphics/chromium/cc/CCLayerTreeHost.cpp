@@ -467,9 +467,6 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
         rootLayer->createRenderSurface();
     rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), deviceViewportSize()));
 
-    IntRect rootClipRect(IntPoint(), deviceViewportSize());
-    rootLayer->setClipRect(rootClipRect);
-
     LayerList updateList;
     updateList.append(rootLayer);
 

@@ -195,9 +195,6 @@ public:
     void setUseParentBackfaceVisibility(bool useParentBackfaceVisibility) { m_useParentBackfaceVisibility = useParentBackfaceVisibility; }
     bool useParentBackfaceVisibility() const { return m_useParentBackfaceVisibility; }
 
-    void setUsesLayerClipping(bool usesLayerClipping) { m_usesLayerClipping = usesLayerClipping; }
-    bool usesLayerClipping() const { return m_usesLayerClipping; }
-
     virtual void setIsNonCompositedContent(bool);
     bool isNonCompositedContent() const { return m_isNonCompositedContent; }
 
@@ -236,8 +233,6 @@ public:
     bool drawOpacityIsAnimating() const { return m_drawOpacityIsAnimating; }
     void setDrawOpacityIsAnimating(bool drawOpacityIsAnimating) { m_drawOpacityIsAnimating = drawOpacityIsAnimating; }
 
-    const IntRect& clipRect() const { return m_clipRect; }
-    void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
     LayerChromium* renderTarget() const { ASSERT(!m_renderTarget || m_renderTarget->renderSurface()); return m_renderTarget; }
     void setRenderTarget(LayerChromium* target) { m_renderTarget = target; }
 
@@ -351,8 +346,7 @@ private:
     IntRect m_visibleContentRect;
 
     // During drawing, identifies the region outside of which nothing should be drawn.
-    // Currently this is set to layer's clipRect if usesLayerClipping is true, otherwise
-    // it's renderTarget's RenderSurface contentRect.
+    // This is the intersection of the layer's drawableContentRect and damage (if damage tracking is enabled).
     // Uses target surface's space.
     IntRect m_scissorRect;
     IntPoint m_scrollPosition;
@@ -378,7 +372,6 @@ private:
     bool m_masksToBounds;
     bool m_opaque;
     bool m_doubleSided;
-    bool m_usesLayerClipping;
     bool m_isNonCompositedContent;
     bool m_preserves3D;
     bool m_useParentBackfaceVisibility;
@@ -397,9 +390,8 @@ private:
     float m_drawOpacity;
     bool m_drawOpacityIsAnimating;
 
-    // Uses target surface space.
-    IntRect m_clipRect;
     LayerChromium* m_renderTarget;
+
     WebKit::WebTransformationMatrix m_drawTransform;
     WebKit::WebTransformationMatrix m_screenSpaceTransform;
     bool m_drawTransformIsAnimating;

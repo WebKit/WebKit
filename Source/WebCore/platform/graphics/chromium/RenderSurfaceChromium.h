@@ -116,8 +116,6 @@ private:
     IntRect m_clipRect;
 
     // During drawing, identifies the region outside of which nothing should be drawn.
-    // Currently this is set to layer's clipRect if usesLayerClipping is true, otherwise
-    // it's targetRenderSurface's contentRect.
     // Uses the space of the surface's target surface.
     IntRect m_scissorRect;
 

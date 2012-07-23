@@ -58,7 +58,8 @@ private:
         , m_drawsContent(true)
     {
         setBounds(IntSize(100, 100));
-        setDrawableContentRect(IntRect(0, 0, 100, 100));
+        setPosition(IntPoint::zero());
+        setAnchorPoint(IntPoint::zero());
     }
 
     bool m_drawsContent;
@@ -239,6 +240,7 @@ TEST(CCLayerIteratorTest, complexTreeMultiSurface)
     RefPtr<TestLayerChromium> root231 = TestLayerChromium::create();
 
     rootLayer->createRenderSurface();
+    rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(), rootLayer->bounds()));
 
     rootLayer->addChild(root1);
     rootLayer->addChild(root2);
@@ -256,6 +258,7 @@ TEST(CCLayerIteratorTest, complexTreeMultiSurface)
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > layerList;
     renderSurfaceLayerList.append(rootLayer.get());
+    
     CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer.get(),
                                                    WebTransformationMatrix(), WebTransformationMatrix(),
                                                    renderSurfaceLayerList, layerList,
