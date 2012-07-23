@@ -1,3 +1,35 @@
+2012-07-23  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] TestInterfaces should be responsible for owning and binding AccessibilityController and TextInputController
+        https://bugs.webkit.org/show_bug.cgi?id=91459
+
+        Reviewed by Ryosuke Niwa.
+
+        Rather than having TestShell own and bind each of these JavaScript APIs
+        individually, TestShell should delegate that work to TestInterfaces.
+        This patch moves AccessibilityController and TextInputController to be
+        the responsibility of TestInterfaces.
+
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.cpp:
+        (TestInterfaces::TestInterfaces):
+        (TestInterfaces::~TestInterfaces):
+        (TestInterfaces::setWebView):
+        (TestInterfaces::bindTo):
+        (TestInterfaces::resetAll):
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.h:
+        (WebKit):
+        (TestInterfaces):
+        (TestInterfaces::accessibilityController):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+        (TestShell::resetTestController):
+        (TestShell::bindJSObjectsToWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::accessibilityController):
+        (TestShell):
+
 2012-07-23  Balazs Kelemen  <kbalazs@webkit.org>
 
         nrwt swallows early exceptions

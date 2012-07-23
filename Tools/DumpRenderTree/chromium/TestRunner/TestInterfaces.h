@@ -33,15 +33,21 @@
 
 namespace WebKit {
 class WebFrame;
+class WebView;
 }
+
+class AccessibilityController;
 
 class TestInterfaces {
 public:
     TestInterfaces();
     ~TestInterfaces();
 
+    void setWebView(WebKit::WebView* webView);
     void bindTo(WebKit::WebFrame*);
     void resetAll();
+
+    AccessibilityController* accessibilityController();
 
 private:
     class Internal;
