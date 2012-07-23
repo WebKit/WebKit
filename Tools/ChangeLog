@@ -1,3 +1,54 @@
+2012-07-23  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: never finds binaries in the 'out' dir on chromium win
+        https://bugs.webkit.org/show_bug.cgi?id=91890
+
+        Reviewed by Tony Chang.
+
+        We were figuring out which directory look in for binaries by
+        testing for the base directory (the directory above
+        Debug/Release). In chromium-win's case, we look in src/build,
+        which always exists because there are checked-in files in it,
+        which means we'd always pick that directory over src/out. All of
+        the other ports' build_path() implementation was including
+        Debug/Release. If we matched that, we wouldn't have a problem,
+        so this change fixes that and updates all of the callers of the
+        chromium ports' implementation to not pass configuration as part
+        of the path to look up; we still need to pass configuration in
+        some cases (to test if the build is out of date between debug
+        and release) so the implementation gets slightly more
+        complicated.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._static_build_path):
+        (ChromiumPort.default_results_directory):
+        (ChromiumPort._build_path):
+        (ChromiumPort._path_to_image_diff):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort._build_path):
+        (ChromiumAndroidPort._path_to_driver):
+        (ChromiumAndroidPort._path_to_forwarder):
+        (ChromiumAndroidPort._push_executable):
+        (ChromiumAndroidPort._push_fonts):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort._determine_driver_path_statically):
+        (ChromiumLinuxPort._modules_to_search_for_symbols):
+        (ChromiumLinuxPort._path_to_driver):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        (ChromiumLinuxPortTest.test_build_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        (ChromiumMacPort._modules_to_search_for_symbols):
+        (ChromiumMacPort._path_to_driver):
+        (ChromiumMacPort._path_to_helper):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest.test_build_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort._path_to_driver):
+        (ChromiumWinPort._path_to_helper):
+        (ChromiumWinPort._path_to_image_diff):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest.test_build_path):
+
 2012-07-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123339.

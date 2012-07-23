@@ -280,7 +280,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     # Overridden private functions.
 
     def _build_path(self, *comps):
-        return self._host_port._build_path(*comps)
+        self._build_path(None, *comps)
+
+    def _build_path_with_configuration(self, configuration, *comps):
+        return self._host_port._build_path_with_configuration(configuration, *comps)
 
     def _path_to_apache(self):
         return self._host_port._path_to_apache()
@@ -289,15 +292,13 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         return self._host_port._path_to_apache_config_file()
 
     def _path_to_driver(self, configuration=None):
-        if not configuration:
-            configuration = self.get_option('configuration')
-        return self._build_path(configuration, 'DumpRenderTree_apk/DumpRenderTree-debug.apk')
+        return self._build_path_with_configuration(configuration, 'DumpRenderTree_apk/DumpRenderTree-debug.apk')
 
     def _path_to_helper(self):
         return None
 
     def _path_to_forwarder(self):
-        return self._build_path(self.get_option('configuration'), 'forwarder')
+        return self._build_path('forwarder')
 
     def _path_to_image_diff(self):
         return self._host_port._path_to_image_diff()
@@ -345,14 +346,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
             install_result = self._run_adb_command(['install', drt_host_path])
             if install_result.find('Success') == -1:
                 raise AssertionError('Failed to install %s onto device: %s' % (drt_host_path, install_result))
-            self._push_to_device(self._build_path(self.get_option('configuration'), 'DumpRenderTree.pak'),
-                                 DEVICE_DRT_DIR + 'DumpRenderTree.pak')
-            self._push_to_device(self._build_path(self.get_option('configuration'), 'DumpRenderTree_resources'),
-                                 DEVICE_DRT_DIR + 'DumpRenderTree_resources')
-            self._push_to_device(self._build_path(self.get_option('configuration'), 'android_main_fonts.xml'),
-                                 DEVICE_DRT_DIR + 'android_main_fonts.xml')
-            self._push_to_device(self._build_path(self.get_option('configuration'), 'android_fallback_fonts.xml'),
-                                 DEVICE_DRT_DIR + 'android_fallback_fonts.xml')
+            self._push_to_device(self._build_path('DumpRenderTree.pak'), DEVICE_DRT_DIR + 'DumpRenderTree.pak')
+            self._push_to_device(self._build_path('DumpRenderTree_resources'), DEVICE_DRT_DIR + 'DumpRenderTree_resources')
+            self._push_to_device(self._build_path('android_main_fonts.xml'), DEVICE_DRT_DIR + 'android_main_fonts.xml')
+            self._push_to_device(self._build_path('android_fallback_fonts.xml'), DEVICE_DRT_DIR + 'android_fallback_fonts.xml')
             # Version control of test resources is dependent on executables,
             # because we will always rebuild executables when resources are
             # updated.
@@ -362,7 +359,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def _push_fonts(self):
         if not self._check_version(DEVICE_FONTS_DIR, FONT_FILES_VERSION):
             _log.debug('Pushing fonts')
-            path_to_ahem_font = self._build_path(self.get_option('configuration'), 'AHEM____.TTF')
+            path_to_ahem_font = self._build_path('AHEM____.TTF')
             self._push_to_device(path_to_ahem_font, DEVICE_FONTS_DIR + 'AHEM____.TTF')
             for (host_dir, font_file) in HOST_FONT_FILES:
                 self._push_to_device(host_dir + font_file, DEVICE_FONTS_DIR + font_file)
