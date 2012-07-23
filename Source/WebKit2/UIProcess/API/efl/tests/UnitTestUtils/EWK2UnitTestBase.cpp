@@ -23,6 +23,7 @@
 #include "EWK2UnitTestEnvironment.h"
 #include <EWebKit2.h>
 #include <Ecore.h>
+#include <glib-object.h>
 #include <wtf/UnusedParam.h>
 
 extern EWK2UnitTest::EWK2UnitTestEnvironment* environment;
@@ -47,6 +48,11 @@ EWK2UnitTestBase::EWK2UnitTestBase()
 void EWK2UnitTestBase::SetUp()
 {
     ASSERT_GT(ecore_evas_init(), 0);
+
+    // glib support (for libsoup).
+    g_type_init();
+    if (!ecore_main_loop_glib_integrate())
+        fprintf(stderr, "WARNING: Glib main loop integration is not working. Some tests may fail.");
 
     unsigned int width = environment->defaultWidth();
     unsigned int height = environment->defaultHeight();

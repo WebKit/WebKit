@@ -1,4 +1,5 @@
 LIST(APPEND WebKit2_LINK_FLAGS
+    ${CAIRO_LDFLAGS}
     ${ECORE_X_LDFLAGS}
     ${EDJE_LDFLAGS}
     ${EFLDEPS_LDFLAGS}
@@ -198,9 +199,11 @@ SET(EWK2UnitTests_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
     ${WebKit2_LIBRARY_NAME}
+    ${CAIRO_LIBRARIES}
     ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}
     ${EVAS_LIBRARIES}
+    ${LIBSOUP24_LIBRARIES}
     gtest
 )
 
@@ -226,6 +229,7 @@ ADD_LIBRARY(ewk2UnitTestUtils
     ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestBase.cpp
     ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestEnvironment.cpp
     ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestMain.cpp
+    ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestServer.cpp
 )
 
 TARGET_LINK_LIBRARIES(ewk2UnitTestUtils ${EWK2UnitTests_LIBRARIES})
@@ -233,6 +237,7 @@ TARGET_LINK_LIBRARIES(ewk2UnitTestUtils ${EWK2UnitTests_LIBRARIES})
 # The "ewk" on the test name needs to be suffixed with "2", otherwise it
 # will clash with tests from the WebKit 1 test suite.
 SET(EWK2UnitTests_BINARIES
+    test_ewk2_cookie_manager
     test_ewk2_view
 )
 

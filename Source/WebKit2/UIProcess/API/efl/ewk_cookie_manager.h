@@ -51,7 +51,7 @@ enum _Ewk_Cookie_Accept_Policy {
     EWK_COOKIE_ACCEPT_POLICY_ALWAYS,
     /// Rejects all cookies.
     EWK_COOKIE_ACCEPT_POLICY_NEVER,
-    /// Accepts cookies only from the main page.
+    /// Accepts only cookies set by the main document loaded.
     EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY
 };
 
@@ -107,7 +107,7 @@ EAPI void ewk_cookie_manager_persistent_storage_set(Ewk_Cookie_Manager *manager,
 /**
  * Set @a policy as the cookie acceptance policy for @a manager.
  *
- * By default, cookies are always accepted.
+ * By default, only cookies set by the main document loaded are accepted.
  *
  * @param manager The cookie manager to update.
  * @param policy a #Ewk_Cookie_Accept_Policy
@@ -118,7 +118,7 @@ EAPI void ewk_cookie_manager_accept_policy_set(Ewk_Cookie_Manager *manager, Ewk_
 /**
  * Asynchronously get the cookie acceptance policy of @a manager.
  *
- * By default, cookies are always accepted.
+ * By default, only cookies set by the main document loaded are accepted.
  *
  * @param manager The cookie manager to query.
  * @param callback The function to call when the policy is received or an error occured.

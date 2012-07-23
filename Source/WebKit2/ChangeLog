@@ -1,3 +1,35 @@
+2012-07-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add unit tests for Ewk_Cookie_Manager
+        https://bugs.webkit.org/show_bug.cgi?id=91639
+
+        Reviewed by Antonio Gomes.
+
+        Add unit tests for Ewk_Cookie_Manager.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_cookie_manager.h: Fix "accept policy" documentation
+        to indicate that only cookies set by the main document are accepted by default.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.cpp: Added.
+        (EWK2UnitTestServer::EWK2UnitTestServer): Add HTTP server similar to the one
+        used by GTK port unit tests.
+        (EWK2UnitTestServer::~EWK2UnitTestServer):
+        (EWK2UnitTestServer::run):
+        (EWK2UnitTestServer::getURIForPath):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.h: Added.
+        (EWK2UnitTestServer):
+        (EWK2UnitTestServer::baseURI):
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp: Added.
+        (serverCallback):
+        (getAcceptPolicyCallback):
+        (getAcceptPolicy):
+        (getHostnamesWithCookiesCallback):
+        (getHostnamesWithCookies):
+        (freeHostNames):
+        (countHostnamesWithCookies):
+        (TEST_F):
+        (cleanUpCookieFiles):
+
 2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Enable touch slider when touch events are enabled
