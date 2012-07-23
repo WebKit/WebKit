@@ -29,10 +29,10 @@ my $option = basename($ARGV[0],".gperf");
 
 if ($option eq "ColorData") {
     my $colorDataGenerated         = "$outdir/ColorData.cpp";
-    my $colorDataGperf             = shift;
-    my $customGperf                = shift;
+    my $colorDataGperf             = $ARGV[0];
+    shift;
 
-    my $gperf = $ENV{GPERF} ? $ENV{GPERF} : ($customGperf ? $customGperf : "gperf");
+    my $gperf = $ENV{GPERF} ? $ENV{GPERF} : "gperf";
     system("\"$gperf\" --key-positions=\"*\" -D -s 2 $colorDataGperf --output-file=$colorDataGenerated") == 0 || die "calling gperf failed: $?";
 
 } else {
