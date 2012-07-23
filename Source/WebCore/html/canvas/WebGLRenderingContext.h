@@ -582,9 +582,15 @@ public:
     // Generates GL error and returns false if level is invalid.
     bool validateTexFuncLevel(const char* functionName, GC3Denum target, GC3Dint level);
 
+    enum TexFuncValidationFunctionType {
+        NotTexSubImage2D,
+        TexSubImage2D,
+    };
+
     // Helper function to check input parameters for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
     bool validateTexFuncParameters(const char* functionName,
+                                   TexFuncValidationFunctionType,
                                    GC3Denum target, GC3Dint level,
                                    GC3Denum internalformat,
                                    GC3Dsizei width, GC3Dsizei height, GC3Dint border,

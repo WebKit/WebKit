@@ -1,3 +1,15 @@
+2012-07-23  Gregg Tavares  <gman@google.com>
+
+        Fix WebGL texSubImage2D for cube maps
+        https://bugs.webkit.org/show_bug.cgi?id=91927
+
+        Reviewed by Kenneth Russell.
+
+        Tests for WebGL texSubImage2D for cube maps.
+
+        * fast/canvas/webgl/tex-sub-image-cube-maps-expected.txt: Added.
+        * fast/canvas/webgl/tex-sub-image-cube-maps.html: Added.
+
 2012-07-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG is too aggressive in performing the specific value optimization on loads

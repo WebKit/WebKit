@@ -1334,7 +1334,7 @@ void WebGLRenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3De
 {
     if (isContextLost())
         return;
-    if (!validateTexFuncParameters("copyTexImage2D", target, level, internalformat, width, height, border, internalformat, GraphicsContext3D::UNSIGNED_BYTE))
+    if (!validateTexFuncParameters("copyTexImage2D", NotTexSubImage2D, target, level, internalformat, width, height, border, internalformat, GraphicsContext3D::UNSIGNED_BYTE))
         return;
     if (!validateSettableTexFormat("copyTexImage2D", internalformat))
         return;
@@ -3503,7 +3503,7 @@ void WebGLRenderingContext::texImage2DBase(GC3Denum target, GC3Dint level, GC3De
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    if (!validateTexFuncParameters("texImage2D", target, level, internalformat, width, height, border, format, type))
+    if (!validateTexFuncParameters("texImage2D", NotTexSubImage2D, target, level, internalformat, width, height, border, format, type))
         return;
     WebGLTexture* tex = validateTextureBinding("texImage2D", target, true);
     if (!tex)
@@ -3748,7 +3748,7 @@ void WebGLRenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, GC
     ec = 0;
     if (isContextLost())
         return;
-    if (!validateTexFuncParameters("texSubImage2D", target, level, format, width, height, 0, format, type))
+    if (!validateTexFuncParameters("texSubImage2D", TexSubImage2D, target, level, format, width, height, 0, format, type))
         return;
     if (!validateSize("texSubImage2D", xoffset, yoffset))
         return;
@@ -4855,6 +4855,7 @@ bool WebGLRenderingContext::validateTexFuncLevel(const char* functionName, GC3De
 }
 
 bool WebGLRenderingContext::validateTexFuncParameters(const char* functionName,
+                                                      TexFuncValidationFunctionType functionType,
                                                       GC3Denum target, GC3Dint level,
                                                       GC3Denum internalformat,
                                                       GC3Dsizei width, GC3Dsizei height, GC3Dint border,
@@ -4884,8 +4885,14 @@ bool WebGLRenderingContext::validateTexFuncParameters(const char* functionName,
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        if (width != height || width > m_maxCubeMapTextureSize) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width != height or width or height out of range for cube map");
+        if (functionType != TexSubImage2D && width != height) {
+          synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width != height for cube map");
+          return false;
+        }
+        // No need to check height here. For texImage width == height.
+        // For texSubImage that will be checked when checking yoffset + height is in range.
+        if (width > m_maxCubeMapTextureSize) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "width or height out of range for cube map");
             return false;
         }
         break;

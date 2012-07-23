@@ -1,3 +1,24 @@
+2012-07-23  Gregg Tavares  <gman@google.com>
+
+        Fix WebGL texSubImage2D for cube maps
+        https://bugs.webkit.org/show_bug.cgi?id=91927
+
+        Reviewed by Kenneth Russell.
+
+        Fixes texSubImage2D so any size rectangle can be passed in
+        for cube maps.
+
+        Test: fast/canvas/webgl/tex-sub-image-cube-maps.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::copyTexImage2D):
+        (WebCore::WebGLRenderingContext::texImage2DBase):
+        (WebCore::WebGLRenderingContext::texSubImage2DBase):
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+
 2012-07-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123387.
