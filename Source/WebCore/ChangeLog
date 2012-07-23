@@ -1,3 +1,86 @@
+2012-07-23  Kwang Yul Seo  <skyul@company100.net>
+
+        Ref-count AtomicHTMLToken
+        https://bugs.webkit.org/show_bug.cgi?id=91981
+
+        Reviewed by Adam Barth.
+
+        Ref-count AtomicHTMLToken to avoid copying AtomicHTMLToken in Bug 91703.
+
+        No new tests - no functional changes.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagInBody):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyStartTagInBody):
+        (WebCore::HTMLConstructionSite::insertDoctype):
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertCommentOnDocument):
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement):
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement):
+        (WebCore::HTMLConstructionSite::insertHTMLElement):
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement):
+        (WebCore::HTMLConstructionSite::insertFormattingElement):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::insertForeignElement):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        (WebCore::HTMLConstructionSite::createHTMLElementFromSavedElement):
+        * html/parser/HTMLConstructionSite.h:
+        (HTMLConstructionSite):
+        * html/parser/HTMLToken.h:
+        (WebCore::AtomicHTMLToken::create):
+        (AtomicHTMLToken):
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::ExternalCharacterTokenBuffer):
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::constructTreeFromAtomicToken):
+        (WebCore::HTMLTreeBuilder::processToken):
+        (WebCore::HTMLTreeBuilder::processDoctypeToken):
+        (WebCore::HTMLTreeBuilder::processFakeStartTag):
+        (WebCore::HTMLTreeBuilder::processFakeEndTag):
+        (WebCore::HTMLTreeBuilder::processFakePEndTagIfPInButtonScope):
+        (WebCore::HTMLTreeBuilder::attributesForIsindexInput):
+        (WebCore::HTMLTreeBuilder::processIsindexStartTagForInBody):
+        (WebCore):
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processHtmlStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processBodyEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTable):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processComment):
+        (WebCore::HTMLTreeBuilder::processCharacter):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHTML):
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHead):
+        (WebCore::HTMLTreeBuilder::defaultForInHead):
+        (WebCore::HTMLTreeBuilder::defaultForInHeadNoscript):
+        (WebCore::HTMLTreeBuilder::defaultForAfterHead):
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead):
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag):
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+        (WebCore::HTMLTreeBuilder::shouldProcessTokenInForeignContent):
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent):
+        (WebCore::HTMLTreeBuilder::parseError):
+        * html/parser/HTMLTreeBuilder.h:
+        (HTMLTreeBuilder):
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement):
+
 2012-07-23  Scott Graham  <scottmg@google.com>
 
         Use native (non-cygwin) binaries for perl, gperf, and bison in Chromium

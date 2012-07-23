@@ -62,9 +62,9 @@ void TextDocumentParser::insertFakePreElement()
 
     Vector<Attribute> attributes;
     attributes.append(Attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"));
-    AtomicHTMLToken fakePre(HTMLTokenTypes::StartTag, preTag.localName(), attributes);
+    RefPtr<AtomicHTMLToken> fakePre = AtomicHTMLToken::create(HTMLTokenTypes::StartTag, preTag.localName(), attributes);
 
-    treeBuilder()->constructTreeFromAtomicToken(fakePre);
+    treeBuilder()->constructTreeFromAtomicToken(fakePre.get());
     // Normally we would skip the first \n after a <pre> element, but we don't
     // want to skip the first \n for text documents!
     treeBuilder()->setShouldSkipLeadingNewline(false);

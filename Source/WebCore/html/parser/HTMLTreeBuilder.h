@@ -72,7 +72,7 @@ public:
 
     // The token really should be passed as a const& since it's never modified.
     void constructTreeFromToken(HTMLToken&);
-    void constructTreeFromAtomicToken(AtomicHTMLToken&);
+    void constructTreeFromAtomicToken(AtomicHTMLToken*);
 
     bool hasParserBlockingScript() const { return !!m_scriptToProcess; }
     // Must be called to take the parser-blocking script before calling the parser again.
@@ -118,34 +118,34 @@ private:
     HTMLTreeBuilder(HTMLDocumentParser*, HTMLDocument*, bool reportErrors, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth);
     HTMLTreeBuilder(HTMLDocumentParser*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission, bool usePreHTML5ParserQuirks, unsigned maximumDOMTreeDepth);
 
-    void processToken(AtomicHTMLToken&);
+    void processToken(AtomicHTMLToken*);
 
-    void processDoctypeToken(AtomicHTMLToken&);
-    void processStartTag(AtomicHTMLToken&);
-    void processEndTag(AtomicHTMLToken&);
-    void processComment(AtomicHTMLToken&);
-    void processCharacter(AtomicHTMLToken&);
-    void processEndOfFile(AtomicHTMLToken&);
+    void processDoctypeToken(AtomicHTMLToken*);
+    void processStartTag(AtomicHTMLToken*);
+    void processEndTag(AtomicHTMLToken*);
+    void processComment(AtomicHTMLToken*);
+    void processCharacter(AtomicHTMLToken*);
+    void processEndOfFile(AtomicHTMLToken*);
 
-    bool processStartTagForInHead(AtomicHTMLToken&);
-    void processStartTagForInBody(AtomicHTMLToken&);
-    void processStartTagForInTable(AtomicHTMLToken&);
-    void processEndTagForInBody(AtomicHTMLToken&);
-    void processEndTagForInTable(AtomicHTMLToken&);
-    void processEndTagForInTableBody(AtomicHTMLToken&);
-    void processEndTagForInRow(AtomicHTMLToken&);
-    void processEndTagForInCell(AtomicHTMLToken&);
+    bool processStartTagForInHead(AtomicHTMLToken*);
+    void processStartTagForInBody(AtomicHTMLToken*);
+    void processStartTagForInTable(AtomicHTMLToken*);
+    void processEndTagForInBody(AtomicHTMLToken*);
+    void processEndTagForInTable(AtomicHTMLToken*);
+    void processEndTagForInTableBody(AtomicHTMLToken*);
+    void processEndTagForInRow(AtomicHTMLToken*);
+    void processEndTagForInCell(AtomicHTMLToken*);
 
-    void processIsindexStartTagForInBody(AtomicHTMLToken&);
-    void processHtmlStartTagForInBody(AtomicHTMLToken&);
-    bool processBodyEndTagForInBody(AtomicHTMLToken&);
+    void processIsindexStartTagForInBody(AtomicHTMLToken*);
+    void processHtmlStartTagForInBody(AtomicHTMLToken*);
+    bool processBodyEndTagForInBody(AtomicHTMLToken*);
     bool processTableEndTagForInTable();
     bool processCaptionEndTagForInCaption();
     bool processColgroupEndTagForInColumnGroup();
     bool processTrEndTagForInRow();
     // FIXME: This function should be inlined into its one call site or it
     // needs to assert which tokens it can be called with.
-    void processAnyOtherEndTagForInBody(AtomicHTMLToken&);
+    void processAnyOtherEndTagForInBody(AtomicHTMLToken*);
 
     void processCharacterBuffer(ExternalCharacterTokenBuffer&);
     inline void processCharacterBufferForInBody(ExternalCharacterTokenBuffer&);
@@ -155,9 +155,9 @@ private:
     void processFakeCharacters(const String&);
     void processFakePEndTagIfPInButtonScope();
 
-    void processGenericRCDATAStartTag(AtomicHTMLToken&);
-    void processGenericRawTextStartTag(AtomicHTMLToken&);
-    void processScriptStartTag(AtomicHTMLToken&);
+    void processGenericRCDATAStartTag(AtomicHTMLToken*);
+    void processGenericRawTextStartTag(AtomicHTMLToken*);
+    void processScriptStartTag(AtomicHTMLToken*);
 
     // Default processing for the different insertion modes.
     void defaultForInitial();
@@ -168,22 +168,22 @@ private:
     void defaultForAfterHead();
     void defaultForInTableText();
 
-    inline bool shouldProcessTokenInForeignContent(AtomicHTMLToken&);
-    void processTokenInForeignContent(AtomicHTMLToken&);
+    inline bool shouldProcessTokenInForeignContent(AtomicHTMLToken*);
+    void processTokenInForeignContent(AtomicHTMLToken*);
 
-    Vector<Attribute> attributesForIsindexInput(AtomicHTMLToken&);
+    Vector<Attribute> attributesForIsindexInput(AtomicHTMLToken*);
 
     HTMLElementStack::ElementRecord* furthestBlockForFormattingElement(Element*);
-    void callTheAdoptionAgency(AtomicHTMLToken&);
+    void callTheAdoptionAgency(AtomicHTMLToken*);
 
     void closeTheCell();
 
     template <bool shouldClose(const ContainerNode*)>
-    void processCloseWhenNestedTag(AtomicHTMLToken&);
+    void processCloseWhenNestedTag(AtomicHTMLToken*);
 
     bool m_framesetOk;
 
-    void parseError(AtomicHTMLToken&);
+    void parseError(AtomicHTMLToken*);
 
     InsertionMode insertionMode() const { return m_insertionMode; }
     void setInsertionMode(InsertionMode mode) { m_insertionMode = mode; }

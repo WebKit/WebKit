@@ -87,25 +87,25 @@ public:
     void detach();
     void executeQueuedTasks();
 
-    void insertDoctype(AtomicHTMLToken&);
-    void insertComment(AtomicHTMLToken&);
-    void insertCommentOnDocument(AtomicHTMLToken&);
-    void insertCommentOnHTMLHtmlElement(AtomicHTMLToken&);
-    void insertHTMLElement(AtomicHTMLToken&);
-    void insertSelfClosingHTMLElement(AtomicHTMLToken&);
-    void insertFormattingElement(AtomicHTMLToken&);
-    void insertHTMLHeadElement(AtomicHTMLToken&);
-    void insertHTMLBodyElement(AtomicHTMLToken&);
-    void insertHTMLFormElement(AtomicHTMLToken&, bool isDemoted = false);
-    void insertScriptElement(AtomicHTMLToken&);
+    void insertDoctype(AtomicHTMLToken*);
+    void insertComment(AtomicHTMLToken*);
+    void insertCommentOnDocument(AtomicHTMLToken*);
+    void insertCommentOnHTMLHtmlElement(AtomicHTMLToken*);
+    void insertHTMLElement(AtomicHTMLToken*);
+    void insertSelfClosingHTMLElement(AtomicHTMLToken*);
+    void insertFormattingElement(AtomicHTMLToken*);
+    void insertHTMLHeadElement(AtomicHTMLToken*);
+    void insertHTMLBodyElement(AtomicHTMLToken*);
+    void insertHTMLFormElement(AtomicHTMLToken*, bool isDemoted = false);
+    void insertScriptElement(AtomicHTMLToken*);
     void insertTextNode(const String&, WhitespaceMode = WhitespaceUnknown);
-    void insertForeignElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
+    void insertForeignElement(AtomicHTMLToken*, const AtomicString& namespaceURI);
 
-    void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken&);
-    void insertHTMLHtmlStartTagInBody(AtomicHTMLToken&);
-    void insertHTMLBodyStartTagInBody(AtomicHTMLToken&);
+    void insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken*);
+    void insertHTMLHtmlStartTagInBody(AtomicHTMLToken*);
+    void insertHTMLBodyStartTagInBody(AtomicHTMLToken*);
 
-    PassRefPtr<Element> createHTMLElement(AtomicHTMLToken&);
+    PassRefPtr<Element> createHTMLElement(AtomicHTMLToken*);
     PassRefPtr<Element> createHTMLElementFromElementRecord(HTMLElementStack::ElementRecord*);
 
     bool shouldFosterParent() const;
@@ -161,9 +161,9 @@ private:
     void findFosterSite(HTMLConstructionSiteTask&);
 
     PassRefPtr<Element> createHTMLElementFromSavedElement(Element*);
-    PassRefPtr<Element> createElement(AtomicHTMLToken&, const AtomicString& namespaceURI);
+    PassRefPtr<Element> createElement(AtomicHTMLToken*, const AtomicString& namespaceURI);
 
-    void mergeAttributesFromTokenIntoElement(AtomicHTMLToken&, Element*);
+    void mergeAttributesFromTokenIntoElement(AtomicHTMLToken*, Element*);
     void dispatchDocumentElementAvailableIfNeeded();
 
     Document* m_document;
