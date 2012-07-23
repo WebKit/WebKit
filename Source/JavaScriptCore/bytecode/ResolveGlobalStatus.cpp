@@ -39,6 +39,8 @@ static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* 
     JSCell* specificValue;
     PropertyOffset offset = structure->get(
         *codeBlock->globalData(), identifier, attributesIgnored, specificValue);
+    if (structure->isDictionary())
+        specificValue = 0;
     if (!isValidOffset(offset))
         return ResolveGlobalStatus();
     

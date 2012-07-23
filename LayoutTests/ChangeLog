@@ -1,5 +1,22 @@
 2012-07-23  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG is too aggressive in performing the specific value optimization on loads
+        https://bugs.webkit.org/show_bug.cgi?id=92034
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/dfg-resolve-global-polymorphic-non-dictionary-expected.txt: Added.
+        * fast/js/dfg-resolve-global-polymorphic-non-dictionary.html: Added.
+        * fast/js/dfg-resolve-global-specific-dictionary-expected.txt: Added.
+        * fast/js/dfg-resolve-global-specific-dictionary.html: Added.
+        * fast/js/script-tests/dfg-resolve-global-polymorphic-non-dictionary.js: Added.
+        (description.foo):
+        * fast/js/script-tests/dfg-resolve-global-specific-dictionary.js: Added.
+        (description.foo):
+        (x):
+
+2012-07-23  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION(r123169): It made fast/js/dfg-inline-arguments-use-from-uninlined-code.html fail on 32 bit platforms
         https://bugs.webkit.org/show_bug.cgi?id=92002
 

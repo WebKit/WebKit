@@ -50,6 +50,8 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     JSCell* specificValue;
     PropertyOffset offset = structure->get(
         *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
+    if (structure->isDictionary())
+        specificValue = 0;
     if (!isValidOffset(offset))
         return GetByIdStatus(NoInformation, false);
     
@@ -75,12 +77,13 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
     Structure* currentStructure = structure;
     JSObject* currentObject = 0;
     for (unsigned i = 0; i < result.m_chain.size(); ++i) {
+        ASSERT(!currentStructure->isDictionary());
         currentObject = asObject(currentStructure->prototypeForLookup(profiledBlock));
         currentStructure = result.m_chain[i];
         if (currentObject->structure() != currentStructure)
             return;
     }
-        
+    
     ASSERT(currentObject);
         
     unsigned attributesIgnored;
@@ -88,6 +91,8 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
         
     result.m_offset = currentStructure->get(
         *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
+    if (currentStructure->isDictionary())
+        specificValue = 0;
     if (!isValidOffset(result.m_offset))
         return;
         
@@ -155,6 +160,8 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         JSCell* specificValue;
         result.m_offset = structure->get(
             *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
+        if (structure->isDictionary())
+            specificValue = 0;
         
         if (isValidOffset(result.m_offset)) {
             result.m_structureSet.add(structure);
@@ -178,6 +185,8 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
             JSCell* specificValue;
             PropertyOffset myOffset = structure->get(
                 *profiledBlock->globalData(), ident, attributesIgnored, specificValue);
+            if (structure->isDictionary())
+                specificValue = 0;
             
             if (!isValidOffset(myOffset)) {
                 result.m_offset = invalidOffset;

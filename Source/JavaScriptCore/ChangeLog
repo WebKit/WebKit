@@ -1,5 +1,25 @@
 2012-07-23  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG is too aggressive in performing the specific value optimization on loads
+        https://bugs.webkit.org/show_bug.cgi?id=92034
+
+        Reviewed by Mark Hahnenberg.
+
+        This ensures that we don't do optimizations based on a structure having a specific
+        value, if there is no way to detect that the value is despecified. This is the
+        case for dictionaries, since despecifying a value in a dictionary does not lead to
+        a transition and so cannot be caught by either structure checks or structure
+        transition watchpoints.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForChain):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/ResolveGlobalStatus.cpp:
+        (JSC::computeForStructure):
+
+2012-07-23  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION(r123169): It made fast/js/dfg-inline-arguments-use-from-uninlined-code.html fail on 32 bit platforms
         https://bugs.webkit.org/show_bug.cgi?id=92002
 
