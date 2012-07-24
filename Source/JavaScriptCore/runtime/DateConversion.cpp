@@ -59,14 +59,14 @@ void formatDate(const GregorianDateTime &t, DateConversionBuffer& buffer)
 {
     snprintf(buffer, DateConversionBufferSize, "%s %s %02d %04d",
         weekdayName[(t.weekDay() + 6) % 7],
-        monthName[t.month()], t.monthDay(), t.year() + 1900);
+        monthName[t.month()], t.monthDay(), t.year());
 }
 
 void formatDateUTCVariant(const GregorianDateTime &t, DateConversionBuffer& buffer)
 {
     snprintf(buffer, DateConversionBufferSize, "%s, %02d %s %04d",
         weekdayName[(t.weekDay() + 6) % 7],
-        t.monthDay(), monthName[t.month()], t.year() + 1900);
+        t.monthDay(), monthName[t.month()], t.year());
 }
 
 void formatTime(const GregorianDateTime &t, DateConversionBuffer& buffer)

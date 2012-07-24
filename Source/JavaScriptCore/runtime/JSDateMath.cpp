@@ -203,7 +203,7 @@ double getUTCOffset(ExecState* exec)
 
 double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
 {
-    double day = dateToDaysFrom1970(t.year() + 1900, t.month(), t.monthDay());
+    double day = dateToDaysFrom1970(t.year(), t.month(), t.monthDay());
     double ms = timeToMS(t.hour(), t.minute(), t.second(), milliSeconds);
     double result = (day * WTF::msPerDay) + ms;
 
@@ -235,7 +235,7 @@ void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, Gregori
     tm.setYearDay(dayInYear(ms, year));
     tm.setMonthDay(dayInMonthFromDayInYear(tm.yearDay(), isLeapYear(year)));
     tm.setMonth(monthFromDayInYear(tm.yearDay(), isLeapYear(year)));
-    tm.setYear(year - 1900);
+    tm.setYear(year);
     tm.setIsDST(dstOff != 0.0);
     tm.setUtcOffset(static_cast<long>((dstOff + utcOff) / WTF::msPerSecond));
 }

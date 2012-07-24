@@ -136,7 +136,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
         else {
             GregorianDateTime t;
             int year = JSC::toInt32(doubleArguments[0]);
-            t.setYear((year >= 0 && year <= 99) ? year : year - 1900);
+            t.setYear((year >= 0 && year <= 99) ? (year + 1900) : year);
             t.setMonth(JSC::toInt32(doubleArguments[1]));
             t.setMonthDay((numArgs >= 3) ? JSC::toInt32(doubleArguments[2]) : 1);
             t.setHour(JSC::toInt32(doubleArguments[3]));
@@ -214,7 +214,7 @@ static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec)
 
     GregorianDateTime t;
     int year = JSC::toInt32(doubleArguments[0]);
-    t.setYear((year >= 0 && year <= 99) ? year : year - 1900);
+    t.setYear((year >= 0 && year <= 99) ? (year + 1900) : year);
     t.setMonth(JSC::toInt32(doubleArguments[1]));
     t.setMonthDay((n >= 3) ? JSC::toInt32(doubleArguments[2]) : 1);
     t.setHour(JSC::toInt32(doubleArguments[3]));

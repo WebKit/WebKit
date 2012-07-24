@@ -1,5 +1,32 @@
 2012-07-24  Patrick Gansterer  <paroga@webkit.org>
 
+        Store the full year in GregorianDateTime
+        https://bugs.webkit.org/show_bug.cgi?id=92067
+
+        Reviewed by Geoffrey Garen.
+
+        Use the full year instead of the offset from year 1900
+        for the year member variable of GregorianDateTime.
+
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::dateUTC):
+        * runtime/DateConversion.cpp:
+        (JSC::formatDate):
+        (JSC::formatDateUTCVariant):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        (JSC::fillStructuresUsingDateArgs):
+        (JSC::dateProtoFuncToISOString):
+        (JSC::dateProtoFuncGetFullYear):
+        (JSC::dateProtoFuncGetUTCFullYear):
+        (JSC::dateProtoFuncSetYear):
+        * runtime/JSDateMath.cpp:
+        (JSC::gregorianDateTimeToMS):
+        (JSC::msToGregorianDateTime):
+
+2012-07-24  Patrick Gansterer  <paroga@webkit.org>
+
         [WIN] Build fix after r123417.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

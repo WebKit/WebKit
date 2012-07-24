@@ -1,3 +1,16 @@
+2012-07-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Store the full year in GregorianDateTime
+        https://bugs.webkit.org/show_bug.cgi?id=92067
+
+        Reviewed by Geoffrey Garen.
+
+        Use the full year instead of the offset from year 1900 
+        for the year member variable of GregorianDateTime.
+
+        * wtf/GregorianDateTime.h:
+        (WTF::GregorianDateTime::operator tm):
+
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         Move GregorianDateTime from JSC to WTF namespace

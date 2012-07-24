@@ -73,7 +73,7 @@ public:
         tm ret;
         memset(&ret, 0, sizeof(ret));
 
-        ret.tm_year = m_year;
+        ret.tm_year = m_year - 1900;
         ret.tm_mon = m_month;
         ret.tm_yday = m_yearDay;
         ret.tm_mday = m_monthDay;

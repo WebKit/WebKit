@@ -504,10 +504,10 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 GregorianDateTime gdt;
                 msToGregorianDateTime(exec, date->internalNumber(), true, gdt);
                 if (hint == QMetaType::QDateTime) {
-                    ret = QDateTime(QDate(gdt.year() + 1900, gdt.month() + 1, gdt.monthDay()), QTime(gdt.hour(), gdt.minute(), gdt.second()), Qt::UTC);
+                    ret = QDateTime(QDate(gdt.year(), gdt.month() + 1, gdt.monthDay()), QTime(gdt.hour(), gdt.minute(), gdt.second()), Qt::UTC);
                     dist = 0;
                 } else if (hint == QMetaType::QDate) {
-                    ret = QDate(gdt.year() + 1900, gdt.month() + 1, gdt.monthDay());
+                    ret = QDate(gdt.year(), gdt.month() + 1, gdt.monthDay());
                     dist = 1;
                 } else {
                     ret = QTime(gdt.hour(), gdt.minute(), gdt.second());
@@ -518,10 +518,10 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 GregorianDateTime gdt;
                 msToGregorianDateTime(exec, b, true, gdt);
                 if (hint == QMetaType::QDateTime) {
-                    ret = QDateTime(QDate(gdt.year() + 1900, gdt.month() + 1, gdt.monthDay()), QTime(gdt.hour(), gdt.minute(), gdt.second()), Qt::UTC);
+                    ret = QDateTime(QDate(gdt.year(), gdt.month() + 1, gdt.monthDay()), QTime(gdt.hour(), gdt.minute(), gdt.second()), Qt::UTC);
                     dist = 6;
                 } else if (hint == QMetaType::QDate) {
-                    ret = QDate(gdt.year() + 1900, gdt.month() + 1, gdt.monthDay());
+                    ret = QDate(gdt.year(), gdt.month() + 1, gdt.monthDay());
                     dist = 8;
                 } else {
                     ret = QTime(gdt.hour(), gdt.minute(), gdt.second());
@@ -874,7 +874,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
         // Dates specified this way are in local time (we convert DateTimes above)
         GregorianDateTime dt;
-        dt.setYear(date.year() - 1900);
+        dt.setYear(date.year());
         dt.setMonth(date.month() - 1);
         dt.setMonthDay(date.day());
         dt.setHour(time.hour());
