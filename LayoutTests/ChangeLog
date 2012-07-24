@@ -1,3 +1,31 @@
+2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] svg/carto.net rebaseline after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92152
+
+        Unreviewed.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/svg/carto.net/window-expected.png: Removed.
+        * platform/qt-5.0/svg/carto.net/window-expected.txt: Removed.
+        * platform/qt/svg/carto.net/button-expected.png:
+        * platform/qt/svg/carto.net/button-expected.txt:
+        * platform/qt/svg/carto.net/colourpicker-expected.png:
+        * platform/qt/svg/carto.net/colourpicker-expected.txt:
+        * platform/qt/svg/carto.net/scrollbar-expected.png:
+        * platform/qt/svg/carto.net/scrollbar-expected.txt:
+        * platform/qt/svg/carto.net/selectionlist-expected.png:
+        * platform/qt/svg/carto.net/selectionlist-expected.txt:
+        * platform/qt/svg/carto.net/slider-expected.png:
+        * platform/qt/svg/carto.net/slider-expected.txt:
+        * platform/qt/svg/carto.net/tabgroup-expected.png:
+        * platform/qt/svg/carto.net/tabgroup-expected.txt:
+        * platform/qt/svg/carto.net/textbox-expected.png:
+        * platform/qt/svg/carto.net/textbox-expected.txt:
+        * platform/qt/svg/carto.net/window-expected.png:
+        * platform/qt/svg/carto.net/window-expected.txt:
+
 2012-07-24  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] platform, plugins and printing need rebaseline after new test fonts
