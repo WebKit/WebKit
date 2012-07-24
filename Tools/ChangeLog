@@ -1,3 +1,14 @@
+2012-07-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] EWebLauncher should not require config.h in the style check
+        https://bugs.webkit.org/show_bug.cgi?id=92070
+
+        Reviewed by Kentaro Hara.
+
+        * Scripts/webkitpy/style/checker.py:
+        Remove the include rules from the style-check for EWebLauncher because
+        EWebLauncher is simple EFL application.
+
 2012-07-24  Jochen Eisinger  <jochen@chromium.or>
 
         [Chromium] EventSender shouldn't know about TestShell

@@ -194,12 +194,13 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming",
       "-readability/parameter_name"]),
     ([# EWebLauncher and MiniBrowser are EFL simple application.
-      # They need to use efl coding style.
+      # They need to use efl coding style and they don't have config.h.
       "Tools/EWebLauncher/",
       "Tools/MiniBrowser/efl/"],
      ["-readability/naming",
       "-readability/parameter_name",
-      "-whitespace/declaration"]),
+      "-whitespace/declaration",
+      "-build/include_order"]),
 
     # WebKit2 rules:
     # WebKit2 and certain directories have idiosyncracies.
