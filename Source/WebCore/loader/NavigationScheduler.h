@@ -68,7 +68,7 @@ class NavigationScheduler {
     WTF_MAKE_NONCOPYABLE(NavigationScheduler);
 
 public:
-    NavigationScheduler(Frame*);
+    explicit NavigationScheduler(Frame*);
     ~NavigationScheduler();
 
     bool redirectScheduledDuringLoad();

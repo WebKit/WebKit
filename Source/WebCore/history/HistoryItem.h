@@ -223,7 +223,7 @@ private:
     HistoryItem(const String& urlString, const String& title, const String& alternateTitle, double lastVisited);
     HistoryItem(const KURL& url, const String& frameName, const String& parent, const String& title);
 
-    HistoryItem(const HistoryItem&);
+    explicit HistoryItem(const HistoryItem&);
 
     void padDailyCountsForNewVisit(double time);
     void collapseDailyVisitsToWeekly();

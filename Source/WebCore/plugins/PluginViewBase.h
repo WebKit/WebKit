@@ -61,7 +61,7 @@ public:
     virtual bool wantsWheelEvents() { return false; }
 
 protected:
-    PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
+    explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
     
 private:
     virtual bool isPluginViewBase() const { return true; }

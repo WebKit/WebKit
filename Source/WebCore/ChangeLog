@@ -1,3 +1,50 @@
+2012-07-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add *explicit* keyword to constructor which has a parameter in bridge, history, loader and plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=92064
+
+        Reviewed by Kentaro Hara.
+
+        Some constructors missed to use *explicit* keyword. They need to be added
+        *explicit* keyword to contructor which has a parameter in order to avoid
+        implicit type conversion.
+
+        No new tests. Covered by existing tests.
+
+        * bridge/IdentifierRep.h:
+        (WebCore::IdentifierRep::IdentifierRep):
+        * history/BackForwardListImpl.h:
+        (BackForwardListImpl):
+        * history/CachedFrame.h:
+        (CachedFrame):
+        * history/HistoryItem.h:
+        (HistoryItem):
+        * loader/DocumentWriter.h:
+        (DocumentWriter):
+        * loader/FrameNetworkingContext.h:
+        (WebCore::FrameNetworkingContext::FrameNetworkingContext):
+        * loader/HistoryController.h:
+        * loader/ImageLoader.h:
+        (ImageLoader):
+        * loader/LinkLoader.h:
+        (LinkLoader):
+        * loader/MainResourceLoader.h:
+        (MainResourceLoader):
+        * loader/NavigationAction.h:
+        (NavigationAction):
+        * loader/NavigationScheduler.h:
+        (NavigationScheduler):
+        * loader/PolicyChecker.h:
+        (PolicyChecker):
+        * loader/SubframeLoader.h:
+        (SubframeLoader):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::ThreadableLoaderClientWrapper):
+        * plugins/PluginData.h:
+        (PluginData):
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::PluginViewBase):
+
 2012-07-24  Patrick Gansterer  <paroga@webkit.org>
 
         [Qt] Fix conversion from GregorianDateTime to QTime

@@ -116,7 +116,7 @@ public:
 #endif
 
 protected:
-    ThreadableLoaderClientWrapper(ThreadableLoaderClient* client)
+    explicit ThreadableLoaderClientWrapper(ThreadableLoaderClient* client)
         : m_client(client)
         , m_done(false)
     {

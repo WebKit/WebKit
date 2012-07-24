@@ -47,13 +47,13 @@ public:
     const char* string() const { return m_isString ? m_value.m_string : 0; }
 
 private:
-    IdentifierRep(int number) 
+    explicit IdentifierRep(int number) 
         : m_isString(false)
     {
         m_value.m_number = number;
     }
     
-    IdentifierRep(const char* name)
+    explicit IdentifierRep(const char* name)
         : m_isString(true)
     {
         m_value.m_string = fastStrDup(name);

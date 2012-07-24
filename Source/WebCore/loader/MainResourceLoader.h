@@ -74,7 +74,7 @@ namespace WebCore {
         bool isLoadingMultipartContent() const { return m_loadingMultipartContent; }
 
     private:
-        MainResourceLoader(Frame*);
+        explicit MainResourceLoader(Frame*);
 
         virtual void willCancel(const ResourceError&) OVERRIDE;
         virtual void didCancel(const ResourceError&) OVERRIDE;

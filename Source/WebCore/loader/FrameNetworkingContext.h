@@ -33,7 +33,7 @@ public:
     }
 
 protected:
-    FrameNetworkingContext(Frame* frame)
+    explicit FrameNetworkingContext(Frame* frame)
         : m_frame(frame)
     {
     }

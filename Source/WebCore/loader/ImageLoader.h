@@ -43,7 +43,7 @@ typedef EventSender<ImageLoader> ImageEventSender;
 
 class ImageLoader : public CachedImageClient {
 public:
-    ImageLoader(ImageLoaderClient*);
+    explicit ImageLoader(ImageLoaderClient*);
     virtual ~ImageLoader();
 
     ImageLoaderClient* client() const { return m_client; }

@@ -83,7 +83,7 @@ public:
     static void refresh();
 
 private:
-    PluginData(const Page*);
+    explicit PluginData(const Page*);
     void initPlugins(const Page*);
 
     Vector<PluginInfo> m_plugins;

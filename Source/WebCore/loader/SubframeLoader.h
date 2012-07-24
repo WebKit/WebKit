@@ -58,7 +58,7 @@ class Widget;
 class SubframeLoader {
     WTF_MAKE_NONCOPYABLE(SubframeLoader);
 public:
-    SubframeLoader(Frame*);
+    explicit SubframeLoader(Frame*);
 
     void clear();
 

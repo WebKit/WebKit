@@ -48,7 +48,7 @@ class HistoryController {
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 
-    HistoryController(Frame*);
+    explicit HistoryController(Frame*);
     ~HistoryController();
 
     void saveScrollPositionAndViewStateToItem(HistoryItem*);

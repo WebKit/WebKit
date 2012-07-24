@@ -76,7 +76,7 @@ public:
     HistoryItemVector& entries();
 
 private:
-    BackForwardListImpl(Page*);
+    explicit BackForwardListImpl(Page*);
 
     virtual bool isActive() { return enabled() && capacity(); }
 

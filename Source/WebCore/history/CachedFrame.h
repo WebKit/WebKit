@@ -94,7 +94,7 @@ public:
     int descendantFrameCount() const;
 
 private:
-    CachedFrame(Frame*);
+    explicit CachedFrame(Frame*);
 };
 
 } // namespace WebCore

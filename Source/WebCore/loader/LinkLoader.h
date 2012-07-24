@@ -49,7 +49,7 @@ class PrerenderHandle;
 // The LinkLoader can load link rel types icon, dns-prefetch, subresource, prefetch and prerender.
 class LinkLoader : public CachedResourceClient {
 public:
-    LinkLoader(LinkLoaderClient*);
+    explicit LinkLoader(LinkLoaderClient*);
     virtual ~LinkLoader();
 
     // from CachedResourceClient
