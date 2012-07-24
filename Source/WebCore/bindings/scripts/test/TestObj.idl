@@ -176,6 +176,7 @@ module test {
         void    overloadedMethod(in DOMString[]? arrayArg);
         void    overloadedMethod(in TestObj objArg);
         void    overloadedMethod(in DOMString[] arrayArg);
+        void    overloadedMethod(in sequence<unsigned long> arrayArg);
 #endif
 
         // Class methods within JavaScript (like what's used for IDBKeyRange).
@@ -207,7 +208,7 @@ module test {
 #endif
 
 #if defined(TESTING_JS)
-        void methodWithUnsignedLongArray(in unsigned long[] unsignedLongArray);
+        void methodWithUnsignedLongSequence(in sequence<unsigned long> unsignedLongSequence);
 #endif
 #if defined(TESTING_V8) || defined(TESTING_JS)
         DOMString[] stringArrayFunction(in DOMString[] values) raises(DOMException);

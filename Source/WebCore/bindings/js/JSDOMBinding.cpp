@@ -277,27 +277,4 @@ Structure* cacheDOMStructure(JSDOMGlobalObject* globalObject, Structure* structu
     return structures.set(classInfo, WriteBarrier<Structure>(globalObject->globalData(), globalObject, structure)).iterator->second.get();
 }
 
-JSC::JSObject* toJSSequence(ExecState* exec, JSValue value, unsigned& length)
-{
-    JSObject* object = value.getObject();
-    if (!object) {
-        throwTypeError(exec);
-        return 0;
-    }
-    JSValue lengthValue = object->get(exec, exec->propertyNames().length);
-    if (exec->hadException())
-        return 0;
-
-    if (lengthValue.isUndefinedOrNull()) {
-        throwTypeError(exec);
-        return 0;
-    }
-
-    length = lengthValue.toUInt32(exec);
-    if (exec->hadException())
-        return 0;
-
-    return object;
-}
-
 } // namespace WebCore

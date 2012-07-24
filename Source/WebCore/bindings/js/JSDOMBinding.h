@@ -34,6 +34,7 @@
 #include "StylePropertySet.h"
 #include "StyledElement.h"
 #include <heap/Weak.h>
+#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSArray.h>
 #include <runtime/Lookup.h>
@@ -275,6 +276,31 @@ enum ParameterDefaultPolicy {
     // NaN if the value can't be converted to a date.
     double valueToDate(JSC::ExecState*, JSC::JSValue);
 
+    // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.
+    inline JSC::JSObject* toJSSequence(JSC::ExecState* exec, JSC::JSValue value, unsigned& length)
+    {
+        JSC::JSObject* object = value.getObject();
+        if (!object) {
+            throwTypeError(exec);
+            return 0;
+        }
+
+        JSC::JSValue lengthValue = object->get(exec, exec->propertyNames().length);
+        if (exec->hadException())
+            return 0;
+
+        if (lengthValue.isUndefinedOrNull()) {
+            throwTypeError(exec);
+            return 0;
+        }
+
+        length = lengthValue.toUInt32(exec);
+        if (exec->hadException())
+            return 0;
+
+        return object;
+    }
+
     template <typename T>
     inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<T> ptr)
     {
@@ -282,7 +308,7 @@ enum ParameterDefaultPolicy {
     }
 
     template <class T>
-    struct Traits {
+    struct JSValueTraits {
         static inline JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const T& value)
         {
             return toJS(exec, globalObject, WTF::getPtr(value));
@@ -290,7 +316,7 @@ enum ParameterDefaultPolicy {
     };
 
     template<>
-    struct Traits<String> {
+    struct JSValueTraits<String> {
         static inline JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject*, const String& value)
         {
             return jsString(exec, stringToUString(value));
@@ -298,7 +324,7 @@ enum ParameterDefaultPolicy {
     };
 
     template<>
-    struct Traits<float> {
+    struct JSValueTraits<float> {
         static inline JSC::JSValue arrayJSValue(JSC::ExecState*, JSDOMGlobalObject*, const float& value)
         {
             return JSC::jsNumber(value);
@@ -306,7 +332,7 @@ enum ParameterDefaultPolicy {
     };
 
     template<>
-    struct Traits<unsigned long> {
+    struct JSValueTraits<unsigned long> {
         static inline JSC::JSValue arrayJSValue(JSC::ExecState*, JSDOMGlobalObject*, const unsigned long& value)
         {
             return JSC::jsNumber(value);
@@ -318,7 +344,7 @@ enum ParameterDefaultPolicy {
     {
         JSC::MarkedArgumentBuffer list;
         typename Vector<T, inlineCapacity>::const_iterator end = iterator.end();        
-        typedef Traits<T> TraitsType;
+        typedef JSValueTraits<T> TraitsType;
 
         for (typename Vector<T, inlineCapacity>::const_iterator iter = iterator.begin(); iter != end; ++iter)
             list.append(TraitsType::arrayJSValue(exec, globalObject, *iter));
@@ -328,24 +354,54 @@ enum ParameterDefaultPolicy {
 
     JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, PassRefPtr<DOMStringList>);
 
+    template<class T> struct NativeValueTraits;
+
+    template<>
+    struct NativeValueTraits<String> {
+        static inline bool arrayNativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, String& indexedValue)
+        {
+            indexedValue = ustringToString(jsValue.toString(exec)->value(exec));
+            return true;
+        }
+    };
+
+    template<>
+    struct NativeValueTraits<unsigned long> {
+        static inline bool arrayNativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, unsigned long& indexedValue)
+        {
+            if (!jsValue.isNumber())
+                return false;
+
+            indexedValue = jsValue.toUInt32(exec);
+            if (exec->hadException())
+                return false;
+
+            return true;
+        }
+    };
+
     template <class T>
     Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)
     {
-        if (!isJSArray(value))
-            return Vector<T>();
+        unsigned length = 0;
+        if (isJSArray(value)) {
+            JSC::JSArray* array = asArray(value);
+            length = array->length();
+        } else
+            toJSSequence(exec, value, length);
 
+        JSC::JSObject* object = value.getObject();
         Vector<T> result;
-        JSC::JSArray* array = asArray(value);
+        typedef NativeValueTraits<T> TraitsType;
 
-        for (unsigned i = 0; i < array->length(); ++i) {
-            String indexedValue = ustringToString(array->getIndex(i).toString(exec)->value(exec));
-            result.append(indexedValue);
+        for (unsigned i = 0; i < length; ++i) {
+            T indexValue;
+            if (!TraitsType::arrayNativeValue(exec, object->get(exec, i), indexValue))
+                return Vector<T>();
+            result.append(indexValue);
         }
         return result;
     }
-
-    // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.
-    JSC::JSObject* toJSSequence(JSC::ExecState*, JSC::JSValue, unsigned&);
 
     // FIXME: Implement allowAccessToContext(JSC::ExecState*, ScriptExecutionContext*);
     bool shouldAllowAccessToNode(JSC::ExecState*, Node*);
@@ -403,23 +459,6 @@ enum ParameterDefaultPolicy {
         return AtomicString(propertyName.publicName());
     }
 
-    inline Vector<unsigned long> jsUnsignedLongArrayToVector(JSC::ExecState* exec, JSC::JSValue value)
-    {
-        unsigned length;
-        JSC::JSObject* object = toJSSequence(exec, value, length);
-        if (exec->hadException())
-            return Vector<unsigned long>();
-
-        Vector<unsigned long> result;
-        for (unsigned i = 0; i < length; i++) {
-            JSC::JSValue indexedValue;
-            indexedValue = object->get(exec, i);
-            if (exec->hadException() || indexedValue.isUndefinedOrNull() || !indexedValue.isNumber())
-                return Vector<unsigned long>();
-            result.append(indexedValue.toUInt32(exec));
-        }
-        return result;
-    }
 } // namespace WebCore
 
 #endif // JSDOMBinding_h
