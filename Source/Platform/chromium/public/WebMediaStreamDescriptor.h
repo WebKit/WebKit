@@ -68,6 +68,9 @@ public:
 
     WEBKIT_EXPORT WebString label() const;
 
+    // DEPRECATED
+    WEBKIT_EXPORT void sources(WebVector<WebMediaStreamSource>&) const;
+
     WEBKIT_EXPORT void audioSources(WebVector<WebMediaStreamComponent>&) const;
     WEBKIT_EXPORT void videoSources(WebVector<WebMediaStreamComponent>&) const;
 

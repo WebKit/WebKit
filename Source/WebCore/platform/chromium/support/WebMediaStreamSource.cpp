@@ -96,18 +96,6 @@ WebString WebMediaStreamSource::name() const
     return m_private.get()->name();
 }
 
-void WebMediaStreamSource::setReadyState(ReadyState state)
-{
-    ASSERT(!m_private.isNull());
-    m_private->setReadyState(static_cast<MediaStreamSource::ReadyState>(state));
-}
-
-WebMediaStreamSource::ReadyState WebMediaStreamSource::readyState() const
-{
-    ASSERT(!m_private.isNull());
-    return static_cast<ReadyState>(m_private->readyState());
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)

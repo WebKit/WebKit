@@ -31,9 +31,7 @@
 #include "config.h"
 #include "MockWebKitPlatformSupport.h"
 
-#include "MockWebMediaStreamCenter.h"
 #include <wtf/Assertions.h>
-#include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;
 
@@ -55,10 +53,7 @@ void MockWebKitPlatformSupport::cryptographicallyRandomValues(unsigned char*, si
     CRASH();
 }
 
-WebMediaStreamCenter* MockWebKitPlatformSupport::createMediaStreamCenter(WebMediaStreamCenterClient* client)
+WebMediaStreamCenter* MockWebKitPlatformSupport::createMediaStreamCenter(WebMediaStreamCenterClient*)
 {
-    if (!m_mockMediaStreamCenter)
-        m_mockMediaStreamCenter = adoptPtr(new MockWebMediaStreamCenter(client));
-
-    return m_mockMediaStreamCenter.get();
+    return 0;
 }

@@ -1,3 +1,42 @@
+2012-07-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123499.
+        http://trac.webkit.org/changeset/123499
+        https://bugs.webkit.org/show_bug.cgi?id=92161
+
+        Android fails to compile (Requested by zhenyao on #webkit).
+
+        * GNUmakefile.list.am:
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::addTrack):
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::create):
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::~MediaStreamTrack):
+        (WebCore::MediaStreamTrack::setEnabled):
+        * Modules/mediastream/MediaStreamTrack.h:
+        (MediaStreamTrack):
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * WebCore.gypi:
+        * dom/EventNames.h:
+        (WebCore):
+        * dom/EventTargetFactory.in:
+        * platform/chromium/support/WebMediaStreamDescriptor.cpp:
+        (WebKit):
+        (WebKit::WebMediaStreamDescriptor::sources):
+        * platform/chromium/support/WebMediaStreamSource.cpp:
+        * platform/mediastream/MediaStreamSource.cpp: Removed.
+        * platform/mediastream/MediaStreamSource.h:
+        (WebCore::MediaStreamSource::create):
+        (WebCore::MediaStreamSource::muted):
+        (WebCore::MediaStreamSource::setMuted):
+        (WebCore::MediaStreamSource::MediaStreamSource):
+        (MediaStreamSource):
+        * platform/mediastream/chromium/MediaStreamCenterChromium.cpp:
+        (WebCore::MediaStreamCenterChromium::queryMediaStreamSources):
+        (WebCore::MediaStreamCenterChromium::didCreateMediaStream):
+
 2012-07-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderTableSection::layoutRows

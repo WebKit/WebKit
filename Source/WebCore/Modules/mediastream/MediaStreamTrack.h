@@ -28,10 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ActiveDOMObject.h"
-#include "EventTarget.h"
 #include "MediaStreamDescriptor.h"
-#include "MediaStreamSource.h"
 #include "PlatformString.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -41,15 +38,9 @@ namespace WebCore {
 
 class MediaStreamComponent;
 
-class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTarget, public MediaStreamSource::Observer {
+class MediaStreamTrack : public RefCounted<MediaStreamTrack> {
 public:
-    enum ReadyState {
-        LIVE = 0,
-        MUTED = 1,
-        ENDED = 2
-    };
-
-    static PassRefPtr<MediaStreamTrack> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>, MediaStreamComponent*);
+    static PassRefPtr<MediaStreamTrack> create(PassRefPtr<MediaStreamDescriptor>, MediaStreamComponent*);
     virtual ~MediaStreamTrack();
 
     String kind() const;
@@ -58,38 +49,11 @@ public:
     bool enabled() const;
     void setEnabled(bool);
 
-    ReadyState readyState() const;
-
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(mute);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(unmute);
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
-
     MediaStreamComponent* component();
 
-    // EventTarget
-    virtual const AtomicString& interfaceName() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
-
-    // ActiveDOMObject
-    virtual void stop() OVERRIDE;
-
-    using RefCounted<MediaStreamTrack>::ref;
-    using RefCounted<MediaStreamTrack>::deref;
-
 private:
-    MediaStreamTrack(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>, MediaStreamComponent*);
+    MediaStreamTrack(PassRefPtr<MediaStreamDescriptor>, MediaStreamComponent*);
 
-    // EventTarget
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-    EventTargetData m_eventTargetData;
-
-    // MediaStreamSourceObserver
-    virtual void sourceChangedState() OVERRIDE;
-
-    bool m_stopped;
     RefPtr<MediaStreamDescriptor> m_streamDescriptor;
     RefPtr<MediaStreamComponent> m_component;
 };
