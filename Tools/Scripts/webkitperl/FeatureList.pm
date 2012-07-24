@@ -127,6 +127,8 @@ my (
     $videoTrackSupport,
     $webglSupport,
     $webAudioSupport,
+    $webIntentsSupport,
+    $webIntentsTagSupport,
     $webSocketsSupport,
     $webTimingSupport,
     $workersSupport,
@@ -385,6 +387,12 @@ my @features = (
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", default => 0, value => \$webAudioSupport },
+
+    { option => "web-intents", desc => "Toggle Web Intents support",
+      define => "ENABLE_WEB_INTENTS", default => isEfl(), value => \$webIntentsSupport },
+
+    { option => "web-intents-tag", desc => "Toggle Web Intents Tag support",
+      define => "ENABLE_WEB_INTENTS_TAG", default => isEfl(), value => \$webIntentsTagSupport },
 
     { option => "web-sockets", desc => "Toggle Web Sockets support",
       define => "ENABLE_WEB_SOCKETS", default => 1, value => \$webSocketsSupport },
