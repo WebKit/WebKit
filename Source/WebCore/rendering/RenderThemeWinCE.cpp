@@ -478,7 +478,9 @@ static HTMLMediaElement* mediaElementParent(Node* node)
 {
     if (!node)
         return 0;
-    Node* mediaNode = node->shadowAncestorNode();
+    Node* mediaNode = node->shadowHost();
+    if (!mediaNode)
+        mediaNode = node;
     if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
         return 0;
 

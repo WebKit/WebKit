@@ -455,7 +455,9 @@ bool RenderThemeQt::paintSearchFieldCancelButton(RenderObject* o, const PaintInf
     // Logic copied from RenderThemeChromium.cpp.
 
     // Get the renderer of <input> element.
-    Node* input = o->node()->shadowAncestorNode();
+    Node* input = o->node()->shadowHost();
+    if (!input)
+        input = o->node();
     if (!input->renderer()->isBox())
         return false;
     RenderBox* inputRenderBox = toRenderBox(input->renderer());
@@ -805,8 +807,9 @@ bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pain
 bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(o->node());
-    Node* hostNode = o->node()->shadowAncestorNode();
-    ASSERT(hostNode);
+    Node* hostNode = o->node()->shadowHost();
+    if (!hostNode)
+        hostNode = o->node();
     HTMLMediaElement* mediaElement = toParentMediaElement(hostNode);
     if (!mediaElement)
         return false;

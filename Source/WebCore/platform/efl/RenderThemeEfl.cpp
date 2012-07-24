@@ -1105,7 +1105,9 @@ String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float d
 
 bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    Node* mediaNode = object->node() ? object->node()->shadowAncestorNode() : 0;
+    Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;
+    if (!mediaNode)
+        mediaNode = object->node();
     if (!mediaNode || (!mediaNode->hasTagName(videoTag)))
         return false;
 
@@ -1117,7 +1119,9 @@ bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const Pain
 
 bool RenderThemeEfl::paintMediaMuteButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    Node* mediaNode = object->node() ? object->node()->shadowAncestorNode() : 0;
+    Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;
+    if (!mediaNode)
+        mediaNode = object->node();
     if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
         return false;
 

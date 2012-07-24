@@ -281,10 +281,11 @@ IntRect RenderThemeChromiumSkia::convertToPaintingRect(RenderObject* inputRender
 bool RenderThemeChromiumSkia::paintSearchFieldCancelButton(RenderObject* cancelButtonObject, const PaintInfo& paintInfo, const IntRect& r)
 {
     // Get the renderer of <input> element.
-    Node* input = cancelButtonObject->node()->shadowAncestorNode();
-    if (!input->renderer()->isBox())
+    Node* input = cancelButtonObject->node()->shadowHost();
+    RenderObject* baseRenderer = input ? input->renderer() : cancelButtonObject;
+    if (!baseRenderer->isBox())
         return false;
-    RenderBox* inputRenderBox = toRenderBox(input->renderer());
+    RenderBox* inputRenderBox = toRenderBox(baseRenderer);
     LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
     // Make sure the scaled button stays square and will fit in its parent's box.
@@ -324,10 +325,11 @@ void RenderThemeChromiumSkia::adjustSearchFieldResultsDecorationStyle(StyleResol
 bool RenderThemeChromiumSkia::paintSearchFieldResultsDecoration(RenderObject* magnifierObject, const PaintInfo& paintInfo, const IntRect& r)
 {
     // Get the renderer of <input> element.
-    Node* input = magnifierObject->node()->shadowAncestorNode();
-    if (!input->renderer()->isBox())
+    Node* input = magnifierObject->node()->shadowHost();
+    RenderObject* baseRenderer = input ? input->renderer() : magnifierObject;
+    if (!baseRenderer->isBox())
         return false;
-    RenderBox* inputRenderBox = toRenderBox(input->renderer());
+    RenderBox* inputRenderBox = toRenderBox(baseRenderer);
     LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
     // Make sure the scaled decoration stays square and will fit in its parent's box.
@@ -359,10 +361,11 @@ void RenderThemeChromiumSkia::adjustSearchFieldResultsButtonStyle(StyleResolver*
 bool RenderThemeChromiumSkia::paintSearchFieldResultsButton(RenderObject* magnifierObject, const PaintInfo& paintInfo, const IntRect& r)
 {
     // Get the renderer of <input> element.
-    Node* input = magnifierObject->node()->shadowAncestorNode();
-    if (!input->renderer()->isBox())
+    Node* input = magnifierObject->node()->shadowHost();
+    RenderObject* baseRenderer = input ? input->renderer() : magnifierObject;
+    if (!baseRenderer->isBox())
         return false;
-    RenderBox* inputRenderBox = toRenderBox(input->renderer());
+    RenderBox* inputRenderBox = toRenderBox(baseRenderer);
     LayoutRect inputContentBox = inputRenderBox->contentBoxRect();
 
     // Make sure the scaled decoration will fit in its parent's box.

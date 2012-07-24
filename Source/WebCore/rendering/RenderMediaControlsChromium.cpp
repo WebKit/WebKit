@@ -240,9 +240,7 @@ static bool paintMediaSlider(RenderObject* object, const PaintInfo& paintInfo, c
 static bool paintMediaSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     ASSERT(object->node());
-    Node* hostNode = object->node()->shadowAncestorNode();
-    ASSERT(hostNode);
-    HTMLMediaElement* mediaElement = toParentMediaElement(hostNode);
+    HTMLMediaElement* mediaElement = toParentMediaElement(object->node()->shadowHost());
     if (!mediaElement)
         return false;
 
@@ -295,9 +293,7 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
 static bool paintMediaVolumeSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     ASSERT(object->node());
-    Node* hostNode = object->node()->shadowAncestorNode();
-    ASSERT(hostNode);
-    HTMLMediaElement* mediaElement = toParentMediaElement(hostNode);
+    HTMLMediaElement* mediaElement = toParentMediaElement(object->node()->shadowHost());
     if (!mediaElement)
         return false;
 

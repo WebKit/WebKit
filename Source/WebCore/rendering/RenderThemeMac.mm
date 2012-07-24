@@ -1559,8 +1559,9 @@ void RenderThemeMac::adjustSearchFieldStyle(StyleResolver* styleResolver, Render
 
 bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    Element* input = toElement(o->node()->shadowAncestorNode());
-    ASSERT(input);
+    Element* input = o->node()->shadowHost();
+    if (!input)
+        input = toElement(o->node());
 
     if (!input->renderer()->isBox())
         return false;
@@ -1652,7 +1653,9 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationStyle(StyleResolver*, Ren
 
 bool RenderThemeMac::paintSearchFieldResultsDecoration(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    Node* input = o->node()->shadowAncestorNode();
+    Node* input = o->node()->shadowHost();
+    if (!input)
+        input = o->node();
     if (!input->renderer()->isBox())
         return false;
 
@@ -1685,7 +1688,9 @@ void RenderThemeMac::adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderS
 
 bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    Node* input = o->node()->shadowAncestorNode();
+    Node* input = o->node()->shadowHost();
+    if (!input)
+        input = o->node();
     if (!input->renderer()->isBox())
         return false;
 
@@ -1859,7 +1864,7 @@ bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const PaintInfo
 bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    Node* mediaNode = node ? node->shadowHost() : 0;
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return false;
 
@@ -1873,7 +1878,7 @@ bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const PaintInfo& pain
 bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    Node* mediaNode = node ? node->shadowHost() : 0;
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
         return false;
 
@@ -1909,8 +1914,8 @@ bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const PaintInf
 bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
-    if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
+    Element* mediaNode = node ? node->shadowHost() : 0;
+    if (!mediaNode || !mediaNode->isMediaElement())
         return false;
 
     HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);

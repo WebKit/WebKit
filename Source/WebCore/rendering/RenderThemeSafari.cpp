@@ -1075,8 +1075,9 @@ bool RenderThemeSafari::paintSearchFieldCancelButton(RenderObject* o, const Pain
 {
     ASSERT(SafariThemeLibrary());
 
-    Node* input = o->node()->shadowAncestorNode();
-    ASSERT(input);
+    Node* input = o->node()->shadowHost();
+    if (!input)
+        input = o->node();
     RenderObject* renderer = input->renderer();
     ASSERT(renderer);
 
@@ -1129,8 +1130,9 @@ bool RenderThemeSafari::paintSearchFieldResultsDecoration(RenderObject* o, const
 {
     ASSERT(SafariThemeLibrary());
 
-    Node* input = o->node()->shadowAncestorNode();
-    ASSERT(input);
+    Node* input = o->node()->shadowHost();
+    if (!input)
+        input = o->node();
     RenderObject* renderer = input->renderer();
     ASSERT(renderer);
 
@@ -1152,8 +1154,9 @@ bool RenderThemeSafari::paintSearchFieldResultsButton(RenderObject* o, const Pai
 {
     ASSERT(SafariThemeLibrary());
 
-    Node* input = o->node()->shadowAncestorNode();
-    ASSERT(input);
+    Node* input = o->node()->shadowHost();
+    if (!input)
+        input = o->node();
     RenderObject* renderer = input->renderer();
     ASSERT(renderer);
 

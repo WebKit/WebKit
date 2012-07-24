@@ -119,8 +119,8 @@ private:
     virtual const AtomicString& shadowPseudoId() const;
     virtual void detach();
     virtual bool isSpinButtonElement() const { return true; }
-    virtual bool isEnabledFormControl() const { return static_cast<Element*>(shadowAncestorNode())->isEnabledFormControl(); }
-    virtual bool isReadOnlyFormControl() const { return static_cast<Element*>(shadowAncestorNode())->isReadOnlyFormControl(); }
+    virtual bool isEnabledFormControl() const { return shadowHost()->isEnabledFormControl(); }
+    virtual bool isReadOnlyFormControl() const { return shadowHost()->isReadOnlyFormControl(); }
     virtual void defaultEventHandler(Event*);
     void doStepAction(int);
     void startRepeatingTimer();

@@ -68,7 +68,11 @@ static const float cScanMaximumRate = 8;
 
 HTMLMediaElement* toParentMediaElement(Node* node)
 {
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    if (!node)
+        return 0;
+    Node* mediaNode = node->shadowHost();
+    if (!mediaNode)
+        mediaNode = node;
     if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
         return 0;
 

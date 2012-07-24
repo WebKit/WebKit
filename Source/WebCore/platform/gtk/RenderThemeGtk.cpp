@@ -64,7 +64,9 @@ using namespace HTMLNames;
 static HTMLMediaElement* getMediaElementFromRenderObject(RenderObject* o)
 {
     Node* node = o->node();
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
+    Node* mediaNode = node ? node->shadowHost() : 0;
+    if (!mediaNode)
+        mediaNode = node;
     if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
         return 0;
 
@@ -313,7 +315,9 @@ void RenderThemeGtk::adjustSearchFieldResultsDecorationStyle(StyleResolver*, Ren
 static IntRect centerRectVerticallyInParentInputElement(RenderObject* renderObject, const IntRect& rect)
 {
     // Get the renderer of <input> element.
-    Node* input = renderObject->node()->shadowAncestorNode();
+    Node* input = renderObject->node()->shadowHost();
+    if (!input)
+        input = renderObject->node();
     if (!input->renderer()->isBox())
         return IntRect();
 

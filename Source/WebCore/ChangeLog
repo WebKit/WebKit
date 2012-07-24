@@ -1,3 +1,59 @@
+2012-07-24  Kent Tamura  <tkent@chromium.org>
+
+        Replace some callsites of shadowAncestorNode() with shadowHost()
+        https://bugs.webkit.org/show_bug.cgi?id=92060
+
+        Reviewed by Hajime Morita.
+
+        shadowAncestorNode() is deprecated.
+
+        No new tests. This shouldn't change behaviors.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::toParentMediaElement):
+        * html/shadow/TextControlInnerElements.h:
+        (WebCore::SpinButtonElement::isEnabledFormControl):
+        (WebCore::SpinButtonElement::isReadOnlyFormControl):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintMediaFullscreenButton):
+        (WebCore::RenderThemeEfl::paintMediaMuteButton):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::getMediaElementFromRenderObject):
+        (WebCore::centerRectVerticallyInParentInputElement):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeQt::paintMediaSliderThumb):
+        Removed an ASSERT() because nullness of o->node() is already asserted.
+        * rendering/RenderInputSpeech.cpp:
+        (WebCore::RenderInputSpeech::paintInputFieldSpeechButton):
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaSliderThumb):
+        Passing shadowHost() to toParentMediaElement(), which accepts 0 and will return 0.
+        (WebCore::paintMediaVolumeSliderThumb): ditto.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeChromiumSkia::paintSearchFieldResultsButton):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        Remove an ASSERT(input) because input never be null unless o->node() is
+        null. If o->node() is null, this function crashes.
+        (WebCore::RenderThemeMac::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeMac::paintMediaMuteButton):
+        It's ok to ignore "node is a media element" case because this function
+        works only if node->isMediaControlElement().
+        (WebCore::RenderThemeMac::paintMediaPlayButton): ditto.
+        (WebCore::RenderThemeMac::paintMediaSliderTrack): ditto.
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintSearchFieldCancelButton):
+        Remove an ASSERT(input) because input never be null unless o->node() is
+        null. If o->node() is null, this function crashes.
+        (WebCore::RenderThemeSafari::paintSearchFieldResultsDecoration): ditto.
+        (WebCore::RenderThemeSafari::paintSearchFieldResultsButton): ditto.
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::mediaElementParent):
+
 2012-07-24  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Build fix for Android after r123424
