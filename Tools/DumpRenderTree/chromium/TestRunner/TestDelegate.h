@@ -35,7 +35,7 @@
 #include <wtf/Vector.h>
 
 namespace WebKit {
-class WebContextMenuData;
+struct WebContextMenuData;
 }
 
 class TestDelegate {
