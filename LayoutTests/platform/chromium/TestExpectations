@@ -3347,8 +3347,6 @@ BUGWK85003 WIN : media/video-currentTime-set.html = PASS TEXT
 
 BUGWK78664 : platform/chromium/compositing/overflow/overflow-scrolling-touch-stacking-context.html = IMAGE+TEXT
 
-BUGWK85038 : http/tests/inspector/network/network-initiator.html = TEXT TIMEOUT
-
 BUGWK85090 DEBUG SLOW : fast/js/dfg-float64array.html = PASS
 BUGWK85090 DEBUG SLOW : fast/js/dfg-uint32array.html = PASS
 BUGWK85090 DEBUG SLOW : fast/js/dfg-uint16array.html = PASS

@@ -1,3 +1,23 @@
+2012-07-24  Anthony Scian  <ascian@rim.com>
+
+        Web Inspector [JSC]: Enable initiator column in network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=65533
+
+        Reviewed by Vsevolod Vlasov.
+
+        With 40118 fixed for webkit, Preferences.displayInitiator should be set to true.
+        Removed references to it since the optionality is no longer required.
+
+        Test: http/tests/inspector/network/network-initiator.html
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._createTable):
+        (WebInspector.NetworkLogView.prototype.switchToDetailedView):
+        (WebInspector.NetworkLogView.prototype.switchToBriefView):
+        (WebInspector.NetworkDataGridNode.prototype.createCells):
+        (WebInspector.NetworkDataGridNode.prototype.refreshRequest):
+        * inspector/front-end/Settings.js:
+
 2012-07-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Missing *explicit* keyword in dom and page.

@@ -42,7 +42,6 @@
     Preferences.exposeWorkersInspection = true;
     Preferences.showDockToRight = true;
     Preferences.exposeFileSystemInspection = true;
-    Preferences.displayInitiator = true;
 })();}
 
 function buildPlatformExtensionAPI(extensionInfo)

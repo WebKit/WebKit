@@ -45,8 +45,7 @@ var Preferences = {
     applicationTitle: "Web Inspector - %s",
     showHeapSnapshotObjectsHiddenProperties: false,
     showDockToRight: false,
-    exposeFileSystemInspection: false,
-    displayInitiator: false
+    exposeFileSystemInspection: false
 }
 
 var Capabilities = {

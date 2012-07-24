@@ -207,9 +207,6 @@ BUGWK60731 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK60731 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK60731 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
-// Fails after r115379
-BUGWK85038 : http/tests/inspector/network/network-initiator.html = TEXT TIMEOUT
-
 BUGWK85401 : media/video-colorspace-yuv420.html = TEXT
 BUGWK85401 : media/video-colorspace-yuv422.html = TEXT
 

@@ -36,7 +36,7 @@ function resourceLoaded()
 
 var test = function()
 {
-    InspectorTest.reloadPage(step1);
+    InspectorTest.hardReloadPage(step1);
 
     function findRequestByURL(url)
     {
@@ -77,8 +77,16 @@ var test = function()
             InspectorTest.addResult(request.url + ": " + initiator.type);
             if (initiator.url)
                 InspectorTest.addResult("    " + initiator.url + " " + initiator.lineNumber);
-            if (initiator.stackTrace)
-                InspectorTest.addResult("    " + initiator.stackTrace[0].url + " " + initiator.stackTrace[0].lineNumber);
+            if (initiator.stackTrace) {
+                var stackTrace = initiator.stackTrace;
+                for (var i = 0; i < stackTrace.length; ++i) {
+                    var frame = stackTrace[i];
+                    if (frame.lineNumber) {
+                        InspectorTest.addResult("    " + frame.functionName + " " + frame.url + " " + frame.lineNumber);
+                        break;
+                    }
+                }
+            }
         }
 
         dumpInitiator(findRequestByURL(/initiator\.css/));
