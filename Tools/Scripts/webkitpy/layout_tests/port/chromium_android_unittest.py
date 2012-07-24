@@ -48,7 +48,6 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
 
     def test_attributes(self):
         port = self.make_port()
-        self.assertTrue(port.get_option('enable_hardware_gpu'))
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-android'))
 
     def test_default_timeout_ms(self):

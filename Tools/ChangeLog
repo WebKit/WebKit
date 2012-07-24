@@ -1,3 +1,27 @@
+2012-07-24  Peter Beverloo  <peter@chromium.org>
+
+        Android-chromium layout tests failing with GPU related crash
+        https://bugs.webkit.org/show_bug.cgi?id=92126
+
+        Reviewed by Adam Barth.
+
+        Remove support for the "--enable-hardware-gpu" flag from run_webkit_tests,
+        as it's not being used by any port anymore, and neither is being passed
+        on to the test runner. Instead, append the flag directly to DRT for the
+        Chromium Android port, which does rely on this functionality.
+
+        The ChromiumAndroidUnitTest tests didn't catch this as the property was
+        set to True, but it's unable to detect whether they'll actually be used.
+        No occurrances of "--enable-hardware-gpu" exist in either Tools/Scripts/
+        or Tools/BuildSlaveSupport/, so nothing upstream seems to rely on the flag.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest.test_attributes):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2012-07-24  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [WTR][EFL] Multiple mouse clicks are not emitted in EventSenderProxyEfl
