@@ -321,7 +321,7 @@ PassRefPtr<FileList> ClipboardMac::files() const
     for (size_t i = 0; i < absoluteURLs.size(); i++) {
         NSURL *absoluteURL = [NSURL URLWithString:absoluteURLs[i]];
         ASSERT([absoluteURL isFileURL]);
-        fileList->append(File::create([absoluteURL path]));
+        fileList->append(File::create([absoluteURL path], File::AllContentTypes));
     }
     return fileList.release(); // We will always return a FileList, sometimes empty
 }

@@ -38,9 +38,16 @@ class KURL;
 
 class File : public Blob {
 public:
-    static PassRefPtr<File> create(const String& path)
+    // AllContentTypes should only be used when the full path/name are trusted; otherwise, it could
+    // allow arbitrary pages to determine what applications an user has installed.
+    enum ContentTypeLookupPolicy {
+        WellKnownContentTypes,
+        AllContentTypes,
+    };
+
+    static PassRefPtr<File> create(const String& path, ContentTypeLookupPolicy policy = WellKnownContentTypes)
     {
-        return adoptRef(new File(path));
+        return adoptRef(new File(path, policy));
     }
 
     // For deserialization.
@@ -64,11 +71,11 @@ public:
 #endif
 
     // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
-    static PassRefPtr<File> createWithName(const String& path, const String& name)
+    static PassRefPtr<File> createWithName(const String& path, const String& name, ContentTypeLookupPolicy policy = WellKnownContentTypes)
     {
         if (name.isEmpty())
-            return adoptRef(new File(path));
-        return adoptRef(new File(path, name));
+            return adoptRef(new File(path, policy));
+        return adoptRef(new File(path, name, policy));
     }
 
     virtual unsigned long long size() const;
@@ -89,11 +96,11 @@ public:
     void captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const;
 
 private:
-    File(const String& path);
+    File(const String& path, ContentTypeLookupPolicy);
 
     // For deserialization.
     File(const String& path, const KURL& srcURL, const String& type);
-    File(const String& path, const String& name);
+    File(const String& path, const String& name, ContentTypeLookupPolicy);
 
 # if ENABLE(FILE_SYSTEM)
     File(const String& name, const FileMetadata&);

@@ -224,7 +224,7 @@ PassRefPtr<FileList> ClipboardGtk::files() const
     RefPtr<FileList> fileList = FileList::create();
     const Vector<String>& filenames = m_dataObject->filenames();
     for (size_t i = 0; i < filenames.size(); i++)
-        fileList->append(File::create(filenames[i]));
+        fileList->append(File::create(filenames[i], File::AllContentTypes));
     return fileList.release();
 }
 

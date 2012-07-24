@@ -284,7 +284,7 @@ PassRefPtr<FileList> FileInputType::createFileList(const Vector<FileChooserFileI
 #endif
 
     for (size_t i = 0; i < size; i++)
-        fileList->append(File::createWithName(files[i].path, files[i].displayName));
+        fileList->append(File::createWithName(files[i].path, files[i].displayName, File::AllContentTypes));
     return fileList;
 }
 

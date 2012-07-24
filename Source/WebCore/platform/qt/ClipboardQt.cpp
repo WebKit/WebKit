@@ -208,7 +208,7 @@ PassRefPtr<FileList> ClipboardQt::files() const
         QUrl url = urls[i];
         if (url.scheme() != QLatin1String("file"))
             continue;
-        fileList->append(File::create(url.toLocalFile()));
+        fileList->append(File::create(url.toLocalFile(), File::AllContentTypes));
     }
 
     return fileList.release();

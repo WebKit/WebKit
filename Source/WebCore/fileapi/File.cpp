@@ -34,12 +34,18 @@
 
 namespace WebCore {
 
-static String getContentTypeFromFileName(const String& name)
+static String getContentTypeFromFileName(const String& name, File::ContentTypeLookupPolicy policy)
 {
     String type;
     int index = name.reverseFind('.');
-    if (index != -1)
-        type = MIMETypeRegistry::getWellKnownMIMETypeForExtension(name.substring(index + 1));
+    if (index != -1) {
+        if (policy == File::WellKnownContentTypes)
+            type = MIMETypeRegistry::getWellKnownMIMETypeForExtension(name.substring(index + 1));
+        else {
+            ASSERT(policy == File::AllContentTypes);
+            type = MIMETypeRegistry::getMIMETypeForExtension(name.substring(index + 1));
+        }
+    }
     return type;
 }
 
@@ -51,21 +57,21 @@ static PassOwnPtr<BlobData> createBlobDataForFileWithType(const String& path, co
     return blobData.release();
 }
 
-static PassOwnPtr<BlobData> createBlobDataForFile(const String& path)
+static PassOwnPtr<BlobData> createBlobDataForFile(const String& path, File::ContentTypeLookupPolicy policy)
 {
-    return createBlobDataForFileWithType(path, getContentTypeFromFileName(path));
+    return createBlobDataForFileWithType(path, getContentTypeFromFileName(path, policy));
 }
 
-static PassOwnPtr<BlobData> createBlobDataForFileWithName(const String& path, const String& fileSystemName)
+static PassOwnPtr<BlobData> createBlobDataForFileWithName(const String& path, const String& fileSystemName, File::ContentTypeLookupPolicy policy)
 {
-    return createBlobDataForFileWithType(path, getContentTypeFromFileName(fileSystemName));
+    return createBlobDataForFileWithType(path, getContentTypeFromFileName(fileSystemName, policy));
 }
 
 #if ENABLE(FILE_SYSTEM)
 static PassOwnPtr<BlobData> createBlobDataForFileWithMetadata(const String& fileSystemName, const FileMetadata& metadata)
 {
     OwnPtr<BlobData> blobData = BlobData::create();
-    blobData->setContentType(getContentTypeFromFileName(fileSystemName));
+    blobData->setContentType(getContentTypeFromFileName(fileSystemName, File::WellKnownContentTypes));
     blobData->appendFile(metadata.platformPath, 0, metadata.length, metadata.modificationTime);
     return blobData.release();
 }
@@ -74,14 +80,14 @@ static PassOwnPtr<BlobData> createBlobDataForFileWithMetadata(const String& file
 #if ENABLE(DIRECTORY_UPLOAD)
 PassRefPtr<File> File::createWithRelativePath(const String& path, const String& relativePath)
 {
-    RefPtr<File> file = adoptRef(new File(path));
+    RefPtr<File> file = adoptRef(new File(path, AllContentTypes));
     file->m_relativePath = relativePath;
     return file.release();
 }
 #endif
 
-File::File(const String& path)
-    : Blob(createBlobDataForFile(path), -1)
+File::File(const String& path, ContentTypeLookupPolicy policy)
+    : Blob(createBlobDataForFile(path, policy), -1)
     , m_path(path)
     , m_name(pathGetFileName(path))
 #if ENABLE(FILE_SYSTEM)
@@ -105,8 +111,8 @@ File::File(const String& path, const KURL& url, const String& type)
     // See SerializedScriptValue.cpp for js and v8.
 }
 
-File::File(const String& path, const String& name)
-    : Blob(createBlobDataForFileWithName(path, name), -1)
+File::File(const String& path, const String& name, ContentTypeLookupPolicy policy)
+    : Blob(createBlobDataForFileWithName(path, name, policy), -1)
     , m_path(path)
     , m_name(name)
 #if ENABLE(FILE_SYSTEM)

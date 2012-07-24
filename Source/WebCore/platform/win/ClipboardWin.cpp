@@ -560,7 +560,7 @@ PassRefPtr<FileList> ClipboardWin::files() const
         for (UINT i = 0; i < fileCount; i++) {
             if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
                 continue;
-            files->append(File::create(reinterpret_cast<UChar*>(filename)));
+            files->append(File::create(reinterpret_cast<UChar*>(filename), File::AllContentTypes));
         }
 
         GlobalUnlock(medium.hGlobal);

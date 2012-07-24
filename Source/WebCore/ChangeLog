@@ -1,3 +1,40 @@
+2012-07-24  Daniel Cheng  <dcheng@chromium.org>
+
+        Files from drag and file <input> should use getMIMETypeForExtension to determine content type.
+        https://bugs.webkit.org/show_bug.cgi?id=91702
+
+        Reviewed by Jian Li.
+
+        Awhile back, we changed File to only use getWellKnownMIMETypeForExtension to prevent web
+        pages from being able to detect what applications a user has installed indirectly through
+        the MIME types. However, some sites like YouTube's drag and drop uploader use MIME types
+        that aren't in WebKit's internal list, so we relax the restriction for Files that originate
+        from an user action.
+
+        * fileapi/File.cpp:
+        (WebCore::getContentTypeFromFileName):
+        (WebCore::createBlobDataForFile):
+        (WebCore::createBlobDataForFileWithName):
+        (WebCore::createBlobDataForFileWithMetadata):
+        (WebCore::File::createWithRelativePath):
+        (WebCore::File::File):
+        * fileapi/File.h:
+        (File):
+        (WebCore::File::create):
+        (WebCore::File::createWithName):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::createFileList):
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::addFilename):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::files):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::files):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::files):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::files):
+
 2012-07-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Snippets UI polish
