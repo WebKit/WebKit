@@ -1,3 +1,19 @@
+2012-07-24  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Do not call settings setters twice on page construction
+        https://bugs.webkit.org/show_bug.cgi?id=92157
+
+        Reviewed by Yong Li.
+
+        The WebPagePrivate init method sets some settings value that were
+        already set in didChangeSettings. setUseHixie76WebSocketProtocol just
+        sets the default value, no need to set it again.
+        Also call didChangeSettings explicitly from init, before that we are
+        not calling it since the delegate is not set yet.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+
 2012-07-24  Mike Fenton  <mifenton@rim.com>
 
         Throttle calls to request the virtual keyboard be shown.

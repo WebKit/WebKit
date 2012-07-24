@@ -547,8 +547,9 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     // so that we only get one didChangeSettings() callback when we set the page group name. This causes us
     // to make a copy of the WebSettings since some WebSettings method make use of the page group name.
     // Instead, we shouldn't be storing the page group name in WebSettings.
-    m_webSettings->setDelegate(this);
     m_webSettings->setPageGroupName(pageGroupName);
+    m_webSettings->setDelegate(this);
+    didChangeSettings(m_webSettings);
 
     RefPtr<Frame> newFrame = Frame::create(m_page, /* HTMLFrameOwnerElement* */ 0, frameLoaderClient);
 
@@ -564,22 +565,16 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_page->settings()->setCanvasUsesAcceleratedDrawing(true);
     m_page->settings()->setAccelerated2dCanvasEnabled(true);
 #endif
-#if ENABLE(VIEWPORT_REFLOW)
-    m_page->settings()->setTextReflowEnabled(m_webSettings->textReflowMode() == WebSettings::TextReflowEnabled);
-#endif
 
     m_page->settings()->setInteractiveFormValidationEnabled(true);
     m_page->settings()->setAllowUniversalAccessFromFileURLs(false);
     m_page->settings()->setAllowFileAccessFromFileURLs(false);
-    m_page->settings()->setShouldUseCrossOriginProtocolCheck(!m_webSettings->allowCrossSiteRequests());
-    m_page->settings()->setWebSecurityEnabled(!m_webSettings->allowCrossSiteRequests());
 
     m_backingStoreClient = BackingStoreClient::create(m_mainFrame, /* parent frame */ 0, m_webPage);
     // The direct access to BackingStore is left here for convenience since it
     // is owned by BackingStoreClient and then deleted by its destructor.
     m_backingStore = m_backingStoreClient->backingStore();
 
-    m_page->settings()->setSpatialNavigationEnabled(m_webSettings->isSpatialNavigationEnabled());
     blockClickRadius = int(roundf(0.35 * Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(0).width())); // The clicked rectangle area should be a fixed unit of measurement.
 
     m_page->settings()->setDelegateSelectionPaint(true);
