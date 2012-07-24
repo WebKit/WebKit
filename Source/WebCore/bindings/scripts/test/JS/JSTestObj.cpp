@@ -2530,9 +2530,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(ExecState*
     float a(MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined).toFloat(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    if (exec->argumentCount() > 2 && !exec->argument(2).isUndefinedOrNull() && !exec->argument(2).inherits(&JSint::s_info))
-        return throwVMTypeError(exec);
-    int* b(toint(MAYBE_MISSING_PARAMETER(exec, 2, DefaultIsUndefined)));
+    int b(MAYBE_MISSING_PARAMETER(exec, 2, DefaultIsUndefined).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

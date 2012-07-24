@@ -1436,7 +1436,7 @@ webkit_dom_test_obj_orange(WebKitDOMTestObj* self)
 }
 
 WebKitDOMbool*
-webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, gint b, GError** error)
+webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, glong b, GError** error)
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;

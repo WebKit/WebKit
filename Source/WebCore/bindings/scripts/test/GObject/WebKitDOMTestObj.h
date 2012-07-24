@@ -487,14 +487,14 @@ webkit_dom_test_obj_orange(WebKitDOMTestObj* self);
  * @self: A #WebKitDOMTestObj
  * @str: A #gchar
  * @a: A #gfloat
- * @b: A #gint
+ * @b: A #glong
  * @error: #GError
  *
  * Returns: (transfer none):
  *
 **/
 WEBKIT_API WebKitDOMbool*
-webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, gint b, GError** error);
+webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gfloat a, glong b, GError** error);
 
 /**
  * webkit_dom_test_obj_get_read_only_int_attr:

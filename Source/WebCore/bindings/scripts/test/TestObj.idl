@@ -190,13 +190,13 @@ module test {
 
 #if defined(TESTING_V8)
         // 'V8EnabledAtRuntime' methods and attributes.
-        [V8EnabledAtRuntime] void enabledAtRuntimeMethod1(in int intArg);
-        [V8EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in int intArg);
+        [V8EnabledAtRuntime] void enabledAtRuntimeMethod1(in long longArg);
+        [V8EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in long longArg);
         attribute [V8EnabledAtRuntime] long enabledAtRuntimeAttr1;
         attribute [V8EnabledAtRuntime=FeatureName] long enabledAtRuntimeAttr2;
         // 'V8EnabledPerContext' methods and attributes.
-        [V8EnabledPerContext] void enabledPerContextMethod1(in int intArg);
-        [V8EnabledPerContext=FeatureName] void enabledPerContextMethod2(in int intArg);
+        [V8EnabledPerContext] void enabledPerContextMethod1(in long longArg);
+        [V8EnabledPerContext=FeatureName] void enabledPerContextMethod2(in long longArg);
         attribute [V8EnabledPerContext] long enabledPerContextAttr1;
         attribute [V8EnabledPerContext=FeatureName] long enabledPerContextAttr2;
 #endif
@@ -233,7 +233,7 @@ module test {
         attribute [ImplementedAs=blueberry] int strawberry;
 
         attribute [StrictTypeChecking] float strictFloat;
-        [StrictTypeChecking] bool strictFunction(in DOMString str, in float a, in int b)
+        [StrictTypeChecking] bool strictFunction(in DOMString str, in float a, in long b)
             raises(DOMException);
 
         // ObjectiveC reserved words.

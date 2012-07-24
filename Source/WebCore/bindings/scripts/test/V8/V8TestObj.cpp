@@ -1728,8 +1728,8 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
-    imp->enabledAtRuntimeMethod1(intArg);
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    imp->enabledAtRuntimeMethod1(Arg);
     return v8::Handle<v8::Value>();
 }
 
@@ -1739,8 +1739,8 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
-    imp->enabledAtRuntimeMethod2(intArg);
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    imp->enabledAtRuntimeMethod2(Arg);
     return v8::Handle<v8::Value>();
 }
 
@@ -1750,8 +1750,8 @@ static v8::Handle<v8::Value> enabledPerContextMethod1Callback(const v8::Argument
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
-    imp->enabledPerContextMethod1(intArg);
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    imp->enabledPerContextMethod1(Arg);
     return v8::Handle<v8::Value>();
 }
 
@@ -1761,8 +1761,8 @@ static v8::Handle<v8::Value> enabledPerContextMethod2Callback(const v8::Argument
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
-    imp->enabledPerContextMethod2(intArg);
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    imp->enabledPerContextMethod2(Arg);
     return v8::Handle<v8::Value>();
 }
 
@@ -1888,7 +1888,7 @@ static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
     {
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     EXCEPTION_BLOCK(float, a, static_cast<float>(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)->NumberValue()));
-    EXCEPTION_BLOCK(int, b, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
+    EXCEPTION_BLOCK(int, b, toInt32(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)));
     RefPtr<bool> result = imp->strictFunction(str, a, b, ec);
     if (UNLIKELY(ec))
         goto fail;
