@@ -1,0 +1,38 @@
+This test ensure that PropertyNodeList.getValues() array returns an array whose valuse are obtained from the itemValue DOM property of each of the elements represented by the object, in tree order.
+
+property index 0, tag DIV
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 1, tag SPAN
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 2, tag META
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 3, tag AUDIO
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 4, tag EMBED
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 5, tag IFRAME
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 6, tag IMG
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 7, tag SOURCE
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 8, tag VIDEO
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 9, tag TRACK
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 10, tag A
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 11, tag AREA
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 12, tag LINK
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 13, tag P
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+property index 14, tag SPAN
+PASS valuesArray[i] is propertyNodeList[i].itemValue
+PASS valuesArray.length is 15
+PASS successfullyParsed is true
+
+TEST COMPLETE
+      
+

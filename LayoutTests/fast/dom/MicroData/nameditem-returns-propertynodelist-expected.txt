@@ -1,0 +1,12 @@
+PropertiesCollection.namedItem(name) must return PropertyNodeList.
+
+PASS element.properties.namedItem('foo') instanceof PropertyNodeList is true
+PASS element.properties['foo'] instanceof PropertyNodeList is true
+
+PropertyNodeList interface inherited from the NodeList interface.
+PASS element.properties.namedItem('foo') instanceof NodeList is true
+PASS element.properties['foo'] instanceof NodeList is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

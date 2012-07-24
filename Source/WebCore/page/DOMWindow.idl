@@ -369,6 +369,7 @@ module window {
         attribute DocumentConstructor Document;
         attribute NodeConstructor Node;
         attribute NodeListConstructor NodeList;
+        attribute [Conditional=MICRODATA] PropertyNodeListConstructor PropertyNodeList;
         attribute NamedNodeMapConstructor NamedNodeMap;
         attribute CharacterDataConstructor CharacterData;
         attribute AttrConstructor Attr;

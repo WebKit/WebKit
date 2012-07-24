@@ -90,6 +90,7 @@ class TreeScope;
 
 #if ENABLE(MICRODATA)
 class HTMLPropertiesCollection;
+class PropertyNodeList;
 #endif
 
 typedef int ExceptionCode;
@@ -633,6 +634,7 @@ public:
     DOMSettableTokenList* itemProp();
     DOMSettableTokenList* itemRef();
     DOMSettableTokenList* itemType();
+    PassRefPtr<PropertyNodeList> propertyNodeList(const String&);
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)

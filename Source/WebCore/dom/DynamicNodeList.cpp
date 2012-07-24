@@ -27,8 +27,26 @@
 #include "Element.h"
 #include "HTMLCollection.h"
 #include "HTMLPropertiesCollection.h"
+#include "PropertyNodeList.h"
 
 namespace WebCore {
+
+Node* DynamicNodeListCacheBase::rootNode() const
+{
+    if ((isRootedAtDocument() || ownerNodeHasItemRefAttribute()) && m_ownerNode->inDocument())
+        return m_ownerNode->document();
+    return m_ownerNode.get();
+}
+
+ALWAYS_INLINE bool DynamicNodeListCacheBase::ownerNodeHasItemRefAttribute() const
+{
+#if ENABLE(MICRODATA)
+    if (m_rootType == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr)
+        return toElement(ownerNode())->fastHasAttribute(HTMLNames::itemrefAttr);
+#endif
+
+    return false;
+}
 
 void DynamicNodeListCacheBase::invalidateCache() const
 {
@@ -36,6 +54,7 @@ void DynamicNodeListCacheBase::invalidateCache() const
     m_isLengthCacheValid = false;
     m_isItemCacheValid = false;
     m_isNameCacheValid = false;
+    m_isItemRefElementsCacheValid = false;
     if (type() == NodeListCollectionType)
         return;
 
@@ -66,6 +85,11 @@ Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
     Node* rootNode = this->rootNode();
 
     if (rootNode->inDocument()) {
+#if ENABLE(MICRODATA)
+        if (rootType() == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr)
+            static_cast<const PropertyNodeList*>(this)->updateRefElements();
+#endif
+
         Element* element = rootNode->treeScope()->getElementById(elementId);
         if (element && nodeMatches(element) && element->isDescendantOf(rootNode))
             return element;

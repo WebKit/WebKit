@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (c) 2012 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -28,18 +28,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+#include "config.h"
 
-    interface [
-        Conditional=MICRODATA,
-        JSGenerateToJSObject,
-        IndexedGetter,
-        NamedGetter
-    ] HTMLPropertiesCollection : HTMLCollection {
-        readonly attribute unsigned long length;
-        Node item(in unsigned long index);
+#if ENABLE(MICRODATA)
+#include "JSMicroDataItemValue.h"
 
-        readonly attribute DOMStringList names;
-        PropertyNodeList namedItem(in DOMString name);
-    };
+#include "JSNode.h"
+#include <runtime/JSArray.h>
+
+using namespace JSC;
+
+namespace WebCore {
+
+JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, MicroDataItemValue* itemValue)
+{
+    if (!itemValue)
+        return jsNull();
+    if (itemValue->isNode())
+        return toJS(exec, globalObject, itemValue->getNode());
+    return jsString(exec, itemValue->getString());
 }
+
+}
+
+#endif // ENABLE(MICRODATA)

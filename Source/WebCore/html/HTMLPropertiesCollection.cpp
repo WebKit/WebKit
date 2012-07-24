@@ -39,7 +39,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Node.h"
-#include "StaticNodeList.h"
+#include "PropertyNodeList.h"
 
 namespace WebCore {
 
@@ -52,8 +52,6 @@ PassRefPtr<HTMLPropertiesCollection> HTMLPropertiesCollection::create(Node* item
 
 HTMLPropertiesCollection::HTMLPropertiesCollection(Node* itemNode)
     : HTMLCollection(itemNode, ItemProperties, OverridesItemAfter)
-    , m_hasPropertyNameCache(false)
-    , m_hasItemRefElements(false)
 {
 }
 
@@ -63,43 +61,12 @@ HTMLPropertiesCollection::~HTMLPropertiesCollection()
 
 void HTMLPropertiesCollection::updateRefElements() const
 {
-    if (m_hasItemRefElements)
+    if (isItemRefElementsCacheValid())
         return;
-
-    HTMLElement* baseElement = toHTMLElement(base());
 
     m_itemRefElements.clear();
-    m_hasItemRefElements = true;
-
-    if (!baseElement->fastHasAttribute(itemscopeAttr))
-        return;
-
-    if (!baseElement->fastHasAttribute(itemrefAttr)) {
-        m_itemRefElements.append(baseElement);
-        return;
-    }
-
-    DOMSettableTokenList* itemRef = baseElement->itemRef();
-    RefPtr<DOMSettableTokenList> processedItemRef = DOMSettableTokenList::create();
-    Node* rootNode = baseElement->treeScope()->rootNode();
-
-    for (Node* current = rootNode->firstChild(); current; current = current->traverseNextNode(rootNode)) {
-        if (!current->isHTMLElement())
-            continue;
-        HTMLElement* element = toHTMLElement(current);
-
-        if (element == baseElement) {
-            m_itemRefElements.append(element);
-            continue;
-        }
-
-        const AtomicString& id = element->getIdAttribute();
-        if (!processedItemRef->tokens().contains(id) && itemRef->tokens().contains(id)) {
-            processedItemRef->setValue(id);
-            if (!element->isDescendantOf(baseElement))
-                m_itemRefElements.append(element);
-        }
-    }
+    setItemRefElementsCacheValid();
+    toHTMLElement(base())->getItemRefElements(m_itemRefElements);
 }
 
 static Node* nextNodeWithProperty(Node* base, Node* node)
@@ -142,7 +109,7 @@ HTMLElement* HTMLPropertiesCollection::virtualItemAfter(HTMLElement* base, Eleme
 
 void HTMLPropertiesCollection::updateNameCache() const
 {
-    if (m_hasPropertyNameCache)
+    if (hasNameCache())
         return;
 
     updateRefElements();
@@ -156,7 +123,7 @@ void HTMLPropertiesCollection::updateNameCache() const
         }
     }
 
-    m_hasPropertyNameCache = true;
+    setHasNameCache();
 }
 
 PassRefPtr<DOMStringList> HTMLPropertiesCollection::names() const
@@ -167,28 +134,16 @@ PassRefPtr<DOMStringList> HTMLPropertiesCollection::names() const
     return m_propertyNames;
 }
 
-PassRefPtr<NodeList> HTMLPropertiesCollection::namedItem(const String& name) const
+PassRefPtr<PropertyNodeList> HTMLPropertiesCollection::namedItem(const String& name) const
 {
-    updateNameCache();
-
-    Vector<RefPtr<Node> > namedItems;
-    Vector<Element*>* propertyResults = m_propertyCache.get(AtomicString(name).impl());
-    for (unsigned i = 0; propertyResults && i < propertyResults->size(); ++i)
-        namedItems.append(propertyResults->at(i));
-
-    // FIXME: HTML5 specifies that this should return PropertyNodeList.
-    return namedItems.isEmpty() ? 0 : StaticNodeList::adopt(namedItems);
+    return base()->propertyNodeList(name);
 }
 
 bool HTMLPropertiesCollection::hasNamedItem(const AtomicString& name) const
 {
     updateNameCache();
-
-    if (Vector<Element*>* propertyCache = m_propertyCache.get(name.impl())) {
-        if (!propertyCache->isEmpty())
-            return true;
-    }
-
+    if (m_propertyNames)
+        return m_propertyNames->contains(name);
     return false;
 }
 

@@ -167,6 +167,7 @@ SOURCES += \
      bindings/js/JSMessageEventCustom.cpp \
      bindings/js/JSMessagePortCustom.cpp \
      bindings/js/JSMessagePortCustom.h \
+     bindings/js/JSMicroDataItemValueCustom.cpp \
      bindings/js/JSMutationCallbackCustom.cpp \
      bindings/js/JSMutationObserverCustom.cpp \
      bindings/js/JSNamedNodeMapCustom.cpp \
@@ -440,6 +441,7 @@ SOURCES += \
     dom/PositionIterator.cpp \
     dom/ProcessingInstruction.cpp \
     dom/ProgressEvent.cpp \
+    dom/PropertyNodeList.cpp \
     dom/QualifiedName.cpp \
     dom/Range.cpp \
     dom/RangeException.cpp \
@@ -1563,6 +1565,7 @@ HEADERS += \
     dom/PositionIterator.h \
     dom/ProcessingInstruction.h \
     dom/ProgressEvent.h \
+    dom/PropertyNodeList.h \
     dom/QualifiedName.h \
     dom/Range.h \
     dom/RegisteredEventListener.h \

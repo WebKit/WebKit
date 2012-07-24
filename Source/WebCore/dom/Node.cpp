@@ -119,6 +119,7 @@
 
 #if ENABLE(MICRODATA)
 #include "HTMLPropertiesCollection.h"
+#include "PropertyNodeList.h"
 #endif
 
 using namespace std;
@@ -2772,6 +2773,10 @@ void Node::setItemType(const String& value)
     ensureRareData()->setItemType(value);
 }
 
+PassRefPtr<PropertyNodeList> Node::propertyNodeList(const String& name)
+{
+    return ensureRareData()->ensureNodeLists()->addCacheWithName<PropertyNodeList>(this, DynamicNodeList::PropertyNodeListType, name);
+}
 #endif
 
 // It's important not to inline removedLastRef, because we don't want to inline the code to

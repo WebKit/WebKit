@@ -98,6 +98,7 @@ public:
     void setItemValue(const String&, ExceptionCode&);
     PassRefPtr<MicroDataItemValue> itemValue() const;
     PassRefPtr<HTMLPropertiesCollection> properties();
+    void getItemRefElements(Vector<HTMLElement*>&);
 #endif
 
 #ifndef NDEBUG

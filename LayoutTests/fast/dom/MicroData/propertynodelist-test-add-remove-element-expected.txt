@@ -1,0 +1,35 @@
+Microdata properties collection must update on adding or removing property.
+
+PASS propertyNodeList.length == '1' is true
+PASS propertyNodeList[0] == item.children[0] is true
+Add a property to the item.
+Created element of type: div
+Set attribute: itemprop, value: foo
+PASS propertyNodeList.length == 2 is true
+PASS propertyNodeList[0] == item.children[0] is true
+PASS propertyNodeList[1] == item.children[1] is true
+Remove itemprop attribute of the first child.
+PASS propertyNodeList.length == 1 is true
+PASS propertyNodeList[0] == item.children[1] is true
+Add itemprop attribute to the first child.
+PASS propertyNodeList.length == 2 is true
+PASS propertyNodeList[0] == item.children[0] is true
+PASS propertyNodeList[1] == item.children[1] is true
+Add itemref attribute.
+PASS propertyNodeList.length == 3 is true
+PASS propertyNodeList[0] == testElement is true
+PASS propertyNodeList[1] == item.children[0] is true
+PASS propertyNodeList[2] == item.children[1] is true
+Remove itemref attribute.
+PASS propertyNodeList.length == 2 is true
+PASS propertyNodeList[0] == item.children[0] is true
+PASS propertyNodeList[1] == item.children[1] is true
+Add itemref attribute.
+PASS propertyNodeList.length == 3 is true
+PASS propertyNodeList[0] == testElement is true
+PASS propertyNodeList[1] == item.children[0] is true
+PASS propertyNodeList[2] == item.children[1] is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

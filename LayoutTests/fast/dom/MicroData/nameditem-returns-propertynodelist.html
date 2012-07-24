@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>PropertiesCollection.namedItem(name) must return PropertyNodeList.</p>
+<div itemscope id="microdataitem">
+<div itemprop="foo"></div>
+</div>
+<div id="console"></div>
+<script>
+var element = document.getElementById("microdataitem");
+
+shouldBeTrue("element.properties.namedItem('foo') instanceof PropertyNodeList");
+shouldBeTrue("element.properties['foo'] instanceof PropertyNodeList");
+
+debug("<br>PropertyNodeList interface inherited from the NodeList interface.")
+shouldBeTrue("element.properties.namedItem('foo') instanceof NodeList");
+shouldBeTrue("element.properties['foo'] instanceof NodeList");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

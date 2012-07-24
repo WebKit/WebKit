@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensure that PropertyNodeList.getValues() array returns an array whose valuse are obtained from the itemValue DOM property of each of the elements represented by the object, in tree order.</p>
+<div id="console"></div>
+<div>
+<div id="id1">
+<div itemprop="foo">
+<span itemprop="foo" itemscope></span>
+</div>
+<div itemscope itemref="id1" id="item">
+<meta itemprop="foo" content="test" />
+<audio itemprop="foo" src="audio.mp3"></audio>
+<embed itemprop="foo" src="test.swf" />
+<iframe itemprop="foo" src="test.html"></iframe>
+<img itemprop="foo" src="test.jpg" />
+<audio controls="controls">
+<source itemprop="foo" src="song.mp3" type="audio/mp3" />
+</audio>
+<video itemprop="foo" src="video.mp4"></video>
+<video src="video.mp4">
+<track itemprop="foo" src="subtitles_en.vtt">
+</video>
+<a itemprop="foo" src="link.html"></a>
+<map>
+<area itemprop="foo" href="test.html" />
+</map>
+<link itemprop="foo" href="test.css" />
+<p itemprop="foo">
+<span itemprop="foo" itemscope>
+<a itemprop="foo" src="test_anchor.html"></a>
+</span>
+</p>
+</div>
+</div>
+<script>
+var item = document.getElementById("item");
+var propertyNodeList = item.properties.namedItem('foo');
+var valuesArray = propertyNodeList.getValues();
+for (var i = 0; i < propertyNodeList.length; i++) {
+    debug('property index ' + i + ', tag ' + propertyNodeList[i].tagName);
+    shouldBe("valuesArray[i]", "propertyNodeList[i].itemValue");
+}
+shouldBe("valuesArray.length", '15');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

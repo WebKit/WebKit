@@ -267,6 +267,7 @@
 #include "JSPositionErrorCallback.cpp"
 #include "JSProcessingInstruction.cpp"
 #include "JSProgressEvent.cpp"
+#include "JSPropertyNodeList.cpp"
 #include "JSRadioNodeList.cpp"
 #include "JSRange.cpp"
 #include "JSRangeException.cpp"

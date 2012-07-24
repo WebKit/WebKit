@@ -1,0 +1,9 @@
+PropertyNodeList.getValues() method test.
+
+PropertyNodeList.getValues() method must return an array.
+PASS element.properties.namedItem('foo').getValues() instanceof Array is true
+PASS element.properties['foo'].getValues() instanceof Array is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

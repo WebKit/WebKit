@@ -354,6 +354,7 @@ SET(WebCore_IDL_FILES
     dom/PopStateEvent.idl
     dom/ProcessingInstruction.idl
     dom/ProgressEvent.idl
+    dom/PropertyNodeList.idl
     dom/RangeException.idl
     dom/Range.idl
     dom/RequestAnimationFrameCallback.idl
@@ -464,6 +465,7 @@ SET(WebCore_IDL_FILES
     html/ImageData.idl
     html/MediaController.idl
     html/MediaError.idl
+    html/MicroDataItemValue.idl
     html/RadioNodeList.idl
     html/TextMetrics.idl
     html/TimeRanges.idl
@@ -1131,6 +1133,7 @@ SET(WebCore_SOURCES
     dom/PositionIterator.cpp
     dom/ProcessingInstruction.cpp
     dom/ProgressEvent.cpp
+    dom/PropertyNodeList.cpp
     dom/QualifiedName.cpp
     dom/Range.cpp
     dom/RangeException.cpp

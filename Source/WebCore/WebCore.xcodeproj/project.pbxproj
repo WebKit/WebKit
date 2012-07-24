@@ -280,6 +280,13 @@
 		0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50268102BA9430066F39A /* JSStyleMedia.h */; };
 		0FF50271102BA96A0066F39A /* StyleMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5026E102BA9660066F39A /* StyleMedia.cpp */; };
 		0FF50272102BA96A0066F39A /* StyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF5026F102BA96A0066F39A /* StyleMedia.h */; };
+		1059457315B42953004D37FD /* JSMicroDataItemValueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1059457215B42953004D37FD /* JSMicroDataItemValueCustom.cpp */; };
+		1059457715B42A0D004D37FD /* JSMicroDataItemValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1059457515B42A0D004D37FD /* JSMicroDataItemValue.cpp */; };
+		1059457A15B42A43004D37FD /* JSMicroDataItemValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1059457915B42A43004D37FD /* JSMicroDataItemValue.h */; };
+		1059459715B42A8E004D37FD /* PropertyNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1059459615B42A8E004D37FD /* PropertyNodeList.cpp */; };
+		1059459915B42AA0004D37FD /* PropertyNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1059459815B42AA0004D37FD /* PropertyNodeList.h */; };
+		1059459D15B42B0C004D37FD /* JSPropertyNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1059459C15B42B0C004D37FD /* JSPropertyNodeList.cpp */; };
+		1059459F15B42B1A004D37FD /* JSPropertyNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1059459E15B42B1A004D37FD /* JSPropertyNodeList.h */; };
 		10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */; };
 		12F35EB6158745A40035CB63 /* WebKitNamedFlowCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 12F35EB4158745A40035CB63 /* WebKitNamedFlowCollection.h */; };
 		12F35EB7158745A40035CB63 /* WebKitNamedFlowCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 12F35EB5158745A40035CB63 /* WebKitNamedFlowCollection.cpp */; };
@@ -7245,6 +7252,15 @@
 		0FF5026E102BA9660066F39A /* StyleMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMedia.cpp; sourceTree = "<group>"; };
 		0FF5026F102BA96A0066F39A /* StyleMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleMedia.h; sourceTree = "<group>"; };
 		0FF50270102BA96A0066F39A /* StyleMedia.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StyleMedia.idl; sourceTree = "<group>"; };
+		1059457115B428C3004D37FD /* MicroDataItemValue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MicroDataItemValue.idl; sourceTree = "<group>"; };
+		1059457215B42953004D37FD /* JSMicroDataItemValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMicroDataItemValueCustom.cpp; sourceTree = "<group>"; };
+		1059457515B42A0D004D37FD /* JSMicroDataItemValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMicroDataItemValue.cpp; sourceTree = "<group>"; };
+		1059457915B42A43004D37FD /* JSMicroDataItemValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMicroDataItemValue.h; sourceTree = "<group>"; };
+		1059459615B42A8E004D37FD /* PropertyNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyNodeList.cpp; sourceTree = "<group>"; };
+		1059459815B42AA0004D37FD /* PropertyNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyNodeList.h; sourceTree = "<group>"; };
+		1059459A15B42AC0004D37FD /* PropertyNodeList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PropertyNodeList.idl; sourceTree = "<group>"; };
+		1059459C15B42B0C004D37FD /* JSPropertyNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNodeList.cpp; sourceTree = "<group>"; };
+		1059459E15B42B1A004D37FD /* JSPropertyNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNodeList.h; sourceTree = "<group>"; };
 		10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublicURLManager.h; sourceTree = "<group>"; };
 		12F35EB4158745A40035CB63 /* WebKitNamedFlowCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNamedFlowCollection.h; sourceTree = "<group>"; };
 		12F35EB5158745A40035CB63 /* WebKitNamedFlowCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitNamedFlowCollection.cpp; sourceTree = "<group>"; };
@@ -17479,6 +17495,7 @@
 				07A6D1EA1491137700051D0C /* MediaFragmentURIParser.h */,
 				9B2F7CF714562120007F8B50 /* MicroDataItemValue.cpp */,
 				9B2F7CF814562120007F8B50 /* MicroDataItemValue.h */,
+				1059457115B428C3004D37FD /* MicroDataItemValue.idl */,
 				F55B3D911251F12D003EF269 /* MonthInputType.cpp */,
 				F55B3D921251F12D003EF269 /* MonthInputType.h */,
 				F55B3D931251F12D003EF269 /* NumberInputType.cpp */,
@@ -18250,6 +18267,8 @@
 				CD27F6E3145767580078207D /* JSMediaController.h */,
 				E44614100CD6826900FADA75 /* JSMediaError.cpp */,
 				E44614110CD6826900FADA75 /* JSMediaError.h */,
+				1059457515B42A0D004D37FD /* JSMicroDataItemValue.cpp */,
+				1059457915B42A43004D37FD /* JSMicroDataItemValue.h */,
 				9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */,
 				9001787F12E0370700648462 /* JSOESStandardDerivatives.h */,
 				6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */,
@@ -18764,6 +18783,8 @@
 				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
 				E4B423850CBFB73C00AF2ECE /* JSProgressEvent.cpp */,
 				E4B423860CBFB73C00AF2ECE /* JSProgressEvent.h */,
+				1059459C15B42B0C004D37FD /* JSPropertyNodeList.cpp */,
+				1059459E15B42B1A004D37FD /* JSPropertyNodeList.h */,
 				4998AECB13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.cpp */,
 				4998AECC13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h */,
 				4A1E71A314E106AC00626F9D /* JSShadowRoot.cpp */,
@@ -20169,6 +20190,7 @@
 				410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */,
 				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
 				41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */,
+				1059457215B42953004D37FD /* JSMicroDataItemValueCustom.cpp */,
 				C6F09184143A6C3B00685849 /* JSMutationCallbackCustom.cpp */,
 				C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */,
 				BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */,
@@ -21576,6 +21598,9 @@
 				E4B41E010CBF8EAA00AF2ECE /* ProgressEvent.cpp */,
 				E4B41E020CBF8EAA00AF2ECE /* ProgressEvent.h */,
 				E4B41E030CBF8EAA00AF2ECE /* ProgressEvent.idl */,
+				1059459615B42A8E004D37FD /* PropertyNodeList.cpp */,
+				1059459815B42AA0004D37FD /* PropertyNodeList.h */,
+				1059459A15B42AC0004D37FD /* PropertyNodeList.idl */,
 				550A0BC7085F6039007353D6 /* QualifiedName.cpp */,
 				550A0BC8085F6039007353D6 /* QualifiedName.h */,
 				F523D30302DE4476018635CA /* Range.cpp */,
@@ -25244,6 +25269,9 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				C3CF17A515B0063F00276D39 /* IdTargetObserver.h in Headers */,
 				C3CF17A715B0063F00276D39 /* IdTargetObserverRegistry.h in Headers */,
+				1059457A15B42A43004D37FD /* JSMicroDataItemValue.h in Headers */,
+				1059459915B42AA0004D37FD /* PropertyNodeList.h in Headers */,
+				1059459F15B42B1A004D37FD /* JSPropertyNodeList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28304,6 +28332,10 @@
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				C3CF17A415B0063F00276D39 /* IdTargetObserver.cpp in Sources */,
 				C3CF17A615B0063F00276D39 /* IdTargetObserverRegistry.cpp in Sources */,
+				1059457315B42953004D37FD /* JSMicroDataItemValueCustom.cpp in Sources */,
+				1059457715B42A0D004D37FD /* JSMicroDataItemValue.cpp in Sources */,
+				1059459715B42A8E004D37FD /* PropertyNodeList.cpp in Sources */,
+				1059459D15B42B0C004D37FD /* JSPropertyNodeList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

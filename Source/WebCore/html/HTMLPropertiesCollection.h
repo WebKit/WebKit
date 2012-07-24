@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class DOMStringList;
+class PropertyNodeList;
 
 class HTMLPropertiesCollection : public HTMLCollection {
 public:
@@ -48,16 +49,13 @@ public:
     void updateRefElements() const;
 
     PassRefPtr<DOMStringList> names() const;
-    virtual PassRefPtr<NodeList> namedItem(const String&) const OVERRIDE;
+    virtual PassRefPtr<PropertyNodeList> namedItem(const String&) const OVERRIDE;
     virtual bool hasNamedItem(const AtomicString&) const OVERRIDE;
 
     void invalidateCache() const
     {
         m_itemRefElements.clear();
         m_propertyNames.clear();
-        m_propertyCache.clear();
-        m_hasPropertyNameCache = false;
-        m_hasItemRefElements = false;
     }
 
 private:
@@ -77,19 +75,10 @@ private:
 
         if (!m_propertyNames->contains(propertyName))
             m_propertyNames->append(propertyName);
-
-        Vector<Element*>* propertyResults = m_propertyCache.get(propertyName.impl());
-        if (!propertyResults || !propertyResults->contains(element))
-            append(m_propertyCache, propertyName, element);
     }
 
     mutable Vector<HTMLElement*> m_itemRefElements;
     mutable RefPtr<DOMStringList> m_propertyNames;
-    mutable NodeCacheMap m_propertyCache;
-
-    // FIXME: Move these variables to DynamicNodeListCacheBase for better bit packing.
-    mutable bool m_hasPropertyNameCache : 1;
-    mutable bool m_hasItemRefElements : 1;
 };
 
 } // namespace WebCore

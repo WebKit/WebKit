@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (c) 2012 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -28,18 +28,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
+#ifndef PropertyNodeList_h
+#define PropertyNodeList_h
 
-    interface [
-        Conditional=MICRODATA,
-        JSGenerateToJSObject,
-        IndexedGetter,
-        NamedGetter
-    ] HTMLPropertiesCollection : HTMLCollection {
-        readonly attribute unsigned long length;
-        Node item(in unsigned long index);
+#if ENABLE(MICRODATA)
+#include "DynamicNodeList.h"
+#include "MicroDataItemValue.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
-        readonly attribute DOMStringList names;
-        PropertyNodeList namedItem(in DOMString name);
-    };
-}
+namespace WebCore {
+
+typedef Vector<RefPtr<MicroDataItemValue> > PropertyValueArray;
+
+class PropertyNodeList : public DynamicSubtreeNodeList {
+public:
+    static PassRefPtr<PropertyNodeList> create(Node* rootNode, const String& name)
+    {
+        return adoptRef(new PropertyNodeList(rootNode, name));
+    }
+
+    ~PropertyNodeList();
+
+    PropertyValueArray getValues() const;
+    void updateRefElements() const;
+
+private:
+    explicit PropertyNodeList(Node* rootNode, const String& name);
+
+    virtual bool nodeMatches(Element*) const OVERRIDE;
+
+    bool elementIsPropertyOfRefElement(const Node*, const Node*) const;
+
+    String m_name;
+    mutable Vector<HTMLElement*> m_itemRefElementsCache;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(MICRODATA)
+
+#endif // StaticNodeList_h

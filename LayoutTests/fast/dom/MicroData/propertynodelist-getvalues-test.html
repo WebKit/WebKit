@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>PropertyNodeList.getValues() method test.</p>
+<div itemscope id="item">
+<div itemprop="foo"></div>
+</div>
+<div id="console"></div>
+<script>
+var element = document.getElementById('item');
+debug("PropertyNodeList.getValues() method must return an array.");
+shouldBeTrue("element.properties.namedItem('foo').getValues() instanceof Array");
+shouldBeTrue("element.properties['foo'].getValues() instanceof Array");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

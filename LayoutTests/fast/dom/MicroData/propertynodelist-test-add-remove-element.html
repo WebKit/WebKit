@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>Microdata properties collection must update on adding or removing property.</p>
+<div itemprop="foo" id="test">
+</div>
+<div itemscope id="microdata-item">
+<p itemprop="foo"></p>
+</div>
+<div id="console"></div>
+<script>
+var item = document.getElementById('microdata-item');
+var propertyNodeList = item.properties.namedItem('foo');
+var testElement = document.getElementById('test');
+
+shouldBeTrue("propertyNodeList.length == '1'");
+shouldBeTrue("propertyNodeList[0] == item.children[0]");
+
+debug('Add a property to the item.');
+item.appendChild(createElement('div', {itemprop: 'foo'}));
+shouldBeTrue("propertyNodeList.length == 2");
+shouldBeTrue("propertyNodeList[0] == item.children[0]");
+shouldBeTrue("propertyNodeList[1] == item.children[1]");
+
+debug('Remove itemprop attribute of the first child.');
+item.children[0].removeAttribute('itemprop');
+shouldBeTrue("propertyNodeList.length == 1");
+shouldBeTrue("propertyNodeList[0] == item.children[1]");
+
+debug('Add itemprop attribute to the first child.');
+item.children[0].setAttribute('itemprop', 'foo');
+shouldBeTrue("propertyNodeList.length == 2");
+shouldBeTrue("propertyNodeList[0] == item.children[0]");
+shouldBeTrue("propertyNodeList[1] == item.children[1]");
+
+debug('Add itemref attribute.');
+item.setAttribute('itemref', 'test');
+shouldBeTrue("propertyNodeList.length == 3");
+shouldBeTrue("propertyNodeList[0] == testElement");
+shouldBeTrue("propertyNodeList[1] == item.children[0]");
+shouldBeTrue("propertyNodeList[2] == item.children[1]");
+
+debug('Remove itemref attribute.');
+item.removeAttribute('itemref');
+shouldBeTrue("propertyNodeList.length == 2");
+shouldBeTrue("propertyNodeList[0] == item.children[0]");
+shouldBeTrue("propertyNodeList[1] == item.children[1]");
+
+debug('Add itemref attribute.');
+item.setAttribute('itemref', 'test');
+shouldBeTrue("propertyNodeList.length == 3");
+shouldBeTrue("propertyNodeList[0] == testElement");
+shouldBeTrue("propertyNodeList[1] == item.children[0]");
+shouldBeTrue("propertyNodeList[2] == item.children[1]");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+
