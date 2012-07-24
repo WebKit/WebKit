@@ -249,6 +249,36 @@
       <include name="IDR_AUDIO_SPATIALIZATION_T345_P315" file="..\..\WebCore\platform\audio\resources\IRC_Composite_C_R0195_T345_P315.wav" type="BINDATA"/>
       <include name="IDR_AUDIO_SPATIALIZATION_T345_P330" file="..\..\WebCore\platform\audio\resources\IRC_Composite_C_R0195_T345_P330.wav" type="BINDATA"/>
       <include name="IDR_AUDIO_SPATIALIZATION_T345_P345" file="..\..\WebCore\platform\audio\resources\IRC_Composite_C_R0195_T345_P345.wav" type="BINDATA"/>
+      <if expr="is_macosx">
+        <include name="IDR_ALIAS_CURSOR" file="../../WebCore/Resources/aliasCursor.png" type="BINDATA" />
+        <include name="IDR_CELL_CURSOR" file="../../WebCore/Resources/cellCursor.png" type="BINDATA" />
+        <include name="IDR_CONTEXTMENU_CURSOR" file="../../WebCore/Resources/contextMenuCursor.png" type="BINDATA" />
+        <include name="IDR_COPY_CURSOR" file="../../WebCore/Resources/copyCursor.png" type="BINDATA" />
+        <include name="IDR_EAST_RESIZE_CURSOR" file="../../WebCore/Resources/eastResizeCursor.png" type="BINDATA" />
+        <include name="IDR_EASTWEST_RESIZE_CURSOR" file="../../WebCore/Resources/eastWestResizeCursor.png" type="BINDATA" />
+        <include name="IDR_HELP_CURSOR" file="../../WebCore/Resources/helpCursor.png" type="BINDATA" />
+        <include name="IDR_LINK_CURSOR" file="../../WebCore/Resources/linkCursor.png" type="BINDATA" />
+        <include name="IDR_MISSING_IMAGE_CURSOR" file="../../WebCore/Resources/missingImage.png" type="BINDATA" />
+        <include name="IDR_MOVE_CURSOR" file="../../WebCore/Resources/moveCursor.png" type="BINDATA" />
+        <include name="IDR_NODROP_CURSOR" file="../../WebCore/Resources/noDropCursor.png" type="BINDATA" />
+        <include name="IDR_NONE_CURSOR" file="../../WebCore/Resources/noneCursor.png" type="BINDATA" />
+        <include name="IDR_NORTHEAST_RESIZE_CURSOR" file="../../WebCore/Resources/northEastResizeCursor.png" type="BINDATA" />
+        <include name="IDR_NORTHEASTSOUTHWEST_RESIZE_CURSOR" file="../../WebCore/Resources/northEastSouthWestResizeCursor.png" type="BINDATA" />
+        <include name="IDR_NORTH_RESIZE_CURSOR" file="../../WebCore/Resources/northResizeCursor.png" type="BINDATA" />
+        <include name="IDR_NORTHSOUTH_RESIZE_CURSOR" file="../../WebCore/Resources/northSouthResizeCursor.png" type="BINDATA" />
+        <include name="IDR_NORTHWEST_RESIZE_CURSOR" file="../../WebCore/Resources/northWestResizeCursor.png" type="BINDATA" />
+        <include name="IDR_NORTHWESTSOUTHEAST_RESIZE_CURSOR" file="../../WebCore/Resources/northWestSouthEastResizeCursor.png" type="BINDATA" />
+        <include name="IDR_PROGRESS_CURSOR" file="../../WebCore/Resources/progressCursor.png" type="BINDATA" />
+        <include name="IDR_SOUTHEAST_RESIZE_CURSOR" file="../../WebCore/Resources/southEastResizeCursor.png" type="BINDATA" />
+        <include name="IDR_SOUTH_RESIZE_CURSOR" file="../../WebCore/Resources/southResizeCursor.png" type="BINDATA" />
+        <include name="IDR_SOUTHWEST_RESIZE_CURSOR" file="../../WebCore/Resources/southWestResizeCursor.png" type="BINDATA" />
+        <include name="IDR_VERTICALTEXT_CURSOR" file="../../WebCore/Resources/verticalTextCursor.png" type="BINDATA" />
+        <include name="IDR_WAIT_CURSOR" file="../../WebCore/Resources/waitCursor.png" type="BINDATA" />
+        <include name="IDR_WEST_RESIZE_CURSOR" file="../../WebCore/Resources/westResizeCursor.png" type="BINDATA" />
+        <include name="IDR_ZOOMIN_CURSOR" file="../../WebCore/Resources/zoomInCursor.png" type="BINDATA" />
+        <include name="IDR_ZOOMOUT_CURSOR" file="../../WebCore/Resources/zoomOutCursor.png" type="BINDATA" />
+      </if>
+
     </includes>
   </release>
 </grit>
