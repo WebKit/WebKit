@@ -35,6 +35,8 @@
 
 #if WEBKIT_IMPLEMENTATION
 #include "FloatRect.h"
+#else
+#include <ui/gfx/rect_f.h>
 #endif
 
 namespace WebKit {
@@ -48,10 +50,10 @@ struct WebFloatRect {
     bool isEmpty() const { return width <= 0 || height <= 0; }
 
     WebFloatRect()
-        : x(0.0f)
-        , y(0.0f)
-        , width(0.0f)
-        , height(0.0f)
+        : x(0)
+        , y(0)
+        , width(0)
+        , height(0)
     {
     }
 
@@ -84,6 +86,28 @@ struct WebFloatRect {
     operator WebCore::FloatRect() const
     {
         return WebCore::FloatRect(x, y, width, height);
+    }
+#else
+    WebFloatRect(const gfx::RectF& r)
+        : x(r.x())
+        , y(r.y())
+        , width(r.width())
+        , height(r.height())
+    {
+    }
+
+    WebFloatRect& operator=(const gfx::RectF& r)
+    {
+        x = r.x();
+        y = r.y();
+        width = r.width();
+        height = r.height();
+        return *this;
+    }
+
+    operator gfx::RectF() const
+    {
+        return gfx::RectF(x, y, width, height);
     }
 #endif
 };

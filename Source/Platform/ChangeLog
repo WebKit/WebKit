@@ -1,3 +1,18 @@
+2012-07-24  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Enable conversion between WebFloatRect and gfx::RectF.
+        https://bugs.webkit.org/show_bug.cgi?id=92117
+
+        Reviewed by Adam Barth.
+
+        Introduce WebFloatRect <--> gfx::RectF conversion as we already do with WebRect <--> gfx::Rect.
+
+        * chromium/public/WebFloatRect.h:
+        (WebKit::WebFloatRect::WebFloatRect):
+        (WebFloatRect):
+        (WebKit::WebFloatRect::operator=):
+        (WebKit::WebFloatRect::operator gfx::RectF):
+
 2012-07-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrack to match the specification
