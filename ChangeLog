@@ -1,5 +1,11 @@
 2012-07-23  Kent Tamura  <tkent@chromium.org>
 
+        [GTK] Remove unnecessary trailing space in the previous commit.
+
+        * Source/autotools/symbols.filter:
+
+2012-07-23  Kent Tamura  <tkent@chromium.org>
+
         [GTK] Attempt to fix build
 
         * Source/autotools/symbols.filter: Export DocumentMarkerController::addTextMatchMarker.
