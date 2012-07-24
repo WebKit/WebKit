@@ -1,3 +1,22 @@
+2012-07-24  Tony Chang  <tony@chromium.org>
+
+        Make RenderBlock::paintChildren virtual so sub classes can change the paint order
+        https://bugs.webkit.org/show_bug.cgi?id=92042
+
+        Reviewed by Ojan Vafai.
+
+        The flexbox spec says that the order property should change the paint order of flex children.
+        To make that possible, make paintChildren virtual so RenderFlexibleBox can override it.
+
+        No new tests, this is just a refactoring.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContents): Move some code out of paintChildren into paintContents.
+        (WebCore::RenderBlock::paintChildren): Make virtual and just have it be a simple for loop.
+        (WebCore::RenderBlock::paintChild): Move code out of paintChildren so subclasses can reuse.
+        * rendering/RenderBlock.h:
+        (RenderBlock): Make paintChildren virtual and protected so sub classes can call paintChild.
+
 2012-07-24  Anna Cavender  <annacc@chromium.org>
 
         Create SourceBuffer and SourceBufferList objects
