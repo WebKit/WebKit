@@ -1964,6 +1964,10 @@ fast/forms/datalist/input-list.html
 # https://bugs.webkit.org/show_bug.cgi?id=89760
 fast/forms/number/number-validation-message.html
 
+# [Qt] New fast/css/sticky/parsing-position-sticky.html fails since r123379
+# https://bugs.webkit.org/show_bug.cgi?id=92080
+fast/css/sticky/parsing-position-sticky.html
+
 # ============================================================================= #
 # failing fonts tests
 # ============================================================================= #
