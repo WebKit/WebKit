@@ -1,3 +1,19 @@
+2012-07-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][WK2] Add unit tests for custom text encoding setting
+        https://bugs.webkit.org/show_bug.cgi?id=91983
+
+        Reviewed by Dirk Pranke.
+
+        Add unit tests for get and set custom text encoding methods. Also, fix
+        a style nit for r123177.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_setting_encoding_custom_set): Fix a style nit - add newline
+        before return.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+
 2012-07-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         WinCairo build fix attempt.

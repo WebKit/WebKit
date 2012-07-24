@@ -986,5 +986,6 @@ Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char*
     WKRetainPtr<WKStringRef> wkEncodingName = encoding ? adoptWK(WKStringCreateWithUTF8CString(encoding)) : 0;
     if (eina_stringshare_replace(&priv->customEncoding, encoding))
         WKPageSetCustomTextEncodingName(toAPI(priv->pageClient->page()), wkEncodingName.get());
+
     return true;
 }
