@@ -484,7 +484,6 @@ public:
 
     void clearExternalCharacters()
     {
-        ASSERT(m_type == Token::Type::Character);
         m_externalCharacters = 0;
     }
 

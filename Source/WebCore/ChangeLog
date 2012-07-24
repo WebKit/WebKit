@@ -1,3 +1,10 @@
+2012-07-24  Kwang Yul Seo  <skyul@company100.net>
+
+        Remove an invalid assertion introduced in r123536. Unreviewed.
+
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::AtomicMarkupTokenBase::clearExternalCharacters):
+
 2012-07-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123504.
