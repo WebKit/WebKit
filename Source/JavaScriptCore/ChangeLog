@@ -1,5 +1,80 @@
 2012-07-23  Filip Pizlo  <fpizlo@apple.com>
 
+        Property storage should grow in reverse address direction, to support butterflies
+        https://bugs.webkit.org/show_bug.cgi?id=91788
+
+        Reviewed by Geoffrey Garen.
+
+        Changes property storage to grow to the left, and changes the property storage pointer to point
+        one 8-byte word (i.e. JSValue) to the right of the first value in the storage.
+        
+        Also improved debug support somewhat, by adding a describe() function to the jsc command-line,
+        and a slow mode of object access in LLInt.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::repatchCompact):
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::isCompactPtrAlignedAddressOffset):
+        (JSC::MacroAssemblerARMv7::load32WithCompactAddressOffsetPatch):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::isCompactPtrAlignedAddressOffset):
+        (JSC::MacroAssemblerX86Common::repatchCompact):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::repatchCompact):
+        * bytecode/CodeBlock.cpp:
+        (JSC::dumpStructure):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::emitPutTransitionStub):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddPointer):
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::pinIfNecessary):
+        (JSC):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionDescribe):
+        * llint/LLIntCommon.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren):
+        (JSC::JSFinalObject::visitChildren):
+        (JSC::JSObject::growOutOfLineStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::offsetForLocation):
+        * runtime/JSValue.h:
+        (JSValue):
+        * runtime/PropertyOffset.h:
+        (JSC::offsetInOutOfLineStorage):
+
+2012-07-23  Filip Pizlo  <fpizlo@apple.com>
+
         DFG is too aggressive in performing the specific value optimization on loads
         https://bugs.webkit.org/show_bug.cgi?id=92034
 

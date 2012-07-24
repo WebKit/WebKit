@@ -106,6 +106,7 @@ typedef void DFG_OPERATION (*V_DFGOperation_EPZJ)(ExecState*, void*, int32_t, En
 typedef void DFG_OPERATION (*V_DFGOperation_W)(WatchpointSet*);
 typedef char* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
 typedef char* DFG_OPERATION (*P_DFGOperation_ES)(ExecState*, size_t);
+typedef char* DFG_OPERATION (*P_DFGOperation_EPS)(ExecState*, void*, size_t);
 
 // These routines are provide callbacks out to C++ implementations of operations too complex to JIT.
 JSCell* DFG_OPERATION operationNewObject(ExecState*) WTF_INTERNAL;

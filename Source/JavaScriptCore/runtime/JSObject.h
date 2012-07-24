@@ -173,14 +173,14 @@ namespace JSC {
         {
             PropertyOffset offset = structure()->get(globalData, propertyName);
             checkOffset(offset, structure()->typeInfo().type());
-            return offset != invalidOffset ? locationForOffset(offset) : 0;
+            return isValidOffset(offset) ? locationForOffset(offset) : 0;
         }
 
         WriteBarrierBase<Unknown>* getDirectLocation(JSGlobalData& globalData, PropertyName propertyName, unsigned& attributes)
         {
             JSCell* specificFunction;
             PropertyOffset offset = structure()->get(globalData, propertyName, attributes, specificFunction);
-            return offset != invalidOffset ? locationForOffset(offset) : 0;
+            return isValidOffset(offset) ? locationForOffset(offset) : 0;
         }
 
         bool hasInlineStorage() const { return structure()->hasInlineStorage(); }
@@ -227,7 +227,7 @@ namespace JSC {
             if (offsetInInlineStorage < static_cast<size_t>(inlineStorageCapacity))
                 result = offsetInInlineStorage;
             else
-                result = location - outOfLineStorage() + firstOutOfLineOffset;
+                result = outOfLineStorage() - location + (inlineStorageCapacity - 2);
             validateOffset(result, structure()->typeInfo().type());
             return result;
         }

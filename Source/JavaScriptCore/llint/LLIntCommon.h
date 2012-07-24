@@ -36,6 +36,9 @@
 // how the GC allocates.
 #define LLINT_ALWAYS_ALLOCATE_SLOW 0
 
+// Disable inline caching of get_by_id and put_by_id.
+#define LLINT_ALWAYS_ACCESS_SLOW 0
+
 // Enable OSR into the JIT. Disabling this while the LLInt is enabled effectively
 // turns off all JIT'ing, since in LLInt's parlance, OSR subsumes any form of JIT
 // invocation.

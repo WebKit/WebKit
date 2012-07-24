@@ -57,6 +57,42 @@ inline void CopiedSpace::pin(CopiedBlock* block)
     block->m_isPinned = true;
 }
 
+inline void CopiedSpace::pinIfNecessary(void* opaquePointer)
+{
+    // Pointers into the copied space come in the following varieties:
+    // 1)  Pointers to the start of a span of memory. This is the most
+    //     natural though not necessarily the most common.
+    // 2)  Pointers to one value-sized (8 byte) word past the end of
+    //     a span of memory. This currently occurs with semi-butterflies
+    //     and should be fixed soon, once the other half of the
+    //     butterfly lands.
+    // 3)  Pointers to the innards arising from loop induction variable
+    //     optimizations (either manual ones or automatic, by the
+    //     compiler).
+    // 4)  Pointers to the end of a span of memory in arising from
+    //     induction variable optimizations combined with the
+    //     GC-to-compiler contract laid out in the C spec: a pointer to
+    //     the end of a span of memory must be considered to be a
+    //     pointer to that memory.
+    
+    EncodedJSValue* pointer = reinterpret_cast<EncodedJSValue*>(opaquePointer);
+    CopiedBlock* block;
+
+    // Handle (1) and (3).
+    if (contains(pointer, block))
+        pin(block);
+    
+    // Handle (4). We don't have to explicitly check and pin the block under this
+    // pointer because it cannot possibly point to something that cases (1) and
+    // (3) above or case (2) below wouldn't already catch.
+    pointer--;
+    
+    // Handle (2)
+    pointer--;
+    if (contains(pointer, block))
+        pin(block);
+}
+
 inline void CopiedSpace::startedCopying()
 {
     DoublyLinkedList<HeapBlock>* temp = m_fromSpace;

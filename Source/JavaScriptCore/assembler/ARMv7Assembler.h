@@ -2095,11 +2095,24 @@ public:
         setInt32(where, value);
     }
     
-    static void repatchCompact(void* where, int32_t value)
+    static void repatchCompact(void* where, int32_t offset)
     {
-        ASSERT(value >= 0);
-        ASSERT(ARMThumbImmediate::makeUInt12(value).isUInt7());
-        setUInt7ForLoad(where, ARMThumbImmediate::makeUInt12(value));
+        ASSERT(offset >= -255 && offset <= 255);
+
+        bool add = true;
+        if (offset < 0) {
+            add = false;
+            offset = -offset;
+        }
+        
+        offset |= (add << 9);
+        offset |= (1 << 10);
+        offset |= (1 << 11);
+
+        uint16_t* location = reinterpret_cast<uint16_t*>(where);
+        location[1] &= ~((1 << 12) - 1);
+        location[1] |= offset;
+        cacheFlush(location, sizeof(uint16_t) * 2);
     }
 
     static void repatchPointer(void* where, void* value)

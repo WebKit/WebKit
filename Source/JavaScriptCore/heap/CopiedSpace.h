@@ -68,6 +68,8 @@ public:
 
     bool contains(CopiedBlock*);
     bool contains(void*, CopiedBlock*&);
+    
+    void pinIfNecessary(void* pointer);
 
     size_t size();
     size_t capacity();

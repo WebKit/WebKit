@@ -1248,7 +1248,7 @@ char* DFG_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecStat
     void* result;
     if (!globalData.heap.tryAllocateStorage(initialOutOfLineCapacity * sizeof(JSValue), &result))
         CRASH();
-    return reinterpret_cast<char*>(result);
+    return reinterpret_cast<char*>(reinterpret_cast<JSValue*>(result) + initialOutOfLineCapacity + 1);
 }
 
 char* DFG_OPERATION operationAllocatePropertyStorage(ExecState* exec, size_t newSize)
@@ -1257,7 +1257,7 @@ char* DFG_OPERATION operationAllocatePropertyStorage(ExecState* exec, size_t new
     void* result;
     if (!globalData.heap.tryAllocateStorage(newSize, &result))
         CRASH();
-    return reinterpret_cast<char*>(result);
+    return reinterpret_cast<char*>(reinterpret_cast<JSValue*>(result) + 1) + newSize;
 }
 
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)

@@ -883,7 +883,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     LLINT_CHECK_EXCEPTION();
     LLINT_OP(1) = result;
 
-    if (baseValue.isCell()
+    if (!LLINT_ALWAYS_ACCESS_SLOW
+        && baseValue.isCell()
         && slot.isCacheable()
         && slot.slotBase() == baseValue
         && slot.cachedPropertyType() == PropertySlot::Value) {
@@ -935,7 +936,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         baseValue.put(exec, ident, LLINT_OP_C(3).jsValue(), slot);
     LLINT_CHECK_EXCEPTION();
     
-    if (baseValue.isCell()
+    if (!LLINT_ALWAYS_ACCESS_SLOW
+        && baseValue.isCell()
         && slot.isCacheable()) {
         
         JSCell* baseCell = baseValue.asCell();

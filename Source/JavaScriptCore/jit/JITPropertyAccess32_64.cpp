@@ -1018,9 +1018,10 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, Register
     if (finalObjectMode == MayBeFinal) {
         Jump isInline = branch32(LessThan, offset, TrustedImm32(inlineStorageCapacity));
         loadPtr(Address(base, JSObject::offsetOfOutOfLineStorage()), base);
+        neg32(offset);
         Jump done = jump();
         isInline.link(this);
-        addPtr(TrustedImmPtr(JSObject::offsetOfInlineStorage() + inlineStorageCapacity * sizeof(EncodedJSValue)), base);
+        addPtr(TrustedImmPtr(JSObject::offsetOfInlineStorage() - (inlineStorageCapacity - 2) * sizeof(EncodedJSValue)), base);
         done.link(this);
     } else {
 #if !ASSERT_DISABLED
@@ -1029,9 +1030,10 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, Register
         isOutOfLine.link(this);
 #endif
         loadPtr(Address(base, JSObject::offsetOfOutOfLineStorage()), base);
+        neg32(offset);
     }
-    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) - inlineStorageCapacity * sizeof(EncodedJSValue)), resultPayload);
-    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) - inlineStorageCapacity * sizeof(EncodedJSValue)), resultTag);
+    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + (inlineStorageCapacity - 2) * sizeof(EncodedJSValue)), resultPayload);
+    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + (inlineStorageCapacity - 2) * sizeof(EncodedJSValue)), resultTag);
 }
 
 void JIT::emit_op_get_by_pname(Instruction* currentInstruction)

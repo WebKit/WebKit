@@ -254,7 +254,7 @@ namespace JSC {
         
         JSValue structureOrUndefined() const;
 
-        char* description() const;
+        JS_EXPORT_PRIVATE char* description() const;
 
         JS_EXPORT_PRIVATE JSObject* synthesizePrototype(ExecState*) const;
 

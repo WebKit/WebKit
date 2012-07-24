@@ -3157,7 +3157,7 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node& node)
     m_jit.storePtr(scratchGPR, &copiedAllocator->m_currentRemaining);
     m_jit.negPtr(scratchGPR);
     m_jit.addPtr(JITCompiler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR);
-    m_jit.subPtr(JITCompiler::TrustedImm32(newSize), scratchGPR);
+    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(JSValue)), scratchGPR);
         
     addSlowPathGenerator(
         slowPathCall(slowPath, this, operationAllocatePropertyStorageWithInitialCapacity, scratchGPR));
@@ -3191,14 +3191,14 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node& node)
     m_jit.storePtr(scratchGPR2, &copiedAllocator->m_currentRemaining);
     m_jit.negPtr(scratchGPR2);
     m_jit.addPtr(JITCompiler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR2);
-    m_jit.subPtr(JITCompiler::TrustedImm32(newSize), scratchGPR2);
+    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(JSValue)), scratchGPR2);
         
     addSlowPathGenerator(
         slowPathCall(slowPath, this, operationAllocatePropertyStorage, scratchGPR2, newSize));
     // We have scratchGPR2 = new storage, scratchGPR1 = scratch
-    for (size_t offset = 0; offset < oldSize; offset += sizeof(void*)) {
-        m_jit.loadPtr(JITCompiler::Address(oldStorageGPR, offset), scratchGPR1);
-        m_jit.storePtr(scratchGPR1, JITCompiler::Address(scratchGPR2, offset));
+    for (ptrdiff_t offset = 0; offset < static_cast<ptrdiff_t>(oldSize); offset += sizeof(void*)) {
+        m_jit.loadPtr(JITCompiler::Address(oldStorageGPR, -(offset + sizeof(JSValue) * 2)), scratchGPR1);
+        m_jit.storePtr(scratchGPR1, JITCompiler::Address(scratchGPR2, -(offset + sizeof(JSValue) * 2)));
     }
     m_jit.storePtr(scratchGPR2, JITCompiler::Address(baseGPR, JSObject::offsetOfOutOfLineStorage()));
     

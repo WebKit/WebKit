@@ -3913,8 +3913,10 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.breakpoint();
         isOutOfLine.link(&m_jit);
 #endif
-        m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) - inlineStorageCapacity * static_cast<ptrdiff_t>(sizeof(JSValue))), resultTagGPR);
-        m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload) - inlineStorageCapacity * static_cast<ptrdiff_t>(sizeof(JSValue))), resultPayloadGPR);
+        m_jit.neg32(resolveInfoGPR);
+        m_jit.signExtend32ToPtr(resolveInfoGPR, resolveInfoGPR);
+        m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) + (inlineStorageCapacity - 2) * static_cast<ptrdiff_t>(sizeof(JSValue))), resultTagGPR);
+        m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload) + (inlineStorageCapacity - 2) * static_cast<ptrdiff_t>(sizeof(JSValue))), resultPayloadGPR);
 
         addSlowPathGenerator(
             slowPathCall(

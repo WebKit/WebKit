@@ -778,20 +778,23 @@ _llint_op_is_string:
     dispatch(3)
 
 
-macro loadPropertyAtVariableOffsetKnownNotFinal(propertyOffset, objectAndStorage, value)
-    assert(macro (ok) bigteq propertyOffset, InlineStorageCapacity, ok end)
+macro loadPropertyAtVariableOffsetKnownNotFinal(propertyOffsetAsPointer, objectAndStorage, value)
+    assert(macro (ok) bigteq propertyOffsetAsPointer, InlineStorageCapacity, ok end)
+    negp propertyOffsetAsPointer
     loadp JSObject::m_outOfLineStorage[objectAndStorage], objectAndStorage
-    loadp -8 * InlineStorageCapacity[objectAndStorage, propertyOffset, 8], value
+    loadp (InlineStorageCapacity - 2) * 8[objectAndStorage, propertyOffsetAsPointer, 8], value
 end
 
-macro loadPropertyAtVariableOffset(propertyOffset, objectAndStorage, value)
-    bilt propertyOffset, InlineStorageCapacity, .isInline
+macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
+    bilt propertyOffsetAsInt, InlineStorageCapacity, .isInline
     loadp JSObject::m_outOfLineStorage[objectAndStorage], objectAndStorage
+    negi propertyOffsetAsInt
+    sxi2p propertyOffsetAsInt, propertyOffsetAsInt
     jmp .ready
 .isInline:
-    addp JSFinalObject::m_inlineStorage + InlineStorageCapacity * 8, objectAndStorage
+    addp JSFinalObject::m_inlineStorage - (InlineStorageCapacity - 2) * 8, objectAndStorage
 .ready:
-    loadp -8 * InlineStorageCapacity[objectAndStorage, propertyOffset, 8], value
+    loadp (InlineStorageCapacity - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8], value
 end
 
 macro resolveGlobal(size, slow)

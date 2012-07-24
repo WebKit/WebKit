@@ -159,9 +159,10 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID 
     if (finalObjectMode == MayBeFinal) {
         Jump isInline = branch32(LessThan, offset, TrustedImm32(inlineStorageCapacity));
         loadPtr(Address(base, JSObject::offsetOfOutOfLineStorage()), scratch);
+        neg32(offset);
         Jump done = jump();
         isInline.link(this);
-        addPtr(TrustedImm32(JSObject::offsetOfInlineStorage() + inlineStorageCapacity * sizeof(EncodedJSValue)), base, scratch);
+        addPtr(TrustedImm32(JSObject::offsetOfInlineStorage() - (inlineStorageCapacity - 2) * sizeof(EncodedJSValue)), base, scratch);
         done.link(this);
     } else {
 #if !ASSERT_DISABLED
@@ -170,8 +171,10 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID 
         isOutOfLine.link(this);
 #endif
         loadPtr(Address(base, JSObject::offsetOfOutOfLineStorage()), scratch);
+        neg32(offset);
     }
-    loadPtr(BaseIndex(scratch, offset, ScalePtr, -inlineStorageCapacity * static_cast<ptrdiff_t>(sizeof(JSValue))), result);
+    signExtend32ToPtr(offset, offset);
+    loadPtr(BaseIndex(scratch, offset, ScalePtr, (inlineStorageCapacity - 2) * static_cast<ptrdiff_t>(sizeof(JSValue))), result);
 }
 
 void JIT::emit_op_get_by_pname(Instruction* currentInstruction)

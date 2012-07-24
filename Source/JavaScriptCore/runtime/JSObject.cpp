@@ -99,10 +99,11 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     PropertyStorage storage = thisObject->outOfLineStorage();
     if (storage) {
         size_t storageSize = thisObject->structure()->outOfLineSizeForKnownNonFinalObject();
+        size_t capacity = thisObject->structure()->outOfLineCapacity();
         // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
-        void* temp = storage;
-        visitor.copyAndAppend(&temp, thisObject->structure()->outOfLineCapacity() * sizeof(WriteBarrierBase<Unknown>), storage->slot(), storageSize);
-        storage = static_cast<PropertyStorage>(temp);
+        void* temp = storage - capacity - 1;
+        visitor.copyAndAppend(&temp, capacity * sizeof(WriteBarrierBase<Unknown>), (storage - storageSize - 1)->slot(), storageSize);
+        storage = static_cast<PropertyStorage>(temp) + capacity + 1;
         thisObject->m_outOfLineStorage.set(storage, StorageBarrier::Unchecked);
     }
 
@@ -128,10 +129,11 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     PropertyStorage storage = thisObject->outOfLineStorage();
     if (storage) {
         size_t storageSize = thisObject->structure()->outOfLineSizeForKnownFinalObject();
+        size_t capacity = thisObject->structure()->outOfLineCapacity();
         // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
-        void* temp = storage;
-        visitor.copyAndAppend(&temp, thisObject->structure()->outOfLineCapacity() * sizeof(WriteBarrierBase<Unknown>), storage->slot(), storageSize);
-        storage = static_cast<PropertyStorage>(temp);
+        void* temp = storage - capacity - 1;
+        visitor.copyAndAppend(&temp, thisObject->structure()->outOfLineCapacity() * sizeof(WriteBarrierBase<Unknown>), (storage - storageSize - 1)->slot(), storageSize);
+        storage = static_cast<PropertyStorage>(temp) + capacity + 1;
         thisObject->m_outOfLineStorage.set(storage, StorageBarrier::Unchecked);
     }
 
@@ -595,7 +597,7 @@ PropertyStorage JSObject::growOutOfLineStorage(JSGlobalData& globalData, size_t 
 
     // It's important that this function not rely on structure(), since
     // we might be in the middle of a transition.
-
+    
     PropertyStorage oldPropertyStorage = m_outOfLineStorage.get();
     PropertyStorage newPropertyStorage = 0;
 
@@ -603,9 +605,9 @@ PropertyStorage JSObject::growOutOfLineStorage(JSGlobalData& globalData, size_t 
     void* temp = newPropertyStorage;
     if (!globalData.heap.tryAllocateStorage(sizeof(WriteBarrierBase<Unknown>) * newSize, &temp))
         CRASH();
-    newPropertyStorage = static_cast<PropertyStorage>(temp);
+    newPropertyStorage = static_cast<PropertyStorage>(temp) + newSize + 1;
     
-    memcpy(newPropertyStorage, oldPropertyStorage, sizeof(WriteBarrierBase<Unknown>) * oldSize);
+    memcpy(newPropertyStorage - oldSize - 1, oldPropertyStorage - oldSize - 1, sizeof(WriteBarrierBase<Unknown>) * oldSize);
 
     ASSERT(newPropertyStorage);
     return newPropertyStorage;

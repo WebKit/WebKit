@@ -66,10 +66,8 @@ template<typename MarkHook>
 inline void ConservativeRoots::genericAddPointer(void* p, TinyBloomFilter filter, MarkHook& markHook)
 {
     markHook.mark(p);
-    
-    CopiedBlock* block;
-    if (m_copiedSpace->contains(p, block))
-        m_copiedSpace->pin(block);
+
+    m_copiedSpace->pinIfNecessary(p);
     
     MarkedBlock* candidate = MarkedBlock::blockFor(p);
     if (filter.ruleOut(reinterpret_cast<Bits>(candidate))) {

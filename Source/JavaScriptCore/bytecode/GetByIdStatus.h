@@ -53,7 +53,7 @@ public:
     
     GetByIdStatus(
         State state, bool wasSeenInJIT, const StructureSet& structureSet = StructureSet(),
-        size_t offset = invalidOffset, JSValue specificValue = JSValue(), Vector<Structure*> chain = Vector<Structure*>())
+        PropertyOffset offset = invalidOffset, JSValue specificValue = JSValue(), Vector<Structure*> chain = Vector<Structure*>())
         : m_state(state)
         , m_structureSet(structureSet)
         , m_chain(chain)
@@ -61,7 +61,7 @@ public:
         , m_offset(offset)
         , m_wasSeenInJIT(wasSeenInJIT)
     {
-        ASSERT((state == Simple) == (offset != notFound));
+        ASSERT((state == Simple) == (offset != invalidOffset));
     }
     
     static GetByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, Identifier&);

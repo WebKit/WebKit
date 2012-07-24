@@ -301,7 +301,8 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
 
     // Optimize self access.
     if (slot.slotBase() == baseValue) {
-        if ((slot.cachedPropertyType() != PropertySlot::Value) || ((slot.cachedOffset() * sizeof(JSValue)) > (unsigned)MacroAssembler::MaximumCompactPtrAlignedAddressOffset)) {
+        if ((slot.cachedPropertyType() != PropertySlot::Value)
+            || !MacroAssembler::isCompactPtrAlignedAddressOffset(offsetRelativeToPatchedStorage(slot.cachedOffset()))) {
             dfgRepatchCall(codeBlock, stubInfo.callReturnLocation, operationGetByIdBuildList);
             return true;
         }
@@ -824,7 +825,7 @@ static void emitPutTransitionStub(
             stubJit.storePtr(scratchGPR1, &copiedAllocator->m_currentRemaining);
             stubJit.negPtr(scratchGPR1);
             stubJit.addPtr(MacroAssembler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR1);
-            stubJit.subPtr(MacroAssembler::TrustedImm32(newSize), scratchGPR1);
+            stubJit.addPtr(MacroAssembler::TrustedImm32(sizeof(JSValue)), scratchGPR1);
         } else {
             size_t oldSize = oldStructure->outOfLineCapacity() * sizeof(JSValue);
             ASSERT(newSize > oldSize);
@@ -835,11 +836,11 @@ static void emitPutTransitionStub(
             stubJit.storePtr(scratchGPR1, &copiedAllocator->m_currentRemaining);
             stubJit.negPtr(scratchGPR1);
             stubJit.addPtr(MacroAssembler::AbsoluteAddress(&copiedAllocator->m_currentPayloadEnd), scratchGPR1);
-            stubJit.subPtr(MacroAssembler::TrustedImm32(newSize), scratchGPR1);
+            stubJit.addPtr(MacroAssembler::TrustedImm32(sizeof(JSValue)), scratchGPR1);
             // We have scratchGPR1 = new storage, scratchGPR3 = old storage, scratchGPR2 = available
-            for (size_t offset = 0; offset < oldSize; offset += sizeof(void*)) {
-                stubJit.loadPtr(MacroAssembler::Address(scratchGPR3, offset), scratchGPR2);
-                stubJit.storePtr(scratchGPR2, MacroAssembler::Address(scratchGPR1, offset));
+            for (ptrdiff_t offset = 0; offset < static_cast<ptrdiff_t>(oldSize); offset += sizeof(void*)) {
+                stubJit.loadPtr(MacroAssembler::Address(scratchGPR3, -(offset + sizeof(JSValue) * 2)), scratchGPR2);
+                stubJit.storePtr(scratchGPR2, MacroAssembler::Address(scratchGPR1, -(offset + sizeof(JSValue) * 2)));
             }
         }
         

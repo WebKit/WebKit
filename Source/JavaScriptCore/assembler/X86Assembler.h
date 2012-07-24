@@ -1829,7 +1829,7 @@ public:
     
     static void repatchCompact(void* where, int32_t value)
     {
-        ASSERT(value >= 0);
+        ASSERT(value >= std::numeric_limits<int8_t>::min());
         ASSERT(value <= std::numeric_limits<int8_t>::max());
         setInt8(where, value);
     }

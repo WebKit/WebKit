@@ -255,9 +255,9 @@ static void dumpStructure(const char* name, ExecState* exec, Structure* structur
     
     dataLog("%s = %p", name, structure);
     
-    size_t offset = structure->get(exec->globalData(), ident);
-    if (offset != notFound)
-        dataLog(" (offset = %lu)", static_cast<unsigned long>(offset));
+    PropertyOffset offset = structure->get(exec->globalData(), ident);
+    if (offset != invalidOffset)
+        dataLog(" (offset = %d)", offset);
 }
 #endif
 
