@@ -45,7 +45,7 @@ String::String(CFStringRef str)
 CFStringRef String::createCFString() const
 {
     if (!m_impl)
-        return static_cast<CFStringRef>(CFRetain(CFSTR("")));
+        return CFSTR("");
 
     return m_impl->createCFString();
 }
