@@ -1,3 +1,18 @@
+2012-07-24  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r123191.
+        http://trac.webkit.org/changeset/123191
+        https://bugs.webkit.org/show_bug.cgi?id=91804
+
+        It might cause another performance regression.
+        http://code.google.com/p/chromium/issues/detail?id=138410
+
+        * html/FormController.cpp:
+        (FormKeyGenerator):
+        (WebCore::createKey):
+        (WebCore::FormKeyGenerator::formKey):
+        (WebCore::FormKeyGenerator::willDeleteForm):
+
 2012-07-24  Vineet Chaudhary  <rgf748@motorola.com>
 
         [JSBinding] Merging jsUnsignedLongArrayToVector() to toNativeArray() using traits.
