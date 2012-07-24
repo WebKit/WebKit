@@ -94,7 +94,7 @@ class AlternativeTextController {
     WTF_MAKE_NONCOPYABLE(AlternativeTextController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AlternativeTextController(Frame*) UNLESS_ENABLED({ })
+    explicit AlternativeTextController(Frame*) UNLESS_ENABLED({ })
     ~AlternativeTextController() UNLESS_ENABLED({ })
 
     void startAlternativeTextUITimer(AlternativeTextType) UNLESS_ENABLED({ })

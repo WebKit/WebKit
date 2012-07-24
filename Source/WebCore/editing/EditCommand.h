@@ -58,7 +58,7 @@ public:
     virtual void doApply() = 0;
 
 protected:
-    EditCommand(Document*);
+    explicit EditCommand(Document*);
     EditCommand(Document*, const VisibleSelection&, const VisibleSelection&);
 
     Document* document() const { return m_document.get(); }
@@ -83,7 +83,7 @@ public:
 #endif
 
 protected:
-    SimpleEditCommand(Document* document) : EditCommand(document) { }
+    explicit SimpleEditCommand(Document* document) : EditCommand(document) { }
 
 #ifndef NDEBUG
     void addNodeAndDescendants(Node*, HashSet<Node*>&);

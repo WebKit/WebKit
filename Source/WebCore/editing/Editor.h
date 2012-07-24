@@ -86,7 +86,7 @@ enum EditorParagraphSeparator { EditorParagraphSeparatorIsDiv, EditorParagraphSe
 
 class Editor : public FrameDestructionObserver {
 public:
-    Editor(Frame*);
+    explicit Editor(Frame*);
     ~Editor();
 
     EditorClient* client() const;

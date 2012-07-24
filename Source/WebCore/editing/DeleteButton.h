@@ -35,7 +35,7 @@ public:
     static PassRefPtr<DeleteButton> create(Document*);
 
 private:
-    DeleteButton(Document*);
+    explicit DeleteButton(Document*);
 
     virtual void defaultEventHandler(Event*);
 };

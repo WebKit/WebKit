@@ -150,8 +150,8 @@ private:
     EditingStyle();
     EditingStyle(Node*, PropertiesToInclude);
     EditingStyle(const Position&, PropertiesToInclude);
-    EditingStyle(const StylePropertySet*);
-    EditingStyle(const CSSStyleDeclaration*);
+    explicit EditingStyle(const StylePropertySet*);
+    explicit EditingStyle(const CSSStyleDeclaration*);
     EditingStyle(CSSPropertyID, const String& value);
     void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);

@@ -39,7 +39,7 @@ class VisibleSelection;
 class DeleteButtonController {
     WTF_MAKE_NONCOPYABLE(DeleteButtonController); WTF_MAKE_FAST_ALLOCATED;
 public:
-    DeleteButtonController(Frame*);
+    explicit DeleteButtonController(Frame*);
 
     static const char* const containerElementIdentifier;
 

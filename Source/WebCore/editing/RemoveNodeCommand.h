@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    RemoveNodeCommand(PassRefPtr<Node>);
+    explicit RemoveNodeCommand(PassRefPtr<Node>);
 
     virtual void doApply() OVERRIDE;
     virtual void doUnapply() OVERRIDE;

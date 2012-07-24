@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    RemoveFormatCommand(Document*);
+    explicit RemoveFormatCommand(Document*);
 
     virtual void doApply();
     virtual EditAction editingAction() const { return EditActionUnspecified; }

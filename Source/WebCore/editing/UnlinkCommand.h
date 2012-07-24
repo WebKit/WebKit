@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    UnlinkCommand(Document*);
+    explicit UnlinkCommand(Document*);
 
     virtual void doApply();
     virtual EditAction editingAction() const { return EditActionUnlink; }

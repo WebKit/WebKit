@@ -131,7 +131,7 @@ public:
         return static_cast<EUserTriggered>(options & UserTriggered);
     }
 
-    FrameSelection(Frame* = 0);
+    explicit FrameSelection(Frame* = 0);
 
     Element* rootEditableElement() const { return m_selection.rootEditableElement(); }
     Element* rootEditableElementOrDocumentElement() const;

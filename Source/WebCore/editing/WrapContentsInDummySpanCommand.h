@@ -40,7 +40,7 @@ public:
     }
 
 private:
-    WrapContentsInDummySpanCommand(PassRefPtr<Element>);
+    explicit WrapContentsInDummySpanCommand(PassRefPtr<Element>);
 
     virtual void doApply() OVERRIDE;
     virtual void doUnapply() OVERRIDE;

@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    RemoveNodePreservingChildrenCommand(PassRefPtr<Node>);
+    explicit RemoveNodePreservingChildrenCommand(PassRefPtr<Node>);
 
     virtual void doApply();
 

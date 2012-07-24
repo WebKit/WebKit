@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    InsertLineBreakCommand(Document*);
+    explicit InsertLineBreakCommand(Document*);
 
     virtual void doApply();
 

@@ -35,7 +35,7 @@ namespace WebCore {
 // It is not used on its own.
 class ModifySelectionListLevelCommand : public CompositeEditCommand {
 protected:
-    ModifySelectionListLevelCommand(Document*);
+    explicit ModifySelectionListLevelCommand(Document*);
     
     void appendSiblingNodeRange(Node* startNode, Node* endNode, Element* newParent);
     void insertSiblingNodeRangeBefore(Node* startNode, Node* endNode, Node* refNode);
@@ -82,7 +82,7 @@ private:
         return adoptRef(new DecreaseSelectionListLevelCommand(document));
     }
 
-    DecreaseSelectionListLevelCommand(Document*);
+    explicit DecreaseSelectionListLevelCommand(Document*);
 
     virtual void doApply();
 };

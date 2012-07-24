@@ -38,7 +38,7 @@ public:
     }
 
 private:
-    BreakBlockquoteCommand(Document*);
+    explicit BreakBlockquoteCommand(Document*);
     virtual void doApply();
 };
 

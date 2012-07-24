@@ -53,7 +53,7 @@ public:
     void clearRedo();
 
 private:
-    UndoManager(Node* host);
+    explicit UndoManager(Node* host);
     Node* m_undoScopeHost;
 };
     

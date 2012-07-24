@@ -1,3 +1,57 @@
+2012-07-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Missing *explicit* keyword in editing.
+        https://bugs.webkit.org/show_bug.cgi?id=92055
+
+        Reviewed by Ryosuke Niwa.
+
+        Some constructors missed to use *explicit* keyword. They need to be added
+        *explicit* keyword to contructor which has a parameter in order to avoid
+        implicit type conversion.
+
+        No new tests. Covered by existing tests.
+
+        * editing/AlternativeTextController.h:
+        (WebCore::AlternativeTextController::UNLESS_ENABLED):
+        * editing/BreakBlockquoteCommand.h:
+        (BreakBlockquoteCommand):
+        * editing/DeleteButton.h:
+        (DeleteButton):
+        * editing/DeleteButtonController.h:
+        (DeleteButtonController):
+        * editing/EditCommand.h:
+        (EditCommand):
+        (WebCore::SimpleEditCommand::SimpleEditCommand):
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::EditingBehavior):
+        * editing/EditingStyle.h:
+        (EditingStyle):
+        * editing/Editor.h:
+        (Editor):
+        * editing/FrameSelection.h:
+        (FrameSelection):
+        * editing/InsertLineBreakCommand.h:
+        (InsertLineBreakCommand):
+        * editing/ModifySelectionListLevel.h:
+        (ModifySelectionListLevelCommand):
+        (DecreaseSelectionListLevelCommand):
+        * editing/RemoveFormatCommand.h:
+        (RemoveFormatCommand):
+        * editing/RemoveNodeCommand.h:
+        (RemoveNodeCommand):
+        * editing/RemoveNodePreservingChildrenCommand.h:
+        (RemoveNodePreservingChildrenCommand):
+        * editing/ReplaceNodeWithSpanCommand.h:
+        (ReplaceNodeWithSpanCommand):
+        * editing/TextInsertionBaseCommand.h:
+        (TextInsertionBaseCommand):
+        * editing/UndoManager.h:
+        (UndoManager):
+        * editing/UnlinkCommand.h:
+        (UnlinkCommand):
+        * editing/WrapContentsInDummySpanCommand.h:
+        (WrapContentsInDummySpanCommand):
+
 2012-07-23  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Need AccessibilityObjects for nodes without renderers in canvas subtree

@@ -28,7 +28,7 @@ namespace WebCore {
 class EditingBehavior {
 
 public:
-    EditingBehavior(EditingBehaviorType type)
+    explicit EditingBehavior(EditingBehaviorType type)
         : m_type(type)
     {
     }

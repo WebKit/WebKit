@@ -48,7 +48,7 @@ public:
     HTMLElement* spanElement() { return m_spanElement.get(); }
 
 private:
-    ReplaceNodeWithSpanCommand(PassRefPtr<HTMLElement>);
+    explicit ReplaceNodeWithSpanCommand(PassRefPtr<HTMLElement>);
 
     virtual void doApply() OVERRIDE;
     virtual void doUnapply() OVERRIDE;
