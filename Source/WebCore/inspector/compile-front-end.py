@@ -171,6 +171,7 @@ modules = [
             "PropertiesSidebarPane.js",
             "SourceFrame.js",
             "TimelineGrid.js",
+            "UISourceCodeFrame.js",
         ]
     },
     {

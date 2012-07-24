@@ -464,14 +464,9 @@ WebInspector.ScriptsPanel.prototype = {
         if (uiSourceCode instanceof WebInspector.JavaScriptSource) {
             var javaScriptSource = /** @type {WebInspector.JavaScriptSource} */ uiSourceCode;
             sourceFrame = new WebInspector.JavaScriptSourceFrame(this, javaScriptSource);
-        } else if (uiSourceCode instanceof WebInspector.StyleSource) {
-            var styleSource = /** @type {WebInspector.StyleSource} */ uiSourceCode;
-            sourceFrame = new WebInspector.StyleSourceFrame(styleSource);
-        } else {
-            console.assert(false, "Unknown UISourceCode type");
-            sourceFrame = new WebInspector.SourceFrame(uiSourceCode);
-        }
-         
+        } else
+            sourceFrame = new WebInspector.UISourceCodeFrame(uiSourceCode);
+
         this._sourceFramesByUISourceCode.put(uiSourceCode, sourceFrame);
         return sourceFrame;
     },

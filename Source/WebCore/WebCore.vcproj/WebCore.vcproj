@@ -75934,6 +75934,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\UISourceCodeFrame.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\UIUtils.js"
 					>
 				</File>

@@ -181,6 +181,7 @@
     <file>TopDownProfileDataGridTree.js</file>
     <file>treeoutline.js</file>
     <file>UISourceCode.js</file>
+    <file>UISourceCodeFrame.js</file>
     <file>UIUtils.js</file>
     <file>UserAgentSupport.js</file>
     <file>UserMetrics.js</file>

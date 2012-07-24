@@ -1,3 +1,29 @@
+2012-07-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: introduce UISourceCodeFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=92124
+
+        Reviewed by Vsevolod Vlasov.
+
+        Generic implementation of SourceFrame over UISourceCode added.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        * inspector/front-end/StylesPanel.js:
+        * inspector/front-end/UISourceCodeFrame.js: Added.
+        (WebInspector.UISourceCodeFrame):
+        (WebInspector.UISourceCodeFrame.prototype.canEditSource):
+        (WebInspector.UISourceCodeFrame.prototype.commitEditing):
+        (WebInspector.UISourceCodeFrame.prototype.afterTextChanged):
+        (WebInspector.UISourceCodeFrame.prototype._didEditContent):
+        (WebInspector.UISourceCodeFrame.prototype._onContentChanged):
+        (WebInspector.UISourceCodeFrame.prototype.populateTextAreaContextMenu):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-07-24  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11945102> REGRESSION (r109451): Overlay scrollbars always use the default style, regardless of background color
