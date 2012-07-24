@@ -151,6 +151,7 @@ EXPORTS
     ?deleteProperty@JSSymbolTableObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@VPropertyName@2@@Z
     ?deletePropertyByIndex@JSObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@I@Z
     ?deleteTable@HashTable@JSC@@QBEXXZ
+    ?description@JSValue@JSC@@QBEPADXZ
     ?despecifyDictionaryFunction@Structure@JSC@@QAEXAAVJSGlobalData@2@VPropertyName@2@@Z
     ?despecifyFunctionTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@VPropertyName@2@@Z
     ?destroy@JSCell@JSC@@KAXPAV12@@Z
