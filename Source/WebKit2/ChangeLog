@@ -1,5 +1,11 @@
 2012-07-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        WinCairo build fix attempt.
+
+        * win/WebKit2CFLite.def:
+
+2012-07-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Windows build fix attempt.
 
         * win/WebKit2.def:
