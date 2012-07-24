@@ -63,6 +63,7 @@ public:
     bool handleKeyEvent(const WebCore::PlatformKeyboardEvent&);
     void closePopup();
     WebWidgetClient* widgetClient() const { return m_widgetClient; }
+    bool hasSamePopupClient(WebPagePopupImpl* other) { return other && m_popupClient == other->m_popupClient; }
 
 private:
     // WebWidget functions

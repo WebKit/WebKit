@@ -1,3 +1,19 @@
+2012-07-24  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Page popup should close on mouse down
+        https://bugs.webkit.org/show_bug.cgi?id=92092
+
+        Reviewed by Kent Tamura.
+
+        Page popup should close on mouse down because some elements(e.g. <input type=color>) don't have a blur event that
+        we can hook to hide the page popup when the user clicks on the page.
+
+        * src/WebPagePopupImpl.h:
+        (WebKit::WebPagePopupImpl::hasSamePopupClient): Returns true if the given WebPagePopupImpl have the same popup client.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleMouseDown): Close all popups when the page is clicked. Checks if the
+        mouse down event opened the same popup we just closed.
+
 2012-07-24  Anthony Scian  <ascian@rim.com>
 
         Web Inspector [JSC]: Enable initiator column in network panel.
