@@ -42,6 +42,7 @@
 
             consoleWrite("<br>Verify invalid key system parameter is caught before checking whether loading has started.");
             // If the above was not the case, all of these would be INVALID_STATE_ERR.
+            // Also tests "null" case for first parameter.
             testExpected("video.networkState", video.NETWORK_EMPTY);
             testExpected("video.currentSrc", "");
             testException("video.webkitGenerateKeyRequest('')", "DOMException.SYNTAX_ERR");
@@ -53,6 +54,11 @@
             testException("video.webkitCancelKeyRequest('')", "DOMException.SYNTAX_ERR");
             testException("video.webkitCancelKeyRequest(null)", "DOMException.SYNTAX_ERR");
             testException("video.webkitCancelKeyRequest(undefined)", "DOMException.SYNTAX_ERR");
+
+            consoleWrite("<br>null key is caught before load state is checked.");
+            testException("video.webkitAddKey('webkit-org.w3.clearkey', '')", "DOMException.SYNTAX_ERR");
+            testException("video.webkitAddKey('webkit-org.w3.clearkey', null)", "DOMException.SYNTAX_ERR");
+            testException("video.webkitAddKey('webkit-org.w3.clearkey', undefined)", "DOMException.SYNTAX_ERR");
 
             consoleWrite("<br>0-length key is caught before load state is checked.");
             testException("video.webkitAddKey('webkit-org.w3.clearkey', new Uint8Array())", "DOMException.TYPE_MISMATCH_ERR");

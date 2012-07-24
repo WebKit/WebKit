@@ -2557,6 +2557,11 @@ void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Arr
         return;
     }
 
+    if (!key) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+
     if (!key->length()) {
         ec = TYPE_MISMATCH_ERR;
         return;

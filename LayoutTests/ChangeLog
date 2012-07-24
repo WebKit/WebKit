@@ -1,3 +1,15 @@
+2012-07-23  David Dorwin  <ddorwin@chromium.org>
+
+        Fixed crash in webkitAddKey() when key parameter is null.
+        https://bugs.webkit.org/show_bug.cgi?id=85444
+
+        Reviewed by Kentaro Hara.
+
+        Reference: Step 1 of http://dvcs.w3.org/hg/html-media/raw-file/5f76a0b43836/encrypted-media/encrypted-media.html#dom-addkey
+
+        * media/encrypted-media/encrypted-media-syntax-expected.txt:
+        * media/encrypted-media/encrypted-media-syntax.html:
+
 2012-07-23  Tony Chang  <tony@chromium.org>
 
         http/tests/multipart/policy-ignore-crash.php is failing on Chromium

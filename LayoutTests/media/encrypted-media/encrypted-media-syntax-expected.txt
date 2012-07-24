@@ -19,6 +19,11 @@ TEST(video.webkitCancelKeyRequest('')) THROWS(DOMException.SYNTAX_ERR) OK
 TEST(video.webkitCancelKeyRequest(null)) THROWS(DOMException.SYNTAX_ERR) OK
 TEST(video.webkitCancelKeyRequest(undefined)) THROWS(DOMException.SYNTAX_ERR) OK
 
+null key is caught before load state is checked.
+TEST(video.webkitAddKey('webkit-org.w3.clearkey', '')) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitAddKey('webkit-org.w3.clearkey', null)) THROWS(DOMException.SYNTAX_ERR) OK
+TEST(video.webkitAddKey('webkit-org.w3.clearkey', undefined)) THROWS(DOMException.SYNTAX_ERR) OK
+
 0-length key is caught before load state is checked.
 TEST(video.webkitAddKey('webkit-org.w3.clearkey', new Uint8Array())) THROWS(DOMException.TYPE_MISMATCH_ERR) OK
 

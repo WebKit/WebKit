@@ -1,3 +1,17 @@
+2012-07-23  David Dorwin  <ddorwin@chromium.org>
+
+        Fixed crash in webkitAddKey() when key parameter is null.
+        https://bugs.webkit.org/show_bug.cgi?id=85444
+
+        Reviewed by Kentaro Hara.
+
+        Reference: Step 1 of http://dvcs.w3.org/hg/html-media/raw-file/5f76a0b43836/encrypted-media/encrypted-media.html#dom-addkey
+
+        Tests: media/encrypted-media/encrypted-media-syntax.html 
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::webkitAddKey):
+
 2012-07-23  Hayato Ito  <hayato@chromium.org>
 
         A FocusScope for a distributed node should not be its TreeScope.
