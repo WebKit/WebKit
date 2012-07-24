@@ -26,6 +26,7 @@
 import logging
 import multiprocessing
 import optparse
+import os
 import StringIO
 import sys
 import traceback
@@ -37,6 +38,30 @@ from webkitpy.test.printer import Printer
 from webkitpy.test.runner import Runner
 
 _log = logging.getLogger(__name__)
+
+
+def main():
+    up = os.path.dirname
+    webkit_root = up(up(up(up(up(os.path.abspath(__file__))))))
+
+    tester = Tester()
+    tester.add_tree(os.path.join(webkit_root, 'Tools', 'Scripts'), 'webkitpy')
+    tester.add_tree(os.path.join(webkit_root, 'Source', 'WebKit2', 'Scripts'), 'webkit2')
+
+    # FIXME: Do we need to be able to test QueueStatusServer on Windows as well?
+    appengine_sdk_path = '/usr/local/google_appengine'
+    if os.path.exists(appengine_sdk_path):
+        if not appengine_sdk_path in sys.path:
+            sys.path.append(appengine_sdk_path)
+        import dev_appserver
+        from google.appengine.dist import use_library
+        use_library('django', '1.2')
+        dev_appserver.fix_sys_path()
+        tester.add_tree(os.path.join(webkit_root, 'Tools', 'QueueStatusServer'))
+    else:
+        _log.info('Skipping QueueStatusServer tests; the Google AppEngine Python SDK is not installed.')
+
+    return not tester.run()
 
 
 class Tester(object):
@@ -132,3 +157,6 @@ class Tester(object):
         traceback.print_exc(file=s)
         for l in s.buflist:
             _log.error('  ' + l.rstrip())
+
+if __name__ == '__main__':
+    sys.exit(main())

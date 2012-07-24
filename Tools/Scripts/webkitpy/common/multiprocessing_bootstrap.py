@@ -27,6 +27,44 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-from webkitpy.common import multiprocessing_bootstrap
 
-multiprocessing_bootstrap.run('webkitpy', 'test', 'main.py')
+"""In order for the multiprocessing module to spawn children correctly on
+Windows, we need to be running a Python module that can be imported
+(which means a file in sys.path that ends in .py). In addition, we need to
+ensure that sys.path / PYTHONPATH is set and propagating correctly.
+
+This module enforces that."""
+
+import os
+import subprocess
+import sys
+
+from webkitpy.common import version_check   # 'unused import' pylint: disable=W0611
+
+
+def run(*parts):
+    up = os.path.dirname
+    script_dir = up(up(up(os.path.abspath(__file__))))
+    env = os.environ
+    if 'PYTHONPATH' in env:
+        if script_dir not in env['PYTHONPATH']:
+            env['PYTHONPATH'] = env['PYTHONPATH'] + os.pathsep + script_dir
+    else:
+        env['PYTHONPATH'] = script_dir
+    module_path = os.path.join(script_dir, *parts)
+    cmd = [sys.executable, module_path] + sys.argv[1:]
+
+    # Wrap processes in the jhbuild environment so DRT or WKTR
+    # doesn't need to do it and their process id as reported by
+    # subprocess.Popen is not jhbuild's.
+    if '--gtk' in sys.argv[1:] and os.path.exists(os.path.join(script_dir, '..', '..', 'WebKitBuild', 'Dependencies')):
+        cmd.insert(1, os.path.join(script_dir, '..', 'gtk', 'run-with-jhbuild'))
+
+    proc = subprocess.Popen(cmd, env=env)
+    try:
+        proc.wait()
+    except KeyboardInterrupt:
+        # We need a second wait in order to make sure the subprocess exits fully.
+        # FIXME: It would be nice if we could put a timeout on this.
+        proc.wait()
+    sys.exit(proc.returncode)

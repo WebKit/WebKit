@@ -1,3 +1,22 @@
+2012-07-24  Dirk Pranke  <dpranke@chromium.org>
+
+        make test-webkitpy at least kinda work in parallel on win32
+        https://bugs.webkit.org/show_bug.cgi?id=91700
+
+        Reviewed by Adam Barth.
+
+        This change makes the hoop-jumping we have to do to make running
+        new-run-webkit-tests in parallel on win32 generic so that we can
+        re-use it for test-webkitpy as well.
+
+        * Scripts/new-run-webkit-tests:
+        * Scripts/test-webkitpy:
+        * Scripts/webkitpy/common/multiprocessing_bootstrap.py: Copied from Tools/Scripts/new-run-webkit-tests.
+        (run):
+        * Scripts/webkitpy/test/main.py:
+        (main):
+        (Tester._log_exception):
+
 2012-07-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123499.

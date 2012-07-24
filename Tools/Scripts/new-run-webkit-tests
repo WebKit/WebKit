@@ -28,39 +28,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """Wrapper around webkitpy/layout_tests/run_webkit_tests.py"""
-import os
-import signal
-import subprocess
-import sys
+from webkitpy.common import multiprocessing_bootstrap
 
-import webkitpy.common.version_check
-
-if __name__ == '__main__':
-    # In order for the multiprocessing module to spawn children correctly on
-    # Windows, we need to be running a Python module that can be imported
-    # (which means a file in sys.path that ends in .py). We also make surei
-    # that sys.path / PYTHONPATH is set and propagating correctly.
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    env = os.environ
-    if env.has_key('PYTHONPATH'):
-        if script_dir not in env['PYTHONPATH']:
-            env['PYTHONPATH'] = env['PYTHONPATH'] + os.pathsep + script_dir
-    else:
-        env['PYTHONPATH'] = script_dir
-    module_path = os.path.join(script_dir, 'webkitpy', 'layout_tests', 'run_webkit_tests.py')
-    cmd = [sys.executable, module_path] + sys.argv[1:]
-
-    # Wrap the NRWT process in the jhbuild environment so DRT or WKTR
-    # doesn't need to do it and their process id as reported by
-    # subprocess.Popen is not jhbuild's.
-    if '--gtk' in sys.argv[1:] and os.path.exists(os.path.join(script_dir, '..', '..', 'WebKitBuild', 'Dependencies')):
-        cmd.insert(1, os.path.join(script_dir, '..', 'gtk', 'run-with-jhbuild'))
-
-    proc = subprocess.Popen(cmd, env=env)
-    try:
-        proc.wait()
-    except KeyboardInterrupt:
-        # We need a second wait in order to make sure the subprocess exits fully.
-        # FIXME: It would be nice if we could put a timeout on this.
-        proc.wait()
-    sys.exit(proc.returncode)
+multiprocessing_bootstrap.run('webkitpy', 'layout_tests', 'run_webkit_tests.py')
