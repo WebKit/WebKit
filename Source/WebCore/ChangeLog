@@ -1,3 +1,13 @@
+2012-07-24  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11945102> REGRESSION (r109451): Overlay scrollbars always use the default style, regardless of background color
+        https://bugs.webkit.org/show_bug.cgi?id=92115
+
+        Reviewed by Mark Rowe.
+
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::scrollbarOverlayStyle): Reversed an incorrect null check.
+
 2012-07-24  Andrew Wilson  <atwilson@chromium.org>
 
         Another prospective build fix for Chromium. Unreviewed.
