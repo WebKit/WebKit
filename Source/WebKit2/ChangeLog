@@ -1,3 +1,9 @@
+2012-07-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix attempt.
+
+        * win/WebKit2.def:
+
 2012-07-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Make sure that an AC sync is triggered when the canvas contents is updated.

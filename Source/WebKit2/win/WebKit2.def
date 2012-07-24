@@ -113,6 +113,7 @@ EXPORTS
         ??1Mutex@WTF@@QAE@XZ
         ??1StringImpl@WTF@@QAE@XZ
         ??1ThreadCondition@WTF@@QAE@XZ
+        ?addTextMatchMarker@DocumentMarkerController@WebCore@@QAEXPBVRange@2@_N@Z
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
         ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@@WTF@@XZ
