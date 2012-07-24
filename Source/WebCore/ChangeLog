@@ -1,3 +1,9 @@
+2012-07-23  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build after r123418.
+
+        * WebCore.exp.in: Added DocumentMarkerController::addTextMatchMarker.
+
 2012-07-23  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc: optimise blending expression
