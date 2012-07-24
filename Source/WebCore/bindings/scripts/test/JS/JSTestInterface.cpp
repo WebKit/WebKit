@@ -244,10 +244,8 @@ bool JSTestInterface::getOwnPropertyDescriptor(JSObject* object, ExecState* exec
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec, JSValue, PropertyName)
 {
-    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-    if (!scriptContext)
-        return jsUndefined();
-    JSC::JSValue result = jsNumber(TestInterface::supplementalStaticReadOnlyAttr(scriptContext));
+    UNUSED_PARAM(exec);
+    JSValue result = jsNumber(TestSupplemental::supplementalStaticReadOnlyAttr(impl));
     return result;
 }
 
@@ -256,10 +254,8 @@ JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSValue, PropertyName)
 {
-    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-    if (!scriptContext)
-        return jsUndefined();
-    JSC::JSValue result = jsString(exec, TestInterface::supplementalStaticAttr(scriptContext));
+    UNUSED_PARAM(exec);
+    JSValue result = jsString(exec, TestSupplemental::supplementalStaticAttr(impl));
     return result;
 }
 
@@ -328,10 +324,8 @@ void JSTestInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyNa
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSObject*, JSValue value)
 {
-    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-    if (!scriptContext)
-        return;
-    TestInterface::setSupplementalStaticAttr(scriptContext, ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
+    UNUSED_PARAM(exec);
+    TestSupplemental::setSupplementalStaticAttr(impl, ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
 }
 
 #endif

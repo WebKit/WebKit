@@ -416,20 +416,16 @@ JSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, JSValue slotBase, Property
 
 JSValue jsTestObjConstructorStaticReadOnlyIntAttr(ExecState* exec, JSValue, PropertyName)
 {
-    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-    if (!scriptContext)
-        return jsUndefined();
-    JSC::JSValue result = jsNumber(TestObj::staticReadOnlyIntAttr(scriptContext));
+    UNUSED_PARAM(exec);
+    JSValue result = jsNumber(TestObj::staticReadOnlyIntAttr());
     return result;
 }
 
 
 JSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, JSValue, PropertyName)
 {
-    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-    if (!scriptContext)
-        return jsUndefined();
-    JSC::JSValue result = jsString(exec, TestObj::staticStringAttr(scriptContext));
+    UNUSED_PARAM(exec);
+    JSValue result = jsString(exec, TestObj::staticStringAttr());
     return result;
 }
 
@@ -949,10 +945,8 @@ void JSTestObj::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JS
 
 void setJSTestObjConstructorStaticStringAttr(ExecState* exec, JSObject*, JSValue value)
 {
-    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-    if (!scriptContext)
-        return;
-    TestObj::setStaticStringAttr(scriptContext, ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
+    UNUSED_PARAM(exec);
+    TestObj::setStaticStringAttr(ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
 }
 
 
