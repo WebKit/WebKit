@@ -27,6 +27,7 @@ PeerConnection00 conditional=MEDIA_STREAM
 Performance conditional=WEB_TIMING
 SharedWorker conditional=SHARED_WORKERS
 SharedWorkerContext conditional=SHARED_WORKERS
+SourceBufferList conditional=MEDIA_SOURCE
 SpeechRecognition conditional=SCRIPTED_SPEECH
 SVGElementInstance conditional=SVG
 TextTrack conditional=VIDEO_TRACK

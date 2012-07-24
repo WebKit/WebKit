@@ -782,6 +782,9 @@ module window {
 
         attribute [Conditional=MUTATION_OBSERVERS] MutationObserverConstructor WebKitMutationObserver;
 
+        attribute [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] SourceBufferConstructor SourceBuffer;
+        attribute [Conditional=MEDIA_SOURCE, V8EnabledAtRuntime=mediaSource] SourceBufferListConstructor SourceBufferList;
+
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 #if defined(V8_BINDING) && V8_BINDING

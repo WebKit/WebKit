@@ -31,6 +31,7 @@ VPATH = \
     $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
+    $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/notifications \
     $(WebCore)/Modules/quota \
     $(WebCore)/Modules/webaudio \
@@ -105,6 +106,8 @@ BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeRequest.idl \
     $(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $(WebCore)/Modules/mediasource/SourceBuffer.idl \
+    $(WebCore)/Modules/mediasource/SourceBufferList.idl \
     $(WebCore)/Modules/notifications/DOMWindowNotifications.idl \
     $(WebCore)/Modules/notifications/Notification.idl \
     $(WebCore)/Modules/notifications/NotificationCenter.idl \
@@ -946,6 +949,7 @@ IDL_INCLUDES = \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/css \
+    $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/notifications \
     $(WebCore)/page \
     $(WebCore)/xml \

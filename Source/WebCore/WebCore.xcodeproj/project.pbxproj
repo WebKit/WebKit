@@ -11584,6 +11584,12 @@
 		B10B697E140C174000BC1C26 /* WebVTTTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTTokenizer.cpp; sourceTree = "<group>"; };
 		B10B697F140C174000BC1C26 /* WebVTTTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTTokenizer.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
+		B1A942E315B5CE2200D525D1 /* SourceBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceBuffer.cpp; sourceTree = "<group>"; };
+		B1A942E415B5CE2200D525D1 /* SourceBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBuffer.h; sourceTree = "<group>"; };
+		B1A942E515B5CE2200D525D1 /* SourceBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourceBuffer.idl; sourceTree = "<group>"; };
+		B1A942E615B5CE2200D525D1 /* SourceBufferList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceBufferList.cpp; sourceTree = "<group>"; };
+		B1A942E715B5CE2200D525D1 /* SourceBufferList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferList.h; sourceTree = "<group>"; };
+		B1A942E815B5CE2200D525D1 /* SourceBufferList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourceBufferList.idl; sourceTree = "<group>"; };
 		B1AD4E7113A12A4600846B27 /* TextTrackLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextTrackLoader.cpp; path = loader/TextTrackLoader.cpp; sourceTree = SOURCE_ROOT; };
 		B1AD4E7213A12A4600846B27 /* TextTrackLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrackLoader.h; path = loader/TextTrackLoader.h; sourceTree = SOURCE_ROOT; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
@@ -17554,6 +17560,7 @@
 		971145FE14EF006E00674FD9 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				B1A942DD15B5CE2200D525D1 /* mediasource */,
 				971145FF14EF007900674FD9 /* geolocation */,
 				9712A55315004E3C0048AF10 /* indexeddb */,
 				333F703D0FB49C16008E12A6 /* notifications */,
@@ -18990,6 +18997,20 @@
 				A9D247FD0D757E6900FDF959 /* JSDOMPluginArray.h */,
 			);
 			name = Plugins;
+			sourceTree = "<group>";
+		};
+		B1A942DD15B5CE2200D525D1 /* mediasource */ = {
+			isa = PBXGroup;
+			children = (
+				B1A942E315B5CE2200D525D1 /* SourceBuffer.cpp */,
+				B1A942E415B5CE2200D525D1 /* SourceBuffer.h */,
+				B1A942E515B5CE2200D525D1 /* SourceBuffer.idl */,
+				B1A942E615B5CE2200D525D1 /* SourceBufferList.cpp */,
+				B1A942E715B5CE2200D525D1 /* SourceBufferList.h */,
+				B1A942E815B5CE2200D525D1 /* SourceBufferList.idl */,
+			);
+			name = mediasource;
+			path = Modules/mediasource;
 			sourceTree = "<group>";
 		};
 		B1AD4E7713A12A7200846B27 /* track */ = {

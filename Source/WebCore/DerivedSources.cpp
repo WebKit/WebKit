@@ -280,6 +280,10 @@
 #include "JSShadowRoot.cpp"
 #include "JSSharedWorker.cpp"
 #include "JSSharedWorkerContext.cpp"
+#if ENABLE(MEDIA_SOURCE)
+#include "JSSourceBuffer.cpp"
+#include "JSSourceBufferList.cpp"
+#endif
 #include "JSSQLError.cpp"
 #include "JSSQLException.cpp"
 #include "JSSQLResultSet.cpp"

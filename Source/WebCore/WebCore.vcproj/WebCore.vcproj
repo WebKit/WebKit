@@ -25083,6 +25083,26 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="mediasource"
+				>
+				<File
+					RelativePath="..\Modules\mediasource\SourceBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\mediasource\SourceBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\mediasource\SourceBufferList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\mediasource\SourceBufferList.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="notifications"
 				>
 				<File

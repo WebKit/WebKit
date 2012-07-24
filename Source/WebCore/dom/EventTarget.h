@@ -64,6 +64,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class SharedWorker;
     class SharedWorkerContext;
+    class SourceBufferList;
     class TextTrack;
     class TextTrackCue;
     class WebSocket;

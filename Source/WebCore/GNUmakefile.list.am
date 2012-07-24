@@ -507,6 +507,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSharedWorker.h \
 	DerivedSources/WebCore/JSSignalingCallback.cpp \
 	DerivedSources/WebCore/JSSignalingCallback.h \
+	DerivedSources/WebCore/JSSourceBuffer.cpp \
+	DerivedSources/WebCore/JSSourceBuffer.h \
+	DerivedSources/WebCore/JSSourceBufferList.cpp \
+	DerivedSources/WebCore/JSSourceBufferList.h \
 	DerivedSources/WebCore/JSSpeechInputEvent.cpp \
 	DerivedSources/WebCore/JSSpeechInputEvent.h \
 	DerivedSources/WebCore/JSSpeechInputResult.cpp \
@@ -696,6 +700,8 @@ dom_binding_idls += \
 	$(WebCore)/Modules/geolocation/PositionCallback.idl \
 	$(WebCore)/Modules/geolocation/PositionError.idl \
 	$(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
+	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
+	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
 	$(WebCore)/Modules/mediastream/DeprecatedPeerConnection.idl \
 	$(WebCore)/Modules/mediastream/DOMWindowMediaStream.idl \
 	$(WebCore)/Modules/mediastream/IceCallback.idl \
@@ -1165,6 +1171,10 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.h \
 	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.cpp \
 	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.h \
+	Source/WebCore/Modules/mediasource/SourceBuffer.cpp \
+	Source/WebCore/Modules/mediasource/SourceBuffer.h \
+	Source/WebCore/Modules/mediasource/SourceBufferList.cpp \
+	Source/WebCore/Modules/mediasource/SourceBufferList.h \
 	Source/WebCore/Modules/mediastream/DeprecatedPeerConnection.cpp \
 	Source/WebCore/Modules/mediastream/DeprecatedPeerConnection.h \
 	Source/WebCore/Modules/mediastream/IceCallback.h \

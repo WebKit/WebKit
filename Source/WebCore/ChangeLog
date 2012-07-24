@@ -1,3 +1,49 @@
+2012-07-24  Anna Cavender  <annacc@chromium.org>
+
+        Create SourceBuffer and SourceBufferList objects
+        https://bugs.webkit.org/show_bug.cgi?id=91771
+
+        Reviewed by Eric Carlson.
+
+        SourceBuffer and SourceBufferList objects are needed in order to
+        implement the new object-oriented MediaSource API:
+        http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html
+
+        No new tests - will be able to test after landing BUGWK91775
+
+        Adding new files to build files:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        New objects:
+        * Modules/mediasource/SourceBuffer.cpp: Added.
+        * Modules/mediasource/SourceBuffer.h: Added.
+        * Modules/mediasource/SourceBuffer.idl: Added.
+        * Modules/mediasource/SourceBufferList.cpp: Added.
+        * Modules/mediasource/SourceBufferList.h: Added.
+        * Modules/mediasource/SourceBufferList.idl: Added.
+
+        New events:
+        * dom/EventNames.h:
+        (WebCore):
+        * dom/EventTarget.h:
+        (WebCore):
+        * dom/EventTargetFactory.in:
+
+        Object constructors:
+        * page/DOMWindow.idl:
+
 2012-07-24  Patrick Gansterer  <paroga@webkit.org>
 
         Store the full year in GregorianDateTime

@@ -15,6 +15,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/Modules/gamepad \
 	-I$(srcdir)/Source/WebCore/Modules/geolocation \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb \
+	-I$(srcdir)/Source/WebCore/Modules/mediasource \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
 	-I$(srcdir)/Source/WebCore/Modules/notifications \
 	-I$(srcdir)/Source/WebCore/Modules/protocolhandler \
@@ -881,6 +882,7 @@ IDL_PATH := \
     $(WebCore)/Modules/gamepad \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
+    $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/mediastream \
     $(WebCore)/Modules/notifications \
     $(WebCore)/Modules/webaudio \
@@ -1049,6 +1051,7 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/gamepad/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/geolocation/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/indexeddb/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/Modules/mediasource/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/notifications/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/protocolhandler/*.idl) \

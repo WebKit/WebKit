@@ -2636,6 +2636,20 @@ SET(WebCoreTestSupport_SOURCES
     testing/InternalSettings.cpp
 )
 
+IF (ENABLE_MEDIA_SOURCE)
+    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+        ${WEBCORE_DIR}/Modules/mediasource
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        Modules/mediasource/SourceBuffer.idl
+        Modules/mediasource/SourceBufferList.idl
+    )
+    LIST(APPEND WebCore_SOURCES
+        Modules/mediasource/SourceBuffer.cpp
+        Modules/mediasource/SourceBufferList.cpp
+    )
+ENDIF()
+
 # Modules that the bindings generator scripts may use
 SET(SCRIPTS_RESOLVE_SUPPLEMENTAL
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm

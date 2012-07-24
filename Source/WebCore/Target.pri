@@ -3008,6 +3008,15 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         platform/AsyncFileSystem.cpp
 }
 
+contains(DEFINES, ENABLE_MEDIA_SOURCE=1) {
+    HEADERS += \
+        Modules/mediasource/SourceBuffer.h \
+        Modules/mediasource/SourceBufferList.h
+    SOURCES += \
+        Modules/mediasource/SourceBuffer.cpp \
+        Modules/mediasource/SourceBufferList.cpp
+}
+
 contains(DEFINES, ENABLE_ICONDATABASE=1) {
     SOURCES += \
         loader/icon/IconDatabase.cpp \

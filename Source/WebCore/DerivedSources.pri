@@ -620,6 +620,12 @@ contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
     $$PWD/html/track/TrackEvent.idl \
 }
 
+contains(DEFINES, ENABLE_MEDIA_SOURCE=1) {
+  IDL_BINDINGS += \
+    $$PWD/Modules/mediasource/SourceBuffer.idl \
+    $$PWD/Modules/mediasource/SourceBufferList.idl
+}
+
 mathmlnames.output = MathMLNames.cpp
 mathmlnames.input = MATHML_NAMES
 mathmlnames.depends = $$PWD/mathml/mathattrs.in
