@@ -1251,6 +1251,8 @@ BUGWK88684 : fast/text/descent-clip-in-scaled-page.html = IMAGE
 // This failure appears to be GTK-specific
 BUGWK91319 : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 
+// Failing after r123379 on EFL and GTK.
+BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

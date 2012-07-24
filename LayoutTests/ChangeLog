@@ -1,3 +1,12 @@
+2012-07-23  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed GTK/EFL gardening after r123379
+        Marked fast/css/sticky/parsing-position-sticky.html as known failure
+        tracked by the bug 92063
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2012-07-23  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] Rename fast/forms/time/*.html to time-*.html

@@ -789,3 +789,6 @@ BUGWK91210 : http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing
 
 // Failing after r123145 on EFL, GTK and QT.
 BUGWK91843 : http/tests/security/cross-frame-access-put.html = TEXT
+
+// Failing after r123379 on EFL and GTK.
+BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
