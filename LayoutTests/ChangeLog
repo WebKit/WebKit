@@ -1,5 +1,20 @@
 2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
 
+        [Tests] Copy fast/forms/number/number-change-type-on-focus.html and number-losing-renderer-on-click.html to fast/forms/resources
+        https://bugs.webkit.org/show_bug.cgi?id=92083
+
+        Reviewed by Kent Tamura.
+
+        This patch copies two test HTML files in fast/forms/number into JavaScript code directory,
+        fast/forms/resources:
+          - number-change-type-on-focus.html -> common-change-type-on-focus.js
+          - number-losing-renderer-on-click.html -> common-losing-renderer-on-click.js
+
+        * fast/forms/resources/common-change-type-on-focus.js: Copied from LayoutTests/fast/forms/number/number-change-type-on-focus.html.
+        * fast/forms/resources/common-losing-renderer-on-click.js: Copied from LayoutTests/fast/forms/number/number-losing-renderer-on-click.html.
+
+2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
+
         [Tests] Rename fast/forms/number/number-crash.html to number-losing-renderer-on-click.html
         https://bugs.webkit.org/show_bug.cgi?id=92085
 
