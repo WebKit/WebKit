@@ -63,7 +63,7 @@ sub applyPreprocessor
     @macros = map { "-D$_" } @macros;
 
     my $pid = 0;
-    if ($Config{osname} eq "cygwin") {
+    if ($Config{osname} eq "cygwin" || $Config{osname} eq 'MSWin32') {
         # This call can fail if Windows rebases cygwin, so retry a few times until it succeeds.
         for (my $tries = 0; !$pid && ($tries < 20); $tries++) {
             eval {

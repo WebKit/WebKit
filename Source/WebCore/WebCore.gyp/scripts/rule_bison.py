@@ -32,7 +32,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# usage: rule_bison.py INPUT_FILE OUTPUT_DIR
+# usage: rule_bison.py INPUT_FILE OUTPUT_DIR [BISON_EXE]
 # INPUT_FILE is a path to either CSSGrammar.y or XPathGrammar.y.
 # OUTPUT_DIR is where the bison-generated .cpp and .h files should be placed.
 
@@ -42,10 +42,13 @@ import os.path
 import subprocess
 import sys
 
-assert len(sys.argv) == 3
+assert len(sys.argv) == 3 or len(sys.argv) == 4
 
 inputFile = sys.argv[1]
 outputDir = sys.argv[2]
+bisonExe = 'bison'
+if len(sys.argv) > 3:
+    bisonExe = sys.argv[3]
 
 inputName = os.path.basename(inputFile)
 assert inputName == 'CSSGrammar.y' or inputName == 'XPathGrammar.y'
@@ -69,7 +72,7 @@ for outputHTry in outputHTries:
 
 outputCpp = os.path.join(outputDir, inputRoot + '.cpp')
 
-returnCode = subprocess.call(['bison', '-d', '-p', prefix, inputFile, '-o', outputCpp])
+returnCode = subprocess.call([bisonExe, '-d', '-p', prefix, inputFile, '-o', outputCpp])
 assert returnCode == 0
 
 # Find the name that bison used for the generated header file.

@@ -29,10 +29,14 @@ my $option = basename($ARGV[0],".gperf");
 
 if ($option eq "ColorData") {
     my $colorDataGenerated         = "$outdir/ColorData.cpp";
-    my $colorDataGperf             = $ARGV[0];
-    shift;
+    my $colorDataGperf             = shift;
+    my $customGperf                = shift;
 
-    my $gperf = $ENV{GPERF} ? $ENV{GPERF} : "gperf";
+    # gperf emits this filename literally in #line directives, but VS errors
+    # out because the filenames then contain unescaped \s, so replace the \
+    # with /.
+    $colorDataGperf =~ s/\\/\//g;
+    my $gperf = $ENV{GPERF} ? $ENV{GPERF} : ($customGperf ? $customGperf : "gperf");
     system("\"$gperf\" --key-positions=\"*\" -D -s 2 $colorDataGperf --output-file=$colorDataGenerated") == 0 || die "calling gperf failed: $?";
 
 } else {
