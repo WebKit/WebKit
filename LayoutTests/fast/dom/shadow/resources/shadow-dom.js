@@ -124,6 +124,10 @@ function shouldNavigateFocus(from, to, direction)
       return;
     }
     fromElement.focus();
+    if (!isInnermostActiveElement(from)) {
+        debug('FAIL: Can not be focused: '+ from);
+        return;
+    }
     if (direction == 'forward')
         navigateFocusForward();
     else

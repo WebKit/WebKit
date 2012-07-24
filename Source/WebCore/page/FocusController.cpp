@@ -119,10 +119,15 @@ Element* FocusScope::owner() const
 FocusScope FocusScope::focusScopeOf(Node* node)
 {
     ASSERT(node);
-    TreeScope* scope = node->treeScope();
-    if (scope->rootNode()->isShadowRoot())
-        return FocusScope(toShadowRoot(scope->rootNode())->owner()->youngestShadowRoot());
-    return FocusScope(scope);
+    ComposedShadowTreeWalker walker(node, ComposedShadowTreeWalker::DoNotCrossUpperBoundary);
+    Node* root = node;
+    while (walker.get()) {
+        root = walker.get();
+        walker.parent();
+    }
+    // The result is not always a ShadowRoot nor a DocumentNode since
+    // a starting node is in an orphaned tree in composed shadow tree.
+    return FocusScope(root->treeScope());
 }
 
 FocusScope FocusScope::focusScopeOwnedByShadowHost(Node* node)

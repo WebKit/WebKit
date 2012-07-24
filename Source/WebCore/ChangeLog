@@ -1,3 +1,21 @@
+2012-07-23  Hayato Ito  <hayato@chromium.org>
+
+        A FocusScope for a distributed node should not be its TreeScope.
+        https://bugs.webkit.org/show_bug.cgi?id=91829
+
+        Reviewed by Dimitri Glazkov.
+
+        Current implementation of FocusScope::focusScopeOf(Node*) returns
+        the given node's treeScope().  That does not apply if the node is
+        a distributed node.  We should calculate a FocusScope for a
+        distributed node by traversing ancestor nodes in Composed Shadow
+        Tree.
+
+        Test: fast/dom/shadow/focus-navigation-with-distributed-nodes.html
+
+        * page/FocusController.cpp:
+        (WebCore::FocusScope::focusScopeOf):
+
 2012-07-23  Douglas Stockwell  <dstockwell@google.com>
 
         Null-pointer crash when parsing border-image

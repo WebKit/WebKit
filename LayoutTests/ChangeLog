@@ -1,3 +1,15 @@
+2012-07-23  Hayato Ito  <hayato@chromium.org>
+
+        A FocusScope for a distributed node should not be its TreeScope.
+        https://bugs.webkit.org/show_bug.cgi?id=91829
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/focus-navigation-with-distributed-nodes-expected.txt: Added.
+        * fast/dom/shadow/focus-navigation-with-distributed-nodes.html: Added.
+        * fast/dom/shadow/resources/shadow-dom.js:
+        (shouldNavigateFocus):
+
 2012-07-23  Douglas Stockwell  <dstockwell@google.com>
 
         Null-pointer crash when parsing border-image
