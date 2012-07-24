@@ -1,5 +1,11 @@
 2012-07-24  Andrew Wilson  <atwilson@chromium.org>
 
+        Another prospective build fix for Chromium. Unreviewed.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFace.h:
+
+2012-07-24  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed prospective build fix for Chromium. Changed include of hb.h in HarfBuzzNGFace.h
 
         * platform/graphics/harfbuzz/ng/HarfBuzzNGFace.h:
