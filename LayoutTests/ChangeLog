@@ -1,3 +1,49 @@
+2012-07-24  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Unskip tests in fast/hidpi
+        https://bugs.webkit.org/show_bug.cgi?id=90190
+
+        Reviewed by Adam Barth.
+
+        Adding cr-linux baselines so that the EWS will go green. Will be adding new
+        baselines for the chromium ports with WebKit gardener atwilson@.
+
+        * platform/chromium-linux/fast/hidpi/broken-image-icon-hidpi-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/broken-image-icon-hidpi-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/broken-image-with-size-hidpi-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/broken-image-with-size-hidpi-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/clip-text-in-hidpi-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/clip-text-in-hidpi-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/device-scale-factor-paint-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/focus-rings-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-as-background-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-as-background-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-background-dynamic-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-background-dynamic-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-background-repeat-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-background-repeat-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-background-repeat-without-size-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-background-repeat-without-size-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-border-image-comparison-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-border-image-comparison-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-border-image-dynamic-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-border-image-dynamic-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-border-image-simple-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-border-image-simple-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-in-content-dynamic-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-in-content-dynamic-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-out-of-order-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-out-of-order-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-simple-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-simple-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-without-specified-width-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/image-set-without-specified-width-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/resize-corner-hidpi-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/resize-corner-hidpi-expected.txt: Added.
+        * platform/chromium-linux/fast/hidpi/video-controls-in-hidpi-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/video-controls-in-hidpi-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-07-24  Nico Weber  <nicolasweber@gmx.de>
 
         [chromium] Add pixel expectations for new test scrollbar-tickmarks-styled.html
