@@ -1,3 +1,31 @@
+2012-07-23  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Add the SpeechRecognitionResult.emma attribute
+        https://bugs.webkit.org/show_bug.cgi?id=91743
+
+        Reviewed by Adam Barth.
+
+        Implement the 'emma' attribute as described in the spec draft at
+        http://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html
+
+        Test: fast/speech/scripted/emma.html
+
+        * Modules/speech/SpeechRecognitionResult.cpp:
+        (WebCore::SpeechRecognitionResult::~SpeechRecognitionResult):
+        (WebCore):
+        (WebCore::SpeechRecognitionResult::emma):
+        * Modules/speech/SpeechRecognitionResult.h:
+        (WebCore):
+        (SpeechRecognitionResult):
+        * Modules/speech/SpeechRecognitionResult.idl:
+        * WebCore.gypi:
+        * bindings/v8/custom/V8SpeechRecognitionResultCustom.cpp:
+        (WebCore):
+        (WebCore::V8SpeechRecognitionResult::visitDOMWrapper):
+          We need to add an implicit reference from the result object to the
+          emma object to keep the latters DOM tree alive across
+          garbage-collection.
+
 2012-07-24  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol Extension: add getFlowByName command

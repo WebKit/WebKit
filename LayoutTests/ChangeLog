@@ -1,3 +1,15 @@
+2012-07-23  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Add the SpeechRecognitionResult.emma attribute
+        https://bugs.webkit.org/show_bug.cgi?id=91743
+
+        Reviewed by Adam Barth.
+
+        Add layout test for the SpeechRecognitionResult.emma attribute.
+
+        * fast/speech/scripted/emma.html: Added.
+        * fast/speech/scripted/emma-expected.txt: Added.
+
 2012-07-24  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

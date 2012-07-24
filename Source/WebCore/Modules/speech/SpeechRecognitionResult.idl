@@ -26,11 +26,14 @@
 module core {
     interface [
         Conditional=SCRIPTED_SPEECH,
-        IndexedGetter
+        CustomIsReachable,
+        IndexedGetter,
+        V8DependentLifetime
     ] SpeechRecognitionResult {
         readonly attribute unsigned long length;
         SpeechRecognitionAlternative item(in [IsIndex] unsigned long index);
         readonly attribute boolean final;
+        readonly attribute Document emma;
     };
 }
 

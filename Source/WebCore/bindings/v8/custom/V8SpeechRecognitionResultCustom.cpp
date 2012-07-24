@@ -23,39 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SpeechRecognitionResult_h
-#define SpeechRecognitionResult_h
+#include "config.h"
 
 #if ENABLE(SCRIPTED_SPEECH)
 
-#include "SpeechRecognitionAlternative.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include "V8SpeechRecognitionResult.h"
+
+#include "SpeechRecognitionResult.h"
+#include "V8Binding.h"
 
 namespace WebCore {
 
-class Document;
-
-class SpeechRecognitionResult : public RefCounted<SpeechRecognitionResult> {
-public:
-    ~SpeechRecognitionResult();
-    static PassRefPtr<SpeechRecognitionResult> create(const Vector<RefPtr<SpeechRecognitionAlternative> >&, bool final);
-
-    unsigned long length() { return m_alternatives.size(); }
-    SpeechRecognitionAlternative* item(unsigned long index);
-    bool final() { return m_final; }
-    Document* emma();
-
-private:
-    SpeechRecognitionResult(const Vector<RefPtr<SpeechRecognitionAlternative> >&, bool final);
-
-    Vector<RefPtr<SpeechRecognitionAlternative> > m_alternatives;
-    bool m_final;
-    RefPtr<Document> m_emma;
-};
+void V8SpeechRecognitionResult::visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
+{
+    SpeechRecognitionResult* impl = static_cast<SpeechRecognitionResult*>(object);
+    Document* emma = impl->emma();
+    v8::Persistent<v8::Value> emmaWrapper = store->domNodeMap().get(emma);
+    if (!emmaWrapper.IsEmpty())
+        v8::V8::AddImplicitReferences(wrapper, &emmaWrapper, 1);
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(SCRIPTED_SPEECH)
-
-#endif // SpeechRecognitionResult_h

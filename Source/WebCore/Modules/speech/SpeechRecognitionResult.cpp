@@ -29,7 +29,15 @@
 
 #include "SpeechRecognitionResult.h"
 
+#include "Document.h"
+#include "Element.h"
+#include "Text.h"
+
 namespace WebCore {
+
+SpeechRecognitionResult::~SpeechRecognitionResult()
+{
+}
 
 PassRefPtr<SpeechRecognitionResult> SpeechRecognitionResult::create(const Vector<RefPtr<SpeechRecognitionAlternative> >& alternatives, bool final)
 {
@@ -42,6 +50,46 @@ SpeechRecognitionAlternative* SpeechRecognitionResult::item(unsigned long index)
         return 0;
 
     return m_alternatives[index].get();
+}
+
+Document* SpeechRecognitionResult::emma()
+{
+    if (m_emma)
+        return m_emma.get();
+
+    RefPtr<Document> document = Document::create(0, KURL());
+
+    const char emmaNamespaceUrl[] = "http://www.w3.org/2003/04/emma";
+    RefPtr<Element> emmaElement = document->createElement(QualifiedName("emma", "emma", emmaNamespaceUrl), false);
+    ExceptionCode ec = 0;
+    emmaElement->setAttribute("version", "1.0", ec);
+    ASSERT(!ec);
+    if (ec)
+        return 0;
+
+    RefPtr<Element> oneOf = document->createElement(QualifiedName("emma", "one-of", emmaNamespaceUrl), false);
+    oneOf->setAttribute(QualifiedName("emma", "medium", emmaNamespaceUrl), "acoustic");
+    oneOf->setAttribute(QualifiedName("emma", "mode", emmaNamespaceUrl), "voice");
+    oneOf->setIdAttribute("one-of");
+
+    for (size_t i = 0; i < m_alternatives.size(); ++i) {
+        const RefPtr<SpeechRecognitionAlternative>& alternative = m_alternatives[i];
+
+        RefPtr<Element> interpretation = document->createElement(QualifiedName("emma", "interpretation", emmaNamespaceUrl), false);
+        interpretation->setIdAttribute(String::number(i + 1));
+        interpretation->setAttribute(QualifiedName("emma", "confidence", emmaNamespaceUrl), String::number(alternative->confidence()));
+
+        RefPtr<Element> literal = document->createElement(QualifiedName("emma", "literal", emmaNamespaceUrl), false);
+        literal->appendChild(document->createTextNode(alternative->transcript()));
+        interpretation->appendChild(literal.release());
+        oneOf->appendChild(interpretation.release());
+    }
+
+    emmaElement->appendChild(oneOf.release());
+    document->appendChild(emmaElement.release());
+
+    m_emma = document;
+    return m_emma.get();
 }
 
 SpeechRecognitionResult::SpeechRecognitionResult(const Vector<RefPtr<SpeechRecognitionAlternative> >& alternatives, bool final)
