@@ -27,10 +27,10 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
-#include <wtf/text/CString.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -190,7 +190,7 @@ void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const Resour
 
     encoder->encode(resourceError.domain());
     encoder->encode(resourceError.errorCode());
-    encoder->encode(resourceError.failingURL()); 
+    encoder->encode(resourceError.failingURL());
     encoder->encode(resourceError.localizedDescription());
 }
 
@@ -219,9 +219,10 @@ bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceErro
     String localizedDescription;
     if (!decoder->decode(localizedDescription))
         return false;
-    
+
     resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription);
     return true;
 }
 
 }
+

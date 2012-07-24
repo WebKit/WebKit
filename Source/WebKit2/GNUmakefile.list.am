@@ -374,7 +374,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/gtk/NativeWebWheelEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/PrintInfoGtk.cpp \
 	Source/WebKit2/Shared/gtk/ProcessExecutablePathGtk.cpp \
-	Source/WebKit2/Shared/gtk/WebCoreArgumentCodersGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.h \
 	Source/WebKit2/Shared/ImageOptions.h \
@@ -431,6 +430,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/soup/PlatformCertificateInfo.cpp \
 	Source/WebKit2/Shared/soup/PlatformCertificateInfo.h \
 	Source/WebKit2/Shared/soup/SoupCookiePersistentStorageType.h \
+	Source/WebKit2/Shared/soup/WebCoreArgumentCodersSoup.cpp \
 	Source/WebKit2/Shared/TextCheckerState.h \
 	Source/WebKit2/Shared/UserMessageCoders.h \
 	Source/WebKit2/Shared/UpdateInfo.cpp \
@@ -1242,13 +1242,13 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
 	Source/WebKit2/Shared/WebMouseEvent.cpp \
 	Source/WebKit2/Shared/WebWheelEvent.cpp \
-	Source/WebKit2/Shared/gtk/WebCoreArgumentCodersGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebKeyboardEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebWheelEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebMouseEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/ProcessExecutablePathGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
 	Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp \
+	Source/WebKit2/Shared/soup/WebCoreArgumentCodersSoup.cpp \
 	Source/WebKit2/UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp \
 	Source/WebKit2/WebProcess/Plugins/Plugin.cpp \
 	Source/WebKit2/WebProcess/Plugins/Plugin.h \

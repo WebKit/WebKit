@@ -27,9 +27,9 @@ LIST(APPEND WebKit2_SOURCES
     Shared/efl/NativeWebMouseEventEfl.cpp
     Shared/efl/ProcessExecutablePathEfl.cpp
     Shared/efl/WebEventFactory.cpp
-    Shared/efl/WebCoreArgumentCodersEfl.cpp
 
     Shared/soup/PlatformCertificateInfo.cpp
+    Shared/soup/WebCoreArgumentCodersSoup.cpp
 
     UIProcess/API/C/efl/WKView.cpp
 
