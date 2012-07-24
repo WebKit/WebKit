@@ -33,6 +33,7 @@
 
 #include "WebTouchPoint.h"
 #include "platform/WebCommon.h"
+#include "platform/WebRect.h"
 
 #include <string.h>
 
@@ -372,6 +373,7 @@ public:
     // NOTE: |deltaX| and |deltaY| represents the amount to scroll for Scroll gesture events. For Pinch gesture events, |deltaX| represents the scaling/magnification factor. For a GestureTap event, |deltaX| and |deltaY| represent the horizontal and vertical radii of the touch region.
     float deltaX;
     float deltaY;
+    WebRect boundingBox;
 
     WebGestureEvent(unsigned sizeParam = sizeof(WebGestureEvent))
         : WebInputEvent(sizeParam)
