@@ -60,7 +60,6 @@ public:
     virtual void paintTrackPiece(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart) { }
     virtual void paintButton(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart) { }
     virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) { }
-    virtual void paintTickmarks(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) { }
 
     virtual IntRect constrainTrackRectToTrackPieces(ScrollbarThemeClient*, const IntRect& rect) { return rect; }
 };

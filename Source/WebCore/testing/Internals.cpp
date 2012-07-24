@@ -624,6 +624,12 @@ String Internals::markerDescriptionForNode(Node* node, const String& markerType,
     return marker->description();
 }
 
+void Internals::addTextMatchMarker(const Range* range, bool isActive)
+{
+    range->ownerDocument()->updateLayoutIgnorePendingStylesheets();
+    range->ownerDocument()->markers()->addTextMatchMarker(range, isActive);
+}
+
 void Internals::setScrollViewPosition(Document* document, long x, long y, ExceptionCode& ec)
 {
     if (!document || !document->view()) {

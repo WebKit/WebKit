@@ -92,7 +92,7 @@ void DocumentMarkerController::addMarkerToNode(Node* node, unsigned startOffset,
 }
 
 
-void DocumentMarkerController::addTextMatchMarker(Range* range, bool activeMatch)
+void DocumentMarkerController::addTextMatchMarker(const Range* range, bool activeMatch)
 {
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {

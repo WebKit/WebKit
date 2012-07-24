@@ -117,6 +117,7 @@ public:
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
     PassRefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     String markerDescriptionForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
+    void addTextMatchMarker(const Range*, bool isActive);
 
     void setScrollViewPosition(Document*, long x, long y, ExceptionCode&);
     void setPagination(Document* document, const String& mode, int gap, ExceptionCode& ec) { setPagination(document, mode, gap, 0, ec); }

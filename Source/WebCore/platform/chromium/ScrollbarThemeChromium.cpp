@@ -113,14 +113,8 @@ void ScrollbarThemeChromium::paintTickmarks(GraphicsContext* context, ScrollbarT
     if (!tickmarks.size())
         return;
 
-    // Get the image for the tickmarks.
-    DEFINE_STATIC_LOCAL(RefPtr<Image>, dash, (Image::loadPlatformResource("tickmarkDash")));
-    if (dash->isNull()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    context->save();
+    GraphicsContextStateSaver stateSaver(*context);
+    context->setShouldAntialias(false);
 
     for (Vector<IntRect>::const_iterator i = tickmarks.begin(); i != tickmarks.end(); ++i) {
         // Calculate how far down (in %) the tick-mark should appear.
@@ -129,11 +123,14 @@ void ScrollbarThemeChromium::paintTickmarks(GraphicsContext* context, ScrollbarT
         // Calculate how far down (in pixels) the tick-mark should appear.
         const int yPos = rect.y() + (rect.height() * percent);
 
-        IntPoint tick(scrollbar->x(), yPos);
-        context->drawImage(dash.get(), ColorSpaceDeviceRGB, tick);
-    }
+        context->setFillColor(Color(0xCC, 0xAA, 0x00, 0xFF), ColorSpaceDeviceRGB);
+        FloatRect tickRect(rect.x(), yPos, rect.width(), 3);
+        context->fillRect(tickRect);
 
-    context->restore();
+        context->setFillColor(Color(0xFF, 0xDD, 0x00, 0xFF), ColorSpaceDeviceRGB);
+        FloatRect tickStroke(rect.x(), yPos + 1, rect.width(), 1);
+        context->fillRect(tickStroke);
+    }
 }
 
 } // namespace WebCore

@@ -1582,7 +1582,7 @@ Node* Range::pastLastNode() const
     return m_end.container()->traverseNextSibling();
 }
 
-IntRect Range::boundingBox()
+IntRect Range::boundingBox() const
 {
     IntRect result;
     Vector<IntRect> rects;
@@ -1593,7 +1593,7 @@ IntRect Range::boundingBox()
     return result;
 }
 
-void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFixedPosition* inFixed)
+void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFixedPosition* inFixed) const
 {
     Node* startContainer = m_start.container();
     Node* endContainer = m_end.container();

@@ -1,3 +1,40 @@
+2012-07-23  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Show search tickmarks on css-styled scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=91949
+
+        Reviewed by Adrienne Walker.
+
+        This is done by letting RenderScrollbarTheme::paintTickmarks()
+        delegate to the native ScrollbarTheme. To make this possible,
+        move paintTickmarks() from ScrollbarThemeComposite to the
+        superclass ScrollbarTheme.
+
+        For testing, add internals.addTextMatchMarker() and add a pixel test.
+
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::paintTickmarks):
+        Moved paintTickmarks() from ScrollbarThemeComposite to here.
+        * platform/ScrollbarThemeComposite.h:
+        Remove paintTickmarks().
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        (WebCore::ScrollbarThemeChromium::paintTickmarks):
+        Switch to drawing tickmarks as vectors, so they can be arbitrarily wide.
+        * platform/chromium/ScrollbarThemeChromiumMac.h:
+        (ScrollbarThemeChromiumMac):
+        Implement paintTickmarks(), so that css-styled scrollbars get tickmarks on mac.
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+        (WebCore::ScrollbarThemeChromiumMac::paintTickmarks):
+        Implement paintTickmarks(), so that css-styled scrollbars get tickmarks on mac.
+        * rendering/RenderScrollbarTheme.cpp:
+        (WebCore::RenderScrollbarTheme::paintTickmarks):
+        Delegate to the native ScrollbarTheme for tickmark drawing.
+        (WebCore):
+        * rendering/RenderScrollbarTheme.h:
+        (RenderScrollbarTheme):
+        Override paintTickmarks().
+
 2012-07-23  Brian Anderson  <brianderson@chromium.org>
 
         [chromium] Use shallow flushes that don't glFlush

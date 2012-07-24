@@ -227,7 +227,7 @@ bool ScrollbarThemeChromiumMac::paint(ScrollbarThemeClient* scrollbar, GraphicsC
     }
     // The ends are rounded and the thumb doesn't go there.
     tickmarkTrackRect.inflateY(-tickmarkTrackRect.width());
-    // Inset by 2 on the left and 3 on the right.
+    // Inset a bit.
     tickmarkTrackRect.setX(tickmarkTrackRect.x() + 2);
     tickmarkTrackRect.setWidth(tickmarkTrackRect.width() - 5);
     paintGivenTickmarks(drawingContext, scrollbar, tickmarkTrackRect, tickmarks);
@@ -409,5 +409,25 @@ void ScrollbarThemeChromiumMac::paintOverhangAreas(ScrollView* view, GraphicsCon
     }
 }
 
+void ScrollbarThemeChromiumMac::paintTickmarks(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect)
+{
+    // Note: This is only used for css-styled scrollbars on mac.
+    if (scrollbar->orientation() != VerticalScrollbar)
+        return;
+
+    if (rect.height() <= 0 || rect.width() <= 0)
+        return;
+
+    Vector<IntRect> tickmarks;
+    scrollbar->getTickmarks(tickmarks);
+    if (!tickmarks.size())
+        return;
+
+    // Inset a bit.
+    IntRect tickmarkTrackRect = rect;
+    tickmarkTrackRect.setX(tickmarkTrackRect.x() + 1);
+    tickmarkTrackRect.setWidth(tickmarkTrackRect.width() - 2);
+    paintGivenTickmarks(context, scrollbar, tickmarkTrackRect, tickmarks);
+}
 
 }
