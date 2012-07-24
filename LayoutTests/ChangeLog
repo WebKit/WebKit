@@ -1,3 +1,27 @@
+2012-07-24  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations update from r123490.
+
+        * platform/chromium-mac-snowleopard/fast/hidpi/broken-image-icon-hidpi-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/broken-image-with-size-hidpi-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/clip-text-in-hidpi-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/device-scale-factor-paint-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/focus-rings-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-as-background-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-background-dynamic-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-background-repeat-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-background-repeat-without-size-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-border-image-comparison-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-border-image-dynamic-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-border-image-simple-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-in-content-dynamic-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-out-of-order-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-simple-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/image-set-without-specified-width-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/resize-corner-hidpi-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/video-controls-in-hidpi-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/video-controls-in-hidpi-expected.txt: Added.
+
 2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] svg/batik rebaseline after new test fonts
