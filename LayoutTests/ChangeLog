@@ -1,3 +1,24 @@
+2012-07-24  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] Re-skip failing tests for Qt 4.8 platform
+        https://bugs.webkit.org/show_bug.cgi?id=92119
+
+        Reviewed by Alexis Menard.
+
+        The following tests, after unskipping, are now passing on Qt-5.0 build bot
+        variations, but still failing for Qt-4.8 ones:
+
+        Regressions: Unexpected text diff mismatch : (1)
+          http/tests/misc/acid3.html = TEXT
+
+        Regressions: Unexpected image mismatch : (2)
+          fast/css/tab-size.html = IMAGE
+          fast/text/international/bdi-dir-default-to-auto.html = IMAGE
+
+        This patch adds these to Skipped list of qt-4.8 platform.
+
+        * platform/qt-4.8/Skipped: Added 3 layout tests.
+
 2012-07-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrack to match the specification
