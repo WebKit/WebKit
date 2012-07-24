@@ -21,10 +21,10 @@
 #import "config.h"
 
 #import "CalendarPickerMac.h"
+#import "LayoutTestSupport.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "RenderThemeChromiumMac.h"
 #import "PaintInfo.h"
-#import "PlatformSupport.h"
 #import "RenderMediaControlsChromium.h"
 #import "WebCoreSystemInterface.h"
 #import "UserAgentStyleSheets.h"
@@ -80,7 +80,7 @@ bool RenderThemeChromiumMac::supportsDataListUI(const AtomicString& type) const
 
 bool RenderThemeChromiumMac::usesTestModeFocusRingColor() const
 {
-    return PlatformSupport::layoutTestMode();
+    return isRunningLayoutTest();
 }
 
 NSView* RenderThemeChromiumMac::documentViewFor(RenderObject*) const

@@ -36,6 +36,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HWndDC.h"
+#include "LayoutTestSupport.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
 #include "PlatformSupport.h"
@@ -247,7 +248,7 @@ bool RenderThemeChromiumWin::supportsFocusRing(const RenderStyle* style) const
 
 Color RenderThemeChromiumWin::platformActiveSelectionBackgroundColor() const
 {
-    if (PlatformSupport::layoutTestMode())
+    if (isRunningLayoutTest())
         return Color(0x00, 0x00, 0xff); // Royal blue.
     COLORREF color = GetSysColor(COLOR_HIGHLIGHT);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
@@ -255,7 +256,7 @@ Color RenderThemeChromiumWin::platformActiveSelectionBackgroundColor() const
 
 Color RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor() const
 {
-    if (PlatformSupport::layoutTestMode())
+    if (isRunningLayoutTest())
         return Color(0x99, 0x99, 0x99); // Medium gray.
     COLORREF color = GetSysColor(COLOR_GRAYTEXT);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
@@ -263,7 +264,7 @@ Color RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor() const
 
 Color RenderThemeChromiumWin::platformActiveSelectionForegroundColor() const
 {
-    if (PlatformSupport::layoutTestMode())
+    if (isRunningLayoutTest())
         return Color(0xff, 0xff, 0xcc); // Pale yellow.
     COLORREF color = GetSysColor(COLOR_HIGHLIGHTTEXT);
     return Color(GetRValue(color), GetGValue(color), GetBValue(color), 0xff);
@@ -384,7 +385,7 @@ static int cssValueIdToSysColorIndex(int cssValueId)
 Color RenderThemeChromiumWin::systemColor(int cssValueId) const
 {
     int sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
-    if (PlatformSupport::layoutTestMode() || (sysColorIndex == -1))
+    if (isRunningLayoutTest() || (sysColorIndex == -1))
         return RenderTheme::systemColor(cssValueId);
 
     COLORREF color = GetSysColor(sysColorIndex);
@@ -479,7 +480,7 @@ bool RenderThemeChromiumWin::paintSliderThumb(RenderObject* o, const PaintInfo& 
 
 static int menuListButtonWidth()
 {
-    static int width = PlatformSupport::layoutTestMode() ? kStandardMenuListButtonWidth : GetSystemMetrics(SM_CXVSCROLL);
+    static int width = isRunningLayoutTest() ? kStandardMenuListButtonWidth : GetSystemMetrics(SM_CXVSCROLL);
     return width;
 }
 
@@ -603,7 +604,7 @@ unsigned RenderThemeChromiumWin::determineClassicState(RenderObject* o, ControlS
 
     // So are readonly text fields.
     if (isReadOnlyControl(o) && (part == TextFieldPart || part == TextAreaPart || part == SearchFieldPart))
-        return result;   
+        return result;
 
     if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
         if (!isEnabled(o))

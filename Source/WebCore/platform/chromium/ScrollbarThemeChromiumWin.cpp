@@ -31,6 +31,7 @@
 #include <vsstyle.h>
 
 #include "GraphicsContext.h"
+#include "LayoutTestSupport.h"
 #include "PlatformContextSkia.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformSupport.h"
@@ -61,7 +62,7 @@ int ScrollbarThemeChromiumWin::scrollbarThickness(ScrollbarControlSize controlSi
 {
     static int thickness;
     if (!thickness) {
-        if (PlatformSupport::layoutTestMode())
+        if (isRunningLayoutTest())
             return kMacScrollbarSize[controlSize];
         thickness = GetSystemMetrics(SM_CXVSCROLL);
     }
@@ -256,7 +257,7 @@ IntSize ScrollbarThemeChromiumWin::buttonSize(ScrollbarThemeClient* scrollbar)
     // test mode so that should be enough to result in repeatable results, but
     // preserving this hack avoids having to rebaseline pixel tests.
     const int kLayoutTestModeGirth = 17;
-    int girth = PlatformSupport::layoutTestMode() ? kLayoutTestModeGirth : thickness;
+    int girth = isRunningLayoutTest() ? kLayoutTestModeGirth : thickness;
 
     if (scrollbar->orientation() == HorizontalScrollbar) {
         int width = scrollbar->width() < 2 * girth ? scrollbar->width() / 2 : girth;

@@ -128,9 +128,6 @@ public:
     static void notifyJSOutOfMemory(Frame*);
     static bool allowScriptDespiteSettings(const KURL& documentURL);
 
-    // LayoutTestMode -----------------------------------------------------
-    static bool layoutTestMode();
-
     // Plugin -------------------------------------------------------------
     static bool plugins(bool refresh, Vector<PluginInfo>*);
     static NPObject* pluginScriptableObject(Widget*);

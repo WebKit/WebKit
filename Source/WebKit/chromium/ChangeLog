@@ -1,3 +1,18 @@
+2012-07-23  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move layoutTestMode to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=92010
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+        * src/WebKit.cpp:
+        (WebKit::setLayoutTestMode):
+        (WebKit::layoutTestMode):
+
 2012-07-23  Dave Tu  <dtu@chromium.org>
 
         [chromium] Add droppedFrameCount to renderingStats.

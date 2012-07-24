@@ -29,9 +29,9 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "Image.h"
+#include "LayoutTestSupport.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
-#include "PlatformSupport.h"
 #include "PlatformContextSkia.h"
 #include "RenderBox.h"
 #include "RenderMediaControlsChromium.h"
@@ -160,7 +160,7 @@ double RenderThemeChromiumSkia::caretBlinkInterval() const
 {
     // Disable the blinking caret in layout test mode, as it introduces
     // a race condition for the pixel tests. http://b/1198440
-    if (PlatformSupport::layoutTestMode())
+    if (isRunningLayoutTest())
         return 0;
 
     return caretBlinkIntervalInternal();

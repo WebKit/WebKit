@@ -5895,6 +5895,7 @@
 		D630E2AC149BF344005B2F94 /* StatsCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = D630E2AB149BF344005B2F94 /* StatsCounter.h */; };
 		D630E2AC149BF344005B2F95 /* MemoryUsageSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = D630E2AB149BF344005B2F95 /* MemoryUsageSupport.h */; };
 		D630E2AC149BF344005B2F96 /* EventTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = D630E2AB149BF344005B2F96 /* EventTracer.h */; };
+		D630E2AC149BF344005B2F93 /* LayoutTestSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = D630E2AB149BF344005B2F97 /* LayoutTestSupport.h */; };
 		D6E276AF14637455001D280A /* MutationObserverRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6E276AD14637455001D280A /* MutationObserverRegistration.cpp */; };
 		D6E276B014637455001D280A /* MutationObserverRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = D6E276AE14637455001D280A /* MutationObserverRegistration.h */; };
 		D6E528A3149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6E528A1149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp */; };
@@ -5903,6 +5904,7 @@
 		D6FDAEF3149C06190037B1E2 /* StatsCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E2 /* StatsCounter.cpp */; };
 		D6FDAEF3149C06190037B1E3 /* MemoryUsageSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E3 /* MemoryUsageSupport.cpp */; };
 		D6FDAEF3149C06190037B1E4 /* EventTracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E4 /* EventTracer.cpp */; };
+		D6FDAEF3149C06190037B1E5 /* LayoutTestSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E5 /* LayoutTestSupport.cpp */; };
 		D70AD65713E1342B005B50B4 /* RenderRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D70AD65513E1342B005B50B4 /* RenderRegion.cpp */; };
 		D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = D70AD65613E1342B005B50B4 /* RenderRegion.h */; };
 		D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D72F6D77153159A3001EE44E /* FlowThreadController.cpp */; };
@@ -13146,6 +13148,7 @@
 		D630E2AB149BF344005B2F94 /* StatsCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatsCounter.h; sourceTree = "<group>"; };
 		D630E2AB149BF344005B2F95 /* MemoryUsageSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryUsageSupport.h; sourceTree = "<group>"; };
 		D630E2AB149BF344005B2F96 /* EventTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTracer.h; sourceTree = "<group>"; };
+		D630E2AB149BF344005B2F97 /* HistogramSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutTestSupport.h; sourceTree = "<group>"; };
 		D6E276AD14637455001D280A /* MutationObserverRegistration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutationObserverRegistration.cpp; sourceTree = "<group>"; };
 		D6E276AE14637455001D280A /* MutationObserverRegistration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutationObserverRegistration.h; sourceTree = "<group>"; };
 		D6E528A1149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutationObserverInterestGroup.cpp; sourceTree = "<group>"; };
@@ -13154,6 +13157,7 @@
 		D6FDAEF2149C06190037B1E2 /* StatsCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatsCounter.cpp; sourceTree = "<group>"; };
 		D6FDAEF2149C06190037B1E3 /* MemoryUsageSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryUsageSupport.cpp; sourceTree = "<group>"; };
 		D6FDAEF2149C06190037B1E4 /* EventTracer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTracer.cpp; sourceTree = "<group>"; };
+		D6FDAEF2149C06190037B1E5 /* LayoutTestSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutTestSupport.cpp; sourceTree = "<group>"; };
 		D70AD65513E1342B005B50B4 /* RenderRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRegion.cpp; sourceTree = "<group>"; };
 		D70AD65613E1342B005B50B4 /* RenderRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRegion.h; sourceTree = "<group>"; };
 		D72F6D77153159A3001EE44E /* FlowThreadController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlowThreadController.cpp; sourceTree = "<group>"; };
@@ -20571,6 +20575,8 @@
 				26A5034D14F0983600AA730D /* KURLWTFURLImpl.h */,
 				E18772F0126E2629003DD586 /* Language.cpp */,
 				85EC9AF90A71A2C600EEEAED /* Language.h */,
+				D6FDAEF2149C06190037B1E5 /* LayoutTestSupport.cpp */,
+				D630E2AB149BF344005B2F97 /* LayoutTestSupport.h */,
 				BCE65BE80EACDF16007E4533 /* Length.cpp */,
 				BCE65BE90EACDF16007E4533 /* Length.h */,
 				146CC113156988BD00109E37 /* LengthBox.cpp */,
@@ -24070,6 +24076,7 @@
 				2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */,
 				A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */,
 				2D9066070BE141D400956998 /* LayoutState.h in Headers */,
+				D630E2AC149BF344005B2F97 /* LayoutTestSupport.h in Headers */,
 				BACF290113B2A0D500781F90 /* LayoutTypes.h in Headers */,
 				512DD8F50D91E6AF000F89EE /* LegacyWebArchive.h in Headers */,
 				BCE65BEB0EACDF16007E4533 /* Length.h in Headers */,
@@ -27352,6 +27359,7 @@
 				2917B566147349950052C9D0 /* LayerFlushSchedulerMac.cpp in Sources */,
 				A120ACA413F998CA00FE4AC7 /* LayoutRepainter.cpp in Sources */,
 				2D9066060BE141D400956998 /* LayoutState.cpp in Sources */,
+				D6FDAEF3149C06190037B1E5 /* LayoutTestSupport.cpp in Sources */,
 				512DD8F40D91E6AF000F89EE /* LegacyWebArchive.cpp in Sources */,
 				51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */,
 				BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */,

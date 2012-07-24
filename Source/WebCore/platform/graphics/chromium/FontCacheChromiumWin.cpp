@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2006, 2007 Apple Computer, Inc.
  * Copyright (c) 2006, 2007, 2008, 2009, 2012 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -15,7 +15,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -35,6 +35,7 @@
 #include "Font.h"
 #include "FontUtilsChromiumWin.h"
 #include "HWndDC.h"
+#include "LayoutTestSupport.h"
 #include "PlatformSupport.h"
 #include "SimpleFontData.h"
 #include <unicode/uniset.h>
@@ -55,10 +56,10 @@ namespace WebCore
 // asked for a CJK font with a Romanized name under a CJK locale,
 // |GetTextFace| (after |CreateFont*|) returns a 'bogus' value (e.g. Arial).
 // This is not consistent with what MSDN says !!
-// Therefore, before we call |CreateFont*|, we have to map a Romanized name to 
-// the corresponding native name under a CJK locale and vice versa 
+// Therefore, before we call |CreateFont*|, we have to map a Romanized name to
+// the corresponding native name under a CJK locale and vice versa
 // under a non-CJK locale.
-// See the corresponding gecko bugs at 
+// See the corresponding gecko bugs at
 // https://bugzilla.mozilla.org/show_bug.cgi?id=373952
 // https://bugzilla.mozilla.org/show_bug.cgi?id=231426
 static bool LookupAltName(const String& name, String& altName)
@@ -206,11 +207,11 @@ static bool LookupAltName(const String& name, String& altName)
             fontNameMap->set(String(namePairs[i].name), &(namePairs[i].altNameCodepage));
     }
 
-    bool isAscii = false; 
+    bool isAscii = false;
     String n;
-    // use |lower| only for ASCII names 
-    // For non-ASCII names, we don't want to invoke an expensive 
-    // and unnecessary |lower|. 
+    // use |lower| only for ASCII names
+    // For non-ASCII names, we don't want to invoke an expensive
+    // and unnecessary |lower|.
     if (name.containsOnlyASCII()) {
         isAscii = true;
         n = name.lower();
@@ -257,7 +258,7 @@ static HFONT createFontIndirectAndGetWinName(const String& family, LOGFONT* winf
 // This maps font family names to their repertoires of supported Unicode
 // characters. Because it's family names rather than font faces we use
 // as keys, there might be edge cases where one face of a font family
-// has a different repertoire from another face of the same family. 
+// has a different repertoire from another face of the same family.
 typedef HashMap<const wchar_t*, icu::UnicodeSet*> FontCmapCache;
 
 static bool fontContainsCharacter(const FontPlatformData* fontData,
@@ -275,10 +276,10 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
         fontCmapCache = new FontCmapCache;
 
     HashMap<const wchar_t*, icu::UnicodeSet*>::iterator it = fontCmapCache->find(family);
-    if (it != fontCmapCache->end()) 
+    if (it != fontCmapCache->end())
         return it->second->contains(character);
-    
-    HFONT hfont = fontData->hfont(); 
+
+    HFONT hfont = fontData->hfont();
     HWndDC hdc(0);
     HGDIOBJ oldFont = static_cast<HFONT>(SelectObject(hdc, hfont));
     int count = GetFontUnicodeRanges(hdc, 0);
@@ -294,7 +295,7 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     glyphsetBuffer.resize(GetFontUnicodeRanges(hdc, 0));
     GLYPHSET* glyphset = reinterpret_cast<GLYPHSET*>(glyphsetBuffer.data());
     // In addition, refering to the OS/2 table and converting the codepage list
-    // to the coverage map might be faster. 
+    // to the coverage map might be faster.
     count = GetFontUnicodeRanges(hdc, glyphset);
     ASSERT(count > 0);
     SelectObject(hdc, oldFont);
@@ -305,14 +306,14 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     unsigned i = 0;
     icu::UnicodeSet* cmap = new icu::UnicodeSet;
     while (i < glyphset->cRanges) {
-        WCHAR start = glyphset->ranges[i].wcLow; 
+        WCHAR start = glyphset->ranges[i].wcLow;
         cmap->add(start, start + glyphset->ranges[i].cGlyphs - 1);
         i++;
     }
     cmap->freeze();
     // We don't lowercase |family| because all of them are under our control
-    // and they're already lowercased. 
-    fontCmapCache->set(family, cmap); 
+    // and they're already lowercased.
+    fontCmapCache->set(family, cmap);
     return cmap->contains(character);
 }
 
@@ -354,7 +355,7 @@ static void FillLogFont(const FontDescription& fontDescription, LOGFONT* winfont
     winfont->lfStrikeOut = false;
     winfont->lfCharSet = DEFAULT_CHARSET;
     winfont->lfOutPrecision = OUT_TT_ONLY_PRECIS;
-    winfont->lfQuality = PlatformSupport::layoutTestMode() ? NONANTIALIASED_QUALITY : DEFAULT_QUALITY; // Honor user's desktop settings.
+    winfont->lfQuality = isRunningLayoutTest() ? NONANTIALIASED_QUALITY : DEFAULT_QUALITY; // Honor user's desktop settings.
     winfont->lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     winfont->lfItalic = fontDescription.italic();
     winfont->lfWeight = toGDIFontWeight(fontDescription.weight());
@@ -433,7 +434,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         fontDescription.genericFamily(), &c, &script);
     FontPlatformData* data = 0;
     if (family)
-        data = getCachedFontPlatformData(font.fontDescription(),  AtomicString(family, wcslen(family)), false); 
+        data = getCachedFontPlatformData(font.fontDescription(),  AtomicString(family, wcslen(family)), false);
 
     // Last resort font list : PanUnicode. CJK fonts have a pretty
     // large repertoire. Eventually, we need to scan all the fonts
@@ -492,7 +493,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     // warrant an additional (real coverage) check with fontCotainsCharacter.
     int i;
     for (i = 0; (!data || !fontContainsCharacter(data, family, c)) && i < numFonts; ++i) {
-        family = panUniFonts[i]; 
+        family = panUniFonts[i];
         data = getCachedFontPlatformData(font.fontDescription(), AtomicString(family, wcslen(family)));
     }
     // When i-th font (0-base) in |panUniFonts| contains a character and
@@ -603,8 +604,8 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     LOGFONT winfont = {0};
     FillLogFont(fontDescription, &winfont);
 
-    // Windows will always give us a valid pointer here, even if the face name 
-    // is non-existent.  We have to double-check and see if the family name was 
+    // Windows will always give us a valid pointer here, even if the face name
+    // is non-existent. We have to double-check and see if the family name was
     // really used.
     String winName;
     HFONT hfont = createFontIndirectAndGetWinName(family, &winfont, &winName);
@@ -614,15 +615,14 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     // FIXME: Do we need to use predefined fonts "guaranteed" to exist
     // when we're running in layout-test mode?
     if (!equalIgnoringCase(family, winName)) {
-        // For CJK fonts with both English and native names, 
+        // For CJK fonts with both English and native names,
         // GetTextFace returns a native name under the font's "locale"
-        // and an English name under other locales regardless of 
+        // and an English name under other locales regardless of
         // lfFaceName field of LOGFONT. As a result, we need to check
         // if a font has an alternate name. If there is, we need to
         // compare it with what's requested in the first place.
         String altName;
-        if (!LookupAltName(family, altName) || 
-            !equalIgnoringCase(altName, winName)) {
+        if (!LookupAltName(family, altName) || !equalIgnoringCase(altName, winName)) {
             DeleteObject(hfont);
             return 0;
         }

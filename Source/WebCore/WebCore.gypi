@@ -287,6 +287,8 @@
             'platform/KURL.h',
             'platform/KURLHash.h',
             'platform/Language.h',
+            'platform/LayoutTestSupport.cpp',
+            'platform/LayoutTestSupport.h',
             'platform/Length.h',
             'platform/LengthBox.h',
             'platform/LengthSize.h',

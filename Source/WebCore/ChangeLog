@@ -1,3 +1,61 @@
+2012-07-23  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move layoutTestMode to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=92010
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (RuntimeEnabledFeatures):
+        * platform/LayoutTestSupport.cpp: Added.
+        (WebCore):
+        (WebCore::isRunningLayoutTest):
+        (WebCore::setIsRunningLayoutTest):
+        * platform/LayoutTestSupport.h: Added.
+        (WebCore):
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        * platform/chromium/ScrollbarThemeChromiumAndroid.cpp:
+        (WebCore::ScrollbarThemeChromiumAndroid::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumAndroid::paintScrollbarBackground):
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarThemeChromiumWin::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumWin::buttonSize):
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore):
+        (WebCore::LookupAltName):
+        (WebCore::fontContainsCharacter):
+        (WebCore::FillLogFont):
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::Font::drawGlyphs):
+        * rendering/RenderThemeChromiumAndroid.cpp:
+        (WebCore::RenderThemeChromiumAndroid::systemColor):
+        (WebCore::RenderThemeChromiumAndroid::adjustInnerSpinButtonStyle):
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::usesTestModeFocusRingColor):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::caretBlinkInterval):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore):
+        (WebCore::RenderThemeChromiumWin::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumWin::systemColor):
+        (WebCore::menuListButtonWidth):
+        (WebCore::RenderThemeChromiumWin::determineClassicState):
+
 2012-07-23  Dave Tu  <dtu@chromium.org>
 
         [chromium] Add droppedFrameCount to renderingStats.

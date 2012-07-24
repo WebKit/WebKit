@@ -28163,6 +28163,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\LayoutTestSupport.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\LayoutTestSupport.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Length.cpp"
 				>
 			</File>

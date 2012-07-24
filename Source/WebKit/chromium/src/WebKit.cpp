@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebKit.h"
 
+#include "LayoutTestSupport.h"
 #include "Logging.h"
 #include "MutationObserver.h"
 #include "Page.h"
@@ -81,7 +82,6 @@ static WebThread::TaskObserver* s_endOfTaskRunner = 0;
 static bool s_webKitInitialized = false;
 
 static WebKitPlatformSupport* s_webKitPlatformSupport = 0;
-static bool s_layoutTestMode = false;
 
 static bool generateEntropy(unsigned char* buffer, size_t length)
 {
@@ -176,12 +176,12 @@ WebKitPlatformSupport* webKitPlatformSupport()
 
 void setLayoutTestMode(bool value)
 {
-    s_layoutTestMode = value;
+    WebCore::setIsRunningLayoutTest(value);
 }
 
 bool layoutTestMode()
 {
-    return s_layoutTestMode;
+    return WebCore::isRunningLayoutTest();
 }
 
 void enableLogChannel(const char* name)

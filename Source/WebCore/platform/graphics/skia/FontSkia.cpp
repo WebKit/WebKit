@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2011 Google Inc. All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -33,8 +33,8 @@
 
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
+#include "LayoutTestSupport.h"
 #include "PlatformContextSkia.h"
-#include "PlatformSupport.h"
 #include "SimpleFontData.h"
 
 #include "SkCanvas.h"
@@ -83,7 +83,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
 
     bool shouldSmoothFonts = true;
     bool shouldAntialias = true;
-    
+
     switch (fontDescription().fontSmoothing()) {
     case Antialiased:
         shouldSmoothFonts = false;
@@ -96,10 +96,10 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         break;
     case AutoSmoothing:
         // For the AutoSmooth case, don't do anything! Keep the default settings.
-        break; 
+        break;
     }
-    
-    if (!shouldUseSmoothing() || PlatformSupport::layoutTestMode())
+
+    if (!shouldUseSmoothing() || isRunningLayoutTest())
         shouldSmoothFonts = false;
 
     const GlyphBufferGlyph* glyphs = glyphBuffer.glyphs(from);

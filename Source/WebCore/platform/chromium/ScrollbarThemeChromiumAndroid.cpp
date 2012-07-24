@@ -26,9 +26,9 @@
 #include "config.h"
 #include "ScrollbarThemeChromiumAndroid.h"
 
+#include "LayoutTestSupport.h"
 #include "PlatformContextSkia.h"
 #include "PlatformMouseEvent.h"
-#include "PlatformSupport.h"
 #include "Scrollbar.h"
 #include "TransformationMatrix.h"
 
@@ -49,7 +49,7 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
 
 int ScrollbarThemeChromiumAndroid::scrollbarThickness(ScrollbarControlSize controlSize)
 {
-    if (PlatformSupport::layoutTestMode()) {
+    if (isRunningLayoutTest()) {
         // Match Chromium-Linux for DumpRenderTree, so the layout test results
         // can be shared. The width of scrollbar down arrow should equal the
         // width of the vertical scrollbar.
@@ -148,7 +148,7 @@ void ScrollbarThemeChromiumAndroid::paintScrollbarBackground(GraphicsContext* co
 {
     // Paint black background in DumpRenderTree, otherwise the pixels in the scrollbar area depend
     // on their previous state, which makes the dumped result undetermined.
-    if (PlatformSupport::layoutTestMode())
+    if (isRunningLayoutTest())
         context->fillRect(scrollbar->frameRect(), Color::black, ColorSpaceDeviceRGB);
 }
 

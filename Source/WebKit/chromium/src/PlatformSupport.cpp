@@ -302,13 +302,6 @@ PassRefPtr<SerializedScriptValue> PlatformSupport::injectIDBKeyIntoSerializedVal
     return webKitPlatformSupport()->injectIDBKeyIntoSerializedValue(key, value, keyPath);
 }
 
-// LayoutTestMode -------------------------------------------------------------
-
-bool PlatformSupport::layoutTestMode()
-{
-    return WebKit::layoutTestMode();
-}
-
 // Plugin ---------------------------------------------------------------------
 
 bool PlatformSupport::plugins(bool refresh, Vector<PluginInfo>* results)

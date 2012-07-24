@@ -3508,6 +3508,8 @@ webcore_sources += \
 	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
 	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
+	Source/WebCore/platform/LayoutTestSupport.cpp \
+	Source/WebCore/platform/LayoutTestSupport.h \
 	Source/WebCore/platform/linux/GamepadDeviceLinux.cpp \
 	Source/WebCore/platform/linux/GamepadDeviceLinux.h \
 	Source/WebCore/platform/mediastream/DeprecatedPeerConnectionHandler.h \
@@ -6268,4 +6270,3 @@ dom_binding_idls += \
 	$(WebCore)/Modules/quota/StorageInfoUsageCallback.idl
 
 endif  # END ENABLE_QUOTA
-

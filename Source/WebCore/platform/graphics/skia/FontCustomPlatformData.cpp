@@ -2,11 +2,11 @@
  * Copyright (C) 2007 Apple Computer, Inc.
  * Copyright (c) 2007, 2008, 2009, Google Inc. All rights reserved.
  * Copyright (C) 2010 Company 100, Inc.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -16,7 +16,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -35,12 +35,12 @@
 
 #if OS(WINDOWS)
 #include "OpenTypeUtilities.h"
-#include "PlatformSupport.h"
 #elif OS(UNIX)
 #include "SkStream.h"
 #endif
 
 #include "FontPlatformData.h"
+#include "LayoutTestSupport.h"
 #include "NotImplemented.h"
 #include "OpenTypeSanitizer.h"
 #include "SharedBuffer.h"
@@ -83,7 +83,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
            sizeof(logFont.lfFaceName[0]) * (1 + m_name.length()));
 
     // FIXME: almost identical to FillLogFont in FontCacheWin.cpp.
-    // Need to refactor. 
+    // Need to refactor.
     logFont.lfHeight = -size;
     logFont.lfWidth = 0;
     logFont.lfEscapement = 0;
@@ -92,7 +92,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     logFont.lfStrikeOut = false;
     logFont.lfCharSet = DEFAULT_CHARSET;
     logFont.lfOutPrecision = OUT_TT_ONLY_PRECIS;
-    logFont.lfQuality = PlatformSupport::layoutTestMode() ?
+    logFont.lfQuality = isRunningLayoutTest() ?
                         NONANTIALIASED_QUALITY :
                         DEFAULT_QUALITY; // Honor user's desktop settings.
     logFont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;

@@ -148,7 +148,7 @@ public:
     static bool deviceMotionEnabled() { return isDeviceMotionEnabled; }
     static bool deviceMotionEventEnabled() { return isDeviceMotionEnabled; }
     static bool ondevicemotionEnabled() { return isDeviceMotionEnabled; }
-    
+
     static void setDeviceOrientationEnabled(bool isEnabled) { isDeviceOrientationEnabled = isEnabled; }
     static bool deviceOrientationEnabled() { return isDeviceOrientationEnabled; }
     static bool deviceOrientationEventEnabled() { return isDeviceOrientationEnabled; }
