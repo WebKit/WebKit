@@ -43,6 +43,7 @@ public:
         ShadowDOM,
         StyleScoped,
         PagePopup,
+        HTMLNotifications,
         FeatureTypeSize // Should be the last entry.
     };
 
@@ -54,6 +55,7 @@ public:
     static bool shadowDOMEnabled(Document*);
     static bool styleScopedEnabled(Document*);
     static bool pagePopupEnabled(Document*);
+    static bool htmlNotificationsEnabled(Document*);
 
     bool isEnabled(Document*, FeatureType, bool) const;
     void urlDidChange(Document*);

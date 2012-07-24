@@ -862,35 +862,35 @@ static void enabledAtRuntimeAttr2AttrSetter(v8::Local<v8::String> name, v8::Loca
     return;
 }
 
-static v8::Handle<v8::Value> enabledAtContextAttr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> enabledPerContextAttr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.enabledAtContextAttr1._get");
+    INC_STATS("DOM.TestObj.enabledPerContextAttr1._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Integer(imp->enabledAtContextAttr1(), info.GetIsolate());
+    return v8Integer(imp->enabledPerContextAttr1(), info.GetIsolate());
 }
 
-static void enabledAtContextAttr1AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+static void enabledPerContextAttr1AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.enabledAtContextAttr1._set");
+    INC_STATS("DOM.TestObj.enabledPerContextAttr1._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     int v = toInt32(value);
-    imp->setEnabledAtContextAttr1(v);
+    imp->setEnabledPerContextAttr1(v);
     return;
 }
 
-static v8::Handle<v8::Value> enabledAtContextAttr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> enabledPerContextAttr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.enabledAtContextAttr2._get");
+    INC_STATS("DOM.TestObj.enabledPerContextAttr2._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Integer(imp->enabledAtContextAttr2(), info.GetIsolate());
+    return v8Integer(imp->enabledPerContextAttr2(), info.GetIsolate());
 }
 
-static void enabledAtContextAttr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+static void enabledPerContextAttr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.enabledAtContextAttr2._set");
+    INC_STATS("DOM.TestObj.enabledPerContextAttr2._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     int v = toInt32(value);
-    imp->setEnabledAtContextAttr2(v);
+    imp->setEnabledPerContextAttr2(v);
     return;
 }
 
@@ -1731,6 +1731,28 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments
     return v8::Handle<v8::Value>();
 }
 
+static v8::Handle<v8::Value> enabledPerContextMethod1Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.enabledPerContextMethod1");
+    if (args.Length() < 1)
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    imp->enabledPerContextMethod1(intArg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> enabledPerContextMethod2Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.enabledPerContextMethod2");
+    if (args.Length() < 1)
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(int, intArg, V8int::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8int::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    imp->enabledPerContextMethod2(intArg);
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> stringArrayFunctionCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.stringArrayFunction");
@@ -2238,17 +2260,25 @@ void V8TestObj::installPerContextProperties(v8::Handle<v8::Object> instance, Tes
     v8::Local<v8::Object> proto = v8::Local<v8::Object>::Cast(instance->GetPrototype());
     // When building QtWebkit with V8 this variable is unused when none of the features are enabled.
     UNUSED_PARAM(proto);
-    if (ContextFeatures::enabledAtContextAttr1Enabled(impl->document())) {
+    if (ContextFeatures::enabledPerContextAttr1Enabled(impl->document())) {
         static const BatchedAttribute attrData =\
-        // Attribute 'enabledAtContextAttr1' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
-        {"enabledAtContextAttr1", TestObjV8Internal::enabledAtContextAttr1AttrGetter, TestObjV8Internal::enabledAtContextAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        // Attribute 'enabledPerContextAttr1' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
+        {"enabledPerContextAttr1", TestObjV8Internal::enabledPerContextAttr1AttrGetter, TestObjV8Internal::enabledPerContextAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
         configureAttribute(instance, proto, attrData);
     }
     if (ContextFeatures::featureNameEnabled(impl->document())) {
         static const BatchedAttribute attrData =\
-        // Attribute 'enabledAtContextAttr2' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
-        {"enabledAtContextAttr2", TestObjV8Internal::enabledAtContextAttr2AttrGetter, TestObjV8Internal::enabledAtContextAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        // Attribute 'enabledPerContextAttr2' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
+        {"enabledPerContextAttr2", TestObjV8Internal::enabledPerContextAttr2AttrGetter, TestObjV8Internal::enabledPerContextAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
         configureAttribute(instance, proto, attrData);
+    }
+    v8::Local<v8::Signature> defaultSignature = v8::Signature::New(GetTemplate());
+    UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
+    if (ContextFeatures::enabledPerContextMethod1Enabled(impl->document())) {
+        proto->Set(v8::String::New("enabledPerContextMethod1"), v8::FunctionTemplate::New(TestObjV8Internal::enabledPerContextMethod1Callback, v8::Handle<v8::Value>(), defaultSignature)->GetFunction());
+    }
+    if (ContextFeatures::featureNameEnabled(impl->document())) {
+        proto->Set(v8::String::New("enabledPerContextMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::enabledPerContextMethod2Callback, v8::Handle<v8::Value>(), defaultSignature)->GetFunction());
     }
 }
 
@@ -2259,6 +2289,7 @@ v8::Handle<v8::Object> V8TestObj::wrapSlow(PassRefPtr<TestObj> impl, v8::Isolate
     wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
+    installPerContextProperties(wrapper, impl.get());
 
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
 

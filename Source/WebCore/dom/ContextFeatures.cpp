@@ -99,6 +99,18 @@ bool ContextFeatures::pagePopupEnabled(Document* document)
 #endif
 }
 
+bool ContextFeatures::htmlNotificationsEnabled(Document* document)
+{
+#if ENABLE(LEGACY_NOTIFICATIONS)
+    if (!document)
+        return false;
+    return document->contextFeatures()->isEnabled(document, HTMLNotifications, false);
+#else
+    UNUSED_PARAM(document);
+    return false;
+#endif
+}
+
 void provideContextFeaturesTo(Page* page, ContextFeaturesClient* client)
 {
     RefCountedSupplement<Page, ContextFeatures>::provideTo(page, ContextFeatures::supplementName(), ContextFeatures::create(client));

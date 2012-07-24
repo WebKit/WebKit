@@ -1,3 +1,44 @@
+2012-07-24  Jian Li  <jianli@chromium.org>
+
+        Add per-context setting for html notifications
+        https://bugs.webkit.org/show_bug.cgi?id=91295
+
+        Reviewed by Adam Barth.
+
+        Added a new per-context setting to control the enabling of html notifications.
+        For chromium port, we're going to disable html notifications for web
+        pages, but still keep it enabled for extensions.
+
+        Also enhance V8 code generator to support V8EnabledPerContext attribute
+        for methods.
+
+        Updated the binding tests.
+
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::document): Expose document for being used by installPerContextProperties.
+        (WebCore):
+        * Modules/notifications/NotificationCenter.h:
+        (NotificationCenter):
+        * Modules/notifications/NotificationCenter.idl: Add V8EnabledPerContext attribute.
+        * bindings/scripts/CodeGeneratorV8.pm: V8EnabledPerContext now supports methods.
+        (GenerateHeader):
+        (IsStandardFunction):
+        (GenerateNonStandardFunction):
+        (GenerateImplementation):
+        (GenerateToV8Converters):
+        (GetContextEnableFunction):
+        * bindings/scripts/test/TestObj.idl: Add test case for V8EnabledPerContext methods.
+        * bindings/scripts/test/V8/V8TestObj.cpp: Update test result.
+        (WebCore::TestObjV8Internal::enabledAtContextMethod1Callback):
+        (TestObjV8Internal):
+        (WebCore::TestObjV8Internal::enabledAtContextMethod2Callback):
+        (WebCore::V8TestObj::installPerContextProperties):
+        (WebCore::V8TestObj::wrapSlow):
+        * dom/ContextFeatures.cpp: Add a new per-context feature.
+        (WebCore::ContextFeatures::htmlNotificationsEnabled):
+        (WebCore):
+        * dom/ContextFeatures.h: Add a new per-context feature.
+
 2012-07-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123499.

@@ -93,6 +93,9 @@ public:
     // Controls whether enabling Web Components API for this frame.
     virtual bool allowWebComponents(const WebDocument&, bool defaultValue) { return defaultValue; }
 
+    // Controls whether enabling HTML notifications for this frame.
+    virtual bool allowHTMLNotifications(const WebDocument&) { return true; }
+
     // Notifies the client that the frame would have instantiated a plug-in if plug-ins were enabled.
     virtual void didNotAllowPlugins(WebFrame*) { }
 
