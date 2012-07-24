@@ -1,3 +1,14 @@
+2012-07-24  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Update expectations after r122988 and r122712.
+
+        * platform/qt-5.0-wk2/editing/deleting/5144139-2-expected.txt: Added after r122712.
+        * platform/qt-5.0/editing/deleting/5144139-2-expected.txt: Removed.
+        * platform/qt-5.0/http/tests/misc/location-replace-crossdomain-expected.png: Added after r122988.
+        * platform/qt-5.0/http/tests/misc/location-replace-crossdomain-expected.txt: Added after r122988.
+        * platform/qt-5.0/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added after r122988.
+        * platform/qt-5.0/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.txt: Added after r122988.
+
 2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] fast/css/text-transform-select.html should be rebaselined for WK1 and WK2 on Qt 5.0
