@@ -101,9 +101,15 @@ void QtWebProcess::setupChildProcess()
 
 void ProcessLauncher::launchProcess()
 {
-    QString commandLine = QLatin1String("%1 %2");
-    commandLine = commandLine.arg(m_launchOptions.processType == WebProcess ?
-                                  executablePathOfWebProcess() : executablePathOfPluginProcess());
+    QString commandLine = QLatin1String("%1 %2 %3");
+    if (m_launchOptions.processType == WebProcess) {
+        QByteArray webProcessPrefix = qgetenv("QT_WEBKIT2_WP_CMD_PREFIX");
+        commandLine = commandLine.arg(QLatin1String(webProcessPrefix.constData())).arg(QString(executablePathOfWebProcess()));
+    } else if (m_launchOptions.processType == PluginProcess) {
+        QByteArray pluginProcessPrefix = qgetenv("QT_WEBKIT2_PP_CMD_PREFIX");
+        commandLine = commandLine.arg(QLatin1String(pluginProcessPrefix.constData())).arg(QString(executablePathOfPluginProcess()));
+    } else
+        ASSERT_NOT_REACHED();
 
 #if OS(DARWIN)
     // Create the listening port.

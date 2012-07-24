@@ -1,3 +1,26 @@
+2012-07-24  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Add quirks for running the web process in a profiler shell, like valgrind
+        https://bugs.webkit.org/show_bug.cgi?id=87672
+
+        Reviewed by Jocelyn Turcotte.
+
+        Add --no-timeout-at-all command line switch to not time out no matter how
+        long the web process does it's job. --no-timeout is not enough for profiling
+        purposes because it only affects the timeout when we are waiting for the end
+        of the test. We use another timeout to control how much we wait for the web
+        process to initialize before and reset after the test and it could also easily
+        expire when running under valgrind. We should keep the behavior of --no-timeout
+        to not disable this timout check because --no-timeout is used by performace tests
+        and those should not wait for the web process to initialize and reset more than
+        normal tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::runUntil):
+        * WebKitTestRunner/TestController.h:
+
 2012-07-24  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Fix a class/struct mismatch error in TestDelegate.h (showing up on clang)

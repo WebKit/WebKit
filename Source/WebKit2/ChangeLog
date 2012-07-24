@@ -1,3 +1,21 @@
+2012-07-24  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Add quirks for running the web process in a profiler shell, like valgrind
+        https://bugs.webkit.org/show_bug.cgi?id=87672
+
+        Reviewed by Jocelyn Turcotte.
+
+        If environment variables QT_WEBKIT_WEB_PROCESS_COMMAND_PREFIX
+        and/or QT_WEBKIT_PLUGIN_PROCESS_COMMAND_PREFIX are set, use their
+        values as the prefix of the command when launching the child process.
+        Example usage:
+            export QT_WEB_PROCESS_COMMAND_PREFIX="valgrind --smc-check=all"
+            ./MiniBrowser http://somepage.html
+            ./WebKitTestRunner --no-timeout-at-all some_layouttest.html
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2012-07-23  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Fix compilation against namespaced Qt

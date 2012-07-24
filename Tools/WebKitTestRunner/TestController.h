@@ -129,6 +129,7 @@ private:
     double m_shortTimeout;
     double m_noTimeout;
     bool m_useWaitToDumpWatchdogTimer;
+    bool m_forceNoTimeout;
 
     bool m_didPrintWebProcessCrashedMessage;
     bool m_shouldExitWhenWebProcessCrashes;

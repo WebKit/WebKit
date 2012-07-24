@@ -78,6 +78,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_shortTimeout(defaultShortTimeout)
     , m_noTimeout(defaultNoTimeout)
     , m_useWaitToDumpWatchdogTimer(true)
+    , m_forceNoTimeout(false)
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
     , m_beforeUnloadReturnValue(true)
@@ -257,6 +258,12 @@ void TestController::initialize(int argc, const char* argv[])
 
         if (argument == "--no-timeout") {
             m_useWaitToDumpWatchdogTimer = false;
+            continue;
+        }
+
+        if (argument == "--no-timeout-at-all") {
+            m_useWaitToDumpWatchdogTimer = false;
+            m_forceNoTimeout = true;
             continue;
         }
 
@@ -560,18 +567,20 @@ void TestController::run()
 
 void TestController::runUntil(bool& done, TimeoutDuration timeoutDuration)
 {
-    double timeout;
-    switch (timeoutDuration) {
-    case ShortTimeout:
-        timeout = m_shortTimeout;
-        break;
-    case LongTimeout:
-        timeout = m_longTimeout;
-        break;
-    case NoTimeout:
-    default:
-        timeout = m_noTimeout;
-        break;
+    double timeout = m_noTimeout;
+    if (!m_forceNoTimeout) {
+        switch (timeoutDuration) {
+        case ShortTimeout:
+            timeout = m_shortTimeout;
+            break;
+        case LongTimeout:
+            timeout = m_longTimeout;
+            break;
+        case NoTimeout:
+        default:
+            timeout = m_noTimeout;
+            break;
+        }
     }
 
     platformRunUntil(done, timeout);
