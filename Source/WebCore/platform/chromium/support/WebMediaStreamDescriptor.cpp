@@ -91,20 +91,6 @@ void WebMediaStreamDescriptor::setExtraData(ExtraData* extraData)
     m_private->setExtraData(adoptRef(new ExtraDataContainer(extraData)));
 }
 
-// FIXME: Cleanup when the chromium code has switched to the split sources implementation.
-void WebMediaStreamDescriptor::sources(WebVector<WebMediaStreamSource>& webSources) const
-{
-    size_t numberOfAudioSources = m_private->numberOfAudioComponents();
-    size_t numberOfVideoSources = m_private->numberOfVideoComponents();
-    WebVector<WebMediaStreamSource> result(numberOfAudioSources + numberOfVideoSources);
-    size_t i = 0;
-    for (size_t j = 0; j < numberOfAudioSources; ++i, ++j)
-        result[i] = m_private->audioComponent(j)->source();
-    for (size_t j = 0; j < numberOfVideoSources; ++i, ++j)
-        result[i] = m_private->videoComponent(j)->source();
-    webSources.swap(result);
-}
-
 void WebMediaStreamDescriptor::audioSources(WebVector<WebMediaStreamComponent>& webSources) const
 {
     size_t numberOfSources = m_private->numberOfAudioComponents();

@@ -32,6 +32,7 @@
 #define MockWebKitPlatformSupport_h
 
 #include <public/Platform.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 class MockWebKitPlatformSupport : public WebKit::Platform {
@@ -45,6 +46,8 @@ public:
 
 private:
     MockWebKitPlatformSupport();
+
+    OwnPtr<WebKit::WebMediaStreamCenter> m_mockMediaStreamCenter;
 };
 
 #endif // MockWebKitPlatformSupport_h

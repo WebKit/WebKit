@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,7 +11,7 @@
  *    notice, this list of conditions and the following disclaimer
  *    in the documentation and/or other materials provided with the
  *    distribution.
- * 3. Neither the name of Ericsson nor the names of its contributors
+ * 3. Neither the name of Google Inc. nor the names of its contributors
  *    may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
  *
@@ -28,62 +28,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamSource_h
-#define MediaStreamSource_h
+#include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "PlatformString.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include "MediaStreamSource.h"
 
 namespace WebCore {
 
-class MediaStreamSource : public RefCounted<MediaStreamSource> {
-public:
-    class Observer {
-    public:
-        virtual ~Observer() { }
-        virtual void sourceChangedState() = 0;
-    };
+PassRefPtr<MediaStreamSource> MediaStreamSource::create(const String& id, Type type, const String& name, ReadyState readyState)
+{
+    return adoptRef(new MediaStreamSource(id, type, name, readyState));
+}
 
-    enum Type {
-        TypeAudio,
-        TypeVideo
-    };
+MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& name, ReadyState readyState)
+    : m_id(id)
+    , m_type(type)
+    , m_name(name)
+    , m_readyState(readyState)
+{
+}
 
-    enum ReadyState {
-        ReadyStateLive = 0,
-        ReadyStateMuted = 1,
-        ReadyStateEnded = 2
-    };
+void MediaStreamSource::setReadyState(ReadyState readyState)
+{
+    ASSERT(m_readyState != ReadyStateEnded);
+    if (m_readyState != readyState) {
+        m_readyState = readyState;
+        for (Vector<Observer*>::iterator i = m_observers.begin(); i != m_observers.end(); ++i)
+            (*i)->sourceChangedState();
+    }
+}
 
-    static PassRefPtr<MediaStreamSource> create(const String& id, Type, const String& name, ReadyState = ReadyStateLive);
+void MediaStreamSource::addObserver(MediaStreamSource::Observer* observer)
+{
+    m_observers.append(observer);
+}
 
-    const String& id() const { return m_id; }
-    Type type() const { return m_type; }
-    const String& name() const { return m_name; }
-
-    void setReadyState(ReadyState);
-    ReadyState readyState() const { return m_readyState; }
-
-    void addObserver(Observer*);
-    void removeObserver(Observer*);
-
-private:
-    MediaStreamSource(const String& id, Type, const String& name, ReadyState);
-
-    String m_id;
-    Type m_type;
-    String m_name;
-    ReadyState m_readyState;
-    Vector<Observer*> m_observers;
-};
-
-typedef Vector<RefPtr<MediaStreamSource> > MediaStreamSourceVector;
+void MediaStreamSource::removeObserver(MediaStreamSource::Observer* observer)
+{
+    size_t pos = m_observers.find(observer);
+    if (pos != notFound)
+        m_observers.remove(pos);
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamSource_h

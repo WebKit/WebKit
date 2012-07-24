@@ -94,14 +94,14 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     size_t numberOfAudioTracks = m_descriptor->numberOfAudioComponents();
     audioTrackVector.reserveCapacity(numberOfAudioTracks);
     for (size_t i = 0; i < numberOfAudioTracks; i++)
-        audioTrackVector.append(MediaStreamTrack::create(m_descriptor, m_descriptor->audioComponent(i)));
+        audioTrackVector.append(MediaStreamTrack::create(context, m_descriptor, m_descriptor->audioComponent(i)));
     m_audioTracks = MediaStreamTrackList::create(this, audioTrackVector);
 
     MediaStreamTrackVector videoTrackVector;
     size_t numberOfVideoTracks = m_descriptor->numberOfVideoComponents();
     videoTrackVector.reserveCapacity(numberOfVideoTracks);
     for (size_t i = 0; i < numberOfVideoTracks; i++)
-        videoTrackVector.append(MediaStreamTrack::create(m_descriptor, m_descriptor->videoComponent(i)));
+        videoTrackVector.append(MediaStreamTrack::create(context, m_descriptor, m_descriptor->videoComponent(i)));
     m_videoTracks = MediaStreamTrackList::create(this, videoTrackVector);
 }
 
@@ -151,7 +151,7 @@ EventTargetData* MediaStream::ensureEventTargetData()
 
 void MediaStream::addTrack(MediaStreamComponent* component)
 {
-    RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(m_descriptor, component);
+    RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(scriptExecutionContext(), m_descriptor, component);
     ExceptionCode ec = 0;
     switch (component->source()->type()) {
     case MediaStreamSource::TypeAudio:

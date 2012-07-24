@@ -28,37 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockWebKitPlatformSupport.h"
+#ifndef MockWebMediaStreamCenter_h
+#define MockWebMediaStreamCenter_h
 
-#include "MockWebMediaStreamCenter.h"
-#include <wtf/Assertions.h>
-#include <wtf/PassOwnPtr.h>
+#include "platform/WebMediaStreamCenter.h"
 
-using namespace WebKit;
+namespace WebKit {
+class WebMediaStreamCenterClient;
+};
 
-PassOwnPtr<MockWebKitPlatformSupport> MockWebKitPlatformSupport::create()
-{
-    return WTF::adoptPtr(new MockWebKitPlatformSupport());
-}
+class MockWebMediaStreamCenter : public WebKit::WebMediaStreamCenter {
+public:
+    explicit MockWebMediaStreamCenter(WebKit::WebMediaStreamCenterClient*);
 
-MockWebKitPlatformSupport::MockWebKitPlatformSupport()
-{
-}
+    virtual void queryMediaStreamSources(const WebKit::WebMediaStreamSourcesRequest&) OVERRIDE;
+    virtual void didEnableMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
+    virtual void didDisableMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
+    virtual void didStopLocalMediaStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual void didCreateMediaStream(WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual WebKit::WebString constructSDP(const WebKit::WebICECandidateDescriptor&) OVERRIDE;
+    virtual WebKit::WebString constructSDP(const WebKit::WebSessionDescriptionDescriptor&) OVERRIDE;
 
-MockWebKitPlatformSupport::~MockWebKitPlatformSupport()
-{
-}
+private:
+    MockWebMediaStreamCenter() { }
+};
 
-void MockWebKitPlatformSupport::cryptographicallyRandomValues(unsigned char*, size_t)
-{
-    CRASH();
-}
+#endif // MockWebMediaStreamCenter_h
 
-WebMediaStreamCenter* MockWebKitPlatformSupport::createMediaStreamCenter(WebMediaStreamCenterClient* client)
-{
-    if (!m_mockMediaStreamCenter)
-        m_mockMediaStreamCenter = adoptPtr(new MockWebMediaStreamCenter(client));
-
-    return m_mockMediaStreamCenter.get();
-}

@@ -50,6 +50,12 @@ public:
         TypeVideo
     };
 
+    enum ReadyState {
+        ReadyStateLive = 0,
+        ReadyStateMuted = 1,
+        ReadyStateEnded = 2
+    };
+
     WebMediaStreamSource() { }
     WebMediaStreamSource(const WebMediaStreamSource& other) { assign(other); }
     ~WebMediaStreamSource() { reset(); }
@@ -69,6 +75,9 @@ public:
     WEBKIT_EXPORT WebString id() const;
     WEBKIT_EXPORT Type type() const;
     WEBKIT_EXPORT WebString name() const;
+
+    WEBKIT_EXPORT void setReadyState(ReadyState);
+    WEBKIT_EXPORT ReadyState readyState() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebMediaStreamSource(const WTF::PassRefPtr<WebCore::MediaStreamSource>&);

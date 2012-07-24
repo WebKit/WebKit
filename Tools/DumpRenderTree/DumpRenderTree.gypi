@@ -16,6 +16,8 @@
             'chromium/MockSpellCheck.h',
             'chromium/MockWebKitPlatformSupport.cpp',
             'chromium/MockWebKitPlatformSupport.h',
+            'chromium/MockWebMediaStreamCenter.cpp',
+            'chromium/MockWebMediaStreamCenter.h',
             'chromium/MockWebPrerenderingSupport.cpp',
             'chromium/MockWebPrerenderingSupport.h',
             'chromium/MockWebSpeechInputController.cpp',

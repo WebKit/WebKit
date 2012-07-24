@@ -28,24 +28,31 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Event.h"
 #include "MediaStreamCenter.h"
 #include "MediaStreamComponent.h"
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(PassRefPtr<MediaStreamDescriptor> streamDescriptor, MediaStreamComponent* component)
+PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor, MediaStreamComponent* component)
 {
-    return adoptRef(new MediaStreamTrack(streamDescriptor, component));
+    RefPtr<MediaStreamTrack> track = adoptRef(new MediaStreamTrack(context, streamDescriptor, component));
+    track->suspendIfNeeded();
+    return track.release();
 }
 
-MediaStreamTrack::MediaStreamTrack(PassRefPtr<MediaStreamDescriptor> streamDescriptor, MediaStreamComponent* component)
-    : m_streamDescriptor(streamDescriptor)
+MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor, MediaStreamComponent* component)
+    : ActiveDOMObject(context, this)
+    , m_stopped(false)
+    , m_streamDescriptor(streamDescriptor)
     , m_component(component)
 {
+    m_component->source()->addObserver(this);
 }
 
 MediaStreamTrack::~MediaStreamTrack()
 {
+    m_component->source()->removeObserver(this);
 }
 
 String MediaStreamTrack::kind() const
@@ -76,7 +83,7 @@ bool MediaStreamTrack::enabled() const
 
 void MediaStreamTrack::setEnabled(bool enabled)
 {
-    if (enabled == m_component->enabled())
+    if (m_stopped || enabled == m_component->enabled())
         return;
 
     m_component->setEnabled(enabled);
@@ -87,9 +94,70 @@ void MediaStreamTrack::setEnabled(bool enabled)
     MediaStreamCenter::instance().didSetMediaStreamTrackEnabled(m_streamDescriptor.get(), m_component.get());
 }
 
+MediaStreamTrack::ReadyState MediaStreamTrack::readyState() const
+{
+    if (m_stopped)
+        return ENDED;
+
+    switch (m_component->source()->readyState()) {
+    case MediaStreamSource::ReadyStateLive:
+        return LIVE;
+    case MediaStreamSource::ReadyStateMuted:
+        return MUTED;
+    case MediaStreamSource::ReadyStateEnded:
+        return ENDED;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ENDED;
+}
+
+void MediaStreamTrack::sourceChangedState()
+{
+    if (m_stopped)
+        return;
+
+    switch (m_component->source()->readyState()) {
+    case MediaStreamSource::ReadyStateLive:
+        dispatchEvent(Event::create(eventNames().unmuteEvent, false, false));
+        break;
+    case MediaStreamSource::ReadyStateMuted:
+        dispatchEvent(Event::create(eventNames().muteEvent, false, false));
+        break;
+    case MediaStreamSource::ReadyStateEnded:
+        dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+        break;
+    }
+}
+
 MediaStreamComponent* MediaStreamTrack::component()
 {
     return m_component.get();
+}
+
+void MediaStreamTrack::stop()
+{
+    m_stopped = true;
+}
+
+const AtomicString& MediaStreamTrack::interfaceName() const
+{
+    return eventNames().interfaceForMediaStreamTrack;
+}
+
+ScriptExecutionContext* MediaStreamTrack::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+EventTargetData* MediaStreamTrack::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* MediaStreamTrack::ensureEventTargetData()
+{
+    return &m_eventTargetData;
 }
 
 } // namespace WebCore
