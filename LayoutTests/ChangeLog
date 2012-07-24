@@ -1,3 +1,14 @@
+2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] fast/css/text-transform-select.html should be rebaselined for WK1 and WK2 on Qt 5.0
+        https://bugs.webkit.org/show_bug.cgi?id=77377
+
+        Reviewed by Simon Hausmann.
+
+        Test now pass in both WK1 and WK2.
+
+        * platform/qt-5.0/Skipped:
+
 2012-07-23  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Add the SpeechRecognitionResult.emma attribute

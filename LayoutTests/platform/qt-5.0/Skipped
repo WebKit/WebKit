@@ -26,9 +26,6 @@ fast/events/clear-edit-drag-state.html
 # https://bugs.webkit.org/show_bug.cgi?id=77384
 svg/as-background-image/background-image-preserveaspectRatio-support.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=77377
-fast/css/text-transform-select.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=77380
 fast/url/path.html
 
