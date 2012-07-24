@@ -102,12 +102,12 @@ void CCTextureUpdater::update(CCResourceProvider* resourceProvider, TextureCopie
             uploader->uploadTexture(entry.texture, resourceProvider, entry.sourceRect, entry.destRect);
             fullUploadCount++;
             if (!(fullUploadCount % kUploadFlushPeriod))
-                resourceProvider->flush();
+                resourceProvider->shallowFlushIfSupported();
         }
 
         // Make sure there are no dangling uploads without a flush.
         if (fullUploadCount % kUploadFlushPeriod)
-            resourceProvider->flush();
+            resourceProvider->shallowFlushIfSupported();
 
         bool moreUploads = maxIndex < m_fullEntries.size();
 
@@ -127,14 +127,14 @@ void CCTextureUpdater::update(CCResourceProvider* resourceProvider, TextureCopie
             UpdateEntry& entry = m_partialEntries[index];
             uploader->uploadTexture(entry.texture, resourceProvider, entry.sourceRect, entry.destRect);
             if (!((index+1) % kUploadFlushPeriod))
-                resourceProvider->flush();
+                resourceProvider->shallowFlushIfSupported();
         }
 
         // Make sure there are no dangling partial uploads without a flush.
         // Note: We don't need to use (index+1) in this case because index was
         // incremented at the end of the for loop.
         if (index % kUploadFlushPeriod)
-            resourceProvider->flush();
+            resourceProvider->shallowFlushIfSupported();
 
         uploader->endUploads();
     }

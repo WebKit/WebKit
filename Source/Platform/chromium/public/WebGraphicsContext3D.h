@@ -421,6 +421,9 @@ public:
     virtual void copyTextureCHROMIUM(WGC3Denum target, WGC3Duint sourceId,
                                      WGC3Duint destId, WGC3Dint level, WGC3Denum internalFormat) { }
 
+    // GL_CHROMIUM_shallow_flush
+    virtual void shallowFlushCHROMIUM() { }
+
     GrGLInterface* createGrGLInterface();
 
 protected:

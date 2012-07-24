@@ -176,4 +176,9 @@ void Extensions3DChromium::copyTextureCHROMIUM(GC3Denum target, Platform3DObject
     m_private->webContext()->copyTextureCHROMIUM(target, sourceId, destId, level, internalFormat);
 }
 
+void Extensions3DChromium::shallowFlushCHROMIUM()
+{
+    return m_private->webContext()->shallowFlushCHROMIUM();
+}
+
 } // namespace WebCore

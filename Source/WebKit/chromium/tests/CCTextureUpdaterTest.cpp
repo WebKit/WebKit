@@ -51,12 +51,25 @@ class CCTextureUpdaterTest;
 
 class WebGraphicsContext3DForUploadTest : public FakeWebGraphicsContext3D {
 public:
-    WebGraphicsContext3DForUploadTest(CCTextureUpdaterTest *test) : m_test(test) { }
+    WebGraphicsContext3DForUploadTest(CCTextureUpdaterTest *test)
+        : m_test(test)
+        , m_supportShallowFlush(true)
+    { }
+
     virtual void flush(void);
+    virtual void shallowFlushCHROMIUM(void);
     virtual GrGLInterface* onCreateGrGLInterface() { return 0; }
+
+    virtual WebString getString(WGC3Denum name)
+    {
+        if (m_supportShallowFlush)
+            return WebString("GL_CHROMIUM_shallow_flush");
+        return WebString("");
+    }
 
 private:
     CCTextureUpdaterTest* m_test;
+    bool m_supportShallowFlush;
 };
 
 
@@ -227,6 +240,11 @@ protected:
 
 
 void WebGraphicsContext3DForUploadTest::flush(void)
+{
+    m_test->onFlush();
+}
+
+void WebGraphicsContext3DForUploadTest::shallowFlushCHROMIUM(void)
 {
     m_test->onFlush();
 }

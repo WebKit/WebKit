@@ -195,6 +195,20 @@ void CCResourceProvider::flush()
     context3d->flush();
 }
 
+bool CCResourceProvider::shallowFlushIfSupported()
+{
+    ASSERT(CCProxy::isImplThread());
+    WebGraphicsContext3D* context3d = m_context->context3D();
+    if (!context3d) {
+        // FIXME: Implement this path for software compositing.
+        return false;
+    }
+
+    if (m_useShallowFlush)
+        context3d->shallowFlushCHROMIUM();
+    return m_useShallowFlush;
+}
+
 unsigned CCResourceProvider::lockForRead(ResourceId id)
 {
     ASSERT(CCProxy::isImplThread());
@@ -217,6 +231,7 @@ CCResourceProvider::CCResourceProvider(CCGraphicsContext* context)
     , m_nextId(1)
     , m_useTextureStorageExt(false)
     , m_useTextureUsageHint(false)
+    , m_useShallowFlush(false)
     , m_maxTextureSize(0)
 {
 }
@@ -240,6 +255,8 @@ bool CCResourceProvider::initialize()
             m_useTextureUsageHint = true;
         else if (extensions[i] == "GL_CHROMIUM_map_sub")
             useMapSub = true;
+        else if (extensions[i] == "GL_CHROMIUM_shallow_flush")
+            m_useShallowFlush = true;
     }
 
     m_texSubImage = adoptPtr(new LayerTextureSubImage(useMapSub));

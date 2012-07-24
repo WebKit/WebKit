@@ -38,6 +38,7 @@ public:
     virtual ~Extensions3DChromium();
 
     // Supported extensions:
+    //   GL_CHROMIUM_shallow_flush  : only supported if an ipc command buffer is used.
     //   GL_CHROMIUM_resource_safe  : indicating that textures/renderbuffers are always initialized before read/write.
     //   GL_CHROMIUM_strict_attribs : indicating a GL error is generated for out-of-bounds buffer accesses.
     //   GL_CHROMIUM_post_sub_buffer
@@ -121,6 +122,9 @@ public:
 
     // GL_CHROMIUM_copy_texture
     void copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum);
+
+    // GL_CHROMIUM_shallow_flush
+    virtual void shallowFlushCHROMIUM();
 
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not

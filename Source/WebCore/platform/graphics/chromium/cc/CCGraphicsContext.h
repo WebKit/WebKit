@@ -48,12 +48,6 @@ public:
 
     WebKit::WebGraphicsContext3D* context3D() { return m_context3D.get(); }
 
-    void flush()
-    {
-        if (m_context3D)
-            m_context3D->flush();
-    }
-
 private:
     CCGraphicsContext() { }
     explicit CCGraphicsContext(PassOwnPtr<WebKit::WebGraphicsContext3D> context3D)
