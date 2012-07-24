@@ -56,9 +56,12 @@ public:
     // true if the given frame interval is too fast or too slow, based on constant thresholds.
     bool isBadFrameInterval(double intervalBetweenConsecutiveFrames) const;
 
+    int droppedFrameCount() const { return m_droppedFrameCount; }
+
 private:
     CCFrameRateCounter();
 
+    double frameInterval(int frameNumber) const;
     int frameIndex(int frameNumber) const;
     bool isBadFrame(int frameNumber) const;
 
@@ -68,10 +71,17 @@ private:
     static const double kFrameTooFast;
     static const double kFrameTooSlow;
 
+    // If a frame takes longer than this threshold (measured in seconds) then we
+    // (naively) assume that it missed a screen refresh; that is, we dropped a frame.
+    // FIXME: Determine this threshold based on monitor refresh rate, crbug.com/138642.
+    static const double kDroppedFrameTime;
+
     static const int kTimeStampHistorySize = 120;
 
     int m_currentFrameNumber;
     double m_timeStampHistory[kTimeStampHistorySize];
+
+    int m_droppedFrameCount;
 };
 
 } // namespace WebCore

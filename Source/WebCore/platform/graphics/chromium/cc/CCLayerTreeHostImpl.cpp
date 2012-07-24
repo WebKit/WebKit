@@ -43,6 +43,7 @@
 #include "cc/CCPageScaleAnimation.h"
 #include "cc/CCPrioritizedTextureManager.h"
 #include "cc/CCRenderPassDrawQuad.h"
+#include "cc/CCRenderingStats.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <wtf/CurrentTime.h>
@@ -114,7 +115,6 @@ PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(const CCLayerTreeSet
 CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCLayerTreeSettings& settings, CCLayerTreeHostImplClient* client)
     : m_client(client)
     , m_sourceFrameNumber(-1)
-    , m_sourceAnimationFrameNumber(0)
     , m_rootScrollLayerImpl(0)
     , m_currentlyScrollingLayerImpl(0)
     , m_scrollingLayerIdFromPreviousTree(-1)
@@ -561,8 +561,6 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 
     if (m_debugRectHistory->enabled(settings()))
         m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), *frame.renderSurfaceLayerList, frame.occludingScreenSpaceRects, settings());
-
-    ++m_sourceAnimationFrameNumber;
 
     // The next frame should start by assuming nothing has changed, and changes are noted as they occur.
     m_rootLayerImpl->resetAllChangeTrackingForSubtree();
@@ -1185,6 +1183,17 @@ void CCLayerTreeHostImpl::animateGestures(double monotonicTime)
         m_client->setNeedsRedrawOnImplThread();
     else
         m_activeGestureAnimation.clear();
+}
+
+int CCLayerTreeHostImpl::sourceAnimationFrameNumber() const
+{
+    return fpsCounter()->currentFrameNumber();
+}
+
+void CCLayerTreeHostImpl::renderingStats(CCRenderingStats& stats) const
+{
+    stats.numFramesSentToScreen = fpsCounter()->currentFrameNumber();
+    stats.droppedFrameCount = fpsCounter()->droppedFrameCount();
 }
 
 } // namespace WebCore

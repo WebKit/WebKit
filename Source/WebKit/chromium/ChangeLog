@@ -1,3 +1,15 @@
+2012-07-23  Dave Tu  <dtu@chromium.org>
+
+        [chromium] Add droppedFrameCount to renderingStats.
+        https://bugs.webkit.org/show_bug.cgi?id=91694
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::renderingStats):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestScrollMultipleRedraw::drawLayersOnCCThread):
+
 2012-07-23  Brian Anderson  <brianderson@chromium.org>
 
         [chromium] Use shallow flushes that don't glFlush

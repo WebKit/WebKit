@@ -49,6 +49,7 @@ class CCRenderPassDrawQuad;
 class CCResourceProvider;
 class LayerRendererChromium;
 struct LayerRendererCapabilities;
+struct CCRenderingStats;
 
 // CCLayerTreeHost->CCProxy callback interface.
 class CCLayerTreeHostImplClient {
@@ -121,7 +122,7 @@ public:
     void setFontAtlas(PassOwnPtr<CCFontAtlas>);
 
     void finishAllRendering();
-    int sourceAnimationFrameNumber() const { return m_sourceAnimationFrameNumber; }
+    int sourceAnimationFrameNumber() const;
 
     bool initializeLayerRenderer(PassOwnPtr<CCGraphicsContext>, TextureUploaderOption);
     bool isContextLost();
@@ -174,6 +175,8 @@ public:
 
     void setNeedsRedraw();
 
+    void renderingStats(CCRenderingStats&) const;
+
     CCFrameRateCounter* fpsCounter() const { return m_fpsCounter.get(); }
     CCDebugRectHistory* debugRectHistory() const { return m_debugRectHistory.get(); }
     CCResourceProvider* resourceProvider() const { return m_resourceProvider.get(); }
@@ -225,7 +228,6 @@ protected:
 
     CCLayerTreeHostImplClient* m_client;
     int m_sourceFrameNumber;
-    int m_sourceAnimationFrameNumber;
 
 private:
     void computeDoubleTapZoomDeltas(CCScrollAndScaleSet* scrollInfo);

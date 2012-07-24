@@ -36,7 +36,6 @@
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCInputHandler.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCRenderingStats.h"
 #include "cc/CCScheduler.h"
 #include "cc/CCScopedThreadProxy.h"
 #include "cc/CCTextureUpdater.h"
@@ -895,7 +894,7 @@ void CCThreadProxy::recreateContextOnImplThread(CCCompletionEvent* completion, C
 void CCThreadProxy::implSideRenderingStatsOnImplThread(CCCompletionEvent* completion, CCRenderingStats* stats)
 {
     ASSERT(isImplThread());
-    stats->numFramesSentToScreen = m_layerTreeHostImpl->sourceAnimationFrameNumber();
+    m_layerTreeHostImpl->renderingStats(*stats);
     completion->signal();
 }
 

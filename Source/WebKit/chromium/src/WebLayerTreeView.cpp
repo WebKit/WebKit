@@ -182,6 +182,7 @@ void WebLayerTreeView::renderingStats(WebRenderingStats& stats) const
 
     stats.numAnimationFrames = ccStats.numAnimationFrames;
     stats.numFramesSentToScreen = ccStats.numFramesSentToScreen;
+    stats.droppedFrameCount = ccStats.droppedFrameCount;
 }
 
 void WebLayerTreeView::loseCompositorContext(int numTimes)

@@ -28,12 +28,15 @@
 namespace WebCore {
 
 struct CCRenderingStats {
+    // FIXME: Rename these to animationFrameCount and screenFrameCount, crbug.com/138641.
     int numAnimationFrames;
     int numFramesSentToScreen;
+    int droppedFrameCount;
 
     CCRenderingStats()
         : numAnimationFrames(0)
         , numFramesSentToScreen(0)
+        , droppedFrameCount(0)
     {
     }
 };

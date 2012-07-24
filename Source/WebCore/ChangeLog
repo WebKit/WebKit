@@ -1,3 +1,35 @@
+2012-07-23  Dave Tu  <dtu@chromium.org>
+
+        [chromium] Add droppedFrameCount to renderingStats.
+        https://bugs.webkit.org/show_bug.cgi?id=91694
+
+        Reviewed by Adrienne Walker.
+
+        * platform/graphics/chromium/cc/CCFrameRateCounter.cpp:
+        (WebCore):
+        (WebCore::CCFrameRateCounter::frameInterval):
+        (WebCore::CCFrameRateCounter::frameIndex):
+        (WebCore::CCFrameRateCounter::CCFrameRateCounter):
+        (WebCore::CCFrameRateCounter::markBeginningOfFrame):
+        (WebCore::CCFrameRateCounter::isBadFrame):
+        * platform/graphics/chromium/cc/CCFrameRateCounter.h:
+        (WebCore::CCFrameRateCounter::droppedFrameCount):
+        (CCFrameRateCounter):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::renderingStats):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCRenderingStats.h:
+        (CCRenderingStats):
+        (WebCore::CCRenderingStats::CCRenderingStats):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::implSideRenderingStats):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::implSideRenderingStatsOnImplThread):
+
 2012-07-23  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build after r123418.

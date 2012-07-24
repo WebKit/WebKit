@@ -35,6 +35,7 @@ namespace WebCore {
 
 const double CCFrameRateCounter::kFrameTooFast = 1.0 / 70.0; // measured in seconds
 const double CCFrameRateCounter::kFrameTooSlow = 1.0 / 12.0;
+const double CCFrameRateCounter::kDroppedFrameTime = 1.0 / 50.0;
 
 // safeMod works on -1, returning m-1 in that case.
 static inline int safeMod(int number, int modulus)
@@ -42,13 +43,20 @@ static inline int safeMod(int number, int modulus)
     return (number + modulus) % modulus;
 }
 
-inline int CCFrameRateCounter::frameIndex(int frame) const
+inline double CCFrameRateCounter::frameInterval(int frameNumber) const
 {
-    return safeMod(frame, kTimeStampHistorySize);
+    return m_timeStampHistory[frameIndex(frameNumber)] -
+        m_timeStampHistory[frameIndex(frameNumber - 1)];
+}
+
+inline int CCFrameRateCounter::frameIndex(int frameNumber) const
+{
+    return safeMod(frameNumber, kTimeStampHistorySize);
 }
 
 CCFrameRateCounter::CCFrameRateCounter()
     : m_currentFrameNumber(1)
+    , m_droppedFrameCount(0)
 {
     m_timeStampHistory[0] = currentTime();
     m_timeStampHistory[1] = m_timeStampHistory[0];
@@ -67,6 +75,9 @@ void CCFrameRateCounter::markBeginningOfFrame(double timestamp)
     }
 
     m_timeStampHistory[frameIndex(m_currentFrameNumber)] = timestamp;
+    double delta = frameInterval(m_currentFrameNumber);
+    if (!isBadFrameInterval(delta) && delta > kDroppedFrameTime)
+        ++m_droppedFrameCount;
 }
 
 void CCFrameRateCounter::markEndOfFrame()
@@ -84,9 +95,7 @@ bool CCFrameRateCounter::isBadFrameInterval(double intervalBetweenConsecutiveFra
 
 bool CCFrameRateCounter::isBadFrame(int frameNumber) const
 {
-    double delta = m_timeStampHistory[frameIndex(frameNumber)] -
-            m_timeStampHistory[frameIndex(frameNumber - 1)];
-    return isBadFrameInterval(delta);
+    return isBadFrameInterval(frameInterval(frameNumber));
 }
 
 void CCFrameRateCounter::getAverageFPSAndStandardDeviation(double& averageFPS, double& standardDeviation) const
