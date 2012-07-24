@@ -39,7 +39,9 @@ AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderProgress* r
 
 PassRefPtr<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderProgress* renderer)
 {
-    return adoptRef(new AccessibilityProgressIndicator(renderer));
+    AccessibilityProgressIndicator* obj = new AccessibilityProgressIndicator(renderer);
+    obj->init();
+    return adoptRef(obj);
 }
 
 bool AccessibilityProgressIndicator::accessibilityIsIgnored() const

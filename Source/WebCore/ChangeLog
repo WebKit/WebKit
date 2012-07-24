@@ -1,3 +1,134 @@
+2012-07-23  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Need AccessibilityObjects for nodes without renderers in canvas subtree
+        https://bugs.webkit.org/show_bug.cgi?id=87899
+
+        Reviewed by Chris Fleizach.
+
+        Refactors AccessibilityRenderObject so that it inherits from a new class,
+        AccessibilityNodeObject, that can be constructed from a Node without a
+        renderer. Modifies AXObjectCache so that it automatically creates an
+        AccessibilityNodeObject for elements in a canvas subtree but not otherwise.
+        A new layout test verifies that this correctly exposes an accessibility
+        tree with appropriate roles for elements in a canvas subtree.
+
+        This patch does not try to complete the implementation of
+        AccessibilityNodeObject. Most AX methods are still unimplemented and need
+        to be migrated from AccessibilityRenderObject to AccessibilityNodeObject
+        in a future patch.
+        
+        This patch also doesn't change anything outside of WebCore/accessibility, so
+        the rest of WebCore only calls AXObjectCache when there are changes to a
+        RenderObject, not to a Node. Accessible notifications on nodes without
+        renderers need to be implemented in a future patch.
+
+        Test: accessibility/canvas-accessibilitynodeobject.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::get):
+        (WebCore):
+        (WebCore::createFromNode):
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::remove):
+        * accessibility/AXObjectCache.h:
+        (AXObjectCache):
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::remove):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::AccessibilityARIAGrid):
+        (WebCore):
+        (WebCore::AccessibilityARIAGrid::~AccessibilityARIAGrid):
+        (WebCore::AccessibilityARIAGrid::init):
+        (WebCore::AccessibilityARIAGrid::create):
+        * accessibility/AccessibilityARIAGrid.h:
+        (AccessibilityARIAGrid):
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::create):
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::create):
+        * accessibility/AccessibilityAllInOne.cpp:
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::create):
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::create):
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::create):
+        (WebCore::AccessibilityMediaControlsContainer::create):
+        (WebCore::AccessibilityMediaTimeline::create):
+        (WebCore::AccessibilityMediaTimeDisplay::create):
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::create):
+        (WebCore):
+        * accessibility/AccessibilityMenuList.h:
+        (AccessibilityMenuList):
+        * accessibility/AccessibilityNodeObject.cpp: Added.
+        (WebCore):
+        (WebCore::AccessibilityNodeObject::AccessibilityNodeObject):
+        (WebCore::AccessibilityNodeObject::~AccessibilityNodeObject):
+        (WebCore::AccessibilityNodeObject::init):
+        (WebCore::AccessibilityNodeObject::create):
+        (WebCore::AccessibilityNodeObject::detach):
+        (WebCore::AccessibilityNodeObject::childrenChanged):
+        (WebCore::AccessibilityNodeObject::updateAccessibilityRole):
+        (WebCore::AccessibilityNodeObject::firstChild):
+        (WebCore::AccessibilityNodeObject::lastChild):
+        (WebCore::AccessibilityNodeObject::previousSibling):
+        (WebCore::AccessibilityNodeObject::nextSibling):
+        (WebCore::AccessibilityNodeObject::parentObjectIfExists):
+        (WebCore::AccessibilityNodeObject::parentObject):
+        (WebCore::AccessibilityNodeObject::elementRect):
+        (WebCore::AccessibilityNodeObject::setNode):
+        (WebCore::AccessibilityNodeObject::document):
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        (WebCore::AccessibilityNodeObject::addChildren):
+        (WebCore::AccessibilityNodeObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityNodeObject::canSetFocusAttribute):
+        (WebCore::AccessibilityNodeObject::determineAriaRoleAttribute):
+        (WebCore::AccessibilityNodeObject::ariaRoleAttribute):
+        (WebCore::AccessibilityNodeObject::remapAriaRoleDueToParent):
+        * accessibility/AccessibilityNodeObject.h: Added.
+        (WebCore):
+        (AccessibilityNodeObject):
+        (WebCore::AccessibilityNodeObject::isAccessibilityNodeObject):
+        (WebCore::AccessibilityNodeObject::node):
+        (WebCore::AccessibilityNodeObject::isDetached):
+        (WebCore::toAccessibilityNodeObject):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isAccessibilityNodeObject):
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::create):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::AccessibilityRenderObject):
+        (WebCore::AccessibilityRenderObject::init):
+        (WebCore):
+        (WebCore::AccessibilityRenderObject::create):
+        (WebCore::AccessibilityRenderObject::detach):
+        (WebCore::AccessibilityRenderObject::setRenderer):
+        (WebCore::AccessibilityRenderObject::canHaveChildren):
+        (WebCore::AccessibilityRenderObject::addCanvasChildren):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::create):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::AccessibilityTable):
+        (WebCore):
+        (WebCore::AccessibilityTable::~AccessibilityTable):
+        (WebCore::AccessibilityTable::init):
+        (WebCore::AccessibilityTable::create):
+        * accessibility/AccessibilityTable.h:
+        (AccessibilityTable):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::create):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::create):
+
 2012-07-23  David Barr  <davidbarr@chromium.org>
 
         Fix ENABLE_CSS_IMAGE_ORIENTATION compile flag

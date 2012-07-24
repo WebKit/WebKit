@@ -52,6 +52,7 @@ SOURCES += \
     accessibility/AccessibilityList.cpp \
     accessibility/AccessibilityListBox.cpp \
     accessibility/AccessibilityListBoxOption.cpp \
+    accessibility/AccessibilityNodeObject.cpp \
     accessibility/AccessibilityProgressIndicator.cpp \
     accessibility/AccessibilityRenderObject.cpp \
     accessibility/AccessibilityScrollbar.cpp \

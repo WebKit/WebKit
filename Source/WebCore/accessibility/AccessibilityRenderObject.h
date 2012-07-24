@@ -29,7 +29,7 @@
 #ifndef AccessibilityRenderObject_h
 #define AccessibilityRenderObject_h
 
-#include "AccessibilityObject.h"
+#include "AccessibilityNodeObject.h"
 #include "LayoutTypes.h"
 #include <wtf/Forward.h>
 
@@ -55,7 +55,7 @@ class RenderView;
 class VisibleSelection;
 class Widget;
     
-class AccessibilityRenderObject : public AccessibilityObject {
+class AccessibilityRenderObject : public AccessibilityNodeObject {
 protected:
     AccessibilityRenderObject(RenderObject*);
 public:
@@ -63,6 +63,8 @@ public:
     virtual ~AccessibilityRenderObject();
     
     virtual bool isAccessibilityRenderObject() const { return true; }
+
+    virtual void init();
     
     virtual bool isAnchor() const;
     virtual bool isAttachment() const;
@@ -111,7 +113,6 @@ public:
     virtual bool hasSameStyle(RenderObject*) const;
     virtual bool hasUnderline() const;
 
-    virtual bool canSetFocusAttribute() const;
     virtual bool canSetTextRangeAttributes() const;
     virtual bool canSetValueAttribute() const;
     virtual bool canSetExpandedAttribute() const;
@@ -149,10 +150,8 @@ public:
 
     virtual void ariaOwnsElements(AccessibilityChildrenVector&) const;
     virtual bool supportsARIAOwns() const;
-    virtual AccessibilityRole ariaRoleAttribute() const;
     virtual bool isPresentationalChildOfAriaRole() const;
     virtual bool ariaRoleHasPresentationalChildren() const;
-    void updateAccessibilityRole();
     
     // Should be called on the root accessibility object to kick off a hit test.
     virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const;
@@ -168,14 +167,15 @@ public:
     virtual LayoutRect elementRect() const;
     virtual IntPoint clickPoint();
     
-    void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
+    void setRenderer(RenderObject*);
     virtual RenderObject* renderer() const { return m_renderer; }
     RenderBoxModelObject* renderBoxModelObject() const;
     virtual Node* node() const;
 
+    virtual Document* document() const;
+
     RenderView* topRenderer() const;
     RenderTextControl* textControl() const;
-    Document* document() const;
     FrameView* topDocumentFrameView() const;  
     Document* topDocument() const;
     HTMLLabelElement* labelElementContainer() const;
@@ -214,7 +214,6 @@ public:
     virtual void decrement();
     
     virtual void detach();
-    virtual void childrenChanged();
     virtual void contentChanged();
     virtual void addChildren();
     virtual bool canHaveChildren() const;
@@ -260,8 +259,6 @@ public:
 
 protected:
     RenderObject* m_renderer;
-    AccessibilityRole m_ariaRole;
-    bool m_childrenDirty;
     
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
     void ariaLabeledByElements(Vector<Element*>& elements) const;
@@ -270,6 +267,8 @@ protected:
     void scrollTo(const IntPoint&) const;
     
     virtual bool isDetached() const { return !m_renderer; }
+
+    virtual AccessibilityRole determineAccessibilityRole();
 
 private:
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
@@ -286,9 +285,6 @@ private:
 
     Element* menuElementForMenuButton() const;
     Element* menuItemElementForMenu() const;
-    AccessibilityRole determineAccessibilityRole();
-    AccessibilityRole determineAriaRoleAttribute() const;
-    AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
 
     bool isTabItemSelected() const;
     void alterSliderValue(bool increase);
@@ -305,6 +301,7 @@ private:
 
     void addTextFieldChildren();
     void addImageMapChildren();
+    void addCanvasChildren();
     void addAttachmentChildren();
 #if PLATFORM(MAC)
     void updateAttachmentViewParents();
@@ -328,8 +325,6 @@ private:
     virtual bool ariaLiveRegionBusy() const;    
     
     bool inheritsPresentationalRole() const;
-    
-    mutable AccessibilityRole m_roleForMSAA;
 };
 
 inline AccessibilityRenderObject* toAccessibilityRenderObject(AccessibilityObject* object)

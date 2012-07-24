@@ -51,6 +51,15 @@ AccessibilityTable::AccessibilityTable(RenderObject* renderer)
     : AccessibilityRenderObject(renderer),
     m_headerContainer(0)
 {
+}
+
+AccessibilityTable::~AccessibilityTable()
+{
+}
+
+void AccessibilityTable::init()
+{
+    AccessibilityRenderObject::init();
 #if ACCESSIBILITY_TABLES
     m_isAccessibilityTable = isTableExposableThroughAccessibility();
 #else
@@ -58,13 +67,11 @@ AccessibilityTable::AccessibilityTable(RenderObject* renderer)
 #endif
 }
 
-AccessibilityTable::~AccessibilityTable()
-{
-}
-
 PassRefPtr<AccessibilityTable> AccessibilityTable::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityTable(renderer));
+    AccessibilityTable* obj = new AccessibilityTable(renderer);
+    obj->init();
+    return adoptRef(obj);
 }
 
 bool AccessibilityTable::hasARIARole() const

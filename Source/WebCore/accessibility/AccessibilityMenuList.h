@@ -37,7 +37,7 @@ class RenderMenuList;
 
 class AccessibilityMenuList : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilityMenuList> create(RenderMenuList* renderer) { return adoptRef(new AccessibilityMenuList(renderer)); }
+    static PassRefPtr<AccessibilityMenuList> create(RenderMenuList* renderer);
 
     virtual bool isCollapsed() const;
     virtual bool press() const;

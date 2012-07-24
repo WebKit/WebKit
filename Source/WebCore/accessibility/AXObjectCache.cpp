@@ -188,6 +188,23 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
     return m_objects.get(axID).get();    
 }
 
+AccessibilityObject* AXObjectCache::get(Node* node)
+{
+    if (!node)
+        return 0;
+
+    // Always prefer building the AccessibilityObject from the renderer if there is one.
+    if (node->renderer())
+        return get(node->renderer());
+
+    AXID axID = m_nodeObjectMapping.get(node);
+    ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
+    if (!axID)
+        return 0;
+
+    return m_objects.get(axID).get();
+}
+
 // FIXME: This probably belongs on Node.
 // FIXME: This should take a const char*, but one caller passes nullAtom.
 bool nodeHasRole(Node* node, const String& role)
@@ -252,6 +269,11 @@ static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer
     return AccessibilityRenderObject::create(renderer);
 }
 
+static PassRefPtr<AccessibilityObject> createFromNode(Node* node)
+{
+    return AccessibilityNodeObject::create(node);
+}
+
 AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
 {
     if (!widget)
@@ -273,7 +295,32 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
     attachWrapper(newObj.get());
     return newObj.get();
 }
-    
+
+AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
+{
+    if (!node)
+        return 0;
+
+    if (AccessibilityObject* obj = get(node))
+        return obj;
+
+    if (node->renderer())
+        return getOrCreate(node->renderer());
+
+    // It's only allowed to create an AccessibilityObject from a Node if it's in a canvas subtree.
+    if (!node->parentElement() || !node->parentElement()->isInCanvasSubtree())
+        return 0;
+
+    RefPtr<AccessibilityObject> newObj = createFromNode(node);
+
+    getAXID(newObj.get());
+
+    m_nodeObjectMapping.set(node, newObj->axObjectID());
+    m_objects.set(newObj->axObjectID(), newObj);
+    attachWrapper(newObj.get());
+    return newObj.get();
+}
+
 AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
 {
     if (!renderer)
@@ -386,6 +433,24 @@ void AXObjectCache::remove(RenderObject* renderer)
     AXID axID = m_renderObjectMapping.get(renderer);
     remove(axID);
     m_renderObjectMapping.remove(renderer);
+}
+
+void AXObjectCache::remove(Node* node)
+{
+    if (!node)
+        return;
+
+    removeNodeForUse(node);
+
+    // This is all safe even if we didn't have a mapping.
+    AXID axID = m_nodeObjectMapping.get(node);
+    remove(axID);
+    m_nodeObjectMapping.remove(node);
+
+    if (node->renderer()) {
+        remove(node->renderer());
+        return;
+    }
 }
 
 void AXObjectCache::remove(Widget* view)
