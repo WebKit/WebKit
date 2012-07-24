@@ -25,16 +25,18 @@ load(default_post)
 shared:contains(TEMPLATE, lib) {
     for(target, POST_TARGETDEPS) {
         libdep = $$find(target, .*\\.lib)
-        exists($$libdep): LIBSWITHEXPORTS += $$libdep
+        !isEmpty(libdep): LIBSWITHEXPORTS += $$libdep
     }
 }
 
 !isEmpty(LIBSWITHEXPORTS) {
-    exportgen.input = LIBSWITHEXPORTS
-    exportgen.output = exports_${QMAKE_FILE_BASE}.cpp
-    exportgen.commands = python $${ROOT_WEBKIT_DIR}$${QMAKE_DIR_SEP}Tools$${QMAKE_DIR_SEP}Scripts$${QMAKE_DIR_SEP}generate-win32-export-forwards ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
-    exportgen.variable_out = SOURCES
-    QMAKE_EXTRA_COMPILERS += exportgen
+    suffix =
+    CONFIG(debug, debug|release): suffix = d
+    forwarded_exports.target = forwarded-exports$${suffix}.cpp
+    forwarded_exports.commands = python $${ROOT_WEBKIT_DIR}$${QMAKE_DIR_SEP}Tools$${QMAKE_DIR_SEP}Scripts$${QMAKE_DIR_SEP}generate-win32-export-forwards $$LIBSWITHEXPORTS $$forwarded_exports.target
+    forwarded_exports.depends = $$LIBSWITHEXPORTS
+    QMAKE_EXTRA_TARGETS += forwarded_exports
+    GENERATED_SOURCES += $$forwarded_exports.target
 }
 
 # To ensure the Qt export macros are set to dllexport

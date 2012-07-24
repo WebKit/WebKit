@@ -27,22 +27,27 @@ import subprocess
 import sys
 import re
 
-dumpBin = subprocess.Popen("dumpbin /directives " + sys.argv[1], stdout=subprocess.PIPE, universal_newlines=True);
+def exportForwardsForLibrary(library):
+    dumpBin = subprocess.Popen("dumpbin /directives " + library, stdout=subprocess.PIPE, universal_newlines=True)
 
-output, errors = dumpBin.communicate();
+    output = dumpBin.communicate()[0]
+    return output
 
-exportedSymbolRegexp = re.compile("\s*(?P<symbol>/EXPORT:.+)");
+libraries = sys.argv[1 : -1]
+outputFileName = sys.argv[-1]
 
+exportedSymbolRegexp = re.compile("\s*(?P<symbol>/EXPORT:.+)")
 symbols = set()
 
-for line in output.splitlines():
-    match = exportedSymbolRegexp.match(line)
-    if match != None:
-        symbols.add(match.group("symbol"))
+for lib in libraries:
+    for line in exportForwardsForLibrary(lib).splitlines():
+        match = exportedSymbolRegexp.match(line)
+        if match:
+            symbols.add(match.group("symbol"))
 
-print "Forwarding %s symbols from static library %s" % (len(symbols), sys.argv[1])
+print "Forwarding %s symbols from %s" % (len(symbols), " ".join(libraries))
 
-exportFile = open(sys.argv[2], "w")
+exportFile = open(outputFileName, "w")
 for symbol in symbols:
     exportFile.write("#pragma comment(linker, \"%s\")\n" % symbol);
 exportFile.close()

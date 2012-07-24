@@ -1,3 +1,33 @@
+2012-07-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] MSVC: unresolved external symbol __DllMainCRTStartup@12
+        https://bugs.webkit.org/show_bug.cgi?id=91229
+
+        Reviewed by Jocelyn Turcotte.
+
+        In order to successfully link a DLL on Windows we need to have at least
+        one object file (or compilation unit). The forward export header files were
+        supposed to be that, but unfortunately the rule in win32/default_post.prf for
+        creating the header files had some bugs, among others that it did an exists()
+        check on the depending static library. At the time qmake is ran those libraries
+        do not exist yet and therefore the corresponding extra compiler rules were never
+        created, resulting in empty OBJECTS/SOURCES.
+
+        Even without such an exists() check, qmake extra compilers require the files
+        referred to in the .input variable to exist at qmake time. In this case the input
+        files were the static libraries, which do not exist yet.
+
+        This patch solves this by using a qmake extra target instead of extra
+        compiler, which does not have this limitation. The target is referenced
+        through the extension of GENERATED_SOURCES.
+
+        The patch also adds a d/_debug suffix for debug builds, do allow for separate
+        symbol exports if necessary.
+
+        * Scripts/generate-win32-export-forwards: Support multiple input files, i.e.
+        consider the last argument to be the output file and everything else input.
+        * qmake/mkspecs/features/win32/default_post.prf:
+
 2012-07-24  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Add quirks for running the web process in a profiler shell, like valgrind
