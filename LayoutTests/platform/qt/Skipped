@@ -2514,10 +2514,6 @@ http/tests/cookies/single-quoted-value.html
 # https://bugs.webkit.org/show_bug.cgi?id=86077
 html5lib/runner.html
 
-# [Qt] tab-size CSS property doesn't work at all
-# https://bugs.webkit.org/show_bug.cgi?id=86179
-fast/css/tab-size.html
-
 # [Qt] fast/frames/seamless/seamless-inherited-document-style.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=86182
 fast/frames/seamless/seamless-inherited-document-style.html

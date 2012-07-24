@@ -1,5 +1,18 @@
 2012-07-24  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
+        [Qt] Unskip layout test after monospace-font fix
+        https://bugs.webkit.org/show_bug.cgi?id=86179
+
+        Reviewed by Alexis Menard.
+
+        This test has been skipped because monospace fonts weren't properly to
+        HTML tags like <pre>, for instance. After r121971, the test results are
+        normal again.
+
+        * platform/qt/Skipped: Unskipped fast/css/tab-size.html.
+
+2012-07-24  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
         [Qt] Updated acid3 layout test results after monospace fix
         https://bugs.webkit.org/show_bug.cgi?id=87501
 
