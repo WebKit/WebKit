@@ -1,5 +1,19 @@
 2012-07-24  János Badics  <jbadics@inf.u-szeged.hu>
 
+        [Qt] Unreviewed gardening after r123100. Added baseline to tests that have been unskipped.
+        https://bugs.webkit.org/show_bug.cgi?id=91739
+
+        * platform/qt-5.0/fast/dynamic/insert-before-table-part-in-continuation-expected.png: Added.
+        * platform/qt-5.0/fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Added.
+        * platform/qt-5.0/fast/events/onload-re-entry-expected.png: Added.
+        * platform/qt-5.0/fast/events/onload-re-entry-expected.txt: Added.
+        * platform/qt-5.0/fast/events/touch/touch-slider-expected.txt: Added.
+        * platform/qt-5.0/fast/events/touch/touch-slider-no-js-touch-listener-expected.txt: Added.
+        * platform/qt-5.0/fast/inline/absolute-positioned-inline-in-centred-block-expected.png: Added.
+        * platform/qt-5.0/fast/inline/absolute-positioned-inline-in-centred-block-expected.txt:
+
+2012-07-24  János Badics  <jbadics@inf.u-szeged.hu>
+
         [Qt] Unreviewed gardening after r123432. Added baseline to fast/text/whitespace/028.html
         after is has been unskipped.
         https://bugs.webkit.org/show_bug.cgi?id=91971
