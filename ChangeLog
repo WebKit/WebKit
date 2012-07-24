@@ -1,3 +1,9 @@
+2012-07-23  Kent Tamura  <tkent@chromium.org>
+
+        [GTK] Attempt to fix build
+
+        * Source/autotools/symbols.filter: Export DocumentMarkerController::addTextMatchMarker.
+
 2012-07-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123184, r123195, and r123197.
