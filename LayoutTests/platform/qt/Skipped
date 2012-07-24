@@ -2208,10 +2208,6 @@ fast/speech/input-appearance-searchandspeech.html
 fast/speech/speech-bidi-rendering.html
 fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic.html
 
-#[Qt]fast/text/international/bdi-dir-default-to-auto.html fails
-#https://bugs.webkit.org/show_bug.cgi?id=81899
-fast/text/international/bdi-dir-default-to-auto.html
-
 # ============================================================================= #
 # Regressions occured after Qt version update
 # ============================================================================= #
