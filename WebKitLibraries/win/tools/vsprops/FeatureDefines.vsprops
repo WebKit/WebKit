@@ -38,7 +38,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_CSS3_FLEXBOX"
-		Value="ENABLE_CSS3_FLEXBOX"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
