@@ -43,14 +43,14 @@
 #include "config.h"
 #include "EventSender.h"
 
-#include "TestShell.h"
+#include "TestDelegate.h"
 #include "WebContextMenuData.h"
-#include "platform/WebDragData.h"
 #include "WebDragOperation.h"
-#include "platform/WebPoint.h"
-#include "platform/WebString.h"
 #include "WebTouchPoint.h"
 #include "WebView.h"
+#include "platform/WebDragData.h"
+#include "platform/WebPoint.h"
+#include "platform/WebString.h"
 #include "webkit/support/webkit_support.h"
 #include <wtf/Deque.h>
 #include <wtf/StringExtras.h>
@@ -244,8 +244,8 @@ enum KeyLocationCode {
     DOMKeyLocationNumpad        = 0x03
 };
 
-EventSender::EventSender(TestShell* shell)
-    : m_shell(shell)
+EventSender::EventSender()
+    : m_delegate(0)
 {
     // Initialize the map that associates methods of this class with the names
     // they will use when called by JavaScript. The actual binding of those
@@ -336,11 +336,6 @@ void EventSender::reset()
     touchPoints.clear();
     m_taskList.revokeAll();
     m_currentGestureLocation = WebPoint(0, 0);
-}
-
-WebView* EventSender::webview()
-{
-    return m_shell->webView();
 }
 
 void EventSender::doDragDrop(const WebDragData& dragData, WebDragOperationsMask mask)
@@ -646,11 +641,11 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     // We just simulate the same behavior here.
     string editCommand;
     if (getEditCommand(eventDown, &editCommand))
-        m_shell->webViewHost()->setEditCommand(editCommand, "");
+        m_delegate->setEditCommand(editCommand, "");
 
     webview()->handleInputEvent(eventDown);
 
-    m_shell->webViewHost()->clearEditCommand();
+    m_delegate->clearEditCommand();
 
     if (generateChar) {
         eventChar.type = WebInputEvent::Char;
@@ -800,7 +795,7 @@ void EventSender::replaySavedEvents()
 //   also makes sense. This function is doing such for some flags.
 // - Some test even checks actual string content. So providing it would be also helpful.
 //
-static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu, MockSpellCheck* spellcheck)
+static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu, TestDelegate* delegate)
 {
     // These constants are based on Safari's context menu because tests are made for it.
     static const char* nonEditableMenuStrings[] = { "Back", "Reload Page", "Open in Dashbaord", "<separator>", "View Source", "Save Page As", "Print Page", "Inspect Element", 0 };
@@ -816,7 +811,7 @@ static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu,
         for (const char** item = editableMenuStrings; *item; ++item) 
             strings.append(WebString::fromUTF8(*item));
         Vector<WebString> suggestions;
-        spellcheck->fillSuggestionList(contextMenu->misspelledWord, &suggestions);
+        delegate->fillSpellingSuggestionList(contextMenu->misspelledWord, &suggestions);
         for (size_t i = 0; i < suggestions.size(); ++i) 
             strings.append(suggestions[i]);
     } else {
@@ -827,7 +822,6 @@ static Vector<WebString> makeMenuItemStringsFor(WebContextMenuData* contextMenu,
     return strings;
 }
 
-
 void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* result)
 {
     webview()->layout();
@@ -836,7 +830,7 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
 
     // Clears last context menu data because we need to know if the context menu be requested 
     // after following mouse events.
-    m_shell->webViewHost()->clearContextMenuData();
+    m_delegate->clearContextMenuData();
 
     // Generate right mouse down and up.
     WebMouseEvent event;
@@ -849,8 +843,8 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
 
     pressedButton = WebMouseEvent::ButtonNone;
 
-    WebContextMenuData* lastContextMenu = m_shell->webViewHost()->lastContextMenuData();
-    result->set(WebBindings::makeStringArray(makeMenuItemStringsFor(lastContextMenu, m_shell->webViewHost()->mockSpellCheck())));
+    WebContextMenuData* lastContextMenu = m_delegate->lastContextMenuData();
+    result->set(WebBindings::makeStringArray(makeMenuItemStringsFor(lastContextMenu, m_delegate)));
 }
 
 class MouseDownTask: public MethodTask<EventSender> {

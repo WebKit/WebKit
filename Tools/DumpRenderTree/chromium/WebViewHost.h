@@ -33,6 +33,7 @@
 
 #include "MockSpellCheck.h"
 #include "Task.h"
+#include "TestDelegate.h"
 #include "TestNavigationController.h"
 #include "WebAccessibilityNotification.h"
 #include "WebCursorInfo.h"
@@ -77,7 +78,8 @@ class TestMediaStreamClient;
 }
 
 class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost,
-                    public WebKit::WebPrerendererClient, public WebKit::WebSpellCheckClient {
+                    public WebKit::WebPrerendererClient, public WebKit::WebSpellCheckClient,
+                    public TestDelegate {
  public:
     WebViewHost(TestShell*);
     virtual ~WebViewHost();
@@ -93,8 +95,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     WebKit::WebFrame* topLoadingFrame() { return m_topLoadingFrame; }
     void setBlockRedirects(bool block) { m_blocksRedirects = block; }
     void setRequestReturnNull(bool returnNull) { m_requestReturnNull = returnNull; }
-    void setEditCommand(const std::string& name, const std::string& value);
-    void clearEditCommand();
+    virtual void setEditCommand(const std::string& name, const std::string& value) OVERRIDE;
+    virtual void clearEditCommand() OVERRIDE;
     void setPendingExtraData(PassOwnPtr<TestShellExtraData>);
 
     void paintRect(const WebKit::WebRect&);
@@ -111,8 +113,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     const HashSet<WTF::String>& clearHeaders() const { return m_clearHeaders; }
     void closeWidget();
 
-    WebKit::WebContextMenuData* lastContextMenuData() const;
-    void clearContextMenuData();
+    virtual WebKit::WebContextMenuData* lastContextMenuData() const OVERRIDE;
+    virtual void clearContextMenuData() OVERRIDE;
 
 #if ENABLE(INPUT_SPEECH)
     MockWebSpeechInputController* speechInputControllerMock() { return m_speechInputControllerMock.get(); }
@@ -271,6 +273,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     // Spellcheck related helper APIs
     MockSpellCheck* mockSpellCheck();
     void finishLastTextCheck();
+    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, Vector<WebKit::WebString>* suggestions) OVERRIDE;
 
     // Geolocation client mocks for LayoutTestController
     WebKit::WebGeolocationClientMock* geolocationClientMock();

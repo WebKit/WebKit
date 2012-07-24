@@ -147,7 +147,7 @@ void TestShell::initialize()
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_testInterfaces = adoptPtr(new TestInterfaces());
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
-    m_eventSender = adoptPtr(new EventSender(this));
+    m_eventSender = adoptPtr(new EventSender());
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
@@ -172,12 +172,16 @@ void TestShell::createMainWindow()
     m_webViewHost = adoptPtr(createNewWindow(WebURL(), m_drtDevToolsAgent.get()));
     m_webView = m_webViewHost->webView();
     m_testInterfaces->setWebView(m_webView);
+    m_eventSender->setDelegate(m_webViewHost.get());
+    m_eventSender->setWebView(m_webView);
     m_drtDevToolsAgent->setWebView(m_webView);
 }
 
 TestShell::~TestShell()
 {
     m_testInterfaces->setWebView(0);
+    m_eventSender->setDelegate(0);
+    m_eventSender->setWebView(0);
     m_drtDevToolsAgent->setWebView(0);
 }
 

@@ -763,6 +763,11 @@ MockSpellCheck* WebViewHost::mockSpellCheck()
     return &m_spellcheck;
 }
 
+void WebViewHost::fillSpellingSuggestionList(const WebKit::WebString& word, Vector<WebKit::WebString>* suggestions)
+{
+    mockSpellCheck()->fillSuggestionList(word, suggestions);
+}
+
 WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
 {
     return deviceOrientationClientMock();

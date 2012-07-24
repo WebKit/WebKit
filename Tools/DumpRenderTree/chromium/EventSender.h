@@ -43,18 +43,19 @@
 #include "WebInputEvent.h"
 #include "platform/WebPoint.h"
 
-class TestShell;
-
 namespace WebKit {
 class WebDragData;
 class WebView;
 }
 
+class TestDelegate;
+
 class EventSender : public CppBoundClass {
 public:
-    // Builds the property and method lists needed to bind this class to a JS
-    // object.
-    EventSender(TestShell*);
+    EventSender();
+
+    void setDelegate(TestDelegate* delegate) { m_delegate = delegate; }
+    void setWebView(WebKit::WebView* webView) { m_webView = webView; }
 
     // Resets some static variable state.
     void reset();
@@ -129,8 +130,7 @@ public:
     TaskList* taskList() { return &m_taskList; }
 
 private:
-    // Returns the test shell's webview.
-    WebKit::WebView* webview();
+    WebKit::WebView* webview() { return m_webView; }
 
     // Returns true if dragMode is true.
     bool isDragMode() { return dragMode.isBool() && dragMode.toBoolean(); }
@@ -163,8 +163,8 @@ private:
 
     TaskList m_taskList;
 
-    // Non-owning pointer. The EventSender is owned by the TestShell.
-    TestShell* m_shell;
+    TestDelegate* m_delegate;
+    WebKit::WebView* m_webView;
 
     // Location of the touch point that initiated a gesture.
     WebKit::WebPoint m_currentGestureLocation;

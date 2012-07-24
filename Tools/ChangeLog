@@ -1,3 +1,44 @@
+2012-07-24  Jochen Eisinger  <jochen@chromium.or>
+
+        [Chromium] EventSender shouldn't know about TestShell
+        https://bugs.webkit.org/show_bug.cgi?id=91449
+
+        Reviewed by Adam Barth.
+
+        Original patch by Adam Barth.
+
+        This patch removes the dependency from EventSender to TestShell.  Most
+        of EventSender works directly with a WebView, but there are a handful
+        of references to WebViewHost.  We don't want to re-use WebViewHost in
+        ContentShell because we want to use the multi-process embedding
+        environment for WebViews.
+
+        To avoid the dependency on WebViewHost, this patch introduces
+        TestDelegate, which is an abstract base class for WebViewHost.  In
+        ContentShell, we'll need another object to implement these functions.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::keyDown):
+        (makeMenuItemStringsFor):
+        (EventSender::contextClick):
+        * DumpRenderTree/chromium/EventSender.h:
+        (EventSender):
+        (EventSender::setDelegate):
+        (EventSender::setWebView):
+        (EventSender::webview):
+        * DumpRenderTree/chromium/TestRunner/TestDelegate.h: Added.
+        (WebKit):
+        (TestDelegate):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::fillSpellingSuggestionList):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-07-24  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Make WebIntents and WebIntentsTag a build option for the build-webkit script
