@@ -56,7 +56,6 @@ editing/selection/triple-click-in-pre.html
 editing/selection/vertical-rl-rtl-extend-line-backward-br.html
 editing/selection/vertical-rl-rtl-extend-line-backward-p.html
 fast/backgrounds/background-inherit-color-bug.html
-fast/block/basic/015.html
 fast/block/float/016.html
 fast/block/float/overhanging-tall-block.html
 fast/block/float/shrink-to-avoid-float-complexity.html
@@ -142,8 +141,6 @@ fast/table/table-style-not-updated.html
 # https://bugs.webkit.org/show_bug.cgi?id=85203
 editing/deleting/deletionUI-single-instance.html
 editing/pasteboard/emacs-cntl-y-001.html
-fast/block/basic/020.html
-fast/block/basic/truncation-rtl.html
 fast/block/float/float-in-float-hit-testing.html
 fast/forms/mailto/advanced-get.html
 fast/forms/mailto/advanced-put.html

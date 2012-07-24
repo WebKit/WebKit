@@ -428,7 +428,6 @@ editing/selection/4975120.html
 editing/selection/drag-select-1.html
 editing/selection/vertical-rl-rtl-extend-line-backward-br.html
 editing/selection/vertical-rl-rtl-extend-line-backward-p.html
-fast/block/basic/015.html
 fast/block/float/016.html
 fast/block/float/overhanging-tall-block.html
 fast/block/float/shrink-to-avoid-float-complexity.html

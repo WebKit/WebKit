@@ -3,40 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 115x21
-          text run at (0,0) width 115: "This is a test for "
-        RenderInline {I} at (0,0) size 777x42
-          RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
-            RenderText {#text} at (115,0) size 337x21
-              text run at (115,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=18809"
-          RenderText {#text} at (452,0) size 777x42
-            text run at (452,0) width 4: " "
-            text run at (456,0) width 321: "Forms with block level generated content and"
-            text run at (0,21) width 449: "absolutely positioned labels break inline layout (fixed on reflow)"
-        RenderText {#text} at (449,21) size 4x21
-          text run at (449,21) width 4: "."
-      RenderBlock {DIV} at (0,58) size 784x42
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 109x21
-            text run at (0,0) width 109: "This should be "
-          RenderText {#text} at (109,0) size 90x21
-            text run at (109,0) width 90: "a single line."
-        RenderBlock (generated) at (0,21) size 784x21
-          RenderText at (0,0) size 221x21
-            text run at (0,0) width 221: "This should be the second line."
-      RenderBlock {DIV} at (0,100) size 784x21
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 99x19
+          text run at (0,0) width 99: "This is a test for "
+        RenderInline {I} at (0,0) size 778x38
+          RenderInline {A} at (0,0) size 311x19 [color=#0000EE]
+            RenderText {#text} at (99,0) size 311x19
+              text run at (99,0) width 311: "https://bugs.webkit.org/show_bug.cgi?id=18809"
+          RenderText {#text} at (410,0) size 778x38
+            text run at (410,0) width 4: " "
+            text run at (414,0) width 364: "Forms with block level generated content and absolutely"
+            text run at (0,19) width 342: "positioned labels break inline layout (fixed on reflow)"
+        RenderText {#text} at (342,19) size 4x19
+          text run at (342,19) width 4: "."
+      RenderBlock {DIV} at (0,54) size 784x38
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 91x19
+            text run at (0,0) width 91: "This should be "
+          RenderText {#text} at (91,0) size 72x19
+            text run at (91,0) width 72: "a single line."
+        RenderBlock (generated) at (0,19) size 784x19
+          RenderText at (0,0) size 184x19
+            text run at (0,0) width 184: "This should be the second line."
+      RenderBlock {DIV} at (0,92) size 784x19
         RenderBlock {DIV} at (0,0) size 784x0
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 109x21
-            text run at (0,0) width 109: "This should be "
-          RenderText {#text} at (109,0) size 90x21
-            text run at (109,0) width 90: "a single line."
-      RenderBlock {DIV} at (0,121) size 784x21
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 91x19
+            text run at (0,0) width 91: "This should be "
+          RenderText {#text} at (91,0) size 72x19
+            text run at (91,0) width 72: "a single line."
+      RenderBlock {DIV} at (0,111) size 784x19
         RenderBlock {DIV} at (0,0) size 784x0
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderText {#text} at (109,0) size 90x21
-            text run at (109,0) width 90: "a single line."
-          RenderBlock (floating) {SPAN} at (0,0) size 109x21
-            RenderText {#text} at (0,0) size 109x21
-              text run at (0,0) width 109: "This should be "
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (91,0) size 72x19
+            text run at (91,0) width 72: "a single line."
+          RenderBlock (floating) {SPAN} at (0,0) size 91x19
+            RenderText {#text} at (0,0) size 91x19
+              text run at (0,0) width 91: "This should be "

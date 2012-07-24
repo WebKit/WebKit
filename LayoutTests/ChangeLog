@@ -1,3 +1,65 @@
+2012-07-24  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt] fast/block/basic needs rebaseline after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92149
+
+        Reviewed by Alexis Menard.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt/fast/block/basic/001-expected.png:
+        * platform/qt/fast/block/basic/001-expected.txt:
+        * platform/qt/fast/block/basic/002-expected.png:
+        * platform/qt/fast/block/basic/002-expected.txt:
+        * platform/qt/fast/block/basic/003-expected.png:
+        * platform/qt/fast/block/basic/003-expected.txt:
+        * platform/qt/fast/block/basic/004-expected.png:
+        * platform/qt/fast/block/basic/004-expected.txt:
+        * platform/qt/fast/block/basic/005-expected.png:
+        * platform/qt/fast/block/basic/005-expected.txt:
+        * platform/qt/fast/block/basic/006-expected.png:
+        * platform/qt/fast/block/basic/006-expected.txt:
+        * platform/qt/fast/block/basic/007-expected.png:
+        * platform/qt/fast/block/basic/007-expected.txt:
+        * platform/qt/fast/block/basic/008-expected.png:
+        * platform/qt/fast/block/basic/008-expected.txt:
+        * platform/qt/fast/block/basic/009-expected.png:
+        * platform/qt/fast/block/basic/009-expected.txt:
+        * platform/qt/fast/block/basic/010-expected.png:
+        * platform/qt/fast/block/basic/010-expected.txt:
+        * platform/qt/fast/block/basic/011-expected.png:
+        * platform/qt/fast/block/basic/011-expected.txt:
+        * platform/qt/fast/block/basic/012-expected.png:
+        * platform/qt/fast/block/basic/012-expected.txt:
+        * platform/qt/fast/block/basic/013-expected.png:
+        * platform/qt/fast/block/basic/013-expected.txt:
+        * platform/qt/fast/block/basic/014-expected.png:
+        * platform/qt/fast/block/basic/014-expected.txt:
+        * platform/qt/fast/block/basic/015-expected.png:
+        * platform/qt/fast/block/basic/015-expected.txt:
+        * platform/qt/fast/block/basic/016-expected.png:
+        * platform/qt/fast/block/basic/016-expected.txt:
+        * platform/qt/fast/block/basic/018-expected.png:
+        * platform/qt/fast/block/basic/018-expected.txt:
+        * platform/qt/fast/block/basic/019-expected.png:
+        * platform/qt/fast/block/basic/019-expected.txt:
+        * platform/qt/fast/block/basic/020-expected.txt:
+        * platform/qt/fast/block/basic/021-expected.png:
+        * platform/qt/fast/block/basic/021-expected.txt:
+        * platform/qt/fast/block/basic/adding-near-anonymous-block-expected.png:
+        * platform/qt/fast/block/basic/adding-near-anonymous-block-expected.txt:
+        * platform/qt/fast/block/basic/minheight-expected.png:
+        * platform/qt/fast/block/basic/minheight-expected.txt:
+        * platform/qt/fast/block/basic/percent-height-inside-anonymous-block-expected.png:
+        * platform/qt/fast/block/basic/percent-height-inside-anonymous-block-expected.txt:
+        * platform/qt/fast/block/basic/quirk-height-expected.png:
+        * platform/qt/fast/block/basic/quirk-height-expected.txt:
+        * platform/qt/fast/block/basic/truncation-rtl-expected.png:
+        * platform/qt/fast/block/basic/truncation-rtl-expected.txt:
+        * platform/qt/fast/block/basic/white-space-pre-wraps-expected.png:
+        * platform/qt/fast/block/basic/white-space-pre-wraps-expected.txt:
+
 2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] svg/carto.net rebaseline after new test fonts
