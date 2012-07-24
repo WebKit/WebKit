@@ -245,7 +245,7 @@ bool JSTestInterface::getOwnPropertyDescriptor(JSObject* object, ExecState* exec
 JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec, JSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    JSValue result = jsNumber(TestSupplemental::supplementalStaticReadOnlyAttr(impl));
+    JSValue result = jsNumber(TestSupplemental::supplementalStaticReadOnlyAttr());
     return result;
 }
 
@@ -255,7 +255,7 @@ JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec
 JSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSValue, PropertyName)
 {
     UNUSED_PARAM(exec);
-    JSValue result = jsString(exec, TestSupplemental::supplementalStaticAttr(impl));
+    JSValue result = jsString(exec, TestSupplemental::supplementalStaticAttr());
     return result;
 }
 
@@ -325,7 +325,7 @@ void JSTestInterface::put(JSCell* cell, ExecState* exec, PropertyName propertyNa
 void setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSObject*, JSValue value)
 {
     UNUSED_PARAM(exec);
-    TestSupplemental::setSupplementalStaticAttr(impl, ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
+    TestSupplemental::setSupplementalStaticAttr(ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
 }
 
 #endif

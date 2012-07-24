@@ -1842,7 +1842,7 @@ sub GenerateImplementation
                             my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                             $implIncludes{"${implementedBy}.h"} = 1;
                             $functionName = "${implementedBy}::${functionName}";
-                            unshift(@arguments, "impl");
+                            unshift(@arguments, "impl") if !$attribute->isStatic;
                         } elsif ($attribute->isStatic) {
                             $functionName = "${implClassName}::${functionName}";
                         } else {
@@ -2071,7 +2071,7 @@ sub GenerateImplementation
                                     if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                                         my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                                         $implIncludes{"${implementedBy}.h"} = 1;
-                                        unshift(@arguments, "impl");
+                                        unshift(@arguments, "impl") if !$attribute->isStatic;
                                         $functionName = "${implementedBy}::${functionName}";
                                     } elsif ($attribute->isStatic) {
                                         $functionName = "${implClassName}::${functionName}";

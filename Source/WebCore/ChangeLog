@@ -1,3 +1,25 @@
+2012-07-24  Kentaro Hara  <haraken@chromium.org>
+
+        [JSC] REGRESSION(r122912): CodeGeneratorJS.pm generates wrong code
+        for static attributes in supplemental IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=91925
+
+        Reviewed by Adam Barth.
+
+        r122912 implemented static attributes in CodeGeneratorJS.pm.
+        However, it generates wrong code for static attributes in supplemental
+        IDL files. This patch fixes it as shown in JSTestInterface.cpp.
+        This fix aligns with the fix in CodeGeneratorV8.pm (r123308).
+
+        Test: bindings/scripts/test/TestSupplemental.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr):
+        (WebCore::jsTestInterfaceConstructorSupplementalStaticAttr):
+        (WebCore::setJSTestInterfaceConstructorSupplementalStaticAttr):
+
 2012-07-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add *explicit* keyword to constructor which has a parameter in bridge, history, loader and plugins.
