@@ -2128,6 +2128,17 @@
                     { "name": "totalTime", "type": "number", "description": "Total processing time for all selectors in the profile (in milliseconds.)" },
                     { "name": "data", "type": "array", "items": { "$ref": "SelectorProfileEntry" }, "description": "CSS selector profile entries." }
                 ]
+            },
+            {
+                "id": "NamedFlow",
+                "type": "object",
+                "properties": [
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "name", "type": "string", "description": "Named Flow identifier." },
+                    { "name": "overset", "type": "boolean", "description": "The \"overset\" attribute of a Named Flow." }
+                ],
+                "description": "This object represents a Named Flow.",
+                "hidden": true
             }
         ],
         "commands": [
@@ -2277,12 +2288,24 @@
             {
                 "name": "getNamedFlowCollection",
                 "parameters": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The document node id for which to get the Named Flow Collection."}
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The document node id for which to get the Named Flow Collection." }
                 ],
                 "returns": [
                     { "name": "namedFlows", "type": "array", "items": { "type": "string" }, "description": "An array containing the Named Flows in the document." }
                 ],
                 "description": "Returns the Named Flows from the document.",
+                "hidden": true
+            },
+            {
+                "name": "getFlowByName",
+                "parameters": [
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "name", "type": "string", "description": "Named Flow identifier." }
+                ],
+                "returns": [
+                    { "name": "namedFlow", "$ref": "NamedFlow", "description": "A Named Flow." }
+                ],
+                "description": "Returns the Named Flow identified by the given name",
                 "hidden": true
             }
         ],

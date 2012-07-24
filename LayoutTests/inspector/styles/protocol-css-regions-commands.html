@@ -1,0 +1,128 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function createDynamicElements()
+{
+    var frameDoc = window.frames[0].document;
+
+    var el = frameDoc.createElement("article");
+    el.style.webkitFlowInto = "flow4";
+    frameDoc.body.appendChild(el);
+
+    el = frameDoc.createElement("div");
+    el.style.webkitFlowFrom = "flow4";
+    frameDoc.body.appendChild(el);
+
+    runTest();
+}
+
+function test()
+{
+    WebInspector.showPanel("elements");
+    InspectorTest.runTestSuite([
+        function testGetNamedFlowCollection(next)
+        {
+            WebInspector.domAgent.requestDocument(documentCallback);
+
+            function documentCallback(document)
+            {
+                WebInspector.cssModel.getNamedFlowCollectionAsync(document.id, namedFlowCallback);
+            }
+
+            function namedFlowCallback(namedFlows)
+            {
+                InspectorTest.addResult("=== CSS Named Flows ===");
+
+                if (!namedFlows) {
+                    InspectorTest.addResult("[!] Failed to get Named Flows");
+                    InspectorTest.completeTest();
+                    return;
+                }
+
+                namedFlows.sort();
+
+                for (var i = 0; i < namedFlows.length; ++i)
+                    InspectorTest.addResult(namedFlows[i]);
+
+                next();
+            }
+        },
+
+        function testGetFlowByName1(next)
+        {
+            WebInspector.domAgent.requestDocument(documentCallback);
+
+            function documentCallback(document)
+            {
+                WebInspector.cssModel.getFlowByNameAsync(document.id, "flow2", namedFlowCallback);
+            }
+
+            function namedFlowCallback(namedFlow)
+            {
+                InspectorTest.addResult("=== Named Flow \"flow2\" from main document ===");
+
+                if (!namedFlow) {
+                    InspectorTest.addResult("[!] Failed to get Named Flow");
+                    InspectorTest.completeTest();
+                    return;
+                }
+
+                InspectorTest.addResult("name: " + namedFlow.name);
+                InspectorTest.addResult("overset: " + namedFlow.overset);
+
+                next();
+            }
+        },
+
+        function testGetFlowByName2(next)
+        {
+            WebInspector.domAgent.requestDocument(documentCallback);
+
+            function documentCallback(document)
+            {
+                WebInspector.cssModel.getFlowByNameAsync(document.id, "flow4", namedFlowCallback);
+            }
+
+            function namedFlowCallback(namedFlow)
+            {
+                InspectorTest.addResult("=== Name Flow \"flow4\" from main document ===");
+
+                if (namedFlow) {
+                    InspectorTest.addResult("[!] Failed")
+                    InspectorTest.completeTest();
+                    return;
+                }
+
+                InspectorTest.addResult("There is no Named Flow \"flow4\" in the main document");
+                next();
+            }
+        },
+    ]);
+}
+</script>
+</head>
+
+<body onload="createDynamicElements()">
+<p>
+Tests the following commands:
+<ul>
+    <li>getNamedFlowCollection <a href="https://bugs.webkit.org/show_bug.cgi?id=91607">Bug 91607</a></li>
+    <li>getFlowByName <a href="https://bugs.webkit.org/show_bug.cgi?id=91855">Bug 91855</a></li>
+</ul>
+</p>
+
+<article style="-webkit-flow-into: flow1"></article>
+<div style="-webkit-flow-from: flow1"></div>
+
+<article style="-webkit-flow-into: flow2"></article>
+<div style="-webkit-flow-from: flow2"></div>
+
+<article style="-webkit-flow-into: flow3"></article>
+<div style="-webkit-flow-from: flow3"></div>
+
+<iframe></iframe>
+
+</body>
+</html>

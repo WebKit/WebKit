@@ -1,3 +1,19 @@
+2012-07-24  Andrei Poenaru  <poenaru@adobe.com>
+
+        Web Inspector: Protocol Extension: add getFlowByName command
+        https://bugs.webkit.org/show_bug.cgi?id=91855
+
+        Reviewed by Pavel Feldman.
+
+        Created a single test suite for the WebInspector protocol extension for CSS Regions.
+
+        * inspector/styles/protocol-css-regions-commands-expected.txt: Added.
+        * inspector/styles/protocol-css-regions-commands.html: Added.
+        * inspector/styles/protocol-getNamedFlowCollection-command-expected.txt: Removed.
+        * inspector/styles/protocol-getNamedFlowCollection-command.html: Removed.
+        * platform/efl/TestExpectations:
+        * platform/qt/Skipped:
+
 2012-07-24  Anthony Scian  <ascian@rim.com>
 
         Web Inspector [JSC]: Enable initiator column in network panel.

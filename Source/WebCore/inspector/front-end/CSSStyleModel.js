@@ -178,7 +178,30 @@ WebInspector.CSSStyleModel.prototype = {
                 userCallback(namedFlowPayload);
         }
 
-        CSSAgent.getNamedFlowCollection(nodeId, callback.bind(null, userCallback));
+        CSSAgent.getNamedFlowCollection(nodeId, callback.bind(this, userCallback));
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} nodeId
+     * @param {string} flowName
+     * @param {function(?WebInspector.NamedFlow)} userCallback
+     */
+    getFlowByNameAsync: function(nodeId, flowName, userCallback)
+    {
+        /**
+         * @param {function(?WebInspector.NamedFlow)} userCallback
+         * @param {?Protocol.Error} error
+         * @param {?CSSAgent.NamedFlow=} namedFlowPayload
+         */
+        function callback(userCallback, error, namedFlowPayload)
+        {
+            if (error || !namedFlowPayload)
+                userCallback(null);
+            else
+                userCallback(WebInspector.NamedFlow.parsePayload(namedFlowPayload));
+        }
+
+        CSSAgent.getFlowByName(nodeId, flowName, callback.bind(this, userCallback));
     },
 
     /**
@@ -1216,6 +1239,26 @@ WebInspector.CSSDispatcher.prototype = {
     {
         this._cssModel._fireStyleSheetChanged(styleSheetId);
     }
+}
+
+/**
+ * @constructor
+ * @param {CSSAgent.NamedFlow} payload
+ */
+WebInspector.NamedFlow = function(payload)
+{
+    this.nodeId = payload.nodeId;
+    this.name = payload.name;
+    this.overset = payload.overset;
+}
+
+/**
+ * @param {CSSAgent.NamedFlow} payload
+ * @return {WebInspector.NamedFlow}
+ */
+WebInspector.NamedFlow.parsePayload = function(payload)
+{
+    return new WebInspector.NamedFlow(payload);
 }
 
 /**

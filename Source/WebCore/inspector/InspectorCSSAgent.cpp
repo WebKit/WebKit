@@ -51,6 +51,7 @@
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleSheetList.h"
+#include "WebKitNamedFlow.h"
 #include "WebKitNamedFlowCollection.h"
 
 #include <wtf/CurrentTime.h>
@@ -801,6 +802,24 @@ void InspectorCSSAgent::getNamedFlowCollection(ErrorString* errorString, int nod
         namedFlows->addItem(*it);
 
     result = namedFlows.release();
+}
+
+void InspectorCSSAgent::getFlowByName(ErrorString* errorString, int nodeId, const String& flowName, RefPtr<TypeBuilder::CSS::NamedFlow>& result)
+{
+    Document* document = m_domAgent->assertDocument(errorString, nodeId);
+    if (!document)
+        return;
+
+    WebKitNamedFlow* namedFlow = document->namedFlows()->flowByName(flowName);
+    if (!namedFlow) {
+        *errorString = "No target CSS Named Flow found";
+        return;
+    }
+
+    result = TypeBuilder::CSS::NamedFlow::create()
+        .setNodeId(nodeId)
+        .setName(flowName)
+        .setOverset(namedFlow->overset());
 }
 
 void InspectorCSSAgent::startSelectorProfiler(ErrorString*)
