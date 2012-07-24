@@ -59,10 +59,6 @@ BUGWK89052 SKIP : fast/css/image-orientation = PASS
 // This test assumes we cannot play RTSP, but we can.
 BUGWKEFL SKIP : media/unsupported-rtsp.html = TIMEOUT
 
-// Perf tests are really slow in debug builds and there are few benefits in
-// running them.
-WONTFIX SKIP DEBUG : perf = TIMEOUT
-
 // Link prefetch is disabled by default
 BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html = PASS
 BUGWKEFL SKIP : fast/dom/HTMLLinkElement/link-and-subresource-test.html = PASS
@@ -77,9 +73,13 @@ BUGWKEFL SKIP : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS
 BUGWKEFL SKIP : http/tests/misc/prefetch-purpose.html = PASS
 BUGWKEFL SKIP : loader/reload-subresource-when-type-changes.html = PASS
 
+// Perf tests are really slow in debug builds and there are few benefits in running them.
+WONTFIX SKIP DEBUG : perf = TIMEOUT
+
 // Perf tests are way too slow and some may fail due to timeout.
 WONTFIX : perf/adding-radio-buttons.html = TEXT PASS TIMEOUT
 WONTFIX : perf/array-binary-search.html = TEXT PASS TIMEOUT
+WONTFIX : perf/array-nested-loop.html = TEXT PASS TIMEOUT
 WONTFIX : perf/mouse-event.html = TEXT PASS TIMEOUT
 
 // Newly added test which fails on other bots too
@@ -175,6 +175,16 @@ BUGWK86084 : svg/dom/SVGScriptElement/script-onerror-bubbling.svg = TEXT PASS
 BUGWK60103 : fast/replaced/border-radius-clip.html = TEXT PASS
 BUGWK91366 : fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html = TEXT PASS
 BUGWK91958 : http/tests/inspector-enabled/injected-script-discard.html = TEXT PASS
+BUGWK92112 : fast/overflow/overflow-height-float-not-removed-crash2.html = CRASH PASS
+BUGWK85615 : http/tests/inspector/resource-har-pages.html = TEXT PASS
+
+// Aborting application cache downloads is flaky.
+BUGWK87633 : http/tests/appcache/abort-cache-onchecking-manifest-404.html = TEXT PASS
+BUGWK87633 : http/tests/appcache/abort-cache-ondownloading-resource-404.html = TEXT PASS
+
+// Tests that sometimes fail on the bot (for GTK and Chromium ports as well).
+BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = TEXT PASS
+BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = TEXT PASS
 
 // Several media tests are flaky on the bots
 BUGWKEFL : media/controls-styling.html = TEXT PASS
@@ -498,10 +508,6 @@ BUGWK84776 : ietestcenter/css3/multicolumn/column-width-applies-to-014.htm = IMA
 BUGWK84777 : ietestcenter/css3/multicolumn/column-width-applies-to-015.htm = IMAGE
 BUGWK84778 : ietestcenter/css3/multicolumn/column-width-negative-001.htm = IMAGE
 
-// Tests that sometimes fail on the bot (for GTK and Chromium ports as well)
-BUGWK77631 : fast/multicol/span/span-as-immediate-child-property-removal.html = TEXT PASS
-BUGWK77631 : fast/multicol/span/span-as-immediate-columns-child-removal.html = TEXT PASS
-
 BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = TEXT
 
 // Expando properties on attribute nodes disappear
@@ -590,10 +596,6 @@ BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE
 
 // Font kerning issue, fails on GTK as well.
 BUGWK76048 : fast/text/font-kerning.html = IMAGE
-
-// Aborting application cache downloads is flaky.
-BUGWK87633 : http/tests/appcache/abort-cache-onchecking-manifest-404.html = TEXT PASS
-BUGWK87633 : http/tests/appcache/abort-cache-ondownloading-resource-404.html = TEXT PASS
 
 // Fails on GTK as well
 BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
