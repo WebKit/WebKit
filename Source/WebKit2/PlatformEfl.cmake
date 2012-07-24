@@ -38,6 +38,7 @@ LIST(APPEND WebKit2_SOURCES
 
     UIProcess/API/efl/BatteryProvider.cpp
     UIProcess/API/efl/PageClientImpl.cpp
+    UIProcess/API/efl/VibrationProvider.cpp
     UIProcess/API/efl/ewk_context.cpp
     UIProcess/API/efl/ewk_context_request_manager_client.cpp
     UIProcess/API/efl/ewk_cookie_manager.cpp

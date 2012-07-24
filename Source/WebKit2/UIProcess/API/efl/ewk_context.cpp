@@ -22,6 +22,7 @@
 #include "ewk_context.h"
 
 #include "BatteryProvider.h"
+#include "VibrationProvider.h"
 #include "WKAPICast.h"
 #include "WKContextSoup.h"
 #include "WKRetainPtr.h"
@@ -58,6 +59,9 @@ struct _Ewk_Context {
 #if ENABLE(BATTERY_STATUS)
     RefPtr<BatteryProvider> batteryProvider;
 #endif
+#if ENABLE(VIBRATION)
+    RefPtr<VibrationProvider> vibrationProvider;
+#endif
 
     WKRetainPtr<WKSoupRequestManagerRef> requestManager;
     URLSchemeHandlerMap urlSchemeHandlers;
@@ -70,6 +74,11 @@ struct _Ewk_Context {
 #if ENABLE(BATTERY_STATUS)
         WKBatteryManagerRef wkBatteryManager = WKContextGetBatteryManager(contextRef);
         batteryProvider = BatteryProvider::create(wkBatteryManager);
+#endif
+
+#if ENABLE(VIBRATION)
+        WKVibrationRef wkVibrationRef = WKContextGetVibration(contextRef);
+        vibrationProvider = VibrationProvider::create(wkVibrationRef);
 #endif
 
         ewk_context_request_manager_client_attach(this);
@@ -150,4 +159,13 @@ Eina_Bool ewk_context_uri_scheme_register(Ewk_Context* ewkContext, const char* s
     WKSoupRequestManagerRegisterURIScheme(ewkContext->requestManager.get(), wkScheme.get());
 
     return true;
+}
+
+void ewk_context_vibration_client_callbacks_set(Ewk_Context* ewkContext, Ewk_Vibration_Client_Vibrate_Cb vibrate, Ewk_Vibration_Client_Vibration_Cancel_Cb cancel, void* data)
+{
+    EINA_SAFETY_ON_NULL_RETURN(ewkContext);
+
+#if ENABLE(VIBRATION)
+    ewkContext->vibrationProvider->setVibrationClientCallbacks(vibrate, cancel, data);
+#endif
 }

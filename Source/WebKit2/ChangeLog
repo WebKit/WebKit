@@ -1,3 +1,40 @@
+2012-07-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL][WK2] Add vibration client
+        https://bugs.webkit.org/show_bug.cgi?id=91371
+
+        Reviewed by Antonio Gomes.
+
+        Implement Vibration provider for WebKit2 EFL and add an API to set
+        vibration client callbacks by application to handle the tactile
+        feedback in the application when the page content ask for vibration.
+
+        * CMakeLists.txt: Add WebCore/Modules/vibration to include path.
+        * PlatformEfl.cmake: Add VibrationProvider.cpp file to the build
+        system.
+        * UIProcess/API/efl/VibrationProvider.cpp: Added.
+        (_Ewk_Vibration_Client): Structure contains the vibration client
+        callbacks.
+        (_Ewk_Vibration_Client::_Ewk_Vibration_Client):
+        (toVibrationProvider): Helper function to cast the clientinfo to
+        VibrationProvider.
+        (vibrateCallback):
+        (cancelVibrationCallback):
+        (VibrationProvider::create):
+        (VibrationProvider::VibrationProvider):
+        (VibrationProvider::~VibrationProvider):
+        (VibrationProvider::vibrate):
+        (VibrationProvider::cancelVibration):
+        (VibrationProvider::setVibrationClientCallbacks):
+        * UIProcess/API/efl/VibrationProvider.h: Added.
+        (VibrationProvider):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context):
+        (createDefaultEwkContext):
+        (ewk_context_vibration_client_callbacks_set): API to set vibration
+        client callbacks.
+        * UIProcess/API/efl/ewk_context.h:
+
 2012-07-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix compilation after QtQuick API changes
