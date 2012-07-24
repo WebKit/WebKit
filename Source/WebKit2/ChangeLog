@@ -1,3 +1,20 @@
+2012-07-24  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac WK2] Improve text input logging
+        https://bugs.webkit.org/show_bug.cgi?id=92147
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView insertText:replacementRange:]):
+        (-[WKView keyUp:]):
+        (-[WKView keyDown:]):
+        (-[WKView flagsChanged:]):
+        (-[WKView _executeSavedKeypressCommands]):
+        (-[WKView _notifyInputContextAboutDiscardedComposition]):
+        (-[WKView _interpretKeyEvent:savingCommandsTo:WebCore::]):
+        (-[WKView _updateSecureInputState]):
+
 2012-07-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Provide more useful output when an injected bundle cannot be loaded

@@ -1201,6 +1201,7 @@ static const short kIOHIDEventTypeScroll = 6;
     // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
     // then we also execute it immediately, as there will be no other chance.
     if (parameters && !isFromInputMethod) {
+        // FIXME: Handle replacementRange in this case, too. It's known to occur in practice when canceling Press and Hold (see <rdar://11940670>).
         ASSERT(replacementRange.location == NSNotFound);
         KeypressCommand command("insertText:", text);
         parameters->commands->append(command);
@@ -1272,6 +1273,7 @@ static const short kIOHIDEventTypeScroll = 6;
 
 - (void)keyUp:(NSEvent *)theEvent
 {
+    LOG(TextInput, "keyUp:%p %@", theEvent, theEvent);
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
 }
 
@@ -1326,13 +1328,17 @@ static const short kIOHIDEventTypeScroll = 6;
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+    LOG(TextInput, "keyDown:%p %@%s", theEvent, theEvent, (theEvent == _data->_keyDownEventBeingResent) ? " (re-sent)" : "");
+
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
     [[theEvent retain] autorelease];
 
-    if ([self _tryHandlePluginComplexTextInputKeyDown:theEvent])
+    if ([self _tryHandlePluginComplexTextInputKeyDown:theEvent]) {
+        LOG(TextInput, "...handled by plug-in");
         return;
+    }
 
     // We could be receiving a key down from AppKit if we have re-sent an event
     // that maps to an action that is currently unavailable (for example a copy when
@@ -1347,6 +1353,8 @@ static const short kIOHIDEventTypeScroll = 6;
 
 - (void)flagsChanged:(NSEvent *)theEvent
 {
+    LOG(TextInput, "flagsChanged:%p %@", theEvent, theEvent);
+
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
@@ -1372,10 +1380,14 @@ static const short kIOHIDEventTypeScroll = 6;
     if (parameters->executingSavedKeypressCommands)
         return;
 
+    LOG(TextInput, "Executing %u saved keypress commands...", parameters->commands->size());
+
     parameters->executingSavedKeypressCommands = true;
     parameters->eventInterpretationHadSideEffects |= _data->_page->executeKeypressCommands(*parameters->commands);
     parameters->commands->clear();
     parameters->executingSavedKeypressCommands = false;
+
+    LOG(TextInput, "...done executing saved keypress commands.");
 }
 
 - (void)_notifyInputContextAboutDiscardedComposition
@@ -1386,6 +1398,7 @@ static const short kIOHIDEventTypeScroll = 6;
     if (![[self window] isKeyWindow] || self != [[self window] firstResponder])
         return;
 
+    LOG(TextInput, "-> discardMarkedText");
     [[super inputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
 }
 
@@ -2371,14 +2384,19 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     parameters.commands = &commands;
     _data->_interpretKeyEventsParameters = &parameters;
 
+    LOG(TextInput, "-> interpretKeyEvents:%p %@", event, event);
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
 
     _data->_interpretKeyEventsParameters = 0;
 
     // An input method may consume an event and not tell us (e.g. when displaying a candidate window),
     // in which case we should not bubble the event up the DOM.
-    if (parameters.consumedByIM)
+    if (parameters.consumedByIM) {
+        LOG(TextInput, "...event %p was consumed by an input method", event);
         return YES;
+    }
+
+    LOG(TextInput, "...interpretKeyEvents for event %p done, returns %d", event, parameters.eventInterpretationHadSideEffects);
 
     // If we have already executed all or some of the commands, the event is "handled". Note that there are additional checks on web process side.
     return parameters.eventInterpretationHadSideEffects;
@@ -2827,10 +2845,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         if (!_data->_inSecureInputState)
             EnableSecureEventInput();
         static NSArray *romanInputSources = [[NSArray alloc] initWithObjects:&NSAllRomanInputSourcesLocaleIdentifier count:1];
+        LOG(TextInput, "-> setAllowedInputSourceLocales:romanInputSources");
         [context setAllowedInputSourceLocales:romanInputSources];
     } else {
         if (_data->_inSecureInputState)
             DisableSecureEventInput();
+        LOG(TextInput, "-> setAllowedInputSourceLocales:nil");
         [context setAllowedInputSourceLocales:nil];
     }
     _data->_inSecureInputState = isInPasswordField;
