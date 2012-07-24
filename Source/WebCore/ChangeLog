@@ -1,3 +1,56 @@
+2012-07-24  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] String wrappers should be marked Independent
+        https://bugs.webkit.org/show_bug.cgi?id=91251
+
+        Reviewed by Adam Barth.
+
+        Currently V8 String wrappers are not marked Independent.
+        By marking them Independent, they can be reclaimed by the scavenger GC.
+        Although I couldn't find a case where this change reduces memory usage,
+        this change would be important for upcoming changes in string conversion
+        between V8 and WebKit (https://bugs.webkit.org/show_bug.cgi?id=91850).
+
+        'm_lastStringImpl = 0' in StringCache::remove() is important.
+        Look at the following code:
+
+            static void cachedStringCallback(v8::Persistent<v8::Value> wrapper, void* parameter)
+            {
+                ...;
+                stringCache()->remove(stringImpl);
+                wrapper.Dispose();
+            }
+
+            void StringCache::remove(StringImpl* stringImpl)
+            {
+                ...
+                if (m_lastStringImpl.get() == stringImpl)
+                    m_lastStringImpl = 0;
+            }
+
+            v8::Local<v8::String> v8ExternalString(StringImpl* stringImpl, v8::Isolate* isolate)
+            {
+                if (m_lastStringImpl.get() == stringImpl) {
+                    return v8::Local<v8::String>::New(m_lastV8String); // m_lastV8String points to a wrapper object that was accessed most recently.
+                }
+                return v8ExternalStringSlow(stringImpl, isolate);
+            }
+
+        Without 'm_lastStringImpl = 0', already disposed m_lastV8String can be used
+        in v8ExternalString(). This was a cause of the crashes of r122614.
+
+        Tests: At the initial commit of this patch (r122614),
+               the following tests had been broken due to missing 'm_lastStringImpl = 0'.
+               fast/workers/worker-location.html
+               Dromaeo/cssquery-jquery.html
+               Dromaeo/jslib-event-jquery.html
+               Dromaeo/jslib-style-jquery.html
+               Dromaeo/jslib-style-prototype.html
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::StringCache::remove):
+        (WebCore::StringCache::v8ExternalStringSlow):
+
 2012-07-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrack to match the specification

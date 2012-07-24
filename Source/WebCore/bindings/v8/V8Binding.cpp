@@ -467,6 +467,10 @@ void StringCache::remove(StringImpl* stringImpl)
 {
     ASSERT(m_stringCache.contains(stringImpl));
     m_stringCache.remove(stringImpl);
+    // Make sure that already disposed m_lastV8String is not used in
+    // StringCache::v8ExternalString().
+    if (m_lastStringImpl.get() == stringImpl)
+        m_lastStringImpl = 0;
 }
 
 v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, v8::Isolate* isolate)
@@ -493,6 +497,7 @@ v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, 
         return newString;
 
     stringImpl->ref();
+    wrapper.MarkIndependent();
     wrapper.MakeWeak(stringImpl, cachedStringCallback);
     m_stringCache.set(stringImpl, *wrapper);
 
