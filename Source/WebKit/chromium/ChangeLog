@@ -1,3 +1,17 @@
+2012-07-23  Adrienne Walker  <enne@google.com>
+
+        [chromium] Add more compositor unit tests for high DPI transforms
+        https://bugs.webkit.org/show_bug.cgi?id=91917
+
+        Reviewed by Kenneth Russell.
+
+        The current set of high DPI tests only deal with layers in a render
+        surface. Add some extra tests for non-surface layers. Also add a test
+        to make sure that an owning layer in a surface doesn't differ from a
+        non-owning layer in high DPI circumstances.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-07-23  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Fix unit tests in debug mode after r123375

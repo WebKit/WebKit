@@ -2946,7 +2946,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleLayerWithScaledContents
     // test makes sure that hit testing works correctly accounts for the contents scale.
     // A contentsScale that is not 1 effectively forces a non-identity transform between
     // layer's content space and layer's origin space, which is not included in the
-    // screenSpaceTransformn. The hit testing code must take this into account.
+    // screenSpaceTransform. The hit testing code must take this into account.
     //
     // To test this, the layer is positioned at (25, 25), and is size (50, 50). If
     // contentsScale is ignored, then hit testing will mis-interpret the visibleContentRect
@@ -3415,7 +3415,97 @@ PassRefPtr<ContentLayerChromium> createDrawableContentLayerChromium(ContentLayer
     return toReturn.release();
 }
 
-TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTranformsInHighDPI)
+TEST(CCLayerTreeHostCommonTest, verifyLayerTransformsInHighDPI)
+{
+    // Verify draw and screen space transforms of layers not in a surface.
+    MockContentLayerDelegate delegate;
+    WebTransformationMatrix identityMatrix;
+    WebTransformationMatrix parentMatrix;
+
+    RefPtr<ContentLayerChromium> parent = createDrawableContentLayerChromium(&delegate);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+
+    RefPtr<ContentLayerChromium> child = createDrawableContentLayerChromium(&delegate);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(2, 2), IntSize(10, 10), true);
+
+    RefPtr<ContentLayerChromium> childNoScale = createDrawableContentLayerChromium(&delegate);
+    setLayerPropertiesForTesting(childNoScale.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(2, 2), IntSize(10, 10), true);
+
+    parent->addChild(child);
+    parent->addChild(childNoScale);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->createRenderSurface();
+    parent->renderSurface()->setContentRect(IntRect(IntPoint(), parent->bounds()));
+    renderSurfaceLayerList.append(parent.get());
+
+    const double deviceScaleFactor = 2.5;
+    parentMatrix.scale(deviceScaleFactor);
+    parent->setContentsScale(deviceScaleFactor);
+    child->setContentsScale(deviceScaleFactor);
+    EXPECT_EQ(childNoScale->contentsScale(), 1);
+
+    CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), parentMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    EXPECT_EQ(1u, renderSurfaceLayerList.size());
+
+    // Verify parent transforms
+    WebTransformationMatrix expectedParentScreenSpaceTransform;
+    expectedParentScreenSpaceTransform.setM11(deviceScaleFactor);
+    expectedParentScreenSpaceTransform.setM22(deviceScaleFactor);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentScreenSpaceTransform, parent->screenSpaceTransform());
+
+    WebTransformationMatrix expectedParentDrawTransform = expectedParentScreenSpaceTransform;
+    expectedParentDrawTransform.translate(0.5 * parent->bounds().width(), 0.5 * parent->bounds().height());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentDrawTransform, parent->drawTransform());
+
+    // Verify results of transformed parent rects
+    IntRect parentBounds(IntPoint(), parent->bounds());
+    IntRect centeredParentBounds = parentBounds;
+    centeredParentBounds.move(-parentBounds.width() * 0.5, -parentBounds.height() * 0.5);
+
+    FloatRect parentDrawRect = CCMathUtil::mapClippedRect(parent->drawTransform(), FloatRect(centeredParentBounds));
+    FloatRect parentScreenSpaceRect = CCMathUtil::mapClippedRect(parent->screenSpaceTransform(), FloatRect(parentBounds));
+
+    FloatRect expectedParentDrawRect(FloatPoint(), parent->bounds());
+    expectedParentDrawRect.scale(deviceScaleFactor);
+    EXPECT_FLOAT_RECT_EQ(expectedParentDrawRect, parentDrawRect);
+    EXPECT_FLOAT_RECT_EQ(expectedParentDrawRect, parentScreenSpaceRect);
+
+    // Verify child transforms
+    WebTransformationMatrix expectedChildScreenSpaceTransform;
+    expectedChildScreenSpaceTransform.setM11(deviceScaleFactor);
+    expectedChildScreenSpaceTransform.setM22(deviceScaleFactor);
+    expectedChildScreenSpaceTransform.translate(child->position().x(), child->position().y());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildScreenSpaceTransform, child->screenSpaceTransform());
+
+    WebTransformationMatrix expectedChildDrawTransform = expectedChildScreenSpaceTransform;
+    expectedChildDrawTransform.translate(0.5 * child->bounds().width(), 0.5 * child->bounds().height());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildDrawTransform, child->drawTransform());
+
+    // Verify results of transformed child rects
+    IntRect childBounds(IntPoint(), child->bounds());
+    IntRect centeredChildBounds = childBounds;
+    centeredChildBounds.move(-childBounds.width() * 0.5, -childBounds.height() * 0.5);
+
+    FloatRect childDrawRect = CCMathUtil::mapClippedRect(child->drawTransform(), FloatRect(centeredChildBounds));
+    FloatRect childScreenSpaceRect = CCMathUtil::mapClippedRect(child->screenSpaceTransform(), FloatRect(childBounds));
+
+    FloatRect expectedChildDrawRect(FloatPoint(), child->bounds());
+    expectedChildDrawRect.move(child->position().x(), child->position().y());
+    expectedChildDrawRect.scale(deviceScaleFactor);
+    EXPECT_FLOAT_RECT_EQ(expectedChildDrawRect, childDrawRect);
+    EXPECT_FLOAT_RECT_EQ(expectedChildDrawRect, childScreenSpaceRect);
+
+    // Verify childNoScale transforms
+    EXPECT_TRANSFORMATION_MATRIX_EQ(child->drawTransform(), childNoScale->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(child->screenSpaceTransform(), childNoScale->screenSpaceTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTransformsInHighDPI)
 {
     MockContentLayerDelegate delegate;
     WebTransformationMatrix identityMatrix;
@@ -3432,7 +3522,13 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTranformsInHighDPI)
     RefPtr<ContentLayerChromium> replica = createDrawableContentLayerChromium(&delegate);
     setLayerPropertiesForTesting(replica.get(), replicaTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(2, 2), IntSize(10, 10), true);
 
+    // This layer should end up in the same surface as child, with the same draw
+    // and screen space transforms.
+    RefPtr<ContentLayerChromium> duplicateChildNonOwner = createDrawableContentLayerChromium(&delegate);
+    setLayerPropertiesForTesting(duplicateChildNonOwner.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), true);
+
     parent->addChild(child);
+    child->addChild(duplicateChildNonOwner);
     child->setReplicaLayer(replica.get());
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
@@ -3447,6 +3543,7 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTranformsInHighDPI)
     parentMatrix.scale(deviceScaleFactor);
     parent->setContentsScale(deviceScaleFactor);
     child->setContentsScale(deviceScaleFactor);
+    duplicateChildNonOwner->setContentsScale(deviceScaleFactor);
     replica->setContentsScale(deviceScaleFactor);
 
     CCLayerTreeHostCommon::calculateDrawTransforms(parent.get(), parent.get(), parentMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
@@ -3455,12 +3552,31 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTranformsInHighDPI)
     // render surface (it needs one because it has a replica layer).
     EXPECT_EQ(2u, renderSurfaceLayerList.size());
 
+    WebTransformationMatrix expectedParentScreenSpaceTransform;
+    expectedParentScreenSpaceTransform.setM11(deviceScaleFactor);
+    expectedParentScreenSpaceTransform.setM22(deviceScaleFactor);
+    WebTransformationMatrix expectedParentDrawTransform = expectedParentScreenSpaceTransform;
+    expectedParentDrawTransform.translate(0.5 * parent->bounds().width(), 0.5 * parent->bounds().height());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentDrawTransform, parent->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentScreenSpaceTransform, parent->screenSpaceTransform());
+
     WebTransformationMatrix expectedDrawTransform;
     expectedDrawTransform.setM11(deviceScaleFactor);
     expectedDrawTransform.setM22(deviceScaleFactor);
     expectedDrawTransform.setM41(0.5 * deviceScaleFactor * child->bounds().width());
     expectedDrawTransform.setM42(0.5 * deviceScaleFactor * child->bounds().height());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedDrawTransform, child->drawTransform());
+
+    WebTransformationMatrix expectedScreenSpaceTransform;
+    expectedScreenSpaceTransform.setM11(deviceScaleFactor);
+    expectedScreenSpaceTransform.setM22(deviceScaleFactor);
+    expectedScreenSpaceTransform.translate(child->position().x(), child->position().y());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedScreenSpaceTransform, child->screenSpaceTransform());
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(child->drawTransform(), duplicateChildNonOwner->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(child->screenSpaceTransform(), duplicateChildNonOwner->screenSpaceTransform());
+    EXPECT_INT_RECT_EQ(child->drawableContentRect(), duplicateChildNonOwner->drawableContentRect());
+    EXPECT_EQ(child->contentBounds(), duplicateChildNonOwner->contentBounds());
 
     WebTransformationMatrix expectedRenderSurfaceDrawTransform;
     expectedRenderSurfaceDrawTransform.translate(deviceScaleFactor * (child->position().x() + 0.5 * child->bounds().width()), deviceScaleFactor * (child->position().y() + 0.5 * child->bounds().height()));
@@ -3470,9 +3586,9 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTranformsInHighDPI)
     expectedOriginTransform.translate(deviceScaleFactor * 2, deviceScaleFactor * 2);
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedOriginTransform, child->renderSurface()->originTransform());
 
-    WebTransformationMatrix expectedScreenSpaceTransform;
-    expectedScreenSpaceTransform.translate(deviceScaleFactor * 2, deviceScaleFactor * 2);
-    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedScreenSpaceTransform, child->renderSurface()->screenSpaceTransform());
+    WebTransformationMatrix expectedSurfaceScreenSpaceTransform;
+    expectedSurfaceScreenSpaceTransform.translate(deviceScaleFactor * 2, deviceScaleFactor * 2);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedSurfaceScreenSpaceTransform, child->renderSurface()->screenSpaceTransform());
 
     WebTransformationMatrix expectedReplicaDrawTransform;
     expectedReplicaDrawTransform.setM22(-1);
