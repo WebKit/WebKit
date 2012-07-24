@@ -1,3 +1,20 @@
+2012-07-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        inline-table wrapper should be generated for display: inline element only
+        https://bugs.webkit.org/show_bug.cgi?id=92054
+
+        Reviewed by Abhishek Arya.
+
+        CSS 2.1 only takes into account the display when determining if we should generate
+        an inline-table. My misreading of the spec would make us generate an inline-table
+        wrapper for any inline formatting context.
+
+        Test: fast/table/inline-block-generates-table-wrapper.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::createAnonymousWithParentRenderer):
+        Changed to use display instead of isInline to properly match the spec.
+
 2012-07-24  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Temporarily continue generating backend keys for empty key lists

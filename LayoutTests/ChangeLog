@@ -1,3 +1,16 @@
+2012-07-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        inline-table wrapper should be generated for display: inline element only
+        https://bugs.webkit.org/show_bug.cgi?id=92054
+
+        Reviewed by Abhishek Arya.
+
+        For some reason, using dumpAsText didn't dump the 2 lines properly so the test
+        is a reftest to work-around that.
+
+        * fast/table/inline-block-generates-table-wrapper-expected.html: Added.
+        * fast/table/inline-block-generates-table-wrapper.html: Added.
+
 2012-07-24  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Unskip tests in fast/hidpi
