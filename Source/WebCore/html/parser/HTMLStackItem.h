@@ -57,6 +57,7 @@ public:
 
     AtomicHTMLToken* token() { return m_token.get(); }
     const AtomicString& namespaceURI() const { return m_namespaceURI; }
+    const AtomicString& localName() const { return m_token->name(); }
 
 private:
     HTMLStackItem(PassRefPtr<ContainerNode> node)

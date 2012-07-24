@@ -1,3 +1,28 @@
+2012-07-24  Kwang Yul Seo  <skyul@company100.net>
+
+        Ensure Noah's ark without reading the DOM tree.
+        https://bugs.webkit.org/show_bug.cgi?id=92065
+
+        Reviewed by Adam Barth.
+
+        Technically we shouldn't read attributes back from the DOM. If JavaScript changes
+        the attributes values, we could get a slightly wrong output here.
+
+        Read attributes from tokens saved in the active formatting element list.
+
+        No new tests, covered by existing tests.
+
+        * html/parser/HTMLFormattingElementList.cpp:
+        (WebCore::attributeCount):
+        (WebCore::HTMLFormattingElementList::append):
+        (WebCore::HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly):
+        (WebCore::HTMLFormattingElementList::ensureNoahsArkCondition):
+        * html/parser/HTMLFormattingElementList.h:
+        (HTMLFormattingElementList):
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::localName):
+        (HTMLStackItem):
+
 2012-07-23  Kwang Yul Seo  <skyul@company100.net>
 
         Clear the external characters pointer of an AtomicHTMLToken before the raw token is cleared.
