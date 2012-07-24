@@ -424,6 +424,9 @@ Attach depth using DEPTH_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+PASS gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+PASS gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
 Attach depth using STENCIL_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
@@ -456,6 +459,9 @@ Attach depthStencil using DEPTH_STENCIL_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+PASS gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+PASS gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+PASS gl.getParameter(gl.STENCIL_BITS) >= 8 is true
 Attach depthStencil using DEPTH_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
@@ -504,18 +510,27 @@ PASS getError was expected value: NO_ERROR :
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+PASS gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+PASS gl.getParameter(gl.DEPTH_BITS) == 0 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
 Attach color renderbuffer with internalformat == RGB5_A1
 PASS colorBuffer = gl.createRenderbuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+PASS gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+PASS gl.getParameter(gl.DEPTH_BITS) == 0 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
 Attach color renderbuffer with internalformat == RGB565
 PASS colorBuffer = gl.createRenderbuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+PASS gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+PASS gl.getParameter(gl.DEPTH_BITS) == 0 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
 Create and attach depthStencil renderbuffer
 PASS depthStencilBuffer = gl.createRenderbuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
@@ -532,6 +547,38 @@ PASS getError was expected value: NO_ERROR :
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) returned 36053
+PASS gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16 is true
+PASS gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+PASS gl.getParameter(gl.STENCIL_BITS) >= 8 is true
+
+test: DEPTH_COMPONENT16 vs DEPTH_STENCIL with delete
+PASS should be green
+test deleting second renderbuffer
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS getError was expected value: NO_ERROR : 
+PASS should be green
+
+test: DEPTH_COMPONENT16 vs DEPTH_STENCIL with unbind
+PASS should be green
+test unbinding second renderbuffer
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS getError was expected value: NO_ERROR : 
+PASS should be green
+
+test: DEPTH_STENCIL vs DEPTH_COMPONENT16 with delete
+PASS should be green
+test deleting second renderbuffer
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS getError was expected value: NO_ERROR : 
+PASS should be green
+
+test: DEPTH_STENCIL vs DEPTH_COMPONENT16 with unbind
+PASS should be green
+test unbinding second renderbuffer
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS getError was expected value: NO_ERROR : 
+PASS should be green
+PASS getError was expected value: NO_ERROR : 
 PASS fbo = gl.createFramebuffer() is non-null.
 PASS colorBuffer = gl.createRenderbuffer() is non-null.
 PASS depthBuffer = gl.createRenderbuffer() is non-null.

@@ -40,6 +40,33 @@ function checkFramebufferForAllowedStatuses(allowedStatuses)
         testFailed(msg);
 }
 
+function checkBufferBits(attachment0, attachment1)
+{
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE)
+      return;
+
+    var haveDepthBuffer = attachment0 == gl.DEPTH_ATTACHMENT ||
+                          attachment0 == gl.DEPTH_STENCIL_ATTACHMENT ||
+                          attachment1 == gl.DEPTH_ATTACHMENT ||
+                          attachment1 == gl.DEPTH_STENCIL_ATTACHMENT;
+    var haveStencilBuffer = attachment0 == gl.STENCIL_ATTACHMENT ||
+                            attachment0 == gl.DEPTH_STENCIL_ATTACHMENT ||
+                            attachment1 == gl.STENCIL_ATTACHMENT ||
+                            attachment1 == gl.DEPTH_STENCIL_ATTACHMENT;
+
+    shouldBeTrue("gl.getParameter(gl.RED_BITS) + gl.getParameter(gl.GREEN_BITS) + gl.getParameter(gl.BLUE_BITS) + gl.getParameter(gl.ALPHA_BITS) >= 16");
+
+    if (haveDepthBuffer)
+      shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) >= 16");
+    else
+      shouldBeTrue("gl.getParameter(gl.DEPTH_BITS) == 0");
+
+    if (haveStencilBuffer)
+      shouldBeTrue("gl.getParameter(gl.STENCIL_BITS) >= 8");
+    else
+      shouldBeTrue("gl.getParameter(gl.STENCIL_BITS) == 0");
+}
+
 function testAttachment(attachment, buffer, allowedStatuses)
 {
     shouldBeNonNull("fbo = gl.createFramebuffer()");
@@ -54,6 +81,7 @@ function testAttachment(attachment, buffer, allowedStatuses)
         gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(width * height * 4));
         glErrorShouldBe(gl, gl.INVALID_FRAMEBUFFER_OPERATION);
     }
+    checkBufferBits(attachment);
     gl.deleteFramebuffer(fbo);
 }
 
@@ -67,6 +95,7 @@ function testAttachments(attachment0, buffer0, attachment1, buffer1, allowedStat
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment1, gl.RENDERBUFFER, buffer1);
     glErrorShouldBe(gl, gl.NO_ERROR);
     checkFramebufferForAllowedStatuses(allowedStatuses);
+    checkBufferBits(attachment0, attachment1);
     gl.deleteFramebuffer(fbo);
 }
 
@@ -105,6 +134,94 @@ function testDepthStencilRenderbuffer(allowedStatuses)
     }
     glErrorShouldBe(gl, gl.NO_ERROR);
     testAttachment(gl.DEPTH_STENCIL_ATTACHMENT, depthStencilBuffer, allowedStatuses);
+    testDepthStencilDepthStencil();
+}
+
+function testDepthStencilDepthStencil()
+{
+    if (!width || !height) {
+        return;
+    }
+
+    var tests = [
+        {   firstFormat: gl.DEPTH_COMPONENT16,
+            firstAttach: gl.DEPTH_ATTACHMENT,
+            secondFormat: gl.DEPTH_STENCIL,
+            secondAttach: gl.DEPTH_STENCIL_ATTACHMENT
+        },
+        {   firstFormat: gl.DEPTH_STENCIL,
+            firstAttach: gl.DEPTH_STENCIL_ATTACHMENT,
+            secondFormat: gl.DEPTH_COMPONENT16,
+            secondAttach: gl.DEPTH_ATTACHMENT
+        }
+    ];
+    for (var ii = 0; ii < tests.length; ++ii) {
+        var test = tests[ii];
+        for (var jj = 0; jj < 2; ++jj) {
+            var fbo = gl.createFramebuffer();
+            var tex = gl.createTexture();
+            var firstRb = gl.createRenderbuffer();
+
+            debug("");
+            debug("test: " + wtu.glEnumToString(gl, test.firstFormat) + " vs " + wtu.glEnumToString(gl, test.secondFormat) + " with " + (jj ? "unbind" : "delete"));
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+            // attach texture as color
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+
+            // attach first
+            gl.bindRenderbuffer(gl.RENDERBUFFER, firstRb);
+            gl.renderbufferStorage(gl.RENDERBUFFER, test.firstFormat, width, height);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, test.firstAttach, gl.RENDERBUFFER, firstRb);
+
+            if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_COMPLETE) {
+                gl.enable(gl.DEPTH_TEST);
+                var program = wtu.setupColorQuad(gl);
+                // Test it works
+                wtu.drawUByteColorQuad(gl, [0, 255, 0, 255]);
+                wtu.drawUByteColorQuad(gl, [255, 0, 0, 255]);  // should not draw since DEPTH_FUNC == LESS
+                wtu.checkCanvasRect(gl, 0, 0, width, height, [0, 255, 0, 255], "should be green");
+
+                var secondRb = gl.createRenderbuffer();
+
+                // attach second
+                gl.bindRenderbuffer(gl.RENDERBUFFER, secondRb);
+                gl.renderbufferStorage(gl.RENDERBUFFER, test.secondFormat, width, height);
+                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, test.secondAttach, gl.RENDERBUFFER, secondRb);
+
+                if (jj == 0) {
+                  // now delete it
+                  debug("test deleting second renderbuffer");
+                  gl.deleteRenderbuffer(secondRb);
+                } else {
+                  // unbind it
+                  debug("test unbinding second renderbuffer");
+                  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, test.secondAttach, gl.RENDERBUFFER, null);
+                }
+
+                // If the first attachment is not restored this may fail
+                shouldBe('gl.checkFramebufferStatus(gl.FRAMEBUFFER)', 'gl.FRAMEBUFFER_COMPLETE');
+                glErrorShouldBe(gl, gl.NO_ERROR);
+
+                // If the first attachment is not restored this may fail.
+                gl.clear(gl.DEPTH_BUFFER_BIT);
+                wtu.drawUByteColorQuad(gl, [0, 255, 0, 255]);
+                wtu.drawUByteColorQuad(gl, [255, 0, 0, 255]);  // should not draw since DEPTH_FUNC == LESS
+                wtu.checkCanvasRect(gl, 0, 0, width, height, [0, 255, 0, 255], "should be green");
+                gl.disable(gl.DEPTH_TEST);
+
+                if (jj == 1) {
+                  gl.deleteRenderbuffer(secondRb);
+                }
+            }
+
+            gl.deleteRenderbuffer(secondRb);
+            gl.deleteFramebuffer(fbo);
+        }
+    }
+    glErrorShouldBe(gl, gl.NO_ERROR);
 }
 
 description("Test framebuffer object attachment behaviors");

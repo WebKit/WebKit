@@ -108,6 +108,27 @@ var simpleTextureFragmentShader = [
   '}'].join('\n');
 
 /**
+ * A vertex shader for a single texture.
+ * @type {string}
+ */
+var simpleColorVertexShader = [
+  'attribute vec4 vPosition;',
+  'void main() {',
+  '    gl_Position = vPosition;',
+  '}'].join('\n');
+
+/**
+ * A fragment shader for a color.
+ * @type {string}
+ */
+var simpleColorFragmentShader = [
+  'precision mediump float;',
+  'uniform vec4 u_color;',
+  'void main() {',
+  '    gl_FragData[0] = u_color;',
+  '}'].join('\n');
+
+/**
  * Creates a simple texture vertex shader.
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @return {!WebGLShader}
@@ -259,6 +280,23 @@ var setupTexturedQuad = function(
 };
 
 /**
+ * Creates a program and buffers for rendering a color quad.
+ * @param {!WebGLContext} gl The WebGLContext to use.
+ * @param {number} opt_positionLocation The attrib location for position.
+ * @return {!WebGLProgram}
+ */
+var setupColorQuad = function(gl, opt_positionLocation) {
+  opt_positionLocation = opt_positionLocation || 0;
+  var program = wtu.setupProgram(
+      gl,
+      [simpleColorVertexShader, simpleColorFragmentShader],
+      ['vPosition'],
+      [opt_positionLocation]);
+  setupUnitQuad(gl, opt_positionLocation);
+  return program;
+};
+
+/**
  * Creates a unit quad with only positions of a given rez
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {number} gridRez The resolution of the mesh grid.
@@ -365,6 +403,40 @@ var createColoredTexture = function(gl, width, height, color) {
   return tex;
 };
 
+var ubyteToFloat = function(c) {
+  return c / 255;
+};
+
+/**
+ * Draws a previously setup quad in the given color.
+ * @param {!WebGLContext} gl The WebGLContext to use.
+ * @param {!Array.<number>} color The color to draw with. A 4
+ *        element array where each element is in the range 0 to
+ *        1.
+ */
+var drawFloatColorQuad = function(gl, color) {
+  var program = gl.getParameter(gl.CURRENT_PROGRAM);
+  var colorLocation = gl.getUniformLocation(program, "u_color");
+  gl.uniform4fv(colorLocation, color);
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+};
+
+
+/**
+ * Draws a previously setup quad in the given color.
+ * @param {!WebGLContext} gl The WebGLContext to use.
+ * @param {!Array.<number>} color The color to draw with. A 4
+ *        element array where each element is in the range 0 to
+ *        255.
+ */
+var drawUByteColorQuad = function(gl, color) {
+  var floatColor = [];
+  for (var ii = 0; ii < color.length; ++ii) {
+    floatColor[ii] = ubyteToFloat(color[ii]);
+  }
+  drawFloatColorQuad(gl, floatColor);
+};
+
 /**
  * Draws a previously setup quad.
  * @param {!WebGLContext} gl The WebGLContext to use.
@@ -381,6 +453,25 @@ var drawQuad = function(gl, opt_color) {
       opt_color[3] / 255);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLES, 0, 6);
+};
+
+/**
+ * Draws a previously setup quad.
+ * @param {!WebGLContext} gl The WebGLContext to use.
+ * @param {number} gridRes Resolution of grid.
+ * @param {!Array.<number>} opt_color The color to fill clear with before
+ *        drawing. A 4 element array where each element is in the range 0 to
+ *        255. Default [255, 255, 255, 255]
+ */
+var drawIndexedQuad = function(gl, gridRes, opt_color) {
+  opt_color = opt_color || [255, 255, 255, 255];
+  gl.clearColor(
+      opt_color[0] / 255,
+      opt_color[1] / 255,
+      opt_color[2] / 255,
+      opt_color[3] / 255);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.drawElements(gl.TRIANGLES, gridRes * 6, gl.UNSIGNED_SHORT, 0);
 };
 
 /**
@@ -1230,6 +1321,9 @@ return {
   checkCanvasRect: checkCanvasRect,
   createColoredTexture: createColoredTexture,
   drawQuad: drawQuad,
+  drawIndexedQuad: drawIndexedQuad,
+  drawUByteColorQuad: drawUByteColorQuad,
+  drawFloatColorQuad: drawFloatColorQuad,
   endsWith: endsWith,
   getExtensionWithKnownPrefixes: getExtensionWithKnownPrefixes,
   getFileListAsync: getFileListAsync,
@@ -1255,6 +1349,7 @@ return {
   log: log,
   loggingOff: loggingOff,
   error: error,
+  setupColorQuad: setupColorQuad,
   setupProgram: setupProgram,
   setupQuad: setupQuad,
   setupSimpleTextureFragmentShader: setupSimpleTextureFragmentShader,

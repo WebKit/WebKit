@@ -1,3 +1,54 @@
+2012-07-24  Zhenyao Mo  <zmo@google.com>
+
+        Rebaseline - gardening stuff.
+        
+        Unreviewed.
+
+        * fast/canvas/webgl/framebuffer-object-attachment-expected.txt:
+        * fast/canvas/webgl/framebuffer-object-attachment.html:
+        * fast/canvas/webgl/resources/webgl-test-utils.js:
+        (WebGLTestUtils):
+        * platform/chromium-linux-x86/css3/selectors3/html: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/xhtml: Removed.
+        * platform/chromium-linux-x86/css3/selectors3/xml: Removed.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/core: Removed.
+        * platform/chromium-linux/compositing/overflow/theme-affects-visual-overflow-expected.png:
+        * platform/chromium-linux/css1/box_properties/acid_test-expected.png:
+        * platform/chromium-linux/css2.1/t09-c5526c-display-00-e-expected.png:
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-25-expected.png:
+        * platform/chromium-linux/css3/selectors3/html/css3-modsel-70-expected.png:
+        * platform/chromium-linux/css3/selectors3/xhtml/css3-modsel-25-expected.png:
+        * platform/chromium-linux/css3/selectors3/xhtml/css3-modsel-70-expected.png:
+        * platform/chromium-linux/css3/selectors3/xml/css3-modsel-25-expected.png:
+        * platform/chromium-linux/css3/selectors3/xml/css3-modsel-70-expected.png:
+        * platform/chromium-linux/fast/block/basic/011-expected.png:
+        * platform/chromium-linux/fast/block/margin-collapse/103-expected.png:
+        * platform/chromium-linux/fast/css/non-standard-checkbox-size-expected.png:
+        * platform/chromium-linux/fast/forms/001-expected.png:
+        * platform/chromium-linux/fast/forms/basic-inputs-expected.png:
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-linux/fast/forms/file/file-input-disabled-expected.png:
+        * platform/chromium-linux/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-linux/fast/forms/formmove-expected.png:
+        * platform/chromium-linux/fast/forms/formmove2-expected.png:
+        * platform/chromium-linux/fast/forms/indeterminate-expected.png:
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-linux/fast/forms/input-value-expected.png:
+        * platform/chromium-linux/fast/inline/positionedLifetime-expected.png:
+        * platform/chromium-linux/fast/parser/bad-xml-slash-expected.png:
+        * platform/chromium-linux/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-linux/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-linux/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-linux/fast/text/whitespace/normal-after-nowrap-breaking-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/canvas/webgl/framebuffer-object-attachment-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/text/whitespace/normal-after-nowrap-breaking-expected.png: Removed.
+        * platform/mac-snowleopard/fast/canvas/webgl/framebuffer-object-attachment-expected.txt: Removed.
+        * platform/mac/fast/canvas/webgl/framebuffer-object-attachment-expected.txt: Removed.
+
 2012-07-24  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] fast/block/basic needs rebaseline after new test fonts
