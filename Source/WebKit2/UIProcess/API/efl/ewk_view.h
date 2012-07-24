@@ -161,7 +161,7 @@ typedef struct _Ewk_Web_Resource_Request Ewk_Web_Resource_Request;
 struct _Ewk_Web_Resource_Request {
     Ewk_Web_Resource *resource; /**< resource being requested */
     Ewk_Url_Request *request; /**< URL request for the resource */
-    Ewk_Url_Response *redirect_response; /**< Possible redirect response for the resource */
+    Ewk_Url_Response *redirect_response; /**< Possible redirect response for the resource or @c NULL */
 };
 
 /// Creates a type name for _Ewk_Web_Resource_Load_Response.

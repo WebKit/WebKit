@@ -44,6 +44,7 @@
 #include "ewk_web_resource_private.h"
 #include <wtf/text/CString.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
 static inline Evas_Object* toEwkView(const void* clientInfo)
@@ -66,10 +67,11 @@ static void didInitiateLoadForResource(WKPageRef, WKFrameRef wkFrame, uint64_t r
 static void didSendRequestForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
 {
     Ewk_Url_Request* request = ewk_url_request_new(wkRequest);
-    Ewk_Url_Response* redirectResponse = ewk_url_response_new(toImpl(wkRedirectResponse)->resourceResponse());
+    Ewk_Url_Response* redirectResponse = wkRedirectResponse ? ewk_url_response_new(toImpl(wkRedirectResponse)->resourceResponse()) : 0;
     ewk_view_resource_request_sent(toEwkView(clientInfo), resourceIdentifier, request, redirectResponse);
     ewk_url_request_unref(request);
-    ewk_url_response_unref(redirectResponse);
+    if (redirectResponse)
+        ewk_url_response_unref(redirectResponse);
 }
 
 static void didReceiveResponseForResource(WKPageRef, WKFrameRef, uint64_t resourceIdentifier, WKURLResponseRef wkResponse, const void* clientInfo)
