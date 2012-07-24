@@ -1,3 +1,20 @@
+2012-07-24  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Temporarily continue generating backend keys for empty key lists
+        https://bugs.webkit.org/show_bug.cgi?id=92012
+
+        Reviewed by Tony Chang.
+
+        Temporarily change key behavior to allow chromium in_process_webkit
+        to call putWithIndexKeys without inadvertently preventing index
+        key generation. Note this is temporary until frontend key generation
+        patch lands.
+
+        No new tests, this is part of a refactor that doesn't change behavior.
+
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+
 2012-07-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: introduce UISourceCodeFrame.

@@ -325,7 +325,9 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     Vector<OwnPtr<IndexWriter> > indexWriters;
     HashMap<String, IndexKeys> indexKeyMap;
-    if (indexKeys) {
+    // FIXME: Turn this into an ASSERT(indexKeys) when get-side key injection is the norm.
+    bool haveIndexKeys = indexKeys && !indexKeys->isEmpty();
+    if (haveIndexKeys) {
         for (size_t i = 0; i < indexNames->size(); ++i)
             indexKeyMap.add(indexNames->at(i), indexKeys->at(i));
     }
@@ -337,8 +339,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             continue; // The index object has been created, but does not exist in the database yet.
 
         OwnPtr<IndexWriter> indexWriter;
-        // FIXME: Turn this into an ASSERT(indexKeys) when get-side key injection is the norm.
-        if (indexKeys)
+        if (haveIndexKeys)
             indexWriter = adoptPtr(new IndexWriter(index->metadata(), indexKeyMap.get(it->first)));
         else {
             indexWriter = adoptPtr(new IndexWriter(index->metadata()));
