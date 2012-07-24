@@ -1,5 +1,19 @@
 2012-07-24  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
+        [Qt] Updated acid3 layout test results after monospace fix
+        https://bugs.webkit.org/show_bug.cgi?id=87501
+
+        Reviewed by Alexis Menard.
+
+        Updated Qt (same for WK1 and WK2) layout test results for
+        http/tests/misc/acid3.html after monospace font fix landed in r121971.
+
+        * platform/qt/Skipped: Unskip http/tests/misc/acid3.html.
+        * platform/qt/http/tests/misc/acid3-expected.png: Added.
+        * platform/qt/http/tests/misc/acid3-expected.txt: Added.
+
+2012-07-24  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
         [Qt] Unskip layout test after monospace-font fix
         https://bugs.webkit.org/show_bug.cgi?id=81899
 
