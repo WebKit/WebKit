@@ -320,6 +320,8 @@ void WebGraphicsLayer::setContentsNeedsDisplay()
     setContentsToImage(0);
     setContentsToImage(image.get());
     m_canvasNeedsDisplay = true;
+    if (client())
+        client()->notifySyncRequired(this);
 }
 
 void WebGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)

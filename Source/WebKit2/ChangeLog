@@ -1,3 +1,16 @@
+2012-07-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Make sure that an AC sync is triggered when the canvas contents is updated.
+        https://bugs.webkit.org/show_bug.cgi?id=92128
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This would cause missed frames when animating an accelerated 2D canvas without
+        touching the document.
+
+        * WebProcess/WebPage/LayerTreeCoordinator/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::setContentsNeedsDisplay):
+
 2012-07-24  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac WK2] Improve text input logging
