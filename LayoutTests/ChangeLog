@@ -1,3 +1,18 @@
+2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Rename fast/forms/number/number-crash.html to number-losing-renderer-on-click.html
+        https://bugs.webkit.org/show_bug.cgi?id=92085
+
+        Reviewed by Kent Tamura.
+
+        This patch renames test file fast/forms/number/number-crash.html to number-losing-renderer-on-click.html
+        to make test name denotes what test will be done.
+
+        * fast/forms/number/number-crash-expected.txt: Removed.
+        * fast/forms/number/number-crash.html: Removed.
+        * fast/forms/number/number-losing-renderer-on-click-expected.txt: Copied from LayoutTests/fast/forms/number/number-crash-expected.txt.
+        * fast/forms/number/number-losing-renderer-on-click.html: Copied from LayoutTests/fast/forms/number/number-crash.html.
+
 2012-07-24  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r123379. Newly added fast/css/sticky/parsing-position-sticky.html fails.
