@@ -36,6 +36,7 @@ namespace WebCore {
 class CachedResourceLoader;
 class Image;
 class RenderObject;
+class StyleResolver;
 
 struct SizeAndCount {
     SizeAndCount(IntSize newSize = IntSize(), int newCount = 0)

@@ -3363,7 +3363,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
                 CSSValue* item = i.value();
                 if (item->isImageGeneratorValue()) {
-                    m_style->setContent(StyleGeneratedImage::create(static_cast<CSSImageGeneratorValue*>(item)), didSet);
+                    if (item->isGradientValue())
+                        m_style->setContent(StyleGeneratedImage::create(static_cast<CSSGradientValue*>(item)->gradientWithStylesResolved(this).get()), didSet);
+                    else
+                        m_style->setContent(StyleGeneratedImage::create(static_cast<CSSImageGeneratorValue*>(item)), didSet);
                     didSet = true;
 #if ENABLE(CSS_IMAGE_SET)
                 } else if (item->isImageSetValue()) {
@@ -4389,8 +4392,11 @@ PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValu
     if (value->isImageValue())
         return cachedOrPendingFromValue(property, static_cast<CSSImageValue*>(value));
 
-    if (value->isImageGeneratorValue())
+    if (value->isImageGeneratorValue()) {
+        if (value->isGradientValue())
+            return generatedOrPendingFromValue(property, static_cast<CSSGradientValue*>(value)->gradientWithStylesResolved(this).get());
         return generatedOrPendingFromValue(property, static_cast<CSSImageGeneratorValue*>(value));
+    }
 
 #if ENABLE(CSS_IMAGE_SET)
     if (value->isImageSetValue())
@@ -4689,6 +4695,20 @@ static Color colorForCSSValue(int cssValueId)
             return col->color;
     }
     return RenderTheme::defaultTheme()->systemColor(cssValueId);
+}
+
+bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(CSSPrimitiveValue* value)
+{
+    int ident = value->getIdent();
+    switch (ident) {
+    case CSSValueWebkitText:
+    case CSSValueWebkitLink:
+    case CSSValueWebkitActivelink:
+    case CSSValueCurrentcolor:
+        return true;
+    default:
+        return false;
+    }
 }
 
 Color StyleResolver::colorFromPrimitiveValue(CSSPrimitiveValue* value, bool forVisitedLink) const

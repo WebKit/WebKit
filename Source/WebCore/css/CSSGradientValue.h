@@ -40,8 +40,11 @@ enum CSSGradientType { CSSLinearGradient, CSSRadialGradient };
 enum CSSGradientRepeat { NonRepeating, Repeating };
 
 struct CSSGradientColorStop {
+    CSSGradientColorStop() : m_colorIsDerivedFromElement(false) { };
     RefPtr<CSSPrimitiveValue> m_position; // percentage or length
     RefPtr<CSSPrimitiveValue> m_color;
+    Color m_resolvedColor;
+    bool m_colorIsDerivedFromElement;
 };
 
 class CSSGradientValue : public CSSImageGeneratorValue {
@@ -71,6 +74,7 @@ public:
 
     bool isPending() const { return false; }
     void loadSubimages(CachedResourceLoader*) { }
+    PassRefPtr<CSSGradientValue> gradientWithStylesResolved(StyleResolver*);
 
 protected:
     CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, bool deprecatedType = false)
@@ -78,6 +82,19 @@ protected:
         , m_stopsSorted(false)
         , m_deprecatedType(deprecatedType)
         , m_repeating(repeat == Repeating)
+    {
+    }
+
+    CSSGradientValue(const CSSGradientValue& other, ClassType classType, bool deprecatedType = false)
+        : CSSImageGeneratorValue(classType)
+        , m_firstX(other.m_firstX)
+        , m_firstY(other.m_firstY)
+        , m_secondX(other.m_secondX)
+        , m_secondY(other.m_secondY)
+        , m_stops(other.m_stops)
+        , m_stopsSorted(other.m_stopsSorted)
+        , m_deprecatedType(deprecatedType)
+        , m_repeating(other.isRepeating() ? Repeating : NonRepeating)
     {
     }
 
@@ -117,9 +134,20 @@ public:
     // Create the gradient for a given size.
     PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
 
+    PassRefPtr<CSSLinearGradientValue> clone() const
+    {
+        return adoptRef(new CSSLinearGradientValue(*this));
+    }
+
 private:
     CSSLinearGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
         : CSSGradientValue(LinearGradientClass, repeat, deprecatedType)
+    {
+    }
+
+    CSSLinearGradientValue(const CSSLinearGradientValue& other)
+        : CSSGradientValue(other, LinearGradientClass, other.deprecatedType())
+        , m_angle(other.m_angle)
     {
     }
 
@@ -131,6 +159,11 @@ public:
     static PassRefPtr<CSSRadialGradientValue> create(CSSGradientRepeat repeat, bool deprecatedType = false)
     {
         return adoptRef(new CSSRadialGradientValue(repeat, deprecatedType));
+    }
+
+    PassRefPtr<CSSRadialGradientValue> clone() const
+    {
+        return adoptRef(new CSSRadialGradientValue(*this));
     }
 
     String customCssText() const;
@@ -152,6 +185,18 @@ private:
         : CSSGradientValue(RadialGradientClass, repeat, deprecatedType)
     {
     }
+
+    CSSRadialGradientValue(const CSSRadialGradientValue& other)
+        : CSSGradientValue(other, RadialGradientClass, other.deprecatedType())
+        , m_firstRadius(other.m_firstRadius)
+        , m_secondRadius(other.m_secondRadius)
+        , m_shape(other.m_shape)
+        , m_sizingBehavior(other.m_sizingBehavior)
+        , m_endHorizontalSize(other.m_endHorizontalSize)
+        , m_endVerticalSize(other.m_endVerticalSize)
+    {
+    }
+
 
     // Resolve points/radii to front end values.
     float resolveRadius(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, float* widthOrHeight = 0);

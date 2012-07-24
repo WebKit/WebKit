@@ -1,3 +1,45 @@
+2012-07-23  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Null-pointer crash when a derived color like -webkit-activelink is set in a gradient stop
+        https://bugs.webkit.org/show_bug.cgi?id=89148
+
+        Reviewed by Simon Fraser.
+
+        CSSGradientValue attempted to resolve colors during paint, this crashed
+        when a derived color like -webkit-activelink was encountered because the
+        corresponding element was no longer available in the StyleResolver.
+        Instead, by adding a field to CSSGradientColorStop we can resolve and
+        then cache the resolved colors at the correct time. To avoid sharing
+        cached derived colors between elements we clone the gradient values when
+        needed.
+
+        Test: fast/css/crash-on-gradient-with-derived-color.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::gradientWithStylesResolved): Added. Resolve and cache
+        resolved colors, clone if colors are derived from the element.
+        (WebCore):
+        (WebCore::CSSGradientValue::addStops):
+        (WebCore::CSSGradientValue::isCacheable): Defer to new logic in
+        StyleResolver.
+        * css/CSSGradientValue.h:
+        (CSSGradientColorStop): Added cache of resolved color.
+        (CSSGradientValue):
+        (CSSLinearGradientValue):
+        (CSSRadialGradientValue):
+        * css/CSSImageGeneratorValue.h:
+        (WebCore):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isGradientValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::image): Revert change from r96449. This
+        is no longer necessary as the gradient colors are now resolved at a
+        time when the style is set on StyleResolver.
+
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         Move GregorianDateTime from JSC to WTF namespace

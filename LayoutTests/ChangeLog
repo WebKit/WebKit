@@ -1,3 +1,13 @@
+2012-07-23  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Null-pointer crash when a derived color like -webkit-activelink is set in a gradient stop
+        https://bugs.webkit.org/show_bug.cgi?id=89148
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/crash-on-gradient-with-derived-color-expected.txt: Added.
+        * fast/css/crash-on-gradient-with-derived-color.html: Added.
+
 2012-07-23  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed GTK/EFL gardening after r123379
