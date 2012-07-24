@@ -1,3 +1,13 @@
+2012-07-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in RenderTableSection::layoutRows
+        https://bugs.webkit.org/show_bug.cgi?id=92145
+
+        Reviewed by Abhishek Arya.
+
+        * fast/table/crash-table-section-layoutRows-expected.txt: Added.
+        * fast/table/crash-table-section-layoutRows.html: Added.
+
 2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] svg/clip-path rebaseline after new test fonts
