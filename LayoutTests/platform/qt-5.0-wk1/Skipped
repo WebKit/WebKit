@@ -190,13 +190,6 @@ http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
 http/tests/ssl/referer-301.html
 http/tests/ssl/referer-303.html
 http/tests/ssl/verify-ssl-enabled.php
-platform/qt/plugins/qt-qwidget-plugin.html
-printing/compositing-layer-printing.html
-printing/iframe-print.html
-printing/media-queries-print.html
-printing/page-rule-in-media-query.html
-printing/simultaneous-position-float-change.html
-printing/width-overflow.html
 svg/as-object/svg-embedded-in-html-in-iframe.html
 svg/custom/clip-path-referencing-use2.svg
 svg/custom/getscreenctm-in-scrollable-div-area.xhtml

@@ -116,6 +116,10 @@ svg/text/scaling-font-with-geometric-precision.html
 # https://bugs.webkit.org/show_bug.cgi?id=91993
 editing/inserting/multiple-lines-selected.html
 
+# [Qt] platform/qt/plugins/qt-qwidget-plugin.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=92141
+platform/qt/plugins/qt-qwidget-plugin.html
+
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
@@ -913,8 +917,6 @@ ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm
 ietestcenter/css3/bordersbackgrounds/border-radius-style-002.htm
 # Missing a bar at the top of blue text
 ietestcenter/css3/text/textshadow-002.htm
-platform/qt/fast/forms/button-line-break.html
-platform/qt/plugins/application-plugin-plugins-disabled.html
 svg/as-background-image/animated-svg-as-background.html
 svg/as-background-image/svg-as-background-1.html
 svg/as-background-image/svg-as-background-2.html

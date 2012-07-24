@@ -262,7 +262,6 @@ css3/filters/should-not-have-compositing-layer.html
 editing/input/emacs-ctrl-o.html
 fast/block/float/float-in-float-hit-testing.html
 fast/dynamic/012.html
-platform/qt/plugins/qt-qwidget-plugin.html
 
 # [Qt][WK2] scrollbars/scroll-rtl-or-bt-layer.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=76986

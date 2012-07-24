@@ -1,3 +1,38 @@
+2012-07-24  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt] platform, plugins and printing need rebaseline after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92016
+
+        Reviewed by Alexis Menard.
+
+        Updating skipped tests inside platform, plugins and printing. The following tests
+        remain skipped:
+        /platform/qt/plugins/qt-qwidget-plugin.html (bug #92141)
+        /plugins/netscape-dom-access.html (already skipped inside qt/Skipped)
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt/platform/qt/fast/forms/button-line-break-expected.png:
+        * platform/qt/platform/qt/fast/forms/button-line-break-expected.txt:
+        * platform/qt/platform/qt/plugins/application-plugin-plugins-disabled-expected.png: Added.
+        * platform/qt/platform/qt/plugins/application-plugin-plugins-disabled-expected.txt: Added.
+        * platform/qt/platform/qt/plugins/qt-qwidget-plugin-expected.png: Added.
+        * platform/qt/platform/qt/plugins/qt-qwidget-plugin-expected.txt:
+        * platform/qt/plugins/iframe-plugin-bgcolor-expected.txt:
+        * platform/qt/plugins/mouse-click-plugin-clears-selection-expected.txt:
+        * platform/qt/printing/compositing-layer-printing-expected.png:
+        * platform/qt/printing/compositing-layer-printing-expected.txt:
+        * platform/qt/printing/iframe-print-expected.png:
+        * platform/qt/printing/iframe-print-expected.txt:
+        * platform/qt/printing/media-queries-print-expected.png:
+        * platform/qt/printing/media-queries-print-expected.txt:
+        * platform/qt/printing/page-rule-in-media-query-expected.png:
+        * platform/qt/printing/page-rule-in-media-query-expected.txt:
+        * platform/qt/printing/simultaneous-position-float-change-expected.txt:
+        * platform/qt/printing/width-overflow-expected.png:
+        * platform/qt/printing/width-overflow-expected.txt:
+
 2012-07-24  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] Re-skip failing tests for Qt 4.8 platform
