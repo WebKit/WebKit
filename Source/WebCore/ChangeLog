@@ -1,3 +1,20 @@
+2012-07-23  David Barr  <davidbarr@chromium.org>
+
+        Fix ENABLE_CSS_IMAGE_ORIENTATION compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=91961
+
+        Reviewed by Tony Chang.
+
+        https://bugs.webkit.org/show_bug.cgi?id=89055
+        A rule was missed implementing the ENABLE_CSS_IMAGE_ORIENTATION compile flag.
+
+        https://bugs.webkit.org/show_bug.cgi?id=90046
+        Half of the missing rule was inadvertently added together with ENABLE_CSS_STICKY_POSITION.
+
+        No new tests; build configuration fix.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-07-23  Douglas Stockwell  <dstockwell@chromium.org>
 
         Null-pointer crash when a derived color like -webkit-activelink is set in a gradient stop
