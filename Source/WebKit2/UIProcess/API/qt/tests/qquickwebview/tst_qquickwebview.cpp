@@ -314,9 +314,9 @@ void tst_QQuickWebView::multipleWebViews()
 
     // This should not crash.
     QScopedPointer<QQuickWebView> webView1(newWebView());
-    webView1->setParentItem(m_window->rootItem());
+    webView1->setParentItem(m_window->contentItem());
     QScopedPointer<QQuickWebView> webView2(newWebView());
-    webView2->setParentItem(m_window->rootItem());
+    webView2->setParentItem(m_window->contentItem());
 
     webView1->setSize(QSizeF(300, 400));
     webView1->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
@@ -344,7 +344,7 @@ void tst_QQuickWebView::basicRenderingSanity()
     // This should not crash.
     webView()->setVisible(true);
     QTest::qWait(200);
-    QImage grabbedWindow = m_window->grabFrameBuffer();
+    QImage grabbedWindow = m_window->grabWindow();
     QRgb testColor = qRgba(0, 0xff, 0, 0xff);
     QVERIFY(grabbedWindow.pixel(10, 10) == testColor);
     QVERIFY(grabbedWindow.pixel(100, 10) == testColor);
@@ -376,9 +376,9 @@ void tst_QQuickWebView::transparentWebViews()
 
     // This should not crash.
     QScopedPointer<QQuickWebView> webView1(newWebView());
-    webView1->setParentItem(m_window->rootItem());
+    webView1->setParentItem(m_window->contentItem());
     QScopedPointer<QQuickWebView> webView2(newWebView());
-    webView2->setParentItem(m_window->rootItem());
+    webView2->setParentItem(m_window->contentItem());
     QVERIFY(!webView1->experimental()->transparentBackground());
     webView2->experimental()->setTransparentBackground(true);
     QVERIFY(webView2->experimental()->transparentBackground());

@@ -35,7 +35,7 @@
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
 #include <QGuiApplication>
-#include <QQuickCanvas>
+#include <QQuickWindow>
 #include <WebCore/Cursor.h>
 #include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
@@ -287,7 +287,7 @@ bool QtPageClient::isViewVisible()
         return false;
 
     // FIXME: this is a workaround while QWindow::isExposed() is not ready.
-    if (m_webView->canvas() && m_webView->canvas()->windowState() == Qt::WindowMinimized)
+    if (m_webView->window() && m_webView->window()->windowState() == Qt::WindowMinimized)
         return false;
 
     return m_webView->isVisible() && m_webView->page()->isVisible();

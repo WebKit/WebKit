@@ -30,7 +30,6 @@
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
 #include "qwebkittest_p.h"
-#include <QtQuick/QQuickCanvas>
 
 using namespace WebKit;
 

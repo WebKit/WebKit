@@ -1,3 +1,27 @@
+2012-07-24  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix compilation after QtQuick API changes
+        https://bugs.webkit.org/show_bug.cgi?id=91822
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QQuickCanvas is now QQuickWindow, QQuickItem::canvas() is window() and rootItem()
+        is contentItem(). Also QQuickWindow::grabFrameBuffer() is now grabWindow().
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::updateIcon):
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::multipleWebViews):
+        (tst_QQuickWebView::basicRenderingSanity):
+        (tst_QQuickWebView::transparentWebViews):
+        * UIProcess/API/qt/tests/testwindow.h:
+        (TestWindow::TestWindow):
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::isViewVisible):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::startDrag):
+
 2012-07-24  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Add quirks for running the web process in a profiler shell, like valgrind

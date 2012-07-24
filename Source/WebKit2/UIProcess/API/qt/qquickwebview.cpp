@@ -491,7 +491,7 @@ void QQuickWebViewPrivate::updateIcon()
 {
     Q_Q(QQuickWebView);
 
-    QQuickView* view = qobject_cast<QQuickView*>(q->canvas());
+    QQuickView* view = qobject_cast<QQuickView*>(q->window());
     if (!view)
         return;
 
