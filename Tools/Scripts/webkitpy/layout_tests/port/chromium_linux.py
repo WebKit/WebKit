@@ -69,7 +69,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             configuration = options.configuration
         else:
             configuration = config_object.default_configuration()
-        return cls._static_build_path(host.filesystem, build_directory, chromium_base, webkit_base, configuration, 'DumpRenderTree')
+        return cls._static_build_path(host.filesystem, build_directory, chromium_base, webkit_base, configuration, ['DumpRenderTree'])
 
     @staticmethod
     def _determine_architecture(filesystem, executive, driver_path):
@@ -111,7 +111,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         return map(self._webkit_baseline_path, port_names)
 
     def _modules_to_search_for_symbols(self):
-        return [self._build_path(self.get_option('configuration'), 'libffmpegsumo.so')]
+        return [self._build_path('libffmpegsumo.so')]
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
@@ -173,10 +173,8 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         return "/usr/bin/php-cgi"
 
     def _path_to_driver(self, configuration=None):
-        if not configuration:
-            configuration = self.get_option('configuration')
         binary_name = self.driver_name()
-        return self._build_path(configuration, binary_name)
+        return self._build_path_with_configuration(configuration, binary_name)
 
     def _path_to_helper(self):
         return None

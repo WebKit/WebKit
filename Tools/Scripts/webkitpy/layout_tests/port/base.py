@@ -1122,14 +1122,17 @@ class Port(object):
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', config_file_name)
 
     def _build_path(self, *comps):
-        # --root is used for running with a pre-built root (like from a nightly zip).
-        build_directory = self.get_option('root') or self.get_option('build_directory')
-        if not build_directory:
-            build_directory = self._config.build_directory(self.get_option('configuration'))
-            # Set --build-directory here Since this modifies the options object used by the worker subprocesses,
-            # it avoids the slow call out to build_directory in each subprocess.
-            self.set_option_default('build_directory', build_directory)
-        return self._filesystem.join(self._filesystem.abspath(build_directory), *comps)
+        root_directory = self.get_option('root')
+        if not root_directory:
+            build_directory = self.get_option('build_directory')
+            if build_directory:
+                root_directory = self._filesystem.join(self.get_option('configuration'))
+            else:
+                root_directory = self._config.build_directory(self.get_option('configuration'))
+            # Set --root so that we can pass this to subprocesses and avoid making the
+            # slow call to config.build_directory() N times in each worker.
+            self.set_option_default('root', root_directory)
+        return self._filesystem.join(self._filesystem.abspath(root_directory), *comps)
 
     def _path_to_driver(self, configuration=None):
         """Returns the full path to the test driver (DumpRenderTree)."""

@@ -79,7 +79,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return map(self._webkit_baseline_path, fallback_paths[self._version])
 
     def _modules_to_search_for_symbols(self):
-        return [self._build_path(self.get_option('configuration'), 'ffmpegsumo.so')]
+        return [self._build_path('ffmpegsumo.so')]
 
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
@@ -120,14 +120,11 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def _path_to_driver(self, configuration=None):
         # FIXME: make |configuration| happy with case-sensitive file systems.
-        if not configuration:
-            configuration = self.get_option('configuration')
-        return self._build_path(configuration, self.driver_name() + '.app',
-            'Contents', 'MacOS', self.driver_name())
+        return self._build_path_with_configuration(configuration, self.driver_name() + '.app', 'Contents', 'MacOS', self.driver_name())
 
     def _path_to_helper(self):
         binary_name = 'LayoutTestHelper'
-        return self._build_path(self.get_option('configuration'), binary_name)
+        return self._build_path(binary_name)
 
     def _path_to_wdiff(self):
         return 'wdiff'

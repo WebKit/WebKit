@@ -271,8 +271,9 @@ def parse_args(args=None):
             help="Run a concurrent JavaScript thread with each test"),
         optparse.make_option("--webkit-test-runner", "-2", action="store_true",
             help="Use WebKitTestRunner rather than DumpRenderTree."),
+        # FIXME: We should merge this w/ --build-directory and only have one flag.
         optparse.make_option("--root", action="store",
-            help="Path to a pre-built root of WebKit (for running tests using a nightly build of WebKit)"),
+            help="Path to a directory containing the executables needed to run tests."),
     ]))
 
     option_group_definitions.append(("ORWT Compatibility Options", [

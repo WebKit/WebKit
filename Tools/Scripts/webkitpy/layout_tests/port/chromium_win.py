@@ -149,18 +149,16 @@ class ChromiumWinPort(chromium.ChromiumPort):
         return self._lighttpd_path('php5', 'php-cgi.exe')
 
     def _path_to_driver(self, configuration=None):
-        if not configuration:
-            configuration = self.get_option('configuration')
         binary_name = '%s.exe' % self.driver_name()
-        return self._build_path(configuration, binary_name)
+        return self._build_path_with_configuration(configuration, binary_name)
 
     def _path_to_helper(self):
         binary_name = 'LayoutTestHelper.exe'
-        return self._build_path(self.get_option('configuration'), binary_name)
+        return self._build_path(binary_name)
 
     def _path_to_image_diff(self):
         binary_name = 'ImageDiff.exe'
-        return self._build_path(self.get_option('configuration'), binary_name)
+        return self._build_path(binary_name)
 
     def _path_to_wdiff(self):
         return self.path_from_chromium_base('third_party', 'cygwin', 'bin', 'wdiff.exe')

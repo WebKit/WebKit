@@ -78,17 +78,17 @@ class ChromiumPort(WebKitPort):
     DEFAULT_BUILD_DIRECTORIES = ('out',)
 
     @classmethod
-    def _static_build_path(cls, filesystem, build_directory, chromium_base, webkit_base, *comps):
+    def _static_build_path(cls, filesystem, build_directory, chromium_base, webkit_base, configuration, comps):
         if build_directory:
-            return filesystem.join(build_directory, *comps)
+            return filesystem.join(build_directory, configuration, *comps)
 
         for directory in cls.DEFAULT_BUILD_DIRECTORIES:
-            base_dir = filesystem.join(chromium_base, directory)
+            base_dir = filesystem.join(chromium_base, directory, configuration)
             if filesystem.exists(base_dir):
                 return filesystem.join(base_dir, *comps)
 
         for directory in cls.DEFAULT_BUILD_DIRECTORIES:
-            base_dir = filesystem.join(webkit_base, directory)
+            base_dir = filesystem.join(webkit_base, directory, configuration)
             if filesystem.exists(base_dir):
                 return filesystem.join(base_dir, *comps)
 
@@ -263,7 +263,7 @@ class ChromiumPort(WebKitPort):
         try:
             return self.path_from_chromium_base('webkit', self.get_option('configuration'), 'layout-test-results')
         except AssertionError:
-            return self._build_path(self.get_option('configuration'), 'layout-test-results')
+            return self._build_path('layout-test-results')
 
     def _missing_symbol_to_skipped_tests(self):
         # FIXME: Should WebKitPort have these definitions also?
@@ -386,11 +386,19 @@ class ChromiumPort(WebKitPort):
     #
 
     def _build_path(self, *comps):
-        return self._static_build_path(self._filesystem, self.get_option('build_directory'), self.path_from_chromium_base(), self.path_from_webkit_base(), *comps)
+        return self._build_path_with_configuration(None, *comps)
+
+    def _build_path_with_configuration(self, configuration, *comps):
+        # Note that we don't implement --root or do the option caching that the
+        # base class does, because chromium doesn't use 'webkit-build-directory' and
+        # hence finding the right directory is relatively fast.
+        configuration = configuration or self.get_option('configuration')
+        return self._static_build_path(self._filesystem, self.get_option('build_directory'),
+            self.path_from_chromium_base(), self.path_from_webkit_base(), configuration, comps)
 
     def _path_to_image_diff(self):
         binary_name = 'ImageDiff'
-        return self._build_path(self.get_option('configuration'), binary_name)
+        return self._build_path(binary_name)
 
     def _check_driver_build_up_to_date(self, configuration):
         if configuration in ('Debug', 'Release'):

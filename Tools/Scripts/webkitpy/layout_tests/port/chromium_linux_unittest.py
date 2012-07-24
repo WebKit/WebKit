@@ -93,19 +93,19 @@ class ChromiumLinuxPortTest(chromium_port_testcase.ChromiumPortTestCase):
     def test_build_path(self):
         # Test that optional paths are used regardless of whether they exist.
         options = MockOptions(configuration='Release', build_directory='/foo')
-        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out'], '/foo')
+        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out/Release'], '/foo/Release')
 
         # Test that optional relative paths are returned unmodified.
         options = MockOptions(configuration='Release', build_directory='foo')
-        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out'], 'foo')
+        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out/Release'], 'foo/Release')
 
         # Test that we look in a chromium directory before the webkit directory.
         options = MockOptions(configuration='Release', build_directory=None)
-        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out', '/mock-checkout/out'], '/mock-checkout/Source/WebKit/chromium/out')
+        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/out/Release', '/mock-checkout/out/Release'], '/mock-checkout/Source/WebKit/chromium/out/Release')
 
         # Test that we prefer the legacy dir over the new dir.
         options = MockOptions(configuration='Release', build_directory=None)
-        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/sconsbuild', '/mock-checkout/Source/WebKit/chromium/out'], '/mock-checkout/Source/WebKit/chromium/sconsbuild')
+        self.assert_build_path(options, ['/mock-checkout/Source/WebKit/chromium/sconsbuild/Release', '/mock-checkout/Source/WebKit/chromium/out/Release'], '/mock-checkout/Source/WebKit/chromium/sconsbuild/Release')
 
     def test_driver_name_option(self):
         self.assertTrue(self.make_port()._path_to_driver().endswith('DumpRenderTree'))
