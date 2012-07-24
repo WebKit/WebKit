@@ -1,3 +1,16 @@
+2012-07-24  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Update about:config lists
+        https://bugs.webkit.org/show_bug.cgi?id=92118
+
+        Reviewed by Rob Buis.
+
+        We want to have all flags which could be used / have been used by any platform. These lists were created by running:
+
+        * WebCoreSupport/AboutDataEnableFeatures.in: `git grep "ENABLE(" | cut -d "(" -f2 | cut -d ")" -f1 | sort -u`
+        * WebCoreSupport/AboutDataHaveFeatures.in: `git grep "HAVE(" | cut -d "(" -f2 | cut -d ")" -f1 | sort -u`
+        * WebCoreSupport/AboutDataUseFeatures.in: `git grep "USE(" | cut -d "(" -f2 | cut -d ")" -f1 | sort -u`
+
 2012-07-24  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Remove unused variable in BackingStore.cpp
