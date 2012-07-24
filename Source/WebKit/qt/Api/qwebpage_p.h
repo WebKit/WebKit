@@ -94,6 +94,8 @@ public:
     void updateNavigationActions();
     void updateEditorActions();
 
+    QColor colorSelectionRequested(const QColor& selectedColor);
+
     void timerEvent(QTimerEvent*);
 
     template<class T> void mouseMoveEvent(T*);

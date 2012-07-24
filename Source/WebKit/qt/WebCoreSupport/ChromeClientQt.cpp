@@ -32,6 +32,7 @@
 
 #include "ApplicationCacheStorage.h"
 #include "ColorChooser.h"
+#include "ColorChooserClient.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "FileChooser.h"
@@ -559,9 +560,11 @@ void ChromeClientQt::reachedApplicationCacheOriginQuota(SecurityOrigin* origin, 
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassOwnPtr<ColorChooser> ChromeClientQt::createColorChooser(ColorChooserClient*, const Color&)
+PassOwnPtr<ColorChooser> ChromeClientQt::createColorChooser(ColorChooserClient* client, const Color& color)
 {
-    notImplemented();
+    const QColor selectedColor = m_webPage->d->colorSelectionRequested(QColor(color));
+    client->didChooseColor(selectedColor);
+    client->didEndChooser();
     return nullptr;
 }
 #endif

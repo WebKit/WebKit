@@ -122,6 +122,7 @@
 #include <QApplication>
 #include <QBasicTimer>
 #include <QBitArray>
+#include <QColorDialog>
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QDragEnterEvent>
@@ -2441,6 +2442,19 @@ void QWebPage::triggerAction(WebAction action, bool)
 
     if (command)
         editor->command(command).execute();
+}
+
+
+QColor QWebPagePrivate::colorSelectionRequested(const QColor &selectedColor)
+{
+    QColor ret = selectedColor;
+#ifndef QT_NO_COLORDIALOG
+    QWidget* parent = (client) ? client->ownerWidget() : 0;
+    ret = QColorDialog::getColor(selectedColor, parent);
+    if (!ret.isValid())
+        ret = selectedColor;
+#endif
+    return ret;
 }
 
 QSize QWebPage::viewportSize() const
