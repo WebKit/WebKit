@@ -1,3 +1,16 @@
+2012-07-24  Peter Beverloo  <peter@chromium.org>
+
+        Update a few Chromium Android contributors in committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=92090
+
+        Reviewed by Kent Tamura.
+
+        Add Sami Kyostila, who has been doing significant work on Chromium's
+        compositor. Add IRC nicknames for John Mellor and Tien-Ren Chen, and
+        remove John Grabowski who changed projects, and add my webkit.org alias.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-24  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Enable touch slider when touch events are enabled
