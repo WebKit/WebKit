@@ -42,7 +42,7 @@ bool InjectedBundle::load(APIObject* initializationUserData)
         return false;
     }
     if (!eina_module_load(m_platformBundle)) {
-        EINA_LOG_CRIT("Error loading the injected bundle: %s", m_path.utf8().data());
+        EINA_LOG_CRIT("Error loading the injected bundle from %s: %s", m_path.utf8().data(), eina_error_msg_get(eina_error_get()));
         eina_module_free(m_platformBundle);
         m_platformBundle = 0;
         return false;

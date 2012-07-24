@@ -1,3 +1,16 @@
+2012-07-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Provide more useful output when an injected bundle cannot be loaded
+        https://bugs.webkit.org/show_bug.cgi?id=92136
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Call eina_error_get() in case an injected bundle cannot be
+        loaded in order to print more information about the error.
+
+        * WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp:
+        (WebKit::InjectedBundle::load):
+
 2012-07-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][WK2] Add vibration client
