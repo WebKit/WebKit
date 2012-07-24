@@ -1,3 +1,12 @@
+2012-07-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Skipping tests added in r123343 and adding a test expectation for
+        an accessibility test added in r123428.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-24  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol Extension: add getFlowByName command

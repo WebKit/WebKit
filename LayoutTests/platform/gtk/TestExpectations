@@ -311,6 +311,9 @@ BUGWKGTK SKIP : webintents = TEXT
 
 // Pointer Lock is not implemented.
 BUGWKGTK SKIP : pointer-lock = TEXT
+// As well as testing fullscreen functionality, these tests also utilize the pointer lock feature.
+BUGWKGTK SKIP : http/tests/fullscreen = TEXT
+BUGWKGTK SKIP : http/tests/pointer-lock = TEXT
 
 // Battery Status API support not yet.
 BUGWK62698 : batterystatus = TEXT
@@ -1253,6 +1256,9 @@ BUGWK91319 : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 
 // Failing after r123379 on EFL and GTK.
 BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
+
+BUGWK92100 : accessibility/canvas-accessibilitynodeobject.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
