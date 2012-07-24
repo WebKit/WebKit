@@ -1,3 +1,20 @@
+2012-07-24  Mike Fenton  <mifenton@rim.com>
+
+        Throttle calls to request the virtual keyboard be shown.
+        https://bugs.webkit.org/show_bug.cgi?id=92138
+
+        Reviewed by Rob Buis.
+
+        PR 178465.
+
+        Do not request keyboard visibility change when
+        we are actively processing an input event.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::focusedNodeChanged):
+
 2012-07-24  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Update about:config lists
