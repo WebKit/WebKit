@@ -1,3 +1,16 @@
+2012-07-24  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Build fix for Android after r123424
+        https://bugs.webkit.org/show_bug.cgi?id=92082
+
+        Unreviewed build fix.
+
+        Mark removed the PlatformSupport.h header from ScrollbarThemeChromiumAndroid.cpp
+        in r123424, while there still are two references left to another method and a
+        constant. Re-add the include directive.
+
+        * platform/chromium/ScrollbarThemeChromiumAndroid.cpp:
+
 2012-07-24  Kentaro Hara  <haraken@chromium.org>
 
         [JSC] REGRESSION(r122912): CodeGeneratorJS.pm generates wrong code
