@@ -103,6 +103,14 @@ WebInspector.SourceFrame.prototype = {
         this._clearLineToReveal();
     },
 
+    /**
+     * @return {Array.<Element>}
+     */
+    statusBarItems: function()
+    {
+        return [];
+    },
+
     defaultFocusedElement: function()
     {
         return this._textEditor.defaultFocusedElement();

@@ -382,7 +382,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         var sourceFrame = this.visibleView;
         if (sourceFrame) {
-            var statusBarItems = sourceFrame.statusBarItems || [];
+            var statusBarItems = sourceFrame.statusBarItems() || [];
             for (var i = 0; i < statusBarItems.length; ++i)
                 this._scriptViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
         }
@@ -461,9 +461,12 @@ WebInspector.ScriptsPanel.prototype = {
     _createSourceFrame: function(uiSourceCode)
     {
         var sourceFrame;
-        if (uiSourceCode instanceof WebInspector.JavaScriptSource) {
-            var javaScriptSource = /** @type {WebInspector.JavaScriptSource} */ uiSourceCode;
-            sourceFrame = new WebInspector.JavaScriptSourceFrame(this, javaScriptSource);
+        if (uiSourceCode instanceof WebInspector.SnippetJavaScriptSource) {
+            var snippetJavaScriptSource = /** @type {WebInspector.SnippetJavaScriptSource} */ uiSourceCode;
+            sourceFrame = new WebInspector.SnippetJavaScriptSourceFrame(this, snippetJavaScriptSource);
+        } else if (uiSourceCode instanceof WebInspector.JavaScriptSource) {
+                var javaScriptSource = /** @type {WebInspector.JavaScriptSource} */ uiSourceCode;
+                sourceFrame = new WebInspector.JavaScriptSourceFrame(this, javaScriptSource);
         } else
             sourceFrame = new WebInspector.UISourceCodeFrame(uiSourceCode);
 

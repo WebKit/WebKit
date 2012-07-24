@@ -1,3 +1,33 @@
+2012-07-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Snippets UI polish
+        https://bugs.webkit.org/show_bug.cgi?id=92142
+
+        Reviewed by Pavel Feldman.
+
+        Changed snippets context menu items.
+        Added run snippet status bar button.
+        Removed unused edit source button.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.SnippetJavaScriptSourceFrame):
+        (WebInspector.SnippetJavaScriptSourceFrame.prototype.statusBarItems):
+        (WebInspector.SnippetJavaScriptSourceFrame.prototype._runButtonClicked):
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.SnippetsNavigatorView.prototype.getOrCreateFolderTreeElement):
+        (WebInspector.SnippetsNavigatorView.prototype.handleContextMenu):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._updateScriptViewStatusBarItems):
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.statusBarItems):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/scriptsPanel.css:
+        (.evaluate-snippet-status-bar-item .glyph):
+        (.evaluate-snippet-status-bar-item.toggled .glyph):
+
 2012-07-24  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Remove webcore_resource_files from WebCore.gypi

@@ -212,20 +212,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
      */
     getOrCreateFolderTreeElement: function(uiSourceCode)
     {
-        if (uiSourceCode.isSnippet)
-            return this._scriptsTree;
-        if (uiSourceCode.isSnippetEvaluation)
-            return this._getOrCreateSnippetEvaluationsFolderTreeElement();
-        return WebInspector.NavigatorView.prototype.getOrCreateFolderTreeElement.call(this, uiSourceCode);
-    },
-
-    _getOrCreateSnippetEvaluationsFolderTreeElement: function()
-    {
-        const snippetEvaluationsFolderIdentifier = "snippetEvaluationsFolder";
-        var folderTreeElement = this._folderTreeElements[snippetEvaluationsFolderIdentifier];
-        if (folderTreeElement)
-            return folderTreeElement;
-        return this.createFolderTreeElement(this._scriptsTree, snippetEvaluationsFolderIdentifier, "", WebInspector.UIString("Evaluated snippets"));
+        return this._scriptsTree;
     },
 
     /**
@@ -236,12 +223,12 @@ WebInspector.SnippetsNavigatorView.prototype = {
     {
         var contextMenu = new WebInspector.ContextMenu();
         if (uiSourceCode) {
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Evaluate snippet" : "Evaluate Snippet"), this._handleEvaluateSnippet.bind(this, uiSourceCode));
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Rename snippet" : "Rename Snippet"), this._handleRenameSnippet.bind(this, uiSourceCode));
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove snippet" : "Remove Snippet"), this._handleRemoveSnippet.bind(this, uiSourceCode));
+            contextMenu.appendItem(WebInspector.UIString("Run"), this._handleEvaluateSnippet.bind(this, uiSourceCode));
+            contextMenu.appendItem(WebInspector.UIString("Rename"), this._handleRenameSnippet.bind(this, uiSourceCode));
+            contextMenu.appendItem(WebInspector.UIString("Remove"), this._handleRemoveSnippet.bind(this, uiSourceCode));
             contextMenu.appendSeparator();
         }
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Create snippet" : "Create Snippet"), this._handleCreateSnippet.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("New"), this._handleCreateSnippet.bind(this));
         contextMenu.show(event);
     },
 

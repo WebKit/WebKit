@@ -1853,14 +1853,6 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     -webkit-mask-position: -96px -24px;
 }
 
-button.edit-source-status-bar-item .glyph {
-    -webkit-mask-position: -64px -48px;
-}
-
-button.edit-source-status-bar-item.toggled-on .glyph {
-    background-color: rgb(66, 129, 235);
-}
-
 #console-messages.console-filter-top {
     margin-top: 23px;
 }
