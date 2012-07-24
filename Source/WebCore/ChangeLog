@@ -1,3 +1,27 @@
+2012-07-23  Hanyee Kim  <choco@company100.net>
+
+        When using TextureMapper, WebKit does not retain final value of opacity in animations, unless it is specified on the last key frame.
+        https://bugs.webkit.org/show_bug.cgi?id=91322
+
+        Reviewed by Noam Rosenthal.
+
+        When -webkit-fill-mode is forwards, GraphicsLayerAnimation::apply does not apply
+        the property values defined in the last executing keyframe after the final iteration of animation.
+
+        This patch does not return right after the end of animation, but it keeps applying
+        the property values defined in the last executing keyframe.
+        Add normalizedAnimationValueForFillsForwards function that returns a normalized value of the
+        last executing keyframe.
+
+        Link to CSS Animations spec: http://www.w3.org/TR/css3-animations/#animation-fill-mode-property
+
+        Test: animations/fill-mode-forwards2.html
+
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore::normalizedAnimationValueForFillsForwards):
+        (WebCore):
+        (WebCore::GraphicsLayerAnimation::apply):
+
 2012-07-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123184, r123195, and r123197.
