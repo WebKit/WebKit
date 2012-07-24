@@ -47,7 +47,7 @@ public:
     size_t jsHeapSizeLimit() const { return m_jsHeapSizeLimit; }
 
 private:
-    MemoryInfo(Frame*);
+    explicit MemoryInfo(Frame*);
 
     size_t m_totalJSHeapSize;
     size_t m_usedJSHeapSize;

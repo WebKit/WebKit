@@ -90,7 +90,7 @@ public:
 private:
     struct ObserverLessThan;
 
-    MutationObserver(PassRefPtr<MutationCallback>);
+    explicit MutationObserver(PassRefPtr<MutationCallback>);
     void deliver();
 
     static bool validateOptions(MutationObserverOptions);

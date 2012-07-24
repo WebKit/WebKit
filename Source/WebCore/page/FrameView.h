@@ -347,7 +347,7 @@ protected:
     virtual bool isFlippedDocument() const;
 
 private:
-    FrameView(Frame*);
+    explicit FrameView(Frame*);
 
     void reset();
     void init();

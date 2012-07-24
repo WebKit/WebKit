@@ -56,7 +56,7 @@ public:
     Document* document() const { return m_document; }
 
 private:
-    WebKitNamedFlowCollection(Document*);
+    explicit WebKitNamedFlowCollection(Document*);
 
     Document* m_document;
 

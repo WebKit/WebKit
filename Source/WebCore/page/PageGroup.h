@@ -46,7 +46,7 @@ namespace WebCore {
     class PageGroup : public Supplementable<PageGroup> {
         WTF_MAKE_NONCOPYABLE(PageGroup); WTF_MAKE_FAST_ALLOCATED;
     public:
-        PageGroup(const String& name);
+        explicit PageGroup(const String& name);
         ~PageGroup();
 
         static PassOwnPtr<PageGroup> create(Page*);

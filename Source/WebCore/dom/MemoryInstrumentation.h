@@ -143,7 +143,7 @@ private:
 
 class MemoryObjectInfo {
 public:
-    MemoryObjectInfo(MemoryInstrumentation* memoryInstrumentation)
+    explicit MemoryObjectInfo(MemoryInstrumentation* memoryInstrumentation)
         : m_memoryInstrumentation(memoryInstrumentation)
         , m_objectType(MemoryInstrumentation::Other)
         , m_objectSize(0)

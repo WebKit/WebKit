@@ -66,7 +66,7 @@ private:
     {
     }
 
-    BeforeLoadEvent(const String& url)
+    explicit BeforeLoadEvent(const String& url)
         : Event(eventNames().beforeloadEvent, false, true)
         , m_url(url)
     {

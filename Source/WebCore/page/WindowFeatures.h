@@ -54,7 +54,7 @@ namespace WebCore {
         {
         }
 
-        WindowFeatures(const String& windowFeaturesString);
+        explicit WindowFeatures(const String& windowFeaturesString);
         WindowFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect);
 
         float x;

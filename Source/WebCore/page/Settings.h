@@ -604,7 +604,7 @@ namespace WebCore {
         bool cookieEnabled() const { return m_cookieEnabled; }
 
     private:
-        Settings(Page*);
+        explicit Settings(Page*);
 
         void initializeDefaultFontFamilies();
 

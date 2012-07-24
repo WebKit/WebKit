@@ -168,7 +168,7 @@ inline ComposedShadowTreeWalker::ComposedShadowTreeWalker(const Node* node, Poli
 // insertion points and shadow roots.
 class ComposedShadowTreeParentWalker {
 public:
-    ComposedShadowTreeParentWalker(const Node*);
+    explicit ComposedShadowTreeParentWalker(const Node*);
     void parentIncludingInsertionPointAndShadowRoot();
     Node* get() const { return const_cast<Node*>(m_node); }
 private:

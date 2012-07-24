@@ -77,7 +77,7 @@ public:
     virtual void setRecognitionResult(int, const SpeechInputResultArray&);
 
 private:
-    SpeechInput(SpeechInputClient*);
+    explicit SpeechInput(SpeechInputClient*);
 
     SpeechInputClient* m_client;
     HashMap<int, SpeechInputListener*> m_listeners;

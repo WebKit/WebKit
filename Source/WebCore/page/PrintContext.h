@@ -35,7 +35,7 @@ class IntRect;
 
 class PrintContext {
 public:
-    PrintContext(Frame*);
+    explicit PrintContext(Frame*);
     ~PrintContext();
 
     Frame* frame() const { return m_frame; }

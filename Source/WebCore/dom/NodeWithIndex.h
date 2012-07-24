@@ -34,7 +34,7 @@ namespace WebCore {
 // only want to walk the child list to figure out the index once.
 class NodeWithIndex {
 public:
-    NodeWithIndex(Node* node)
+    explicit NodeWithIndex(Node* node)
         : m_node(node)
         , m_haveIndex(false)
     {

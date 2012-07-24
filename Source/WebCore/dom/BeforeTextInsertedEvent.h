@@ -46,7 +46,7 @@ public:
     void setText(const String& s) { m_text = s; }
 
 private:
-    BeforeTextInsertedEvent(const String&);
+    explicit BeforeTextInsertedEvent(const String&);
 
     String m_text;
 };

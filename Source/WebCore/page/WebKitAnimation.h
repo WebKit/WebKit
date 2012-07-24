@@ -70,7 +70,7 @@ public:
     void pause();
 
 protected:
-    WebKitAnimation(PassRefPtr<KeyframeAnimation>);
+    explicit WebKitAnimation(PassRefPtr<KeyframeAnimation>);
 
 private:
     RefPtr<KeyframeAnimation> m_keyframeAnimation;

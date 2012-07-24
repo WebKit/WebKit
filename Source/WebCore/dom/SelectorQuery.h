@@ -64,7 +64,7 @@ class SelectorQuery {
     WTF_MAKE_NONCOPYABLE(SelectorQuery);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SelectorQuery(const CSSSelectorList&);
+    explicit SelectorQuery(const CSSSelectorList&);
     bool matches(Element*) const;
     PassRefPtr<NodeList> queryAll(Node* rootNode) const;
     PassRefPtr<Element> queryFirst(Node* rootNode) const;

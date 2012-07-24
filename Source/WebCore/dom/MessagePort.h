@@ -109,7 +109,7 @@ namespace WebCore {
         bool isCloned() { return !m_entangledChannel; }
 
     private:
-        MessagePort(ScriptExecutionContext&);
+        explicit MessagePort(ScriptExecutionContext&);
 
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }

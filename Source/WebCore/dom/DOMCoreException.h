@@ -43,7 +43,7 @@ public:
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
 private:
-    DOMCoreException(const ExceptionCodeDescription& description)
+    explicit DOMCoreException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)
     {
     }

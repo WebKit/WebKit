@@ -1,3 +1,118 @@
+2012-07-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Missing *explicit* keyword in dom and page.
+        https://bugs.webkit.org/show_bug.cgi?id=92074
+
+        Reviewed by Kentaro Hara.
+
+        Some constructors missed to use *explicit* keyword. They need to be added
+        *explicit* keyword to contructor which has a parameter in order to avoid
+        implicit type conversion.
+
+        Some files in dom directory can't use explicit keyword because of build breaks.
+
+        No new tests. Covered by existing tests.
+
+        * dom/BeforeLoadEvent.h:
+        (WebCore::BeforeLoadEvent::BeforeLoadEvent):
+        * dom/BeforeTextInsertedEvent.h:
+        (BeforeTextInsertedEvent):
+        * dom/ChildListMutationScope.h:
+        (WebCore::ChildListMutationScope::ChildListMutationScope):
+        * dom/ChildNodeList.h:
+        (ChildNodeList):
+        * dom/ClientRect.h:
+        (ClientRect):
+        * dom/ClientRectList.h:
+        (ClientRectList):
+        * dom/ComposedShadowTreeWalker.h:
+        (ComposedShadowTreeParentWalker):
+        * dom/DOMCoreException.h:
+        (WebCore::DOMCoreException::DOMCoreException):
+        * dom/DOMImplementation.h:
+        (DOMImplementation):
+        * dom/DatasetDOMStringMap.h:
+        (WebCore::DatasetDOMStringMap::DatasetDOMStringMap):
+        * dom/DeviceMotionController.h:
+        (DeviceMotionController):
+        * dom/DeviceOrientationController.h:
+        (DeviceOrientationController):
+        * dom/DocumentParser.h:
+        (DocumentParser):
+        * dom/EventException.h:
+        (WebCore::EventException::EventException):
+        * dom/EventListener.h:
+        (WebCore::EventListener::EventListener):
+        * dom/ExceptionBase.h:
+        (ExceptionBase):
+        * dom/GenericEventQueue.h:
+        (GenericEventQueue):
+        * dom/KeyboardEvent.h:
+        (WebCore::KeypressCommand::KeypressCommand):
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryObjectInfo::MemoryObjectInfo):
+        * dom/MessageChannel.h:
+        (MessageChannel):
+        * dom/MessagePort.h:
+        (MessagePort):
+        * dom/MessagePortChannel.h:
+        (MessagePortChannel):
+        * dom/MutationObserver.h:
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::NamedNodeMap):
+        * dom/NodeFilter.h:
+        (WebCore::NodeFilter::NodeFilter):
+        * dom/NodeWithIndex.h:
+        (WebCore::NodeWithIndex::NodeWithIndex):
+        * dom/Range.h:
+        * dom/RangeException.h:
+        (WebCore::RangeException::RangeException):
+        * dom/RawDataDocumentParser.h:
+        (WebCore::RawDataDocumentParser::RawDataDocumentParser):
+        * dom/ScriptRunner.h:
+        (ScriptRunner):
+        * dom/SelectorQuery.h:
+        (SelectorQuery):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        * dom/SpaceSplitString.h:
+        (SpaceSplitStringData):
+        * dom/StaticHashSetNodeList.h:
+        (StaticHashSetNodeList):
+        * dom/StaticNodeList.h:
+        (WebCore::StaticNodeList::StaticNodeList):
+        * dom/TransformSource.h:
+        (TransformSource):
+        * dom/TreeScope.h:
+        (TreeScope):
+        * dom/WebKitNamedFlowCollection.h:
+        (WebKitNamedFlowCollection):
+        * page/EventHandler.h:
+        (EventHandler):
+        * page/FocusController.h:
+        (FocusController):
+        * page/FrameView.h:
+        (FrameView):
+        * page/MemoryInfo.h:
+        (MemoryInfo):
+        * page/Page.h:
+        (Page):
+        * page/PageGroup.h:
+        (PageGroup):
+        * page/PrintContext.h:
+        (PrintContext):
+        * page/Settings.h:
+        (Settings):
+        * page/SpeechInput.h:
+        (SpeechInput):
+        * page/SpeechInputResultList.h:
+        (SpeechInputResultList):
+        * page/WebKitAnimation.h:
+        * page/WindowFeatures.h:
+        (WindowFeatures):
+        * page/WorkerNavigator.h:
+        (WorkerNavigator):
+
 2012-07-24  Kent Tamura  <tkent@chromium.org>
 
         Replace some callsites of shadowAncestorNode() with shadowHost()

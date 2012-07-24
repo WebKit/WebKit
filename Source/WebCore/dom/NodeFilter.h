@@ -84,7 +84,7 @@ namespace WebCore {
         void setCondition(PassRefPtr<NodeFilterCondition> condition) { ASSERT(!m_condition); m_condition = condition; }
 
     private:
-        NodeFilter(PassRefPtr<NodeFilterCondition> condition) : m_condition(condition) { }
+        explicit NodeFilter(PassRefPtr<NodeFilterCondition> condition) : m_condition(condition) { }
         NodeFilter() {}
 
         RefPtr<NodeFilterCondition> m_condition;

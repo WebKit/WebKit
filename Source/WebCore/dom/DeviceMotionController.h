@@ -58,7 +58,7 @@ public:
     static bool isActiveAt(Page*);
 
 private:
-    DeviceMotionController(DeviceMotionClient*);
+    explicit DeviceMotionController(DeviceMotionClient*);
 
     void timerFired(Timer<DeviceMotionController>*);
     

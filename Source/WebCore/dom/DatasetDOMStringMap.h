@@ -52,7 +52,7 @@ public:
     virtual Element* element() { return m_element; }
 
 private:
-    DatasetDOMStringMap(Element* element)
+    explicit DatasetDOMStringMap(Element* element)
         : m_element(element)
     {
     }

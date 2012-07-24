@@ -97,7 +97,7 @@ public:
     virtual void resumeScheduledTasks();
 
 protected:
-    DocumentParser(Document*);
+    explicit DocumentParser(Document*);
 
 private:
     enum ParserState {

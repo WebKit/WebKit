@@ -82,7 +82,7 @@ public:
     bool containingWindowIsVisible() const { return m_containingWindowIsVisible; }
 
 private:
-    FocusController(Page*);
+    explicit FocusController(Page*);
 
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);

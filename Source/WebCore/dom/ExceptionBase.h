@@ -47,7 +47,7 @@ public:
     String toString() const;
 
 protected:
-    ExceptionBase(const ExceptionCodeDescription&);
+    explicit ExceptionBase(const ExceptionCodeDescription&);
 
 private:
     unsigned short m_code;

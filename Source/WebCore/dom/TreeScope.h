@@ -82,7 +82,7 @@ public:
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
 
 protected:
-    TreeScope(ContainerNode*);
+    explicit TreeScope(ContainerNode*);
     virtual ~TreeScope();
 
     void destroyTreeScopeData();

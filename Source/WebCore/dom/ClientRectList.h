@@ -47,7 +47,7 @@ namespace WebCore {
 
     private:
         ClientRectList();
-        ClientRectList(const Vector<FloatQuad>&);
+        explicit ClientRectList(const Vector<FloatQuad>&);
 
         Vector<RefPtr<ClientRect> > m_list;
     }; 

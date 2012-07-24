@@ -51,7 +51,7 @@ public:
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
 private:
-    EventException(const ExceptionCodeDescription& description)
+    explicit EventException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)
     {
     }

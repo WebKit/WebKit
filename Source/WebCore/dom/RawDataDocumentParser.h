@@ -32,7 +32,7 @@ namespace WebCore {
 
 class RawDataDocumentParser : public DocumentParser {
 protected:
-    RawDataDocumentParser(Document* document)
+    explicit RawDataDocumentParser(Document* document)
         : DocumentParser(document)
     {
     }

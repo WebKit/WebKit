@@ -94,7 +94,7 @@ public:
 #endif
 
 private:
-    ShadowRoot(Document*);
+    explicit ShadowRoot(Document*);
     virtual ~ShadowRoot();
     virtual String nodeName() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);

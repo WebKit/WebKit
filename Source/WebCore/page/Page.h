@@ -125,7 +125,7 @@ namespace WebCore {
             RefPtr<BackForwardList> backForwardClient;
         };
 
-        Page(PageClients&);
+        explicit Page(PageClients&);
         ~Page();
 
         ArenaSize renderTreeSize() const;

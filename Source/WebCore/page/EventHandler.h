@@ -93,7 +93,7 @@ enum HitTestScrollbars { ShouldHitTestScrollbars, DontHitTestScrollbars };
 class EventHandler {
     WTF_MAKE_NONCOPYABLE(EventHandler);
 public:
-    EventHandler(Frame*);
+    explicit EventHandler(Frame*);
     ~EventHandler();
 
     void clear();

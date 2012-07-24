@@ -44,7 +44,7 @@ namespace WebCore {
         virtual String userAgent() const;
 
     private:
-        WorkerNavigator(const String&);
+        explicit WorkerNavigator(const String&);
 
         String m_userAgent;
     };

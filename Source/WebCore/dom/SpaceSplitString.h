@@ -54,8 +54,8 @@ namespace WebCore {
         const AtomicString& operator[](size_t i) { ASSERT(i < size()); return m_vector[i]; }
 
     private:
-        SpaceSplitStringData(const AtomicString&);
-        SpaceSplitStringData(const SpaceSplitStringData&);
+        explicit SpaceSplitStringData(const AtomicString&);
+        explicit SpaceSplitStringData(const SpaceSplitStringData&);
 
         void createVector(const String&);
 

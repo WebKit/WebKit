@@ -70,7 +70,7 @@ public:
     static bool isTextMIMEType(const String& MIMEType);
 
 private:
-    DOMImplementation(Document*);
+    explicit DOMImplementation(Document*);
 
     Document* m_document;
 };

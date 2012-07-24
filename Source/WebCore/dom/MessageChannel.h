@@ -45,7 +45,7 @@ namespace WebCore {
         MessagePort* port2() const { return m_port2.get(); }
 
     private:
-        MessageChannel(ScriptExecutionContext*);
+        explicit MessageChannel(ScriptExecutionContext*);
 
         RefPtr<MessagePort> m_port1;
         RefPtr<MessagePort> m_port2;

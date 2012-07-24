@@ -39,7 +39,7 @@ namespace WebCore {
         virtual ~ChildNodeList();
 
     protected:
-        ChildNodeList(PassRefPtr<Node> rootNode);
+        explicit ChildNodeList(PassRefPtr<Node> rootNode);
 
         virtual bool nodeMatches(Element*) const;
     };

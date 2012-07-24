@@ -61,7 +61,7 @@ public:
     static bool isActiveAt(Page*);
 
 private:
-    DeviceOrientationController(DeviceOrientationClient*);
+    explicit DeviceOrientationController(DeviceOrientationClient*);
 
     void timerFired(Timer<DeviceOrientationController>*);
 

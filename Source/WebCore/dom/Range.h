@@ -149,7 +149,7 @@ public:
 #endif
 
 private:
-    Range(PassRefPtr<Document>);
+    explicit Range(PassRefPtr<Document>);
     Range(PassRefPtr<Document>, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
 
     void setDocument(Document*);

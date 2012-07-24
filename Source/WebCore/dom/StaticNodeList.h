@@ -51,7 +51,7 @@ namespace WebCore {
         virtual Node* itemWithName(const AtomicString&) const;
 
     private:
-        StaticNodeList(Vector<RefPtr<Node> >& nodes)
+        explicit StaticNodeList(Vector<RefPtr<Node> >& nodes)
         {
             m_nodes.swap(nodes);
         }

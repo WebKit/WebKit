@@ -55,7 +55,7 @@ public:
     void notifyScriptReady(ScriptElement*, ExecutionType);
 
 private:
-    ScriptRunner(Document*);
+    explicit ScriptRunner(Document*);
 
     void timerFired(Timer<ScriptRunner>*);
 

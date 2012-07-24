@@ -64,7 +64,7 @@ public:
     Element* element() const { return m_element; }
 
 private:
-    NamedNodeMap(Element* element)
+    explicit NamedNodeMap(Element* element)
         : m_element(element)
     {
         // Only supports NamedNodeMaps with Element associated, DocumentType.entities and DocumentType.notations are not supported yet.

@@ -60,7 +60,7 @@ public:
     virtual Node* itemWithName(const AtomicString&) const;
 
 private:
-    StaticHashSetNodeList(ListHashSet<RefPtr<Node> >& nodes);
+    explicit StaticHashSetNodeList(ListHashSet<RefPtr<Node> >& nodes);
 
     ListHashSet<RefPtr<Node> > m_nodes;
 };

@@ -45,7 +45,7 @@ public:
     SpeechInputResult* item(unsigned index);
 
 private:
-    SpeechInputResultList(const SpeechInputResultArray& results);
+    explicit SpeechInputResultList(const SpeechInputResultArray& results);
 
     SpeechInputResultArray m_results;
 };

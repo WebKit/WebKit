@@ -45,7 +45,7 @@ namespace WebCore {
 class ChildListMutationScope {
     WTF_MAKE_NONCOPYABLE(ChildListMutationScope);
 public:
-    ChildListMutationScope(Node* target)
+    explicit ChildListMutationScope(Node* target)
         : m_target(target->document()->hasMutationObserversOfType(MutationObserver::ChildList) ? target : 0)
     {
         if (m_target)

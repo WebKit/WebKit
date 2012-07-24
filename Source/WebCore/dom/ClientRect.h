@@ -50,8 +50,8 @@ namespace WebCore {
 
     private:
         ClientRect();
-        ClientRect(const IntRect&);
-        ClientRect(const FloatRect&);
+        explicit ClientRect(const IntRect&);
+        explicit ClientRect(const FloatRect&);
 
         FloatRect m_rect;
     }; 

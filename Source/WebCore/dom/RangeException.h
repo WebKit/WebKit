@@ -47,7 +47,7 @@ public:
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
 private:
-    RangeException(const ExceptionCodeDescription& description)
+    explicit RangeException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)
     {
     }
