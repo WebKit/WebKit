@@ -1,3 +1,16 @@
+2012-07-24  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Remove webcore_resource_files from WebCore.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=92129
+
+        Reviewed by Adam Barth.
+
+        It was added in http://trac.webkit.org/changeset/81706/trunk/Source/WebCore/WebCore.gypi .
+        The changes in that revision were mostly reverted in http://trac.webkit.org/changeset/119921 ,
+        but this block was forgotten. Since it just confused me for a bit, remove it.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-07-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         inline-table wrapper should be generated for display: inline element only
