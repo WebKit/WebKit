@@ -1,3 +1,17 @@
+2012-07-23  Tony Chang  <tony@chromium.org>
+
+        http/tests/multipart/policy-ignore-crash.php is failing on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=92046
+
+        Reviewed by Adam Barth.
+
+        Chromium's network layer now shows most text/* mime types. This test was using text/random to
+        try to trigger a crash when multipart content switch from a text type to a non-text type.
+        Change the test to use a text type that we don't render.
+
+        * http/tests/multipart/policy-ignore-crash.php: Use text/rtf instead of text/random.
+        * platform/chromium/TestExpectations: Test should be passing again.
+
 2012-07-23  Hayato Ito  <hayato@chromium.org>
 
         A FocusScope for a distributed node should not be its TreeScope.

@@ -3638,9 +3638,6 @@ BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalis
 // Needs rebaseline.
 BUGWK91811 : media/media-document-audio-repaint.html = IMAGE+TEXT
 
-// Layout test fails due to Chromium r147845.
-BUGCR68648 : http/tests/multipart/policy-ignore-crash.php = TEXT
-
 BUGWK92019 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
 BUGWK92022 DEBUG : svg/W3C-SVG-1.1/struct-dom-06-b.svg = TEXT PASS
 BUGCR138583 : media/media-fragments/TC0010-TC0019.html = PASS CRASH

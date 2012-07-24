@@ -17,9 +17,9 @@ ob_flush();
 flush();
 ?>
 --asdf
-Content-type: text/random
+Content-type: text/rtf
 
-This chunk doesn't have a content type, which can cause the policy
+This chunk has an unsupported text mime type, which can cause the policy
 for this load to be ignored. This causes the request to be canceled.
 
 <?php
