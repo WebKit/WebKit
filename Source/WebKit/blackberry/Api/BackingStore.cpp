@@ -1072,8 +1072,6 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
     BackingStoreGeometry* currentState = frontState();
     TileMap currentMap = currentState->tileMap();
 
-    Platform::IntRect dirtyContentsRect;
-
     for (size_t i = 0; i < tileRectList.size(); ++i) {
         TileRect tileRect = tileRectList[i];
         TileIndex index = tileRect.first;
@@ -1161,7 +1159,6 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
             tile->backBuffer()->clearRenderedRegion();
         }
 
-        dirtyContentsRect = Platform::unionOfRects(dirtyContentsRect, dirtyRect);
     }
 
     return true;
