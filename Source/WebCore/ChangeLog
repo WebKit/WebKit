@@ -1,3 +1,9 @@
+2012-07-24  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed prospective build fix for Chromium. Changed include of hb.h in HarfBuzzNGFace.h
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFace.h:
+
 2012-07-24  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         HarfBuzzFaceNG.h forward declarations conflict with newer versions of Harfbuzz

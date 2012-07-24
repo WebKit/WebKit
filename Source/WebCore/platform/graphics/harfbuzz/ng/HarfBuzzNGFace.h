@@ -31,7 +31,7 @@
 #ifndef HarfBuzzNGFace_h
 #define HarfBuzzNGFace_h
 
-#include <hb.h>
+#include "hb.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
