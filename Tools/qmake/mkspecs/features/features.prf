@@ -244,3 +244,8 @@ for(define, DEFINES) {
 haveQt(4):contains(DEFINES, ENABLE_WEBGL=1):contains(DEFINES, WTF_USE_3D_GRAPHICS=0) {
     error("WebGL requires Qt to be configured with OpenGL. Please reconfigure Qt with OpenGL, or build WebKit without WebGL.")
 }
+
+# Slider Touch is sensible to use when compiling WebKit2
+haveQt(5):contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
+    DEFINES += ENABLE_TOUCH_SLIDER=1
+}

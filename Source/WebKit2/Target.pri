@@ -851,7 +851,6 @@ contains(DEFINES, ENABLE_INSPECTOR_SERVER=1) {
 }
 
 contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
-    DEFINES += ENABLE_TOUCH_SLIDER=1
     HEADERS += \
         Shared/NativeWebTouchEvent.h
     SOURCES += \
