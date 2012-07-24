@@ -482,6 +482,12 @@ public:
         return m_doctypeData->m_systemIdentifier;
     }
 
+    void clearExternalCharacters()
+    {
+        ASSERT(m_type == Token::Type::Character);
+        m_externalCharacters = 0;
+    }
+
 protected:
     typename Token::Type::Type m_type;
 

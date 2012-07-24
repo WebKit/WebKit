@@ -1,3 +1,22 @@
+2012-07-23  Kwang Yul Seo  <skyul@company100.net>
+
+        Clear the external characters pointer of an AtomicHTMLToken before the raw token is cleared.
+        https://bugs.webkit.org/show_bug.cgi?id=92056
+
+        Reviewed by Adam Barth.
+
+        AtomicHTMLToken keeps a pointer to the HTMLToken's buffer instead of copying the
+        characters for performance. Clear the external characters pointer before the raw token
+        is cleared to make sure that we won't have a dangling pointer.
+
+        No new tests - no functional changes.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::AtomicMarkupTokenBase::clearExternalCharacters):
+        (AtomicMarkupTokenBase):
+
 2012-07-24  Jian Li  <jianli@chromium.org>
 
         Add per-context setting for html notifications

@@ -451,6 +451,12 @@ void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
 
     constructTreeFromAtomicToken(token.get());
 
+    // AtomicHTMLToken keeps a pointer to the HTMLToken's buffer instead
+    // of copying the characters for performance.
+    // Clear the external characters pointer before the raw token is cleared
+    // to make sure that we won't have a dangling pointer.
+    token->clearExternalCharacters();
+
     if (!rawToken.isUninitialized()) {
         ASSERT(rawToken.type() == HTMLTokenTypes::Character);
         rawToken.clear();
