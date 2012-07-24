@@ -2823,7 +2823,7 @@ BUGWK86722 : fast/images/paletted-png-with-color-profile.html = MISSING
 BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT
 
 // These all will timeout, because we are lacking a hook that signals test completion.
-BUGWK70066 : fast/hidpi = FAIL
+BUGWK70066 : fast/hidpi = IMAGE IMAGE+TEXT
 BUGWK70066 SKIP : svg/as-image/image-respects-deviceScaleFactor.html = TIMEOUT
 
 // Flaky tests from ~r97647

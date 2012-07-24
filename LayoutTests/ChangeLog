@@ -1,3 +1,9 @@
+2012-07-24  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed expectations change for chromium to address lint error from r90190.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         inline-table wrapper should be generated for display: inline element only
