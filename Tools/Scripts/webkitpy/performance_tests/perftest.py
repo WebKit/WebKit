@@ -232,7 +232,7 @@ class ReplayServer(object):
         self._process = subprocess.Popen(args)
 
     def wait_until_ready(self):
-        for i in range(0, 10):
+        for i in range(0, 3):
             try:
                 connection = socket.create_connection(('localhost', '8080'), timeout=1)
                 connection.close()
@@ -281,7 +281,7 @@ class ReplayPerfTest(PageLoadingPerfTest):
 
         driver = self._port.create_driver(worker_number=1, no_timeout=True)
         try:
-            output = self.run_single(driver, self._url, time_out_ms, record=True)
+            output = self.run_single(driver, self._archive_path, time_out_ms, record=True)
         finally:
             driver.stop()
 
@@ -300,6 +300,7 @@ class ReplayPerfTest(PageLoadingPerfTest):
             return None
 
         try:
+            _log.debug("Waiting for Web page replay to start.")
             if not server.wait_until_ready():
                 _log.error("Web page replay didn't start.")
                 return None
@@ -317,8 +318,8 @@ class ReplayPerfTest(PageLoadingPerfTest):
                 return None
 
             filesystem = self._port.host.filesystem
-            dirname = filesystem.dirname(url)
-            filename = filesystem.split(url)[1]
+            dirname = filesystem.dirname(self._archive_path)
+            filename = filesystem.split(self._archive_path)[1]
             writer = TestResultWriter(filesystem, self._port, dirname, filename)
             if record:
                 writer.write_image_files(actual_image=None, expected_image=output.image)

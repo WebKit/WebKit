@@ -1,3 +1,25 @@
+2012-07-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix regressions in replay performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=92052
+
+        Reviewed by Dirk Pranke.
+
+        Fix regression that accumulated over time to make replay tests work again.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::willSendRequest): Use the main document URL in the request since the main frame's
+        URL hadn't been updated yet When requesting a new URL on the main frame.
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (ReplayServer.wait_until_ready): Waiting for 6 seconds (3 tries) seems enough.
+        (ReplayPerfTest.prepare): Pass self._archive_path to run_signle as that is the current contract.
+        (ReplayPerfTest.run_single): Use the archive path to generate -expected.png path.
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestReplayPerfTest.test_run_single):
+        (TestReplayPerfTest.test_prepare):
+        (TestReplayPerfTest.test_prepare_calls_run_single.run_single):
+        (TestReplayPerfTest):
+
 2012-07-24  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] MSVC: unresolved external symbol __DllMainCRTStartup@12

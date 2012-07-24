@@ -156,7 +156,7 @@ class TestReplayPerfTest(unittest.TestCase):
 
     def _add_file(self, port, dirname, filename, content=True):
         port.host.filesystem.maybe_make_directory(dirname)
-        port.host.filesystem.files[port.host.filesystem.join(dirname, filename)] = content
+        port.host.filesystem.write_binary_file(port.host.filesystem.join(dirname, filename), content)
 
     def _setup_test(self, run_test=None):
         test_port = self.ReplayTestPort(run_test)
@@ -195,6 +195,7 @@ class TestReplayPerfTest(unittest.TestCase):
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, '')
+        self.assertEqual(port.host.filesystem.read_binary_file('/path/some-dir/some-test-actual.png'), 'actual image')
 
     def test_run_single_fails_without_webpagereplay(self):
         output_capture = OutputCapture()
@@ -281,6 +282,7 @@ class TestReplayPerfTest(unittest.TestCase):
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, 'Preparing replay for some-test.replay\nPrepared replay for some-test.replay\n')
+        self.assertEqual(port.host.filesystem.read_binary_file('/path/some-dir/some-test-expected.png'), 'actual image')
 
     def test_prepare_calls_run_single(self):
         output_capture = OutputCapture()
@@ -289,7 +291,7 @@ class TestReplayPerfTest(unittest.TestCase):
 
         def run_single(driver, url, time_out_ms, record):
             self.assertTrue(record)
-            self.assertEqual(url, 'http://some-test/')
+            self.assertEqual(url, '/path/some-dir/some-test.wpr')
             called[0] = True
             return False
 

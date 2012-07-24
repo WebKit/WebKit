@@ -1279,8 +1279,8 @@ void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRe
     GURL url = request.url();
     string requestURL = url.possibly_invalid_spec();
 
+    GURL mainDocumentURL = request.firstPartyForCookies();
     if (layoutTestController()->shouldDumpResourceLoadCallbacks()) {
-        GURL mainDocumentURL = request.firstPartyForCookies();
         printResourceDescription(identifier);
         printf(" - willSendRequest <NSURLRequest URL %s, main document URL %s,"
                " http method %s> redirectResponse ",
@@ -1306,9 +1306,8 @@ void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRe
 
     string host = url.host();
     if (!host.empty() && (url.SchemeIs("http") || url.SchemeIs("https"))) {
-        GURL testURL = webView()->mainFrame()->document().url();
-        const string& testHost = testURL.host();
-        if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && ((!testURL.SchemeIs("http") && !testURL.SchemeIs("https")) || isLocalhost(testHost))
+        if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host)
+            && ((!mainDocumentURL.SchemeIs("http") && !mainDocumentURL.SchemeIs("https")) || isLocalhost(mainDocumentURL.host()))
             && !m_shell->allowExternalPages()) {
             printf("Blocked access to external URL %s\n", requestURL.c_str());
             blockRequest(request);
