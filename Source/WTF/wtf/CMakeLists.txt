@@ -28,6 +28,7 @@ SET(WTF_HEADERS
     FixedArray.h
     Forward.h
     GetPtr.h
+    GregorianDateTime.h
     HashCountedSet.h
     HashFunctions.h
     HashIterators.h

@@ -1,3 +1,23 @@
+2012-07-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Move GregorianDateTime from JSC to WTF namespace
+        https://bugs.webkit.org/show_bug.cgi?id=91948
+
+        Reviewed by Geoffrey Garen.
+
+        Moving GregorianDateTime into the WTF namespace allows us to us to
+        use it in WebCore too. The new class has the same behaviour as the
+        old struct. Only the unused timeZone member has been removed.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/GregorianDateTime.h: Added.
+        (GregorianDateTime):
+
 2012-07-23  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Merge createThreadInternal implementations

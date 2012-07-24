@@ -23,10 +23,6 @@
 
 #include "JSWrapperObject.h"
 
-namespace WTF {
-    struct GregorianDateTime;
-}
-
 namespace JSC {
 
     class DateInstance : public JSWrapperObject {

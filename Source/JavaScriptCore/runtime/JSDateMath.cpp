@@ -203,8 +203,8 @@ double getUTCOffset(ExecState* exec)
 
 double gregorianDateTimeToMS(ExecState* exec, const GregorianDateTime& t, double milliSeconds, bool inputIsUTC)
 {
-    double day = dateToDaysFrom1970(t.year + 1900, t.month, t.monthDay);
-    double ms = timeToMS(t.hour, t.minute, t.second, milliSeconds);
+    double day = dateToDaysFrom1970(t.year() + 1900, t.month(), t.monthDay());
+    double ms = timeToMS(t.hour(), t.minute(), t.second(), milliSeconds);
     double result = (day * WTF::msPerDay) + ms;
 
     if (!inputIsUTC) { // convert to UTC
@@ -228,17 +228,16 @@ void msToGregorianDateTime(ExecState* exec, double ms, bool outputIsUTC, Gregori
     }
 
     const int year = msToYear(ms);
-    tm.second   =  msToSeconds(ms);
-    tm.minute   =  msToMinutes(ms);
-    tm.hour     =  msToHours(ms);
-    tm.weekDay  =  msToWeekDay(ms);
-    tm.yearDay  =  dayInYear(ms, year);
-    tm.monthDay =  dayInMonthFromDayInYear(tm.yearDay, isLeapYear(year));
-    tm.month    =  monthFromDayInYear(tm.yearDay, isLeapYear(year));
-    tm.year     =  year - 1900;
-    tm.isDST    =  dstOff != 0.0;
-    tm.utcOffset = static_cast<long>((dstOff + utcOff) / WTF::msPerSecond);
-    tm.timeZone = nullptr;
+    tm.setSecond(msToSeconds(ms));
+    tm.setMinute(msToMinutes(ms));
+    tm.setHour(msToHours(ms));
+    tm.setWeekDay(msToWeekDay(ms));
+    tm.setYearDay(dayInYear(ms, year));
+    tm.setMonthDay(dayInMonthFromDayInYear(tm.yearDay(), isLeapYear(year)));
+    tm.setMonth(monthFromDayInYear(tm.yearDay(), isLeapYear(year)));
+    tm.setYear(year - 1900);
+    tm.setIsDST(dstOff != 0.0);
+    tm.setUtcOffset(static_cast<long>((dstOff + utcOff) / WTF::msPerSecond));
 }
 
 double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateString)

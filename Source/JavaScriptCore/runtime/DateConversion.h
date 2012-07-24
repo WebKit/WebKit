@@ -42,10 +42,11 @@
 #ifndef DateConversion_h
 #define DateConversion_h
 
+#include <wtf/GregorianDateTime.h>
+
 namespace JSC {
 
 class ExecState;
-struct GregorianDateTime;
 
 static const unsigned DateConversionBufferSize = 100;
 typedef char DateConversionBuffer[DateConversionBufferSize];

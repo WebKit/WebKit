@@ -61,6 +61,7 @@ HEADERS += \
     Forward.h \
     Functional.h \
     GetPtr.h \
+    GregorianDateTime.h \
     HashCountedSet.h \
     HashFunctions.h \
     HashIterators.h \

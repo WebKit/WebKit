@@ -504,13 +504,13 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 GregorianDateTime gdt;
                 msToGregorianDateTime(exec, date->internalNumber(), true, gdt);
                 if (hint == QMetaType::QDateTime) {
-                    ret = QDateTime(QDate(gdt.year + 1900, gdt.month + 1, gdt.monthDay), QTime(gdt.hour, gdt.minute, gdt.second), Qt::UTC);
+                    ret = QDateTime(QDate(gdt.year() + 1900, gdt.month() + 1, gdt.monthDay()), QTime(gdt.hour(), gdt.minute(), gdt.second()), Qt::UTC);
                     dist = 0;
                 } else if (hint == QMetaType::QDate) {
-                    ret = QDate(gdt.year + 1900, gdt.month + 1, gdt.monthDay);
+                    ret = QDate(gdt.year() + 1900, gdt.month() + 1, gdt.monthDay());
                     dist = 1;
                 } else {
-                    ret = QTime(gdt.hour + 1900, gdt.minute, gdt.second);
+                    ret = QTime(gdt.hour() + 1900, gdt.minute(), gdt.second());
                     dist = 2;
                 }
             } else if (type == Number) {
@@ -518,13 +518,13 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 GregorianDateTime gdt;
                 msToGregorianDateTime(exec, b, true, gdt);
                 if (hint == QMetaType::QDateTime) {
-                    ret = QDateTime(QDate(gdt.year + 1900, gdt.month + 1, gdt.monthDay), QTime(gdt.hour, gdt.minute, gdt.second), Qt::UTC);
+                    ret = QDateTime(QDate(gdt.year() + 1900, gdt.month() + 1, gdt.monthDay()), QTime(gdt.hour(), gdt.minute(), gdt.second()), Qt::UTC);
                     dist = 6;
                 } else if (hint == QMetaType::QDate) {
-                    ret = QDate(gdt.year + 1900, gdt.month + 1, gdt.monthDay);
+                    ret = QDate(gdt.year() + 1900, gdt.month() + 1, gdt.monthDay());
                     dist = 8;
                 } else {
-                    ret = QTime(gdt.hour, gdt.minute, gdt.second);
+                    ret = QTime(gdt.hour(), gdt.minute(), gdt.second());
                     dist = 10;
                 }
 #ifndef QT_NO_DATESTRING
@@ -874,13 +874,13 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
         // Dates specified this way are in local time (we convert DateTimes above)
         GregorianDateTime dt;
-        dt.year = date.year() - 1900;
-        dt.month = date.month() - 1;
-        dt.monthDay = date.day();
-        dt.hour = time.hour();
-        dt.minute = time.minute();
-        dt.second = time.second();
-        dt.isDST = -1;
+        dt.setYear(date.year() - 1900);
+        dt.setMonth(date.month() - 1);
+        dt.setMonthDay(date.day());
+        dt.setHour(time.hour());
+        dt.setMinute(time.minute());
+        dt.setSecond(time.second());
+        dt.setIsDST(-1);
         double ms = gregorianDateTimeToMS(exec, dt, time.msec(), /*inputIsUTC*/ false);
 
         return DateInstance::create(exec, exec->lexicalGlobalObject()->dateStructure(), trunc(ms));

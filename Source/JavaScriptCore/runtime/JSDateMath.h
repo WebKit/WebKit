@@ -44,100 +44,18 @@
 #define JSDateMath_h
 
 #include <wtf/DateMath.h>
+#include <wtf/GregorianDateTime.h>
 
 namespace JSC {
 
 class ExecState;
 class UString;
-struct GregorianDateTime;
 
 void msToGregorianDateTime(ExecState*, double, bool outputIsUTC, GregorianDateTime&);
 double gregorianDateTimeToMS(ExecState*, const GregorianDateTime&, double, bool inputIsUTC);
 double getUTCOffset(ExecState*);
 double parseDateFromNullTerminatedCharacters(ExecState*, const char* dateString);
 double parseDate(ExecState*, const UString&);
-
-// Intentionally overridding the default tm of the system.
-// The members of tm differ on various operating systems.
-struct GregorianDateTime {
-    WTF_MAKE_NONCOPYABLE(GregorianDateTime);
-public:
-    GregorianDateTime()
-        : second(0)
-        , minute(0)
-        , hour(0)
-        , weekDay(0)
-        , monthDay(0)
-        , yearDay(0)
-        , month(0)
-        , year(0)
-        , isDST(0)
-        , utcOffset(0)
-    {
-    }
-
-    operator tm() const
-    {
-        tm ret;
-        memset(&ret, 0, sizeof(ret));
-
-        ret.tm_sec   =  second;
-        ret.tm_min   =  minute;
-        ret.tm_hour  =  hour;
-        ret.tm_wday  =  weekDay;
-        ret.tm_mday  =  monthDay;
-        ret.tm_yday  =  yearDay;
-        ret.tm_mon   =  month;
-        ret.tm_year  =  year;
-        ret.tm_isdst =  isDST;
-
-#if HAVE(TM_GMTOFF)
-        ret.tm_gmtoff = static_cast<long>(utcOffset);
-#endif
-#if HAVE(TM_ZONE)
-        ret.tm_zone = timeZone.get();
-#endif
-
-        return ret;
-    }
-
-    void copyFrom(const GregorianDateTime& rhs)
-    {
-        second = rhs.second;
-        minute = rhs.minute;
-        hour = rhs.hour;
-        weekDay = rhs.weekDay;
-        monthDay = rhs.monthDay;
-        yearDay = rhs.yearDay;
-        month = rhs.month;
-        year = rhs.year;
-        isDST = rhs.isDST;
-        utcOffset = rhs.utcOffset;
-        if (rhs.timeZone) {
-            int inZoneSize = strlen(rhs.timeZone.get()) + 1;
-            timeZone = adoptArrayPtr(new char[inZoneSize]);
-            strncpy(timeZone.get(), rhs.timeZone.get(), inZoneSize);
-        } else
-            timeZone = nullptr;
-    }
-
-    int second;
-    int minute;
-    int hour;
-    int weekDay;
-    int monthDay;
-    int yearDay;
-    int month;
-    int year;
-    int isDST;
-    int utcOffset;
-    OwnArrayPtr<char> timeZone;
-};
-
-static inline int gmtoffset(const GregorianDateTime& t)
-{
-    return t.utcOffset;
-}
 
 } // namespace JSC
 

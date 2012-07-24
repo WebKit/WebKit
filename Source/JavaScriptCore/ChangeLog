@@ -1,3 +1,22 @@
+2012-07-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Move GregorianDateTime from JSC to WTF namespace
+        https://bugs.webkit.org/show_bug.cgi?id=91948
+
+        Reviewed by Geoffrey Garen.
+
+        Moving GregorianDateTime into the WTF namespace allows us to us to
+        use it in WebCore too. The new class has the same behaviour as the
+        old struct. Only the unused timeZone member has been removed.
+
+        * runtime/DateConstructor.cpp:
+        * runtime/DateConversion.cpp:
+        * runtime/DateConversion.h:
+        * runtime/DateInstance.h:
+        * runtime/DatePrototype.cpp:
+        * runtime/JSDateMath.cpp:
+        * runtime/JSDateMath.h:
+
 2012-07-23  Filip Pizlo  <fpizlo@apple.com>
 
         Property storage should grow in reverse address direction, to support butterflies

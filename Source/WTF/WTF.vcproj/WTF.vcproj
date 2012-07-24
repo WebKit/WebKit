@@ -797,6 +797,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\GregorianDateTime.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\HashCountedSet.h"
 			>
 		</File>

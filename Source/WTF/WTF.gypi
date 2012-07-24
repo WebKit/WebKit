@@ -34,6 +34,7 @@
             'wtf/Forward.h',
             'wtf/Functional.h',
             'wtf/GetPtr.h',
+            'wtf/GregorianDateTime.h',
             'wtf/HashCountedSet.h',
             'wtf/HashFunctions.h',
             'wtf/HashIterators.h',
