@@ -31,10 +31,11 @@
 
 QT_BEGIN_NAMESPACE
 class QPointF;
-class QQuickWebPage;
-class QQuickWebView;
 class QWheelEvent;
 QT_END_NAMESPACE
+
+class QQuickWebPage;
+class QQuickWebView;
 
 class QWebKitTest;
 

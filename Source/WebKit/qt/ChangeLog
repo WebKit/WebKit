@@ -1,3 +1,12 @@
+2012-07-23  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fix compilation against namespaced Qt
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/GeolocationClientQt.h:
+        * examples/platformplugin/WebPlugin.h:
+
 2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client

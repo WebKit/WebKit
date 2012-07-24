@@ -24,7 +24,9 @@
 #include <QtQuick/QSGTransformNode>
 #include <wtf/PassRefPtr.h>
 
+QT_BEGIN_NAMESPACE
 class QSGSimpleRectNode;
+QT_END_NAMESPACE
 
 namespace WebKit {
 

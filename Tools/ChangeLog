@@ -1,3 +1,12 @@
+2012-07-23  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fix compilation against namespaced Qt
+
+        Reviewed by Simon Hausmann.
+
+        * QtTestBrowser/launcherwindow.h:
+        * WebKitTestRunner/PlatformWebView.h:
+
 2012-07-24  Peter Beverloo  <peter@chromium.org>
 
         Update a few Chromium Android contributors in committers.py

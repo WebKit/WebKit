@@ -38,7 +38,9 @@
 #if PLATFORM(QT)
 #if HAVE(QRAWFONT)
 #include <QRawFont>
+QT_BEGIN_NAMESPACE
 class QTextLayout;
+QT_END_NAMESPACE
 #else
 #include <QFont>
 #endif

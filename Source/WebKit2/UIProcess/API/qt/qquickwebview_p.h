@@ -27,8 +27,10 @@
 #include <QtQuick/qquickitem.h>
 #include <private/qquickflickable_p.h>
 
-class QWebNavigationRequest;
+QT_BEGIN_NAMESPACE
 class QQmlComponent;
+QT_END_NAMESPACE
+class QWebNavigationRequest;
 class QQuickWebPage;
 class QQuickWebViewAttached;
 class QWebLoadRequest;

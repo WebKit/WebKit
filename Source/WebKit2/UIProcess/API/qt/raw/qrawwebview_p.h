@@ -32,6 +32,7 @@
 #include <WebKit2/WKPageGroup.h>
 #include <wtf/Platform.h>
 
+QT_BEGIN_NAMESPACE
 class QRect;
 class QRectF;
 class QPoint;
@@ -43,6 +44,7 @@ class QTouchEvent;
 class QUrl;
 class QMatrix4x4;
 class QCursor;
+QT_END_NAMESPACE
 
 class QRawWebViewPrivate;
 

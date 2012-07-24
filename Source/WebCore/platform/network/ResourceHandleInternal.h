@@ -54,7 +54,9 @@ class Frame;
 #endif
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QWebNetworkJob;
+QT_END_NAMESPACE
 namespace WebCore {
 class QNetworkReplyHandler;
 }

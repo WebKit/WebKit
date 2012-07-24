@@ -59,8 +59,10 @@
 #include "webpage.h"
 #include "webview.h"
 
+QT_BEGIN_NAMESPACE
 class QPropertyAnimation;
 class QLineEdit;
+QT_END_NAMESPACE
 
 class WindowOptions {
 public:

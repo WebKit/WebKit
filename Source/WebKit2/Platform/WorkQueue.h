@@ -47,8 +47,10 @@
 
 #if PLATFORM(QT) && !OS(DARWIN)
 #include <QSocketNotifier>
+QT_BEGIN_NAMESPACE
 class QObject;
 class QThread;
+QT_END_NAMESPACE
 #elif PLATFORM(GTK)
 #include <wtf/gobject/GRefPtr.h>
 typedef gboolean (*GSourceFunc) (gpointer data);

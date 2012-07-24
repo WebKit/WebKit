@@ -1,3 +1,13 @@
+2012-07-23  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fix compilation against namespaced Qt
+
+        Reviewed by Simon Hausmann.
+
+        * platform/graphics/Font.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/qt/ThirdPartyCookiesQt.h:
+
 2012-07-24  Anthony Scian  <ascian@rim.com>
 
         Web Inspector [JSC]: Enable initiator column in network panel.

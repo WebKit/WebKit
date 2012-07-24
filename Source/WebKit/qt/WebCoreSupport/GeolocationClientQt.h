@@ -39,7 +39,9 @@ class QGeoPositionInfoSource;
 using namespace QtMobility;
 #elif HAVE(QT5)
 #include <QtLocation/QGeoPositionInfo>
+QT_BEGIN_NAMESPACE
 class QGeoPositionInfoSource;
+QT_END_NAMESPACE
 #endif
 
 

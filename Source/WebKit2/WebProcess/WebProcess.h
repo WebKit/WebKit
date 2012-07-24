@@ -50,7 +50,9 @@
 #endif
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QNetworkAccessManager;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(MAC)

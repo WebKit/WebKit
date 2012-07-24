@@ -26,8 +26,10 @@
 #include <WebKit2/WKGeolocationPosition.h>
 #include <WebKit2/WKRetainPtr.h>
 
+QT_BEGIN_NAMESPACE
 class QGeoPositionInfoSource;
 class QGeoPositionInfo;
+QT_END_NAMESPACE
 
 namespace WebKit {
 

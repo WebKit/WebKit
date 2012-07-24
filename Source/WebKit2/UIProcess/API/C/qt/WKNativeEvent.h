@@ -29,7 +29,9 @@
 // a Qt specific WKNativeEvent.h file is needed because that the use of __APPLE__
 // in original WKNativeEvent.h file breaks Qt build in MacOS
 
+QT_BEGIN_NAMESPACE
 class QEvent;
+QT_END_NAMESPACE
 typedef const QEvent* WKNativeEventPtr;
 
 #endif /* WKNativeEvent_h */

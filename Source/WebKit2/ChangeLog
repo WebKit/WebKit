@@ -1,3 +1,28 @@
+2012-07-23  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fix compilation against namespaced Qt
+
+        Reviewed by Simon Hausmann.
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/PlatformProcessIdentifier.h:
+        * Platform/WorkQueue.h:
+        * Shared/qt/QtNetworkRequestData.h:
+        * Shared/qt/WebEventFactoryQt.h:
+        * UIProcess/API/C/qt/WKNativeEvent.h:
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebnavigationhistory_p.h:
+        * UIProcess/API/qt/raw/qrawwebview_p.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/Launcher/ThreadLauncher.h:
+        * UIProcess/LayerTreeCoordinatorProxy.h:
+        * UIProcess/qt/QtViewportHandler.h:
+        * UIProcess/qt/QtWebPageSGNode.h:
+        * UIProcess/qt/WebColorChooserProxyQt.h:
+        * UIProcess/qt/WebGeolocationProviderQt.h:
+        * UIProcess/qt/WebPopupMenuProxyQt.h:
+        * WebProcess/WebProcess.h:
+
 2012-07-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Remove unneeded WebURLRequestEfl and WebURLResponseEfl

@@ -34,8 +34,10 @@ class ArgumentEncoder;
 class ArgumentDecoder;
 };
 
+QT_BEGIN_NAMESPACE
 class QNetworkRequest;
 class QNetworkReply;
+QT_END_NAMESPACE
 
 namespace WebKit {
 

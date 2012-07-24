@@ -32,7 +32,9 @@
 #include <wtf/Threading.h>
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QLocalSocket;
+QT_END_NAMESPACE
 #endif
 
 namespace WebKit {

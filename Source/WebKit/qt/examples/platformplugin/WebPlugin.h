@@ -28,8 +28,10 @@
 #include <QVideoWidget>
 #endif
 
+QT_BEGIN_NAMESPACE
 class QListWidgetItem;
 class QListWidget;
+QT_END_NAMESPACE
 
 class Popup : public QDialog {
     Q_OBJECT

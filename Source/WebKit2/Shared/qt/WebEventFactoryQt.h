@@ -29,6 +29,8 @@
 
 #include "WebEvent.h"
 
+QT_BEGIN_NAMESPACE
+
 #if ENABLE(TOUCH_EVENTS)
 class QTouchEvent;
 #endif
@@ -36,6 +38,8 @@ class QTouchEvent;
 class QMouseEvent;
 class QWheelEvent;
 class QKeyEvent;
+
+QT_END_NAMESPACE
 
 namespace WebKit {
 

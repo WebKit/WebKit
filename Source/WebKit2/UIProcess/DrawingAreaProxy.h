@@ -36,7 +36,9 @@
 #include <wtf/Noncopyable.h>
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QPainter;
+QT_END_NAMESPACE
 #elif PLATFORM(GTK)
 typedef struct _cairo cairo_t;
 #endif

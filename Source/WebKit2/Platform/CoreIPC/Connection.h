@@ -43,7 +43,9 @@
 #elif PLATFORM(WIN)
 #include <string>
 #elif PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QSocketNotifier;
+QT_END_NAMESPACE
 #endif
 
 #if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)

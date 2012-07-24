@@ -29,11 +29,13 @@
 #include <WebKit2/WKRetainPtr.h>
 
 #if defined(BUILDING_QT__)
+QT_BEGIN_NAMESPACE
+class QQuickView;
+class QEventLoop;
+QT_END_NAMESPACE
 class QQuickWebView;
 typedef QQuickWebView* PlatformWKView;
-class QQuickView;
 typedef QQuickView* PlatformWindow;
-class QEventLoop;
 #elif defined(__APPLE__) && __APPLE__
 #if __OBJC__
 @class WKView;

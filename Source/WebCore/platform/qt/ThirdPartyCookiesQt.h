@@ -20,8 +20,10 @@
 #ifndef ThirdPartyCookiesQt_h
 #define ThirdPartyCookiesQt_h
 
+QT_BEGIN_NAMESPACE
 class QNetworkCookieJar;
 class QUrl;
+QT_END_NAMESPACE
 
 namespace WebCore {
 class NetworkingContext;

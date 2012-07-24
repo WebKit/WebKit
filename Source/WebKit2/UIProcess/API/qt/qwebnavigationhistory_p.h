@@ -33,11 +33,13 @@
 #include <QVariant>
 #include <QtQml/qqml.h>
 
+QT_BEGIN_NAMESPACE
 class QAbstractListModel;
+class QString;
+class QUrl;
+QT_END_NAMESPACE
 class QWebNavigationHistoryPrivate;
 class QWebNavigationListModelPrivate;
-class QUrl;
-class QString;
 
 class QWEBKIT_EXPORT QWebNavigationListModel : public QAbstractListModel {
     Q_OBJECT

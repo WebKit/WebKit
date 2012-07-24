@@ -25,9 +25,12 @@
 #include <QtCore/QObject>
 #include <wtf/OwnPtr.h>
 
+QT_BEGIN_NAMESPACE
 class QQmlComponent;
 class QQmlContext;
 class QQuickItem;
+QT_END_NAMESPACE
+
 class QQuickWebView;
 
 namespace WebCore {
