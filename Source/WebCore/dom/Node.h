@@ -233,8 +233,7 @@ public:
 
     // Returns 0, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
-    bool isInShadowTree() const { return getFlag(InShadowTree); }
-
+    bool isInShadowTree() const;
     // Node's parent, shadow tree host.
     ContainerNode* parentOrHostNode() const;
     Element* parentOrHostElement() const;
@@ -412,7 +411,14 @@ public:
 
     // Returns the document associated with this node. This method never returns NULL, except in the case 
     // of a DocumentType node that is not used with any Document yet. A Document node returns itself.
-    Document* document() const;
+    Document* document() const
+    {
+        ASSERT(this);
+        // FIXME: below ASSERT is useful, but prevents the use of document() in the constructor or destructor
+        // due to the virtual function call to nodeType().
+        ASSERT(m_document || (nodeType() == DOCUMENT_TYPE_NODE && !inDocument()));
+        return m_document;
+    }
 
     TreeScope* treeScope() const;
 
@@ -420,7 +426,7 @@ public:
     // node tree, false otherwise.
     bool inDocument() const 
     { 
-        ASSERT(treeScope() || !getFlag(InDocumentFlag));
+        ASSERT(m_document || !getFlag(InDocumentFlag));
         return getFlag(InDocumentFlag);
     }
 
@@ -690,12 +696,10 @@ private:
 #endif
         InNamedFlowFlag = 1 << 26,
         HasAttrListFlag = 1 << 27,
-        HasCustomCallbacksFlag = 1 << 28,
-        InShadowTree = 1 << 29
-
+        HasCustomCallbacksFlag = 1 << 28
     };
 
-    // 3 bits remaining
+    // 4 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -731,13 +735,15 @@ protected:
 
     void setHasCustomCallbacks() { setFlag(true, HasCustomCallbacksFlag); }
 
-    void setTreeScope(TreeScope*);
-    Document* documentInternal() const;
-
 private:
     friend class TreeShared<Node, ContainerNode>;
 
     void removedLastRef();
+
+    // These API should be only used for a tree scope migration.
+    // setTreeScope() returns NodeRareData to save extra nodeRareData() invocations on the caller site.
+    NodeRareData* setTreeScope(TreeScope*);
+    void setDocument(Document*);
 
     enum EditableLevel { Editable, RichlyEditable };
     bool rendererIsEditable(EditableLevel) const;
@@ -781,7 +787,7 @@ private:
 #endif
 
     mutable uint32_t m_nodeFlags;
-    TreeScope* m_treeScope;
+    Document* m_document;
     Node* m_previous;
     Node* m_next;
     RenderObject* m_renderer;

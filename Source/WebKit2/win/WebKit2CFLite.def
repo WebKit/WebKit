@@ -246,7 +246,6 @@ EXPORTS
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?utf8@String@WTF@@QBE?AVCString@2@_N@Z
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
-        ?nullInstance@TreeScope@WebCore@@SAPAV12@XZ
         ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N0@Z
         ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z
         ?restrictScaleFactorToInitialScaleIfNotUserScalable@WebCore@@YAXAAUViewportAttributes@1@@Z

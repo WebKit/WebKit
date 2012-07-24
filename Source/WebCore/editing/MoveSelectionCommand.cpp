@@ -26,7 +26,6 @@
 #include "config.h"
 #include "MoveSelectionCommand.h"
 
-#include "Document.h"
 #include "DocumentFragment.h"
 #include "ReplaceSelectionCommand.h"
 

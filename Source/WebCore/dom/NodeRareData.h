@@ -184,7 +184,8 @@ class NodeRareData {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:    
     NodeRareData()
-        : m_childNodeList(0)
+        : m_treeScope(0)
+        , m_childNodeList(0)
         , m_tabIndex(0)
         , m_tabIndexWasSetExplicitly(false)
         , m_isFocused(false)
@@ -212,6 +213,9 @@ public:
         return rareDataMap().get(node);
     }
 
+    TreeScope* treeScope() const { return m_treeScope; }
+    void setTreeScope(TreeScope* treeScope) { m_treeScope = treeScope; }
+    
     void clearNodeLists() { m_nodeLists.clear(); }
     void setNodeLists(PassOwnPtr<NodeListsNodeData> lists) { m_nodeLists = lists; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
@@ -345,6 +349,7 @@ protected:
 
 private:
 
+    TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;
     ChildNodeList* m_childNodeList;
     OwnPtr<EventTargetData> m_eventTargetData;

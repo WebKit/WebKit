@@ -1,3 +1,16 @@
+2012-07-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123184, r123195, and r123197.
+        http://trac.webkit.org/changeset/123184
+        http://trac.webkit.org/changeset/123195
+        http://trac.webkit.org/changeset/123197
+        https://bugs.webkit.org/show_bug.cgi?id=92049
+
+        pagecycler regression (Requested by morrita on #webkit).
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         Part 2 of: Implement sticky positioning
