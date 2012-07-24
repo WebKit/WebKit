@@ -1262,6 +1262,11 @@ fast/events/constructors/media-key-event-constructor.html
 # missing testRunner.setStorageDatabaseIdleInterval() implementation
 storage/domstorage/storage-close-database-on-idle.html
 
+# Missing targetDiv1.webkitRequestFullscreen() implementation
+# https://bugs.webkit.org/show_bug.cgi?id=92078
+http/tests/fullscreen/fullscreenelement-different-origin.html
+http/tests/fullscreen/fullscreenelement-same-origin.html
+
 # ============================================================================= #
 # Failing SVG tests
 # ============================================================================= #

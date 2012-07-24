@@ -1,3 +1,9 @@
+2012-07-24  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Unreview gardening.
+
+        * platform/qt/Skipped:
+
 2012-07-24  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipped a test because of a missing feature.
