@@ -141,10 +141,16 @@ static void setEvasModifiers(Evas* evas, WKEventModifiers wkModifiers)
     }
 }
 
-static void dispatchMouseDownEvent(Evas* evas, unsigned button, WKEventModifiers wkModifiers)
+static void dispatchMouseDownEvent(Evas* evas, unsigned button, WKEventModifiers wkModifiers, int clickCount)
 {
+    Evas_Button_Flags buttonFlags = EVAS_BUTTON_NONE;
+    if (clickCount == 3)
+        buttonFlags = EVAS_BUTTON_TRIPLE_CLICK;
+    else if (clickCount == 2)
+        buttonFlags = EVAS_BUTTON_DOUBLE_CLICK;
+
     setEvasModifiers(evas, wkModifiers);
-    evas_event_feed_mouse_down(evas, button, EVAS_BUTTON_NONE, 0, 0);
+    evas_event_feed_mouse_down(evas, button, buttonFlags, 0, 0);
     setEvasModifiers(evas, 0);
 }
 
@@ -303,7 +309,7 @@ void EventSenderProxy::updateClickCountForButton(int button)
 void EventSenderProxy::dispatchEvent(const WTREvent& event)
 {
     if (event.eventType == WTREventTypeMouseDown)
-        dispatchMouseDownEvent(ecore_evas_get(m_testController->mainWebView()->platformWindow()), event.button, event.modifiers);
+        dispatchMouseDownEvent(ecore_evas_get(m_testController->mainWebView()->platformWindow()), event.button, event.modifiers, m_clickCount);
     else if (event.eventType == WTREventTypeMouseUp)
         dispatchMouseUpEvent(ecore_evas_get(m_testController->mainWebView()->platformWindow()), event.button, event.modifiers);
     else if (event.eventType == WTREventTypeMouseMove)

@@ -1,3 +1,16 @@
+2012-07-24  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [WTR][EFL] Multiple mouse clicks are not emitted in EventSenderProxyEfl
+        https://bugs.webkit.org/show_bug.cgi?id=92107
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fixes mouse click events in EventSenderProxyEfl.
+
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR::dispatchMouseDownEvent):
+        (WTR::EventSenderProxy::dispatchEvent):
+
 2012-07-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrack to match the specification
