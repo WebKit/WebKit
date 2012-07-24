@@ -1,3 +1,25 @@
+2012-07-23  Roger Fong  <roger_fong@apple.com>
+
+        On Windows, if select element is off screen horizontally, 
+        menu is either inappropriately resized or positioned offscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=91913
+        <rdar://problem/7611229>
+
+        Reviewed by Tim Horton.
+
+        If the select element is positioned off the edge of the screen to the left, 
+        the menu is resized. It should not be resized, just shifted to remain on the screen.
+        If the select element is positioned off the edge of the screen to the right, 
+        the menu goes off screen instead of being shifted over to appear on screen.
+        This problem only occurs on Windows.
+        
+        Test: ManualTests/win/select-menu-off-screen.html
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        Modified final horizontal position calculation code to position
+        popup menu on screen if it would otherwise go off.
+        
 2012-07-23  David Dorwin  <ddorwin@chromium.org>
 
         Fixed crash in webkitAddKey() when key parameter is null.
