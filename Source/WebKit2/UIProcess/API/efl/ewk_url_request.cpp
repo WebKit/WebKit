@@ -31,7 +31,6 @@
 #include "WKURL.h"
 #include "WKURLRequest.h"
 #include "WebURLRequest.h"
-#include "WebURLRequestEfl.h"
 #include "ewk_url_request_private.h"
 #include <wtf/text/CString.h>
 

@@ -1,3 +1,24 @@
+2012-07-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Remove unneeded WebURLRequestEfl and WebURLResponseEfl
+        https://bugs.webkit.org/show_bug.cgi?id=92087
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove WebURLRequestEfl and WebURLResponseEfl classes
+        and their corresponding C APIs since we don't need / use
+        them.
+
+        * Shared/API/c/efl/WKURLRequestEfl.cpp: Removed.
+        * Shared/API/c/efl/WKURLRequestEfl.h: Removed.
+        * Shared/API/c/efl/WKURLResponseEfl.cpp: Removed.
+        * Shared/API/c/efl/WKURLResponseEfl.h: Removed.
+        * Shared/efl/WebURLRequestEfl.cpp: Removed.
+        * Shared/efl/WebURLRequestEfl.h: Removed.
+        * Shared/efl/WebURLResponseEfl.cpp: Removed.
+        * Shared/efl/WebURLResponseEfl.h: Removed.
+        * UIProcess/API/efl/ewk_url_request.cpp:
+
 2012-07-24  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Enable touch slider when touch events are enabled
