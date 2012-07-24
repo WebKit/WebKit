@@ -3,31 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 32x21
-          text run at (0,0) width 32: "The "
-        RenderInline {SPAN} at (0,0) size 158x21
-          RenderText {#text} at (32,0) size 158x21
-            text run at (32,0) width 158: "span in this paragraph"
-        RenderText {#text} at (190,0) size 334x21
-          text run at (190,0) width 334: " has a transform, which has no effect on inlines."
-      RenderBlock {P} at (0,37) size 784x42
-        RenderText {#text} at (0,0) size 32x21
-          text run at (0,0) width 32: "The "
-        RenderText {#text} at (190,0) size 770x42
-          text run at (190,0) width 580: " has a transform, which has no effect on inlines. It also has opacity to throw it into a"
-          text run at (0,21) width 97: "RenderLayer."
-      RenderBlock {P} at (0,95) size 784x42
-        RenderText {#text} at (0,0) size 32x21
-          text run at (0,0) width 32: "The "
-        RenderText {#text} at (190,0) size 722x42
-          text run at (190,0) width 532: " has a transform and opacity, and is an inline-block. So it should respect the"
-          text run at (0,21) width 70: "transform."
-layer at (8,45) size 158x21
-  RenderInline {SPAN} at (0,0) size 158x21
-    RenderText {#text} at (32,0) size 158x21
-      text run at (32,0) width 158: "span in this paragraph"
-layer at (40,103) size 158x21
-  RenderBlock {SPAN} at (32,0) size 158x21
-    RenderText {#text} at (0,0) size 158x21
-      text run at (0,0) width 158: "span in this paragraph"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 27x19
+          text run at (0,0) width 27: "The "
+        RenderInline {SPAN} at (0,0) size 131x19
+          RenderText {#text} at (27,0) size 131x19
+            text run at (27,0) width 131: "span in this paragraph"
+        RenderText {#text} at (158,0) size 282x19
+          text run at (158,0) width 282: " has a transform, which has no effect on inlines."
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 27x19
+          text run at (0,0) width 27: "The "
+        RenderText {#text} at (158,0) size 585x19
+          text run at (158,0) width 585: " has a transform, which has no effect on inlines. It also has opacity to throw it into a RenderLayer."
+      RenderBlock {P} at (0,70) size 784x19
+        RenderText {#text} at (0,0) size 27x19
+          text run at (0,0) width 27: "The "
+        RenderText {#text} at (158,0) size 519x19
+          text run at (158,0) width 519: " has a transform and opacity, and is an inline-block. So it should respect the transform."
+layer at (8,43) size 131x19
+  RenderInline {SPAN} at (0,0) size 131x19
+    RenderText {#text} at (27,0) size 131x19
+      text run at (27,0) width 131: "span in this paragraph"
+layer at (35,78) size 131x19
+  RenderBlock {SPAN} at (27,0) size 131x19
+    RenderText {#text} at (0,0) size 131x19
+      text run at (0,0) width 131: "span in this paragraph"

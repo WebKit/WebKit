@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x94
-  RenderBlock {HTML} at (0,0) size 800x94
-    RenderBody {BODY} at (16,16) size 768x62 [color=#0000FF]
-      RenderRuby (inline) {RUBY} at (0,0) size 221x41
-        RenderRubyRun (anonymous) at (0,21) size 200x41
-          RenderRubyText {RT} at (0,-21) size 200x21
-            RenderInline (generated) at (0,0) size 67x21
-              RenderText at (0,0) size 67x21
-                text run at (0,0) width 67: "BEFORE"
-            RenderText {#text} at (67,0) size 79x21
-              text run at (67,0) width 79: "CONTENT"
-            RenderInline (generated) at (0,0) size 54x21
-              RenderText at (146,0) size 54x21
-                text run at (146,0) width 54: "AFTER"
-          RenderRubyBase (anonymous) at (0,0) size 200x41
-            RenderText {#text} at (89,0) size 22x41
-              text run at (89,0) width 22: "A"
-        RenderRubyRun (anonymous) at (200,21) size 21x41
-          RenderRubyBase (anonymous) at (0,0) size 21x41
-            RenderText {#text} at (0,0) size 21x41
+layer at (0,0) size 800x88
+  RenderBlock {HTML} at (0,0) size 800x88
+    RenderBody {BODY} at (16,16) size 768x56 [color=#0000FF]
+      RenderRuby (inline) {RUBY} at (0,0) size 202x36
+        RenderRubyRun (anonymous) at (0,19) size 181x37
+          RenderRubyText {RT} at (0,-19) size 181x19
+            RenderInline (generated) at (0,0) size 59x19
+              RenderText at (0,0) size 59x19
+                text run at (0,0) width 59: "BEFORE"
+            RenderText {#text} at (59,0) size 74x19
+              text run at (59,0) width 74: "CONTENT"
+            RenderInline (generated) at (0,0) size 48x19
+              RenderText at (133,0) size 48x19
+                text run at (133,0) width 48: "AFTER"
+          RenderRubyBase (anonymous) at (0,0) size 181x37
+            RenderText {#text} at (79,0) size 23x36
+              text run at (79,0) width 23: "A"
+        RenderRubyRun (anonymous) at (181,19) size 21x37
+          RenderRubyBase (anonymous) at (0,0) size 21x37
+            RenderText {#text} at (0,0) size 21x36
               text run at (0,0) width 21: "B"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

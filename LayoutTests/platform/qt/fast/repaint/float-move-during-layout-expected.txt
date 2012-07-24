@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 168x21
-          text run at (0,0) width 168: "This is a repaint test for "
-        RenderInline {I} at (0,0) size 745x42
-          RenderInline {A} at (0,0) size 379x21 [color=#0000EE]
-            RenderText {#text} at (168,0) size 379x21
-              text run at (168,0) width 379: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7204"
-          RenderText {#text} at (547,0) size 745x42
-            text run at (547,0) width 4: " "
-            text run at (551,0) width 194: "float inserted in fixed height"
-            text run at (0,21) width 201: "block via DOM not repainted"
-        RenderText {#text} at (201,21) size 4x21
-          text run at (201,21) width 4: "."
-      RenderBlock {P} at (0,58) size 784x21
-        RenderText {#text} at (0,0) size 278x21
-          text run at (0,0) width 278: "There should be a green square below."
-      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,105) size 784x100
-      RenderBlock {DIV} at (0,205) size 784x0
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 144x19
+          text run at (0,0) width 144: "This is a repaint test for "
+        RenderInline {I} at (0,0) size 781x38
+          RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
+            RenderText {#text} at (144,0) size 350x19
+              text run at (144,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7204"
+          RenderText {#text} at (494,0) size 781x38
+            text run at (494,0) width 4: " "
+            text run at (498,0) width 283: "float inserted in fixed height block via DOM"
+            text run at (0,19) width 86: "not repainted"
+        RenderText {#text} at (86,19) size 4x19
+          text run at (86,19) width 4: "."
+      RenderBlock {P} at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 234x19
+          text run at (0,0) width 234: "There should be a green square below."
+      RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,99) size 784x100
+      RenderBlock {DIV} at (0,199) size 784x0
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

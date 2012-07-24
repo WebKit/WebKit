@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 235x21
-          text run at (0,0) width 235: "This should be pointing upwards:"
-      RenderBlock {DIV} at (0,37) size 100x22
-        RenderText {#text} at (0,0) size 100x22
-          text run at (0,0) width 22: "\x{3008}"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 197x19
+          text run at (0,0) width 197: "This should be pointing upwards:"
+      RenderBlock {DIV} at (0,35) size 92x0
+        RenderText {#text} at (1,0) size 90x0
+          text run at (1,0) width 0: "\x{3008}"

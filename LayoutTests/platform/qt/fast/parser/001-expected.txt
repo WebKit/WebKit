@@ -3,40 +3,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIR} at (0,0) size 784x116
-        RenderBlock (anonymous) at (40,0) size 744x21
-          RenderText {#text} at (0,0) size 30x21
-            text run at (0,0) width 30: "One"
-        RenderBlock {DIR} at (40,37) size 744x79
-          RenderBlock (anonymous) at (40,0) size 704x21
-            RenderText {#text} at (0,0) size 31x21
-              text run at (0,0) width 31: "Two"
-          RenderBlock {DIR} at (40,37) size 704x42
-            RenderBlock (anonymous) at (40,0) size 664x21
-              RenderText {#text} at (0,0) size 42x21
-                text run at (0,0) width 42: "Three"
-            RenderBlock {CENTER} at (40,21) size 664x21
-              RenderText {#text} at (315,0) size 34x21
-                text run at (315,0) width 34: "Four"
-      RenderBlock {PRE} at (0,132) size 784x338
-        RenderText {#text} at (0,0) size 46x17
-          text run at (0,0) width 46: "Pre text"
-          text run at (46,0) width 0: " "
-        RenderEmbeddedObject {OBJECT} at (0,17) size 300x300 [bgcolor=#008000]
-        RenderText {#text} at (300,304) size 300x34
+      RenderBlock {DIR} at (0,0) size 784x108
+        RenderBlock (anonymous) at (40,0) size 744x19
+          RenderText {#text} at (0,0) size 26x19
+            text run at (0,0) width 26: "One"
+        RenderBlock {DIR} at (40,35) size 744x73
+          RenderBlock (anonymous) at (40,0) size 704x19
+            RenderText {#text} at (0,0) size 28x19
+              text run at (0,0) width 28: "Two"
+          RenderBlock {DIR} at (40,35) size 704x38
+            RenderBlock (anonymous) at (40,0) size 664x19
+              RenderText {#text} at (0,0) size 35x19
+                text run at (0,0) width 35: "Three"
+            RenderBlock {CENTER} at (40,19) size 664x19
+              RenderText {#text} at (317,0) size 30x19
+                text run at (317,0) width 30: "Four"
+      RenderBlock {PRE} at (0,124) size 784x334
+        RenderText {#text} at (0,0) size 64x15
+          text run at (0,0) width 64: "Pre text"
+          text run at (64,0) width 0: " "
+        RenderEmbeddedObject {OBJECT} at (0,15) size 300x300 [bgcolor=#008000]
+        RenderText {#text} at (300,304) size 300x30
           text run at (300,304) width 0: " "
-          text run at (0,321) width 74: "Also pre text"
-          text run at (74,321) width 0: " "
-      RenderBlock (anonymous) at (0,483) size 784x21
-        RenderInline {NOBR} at (0,0) size 149x21 [bgcolor=#CCCCCC]
-          RenderText {#text} at (0,0) size 149x21
-            text run at (0,0) width 149: "This text won't break."
-      RenderBlock (anonymous) at (0,517) size 784x17
-        RenderBlock {PRE} at (0,0) size 784x17
-          RenderText {#text} at (0,0) size 146x17
-            text run at (0,0) width 146: "This will be preformatted."
-      RenderBlock (anonymous) at (0,547) size 784x21
-        RenderInline {NOBR} at (0,0) size 256x21 [bgcolor=#CCCCCC]
-          RenderText {#text} at (0,0) size 256x21
-            text run at (0,0) width 256: "Now we're back to nonbreaking text."
+          text run at (0,319) width 104: "Also pre text"
+          text run at (104,319) width 0: " "
+      RenderBlock (anonymous) at (0,471) size 784x19
+        RenderInline {NOBR} at (0,0) size 131x19 [bgcolor=#CCCCCC]
+          RenderText {#text} at (0,0) size 131x19
+            text run at (0,0) width 131: "This text won't break."
+      RenderBlock (anonymous) at (0,503) size 784x15
+        RenderBlock {PRE} at (0,0) size 784x15
+          RenderText {#text} at (0,0) size 208x15
+            text run at (0,0) width 208: "This will be preformatted."
+      RenderBlock (anonymous) at (0,531) size 784x19
+        RenderInline {NOBR} at (0,0) size 226x19 [bgcolor=#CCCCCC]
+          RenderText {#text} at (0,0) size 226x19
+            text run at (0,0) width 226: "Now we're back to nonbreaking text."
         RenderText {#text} at (0,0) size 0x0

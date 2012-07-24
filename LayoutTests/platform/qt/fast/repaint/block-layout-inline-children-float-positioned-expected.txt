@@ -3,18 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderBlock {P} at (0,0) size 800x21
-        RenderText {#text} at (0,0) size 250x21
-          text run at (0,0) width 250: "This is a test for regression against "
-        RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
-          RenderText {#text} at (250,0) size 337x21
-            text run at (250,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=40142"
-      RenderBlock {DIV} at (0,37) size 800x102
+      RenderBlock {P} at (0,0) size 800x19
+        RenderText {#text} at (0,0) size 209x19
+          text run at (0,0) width 209: "This is a test for regression against "
+        RenderInline {A} at (0,0) size 291x19 [color=#0000EE]
+          RenderText {#text} at (209,0) size 291x19
+            text run at (209,0) width 291: "https://bugs.webkit.org/show_bug.cgi?id=40142"
+      RenderBlock {DIV} at (0,35) size 800x102
         RenderBlock {DIV} at (0,0) size 602x102 [border: (1px solid #DDDDDD)]
-          RenderBlock (floating) {SPAN} at (282,1) size 319x21
-            RenderText {#text} at (0,0) size 319x21
-              text run at (0,0) width 319: "the quick brown fox jumped over the lazy dog"
-layer at (141,38) size 319x21
-  RenderBlock (positioned) {SPAN} at (141,38) size 319x21
-    RenderText {#text} at (0,0) size 319x21
-      text run at (0,0) width 319: "the quick brown fox jumped over the lazy dog"
+          RenderBlock (floating) {SPAN} at (324,1) size 277x19
+            RenderText {#text} at (0,0) size 277x19
+              text run at (0,0) width 277: "the quick brown fox jumped over the lazy dog"
+layer at (162,36) size 277x19
+  RenderBlock (positioned) {SPAN} at (162,36) size 277x19
+    RenderText {#text} at (0,0) size 277x19
+      text run at (0,0) width 277: "the quick brown fox jumped over the lazy dog"

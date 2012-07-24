@@ -3,23 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 57x21
-          text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 586x21
-          RenderInline {A} at (0,0) size 165x21 [color=#0000EE]
-            RenderText {#text} at (57,0) size 165x21
-              text run at (57,0) width 165: "rdar://problem/6771547"
-          RenderText {#text} at (222,0) size 421x21
-            text run at (222,0) width 421: " Appending to a RenderText causes all its lines to be dirtied"
-        RenderText {#text} at (643,0) size 4x21
-          text run at (643,0) width 4: "."
-      RenderBlock {P} at (0,37) size 784x147
-        RenderText {#text} at (0,0) size 773x147
-          text run at (0,0) width 773: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse placerat. Morbi tristique. Mauris eu lacus"
-          text run at (0,21) width 757: "sed felis pellentesque cursus. Proin vitae nulla. Vivamus in ipsum. Etiam mi. Nam malesuada purus in sem."
-          text run at (0,42) width 754: "Sed eget elit vel erat laoreet feugiat. Phasellus mollis pulvinar mi. Etiam ut neque sed eros egestas laoreet."
-          text run at (0,63) width 752: "Vestibulum ullamcorper, nulla non feugiat molestie, mi lorem bibendum leo, ac gravida orci nunc nec nulla."
-          text run at (0,84) width 723: "Nunc nunc lorem, rhoncus et, rutrum ac, fermentum ut, tortor. Sed rhoncus. Quisque enim metus, luctus"
-          text run at (0,105) width 757: "tincidunt, vestibulum eu, vestibulum eu, libero. Mauris sagittis aliquam nunc. Nullam pharetra molestie eros."
-          text run at (0,126) width 593: "Donec tempus purus ut ligula. Phasellus non nisl. Etiam eu mauris. Curabitur a velit."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {I} at (0,0) size 534x19
+          RenderInline {A} at (0,0) size 154x19 [color=#0000EE]
+            RenderText {#text} at (51,0) size 154x19
+              text run at (51,0) width 154: "rdar://problem/6771547"
+          RenderText {#text} at (205,0) size 380x19
+            text run at (205,0) width 380: " Appending to a RenderText causes all its lines to be dirtied"
+        RenderText {#text} at (585,0) size 4x19
+          text run at (585,0) width 4: "."
+      RenderBlock {P} at (0,35) size 784x114
+        RenderText {#text} at (0,0) size 783x114
+          text run at (0,0) width 711: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse placerat. Morbi tristique. Mauris eu lacus sed felis"
+          text run at (0,19) width 751: "pellentesque cursus. Proin vitae nulla. Vivamus in ipsum. Etiam mi. Nam malesuada purus in sem. Sed eget elit vel erat laoreet"
+          text run at (0,38) width 783: "feugiat. Phasellus mollis pulvinar mi. Etiam ut neque sed eros egestas laoreet. Vestibulum ullamcorper, nulla non feugiat molestie, mi"
+          text run at (0,57) width 765: "lorem bibendum leo, ac gravida orci nunc nec nulla. Nunc nunc lorem, rhoncus et, rutrum ac, fermentum ut, tortor. Sed rhoncus."
+          text run at (0,76) width 771: "Quisque enim metus, luctus tincidunt, vestibulum eu, vestibulum eu, libero. Mauris sagittis aliquam nunc. Nullam pharetra molestie"
+          text run at (0,95) width 530: "eros. Donec tempus purus ut ligula. Phasellus non nisl. Etiam eu mauris. Curabitur a velit."

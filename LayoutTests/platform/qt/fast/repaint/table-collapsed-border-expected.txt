@@ -3,71 +3,71 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,10) size 784x580
-      RenderTable {TABLE} at (0,0) size 103x85 [border: (4px solid #008000)]
-        RenderTableSection {TBODY} at (4,4) size 95x77
-          RenderTableRow {TR} at (0,0) size 95x27
-            RenderTableCell {TD} at (0,10) size 6x6 [border: (4px none #000000)] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (6,0) size 89x27 [border: (4px none #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,5) size 45x21
-                text run at (1,5) width 45: "Lorem"
-          RenderTableRow {TR} at (0,27) size 95x23
-            RenderTableCell {TD} at (0,37) size 6x2 [border: none] [r=1 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (6,27) size 89x23 [border: none] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 83x21
-                text run at (1,1) width 83: "ipsum dolor"
-          RenderTableRow {TR} at (0,50) size 95x27
-            RenderTableCell {TD} at (0,60) size 6x6 [border: none] [r=2 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (6,50) size 89x27 [border: none] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 55x21
-                text run at (1,1) width 55: "sit amet"
-      RenderTable {TABLE} at (0,95) size 79x85 [border: (4px solid #000000)]
-        RenderTableSection {TBODY} at (4,4) size 71x77
-          RenderTableRow {TR} at (0,0) size 71x27
-            RenderTableCell {TD} at (0,10) size 10x6 [border: (4px none #000000)] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (10,0) size 61x27 [border: (4px none #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,5) size 45x21
-                text run at (1,5) width 45: "Lorem"
-          RenderTableRow {TR} at (0,27) size 71x23
-            RenderTableCell {TD} at (0,27) size 10x23 [border: none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,1) size 4x21
+      RenderTable {TABLE} at (0,0) size 91x79 [border: (4px solid #008000)]
+        RenderTableSection {TBODY} at (4,4) size 83x71
+          RenderTableRow {TR} at (0,0) size 83x25
+            RenderTableCell {TD} at (0,9) size 6x6 [border: (4px none #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (6,0) size 77x25 [border: (4px none #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,5) size 40x19
+                text run at (1,5) width 40: "Lorem"
+          RenderTableRow {TR} at (0,25) size 83x21
+            RenderTableCell {TD} at (0,34) size 6x2 [border: none] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (6,25) size 77x21 [border: none] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 71x19
+                text run at (1,1) width 71: "ipsum dolor"
+          RenderTableRow {TR} at (0,46) size 83x25
+            RenderTableCell {TD} at (0,55) size 6x6 [border: none] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (6,46) size 77x25 [border: none] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 46x19
+                text run at (1,1) width 46: "sit amet"
+      RenderTable {TABLE} at (0,89) size 70x79 [border: (4px solid #000000)]
+        RenderTableSection {TBODY} at (4,4) size 62x71
+          RenderTableRow {TR} at (0,0) size 62x25
+            RenderTableCell {TD} at (0,9) size 10x6 [border: (4px none #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,0) size 52x25 [border: (4px none #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,5) size 40x19
+                text run at (1,5) width 40: "Lorem"
+          RenderTableRow {TR} at (0,25) size 62x21
+            RenderTableCell {TD} at (0,25) size 10x21 [border: none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,1) size 4x19
                 text run at (5,1) width 4: " "
-          RenderTableRow {TR} at (0,50) size 71x27
-            RenderTableCell {TD} at (0,60) size 10x6 [border: none] [r=2 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (10,50) size 61x27 [border: none] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 55x21
-                text run at (1,1) width 55: "sit amet"
-      RenderTable {TABLE} at (0,190) size 116x85 [border: (4px solid #000000)]
-        RenderTableSection {TBODY} at (4,4) size 108x77
-          RenderTableRow {TR} at (0,0) size 108x27
-            RenderTableCell {TD} at (0,10) size 10x6 [border: (4px none #000000)] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (10,0) size 98x27 [border: (4px none #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,5) size 92x21
-                text run at (1,5) width 92: "Lorem ipsum"
-          RenderTableRow {TR} at (0,27) size 108x23
-            RenderTableCell {TD} at (0,27) size 10x23 [border: none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,1) size 4x21
+          RenderTableRow {TR} at (0,46) size 62x25
+            RenderTableCell {TD} at (0,55) size 10x6 [border: none] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,46) size 52x25 [border: none] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 46x19
+                text run at (1,1) width 46: "sit amet"
+      RenderTable {TABLE} at (0,178) size 103x79 [border: (4px solid #000000)]
+        RenderTableSection {TBODY} at (4,4) size 95x71
+          RenderTableRow {TR} at (0,0) size 95x25
+            RenderTableCell {TD} at (0,9) size 10x6 [border: (4px none #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,0) size 85x25 [border: (4px none #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,5) size 79x19
+                text run at (1,5) width 79: "Lorem ipsum"
+          RenderTableRow {TR} at (0,25) size 95x21
+            RenderTableCell {TD} at (0,25) size 10x21 [border: none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,1) size 4x19
                 text run at (5,1) width 4: " "
-          RenderTableRow {TR} at (0,50) size 108x27
-            RenderTableCell {TD} at (0,60) size 10x6 [border: none] [r=2 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (10,50) size 98x27 [border: none] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 55x21
-                text run at (1,1) width 55: "sit amet"
-      RenderTable {TABLE} at (0,285) size 107x85 [border: (4px solid #000000)]
-        RenderTableSection {TBODY} at (4,4) size 99x77
-          RenderTableRow {TR} at (0,0) size 99x27
-            RenderTableCell {TD} at (0,10) size 10x6 [border: (4px none #000000)] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (10,0) size 89x27 [border: (4px none #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,5) size 45x21
-                text run at (1,5) width 45: "Lorem"
-          RenderTableRow {TR} at (0,27) size 99x23
-            RenderTableCell {TD} at (0,27) size 10x23 [border: none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,1) size 4x21
+          RenderTableRow {TR} at (0,46) size 95x25
+            RenderTableCell {TD} at (0,55) size 10x6 [border: none] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,46) size 85x25 [border: none] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 46x19
+                text run at (1,1) width 46: "sit amet"
+      RenderTable {TABLE} at (0,267) size 95x79 [border: (4px solid #000000)]
+        RenderTableSection {TBODY} at (4,4) size 87x71
+          RenderTableRow {TR} at (0,0) size 87x25
+            RenderTableCell {TD} at (0,9) size 10x6 [border: (4px none #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,0) size 77x25 [border: (4px none #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,5) size 40x19
+                text run at (1,5) width 40: "Lorem"
+          RenderTableRow {TR} at (0,25) size 87x21
+            RenderTableCell {TD} at (0,25) size 10x21 [border: none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,1) size 4x19
                 text run at (5,1) width 4: " "
-            RenderTableCell {TD} at (10,27) size 89x23 [border: none] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 83x21
-                text run at (1,1) width 83: "ipsum dolor"
-          RenderTableRow {TR} at (0,50) size 99x27
-            RenderTableCell {TD} at (0,60) size 10x6 [border: none] [r=2 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (10,50) size 89x27 [border: none] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 55x21
-                text run at (1,1) width 55: "sit amet"
+            RenderTableCell {TD} at (10,25) size 77x21 [border: none] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 71x19
+                text run at (1,1) width 71: "ipsum dolor"
+          RenderTableRow {TR} at (0,46) size 87x25
+            RenderTableCell {TD} at (0,55) size 10x6 [border: none] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,46) size 77x25 [border: none] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 46x19
+                text run at (1,1) width 46: "sit amet"

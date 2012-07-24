@@ -3,12 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 764x42
-          text run at (0,0) width 510: "This tests for a crash when removing a widget whose height is specified "
-          text run at (510,0) width 254: "as a percentage of a non-immediate"
-          text run at (0,21) width 125: "ancestor\x{2019}s height."
-      RenderBlock {DIV} at (0,58) size 100x50 [bgcolor=#0000FF]
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 753x19
+          text run at (0,0) width 430: "This tests for a crash when removing a widget whose height is specified "
+          text run at (430,0) width 323: "as a percentage of a non-immediate ancestor\x{2019}s height."
+      RenderBlock {DIV} at (0,35) size 100x50 [bgcolor=#0000FF]
         RenderBlock {DIV} at (0,0) size 100x0
         RenderBlock (anonymous) at (0,0) size 100x0
           RenderText {#text} at (0,0) size 0x0

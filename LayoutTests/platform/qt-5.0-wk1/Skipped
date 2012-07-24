@@ -147,14 +147,6 @@ fast/block/basic/truncation-rtl.html
 fast/block/float/float-in-float-hit-testing.html
 fast/forms/mailto/advanced-get.html
 fast/forms/mailto/advanced-put.html
-fast/repaint/no-caret-repaint-in-non-content-editable-element.html
-fast/replaced/applet-disabled-positioned.html
-fast/replaced/applet-rendering-java-disabled.html
-fast/spatial-navigation/snav-media-elements.html
-fast/spatial-navigation/snav-multiple-select-focusring.html
-fast/text/basic/001.html
-fast/text/whitespace/028.html
-fast/text/zero-font-size.html
 http/tests/appcache/different-https-origin-resource-main.html
 http/tests/cache/cancel-during-revalidation-succeeded.html
 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html

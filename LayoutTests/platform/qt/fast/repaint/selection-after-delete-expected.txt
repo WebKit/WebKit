@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x562
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 743x42
-          text run at (0,0) width 545: "This tests to see if selection gaps are removed when the selection is deleted. "
-          text run at (545,0) width 194: "Nothing should be selected"
-          text run at (739,0) width 4: " "
-          text run at (0,21) width 51: "below. "
-          text run at (51,21) width 253: "A caret should be inside the red div."
-      RenderBlock {DIV} at (30,72) size 152x23 [border: (1px solid #FF0000)]
-        RenderBR {BR} at (1,1) size 0x21
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 781x38
+          text run at (0,0) width 458: "This tests to see if selection gaps are removed when the selection is deleted. "
+          text run at (458,0) width 212: "Nothing should be selected below. "
+          text run at (670,0) width 107: "A caret should be"
+          text run at (777,0) width 4: " "
+          text run at (0,19) width 106: "inside the red div."
+      RenderBlock {DIV} at (30,68) size 152x21 [border: (1px solid #FF0000)]
+        RenderBR {BR} at (1,1) size 0x19
 caret: position 0 of child 0 {BR} of child 3 {DIV} of body

@@ -1,38 +1,38 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x224
-  RenderBlock {HTML} at (0,0) size 800x224
-    RenderBody {BODY} at (8,16) size 784x192
-      RenderBlock {P} at (0,0) size 784x21
-        RenderInline {B} at (0,0) size 61x21
-          RenderText {#text} at (0,0) size 61x21
+layer at (0,0) size 800x216
+  RenderBlock {HTML} at (0,0) size 800x216
+    RenderBody {BODY} at (8,16) size 784x184
+      RenderBlock {P} at (0,0) size 784x19
+        RenderInline {B} at (0,0) size 61x19
+          RenderText {#text} at (0,0) size 61x19
             text run at (0,0) width 61: "BUG ID:"
-        RenderText {#text} at (61,0) size 4x21
+        RenderText {#text} at (61,0) size 4x19
           text run at (61,0) width 4: " "
-        RenderInline {A} at (0,0) size 129x21 [color=#0000EE]
-          RenderText {#text} at (65,0) size 129x21
-            text run at (65,0) width 129: "Bugzilla bug 5699"
-        RenderText {#text} at (194,0) size 251x21
-          text run at (194,0) width 251: " REGRESSION: incomplete repaint"
-      RenderBlock {P} at (0,37) size 784x27 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 96x21
-          RenderText {#text} at (3,3) size 96x21
-            text run at (3,3) width 96: "TEST PASS:"
-        RenderText {#text} at (99,3) size 241x21
-          text run at (99,3) width 4: " "
-          text run at (103,3) width 237: "The word \x{201C}Hello\x{201D} will move down."
-      RenderBlock {P} at (0,80) size 784x27 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 87x21
-          RenderText {#text} at (3,3) size 87x21
-            text run at (3,3) width 87: "TEST FAIL:"
-        RenderText {#text} at (90,3) size 318x21
-          text run at (90,3) width 4: " "
-          text run at (94,3) width 314: "Another copy of the word \x{201C}Hello\x{201D} will appear."
-      RenderBlock {P} at (0,123) size 784x69
-        RenderInline {SPAN} at (0,0) size 4x21
-          RenderText {#text} at (0,13) size 4x21
-            text run at (0,13) width 4: " "
-        RenderBR {BR} at (4,13) size 0x21
-        RenderText {#text} at (0,48) size 38x21
-          text run at (0,48) width 38: "Hello"
-        RenderBR {BR} at (38,48) size 0x21
+        RenderInline {A} at (0,0) size 108x19 [color=#0000EE]
+          RenderText {#text} at (65,0) size 108x19
+            text run at (65,0) width 108: "Bugzilla bug 5699"
+        RenderText {#text} at (173,0) size 217x19
+          text run at (173,0) width 217: " REGRESSION: incomplete repaint"
+      RenderBlock {P} at (0,35) size 784x25 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 86x19
+          RenderText {#text} at (3,3) size 86x19
+            text run at (3,3) width 86: "TEST PASS:"
+        RenderText {#text} at (89,3) size 214x19
+          text run at (89,3) width 4: " "
+          text run at (93,3) width 210: "The word \x{201C}Hello\x{201D} will move down."
+      RenderBlock {P} at (0,76) size 784x25 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 84x19
+          RenderText {#text} at (3,3) size 84x19
+            text run at (3,3) width 84: "TEST FAIL:"
+        RenderText {#text} at (87,3) size 283x19
+          text run at (87,3) width 4: " "
+          text run at (91,3) width 279: "Another copy of the word \x{201C}Hello\x{201D} will appear."
+      RenderBlock {P} at (0,117) size 784x67
+        RenderInline {SPAN} at (0,0) size 4x19
+          RenderText {#text} at (0,14) size 4x19
+            text run at (0,14) width 4: " "
+        RenderBR {BR} at (4,14) size 0x19
+        RenderText {#text} at (0,48) size 32x19
+          text run at (0,48) width 32: "Hello"
+        RenderBR {BR} at (32,48) size 0x19

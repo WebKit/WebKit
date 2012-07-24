@@ -433,17 +433,6 @@ fast/block/basic/015.html
 fast/block/float/016.html
 fast/block/float/overhanging-tall-block.html
 fast/block/float/shrink-to-avoid-float-complexity.html
-fast/overflow/007.html
-fast/overflow/overflow-auto-table.html
-fast/parser/001.html
-fast/repaint/renderer-destruction-by-invalidateSelection-crash.html
-fast/repaint/search-field-cancel.html
-fast/repaint/subtree-root-skipped.html
-fast/replaced/replaced-breaking-mixture.html
-fast/replaced/replaced-breaking.html
-fast/replaced/width100percent-searchfield.html
-fast/replaced/width100percent-textfield.html
-fast/transforms/transformed-focused-text-input.html
 fullscreen/full-screen-placeholder.html
 fullscreen/video-controls-drag.html
 fullscreen/video-controls-override.html
@@ -512,6 +501,14 @@ fast/multicol/vertical-rl/float-paginate-complex.html
 fast/multicol/vertical-rl/float-paginate.html
 fast/multicol/vertical-rl/nested-columns.html
 fast/multicol/vertical-rl/unsplittable-inline-block.html
+fast/repaint/renderer-destruction-by-invalidateSelection-crash.html
+fast/repaint/search-field-cancel.html
+fast/repaint/subtree-root-skipped.html
+fast/replaced/replaced-breaking-mixture.html
+fast/replaced/replaced-breaking.html
+fast/replaced/width100percent-searchfield.html
+fast/replaced/width100percent-textfield.html
+fast/transforms/transformed-focused-text-input.html
 
 # REGRESSION(r122768, r122771) made 157 fails on WebKit2
 compositing/columns/composited-in-paginated.html

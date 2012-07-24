@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x571
-      RenderBlock (anonymous) at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 583x21
-          text run at (0,0) width 583: "--> */ h1 { background-color: red; } /* This comment should not be part of the style. */"
-      RenderBlock {H1} at (0,42) size 784x42
-        RenderText {#text} at (0,0) size 683x42
-          text run at (0,0) width 683: "This text should not have a red background."
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 529x19
+          text run at (0,0) width 529: "--> */ h1 { background-color: red; } /* This comment should not be part of the style. */"
+      RenderBlock {H1} at (0,40) size 784x37
+        RenderText {#text} at (0,0) size 603x36
+          text run at (0,0) width 603: "This text should not have a red background."

@@ -1,35 +1,35 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x397
-  RenderBlock {HTML} at (0,0) size 800x397
-    RenderBody {BODY} at (8,16) size 784x373
-      RenderBlock {P} at (0,0) size 784x21
-        RenderInline {B} at (0,0) size 61x21
-          RenderText {#text} at (0,0) size 61x21
+layer at (0,0) size 800x391
+  RenderBlock {HTML} at (0,0) size 800x391
+    RenderBody {BODY} at (8,16) size 784x367
+      RenderBlock {P} at (0,0) size 784x19
+        RenderInline {B} at (0,0) size 61x19
+          RenderText {#text} at (0,0) size 61x19
             text run at (0,0) width 61: "BUG ID:"
-        RenderText {#text} at (61,0) size 4x21
+        RenderText {#text} at (61,0) size 4x19
           text run at (61,0) width 4: " "
-        RenderInline {A} at (0,0) size 129x21 [color=#0000EE]
-          RenderText {#text} at (65,0) size 129x21
-            text run at (65,0) width 129: "Bugzilla bug 8449"
-        RenderText {#text} at (194,0) size 418x21
-          text run at (194,0) width 418: " REGRESSION: Incomplete repaint of table cell that moved"
-      RenderBlock {P} at (0,37) size 784x27 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 96x21
-          RenderText {#text} at (3,3) size 96x21
-            text run at (3,3) width 96: "TEST PASS:"
-        RenderText {#text} at (99,3) size 456x21
-          text run at (99,3) width 4: " "
-          text run at (103,3) width 452: "There should be only a green square below the line, and no red."
-      RenderBlock {P} at (0,80) size 784x27 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 87x21
-          RenderText {#text} at (3,3) size 87x21
-            text run at (3,3) width 87: "TEST FAIL:"
-        RenderText {#text} at (90,3) size 352x21
-          text run at (90,3) width 4: " "
-          text run at (94,3) width 348: "There will be a red square and a green rectangle."
-      RenderBlock {HR} at (0,123) size 784x2 [border: (1px inset #000000)]
-      RenderTable {TABLE} at (0,133) size 61x240
+        RenderInline {A} at (0,0) size 108x19 [color=#0000EE]
+          RenderText {#text} at (65,0) size 108x19
+            text run at (65,0) width 108: "Bugzilla bug 8449"
+        RenderText {#text} at (173,0) size 363x19
+          text run at (173,0) width 363: " REGRESSION: Incomplete repaint of table cell that moved"
+      RenderBlock {P} at (0,35) size 784x25 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 86x19
+          RenderText {#text} at (3,3) size 86x19
+            text run at (3,3) width 86: "TEST PASS:"
+        RenderText {#text} at (89,3) size 386x19
+          text run at (89,3) width 4: " "
+          text run at (93,3) width 382: "There should be only a green square below the line, and no red."
+      RenderBlock {P} at (0,76) size 784x25 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 84x19
+          RenderText {#text} at (3,3) size 84x19
+            text run at (3,3) width 84: "TEST FAIL:"
+        RenderText {#text} at (87,3) size 297x19
+          text run at (87,3) width 4: " "
+          text run at (91,3) width 293: "There will be a red square and a green rectangle."
+      RenderBlock {HR} at (0,117) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,127) size 61x240
         RenderTableSection {TBODY} at (0,0) size 61x240
           RenderTableRow {TR} at (0,0) size 61x60
             RenderTableCell {TD} at (0,30) size 61x0 [r=0 c=0 rs=1 cs=1]
