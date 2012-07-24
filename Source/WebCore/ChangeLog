@@ -1,3 +1,16 @@
+2012-07-23  Douglas Stockwell  <dstockwell@google.com>
+
+        Null-pointer crash when parsing border-image
+        https://bugs.webkit.org/show_bug.cgi?id=91963
+
+        Reviewed by Darin Adler.
+
+        Test: fast/css/border-image-fill-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBorderImageRepeat): Handle the case where
+        parseBorderImageRepeat is called when the value list is empty.
+
 2012-07-23  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Exclusions] SVG shape errors should invalidate exclusion shapes

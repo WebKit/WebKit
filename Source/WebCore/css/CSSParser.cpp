@@ -6084,6 +6084,8 @@ bool CSSParser::parseBorderImageRepeat(RefPtr<CSSValue>& result)
     RefPtr<CSSPrimitiveValue> firstValue;
     RefPtr<CSSPrimitiveValue> secondValue;
     CSSParserValue* val = m_valueList->current();
+    if (!val)
+        return false;
     if (isBorderImageRepeatKeyword(val->id))
         firstValue = cssValuePool().createIdentifierValue(val->id);
     else
