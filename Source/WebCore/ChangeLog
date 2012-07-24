@@ -1,3 +1,17 @@
+2012-07-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123504.
+        http://trac.webkit.org/changeset/123504
+        https://bugs.webkit.org/show_bug.cgi?id=92169
+
+        broke a bunch of text-related tests in chromium mac debug
+        (Requested by zhenyao on #webkit).
+
+        * platform/text/cf/StringCF.cpp:
+        (WTF::String::createCFString):
+        * platform/text/cf/StringImplCF.cpp:
+        (WTF::StringImpl::createCFString):
+
 2012-07-24  Kwang Yul Seo  <skyul@company100.net>
 
         Ensure Noah's ark without reading the DOM tree.
