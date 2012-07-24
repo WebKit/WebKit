@@ -1,3 +1,28 @@
+2012-07-23  Mike Lawther  <mikelawther@chromium.org>
+
+        CSS3 calc: optimise blending expression
+        https://bugs.webkit.org/show_bug.cgi?id=90037
+
+        Reviewed by Tony Chang.
+
+        Introduce a new calc expression node - a BlendLength node. Given two Lengths and a progress
+        this blends them together when evaluated.
+
+        An alternative and more general approach of being able to blend two CalcExpressionNodes was
+        tested, but involves more memory allocations, was measurably slower, and nothing currently
+        would make use of the generality. 
+
+        No functional change. Covered by existing tests.
+
+        * platform/CalculationValue.h:
+        (CalcExpressionBlendLength):
+        (WebCore::CalcExpressionBlendLength::CalcExpressionBlendLength):
+        (WebCore::CalcExpressionBlendLength::operator==):
+        (WebCore::CalcExpressionBlendLength::evaluate):
+        (WebCore):
+        * platform/Length.cpp:
+        (WebCore::Length::blendCalculation):
+
 2012-07-23  Nico Weber  <thakis@chromium.org>
 
         [chromium] Show search tickmarks on css-styled scrollbars

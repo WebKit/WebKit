@@ -56,7 +56,8 @@ enum CalcExpressionNodeType {
     CalcExpressionNodeUndefined,
     CalcExpressionNodeNumber,
     CalcExpressionNodeLength,
-    CalcExpressionNodeBinaryOperation
+    CalcExpressionNodeBinaryOperation,
+    CalcExpressionNodeBlendLength,
 };
         
 class CalcExpressionNode {
@@ -183,6 +184,37 @@ private:
     CalcOperator m_operator;
 };
 
+class CalcExpressionBlendLength : public CalcExpressionNode {
+public:
+    CalcExpressionBlendLength(Length from, Length to, float progress)
+        : m_from(from)
+        , m_to(to)
+        , m_progress(progress)
+    {
+        m_type = CalcExpressionNodeBlendLength;
+    }
+    
+    bool operator==(const CalcExpressionBlendLength& o) const
+    {
+        return m_progress == o.m_progress && m_from == o.m_from && m_to == o.m_to;
+    }
+    
+    virtual bool operator==(const CalcExpressionNode& o) const
+    {
+        return type() == o.type() && *this == static_cast<const CalcExpressionBlendLength&>(o);
+    }
+    
+    virtual float evaluate(float maxValue) const
+    {
+        return (1.0f - m_progress) * floatValueForLength(m_from, maxValue) + m_progress * floatValueForLength(m_to, maxValue);
+    }
+    
+private:  
+    Length m_from;
+    Length m_to;
+    float m_progress;
+};
+    
 } // namespace WebCore
 
 #endif // CalculationValue_h
