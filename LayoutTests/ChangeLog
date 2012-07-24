@@ -1,3 +1,38 @@
+2012-07-23  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Rename fast/forms/time/*.html to time-*.html
+        https://bugs.webkit.org/show_bug.cgi?id=92058
+
+        Reviewed by Kent Tamura.
+
+        This patch renames test scripts and expected text to same naming 
+        scheme(name starts with "time-"), for fast/forms/time.
+
+        * fast/forms/time/ValidityState-rangeOverflow-time-expected.txt: Removed.
+        * fast/forms/time/ValidityState-rangeOverflow-time.html: Removed.
+        * fast/forms/time/ValidityState-rangeUnderflow-time-expected.txt: Removed.
+        * fast/forms/time/ValidityState-rangeUnderflow-time.html: Removed.
+        * fast/forms/time/ValidityState-stepMismatch-time-expected.txt: Removed.
+        * fast/forms/time/ValidityState-stepMismatch-time.html: Removed.
+        * fast/forms/time/ValidityState-typeMismatch-time-expected.txt: Removed.
+        * fast/forms/time/ValidityState-typeMismatch-time.html: Removed.
+        * fast/forms/time/input-valueasdate-time-expected.txt: Removed.
+        * fast/forms/time/input-valueasdate-time.html: Removed.
+        * fast/forms/time/input-valueasnumber-time-expected.txt: Removed.
+        * fast/forms/time/input-valueasnumber-time.html: Removed.
+        * fast/forms/time/time-validity-state-range-overflow-expected.txt: Copied from LayoutTests/fast/forms/time/ValidityState-rangeOverflow-time-expected.txt.
+        * fast/forms/time/time-validity-state-range-overflow.html: Copied from LayoutTests/fast/forms/time/ValidityState-rangeOverflow-time.html.
+        * fast/forms/time/time-validity-state-range-underflow-expected.txt: Copied from LayoutTests/fast/forms/time/ValidityState-rangeUnderflow-time-expected.txt.
+        * fast/forms/time/time-validity-state-range-underflow.html: Copied from LayoutTests/fast/forms/time/ValidityState-rangeUnderflow-time.html.
+        * fast/forms/time/time-validity-state-step-mismatch-expected.txt: Copied from LayoutTests/fast/forms/time/ValidityState-stepMismatch-time-expected.txt.
+        * fast/forms/time/time-validity-state-step-mismatch.html: Copied from LayoutTests/fast/forms/time/ValidityState-stepMismatch-time.html.
+        * fast/forms/time/time-validity-state-type-mismatch-expected.txt: Copied from LayoutTests/fast/forms/time/ValidityState-typeMismatch-time-expected.txt.
+        * fast/forms/time/time-validity-state-type-mismatch.html: Copied from LayoutTests/fast/forms/time/ValidityState-typeMismatch-time.html.
+        * fast/forms/time/time-valueasdate-expected.txt: Copied from LayoutTests/fast/forms/time/input-valueasdate-time-expected.txt.
+        * fast/forms/time/time-valueasdate.html: Copied from LayoutTests/fast/forms/time/input-valueasdate-time.html.
+        * fast/forms/time/time-valueasnumber-expected.txt: Copied from LayoutTests/fast/forms/time/input-valueasnumber-time-expected.txt.
+        * fast/forms/time/time-valueasnumber.html: Copied from LayoutTests/fast/forms/time/input-valueasnumber-time.html.
+
 2012-07-23  Roger Fong  <roger_fong@apple.com>
 
         Disable flexbox on Windows
