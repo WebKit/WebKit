@@ -31,14 +31,10 @@
 #ifndef HarfBuzzNGFace_h
 #define HarfBuzzNGFace_h
 
+#include <hb.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-
-struct _hb_face_t;
-typedef _hb_face_t hb_face_t;
-struct _hb_font_t;
-typedef _hb_font_t hb_font_t;
 
 namespace WebCore {
 
