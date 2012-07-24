@@ -1,3 +1,23 @@
+2012-07-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add some Japanese and Swedish websites to replay tests
+        https://bugs.webkit.org/show_bug.cgi?id=92076
+
+        Reviewed by Andreas Kling.
+
+        Added new replay tests as follows.
+
+        * Replay/Japanese: Added.
+        * Replay/Japanese/2ch.net-newsplus.replay: Added.
+        * Replay/Japanese/ja.wikipedia.org.replay: Added.
+        * Replay/Japanese/www.livedoor.com.replay: Added.
+        * Replay/Japanese/www.rakuten.co.jp.replay: Added.
+        * Replay/Japanese/www.yahoo.co.jp.replay: Added.
+        * Replay/Swedish: Added.
+        * Replay/Swedish/www.flashback.se.replay: Added.
+        * Replay/Swedish/www.tradera.com.replay: Added.
+        * Replay/www.techcrunch.com.replay: Added.
+
 2012-07-18  MORITA Hajime  <morrita@google.com>
 
         Add window resize benchmark
