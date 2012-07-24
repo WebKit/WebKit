@@ -510,7 +510,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                     ret = QDate(gdt.year() + 1900, gdt.month() + 1, gdt.monthDay());
                     dist = 1;
                 } else {
-                    ret = QTime(gdt.hour() + 1900, gdt.minute(), gdt.second());
+                    ret = QTime(gdt.hour(), gdt.minute(), gdt.second());
                     dist = 2;
                 }
             } else if (type == Number) {
