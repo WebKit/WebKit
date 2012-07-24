@@ -522,14 +522,23 @@ void WebViewImpl::handleMouseLeave(Frame& mainFrame, const WebMouseEvent& event)
 
 void WebViewImpl::handleMouseDown(Frame& mainFrame, const WebMouseEvent& event)
 {
-    // If there is a select popup open, close it as the user is clicking on
-    // the page (outside of the popup).  We also save it so we can prevent a
-    // click on the select element from immediately reopening the popup.
+    // If there is a popup open, close it as the user is clicking on the page (outside of the
+    // popup). We also save it so we can prevent a click on an element from immediately
+    // reopening the same popup.
     RefPtr<WebCore::PopupContainer> selectPopup;
+#if ENABLE(PAGE_POPUP)
+    RefPtr<WebPagePopupImpl> pagePopup;
+#endif
     if (event.button == WebMouseEvent::ButtonLeft) {
         selectPopup = m_selectPopup;
-        hideSelectPopup();
+#if ENABLE(PAGE_POPUP)
+        pagePopup = m_pagePopup;
+#endif
+        hidePopups();
         ASSERT(!m_selectPopup);
+#if ENABLE(PAGE_POPUP)
+        ASSERT(!m_pagePopup);
+#endif
     }
 
     m_lastMouseDownPoint = WebPoint(event.x, event.y);
@@ -554,6 +563,14 @@ void WebViewImpl::handleMouseDown(Frame& mainFrame, const WebMouseEvent& event)
         // immediately reopened the select popup.  It needs to be closed.
         hideSelectPopup();
     }
+
+#if ENABLE(PAGE_POPUP)
+    if (m_pagePopup && pagePopup && m_pagePopup->hasSamePopupClient(pagePopup.get())) {
+        // That click triggered a page popup that is the same as the one we just closed.
+        // It needs to be closed.
+        closePagePopup(m_pagePopup.get());
+    }
+#endif
 
     // Dispatch the contextmenu event regardless of if the click was swallowed.
     // On Windows, we handle it on mouse up, not down.
