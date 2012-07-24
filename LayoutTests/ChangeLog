@@ -1,3 +1,33 @@
+2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] svg/clip-path rebaseline after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92158
+
+        Unreviewed.
+
+        Create a separate bug to track two tests that had wrong expected results before
+        the font change.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/svg/clip-path/clip-path-pixelation-expected.png:
+        * platform/qt/svg/clip-path/clip-path-pixelation-expected.txt:
+        * platform/qt/svg/clip-path/clip-path-text-and-shape-expected.png:
+        * platform/qt/svg/clip-path/clip-path-text-and-shape-expected.txt:
+        * platform/qt/svg/clip-path/clip-path-text-and-stroke-expected.png:
+        * platform/qt/svg/clip-path/clip-path-text-and-stroke-expected.txt:
+        * platform/qt/svg/clip-path/clip-path-text-expected.png:
+        * platform/qt/svg/clip-path/clip-path-text-expected.txt:
+        * platform/qt/svg/clip-path/clip-path-tspan-and-stroke-expected.png:
+        * platform/qt/svg/clip-path/clip-path-tspan-and-stroke-expected.txt:
+        * platform/qt/svg/clip-path/clip-path-with-text-clipped-expected.png:
+        * platform/qt/svg/clip-path/clip-path-with-text-clipped-expected.txt:
+        * platform/qt/svg/clip-path/deep-nested-clip-in-mask-different-unitTypes-expected.png:
+        * platform/qt/svg/clip-path/deep-nested-clip-in-mask-different-unitTypes-expected.txt:
+        * platform/qt/svg/clip-path/deep-nested-clip-in-mask-expected.png: Removed.
+        * platform/qt/svg/clip-path/deep-nested-clip-in-mask-expected.txt: Removed.
+        * platform/qt/svg/clip-path/deep-nested-clip-in-mask-panning-expected.png: Removed.
+        * platform/qt/svg/clip-path/deep-nested-clip-in-mask-panning-expected.txt: Removed.
+
 2012-07-24  Zhenyao Mo  <zmo@google.com>
 
         Rebaseline - gardening stuff.
