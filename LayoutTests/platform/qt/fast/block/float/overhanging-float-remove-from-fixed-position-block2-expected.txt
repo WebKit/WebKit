@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
 layer at (8,8) size 18x0
   RenderBlock (relative positioned) {DIV} at (0,0) size 18x0
     RenderBlock (floating) {DIV} at (8,0) size 10x100 [bgcolor=#C0C0C0]
-layer at (8,8) size 63x71
-  RenderBlock (positioned) {DIV} at (8,8) size 63x71
-    RenderBlock {DIV} at (0,0) size 63x21
-      RenderBlock (floating) {DIV} at (58,0) size 5x50 [bgcolor=#FFA500]
-      RenderBlock {DIV} at (0,0) size 63x21 [bgcolor=#0000FF]
-        RenderText {#text} at (0,0) size 58x21
-          text run at (0,0) width 58: "A B C D"
-        RenderBlock (floating) {DIV} at (53,21) size 5x50 [bgcolor=#008000]
+layer at (8,8) size 60x69
+  RenderBlock (positioned) {DIV} at (8,8) size 60x69
+    RenderBlock {DIV} at (0,0) size 60x19
+      RenderBlock (floating) {DIV} at (55,0) size 5x50 [bgcolor=#FFA500]
+      RenderBlock {DIV} at (0,0) size 60x19 [bgcolor=#0000FF]
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "A B C D"
+        RenderBlock (floating) {DIV} at (50,19) size 5x50 [bgcolor=#008000]

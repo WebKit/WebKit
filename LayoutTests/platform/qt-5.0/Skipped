@@ -125,6 +125,15 @@ platform/qt/plugins/qt-qwidget-plugin.html
 svg/clip-path/deep-nested-clip-in-mask.svg
 svg/clip-path/deep-nested-clip-in-mask-panning.svg
 
+# [Qt] ietestcenter/css3/bordersbackgrounds/border-radius-style-001 & 002 giving wrong results
+# https://bugs.webkit.org/show_bug.cgi?id=91995
+ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm
+ietestcenter/css3/bordersbackgrounds/border-radius-style-002.htm
+
+# [Qt] ietestcenter/css3/text/textshadow-002.htm giving wrong results
+# https://bugs.webkit.org/show_bug.cgi?id=91994
+ietestcenter/css3/text/textshadow-002.htm
+
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
@@ -682,72 +691,6 @@ editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html
 editing/undo/5378473.html
 editing/undo/undo-misspellings.html
 editing/undo/undo-typing-001.html
-fast/block/float/001.html
-fast/block/float/002.html
-fast/block/float/003.html
-fast/block/float/004.html
-fast/block/float/005.html
-fast/block/float/006.html
-fast/block/float/007.html
-fast/block/float/010.html
-fast/block/float/011.html
-fast/block/float/012.html
-fast/block/float/013.html
-fast/block/float/014.html
-fast/block/float/015.html
-fast/block/float/017.html
-fast/block/float/018.html
-fast/block/float/020.html
-fast/block/float/021.html
-fast/block/float/022.html
-fast/block/float/023.html
-fast/block/float/024.html
-fast/block/float/025.html
-fast/block/float/027.html
-fast/block/float/029.html
-fast/block/float/030.html
-fast/block/float/031.html
-fast/block/float/032.html
-fast/block/float/avoidance-percent-width-compat.html
-fast/block/float/avoidance-percent-width-strict.html
-fast/block/float/avoiding-float-centered.html
-fast/block/float/br-with-clear.html
-fast/block/float/centered-float-avoidance-complexity.html
-fast/block/float/clamped-right-float.html
-fast/block/float/clear-element-too-wide-for-containing-block.html
-fast/block/float/dynamic-unfloat-pref-width.html
-fast/block/float/editable-text-overlapping-float.html
-fast/block/float/fit_line_below_floats.html
-fast/block/float/float-avoidance.html
-fast/block/float/float-in-float-painting.html
-fast/block/float/floats-and-text-indent-rl.html
-fast/block/float/floats-and-text-indent.html
-fast/block/float/intruding-float-add-in-sibling-block-on-static-position.html
-fast/block/float/intruding-float-add-in-sibling-block-on-static-position2.html
-fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position.html
-fast/block/float/intruding-float-remove-from-sibling-block-on-absolute-position2.html
-fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position.html
-fast/block/float/intruding-float-remove-from-sibling-block-on-fixed-position2.html
-fast/block/float/intruding-painted-twice.html
-fast/block/float/marquee-shrink-to-avoid-floats.html
-fast/block/float/multiple-float-positioning.html
-fast/block/float/nested-clearance.html
-fast/block/float/nestedAnonymousBlocks.html
-fast/block/float/nestedAnonymousBlocks2.html
-fast/block/float/nopaint-after-layer-destruction.html
-fast/block/float/nopaint-after-layer-destruction2.html
-fast/block/float/overhanging-after-height-decrease.html
-fast/block/float/overhanging-float-add-in-static-position-block.html
-fast/block/float/overhanging-float-add-in-static-position-block2.html
-fast/block/float/overhanging-float-remove-from-absolute-position-block.html
-fast/block/float/overhanging-float-remove-from-absolute-position-block2.html
-fast/block/float/overhanging-float-remove-from-fixed-position-block.html
-fast/block/float/overhanging-float-remove-from-fixed-position-block2.html
-fast/block/float/overlapping-floats-with-overflow-hidden.html
-fast/block/float/shrink-to-fit-width.html
-fast/block/float/table-relayout.html
-fast/block/float/vertical-move-relayout.html
-fast/block/float/width-update-after-clear.html
 fast/block/lineboxcontain/inline-box-vertical.html
 fast/block/lineboxcontain/inline-box.html
 fast/block/lineboxcontain/inline-replaced.html
@@ -894,11 +837,6 @@ fast/block/positioning/window-height-change.html
 fast/js/constructor-length.html
 fast/js/custom-constructors.html
 fast/js/instanceof-XMLHttpRequest.html
-# These borders should be dashed not straight
-ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm
-ietestcenter/css3/bordersbackgrounds/border-radius-style-002.htm
-# Missing a bar at the top of blue text
-ietestcenter/css3/text/textshadow-002.htm
 svg/as-background-image/animated-svg-as-background.html
 svg/as-background-image/svg-as-background-1.html
 svg/as-background-image/svg-as-background-2.html

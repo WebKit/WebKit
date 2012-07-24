@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-layer at (8,8) size 38x50
-  RenderBlock (positioned) {DIV} at (8,8) size 38x50 [border: (2px solid #0000FF)]
-    RenderBlock {DIV} at (2,2) size 34x25 [border: (2px solid #FFA500)]
-      RenderText {#text} at (2,2) size 30x21
-        text run at (2,2) width 30: "One"
-    RenderBlock (floating) {DIV} at (2,27) size 31x21
-      RenderText {#text} at (0,0) size 31x21
-        text run at (0,0) width 31: "Two"
+layer at (8,8) size 34x46
+  RenderBlock (positioned) {DIV} at (8,8) size 34x46 [border: (2px solid #0000FF)]
+    RenderBlock {DIV} at (2,2) size 30x23 [border: (2px solid #FFA500)]
+      RenderText {#text} at (2,2) size 26x19
+        text run at (2,2) width 26: "One"
+    RenderBlock (floating) {DIV} at (2,25) size 28x19
+      RenderText {#text} at (0,0) size 28x19
+        text run at (0,0) width 28: "Two"

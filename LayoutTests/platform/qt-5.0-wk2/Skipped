@@ -428,9 +428,6 @@ editing/selection/4975120.html
 editing/selection/drag-select-1.html
 editing/selection/vertical-rl-rtl-extend-line-backward-br.html
 editing/selection/vertical-rl-rtl-extend-line-backward-p.html
-fast/block/float/016.html
-fast/block/float/overhanging-tall-block.html
-fast/block/float/shrink-to-avoid-float-complexity.html
 fullscreen/full-screen-placeholder.html
 fullscreen/video-controls-drag.html
 fullscreen/video-controls-override.html
@@ -553,9 +550,6 @@ editing/selection/select-all-001.html
 editing/selection/select-all-002.html
 editing/selection/select-all-003.html
 editing/selection/select-all-004.html
-fast/block/float/008.html
-fast/block/float/033.html
-fast/block/float/br-with-clear-2.html
 fast/block/positioning/negative-rel-position.html
 fast/canvas/canvas-bg.html
 fast/canvas/fallback-content.html

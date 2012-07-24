@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (floating) {P} at (197,16) size 587x21
-        RenderText {#text} at (0,0) size 587x21
-          text run at (0,0) width 587: "The 'hr' below should span the width of the page, not just to the left edge of this text."
-      RenderBlock {HR} at (0,53) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (floating) {P} at (182,79) size 602x21
-        RenderText {#text} at (0,0) size 602x21
-          text run at (0,0) width 602: "The table below should span the width of the page, not just to the left edge of this text."
-      RenderTable {TABLE} at (0,116) size 784x70 [border: (10px outset #808080)]
-        RenderTableSection {TBODY} at (10,10) size 764x50
-          RenderTableRow {TR} at (0,2) size 764x46
-            RenderTableCell {TD} at (2,2) size 760x46 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 753x42
-                text run at (2,2) width 404: "This is a table that should fill the entire width of the page. "
-                text run at (406,2) width 349: "It should clear the float and then take up the width"
-                text run at (2,23) width 268: "of the page. If it doesn't then it's a bug."
-      RenderBlock (floating) {P} at (309,202) size 475x21
-        RenderText {#text} at (0,0) size 475x21
-          text run at (0,0) width 475: "The overflow auto section below should span the width of the page."
-layer at (8,247) size 784x42
-  RenderBlock {DIV} at (0,239) size 784x42
-    RenderText {#text} at (0,0) size 782x42
-      text run at (0,0) width 390: "This is a div that should fill the entire width of the page. "
-      text run at (390,0) width 392: "It should clear the float and then take up the width of the"
-      text run at (0,21) width 225: "page. If it doesn't then it's a bug."
+      RenderBlock (floating) {P} at (278,16) size 506x19
+        RenderText {#text} at (0,0) size 506x19
+          text run at (0,0) width 506: "The 'hr' below should span the width of the page, not just to the left edge of this text."
+      RenderBlock {HR} at (0,51) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (floating) {P} at (267,77) size 517x19
+        RenderText {#text} at (0,0) size 517x19
+          text run at (0,0) width 517: "The table below should span the width of the page, not just to the left edge of this text."
+      RenderTable {TABLE} at (0,112) size 784x66 [border: (10px outset #808080)]
+        RenderTableSection {TBODY} at (10,10) size 764x46
+          RenderTableRow {TR} at (0,2) size 764x42
+            RenderTableCell {TD} at (2,2) size 760x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 742x38
+                text run at (2,2) width 343: "This is a table that should fill the entire width of the page. "
+                text run at (345,2) width 399: "It should clear the float and then take up the width of the page. If it"
+                text run at (2,21) width 133: "doesn't then it's a bug."
+      RenderBlock (floating) {P} at (378,194) size 406x19
+        RenderText {#text} at (0,0) size 406x19
+          text run at (0,0) width 406: "The overflow auto section below should span the width of the page."
+layer at (8,237) size 784x38
+  RenderBlock {DIV} at (0,229) size 784x38
+    RenderText {#text} at (0,0) size 778x38
+      text run at (0,0) width 332: "This is a div that should fill the entire width of the page. "
+      text run at (332,0) width 446: "It should clear the float and then take up the width of the page. If it doesn't"
+      text run at (0,19) width 86: "then it's a bug."
