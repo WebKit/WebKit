@@ -1168,6 +1168,11 @@ void InputHandler::paste()
     executeTextEditCommand("Paste");
 }
 
+void InputHandler::selectAll()
+{
+    executeTextEditCommand("SelectAll");
+}
+
 void InputHandler::addAttributedTextMarker(int start, int end, const AttributeTextStyle& style)
 {
     if ((end - start) < 1 || end > static_cast<int>(elementText().length()))

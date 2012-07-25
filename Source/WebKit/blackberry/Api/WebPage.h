@@ -158,6 +158,7 @@ public:
     void cut();
     void copy();
     void paste();
+    void selectAll();
 
     // Text encoding.
     WebString textEncoding();

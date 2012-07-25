@@ -4679,6 +4679,13 @@ void WebPage::paste()
     d->m_inputHandler->paste();
 }
 
+void WebPage::selectAll()
+{
+    if (d->m_page->defersLoading())
+        return;
+    d->m_inputHandler->selectAll();
+}
+
 void WebPage::setSelection(const Platform::IntPoint& startPoint, const Platform::IntPoint& endPoint)
 {
     if (d->m_page->defersLoading())

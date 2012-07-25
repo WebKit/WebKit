@@ -1,3 +1,22 @@
+2012-07-25  Andy Chen  <andchen@rim.com>
+
+        [BlackBerry] Add "SelectAll" to WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=92246
+
+        Reviewed by Antonio Gomes.
+
+        Add "Select All" editor command to WebPage.
+        Internally reviewed by Mike Fenton.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::selectAll):
+        (WebKit):
+        * Api/WebPage.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::selectAll):
+        (WebKit):
+        * WebKitSupport/InputHandler.h:
+
 2012-07-25  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Don't touch a tile buffer while it's still on its way to the GPU
