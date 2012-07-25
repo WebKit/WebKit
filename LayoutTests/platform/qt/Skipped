@@ -998,6 +998,10 @@ http/tests/misc/link-rel-icon-beforeload.html
 # https://bugs.webkit.org/show_bug.cgi?id=64002
 fast/selectors/unqualified-hover-strict.html
 
+# http/tests/websocket/tests/hybi/workers/close.html is flaky
+# https://bugs.webkit.org/show_bug.cgi?id=89153
+http/tests/websocket/tests/hybi/workers/close.html
+
 
 # =========================================================================== #
 # failing media tests
