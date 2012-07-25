@@ -1,3 +1,15 @@
+2012-07-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Improve ObjectPropertiesSection UI by adding a tooltip for the value.
+        https://bugs.webkit.org/show_bug.cgi?id=92225
+
+        Reviewed by Pavel Feldman.
+
+        Added tooltip with property value description on the property's valueElement.
+
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+
 2012-07-25  Pavel Feldman  <pfeldman@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=91931

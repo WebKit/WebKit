@@ -304,6 +304,8 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (this.property.value.subtype === "node")
             this.valueElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);
 
+        this.valueElement.title = description || "";
+        
         this.listItemElement.removeChildren();
 
         this.listItemElement.appendChild(this.nameElement);
