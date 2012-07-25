@@ -1,3 +1,22 @@
+2012-07-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Fix blend filter for autovectorizing
+        https://bugs.webkit.org/show_bug.cgi?id=91398
+
+        Reviewed by Nikolas Zimmermann.
+
+        Get rid of wrapper classes, and use functions directly as template argument.
+
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::feBlendNormal):
+        (WebCore::feBlendMultiply):
+        (WebCore::feBlendScreen):
+        (WebCore::feBlendDarken):
+        (WebCore::feBlendLighten):
+        (WebCore::feBlendUnknown):
+        (WebCore::platformApply):
+        (WebCore::FEBlend::platformApplyGeneric):
+
 2012-07-25  Keishi Hattori  <keishi@webkit.org>
 
         Add methods to ColorChooserClient so the color chooser can show suggestions

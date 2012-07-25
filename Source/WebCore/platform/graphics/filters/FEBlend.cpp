@@ -71,55 +71,37 @@ static inline unsigned char fastDivideBy255(uint16_t value)
     return quotient + (remainder >> 8);
 }
 
-class BlendNormal {
-public:
-    static unsigned char apply(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char)
-    {
-        return fastDivideBy255((255 - alphaA) * colorB + colorA * 255);
-    }
-};
+inline unsigned char feBlendNormal(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char)
+{
+    return fastDivideBy255((255 - alphaA) * colorB + colorA * 255);
+}
 
-class BlendMultiply {
-public:
-    static unsigned char apply(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
-    {
-        return fastDivideBy255((255 - alphaA) * colorB + (255 - alphaB + colorB) * colorA);
-    }
-};
+inline unsigned char feBlendMultiply(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
+{
+    return fastDivideBy255((255 - alphaA) * colorB + (255 - alphaB + colorB) * colorA);
+}
 
-class BlendScreen {
-public:
-    static unsigned char apply(unsigned char colorA, unsigned char colorB, unsigned char, unsigned char)
-    {
-        return fastDivideBy255((colorB + colorA) * 255 - colorA * colorB);
-    }
-};
+inline unsigned char feBlendScreen(unsigned char colorA, unsigned char colorB, unsigned char, unsigned char)
+{
+    return fastDivideBy255((colorB + colorA) * 255 - colorA * colorB);
+}
 
-class BlendDarken {
-public:
-    static unsigned char apply(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
-    {
-        return fastDivideBy255(std::min((255 - alphaA) * colorB + colorA * 255, (255 - alphaB) * colorA + colorB * 255));
-    }
-};
+inline unsigned char feBlendDarken(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
+{
+    return fastDivideBy255(std::min((255 - alphaA) * colorB + colorA * 255, (255 - alphaB) * colorA + colorB * 255));
+}
 
-class BlendLighten {
-public:
-    static unsigned char apply(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
-    {
-        return fastDivideBy255(std::max((255 - alphaA) * colorB + colorA * 255, (255 - alphaB) * colorA + colorB * 255));
-    }
-};
+inline unsigned char feBlendLighten(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB)
+{
+    return fastDivideBy255(std::max((255 - alphaA) * colorB + colorA * 255, (255 - alphaB) * colorA + colorB * 255));
+}
 
-class BlendUnknown {
-public:
-    static unsigned char apply(unsigned char, unsigned char, unsigned char, unsigned char)
-    {
-        return 0;
-    }
-};
+inline unsigned char feBlendUnknown(unsigned char, unsigned char, unsigned char, unsigned char)
+{
+    return 0;
+}
 
-template<typename BlendFunctor>
+template<BlendType BlendFunction>
 static void platformApply(unsigned char* sourcePixelA, unsigned char* sourcePixelB,
                           unsigned char* destinationPixel, unsigned pixelArrayLength)
 {
@@ -127,9 +109,9 @@ static void platformApply(unsigned char* sourcePixelA, unsigned char* sourcePixe
     for (unsigned pixelOffset = 0; pixelOffset < len; pixelOffset++) {
         unsigned char alphaA = sourcePixelA[3];
         unsigned char alphaB = sourcePixelB[3];
-        destinationPixel[0] = BlendFunctor::apply(sourcePixelA[0], sourcePixelB[0], alphaA, alphaB);
-        destinationPixel[1] = BlendFunctor::apply(sourcePixelA[1], sourcePixelB[1], alphaA, alphaB);
-        destinationPixel[2] = BlendFunctor::apply(sourcePixelA[2], sourcePixelB[2], alphaA, alphaB);
+        destinationPixel[0] = BlendFunction(sourcePixelA[0], sourcePixelB[0], alphaA, alphaB);
+        destinationPixel[1] = BlendFunction(sourcePixelA[1], sourcePixelB[1], alphaA, alphaB);
+        destinationPixel[2] = BlendFunction(sourcePixelA[2], sourcePixelB[2], alphaA, alphaB);
         destinationPixel[3] = 255 - fastDivideBy255((255 - alphaA) * (255 - alphaB));
         sourcePixelA += 4;
         sourcePixelB += 4;
@@ -142,22 +124,22 @@ void FEBlend::platformApplyGeneric(unsigned char* sourcePixelA, unsigned char* s
 {
     switch (m_mode) {
     case FEBLEND_MODE_NORMAL:
-        platformApply<BlendNormal>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
+        platformApply<feBlendNormal>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
         break;
     case FEBLEND_MODE_MULTIPLY:
-        platformApply<BlendMultiply>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
+        platformApply<feBlendMultiply>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
         break;
     case FEBLEND_MODE_SCREEN:
-        platformApply<BlendScreen>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
+        platformApply<feBlendScreen>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
         break;
     case FEBLEND_MODE_DARKEN:
-        platformApply<BlendDarken>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
+        platformApply<feBlendDarken>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
         break;
     case FEBLEND_MODE_LIGHTEN:
-        platformApply<BlendLighten>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
+        platformApply<feBlendLighten>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
         break;
     case FEBLEND_MODE_UNKNOWN:
-        platformApply<BlendUnknown>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
+        platformApply<feBlendUnknown>(sourcePixelA, sourcePixelB, destinationPixel, pixelArrayLength);
         break;
     }
 }
