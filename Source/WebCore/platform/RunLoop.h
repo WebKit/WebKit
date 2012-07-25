@@ -67,7 +67,7 @@ public:
     class TimerBase {
         friend class RunLoop;
     public:
-        explicit TimerBase(RunLoop*);
+        TimerBase(RunLoop*);
         virtual ~TimerBase();
 
         void startRepeating(double repeatInterval) { start(repeatInterval, true); }

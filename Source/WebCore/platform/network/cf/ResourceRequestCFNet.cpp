@@ -192,7 +192,7 @@ void ResourceRequest::doUpdateResourceRequest()
         return;
     }
 
-    m_url = KURL(CFURLRequestGetURL(m_cfRequest.get()));
+    m_url = CFURLRequestGetURL(m_cfRequest.get());
 
     m_cachePolicy = (ResourceRequestCachePolicy)CFURLRequestGetCachePolicy(m_cfRequest.get());
     m_timeoutInterval = CFURLRequestGetTimeoutInterval(m_cfRequest.get());

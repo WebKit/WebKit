@@ -53,7 +53,7 @@ struct ScrollAnimatorParameters;
 
 class ScrollAnimatorNone : public ScrollAnimator, public PlatformGestureCurveTarget {
 public:
-    explicit ScrollAnimatorNone(ScrollableArea*);
+    ScrollAnimatorNone(ScrollableArea*);
     virtual ~ScrollAnimatorNone();
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);

@@ -119,7 +119,7 @@ public:
 
 private:
     SharedBuffer();
-    explicit SharedBuffer(size_t);
+    SharedBuffer(size_t);
     SharedBuffer(const char*, int);
     SharedBuffer(const unsigned char*, int);
     
@@ -144,7 +144,7 @@ private:
     unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;
 #endif
 #if USE(CF)
-    explicit SharedBuffer(CFDataRef);
+    SharedBuffer(CFDataRef);
     RetainPtr<CFDataRef> m_cfData;
 #endif
 };
