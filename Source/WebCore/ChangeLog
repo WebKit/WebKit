@@ -1,5 +1,19 @@
 2012-07-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Fix arithmetic composite filter for auto-vectorization
+        https://bugs.webkit.org/show_bug.cgi?id=92123
+
+        Reviewed by Nikolas Zimmermann.
+
+        Since only clamping of the result prevents GCC from auto-vectorizing the inner loop, this patch 
+        adds a faster version of the inner loop to handle cases where clamping is unnecessary, 
+
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::computeArithmeticPixelsUnclamped):
+        (WebCore::arithmeticSoftware):
+
+2012-07-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         Fix blend filter for autovectorizing
         https://bugs.webkit.org/show_bug.cgi?id=91398
 
