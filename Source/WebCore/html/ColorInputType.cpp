@@ -35,8 +35,10 @@
 #include "Chrome.h"
 #include "Color.h"
 #include "ElementShadow.h"
+#include "HTMLDataListElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLOptionElement.h"
 #include "MouseEvent.h"
 #include "RenderObject.h"
 #include "RenderView.h"
@@ -49,6 +51,8 @@
 #if ENABLE(INPUT_TYPE_COLOR)
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 static bool isValidColorString(const String& value)
 {
@@ -202,6 +206,38 @@ IntRect ColorInputType::elementRectRelativeToWindow() const
     RenderObject* renderer = element()->renderer();
     ASSERT(renderer);
     return pixelSnappedIntRect(renderer->view()->frameView()->contentsToWindow(renderer->absoluteBoundingBoxRect()));
+}
+
+Color ColorInputType::currentColor()
+{
+    return valueAsColor();
+}
+
+bool ColorInputType::shouldShowSuggestions() const
+{
+#if ENABLE(DATALIST_ELEMENT)
+    return element()->fastHasAttribute(listAttr);
+#endif
+}
+
+Vector<Color> ColorInputType::suggestions() const
+{
+    Vector<Color> suggestions;
+#if ENABLE(DATALIST_ELEMENT)
+    HTMLDataListElement* dataList = element()->dataList();
+    if (dataList) {
+        RefPtr<HTMLCollection> options = dataList->options();
+        for (unsigned i = 0; HTMLOptionElement* option = static_cast<HTMLOptionElement*>(options->item(i)); i++) {
+            if (!element()->isValidValue(option->value()))
+                continue;
+            Color color(option->value());
+            if (!color.isValid())
+                continue;
+            suggestions.append(color);
+        }
+    }
+#endif
+    return suggestions;
 }
 
 } // namespace WebCore

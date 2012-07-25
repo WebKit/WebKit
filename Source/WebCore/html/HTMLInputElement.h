@@ -236,6 +236,7 @@ public:
 
 #if ENABLE(DATALIST_ELEMENT)
     HTMLElement* list() const;
+    HTMLDataListElement* dataList() const;
     void listAttributeTargetChanged();
 #endif
 
@@ -363,7 +364,6 @@ private:
     virtual void subtreeHasChanged();
 
 #if ENABLE(DATALIST_ELEMENT)
-    HTMLDataListElement* dataList() const;
     void resetListAttributeTargetObserver();
 #endif
     void parseMaxLengthAttribute(const Attribute&);

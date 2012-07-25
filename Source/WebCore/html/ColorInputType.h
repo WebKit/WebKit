@@ -47,6 +47,9 @@ public:
     virtual void didChooseColor(const Color&) OVERRIDE;
     virtual void didEndChooser() OVERRIDE;
     virtual IntRect elementRectRelativeToWindow() const OVERRIDE;
+    virtual Color currentColor() OVERRIDE;
+    virtual bool shouldShowSuggestions() const OVERRIDE;
+    virtual Vector<Color> suggestions() const OVERRIDE;
 
 private:
     ColorInputType(HTMLInputElement* element) : BaseClickableWithKeyInputType(element) { }

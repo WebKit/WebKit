@@ -7,6 +7,7 @@
 #include "IntRect.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -19,6 +20,9 @@ public:
     virtual void didChooseColor(const Color&) = 0;
     virtual void didEndChooser() = 0;
     virtual IntRect elementRectRelativeToWindow() const = 0;
+    virtual Color currentColor() = 0;
+    virtual bool shouldShowSuggestions() const = 0;
+    virtual Vector<Color> suggestions() const = 0;
 };
 
 } // namespace WebCore
