@@ -1,3 +1,59 @@
+2012-07-24  Kwang Yul Seo  <skyul@company100.net>
+
+        Remove anonymous namespace and make functions static.
+        https://bugs.webkit.org/show_bug.cgi?id=92214
+
+        Reviewed by Adam Barth.
+
+        Mark functions as static instead of enclosing them in anonymous namespaces.
+        One exception to this rule is when a function is passed as a template argument.
+        In this case, the function must have an external linkage.
+
+        No functional change. Covered by existing tests.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::hasImpliedEndTag):
+        (WebCore::causesFosterParenting):
+        (WebCore::isAllWhitespace):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore):
+        (WebCore::tokenizerStateForContextElement):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::isNumberedHeaderElement):
+        (WebCore::isRootNode):
+        (WebCore):
+        * html/parser/HTMLEntityParser.cpp:
+        (WebCore::isAlphaNumeric):
+        * html/parser/HTMLEntitySearch.cpp:
+        (WebCore::halfway):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore):
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::toLowerCase):
+        (WebCore::vectorEqualsString):
+        (WebCore::isEndTagBufferingState):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore):
+        (WebCore::uninitializedPositionValue1):
+        (WebCore::isAllWhitespace):
+        (WebCore::isAllWhitespaceOrReplacementCharacters):
+        (WebCore::isNumberedHeaderTag):
+        (WebCore::isCaptionColOrColgroupTag):
+        (WebCore::isTableCellContextTag):
+        (WebCore::isTableBodyContextTag):
+        (WebCore::isSpecialNode):
+        (WebCore::isNonAnchorNonNobrFormattingTag):
+        (WebCore::isNonAnchorFormattingTag):
+        (WebCore::isFormattingTag):
+        (WebCore::closestFormAncestor):
+        (WebCore::mapLoweredLocalNameToName):
+        (WebCore::adjustSVGTagNameCase):
+        (WebCore::adjustAttributes):
+        (WebCore::adjustSVGAttributes):
+        (WebCore::adjustMathMLAttributes):
+        (WebCore::addNamesWithPrefix):
+        (WebCore::adjustForeignAttributes):
+
 2012-07-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed r123494 follow-up: fixed inspector undock icon.

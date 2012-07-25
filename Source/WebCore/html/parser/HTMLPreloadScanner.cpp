@@ -43,8 +43,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-namespace {
-
 class PreloadTask {
 public:
     explicit PreloadTask(const HTMLToken& token)
@@ -150,8 +148,6 @@ private:
     bool m_linkMediaAttributeIsScreen;
     bool m_inputIsImage;
 };
-
-} // namespace
 
 HTMLPreloadScanner::HTMLPreloadScanner(Document* document)
     : m_document(document)

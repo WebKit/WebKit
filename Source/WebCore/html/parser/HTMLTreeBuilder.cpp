@@ -57,11 +57,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static TextPosition uninitializedPositionValue1()
-{
-    return TextPosition(OrdinalNumber::fromOneBasedInt(-1), OrdinalNumber::first());
-}
-
 namespace {
 
 inline bool isHTMLSpaceOrReplacementCharacter(UChar character)
@@ -69,17 +64,24 @@ inline bool isHTMLSpaceOrReplacementCharacter(UChar character)
     return isHTMLSpace(character) || character == replacementCharacter;
 }
 
-inline bool isAllWhitespace(const String& string)
+}
+
+static TextPosition uninitializedPositionValue1()
+{
+    return TextPosition(OrdinalNumber::fromOneBasedInt(-1), OrdinalNumber::first());
+}
+
+static inline bool isAllWhitespace(const String& string)
 {
     return string.isAllSpecialCharacters<isHTMLSpace>();
 }
 
-inline bool isAllWhitespaceOrReplacementCharacters(const String& string)
+static inline bool isAllWhitespaceOrReplacementCharacters(const String& string)
 {
     return string.isAllSpecialCharacters<isHTMLSpaceOrReplacementCharacter>();
 }
 
-bool isNumberedHeaderTag(const AtomicString& tagName)
+static bool isNumberedHeaderTag(const AtomicString& tagName)
 {
     return tagName == h1Tag
         || tagName == h2Tag
@@ -89,19 +91,19 @@ bool isNumberedHeaderTag(const AtomicString& tagName)
         || tagName == h6Tag;
 }
 
-bool isCaptionColOrColgroupTag(const AtomicString& tagName)
+static bool isCaptionColOrColgroupTag(const AtomicString& tagName)
 {
     return tagName == captionTag
         || tagName == colTag
         || tagName == colgroupTag;
 }
 
-bool isTableCellContextTag(const AtomicString& tagName)
+static bool isTableCellContextTag(const AtomicString& tagName)
 {
     return tagName == thTag || tagName == tdTag;
 }
 
-bool isTableBodyContextTag(const AtomicString& tagName)
+static bool isTableBodyContextTag(const AtomicString& tagName)
 {
     return tagName == tbodyTag
         || tagName == tfootTag
@@ -109,7 +111,7 @@ bool isTableBodyContextTag(const AtomicString& tagName)
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#special
-bool isSpecialNode(const HTMLStackItem* item)
+static bool isSpecialNode(const HTMLStackItem* item)
 {
     if (item->hasTagName(MathMLNames::miTag)
         || item->hasTagName(MathMLNames::moTag)
@@ -200,7 +202,7 @@ bool isSpecialNode(const HTMLStackItem* item)
         || tagName == xmpTag;
 }
 
-bool isNonAnchorNonNobrFormattingTag(const AtomicString& tagName)
+static bool isNonAnchorNonNobrFormattingTag(const AtomicString& tagName)
 {
     return tagName == bTag
         || tagName == bigTag
@@ -216,19 +218,19 @@ bool isNonAnchorNonNobrFormattingTag(const AtomicString& tagName)
         || tagName == uTag;
 }
 
-bool isNonAnchorFormattingTag(const AtomicString& tagName)
+static bool isNonAnchorFormattingTag(const AtomicString& tagName)
 {
     return tagName == nobrTag
         || isNonAnchorNonNobrFormattingTag(tagName);
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#formatting
-bool isFormattingTag(const AtomicString& tagName)
+static bool isFormattingTag(const AtomicString& tagName)
 {
     return tagName == aTag || isNonAnchorFormattingTag(tagName);
 }
 
-HTMLFormElement* closestFormAncestor(Element* element)
+static HTMLFormElement* closestFormAncestor(Element* element)
 {
     while (element) {
         if (element->hasTagName(formTag))
@@ -240,8 +242,6 @@ HTMLFormElement* closestFormAncestor(Element* element)
     }
     return 0;
 }
-
-} // namespace
 
 class HTMLTreeBuilder::ExternalCharacterTokenBuffer {
     WTF_MAKE_NONCOPYABLE(ExternalCharacterTokenBuffer);
@@ -638,11 +638,9 @@ void HTMLTreeBuilder::processCloseWhenNestedTag(AtomicHTMLToken* token)
     m_tree.insertHTMLElement(token);
 }
 
-namespace {
-
 typedef HashMap<AtomicString, QualifiedName> PrefixedNameToQualifiedNameMap;
 
-void mapLoweredLocalNameToName(PrefixedNameToQualifiedNameMap* map, QualifiedName** names, size_t length)
+static void mapLoweredLocalNameToName(PrefixedNameToQualifiedNameMap* map, QualifiedName** names, size_t length)
 {
     for (size_t i = 0; i < length; ++i) {
         const QualifiedName& name = *names[i];
@@ -653,7 +651,7 @@ void mapLoweredLocalNameToName(PrefixedNameToQualifiedNameMap* map, QualifiedNam
     }
 }
 
-void adjustSVGTagNameCase(AtomicHTMLToken* token)
+static void adjustSVGTagNameCase(AtomicHTMLToken* token)
 {
     static PrefixedNameToQualifiedNameMap* caseMap = 0;
     if (!caseMap) {
@@ -670,7 +668,7 @@ void adjustSVGTagNameCase(AtomicHTMLToken* token)
 }
 
 template<QualifiedName** getAttrs(size_t* length)>
-void adjustAttributes(AtomicHTMLToken* token)
+static void adjustAttributes(AtomicHTMLToken* token)
 {
     static PrefixedNameToQualifiedNameMap* caseMap = 0;
     if (!caseMap) {
@@ -688,17 +686,17 @@ void adjustAttributes(AtomicHTMLToken* token)
     }
 }
 
-void adjustSVGAttributes(AtomicHTMLToken* token)
+static void adjustSVGAttributes(AtomicHTMLToken* token)
 {
     adjustAttributes<SVGNames::getSVGAttrs>(token);
 }
 
-void adjustMathMLAttributes(AtomicHTMLToken* token)
+static void adjustMathMLAttributes(AtomicHTMLToken* token)
 {
     adjustAttributes<MathMLNames::getMathMLAttrs>(token);
 }
 
-void addNamesWithPrefix(PrefixedNameToQualifiedNameMap* map, const AtomicString& prefix, QualifiedName** names, size_t length)
+static void addNamesWithPrefix(PrefixedNameToQualifiedNameMap* map, const AtomicString& prefix, QualifiedName** names, size_t length)
 {
     for (size_t i = 0; i < length; ++i) {
         QualifiedName* name = names[i];
@@ -709,7 +707,7 @@ void addNamesWithPrefix(PrefixedNameToQualifiedNameMap* map, const AtomicString&
     }
 }
 
-void adjustForeignAttributes(AtomicHTMLToken* token)
+static void adjustForeignAttributes(AtomicHTMLToken* token)
 {
     static PrefixedNameToQualifiedNameMap* map = 0;
     if (!map) {
@@ -731,8 +729,6 @@ void adjustForeignAttributes(AtomicHTMLToken* token)
         if (!name.localName().isNull())
             tokenAttribute.parserSetName(name);
     }
-}
-
 }
 
 void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)

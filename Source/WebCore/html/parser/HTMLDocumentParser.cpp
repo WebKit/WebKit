@@ -45,11 +45,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-namespace {
-
 // This is a direct transcription of step 4 from:
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
-HTMLTokenizerState::State tokenizerStateForContextElement(Element* contextElement, bool reportErrors)
+static HTMLTokenizerState::State tokenizerStateForContextElement(Element* contextElement, bool reportErrors)
 {
     if (!contextElement)
         return HTMLTokenizerState::DataState;
@@ -71,8 +69,6 @@ HTMLTokenizerState::State tokenizerStateForContextElement(Element* contextElemen
         return HTMLTokenizerState::PLAINTEXTState;
     return HTMLTokenizerState::DataState;
 }
-
-} // namespace
 
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors)
     : ScriptableDocumentParser(document)

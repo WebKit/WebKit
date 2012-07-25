@@ -67,16 +67,14 @@ bool AtomicMarkupTokenBase<HTMLToken>::usesAttributes() const
     return m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag;
 }
 
-namespace {
-
-inline UChar toLowerCase(UChar cc)
+static inline UChar toLowerCase(UChar cc)
 {
     ASSERT(isASCIIUpper(cc));
     const int lowerCaseOffset = 0x20;
     return cc + lowerCaseOffset;
 }
 
-inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& string)
+static inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& string)
 {
     if (vector.size() != string.length())
         return false;
@@ -86,7 +84,7 @@ inline bool vectorEqualsString(const Vector<UChar, 32>& vector, const String& st
     return !memcmp(stringData, vectorData, vector.size() * sizeof(UChar));
 }
 
-inline bool isEndTagBufferingState(HTMLTokenizerState::State state)
+static inline bool isEndTagBufferingState(HTMLTokenizerState::State state)
 {
     switch (state) {
     case HTMLTokenizerState::RCDATAEndTagOpenState:
@@ -103,8 +101,6 @@ inline bool isEndTagBufferingState(HTMLTokenizerState::State state)
     }
 }
 
-}
-    
 #define HTML_BEGIN_STATE(stateName) BEGIN_STATE(HTMLTokenizerState, stateName)
 #define HTML_RECONSUME_IN(stateName) RECONSUME_IN(HTMLTokenizerState, stateName)
 #define HTML_ADVANCE_TO(stateName) ADVANCE_TO(HTMLTokenizerState, stateName)

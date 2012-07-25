@@ -38,9 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-namespace {
-
-inline bool isNumberedHeaderElement(HTMLStackItem* item)
+static inline bool isNumberedHeaderElement(HTMLStackItem* item)
 {
     return item->hasTagName(h1Tag)
         || item->hasTagName(h2Tag)
@@ -50,11 +48,13 @@ inline bool isNumberedHeaderElement(HTMLStackItem* item)
         || item->hasTagName(h6Tag);
 }
     
-inline bool isRootNode(HTMLStackItem* item)
+static inline bool isRootNode(HTMLStackItem* item)
 {
     return item->isDocumentFragmentNode()
         || item->hasTagName(htmlTag);
 }
+
+namespace {
 
 inline bool isScopeMarker(HTMLStackItem* item)
 {

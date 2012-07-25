@@ -30,15 +30,11 @@
 
 namespace WebCore {
 
-namespace {
-    
-const HTMLEntityTableEntry* halfway(const HTMLEntityTableEntry* left, const HTMLEntityTableEntry* right)
+static const HTMLEntityTableEntry* halfway(const HTMLEntityTableEntry* left, const HTMLEntityTableEntry* right)
 {
     return &left[(right - left) / 2];
 }
 
-}
-    
 HTMLEntitySearch::HTMLEntitySearch()
     : m_currentLength(0)
     , m_mostRecentMatch(0)

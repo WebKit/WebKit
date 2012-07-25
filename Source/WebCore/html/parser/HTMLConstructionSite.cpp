@@ -58,9 +58,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-namespace {
-
-bool hasImpliedEndTag(const HTMLStackItem* item)
+static bool hasImpliedEndTag(const HTMLStackItem* item)
 {
     return item->hasTagName(ddTag)
         || item->hasTagName(dtTag)
@@ -72,7 +70,7 @@ bool hasImpliedEndTag(const HTMLStackItem* item)
         || item->hasTagName(rtTag);
 }
 
-bool causesFosterParenting(const HTMLStackItem* item)
+static bool causesFosterParenting(const HTMLStackItem* item)
 {
     return item->hasTagName(tableTag)
         || item->hasTagName(tbodyTag)
@@ -81,12 +79,10 @@ bool causesFosterParenting(const HTMLStackItem* item)
         || item->hasTagName(trTag);
 }
 
-inline bool isAllWhitespace(const String& string)
+static inline bool isAllWhitespace(const String& string)
 {
     return string.isAllSpecialCharacters<isHTMLSpace>();
 }
-
-} // namespace
 
 static inline void executeTask(HTMLConstructionSiteTask& task)
 {
