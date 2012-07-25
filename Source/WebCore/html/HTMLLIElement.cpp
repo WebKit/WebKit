@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "ComposedShadowTreeWalker.h"
 #include "HTMLNames.h"
 #include "RenderListItem.h"
 
@@ -95,10 +96,13 @@ void HTMLLIElement::attach()
 
         // Find the enclosing list node.
         Node* listNode = 0;
-        Node* n = this;
-        while (!listNode && (n = n->parentNode())) {
-            if (n->hasTagName(ulTag) || n->hasTagName(olTag))
-                listNode = n;
+        ComposedShadowTreeParentWalker walker(this);
+        while (!listNode) {
+            walker.parentIncludingInsertionPointAndShadowRoot();
+            if (!walker.get())
+                break;
+            if (walker.get()->hasTagName(ulTag) || walker.get()->hasTagName(olTag))
+                listNode = walker.get();
         }
 
         // If we are not in a list, tell the renderer so it can position us inside.

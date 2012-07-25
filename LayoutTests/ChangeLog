@@ -1,3 +1,13 @@
+2012-07-24  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=89179
+        Rendering LI having Shadow DOM seems weird
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/shadow-and-list-elements-expected.html: Added.
+        * fast/dom/shadow/shadow-and-list-elements.html: Added.
+
 2012-07-24  Jer Noble  <jer.noble@apple.com>
 
         setting playbackRate on a MediaController doesn't change the playbackRate for slaved media
