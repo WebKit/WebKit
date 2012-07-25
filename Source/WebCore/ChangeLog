@@ -1,3 +1,25 @@
+2012-07-24  Keishi Hattori  <keishi@webkit.org>
+
+        Move PagePopupClient helper functions so they can be shared
+        https://bugs.webkit.org/show_bug.cgi?id=92096
+
+        Reviewed by Kent Tamura.
+
+        Move PagePopupClient helper functions to a separate file,
+        so they can be shared with new PagePopupClients.
+
+        No new tests. Covered by fast/forms/date/calendar-picker-appearance.html
+
+        * WebCore.gypi: Added PagePopupClient.cpp
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::CalendarPickerElement::writeDocument): Modified to use PagePopupClient.
+        * page/PagePopupClient.cpp: Added.
+        (WebCore):
+        (WebCore::PagePopupClient::addJavaScriptString):
+        (WebCore::PagePopupClient::addProperty):
+        * page/PagePopupClient.h:
+        (WebCore::PagePopupClient::addString):
+
 2012-07-24  Jer Noble  <jer.noble@apple.com>
 
         setting playbackRate on a MediaController doesn't change the playbackRate for slaved media

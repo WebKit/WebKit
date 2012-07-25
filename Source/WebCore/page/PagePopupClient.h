@@ -33,6 +33,7 @@
 
 #if ENABLE(PAGE_POPUP)
 
+#include "DocumentWriter.h"
 #include "IntSize.h"
 #include <wtf/text/WTFString.h>
 
@@ -59,7 +60,21 @@ public:
     virtual void didClosePopup() = 0;
 
     virtual ~PagePopupClient() { }
+
+    // Helper functions to be used in PagePopupClient::writeDocument().
+    static void addString(const String&, DocumentWriter&);
+    static void addJavaScriptString(const String&, DocumentWriter&);
+    static void addProperty(const char* name, const String& value, DocumentWriter&);
+    static void addProperty(const char* name, unsigned value, DocumentWriter&);
+    static void addProperty(const char* name, bool value, DocumentWriter&);
+    static void addProperty(const char* name, const Vector<String>& values, DocumentWriter&);
 };
+
+inline void PagePopupClient::addString(const String& str, DocumentWriter& writer)
+{
+    CString str8 = str.utf8();
+    writer.addData(str8.data(), str8.length());
+}
 
 }
 #endif
