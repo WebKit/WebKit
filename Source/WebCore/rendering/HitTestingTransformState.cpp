@@ -58,6 +58,7 @@ void HitTestingTransformState::flattenWithTransform(const TransformationMatrix& 
     TransformationMatrix inverseTransform = t.inverse();
     m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
     m_lastPlanarQuad = inverseTransform.projectQuad(m_lastPlanarQuad);
+    m_lastPlanarArea = inverseTransform.projectQuad(m_lastPlanarArea);
 
     m_accumulatedTransform.makeIdentity();
     m_accumulatingTransform = false;
@@ -73,9 +74,14 @@ FloatQuad HitTestingTransformState::mappedQuad() const
     return m_accumulatedTransform.inverse().projectQuad(m_lastPlanarQuad);
 }
 
-LayoutRect HitTestingTransformState::boundsOfMappedQuad() const
+FloatQuad HitTestingTransformState::mappedArea() const
 {
-    return m_accumulatedTransform.inverse().clampedBoundsOfProjectedQuad(m_lastPlanarQuad);
+    return m_accumulatedTransform.inverse().projectQuad(m_lastPlanarArea);
+}
+
+LayoutRect HitTestingTransformState::boundsOfMappedArea() const
+{
+    return m_accumulatedTransform.inverse().clampedBoundsOfProjectedQuad(m_lastPlanarArea);
 }
 
 } // namespace WebCore

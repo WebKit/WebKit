@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Document::nodesFromRect : CSS rotate transforms - bug 85792</title>
+<style type="text/css">
+    #sandbox {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 700px;
+        height: 700px;
+    }
+    #layer {
+        position: absolute;
+        left: 200px;
+        top: 200px;
+        width: 300px;
+        height: 300px;
+    }
+    .rotate45 { -webkit-transform: rotate(45deg); }
+    .rotate90 { -webkit-transform: rotate(90deg); }
+    .rotate180 { -webkit-transform: rotate(180deg); }
+    #layer > #fleft { float: left; width: 50px; height: 300px; }
+    #layer > #fright { float: right; width: 50px; height: 300px; }
+    #layer > .hbox { height: 100px; margin-right: 50px; margin-left: 50px }
+</style>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/nodesFromRect.js"></script>
+</head>
+
+<body>
+    <div id=sandbox>
+        <div id=layer>
+            <div id=fleft></div>
+            <div id=fright></div>
+            <div id=box1 class=hbox></div>
+            <div id=box2 class=hbox></div>
+            <div id=box3 class=hbox></div>
+        </div>
+    </div>
+
+    <script>
+        function runTest()
+        {
+            description(document.title);
+            var e = {};
+
+            // Set up shortcut access to elements
+            ['sandbox', 'layer', 'fleft', 'fright', 'box1', 'box2', 'box3'].forEach(function(a) {
+                e[a] = document.getElementById(a);
+            });
+
+            window.scrollTo(0, 0);
+            debug('Check unrotated area-testing for sanity');
+            check(150, 150, 30, 30, 30, 30, [e.sandbox]);
+            check(220, 220, 10, 10, 10, 10, [e.fleft]);
+            check(470, 220, 10, 10, 10, 10, [e.fright]);
+            check(270, 220, 10, 10, 10, 10, [e.box1]);
+            check(270, 320, 10, 10, 10, 10, [e.box2]);
+            check(240, 290, 30, 30, 30, 30, [e.fleft, e.box2, e.box1, e.layer]);
+            check(180, 220, 10, 30, 10, 0, [e.fleft, e.layer, e.sandbox]);
+            check(270, 280, 0, 10, 30, 10, [e.box2, e.box1, e.layer]);
+            check(180, 220, 10, 0, 10, 30, [e.sandbox]);
+
+
+            debug('Check rotated 180deg');
+            e['layer'].setAttribute('class', 'rotate180');
+            check(150, 150, 30, 30, 30, 30, [e.sandbox]);
+            check(220, 220, 10, 10, 10, 10, [e.fright]);
+            check(470, 220, 10, 10, 10, 10, [e.fleft]);
+            check(270, 220, 10, 10, 10, 10, [e.box3]);
+            check(270, 320, 10, 10, 10, 10, [e.box2]);
+            check(240, 290, 30, 30, 30, 30, [e.fright, e.box3, e.box2, e.layer]);
+            check(180, 220, 10, 30, 10, 0, [e.fright, e.layer, e.sandbox]);
+            check(270, 280, 0, 10, 30, 10, [e.box3, e.box2, e.layer]);
+            check(180, 220, 10, 0, 10, 30, [e.sandbox]);
+
+            debug('Check rotated 90deg');
+            e['layer'].setAttribute('class', 'rotate90');
+            check(150, 150, 30, 30, 30, 30, [e.sandbox]);
+            check(220, 280, 10, 10, 10, 10, [e.box3]);
+            check(470, 280, 10, 10, 10, 10, [e.box1]);
+            check(270, 220, 10, 10, 10, 10, [e.fleft]);
+            check(270, 470, 10, 10, 10, 10, [e.fright]);
+            check(290, 240, 30, 30, 30, 30, [e.fleft, e.box3, e.box2, e.layer]);
+            check(180, 280, 10, 30, 10, 0, [e.box3, e.layer, e.sandbox]);
+            check(330, 180, 0, 10, 30, 10, [e.fleft, e.layer, e.sandbox]);
+            check(280, 260, 40, 10, 10, 10, [e.fleft, e.box3, e.layer]);
+
+            debug('Check rotated 45deg');
+            e['layer'].setAttribute('class', 'rotate45');
+            check(150, 150, 30, 30, 30, 30, [e.sandbox]);
+            check(260, 260, 10, 10, 10, 10, [e.fleft]);
+            check(440, 440, 10, 10, 10, 10, [e.fright]);
+            check(440, 260, 10, 10, 10, 10, [e.box1]);
+            check(260, 440, 10, 10, 10, 10, [e.box3]);
+            check(350, 140, 20, 20, 20, 20, [e.fleft, e.layer, e.sandbox]);
+            check(350, 140, 20, 20, 70, 20, [e.fleft, e.box1, e.layer, e.sandbox]);
+            check(350, 350, 40, 40, 40, 40, [e.box3, e.box2, e.box1, e.layer]);
+            check(260, 260, 1, 27, 1, 27, [e.fleft]);
+
+        }
+
+        window.onload = runTest;
+    </script>
+
+    <p id='description'></p>
+    <span id="console"></span>
+    <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

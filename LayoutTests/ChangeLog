@@ -1,3 +1,18 @@
+2012-07-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        NodesFromRect and area-based hit-testing can not handle CSS transforms.
+        https://bugs.webkit.org/show_bug.cgi?id=85792
+
+        Reviewed by Eric Seidel.
+
+        Adds nodesFromRect tests that tests the API under the CSS transforms
+        scale and rotate.
+
+        * fast/dom/nodesFromRect/nodesFromRect-rotate-expected.txt: Added.
+        * fast/dom/nodesFromRect/nodesFromRect-rotate.html: Added.
+        * fast/dom/nodesFromRect/nodesFromRect-scale-expected.txt: Added.
+        * fast/dom/nodesFromRect/nodesFromRect-scale.html: Added.
+
 2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] css2.1/t1* tests needs rebaseline after new testfonts

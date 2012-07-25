@@ -1,3 +1,56 @@
+2012-07-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        NodesFromRect and area-based hit-testing can not handle CSS transforms.
+        https://bugs.webkit.org/show_bug.cgi?id=85792
+
+        Reviewed by Eric Seidel.
+
+        To support the combination of CSS transforms and rect based hit testing,
+        we need to test against the transformed rect, instead of the original rect.
+
+        This patch makes HitTestPoint store the exact transformed FloatPoint and 
+        FloatQuad, and modifies the intersection methods so that they will use a 
+        new FloatQuad based intersection when transforms requires it.
+
+        Tests: fast/dom/nodesFromRect/nodesFromRect-rotate.html
+               fast/dom/nodesFromRect/nodesFromRect-scale.html
+
+        * platform/graphics/FloatQuad.cpp:
+        (WebCore::determinant):
+        (WebCore::rightMostCornerToVector):
+        (WebCore::FloatQuad::intersectsRect):
+        (WebCore::FloatQuad::isCounterclockwise):
+        * platform/graphics/FloatQuad.h:
+        (FloatQuad):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestPoint::HitTestPoint):
+        (WebCore::HitTestPoint::operator=):
+        (WebCore::HitTestPoint::move):
+        (WebCore::HitTestPoint::intersectsRect):
+        (WebCore::HitTestPoint::intersects):
+        * rendering/HitTestResult.h:
+        (HitTestPoint):
+        (WebCore::HitTestPoint::isRectilinear):
+        (WebCore::HitTestPoint::transformedPoint):
+        (WebCore::HitTestPoint::transformedRect):
+        * rendering/HitTestingTransformState.cpp:
+        (WebCore::HitTestingTransformState::flattenWithTransform):
+        (WebCore::HitTestingTransformState::mappedArea):
+        (WebCore::HitTestingTransformState::boundsOfMappedArea):
+        * rendering/HitTestingTransformState.h:
+        (WebCore::HitTestingTransformState::create):
+        (WebCore::HitTestingTransformState::HitTestingTransformState):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::hitTestRegion):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::createLocalTransformState):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        * rendering/RenderLayer.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtFloatPoint):
+
 2012-07-25  Kwang Yul Seo  <skyul@company100.net>
 
         Add HTMLStackItem.h to project files

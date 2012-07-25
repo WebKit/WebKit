@@ -22,6 +22,7 @@
 #ifndef HitTestResult_h
 #define HitTestResult_h
 
+#include "FloatQuad.h"
 #include "FloatRect.h"
 #include "HitTestRequest.h"
 #include "LayoutTypes.h"
@@ -51,6 +52,8 @@ public:
 
     HitTestPoint();
     HitTestPoint(const LayoutPoint&);
+    HitTestPoint(const FloatPoint&);
+    HitTestPoint(const FloatPoint&, const FloatQuad&);
     // Pass non-zero padding values to perform a rect-based hit test.
     HitTestPoint(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     HitTestPoint(const HitTestPoint&);
@@ -60,10 +63,11 @@ public:
     LayoutPoint point() const { return m_point; }
     IntPoint roundedPoint() const { return roundedIntPoint(m_point); }
 
-    void setPoint(const LayoutPoint&);
+    void move(const LayoutSize& offset);
 
     // Rect-based hit test related methods.
     bool isRectBasedTest() const { return m_isRectBased; }
+    bool isRectilinear() const { return m_isRectilinear; }
     IntRect boundingBox() const { return m_boundingBox; }
 
     static IntRect rectForPoint(const LayoutPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
@@ -75,11 +79,21 @@ public:
     bool intersects(const LayoutRect&) const;
     bool intersects(const FloatRect&) const;
 
-private:
-    LayoutPoint m_point;
+    const FloatPoint& transformedPoint() const { return m_transformedPoint; }
+    const FloatQuad& transformedRect() const { return m_transformedRect; }
 
+private:
+    template<typename RectType>
+    bool intersectsRect(const RectType&) const;
+
+    // This is cached forms of the more accurate point and area below.
+    LayoutPoint m_point;
     IntRect m_boundingBox;
+
+    FloatPoint m_transformedPoint;
+    FloatQuad m_transformedRect;
     bool m_isRectBased;
+    bool m_isRectilinear;
 };
 
 class HitTestResult : public HitTestPoint {

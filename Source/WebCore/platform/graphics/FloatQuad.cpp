@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +50,11 @@ static inline float max4(float a, float b, float c, float d)
 inline float dot(const FloatSize& a, const FloatSize& b)
 {
     return a.width() * b.width() + a.height() * b.height();
+}
+
+inline float determinant(const FloatSize& a, const FloatSize& b)
+{
+    return a.width() * b.height() - a.height() * b.width();
 }
 
 inline bool isPointInTriangle(const FloatPoint& p, const FloatPoint& t1, const FloatPoint& t2, const FloatPoint& t3)
@@ -107,11 +113,74 @@ bool FloatQuad::containsQuad(const FloatQuad& other) const
     return containsPoint(other.p1()) && containsPoint(other.p2()) && containsPoint(other.p3()) && containsPoint(other.p4());
 }
 
+static inline FloatPoint rightMostCornerToVector(const FloatRect& rect, const FloatSize& vector)
+{
+    // Return the corner of the rectangle that if it is to the left of the vector
+    // would mean all of the rectangle is to the left of the vector.
+    // The vector here represents the side between two points in a clockwise convex polygon.
+    //
+    //  Q  XXX
+    // QQQ XXX   If the lower left corner of X is left of the vector that goes from the top corner of Q to
+    //  QQQ      the right corner of Q, then all of X is left of the vector, and intersection impossible.
+    //   Q
+    //
+    FloatPoint point;
+    if (vector.width() >= 0)
+        point.setY(rect.maxY());
+    else
+        point.setY(rect.y());
+    if (vector.height() >= 0)
+        point.setX(rect.x());
+    else
+        point.setX(rect.maxX());
+    return point;
+}
+
+bool FloatQuad::intersectsRect(const FloatRect& rect) const
+{
+    // For each side of the quad clockwise we check if the rectangle is to the left of it
+    // since only content on the right can onlap with the quad.
+    // This only works if the quad is convex.
+    FloatSize v1, v2, v3, v4;
+
+    // Ensure we use clockwise vectors.
+    if (!isCounterclockwise()) {
+        v1 = m_p2 - m_p1;
+        v2 = m_p3 - m_p2;
+        v3 = m_p4 - m_p3;
+        v4 = m_p1 - m_p4;
+    } else {
+        v1 = m_p4 - m_p1;
+        v2 = m_p1 - m_p2;
+        v3 = m_p2 - m_p3;
+        v4 = m_p3 - m_p4;
+    }
+
+    FloatPoint p = rightMostCornerToVector(rect, v1);
+    if (determinant(v1, p - m_p1) < 0)
+        return false;
+
+    p = rightMostCornerToVector(rect, v2);
+    if (determinant(v2, p - m_p2) < 0)
+        return false;
+
+    p = rightMostCornerToVector(rect, v3);
+    if (determinant(v3, p - m_p3) < 0)
+        return false;
+
+    p = rightMostCornerToVector(rect, v4);
+    if (determinant(v4, p - m_p4) < 0)
+        return false;
+
+    // If not all of the rectangle is outside one of the quad's four sides, then that means at least
+    // a part of the rectangle is overlapping the quad.
+    return true;
+}
+
 bool FloatQuad::isCounterclockwise() const
 {
-    FloatPoint v1 = FloatPoint(m_p2.x() - m_p1.x(), m_p2.y() - m_p1.y());
-    FloatPoint v2 = FloatPoint(m_p3.x() - m_p2.x(), m_p3.y() - m_p2.y());
-    return (v1.x() * v2.y() - v1.y() * v2.x()) < 0;
+    // Return if the two first vectors are turning clockwise. If the quad is convex then all following vectors will turn the same way.
+    return determinant(m_p2 - m_p1, m_p3 - m_p2) < 0;
 }
 
 } // namespace WebCore

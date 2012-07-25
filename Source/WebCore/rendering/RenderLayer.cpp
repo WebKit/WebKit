@@ -3386,13 +3386,18 @@ static inline LayoutRect frameVisibleRect(RenderObject* renderer)
 
 bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 {
+    return hitTest(request, result.hitTestPoint(), result);
+}
+
+bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestPoint& hitTestPoint, HitTestResult& result)
+{
     renderer()->document()->updateLayout();
     
     LayoutRect hitTestArea = renderer()->isRenderFlowThread() ? toRenderFlowThread(renderer())->borderBoxRect() : renderer()->view()->documentRect();
     if (!request.ignoreClipping())
         hitTestArea.intersect(frameVisibleRect(renderer()));
 
-    RenderLayer* insideLayer = hitTestLayer(this, 0, request, result, hitTestArea, result.hitTestPoint(), false);
+    RenderLayer* insideLayer = hitTestLayer(this, 0, request, result, hitTestArea, hitTestPoint, false);
     if (!insideLayer) {
         // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
@@ -3456,7 +3461,7 @@ PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(Rend
     } else {
         // If this is the first time we need to make transform state, then base it off of hitTestPoint,
         // which is relative to rootLayer.
-        transformState = HitTestingTransformState::create(hitTestPoint.point(), FloatQuad(hitTestRect));
+        transformState = HitTestingTransformState::create(hitTestPoint.transformedPoint(), hitTestPoint.transformedRect(), FloatQuad(hitTestRect));
         convertToLayerCoords(rootLayer, offset);
     }
     
@@ -3536,10 +3541,14 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
         //
         // We can't just map hitTestPoint and hitTestRect because they may have been flattened (losing z)
         // by our container.
-        LayoutPoint localPoint = roundedLayoutPoint(newTransformState->mappedPoint());
-        LayoutRect localHitTestRect = newTransformState->boundsOfMappedQuad();
-        HitTestPoint newHitTestPoint(result.hitTestPoint());
-        newHitTestPoint.setPoint(localPoint);
+        FloatPoint localPoint = newTransformState->mappedPoint();
+        FloatQuad localPointQuad = newTransformState->mappedQuad();
+        LayoutRect localHitTestRect = newTransformState->boundsOfMappedArea();
+        HitTestPoint newHitTestPoint;
+        if (hitTestPoint.isRectBasedTest())
+            newHitTestPoint = HitTestPoint(localPoint, localPointQuad);
+        else
+            newHitTestPoint = HitTestPoint(localPoint);
 
         // Now do a hit test with the root layer shifted to be us.
         return hitTestLayer(this, containerLayer, request, result, localHitTestRect, newHitTestPoint, true, newTransformState.get(), zOffset);
@@ -3835,10 +3844,14 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
                 RenderLayer* nextLayer = columnLayers[columnIndex - 1];
                 RefPtr<HitTestingTransformState> newTransformState = nextLayer->createLocalTransformState(rootLayer, nextLayer, localClipRect, hitTestPoint, transformState);
                 newTransformState->translate(offset.width(), offset.height(), HitTestingTransformState::AccumulateTransform);
-                LayoutPoint localPoint = roundedLayoutPoint(newTransformState->mappedPoint());
-                LayoutRect localHitTestRect = newTransformState->mappedQuad().enclosingBoundingBox();
-                HitTestPoint newHitTestPoint(result.hitTestPoint());
-                newHitTestPoint.setPoint(localPoint);
+                FloatPoint localPoint = newTransformState->mappedPoint();
+                FloatQuad localPointQuad = newTransformState->mappedQuad();
+                LayoutRect localHitTestRect = newTransformState->mappedArea().enclosingBoundingBox();
+                HitTestPoint newHitTestPoint;
+                if (hitTestPoint.isRectBasedTest())
+                    newHitTestPoint = HitTestPoint(localPoint, localPointQuad);
+                else
+                    newHitTestPoint = HitTestPoint(localPoint);
                 newTransformState->flatten();
 
                 hitLayer = hitTestChildLayerColumns(childLayer, columnLayers[columnIndex - 1], request, result, localHitTestRect, newHitTestPoint,

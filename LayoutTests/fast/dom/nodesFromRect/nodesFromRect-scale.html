@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Document::nodesFromRect : CSS scale transforms - bug 85792</title>
+<style type="text/css">
+    #sandbox {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 600px;
+        height: 600px;
+    }
+    #layer {
+        position: absolute;
+        left: 200px;
+        top: 200px;
+        width: 200px;
+        height: 200px;
+    }
+    .scaleup { -webkit-transform: scale(2); }
+    .scaledown { -webkit-transform: scale(0.5); }
+    #layer > #fleft { float: left; width: 50px; height: 200px; }
+    #layer > #fright { float: right; width: 50px; height: 200px; }
+    #layer > .hbox { height: 100px; margin-right: 50px; margin-left: 50px }
+</style>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/nodesFromRect.js"></script>
+</head>
+
+<body>
+    <div id=sandbox>
+        <div id=layer>
+            <div id=fleft></div>
+            <div id=fright></div>
+            <div id=box1 class=hbox></div>
+            <div id=box2 class=hbox></div>
+        </div>
+    </div>
+
+    <script>
+        function runTest()
+        {
+            description(document.title);
+            var e = {};
+
+            // Set up shortcut access to elements
+            ['sandbox', 'layer', 'fleft', 'fright', 'box1', 'box2', 'box3'].forEach(function(a) {
+                e[a] = document.getElementById(a);
+            });
+
+            window.scrollTo(0, 0);
+            debug('Check unscaled area-testing for sanity');
+            check(150, 150, 30, 30, 30, 30, [e.sandbox]);
+            check(220, 220, 10, 10, 10, 10, [e.fleft]);
+            check(370, 220, 10, 10, 10, 10, [e.fright]);
+            check(270, 220, 10, 10, 10, 10, [e.box1]);
+            check(270, 320, 10, 10, 10, 10, [e.box2]);
+            check(240, 290, 30, 30, 30, 30, [e.fleft, e.box2, e.box1, e.layer]);
+            check(180, 220, 10, 30, 10, 0, [e.fleft, e.layer, e.sandbox]);
+            check(270, 280, 0, 10, 30, 10, [e.box2, e.box1, e.layer]);
+            check(180, 220, 10, 0, 10, 30, [e.sandbox]);
+
+            debug('Check scaling 2X');
+            e['layer'].setAttribute('class', 'scaleup');
+            check(150, 150, 30, 30, 30, 30, [e.fleft]);
+            check(450, 150, 30, 30, 30, 30, [e.fright]);
+            check(350, 220, 10, 10, 10, 10, [e.box1]);
+            check(350, 420, 10, 10, 10, 10, [e.box2]);
+            check(180, 280, 60, 60, 60, 60, [e.fleft, e.box2, e.box1, e.layer]);
+            check(60, 140, 20, 60, 20, 0, [e.fleft, e.layer, e.sandbox]);
+            check(240, 260, 0, 20, 60, 20, [e.box2, e.box1, e.layer]);
+            check(60, 140, 20, 0, 20, 60, [e.sandbox]);
+
+            debug('Check scaling 0.5X');
+            e['layer'].setAttribute('class', 'scaledown');
+            check(225, 225, 15, 15, 15, 15, [e.sandbox]);
+            check(260, 260, 5, 5, 5, 5, [e.fleft]);
+            check(335, 260, 5, 5, 5, 5, [e.fright]);
+            check(285, 260, 5, 5, 5, 5, [e.box1]);
+            check(285, 310, 5, 5, 5, 5, [e.box2]);
+            check(270, 295, 15, 15, 15, 15, [e.fleft, e.box2, e.box1, e.layer]);
+            check(240, 260, 5, 15, 5, 0, [e.fleft, e.layer, e.sandbox]);
+            check(285, 290, 0, 5, 15, 5, [e.box2, e.box1, e.layer]);
+            check(240, 260, 5, 0, 5, 15, [e.sandbox]);
+
+        }
+
+        window.onload = runTest;
+    </script>
+
+    <p id='description'></p>
+    <span id="console"></span>
+    <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

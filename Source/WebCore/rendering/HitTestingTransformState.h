@@ -42,9 +42,9 @@ namespace WebCore {
 // differently than move()) so care has to be taken when this is done.
 class HitTestingTransformState : public RefCounted<HitTestingTransformState> {
 public:
-    static PassRefPtr<HitTestingTransformState> create(const FloatPoint& p, const FloatQuad& quad)
+    static PassRefPtr<HitTestingTransformState> create(const FloatPoint& p, const FloatQuad& quad, const FloatQuad& area)
     {
-        return adoptRef(new HitTestingTransformState(p, quad));
+        return adoptRef(new HitTestingTransformState(p, quad, area));
     }
 
     static PassRefPtr<HitTestingTransformState> create(const HitTestingTransformState& other)
@@ -58,18 +58,21 @@ public:
 
     FloatPoint mappedPoint() const;
     FloatQuad mappedQuad() const;
-    LayoutRect boundsOfMappedQuad() const;
+    FloatQuad mappedArea() const;
+    LayoutRect boundsOfMappedArea() const;
     void flatten();
 
     FloatPoint m_lastPlanarPoint;
     FloatQuad m_lastPlanarQuad;
+    FloatQuad m_lastPlanarArea;
     TransformationMatrix m_accumulatedTransform;
     bool m_accumulatingTransform;
 
 private:
-    HitTestingTransformState(const FloatPoint& p, const FloatQuad& quad)
+    HitTestingTransformState(const FloatPoint& p, const FloatQuad& quad, const FloatQuad& area)
         : m_lastPlanarPoint(p)
         , m_lastPlanarQuad(quad)
+        , m_lastPlanarArea(area)
         , m_accumulatingTransform(false)
     {
     }
@@ -78,6 +81,7 @@ private:
         : RefCounted<HitTestingTransformState>()
         , m_lastPlanarPoint(other.m_lastPlanarPoint)
         , m_lastPlanarQuad(other.m_lastPlanarQuad)
+        , m_lastPlanarArea(other.m_lastPlanarArea)
         , m_accumulatedTransform(other.m_accumulatedTransform)
         , m_accumulatingTransform(other.m_accumulatingTransform)
     {
