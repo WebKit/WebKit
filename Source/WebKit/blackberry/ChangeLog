@@ -1,3 +1,23 @@
+2012-07-25  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Don't touch a tile buffer while it's still on its way to the GPU
+        https://bugs.webkit.org/show_bug.cgi?id=91992
+
+        Reviewed by Adam Treat.
+
+        PR: 141439
+        The copyPreviousContentsToBackSurfaceOfTile() call will also modify
+        buffer contents, move it after the blit generation condvar to make sure
+        we've waited for the buffer to become available first.
+
+        This is done as part of some general BackingStorePrivate::render()
+        cleanup in PR 141439.
+
+        Internally reviewed by Jakob Petsovits.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+
 2012-07-25  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] notifyContentRendered() call missing in two spots

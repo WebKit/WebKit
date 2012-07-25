@@ -1113,8 +1113,6 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
                 continue;
         }
 
-        copyPreviousContentsToBackSurfaceOfTile(dirtyTileRect, tile);
-
         BlackBerry::Platform::Graphics::Buffer* nativeBuffer
             = tile->backBuffer()->nativeBuffer();
 
@@ -1138,6 +1136,10 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
             }
             pthread_mutex_unlock(&m_blitGenerationLock);
         }
+
+        // Modify the buffer only after we've waited for the buffer to become available above.
+
+        copyPreviousContentsToBackSurfaceOfTile(dirtyTileRect, tile);
 
         // FIXME: modify render to take a Vector<IntRect> parameter so we're not recreating
         // GraphicsContext on the stack each time.
