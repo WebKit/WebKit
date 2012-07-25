@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <script src="../fast/js/resources/js-test-pre.js"></script>
@@ -88,12 +87,40 @@ function runTest() {
     context = new webkitAudioContext(2, renderLengthInFrames, sampleRate);
 
     try {
-        var jsnode = context.createJavaScriptNode(512, 1, 0);
-        testFailed("Exception should be thrown for illegal numberOfOutputChannels.");
+        var jsnode = context.createJavaScriptNode(512, 0, 0);
+        testFailed("Exception should be thrown when both numberOfInputChannels and numberOfOutputChannels are zero.");
     } catch(e) {
-        testPassed("Exception was thrown for illegal numberOfOutputChannels.");
+        testPassed("Exception was thrown when both numberOfInputChannels and numberOfOutputChannels are zero.");
     }
-
+    
+    try {
+        var jsnode = context.createJavaScriptNode(512, 1, 0);
+        testPassed("Successfully created JavaScriptAudioNode with numberOfInputChannels = 1 and numberOfOutputChannels = 0.");
+    } catch(e) {
+        testFailed("Exception should not be thrown when numberOfInputChannels = 1 and numberOfOutputChannels = 0.");
+    }
+    
+    try {
+        var jsnode = context.createJavaScriptNode(512, 2, 0);
+        testPassed("Successfully created JavaScriptAudioNode with numberOfInputChannels = 2 and numberOfOutputChannels = 0.");
+    } catch(e) {
+        testFailed("Exception should not be thrown when numberOfInputChannels = 2 and numberOfOutputChannels = 0.");
+    }
+    
+    try {
+        var jsnode = context.createJavaScriptNode(512, 0, 1);
+        testPassed("Successfully created JavaScriptAudioNode with numberOfInputChannels = 0 and numberOfOutputChannels = 1.");
+    } catch(e) {
+        testFailed("Exception should not be thrown when numberOfInputChannels = 0 and numberOfOutputChannels = 1.");
+    }
+    
+    try {
+        var jsnode = context.createJavaScriptNode(512, 0, 2);
+        testPassed("Successfully created JavaScriptAudioNode with numberOfInputChannels = 0 and numberOfOutputChannels = 2.");
+    } catch(e) {
+        testFailed("Exception should not be thrown when numberOfInputChannels = 0 and numberOfOutputChannels = 2.");
+    }
+    
     try {
         var jsnode = context.createJavaScriptNode(511, 1, 1);
         testFailed("Exception should be thrown for illegal bufferSize.");

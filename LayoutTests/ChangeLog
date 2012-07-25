@@ -1,3 +1,15 @@
+2012-07-25  Li Yin  <li.yin@intel.com>
+
+        It is invalid when both numberOfInputChannels and numberOfOutputChannels to be zero in JavaScriptAudioNode.
+        https://bugs.webkit.org/show_bug.cgi?id=91364
+
+        Reviewed by Kenneth Russell.
+
+        Add tests for (numberOfInputChannels, numberOfOutputChannels) to be (0, 0),(0, 1),(0, 2),(1, 0) and (2, 0).
+
+        * webaudio/javascriptaudionode-expected.txt:
+        * webaudio/javascriptaudionode.html:
+
 2012-07-25  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations change.

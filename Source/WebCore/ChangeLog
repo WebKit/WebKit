@@ -1,3 +1,18 @@
+2012-07-25  Li Yin  <li.yin@intel.com>
+
+        It is invalid when both numberOfInputChannels and numberOfOutputChannels to be zero in JavaScriptAudioNode.
+        https://bugs.webkit.org/show_bug.cgi?id=91364
+
+        Reviewed by Kenneth Russell.
+
+        Spec: http://www.w3.org/TR/webaudio/#JavaScriptAudioNode-section
+        It is invalid for both numberOfInputChannels and numberOfOutputChannels to be zero.
+
+        Test: webaudio/javascriptaudionode.html
+
+        * Modules/webaudio/JavaScriptAudioNode.cpp:
+        (WebCore::JavaScriptAudioNode::create):
+
 2012-07-24  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Refactor CCLayerTreeHostCommon: move root layer special case initialization into internal code.

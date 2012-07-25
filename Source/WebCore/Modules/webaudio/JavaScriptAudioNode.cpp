@@ -58,10 +58,13 @@ PassRefPtr<JavaScriptAudioNode> JavaScriptAudioNode::create(AudioContext* contex
         return 0;
     }
 
+    if (!numberOfInputChannels && !numberOfOutputChannels)
+        return 0;
+
     if (numberOfInputChannels > AudioContext::maxNumberOfChannels())
         return 0;
 
-    if (!numberOfOutputChannels || numberOfOutputChannels > AudioContext::maxNumberOfChannels())
+    if (numberOfOutputChannels > AudioContext::maxNumberOfChannels())
         return 0;
 
     return adoptRef(new JavaScriptAudioNode(context, sampleRate, bufferSize, numberOfInputChannels, numberOfOutputChannels));
