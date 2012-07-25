@@ -1,3 +1,9 @@
+2012-07-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed r123494 follow-up: fixed inspector undock icon.
+
+        * inspector/front-end/Images/statusbarButtonGlyphs.png:
+
 2012-07-24  Kwang Yul Seo  <skyul@company100.net>
 
         Read tag names and attributes from the saved tokens where possible.
