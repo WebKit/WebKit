@@ -1,3 +1,9 @@
+2012-07-25  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-25  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] fast/borders rebaseline after new test fonts

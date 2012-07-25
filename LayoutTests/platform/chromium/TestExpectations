@@ -2777,7 +2777,7 @@ BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 // Failing after r94946
 BUGWK67926 WIN : fast/events/constructors/progress-event-constructor.html = TEXT
 
-BUGWK73030 WIN MAC DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
+BUGWK73030 DEBUG : http/tests/loading/307-after-303-after-post.html = PASS TEXT
 
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia graphics.
 BUGWK68437 BUGWK54322 SNOWLEOPARD : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
@@ -3643,5 +3643,5 @@ BUGCR138583 : media/media-fragments/TC0010-TC0019.html = PASS CRASH
 
 BUGWK92026 DEBUG SNOWLEOPARD : css3/selectors3/xml/css3-modsel-179a.xml = PASS IMAGE+TEXT
 BUGWK92027 DEBUG SNOWLEOPARD : fast/performance/performance-now-timestamps.html = PASS TEXT
-
 BUGWK92288 SNOWLEOPARD DEBUG : plugins/update-widgets-crash.html = PASS TIMEOUT
+BUGWK92297 DEBUG : media/video-set-rate-from-pause.html = PASS CRASH
