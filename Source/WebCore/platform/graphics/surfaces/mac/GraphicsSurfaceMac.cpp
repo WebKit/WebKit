@@ -122,6 +122,12 @@ void GraphicsSurface::platformCopyFromFramebuffer(uint32_t originFbo, const IntR
 
 PassRefPtr<GraphicsSurface> GraphicsSurface::platformCreate(const IntSize& size, Flags flags)
 {
+    // We currently disable support for CopyToTexture on Mac, because this is used for single buffered Tiles.
+    // The single buffered nature of this requires a call to glFlush, as described in platformCopyToTexture.
+    // This call blocks the GPU for about 40ms, which makes smooth animations impossible.
+    if (flags & SupportsCopyToTexture)
+        return PassRefPtr<GraphicsSurface>();
+
     unsigned pixelFormat = 'BGRA';
     unsigned bytesPerElement = 4;
     int width = size.width();
@@ -165,6 +171,12 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformCreate(const IntSize& size,
 
 PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size, Flags flags, uint32_t token)
 {
+    // We currently disable support for CopyToTexture on Mac, because this is used for single buffered Tiles.
+    // The single buffered nature of this requires a call to glFlush, as described in platformCopyToTexture.
+    // This call blocks the GPU for about 40ms, which makes smooth animations impossible.
+    if (flags & SupportsCopyToTexture)
+        return PassRefPtr<GraphicsSurface>();
+
     RefPtr<GraphicsSurface> surface = adoptRef(new GraphicsSurface(size, flags));
     surface->m_platformSurface = IOSurfaceLookup(token);
     if (!surface->m_platformSurface)

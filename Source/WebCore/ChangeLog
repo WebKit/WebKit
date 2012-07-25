@@ -1,3 +1,19 @@
+2012-07-25  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][WK2] Disable CopyToTexture for GraphicsSurfaceMac.
+        https://bugs.webkit.org/show_bug.cgi?id=92159
+
+        Disable CopyToTexture feature for GraphicsSurface on Mac.
+        While this is actually working, it is currently used for Tiles
+        that are single buffered, and therefore requires a call to glFlush.
+        This call blocks the GPU for about 40ms which would make smooth animations impossible.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+        (WebCore::GraphicsSurface::platformCreate):
+        (WebCore::GraphicsSurface::platformImport):
+
 2012-07-25  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Fix up includes in HarfBuzzNGFace.h
