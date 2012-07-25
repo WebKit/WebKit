@@ -849,9 +849,14 @@ void FrameLoaderClientBlackBerry::dispatchDidFirstVisuallyNonEmptyLayout()
         m_webPagePrivate->setShouldZoomToInitialScaleAfterLoadFinished(true);
 
     if (m_webPagePrivate->shouldZoomToInitialScaleOnLoad()) {
+        BackingStorePrivate* backingStorePrivate = m_webPagePrivate->m_backingStore->d;
         m_webPagePrivate->zoomToInitialScaleOnLoad(); // Set the proper zoom level first.
-        m_webPagePrivate->m_backingStore->d->clearVisibleZoom(); // Clear the visible zoom since we're explicitly rendering+blitting below.
-        m_webPagePrivate->m_backingStore->d->renderVisibleContents();
+        backingStorePrivate->clearVisibleZoom(); // Clear the visible zoom since we're explicitly rendering+blitting below.
+        if (backingStorePrivate->renderVisibleContents()) {
+            if (!backingStorePrivate->shouldDirectRenderingToWindow())
+                backingStorePrivate->blitVisibleContents();
+            m_webPagePrivate->m_client->notifyContentRendered(backingStorePrivate->visibleContentsRect());
+        }
     }
 
     m_webPagePrivate->m_client->notifyFirstVisuallyNonEmptyLayout();

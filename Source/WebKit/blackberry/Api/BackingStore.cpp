@@ -399,8 +399,11 @@ void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
 #endif
 
         if (immediate) {
-            if (render(rect) && !shouldDirectRenderingToWindow())
-                blitVisibleContents();
+            if (render(rect)) {
+                if (!shouldDirectRenderingToWindow())
+                    blitVisibleContents();
+                m_webPage->d->m_client->notifyContentRendered(rect);
+            }
         } else
             m_renderQueue->addToQueue(RenderQueue::RegularRender, rect);
     }

@@ -1,3 +1,36 @@
+2012-07-25  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] notifyContentRendered() call missing in two spots
+        https://bugs.webkit.org/show_bug.cgi?id=92153
+        RIM PR 173340
+
+        Reviewed by Antonio Gomes.
+
+        In dispatchDidFirstVisualLayout() and repaint() in
+        immediate mode, we render but don't notify the
+        WebPageClient that the content was modified.
+
+        In the long run, we should probably keep track of
+        the modified reason from within render() itself
+        and use this to automatically notify the client
+        from within blitContents() and/or invalidateWindow(),
+        depending on the rendering path. That's somewhat of
+        a medium-size undertaking though; for now, adding
+        the call directly to the renderVisibleContents()
+        call sites will do.
+
+        This patch also adds a blitVisibleContents() to
+        dispatchDidFirstVisualLayout() where it was
+        inexplicably missing, probably on account of
+        old code that was never updated.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFirstVisuallyNonEmptyLayout):
+
 2012-07-24  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Do not call settings setters twice on page construction

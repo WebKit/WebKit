@@ -3648,12 +3648,14 @@ void WebPagePrivate::resumeBackingStore()
         m_backingStore->d->orientationChanged(); // Updates tile geometry and creates visible tile buffer.
         m_backingStore->d->resetTiles(true /* resetBackground */);
         m_backingStore->d->updateTiles(false /* updateVisible */, false /* immediate */);
+
         // This value may have changed, so we need to update it.
         directRendering = m_backingStore->d->shouldDirectRenderingToWindow();
-        if (m_backingStore->d->renderVisibleContents() && !m_backingStore->d->isSuspended() && !directRendering)
-            m_backingStore->d->blitVisibleContents();
-
-        m_client->notifyContentRendered(m_backingStore->d->visibleContentsRect());
+        if (m_backingStore->d->renderVisibleContents()) {
+            if (!m_backingStore->d->isSuspended() && !directRendering)
+                m_backingStore->d->blitVisibleContents();
+            m_client->notifyContentRendered(m_backingStore->d->visibleContentsRect());
+        }
     } else {
         if (m_backingStore->d->isOpenGLCompositing())
            setCompositorDrawsRootLayer(false);
