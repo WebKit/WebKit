@@ -37,6 +37,7 @@
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include <unistd.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/text/CString.h>
