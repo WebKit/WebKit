@@ -1,104 +1,104 @@
-layer at (0,0) size 784x1128
+layer at (0,0) size 784x1116
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1128
-  RenderBlock {HTML} at (0,0) size 784x1128
-    RenderBody {BODY} at (8,8) size 768x1112
-      RenderBlock {SPAN} at (0,0) size 768x21
+layer at (0,0) size 784x1116
+  RenderBlock {HTML} at (0,0) size 784x1116
+    RenderBody {BODY} at (8,8) size 768x1100
+      RenderBlock {SPAN} at (0,0) size 768x19
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 94x63
-            text run at (0,0) width 94: "This is a float"
-            text run at (0,21) width 90: "that is 100px"
-            text run at (0,42) width 35: "high."
-        RenderText {#text} at (100,0) size 316x21
-          text run at (100,0) width 316: "This paragraph has a bottom margin of 50px."
+          RenderText {#text} at (0,0) size 79x57
+            text run at (0,0) width 79: "This is a float"
+            text run at (0,19) width 78: "that is 100px"
+            text run at (0,38) width 28: "high."
+        RenderText {#text} at (100,0) size 271x19
+          text run at (100,0) width 271: "This paragraph has a bottom margin of 50px."
       RenderBlock {SPAN} at (0,100) size 768x0
-      RenderBlock {SPAN} at (0,100) size 768x21
-        RenderText {#text} at (0,0) size 333x21
-          text run at (0,0) width 333: "This text should be immediately under the float."
-      RenderBlock {HR} at (0,129) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {SPAN} at (0,139) size 768x21
+      RenderBlock {SPAN} at (0,100) size 768x19
+        RenderText {#text} at (0,0) size 282x19
+          text run at (0,0) width 282: "This text should be immediately under the float."
+      RenderBlock {HR} at (0,127) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {SPAN} at (0,137) size 768x19
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 94x63
-            text run at (0,0) width 94: "This is a float"
-            text run at (0,21) width 90: "that is 100px"
-            text run at (0,42) width 35: "high."
-        RenderText {#text} at (100,0) size 316x21
-          text run at (100,0) width 316: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,239) size 768x0
-      RenderBlock {SPAN} at (0,249) size 768x21
-        RenderText {#text} at (0,0) size 282x21
-          text run at (0,0) width 282: "This text should be 10px under the float."
-      RenderBlock {HR} at (0,278) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {SPAN} at (0,288) size 768x21
+          RenderText {#text} at (0,0) size 79x57
+            text run at (0,0) width 79: "This is a float"
+            text run at (0,19) width 78: "that is 100px"
+            text run at (0,38) width 28: "high."
+        RenderText {#text} at (100,0) size 271x19
+          text run at (100,0) width 271: "This paragraph has a bottom margin of 50px."
+      RenderBlock {SPAN} at (0,237) size 768x0
+      RenderBlock {SPAN} at (0,247) size 768x19
+        RenderText {#text} at (0,0) size 242x19
+          text run at (0,0) width 242: "This text should be 10px under the float."
+      RenderBlock {HR} at (0,274) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {SPAN} at (0,284) size 768x19
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 94x63
-            text run at (0,0) width 94: "This is a float"
-            text run at (0,21) width 90: "that is 100px"
-            text run at (0,42) width 35: "high."
-        RenderText {#text} at (100,0) size 316x21
-          text run at (100,0) width 316: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,388) size 768x0
-      RenderBlock {SPAN} at (0,388) size 768x21
-        RenderText {#text} at (0,0) size 333x21
-          text run at (0,0) width 333: "This text should be immediately under the float."
-      RenderBlock {HR} at (0,417) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {SPAN} at (0,427) size 768x21
+          RenderText {#text} at (0,0) size 79x57
+            text run at (0,0) width 79: "This is a float"
+            text run at (0,19) width 78: "that is 100px"
+            text run at (0,38) width 28: "high."
+        RenderText {#text} at (100,0) size 271x19
+          text run at (100,0) width 271: "This paragraph has a bottom margin of 50px."
+      RenderBlock {SPAN} at (0,384) size 768x0
+      RenderBlock {SPAN} at (0,384) size 768x19
+        RenderText {#text} at (0,0) size 282x19
+          text run at (0,0) width 282: "This text should be immediately under the float."
+      RenderBlock {HR} at (0,411) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {SPAN} at (0,421) size 768x19
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 94x63
-            text run at (0,0) width 94: "This is a float"
-            text run at (0,21) width 90: "that is 100px"
-            text run at (0,42) width 35: "high."
-        RenderText {#text} at (100,0) size 316x21
-          text run at (100,0) width 316: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,527) size 768x0
-      RenderBlock {SPAN} at (0,527) size 768x21
-        RenderText {#text} at (0,0) size 333x21
-          text run at (0,0) width 333: "This text should be immediately under the float."
-      RenderBlock {HR} at (0,556) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {SPAN} at (0,566) size 768x21
+          RenderText {#text} at (0,0) size 79x57
+            text run at (0,0) width 79: "This is a float"
+            text run at (0,19) width 78: "that is 100px"
+            text run at (0,38) width 28: "high."
+        RenderText {#text} at (100,0) size 271x19
+          text run at (100,0) width 271: "This paragraph has a bottom margin of 50px."
+      RenderBlock {SPAN} at (0,521) size 768x0
+      RenderBlock {SPAN} at (0,521) size 768x19
+        RenderText {#text} at (0,0) size 282x19
+          text run at (0,0) width 282: "This text should be immediately under the float."
+      RenderBlock {HR} at (0,548) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {SPAN} at (0,558) size 768x19
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 94x63
-            text run at (0,0) width 94: "This is a float"
-            text run at (0,21) width 90: "that is 100px"
-            text run at (0,42) width 35: "high."
-        RenderText {#text} at (100,0) size 316x21
-          text run at (100,0) width 316: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,666) size 768x0
-      RenderBlock {SPAN} at (0,676) size 768x21
-        RenderText {#text} at (0,0) size 282x21
-          text run at (0,0) width 282: "This text should be 10px under the float."
-      RenderBlock {HR} at (0,705) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {SPAN} at (0,715) size 768x21
+          RenderText {#text} at (0,0) size 79x57
+            text run at (0,0) width 79: "This is a float"
+            text run at (0,19) width 78: "that is 100px"
+            text run at (0,38) width 28: "high."
+        RenderText {#text} at (100,0) size 271x19
+          text run at (100,0) width 271: "This paragraph has a bottom margin of 50px."
+      RenderBlock {SPAN} at (0,658) size 768x0
+      RenderBlock {SPAN} at (0,668) size 768x19
+        RenderText {#text} at (0,0) size 242x19
+          text run at (0,0) width 242: "This text should be 10px under the float."
+      RenderBlock {HR} at (0,695) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {SPAN} at (0,705) size 768x19
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 94x63
-            text run at (0,0) width 94: "This is a float"
-            text run at (0,21) width 90: "that is 100px"
-            text run at (0,42) width 35: "high."
-        RenderText {#text} at (100,0) size 316x21
-          text run at (100,0) width 316: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,815) size 768x0
-      RenderBlock {SPAN} at (0,815) size 768x21
-        RenderText {#text} at (0,0) size 333x21
-          text run at (0,0) width 333: "This text should be immediately under the float."
-      RenderBlock {HR} at (0,844) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {SPAN} at (0,854) size 768x120 [border: (10px dotted #000000)]
-        RenderBlock {SPAN} at (10,10) size 748x21
+          RenderText {#text} at (0,0) size 79x57
+            text run at (0,0) width 79: "This is a float"
+            text run at (0,19) width 78: "that is 100px"
+            text run at (0,38) width 28: "high."
+        RenderText {#text} at (100,0) size 271x19
+          text run at (100,0) width 271: "This paragraph has a bottom margin of 50px."
+      RenderBlock {SPAN} at (0,805) size 768x0
+      RenderBlock {SPAN} at (0,805) size 768x19
+        RenderText {#text} at (0,0) size 282x19
+          text run at (0,0) width 282: "This text should be immediately under the float."
+      RenderBlock {HR} at (0,832) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {SPAN} at (0,842) size 768x120 [border: (10px dotted #000000)]
+        RenderBlock {SPAN} at (10,10) size 748x19
           RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
-            RenderText {#text} at (0,0) size 94x63
-              text run at (0,0) width 94: "This is a float"
-              text run at (0,21) width 90: "that is 100px"
-              text run at (0,42) width 35: "high."
-          RenderText {#text} at (100,0) size 316x21
-            text run at (100,0) width 316: "This paragraph has a bottom margin of 50px."
+            RenderText {#text} at (0,0) size 79x57
+              text run at (0,0) width 79: "This is a float"
+              text run at (0,19) width 78: "that is 100px"
+              text run at (0,38) width 28: "high."
+          RenderText {#text} at (100,0) size 271x19
+            text run at (100,0) width 271: "This paragraph has a bottom margin of 50px."
         RenderBlock {SPAN} at (10,110) size 748x0
-      RenderBlock {HR} at (0,982) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {SPAN} at (0,992) size 768x120 [border: (10px dotted #000000)]
-        RenderBlock {SPAN} at (10,10) size 748x21
+      RenderBlock {HR} at (0,970) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {SPAN} at (0,980) size 768x120 [border: (10px dotted #000000)]
+        RenderBlock {SPAN} at (10,10) size 748x19
           RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
-            RenderText {#text} at (0,0) size 94x63
-              text run at (0,0) width 94: "This is a float"
-              text run at (0,21) width 90: "that is 100px"
-              text run at (0,42) width 35: "high."
-          RenderText {#text} at (100,0) size 316x21
-            text run at (100,0) width 316: "This paragraph has a bottom margin of 50px."
+            RenderText {#text} at (0,0) size 79x57
+              text run at (0,0) width 79: "This is a float"
+              text run at (0,19) width 78: "that is 100px"
+              text run at (0,38) width 28: "high."
+          RenderText {#text} at (100,0) size 271x19
+            text run at (100,0) width 271: "This paragraph has a bottom margin of 50px."
         RenderBlock {SPAN} at (10,110) size 748x0

@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x266
-  RenderBlock {HTML} at (0,0) size 800x266
-    RenderBody {BODY} at (8,8) size 784x218
-      RenderBlock (anonymous) at (0,0) size 784x21
+layer at (0,0) size 800x262
+  RenderBlock {HTML} at (0,0) size 800x262
+    RenderBody {BODY} at (8,8) size 784x214
+      RenderBlock (anonymous) at (0,0) size 784x19
         RenderInline {DIV} at (0,0) size 528x17 [color=#FFFFFF] [bgcolor=#FF0000]
-          RenderText {#text} at (0,3) size 528x17
-            text run at (0,3) width 528: "Ahem_font_required_for_this_test."
+          RenderText {#text} at (0,2) size 528x17
+            text run at (0,2) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,37) size 784x21
-        RenderText {#text} at (0,0) size 320x21
-          text run at (0,0) width 320: "There should be a big square green H below:"
-      RenderBlock {DIV} at (40,98) size 120x120 [bgcolor=#008000]
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 270x19
+          text run at (0,0) width 270: "There should be a big square green H below:"
+      RenderBlock {DIV} at (40,94) size 120x120 [bgcolor=#008000]
         RenderBlock {DIV} at (40,0) size 40x40 [color=#FFFFFF]
           RenderText {#text} at (0,0) size 40x40
             text run at (0,0) width 40: "X"

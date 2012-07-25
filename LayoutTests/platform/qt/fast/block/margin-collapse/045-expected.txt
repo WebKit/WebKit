@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x92
-  RenderBlock {HTML} at (0,0) size 800x92 [border: (1px solid #C0C0C0)]
-    RenderBody {BODY} at (1,1) size 798x74
-      RenderBlock (floating) {DIV} at (16,0) size 336x37 [bgcolor=#00FFFF]
-        RenderText {#text} at (8,8) size 52x21
-          text run at (8,8) width 52: "FLOAT"
-      RenderBlock {DIV} at (16,37) size 766x37 [bgcolor=#FFFF00]
-        RenderText {#text} at (8,8) size 55x21
-          text run at (8,8) width 55: "BLOCK"
+layer at (0,0) size 800x88
+  RenderBlock {HTML} at (0,0) size 800x88 [border: (1px solid #C0C0C0)]
+    RenderBody {BODY} at (1,1) size 798x70
+      RenderBlock (floating) {DIV} at (16,0) size 336x35 [bgcolor=#00FFFF]
+        RenderText {#text} at (8,8) size 50x19
+          text run at (8,8) width 50: "FLOAT"
+      RenderBlock {DIV} at (16,35) size 766x35 [bgcolor=#FFFF00]
+        RenderText {#text} at (8,8) size 54x19
+          text run at (8,8) width 54: "BLOCK"

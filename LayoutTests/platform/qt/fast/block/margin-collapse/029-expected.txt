@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x93
-  RenderBlock {HTML} at (0,0) size 800x93
-    RenderBody {BODY} at (8,16) size 784x69
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 216x21
-          text run at (0,0) width 216: "There should be no red below."
-      RenderBlock {DIV} at (0,37) size 784x32 [bgcolor=#FF0000] [border: (16px solid #00FF00)]
+layer at (0,0) size 800x91
+  RenderBlock {HTML} at (0,0) size 800x91
+    RenderBody {BODY} at (8,16) size 784x67
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 185x19
+          text run at (0,0) width 185: "There should be no red below."
+      RenderBlock {DIV} at (0,35) size 784x32 [bgcolor=#FF0000] [border: (16px solid #00FF00)]
         RenderBlock {DIV} at (16,16) size 752x0
           RenderBlock {DIV} at (0,0) size 752x0
           RenderBlock {DIV} at (0,0) size 752x0

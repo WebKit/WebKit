@@ -1,23 +1,23 @@
-layer at (0,0) size 1084x584
+layer at (0,0) size 916x584
   RenderView at (0,0) size 800x584
 layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
     RenderBody {BODY} at (8,8) size 784x568
-      RenderBlock {DIV} at (0,0) size 784x123 [border: (2px solid #0000FF)]
-        RenderBlock (anonymous) at (2,2) size 780x63
-          RenderText {#text} at (0,0) size 750x42
-            text run at (0,0) width 638: "Resize the window. Red boxes below must not overflow the blue box (or window) from the "
-            text run at (638,0) width 112: "left side, though"
-            text run at (0,21) width 202: "they may overflow from right."
-          RenderBR {BR} at (202,37) size 0x0
-          RenderBR {BR} at (0,42) size 0x21
-        RenderTable {TABLE} at (2,65) size 1074x31 [border: (2px solid #FF0000)]
-          RenderTableSection {TBODY} at (2,2) size 1070x27
-            RenderTableRow {TR} at (0,2) size 1070x23
-              RenderTableCell {TD} at (2,2) size 1066x23 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 1064x21
-                  text run at (1,1) width 534: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. "
-                  text run at (535,1) width 530: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."
-        RenderBlock {DIV} at (2,96) size 904x25 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 530x21
-            text run at (2,2) width 530: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."
+      RenderBlock {DIV} at (0,0) size 784x113 [border: (2px solid #0000FF)]
+        RenderBlock (anonymous) at (2,2) size 780x57
+          RenderText {#text} at (0,0) size 763x38
+            text run at (0,0) width 554: "Resize the window. Red boxes below must not overflow the blue box (or window) from the "
+            text run at (554,0) width 209: "left side, though they may overflow"
+            text run at (0,19) width 62: "from right."
+          RenderBR {BR} at (62,34) size 0x0
+          RenderBR {BR} at (0,38) size 0x19
+        RenderTable {TABLE} at (2,59) size 906x29 [border: (2px solid #FF0000)]
+          RenderTableSection {TBODY} at (2,2) size 902x25
+            RenderTableRow {TR} at (0,2) size 902x21
+              RenderTableCell {TD} at (2,2) size 898x21 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 896x19
+                  text run at (1,1) width 450: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. "
+                  text run at (451,1) width 446: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."
+        RenderBlock {DIV} at (2,88) size 904x23 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 446x19
+            text run at (2,2) width 446: "Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah. Blabla blah."

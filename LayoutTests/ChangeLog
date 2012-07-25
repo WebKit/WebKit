@@ -1,3 +1,150 @@
+2012-07-25  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt] fast/block/margin-collapse tests need update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=92274
+
+        Reviewed by Alexis Menard.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/fast/block/margin-collapse/001-expected.png:
+        * platform/qt/fast/block/margin-collapse/001-expected.txt:
+        * platform/qt/fast/block/margin-collapse/002-expected.png:
+        * platform/qt/fast/block/margin-collapse/002-expected.txt:
+        * platform/qt/fast/block/margin-collapse/003-expected.png:
+        * platform/qt/fast/block/margin-collapse/003-expected.txt:
+        * platform/qt/fast/block/margin-collapse/004-expected.png:
+        * platform/qt/fast/block/margin-collapse/004-expected.txt:
+        * platform/qt/fast/block/margin-collapse/005-expected.png:
+        * platform/qt/fast/block/margin-collapse/005-expected.txt:
+        * platform/qt/fast/block/margin-collapse/006-expected.png:
+        * platform/qt/fast/block/margin-collapse/006-expected.txt:
+        * platform/qt/fast/block/margin-collapse/010-expected.png:
+        * platform/qt/fast/block/margin-collapse/010-expected.txt:
+        * platform/qt/fast/block/margin-collapse/011-expected.png:
+        * platform/qt/fast/block/margin-collapse/011-expected.txt:
+        * platform/qt/fast/block/margin-collapse/012-expected.png:
+        * platform/qt/fast/block/margin-collapse/012-expected.txt:
+        * platform/qt/fast/block/margin-collapse/015-expected.png:
+        * platform/qt/fast/block/margin-collapse/015-expected.txt:
+        * platform/qt/fast/block/margin-collapse/016-expected.png:
+        * platform/qt/fast/block/margin-collapse/016-expected.txt:
+        * platform/qt/fast/block/margin-collapse/017-expected.png:
+        * platform/qt/fast/block/margin-collapse/017-expected.txt:
+        * platform/qt/fast/block/margin-collapse/018-expected.png:
+        * platform/qt/fast/block/margin-collapse/018-expected.txt:
+        * platform/qt/fast/block/margin-collapse/019-expected.png:
+        * platform/qt/fast/block/margin-collapse/019-expected.txt:
+        * platform/qt/fast/block/margin-collapse/020-expected.png:
+        * platform/qt/fast/block/margin-collapse/020-expected.txt:
+        * platform/qt/fast/block/margin-collapse/021-expected.png:
+        * platform/qt/fast/block/margin-collapse/021-expected.txt:
+        * platform/qt/fast/block/margin-collapse/022-expected.png:
+        * platform/qt/fast/block/margin-collapse/022-expected.txt:
+        * platform/qt/fast/block/margin-collapse/025-expected.png:
+        * platform/qt/fast/block/margin-collapse/025-expected.txt:
+        * platform/qt/fast/block/margin-collapse/026-expected.png:
+        * platform/qt/fast/block/margin-collapse/026-expected.txt:
+        * platform/qt/fast/block/margin-collapse/027-expected.png:
+        * platform/qt/fast/block/margin-collapse/027-expected.txt:
+        * platform/qt/fast/block/margin-collapse/028-expected.png:
+        * platform/qt/fast/block/margin-collapse/028-expected.txt:
+        * platform/qt/fast/block/margin-collapse/029-expected.png:
+        * platform/qt/fast/block/margin-collapse/029-expected.txt:
+        * platform/qt/fast/block/margin-collapse/030-expected.png:
+        * platform/qt/fast/block/margin-collapse/030-expected.txt:
+        * platform/qt/fast/block/margin-collapse/031-expected.png:
+        * platform/qt/fast/block/margin-collapse/031-expected.txt:
+        * platform/qt/fast/block/margin-collapse/032-expected.png:
+        * platform/qt/fast/block/margin-collapse/032-expected.txt:
+        * platform/qt/fast/block/margin-collapse/033-expected.png:
+        * platform/qt/fast/block/margin-collapse/033-expected.txt:
+        * platform/qt/fast/block/margin-collapse/034-expected.png:
+        * platform/qt/fast/block/margin-collapse/034-expected.txt:
+        * platform/qt/fast/block/margin-collapse/035-expected.png:
+        * platform/qt/fast/block/margin-collapse/035-expected.txt:
+        * platform/qt/fast/block/margin-collapse/037-expected.png:
+        * platform/qt/fast/block/margin-collapse/037-expected.txt:
+        * platform/qt/fast/block/margin-collapse/038-expected.png:
+        * platform/qt/fast/block/margin-collapse/038-expected.txt:
+        * platform/qt/fast/block/margin-collapse/039-expected.png:
+        * platform/qt/fast/block/margin-collapse/039-expected.txt:
+        * platform/qt/fast/block/margin-collapse/040-expected.png:
+        * platform/qt/fast/block/margin-collapse/040-expected.txt:
+        * platform/qt/fast/block/margin-collapse/041-expected.png:
+        * platform/qt/fast/block/margin-collapse/041-expected.txt:
+        * platform/qt/fast/block/margin-collapse/042-expected.png:
+        * platform/qt/fast/block/margin-collapse/042-expected.txt:
+        * platform/qt/fast/block/margin-collapse/043-expected.png:
+        * platform/qt/fast/block/margin-collapse/043-expected.txt:
+        * platform/qt/fast/block/margin-collapse/044-expected.png:
+        * platform/qt/fast/block/margin-collapse/044-expected.txt:
+        * platform/qt/fast/block/margin-collapse/045-expected.png:
+        * platform/qt/fast/block/margin-collapse/045-expected.txt:
+        * platform/qt/fast/block/margin-collapse/055-expected.png:
+        * platform/qt/fast/block/margin-collapse/055-expected.txt:
+        * platform/qt/fast/block/margin-collapse/056-expected.png:
+        * platform/qt/fast/block/margin-collapse/056-expected.txt:
+        * platform/qt/fast/block/margin-collapse/057-expected.png:
+        * platform/qt/fast/block/margin-collapse/057-expected.txt:
+        * platform/qt/fast/block/margin-collapse/058-expected.png:
+        * platform/qt/fast/block/margin-collapse/058-expected.txt:
+        * platform/qt/fast/block/margin-collapse/059-expected.png:
+        * platform/qt/fast/block/margin-collapse/059-expected.txt:
+        * platform/qt/fast/block/margin-collapse/062-expected.png:
+        * platform/qt/fast/block/margin-collapse/062-expected.txt:
+        * platform/qt/fast/block/margin-collapse/063-expected.png:
+        * platform/qt/fast/block/margin-collapse/063-expected.txt:
+        * platform/qt/fast/block/margin-collapse/100-expected.png:
+        * platform/qt/fast/block/margin-collapse/100-expected.txt:
+        * platform/qt/fast/block/margin-collapse/101-expected.png:
+        * platform/qt/fast/block/margin-collapse/101-expected.txt:
+        * platform/qt/fast/block/margin-collapse/102-expected.png:
+        * platform/qt/fast/block/margin-collapse/102-expected.txt:
+        * platform/qt/fast/block/margin-collapse/103-expected.png:
+        * platform/qt/fast/block/margin-collapse/103-expected.txt:
+        * platform/qt/fast/block/margin-collapse/104-expected.png:
+        * platform/qt/fast/block/margin-collapse/104-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/001-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/001-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/002-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/002-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/003-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/003-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/004-expected.png:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/004-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/005-expected.png:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/005-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/006-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/006-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/010-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/010-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/011-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/011-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/012-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/012-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/015-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/015-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/016-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/016-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/017-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/017-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/018-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/018-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/019-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/019-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/020-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/020-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/021-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/021-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/022-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/022-expected.txt:
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/025-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+        * platform/qt/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/qt/fast/block/margin-collapse/empty-clear-blocks-expected.txt:
+        * platform/qt/fast/block/margin-collapse/negative-margins-expected.png:
+        * platform/qt/fast/block/margin-collapse/negative-margins-expected.txt:
+
 2012-07-25  Li Yin  <li.yin@intel.com>
 
         It is invalid when both numberOfInputChannels and numberOfOutputChannels to be zero in JavaScriptAudioNode.
