@@ -499,6 +499,7 @@ class ChromiumAndroidDriver(driver.Driver):
         # The single driver needs to switch between pixel test and no pixel test mode by itself.
         if pixel_tests != self._pixel_tests:
             self.stop()
+            self._pixel_tests = pixel_tests
         super(ChromiumAndroidDriver, self).start(pixel_tests, per_test_args)
 
     def _start(self, pixel_tests, per_test_args):
