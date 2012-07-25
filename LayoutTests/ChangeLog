@@ -1,5 +1,23 @@
 2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
 
+        [Tests] Rename fast/number/number-events.html to number-spinbutton-change-and-input-events.html
+        https://bugs.webkit.org/show_bug.cgi?id=92208
+
+        Reviewed by Kent Tamura.
+
+        This patch renames fast/forms/number/number-events.html to number-spinbutton-change-and-input-events.html
+        to make file name explains what test will be done.
+
+        * fast/forms/number/number-events-expected.txt: Removed.
+        * fast/forms/number/number-events.html: Removed.
+        * fast/forms/number/number-spinbutton-change-and-input-events-expected.txt: Copied from LayoutTests/fast/forms/number/number-events-expected.txt.
+        * fast/forms/number/number-spinbutton-change-and-input-events.html: Copied from LayoutTests/fast/forms/number/number-events.html.
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+
+2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
+
         [Tests] Remove duplicated fast/forms/number/number-spinbutton-events.html
         https://bugs.webkit.org/show_bug.cgi?id=92205
 

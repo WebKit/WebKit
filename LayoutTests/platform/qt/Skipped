@@ -2349,7 +2349,7 @@ fast/harness/sample-fail-mismatch-reftest.html
 # Flaky
 fast/forms/number/number-large-padding.html
 fast/forms/number/number-spinbutton-capturing.html
-fast/forms/number/number-events.html
+fast/forms/number/number-spinbutton-change-and-input-events.html
 
 # [Qt] Incorrect results for new fast/multicol tests added in r94084
 # https://bugs.webkit.org/show_bug.cgi?id=67293

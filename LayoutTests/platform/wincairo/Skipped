@@ -1664,7 +1664,7 @@ fast/forms/number/number-appearance-rtl.html
 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html
 fast/forms/number/number-appearance-spinbutton-layer.html
 fast/forms/number/number-appearance-spinbutton-visibility.html
-fast/forms/number/number-events.html
+fast/forms/number/number-spinbutton-change-and-input-events.html
 fast/forms/number/number-large-padding.html
 fast/forms/number/number-size.html
 fast/forms/number/number-spinbutton-capturing.html
