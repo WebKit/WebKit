@@ -107,7 +107,7 @@ void Profile::debugPrintData() const
     m_head->debugPrintData(0);
 }
 
-typedef pair<StringImpl*, unsigned> NameCountPair;
+typedef WTF::KeyValuePair<FunctionCallHashCount::ValueType, unsigned> NameCountPair;
 
 static inline bool functionNameCountPairComparator(const NameCountPair& a, const NameCountPair& b)
 {

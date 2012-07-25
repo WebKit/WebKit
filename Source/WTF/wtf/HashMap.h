@@ -26,13 +26,16 @@
 namespace WTF {
 
     template<typename KeyTraits, typename MappedTraits> struct HashMapValueTraits;
-    template<typename PairType> struct PairFirstExtractor;
 
     template<typename T> struct ReferenceTypeMaker {
         typedef T& ReferenceType;
     };
     template<typename T> struct ReferenceTypeMaker<T&> {
         typedef T& ReferenceType;
+    };
+
+    template<typename T> struct KeyValuePairKeyExtractor {
+        static const typename T::KeyType& extract(const T& p) { return p.first; }
     };
 
     template<typename KeyArg, typename MappedArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
@@ -58,7 +61,7 @@ namespace WTF {
 
         typedef HashArg HashFunctions;
 
-        typedef HashTable<KeyType, ValueType, PairFirstExtractor<ValueType>,
+        typedef HashTable<KeyType, ValueType, KeyValuePairKeyExtractor<ValueType>,
             HashFunctions, ValueTraits, KeyTraits> HashTableType;
 
         class HashMapKeysProxy;
@@ -204,16 +207,12 @@ namespace WTF {
         HashTableType m_impl;
     };
 
-    template<typename KeyTraits, typename MappedTraits> struct HashMapValueTraits : PairHashTraits<KeyTraits, MappedTraits> {
+    template<typename KeyTraits, typename MappedTraits> struct HashMapValueTraits : KeyValuePairHashTraits<KeyTraits, MappedTraits> {
         static const bool hasIsEmptyValueFunction = true;
-        static bool isEmptyValue(const typename PairHashTraits<KeyTraits, MappedTraits>::TraitType& value)
+        static bool isEmptyValue(const typename KeyValuePairHashTraits<KeyTraits, MappedTraits>::TraitType& value)
         {
             return isHashTraitsEmptyValue<KeyTraits>(value.first);
         }
-    };
-
-    template<typename PairType> struct PairFirstExtractor {
-        static const typename PairType::first_type& extract(const PairType& p) { return p.first; }
     };
 
     template<typename ValueTraits, typename HashFunctions>
@@ -223,7 +222,7 @@ namespace WTF {
         template<typename T, typename U, typename V> static void translate(T& location, const U& key, const V& mapped)
         {
             location.first = key;
-            ValueTraits::SecondTraits::store(mapped, location.second);
+            ValueTraits::ValueTraits::store(mapped, location.second);
         }
     };
 
@@ -234,7 +233,7 @@ namespace WTF {
         template<typename T, typename U, typename V> static void translate(T& location, const U& key, const V& mapped, unsigned hashCode)
         {
             Translator::translate(location.first, key, hashCode);
-            ValueTraits::SecondTraits::store(mapped, location.second);
+            ValueTraits::ValueTraits::store(mapped, location.second);
         }
     };
 

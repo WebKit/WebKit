@@ -1,3 +1,54 @@
+2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Create a specialized pair for use in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=92137
+
+        Reviewed by Ryosuke Niwa.
+
+        The type used for internal storage in HashMap is exposed in its interface as iterator
+        "contents". Currently HashMap uses std::pair<>, which this patch replaces with
+        KeyValuePair.
+
+        Having this specialized structure will allow us to customize the members to be called
+        key/value, improving readability in code using HashMap iterators. They are still called
+        first/second to separate this change from the mechanical change of updating callsites.
+
+        * wtf/HashIterators.h:
+        (HashTableConstKeysIterator):
+        (HashTableConstValuesIterator):
+        (HashTableKeysIterator):
+        (HashTableValuesIterator):
+        Use KeyValuePair instead of std::pair when defining the iterators.
+
+        * wtf/HashMap.h:
+        (WTF):
+        (WTF::KeyValuePairKeyExtractor::extract):
+        (HashMap):
+        Remove PairFirstExtractor. Add and use the KeyValuePair corresponding extractor.
+
+        (WTF::HashMapValueTraits::isEmptyValue): Use KeyValuePairHashTraits for HashMaps.
+        (WTF::HashMapTranslator::translate):
+        (WTF::HashMapTranslatorAdapter::translate):
+        The traits of the mapped value is now called ValueTraits instead of SecondTraits.
+
+        * wtf/HashTable.h:
+        (WTF::hashTableSwap): Add specialization for swapping KeyValuePairs.
+        (WTF): Remove now unneeded specialization for std::pairs.
+
+        * wtf/HashTraits.h:
+        (KeyValuePair):
+        (WTF::KeyValuePair::KeyValuePair):
+        (WTF):
+        Specialized pair. In the future difference from pair should be the member names.
+
+        (KeyValuePairHashTraits):
+        (WTF::KeyValuePairHashTraits::emptyValue):
+        (WTF::KeyValuePairHashTraits::constructDeletedValue):
+        (WTF::KeyValuePairHashTraits::isDeletedValue):
+        These traits are analogous to PairHashTraits but for KeyValuePair.
+
+        * wtf/RefPtrHashMap.h: Use KeyValuePairHashTraits.
+
 2012-07-25  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r123560.

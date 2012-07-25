@@ -30,7 +30,7 @@ namespace JSC {
 
 class ProfileTreeNode {
     typedef HashMap<String, ProfileTreeNode> Map;
-    typedef std::pair<String, ProfileTreeNode> MapEntry;
+    typedef Map::ValueType MapEntry;
 
 public:
     ProfileTreeNode()

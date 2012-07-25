@@ -1,3 +1,21 @@
+2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Create a specialized pair for use in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=92137
+
+        Reviewed by Ryosuke Niwa.
+
+        Update a couple of sites that relied on the fact that "contents" of iterators were
+        std::pairs.
+
+        * profiler/Profile.cpp:
+        (JSC): This code kept a vector of the pairs that were the "contents" of the iterators. This
+        is changed to use a KeyValuePair. We make use HashCount's ValueType (which represents only
+        the key) to get the proper key parameter for KeyValuePair.
+        * tools/ProfileTreeNode.h:
+        (ProfileTreeNode): Use HashMap::ValueType to declare the type of the contents of the hash
+        instead of declaring it manually. This will make use of the new KeyValuePair.
+
 2012-07-25  Patrick Gansterer  <paroga@webkit.org>
 
         REGRESSION(r123505): Date.getYear() returns the same as Date.getFullYear()

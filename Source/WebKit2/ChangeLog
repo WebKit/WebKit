@@ -1,3 +1,12 @@
+2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Create a specialized struct for use in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=92137
+
+        Reviewed by Ryosuke Niwa.
+
+        * Platform/CoreIPC/ArgumentCoders.h: Add encode/decode for KeyValuePair.
+
 2012-07-25  Anders Carlsson  <andersca@apple.com>
 
         Crash when calling PluginView::pluginFocusOrWindowFocusChanged when the web page is null

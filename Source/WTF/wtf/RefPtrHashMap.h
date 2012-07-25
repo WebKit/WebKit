@@ -34,7 +34,7 @@ namespace WTF {
     private:
         typedef KeyTraitsArg KeyTraits;
         typedef MappedTraitsArg MappedTraits;
-        typedef PairHashTraits<KeyTraits, MappedTraits> ValueTraits;
+        typedef KeyValuePairHashTraits<KeyTraits, MappedTraits> ValueTraits;
 
     public:
         typedef typename KeyTraits::TraitType KeyType;
@@ -51,7 +51,7 @@ namespace WTF {
         
         typedef HashArg HashFunctions;
 
-        typedef HashTable<KeyType, ValueType, PairFirstExtractor<ValueType>,
+        typedef HashTable<KeyType, ValueType, KeyValuePairKeyExtractor<ValueType>,
             HashFunctions, ValueTraits, KeyTraits> HashTableType;
 
         typedef HashMapTranslator<ValueTraits, HashFunctions>

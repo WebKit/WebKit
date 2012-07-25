@@ -163,8 +163,6 @@ namespace WTF {
         return HashTraitsEmptyValueChecker<Traits, Traits::hasIsEmptyValueFunction>::isEmptyValue(value);
     }
 
-    // special traits for pairs, helpful for their use in HashMap implementation
-
     template<typename FirstTraitsArg, typename SecondTraitsArg>
     struct PairHashTraits : GenericHashTraits<std::pair<typename FirstTraitsArg::TraitType, typename SecondTraitsArg::TraitType> > {
         typedef FirstTraitsArg FirstTraits;
@@ -185,6 +183,53 @@ namespace WTF {
 
     template<typename First, typename Second>
     struct HashTraits<std::pair<First, Second> > : public PairHashTraits<HashTraits<First>, HashTraits<Second> > { };
+
+    template<typename KeyTypeArg, typename ValueTypeArg>
+    struct KeyValuePair {
+        typedef KeyTypeArg KeyType;
+
+        KeyValuePair()
+        {
+        }
+
+        KeyValuePair(const KeyTypeArg& key, const ValueTypeArg& value)
+            : first(key)
+            , second(value)
+        {
+        }
+
+        template <typename OtherKeyType, typename OtherValueType>
+        KeyValuePair(const KeyValuePair<OtherKeyType, OtherValueType>& other)
+            : first(other.first)
+            , second(other.second)
+        {
+        }
+
+        // TODO: Rename these to key and value. See https://bugs.webkit.org/show_bug.cgi?id=82784.
+        KeyTypeArg first;
+        ValueTypeArg second;
+    };
+
+    template<typename KeyTraitsArg, typename ValueTraitsArg>
+    struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTraitsArg::TraitType, typename ValueTraitsArg::TraitType> > {
+        typedef KeyTraitsArg KeyTraits;
+        typedef ValueTraitsArg ValueTraits;
+        typedef KeyValuePair<typename KeyTraits::TraitType, typename ValueTraits::TraitType> TraitType;
+        typedef KeyValuePair<typename KeyTraits::EmptyValueType, typename ValueTraits::EmptyValueType> EmptyValueType;
+
+        static const bool emptyValueIsZero = KeyTraits::emptyValueIsZero && ValueTraits::emptyValueIsZero;
+        static EmptyValueType emptyValue() { return KeyValuePair<typename KeyTraits::EmptyValueType, typename ValueTraits::EmptyValueType>(KeyTraits::emptyValue(), ValueTraits::emptyValue()); }
+
+        static const bool needsDestruction = KeyTraits::needsDestruction || ValueTraits::needsDestruction;
+
+        static const int minimumTableSize = KeyTraits::minimumTableSize;
+
+        static void constructDeletedValue(TraitType& slot) { KeyTraits::constructDeletedValue(slot.first); }
+        static bool isDeletedValue(const TraitType& value) { return KeyTraits::isDeletedValue(value.first); }
+    };
+
+    template<typename Key, typename Value>
+    struct HashTraits<KeyValuePair<Key, Value> > : public KeyValuePairHashTraits<HashTraits<Key>, HashTraits<Value> > { };
 
 } // namespace WTF
 

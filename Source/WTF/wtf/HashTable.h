@@ -284,8 +284,7 @@ namespace WTF {
         swap(a, b);
     }
 
-    // Swap pairs by component, in case of pair members that specialize swap.
-    template<typename T, typename U> inline void hashTableSwap(std::pair<T, U>& a, std::pair<T, U>& b)
+    template<typename T, typename U> inline void hashTableSwap(KeyValuePair<T, U>& a, KeyValuePair<T, U>& b)
     {
         swap(a.first, b.first);
         swap(a.second, b.second);

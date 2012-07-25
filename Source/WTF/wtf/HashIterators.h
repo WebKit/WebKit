@@ -33,9 +33,9 @@ namespace WTF {
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableKeysIterator;
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableValuesIterator;
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstIteratorAdapter<HashTableType, std::pair<KeyType, MappedType> > {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType> > {
     private:
-        typedef std::pair<KeyType, MappedType> ValueType;
+        typedef KeyValuePair<KeyType, MappedType> ValueType;
     public:
         typedef HashTableConstKeysIterator<HashTableType, KeyType, MappedType> Keys;
         typedef HashTableConstValuesIterator<HashTableType, KeyType, MappedType> Values;
@@ -56,9 +56,9 @@ namespace WTF {
         typename HashTableType::const_iterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableIteratorAdapter<HashTableType, std::pair<KeyType, MappedType> > {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType> > {
     private:
-        typedef std::pair<KeyType, MappedType> ValueType;
+        typedef KeyValuePair<KeyType, MappedType> ValueType;
     public:
         typedef HashTableKeysIterator<HashTableType, KeyType, MappedType> Keys;
         typedef HashTableValuesIterator<HashTableType, KeyType, MappedType> Values;
@@ -86,7 +86,7 @@ namespace WTF {
 
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstKeysIterator {
     private:
-        typedef HashTableConstIteratorAdapter<HashTableType, std::pair<KeyType, MappedType> > ConstIterator;
+        typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType> > ConstIterator;
 
     public:
         HashTableConstKeysIterator(const ConstIterator& impl) : m_impl(impl) {}
@@ -103,7 +103,7 @@ namespace WTF {
 
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstValuesIterator {
     private:
-        typedef HashTableConstIteratorAdapter<HashTableType, std::pair<KeyType, MappedType> > ConstIterator;
+        typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType> > ConstIterator;
 
     public:
         HashTableConstValuesIterator(const ConstIterator& impl) : m_impl(impl) {}
@@ -120,8 +120,8 @@ namespace WTF {
 
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableKeysIterator {
     private:
-        typedef HashTableIteratorAdapter<HashTableType, std::pair<KeyType, MappedType> > Iterator;
-        typedef HashTableConstIteratorAdapter<HashTableType, std::pair<KeyType, MappedType> > ConstIterator;
+        typedef HashTableIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType> > Iterator;
+        typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType> > ConstIterator;
 
     public:
         HashTableKeysIterator(const Iterator& impl) : m_impl(impl) {}
@@ -143,8 +143,8 @@ namespace WTF {
 
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableValuesIterator {
     private:
-        typedef HashTableIteratorAdapter<HashTableType, std::pair<KeyType, MappedType> > Iterator;
-        typedef HashTableConstIteratorAdapter<HashTableType, std::pair<KeyType, MappedType> > ConstIterator;
+        typedef HashTableIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType> > Iterator;
+        typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType> > ConstIterator;
 
     public:
         HashTableValuesIterator(const Iterator& impl) : m_impl(impl) {}
