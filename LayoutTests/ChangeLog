@@ -1,3 +1,41 @@
+2012-07-24  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] svg/as-border-image, svg/as-image, svg/as-object, svg/css rebaseline after new test fonts.
+        https://bugs.webkit.org/show_bug.cgi?id=92193
+
+        Unreviewed gardening.
+
+        These tests have been skipped because monospace fonts weren't properly used by
+        layout tests. After r121971, the test results are normal again.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/svg/as-border-image/svg-as-border-image-2-expected.png:
+        * platform/qt/svg/as-border-image/svg-as-border-image-2-expected.txt:
+        * platform/qt/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/qt/svg/as-border-image/svg-as-border-image-expected.txt:
+        * platform/qt/svg/as-image/animated-svg-as-image-expected.png: Added.
+        * platform/qt/svg/as-image/animated-svg-as-image-expected.txt:
+        * platform/qt/svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size-expected.png: Added.
+        * platform/qt/svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size-expected.txt:
+        * platform/qt/svg/as-image/animated-svg-as-image-same-image-expected.png: Added.
+        * platform/qt/svg/as-image/animated-svg-as-image-same-image-expected.txt:
+        * platform/qt/svg/as-image/image-respects-pageScaleFactor-expected.png:
+        * platform/qt/svg/as-image/image-respects-pageScaleFactor-expected.txt:
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-1-expected.txt:
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-2-expected.png:
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-2-expected.txt:
+        * platform/qt/svg/as-image/same-image-two-instances-expected.txt:
+        * platform/qt/svg/as-image/svg-image-change-content-size-expected.png:
+        * platform/qt/svg/as-image/svg-image-change-content-size-expected.txt:
+        * platform/qt/svg/as-object/svg-embedded-in-html-in-iframe-expected.txt:
+        * platform/qt/svg/css/composite-shadow-text-expected.png:
+        * platform/qt/svg/css/composite-shadow-text-expected.txt:
+        * platform/qt/svg/css/css-box-min-width-expected.png:
+        * platform/qt/svg/css/css-box-min-width-expected.txt:
+        * platform/qt/svg/css/text-shadow-multiple-expected.png:
+        * platform/qt/svg/css/text-shadow-multiple-expected.txt:
+
 2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] css2.1/t080* rebaseline after new test fonts

@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x327
-  RenderBlock {HTML} at (0,0) size 800x327
-    RenderBody {BODY} at (8,21) size 784x298
-      RenderBlock {H1} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 263x42
-          text run at (0,0) width 263: "No size specified"
-      RenderBlock (anonymous) at (0,63) size 784x235
+layer at (0,0) size 800x321
+  RenderBlock {HTML} at (0,0) size 800x321
+    RenderBody {BODY} at (8,21) size 784x292
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 223x36
+          text run at (0,0) width 223: "No size specified"
+      RenderBlock (anonymous) at (0,58) size 784x234
         RenderImage {IMG} at (0,0) size 230x230 [border: (2px dashed #800000)]
-        RenderText {#text} at (230,214) size 4x21
-          text run at (230,214) width 4: " "
+        RenderText {#text} at (230,215) size 4x19
+          text run at (230,215) width 4: " "
         RenderEmbeddedObject {OBJECT} at (234,2) size 228x228 [border: (1px dashed #008000)]
           layer at (0,0) size 220x220
             RenderView at (0,0) size 220x220
