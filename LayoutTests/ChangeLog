@@ -1,5 +1,20 @@
 2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
 
+        [Tests] Copy fast/forms/number/number-spinbutton-change-and-input-events.html to fast/forms/js/resources
+        https://bugs.webkit.org/show_bug.cgi?id=92209
+
+        Reviewed by Kent Tamura.
+
+        This patch copies test file fast/forms/number/number-spinbutton-change-and-input-events.html
+        to JavaScript code directory fast/forms/resources as common-spinbutton-change-and-input-events.js
+        for sharing code with other input types.
+
+        This patch is preparation of re-factoring.
+
+        * fast/forms/resources/common-spinbutton-change-and-input-events.js: Copied from LayoutTests/fast/forms/number/number-spinbutton-change-and-input-events.html.
+
+2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
+
         [Tests] Rename fast/number/number-events.html to number-spinbutton-change-and-input-events.html
         https://bugs.webkit.org/show_bug.cgi?id=92208
 
