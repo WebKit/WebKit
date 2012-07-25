@@ -60,6 +60,7 @@ V8BindingPerIsolateData::V8BindingPerIsolateData(v8::Isolate* isolate)
 #ifndef NDEBUG
     , m_internalScriptRecursionLevel(0)
 #endif
+    , m_lowMemoryNotificationHint(false)
 {
 }
 

@@ -271,6 +271,8 @@ namespace WebCore {
     private:
         void resetIsolatedWorlds();
 
+        void hintForGCIfNecessary();
+
         PassOwnPtr<v8::ScriptData> precompileScript(v8::Handle<v8::String>, CachedScript*);
 
         static const char* rangeExceptionName(int exceptionCode);

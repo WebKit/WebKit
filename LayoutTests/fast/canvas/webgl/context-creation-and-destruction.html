@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"> </script>
+<script src="resources/webgl-test-utils.js"> </script>
+</head>
+<body>
+<script>
+var wtu = WebGLTestUtils;
+// Ideally we would make this test run far longer, but we need to keep
+// it within a reasonable per-test timeout.
+var target = 8;
+var count = 0;
+
+if (window.initNonKhronosFramework) {
+    window.initNonKhronosFramework(true);
+}
+
+description('Test that contexts are freed and garbage collected reasonably');
+doNextTest();
+
+// Creates a canvas and some textures then exits. There are
+// no references to either so all should be garbage collected.
+function test() {
+  var canvas = document.createElement("canvas");
+  // This is safe for any device. See drawingBufferWidth in spec.
+  canvas.width = 2048;
+  canvas.height = 2048;
+  var gl = wtu.create3DContext(canvas);
+  var maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+  var size = Math.min(1024, maxTextureSize);
+  for (var jj = 0; jj < 5; ++jj) {
+    var tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+                  new Uint8Array(size * size * 4));
+  }
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors");
+}
+
+function doNextTest() {
+  ++count;
+  debug("test " + count + " of " + target);
+  test();
+  if (count < target) {
+    setTimeout(doNextTest, 100);
+  } else {
+    finishTest();
+  }
+}
+</script>
+
+</body>
+</html>
