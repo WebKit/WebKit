@@ -225,7 +225,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "hidden", "auto", "visible", "overlay", "scroll"
     ],
     "text-rendering": [
-        "auto", "optimizespeed", "optimizelegibility", "geometricprecision"
+        "auto", "optimizeSpeed", "optimizeLegibility", "geometricPrecision"
     ],
     "text-align": [
         "-webkit-auto", "left", "right", "center", "justify", "-webkit-left", "-webkit-right", "-webkit-center"
@@ -277,7 +277,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "skip-white-space"
     ],
     "color-rendering": [
-        "auto", "optimizespeed", "optimizequality"
+        "auto", "optimizeSpeed", "optimizeQuality"
     ],
     "list-style-type": [
         "none", "disc", "circle", "square", "decimal", "decimal-leading-zero", "arabic-indic", "binary", "bengali",
@@ -320,7 +320,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "over", "under"
     ],
     "image-rendering": [
-        "auto", "optimizespeed", "optimizequality"
+        "auto", "optimizeSpeed", "optimizeQuality"
     ],
     "alignment-baseline": [
         "baseline", "middle", "auto", "before-edge", "after-edge", "central", "text-before-edge", "text-after-edge",

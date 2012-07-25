@@ -1,3 +1,14 @@
+2012-07-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web inspector auto-completes "optimizequality" but then complains
+        https://bugs.webkit.org/show_bug.cgi?id=92262
+
+        Reviewed by Timothy Hatcher.
+
+        Fixed optimizeSpeed, optimizeLegibility, geometricPrecision.
+
+        * inspector/front-end/CSSKeywordCompletions.js:
+
 2012-07-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=89114
