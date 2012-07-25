@@ -467,22 +467,11 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
 {
     TRACE_EVENT0("cc", "CCLayerTreeHost::updateLayers");
 
-    if (!rootLayer->renderSurface())
-        rootLayer->createRenderSurface();
-    rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), deviceViewportSize()));
-
     LayerList updateList;
-    updateList.append(rootLayer);
-
-    RenderSurfaceChromium* rootRenderSurface = rootLayer->renderSurface();
-    rootRenderSurface->clearLayerList();
 
     {
         TRACE_EVENT0("cc", "CCLayerTreeHost::updateLayers::calcDrawEtc");
-        WebTransformationMatrix identityMatrix;
-        WebTransformationMatrix deviceScaleTransform;
-        deviceScaleTransform.scale(m_deviceScaleFactor);
-        CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer, deviceViewportSize(), m_deviceScaleFactor, layerRendererCapabilities().maxTextureSize, updateList);
 
         FloatRect rootScissorRect(FloatPoint(0, 0), viewportSize());
         CCLayerTreeHostCommon::calculateVisibleAndScissorRects(updateList, rootScissorRect);

@@ -1,3 +1,22 @@
+2012-07-24  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Refactor CCLayerTreeHostCommon: move root layer special case initialization into internal code.
+        https://bugs.webkit.org/show_bug.cgi?id=88953
+
+        Reviewed by Adrienne Walker.
+
+        Unit tests updated to account for the new less-special root layer setup.
+          - most test cases just needed to remove root->renderSurface()->setContentBounds(), createRenderSurface(), and renderSurfaceLayerList.append().
+          - some test cases originally relied on setting some awkward unconventional bounds of the rootLayer that were different than the rootLayer's renderSurface. these tests are updated.
+          - a few minor cleanups otherwise.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::executeCalculateDrawTransformsAndVisibility):
+        * tests/CCLayerIteratorTest.cpp:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTest::calcDrawEtc):
+
 2012-07-25  Taiju Tsuiki  <tzik@chromium.org>
 
         FileSystem should provide a way to delete filesystem.

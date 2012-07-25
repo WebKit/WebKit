@@ -250,19 +250,9 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
     ASSERT(renderSurfaceLayerList.isEmpty());
     ASSERT(m_rootLayerImpl);
 
-    renderSurfaceLayerList.append(m_rootLayerImpl.get());
-
-    if (!m_rootLayerImpl->renderSurface())
-        m_rootLayerImpl->createRenderSurface();
-    m_rootLayerImpl->renderSurface()->clearLayerList();
-    m_rootLayerImpl->renderSurface()->setContentRect(IntRect(IntPoint(), deviceViewportSize()));
-
     {
         TRACE_EVENT0("cc", "CCLayerTreeHostImpl::calcDrawEtc");
-        WebTransformationMatrix identityMatrix;
-        WebTransformationMatrix deviceScaleTransform;
-        deviceScaleTransform.scale(m_deviceScaleFactor);
-        CCLayerTreeHostCommon::calculateDrawTransforms(m_rootLayerImpl.get(), m_rootLayerImpl.get(), deviceScaleTransform, identityMatrix, renderSurfaceLayerList, m_rootLayerImpl->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransforms(m_rootLayerImpl.get(), deviceViewportSize(), m_deviceScaleFactor, &m_layerSorter, layerRendererCapabilities().maxTextureSize, renderSurfaceLayerList);
 
         trackDamageForAllSurfaces(m_rootLayerImpl.get(), renderSurfaceLayerList);
 

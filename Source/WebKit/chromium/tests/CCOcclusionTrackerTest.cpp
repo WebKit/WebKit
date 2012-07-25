@@ -256,16 +256,12 @@ protected:
     void calcDrawEtc(TestContentLayerImpl* root)
     {
         ASSERT(root == m_root.get());
-        Vector<CCLayerImpl*> dummyLayerList;
         int dummyMaxTextureSize = 512;
         CCLayerSorter layerSorter;
 
         ASSERT(!root->renderSurface());
-        root->createRenderSurface();
-        root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), root->bounds()));
-        m_renderSurfaceLayerListImpl.append(m_root.get());
 
-        CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListImpl, dummyLayerList, &layerSorter, dummyMaxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransforms(root, root->bounds(), 1, &layerSorter, dummyMaxTextureSize, m_renderSurfaceLayerListImpl);
 
         CCLayerTreeHostCommon::calculateVisibleAndScissorRects(m_renderSurfaceLayerListImpl, root->renderSurface()->contentRect());
 
@@ -275,15 +271,11 @@ protected:
     void calcDrawEtc(TestContentLayerChromium* root)
     {
         ASSERT(root == m_root.get());
-        Vector<RefPtr<LayerChromium> > dummyLayerList;
         int dummyMaxTextureSize = 512;
 
         ASSERT(!root->renderSurface());
-        root->createRenderSurface();
-        root->renderSurface()->setContentRect(IntRect(IntPoint::zero(), root->bounds()));
-        m_renderSurfaceLayerListChromium.append(m_root);
 
-        CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, m_renderSurfaceLayerListChromium, dummyLayerList, dummyMaxTextureSize);
+        CCLayerTreeHostCommon::calculateDrawTransforms(root, root->bounds(), 1, dummyMaxTextureSize, m_renderSurfaceLayerListChromium);
 
         CCLayerTreeHostCommon::calculateVisibleAndScissorRects(m_renderSurfaceLayerListChromium, root->renderSurface()->contentRect());
 

@@ -147,12 +147,7 @@ TEST(CCLayerIteratorTest, simpleTree)
     rootLayer->addChild(fourth);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
-    Vector<RefPtr<LayerChromium> > layerList;
-    renderSurfaceLayerList.append(rootLayer.get());
-    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer.get(),
-                                                   WebTransformationMatrix(), WebTransformationMatrix(),
-                                                   renderSurfaceLayerList, layerList,
-                                                   256);
+    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer->bounds(), 1, 256, renderSurfaceLayerList);
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootLayer->renderSurface()->contentRect());
 
     iterateBackToFront(&renderSurfaceLayerList);
@@ -195,12 +190,7 @@ TEST(CCLayerIteratorTest, complexTree)
     root23->addChild(root231);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
-    Vector<RefPtr<LayerChromium> > layerList;
-    renderSurfaceLayerList.append(rootLayer.get());
-    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer.get(),
-                                                   WebTransformationMatrix(), WebTransformationMatrix(),
-                                                   renderSurfaceLayerList, layerList,
-                                                   256);
+    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer->bounds(), 1, 256, renderSurfaceLayerList);
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootLayer->renderSurface()->contentRect());
 
     iterateBackToFront(&renderSurfaceLayerList);
@@ -256,13 +246,7 @@ TEST(CCLayerIteratorTest, complexTreeMultiSurface)
     root23->addChild(root231);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
-    Vector<RefPtr<LayerChromium> > layerList;
-    renderSurfaceLayerList.append(rootLayer.get());
-    
-    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer.get(),
-                                                   WebTransformationMatrix(), WebTransformationMatrix(),
-                                                   renderSurfaceLayerList, layerList,
-                                                   256);
+    CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer.get(), rootLayer->bounds(), 1, 256, renderSurfaceLayerList);
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, rootLayer->renderSurface()->contentRect());
 
     iterateBackToFront(&renderSurfaceLayerList);

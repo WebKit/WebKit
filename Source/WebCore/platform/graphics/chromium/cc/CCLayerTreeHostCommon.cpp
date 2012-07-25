@@ -389,6 +389,20 @@ WebTransformationMatrix computeScrollCompensationMatrixForChildren(CCLayerImpl* 
     return nextScrollCompensationMatrix;
 }
 
+// Should be called just before the recursive calculateDrawTransformsInternal().
+template<typename LayerType, typename LayerList>
+void setupRootLayerAndSurfaceForRecursion(LayerType* rootLayer, LayerList& renderSurfaceLayerList, const IntSize& deviceViewportSize)
+{
+    if (!rootLayer->renderSurface())
+        rootLayer->createRenderSurface();
+
+    rootLayer->renderSurface()->setContentRect(IntRect(IntPoint::zero(), deviceViewportSize));
+    rootLayer->renderSurface()->clearLayerList();
+
+    ASSERT(renderSurfaceLayerList.isEmpty());
+    renderSurfaceLayerList.append(rootLayer);
+}
+
 // Recursively walks the layer tree starting at the given node and computes all the
 // necessary transformations, clipRects, render surfaces, etc.
 template<typename LayerType, typename LayerList, typename RenderSurfaceType, typename LayerSorter>
@@ -853,22 +867,32 @@ static void calculateVisibleAndScissorRectsInternal(const LayerList& renderSurfa
     }
 }
 
-void CCLayerTreeHostCommon::calculateDrawTransforms(LayerChromium* layer, LayerChromium* rootLayer, const WebTransformationMatrix& parentMatrix, const WebTransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, Vector<RefPtr<LayerChromium> >& layerList, int maxTextureSize)
+void CCLayerTreeHostCommon::calculateDrawTransforms(LayerChromium* rootLayer, const IntSize& deviceViewportSize, float deviceScaleFactor, int maxTextureSize, Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList)
 {
-    WebTransformationMatrix scrollCompensationMatrix;
-    IntRect drawableContentRect;
-    WebCore::calculateDrawTransformsInternal<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, void>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, scrollCompensationMatrix,
+    IntRect totalDrawableContentRect;
+    WebTransformationMatrix identityMatrix;
+    WebTransformationMatrix deviceScaleTransform;
+    deviceScaleTransform.scale(deviceScaleFactor);
+
+    setupRootLayerAndSurfaceForRecursion<LayerChromium, Vector<RefPtr<LayerChromium> > >(rootLayer, renderSurfaceLayerList, deviceViewportSize);
+
+    WebCore::calculateDrawTransformsInternal<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, void>(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, identityMatrix,
                                                                                                                          rootLayer->renderSurface()->contentRect(), true, 0, renderSurfaceLayerList,
-                                                                                                                         layerList, 0, maxTextureSize, drawableContentRect);
+                                                                                                                         rootLayer->renderSurface()->layerList(), 0, maxTextureSize, totalDrawableContentRect);
 }
 
-void CCLayerTreeHostCommon::calculateDrawTransforms(CCLayerImpl* layer, CCLayerImpl* rootLayer, const WebTransformationMatrix& parentMatrix, const WebTransformationMatrix& fullHierarchyMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList, CCLayerSorter* layerSorter, int maxTextureSize)
+void CCLayerTreeHostCommon::calculateDrawTransforms(CCLayerImpl* rootLayer, const IntSize& deviceViewportSize, float deviceScaleFactor, CCLayerSorter* layerSorter, int maxTextureSize, Vector<CCLayerImpl*>& renderSurfaceLayerList)
 {
-    WebTransformationMatrix scrollCompensationMatrix;
-    IntRect drawableContentRect;
-    WebCore::calculateDrawTransformsInternal<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerSorter>(layer, rootLayer, parentMatrix, fullHierarchyMatrix, scrollCompensationMatrix,
+    IntRect totalDrawableContentRect;
+    WebTransformationMatrix identityMatrix;
+    WebTransformationMatrix deviceScaleTransform;
+    deviceScaleTransform.scale(deviceScaleFactor);
+
+    setupRootLayerAndSurfaceForRecursion<CCLayerImpl, Vector<CCLayerImpl*> >(rootLayer, renderSurfaceLayerList, deviceViewportSize);
+
+    WebCore::calculateDrawTransformsInternal<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerSorter>(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, identityMatrix,
                                                                                                                 rootLayer->renderSurface()->contentRect(), true, 0, renderSurfaceLayerList,
-                                                                                                                layerList, layerSorter, maxTextureSize, drawableContentRect);
+                                                                                                                rootLayer->renderSurface()->layerList(), layerSorter, maxTextureSize, totalDrawableContentRect);
 }
 
 void CCLayerTreeHostCommon::calculateVisibleAndScissorRects(Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, const FloatRect& rootScissorRect)

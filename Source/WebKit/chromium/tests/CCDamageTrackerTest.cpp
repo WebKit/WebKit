@@ -46,8 +46,6 @@ namespace {
 void executeCalculateDrawTransformsAndVisibility(CCLayerImpl* root, Vector<CCLayerImpl*>& renderSurfaceLayerList)
 {
     CCLayerSorter layerSorter;
-    WebTransformationMatrix identityMatrix;
-    Vector<CCLayerImpl*> dummyLayerList;
     int dummyMaxTextureSize = 512;
 
     // Sanity check: The test itself should create the root layer's render surface, so
@@ -56,9 +54,7 @@ void executeCalculateDrawTransformsAndVisibility(CCLayerImpl* root, Vector<CCLay
     ASSERT_TRUE(root->renderSurface());
     ASSERT_FALSE(renderSurfaceLayerList.size());
 
-    root->renderSurface()->clearLayerList();
-    renderSurfaceLayerList.append(root);
-    CCLayerTreeHostCommon::calculateDrawTransforms(root, root, identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, &layerSorter, dummyMaxTextureSize);
+    CCLayerTreeHostCommon::calculateDrawTransforms(root, root->bounds(), 1, &layerSorter, dummyMaxTextureSize, renderSurfaceLayerList);
     CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, root->renderSurface()->contentRect());
 }
 
