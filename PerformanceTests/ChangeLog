@@ -1,3 +1,79 @@
+2012-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import more replay performance tests from Mozilla's Tp5 test suite
+        https://bugs.webkit.org/show_bug.cgi?id=92229
+
+        Reviewed by Andreas Kling.
+
+        Add more replay tests based on Mozilla's Tp5 test suite [1]. Unfortunately,
+        we cannot import all URLs because some of them are not archived on archive.org
+        and others do not replay well on web-page-replay. Nonethless, we're still adding
+        60+ URLs in this patch.
+
+        [1] http://people.mozilla.org/~jmaher/tp5.manifest
+
+        * Replay/Chinese: Added.
+        * Replay/Chinese/chinaz.com.replay: Added.
+        * Replay/Chinese/www.163.com.replay: Added.
+        * Replay/Chinese/www.alipay.com.replay: Added.
+        * Replay/Chinese/www.baidu.com.replay: Added.
+        * Replay/Chinese/www.csdn.net.replay: Added.
+        * Replay/Chinese/www.douban.com.replay: Added.
+        * Replay/Chinese/www.hao123.com.replay: Added.
+        * Replay/Chinese/www.xinhuanet.com.replay: Added.
+        * Replay/Chinese/www.xunlei.com.replay: Added.
+        * Replay/Chinese/www.youku.com.replay: Added.
+        * Replay/English: Added.
+        * Replay/English/beatonna.livejournal.com.replay: Added.
+        * Replay/English/cakewrecks.blogspot.com.replay: Added.
+        * Replay/English/chemistry.about.com.replay: Added.
+        * Replay/English/digg.com.replay: Added.
+        * Replay/English/en.wikipedia.org-rorschach_test.replay: Added.
+        * Replay/English/icanhascheezburger.com.replay: Added.
+        * Replay/English/imgur.com-gallery.replay: Added.
+        * Replay/English/online.wsj.com.replay: Added.
+        * Replay/English/stockoverflow.com-best-comment.replay: Added.
+        * Replay/English/www.alibaba.com.replay: Added.
+        * Replay/English/www.amazon.com-kindle.replay: Added.
+        * Replay/English/www.apple.com.replay: Added.
+        * Replay/English/www.cnet.com.replay: Added.
+        * Replay/English/www.dailymotion.com.replay: Added.
+        * Replay/English/www.ehow.com-prevent-fire.replay: Added.
+        * Replay/English/www.filestube.com-amy-adams.replay: Added.
+        * Replay/English/www.foxnews.replay: Added.
+        * Replay/English/www.huffingtonpost.com.replay: Added.
+        * Replay/English/www.imdb.com-twilight.replay: Added.
+        * Replay/English/www.mozilla.com-all-order.replay: Added.
+        * Replay/English/www.php.net.replay: Added.
+        * Replay/English/www.reddit.com.replay: Added.
+        * Replay/English/www.telegraph.co.uk.replay: Added.
+        * Replay/English/www.w3.org-htmlcss.replay: Added.
+        * Replay/English/www.w3schools.com-html.replay: Added.
+        * Replay/English/www.youtube.com-music.replay: Added.
+        * Replay/French: Added.
+        * Replay/French/www.orange.fr.replay: Added.
+        * Replay/German: Added.
+        * Replay/Italian: Added.
+        * Replay/Italian/www.repubblica.it.replay: Added.
+        * Replay/Japanese/entameblog.seesaa.net.replay: Added.
+        * Replay/Japanese/www.hatena.ne.jp.replay: Added.
+        * Replay/Japanese/www.nicovideo.jp.replay: Added.
+        * Replay/Korean: Added.
+        * Replay/Korean/www.naver.com.replay: Added.
+        * Replay/Persian: Added.
+        * Replay/Persian/blogfa.com.replay: Added.
+        * Replay/Polish: Added.
+        * Replay/Polish/www.wp.pl.replay: Added.
+        * Replay/Portuguese: Added.
+        * Replay/Portuguese/www.uol.com.br.replay: Added.
+        * Replay/Russian: Added.
+        * Replay/Russian/vkontakte.ru-help.replay: Added.
+        * Replay/Russian/www.rambler.ru.replay: Added.
+        * Replay/Russian/www.ucoz.ru.replay: Added.
+        * Replay/Russian/www.yandex.ru.replay: Added.
+        * Replay/Spanish: Added.
+        * Replay/Spanish/www.taringa.net.replay: Added.
+
 2012-07-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add some Japanese and Swedish websites to replay tests
