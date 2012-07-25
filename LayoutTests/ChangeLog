@@ -1,5 +1,131 @@
 2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        [Qt] css2.1/t040* rebaseline after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92248
+
+        Unreviewed.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/css2.1/t040102-keywords-00-b-expected.png: Added.
+        * platform/qt/css2.1/t040102-keywords-00-b-expected.txt:
+        * platform/qt/css2.1/t040102-keywords-01-b-expected.png: Added.
+        * platform/qt/css2.1/t040102-keywords-01-b-expected.txt:
+        * platform/qt/css2.1/t040103-case-00-b-expected.png: Added.
+        * platform/qt/css2.1/t040103-case-00-b-expected.txt:
+        * platform/qt/css2.1/t040103-case-01-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-case-01-c-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-00-b-expected.png: Added.
+        * platform/qt/css2.1/t040103-escapes-00-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-01-b-expected.png:
+        * platform/qt/css2.1/t040103-escapes-01-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-02-d-expected.png: Added.
+        * platform/qt/css2.1/t040103-escapes-02-d-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-03-b-expected.png: Added.
+        * platform/qt/css2.1/t040103-escapes-03-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-04-b-expected.png: Added.
+        * platform/qt/css2.1/t040103-escapes-04-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-05-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-escapes-05-c-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-06-b-expected.png: Added.
+        * platform/qt/css2.1/t040103-escapes-06-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-07-b-expected.png: Added.
+        * platform/qt/css2.1/t040103-escapes-07-b-expected.txt:
+        * platform/qt/css2.1/t040103-escapes-08-b-expected.png: Added.
+        * platform/qt/css2.1/t040103-escapes-08-b-expected.txt:
+        * platform/qt/css2.1/t040103-ident-00-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-00-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-01-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-01-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-02-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-02-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-03-c-expected.txt: Removed.
+        * platform/qt/css2.1/t040103-ident-04-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-04-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-05-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-05-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-06-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-06-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-07-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-07-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-08-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-08-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-09-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-09-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-10-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-10-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-11-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-11-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-12-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-12-c-expected.txt:
+        * platform/qt/css2.1/t040103-ident-13-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-13-c-expected.txt:
+        * platform/qt/css2.1/t040105-atkeyw-00-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-atkeyw-00-b-expected.txt:
+        * platform/qt/css2.1/t040105-atkeyw-01-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-atkeyw-01-b-expected.txt:
+        * platform/qt/css2.1/t040105-atkeyw-02-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-atkeyw-02-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-00-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-atrule-00-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-01-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-atrule-01-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-02-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-atrule-02-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-03-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-atrule-03-b-expected.txt:
+        * platform/qt/css2.1/t040105-atrule-04-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-atrule-04-b-expected.txt:
+        * platform/qt/css2.1/t040105-import-00-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-import-00-b-expected.txt:
+        * platform/qt/css2.1/t040105-import-01-b-expected.png: Added.
+        * platform/qt/css2.1/t040105-import-01-b-expected.txt:
+        * platform/qt/css2.1/t040105-import-10-b-expected.png:
+        * platform/qt/css2.1/t040105-import-10-b-expected.txt:
+        * platform/qt/css2.1/t040109-c17-comments-00-b-expected.png: Added.
+        * platform/qt/css2.1/t040109-c17-comments-00-b-expected.txt:
+        * platform/qt/css2.1/t040109-c17-comments-01-b-expected.png: Added.
+        * platform/qt/css2.1/t040109-c17-comments-01-b-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-00-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-00-f-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-01-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-01-f-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-02-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-02-f-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-03-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-03-f-expected.txt:
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-04-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-c71-fwd-parsing-04-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-01-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-syntax-01-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-02-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-syntax-02-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-03-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-syntax-03-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-04-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-syntax-04-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-05-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-syntax-05-f-expected.txt:
+        * platform/qt/css2.1/t0402-syntax-06-f-expected.png: Added.
+        * platform/qt/css2.1/t0402-syntax-06-f-expected.txt:
+        * platform/qt/css2.1/t040302-c61-ex-len-00-b-a-expected.png: Added.
+        * platform/qt/css2.1/t040302-c61-ex-len-00-b-a-expected.txt:
+        * platform/qt/css2.1/t040302-c61-phys-len-00-b-expected.png: Added.
+        * platform/qt/css2.1/t040302-c61-phys-len-00-b-expected.txt:
+        * platform/qt/css2.1/t040302-c61-rel-len-00-b-ag-expected.png: Added.
+        * platform/qt/css2.1/t040302-c61-rel-len-00-b-ag-expected.txt:
+        * platform/qt/css2.1/t040303-c62-percent-00-b-ag-expected.png:
+        * platform/qt/css2.1/t040303-c62-percent-00-b-ag-expected.txt:
+        * platform/qt/css2.1/t040304-c64-uri-00-a-g-expected.png: Added.
+        * platform/qt/css2.1/t040304-c64-uri-00-a-g-expected.txt:
+        * platform/qt/css2.1/t040306-c63-color-00-b-ag-expected.png: Added.
+        * platform/qt/css2.1/t040306-c63-color-00-b-ag-expected.txt:
+        * platform/qt/css2.1/t040306-syntax-01-f-expected.png: Added.
+        * platform/qt/css2.1/t040306-syntax-01-f-expected.txt:
+        * platform/qt/css2.1/t040307-syntax-01-b-expected.png: Added.
+        * platform/qt/css2.1/t040307-syntax-01-b-expected.txt:
+
+2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         [Qt] Fix rebaseline for two tests in svg/hixie
         https://bugs.webkit.org/show_bug.cgi?id=92244
 

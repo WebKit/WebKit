@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x164
-  RenderBlock {HTML} at (0,0) size 800x164
-    RenderBody {BODY} at (8,16) size 784x132 [color=#000080]
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 353x21
-          text run at (0,0) width 353: "These four lines should look identical, to the pixel."
-      RenderBlock {P} at (0,37) size 784x21
-        RenderText {#text} at (0,0) size 353x21
-          text run at (0,0) width 353: "These four lines should look identical, to the pixel."
-      RenderBlock {P} at (0,74) size 784x21
-        RenderText {#text} at (0,0) size 353x21
-          text run at (0,0) width 353: "These four lines should look identical, to the pixel."
-      RenderBlock {P} at (0,111) size 784x21
-        RenderText {#text} at (0,0) size 353x21
-          text run at (0,0) width 353: "These four lines should look identical, to the pixel."
+layer at (0,0) size 800x156
+  RenderBlock {HTML} at (0,0) size 800x156
+    RenderBody {BODY} at (8,16) size 784x124 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 299x19
+          text run at (0,0) width 299: "These four lines should look identical, to the pixel."
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 299x19
+          text run at (0,0) width 299: "These four lines should look identical, to the pixel."
+      RenderBlock {P} at (0,70) size 784x19
+        RenderText {#text} at (0,0) size 299x19
+          text run at (0,0) width 299: "These four lines should look identical, to the pixel."
+      RenderBlock {P} at (0,105) size 784x19
+        RenderText {#text} at (0,0) size 299x19
+          text run at (0,0) width 299: "These four lines should look identical, to the pixel."

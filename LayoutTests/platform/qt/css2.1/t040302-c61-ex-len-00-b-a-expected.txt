@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x121
-  RenderBlock {HTML} at (0,0) size 800x121
-    RenderBody {BODY} at (8,16) size 784x89
-      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 366x21
-          text run at (0,0) width 366: "The two blocks below should have the same height."
-      RenderTable {TABLE} at (80,37) size 102x52
+layer at (0,0) size 800x119
+  RenderBlock {HTML} at (0,0) size 800x119
+    RenderBody {BODY} at (8,16) size 784x87
+      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 310x19
+          text run at (0,0) width 310: "The two blocks below should have the same height."
+      RenderTable {TABLE} at (80,35) size 102x52
         RenderTableSection {TBODY} at (0,0) size 102x52
           RenderTableRow {TR} at (0,2) size 102x48
             RenderTableCell {TD} at (2,2) size 48x48 [r=0 c=0 rs=1 cs=1]
