@@ -1,3 +1,33 @@
+2012-07-24  Hironori Bono  <hbono@chromium.org>
+
+        Avoid moving child objects multiple times when vertical scrollbar are shown at the left side.
+        https://bugs.webkit.org/show_bug.cgi?id=91756
+
+        Reviewed by Tony Chang.
+
+        My r123067 moves the top-left origin of an RTL element right when its vertical
+        scrollbar is shown at its left side. (That is, r123067 moves all child objects
+        in the RTL element right.) This change also increases RenderBox::clientLeft()
+        at the same time, i.e. it also moves child objects right. Furthermore, my r109512
+        moves positioned objects in an RTL element right at the same time. This makes
+        WebKit move objects in an RTL element up to three times by the scrollbar width.
+        (Moving an absolute object right increases the scrollWidth value and it causes
+        this bug.) This change removes unnecessary code that moves objects right in my
+        r109512 and RenderBox::clientLeft().
+
+        Test: scrollbars/rtl/div-absolute.html
+              fast/block/float/026.html
+              fast/block/float/028.html
+              fast/overflow/unreachable-overflow-rtl-bug.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::clientLeft): Increase clientLeft value by the width of a vertical scrollbar as written in the CSSOM specification.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromPositionedObjects): Removed unnecessary code.
+        (WebCore::RenderBlock::determineLogicalLeftPositionForChild): Removed unnecessary code.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::clientLeft): Removed unnecessary code.
+
 2012-07-24  Dan Bernstein  <mitz@apple.com>
 
         RenderBlock::positionForPoint can fail when the block or its children have a vertical writing mode

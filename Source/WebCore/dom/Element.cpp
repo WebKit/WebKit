@@ -412,8 +412,12 @@ int Element::clientLeft()
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    if (RenderBox* renderer = renderBox())
-        return adjustForAbsoluteZoom(roundToInt(renderer->clientLeft()), renderer);
+    if (RenderBox* renderer = renderBox()) {
+        LayoutUnit clientLeft = renderer->clientLeft();
+        if (renderer->style() && renderer->style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
+            clientLeft += renderer->verticalScrollbarWidth();
+        return adjustForAbsoluteZoom(roundToInt(clientLeft), renderer);
+    }
     return 0;
 }
 

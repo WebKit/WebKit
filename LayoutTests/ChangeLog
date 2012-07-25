@@ -1,3 +1,25 @@
+2012-07-24  Hironori Bono  <hbono@chromium.org>
+
+        Avoid moving child objects multiple times when vertical scrollbar are shown at the left side.
+        https://bugs.webkit.org/show_bug.cgi?id=91756
+
+        Reviewed by Tony Chang.
+
+        This change adds a test that compares CSSOM properties of an RTL element which
+        includes positioned objects with the CSSOM properties of an LTR one. This change
+        also uses clientLeft properties in offsetX-offsetY.html to remove a hard-coded
+        value in the test and adds rebaselined results for Windows.
+
+        * fast/events/offsetX-offsetY.html: Replaced a hard-coded value 'borderLeft' with clientLeft.
+        * platform/chromium-linux/fast/block/float/026-expected.png:
+        * platform/chromium-linux/fast/block/float/028-expected.png:
+        * platform/chromium-win/fast/block/float/026-expected.png:
+        * platform/chromium-win/fast/block/float/028-expected.png:
+        * platform/chromium-win/fast/overflow/unreachable-overflow-rtl-bug-expected.png:
+        * platform/chromium-win/fast/overflow/unreachable-overflow-rtl-bug-expected.txt:
+        * scrollbars/rtl/div-absolute-expected.txt: Added.
+        * scrollbars/rtl/div-absolute.html: Added.
+
 2012-07-24  Dan Bernstein  <mitz@apple.com>
 
         RenderBlock::positionForPoint can fail when the block or its children have a vertical writing mode
