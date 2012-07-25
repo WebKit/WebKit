@@ -2209,6 +2209,36 @@ fast/speech/input-appearance-searchandspeech.html
 fast/speech/speech-bidi-rendering.html
 fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic.html
 
+# new tests without expected files, need investigation
+css3/filters/effect-reference-external.html
+css3/filters/effect-reference-hw.html
+css3/filters/effect-reference.html
+css3/filters/effect-reference-ordering.html
+fast/repaint/repaint-during-scroll-with-zoom.html
+fast/multicol/shrink-to-column-height-for-pagination.html
+fast/forms/textarea/textarea-placeholder-paint-order.html
+fast/forms/select/optgroup-rendering.html
+fast/forms/input-placeholder-paint-order.html
+fast/reflections/reflection-with-zoom.html
+fast/table/mozilla-bug10296-vertical-align-2.html
+fast/table/mozilla-bug10296-vertical-align-1.html
+fast/events/touch/gesture/context-menu-on-long-press.html
+fast/events/touch/gesture/context-menu-on-two-finger-tap.html
+fast/css/text-overflow-ellipsis-text-align-right.html
+fast/css/text-overflow-ellipsis-text-align-left.html
+fast/css/vertical-text-overflow-ellipsis-text-align-center.html
+fast/css/vertical-text-overflow-ellipsis-text-align-right.html
+fast/css/text-overflow-ellipsis-text-align-center.html
+fast/css/vertical-text-overflow-ellipsis-text-align-justify.html
+fast/css/text-overflow-ellipsis-text-align-justify.html
+fast/css/vertical-text-overflow-ellipsis-text-align-left.html
+css2.1/20110323/table-height-algorithm-024.htm
+css2.1/20110323/table-height-algorithm-023.htm
+css2.1/20110323/inline-table-002a.htm
+css2.1/20110323/inline-table-001.htm
+css2.1/20110323/inline-table-003.htm
+editing/inserting/multiple-lines-selected.html
+
 # ============================================================================= #
 # Regressions occured after Qt version update
 # ============================================================================= #

@@ -1,3 +1,10 @@
+2012-07-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-4.8/Skipped: Unskip now passing tests. (bug85203)
+        * platform/qt/Skipped: Skip new tests without expected files.
+
 2012-07-25  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Rebaseline for changed mathml dump after r123492
