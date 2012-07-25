@@ -1,3 +1,25 @@
+2012-07-25  Shinya Kawanaka  <shinyak@chromium.org>
+
+        A validation bubble should not be modifiable.
+        https://bugs.webkit.org/show_bug.cgi?id=92217
+
+        Reviewed by Kent Tamura.
+
+        A user can set -webkit-user-modify: read-write to validation message elements.
+        This might cause a undesired crash like Bug 65738. They should be unmodifiable.
+
+        Test: fast/forms/validation-user-modify.html
+
+        * css/html.css:
+        Added -webkit-user-modify: read-only !important; for these elements so that they won't be
+        changed by a user.
+        (::-webkit-validation-bubble):
+        (::-webkit-validation-bubble-message):
+        (::-webkit-validation-bubble-text-block):
+        (::-webkit-validation-bubble-heading):
+        (::-webkit-validation-bubble-arrow):
+        (::-webkit-validation-bubble-arrow-clipper):
+
 2012-07-25  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][WK2] Disable CopyToTexture for GraphicsSurfaceMac.

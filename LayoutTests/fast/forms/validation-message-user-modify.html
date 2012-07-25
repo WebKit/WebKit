@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+::-webkit-validation-bubble,
+::-webkit-validation-bubble-message,
+::-webkit-validation-bubble-text-block,
+::-webkit-validation-bubble-heading,
+::-webkit-validation-bubble-arrow,
+::-webkit-validation-bubble-arrow-clipper
+{
+    -webkit-user-modify: read-write;
+}
+</style>
+</head>
+<body>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+
+<p>The inner element of validation should not be modifiable.</p>
+
+<div id="container">
+    <form action="validation-user-modify.html">
+        <input type="checkbox" id="checkbox" required>
+        <input type="submit" id="submit">
+    </form>
+</div>
+<pre id="console"></pre>
+
+<script>
+jsTestIsAsync = true;
+
+submit.click();
+
+var renderTreeBeforeEditing;
+var renderTreeAfterEditing;
+
+setTimeout(function() {
+    renderTreeBeforeEditing = internals.elementRenderTreeAsText(document.documentElement);
+
+    for (var i = -20; i < 50; i += 10) {
+        eventSender.mouseMoveTo(checkbox.offsetLeft + 20, checkbox.offsetTop + checkbox.offsetHeight + i);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.keyDown('delete');
+    }
+
+    renderTreeAfterEditing = internals.elementRenderTreeAsText(document.documentElement);
+    shouldBe("renderTreeAfterEditing", "renderTreeBeforeEditing");
+
+    finishJSTest();                          
+}, 0);
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -745,6 +745,7 @@ output {
     margin: 0;
     -webkit-text-security: none;
     -webkit-transition: opacity 05.5s ease;
+    -webkit-user-modify: read-only !important;
 }
 
 ::-webkit-validation-bubble-message {
@@ -762,6 +763,7 @@ output {
     -webkit-box-shadow: 4px 4px 4px rgba(100,100,100,0.6),
         inset -2px -2px 1px #d0c4c4,
         inset 2px 2px 1px white;
+    -webkit-user-modify: read-only !important;
     line-height: normal;
     white-space: normal;
     z-index: 2147483644;
@@ -769,10 +771,12 @@ output {
 
 ::-webkit-validation-bubble-text-block {
     -webkit-box-flex: 1;
+    -webkit-user-modify: read-only !important;
 }
 
 ::-webkit-validation-bubble-heading {
     font-weight: bold;
+    -webkit-user-modify: read-only !important;
 }
 
 ::-webkit-validation-bubble-arrow {
@@ -788,6 +792,7 @@ output {
     box-shadow: inset 2px 2px 1px white;
     -webkit-transform-origin: 0 0;
     -webkit-transform: rotate(45deg);
+    -webkit-user-modify: read-only !important;
     z-index: 2147483645;
 }
 
@@ -795,6 +800,7 @@ output {
     display: block;
     overflow: hidden;
     height: 16px;
+    -webkit-user-modify: read-only !important;
 }
 
 #if defined(ENABLE_METER_ELEMENT) && ENABLE_METER_ELEMENT
