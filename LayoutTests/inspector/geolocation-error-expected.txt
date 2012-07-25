@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 26: Error: 2
+CONSOLE MESSAGE: line 22: lat: 51.478, long: -0.166
+

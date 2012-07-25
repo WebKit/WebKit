@@ -1,0 +1,55 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+var mockLatitude = 51.478;
+var mockLongitude = -0.166;
+var mockAccuracy = 100;
+
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPosition(mockLatitude,
+                                          mockLongitude,
+                                          mockAccuracy);
+} else
+    debug('This test can not be run without the LayoutTestController');
+
+function getGeolocation()
+{
+    function printLocation(pos)
+    {
+        console.log('lat: ' + pos.coords.latitude + ', long: ' + pos.coords.longitude);
+    }
+    function printError(err)
+    {
+        console.log('Error: ' + err.code);
+    }
+    navigator.geolocation.getCurrentPosition(printLocation, printError, [])
+}
+
+function test()
+{
+    function callbackComplete()
+    {
+        InspectorTest.completeTest();
+    }
+    function callback()
+    {
+        PageAgent.clearGeolocationOverride();
+        InspectorTest.evaluateInPage("getGeolocation()", callbackComplete);
+    }
+    PageAgent.setGeolocationOverride(43.476093, -80.540299, 150);
+    InspectorTest.evaluateInPage("getGeolocation()", callback);
+}
+
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+</p>
+
+</body>
+</html>

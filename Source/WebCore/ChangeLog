@@ -1,3 +1,63 @@
+2012-07-25  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: Geolocation override
+        https://bugs.webkit.org/show_bug.cgi?id=89365
+
+        Reviewed by Pavel Feldman.
+
+        Re-added the m_page member variable for GeolocationController since
+        it's now being used by InspectorInstrumentaiton.
+
+        Added a way to override the GeolocationPosition and GeolocationError
+        using Web Inspector. Curretnly only PositionError can be set.
+
+        This will be hidden behind the experiments flag for now.
+
+        Tests: inspector/geolocation-error.html
+               inspector/geolocation-success.html
+               inspector/geolocation-watchPosition.html
+
+        * English.lproj/localizedStrings.js:
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::GeolocationController):
+        (WebCore::GeolocationController::positionChanged):
+        * Modules/geolocation/GeolocationController.h:
+        (GeolocationController):
+        * inspector/Inspector.json:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::overrideGeolocationPositionImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore):
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::overrideGeolocationPosition):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::setGeolocationOverride):
+        (WebCore):
+        (WebCore::InspectorPageAgent::clearGeolocationOverride):
+        (WebCore::InspectorPageAgent::canOverrideGeolocation):
+        (WebCore::InspectorPageAgent::overrideGeolocationPosition):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.UserAgentSettingsTab):
+        (WebInspector.UserAgentSettingsTab.prototype._createDeviceMetricsElement):
+        (WebInspector.UserAgentSettingsTab.prototype._onGeolocationOverrideCheckboxClicked):
+        (WebInspector.UserAgentSettingsTab.prototype._applyGeolocationUserInput):
+        (WebInspector.UserAgentSettingsTab.prototype._setGeolocationPosition.set if):
+        (WebInspector.UserAgentSettingsTab.prototype._setGeolocationPosition):
+        (WebInspector.UserAgentSettingsTab.prototype._createGeolocationOverrideElement.createInput):
+        (WebInspector.UserAgentSettingsTab.prototype._createGeolocationOverrideElement):
+        * inspector/front-end/UserAgentSupport.js:
+        (WebInspector.UserAgentSupport.GeolocationPosition):
+        (WebInspector.UserAgentSupport.GeolocationPosition.prototype.toSetting):
+        (WebInspector.UserAgentSupport.GeolocationPosition.parseSetting):
+        (WebInspector.UserAgentSupport.GeolocationPosition.parseUserInput):
+        (WebInspector.UserAgentSupport.GeolocationPosition.clearGeolocationOverride):
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone):
+
 2012-07-25  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Build fix for clang builds after r123628

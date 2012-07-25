@@ -434,7 +434,8 @@ WebInspector.doLoadedDone = function()
     ProfilerAgent.isSampling(WebInspector._initializeCapability.bind(WebInspector, "samplingCPUProfiler", null));
     ProfilerAgent.hasHeapProfiler(WebInspector._initializeCapability.bind(WebInspector, "heapProfilerPresent", null));
     TimelineAgent.supportsFrameInstrumentation(WebInspector._initializeCapability.bind(WebInspector, "timelineSupportsFrameInstrumentation", null));
-    PageAgent.canOverrideDeviceMetrics(WebInspector._initializeCapability.bind(WebInspector, "canOverrideDeviceMetrics", WebInspector._doLoadedDoneWithCapabilities.bind(WebInspector)));
+    PageAgent.canOverrideDeviceMetrics(WebInspector._initializeCapability.bind(WebInspector, "canOverrideDeviceMetrics", null));
+    PageAgent.canOverrideGeolocation(WebInspector._initializeCapability.bind(WebInspector, "canOverrideGeolocation", WebInspector._doLoadedDoneWithCapabilities.bind(WebInspector)));
 }
 
 WebInspector._doLoadedDoneWithCapabilities = function()

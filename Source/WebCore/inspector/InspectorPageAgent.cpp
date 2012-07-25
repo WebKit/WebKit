@@ -50,6 +50,8 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GeolocationController.h"
+#include "GeolocationError.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "IdentifiersFactory.h"
@@ -319,6 +321,7 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
     , m_lastScriptIdentifier(0)
     , m_lastPaintContext(0)
     , m_didLoadEventFire(false)
+    , m_geolocationOverridden(false)
 {
 }
 
@@ -966,6 +969,67 @@ void InspectorPageAgent::updateViewMetrics(int width, int height, double fontSca
     Document* document = mainFrame()->document();
     document->styleResolverChanged(RecalcStyleImmediately);
     InspectorInstrumentation::mediaQueryResultChanged(document);
+}
+
+void InspectorPageAgent::setGeolocationOverride(ErrorString* error, const double* latitude, const double* longitude, const double* accuracy)
+{
+#if ENABLE (GEOLOCATION)
+    GeolocationController* controller = GeolocationController::from(m_page);
+    GeolocationPosition* position = 0;
+    if (!controller) {
+        *error = "Internal error: unable to override geolocation.";
+        return;
+    }
+    position = controller->lastPosition();
+    if (!m_geolocationOverridden && position)
+        m_platformGeolocationPosition = position;
+
+    m_geolocationOverridden = true;
+    if (latitude && longitude && accuracy)
+        m_geolocationPosition = GeolocationPosition::create(currentTimeMS(), *latitude, *longitude, *accuracy);
+    else
+        m_geolocationPosition.clear();
+
+    controller->positionChanged(0); // Kick location update.
+#else
+    *error = "Geolocation is not available.";
+#endif
+}
+
+void InspectorPageAgent::clearGeolocationOverride(ErrorString* error)
+{
+    if (!m_geolocationOverridden)
+        return;
+#if ENABLE(GEOLOCATION)
+    ASSERT_UNUSED(error, true);
+    m_geolocationOverridden = false;
+    m_geolocationPosition.clear();
+
+    GeolocationController* controller = GeolocationController::from(m_page);
+    if (controller && m_platformGeolocationPosition.get())
+        controller->positionChanged(m_platformGeolocationPosition.get());
+#else
+    *error = "Geolocation is not available.";
+#endif
+}
+
+void InspectorPageAgent::canOverrideGeolocation(ErrorString*, bool* out_param)
+{
+#if ENABLE(GEOLOCATION)
+    *out_param = true;
+#else
+    *out_param = false;
+#endif
+}
+
+GeolocationPosition* InspectorPageAgent::overrideGeolocationPosition(GeolocationPosition* position)
+{
+    if (m_geolocationOverridden) {
+        if (position)
+            m_platformGeolocationPosition = position;
+        return m_geolocationPosition.get();
+    }
+    return position;
 }
 
 } // namespace WebCore

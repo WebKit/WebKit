@@ -722,3 +722,6 @@ localizedStrings["Replace"] = "Replace";
 localizedStrings["Replace All"] = "Replace All";
 localizedStrings["Previous"] = "Previous";
 localizedStrings["Paused in debugger"] = "Paused in debugger";
+localizedStrings["Emulate position unavailable"] = "Emulate position unavailable";
+localizedStrings["Override Geolocation"] = "Override Geolocation";
+localizedStrings["Geolocation Position"] = "Geolocation Position";

@@ -1,3 +1,19 @@
+2012-07-25  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: Geolocation override
+        https://bugs.webkit.org/show_bug.cgi?id=89365
+
+        Reviewed by Pavel Feldman.
+
+        Added new tests.
+
+        * inspector/geolocation-error-expected.txt: Added.
+        * inspector/geolocation-error.html: Added.
+        * inspector/geolocation-success-expected.txt: Added.
+        * inspector/geolocation-success.html: Added.
+        * inspector/geolocation-watchPosition-expected.txt: Added.
+        * inspector/geolocation-watchPosition.html: Added.
+
 2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] css2.1/t* tests needs rebaseline after new testfonts

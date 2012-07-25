@@ -350,6 +350,29 @@
                 "parameters": [
                     { "name": "value", "type": "boolean", "description": "Whether script execution should be disabled in the page." }
                 ]
+            },
+            {
+                "name": "setGeolocationOverride",
+                "description": "Overrides the Geolocation Position or Error.",
+                "parameters": [
+                    { "name": "latitude", "type": "number", "optional": true, "description": "Mock longitude"},
+                    { "name": "longitude", "type": "number", "optional": true, "description": "Mock latitude"},
+                    { "name": "accuracy", "type": "number", "optional": true, "description": "Mock accuracy"}
+                ],
+                "hidden": true
+            },
+            {
+                "name": "clearGeolocationOverride",
+                "description": "Clears the overriden Geolocation Position and Error.",
+                "hidden": true
+            },
+            {
+                "name": "canOverrideGeolocation",
+                "description": "Checks if Geolocation can be overridden.",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "True if browser can ovrride Geolocation." }
+                ],
+                "hidden": true
             }
         ],
         "events": [

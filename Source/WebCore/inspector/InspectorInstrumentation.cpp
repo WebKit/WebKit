@@ -1174,6 +1174,15 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocument
 }
 #endif
 
+#if ENABLE(GEOLOCATION)
+GeolocationPosition* InspectorInstrumentation::overrideGeolocationPositionImpl(InstrumentingAgents* instrumentingAgents, GeolocationPosition* position)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
+        position = pageAgent->overrideGeolocationPosition(position);
+    return position;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // !ENABLE(INSPECTOR)

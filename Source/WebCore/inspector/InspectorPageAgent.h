@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "Frame.h"
+#include "GeolocationPosition.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include "PlatformString.h"
@@ -109,6 +110,13 @@ public:
     virtual void setShowPaintRects(ErrorString*, bool show);
     virtual void getScriptExecutionStatus(ErrorString*, PageCommandHandler::Result::Enum*);
     virtual void setScriptExecutionDisabled(ErrorString*, bool);
+    virtual void setGeolocationOverride(ErrorString*, const double*, const double*, const double*);
+    virtual void clearGeolocationOverride(ErrorString*);
+    virtual void canOverrideGeolocation(ErrorString*, bool* out_param);
+
+
+    // Geolocation override helpers.
+    GeolocationPosition* overrideGeolocationPosition(GeolocationPosition*);
 
     // InspectorInstrumentation API
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
@@ -158,6 +166,9 @@ private:
     GraphicsContext* m_lastPaintContext;
     LayoutRect m_lastPaintRect;
     bool m_didLoadEventFire;
+    bool m_geolocationOverridden;
+    RefPtr<GeolocationPosition> m_geolocationPosition;
+    RefPtr<GeolocationPosition> m_platformGeolocationPosition;
 };
 
 

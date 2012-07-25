@@ -56,6 +56,7 @@ var Capabilities = {
     heapProfilerPresent: false,
     canOverrideDeviceMetrics: false,
     timelineSupportsFrameInstrumentation: false,
+    canOverrideGeolocation: false,
 }
 
 /**
@@ -98,6 +99,7 @@ WebInspector.Settings = function()
     this.zoomLevel = this.createSetting("zoomLevel", 0);
     this.savedURLs = this.createSetting("savedURLs", {});
     this.javaScriptDisabled = this.createSetting("javaScriptDisabled", false);
+    this.geolocationOverride = this.createSetting("geolocationOverride", "");
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.
@@ -187,6 +189,7 @@ WebInspector.ExperimentsSettings = function()
     this.liveNativeMemoryChart = this._createExperiment("liveNativeMemoryChart", "Live native memory chart");
     this.fileSystemInspection = this._createExperiment("fileSystemInspection", "FileSystem inspection");
     this.mainThreadMonitoring = this._createExperiment("mainThreadMonitoring", "Show CPU activity in Timeline");
+    this.geolocationOverride = this._createExperiment("geolocationOverride", "Override Device Geolocation");
 
     this._cleanUpSetting();
 }
