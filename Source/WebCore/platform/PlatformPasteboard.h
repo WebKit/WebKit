@@ -42,7 +42,7 @@ class KURL;
 
 class PlatformPasteboard {
 public:
-    PlatformPasteboard(const String& pasteboardName);
+    explicit PlatformPasteboard(const String& pasteboardName);
     static String uniqueName();
     
     void getTypes(Vector<String>& types);

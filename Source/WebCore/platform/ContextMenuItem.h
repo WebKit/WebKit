@@ -277,8 +277,8 @@ namespace WebCore {
         const Vector<ContextMenuItem>& subMenuItems() const { return m_subMenuItems; }
 #else
     public:
-        ContextMenuItem(PlatformMenuItemDescription);
-        ContextMenuItem(ContextMenu* subMenu = 0);
+        explicit ContextMenuItem(PlatformMenuItemDescription);
+        explicit ContextMenuItem(ContextMenu* subMenu = 0);
         ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& submenuItems);
 
         PlatformMenuItemDescription releasePlatformDescription();

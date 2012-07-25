@@ -75,7 +75,7 @@ namespace WebCore {
         ~SharedCursor();
         HCURSOR nativeCursor() const { return m_nativeCursor; }
     private:
-        SharedCursor(HCURSOR nativeCursor) : m_nativeCursor(nativeCursor) { }
+        explicit SharedCursor(HCURSOR nativeCursor) : m_nativeCursor(nativeCursor) { }
         HCURSOR m_nativeCursor;
     };
     typedef RefPtr<SharedCursor> PlatformCursor;
@@ -158,18 +158,18 @@ namespace WebCore {
 
 #if !PLATFORM(IOS)
         Cursor(Image*, const IntPoint& hotSpot);
-        Cursor(const Cursor&);
+        explicit Cursor(const Cursor&);
         ~Cursor();
         Cursor& operator=(const Cursor&);
 
 #if USE(LAZY_NATIVE_CURSOR)
-        Cursor(Type);
+        explicit Cursor(Type);
         Type type() const { return m_type; }
         Image* image() const { return m_image.get(); }
         const IntPoint& hotSpot() const { return m_hotSpot; }
         PlatformCursor platformCursor() const;
 #else
-        Cursor(PlatformCursor);
+        explicit Cursor(PlatformCursor);
         PlatformCursor impl() const { return m_platformCursor; }
 #endif
 

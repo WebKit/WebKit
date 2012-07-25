@@ -47,7 +47,7 @@ public:
     virtual bool apply(double time, PlatformGestureCurveTarget*);
 
 private:
-    WheelFlingPlatformGestureCurve(const FloatPoint& velocity);
+    explicit WheelFlingPlatformGestureCurve(const FloatPoint& velocity);
 
     FloatPoint m_velocity;
     IntPoint m_cumulativeScroll;

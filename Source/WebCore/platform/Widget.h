@@ -127,7 +127,7 @@ enum WidgetNotification { WillPaintFlattened, DidPaintFlattened };
 //
 class Widget : public RefCounted<Widget> {
 public:
-    Widget(PlatformWidget = 0);
+    explicit Widget(PlatformWidget = 0);
     virtual ~Widget();
 
     PlatformWidget platformWidget() const;

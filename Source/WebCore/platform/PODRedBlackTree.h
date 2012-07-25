@@ -111,7 +111,7 @@ public:
     // isInitialized will return false in this case. initIfNeeded can be used
     // to init the structure. This constructor is usefull for creating
     // lazy initialized tree.
-    PODRedBlackTree(UninitializedTreeEnum)
+    explicit PODRedBlackTree(UninitializedTreeEnum)
         : m_root(0)
         , m_needsFullOrderingComparisons(false)
 #ifndef NDEBUG

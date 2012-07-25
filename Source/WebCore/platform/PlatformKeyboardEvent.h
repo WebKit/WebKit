@@ -170,16 +170,16 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(WX)
-        PlatformKeyboardEvent(wxKeyEvent&);
+        explicit PlatformKeyboardEvent(wxKeyEvent&);
 #endif
 
 #if PLATFORM(BLACKBERRY)
-        PlatformKeyboardEvent(const BlackBerry::Platform::KeyboardEvent&);
+        explicit PlatformKeyboardEvent(const BlackBerry::Platform::KeyboardEvent&);
 #endif
 
 #if PLATFORM(EFL)
-        PlatformKeyboardEvent(const Evas_Event_Key_Down*);
-        PlatformKeyboardEvent(const Evas_Event_Key_Up*);
+        explicit PlatformKeyboardEvent(const Evas_Event_Key_Down*);
+        explicit PlatformKeyboardEvent(const Evas_Event_Key_Up*);
 #endif
 
     protected:

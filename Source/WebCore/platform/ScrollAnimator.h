@@ -95,7 +95,7 @@ public:
     virtual bool isRubberBandInProgress() const { return false; }
 
 protected:
-    ScrollAnimator(ScrollableArea*);
+    explicit ScrollAnimator(ScrollableArea*);
 
     virtual void notifyPositionChanged();
 
