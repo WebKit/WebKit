@@ -51,14 +51,15 @@ public:
     // when painting is about to occur and when painting is complete.
     class PaintClient {
     public:
-        virtual WebCanvas* createCanvas(const WebSize&) = 0;
-
-        // Called by the WebViewBenchmarkSupport when painting is about to
-        // occur.
-        virtual void willPaint(const WebCanvas&) { }
+        // Called by the WebViewBenchmarkSupport when painting is about to occur.
+        // PaintClient is expected to return an appropriately-sized canvas
+        // for the WebViewBenchmarkSupport to paint on.
+        virtual WebCanvas* willPaint(const WebSize&) { return 0; }
 
         // Called by the WebViewBenchmarkSupport when painting is complete.
-        virtual void didPaint(const WebCanvas&) { }
+        // The canvas will not be used after this call and can be destroyed
+        // if necessary.
+        virtual void didPaint(WebCanvas*) { }
     protected:
         virtual ~PaintClient() { }
     };

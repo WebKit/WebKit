@@ -47,12 +47,11 @@ namespace WebKit {
 void WebViewBenchmarkSupportImpl::paintLayer(PaintClient* paintClient, GraphicsLayer& layer, const IntRect& clip)
 {
     WebSize canvasSize(clip.width(), clip.height());
-    OwnPtr<WebCanvas> canvas = adoptPtr(paintClient->createCanvas(canvasSize));
-    GraphicsContextBuilder builder(canvas.get());
+    WebCanvas* canvas = paintClient->willPaint(canvasSize);
+    GraphicsContextBuilder builder(canvas);
 
-    paintClient->willPaint(*canvas.get());
     layer.paintGraphicsLayerContents(builder.context(), clip);
-    paintClient->didPaint(*canvas.get());
+    paintClient->didPaint(canvas);
 }
 
 void WebViewBenchmarkSupportImpl::acceleratedPaintUnclipped(PaintClient* paintClient, GraphicsLayer& layer)
@@ -84,10 +83,9 @@ void WebViewBenchmarkSupportImpl::softwarePaint(PaintClient* paintClient, PaintM
     }
 
     WebSize canvasSize(paintSize.width, paintSize.height);
-    OwnPtr<WebCanvas> canvas = adoptPtr(paintClient->createCanvas(canvasSize));
-    paintClient->willPaint(*canvas.get());
-    m_webViewImpl->paint(canvas.get(), paintSize);
-    paintClient->didPaint(*canvas.get());
+    WebCanvas* canvas = paintClient->willPaint(canvasSize);
+    m_webViewImpl->paint(canvas, paintSize);
+    paintClient->didPaint(canvas);
 }
 
 void WebViewBenchmarkSupportImpl::paint(PaintClient* paintClient, PaintMode paintMode)

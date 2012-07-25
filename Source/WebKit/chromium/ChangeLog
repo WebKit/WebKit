@@ -1,3 +1,20 @@
+2012-07-25  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] WebViewBenchmarkSupport::paint API does not work with recording canvas
+        https://bugs.webkit.org/show_bug.cgi?id=92008
+
+        Reviewed by Darin Fisher.
+
+        Moved the ownership of canvas to WebViewBenchmarkSupport::PaintClient.
+
+        * public/WebViewBenchmarkSupport.h:
+        (PaintClient):
+        (WebKit::WebViewBenchmarkSupport::PaintClient::willPaint):
+        (WebKit::WebViewBenchmarkSupport::PaintClient::didPaint):
+        * src/WebViewBenchmarkSupportImpl.cpp:
+        (WebKit::WebViewBenchmarkSupportImpl::paintLayer):
+        (WebKit::WebViewBenchmarkSupportImpl::softwarePaint):
+
 2012-07-24  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Turn the debug HUD into a layer so that it can be drawn as a WebCompositorQuad
