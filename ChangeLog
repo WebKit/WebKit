@@ -1,3 +1,12 @@
+2012-07-25  Keishi Hattori  <keishi@webkit.org>
+
+        Implement ColorSuggestionPicker page popup
+        https://bugs.webkit.org/show_bug.cgi?id=92109
+
+        Reviewed by Kent Tamura.
+
+        * ManualTests/forms/color-suggestion-picker.html: Added. Tests colorSuggestionPicker.{js,css}
+
 2012-07-23  Kent Tamura  <tkent@chromium.org>
 
         [GTK] Remove unnecessary trailing space in the previous commit.

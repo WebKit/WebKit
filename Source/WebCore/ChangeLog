@@ -1,3 +1,39 @@
+2012-07-25  Keishi Hattori  <keishi@webkit.org>
+
+        Implement ColorSuggestionPicker page popup
+        https://bugs.webkit.org/show_bug.cgi?id=92109
+
+        Reviewed by Kent Tamura.
+
+        Implements ColorSuggestionPicker page popup. This will be used in
+        certain ports as the datalist UI for <input type=color>.
+
+        No new tests because there is no way to open the popup yet.
+
+        * Resources/colorSuggestionPicker.css: Added.
+        (body):
+        (#main):
+        (.color-swatch):
+        (.color-swatch:hover):
+        (.color-swatch-container):
+        (.other-color):
+        * Resources/colorSuggestionPicker.js: Added.
+        (getScrollbarWidth):When there are more than 20 colors we need to
+        increase the window width to accommodate the scroll bar.
+        (createElement):
+        (handleMessage):
+        (initialize):
+        (handleArgumentsTimeout):
+        (validateArguments):
+        (submitValue): Calls setValueAndClosePopup with a numValue of 0.
+        (handleCancel): Calls setValueAndClosePopup with a numValue of -1.
+        (chooseOtherColor): Calls setValueAndClosePopup with a numValue of -2.
+        (ColorPicker):
+        (ColorPicker.prototype._layout): Lays out the color swatches in a 5x4
+        grid.
+        (ColorPicker.prototype._handleSwatchClick):
+        * WebCore.gyp/WebCore.gyp:
+
 2012-07-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Fix arithmetic composite filter for auto-vectorization

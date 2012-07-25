@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<title>Color Suggestion Picker test</title>
+<style>
+body {
+    background-color: #eeffff;
+}
+iframe {
+    z-index: 2147483647;
+    width: 180px;
+    height: 240px;
+    border: 0;
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+
+<p>This is a testbed for a color suggestion picker.</p>
+
+<div><input type="color" id="color"></div>
+<iframe></iframe>
+
+<ol id="console" style="font-family:monospace;">
+</ol>
+
+<script>
+var arguments = {
+    values : ['#000000', '#404040', '#808080', '#c0c0c0', '#ffffff', '#980000', '#ff0000', '#ff9900', '#ffff00', '#00ff00', '#00ffff', '#4a86e8', '#0000ff', '#9900ff', '#ff00ff', '#404040', '#808080', '#c0c0c0', '#ffffff', '#980000', '#ff0000', '#ff9900', '#ffff00', '#00ff00', '#00ffff', '#4a86e8', '#0000ff', '#9900ff', '#ff00ff'],
+    otherColorLabel: 'Other...'
+};
+
+function openColorPicker(args) {
+    var frame = document.getElementsByTagName('iframe')[0];
+    var doc = frame.contentDocument;
+    doc.documentElement.innerHTML = '<head></head><body><div id=main>Loading...</div></body>';
+    var link = doc.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '../../Source/WebCore/Resources/colorSuggestionPicker.css?' + (new Date()).getTime();
+    doc.head.appendChild(link);
+    var script = doc.createElement('script');
+    script.src = '../../Source/WebCore/Resources/colorSuggestionPicker.js?' + (new Date()).getTime();
+    doc.body.appendChild(script);
+
+    var pagePopupController = {
+        setValueAndClosePopup: function(numValue, stringValue) {
+            window.log('number=' + numValue + ', string="' + stringValue + '"');
+            if (numValue === 0)
+                window.document.getElementById('color').value = stringValue;
+        }
+    }
+
+    setTimeout(function() {
+        frame.contentWindow.postMessage(JSON.stringify(args), "*");
+        frame.contentWindow.pagePopupController = pagePopupController;
+    }, 100);
+}
+
+function log(str) {
+    var entry = document.createElement('li');
+    entry.innerText = str;
+    document.getElementById('console').appendChild(entry);
+}
+
+openColorPicker(arguments);
+</script>
+</body>
+</html>
