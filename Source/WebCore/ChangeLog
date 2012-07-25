@@ -1,3 +1,19 @@
+2012-07-25  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: extract function from SpeechRecognitionResult::emma()
+        https://bugs.webkit.org/show_bug.cgi?id=92232
+
+        Reviewed by Adam Barth.
+
+        Extract code for creating emma-qualified names to a helper function.
+
+        Just a refactoring; covered by the existing test.
+
+        * Modules/speech/SpeechRecognitionResult.cpp:
+        (WebCore::emmaQualifiedName):
+        (WebCore):
+        (WebCore::SpeechRecognitionResult::emma):
+
 2012-07-25  Adrienne Walker  <enne@google.com>
 
         [chromium] Unify compositor quadTransform/drawTransform/originTransform

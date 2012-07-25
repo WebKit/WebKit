@@ -52,6 +52,12 @@ SpeechRecognitionAlternative* SpeechRecognitionResult::item(unsigned long index)
     return m_alternatives[index].get();
 }
 
+static QualifiedName emmaQualifiedName(const char* localName)
+{
+    const char emmaNamespaceUrl[] = "http://www.w3.org/2003/04/emma";
+    return QualifiedName("emma", localName, emmaNamespaceUrl);
+}
+
 Document* SpeechRecognitionResult::emma()
 {
     if (m_emma)
@@ -59,27 +65,26 @@ Document* SpeechRecognitionResult::emma()
 
     RefPtr<Document> document = Document::create(0, KURL());
 
-    const char emmaNamespaceUrl[] = "http://www.w3.org/2003/04/emma";
-    RefPtr<Element> emmaElement = document->createElement(QualifiedName("emma", "emma", emmaNamespaceUrl), false);
+    RefPtr<Element> emmaElement = document->createElement(emmaQualifiedName("emma"), false);
     ExceptionCode ec = 0;
     emmaElement->setAttribute("version", "1.0", ec);
     ASSERT(!ec);
     if (ec)
         return 0;
 
-    RefPtr<Element> oneOf = document->createElement(QualifiedName("emma", "one-of", emmaNamespaceUrl), false);
-    oneOf->setAttribute(QualifiedName("emma", "medium", emmaNamespaceUrl), "acoustic");
-    oneOf->setAttribute(QualifiedName("emma", "mode", emmaNamespaceUrl), "voice");
+    RefPtr<Element> oneOf = document->createElement(emmaQualifiedName("one-of"), false);
+    oneOf->setAttribute(emmaQualifiedName("medium"), "acoustic");
+    oneOf->setAttribute(emmaQualifiedName("mode"), "voice");
     oneOf->setIdAttribute("one-of");
 
     for (size_t i = 0; i < m_alternatives.size(); ++i) {
         const RefPtr<SpeechRecognitionAlternative>& alternative = m_alternatives[i];
 
-        RefPtr<Element> interpretation = document->createElement(QualifiedName("emma", "interpretation", emmaNamespaceUrl), false);
+        RefPtr<Element> interpretation = document->createElement(emmaQualifiedName("interpretation"), false);
         interpretation->setIdAttribute(String::number(i + 1));
-        interpretation->setAttribute(QualifiedName("emma", "confidence", emmaNamespaceUrl), String::number(alternative->confidence()));
+        interpretation->setAttribute(emmaQualifiedName("confidence"), String::number(alternative->confidence()));
 
-        RefPtr<Element> literal = document->createElement(QualifiedName("emma", "literal", emmaNamespaceUrl), false);
+        RefPtr<Element> literal = document->createElement(emmaQualifiedName("literal"), false);
         literal->appendChild(document->createTextNode(alternative->transcript()));
         interpretation->appendChild(literal.release());
         oneOf->appendChild(interpretation.release());
