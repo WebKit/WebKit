@@ -28,6 +28,8 @@
 
 /**
  * @param {InjectedScriptHost} InjectedScriptHost
+ * @param {Window} inspectedWindow
+ * @param {number} injectedScriptId
  */
 (function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
@@ -43,6 +45,10 @@ var InjectedScript = function()
     this._modules = {};
 }
 
+/**
+ * @type {Object.<string, boolean>}
+ * @const
+ */
 InjectedScript.primitiveTypes = {
     undefined: true,
     boolean: true,
@@ -51,12 +57,22 @@ InjectedScript.primitiveTypes = {
 }
 
 InjectedScript.prototype = {
+    /**
+     * @param {*} object
+     * @return {boolean}
+     */
     isPrimitiveValue: function(object)
     {
         // FIXME(33716): typeof document.all is always 'undefined'.
         return InjectedScript.primitiveTypes[typeof object] && !this._isHTMLAllCollection(object);
     },
 
+    /**
+     * @param {*} object
+     * @param {string} groupName
+     * @param {boolean} canAccessInspectedWindow
+     * @return {Object}
+     */
     wrapObject: function(object, groupName, canAccessInspectedWindow)
     {
         if (canAccessInspectedWindow)
@@ -71,11 +87,18 @@ InjectedScript.prototype = {
         return result;
     },
 
+    /**
+     * @param {*} object
+     */
     inspectNode: function(object)
     {
         this._inspect(object);
     },
 
+    /**
+     * @param {*} object
+     * @return {*}
+     */
     _inspect: function(object)
     {
         if (arguments.length === 0)
@@ -100,7 +123,13 @@ InjectedScript.prototype = {
         return object;
     },
 
-    // This method cannot throw.
+    /**
+     * This method cannot throw.
+     * @param {*} object
+     * @param {string=} objectGroupName
+     * @param {boolean=} forceValueType
+     * @return {InjectedScript.RemoteObject}
+     */
     _wrapObject: function(object, objectGroupName, forceValueType)
     {
         try {
@@ -115,6 +144,11 @@ InjectedScript.prototype = {
         }
     },
 
+    /**
+     * @param {*} object
+     * @param {string=} objectGroupName
+     * @return {string}
+     */
     _bind: function(object, objectGroupName)
     {
         var id = this._lastBoundObjectId++;
@@ -132,11 +166,18 @@ InjectedScript.prototype = {
         return objectId;
     },
 
+    /**
+     * @param {string} objectId
+     * @return {*}
+     */
     _parseObjectId: function(objectId)
     {
         return eval("(" + objectId + ")");
     },
 
+    /**
+     * @param {string} objectGroupName
+     */
     releaseObjectGroup: function(objectGroupName)
     {
         var group = this._objectGroups[objectGroupName];
@@ -147,6 +188,11 @@ InjectedScript.prototype = {
         delete this._objectGroups[objectGroupName];
     },
 
+    /**
+     * @param {string} methodName
+     * @param {string} args
+     * @return {*}
+     */
     dispatch: function(methodName, args)
     {
         var argsArray = eval("(" + args + ")");
@@ -158,6 +204,11 @@ InjectedScript.prototype = {
         return result;
     },
 
+    /**
+     * @param {string} objectId
+     * @param {boolean} ownProperties
+     * @return {Array.<Object>|boolean}
+     */
     getProperties: function(objectId, ownProperties)
     {
         var parsedObjectId = this._parseObjectId(objectId);
@@ -192,6 +243,10 @@ InjectedScript.prototype = {
         return descriptors;
     },
 
+    /**
+     * @param {string} functionId
+     * @return {Object|string}
+     */
     getFunctionDetails: function(functionId)
     {
         var parsedFunctionId = this._parseObjectId(functionId);
@@ -211,25 +266,36 @@ InjectedScript.prototype = {
         return details;
     },
 
+    /**
+     * @param {string} objectId
+     */
     releaseObject: function(objectId)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         this._releaseObject(parsedObjectId.id);
     },
 
+    /**
+     * @param {string} id
+     */
     _releaseObject: function(id)
     {
         delete this._idToWrappedObject[id];
         delete this._idToObjectGroupName[id];
     },
 
+    /**
+     * @param {Object} object
+     * @param {boolean} ownProperties
+     * @return {Array.<Object>}
+     */
     _propertyDescriptors: function(object, ownProperties)
     {
         var descriptors = [];
         var nameProcessed = {};
         nameProcessed["__proto__"] = null;
         for (var o = object; this._isDefined(o); o = o.__proto__) {
-            var names = Object.getOwnPropertyNames(o);
+            var names = Object.getOwnPropertyNames(/** @type {!Object} */ (o));
             for (var i = 0; i < names.length; ++i) {
                 var name = names[i];
                 if (nameProcessed[name])
@@ -237,7 +303,7 @@ InjectedScript.prototype = {
 
                 try {
                     nameProcessed[name] = true;
-                    var descriptor = Object.getOwnPropertyDescriptor(object, name);
+                    var descriptor = Object.getOwnPropertyDescriptor(/** @type {!Object} */ (object), name);
                     if (!descriptor) {
                         // Not all bindings provide proper descriptors. Fall back to the writable, configurable property.
                         try {
@@ -265,11 +331,24 @@ InjectedScript.prototype = {
         return descriptors;
     },
 
+    /**
+     * @param {string} expression
+     * @param {string} objectGroup
+     * @param {boolean} injectCommandLineAPI
+     * @param {boolean} returnByValue
+     * @return {*}
+     */
     evaluate: function(expression, objectGroup, injectCommandLineAPI, returnByValue)
     {
         return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup, false, injectCommandLineAPI, returnByValue);
     },
 
+    /**
+     * @param {string} objectId
+     * @param {string} expression
+     * @param {boolean} returnByValue
+     * @return {Object|string}
+     */
     callFunctionOn: function(objectId, expression, args, returnByValue)
     {
         var parsedObjectId = this._parseObjectId(objectId);
@@ -312,6 +391,15 @@ InjectedScript.prototype = {
         }
     },
 
+    /**
+     * @param {Function} evalFunction
+     * @param {Object} object
+     * @param {string} objectGroup
+     * @param {boolean} isEvalOnCallFrame
+     * @param {boolean} injectCommandLineAPI
+     * @param {boolean} returnByValue
+     * @return {*}
+     */
     _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, returnByValue)
     {
         try {
@@ -322,6 +410,11 @@ InjectedScript.prototype = {
         }
     },
 
+    /**
+     * @param {*} value
+     * @param {string} objectGroup
+     * @return {Object}
+     */
     _createThrownValue: function(value, objectGroup)
     {
         var remoteObject = this._wrapObject(value, objectGroup);
@@ -332,6 +425,14 @@ InjectedScript.prototype = {
                  result: remoteObject };
     },
 
+    /**
+     * @param {Function} evalFunction
+     * @param {Object} object
+     * @param {string} expression
+     * @param {boolean} isEvalOnCallFrame
+     * @param {boolean} injectCommandLineAPI
+     * @return {*}
+     */
     _evaluateOn: function(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI)
     {
         // Only install command line api object for the time of evaluation.
@@ -350,6 +451,10 @@ InjectedScript.prototype = {
         }
     },
 
+    /**
+     * @param {Object} callFrame
+     * @return {Array.<InjectedScript.CallFrameProxy>|boolean}
+     */
     wrapCallFrames: function(callFrame)
     {
         if (!callFrame)
@@ -364,6 +469,15 @@ InjectedScript.prototype = {
         return result;
     },
 
+    /**
+     * @param {Object} topCallFrame
+     * @param {string} callFrameId
+     * @param {string} expression
+     * @param {string} objectGroup
+     * @param {boolean} injectCommandLineAPI
+     * @param {boolean} returnByValue
+     * @return {*}
+     */
     evaluateOnCallFrame: function(topCallFrame, callFrameId, expression, objectGroup, injectCommandLineAPI, returnByValue)
     {
         var callFrame = this._callFrameForId(topCallFrame, callFrameId);
@@ -372,6 +486,11 @@ InjectedScript.prototype = {
         return this._evaluateAndWrap(callFrame.evaluate, callFrame, expression, objectGroup, true, injectCommandLineAPI, returnByValue);
     },
 
+    /**
+     * @param {Object} topCallFrame
+     * @param {string} callFrameId
+     * @return {*}
+     */
     restartFrame: function(topCallFrame, callFrameId)
     {
         var callFrame = this._callFrameForId(topCallFrame, callFrameId);
@@ -383,6 +502,11 @@ InjectedScript.prototype = {
         return result;
     },
 
+    /**
+     * @param {Object} topCallFrame
+     * @param {string} callFrameId
+     * @return {Object}
+     */
     _callFrameForId: function(topCallFrame, callFrameId)
     {
         var parsedCallFrameId = eval("(" + callFrameId + ")");
@@ -393,17 +517,29 @@ InjectedScript.prototype = {
         return callFrame;
     },
 
+    /**
+     * @param {Object} objectId
+     * @return {Object}
+     */
     _objectForId: function(objectId)
     {
         return this._idToWrappedObject[objectId.id];
     },
 
+    /**
+     * @param {string} objectId
+     * @return {Object}
+     */
     findObjectById: function(objectId)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         return this._objectForId(parsedObjectId);
     },
 
+    /**
+     * @param {string} objectId
+     * @return {Node}
+     */
     nodeForObjectId: function(objectId)
     {
         var object = this.findObjectById(objectId);
@@ -425,17 +561,29 @@ InjectedScript.prototype = {
         return module;
     },
 
+    /**
+     * @param {*} object
+     * @return {boolean}
+     */
     _isDefined: function(object)
     {
         return object || this._isHTMLAllCollection(object);
     },
 
+    /**
+     * @param {*} object
+     * @return {boolean}
+     */
     _isHTMLAllCollection: function(object)
     {
         // document.all is reported as undefined, but we still want to process it.
         return (typeof object === "undefined") && InjectedScriptHost.isHTMLAllCollection(object);
     },
 
+    /**
+     * @param {Object=} obj
+     * @return {string?}
+     */
     _subtype: function(obj)
     {
         if (obj === null)
@@ -465,6 +613,10 @@ InjectedScript.prototype = {
         return null;
     },
 
+    /**
+     * @param {*} obj
+     * @return {string?}
+     */
     _describe: function(obj)
     {
         if (this.isPrimitiveValue(obj))
@@ -500,6 +652,10 @@ InjectedScript.prototype = {
         return className;
     },
 
+    /**
+     * @param {*} obj
+     * @return {string}
+     */
     _toString: function(obj)
     {
         // We don't use String(obj) because inspectedWindow.String is undefined if owning frame navigated to another page.
@@ -507,6 +663,10 @@ InjectedScript.prototype = {
     }
 }
 
+/**
+ * @type {InjectedScript}
+ * @const
+ */
 var injectedScript = new InjectedScript();
 
 /**
@@ -544,6 +704,7 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType)
 /**
  * @constructor
  * @param {number} ordinal
+ * @param {Object} callFrame
  */
 InjectedScript.CallFrameProxy = function(ordinal, callFrame)
 {
@@ -555,6 +716,10 @@ InjectedScript.CallFrameProxy = function(ordinal, callFrame)
 }
 
 InjectedScript.CallFrameProxy.prototype = {
+    /**
+     * @param {Object} callFrame
+     * @return {Array.<Object>}
+     */
     _wrapScopeChain: function(callFrame)
     {
         var scopeChain = callFrame.scopeChain;
@@ -567,6 +732,12 @@ InjectedScript.CallFrameProxy.prototype = {
     }
 }
 
+/**
+ * @param {number} scopeTypeCode
+ * @param {*} scopeObject
+ * @param {string} groupId
+ * @return {Object}
+ */
 InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeObject, groupId) {
     const GLOBAL_SCOPE = 0;
     const LOCAL_SCOPE = 1;
@@ -589,9 +760,15 @@ InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeOb
 
 /**
  * @constructor
+ * @param {CommandLineAPIImpl} commandLineAPIImpl
+ * @param {Object} callFrame
  */
 function CommandLineAPI(commandLineAPIImpl, callFrame)
 {
+    /**
+     * @param {string} member
+     * @return {boolean}
+     */
     function inScopeVariables(member)
     {
         if (!callFrame)
@@ -622,6 +799,10 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
     }
 }
 
+/**
+ * @type {Array.<string>}
+ * @const
+ */
 CommandLineAPI.members_ = [
     "$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd",
     "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners"
@@ -698,6 +879,10 @@ CommandLineAPIImpl.prototype = {
         return console.profileEnd.apply(console, arguments)
     },
 
+    /**
+     * @param {Object} object
+     * @param {Array.<string>|string=} types
+     */
     monitorEvents: function(object, types)
     {
         if (!object || !object.addEventListener || !object.removeEventListener)
@@ -709,6 +894,10 @@ CommandLineAPIImpl.prototype = {
         }
     },
 
+    /**
+     * @param {Object} object
+     * @param {Array.<string>|string=} types
+     */
     unmonitorEvents: function(object, types)
     {
         if (!object || !object.addEventListener || !object.removeEventListener)
@@ -718,6 +907,10 @@ CommandLineAPIImpl.prototype = {
             object.removeEventListener(types[i], this._logEvent, false);
     },
 
+    /**
+     * @param {*} object
+     * @return {*}
+     */
     inspect: function(object)
     {
         return injectedScript._inspect(object);
@@ -735,16 +928,26 @@ CommandLineAPIImpl.prototype = {
         InjectedScriptHost.clearConsoleMessages();
     },
 
+    /**
+     * @param {Node} node
+     */
     getEventListeners: function(node)
     {
         return InjectedScriptHost.getEventListeners(node);
     },
 
+    /**
+     * @param {number} num
+     */
     _inspectedObject: function(num)
     {
         return InjectedScriptHost.inspectedObject(num);
     },
 
+    /**
+     * @param {Array.<string>|string=} types
+     * @return {Array.<string>}
+     */
     _normalizeEventTypes: function(types)
     {
         if (typeof types === "undefined")
@@ -768,6 +971,9 @@ CommandLineAPIImpl.prototype = {
         return result;
     },
 
+    /**
+     * @param {Event} event
+     */
     _logEvent: function(event)
     {
         console.log(event.type, event);
