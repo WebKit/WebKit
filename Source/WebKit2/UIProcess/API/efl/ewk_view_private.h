@@ -26,6 +26,7 @@
 #include <WebKit2/WKBase.h>
 
 namespace WebCore {
+class Cursor;
 class IntRect;
 class IntSize;
 }
@@ -42,6 +43,7 @@ typedef struct _Ewk_Intent Ewk_Intent;
 typedef struct _Ewk_Intent_Service Ewk_Intent_Service;
 #endif
 
+void ewk_view_cursor_set(Evas_Object* ewkView, const WebCore::Cursor& cursor);
 void ewk_view_display(Evas_Object* ewkView, const WebCore::IntRect& rect);
 void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const WebCore::IntSize& size);
 void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Web_Error* error);

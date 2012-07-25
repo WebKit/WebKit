@@ -1,5 +1,26 @@
 2012-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        [EFL][WK2] Add ewk_view_cursor_set to change cursor.
+        https://bugs.webkit.org/show_bug.cgi?id=89140
+
+        Reviewed by Hajime Morita.
+
+        Implement ewk_view_cursor_set to support cursor changes.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setCursor): Called ewk_view_cursor_set.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (_ewk_view_priv_new): Check whether ecore_x can be used.
+        (_ewk_view_smart_add):
+        Change order of initialization to use base structure in _ewk_view_priv_new.
+        (ewk_view_cursor_set): Added to set cursor.
+        * UIProcess/API/efl/ewk_view_private.h:
+
+2012-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
         [EFL][WK2] Update uri when the active URI is changed while loading.
         https://bugs.webkit.org/show_bug.cgi?id=92001
 

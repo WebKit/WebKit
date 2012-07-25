@@ -37,12 +37,18 @@
 #include "ewk_view_private.h"
 #include "ewk_view_resource_load_client_private.h"
 #include "ewk_web_resource.h"
+#include <Ecore_Evas.h>
+#include <Edje.h>
+#include <WebCore/Cursor.h>
+#include <WebCore/EflScreenUtilities.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
 using namespace WebCore;
 
 static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
+
+static const int defaultCursorSize = 16;
 
 typedef HashMap<uint64_t, Ewk_Web_Resource*> LoadingResourcesMap;
 
@@ -52,13 +58,24 @@ struct _Ewk_View_Private_Data {
     const char* title;
     const char* theme;
     const char* customEncoding;
+    const char* cursorGroup;
+    Evas_Object* cursorObject;
     LoadingResourcesMap loadingResourcesMap;
+
+#ifdef HAVE_ECORE_X
+    bool isUsingEcoreX;
+#endif
 
     _Ewk_View_Private_Data()
         : uri(0)
         , title(0)
         , theme(0)
         , customEncoding(0)
+        , cursorGroup(0)
+        , cursorObject(0)
+#ifdef HAVE_ECORE_X
+        , isUsingEcoreX(false)
+#endif
     { }
 
     ~_Ewk_View_Private_Data()
@@ -67,6 +84,9 @@ struct _Ewk_View_Private_Data {
         eina_stringshare_del(title);
         eina_stringshare_del(theme);
         eina_stringshare_del(customEncoding);
+
+        if (cursorObject)
+            evas_object_del(cursorObject);
     }
 };
 
@@ -284,6 +304,10 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
         return 0;
     }
 
+#ifdef HAVE_ECORE_X
+    priv->isUsingEcoreX = WebCore::isUsingEcoreX(smartData->base.evas);
+#endif
+
     return priv;
 }
 
@@ -309,17 +333,17 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
     }
 
     smartData->self = ewkView;
-    smartData->priv = _ewk_view_priv_new(smartData);
     smartData->api = api;
 
+    g_parentSmartClass.add(ewkView);
+
+    smartData->priv = _ewk_view_priv_new(smartData);
     if (!smartData->priv) {
         EINA_LOG_CRIT("could not allocate _Ewk_View_Private_Data");
         evas_object_smart_data_set(ewkView, 0);
         free(smartData);
         return;
     }
-
-    g_parentSmartClass.add(ewkView);
 
     // Create evas_object_image to draw web contents.
     smartData->image = evas_object_image_add(smartData->base.evas);
@@ -785,6 +809,57 @@ const char* ewk_view_theme_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
     return priv->theme;
+}
+
+void ewk_view_cursor_set(Evas_Object* ewkView, const Cursor& cursor)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    const char* group = cursor.platformCursor();
+    if (!group || group == priv->cursorGroup)
+        return;
+    priv->cursorGroup = group;
+
+    if (priv->cursorObject)
+        evas_object_del(priv->cursorObject);
+    priv->cursorObject = edje_object_add(smartData->base.evas);
+
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+    if (!priv->theme || !edje_object_file_set(priv->cursorObject, priv->theme, group)) {
+        evas_object_del(priv->cursorObject);
+        priv->cursorObject = 0;
+
+        ecore_evas_object_cursor_set(ecoreEvas, 0, 0, 0, 0);
+#ifdef HAVE_ECORE_X
+        if (priv->isUsingEcoreX)
+            WebCore::applyFallbackCursor(ecoreEvas, group);
+#endif
+        return;
+    }
+
+    Evas_Coord width, height;
+    edje_object_size_min_get(priv->cursorObject, &width, &height);
+    if (width <= 0 || height <= 0)
+        edje_object_size_min_calc(priv->cursorObject, &width, &height);
+    if (width <= 0 || height <= 0) {
+        width = defaultCursorSize;
+        height = defaultCursorSize;
+    }
+    evas_object_resize(priv->cursorObject, width, height);
+
+    const char* data;
+    int hotspotX = 0;
+    data = edje_object_data_get(priv->cursorObject, "hot.x");
+    if (data)
+        hotspotX = atoi(data);
+
+    int hotspotY = 0;
+    data = edje_object_data_get(priv->cursorObject, "hot.y");
+    if (data)
+        hotspotY = atoi(data);
+
+    ecore_evas_object_cursor_set(ecoreEvas, priv->cursorObject, EVAS_LAYER_MAX, hotspotX, hotspotY);
 }
 
 void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)

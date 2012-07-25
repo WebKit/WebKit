@@ -121,9 +121,9 @@ void PageClientImpl::toolTipChanged(const String&, const String&)
     notImplemented();
 }
 
-void PageClientImpl::setCursor(const Cursor&)
+void PageClientImpl::setCursor(const Cursor& cursor)
 {
-    notImplemented();
+    ewk_view_cursor_set(m_viewWidget, cursor);
 }
 
 void PageClientImpl::setCursorHiddenUntilMouseMoves(bool)
