@@ -419,7 +419,6 @@ TEST(LayerRendererChromiumTest2, opaqueBackground)
     EXPECT_TRUE(layerRendererChromium.initialize());
 
     layerRendererChromium.drawFrame(mockClient.renderPasses(), FloatRect());
-    layerRendererChromium.finishDrawingFrame();
 
     // On DEBUG builds, render passes with opaque background clear to blue to
     // easily see regions that were not drawn on the screen.
@@ -443,7 +442,6 @@ TEST(LayerRendererChromiumTest2, transparentBackground)
     EXPECT_TRUE(layerRendererChromium.initialize());
 
     layerRendererChromium.drawFrame(mockClient.renderPasses(), FloatRect());
-    layerRendererChromium.finishDrawingFrame();
 
     EXPECT_EQ(1, context->clearCount());
 }

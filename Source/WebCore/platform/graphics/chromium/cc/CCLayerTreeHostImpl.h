@@ -39,9 +39,7 @@ namespace WebCore {
 class CCActiveGestureAnimation;
 class CCCompletionEvent;
 class CCDebugRectHistory;
-class CCFontAtlas;
 class CCFrameRateCounter;
-class CCHeadsUpDisplay;
 class CCLayerImpl;
 class CCLayerTreeHostImplTimeSourceAdapter;
 class CCPageScaleAnimation;
@@ -119,7 +117,6 @@ public:
     CCGraphicsContext* context() const;
 
     String layerTreeAsText() const;
-    void setFontAtlas(PassOwnPtr<CCFontAtlas>);
 
     void finishAllRendering();
     int sourceAnimationFrameNumber() const;
@@ -267,8 +264,6 @@ private:
     bool m_visible;
     bool m_contentsTexturesWerePurgedSinceLastCommit;
     size_t m_memoryAllocationLimitBytes;
-
-    OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 
     float m_pageScale;
     float m_pageScaleDelta;

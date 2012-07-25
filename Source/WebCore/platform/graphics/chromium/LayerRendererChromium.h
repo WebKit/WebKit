@@ -81,9 +81,6 @@ public:
     virtual bool haveCachedResourcesForRenderPassId(int id) const OVERRIDE;
 
     virtual void drawFrame(const CCRenderPassList&, const FloatRect& rootScissorRect) OVERRIDE;
-    virtual void finishDrawingFrame() OVERRIDE;
-
-    virtual void drawHeadsUpDisplay(const CCScopedTexture*, const IntSize& hudSize) OVERRIDE;
 
     // waits for rendering to finish
     virtual void finish() OVERRIDE;
@@ -126,6 +123,7 @@ private:
 
     void beginDrawingFrame(const CCRenderPass* rootRenderPass);
     void drawRenderPass(const CCRenderPass*, const FloatRect& framebufferDamageRect);
+    void finishDrawingFrame();
 
     void drawQuad(const CCDrawQuad*);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
@@ -213,10 +211,6 @@ private:
     // Special purpose / effects shaders.
     typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> SolidColorProgram;
 
-    // Debugging shaders.
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexSwizzleAlpha> HeadsUpDisplayProgram;
-
-
     const TileProgram* tileProgram();
     const TileProgramOpaque* tileProgramOpaque();
     const TileProgramAA* tileProgramAA();
@@ -239,8 +233,6 @@ private:
 
     const SolidColorProgram* solidColorProgram();
 
-    const HeadsUpDisplayProgram* headsUpDisplayProgram();
-
     OwnPtr<TileProgram> m_tileProgram;
     OwnPtr<TileProgramOpaque> m_tileProgramOpaque;
     OwnPtr<TileProgramAA> m_tileProgramAA;
@@ -262,7 +254,6 @@ private:
     OwnPtr<VideoStreamTextureProgram> m_videoStreamTextureProgram;
 
     OwnPtr<SolidColorProgram> m_solidColorProgram;
-    OwnPtr<HeadsUpDisplayProgram> m_headsUpDisplayProgram;
 
     CCResourceProvider* m_resourceProvider;
     OwnPtr<AcceleratedTextureCopier> m_textureCopier;

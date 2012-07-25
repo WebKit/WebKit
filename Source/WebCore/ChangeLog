@@ -1,3 +1,93 @@
+2012-07-24  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Turn the debug HUD into a layer so that it can be drawn as a WebCompositorQuad
+        https://bugs.webkit.org/show_bug.cgi?id=92182
+
+        Reviewed by Adrienne Walker.
+
+        By changing the HUD into a quad, we are able to create a HUD and pass
+        it to the host compositor, allowing the HUD to be used for renderers
+        under Ubercompositor.
+
+        This also removes the special drawing code for the HUD from
+        LayerRendererChromium, allowing us to move finishDrawingFrame
+        into LayerRendererChromium as a private method and remove it
+        from the CCRenderer interface.
+
+        Finally, we can remove the CCFontAtlas transport code from CCProxy
+        and its implementations as the atlas can be synced to impl thread
+        through the usual layer commit mechanism.
+
+        The debug HUD is not covered by tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/HeadsUpDisplayLayerChromium.cpp: Added.
+        (WebCore):
+        (WebCore::HeadsUpDisplayLayerChromium::create):
+        (WebCore::HeadsUpDisplayLayerChromium::HeadsUpDisplayLayerChromium):
+        (WebCore::HeadsUpDisplayLayerChromium::~HeadsUpDisplayLayerChromium):
+        (WebCore::HeadsUpDisplayLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/HeadsUpDisplayLayerChromium.h: Added.
+        (WebCore):
+        (HeadsUpDisplayLayerChromium):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawFrame):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCDebugRectHistory.cpp:
+        (WebCore::CCDebugRectHistory::savePropertyChangedRects):
+        * platform/graphics/chromium/cc/CCDebugRectHistory.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.cpp: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp.
+        (WebCore):
+        (WebCore::CCHeadsUpDisplayLayerImpl::CCHeadsUpDisplayLayerImpl):
+        (WebCore::CCHeadsUpDisplayLayerImpl::~CCHeadsUpDisplayLayerImpl):
+        (WebCore::CCHeadsUpDisplayLayerImpl::willDraw):
+        (WebCore::CCHeadsUpDisplayLayerImpl::appendQuads):
+        (WebCore::CCHeadsUpDisplayLayerImpl::didDraw):
+        (WebCore::CCHeadsUpDisplayLayerImpl::didLoseContext):
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawHudContents):
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawFPSCounter):
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawFPSCounterText):
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawDebugRects):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.h: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCHeadsUpDisplay.h.
+        (WebCore):
+        (CCHeadsUpDisplayLayerImpl):
+        (WebCore::CCHeadsUpDisplayLayerImpl::create):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::layerIsAlwaysDamaged):
+        This flag is used to mark the HUD as always damaged, so that it is
+        continually drawn on the impl thread. It is also used as a hint by
+        the CCDebugRectHistory class to not include the layer in the display
+        of damage, since always damaged is not interesting damage.
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::create):
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::willCommit):
+        (WebCore::CCLayerTreeHost::didCommit):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeSettings):
+        (WebCore::CCLayerTreeSettings::showDebugInfo):
+        (WebCore::CCLayerTreeSettings::showDebugRects):
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (WebCore):
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (CCProxy):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRenderer):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
 2012-07-25  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Web Inspector: follow up to r123612, fixing CSS value suggest.

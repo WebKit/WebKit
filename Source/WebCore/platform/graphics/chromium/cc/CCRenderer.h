@@ -81,9 +81,6 @@ public:
     virtual bool haveCachedResourcesForRenderPassId(int) const { return false; }
 
     virtual void drawFrame(const CCRenderPassList&, const FloatRect& rootScissorRect) = 0;
-    virtual void finishDrawingFrame() { }
-
-    virtual void drawHeadsUpDisplay(const CCScopedTexture*, const IntSize& hudSize) = 0;
 
     // waits for rendering to finish
     virtual void finish() = 0;

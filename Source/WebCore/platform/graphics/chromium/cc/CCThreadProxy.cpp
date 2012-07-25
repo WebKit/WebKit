@@ -31,7 +31,6 @@
 #include "TraceEvent.h"
 #include "cc/CCDelayBasedTimeSource.h"
 #include "cc/CCDrawQuad.h"
-#include "cc/CCFontAtlas.h"
 #include "cc/CCFrameRateController.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCInputHandler.h"
@@ -863,19 +862,6 @@ void CCThreadProxy::setFullRootLayerDamageOnImplThread()
 size_t CCThreadProxy::maxPartialTextureUpdates() const
 {
     return textureUpdatesPerFrame;
-}
-
-void CCThreadProxy::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
-{
-    ASSERT(isMainThread());
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setFontAtlasOnImplThread, fontAtlas));
-
-}
-
-void CCThreadProxy::setFontAtlasOnImplThread(PassOwnPtr<CCFontAtlas> fontAtlas)
-{
-    ASSERT(isImplThread());
-    m_layerTreeHostImpl->setFontAtlas(fontAtlas);
 }
 
 void CCThreadProxy::recreateContextOnImplThread(CCCompletionEvent* completion, CCGraphicsContext* contextPtr, bool* recreateSucceeded, LayerRendererCapabilities* capabilities)

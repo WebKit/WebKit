@@ -1,3 +1,13 @@
+2012-07-24  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Turn the debug HUD into a layer so that it can be drawn as a WebCompositorQuad
+        https://bugs.webkit.org/show_bug.cgi?id=92182
+
+        Reviewed by Adrienne Walker.
+
+        * tests/LayerRendererChromiumTest.cpp:
+        (TEST):
+
 2012-07-25  Adrienne Walker  <enne@google.com>
 
         [chromium] Unify compositor quadTransform/drawTransform/originTransform

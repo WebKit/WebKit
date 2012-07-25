@@ -35,7 +35,6 @@
 #include "cc/CCDelayBasedTimeSource.h"
 #include "cc/CCFontAtlas.h"
 #include "cc/CCFrameRateCounter.h"
-#include "cc/CCHeadsUpDisplay.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
@@ -123,7 +122,6 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCLayerTreeSettings& settings, CC
     , m_visible(true)
     , m_contentsTexturesWerePurgedSinceLastCommit(false)
     , m_memoryAllocationLimitBytes(CCPrioritizedTextureManager::defaultMemoryAllocationLimit())
-    , m_headsUpDisplay(CCHeadsUpDisplay::create())
     , m_pageScale(1)
     , m_pageScaleDelta(1)
     , m_sentPageScaleDelta(1)
@@ -552,14 +550,11 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     m_fpsCounter->markBeginningOfFrame(currentTime());
 
     m_layerRenderer->drawFrame(frame.renderPasses, m_rootScissorRect);
-    if (m_headsUpDisplay->enabled(settings()))
-        m_headsUpDisplay->draw(this);
-    m_layerRenderer->finishDrawingFrame();
 
     for (unsigned int i = 0; i < frame.renderPasses.size(); i++)
         frame.renderPasses[i]->targetSurface()->damageTracker()->didDrawDamagedArea();
 
-    if (m_debugRectHistory->enabled(settings()))
+    if (m_settings.showDebugRects())
         m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), *frame.renderSurfaceLayerList, frame.occludingScreenSpaceRects, settings());
 
     // The next frame should start by assuming nothing has changed, and changes are noted as they occur.
@@ -1156,11 +1151,6 @@ String CCLayerTreeHostImpl::layerTreeAsText() const
         dumpRenderSurfaces(ts, 1, m_rootLayerImpl.get());
     }
     return ts.release();
-}
-
-void CCLayerTreeHostImpl::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
-{
-    m_headsUpDisplay->setFontAtlas(fontAtlas);
 }
 
 void CCLayerTreeHostImpl::dumpRenderSurfaces(TextStream& ts, int indent, const CCLayerImpl* layer) const

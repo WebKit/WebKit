@@ -385,6 +385,8 @@ void LayerRendererChromium::drawFrame(const CCRenderPassList& renderPasses, cons
         FloatRect rootScissorRectInCurrentSurface = renderPass->targetSurface()->computeRootScissorRectInCurrentSurface(rootScissorRect);
         drawRenderPass(renderPass, rootScissorRectInCurrentSurface);
     }
+
+    finishDrawingFrame();
 }
 
 void LayerRendererChromium::beginDrawingFrame(const CCRenderPass* rootRenderPass)
@@ -1141,31 +1143,6 @@ void LayerRendererChromium::drawIOSurfaceQuad(const CCIOSurfaceDrawQuad* quad)
     GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
 }
 
-void LayerRendererChromium::drawHeadsUpDisplay(const CCScopedTexture* hudTexture, const IntSize& hudSize)
-{
-    ASSERT(hudTexture->id());
-
-    GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));
-    GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
-    GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-    useRenderPass(m_defaultRenderPass);
-
-    const HeadsUpDisplayProgram* program = headsUpDisplayProgram();
-    ASSERT(program && program->initialized());
-    GLC(m_context, m_context->activeTexture(GraphicsContext3D::TEXTURE0));
-    CCScopedLockResourceForRead lock(m_resourceProvider, hudTexture->id());
-    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, lock.textureId()));
-    GLC(m_context, m_context->useProgram(program->program()));
-    GLC(m_context, m_context->uniform1i(program->fragmentShader().samplerLocation(), 0));
-
-    WebTransformationMatrix matrix;
-    matrix.translate3d(hudSize.width() * 0.5, hudSize.height() * 0.5, 0);
-    drawTexturedQuad(matrix, hudSize.width(), hudSize.height(),
-                     1, sharedGeometryQuad(), program->vertexShader().matrixLocation(),
-                     program->fragmentShader().alphaLocation(),
-                     -1);
-}
-
 void LayerRendererChromium::finishDrawingFrame()
 {
     m_currentFramebufferLock.clear();
@@ -1559,17 +1536,6 @@ const LayerRendererChromium::SolidColorProgram* LayerRendererChromium::solidColo
     return m_solidColorProgram.get();
 }
 
-const LayerRendererChromium::HeadsUpDisplayProgram* LayerRendererChromium::headsUpDisplayProgram()
-{
-    if (!m_headsUpDisplayProgram)
-        m_headsUpDisplayProgram = adoptPtr(new HeadsUpDisplayProgram(m_context));
-    if (!m_headsUpDisplayProgram->initialized()) {
-        TRACE_EVENT0("cc", "LayerRendererChromium::headsUpDisplayProgram::initialize");
-        m_headsUpDisplayProgram->initialize(m_context, m_isUsingBindUniform);
-    }
-    return m_headsUpDisplayProgram.get();
-}
-
 const LayerRendererChromium::RenderPassProgram* LayerRendererChromium::renderPassProgram()
 {
     ASSERT(m_renderPassProgram);
@@ -1776,9 +1742,6 @@ void LayerRendererChromium::cleanupSharedObjects()
 
     if (m_solidColorProgram)
         m_solidColorProgram->cleanup(m_context);
-
-    if (m_headsUpDisplayProgram)
-        m_headsUpDisplayProgram->cleanup(m_context);
 
     if (m_offscreenFramebufferId)
         GLC(m_context, m_context->deleteFramebuffer(m_offscreenFramebufferId));

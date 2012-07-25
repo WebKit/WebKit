@@ -28,7 +28,6 @@
 
 #include "TraceEvent.h"
 #include "cc/CCDrawQuad.h"
-#include "cc/CCFontAtlas.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCTextureUpdater.h"
@@ -265,13 +264,6 @@ void CCSingleThreadProxy::stop()
         m_layerTreeHostImpl.clear();
     }
     m_layerTreeHost = 0;
-}
-
-void CCSingleThreadProxy::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
-{
-    ASSERT(isMainThread());
-    DebugScopedSetImplThread impl;
-    m_layerTreeHostImpl->setFontAtlas(fontAtlas);
 }
 
 void CCSingleThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector> events, double wallClockTime)

@@ -112,6 +112,9 @@ struct CCLayerTreeSettings {
     IntSize defaultTileSize;
     IntSize maxUntiledLayerSize;
     IntSize minimumOcclusionTrackingSize;
+
+    bool showDebugInfo() const { return showPlatformLayerTree || showFPSCounter || showDebugRects(); }
+    bool showDebugRects() const { return showPaintRects || showPropertyChangedRects || showSurfaceDamageRects || showScreenSpaceRects || showReplicaScreenSpaceRects || showOccludingRects; }
 };
 
 // Provides information on an Impl's rendering capabilities back to the CCLayerTreeHost
@@ -168,6 +171,7 @@ public:
     void layout();
     void beginCommitOnImplThread(CCLayerTreeHostImpl*);
     void finishCommitOnImplThread(CCLayerTreeHostImpl*);
+    void willCommit();
     void commitComplete();
     PassOwnPtr<CCGraphicsContext> createContext();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
@@ -178,7 +182,6 @@ public:
         RecreateFailedAndGaveUp,
     };
     RecreateResult recreateContext();
-    void willCommit() { m_client->willCommit(); }
     void didCommitAndDrawFrame() { m_client->didCommitAndDrawFrame(); }
     void didCompleteSwapBuffers() { m_client->didCompleteSwapBuffers(); }
     void deleteContentsTexturesOnImplThread(CCResourceProvider*);
@@ -308,6 +311,7 @@ private:
     int m_numFailedRecreateAttempts;
 
     RefPtr<LayerChromium> m_rootLayer;
+    RefPtr<LayerChromium> m_hudLayer;
     OwnPtr<CCPrioritizedTextureManager> m_contentsTextureManager;
     OwnPtr<CCPrioritizedTexture> m_surfaceMemoryPlaceholder;
 

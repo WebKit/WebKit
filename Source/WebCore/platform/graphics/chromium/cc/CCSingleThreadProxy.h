@@ -63,7 +63,6 @@ public:
     virtual void stop() OVERRIDE;
     virtual size_t maxPartialTextureUpdates() const OVERRIDE { return std::numeric_limits<size_t>::max(); }
     virtual void acquireLayerTextures() OVERRIDE { }
-    virtual void setFontAtlas(PassOwnPtr<CCFontAtlas>) OVERRIDE;
     virtual void forceSerializeOnSwapBuffers() OVERRIDE;
 
     // CCLayerTreeHostImplClient implementation

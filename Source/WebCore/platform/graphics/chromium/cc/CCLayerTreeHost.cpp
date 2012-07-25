@@ -26,6 +26,7 @@
 
 #include "cc/CCLayerTreeHost.h"
 
+#include "HeadsUpDisplayLayerChromium.h"
 #include "LayerChromium.h"
 #include "Region.h"
 #include "TraceEvent.h"
@@ -104,14 +105,6 @@ bool CCLayerTreeHost::initialize()
 
     if (!m_proxy->initializeContext())
         return false;
-
-    // Only allocate the font atlas if we have reason to use the heads-up display.
-    if (m_settings.showFPSCounter || m_settings.showPlatformLayerTree) {
-        TRACE_EVENT0("cc", "CCLayerTreeHost::initialize::initializeFontAtlas");
-        OwnPtr<CCFontAtlas> fontAtlas(CCFontAtlas::create());
-        fontAtlas->initialize();
-        m_proxy->setFontAtlas(fontAtlas.release());
-    }
 
     m_compositorIdentifier = m_proxy->compositorIdentifier();
     return true;
@@ -258,8 +251,20 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     m_commitNumber++;
 }
 
+void CCLayerTreeHost::willCommit()
+{
+    m_client->willCommit();
+    if (m_settings.showDebugInfo()) {
+        if (!m_hudLayer)
+            m_hudLayer = HeadsUpDisplayLayerChromium::create(m_settings, layerRendererCapabilities().maxTextureSize);
+        m_rootLayer->addChild(m_hudLayer);
+    }
+}
+
 void CCLayerTreeHost::commitComplete()
 {
+    if (m_hudLayer)
+        m_hudLayer->removeFromParent();
     m_deleteTextureAfterCommitList.clear();
     m_client->didCommit();
 }

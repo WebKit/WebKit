@@ -79,8 +79,6 @@ public:
         return adoptPtr(new CCDebugRectHistory());
     }
 
-    bool enabled(const CCLayerTreeSettings&);
-
     // Note: Saving debug rects must happen before layers' change tracking is reset.
     void saveDebugRectsForCurrentFrame(CCLayerImpl* rootLayer, const Vector<CCLayerImpl*>& renderSurfaceLayerList, const Vector<IntRect>& occludingScreenSpaceRects, const CCLayerTreeSettings&);
 

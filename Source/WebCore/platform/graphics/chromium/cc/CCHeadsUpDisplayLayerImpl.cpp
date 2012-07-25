@@ -1,113 +1,126 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
+ *
  * 1.  Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "cc/CCHeadsUpDisplay.h"
+#include "cc/CCHeadsUpDisplayLayerImpl.h"
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "PlatformCanvas.h"
 #include "cc/CCDebugRectHistory.h"
+#include "cc/CCFontAtlas.h"
 #include "cc/CCFrameRateCounter.h"
 #include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCQuadSink.h"
+#include <public/WebCompositorTextureQuad.h>
 #include <wtf/text/WTFString.h>
+
+using WebKit::WebCompositorTextureQuad;
 
 namespace WebCore {
 
-using namespace std;
-
-CCHeadsUpDisplay::~CCHeadsUpDisplay()
+CCHeadsUpDisplayLayerImpl::CCHeadsUpDisplayLayerImpl(int id, PassOwnPtr<CCFontAtlas> fontAtlas)
+    : CCLayerImpl(id),
+      m_fontAtlas(fontAtlas)
 {
 }
 
-void CCHeadsUpDisplay::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
+CCHeadsUpDisplayLayerImpl::~CCHeadsUpDisplayLayerImpl()
 {
-    m_fontAtlas = fontAtlas;
 }
 
-bool CCHeadsUpDisplay::enabled(const CCLayerTreeSettings& settings) const
+void CCHeadsUpDisplayLayerImpl::willDraw(CCResourceProvider* resourceProvider)
 {
-    return showPlatformLayerTree(settings) || settings.showFPSCounter || showDebugRects(settings);
-}
+    CCLayerImpl::willDraw(resourceProvider);
 
-bool CCHeadsUpDisplay::showPlatformLayerTree(const CCLayerTreeSettings& settings) const
-{
-    return settings.showPlatformLayerTree;
-}
-
-bool CCHeadsUpDisplay::showDebugRects(const CCLayerTreeSettings& settings) const
-{
-    return settings.showPaintRects || settings.showPropertyChangedRects || settings.showSurfaceDamageRects || settings.showScreenSpaceRects || settings.showReplicaScreenSpaceRects || settings.showOccludingRects;
-}
-
-void CCHeadsUpDisplay::draw(CCLayerTreeHostImpl* layerTreeHostImpl)
-{
-    CCRenderer* layerRenderer = layerTreeHostImpl->layerRenderer();
     if (!m_hudTexture)
-        m_hudTexture = CCScopedTexture::create(layerTreeHostImpl->resourceProvider());
+        m_hudTexture = CCScopedTexture::create(resourceProvider);
 
-    const CCLayerTreeSettings& settings = layerTreeHostImpl->settings();
-    // Use a fullscreen texture only if we need to...
-    IntSize hudSize;
-    if (showPlatformLayerTree(settings) || showDebugRects(settings)) {
-        hudSize.setWidth(min(2048, layerTreeHostImpl->deviceViewportSize().width()));
-        hudSize.setHeight(min(2048, layerTreeHostImpl->deviceViewportSize().height()));
-    } else {
-        hudSize.setWidth(512);
-        hudSize.setHeight(128);
-    }
+    // FIXME: Scale the HUD by deviceScale to make it more friendly under high DPI.
 
-    if (!m_hudTexture->id() && !m_hudTexture->allocate(CCRenderer::ImplPool, hudSize, GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny))
+    if (m_hudTexture->size() != bounds())
+        m_hudTexture->free();
+
+    if (!m_hudTexture->id() && !m_hudTexture->allocate(CCRenderer::ImplPool, bounds(), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny))
         return;
 
     // Render pixels into the texture.
     PlatformCanvas canvas;
-    canvas.resize(hudSize);
+    canvas.resize(bounds());
     {
         PlatformCanvas::Painter painter(&canvas, PlatformCanvas::Painter::GrayscaleText);
-        painter.context()->clearRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
-        drawHudContents(painter.context(), layerTreeHostImpl, settings, hudSize);
+        painter.context()->clearRect(FloatRect(0, 0, bounds().width(), bounds().height()));
+        drawHudContents(painter.context());
     }
 
-    // Upload to GL.
     {
         PlatformCanvas::AutoLocker locker(&canvas);
-        IntRect rect(IntPoint(0, 0), hudSize);
-        layerTreeHostImpl->resourceProvider()->upload(m_hudTexture->id(), locker.pixels(), rect, rect, rect);
+        IntRect layerRect(IntPoint(), bounds());
+        resourceProvider->upload(m_hudTexture->id(), locker.pixels(), layerRect, layerRect, layerRect);
     }
-
-    layerRenderer->drawHeadsUpDisplay(m_hudTexture.get(), hudSize);
 }
 
-void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, CCLayerTreeHostImpl* layerTreeHostImpl, const CCLayerTreeSettings& settings, const IntSize& hudSize)
+void CCHeadsUpDisplayLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
-    if (showPlatformLayerTree(settings)) {
+    if (!m_hudTexture->id())
+        return;
+
+    IntRect quadRect(IntPoint(), bounds());
+    bool premultipliedAlpha = true;
+    FloatRect uvRect(0, 0, 1, 1);
+    bool flipped = false;
+    quadList.append(WebCompositorTextureQuad::create(sharedQuadState, quadRect, m_hudTexture->id(), premultipliedAlpha, uvRect, flipped));
+}
+
+void CCHeadsUpDisplayLayerImpl::didDraw(CCResourceProvider* resourceProvider)
+{
+    CCLayerImpl::didDraw(resourceProvider);
+
+    if (!m_hudTexture->id())
+        return;
+
+    // FIXME: the following assert will not be true when sending resources to a
+    // parent compositor. We will probably need to hold on to m_hudTexture for
+    // longer, and have several HUD textures in the pipeline.
+    ASSERT(!resourceProvider->inUseByConsumer(m_hudTexture->id()));
+}
+
+void CCHeadsUpDisplayLayerImpl::didLoseContext()
+{
+    m_hudTexture->leak();
+}
+
+void CCHeadsUpDisplayLayerImpl::drawHudContents(GraphicsContext* context)
+{
+    const CCLayerTreeSettings& settings = layerTreeHostImpl()->settings();
+
+    if (settings.showPlatformLayerTree) {
         context->setFillColor(Color(0, 0, 0, 192), ColorSpaceDeviceRGB);
-        context->fillRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
+        context->fillRect(FloatRect(0, 0, bounds().width(), bounds().height()));
     }
 
     int fpsCounterHeight = 40;
@@ -120,18 +133,18 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* context, CCLayerTreeHost
         platformLayerTreeTop = 0;
 
     if (settings.showFPSCounter)
-        drawFPSCounter(context, layerTreeHostImpl->fpsCounter(), fpsCounterTop, fpsCounterHeight);
+        drawFPSCounter(context, layerTreeHostImpl()->fpsCounter(), fpsCounterTop, fpsCounterHeight);
 
-    if (showPlatformLayerTree(settings) && m_fontAtlas) {
-        String layerTree = layerTreeHostImpl->layerTreeAsText();
-        m_fontAtlas->drawText(context, layerTree, IntPoint(2, platformLayerTreeTop), hudSize);
+    if (settings.showPlatformLayerTree && m_fontAtlas) {
+        String layerTree = layerTreeHostImpl()->layerTreeAsText();
+        m_fontAtlas->drawText(context, layerTree, IntPoint(2, platformLayerTreeTop), bounds());
     }
 
-    if (showDebugRects(settings))
-        drawDebugRects(context, layerTreeHostImpl->debugRectHistory(), settings);
+    if (settings.showDebugRects())
+        drawDebugRects(context, layerTreeHostImpl()->debugRectHistory());
 }
 
-void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, CCFrameRateCounter* fpsCounter, int top, int height)
+void CCHeadsUpDisplayLayerImpl::drawFPSCounter(GraphicsContext* context, CCFrameRateCounter* fpsCounter, int top, int height)
 {
     float textWidth = 170; // so text fits on linux.
     float graphWidth = fpsCounter->timeStampHistorySize();
@@ -182,7 +195,7 @@ void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* context, CCFrameRateCount
     }
 }
 
-void CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, CCFrameRateCounter* fpsCounter, int top, int width, int height)
+void CCHeadsUpDisplayLayerImpl::drawFPSCounterText(GraphicsContext* context, CCFrameRateCounter* fpsCounter, int top, int width, int height)
 {
     double averageFPS, stdDeviation;
     fpsCounter->getAverageFPSAndStandardDeviation(averageFPS, stdDeviation);
@@ -196,7 +209,7 @@ void CCHeadsUpDisplay::drawFPSCounterText(GraphicsContext* context, CCFrameRateC
         m_fontAtlas->drawText(context, String::format("FPS: %4.1f +/- %3.1f", averageFPS, stdDeviation), IntPoint(10, height / 3), IntSize(width, height));
 }
 
-void CCHeadsUpDisplay::drawDebugRects(GraphicsContext* context, CCDebugRectHistory* debugRectHistory, const CCLayerTreeSettings& settings)
+void CCHeadsUpDisplayLayerImpl::drawDebugRects(GraphicsContext* context, CCDebugRectHistory* debugRectHistory)
 {
     const Vector<CCDebugRect>& debugRects = debugRectHistory->debugRects();
     for (size_t i = 0; i < debugRects.size(); ++i) {
@@ -246,5 +259,3 @@ void CCHeadsUpDisplay::drawDebugRects(GraphicsContext* context, CCDebugRectHisto
 }
 
 }
-
-#endif // USE(ACCELERATED_COMPOSITING)

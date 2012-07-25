@@ -252,10 +252,12 @@ public:
 
     void setStackingOrderChanged(bool);
 
-    bool layerPropertyChanged() const { return m_layerPropertyChanged; }
+    bool layerPropertyChanged() const { return m_layerPropertyChanged || layerIsAlwaysDamaged(); }
     bool layerSurfacePropertyChanged() const;
 
     void resetAllChangeTrackingForSubtree();
+
+    virtual bool layerIsAlwaysDamaged() const { return false; }
 
     CCLayerAnimationController* layerAnimationController() { return m_layerAnimationController.get(); }
 

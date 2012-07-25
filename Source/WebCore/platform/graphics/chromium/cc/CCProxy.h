@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class CCFontAtlas;
 class CCThread;
 class CCGraphicsContext;
 struct CCRenderingStats;
@@ -105,8 +104,6 @@ public:
     virtual size_t maxPartialTextureUpdates() const = 0;
 
     virtual void acquireLayerTextures() = 0;
-
-    virtual void setFontAtlas(PassOwnPtr<CCFontAtlas>) = 0;
 
     // Debug hooks
 #ifndef NDEBUG
