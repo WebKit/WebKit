@@ -1,3 +1,18 @@
+2012-07-25  Anders Carlsson  <andersca@apple.com>
+
+        Crash when calling PluginView::pluginFocusOrWindowFocusChanged when the web page is null
+        https://bugs.webkit.org/show_bug.cgi?id=92289
+        <rdar://problem/11785352>
+
+        Reviewed by Andreas Kling.
+
+        Plug-in views that outlive their containing web page for various reasons (such as being protected from
+        destruction) need to null check the web page.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginFocusOrWindowFocusChanged):
+        (WebKit::PluginView::setComplexTextInputState):
+
 2012-07-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WTR] LayoutTestController.sendWebIntentResponse() needs to be implemented
