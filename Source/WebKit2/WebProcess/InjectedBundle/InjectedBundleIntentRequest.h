@@ -23,61 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "IntentData.h"
+#ifndef InjectedBundleIntentRequest_h
+#define InjectedBundleIntentRequest_h
 
 #if ENABLE(WEB_INTENTS)
 
 #include "APIObject.h"
-#include "DataReference.h"
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/Intent.h>
+#include "WebIntentData.h"
+#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
-using namespace WebCore;
+namespace WebCore {
+class IntentRequest;
+}
 
 namespace WebKit {
 
-IntentData::IntentData(Intent* coreIntent)
-    : action(coreIntent->action())
-    , type(coreIntent->type())
-    , service(coreIntent->service())
-    , data(coreIntent->data()->data())
-    , extras(coreIntent->extras())
-    , suggestions(coreIntent->suggestions())
-{
-}
+class WebSerializedScriptValue;
 
-void IntentData::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encode(action);
-    encoder->encode(type);
-    encoder->encode(service);
-    encoder->encode(CoreIPC::DataReference(data));
-    encoder->encode(extras);
-    encoder->encode(suggestions);
-}
+class InjectedBundleIntentRequest : public APIObject {
+public:
+    static const Type APIType = TypeBundleIntentRequest;
 
-bool IntentData::decode(CoreIPC::ArgumentDecoder* decoder, IntentData& intentData)
-{
-    if (!decoder->decode(intentData.action))
-        return false;
-    if (!decoder->decode(intentData.type))
-        return false;
-    if (!decoder->decode(intentData.service))
-        return false;
-    CoreIPC::DataReference data;
-    if (!decoder->decode(data))
-        return false;
-    intentData.data.append(data.data(), data.size());
-    if (!decoder->decode(intentData.extras))
-        return false;
-    if (!decoder->decode(intentData.suggestions))
-        return false;
+    static PassRefPtr<InjectedBundleIntentRequest> create(WebCore::IntentRequest*);
 
-    return true;
-}
+    void postResult(WebSerializedScriptValue*);
+    void postFailure(WebSerializedScriptValue*);
+
+    PassRefPtr<WebIntentData> intent() const;
+
+private:
+    explicit InjectedBundleIntentRequest(WebCore::IntentRequest*);
+
+    virtual Type type() const { return APIType; }
+
+    RefPtr<WebCore::IntentRequest> m_intentRequest;
+};
 
 } // namespace WebKit
 
 #endif // ENABLE(WEB_INTENTS)
 
+#endif // InjectedBundleIntentRequest_h

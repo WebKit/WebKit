@@ -206,6 +206,9 @@ public:
 
     void overridePreference(JSStringRef preference, bool value);
 
+    // Web intents testing.
+    void sendWebIntentResponse(JSStringRef reply);
+
     // Cookies testing
     void setAlwaysAcceptCookies(bool);
 

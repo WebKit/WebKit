@@ -24,60 +24,41 @@
  */
 
 #include "config.h"
-#include "IntentData.h"
+#include "InjectedBundleIntentRequest.h"
 
 #if ENABLE(WEB_INTENTS)
-
-#include "APIObject.h"
-#include "DataReference.h"
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/Intent.h>
+#include <WebCore/IntentRequest.h>
+#include <WebSerializedScriptValue.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-IntentData::IntentData(Intent* coreIntent)
-    : action(coreIntent->action())
-    , type(coreIntent->type())
-    , service(coreIntent->service())
-    , data(coreIntent->data()->data())
-    , extras(coreIntent->extras())
-    , suggestions(coreIntent->suggestions())
+PassRefPtr<InjectedBundleIntentRequest> InjectedBundleIntentRequest::create(IntentRequest* request)
+{
+    return adoptRef(new InjectedBundleIntentRequest(request));
+}
+
+InjectedBundleIntentRequest::InjectedBundleIntentRequest(IntentRequest* request)
+    : m_intentRequest(request)
 {
 }
 
-void IntentData::encode(CoreIPC::ArgumentEncoder* encoder) const
+void InjectedBundleIntentRequest::postResult(WebSerializedScriptValue* data)
 {
-    encoder->encode(action);
-    encoder->encode(type);
-    encoder->encode(service);
-    encoder->encode(CoreIPC::DataReference(data));
-    encoder->encode(extras);
-    encoder->encode(suggestions);
+    m_intentRequest->postResult(static_cast<SerializedScriptValue*>(data->internalRepresentation()));
 }
 
-bool IntentData::decode(CoreIPC::ArgumentDecoder* decoder, IntentData& intentData)
+void InjectedBundleIntentRequest::postFailure(WebSerializedScriptValue* data)
 {
-    if (!decoder->decode(intentData.action))
-        return false;
-    if (!decoder->decode(intentData.type))
-        return false;
-    if (!decoder->decode(intentData.service))
-        return false;
-    CoreIPC::DataReference data;
-    if (!decoder->decode(data))
-        return false;
-    intentData.data.append(data.data(), data.size());
-    if (!decoder->decode(intentData.extras))
-        return false;
-    if (!decoder->decode(intentData.suggestions))
-        return false;
+    m_intentRequest->postFailure(static_cast<SerializedScriptValue*>(data->internalRepresentation()));
+}
 
-    return true;
+PassRefPtr<WebIntentData> InjectedBundleIntentRequest::intent() const
+{
+    return WebIntentData::create(IntentData(m_intentRequest->intent()));
 }
 
 } // namespace WebKit
 
 #endif // ENABLE(WEB_INTENTS)
-

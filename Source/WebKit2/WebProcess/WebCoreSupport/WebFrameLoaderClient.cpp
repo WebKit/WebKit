@@ -74,8 +74,8 @@
 #include <WebCore/WindowFeatures.h>
 
 #if ENABLE(WEB_INTENTS)
+#include "InjectedBundleIntentRequest.h"
 #include "IntentData.h"
-#include "WebIntentData.h"
 #include <WebCore/IntentRequest.h>
 #endif
 
@@ -1562,20 +1562,11 @@ void WebFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest> request)
     if (!webPage)
         return;
 
-    IntentData intentData;
-    Intent* coreIntent = request->intent();
-    ASSERT(coreIntent);
-    intentData.action = coreIntent->action();
-    intentData.type = coreIntent->type();
-    intentData.service = coreIntent->service();
-    intentData.data = coreIntent->data()->data();
-    intentData.extras = coreIntent->extras();
-    intentData.suggestions = coreIntent->suggestions();
-
     RefPtr<APIObject> userData;
-    RefPtr<WebIntentData> webIntent = WebIntentData::create(intentData);
-    webPage->injectedBundleLoaderClient().didReceiveIntentForFrame(webPage, m_frame, webIntent.get(), userData);
+    RefPtr<InjectedBundleIntentRequest> bundleIntentRequest = InjectedBundleIntentRequest::create(request.get());
+    webPage->injectedBundleLoaderClient().didReceiveIntentForFrame(webPage, m_frame, bundleIntentRequest.get(), userData);
 
+    IntentData intentData(request->intent());
     webPage->send(Messages::WebPageProxy::DidReceiveIntentForFrame(m_frame->frameID(), intentData, InjectedBundleUserMessageEncoder(userData.get())));
 }
 #endif

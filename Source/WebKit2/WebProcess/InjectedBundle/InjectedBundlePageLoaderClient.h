@@ -47,7 +47,7 @@ class InjectedBundleBackForwardListItem;
 class WebPage;
 class WebFrame;
 #if ENABLE(WEB_INTENTS)
-class WebIntentData;
+class InjectedBundleIntentRequest;
 #endif
 #if ENABLE(WEB_INTENTS_TAG)
 class WebIntentServiceInfo;
@@ -72,7 +72,7 @@ public:
     void didDetectXSSForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
 
 #if ENABLE(WEB_INTENTS)
-    void didReceiveIntentForFrame(WebPage*, WebFrame*, WebIntentData*, RefPtr<APIObject>& userData);
+    void didReceiveIntentForFrame(WebPage*, WebFrame*, InjectedBundleIntentRequest*, RefPtr<APIObject>& userData);
 #endif
 #if ENABLE(WEB_INTENTS_TAG)
     void registerIntentServiceForFrame(WebPage*, WebFrame*, WebIntentServiceInfo*, RefPtr<APIObject>& userData);

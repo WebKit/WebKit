@@ -38,6 +38,11 @@ public:
     ~InjectedBundlePage();
 
     WKBundlePageRef page() const { return m_page; }
+
+#if ENABLE(WEB_INTENTS)
+    WKBundleIntentRequestRef currentIntentRequest() const { return m_currentIntentRequest.get(); }
+#endif
+
     void dump();
 
     void stopLoading();
@@ -72,7 +77,7 @@ private:
     static void didReceiveContentLengthForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, uint64_t length, const void*);
     static void didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, const void*);
     static void didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKErrorRef, const void*);
-    static void didReceiveIntentForFrame(WKBundlePageRef, WKBundleFrameRef, WKIntentDataRef, WKTypeRef*, const void*);
+    static void didReceiveIntentForFrame(WKBundlePageRef, WKBundleFrameRef, WKBundleIntentRequestRef, WKTypeRef*, const void*);
     static void registerIntentServiceForFrame(WKBundlePageRef, WKBundleFrameRef, WKIntentServiceInfoRef, WKTypeRef*, const void*);
 
     void didStartProvisionalLoadForFrame(WKBundleFrameRef);
@@ -164,6 +169,10 @@ private:
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
     WKRetainPtr<WKBundleBackForwardListItemRef> m_previousTestBackForwardListItem;
+
+#if ENABLE(WEB_INTENTS)
+    WKRetainPtr<WKBundleIntentRequestRef> m_currentIntentRequest;
+#endif
 };
 
 } // namespace WTR

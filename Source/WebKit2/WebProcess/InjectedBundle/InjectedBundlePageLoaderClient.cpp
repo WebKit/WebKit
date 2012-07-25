@@ -34,7 +34,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEB_INTENTS)
-#include "WebIntentData.h"
+#include "InjectedBundleIntentRequest.h"
 #endif
 #if ENABLE(WEB_INTENTS_TAG)
 #include "WebIntentServiceInfo.h"
@@ -195,13 +195,13 @@ void InjectedBundlePageLoaderClient::didDetectXSSForFrame(WebPage* page, WebFram
 }
 
 #if ENABLE(WEB_INTENTS)
-void InjectedBundlePageLoaderClient::didReceiveIntentForFrame(WebPage* page, WebFrame* frame, WebIntentData* intent, RefPtr<APIObject>& userData)
+void InjectedBundlePageLoaderClient::didReceiveIntentForFrame(WebPage* page, WebFrame* frame, InjectedBundleIntentRequest* intentRequest, RefPtr<APIObject>& userData)
 {
     if (!m_client.didReceiveIntentForFrame)
         return;
 
     WKTypeRef userDataToPass = 0;
-    m_client.didReceiveIntentForFrame(toAPI(page), toAPI(frame), toAPI(intent), &userDataToPass, m_client.clientInfo);
+    m_client.didReceiveIntentForFrame(toAPI(page), toAPI(frame), toAPI(intentRequest), &userDataToPass, m_client.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 #endif

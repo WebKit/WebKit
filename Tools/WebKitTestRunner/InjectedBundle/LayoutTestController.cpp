@@ -42,10 +42,15 @@
 #include <WebKit2/WKBundlePrivate.h>
 #include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKSerializedScriptValue.h>
 #include <WebKit2/WebKit2.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
+
+#if ENABLE(WEB_INTENTS)
+#include <WebKit2/WKBundleIntentRequest.h>
+#endif
 
 namespace WTR {
 
@@ -611,6 +616,27 @@ void LayoutTestController::callSetBackingScaleFactorCallback()
 void LayoutTestController::overridePreference(JSStringRef preference, bool value)
 {
     WKBundleOverrideBoolPreferenceForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), toWK(preference).get(), value);
+}
+
+void LayoutTestController::sendWebIntentResponse(JSStringRef reply)
+{
+#if ENABLE(WEB_INTENTS)
+    WKRetainPtr<WKBundleIntentRequestRef> currentRequest = InjectedBundle::shared().page()->currentIntentRequest();
+    if (!currentRequest)
+        return;
+
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    if (reply) {
+        WKRetainPtr<WKSerializedScriptValueRef> serializedData(AdoptWK, WKSerializedScriptValueCreate(context, JSValueMakeString(context, reply), 0));
+        WKBundleIntentRequestPostResult(currentRequest.get(), serializedData.get());
+    } else {
+        JSRetainPtr<JSStringRef> errorReply(JSStringCreateWithUTF8CString("ERROR"));
+        WKRetainPtr<WKSerializedScriptValueRef> serializedData(AdoptWK, WKSerializedScriptValueCreate(context, JSValueMakeString(context, errorReply.get()), 0));
+        WKBundleIntentRequestPostFailure(currentRequest.get(), serializedData.get());
+    }
+#endif
 }
 
 void LayoutTestController::setAlwaysAcceptCookies(bool accept)

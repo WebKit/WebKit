@@ -964,6 +964,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInitialize.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleInspector.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
@@ -996,6 +998,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleIntentRequest.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleIntentRequest.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleNavigationAction.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \

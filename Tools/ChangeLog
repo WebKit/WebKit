@@ -1,3 +1,36 @@
+2012-07-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WTR] LayoutTestController.sendWebIntentResponse() needs to be implemented
+        https://bugs.webkit.org/show_bug.cgi?id=92227
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement LayoutTestController.sendWebIntentResponse() so
+        that a test case can reply to a Web intent request and
+        test this functionality.
+
+        In order to support this functionality, we need to keep
+        a pointer to the current intent request in
+        InjectedBundlePage::didReceiveIntentForFrame() so that
+        we can reuse it later in
+        LayoutTestController::sendWebIntentResponse().
+
+        The following tests need this functionality:
+        - webintents/web-intents-failure.html
+        - webintents/web-intents-reply.html
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didReceiveIntentForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        (InjectedBundlePage):
+        (WTR::InjectedBundlePage::currentIntentRequest):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::sendWebIntentResponse):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (LayoutTestController):
+
 2012-07-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2][WTR] Alt, Shift and Ctrl keys are not handled by EventSenderProxy.

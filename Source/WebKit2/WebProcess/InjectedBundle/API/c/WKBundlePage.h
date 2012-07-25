@@ -109,7 +109,7 @@ typedef void (*WKBundlePageWillDisconnectDOMWindowExtensionFromGlobalObjectCallb
 typedef void (*WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 typedef void (*WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 typedef bool (*WKBundlePageShouldForceUniversalAccessFromLocalURLCallback)(WKBundlePageRef, WKStringRef url, const void* clientInfo);
-typedef void (*WKBundlePageDidReceiveIntentForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKIntentDataRef intent, WKTypeRef* userData, const void* clientInfo);
+typedef void (*WKBundlePageDidReceiveIntentForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleIntentRequestRef intentRequest, WKTypeRef* userData, const void* clientInfo);
 typedef void (*WKBundlePageRegisterIntentServiceForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKIntentServiceInfoRef serviceInfo, WKTypeRef* userData, const void* clientInfo);
 
 struct WKBundlePageLoaderClient {

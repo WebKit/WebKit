@@ -1,3 +1,58 @@
+2012-07-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WTR] LayoutTestController.sendWebIntentResponse() needs to be implemented
+        https://bugs.webkit.org/show_bug.cgi?id=92227
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add new InjectedBundleIntentRequest class to wrap WebCore's
+        IntentRequest and use it in InjectedBundle's
+        didReceiveIntentForFrame callback. The WebKitTestRunner needs
+        to be able to reply to a Web intent request in order to
+        implement LayoutTestController.sendWebIntentResponse(). As
+        a consequence, passing a WebIntentData type in not enough.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * Shared/IntentData.cpp:
+        (WebKit::IntentData::IntentData):
+        (WebKit):
+        * Shared/IntentData.h:
+        (WebCore):
+        (WebKit::IntentData::IntentData):
+        (IntentData):
+        * Target.pri:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (WebKit):
+        * WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.cpp: Copied from Source/WebKit2/Shared/IntentData.cpp.
+        (WKBundleIntentRequestGetTypeID):
+        (WKBundleIntentRequestCopyIntent):
+        (WKBundleIntentRequestPostResult):
+        (WKBundleIntentRequestPostFailure):
+        * WebProcess/InjectedBundle/API/c/WKBundleIntentRequest.h: Copied from Source/WebKit2/Shared/IntentData.h.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundleIntentRequest.cpp: Copied from Source/WebKit2/Shared/IntentData.cpp.
+        (WebKit):
+        (WebKit::InjectedBundleIntentRequest::create):
+        (WebKit::InjectedBundleIntentRequest::InjectedBundleIntentRequest):
+        (WebKit::InjectedBundleIntentRequest::postResult):
+        (WebKit::InjectedBundleIntentRequest::postFailure):
+        (WebKit::InjectedBundleIntentRequest::intent):
+        * WebProcess/InjectedBundle/InjectedBundleIntentRequest.h: Copied from Source/WebKit2/Shared/IntentData.h.
+        (WebCore):
+        (WebKit):
+        (InjectedBundleIntentRequest):
+        (WebKit::InjectedBundleIntentRequest::type):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didReceiveIntentForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        (WebKit):
+        (InjectedBundlePageLoaderClient):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchIntent):
+
 2012-07-25  Anders Carlsson  <andersca@apple.com>
 
         Crash when a web page is closed with outstanding scrolling thread barriers

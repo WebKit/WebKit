@@ -23,43 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IntentData_h
-#define IntentData_h
+#ifndef WKBundleIntentRequest_h
+#define WKBundleIntentRequest_h
 
-#if ENABLE(WEB_INTENTS)
+#include <WebKit2/WKBase.h>
 
-#include "APIObject.h"
-#include "GenericCallback.h"
-#include <wtf/text/WTFString.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace CoreIPC {
-class ArgumentDecoder;
-class ArgumentEncoder;
+WK_EXPORT WKTypeID WKBundleIntentRequestGetTypeID();
+
+WK_EXPORT WKIntentDataRef WKBundleIntentRequestCopyIntentData(WKBundleIntentRequestRef request);
+
+WK_EXPORT void WKBundleIntentRequestPostResult(WKBundleIntentRequestRef request, WKSerializedScriptValueRef serializedData);
+WK_EXPORT void WKBundleIntentRequestPostFailure(WKBundleIntentRequestRef request, WKSerializedScriptValueRef serializedData);
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebCore {
-class Intent;
-}
-
-namespace WebKit {
-
-struct IntentData {
-    IntentData() { }
-    explicit IntentData(WebCore::Intent*);
-
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, IntentData&);
-
-    String action;
-    String type;
-    WebCore::KURL service;
-    Vector<uint8_t> data;
-    HashMap<String, String> extras;
-    Vector<WebCore::KURL> suggestions;
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(WEB_INTENTS)
-
-#endif // IntentData_h
+#endif /* WKBundleIntentRequest_h */

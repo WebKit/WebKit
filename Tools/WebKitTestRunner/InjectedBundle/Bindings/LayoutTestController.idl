@@ -129,6 +129,9 @@ module WTR {
         void setShouldStayOnPageAfterHandlingBeforeUnload(in boolean flag);
 
         void setDefersLoading(in boolean flag);
+
+        // Web intents testing.
+        void sendWebIntentResponse(in DOMString reply);
         
         // Focus testing.
         void addChromeInputField(in object callback);

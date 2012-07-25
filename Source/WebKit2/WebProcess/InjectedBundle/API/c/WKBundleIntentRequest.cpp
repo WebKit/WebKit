@@ -24,60 +24,46 @@
  */
 
 #include "config.h"
-#include "IntentData.h"
+#include "WKBundleIntentRequest.h"
 
 #if ENABLE(WEB_INTENTS)
+#include "InjectedBundleIntentRequest.h"
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
+#include "WebIntentData.h"
 
-#include "APIObject.h"
-#include "DataReference.h"
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/Intent.h>
+using namespace WebKit;
+#endif
 
-using namespace WebCore;
-
-namespace WebKit {
-
-IntentData::IntentData(Intent* coreIntent)
-    : action(coreIntent->action())
-    , type(coreIntent->type())
-    , service(coreIntent->service())
-    , data(coreIntent->data()->data())
-    , extras(coreIntent->extras())
-    , suggestions(coreIntent->suggestions())
+WKTypeID WKBundleIntentRequestGetTypeID()
 {
+#if ENABLE(WEB_INTENTS)
+    return toAPI(InjectedBundleIntentRequest::APIType);
+#else
+    return 0;
+#endif
 }
 
-void IntentData::encode(CoreIPC::ArgumentEncoder* encoder) const
+WKIntentDataRef WKBundleIntentRequestCopyIntentData(WKBundleIntentRequestRef requestRef)
 {
-    encoder->encode(action);
-    encoder->encode(type);
-    encoder->encode(service);
-    encoder->encode(CoreIPC::DataReference(data));
-    encoder->encode(extras);
-    encoder->encode(suggestions);
+#if ENABLE(WEB_INTENTS)
+    RefPtr<WebIntentData> webIntentData = toImpl(requestRef)->intent();
+    return toAPI(webIntentData.release().leakRef());
+#else
+    return 0;
+#endif
 }
 
-bool IntentData::decode(CoreIPC::ArgumentDecoder* decoder, IntentData& intentData)
+void WKBundleIntentRequestPostResult(WKBundleIntentRequestRef requestRef, WKSerializedScriptValueRef serializedDataRef)
 {
-    if (!decoder->decode(intentData.action))
-        return false;
-    if (!decoder->decode(intentData.type))
-        return false;
-    if (!decoder->decode(intentData.service))
-        return false;
-    CoreIPC::DataReference data;
-    if (!decoder->decode(data))
-        return false;
-    intentData.data.append(data.data(), data.size());
-    if (!decoder->decode(intentData.extras))
-        return false;
-    if (!decoder->decode(intentData.suggestions))
-        return false;
-
-    return true;
+#if ENABLE(WEB_INTENTS)
+    return toImpl(requestRef)->postResult(toImpl(serializedDataRef));
+#endif
 }
 
-} // namespace WebKit
-
-#endif // ENABLE(WEB_INTENTS)
-
+void WKBundleIntentRequestPostFailure(WKBundleIntentRequestRef requestRef, WKSerializedScriptValueRef serializedDataRef)
+{
+#if ENABLE(WEB_INTENTS)
+    return toImpl(requestRef)->postFailure(toImpl(serializedDataRef));
+#endif
+}
