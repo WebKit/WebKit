@@ -68,7 +68,7 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
     StringBuilder consumedCharacters;
     
     while (!source.isEmpty()) {
-        UChar cc = *source;
+        UChar cc = source.currentChar();
         switch (entityState) {
         case Initial: {
             if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '<' || cc == '&')

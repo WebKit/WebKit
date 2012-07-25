@@ -368,7 +368,7 @@ void FTPDirectoryDocumentParser::append(const SegmentedString& source)
     m_dest = m_buffer;
     SegmentedString str = source;
     while (!str.isEmpty()) {
-        UChar c = *str;
+        UChar c = str.currentChar();
 
         if (c == '\r') {
             *m_dest++ = '\n';
