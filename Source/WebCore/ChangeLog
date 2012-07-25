@@ -1,3 +1,15 @@
+2012-07-25  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Remove mac_bundle_resources section from WebCore.gyp
+        https://bugs.webkit.org/show_bug.cgi?id=92207
+
+        Reviewed by Tony Chang.
+
+        It's no longer needed after http://crrev.com/148290 and
+        http://crrev.com/148187.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-07-25  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Move WebFilterOperations from RenderPassDrawQuad to RenderPass
