@@ -1,3 +1,16 @@
+2012-07-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123606.
+        http://trac.webkit.org/changeset/123606
+        https://bugs.webkit.org/show_bug.cgi?id=92247
+
+        broke Windows build of Chromium (Requested by tomhudson on
+        #webkit).
+
+        * Resources/colorSuggestionPicker.css: Removed.
+        * Resources/colorSuggestionPicker.js: Removed.
+        * WebCore.gyp/WebCore.gyp:
+
 2012-07-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: disabling property should remove "overriden" decoration from overriden UA shorthand.
