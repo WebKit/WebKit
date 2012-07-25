@@ -211,10 +211,7 @@ void CCRenderSurface::appendQuads(CCQuadSink& quadList, CCSharedQuadState* share
     WebTransformationMatrix drawTransform = forReplica ? m_replicaDrawTransform : m_drawTransform;
     IntRect contentsChangedSinceLastFrame = contentsChanged() ? m_contentRect : IntRect();
 
-    const WebKit::WebFilterOperations& filters = m_owningLayer->filters();
-    const WebKit::WebFilterOperations& backgroundFilters = m_owningLayer->backgroundFilters();
-
-    quadList.append(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, drawTransform, filters, backgroundFilters, maskResourceId, contentsChangedSinceLastFrame));
+    quadList.append(CCRenderPassDrawQuad::create(sharedQuadState, contentRect(), renderPassId, forReplica, drawTransform, maskResourceId, contentsChangedSinceLastFrame));
 }
 
 }

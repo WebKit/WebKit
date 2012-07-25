@@ -334,14 +334,14 @@ GC3Denum LayerRendererChromium::renderPassTextureFormat(const CCRenderPass*)
 
 void LayerRendererChromium::decideRenderPassAllocationsForFrame(const CCRenderPassList& renderPassesInDrawOrder)
 {
-    HashMap<int, const CCRenderPass*> passesInFrame;
+    HashMap<int, const CCRenderPass*> renderPassesInFrame;
     for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i)
-        passesInFrame.set(renderPassesInDrawOrder[i]->id(), renderPassesInDrawOrder[i]);
+        renderPassesInFrame.set(renderPassesInDrawOrder[i]->id(), renderPassesInDrawOrder[i]);
 
     Vector<int> passesToDelete;
     HashMap<int, OwnPtr<CachedTexture> >::const_iterator passIterator;
     for (passIterator = m_renderPassTextures.begin(); passIterator != m_renderPassTextures.end(); ++passIterator) {
-        const CCRenderPass* renderPassInFrame = passesInFrame.get(passIterator->first);
+        const CCRenderPass* renderPassInFrame = renderPassesInFrame.get(passIterator->first);
         if (!renderPassInFrame) {
             passesToDelete.append(passIterator->first);
             continue;
@@ -374,28 +374,33 @@ bool LayerRendererChromium::haveCachedResourcesForRenderPassId(int id) const
     return texture && texture->id() && texture->isComplete();
 }
 
-void LayerRendererChromium::drawFrame(const CCRenderPassList& renderPasses, const FloatRect& rootScissorRect)
+void LayerRendererChromium::drawFrame(const CCRenderPassList& renderPassesInDrawOrder, const CCRenderPassIdHashMap& renderPassesById, const FloatRect& rootScissorRect)
 {
-    const CCRenderPass* rootRenderPass = renderPasses.last();
-    beginDrawingFrame(rootRenderPass);
+    const CCRenderPass* rootRenderPass = renderPassesInDrawOrder.last();
+    ASSERT(rootRenderPass);
 
-    for (size_t i = 0; i < renderPasses.size(); ++i) {
-        const CCRenderPass* renderPass = renderPasses[i];
+    m_defaultRenderPass = rootRenderPass;
+    m_renderPassesById = &renderPassesById;
+
+    beginDrawingFrame();
+
+    for (size_t i = 0; i < renderPassesInDrawOrder.size(); ++i) {
+        const CCRenderPass* renderPass = renderPassesInDrawOrder[i];
 
         FloatRect rootScissorRectInCurrentSurface = renderPass->targetSurface()->computeRootScissorRectInCurrentSurface(rootScissorRect);
         drawRenderPass(renderPass, rootScissorRectInCurrentSurface);
     }
 
     finishDrawingFrame();
+
+    m_defaultRenderPass = 0;
+    m_renderPassesById = 0;
 }
 
-void LayerRendererChromium::beginDrawingFrame(const CCRenderPass* rootRenderPass)
+void LayerRendererChromium::beginDrawingFrame()
 {
     // FIXME: Remove this once framebuffer is automatically recreated on first use
     ensureFramebuffer();
-
-    m_defaultRenderPass = rootRenderPass;
-    ASSERT(m_defaultRenderPass);
 
     if (viewportSize().isEmpty())
         return;
@@ -556,7 +561,7 @@ static inline SkBitmap applyFilters(LayerRendererChromium* layerRenderer, const 
     return source;
 }
 
-PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* quad, const WebTransformationMatrix& contentsDeviceTransform)
+PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* quad, const WebKit::WebFilterOperations& filters, const WebTransformationMatrix& contentsDeviceTransform)
 {
     // This method draws a background filter, which applies a filter to any pixels behind the quad and seen through its background.
     // The algorithm works as follows:
@@ -574,7 +579,7 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
 
     // FIXME: When this algorithm changes, update CCLayerTreeHost::prioritizeTextures() accordingly.
 
-    if (quad->backgroundFilters().isEmpty())
+    if (filters.isEmpty())
         return nullptr;
 
     // FIXME: We only allow background filters on an opaque render surface because other surfaces may contain
@@ -587,7 +592,7 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
     IntRect deviceRect = enclosingIntRect(CCMathUtil::mapClippedRect(contentsDeviceTransform, sharedGeometryQuad().boundingBox()));
 
     int top, right, bottom, left;
-    quad->backgroundFilters().getOutsets(top, right, bottom, left);
+    filters.getOutsets(top, right, bottom, left);
     deviceRect.move(-left, -top);
     deviceRect.expand(left + right, top + bottom);
 
@@ -597,7 +602,7 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
     if (!getFramebufferTexture(deviceBackgroundTexture.get(), deviceRect))
         return nullptr;
 
-    SkBitmap filteredDeviceBackground = applyFilters(this, quad->backgroundFilters(), deviceBackgroundTexture.get());
+    SkBitmap filteredDeviceBackground = applyFilters(this, filters, deviceBackgroundTexture.get());
     if (!filteredDeviceBackground.getTexture())
         return nullptr;
 
@@ -636,6 +641,11 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     if (!contentsTexture || !contentsTexture->id())
         return;
 
+    const CCRenderPass* renderPass = m_renderPassesById->get(quad->renderPassId());
+    ASSERT(renderPass);
+    if (!renderPass)
+        return;
+
     WebTransformationMatrix renderMatrix = quad->quadTransform();
     renderMatrix.translate(0.5 * quad->quadRect().width() + quad->quadRect().x(), 0.5 * quad->quadRect().height() + quad->quadRect().y());
     WebTransformationMatrix deviceMatrix = renderMatrix;
@@ -646,11 +656,11 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     if (!contentsDeviceTransform.isInvertible())
         return;
 
-    OwnPtr<CCScopedTexture> backgroundTexture = drawBackgroundFilters(quad, contentsDeviceTransform);
+    OwnPtr<CCScopedTexture> backgroundTexture = drawBackgroundFilters(quad, renderPass->backgroundFilters(), contentsDeviceTransform);
 
     // FIXME: Cache this value so that we don't have to do it for both the surface and its replica.
     // Apply filters to the contents texture.
-    SkBitmap filterBitmap = applyFilters(this, quad->filters(), contentsTexture);
+    SkBitmap filterBitmap = applyFilters(this, renderPass->filters(), contentsTexture);
     OwnPtr<CCScopedLockResourceForRead> contentsResourceLock;
     unsigned contentsTextureId = 0;
     if (filterBitmap.getTexture()) {

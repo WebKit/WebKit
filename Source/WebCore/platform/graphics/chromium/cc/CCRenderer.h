@@ -80,7 +80,7 @@ public:
     virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) { }
     virtual bool haveCachedResourcesForRenderPassId(int) const { return false; }
 
-    virtual void drawFrame(const CCRenderPassList&, const FloatRect& rootScissorRect) = 0;
+    virtual void drawFrame(const CCRenderPassList&, const CCRenderPassIdHashMap&, const FloatRect& rootScissorRect) = 0;
 
     // waits for rendering to finish
     virtual void finish() = 0;

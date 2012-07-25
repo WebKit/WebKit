@@ -80,8 +80,9 @@ public:
         , m_memoryAllocationLimitBytes(CCPrioritizedTextureManager::defaultMemoryAllocationLimit())
     {
         m_rootLayer->createRenderSurface();
-        m_rootRenderPass = CCRenderPass::create(m_rootLayer->renderSurface(), m_rootLayer->id());
-        m_renderPasses.append(m_rootRenderPass.get());
+        OwnPtr<CCRenderPass> rootRenderPass = CCRenderPass::create(m_rootLayer->renderSurface(), m_rootLayer->id());
+        m_renderPassesInDrawOrder.append(rootRenderPass.get());
+        m_renderPasses.set(m_rootLayer->id(), rootRenderPass.release());
     }
 
     // CCRendererClient methods.
@@ -96,8 +97,9 @@ public:
     // Methods added for test.
     int setFullRootLayerDamageCount() const { return m_setFullRootLayerDamageCount; }
 
-    CCRenderPass* rootRenderPass() { return m_rootRenderPass.get(); }
-    const CCRenderPassList& renderPasses() { return m_renderPasses; }
+    CCRenderPass* rootRenderPass() { return m_renderPassesInDrawOrder.last(); }
+    const CCRenderPassList& renderPassesInDrawOrder() const { return m_renderPassesInDrawOrder; }
+    const CCRenderPassIdHashMap& renderPasses() const { return m_renderPasses; }
 
     size_t memoryAllocationLimitBytes() const { return m_memoryAllocationLimitBytes; }
 
@@ -105,8 +107,8 @@ private:
     int m_setFullRootLayerDamageCount;
     DebugScopedSetImplThread m_implThread;
     OwnPtr<CCLayerImpl> m_rootLayer;
-    OwnPtr<CCRenderPass> m_rootRenderPass;
-    CCRenderPassList m_renderPasses;
+    CCRenderPassList m_renderPassesInDrawOrder;
+    CCRenderPassIdHashMap m_renderPasses;
     size_t m_memoryAllocationLimitBytes;
 };
 
@@ -222,7 +224,7 @@ TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatedForScopeDuration
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
     m_layerRendererChromium.setVisible(true);
-    m_layerRendererChromium.drawFrame(m_mockClient.renderPasses(), FloatRect());
+    m_layerRendererChromium.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses(), FloatRect());
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
     swapBuffers();
@@ -237,7 +239,7 @@ TEST_F(LayerRendererChromiumTest, FramebufferDiscardedAfterReadbackWhenNotVisibl
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
     char pixels[4];
-    m_layerRendererChromium.drawFrame(m_mockClient.renderPasses(), FloatRect());
+    m_layerRendererChromium.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses(), FloatRect());
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
     m_layerRendererChromium.getFramebufferPixels(pixels, IntRect(0, 0, 1, 1));
@@ -418,7 +420,7 @@ TEST(LayerRendererChromiumTest2, opaqueBackground)
 
     EXPECT_TRUE(layerRendererChromium.initialize());
 
-    layerRendererChromium.drawFrame(mockClient.renderPasses(), FloatRect());
+    layerRendererChromium.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses(), FloatRect());
 
     // On DEBUG builds, render passes with opaque background clear to blue to
     // easily see regions that were not drawn on the screen.
@@ -441,7 +443,7 @@ TEST(LayerRendererChromiumTest2, transparentBackground)
 
     EXPECT_TRUE(layerRendererChromium.initialize());
 
-    layerRendererChromium.drawFrame(mockClient.renderPasses(), FloatRect());
+    layerRendererChromium.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses(), FloatRect());
 
     EXPECT_EQ(1, context->clearCount());
 }

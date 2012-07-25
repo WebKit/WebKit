@@ -1,3 +1,47 @@
+2012-07-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Move WebFilterOperations from RenderPassDrawQuad to RenderPass
+        https://bugs.webkit.org/show_bug.cgi?id=91885
+
+        Reviewed by Adrienne Walker.
+
+        We move the filter operations to CCRenderPass to avoid having
+        variable-length data in a WebCompositorQuad in order to serialize,
+        and also to avoid requiring a virtual destructor for the quad
+        classes.
+
+        The drawFrame method now takes a CCRenderPassIdHashMap in order
+        to connect RenderPass quads to their source RenderPass.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::decideRenderPassAllocationsForFrame):
+        (WebCore::LayerRendererChromium::drawFrame):
+        (WebCore::LayerRendererChromium::beginDrawingFrame):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (WebCore::CCRenderPass::filters):
+        (WebCore::CCRenderPass::setFilters):
+        (CCRenderPass):
+        (WebCore::CCRenderPass::backgroundFilters):
+        (WebCore::CCRenderPass::setBackgroundFilters):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRenderer):
+
 2012-07-25  Mike Reed  <reed@google.com>
 
         fix test in beginLayerClippedToImage to check for immutability if we're going to do a shallow-copy

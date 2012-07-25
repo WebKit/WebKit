@@ -283,6 +283,9 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
 
         int renderPassId = renderSurfaceLayer->id();
         OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface, renderPassId);
+        pass->setFilters(renderSurfaceLayer->filters());
+        pass->setBackgroundFilters(renderSurfaceLayer->backgroundFilters());
+
         surfacePassMap.add(renderSurface, pass.get());
         frame.renderPasses.append(pass.get());
         frame.renderPassesById.add(renderPassId, pass.release());
@@ -539,7 +542,7 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     // RenderWidget.
     m_fpsCounter->markBeginningOfFrame(currentTime());
 
-    m_layerRenderer->drawFrame(frame.renderPasses, m_rootScissorRect);
+    m_layerRenderer->drawFrame(frame.renderPasses, frame.renderPassesById, m_rootScissorRect);
 
     for (unsigned int i = 0; i < frame.renderPasses.size(); i++)
         frame.renderPasses[i]->targetSurface()->damageTracker()->didDrawDamagedArea();

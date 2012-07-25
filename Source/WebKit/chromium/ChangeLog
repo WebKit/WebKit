@@ -1,3 +1,20 @@
+2012-07-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Move WebFilterOperations from RenderPassDrawQuad to RenderPass
+        https://bugs.webkit.org/show_bug.cgi?id=91885
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/LayerRendererChromiumTest.cpp:
+        (FakeCCRendererClient::FakeCCRendererClient):
+        (FakeCCRendererClient::rootRenderPass):
+        (FakeCCRendererClient::renderPassesInDrawOrder):
+        (FakeCCRendererClient::renderPasses):
+        (FakeCCRendererClient):
+        (TEST_F):
+        (TEST):
+
 2012-07-24  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Refactor CCLayerTreeHostCommon: move root layer special case initialization into internal code.

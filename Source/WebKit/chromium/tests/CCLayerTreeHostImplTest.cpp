@@ -3577,12 +3577,12 @@ struct RenderPassRemovalTestData : public CCLayerTreeHostImpl::FrameData {
 
 class CCTestRenderPass: public CCRenderPass {
 public:
-    static PassOwnPtr<CCRenderPass> create(CCRenderSurface* targetSurface, int id) { return adoptPtr(new CCTestRenderPass(targetSurface, id)); }
+    static PassOwnPtr<CCRenderPass> create(CCRenderSurface* renderSurface, int id) { return adoptPtr(new CCTestRenderPass(renderSurface, id)); }
 
     void appendQuad(PassOwnPtr<CCDrawQuad> quad) { m_quadList.append(quad); }
 
 protected:
-    CCTestRenderPass(CCRenderSurface* targetSurface, int id) : CCRenderPass(targetSurface, id) { }
+    CCTestRenderPass(CCRenderSurface* renderSurface, int id) : CCRenderPass(renderSurface, id) { }
 };
 
 class CCTestRenderer : public LayerRendererChromium, public CCRendererClient {
@@ -3698,7 +3698,7 @@ static void configureRenderPassTestData(const char* testScript, RenderPassRemova
 
                 IntRect quadRect = IntRect(0, 0, 1, 1);
                 IntRect contentsChangedRect = contentsChanged ? quadRect : IntRect();
-                OwnPtr<CCRenderPassDrawQuad> quad = CCRenderPassDrawQuad::create(testData.sharedQuadState.get(), quadRect, newRenderPassId, isReplica, WebKit::WebTransformationMatrix(), WebKit::WebFilterOperations(), WebKit::WebFilterOperations(), 1, contentsChangedRect);
+                OwnPtr<CCRenderPassDrawQuad> quad = CCRenderPassDrawQuad::create(testData.sharedQuadState.get(), quadRect, newRenderPassId, isReplica, WebKit::WebTransformationMatrix(), 1, contentsChangedRect);
                 static_cast<CCTestRenderPass*>(renderPass.get())->appendQuad(quad.release());
             }
         }

@@ -80,7 +80,7 @@ public:
     virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) OVERRIDE;
     virtual bool haveCachedResourcesForRenderPassId(int id) const OVERRIDE;
 
-    virtual void drawFrame(const CCRenderPassList&, const FloatRect& rootScissorRect) OVERRIDE;
+    virtual void drawFrame(const CCRenderPassList&, const CCRenderPassIdHashMap&, const FloatRect& rootScissorRect) OVERRIDE;
 
     // waits for rendering to finish
     virtual void finish() OVERRIDE;
@@ -121,14 +121,14 @@ protected:
 private:
     static void toGLMatrix(float*, const WebKit::WebTransformationMatrix&);
 
-    void beginDrawingFrame(const CCRenderPass* rootRenderPass);
+    void beginDrawingFrame();
     void drawRenderPass(const CCRenderPass*, const FloatRect& framebufferDamageRect);
     void finishDrawingFrame();
 
     void drawQuad(const CCDrawQuad*);
     void drawCheckerboardQuad(const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
-    PassOwnPtr<CCScopedTexture> drawBackgroundFilters(const CCRenderPassDrawQuad*, const WebKit::WebTransformationMatrix& deviceTransform);
+    PassOwnPtr<CCScopedTexture> drawBackgroundFilters(const CCRenderPassDrawQuad*, const WebKit::WebFilterOperations&, const WebKit::WebTransformationMatrix& deviceTransform);
     void drawRenderPassQuad(const CCRenderPassDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
     void drawStreamVideoQuad(const CCStreamVideoDrawQuad*);
@@ -264,6 +264,7 @@ private:
     WebKit::WebGraphicsContext3D* m_context;
 
     const CCRenderPass* m_defaultRenderPass;
+    const CCRenderPassIdHashMap* m_renderPassesById;
 
     bool m_isViewportChanged;
     bool m_isFramebufferDiscarded;
