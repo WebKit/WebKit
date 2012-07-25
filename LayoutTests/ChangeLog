@@ -1,3 +1,22 @@
+2012-07-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, update Qt5 specific test results.
+
+        * platform/qt-5.0-wk1/fast/text/whitespace/028-expected.png: Added.
+        * platform/qt-5.0-wk1/fast/text/whitespace/028-expected.txt: Added.
+        * platform/qt-5.0-wk2/fast/text/whitespace/028-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/text/whitespace/028-expected.txt: Added.
+        * platform/qt-5.0/css2.1/t0805-c5519-brdr-r-01-e-expected.png: Added.
+        * platform/qt-5.0/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Added.
+        * platform/qt-5.0/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/qt-5.0/svg/as-image/img-preserveAspectRatio-support-1-expected.txt:
+        * platform/qt-5.0/svg/as-object/object-box-sizing-no-width-height-expected.png: Added.
+        * platform/qt-5.0/svg/as-object/object-box-sizing-no-width-height-expected.txt: Added.
+        * platform/qt-5.0/svg/batik/text/longTextOnPath-expected.png: Added.
+        * platform/qt-5.0/svg/batik/text/longTextOnPath-expected.txt: Added.
+        * platform/qt-5.0/svg/carto.net/tabgroup-expected.png: Added.
+        * platform/qt-5.0/svg/carto.net/tabgroup-expected.txt: Added.
+
 2012-07-25  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
