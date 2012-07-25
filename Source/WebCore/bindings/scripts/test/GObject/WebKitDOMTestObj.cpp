@@ -100,12 +100,12 @@ G_DEFINE_TYPE(WebKitDOMTestObj, webkit_dom_test_obj, WEBKIT_TYPE_DOM_OBJECT)
 
 enum {
     PROP_0,
-    PROP_READ_ONLY_INT_ATTR,
+    PROP_READ_ONLY_LONG_ATTR,
     PROP_READ_ONLY_STRING_ATTR,
     PROP_READ_ONLY_TEST_OBJ_ATTR,
     PROP_SHORT_ATTR,
     PROP_UNSIGNED_SHORT_ATTR,
-    PROP_INT_ATTR,
+    PROP_ATTR,
     PROP_LONG_LONG_ATTR,
     PROP_UNSIGNED_LONG_LONG_ATTR,
     PROP_STRING_ATTR,
@@ -175,10 +175,6 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
     switch (propertyId) {
     case PROP_UNSIGNED_SHORT_ATTR: {
         coreSelf->setUnsignedShortAttr((g_value_get_uint(value)));
-        break;
-    }
-    case PROP_INT_ATTR: {
-        coreSelf->setIntAttr((g_value_get_long(value)));
         break;
     }
     case PROP_UNSIGNED_LONG_LONG_ATTR: {
@@ -283,6 +279,10 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
         break;
     }
+    case PROP_STRAWBERRY: {
+        coreSelf->setBlueberry((g_value_get_long(value)));
+        break;
+    }
     case PROP_STRICT_FLOAT: {
         coreSelf->setStrictFloat((g_value_get_float(value)));
         break;
@@ -306,8 +306,8 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
     WebCore::TestObj* coreSelf = WebKit::core(self);
 
     switch (propertyId) {
-    case PROP_READ_ONLY_INT_ATTR: {
-        g_value_set_long(value, coreSelf->readOnlyIntAttr());
+    case PROP_READ_ONLY_LONG_ATTR: {
+        g_value_set_long(value, coreSelf->readOnlyLongAttr());
         break;
     }
     case PROP_READ_ONLY_STRING_ATTR: {
@@ -327,8 +327,8 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         g_value_set_uint(value, coreSelf->unsignedShortAttr());
         break;
     }
-    case PROP_INT_ATTR: {
-        g_value_set_long(value, coreSelf->intAttr());
+    case PROP_ATTR: {
+        g_value_set_int64(value, coreSelf->attr());
         break;
     }
     case PROP_LONG_LONG_ATTR: {
@@ -499,7 +499,7 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     }
     case PROP_STRAWBERRY: {
-        g_value_set_int(value, coreSelf->blueberry());
+        g_value_set_long(value, coreSelf->blueberry());
         break;
     }
     case PROP_STRICT_FLOAT: {
@@ -545,10 +545,10 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
     gobjectClass->constructed = webkit_dom_test_obj_constructed;
 
     g_object_class_install_property(gobjectClass,
-                                    PROP_READ_ONLY_INT_ATTR,
-                                    g_param_spec_long("read-only-int-attr", /* name */
-                                                           "test_obj_read-only-int-attr", /* short description */
-                                                           "read-only  glong TestObj.read-only-int-attr", /* longer - could do with some extra doc stuff here */
+                                    PROP_READ_ONLY_LONG_ATTR,
+                                    g_param_spec_long("read-only-long-attr", /* name */
+                                                           "test_obj_read-only-long-attr", /* short description */
+                                                           "read-only  glong TestObj.read-only-long-attr", /* longer - could do with some extra doc stuff here */
                                                            G_MINLONG, /* min */
 G_MAXLONG, /* max */
 0, /* default */
@@ -586,12 +586,12 @@ G_MAXUINT, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
-                                    PROP_INT_ATTR,
-                                    g_param_spec_long("int-attr", /* name */
-                                                           "test_obj_int-attr", /* short description */
-                                                           "read-write  glong TestObj.int-attr", /* longer - could do with some extra doc stuff here */
-                                                           G_MINLONG, /* min */
-G_MAXLONG, /* max */
+                                    PROP_ATTR,
+                                    g_param_spec_int64("attr", /* name */
+                                                           "test_obj_attr", /* short description */
+                                                           "read-write  gint64 TestObj.attr", /* longer - could do with some extra doc stuff here */
+                                                           G_MININT64, /* min */
+G_MAXINT64, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
@@ -849,11 +849,11 @@ G_MAXLONG, /* max */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
                                     PROP_STRAWBERRY,
-                                    g_param_spec_int("strawberry", /* name */
+                                    g_param_spec_long("strawberry", /* name */
                                                            "test_obj_strawberry", /* short description */
-                                                           "read-write  gint TestObj.strawberry", /* longer - could do with some extra doc stuff here */
-                                                           G_MININT, /* min */
-G_MAXINT, /* max */
+                                                           "read-write  glong TestObj.strawberry", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
@@ -917,7 +917,7 @@ webkit_dom_test_obj_void_method(WebKitDOMTestObj* self)
 }
 
 void
-webkit_dom_test_obj_void_method_with_args(WebKitDOMTestObj* self, glong intArg, const gchar* strArg, WebKitDOMTestObj* objArg)
+webkit_dom_test_obj_void_method_with_args(WebKitDOMTestObj* self, gint64 Arg, const gchar* strArg, WebKitDOMTestObj* objArg)
 {
     g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
@@ -930,21 +930,21 @@ webkit_dom_test_obj_void_method_with_args(WebKitDOMTestObj* self, glong intArg, 
         convertedObjArg = WebKit::core(objArg);
         g_return_if_fail(convertedObjArg);
     }
-    item->voidMethodWithArgs(intArg, convertedStrArg, convertedObjArg);
+    item->voidMethodWithArgs(Arg, convertedStrArg, convertedObjArg);
 }
 
-glong
-webkit_dom_test_obj_int_method(WebKitDOMTestObj* self)
+gint64
+webkit_dom_test_obj_method(WebKitDOMTestObj* self)
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj* item = WebKit::core(self);
-    glong result = item->intMethod();
+    gint64 result = item->Method();
     return result;
 }
 
-glong
-webkit_dom_test_obj_int_method_with_args(WebKitDOMTestObj* self, glong intArg, const gchar* strArg, WebKitDOMTestObj* objArg)
+gint64
+webkit_dom_test_obj_method_with_args(WebKitDOMTestObj* self, gint64 Arg, const gchar* strArg, WebKitDOMTestObj* objArg)
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
@@ -957,7 +957,7 @@ webkit_dom_test_obj_int_method_with_args(WebKitDOMTestObj* self, glong intArg, c
         convertedObjArg = WebKit::core(objArg);
         g_return_val_if_fail(convertedObjArg, 0);
     }
-    glong result = item->intMethodWithArgs(intArg, convertedStrArg, convertedObjArg);
+    gint64 result = item->MethodWithArgs(Arg, convertedStrArg, convertedObjArg);
     return result;
 }
 
@@ -973,7 +973,7 @@ webkit_dom_test_obj_obj_method(WebKitDOMTestObj* self)
 }
 
 WebKitDOMTestObj*
-webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong intArg, const gchar* strArg, WebKitDOMTestObj* objArg)
+webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, gint64 Arg, const gchar* strArg, WebKitDOMTestObj* objArg)
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
@@ -986,7 +986,7 @@ webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong intArg, c
         convertedObjArg = WebKit::core(objArg);
         g_return_val_if_fail(convertedObjArg, 0);
     }
-    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->objMethodWithArgs(intArg, convertedStrArg, convertedObjArg));
+    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->objMethodWithArgs(Arg, convertedStrArg, convertedObjArg));
     WebKitDOMTestObj* result = WebKit::kit(gobjectResult.get());
     return result;
 }
@@ -1454,12 +1454,12 @@ webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gf
 }
 
 glong
-webkit_dom_test_obj_get_read_only_int_attr(WebKitDOMTestObj* self)
+webkit_dom_test_obj_get_read_only_long_attr(WebKitDOMTestObj* self)
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj* item = WebKit::core(self);
-    glong result = item->readOnlyIntAttr();
+    glong result = item->readOnlyLongAttr();
     return result;
 }
 
@@ -1522,23 +1522,23 @@ webkit_dom_test_obj_set_unsigned_short_attr(WebKitDOMTestObj* self, gushort valu
     item->setUnsignedShortAttr(value);
 }
 
-glong
-webkit_dom_test_obj_get_int_attr(WebKitDOMTestObj* self)
+gint64
+webkit_dom_test_obj_get_attr(WebKitDOMTestObj* self)
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj* item = WebKit::core(self);
-    glong result = item->intAttr();
+    gint64 result = item->attr();
     return result;
 }
 
 void
-webkit_dom_test_obj_set_int_attr(WebKitDOMTestObj* self, glong value)
+webkit_dom_test_obj_set_attr(WebKitDOMTestObj* self, gint64 value)
 {
     g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj* item = WebKit::core(self);
-    item->setIntAttr(value);
+    item->setAttr(value);
 }
 
 gint64
@@ -2320,18 +2320,18 @@ webkit_dom_test_obj_set_immutable_point(WebKitDOMTestObj* self, WebKitDOMSVGPoin
     item->setImmutablePoint(convertedValue);
 }
 
-gint
+glong
 webkit_dom_test_obj_get_strawberry(WebKitDOMTestObj* self)
 {
     g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
     WebCore::TestObj* item = WebKit::core(self);
-    gint result = item->blueberry();
+    glong result = item->blueberry();
     return result;
 }
 
 void
-webkit_dom_test_obj_set_strawberry(WebKitDOMTestObj* self, gint value)
+webkit_dom_test_obj_set_strawberry(WebKitDOMTestObj* self, glong value)
 {
     g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;

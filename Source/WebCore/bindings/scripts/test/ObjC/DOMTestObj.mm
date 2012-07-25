@@ -98,10 +98,10 @@
     [super finalize];
 }
 
-- (int)readOnlyIntAttr
+- (int)readOnlyLongAttr
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->readOnlyIntAttr();
+    return IMPL->readOnlyLongAttr();
 }
 
 - (NSString *)readOnlyStringAttr
@@ -140,16 +140,16 @@
     IMPL->setUnsignedShortAttr(newUnsignedShortAttr);
 }
 
-- (int)intAttr
+- (long long)Attr
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->intAttr();
+    return IMPL->attr();
 }
 
-- (void)setIntAttr:(int)newIntAttr
+- (void)setAttr:(long long)newAttr
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setIntAttr(newIntAttr);
+    IMPL->setAttr(newAttr);
 }
 
 - (long long)longLongAttr
@@ -725,22 +725,22 @@
     IMPL->voidMethod();
 }
 
-- (void)voidMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
+- (void)voidMethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->voidMethodWithArgs(intArg, strArg, core(objArg));
+    IMPL->voidMethodWithArgs(Arg, strArg, core(objArg));
 }
 
-- (int)intMethod
+- (long long)Method
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->intMethod();
+    return IMPL->method();
 }
 
-- (int)intMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
+- (long long)MethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->intMethodWithArgs(intArg, strArg, core(objArg));
+    return IMPL->methodWithArgs(Arg, strArg, core(objArg));
 }
 
 - (DOMTestObj *)objMethod
@@ -749,10 +749,10 @@
     return kit(WTF::getPtr(IMPL->objMethod()));
 }
 
-- (DOMTestObj *)objMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
+- (DOMTestObj *)objMethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->objMethodWithArgs(intArg, strArg, core(objArg))));
+    return kit(WTF::getPtr(IMPL->objMethodWithArgs(Arg, strArg, core(objArg))));
 }
 
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg
@@ -796,10 +796,10 @@
     IMPL->customMethod();
 }
 
-- (void)customMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
+- (void)customMethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->customMethodWithArgs(intArg, strArg, core(objArg));
+    IMPL->customMethodWithArgs(Arg, strArg, core(objArg));
 }
 
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture

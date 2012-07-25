@@ -55,7 +55,6 @@
 #include "V8c.h"
 #include "V8d.h"
 #include "V8e.h"
-#include "V8int.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -81,11 +80,11 @@ namespace TestObjV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
-static v8::Handle<v8::Value> readOnlyIntAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> readOnlyLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.readOnlyIntAttr._get");
+    INC_STATS("DOM.TestObj.readOnlyLongAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Integer(imp->readOnlyIntAttr(), info.GetIsolate());
+    return v8Integer(imp->readOnlyLongAttr(), info.GetIsolate());
 }
 
 static v8::Handle<v8::Value> readOnlyStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -109,10 +108,10 @@ static v8::Handle<v8::Value> readOnlyTestObjAttrAttrGetter(v8::Local<v8::String>
     return wrapper;
 }
 
-static v8::Handle<v8::Value> staticReadOnlyIntAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> staticReadOnlyLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.staticReadOnlyIntAttr._get");
-    return v8Integer(TestObj::staticReadOnlyIntAttr(), info.GetIsolate());
+    INC_STATS("DOM.TestObj.staticReadOnlyLongAttr._get");
+    return v8Integer(TestObj::staticReadOnlyLongAttr(), info.GetIsolate());
 }
 
 static v8::Handle<v8::Value> staticStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -161,19 +160,19 @@ static void unsignedShortAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8
     return;
 }
 
-static v8::Handle<v8::Value> intAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> AttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.intAttr._get");
+    INC_STATS("DOM.TestObj.Attr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8Integer(imp->intAttr(), info.GetIsolate());
+    return v8::Number::New(static_cast<double>(imp->attr()));
 }
 
-static void intAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+static void AttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    INC_STATS("DOM.TestObj.intAttr._set");
+    INC_STATS("DOM.TestObj.Attr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
-    imp->setIntAttr(v);
+    long long v = toInt64(value);
+    imp->setAttr(WTF::getPtr(v));
     return;
 }
 
@@ -979,7 +978,7 @@ static void strawberryAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value
 {
     INC_STATS("DOM.TestObj.strawberry._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = V8int::HasInstance(value) ? V8int::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    int v = toInt32(value);
     imp->setBlueberry(v);
     return;
 }
@@ -1065,30 +1064,30 @@ static v8::Handle<v8::Value> voidMethodWithArgsCallback(const v8::Arguments& arg
     if (args.Length() < 3)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
-    imp->voidMethodWithArgs(intArg, strArg, objArg);
+    imp->voidMethodWithArgs(Arg, strArg, objArg);
     return v8::Handle<v8::Value>();
 }
 
-static v8::Handle<v8::Value> intMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> MethodCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestObj.intMethod");
+    INC_STATS("DOM.TestObj.Method");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    return v8Integer(imp->intMethod(), args.GetIsolate());
+    return v8::Number::New(static_cast<double>(imp->Method()));
 }
 
-static v8::Handle<v8::Value> intMethodWithArgsCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> MethodWithArgsCallback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.TestObj.intMethodWithArgs");
+    INC_STATS("DOM.TestObj.MethodWithArgs");
     if (args.Length() < 3)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
-    return v8Integer(imp->intMethodWithArgs(intArg, strArg, objArg), args.GetIsolate());
+    return v8::Number::New(static_cast<double>(imp->MethodWithArgs(Arg, strArg, objArg)));
 }
 
 static v8::Handle<v8::Value> objMethodCallback(const v8::Arguments& args)
@@ -1104,10 +1103,10 @@ static v8::Handle<v8::Value> objMethodWithArgsCallback(const v8::Arguments& args
     if (args.Length() < 3)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
-    return toV8(imp->objMethodWithArgs(intArg, strArg, objArg), args.GetIsolate());
+    return toV8(imp->objMethodWithArgs(Arg, strArg, objArg), args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> methodWithSequenceArgCallback(const v8::Arguments& args)
@@ -1127,8 +1126,8 @@ static v8::Handle<v8::Value> methodReturningSequenceCallback(const v8::Arguments
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    return v8Array(imp->methodReturningSequence(intArg), args.GetIsolate());
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    return v8Array(imp->methodReturningSequence(Arg), args.GetIsolate());
 }
 
 static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8::Arguments& args)
@@ -1542,8 +1541,8 @@ static v8::Handle<v8::Value> overloadedMethod2Callback(const v8::Arguments& args
         imp->overloadedMethod(objArg);
         return v8::Handle<v8::Value>();
     }
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)));
-    imp->overloadedMethod(objArg, intArg);
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)));
+    imp->overloadedMethod(objArg, Arg);
     return v8::Handle<v8::Value>();
 }
 
@@ -1564,8 +1563,8 @@ static v8::Handle<v8::Value> overloadedMethod4Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    imp->overloadedMethod(intArg);
+    EXCEPTION_BLOCK(long long, Arg, toInt64(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    imp->overloadedMethod(Arg);
     return v8::Handle<v8::Value>();
 }
 
@@ -1901,22 +1900,22 @@ static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
 } // namespace TestObjV8Internal
 
 static const BatchedAttribute TestObjAttrs[] = {
-    // Attribute 'readOnlyIntAttr' (Type: 'readonly attribute' ExtAttr: '')
-    {"readOnlyIntAttr", TestObjV8Internal::readOnlyIntAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'readOnlyLongAttr' (Type: 'readonly attribute' ExtAttr: '')
+    {"readOnlyLongAttr", TestObjV8Internal::readOnlyLongAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'readOnlyStringAttr' (Type: 'readonly attribute' ExtAttr: '')
     {"readOnlyStringAttr", TestObjV8Internal::readOnlyStringAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'readOnlyTestObjAttr' (Type: 'readonly attribute' ExtAttr: '')
     {"readOnlyTestObjAttr", TestObjV8Internal::readOnlyTestObjAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'staticReadOnlyIntAttr' (Type: 'readonly attribute' ExtAttr: '')
-    {"staticReadOnlyIntAttr", TestObjV8Internal::staticReadOnlyIntAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'staticReadOnlyLongAttr' (Type: 'readonly attribute' ExtAttr: '')
+    {"staticReadOnlyLongAttr", TestObjV8Internal::staticReadOnlyLongAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'staticStringAttr' (Type: 'attribute' ExtAttr: '')
     {"staticStringAttr", TestObjV8Internal::staticStringAttrAttrGetter, TestObjV8Internal::staticStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'shortAttr' (Type: 'attribute' ExtAttr: '')
     {"shortAttr", TestObjV8Internal::shortAttrAttrGetter, TestObjV8Internal::shortAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'unsignedShortAttr' (Type: 'attribute' ExtAttr: '')
     {"unsignedShortAttr", TestObjV8Internal::unsignedShortAttrAttrGetter, TestObjV8Internal::unsignedShortAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'intAttr' (Type: 'attribute' ExtAttr: '')
-    {"intAttr", TestObjV8Internal::intAttrAttrGetter, TestObjV8Internal::intAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'Attr' (Type: 'attribute' ExtAttr: '')
+    {"Attr", TestObjV8Internal::AttrAttrGetter, TestObjV8Internal::AttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'longLongAttr' (Type: 'attribute' ExtAttr: '')
     {"longLongAttr", TestObjV8Internal::longLongAttrAttrGetter, TestObjV8Internal::longLongAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'unsignedLongLongAttr' (Type: 'attribute' ExtAttr: '')
@@ -2027,7 +2026,7 @@ static const BatchedAttribute TestObjAttrs[] = {
 
 static const BatchedCallback TestObjCallbacks[] = {
     {"voidMethod", TestObjV8Internal::voidMethodCallback},
-    {"intMethod", TestObjV8Internal::intMethodCallback},
+    {"Method", TestObjV8Internal::MethodCallback},
     {"objMethod", TestObjV8Internal::objMethodCallback},
     {"methodReturningSequence", TestObjV8Internal::methodReturningSequenceCallback},
     {"serializedValue", TestObjV8Internal::serializedValueCallback},
@@ -2166,11 +2165,11 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::Signature> voidMethodWithArgsSignature = v8::Signature::New(desc, voidMethodWithArgsArgc, voidMethodWithArgsArgv);
     proto->Set(v8::String::New("voidMethodWithArgs"), v8::FunctionTemplate::New(TestObjV8Internal::voidMethodWithArgsCallback, v8::Handle<v8::Value>(), voidMethodWithArgsSignature));
 
-    // Custom Signature 'intMethodWithArgs'
-    const int intMethodWithArgsArgc = 3;
-    v8::Handle<v8::FunctionTemplate> intMethodWithArgsArgv[intMethodWithArgsArgc] = { v8::Handle<v8::FunctionTemplate>(), v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
-    v8::Handle<v8::Signature> intMethodWithArgsSignature = v8::Signature::New(desc, intMethodWithArgsArgc, intMethodWithArgsArgv);
-    proto->Set(v8::String::New("intMethodWithArgs"), v8::FunctionTemplate::New(TestObjV8Internal::intMethodWithArgsCallback, v8::Handle<v8::Value>(), intMethodWithArgsSignature));
+    // Custom Signature 'MethodWithArgs'
+    const int MethodWithArgsArgc = 3;
+    v8::Handle<v8::FunctionTemplate> MethodWithArgsArgv[MethodWithArgsArgc] = { v8::Handle<v8::FunctionTemplate>(), v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
+    v8::Handle<v8::Signature> MethodWithArgsSignature = v8::Signature::New(desc, MethodWithArgsArgc, MethodWithArgsArgv);
+    proto->Set(v8::String::New("MethodWithArgs"), v8::FunctionTemplate::New(TestObjV8Internal::MethodWithArgsCallback, v8::Handle<v8::Value>(), MethodWithArgsSignature));
 
     // Custom Signature 'objMethodWithArgs'
     const int objMethodWithArgsArgc = 3;

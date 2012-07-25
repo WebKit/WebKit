@@ -70,15 +70,15 @@ public:
         WEBDOM_CONST_JAVASCRIPT = 15
     };
 
-    int readOnlyIntAttr() const;
+    int readOnlyLongAttr() const;
     WebDOMString readOnlyStringAttr() const;
     WebDOMTestObj readOnlyTestObjAttr() const;
     short shortAttr() const;
     void setShortAttr(short);
     unsigned short unsignedShortAttr() const;
     void setUnsignedShortAttr(unsigned short);
-    int intAttr() const;
-    void setIntAttr(int);
+    long long Attr() const;
+    void setAttr(long long);
     long long longLongAttr() const;
     void setLongLongAttr(long long);
     unsigned long long unsignedLongLongAttr() const;
@@ -145,11 +145,11 @@ public:
     int replaceableAttribute() const;
 
     void voidMethod();
-    void voidMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
-    int intMethod();
-    int intMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
+    void voidMethodWithArgs(long long Arg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
+    long long Method();
+    long long MethodWithArgs(long long Arg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj objMethod();
-    WebDOMTestObj objMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
+    WebDOMTestObj objMethodWithArgs(long long Arg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void serializedValue(const WebDOMString& serializedArg);
     void idbKey(const WebDOMIDBKey& key);

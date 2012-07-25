@@ -97,12 +97,12 @@ WebDOMTestObj::~WebDOMTestObj()
     m_impl = 0;
 }
 
-int WebDOMTestObj::readOnlyIntAttr() const
+int WebDOMTestObj::readOnlyLongAttr() const
 {
     if (!impl())
         return 0;
 
-    return impl()->readOnlyIntAttr();
+    return impl()->readOnlyLongAttr();
 }
 
 WebDOMString WebDOMTestObj::readOnlyStringAttr() const
@@ -153,20 +153,20 @@ void WebDOMTestObj::setUnsignedShortAttr(unsigned short newUnsignedShortAttr)
     impl()->setUnsignedShortAttr(newUnsignedShortAttr);
 }
 
-int WebDOMTestObj::intAttr() const
+long long WebDOMTestObj::Attr() const
 {
     if (!impl())
         return 0;
 
-    return impl()->intAttr();
+    return impl()->attr();
 }
 
-void WebDOMTestObj::setIntAttr(int newIntAttr)
+void WebDOMTestObj::setAttr(long long newAttr)
 {
     if (!impl())
         return;
 
-    impl()->setIntAttr(newIntAttr);
+    impl()->setAttr(newAttr);
 }
 
 long long WebDOMTestObj::longLongAttr() const
@@ -661,28 +661,28 @@ void WebDOMTestObj::voidMethod()
     impl()->voidMethod();
 }
 
-void WebDOMTestObj::voidMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg)
+void WebDOMTestObj::voidMethodWithArgs(long long Arg, const WebDOMString& strArg, const WebDOMTestObj& objArg)
 {
     if (!impl())
         return;
 
-    impl()->voidMethodWithArgs(intArg, strArg, toWebCore(objArg));
+    impl()->voidMethodWithArgs(Arg, strArg, toWebCore(objArg));
 }
 
-int WebDOMTestObj::intMethod()
+long long WebDOMTestObj::Method()
 {
     if (!impl())
         return 0;
 
-    return impl()->intMethod();
+    return impl()->method();
 }
 
-int WebDOMTestObj::intMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg)
+long long WebDOMTestObj::MethodWithArgs(long long Arg, const WebDOMString& strArg, const WebDOMTestObj& objArg)
 {
     if (!impl())
         return 0;
 
-    return impl()->intMethodWithArgs(intArg, strArg, toWebCore(objArg));
+    return impl()->methodWithArgs(Arg, strArg, toWebCore(objArg));
 }
 
 WebDOMTestObj WebDOMTestObj::objMethod()
@@ -693,12 +693,12 @@ WebDOMTestObj WebDOMTestObj::objMethod()
     return toWebKit(WTF::getPtr(impl()->objMethod()));
 }
 
-WebDOMTestObj WebDOMTestObj::objMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg)
+WebDOMTestObj WebDOMTestObj::objMethodWithArgs(long long Arg, const WebDOMString& strArg, const WebDOMTestObj& objArg)
 {
     if (!impl())
         return WebDOMTestObj();
 
-    return toWebKit(WTF::getPtr(impl()->objMethodWithArgs(intArg, strArg, toWebCore(objArg))));
+    return toWebKit(WTF::getPtr(impl()->objMethodWithArgs(Arg, strArg, toWebCore(objArg))));
 }
 
 WebDOMTestObj WebDOMTestObj::methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg)

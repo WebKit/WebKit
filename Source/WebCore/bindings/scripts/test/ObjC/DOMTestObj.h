@@ -65,15 +65,15 @@ enum {
 };
 
 @interface DOMTestObj : DOMObject
-- (int)readOnlyIntAttr;
+- (int)readOnlyLongAttr;
 - (NSString *)readOnlyStringAttr;
 - (DOMTestObj *)readOnlyTestObjAttr;
 - (short)shortAttr;
 - (void)setShortAttr:(short)newShortAttr;
 - (unsigned short)unsignedShortAttr;
 - (void)setUnsignedShortAttr:(unsigned short)newUnsignedShortAttr;
-- (int)intAttr;
-- (void)setIntAttr:(int)newIntAttr;
+- (long long)Attr;
+- (void)setAttr:(long long)newAttr;
 - (long long)longLongAttr;
 - (void)setLongLongAttr:(long long)newLongLongAttr;
 - (unsigned long long)unsignedLongLongAttr;
@@ -170,18 +170,18 @@ enum {
 - (int)replaceableAttribute;
 - (void)setReplaceableAttribute:(int)newReplaceableAttribute;
 - (void)voidMethod;
-- (void)voidMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
-- (int)intMethod;
-- (int)intMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (void)voidMethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (long long)Method;
+- (long long)MethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (DOMTestObj *)objMethod;
-- (DOMTestObj *)objMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (DOMTestObj *)objMethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (void)serializedValue:(NSString *)serializedArg;
 - (void)idbKey:(DOMIDBKey *)key;
 - (void)optionsObject:(DOMDictionary *)oo ooo:(DOMDictionary *)ooo;
 - (void)methodWithException;
 - (void)customMethod;
-- (void)customMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (void)customMethodWithArgs:(long long)Arg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;
 - (void)withScriptStateVoid;

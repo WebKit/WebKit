@@ -1,3 +1,82 @@
+2012-07-25  Kentaro Hara  <haraken@chromium.org>
+
+        Replace int with long in test IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=92181
+
+        Reviewed by Adam Barth.
+
+        int is not a valid type in WebIDL. It should be long.
+        We should replace int with long in bindings/scripts/test/*.idl.
+        This is a follow-up patch for r123550.
+
+        Test: bindings/scripts/test/TestObj.idl
+
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::readOnlyLongAttr):
+        (WebDOMTestObj::Attr):
+        (WebDOMTestObj::setAttr):
+        (WebDOMTestObj::voidMethodWithArgs):
+        (WebDOMTestObj::Method):
+        (WebDOMTestObj::MethodWithArgs):
+        (WebDOMTestObj::objMethodWithArgs):
+        * bindings/scripts/test/CPP/WebDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_set_property):
+        (webkit_dom_test_obj_get_property):
+        (webkit_dom_test_obj_class_init):
+        (webkit_dom_test_obj_void_method_with_args):
+        (webkit_dom_test_obj_method):
+        (webkit_dom_test_obj_method_with_args):
+        (webkit_dom_test_obj_obj_method_with_args):
+        (webkit_dom_test_obj_get_read_only_long_attr):
+        (webkit_dom_test_obj_get_attr):
+        (webkit_dom_test_obj_set_attr):
+        (webkit_dom_test_obj_get_strawberry):
+        (webkit_dom_test_obj_set_strawberry):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore):
+        (WebCore::jsTestObjReadOnlyLongAttr):
+        (WebCore::jsTestObjConstructorStaticReadOnlyLongAttr):
+        (WebCore::jsTestObjAttr):
+        (WebCore::setJSTestObjAttr):
+        (WebCore::setJSTestObjStrawberry):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethod):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodReturningSequence):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        (-[DOMTestObj readOnlyLongAttr]):
+        (-[DOMTestObj Attr]):
+        (-[DOMTestObj setAttr:]):
+        (-[DOMTestObj voidMethodWithArgs:strArg:objArg:]):
+        (-[DOMTestObj Method]):
+        (-[DOMTestObj MethodWithArgs:strArg:objArg:]):
+        (-[DOMTestObj objMethodWithArgs:strArg:objArg:]):
+        (-[DOMTestObj customMethodWithArgs:strArg:objArg:]):
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::readOnlyLongAttrAttrGetter):
+        (WebCore::TestObjV8Internal::staticReadOnlyLongAttrAttrGetter):
+        (WebCore::TestObjV8Internal::AttrAttrGetter):
+        (WebCore::TestObjV8Internal::AttrAttrSetter):
+        (WebCore::TestObjV8Internal::strawberryAttrSetter):
+        (WebCore::TestObjV8Internal::voidMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::MethodCallback):
+        (WebCore::TestObjV8Internal::MethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::objMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::methodReturningSequenceCallback):
+        (WebCore::TestObjV8Internal::overloadedMethod2Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod4Callback):
+        (WebCore):
+        (WebCore::ConfigureV8TestObjTemplate):
+
 2012-07-25  Shinya Kawanaka  <shinyak@chromium.org>
 
         A validation bubble should not be modifiable.

@@ -35,16 +35,16 @@ module test {
         InterfaceName=TestObject
     ] TestObj {
         // Attributes
-        readonly attribute long            readOnlyIntAttr;
+        readonly attribute long            readOnlyLongAttr;
         readonly attribute DOMString       readOnlyStringAttr;
         readonly attribute TestObj         readOnlyTestObjAttr;
 #if defined(TESTING_JS) || defined(TESTING_V8)
-        static readonly attribute long     staticReadOnlyIntAttr;
+        static readonly attribute long     staticReadOnlyLongAttr;
         static attribute DOMString         staticStringAttr;
 #endif
         attribute short                    shortAttr;
         attribute unsigned short           unsignedShortAttr;
-        attribute long                     intAttr;
+        attribute long                     longAttr;
         attribute long long                longLongAttr;
         attribute unsigned long long       unsignedLongLongAttr;
         attribute DOMString                stringAttr;
@@ -68,14 +68,14 @@ module test {
 
         // Methods
         void    voidMethod();
-        void    voidMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
-        long    intMethod();
-        long    intMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
+        void    voidMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
+        long    longMethod();
+        long    longMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
         TestObj objMethod();
-        TestObj objMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
+        TestObj objMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
 
         void methodWithSequenceArg(in sequence<ScriptProfile> sequenceArg);
-        sequence<ScriptProfile> methodReturningSequence(in long intArg);
+        sequence<ScriptProfile> methodReturningSequence(in long longArg);
 
         TestObj methodThatRequiresAllArgsAndThrows(in DOMString strArg, in TestObj objArg)
             raises(DOMException);
@@ -94,7 +94,7 @@ module test {
         // 'Custom' extended attribute
         attribute [Custom] long            customAttr;
         [Custom] void customMethod();
-        [Custom] void customMethodWithArgs(in long intArg, in DOMString strArg, in TestObj objArg);
+        [Custom] void customMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
 
         void addEventListener(in DOMString type, 
                               in EventListener listener, 
@@ -168,9 +168,9 @@ module test {
 #if defined(TESTING_V8) || defined(TESTING_JS)
         // Overloads
         void    overloadedMethod(in TestObj? objArg, in DOMString strArg);
-        void    overloadedMethod(in TestObj? objArg, in [Optional] long intArg);
+        void    overloadedMethod(in TestObj? objArg, in [Optional] long longArg);
         void    overloadedMethod(in DOMString strArg);
-        void    overloadedMethod(in long intArg);
+        void    overloadedMethod(in long longArg);
         void    overloadedMethod(in [Callback] TestCallback callback);
         void    overloadedMethod(in DOMStringList? listArg);
         void    overloadedMethod(in DOMString[]? arrayArg);
@@ -230,7 +230,7 @@ module test {
         [Immutable] SVGPoint immutablePointFunction();
 
         [ImplementedAs=banana] void orange();
-        attribute [ImplementedAs=blueberry] int strawberry;
+        attribute [ImplementedAs=blueberry] long strawberry;
 
         attribute [StrictTypeChecking] float strictFloat;
         [StrictTypeChecking] bool strictFunction(in DOMString str, in float a, in long b)
