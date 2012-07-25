@@ -1,3 +1,32 @@
+2012-07-24  Sam Weinig  <sam@webkit.org>
+
+        Add per-HashTable stats
+        https://bugs.webkit.org/show_bug.cgi?id=92185
+
+        Reviewed by Anders Carlsson.
+
+        Add per-HashTable stats, so we can look at the effectiveness of an individual HashTable.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::Stats::Stats):
+        Add a HashTable::Stats to hold the stats.
+
+        (WTF::HashTable::Stats::recordCollisionAtCount):
+        (WTF::HashTable::Stats::dumpStats):
+        Add versions of recordCollisionAtCount and dumpStats for per-HashTable version.
+
+        (WTF::HashTable):
+        Keep the stats, if enabled, in an OwnPtr, to not blow JSCell max size restrictions.
+
+        (WTF::lookup):
+        (WTF::lookupForWriting):
+        (WTF::fullLookupForWriting):
+        (WTF::add):
+        (WTF::reinsert):
+        (WTF::remove):
+        (WTF::rehash):
+        Keep track of the stats as the table is used.
+
 2012-07-24  Patrick Gansterer  <paroga@webkit.org>
 
         Store the full year in GregorianDateTime
