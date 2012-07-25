@@ -1,3 +1,33 @@
+2012-07-25  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt] fast/borders rebaseline after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92146
+
+        Reviewed by Csaba Osztrogonác.
+
+        Updated patch started by Alexis. This one removes old expected results
+        found inside qt-5.0 directory and updates Skipped files as well.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/fast/borders/bidi-002-expected.txt: Removed.
+        * platform/qt-5.0/fast/borders/bidi-009a-expected.txt: Removed.
+        * platform/qt-5.0/fast/borders/bidi-012-expected.txt: Removed.
+        * platform/qt/fast/borders/border-image-slice-constrained-expected.txt:
+        * platform/qt/fast/borders/borderRadiusArcs01-expected.txt:
+        * platform/qt/fast/borders/borderRadiusDouble01-expected.txt:
+        * platform/qt/fast/borders/borderRadiusDouble02-expected.txt:
+        * platform/qt/fast/borders/borderRadiusDouble03-expected.txt:
+        * platform/qt/fast/borders/borderRadiusGroove01-expected.txt:
+        * platform/qt/fast/borders/borderRadiusGroove02-expected.txt:
+        * platform/qt/fast/borders/borderRadiusInset01-expected.txt:
+        * platform/qt/fast/borders/borderRadiusOutset01-expected.txt:
+        * platform/qt/fast/borders/borderRadiusRidge01-expected.txt:
+        * platform/qt/fast/borders/borderRadiusSolid01-expected.txt:
+        * platform/qt/fast/borders/borderRadiusSolid02-expected.txt:
+        * platform/qt/fast/borders/borderRadiusSolid03-expected.txt:
+        * platform/qt/fast/borders/borderRadiusSolid04-expected.txt:
+        * platform/qt/fast/borders/table-borders-expected.txt:
+
 2012-07-25  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations change.
