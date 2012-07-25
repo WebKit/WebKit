@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
     const char *url;
     int args = 1;
 
-    if (!ecore_evas_init())
+    if (!ewk_init())
         return EXIT_FAILURE;
 
     if (args < argc)
@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
     ecore_evas_free(browser->ee);
     free(browser);
 
-    ecore_evas_shutdown();
+    ewk_shutdown();
 
     return 0;
 }

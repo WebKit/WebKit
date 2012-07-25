@@ -19,12 +19,8 @@
 
 #include "config.h"
 
+#include "EWebKit2.h"
 #include "TestController.h"
-#include <Ecore.h>
-#include <Ecore_Evas.h>
-#include <Edje.h>
-#include <glib-object.h>
-#include <glib.h>
 
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>
@@ -32,20 +28,12 @@
 
 int main(int argc, char** argv)
 {
-    g_type_init();
-
-    if (!ecore_evas_init())
+    if (!ewk_init())
         return 1;
-
-    if (!edje_init()) {
-        ecore_evas_shutdown();
-        return 1;
-    }
 
 #ifdef HAVE_ECORE_X
     if (!ecore_x_init(0)) {
-        ecore_evas_shutdown();
-        edje_shutdown();
+        ewk_shutdown();
         return 1;
     }
 #endif
@@ -57,8 +45,7 @@ int main(int argc, char** argv)
     ecore_x_shutdown();
 #endif
 
-    edje_shutdown();
-    ecore_evas_shutdown();
+    ewk_shutdown();
 
     return 0;
 }
