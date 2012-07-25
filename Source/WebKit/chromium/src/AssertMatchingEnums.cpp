@@ -537,6 +537,9 @@ COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStatePreview, PageVisibilityStateP
 #if ENABLE(MEDIA_STREAM)
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeAudio, MediaStreamSource::TypeAudio);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeVideo, MediaStreamSource::TypeVideo);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::ReadyStateLive, MediaStreamSource::ReadyStateLive);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::ReadyStateMuted, MediaStreamSource::ReadyStateMuted);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::ReadyStateEnded, MediaStreamSource::ReadyStateEnded);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeAll, IceOptions::ALL);
 COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeNoRelay, IceOptions::NO_RELAY);

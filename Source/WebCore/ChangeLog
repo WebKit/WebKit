@@ -1,3 +1,59 @@
+2012-07-25  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update MediaStreamTrack to match the specification
+        https://bugs.webkit.org/show_bug.cgi?id=90180
+
+        Reviewed by Adam Barth.
+
+        MediaStreamTracks are now required to show the status of the underlying source,
+        and trigger events when that status changes.
+
+        Test: fast/mediastream/MediaStreamTrack.html
+
+        * GNUmakefile.list.am:
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::addTrack):
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::create):
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::~MediaStreamTrack):
+        (WebCore::MediaStreamTrack::setEnabled):
+        (WebCore::MediaStreamTrack::readyState):
+        (WebCore):
+        (WebCore::MediaStreamTrack::sourceChangedState):
+        (WebCore::MediaStreamTrack::stop):
+        (WebCore::MediaStreamTrack::interfaceName):
+        (WebCore::MediaStreamTrack::scriptExecutionContext):
+        (WebCore::MediaStreamTrack::eventTargetData):
+        (WebCore::MediaStreamTrack::ensureEventTargetData):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/MediaStreamTrack.idl:
+        * WebCore.gypi:
+        * dom/EventNames.h:
+        (WebCore):
+        * dom/EventTargetFactory.in:
+        * platform/chromium/support/WebMediaStreamDescriptor.cpp:
+        * platform/chromium/support/WebMediaStreamSource.cpp:
+        (WebKit::WebMediaStreamSource::setReadyState):
+        (WebKit):
+        (WebKit::WebMediaStreamSource::readyState):
+        * platform/mediastream/MediaStreamSource.cpp: Copied from Source/WebCore/platform/mediastream/MediaStreamSource.h.
+        (WebCore):
+        (WebCore::MediaStreamSource::create):
+        (WebCore::MediaStreamSource::MediaStreamSource):
+        (WebCore::MediaStreamSource::setReadyState):
+        (WebCore::MediaStreamSource::addObserver):
+        (WebCore::MediaStreamSource::removeObserver):
+        * platform/mediastream/MediaStreamSource.h:
+        (Observer):
+        (WebCore::MediaStreamSource::Observer::~Observer):
+        (MediaStreamSource):
+        (WebCore::MediaStreamSource::readyState):
+        * platform/mediastream/chromium/MediaStreamCenterChromium.cpp:
+        (WebCore::MediaStreamCenterChromium::queryMediaStreamSources):
+        (WebCore::MediaStreamCenterChromium::didCreateMediaStream):
+
 2012-07-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Incorrect rounding in ceiledLayoutUnit and roundedLayoutUnit.

@@ -1,3 +1,29 @@
+2012-07-25  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update MediaStreamTrack to match the specification
+        https://bugs.webkit.org/show_bug.cgi?id=90180
+
+        Reviewed by Adam Barth.
+
+        Adding a Mock WebMediaStreamCenter to enable better LayoutTests.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/MockWebKitPlatformSupport.cpp:
+        (MockWebKitPlatformSupport::createMediaStreamCenter):
+        * DumpRenderTree/chromium/MockWebMediaStreamCenter.cpp: Added.
+        (WebKit):
+        (WebKit::MockWebMediaStreamCenter::MockWebMediaStreamCenter):
+        (WebKit::MockWebMediaStreamCenter::queryMediaStreamSources):
+        (WebKit::MockWebMediaStreamCenter::didEnableMediaStreamTrack):
+        (WebKit::MockWebMediaStreamCenter::didDisableMediaStreamTrack):
+        (WebKit::MockWebMediaStreamCenter::didStopLocalMediaStream):
+        (WebKit::MockWebMediaStreamCenter::didCreateMediaStream):
+        (WebKit::MockWebMediaStreamCenter::constructSDP):
+        * DumpRenderTree/chromium/MockWebMediaStreamCenter.h: Copied from Tools/DumpRenderTree/chromium/MockWebKitPlatformSupport.cpp.
+        (WebKit):
+        (MockWebMediaStreamCenter):
+        (WebKit::MockWebMediaStreamCenter::MockWebMediaStreamCenter):
+
 2012-07-25  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [NRWT] Rename baseline_search_path() to default_baseline_search_path()

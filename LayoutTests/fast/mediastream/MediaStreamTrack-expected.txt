@@ -1,0 +1,13 @@
+Tests MediaStreamTrack callbacks.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getUserMedia succeeded.
+PASS Track onmute callback succeeded.
+PASS Track onunmute callback succeeded.
+PASS Track onended callback succeeded.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

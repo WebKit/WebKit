@@ -68,9 +68,12 @@ MediaStreamCenterChromium::~MediaStreamCenterChromium()
 
 void MediaStreamCenterChromium::queryMediaStreamSources(PassRefPtr<MediaStreamSourcesQueryClient> client)
 {
-    // FIXME: Remove this "short-circuit" and forward to m_private when Chrome and DumpRenderTree has implemented WebMediaStreamCenter.
-    MediaStreamSourceVector audioSources, videoSources;
-    client->didCompleteQuery(audioSources, videoSources);
+    if (m_private)
+        m_private->queryMediaStreamSources(client);
+    else {
+        MediaStreamSourceVector audioSources, videoSources;
+        client->didCompleteQuery(audioSources, videoSources);
+    }
 }
 
 void MediaStreamCenterChromium::didSetMediaStreamTrackEnabled(MediaStreamDescriptor* stream,  MediaStreamComponent* component)
@@ -100,9 +103,6 @@ void MediaStreamCenterChromium::didStopLocalMediaStream(MediaStreamDescriptor* s
 void MediaStreamCenterChromium::didCreateMediaStream(MediaStreamDescriptor* stream)
 {
     if (m_private) {
-        // FIXME: Remove when Chromium have switched to the new API.
-        m_private->didConstructMediaStream(stream);
-
         WebKit::WebMediaStreamDescriptor webStream(stream);
         m_private->didCreateMediaStream(webStream);
     }

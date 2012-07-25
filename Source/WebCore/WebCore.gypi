@@ -447,6 +447,7 @@
             'platform/mediastream/MediaStreamCenter.h',
             'platform/mediastream/MediaStreamComponent.h',
             'platform/mediastream/MediaStreamDescriptor.h',
+            'platform/mediastream/MediaStreamSource.cpp',
             'platform/mediastream/MediaStreamSource.h',
             'platform/mediastream/PeerConnection00Handler.h',
             'platform/mediastream/PeerConnection00HandlerClient.h',

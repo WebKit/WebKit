@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests MediaStreamTrack callbacks.");
+
+// Note that the below behaviour doesn't reflect how it works outside of LayoutTests.
+// The underlying mock is modified to trigger the events when certain functions are called.
+// This modified behaviour allows us to test the MediaStreamTrack class properly.
+
+var stream;
+var track;
+
+function error() {
+    testFailed('Stream generation failed.');
+    finishJSTest();
+}
+
+function getUserMedia(constraints, callback) {
+    try {
+        navigator.webkitGetUserMedia(constraints, callback, error);
+    } catch (e) {
+        testFailed('webkitGetUserMedia threw exception :' + e);
+        finishJSTest();
+    }
+}
+
+function onTrackEnded() {
+    testPassed('Track onended callback succeeded.');
+
+    finishJSTest();
+}
+
+function onTrackUnmute() {
+    testPassed('Track onunmute callback succeeded.');
+
+    stream.stop();
+}
+
+function onTrackMute() {
+    testPassed('Track onmute callback succeeded.');
+
+    track.enabled = true;
+}
+
+function gotStream(s) {
+    testPassed('getUserMedia succeeded.');
+
+    stream = s;
+    track = stream.videoTracks[0];
+
+    track.onunmute = onTrackUnmute;
+    track.onmute = onTrackMute;
+    track.onended = onTrackEnded;
+
+    track.enabled = false;
+}
+
+getUserMedia({audio:true, video:true}, gotStream);
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

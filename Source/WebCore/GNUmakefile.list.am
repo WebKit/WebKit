@@ -3546,6 +3546,7 @@ webcore_sources += \
 	Source/WebCore/platform/mediastream/MediaStreamCenter.h \
 	Source/WebCore/platform/mediastream/MediaStreamComponent.h \
 	Source/WebCore/platform/mediastream/MediaStreamDescriptor.h \
+	Source/WebCore/platform/mediastream/MediaStreamSource.cpp \
 	Source/WebCore/platform/mediastream/MediaStreamSource.h \
 	Source/WebCore/platform/mediastream/MediaStreamSourcesQueryClient.h \
 	Source/WebCore/platform/mediastream/PeerConnection00Handler.cpp \

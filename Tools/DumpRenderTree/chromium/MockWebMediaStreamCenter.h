@@ -28,39 +28,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockWebKitPlatformSupport.h"
-
-#include "MockWebMediaStreamCenter.h"
-#include <wtf/Assertions.h>
-#include <wtf/PassOwnPtr.h>
-
-using namespace WebKit;
-
-PassOwnPtr<MockWebKitPlatformSupport> MockWebKitPlatformSupport::create()
-{
-    return adoptPtr(new MockWebKitPlatformSupport());
-}
-
-MockWebKitPlatformSupport::MockWebKitPlatformSupport()
-{
-}
-
-MockWebKitPlatformSupport::~MockWebKitPlatformSupport()
-{
-}
-
-void MockWebKitPlatformSupport::cryptographicallyRandomValues(unsigned char*, size_t)
-{
-    CRASH();
-}
+#ifndef MockWebMediaStreamCenter_h
+#define MockWebMediaStreamCenter_h
 
 #if ENABLE(MEDIA_STREAM)
-WebMediaStreamCenter* MockWebKitPlatformSupport::createMediaStreamCenter(WebMediaStreamCenterClient* client)
-{
-    if (!m_mockMediaStreamCenter)
-        m_mockMediaStreamCenter = adoptPtr(new MockWebMediaStreamCenter(client));
+#include "platform/WebMediaStreamCenter.h"
 
-    return m_mockMediaStreamCenter.get();
-}
+namespace WebKit {
+class WebMediaStreamCenterClient;
+};
+
+class MockWebMediaStreamCenter : public WebKit::WebMediaStreamCenter {
+public:
+    explicit MockWebMediaStreamCenter(WebKit::WebMediaStreamCenterClient*);
+
+    virtual void queryMediaStreamSources(const WebKit::WebMediaStreamSourcesRequest&) OVERRIDE;
+    virtual void didEnableMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
+    virtual void didDisableMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
+    virtual void didStopLocalMediaStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual void didCreateMediaStream(WebKit::WebMediaStreamDescriptor&) OVERRIDE;
+    virtual WebKit::WebString constructSDP(const WebKit::WebICECandidateDescriptor&) OVERRIDE;
+    virtual WebKit::WebString constructSDP(const WebKit::WebSessionDescriptionDescriptor&) OVERRIDE;
+
+private:
+    MockWebMediaStreamCenter() { }
+};
+
 #endif // ENABLE(MEDIA_STREAM)
+#endif // MockWebMediaStreamCenter_h
+
