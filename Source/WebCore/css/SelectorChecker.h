@@ -214,7 +214,7 @@ inline bool SelectorChecker::checkExactAttribute(const Element* element, const Q
         return false;
     unsigned size = element->attributeCount();
     for (unsigned i = 0; i < size; ++i) {
-        Attribute* attribute = element->attributeItem(i);
+        const Attribute* attribute = element->attributeItem(i);
         if (attributeNameMatches(attribute, selectorAttributeName) && (!value || attribute->value().impl() == value))
             return true;
     }

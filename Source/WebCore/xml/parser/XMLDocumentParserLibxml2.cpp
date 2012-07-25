@@ -605,11 +605,11 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
         Element* element = elemStack.last();
         if (element->hasAttributes()) {
             for (unsigned i = 0; i < element->attributeCount(); i++) {
-                Attribute* attr = element->attributeItem(i);
-                if (attr->localName() == xmlnsAtom)
-                    m_defaultNamespaceURI = attr->value();
-                else if (attr->prefix() == xmlnsAtom)
-                    m_prefixToNamespaceMap.set(attr->localName(), attr->value());
+                const Attribute* attribute = element->attributeItem(i);
+                if (attribute->localName() == xmlnsAtom)
+                    m_defaultNamespaceURI = attribute->value();
+                else if (attribute->prefix() == xmlnsAtom)
+                    m_prefixToNamespaceMap.set(attribute->localName(), attribute->value());
             }
         }
     }

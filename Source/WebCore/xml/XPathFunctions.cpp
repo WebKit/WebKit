@@ -587,7 +587,7 @@ Value FunLang::evaluate() const
 {
     String lang = arg(0)->evaluate().toString();
 
-    Attribute* languageAttribute = 0;
+    const Attribute* languageAttribute = 0;
     Node* node = evaluationContext().node.get();
     while (node) {
         if (node->isElementNode()) {

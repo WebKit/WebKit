@@ -1,3 +1,15 @@
+2012-07-25  Andreas Kling  <kling@webkit.org>
+
+        Make ElementAttributeData a variable-sized object to reduce memory use.
+        <http://webkit.org/b/88240>
+
+        Reviewed by Ryosuke Niwa.
+
+        Extended this test to cover the case where setAttributeNode() returns a lazily serialized value.
+
+        * fast/dom/attr-style-too-lazy-expected.txt:
+        * fast/dom/attr-style-too-lazy.html:
+
 2012-07-25  Konrad Piascik  <kpiascik@rim.com>
 
         Web Inspector: Geolocation override

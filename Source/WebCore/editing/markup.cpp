@@ -110,7 +110,7 @@ static void completeURLs(Node* node, const String& baseURL)
                 continue;
             unsigned length = e->attributeCount();
             for (unsigned i = 0; i < length; i++) {
-                Attribute* attribute = e->attributeItem(i);
+                const Attribute* attribute = e->attributeItem(i);
                 if (e->isURLAttribute(*attribute))
                     changes.append(AttributeChange(e, attribute->name(), KURL(parsedBaseURL, attribute->value()).string()));
             }
@@ -294,7 +294,7 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element
     const bool shouldAnnotateOrForceInline = element->isHTMLElement() && (shouldAnnotate() || addDisplayInline);
     const bool shouldOverrideStyleAttr = shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element);
     for (unsigned int i = 0; i < length; i++) {
-        Attribute* attribute = element->attributeItem(i);
+        const Attribute* attribute = element->attributeItem(i);
         // We'll handle the style attribute separately, below.
         if (attribute->name() == styleAttr && shouldOverrideStyleAttr)
             continue;

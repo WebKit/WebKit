@@ -622,7 +622,7 @@ bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr)
     return isPossibleHTMLAttr && htmlCaseInsensitiveAttributesSet->contains(attr.localName().impl());
 }
 
-static bool attributeValueMatches(Attribute* attributeItem, CSSSelector::Match match, const AtomicString& selectorValue, bool caseSensitive)
+static bool attributeValueMatches(const Attribute* attributeItem, CSSSelector::Match match, const AtomicString& selectorValue, bool caseSensitive)
 {
     const AtomicString& value = attributeItem->value();
     if (value.isNull())
@@ -689,7 +689,7 @@ static bool anyAttributeMatches(Element* element, CSSSelector::Match match, cons
 {
     ASSERT(element->hasAttributesWithoutUpdate());
     for (size_t i = 0; i < element->attributeCount(); ++i) {
-        Attribute* attributeItem = element->attributeItem(i);
+        const Attribute* attributeItem = element->attributeItem(i);
 
         if (!SelectorChecker::attributeNameMatches(attributeItem, selectorAttr))
             continue;

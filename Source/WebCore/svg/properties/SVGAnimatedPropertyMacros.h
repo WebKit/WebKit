@@ -59,7 +59,7 @@ struct SVGSynchronizableAnimatedProperty {
         // Attribute directly to avoid a call to Element::attributeChanged
         // that could cause the SVGElement to erroneously reset its properties.
         // svg/dom/SVGStringList-basics.xhtml exercises this behavior.
-        ElementAttributeData* attributeData = ownerElement->ensureUpdatedAttributeData();
+        ElementAttributeData* attributeData = ownerElement->mutableAttributeData();
         Attribute* old = attributeData->getAttributeItem(attrName);
         if (old && value.isNull())
             attributeData->removeAttribute(old->name(), ownerElement);

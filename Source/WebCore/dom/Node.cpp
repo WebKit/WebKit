@@ -1703,7 +1703,7 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
 
             if (elem->hasAttributes()) {
                 for (unsigned i = 0; i < elem->attributeCount(); i++) {
-                    Attribute* attr = elem->attributeItem(i);
+                    const Attribute* attr = elem->attributeItem(i);
                     
                     if (attr->localName() == xmlnsAtom)
                         return attr->value() == namespaceURI;
@@ -1787,7 +1787,7 @@ String Node::lookupNamespaceURI(const String &prefix) const
             
             if (elem->hasAttributes()) {
                 for (unsigned i = 0; i < elem->attributeCount(); i++) {
-                    Attribute* attr = elem->attributeItem(i);
+                    const Attribute* attr = elem->attributeItem(i);
                     
                     if (attr->prefix() == xmlnsAtom && attr->localName() == prefix) {
                         if (!attr->value().isEmpty())
@@ -1842,7 +1842,7 @@ String Node::lookupNamespacePrefix(const AtomicString &_namespaceURI, const Elem
     const Element* thisElement = toElement(this);
     if (thisElement->hasAttributes()) {
         for (unsigned i = 0; i < thisElement->attributeCount(); i++) {
-            Attribute* attr = thisElement->attributeItem(i);
+            const Attribute* attr = thisElement->attributeItem(i);
             
             if (attr->prefix() == xmlnsAtom && attr->value() == _namespaceURI
                     && originalElement->lookupNamespaceURI(attr->localName()) == _namespaceURI)
@@ -1991,7 +1991,7 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
             // the same nodeType are inserted into or removed from the direct container. This would be the case, for example, 
             // when comparing two attributes of the same element, and inserting or removing additional attributes might change 
             // the order between existing attributes.
-            Attribute* attribute = owner1->attributeItem(i);
+            const Attribute* attribute = owner1->attributeItem(i);
             if (attr1->qualifiedName() == attribute->name())
                 return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_FOLLOWING;
             if (attr2->qualifiedName() == attribute->name())

@@ -403,6 +403,7 @@ CSSStyleSheet* InlineCSSStyleDeclaration::parentStyleSheet() const
 StylePropertySet* InlineCSSStyleDeclaration::ensureMutablePropertySet()
 {
     ASSERT(m_propertySet);
+    ASSERT(m_propertySet->isMutable());
     return m_propertySet;
 }
 

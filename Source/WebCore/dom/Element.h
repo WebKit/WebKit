@@ -162,8 +162,9 @@ public:
     // Internal methods that assume the existence of attribute storage, one should use hasAttributes()
     // before calling them.
     size_t attributeCount() const;
-    Attribute* attributeItem(unsigned index) const;
-    Attribute* getAttributeItem(const QualifiedName&) const;
+    const Attribute* attributeItem(unsigned index) const;
+    const Attribute* getAttributeItem(const QualifiedName&) const;
+    Attribute* getAttributeItem(const QualifiedName&);
     size_t getAttributeItemIndex(const QualifiedName& name) const { return attributeData()->getAttributeItemIndex(name); }
     size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return attributeData()->getAttributeItemIndex(name, shouldIgnoreAttributeCase); }
 
@@ -246,10 +247,11 @@ public:
     // Only called by the parser immediately after element construction.
     void parserSetAttributes(const Vector<Attribute>&, FragmentScriptingPermission);
 
-    ElementAttributeData* attributeData() const { return m_attributeData.get(); }
-    ElementAttributeData* ensureAttributeData() const;
-    ElementAttributeData* updatedAttributeData() const;
-    ElementAttributeData* ensureUpdatedAttributeData() const;
+    const ElementAttributeData* attributeData() const { return m_attributeData.get(); }
+    ElementAttributeData* mutableAttributeData();
+    const ElementAttributeData* ensureAttributeData();
+    const ElementAttributeData* updatedAttributeData() const;
+    const ElementAttributeData* ensureUpdatedAttributeData() const;
 
     // Clones attributes only.
     void cloneAttributesFromElement(const Element&);
@@ -434,7 +436,7 @@ public:
         MemoryClassInfo<Element> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         info.visitBaseClass<ContainerNode>(this);
         info.addInstrumentedMember(m_tagName);
-        info.addInstrumentedMember(m_attributeData.get());
+        info.addInstrumentedMember(attributeData());
     }
 
 protected:
@@ -475,8 +477,6 @@ private:
 
     bool pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle);
 
-    void createAttributeData() const;
-
     virtual void updateStyleAttribute() const { }
 
 #if ENABLE(SVG)
@@ -505,11 +505,13 @@ private:
 
     void unregisterNamedFlowContentNode();
 
+    void createMutableAttributeData();
+
 private:
     ElementRareData* elementRareData() const;
     ElementRareData* ensureElementRareData();
 
-    mutable OwnPtr<ElementAttributeData> m_attributeData;
+    OwnPtr<ElementAttributeData> m_attributeData;
 };
     
 inline Element* toElement(Node* node)
@@ -569,23 +571,25 @@ inline Element* Element::nextElementSibling() const
     return static_cast<Element*>(n);
 }
 
-inline ElementAttributeData* Element::ensureAttributeData() const
-{
-    if (!m_attributeData)
-        createAttributeData();
-    return m_attributeData.get();
-}
-
-inline ElementAttributeData* Element::updatedAttributeData() const
+inline const ElementAttributeData* Element::updatedAttributeData() const
 {
     updateInvalidAttributes();
     return attributeData();
 }
 
-inline ElementAttributeData* Element::ensureUpdatedAttributeData() const
+inline const ElementAttributeData* Element::ensureAttributeData()
+{
+    if (attributeData())
+        return attributeData();
+    return mutableAttributeData();
+}
+
+inline const ElementAttributeData* Element::ensureUpdatedAttributeData() const
 {
     updateInvalidAttributes();
-    return ensureAttributeData();
+    if (attributeData())
+        return attributeData();
+    return const_cast<Element*>(this)->mutableAttributeData();
 }
 
 inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
@@ -634,14 +638,14 @@ inline void Element::willRemoveAttribute(const QualifiedName& name, const Atomic
 inline bool Element::fastHasAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
-    return m_attributeData && getAttributeItem(name);
+    return attributeData() && getAttributeItem(name);
 }
 
 inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
-    if (m_attributeData) {
-        if (Attribute* attribute = getAttributeItem(name))
+    if (attributeData()) {
+        if (const Attribute* attribute = getAttributeItem(name))
             return attribute->value();
     }
     return nullAtom;
@@ -649,13 +653,13 @@ inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) 
 
 inline bool Element::hasAttributesWithoutUpdate() const
 {
-    return m_attributeData && !m_attributeData->isEmpty();
+    return attributeData() && !attributeData()->isEmpty();
 }
 
 inline const AtomicString& Element::idForStyleResolution() const
 {
     ASSERT(hasID());
-    return m_attributeData->idForStyleResolution();
+    return attributeData()->idForStyleResolution();
 }
 
 inline bool Element::isIdAttributeName(const QualifiedName& attributeName) const
@@ -684,20 +688,26 @@ inline void Element::setIdAttribute(const AtomicString& value)
 
 inline size_t Element::attributeCount() const
 {
-    ASSERT(m_attributeData);
-    return m_attributeData->length();
+    ASSERT(attributeData());
+    return attributeData()->length();
 }
 
-inline Attribute* Element::attributeItem(unsigned index) const
+inline const Attribute* Element::attributeItem(unsigned index) const
 {
-    ASSERT(m_attributeData);
-    return m_attributeData->attributeItem(index);
+    ASSERT(attributeData());
+    return attributeData()->attributeItem(index);
 }
 
-inline Attribute* Element::getAttributeItem(const QualifiedName& name) const
+inline const Attribute* Element::getAttributeItem(const QualifiedName& name) const
 {
-    ASSERT(m_attributeData);
-    return m_attributeData->getAttributeItem(name);
+    ASSERT(attributeData());
+    return attributeData()->getAttributeItem(name);
+}
+
+inline Attribute* Element::getAttributeItem(const QualifiedName& name)
+{
+    ASSERT(attributeData());
+    return mutableAttributeData()->getAttributeItem(name);
 }
 
 inline void Element::updateInvalidAttributes() const
@@ -728,6 +738,13 @@ inline bool Element::hasID() const
 inline bool Element::hasClass() const
 {
     return attributeData() && attributeData()->hasClass();
+}
+
+inline ElementAttributeData* Element::mutableAttributeData()
+{
+    if (!attributeData() || !attributeData()->isMutable())
+        createMutableAttributeData();
+    return m_attributeData.get();
 }
 
 // Put here to make them inline.

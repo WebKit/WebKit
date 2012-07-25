@@ -1,3 +1,221 @@
+2012-07-25  Andreas Kling  <kling@webkit.org>
+
+        Make ElementAttributeData a variable-sized object to reduce memory use.
+        <http://webkit.org/b/88240>
+
+        Reviewed by Ryosuke Niwa.
+
+        Take advantage of the fact that we know at ElementAttributeData construction time how many attributes
+        it needs to accomodate and allocate exactly as much space as needed instead of using a Vector.
+        For elements that never have their attribute list mutated (the vast majority), this saves a lot of
+        memory and removes the indirection to Vector<Attribute>'s heap-allocated storage.
+
+        Introduced a mutability flag to ElementAttributeData and sprinkled assertions all over to make sure
+        that nothing tries to mutate an element with a raw attribute array.
+
+        When an Element's attribute(s) are mutated, we reconstruct the ElementAttributeData, this time using
+        a Vector as backing instead. This is triggered when calling Element::mutableAttributeData().
+
+        This reduces memory consumption by 3.2MB when viewing the full HTML5 spec at <http://whatwg.org/c/>.
+        That is a ~35% reduction in DOM attribute memory use.
+
+        Furthermore, that page ends up promoting 27% of the elements to mutable attribute storage due to dynamic
+        adding of "class" attributes. For more static pages, savings are even greater.
+
+        Also did away with ElementAttributeData::removeAttribute(name) and do separate index lookup where
+        needed. Not a big deal but avoids double lookup of attributes when removing them.
+
+        * dom/Element.cpp:
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::attributes):
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::parserSetAttributes):
+        (WebCore::Element::hasEquivalentAttributes):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        (WebCore::Element::cloneAttributesFromElement):
+
+            Sprinkle const on ElementAttributeData* pointers.
+            Switch to using mutableAttributeData() in code paths that modify attributes.
+
+        (WebCore::Element::normalizeAttributes):
+
+            Cleaner iteration over attributes, I removed ElementAttributeData::attributeVector() since that
+            was just incurring a bunch of extra Vector copying. Since ElementAttributeData already exposes
+            length() and attributeItem(index), use those to iterate directly over the attributes.
+
+        (WebCore::Element::createMutableAttributeData):
+
+            Added, converts existing ElementAttributeData to a mutable object. Otherwise creates a new
+            ElementAttributeData (mutable and empty.)
+
+        * dom/Element.h:
+        (WebCore::Element::attributeData):
+        (WebCore::Element::updatedAttributeData):
+        (WebCore::Element::ensureAttributeData):
+        (WebCore::Element::ensureUpdatedAttributeData):
+
+            Made all of these return "const ElementAttributeData*" to ensure at compile-time that nothing
+            attempts to modify an ElementAttributeData that may be immutable.
+
+            ensureUpdatedAttributeData() is still const, despite possibly calling mutableAttributeData().
+            The goal of having methods be const is to prevent conversion from one ElementAttributeData
+            object to another, so that pointers remain intact and no unnecessary work gets done.
+
+        (WebCore::Element::mutableAttributeData):
+
+            Added, returns a guaranteed mutable ElementAttributeData* pointer.
+
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::createImmutable):
+
+            Creates a new ElementAttributeData tailored to fit the provided Vector<Attribute>.
+
+        (WebCore::ElementAttributeData::ElementAttributeData):
+
+            Moved constructors out-of-line, getting too complex for header files.
+
+            ElementAttributeData(const Vector<Attribute>&) creates an immutable ElementAttributeData
+            containing the provided attributes in an array tacked onto the end of the object.
+
+        (WebCore::ElementAttributeData::~ElementAttributeData):
+
+            Free the attribute vector if mutable.
+            For immutable objects, manually invoke destructor on each Attribute object,
+            since these won't be destroyed automatically by ~ElementAttributeData.
+
+        (WebCore::ElementAttributeData::attrIfExists):
+
+        (WebCore::ElementAttributeData::ensureAttr):
+        (WebCore::ElementAttributeData::setAttr):
+        (WebCore::ElementAttributeData::removeAttr):
+
+            Make these const, as they should always have been- they don't affect the ElementAttributeData,
+            only the global DOM Attr <-> ElementAttributeData mappings.
+
+        (WebCore::ElementAttributeData::ensureInlineStyle):
+        (WebCore::ElementAttributeData::ensureMutableInlineStyle):
+
+            Sprinkle ASSERT(isMutable()). This doesn't mean that all Elements with inline styles automatically
+            have mutable attribute data. There's still inlineStyle() for that, which may return null.
+            These are only for use where you need a valid StylePropertySet*, even if there is no inline style
+            attribute, e.g in editing code that wants to add style.
+
+        (WebCore::ElementAttributeData::updateInlineStyleAvoidingMutation):
+        (WebCore::ElementAttributeData::destroyInlineStyle):
+
+            Make these const. While destroyInlineStyle() doesn't sound very const-y, immutable objects that
+            contain a style attribute will have a valid inlineStyle() with that style data. This is just
+            an interface for ~StyledElement to destroy the style object.
+            It'd be nice to do that in ~ElementAttributeData(), but we need a StyledElement* pointer to
+            clean up properly and we don't store one in this class.
+
+        (WebCore::ElementAttributeData::addAttribute):
+        (WebCore::ElementAttributeData::removeAttribute):
+        (WebCore::ElementAttributeData::clearAttributes):
+        (WebCore::ElementAttributeData::replaceAttribute):
+
+            Sprinkle ASSERT(isMutable()).
+            Always go straight for m_mutableAttributeVector since we know that's the storage being used.
+
+        (WebCore::ElementAttributeData::isEquivalent):
+        (WebCore::ElementAttributeData::detachAttrObjectsFromElement):
+        (WebCore::ElementAttributeData::getAttributeItemIndexSlowCase):
+        (WebCore::ElementAttributeData::removeAttribute):
+        (WebCore::ElementAttributeData::getAttributeItem):
+        (WebCore::ElementAttributeData::getAttributeItemIndex):
+
+            Use length() and attributeItem(index) to iterate over the attributes.
+
+        (WebCore::ElementAttributeData::cloneDataFrom):
+
+            Sprinkle ASSERT(isMutable()). Added a FIXME that cloning elements could create immutable
+            attribute data. I'm not sure this optimization is worthwhile, as cloning elements is already
+            a semi-rare occurrence.
+
+            Updated code to handle both immutable and mutable source objects. This could 
+
+        (WebCore::ElementAttributeData::getAttributeNode):
+
+            Const correctness.
+
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+
+            Turn attribute storage into what's effectively union { OwnPtr<Vector<Attribute>>; Attribute[]; }
+            The new m_isMutable bit determines which union member should be used for access.
+
+        (WebCore::ElementAttributeData::create):
+        (WebCore::ElementAttributeData::createImmutable):
+
+            Added createImmutable(const Vector<Attribute>&) as a complement to create().
+
+        (WebCore::ElementAttributeData::setClass):
+        (WebCore::ElementAttributeData::setIdForStyleResolution):
+        (WebCore::ElementAttributeData::inlineStyle):
+        (WebCore::ElementAttributeData::setAttributeStyle):
+
+            Make these const, and their data member counterparts 'mutable'.
+            An immutable ElementAttributeData object still has m_classNames, m_idForStyleResolution,
+            m_inlineStyleDecl and m_attributeStyle.
+
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+
+            Updated for isMutable().
+
+        (WebCore::ElementAttributeData::makeMutable):
+
+            Returns a mutable clone of itself.
+
+        (WebCore::ElementAttributeData::isEmpty):
+        (WebCore::ElementAttributeData::length):
+        (WebCore::ElementAttributeData::attributeItem):
+
+            Check isMutable() to know how to access attribute storage.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::style):
+        (WebCore::StyledElement::setInlineStyleProperty):
+
+            Simplify by using StyledElement::ensureInlineStyle().
+
+        (WebCore::StyledElement::classAttributeChanged):
+
+            Use mutableAttributeData() if the attribute is being removed completely.
+            In other cases, tiptoe around without causing the attribute data to go mutable.
+
+        (WebCore::StyledElement::removeInlineStyleProperty):
+
+            Use mutableAttributeData() if/when actually removing something.
+
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+
+            Const correctness.
+
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::ensureInlineStyle):
+
+            This now implies conversion to mutable attribute data. Used by codepaths that add/remove
+            properties, so conversion is inevitable.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement):
+        (WebCore::HTMLConstructionSite::createHTMLElementFromSavedElement):
+        * svg/properties/SVGAnimatedPropertyMacros.h:
+        (WebCore::SVGSynchronizableAnimatedProperty::synchronize):
+
+            Use mutableAttributeData() as appropriate.
+
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
+            Const correctness.
+
 2012-07-25  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r123560.

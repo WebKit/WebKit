@@ -82,11 +82,11 @@ XMLTreeBuilder::XMLTreeBuilder(NewXMLDocumentParser* parser, DocumentFragment* f
         element = nodeStack.last();
         if (element->hasAttributes()) {
             for (size_t i = 0; i < element->attributeCount(); ++i) {
-                Attribute* attr = element->attributeItem(i);
-                if (attr->localName() == xmlnsAtom)
-                    stackItem.setNamespaceURI(attr->value());
-                else if (attr->prefix() == xmlnsAtom)
-                    stackItem.setNamespaceURI(attr->localName(), attr->value());
+                const Attribute* attribute = element->attributeItem(i);
+                if (attribute->localName() == xmlnsAtom)
+                    stackItem.setNamespaceURI(attribute->value());
+                else if (attribute->prefix() == xmlnsAtom)
+                    stackItem.setNamespaceURI(attribute->localName(), attribute->value());
             }
         }
     }
