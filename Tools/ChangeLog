@@ -1,3 +1,16 @@
+2012-07-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2][WTR] Alt, Shift and Ctrl keys are not handled by EventSenderProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=92241
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Alt, Shift and Ctrl keys were not handled by EventSenderProxy.
+        It caused failure of fast/events/keydown-leftright-keys.html test.
+
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp: Added handling of Alt, Shift and Ctrl keys.
+        (WTR::keyName):
+
 2012-07-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Fix timeout issues when debugging WebProcess.

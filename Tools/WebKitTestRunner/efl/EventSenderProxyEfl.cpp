@@ -231,6 +231,18 @@ static const PassRefPtr<KeyEventInfo> keyName(WKStringRef keyRef)
         return adoptRef(new KeyEventInfo("Print", ""));
     if (WKStringIsEqualToUTF8CString(keyRef, "menu"))
         return adoptRef(new KeyEventInfo("Menu", ""));
+    if (WKStringIsEqualToUTF8CString(keyRef, "leftControl"))
+        return adoptRef(new KeyEventInfo("Control_L", ""));
+    if (WKStringIsEqualToUTF8CString(keyRef, "rightControl"))
+        return adoptRef(new KeyEventInfo("Control_R", ""));
+    if (WKStringIsEqualToUTF8CString(keyRef, "leftShift"))
+        return adoptRef(new KeyEventInfo("Shift_L", ""));
+    if (WKStringIsEqualToUTF8CString(keyRef, "rightShift"))
+        return adoptRef(new KeyEventInfo("Shift_R", ""));
+    if (WKStringIsEqualToUTF8CString(keyRef, "leftAlt"))
+        return adoptRef(new KeyEventInfo("Alt_L", ""));
+    if (WKStringIsEqualToUTF8CString(keyRef, "rightAlt"))
+        return adoptRef(new KeyEventInfo("Alt_R", ""));
     if (WKStringIsEqualToUTF8CString(keyRef, "F1"))
         return adoptRef(new KeyEventInfo("F1", ""));
     if (WKStringIsEqualToUTF8CString(keyRef, "F2"))
