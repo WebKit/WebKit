@@ -228,7 +228,12 @@ BackingStorePrivate::BackingStorePrivate()
     pthread_mutexattr_destroy(&attr);
 
     pthread_mutex_init(&m_blitGenerationLock, 0);
-    pthread_cond_init(&m_blitGenerationCond, 0);
+
+    pthread_condattr_t condattr;
+    pthread_condattr_init(&condattr);
+    pthread_condattr_setclock(&condattr, CLOCK_MONOTONIC);
+    pthread_cond_init(&m_blitGenerationCond, &condattr);
+    pthread_condattr_destroy(&condattr);
 }
 
 BackingStorePrivate::~BackingStorePrivate()

@@ -1,3 +1,16 @@
+2012-07-25  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] clock_gettime() in BackingStore.cpp should use CLOCK_MONOTONIC
+        https://bugs.webkit.org/show_bug.cgi?id=91898
+
+        Reviewed by Yong Li.
+
+        Let pthread condition variable in BackingStore.cpp use monotonic clock
+        to fix a regression caused by r123266.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+
 2012-07-25  Andy Chen  <andchen@rim.com>
 
         [BlackBerry] Add "SelectAll" to WebPage
