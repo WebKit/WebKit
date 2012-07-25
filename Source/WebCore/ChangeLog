@@ -1,3 +1,45 @@
+2012-07-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=91931
+
+        Reviewed by Vsevolod Vlasov.
+
+        - Synthetic shorthand values are now only returned for source-less styles
+        - CSSAgents reports longhands along with the property names in getSupportedCSSProperties
+        - StylesSidebarPane now has two paths: for source-enabled styles and for CSSOM-based ones (UA styles)
+        - CSSStyleModel uses style metainfo as a source of shorthand / longhand relationship now
+
+        Test: inspector/styles/styles-overriden-properties.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::styleWithProperties):
+        * inspector/front-end/CSSCompletions.js:
+        (WebInspector.CSSCompletions):
+        (WebInspector.CSSCompletions.requestCSSNameCompletions):
+        (WebInspector.CSSCompletions.prototype._closest):
+        (WebInspector.CSSCompletions.prototype.longhands):
+        (WebInspector.CSSCompletions.prototype.shorthands):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleDeclaration):
+        (WebInspector.CSSStyleDeclaration.prototype.longhandProperties):
+        (WebInspector.CSSStyleDeclaration.prototype.shorthandValue):
+        (WebInspector.CSSStyleDeclaration.prototype.newBlankProperty):
+        (WebInspector.CSSProperty):
+        (WebInspector.CSSProperty.parsePayload):
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer):
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.isPropertyOverloaded):
+        (WebInspector.StylePropertiesSection.prototype.update):
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2012-07-25  Keishi Hattori  <keishi@webkit.org>
 
         Implement ColorSuggestionPicker page popup

@@ -109,7 +109,7 @@ public:
     virtual void toggleProperty(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<TypeBuilder::CSS::CSSStyle>& result);
     virtual void setRuleSelector(ErrorString*, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<TypeBuilder::CSS::CSSRule>& result);
     virtual void addRule(ErrorString*, int contextNodeId, const String& selector, RefPtr<TypeBuilder::CSS::CSSRule>& result);
-    virtual void getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuilder::Array<String> >& result);
+    virtual void getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSPropertyInfo> >& result);
     virtual void getNamedFlowCollection(ErrorString*, int nodeId, RefPtr<TypeBuilder::Array<String> >& result);
     virtual void getFlowByName(ErrorString*, int nodeId, const String& flowName, RefPtr<TypeBuilder::CSS::NamedFlow>& result);
 

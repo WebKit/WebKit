@@ -544,7 +544,6 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
 
                 if (shouldInactivate) {
                     activeIt->second->setStatus(TypeBuilder::CSS::CSSProperty::Status::Inactive);
-                    activeIt->second->remove(TypeBuilder::CSS::CSSProperty::ShorthandName);
                     propertyNameToPreviousActiveProperty.set(canonicalPropertyName, property);
                 }
             } else {
@@ -553,29 +552,23 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorStyle::styleWithProperties() con
                 if (implicit)
                     property->setImplicit(true);
                 status = TypeBuilder::CSS::CSSProperty::Status::Style;
+
+                String shorthand = m_style->getPropertyShorthand(name);
+                if (!shorthand.isEmpty()) {
+                    if (!foundShorthands.contains(shorthand)) {
+                        foundShorthands.add(shorthand);
+                        RefPtr<InspectorObject> shorthandEntry = InspectorObject::create();
+                        shorthandEntry->setString("name", shorthand);
+                        shorthandEntry->setString("value", shorthandValue(shorthand));
+                        shorthandEntries->addItem(shorthandEntry.release());
+                    }
+                }
             }
         }
 
         // Default "status" == "style".
         if (status != TypeBuilder::CSS::CSSProperty::Status::Style)
             property->setStatus(status);
-
-        if (propertyEntry.parsedOk) {
-            // Both for style-originated and parsed source properties.
-            String shorthand = m_style->getPropertyShorthand(name);
-            if (!shorthand.isEmpty()) {
-                // Default "shorthandName" == "".
-                property->setShorthandName(shorthand);
-                if (!foundShorthands.contains(shorthand)) {
-                    foundShorthands.add(shorthand);
-                    RefPtr<InspectorObject> shorthandEntry = InspectorObject::create();
-                    shorthandEntry->setString("name", shorthand);
-                    shorthandEntry->setString("value", shorthandValue(shorthand));
-                    shorthandEntries->addItem(shorthandEntry.release());
-                }
-            }
-        }
-        // else shorthandName is not set
     }
 
     RefPtr<TypeBuilder::CSS::CSSStyle> result = TypeBuilder::CSS::CSSStyle::create()

@@ -14,15 +14,15 @@ media="screen" (inject-stylesheet.html)
 #main  { (inject-stylesheet.html:5)
 background: blue;
     background-image: initial;
+    background-position-x: initial;
+    background-position-y: initial;
+    background-size: initial;
     background-repeat-x: initial;
     background-repeat-y: initial;
     background-attachment: initial;
-    background-position-x: initial;
-    background-position-y: initial;
     background-origin: initial;
     background-clip: initial;
     background-color: blue;
-    background-size: initial;
 
 [expanded] 
 #main  { (user stylesheet)
@@ -45,29 +45,29 @@ media="screen" (inject-stylesheet-iframe-data.html)
 body  { (inject-stylesheet-iframe-data.html:4)
 background: green;
     background-image: initial;
+    background-position-x: initial;
+    background-position-y: initial;
+    background-size: initial;
     background-repeat-x: initial;
     background-repeat-y: initial;
     background-attachment: initial;
-    background-position-x: initial;
-    background-position-y: initial;
     background-origin: initial;
     background-clip: initial;
     background-color: green;
-    background-size: initial;
 
 [expanded] 
 #iframebody  { (user stylesheet)
 /-- overloaded --/ background: red;
     /-- overloaded --/ background-image: initial;
+    /-- overloaded --/ background-position-x: initial;
+    /-- overloaded --/ background-position-y: initial;
+    /-- overloaded --/ background-size: initial;
     /-- overloaded --/ background-repeat-x: initial;
     /-- overloaded --/ background-repeat-y: initial;
     /-- overloaded --/ background-attachment: initial;
-    /-- overloaded --/ background-position-x: initial;
-    /-- overloaded --/ background-position-y: initial;
     /-- overloaded --/ background-origin: initial;
     /-- overloaded --/ background-clip: initial;
     /-- overloaded --/ background-color: red;
-    /-- overloaded --/ background-size: initial;
 
 [expanded] 
 body  { (user agent stylesheet)

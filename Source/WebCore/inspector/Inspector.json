@@ -2060,13 +2060,21 @@
                 "type": "object"
             },
             {
+                "id": "CSSPropertyInfo",
+                "type": "object",
+                "properties": [
+                    { "name": "name", "type": "string", "description": "Property name." },
+                    { "name": "longhands", "type": "array", "optional": true, "items": { "type": "string" }, "description": "Longhand property names." }
+                ]
+            },
+            {
                 "id": "CSSComputedStyleProperty",
                 "type": "object",
                 "properties": [
                     { "name": "name", "type": "string", "description": "Computed style property name." },
                     { "name": "value", "type": "string", "description": "Computed style property value." }
                 ]
-            },            
+            },
             {
                 "id": "CSSStyle",
                 "type": "object",
@@ -2092,7 +2100,6 @@
                     { "name": "text", "type": "string", "optional": true, "description": "The full property text as specified in the style." },
                     { "name": "parsedOk", "type": "boolean", "optional": true, "description": "Whether the property is understood by the browser (implies <code>true</code> if absent)." },
                     { "name": "status", "type": "string", "enum": ["active", "inactive", "disabled", "style"], "optional": true, "description": "The property status: \"active\" (implied if absent) if the property is effective in the style, \"inactive\" if the property is overridden by a same-named property in this style later on, \"disabled\" if the property is disabled by the user, \"style\" if the property is reported by the browser rather than by the CSS source parser." },
-                    { "name": "shorthandName", "type": "string", "optional": true, "description": "The related shorthand property name (absent if this property is not a longhand)." },
                     { "name": "range", "$ref": "SourceRange", "optional": true, "description": "The entire property range in the enclosing style declaration (if available)." }
                 ],
                 "description": "CSS style effective visual dimensions and source offsets."
@@ -2272,7 +2279,7 @@
             {
                 "name": "getSupportedCSSProperties",
                 "returns": [
-                    { "name": "cssProperties", "type": "array", "items": { "type": "string" }, "description": "Supported property names." }
+                    { "name": "cssProperties", "type": "array", "items": { "$ref": "CSSPropertyInfo" }, "description": "Supported property metainfo." }
                 ],
                 "description": "Returns all supported CSS property names."
             },

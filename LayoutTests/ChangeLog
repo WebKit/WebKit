@@ -1,3 +1,21 @@
+2012-07-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: Redundant Style Declarations Missing in Styles Section
+        https://bugs.webkit.org/show_bug.cgi?id=91931
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.dumpStyleTreeItem):
+        * inspector/elements/elements-panel-styles-expected.txt:
+        * inspector/styles/force-pseudo-state-expected.txt:
+        * inspector/styles/inject-stylesheet-expected.txt:
+        * inspector/styles/lazy-computed-style-expected.txt:
+        * inspector/styles/styles-overriden-properties-expected.txt: Added.
+        * inspector/styles/styles-overriden-properties.html: Added.
+        * inspector/styles/styles-update-from-js-expected.txt:
+        * platform/chromium/inspector/styles/inject-stylesheet-expected.txt: Removed.
+
 2012-07-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.

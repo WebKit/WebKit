@@ -59,15 +59,15 @@ color: blue;
 /-- overloaded --/ color: black;
 margin-left: 1px;
 margin: 10px 0 2px;
-    margin-left: 1px;
     margin-top: 10px;
     margin-right: 0px;
     margin-bottom: 2px;
+    margin-left: 1px;
 border-radius: 5px;
-    border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 /-- overloaded --/ font-style: normal !important;
 
 [expanded] 

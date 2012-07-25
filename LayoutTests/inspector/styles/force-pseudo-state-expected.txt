@@ -45,25 +45,25 @@ font-weight: bold;
 [expanded] 
 div:focus, a:focus  { (force-pseudo-state.html:65)
 border: 1px solid green;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
     border-top-color: green;
+    border-top-style: solid;
+    border-top-width: 1px;
     border-right-color: green;
+    border-right-style: solid;
+    border-right-width: 1px;
     border-bottom-color: green;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
     border-left-color: green;
+    border-left-style: solid;
+    border-left-width: 1px;
 
 [expanded] 
 :focus  { (user agent stylesheet)
 outline: -webkit-focus-ring-color auto 5px;
+    outline-color: -webkit-focus-ring-color;
     outline-style: auto;
     outline-width: 5px;
-    outline-color: -webkit-focus-ring-color;
 
 [expanded] 
 div  { (user agent stylesheet)

@@ -298,7 +298,7 @@ InspectorTest.dumpStyleTreeItem = function(treeItem, prefix, depth)
     if (treeItem.listItemElement.hasStyleClass("inherited"))
         return;
     var typePrefix = "";
-    if (treeItem.listItemElement.hasStyleClass("overloaded"))
+    if (treeItem.listItemElement.hasStyleClass("overloaded") || treeItem.listItemElement.hasStyleClass("inactive"))
         typePrefix += "/-- overloaded --/ ";
     if (treeItem.listItemElement.hasStyleClass("disabled"))
         typePrefix += "/-- disabled --/ ";

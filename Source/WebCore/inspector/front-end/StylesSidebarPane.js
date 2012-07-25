@@ -984,7 +984,11 @@ WebInspector.StylePropertiesSection.prototype = {
         return false;
     },
 
-    isPropertyOverloaded: function(propertyName, shorthand)
+    /**
+     * @param {string} propertyName
+     * @param {boolean=} isShorthand
+     */
+    isPropertyOverloaded: function(propertyName, isShorthand)
     {
         if (!this._usedProperties || this.noAffect)
             return false;
@@ -996,12 +1000,12 @@ WebInspector.StylePropertiesSection.prototype = {
 
         var canonicalName = WebInspector.StylesSidebarPane.canonicalPropertyName(propertyName);
         var used = (canonicalName in this._usedProperties);
-        if (used || !shorthand)
+        if (used || !isShorthand)
             return !used;
 
         // Find out if any of the individual longhand properties of the shorthand
         // are used, if none are then the shorthand is overloaded too.
-        var longhandProperties = this.styleRule.style.getLonghandProperties(propertyName);
+        var longhandProperties = this.styleRule.style.longhandProperties(propertyName);
         for (var j = 0; j < longhandProperties.length; ++j) {
             var individualProperty = longhandProperties[j];
             if (WebInspector.StylesSidebarPane.canonicalPropertyName(individualProperty.name) in this._usedProperties)
@@ -1051,7 +1055,7 @@ WebInspector.StylePropertiesSection.prototype = {
         } else {
             var child = this.propertiesTreeOutline.children[0];
             while (child) {
-                child.overloaded = this.isPropertyOverloaded(child.name, child.shorthand);
+                child.overloaded = this.isPropertyOverloaded(child.name);
                 child = child.traverseNextTreeElement(false, null, true);
             }
         }
@@ -1069,52 +1073,66 @@ WebInspector.StylePropertiesSection.prototype = {
     onpopulate: function()
     {
         var style = this.styleRule.style;
-
-        var handledProperties = {};
-        var shorthandNames = {};
-
-        this.uniqueProperties = [];
         var allProperties = style.allProperties;
-        for (var i = 0; i < allProperties.length; ++i)
-            this.uniqueProperties.push(allProperties[i]);
+        this.uniqueProperties = [];
 
-        // Collect all shorthand names.
-        for (var i = 0; i < this.uniqueProperties.length; ++i) {
-            var property = this.uniqueProperties[i];
-            if (property.disabled)
-                continue;
-            if (property.shorthand)
-                shorthandNames[property.shorthand] = true;
+        var styleHasEditableSource = this.editable && !!style.range;
+        if (styleHasEditableSource) {
+            for (var i = 0; i < allProperties.length; ++i) {
+                var property = allProperties[i];
+                this.uniqueProperties.push(property);
+                if (property.styleBased)
+                    continue;
+
+                var isShorthand = !!WebInspector.CSSCompletions.cssPropertiesMetainfo.longhands(property.name);
+                var inherited = this.isPropertyInherited(property.name);
+                var overloaded = this.isPropertyOverloaded(property.name);
+                var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, property, isShorthand, inherited, overloaded);
+                this.propertiesTreeOutline.appendChild(item);
+            }
+            return;
         }
 
-        // Create property tree elements.
-        for (var i = 0; i < this.uniqueProperties.length; ++i) {
-            var property = this.uniqueProperties[i];
-            var shorthand = !property.disabled && !property.inactive ? property.shorthand : null;
+        var generatedShorthands = {};
+        // For style-based properties, generate shorthands with values when possible.
+        for (var i = 0; i < allProperties.length; ++i) {
+            var property = allProperties[i];
+            this.uniqueProperties.push(property);
+            var isShorthand = !!WebInspector.CSSCompletions.cssPropertiesMetainfo.longhands(property.name);
 
-            if (shorthand) {
-                if (shorthand in handledProperties)
-                    continue;
-                // We should only create synthetic shorthands if they are not present in the style source (i.e. we are dealing with a source-less style).
-                if (!style.getLiveProperty(shorthand))
-                    property = new WebInspector.CSSProperty(style, style.allProperties.length, shorthand, style.getShorthandValue(shorthand), style.getShorthandPriority(shorthand), "style", true, true, "", undefined);
-                else
-                    shorthand = null;
+            // For style-based properties, try generating shorthands.
+            var shorthands = isShorthand ? null : WebInspector.CSSCompletions.cssPropertiesMetainfo.shorthands(property.name);
+            var shorthandPropertyAvailable = false;
+            for (var j = 0; shorthands && !shorthandPropertyAvailable && j < shorthands.length; ++j) {
+                var shorthand = shorthands[j];
+                if (shorthand in generatedShorthands) {
+                    shorthandPropertyAvailable = true;
+                    continue;  // There already is a shorthand this longhands falls under.
+                }
+                if (style.getLiveProperty(shorthand)) {
+                    shorthandPropertyAvailable = true;
+                    continue;  // There is an explict shorthand property this longhands falls under.
+                }
+                if (!style.shorthandValue(shorthand)) {
+                    shorthandPropertyAvailable = false;
+                    continue;  // Never generate synthetic shorthands when no value is available.
+                }
+
+                // Generate synthetic shorthand we have a value for.
+                var shorthandProperty = new WebInspector.CSSProperty(style, style.allProperties.length, shorthand, style.shorthandValue(shorthand), "", "style", true, true, undefined);
+                var overloaded = this.isPropertyOverloaded(property.name, true);
+                var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, shorthandProperty,  /* isShorthand */ true, /* inherited */ false, overloaded);
+                this.propertiesTreeOutline.appendChild(item);
+                generatedShorthands[shorthand] = shorthandProperty;
+                shorthandPropertyAvailable = true;
             }
+            if (shorthandPropertyAvailable)
+                continue;  // Shorthand for the property found.
 
-            // BUG71275: Never show purely style-based properties in editable rules.
-            if (!shorthand && this.editable && property.styleBased)
-                continue;
-
-            var isShorthand = !!(property.isLive && (shorthand || shorthandNames[property.name]));
-            if (isShorthand && (property.name in handledProperties))
-                continue;
             var inherited = this.isPropertyInherited(property.name);
             var overloaded = this.isPropertyOverloaded(property.name, isShorthand);
-
             var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, property, isShorthand, inherited, overloaded);
             this.propertiesTreeOutline.appendChild(item);
-            handledProperties[property.name] = property;
         }
     },
 
@@ -1897,7 +1915,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             // Add a separate exclamation mark IMG element with a tooltip.
             var exclamationElement = document.createElement("img");
             exclamationElement.className = "exclamation-mark";
-            exclamationElement.title = WebInspector.CSSCompletions.cssNameCompletions.keySet()[this.property.name.toLowerCase()] ? WebInspector.UIString("Invalid property value.") : WebInspector.UIString("Unknown property name.");
+            exclamationElement.title = WebInspector.CSSCompletions.cssPropertiesMetainfo.keySet()[this.property.name.toLowerCase()] ? WebInspector.UIString("Invalid property value.") : WebInspector.UIString("Unknown property name.");
             this.listItemElement.insertBefore(exclamationElement, this.listItemElement.firstChild);
         }
         if (this.property.inactive)
@@ -1971,10 +1989,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (this.children.length || !this.shorthand)
             return;
 
-        var longhandProperties = this.style.getLonghandProperties(this.name);
+        var longhandProperties = this.style.longhandProperties(this.name);
         for (var i = 0; i < longhandProperties.length; ++i) {
             var name = longhandProperties[i].name;
-
 
             if (this.treeOutline.section) {
                 var inherited = this.treeOutline.section.isPropertyInherited(name);
@@ -2112,7 +2129,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             selectElement.parentElement.scrollIntoViewIfNeeded(false);
 
         var applyItemCallback = !isEditingName ? this._applyFreeFlowStyleTextEdit.bind(this, true) : undefined;
-        this._prompt = new WebInspector.StylesSidebarPane.CSSPropertyPrompt(isEditingName ? WebInspector.CSSCompletions.cssNameCompletions : WebInspector.CSSKeywordCompletions.forProperty(this.nameElement.textContent), this, isEditingName);
+        this._prompt = new WebInspector.StylesSidebarPane.CSSPropertyPrompt(isEditingName ? WebInspector.CSSCompletions.cssPropertiesMetainfo : WebInspector.CSSKeywordCompletions.forProperty(this.nameElement.textContent), this, isEditingName);
         if (applyItemCallback) {
             this._prompt.addEventListener(WebInspector.TextPrompt.Events.ItemApplied, applyItemCallback, this);
             this._prompt.addEventListener(WebInspector.TextPrompt.Events.ItemAccepted, applyItemCallback, this);

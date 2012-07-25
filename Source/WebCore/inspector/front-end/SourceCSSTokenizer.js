@@ -52,7 +52,7 @@ WebInspector.SourceCSSTokenizer = function()
 {
     WebInspector.SourceTokenizer.call(this);
 
-    this._propertyKeywords = WebInspector.CSSCompletions.cssNameCompletions.keySet();
+    this._propertyKeywords = WebInspector.CSSCompletions.cssPropertiesMetainfo.keySet();
     this._colorKeywords = WebInspector.CSSKeywordCompletions.colors();
 
     this._valueKeywords = [

@@ -48,6 +48,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "StylePropertySet.h"
+#include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleSheetList.h"
@@ -780,12 +781,27 @@ void InspectorCSSAgent::addRule(ErrorString* errorString, const int contextNodeI
     result = inspectorStyleSheet->buildObjectForRule(rule);
 }
 
-void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuilder::Array<String> >& cssProperties)
+void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSPropertyInfo> >& cssProperties)
 {
-    RefPtr<TypeBuilder::Array<String> > properties = TypeBuilder::Array<String>::create();
-    for (int i = 0; i < numCSSProperties; ++i)
-        properties->addItem(propertyNameStrings[i]);
+    RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSPropertyInfo> > properties = TypeBuilder::Array<TypeBuilder::CSS::CSSPropertyInfo>::create();
+    for (int i = firstCSSProperty; i <= lastCSSProperty; ++i) {
+        CSSPropertyID id = convertToCSSPropertyID(i);
+        RefPtr<TypeBuilder::CSS::CSSPropertyInfo> property = TypeBuilder::CSS::CSSPropertyInfo::create()
+            .setName(getPropertyName(id));
 
+        const StylePropertyShorthand& shorthand = shorthandForProperty(id);
+        if (!shorthand.length()) {
+            properties->addItem(property.release());
+            continue;
+        }
+        RefPtr<TypeBuilder::Array<String> > longhands = TypeBuilder::Array<String>::create();
+        for (unsigned j = 0; j < shorthand.length(); ++j) {
+            CSSPropertyID longhandID = shorthand.properties()[j];
+            longhands->addItem(getPropertyName(longhandID));
+        }
+        property->setLonghands(longhands);
+        properties->addItem(property.release());
+    }
     cssProperties = properties.release();
 }
 
