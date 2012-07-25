@@ -50,6 +50,7 @@ PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup)
 
     ewk_view_theme_set(m_view, THEME_DIR"/default.edj");
     m_windowIsKey = false;
+    evas_object_show(m_view);
 }
 
 PlatformWebView::~PlatformWebView()
@@ -70,6 +71,7 @@ WKPageRef PlatformWebView::page()
 
 void PlatformWebView::focus()
 {
+    evas_object_focus_set(m_view, true);
 }
 
 WKRect PlatformWebView::windowFrame()

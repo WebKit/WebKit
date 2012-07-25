@@ -169,20 +169,11 @@ static void dispatchMouseMoveEvent(Evas* evas, int x, int y)
 
 static void dispatchMouseScrollByEvent(Evas* evas, int horizontal, int vertical)
 {
-    const int SCROLLLEFT = -10;
-    const int SCROLLRIGHT = 10;
-    const int SCROLLDOWN = -10;
-    const int SCROLLUP = 10;
+    if (horizontal)
+        evas_event_feed_mouse_wheel(evas, 1, horizontal, 0, 0);
 
-    if (horizontal > 0)
-        evas_event_feed_mouse_wheel(evas, 1, SCROLLLEFT, 0, 0);
-    else if (horizontal < 0)
-        evas_event_feed_mouse_wheel(evas, 1, SCROLLRIGHT, 0, 0);
-
-    if (vertical > 0)
-        evas_event_feed_mouse_wheel(evas, 0, SCROLLUP, 0, 0);
-    else if (vertical < 0)
-        evas_event_feed_mouse_wheel(evas, 0, SCROLLDOWN, 0, 0);
+    if (vertical)
+        evas_event_feed_mouse_wheel(evas, 0, vertical, 0, 0);
 }
 
 static const PassRefPtr<KeyEventInfo> keyPadName(WKStringRef keyRef)
@@ -374,8 +365,10 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
 void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
 {
     WTREvent event(WTREventTypeMouseScrollBy, 0, 0, WTRMouseButtonNone);
-    event.horizontal = horizontal;
-    event.vertical = vertical;
+    // We need to invert scrolling values since in EFL negative z value means that
+    // canvas is scrolling down
+    event.horizontal = -horizontal;
+    event.vertical = -vertical;
     sendOrQueueEvent(event);
 }
 

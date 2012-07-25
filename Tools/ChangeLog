@@ -1,3 +1,19 @@
+2012-07-25  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [WTR][EFL] Wheel events are not emitted
+        https://bugs.webkit.org/show_bug.cgi?id=92094
+
+        Reviewed by Csaba Osztrogonác.
+
+        Wheel events are not emitted, therefore, layout tests that use mouseScrollBy method are failing.
+
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR::dispatchMouseScrollByEvent):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::focus):
+
 2012-07-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Add ewk_main.{cpp,h} to EFL WK2
