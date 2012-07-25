@@ -2006,6 +2006,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
             }
 
             var liveProperty = this.style.getLiveProperty(name);
+            if (!liveProperty)
+                continue;
+
             var item = new WebInspector.StylePropertyTreeElement(this.section, this._parentPane, this._styleRule, this.style, liveProperty, false, inherited, overloaded);
             this.appendChild(item);
         }

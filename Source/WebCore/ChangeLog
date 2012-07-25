@@ -1,3 +1,14 @@
+2012-07-25  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Web Inspector: follow up to r123612, fixing CSS value suggest.
+
+        Not reviewed, minor JS fix.
+
+        * inspector/front-end/CSSCompletions.js:
+        (WebInspector.CSSCompletions):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2012-07-25  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix after r123624.

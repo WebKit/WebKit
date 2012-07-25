@@ -32,7 +32,7 @@
 
 /**
  * @constructor
- * @param {Array.<CSSAgent.CSSPropertyInfo>} properties
+ * @param {Array.<CSSAgent.CSSPropertyInfo|string>} properties
  */
 WebInspector.CSSCompletions = function(properties, acceptEmptyPrefix)
 {
@@ -40,7 +40,13 @@ WebInspector.CSSCompletions = function(properties, acceptEmptyPrefix)
     this._longhands = {};
     this._shorthands = {};
     for (var i = 0; i < properties.length; ++i) {
-        var propertyName = properties[i].name;
+        var property = properties[i];
+        if (typeof property === "string") {
+            this._values.push(property);
+            continue;
+        }
+
+        var propertyName = property.name;
         this._values.push(propertyName);
 
         var longhands = properties[i].longhands;
