@@ -1,3 +1,33 @@
+2012-07-25  Pratik Solanki  <psolanki@apple.com>
+
+        Remove catchesDelegateExceptions from WebViewData and related accessor methods
+        https://bugs.webkit.org/show_bug.cgi?id=90898
+
+        Reviewed by Darin Adler.
+
+        Remove catchesDelegateException ivar from WebViewData and all its accesor methods from
+        WebView. All uses of this flag in WebKit set it to YES and no one calls
+        _setCatchesDelegateExceptions with NO.
+
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::startDrag):
+        * WebView/WebDelegateImplementationCaching.mm:
+        (CallDelegate):
+        (CallDelegateReturningFloat):
+        (CallDelegateReturningBoolean):
+        (CallResourceLoadDelegateReturningBoolean):
+        (CallFormDelegate):
+        (CallFormDelegateReturningBoolean):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _policyDelegateForwarder]):
+        (-[WebView _UIDelegateForwarder]):
+        (-[WebView _editingDelegateForwarder]):
+        (-[_WebSafeForwarder initWithTarget:defaultTarget:]):
+        (-[_WebSafeForwarder forwardInvocation:]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewPrivate.h:
+
 2012-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         Part 2 of: Implement sticky positioning

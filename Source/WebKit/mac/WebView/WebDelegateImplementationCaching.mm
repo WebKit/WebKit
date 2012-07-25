@@ -83,8 +83,6 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector)
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend(delegate, selector, self);
     @try {
         return objc_msgSend(delegate, selector, self);
     } @catch(id exception) {
@@ -97,8 +95,6 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend(delegate, selector, self, object);
     @try {
         return objc_msgSend(delegate, selector, self, object);
     } @catch(id exception) {
@@ -111,8 +107,6 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, NSRect r
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<id (*)(id, SEL, WebView *, NSRect)>(objc_msgSend)(delegate, selector, self, rect);
     @try {
         return reinterpret_cast<id (*)(id, SEL, WebView *, NSRect)>(objc_msgSend)(delegate, selector, self, rect);
     } @catch(id exception) {
@@ -125,8 +119,6 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend(delegate, selector, self, object1, object2);
     @try {
         return objc_msgSend(delegate, selector, self, object1, object2);
     } @catch(id exception) {
@@ -139,8 +131,6 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend(delegate, selector, self, object, boolean);
     @try {
         return objc_msgSend(delegate, selector, self, object, boolean);
     } @catch(id exception) {
@@ -153,8 +143,6 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend(delegate, selector, self, object1, object2, object3);
     @try {
         return objc_msgSend(delegate, selector, self, object1, object2, object3);
     } @catch(id exception) {
@@ -167,8 +155,6 @@ static inline id CallDelegate(WebView *self, id delegate, SEL selector, id objec
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend(delegate, selector, self, object, integer);
     @try {
         return objc_msgSend(delegate, selector, self, object, integer);
     } @catch(id exception) {
@@ -181,8 +167,6 @@ static inline float CallDelegateReturningFloat(WebView *self, id delegate, SEL s
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return 0.0f;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend_float_return(delegate, selector, self);
     @try {
         return objc_msgSend_float_return(delegate, selector, self);
     } @catch(id exception) {
@@ -195,8 +179,6 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<BOOL (*)(id, SEL, WebView *)>(objc_msgSend)(delegate, selector, self);
     @try {
         return reinterpret_cast<BOOL (*)(id, SEL, WebView *)>(objc_msgSend)(delegate, selector, self);
     } @catch(id exception) {
@@ -209,8 +191,6 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id)>(objc_msgSend)(delegate, selector, self, object);
     @try {
         return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id)>(objc_msgSend)(delegate, selector, self, object);
     } @catch(id exception) {
@@ -223,8 +203,6 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, BOOL)>(objc_msgSend)(delegate, selector, self, object, boolean);
     @try {
         return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, BOOL)>(objc_msgSend)(delegate, selector, self, object, boolean);
     } @catch(id exception) {
@@ -237,8 +215,6 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, BOOL, id)>(objc_msgSend)(delegate, selector, self, object, boolean, object2);
     @try {
         return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, BOOL, id)>(objc_msgSend)(delegate, selector, self, object, boolean, object2);
     } @catch(id exception) {
@@ -251,8 +227,6 @@ static inline BOOL CallDelegateReturningBoolean(BOOL result, WebView *self, id d
 {
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id)>(objc_msgSend)(delegate, selector, self, object1, object2);
     @try {
         return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id)>(objc_msgSend)(delegate, selector, self, object1, object2);
     } @catch(id exception) {
@@ -265,8 +239,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self);
     @try {
         return implementation(delegate, selector, self);
     } @catch(id exception) {
@@ -279,8 +251,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object);
     @try {
         return implementation(delegate, selector, self, object);
     } @catch(id exception) {
@@ -293,8 +263,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, object2);
     @try {
         return implementation(delegate, selector, self, object1, object2);
     } @catch(id exception) {
@@ -307,8 +275,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, object2, object3);
     @try {
         return implementation(delegate, selector, self, object1, object2, object3);
     } @catch(id exception) {
@@ -321,8 +287,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, object2, object3, object4);
     @try {
         return implementation(delegate, selector, self, object1, object2, object3, object4);
     } @catch(id exception) {
@@ -335,8 +299,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, integer, object2);
     @try {
         return implementation(delegate, selector, self, object1, integer, object2);
     } @catch(id exception) {
@@ -349,8 +311,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, integer1, integer2, object2);
     @try {
         return implementation(delegate, selector, self, object1, integer1, integer2, object2);
     } @catch(id exception) {
@@ -363,8 +323,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, boolean, integer1, integer2, object2);
     @try {
         return implementation(delegate, selector, self, object1, boolean, integer1, integer2, object2);
     } @catch(id exception) {
@@ -377,8 +335,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, object2, integer, object3);
     @try {
         return implementation(delegate, selector, self, object1, object2, integer, object3);
     } @catch(id exception) {
@@ -391,8 +347,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, integer1, object2, integer2, object3);
     @try {
         return implementation(delegate, selector, self, object1, integer1, object2, integer2, object3);
     } @catch(id exception) {
@@ -405,8 +359,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, integer, object2, object3, object4);
     @try {
         return implementation(delegate, selector, self, object1, integer, object2, object3, object4);
     } @catch(id exception) {
@@ -419,8 +371,6 @@ static inline id CallDelegate(IMP implementation, WebView *self, id delegate, SE
 {
     if (!delegate)
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return implementation(delegate, selector, self, object1, interval, object2, object3);
     @try {
         return implementation(delegate, selector, self, object1, interval, object2, object3);
     } @catch(id exception) {
@@ -551,8 +501,6 @@ id CallResourceLoadDelegate(IMP implementation, WebView *self, SEL selector, id 
 
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1)
 {
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id)>(objc_msgSend)(self->_private->resourceProgressDelegate, selector, self, object1);
     @try {
         return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id)>(objc_msgSend)(self->_private->resourceProgressDelegate, selector, self, object1);
     } @catch(id exception) {
@@ -563,8 +511,6 @@ BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, W
 
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1, id object2)
 {
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id)>(objc_msgSend)(self->_private->resourceProgressDelegate, selector, self, object1, object2);
     @try {
         return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id)>(objc_msgSend)(self->_private->resourceProgressDelegate, selector, self, object1, object2);
     } @catch(id exception) {
@@ -575,8 +521,6 @@ BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, W
 
 BOOL CallResourceLoadDelegateReturningBoolean(BOOL result, IMP implementation, WebView *self, SEL selector, id object1, id object2, id object3)
 {
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id, id)>(objc_msgSend)(self->_private->resourceProgressDelegate, selector, self, object1, object2, object3);
     @try {
         return reinterpret_cast<BOOL (*)(id, SEL, WebView *, id, id, id)>(objc_msgSend)(self->_private->resourceProgressDelegate, selector, self, object1, object2, object3);
     } @catch(id exception) {
@@ -632,8 +576,6 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2)
     id delegate = self->_private->formDelegate;
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend(delegate, selector, object1, object2);
     @try {
         return objc_msgSend(delegate, selector, object1, object2);
     } @catch(id exception) {
@@ -647,8 +589,6 @@ id CallFormDelegate(WebView *self, SEL selector, id object1, id object2, id obje
     id delegate = self->_private->formDelegate;
     if (!delegate || ![delegate respondsToSelector:selector])
         return nil;
-    if (!self->_private->catchesDelegateExceptions)
-        return objc_msgSend(delegate, selector, object1, object2, object3, object4, object5);
     @try {
         return objc_msgSend(delegate, selector, object1, object2, object3, object4, object5);
     } @catch(id exception) {
@@ -662,8 +602,6 @@ BOOL CallFormDelegateReturningBoolean(BOOL result, WebView *self, SEL selector, 
     id delegate = self->_private->formDelegate;
     if (!delegate || ![delegate respondsToSelector:selector])
         return result;
-    if (!self->_private->catchesDelegateExceptions)
-        return reinterpret_cast<BOOL (*)(id, SEL, id, SEL, id)>(objc_msgSend)(delegate, selector, object1, selectorArg, object2);
     @try {
         return reinterpret_cast<BOOL (*)(id, SEL, id, SEL, id)>(objc_msgSend)(delegate, selector, object1, selectorArg, object2);
     } @catch(id exception) {

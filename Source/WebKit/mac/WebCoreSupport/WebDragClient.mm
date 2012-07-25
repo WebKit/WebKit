@@ -110,14 +110,11 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:);
     if ([delegate respondsToSelector:selector]) {
-        if ([m_webView _catchesDelegateExceptions]) {
-            @try {
-                [delegate webView:m_webView dragImage:dragNSImage at:at offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES forView:topHTMLView];
-            } @catch (id exception) {
-                ReportDiscardedDelegateException(selector, exception);
-            }
-        } else
+        @try {
             [delegate webView:m_webView dragImage:dragNSImage at:at offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES forView:topHTMLView];
+        } @catch (id exception) {
+            ReportDiscardedDelegateException(selector, exception);
+        }
     } else
         [topHTMLView dragImage:dragNSImage at:at offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES];
 }

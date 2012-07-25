@@ -137,7 +137,6 @@ private:
     BOOL becomingFirstResponder;
     BOOL becomingFirstResponderFromOutside;
     BOOL usesPageCache;
-    BOOL catchesDelegateExceptions;
     BOOL cssAnimationsSuspended;
 
     NSColor *backgroundColor;
