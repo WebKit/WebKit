@@ -1,3 +1,84 @@
+2012-07-25  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] svg/hixie rebaseline after new test fonts.
+        https://bugs.webkit.org/show_bug.cgi?id=92242
+
+        Unreviewed gardening.
+
+        These tests have been skipped because monospace fonts weren't properly used by
+        layout tests. After r121971, the test results are normal again.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/svg/hixie/dynamic/002-expected.txt:
+        * platform/qt/svg/hixie/error/002-expected.txt:
+        * platform/qt/svg/hixie/error/003-expected.png:
+        * platform/qt/svg/hixie/error/003-expected.txt:
+        * platform/qt/svg/hixie/error/010-expected.png:
+        * platform/qt/svg/hixie/error/010-expected.txt:
+        * platform/qt/svg/hixie/error/011-expected.png:
+        * platform/qt/svg/hixie/error/011-expected.txt:
+        * platform/qt/svg/hixie/error/013-expected.png:
+        * platform/qt/svg/hixie/error/013-expected.txt:
+        * platform/qt/svg/hixie/error/017-expected.png:
+        * platform/qt/svg/hixie/error/017-expected.txt:
+        * platform/qt/svg/hixie/intrinsic/001-expected.png:
+        * platform/qt/svg/hixie/intrinsic/001-expected.txt:
+        * platform/qt/svg/hixie/intrinsic/002-expected.png:
+        * platform/qt/svg/hixie/intrinsic/002-expected.txt:
+        * platform/qt/svg/hixie/intrinsic/003-expected.png:
+        * platform/qt/svg/hixie/intrinsic/003-expected.txt:
+        * platform/qt/svg/hixie/links/002-expected.png:
+        * platform/qt/svg/hixie/links/002-expected.txt:
+        * platform/qt/svg/hixie/mixed/003-expected.png:
+        * platform/qt/svg/hixie/mixed/003-expected.txt:
+        * platform/qt/svg/hixie/mixed/004-expected.txt: Added.
+        * platform/qt/svg/hixie/mixed/005-expected.txt: Added.
+        * platform/qt/svg/hixie/mixed/006-expected.png:
+        * platform/qt/svg/hixie/mixed/006-expected.txt:
+        * platform/qt/svg/hixie/mixed/007-expected.txt:
+        * platform/qt/svg/hixie/mixed/008-expected.png:
+        * platform/qt/svg/hixie/mixed/008-expected.txt:
+        * platform/qt/svg/hixie/mixed/009-expected.png:
+        * platform/qt/svg/hixie/mixed/009-expected.txt:
+        * platform/qt/svg/hixie/mixed/010-expected.png:
+        * platform/qt/svg/hixie/mixed/010-expected.txt:
+        * platform/qt/svg/hixie/mixed/011-expected.png:
+        * platform/qt/svg/hixie/mixed/011-expected.txt:
+        * platform/qt/svg/hixie/perf/001-expected.txt:
+        * platform/qt/svg/hixie/perf/002-expected.txt:
+        * platform/qt/svg/hixie/perf/003-expected.png:
+        * platform/qt/svg/hixie/perf/003-expected.txt:
+        * platform/qt/svg/hixie/perf/004-expected.png:
+        * platform/qt/svg/hixie/perf/004-expected.txt:
+        * platform/qt/svg/hixie/perf/005-expected.png:
+        * platform/qt/svg/hixie/perf/005-expected.txt:
+        * platform/qt/svg/hixie/perf/006-expected.png:
+        * platform/qt/svg/hixie/perf/006-expected.txt:
+        * platform/qt/svg/hixie/perf/007-expected.png:
+        * platform/qt/svg/hixie/perf/007-expected.txt:
+        * platform/qt/svg/hixie/processing-model/003-expected.png:
+        * platform/qt/svg/hixie/processing-model/003-expected.txt:
+        * platform/qt/svg/hixie/processing-model/004-expected.png:
+        * platform/qt/svg/hixie/processing-model/004-expected.txt:
+        * platform/qt/svg/hixie/rendering-model/003-expected.png:
+        * platform/qt/svg/hixie/rendering-model/003-expected.txt:
+        * platform/qt/svg/hixie/rendering-model/004-expected.png:
+        * platform/qt/svg/hixie/rendering-model/004-expected.txt:
+        * platform/qt/svg/hixie/text/002-expected.png:
+        * platform/qt/svg/hixie/text/002-expected.txt:
+        * platform/qt/svg/hixie/text/003-expected.png:
+        * platform/qt/svg/hixie/text/003-expected.txt:
+        * platform/qt/svg/hixie/text/003a-expected.png:
+        * platform/qt/svg/hixie/text/003a-expected.txt:
+        * platform/qt/svg/hixie/text/003b-expected.png:
+        * platform/qt/svg/hixie/text/003b-expected.txt:
+        * platform/qt/svg/hixie/viewbox/002-expected.txt:
+        * platform/qt/svg/hixie/viewbox/003-expected.txt:
+        * platform/qt/svg/hixie/viewbox/preserveAspectRatio/001-expected.png:
+        * platform/qt/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        * platform/qt/svg/hixie/viewbox/preserveAspectRatio/002-expected.png:
+        * platform/qt/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt:
+
 2012-07-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.

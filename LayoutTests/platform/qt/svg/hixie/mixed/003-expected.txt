@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x311
-  RenderBlock {html} at (0,0) size 800x311
-    RenderBody {body} at (8,16) size 784x287
-      RenderBlock {p} at (0,0) size 784x29
-        RenderTextControl {input} at (2,2) size 454x25
-      RenderBlock {p} at (0,45) size 784x21
-        RenderText {#text} at (0,0) size 516x21
-          text run at (0,0) width 516: "It should say \"PASSED\" above and there should be a green circle below."
-      RenderBlock (anonymous) at (0,82) size 784x205
-        RenderSVGRoot {svg} at (8,98) size 100x100
-          RenderSVGEllipse {circle} at (8,98) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=50.00] [cy=50.00] [r=50.00]
+layer at (0,0) size 800x306
+  RenderBlock {html} at (0,0) size 800x306
+    RenderBody {body} at (8,16) size 784x282
+      RenderBlock {p} at (0,0) size 784x27
+        RenderTextControl {input} at (2,2) size 462x23
+      RenderBlock {p} at (0,43) size 784x19
+        RenderText {#text} at (0,0) size 440x19
+          text run at (0,0) width 440: "It should say \"PASSED\" above and there should be a green circle below."
+      RenderBlock (anonymous) at (0,78) size 784x204
+        RenderSVGRoot {svg} at (8,94) size 100x100
+          RenderSVGEllipse {circle} at (8,94) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=50.00] [cy=50.00] [r=50.00]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (12,20) size 450x21
-  RenderBlock {div} at (2,2) size 450x21
-    RenderText {#text} at (0,0) size 165x21
-      text run at (0,0) width 165: "This test has PASSED."
+layer at (12,20) size 458x19
+  RenderBlock {div} at (2,2) size 458x19
+    RenderText {#text} at (0,0) size 140x19
+      text run at (0,0) width 140: "This test has PASSED."

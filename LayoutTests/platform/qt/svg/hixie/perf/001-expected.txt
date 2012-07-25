@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (109,9) size 582x582
     RenderSVGRect {rect} at (109,9) size 582x582 [stroke={[type=SOLID] [color=#000000]}] [x=-190.00] [y=-190.00] [width=580.00] [height=580.00]
-    RenderSVGText {text} at (-150,-160) size 107x13 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 107x13
-        chunk 1 text run 1 at (-150.00,-150.00) startOffset 0 endOffset 21 width 107.00: "SVG Performance test."
-    RenderSVGText {text} at (200,340) size 71x13 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 71x13
-        chunk 1 text run 1 at (200.00,350.00) startOffset 0 endOffset 14 width 71.00: "Test completed"
+    RenderSVGText {text} at (-150,-159) size 91x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 91x12
+        chunk 1 text run 1 at (-150.00,-150.00) startOffset 0 endOffset 21 width 91.00: "SVG Performance test."
+    RenderSVGText {text} at (200,341) size 62x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 62x12
+        chunk 1 text run 1 at (200.00,350.00) startOffset 0 endOffset 14 width 62.00: "Test completed"
     RenderSVGContainer {g} at (116,43) size 499x533
       RenderSVGPath {path} at (139,232) size 39x55 [stroke={[type=SOLID] [color=#000000] [stroke width=0.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M -122.304 84.285 C -122.304 84.285 -122.203 86.179 -123.027 86.16 C -123.851 86.141 -140.305 38.066 -160.833 40.309 C -160.833 40.309 -143.05 32.956 -122.304 84.285 Z"]
       RenderSVGPath {path} at (159,225) size 23x59 [stroke={[type=SOLID] [color=#000000] [stroke width=0.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M -118.774 81.262 C -118.774 81.262 -119.323 83.078 -120.092 82.779 C -120.86 82.481 -119.977 31.675 -140.043 26.801 C -140.043 26.801 -120.82 25.937 -118.774 81.262 Z"]

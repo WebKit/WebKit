@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,194) size 428x201
-    RenderSVGText {text} at (0,-157) size 2675x1244 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 2675x1244
-        chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2675.00: "PASS"
+  RenderSVGRoot {svg} at (0,204) size 384x180
+    RenderSVGText {text} at (0,-94) size 2394x1113 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 2394x1113
+        chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2393.75: "PASS"

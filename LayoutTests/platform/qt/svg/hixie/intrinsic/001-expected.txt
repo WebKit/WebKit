@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (8,8) size 150x174
-  RenderBlock {HTML} at (8,8) size 150x174
-    RenderBody {BODY} at (0,0) size 150x174
-      RenderBlock {P} at (0,0) size 150x174
-        RenderText {#text} at (0,0) size 405x21
-          text run at (0,0) width 405: "There should be an exact square of green below this line:"
+layer at (8,8) size 150x175
+  RenderBlock {HTML} at (8,8) size 150x175
+    RenderBody {BODY} at (0,0) size 150x175
+      RenderBlock {P} at (0,0) size 150x175
+        RenderText {#text} at (0,0) size 340x19
+          text run at (0,0) width 340: "There should be an exact square of green below this line:"
         RenderEmbeddedObject {OBJECT} at (0,20) size 150x150
           layer at (0,0) size 150x150
             RenderView at (0,0) size 150x150

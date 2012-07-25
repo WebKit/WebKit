@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x419
-  RenderBlock {HTML} at (0,0) size 800x419
-    RenderBody {BODY} at (8,16) size 784x387
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 665x21
-          text run at (0,0) width 665: "The following two blocks should look identical (to the pixel), and they should both say \"PASS\":"
-      RenderBlock {P} at (0,37) size 784x167
+layer at (0,0) size 800x415
+  RenderBlock {HTML} at (0,0) size 800x415
+    RenderBody {BODY} at (8,16) size 784x383
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 571x19
+          text run at (0,0) width 571: "The following two blocks should look identical (to the pixel), and they should both say \"PASS\":"
+      RenderBlock {P} at (0,35) size 784x166
         RenderEmbeddedObject {OBJECT} at (0,0) size 784x162 [border: (3px inset #000080)]
           layer at (0,0) size 778x156
             RenderView at (0,0) size 778x156
@@ -14,13 +14,13 @@ layer at (0,0) size 800x419
             RenderSVGRoot {svg} at (0,0) size 467x156
               RenderSVGText {text} at (0,-1) size 3x2 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 3x2
-                  chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 2.67: "PASS"
-      RenderBlock {P} at (0,220) size 784x167
+                  chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 2.40: "PASS"
+      RenderBlock {P} at (0,217) size 784x166
         RenderEmbeddedObject {OBJECT} at (0,0) size 784x162 [border: (3px inset #000080)]
           layer at (0,0) size 778x156
             RenderView at (0,0) size 778x156
           layer at (0,0) size 778x156
-            RenderSVGRoot {svg} at (0,0) size 417x156
-              RenderSVGText {text} at (0,-158) size 2674x1247 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 2674x1247
-                  chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2673.52: "PASS"
+            RenderSVGRoot {svg} at (0,0) size 375x156
+              RenderSVGText {text} at (0,-100) size 2404x1119 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 2404x1119
+                  chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2403.60: "PASS"
