@@ -1,3 +1,11 @@
+2012-07-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Add Mac results for media/controls-styling-strict.html.
+
+        Rubber-stamped by Michael Saboff.
+
+        * platform/mac/media/controls-styling-strict-expected.txt: Added.
+
 2012-07-25  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=89114
