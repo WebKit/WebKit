@@ -174,6 +174,7 @@ public:
     virtual void didChangeWindowResizerRect();
     virtual void instrumentBeginFrame();
     virtual void instrumentCancelFrame();
+    virtual void renderingStats(WebRenderingStats&) const;
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);
@@ -298,7 +299,6 @@ public:
     virtual void updateBatteryStatus(const WebBatteryStatus&);
 #endif
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&);
-    virtual void renderingStats(WebRenderingStats&) const;
     virtual WebViewBenchmarkSupport* benchmarkSupport();
 
     // WebLayerTreeViewClient

@@ -48,6 +48,7 @@ class WebInputEvent;
 class WebMouseEvent;
 class WebString;
 struct WebPoint;
+struct WebRenderingStats;
 template <typename T> class WebVector;
 
 class WebWidget {
@@ -220,6 +221,10 @@ public:
     // Cancels the effect of instrumentBeginFrame() in case there were no events
     // following the call to instrumentBeginFrame().
     virtual void instrumentCancelFrame() { }
+
+    // Fills in a WebRenderingStats struct containing information about the state of the compositor.
+    // This call is relatively expensive in threaded mode as it blocks on the compositor thread.
+    virtual void renderingStats(WebRenderingStats&) const { }
 
     // The page background color. Can be used for filling in areas without
     // content.

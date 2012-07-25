@@ -1,3 +1,22 @@
+2012-07-24  Dave Tu  <dtu@chromium.org>
+
+        [chromium] Move renderingStats from WebView to WebWidget.
+        https://bugs.webkit.org/show_bug.cgi?id=92184
+
+        Reviewed by Adam Barth.
+
+        We are going to add some rendering stats that work in non-composited mode, so the renderingStats() method should be moved from WebView to WebWidget.
+
+        * public/WebView.h:
+        (WebKit):
+        (WebView):
+        * public/WebWidget.h:
+        (WebKit):
+        (WebWidget):
+        (WebKit::WebWidget::renderingStats):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-07-24  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: fix #include dependencies so IDBRequest isn't an include root
