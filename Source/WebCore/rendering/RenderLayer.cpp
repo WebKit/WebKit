@@ -86,6 +86,7 @@
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "ScaleTransformOperation.h"
+#include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "Settings.h"
@@ -195,6 +196,8 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
         // We save and restore only the scrollOffset as the other scroll values are recalculated.
         Element* element = toElement(node);
         m_scrollOffset = element->savedLayerScrollOffset();
+        if (!m_scrollOffset.isZero())
+            scrollAnimator()->setCurrentPosition(FloatPoint(m_scrollOffset.width(), m_scrollOffset.height()));
         element->setSavedLayerScrollOffset(IntSize());
     }
 }

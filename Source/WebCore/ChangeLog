@@ -1,3 +1,26 @@
+2012-07-25  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=89114
+        REGRESSION (r112919): Setting scrollTop after setting display from none to block 
+        fails
+        -and corresponding-
+        <rdar://problem/11656050>
+
+        Reviewed by Simon Fraser.
+
+        ScrollAnimatorMac::immediateScrollTo() and ScrollAnimatorMac::immediateScrollBy() 
+        both have an optimization in place so that they do not call 
+        notifyPositionChanged() if the new scroll offset matches the ScrollAnimator's 
+        cached m_currentPosX and m_currentPosY. So revision 112919 caused troubled with 
+        this optimization because it allowed RenderLayers to restore a scrollOffset from 
+        the Element if there is one cached there. This caused the RenderLayer to have a 
+        scrollOffset that is improperly out-of-synch with the ScrollAnimator's 
+        currentPosition (which will just be 0,0 since it is being re-created like the 
+        RenderLayer). This fix makes sure they are in synch by calling 
+        setCurrentPosition() on the ScrollAnimator when the cached position is non-zero.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+
 2012-07-25  Andreas Kling  <kling@webkit.org>
 
         Make ElementAttributeData a variable-sized object to reduce memory use.
