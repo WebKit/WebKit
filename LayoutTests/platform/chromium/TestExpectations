@@ -47,6 +47,8 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/shadow/tree-scope-crash.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html = PASS
 BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/frameset-frameborder-boolean-values.html = PASS
+BUGCR76225 SLOW WIN MAC : fast/canvas/webgl/context-creation-and-destruction.html = PASS
+BUGCR76225 SLOW WIN MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/context-creation-and-destruction.html = PASS
 
 // V8 roll to 3.9.24.1. Remember to remove WIN LINUX from the line below upon fixing.
 BUGCR119915 MAC RELEASE SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
@@ -3395,7 +3397,7 @@ BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TE
 
 BUGWK86592 LINUX : fast/canvas/webgl/shader-precision-format.html = TEXT PASS
 BUGWK86592 LINUX : fast/loader/javascript-url-in-object.html = TEXT PASS
-BUGWK86592 LINUX WIN : http/tests/inspector/resource-har-pages.html = TEXT PASS
+BUGWK92279 SLOW LINUX WIN : http/tests/inspector/resource-har-pages.html = TEXT PASS
 BUGWK86592 LINUX : http/tests/security/sandboxed-iframe-origin-add.html = TEXT PASS
 BUGWK86592 LINUX : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT PASS
 BUGWK86592 LINUX : fast/loader/link-no-URL.html = TEXT PASS

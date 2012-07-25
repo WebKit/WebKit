@@ -1,3 +1,9 @@
+2012-07-25  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change to mark tests as slow.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-25  Brian Weinstein  <bweinstein@apple.com>
 
         Add Mac results for media/controls-styling-strict.html.
