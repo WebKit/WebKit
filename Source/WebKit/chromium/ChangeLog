@@ -1,3 +1,14 @@
+2012-07-25  Scott Graham  <scottmg@chromium.org>
+
+        [Chromium] fix double->float warnings in CCLayerTreeHostCommonTest.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=92271
+
+        Reviewed by Adrienne Walker.
+
+        Fix compile warnings on Windows.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-07-25  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Move WebFilterOperations from RenderPassDrawQuad to RenderPass

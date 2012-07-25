@@ -200,7 +200,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     // Case 4: A change in actual position affects both the draw transform and screen space transform.
     WebTransformationMatrix positionTransform;
     positionTransform.translate(0, 1.2);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 1.2), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 1.2f), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(positionTransform, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(positionTransform, layer->screenSpaceTransform());
@@ -227,7 +227,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     //         The current implementation of calculateDrawTransforms does this implicitly, but it is
     //         still worth testing to detect accidental regressions.
     expectedResult = positionTransform * translationToAnchor * layerTransform * translationToAnchor.inverse();
-    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5, 0), FloatPoint(0, 1.2), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5, 0), FloatPoint(0, 1.2f), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->screenSpaceTransform());
@@ -255,7 +255,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     // Case 2: parent's position affects child and grandChild.
     WebTransformationMatrix parentPositionTransform;
     parentPositionTransform.translate(0, 1.2);
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 1.2), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 1.2f), IntSize(10, 12), false);
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
@@ -779,7 +779,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
 
     // In combination with descendantDrawsContent, opacity != 1 forces the layer to have a new renderSurface.
     renderSurface1->setOpacity(0.5);
-    renderSurface2->setOpacity(0.33);
+    renderSurface2->setOpacity(0.33f);
 
     // All layers in the tree are initialized with an anchor at .25 and a size of (10,10).
     // matrix "A" is the composite layer transform used in all layers, centered about the anchor point
@@ -1600,9 +1600,9 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     setLayerPropertiesForTesting(leafNode2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
 
     child->setMasksToBounds(true);
-    child->setOpacity(0.4);
+    child->setOpacity(0.4f);
     grandChild->setOpacity(0.5);
-    greatGrandChild->setOpacity(0.4);
+    greatGrandChild->setOpacity(0.4f);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     int dummyMaxTextureSize = 512;
@@ -1648,8 +1648,8 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsSurfaceWithoutVisibleContent)
     setLayerPropertiesForTesting(leafNode.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), false);
 
     parent->setMasksToBounds(true);
-    child->setOpacity(0.4);
-    grandChild->setOpacity(0.4);
+    child->setOpacity(0.4f);
+    grandChild->setOpacity(0.4f);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     int dummyMaxTextureSize = 512;
@@ -1711,7 +1711,7 @@ TEST(CCLayerTreeHostCommonTest, verifyDrawableContentRectForLayers)
     grandChild3->setMasksToBounds(true);
 
     // Force everyone to be a render surface.
-    child->setOpacity(0.4);
+    child->setOpacity(0.4f);
     grandChild1->setOpacity(0.5);
     grandChild2->setOpacity(0.5);
     grandChild3->setOpacity(0.5);
@@ -1779,7 +1779,7 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectIsPropagatedCorrectlyToSurfaces)
     grandChild4->setMasksToBounds(true);
 
     // Force everyone to be a render surface.
-    child->setOpacity(0.4);
+    child->setOpacity(0.4f);
     grandChild1->setOpacity(0.5);
     grandChild2->setOpacity(0.5);
     grandChild3->setOpacity(0.5);
