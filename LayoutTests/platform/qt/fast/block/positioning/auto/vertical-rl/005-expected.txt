@@ -1,23 +1,22 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 105x579
-        text run at (0,0) width 545: "In this test, you should see three blocks that are aligned to the bottom within a"
-        text run at (21,0) width 76: "black box. "
-        text run at (21,76) width 500: "They should be stacked horizontally with the green box in between two"
-        text run at (42,0) width 89: "olive boxes. "
-        text run at (42,89) width 393: "The olive boxes and the green box should be 100x100. "
-        text run at (42,482) width 70: "The black"
-        text run at (63,0) width 579: "box's left side should be aligned with the last line in this paragraph and its top side"
-        text run at (84,0) width 338: "should begin right after the end of this sentence."
+layer at (0,0) size 784x754
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x600
+  RenderBlock {HTML} at (0,0) size 784x600
+    RenderBody {BODY} at (8,8) size 768x584
+      RenderText {#text} at (0,0) size 76x568
+        text run at (0,0) width 538: "In this test, you should see three blocks that are aligned to the bottom within a black box. "
+        text run at (0,538) width 30: "They"
+        text run at (19,0) width 472: "should be stacked horizontally with the green box in between two olive boxes. "
+        text run at (19,472) width 95: "The olive boxes"
+        text run at (38,0) width 237: "and the green box should be 100x100. "
+        text run at (38,237) width 329: "The black box's left side should be aligned with the last"
+        text run at (57,0) width 506: "line in this paragraph and its top side should begin right after the end of this sentence."
       RenderText {#text} at (0,0) size 0x0
-layer at (368,346) size 340x240
-  RenderBlock (positioned) {SPAN} at (92,346) size 340x240 [border: (20px solid #000000)]
-layer at (488,466) size 100x100
+layer at (379,514) size 340x240
+  RenderBlock (positioned) {SPAN} at (65,514) size 340x240 [border: (20px solid #000000)]
+layer at (499,634) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (588,466) size 100x100
+layer at (599,634) size 100x100
   RenderBlock (positioned) {DIV} at (20,120) size 100x100 [bgcolor=#808000]
-layer at (388,466) size 100x100
+layer at (399,634) size 100x100
   RenderBlock (positioned) {DIV} at (220,120) size 100x100 [bgcolor=#808000]

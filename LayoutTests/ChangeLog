@@ -1,3 +1,190 @@
+2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] fast/block/positioning rebaseline after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92174
+
+        Unreviewed.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt/fast/block/positioning/003-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/004-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/005-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/006-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/007-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/008-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/009-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/010-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/011-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/012-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/013-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/014-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/015-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/016-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/017-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/018-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/019-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/020-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/021-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/022-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/023-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/024-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/025-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/026-expected.png: Added.
+        * platform/qt/fast/block/positioning/027-expected.png: Added.
+        * platform/qt/fast/block/positioning/028-expected.png: Added.
+        * platform/qt/fast/block/positioning/029-expected.png: Added.
+        * platform/qt/fast/block/positioning/030-expected.png: Added.
+        * platform/qt/fast/block/positioning/031-expected.png: Added.
+        * platform/qt/fast/block/positioning/032-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/033-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/034-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/035-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/036-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/037-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/038-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/039-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/040-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/041-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/042-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/043-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/044-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/045-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/046-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/047-expected.png:
+        * platform/qt/fast/block/positioning/047-expected.txt:
+        * platform/qt/fast/block/positioning/048-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/050-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-rl/001-expected.png.
+        * platform/qt/fast/block/positioning/052-expected.txt:
+        * platform/qt/fast/block/positioning/053-expected.png:
+        * platform/qt/fast/block/positioning/053-expected.txt:
+        * platform/qt/fast/block/positioning/054-expected.txt:
+        * platform/qt/fast/block/positioning/055-expected.png:
+        * platform/qt/fast/block/positioning/055-expected.txt:
+        * platform/qt/fast/block/positioning/057-expected.png:
+        * platform/qt/fast/block/positioning/057-expected.txt:
+        * platform/qt/fast/block/positioning/058-expected.png:
+        * platform/qt/fast/block/positioning/058-expected.txt:
+        * platform/qt/fast/block/positioning/059-expected.png:
+        * platform/qt/fast/block/positioning/059-expected.txt:
+        * platform/qt/fast/block/positioning/060-expected.png:
+        * platform/qt/fast/block/positioning/060-expected.txt:
+        * platform/qt/fast/block/positioning/061-expected.txt:
+        * platform/qt/fast/block/positioning/062-expected.png: Added.
+        * platform/qt/fast/block/positioning/abs-inside-inline-rel-expected.png:
+        * platform/qt/fast/block/positioning/abs-inside-inline-rel-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-in-inline-ltr-3-expected.png:
+        * platform/qt/fast/block/positioning/absolute-in-inline-ltr-3-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-in-inline-short-ltr-expected.png:
+        * platform/qt/fast/block/positioning/absolute-in-inline-short-ltr-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-in-inline-short-rtl-expected.png:
+        * platform/qt/fast/block/positioning/absolute-in-inline-short-rtl-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-length-of-neg-666666-expected.png:
+        * platform/qt/fast/block/positioning/absolute-length-of-neg-666666-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-position-direction-expected.png:
+        * platform/qt/fast/block/positioning/absolute-position-direction-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-positioned-overconstrained-expected.png:
+        * platform/qt/fast/block/positioning/absolute-positioned-overconstrained-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-positioning-no-scrollbar-expected.png: Added.
+        * platform/qt/fast/block/positioning/absolute-positioning-no-scrollbar-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-with-html-border-quirks-expected.png:
+        * platform/qt/fast/block/positioning/absolute-with-html-border-quirks-expected.txt:
+        * platform/qt/fast/block/positioning/absolute-with-html-border-strict-expected.png:
+        * platform/qt/fast/block/positioning/absolute-with-html-border-strict-expected.txt:
+        * platform/qt/fast/block/positioning/auto-height-with-top-and-bottom-expected.png:
+        * platform/qt/fast/block/positioning/auto-height-with-top-and-bottom-expected.txt:
+        * platform/qt/fast/block/positioning/auto/001-expected.png:
+        * platform/qt/fast/block/positioning/auto/001-expected.txt:
+        * platform/qt/fast/block/positioning/auto/002-expected.png:
+        * platform/qt/fast/block/positioning/auto/002-expected.txt:
+        * platform/qt/fast/block/positioning/auto/003-expected.png:
+        * platform/qt/fast/block/positioning/auto/003-expected.txt:
+        * platform/qt/fast/block/positioning/auto/004-expected.png:
+        * platform/qt/fast/block/positioning/auto/004-expected.txt:
+        * platform/qt/fast/block/positioning/auto/005-expected.png:
+        * platform/qt/fast/block/positioning/auto/005-expected.txt:
+        * platform/qt/fast/block/positioning/auto/006-expected.png:
+        * platform/qt/fast/block/positioning/auto/006-expected.txt:
+        * platform/qt/fast/block/positioning/auto/007-expected.png:
+        * platform/qt/fast/block/positioning/auto/007-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/001-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/001-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/002-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/002-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/003-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/003-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/004-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/004-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/005-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/005-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/006-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/006-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/007-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-lr/007-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/001-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/001-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/002-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/002-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/003-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/003-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/004-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/004-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/005-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/005-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/006-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/006-expected.txt:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/007-expected.png:
+        * platform/qt/fast/block/positioning/auto/vertical-rl/007-expected.txt:
+        * platform/qt/fast/block/positioning/child-of-absolute-with-auto-height-expected.png:
+        * platform/qt/fast/block/positioning/child-of-absolute-with-auto-height-expected.txt:
+        * platform/qt/fast/block/positioning/differing-writing-modes-expected.png:
+        * platform/qt/fast/block/positioning/differing-writing-modes-expected.txt:
+        * platform/qt/fast/block/positioning/differing-writing-modes-replaced-expected.png:
+        * platform/qt/fast/block/positioning/differing-writing-modes-replaced-expected.txt:
+        * platform/qt/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.png:
+        * platform/qt/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.txt:
+        * platform/qt/fast/block/positioning/height-change-expected.png:
+        * platform/qt/fast/block/positioning/height-change-expected.txt:
+        * platform/qt/fast/block/positioning/hiding-inside-relpositioned-inline-expected.png:
+        * platform/qt/fast/block/positioning/hiding-inside-relpositioned-inline-expected.txt:
+        * platform/qt/fast/block/positioning/inline-block-relposition-expected.png:
+        * platform/qt/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/qt/fast/block/positioning/leftmargin-topmargin-expected.png:
+        * platform/qt/fast/block/positioning/leftmargin-topmargin-expected.txt:
+        * platform/qt/fast/block/positioning/negative-right-pos-expected.png:
+        * platform/qt/fast/block/positioning/negative-right-pos-expected.txt:
+        * platform/qt/fast/block/positioning/padding-percent-expected.png:
+        * platform/qt/fast/block/positioning/padding-percent-expected.txt:
+        * platform/qt/fast/block/positioning/pref-width-change-expected.txt:
+        * platform/qt/fast/block/positioning/relative-overconstrained-expected.png: Copied from LayoutTests/platform/qt/fast/block/positioning/vertical-lr/001-expected.png.
+        * platform/qt/fast/block/positioning/relative-overflow-block-expected.png:
+        * platform/qt/fast/block/positioning/relative-overflow-block-expected.txt:
+        * platform/qt/fast/block/positioning/relative-overflow-replaced-expected.png:
+        * platform/qt/fast/block/positioning/relative-overflow-replaced-expected.txt:
+        * platform/qt/fast/block/positioning/relative-overflow-replaced-float-expected.png:
+        * platform/qt/fast/block/positioning/relative-overflow-replaced-float-expected.txt:
+        * platform/qt/fast/block/positioning/relayout-on-position-change-expected.png:
+        * platform/qt/fast/block/positioning/relayout-on-position-change-expected.txt:
+        * platform/qt/fast/block/positioning/replaced-inside-fixed-top-bottom-expected.png:
+        * platform/qt/fast/block/positioning/rtl-fixed-positioning-expected.png:
+        * platform/qt/fast/block/positioning/rtl-static-positioning-expected.png:
+        * platform/qt/fast/block/positioning/rtl-static-positioning-expected.txt:
+        * platform/qt/fast/block/positioning/rtl-static-positioning-inline-block-expected.png:
+        * platform/qt/fast/block/positioning/rtl-static-positioning-inline-block-expected.txt:
+        * platform/qt/fast/block/positioning/static-distance-with-positioned-ancestor-expected.png:
+        * platform/qt/fast/block/positioning/static-distance-with-positioned-ancestor-expected.txt:
+        * platform/qt/fast/block/positioning/table-cell-static-position-expected.png:
+        * platform/qt/fast/block/positioning/table-cell-static-position-expected.txt:
+        * platform/qt/fast/block/positioning/trailing-space-test-expected.png:
+        * platform/qt/fast/block/positioning/trailing-space-test-expected.txt:
+        * platform/qt/fast/block/positioning/vertical-lr/001-expected.png:
+        * platform/qt/fast/block/positioning/vertical-lr/001-expected.txt:
+        * platform/qt/fast/block/positioning/vertical-rl/001-expected.png:
+        * platform/qt/fast/block/positioning/vertical-rl/001-expected.txt:
+        * platform/qt/fast/block/positioning/vertical-rl/fixed-positioning-expected.png:
+        * platform/qt/fast/block/positioning/window-height-change-expected.png:
+        * platform/qt/fast/block/positioning/window-height-change-expected.txt:
+
 2012-07-24  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] fast/block/float needs rebaseline after new test fonts

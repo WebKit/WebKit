@@ -550,7 +550,6 @@ editing/selection/select-all-001.html
 editing/selection/select-all-002.html
 editing/selection/select-all-003.html
 editing/selection/select-all-004.html
-fast/block/positioning/negative-rel-position.html
 fast/canvas/canvas-bg.html
 fast/canvas/fallback-content.html
 fast/css-generated-content/table-parts-before-and-after.html
@@ -685,6 +684,7 @@ tables/mozilla_expected_failures/bugs/bug92647-1.html
 
 # [Qt] Images scale differently in WK1 and WK2
 # https://bugs.webkit.org/show_bug.cgi?id=92015
+fast/block/positioning/replaced-inside-fixed-top-bottom.html
 svg/carto.net/scrollbar.svg
 svg/carto.net/selectionlist.svg
 tables/mozilla_expected_failures/bugs/bug85016.html
