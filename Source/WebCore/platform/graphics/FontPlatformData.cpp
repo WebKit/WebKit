@@ -27,9 +27,111 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+#include "HarfBuzzNGFace.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
+
+FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
+    : m_syntheticBold(false)
+    , m_syntheticOblique(false)
+    , m_orientation(Horizontal)
+    , m_textOrientation(TextOrientationVerticalRight)
+    , m_size(0)
+    , m_widthVariant(RegularWidth)
+#if PLATFORM(WIN)
+    , m_font(WTF::HashTableDeletedValue)
+#elif OS(DARWIN)
+    , m_font(hashTableDeletedFontValue())
+#endif
+#if USE(CG) && PLATFORM(WIN)
+    , m_cgFont(0)
+#elif USE(CAIRO)
+    , m_scaledFont(hashTableDeletedFontValue())
+#endif
+    , m_isColorBitmapFont(false)
+    , m_isCompositeFontReference(false)
+#if OS(DARWIN)
+    , m_isPrinterFont(false)
+#endif
+#if PLATFORM(WIN)
+    , m_useGDI(false)
+#endif
+{
+}
+
+FontPlatformData::FontPlatformData()
+    : m_syntheticBold(false)
+    , m_syntheticOblique(false)
+    , m_orientation(Horizontal)
+    , m_textOrientation(TextOrientationVerticalRight)
+    , m_size(0)
+    , m_widthVariant(RegularWidth)
+#if OS(DARWIN)
+    , m_font(0)
+#endif
+#if USE(CG) && PLATFORM(WIN)
+    , m_cgFont(0)
+#elif USE(CAIRO)
+    , m_scaledFont(0)
+#endif
+    , m_isColorBitmapFont(false)
+    , m_isCompositeFontReference(false)
+#if OS(DARWIN)
+    , m_isPrinterFont(false)
+#endif
+#if PLATFORM(WIN)
+    , m_useGDI(false)
+#endif
+{
+}
+
+FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, TextOrientation textOrientation, FontWidthVariant widthVariant)
+    : m_syntheticBold(syntheticBold)
+    , m_syntheticOblique(syntheticOblique)
+    , m_orientation(orientation)
+    , m_textOrientation(textOrientation)
+    , m_size(size)
+    , m_widthVariant(widthVariant)
+#if OS(DARWIN)
+    , m_font(0)
+#endif
+#if USE(CG) && PLATFORM(WIN)
+    , m_cgFont(0)
+#elif USE(CAIRO)
+    , m_scaledFont(0)
+#endif
+    , m_isColorBitmapFont(false)
+    , m_isCompositeFontReference(false)
+#if OS(DARWIN)
+    , m_isPrinterFont(false)
+#endif
+#if PLATFORM(WIN)
+    , m_useGDI(false)
+#endif
+{
+}
+
+#if OS(DARWIN) && (USE(CG) || USE(SKIA_ON_MAC_CHROMIUM))
+FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation,
+                                   TextOrientation textOrientation, FontWidthVariant widthVariant)
+    : m_syntheticBold(syntheticBold)
+    , m_syntheticOblique(syntheticOblique)
+    , m_orientation(orientation)
+    , m_textOrientation(textOrientation)
+    , m_size(size)
+    , m_widthVariant(widthVariant)
+    , m_font(0)
+    , m_cgFont(cgFont)
+    , m_isColorBitmapFont(false)
+    , m_isCompositeFontReference(false)
+    , m_isPrinterFont(false)
+{
+}
+#endif
 
 FontPlatformData::FontPlatformData(const FontPlatformData& source)
     : m_syntheticBold(source.m_syntheticBold)

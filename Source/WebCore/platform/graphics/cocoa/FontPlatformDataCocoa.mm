@@ -28,6 +28,10 @@
 #import "WebCoreSystemInterface.h"
 #import <AppKit/NSFont.h>
 
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+#import "HarfBuzzNGFace.h"
+#endif
+
 namespace WebCore {
 
 // These CoreText Text Spacing feature selectors are not defined in CoreText.

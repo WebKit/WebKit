@@ -42,6 +42,12 @@
 
 #include <wtf/text/StringImpl.h> 
 
+#if USE(HARFBUZZ_NG)
+#include "HarfBuzzNGFace.h"
+#else
+#include "HarfBuzzSkia.h"
+#endif
+
 namespace WebCore {
 
 static SkPaint::Hinting skiaHinting = SkPaint::kNormal_Hinting;
@@ -79,6 +85,39 @@ void FontPlatformData::setSubpixelRendering(bool useSubpixelRendering)
 void FontPlatformData::setSubpixelPositioning(bool useSubpixelPositioning)
 {
     useSkiaSubpixelPositioning = useSubpixelPositioning;
+}
+
+FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
+    : m_typeface(hashTableDeletedFontValue())
+    , m_textSize(0)
+    , m_emSizeInFontUnits(0)
+    , m_fakeBold(false)
+    , m_fakeItalic(false)
+    , m_orientation(Horizontal)
+    , m_textOrientation(TextOrientationVerticalRight)
+{
+}
+
+FontPlatformData::FontPlatformData()
+    : m_typeface(0)
+    , m_textSize(0)
+    , m_emSizeInFontUnits(0)
+    , m_fakeBold(false)
+    , m_fakeItalic(false)
+    , m_orientation(Horizontal)
+    , m_textOrientation(TextOrientationVerticalRight)
+{
+}
+
+FontPlatformData::FontPlatformData(float textSize, bool fakeBold, bool fakeItalic)
+    : m_typeface(0)
+    , m_textSize(textSize)
+    , m_emSizeInFontUnits(0)
+    , m_fakeBold(fakeBold)
+    , m_fakeItalic(fakeItalic)
+    , m_orientation(Horizontal)
+    , m_textOrientation(TextOrientationVerticalRight)
+{
 }
 
 FontPlatformData::FontPlatformData(const FontPlatformData& src)

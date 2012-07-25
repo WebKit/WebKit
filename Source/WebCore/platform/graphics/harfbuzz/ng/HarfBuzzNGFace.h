@@ -31,15 +31,7 @@
 #ifndef HarfBuzzNGFace_h
 #define HarfBuzzNGFace_h
 
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-// TODO: Figure out why including <hb.h> fails on chromium.
-struct _hb_face_t;
-typedef _hb_face_t hb_face_t;
-struct _hb_font_t;
-typedef _hb_font_t hb_font_t;
-#else
 #include <hb.h>
-#endif
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

@@ -33,11 +33,6 @@
 
 #include "FontOrientation.h"
 #include "FontRenderStyle.h"
-#if USE(HARFBUZZ_NG)
-#include "HarfBuzzNGFace.h"
-#else
-#include "HarfBuzzSkia.h"
-#endif
 #include "SkPaint.h"
 #include "TextOrientation.h"
 #include <wtf/Forward.h>
@@ -52,6 +47,12 @@ namespace WebCore {
 
 class FontDescription;
 
+#if USE(HARFBUZZ_NG)
+class HarfBuzzNGFace;
+#else
+class HarfbuzzFace;
+#endif
+
 // -----------------------------------------------------------------------------
 // FontPlatformData is the handle which WebKit has on a specific face. A face
 // is the tuple of (font, size, ...etc). Here we are just wrapping a Skia
@@ -64,36 +65,9 @@ public:
     // to this "Deleted" one. It expects the Deleted one to be differentiable
     // from the 0 one (created with the empty constructor), so we can't just
     // set everything to 0.
-    FontPlatformData(WTF::HashTableDeletedValueType)
-        : m_typeface(hashTableDeletedFontValue())
-        , m_textSize(0)
-        , m_emSizeInFontUnits(0)
-        , m_fakeBold(false)
-        , m_fakeItalic(false)
-        , m_orientation(Horizontal)
-        , m_textOrientation(TextOrientationVerticalRight)
-        { }
-
-    FontPlatformData()
-        : m_typeface(0)
-        , m_textSize(0)
-        , m_emSizeInFontUnits(0)
-        , m_fakeBold(false)
-        , m_fakeItalic(false)
-        , m_orientation(Horizontal)
-        , m_textOrientation(TextOrientationVerticalRight)
-        { }
-
-    FontPlatformData(float textSize, bool fakeBold, bool fakeItalic)
-        : m_typeface(0)
-        , m_textSize(textSize)
-        , m_emSizeInFontUnits(0)
-        , m_fakeBold(fakeBold)
-        , m_fakeItalic(fakeItalic)
-        , m_orientation(Horizontal)
-        , m_textOrientation(TextOrientationVerticalRight)
-        { }
-
+    FontPlatformData(WTF::HashTableDeletedValueType);
+    FontPlatformData();
+    FontPlatformData(float textSize, bool fakeBold, bool fakeItalic);
     FontPlatformData(const FontPlatformData&);
     FontPlatformData(SkTypeface*, const char* name, float textSize, bool fakeBold, bool fakeItalic, FontOrientation = Horizontal, TextOrientation = TextOrientationVerticalRight);
     FontPlatformData(const FontPlatformData& src, float textSize);

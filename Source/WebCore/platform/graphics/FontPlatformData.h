@@ -72,7 +72,6 @@ typedef const struct __CTFont* CTFontRef;
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
 #include "CrossProcessFontLoading.h"  
-#include "HarfBuzzNGFace.h"
 #endif
 
 #if PLATFORM(WIN)
@@ -94,114 +93,29 @@ namespace WebCore {
 class FontDescription;
 class SharedBuffer;
 
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+class HarfBuzzNGFace;
+#endif
+
 #if OS(DARWIN)
 inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
 #endif
 
 class FontPlatformData {
 public:
-    FontPlatformData(WTF::HashTableDeletedValueType)
-        : m_syntheticBold(false)
-        , m_syntheticOblique(false)
-        , m_orientation(Horizontal)
-        , m_textOrientation(TextOrientationVerticalRight)
-        , m_size(0)
-        , m_widthVariant(RegularWidth)
-#if PLATFORM(WIN)
-        , m_font(WTF::HashTableDeletedValue)
-#elif OS(DARWIN)
-        , m_font(hashTableDeletedFontValue())
-#endif
-#if USE(CG) && PLATFORM(WIN)
-        , m_cgFont(0)
-#elif USE(CAIRO)
-        , m_scaledFont(hashTableDeletedFontValue())
-#endif
-        , m_isColorBitmapFont(false)
-        , m_isCompositeFontReference(false)
-#if OS(DARWIN)
-        , m_isPrinterFont(false)
-#endif
-#if PLATFORM(WIN)
-        , m_useGDI(false)
-#endif
-        {
-        }
-
-    FontPlatformData()
-        : m_syntheticBold(false)
-        , m_syntheticOblique(false)
-        , m_orientation(Horizontal)
-        , m_textOrientation(TextOrientationVerticalRight)
-        , m_size(0)
-        , m_widthVariant(RegularWidth)
-#if OS(DARWIN)
-        , m_font(0)
-#endif
-#if USE(CG) && PLATFORM(WIN)
-        , m_cgFont(0)
-#elif USE(CAIRO)
-        , m_scaledFont(0)
-#endif
-        , m_isColorBitmapFont(false)
-        , m_isCompositeFontReference(false)
-#if OS(DARWIN)
-        , m_isPrinterFont(false)
-#endif
-#if PLATFORM(WIN)
-        , m_useGDI(false)
-#endif
-    {
-    }
-
+    FontPlatformData(WTF::HashTableDeletedValueType);
+    FontPlatformData();
     FontPlatformData(const FontPlatformData&);
     FontPlatformData(const FontDescription&, const AtomicString& family);
-    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation = Horizontal,
-                     TextOrientation textOrientation = TextOrientationVerticalRight, FontWidthVariant widthVariant = RegularWidth)
-        : m_syntheticBold(syntheticBold)
-        , m_syntheticOblique(syntheticOblique)
-        , m_orientation(orientation)
-        , m_textOrientation(textOrientation)
-        , m_size(size)
-        , m_widthVariant(widthVariant)
-#if OS(DARWIN)
-        , m_font(0)
-#endif
-#if USE(CG) && PLATFORM(WIN)
-        , m_cgFont(0)
-#elif USE(CAIRO)
-        , m_scaledFont(0)
-#endif
-        , m_isColorBitmapFont(false)
-        , m_isCompositeFontReference(false)
-#if OS(DARWIN)
-        , m_isPrinterFont(false)
-#endif
-#if PLATFORM(WIN)
-        , m_useGDI(false)
-#endif
-    {
-    }
+    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = Horizontal,
+                     TextOrientation = TextOrientationVerticalRight, FontWidthVariant = RegularWidth);
 
 #if OS(DARWIN)
     FontPlatformData(NSFont*, float size, bool isPrinterFont = false, bool syntheticBold = false, bool syntheticOblique = false,
                      FontOrientation = Horizontal, TextOrientation = TextOrientationVerticalRight, FontWidthVariant = RegularWidth);
 #if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
-    FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation,
-                     TextOrientation textOrientation, FontWidthVariant widthVariant)
-        : m_syntheticBold(syntheticBold)
-        , m_syntheticOblique(syntheticOblique)
-        , m_orientation(orientation)
-        , m_textOrientation(textOrientation)
-        , m_size(size)
-        , m_widthVariant(widthVariant)
-        , m_font(0)
-        , m_cgFont(cgFont)
-        , m_isColorBitmapFont(false)
-        , m_isCompositeFontReference(false)
-        , m_isPrinterFont(false)
-    {
-    }
+    FontPlatformData(CGFontRef, float size, bool syntheticBold, bool syntheticOblique, FontOrientation,
+                     TextOrientation, FontWidthVariant);
 #endif
 #endif
 #if PLATFORM(WIN)
