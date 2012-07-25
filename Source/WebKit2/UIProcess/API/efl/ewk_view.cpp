@@ -529,6 +529,28 @@ Evas_Object* ewk_view_add(Evas* canvas)
     return ewk_view_add_with_context(canvas, ewk_context_default_get());
 }
 
+/**
+ * @internal
+ * The uri of view was changed by the frame loader.
+ *
+ * Emits signal: "uri,changed" with pointer to new uri string.
+ */
+void ewk_view_uri_update(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKPageCopyActiveURL(toAPI(priv->pageClient->page())));
+    if (!wkURL)
+        return;
+
+    CString activeURI = toImpl(wkURL.get())->string().utf8();
+    if (!eina_stringshare_replace(&priv->uri, activeURI.data()))
+        return;
+
+    evas_object_smart_callback_call(ewkView, "uri,changed", static_cast<void*>(const_cast<char*>(priv->uri)));
+}
+
 Eina_Bool ewk_view_uri_set(Evas_Object* ewkView, const char* uri)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
@@ -536,8 +558,7 @@ Eina_Bool ewk_view_uri_set(Evas_Object* ewkView, const char* uri)
 
     WKRetainPtr<WKURLRef> url(AdoptWK, WKURLCreateWithUTF8CString(uri));
     WKPageLoadURL(toAPI(priv->pageClient->page()), url.get());
-
-    eina_stringshare_replace(&priv->uri, uri);
+    ewk_view_uri_update(ewkView);
 
     return true;
 }
@@ -556,6 +577,7 @@ Eina_Bool ewk_view_reload(Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     WKPageReload(toAPI(priv->pageClient->page()));
+    ewk_view_uri_update(ewkView);
     return true;
 }
 
@@ -565,7 +587,7 @@ Eina_Bool ewk_view_reload_bypass_cache(Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     WKPageReloadFromOrigin(toAPI(priv->pageClient->page()));
-
+    ewk_view_uri_update(ewkView);
     return true;
 }
 
@@ -861,6 +883,7 @@ void ewk_view_load_error(Evas_Object* ewkView, const Ewk_Web_Error* error)
  */
 void ewk_view_load_finished(Evas_Object* ewkView)
 {
+    ewk_view_uri_update(ewkView);
     evas_object_smart_callback_call(ewkView, "load,finished", 0);
 }
 
@@ -883,6 +906,7 @@ void ewk_view_load_provisional_failed(Evas_Object* ewkView, const Ewk_Web_Error*
  */
 void ewk_view_load_provisional_redirect(Evas_Object* ewkView)
 {
+    ewk_view_uri_update(ewkView);
     evas_object_smart_callback_call(ewkView, "load,provisional,redirect", 0);
 }
 
@@ -905,6 +929,7 @@ void ewk_view_load_provisional_started(Evas_Object* ewkView)
         ewk_web_resource_unref(it->second);
     priv->loadingResourcesMap.clear();
 
+    ewk_view_uri_update(ewkView);
     evas_object_smart_callback_call(ewkView, "load,provisional,started", 0);
 }
 
@@ -940,6 +965,7 @@ Eina_Bool ewk_view_html_string_load(Evas_Object* ewkView, const char* html, cons
         priv->pageClient->page()->loadAlternateHTMLString(String::fromUTF8(html), baseUrl ? String::fromUTF8(baseUrl) : "", String::fromUTF8(unreachableUrl));
     else
         priv->pageClient->page()->loadHTMLString(String::fromUTF8(html), baseUrl ? String::fromUTF8(baseUrl) : "");
+    ewk_view_uri_update(ewkView);
 
     return true;
 }

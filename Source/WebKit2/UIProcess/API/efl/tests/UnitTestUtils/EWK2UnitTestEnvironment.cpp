@@ -20,6 +20,8 @@
 #include "config.h"
 #include "EWK2UnitTestEnvironment.h"
 
+#include <wtf/text/StringConcatenate.h>
+
 namespace EWK2UnitTest {
 
 EWK2UnitTestEnvironment::EWK2UnitTestEnvironment(bool useX11Window)
@@ -37,6 +39,11 @@ const char* EWK2UnitTestEnvironment::defaultTestPageUrl() const
 const char* EWK2UnitTestEnvironment::defaultTheme() const
 {
     return TEST_THEME_DIR"/default.edj";
+}
+
+CString EWK2UnitTestEnvironment::urlForResource(const char* resource)
+{
+    return makeString("file://"TEST_RESOURCES_DIR"/", resource).utf8();
 }
 
 } // namespace EWK2UnitTest

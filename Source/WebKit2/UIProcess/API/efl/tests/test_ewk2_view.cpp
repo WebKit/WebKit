@@ -22,15 +22,32 @@
 #include "UnitTestUtils/EWK2UnitTestBase.h"
 #include "UnitTestUtils/EWK2UnitTestEnvironment.h"
 #include <EWebKit2.h>
+#include <Ecore.h>
 #include <gtest/gtest.h>
+#include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 
 using namespace EWK2UnitTest;
 
 extern EWK2UnitTestEnvironment* environment;
 
+static void onLoadFinishedForRedirection(void* userData, Evas_Object*, void*)
+{
+    int* countLoadFinished = static_cast<int*>(userData);
+    (*countLoadFinished)--;
+}
+
 TEST_F(EWK2UnitTestBase, ewk_view_uri_get)
 {
     loadUrlSync(environment->defaultTestPageUrl());
+    EXPECT_STREQ(ewk_view_uri_get(webView()), environment->defaultTestPageUrl());
+
+    int countLoadFinished = 2;
+    evas_object_smart_callback_add(webView(), "load,finished", onLoadFinishedForRedirection, &countLoadFinished);
+    ewk_view_uri_set(webView(), environment->urlForResource("redirect_uri_to_default.html").data());
+    while (countLoadFinished)
+        ecore_main_loop_iterate();
+    evas_object_smart_callback_del(webView(), "load,finished", onLoadFinishedForRedirection);
     EXPECT_STREQ(ewk_view_uri_get(webView()), environment->defaultTestPageUrl());
 }
 

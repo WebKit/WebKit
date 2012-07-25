@@ -1,3 +1,38 @@
+2012-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Update uri when the active URI is changed while loading.
+        https://bugs.webkit.org/show_bug.cgi?id=92001
+
+        Reviewed by Hajime Morita.
+
+        For now, ewk_view_uri_get just return the last uri of setter.
+        This patch updates the uri of ewk_view when it is changed while loading.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_uri_update):
+        Added to check whether current active URI has changed and send uri,changed
+        signal if it has changed.
+        (ewk_view_uri_set):
+        Called ewk_view_uri_update to make sure the active uri is updated when the
+        load operation is started.
+        (ewk_view_reload): Ditto.
+        (ewk_view_reload_bypass_cache): Ditto.
+        (ewk_view_load_finished): Ditto.
+        (ewk_view_load_provisional_redirect): Ditto.
+        (ewk_view_load_provisional_started): Ditto.
+        (ewk_view_html_string_load): Ditto.
+        * UIProcess/API/efl/ewk_view.h: Updated comment for uri,changed signal.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.cpp: 
+        (EWK2UnitTest::EWK2UnitTestEnvironment::urlForResource):
+        Added to get url of custom resource for test.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.h:
+        * UIProcess/API/efl/tests/resources/redirect_uri_to_default.html:
+        Added to test ewk_view_uri_get when the page is redirected.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp: Ditto.
+        (onLoadFinishedForRedirection):
+        (TEST_F): Added new test case whether ewk_view_uri_get returns correct uri when
+        the page is redirected.
+
 2012-07-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Add ewk_main.{cpp,h} to EFL WK2

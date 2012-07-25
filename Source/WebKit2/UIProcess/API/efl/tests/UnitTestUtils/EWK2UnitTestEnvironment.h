@@ -19,7 +19,9 @@
 #ifndef EWK2UnitTestEnvironment_h
 #define EWK2UnitTestEnvironment_h
 
+#include <Eina.h>
 #include <gtest/gtest.h>
+#include <wtf/text/CString.h>
 
 namespace EWK2UnitTest {
 
@@ -30,6 +32,7 @@ public:
     bool useX11Window() const { return m_useX11Window; }
     const char* defaultTestPageUrl() const;
     const char* defaultTheme() const;
+    CString urlForResource(const char* resource);
 
     virtual unsigned int defaultWidth() const { return m_defaultWidth; }
     virtual unsigned int defaultHeight() const { return m_defaultHeight; }

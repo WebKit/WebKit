@@ -46,6 +46,7 @@
  * - "resource,request,response", Ewk_Web_Resource_Load_Response*: a response to a resource request was received.
  * - "resource,request,sent", const Ewk_Web_Resource_Request*: a resource request was sent.
  * - "title,changed", const char*: title of the main frame was changed.
+ * - "uri,changed", const char*: uri of the main frame was changed.
  */
 
 #ifndef ewk_view_h
