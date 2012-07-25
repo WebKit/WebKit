@@ -1,3 +1,9 @@
+2012-07-25  Adam Barth  <abarth@webkit.org>
+
+        Jochen is our a newest reviewer!
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-25  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] don't use webkit_support methods directly from test runners but through the test delegate
