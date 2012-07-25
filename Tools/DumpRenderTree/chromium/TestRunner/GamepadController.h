@@ -34,6 +34,8 @@
 #include "CppBoundClass.h"
 #include "platform/WebGamepads.h"
 
+class TestDelegate;
+
 namespace WebKit {
 class WebGamepads;
 class WebFrame;
@@ -44,6 +46,7 @@ public:
     GamepadController();
 
     void bindToJavascript(WebKit::WebFrame*, const WebKit::WebString& classname);
+    void setDelegate(TestDelegate*);
     void reset();
 
 private:
@@ -57,7 +60,9 @@ private:
     void setAxisData(const CppArgumentList&, CppVariant*);
     void fallbackCallback(const CppArgumentList&, CppVariant*);
 
-    WebKit::WebGamepads internalData;
+    WebKit::WebGamepads m_gamepads;
+
+    TestDelegate* m_delegate;
 };
 
 #endif // GamepadController_h

@@ -1,3 +1,43 @@
+2012-07-25  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] don't use webkit_support methods directly from test runners but through the test delegate
+        https://bugs.webkit.org/show_bug.cgi?id=92256
+
+        Reviewed by Adam Barth.
+
+        This will allow for the content_shell to provide its own implementation
+        for setting the Gamepad data instead.
+
+        * DumpRenderTree/chromium/TestRunner/GamepadController.cpp:
+        (GamepadController::setDelegate):
+        (GamepadController::reset):
+        (GamepadController::connect):
+        (GamepadController::disconnect):
+        (GamepadController::setId):
+        (GamepadController::setButtonCount):
+        (GamepadController::setButtonData):
+        (GamepadController::setAxisCount):
+        (GamepadController::setAxisData):
+        * DumpRenderTree/chromium/TestRunner/GamepadController.h:
+        (GamepadController):
+        * DumpRenderTree/chromium/TestRunner/TestDelegate.h:
+        (WebKit):
+        (TestDelegate):
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.cpp:
+        (TestInterfaces::Internal):
+        (TestInterfaces::Internal::~Internal):
+        (TestInterfaces::Internal::setDelegate):
+        (TestInterfaces::setDelegate):
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.h:
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::setGamepadData):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-07-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WTR] LayoutTestController.sendWebIntentResponse() needs to be implemented

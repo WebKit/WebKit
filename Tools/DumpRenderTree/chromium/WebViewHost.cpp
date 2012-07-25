@@ -1762,6 +1762,11 @@ void WebViewHost::setPendingExtraData(PassOwnPtr<TestShellExtraData> extraData)
     m_pendingExtraData = extraData;
 }
 
+void WebViewHost::setGamepadData(const WebGamepads& pads)
+{
+    webkit_support::SetGamepadData(pads);
+}
+
 void WebViewHost::setPageTitle(const WebString&)
 {
     // Nothing to do in layout test.

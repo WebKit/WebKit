@@ -99,6 +99,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void clearEditCommand() OVERRIDE;
     void setPendingExtraData(PassOwnPtr<TestShellExtraData>);
 
+    virtual void setGamepadData(const WebKit::WebGamepads&);
+
     void paintRect(const WebKit::WebRect&);
     void updatePaintRect(const WebKit::WebRect&);
     void paintInvalidatedRegion();

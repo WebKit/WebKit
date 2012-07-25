@@ -37,13 +37,15 @@ class WebView;
 }
 
 class AccessibilityController;
+class TestDelegate;
 
 class TestInterfaces {
 public:
     TestInterfaces();
     ~TestInterfaces();
 
-    void setWebView(WebKit::WebView* webView);
+    void setWebView(WebKit::WebView*);
+    void setDelegate(TestDelegate*);
     void bindTo(WebKit::WebFrame*);
     void resetAll();
 

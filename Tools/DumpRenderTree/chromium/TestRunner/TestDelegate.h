@@ -36,6 +36,7 @@
 
 namespace WebKit {
 struct WebContextMenuData;
+class WebGamepads;
 }
 
 class TestDelegate {
@@ -45,6 +46,7 @@ public:
     virtual void fillSpellingSuggestionList(const WebKit::WebString& word, Vector<WebKit::WebString>* suggestions) = 0;
     virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
     virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
+    virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
 };
 
 #endif // TestDelegate_h

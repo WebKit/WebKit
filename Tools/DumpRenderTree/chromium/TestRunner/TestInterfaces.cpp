@@ -47,7 +47,8 @@ public:
     Internal();
     ~Internal();
 
-    void setWebView(WebView* webView);
+    void setWebView(WebView*);
+    void setDelegate(TestDelegate*);
     void bindTo(WebFrame*);
     void resetAll();
 
@@ -71,6 +72,10 @@ TestInterfaces::Internal::~Internal()
     m_accessibilityController->setWebView(0);
     // m_gamepadController doesn't depend on WebView.
     m_textInputController->setWebView(0);
+
+    // m_accessibilityController doesn't depend on TestDelegate.
+    m_gamepadController->setDelegate(0);
+    // m_textInputController doesn't depend on TestDelegate.
 }
 
 void TestInterfaces::Internal::setWebView(WebView* webView)
@@ -78,6 +83,13 @@ void TestInterfaces::Internal::setWebView(WebView* webView)
     m_accessibilityController->setWebView(webView);
     // m_gamepadController doesn't depend on WebView.
     m_textInputController->setWebView(webView);
+}
+
+void TestInterfaces::Internal::setDelegate(TestDelegate* delegate)
+{
+    // m_accessibilityController doesn't depend on TestDelegate.
+    m_gamepadController->setDelegate(delegate);
+    // m_textInputController doesn't depend on TestDelegate.
 }
 
 void TestInterfaces::Internal::bindTo(WebFrame* frame)
@@ -107,6 +119,11 @@ TestInterfaces::~TestInterfaces()
 void TestInterfaces::setWebView(WebView* webView)
 {
     m_internal->setWebView(webView);
+}
+
+void TestInterfaces::setDelegate(TestDelegate* delegate)
+{
+    m_internal->setDelegate(delegate);
 }
 
 void TestInterfaces::bindTo(WebFrame* frame)
