@@ -1,3 +1,17 @@
+2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Update about:config lists
+        https://bugs.webkit.org/show_bug.cgi?id=92118
+
+        Reviewed by Rob Buis.
+
+        Remove features from list that have either been removed from WebKit
+        or that have been moved from one list to another.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+        * WebCoreSupport/AboutDataHaveFeatures.in:
+        * WebCoreSupport/AboutDataUseFeatures.in:
+
 2012-07-25  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] clock_gettime() in BackingStore.cpp should use CLOCK_MONOTONIC
