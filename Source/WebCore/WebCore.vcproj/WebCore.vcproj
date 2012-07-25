@@ -63394,6 +63394,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLStackItem.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLToken.h"
 					>
 				</File>

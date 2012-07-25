@@ -2583,6 +2583,7 @@ webcore_sources += \
 	Source/WebCore/html/parser/HTMLScriptRunnerHost.h \
 	Source/WebCore/html/parser/HTMLSourceTracker.cpp \
 	Source/WebCore/html/parser/HTMLSourceTracker.h \
+	Source/WebCore/html/parser/HTMLStackItem.h \
 	Source/WebCore/html/parser/HTMLToken.h \
 	Source/WebCore/html/parser/HTMLTokenizer.cpp \
 	Source/WebCore/html/parser/HTMLTokenizer.h \
