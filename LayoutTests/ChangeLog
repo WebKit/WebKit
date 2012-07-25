@@ -1,3 +1,9 @@
+2012-07-25  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-25  Michael Saboff  <msaboff@apple.com>
 
         r123492 Changed output of msub-anonymous-child-render-crash.html LayoutTest
