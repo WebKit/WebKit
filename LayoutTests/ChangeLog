@@ -1,3 +1,9 @@
+2012-07-25  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating one mathml test baseline after r123492.
+
+        * platform/gtk/mathml/msub-anonymous-child-render-crash-expected.txt: Added.
+
 2012-07-25  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
