@@ -1,3 +1,65 @@
+2012-07-24  Zhenyao Mo  <zmo@google.com>
+
+        Gardening stuff, rebaseline.
+        
+        Unreviewed.
+
+        * platform/chromium-mac/fast/hidpi: Added.
+        * platform/chromium-mac/fast/hidpi/broken-image-icon-hidpi-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/broken-image-with-size-hidpi-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/clip-text-in-hidpi-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/device-scale-factor-paint-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/focus-rings-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-as-background-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-background-dynamic-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-background-repeat-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-background-repeat-without-size-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-border-image-comparison-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-border-image-dynamic-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-border-image-simple-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-in-content-dynamic-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-out-of-order-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-simple-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/image-set-without-specified-width-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/resize-corner-hidpi-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/video-controls-in-hidpi-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/video-controls-in-hidpi-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi: Added.
+        * platform/chromium-win/fast/hidpi/broken-image-icon-hidpi-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/broken-image-icon-hidpi-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/broken-image-with-size-hidpi-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/broken-image-with-size-hidpi-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/clip-text-in-hidpi-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/clip-text-in-hidpi-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/device-scale-factor-paint-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/focus-rings-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-as-background-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-as-background-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-background-dynamic-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-background-dynamic-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-background-repeat-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-background-repeat-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-background-repeat-without-size-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-background-repeat-without-size-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-border-image-comparison-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-border-image-comparison-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-border-image-dynamic-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-border-image-dynamic-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-border-image-simple-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-border-image-simple-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-in-content-dynamic-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-in-content-dynamic-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-out-of-order-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-out-of-order-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-simple-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-simple-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/image-set-without-specified-width-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/image-set-without-specified-width-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/resize-corner-hidpi-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/resize-corner-hidpi-expected.txt: Added.
+        * platform/chromium-win/fast/hidpi/video-controls-in-hidpi-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/video-controls-in-hidpi-expected.txt: Added.
+
 2012-07-24  Kenneth Russell  <kbr@google.com>
 
         [chromium] Hint garbage collector to run if page uses Canvas contexts
