@@ -1,3 +1,9 @@
+2012-07-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-07-24  Dave Tu  <dtu@chromium.org>
 
         [chromium] Move renderingStats from WebView to WebWidget.
