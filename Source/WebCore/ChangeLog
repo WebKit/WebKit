@@ -1,3 +1,20 @@
+2012-07-24  Dan Bernstein  <mitz@apple.com>
+
+        RenderBlock::positionForPoint can fail when the block or its children have a vertical writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=92202
+
+        Reviewed by Beth Dakin.
+
+        Test: fast/writing-mode/positionForPoint.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPoint): Fixed two issues, each of which are covered by
+        one of the sub-tests in the new regression test: (1) changed to compare children’s logical
+        bounds against pointInLogicalContents, i.e. compare childern’s horizontal bounds to the
+        point’s horizontal component; and (2) changed to use logicalTopForChild and
+        logicalHeightForChild, which account for this block’s writing mode, instead of logicalTop
+        and logicalBottom, which are based on the child’s writing mode.
+
 2012-07-24  MORITA Hajime  <morrita@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=89179
