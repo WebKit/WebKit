@@ -785,7 +785,6 @@ fast/forms/input-step-as-double.html
 fast/forms/input-text-scroll-left-on-blur.html
 fast/forms/mailto/advanced-get.html
 fast/forms/mailto/advanced-put.html
-fast/forms/number/number-spinbutton-events.html
 fast/forms/number/number-spinbutton-in-multi-column.html
 fast/forms/placeholder-position.html
 fast/forms/placeholder-pseudo-style.html

@@ -246,7 +246,6 @@ BUG_ARM SKIP: fast/forms/number/number-keyoperation.html = CRASH
 BUG_ARM SKIP: fast/forms/number/number-unacceptable-style.html = CRASH
 BUG_ARM SKIP: fast/forms/number/number-input-changeevent.html = CRASH
 BUG_ARM SKIP: fast/forms/number/number-placeholder-with-unacceptable-value.html = CRASH
-BUG_ARM SKIP: fast/forms/number/number-spinbutton-events.html = CRASH
 BUG_ARM SKIP: fast/forms/number/number-spinbutton-state.html = CRASH
 BUG_ARM SKIP: fast/forms/onchange-change-type.html = CRASH
 BUG_ARM SKIP: fast/forms/onchange-enter-submit.html = CRASH

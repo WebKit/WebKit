@@ -1,3 +1,21 @@
+2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Remove duplicated fast/forms/number/number-spinbutton-events.html
+        https://bugs.webkit.org/show_bug.cgi?id=92205
+
+        Reviewed by Kent Tamura.
+
+        This patch removes fast/forms/number/number-spinbutton-events.html
+        because fast/forms/number/number-events.html covers and checked more.
+
+        r108955 is an evidence of coverage.
+
+        * fast/forms/number/number-spinbutton-events-expected.txt: Removed.
+        * fast/forms/number/number-spinbutton-events.html: Removed.
+        * platform/efl/Skipped:
+        * platform/qt-arm/TestExpectations:
+        * platform/win/Skipped:
+
 2012-07-24  Hironori Bono  <hbono@chromium.org>
 
         Avoid moving child objects multiple times when vertical scrollbar are shown at the left side.
