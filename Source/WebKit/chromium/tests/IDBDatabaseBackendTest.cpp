@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "IDBBackingStore.h"
+#include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBFakeBackingStore.h"
