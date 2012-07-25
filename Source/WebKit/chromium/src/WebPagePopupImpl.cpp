@@ -190,6 +190,7 @@ bool WebPagePopupImpl::initPage()
     m_page = adoptPtr(new Page(pageClients));
     m_page->settings()->setScriptEnabled(true);
     m_page->settings()->setAllowScriptsToCloseWindows(true);
+    m_page->setDeviceScaleFactor(m_webView->deviceScaleFactor());
 
     static ContextFeaturesClient* pagePopupFeaturesClient =  new PagePopupFeaturesClient();
     provideContextFeaturesTo(m_page.get(), pagePopupFeaturesClient);

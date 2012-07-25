@@ -1,3 +1,19 @@
+2012-07-25  Kevin Ellis  <kevers@chromium.org>
+
+        [chromium] Calendar picker popup displays at wrong scale when deviceScaleFactor != 1.
+        https://bugs.webkit.org/show_bug.cgi?id=92177
+
+        Manually tested at deviceScaleFactor = 1 and 2.
+
+        Reviewed by Kent Tamura.
+
+        The device scale factor was not being set for the calendar popup. 
+        As a result, the popup was rendered too small on hidpi displays.
+        This patch sets the device scale factor for any page popup.
+
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::initPage):
+
 2012-07-25  MORITA Hajime <morrita@google.com>
 
         Another unreviewed win build fix against r123569.
