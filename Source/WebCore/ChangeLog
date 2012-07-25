@@ -1,3 +1,33 @@
+2012-07-24  Hayato Ito  <hayato@chromium.org>
+
+        Rename FocusScope to FocusNavigationScope.
+        https://bugs.webkit.org/show_bug.cgi?id=92062
+
+        Reviewed by Dimitri Glazkov.
+
+        FocusNavagationScope is better name than FocusScope since the
+        class is only used for controlling focus navigation.
+
+        No new tests - no functional changes.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::FocusNavigationScope):
+        (WebCore::FocusNavigationScope::rootNode):
+        (WebCore::FocusNavigationScope::owner):
+        (WebCore::FocusNavigationScope::focusNavigationScopeOf):
+        (WebCore::FocusNavigationScope::focusNavigationScopeOwnedByShadowHost):
+        (WebCore::FocusNavigationScope::focusNavigationScopeOwnedByIFrame):
+        (WebCore::FocusController::findFocusableNodeDecendingDownIntoFrameDocument):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::FocusController::findFocusableNodeAcrossFocusScope):
+        (WebCore::FocusController::findFocusableNodeRecursively):
+        (WebCore::FocusController::findFocusableNode):
+        (WebCore::FocusController::nextFocusableNode):
+        (WebCore::FocusController::previousFocusableNode):
+        * page/FocusController.h:
+        (FocusNavigationScope):
+        (FocusController):
+
 2012-07-24  Michael Saboff  <msaboff@apple.com>
 
         Convert HTML parser to handle 8-bit resources without converting to UChar*

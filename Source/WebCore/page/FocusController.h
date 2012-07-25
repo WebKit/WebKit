@@ -45,16 +45,16 @@ class Node;
 class Page;
 class TreeScope;
 
-class FocusScope {
+class FocusNavigationScope {
 public:
     Node* rootNode() const;
     Element* owner() const;
-    static FocusScope focusScopeOf(Node*);
-    static FocusScope focusScopeOwnedByShadowHost(Node*);
-    static FocusScope focusScopeOwnedByIFrame(HTMLFrameOwnerElement*);
+    static FocusNavigationScope focusNavigationScopeOf(Node*);
+    static FocusNavigationScope focusNavigationScopeOwnedByShadowHost(Node*);
+    static FocusNavigationScope focusNavigationScopeOwnedByIFrame(HTMLFrameOwnerElement*);
 
 private:
-    explicit FocusScope(TreeScope*);
+    explicit FocusNavigationScope(TreeScope*);
     TreeScope* m_rootTreeScope;
 };
 
@@ -87,8 +87,8 @@ private:
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
-    Node* findFocusableNodeAcrossFocusScope(FocusDirection, FocusScope startScope, Node* start, KeyboardEvent*);
-    Node* findFocusableNodeRecursively(FocusDirection, FocusScope, Node* start, KeyboardEvent*);
+    Node* findFocusableNodeAcrossFocusScope(FocusDirection, FocusNavigationScope startScope, Node* start, KeyboardEvent*);
+    Node* findFocusableNodeRecursively(FocusDirection, FocusNavigationScope, Node* start, KeyboardEvent*);
     Node* findFocusableNodeDecendingDownIntoFrameDocument(FocusDirection, Node*, KeyboardEvent*);
 
     // Searches through the given tree scope, starting from start node, for the next/previous selectable element that comes after/before start node.
@@ -100,10 +100,10 @@ private:
     // @return The focus node that comes after/before start node.
     //
     // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-    inline Node* findFocusableNode(FocusDirection, FocusScope, Node* start, KeyboardEvent*);
+    inline Node* findFocusableNode(FocusDirection, FocusNavigationScope, Node* start, KeyboardEvent*);
 
-    Node* nextFocusableNode(FocusScope, Node* start, KeyboardEvent*);
-    Node* previousFocusableNode(FocusScope, Node* start, KeyboardEvent*);
+    Node* nextFocusableNode(FocusNavigationScope, Node* start, KeyboardEvent*);
+    Node* previousFocusableNode(FocusNavigationScope, Node* start, KeyboardEvent*);
 
     Node* findNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent*, FocusDirection);
 
