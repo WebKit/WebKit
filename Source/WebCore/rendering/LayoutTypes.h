@@ -117,7 +117,7 @@ inline int floorToInt(LayoutUnit value)
 inline LayoutUnit roundedLayoutUnit(float value)
 {
 #if ENABLE(SUBPIXEL_LAYOUT)
-    return FractionalLayoutUnit(value);
+    return FractionalLayoutUnit::fromFloatRound(value);
 #else
     return static_cast<int>(lroundf(value));
 #endif
@@ -126,7 +126,7 @@ inline LayoutUnit roundedLayoutUnit(float value)
 inline LayoutUnit ceiledLayoutUnit(float value)
 {
 #if ENABLE(SUBPIXEL_LAYOUT)
-    return FractionalLayoutUnit(value);
+    return FractionalLayoutUnit::fromFloatCeil(value);
 #else
     return ceilf(value);
 #endif

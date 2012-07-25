@@ -5593,7 +5593,7 @@ static inline void stripTrailingSpace(float& inlineMax, float& inlineMin,
 
 static inline void updatePreferredWidth(LayoutUnit& preferredWidth, float& result)
 {
-    LayoutUnit snappedResult = LayoutUnit::fromFloatCeil(result);
+    LayoutUnit snappedResult = ceiledLayoutUnit(result);
     preferredWidth = max(snappedResult, preferredWidth);
 }
 

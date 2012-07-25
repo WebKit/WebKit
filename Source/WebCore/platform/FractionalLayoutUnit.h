@@ -88,10 +88,17 @@ public:
 
     static FractionalLayoutUnit fromFloatCeil(float value)
     {
-      REPORT_OVERFLOW(isInBounds(value));
-      FractionalLayoutUnit v;
-      v.m_value = ceilf(value * kFixedPointDenominator);
-      return v;
+        REPORT_OVERFLOW(isInBounds(value));
+        FractionalLayoutUnit v;
+        v.m_value = ceilf(value * kFixedPointDenominator);
+        return v;
+    }
+
+    static FractionalLayoutUnit fromFloatRound(float value)
+    {
+        if (value >= 0)
+            return FractionalLayoutUnit(value + epsilon() / 2.0f);
+        return FractionalLayoutUnit(value - epsilon() / 2.0f);
     }
 
 #if ENABLE(SUBPIXEL_LAYOUT)

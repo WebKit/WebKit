@@ -1,3 +1,24 @@
+2012-07-25  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Incorrect rounding in ceiledLayoutUnit and roundedLayoutUnit.
+        https://bugs.webkit.org/show_bug.cgi?id=91061
+
+        Reviewed by Adam Barth.
+
+        The two functions are currently both returning the flooredLayoutUnit when subpixel
+        layout is enabled. This patch changes them to return the correct fractional rounded
+        value.
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::fromFloatCeil):
+        (FractionalLayoutUnit):
+        (WebCore::FractionalLayoutUnit::fromFloatRound):
+        * rendering/LayoutTypes.h:
+        (WebCore::roundedLayoutUnit):
+        (WebCore::ceiledLayoutUnit):
+        * rendering/RenderBlock.cpp:
+        (WebCore::updatePreferredWidth):
+
 2012-07-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add *explicit* keyword to constructors in WebCore/platform
