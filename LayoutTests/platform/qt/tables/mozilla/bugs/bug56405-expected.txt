@@ -1,15 +1,15 @@
-layer at (0,0) size 784x1142
+layer at (0,0) size 784x1138
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1142
-  RenderBlock {HTML} at (0,0) size 784x1142
-    RenderBody {BODY} at (8,8) size 768x1126
+layer at (0,0) size 784x1138
+  RenderBlock {HTML} at (0,0) size 784x1138
+    RenderBody {BODY} at (8,8) size 768x1122
       RenderTable {TABLE} at (0,0) size 2x1078
-      RenderTable {TABLE} at (0,1078) size 109x27
-        RenderTableSection {TBODY} at (0,0) size 109x27
-          RenderTableRow {TR} at (0,2) size 109x23
-            RenderTableCell {TD} at (2,2) size 105x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 103x21
-                text run at (1,1) width 103: "I'm down here!"
-      RenderBlock (anonymous) at (0,1105) size 768x21
-        RenderText {#text} at (0,0) size 63x21
-          text run at (0,0) width 63: "The end."
+      RenderTable {TABLE} at (0,1078) size 98x25
+        RenderTableSection {TBODY} at (0,0) size 98x25
+          RenderTableRow {TR} at (0,2) size 98x21
+            RenderTableCell {TD} at (2,2) size 94x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 92x19
+                text run at (1,1) width 92: "I'm down here!"
+      RenderBlock (anonymous) at (0,1103) size 768x19
+        RenderText {#text} at (0,0) size 53x19
+          text run at (0,0) width 53: "The end."

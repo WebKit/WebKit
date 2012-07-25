@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable at (0,0) size 45x21
-        RenderTableSection (anonymous) at (0,0) size 45x21
-          RenderTableRow (anonymous) at (0,0) size 45x21
-            RenderTableCell {SPAN} at (0,0) size 22x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 22x21
-                text run at (0,0) width 22: "foo"
-            RenderTableCell {SPAN} at (22,0) size 23x21 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 23x21
-                text run at (0,0) width 23: "bar"
+      RenderTable at (0,0) size 40x19
+        RenderTableSection (anonymous) at (0,0) size 40x19
+          RenderTableRow (anonymous) at (0,0) size 40x19
+            RenderTableCell {SPAN} at (0,0) size 20x19 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 20x19
+                text run at (0,0) width 20: "foo"
+            RenderTableCell {SPAN} at (20,0) size 20x19 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 20x19
+                text run at (0,0) width 20: "bar"

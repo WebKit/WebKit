@@ -1,3 +1,61 @@
+2012-07-25  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt] platform/qt/tables/mozilla tests needs update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91242
+
+        Unreviewed gardening.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug102145-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug102145-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug102145-3-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug102145-4-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug10269-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug10296-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug103533-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug1067-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug1067-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug106795-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug11321-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug133948-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug154780-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug15933-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug1818-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug1818-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug1818-4-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug219693-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug219693-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug221784-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug221784-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug22513-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug23072-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug23994-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug25074-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug25367-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug26553-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug3037-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug3037-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug32447-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug3309-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug34538-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug45350-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug53690-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug53690-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug55789-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug56201-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug56405-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug641-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug641-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug8361-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug88524-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug9072-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug92647-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug97383-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug98196-expected.txt:
+        * platform/qt/tables/mozilla/marvin/tfoot_char-expected.png:
+        * platform/qt/tables/mozilla/marvin/tfoot_char-expected.txt:
+
 2012-07-25  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] fast/block/margin-collapse tests need update after rebaseline and new testfonts
