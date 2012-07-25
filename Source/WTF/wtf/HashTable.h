@@ -505,6 +505,44 @@ namespace WTF {
 #endif
     };
 
+    // Set all the bits to one after the most significant bit: 00110101010 -> 00111111111.
+    template<unsigned size> struct OneifyLowBits;
+    template<>
+    struct OneifyLowBits<0> {
+        static const unsigned value = 0;
+    };
+    template<unsigned number>
+    struct OneifyLowBits {
+        static const unsigned value = number | OneifyLowBits<(number >> 1)>::value;
+    };
+    // Compute the first power of two integer that is an upper bound of the parameter 'number'.
+    template<unsigned number>
+    struct UpperPowerOfTwoBound {
+        static const unsigned value = (OneifyLowBits<number - 1>::value + 1) * 2;
+    };
+
+    // Because power of two numbers are the limit of maxLoad, their capacity is twice the
+    // UpperPowerOfTwoBound, or 4 times their values.
+    template<unsigned size, bool isPowerOfTwo> struct HashTableCapacityForSizeSplitter;
+    template<unsigned size>
+    struct HashTableCapacityForSizeSplitter<size, true> {
+        static const unsigned value = size * 4;
+    };
+    template<unsigned size>
+    struct HashTableCapacityForSizeSplitter<size, false> {
+        static const unsigned value = UpperPowerOfTwoBound<size>::value;
+    };
+
+    // HashTableCapacityForSize computes the upper power of two capacity to hold the size parameter.
+    // This is done at compile time to initialize the HashTraits.
+    template<unsigned size>
+    struct HashTableCapacityForSize {
+        static const unsigned value = HashTableCapacityForSizeSplitter<size, !(size & (size - 1))>::value;
+        COMPILE_ASSERT(size > 0, HashTableNonZeroMinimumCapacity);
+        COMPILE_ASSERT(!static_cast<int>(value >> 31), HashTableNoCapacityOverflow);
+        COMPILE_ASSERT(value > (2 * size), HashTableCapacityHoldsContentSize);
+    };
+
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     inline HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable()
         : m_table(0)

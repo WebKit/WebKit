@@ -1,3 +1,19 @@
+2012-07-24  Benjamin Poulain  <bpoulain@apple.com> && Joseph Pecoraro  <pecoraro@apple.com>
+
+        QualifiedName's HashSet should be big enough to hold at least all the static names
+        https://bugs.webkit.org/show_bug.cgi?id=91891
+
+        Reviewed by Darin Adler.
+
+        Add a test for WTF::hashTableCapacityForSize.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp: Added.
+        (InitialCapacityTestHashTraits):
+        (TestWebKitAPI::testInitialCapacity):
+        (TestWebKitAPI::generateTestCapacityUpToSize):
+        (TestWebKitAPI::TEST):
+
 2012-07-24  Adam Barth  <abarth@webkit.org>
 
         The EWS bots get flaky when we hit the failure limit

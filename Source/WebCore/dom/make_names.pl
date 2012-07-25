@@ -600,10 +600,12 @@ sub printNamesHeaderFile
     print F "#endif\n\n";
 
     if (keys %allTags) {
+        print F "const unsigned $parameters{namespace}TagsCount = ", scalar(keys %allTags), ";\n";
         print F "WebCore::QualifiedName** get$parameters{namespace}Tags(size_t* size);\n";
     }
 
     if (keys %allAttrs) {
+        print F "const unsigned $parameters{namespace}AttrsCount = ", scalar(keys %allAttrs), ";\n";
         print F "WebCore::QualifiedName** get$parameters{namespace}Attrs(size_t* size);\n";
     }
 
