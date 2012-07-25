@@ -1,3 +1,19 @@
+2012-07-25  Anders Carlsson  <andersca@apple.com>
+
+        Crash when a web page is closed with outstanding scrolling thread barriers
+        https://bugs.webkit.org/show_bug.cgi?id=92280
+        <rdar://problem/11630200>
+
+        Reviewed by Andreas Kling.
+
+        There was a check in forceRepaintAsync to handle the drawing area going away before the block had
+        been invoked,  but this check needs to be done earlier (as the FIXME suggested).
+        Move this check to dispatchAfterEnsuringUpdatedScrollPosition instead.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaintAsync):
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+
 2012-07-25  Alexey Proskuryakov  <ap@apple.com>
 
         Chinese IM receives incorrect/duplicated key events in text fields in webpages in Safari.
