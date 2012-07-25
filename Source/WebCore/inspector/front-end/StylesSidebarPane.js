@@ -1055,7 +1055,7 @@ WebInspector.StylePropertiesSection.prototype = {
         } else {
             var child = this.propertiesTreeOutline.children[0];
             while (child) {
-                child.overloaded = this.isPropertyOverloaded(child.name);
+                child.overloaded = this.isPropertyOverloaded(child.name, child.isShorthand);
                 child = child.traverseNextTreeElement(false, null, true);
             }
         }
@@ -1530,21 +1530,28 @@ WebInspector.BlankStylePropertiesSection.prototype.__proto__ = WebInspector.Styl
 /**
  * @constructor
  * @extends {TreeElement}
+ * @param {WebInspector.StylePropertiesSection|WebInspector.ComputedStylePropertiesSection} section
  * @param {?WebInspector.StylesSidebarPane} parentPane
+ * @param {Object} styleRule
+ * @param {WebInspector.CSSStyleDeclaration} style
+ * @param {WebInspector.CSSProperty} property
+ * @param {boolean} isShorthand
+ * @param {boolean} inherited
+ * @param {boolean} overloaded
  */
-WebInspector.StylePropertyTreeElement = function(section, parentPane, styleRule, style, property, shorthand, inherited, overloaded)
+WebInspector.StylePropertyTreeElement = function(section, parentPane, styleRule, style, property, isShorthand, inherited, overloaded)
 {
     this.section = section;
     this._parentPane = parentPane;
     this._styleRule = styleRule;
     this.style = style;
     this.property = property;
-    this.shorthand = shorthand;
+    this.isShorthand = isShorthand;
     this._inherited = inherited;
     this._overloaded = overloaded;
 
     // Pass an empty title, the title gets made later in onattach.
-    TreeElement.call(this, "", null, shorthand);
+    TreeElement.call(this, "", null, isShorthand);
 
     this.selectable = false;
 }
@@ -1986,7 +1993,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
     onpopulate: function()
     {
         // Only populate once and if this property is a shorthand.
-        if (this.children.length || !this.shorthand)
+        if (this.children.length || !this.isShorthand)
             return;
 
         var longhandProperties = this.style.longhandProperties(this.name);
@@ -1999,7 +2006,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             }
 
             var liveProperty = this.style.getLiveProperty(name);
-            var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this._styleRule, this.style, liveProperty, false, inherited, overloaded);
+            var item = new WebInspector.StylePropertyTreeElement(this.section, this._parentPane, this._styleRule, this.style, liveProperty, false, inherited, overloaded);
             this.appendChild(item);
         }
     },
@@ -2046,7 +2053,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
     startEditing: function(selectElement)
     {
         // FIXME: we don't allow editing of longhand properties under a shorthand right now.
-        if (this.parent.shorthand)
+        if (this.parent.isShorthand)
             return;
 
         if (selectElement === this._expandElement)

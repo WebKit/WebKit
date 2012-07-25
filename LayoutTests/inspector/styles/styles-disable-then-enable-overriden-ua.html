@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+
+<script>
+
+function injectStyleSheet()
+{
+    var styleSheet = "#container { margin: 8px }";
+    if (window.testRunner)
+        window.testRunner.addUserStyleSheet(styleSheet, true);
+}
+
+function test()
+{
+    InspectorTest.evaluateInPage("injectStyleSheet()", step1);
+    function step1()
+    {
+        InspectorTest.selectNodeAndWaitForStyles("container", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("Before disable");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.toggleStyleProperty("margin", false);
+        InspectorTest.waitForStyles("container", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("After disable");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.toggleStyleProperty("margin", true);
+        InspectorTest.waitForStyles("container", step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.addResult("After enable");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()" id="body-id">
+<p>
+Tests that disabling shorthand removes the "overriden" mark from the UA shorthand it overrides.
+</p>
+
+<div id="container" style="margin: 10px"></div>
+
+</body>
+</html>
