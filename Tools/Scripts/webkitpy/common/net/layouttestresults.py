@@ -168,9 +168,7 @@ class LayoutTestResults(object):
         return [result.test_name for result in self.results_matching_failure_types(failure_types)]
 
     def failing_test_results(self):
-        # These should match the "fail", "crash", and "timeout" keys.
-        failure_types = [test_failures.FailureTextMismatch, test_failures.FailureImageHashMismatch, test_failures.FailureCrash, test_failures.FailureTimeout]
-        return self.results_matching_failure_types(failure_types)
+        return self.results_matching_failure_types(test_failures.ALL_FAILURE_CLASSES)
 
     def failing_tests(self):
         return [result.test_name for result in self.failing_test_results()] + self._unit_test_failures

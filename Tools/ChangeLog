@@ -1,3 +1,19 @@
+2012-07-24  Adam Barth  <abarth@webkit.org>
+
+        The EWS bots get flaky when we hit the failure limit
+        https://bugs.webkit.org/show_bug.cgi?id=92212
+
+        Reviewed by Eric Seidel.
+
+        Previously we were missing some failure types, which means we didn't
+        notice that the bots were hitting the failure limit.
+
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        (LayoutTestResults.failing_test_results):
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        (LayoutTestResultsTest.test_results_from_string):
+        (LayoutTestResultsTest.test_tests_matching_failure_types):
+
 2012-07-24  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL] Unreviewed build fix.

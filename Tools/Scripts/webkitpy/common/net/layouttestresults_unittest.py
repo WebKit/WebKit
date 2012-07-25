@@ -138,9 +138,9 @@ class LayoutTestResultsTest(unittest.TestCase):
         self.assertEqual(LayoutTestResults.results_from_string(None), None)
         self.assertEqual(LayoutTestResults.results_from_string(""), None)
         results = LayoutTestResults.results_from_string(ORWTResultsHTMLParserTest._example_results_html)
-        self.assertEqual(len(results.failing_tests()), 0)
+        self.assertEqual(len(results.failing_tests()), 1)
 
     def test_tests_matching_failure_types(self):
         results = LayoutTestResults.results_from_string(ORWTResultsHTMLParserTest._example_results_html_with_failing_tests)
         failing_tests = results.tests_matching_failure_types([test_failures.FailureTextMismatch])
-        self.assertEqual(len(results.failing_tests()), 1)
+        self.assertEqual(len(results.failing_tests()), 2)
