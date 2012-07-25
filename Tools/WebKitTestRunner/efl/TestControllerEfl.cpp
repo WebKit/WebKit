@@ -50,6 +50,11 @@ void TestController::notifyDone()
 
 void TestController::platformInitialize()
 {
+    const char* isDebugging = getenv("WEB_PROCESS_CMD_PREFIX");
+    if (isDebugging && *isDebugging) {
+        m_useWaitToDumpWatchdogTimer = false;
+        m_forceNoTimeout = true;
+    }
 }
 
 void TestController::platformRunUntil(bool& condition, double timeout)

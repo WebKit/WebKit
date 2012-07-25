@@ -61,6 +61,13 @@ class EflPort(WebKitPort, PulseAudioSanitizer):
             env['WEB_PROCESS_CMD_PREFIX'] = self.webprocess_cmd_prefix
         return env
 
+    def default_timeout_ms(self):
+        # Tests run considerably slower under gdb
+        # or valgrind.
+        if self.get_option('webprocess_cmd_prefix'):
+            return 350 * 1000
+        return super(EflPort, self).default_timeout_ms()
+
     def clean_up_test_run(self):
         self._restore_pulseaudio_module()
 

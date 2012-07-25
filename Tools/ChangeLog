@@ -1,3 +1,18 @@
+2012-07-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Fix timeout issues when debugging WebProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=92245
+
+        Reviewed by Dirk Pranke.
+
+        Fix timeout issues when debugging the WebProcess
+        under valgrind or gdb.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.default_timeout_ms):
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::platformInitialize):
+
 2012-07-25  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] NRWT driver should not restart between reftests
