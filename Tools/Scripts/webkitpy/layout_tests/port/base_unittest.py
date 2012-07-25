@@ -239,7 +239,7 @@ class PortTest(unittest.TestCase):
 
     def test_additional_platform_directory(self):
         port = self.make_port(port_name='foo')
-        port.baseline_search_path = lambda: ['LayoutTests/platform/foo']
+        port.default_baseline_search_path = lambda: ['LayoutTests/platform/foo']
         layout_test_dir = port.layout_tests_dir()
         test_file = 'fast/test.html'
 

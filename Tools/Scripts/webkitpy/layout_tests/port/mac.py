@@ -89,7 +89,7 @@ class MacPort(ApplePort):
             return self._webkit_baseline_path('mac')
         return ApplePort.baseline_path(self)
 
-    def baseline_search_path(self):
+    def default_baseline_search_path(self):
         fallback_index = self.VERSION_FALLBACK_ORDER.index(self._port_name_with_version())
         fallback_names = list(self.VERSION_FALLBACK_ORDER[fallback_index:])
         if self.get_option('webkit_test_runner'):

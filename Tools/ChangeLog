@@ -1,3 +1,25 @@
+2012-07-25  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [NRWT] Rename baseline_search_path() to default_baseline_search_path()
+        https://bugs.webkit.org/show_bug.cgi?id=92122
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.baseline_version_dir):
+        (Port.baseline_search_path):
+        (Port):
+        (Port.default_baseline_search_path):
+        (Port.expected_baselines):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_additional_platform_directory):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.default_baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.default_baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort.default_baseline_search_path):
+
 2012-07-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Use eina_stringshare_add instead of strdup.

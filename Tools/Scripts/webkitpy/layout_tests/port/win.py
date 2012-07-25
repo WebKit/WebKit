@@ -62,7 +62,7 @@ class WinPort(ApplePort):
         actual_text = delegate_regexp.sub("", actual_text)
         return expected_text != actual_text
 
-    def baseline_search_path(self):
+    def default_baseline_search_path(self):
         fallback_index = self.VERSION_FALLBACK_ORDER.index(self._port_name_with_version())
         fallback_names = list(self.VERSION_FALLBACK_ORDER[fallback_index:])
         # FIXME: The AppleWin port falls back to AppleMac for some results.  Eventually we'll have a shared 'apple' port.

@@ -179,10 +179,14 @@ class Port(object):
 
     def baseline_version_dir(self):
         """Return the absolute path to the platform-and-version-specific results."""
-        baseline_search_paths = self.get_option('additional_platform_directory', []) + self.baseline_search_path()
+        baseline_search_paths = self.baseline_search_path()
         return baseline_search_paths[0]
 
+
     def baseline_search_path(self):
+        return self.get_option('additional_platform_directory', []) + self.default_baseline_search_path()
+
+    def default_baseline_search_path(self):
         """Return a list of absolute paths to directories to search under for
         baselines. The directories are searched in order."""
         search_paths = []
@@ -395,7 +399,7 @@ class Port(object):
         platform specific.
         """
         baseline_filename = self._filesystem.splitext(test_name)[0] + '-expected' + suffix
-        baseline_search_path = self.get_option('additional_platform_directory', []) + self.baseline_search_path()
+        baseline_search_path = self.baseline_search_path()
 
         baselines = []
         for platform_dir in baseline_search_path:

@@ -141,7 +141,7 @@ class QtPort(WebKitPort):
         search_paths.append(self.port_name)
         return search_paths
 
-    def baseline_search_path(self):
+    def default_baseline_search_path(self):
         return map(self._webkit_baseline_path, self._search_paths())
 
     def _skipped_file_search_paths(self):
