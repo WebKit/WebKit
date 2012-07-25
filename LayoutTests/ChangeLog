@@ -1,3 +1,18 @@
+2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Re-factor some tests in fast/forms/number for sharing with other input types
+        https://bugs.webkit.org/show_bug.cgi?id=92081
+
+        Reviewed by Kent Tamura.
+
+        This patch moves JavaScript code from test HTML files into JavaScript
+        files for sharing JavaScript code with other input types.
+
+        * fast/forms/number/number-change-type-on-focus.html: Removed JavaScript code and changed to load JavaScript code from fast/forms/resources/common-change-type-on-focus.js.
+        * fast/forms/number/number-losing-renderer-on-click.html: Removed JavaScript code and changed to load JavaScript code from fast/forms/resources/common-losing-renderer-on-click.js.
+        * fast/forms/resources/common-change-type-on-focus.js: Remove HTML markup text.
+        * fast/forms/resources/common-losing-renderer-on-click.js: Remove HTML markup text.
+
 2012-07-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] css2.1/t170602* rebaseline after new test fonts
