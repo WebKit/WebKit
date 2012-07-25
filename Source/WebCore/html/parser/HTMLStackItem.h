@@ -55,15 +55,25 @@ public:
     Element* element() const { return toElement(m_node.get()); }
     ContainerNode* node() const { return m_node.get(); }
 
+    bool isDocumentFragmentNode() const { return m_isDocumentFragmentNode; }
+    bool isElementNode() const { return !m_isDocumentFragmentNode; }
+
     AtomicHTMLToken* token() { return m_token.get(); }
     const AtomicString& namespaceURI() const { return m_namespaceURI; }
     const AtomicString& localName() const { return m_token->name(); }
+
+    bool hasLocalName(const AtomicString& name) const { return m_token->name() == name; }
+    bool hasTagName(const QualifiedName& name) const { return m_token->name() == name.localName() && m_namespaceURI == name.namespaceURI(); }
 
 private:
     HTMLStackItem(PassRefPtr<ContainerNode> node)
         : m_node(node)
         , m_isDocumentFragmentNode(true)
     {
+        // Create a fake token for a document fragment node. This looks ugly but required for performance
+        // because we want to use m_token->name() in localName(), hasLocalName() and hasTagName() without
+        // checking m_isDocumentFragmentNode flag.
+        m_token = AtomicHTMLToken::create(HTMLTokenTypes::StartTag, nullAtom);
     }
 
     HTMLStackItem(PassRefPtr<ContainerNode> node, PassRefPtr<AtomicHTMLToken> token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)

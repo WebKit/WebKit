@@ -92,6 +92,12 @@ public:
         return m_top->node();
     }
 
+    HTMLStackItem* topStackItem() const
+    {
+        ASSERT(m_top->stackItem());
+        return m_top->stackItem().get();
+    }
+
     Element* oneBelowTop() const;
     ElementRecord* topRecord() const;
     Element* bottom() const;
@@ -120,8 +126,8 @@ public:
     void popHTMLBodyElement();
     void popAll();
 
-    static bool isMathMLTextIntegrationPoint(ContainerNode*);
-    static bool isHTMLIntegrationPoint(ContainerNode*);
+    static bool isMathMLTextIntegrationPoint(HTMLStackItem*);
+    static bool isHTMLIntegrationPoint(HTMLStackItem*);
 
     void remove(Element*);
     void removeHTMLHeadElement(Element*);
@@ -175,12 +181,12 @@ private:
     unsigned m_stackDepth;
 };
     
-inline bool isInHTMLNamespace(Node* node)
+inline bool isInHTMLNamespace(const HTMLStackItem* item)
 {
     // A DocumentFragment takes the place of the document element when parsing
     // fragments and should be considered in the HTML namespace.
-    return node->namespaceURI() == HTMLNames::xhtmlNamespaceURI
-        || node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE; // FIXME: Does this also apply to ShadowRoot?
+    return item->namespaceURI() == HTMLNames::xhtmlNamespaceURI
+        || item->isDocumentFragmentNode(); // FIXME: Does this also apply to ShadowRoot?
 }
 
 

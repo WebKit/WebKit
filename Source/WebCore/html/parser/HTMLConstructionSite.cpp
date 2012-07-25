@@ -60,25 +60,25 @@ using namespace HTMLNames;
 
 namespace {
 
-bool hasImpliedEndTag(ContainerNode* node)
+bool hasImpliedEndTag(const HTMLStackItem* item)
 {
-    return node->hasTagName(ddTag)
-        || node->hasTagName(dtTag)
-        || node->hasTagName(liTag)
-        || node->hasTagName(optionTag)
-        || node->hasTagName(optgroupTag)
-        || node->hasTagName(pTag)
-        || node->hasTagName(rpTag)
-        || node->hasTagName(rtTag);
+    return item->hasTagName(ddTag)
+        || item->hasTagName(dtTag)
+        || item->hasTagName(liTag)
+        || item->hasTagName(optionTag)
+        || item->hasTagName(optgroupTag)
+        || item->hasTagName(pTag)
+        || item->hasTagName(rpTag)
+        || item->hasTagName(rtTag);
 }
 
-bool causesFosterParenting(const QualifiedName& tagName)
+bool causesFosterParenting(const HTMLStackItem* item)
 {
-    return tagName == tableTag
-        || tagName == tbodyTag
-        || tagName == tfootTag
-        || tagName == theadTag
-        || tagName == trTag;
+    return item->hasTagName(tableTag)
+        || item->hasTagName(tbodyTag)
+        || item->hasTagName(tfootTag)
+        || item->hasTagName(theadTag)
+        || item->hasTagName(trTag);
 }
 
 inline bool isAllWhitespace(const String& string)
@@ -465,13 +465,13 @@ void HTMLConstructionSite::reconstructTheActiveFormattingElements()
 
 void HTMLConstructionSite::generateImpliedEndTagsWithExclusion(const AtomicString& tagName)
 {
-    while (hasImpliedEndTag(currentNode()) && !currentNode()->hasLocalName(tagName))
+    while (hasImpliedEndTag(currentStackItem()) && !currentStackItem()->hasLocalName(tagName))
         m_openElements.pop();
 }
 
 void HTMLConstructionSite::generateImpliedEndTags()
 {
-    while (hasImpliedEndTag(currentNode()))
+    while (hasImpliedEndTag(currentStackItem()))
         m_openElements.pop();
 }
 
@@ -495,8 +495,8 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
 bool HTMLConstructionSite::shouldFosterParent() const
 {
     return m_redirectAttachToFosterParent
-        && currentNode()->isElementNode()
-        && causesFosterParenting(currentElement()->tagQName());
+        && currentStackItem()->isElementNode()
+        && causesFosterParenting(currentStackItem());
 }
 
 void HTMLConstructionSite::fosterParent(PassRefPtr<Node> node)

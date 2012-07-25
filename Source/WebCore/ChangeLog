@@ -1,3 +1,83 @@
+2012-07-24  Kwang Yul Seo  <skyul@company100.net>
+
+        Read tag names and attributes from the saved tokens where possible.
+        https://bugs.webkit.org/show_bug.cgi?id=92079
+
+        Reviewed by Adam Barth.
+
+        Read tag names and attributes from the saved tokens, not from the DOM.
+        Also added convenient methods such as hasLocalName, hasTagName, localName,
+        isElementNode and isDocumentFragmentNode to HTMLStackItem class.
+
+        No new tests, covered by existing tests.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLNames::hasImpliedEndTag):
+        (WebCore::HTMLNames::causesFosterParenting):
+        (WebCore::HTMLConstructionSite::generateImpliedEndTagsWithExclusion):
+        (WebCore::HTMLConstructionSite::generateImpliedEndTags):
+        (WebCore::HTMLConstructionSite::shouldFosterParent):
+        * html/parser/HTMLConstructionSite.h:
+        (WebCore::HTMLConstructionSite::currentStackItem):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isNumberedHeaderElement):
+        (WebCore::HTMLNames::isRootNode):
+        (WebCore::HTMLNames::isScopeMarker):
+        (WebCore::HTMLNames::isListItemScopeMarker):
+        (WebCore::HTMLNames::isTableScopeMarker):
+        (WebCore::HTMLNames::isTableBodyScopeMarker):
+        (WebCore::HTMLNames::isTableRowScopeMarker):
+        (WebCore::HTMLNames::isForeignContentScopeMarker):
+        (WebCore::HTMLNames::isButtonScopeMarker):
+        (WebCore::HTMLNames::isSelectScopeMarker):
+        (WebCore::HTMLElementStack::ElementRecord::replaceElement):
+        (WebCore::HTMLElementStack::popUntilNumberedHeaderElementPopped):
+        (WebCore::HTMLElementStack::popUntilTableScopeMarker):
+        (WebCore::HTMLElementStack::popUntilTableBodyScopeMarker):
+        (WebCore::HTMLElementStack::popUntilTableRowScopeMarker):
+        (WebCore::HTMLElementStack::isMathMLTextIntegrationPoint):
+        (WebCore::HTMLElementStack::isHTMLIntegrationPoint):
+        (WebCore::HTMLElementStack::popUntilForeignContentScopeMarker):
+        (WebCore::HTMLElementStack::pushRootNode):
+        (WebCore::HTMLElementStack::oneBelowTop):
+        (WebCore::HTMLElementStack::topmost):
+        (WebCore):
+        (WebCore::inScopeCommon):
+        (WebCore::HTMLElementStack::hasNumberedHeaderElementInScope):
+        (WebCore::HTMLElementStack::inScope):
+        * html/parser/HTMLElementStack.h:
+        (WebCore::HTMLElementStack::topStackItem):
+        (HTMLElementStack):
+        (WebCore::isInHTMLNamespace):
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::isDocumentFragmentNode):
+        (WebCore::HTMLStackItem::isElementNode):
+        (HTMLStackItem):
+        (WebCore::HTMLStackItem::hasLocalName):
+        (WebCore::HTMLStackItem::hasTagName):
+        (WebCore::HTMLStackItem::HTMLStackItem):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore):
+        (WebCore::HTMLTreeBuilder::constructTreeFromAtomicToken):
+        (WebCore::HTMLTreeBuilder::processFakeEndTag):
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::furthestBlockForFormattingElement):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processCaptionEndTagForInCaption):
+        (WebCore::HTMLTreeBuilder::processTrEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::shouldProcessTokenInForeignContent):
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent):
+        * html/parser/HTMLTreeBuilder.h:
+
 2012-07-24  Hironori Bono  <hbono@chromium.org>
 
         Avoid moving child objects multiple times when vertical scrollbar are shown at the left side.

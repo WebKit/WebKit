@@ -152,6 +152,7 @@ private:
 
     void processFakeStartTag(const QualifiedName&, const Vector<Attribute>& attributes = Vector<Attribute>());
     void processFakeEndTag(const QualifiedName&);
+    void processFakeEndTag(const AtomicString&);
     void processFakeCharacters(const String&);
     void processFakePEndTagIfPInButtonScope();
 
@@ -178,7 +179,7 @@ private:
 
     void closeTheCell();
 
-    template <bool shouldClose(const ContainerNode*)>
+    template <bool shouldClose(const HTMLStackItem*)>
     void processCloseWhenNestedTag(AtomicHTMLToken*);
 
     bool m_framesetOk;
