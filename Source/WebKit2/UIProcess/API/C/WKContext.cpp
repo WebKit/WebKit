@@ -112,7 +112,7 @@ void WKContextGetGlobalStatistics(WKContextStatistics* statistics)
 
     statistics->wkViewCount = webContextStatistics.wkViewCount;
     statistics->wkPageCount = webContextStatistics.wkPageCount;
-    statistics->wkFrameCount = webContextStatistics.wkViewCount;
+    statistics->wkFrameCount = webContextStatistics.wkFrameCount;
 }
 
 void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)

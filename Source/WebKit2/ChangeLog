@@ -1,3 +1,17 @@
+2012-07-24  Jae Hyun Park  <jae.park@company100.net>
+
+        WKContextGetGlobalStatistics() assigns wrong value to wkFrameCount in WKContextStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=92173
+
+        Reviewed by John Sullivan.
+
+        In WKContextGetGlobalStatistics(), wkViewCount in WebContext::Statistics
+        is assigned to wkFrameCount in WKContextStatistics.
+        wkFrameCount in WebContext:Statistics should be assigned to wkFrameCount in WKContextStatistics.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetGlobalStatistics):
+
 2012-07-24  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL][WK2] Add unit tests for custom text encoding setting
