@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x53
-  RenderBlock {HTML} at (0,0) size 800x53
-    RenderBody {BODY} at (8,16) size 784x21
-      RenderBlock {P} at (0,0) size 784x21
-        RenderInline {A} at (0,0) size 183x21 [color=#008000]
-          RenderText {#text} at (0,0) size 183x21
-            text run at (0,0) width 183: "This link should be green."
-        RenderText {#text} at (183,0) size 238x21
-          text run at (183,0) width 238: " (do not hover over it or activate it)"
+layer at (0,0) size 800x51
+  RenderBlock {HTML} at (0,0) size 800x51
+    RenderBody {BODY} at (8,16) size 784x19
+      RenderBlock {P} at (0,0) size 784x19
+        RenderInline {A} at (0,0) size 153x19 [color=#008000]
+          RenderText {#text} at (0,0) size 153x19
+            text run at (0,0) width 153: "This link should be green."
+        RenderText {#text} at (153,0) size 211x19
+          text run at (153,0) width 211: " (do not hover over it or activate it)"

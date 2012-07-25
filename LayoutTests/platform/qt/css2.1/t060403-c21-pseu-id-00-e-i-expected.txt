@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x53
-  RenderBlock {HTML} at (0,0) size 800x53
-    RenderBody {BODY} at (8,16) size 784x21
-      RenderBlock {P} at (0,0) size 784x21
-        RenderInline {A} at (0,0) size 345x21 [color=#008000]
-          RenderText {#text} at (0,0) size 345x21
-            text run at (0,0) width 345: "Whatever you do to this link, it should stay green."
-        RenderText {#text} at (345,0) size 213x21
-          text run at (345,0) width 213: " (hover, focus, activate, follow)"
+layer at (0,0) size 800x51
+  RenderBlock {HTML} at (0,0) size 800x51
+    RenderBody {BODY} at (8,16) size 784x19
+      RenderBlock {P} at (0,0) size 784x19
+        RenderInline {A} at (0,0) size 297x19 [color=#008000]
+          RenderText {#text} at (0,0) size 297x19
+            text run at (0,0) width 297: "Whatever you do to this link, it should stay green."
+        RenderText {#text} at (297,0) size 187x19
+          text run at (297,0) width 187: " (hover, focus, activate, follow)"

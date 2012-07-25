@@ -29,13 +29,6 @@ http/tests/incremental/slow-utf8-text.pl
 
 # [Qt] REGRESSION: 360 tests started to fail with newer Qt5-WK1
 # https://bugs.webkit.org/show_bug.cgi?id=85631
-css2.1/t050803-c14-classes-00-e.html
-css2.1/t0509-c15-ids-01-e.html
-css2.1/t0602-c13-inh-underlin-00-e.html
-css2.1/t0905-c414-flt-wrap-01-d-g.html
-css2.1/t1503-c522-font-family-00-b.html
-css2.1/t1508-c527-font-03-b.html
-css2.1/t1508-c527-font-06-b.html
 editing/deleting/merge-whitespace-pre.html
 editing/input/caret-at-the-edge-of-input.html
 editing/input/reveal-caret-of-multiline-input.html

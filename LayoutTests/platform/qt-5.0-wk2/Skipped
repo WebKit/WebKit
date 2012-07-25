@@ -405,13 +405,6 @@ fast/multicol/shrink-to-column-height-for-pagination.html
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
-css2.1/t050803-c14-classes-00-e.html
-css2.1/t0509-c15-ids-01-e.html
-css2.1/t0602-c13-inh-underlin-00-e.html
-css2.1/t0905-c414-flt-wrap-01-d-g.html
-css2.1/t1503-c522-font-family-00-b.html
-css2.1/t1508-c527-font-03-b.html
-css2.1/t1508-c527-font-06-b.html
 editing/deleting/merge-whitespace-pre.html
 editing/input/caret-at-the-edge-of-input.html
 editing/input/reveal-caret-of-multiline-input.html
@@ -684,6 +677,9 @@ tables/mozilla_expected_failures/bugs/bug92647-1.html
 
 # [Qt] Images scale differently in WK1 and WK2
 # https://bugs.webkit.org/show_bug.cgi?id=92015
+css2.1/t090501-c414-flt-02-d-g.html
+css2.1/t090501-c414-flt-03-b-g.html
+css2.1/t090501-c414-flt-ln-01-d-g.html
 css2.1/t100304-c43-rpl-bbx-00-d-g.html
 css2.1/t100304-c43-rpl-bbx-01-d-g.html
 fast/block/positioning/replaced-inside-fixed-top-bottom.html

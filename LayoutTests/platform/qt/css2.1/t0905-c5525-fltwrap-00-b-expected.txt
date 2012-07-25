@@ -1,29 +1,27 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x368
-  RenderBlock {HTML} at (0,0) size 800x368
-    RenderBody {BODY} at (8,8) size 784x300
-      RenderBlock (floating) {DIV} at (0,0) size 196x300 [color=#FFFFFF] [bgcolor=#000080]
-        RenderBlock {P} at (0,0) size 196x300
-          RenderText {#text} at (0,0) size 183x300
-            text run at (0,0) width 117: "\x{21E6} This"
-            text run at (0,60) width 183: "blue box"
-            text run at (0,120) width 143: "should"
-            text run at (0,180) width 121: "be on"
-            text run at (0,240) width 157: "the left."
-      RenderBlock (floating) {DIV} at (588,0) size 196x360 [color=#FFFFFF] [bgcolor=#008080]
-        RenderBlock {P} at (0,0) size 196x360
-          RenderText {#text} at (0,0) size 187x360
-            text run at (0,0) width 182: "This teal"
-            text run at (0,60) width 78: "box"
-            text run at (0,120) width 143: "should"
-            text run at (0,180) width 121: "be on"
-            text run at (0,240) width 187: "the right."
-            text run at (0,300) width 13: "\x{21E8}"
-      RenderBlock {P} at (0,0) size 784x300
-        RenderText {#text} at (196,0) size 358x300
-          text run at (196,0) width 337: "This text should"
-          text run at (196,60) width 341: "be in between a"
-          text run at (196,120) width 330: "blue box on the"
-          text run at (196,180) width 302: "\x{21E6}left and a teal"
-          text run at (196,240) width 358: "box on the right\x{21E8}."
+layer at (0,0) size 800x283
+  RenderBlock {HTML} at (0,0) size 800x283
+    RenderBody {BODY} at (8,8) size 784x220
+      RenderBlock (floating) {DIV} at (0,0) size 196x275 [color=#FFFFFF] [bgcolor=#000080]
+        RenderBlock {P} at (0,0) size 196x275
+          RenderText {#text} at (0,0) size 188x274
+            text run at (0,0) width 188: "\x{21E6} This blue"
+            text run at (0,55) width 71: "box"
+            text run at (0,110) width 182: "should be"
+            text run at (0,165) width 115: "on the"
+            text run at (0,220) width 73: "left."
+      RenderBlock (floating) {DIV} at (588,0) size 196x275 [color=#FFFFFF] [bgcolor=#008080]
+        RenderBlock {P} at (0,0) size 196x275
+          RenderText {#text} at (0,0) size 182x274
+            text run at (0,0) width 162: "This teal"
+            text run at (0,55) width 71: "box"
+            text run at (0,110) width 182: "should be"
+            text run at (0,165) width 115: "on the"
+            text run at (0,220) width 112: "right. \x{21E8}"
+      RenderBlock {P} at (0,0) size 784x220
+        RenderText {#text} at (196,0) size 389x219
+          text run at (196,0) width 360: "This text should be"
+          text run at (196,55) width 331: "in between a blue"
+          text run at (196,110) width 384: "box on the \x{21E6}left and a"
+          text run at (196,165) width 389: "teal box on the right\x{21E8}."

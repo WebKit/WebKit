@@ -1,33 +1,33 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x164
-  RenderBlock {HTML} at (0,0) size 800x164
-    RenderBody {BODY} at (8,16) size 784x132 [color=#008000]
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 223x21
-          text run at (0,0) width 223: "This sentence should be green."
-      RenderBlock {P} at (0,37) size 784x21 [color=#FFFFFF] [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 104x21
-          text run at (0,0) width 104: "This sentence "
-        RenderInline {SPAN} at (0,0) size 70x21
-          RenderText {#text} at (104,0) size 70x21
-            text run at (104,0) width 70: "should be"
-        RenderText {#text} at (174,0) size 113x21
-          text run at (174,0) width 113: " white on green."
-      RenderBlock {P} at (0,74) size 784x21 [color=#FFFFFF]
-        RenderInline {EM} at (0,0) size 44x21 [color=#008000]
-          RenderText {#text} at (0,0) size 44x21
-            text run at (0,0) width 44: "PASS"
-        RenderText {#text} at (44,0) size 4x21
-          text run at (44,0) width 4: " "
-        RenderInline {STRONG} at (0,0) size 36x21
-          RenderText {#text} at (48,0) size 36x21
-            text run at (48,0) width 36: "FAIL"
+layer at (0,0) size 800x156
+  RenderBlock {HTML} at (0,0) size 800x156
+    RenderBody {BODY} at (8,16) size 784x124 [color=#008000]
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 184x19
+          text run at (0,0) width 184: "This sentence should be green."
+      RenderBlock {P} at (0,35) size 784x19 [color=#FFFFFF] [bgcolor=#008000]
+        RenderText {#text} at (0,0) size 85x19
+          text run at (0,0) width 85: "This sentence "
+        RenderInline {SPAN} at (0,0) size 61x19
+          RenderText {#text} at (85,0) size 61x19
+            text run at (85,0) width 61: "should be"
+        RenderText {#text} at (146,0) size 96x19
+          text run at (146,0) width 96: " white on green."
+      RenderBlock {P} at (0,70) size 784x19 [color=#FFFFFF]
+        RenderInline {EM} at (0,0) size 36x19 [color=#008000]
+          RenderText {#text} at (0,0) size 36x19
+            text run at (0,0) width 36: "PASS"
+        RenderText {#text} at (36,0) size 4x19
+          text run at (36,0) width 4: " "
+        RenderInline {STRONG} at (0,0) size 36x19
+          RenderText {#text} at (40,0) size 36x19
+            text run at (40,0) width 36: "FAIL"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,111) size 784x21
-        RenderText {#text} at (0,0) size 48x21
-          text run at (0,0) width 48: "PASS "
-        RenderInline {DFN} at (0,0) size 34x21 [color=#FFFFFF]
-          RenderText {#text} at (48,0) size 34x21
-            text run at (48,0) width 34: "FAIL"
+      RenderBlock {P} at (0,105) size 784x19
+        RenderText {#text} at (0,0) size 42x19
+          text run at (0,0) width 42: "PASS "
+        RenderInline {DFN} at (0,0) size 34x19 [color=#FFFFFF]
+          RenderText {#text} at (42,0) size 34x19
+            text run at (42,0) width 34: "FAIL"
         RenderText {#text} at (0,0) size 0x0

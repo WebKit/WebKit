@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x53
-  RenderBlock {HTML} at (0,0) size 800x53
-    RenderBody {BODY} at (8,16) size 784x21
-      RenderBlock {P} at (0,0) size 784x21
-        RenderInline {A} at (0,0) size 396x21 [color=#0000FF]
-          RenderText {#text} at (0,0) size 396x21
-            text run at (0,0) width 396: "While you are hovering over this link, it should go green."
+layer at (0,0) size 800x51
+  RenderBlock {HTML} at (0,0) size 800x51
+    RenderBody {BODY} at (8,16) size 784x19
+      RenderBlock {P} at (0,0) size 784x19
+        RenderInline {A} at (0,0) size 337x19 [color=#0000FF]
+          RenderText {#text} at (0,0) size 337x19
+            text run at (0,0) width 337: "While you are hovering over this link, it should go green."

@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x185
-  RenderBlock {HTML} at (0,0) size 800x185
-    RenderBody {BODY} at (8,16) size 784x111
-      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 450x21
-          text run at (0,0) width 450: "The two patterns below should be identical, with no red present."
-      RenderBlock {DIV} at (0,37) size 784x74
-        RenderBlock {DIV} at (16,16) size 160x21 [color=#FFFF00] [bgcolor=#000080]
-          RenderText {#text} at (0,0) size 10x21
-            text run at (0,0) width 10: " *"
-        RenderBlock {DIV} at (96,37) size 160x21 [color=#FFFF00] [bgcolor=#000080]
-          RenderText {#text} at (150,0) size 10x21
-            text run at (150,0) width 10: "* "
-      RenderBlock {DIV} at (16,127) size 240x0
+layer at (0,0) size 800x175
+  RenderBlock {HTML} at (0,0) size 800x175
+    RenderBody {BODY} at (8,16) size 784x105
+      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 386x19
+          text run at (0,0) width 386: "The two patterns below should be identical, with no red present."
+      RenderBlock {DIV} at (0,35) size 784x70
+        RenderBlock {DIV} at (16,16) size 160x19 [color=#FFFF00] [bgcolor=#000080]
+          RenderText {#text} at (0,0) size 12x19
+            text run at (0,0) width 12: " *"
+        RenderBlock {DIV} at (96,35) size 160x19 [color=#FFFF00] [bgcolor=#000080]
+          RenderText {#text} at (148,0) size 12x19
+            text run at (148,0) width 12: "* "
+      RenderBlock {DIV} at (16,121) size 240x0
         RenderBlock {DIV} at (0,0) size 240x0 [bgcolor=#FF0000]
-          RenderBlock (floating) {P} at (0,0) size 160x21 [color=#FFFF00] [bgcolor=#000080]
-            RenderText {#text} at (0,0) size 10x21
-              text run at (0,0) width 10: " *"
-          RenderBlock (floating) {P} at (80,21) size 160x21 [color=#FFFF00] [bgcolor=#000080]
-            RenderText {#text} at (150,0) size 10x21
-              text run at (150,0) width 10: "* "
+          RenderBlock (floating) {P} at (0,0) size 160x19 [color=#FFFF00] [bgcolor=#000080]
+            RenderText {#text} at (0,0) size 12x19
+              text run at (0,0) width 12: " *"
+          RenderBlock (floating) {P} at (80,19) size 160x19 [color=#FFFF00] [bgcolor=#000080]
+            RenderText {#text} at (148,0) size 12x19
+              text run at (148,0) width 12: "* "

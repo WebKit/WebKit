@@ -1,31 +1,28 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x211
-  RenderBlock {HTML} at (0,0) size 800x211
-    RenderBody {BODY} at (8,16) size 784x179
-      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 659x21
-          text run at (0,0) width 412: "In the following test, the teal blocks must be just inside the "
-          text run at (412,0) width 247: "top and sides of the blue rectangle."
-      RenderBlock {DIV} at (0,37) size 784x142
-        RenderBlock {DIV} at (16,0) size 752x142 [color=#0000FF] [bgcolor=#000080] [border: (8px solid #0000FF) none (8px solid #0000FF)]
-          RenderBlock (floating) {P} at (8,8) size 176x100 [color=#00FFFF] [bgcolor=#008080] [border: (4px solid #00FFFF)]
-            RenderText {#text} at (8,8) size 160x84
-              text run at (8,8) width 160: "Teal block. Teal block."
-              text run at (8,29) width 160: "Teal block. Teal block."
-              text run at (8,50) width 160: "Teal block. Teal block."
-              text run at (8,71) width 160: "Teal block. Teal block."
-          RenderBlock (floating) {P} at (568,8) size 176x100 [color=#00FFFF] [bgcolor=#008080] [border: (4px solid #00FFFF)]
-            RenderText {#text} at (8,8) size 160x84
-              text run at (8,8) width 160: "Teal block. Teal block."
-              text run at (8,29) width 160: "Teal block. Teal block."
-              text run at (8,50) width 160: "Teal block. Teal block."
-              text run at (8,71) width 160: "Teal block. Teal block."
-          RenderText {#text} at (184,8) size 542x126
-            text run at (184,8) width 366: "Blue rectangle. Blue rectangle. Blue rectangle. Blue"
-            text run at (184,29) width 329: "rectangle. Blue rectangle. Blue rectangle. Blue"
-            text run at (184,50) width 185: "rectangle. Blue rectangle. "
-            text run at (369,50) width 144: "Blue rectangle. Blue"
-            text run at (184,71) width 329: "rectangle. Blue rectangle. Blue rectangle. Blue"
-            text run at (184,92) width 329: "rectangle. Blue rectangle. Blue rectangle. Blue"
-            text run at (8,113) width 70: "rectangle."
+layer at (0,0) size 800x159
+  RenderBlock {HTML} at (0,0) size 800x159
+    RenderBody {BODY} at (8,16) size 784x127
+      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 561x19
+          text run at (0,0) width 352: "In the following test, the teal blocks must be just inside the "
+          text run at (352,0) width 209: "top and sides of the blue rectangle."
+      RenderBlock {DIV} at (0,35) size 784x92
+        RenderBlock {DIV} at (16,0) size 752x92 [color=#0000FF] [bgcolor=#000080] [border: (8px solid #0000FF) none (8px solid #0000FF)]
+          RenderBlock (floating) {P} at (8,8) size 176x92 [color=#00FFFF] [bgcolor=#008080] [border: (4px solid #00FFFF)]
+            RenderText {#text} at (8,8) size 140x76
+              text run at (8,8) width 140: "Teal block. Teal block."
+              text run at (8,27) width 140: "Teal block. Teal block."
+              text run at (8,46) width 140: "Teal block. Teal block."
+              text run at (8,65) width 140: "Teal block. Teal block."
+          RenderBlock (floating) {P} at (568,8) size 176x92 [color=#00FFFF] [bgcolor=#008080] [border: (4px solid #00FFFF)]
+            RenderText {#text} at (8,8) size 140x76
+              text run at (8,8) width 140: "Teal block. Teal block."
+              text run at (8,27) width 140: "Teal block. Teal block."
+              text run at (8,46) width 140: "Teal block. Teal block."
+              text run at (8,65) width 140: "Teal block. Teal block."
+          RenderText {#text} at (184,8) size 368x76
+            text run at (184,8) width 368: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
+            text run at (184,27) width 368: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
+            text run at (184,46) width 368: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
+            text run at (184,65) width 368: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."

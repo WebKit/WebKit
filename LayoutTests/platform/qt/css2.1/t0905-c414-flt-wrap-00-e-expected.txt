@@ -1,26 +1,24 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x216
-  RenderBlock {HTML} at (0,0) size 800x216
-    RenderBody {BODY} at (8,16) size 784x184
-      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 287x21
-          text run at (0,0) width 287: "The word \"fail\" should not appear below."
-      RenderBlock {DIV} at (16,37) size 240x147 [color=#FFFFFF] [bgcolor=#FFFFFF]
-        RenderBlock (floating) {P} at (0,0) size 46x21 [color=#000080]
-          RenderText {#text} at (0,0) size 46x21
-            text run at (0,0) width 46: "TEST:"
-        RenderBlock (floating) {P} at (1,21) size 239x21 [color=#00FFFF] [bgcolor=#008080]
-          RenderText {#text} at (97,0) size 45x21
-            text run at (97,0) width 45: "PASS"
-        RenderText {#text} at (46,0) size 221x147
-          text run at (46,0) width 171: "fail fail fail fail fail fail fail"
-          text run at (0,42) width 75: "fail fail fail "
-          text run at (75,42) width 146: "fail fail fail fail fail fail"
-          text run at (0,63) width 100: "fail fail fail fail "
-          text run at (100,63) width 121: "fail fail fail fail fail"
-          text run at (0,84) width 125: "fail fail fail fail fail "
-          text run at (125,84) width 96: "fail fail fail fail"
-          text run at (0,105) width 150: "fail fail fail fail fail fail "
-          text run at (150,105) width 71: "fail fail fail"
-          text run at (0,126) width 171: "fail fail fail fail fail fail fail"
+layer at (0,0) size 800x181
+  RenderBlock {HTML} at (0,0) size 800x181
+    RenderBody {BODY} at (8,16) size 784x149
+      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 247x19
+          text run at (0,0) width 247: "The word \"fail\" should not appear below."
+      RenderBlock {DIV} at (16,35) size 240x114 [color=#FFFFFF] [bgcolor=#FFFFFF]
+        RenderBlock (floating) {P} at (0,0) size 39x19 [color=#000080]
+          RenderText {#text} at (0,0) size 39x19
+            text run at (0,0) width 39: "TEST:"
+        RenderBlock (floating) {P} at (1,19) size 239x19 [color=#00FFFF] [bgcolor=#008080]
+          RenderText {#text} at (100,0) size 39x19
+            text run at (100,0) width 39: "PASS"
+        RenderText {#text} at (39,0) size 227x114
+          text run at (39,0) width 185: "fail fail fail fail fail fail fail fail fail"
+          text run at (0,38) width 21: "fail "
+          text run at (21,38) width 206: "fail fail fail fail fail fail fail fail fail fail"
+          text run at (0,57) width 210: "fail fail fail fail fail fail fail fail fail fail "
+          text run at (210,57) width 17: "fail"
+          text run at (0,76) width 189: "fail fail fail fail fail fail fail fail fail "
+          text run at (189,76) width 38: "fail fail"
+          text run at (0,95) width 164: "fail fail fail fail fail fail fail fail"

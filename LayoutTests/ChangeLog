@@ -1,3 +1,182 @@
+2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] css2.1/t* tests needs rebaseline after new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91999
+
+        Unreviewed.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/css2.1/t0805-c5519-brdr-r-01-e-expected.png: Removed.
+        * platform/qt-5.0/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c414-flt-02-c-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c414-flt-03-c-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c414-flt-04-c-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c414-flt-fit-01-d-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltblck-01-d-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5525-flthw-00-c-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltwrap-00-b-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t0905-c5526-flthw-00-c-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t090501-c414-flt-01-b-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t090501-c414-flt-03-b-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t090501-c414-flt-ln-01-d-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t090501-c5525-flt-l-00-b-g-expected.txt: Removed.
+        * platform/qt-5.0/css2.1/t090501-c5525-flt-r-00-b-g-expected.txt: Removed.
+        * platform/qt/css2.1/t010403-shand-border-00-c-expected.png:
+        * platform/qt/css2.1/t010403-shand-border-00-c-expected.txt:
+        * platform/qt/css2.1/t010403-shand-font-00-b-expected.png:
+        * platform/qt/css2.1/t010403-shand-font-00-b-expected.txt:
+        * platform/qt/css2.1/t010403-shand-font-01-b-expected.png:
+        * platform/qt/css2.1/t010403-shand-font-01-b-expected.txt:
+        * platform/qt/css2.1/t010403-shand-font-02-b-expected.png:
+        * platform/qt/css2.1/t010403-shand-font-02-b-expected.txt:
+        * platform/qt/css2.1/t010403-shand-font-03-b-expected.png:
+        * platform/qt/css2.1/t010403-shand-font-03-b-expected.txt:
+        * platform/qt/css2.1/t050201-c12-grouping-00-b-expected.png:
+        * platform/qt/css2.1/t050201-c12-grouping-00-b-expected.txt:
+        * platform/qt/css2.1/t0505-c16-descendant-00-e-expected.png:
+        * platform/qt/css2.1/t0505-c16-descendant-00-e-expected.txt:
+        * platform/qt/css2.1/t0505-c16-descendant-01-e-expected.png:
+        * platform/qt/css2.1/t0505-c16-descendant-01-e-expected.txt:
+        * platform/qt/css2.1/t0505-c16-descendant-02-e-expected.png:
+        * platform/qt/css2.1/t0505-c16-descendant-02-e-expected.txt:
+        * platform/qt/css2.1/t050803-c14-classes-00-e-expected.png:
+        * platform/qt/css2.1/t050803-c14-classes-00-e-expected.txt:
+        * platform/qt/css2.1/t0509-c15-ids-00-a-expected.png:
+        * platform/qt/css2.1/t0509-c15-ids-00-a-expected.txt:
+        * platform/qt/css2.1/t0509-c15-ids-01-e-expected.png:
+        * platform/qt/css2.1/t0509-c15-ids-01-e-expected.txt:
+        * platform/qt/css2.1/t0509-id-sel-syntax-01-f-expected.png:
+        * platform/qt/css2.1/t0509-id-sel-syntax-01-f-expected.txt:
+        * platform/qt/css2.1/t0509-id-sel-syntax-02-b-expected.png:
+        * platform/qt/css2.1/t0509-id-sel-syntax-02-b-expected.txt:
+        * platform/qt/css2.1/t0510-c25-pseudo-elmnt-00-c-expected.png:
+        * platform/qt/css2.1/t0510-c25-pseudo-elmnt-00-c-expected.txt:
+        * platform/qt/css2.1/t0511-c21-pseud-anch-00-e-i-expected.png:
+        * platform/qt/css2.1/t0511-c21-pseud-anch-00-e-i-expected.txt:
+        * platform/qt/css2.1/t0511-c21-pseud-link-00-e-expected.png:
+        * platform/qt/css2.1/t0511-c21-pseud-link-00-e-expected.txt:
+        * platform/qt/css2.1/t0511-c21-pseud-link-01-e-expected.png:
+        * platform/qt/css2.1/t0511-c21-pseud-link-01-e-expected.txt:
+        * platform/qt/css2.1/t0511-c21-pseud-link-02-e-expected.png:
+        * platform/qt/css2.1/t0511-c21-pseud-link-02-e-expected.txt:
+        * platform/qt/css2.1/t0511-c21-pseud-link-03-e-expected.png:
+        * platform/qt/css2.1/t0511-c21-pseud-link-03-e-expected.txt:
+        * platform/qt/css2.1/t051103-c21-activ-ln-00-e-i-expected.png:
+        * platform/qt/css2.1/t051103-c21-activ-ln-00-e-i-expected.txt:
+        * platform/qt/css2.1/t051103-c21-focus-ln-00-e-i-expected.png:
+        * platform/qt/css2.1/t051103-c21-focus-ln-00-e-i-expected.txt:
+        * platform/qt/css2.1/t051103-c21-hover-ln-00-e-i-expected.png:
+        * platform/qt/css2.1/t051103-c21-hover-ln-00-e-i-expected.txt:
+        * platform/qt/css2.1/t051103-dom-hover-01-c-io-expected.png:
+        * platform/qt/css2.1/t051103-dom-hover-01-c-io-expected.txt:
+        * platform/qt/css2.1/t051103-dom-hover-02-c-io-expected.png:
+        * platform/qt/css2.1/t051103-dom-hover-02-c-io-expected.txt:
+        * platform/qt/css2.1/t051202-c24-first-lttr-00-b-expected.png:
+        * platform/qt/css2.1/t051202-c24-first-lttr-00-b-expected.txt:
+        * platform/qt/css2.1/t051202-c26-psudo-nest-00-c-expected.png:
+        * platform/qt/css2.1/t051202-c26-psudo-nest-00-c-expected.txt:
+        * platform/qt/css2.1/t0602-c13-inh-underlin-00-e-expected.png:
+        * platform/qt/css2.1/t0602-c13-inh-underlin-00-e-expected.txt:
+        * platform/qt/css2.1/t0602-c13-inheritance-00-e-expected.png:
+        * platform/qt/css2.1/t0602-c13-inheritance-00-e-expected.txt:
+        * platform/qt/css2.1/t0602-inherit-bdr-pad-b-00-expected.png:
+        * platform/qt/css2.1/t0602-inherit-bdr-pad-b-00-expected.txt:
+        * platform/qt/css2.1/t0603-c11-import-00-b-expected.png:
+        * platform/qt/css2.1/t0603-c11-import-00-b-expected.txt:
+        * platform/qt/css2.1/t060401-c32-cascading-00-b-expected.png:
+        * platform/qt/css2.1/t060401-c32-cascading-00-b-expected.txt:
+        * platform/qt/css2.1/t060402-c31-important-00-b-expected.png:
+        * platform/qt/css2.1/t060402-c31-important-00-b-expected.txt:
+        * platform/qt/css2.1/t060403-c21-pseu-cls-00-e-i-expected.png:
+        * platform/qt/css2.1/t060403-c21-pseu-cls-00-e-i-expected.txt:
+        * platform/qt/css2.1/t060403-c21-pseu-id-00-e-i-expected.png:
+        * platform/qt/css2.1/t060403-c21-pseu-id-00-e-i-expected.txt:
+        * platform/qt/css2.1/t09-c5526c-display-00-e-expected.png:
+        * platform/qt/css2.1/t09-c5526c-display-00-e-expected.txt:
+        * platform/qt/css2.1/t090402-c42-ibx-pad-00-d-ag-expected.png:
+        * platform/qt/css2.1/t090402-c42-ibx-pad-00-d-ag-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-00-d-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-00-d-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-01-d-g-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-01-d-g-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-02-c-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-02-c-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-03-c-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-03-c-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-04-c-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-04-c-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-fit-00-d-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-fit-00-d-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-fit-01-d-g-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-fit-01-d-g-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-wrap-00-e-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/qt/css2.1/t0905-c414-flt-wrap-01-d-g-expected.png:
+        * platform/qt/css2.1/t0905-c414-flt-wrap-01-d-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltblck-00-d-ag-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltblck-01-d-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltblck-01-d-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltclr-00-c-ag-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltclr-00-c-ag-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltcont-00-d-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-flthw-00-c-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-flthw-00-c-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltinln-00-c-ag-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltinln-00-c-ag-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltmrgn-00-c-ag-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltmrgn-00-c-ag-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltmult-00-d-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltmult-00-d-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-01-c-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-01-c-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-02-c-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-03-c-g-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt:
+        * platform/qt/css2.1/t0905-c5525-fltwrap-00-b-expected.png:
+        * platform/qt/css2.1/t0905-c5525-fltwrap-00-b-expected.txt:
+        * platform/qt/css2.1/t0905-c5526-fltclr-00-c-ag-expected.png:
+        * platform/qt/css2.1/t0905-c5526-fltclr-00-c-ag-expected.txt:
+        * platform/qt/css2.1/t0905-c5526-flthw-00-c-g-expected.png:
+        * platform/qt/css2.1/t0905-c5526-flthw-00-c-g-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-00-d-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-00-d-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-01-b-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-01-b-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-02-d-g-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-02-d-g-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-03-b-g-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-03-b-g-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-ln-00-d-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-ln-00-d-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-ln-01-d-g-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-ln-01-d-g-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-ln-02-d-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-ln-02-d-expected.txt:
+        * platform/qt/css2.1/t090501-c414-flt-ln-03-d-expected.png:
+        * platform/qt/css2.1/t090501-c414-flt-ln-03-d-expected.txt:
+        * platform/qt/css2.1/t090501-c5525-flt-l-00-b-g-expected.png:
+        * platform/qt/css2.1/t090501-c5525-flt-l-00-b-g-expected.txt:
+        * platform/qt/css2.1/t090501-c5525-flt-r-00-b-g-expected.png:
+        * platform/qt/css2.1/t090501-c5525-flt-r-00-b-g-expected.txt:
+        * platform/qt/css2.1/t1503-c522-font-family-00-b-expected.png:
+        * platform/qt/css2.1/t1503-c522-font-family-00-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-03-b-expected.png:
+        * platform/qt/css2.1/t1508-c527-font-03-b-expected.txt:
+        * platform/qt/css2.1/t1508-c527-font-06-b-expected.png:
+        * platform/qt/css2.1/t1508-c527-font-06-b-expected.txt:
+
 2012-07-25  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrack to match the specification
