@@ -23,9 +23,6 @@ editing/pasteboard/data-transfer-items-image-png.html
 # https://bugs.webkit.org/show_bug.cgi?id=76897
 fast/events/clear-edit-drag-state.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=77384
-svg/as-background-image/background-image-preserveaspectRatio-support.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=77380
 fast/url/path.html
 
@@ -769,19 +766,6 @@ fast/block/margin-collapse/negative-margins.html
 fast/js/constructor-length.html
 fast/js/custom-constructors.html
 fast/js/instanceof-XMLHttpRequest.html
-svg/as-background-image/animated-svg-as-background.html
-svg/as-background-image/svg-as-background-1.html
-svg/as-background-image/svg-as-background-2.html
-svg/as-background-image/svg-as-background-3.html
-svg/as-background-image/svg-as-background-4.html
-svg/as-background-image/svg-as-background-5.html
-svg/as-background-image/svg-as-background-6.html
-svg/as-background-image/svg-as-background-with-relative-size.html
-svg/as-background-image/svg-as-background-with-viewBox.html
-svg/as-background-image/svg-as-background.html
-svg/as-background-image/svg-as-tiled-background.html
-svg/as-background-image/svg-background-partial-redraw.html
-svg/as-background-image/svg-width-100p-as-background.html
 svg/as-border-image/svg-as-border-image-2.html
 svg/as-border-image/svg-as-border-image.html
 svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html
