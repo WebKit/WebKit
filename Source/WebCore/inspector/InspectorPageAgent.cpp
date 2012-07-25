@@ -1001,7 +1001,7 @@ void InspectorPageAgent::clearGeolocationOverride(ErrorString* error)
     if (!m_geolocationOverridden)
         return;
 #if ENABLE(GEOLOCATION)
-    ASSERT_UNUSED(error, true);
+    UNUSED_PARAM(error);
     m_geolocationOverridden = false;
     m_geolocationPosition.clear();
 
