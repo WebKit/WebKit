@@ -64,7 +64,7 @@ static Eina_Bool ewk_js_variant_to_npvariant(const Ewk_JS_Variant* data, NPVaria
         DOUBLE_TO_NPVARIANT(data->value.d, *result);
         break;
     case EWK_JS_VARIANT_STRING:
-        string_value = strdup(data->value.s);
+        string_value = eina_stringshare_add(data->value.s);
         if (string_value)
             STRINGZ_TO_NPVARIANT(string_value, *result);
         else
@@ -569,7 +569,7 @@ Ewk_JS_Object* ewk_js_object_new(const Ewk_JS_Class_Meta* jsMetaClass)
                 value->value.o = 0;
                 break;
             case EWK_JS_VARIANT_STRING:
-                value->value.s = strdup(prop.value.value.s);
+                value->value.s = eina_stringshare_add(prop.value.value.s);
                 break;
             case EWK_JS_VARIANT_BOOL:
                 value->value.b = prop.value.value.b;

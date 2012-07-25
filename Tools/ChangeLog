@@ -1,3 +1,22 @@
+2012-07-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Use eina_stringshare_add instead of strdup.
+        https://bugs.webkit.org/show_bug.cgi?id=92072
+
+        Reviewed by Kentaro Hara.
+
+        Eina of EFL libraries supports a string functionality that replaces strdup. So, EFL port needs
+        to replace strdup with eina_stringshare_add function.
+
+        DumpRenderTree also needs to be modified according to ewk APIs's parameter change.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (dumpFramesAsText):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onFrameIntentNew):
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onJavaScriptPrompt):
+
 2012-07-25  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [WTR][EFL] Wheel events are not emitted

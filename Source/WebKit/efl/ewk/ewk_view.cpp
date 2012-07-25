@@ -633,9 +633,9 @@ static Eina_Bool _ewk_view_smart_should_interrupt_javascript(Ewk_View_Smart_Data
     return false;
 }
 
-static Eina_Bool _ewk_view_smart_run_javascript_prompt(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* message, const char* defaultValue, char** value)
+static Eina_Bool _ewk_view_smart_run_javascript_prompt(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* message, const char* defaultValue, const char** value)
 {
-    *value = strdup("test");
+    *value = eina_stringshare_add("test");
     Eina_Bool result = true;
     INF("javascript prompt:\n"
         "\t      message: %s\n"
@@ -1585,14 +1585,14 @@ Eina_Bool ewk_view_editable_set(Evas_Object* ewkView, Eina_Bool editable)
     return ewk_frame_editable_set(smartData->main_frame, editable);
 }
 
-char* ewk_view_selection_get(const Evas_Object* ewkView)
+const char* ewk_view_selection_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
     CString selectedString = priv->page->focusController()->focusedOrMainFrame()->editor()->selectedText().utf8();
     if (selectedString.isNull())
         return 0;
-    return strdup(selectedString.data());
+    return eina_stringshare_add(selectedString.data());
 }
 
 Eina_Bool ewk_view_editor_command_execute(const Evas_Object* ewkView, const Ewk_Editor_Command command, const char* value)
@@ -3481,7 +3481,7 @@ bool ewk_view_run_javascript_confirm(Evas_Object* ewkView, Evas_Object* frame, c
     return smartData->api->run_javascript_confirm(smartData, frame, message);
 }
 
-bool ewk_view_run_javascript_prompt(Evas_Object* ewkView, Evas_Object* frame, const char* message, const char* defaultValue, char** value)
+bool ewk_view_run_javascript_prompt(Evas_Object* ewkView, Evas_Object* frame, const char* message, const char* defaultValue, const char** value)
 {
     DBG("ewkView=%p frame=%p message=%s", ewkView, frame, message);
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
@@ -3591,7 +3591,7 @@ bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, bool allo
 
     Eina_List* cAcceptMIMETypes = 0;
     for (WTF::Vector<WTF::String>::const_iterator iterator = acceptMIMETypes.begin(); iterator != acceptMIMETypes.end(); ++iterator)
-        cAcceptMIMETypes = eina_list_append(cAcceptMIMETypes, strdup((*iterator).utf8().data()));
+        cAcceptMIMETypes = eina_list_append(cAcceptMIMETypes, eina_stringshare_add((*iterator).utf8().data()));
 
     bool confirm = smartData->api->run_open_panel(smartData, frame, allowsMultipleFiles, cAcceptMIMETypes, selectedFilenames);
     if (!confirm && *selectedFilenames)
@@ -3599,7 +3599,7 @@ bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, bool allo
 
     void* item = 0;
     EINA_LIST_FREE(cAcceptMIMETypes, item)
-        free(item);
+        eina_stringshare_del(static_cast<const char*>(item));
 
     return confirm;
 }

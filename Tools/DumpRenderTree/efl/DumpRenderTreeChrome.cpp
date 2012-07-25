@@ -857,10 +857,10 @@ void DumpRenderTreeChrome::onFrameIntentNew(void*, Evas_Object*, void* eventInfo
     Eina_List* extraNames = ewk_intent_extra_names_get(intent);
     EINA_LIST_FREE(extraNames, data) {
         char* name = static_cast<char*>(data);
-        char* value = ewk_intent_extra_get(intent, name);
+        const char* value = ewk_intent_extra_get(intent, name);
         if (value) {
             printf("Extras[%s] = %s\n", name, value);
-            free(value);
+            eina_stringshare_del(value);
         }
         free(name);
     }

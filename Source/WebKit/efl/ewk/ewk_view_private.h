@@ -92,7 +92,7 @@ void ewk_view_add_console_message(Evas_Object* ewkView, const char* message, uns
 
 void ewk_view_run_javascript_alert(Evas_Object* ewkView, Evas_Object* frame, const char* message);
 bool ewk_view_run_javascript_confirm(Evas_Object* ewkView, Evas_Object* frame, const char* message);
-bool ewk_view_run_javascript_prompt(Evas_Object* ewkView, Evas_Object* frame, const char* message, const char* defaultValue, char** value);
+bool ewk_view_run_javascript_prompt(Evas_Object* ewkView, Evas_Object* frame, const char* message, const char* defaultValue, const char** value);
 bool ewk_view_should_interrupt_javascript(Evas_Object* ewkView);
 int64_t ewk_view_exceeded_application_cache_quota(Evas_Object* ewkView, Ewk_Security_Origin *origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded);
 uint64_t ewk_view_exceeded_database_quota(Evas_Object* ewkView, Evas_Object* frame, const char* databaseName, uint64_t currentSize, uint64_t expectedSize);

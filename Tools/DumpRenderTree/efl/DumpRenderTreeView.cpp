@@ -86,10 +86,10 @@ static Eina_Bool onJavaScriptConfirm(Ewk_View_Smart_Data*, Evas_Object*, const c
     return EINA_TRUE;
 }
 
-static Eina_Bool onJavaScriptPrompt(Ewk_View_Smart_Data*, Evas_Object*, const char* message, const char* defaultValue, char** value)
+static Eina_Bool onJavaScriptPrompt(Ewk_View_Smart_Data*, Evas_Object*, const char* message, const char* defaultValue, const char** value)
 {
     printf("PROMPT: %s, default text: %s\n", message, defaultValue);
-    *value = strdup(defaultValue);
+    *value = eina_stringshare_add(defaultValue);
     return EINA_TRUE;
 }
 

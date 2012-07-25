@@ -446,14 +446,14 @@ EAPI Eina_Bool    ewk_frame_contents_alternate_set(Evas_Object *o, const char *c
 /**
  * Requests execution of the given script.
  *
- * The returned string @b should be freed after use.
+ * The returned string @b should be freed by eina_stringshare_del() after use.
  *
  * @param o frame object to execute script
  * @param script Java Script to execute
  *
  * @return newly allocated string for result or @c NULL if the result cannot be converted to string or failure
  */
-EAPI char        *ewk_frame_script_execute(Evas_Object *o, const char *script);
+EAPI const char        *ewk_frame_script_execute(Evas_Object *o, const char *script);
 
 /**
  * Queries if the frame is editable.
@@ -477,13 +477,13 @@ EAPI Eina_Bool    ewk_frame_editable_set(Evas_Object *o, Eina_Bool editable);
 /**
  * Gets the copy of the selected text.
  *
- * The returned string @b should be freed after use.
+ * The returned string @b should be freed by eina_stringshare_del() after use.
  *
  * @param o the frame object to get selected text
  *
  * @return a newly allocated string or @c NULL if nothing is selected or on failure
  */
-EAPI char        *ewk_frame_selection_get(const Evas_Object *o);
+EAPI const char        *ewk_frame_selection_get(const Evas_Object *o);
 
 /**
  * Searches the given string in a document.
@@ -968,12 +968,14 @@ EAPI Eina_List *ewk_frame_resources_location_get(const Evas_Object *o);
  * This function returns the contents of the given frame converted to plain text,
  * removing all the HTML formatting.
  *
+ * The returned string @b should be freed by eina_stringshare_del() after use.
+ *
  * @param ewkFrame Frame object whose contents to retrieve.
  *
  * @return A newly allocated string (which must be freed by the caller with @c free())
  *         or @c NULL in case of failure.
  */
-EAPI char *ewk_frame_plain_text_get(const Evas_Object *o);
+EAPI const char *ewk_frame_plain_text_get(const Evas_Object *o);
 
 /**
  * Returns whether the frame has displayed mixed content.

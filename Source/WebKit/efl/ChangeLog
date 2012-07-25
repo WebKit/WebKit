@@ -1,3 +1,44 @@
+2012-07-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Use eina_stringshare_add instead of strdup.
+        https://bugs.webkit.org/show_bug.cgi?id=92072
+
+        Reviewed by Kentaro Hara.
+
+        Eina of EFL libraries supports a string functionality that replaces strdup. So, EFL port needs
+        to replace strdup with eina_stringshare_add function.
+
+        In addition, some API descriptions need to be modified according to ewk APIs's parameter and
+        return type change.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::runJavaScriptPrompt):
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_get_all):
+        (ewk_cookies_cookie_free):
+        * ewk/ewk_cookies.h:
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_script_execute):
+        (ewk_frame_selection_get):
+        (ewk_frame_resources_location_get):
+        (ewk_frame_plain_text_get):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_intent.cpp:
+        (ewk_intent_suggestions_get):
+        (ewk_intent_extra_get):
+        (ewk_intent_extra_names_get):
+        * ewk/ewk_intent.h:
+        * ewk/ewk_js.cpp:
+        (ewk_js_variant_to_npvariant):
+        (ewk_js_object_new):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_run_javascript_prompt):
+        (ewk_view_selection_get):
+        (ewk_view_run_javascript_prompt):
+        (ewk_view_run_open_panel):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_private.h:
+
 2012-07-25  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Add File Chooser API

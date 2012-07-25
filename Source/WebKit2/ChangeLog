@@ -1,3 +1,18 @@
+2012-07-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Use eina_stringshare_add instead of strdup.
+        https://bugs.webkit.org/show_bug.cgi?id=92072
+
+        Reviewed by Kentaro Hara.
+
+        Eina of EFL libraries supports a string functionality that replaces strdup. So, EFL port needs
+        to replace strdup with eina_stringshare_add function.
+
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (ewk_intent_suggestions_get):
+        (ewk_intent_extra_get):
+        * UIProcess/API/efl/ewk_intent.h:
+
 2012-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK2] Add ewk_view_cursor_set to change cursor.

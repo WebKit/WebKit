@@ -77,10 +77,10 @@ Eina_List* ewk_cookies_get_all(void)
     for (p = list; p; p = p->next) {
         SoupCookie* cookie = static_cast<SoupCookie*>(p->data);
         Ewk_Cookie* ewkCookie = new Ewk_Cookie;
-        ewkCookie->name = strdup(cookie->name);
-        ewkCookie->value = strdup(cookie->value);
-        ewkCookie->domain = strdup(cookie->domain);
-        ewkCookie->path = strdup(cookie->path);
+        ewkCookie->name = eina_stringshare_add(cookie->name);
+        ewkCookie->value = eina_stringshare_add(cookie->value);
+        ewkCookie->domain = eina_stringshare_add(cookie->domain);
+        ewkCookie->path = eina_stringshare_add(cookie->path);
         ewkCookie->expires = soup_date_to_time_t(cookie->expires);
         ewkCookie->secure = static_cast<Eina_Bool>(cookie->secure);
         ewkCookie->http_only = static_cast<Eina_Bool>(cookie->http_only);
@@ -117,10 +117,10 @@ void ewk_cookies_cookie_del(Ewk_Cookie* cookie)
 void ewk_cookies_cookie_free(Ewk_Cookie* cookie)
 {
     EINA_SAFETY_ON_NULL_RETURN(cookie);
-    free(cookie->name);
-    free(cookie->value);
-    free(cookie->domain);
-    free(cookie->path);
+    eina_stringshare_del(cookie->name);
+    eina_stringshare_del(cookie->value);
+    eina_stringshare_del(cookie->domain);
+    eina_stringshare_del(cookie->path);
     delete cookie;
 }
 

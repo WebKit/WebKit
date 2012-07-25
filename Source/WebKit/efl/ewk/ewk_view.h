@@ -182,7 +182,7 @@ struct _Ewk_View_Smart_Class {
     void (*add_console_message)(Ewk_View_Smart_Data *sd, const char *message, unsigned int lineNumber, const char *sourceID);
     void (*run_javascript_alert)(Ewk_View_Smart_Data *sd, Evas_Object *frame, const char *message);
     Eina_Bool (*run_javascript_confirm)(Ewk_View_Smart_Data *sd, Evas_Object *frame, const char *message);
-    Eina_Bool (*run_javascript_prompt)(Ewk_View_Smart_Data *sd, Evas_Object *frame, const char *message, const char *defaultValue, char **value);
+    Eina_Bool (*run_javascript_prompt)(Ewk_View_Smart_Data *sd, Evas_Object *frame, const char *message, const char *defaultValue, const char **value);
     Eina_Bool (*should_interrupt_javascript)(Ewk_View_Smart_Data *sd);
     int64_t (*exceeded_application_cache_quota)(Ewk_View_Smart_Data *sd, Ewk_Security_Origin* origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded);
     uint64_t (*exceeded_database_quota)(Ewk_View_Smart_Data *sd, Evas_Object *frame, const char *databaseName, uint64_t current_size, uint64_t expected_size);
@@ -858,13 +858,13 @@ EAPI void         ewk_view_bg_color_get(const Evas_Object *o, int *r, int *g, in
 /**
  * Gets the copy of the selected text.
  *
- * The returned string @b should be freed after use.
+ * The returned string @b should be freed by eina_stringshare_del() after use.
  *
  * @param o view object to get selected text
  *
  * @return a newly allocated string or @c NULL if nothing is selected or on failure
  */
-EAPI char        *ewk_view_selection_get(const Evas_Object *o);
+EAPI const char        *ewk_view_selection_get(const Evas_Object *o);
 
 /**
  * Forwards a request of a new Context Menu to WebCore.

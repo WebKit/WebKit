@@ -106,21 +106,21 @@ Eina_List* ewk_intent_suggestions_get(const Ewk_Intent* intent)
     Eina_List* listOfSuggestions = 0;
     Vector<WebCore::KURL>::const_iterator it;
     for (it = core->suggestions().begin(); it != core->suggestions().end(); ++it)
-        listOfSuggestions = eina_list_append(listOfSuggestions, strdup(it->string().utf8().data()));
+        listOfSuggestions = eina_list_append(listOfSuggestions, eina_stringshare_add(it->string().utf8().data()));
     return listOfSuggestions;
 #else
     return 0;
 #endif
 }
 
-char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
+const char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
 {
 #if ENABLE(WEB_INTENTS)
     EWK_INTENT_CORE_GET_OR_RETURN(intent, core, 0);
     WTF::HashMap<String, String>::const_iterator val = core->extras().find(String::fromUTF8(key));
     if (val == core->extras().end())
         return 0;
-    return strdup(val->second.utf8().data());
+    return eina_stringshare_add(val->second.utf8().data());
 #else
     return 0;
 #endif
@@ -133,7 +133,7 @@ Eina_List* ewk_intent_extra_names_get(const Ewk_Intent* intent)
     Eina_List* listOfNames = 0;
     WTF::HashMap<String, String>::const_iterator::Keys it = core->extras().begin().keys();
     for (; it != core->extras().end().keys(); ++it)
-        listOfNames = eina_list_append(listOfNames, strdup(it->utf8().data()));
+        listOfNames = eina_list_append(listOfNames, eina_stringshare_add(it->utf8().data()));
     return listOfNames;
 #else
     return 0;

@@ -79,10 +79,10 @@ static String dumpFramesAsText(Evas_Object* frame)
         result.append("'\n--------\n");
     }
 
-    char* frameContents = ewk_frame_plain_text_get(frame);
+    const char* frameContents = ewk_frame_plain_text_get(frame);
     result.append(String::fromUTF8(frameContents));
     result.append("\n");
-    free(frameContents);
+    eina_stringshare_del(frameContents);
 
     if (gLayoutTestController->dumpChildFramesAsText()) {
         Eina_List* children = DumpRenderTreeSupportEfl::frameChildren(frame);

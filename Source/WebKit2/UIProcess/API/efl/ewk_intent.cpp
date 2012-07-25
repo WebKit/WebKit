@@ -156,7 +156,7 @@ Eina_List* ewk_intent_suggestions_get(const Ewk_Intent* intent)
     const size_t numSuggestions = WKArrayGetSize(wkSuggestions.get());
     for (size_t i = 0; i < numSuggestions; ++i) {
         WKURLRef wkSuggestion = static_cast<WKURLRef>(WKArrayGetItemAtIndex(wkSuggestions.get(), i));
-        listOfSuggestions = eina_list_append(listOfSuggestions, strdup(toImpl(wkSuggestion)->string().utf8().data()));
+        listOfSuggestions = eina_list_append(listOfSuggestions, eina_stringshare_add(toImpl(wkSuggestion)->string().utf8().data()));
     }
 
     return listOfSuggestions;
@@ -165,7 +165,7 @@ Eina_List* ewk_intent_suggestions_get(const Ewk_Intent* intent)
 #endif
 }
 
-char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
+const char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
 {
 #if ENABLE(WEB_INTENTS)
     EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent, 0);
@@ -176,7 +176,7 @@ char* ewk_intent_extra_get(const Ewk_Intent* intent, const char* key)
     if (value.isEmpty())
         return 0;
 
-    return strdup(value.utf8().data());
+    return eina_stringshare_add(value.utf8().data());
 #else
     return 0;
 #endif
@@ -193,7 +193,7 @@ Eina_List* ewk_intent_extra_names_get(const Ewk_Intent* intent)
     const size_t numKeys = WKArrayGetSize(wkKeys.get());
     for (size_t i = 0; i < numKeys; ++i) {
         WKStringRef wkKey = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkKeys.get(), i));
-        listOfKeys = eina_list_append(listOfKeys, strdup(toImpl(wkKey)->string().utf8().data()));
+        listOfKeys = eina_list_append(listOfKeys, eina_stringshare_add(toImpl(wkKey)->string().utf8().data()));
     }
 
     return listOfKeys;

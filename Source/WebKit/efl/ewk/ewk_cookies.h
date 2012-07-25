@@ -42,16 +42,19 @@ extern "C" {
  * \struct  _Ewk_Cookie
  *
  * @brief   Describes properties of an HTTP cookie.
+ *
+ * All the strings are guaranteed to be stringshared, so use eina_stringshare_ref()
+ * instead of eina_stringshare_add() or strdup().
  */
 struct _Ewk_Cookie {
     /// the cookie name
-    char *name;
+    const char *name;
     /// the cookie value
-    char *value;
+    const char *value;
     /// the "domain" attribute, or else the hostname that the cookie came from
-    char *domain;
+    const char *domain;
     /// the "path" attribute, or @c NULL
-    char *path;
+    const char *path;
     /// the cookie expiration time, or @c 0 for a session cookie
     time_t expires;
     /// @c EINA_TRUE if the cookie should only be tranferred over SSL

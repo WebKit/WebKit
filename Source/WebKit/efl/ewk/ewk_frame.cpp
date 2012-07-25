@@ -439,7 +439,7 @@ Eina_Bool ewk_frame_contents_alternate_set(Evas_Object* ewkFrame, const char* co
                unreachableUri);
 }
 
-char* ewk_frame_script_execute(Evas_Object* ewkFrame, const char* script)
+const char* ewk_frame_script_execute(Evas_Object* ewkFrame, const char* script)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, 0);
@@ -458,7 +458,7 @@ char* ewk_frame_script_execute(Evas_Object* ewkFrame, const char* script)
     JSC::ExecState* exec = smartData->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec();
     JSC::JSLockHolder lock(exec);
     resultString = WebCore::ustringToString(result.toString(exec)->value(exec));
-    return strdup(resultString.utf8().data());
+    return eina_stringshare_add(resultString.utf8().data());
 #else
     notImplemented();
     return 0;
@@ -485,14 +485,14 @@ Eina_Bool ewk_frame_editable_set(Evas_Object* ewkFrame, Eina_Bool editable)
     return true;
 }
 
-char* ewk_frame_selection_get(const Evas_Object* ewkFrame)
+const char* ewk_frame_selection_get(const Evas_Object* ewkFrame)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, 0);
     WTF::CString selectedText = smartData->frame->editor()->selectedText().utf8();
     if (selectedText.isNull())
         return 0;
-    return strdup(selectedText.data());
+    return eina_stringshare_add(selectedText.data());
 }
 
 Eina_Bool ewk_frame_text_search(const Evas_Object* ewkFrame, const char* text, Eina_Bool caseSensitive, Eina_Bool forward, Eina_Bool wrap)
@@ -1736,7 +1736,7 @@ Eina_List* ewk_frame_resources_location_get(const Evas_Object* ewkFrame)
         if (found)
             continue;
 
-        char* imageLocationCopy = strdup(imageLocation.utf8().data());
+        const char* imageLocationCopy = eina_stringshare_add(imageLocation.utf8().data());
         if (!imageLocationCopy)
             goto out_of_memory_handler;
         listOfImagesLocation = eina_list_append(listOfImagesLocation, imageLocationCopy);
@@ -1754,7 +1754,7 @@ out_of_memory_handler:
     return 0;
 }
 
-char* ewk_frame_plain_text_get(const Evas_Object* ewkFrame)
+const char* ewk_frame_plain_text_get(const Evas_Object* ewkFrame)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, 0);
@@ -1767,7 +1767,7 @@ char* ewk_frame_plain_text_get(const Evas_Object* ewkFrame)
     if (!documentElement)
         return 0;
 
-    return strdup(documentElement->innerText().utf8().data());
+    return eina_stringshare_add(documentElement->innerText().utf8().data());
 }
 
 Eina_Bool ewk_frame_mixed_content_displayed_get(const Evas_Object* ewkFrame)

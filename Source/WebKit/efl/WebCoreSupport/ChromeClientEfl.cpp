@@ -294,11 +294,11 @@ bool ChromeClientEfl::runJavaScriptConfirm(Frame* frame, const String& message)
 
 bool ChromeClientEfl::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
-    char* value = 0;
+    const char* value = 0;
     ewk_view_run_javascript_prompt(m_view, kit(frame), message.utf8().data(), defaultValue.utf8().data(), &value);
     if (value) {
         result = String::fromUTF8(value);
-        free(value);
+        eina_stringshare_del(value);
         return true;
     }
     return false;
