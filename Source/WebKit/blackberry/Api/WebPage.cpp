@@ -5877,7 +5877,7 @@ void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> composit
     // That seems extremely likely to be the case, but let's assert just to make sure.
     ASSERT(webKitThreadMessageClient()->isCurrentThread());
 
-    if (m_backingStore->d->buffer())
+    if (m_compositor || m_client->window())
         m_backingStore->d->suspendScreenAndBackingStoreUpdates();
 
     // This method call always round-trips on the WebKit thread (see WebPageCompositor::WebPageCompositor() and ~WebPageCompositor()),
@@ -5889,7 +5889,7 @@ void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> composit
     // safe access to m_compositor and its refcount.
     userInterfaceThreadMessageClient()->dispatchSyncMessage(createMethodCallMessage(&WebPagePrivate::setCompositorHelper, this, compositor, compositingContext));
 
-    if (m_backingStore->d->buffer()) // the new compositor, if one was set
+    if (m_compositor || m_client->window()) // the new compositor, if one was set
         m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
 }
 

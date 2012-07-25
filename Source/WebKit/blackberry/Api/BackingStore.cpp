@@ -2878,7 +2878,7 @@ Platform::Graphics::Buffer* BackingStorePrivate::buffer() const
 
 #if USE(ACCELERATED_COMPOSITING)
     if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor())
-        return compositor->context()->buffer();
+        return compositor->context() ? compositor->context()->buffer() : 0;
 #endif
 
     return 0;

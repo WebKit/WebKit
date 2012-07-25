@@ -1,3 +1,36 @@
+2012-07-25  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Rephrase suspend/resume condition to guard against crashes
+        https://bugs.webkit.org/show_bug.cgi?id=92300
+        PR 182125
+
+        Reviewed by George Staikos.
+
+        When the compositor is removed from a WebPage, it might
+        already have unset its context, and issuing a call to
+        BackingStore::buffer() would therefore cause a crash.
+        Just guarding buffer() from this crash isn't fully
+        correct, because then we wouldn't suspend rendering
+        for a compositor that had been previously enabled.
+
+        Instead, change the condition to suspend/resume in
+        WebPagePrivate::setCompositor() to focus on the
+        object that delivers us the buffer. If we can't
+        listen to the context or buffer being set, better
+        just take the compositor object itself to determine
+        whether we have something valid or not... and hope
+        that they give us a valid context & buffer in all
+        situations when we can actually be rendering.
+
+        Also check compositor->context() in buffer() to be
+        non-zero before accessing the context's buffer,
+        because more defensive coding can't hurt here.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::buffer):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+
 2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Update about:config lists
