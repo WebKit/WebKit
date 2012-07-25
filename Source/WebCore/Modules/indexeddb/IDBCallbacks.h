@@ -30,19 +30,19 @@
 #define IDBCallbacks_h
 
 #include "DOMStringList.h"
-#include "IDBCursorBackendInterface.h"
-#include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
-#include "IDBObjectStoreBackendInterface.h"
-#include "IDBTransactionBackendInterface.h"
 #include "SerializedScriptValue.h"
 #include <wtf/Threading.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
+class IDBCursorBackendInterface;
+class IDBDatabaseBackendInterface;
+class IDBObjectStoreBackendInterface;
+class IDBTransactionBackendInterface;
 
 // FIXME: All child classes need to be made threadsafe.
 class IDBCallbacks : public ThreadSafeRefCounted<IDBCallbacks> {

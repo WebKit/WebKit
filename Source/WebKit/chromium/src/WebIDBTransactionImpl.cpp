@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBObjectStoreBackendInterface.h"
 #include "IDBTransaction.h"
 #include "IDBTransactionCallbacksProxy.h"
 #include "WebIDBObjectStoreImpl.h"

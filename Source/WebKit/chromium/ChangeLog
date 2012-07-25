@@ -1,3 +1,17 @@
+2012-07-24  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: fix #include dependencies so IDBRequest isn't an include root
+        https://bugs.webkit.org/show_bug.cgi?id=92167
+
+        Reviewed by Tony Chang.
+
+        Remove implicit dependencies due to using IDBRequest.h, and fix all 
+        places that break as a result.
+
+        * src/IDBCallbacksProxy.cpp:
+        * src/WebIDBDatabaseImpl.cpp:
+        * src/WebIDBTransactionImpl.cpp:
+
 2012-07-24  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Support scrolling and zooming to focused input elements

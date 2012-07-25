@@ -42,6 +42,7 @@
 #include "GroupSettings.h"
 #include "IDBCallbacks.h"
 #include "IDBCursor.h"
+#include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBFactoryBackendInterface.h"

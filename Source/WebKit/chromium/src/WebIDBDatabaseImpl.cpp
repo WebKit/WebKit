@@ -33,6 +33,7 @@
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseCallbacksProxy.h"
 #include "IDBMetadata.h"
+#include "IDBObjectStoreBackendInterface.h"
 #include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBDatabaseCallbacks.h"

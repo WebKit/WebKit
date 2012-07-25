@@ -31,8 +31,12 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursorBackendInterface.h"
+#include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseBackendProxy.h"
 #include "IDBDatabaseError.h"
+#include "IDBObjectStoreBackendInterface.h"
+#include "IDBTransactionBackendInterface.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBCursorImpl.h"
 #include "WebIDBDatabaseImpl.h"

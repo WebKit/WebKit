@@ -41,6 +41,7 @@
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
 #include "IDBCursor.h"
+#include "IDBCursorBackendInterface.h"
 
 namespace WebCore {
 

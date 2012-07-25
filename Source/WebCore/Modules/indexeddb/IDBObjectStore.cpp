@@ -31,6 +31,7 @@
 #include "DOMStringList.h"
 #include "IDBAny.h"
 #include "IDBBindingUtilities.h"
+#include "IDBCursorBackendInterface.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
 #include "IDBIndex.h"
