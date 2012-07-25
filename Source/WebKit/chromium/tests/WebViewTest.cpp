@@ -254,7 +254,8 @@ TEST_F(WebViewTest, AutoResizeFixedHeightAndWidthOverflow)
                    expectedWidth, expectedHeight, VisibleHorizontalScrollbar, NoVerticalScrollbar);
 }
 
-TEST_F(WebViewTest, AutoResizeInBetweenSizes)
+// Disabled for https://bugs.webkit.org/show_bug.cgi?id=92318
+TEST_F(WebViewTest, DISABLED_AutoResizeInBetweenSizes)
 {
     WebSize minAutoResize(90, 95);
     WebSize maxAutoResize(200, 300);
