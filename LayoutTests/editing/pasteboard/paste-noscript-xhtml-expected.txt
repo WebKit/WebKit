@@ -1,7 +1,78 @@
 ALERT: hello
-CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: sayHello
-This test copies the content of an iframe and pastes it in an editable area in an xhtml document and verifies that no script, handlers or javascript urls are copied.
+ALERT: hello
 
-HelloCNNHello
-This is a form
-<button xmlns="http://www.w3.org/1999/xhtml" id="button1" style="width: 100px; ">Hello</button><a xmlns="http://www.w3.org/1999/xhtml" id="anchor1" href="http://www.bing.com/search?q=cnn">CNN</a><a xmlns="http://www.w3.org/1999/xhtml" id="anchor2">Hello</a><iframe xmlns="http://www.w3.org/1999/xhtml" id="iframe1" style="width: 200px; height: 100px; background-color: rgb(204, 238, 238); "></iframe><form xmlns="http://www.w3.org/1999/xhtml" id="form1" style="width: 200px; height: 150px; background-color: rgb(204, 238, 238); ">This is a form</form>
+This test copies the content of an iframe and pastes it
+in an editable area in an xhtml document and verifies that no script, handlers or javascript urls are copied.
+
+
+Copied content:
+| "
+"
+| <button>
+|   id="button1"
+|   onclick="sayHello()"
+|   ondblclick="sayHello()"
+|   style="width: 100px;"
+|   "<#selection-anchor>Hello"
+| <a>
+|   href="http://www.bing.com/search?q=cnn"
+|   id="anchor1"
+|   "CNN"
+| <a>
+|   href="javascript:sayHello()"
+|   id="anchor2"
+|   "Hello"
+| "
+"
+| <script>
+|   style="display: block; position: fixed; top: 4000px"
+|   "alert('hello');"
+| "
+"
+| <script>
+|   src="../editing.js"
+|   style="display: block; position: fixed; top: 4000px"
+| "
+"
+| <iframe>
+|   id="iframe1"
+|   src="javascript:alert('hello')"
+|   style="width: 200px; height: 100px; background-color:#cee;"
+| "
+"
+| <form>
+|   action="javascript:sayHello()"
+|   id="form1"
+|   style="width: 200px; height: 150px; background-color:#cee;"
+|   "This is a form<#selection-focus>"
+| "
+
+"
+
+FRAME 0:
+| <head>
+| <body>
+
+Pasted content:
+| <button>
+|   id="button1"
+|   style="width: 100px; "
+|   "Hello"
+| <a>
+|   href="http://www.bing.com/search?q=cnn"
+|   id="anchor1"
+|   "CNN"
+| <a>
+|   id="anchor2"
+|   "Hello"
+| <iframe>
+|   id="iframe1"
+|   style="width: 200px; height: 100px; background-color: rgb(204, 238, 238); "
+| <form>
+|   id="form1"
+|   style="width: 200px; height: 150px; background-color: rgb(204, 238, 238); "
+|   "This is a form<#selection-caret>"
+
+FRAME 0:
+| <head>
+| <body>

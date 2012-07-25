@@ -1,45 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<body onload="foo()">
+<body onload="runTest()">
 <div id="description">
 This test copies the content of an iframe and pastes it
 in an editable area in an xhtml document and verifies that no script, handlers or javascript urls are copied.
 </div>
-<iframe id="iframe1" src="../resources/htmlcontent.html"></iframe>
+<iframe id="iframe1" src="resources/paste-noscript-content.html"></iframe>
 <div id="pastehere" contenteditable="true"></div>
-<ul id="console"></ul>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
-if (window.testRunner)
-     window.testRunner.dumpAsText();
 
-if (window.testRunner)
-    window.testRunner.waitUntilDone();
+Markup.waitUntilDone();
 
-function foo() {
-    var frame = frames[0];
-    var sel = frame.getSelection();
-    var doc = frame.document;
-    sel.setPosition(doc.body, 0);
+function runTest() {
+    Markup.description(document.getElementById('description').textContent);
+
+    var doc = frames[0].document;
+    getSelection().setPosition(doc.body, 0);
     doc.execCommand("SelectAll");
     doc.execCommand("Copy");
 
-    var p1 = document.getElementById("pastehere");
-    var s = window.getSelection();
-    s.setPosition(p1, 0);
+    Markup.dump(doc.body, 'Copied content');
+
+    getSelection().setPosition(document.getElementById("pastehere"), 0);
     document.execCommand("Paste");
-    log(document.getElementById("pastehere").innerHTML);
+    Markup.dump('pastehere', 'Pasted content');
 
-    if (window.testRunner)
-        window.testRunner.notifyDone();
+    Markup.notifyDone();
 }
 
-function log(str) {
-    var li = document.createElement("li");
-    li.appendChild(document.createTextNode(str));
-    var console = document.getElementById("console");
-    console.appendChild(li);
-}
 </script>
 </body>
 </html>

@@ -1,3 +1,21 @@
+2012-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Improve the output of editing/pasteboard/paste-noscript-xhtml.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=92307
+
+        Reviewed by Tony Chang.
+
+        Use dump-as-markup to improve the readability of output, and removed replaced the call to sayHello in iframe's src
+        content attribute by a call to alert("hello") so that reference error doesn't show up on the result, and moved
+        the resource from editing/resources to editing/pasteboard/resources as it's not used elsewhere.
+
+        * editing/pasteboard/paste-noscript-xhtml-expected.txt:
+        * editing/pasteboard/paste-noscript-xhtml.xhtml:
+        * editing/pasteboard/resources/paste-noscript-content.html: Copied from LayoutTests/editing/resources/htmlcontent.html.
+        * editing/resources/htmlcontent.html: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-noscript-xhtml-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-noscript-xhtml-expected.txt: Removed.
+
 2012-07-25  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt] platform/qt/tables/mozilla tests needs update after rebaseline and new testfonts
