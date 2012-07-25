@@ -220,6 +220,8 @@ public:
     virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale);
     virtual float minimumPageScaleFactor() const;
     virtual float maximumPageScaleFactor() const;
+    virtual void saveScrollAndScaleState();
+    virtual void restoreScrollAndScaleState();
     virtual void setIgnoreViewportTagMaximumScale(bool);
 
     virtual float deviceScaleFactor() const;
@@ -579,6 +581,8 @@ private:
     float clampPageScaleFactorToLimits(float scale);
     WebPoint clampOffsetAtScale(const WebPoint& offset, float scale);
 
+    void resetSavedScrollAndScaleState();
+
     friend class WebView;  // So WebView::Create can call our constructor
     friend class WTF::RefCounted<WebViewImpl>;
 
@@ -707,14 +711,17 @@ private:
 
     double m_maximumZoomLevel;
 
+    // State related to the page scale
     float m_pageDefinedMinimumPageScaleFactor;
     float m_pageDefinedMaximumPageScaleFactor;
     float m_minimumPageScaleFactor;
     float m_maximumPageScaleFactor;
-
     bool m_ignoreViewportTagMaximumScale;
-
     bool m_pageScaleFactorIsSet;
+
+    // Saved page scale state.
+    float m_savedPageScaleFactor; // 0 means that no page scale factor is saved.
+    WebCore::IntSize m_savedScrollOffset;
 
     bool m_contextMenuAllowed;
 

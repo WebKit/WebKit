@@ -197,6 +197,8 @@ static const float doubleTapZoomContentDefaultMargin = 5;
 static const float doubleTapZoomContentMinimumMargin = 2;
 static const double doubleTabZoomAnimationDurationInSeconds = 0.25;
 
+// Constants for zooming in on a focused text field.
+static const double scrollAndScaleAnimationDurationInSeconds = 0.2;
 
 namespace WebKit {
 
@@ -392,6 +394,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_maximumPageScaleFactor(maxPageScaleFactor)
     , m_ignoreViewportTagMaximumScale(false)
     , m_pageScaleFactorIsSet(false)
+    , m_savedPageScaleFactor(0)
     , m_contextMenuAllowed(false)
     , m_doingDragAndDrop(false)
     , m_ignoreInputEvents(false)
@@ -2730,6 +2733,33 @@ float WebViewImpl::maximumPageScaleFactor() const
     return m_maximumPageScaleFactor;
 }
 
+void WebViewImpl::saveScrollAndScaleState()
+{
+    m_savedPageScaleFactor = pageScaleFactor();
+    m_savedScrollOffset = mainFrame()->scrollOffset();
+}
+
+void WebViewImpl::restoreScrollAndScaleState()
+{
+    if (!m_savedPageScaleFactor)
+        return;
+
+#if ENABLE(GESTURE_EVENTS)
+    startPageScaleAnimation(IntPoint(m_savedScrollOffset), false, m_savedPageScaleFactor, scrollAndScaleAnimationDurationInSeconds);
+#else
+    setPageScaleFactor(m_savedPageScaleFactor, WebPoint());
+    mainFrame()->setScrollOffset(m_savedScrollOffset);
+#endif
+
+    resetSavedScrollAndScaleState();
+}
+
+void WebViewImpl::resetSavedScrollAndScaleState()
+{
+    m_savedPageScaleFactor = 0;
+    m_savedScrollOffset = IntSize();
+}
+
 WebSize WebViewImpl::fixedLayoutSize() const
 {
     if (!page())
@@ -3263,6 +3293,7 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation, bool isNavigationWithinPa
         m_pageScaleFactorIsSet = false;
 
     m_gestureAnimation.clear();
+    resetSavedScrollAndScaleState();
 }
 
 void WebViewImpl::layoutUpdated(WebFrameImpl* webframe)

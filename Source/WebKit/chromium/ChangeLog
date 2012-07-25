@@ -1,3 +1,33 @@
+2012-07-24  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Support scrolling and zooming to focused input elements
+        https://bugs.webkit.org/show_bug.cgi?id=91661
+
+        Reviewed by Darin Fisher.
+
+        This patch introduces saveScrollAndScaleState and
+        restoreScrollAndScaleState, which can be used to save and restore the
+        scroll and scale state of the WebView, respectively.  These functions
+        will be used by Chromium on Android to save the scale and scrolls state
+        before zoom into a text field so that we can "undo" the zoom if the
+        user didn't mean to zoom into the text field.
+
+        I wanted to write unit tests for these functions, but it wasn't clear
+        to me how to write the test because startPageScaleAnimation appears to
+        complete asynchronously.
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::saveScrollAndScaleState):
+        (WebKit):
+        (WebKit::WebViewImpl::restoreScrollAndScaleState):
+        (WebKit::WebViewImpl::resetSavedScrollAndScaleState):
+        (WebKit::WebViewImpl::didCommitLoad):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-07-24  Dave Tu  <dtu@chromium.org>
 
         [chromium] Add time spent painting to GPU benchmarking renderingStats() API.
