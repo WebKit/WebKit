@@ -1,3 +1,9 @@
+2012-07-25  MORITA Hajime <morrita@google.com>
+
+        Another unreviewed win build fix against r123569.
+
+        * tests/IDBAbortOnCorruptTest.cpp:
+
 2012-07-25  MORITA Hajime  <morrita@google.com>
 
         Unreviewed win build fix against r123569.
