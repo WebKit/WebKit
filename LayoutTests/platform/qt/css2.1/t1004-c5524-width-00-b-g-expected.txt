@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x567
-  RenderBlock {HTML} at (0,0) size 800x567
-    RenderBody {BODY} at (8,16) size 784x543
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 756x42
-          text run at (0,0) width 441: "The blue rectangle below should be exactly 200 pixels by 120 "
-          text run at (441,0) width 315: "pixels on the ruler (and the aqua bars should"
-          text run at (0,21) width 105: "stick out of the "
-          text run at (105,21) width 213: "blue box, with no red present)."
-      RenderBlock {DIV} at (0,58) size 784x485
+layer at (0,0) size 800x562
+  RenderBlock {HTML} at (0,0) size 800x562
+    RenderBody {BODY} at (8,16) size 784x538
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 763x38
+          text run at (0,0) width 376: "The blue rectangle below should be exactly 200 pixels by 120 "
+          text run at (376,0) width 362: "pixels on the ruler (and the aqua bars should stick out of the "
+          text run at (738,0) width 25: "blue"
+          text run at (0,19) width 156: "box, with no red present)."
+      RenderBlock {DIV} at (0,54) size 784x484
         RenderImage {IMG} at (40,40) size 120x200

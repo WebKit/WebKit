@@ -1,15 +1,14 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x260
-  RenderBlock {HTML} at (0,0) size 800x260
-    RenderBody {BODY} at (8,16) size 784x229
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 773x42
-          text run at (0,0) width 428: "Change your window size. However the lines wrap, the blue "
-          text run at (428,0) width 345: "rectanglues should always have their tops on the"
-          text run at (0,21) width 138: "same alignment as "
-          text run at (138,21) width 231: "other blue rectangles on the line."
-      RenderBlock {P} at (15,58) size 754x171 [color=#0000FF] [bgcolor=#FFFFFF] [border: (1px solid #C0C0C0)]
+layer at (0,0) size 800x256
+  RenderBlock {HTML} at (0,0) size 800x256
+    RenderBody {BODY} at (8,16) size 784x225
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 765x38
+          text run at (0,0) width 365: "Change your window size. However the lines wrap, the blue "
+          text run at (365,0) width 400: "rectanglues should always have their tops on the same alignment as"
+          text run at (0,19) width 193: "other blue rectangles on the line."
+      RenderBlock {P} at (15,54) size 754x171 [color=#0000FF] [bgcolor=#FFFFFF] [border: (1px solid #C0C0C0)]
         RenderInline {SPAN} at (0,0) size 45x15
           RenderText {#text} at (8,8) size 45x15
             text run at (8,8) width 45: "xxx"

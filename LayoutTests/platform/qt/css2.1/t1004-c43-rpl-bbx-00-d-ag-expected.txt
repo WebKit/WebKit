@@ -1,23 +1,23 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x327
-  RenderBlock {HTML} at (0,0) size 800x327
-    RenderBody {BODY} at (8,16) size 784x295
-      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 243x21
-          text run at (0,0) width 243: "There should be no red anywhere."
-      RenderBlock {P} at (0,37) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 368x21
-          text run at (0,0) width 368: "There should be two identical squares after this line:"
-      RenderBlock {DIV} at (16,74) size 752x35
+layer at (0,0) size 800x321
+  RenderBlock {HTML} at (0,0) size 800x321
+    RenderBody {BODY} at (8,16) size 784x289
+      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 206x19
+          text run at (0,0) width 206: "There should be no red anywhere."
+      RenderBlock {P} at (0,35) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 309x19
+          text run at (0,0) width 309: "There should be two identical squares after this line:"
+      RenderBlock {DIV} at (16,70) size 752x35
         RenderImage {IMG} at (0,0) size 15x15
         RenderBlock {SPAN} at (0,20) size 15x15 [color=#0000FF] [bgcolor=#FF0000]
           RenderText {#text} at (0,0) size 15x15
             text run at (0,0) width 15: "X"
-      RenderBlock {P} at (0,125) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 368x21
-          text run at (0,0) width 368: "There should be two identical squares after this line:"
-      RenderBlock {DIV} at (16,162) size 752x133
+      RenderBlock {P} at (0,121) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 309x19
+          text run at (0,0) width 309: "There should be two identical squares after this line:"
+      RenderBlock {DIV} at (16,156) size 752x133
         RenderImage {IMG} at (0,0) size 64x64
         RenderBlock {SPAN} at (0,69) size 64x64 [color=#0000FF] [bgcolor=#FF0000]
           RenderText {#text} at (0,0) size 64x65

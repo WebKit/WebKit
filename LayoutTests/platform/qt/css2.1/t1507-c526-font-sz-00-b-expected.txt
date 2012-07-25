@@ -1,60 +1,59 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x393
-  RenderBlock {HTML} at (0,0) size 800x393
-    RenderBody {BODY} at (8,10) size 784x373
-      RenderBlock {P} at (10,0) size 764x21 [color=#000080]
-        RenderText {#text} at (0,0) size 231x21
-          text run at (0,0) width 231: "This sentence should be normal."
-      RenderBlock {P} at (10,31) size 764x21 [color=#000080]
-        RenderText {#text} at (0,0) size 247x21
-          text run at (0,0) width 247: "This sentence should be the same."
-      RenderBlock {P} at (10,62) size 764x25 [color=#000080]
-        RenderText {#text} at (0,0) size 378x25
-          text run at (0,0) width 378: "This sentence should be larger than normal."
-      RenderBlock {P} at (10,97) size 764x17 [color=#000080]
-        RenderText {#text} at (0,0) size 264x17
-          text run at (0,0) width 264: "This sentence should be smaller than normal."
-      RenderBlock {P} at (10,124) size 764x21 [color=#000080]
-        RenderText {#text} at (0,7) size 154x12
-          text run at (0,7) width 154: "This sentence should be very small. "
-        RenderInline {SPAN} at (0,0) size 286x21
-          RenderText {#text} at (154,0) size 286x21
-            text run at (154,0) width 286: "This sentence should be back to normal."
+layer at (0,0) size 800x328
+  RenderBlock {HTML} at (0,0) size 800x328
+    RenderBody {BODY} at (8,10) size 784x308
+      RenderBlock {P} at (10,0) size 764x19 [color=#000080]
+        RenderText {#text} at (0,0) size 192x19
+          text run at (0,0) width 192: "This sentence should be normal."
+      RenderBlock {P} at (10,29) size 764x19 [color=#000080]
+        RenderText {#text} at (0,0) size 204x19
+          text run at (0,0) width 204: "This sentence should be the same."
+      RenderBlock {P} at (10,58) size 764x22 [color=#000080]
+        RenderText {#text} at (0,0) size 323x22
+          text run at (0,0) width 323: "This sentence should be larger than normal."
+      RenderBlock {P} at (10,90) size 764x15 [color=#000080]
+        RenderText {#text} at (0,0) size 240x15
+          text run at (0,0) width 240: "This sentence should be smaller than normal."
+      RenderBlock {P} at (10,115) size 764x19 [color=#000080]
+        RenderText {#text} at (0,6) size 137x11
+          text run at (0,6) width 137: "This sentence should be very small. "
+        RenderInline {SPAN} at (0,0) size 242x19
+          RenderText {#text} at (137,0) size 242x19
+            text run at (137,0) width 242: "This sentence should be back to normal."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (10,155) size 764x21 [color=#000080]
-        RenderText {#text} at (0,6) size 176x13
-          text run at (0,6) width 176: "This sentence should be rather small. "
-        RenderInline {SPAN} at (0,0) size 286x21
-          RenderText {#text} at (176,0) size 286x21
-            text run at (176,0) width 286: "This sentence should be back to normal."
+      RenderBlock {P} at (10,144) size 764x19 [color=#000080]
+        RenderText {#text} at (0,6) size 153x12
+          text run at (0,6) width 153: "This sentence should be rather small. "
+        RenderInline {SPAN} at (0,0) size 242x19
+          RenderText {#text} at (153,0) size 242x19
+            text run at (153,0) width 242: "This sentence should be back to normal."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (10,186) size 764x21 [color=#000080]
-        RenderText {#text} at (0,3) size 185x17
-          text run at (0,3) width 185: "This sentence should be small. "
-        RenderInline {SPAN} at (0,0) size 286x21
-          RenderText {#text} at (185,0) size 286x21
-            text run at (185,0) width 286: "This sentence should be back to normal."
+      RenderBlock {P} at (10,173) size 764x19 [color=#000080]
+        RenderText {#text} at (0,3) size 167x15
+          text run at (0,3) width 167: "This sentence should be small. "
+        RenderInline {SPAN} at (0,0) size 242x19
+          RenderText {#text} at (167,0) size 242x19
+            text run at (167,0) width 242: "This sentence should be back to normal."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (10,217) size 764x24 [color=#000080]
-        RenderText {#text} at (0,0) size 250x24
-          text run at (0,0) width 250: "This sentence should be large. "
-        RenderInline {SPAN} at (0,0) size 286x21
-          RenderText {#text} at (250,2) size 286x21
-            text run at (250,2) width 286: "This sentence should be back to normal."
+      RenderBlock {P} at (10,202) size 764x21 [color=#000080]
+        RenderText {#text} at (0,0) size 222x21
+          text run at (0,0) width 222: "This sentence should be large. "
+        RenderInline {SPAN} at (0,0) size 242x19
+          RenderText {#text} at (222,2) size 242x19
+            text run at (222,2) width 242: "This sentence should be back to normal."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (10,251) size 764x30 [color=#000080]
-        RenderText {#text} at (0,0) size 399x30
-          text run at (0,0) width 399: "This sentence should be rather large. "
-        RenderInline {SPAN} at (0,0) size 286x21
-          RenderText {#text} at (399,7) size 286x21
-            text run at (399,7) width 286: "This sentence should be back to normal."
+      RenderBlock {P} at (10,233) size 764x28 [color=#000080]
+        RenderText {#text} at (0,0) size 357x28
+          text run at (0,0) width 357: "This sentence should be rather large. "
+        RenderInline {SPAN} at (0,0) size 242x19
+          RenderText {#text} at (357,7) size 242x19
+            text run at (357,7) width 242: "This sentence should be back to normal."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (10,291) size 764x82 [color=#000080]
-        RenderText {#text} at (0,0) size 519x41
-          text run at (0,0) width 519: "This sentence should be very large. "
-        RenderInline {SPAN} at (0,0) size 748x62
-          RenderText {#text} at (519,15) size 748x62
-            text run at (519,15) width 229: "This sentence should be back to"
-            text run at (0,56) width 53: "normal."
+      RenderBlock {P} at (10,271) size 764x37 [color=#000080]
+        RenderText {#text} at (0,0) size 446x36
+          text run at (0,0) width 446: "This sentence should be very large. "
+        RenderInline {SPAN} at (0,0) size 242x19
+          RenderText {#text} at (446,14) size 242x19
+            text run at (446,14) width 242: "This sentence should be back to normal."
         RenderText {#text} at (0,0) size 0x0

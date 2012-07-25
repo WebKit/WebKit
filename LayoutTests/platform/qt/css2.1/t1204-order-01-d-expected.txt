@@ -1,69 +1,68 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x219
-  RenderBlock {HTML} at (0,0) size 800x219
-    RenderBody {BODY} at (8,16) size 784x195
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 777x42
-          text run at (0,0) width 460: "You should see nine boxes below, each just containing a unique "
-          text run at (460,0) width 317: "multiple of eleven, from 11 to 99, and nothing"
-          text run at (0,21) width 34: "else."
-      RenderBlock {UL} at (0,58) size 784x137
-        RenderBlock {LI} at (0,0) size 50x23 [border: (1px solid #000000)]
-          RenderInline (generated) at (0,0) size 9x21
-            RenderCounter at (1,1) size 9x21
-              text run at (1,1) width 9: "1"
-          RenderText {#text} at (10,1) size 9x21
-            text run at (10,1) width 9: "1"
-        RenderBlock (floating) {LI} at (0,23) size 50x23 [border: (1px solid #000000)]
-          RenderInline (generated) at (0,0) size 9x21
-            RenderCounter at (1,1) size 9x21
-              text run at (1,1) width 9: "2"
-          RenderText {#text} at (10,1) size 9x21
-            text run at (10,1) width 9: "2"
-        RenderBlock {LI} at (0,68) size 50x23 [border: (1px solid #000000)]
-          RenderInline (generated) at (0,0) size 9x21
-            RenderCounter at (1,1) size 9x21
-              text run at (1,1) width 9: "5"
-          RenderText {#text} at (10,1) size 9x21
-            text run at (10,1) width 9: "5"
-        RenderBlock {LI} at (0,91) size 50x23 [border: (1px solid #000000)]
-          RenderInline (generated) at (0,0) size 9x21
-            RenderCounter at (1,1) size 9x21
-              text run at (1,1) width 9: "7"
-          RenderText {#text} at (10,1) size 9x21
-            text run at (10,1) width 9: "7"
-        RenderBlock {LI} at (0,114) size 50x23 [border: (1px solid #000000)]
-          RenderInline (generated) at (0,0) size 9x21
-            RenderCounter at (1,1) size 9x21
-              text run at (1,1) width 9: "9"
-          RenderText {#text} at (10,1) size 9x21
-            text run at (10,1) width 9: "9"
-layer at (8,97) size 50x45
-  RenderBlock (relative positioned) {LI} at (0,23) size 50x45 [border: (1px solid #000000)]
-    RenderInline (generated) at (0,0) size 9x21
-      RenderCounter at (1,23) size 9x21
-        text run at (1,23) width 9: "3"
-    RenderText {#text} at (10,23) size 9x21
-      text run at (10,23) width 9: "3"
-layer at (136,142) size 50x23
-  RenderBlock (positioned) {DIV} at (128,0) size 50x23 [border: (1px solid #000000)]
-    RenderInline (generated) at (0,0) size 9x21
-      RenderCounter at (1,1) size 9x21
-        text run at (1,1) width 9: "4"
-    RenderText {#text} at (10,1) size 9x21
-      text run at (10,1) width 9: "4"
-layer at (192,80) size 50x23
-  RenderBlock (positioned) {LI} at (192,80) size 50x23 [border: (1px solid #000000)]
-    RenderInline (generated) at (0,0) size 9x21
-      RenderCounter at (1,1) size 9x21
-        text run at (1,1) width 9: "6"
-    RenderText {#text} at (10,1) size 9x21
-      text run at (10,1) width 9: "6"
-layer at (64,128) size 50x23
-  RenderBlock (positioned) {LI} at (64,128) size 50x23 [border: (1px solid #000000)]
-    RenderInline (generated) at (0,0) size 9x21
-      RenderCounter at (1,1) size 9x21
-        text run at (1,1) width 9: "8"
-    RenderText {#text} at (10,1) size 9x21
-      text run at (10,1) width 9: "8"
+layer at (0,0) size 800x184
+  RenderBlock {HTML} at (0,0) size 800x184
+    RenderBody {BODY} at (8,16) size 784x160
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 689x19
+          text run at (0,0) width 385: "You should see nine boxes below, each just containing a unique "
+          text run at (385,0) width 304: "multiple of eleven, from 11 to 99, and nothing else."
+      RenderBlock {UL} at (0,35) size 784x125
+        RenderBlock {LI} at (0,0) size 50x21 [border: (1px solid #000000)]
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (1,1) size 8x19
+              text run at (1,1) width 8: "1"
+          RenderText {#text} at (9,1) size 8x19
+            text run at (9,1) width 8: "1"
+        RenderBlock (floating) {LI} at (0,21) size 50x21 [border: (1px solid #000000)]
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (1,1) size 8x19
+              text run at (1,1) width 8: "2"
+          RenderText {#text} at (9,1) size 8x19
+            text run at (9,1) width 8: "2"
+        RenderBlock {LI} at (0,62) size 50x21 [border: (1px solid #000000)]
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (1,1) size 8x19
+              text run at (1,1) width 8: "5"
+          RenderText {#text} at (9,1) size 8x19
+            text run at (9,1) width 8: "5"
+        RenderBlock {LI} at (0,83) size 50x21 [border: (1px solid #000000)]
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (1,1) size 8x19
+              text run at (1,1) width 8: "7"
+          RenderText {#text} at (9,1) size 8x19
+            text run at (9,1) width 8: "7"
+        RenderBlock {LI} at (0,104) size 50x21 [border: (1px solid #000000)]
+          RenderInline (generated) at (0,0) size 8x19
+            RenderCounter at (1,1) size 8x19
+              text run at (1,1) width 8: "9"
+          RenderText {#text} at (9,1) size 8x19
+            text run at (9,1) width 8: "9"
+layer at (8,72) size 50x41
+  RenderBlock (relative positioned) {LI} at (0,21) size 50x41 [border: (1px solid #000000)]
+    RenderInline (generated) at (0,0) size 8x19
+      RenderCounter at (1,21) size 8x19
+        text run at (1,21) width 8: "3"
+    RenderText {#text} at (9,21) size 8x19
+      text run at (9,21) width 8: "3"
+layer at (136,113) size 50x21
+  RenderBlock (positioned) {DIV} at (128,0) size 50x21 [border: (1px solid #000000)]
+    RenderInline (generated) at (0,0) size 8x19
+      RenderCounter at (1,1) size 8x19
+        text run at (1,1) width 8: "4"
+    RenderText {#text} at (9,1) size 8x19
+      text run at (9,1) width 8: "4"
+layer at (192,80) size 50x21
+  RenderBlock (positioned) {LI} at (192,80) size 50x21 [border: (1px solid #000000)]
+    RenderInline (generated) at (0,0) size 8x19
+      RenderCounter at (1,1) size 8x19
+        text run at (1,1) width 8: "6"
+    RenderText {#text} at (9,1) size 8x19
+      text run at (9,1) width 8: "6"
+layer at (64,128) size 50x21
+  RenderBlock (positioned) {LI} at (64,128) size 50x21 [border: (1px solid #000000)]
+    RenderInline (generated) at (0,0) size 8x19
+      RenderCounter at (1,1) size 8x19
+        text run at (1,1) width 8: "8"
+    RenderText {#text} at (9,1) size 8x19
+      text run at (9,1) width 8: "8"
