@@ -132,6 +132,7 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_contextmenu.cpp
     efl/ewk/ewk_cookies.cpp
     efl/ewk/ewk_custom_handler.cpp
+    efl/ewk/ewk_file_chooser.cpp
     efl/ewk/ewk_frame.cpp
     efl/ewk/ewk_history.cpp
     efl/ewk/ewk_intent.cpp
@@ -274,6 +275,7 @@ SET(EWebKit_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_auth.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_contextmenu.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_cookies.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_file_chooser.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_frame.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_history.h
     ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_intent.h

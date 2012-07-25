@@ -32,6 +32,7 @@
 #include "ewk_auth.h"
 #include "ewk_contextmenu.h"
 #include "ewk_cookies.h"
+#include "ewk_file_chooser.h"
 #include "ewk_frame.h"
 #include "ewk_history.h"
 #include "ewk_intent.h"

@@ -1,3 +1,14 @@
+2012-07-25  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Add File Chooser API
+        https://bugs.webkit.org/show_bug.cgi?id=91957
+
+        Reviewed by Hajime Morita.
+
+        Add ewk_file_chooser source and header.
+
+        * PlatformEfl.cmake:
+
 2012-07-22  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_METER_TAG and ENABLE_PROGRESS_TAG to ENABLE_METER_ELEMENT and ENABLE_PROGRESS_ELEMENT respectively

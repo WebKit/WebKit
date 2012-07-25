@@ -1,3 +1,29 @@
+2012-07-25  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Add File Chooser API
+        https://bugs.webkit.org/show_bug.cgi?id=91957
+
+        Reviewed by Hajime Morita.
+
+        Add APIs for file chooser. These APIs allow an application(like a browser) queries informations
+        about multiple files allowed, directory upload allowed, accept mimetypes list,
+        accept file extentions list, selected files list and capture to support HTML media capture.
+
+        * ewk/EWebKit.h:
+        * ewk/ewk_file_chooser.cpp: Added.
+        (_Ewk_File_Chooser):
+        (ewk_file_chooser_allows_multiple_files_get):
+        (ewk_file_chooser_allows_directory_upload_get):
+        (ewk_file_chooser_accept_mimetypes_get):
+        (ewk_file_chooser_accept_file_extentions_get):
+        (ewk_file_chooser_selected_files_get):
+        (ewk_file_chooser_capture_get):
+        (ewk_file_chooser_new):
+        (ewk_file_chooser_free):
+        * ewk/ewk_file_chooser.h: Added.
+        * ewk/ewk_file_chooser_private.h: Added.
+        (WebCore):
+
 2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client
