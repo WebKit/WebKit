@@ -87,7 +87,7 @@ public:
         StringBuilder consumedCharacters;
         HTMLEntitySearch entitySearch;
         while (!source.isEmpty()) {
-            cc = *source;
+            cc = source.currentChar();
             entitySearch.advance(cc);
             if (!entitySearch.isEntityPrefix())
                 break;
@@ -114,13 +114,13 @@ public:
             const int length = entitySearch.mostRecentMatch()->length;
             const UChar* reference = entitySearch.mostRecentMatch()->entity;
             for (int i = 0; i < length; ++i) {
-                cc = *source;
+                cc = source.currentChar();
                 ASSERT_UNUSED(reference, cc == *reference++);
                 consumedCharacters.append(cc);
                 source.advanceAndASSERT(cc);
                 ASSERT(!source.isEmpty());
             }
-            cc = *source;
+            cc = source.currentChar();
         }
         if (entitySearch.mostRecentMatch()->lastCharacter() == ';'
             || !additionalAllowedCharacter

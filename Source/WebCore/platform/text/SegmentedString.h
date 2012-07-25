@@ -33,20 +33,32 @@ class SegmentedSubstring {
 public:
     SegmentedSubstring()
         : m_length(0)
-        , m_current(0)
         , m_doNotExcludeLineNumbers(true)
+        , m_is8Bit(false)
     {
+        m_data.string16Ptr = 0;
     }
 
     SegmentedSubstring(const String& str)
         : m_length(str.length())
-        , m_current(str.isEmpty() ? 0 : str.characters())
-        , m_string(str)
         , m_doNotExcludeLineNumbers(true)
+        , m_string(str)
     {
+        if (m_length) {
+            if (m_string.is8Bit()) {
+                m_is8Bit = true;
+                m_data.string8Ptr = m_string.characters8();
+            } else {
+                m_is8Bit = false;
+                m_data.string16Ptr = m_string.characters16();
+            }
+        } else
+            m_is8Bit = false;
     }
 
-    void clear() { m_length = 0; m_current = 0; }
+    void clear() { m_length = 0; m_data.string16Ptr = 0; m_is8Bit = false;}
+    
+    bool is8Bit() { return m_is8Bit; }
     
     bool excludeLineNumbers() const { return !m_doNotExcludeLineNumbers; }
     bool doNotExcludeLineNumbers() const { return m_doNotExcludeLineNumbers; }
@@ -57,19 +69,70 @@ public:
 
     void appendTo(StringBuilder& builder) const
     {
-        if (m_string.characters() == m_current)
-            builder.append(m_string);
-        else
-            builder.append(String(m_current, m_length));
+        int offset = m_string.length() - m_length;
+
+        if (!offset) {
+            if (m_length)
+                builder.append(m_string);
+        } else
+            builder.append(m_string.substring(offset, m_length));
+    }
+
+    UChar getCurrentChar8()
+    {
+        return *m_data.string8Ptr;
+    }
+
+    UChar getCurrentChar16()
+    {
+        return m_data.string16Ptr ? *m_data.string16Ptr : 0;
+    }
+
+    UChar incrementAndGetCurrentChar8()
+    {
+        ASSERT(m_data.string8Ptr);
+        return *++m_data.string8Ptr;
+    }
+
+    UChar incrementAndGetCurrentChar16()
+    {
+        ASSERT(m_data.string16Ptr);
+        return *++m_data.string16Ptr;
+    }
+
+    String currentSubString(unsigned length)
+    {
+        int offset = m_string.length() - m_length;
+        return m_string.substring(offset, length);
+    }
+
+    ALWAYS_INLINE UChar getCurrentChar()
+    {
+        ASSERT(m_length);
+        if (is8Bit())
+            return getCurrentChar8();
+        return getCurrentChar16();
+    }
+    
+    ALWAYS_INLINE UChar incrementAndGetCurrentChar()
+    {
+        ASSERT(m_length);
+        if (is8Bit())
+            return incrementAndGetCurrentChar8();
+        return incrementAndGetCurrentChar16();
     }
 
 public:
+    union {
+        const LChar* string8Ptr;
+        const UChar* string16Ptr;
+    } m_data;
     int m_length;
-    const UChar* m_current;
 
 private:
-    String m_string;
     bool m_doNotExcludeLineNumbers;
+    bool m_is8Bit;
+    String m_string;
 };
 
 class SegmentedString {
@@ -82,6 +145,9 @@ public:
         , m_numberOfCharactersConsumedPriorToCurrentLine(0)
         , m_currentLine(0)
         , m_closed(false)
+        , m_empty(true)
+        , m_advanceFunc(&SegmentedString::advanceEmpty)
+        , m_advanceAndUpdateLineNumberFunc(&SegmentedString::advanceEmpty)
     {
     }
 
@@ -89,12 +155,16 @@ public:
         : m_pushedChar1(0)
         , m_pushedChar2(0)
         , m_currentString(str)
-        , m_currentChar(m_currentString.m_current)
+        , m_currentChar(0)
         , m_numberOfCharactersConsumedPriorToCurrentString(0)
         , m_numberOfCharactersConsumedPriorToCurrentLine(0)
         , m_currentLine(0)
         , m_closed(false)
+        , m_empty(!str.length())
     {
+        if (m_currentString.m_length)
+            m_currentChar = m_currentString.getCurrentChar();
+        updateAdvanceFunctionPointers();
     }
 
     SegmentedString(const SegmentedString&);
@@ -114,14 +184,15 @@ public:
     {
         if (!m_pushedChar1) {
             m_pushedChar1 = c;
-            m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
+            m_currentChar = m_pushedChar1 ? m_pushedChar1 : m_currentString.getCurrentChar();
+            updateSlowCaseFunctionPointers();
         } else {
             ASSERT(!m_pushedChar2);
             m_pushedChar2 = c;
         }
     }
 
-    bool isEmpty() const { return !current(); }
+    bool isEmpty() const { return m_empty; }
     unsigned length() const;
 
     bool isClosed() const { return m_closed; }
@@ -132,66 +203,47 @@ public:
         NotEnoughCharacters,
     };
 
-    LookAheadResult lookAhead(const String& string) { return lookAheadInline<SegmentedString::equalsLiterally>(string); }
-    LookAheadResult lookAheadIgnoringCase(const String& string) { return lookAheadInline<SegmentedString::equalsIgnoringCase>(string); }
+    LookAheadResult lookAhead(const String& string) { return lookAheadInline(string, true); }
+    LookAheadResult lookAheadIgnoringCase(const String& string) { return lookAheadInline(string, false); }
 
-    void advance()
+    inline void advance()
     {
-        if (!m_pushedChar1 && m_currentString.m_length > 1) {
-            --m_currentString.m_length;
-            m_currentChar = ++m_currentString.m_current;
-            return;
-        }
-        advanceSlowCase();
+        (this->*m_advanceFunc)();
+    }
+
+    inline void advanceAndUpdateLineNumber()
+    {
+        (this->*m_advanceAndUpdateLineNumberFunc)();
     }
 
     void advanceAndASSERT(UChar expectedCharacter)
     {
-        ASSERT_UNUSED(expectedCharacter, *current() == expectedCharacter);
+        ASSERT_UNUSED(expectedCharacter, currentChar() == expectedCharacter);
         advance();
     }
 
     void advanceAndASSERTIgnoringCase(UChar expectedCharacter)
     {
-        ASSERT_UNUSED(expectedCharacter, WTF::Unicode::foldCase(*current()) == WTF::Unicode::foldCase(expectedCharacter));
+        ASSERT_UNUSED(expectedCharacter, WTF::Unicode::foldCase(currentChar()) == WTF::Unicode::foldCase(expectedCharacter));
+        advance();
+    }
+
+    void advancePastNonNewline()
+    {
+        ASSERT(currentChar() != '\n');
         advance();
     }
 
     void advancePastNewlineAndUpdateLineNumber()
     {
-        ASSERT(*current() == '\n');
+        ASSERT(currentChar() == '\n');
         if (!m_pushedChar1 && m_currentString.m_length > 1) {
             int newLineFlag = m_currentString.doNotExcludeLineNumbers();
             m_currentLine += newLineFlag;
             if (newLineFlag)
                 m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + 1;
-            --m_currentString.m_length;
-            m_currentChar = ++m_currentString.m_current;
-            return;
-        }
-        advanceAndUpdateLineNumberSlowCase();
-    }
-    
-    void advancePastNonNewline()
-    {
-        ASSERT(*current() != '\n');
-        if (!m_pushedChar1 && m_currentString.m_length > 1) {
-            --m_currentString.m_length;
-            m_currentChar = ++m_currentString.m_current;
-            return;
-        }
-        advanceSlowCase();
-    }
-    
-    void advanceAndUpdateLineNumber()
-    {
-        if (!m_pushedChar1 && m_currentString.m_length > 1) {
-            int newLineFlag = (*m_currentString.m_current == '\n') & m_currentString.doNotExcludeLineNumbers();
-            m_currentLine += newLineFlag;
-            if (newLineFlag)
-                m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + 1;
-            --m_currentString.m_length;
-            m_currentChar = ++m_currentString.m_current;
+            decrementAndCheckLength();
+            m_currentChar = m_currentString.incrementAndGetCurrentChar();
             return;
         }
         advanceAndUpdateLineNumberSlowCase();
@@ -216,9 +268,7 @@ public:
 
     String toString() const;
 
-    const UChar& operator*() const { return *current(); }
-    const UChar* operator->() const { return current(); }
-    
+    UChar currentChar() const { return m_currentChar; }    
 
     // The method is moderately slow, comparing to currentLine method.
     OrdinalNumber currentColumn() const;
@@ -231,27 +281,68 @@ private:
     void append(const SegmentedSubstring&);
     void prepend(const SegmentedSubstring&);
 
+    void advance8();
+    void advance16();
+    void advanceAndUpdateLineNumber8();
+    void advanceAndUpdateLineNumber16();
     void advanceSlowCase();
     void advanceAndUpdateLineNumberSlowCase();
+    void advanceEmpty();
     void advanceSubstring();
-    const UChar* current() const { return m_currentChar; }
+    
+    void updateSlowCaseFunctionPointers()
+    {
+        m_advanceFunc = &SegmentedString::advanceSlowCase;
+        m_advanceAndUpdateLineNumberFunc = &SegmentedString::advanceAndUpdateLineNumberSlowCase;
+    }
 
-    static bool equalsLiterally(const UChar* str1, const UChar* str2, size_t count) { return !memcmp(str1, str2, count * sizeof(UChar)); }
-    static bool equalsIgnoringCase(const UChar* str1, const UChar* str2, size_t count) { return !WTF::Unicode::umemcasecmp(str1, str2, count); }
+    void decrementAndCheckLength()
+    {
+        ASSERT(m_currentString.m_length > 1);
+        if (--m_currentString.m_length == 1)
+            updateSlowCaseFunctionPointers();
+    }
 
-    template<bool equals(const UChar* str1, const UChar* str2, size_t count)>
-    inline LookAheadResult lookAheadInline(const String& string)
+    void updateAdvanceFunctionPointers()
+    {
+        if ((m_currentString.m_length > 1) && !m_pushedChar1) {
+            if (m_currentString.is8Bit()) {
+                m_advanceFunc = &SegmentedString::advance8;
+                if (m_currentString.doNotExcludeLineNumbers())
+                    m_advanceAndUpdateLineNumberFunc = &SegmentedString::advanceAndUpdateLineNumber8;
+                else
+                    m_advanceAndUpdateLineNumberFunc = &SegmentedString::advance8;
+                return;
+            }
+
+            m_advanceFunc = &SegmentedString::advance16;
+            if (m_currentString.doNotExcludeLineNumbers())
+                m_advanceAndUpdateLineNumberFunc = &SegmentedString::advanceAndUpdateLineNumber16;
+            else
+                m_advanceAndUpdateLineNumberFunc = &SegmentedString::advance16;
+            return;
+        }
+
+        if (!m_currentString.m_length && !isComposite()) {
+            m_advanceFunc = &SegmentedString::advanceEmpty;
+            m_advanceAndUpdateLineNumberFunc = &SegmentedString::advanceEmpty;
+        }
+
+        updateSlowCaseFunctionPointers();
+    }
+
+    inline LookAheadResult lookAheadInline(const String& string, bool caseSensitive)
     {
         if (!m_pushedChar1 && string.length() <= static_cast<unsigned>(m_currentString.m_length)) {
-            if (equals(string.characters(), m_currentString.m_current, string.length()))
+            String currentSubstring = m_currentString.currentSubString(string.length());
+            if (currentSubstring.startsWith(string, caseSensitive))
                 return DidMatch;
             return DidNotMatch;
         }
-        return lookAheadSlowCase<equals>(string);
+        return lookAheadSlowCase(string, caseSensitive);
     }
-
-    template<bool equals(const UChar* str1, const UChar* str2, size_t count)>
-    LookAheadResult lookAheadSlowCase(const String& string)
+    
+    LookAheadResult lookAheadSlowCase(const String& string, bool caseSensitive)
     {
         unsigned count = string.length();
         if (count > length())
@@ -260,7 +351,7 @@ private:
         String consumedString = String::createUninitialized(count, consumedCharacters);
         advance(count, consumedCharacters);
         LookAheadResult result = DidNotMatch;
-        if (equals(string.characters(), consumedCharacters, count))
+        if (consumedString.startsWith(string, caseSensitive))
             result = DidMatch;
         prepend(SegmentedString(consumedString));
         return result;
@@ -271,12 +362,15 @@ private:
     UChar m_pushedChar1;
     UChar m_pushedChar2;
     SegmentedSubstring m_currentString;
-    const UChar* m_currentChar;
+    UChar m_currentChar;
     int m_numberOfCharactersConsumedPriorToCurrentString;
     int m_numberOfCharactersConsumedPriorToCurrentLine;
     int m_currentLine;
     Deque<SegmentedSubstring> m_substrings;
     bool m_closed;
+    bool m_empty;
+    void (SegmentedString::*m_advanceFunc)();
+    void (SegmentedString::*m_advanceAndUpdateLineNumberFunc)();
 };
 
 }

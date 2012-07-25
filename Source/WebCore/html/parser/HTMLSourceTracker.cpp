@@ -71,12 +71,12 @@ String HTMLSourceTracker::sourceForToken(const HTMLToken& token)
 
     size_t i = 0;
     for ( ; i < length && !m_previousSource.isEmpty(); ++i) {
-        source.append(*m_previousSource);
+        source.append(m_previousSource.currentChar());
         m_previousSource.advance();
     }
     for ( ; i < length; ++i) {
         ASSERT(!m_currentSource.isEmpty());
-        source.append(*m_currentSource);
+        source.append(m_currentSource.currentChar());
         m_currentSource.advance();
     }
 
