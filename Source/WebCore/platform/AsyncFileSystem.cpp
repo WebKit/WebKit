@@ -46,7 +46,14 @@ bool AsyncFileSystem::isAvailable()
     return false;
 }
 
+// FIXME: Add FileSystemType parameter.
 void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    notImplemented();
+    callbacks->didFail(NOT_SUPPORTED_ERR);
+}
+
+void AsyncFileSystem::deleteFileSystem(const String& basePath, const String& storageIdentifier, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     notImplemented();
     callbacks->didFail(NOT_SUPPORTED_ERR);

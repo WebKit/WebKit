@@ -77,9 +77,15 @@ String LocalFileSystem::fileSystemBasePath() const
     return m_basePath;
 }
 
+// FIXME: Add FileSystemType parameter.
 static void openFileSystem(ScriptExecutionContext*, const String& basePath, const String& identifier, bool create, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     AsyncFileSystem::openFileSystem(basePath, identifier, create, callbacks);
+}
+
+static void deleteFileSystem(ScriptExecutionContext*, const String& basePath, const String& identifier, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    AsyncFileSystem::deleteFileSystem(basePath, identifier, type, callbacks);
 }
 
 void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemSynchronousType)
@@ -90,8 +96,15 @@ void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, FileSystem
 
 void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, FileSystemType, long long, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemSynchronousType)
 {
+    // FIXME: Pass FileSystemType parameter.
     // AsyncFileSystem::openFileSystem calls callbacks synchronously, so the method needs to be called asynchronously.
     context->postTask(createCallbackTask(&openFileSystem, fileSystemBasePath(), context->securityOrigin()->databaseIdentifier(), true, callbacks));
+}
+
+void LocalFileSystem::deleteFileSystem(ScriptExecutionContext* context, FileSystemType type, PassRefPtr<ErrorCallback> callbacks)
+{
+    // AsyncFileSystem::deleteFileSystem calls callbacks synchronously, so the method needs to be called asynchronously.
+    context->postTask(createCallbackTask(&deleteFileSystem, filesystemBasePath(), context->securityOrigin()->databaseIdentifier(), type, callbacks);
 }
 
 } // namespace

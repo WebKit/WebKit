@@ -183,6 +183,11 @@ static void openFileSystemNotAllowed(ScriptExecutionContext*, PassOwnPtr<AsyncFi
     callbacks->didFail(WebKit::WebFileErrorAbort);
 }
 
+static void deleteFileSystemNotAllowed(ScriptExecutionContext*, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    callbacks->didFail(WebKit::WebFileErrorAbort);
+}
+
 static void openFileSystemHelper(ScriptExecutionContext* context, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemSynchronousType synchronousType, long long size, CreationFlag create)
 {
     bool allowed = true;
@@ -224,6 +229,22 @@ void LocalFileSystem::readFileSystem(ScriptExecutionContext* context, FileSystem
 void LocalFileSystem::requestFileSystem(ScriptExecutionContext* context, FileSystemType type, long long size, PassOwnPtr<AsyncFileSystemCallbacks> callbacks, FileSystemSynchronousType synchronousType)
 {
     openFileSystemHelper(context, type, callbacks, synchronousType, size, CreateIfNotPresent);
+}
+
+void LocalFileSystem::deleteFileSystem(ScriptExecutionContext* context, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    ASSERT(context);
+    ASSERT(context->isDocument());
+
+    Document* document = static_cast<Document*>(context);
+    WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
+    WebKit::WebViewImpl* webView = webFrame->viewImpl();
+    if (webView->permissionClient() && !webView->permissionClient()->allowFileSystem(webFrame)) {
+        context->postTask(createCallbackTask(&deleteFileSystemNotAllowed, callbacks));
+        return;
+    }
+
+    webFrame->client()->deleteFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), new WebFileSystemCallbacksImpl(callbacks));
 }
 
 } // namespace WebCore

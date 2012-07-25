@@ -1,3 +1,18 @@
+2012-07-25  Taiju Tsuiki  <tzik@chromium.org>
+
+        FileSystem should provide a way to delete filesystem.
+        https://bugs.webkit.org/show_bug.cgi?id=91861
+
+        Reviewed by Adam Barth.
+
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+        (WebKit::WebFrameClient::deleteFileSystem):
+        * src/LocalFileSystemChromium.cpp: Add deleteFileSystem
+        (WebCore::deleteFileSystemNotAllowed):
+        (WebCore):
+        (WebCore::LocalFileSystem::deleteFileSystem):
+
 2012-07-25  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] WebViewBenchmarkSupport::paint API does not work with recording canvas

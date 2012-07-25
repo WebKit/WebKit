@@ -346,6 +346,15 @@ public:
         WebFrame*, WebFileSystem::Type, long long size,
         bool create, WebFileSystemCallbacks*) { }
 
+    // Deletes FileSystem.
+    // WebFileSystemCallbacks::didSucceed() must be called when the operation
+    // is completed successfully. WebFileSystemCallbacks::didFail() must be
+    // called otherwise.
+    // All in-flight operations and following operations may fail after the
+    // FileSystem is deleted.
+    virtual void deleteFileSystem(
+        WebFrame*, WebFileSystem::Type, WebFileSystemCallbacks*) { }
+
     // Quota ---------------------------------------------------------
 
     // Queries the origin's storage usage and quota information.

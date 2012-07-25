@@ -40,11 +40,22 @@ PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create()
     return adoptPtr(new AsyncFileSystemBlackBerry());
 }
 
+// FIXME: Add FileSystemType parameter.
 void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     UNUSED_PARAM(basePath);
     UNUSED_PARAM(storageIdentifier);
     UNUSED_PARAM(callbacks);
+
+    notImplemented();
+    callbacks->didFail(NOT_SUPPORTED_ERR);
+}
+
+void AsyncFileSystem::deleteFileSystem(const String& basePath, const String& storageIdentifier, FileSystemType type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    UNUSED_PARAM(basePath);
+    UNUSED_PARAM(storageIdentifier);
+    UNUSED_PARAM(type);
 
     notImplemented();
     callbacks->didFail(NOT_SUPPORTED_ERR);

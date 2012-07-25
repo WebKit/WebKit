@@ -1,3 +1,30 @@
+2012-07-25  Taiju Tsuiki  <tzik@chromium.org>
+
+        FileSystem should provide a way to delete filesystem.
+        https://bugs.webkit.org/show_bug.cgi?id=91861
+
+        Reviewed by Adam Barth.
+
+        We will add a test when we wire-up the feature to Inspector.
+
+        * Modules/filesystem/LocalFileSystem.cpp: Add deleteFileSystem
+        (WebCore::deleteFileSystem):
+        (WebCore):
+        (WebCore::LocalFileSystem::deleteFileSystem):
+        * Modules/filesystem/LocalFileSystem.h:
+        (LocalFileSystem):
+        * platform/AsyncFileSystem.cpp: Add deleteFileSystem
+        (WebCore):
+        (WebCore::AsyncFileSystem::deleteFileSystem):
+        * platform/AsyncFileSystem.h:
+        (AsyncFileSystem):
+        * platform/blackberry/AsyncFileSystemBlackBerry.cpp: Add deleteFileSystem
+        (WebCore::AsyncFileSystem::deleteFileSystem):
+        (WebCore):
+        * platform/gtk/AsyncFileSystemGtk.cpp: Add deleteFileSystem
+        (WebCore::AsyncFileSystem::deleteFileSystem):
+        (WebCore):
+
 2012-07-25  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: Add more jsdocs to InjectedScriptSource.js
