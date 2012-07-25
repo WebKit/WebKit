@@ -86,7 +86,7 @@ const String& CachedScript::script()
     if (!m_script && m_data) {
         m_script = m_decoder->decode(m_data->data(), encodedSize());
         m_script += m_decoder->flush();
-        setDecodedSize(m_script.sizeInBytes());
+        setDecodedSize(m_script.length() * sizeof(UChar));
     }
     m_decodedDataDeletionTimer.startOneShot(0);
     

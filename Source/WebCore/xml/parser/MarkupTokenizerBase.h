@@ -66,7 +66,7 @@ protected:
         {
         }
 
-        ALWAYS_INLINE UChar nextInputCharacter() const { return m_nextInputCharacter; }
+        UChar nextInputCharacter() const { return m_nextInputCharacter; }
 
         // Returns whether we succeeded in peeking at the next character.
         // The only way we can fail to peek is if there are no more
@@ -74,7 +74,7 @@ protected:
         ALWAYS_INLINE bool peek(SegmentedString& source)
         {
         PeekAgain:
-            m_nextInputCharacter = source.currentChar();
+            m_nextInputCharacter = *source;
 
             // Every branch in this function is expensive, so we have a
             // fast-reject branch for characters that don't require special
@@ -91,7 +91,7 @@ protected:
                 source.advancePastNewlineAndUpdateLineNumber();
                 if (source.isEmpty())
                     return false;
-                m_nextInputCharacter = source.currentChar();
+                m_nextInputCharacter = *source;
             }
             if (m_nextInputCharacter == '\r') {
                 m_nextInputCharacter = '\n';
@@ -116,7 +116,7 @@ protected:
         }
 
         // Returns whether there are more characters in |source| after advancing.
-        ALWAYS_INLINE bool advance(SegmentedString& source)
+        bool advance(SegmentedString& source)
         {
             source.advanceAndUpdateLineNumber();
             if (source.isEmpty())

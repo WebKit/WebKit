@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-template <typename CharType>
-static String stripLeadingAndTrailingHTMLSpaces(String string, CharType characters, unsigned length)
+String stripLeadingAndTrailingHTMLSpaces(const String& string)
 {
-    unsigned numLeadingSpaces = 0;
-    unsigned numTrailingSpaces = 0;
+    const UChar* characters = string.characters();
+    unsigned length = string.length();
 
-    for (; numLeadingSpaces < length; ++numLeadingSpaces) {
+    unsigned numLeadingSpaces;
+    for (numLeadingSpaces = 0; numLeadingSpaces < length; ++numLeadingSpaces) {
         if (isNotHTMLSpace(characters[numLeadingSpaces]))
             break;
     }
@@ -48,30 +48,15 @@ static String stripLeadingAndTrailingHTMLSpaces(String string, CharType characte
     if (numLeadingSpaces == length)
         return string.isNull() ? string : emptyAtom.string();
 
-    for (; numTrailingSpaces < length; ++numTrailingSpaces) {
+    unsigned numTrailingSpaces;
+    for (numTrailingSpaces = 0; numTrailingSpaces < length; ++numTrailingSpaces) {
         if (isNotHTMLSpace(characters[length - numTrailingSpaces - 1]))
             break;
     }
 
     ASSERT(numLeadingSpaces + numTrailingSpaces < length);
 
-    if (!(numLeadingSpaces | numTrailingSpaces))
-        return string;
-
     return string.substring(numLeadingSpaces, length - (numLeadingSpaces + numTrailingSpaces));
-}
-
-String stripLeadingAndTrailingHTMLSpaces(const String& string)
-{
-    unsigned length = string.length();
-
-    if (!length)
-        return string.isNull() ? string : emptyAtom.string();
-
-    if (string.is8Bit())
-        return stripLeadingAndTrailingHTMLSpaces(string, string.characters8(), length);
-
-    return stripLeadingAndTrailingHTMLSpaces(string, string.characters(), length);
 }
 
 String serializeForNumberType(const Decimal& number)
