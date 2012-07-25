@@ -2200,7 +2200,7 @@ void HTMLMediaElement::setPlaybackRate(float rate)
 void HTMLMediaElement::updatePlaybackRate()
 {
     float effectiveRate = m_mediaController ? m_mediaController->playbackRate() : m_playbackRate;
-    if (m_player && potentiallyPlaying() && m_player->rate() != effectiveRate && !m_mediaController)
+    if (m_player && potentiallyPlaying() && m_player->rate() != effectiveRate)
         m_player->setRate(effectiveRate);
 }
 

@@ -1,0 +1,6 @@
+EVENT(canplay)
+EVENT(play)
+EVENT(timeupdate)
+EXPECTED (video.currentTime != '0') OK
+END OF TEST
+

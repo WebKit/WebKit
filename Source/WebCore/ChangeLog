@@ -1,3 +1,18 @@
+2012-07-24  Jer Noble  <jer.noble@apple.com>
+
+        setting playbackRate on a MediaController doesn't change the playbackRate for slaved media
+        https://bugs.webkit.org/show_bug.cgi?id=92035
+
+        Reviewed by Darin Adler.
+
+        Allow updatePlaybackRate() to change the MediaPlayer rate when the media element has a 
+        current media controller.
+
+        Test: media/media-controller-playbackrate.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlaybackRate):
+
 2012-07-24  Hayato Ito  <hayato@chromium.org>
 
         Rename FocusScope to FocusNavigationScope.
