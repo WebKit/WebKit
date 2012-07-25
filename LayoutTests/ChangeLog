@@ -1,3 +1,9 @@
+2012-07-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped: Skip 2 more tests because of minor 32/64 bit differences.
+
 2012-07-25  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] svg/dom, svg/filters, svg/foreignObject rebaseline after new test fonts.

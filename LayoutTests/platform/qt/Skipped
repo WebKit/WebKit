@@ -1444,6 +1444,8 @@ fast/repaint/moving-shadow-on-path.html
 svg/W3C-SVG-1.1/paths-data-03-f.svg
 svg/css/stars-with-shadow.html
 svg/custom/use-on-symbol-inside-pattern.svg
+svg/batik/text/longTextOnPath.svg
+svg/carto.net/tabgroup.svg
 
 # ============================================================================= #
 # Failing CSS Tests
