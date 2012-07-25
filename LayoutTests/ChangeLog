@@ -1,3 +1,23 @@
+2012-07-25  Zan Dobersek  <zandobersek@gmail.com>
+
+        fast/events/panScroll-click-hyperlink.html test should be put in platform/win
+        https://bugs.webkit.org/show_bug.cgi?id=92111
+
+        Reviewed by Daniel Bates.
+
+        Move the test into platform/win directory where other pan scrolling tests reside,
+        and remove other ports' baselines as they just indicated that pan scrolling is not
+        supported on those platforms. chromium-win and qt-win platforms still pass the test
+        but should cope with the default baseline just fine.
+
+        * platform/chromium-linux/fast/events/panScroll-click-hyperlink-expected.txt: Removed.
+        * platform/chromium-win/fast/events/panScroll-click-hyperlink-expected.txt: Removed.
+        * platform/efl/fast/events/panScroll-click-hyperlink-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/fast/events/panScroll-click-hyperlink-expected.txt: Removed.
+        * platform/qt/fast/events/panScroll-click-hyperlink-expected.txt: Removed.
+        * platform/win/fast/events/panScroll-click-hyperlink.html: Renamed from LayoutTests/fast/events/panScroll-click-hyperlink.html.
+
 2012-07-24  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] Copy fast/forms/number/number-spinbutton-change-and-input-events.html to fast/forms/js/resources

@@ -1143,7 +1143,6 @@ BUGWK84678 : fast/spatial-navigation/snav-iframe-no-scrollable-content.html = TE
 BUGWK84679 : css3/zoom-coords.xhtml = TEXT
 
 BUGWK84694 : fast/events/selectstart-by-double-triple-clicks.html = TEXT
-BUGWK84693 : fast/events/panScroll-click-hyperlink.html = MISSING
 BUGWK84692 : fast/events/attempt-scroll-with-no-scrollbars.html = TEXT
 
 BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = IMAGE
