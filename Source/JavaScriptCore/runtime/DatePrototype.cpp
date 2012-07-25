@@ -1135,7 +1135,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetYear(ExecState* exec)
         return JSValue::encode(jsNaN());
 
     // NOTE: IE returns the full year even in getYear.
-    return JSValue::encode(jsNumber(gregorianDateTime->year()));
+    return JSValue::encode(jsNumber(gregorianDateTime->year() - 1900));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)

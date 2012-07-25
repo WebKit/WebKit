@@ -1,3 +1,13 @@
+2012-07-25  Patrick Gansterer  <paroga@webkit.org>
+
+        REGRESSION(r123505): Date.getYear() returns the same as Date.getFullYear()
+        https://bugs.webkit.org/show_bug.cgi?id=92218
+
+        Reviewed by Csaba Osztrogonác.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncGetYear): Added the missing offset of 1900 to the return value.
+
 2012-07-24  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r123417): It made tests assert/crash on 32 bit
