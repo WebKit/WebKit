@@ -284,17 +284,12 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
     }
 
     // Copy off the image as |imageBuffer| may be deleted before restore is invoked.
-    if (!bitmap->pixelRef()) {
-        // The bitmap owns it's pixels. This happens when we've allocated the
-        // pixels in some way and assigned them directly to the bitmap (as
-        // happens when we allocate a DIB). In this case the assignment operator
-        // does not copy the pixels, rather the copied bitmap ends up
-        // referencing the same pixels. As the pixels may not live as long as we
-        // need it to, we copy the image.
-        bitmap->copyTo(&m_state->m_imageBufferClip, SkBitmap::kARGB_8888_Config);
-    } else {
-        // If there is a pixel ref, we can safely use the assignment operator.
+    if (bitmap->isImmutable())
         m_state->m_imageBufferClip = *bitmap;
+    else {
+        // We need to make a deep-copy of the pixels themselves, so they don't
+        // change on us between now and when we want to apply them in restore()
+        bitmap->copyTo(&m_state->m_imageBufferClip, SkBitmap::kARGB_8888_Config);
     }
 }
 

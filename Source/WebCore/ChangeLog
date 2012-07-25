@@ -1,3 +1,26 @@
+2012-07-25  Mike Reed  <reed@google.com>
+
+        fix test in beginLayerClippedToImage to check for immutability if we're going to do a shallow-copy
+        https://bugs.webkit.org/show_bug.cgi?id=92276
+
+        Reviewed by Stephen White.
+
+        PlatformContextSkia::beginLayerClippedToImage
+
+        This function wants to apply the provided ImageBuffer as a clip. Skia does not support this natively yet,
+        so the code makes a "copy" of that imageBuffer, to be applied later. The old code, wanting to avoid a
+        deep copy if possible, checked for the presence of a SkPixelRef. If it found one, it made a shallow copy.
+        This is flawed, since the contents of a pixelref are not guaranteed to be immutable. The new code checks
+        against this attribute: if the bitmap is "immutable" then we can make a shallow-copy, else we make a
+        deep copy.
+
+        No new tests. Existing svg layouttests work w/ or w/out this change, but at the next Skia deps roll, we see
+        failures w/o this change. The change is more "correct", though the problem case does not exhibit itself until
+        Skia rev. 4722 or later lands.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::beginLayerClippedToImage):
+
 2012-07-25  Li Yin  <li.yin@intel.com>
 
         It is invalid when both numberOfInputChannels and numberOfOutputChannels to be zero in JavaScriptAudioNode.
