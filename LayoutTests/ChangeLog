@@ -1,3 +1,9 @@
+2012-07-25  Balazs Ankes  <bank@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped:
+
 2012-07-25  Zan Dobersek  <zandobersek@gmail.com>
 
         fast/events/panScroll-click-hyperlink.html test should be put in platform/win
