@@ -146,14 +146,7 @@ bool CCLayerImpl::descendantDrawsContent()
 
 PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState(int id) const
 {
-    WebTransformationMatrix quadTransformation = drawTransform();
-    if (!contentBounds().isEmpty() && !bounds().isEmpty()) {
-        quadTransformation.scaleNonUniform(bounds().width() / static_cast<double>(contentBounds().width()),
-                                           bounds().height() / static_cast<double>(contentBounds().height()));
-        quadTransformation.translate(-contentBounds().width() / 2.0, -contentBounds().height() / 2.0);
-    }
-
-    return CCSharedQuadState::create(id, quadTransformation, m_visibleContentRect, m_scissorRect, m_drawOpacity, m_opaque);
+    return CCSharedQuadState::create(id, m_drawTransform, m_visibleContentRect, m_scissorRect, m_drawOpacity, m_opaque);
 }
 
 void CCLayerImpl::willDraw(CCResourceProvider*)
@@ -230,15 +223,6 @@ CCInputHandlerClient::ScrollStatus CCLayerImpl::tryScroll(const IntPoint& viewpo
     }
 
     return CCInputHandlerClient::ScrollStarted;
-}
-
-const IntRect CCLayerImpl::getDrawRect() const
-{
-    // Form the matrix used by the shader to map the corners of the layer's
-    // bounds into the view space.
-    FloatRect layerRect(-0.5 * bounds().width(), -0.5 * bounds().height(), bounds().width(), bounds().height());
-    IntRect mappedRect = enclosingIntRect(CCMathUtil::mapClippedRect(drawTransform(), layerRect));
-    return mappedRect;
 }
 
 void CCLayerImpl::writeIndent(TextStream& ts, int indent)

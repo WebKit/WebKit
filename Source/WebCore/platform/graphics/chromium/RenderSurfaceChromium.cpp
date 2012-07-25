@@ -54,12 +54,9 @@ RenderSurfaceChromium::~RenderSurfaceChromium()
 
 FloatRect RenderSurfaceChromium::drawableContentRect() const
 {
-    FloatRect localContentRect(-0.5 * m_contentRect.width(), -0.5 * m_contentRect.height(),
-                               m_contentRect.width(), m_contentRect.height());
-    FloatRect drawableContentRect = CCMathUtil::mapClippedRect(m_drawTransform, localContentRect);
-    if (m_owningLayer->replicaLayer())
-        drawableContentRect.unite(CCMathUtil::mapClippedRect(m_replicaDrawTransform, localContentRect));
-
+    FloatRect drawableContentRect = CCMathUtil::mapClippedRect(m_drawTransform, m_contentRect);
+    if (m_owningLayer->hasReplica())
+        drawableContentRect.unite(CCMathUtil::mapClippedRect(m_replicaDrawTransform, m_contentRect));
     return drawableContentRect;
 }
 

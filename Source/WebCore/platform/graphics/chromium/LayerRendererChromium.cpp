@@ -634,10 +634,11 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     if (!contentsTexture || !contentsTexture->id())
         return;
 
-    WebTransformationMatrix renderTransform = quad->drawTransform();
-    // Apply a scaling factor to size the quad from 1x1 to its intended size.
-    renderTransform.scale3d(quad->quadRect().width(), quad->quadRect().height(), 1);
-    WebTransformationMatrix contentsDeviceTransform = WebTransformationMatrix(windowMatrix() * projectionMatrix() * renderTransform).to2dTransform();
+    WebTransformationMatrix renderMatrix = quad->quadTransform();
+    renderMatrix.translate(0.5 * quad->quadRect().width() + quad->quadRect().x(), 0.5 * quad->quadRect().height() + quad->quadRect().y());
+    WebTransformationMatrix deviceMatrix = renderMatrix;
+    deviceMatrix.scaleNonUniform(quad->quadRect().width(), quad->quadRect().height());
+    WebTransformationMatrix contentsDeviceTransform = WebTransformationMatrix(windowMatrix() * projectionMatrix() * deviceMatrix).to2dTransform();
 
     // Can only draw surface if device matrix is invertible.
     if (!contentsDeviceTransform.isInvertible())
@@ -662,7 +663,7 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     if (backgroundTexture) {
         ASSERT(backgroundTexture->size() == quad->quadRect().size());
         CCScopedLockResourceForRead lock(m_resourceProvider, backgroundTexture->id());
-        copyTextureToFramebuffer(lock.textureId(), quad->quadRect().size(), quad->drawTransform());
+        copyTextureToFramebuffer(lock.textureId(), quad->quadRect().size(), renderMatrix);
     }
 
     bool clipped = false;
@@ -749,7 +750,7 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     FloatQuad surfaceQuad = CCMathUtil::mapQuad(contentsDeviceTransform.inverse(), deviceLayerEdges.floatQuad(), clipped);
     ASSERT(!clipped);
 
-    drawTexturedQuad(quad->drawTransform(), quad->quadRect().width(), quad->quadRect().height(), quad->opacity(), surfaceQuad,
+    drawTexturedQuad(renderMatrix, quad->quadRect().width(), quad->quadRect().height(), quad->opacity(), surfaceQuad,
                      shaderMatrixLocation, shaderAlphaLocation, shaderQuadLocation);
 }
 

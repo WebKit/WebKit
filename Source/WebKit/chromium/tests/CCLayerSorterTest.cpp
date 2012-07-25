@@ -89,9 +89,11 @@ TEST(CCLayerSorterTest, RightAngleOverlap)
     WebTransformationMatrix leftFaceMatrix;
     leftFaceMatrix.rotate3d(0, 1, 0, -90);
     leftFaceMatrix.translateRight3d(-1, 0, -5);
+    leftFaceMatrix.translate(-1, -1);
     CCLayerSorter::LayerShape leftFace(2, 2, perspectiveMatrix * leftFaceMatrix);
     WebTransformationMatrix frontFaceMatrix;
     frontFaceMatrix.translate3d(0, 0, -4);
+    frontFaceMatrix.translate(-1, -1);
     CCLayerSorter::LayerShape frontFace(2, 2, perspectiveMatrix * frontFaceMatrix);
 
     overlapResult = CCLayerSorter::checkOverlap(&frontFace, &leftFace, zThreshold, weight);
@@ -111,11 +113,13 @@ TEST(CCLayerSorterTest, IntersectingLayerOverlap)
     // values at the overlapping features but the weight returned should be zero.
     WebTransformationMatrix frontFaceMatrix;
     frontFaceMatrix.translate3d(0, 0, -4);
+    frontFaceMatrix.translate(-1, -1);
     CCLayerSorter::LayerShape frontFace(2, 2, perspectiveMatrix * frontFaceMatrix);
 
     WebTransformationMatrix throughMatrix;
     throughMatrix.rotate3d(0, 1, 0, 45);
     throughMatrix.translateRight3d(0, 0, -4);
+    throughMatrix.translate(-1, -1);
     CCLayerSorter::LayerShape rotatedFace(2, 2, perspectiveMatrix * throughMatrix);
     overlapResult = CCLayerSorter::checkOverlap(&frontFace, &rotatedFace, zThreshold, weight);
     EXPECT_NE(CCLayerSorter::None, overlapResult);
@@ -142,14 +146,17 @@ TEST(CCLayerSorterTest, LayersAtAngleOverlap)
 
     WebTransformationMatrix transformA;
     transformA.translate3d(-6, 0, 1);
+    transformA.translate(-4, -10);
     CCLayerSorter::LayerShape layerA(8, 20, transformA);
 
     WebTransformationMatrix transformB;
     transformB.translate3d(6, 0, -1);
+    transformB.translate(-4, -10);
     CCLayerSorter::LayerShape layerB(8, 20, transformB);
 
     WebTransformationMatrix transformC;
     transformC.rotate3d(0, 1, 0, 40);
+    transformC.translate(-4, -10);
     CCLayerSorter::LayerShape layerC(8, 20, transformC);
 
     overlapResult = CCLayerSorter::checkOverlap(&layerA, &layerC, zThreshold, weight);
@@ -176,6 +183,7 @@ TEST(CCLayerSorterTest, LayersUnderPathologicalPerspectiveTransform)
 
     WebTransformationMatrix transformA;
     transformA.translate3d(-15, 0, -2);
+    transformA.translate(-5, -5);
     CCLayerSorter::LayerShape layerA(10, 10, perspectiveMatrix * transformA);
 
     // With this sequence of transforms, when layer B is correctly clipped, it will be
@@ -185,6 +193,7 @@ TEST(CCLayerSorterTest, LayersUnderPathologicalPerspectiveTransform)
     WebTransformationMatrix transformB;
     transformB.translate3d(0, 0, 0.7);
     transformB.rotate3d(0, 45, 0);
+    transformB.translate(-5, -5);
     CCLayerSorter::LayerShape layerB(10, 10, perspectiveMatrix * transformB);
 
     // Sanity check that the test case actually covers the intended scenario, where part
@@ -226,22 +235,27 @@ TEST(CCLayerSorterTest, verifyExistingOrderingPreservedWhenNoZDiff)
     FrontMatrix.translate3d(0, 0, 1);
 
     layer1->setBounds(IntSize(10, 10));
+    layer1->setContentBounds(IntSize(10, 10));
     layer1->setDrawTransform(BehindMatrix);
     layer1->setDrawsContent(true);
 
     layer2->setBounds(IntSize(20, 20));
+    layer2->setContentBounds(IntSize(20, 20));
     layer2->setDrawTransform(BehindMatrix);
     layer2->setDrawsContent(true);
 
     layer3->setBounds(IntSize(30, 30));
+    layer3->setContentBounds(IntSize(30, 30));
     layer3->setDrawTransform(FrontMatrix);
     layer3->setDrawsContent(true);
 
     layer4->setBounds(IntSize(40, 40));
+    layer4->setContentBounds(IntSize(40, 40));
     layer4->setDrawTransform(FrontMatrix);
     layer4->setDrawsContent(true);
 
     layer5->setBounds(IntSize(50, 50));
+    layer5->setContentBounds(IntSize(50, 50));
     layer5->setDrawTransform(BehindMatrix);
     layer5->setDrawsContent(true);
 

@@ -1,3 +1,24 @@
+2012-07-25  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unify compositor quadTransform/drawTransform/originTransform
+        https://bugs.webkit.org/show_bug.cgi?id=91417
+
+        Reviewed by Kenneth Russell.
+
+        Clean up tests to refer to the new draw transform semantics.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::createTestTreeWithOneSurface):
+        (WebKitTests::createTestTreeWithTwoSurfaces):
+        (WebKitTests::TEST_F):
+        * tests/CCLayerSorterTest.cpp:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestDeviceScaleFactorScalesViewportAndLayers::commitCompleteOnCCThread):
+        * tests/CCQuadCullerTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-07-25  Kevin Ellis  <kevers@chromium.org>
 
         [chromium] Calendar picker popup displays at wrong scale when deviceScaleFactor != 1.

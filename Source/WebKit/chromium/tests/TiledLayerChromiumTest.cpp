@@ -149,7 +149,6 @@ TEST_F(TiledLayerChromiumTest, pushOccludedDirtyTiles)
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
-    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
     layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
     layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
@@ -383,7 +382,6 @@ TEST_F(TiledLayerChromiumTest, pushIdlePaintedOccludedTiles)
     occluded.setOcclusion(IntRect(0, 0, 100, 100));
 
     layer->setBounds(IntSize(100, 100));
-    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
     layer->setVisibleContentRect(IntRect(0, 0, 100, 100));
     layer->invalidateContentRect(IntRect(0, 0, 100, 100));
 
@@ -1062,10 +1060,9 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     // The tile size is 100x100.
 
     layer->setBounds(IntSize(600, 600));
-    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
-    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
 
     layer->setTexturePriorities(m_priorityCalculator);
@@ -1109,7 +1106,6 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
     // The tile size is 100x100.
 
     layer->setBounds(IntSize(600, 600));
-    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     // The partially occluded tiles (by the 150 occlusion height) are visible beyond the occlusion, so not culled.
     occluded.setOcclusion(IntRect(200, 200, 300, 150));
@@ -1166,7 +1162,6 @@ TEST_F(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
     // The tile size is 100x100.
 
     layer->setBounds(IntSize(600, 600));
-    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
     layer->setVisibleContentRect(IntRect(0, 0, 600, 600));
@@ -1209,10 +1204,10 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndTransforms)
     WebTransformationMatrix screenTransform;
     screenTransform.scale(0.5);
     layer->setScreenSpaceTransform(screenTransform);
-    layer->setDrawTransform(screenTransform * WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(screenTransform);
 
     occluded.setOcclusion(IntRect(100, 100, 150, 50));
-    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
     textureManager->prioritizeTextures();
@@ -1237,10 +1232,9 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     // pixels, which means none should be occluded.
     layer->setContentsScale(0.5);
     layer->setBounds(IntSize(600, 600));
-    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
-    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
     textureManager->prioritizeTextures();
@@ -1260,7 +1254,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     // a different layer space. In this case the occluded region catches the
     // blown up tiles.
     occluded.setOcclusion(IntRect(200, 200, 300, 200));
-    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
     textureManager->prioritizeTextures();
@@ -1277,10 +1271,10 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     WebTransformationMatrix screenTransform;
     screenTransform.scale(0.5);
     layer->setScreenSpaceTransform(screenTransform);
-    layer->setDrawTransform(screenTransform * WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setDrawTransform(screenTransform);
 
     occluded.setOcclusion(IntRect(100, 100, 150, 100));
-    layer->setVisibleContentRect(IntRect(IntPoint(), layer->bounds()));
+    layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
     textureManager->prioritizeTextures();
@@ -1308,7 +1302,6 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     IntRect visibleBounds = IntRect(0, 0, 100, 150);
 
     layer->setBounds(contentBounds.size());
-    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
     layer->setVisibleContentRect(visibleBounds);
     layer->setDrawOpacity(1);
 
@@ -1402,7 +1395,6 @@ TEST_F(TiledLayerChromiumTest, pixelsPaintedMetrics)
     IntRect visibleBounds = IntRect(0, 0, 100, 300);
 
     layer->setBounds(contentBounds.size());
-    layer->setDrawTransform(WebTransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
     layer->setVisibleContentRect(visibleBounds);
     layer->setDrawOpacity(1);
 

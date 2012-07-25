@@ -284,28 +284,6 @@ static inline WebTransformationMatrix contentToScreenSpaceTransform(const LayerT
     return transform;
 }
 
-template<typename LayerType>
-static inline WebTransformationMatrix contentToTargetSurfaceTransform(const LayerType* layer)
-{
-    ASSERT(layerTransformsToTargetKnown(layer));
-    IntSize boundsInLayerSpace = layer->bounds();
-    IntSize boundsInContentSpace = layer->contentBounds();
-
-    WebTransformationMatrix transform = layer->drawTransform();
-
-    if (boundsInContentSpace.isEmpty())
-        return transform;
-
-    // Scale from content space to layer space
-    transform.scaleNonUniform(boundsInLayerSpace.width() / static_cast<double>(boundsInContentSpace.width()),
-                              boundsInLayerSpace.height() / static_cast<double>(boundsInContentSpace.height()));
-
-    // The draw transform expects the origin to be in the middle of the layer.
-    transform.translate(-boundsInContentSpace.width() / 2.0, -boundsInContentSpace.height() / 2.0);
-
-    return transform;
-}
-
 // FIXME: Remove usePaintTracking when paint tracking is on for paint culling.
 template<typename LayerType>
 static inline void addOcclusionBehindLayer(Region& region, const LayerType* layer, const WebTransformationMatrix& transform, const Region& opaqueContents, const IntRect& scissorRect, const IntSize& minimumTrackingSize, Vector<IntRect>* occludingScreenSpaceRects)
@@ -351,7 +329,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
 
     IntRect scissorInTarget = layerScissorRectInTargetSurface(layer);
     if (layerTransformsToTargetKnown(layer))
-        addOcclusionBehindLayer<LayerType>(m_stack.last().occlusionInTarget, layer, contentToTargetSurfaceTransform<LayerType>(layer), opaqueContents, scissorInTarget, m_minimumTrackingSize, 0);
+        addOcclusionBehindLayer<LayerType>(m_stack.last().occlusionInTarget, layer, layer->drawTransform(), opaqueContents, scissorInTarget, m_minimumTrackingSize, 0);
 
     // We must clip the occlusion within the layer's scissorInTarget within screen space as well. If the scissor rect can't be moved to screen space and
     // remain rectilinear, then we don't add any occlusion in screen space.
@@ -390,7 +368,7 @@ bool CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::occluded(const LayerT
 
     ASSERT(layer->renderTarget() == m_stack.last().target);
 
-    if (layerTransformsToTargetKnown(layer) && testContentRectOccluded(contentRect, contentToTargetSurfaceTransform<LayerType>(layer), layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget))
+    if (layerTransformsToTargetKnown(layer) && testContentRectOccluded(contentRect, layer->drawTransform(), layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget))
         return true;
 
     if (layerTransformsToScreenKnown(layer) && testContentRectOccluded(contentRect, contentToScreenSpaceTransform<LayerType>(layer), m_scissorRectInScreenSpace, m_stack.last().occlusionInScreen)) {
@@ -444,7 +422,7 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContentR
 
     IntRect unoccludedInTarget = contentRect;
     if (layerTransformsToTargetKnown(layer))
-        unoccludedInTarget = computeUnoccludedContentRect(contentRect, contentToTargetSurfaceTransform<LayerType>(layer), layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget);
+        unoccludedInTarget = computeUnoccludedContentRect(contentRect, layer->drawTransform(), layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget);
 
     if (hasOcclusionFromOutsideTargetSurface)
         *hasOcclusionFromOutsideTargetSurface = (intersection(unoccludedInScreen, unoccludedInTarget) != unoccludedInTarget);

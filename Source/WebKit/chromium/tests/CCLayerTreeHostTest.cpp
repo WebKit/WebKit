@@ -1301,7 +1301,6 @@ public:
         // The root layer is scaled by 2x.
         WebTransformationMatrix rootScreenSpaceTransform = scaleTransform;
         WebTransformationMatrix rootDrawTransform = scaleTransform;
-        rootDrawTransform.translate(root->bounds().width() * 0.5, root->bounds().height() * 0.5);
 
         EXPECT_EQ(rootDrawTransform, root->drawTransform());
         EXPECT_EQ(rootScreenSpaceTransform, root->screenSpaceTransform());
@@ -1311,7 +1310,6 @@ public:
         childScreenSpaceTransform.translate(2, 2);
         WebTransformationMatrix childDrawTransform = scaleTransform;
         childDrawTransform.translate(2, 2);
-        childDrawTransform.translate(child->bounds().width() * 0.5, child->bounds().height() * 0.5);
 
         EXPECT_EQ(childDrawTransform, child->drawTransform());
         EXPECT_EQ(childScreenSpaceTransform, child->screenSpaceTransform());

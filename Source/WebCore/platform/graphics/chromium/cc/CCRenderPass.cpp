@@ -107,6 +107,7 @@ void CCRenderPass::appendQuadsToFillScreen(CCLayerImpl* rootLayer, SkColor scree
     // Manually create the quad state for the gutter quads, as the root layer
     // doesn't have any bounds and so can't generate this itself.
     OwnPtr<CCSharedQuadState> sharedQuadState = rootLayer->createSharedQuadState(m_sharedQuadStateList.size());
+    ASSERT(rootLayer->screenSpaceTransform().isInvertible());
     WebTransformationMatrix transformToLayerSpace = rootLayer->screenSpaceTransform().inverse();
     Vector<IntRect> fillRects = fillRegion.rects();
     for (size_t i = 0; i < fillRects.size(); ++i) {

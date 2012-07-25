@@ -58,17 +58,15 @@ private:
 
 typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
-static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const WebTransformationMatrix& originTransform, const IntRect& layerRect, float opacity, bool opaque, const IntRect& layerOpaqueRect, Vector<CCLayerImpl*>& surfaceLayerList)
+static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const WebTransformationMatrix& drawTransform, const IntRect& layerRect, float opacity, bool opaque, const IntRect& layerOpaqueRect, Vector<CCLayerImpl*>& surfaceLayerList)
 {
     OwnPtr<CCTiledLayerImpl> layer = CCTiledLayerImpl::create(1);
     OwnPtr<CCLayerTilingData> tiler = CCLayerTilingData::create(IntSize(100, 100), CCLayerTilingData::NoBorderTexels);
     tiler->setBounds(layerRect.size());
     layer->setTilingData(*tiler);
     layer->setSkipsDraw(false);
-    WebTransformationMatrix drawTransform = originTransform;
-    drawTransform.translate(0.5 * layerRect.width(), 0.5 * layerRect.height());
     layer->setDrawTransform(drawTransform);
-    layer->setScreenSpaceTransform(originTransform);
+    layer->setScreenSpaceTransform(drawTransform);
     layer->setVisibleContentRect(layerRect);
     layer->setDrawOpacity(opacity);
     layer->setOpaque(opaque);

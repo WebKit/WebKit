@@ -1,3 +1,46 @@
+2012-07-25  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unify compositor quadTransform/drawTransform/originTransform
+        https://bugs.webkit.org/show_bug.cgi?id=91417
+
+        Reviewed by Kenneth Russell.
+
+        drawTransform used to operate on centered layer rects. To unify quad
+        transforms, draw transforms, and origin transforms, make draw
+        transforms operate on content rects with the origin in the top left.
+
+        This essentially eliminates the need for surface origin transforms,
+        which will be eliminated in a future patch.
+
+        Also, remove the unused CCLayerImpl::getDrawRect function.
+
+        No-op refactoring. Tested by existing tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::drawableContentRect):
+        * platform/graphics/chromium/cc/CCDamageTracker.cpp:
+        (WebCore::CCDamageTracker::extendDamageForLayer):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::createSharedQuadState):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerSorter.cpp:
+        (WebCore::CCLayerSorter::LayerShape::LayerShape):
+        (WebCore::CCLayerSorter::createGraphNodes):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateVisibleContentRect):
+        (WebCore::calculateDrawTransformsInternal):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::markOccludedBehindLayer):
+        (WebCore::::occluded):
+        (WebCore::::unoccludedContentRect):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::appendQuadsToFillScreen):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::drawableContentRect):
+
 2012-07-25  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrack to match the specification

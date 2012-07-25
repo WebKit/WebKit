@@ -75,11 +75,9 @@ CCRenderSurface::~CCRenderSurface()
 
 FloatRect CCRenderSurface::drawableContentRect() const
 {
-    FloatRect localContentRect(-0.5 * m_contentRect.width(), -0.5 * m_contentRect.height(),
-                               m_contentRect.width(), m_contentRect.height());
-    FloatRect drawableContentRect = CCMathUtil::mapClippedRect(m_drawTransform, localContentRect);
+    FloatRect drawableContentRect = CCMathUtil::mapClippedRect(m_drawTransform, m_contentRect);
     if (m_owningLayer->hasReplica())
-        drawableContentRect.unite(CCMathUtil::mapClippedRect(m_replicaDrawTransform, localContentRect));
+        drawableContentRect.unite(CCMathUtil::mapClippedRect(m_replicaDrawTransform, m_contentRect));
 
     return drawableContentRect;
 }

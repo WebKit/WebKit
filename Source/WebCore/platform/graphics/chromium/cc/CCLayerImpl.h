@@ -230,9 +230,6 @@ public:
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool);
 
-    // Returns the rect containtaining this layer in the current view's coordinate system.
-    const IntRect getDrawRect() const;
-
     void setTransform(const WebKit::WebTransformationMatrix&);
     bool transformIsAnimating() const;
 

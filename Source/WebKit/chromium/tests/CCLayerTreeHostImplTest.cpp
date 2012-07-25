@@ -1038,12 +1038,12 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleDeltaAppliedToRootScrollLayerOnly)
     m_hostImpl->drawLayers(frame);
     m_hostImpl->didDrawAllLayers(frame);
 
-    WebTransformationMatrix pageScaleTransform;
-    pageScaleTransform.scale(newPageScale);
-    pageScaleTransform.translate(0.5 * surfaceSize.width(), 0.5 * surfaceSize.height());
-    EXPECT_EQ(root->drawTransform(), pageScaleTransform);
-    EXPECT_EQ(child->drawTransform(), pageScaleTransform);
-    EXPECT_EQ(grandChild->drawTransform(), pageScaleTransform);
+    EXPECT_EQ(root->drawTransform().m11(), newPageScale);
+    EXPECT_EQ(root->drawTransform().m22(), newPageScale);
+    EXPECT_EQ(child->drawTransform().m11(), newPageScale);
+    EXPECT_EQ(child->drawTransform().m22(), newPageScale);
+    EXPECT_EQ(grandChild->drawTransform().m11(), newPageScale);
+    EXPECT_EQ(grandChild->drawTransform().m22(), newPageScale);
 }
 
 TEST_F(CCLayerTreeHostImplTest, scrollChildAndChangePageScaleOnMainThread)
@@ -1635,9 +1635,11 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     child->setPosition(FloatPoint(12, 13));
     child->setAnchorPoint(FloatPoint(0, 0));
     child->setBounds(IntSize(14, 15));
+    child->setContentBounds(IntSize(14, 15));
     child->setDrawsContent(true);
     root->setAnchorPoint(FloatPoint(0, 0));
     root->setBounds(IntSize(500, 500));
+    root->setContentBounds(IntSize(500, 500));
     root->setDrawsContent(true);
     root->addChild(adoptPtr(child));
     layerTreeHostImpl->setRootLayer(adoptPtr(root));
@@ -1695,9 +1697,11 @@ TEST_F(CCLayerTreeHostImplTest, rootLayerDoesntCreateExtraSurface)
     CCLayerImpl* child = new FakeDrawableCCLayerImpl(2);
     child->setAnchorPoint(FloatPoint(0, 0));
     child->setBounds(IntSize(10, 10));
+    child->setContentBounds(IntSize(10, 10));
     child->setDrawsContent(true);
     root->setAnchorPoint(FloatPoint(0, 0));
     root->setBounds(IntSize(10, 10));
+    root->setContentBounds(IntSize(10, 10));
     root->setDrawsContent(true);
     root->setOpacity(0.7f);
     root->addChild(adoptPtr(child));
@@ -1709,6 +1713,7 @@ TEST_F(CCLayerTreeHostImplTest, rootLayerDoesntCreateExtraSurface)
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     EXPECT_EQ(1u, frame.renderSurfaceLayerList->size());
     EXPECT_EQ(1u, frame.renderPasses.size());
+    m_hostImpl->didDrawAllLayers(frame);
 }
 
 } // namespace

@@ -154,10 +154,7 @@ CCLayerSorter::ABCompareResult CCLayerSorter::checkOverlap(LayerShape* a, LayerS
 
 CCLayerSorter::LayerShape::LayerShape(float width, float height, const WebTransformationMatrix& drawTransform)
 {
-    FloatQuad layerQuad(FloatPoint(-width * 0.5, height * 0.5),
-                        FloatPoint(width * 0.5, height * 0.5),
-                        FloatPoint(width * 0.5, -height * 0.5),
-                        FloatPoint(-width * 0.5, -height * 0.5));
+    FloatQuad layerQuad(FloatRect(0, 0, width, height));
 
     // Compute the projection of the layer quad onto the z = 0 plane.
 
@@ -245,8 +242,8 @@ void CCLayerSorter::createGraphNodes(LayerList::iterator first, LayerList::itera
             layerHeight = renderSurface->contentRect().height();
         } else {
             drawTransform = node.layer->drawTransform();
-            layerWidth = node.layer->bounds().width();
-            layerHeight = node.layer->bounds().height();
+            layerWidth = node.layer->contentBounds().width();
+            layerHeight = node.layer->contentBounds().height();
         }
 
         node.shape = LayerShape(layerWidth, layerHeight, drawTransform);

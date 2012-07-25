@@ -184,23 +184,21 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     setLayerPropertiesForTesting(layer.get(), identityMatrix, arbitraryTranslation, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
     WebTransformationMatrix expectedDrawTransform = identityMatrix;
-    expectedDrawTransform.translate(50, 50);
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedDrawTransform, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
 
-    // Case 2: setting the bounds of the layer should result in a draw transform that translates to half the width and height.
-    //         The screen-space transform should remain as the identity, because it does not deal with transforming to/from the center of the layer.
+    // Case 2: Setting the bounds of the layer should not affect either the draw transform or the screenspace transform.
     WebTransformationMatrix translationToCenter;
     translationToCenter.translate(5, 6);
     setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
 
     // Case 3: The anchor point by itself (without a layer transform) should have no effect on the transforms.
     setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 0), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, layer->screenSpaceTransform());
 
     // Case 4: A change in actual position affects both the draw transform and screen space transform.
@@ -208,7 +206,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     positionTransform.translate(0, 1.2);
     setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 1.2), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(positionTransform * translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(positionTransform, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(positionTransform, layer->screenSpaceTransform());
 
     // Case 5: In the correct sequence of transforms, the layer transform should pre-multiply the translationToCenter. This is easily tested by
@@ -217,7 +215,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     layerTransform.scale3d(2, 2, 1);
     setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(layerTransform * translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(layerTransform, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(layerTransform, layer->screenSpaceTransform());
 
     // Case 6: The layer transform should occur with respect to the anchor point.
@@ -226,7 +224,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     WebTransformationMatrix expectedResult = translationToAnchor * layerTransform * translationToAnchor.inverse();
     setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5, 0), FloatPoint(0, 0), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult * translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->screenSpaceTransform());
 
     // Case 7: Verify that position pre-multiplies the layer transform.
@@ -235,7 +233,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleLayer)
     expectedResult = positionTransform * translationToAnchor * layerTransform * translationToAnchor.inverse();
     setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0.5, 0), FloatPoint(0, 1.2), IntSize(10, 12), false);
     executeCalculateDrawTransformsAndVisibility(layer.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult * translationToCenter, layer->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedResult, layer->screenSpaceTransform());
 }
 
@@ -250,16 +248,13 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     child->addChild(grandChild);
 
     // Case 1: parent's anchorPoint should not affect child or grandChild.
-    WebTransformationMatrix childTranslationToCenter, grandChildTranslationToCenter;
-    childTranslationToCenter.translate(8, 9);
-    grandChildTranslationToCenter.translate(38, 39);
     setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0.25, 0.25), FloatPoint(0, 0), IntSize(10, 12), false);
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->screenSpaceTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, grandChild->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, grandChild->screenSpaceTransform());
 
     // Case 2: parent's position affects child and grandChild.
@@ -269,9 +264,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform * childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform, child->screenSpaceTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform * grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform, grandChild->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentPositionTransform, grandChild->screenSpaceTransform());
 
     // Case 3: parent's local transform affects child and grandchild
@@ -284,9 +279,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, grandChild->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, grandChild->screenSpaceTransform());
 
     // Case 4: parent's sublayerMatrix affects child and grandchild
@@ -305,9 +300,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), false);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(flattenedCompositeTransform * grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(flattenedCompositeTransform, grandChild->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(flattenedCompositeTransform, grandChild->screenSpaceTransform());
 
     // Case 5: same as Case 4, except that child does preserve 3D, so the grandChild should receive the non-flattened composite transform.
@@ -316,9 +311,9 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSimpleHierarchy)
     setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(16, 18), true);
     setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(76, 78), false);
     executeCalculateDrawTransformsAndVisibility(parent.get());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * grandChildTranslationToCenter, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, grandChild->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, grandChild->screenSpaceTransform());
 }
 
@@ -346,11 +341,6 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
     WebTransformationMatrix parentCompositeTransform = parentTranslationToAnchor * parentLayerTransform * parentTranslationToAnchor.inverse()
             * parentTranslationToCenter * parentSublayerMatrix * parentTranslationToCenter.inverse();
 
-    WebTransformationMatrix childTranslationToCenter;
-    childTranslationToCenter.translate(8, 9);
-    WebTransformationMatrix grandChildTranslationToCenter;
-    grandChildTranslationToCenter.translate(4, 5);
-
     // Child's render surface should not exist yet.
     ASSERT_FALSE(child->renderSurface());
 
@@ -363,16 +353,15 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
     ASSERT_TRUE(child->renderSurface());
     ASSERT_EQ(child, child->renderTarget());
 
-    // The child layer's draw transform should refer to its new render surface; they only differ by a translation to center.
+    // The child layer's draw transform should refer to its new render surface.
     // The screen-space transform, however, should still refer to the root.
-    EXPECT_TRANSFORMATION_MATRIX_EQ(childTranslationToCenter, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->screenSpaceTransform());
 
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->renderTarget()->renderSurface()->originTransform());
 
     // Because the grandChild is the only drawable content, the child's renderSurface will tighten its bounds to the grandChild.
-    // Therefore, the draw transform will have a translation of half-width, half-height of the grandChild's bounds.
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform * grandChildTranslationToCenter, child->renderTarget()->renderSurface()->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->renderTarget()->renderSurface()->drawTransform());
 
     // The screen space is the same as the target since the child surface draws into the root.
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->renderTarget()->renderSurface()->screenSpaceTransform());
@@ -412,6 +401,7 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClip)
     root->setAnchorPoint(FloatPoint(0, 0));
     root->setPosition(FloatPoint(rootRect.x(), rootRect.y()));
     root->setBounds(IntSize(rootRect.width(), rootRect.height()));
+    root->setContentBounds(root->bounds());
     root->setDrawsContent(true);
     root->renderSurface()->setContentRect(IntRect(IntPoint(), IntSize(rootRect.width(), rootRect.height())));
 
@@ -419,11 +409,13 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClip)
     child->setPosition(FloatPoint(childRect.x(), childRect.y()));
     child->setOpacity(0.5);
     child->setBounds(IntSize(childRect.width(), childRect.height()));
+    child->setContentBounds(child->bounds());
     child->setDrawsContent(true);
 
     grandChild->setAnchorPoint(FloatPoint(0, 0));
     grandChild->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
     grandChild->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
+    grandChild->setContentBounds(grandChild->bounds());
     grandChild->setDrawsContent(true);
 
     CCLayerImpl* childPtr = child.get();
@@ -579,6 +571,7 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClipAndSpaceTransform)
     root->setAnchorPoint(FloatPoint(0, 0));
     root->setPosition(FloatPoint(rootRect.x(), rootRect.y()));
     root->setBounds(IntSize(rootRect.width(), rootRect.height()));
+    root->setContentBounds(root->bounds());
     root->setDrawsContent(true);
     root->renderSurface()->setContentRect(IntRect(IntPoint(), IntSize(rootRect.width(), rootRect.height())));
 
@@ -586,18 +579,21 @@ TEST(CCLayerTreeHostCommonTest, scissorRectWithClipAndSpaceTransform)
     child->setPosition(FloatPoint(childRect.x(), childRect.y()));
     child->setOpacity(0.5);
     child->setBounds(IntSize(childRect.width(), childRect.height()));
+    child->setContentBounds(child->bounds());
     child->setDrawsContent(true);
 
     grandChild->setAnchorPoint(FloatPoint(0, 0));
     grandChild->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
     grandChild->setOpacity(0.5);
     grandChild->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
+    grandChild->setContentBounds(grandChild->bounds());
     grandChild->setDrawsContent(true);
 
     grandChild2->setAnchorPoint(FloatPoint(0, 0));
     grandChild2->setPosition(IntPoint(grandChildRect.x(), grandChildRect.y()));
     grandChild2->setOpacity(0.5);
     grandChild2->setBounds(IntSize(grandChildRect.width(), grandChildRect.height()));
+    grandChild2->setContentBounds(grandChild2->bounds());
     grandChild2->setDrawsContent(true);
 
     CCLayerImpl* childPtr = child.get();
@@ -828,6 +824,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     WebTransformationMatrix A = translationToAnchor * layerTransform * translationToAnchor.inverse();
     WebTransformationMatrix B = translationToCenter * sublayerTransform * translationToCenter.inverse();
     WebTransformationMatrix R = A * translationToAnchor * replicaLayerTransform * translationToAnchor.inverse();
+    WebTransformationMatrix identityMatrix;
 
     setLayerPropertiesForTesting(parent.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
     setLayerPropertiesForTesting(renderSurface1.get(), layerTransform, sublayerTransform, FloatPoint(0.25, 0), FloatPoint(0, 0), IntSize(10, 10), false);
@@ -875,17 +872,17 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     //  note that draw transforms are described with respect to the nearest ancestor render surface
     //  but screen space transforms are described with respect to the root.
     //
-    EXPECT_TRANSFORMATION_MATRIX_EQ(A * translationToCenter, parent->drawTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * translationToCenter, childOfRoot->drawTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A * translationToCenter, grandChildOfRoot->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A, parent->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A, childOfRoot->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A, grandChildOfRoot->drawTransform());
 
-    EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, renderSurface1->drawTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * translationToCenter, childOfRS1->drawTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * B * A * translationToCenter, grandChildOfRS1->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, renderSurface1->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A, childOfRS1->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * B * A, grandChildOfRS1->drawTransform());
 
-    EXPECT_TRANSFORMATION_MATRIX_EQ(translationToCenter, renderSurface2->drawTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * translationToCenter, childOfRS2->drawTransform());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * B * A * translationToCenter, grandChildOfRS2->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, renderSurface2->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A, childOfRS2->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * A * B * A, grandChildOfRS2->drawTransform());
 
     // Verify layer screen-space transforms
     //
@@ -1042,10 +1039,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     child->setScrollDelta(IntSize(0, 0));
     executeCalculateDrawTransformsAndVisibility(root.get());
 
-    // The expected drawTransforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
     WebTransformationMatrix expectedChildTransform;
-    expectedChildTransform.translate(50, 50);
-
     WebTransformationMatrix expectedGrandChildTransform = expectedChildTransform;
 
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
@@ -1057,7 +1051,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 
     // Here the child is affected by scrollDelta, but the fixed position grandChild should not be affected.
     expectedChildTransform.makeIdentity();
-    expectedChildTransform.translate(40, 40);
+    expectedChildTransform.translate(-10, -10);
 
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
@@ -1091,10 +1085,8 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     child->setScrollDelta(IntSize(0, 0));
     executeCalculateDrawTransformsAndVisibility(root.get());
 
-    // The expected drawTransforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
     WebTransformationMatrix expectedChildTransform;
     expectedChildTransform.multiply(nonUniformScale);
-    expectedChildTransform.translate(50, 50);
 
     WebTransformationMatrix expectedGrandChildTransform = expectedChildTransform;
 
@@ -1109,7 +1101,6 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     expectedChildTransform.makeIdentity();
     expectedChildTransform.translate(-10, -20); // scrollDelta
     expectedChildTransform.multiply(nonUniformScale);
-    expectedChildTransform.translate(50, 50);
 
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
@@ -1135,10 +1126,8 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     executeCalculateDrawTransformsAndVisibility(root.get());
 
     WebTransformationMatrix expectedChildTransform;
-    expectedChildTransform.translate(50, 50);
-
     WebTransformationMatrix expectedGrandChildTransform;
-    expectedGrandChildTransform.translate(58, 56);
+    expectedGrandChildTransform.translate(8, 6);
 
     WebTransformationMatrix expectedGreatGrandChildTransform = expectedGrandChildTransform;
 
@@ -1152,9 +1141,9 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 
     // Here the child and grandChild are affected by scrollDelta, but the fixed position greatGrandChild should not be affected.
     expectedChildTransform.makeIdentity();
-    expectedChildTransform.translate(40, 40);
+    expectedChildTransform.translate(-10, -10);
     expectedGrandChildTransform.makeIdentity();
-    expectedGrandChildTransform.translate(48, 46);
+    expectedGrandChildTransform.translate(-2, -4);
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGreatGrandChildTransform, greatGrandChild->drawTransform());
@@ -1174,7 +1163,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 
     WebTransformationMatrix rotationAboutZ;
     rotationAboutZ.rotate3d(0, 0, 90);
-    
+
     child->setIsContainerForFixedPositionLayers(true);
     child->setTransform(rotationAboutZ);
     grandChild->setPosition(FloatPoint(8, 6));
@@ -1187,13 +1176,11 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 
     WebTransformationMatrix expectedChildTransform;
     expectedChildTransform.multiply(rotationAboutZ);
-    expectedChildTransform.translate(50, 50);
 
     WebTransformationMatrix expectedGrandChildTransform;
     expectedGrandChildTransform.multiply(rotationAboutZ); // child's local transform is inherited
     expectedGrandChildTransform.translate(8, 6); // translation because of position occurs before layer's local transform.
     expectedGrandChildTransform.multiply(rotationAboutZ); // grandChild's local transform
-    expectedGrandChildTransform.translate(50, 50); // translation because of half-width half-height occurs after layer's local transform
 
     WebTransformationMatrix expectedGreatGrandChildTransform = expectedGrandChildTransform;
 
@@ -1209,14 +1196,12 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     expectedChildTransform.makeIdentity();
     expectedChildTransform.translate(-10, -20); // scrollDelta
     expectedChildTransform.multiply(rotationAboutZ);
-    expectedChildTransform.translate(50, 50);
 
     expectedGrandChildTransform.makeIdentity();
     expectedGrandChildTransform.translate(-10, -20); // child's scrollDelta is inherited
     expectedGrandChildTransform.multiply(rotationAboutZ); // child's local transform is inherited
     expectedGrandChildTransform.translate(8, 6); // translation because of position occurs before layer's local transform.
     expectedGrandChildTransform.multiply(rotationAboutZ); // grandChild's local transform
-    expectedGrandChildTransform.translate(50, 50); // translation because of half-width half-height occurs after layer's local transform
 
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
@@ -1240,7 +1225,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 
     WebTransformationMatrix rotationAboutZ;
     rotationAboutZ.rotate3d(0, 0, 90);
-    
+
     child->setIsContainerForFixedPositionLayers(true);
     child->setTransform(rotationAboutZ);
     grandChild->setPosition(FloatPoint(8, 6));
@@ -1253,13 +1238,11 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 
     WebTransformationMatrix expectedChildTransform;
     expectedChildTransform.multiply(rotationAboutZ);
-    expectedChildTransform.translate(50, 50);
 
     WebTransformationMatrix expectedGrandChildTransform;
     expectedGrandChildTransform.multiply(rotationAboutZ); // child's local transform is inherited
     expectedGrandChildTransform.translate(8, 6); // translation because of position occurs before layer's local transform.
     expectedGrandChildTransform.multiply(rotationAboutZ); // grandChild's local transform
-    expectedGrandChildTransform.translate(50, 50); // translation because of half-width half-height occurs after layer's local transform
 
     WebTransformationMatrix expectedGreatGrandChildTransform = expectedGrandChildTransform;
 
@@ -1276,7 +1259,6 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     expectedChildTransform.makeIdentity();
     expectedChildTransform.translate(-10, 0); // scrollDelta
     expectedChildTransform.multiply(rotationAboutZ);
-    expectedChildTransform.translate(50, 50);
 
     expectedGrandChildTransform.makeIdentity();
     expectedGrandChildTransform.translate(-10, 0); // child's scrollDelta is inherited
@@ -1284,7 +1266,6 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     expectedGrandChildTransform.translate(-5, 0); // grandChild's scrollDelta
     expectedGrandChildTransform.translate(8, 6); // translation because of position occurs before layer's local transform.
     expectedGrandChildTransform.multiply(rotationAboutZ); // grandChild's local transform
-    expectedGrandChildTransform.translate(50, 50); // translation because of half-width half-height occurs after layer's local transform
 
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
@@ -1313,20 +1294,17 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     WebTransformationMatrix rotationAboutZ;
     rotationAboutZ.rotate3d(0, 0, 90);
     grandChild->setTransform(rotationAboutZ);
-    
+
     // Case 1: scrollDelta of 0, 0
     child->setScrollDelta(IntSize(0, 0));
     executeCalculateDrawTransformsAndVisibility(root.get());
-        
+
     WebTransformationMatrix expectedChildTransform;
-    expectedChildTransform.translate(50, 50);
     WebTransformationMatrix expectedSurfaceOriginTransform;
     expectedSurfaceOriginTransform.translate(8, 6);
     expectedSurfaceOriginTransform.multiply(rotationAboutZ);
     WebTransformationMatrix expectedGrandChildTransform;
-    expectedGrandChildTransform.translate(50, 50);
     WebTransformationMatrix expectedGreatGrandChildTransform;
-    expectedGreatGrandChildTransform.translate(50, 50);
     ASSERT_TRUE(grandChild->renderSurface());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedSurfaceOriginTransform, grandChild->renderSurface()->originTransform());
@@ -1336,7 +1314,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     // Case 2: scrollDelta of 10, 30
     child->setScrollDelta(IntSize(10, 30));
     executeCalculateDrawTransformsAndVisibility(root.get());
-        
+
     // Here the grandChild remains unchanged, because it scrolls along with the
     // renderSurface, and the translation is actually in the renderSurface. But, the fixed
     // position greatGrandChild is more awkward: its actually being drawn with respect to
@@ -1346,7 +1324,6 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     // transform explicitly contains the translation that cancels out the scroll.
     expectedChildTransform.makeIdentity();
     expectedChildTransform.translate(-10, -30); // scrollDelta
-    expectedChildTransform.translate(50, 50);
 
     expectedSurfaceOriginTransform.makeIdentity();
     expectedSurfaceOriginTransform.translate(-10, -30); // scrollDelta
@@ -1360,7 +1337,6 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     expectedGreatGrandChildTransform.multiply(rotationAboutZ.inverse());
     expectedGreatGrandChildTransform.translate(10, 30); // explicit canceling out the scrollDelta that gets embedded in the fixed position layer's surface.
     expectedGreatGrandChildTransform.multiply(rotationAboutZ);
-    expectedGreatGrandChildTransform.translate(50, 50);
 
     ASSERT_TRUE(grandChild->renderSurface());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
@@ -1416,24 +1392,20 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     executeCalculateDrawTransformsAndVisibility(root.get());
 
     WebTransformationMatrix expectedChildTransform;
-    expectedChildTransform.translate(50, 50);
 
     WebTransformationMatrix expectedGrandChildSurfaceOriginTransform;
     expectedGrandChildSurfaceOriginTransform.translate(8, 6);
     expectedGrandChildSurfaceOriginTransform.multiply(rotationAboutZ);
 
     WebTransformationMatrix expectedGrandChildTransform;
-    expectedGrandChildTransform.translate(50, 50);
 
     WebTransformationMatrix expectedGreatGrandChildSurfaceOriginTransform;
     expectedGreatGrandChildSurfaceOriginTransform.translate(40, 60);
     expectedGreatGrandChildSurfaceOriginTransform.multiply(rotationAboutZ);
 
     WebTransformationMatrix expectedGreatGrandChildTransform;
-    expectedGreatGrandChildTransform.translate(50, 50);
 
     WebTransformationMatrix expectedFixedPositionChildTransform;
-    expectedFixedPositionChildTransform.translate(50, 50);
 
     ASSERT_TRUE(grandChild->renderSurface());
     ASSERT_TRUE(greatGrandChild->renderSurface());
@@ -1450,7 +1422,6 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
 
     expectedChildTransform.makeIdentity();
     expectedChildTransform.translate(-10, -30); // scrollDelta
-    expectedChildTransform.translate(50, 50);
 
     expectedGrandChildSurfaceOriginTransform.makeIdentity();
     expectedGrandChildSurfaceOriginTransform.translate(-10, -30); // scrollDelta
@@ -1474,7 +1445,6 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     expectedFixedPositionChildTransform.multiply(compoundOriginTransform.inverse());
     expectedFixedPositionChildTransform.translate(10, 30); // explicit canceling out the scrollDelta that gets embedded in the fixed position layer's surface.
     expectedFixedPositionChildTransform.multiply(compoundOriginTransform);
-    expectedFixedPositionChildTransform.translate(50, 50);
 
     ASSERT_TRUE(grandChild->renderSurface());
     ASSERT_TRUE(greatGrandChild->renderSurface());
@@ -1507,13 +1477,10 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     child->setScrollDelta(IntSize(0, 0));
     executeCalculateDrawTransformsAndVisibility(root.get());
 
-    // The expected draw transforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
     WebTransformationMatrix expectedSurfaceOriginTransform;
     expectedSurfaceOriginTransform.translate(0, 0);
     WebTransformationMatrix expectedChildTransform;
-    expectedChildTransform.translate(50, 50);
     WebTransformationMatrix expectedGrandChildTransform;
-    expectedGrandChildTransform.translate(50, 50);
     ASSERT_TRUE(child->renderSurface());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedSurfaceOriginTransform, child->renderSurface()->originTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
@@ -1529,7 +1496,8 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerWit
     expectedSurfaceOriginTransform.makeIdentity();
     expectedSurfaceOriginTransform.translate(-10, -10);
     expectedGrandChildTransform.makeIdentity();
-    expectedGrandChildTransform.translate(60, 60);
+    expectedGrandChildTransform.translate(10, 10);
+
     ASSERT_TRUE(child->renderSurface());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedSurfaceOriginTransform, child->renderSurface()->originTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
@@ -1557,11 +1525,8 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerTha
     child->setScrollDelta(IntSize(0, 0));
     executeCalculateDrawTransformsAndVisibility(root.get());
 
-    // The expected draw transforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
     WebTransformationMatrix expectedChildTransform;
-    expectedChildTransform.translate(50, 50);
     WebTransformationMatrix expectedGrandChildTransform;
-    expectedGrandChildTransform.translate(50, 50);
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
 
@@ -1571,7 +1536,7 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerTha
 
     // Here the child is affected by scrollDelta, but the fixed position grandChild should not be affected.
     expectedChildTransform.makeIdentity();
-    expectedChildTransform.translate(40, 40);
+    expectedChildTransform.translate(-10, -10);
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
 }
@@ -1597,14 +1562,11 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerTha
     root->setScrollDelta(IntSize(0, 0));
     executeCalculateDrawTransformsAndVisibility(root.get());
 
-    // The expected draw transforms without any scroll should still include a translation to the center of the layer (i.e. translation by 50, 50).
     WebTransformationMatrix expectedChildTransform;
     expectedChildTransform.multiply(rotationByZ);
-    expectedChildTransform.translate(50, 50);
 
     WebTransformationMatrix expectedGrandChildTransform;
     expectedGrandChildTransform.multiply(rotationByZ);
-    expectedGrandChildTransform.translate(50, 50);
 
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
@@ -1617,7 +1579,6 @@ TEST(CCLayerTreeHostCommonTest, verifyScrollCompensationForFixedPositionLayerTha
     expectedChildTransform.makeIdentity();
     expectedChildTransform.translate(-10, -10); // the scrollDelta
     expectedChildTransform.multiply(rotationByZ);
-    expectedChildTransform.translate(50, 50);
 
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildTransform, grandChild->drawTransform());
@@ -3457,17 +3418,14 @@ TEST(CCLayerTreeHostCommonTest, verifyLayerTransformsInHighDPI)
     expectedParentScreenSpaceTransform.setM11(deviceScaleFactor);
     expectedParentScreenSpaceTransform.setM22(deviceScaleFactor);
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentScreenSpaceTransform, parent->screenSpaceTransform());
-
-    WebTransformationMatrix expectedParentDrawTransform = expectedParentScreenSpaceTransform;
-    expectedParentDrawTransform.translate(0.5 * parent->bounds().width(), 0.5 * parent->bounds().height());
+    WebTransformationMatrix expectedParentDrawTransform;
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentDrawTransform, parent->drawTransform());
 
     // Verify results of transformed parent rects
     IntRect parentBounds(IntPoint(), parent->bounds());
-    IntRect centeredParentBounds = parentBounds;
-    centeredParentBounds.move(-parentBounds.width() * 0.5, -parentBounds.height() * 0.5);
+    IntRect parentContentBounds(IntPoint(), parent->contentBounds());
 
-    FloatRect parentDrawRect = CCMathUtil::mapClippedRect(parent->drawTransform(), FloatRect(centeredParentBounds));
+    FloatRect parentDrawRect = CCMathUtil::mapClippedRect(parent->drawTransform(), FloatRect(parentContentBounds));
     FloatRect parentScreenSpaceRect = CCMathUtil::mapClippedRect(parent->screenSpaceTransform(), FloatRect(parentBounds));
 
     FloatRect expectedParentDrawRect(FloatPoint(), parent->bounds());
@@ -3482,16 +3440,15 @@ TEST(CCLayerTreeHostCommonTest, verifyLayerTransformsInHighDPI)
     expectedChildScreenSpaceTransform.translate(child->position().x(), child->position().y());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildScreenSpaceTransform, child->screenSpaceTransform());
 
-    WebTransformationMatrix expectedChildDrawTransform = expectedChildScreenSpaceTransform;
-    expectedChildDrawTransform.translate(0.5 * child->bounds().width(), 0.5 * child->bounds().height());
+    WebTransformationMatrix expectedChildDrawTransform;
+    expectedChildDrawTransform.translate(deviceScaleFactor * child->position().x(), deviceScaleFactor * child->position().y());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildDrawTransform, child->drawTransform());
 
     // Verify results of transformed child rects
     IntRect childBounds(IntPoint(), child->bounds());
-    IntRect centeredChildBounds = childBounds;
-    centeredChildBounds.move(-childBounds.width() * 0.5, -childBounds.height() * 0.5);
+    IntRect childContentBounds(IntPoint(), child->contentBounds());
 
-    FloatRect childDrawRect = CCMathUtil::mapClippedRect(child->drawTransform(), FloatRect(centeredChildBounds));
+    FloatRect childDrawRect = CCMathUtil::mapClippedRect(child->drawTransform(), FloatRect(childContentBounds));
     FloatRect childScreenSpaceRect = CCMathUtil::mapClippedRect(child->screenSpaceTransform(), FloatRect(childBounds));
 
     FloatRect expectedChildDrawRect(FloatPoint(), child->bounds());
@@ -3501,7 +3458,11 @@ TEST(CCLayerTreeHostCommonTest, verifyLayerTransformsInHighDPI)
     EXPECT_FLOAT_RECT_EQ(expectedChildDrawRect, childScreenSpaceRect);
 
     // Verify childNoScale transforms
-    EXPECT_TRANSFORMATION_MATRIX_EQ(child->drawTransform(), childNoScale->drawTransform());
+    WebTransformationMatrix expectedChildNoScaleTransform = child->drawTransform();
+    // drawTransform transforms on content rects. The child's content rect
+    // incorporates device scale, but the childNoScale does not; add it here.
+    expectedChildNoScaleTransform.scale(deviceScaleFactor);
+    EXPECT_TRANSFORMATION_MATRIX_EQ(childNoScale->drawTransform(), expectedChildNoScaleTransform);
     EXPECT_TRANSFORMATION_MATRIX_EQ(child->screenSpaceTransform(), childNoScale->screenSpaceTransform());
 }
 
@@ -3555,16 +3516,12 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTransformsInHighDPI)
     WebTransformationMatrix expectedParentScreenSpaceTransform;
     expectedParentScreenSpaceTransform.setM11(deviceScaleFactor);
     expectedParentScreenSpaceTransform.setM22(deviceScaleFactor);
-    WebTransformationMatrix expectedParentDrawTransform = expectedParentScreenSpaceTransform;
-    expectedParentDrawTransform.translate(0.5 * parent->bounds().width(), 0.5 * parent->bounds().height());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentDrawTransform, parent->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentScreenSpaceTransform, parent->screenSpaceTransform());
 
+    WebTransformationMatrix expectedParentDrawTransform;
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parent->drawTransform(), expectedParentDrawTransform);
+
     WebTransformationMatrix expectedDrawTransform;
-    expectedDrawTransform.setM11(deviceScaleFactor);
-    expectedDrawTransform.setM22(deviceScaleFactor);
-    expectedDrawTransform.setM41(0.5 * deviceScaleFactor * child->bounds().width());
-    expectedDrawTransform.setM42(0.5 * deviceScaleFactor * child->bounds().height());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedDrawTransform, child->drawTransform());
 
     WebTransformationMatrix expectedScreenSpaceTransform;
@@ -3573,13 +3530,14 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTransformsInHighDPI)
     expectedScreenSpaceTransform.translate(child->position().x(), child->position().y());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedScreenSpaceTransform, child->screenSpaceTransform());
 
+    WebTransformationMatrix expectedDuplicateChildDrawTransform = child->drawTransform();
     EXPECT_TRANSFORMATION_MATRIX_EQ(child->drawTransform(), duplicateChildNonOwner->drawTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(child->screenSpaceTransform(), duplicateChildNonOwner->screenSpaceTransform());
     EXPECT_INT_RECT_EQ(child->drawableContentRect(), duplicateChildNonOwner->drawableContentRect());
     EXPECT_EQ(child->contentBounds(), duplicateChildNonOwner->contentBounds());
 
     WebTransformationMatrix expectedRenderSurfaceDrawTransform;
-    expectedRenderSurfaceDrawTransform.translate(deviceScaleFactor * (child->position().x() + 0.5 * child->bounds().width()), deviceScaleFactor * (child->position().y() + 0.5 * child->bounds().height()));
+    expectedRenderSurfaceDrawTransform.translate(deviceScaleFactor * child->position().x(), deviceScaleFactor * child->position().y());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedRenderSurfaceDrawTransform, child->renderSurface()->drawTransform());
 
     WebTransformationMatrix expectedOriginTransform;
@@ -3592,8 +3550,8 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTransformsInHighDPI)
 
     WebTransformationMatrix expectedReplicaDrawTransform;
     expectedReplicaDrawTransform.setM22(-1);
-    expectedReplicaDrawTransform.setM41(13.5);
-    expectedReplicaDrawTransform.setM42(-1.5);
+    expectedReplicaDrawTransform.setM41(6);
+    expectedReplicaDrawTransform.setM42(6);
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedReplicaDrawTransform, child->renderSurface()->replicaDrawTransform());
 
     WebTransformationMatrix expectedReplicaOriginTransform = expectedReplicaDrawTransform;
