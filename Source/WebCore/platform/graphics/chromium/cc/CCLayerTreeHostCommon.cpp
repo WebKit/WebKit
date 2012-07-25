@@ -730,7 +730,6 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     if (layer->renderSurface() && layer != rootLayer) {
         RenderSurfaceType* renderSurface = layer->renderSurface();
         IntRect clippedContentRect = localDrawableContentRectOfSubtree;
-        FloatPoint surfaceCenter = FloatRect(clippedContentRect).center();
 
         // The render surface clipRect is expressed in the space where this surface draws, i.e. the same space as clipRectFromAncestor.
         if (ancestorClipsSubtree)
