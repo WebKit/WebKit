@@ -40,10 +40,15 @@ class ContainerNode;
 
 class HTMLStackItem : public RefCounted<HTMLStackItem> {
 public:
-    // DocumentFragment case.
-    static PassRefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node)
+    enum ItemType {
+        ItemForContextElement,
+        ItemForDocumentFragmentNode
+    };
+
+    // Used by document fragment node and context element.
+    static PassRefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node, ItemType type)
     {
-        return adoptRef(new HTMLStackItem(node));
+        return adoptRef(new HTMLStackItem(node, type));
     }
 
     // Used by HTMLElementStack and HTMLFormattingElementList.
@@ -66,14 +71,24 @@ public:
     bool hasTagName(const QualifiedName& name) const { return m_token->name() == name.localName() && m_namespaceURI == name.namespaceURI(); }
 
 private:
-    HTMLStackItem(PassRefPtr<ContainerNode> node)
+    HTMLStackItem(PassRefPtr<ContainerNode> node, ItemType type)
         : m_node(node)
-        , m_isDocumentFragmentNode(true)
     {
-        // Create a fake token for a document fragment node. This looks ugly but required for performance
-        // because we want to use m_token->name() in localName(), hasLocalName() and hasTagName() without
-        // checking m_isDocumentFragmentNode flag.
-        m_token = AtomicHTMLToken::create(HTMLTokenTypes::StartTag, nullAtom);
+        switch (type) {
+        case ItemForDocumentFragmentNode:
+            // Create a fake token for a document fragment node. This looks ugly but required for performance
+            // because we want to use m_token->name() in localName(), hasLocalName() and hasTagName() without
+            // checking m_isDocumentFragmentNode flag.
+            m_token = AtomicHTMLToken::create(HTMLTokenTypes::StartTag, nullAtom);
+            m_isDocumentFragmentNode = true;
+            break;
+        case ItemForContextElement:
+            // Create a fake token for a context element for the same reason as above.
+            m_token = AtomicHTMLToken::create(HTMLTokenTypes::StartTag, m_node->localName());
+            m_namespaceURI = m_node->namespaceURI();
+            m_isDocumentFragmentNode = false;
+            break;
+        }
     }
 
     HTMLStackItem(PassRefPtr<ContainerNode> node, PassRefPtr<AtomicHTMLToken> token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)

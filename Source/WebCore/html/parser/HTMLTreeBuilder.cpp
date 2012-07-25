@@ -381,7 +381,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
         // For efficiency, we skip step 4.2 ("Let root be a new html element with no attributes")
         // and instead use the DocumentFragment as a root node.
-        m_tree.openElements()->pushRootNode(HTMLStackItem::create(fragment));
+        m_tree.openElements()->pushRootNode(HTMLStackItem::create(fragment, HTMLStackItem::ItemForDocumentFragmentNode));
         resetInsertionModeAppropriately();
         m_tree.setForm(closestFormAncestor(contextElement));
     }
@@ -1632,41 +1632,41 @@ void HTMLTreeBuilder::resetInsertionModeAppropriately()
     bool last = false;
     HTMLElementStack::ElementRecord* nodeRecord = m_tree.openElements()->topRecord();
     while (1) {
-        ContainerNode* node = nodeRecord->node();
-        if (node == m_tree.openElements()->rootNode()) {
+        RefPtr<HTMLStackItem> item = nodeRecord->stackItem();
+        if (item->node() == m_tree.openElements()->rootNode()) {
             ASSERT(isParsingFragment());
             last = true;
-            node = m_fragmentContext.contextElement();
+            item = HTMLStackItem::create(m_fragmentContext.contextElement(), HTMLStackItem::ItemForContextElement);
         }
-        if (node->hasTagName(selectTag)) {
+        if (item->hasTagName(selectTag)) {
             ASSERT(isParsingFragment());
             return setInsertionMode(InSelectMode);
         }
-        if (node->hasTagName(tdTag) || node->hasTagName(thTag))
+        if (item->hasTagName(tdTag) || item->hasTagName(thTag))
             return setInsertionMode(InCellMode);
-        if (node->hasTagName(trTag))
+        if (item->hasTagName(trTag))
             return setInsertionMode(InRowMode);
-        if (node->hasTagName(tbodyTag) || node->hasTagName(theadTag) || node->hasTagName(tfootTag))
+        if (item->hasTagName(tbodyTag) || item->hasTagName(theadTag) || item->hasTagName(tfootTag))
             return setInsertionMode(InTableBodyMode);
-        if (node->hasTagName(captionTag))
+        if (item->hasTagName(captionTag))
             return setInsertionMode(InCaptionMode);
-        if (node->hasTagName(colgroupTag)) {
+        if (item->hasTagName(colgroupTag)) {
             ASSERT(isParsingFragment());
             return setInsertionMode(InColumnGroupMode);
         }
-        if (node->hasTagName(tableTag))
+        if (item->hasTagName(tableTag))
             return setInsertionMode(InTableMode);
-        if (node->hasTagName(headTag)) {
+        if (item->hasTagName(headTag)) {
             ASSERT(isParsingFragment());
             return setInsertionMode(InBodyMode);
         }
-        if (node->hasTagName(bodyTag))
+        if (item->hasTagName(bodyTag))
             return setInsertionMode(InBodyMode);
-        if (node->hasTagName(framesetTag)) {
+        if (item->hasTagName(framesetTag)) {
             ASSERT(isParsingFragment());
             return setInsertionMode(InFramesetMode);
         }
-        if (node->hasTagName(htmlTag)) {
+        if (item->hasTagName(htmlTag)) {
             ASSERT(isParsingFragment());
             return setInsertionMode(BeforeHeadMode);
         }

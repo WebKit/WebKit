@@ -1,3 +1,22 @@
+2012-07-25  Kwang Yul Seo  <skyul@company100.net>
+
+        Read tag names and attributes from the saved tokens in HTMLTreeBuilder::resetInsertionModeAppropriately.
+        https://bugs.webkit.org/show_bug.cgi?id=92240
+
+        Reviewed by Adam Barth.
+
+        This is a follow-up patch for r123577. Added ItemType enum to HTMLStackItem to handle
+        the context element case.
+
+        No new tests, covered by existing tests.
+
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::create):
+        (WebCore::HTMLStackItem::HTMLStackItem):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+
 2012-07-25  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Remove mac_bundle_resources section from WebCore.gyp
