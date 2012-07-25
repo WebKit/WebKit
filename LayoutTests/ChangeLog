@@ -1,5 +1,44 @@
 2012-07-25  Alexis Menard  <alexis.menard@openbossa.org>
 
+        [Qt] svg/dom, svg/filters, svg/foreignObject rebaseline after new test fonts.
+        https://bugs.webkit.org/show_bug.cgi?id=92243
+
+        Unreviewed gardening.
+
+        These tests have been skipped because monospace fonts weren't properly used by
+        layout tests. After r121971, the test results are normal again.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/svg/dom/SVGPathSegList-cloning-expected.png:
+        * platform/qt/svg/dom/SVGPathSegList-cloning-expected.txt:
+        * platform/qt/svg/dom/SVGPathSegList-segment-modification-expected.png:
+        * platform/qt/svg/dom/SVGPathSegList-segment-modification-expected.txt:
+        * platform/qt/svg/dom/SVGPathSegList-xml-dom-synchronization2-expected.png:
+        * platform/qt/svg/dom/SVGPathSegList-xml-dom-synchronization2-expected.txt:
+        * platform/qt/svg/filters/feColorMatrix-values-expected.txt:
+        * platform/qt/svg/filters/feComposite-expected.png: Added.
+        * platform/qt/svg/filters/feComposite-expected.txt:
+        * platform/qt/svg/filters/filter-on-filter-for-text-expected.png:
+        * platform/qt/svg/filters/filter-on-filter-for-text-expected.txt:
+        * platform/qt/svg/filters/filter-on-tspan-expected.png:
+        * platform/qt/svg/filters/filter-on-tspan-expected.txt:
+        * platform/qt/svg/filters/filter-width-update-expected.png:
+        * platform/qt/svg/filters/filter-width-update-expected.txt:
+        * platform/qt/svg/filters/sourceAlpha-expected.png: Added.
+        * platform/qt/svg/filters/sourceAlpha-expected.txt:
+        * platform/qt/svg/foreignObject/fO-parent-display-changes-expected.txt:
+        * platform/qt/svg/foreignObject/fO-parent-display-none-expected.txt:
+        * platform/qt/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/qt/svg/foreignObject/fO-parent-of-parent-display-none-expected.txt:
+        * platform/qt/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/qt/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.png:
+        * platform/qt/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt:
+        * platform/qt/svg/foreignObject/svg-document-as-direct-child-expected.txt:
+        * platform/qt/svg/foreignObject/svg-document-in-html-document-expected.png:
+        * platform/qt/svg/foreignObject/svg-document-in-html-document-expected.txt:
+
+2012-07-25  Alexis Menard  <alexis.menard@openbossa.org>
+
         [Qt] svg/hixie rebaseline after new test fonts.
         https://bugs.webkit.org/show_bug.cgi?id=92242
 
