@@ -1160,9 +1160,9 @@ public:
     int paintContentsCount() { return m_paintContentsCount; }
     void resetPaintContentsCount() { m_paintContentsCount = 0; }
 
-    virtual void update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion) OVERRIDE
+    virtual void update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion, CCRenderingStats& stats) OVERRIDE
     {
-        ContentLayerChromium::update(updater, occlusion);
+        ContentLayerChromium::update(updater, occlusion, stats);
         m_paintContentsCount++;
     }
 
@@ -1576,7 +1576,7 @@ class TestLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<TestLayerChromium> create() { return adoptRef(new TestLayerChromium()); }
 
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker* occlusion) OVERRIDE
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker* occlusion, CCRenderingStats&) OVERRIDE
     {
         // Gain access to internals of the CCOcclusionTracker.
         const TestCCOcclusionTracker* testOcclusion = static_cast<const TestCCOcclusionTracker*>(occlusion);

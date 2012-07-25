@@ -226,7 +226,7 @@ void ScrollbarLayerChromium::createTextureUpdaterIfNeeded()
         m_thumb = m_thumbUpdater->createTexture(layerTreeHost()->contentsTextureManager());
 }
 
-void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextureUpdater::Texture* texture, const IntRect& rect, CCTextureUpdater& updater)
+void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextureUpdater::Texture* texture, const IntRect& rect, CCTextureUpdater& updater, CCRenderingStats& stats)
 {
     // Skip painting and uploading if there are no invalidations and
     // we already have valid texture data.
@@ -242,8 +242,8 @@ void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextu
 
     // Paint and upload the entire part.
     IntRect paintedOpaqueRect;
-    painter->prepareToUpdate(rect, rect.size(), 1, 1, paintedOpaqueRect);
-    texture->prepareRect(rect);
+    painter->prepareToUpdate(rect, rect.size(), 1, 1, paintedOpaqueRect, stats);
+    texture->prepareRect(rect, stats);
 
     IntRect destRect(IntPoint(), rect.size());
     updater.appendFullUpdate(texture, rect, destRect);
@@ -273,7 +273,7 @@ void ScrollbarLayerChromium::setTexturePriorities(const CCPriorityCalculator&)
     }
 }
 
-void ScrollbarLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*)
+void ScrollbarLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*, CCRenderingStats& stats)
 {
     if (contentBounds().isEmpty())
         return;
@@ -282,14 +282,14 @@ void ScrollbarLayerChromium::update(CCTextureUpdater& updater, const CCOcclusion
 
     IntPoint scrollbarOrigin(m_scrollbar->x(), m_scrollbar->y());
     IntRect contentRect(scrollbarOrigin, contentBounds());
-    updatePart(m_backTrackUpdater.get(), m_backTrack.get(), contentRect, updater);
+    updatePart(m_backTrackUpdater.get(), m_backTrack.get(), contentRect, updater, stats);
     if (m_foreTrack && m_foreTrackUpdater)
-        updatePart(m_foreTrackUpdater.get(), m_foreTrack.get(), contentRect, updater);
+        updatePart(m_foreTrackUpdater.get(), m_foreTrack.get(), contentRect, updater, stats);
 
     // Consider the thumb to be at the origin when painting.
     IntRect thumbRect = IntRect(IntPoint(), theme()->thumbRect(m_scrollbar.get()).size());
     if (!thumbRect.isEmpty())
-        updatePart(m_thumbUpdater.get(), m_thumb.get(), thumbRect, updater);
+        updatePart(m_thumbUpdater.get(), m_thumb.get(), thumbRect, updater, stats);
 }
 
 }

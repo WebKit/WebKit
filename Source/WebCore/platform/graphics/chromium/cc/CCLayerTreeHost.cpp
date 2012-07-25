@@ -38,7 +38,6 @@
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCOcclusionTracker.h"
 #include "cc/CCOverdrawMetrics.h"
-#include "cc/CCRenderingStats.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThreadProxy.h"
@@ -72,8 +71,8 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCLayerTre
     , m_animating(false)
     , m_needsAnimateLayers(false)
     , m_client(client)
-    , m_animationFrameNumber(0)
     , m_commitNumber(0)
+    , m_renderingStats()
     , m_layerRendererInitialized(false)
     , m_contextLost(false)
     , m_numTimesRecreateShouldFail(0)
@@ -217,7 +216,7 @@ void CCLayerTreeHost::updateAnimations(double monotonicFrameBeginTime)
     animateLayers(monotonicFrameBeginTime);
     m_animating = false;
 
-    m_animationFrameNumber++;
+    m_renderingStats.numAnimationFrames++;
 }
 
 void CCLayerTreeHost::layout()
@@ -303,8 +302,8 @@ void CCLayerTreeHost::finishAllRendering()
 
 void CCLayerTreeHost::renderingStats(CCRenderingStats& stats) const
 {
+    stats = m_renderingStats;
     m_proxy->implSideRenderingStats(stats);
-    stats.numAnimationFrames = animationFrameNumber();
 }
 
 const LayerRendererCapabilities& CCLayerTreeHost::layerRendererCapabilities() const
@@ -572,13 +571,13 @@ bool CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLay
     bool needMoreUpdates = false;
     LayerChromium* maskLayer = renderSurfaceLayer->maskLayer();
     if (maskLayer) {
-        maskLayer->update(updater, 0);
+        maskLayer->update(updater, 0, m_renderingStats);
         needMoreUpdates |= maskLayer->needMoreUpdates();
     }
 
     LayerChromium* replicaMaskLayer = renderSurfaceLayer->replicaLayer() ? renderSurfaceLayer->replicaLayer()->maskLayer() : 0;
     if (replicaMaskLayer) {
-        replicaMaskLayer->update(updater, 0);
+        replicaMaskLayer->update(updater, 0, m_renderingStats);
         needMoreUpdates |= replicaMaskLayer->needMoreUpdates();
     }
     return needMoreUpdates;
@@ -605,7 +604,7 @@ bool CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
             needMoreUpdates |= paintMasksForRenderSurface(*it, updater);
         } else if (it.representsItself()) {
             ASSERT(!it->bounds().isEmpty());
-            it->update(updater, &occlusionTracker);
+            it->update(updater, &occlusionTracker, m_renderingStats);
             needMoreUpdates |= it->needMoreUpdates();
         }
 

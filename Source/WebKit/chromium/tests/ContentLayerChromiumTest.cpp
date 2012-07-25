@@ -30,6 +30,7 @@
 #include "CCLayerTreeTestCommon.h"
 #include "GraphicsContext.h"
 #include "OpaqueRectTrackingContentLayerDelegate.h"
+#include "cc/CCRenderingStats.h"
 #include "skia/ext/platform_canvas.h"
 
 #include <gtest/gtest.h>
@@ -102,7 +103,8 @@ TEST(ContentLayerChromiumTest, ContentLayerPainterWithDeviceScale)
     RefPtr<BitmapCanvasLayerTextureUpdater> updater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(&delegate));
 
     IntRect resultingOpaqueRect;
-    updater->prepareToUpdate(contentRect, IntSize(256, 256), contentsScale, contentsScale, resultingOpaqueRect);
+    CCRenderingStats stats;
+    updater->prepareToUpdate(contentRect, IntSize(256, 256), contentsScale, contentsScale, resultingOpaqueRect, stats);
 
     EXPECT_INT_RECT_EQ(opaqueRectInContentSpace, resultingOpaqueRect);
 }

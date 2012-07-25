@@ -37,6 +37,8 @@
 #include "SkRect.h"
 #include "SkiaUtils.h"
 #include "TraceEvent.h"
+#include "cc/CCRenderingStats.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -49,7 +51,7 @@ CanvasLayerTextureUpdater::~CanvasLayerTextureUpdater()
 {
 }
 
-void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& contentRect, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect)
+void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& contentRect, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect, CCRenderingStats& stats)
 {
     TRACE_EVENT0("cc", "CanvasLayerTextureUpdater::paintContents");
     canvas->save();
@@ -72,7 +74,9 @@ void CanvasLayerTextureUpdater::paintContents(SkCanvas* canvas, const IntRect& c
     canvas->clipRect(layerRect);
 
     FloatRect opaqueLayerRect;
+    double paintBeginTime = monotonicallyIncreasingTime();
     m_painter->paint(canvas, layerRect, opaqueLayerRect);
+    stats.totalPaintTimeInSeconds += monotonicallyIncreasingTime() - paintBeginTime;
     canvas->restore();
 
     FloatRect opaqueContentRect = opaqueLayerRect;

@@ -45,7 +45,7 @@ public:
 
     // LayerChromium interface
     virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
     virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
@@ -59,7 +59,7 @@ protected:
 
 private:
     ScrollbarThemeComposite* theme() const;
-    void updatePart(LayerTextureUpdater*, LayerTextureUpdater::Texture*, const IntRect&, CCTextureUpdater&);
+    void updatePart(LayerTextureUpdater*, LayerTextureUpdater::Texture*, const IntRect&, CCTextureUpdater&, CCRenderingStats&);
     void createTextureUpdaterIfNeeded();
 
     RefPtr<Scrollbar> m_scrollbar;

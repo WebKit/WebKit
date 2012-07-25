@@ -41,7 +41,7 @@ public:
     public:
         Texture(BitmapSkPictureCanvasLayerTextureUpdater*, PassOwnPtr<CCPrioritizedTexture>);
 
-        virtual void prepareRect(const IntRect& sourceRect) OVERRIDE;
+        virtual void prepareRect(const IntRect& sourceRect, CCRenderingStats&) OVERRIDE;
         virtual void updateRect(CCResourceProvider*, const IntRect& sourceRect, const IntRect& destRect) OVERRIDE;
 
     private:
@@ -56,7 +56,7 @@ public:
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE;
-    void paintContentsRect(SkCanvas*, const IntRect& sourceRect);
+    void paintContentsRect(SkCanvas*, const IntRect& sourceRect, CCRenderingStats&);
 
 private:
     explicit BitmapSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);

@@ -1,3 +1,67 @@
+2012-07-24  Dave Tu  <dtu@chromium.org>
+
+        [chromium] Add time spent painting to GPU benchmarking renderingStats() API.
+        https://bugs.webkit.org/show_bug.cgi?id=90019
+
+        Reviewed by Adrienne Walker.
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        (BitmapCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        (WebCore::BitmapSkPictureCanvasLayerTextureUpdater::paintContentsRect):
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        (Texture):
+        (BitmapSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.cpp:
+        (WebCore::CanvasLayerTextureUpdater::paintContents):
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.h:
+        (CanvasLayerTextureUpdater):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::update):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (ContentLayerChromium):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::update):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (ImageLayerChromium):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore):
+        (WebCore::LayerChromium::update):
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore):
+        (WebCore::LayerTextureUpdater::Texture::prepareRect):
+        (WebCore::LayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::updatePart):
+        (WebCore::ScrollbarLayerChromium::update):
+        * platform/graphics/chromium/ScrollbarLayerChromium.h:
+        (ScrollbarLayerChromium):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::SkPictureCanvasLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/SkPictureCanvasLayerTextureUpdater.h:
+        (SkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateTiles):
+        (WebCore::TiledLayerChromium::updateContentRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::updateAnimations):
+        (WebCore::CCLayerTreeHost::renderingStats):
+        (WebCore::CCLayerTreeHost::paintMasksForRenderSurface):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCRenderingStats.h:
+        (CCRenderingStats):
+        (WebCore::CCRenderingStats::CCRenderingStats):
+
 2012-07-24  Jian Li  <jianli@chromium.org>
 
         [V8] Correct WebIDL type should be used in the testing IDL file 

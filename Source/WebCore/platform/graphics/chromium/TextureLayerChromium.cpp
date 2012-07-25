@@ -129,7 +129,7 @@ bool TextureLayerChromium::drawsContent() const
     return (m_client || m_textureId) && !m_contextLost && LayerChromium::drawsContent();
 }
 
-void TextureLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*)
+void TextureLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*, CCRenderingStats&)
 {
     if (m_client) {
         m_textureId = m_client->prepareTexture(updater);

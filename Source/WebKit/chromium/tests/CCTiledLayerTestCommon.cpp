@@ -46,7 +46,7 @@ void FakeLayerTextureUpdater::Texture::updateRect(CCResourceProvider* resourcePr
     m_layer->updateRect();
 }
 
-void FakeLayerTextureUpdater::Texture::prepareRect(const IntRect&)
+void FakeLayerTextureUpdater::Texture::prepareRect(const IntRect&, WebCore::CCRenderingStats&)
 {
     m_layer->prepareRect();
 }
@@ -62,7 +62,7 @@ FakeLayerTextureUpdater::~FakeLayerTextureUpdater()
 {
 }
 
-void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize&, float, float, IntRect& resultingOpaqueRect)
+void FakeLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize&, float, float, IntRect& resultingOpaqueRect, CCRenderingStats&)
 {
     m_prepareCount++;
     m_lastUpdateRect = contentRect;
@@ -115,9 +115,9 @@ void FakeTiledLayerChromium::setNeedsDisplayRect(const FloatRect& rect)
     TiledLayerChromium::setNeedsDisplayRect(rect);
 }
 
-void FakeTiledLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion)
+void FakeTiledLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
 {
-    updateContentRect(updater, visibleContentRect(), occlusion);
+    updateContentRect(updater, visibleContentRect(), occlusion, stats);
 }
 
 void FakeTiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& calculator)

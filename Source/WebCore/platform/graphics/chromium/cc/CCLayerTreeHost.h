@@ -36,6 +36,7 @@
 #include "cc/CCOcclusionTracker.h"
 #include "cc/CCPrioritizedTextureManager.h"
 #include "cc/CCProxy.h"
+#include "cc/CCRenderingStats.h"
 
 
 #include <limits>
@@ -53,7 +54,6 @@ class CCLayerTreeHostImplClient;
 class CCTextureUpdater;
 class Region;
 class CCPrioritizedTextureManager;
-struct CCRenderingStats;
 struct CCScrollAndScaleSet;
 
 class CCLayerTreeHostClient {
@@ -202,8 +202,6 @@ public:
 
     void finishAllRendering();
 
-    int animationFrameNumber() const { return m_animationFrameNumber; }
-
     int commitNumber() const { return m_commitNumber; }
 
     void renderingStats(CCRenderingStats&) const;
@@ -278,7 +276,7 @@ private:
 
     void initializeLayerRenderer();
 
-    static void update(LayerChromium*, CCTextureUpdater&, const CCOcclusionTracker*);
+    void update(LayerChromium*, CCTextureUpdater&, const CCOcclusionTracker*);
     bool paintLayerContents(const LayerList&, CCTextureUpdater&);
     bool paintMasksForRenderSurface(LayerChromium*, CCTextureUpdater&);
 
@@ -300,8 +298,8 @@ private:
 
     CCLayerTreeHostClient* m_client;
 
-    int m_animationFrameNumber;
     int m_commitNumber;
+    CCRenderingStats m_renderingStats;
 
     OwnPtr<CCProxy> m_proxy;
     bool m_layerRendererInitialized;

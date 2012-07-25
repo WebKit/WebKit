@@ -38,6 +38,7 @@ namespace WebCore {
 class IntRect;
 class IntSize;
 class TextureManager;
+struct CCRenderingStats;
 
 class LayerTextureUpdater : public RefCounted<LayerTextureUpdater> {
 public:
@@ -48,7 +49,7 @@ public:
 
         CCPrioritizedTexture* texture() { return m_texture.get(); }
         void swapTextureWith(OwnPtr<CCPrioritizedTexture>& texture) { m_texture.swap(texture); }
-        virtual void prepareRect(const IntRect& /* sourceRect */) { }
+        virtual void prepareRect(const IntRect& /* sourceRect */, CCRenderingStats&) { }
         virtual void updateRect(CCResourceProvider*, const IntRect& sourceRect, const IntRect& destRect) = 0;
     protected:
         explicit Texture(PassOwnPtr<CCPrioritizedTexture> texture) : m_texture(texture) { }
@@ -72,7 +73,7 @@ public:
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) = 0;
     // The |resultingOpaqueRect| gives back a region of the layer that was painted opaque. If the layer is marked opaque in the updater,
     // then this region should be ignored in preference for the entire layer's area.
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect) { }
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect, CCRenderingStats&) { }
 
     // Set true by the layer when it is known that the entire output is going to be opaque.
     virtual void setOpaque(bool) { }

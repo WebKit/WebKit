@@ -34,6 +34,8 @@
 #include "PlatformColor.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
+#include "cc/CCRenderingStats.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -43,14 +45,16 @@ BitmapSkPictureCanvasLayerTextureUpdater::Texture::Texture(BitmapSkPictureCanvas
 {
 }
 
-void BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect(const IntRect& sourceRect)
+void BitmapSkPictureCanvasLayerTextureUpdater::Texture::prepareRect(const IntRect& sourceRect, CCRenderingStats& stats)
 {
     m_bitmap.setConfig(SkBitmap::kARGB_8888_Config, sourceRect.width(), sourceRect.height());
     m_bitmap.allocPixels();
     m_bitmap.setIsOpaque(m_textureUpdater->layerIsOpaque());
     SkDevice device(m_bitmap);
     SkCanvas canvas(&device);
-    textureUpdater()->paintContentsRect(&canvas, sourceRect);
+    double paintBeginTime = monotonicallyIncreasingTime();
+    textureUpdater()->paintContentsRect(&canvas, sourceRect, stats);
+    stats.totalPaintTimeInSeconds += monotonicallyIncreasingTime() - paintBeginTime;
 }
 
 void BitmapSkPictureCanvasLayerTextureUpdater::Texture::updateRect(CCResourceProvider* resourceProvider, const IntRect& sourceRect, const IntRect& destRect)
@@ -87,12 +91,14 @@ LayerTextureUpdater::SampledTexelFormat BitmapSkPictureCanvasLayerTextureUpdater
             LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
 }
 
-void BitmapSkPictureCanvasLayerTextureUpdater::paintContentsRect(SkCanvas* canvas, const IntRect& sourceRect)
+void BitmapSkPictureCanvasLayerTextureUpdater::paintContentsRect(SkCanvas* canvas, const IntRect& sourceRect, CCRenderingStats& stats)
 {
     // Translate the origin of contentRect to that of sourceRect.
     canvas->translate(contentRect().x() - sourceRect.x(),
                       contentRect().y() - sourceRect.y());
+    double rasterizeBeginTime = monotonicallyIncreasingTime();
     drawPicture(canvas);
+    stats.totalRasterizeTimeInSeconds += monotonicallyIncreasingTime() - rasterizeBeginTime;
 }
 
 } // namespace WebCore

@@ -52,7 +52,7 @@ public:
 protected:
     explicit SkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect) OVERRIDE;
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect, CCRenderingStats&) OVERRIDE;
     void drawPicture(SkCanvas*);
 
     bool layerIsOpaque() const { return m_layerIsOpaque; }

@@ -87,7 +87,7 @@ public:
 
     virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;
     virtual bool drawsContent() const OVERRIDE;
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*) OVERRIDE;
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
 protected:
