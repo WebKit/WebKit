@@ -365,7 +365,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) con
             // If 'height' and 'width' both have computed values of 'auto' and the element has an intrinsic ratio but no intrinsic height or width, then the used value of
             // 'width' is undefined in CSS 2.1. However, it is suggested that, if the containing block's width does not itself depend on the replaced element's width, then
             // the used value of 'width' is calculated from the constraint equation used for block-level, non-replaced elements in normal flow.
-            if (heightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight && contentRenderer) {
+            if (heightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight) {
                 // The aforementioned 'constraint equation' used for block-level, non-replaced elements in normal flow:
                 // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
                 LayoutUnit logicalWidth;
