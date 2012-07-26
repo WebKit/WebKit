@@ -39,7 +39,6 @@
 #include "WebInputEvent.h"
 
 namespace WebCore {
-class GestureEvent;
 class KeyboardEvent;
 class MouseEvent;
 class ScrollView;
@@ -131,15 +130,6 @@ public:
     WebTouchEventBuilder(const WebCore::Widget*, const WebCore::TouchEvent&);
 };
 #endif // ENABLE(TOUCH_EVENTS)
-
-#if ENABLE(GESTURE_EVENTS)
-// Converts WebCore::GestureEvent to a corresponding WebGestureEvent.
-// NOTE: If event mapping fails, the type will be set to Undefined.
-class WebGestureEventBuilder : public WebGestureEvent {
-public:
-    WebGestureEventBuilder(const WebCore::Widget*, const WebCore::GestureEvent&);
-};
-#endif // ENABLE(GESTURE_EVENTS)
 
 } // namespace WebKit
 

@@ -60,8 +60,8 @@ public:
                                 bool isVisible);
     virtual void updateFocus(bool) { }
     virtual void updateVisibility(bool) { }
-    virtual bool acceptsInputEvents() { return true; }
-    virtual bool handleInputEvent(const WebKit::WebInputEvent&, WebKit::WebCursorInfo&);
+    virtual bool acceptsInputEvents() { return false; }
+    virtual bool handleInputEvent(const WebKit::WebInputEvent&, WebKit::WebCursorInfo&) { return false; }
     virtual void didReceiveResponse(const WebKit::WebURLResponse&) { }
     virtual void didReceiveData(const char* data, int dataLength) { }
     virtual void didFinishLoading() { }

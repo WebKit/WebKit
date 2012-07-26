@@ -1,3 +1,21 @@
+2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123799.
+        http://trac.webkit.org/changeset/123799
+        https://bugs.webkit.org/show_bug.cgi?id=92431
+
+        broke the Apple Mac build (Requested by bweinstein on
+        #webkit).
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit):
+        * src/WebInputEventConversion.h:
+        (WebKit):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleEvent):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2012-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Propagate gesture events to plugins.

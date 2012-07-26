@@ -45,7 +45,6 @@
 struct NPObject;
 
 namespace WebCore {
-class GestureEvent;
 class HTMLPlugInElement;
 class IntRect;
 class KeyboardEvent;
@@ -168,7 +167,6 @@ private:
     void handleWheelEvent(WebCore::WheelEvent*);
     void handleKeyboardEvent(WebCore::KeyboardEvent*);
     void handleTouchEvent(WebCore::TouchEvent*);
-    void handleGestureEvent(WebCore::GestureEvent*);
 
     void calculateGeometry(const WebCore::IntRect& frameRect,
                            WebCore::IntRect& windowRect,

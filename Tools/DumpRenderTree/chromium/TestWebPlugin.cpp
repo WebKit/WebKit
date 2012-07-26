@@ -27,7 +27,6 @@
 #include "TestWebPlugin.h"
 
 #include "WebFrame.h"
-#include "WebInputEvent.h"
 #include "platform/WebGraphicsContext3D.h"
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
@@ -363,49 +362,5 @@ unsigned TestWebPlugin::loadProgram(const CString& vertexSource,
         m_context->deleteShader(fragmentShader);
 
     return program;
-}
-
-bool TestWebPlugin::handleInputEvent(const WebKit::WebInputEvent& event, WebKit::WebCursorInfo& info)
-{
-    const char* eventName = 0;
-    switch (event.type) {
-    case WebKit::WebInputEvent::Undefined:           eventName = "unknown"; break;
-
-    case WebKit::WebInputEvent::MouseDown:           eventName = "MouseDown"; break;
-    case WebKit::WebInputEvent::MouseUp:             eventName = "MouseUp"; break;
-    case WebKit::WebInputEvent::MouseMove:           eventName = "MouseMove"; break;
-    case WebKit::WebInputEvent::MouseEnter:          eventName = "MouseEnter"; break;
-    case WebKit::WebInputEvent::MouseLeave:          eventName = "MouseLeave"; break;
-    case WebKit::WebInputEvent::ContextMenu:         eventName = "ContextMenu"; break;
-
-    case WebKit::WebInputEvent::MouseWheel:          eventName = "MouseWheel"; break;
-
-    case WebKit::WebInputEvent::RawKeyDown:          eventName = "RawKeyDown"; break;
-    case WebKit::WebInputEvent::KeyDown:             eventName = "KeyDown"; break;
-    case WebKit::WebInputEvent::KeyUp:               eventName = "KeyUp"; break;
-    case WebKit::WebInputEvent::Char:                eventName = "Char"; break;
-
-    case WebKit::WebInputEvent::GestureScrollBegin:  eventName = "GestureScrollBegin"; break;
-    case WebKit::WebInputEvent::GestureScrollEnd:    eventName = "GestureScrollEnd"; break;
-    case WebKit::WebInputEvent::GestureScrollUpdate: eventName = "GestureScrollUpdate"; break;
-    case WebKit::WebInputEvent::GestureFlingStart:   eventName = "GestureFlingStart"; break;
-    case WebKit::WebInputEvent::GestureFlingCancel:  eventName = "GestureFlingCancel"; break;
-    case WebKit::WebInputEvent::GestureTap:          eventName = "GestureTap"; break;
-    case WebKit::WebInputEvent::GestureTapDown:      eventName = "GestureTapDown"; break;
-    case WebKit::WebInputEvent::GestureDoubleTap:    eventName = "GestureDoubleTap"; break;
-    case WebKit::WebInputEvent::GestureTwoFingerTap: eventName = "GestureTwoFingerTap"; break;
-    case WebKit::WebInputEvent::GestureLongPress:    eventName = "GestureLongPress"; break;
-    case WebKit::WebInputEvent::GesturePinchBegin:   eventName = "GesturePinchBegin"; break;
-    case WebKit::WebInputEvent::GesturePinchEnd:     eventName = "GesturePinchEnd"; break;
-    case WebKit::WebInputEvent::GesturePinchUpdate:  eventName = "GesturePinchUpdate"; break;
-
-    case WebKit::WebInputEvent::TouchStart:          eventName = "TouchStart"; break;
-    case WebKit::WebInputEvent::TouchMove:           eventName = "TouchMove"; break;
-    case WebKit::WebInputEvent::TouchEnd:            eventName = "TouchEnd"; break;
-    case WebKit::WebInputEvent::TouchCancel:         eventName = "TouchCancel"; break;
-    }
-
-    printf("Plugin received event: %s\n", eventName ? eventName : "unknown");
-    return false;
 }
 

@@ -56,7 +56,6 @@
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
-#include "GestureEvent.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "HostWindow.h"
@@ -189,8 +188,6 @@ void WebPluginContainerImpl::handleEvent(Event* event)
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
     else if (eventNames().isTouchEventType(event->type()))
         handleTouchEvent(static_cast<TouchEvent*>(event));
-    else if (eventNames().isGestureEventType(event->type()))
-        handleGestureEvent(static_cast<GestureEvent*>(event));
 
     // FIXME: it would be cleaner if Widget::handleEvent returned true/false and
     // HTMLPluginElement called setDefaultHandled or defaultEventHandler.
@@ -731,17 +728,6 @@ void WebPluginContainerImpl::handleKeyboardEvent(KeyboardEvent* event)
 void WebPluginContainerImpl::handleTouchEvent(TouchEvent* event)
 {
     WebTouchEventBuilder webEvent(this, *event);
-    if (webEvent.type == WebInputEvent::Undefined)
-        return;
-    WebCursorInfo cursorInfo;
-    if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
-        event->setDefaultHandled();
-    // FIXME: Can a plugin change the cursor from a touch-event callback?
-}
-
-void WebPluginContainerImpl::handleGestureEvent(GestureEvent* event)
-{
-    WebGestureEventBuilder webEvent(this, *event);
     if (webEvent.type == WebInputEvent::Undefined)
         return;
     WebCursorInfo cursorInfo;

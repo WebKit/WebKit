@@ -1952,8 +1952,6 @@ webcore_sources += \
 	Source/WebCore/dom/ExceptionCodePlaceholder.cpp \
 	Source/WebCore/dom/ExceptionCodePlaceholder.h \
 	Source/WebCore/dom/FragmentScriptingPermission.h \
-	Source/WebCore/dom/GestureEvent.cpp \
-	Source/WebCore/dom/GestureEvent.h \
 	Source/WebCore/dom/IgnoreDestructiveWriteCountIncrementer.h \
 	Source/WebCore/dom/ExceptionCodePlaceholder.h \
 	Source/WebCore/dom/GenericEventQueue.cpp \
