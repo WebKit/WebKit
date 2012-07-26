@@ -1,3 +1,11 @@
+2012-07-26  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations update for table-row-outline-paint.html from r123793.
+
+        * platform/chromium-mac/fast/table/table-row-outline-paint-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-outline-paint-expected.png: Added.
+        * platform/chromium/fast/table/table-row-outline-paint-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/table/table-row-outline-paint-expected.txt.
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123799.
