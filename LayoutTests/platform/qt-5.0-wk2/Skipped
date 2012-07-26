@@ -547,6 +547,7 @@ fast/images/imagemap-scroll.html
 fast/multicol/progression-reverse.html
 fast/overflow/scroll-vertical-not-horizontal.html
 fast/repaint/fixed-tranformed.html
+fast/sub-pixel/position-right-aligns-with-container.html
 fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html
 fast/sub-pixel/table-rows-have-stable-height.html
 fast/table/height-percent-test-vertical.html

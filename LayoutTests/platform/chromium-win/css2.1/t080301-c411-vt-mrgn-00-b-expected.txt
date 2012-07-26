@@ -108,6 +108,6 @@ layer at (0,0) size 785x896
 layer at (101,730) size 80x38
   RenderBlock (relative positioned) {DIV} at (3,676) size 80x39 [bgcolor=#008080]
 layer at (101,748) size 40x20
-  RenderBlock (positioned) {DIV} at (0,18) size 40x20 [bgcolor=#FFFFFF]
+  RenderBlock (positioned) {DIV} at (0,17) size 40x21 [bgcolor=#FFFFFF]
     RenderText {#text} at (0,0) size 6x19
       text run at (0,0) width 6: "-"

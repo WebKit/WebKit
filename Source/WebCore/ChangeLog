@@ -1,3 +1,22 @@
+2012-07-26  Emil A Eklund  <eae@chromium.org>
+
+        Contained div with right 0 sometimes overlaps parent div
+        https://bugs.webkit.org/show_bug.cgi?id=91521
+
+        Reviewed by Levi Weintraub.
+
+        Due to unnecessary rounding in clientLogicalWidth and clientLogicalHeight
+        we lost precision when computing the width and position of render boxes.
+        Change clientLogicalWidth/Height to return values with subpixel precision
+        to avoid this.
+
+        Test: fast/sub-pixel/position-right-aligns-with-container.html
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::clientLogicalWidth):
+        (WebCore::RenderBox::clientLogicalHeight):
+        Remove unnecessary rounding.
+
 2012-07-26  Chang Shu  <cshu@webkit.org>
 
         Build broken when svg is disabled.
@@ -97,6 +116,300 @@
         * page/Settings.h:
         (WebCore::Settings::setDiagnosticLoggingEnabled): Simple accessor.
         (WebCore::Settings::diagnosticLoggingEnabled): Ditto.
+
+2012-07-26  Olivier Blin  <olivier.blin@softathome.com>
+
+        Add FastMalloc statistics in window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=91274
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/harness/fastmallocstatistics-object.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCoreTestSupport.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/FastMallocStatistics.h: Added.
+        (WebCore):
+        (FastMallocStatistics):
+        (WebCore::FastMallocStatistics::create):
+        (WebCore::FastMallocStatistics::reservedVMBytes):
+        (WebCore::FastMallocStatistics::committedVMBytes):
+        (WebCore::FastMallocStatistics::freeListBytes):
+        (WebCore::FastMallocStatistics::FastMallocStatistics):
+        * testing/FastMallocStatistics.idl: Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::fastMallocStatistics):
+        (WebCore):
+        * testing/Internals.h:
+        (WebCore):
+        (Internals):
+        * testing/Internals.idl:
+
+2012-07-26  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove redundant surface origin transforms
+        https://bugs.webkit.org/show_bug.cgi?id=91815
+
+        Reviewed by Stephen White.
+
+        Bug 91417 changed draw transforms to become equivalent to origin
+        transforms for surfaces. This change removes them as they are no
+        longer needed for anything.
+
+        No new tests. Just a refactoring.
+
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (RenderSurfaceChromium):
+        * platform/graphics/chromium/cc/CCDamageTracker.cpp:
+        (WebCore::CCDamageTracker::extendDamageForRenderSurface):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::computeScrollCompensationMatrixForChildren):
+        (WebCore::calculateDrawTransformsInternal):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::leaveToRenderTarget):
+        (WebCore::::unoccludedContributingSurfaceContentRect):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::createSharedQuadState):
+        (WebCore::CCRenderSurface::createReplicaSharedQuadState):
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (CCRenderSurface):
+
+2012-07-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: simplify handling of status bar items
+        https://bugs.webkit.org/show_bug.cgi?id=92143
+
+        Reviewed by Pavel Feldman.
+
+        - split status bars into "global" (always in the bottom) and "panel"
+            (on top of the drawer when drawer is shown)
+        - use "inner" status bar section in global status bar to display either
+            panel status bar items or drawer view items (depending on drawer visibility)
+        - let panels/views manage their counters as part of their status bar
+            items, not through special interface members;
+        - get rid of absolute positioning in the status bars where possible;
+
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.SearchView.prototype.get statusBarItems):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer):
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide.animationFinished):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype._startStatusBarDragging):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.wasShown):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype.willHide):
+        * inspector/front-end/elementsPanel.css:
+        (.crumbs):
+        * inspector/front-end/inspector.css:
+        (#main):
+        (body.drawer-visible #main-panels):
+        (.status-bar):
+        (.status-bar-item):
+        (#panel-status-bar-placeholder):
+        (body.drawer-visible #panel-status-bar-placeholder):
+        (#panel-status-bar-resizer):
+        (#panel-status-bar):
+        (#panel-status-bar > div):
+        (#error-warning-count):
+        (#drawer):
+        (#drawer-contents):
+        (.status-bar-items):
+        (.drawer-header):
+        (#inner-status-bar):
+        (.search-status-bar-item):
+        (.search-status-bar-message):
+        (.search-status-bar-progress):
+        (body:not(.platform-mac) .search-status-bar-progress):
+        (body.platform-mac .search-status-bar-progress):
+        (.search-status-bar-stop-button-item):
+        (.search-status-bar-stop-button .glyph):
+        (.search-results-status-bar-message):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (WebInspector.showViewInDrawer):
+        (WebInspector._closePreviousDrawerView):
+        * inspector/front-end/timelinePanel.css:
+        (.timeline-records-counter):
+
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement Network Information provider
+        https://bugs.webkit.org/show_bug.cgi?id=92343
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Moved Network Information provider code from WebKit1
+        to WebCore so that it can be shared with WebKit2.
+
+        No new tests, no behavior change.
+
+        * PlatformEfl.cmake:
+        * platform/efl/NetworkInfoProviderEfl.cpp: Copied from Source/WebKit/efl/WebCoreSupport/NetworkInfoClientEfl.cpp.
+        (WebCore):
+        (WebCore::NetworkInfoProviderEfl::NetworkInfoProviderEfl):
+        (WebCore::NetworkInfoProviderEfl::startUpdating):
+        (WebCore::NetworkInfoProviderEfl::stopUpdating):
+        (WebCore::NetworkInfoProviderEfl::bandwidth):
+        * platform/efl/NetworkInfoProviderEfl.h: Added.
+        (WebCore):
+        (NetworkInfoProviderEfl):
+
+2012-07-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: SASS source mapping straw man (behind experiment)
+        https://bugs.webkit.org/show_bug.cgi?id=92265
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change introduces SASS mapping support (behind the experiment).
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel):
+        (WebInspector.CSSStyleModel.prototype.resourceBinding):
+        (WebInspector.CSSStyleModel.prototype.setSourceMapping):
+        (WebInspector.CSSStyleModel.prototype.resetSourceMappings):
+        (WebInspector.CSSStyleModel.prototype._rawLocationToUILocation):
+        (WebInspector.CSSLocation):
+        (WebInspector.CSSRule):
+        (WebInspector.CSSRule.prototype.get isRegular):
+        (WebInspector.CSSRule.prototype.uiLocation):
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.StaticContentProvider.prototype.contentType):
+        * inspector/front-end/SASSSourceMapping.js: Added.
+        (WebInspector.SASSSourceMapping):
+        (WebInspector.SASSSourceMapping.prototype._populate):
+        (WebInspector.SASSSourceMapping.prototype._resourceAdded.didRequestContent):
+        (WebInspector.SASSSourceMapping.prototype._resourceAdded):
+        (rawLocationToUILocation):
+        (uiLocationToRawLocation):
+        (uiSourceCodes):
+        (reset):
+        (WebInspector.SASSSource):
+        (WebInspector.SASSSource.prototype.isEditable):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/StylesPanel.js:
+        (WebInspector.StylesUISourceCodeProvider):
+        (WebInspector.StylesUISourceCodeProvider.prototype.rawLocationToUILocation):
+        (WebInspector.StylesUISourceCodeProvider.prototype.uiLocationToRawLocation):
+        (WebInspector.StylesUISourceCodeProvider.prototype._resourceAdded):
+        (WebInspector.StylesUISourceCodeProvider.prototype.reset):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UILocation.prototype.uiLocationToRawLocation):
+        (WebInspector.UILocation.prototype.url):
+        * inspector/front-end/Workspace.js:
+        (WebInspector.Workspace):
+        * inspector/front-end/inspector.html:
+
+2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed r123761 follow-up, inspector closure compilation fix.
+
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.Location.prototype.uiLocation):
+        * inspector/front-end/ScriptSnippetModel.js:
+
+2012-07-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Cleanup GraphicsContext::(getWindowsContext|releaseWindowsContext)
+        https://bugs.webkit.org/show_bug.cgi?id=92113
+
+        Reviewed by Simon Hausmann.
+
+        Cleanup the definition of the two methods across different ports and
+        replace the calls to them with LocalWindowsContext where possible.
+
+        * platform/graphics/GraphicsContext.h:
+        (GraphicsContext):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintThumb):
+
+2012-07-27 Chris Fleizach <cfleizach@apple.com>
+
+        WebKit should expose @title as label (AXTitle or AXDescription) sometimes instead of AXHelp, according to the ARIA text alt computation
+        https://bugs.webkit.org/show_bug.cgi?id=91911
+
+        Reviewed by Anders Carlsson.
+
+        The ARIA spec states that the title attribute should be used as the last resort for a description of an element. WebKit needs to honor that.
+
+        Test: platform/mac/accessibility/title-attribute-used-as-last-resort.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::helpText):
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+
+2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed r123761 follow-up, inspector closure compilation fix.
+
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.Location.prototype.uiLocation):
+        * inspector/front-end/ScriptSnippetModel.js:
+
+2012-07-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Cleanup GraphicsContext::(getWindowsContext|releaseWindowsContext)
+        https://bugs.webkit.org/show_bug.cgi?id=92113
+
+        Reviewed by Simon Hausmann.
+
+        Cleanup the definition of the two methods across different ports and
+        replace the calls to them with LocalWindowsContext where possible.
+
+        * platform/graphics/GraphicsContext.h:
+        (GraphicsContext):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintThumb):
+
+2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed r123761 follow-up, inspector closure compilation fix.
+
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.Location.prototype.uiLocation):
+        * inspector/front-end/ScriptSnippetModel.js:
+
+2012-07-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Cleanup GraphicsContext::(getWindowsContext|releaseWindowsContext)
+        https://bugs.webkit.org/show_bug.cgi?id=92113
+
+        Reviewed by Simon Hausmann.
+
+        Cleanup the definition of the two methods across different ports and
+        replace the calls to them with LocalWindowsContext where possible.
+
+        * platform/graphics/GraphicsContext.h:
+        (GraphicsContext):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintThumb):
 
 2012-07-26  Olivier Blin  <olivier.blin@softathome.com>
 

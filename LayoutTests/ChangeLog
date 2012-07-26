@@ -1,3 +1,33 @@
+2012-07-26  Emil A Eklund  <eae@chromium.org>
+
+        Contained div with right 0 sometimes overlaps parent div
+        https://bugs.webkit.org/show_bug.cgi?id=91521
+
+        Reviewed by Levi Weintraub.
+
+        Add test for elements positioned based on the right edge and update two
+        existing tests that where affected by the rounding.
+
+        * fast/sub-pixel/position-right-aligns-with-container-expected.html: Added.
+        * fast/sub-pixel/position-right-aligns-with-container.html: Added.
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+        Mark new subpixel test as skipped on platforms that do not enable
+        subpixel layout.
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123159, r123165, r123168, r123492,
@@ -46,6 +76,52 @@
         Reviewed by NOBODY : expectations change only
 
         * platform/chromium/TestExpectations:
+
+2012-07-26  Olivier Blin  <olivier.blin@softathome.com>
+
+        Add FastMalloc statistics in window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=91274
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/harness/fastmallocstatistics-object-expected.txt: Added.
+        * fast/harness/fastmallocstatistics-object.html: Added.
+
+2012-07-26  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt] css3/filters, editing/undo, fast/block/lineboxcontain, fast/js and tables/layering tests need update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=92292
+
+        Reviewed by Alexis Menard.
+
+        * platform/qt-5.0/Skipped:
+        * platform/qt/css3/filters/effect-blur-expected.txt:
+        * platform/qt/css3/filters/effect-blur-hw-expected.txt:
+        * platform/qt/css3/filters/regions-expanding-expected.txt:
+        * platform/qt/editing/undo/5378473-expected.txt:
+        * platform/qt/editing/undo/undo-misspellings-expected.txt:
+        * platform/qt/fast/block/lineboxcontain/inline-box-expected.png:
+        * platform/qt/fast/block/lineboxcontain/inline-box-expected.txt:
+        * platform/qt/fast/block/lineboxcontain/inline-box-vertical-expected.png:
+        * platform/qt/fast/block/lineboxcontain/inline-box-vertical-expected.txt:
+        * platform/qt/fast/block/lineboxcontain/inline-replaced-expected.png:
+        * platform/qt/fast/block/lineboxcontain/inline-replaced-expected.txt:
+        * platform/qt/fast/block/lineboxcontain/none-expected.png:
+        * platform/qt/fast/block/lineboxcontain/none-expected.txt:
+        * platform/qt/fast/block/lineboxcontain/parsing-invalid-expected.png:
+        * platform/qt/fast/block/lineboxcontain/parsing-invalid-expected.txt:
+        * platform/qt/fast/block/lineboxcontain/replaced-expected.png:
+        * platform/qt/fast/block/lineboxcontain/replaced-expected.txt:
+
+2012-07-26  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKit should expose @title as label (AXTitle or AXDescription) sometimes instead of AXHelp, according to the ARIA text alt computation
+        https://bugs.webkit.org/show_bug.cgi?id=91911
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/accessibility/title-attribute-used-as-last-resort-expected.txt: Added.
+        * platform/mac/accessibility/title-attribute-used-as-last-resort.html: Added.
 
 2012-07-26  Olivier Blin  <olivier.blin@softathome.com>
 

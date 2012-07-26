@@ -120,6 +120,72 @@
         * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.cpp:
         (EWK2UnitTestServer::EWK2UnitTestServer):
 
+2012-07-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL][WK2] Regression(r123731): Linking errors due to efreet functions
+        https://bugs.webkit.org/show_bug.cgi?id=92378
+
+        Unreviewed build fix.
+
+        The library list created by PlatformEfl.cmake was being erased by a
+        SET called after including the platform specific file. Luckily the
+        dependencies were fulfilled by other targets until efreet was add.
+
+        * CMakeLists.txt:
+
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Compilation warning in EWK2UnitTestServer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=92387
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix compilation warning in EWK2UnitTestServer.cpp.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.cpp:
+        (EWK2UnitTestServer::EWK2UnitTestServer):
+
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement Network Information provider
+        https://bugs.webkit.org/show_bug.cgi?id=92343
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Network Information provider for WebKit2 EFL
+        by using NetworkInfoProviderEfl class from
+        WebCore.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/NetworkInfoProvider.cpp: Added.
+        (toNetworkInfoProvider):
+        (startUpdatingCallback):
+        (stopUpdatingCallback):
+        (getBandwidthCallback):
+        (isMeteredCallback):
+        (NetworkInfoProvider::create):
+        (NetworkInfoProvider::NetworkInfoProvider):
+        (NetworkInfoProvider::~NetworkInfoProvider):
+        (NetworkInfoProvider::bandwidth):
+        (NetworkInfoProvider::metered):
+        (NetworkInfoProvider::startUpdating):
+        (NetworkInfoProvider::stopUpdating):
+        * UIProcess/API/efl/NetworkInfoProvider.h: Added.
+        (NetworkInfoProvider):
+
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Compilation warning in EWK2UnitTestServer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=92387
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix compilation warning in EWK2UnitTestServer.cpp.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.cpp:
+        (EWK2UnitTestServer::EWK2UnitTestServer):
+
 2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add unit tests for Ewk_Context
