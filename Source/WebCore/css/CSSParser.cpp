@@ -3022,7 +3022,10 @@ void CSSParser::storeVariableDeclaration(const CSSParserString& name, PassOwnPtr
     for (unsigned i = 0, size = value->size(); i < size; i++) {
         if (i)
             builder.append(' ');
-        builder.append(value->valueAt(i)->createCSSValue()->cssText());
+        RefPtr<CSSValue> cssValue = value->valueAt(i)->createCSSValue();
+        if (!cssValue)
+            return;
+        builder.append(cssValue->cssText());
     }
     addProperty(CSSPropertyVariable, CSSVariableValue::create(variableName, builder.toString()), important, false);
 }

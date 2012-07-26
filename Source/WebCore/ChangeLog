@@ -1,3 +1,17 @@
+2012-07-26  Luke Macpherson   <macpherson@chromium.org>
+
+        Fix null ptr deref in CSSParser::storeVariableDeclaration().
+        https://bugs.webkit.org/show_bug.cgi?id=92333
+
+        Reviewed by Andreas Kling.
+
+        Fix null pointer deref that occurs if the CSSParserValue couldn't be converted to a CSSValue.
+
+        Test fast/css/variables/variable-unparseable-value-crash.html added.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::storeVariableDeclaration):
+
 2012-07-26  Shinya Kawanaka  <shinyak@chromium.org>
 
         Add UserAgentShadowDOM to FormControlElement just before adding AuthorShadowDOM
