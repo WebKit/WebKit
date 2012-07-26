@@ -234,8 +234,9 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
     }
 
     ASSERT(!child->parent());
-    while (beforeChild->parent() != owner)
+    while (beforeChild->parent() != owner && beforeChild->parent()->isAnonymousBlock())
         beforeChild = beforeChild->parent();
+    ASSERT(beforeChild->parent() == owner);
 
     ASSERT(!owner->isBlockFlow() || (!child->isTableSection() && !child->isTableRow() && !child->isTableCell()));
 

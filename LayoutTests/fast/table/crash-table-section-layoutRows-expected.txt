@@ -1,5 +1,0 @@
-Bug 92145: Crash in WebCore::RenderTableSection::layoutRows
-
-There should be PASSED below and we shouldn't crash or ASSERT.
-
-PASSED.
