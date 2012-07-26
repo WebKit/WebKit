@@ -36,23 +36,16 @@ WebInspector.Drawer = function()
     this._savedHeight = 200; // Default.
     this._mainElement = document.getElementById("main");
     this._toolbarElement = document.getElementById("toolbar");
-    this._mainStatusBar = document.getElementById("main-status-bar");
-    WebInspector.installDragHandle(this._mainStatusBar, this._startStatusBarDragging.bind(this), this._statusBarDragging.bind(this), this._endStatusBarDragging.bind(this), "row-resize");
 
-    this._counters = document.getElementById("counters");
+    this._floatingStatusBarContainer = document.getElementById("floating-status-bar-container");
+    WebInspector.installDragHandle(this._floatingStatusBarContainer, this._startStatusBarDragging.bind(this), this._statusBarDragging.bind(this), this._endStatusBarDragging.bind(this), "row-resize");
 
     this._drawerContentsElement = document.createElement("div");
     this._drawerContentsElement.id = "drawer-contents";
     this._drawerContentsElement.className = "drawer-contents";
     this.element.appendChild(this._drawerContentsElement);
-
-    this._drawerStatusBar = document.createElement("div");
-    this._drawerStatusBar.id = "drawer-status-bar";
-    this._drawerStatusBar.className = "status-bar";
-    this.element.appendChild(this._drawerStatusBar);
-
     this._viewStatusBar = document.createElement("div");
-    this._drawerStatusBar.appendChild(this._viewStatusBar);
+    this._bottomStatusBar = document.getElementById("bottom-status-bar-container");
 }
 
 WebInspector.Drawer.AnimationType = {
@@ -75,8 +68,6 @@ WebInspector.Drawer.prototype = {
     show: function(view, animationType)
     {
         this.immediatelyFinishAnimation();
-        if (this._view && this._view.counterElement)
-            this._view.counterElement.parentNode.removeChild(this._view.counterElement);
 
         var drawerWasVisible = this.visible;
 
@@ -92,44 +83,29 @@ WebInspector.Drawer.prototype = {
         for (var i = 0; i < statusBarItems.length; ++i)
             this._viewStatusBar.appendChild(statusBarItems[i]);
 
-        if (this._view.counterElement)
-            this._counters.insertBefore(this._view.counterElement, this._counters.firstChild);
-
         document.body.addStyleClass("drawer-visible");
+        this._floatingStatusBarContainer.insertBefore(document.getElementById("panel-status-bar"), this._floatingStatusBarContainer.firstElementChild);
+        this._bottomStatusBar.appendChild(this._viewStatusBar);
         this._view.markAsRoot();
         this._view.show(this._drawerContentsElement);
 
         if (drawerWasVisible)
             return;
         
-        var anchoredItems = document.getElementById("anchored-status-bar-items");
         var height = this._constrainHeight(this._savedHeight || this.element.offsetHeight);
         var animations = [
             {element: this.element, end: {height: height}},
             {element: this._mainElement, end: {bottom: height}},
-            {element: this._mainStatusBar, start: {"padding-left": anchoredItems.offsetWidth - 1}, end: {"padding-left": 0}},
+            {element: this._floatingStatusBarContainer, start: {"padding-left": this._bottomStatusBar.offsetLeft}, end: {"padding-left": 0}},
             {element: this._viewStatusBar, start: {opacity: 0}, end: {opacity: 1}}
         ];
 
-        this._drawerStatusBar.insertBefore(anchoredItems, this._drawerStatusBar.firstChild);
-
-        if (this._currentPanelCounters) {
-            var oldRight = this._drawerStatusBar.clientWidth - (this._counters.offsetLeft + this._currentPanelCounters.offsetWidth);
-            var newRight = WebInspector.Panel.counterRightMargin;
-            var rightPadding = (oldRight - newRight);
-            animations.push({element: this._currentPanelCounters, start: {"padding-right": rightPadding}, end: {"padding-right": 0}});
-            this._currentPanelCounters.parentNode.removeChild(this._currentPanelCounters);
-            this._mainStatusBar.appendChild(this._currentPanelCounters);
-        }
-        
         function animationFinished()
         {
             WebInspector.inspectorView.currentPanel().doResize();
             if (this._view && this._view.afterShow)
                 this._view.afterShow();
             delete this._currentAnimation;
-            if (this._currentPanelCounters)
-                this._currentPanelCounters.removeAttribute("style");
         }
 
         this._currentAnimation = WebInspector.animateStyle(animations, this._animationDuration(animationType), animationFinished.bind(this));
@@ -147,45 +123,26 @@ WebInspector.Drawer.prototype = {
 
         WebInspector.restoreFocusFromElement(this.element);
 
-        var anchoredItems = document.getElementById("anchored-status-bar-items");
-
         // Temporarily set properties and classes to mimic the post-animation values so panels
         // like Elements in their updateStatusBarItems call will size things to fit the final location.
-        this._mainStatusBar.style.setProperty("padding-left", (anchoredItems.offsetWidth - 1) + "px");
         document.body.removeStyleClass("drawer-visible");
         WebInspector.inspectorView.currentPanel().statusBarResized();
         document.body.addStyleClass("drawer-visible");
 
         var animations = [
             {element: this._mainElement, end: {bottom: 0}},
-            {element: this._mainStatusBar, start: {"padding-left": 0}, end: {"padding-left": anchoredItems.offsetWidth - 1}},
+            {element: this.element, end: {height: 0}},
+            {element: this._floatingStatusBarContainer, start: {"padding-left": 0}, end: {"padding-left": this._bottomStatusBar.offsetLeft} },
             {element: this._viewStatusBar, start: {opacity: 1}, end: {opacity: 0}}
         ];
-
-        if (this._currentPanelCounters) {
-            var newRight = this._drawerStatusBar.clientWidth - this._counters.offsetLeft;
-            var oldRight = this._mainStatusBar.clientWidth - (this._currentPanelCounters.offsetLeft + this._currentPanelCounters.offsetWidth);
-            var rightPadding = (newRight - oldRight);
-            animations.push({element: this._currentPanelCounters, start: {"padding-right": 0}, end: {"padding-right": rightPadding}});
-        }
 
         function animationFinished()
         {
             WebInspector.inspectorView.currentPanel().doResize();
-            this._mainStatusBar.insertBefore(anchoredItems, this._mainStatusBar.firstChild);
-            this._mainStatusBar.style.removeProperty("padding-left");
-
-            if (this._view.counterElement)
-                this._view.counterElement.parentNode.removeChild(this._view.counterElement);
-
-            if (this._currentPanelCounters) {
-                this._currentPanelCounters.setAttribute("style", null);
-                this._currentPanelCounters.parentNode.removeChild(this._currentPanelCounters);
-                this._counters.insertBefore(this._currentPanelCounters, this._counters.firstChild);
-            }
-
             this._view.detach();
             delete this._view;
+            this._bottomStatusBar.removeChildren();
+            this._bottomStatusBar.appendChild(document.getElementById("panel-status-bar"));
             this._drawerContentsElement.removeChildren();
             document.body.removeStyleClass("drawer-visible");
             delete this._currentAnimation;
@@ -214,22 +171,6 @@ WebInspector.Drawer.prototype = {
             this._currentAnimation.forceComplete();
     },
 
-    set currentPanelCounters(x)
-    {
-        if (!x) {
-            if (this._currentPanelCounters)
-                this._currentPanelCounters.parentElement.removeChild(this._currentPanelCounters);
-            delete this._currentPanelCounters;
-            return;
-        }
-
-        this._currentPanelCounters = x;
-        if (this.visible)
-            this._mainStatusBar.appendChild(x);
-        else
-            this._counters.insertBefore(x, this._counters.firstChild);
-    },
-
     _animationDuration: function(animationType)
     {
         switch (animationType) {
@@ -247,7 +188,7 @@ WebInspector.Drawer.prototype = {
      */
     _startStatusBarDragging: function(event)
     {
-        if (!this.visible || event.target !== this._mainStatusBar)
+        if (!this.visible || event.target !== this._floatingStatusBarContainer)
             return false;
 
         this._view.storeScrollPositions();

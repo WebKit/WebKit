@@ -73,7 +73,7 @@ WebInspector.Panel.prototype = {
             this._statusBarItemContainer = document.createElement("div");
             for (var i = 0; i < statusBarItems.length; ++i)
                 this._statusBarItemContainer.appendChild(statusBarItems[i]);
-            document.getElementById("main-status-bar").appendChild(this._statusBarItemContainer);
+            document.getElementById("panel-status-bar").appendChild(this._statusBarItemContainer);
         }
 
         if ("_toolbarItem" in this)

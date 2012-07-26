@@ -70,21 +70,22 @@ var WebInspector = {
 
     _createGlobalStatusBarItems: function()
     {
+        var bottomStatusBarContainer = document.getElementById("bottom-status-bar-container");
         this._dockToggleButton = new WebInspector.StatusBarButton("", "dock-status-bar-item", 3);
         this._dockToggleButton.makeLongClickEnabled(this._createDockOptions.bind(this));
         this._dockToggleButton.addEventListener("click", this._toggleAttach.bind(this), false);
         this._updateDockButtonState();
 
-        var anchoredStatusBar = document.getElementById("anchored-status-bar-items");
-        anchoredStatusBar.appendChild(this._dockToggleButton.element);
+        var mainStatusBar = document.getElementById("main-status-bar");
+        mainStatusBar.insertBefore(this._dockToggleButton.element, bottomStatusBarContainer);
 
         this._toggleConsoleButton = new WebInspector.StatusBarButton(WebInspector.UIString("Show console."), "console-status-bar-item");
         this._toggleConsoleButton.addEventListener("click", this._toggleConsoleButtonClicked.bind(this), false);
-        anchoredStatusBar.appendChild(this._toggleConsoleButton.element);
+        mainStatusBar.insertBefore(this._toggleConsoleButton.element, bottomStatusBarContainer);
 
         if (this.panels.elements)
-            anchoredStatusBar.appendChild(this.panels.elements.nodeSearchButton.element);
-        anchoredStatusBar.appendChild(this.settingsController.statusBarItem);
+            mainStatusBar.insertBefore(this.panels.elements.nodeSearchButton.element, bottomStatusBarContainer);
+        mainStatusBar.appendChild(this.settingsController.statusBarItem);
     },
 
     _createDockOptions: function()
@@ -180,21 +181,16 @@ var WebInspector = {
         this._closePreviousDrawerView();
 
         var drawerStatusBarHeader = document.createElement("div");
-        drawerStatusBarHeader.className = "drawer-header";
+        drawerStatusBarHeader.className = "drawer-header status-bar-item";
         drawerStatusBarHeader.appendChild(statusBarElement);
         drawerStatusBarHeader.onclose = onclose;
 
         var closeButton = drawerStatusBarHeader.createChild("span");
         closeButton.textContent = WebInspector.UIString("\u00D7");
         closeButton.addStyleClass("drawer-header-close-button");
-        closeButton.addEventListener("click", closeButtonPressed.bind(this), false);
+        closeButton.addEventListener("click", this.closeViewInDrawer.bind(this), false);
 
-        function closeButtonPressed(event)
-        {
-            this.closeViewInDrawer();
-        }
-
-        document.getElementById("main-status-bar").appendChild(drawerStatusBarHeader);
+        document.getElementById("panel-status-bar").firstElementChild.appendChild(drawerStatusBarHeader);
         this._drawerStatusBarHeader = drawerStatusBarHeader;
         this.drawer.show(view, WebInspector.Drawer.AnimationType.Immediately);
     },
@@ -215,7 +211,7 @@ var WebInspector = {
     _closePreviousDrawerView: function()
     {
         if (this._drawerStatusBarHeader) {
-            document.getElementById("main-status-bar").removeChild(this._drawerStatusBarHeader);
+            this._drawerStatusBarHeader.parentElement.removeChild(this._drawerStatusBarHeader);
             if (this._drawerStatusBarHeader.onclose)
                 this._drawerStatusBarHeader.onclose();
             delete this._drawerStatusBarHeader;

@@ -1,3 +1,66 @@
+2012-07-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: simplify handling of status bar items
+        https://bugs.webkit.org/show_bug.cgi?id=92143
+
+        Reviewed by Pavel Feldman.
+
+        - split status bars into "global" (always in the bottom) and "panel"
+            (on top of the drawer when drawer is shown)
+        - use "inner" status bar section in global status bar to display either
+            panel status bar items or drawer view items (depending on drawer visibility)
+        - let panels/views manage their counters as part of their status bar
+            items, not through special interface members;
+        - get rid of absolute positioning in the status bars where possible;
+
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.SearchView.prototype.get statusBarItems):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer):
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide.animationFinished):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype._startStatusBarDragging):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.wasShown):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype.willHide):
+        * inspector/front-end/elementsPanel.css:
+        (.crumbs):
+        * inspector/front-end/inspector.css:
+        (#main):
+        (body.drawer-visible #main-panels):
+        (.status-bar):
+        (.status-bar-item):
+        (#panel-status-bar-placeholder):
+        (body.drawer-visible #panel-status-bar-placeholder):
+        (#panel-status-bar-resizer):
+        (#panel-status-bar):
+        (#panel-status-bar > div):
+        (#error-warning-count):
+        (#drawer):
+        (#drawer-contents):
+        (.status-bar-items):
+        (.drawer-header):
+        (#inner-status-bar):
+        (.search-status-bar-item):
+        (.search-status-bar-message):
+        (.search-status-bar-progress):
+        (body:not(.platform-mac) .search-status-bar-progress):
+        (body.platform-mac .search-status-bar-progress):
+        (.search-status-bar-stop-button-item):
+        (.search-status-bar-stop-button .glyph):
+        (.search-results-status-bar-message):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createGlobalStatusBarItems):
+        (WebInspector.showViewInDrawer):
+        (WebInspector._closePreviousDrawerView):
+        * inspector/front-end/timelinePanel.css:
+        (.timeline-records-counter):
+
 2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Implement Network Information provider

@@ -202,7 +202,14 @@ WebInspector.TimelinePanel.prototype = {
 
     get statusBarItems()
     {
-        var statusBarItems = [ this.toggleFilterButton.element, this.toggleTimelineButton.element, this.clearButton.element, this.garbageCollectButton.element, this._glueParentButton.element, this.statusBarFilters ];
+        var statusBarItems = [
+            this.toggleFilterButton.element,
+            this.toggleTimelineButton.element,
+            this.clearButton.element, this.garbageCollectButton.element,
+            this._glueParentButton.element,
+            this.statusBarFilters,
+            this.recordsCounter
+        ];
 
         return statusBarItems;
     },
@@ -592,13 +599,11 @@ WebInspector.TimelinePanel.prototype = {
         }
         this._overviewPane.setMode(this._overviewModeSetting.get());
         this._refresh();
-        WebInspector.drawer.currentPanelCounters = this.recordsCounter;
     },
 
     willHide: function()
     {
         this._closeRecordDetails();
-        WebInspector.drawer.currentPanelCounters = null;
         WebInspector.Panel.prototype.willHide.call(this);
     },
 

@@ -423,15 +423,10 @@
     text-shadow: white 0 1px 0;
 }
 
-#main-status-bar > .timeline-records-counter {
+.timeline-records-counter {
     float: right;
-    margin-top: 4px;
-    margin-right: 25px;
-}
-
-#counters > .timeline-records-counter {
-    float: left;
-    margin-top: -1px;
+    margin-top: 5px;
+    margin-right: 6px;
 }
 
 #resources-container-content {

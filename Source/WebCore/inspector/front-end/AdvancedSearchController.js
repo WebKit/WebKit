@@ -235,15 +235,7 @@ WebInspector.SearchView.prototype = {
      */
     get statusBarItems()
     {
-        return [this._searchStatusBarElement];
-    },
-
-    /**
-     * @return {Element}
-     */
-    get counterElement()
-    {
-        return this._searchResultsMessageElement;
+        return [this._searchStatusBarElement, this._searchResultsMessageElement];
     },
 
     /**
