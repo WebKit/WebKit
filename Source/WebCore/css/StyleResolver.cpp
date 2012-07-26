@@ -1312,6 +1312,9 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     if (!thisInputElement || !otherInputElement)
         return false;
 
+    if (thisInputElement->fastGetAttribute(typeAttr) != otherInputElement->fastGetAttribute(typeAttr))
+        return false;
+
     if (thisInputElement->isAutofilled() != otherInputElement->isAutofilled())
         return false;
     if (thisInputElement->shouldAppearChecked() != otherInputElement->shouldAppearChecked())
@@ -1372,8 +1375,9 @@ static inline bool attributeStylesEqual(StylePropertySet* a, StylePropertySet* b
     return true;
 }
 
-inline bool elementHasDirectionAuto(Element* element)
+static inline bool elementHasDirectionAuto(Element* element)
 {
+    // FIXME: This line is surprisingly hot, we may wish to inline hasDirectionAuto into StyleResolver.
     return element->isHTMLElement() && toHTMLElement(element)->hasDirectionAuto();
 }
 
@@ -1416,8 +1420,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element == element->document()->cssTarget())
         return false;
     if (m_element == m_element->document()->cssTarget())
-        return false;
-    if (element->getAttribute(typeAttr) != m_element->getAttribute(typeAttr))
         return false;
     if (element->fastGetAttribute(XMLNames::langAttr) != m_element->fastGetAttribute(XMLNames::langAttr))
         return false;

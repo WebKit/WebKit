@@ -1,3 +1,27 @@
+2012-07-26  Eric Seidel  <eric@webkit.org>
+
+        2% of all samples running grid demo show up in StyleResolver::canShareStyleWithElement, 20% of those due to getAttribute instead of fastGetAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=92257
+
+        Reviewed by Andreas Kling.
+
+        This check was added 7 years ago by hyatt in:
+        http://trac.webkit.org/changeset/10984
+        And then later made slow after triggering an ASSERT added:
+        http://trac.webkit.org/changeset/97670
+
+        SVG uses a "type" attribute (and it is animatable), but only when
+        used on filter elements:
+        http://www.w3.org/TR/SVG/attindex.html
+        In any case, this does not apply here, and is certainly not what
+        this check was originally intended for.
+
+        I've moved the check to canShareStyleWithControl
+        as it is only needed when the elements in question are both input elements.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add memory reporting routine to StyleResolver
