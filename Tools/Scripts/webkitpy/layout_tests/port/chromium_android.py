@@ -280,7 +280,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     # Overridden private functions.
 
     def _build_path(self, *comps):
-        self._build_path(None, *comps)
+        return self._host_port._build_path(*comps)
 
     def _build_path_with_configuration(self, configuration, *comps):
         return self._host_port._build_path_with_configuration(configuration, *comps)
