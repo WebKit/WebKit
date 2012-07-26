@@ -1,3 +1,22 @@
+2012-07-25  Jer Noble  <jer.noble@apple.com>
+
+        Add diagnostic messages when media and plugins load or fail to load.
+        https://bugs.webkit.org/show_bug.cgi?id=92341
+
+        Reviewed by Anders Carlsson.
+
+        Send diagnostic messages when a media or plugin element loads or fails to load. Include in
+        the trace the media engine description, error code, or plugin mime type.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget): Send a diagnostic message.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::stringForNetworkState): Added convenience function to stringify network states.
+        (WebCore::HTMLMediaElement::mediaLoadingFailed): Send a diagnostic message.
+        (WebCore::HTMLMediaElement::setReadyState): Send a diagnostic message.
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget): Send a diagnostic message.
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123159, r123165, r123168, r123492,

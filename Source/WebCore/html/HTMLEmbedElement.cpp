@@ -26,6 +26,9 @@
 
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
@@ -34,6 +37,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
 #include "MainResourceLoader.h"
+#include "Page.h"
 #include "PluginDocument.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
@@ -172,7 +176,10 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
 
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
     // FIXME: beforeLoad could have detached the renderer!  Just like in the <object> case above.
-    loader->requestObject(this, m_url, getNameAttribute(), m_serviceType, paramNames, paramValues);
+    bool success = loader->requestObject(this, m_url, getNameAttribute(), m_serviceType, paramNames, paramValues);
+
+    if (document()->page() && document()->page()->settings()->diagnosticLoggingEnabled())
+        document()->page()->chrome()->client()->logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), m_serviceType, DiagnosticLoggingKeys::noopKey());
 }
 
 bool HTMLEmbedElement::rendererIsNeeded(const NodeRenderingContext& context)
