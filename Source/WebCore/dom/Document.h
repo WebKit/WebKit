@@ -179,6 +179,10 @@ class Prerenderer;
 class TextAutosizer;
 #endif
 
+#if ENABLE(CSP_NEXT)
+class DOMSecurityPolicy;
+#endif
+
 typedef int ExceptionCode;
 
 enum PageshowEventPersistence {
@@ -414,6 +418,10 @@ public:
     String webkitVisibilityState() const;
     bool webkitHidden() const;
     void dispatchVisibilityStateChangeEvent();
+#endif
+
+#if ENABLE(CSP_NEXT)
+    DOMSecurityPolicy* securityPolicy();
 #endif
 
     PassRefPtr<Node> adoptNode(PassRefPtr<Node> source, ExceptionCode&);
@@ -1538,6 +1546,10 @@ private:
     Timer<Document> m_visualUpdatesSuppressionTimer;
 
     RefPtr<WebKitNamedFlowCollection> m_namedFlows;
+
+#if ENABLE(CSP_NEXT)
+    RefPtr<DOMSecurityPolicy> m_domSecurityPolicy;
+#endif
 
 #ifndef NDEBUG
     bool m_didDispatchViewportPropertiesChanged;

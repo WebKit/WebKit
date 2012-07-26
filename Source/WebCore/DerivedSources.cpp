@@ -94,6 +94,7 @@
 #include "JSDOMParser.cpp"
 #include "JSDOMPlugin.cpp"
 #include "JSDOMPluginArray.cpp"
+#include "JSDOMSecurityPolicy.cpp"
 #include "JSDOMSelection.cpp"
 #include "JSDOMSettableTokenList.cpp"
 #include "JSDOMStringList.cpp"

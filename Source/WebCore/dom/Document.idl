@@ -375,6 +375,9 @@ module core {
         readonly attribute [Conditional=PAGE_VISIBILITY_API] DOMString webkitVisibilityState;
         readonly attribute [Conditional=PAGE_VISIBILITY_API] boolean webkitHidden;
 
+        // Security Policy API: http://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#script-interfaces
+        readonly attribute [Conditional=CSP_NEXT] DOMSecurityPolicy SecurityPolicy;
+
     };
 
 }

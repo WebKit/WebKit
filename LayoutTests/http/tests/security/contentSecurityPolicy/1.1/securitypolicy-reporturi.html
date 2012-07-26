@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <body>
+    <script src="../resources/securitypolicy-tests-base.js"></script>
+    <script>
+      if (document.SecurityPolicy.reportURIs.length === 0)
+          log('PASS document.SecurityPolicy.reportURIs has length 0 when no policy exists.');
+      else
+          log('FAIL document.SecurityPolicy.reportURIs has length ' + document.SecurityPolicy.reportURIs.length + ' when no policy exists.');
+
+      injectPolicy('report-uri http://example.com/');
+
+      if (document.SecurityPolicy.reportURIs.length === 1)
+          log('PASS document.SecurityPolicy.reportURIs has length 1 when policy exists.');
+      else
+          log('FAIL document.SecurityPolicy.reportURIs has length ' + document.SecurityPolicy.reportURIs.length + ' when policy exists.');
+
+      if (document.SecurityPolicy.reportURIs[0] === "http://example.com/")
+          log('PASS document.SecurityPolicy.reportURIs[0] is correct.');
+      else
+          log('FAIL document.SecurityPolicy.reportURIs[0] is ' + document.SecurityPolicy.reportURIs[0] + ' (should be `http://example.com/`).');
+    </script>
+  </body>
+</html>

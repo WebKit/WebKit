@@ -415,6 +415,7 @@ IDL_BINDINGS += \
     $$PWD/page/Console.idl \
     $$PWD/page/Coordinates.idl \
     $$PWD/page/Crypto.idl \
+    $$PWD/page/DOMSecurityPolicy.idl \
     $$PWD/page/DOMSelection.idl \
     $$PWD/page/DOMWindow.idl \
     $$PWD/page/EventSource.idl \

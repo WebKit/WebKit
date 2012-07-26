@@ -40,6 +40,7 @@ namespace WebCore {
 
 class CSPDirectiveList;
 class ScriptCallStack;
+class DOMStringList;
 class ScriptExecutionContext;
 
 typedef Vector<OwnPtr<CSPDirectiveList> > CSPDirectiveListVector;
@@ -59,30 +60,38 @@ public:
         EnforcePolicy
     };
 
+    enum ReportingStatus {
+        SendReport,
+        SuppressReport
+    };
+
     void didReceiveHeader(const String&, HeaderType);
 
-    // These functions are wrong becuase they assume that there is only one header.
+    // These functions are wrong because they assume that there is only one header.
     // FIXME: Replace them with functions that return vectors.
     const String& deprecatedHeader() const;
     HeaderType deprecatedHeaderType() const;
 
-    bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
-    bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
-    bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
-    bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
-    bool allowEval(PassRefPtr<ScriptCallStack>) const;
+    bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
+    bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
+    bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
+    bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
+    bool allowEval(PassRefPtr<ScriptCallStack>, ReportingStatus = SendReport) const;
     bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& = KURL()) const;
 
-    bool allowScriptFromSource(const KURL&) const;
-    bool allowObjectFromSource(const KURL&) const;
-    bool allowChildFrameFromSource(const KURL&) const;
-    bool allowImageFromSource(const KURL&) const;
-    bool allowStyleFromSource(const KURL&) const;
-    bool allowFontFromSource(const KURL&) const;
-    bool allowMediaFromSource(const KURL&) const;
-    bool allowConnectToSource(const KURL&) const;
+    bool allowScriptFromSource(const KURL&, ReportingStatus = SendReport) const;
+    bool allowObjectFromSource(const KURL&, ReportingStatus = SendReport) const;
+    bool allowChildFrameFromSource(const KURL&, ReportingStatus = SendReport) const;
+    bool allowImageFromSource(const KURL&, ReportingStatus = SendReport) const;
+    bool allowStyleFromSource(const KURL&, ReportingStatus = SendReport) const;
+    bool allowFontFromSource(const KURL&, ReportingStatus = SendReport) const;
+    bool allowMediaFromSource(const KURL&, ReportingStatus = SendReport) const;
+    bool allowConnectToSource(const KURL&, ReportingStatus = SendReport) const;
 
     void setOverrideAllowInlineStyle(bool);
+
+    bool isActive() const;
+    void gatherReportURIs(DOMStringList&) const;
 
 private:
     explicit ContentSecurityPolicy(ScriptExecutionContext*);

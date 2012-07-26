@@ -222,6 +222,10 @@
 #include "TextAutosizer.h"
 #endif
 
+#if ENABLE(CSP_NEXT)
+#include "DOMSecurityPolicy.h"
+#endif
+
 using namespace std;
 using namespace WTF;
 using namespace Unicode;
@@ -1640,6 +1644,15 @@ bool Document::webkitHidden() const
 void Document::dispatchVisibilityStateChangeEvent()
 {
     dispatchEvent(Event::create(eventNames().webkitvisibilitychangeEvent, false, false));
+}
+#endif
+
+#if ENABLE(CSP_NEXT)
+DOMSecurityPolicy* Document::securityPolicy()
+{
+    if (!m_domSecurityPolicy)
+        m_domSecurityPolicy = DOMSecurityPolicy::create(this);
+    return m_domSecurityPolicy.get();
 }
 #endif
 

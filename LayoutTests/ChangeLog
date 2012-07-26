@@ -1,3 +1,36 @@
+2012-07-26  Mike West  <mkwst@chromium.org>
+
+        Implement the experimental Content Security Policy script interface.
+        https://bugs.webkit.org/show_bug.cgi?id=91707
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowconnectionto-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowconnectionto.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-alloweval-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-alloweval.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowfontfrom-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowfontfrom.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowframefrom-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowframefrom.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowimagefrom-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowimagefrom.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowmediafrom-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowmediafrom.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowobjectfrom-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowobjectfrom.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowscriptfrom-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowscriptfrom.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowstylefrom-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowstylefrom.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-isactive-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-isactive.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-reporturi-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-reporturi.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/securitypolicy-tests-base.js: Added.
+        (log):
+        (injectPolicy):
+
 2012-07-26  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Added Qt5 specific expected results and png.

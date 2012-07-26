@@ -1,3 +1,138 @@
+2012-07-26  Mike West  <mkwst@chromium.org>
+
+        CSP 1.1: Implement the Content Security Policy script interface.
+        https://bugs.webkit.org/show_bug.cgi?id=91707
+
+        Reviewed by Adam Barth.
+
+        The CSP 1.1 editor's draft defines a script interface that gives
+        developers the ability to query a document regarding the restrictions
+        set by it's currently active content security policy[1]. This patch
+        exposes that API in terms of a new DOMSecurityPolicy object.
+
+        Data for the API is gathered from the existing ContentSecurityPolicy
+        object on the containing document. CSP's various methods have been
+        extended with a `reportingStatus` parameter which, unsurprisingly,
+        determines whether a violation report should be sent for blocked
+        resources. This allows us to reuse the same codepaths by simply using
+        ContentSecurityPolicy::SuppressReport when querying on behalf of the
+        API, and ContentSecurityPolicy::SendReport when checking resources a
+        page wants to load.
+
+        This feature is gated on the CSP_NEXT flag, which is currently disabled
+        for all ports other than Chromium.
+
+        [1]: https://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#script-interfaces--experimental
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowconnectionto.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-alloweval.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowfontfrom.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowframefrom.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowimagefrom.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowmediafrom.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowobjectfrom.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowscriptfrom.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowstylefrom.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-isactive.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-reporturi.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * bindings/gobject/GNUmakefile.am:
+        * WebCore.xcodeproj/project.pbxproj:
+            We added a new object, so let's tell _everyone!_
+        * dom/Document.cpp:
+        (WebCore::Document::securityPolicy):
+            Expose the SecurityPolicy object via Document, gated on CSP_NEXT.
+        (WebCore):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/Document.idl:
+            Adding the SecurityPolicy object to the document, gated on CSP_NEXT.
+        * page/ContentSecurityPolicy.cpp:
+        (CSPDirectiveList):
+        (WebCore::CSPDirectiveList::checkInline):
+        (WebCore::CSPDirectiveList::checkNonce):
+        (WebCore::CSPDirectiveList::checkSource):
+            Extracting the core checks out into separate methods.
+        (WebCore::CSPDirectiveList::checkEvalAndReportViolation):
+            Use checkEval.
+        (WebCore::CSPDirectiveList::checkNonceAndReportViolation):
+            Use checkNonce.
+        (WebCore::CSPDirectiveList::checkInlineAndReportViolation):
+            Use checkInline.
+        (WebCore::CSPDirectiveList::checkSourceAndReportViolation):
+            Use checkSource.
+        (WebCore::CSPDirectiveList::allowJavaScriptURLs):
+        (WebCore::CSPDirectiveList::allowInlineEventHandlers):
+        (WebCore::CSPDirectiveList::allowInlineScript):
+        (WebCore::CSPDirectiveList::allowInlineStyle):
+        (WebCore::CSPDirectiveList::allowEval):
+        (WebCore::CSPDirectiveList::allowScriptFromSource):
+        (WebCore::CSPDirectiveList::allowObjectFromSource):
+        (WebCore::CSPDirectiveList::allowChildFrameFromSource):
+        (WebCore::CSPDirectiveList::allowImageFromSource):
+        (WebCore::CSPDirectiveList::allowStyleFromSource):
+        (WebCore::CSPDirectiveList::allowFontFromSource):
+        (WebCore::CSPDirectiveList::allowMediaFromSource):
+        (WebCore::CSPDirectiveList::allowConnectToSource):
+            These methods now branch on `reportingStatus`: if `SendReoport`,
+            they call `checkXAndReportViolation`, otherwise, they call `checkX`.
+        (WebCore::CSPDirectiveList::gatherReportURIs):
+            New method that gathers the violation report URIs into a DOMStringList.
+        (WebCore::isAllowedByAllWithCallStack):
+        (WebCore::isAllowedByAllWithContext):
+        (WebCore::isAllowedByAllWithURL):
+            These now pass reportingStatus through to the various `allowX` methods.
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs):
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers):
+        (WebCore::ContentSecurityPolicy::allowInlineScript):
+        (WebCore::ContentSecurityPolicy::allowInlineStyle):
+        (WebCore::ContentSecurityPolicy::allowEval):
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource):
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource):
+        (WebCore::ContentSecurityPolicy::allowChildFrameFromSource):
+        (WebCore::ContentSecurityPolicy::allowImageFromSource):
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource):
+        (WebCore::ContentSecurityPolicy::allowFontFromSource):
+        (WebCore::ContentSecurityPolicy::allowMediaFromSource):
+        (WebCore::ContentSecurityPolicy::allowConnectToSource):
+            These accept a new `reportingStatus` parameter, which is passed through
+            to the CSPDirectiveList methods.
+        (WebCore::ContentSecurityPolicy::isActive):
+            New method that returns `true` if policy is active.
+        (WebCore::ContentSecurityPolicy::gatherReportURIs):
+            New method that returns a DOMStringList of violation report URIs.
+        * page/ContentSecurityPolicy.h:
+        (WebCore):
+        * page/DOMSecurityPolicy.cpp: Added.
+        (WebCore::DOMSecurityPolicy::DOMSecurityPolicy):
+        (WebCore):
+        (WebCore::DOMSecurityPolicy::~DOMSecurityPolicy):
+        (WebCore::DOMSecurityPolicy::isActive):
+        (WebCore::DOMSecurityPolicy::reportURIs):
+        (WebCore::DOMSecurityPolicy::allowsInlineScript):
+        (WebCore::DOMSecurityPolicy::allowsInlineStyle):
+        (WebCore::DOMSecurityPolicy::allowsEval):
+        (WebCore::DOMSecurityPolicy::allowsConnectionTo):
+        (WebCore::DOMSecurityPolicy::allowsFontFrom):
+        (WebCore::DOMSecurityPolicy::allowsFrameFrom):
+        (WebCore::DOMSecurityPolicy::allowsImageFrom):
+        (WebCore::DOMSecurityPolicy::allowsMediaFrom):
+        (WebCore::DOMSecurityPolicy::allowsObjectFrom):
+        (WebCore::DOMSecurityPolicy::allowsScriptFrom):
+        (WebCore::DOMSecurityPolicy::allowsStyleFrom):
+        * page/DOMSecurityPolicy.h: Added.
+        (WebCore):
+        (DOMSecurityPolicy):
+        (WebCore::DOMSecurityPolicy::create):
+        * page/DOMSecurityPolicy.idl: Added.
+
 2012-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix build break on mac win port by r123716.

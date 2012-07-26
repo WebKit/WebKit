@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <body>
+    <script src="../resources/securitypolicy-tests-base.js"></script>
+    <script>
+      if (!document.SecurityPolicy.isActive())
+          log('PASS document.SecurityPolicy.active is false when no policy exists.');
+      else
+          log('FAIL document.SecurityPolicy.active is truw when no policy exists.');
+
+      injectPolicy("script-src 'unsafe-inline';");
+
+      if (document.SecurityPolicy.isActive())
+          log('PASS document.SecurityPolicy.active is true when policy exists.');
+      else
+          log('FAIL document.SecurityPolicy.active is false when policy exists.');
+    </script>
+  </body>
+</html>

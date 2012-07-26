@@ -532,6 +532,7 @@ SET(WebCore_IDL_FILES
     page/Console.idl
     page/Coordinates.idl
     page/Crypto.idl
+    page/DOMSecurityPolicy.idl
     page/DOMSelection.idl
     page/DOMWindow.idl
     page/EventSource.idl
@@ -1624,6 +1625,7 @@ SET(WebCore_SOURCES
     page/ContentSecurityPolicy.cpp
     page/ContextMenuController.cpp
     page/Crypto.cpp
+    page/DOMSecurityPolicy.cpp
     page/DOMSelection.cpp
     page/DOMTimer.cpp
     page/DOMWindow.cpp

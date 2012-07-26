@@ -142,6 +142,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMPluginArray.h \
 	DerivedSources/WebCore/JSDOMPlugin.cpp \
 	DerivedSources/WebCore/JSDOMPlugin.h \
+	DerivedSources/WebCore/JSDOMSecurityPolicy.cpp \
+	DerivedSources/WebCore/JSDOMSecurityPolicy.h \
 	DerivedSources/WebCore/JSDOMSelection.cpp \
 	DerivedSources/WebCore/JSDOMSelection.h \
 	DerivedSources/WebCore/JSDOMSettableTokenList.cpp \
@@ -969,6 +971,7 @@ dom_binding_idls += \
 	$(WebCore)/page/Console.idl \
 	$(WebCore)/page/Coordinates.idl \
 	$(WebCore)/page/Crypto.idl \
+	$(WebCore)/page/DOMSecurityPolicy.idl \
 	$(WebCore)/page/DOMSelection.idl \
 	$(WebCore)/page/DOMWindow.idl \
 	$(WebCore)/page/EventSource.idl \
@@ -3030,6 +3033,8 @@ webcore_sources += \
 	Source/WebCore/page/Coordinates.h \
 	Source/WebCore/page/Crypto.cpp \
 	Source/WebCore/page/Crypto.h \
+	Source/WebCore/page/DOMSecurityPolicy.cpp \
+	Source/WebCore/page/DOMSecurityPolicy.h \
 	Source/WebCore/page/DOMSelection.cpp \
 	Source/WebCore/page/DOMSelection.h \
 	Source/WebCore/page/DOMTimer.cpp \
