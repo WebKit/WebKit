@@ -28,7 +28,6 @@
 #include "SVGImageCache.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
-#include "Timer.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -104,7 +103,6 @@ private:
     size_t maximumDecodedImageSize();
     // If not null, changeRect is the changed part of the image.
     void notifyObservers(const IntRect* changeRect = 0);
-    void decodedDataDeletionTimerFired(Timer<CachedImage>*);
     virtual PurgePriority purgePriority() const { return PurgeFirst; }
     void checkShouldPaintBrokenImage();
 
@@ -112,7 +110,6 @@ private:
 #if ENABLE(SVG)
     OwnPtr<SVGImageCache> m_svgImageCache;
 #endif
-    Timer<CachedImage> m_decodedDataDeletionTimer;
     bool m_shouldPaintBrokenImage;
 };
 
