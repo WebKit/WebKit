@@ -41,7 +41,6 @@ class MacroAssemblerARM : public AbstractMacroAssembler<ARMAssembler> {
     COMPILE_ASSERT(!(DoubleConditionBitSpecial & DoubleConditionMask), DoubleConditionBitSpecial_should_not_interfere_with_ARMAssembler_Condition_codes);
 public:
     typedef ARMRegisters::FPRegisterID FPRegisterID;
-    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
 
     enum RelationalCondition {
         Equal = ARMAssembler::EQ,
@@ -408,11 +407,20 @@ public:
         m_assembler.dtr_ur(ARMAssembler::LoadUint32, dest, address.base, ARMRegisters::S0);
         return dataLabel;
     }
-    
+
+    static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
+    {
+        return value >= -4095 && value <= 4095;
+    }
+
     DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
     {
         DataLabelCompact dataLabel(this);
-        load32WithAddressOffsetPatch(address, dest);
+        ASSERT(isCompactPtrAlignedAddressOffset(address.offset));
+        if (address.offset >= 0)
+            m_assembler.dtr_u(ARMAssembler::LoadUint32, dest, address.base, address.offset);
+        else
+            m_assembler.dtr_d(ARMAssembler::LoadUint32, dest, address.base, address.offset);
         return dataLabel;
     }
 

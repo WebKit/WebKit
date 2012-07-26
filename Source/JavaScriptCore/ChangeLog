@@ -1,3 +1,24 @@
+2012-07-26  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        [Qt][ARM]ARMAssembler needs buildfix afert r123417
+        https://bugs.webkit.org/show_bug.cgi?id=92086
+
+        Reviewed by Csaba Osztrogonác.
+
+        The ARM implementation of this should be optimized code path
+        is covered by a non-optimized code path. This patch fixes this,
+        and adds a new function which returns with the offset range.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::readPointer):
+        (ARMAssembler):
+        (JSC::ARMAssembler::repatchInt32):
+        (JSC::ARMAssembler::repatchCompact):
+        * assembler/MacroAssemblerARM.h:
+        (MacroAssemblerARM):
+        (JSC::MacroAssemblerARM::isCompactPtrAlignedAddressOffset):
+        (JSC::MacroAssemblerARM::load32WithCompactAddressOffsetPatch):
+
 2012-07-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Build fix for 32-bit after r123682

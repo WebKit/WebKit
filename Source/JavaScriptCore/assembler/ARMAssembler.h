@@ -817,11 +817,11 @@ namespace JSC {
         // Read pointers
         static void* readPointer(void* from)
         {
-            ARMWord* insn = reinterpret_cast<ARMWord*>(from);
-            ARMWord* addr = getLdrImmAddress(insn);
-            return *reinterpret_cast<void**>(addr);
+            ARMWord* instruction = reinterpret_cast<ARMWord*>(from);
+            ARMWord* address = getLdrImmAddress(instruction);
+            return *reinterpret_cast<void**>(address);
         }
-        
+
         // Patch pointers
 
         static void linkPointer(void* code, AssemblerLabel from, void* to)
@@ -829,14 +829,20 @@ namespace JSC {
             patchPointerInternal(reinterpret_cast<intptr_t>(code) + from.m_offset, to);
         }
 
-        static void repatchInt32(void* from, int32_t to)
+        static void repatchInt32(void* where, int32_t to)
         {
-            patchPointerInternal(reinterpret_cast<intptr_t>(from), reinterpret_cast<void*>(to));
+            patchPointerInternal(reinterpret_cast<intptr_t>(where), reinterpret_cast<void*>(to));
         }
-        
+
         static void repatchCompact(void* where, int32_t value)
         {
-            repatchInt32(where, value);
+            ARMWord* instruction = reinterpret_cast<ARMWord*>(where);
+            ASSERT((*instruction & 0x0f700000) == LoadUint32);
+            if (value >= 0)
+                *instruction = (*instruction & 0xff7ff000) | DT_UP | value;
+            else
+                *instruction = (*instruction & 0xff7ff000) | -value;
+            cacheFlush(instruction, sizeof(ARMWord));
         }
 
         static void repatchPointer(void* from, void* to)
