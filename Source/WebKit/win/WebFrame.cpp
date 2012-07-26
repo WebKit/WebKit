@@ -886,6 +886,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::pageNumberForElementById(
     // TODO: Please remove this function if not needed as this is LTC specific function
     // and has been moved to Internals.
     notImplemented();
+    return E_FAIL;
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::numberOfPages(

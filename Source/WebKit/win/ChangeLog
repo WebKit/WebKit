@@ -1,3 +1,15 @@
+2012-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [Mac] Fix build break on Apple win bot after r123711
+        https://bugs.webkit.org/show_bug.cgi?id=92354
+
+        Reviewed by Adam Barth.
+
+        Missing return value.
+
+        * WebFrame.cpp:
+        (WebFrame::pageNumberForElementById):
+
 2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: pageNumberForElementById() could be moved to Internals
