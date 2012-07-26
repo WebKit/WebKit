@@ -1,3 +1,81 @@
+2012-07-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [NRWT] should have a way to restrict pixel tests for individual directories
+        https://bugs.webkit.org/show_bug.cgi?id=91754
+
+        Reviewed by Dirk Pranke.
+
+        Added --pixel-test-directories option to nrwt. It implies --pixel-tests.
+        If the platform supports this option only tests from these directories will
+        be executed as pixel tests. Furthermore, platforms can have a default set of
+        pixel test directories. To support the feature the test harness have to be
+        able to inform the driver whether to dump pixels for each tests. For this
+        purpose I changed WTR and the Qt DRT to handle a --pixel-test argument from
+        the standard output and made NRWT use this argument with these drivers.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::processLine):
+        (WebCore::DumpRenderTree::setDumpPixelsForAllTests):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (DumpRenderTree):
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+        Handle the --pixel-test argument.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._should_fetch_expected_checksum):
+        (SingleTestRunner._overwrite_baselines):
+        (SingleTestRunner._compare_output):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker._update_test_input):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.supports_switching_pixel_tests_per_test): Ports can override this to inform
+        the harness that --pixel-test argument is supported. True for WTR, otherwise calls
+        private version that can be overridden by the actual platform. Only true with WTR
+        and Qt DRT currently. This supposed to exist only temporary until there are ports
+        that doesn't support the feature in their DRT's.
+        (Port):
+        (Port._supports_switching_pixel_tests_per_test):
+        (Port.should_run_as_pixel_test):
+        (Port._should_run_as_pixel_test): Ports can override this to define their
+        default set of pixel tests directories.
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.cmd_line): Don't pass --pixel-tests if the platform supports per test
+        --pixel-test.
+        (Driver._command_from_driver_input): Pass --pixel-test if it is supported and pixel
+        tests are enabled.
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.check_sys_deps):
+        (QtPort):
+        (QtPort._supports_switching_pixel_tests_per_test):
+        (QtPort._should_run_as_pixel_test):
+        (QtPort._default_pixel_test_directories): Only compositing will be our default pixel
+        test directory for the time being.
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.supports_switching_pixel_tests_per_test):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        (parse_args):
+        Handle the --pixel-test-directory option. It expect a directory below LayoutTests
+        and can be specified multiple times. Added fixme's that we should improve how we
+        handle these arguments.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_run_singly_actually_runs_tests):
+        (MainTest.test_pixel_test_directories):
+        Added an integration test for the feature.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        Handle the --pixel-test argument.
+
 2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Regression(r123604): webintents/web-intents-obj-constructor.html is crashing

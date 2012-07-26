@@ -88,13 +88,8 @@ class Worker(object):
             test_input.reference_files = self._port.reference_files(test_input.test_name)
         if test_input.reference_files:
             test_input.should_run_pixel_test = True
-        elif self._options.pixel_tests:
-            if self._options.skip_pixel_test_if_no_baseline:
-                test_input.should_run_pixel_test = bool(self._port.expected_image(test_input.test_name))
-            else:
-                test_input.should_run_pixel_test = True
         else:
-            test_input.should_run_pixel_test = False
+            test_input.should_run_pixel_test = self._port.should_run_as_pixel_test(test_input)
 
     def _run_test(self, test_input):
         self._update_test_input(test_input)
