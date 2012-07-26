@@ -1,3 +1,15 @@
+2012-07-25  Dan Bernstein  <mitz@apple.com>
+
+        Hit testing in one column or in the gap between cloumns along the block axis can return a result from the wrong column
+        https://bugs.webkit.org/show_bug.cgi?id=92311
+
+        Reviewed by Anders Carlsson.
+
+        * fast/multicol/hit-test-end-of-column-expected.txt: Added.
+        * fast/multicol/hit-test-end-of-column.html: Added.
+        * fast/multicol/hit-test-gap-block-axis-expected.txt: Added.
+        * fast/multicol/hit-test-gap-block-axis.html: Added.
+
 2012-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Improve the output of editing/pasteboard/paste-noscript-xhtml.xhtml

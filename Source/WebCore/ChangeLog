@@ -1,3 +1,21 @@
+2012-07-25  Dan Bernstein  <mitz@apple.com>
+
+        Hit testing in one column or in the gap between cloumns along the block axis can return a result from the wrong column
+        https://bugs.webkit.org/show_bug.cgi?id=92311
+
+        Reviewed by Anders Carlsson.
+
+        Tests: fast/multicol/hit-test-end-of-column.html
+               fast/multicol/hit-test-gap-block-axis.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPointWithInlineChildren): To prevent hits after the last
+        line on a given column from returning the next line in the next column, added a check if
+        the hit occurred within the pagination strut of a line. Covered by the first test.
+        (WebCore::RenderBlock::adjustPointToColumnContents): Added clamp-to-column logic for the
+        block-axis case. This prevents hits near the bottom of the top half of the gap from bleeding
+        into the top of the next column. Covered by the second test.
+
 2012-07-25  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Make db.version return an integer if appropriate
