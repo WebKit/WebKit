@@ -551,7 +551,7 @@ WebInspector.scriptSnippetModel = null;
 
 /**
  * @constructor
- * @extends {WebInspector.SourceFrame}
+ * @extends {WebInspector.JavaScriptSourceFrame}
  * @param {WebInspector.ScriptsPanel} scriptsPanel
  * @param {WebInspector.SnippetJavaScriptSource} snippetJavaScriptSource
  */

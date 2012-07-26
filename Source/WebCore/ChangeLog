@@ -1,3 +1,11 @@
+2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed r123761 follow-up, inspector closure compilation fix.
+
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.Location.prototype.uiLocation):
+        * inspector/front-end/ScriptSnippetModel.js:
+
 2012-07-26  Patrick Gansterer  <paroga@webkit.org>
 
         Cleanup GraphicsContext::(getWindowsContext|releaseWindowsContext)
