@@ -1,3 +1,10 @@
+2012-07-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed speculative buildfix after r123729.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::runTest): Fix sign errors.
+
 2012-07-26  Zoltan Nyul  <zoltan.nyul@intel.com>
 
         [EFL] EFL port should use XDG paths
