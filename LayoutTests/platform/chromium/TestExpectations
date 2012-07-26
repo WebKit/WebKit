@@ -1600,6 +1600,9 @@ BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
 
+// Rebaseline this after Skia rev. 4771 has landed
+BUGCR139162 : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
+
 // Rebaseline to take advantage of skia ColorFilter optimization.
 // Note that two of tests below are broken on Leopard for other reasons (search
 // elsewhere within this file) and thus should not be blindly rebaselined there.
