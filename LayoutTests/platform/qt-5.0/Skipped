@@ -134,9 +134,6 @@ ietestcenter/css3/text/textshadow-002.htm
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
-css3/filters/effect-blur-hw.html
-css3/filters/effect-blur.html
-css3/filters/regions-expanding.html
 editing/pasteboard/3976872.html
 editing/pasteboard/4076267-2.html
 editing/pasteboard/4076267-3.html
@@ -212,18 +209,6 @@ editing/pasteboard/smart-paste-007.html
 editing/pasteboard/styled-element-markup.html
 editing/pasteboard/undoable-fragment-removes.html
 editing/pasteboard/unrendered-br.html
-editing/undo/5378473.html
-editing/undo/undo-misspellings.html
-editing/undo/undo-typing-001.html
-fast/block/lineboxcontain/inline-box-vertical.html
-fast/block/lineboxcontain/inline-box.html
-fast/block/lineboxcontain/inline-replaced.html
-fast/block/lineboxcontain/none.html
-fast/block/lineboxcontain/parsing-invalid.html
-fast/block/lineboxcontain/replaced.html
-fast/js/constructor-length.html
-fast/js/custom-constructors.html
-fast/js/instanceof-XMLHttpRequest.html
 svg/custom/SVGMatrix-interface.svg
 svg/custom/SVGPoint-matrixTransform.svg
 svg/custom/absolute-sized-content-with-resources.xhtml
@@ -421,8 +406,6 @@ svg/custom/use-setAttribute-crash.svg
 svg/custom/use-transform.svg
 svg/custom/viewbox-syntax.svg
 svg/custom/viewport-em.svg
-tables/layering/paint-test-layering-1.html
-tables/layering/paint-test-layering-2.html
 
 # [Qt] Tests still fail after the update to new fonts
 # https://bugs.webkit.org/show_bug.cgi?id=91610
