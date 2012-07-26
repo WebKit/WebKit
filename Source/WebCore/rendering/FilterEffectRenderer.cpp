@@ -161,6 +161,9 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* do
     }
     return effect;
 #else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(previousEffect);
+    UNUSED_PARAM(op);
     return 0;
 #endif
 }
