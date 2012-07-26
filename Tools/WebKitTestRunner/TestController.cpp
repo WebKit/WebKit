@@ -525,17 +525,17 @@ bool TestController::runTest(const char* test)
     size_t secondSeparatorPos = command.find_first_of('\'', firstSeparatorPos + 1);
     if (firstSeparatorPos != std::string::npos) {
         pathOrURL = std::string(command, 0, firstSeparatorPos);
-        int pixelHashPos = firstSeparatorPos + 1;
+        size_t pixelHashPos = firstSeparatorPos + 1;
 
         // NRWT passes --pixel-test if we should dump pixels for the test.
         const std::string expectedPixelTestArg("--pixel-test");
         std::string argTest = std::string(command, firstSeparatorPos + 1, expectedPixelTestArg.size());
         if (argTest == expectedPixelTestArg) {
             dumpPixelsTest = true;
-            pixelHashPos = secondSeparatorPos == std::string::npos ? -1 : static_cast<int>(secondSeparatorPos + 1);
+            pixelHashPos = secondSeparatorPos == std::string::npos ? std::string::npos : secondSeparatorPos + 1;
         }
-        if (pixelHashPos != -1 && pixelHashPos < command.size())
-            expectedPixelHash = std::string(command, static_cast<size_t>(pixelHashPos));
+        if (pixelHashPos != std::string::npos && pixelHashPos < command.size())
+            expectedPixelHash = std::string(command, pixelHashPos);
     }
 
     m_state = RunningTest;

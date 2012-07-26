@@ -1,5 +1,12 @@
 2012-07-26  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Unreviewed speculative Mac buildfix after r123729 - 2nd attempt.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::runTest):
+
+2012-07-26  Balazs Kelemen  <kbalazs@webkit.org>
+
         Unreviewed speculative buildfix after r123729.
 
         * WebKitTestRunner/TestController.cpp:
