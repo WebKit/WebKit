@@ -90,6 +90,9 @@ function transactionAborted()
     abortFired = true;
 
     evalAndExpectException("store.add({x: 'value5', y: 'zzz5'}, 'key5')", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+
+    evalAndExpectException("trans.abort()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+ 
     finishJSTest();
 }
 

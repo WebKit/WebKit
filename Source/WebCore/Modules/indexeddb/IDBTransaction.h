@@ -78,7 +78,7 @@ public:
     IDBDatabase* db() const { return m_database.get(); }
     PassRefPtr<DOMError> error() const { return m_error; }
     PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&);
-    void abort();
+    void abort(ExceptionCode&);
 
     class OpenCursorNotifier {
     public:

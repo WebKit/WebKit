@@ -458,7 +458,8 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     if (m_transaction) {
         if (event->type() == eventNames().errorEvent && dontPreventDefault && !m_requestAborted) {
             m_transaction->setError(m_error);
-            m_transaction->abort();
+            ExceptionCode unused;
+            m_transaction->abort(unused);
         }
 
         if (event->type() != eventNames().blockedEvent)
@@ -475,7 +476,8 @@ void IDBRequest::uncaughtExceptionInEventHandler()
 {
     if (m_transaction && !m_requestAborted) {
         m_transaction->setError(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::IDB_ABORT_ERR)));
-        m_transaction->abort();
+        ExceptionCode unused; 
+        m_transaction->abort(unused);
     }
 }
 

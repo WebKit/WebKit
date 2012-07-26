@@ -44,7 +44,8 @@ module storage {
         // Methods
         IDBObjectStore objectStore (in DOMString name)
             raises (IDBDatabaseException);
-        void abort ();
+        void abort ()
+            raises (IDBDatabaseException);
 
         // Events
         attribute EventListener onabort;

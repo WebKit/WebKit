@@ -193,10 +193,13 @@ void IDBTransaction::setActive(bool active)
         m_backend->commit();
 }
 
-void IDBTransaction::abort()
+void IDBTransaction::abort(ExceptionCode& ec)
 {
-    if (m_state == Finishing || m_state == Finished)
+    if (m_state == Finishing || m_state == Finished) {
+        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return;
+    }
+
     m_state = Finishing;
     m_active = false;
 
@@ -387,7 +390,8 @@ void IDBTransaction::stop()
     ActiveDOMObject::stop();
     m_contextStopped = true;
 
-    abort();
+    ExceptionCode unused;
+    abort(unused);
 }
 
 void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)

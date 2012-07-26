@@ -1,3 +1,22 @@
+2012-07-25  Xingnan Wang  <xingnan.wang@intel.com>
+
+        IndexedDB: IDBTransaction::abort() should throw DOMException
+        https://bugs.webkit.org/show_bug.cgi?id=92069
+
+        Reviewed by Kentaro Hara.
+
+        Keep aligned with the W3C spec.
+        http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#widl-IDBTransaction-abort-void
+
+        Test: storage/indexeddb/transaction-abort.html.
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::abort):
+        (WebCore):
+        * Modules/indexeddb/IDBTransaction.h:
+        (IDBTransaction):
+        * Modules/indexeddb/IDBTransaction.idl:
+
 2012-07-25  Tony Chang  <tony@chromium.org>
 
         flexitems can overflow the flexbox due to rounding
