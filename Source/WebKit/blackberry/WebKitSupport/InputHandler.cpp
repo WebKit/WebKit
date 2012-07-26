@@ -53,6 +53,8 @@
 #include "ScopePointer.h"
 #include "SelectPopupClient.h"
 #include "SelectionHandler.h"
+#include "SpellChecker.h"
+#include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "WebPageClient.h"
 #include "WebPage_p.h"
@@ -518,12 +520,127 @@ void InputHandler::learnText()
     sendLearnTextDetails(textInField);
 }
 
-
-void InputHandler::spellCheckingRequestProcessed(int32_t id, spannable_string_t* spannableString)
+void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest> textCheckingRequest)
 {
-    UNUSED_PARAM(id);
-    UNUSED_PARAM(spannableString);
-    // TODO implement.
+    RefPtr<WebCore::TextCheckingRequest> request = textCheckingRequest;
+
+    int32_t sequenceId = request->sequence();
+    int requestLength = request->text().length();
+    if (!requestLength /* || requestLength > maxSpellCheckStringLength */) {
+        spellCheckingRequestCancelled(sequenceId, true /* isSequenceId */);
+        return;
+    }
+
+    wchar_t* checkingString = (wchar_t*)malloc(sizeof(wchar_t) * (requestLength + 1));
+    if (!checkingString) {
+        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "InputHandler::requestCheckingOfString Cannot allocate memory for string.");
+        spellCheckingRequestCancelled(sequenceId, true /* isSequenceId */);
+        return;
+    }
+
+    int stringLength = 0;
+    if (!convertStringToWchar(request->text(), checkingString, requestLength + 1, &stringLength)) {
+        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "InputHandler::requestCheckingOfString Failed to convert String to wchar type.");
+        free(checkingString);
+        spellCheckingRequestCancelled(sequenceId, true /* isSequenceId */);
+        return;
+    }
+
+    int32_t transactionId = m_webPage->m_client->checkSpellingOfStringAsync(checkingString, stringLength);
+    free(checkingString);
+
+    // If the call to the input service did not go through, then cancel the request so we don't block endlessly.
+    // This should still take transactionId as a parameter to maintain the same behavior as if InputMethodSupport
+    // were to cancel a request during processing.
+    if (transactionId == -1) { // Error before sending request to input service.
+        spellCheckingRequestCancelled(sequenceId, true /* isSequenceId */);
+        return;
+    }
+
+    // map sequenceId to transactionId.
+    m_sequenceMap[transactionId] = sequenceId;
+}
+
+int32_t InputHandler::convertTransactionIdToSequenceId(int32_t transactionId)
+{
+    std::map<int32_t, int32_t>::iterator it = m_sequenceMap.find(transactionId);
+
+    if (it == m_sequenceMap.end())
+        return 0;
+
+    int32_t sequenceId = it->second;
+    // We only convert this value when we have received its response, so its safe to remove it from the map.
+    m_sequenceMap.erase(it);
+
+    return sequenceId;
+}
+
+void InputHandler::spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t* spannableString)
+{
+    if (!spannableString) {
+        spellCheckingRequestCancelled(transactionId, false /* isSequenceId */);
+        return;
+    }
+
+    Vector<TextCheckingResult> results;
+
+    // Convert the spannableString to TextCheckingResult then append to results vector.
+    String replacement;
+    TextCheckingResult textCheckingResult;
+    textCheckingResult.type = TextCheckingTypeSpelling;
+    textCheckingResult.replacement = replacement;
+    textCheckingResult.location = 0;
+    textCheckingResult.length = 0;
+
+    span_t* span = spannableString->spans;
+    for (unsigned int i = 0; i < spannableString->spans_count; i++) {
+        if (!span)
+            break;
+        if (span->end < span->start) {
+            spellCheckingRequestCancelled(transactionId, false /* isSequenceId */);
+            return;
+        }
+        if (span->attributes_mask & MISSPELLED_WORD_ATTRIB) {
+            textCheckingResult.location = span->start;
+            // The end point includes the character that it is before. Ie, 0, 0
+            // applies to the first character as the end point includes the character
+            // at the position. This means the endPosition is always +1.
+            textCheckingResult.length = span->end - span->start + 1;
+            results.append(textCheckingResult);
+        }
+        span++;
+    }
+
+    // transactionId here is for use with the input service. We need to translate this to sequenceId used with SpellChecker.
+    int32_t sequenceId = convertTransactionIdToSequenceId(transactionId);
+
+    SpellChecker* sp = getSpellChecker();
+    if (!sp || !sequenceId) {
+        InputLog(LogLevelWarn, "InputHandler::spellCheckingRequestProcessed failed to process the request with sequenceId %d", sequenceId);
+        spellCheckingRequestCancelled(sequenceId, true /* isSequenceId */);
+        return;
+    }
+    sp->didCheckSucceeded(sequenceId, results);
+}
+
+void InputHandler::spellCheckingRequestCancelled(int32_t id, bool isSequenceId)
+{
+    int32_t sequenceId = isSequenceId ? id : convertTransactionIdToSequenceId(id);
+    SpellChecker* sp = getSpellChecker();
+    if (!sp) {
+        InputLog(LogLevelWarn, "InputHandler::spellCheckingRequestCancelled failed to cancel the request with sequenceId %d", sequenceId);
+        return;
+    }
+    sp->didCheckCanceled(sequenceId);
+}
+
+SpellChecker* InputHandler::getSpellChecker()
+{
+    if (Frame* frame = m_currentFocusElement->document()->frame())
+        if (Editor* editor = frame->editor())
+            return editor->spellChecker();
+
+    return 0;
 }
 
 void InputHandler::setElementUnfocused(bool refocusOccuring)

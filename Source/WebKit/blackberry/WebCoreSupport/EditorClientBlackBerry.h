@@ -87,6 +87,7 @@ public:
     virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail, 0u>&, int*, int*);
     virtual void getGuessesForWord(const String&, const String&, Vector<String>&);
     virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>);
+    virtual void checkTextOfParagraph(const UChar*, int, TextCheckingTypeMask, Vector<TextCheckingResult>&);
 
     virtual TextCheckerClient* textChecker();
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&);

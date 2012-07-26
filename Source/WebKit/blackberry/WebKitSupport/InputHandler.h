@@ -22,7 +22,7 @@
 #include <BlackBerryPlatformInputEvents.h>
 
 #include <imf/input_data.h>
-
+#include <map>
 #include <wtf/RefPtr.h>
 
 namespace WTF {
@@ -37,6 +37,8 @@ class HTMLInputElement;
 class HTMLSelectElement;
 class IntRect;
 class Node;
+class SpellChecker;
+class TextCheckingRequest;
 }
 
 namespace BlackBerry {
@@ -122,7 +124,9 @@ public:
     int32_t setComposingText(spannable_string_t*, int32_t relativeCursorPosition);
     int32_t commitText(spannable_string_t*, int32_t relativeCursorPosition);
 
-    void spellCheckingRequestProcessed(int32_t id, spannable_string_t*);
+    void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>);
+    void spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t*);
+    void spellCheckingRequestCancelled(int32_t id, bool isSequenceId = false);
 
 private:
     enum PendingKeyboardStateChange { NoChange, Visible, NotVisible };
@@ -179,6 +183,8 @@ private:
 
     void learnText();
     void sendLearnTextDetails(const WTF::String&);
+    int32_t convertTransactionIdToSequenceId(int32_t transactionId);
+    WebCore::SpellChecker* getSpellChecker();
 
     WebPagePrivate* m_webPage;
 
@@ -196,6 +202,8 @@ private:
 
     PendingKeyboardStateChange m_pendingKeyboardVisibilityChange;
     bool m_delayKeyboardVisibilityChange;
+
+    std::map<int32_t, int32_t> m_sequenceMap;
 };
 
 }

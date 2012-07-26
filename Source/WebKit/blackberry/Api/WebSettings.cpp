@@ -38,6 +38,7 @@ namespace BlackBerry {
 namespace WebKit {
 
 DEFINE_STATIC_LOCAL(String, BlackBerryAllowCrossSiteRequests, ("BlackBerryAllowCrossSiteRequests"));
+DEFINE_STATIC_LOCAL(String, BlackBerryAsynchronousSpellChecking, ("BlackBerryAsynchronousSpellChecking"));
 DEFINE_STATIC_LOCAL(String, BlackBerryBackgroundColor, ("BlackBerryBackgroundColor"));
 DEFINE_STATIC_LOCAL(String, BlackBerryCookiesEnabled, ("BlackBerryCookiesEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryDirectRenderingToWindowEnabled, ("BlackBerryDirectRenderingToWindowEnabled"));
@@ -177,6 +178,7 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setBoolean(BlackBerryFullScreenVideoCapable, false);
     settings->m_private->setBoolean(BlackBerryCredentialAutofillEnabled, false);
     settings->m_private->setBoolean(BlackBerryFormAutofillEnabled, false);
+    settings->m_private->setBoolean(BlackBerryAsynchronousSpellChecking, true);
 
     if (BlackBerry::Platform::DeviceInfo::instance()->isMobile()) {
         WebCore::FloatSize currentPPI = Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
@@ -805,6 +807,16 @@ bool WebSettings::isSpatialNavigationEnabled() const
 void WebSettings::setSpatialNavigationEnabled(bool enable)
 {
     m_private->setBoolean(SpatialNavigationEnabled, enable);
+}
+
+bool WebSettings::isAsynchronousSpellCheckingEnabled() const
+{
+    return m_private->getBoolean(BlackBerryAsynchronousSpellChecking);
+}
+
+void WebSettings::setAsynchronousSpellCheckingEnabled(bool enable) const
+{
+    return m_private->setBoolean(BlackBerryAsynchronousSpellChecking, enable);
 }
 
 bool WebSettings::fullScreenVideoCapable() const

@@ -4593,9 +4593,14 @@ void WebPage::setSpellCheckingEnabled(bool enabled)
     static_cast<EditorClientBlackBerry*>(d->m_page->editorClient())->enableSpellChecking(enabled);
 }
 
-void WebPage::spellCheckingRequestProcessed(int32_t id, spannable_string_t* spannableString)
+void WebPage::spellCheckingRequestCancelled(int32_t transactionId)
 {
-    d->m_inputHandler->spellCheckingRequestProcessed(id, spannableString);
+    d->m_inputHandler->spellCheckingRequestCancelled(transactionId);
+}
+
+void WebPage::spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t* spannableString)
+{
+    d->m_inputHandler->spellCheckingRequestProcessed(transactionId, spannableString);
 }
 
 class DeferredTaskSelectionCancelled: public DeferredTask<&WebPagePrivate::m_wouldCancelSelection> {
@@ -6404,6 +6409,7 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setDefaultTextEncodingName(webSettings->defaultTextEncodingName().impl());
     coreSettings->setDownloadableBinaryFontsEnabled(webSettings->downloadableBinaryFontsEnabled());
     coreSettings->setSpatialNavigationEnabled(m_webSettings->isSpatialNavigationEnabled());
+    coreSettings->setAsynchronousSpellCheckingEnabled(m_webSettings->isAsynchronousSpellCheckingEnabled());
 
     WebString stylesheetURL = webSettings->userStyleSheetString();
     if (stylesheetURL.isEmpty())

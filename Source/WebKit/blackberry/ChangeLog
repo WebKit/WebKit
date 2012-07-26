@@ -1,3 +1,44 @@
+2012-07-26  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Support async spellcheck for the blackberry port
+        https://bugs.webkit.org/show_bug.cgi?id=92160
+
+        PR124517
+        Implementing support for async spellcheck.
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::spellCheckingRequestCancelled):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        * Api/WebPage.h:
+        * Api/WebSettings.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+        (BlackBerry::WebKit::WebSettings::isAsynchronousSpellCheckingEnabled):
+        (BlackBerry::WebKit::WebSettings::setAsynchronousSpellCheckingEnabled):
+        * Api/WebSettings.h:
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore):
+        (WebCore::EditorClientBlackBerry::requestCheckingOfString):
+        (WebCore::EditorClientBlackBerry::checkTextOfParagraph):
+        * WebCoreSupport/EditorClientBlackBerry.h:
+        (EditorClientBlackBerry):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        (BlackBerry::WebKit::InputHandler::convertTransactionIdToSequenceId):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestCancelled):
+        (BlackBerry::WebKit::InputHandler::getSpellChecker):
+        * WebKitSupport/InputHandler.h:
+        (WebCore):
+        (InputHandler):
+
 2012-07-26  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Improve the logs in Selection Handler.

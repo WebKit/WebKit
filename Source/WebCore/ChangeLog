@@ -1,3 +1,18 @@
+2012-07-26  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Support async spellcheck for the blackberry port
+        https://bugs.webkit.org/show_bug.cgi?id=92160
+
+        Set USE_UNIFIED_TEXT_CHECKING for PLATFORM(BLACKBERRY) to use the
+        asynchronous spellchecking code path.
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        * platform/text/TextChecking.h:
+        (WebCore):
+
 2012-07-26  Huang Dongsung  <luxtella@company100.net>
 
         Gather the duplicated timer code into CachedResource.

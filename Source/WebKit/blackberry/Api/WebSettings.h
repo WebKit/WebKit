@@ -228,6 +228,9 @@ public:
     bool isSpatialNavigationEnabled() const;
     void setSpatialNavigationEnabled(bool);
 
+    bool isAsynchronousSpellCheckingEnabled() const;
+    void setAsynchronousSpellCheckingEnabled(bool) const;
+
     bool fullScreenVideoCapable() const;
     void setFullScreenVideoCapable(bool);
 
