@@ -1,3 +1,19 @@
+2012-07-25  Min Qin  <qinmin@chromium.org>
+
+        Upstream declaration of WebGraphicsContext3D::createStreamTextureCHROMIUM() for android
+        https://bugs.webkit.org/show_bug.cgi?id=92308
+
+        Reviewed by Adam Barth.
+
+        For android, we need 2 calls to create and destroy the stream texture.
+        This change adds the interface for these 2 calls.
+        The actual implementation will be in webgraphicscontext3d_in_process_impl and webgraphicscontext3d_command_buffer_impl.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::createStreamTextureCHROMIUM):
+        (WebKit::WebGraphicsContext3D::destroyStreamTextureCHROMIUM):
+
 2012-07-25  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update MediaStreamTrack to match the specification
