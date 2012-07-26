@@ -1,3 +1,16 @@
+2012-07-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r123634
+        https://bugs.webkit.org/show_bug.cgi?id=92351
+
+        Unreviewed gardening.
+
+        Newly added inspector tests failing on EFL port due to missing Geolocation support (bug 82140).
+        Moved Geolocation tests to TestExpectations from Skipped.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
 2012-07-26  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Remove DeprecatedPeerConnection

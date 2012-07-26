@@ -211,10 +211,6 @@ fast/dom/HTMLAnchorElement/anchor-download.html
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
 
-# The EFL port has no support for Geolocation
-fast/dom/Geolocation
-fast/dom/Window/window-properties-geolocation.html
-
 # The EFL port has no support for x-webkit-speech (and addMockSpeechInputResult in LayoutTestController)
 fast/speech
 fast/events/constructors/speech-recognition-event-constructor.html
