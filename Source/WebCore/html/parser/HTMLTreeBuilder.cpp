@@ -656,9 +656,8 @@ static void adjustSVGTagNameCase(AtomicHTMLToken* token)
     static PrefixedNameToQualifiedNameMap* caseMap = 0;
     if (!caseMap) {
         caseMap = new PrefixedNameToQualifiedNameMap;
-        size_t length = 0;
-        QualifiedName** svgTags = SVGNames::getSVGTags(&length);
-        mapLoweredLocalNameToName(caseMap, svgTags, length);
+        QualifiedName** svgTags = SVGNames::getSVGTags();
+        mapLoweredLocalNameToName(caseMap, svgTags, SVGNames::SVGTagsCount);
     }
 
     const QualifiedName& casedName = caseMap->get(token->name());
@@ -667,14 +666,13 @@ static void adjustSVGTagNameCase(AtomicHTMLToken* token)
     token->setName(casedName.localName());
 }
 
-template<QualifiedName** getAttrs(size_t* length)>
+template<QualifiedName** getAttrs(), unsigned length>
 static void adjustAttributes(AtomicHTMLToken* token)
 {
     static PrefixedNameToQualifiedNameMap* caseMap = 0;
     if (!caseMap) {
         caseMap = new PrefixedNameToQualifiedNameMap;
-        size_t length = 0;
-        QualifiedName** attrs = getAttrs(&length);
+        QualifiedName** attrs = getAttrs();
         mapLoweredLocalNameToName(caseMap, attrs, length);
     }
 
@@ -688,12 +686,12 @@ static void adjustAttributes(AtomicHTMLToken* token)
 
 static void adjustSVGAttributes(AtomicHTMLToken* token)
 {
-    adjustAttributes<SVGNames::getSVGAttrs>(token);
+    adjustAttributes<SVGNames::getSVGAttrs, SVGNames::SVGAttrsCount>(token);
 }
 
 static void adjustMathMLAttributes(AtomicHTMLToken* token)
 {
-    adjustAttributes<MathMLNames::getMathMLAttrs>(token);
+    adjustAttributes<MathMLNames::getMathMLAttrs, MathMLNames::MathMLAttrsCount>(token);
 }
 
 static void addNamesWithPrefix(PrefixedNameToQualifiedNameMap* map, const AtomicString& prefix, QualifiedName** names, size_t length)
@@ -712,12 +710,11 @@ static void adjustForeignAttributes(AtomicHTMLToken* token)
     static PrefixedNameToQualifiedNameMap* map = 0;
     if (!map) {
         map = new PrefixedNameToQualifiedNameMap;
-        size_t length = 0;
-        QualifiedName** attrs = XLinkNames::getXLinkAttrs(&length);
-        addNamesWithPrefix(map, "xlink", attrs, length);
+        QualifiedName** attrs = XLinkNames::getXLinkAttrs();
+        addNamesWithPrefix(map, "xlink", attrs, XLinkNames::XLinkAttrsCount);
 
-        attrs = XMLNames::getXMLAttrs(&length);
-        addNamesWithPrefix(map, "xml", attrs, length);
+        attrs = XMLNames::getXMLAttrs();
+        addNamesWithPrefix(map, "xml", attrs, XMLNames::XMLAttrsCount);
 
         map->add("xmlns", XMLNSNames::xmlnsAttr);
         map->add("xmlns:xlink", QualifiedName("xmlns", "xlink", XMLNSNames::xmlnsNamespaceURI));

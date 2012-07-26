@@ -601,12 +601,12 @@ sub printNamesHeaderFile
 
     if (keys %allTags) {
         print F "const unsigned $parameters{namespace}TagsCount = ", scalar(keys %allTags), ";\n";
-        print F "WebCore::QualifiedName** get$parameters{namespace}Tags(size_t* size);\n";
+        print F "WebCore::QualifiedName** get$parameters{namespace}Tags();\n";
     }
 
     if (keys %allAttrs) {
         print F "const unsigned $parameters{namespace}AttrsCount = ", scalar(keys %allAttrs), ";\n";
-        print F "WebCore::QualifiedName** get$parameters{namespace}Attrs(size_t* size);\n";
+        print F "WebCore::QualifiedName** get$parameters{namespace}Attrs();\n";
     }
 
     printInit($F, 1);
@@ -632,13 +632,12 @@ sub printNamesCppFile
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Tag)\n";
         }
         
-        print F "\n\nWebCore::QualifiedName** get$parameters{namespace}Tags(size_t* size)\n";
+        print F "\n\nWebCore::QualifiedName** get$parameters{namespace}Tags()\n";
         print F "{\n    static WebCore::QualifiedName* $parameters{namespace}Tags[] = {\n";
         for my $name (sort keys %allTags) {
             print F "        (WebCore::QualifiedName*)&${name}Tag,\n";
         }
         print F "    };\n";
-        print F "    *size = ", scalar(keys %allTags), ";\n";
         print F "    return $parameters{namespace}Tags;\n";
         print F "}\n";
     }
@@ -648,13 +647,12 @@ sub printNamesCppFile
         for my $name (sort keys %allAttrs) {
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Attr)\n";
         }
-        print F "\n\nWebCore::QualifiedName** get$parameters{namespace}Attrs(size_t* size)\n";
+        print F "\n\nWebCore::QualifiedName** get$parameters{namespace}Attrs()\n";
         print F "{\n    static WebCore::QualifiedName* $parameters{namespace}Attr[] = {\n";
         for my $name (sort keys %allAttrs) {
             print F "        (WebCore::QualifiedName*)&${name}Attr,\n";
         }
         print F "    };\n";
-        print F "    *size = ", scalar(keys %allAttrs), ";\n";
         print F "    return $parameters{namespace}Attr;\n";
         print F "}\n";
     }

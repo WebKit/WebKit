@@ -1,3 +1,33 @@
+2012-07-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use the constant count of Tags/Attributes names instead of getting the size when obtaining the tags/attributes
+        https://bugs.webkit.org/show_bug.cgi?id=92411
+
+        Reviewed by Julien Chaffraix.
+
+        Since r123582, the number of tags and attributes per "namespace" is exposed in a constant in the header file.
+        This makes it possible to access this value through two ways:
+        1) The constant.
+        2) The first parameter of the tags/attributes getter function.
+
+        Having two ways to access the value is error prone. This patches changes the code to have all accesses done
+        through the constant.
+
+        * dom/make_names.pl:
+        (printNamesHeaderFile):
+        (printNamesCppFile):
+        Change the code generator to not provide the size in the getter function.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::isRecognizedTagName):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::adjustSVGTagNameCase):
+        (WebCore):
+        (WebCore::adjustAttributes):
+        (WebCore::adjustSVGAttributes):
+        (WebCore::adjustMathMLAttributes):
+        (WebCore::adjustForeignAttributes):
+
 2012-07-26  Chang Shu  <cshu@webkit.org>
 
         Support constructor-type static readonly attribute for CodeGenerator.
