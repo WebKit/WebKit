@@ -199,20 +199,16 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
 }
 #endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
-PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const LayoutSize& size, HTMLAppletElement* element, const HashMap<String, String>& args)
+PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     String baseURLString;
     String codeBaseURLString;
-    Vector<String> paramNames;
-    Vector<String> paramValues;
-    HashMap<String, String>::const_iterator end = args.end();
-    for (HashMap<String, String>::const_iterator it = args.begin(); it != end; ++it) {
-        if (equalIgnoringCase(it->first, "baseurl"))
-            baseURLString = it->second;
-        else if (equalIgnoringCase(it->first, "codebase"))
-            codeBaseURLString = it->second;
-        paramNames.append(it->first);
-        paramValues.append(it->second);
+
+    for (size_t i = 0; i < paramNames.size(); ++i) {
+        if (equalIgnoringCase(paramNames[i], "baseurl"))
+            baseURLString = paramValues[i];
+        else if (equalIgnoringCase(paramNames[i], "codebase"))
+            codeBaseURLString = paramValues[i];
     }
 
     if (!codeBaseURLString.isEmpty()) {
@@ -232,7 +228,7 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const LayoutSize& size
 
     RefPtr<Widget> widget;
     if (allowPlugins(AboutToInstantiatePlugin))
-        widget = m_frame->loader()->client()->createJavaAppletWidget(roundedIntSize(size), element, baseURL, paramNames, paramValues);
+        widget = m_frame->loader()->client()->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
     if (!widget)
         return 0;
 

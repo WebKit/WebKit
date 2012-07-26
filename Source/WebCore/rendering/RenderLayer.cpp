@@ -4747,7 +4747,6 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
                 || renderer()->isCanvas()
                 || renderer()->isVideo()
                 || renderer()->isEmbeddedObject()
-                || renderer()->isApplet()
                 || renderer()->isRenderIFrame()
                 || renderer()->style()->specifiesColumns())
             && !renderer()->isOutOfFlowPositioned()
@@ -4769,7 +4768,6 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer()->isCanvas()
         || renderer()->isVideo()
         || renderer()->isEmbeddedObject()
-        || renderer()->isApplet()
         || renderer()->isRenderIFrame();
 }
 

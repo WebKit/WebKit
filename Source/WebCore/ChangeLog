@@ -1,3 +1,52 @@
+2012-07-26  Anders Carlsson  <andersca@apple.com>
+
+        HTMLAppletElement should inherit from HTMLPlugInImageElement
+        https://bugs.webkit.org/show_bug.cgi?id=92320
+
+        Reviewed by Eric Seidel.
+
+        In order to simplify the class hierarchy and eventually merge HTMLPlugInImageElement and HMTLPlugInElement,
+        make HTMLAppletElement inherit from HTMLPlugInImageElement. While this does mean that HTMLAppletElement will grow by
+        a couple of words, in practice it won't matter.
+
+        Also, make RenderApplet inherit from RenderEmbeddedObject and move the plug-in instantiation to HTMLAppletElement which matches
+        both HTMLEmbedElement and HTMLObjectElement.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::HTMLAppletElement):
+        (WebCore::HTMLAppletElement::create):
+        (WebCore::HTMLAppletElement::parseAttribute):
+        (WebCore::HTMLAppletElement::rendererIsNeeded):
+        (WebCore::HTMLAppletElement::createRenderer):
+        (WebCore):
+        (WebCore::HTMLAppletElement::renderWidgetForJSBindings):
+        (WebCore::HTMLAppletElement::updateWidget):
+        * html/HTMLAppletElement.h:
+        (HTMLAppletElement):
+        * html/HTMLTagNames.in:
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+        * loader/SubframeLoader.h:
+        (SubframeLoader):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateWidget):
+        * rendering/RenderApplet.cpp:
+        (WebCore::RenderApplet::RenderApplet):
+        * rendering/RenderApplet.h:
+        (RenderApplet):
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::toRenderEmbeddedObject):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly):
+        (WebCore::RenderLayer::shouldBeSelfPaintingLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPlugin):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        * rendering/RenderObject.h:
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123799.

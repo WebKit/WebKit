@@ -1701,8 +1701,7 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderObject* renderer)
     if (!(m_compositingTriggers & ChromeClient::PluginTrigger))
         return false;
 
-    bool composite = (renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing())
-                  || (renderer->isApplet() && toRenderApplet(renderer)->allowsAcceleratedCompositing());
+    bool composite = renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing();
     if (!composite)
         return false;
 

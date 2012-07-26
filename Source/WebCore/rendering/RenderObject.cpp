@@ -1711,7 +1711,7 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
 #if USE(ACCELERATED_COMPOSITING)
         // We need to run through adjustStyleDifference() for iframes and plugins, so
         // style sharing is disabled for them. That should ensure that we never hit this code path.
-        ASSERT(!isRenderIFrame() && !isEmbeddedObject() &&!isApplet());
+        ASSERT(!isRenderIFrame() && !isEmbeddedObject());
 #endif
         return;
     }

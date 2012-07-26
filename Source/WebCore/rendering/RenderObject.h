@@ -296,7 +296,6 @@ private:
 public:
     RenderArena* renderArena() const { return document()->renderArena(); }
 
-    virtual bool isApplet() const { return false; }
     virtual bool isBR() const { return false; }
     virtual bool isBlockFlow() const { return false; }
     virtual bool isBoxModelObject() const { return false; }

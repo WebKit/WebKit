@@ -2296,7 +2296,7 @@ void FrameView::updateWidget(RenderEmbeddedObject* object)
 
     // FIXME: This could turn into a real virtual dispatch if we defined
     // updateWidget(PluginCreationOption) on HTMLElement.
-    if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag)) {
+    if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag) || ownerElement->hasTagName(appletTag)) {
         HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(ownerElement);
         if (pluginElement->needsWidgetUpdate())
             pluginElement->updateWidget(CreateAnyWidgetType);
