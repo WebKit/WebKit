@@ -1,3 +1,14 @@
+2012-07-26  Zoltan Nyul  <zoltan.nyul@intel.com>
+
+        [EFL] EFL port should use XDG paths
+        https://bugs.webkit.org/show_bug.cgi?id=91719
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Efreet library added.
+
+        * Source/cmake/FindEFL.cmake:
+
 2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: pageNumberForElementById() could be moved to Internals.

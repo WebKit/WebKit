@@ -39,6 +39,7 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
+#include <Efreet.h>
 #include <Eina.h>
 #include <Evas.h>
 #include <glib-object.h>
@@ -159,23 +160,17 @@ Eina_Bool _ewk_init_body(void)
     ewk_settings_page_cache_capacity_set(3);
     WebCore::PageGroup::setShouldTrackVisitedLinks(true);
 
-    String home = WebCore::homeDirectoryPath();
-    struct stat state;
-    // check home directory first
-    if (stat(home.utf8().data(), &state) == -1) {
-        // Exit now - otherwise you may have some crash later
-        int errnowas = errno;
-        CRITICAL("Can't access HOME dir (or /tmp) - no place to save databases: %s", strerror(errnowas));
-        return false;
-    }
+    String localStorageDirectory = String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/LocalStorage";
+    String webDatabaseDirectory = String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Databases";
+    String applicationCacheDirectory = String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Applications";
 
-    WTF::String webkitDirectory = home + "/.webkit";
-    if (WebCore::makeAllDirectories(webkitDirectory))
-        ewk_settings_web_database_path_set(webkitDirectory.utf8().data());
+    ewk_settings_local_storage_path_set(localStorageDirectory.utf8().data());
+    ewk_settings_web_database_path_set(webDatabaseDirectory.utf8().data());
+    ewk_settings_application_cache_path_set(applicationCacheDirectory.utf8().data());
 
     ewk_network_tls_certificate_check_set(false);
 
-    WebCore::StorageTracker::initializeTracker(webkitDirectory.utf8().data(), trackerClient());
+    WebCore::StorageTracker::initializeTracker(localStorageDirectory.utf8().data(), trackerClient());
 
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
     SoupSessionFeature* auth_dialog = static_cast<SoupSessionFeature*>(g_object_new(EWK_TYPE_SOUP_AUTH_DIALOG, 0));

@@ -59,6 +59,9 @@ class EflPort(WebKitPort, PulseAudioSanitizer):
         env['TEST_RUNNER_PLUGIN_PATH'] = self._build_path('lib')
         if self.webprocess_cmd_prefix:
             env['WEB_PROCESS_CMD_PREFIX'] = self.webprocess_cmd_prefix
+
+        env['XDG_CACHE_HOME'] = str(self._filesystem.mkdtemp(prefix='%s-Efl-CacheDir-' % self.driver_name()))
+        env['XDG_DATA_HOME'] = str(self._filesystem.mkdtemp(prefix='%s-Efl-DataDir-' % self.driver_name()))
         return env
 
     def default_timeout_ms(self):

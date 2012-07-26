@@ -1,3 +1,21 @@
+2012-07-26  Zoltan Nyul  <zoltan.nyul@intel.com>
+
+        [EFL] EFL port should use XDG paths
+        https://bugs.webkit.org/show_bug.cgi?id=91719
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The appcache/localstorage/webdatabase path should be set in the
+        ewk_main.cpp instead of the DumpRenderTree, and the XDG_DATA_HOME and
+        XDG_CACHE_HOME should be set to different directory for each processes
+        for the layout-tests.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::initialize):
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.setup_environ_for_server):
+        * efl/jhbuild.modules:
+
 2012-07-26  Balazs Kelemen  <kbalazs@webkit.org>
 
         [NRWT] should have a way to restrict pixel tests for individual directories

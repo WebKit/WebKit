@@ -207,17 +207,6 @@ bool DumpRenderTreeChrome::initialize()
 
     m_mainFrame = ewk_view_frame_main_get(m_mainView);
 
-    char* drtTemp = getenv("DUMPRENDERTREE_TEMP");
-    if (drtTemp) {
-        char path[2048];
-        eina_str_join(path, sizeof(path), '/', drtTemp, "LocalStorage");
-        ewk_settings_local_storage_path_set(path);
-        eina_str_join(path, sizeof(path), '/', drtTemp, "Databases");
-        ewk_settings_web_database_path_set(path);
-        eina_str_join(path, sizeof(path), '/', drtTemp, "Applications");
-        ewk_settings_application_cache_path_set(path);
-    }
-
     return true;
 }
 

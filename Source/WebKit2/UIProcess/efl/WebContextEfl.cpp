@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebContext.h"
 
+#include <Efreet.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/NotImplemented.h>
 
@@ -33,7 +34,7 @@ namespace WebKit {
 
 String WebContext::applicationCacheDirectory()
 {
-    return WebCore::cacheStorage().cacheDirectory();
+    return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Applications";
 }
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
@@ -48,8 +49,7 @@ void WebContext::platformInvalidateContext()
 
 String WebContext::platformDefaultDatabaseDirectory() const
 {
-    notImplemented();
-    return "";
+    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/Databases";
 }
 
 String WebContext::platformDefaultIconDatabasePath() const
@@ -60,8 +60,7 @@ String WebContext::platformDefaultIconDatabasePath() const
 
 String WebContext::platformDefaultLocalStorageDirectory() const
 {
-    notImplemented();
-    return "";
+    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/LocalStorage";
 }
 
 } // namespace WebKit
