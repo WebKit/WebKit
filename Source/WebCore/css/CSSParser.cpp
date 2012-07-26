@@ -9544,7 +9544,8 @@ StyleRuleBase* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* se
         result = rule.get();
         m_parsedRules.append(rule.release());
         processAndAddNewRuleToSourceTreeIfNeeded();
-    }
+    } else
+        popRuleData();
     clearProperties();
     return result;
 }
