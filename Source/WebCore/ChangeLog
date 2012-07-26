@@ -1,3 +1,10 @@
+2012-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix build break on mac win port by r123716.
+
+        * platform/KURL.h:
+        (KURL):
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123715.

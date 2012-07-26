@@ -195,7 +195,7 @@ public:
     operator const String&() const { return string(); }
 
 #if USE(CF)
-    explicit KURL(CFURLRef);
+    KURL(CFURLRef);
     CFURLRef createCFURL() const;
 #endif
 
