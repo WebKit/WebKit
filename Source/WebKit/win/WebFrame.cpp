@@ -1198,6 +1198,26 @@ HRESULT WebFrame::elementDoesAutoComplete(IDOMElement *element, BOOL *result)
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebFrame::resumeAnimations()
+{
+    Frame* frame = core(this);
+    if (!frame)
+        return E_FAIL;
+
+    frame->animation()->resumeAnimations();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebFrame::suspendAnimations()
+{
+    Frame* frame = core(this);
+    if (!frame)
+        return E_FAIL;
+
+    frame->animation()->suspendAnimations();
+    return S_OK;
+}
+
 HRESULT WebFrame::pauseAnimation(BSTR animationName, IDOMNode* node, double secondsFromNow, BOOL* animationWasRunning)
 {
     if (!node || !animationWasRunning)

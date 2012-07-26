@@ -280,6 +280,12 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE setTextDirection(BSTR);
 
+    virtual HRESULT STDMETHODCALLTYPE unused3(BSTR, BSTR*) { return E_NOTIMPL; }
+
+    virtual HRESULT STDMETHODCALLTYPE resumeAnimations();
+
+    virtual HRESULT STDMETHODCALLTYPE suspendAnimations();
+
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
         /* [retval][out] */ BOOL* result);

@@ -96,6 +96,8 @@ interface IWebFramePrivate : IUnknown
 
     [local] JSGlobalContextRef globalContextForScriptWorld([in] IWebScriptWorld*);
 
+    HRESULT unused3([in] BSTR, [out, retval] BSTR*);
+
     HRESULT visibleContentRect([out, retval] RECT*);
 
     HRESULT pageNumberForElementById([in] BSTR id, [in] float pageWidthInPixels, [in] float pageHeightInPixels, [out, retval] int* pageNumber);
@@ -108,9 +110,13 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT renderTreeAsExternalRepresentation([in] BOOL forPrinting, [out, retval] BSTR* result);
 
+    HRESULT suspendAnimations();
+    HRESULT resumeAnimations(); 
+
     HRESULT loadPlainTextString([in] BSTR string, [in] BSTR url);
 
     HRESULT clearOpener();
 
     HRESULT setTextDirection([in] BSTR direction);
+
 }

@@ -1,3 +1,28 @@
+2012-07-25  Roger Fong  <roger_fong@apple.com>
+
+        Changes to the WebFrame API cause dependent apps to crash.
+        https://bugs.webkit.org/show_bug.cgi?id=91656
+        <rdar://problem/11904605>
+        
+        Reviewed by Jon Honeycutt.
+        
+        Changes to the WebFrame API cause certain apps to crash because of inconsistencies in the COM interface.
+        The resumeAnimations and suspendAnimations are removed, which are still needed.
+        The counterValueByElementId method was also removed, although is not needed there.
+        However, for all of these methods, no method stubs were added where appropriate after removal.
+        
+        * Interfaces/IWebFramePrivate.idl:
+        Added resumeAnimations() and suspendAnimations() methods back in. Added unused method stub for counterValueByElementId method.
+        
+        * WebFrame.cpp:
+        (WebFrame::resumeAnimations):
+        Added this method back in.
+        (WebFrame::suspendAnimations):
+        Added this method back in.
+        
+        * WebFrame.h:
+        (Re)added methods and unused method stubs. 
+
 2012-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix if NOMINMAX is defined by the build system.
