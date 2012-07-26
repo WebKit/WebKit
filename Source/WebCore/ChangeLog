@@ -1,3 +1,20 @@
+2012-07-26  Pravin D  <pravind.2k4@gmail.com>
+
+        Outline is always painted on the first table row regardless of the row it's set on
+        https://bugs.webkit.org/show_bug.cgi?id=92389
+
+        Reviewed by Eric Seidel.
+
+        The outlines of all the rows are drawn on the row instead of their respective rows.
+        The paint offset for the outlines does not take the row location into account.
+
+        Test: fast/table/table-row-outline-paint.html
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::paintOutlineForRowIfNeeded):
+        The row's location is taken into account for calculating the correct paint offset
+        for its outline.
+
 2012-07-26  Antoine Labour  <piman@chromium.org>
 
         [chromium] Combine color matrix filters and apply them in a single pass.

@@ -1,3 +1,15 @@
+2012-07-26  Pravin D  <pravind.2k4@gmail.com>
+
+        Outline is always painted on the first table row regardless of the row it's set on
+        https://bugs.webkit.org/show_bug.cgi?id=92389
+
+        Reviewed by Eric Seidel.
+
+        * fast/table/table-row-outline-paint.html: Added.
+        * platform/chromium-linux/fast/table/table-row-outline-paint-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-outline-paint-expected.txt: Added.
+          Paint phase issue.
+
 2012-07-26  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations change to mark inspector tests as SLOW.
