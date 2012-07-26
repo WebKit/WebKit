@@ -805,6 +805,9 @@ public:
 #elif PLATFORM(QT)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, QPainter* context);
+#elif PLATFORM(BLACKBERRY)
+    void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
+                       int canvasWidth, int canvasHeight, GraphicsContext*);
 #endif
 
     void markContextChanged();

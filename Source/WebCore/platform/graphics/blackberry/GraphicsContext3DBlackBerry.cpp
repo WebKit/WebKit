@@ -359,29 +359,16 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 #endif
 
 void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight,
-       GraphicsContext* context, bool flipY)
+       GraphicsContext* context)
 {
-    // Reorder pixels into BGRA format.
     unsigned char* tempPixels = new unsigned char[imageWidth * imageHeight * 4];
 
-    if (flipY) {
-        for (int y = 0; y < imageHeight; y++) {
-            const unsigned char *srcRow = imagePixels + (imageWidth * 4 * y);
-            unsigned char *destRow = tempPixels + (imageWidth * 4 * (imageHeight - y - 1));
-            for (int i = 0; i < imageWidth * 4; i += 4) {
-                destRow[i + 0] = srcRow[i + 2];
-                destRow[i + 1] = srcRow[i + 1];
-                destRow[i + 2] = srcRow[i + 0];
-                destRow[i + 3] = srcRow[i + 3];
-            }
-        }
-    } else {
-        for (int i = 0; i < imageWidth * imageHeight * 4; i += 4) {
-            tempPixels[i + 0] = imagePixels[i + 2];
-            tempPixels[i + 1] = imagePixels[i + 1];
-            tempPixels[i + 2] = imagePixels[i + 0];
-            tempPixels[i + 3] = imagePixels[i + 3];
-        }
+    // 3D images have already been converted to BGRA. Don't do it twice!!
+    for (int y = 0; y < imageHeight; y++) {
+        const unsigned char *srcRow = imagePixels + (imageWidth * 4 * y);
+        unsigned char *destRow = tempPixels + (imageWidth * 4 * (imageHeight - y - 1));
+        for (int i = 0; i < imageWidth * 4; i += 4)
+            memcpy(destRow + i, srcRow + i, 4);
     }
 
     SkBitmap canvasBitmap;

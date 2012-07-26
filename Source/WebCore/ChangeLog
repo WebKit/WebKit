@@ -1,5 +1,21 @@
 2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
 
+        [BlackBerry] GraphicsContext3D::paintToCanvas should not swap 0th and 2nd components of color
+        https://bugs.webkit.org/show_bug.cgi?id=92314
+
+        Reviewed by Rob Buis.
+
+        No new tests, because it corrects existing functionality, but it makes BlackBerry
+        pass canvas-text.html and others.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+
+2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
+
         [BlackBerry] GraphicsContext3D::reshapeFBOs does not report when bound FBOs should be restored
         https://bugs.webkit.org/show_bug.cgi?id=92304
 
