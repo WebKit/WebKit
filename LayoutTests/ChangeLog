@@ -1,3 +1,9 @@
+2012-07-26  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change to mark inspector tests as SLOW.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-26  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium mac/win rebaseline post r123782.

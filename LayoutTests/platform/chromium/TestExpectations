@@ -975,6 +975,7 @@ BUGWK60109 WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
 BUGWK60109 SKIP WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
 
 BUGWK72434 LINUX WIN : inspector/styles/svg-style.xhtml = PASS TEXT
+BUGWK72434 LINUX WIN DEBUG SLOW : inspector/styles/svg-style.xhtml = TEXT
 
 BUGWK74654 SKIP : http/tests/inspector/network/network-worker.html = PASS
 
@@ -3282,7 +3283,7 @@ BUGWK19688 SKIP : fast/images/exif-orientation-css.html = PASS
 
 BUGCR122448 : media/video-seek-past-end-paused.html = PASS TEXT
 
-BUGCR122462 WIN LINUX : http/tests/inspector/inspect-element.html = TEXT
+BUGCR122462 WIN LINUX SLOW : http/tests/inspector/inspect-element.html = TEXT
 
 BUGWK83635 : fast/canvas/2d.backingStorePixelRatio.html = TEXT TIMEOUT
 BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio.html = TEXT TIMEOUT
@@ -3426,8 +3427,6 @@ BUGWK86674 DEBUG : fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml = 
 
 BUGWK86683 DEBUG WIN LINUX SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT
 BUGWK86683 RELEASE WIN LINUX SLOW : inspector/profiler/heap-snapshot-summary-show-ranges.html = TEXT PASS
-
-BUGWK86907 WIN : http/tests/inspector/compiler-script-mapping.html = PASS TEXT
 
 BUGWK86908 WIN : http/tests/security/cross-frame-access-put.html = PASS TEXT
 
