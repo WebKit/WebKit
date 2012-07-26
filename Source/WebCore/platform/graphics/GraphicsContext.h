@@ -431,7 +431,11 @@ namespace WebCore {
         void applyDeviceScaleFactor(float);
         void platformApplyDeviceScaleFactor(float);
 
-#if OS(WINCE) && !PLATFORM(QT)
+#if OS(WINDOWS)
+        HDC getWindowsContext(const IntRect&, bool supportAlphaBlend, bool mayCreateBitmap); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
+        void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend, bool mayCreateBitmap); // The passed in HDC should be the one handed back by getWindowsContext.
+#if PLATFORM(WIN)
+#if OS(WINCE)
         void setBitmap(PassRefPtr<SharedBitmap>);
         const AffineTransform& affineTransform() const;
         AffineTransform& affineTransform();
@@ -444,13 +448,9 @@ namespace WebCore {
         void drawBitmap(SharedBitmap*, const IntRect& dstRect, const IntRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp);
         void drawBitmapPattern(SharedBitmap*, const FloatRect& tileRectIn, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, const IntSize& origSourceSize);
         void drawIcon(HICON icon, const IntRect& dstRect, UINT flags);
-        HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = false, bool mayCreateBitmap = true); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
-        void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = false, bool mayCreateBitmap = true);    // The passed in HDC should be the one handed back by getWindowsContext.
         void drawRoundCorner(bool newClip, RECT clipRect, RECT rectWin, HDC dc, int width, int height);
-#elif PLATFORM(WIN)
+#else
         GraphicsContext(HDC, bool hasAlpha = false); // FIXME: To be removed.
-        HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
-        void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);    // The passed in HDC should be the one handed back by getWindowsContext.
 
         // When set to true, child windows should be rendered into this context
         // rather than allowing them just to render to the screen. Defaults to
@@ -487,12 +487,10 @@ namespace WebCore {
         // The bitmap should be non-premultiplied.
         void drawWindowsBitmap(WindowsBitmap*, const IntPoint&);
 #endif
-
-#if (PLATFORM(GTK) && OS(WINDOWS)) || (PLATFORM(QT) && OS(WINDOWS)) || (PLATFORM(WX) && OS(WINDOWS))
-        HDC getWindowsContext(const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);
-        void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend = true, bool mayCreateBitmap = true);
+#else // PLATFORM(WIN)
         bool shouldIncludeChildWindows() const { return false; }
-#endif
+#endif // PLATFORM(WIN)
+#endif // OS(WINDOWS)
 
 #if PLATFORM(WX)
         // This is needed because of a bug whereby getting an HDC from a GDI+ context

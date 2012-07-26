@@ -1,3 +1,18 @@
+2012-07-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Cleanup GraphicsContext::(getWindowsContext|releaseWindowsContext)
+        https://bugs.webkit.org/show_bug.cgi?id=92113
+
+        Reviewed by Simon Hausmann.
+
+        Cleanup the definition of the two methods across different ports and
+        replace the calls to them with LocalWindowsContext where possible.
+
+        * platform/graphics/GraphicsContext.h:
+        (GraphicsContext):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintThumb):
+
 2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Introduce generic LiveLocation, make Script.Location inherit it.
