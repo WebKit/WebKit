@@ -82,6 +82,7 @@
 #include "MatrixTransformOperation.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "MemoryInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
@@ -216,6 +217,8 @@ public:
     static const unsigned maximumIdentifierCount = 4;
     const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     StyleRule* m_rule;
     CSSSelector* m_selector;
@@ -272,6 +275,8 @@ public:
     const Vector<RuleData>* universalRules() const { return &m_universalRules; }
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 public:
     RuleSet();
 
@@ -290,6 +295,8 @@ public:
     struct RuleSetSelectorPair {
         RuleSetSelectorPair(CSSSelector* selector, PassOwnPtr<RuleSet> ruleSet) : selector(selector), ruleSet(ruleSet) { }
         RuleSetSelectorPair(const RuleSetSelectorPair& rs) : selector(rs.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&rs)->ruleSet.release()) { }
+        void reportMemoryUsage(MemoryObjectInfo*) const;
+
         CSSSelector* selector;
         OwnPtr<RuleSet> ruleSet;
     };
@@ -726,6 +733,15 @@ void StyleResolver::Features::clear()
     usesFirstLineRules = false;
     usesBeforeAfterRules = false;
     usesLinkRules = false;
+}
+
+void StyleResolver::Features::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StyleResolver::Features> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addHashSet(idsInRules);
+    info.addHashSet(attrsInRules);
+    info.addVector(siblingRules);
+    info.addVector(uncommonAttributeRules);
 }
 
 static StyleSheetContents* parseUASheet(const String& str)
@@ -2481,10 +2497,43 @@ RuleData::RuleData(StyleRule* rule, CSSSelector* selector, unsigned position, bo
     SelectorChecker::collectIdentifierHashes(m_selector, m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
 }
 
+void RuleData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<RuleData> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+}
+
 RuleSet::RuleSet()
     : m_ruleCount(0)
     , m_autoShrinkToFitEnabled(true)
 {
+}
+
+
+static void reportAtomRuleMap(MemoryClassInfo<RuleSet>* info, const RuleSet::AtomRuleMap& atomicRuleMap)
+{
+    info->addHashMap(atomicRuleMap);
+    for (RuleSet::AtomRuleMap::const_iterator it = atomicRuleMap.begin(); it != atomicRuleMap.end(); ++it)
+        info->addInstrumentedVector(*it->second);
+}
+
+void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<RuleSet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    reportAtomRuleMap(&info, m_idRules);
+    reportAtomRuleMap(&info, m_classRules);
+    reportAtomRuleMap(&info, m_tagRules);
+    reportAtomRuleMap(&info, m_shadowPseudoElementRules);
+    info.addInstrumentedVector(m_linkPseudoClassRules);
+    info.addInstrumentedVector(m_focusPseudoClassRules);
+    info.addInstrumentedVector(m_universalRules);
+    info.addVector(m_pageRules);
+    info.addInstrumentedVector(m_regionSelectorsAndRuleSets);
+}
+
+void RuleSet::RuleSetSelectorPair::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<RuleSet::RuleSetSelectorPair> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(ruleSet);
 }
 
 static inline void collectFeaturesFromSelector(StyleResolver::Features& features, const CSSSelector* selector)
@@ -5576,6 +5625,38 @@ void StyleResolver::loadPendingResources()
     // Start loading the SVG Documents referenced by this style.
     loadPendingSVGDocuments();
 #endif
+}
+
+void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StyleResolver> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addMember(m_style);
+    info.addInstrumentedMember(m_authorStyle);
+    info.addInstrumentedMember(m_userStyle);
+    info.addInstrumentedMember(m_siblingRuleSet);
+    info.addInstrumentedMember(m_uncommonAttributeRuleSet);
+    info.addHashMap(m_keyframesRuleMap);
+    info.addHashMap(m_matchedPropertiesCache);
+    info.addVector(m_matchedRules);
+
+    // FIXME: Instrument StaticCSSRuleList and add m_ruleList here.
+    info.addHashSet(m_pendingImageProperties);
+    info.addVector(m_viewportDependentMediaQueryResults);
+    info.addHashMap(m_styleRuleToCSSOMWrapperMap);
+    info.addHashSet(m_styleSheetCSSOMWrapperSet);
+#if ENABLE(CSS_FILTERS) && ENABLE(SVG)
+    info.addHashMap(m_pendingSVGDocuments);
+#endif
+#if ENABLE(STYLE_SCOPED)
+    info.addHashMap(m_scopedAuthorStyles);
+    info.addVector(m_scopeStack);
+#endif
+
+    // FIXME: move this to a place where it would be called only once?
+    info.addInstrumentedMember(defaultStyle);
+    info.addInstrumentedMember(defaultQuirksStyle);
+    info.addInstrumentedMember(defaultPrintStyle);
+    info.addInstrumentedMember(defaultViewSourceStyle);
 }
 
 } // namespace WebCore

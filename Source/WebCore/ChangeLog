@@ -1,3 +1,33 @@
+2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add memory reporting routine to StyleResolver
+        https://bugs.webkit.org/show_bug.cgi?id=92259
+
+        Reviewed by Vsevolod Vlasov.
+
+        SyleResolver::reportMemoryUsage is added for estimating StyleResolver
+        memory footprint.
+
+        * css/StyleResolver.cpp:
+        (RuleData):
+        (RuleSet):
+        (RuleSetSelectorPair):
+        (WebCore::StyleResolver::Features::reportMemoryUsage):
+        (WebCore):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (Features):
+        (StyleResolver):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (WebCore::MemoryClassInfo::addInstrumentedHashSet):
+        (WebCore::MemoryClassInfo::addInstrumentedVector):
+        (WebCore::MemoryInstrumentation::addHashMap):
+        (WebCore):
+        (WebCore::MemoryInstrumentation::addInstrumentedCollection):
+
 2012-07-26  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Remove DeprecatedPeerConnection

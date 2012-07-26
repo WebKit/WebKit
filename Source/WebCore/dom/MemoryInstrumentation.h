@@ -67,7 +67,7 @@ public:
 
     template <typename HashMapType> void addHashMap(const HashMapType&, ObjectType, bool contentOnly = false);
     template <typename HashSetType> void addHashSet(const HashSetType&, ObjectType, bool contentOnly = false);
-    template <typename HashSetType> void addInstrumentedHashSet(const HashSetType&, ObjectType, bool contentOnly = false);
+    template <typename CollectionType> void addInstrumentedCollection(const CollectionType&, ObjectType, bool contentOnly = false);
     template <typename ListHashSetType> void addListHashSet(const ListHashSetType&, ObjectType, bool contentOnly = false);
     template <typename VectorType> void addVector(const VectorType&, ObjectType, bool contentOnly = false);
     void addRawBuffer(const void* const& buffer, ObjectType objectType, size_t size)
@@ -206,7 +206,8 @@ public:
 
     template <typename HashMapType> void addHashMap(const HashMapType& map) { m_memoryInstrumentation->addHashMap(map, m_objectType, true); }
     template <typename HashSetType> void addHashSet(const HashSetType& set) { m_memoryInstrumentation->addHashSet(set, m_objectType, true); }
-    template <typename HashSetType> void addInstrumentedHashSet(const HashSetType& set) { m_memoryInstrumentation->addInstrumentedHashSet(set, m_objectType, true); }
+    template <typename HashSetType> void addInstrumentedHashSet(const HashSetType& set) { m_memoryInstrumentation->addInstrumentedCollection(set, m_objectType, true); }
+    template <typename VectorType> void addInstrumentedVector(const VectorType& vector) { m_memoryInstrumentation->addInstrumentedCollection(vector, m_objectType, true); }
     template <typename ListHashSetType> void addListHashSet(const ListHashSetType& set) { m_memoryInstrumentation->addListHashSet(set, m_objectType, true); }
     template <typename VectorType> void addVector(const VectorType& vector) { m_memoryInstrumentation->addVector(vector, m_objectType, true); }
     void addRawBuffer(const void* const& buffer, size_t size) { m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size); }
@@ -223,6 +224,8 @@ private:
 template<typename HashMapType>
 void MemoryInstrumentation::addHashMap(const HashMapType& hashMap, ObjectType objectType, bool contentOnly)
 {
+    if (visited(&hashMap))
+        return;
     countObjectSize(objectType, calculateContainerSize(hashMap, contentOnly));
 }
 
@@ -234,13 +237,14 @@ void MemoryInstrumentation::addHashSet(const HashSetType& hashSet, ObjectType ob
     countObjectSize(objectType, calculateContainerSize(hashSet, contentOnly));
 }
 
-template<typename HashSetType>
-void MemoryInstrumentation::addInstrumentedHashSet(const HashSetType& hashSet, ObjectType objectType, bool contentOnly)
+template <typename CollectionType>
+void MemoryInstrumentation::addInstrumentedCollection(const CollectionType& collection, ObjectType objectType, bool contentOnly)
 {
-    if (visited(&hashSet))
+    if (visited(&collection))
         return;
-    countObjectSize(objectType, calculateContainerSize(hashSet, contentOnly));
-    for (typename HashSetType::const_iterator i = hashSet.begin(); i != hashSet.end(); ++i)
+    countObjectSize(objectType, calculateContainerSize(collection, contentOnly));
+    typename CollectionType::const_iterator end = collection.end();
+    for (typename CollectionType::const_iterator i = collection.begin(); i != end; ++i)
         addInstrumentedMember(*i);
 }
 
