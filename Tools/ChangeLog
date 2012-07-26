@@ -1,3 +1,20 @@
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Regression(r123604): webintents/web-intents-obj-constructor.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=92349
+
+        Reviewed by Kentaro Hara.
+
+        Fix crash occurring after r123604, which replaced strdup()
+        usage with eina_stringshare_add(). Unfortunately, the DRT
+        was not updated accordingly to use eina_stringshare_del()
+        instead of free() on the values returned by Ewk_Intent
+        getters and it was causing
+        webintents/web-intents-obj-constructor.html to crash.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onFrameIntentNew):
+
 2012-07-26  Adam Barth  <abarth@webkit.org>
 
         Unreviewed attempt to fix the chromium-win build.
