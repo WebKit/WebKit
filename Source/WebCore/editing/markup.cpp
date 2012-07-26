@@ -111,7 +111,7 @@ static void completeURLs(Node* node, const String& baseURL)
             unsigned length = e->attributeCount();
             for (unsigned i = 0; i < length; i++) {
                 const Attribute* attribute = e->attributeItem(i);
-                if (e->isURLAttribute(*attribute))
+                if (e->isURLAttribute(*attribute) && !attribute->value().isEmpty())
                     changes.append(AttributeChange(e, attribute->name(), KURL(parsedBaseURL, attribute->value()).string()));
             }
         }

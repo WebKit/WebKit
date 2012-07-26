@@ -1,3 +1,14 @@
+2012-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Href attribute with javascript protocol is stripped when content is pasted into a XML doucment
+        https://bugs.webkit.org/show_bug.cgi?id=92310
+
+        Reviewed by Adam Barth.
+
+        Rebaseline a test that catches this bug.
+
+        * editing/pasteboard/paste-noscript-xhtml-expected.txt:
+
 2012-07-26  Dan Bernstein  <mitz@apple.com>
 
         <svg> element with no intrinsic size and max-width gets sized incorrectly

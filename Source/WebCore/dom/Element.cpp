@@ -784,7 +784,7 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, Frag
             }
 
             if (isAttributeToRemove(attribute.name(), attribute.value()))
-                attribute.setValue(nullAtom);
+                attribute.setValue(emptyAtom);
             i++;
         }
     }
@@ -1462,23 +1462,30 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
     return detachAttribute(index);
 }
 
-void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode& ec, FragmentScriptingPermission scriptingPermission)
+bool Element::parseAttributeName(QualifiedName& out, const AtomicString& namespaceURI, const AtomicString& qualifiedName, ExceptionCode& ec)
 {
     String prefix, localName;
     if (!Document::parseQualifiedName(qualifiedName, prefix, localName, ec))
-        return;
+        return false;
+    ASSERT(!ec);
 
     QualifiedName qName(prefix, localName, namespaceURI);
 
     if (!Document::hasValidNamespaceForAttributes(qName)) {
         ec = NAMESPACE_ERR;
-        return;
+        return false;
     }
 
-    if (scriptingPermission == DisallowScriptingContent && (isEventHandlerAttribute(qName) || isAttributeToRemove(qName, value)))
-        return;
+    out = qName;
+    return true;
+}
 
-    setAttribute(qName, value);
+void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode& ec)
+{
+    QualifiedName parsedName = anyName;
+    if (!parseAttributeName(parsedName, namespaceURI, qualifiedName, ec))
+        return;
+    setAttribute(parsedName, value);
 }
 
 void Element::removeAttribute(size_t index)

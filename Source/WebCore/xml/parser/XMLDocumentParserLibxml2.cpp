@@ -696,7 +696,7 @@ struct _xmlSAX2Namespace {
 };
 typedef struct _xmlSAX2Namespace xmlSAX2Namespace;
 
-static inline void handleElementNamespaces(Element* newElement, const xmlChar** libxmlNamespaces, int nb_namespaces, ExceptionCode& ec, FragmentScriptingPermission scriptingPermission)
+static inline void handleNamespaceAttributes(Vector<Attribute, 8>& prefixedAttributes, const xmlChar** libxmlNamespaces, int nb_namespaces, ExceptionCode& ec)
 {
     xmlSAX2Namespace* namespaces = reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces);
     for (int i = 0; i < nb_namespaces; i++) {
@@ -704,9 +704,12 @@ static inline void handleElementNamespaces(Element* newElement, const xmlChar** 
         AtomicString namespaceURI = toAtomicString(namespaces[i].uri);
         if (namespaces[i].prefix)
             namespaceQName = "xmlns:" + toString(namespaces[i].prefix);
-        newElement->setAttributeNS(XMLNSNames::xmlnsNamespaceURI, namespaceQName, namespaceURI, ec, scriptingPermission);
-        if (ec) // exception setting attributes
+
+        QualifiedName parsedName = anyName;
+        if (!Element::parseAttributeName(parsedName, XMLNSNames::xmlnsNamespaceURI, namespaceQName, ec))
             return;
+        
+        prefixedAttributes.append(Attribute(parsedName, namespaceURI));
     }
 }
 
@@ -719,7 +722,7 @@ struct _xmlSAX2Attributes {
 };
 typedef struct _xmlSAX2Attributes xmlSAX2Attributes;
 
-static inline void handleElementAttributes(Element* newElement, const xmlChar** libxmlAttributes, int nb_attributes, ExceptionCode& ec, FragmentScriptingPermission scriptingPermission)
+static inline void handleElementAttributes(Vector<Attribute, 8>& prefixedAttributes, const xmlChar** libxmlAttributes, int nb_attributes, ExceptionCode& ec)
 {
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
     for (int i = 0; i < nb_attributes; i++) {
@@ -729,9 +732,11 @@ static inline void handleElementAttributes(Element* newElement, const xmlChar** 
         AtomicString attrURI = attrPrefix.isEmpty() ? AtomicString() : toAtomicString(attributes[i].uri);
         AtomicString attrQName = attrPrefix.isEmpty() ? toAtomicString(attributes[i].localname) : attrPrefix + ":" + toString(attributes[i].localname);
 
-        newElement->setAttributeNS(attrURI, attrQName, attrValue, ec, scriptingPermission);
-        if (ec) // exception setting attributes
+        QualifiedName parsedName = anyName;
+        if (!Element::parseAttributeName(parsedName, attrURI, attrQName, ec))
             return;
+
+        prefixedAttributes.append(Attribute(parsedName, attrValue));
     }
 }
 
@@ -788,14 +793,17 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         return;
     }
 
+    Vector<Attribute, 8> prefixedAttributes;
     ExceptionCode ec = 0;
-    handleElementNamespaces(newElement.get(), libxmlNamespaces, nb_namespaces, ec, m_scriptingPermission);
+    handleNamespaceAttributes(prefixedAttributes, libxmlNamespaces, nb_namespaces, ec);
     if (ec) {
+        newElement->parserSetAttributes(prefixedAttributes, m_scriptingPermission);
         stopParsing();
         return;
     }
 
-    handleElementAttributes(newElement.get(), libxmlAttributes, nb_attributes, ec, m_scriptingPermission);
+    handleElementAttributes(prefixedAttributes, libxmlAttributes, nb_attributes, ec);
+    newElement->parserSetAttributes(prefixedAttributes, m_scriptingPermission);
     if (ec) {
         stopParsing();
         return;

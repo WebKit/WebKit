@@ -1,3 +1,39 @@
+2012-07-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Href attribute with javascript protocol is stripped when content is pasted into a XML doucment
+        https://bugs.webkit.org/show_bug.cgi?id=92310
+
+        Reviewed by Adam Barth.
+
+        The bug was caused by setAttributeNS's stripping attributes for which isAttributeToRemove
+        return true instead of setting an empty string. Changing this in setAttributeNS is problematic
+        because it will trigger a logic, in HTMLAnchorElement for example, to resolve the URL.
+
+        Fixed the bug by making XML parsers call parserSetAttributes instead of setAttributeNS.
+        After this patch, handleNamespaceAttributes and handleElementAttributes simply fills up a Vector
+        with which startElementNs (or parseStartElement in Qt) calls parserSetAttributes.
+
+        * dom/Element.cpp:
+        (WebCore::Element::parserSetAttributes): Sets emptyAtom instead of nullAtom as nullAtom can be
+        turned into "null".
+        (WebCore::Element::parseAttributeName): Extracted from setAttributeNS.
+        (WebCore::Element::setAttributeNS): No longer takes FragmentScriptingPermission.
+        * dom/Element.h:
+        (Element):
+        * editing/markup.cpp:
+        (WebCore::completeURLs): Don't resolve URLs when it's empty since empty attribute has a canonical
+        meaning in some cases. e.g. <frame src=""></iframe>
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::handleNamespaceAttributes): Renamed from handleElementNamespaces. Call
+        parserSetAttributes even when exiting early to be maintain the same behavior.
+        (WebCore::handleElementAttributes):
+        (WebCore::XMLDocumentParser::startElementNs):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::handleNamespaceAttributes): Use XMLNSNames::xmlnsNamespaceURI. Call parserSetAttributes
+        even when exiting early to be maintain the same behavior.
+        (WebCore::handleElementAttributes):
+        (WebCore::XMLDocumentParser::parseStartElement):
+
 2012-07-26  Dan Bernstein  <mitz@apple.com>
 
         <svg> element with no intrinsic size and max-width gets sized incorrectly

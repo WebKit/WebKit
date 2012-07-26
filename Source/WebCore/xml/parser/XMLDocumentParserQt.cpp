@@ -52,6 +52,7 @@
 #include "ScriptValue.h"
 #include "TextResourceDecoder.h"
 #include "TransformSource.h"
+#include "XMLNSNames.h"
 #include <QDebug>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
@@ -315,22 +316,23 @@ static inline String prefixFromQName(const QString& qName)
         return qName.left(offset);
 }
 
-static inline void handleElementNamespaces(Element* newElement, const QXmlStreamNamespaceDeclarations &ns,
-                                           ExceptionCode& ec, FragmentScriptingPermission scriptingPermission)
+static inline void handleNamespaceAttributes(Vector<Attribute, 8>& prefixedAttributes, const QXmlStreamNamespaceDeclarations &ns, ExceptionCode& ec)
 {
     for (int i = 0; i < ns.count(); ++i) {
         const QXmlStreamNamespaceDeclaration &decl = ns[i];
         String namespaceURI = decl.namespaceUri();
         String namespaceQName = decl.prefix().isEmpty() ? String("xmlns") : String("xmlns:");
         namespaceQName.append(decl.prefix());
-        newElement->setAttributeNS("http://www.w3.org/2000/xmlns/", namespaceQName, namespaceURI, ec, scriptingPermission);
-        if (ec) // exception setting attributes
+
+        QualifiedName parsedName = anyName;
+        if (!Element::parseAttributeName(parsedName, XMLNSNames::xmlnsNamespaceURI, namespaceQName, ec))
             return;
+
+        prefixedAttributes.append(Attribute(parsedName, namespaceURI));
     }
 }
 
-static inline void handleElementAttributes(Element* newElement, const QXmlStreamAttributes &attrs, ExceptionCode& ec,
-                                           FragmentScriptingPermission scriptingPermission)
+static inline void handleElementAttributes(Vector<Attribute, 8>& prefixedAttributes, const QXmlStreamAttributes &attrs, ExceptionCode& ec)
 {
     for (int i = 0; i < attrs.count(); ++i) {
         const QXmlStreamAttribute &attr = attrs[i];
@@ -338,9 +340,12 @@ static inline void handleElementAttributes(Element* newElement, const QXmlStream
         String attrValue     = attr.value();
         String attrURI       = attr.namespaceUri().isEmpty() ? String() : String(attr.namespaceUri());
         String attrQName     = attr.qualifiedName();
-        newElement->setAttributeNS(attrURI, attrQName, attrValue, ec, scriptingPermission);
-        if (ec) // exception setting attributes
+
+        QualifiedName parsedName = anyName;
+        if (!Element::parseAttributeName(parsedName, attrURI, attrQName, ec))
             return;
+
+        prefixedAttributes.append(Attribute(parsedName, attrURI));
     }
 }
 
@@ -455,14 +460,17 @@ void XMLDocumentParser::parseStartElement()
     bool isFirstElement = !m_sawFirstElement;
     m_sawFirstElement = true;
 
+    Vector<Attribute, 8> prefixedAttributes;
     ExceptionCode ec = 0;
-    handleElementNamespaces(newElement.get(), m_stream.namespaceDeclarations(), ec, m_scriptingPermission);
+    handleNamespaceAttributes(prefixedAttributes, m_stream.namespaceDeclarations(), ec);
     if (ec) {
+        newElement->parserSetAttributes(prefixedAttributes, m_scriptingPermission);
         stopParsing();
         return;
     }
 
-    handleElementAttributes(newElement.get(), m_stream.attributes(), ec, m_scriptingPermission);
+    handleElementAttributes(prefixedAttributes, m_stream.attributes(), ec);
+    newElement->parserSetAttributes(prefixedAttributes, m_scriptingPermission);
     if (ec) {
         stopParsing();
         return;
