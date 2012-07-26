@@ -1,3 +1,10 @@
+2012-07-26  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Added Qt5 specific expected results after r123670.
+
+        * platform/qt-5.0/tables/mozilla/bugs/bug3037-1-expected.png: Added after r123670.
+        * platform/qt-5.0/tables/mozilla/bugs/bug3037-1-expected.txt: Added after r123670.
+
 2012-07-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r123696
