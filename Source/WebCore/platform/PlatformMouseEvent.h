@@ -103,8 +103,8 @@ namespace WebCore {
         
 
 #if PLATFORM(GTK) 
-        PlatformMouseEvent(GdkEventButton*);
-        PlatformMouseEvent(GdkEventMotion*);
+        explicit PlatformMouseEvent(GdkEventButton*);
+        explicit PlatformMouseEvent(GdkEventMotion*);
         void setClickCount(int count) { m_clickCount = count; }
 #endif
 

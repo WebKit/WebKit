@@ -79,7 +79,7 @@ public:
 #if PLATFORM(MAC)
     // This is required to support OS X services.
     void writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame*);
-    Pasteboard(const String& pasteboardName);
+    explicit Pasteboard(const String& pasteboardName);
     static String getStringSelection(Frame*);
     static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType);
 #endif

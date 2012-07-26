@@ -178,8 +178,8 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(EFL)
-        PlatformKeyboardEvent(const Evas_Event_Key_Down*);
-        PlatformKeyboardEvent(const Evas_Event_Key_Up*);
+        explicit PlatformKeyboardEvent(const Evas_Event_Key_Down*);
+        explicit PlatformKeyboardEvent(const Evas_Event_Key_Up*);
 #endif
 
     protected:

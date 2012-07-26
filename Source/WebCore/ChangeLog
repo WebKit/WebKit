@@ -1,3 +1,63 @@
+2012-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add *explicit* keyword to constructors in WebCore/platform
+        https://bugs.webkit.org/show_bug.cgi?id=92238
+
+        Reviewed by Kentaro Hara.
+
+        As a step to let *explicit* keyword add to constructors which have a parameter,
+        *explicit* keyword is added to Source/WebCore/platform in order to avoid implicit
+        type conversion.
+
+        Some files in platform directory can't use explicit keyword because of build breaks.
+
+        No new tests. Covered by existing tests.
+
+        * platform/AutodrainedPool.h:
+        (AutodrainedPool):
+        * platform/ContentType.h:
+        (ContentType):
+        * platform/ContextMenu.h:
+        (ContextMenu):
+        * platform/ContextMenuItem.h:
+        (ContextMenuItem):
+        * platform/Cursor.h:
+        (WebCore::SharedCursor::SharedCursor):
+        (Cursor):
+        * platform/KURL.h:
+        (WebCore::KURL::KURL):
+        (KURL):
+        * platform/KURLGooglePrivate.h:
+        (KURLGooglePrivate):
+        * platform/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::PODRedBlackTree):
+        * platform/Pasteboard.h:
+        (Pasteboard):
+        * platform/PlatformEvent.h:
+        (WebCore::PlatformEvent::PlatformEvent):
+        * platform/PlatformKeyboardEvent.h:
+        (PlatformKeyboardEvent):
+        * platform/PlatformMouseEvent.h:
+        (PlatformMouseEvent):
+        * platform/PlatformPasteboard.h:
+        (PlatformPasteboard):
+        * platform/PlatformTouchEvent.h:
+        (PlatformTouchEvent):
+        * platform/PlatformWheelEvent.h:
+        (PlatformWheelEvent):
+        * platform/RunLoop.h:
+        (TimerBase):
+        * platform/ScrollAnimator.h:
+        (ScrollAnimator):
+        * platform/ScrollAnimatorNone.h:
+        (ScrollAnimatorNone):
+        * platform/SharedBuffer.h:
+        (SharedBuffer):
+        * platform/WheelFlingPlatformGestureCurve.h:
+        (WheelFlingPlatformGestureCurve):
+        * platform/Widget.h:
+        (Widget):
+
 2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resource agent's reference to cached resources should be weak.

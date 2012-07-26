@@ -71,7 +71,7 @@ namespace WebCore {
 
         void appendItem(const ContextMenuItem& item) { m_items.append(item); } 
 #else
-        ContextMenu(const PlatformMenuDescription);
+        explicit ContextMenu(const PlatformMenuDescription);
         ~ContextMenu();
 
         void insertItem(unsigned position, ContextMenuItem&);

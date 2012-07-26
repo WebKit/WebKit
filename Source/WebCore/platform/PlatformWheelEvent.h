@@ -152,11 +152,11 @@ namespace WebCore {
         bool directionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
 
 #if PLATFORM(GTK)
-        PlatformWheelEvent(GdkEventScroll*);
+        explicit PlatformWheelEvent(GdkEventScroll*);
 #endif
 
 #if PLATFORM(EFL)
-        PlatformWheelEvent(const Evas_Event_Mouse_Wheel*);
+        explicit PlatformWheelEvent(const Evas_Event_Mouse_Wheel*);
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
@@ -180,7 +180,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(HAIKU)
-        PlatformWheelEvent(BMessage*);
+        explicit PlatformWheelEvent(BMessage*);
 #endif
 
     protected:

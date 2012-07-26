@@ -38,7 +38,7 @@ namespace WebCore {
 class AutodrainedPool {
     WTF_MAKE_NONCOPYABLE(AutodrainedPool);
 public:
-    AutodrainedPool(int iterationLimit = 1);
+    explicit AutodrainedPool(int iterationLimit = 1);
     ~AutodrainedPool();
     
     void cycle();
