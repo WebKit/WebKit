@@ -1,3 +1,19 @@
+2012-07-25  Tony Chang  <tony@chromium.org>
+
+        flexitems can overflow the flexbox due to rounding
+        https://bugs.webkit.org/show_bug.cgi?id=92163
+
+        Reviewed by Levi Weintraub.
+
+        Don't round flex item sizes and use LayoutPoint for the location of flex items.
+
+        Test: css3/flexbox/flex-rounding.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+
 2012-07-25  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Integrate certmgr with CredentialBackingStore
