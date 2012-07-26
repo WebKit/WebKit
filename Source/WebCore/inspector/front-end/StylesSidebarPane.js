@@ -1180,6 +1180,10 @@ WebInspector.StylePropertiesSection.prototype = {
 
     _createRuleOriginNode: function()
     {
+        /**
+         * @param {string} url
+         * @param {number} line
+         */
         function linkifyUncopyable(url, line)
         {
             var link = WebInspector.linkifyResourceAsNode(url, line, "", url + ":" + (line + 1));
@@ -1190,8 +1194,13 @@ WebInspector.StylePropertiesSection.prototype = {
             return link;
         }
 
-        if (this.styleRule.sourceURL)
-            return linkifyUncopyable(this.styleRule.sourceURL, this.rule.sourceLine);
+        if (this.styleRule.sourceURL) {
+            var uiLocation = this.rule.uiLocation();
+            if (uiLocation)
+                return linkifyUncopyable(uiLocation.url(), uiLocation.lineNumber);
+            else
+                return linkifyUncopyable(this.styleRule.sourceURL, this.rule.sourceLine);
+        }
 
         if (!this.rule)
             return document.createTextNode("");

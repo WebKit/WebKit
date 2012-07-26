@@ -87,6 +87,7 @@ modules = [
             "Linkifier.js",
             "NetworkLog.js",
             "Placard.js",
+            "SASSSourceMapping.js",
             "Script.js",
             "ScriptFormatter.js",
             "ScriptSnippetModel.js",

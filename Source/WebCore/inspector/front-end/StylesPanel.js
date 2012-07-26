@@ -30,6 +30,7 @@
  * @constructor
  * @extends {WebInspector.Object}
  * @implements {WebInspector.UISourceCodeProvider}
+ * @implements {WebInspector.SourceMapping}
  */
 WebInspector.StylesUISourceCodeProvider = function()
 {
@@ -37,6 +38,7 @@ WebInspector.StylesUISourceCodeProvider = function()
      * @type {Array.<WebInspector.UISourceCode>}
      */
     this._uiSourceCodes = [];
+    this._uiSourceCodeForURL = {};
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
 }
 
@@ -47,6 +49,28 @@ WebInspector.StylesUISourceCodeProvider.prototype = {
     uiSourceCodes: function()
     {
         return this._uiSourceCodes;
+    },
+
+    /**
+     * @param {WebInspector.RawLocation} rawLocation
+     * @return {WebInspector.UILocation}
+     */
+    rawLocationToUILocation: function(rawLocation)
+    {
+        var location = /** @type WebInspector.CSSLocation */ rawLocation;
+        var uiSourceCode = this._uiSourceCodeForURL[location.url];
+        return new WebInspector.UILocation(uiSourceCode, location.lineNumber, 0);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     * @return {WebInspector.RawLocation}
+     */
+    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
+    {
+        return new WebInspector.CSSLocation(uiSourceCode.contentURL() || "", lineNumber);
     },
 
     _populate: function()
@@ -64,19 +88,26 @@ WebInspector.StylesUISourceCodeProvider.prototype = {
         populateFrame.call(this, WebInspector.resourceTreeModel.mainFrame);
     },
 
+    /**
+     * @param {WebInspector.Event} event
+     */
     _resourceAdded: function(event)
     {
-        var resource = event.data;
+        var resource = /** @type {WebInspector.Resource} */ event.data;
         if (resource.type !== WebInspector.resourceTypes.Stylesheet)
             return;
         var uiSourceCode = new WebInspector.StyleSource(resource);
         this._uiSourceCodes.push(uiSourceCode);
+        this._uiSourceCodeForURL[resource.url] = uiSourceCode;
+        WebInspector.cssModel.setSourceMapping(resource.url, this);
         this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
     },
 
     reset: function()
     {
         this._uiSourceCodes = [];
+        this._uiSourceCodeForURL = {};
+        WebInspector.cssModel.resetSourceMappings();
         this._populate();
     }
 }

@@ -123,10 +123,12 @@ WebInspector.CompositeUISourceCodeProvider.prototype.__proto__ = WebInspector.Ob
 WebInspector.Workspace = function()
 {
     var scriptMapping = new WebInspector.DebuggerScriptMapping();
-    var providers = scriptMapping.uiSourceCodeProviders();
-    providers = providers.concat(new WebInspector.StylesUISourceCodeProvider());
+    var styleProviders = [new WebInspector.StylesUISourceCodeProvider()];
+    if (WebInspector.experimentsSettings.sass.isEnabled())
+        styleProviders.push(new WebInspector.SASSSourceMapping());
+    var providers = scriptMapping.uiSourceCodeProviders().concat(styleProviders);
     WebInspector.CompositeUISourceCodeProvider.call(this, providers);
-    
+
     new WebInspector.PresentationConsoleMessageHelper(this);
     
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._reset, this);

@@ -263,7 +263,7 @@ WebInspector.StaticContentProvider.prototype = {
      */
     contentType: function()
     {
-        return WebInspector.resourceTypes.Script;
+        return this._contentType;
     },
 
     /**

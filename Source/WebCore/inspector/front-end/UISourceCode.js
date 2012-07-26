@@ -511,6 +511,14 @@ WebInspector.UILocation.prototype = {
     uiLocationToRawLocation: function()
     {
         return this.uiSourceCode.uiLocationToRawLocation(this.lineNumber, this.columnNumber);
+    },
+
+    /**
+     * @return {?string}
+     */
+    url: function()
+    {
+        return this.uiSourceCode.contentURL();
     }
 }
 

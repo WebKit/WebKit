@@ -75738,6 +75738,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SASSSourceMapping.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ScopeChainSidebarPane.js"
 					>
 				</File>

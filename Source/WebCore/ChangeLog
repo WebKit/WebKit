@@ -1,3 +1,80 @@
+2012-07-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: SASS source mapping straw man (behind experiment)
+        https://bugs.webkit.org/show_bug.cgi?id=92265
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change introduces SASS mapping support (behind the experiment).
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel):
+        (WebInspector.CSSStyleModel.prototype.resourceBinding):
+        (WebInspector.CSSStyleModel.prototype.setSourceMapping):
+        (WebInspector.CSSStyleModel.prototype.resetSourceMappings):
+        (WebInspector.CSSStyleModel.prototype._rawLocationToUILocation):
+        (WebInspector.CSSLocation):
+        (WebInspector.CSSRule):
+        (WebInspector.CSSRule.prototype.get isRegular):
+        (WebInspector.CSSRule.prototype.uiLocation):
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.StaticContentProvider.prototype.contentType):
+        * inspector/front-end/SASSSourceMapping.js: Added.
+        (WebInspector.SASSSourceMapping):
+        (WebInspector.SASSSourceMapping.prototype._populate):
+        (WebInspector.SASSSourceMapping.prototype._resourceAdded.didRequestContent):
+        (WebInspector.SASSSourceMapping.prototype._resourceAdded):
+        (rawLocationToUILocation):
+        (uiLocationToRawLocation):
+        (uiSourceCodes):
+        (reset):
+        (WebInspector.SASSSource):
+        (WebInspector.SASSSource.prototype.isEditable):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/StylesPanel.js:
+        (WebInspector.StylesUISourceCodeProvider):
+        (WebInspector.StylesUISourceCodeProvider.prototype.rawLocationToUILocation):
+        (WebInspector.StylesUISourceCodeProvider.prototype.uiLocationToRawLocation):
+        (WebInspector.StylesUISourceCodeProvider.prototype._resourceAdded):
+        (WebInspector.StylesUISourceCodeProvider.prototype.reset):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UILocation.prototype.uiLocationToRawLocation):
+        (WebInspector.UILocation.prototype.url):
+        * inspector/front-end/Workspace.js:
+        (WebInspector.Workspace):
+        * inspector/front-end/inspector.html:
+
+2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed r123761 follow-up, inspector closure compilation fix.
+
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.Location.prototype.uiLocation):
+        * inspector/front-end/ScriptSnippetModel.js:
+
+2012-07-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Cleanup GraphicsContext::(getWindowsContext|releaseWindowsContext)
+        https://bugs.webkit.org/show_bug.cgi?id=92113
+
+        Reviewed by Simon Hausmann.
+
+        Cleanup the definition of the two methods across different ports and
+        replace the calls to them with LocalWindowsContext where possible.
+
+        * platform/graphics/GraphicsContext.h:
+        (GraphicsContext):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::paintThumb):
+
 2012-07-27 Chris Fleizach <cfleizach@apple.com>
 
         WebKit should expose @title as label (AXTitle or AXDescription) sometimes instead of AXHelp, according to the ARIA text alt computation

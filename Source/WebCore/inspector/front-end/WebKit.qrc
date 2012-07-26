@@ -133,6 +133,7 @@
     <file>ResourceWebSocketFrameView.js</file>
     <file>ResourcesPanel.js</file>
     <file>RevisionHistoryView.js</file>
+    <file>SASSSourceMapping.js</file>
     <file>ScopeChainSidebarPane.js</file>
     <file>Script.js</file>
     <file>ScriptFormatter.js</file>

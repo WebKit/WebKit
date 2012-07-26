@@ -6345,6 +6345,7 @@
             'inspector/front-end/ResourceWebSocketFrameView.js',
             'inspector/front-end/ResourcesPanel.js',
             'inspector/front-end/RevisionHistoryView.js',
+            'inspector/front-end/SASSSourceMapping.js',
             'inspector/front-end/ScopeChainSidebarPane.js',
             'inspector/front-end/Script.js',
             'inspector/front-end/ScriptFormatter.js',

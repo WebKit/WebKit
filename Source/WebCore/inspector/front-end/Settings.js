@@ -190,6 +190,7 @@ WebInspector.ExperimentsSettings = function()
     this.fileSystemInspection = this._createExperiment("fileSystemInspection", "FileSystem inspection");
     this.mainThreadMonitoring = this._createExperiment("mainThreadMonitoring", "Show CPU activity in Timeline");
     this.geolocationOverride = this._createExperiment("geolocationOverride", "Override Device Geolocation");
+    this.sass = this._createExperiment("sass", "Support for SASS");
 
     this._cleanUpSetting();
 }

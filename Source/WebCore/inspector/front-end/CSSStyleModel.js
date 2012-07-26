@@ -35,6 +35,7 @@
 WebInspector.CSSStyleModel = function()
 {
     this._pendingCommandsMajorState = [];
+    this._sourceMappings = {};
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoRequested, this._undoRedoRequested, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.UndoRedoCompleted, this._undoRedoCompleted, this);
     this._resourceBinding = new WebInspector.CSSStyleModelResourceBinding(this);
@@ -388,10 +389,46 @@ WebInspector.CSSStyleModel.prototype = {
     resourceBinding: function()
     {
         return this._resourceBinding;
+    },
+
+    /**
+     * @param {string} url
+     * @param {WebInspector.SourceMapping} sourceMapping
+     */
+    setSourceMapping: function(url, sourceMapping)
+    {
+        this._sourceMappings[url] = sourceMapping;
+    },
+
+    resetSourceMappings: function()
+    {
+        this._sourceMappings = {};
+    },
+
+    /**
+     * @param {WebInspector.CSSLocation} rawLocation
+     * @return {?WebInspector.UILocation}
+     */
+    _rawLocationToUILocation: function(rawLocation)
+    {
+        var sourceMapping = this._sourceMappings[rawLocation.url];
+        return sourceMapping ? sourceMapping.rawLocationToUILocation(rawLocation) : null;
     }
 }
 
 WebInspector.CSSStyleModel.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ * @implements {WebInspector.RawLocation}
+ * @param {string} url
+ * @param {number} lineNumber
+ */
+WebInspector.CSSLocation = function(url, lineNumber)
+{
+    this.url = url;
+    this.lineNumber = lineNumber;
+}
 
 /**
  * @constructor
@@ -617,6 +654,8 @@ WebInspector.CSSRule = function(payload)
     this.selectorText = payload.selectorText;
     this.sourceLine = payload.sourceLine;
     this.sourceURL = payload.sourceURL;
+    if (payload.sourceURL)
+        this._rawLocation = new WebInspector.CSSLocation(payload.sourceURL, payload.sourceLine);
     this.origin = payload.origin;
     this.style = WebInspector.CSSStyleDeclaration.parsePayload(payload.style);
     this.style.parentRule = this;
@@ -653,6 +692,16 @@ WebInspector.CSSRule.prototype = {
     get isRegular()
     {
         return this.origin === "regular";
+    },
+
+    /**
+     * @return {?WebInspector.UILocation}
+     */
+    uiLocation: function()
+    {
+        if (!this._rawLocation)
+            return null;
+        return WebInspector.cssModel._rawLocationToUILocation(this._rawLocation);
     }
 }
 

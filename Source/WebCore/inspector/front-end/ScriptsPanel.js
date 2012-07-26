@@ -469,7 +469,6 @@ WebInspector.ScriptsPanel.prototype = {
                 sourceFrame = new WebInspector.JavaScriptSourceFrame(this, javaScriptSource);
         } else
             sourceFrame = new WebInspector.UISourceCodeFrame(uiSourceCode);
-
         this._sourceFramesByUISourceCode.put(uiSourceCode, sourceFrame);
         return sourceFrame;
     },
