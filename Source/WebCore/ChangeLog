@@ -1,5 +1,11 @@
 2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Fix AppleMac compilation after r123740.
+
+        * WebCore.exp.in: Added missing symbol.
+
+2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
+
         Web Inspector: move StringImpl size calculation to StringImpl
         https://bugs.webkit.org/show_bug.cgi?id=92359
 
