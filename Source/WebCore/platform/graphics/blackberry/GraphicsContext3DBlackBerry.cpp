@@ -173,7 +173,11 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         sampleCount = std::min(8, maxSampleCount);
     }
 
-    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+    bool mustRestoreFBO = false;
+    if (m_boundFBO != m_fbo) {
+        mustRestoreFBO = true;
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+    }
 
     ::glBindTexture(GL_TEXTURE_2D, m_texture);
     ::glTexImage2D(GL_TEXTURE_2D, 0, internalColorFormat, fboWidth, fboHeight, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
@@ -211,7 +215,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
     logFrameBufferStatus(__LINE__);
 
-    return true;
+    return mustRestoreFBO;
 }
 
 void GraphicsContext3D::logFrameBufferStatus(int line)

@@ -1,5 +1,18 @@
 2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
 
+        [BlackBerry] GraphicsContext3D::reshapeFBOs does not report when bound FBOs should be restored
+        https://bugs.webkit.org/show_bug.cgi?id=92304
+
+        Reviewed by Rob Buis.
+
+        No new tests, because it corrects existing functionality, but it makes BlackBerry
+        pass framebuffer-bindings-unaffected-on-resize.html.
+
+        * platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+
+2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
+
         [BlackBerry] readPixels should set alpha to 255 instead of 0 when alpha is disabled
         https://bugs.webkit.org/show_bug.cgi?id=92303
 
