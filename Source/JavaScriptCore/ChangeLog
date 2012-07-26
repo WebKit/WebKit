@@ -1,3 +1,13 @@
+2012-07-26  Filip Pizlo  <fpizlo@apple.com>
+
+        JSArray has methods that are neither used nor defined
+        https://bugs.webkit.org/show_bug.cgi?id=92416
+
+        Reviewed by Simon Fraser.
+
+        * runtime/JSArray.h:
+        (JSArray):
+
 2012-07-26  Zoltan Herczeg  <zherczeg@webkit.org>
 
         [Qt][ARM]ARMAssembler needs buildfix afert r123417

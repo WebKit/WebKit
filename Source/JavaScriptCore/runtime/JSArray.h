@@ -287,9 +287,6 @@ namespace JSC {
         static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
-        JS_EXPORT_PRIVATE void* subclassData() const;
-        JS_EXPORT_PRIVATE void setSubclassData(void*);
-
     private:
         static size_t storageSize(unsigned vectorLength);
         bool isLengthWritable()
@@ -304,7 +301,6 @@ namespace JSC {
         void allocateSparseMap(JSGlobalData&);
         void deallocateSparseMap();
 
-        bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
         void putByIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         JS_EXPORT_PRIVATE bool putDirectIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
 
