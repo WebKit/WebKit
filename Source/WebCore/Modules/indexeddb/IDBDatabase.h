@@ -59,7 +59,7 @@ public:
 
     // Implement the IDL
     const String name() const { return m_metadata.name; }
-    const String version() const { return m_metadata.version; }
+    PassRefPtr<IDBAny> version() const;
     PassRefPtr<DOMStringList> objectStoreNames() const;
 
     // FIXME: Try to modify the code generator so this is unneeded.

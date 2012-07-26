@@ -32,7 +32,7 @@ module storage {
         EventTarget
     ] IDBDatabase {
         readonly attribute DOMString name;
-        readonly attribute DOMString version;
+        readonly attribute IDBAny version;
         readonly attribute DOMStringList objectStoreNames;
 
         attribute EventListener onabort;

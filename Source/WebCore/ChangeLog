@@ -1,3 +1,22 @@
+2012-07-25  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Make db.version return an integer if appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=92195
+
+        Reviewed by Tony Chang.
+
+        Make use of the existing IDBAny mechanism to return an integer if
+        integer versions have been used.
+
+        No new tests - no change in behavior expected.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::version):
+        (WebCore):
+        * Modules/indexeddb/IDBDatabase.h:
+        (IDBDatabase):
+        * Modules/indexeddb/IDBDatabase.idl:
+
 2012-07-25  Michael Saboff  <msaboff@apple.com>
 
         Convert HTML parser to handle 8-bit resources without converting to UChar*
